@@ -4,9 +4,9 @@
 - Afternoon
 
 # TimeOfDayWithCondition
-- IF: {time == 'morning'}
+- IF: @{time == 'morning'}
     - Have a good morning
-- ELSEIF: {time == 'evening'}
+- ELSEIF: @{time == 'evening'}
     - Have a good evening
 - ELSE:
     - Have a good afternoon

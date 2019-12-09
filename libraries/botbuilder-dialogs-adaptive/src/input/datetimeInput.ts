@@ -5,9 +5,10 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { InputDialogConfiguration, InputDialog, InputDialogOptions, InputState } from "./inputDialog";
+import { InputDialogConfiguration, InputDialog, InputDialogOptions, InputState, PromptType } from "./inputDialog";
 import { DialogContext } from "botbuilder-dialogs";
 import * as Recognizers from '@microsoft/recognizers-text-date-time';
+import { ExpressionPropertyValue, ExpressionProperty } from "../expressionProperty";
 
 
 export interface DatetimeInputConfiguration extends InputDialogConfiguration {
@@ -19,11 +20,18 @@ export class DatetimeInput extends InputDialog<InputDialogOptions> {
     public defaultLocale: string = null;
 
     constructor();
-    constructor(defaultLocale: string);
-    constructor(defaultLocale?: string) {
+    constructor(property: string, prompt: PromptType);
+    constructor(property: string, value: ExpressionPropertyValue<any>, prompt: PromptType);
+    constructor(property?: string, value?: ExpressionPropertyValue<any> | PromptType, prompt?: PromptType) {
         super();
-        if (defaultLocale) {
-            this.defaultLocale = defaultLocale;
+        if (property) {
+            if (!prompt) {
+                prompt = value as PromptType;
+                value = undefined;
+            }
+            this.property = property;
+            if (value !== undefined) { this.value = new ExpressionProperty(value as any) }
+            this.prompt.value = prompt;
         }
     }
 

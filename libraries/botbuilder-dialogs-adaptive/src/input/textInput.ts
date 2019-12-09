@@ -23,18 +23,18 @@ export enum TextOutputFormat {
 export class TextInput extends InputDialog<InputDialogOptions> {
 
     public outputFormat = TextOutputFormat.none;
-    
+
     constructor();
-    constructor(valueProperty: string, prompt: PromptType);
-    constructor(valueProperty: string, value: ExpressionPropertyValue<any>, prompt: PromptType);
-    constructor(valueProperty?: string, value?: ExpressionPropertyValue<any>|PromptType, prompt?: PromptType) {
+    constructor(property: string, prompt: PromptType);
+    constructor(property: string, value: ExpressionPropertyValue<any>, prompt: PromptType);
+    constructor(property?: string, value?: ExpressionPropertyValue<any> | PromptType, prompt?: PromptType) {
         super();
-        if (valueProperty) {
-            if(!prompt) {
+        if (property) {
+            if (!prompt) {
                 prompt = value as PromptType;
                 value = undefined;
             }
-            this.valueProperty = valueProperty;
+            this.property = property;
             if (value !== undefined) { this.value = new ExpressionProperty(value as any) }
             this.prompt.value = prompt;
         }
@@ -47,7 +47,7 @@ export class TextInput extends InputDialog<InputDialogOptions> {
     protected onComputeId(): string {
         return `TextInput[]`;
     }
-    
+
     protected async onRecognizeInput(dc: DialogContext, consultation: boolean): Promise<InputState> {
         // Check for consultation
         if (consultation) {

@@ -47,6 +47,14 @@ export function compile(template: string): (dc: DialogContext) => string {
                 buffer = '';
             }
             inSlot = true;
+        } else if (chr === '@' && i < template.length - 1 && template[i+1] === '{') {
+            // support @{}
+            if (buffer.length > 0) {
+                chunks.push(textLiteral(buffer));
+                buffer = '';
+            }
+            i++;
+            inSlot = true;
         } else {
             buffer += chr;
         }

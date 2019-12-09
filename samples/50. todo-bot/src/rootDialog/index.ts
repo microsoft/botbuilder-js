@@ -52,7 +52,7 @@ export class RootDialog extends AdaptiveDialog {
 
         // Define rules for handling errors
         this.triggers.push(new OnDialogEvent('error', [
-            new SendActivity(`Oops. An error occurred: {message}`)
+            new SendActivity(`Oops. An error occurred: @{message}`)
         ]));
     }
 }

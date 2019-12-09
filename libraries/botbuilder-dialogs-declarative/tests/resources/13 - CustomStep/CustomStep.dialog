@@ -10,7 +10,7 @@
         },
         {
             "$type": "Microsoft.SendActivity",
-            "activity": "Your age is: {user.age}"
+            "activity": "Your age is: @{user.age}"
         },
         {
             "$type": "Testbot.JavascriptAction",
@@ -19,7 +19,7 @@
         },
         {
             "$type": "Microsoft.SendActivity",
-            "activity": "Your age in dog years is: {user.dogyears}"
+            "activity": "Your age in dog years is: @{user.dogyears}"
         },
         {
             "$type": "Testbot.CSharpAction",
@@ -28,7 +28,7 @@
         },
         {
             "$type": "Microsoft.SendActivity",
-            "activity": "Your age in cat years is: {user.catyears}"
+            "activity": "Your age in cat years is: @{user.catyears}"
         },
         {
             "$type": "Testbot.CalculateDogYears",
@@ -37,11 +37,11 @@
         },
         {
             "$type": "Microsoft.SendActivity",
-            "activity": "A dog that is {conversation.dog} years old is the same age as you"
+            "activity": "A dog that is @{conversation.dog} years old is the same age as you"
         },
         {
             "$type": "Microsoft.SendActivity",
-            "activity": "A cat that is {conversation.cat} years old is the same age as you"
+            "activity": "A cat that is @{conversation.cat} years old is the same age as you"
         },
     ]
 }

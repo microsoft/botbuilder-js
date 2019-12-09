@@ -14,7 +14,7 @@
     "actions": [
         {
             "$type": "Microsoft.SendActivity",
-            "activity": "[welcome]"
+            "activity": "@{welcome}"
         },
         "ExternalLanguage.Greeting"
     ],
@@ -46,7 +46,7 @@
             "actions": [
                 {
                     "$type": "Microsoft.SendActivity",
-                    "activity": "[help]"
+                    "activity": "@{help()}"
                 }
             ]
         },
@@ -55,7 +55,7 @@
             "actions": [
                 {
                     "$type": "Microsoft.SendActivity",
-                    "activity": "[help]"
+                    "activity": "@{help()}"
                 }
             ]
         }

@@ -83,7 +83,7 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
         this.dialogs.telemetryClient = client;
     }
 
-    protected ensureDependenciesInstalled() {
+    protected ensureDependenciesInstalled(): void {
         if (this.installedDependencies) {
             return;
         }

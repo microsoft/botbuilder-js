@@ -1,4 +1,3 @@
-
 /**
  * @module botframework-expressions
  */
@@ -12,15 +11,31 @@ import * as LRUCache from 'lru-cache';
 import { CommonRegexLexer, CommonRegexParser } from './generated';
 
 // tslint:disable-next-line: completed-docs
+export class ErrorListener implements ANTLRErrorListener<any> {
+    public static readonly Instance: ErrorListener = new ErrorListener();
+
+    public syntaxError<T>(
+        _recognizer: Recognizer<T, any>,// eslint-disable-line @typescript-eslint/no-unused-vars
+        _offendingSymbol: T,// eslint-disable-line @typescript-eslint/no-unused-vars
+        line: number,// eslint-disable-line @typescript-eslint/no-unused-vars
+        charPositionInLine: number,// eslint-disable-line @typescript-eslint/no-unused-vars
+        msg: string,// eslint-disable-line @typescript-eslint/no-unused-vars
+        _e: RecognitionException | undefined): void {// eslint-disable-line @typescript-eslint/no-unused-vars
+        
+        throw Error(`Regular expression is invalid.`);
+    }
+}
+
+// tslint:disable-next-line: completed-docs
 export class CommonRegex {
     public static regexCache: LRUCache<string, RegExp> = new LRUCache<string, RegExp>(15);
     public static CreateRegex(pattern: string): RegExp {
 
         let result: RegExp;
-        if (pattern !== undefined && pattern !== '' && this.regexCache.has(pattern)) {
+        if (pattern && this.regexCache.has(pattern)) {
             result = this.regexCache.get(pattern);
         } else {
-            if (pattern === undefined || pattern === '' || !this.isCommonRegex(pattern)) {
+            if (!pattern || !this.isCommonRegex(pattern)) {
                 throw new Error(`A regular expression parsing error occurred.`);
             }
 
@@ -42,7 +57,7 @@ export class CommonRegex {
         });
 
         let regexp: RegExp;
-        if (flag !== '') {
+        if (flag) {
             regexp = new RegExp(`${ pattern }`, flag);
         } else {
             regexp = new RegExp(`${ pattern }`);
@@ -72,20 +87,5 @@ export class CommonRegex {
         parser.buildParseTree = true;
 
         return parser.parse();
-    }
-}
-
-// tslint:disable-next-line: completed-docs
-export class ErrorListener implements ANTLRErrorListener<any> {
-    public static readonly Instance: ErrorListener = new ErrorListener();
-
-    public syntaxError<T>(
-        _recognizer: Recognizer<T, any>,
-        _offendingSymbol: T,
-        line: number,
-        charPositionInLine: number,
-        msg: string,
-        _e: RecognitionException | undefined): void {
-        throw Error(`Regular expression is invalid.`);
     }
 }

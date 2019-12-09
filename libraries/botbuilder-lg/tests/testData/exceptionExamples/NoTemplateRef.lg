@@ -1,14 +1,16 @@
 # template
-- [templateRef]
+- @{templateRef()}
 
 # template1
-- [templateRef(a)]
+- @{templateRef(a)}
+
 
 # multiLineTemplate
 - ```
-@{[templateRefInMultiLine]}
+@{templateRefInMultiLine()}
 ```
 
 # otherTemplate
 - hi 
+
 
