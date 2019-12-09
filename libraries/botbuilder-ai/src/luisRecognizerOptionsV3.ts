@@ -1,3 +1,11 @@
+/**
+ * @module botbuilder-ai
+ */
+/**
+ * Copyright (c) Microsoft Corporation. All rights reserved.
+ * Licensed under the MIT License.
+ */
+
 import { LUISRuntimeModels as LuisModels } from '@azure/cognitiveservices-luis-runtime';
 import { LuisRecognizerInternal } from './luisRecognizerOptions'
 import { LuisApplication , LuisRecognizerOptionsV3} from './luisRecognizer'
@@ -6,6 +14,9 @@ const fetch = require('node-fetch');
 const LUIS_TRACE_TYPE = 'https://www.luis.ai/schemas/trace';
 const LUIS_TRACE_NAME = 'LuisRecognizer';
 const LUIS_TRACE_LABEL = 'LuisV3 Trace';
+const _dateSubtypes = [ "date", "daterange", "datetime", "datetimerange", "duration", "set", "time", "timerange" ];    
+const _geographySubtypes = [ "poi", "city", "countryRegion", "continet", "state" ];
+const MetadataKey = "$instance";
 
 
 export function isLuisRecognizerOptionsV3(options: any): options is LuisRecognizerOptionsV3 {
@@ -19,7 +30,7 @@ export class LuisRecognizerV3 extends LuisRecognizerInternal {
 
         this.predictionOptions = {
             includeAllIntents: false,
-            includeInstanceData: false,
+            includeInstanceData: true,
             log: true,
             preferExternalEntities: true,
             slot: 'production',
@@ -56,6 +67,10 @@ export class LuisRecognizerV3 extends LuisRecognizerInternal {
             luisResult: (this.predictionOptions.includeAPIResults ? response : null)
         }
 
+        if (this.predictionOptions.includeInstanceData) {
+            result.entities[MetadataKey] = result.entities[MetadataKey] ? result.entities[MetadataKey] : {}
+        }
+
         this.emitTraceInfo(context, response.prediction, result);
 
         return result;
@@ -79,7 +94,7 @@ export class LuisRecognizerV3 extends LuisRecognizerInternal {
     }
 
     private buildRequestBody(utterance: string){
-        let content = { 
+        const content = { 
             'query': utterance, 
             'options': { 
                 'overridePredictions': this.predictionOptions.preferExternalEntities  
@@ -125,13 +140,13 @@ export class LuisRecognizerV3 extends LuisRecognizerInternal {
     }
 }
 
-const normalizeName = function(name) {
+function normalizeName(name) {
     return name.replace(/\.| /g, '_');
 }
 
-const getIntents = function(luisResult) {
+function  getIntents(luisResult) {
     // let intents: { [name: string]: { score: number } } = {};
-    let intents = {};
+    const intents = {};
     if (luisResult.intents) {
         for (let intent in luisResult.intents) {
             intents[normalizeName(intent)] = { score: luisResult.intents[intent].score};
@@ -141,16 +156,13 @@ const getIntents = function(luisResult) {
     return intents;
 }
 
-const normalizeEntity = function(entity) {
+function normalizeEntity(entity) {
     const splitEntity = entity.split(':');
-    let entityName = splitEntity[splitEntity.length -1]; 
+    const entityName = splitEntity[splitEntity.length -1]; 
     return entityName.replace(/\.| /g, '_');
 }
 
-const _dateSubtypes = [ "date", "daterange", "datetime", "datetimerange", "duration", "set", "time", "timerange" ];    
-const _geographySubtypes = [ "poi", "city", "countryRegion", "continet", "state" ];
-const MetadataKey = "$instance";
-const MapProperties = function(source, inInstance){
+function mapProperties(source, inInstance){
     let result = source;
     if (source instanceof Array) {
         let narr = [];
@@ -174,7 +186,7 @@ const MapProperties = function(source, inInstance){
                 geoEntity.type = isGeographyV2;
                 narr.push(geoEntity);
             } else {
-                narr.push(MapProperties(item, inInstance));
+                narr.push(mapProperties(item, inInstance));
             }
         }
         result = narr;
@@ -216,7 +228,7 @@ const MapProperties = function(source, inInstance){
                 let isArray = source[property] instanceof Array;
                 let isString = typeof source[property] === 'string';
                 let isInt = Number.isInteger(source[property]);
-                let val = MapProperties(source[property], inInstance || property == MetadataKey);
+                let val = mapProperties(source[property], inInstance || property == MetadataKey);
                 if (name == "datetime" && isArray)
                 {
                     nobj.datetimeV1 = val;
@@ -258,13 +270,13 @@ const MapProperties = function(source, inInstance){
     return result;
 }
 
-const extractEntitiesAndMetadata = function(prediction){
+function extractEntitiesAndMetadata(prediction){
 
-    var entities = prediction.entities;
-    return MapProperties(entities, false);
+    const entities = prediction.entities;
+    return mapProperties(entities, false);
 }
 
-const getSentiment = function(luis): any {
+function getSentiment(luis): any {
     let result: any;
     if (luis.sentiment) {
         result = {

@@ -1,15 +1,5 @@
-import {LuisApplication} from './luisRecognizer'
-import { BotTelemetryClient, RecognizerResult, TurnContext } from 'botbuilder-core';
-
-export interface LuisRecognizerOptions {
-
-    telemetryClient?: BotTelemetryClient;
-
-    logPersonalInformation?: boolean;
-
-    includeAPIResults?: boolean;
-}
-
+import {LuisApplication, LuisRecognizerOptions}  from './luisRecognizer'
+import { RecognizerResult, TurnContext } from 'botbuilder-core';
 
 export abstract class LuisRecognizerInternal {
  

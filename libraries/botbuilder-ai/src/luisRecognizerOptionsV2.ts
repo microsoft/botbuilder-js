@@ -1,3 +1,10 @@
+/**
+ * @module botbuilder-ai
+ */
+/**
+ * Copyright (c) Microsoft Corporation. All rights reserved.
+ * Licensed under the MIT License.
+ */
 
 import { LUISRuntimeClient as LuisClient, LUISRuntimeModels as LuisModels } from '@azure/cognitiveservices-luis-runtime';
 import * as msRest from '@azure/ms-rest-js';
@@ -50,14 +57,14 @@ export class LuisRecognizerV2 extends LuisRecognizerInternal {
 
         if (!utterance.trim()) {
             // Bypass LUIS if the activity's text is null or whitespace
-            return Promise.resolve({
+            return {
                 text: utterance,
                 intents: { '': { score: 1 } },
                 entities: {},
-            });
+            };
         }
         
-        let luisResult: LuisModels.LuisResult  = await this.luisClient.prediction.resolve(
+        const luisResult: LuisModels.LuisResult  = await this.luisClient.prediction.resolve(
             this.application.applicationId, utterance,
             {
                 verbose: luisPredictionOptions.includeAllIntents,
@@ -68,7 +75,7 @@ export class LuisRecognizerV2 extends LuisRecognizerInternal {
                 ...luisPredictionOptions
             })
         // Map results
-        let result = {
+        const result = {
             text: luisResult.query,
             alteredText: luisResult.alteredQuery,
             intents: this.getIntents(luisResult),
@@ -182,7 +189,7 @@ export class LuisRecognizerV2 extends LuisRecognizerInternal {
                     // Add to the set to ensure that we don't consider the same child entity more than once per composite
                     coveredSet.add(i);
 
-                    let val = this.getEntityValue(entity);
+                    const val = this.getEntityValue(entity);
                     if (val != null) {
                         this.addProperty(childrenEntities, this.getNormalizedEntityName(entity), val);
                         if (verbose) {
@@ -209,17 +216,17 @@ export class LuisRecognizerV2 extends LuisRecognizerInternal {
     }
 
     private getEntityValue(entity: LuisModels.EntityModel): any {
-        if (entity.type.startsWith("builtin.geographyV2.")) {
+        if (entity.type.startsWith('builtin.geographyV2.')) {
             return {
-                "type": entity.type.substring(20),
-                "location": entity.entity
+                'type': entity.type.substring(20),
+                'location': entity.entity
             };
         }
 
         if (entity.type.startsWith('builtin.ordinalV2')) {
             return {
-                "relativeTo": entity.resolution.relativeTo,
-                "offset": Number(entity.resolution.offset)
+                'relativeTo': entity.resolution.relativeTo,
+                'offset': Number(entity.resolution.offset)
             }
         }
 

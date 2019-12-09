@@ -11,7 +11,6 @@ import * as Url from 'url-parse';
 import { LuisTelemetryConstants } from './luisTelemetryConstants';
 import { isLuisRecognizerOptionsV2, LuisRecognizerV2 } from './luisRecognizerOptionsV2';
 import { isLuisRecognizerOptionsV3, LuisRecognizerV3 } from './luisRecognizerOptionsV3';
-import { LuisRecognizerOptions } from './luisRecognizerOptions';
 
 /**
  * @private
@@ -131,6 +130,22 @@ export interface LuisRecognizerTelemetryClient {
     recognize(context: TurnContext, telemetryProperties?: { [key: string]: string }, telemetryMetrics?: { [key: string]: number }): Promise<RecognizerResult>;
 }
 
+export interface LuisRecognizerOptions {
+    /**
+     * (Optional) Telemetry Client.
+     */
+    telemetryClient?: BotTelemetryClient;
+    /**
+     * (Optional) Designates whether personal information should be logged in telemetry.
+     */
+    logPersonalInformation?: boolean;
+
+    /**
+     * (Optional) Force the inclusion of LUIS Api call in results returned by [recognize()](#recognize). Defaults to a value of `false`
+     */
+    includeAPIResults?: boolean;
+}
+
 export interface LuisRecognizerOptionsV3 extends LuisRecognizerOptions {
     /**
      * (Optional) Luis Api endpoint version.
@@ -222,7 +237,6 @@ export interface LuisRecognizerOptionsV2 extends LuisRecognizerOptions {
     timezoneOffset?: number;
 }
 
-
 /**
  * Recognize intents in a user utterance using a configured LUIS model.
  *
@@ -247,12 +261,12 @@ export class LuisRecognizer implements LuisRecognizerTelemetryClient {
     /**
      * Creates a new LuisRecognizer instance.
      * @param application An object conforming to the [LuisApplication](#luisapplication) definition or a string representing a LUIS application endpoint, usually retrieved from https://luis.ai.
-     * @param options (Optional) options object used to control predictions. Should conform to the [LuisRecognizerOptions](#luispredictionoptions) definition.
+     * @param options (Optional) options object used to control predictions. Should conform to the [LuisRecognizerOptions](#luisrecognizeroptions) definition.
      * @param includeApiResults (Deprecated) flag that if set to `true` will force the inclusion of LUIS Api call in results returned by [recognize()](#recognize). Defaults to a value of `false`.
      */
     constructor(application: string, options?: LuisPredictionOptions, includeApiResults?: boolean);
     constructor(application: LuisApplication, options?: LuisPredictionOptions, includeApiResults?: boolean);
-    constructor(application: LuisApplication | string, options?: LuisPredictionOptions, includeApiResults?: boolean);
+    constructor(application: LuisApplication | string, options?: LuisRecognizerOptionsV3 | LuisRecognizerOptionsV2);
     constructor(application: LuisApplication | string, options?: LuisRecognizerOptionsV3 | LuisRecognizerOptionsV2 | LuisPredictionOptions, includeApiResults?: boolean) {
         if (typeof application === 'string') {
             const parsedEndpoint: Url = Url(application);
@@ -361,7 +375,7 @@ export class LuisRecognizer implements LuisRecognizerTelemetryClient {
      * @param context Context for the current turn of conversation with the use.
      * @param telemetryProperties Additional properties to be logged to telemetry with the LuisResult event.
      * @param telemetryMetrics Additional metrics to be logged to telemetry with the LuisResult event.
-     * @param options (Optional) options object used to control predictions. Should conform to the [LuisPrectionOptions](#luispredictionoptions) definition.
+     * @param options (Optional) options object used to override control predictions. Should conform to the [LuisRecognizerOptionsV2] or [LuisRecognizerOptionsV3] definition.
      */
     public recognize(context: TurnContext, telemetryProperties?: { [key: string]: string }, telemetryMetrics?: { [key: string]: number }, options?: LuisRecognizerOptionsV2 | LuisRecognizerOptionsV3 | LuisPredictionOptions): Promise<RecognizerResult> {
         const cached: any = context.turnState.get(this.cacheKey);
