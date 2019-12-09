@@ -6,6 +6,8 @@
  * Licensed under the MIT License.
  */
 
+import axios from 'axios';
+import { Activity } from 'botbuilder-core';
 import {
     AuthenticationConstants,
     GovernmentConstants,
@@ -13,10 +15,6 @@ import {
     JwtTokenValidation,
     MicrosoftAppCredentials
 } from 'botframework-connector';
-
-import axios from 'axios';
-
-import { Activity } from 'botbuilder-core';
 
 import { InvokeResponse, USER_AGENT } from './botFrameworkAdapter';
 
@@ -63,9 +61,11 @@ export class BotFrameworkHttpClient {
         // TODO: DO we need to set the activity ID? (events that are created manually don't have it).
         const originalConversationId = activity.conversation.id;
         const originalServiceUrl = activity.serviceUrl;
+        const originalCallerId = activity.callerId;
         try {
             activity.conversation.id = conversationId;
             activity.serviceUrl = serviceUrl;
+            activity.callerId = fromBotId;
             const config = {
                 headers: {
                     Accept: 'application/json',
@@ -74,12 +74,11 @@ export class BotFrameworkHttpClient {
                 }
             };
 
-            if (token !== null) {
+            if (token) {
                 config.headers['Authorization'] = `Bearer ${ token }`;
             }
             
             const response = await axios.post(toUrl, activity, config);
-            
             const invokeResponse: InvokeResponse = { status: response.status, body: response.data };
 
             return invokeResponse;
@@ -87,12 +86,14 @@ export class BotFrameworkHttpClient {
             // Restore activity properties.
             activity.conversation.id = originalConversationId;
             activity.serviceUrl = originalServiceUrl;
+            activity.callerId = originalCallerId;
         }
     }
 
     /**
      * Gets the application credentials. App Credentials are cached so as to ensure we are not refreshing
      * token every time.
+     * @private
      * @param appId The application identifier (AAD Id for the bot).
      * @param oAuthScope The scope for the token, skills will use the Skill App Id.
      */
