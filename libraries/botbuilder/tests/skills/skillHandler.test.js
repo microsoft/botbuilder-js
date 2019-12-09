@@ -23,13 +23,21 @@ class ConvIdFactory extends SkillConversationIdFactoryBase {
 
 describe('SkillHandler', function() {
     this.timeout(3000);
-    it('should fail construction without required parameters', () => {
+    it('should fail construction without required adapter', () => {
         try {
-            const handler = new SkillHandler(undefined, undefined, {}, {}, {});
+            const handler = new SkillHandler(undefined, {}, {}, {}, {});
         } catch (e) {
             strictEqual(e.message, 'missing adapter.');
         }
 
+        try {
+            const handler = new SkillHandler({}, undefined, {}, {}, {});
+        } catch (e) {
+            strictEqual(e.message, 'missing conversationIdFactory.');
+        }
+    });
+
+    it('should fail construction without required factory', () => {
         try {
             const handler = new SkillHandler({}, undefined, {}, {}, {});
         } catch (e) {
@@ -123,7 +131,6 @@ describe('SkillHandler', function() {
                 bot.run = async (context) => {
                     assert(context);
                     strictEqual(context.turnState.get(context.adapter.BotIdentityKey), identity);
-                    // Override sendActivity to do nothing.
                 };
                 const resourceResponse = await handler.processActivity(identity, 'convId', 'replyId', skillActivity);
                 assert(resourceResponse);
@@ -157,7 +164,6 @@ describe('SkillHandler', function() {
                 bot.run = async (context) => {
                     assert(context);
                     strictEqual(context.turnState.get(context.adapter.BotIdentityKey), identity);
-                    // Override sendActivity to do nothing.
                     const a = context.activity;
                     strictEqual(a.name, name);
                     strictEqual(a.relatesTo, relatesTo);
@@ -198,7 +204,6 @@ describe('SkillHandler', function() {
                 bot.run = async (context) => {
                     assert(context);
                     strictEqual(context.turnState.get(context.adapter.BotIdentityKey), identity);
-                    // Override sendActivity to do nothing.
                     const a = context.activity;
                     strictEqual(a.type, ActivityTypes.EndOfConversation);
                     strictEqual(a.text, text);
@@ -210,6 +215,31 @@ describe('SkillHandler', function() {
                     strictEqual(a.timestamp, timestamp);
                     strictEqual(a.channelData, channelData);
                     strictEqual(a.replyToId, replyToId);
+                };
+                await handler.processActivity(identity, 'convId', 'replyId', skillActivity);
+            });
+
+            it('should forward activity from Skill for other ActivityTypes', async () => {
+                const adapter = new BotFrameworkAdapter({});
+                const bot = new ActivityHandler();
+                const factory = new ConvIdFactory();
+                const creds = new SimpleCredentialProvider('', '');
+                const authConfig = new AuthenticationConfiguration();
+                const handler = new SkillHandler(adapter, bot, factory, creds, authConfig);
+                const serviceUrl = 'http://localhost/api/messages';
+                factory.refs['convId'] = 'conversationId';
+                const text = 'Test';
+                const skillActivity = {
+                    type: ActivityTypes.Message,
+                    serviceUrl, text
+                };
+                // Override sendActivities to do nothing.
+                adapter.sendActivities = async (context, activities) => {
+                    assert(context);
+                    assert(activities);
+                    strictEqual(activities.length, 1);
+                    strictEqual(activities[0].type, ActivityTypes.Message);
+                    strictEqual(activities[0].text, text);
                 };
                 await handler.processActivity(identity, 'convId', 'replyId', skillActivity);
             });
