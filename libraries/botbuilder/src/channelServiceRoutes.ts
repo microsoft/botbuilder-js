@@ -10,28 +10,52 @@ import { ChannelServiceHandler } from './channelServiceHandler';
 import { Activity, ConversationParameters, Transcript, AttachmentData } from 'botbuilder-core';
 import { WebRequest, WebResponse, StatusCodeError, StatusCodes } from './botFrameworkAdapter';
 
-export class ChannelServiceRoutes {
+export type RouteHandler = (request: WebRequest, response: WebResponse) => void;
 
+/**
+ * Interface representing an Express Application or a Restify Server.
+ */
+export interface WebServer {
+    get: (path: string, handler: RouteHandler) => void;
+    post: (path: string, handler: RouteHandler) => void;
+    put: (path: string, handler: RouteHandler) => void;
+    // For the DELETE HTTP Method, we need two optional methods:
+    //  - Express 4.x has delete() - https://expressjs.com/en/4x/api.html#app.delete.method
+    //  - restify has del() - http://restify.com/docs/server-api/#del
+    del?: (path: string, handler: RouteHandler) => void;
+    delete?: (path: string, handler: RouteHandler) => void;
+}
+
+export class ChannelServiceRoutes {
+    /**
+     * @param channelServiceHandler 
+     */
     constructor(private readonly channelServiceHandler: ChannelServiceHandler) {
         this.channelServiceHandler = channelServiceHandler;
     }
 
-    register(baseAddress, server) {
-        server.post(baseAddress + '/v3/conversations/:conversationId/activities', this.processSendToConversation.bind(this));
-        server.post(baseAddress + '/v3/conversations/:conversationId/activities/:activityId', this.processReplyToActivity.bind(this));
-        server.put(baseAddress + '/v3/conversations/:conversationId/activities/:activityId', this.processUpdateActivity.bind(this));
-        server.del(baseAddress + '/v3/conversations/:conversationId/activities/:activityId', this.processDeleteActivity.bind(this));
-        server.get(baseAddress + '/v3/conversations/:conversationId/activities/:activityId/members', this.processGetActivityMembers.bind(this));
-        server.post(baseAddress + '/v3/conversations', this.processCreateConversation.bind(this));
-        server.get(baseAddress + '/v3/conversations', this.processGetConversations.bind(this));
-        server.get(baseAddress + '/v3/conversations/:conversationId/members', this.processGetConversationMembers.bind(this));
-        server.get(baseAddress + '/v3/conversations/:conversationId/pagedmembers', this.processGetConversationPagedMembers.bind(this));
-        server.del(baseAddress + '/v3/conversations/:conversationId/members/:memberId', this.processDeleteConversationMember.bind(this));
-        server.post(baseAddress + '/v3/conversations/:conversationId/activities/history', this.processSendConversationHistory.bind(this));
-        server.post(baseAddress + '/v3/conversations/:conversationId/attachments', this.processUploadAttachment.bind(this));
+    /**
+     * Registers all WebServer 
+     * @param server WebServer
+     * @param basePath Optional basePath which is appended before the service's REST API is configured on the WebServer.
+     */
+    public register(server: WebServer, basePath: string = ''): void {
+        server.post(basePath + '/v3/conversations/:conversationId/activities', this.processSendToConversation.bind(this));
+        server.post(basePath + '/v3/conversations/:conversationId/activities/:activityId', this.processReplyToActivity.bind(this));
+        server.put(basePath + '/v3/conversations/:conversationId/activities/:activityId', this.processUpdateActivity.bind(this));
+        server.get(basePath + '/v3/conversations/:conversationId/activities/:activityId/members', this.processGetActivityMembers.bind(this));
+        server.post(basePath + '/v3/conversations', this.processCreateConversation.bind(this));
+        server.get(basePath + '/v3/conversations', this.processGetConversations.bind(this));
+        server.get(basePath + '/v3/conversations/:conversationId/members', this.processGetConversationMembers.bind(this));
+        server.get(basePath + '/v3/conversations/:conversationId/pagedmembers', this.processGetConversationPagedMembers.bind(this));
+        server.post(basePath + '/v3/conversations/:conversationId/activities/history', this.processSendConversationHistory.bind(this));
+        server.post(basePath + '/v3/conversations/:conversationId/attachments', this.processUploadAttachment.bind(this));
+
+        server.del(basePath + '/v3/conversations/:conversationId/members/:memberId', this.processDeleteConversationMember.bind(this));
+        server.del(basePath + '/v3/conversations/:conversationId/activities/:activityId', this.processDeleteActivity.bind(this));
     }
 
-    processSendToConversation(req: WebRequest, res: WebResponse) {
+    private processSendToConversation(req: WebRequest, res: WebResponse): void {
         const authHeader = req.headers.authorization || req.headers.Authorization || '';
         ChannelServiceRoutes.readActivity(req)
             .then((activity) => {
@@ -48,7 +72,7 @@ export class ChannelServiceRoutes {
             .catch(err => { ChannelServiceRoutes.handleError(err, res); });
     }
 
-    processReplyToActivity(req: WebRequest, res: WebResponse) {
+    private processReplyToActivity(req: WebRequest, res: WebResponse): void {
         const authHeader = req.headers.authorization || req.headers.Authorization || '';
         ChannelServiceRoutes.readActivity(req)
             .then((activity) => {
@@ -65,7 +89,7 @@ export class ChannelServiceRoutes {
             .catch(err => { ChannelServiceRoutes.handleError(err, res); });
     }
 
-    processUpdateActivity(req: WebRequest, res: WebResponse) {
+    private processUpdateActivity(req: WebRequest, res: WebResponse): void {
         const authHeader = req.headers.authorization || req.headers.Authorization || '';
         ChannelServiceRoutes.readActivity(req)
             .then((activity) => {
@@ -82,7 +106,7 @@ export class ChannelServiceRoutes {
             .catch(err => { ChannelServiceRoutes.handleError(err, res); });
     }
 
-    processDeleteActivity(req: WebRequest, res: WebResponse) {
+    private processDeleteActivity(req: WebRequest, res: WebResponse): void {
         const authHeader = req.headers.authorization || req.headers.Authorization || '';
         this.channelServiceHandler.handleDeleteActivity(authHeader, req.params.conversationId, req.params.activityId)
             .then(() => {
@@ -92,7 +116,7 @@ export class ChannelServiceRoutes {
             .catch(err => { ChannelServiceRoutes.handleError(err, res); });
     }
 
-    processGetActivityMembers(req: WebRequest, res: WebResponse) {
+    private processGetActivityMembers(req: WebRequest, res: WebResponse): void {
         const authHeader = req.headers.authorization || req.headers.Authorization || '';
         this.channelServiceHandler.handleGetActivityMembers(authHeader, req.params.conversationId, req.params.activityId)
             .then((channelAccounts) => {
@@ -105,7 +129,7 @@ export class ChannelServiceRoutes {
             .catch(err => { ChannelServiceRoutes.handleError(err, res); });
     }
 
-    processCreateConversation(req: WebRequest, res: WebResponse) {
+    private processCreateConversation(req: WebRequest, res: WebResponse): void {
         const authHeader = req.headers.authorization || req.headers.Authorization || '';
         ChannelServiceRoutes.readBody<ConversationParameters>(req)
             .then((conversationParameters) => {
@@ -121,7 +145,7 @@ export class ChannelServiceRoutes {
             });
     }
 
-    processGetConversations(req: WebRequest, res: WebResponse) {
+    private processGetConversations(req: WebRequest, res: WebResponse): void {
         const authHeader = req.headers.authorization || req.headers.Authorization || '';
         this.channelServiceHandler.handleGetConversations(authHeader, req.params.conversationId, req.query.continuationToken)
             .then((conversationsResult) => {
@@ -132,9 +156,9 @@ export class ChannelServiceRoutes {
                 res.end();
             })
             .catch(err => { ChannelServiceRoutes.handleError(err, res); });
-        }
+    }
 
-    processGetConversationMembers(req: WebRequest, res: WebResponse) {
+    private processGetConversationMembers(req: WebRequest, res: WebResponse): void {
         const authHeader = req.headers.authorization || req.headers.Authorization || '';
         this.channelServiceHandler.handleGetConversationMembers(authHeader, req.params.conversationId)
             .then((channelAccounts) => {
@@ -145,13 +169,12 @@ export class ChannelServiceRoutes {
                 res.end();
             })
             .catch(err => { ChannelServiceRoutes.handleError(err, res); });
-        }
+    }
 
-    processGetConversationPagedMembers(req: WebRequest, res: WebResponse) {
+    private processGetConversationPagedMembers(req: WebRequest, res: WebResponse): void {
         const authHeader = req.headers.authorization || req.headers.Authorization || '';
         let pageSize = parseInt(req.query.pageSize);
-        if (isNaN(pageSize))
-        {
+        if (isNaN(pageSize)) {
             pageSize = undefined;
         }
         this.channelServiceHandler.handleGetConversationPagedMembers(
@@ -167,9 +190,9 @@ export class ChannelServiceRoutes {
                 res.end();
             })
             .catch(err => { ChannelServiceRoutes.handleError(err, res); });
-        }
+    }
 
-    processDeleteConversationMember(req: WebRequest, res: WebResponse) {
+    private processDeleteConversationMember(req: WebRequest, res: WebResponse): void {
         const authHeader = req.headers.authorization || req.headers.Authorization || '';
         this.channelServiceHandler.handleDeleteConversationMember(authHeader, req.params.conversationId, req.params.memberId)
             .then((resourceResponse) => {
@@ -177,9 +200,9 @@ export class ChannelServiceRoutes {
                 res.end();
             })
             .catch(err => { ChannelServiceRoutes.handleError(err, res); });
-        }
+    }
 
-    processSendConversationHistory(req: WebRequest, res: WebResponse) {
+    private processSendConversationHistory(req: WebRequest, res: WebResponse): void {
         const authHeader = req.headers.authorization || req.headers.Authorization || '';
         ChannelServiceRoutes.readBody<Transcript>(req)
             .then((transcript) => {
@@ -196,7 +219,7 @@ export class ChannelServiceRoutes {
             .catch(err => { ChannelServiceRoutes.handleError(err, res); });
     }
 
-    processUploadAttachment(req: WebRequest, res: WebResponse) {
+    private processUploadAttachment(req: WebRequest, res: WebResponse): void {
         const authHeader = req.headers.authorization || req.headers.Authorization || '';
         ChannelServiceRoutes.readBody<AttachmentData>(req)
             .then((attachmentData) => {
@@ -213,7 +236,7 @@ export class ChannelServiceRoutes {
             .catch(err => { ChannelServiceRoutes.handleError(err, res); });
     }
 
-    static readActivity(req: WebRequest) : Promise<Activity> {
+    private static readActivity(req: WebRequest): Promise<Activity> {
         return new Promise((resolve, reject) => {
             function returnActivity(activity) {
                 if (typeof activity !== 'object') { throw new Error(`Invalid request body.`); }
@@ -247,7 +270,7 @@ export class ChannelServiceRoutes {
         });
     }
 
-    static readBody<T>(req: WebRequest) : Promise<T> {
+    private static readBody<T>(req: WebRequest): Promise<T> {
         return new Promise((resolve, reject) => {
             if (req.body) {
                 try {
@@ -272,7 +295,7 @@ export class ChannelServiceRoutes {
         });
     }
 
-    static handleError(err: any, res: WebResponse) {
+    private static handleError(err: any, res: WebResponse): void {
         if (err instanceof StatusCodeError) {
             res.send(err.message);
             res.status(err.statusCode);
@@ -282,5 +305,3 @@ export class ChannelServiceRoutes {
         res.end();
     }
 }
-
-module.exports = { ChannelServiceRoutes: ChannelServiceRoutes };

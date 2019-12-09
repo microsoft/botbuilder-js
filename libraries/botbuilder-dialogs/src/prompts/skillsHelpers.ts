@@ -20,6 +20,10 @@ export const AuthConstants = {
     VersionClaim: 'ver'
 };
 
+export const GovConstants = {
+    ToBotFromChannelTokenIssuer: 'https://api.botframework.us'
+}
+
 /**
  * @ignore
  * Checks if the given object of claims represents a skill.
@@ -33,19 +37,20 @@ export const AuthConstants = {
  * @param claims An object of claims.
  * @returns {boolean} True if the object of claims is a skill claim, false if is not.
  */
-export function isSkillClaim(claims: { [key: string]: any }): boolean {
+export function isSkillClaim(claims: { [key: string]: any }[]): boolean {
     if (!claims) {
         throw new TypeError(`isSkillClaim(): missing claims.`);
     }
-
-    const versionClaim = claims[AuthConstants.VersionClaim];
-    if (!versionClaim) {
+    const versionClaim = claims.find(c => c.type === AuthConstants.VersionClaim);
+    const versionValue = versionClaim && versionClaim.value;
+    if (!versionValue) {
         // Must have a version claim.
         return false;
     }
 
-    const audClaim = claims[AuthConstants.AudienceClaim];
-    if (!audClaim || AuthConstants.ToBotFromChannelTokenIssuer === audClaim) {
+    const audClaim = claims.find(c => c.type === AuthConstants.AudienceClaim);
+    const audienceValue = audClaim && audClaim.value;
+    if (!audClaim || AuthConstants.ToBotFromChannelTokenIssuer === audienceValue || GovConstants.ToBotFromChannelTokenIssuer === audienceValue) {
         // The audience is https://api.botframework.com and not an appId.
         return false;
     }
@@ -56,7 +61,7 @@ export function isSkillClaim(claims: { [key: string]: any }): boolean {
     }
 
     // Skill claims must contain and app ID and the AppID must be different than the audience.
-    return appId !== audClaim;
+    return appId !== audienceValue;
 }
 
 /**
@@ -71,23 +76,26 @@ export function isSkillClaim(claims: { [key: string]: any }): boolean {
  * Throws a TypeError if claims is falsy.
  * @param claims An object containing claims types and their values.
  */
-export function getAppIdFromClaims(claims: { [key: string]: any }): string {
+export function getAppIdFromClaims(claims: { [key: string]: any }[]): string {
     if (!claims) {
         throw new TypeError(`getAppIdFromClaims(): missing claims.`);
     }
     let appId: string;
 
-    // Depending on Version, the AppId is either in the
-    // appid claim (Version 1) or the 'azp' claim (Version 2).
-    const tokenClaim = claims[AuthConstants.VersionClaim];
-    if (!tokenClaim || tokenClaim === '1.0') {
-        // No version or a version of '1.0' means we should look for
-        // the claim in the 'appid' claim.
-        appId = claims[AuthConstants.AppIdClaim];
-    } else if (tokenClaim === '2.0') {
-        // Version '2.0' puts the AppId in the 'azp' claim.
-        appId = claims[AuthConstants.AuthorizedParty];
-    }
+        // Depending on Version, the AppId is either in the
+        // appid claim (Version 1) or the 'azp' claim (Version 2).
+        const versionClaim = claims.find(c => c.type === AuthConstants.VersionClaim);
+        const versionValue = versionClaim && versionClaim.value;
+        if (!versionValue || versionValue === '1.0') {
+            // No version or a version of '1.0' means we should look for
+            // the claim in the 'appid' claim.
+            const appIdClaim = claims.find(c => c.type === AuthConstants.AppIdClaim);
+            appId = appIdClaim && appIdClaim.value;
+        } else if (versionValue === '2.0') {
+            // Version '2.0' puts the AppId in the 'azp' claim.
+            const azpClaim = claims.find(c => c.type === AuthConstants.AuthorizedParty);
+            appId = azpClaim && azpClaim.value;
+        }
 
-    return appId;
+        return appId;
 }
