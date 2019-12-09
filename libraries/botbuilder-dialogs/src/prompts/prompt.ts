@@ -209,18 +209,15 @@ export abstract class Prompt<T> extends Dialog {
         let isValid = false;
         if (this.validator) {
             if (state.state['attemptCount'] === undefined) {
-                state.state['attemptCount'] = 1;
+                state.state['attemptCount'] = 0;
             }
             isValid = await this.validator({
                 context: dc.context,
                 recognized: recognized,
                 state: state.state,
                 options: state.options,
-                attemptCount: state.state['attemptCount']
+                attemptCount: ++state.state['attemptCount']
             });
-            if (state.state['attemptCount'] !== undefined) {
-                state.state['attemptCount']++;
-            }
         } else if (recognized.succeeded) {
             isValid = true;
         }

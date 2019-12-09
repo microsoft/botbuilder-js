@@ -86,7 +86,7 @@ export namespace SkillValidation {
 
         const versionClaim = claims.find(c => c.type === AuthenticationConstants.VersionClaim);
         const versionValue = versionClaim && versionClaim.value;
-        if (!versionClaim) {
+        if (!versionValue) {
             // Must have a version claim.
             return false;
         }

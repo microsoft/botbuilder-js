@@ -108,7 +108,5 @@ appInsightsClient.trackDependency({target:"http://dbname", name:"select customer
 ## Learn More
 Learn how to build great bots.
 
-* [Sample: Using Application Insights with QnA Maker](https://github.com/Microsoft/BotBuilder-Samples/tree/master/samples/javascript_nodejs/20.qna-with-appinsights)
-* [Sample: Using Application Insights with LUIS](https://github.com/Microsoft/BotBuilder-Samples/tree/master/samples/javascript_nodejs/21.luis-with-appinsights)
 * [BotTelemetryClient class interface](https://github.com/Microsoft/botbuilder-js/tree/master/libraries/botbuilder-core/src/botTelemetryClient.ts)
 * [Application Insights official client](https://github.com/Microsoft/ApplicationInsights-node.js)

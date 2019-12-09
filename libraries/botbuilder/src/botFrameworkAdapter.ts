@@ -247,8 +247,12 @@ export const INVOKE_RESPONSE_KEY: symbol = Symbol('invokeResponse');
  * ```
  */
 export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvider, RequestHandler {
-    public static readonly BotIdentityKey: string = 'BotIdentity';
-    public static readonly ConnectorClientKey: string = 'ConnectorClient';
+    // These keys are public to permit access to the keys from the adapter when it's a being
+    // from library that does not have access to static properties off of BotFrameworkAdapter.
+    // E.g. botbuilder-dialogs
+    public readonly BotIdentityKey: Symbol = Symbol('BotIdentity');
+    public readonly ConnectorClientKey: Symbol = Symbol('ConnectorClient');
+
     protected readonly credentials: AppCredentials;
     protected readonly credentialsProvider: SimpleCredentialProvider;
     protected readonly settings: BotFrameworkAdapterSettings;
@@ -489,7 +493,7 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
             throw new Error(`BotFrameworkAdapter.deleteActivity(): missing conversation or conversation.id`);
         }
         if (!reference.activityId) { throw new Error(`BotFrameworkAdapter.deleteActivity(): missing activityId`); }
-        const client: ConnectorClient = this.createConnectorClient(reference.serviceUrl);
+        const client: ConnectorClient = this.getOrCreateConnectorClient(context, reference.serviceUrl, this.credentials);
         await client.conversations.deleteActivity(reference.conversation.id, reference.activityId);
     }
 
@@ -511,7 +515,7 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
         }
         const serviceUrl: string = context.activity.serviceUrl;
         const conversationId: string = context.activity.conversation.id;
-        const client: ConnectorClient = this.createConnectorClient(serviceUrl);
+        const client: ConnectorClient = this.getOrCreateConnectorClient(context, serviceUrl, this.credentials);
         await client.conversations.deleteConversationMember(conversationId, memberId);
     }
 
@@ -542,7 +546,7 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
         }
         const serviceUrl: string = context.activity.serviceUrl;
         const conversationId: string = context.activity.conversation.id;
-        const client: ConnectorClient = this.createConnectorClient(serviceUrl);
+        const client: ConnectorClient = this.getOrCreateConnectorClient(context, serviceUrl, this.credentials);
 
         return await client.conversations.getActivityMembers(conversationId, activityId);
     }
@@ -569,7 +573,7 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
         }
         const serviceUrl: string = context.activity.serviceUrl;
         const conversationId: string = context.activity.conversation.id;
-        const client: ConnectorClient = this.createConnectorClient(serviceUrl);
+        const client: ConnectorClient = this.getOrCreateConnectorClient(context, serviceUrl, this.credentials);
 
         return await client.conversations.getConversationMembers(conversationId);
     }
@@ -599,8 +603,13 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
      * `contextOrServiceUrl`.[activity](xref:botbuilder-core.TurnContext.activity).[serviceUrl](xref:botframework-schema.Activity.serviceUrl).
      */
     public async getConversations(contextOrServiceUrl: TurnContext | string, continuationToken?: string): Promise<ConversationsResult> {
-        const url: string = typeof contextOrServiceUrl === 'object' ? contextOrServiceUrl.activity.serviceUrl : contextOrServiceUrl;
-        const client: ConnectorClient = this.createConnectorClient(url);
+        let client: ConnectorClient;
+        if (typeof contextOrServiceUrl === 'object') {
+            const context: TurnContext = contextOrServiceUrl as TurnContext;
+            client = this.getOrCreateConnectorClient(context, context.activity.serviceUrl, this.credentials);
+        } else {
+            client = this.createConnectorClient(contextOrServiceUrl as string);
+        }
 
         return await client.conversations.getConversations(continuationToken ? { continuationToken: continuationToken } : undefined);
     }
@@ -803,16 +812,16 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
             // Authenticate the incoming request
             status = 401;
             const authHeader: string = req.headers.authorization || req.headers.Authorization || '';
-            await this.authenticateRequest(request, authHeader);
 
             const identity = await this.authenticateRequestInternal(request, authHeader);
             
             // Process received activity
             status = 500;
             const context: TurnContext = this.createContext(request);
-            context.turnState.set(BotFrameworkAdapter.BotIdentityKey, identity);
+            context.turnState.set(this.BotIdentityKey, identity);
             const connectorClient = await this.createConnectorClientWithIdentity(request.serviceUrl, identity);
-            context.turnState.set(BotFrameworkAdapter.ConnectorClientKey, connectorClient);
+            context.turnState.set(this.ConnectorClientKey, connectorClient);
+
             context.turnState.set(BotCallbackHandlerKey, logic);
             await this.runMiddleware(context, logic);
 
@@ -935,7 +944,7 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
                     if (activity && BotFrameworkAdapter.isStreamingServiceUrl(activity.serviceUrl)) {
                         TokenResolver.checkForOAuthCards(this, context, activity as Activity);
                     }
-                    const client: ConnectorClient = this.createConnectorClient(activity.serviceUrl);
+                    const client = this.getOrCreateConnectorClient(context, activity.serviceUrl, this.credentials);
                     if (activity.type === 'trace' && activity.channelId !== 'emulator') {
                     // Just eat activity
                         responses.push({} as ResourceResponse);
@@ -976,7 +985,7 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
             throw new Error(`BotFrameworkAdapter.updateActivity(): missing conversation or conversation.id`);
         }
         if (!activity.id) { throw new Error(`BotFrameworkAdapter.updateActivity(): missing activity.id`); }
-        const client: ConnectorClient = this.createConnectorClient(activity.serviceUrl);
+        const client: ConnectorClient = this.getOrCreateConnectorClient(context, activity.serviceUrl, this.credentials);
         await client.conversations.updateActivity(
             activity.conversation.id,
             activity.id,
@@ -1064,6 +1073,26 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
     }
 
     /**
+     * @private
+     * Retrieves the ConnectorClient from the TurnContext or creates a new ConnectorClient with the provided serviceUrl and credentials.
+     * @param context 
+     * @param serviceUrl 
+     * @param credentials 
+     */
+    private getOrCreateConnectorClient(context: TurnContext, serviceUrl: string, credentials: AppCredentials): ConnectorClient {
+        if (!context || !context.turnState) throw new Error('invalid context parameter');
+        if (!serviceUrl) throw new Error('invalid serviceUrl');
+        if (!credentials) throw new Error('invalid credentials');
+
+        let client: ConnectorClient = context.turnState.get(this.ConnectorClientKey);
+        if (!client) {
+            client = this.createConnectorClientInternal(serviceUrl, credentials);
+        }
+
+        return client;
+    }
+
+    /**
      * 
      * @remarks
      * @param appId 
@@ -1073,7 +1102,7 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
         // There is no cache for AppCredentials in JS as opposed to C#.
         // Instead of retrieving an AppCredentials from the Adapter instance, generate a new one
         const appPassword = await this.credentialsProvider.getAppPassword(appId);
-        return new MicrosoftAppCredentials(appId, appPassword, oAuthScope);
+        return new MicrosoftAppCredentials(appId, appPassword, undefined, oAuthScope);
     }
 
     /**
