@@ -24,7 +24,7 @@ import { BotFrameworkAdapter } from '../botFrameworkAdapter';
  * A Bot Framework Handler for skills.
  */
 export class SkillHandler extends ChannelServiceHandler {
-    public readonly SkillConversationReferenceKey: string = 'SkillConversationReference';
+    public readonly SkillConversationReferenceKey: Symbol = Symbol('SkillConversationReference');
     /**
      * Initializes a new instance of the SkillHandler class.
      * @param adapter An instance of the BotAdapter that will handle the request.

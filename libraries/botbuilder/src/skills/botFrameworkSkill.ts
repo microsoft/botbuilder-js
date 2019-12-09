@@ -13,7 +13,7 @@ export interface BotFrameworkSkill {
     /**
      * Id of the skill.
      */
-    id?: string;
+    id: string;
 
     /**
      * AppId of the skill.
