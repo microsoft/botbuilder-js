@@ -95,7 +95,7 @@ export class SkillHandler extends ChannelServiceHandler {
      * @param activity Activity to send.
      * @returns A Promise with a ResourceResponse.
      */
-    protected async onreplyToActivity(claimsIdentity: ClaimsIdentity, conversationId: string, activityId: string, activity: Activity): Promise<ResourceResponse> {
+    protected async onReplyToActivity(claimsIdentity: ClaimsIdentity, conversationId: string, activityId: string, activity: Activity): Promise<ResourceResponse> {
         return await this.processActivity(claimsIdentity, conversationId, activityId, activity);
     }
 
@@ -149,8 +149,7 @@ export class SkillHandler extends ChannelServiceHandler {
 
             TurnContext.applyConversationReference(activity, conversationReference);
             context.activity.id = replyToActivityId;
-            switch (activity.type)
-            {
+            switch (activity.type) {
                 case ActivityTypes.EndOfConversation:
                     await this.conversationIdFactory.deleteConversationReference(conversationId);
                     SkillHandler.applyEoCToTurnContextActivity(context, activity);

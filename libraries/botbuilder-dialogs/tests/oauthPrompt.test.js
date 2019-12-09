@@ -296,6 +296,23 @@ describe('OAuthPrompt', function () {
                 }
             }
 
+            it(`should fail if adapter does not have 'getUserToken'`, async () => {
+                const fakeAdapter = {};
+                const context = new TurnContext(fakeAdapter, {
+                    activity: {
+                        channelId: channels.webchat,
+                        serviceUrl: 'https://bing.com',
+                    }
+                });
+
+                const prompt = new OAuthPrompt('OAuthPrompt', {});
+                try {
+                    await prompt.sendOAuthCardAsync(context);
+                } catch (e) {
+                    assert.strictEqual(e.message, `OAuthPrompt.prompt(): not supported for the current adapter.`);
+                }
+            });
+
             it('should send a well-constructed OAuthCard for channels with OAuthCard support', async () => {
                 const connectionName = 'connection';
                 const title = 'myTitle';
