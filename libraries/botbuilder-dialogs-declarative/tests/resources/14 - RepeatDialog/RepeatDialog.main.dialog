@@ -9,7 +9,7 @@
                 {
                     "$type":"Microsoft.TextInput",
                     "prompt" : "Hello, what is your name?",
-                    "valueProperty": "user.name"
+                    "property": "user.name"
                 },
                 {
                     "$type":"Microsoft.SendActivity",

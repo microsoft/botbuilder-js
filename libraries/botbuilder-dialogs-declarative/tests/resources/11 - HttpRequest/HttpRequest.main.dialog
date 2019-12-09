@@ -9,7 +9,7 @@
                 {
                     "$type": "Microsoft.TextInput",
                     "prompt": "Welcome! Here is a http request sample, please enter a name for you visual pet.",
-                    "valueProperty": "dialog.petname"
+                    "property": "dialog.petname"
                 },
                 {
                     "$type": "Microsoft.SendActivity",
@@ -18,7 +18,7 @@
                 {
                     "$type": "Microsoft.TextInput",
                     "prompt": "Now please enter the id of your pet, this could help you find your pet later.",
-                    "valueProperty": "dialog.petid"
+                    "property": "dialog.petid"
                 },
                 {
                     "$type": "Microsoft.HttpRequest",
@@ -69,5 +69,5 @@
             ]
         }
     ]
-    
+
 }

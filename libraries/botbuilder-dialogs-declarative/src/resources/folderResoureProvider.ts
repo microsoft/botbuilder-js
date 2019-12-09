@@ -36,7 +36,7 @@ export class FolderResourceProvider implements IResourceProvider {
 
         allFilteredFiles.forEach(f => {
             const fileResource: FileResource = new FileResource(f);
-            this.resources[fileResource.id()] = fileResource;
+            this.resources.set(fileResource.id(), fileResource);
         });
 
         if (monitorChanges) {
@@ -47,11 +47,7 @@ export class FolderResourceProvider implements IResourceProvider {
     }
 
     public async getResource(id: string): Promise<IResource> {
-        if (this.resources.has(id)) {
-            return this.resources[id];
-        }
-
-        return null;
+        return this.resources.has(id) ? this.resources.get(id) : null;
     }
 
     public async getResources(extension: string): Promise<IResource[]> {
@@ -59,9 +55,9 @@ export class FolderResourceProvider implements IResourceProvider {
 
         let filteredResources: IResource[] = [];
 
-        for (let key in this.resources) {
+        for (let key of this.resources.keys()) {
             if (key.toLowerCase().endsWith(extension)) {
-                filteredResources.push(this.resources[key]);
+                filteredResources.push(this.resources.get(key));
             }
         }
 

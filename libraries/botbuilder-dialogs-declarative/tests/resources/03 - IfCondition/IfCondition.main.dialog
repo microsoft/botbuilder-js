@@ -12,7 +12,7 @@
                         {
                             "$type": "Microsoft.TextInput",
                             "prompt": "Hello, I'm Zoidberg. What is your name?",
-                            "valueProperty": "user.name"
+                            "property": "user.name"
                         }
                     ]
                 },

@@ -19,7 +19,7 @@
                     "actions": [
                         {
                             "$type": "Microsoft.TextInput",
-                            "valueProperty": "user.name",
+                            "property": "user.name",
                             "prompt": "Hello, I'm Zoidberg. What is your name?"
                         }
                     ]

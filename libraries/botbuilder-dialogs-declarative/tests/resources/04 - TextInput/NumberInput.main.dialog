@@ -7,7 +7,7 @@
             "actions": [
                 {
                     "$type": "Microsoft.IntegerInput",
-                    "valueProperty": "user.age",
+                    "property": "user.age",
                     "alwaysPrompt": true,
                     "prompt": "What is your age?",
                     "invalidPrompt": "Please input a number."
@@ -18,7 +18,7 @@
                 },
                 {
                     "$type": "Microsoft.FloatInput",
-                    "valueProperty": "user.result",
+                    "property": "user.result",
                     "alwaysPrompt": true,
                     "prompt": "2 * 2.2 equals?"
                 },

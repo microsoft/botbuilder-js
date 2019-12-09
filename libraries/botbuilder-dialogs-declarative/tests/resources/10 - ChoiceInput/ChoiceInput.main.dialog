@@ -7,7 +7,7 @@
             "actions": [
                 {
                     "$type": "Microsoft.ChoiceInput",
-                    "valueProperty": "user.style",
+                    "property": "user.style",
                     "choices": [
                         {
                             "value": "Test1"
