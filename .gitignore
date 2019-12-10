@@ -309,3 +309,6 @@ package-lock.json
 
 *.tsbuildinfo
 *.js.map
+
+# Transpiled botbuilder integration tests
+libraries/integration-tests/transpiled-tests/

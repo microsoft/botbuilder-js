@@ -35,7 +35,7 @@ export class ChannelServiceRoutes {
     }
 
     /**
-     * Registers all WebServer 
+     * Registers all Channel Service paths on the provided WebServer.
      * @param server WebServer
      * @param basePath Optional basePath which is appended before the service's REST API is configured on the WebServer.
      */
@@ -51,8 +51,15 @@ export class ChannelServiceRoutes {
         server.post(basePath + '/v3/conversations/:conversationId/activities/history', this.processSendConversationHistory.bind(this));
         server.post(basePath + '/v3/conversations/:conversationId/attachments', this.processUploadAttachment.bind(this));
 
-        server.del(basePath + '/v3/conversations/:conversationId/members/:memberId', this.processDeleteConversationMember.bind(this));
-        server.del(basePath + '/v3/conversations/:conversationId/activities/:activityId', this.processDeleteActivity.bind(this));
+        // Express 4.x uses the delete() method to register handlers for the DELETE method.
+        // Restify 8.x uses the del() method.
+        if (typeof(server.delete) === 'function') {
+            server.delete(basePath + '/v3/conversations/:conversationId/members/:memberId', this.processDeleteConversationMember.bind(this));
+            server.delete(basePath + '/v3/conversations/:conversationId/activities/:activityId', this.processDeleteActivity.bind(this));
+        } else if (typeof(server.del) === 'function') {
+            server.del(basePath + '/v3/conversations/:conversationId/members/:memberId', this.processDeleteConversationMember.bind(this));
+            server.del(basePath + '/v3/conversations/:conversationId/activities/:activityId', this.processDeleteActivity.bind(this));
+        }
     }
 
     private processSendToConversation(req: WebRequest, res: WebResponse): void {

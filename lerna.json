@@ -16,6 +16,7 @@
     "libraries/functional-tests",
     "libraries/testbot",
     "libraries/botframework-streaming",
+    "libraries/integration-tests",
     "transcripts"
   ],
   "version": "independent",

@@ -1,0 +1,23 @@
+{
+  "name": "integration-tests",
+  "version": "0.0.0",
+  "description": "Integration tests for botbuilder",
+  "scripts": {
+    "build": "tsc",
+    "just-test": "tsc && mocha \"./transpiled-tests/**/*.test.js\"",
+    "test": "tsc && nyc mocha \"./transpiled-tests/**/*.test.js\""
+  },
+  "author": "Microsoft Corp.",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/express": "^4.17.2",
+    "@types/mocha": "^2.2.47",
+    "@types/restify": "^8.4.2",
+    "botbuilder": "4.1.6",
+    "botframework-connector": "4.1.6",
+    "express": "^4.17.1",
+    "mocha": "^6.1.4",
+    "nyc": "^11.4.1",
+    "restify": "^8.3.0"
+  }
+}
