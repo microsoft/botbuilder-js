@@ -7,6 +7,12 @@ console.log('Started ' + (new Date()));
 var myArgs = process.argv.slice(2);
 var rootPath = myArgs[0];
 var newVersion = myArgs[1];
+var previewVersion = process.env.PreviewPackageVersion;
+var previewPackages = {
+    'botbuilder-lg': true,
+    'botframework-expressions': true,
+    'botframework-streaming': true
+}
 var dependencies = myArgs.slice(2);
 console.log('newVersion =', newVersion);
 console.log('dependencies =');
@@ -22,8 +28,8 @@ function updateDependencies(filePath) {
 
         var result = '';
         dependencies.forEach(function (dependency) {
-            var findString = new RegExp('("dependencies":)(.+?)("' + dependency + '":\\s*")([^\/"]+)', "gms")
-            var replaceString = '$1$2$3' + newVersion;
+            var findString = new RegExp('("dependencies":)(.+?)("' + dependency + '":\\s*")([^\/"]+)', 'gms')
+            var replaceString = '$1$2$3' + ((previewVersion && previewPackages[dependency]) ? previewVersion : newVersion);
             result = data.replace(findString, replaceString);
             data = result;
         });
