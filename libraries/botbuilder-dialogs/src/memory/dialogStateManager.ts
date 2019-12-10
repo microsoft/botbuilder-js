@@ -12,6 +12,7 @@ import { ConversationState, UserState } from 'botbuilder-core';
 import { ConversationMemoryScope } from './scopes/conversationMemoryScope';
 import { TurnMemoryScope } from './scopes/turnMemoryScope';
 import { UserMemoryScope } from './scopes/userMemoryScope';
+import { MemoryInterface } from 'botframework-expressions';
 
 export interface DialogStateManagerConfiguration {
     /**
@@ -33,7 +34,7 @@ export interface DialogStateManagerConfiguration {
  * of turn state. Path resolvers allow for shortcut behavior for mapping things like 
  * $foo -> dialog.foo
  */
-export class DialogStateManager {
+export class DialogStateManager implements MemoryInterface {
     private readonly dialogContext: DialogContext;
     private _config: DialogStateManagerConfiguration;
 
@@ -79,24 +80,34 @@ export class DialogStateManager {
      * @param defaultValue (Optional) default value to use if the path isn't found. May be a function that returns the default value to use.
      * @returns The found value or undefined if not found and no `defaultValue` specified.
      */
-    public getValue<T = any>(pathExpression: string, defaultValue?: T|(() => T)): T {
-        function returnDefault(): T {
-            return typeof defaultValue == 'function' ? (defaultValue as Function)() : defaultValue;  
+    public getValue<T = any>(pathExpression: string, defaultValue?: T | (() => { value: T, error: string })): { value: T, error: string } {
+        function returnDefault(): { value: T, error: string } {
+            return typeof defaultValue == 'function' ? (defaultValue as Function)() :
+                { value: defaultValue, error: undefined };
         }
 
-        // Get path segments
-        const segments = this.parsePath(this.transformPath(pathExpression));
-        if (segments.length < 1) { return returnDefault() }
+        try {
+            // Get path segments
+            const segments = this.parsePath(this.transformPath(pathExpression));
+            if (segments.length < 1) { return returnDefault() }
 
-        // Get memory scope to search over
-        const scope = this.getMemoryScope(segments[0].toString());
-        if (scope == undefined) { throw new Error(`DialogStateManager.getValue: a scope of '${segments[0]}' wasn't found.`) }
-        
-        // Search over path
-        const memory = this.resolveSegments(scope.getMemory(this.dialogContext), segments, false);
+            // Get memory scope to search over
+            const scope = this.getMemoryScope(segments[0].toString());
+            if (scope == undefined) {
+                return {
+                    value: undefined,
+                    error: `DialogStateManager.getValue: a scope of '${segments[0]}' wasn't found.`
+                }
+            };
 
-        // Return default value if nothing found
-        return memory != undefined ? memory : returnDefault();
+            // Search over path
+            const memory = this.resolveSegments(scope.getMemory(this.dialogContext), segments, false);
+
+            // Return default value if nothing found
+            return memory != undefined ? { value: memory, error: undefined } : returnDefault();
+        } catch (e) {
+            return { value: undefined, error: e.toString() };
+        }
     }
 
     /**
@@ -104,45 +115,56 @@ export class DialogStateManager {
      * @param pathExpression Path to memory. 
      * @param value Value to set.
      */
-    public setValue(pathExpression: string, value: any): void {
-        // Get path segments
-        const segments = this.parsePath(this.transformPath(pathExpression));
-        if (segments.length < 1) { throw new Error(`DialogStateManager.setValue: path wasn't specified.`) }
-
-        // Get memory scope to update
-        const scope = this.getMemoryScope(segments[0].toString());
-        if (scope == undefined) { throw new Error(`DialogStateManager.setValue: a scope of '${segments[0]}' wasn't found.`) }
-
-        // Update memory
-        if (segments.length > 1) {
-            // Find value up to last key
-            // - Missing paths will be populated as needed
-            let memory = scope.getMemory(this.dialogContext);
-            memory = this.resolveSegments(memory, segments, true);
-
-            // Update value
-            let key = segments[segments.length - 1];
-            if (key === 'first()') { key = 0 };
-            if (typeof key == 'number' && Array.isArray(memory)) {
-                // Only allow positive indexes
-                if (key < 0) { throw new Error(`DialogStateManager.setValue: unable to update value for '${pathExpression}'. Negative indexes aren't allowed.`) } 
-                
-                // Expand array as needed and update array
-                const l = key + 1;
-                while (memory.length < l) {
-                    memory.push(undefined);
-                }
-                memory[key] = value;
-            } else if (typeof key == 'string' && key.length > 0 && typeof memory == 'object' && !Array.isArray(memory)) {
-                // Find key to use and update object
-                key = this.findObjectKey(memory, key) || key;
-                memory[key] = value;
-            } else {
-                throw new Error(`DialogStateManager.setValue: unable to update value for '${pathExpression}'.`);
+    public setValue(pathExpression: string, value: any): { value: any, error: string } {
+        try {
+            // Get path segments
+            const segments = this.parsePath(this.transformPath(pathExpression));
+            if (segments.length < 1) {
+                return { value: undefined, error: `DialogStateManager.setValue: path wasn't specified.` };
             }
-        } else {
-            // Just update memory scope
-            scope.setMemory(this.dialogContext, value);
+
+            // Get memory scope to update
+            const scope = this.getMemoryScope(segments[0].toString());
+            if (scope == undefined) {
+                return { value: undefined, error: `DialogStateManager.setValue: a scope of '${segments[0]}' wasn't found.` };
+            }
+
+            // Update memory
+            if (segments.length > 1) {
+                // Find value up to last key
+                // - Missing paths will be populated as needed
+                let memory = scope.getMemory(this.dialogContext);
+                memory = this.resolveSegments(memory, segments, true);
+
+                // Update value
+                let key = segments[segments.length - 1];
+                if (key === 'first()') { key = 0 };
+                if (typeof key == 'number' && Array.isArray(memory)) {
+                    // Only allow positive indexes
+                    if (key < 0) {
+                        return { value: undefined, error: `DialogStateManager.setValue: unable to update value for '${pathExpression}'. Negative indexes aren't allowed.` }
+                    }
+
+                    // Expand array as needed and update array
+                    const l = key + 1;
+                    while (memory.length < l) {
+                        memory.push(undefined);
+                    }
+                    memory[key] = value;
+                } else if (typeof key == 'string' && key.length > 0 && typeof memory == 'object' && !Array.isArray(memory)) {
+                    // Find key to use and update object
+                    key = this.findObjectKey(memory, key) || key;
+                    memory[key] = value;
+                } else {
+                    return { value: undefined, error: `DialogStateManager.setValue: unable to update value for '${pathExpression}'.` };
+                }
+            } else {
+                // Just update memory scope
+                scope.setMemory(this.dialogContext, value);
+            }
+            return { value, error: undefined };
+        } catch (e) {
+            return { value: undefined, error: e.toString() };
         }
     }
 
@@ -225,12 +247,12 @@ export class DialogStateManager {
      * @param pathExpression The path to normalize.
      * @returns The normalized path.
      */
-    public parsePath(pathExpression: string): (string|number)[] {
+    public parsePath(pathExpression: string): (string | number)[] {
         // Expand path segments
         let segment = '';
         let depth = 0;
         let quote = '';
-        const output: (string|number)[] = [];
+        const output: (string | number)[] = [];
         for (let i = 0; i < pathExpression.length; i++) {
             const c = pathExpression[i];
             if (depth > 0) {
@@ -281,9 +303,9 @@ export class DialogStateManager {
                             output.push(parseInt(segment));
                         } else {
                             // Resolve nested value
-                            const val = this.getValue(segment);
-                            const t = typeof val;
-                            output.push(t == 'string' || t == 'number' ? val : '');
+                            const { value } = this.getValue(segment);
+                            const t = typeof value;
+                            output.push(t == 'string' || t == 'number' ? value : '');
                         }
                         segment = '';
                     }
@@ -359,7 +381,7 @@ export class DialogStateManager {
         return output;
     }
 
-    private resolveSegments(memory: object, segments: (string|number)[], assignment?: boolean): any {
+    private resolveSegments(memory: object, segments: (string | number)[], assignment?: boolean): any {
         let value: any = memory;
         const l = assignment ? segments.length - 1 : segments.length;
         for (let i = 1; i < l && value != undefined; i++) {
@@ -434,7 +456,11 @@ export class DialogStateManager {
         return value;
     }
 
-    private findObjectKey(obj: object, key: string): string|undefined {
+    public version(): string {
+        return '0';
+    }
+
+    private findObjectKey(obj: object, key: string): string | undefined {
         const k = key.toLowerCase();
         for (const prop in obj) {
             if (prop.toLowerCase() == k) {
@@ -459,7 +485,7 @@ export class DialogStateManager {
     }
 
     static createStandardConfiguration(conversationState?: ConversationState, userState?: UserState): DialogStateManagerConfiguration {
-        const config: DialogStateManagerConfiguration = { 
+        const config: DialogStateManagerConfiguration = {
             pathResolvers: [
                 new DollarPathResolver(),
                 new HashPathResolver(),
@@ -494,7 +520,7 @@ export class DialogStateManager {
 function isIndex(segment: string): boolean {
     const digits = '0123456789';
     for (let i = 0; i < segment.length; i++) {
-        const c= segment[i];
+        const c = segment[i];
         if (digits.indexOf(c) < 0) {
             // Check for negative sign 
             if (c != '-' || i > 0 || segment.length < 2) {
@@ -510,8 +536,8 @@ function isIndex(segment: string): boolean {
  * @private
  */
 function isQuoted(segment: string): boolean {
-    return segment.length > 1 && (segment.startsWith("'") && segment.endsWith("'")) || 
-    (segment.startsWith('"') && segment.endsWith('"'));
+    return segment.length > 1 && (segment.startsWith("'") && segment.endsWith("'")) ||
+        (segment.startsWith('"') && segment.endsWith('"'));
 }
 
 /**

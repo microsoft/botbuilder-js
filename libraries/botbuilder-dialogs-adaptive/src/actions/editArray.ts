@@ -52,7 +52,7 @@ export class EditArray<O extends object = {}> extends Dialog<O> {
         if (!this.arrayProperty) { throw new Error(`EditArray: "${this.changeType}" operation couldn't be performed because the listProperty wasn't specified.`) }
 
         // Get list and ensure populated
-        let list: any[] = dc.state.getValue(this.arrayProperty);
+        let list: any[]  = dc.state.getValue(this.arrayProperty).value;
         if (!Array.isArray(list)) { list = [] }
 
         // Manipulate list
@@ -69,7 +69,7 @@ export class EditArray<O extends object = {}> extends Dialog<O> {
                 break;
             case ArrayChangeType.push:
                 this.ensureItemProperty();
-                item = dc.state.getValue(this.itemProperty);
+                item = dc.state.getValue(this.itemProperty).value;
                 lastResult = item != undefined;
                 if (lastResult) {
                     list.push(item);
@@ -84,7 +84,7 @@ export class EditArray<O extends object = {}> extends Dialog<O> {
                 break;
             case ArrayChangeType.remove:
                 this.ensureItemProperty();
-                item = dc.state.getValue(this.itemProperty);
+                item = dc.state.getValue(this.itemProperty).value;
                 if (item != undefined) {
                     serialized = Array.isArray(item) || typeof item == 'object' ? JSON.stringify(item) : undefined;
                     lastResult = false;

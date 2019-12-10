@@ -85,7 +85,7 @@ export class ConfirmInput extends InputDialog<InputDialogOptions> {
 
     protected async onRecognizeInput(dc: DialogContext, consultation: boolean): Promise<InputState> {
         // Recognize input if needed
-        let input: any = dc.state.getValue(InputDialog.VALUE_PROPERTY);
+        let input: any = dc.state.getValue(InputDialog.VALUE_PROPERTY).value;
         if (typeof input !== 'boolean') {
             // Find locale to use
             const activity: Activity = dc.context.activity;

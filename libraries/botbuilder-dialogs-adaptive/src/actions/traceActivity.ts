@@ -64,7 +64,7 @@ export class TraceActivity<O extends object = {}> extends Dialog<O> {
         var value: Object = null;
 
         if (this.value) {
-            value = dc.state.getValue(this.value);
+            value = dc.state.getValue(this.value).value;
         } else {
             value = dc.state.getMemorySnapshot();
         }

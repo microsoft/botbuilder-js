@@ -47,7 +47,7 @@ export class RepeatDialog extends Dialog {
     }
 
     public async beginDialog(dc: DialogContext, options?: object): Promise<DialogTurnResult> {
-        const originalOptions = dc.state.getValue<object>('options');
+        const originalOptions = dc.state.getValue<object>('options').value;
         options = Object.assign({}, originalOptions, options, this.options);
         return await this.repeatParentDialog(dc, options);
     }

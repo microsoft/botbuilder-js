@@ -204,7 +204,7 @@ export abstract class Prompt<T> extends Dialog {
         // Are we being continued after an interruption?
         // - The stepCount will be 1 or more if we're running in the context of an AdaptiveDialog
         //   and we're coming back from an interruption.
-        const stepCount = dc.state.getValue('turn.stepCount');
+        const stepCount = dc.state.getValue('turn.stepCount').value;
         if (typeof stepCount == 'number' && stepCount > 0) {
             // re-prompt and then end
             await this.repromptDialog(dc.context, dc.activeDialog);
