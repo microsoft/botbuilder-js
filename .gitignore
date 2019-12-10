@@ -311,4 +311,4 @@ package-lock.json
 *.js.map
 
 # Transpiled botbuilder integration tests
-libraries/integration-tests/transpiled-tests/
+libraries/**/transpiled-tests/
