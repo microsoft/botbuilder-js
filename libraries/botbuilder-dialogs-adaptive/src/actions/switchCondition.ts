@@ -82,7 +82,7 @@ export class SwitchCondition<O extends object = {}> extends Dialog<O> implements
 
         for (var caseCondition of this.cases) {
             const caseExpression = this.caseExpresssions[caseCondition.value] as Expression;
-            var { value, error } = caseExpression.tryEvaluate(sc.state.getMemorySnapshot());
+            var { value, error } = caseExpression.tryEvaluate(sc.state);
             if (error != null) {
                 throw new Error(`Expression evaluation resulted in an error.
                  Expression: ${this.caseExpresssions[caseCondition.value].ToString()}. Error: ${error}`);

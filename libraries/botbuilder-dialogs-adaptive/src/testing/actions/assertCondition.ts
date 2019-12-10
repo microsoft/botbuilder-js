@@ -16,7 +16,7 @@ export class AssertCondition extends Dialog {
 
     public async beginDialog(dc: DialogContext, _options?: any): Promise<DialogTurnResult> {
         const parser = new ExpressionEngine()
-        const { value, error } = parser.parse(this.condition).tryEvaluate(dc.state.getMemorySnapshot());
+        const { value, error } = parser.parse(this.condition).tryEvaluate(dc.state);
         if (!value || error) {
             throw new Error(this.description);
         }
