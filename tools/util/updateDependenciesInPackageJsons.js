@@ -7,10 +7,22 @@ console.log('Started ' + (new Date()));
 var myArgs = process.argv.slice(2);
 var rootPath = myArgs[0];
 var newVersion = myArgs[1];
-var dependencies = myArgs.slice(2);
+var previewVersion = myArgs[2] || process.env.PreviewPackageVersion;
+// This is a hack to deal with the inconsistencies between CI and daily builds right now
+if(previewVersion === 'botframework-expressions') {
+    previewVersion = undefined;
+}
+var previewPackages = {
+    'botbuilder-lg': true,
+    'botframework-expressions': true
+}
+var dependencies = myArgs.slice(previewVersion ? 3 : 2);
 console.log('newVersion =', newVersion);
+console.log('previewVersion = ' + previewVersion);
 console.log('dependencies =');
 console.log(dependencies);
+console.log('Preview packages: ');
+console.log(JSON.stringify(previewPackages, null, ' '));
 
 // Update versions for specified dependencies in package.json file
 function updateDependencies(filePath) {
@@ -20,10 +32,13 @@ function updateDependencies(filePath) {
             return console.log(err);
         }
 
+        console.log('Updating file: ' + filePath);
+
         var result = '';
         dependencies.forEach(function (dependency) {
-            var findString = new RegExp('("dependencies":)(.+?)("' + dependency + '":\\s*")([^\/"]+)', "gms")
-            var replaceString = '$1$2$3' + newVersion;
+            var findString = new RegExp('("dependencies":)(.+?)("' + dependency + '":\\s*")([^\/"]+)', 'gms')
+            var replaceString = '$1$2$3' + ((previewVersion && previewPackages[dependency]) ? previewVersion : newVersion);
+            console.log('Replace string: ' + replaceString);
             result = data.replace(findString, replaceString);
             data = result;
         });
