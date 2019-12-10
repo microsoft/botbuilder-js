@@ -20,7 +20,7 @@
         "actions": [
           {
             "$kind": "Microsoft.SendActivity",
-            "activity": "You picked {@color}"
+            "activity": "You picked @{@color}"
           }
         ]
       },

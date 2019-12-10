@@ -47,13 +47,13 @@ export class OnIntent extends OnDialogEvent {
         let intentExpression = parser.parse(`turn.recognized.intent == '${trimmedIntent}'`)
 
         if (this.entities.length > 0) {
-            intentExpression = Expression.makeExpression(ExpressionType.And, undefined, intentExpression,
-                Expression.makeExpression(ExpressionType.And, undefined, ...this.entities.map(entity => {
+            intentExpression = Expression.makeExpression(ExpressionType.And,
+                undefined, intentExpression, ...this.entities.map(entity => {
                     if (entity.startsWith('@') || entity.startsWith('turn.recognized')) {
                         return parser.parse(`exists(${entity})`);
                     }
                     return parser.parse(`exists(@${entity})`);
-                })));
+                }));
         }
 
         return Expression.makeExpression(ExpressionType.And, undefined, intentExpression, super.getExpression(parser));
