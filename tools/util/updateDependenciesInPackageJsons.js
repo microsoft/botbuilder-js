@@ -14,8 +14,7 @@ if(previewVersion === 'botframework-expressions') {
 }
 var previewPackages = {
     'botbuilder-lg': true,
-    'botframework-expressions': true,
-    'botframework-streaming': true
+    'botframework-expressions': true
 }
 var dependencies = myArgs.slice(previewVersion ? 3 : 2);
 console.log('newVersion =', newVersion);
