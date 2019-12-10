@@ -15,8 +15,11 @@ var previewPackages = {
 }
 var dependencies = myArgs.slice(2);
 console.log('newVersion =', newVersion);
+console.log('previewVersion = ' + previewVersion);
 console.log('dependencies =');
 console.log(dependencies);
+console.log('Preview packages: ');
+console.log(JSON.stringify(previewPackages, null, ' '));
 
 // Update versions for specified dependencies in package.json file
 function updateDependencies(filePath) {
@@ -26,10 +29,13 @@ function updateDependencies(filePath) {
             return console.log(err);
         }
 
+        console.log('Updating file: ' + filePath);
+
         var result = '';
         dependencies.forEach(function (dependency) {
             var findString = new RegExp('("dependencies":)(.+?)("' + dependency + '":\\s*")([^\/"]+)', 'gms')
             var replaceString = '$1$2$3' + ((previewVersion && previewPackages[dependency]) ? previewVersion : newVersion);
+            console.log('Replace string: ' + replaceString);
             result = data.replace(findString, replaceString);
             data = result;
         });
