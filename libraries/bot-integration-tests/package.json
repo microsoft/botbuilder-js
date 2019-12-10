@@ -1,5 +1,5 @@
 {
-  "name": "integration-tests",
+  "name": "bot-integration-tests",
   "version": "0.0.0",
   "description": "Integration tests for botbuilder",
   "scripts": {
