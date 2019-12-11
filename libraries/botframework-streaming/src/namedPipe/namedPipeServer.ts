@@ -14,7 +14,7 @@ import {
     PayloadReceiver,
     PayloadSender
 } from '../payloadTransport';
-import { NamedPipeTransport } from './NamedPipeTransport';
+import { NamedPipeTransport } from './namedPipeTransport';
 import { IStreamingTransportServer, IReceiveResponse } from '../interfaces';
 
 /**
