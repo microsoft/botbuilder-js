@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { IReceiveRequest } from './Interfaces/IReceiveRequest';
+import { IReceiveRequest } from './interfaces/IReceiveRequest';
 import { StreamingResponse } from './streamingResponse';
 
 /**

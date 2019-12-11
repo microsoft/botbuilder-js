@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 import { IReceiveResponse } from './IReceiveResponse';
-import { StreamingRequest } from '../StreamingRequest';
+import { StreamingRequest } from '../streamingRequest';
 
 /**
  * Abstraction to define the characteristics of a streaming transport client. 
