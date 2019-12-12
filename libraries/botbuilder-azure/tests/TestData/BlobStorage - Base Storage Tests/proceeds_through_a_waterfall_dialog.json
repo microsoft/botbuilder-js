@@ -12,13 +12,13 @@
             "Server",
             "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
             "x-ms-request-id",
-            "a02d6c0b-7d10-4986-be24-9512dce7e0d8",
+            "84331c3c-5d2d-4cd6-9cdb-5e1f159484a0",
             "x-ms-version",
             "2018-03-28",
             "x-ms-error-code",
             "BlobNotFound",
             "Date",
-            "Mon, 28 Oct 2019 16:57:28 GMT"
+            "Thu, 12 Dec 2019 23:27:14 GMT"
         ]
     },
     {
@@ -52,21 +52,21 @@
             "Transfer-Encoding",
             "chunked",
             "Content-MD5",
-            "wH1L74RIyEyaqKh4lUKixA==",
+            "RF2QjfIuaWim0kNMfiC1PA==",
             "Last-Modified",
-            "Mon, 28 Oct 2019 16:57:28 GMT",
+            "Thu, 12 Dec 2019 23:27:15 GMT",
             "ETag",
-            "\"0x8D75BC7EA6128B0\"",
+            "\"0x8D77F5AD28106F0\"",
             "Server",
             "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
             "x-ms-request-id",
-            "86b83f5a-817d-477c-97b0-10d928fa73e2",
+            "05ad2836-e20f-42e9-a883-eb26263c4f03",
             "x-ms-version",
             "2018-03-28",
             "x-ms-request-server-encrypted",
             "true",
             "Date",
-            "Mon, 28 Oct 2019 16:57:28 GMT"
+            "Thu, 12 Dec 2019 23:27:14 GMT"
         ]
     },
     {
@@ -82,21 +82,21 @@
             "Content-Type",
             "application/octet-stream",
             "Content-MD5",
-            "wH1L74RIyEyaqKh4lUKixA==",
+            "RF2QjfIuaWim0kNMfiC1PA==",
             "Last-Modified",
-            "Mon, 28 Oct 2019 16:57:28 GMT",
+            "Thu, 12 Dec 2019 23:27:15 GMT",
             "Accept-Ranges",
             "bytes",
             "ETag",
-            "\"0x8D75BC7EA6128B0\"",
+            "\"0x8D77F5AD28106F0\"",
             "Server",
             "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
             "x-ms-request-id",
-            "fbcc50ed-e7ba-4204-9baa-27f5de1a2033",
+            "058ea879-053f-4f66-b660-4799bc5e6306",
             "x-ms-version",
             "2018-03-28",
             "x-ms-creation-time",
-            "Mon, 28 Oct 2019 16:57:28 GMT",
+            "Thu, 12 Dec 2019 23:27:15 GMT",
             "x-ms-lease-status",
             "unlocked",
             "x-ms-lease-state",
@@ -106,7 +106,7 @@
             "x-ms-server-encrypted",
             "true",
             "Date",
-            "Mon, 28 Oct 2019 16:57:28 GMT"
+            "Thu, 12 Dec 2019 23:27:14 GMT"
         ]
     },
     {
@@ -120,17 +120,17 @@
             "Transfer-Encoding",
             "chunked",
             "Last-Modified",
-            "Mon, 28 Oct 2019 16:57:28 GMT",
+            "Thu, 12 Dec 2019 23:27:15 GMT",
             "ETag",
-            "\"0x8D75BC7EA6128B0\"",
+            "\"0x8D77F5AD28106F0\"",
             "Server",
             "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
             "x-ms-request-id",
-            "bade75c4-6dc4-464c-bbaf-0f70049b9345",
+            "2d4a0994-5423-4b89-92a1-4c860495f1b5",
             "x-ms-version",
             "2018-03-28",
             "Date",
-            "Mon, 28 Oct 2019 16:57:28 GMT"
+            "Thu, 12 Dec 2019 23:27:14 GMT"
         ]
     },
     {
@@ -150,7 +150,7 @@
                             "state": {
                                 "options": {},
                                 "values": {
-                                    "instanceId": "a95381ab-3b15-e9a8-95d5-18e79c366151"
+                                    "instanceId": "55bde189-6897-80e7-b099-4e1433ceb4a8"
                                 },
                                 "stepIndex": 0
                             }
@@ -166,21 +166,21 @@
             "Content-Type",
             "application/octet-stream",
             "Content-MD5",
-            "wH1L74RIyEyaqKh4lUKixA==",
+            "RF2QjfIuaWim0kNMfiC1PA==",
             "Last-Modified",
-            "Mon, 28 Oct 2019 16:57:28 GMT",
+            "Thu, 12 Dec 2019 23:27:15 GMT",
             "Accept-Ranges",
             "bytes",
             "ETag",
-            "\"0x8D75BC7EA6128B0\"",
+            "\"0x8D77F5AD28106F0\"",
             "Server",
             "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
             "x-ms-request-id",
-            "df151298-9c47-451e-be62-aef1e14f44cd",
+            "bae7fe3a-5074-4ae4-bcbb-029abcad98f9",
             "x-ms-version",
             "2018-03-28",
             "x-ms-creation-time",
-            "Mon, 28 Oct 2019 16:57:28 GMT",
+            "Thu, 12 Dec 2019 23:27:15 GMT",
             "x-ms-lease-status",
             "unlocked",
             "x-ms-lease-state",
@@ -190,7 +190,7 @@
             "x-ms-server-encrypted",
             "true",
             "Date",
-            "Mon, 28 Oct 2019 16:57:28 GMT"
+            "Thu, 12 Dec 2019 23:27:14 GMT"
         ]
     },
     {
@@ -237,21 +237,21 @@
             "Transfer-Encoding",
             "chunked",
             "Content-MD5",
-            "zpCe9f4tmAHpPpIVvlt9fw==",
+            "DtPb0Ue8o4Od3Mpug20CIQ==",
             "Last-Modified",
-            "Mon, 28 Oct 2019 16:57:28 GMT",
+            "Thu, 12 Dec 2019 23:27:15 GMT",
             "ETag",
-            "\"0x8D75BC7EA737830\"",
+            "\"0x8D77F5AD2913390\"",
             "Server",
             "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
             "x-ms-request-id",
-            "13168618-d547-47b2-8103-7085105db11f",
+            "f95d5fc5-491e-4585-a352-fae104bfa166",
             "x-ms-version",
             "2018-03-28",
             "x-ms-request-server-encrypted",
             "true",
             "Date",
-            "Mon, 28 Oct 2019 16:57:28 GMT"
+            "Thu, 12 Dec 2019 23:27:14 GMT"
         ]
     },
     {
@@ -267,21 +267,21 @@
             "Content-Type",
             "application/octet-stream",
             "Content-MD5",
-            "zpCe9f4tmAHpPpIVvlt9fw==",
+            "DtPb0Ue8o4Od3Mpug20CIQ==",
             "Last-Modified",
-            "Mon, 28 Oct 2019 16:57:28 GMT",
+            "Thu, 12 Dec 2019 23:27:15 GMT",
             "Accept-Ranges",
             "bytes",
             "ETag",
-            "\"0x8D75BC7EA737830\"",
+            "\"0x8D77F5AD2913390\"",
             "Server",
             "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
             "x-ms-request-id",
-            "9d14e5c7-3ca0-480d-87f9-5768c6a67e19",
+            "d72fdc8f-545b-43c6-becb-c65098aca5bb",
             "x-ms-version",
             "2018-03-28",
             "x-ms-creation-time",
-            "Mon, 28 Oct 2019 16:57:28 GMT",
+            "Thu, 12 Dec 2019 23:27:15 GMT",
             "x-ms-lease-status",
             "unlocked",
             "x-ms-lease-state",
@@ -291,7 +291,7 @@
             "x-ms-server-encrypted",
             "true",
             "Date",
-            "Mon, 28 Oct 2019 16:57:28 GMT"
+            "Thu, 12 Dec 2019 23:27:14 GMT"
         ]
     },
     {
@@ -305,17 +305,17 @@
             "Transfer-Encoding",
             "chunked",
             "Last-Modified",
-            "Mon, 28 Oct 2019 16:57:28 GMT",
+            "Thu, 12 Dec 2019 23:27:15 GMT",
             "ETag",
-            "\"0x8D75BC7EA737830\"",
+            "\"0x8D77F5AD2913390\"",
             "Server",
             "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
             "x-ms-request-id",
-            "f502f8e3-bb85-4697-be96-25b1a6cea05c",
+            "7e3325b9-f41a-4b9c-9183-4ea61a12e0e0",
             "x-ms-version",
             "2018-03-28",
             "Date",
-            "Mon, 28 Oct 2019 16:57:28 GMT"
+            "Thu, 12 Dec 2019 23:27:14 GMT"
         ]
     },
     {
@@ -335,7 +335,7 @@
                             "state": {
                                 "options": {},
                                 "values": {
-                                    "instanceId": "a95381ab-3b15-e9a8-95d5-18e79c366151"
+                                    "instanceId": "55bde189-6897-80e7-b099-4e1433ceb4a8"
                                 },
                                 "stepIndex": 1
                             }
@@ -364,21 +364,21 @@
             "Content-Type",
             "application/octet-stream",
             "Content-MD5",
-            "zpCe9f4tmAHpPpIVvlt9fw==",
+            "DtPb0Ue8o4Od3Mpug20CIQ==",
             "Last-Modified",
-            "Mon, 28 Oct 2019 16:57:28 GMT",
+            "Thu, 12 Dec 2019 23:27:15 GMT",
             "Accept-Ranges",
             "bytes",
             "ETag",
-            "\"0x8D75BC7EA737830\"",
+            "\"0x8D77F5AD2913390\"",
             "Server",
             "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
             "x-ms-request-id",
-            "a5443901-bf4c-4a06-9720-788cdfe6c828",
+            "d3adebb2-ee0f-424a-8de2-fdbc6be13f63",
             "x-ms-version",
             "2018-03-28",
             "x-ms-creation-time",
-            "Mon, 28 Oct 2019 16:57:28 GMT",
+            "Thu, 12 Dec 2019 23:27:15 GMT",
             "x-ms-lease-status",
             "unlocked",
             "x-ms-lease-state",
@@ -388,7 +388,209 @@
             "x-ms-server-encrypted",
             "true",
             "Date",
-            "Mon, 28 Oct 2019 16:57:28 GMT"
+            "Thu, 12 Dec 2019 23:27:14 GMT"
+        ]
+    },
+    {
+        "scope": "http://127.0.0.1:10000",
+        "method": "PUT",
+        "path": "/devstoreaccount1/test/test%252Fconversations%252FConvo1",
+        "body": {
+            "id": "test%2Fconversations%2FConvo1",
+            "realId": "test/conversations/Convo1/",
+            "document": {
+                "dialogState": {
+                    "dialogStack": [
+                        {
+                            "id": "waterfallDialog",
+                            "state": {
+                                "options": {},
+                                "values": {
+                                    "instanceId": "fakeInstanceId"
+                                },
+                                "stepIndex": 1
+                            }
+                        },
+                        {
+                            "id": "textPrompt",
+                            "state": {
+                                "options": {
+                                    "prompt": {
+                                        "type": "message",
+                                        "text": "Please type your name.",
+                                        "inputHint": "acceptingInput"
+                                    }
+                                },
+                                "state": {
+                                    "attemptCount": 1
+                                }
+                            }
+                        }
+                    ]
+                },
+                "eTag": "*"
+            }
+        },
+        "status": 201,
+        "response": "",
+        "rawHeaders": [
+            "Transfer-Encoding",
+            "chunked",
+            "Content-MD5",
+            "PDQiNNGqoNXCBFqG63/Hcg==",
+            "Last-Modified",
+            "Thu, 12 Dec 2019 23:27:15 GMT",
+            "ETag",
+            "\"0x8D77F5AD2A816F0\"",
+            "Server",
+            "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+            "x-ms-request-id",
+            "3b8def5a-7726-4882-9ed0-4602ff7250e2",
+            "x-ms-version",
+            "2018-03-28",
+            "x-ms-request-server-encrypted",
+            "true",
+            "Date",
+            "Thu, 12 Dec 2019 23:27:15 GMT"
+        ]
+    },
+    {
+        "scope": "http://127.0.0.1:10000",
+        "method": "HEAD",
+        "path": "/devstoreaccount1/test/test%252Fconversations%252FConvo1",
+        "body": "",
+        "status": 200,
+        "response": "",
+        "rawHeaders": [
+            "Content-Length",
+            "415",
+            "Content-Type",
+            "application/octet-stream",
+            "Content-MD5",
+            "PDQiNNGqoNXCBFqG63/Hcg==",
+            "Last-Modified",
+            "Thu, 12 Dec 2019 23:27:15 GMT",
+            "Accept-Ranges",
+            "bytes",
+            "ETag",
+            "\"0x8D77F5AD2A816F0\"",
+            "Server",
+            "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+            "x-ms-request-id",
+            "b70a2621-7339-4b7c-ac91-205bce9996ab",
+            "x-ms-version",
+            "2018-03-28",
+            "x-ms-creation-time",
+            "Thu, 12 Dec 2019 23:27:15 GMT",
+            "x-ms-lease-status",
+            "unlocked",
+            "x-ms-lease-state",
+            "available",
+            "x-ms-blob-type",
+            "BlockBlob",
+            "x-ms-server-encrypted",
+            "true",
+            "Date",
+            "Thu, 12 Dec 2019 23:27:15 GMT"
+        ]
+    },
+    {
+        "scope": "http://127.0.0.1:10000",
+        "method": "HEAD",
+        "path": "/devstoreaccount1/test/test%252Fconversations%252FConvo1?comp=metadata",
+        "body": "",
+        "status": 200,
+        "response": "",
+        "rawHeaders": [
+            "Transfer-Encoding",
+            "chunked",
+            "Last-Modified",
+            "Thu, 12 Dec 2019 23:27:15 GMT",
+            "ETag",
+            "\"0x8D77F5AD2A816F0\"",
+            "Server",
+            "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+            "x-ms-request-id",
+            "f95316d0-6a7e-4b71-8cae-e1320ea86b77",
+            "x-ms-version",
+            "2018-03-28",
+            "Date",
+            "Thu, 12 Dec 2019 23:27:15 GMT"
+        ]
+    },
+    {
+        "scope": "http://127.0.0.1:10000",
+        "method": "GET",
+        "path": "/devstoreaccount1/test/test%252Fconversations%252FConvo1",
+        "body": "",
+        "status": 200,
+        "response": {
+            "id": "test%2Fconversations%2FConvo1",
+            "realId": "test/conversations/Convo1/",
+            "document": {
+                "dialogState": {
+                    "dialogStack": [
+                        {
+                            "id": "waterfallDialog",
+                            "state": {
+                                "options": {},
+                                "values": {
+                                    "instanceId": "55bde189-6897-80e7-b099-4e1433ceb4a8"
+                                },
+                                "stepIndex": 1
+                            }
+                        },
+                        {
+                            "id": "textPrompt",
+                            "state": {
+                                "options": {
+                                    "prompt": {
+                                        "type": "message",
+                                        "text": "Please type your name.",
+                                        "inputHint": "acceptingInput"
+                                    }
+                                },
+                                "state": {
+                                    "attemptCount": 1
+                                }
+                            }
+                        }
+                    ]
+                },
+                "eTag": "*"
+            }
+        },
+        "rawHeaders": [
+            "Content-Length",
+            "415",
+            "Content-Type",
+            "application/octet-stream",
+            "Content-MD5",
+            "PDQiNNGqoNXCBFqG63/Hcg==",
+            "Last-Modified",
+            "Thu, 12 Dec 2019 23:27:15 GMT",
+            "Accept-Ranges",
+            "bytes",
+            "ETag",
+            "\"0x8D77F5AD2A816F0\"",
+            "Server",
+            "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+            "x-ms-request-id",
+            "70f45cc9-1c42-4329-9a02-189d14677838",
+            "x-ms-version",
+            "2018-03-28",
+            "x-ms-creation-time",
+            "Thu, 12 Dec 2019 23:27:15 GMT",
+            "x-ms-lease-status",
+            "unlocked",
+            "x-ms-lease-state",
+            "available",
+            "x-ms-blob-type",
+            "BlockBlob",
+            "x-ms-server-encrypted",
+            "true",
+            "Date",
+            "Thu, 12 Dec 2019 23:27:15 GMT"
         ]
     },
     {
@@ -437,21 +639,21 @@
             "Transfer-Encoding",
             "chunked",
             "Content-MD5",
-            "ybm4ZUvuUUGp56agFD695g==",
+            "mYvUdEECZSs+S/9h1tbvVA==",
             "Last-Modified",
-            "Mon, 28 Oct 2019 16:57:28 GMT",
+            "Thu, 12 Dec 2019 23:27:15 GMT",
             "ETag",
-            "\"0x8D75BC7EA81A900\"",
+            "\"0x8D77F5AD2B6E400\"",
             "Server",
             "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
             "x-ms-request-id",
-            "708b809e-f5c2-4cda-8ea7-bb99cb760081",
+            "f53512af-0b83-4d6a-b462-cc7b8cbcbc2d",
             "x-ms-version",
             "2018-03-28",
             "x-ms-request-server-encrypted",
             "true",
             "Date",
-            "Mon, 28 Oct 2019 16:57:28 GMT"
+            "Thu, 12 Dec 2019 23:27:15 GMT"
         ]
     },
     {
@@ -467,21 +669,21 @@
             "Content-Type",
             "application/octet-stream",
             "Content-MD5",
-            "ybm4ZUvuUUGp56agFD695g==",
+            "mYvUdEECZSs+S/9h1tbvVA==",
             "Last-Modified",
-            "Mon, 28 Oct 2019 16:57:28 GMT",
+            "Thu, 12 Dec 2019 23:27:15 GMT",
             "Accept-Ranges",
             "bytes",
             "ETag",
-            "\"0x8D75BC7EA81A900\"",
+            "\"0x8D77F5AD2B6E400\"",
             "Server",
             "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
             "x-ms-request-id",
-            "60c90574-7150-453e-9857-1b197699af8a",
+            "081bee70-24b4-4043-b928-24b78834fb46",
             "x-ms-version",
             "2018-03-28",
             "x-ms-creation-time",
-            "Mon, 28 Oct 2019 16:57:28 GMT",
+            "Thu, 12 Dec 2019 23:27:15 GMT",
             "x-ms-lease-status",
             "unlocked",
             "x-ms-lease-state",
@@ -491,7 +693,7 @@
             "x-ms-server-encrypted",
             "true",
             "Date",
-            "Mon, 28 Oct 2019 16:57:28 GMT"
+            "Thu, 12 Dec 2019 23:27:15 GMT"
         ]
     },
     {
@@ -505,17 +707,17 @@
             "Transfer-Encoding",
             "chunked",
             "Last-Modified",
-            "Mon, 28 Oct 2019 16:57:28 GMT",
+            "Thu, 12 Dec 2019 23:27:15 GMT",
             "ETag",
-            "\"0x8D75BC7EA81A900\"",
+            "\"0x8D77F5AD2B6E400\"",
             "Server",
             "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
             "x-ms-request-id",
-            "c103ef2b-eb63-4f06-bc2e-1e26c8f038d2",
+            "29bd7739-2e51-42f0-9db1-c150661329c0",
             "x-ms-version",
             "2018-03-28",
             "Date",
-            "Mon, 28 Oct 2019 16:57:28 GMT"
+            "Thu, 12 Dec 2019 23:27:15 GMT"
         ]
     },
     {
@@ -535,7 +737,7 @@
                             "state": {
                                 "options": {},
                                 "values": {
-                                    "instanceId": "a95381ab-3b15-e9a8-95d5-18e79c366151"
+                                    "instanceId": "55bde189-6897-80e7-b099-4e1433ceb4a8"
                                 },
                                 "stepIndex": 1
                             }
@@ -566,21 +768,21 @@
             "Content-Type",
             "application/octet-stream",
             "Content-MD5",
-            "ybm4ZUvuUUGp56agFD695g==",
+            "mYvUdEECZSs+S/9h1tbvVA==",
             "Last-Modified",
-            "Mon, 28 Oct 2019 16:57:28 GMT",
+            "Thu, 12 Dec 2019 23:27:15 GMT",
             "Accept-Ranges",
             "bytes",
             "ETag",
-            "\"0x8D75BC7EA81A900\"",
+            "\"0x8D77F5AD2B6E400\"",
             "Server",
             "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
             "x-ms-request-id",
-            "c377f555-a1e9-452d-889b-5c6985b21f94",
+            "543b6c12-c240-423e-853b-f1b0613685d4",
             "x-ms-version",
             "2018-03-28",
             "x-ms-creation-time",
-            "Mon, 28 Oct 2019 16:57:28 GMT",
+            "Thu, 12 Dec 2019 23:27:15 GMT",
             "x-ms-lease-status",
             "unlocked",
             "x-ms-lease-state",
@@ -590,7 +792,7 @@
             "x-ms-server-encrypted",
             "true",
             "Date",
-            "Mon, 28 Oct 2019 16:57:28 GMT"
+            "Thu, 12 Dec 2019 23:27:15 GMT"
         ]
     },
     {
@@ -639,21 +841,21 @@
             "Transfer-Encoding",
             "chunked",
             "Content-MD5",
-            "ByT9eecw8dPeonlurf1c8Q==",
+            "kp12T+k3qh5xIqWdl8KT/w==",
             "Last-Modified",
-            "Mon, 28 Oct 2019 16:57:28 GMT",
+            "Thu, 12 Dec 2019 23:27:15 GMT",
             "ETag",
-            "\"0x8D75BC7EA8EEF70\"",
+            "\"0x8D77F5AD2C69B70\"",
             "Server",
             "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
             "x-ms-request-id",
-            "7f5f418c-0f2b-4640-be31-1e2d9670edf7",
+            "67b2e821-998c-4820-ab92-d665bdaf8678",
             "x-ms-version",
             "2018-03-28",
             "x-ms-request-server-encrypted",
             "true",
             "Date",
-            "Mon, 28 Oct 2019 16:57:28 GMT"
+            "Thu, 12 Dec 2019 23:27:15 GMT"
         ]
     },
     {
@@ -669,21 +871,21 @@
             "Content-Type",
             "application/octet-stream",
             "Content-MD5",
-            "ByT9eecw8dPeonlurf1c8Q==",
+            "kp12T+k3qh5xIqWdl8KT/w==",
             "Last-Modified",
-            "Mon, 28 Oct 2019 16:57:28 GMT",
+            "Thu, 12 Dec 2019 23:27:15 GMT",
             "Accept-Ranges",
             "bytes",
             "ETag",
-            "\"0x8D75BC7EA8EEF70\"",
+            "\"0x8D77F5AD2C69B70\"",
             "Server",
             "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
             "x-ms-request-id",
-            "4101ec59-9f0c-4c85-a0a1-ea56d1245052",
+            "ad781f52-7b33-4734-9a02-dc54a8af1f01",
             "x-ms-version",
             "2018-03-28",
             "x-ms-creation-time",
-            "Mon, 28 Oct 2019 16:57:28 GMT",
+            "Thu, 12 Dec 2019 23:27:15 GMT",
             "x-ms-lease-status",
             "unlocked",
             "x-ms-lease-state",
@@ -693,7 +895,7 @@
             "x-ms-server-encrypted",
             "true",
             "Date",
-            "Mon, 28 Oct 2019 16:57:28 GMT"
+            "Thu, 12 Dec 2019 23:27:15 GMT"
         ]
     },
     {
@@ -707,17 +909,17 @@
             "Transfer-Encoding",
             "chunked",
             "Last-Modified",
-            "Mon, 28 Oct 2019 16:57:28 GMT",
+            "Thu, 12 Dec 2019 23:27:15 GMT",
             "ETag",
-            "\"0x8D75BC7EA8EEF70\"",
+            "\"0x8D77F5AD2C69B70\"",
             "Server",
             "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
             "x-ms-request-id",
-            "99214c1c-3f7d-4d06-9c87-024cd913bda5",
+            "5966e21f-9a56-4ee5-b334-d11945846a25",
             "x-ms-version",
             "2018-03-28",
             "Date",
-            "Mon, 28 Oct 2019 16:57:28 GMT"
+            "Thu, 12 Dec 2019 23:27:15 GMT"
         ]
     },
     {
@@ -737,7 +939,7 @@
                             "state": {
                                 "options": {},
                                 "values": {
-                                    "instanceId": "a95381ab-3b15-e9a8-95d5-18e79c366151"
+                                    "instanceId": "55bde189-6897-80e7-b099-4e1433ceb4a8"
                                 },
                                 "stepIndex": 1
                             }
@@ -768,21 +970,21 @@
             "Content-Type",
             "application/octet-stream",
             "Content-MD5",
-            "ByT9eecw8dPeonlurf1c8Q==",
+            "kp12T+k3qh5xIqWdl8KT/w==",
             "Last-Modified",
-            "Mon, 28 Oct 2019 16:57:28 GMT",
+            "Thu, 12 Dec 2019 23:27:15 GMT",
             "Accept-Ranges",
             "bytes",
             "ETag",
-            "\"0x8D75BC7EA8EEF70\"",
+            "\"0x8D77F5AD2C69B70\"",
             "Server",
             "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
             "x-ms-request-id",
-            "4ad460f9-b71a-4bb5-9552-82282cfa13c2",
+            "5b40e872-dbca-42b0-9ba6-d8ef30130d14",
             "x-ms-version",
             "2018-03-28",
             "x-ms-creation-time",
-            "Mon, 28 Oct 2019 16:57:28 GMT",
+            "Thu, 12 Dec 2019 23:27:15 GMT",
             "x-ms-lease-status",
             "unlocked",
             "x-ms-lease-state",
@@ -792,209 +994,7 @@
             "x-ms-server-encrypted",
             "true",
             "Date",
-            "Mon, 28 Oct 2019 16:57:28 GMT"
-        ]
-    },
-    {
-        "scope": "http://127.0.0.1:10000",
-        "method": "PUT",
-        "path": "/devstoreaccount1/test/test%252Fconversations%252FConvo1",
-        "body": {
-            "id": "test%2Fconversations%2FConvo1",
-            "realId": "test/conversations/Convo1/",
-            "document": {
-                "dialogState": {
-                    "dialogStack": [
-                        {
-                            "id": "waterfallDialog",
-                            "state": {
-                                "options": {},
-                                "values": {
-                                    "instanceId": "fakeInstanceId"
-                                },
-                                "stepIndex": 1
-                            }
-                        },
-                        {
-                            "id": "textPrompt",
-                            "state": {
-                                "options": {
-                                    "prompt": {
-                                        "type": "message",
-                                        "text": "Please type your name.",
-                                        "inputHint": "acceptingInput"
-                                    }
-                                },
-                                "state": {
-                                    "attemptCount": 4
-                                }
-                            }
-                        }
-                    ]
-                },
-                "eTag": "*"
-            }
-        },
-        "status": 201,
-        "response": "",
-        "rawHeaders": [
-            "Transfer-Encoding",
-            "chunked",
-            "Content-MD5",
-            "k3YaEp2/2NFN4wocwnOqrQ==",
-            "Last-Modified",
-            "Mon, 28 Oct 2019 16:57:28 GMT",
-            "ETag",
-            "\"0x8D75BC7EA9E31B0\"",
-            "Server",
-            "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
-            "x-ms-request-id",
-            "9c99efa2-7fd2-43ed-b1cb-1793b59fba99",
-            "x-ms-version",
-            "2018-03-28",
-            "x-ms-request-server-encrypted",
-            "true",
-            "Date",
-            "Mon, 28 Oct 2019 16:57:28 GMT"
-        ]
-    },
-    {
-        "scope": "http://127.0.0.1:10000",
-        "method": "HEAD",
-        "path": "/devstoreaccount1/test/test%252Fconversations%252FConvo1",
-        "body": "",
-        "status": 200,
-        "response": "",
-        "rawHeaders": [
-            "Content-Length",
-            "415",
-            "Content-Type",
-            "application/octet-stream",
-            "Content-MD5",
-            "k3YaEp2/2NFN4wocwnOqrQ==",
-            "Last-Modified",
-            "Mon, 28 Oct 2019 16:57:28 GMT",
-            "Accept-Ranges",
-            "bytes",
-            "ETag",
-            "\"0x8D75BC7EA9E31B0\"",
-            "Server",
-            "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
-            "x-ms-request-id",
-            "787fa58b-3c90-4d1f-aa67-f3d6e0280b14",
-            "x-ms-version",
-            "2018-03-28",
-            "x-ms-creation-time",
-            "Mon, 28 Oct 2019 16:57:28 GMT",
-            "x-ms-lease-status",
-            "unlocked",
-            "x-ms-lease-state",
-            "available",
-            "x-ms-blob-type",
-            "BlockBlob",
-            "x-ms-server-encrypted",
-            "true",
-            "Date",
-            "Mon, 28 Oct 2019 16:57:28 GMT"
-        ]
-    },
-    {
-        "scope": "http://127.0.0.1:10000",
-        "method": "HEAD",
-        "path": "/devstoreaccount1/test/test%252Fconversations%252FConvo1?comp=metadata",
-        "body": "",
-        "status": 200,
-        "response": "",
-        "rawHeaders": [
-            "Transfer-Encoding",
-            "chunked",
-            "Last-Modified",
-            "Mon, 28 Oct 2019 16:57:28 GMT",
-            "ETag",
-            "\"0x8D75BC7EA9E31B0\"",
-            "Server",
-            "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
-            "x-ms-request-id",
-            "1e1292ab-9fac-471a-9370-17fe3562af03",
-            "x-ms-version",
-            "2018-03-28",
-            "Date",
-            "Mon, 28 Oct 2019 16:57:28 GMT"
-        ]
-    },
-    {
-        "scope": "http://127.0.0.1:10000",
-        "method": "GET",
-        "path": "/devstoreaccount1/test/test%252Fconversations%252FConvo1",
-        "body": "",
-        "status": 200,
-        "response": {
-            "id": "test%2Fconversations%2FConvo1",
-            "realId": "test/conversations/Convo1/",
-            "document": {
-                "dialogState": {
-                    "dialogStack": [
-                        {
-                            "id": "waterfallDialog",
-                            "state": {
-                                "options": {},
-                                "values": {
-                                    "instanceId": "a95381ab-3b15-e9a8-95d5-18e79c366151"
-                                },
-                                "stepIndex": 1
-                            }
-                        },
-                        {
-                            "id": "textPrompt",
-                            "state": {
-                                "options": {
-                                    "prompt": {
-                                        "type": "message",
-                                        "text": "Please type your name.",
-                                        "inputHint": "acceptingInput"
-                                    }
-                                },
-                                "state": {
-                                    "attemptCount": 4
-                                }
-                            }
-                        }
-                    ]
-                },
-                "eTag": "*"
-            }
-        },
-        "rawHeaders": [
-            "Content-Length",
-            "415",
-            "Content-Type",
-            "application/octet-stream",
-            "Content-MD5",
-            "k3YaEp2/2NFN4wocwnOqrQ==",
-            "Last-Modified",
-            "Mon, 28 Oct 2019 16:57:28 GMT",
-            "Accept-Ranges",
-            "bytes",
-            "ETag",
-            "\"0x8D75BC7EA9E31B0\"",
-            "Server",
-            "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
-            "x-ms-request-id",
-            "fd51b167-7e19-41db-922c-a24c791eff0c",
-            "x-ms-version",
-            "2018-03-28",
-            "x-ms-creation-time",
-            "Mon, 28 Oct 2019 16:57:28 GMT",
-            "x-ms-lease-status",
-            "unlocked",
-            "x-ms-lease-state",
-            "available",
-            "x-ms-blob-type",
-            "BlockBlob",
-            "x-ms-server-encrypted",
-            "true",
-            "Date",
-            "Mon, 28 Oct 2019 16:57:29 GMT"
+            "Thu, 12 Dec 2019 23:27:15 GMT"
         ]
     },
     {
@@ -1028,21 +1028,21 @@
             "Transfer-Encoding",
             "chunked",
             "Content-MD5",
-            "xaZ9bpM4v26Oinq8ff1Zag==",
+            "EXahS/4ABHLQRWO1SmmREg==",
             "Last-Modified",
-            "Mon, 28 Oct 2019 16:57:29 GMT",
+            "Thu, 12 Dec 2019 23:27:15 GMT",
             "ETag",
-            "\"0x8D75BC7EAB27D00\"",
+            "\"0x8D77F5AD2D679F0\"",
             "Server",
             "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
             "x-ms-request-id",
-            "0d7f7bbd-885d-43c1-b377-8b9c5bbe3ae8",
+            "e115915b-c020-41f5-969c-dd5aef81fda2",
             "x-ms-version",
             "2018-03-28",
             "x-ms-request-server-encrypted",
             "true",
             "Date",
-            "Mon, 28 Oct 2019 16:57:29 GMT"
+            "Thu, 12 Dec 2019 23:27:15 GMT"
         ]
     }
 ]

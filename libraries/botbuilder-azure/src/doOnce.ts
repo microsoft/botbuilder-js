@@ -10,7 +10,7 @@ export class DoOnce<T> {
     private task: Promise<T>;
 
     public waitFor(fn: () => Promise<T>): Promise<T> {
-        if (process.env.SKIP_DO_ONCE === 'true' || !this.task) {
+        if (!this.task) {
             this.task = fn();
         }
 

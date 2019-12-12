@@ -7,7 +7,7 @@
         "status": 404,
         "response": {
             "code": "NotFound",
-            "message": "Message: {\"Errors\":[\"Resource Not Found\"]}\r\nActivityId: bd2b6337-5187-4b1f-a8d1-cfca583f53ec, Request URI: /apps/DocDbApp/services/DocDbServer16/partitions/a4cb495c-38c8-11e6-8106-8cdcd42c33be/replicas/1p/, RequestStats: \r\nRequestStartTime: 2019-10-28T16:57:01.0524257Z, RequestEndTime: 2019-10-28T16:57:01.0534243Z, Number of regions attempted: 1\r\nResponseTime: 2019-10-28T16:57:01.0534243Z, StoreResult: StorePhysicalAddress: rntbd://127.0.0.1:10253/apps/DocDbApp/services/DocDbServer16/partitions/a4cb495c-38c8-11e6-8106-8cdcd42c33be/replicas/1p/, LSN: 2855, GlobalCommittedLsn: -1, PartitionKeyRangeId: 0, IsValid: True, StatusCode: 404, SubStatusCode: 0, RequestCharge: 1.24, ItemLSN: -1, SessionToken: 2855, UsingLocalLSN: False, TransportException: null, ResourceType: Document, OperationType: Delete\r\n, SDK: Microsoft.Azure.Documents.Common/2.4.0.0"
+            "message": "Message: {\"Errors\":[\"Resource Not Found\"]}\r\nActivityId: 0e1814e0-b7a4-4fca-820e-c12193fcbe01, Request URI: /apps/DocDbApp/services/DocDbServer15/partitions/a4cb495b-38c8-11e6-8106-8cdcd42c33be/replicas/1p/, RequestStats: \r\nRequestStartTime: 2019-12-12T23:27:28.9845561Z, RequestEndTime: 2019-12-12T23:27:28.9855546Z,  Number of regions attempted:1\r\nResponseTime: 2019-12-12T23:27:28.9855546Z, StoreResult: StorePhysicalAddress: rntbd://127.0.0.1:10253/apps/DocDbApp/services/DocDbServer15/partitions/a4cb495b-38c8-11e6-8106-8cdcd42c33be/replicas/1p/, LSN: 535, GlobalCommittedLsn: -1, PartitionKeyRangeId: 0, IsValid: True, StatusCode: 404, SubStatusCode: 0, RequestCharge: 1.24, ItemLSN: -1, SessionToken: 535, UsingLocalLSN: False, TransportException: null, ResourceType: Document, OperationType: Delete\r\n, SDK: Microsoft.Azure.Documents.Common/2.7.0"
         },
         "rawHeaders": [
             "Transfer-Encoding",
@@ -23,13 +23,13 @@
             "Access-Control-Allow-Credentials",
             "true",
             "x-ms-last-state-change-utc",
-            "Mon, 28 Oct 2019 16:49:38.201 GMT",
+            "Wed, 11 Dec 2019 19:46:13.459 GMT",
             "lsn",
-            "2855",
+            "535",
             "x-ms-schemaversion",
             "1.8",
             "x-ms-quorum-acked-lsn",
-            "2855",
+            "535",
             "x-ms-current-write-quorum",
             "1",
             "x-ms-current-replica-set-size",
@@ -41,23 +41,23 @@
             "x-ms-number-of-read-regions",
             "0",
             "x-ms-transport-request-id",
-            "101",
+            "1456",
             "x-ms-cosmos-llsn",
-            "2855",
+            "535",
             "x-ms-cosmos-quorum-acked-llsn",
-            "2855",
+            "535",
             "x-ms-session-token",
-            "0:2855",
+            "0:535",
             "x-ms-request-charge",
             "1.24",
             "x-ms-serviceversion",
-            "version=2.4.0.0",
+            "version=2.7.0.0",
             "x-ms-activity-id",
-            "bd2b6337-5187-4b1f-a8d1-cfca583f53ec",
+            "0e1814e0-b7a4-4fca-820e-c12193fcbe01",
             "x-ms-gatewayversion",
-            "version=2.4.0.0",
+            "version=2.7.0",
             "Date",
-            "Mon, 28 Oct 2019 16:57:00 GMT"
+            "Thu, 12 Dec 2019 23:27:28 GMT"
         ]
     }
 ]

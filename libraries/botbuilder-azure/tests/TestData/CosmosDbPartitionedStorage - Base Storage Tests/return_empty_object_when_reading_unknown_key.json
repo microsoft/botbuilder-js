@@ -2,270 +2,12 @@
     {
         "scope": "https://localhost:8081",
         "method": "GET",
-        "path": "/",
-        "body": "",
-        "status": 200,
-        "response": {
-            "_self": "",
-            "id": "localhost",
-            "_rid": "localhost",
-            "media": "//media/",
-            "addresses": "//addresses/",
-            "_dbs": "//dbs/",
-            "writableLocations": [
-                {
-                    "name": "South Central US",
-                    "databaseAccountEndpoint": "https://127.0.0.1:8081/"
-                }
-            ],
-            "readableLocations": [
-                {
-                    "name": "South Central US",
-                    "databaseAccountEndpoint": "https://127.0.0.1:8081/"
-                }
-            ],
-            "enableMultipleWriteLocations": false,
-            "userReplicationPolicy": {
-                "asyncReplication": false,
-                "minReplicaSetSize": 1,
-                "maxReplicasetSize": 4
-            },
-            "userConsistencyPolicy": {
-                "defaultConsistencyLevel": "Session"
-            },
-            "systemReplicationPolicy": {
-                "minReplicaSetSize": 1,
-                "maxReplicasetSize": 4
-            },
-            "readPolicy": {
-                "primaryReadCoefficient": 1,
-                "secondaryReadCoefficient": 1
-            },
-            "queryEngineConfiguration": "{\"maxSqlQueryInputLength\":262144,\"maxJoinsPerSqlQuery\":5,\"maxLogicalAndPerSqlQuery\":500,\"maxLogicalOrPerSqlQuery\":500,\"maxUdfRefPerSqlQuery\":10,\"maxInExpressionItemsCount\":16000,\"queryMaxInMemorySortDocumentCount\":500,\"maxQueryRequestTimeoutFraction\":0.9,\"sqlAllowNonFiniteNumbers\":false,\"sqlAllowAggregateFunctions\":true,\"sqlAllowSubQuery\":true,\"sqlAllowScalarSubQuery\":true,\"allowNewKeywords\":true,\"sqlAllowLike\":false,\"sqlAllowGroupByClause\":false,\"maxSpatialQueryCells\":12,\"spatialMaxGeometryPointCount\":256,\"sqlAllowTop\":true,\"enableSpatialIndexing\":true}"
-        },
-        "rawHeaders": [
-            "Cache-Control",
-            "no-store, no-cache",
-            "Pragma",
-            "no-cache",
-            "Transfer-Encoding",
-            "chunked",
-            "Content-Type",
-            "application/json",
-            "Content-Location",
-            "https://localhost:8081/",
-            "Server",
-            "Microsoft-HTTPAPI/2.0",
-            "Access-Control-Allow-Origin",
-            "",
-            "Access-Control-Allow-Credentials",
-            "true",
-            "x-ms-max-media-storage-usage-mb",
-            "10240",
-            "x-ms-media-storage-usage-mb",
-            "0",
-            "x-ms-databaseaccount-consumed-mb",
-            "0",
-            "x-ms-databaseaccount-reserved-mb",
-            "0",
-            "x-ms-databaseaccount-provisioned-mb",
-            "0",
-            "x-ms-gatewayversion",
-            "version=2.4.0.0",
-            "Date",
-            "Mon, 28 Oct 2019 21:20:08 GMT",
-            "Connection",
-            "close"
-        ]
-    },
-    {
-        "scope": "https://localhost:8081",
-        "method": "GET",
-        "path": "/dbs/test-db/colls/bot-storage",
-        "body": "",
-        "status": 404,
-        "response": {
-            "code": "NotFound",
-            "message": "Message: {\"Errors\":[\"Resource Not Found\"]}\r\nActivityId: 3320daed-5cc9-448f-815c-2a6ce9813d83, Request URI: /apps/DocDbApp/services/DocDbMaster0/partitions/780e44f4-38c8-11e6-8106-8cdcd42c33be/replicas/1p/, RequestStats: \r\nRequestStartTime: 2019-10-28T21:20:08.8841484Z, RequestEndTime: 2019-10-28T21:20:08.8871506Z, Number of regions attempted: 1\r\nResponseTime: 2019-10-28T21:20:08.8871506Z, StoreResult: StorePhysicalAddress: rntbd://127.0.0.1:10251/apps/DocDbApp/services/DocDbMaster0/partitions/780e44f4-38c8-11e6-8106-8cdcd42c33be/replicas/1p/, LSN: 1481, GlobalCommittedLsn: -1, PartitionKeyRangeId: , IsValid: True, StatusCode: 404, SubStatusCode: 0, RequestCharge: 1, ItemLSN: -1, SessionToken: -1#1481, UsingLocalLSN: False, TransportException: null, ResourceType: Collection, OperationType: Read\r\nResponseTime: 2019-10-28T21:20:08.8871506Z, StoreResult: StorePhysicalAddress: rntbd://127.0.0.1:10251/apps/DocDbApp/services/DocDbMaster0/partitions/780e44f4-38c8-11e6-8106-8cdcd42c33be/replicas/1p/, LSN: 1481, GlobalCommittedLsn: -1, PartitionKeyRangeId: , IsValid: True, StatusCode: 404, SubStatusCode: 0, RequestCharge: 1, ItemLSN: -1, SessionToken: -1#1481, UsingLocalLSN: False, TransportException: null, ResourceType: Collection, OperationType: Read\r\n, SDK: Microsoft.Azure.Documents.Common/2.4.0.0"
-        },
-        "rawHeaders": [
-            "Transfer-Encoding",
-            "chunked",
-            "Content-Type",
-            "application/json",
-            "Content-Location",
-            "https://localhost:8081/dbs/test-db/colls/bot-storage",
-            "Server",
-            "Microsoft-HTTPAPI/2.0",
-            "Access-Control-Allow-Origin",
-            "",
-            "Access-Control-Allow-Credentials",
-            "true",
-            "x-ms-last-state-change-utc",
-            "Mon, 28 Oct 2019 21:19:48.110 GMT",
-            "lsn",
-            "1481",
-            "x-ms-schemaversion",
-            "1.8",
-            "x-ms-quorum-acked-lsn",
-            "1481",
-            "x-ms-current-write-quorum",
-            "1",
-            "x-ms-current-replica-set-size",
-            "1",
-            "x-ms-xp-role",
-            "0",
-            "x-ms-global-Committed-lsn",
-            "-1",
-            "x-ms-number-of-read-regions",
-            "0",
-            "x-ms-transport-request-id",
-            "31",
-            "x-ms-cosmos-llsn",
-            "1481",
-            "x-ms-cosmos-quorum-acked-llsn",
-            "1481",
-            "x-ms-session-token",
-            "0:-1#1481",
-            "x-ms-request-charge",
-            "2",
-            "x-ms-serviceversion",
-            "version=2.4.0.0",
-            "x-ms-activity-id",
-            "3320daed-5cc9-448f-815c-2a6ce9813d83",
-            "x-ms-gatewayversion",
-            "version=2.4.0.0",
-            "Date",
-            "Mon, 28 Oct 2019 21:20:08 GMT",
-            "Connection",
-            "close"
-        ]
-    },
-    {
-        "scope": "https://localhost:8081",
-        "method": "POST",
-        "path": "/dbs/test-db/colls",
-        "body": {
-            "id": "bot-storage",
-            "partitionKey": {
-                "paths": [
-                    "/id"
-                ]
-            }
-        },
-        "status": 201,
-        "response": {
-            "id": "bot-storage",
-            "indexingPolicy": {
-                "indexingMode": "consistent",
-                "automatic": true,
-                "includedPaths": [
-                    {
-                        "path": "/*",
-                        "indexes": []
-                    }
-                ],
-                "excludedPaths": [
-                    {
-                        "path": "/\"_etag\"/?"
-                    }
-                ]
-            },
-            "partitionKey": {
-                "paths": [
-                    "/id"
-                ],
-                "kind": "Hash"
-            },
-            "geospatialConfig": {
-                "type": "Geography"
-            },
-            "_rid": "iC5xAK-diUI=",
-            "_ts": 1572297609,
-            "_self": "dbs/iC5xAA==/colls/iC5xAK-diUI=/",
-            "_etag": "\"00000000-0000-0000-8dd5-7a0299f901d5\"",
-            "_docs": "docs/",
-            "_sprocs": "sprocs/",
-            "_triggers": "triggers/",
-            "_udfs": "udfs/",
-            "_conflicts": "conflicts/"
-        },
-        "rawHeaders": [
-            "Cache-Control",
-            "no-store, no-cache",
-            "Pragma",
-            "no-cache",
-            "Transfer-Encoding",
-            "chunked",
-            "Content-Type",
-            "application/json",
-            "Server",
-            "Microsoft-HTTPAPI/2.0",
-            "Access-Control-Allow-Origin",
-            "",
-            "Access-Control-Allow-Credentials",
-            "true",
-            "x-ms-last-state-change-utc",
-            "Mon, 28 Oct 2019 21:20:02.595 GMT",
-            "etag",
-            "\"00000000-0000-0000-8dd5-7a0299f901d5\"",
-            "collection-partition-index",
-            "0",
-            "collection-service-index",
-            "0",
-            "lsn",
-            "2879",
-            "x-ms-schemaversion",
-            "1.8",
-            "x-ms-alt-content-path",
-            "dbs/test-db",
-            "x-ms-quorum-acked-lsn",
-            "2879",
-            "x-ms-current-write-quorum",
-            "1",
-            "x-ms-current-replica-set-size",
-            "1",
-            "x-ms-xp-role",
-            "0",
-            "x-ms-global-Committed-lsn",
-            "-1",
-            "x-ms-number-of-read-regions",
-            "0",
-            "x-ms-item-lsn",
-            "2879",
-            "x-ms-transport-request-id",
-            "17",
-            "x-ms-cosmos-llsn",
-            "2879",
-            "x-ms-cosmos-quorum-acked-llsn",
-            "2879",
-            "x-ms-cosmos-item-llsn",
-            "2879",
-            "x-ms-session-token",
-            "0:-1#2879",
-            "x-ms-request-charge",
-            "1",
-            "x-ms-serviceversion",
-            "version=2.4.0.0",
-            "x-ms-activity-id",
-            "fed2d574-d943-4aa8-8fa1-a5bb0820a8f7",
-            "x-ms-gatewayversion",
-            "version=2.4.0.0",
-            "Date",
-            "Mon, 28 Oct 2019 21:20:08 GMT",
-            "Connection",
-            "close"
-        ]
-    },
-    {
-        "scope": "https://localhost:8081",
-        "method": "GET",
         "path": "/dbs/test-db/colls/bot-storage/docs/unknown",
         "body": "",
         "status": 404,
         "response": {
             "code": "NotFound",
-            "message": "Message: {\"Errors\":[\"Resource Not Found\"]}\r\nActivityId: bf2bfe53-9bc2-4b27-8511-17778247c203, Request URI: /apps/DocDbApp/services/DocDbServer16/partitions/a4cb495c-38c8-11e6-8106-8cdcd42c33be/replicas/1p/, RequestStats: \r\nRequestStartTime: 2019-10-28T21:20:09.4321487Z, RequestEndTime: 2019-10-28T21:20:09.4611484Z, Number of regions attempted: 1\r\nResponseTime: 2019-10-28T21:20:09.4611484Z, StoreResult: StorePhysicalAddress: rntbd://127.0.0.1:10253/apps/DocDbApp/services/DocDbServer16/partitions/a4cb495c-38c8-11e6-8106-8cdcd42c33be/replicas/1p/, LSN: 2879, GlobalCommittedLsn: -1, PartitionKeyRangeId: 0, IsValid: True, StatusCode: 404, SubStatusCode: 0, RequestCharge: 1, ItemLSN: -1, SessionToken: -1#2879, UsingLocalLSN: True, TransportException: null, ResourceType: Document, OperationType: Read\r\n, SDK: Microsoft.Azure.Documents.Common/2.4.0.0"
+            "message": "Message: {\"Errors\":[\"Resource Not Found\"]}\r\nActivityId: d77eb317-0151-4c85-8ecd-037f37509f30, Request URI: /apps/DocDbApp/services/DocDbServer7/partitions/a4cb4953-38c8-11e6-8106-8cdcd42c33be/replicas/1p/, RequestStats: \r\nRequestStartTime: 2019-12-12T23:26:56.0446559Z, RequestEndTime: 2019-12-12T23:26:56.0536541Z,  Number of regions attempted:1\r\nResponseTime: 2019-12-12T23:26:56.0536541Z, StoreResult: StorePhysicalAddress: rntbd://127.0.0.1:10253/apps/DocDbApp/services/DocDbServer7/partitions/a4cb4953-38c8-11e6-8106-8cdcd42c33be/replicas/1p/, LSN: 4034, GlobalCommittedLsn: -1, PartitionKeyRangeId: 0, IsValid: True, StatusCode: 404, SubStatusCode: 0, RequestCharge: 1, ItemLSN: -1, SessionToken: -1#4034, UsingLocalLSN: True, TransportException: null, ResourceType: Document, OperationType: Read\r\n, SDK: Microsoft.Azure.Documents.Common/2.7.0"
         },
         "rawHeaders": [
             "Transfer-Encoding",
@@ -281,13 +23,13 @@
             "Access-Control-Allow-Credentials",
             "true",
             "x-ms-last-state-change-utc",
-            "Mon, 28 Oct 2019 21:20:02.595 GMT",
+            "Wed, 11 Dec 2019 19:46:09.043 GMT",
             "lsn",
-            "2879",
+            "4034",
             "x-ms-schemaversion",
             "1.8",
             "x-ms-quorum-acked-lsn",
-            "2879",
+            "4034",
             "x-ms-current-write-quorum",
             "1",
             "x-ms-current-replica-set-size",
@@ -299,23 +41,23 @@
             "x-ms-number-of-read-regions",
             "0",
             "x-ms-transport-request-id",
-            "18",
+            "1354",
             "x-ms-cosmos-llsn",
-            "2879",
+            "4034",
             "x-ms-cosmos-quorum-acked-llsn",
-            "2879",
+            "4034",
             "x-ms-session-token",
-            "0:-1#2879",
+            "0:-1#4034",
             "x-ms-request-charge",
             "1",
             "x-ms-serviceversion",
-            "version=2.4.0.0",
+            "version=2.7.0.0",
             "x-ms-activity-id",
-            "bf2bfe53-9bc2-4b27-8511-17778247c203",
+            "d77eb317-0151-4c85-8ecd-037f37509f30",
             "x-ms-gatewayversion",
-            "version=2.4.0.0",
+            "version=2.7.0",
             "Date",
-            "Mon, 28 Oct 2019 21:20:08 GMT",
+            "Thu, 12 Dec 2019 23:26:55 GMT",
             "Connection",
             "close"
         ]
