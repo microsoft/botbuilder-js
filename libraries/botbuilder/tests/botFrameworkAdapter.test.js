@@ -1,7 +1,7 @@
 const assert = require('assert');
-const { TurnContext } = require('botbuilder-core');
+const { ActivityTypes, TurnContext } = require('botbuilder-core');
 const connector = require('botframework-connector');
-const { AuthenticationConstants, CertificateAppCredentials } = require('botframework-connector');
+const { AuthenticationConstants, CertificateAppCredentials, ConnectorClient, MicrosoftAppCredentials } = require('botframework-connector');
 const { BotFrameworkAdapter } = require('../');
 
 const reference = {
@@ -257,13 +257,25 @@ describe(`BotFrameworkAdapter`, function () {
         });
     });
 
-    it(`should createConnectorClient().`, function (done) {
-        const req = new MockRequest(incomingMessage);
-        const adapter = new AdapterUnderTest();
-        const client = adapter.testCreateConnectorClient(reference.serviceUrl);
-        assert(client, `client not returned.`);
-        assert(client.conversations, `invalid client returned.`);
-        done();
+    describe('get/create ConnectorClient methods', () => {
+        it(`should createConnectorClient().`, function (done) {
+            const req = new MockRequest(incomingMessage);
+            const adapter = new AdapterUnderTest();
+            const client = adapter.testCreateConnectorClient(reference.serviceUrl);
+            assert(client, `client not returned.`);
+            assert(client.conversations, `invalid client returned.`);
+            done();
+        });
+
+        it('getOrCreateConnectorClient should create a new client if the cached serviceUrl does not match the provided one', () => {
+            const adapter = new BotFrameworkAdapter();
+            const context = new TurnContext(adapter, { type: ActivityTypes.Message, text: 'hello', serviceUrl: 'http://bing.com' });
+            const cc = new ConnectorClient(new MicrosoftAppCredentials('', ''), {baseUri: 'http://bing.com'});
+            context.turnState.set(adapter.ConnectorClientKey, cc);
+
+            const client = adapter.getOrCreateConnectorClient(context, 'https://botframework.com', adapter.credentials);
+            assert.notEqual(client.baseUri, cc.baseUri);
+        });
     });
 
     it(`should processActivity().`, function (done) {
@@ -732,15 +744,15 @@ describe(`BotFrameworkAdapter`, function () {
     });
 
     // This unit test doesn't work anymore because client.UserAgentInfo was removed, so we can't inspect the user agent string
-    // it(`should create a User-Agent header with the same info as the host machine.`, function (done) {
-    //     const adapter = new BotFrameworkAdapter();
-    //     const client = adapter.createConnectorClient('https://example.com');
-    //     //const userAgentHeader = client.userAgentInfo.value;
-    //     const pjson = require('../package.json');
-    //     const userAgent = 'Microsoft-BotFramework/3.1 BotBuilder/' + pjson.version + ' (Node.js,Version=' + process.version + '; ' + os.type() + ' ' + os.release() + '; ' + os.arch() + ')';
-    //     // assert(userAgentHeader.includes(userAgent), `ConnectorClient doesn't have user-agent header created by BotFrameworkAdapter or header is incorrect.`);
-    //     done();
-    // });
+    xit(`should create a User-Agent header with the same info as the host machine.`, function (done) {
+        const adapter = new BotFrameworkAdapter();
+        const client = adapter.createConnectorClient('https://example.com');
+        //const userAgentHeader = client.userAgentInfo.value;
+        const pjson = require('../package.json');
+        const userAgent = 'Microsoft-BotFramework/3.1 BotBuilder/' + pjson.version + ' (Node.js,Version=' + process.version + '; ' + os.type() + ' ' + os.release() + '; ' + os.arch() + ')';
+        // assert(userAgentHeader.includes(userAgent), `ConnectorClient doesn't have user-agent header created by BotFrameworkAdapter or header is incorrect.`);
+        done();
+    });
 
     it(`should set openIdMetadata property on ChannelValidation`, function (done) {
         const testEndpoint = "http://rainbows.com";
