@@ -1,11 +1,12 @@
 {
   "name": "bot-integration-tests",
-  "version": "0.0.0",
+  "version": "4.1.6",
   "description": "Integration tests for botbuilder",
   "scripts": {
     "build": "tsc",
     "just-test": "tsc && mocha \"./transpiled-tests/**/*.test.js\"",
-    "test": "tsc && nyc mocha \"./transpiled-tests/**/*.test.js\""
+    "test": "tsc && nyc mocha \"./transpiled-tests/**/*.test.js\"",
+    "set-version": "npm version --allow-same-version ${Version}"
   },
   "author": "Microsoft Corp.",
   "license": "MIT",
