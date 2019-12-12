@@ -110,12 +110,11 @@ export class BotFrameworkHttpClient {
 
         const appPassword = await this.credentialProvider.getAppPassword(appId);
         if (JwtTokenValidation.isGovernment(this.channelService)) {
-            appCredentials = new MicrosoftAppCredentials(appId, appPassword, this.channelService);
+            appCredentials = new MicrosoftAppCredentials(appId, appPassword, this.channelService, oAuthScope);
             appCredentials.oAuthEndpoint = GovernmentConstants.ToChannelFromBotLoginUrl;
             appCredentials.oAuthScope = GovernmentConstants.ToChannelFromBotOAuthScope;
         } else {
-            appCredentials = new MicrosoftAppCredentials(appId, appPassword, this.channelService);
-            appCredentials.oAuthScope = !oAuthScope ? AuthenticationConstants.ToChannelFromBotOAuthScope : oAuthScope;
+            appCredentials = new MicrosoftAppCredentials(appId, appPassword, this.channelService, oAuthScope);
         }
 
         // Cache the credentials for later use
