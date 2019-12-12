@@ -48,6 +48,7 @@ const reset = async () => {
             await client.database(settings.databaseId).delete();
         } catch (err) { }
         await client.databases.create({ id: settings.databaseId });
+        await storage.initialize();
     }
 };
 
@@ -104,9 +105,22 @@ describe('CosmosDbPartitionedStorage - Constructor Tests', function() {
     });
 });
 
+/**
+ * DoOnce prevents us from re-creating containers, which is necessary for testing. We can skip it by
+ *   setting process.env.SKIP_DO_ONCE to 'true'. We'll also capture whatever it is currently set to
+ *   (in before()) so that we can reset it back after testing (in after()), just in case.
+ */
+const originalSkipDoOnce = process.env.SKIP_DO_ONCE;
+
 describe('CosmosDbPartitionedStorage - Base Storage Tests', function() {
-    before('cleanup', reset);
-    after('cleanup', reset);
+    before('cleanup', async () => {
+        process.env['SKIP_DO_ONCE'] = 'true';
+        await reset();
+    });
+    after('cleanup', async () => {
+        await reset();
+        process.env['SKIP_DO_ONCE'] = originalSkipDoOnce;
+    });
 
     it('return empty object when reading unknown key', async function() {
         checkEmulator();
