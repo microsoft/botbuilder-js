@@ -16,8 +16,8 @@ export class CertificateAppCredentials extends AppCredentials {
     public certificateThumbprint: string;
     public certificatePrivateKey: string;
 
-    constructor(appId: string, certificateThumbprint: string, certificatePrivateKey: string, channelAuthTenant?: string) {
-        super(appId, channelAuthTenant);
+    constructor(appId: string, certificateThumbprint: string, certificatePrivateKey: string, channelAuthTenant?: string, oAuthScope?: string) {
+        super(appId, channelAuthTenant, oAuthScope);
         this.certificateThumbprint = certificateThumbprint;
         this.certificatePrivateKey = certificatePrivateKey;
     }
