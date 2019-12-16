@@ -24,7 +24,7 @@ export {
     WebResponse
 } from './interfaces';
 export * from './skills';
-export * from './streaming';
+export { StreamingHttpClient, TokenResolver } from './streaming';
 export * from './teamsActivityHandler';
 export * from './teamsActivityHelpers';
 export * from './teamsInfo';

@@ -14,7 +14,7 @@ import { AuthenticationConfiguration, AuthenticationConstants, ChannelValidation
 import { INodeBuffer, INodeSocket, IReceiveRequest, ISocket, IStreamingTransportServer, NamedPipeServer, NodeWebSocketFactory, NodeWebSocketFactoryBase, RequestHandler, StreamingResponse, WebSocketServer } from 'botframework-streaming';
 
 import { InvokeResponse, WebRequest, WebResponse } from './interfaces';
-import { StreamingHttpClient, TokenResolver } from './streaming';
+import { defaultPipeName, GET, POST, MESSAGES_PATH, StreamingHttpClient, TokenResolver, VERSION_PATH } from './streaming';
 
 export enum StatusCodes {
     OK = 200,
@@ -101,13 +101,6 @@ export const USER_AGENT: string = `Microsoft-BotFramework/3.1 BotBuilder/${ pjso
     `(Node.js,Version=${ NODE_VERSION }; ${ TYPE } ${ RELEASE }; ${ ARCHITECTURE })`;
 const OAUTH_ENDPOINT = 'https://api.botframework.com';
 const US_GOV_OAUTH_ENDPOINT = 'https://api.botframework.azure.us';
-
-// Streaming-specific constants
-const defaultPipeName = 'bfv4.pipes';
-const VERSION_PATH: string = '/api/version';
-const MESSAGES_PATH: string = '/api/messages';
-const GET: string = 'GET';
-const POST: string = 'POST';
 
 // This key is exported internally so that the TeamsActivityHandler will not overwrite any already set InvokeResponses.
 export const INVOKE_RESPONSE_KEY: symbol = Symbol('invokeResponse');
