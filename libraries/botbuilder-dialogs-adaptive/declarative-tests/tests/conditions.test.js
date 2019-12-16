@@ -1,9 +1,9 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 require("mocha");
-const testRunner_1 = require("./testRunner");
+const botbuilder_dialogs_adaptive_1 = require("botbuilder-dialogs-adaptive");
 describe('Conditions', () => {
-    const testRunner = new testRunner_1.TestRunner('resources/conditionsTests');
+    const testRunner = new botbuilder_dialogs_adaptive_1.TestRunner('resources/conditionsTests');
     it('OnIntent', async () => {
         await testRunner.runTestScript('OnIntent');
     });

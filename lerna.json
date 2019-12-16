@@ -2,7 +2,6 @@
   "lerna": "3.2.1",
   "packages": [
     "samples/*",
-    "tests/*",
     "libraries/botbuilder",
     "libraries/botbuilder-ai",
     "libraries/botbuilder-applicationinsights",
@@ -10,6 +9,7 @@
     "libraries/botbuilder-core",
     "libraries/botbuilder-dialogs",
     "libraries/botbuilder-dialogs-adaptive",
+    "libraries/botbuilder-dialogs-adaptive/declarative-tests",
     "libraries/botbuilder-dialogs-declarative",
     "libraries/botbuilder-testing",
     "libraries/botbuilder-lg",

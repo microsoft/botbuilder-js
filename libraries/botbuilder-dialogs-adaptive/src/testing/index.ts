@@ -10,4 +10,5 @@ export * from './adaptiveTestAdapter';
 export * from './testScript';
 export * from './testAction';
 export * from './testActions';
+export * from './testRunner';
 export * from './actions';

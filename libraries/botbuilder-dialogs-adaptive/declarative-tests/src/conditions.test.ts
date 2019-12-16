@@ -1,5 +1,5 @@
 import 'mocha';
-import { TestRunner } from './testRunner';
+import { TestRunner } from 'botbuilder-dialogs-adaptive';
 
 describe('Conditions', () => {
     const testRunner = new TestRunner('resources/conditionsTests');
