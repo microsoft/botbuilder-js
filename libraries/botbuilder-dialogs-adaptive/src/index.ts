@@ -16,3 +16,5 @@ export * from './expressionProperty';
 export * from './sequenceContext';
 export * from './stringTemplate';
 export * from './testing';
+export * from './adaptiveComponentRegistration';
+export * from './adaptiveTestComponentRegistration';

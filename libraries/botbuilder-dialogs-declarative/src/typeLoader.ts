@@ -8,12 +8,21 @@
 
 import { TypeFactory } from "./factory/typeFactory";
 import { IResourceProvider } from "./resources/resourceProvider";
+import { ComponentRegistration } from "./componentRegistration";
 
 export class TypeLoader {
 
     constructor(private factory?: TypeFactory, private resourceProvider?: IResourceProvider) { 
         if (!this.factory) {
             this.factory = new TypeFactory();
+        }
+    }
+
+    public addComponent(component: ComponentRegistration) {
+        const types = component.getTypes();
+        for (let i = 0; i < types.length; i++) {
+            const type = types[i];
+            this.factory.register(type.name, type.builder);
         }
     }
 
