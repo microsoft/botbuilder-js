@@ -7,9 +7,9 @@
  */
 import { Activity, ConversationReference, TurnContext } from 'botbuilder-core';
 import { ICredentialProvider } from 'botframework-connector';
-import { InvokeResponse } from '../botFrameworkAdapter';
 import { BotFrameworkHttpClient } from '../botFrameworkHttpClient';
 import { BotFrameworkSkill } from './botFrameworkSkill';
+import { InvokeResponse } from '../interfaces';
 import { SkillConversationIdFactoryBase } from './skillConversationIdFactoryBase';    
 
 /**

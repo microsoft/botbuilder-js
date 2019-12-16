@@ -9,18 +9,20 @@
 export {
     BotFrameworkAdapter,
     BotFrameworkAdapterSettings,
-    InvokeResponse,
     INVOKE_RESPONSE_KEY,
     StatusCodes,
     StatusCodeError,
-    WebRequest,
-    WebResponse
 } from './botFrameworkAdapter';
 export { BotFrameworkHttpClient } from './botFrameworkHttpClient';
 export { ChannelServiceHandler } from './channelServiceHandler';
 export { ChannelServiceRoutes, RouteHandler, WebServer } from './channelServiceRoutes';
 export * from './fileTranscriptStore';
 export * from './inspectionMiddleware';
+export {
+    InvokeResponse,
+    WebRequest,
+    WebResponse
+} from './interfaces';
 export * from './skills';
 export * from './streaming';
 export * from './teamsActivityHandler';

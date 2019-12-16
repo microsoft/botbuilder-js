@@ -13,6 +13,7 @@ import { Activity, ActivityTypes, BotAdapter, BotCallbackHandlerKey, ChannelAcco
 import { AuthenticationConfiguration, AuthenticationConstants, ChannelValidation, ClaimsIdentity, ConnectorClient, EmulatorApiClient, GovernmentConstants, GovernmentChannelValidation, JwtTokenValidation, MicrosoftAppCredentials, AppCredentials, CertificateAppCredentials, SimpleCredentialProvider, TokenApiClient, TokenStatus, TokenApiModels, SkillValidation } from 'botframework-connector';
 import { INodeBuffer, INodeSocket, IReceiveRequest, ISocket, IStreamingTransportServer, NamedPipeServer, NodeWebSocketFactory, NodeWebSocketFactoryBase, RequestHandler, StreamingResponse, WebSocketServer } from 'botframework-streaming';
 
+import { InvokeResponse, WebRequest, WebResponse } from './interfaces';
 import { StreamingHttpClient, TokenResolver } from './streaming';
 
 export enum StatusCodes {
@@ -31,90 +32,6 @@ export class StatusCodeError extends Error {
         super(message);
         this.statusCode = statusCode;
     }
-}
-
-/**
- * Represents an Express or Restify request object.
- * 
- * This interface supports the framework and is not intended to be called directly for your code.
- */
-export interface WebRequest {
-    /**
-     * Optional. The request body.
-     */
-    body?: any;
-
-    /***
-     * Optional. The request headers.
-     */
-    headers: any;
-
-    /***
-     * Optional. The request method.
-     */
-    method?: any;
-
-    /***
-     * Optional. The request parameters from the url.
-     */
-    params?: any;
-
-    /***
-     * Optional. The values from the query string.
-     */
-    query?: any;
-
-    /**
-     * When implemented in a derived class, adds a listener for an event.
-     * The framework uses this method to retrieve the request body when the
-     * [body](xref:botbuilder.WebRequest.body) property is `null` or `undefined`.
-     * 
-     * @param event The event name.
-     * @param args Arguments used to handle the event.
-     * 
-     * @returns A reference to the request object.
-     */
-    on(event: string, ...args: any[]): any;
-}
-
-/**
- * Represents an Express or Restify response object.
- * 
- * This interface supports the framework and is not intended to be called directly for your code.
- */
-export interface WebResponse {
-    /**
-     * 
-     * Optional. The underlying socket.
-     */
-    socket?: any;
-
-    /**
-     * When implemented in a derived class, sends a FIN packet.
-     * 
-     * @param args The arguments for the end event.
-     * 
-     * @returns A reference to the response object.
-     */
-    end(...args: any[]): any;
-
-    /**
-     * When implemented in a derived class, sends the response.
-     * 
-     * @param body The response payload.
-     * 
-     * @returns A reference to the response object.
-     */
-    send(body: any): any;
-
-    /**
-     * When implemented in a derived class, sets the HTTP status code for the response.
-     * 
-     * @param status The status code to use.
-     * 
-     * @returns The status code.
-     */
-    status(status: number): any;
 }
 
 /**
@@ -170,23 +87,6 @@ export interface BotFrameworkAdapterSettings {
      * Optional. Used to require specific endorsements and verify claims. Recommended for Skills.
      */
     authConfig?: AuthenticationConfiguration;
-}
-
-/**
- * Represents a response returned by a bot when it receives an `invoke` activity.
- * 
- * This interface supports the framework and is not intended to be called directly for your code.
- */
-export interface InvokeResponse {
-    /**
-     * The HTTP status code of the response.
-     */
-    status: number;
-
-    /**
-     * Optional. The body of the response.
-     */
-    body?: any;
 }
 
 // Retrieve additional information, i.e., host operating system, host OS release, architecture, Node.js version
