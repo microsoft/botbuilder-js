@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 
-import { AdaptiveDialog, SendActivity, TextInput, ConfirmInput, NumberInput, ChoiceInput, EndTurn, IfCondition, RegExpRecognizer, OnIntent, OnUnknownIntent, CancelAllDialogs, DeleteProperty, EditArray, EditActions, EmitEvent, EndDialog, ForEach, ForEachPage, LogAction, RepeatDialog, ReplaceDialog, SendList, SetProperty } from 'botbuilder-dialogs-adaptive';
+import { AdaptiveDialog, SendActivity, TextInput, ConfirmInput, NumberInput, ChoiceInput, EndTurn, IfCondition, RegExpRecognizer, OnIntent, OnUnknownIntent, CancelAllDialogs, DeleteProperty, EditArray, EditActions, EmitEvent, EndDialog, ForEach, ForEachPage, LogAction, RepeatDialog, ReplaceDialog, SendList, SetProperty, DatetimeInput, OAuthInput, SwitchCondition, InitProperty, TraceActivity, HttpMethod, HttpRequest } from 'botbuilder-dialogs-adaptive';
 
 import { ConfigurableTypeBuilder } from './configurableTypeBuilder';
 import { DefaultTypeBuilder } from './defaultTypeBuilder';
@@ -67,6 +67,8 @@ import { CustomTypeBuilder } from './customTypeBuilder';
         this.register('Microsoft.FloatInput', new ConfigurableTypeBuilder(NumberInput));
         this.register('Microsoft.IntegerInput', new ConfigurableTypeBuilder(NumberInput));
         this.register('Microsoft.ChoiceInput', new ConfigurableTypeBuilder(ChoiceInput));
+        this.register('Microsoft.DatetimeInput', new ConfigurableTypeBuilder(DatetimeInput));
+        this.register('Microsoft.OAuthInput', new ConfigurableTypeBuilder(OAuthInput));
 
         // Actions
         this.register('Microsoft.IfCondition', new ConfigurableTypeBuilder(IfCondition));
@@ -85,6 +87,10 @@ import { CustomTypeBuilder } from './customTypeBuilder';
         this.register('Microsoft.SendActivity', new ConfigurableTypeBuilder(SendActivity));
         this.register('Microsoft.SendList', new ConfigurableTypeBuilder(SendList));
         this.register('Microsoft.SetProperty', new ConfigurableTypeBuilder(SetProperty));
+        this.register('Microsoft.SwitchCondition', new ConfigurableTypeBuilder(SwitchCondition));
+        this.register('Microsoft.InitProperty', new ConfigurableTypeBuilder(InitProperty));
+        this.register('Microsoft.TraceActivity', new ConfigurableTypeBuilder(TraceActivity));
+        this.register('Microsoft.HttpRequest', new ConfigurableTypeBuilder(HttpRequest));
 
         // Dialogs
         this.register('Microsoft.AdaptiveDialog', new ConfigurableTypeBuilder(AdaptiveDialog));
@@ -93,7 +99,7 @@ import { CustomTypeBuilder } from './customTypeBuilder';
         this.register('Microsoft.OnUnknownIntent', new DefaultTypeBuilder(OnUnknownIntent));
         this.register('Microsoft.OnIntent', new CustomTypeBuilder((config) => {
             let condition = new OnIntent();
-            
+
             if(config && config['intent']) {
                 condition.intent = config['intent'];
             }

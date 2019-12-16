@@ -118,7 +118,7 @@ export class ChoiceInput extends InputDialog<ChoiceInputOptions> {
     }
 
     protected onComputeId(): string {
-        return `ChoiceInput[]`;
+        return `ChoiceInput[${this.prompt.value.toString()}]`;
     }
 
     protected onInitializeOptions(dc: DialogContext, options: ChoiceInputOptions): ChoiceInputOptions {

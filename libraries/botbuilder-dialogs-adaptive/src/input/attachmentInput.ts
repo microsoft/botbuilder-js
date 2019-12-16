@@ -44,7 +44,7 @@ export class AttachmentInput extends InputDialog<InputDialogOptions> {
     }
 
     protected onComputeId(): string {
-        return `AttachmentInput[]`;
+        return `AttachmentInput[${this.prompt.value.toString()}]`;
     }
 
     protected getDefaultInput(dc: DialogContext): any {

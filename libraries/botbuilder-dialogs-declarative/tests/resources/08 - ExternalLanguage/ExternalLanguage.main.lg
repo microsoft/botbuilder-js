@@ -29,7 +29,6 @@
 - Oh no, I'm silly and confused again.
 
 # Greeting.GreetUser
-- Hello @{user.name}, nice to talk to you!
-- Hi @{user.name}, you seem nice!
-- Whassup @{user.name}?  
-
+- Hello {user.name}, nice to talk to you!
+- Hi {user.name}, you seem nice!
+- Whassup {user.name}?  

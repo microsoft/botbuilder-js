@@ -13,5 +13,7 @@ const path = require('path');
 const fs = require('fs');
 
 export interface IResourceProvider {
-    getResource(id: string) : Promise<IResource>;
+    id(): string;
+    getResource(id: string): Promise<IResource>;
+    getResources(ex: string): Promise<IResource[]>;
 }

@@ -9,10 +9,11 @@
 import { Configurable } from "botbuilder-dialogs";
 import { TypeFactory } from "./factory/typeFactory";
 import { IResourceProvider } from "./resources/resourceProvider";
+import { ResourceExplorer } from "./resources/resourceExplorer";
 
 export class TypeLoader {
 
-    constructor(private factory?: TypeFactory, private resourceProvider?: IResourceProvider) { 
+    constructor(private factory?: TypeFactory, private resourceExplorer?: ResourceExplorer) {
         if (!this.factory) {
             this.factory = new TypeFactory();
         }
@@ -37,7 +38,7 @@ export class TypeLoader {
                 return obj;
             }
 
-            // Iterate through json object properties and check whether 
+            // Iterate through json object properties and check whether
             // there are typed objects that require factory calls
             for (const key in jsonObj) {
                 if (jsonObj.hasOwnProperty(key) && key != "$type") {
@@ -48,7 +49,7 @@ export class TypeLoader {
                         if (Array.isArray(obj[key])) {
                             obj[key] = [];
 
-                            // Recursively check for factory 
+                            // Recursively check for factory
                             for (let item of setting) {
                                 let loadedItem = await this.loadObjectTree(item);
                                 obj[key].push(loadedItem);
@@ -60,8 +61,8 @@ export class TypeLoader {
                     } else if (typeof setting == 'object' && setting.hasOwnProperty('$type')) {
                         obj[key] = await this.loadObjectTree(setting);
                     // Process string references where an object is expected using resourceProvider
-                    } else if (setting && typeof setting == 'string' && !setting.includes('=') && obj.hasOwnProperty(key) && typeof obj[key] != 'string' && this.resourceProvider) {
-                        let resource = await this.resourceProvider.getResource(`${setting}.dialog`)
+                    } else if (setting && typeof setting == 'string' && !setting.includes('=') && obj.hasOwnProperty(key) && typeof obj[key] != 'string' && this.resourceExplorer) {
+                        let resource = await this.resourceExplorer.getResource(`${setting}.dialog`)
 
                         if (resource) {
                             const text = await resource.readText();
@@ -69,24 +70,24 @@ export class TypeLoader {
                         } else if (!obj[key]){
                             obj[key] = setting;
                         }
-                    } 
+                    }
                     else if (!obj[key]) {
-                        obj[key] = setting; 
+                        obj[key] = setting;
                     }
                 }
             }
             return obj;
-        } 
+        }
         // Implicit copy: we receive a string in a leaf node but actually expect an object.
         else if (typeof jsonObj == 'string') {
-            let resource = await this.resourceProvider.getResource(`${jsonObj}.dialog`)
+            let resource = await this.resourceExplorer.getResource(`${jsonObj}.dialog`)
             if (resource) {
                 const text = await resource.readText();
 
                 return await this.loadObjectTree(JSON.parse(text));
-            } 
+            }
         }
-        
+
         return null;
     }
 }
