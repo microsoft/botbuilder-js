@@ -1,4 +1,4 @@
-import { TypeFactory, FileResourceProvider, TypeLoader } from "botbuilder-dialogs-declarative";
+import { TypeFactory, TypeLoader, ResourceExplorer } from "botbuilder-dialogs-declarative";
 import { AdaptiveComponentRegistration } from "../adaptiveComponentRegistration";
 import { AdaptiveTestComponentRegistration } from "../adaptiveTestComponentRegistration";
 import { TestScript } from "./testScript";
@@ -10,10 +10,10 @@ export class TestRunner {
 
     constructor(private resourcePath: string) {
         const typeFactory = new TypeFactory();
-        const resourceProvider = new FileResourceProvider();
-        resourceProvider.registerDirectory(this.resourcePath);
+        const resourceExplorer = new ResourceExplorer();
+        resourceExplorer.addFolder(this.resourcePath);
 
-        this.typeLoader = new TypeLoader(typeFactory, resourceProvider);
+        this.typeLoader = new TypeLoader(typeFactory, resourceExplorer);
         this.typeLoader.addComponent(new AdaptiveComponentRegistration());
         this.typeLoader.addComponent(new AdaptiveTestComponentRegistration());
     }
