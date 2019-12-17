@@ -51,7 +51,7 @@ export class NumberInput extends InputDialog<InputDialogOptions> {
     }
 
     protected onComputeId(): string {
-        return `NumberInput[]`;
+        return `NumberInput[${this.prompt.value.toString()}]`;
     }
 
     protected async onRecognizeInput(dc: DialogContext, consultation: boolean): Promise<InputState> {

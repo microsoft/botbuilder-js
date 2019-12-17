@@ -31,7 +31,8 @@
     "botbuilder-dialogs": "~4.1.6",
     "botframework-connector": "~4.1.6",
     "botframework-schema": "~4.1.6",
-    "jsonpath": "^1.0.0"
+    "jsonpath": "^1.0.0",
+    "node-watch": "^0.6.3"
   },
   "devDependencies": {
     "@types/mocha": "^2.2.47",

@@ -1,17 +1,22 @@
 {
     "$schema": "../../app.schema",
     "$type": "Microsoft.AdaptiveDialog",
-    "actions": [
+    "triggers": [
         {
-            "$type": "Microsoft.SendActivity",
-            "activity": "What's up?"
-        },
-        {
-            "$type": "Microsoft.EndTurn"
-        },
-        {
-            "$type": "Microsoft.SendActivity",
-            "activity": "Oh I see!"
+            "$type": "Microsoft.OnUnknownIntent",
+            "actions": [
+                {
+                    "$type": "Microsoft.SendActivity",
+                    "activity": "What's up?"
+                },
+                {
+                    "$type": "Microsoft.EndTurn"
+                },
+                {
+                    "$type": "Microsoft.SendActivity",
+                    "activity": "Oh I see!"
+                }
+            ]
         }
     ]
 }

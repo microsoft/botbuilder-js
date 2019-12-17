@@ -19,3 +19,5 @@ export * from './resources/fileResource';
 export * from './resources/resource';
 export * from './resources/resourceProvider';
 export * from './resources/fileResourceProvider';
+export * from './resources/folderResoureProvider';
+export * from './resources/resourceExplorer';

@@ -40,7 +40,7 @@ export class DatetimeInput extends InputDialog<InputDialogOptions> {
     }
 
     protected onComputeId(): string {
-        return `DatetimeInput[locale:${this.defaultLocale}]`;
+        return `DatetimeInput[${this.prompt.value.toString()}]`;
     }
 
     protected async onRecognizeInput(dc: DialogContext, consultation: boolean): Promise<InputState> {

@@ -45,7 +45,7 @@ export class SendList extends Dialog {
     }
 
     protected onComputeId(): string {
-        return `SendList[]`;
+        return `SendList[${this.listProperty}]`;
     }
 
     /**

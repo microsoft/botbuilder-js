@@ -125,6 +125,7 @@ export class ExpressionType {
 
     // Misc
     public static readonly Constant: string = 'Constant';
+    public static readonly Lambda: string = 'Lambda';
     public static readonly If: string = 'if';
     public static readonly Rand: string = 'rand';
 

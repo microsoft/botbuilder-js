@@ -181,7 +181,9 @@ export abstract class InputDialog<O extends InputDialogOptions> extends Dialog<O
 
     protected async onPreBubbleEvent(dc: DialogContext, event: DialogEvent): Promise<boolean> {
         if (event.name === DialogEvents.activityReceived && dc.context.activity.type === ActivityTypes.Message) {
-            dc.parent.emitEvent(AdaptiveEventNames.recognizeUtterance, dc.context.activity, false);
+            if (dc.parent) {
+                dc.parent.emitEvent(AdaptiveEventNames.recognizeUtterance, dc.context.activity, false);
+            }
             let canInterrupt: boolean = true;
             if (this.allowInterruptions) {
                 const { value, error } = this.allowInterruptions.evaluate(this.id, dc.state);

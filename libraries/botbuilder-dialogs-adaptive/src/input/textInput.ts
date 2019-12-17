@@ -45,7 +45,7 @@ export class TextInput extends InputDialog<InputDialogOptions> {
     }
 
     protected onComputeId(): string {
-        return `TextInput[]`;
+        return `TextInput[${this.prompt.value.toString()}]`;
     }
 
     protected async onRecognizeInput(dc: DialogContext, consultation: boolean): Promise<InputState> {
