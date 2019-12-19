@@ -41,7 +41,7 @@ bot.rootDialog = dialogs;
 // Add a default rule for handling incoming messages
 dialogs.triggers.push(new OnUnknownIntent([
     new CodeAction(async (dc) => {
-        const count = dc.state.getValue('conversation.count').value || 0;
+        const count = dc.state.getValue('conversation.count') || 0;
         dc.state.setValue('conversation.count', count + 1);
         return await dc.endDialog();
     }),
