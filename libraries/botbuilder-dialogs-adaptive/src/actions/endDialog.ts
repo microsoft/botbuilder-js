@@ -41,7 +41,7 @@ export class EndDialog<O extends object = {}> extends Dialog<O> {
     public resultProperty: string;
 
     public async beginDialog(dc: DialogContext): Promise<DialogTurnResult> {
-        const result = this.resultProperty ? dc.state.getValue(this.resultProperty).value : undefined;
+        const result = this.resultProperty ? dc.state.getValue(this.resultProperty) : undefined;
         return dc.parent ? await dc.parent.endDialog(result) : await dc.endDialog(result);
     }
 }

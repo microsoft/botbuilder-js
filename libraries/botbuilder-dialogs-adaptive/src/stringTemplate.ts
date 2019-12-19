@@ -91,7 +91,7 @@ function textLiteral(buffer: string): (dc: DialogContext) => string {
 
 function textSlot(path: string): (dc: DialogContext) => string {
     return (dc) => {
-        const value = dc.state.getValue(path).value;
+        const value = dc.state.getValue(path);
         switch (typeof value) {
             case 'object':
                 return JSON.stringify(value);

@@ -57,7 +57,7 @@ export class TextInput extends InputDialog<InputDialogOptions> {
         }
 
         // Treat input as a string
-        let input: string = dc.state.getValue(InputDialog.VALUE_PROPERTY).value.toString();
+        let input: string = dc.state.getValue(InputDialog.VALUE_PROPERTY).toString();
 
         // Format output
         switch (this.outputFormat) {

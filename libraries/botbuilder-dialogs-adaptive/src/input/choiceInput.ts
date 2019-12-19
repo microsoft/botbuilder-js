@@ -141,8 +141,8 @@ export class ChoiceInput extends InputDialog<ChoiceInputOptions> {
 
     protected async onRecognizeInput(dc: DialogContext, consultation: boolean): Promise<InputState> {
         // Get input and options
-        let input: string = dc.state.getValue(InputDialog.VALUE_PROPERTY).value.toString();
-        const options: ChoiceInputOptions = dc.state.getValue(InputDialog.OPTIONS_PROPERTY).value;
+        let input: string = dc.state.getValue(InputDialog.VALUE_PROPERTY).toString();
+        const options: ChoiceInputOptions = dc.state.getValue(InputDialog.OPTIONS_PROPERTY);
 
         // Format choices
         const choices = ChoiceFactory.toChoices(options.choices);
@@ -181,7 +181,7 @@ export class ChoiceInput extends InputDialog<ChoiceInputOptions> {
         }
 
         // Format choices
-        const options: ChoiceInputOptions = dc.state.getValue(InputDialog.OPTIONS_PROPERTY).value;
+        const options: ChoiceInputOptions = dc.state.getValue(InputDialog.OPTIONS_PROPERTY);
         const choices = ChoiceFactory.toChoices(options.choices);
 
         // Format prompt to send

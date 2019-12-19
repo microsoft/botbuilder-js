@@ -87,14 +87,14 @@ export abstract class InputDialog<O extends InputDialogOptions> extends Dialog<O
         // Initialize turn count & input
         dc.state.setValue(InputDialog.TURN_COUNT_PROPERTY, 0);
         if (this.property) {
-            dc.state.setValue(InputDialog.VALUE_PROPERTY, dc.state.getValue(this.property).value);
+            dc.state.setValue(InputDialog.VALUE_PROPERTY, dc.state.getValue(this.property));
         }
 
         // Recognize input
         const state = this.alwaysPrompt ? InputState.missing : await this.recognizeInput(dc, false);
         if (state == InputState.valid) {
             // Return input
-            const value = dc.state.getValue(InputDialog.VALUE_PROPERTY).value;
+            const value = dc.state.getValue(InputDialog.VALUE_PROPERTY);
             if (this.property) { dc.state.setValue(this.property, value) }
             return await dc.endDialog(value);
         } else {
@@ -118,14 +118,14 @@ export abstract class InputDialog<O extends InputDialogOptions> extends Dialog<O
         }
 
         // Increment turn count
-        const turnCount = dc.state.getValue(InputDialog.TURN_COUNT_PROPERTY).value + 1;
+        const turnCount = dc.state.getValue(InputDialog.TURN_COUNT_PROPERTY) + 1;
         dc.state.setValue(InputDialog.TURN_COUNT_PROPERTY, turnCount);
 
         // Recognize input
         const state = await this.recognizeInput(dc, false);
         if (state == InputState.valid) {
             // Return input
-            const value = dc.state.getValue(InputDialog.VALUE_PROPERTY).value;
+            const value = dc.state.getValue(InputDialog.VALUE_PROPERTY);
             if (this.property) { dc.state.setValue(this.property, value) }
             return await dc.endDialog(value);
         } else if (this.maxTurnCount == undefined || turnCount < this.maxTurnCount) {
@@ -299,9 +299,9 @@ export abstract class InputDialog<O extends InputDialogOptions> extends Dialog<O
 
         // Use utterance or value passed in
         if (input == undefined) {
-            const turnCount = dc.state.getValue(InputDialog.TURN_COUNT_PROPERTY).value;
+            const turnCount = dc.state.getValue(InputDialog.TURN_COUNT_PROPERTY);
             if (turnCount == 0) {
-                input = dc.state.getValue(InputDialog.VALUE_PROPERTY).value;
+                input = dc.state.getValue(InputDialog.VALUE_PROPERTY);
             } else {
                 input = this.getDefaultInput(dc);
             }

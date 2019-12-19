@@ -228,7 +228,7 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
                         };
                         await this.processEvent(sequence, recognizeUtteranceEvent, true);
 
-                        const recognized = sequence.state.getValue<RecognizerResult>('turn.recognized').value;
+                        const recognized = sequence.state.getValue<RecognizerResult>('turn.recognized');
                         const recognizedIntentEvent: DialogEvent = {
                             name: AdaptiveEventNames.recognizedIntent,
                             value: recognized,
@@ -402,7 +402,7 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
             // Increment turns action count
             // - This helps dialogs being resumed from an interruption to determine if they
             //   should re-prompt or not.
-            const actionCount = sequence.state.getValue('turn.actionCount').value;
+            const actionCount = sequence.state.getValue('turn.actionCount');
             sequence.state.setValue('turn.actionCount', typeof actionCount == 'number' ? actionCount + 1 : 1);
 
             // Is the action waiting for input or were we cancelled?
