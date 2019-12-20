@@ -11,7 +11,7 @@ export class TestRunner {
     constructor(private resourcePath: string) {
         const typeFactory = new TypeFactory();
         const resourceExplorer = new ResourceExplorer();
-        resourceExplorer.addFolder(this.resourcePath);
+        resourceExplorer.addFolder(this.resourcePath, true, false);
 
         this.typeLoader = new TypeLoader(typeFactory, resourceExplorer);
         this.typeLoader.addComponent(new AdaptiveComponentRegistration());
