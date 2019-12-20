@@ -18,13 +18,11 @@ export class CustomizedMemory implements MemoryInterface {
         this.localMemory = undefined;
     }
 
-    public getValue(path: string): { value: any; error: string } {
-        let value: any;
-        let error = '';
+    public getValue(path: string): any {
         if (this.localMemory) {
-            ({value, error} = this.localMemory.getValue(path));
-            if (!error && value) {
-                return {value, error};
+            const value = this.localMemory.getValue(path);
+            if (value) {
+                return value;
             }
         }
 
@@ -32,12 +30,12 @@ export class CustomizedMemory implements MemoryInterface {
             return this.globalMemory.getValue(path);
         }
 
-        return {value, error};
+        return undefined;
     }
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    public setValue(_path: string, _value: any): { value: any; error: string } {
-        return {value: undefined, error: `LG memory are readonly`};
+    public setValue(_path: string, _value: any): void {
+        return;
     }
 
     public  version(): string {
