@@ -1,6 +1,7 @@
-(new Function('require', 'if (!this.hasOwnProperty("FormData")) { this.FormData = require("form-data"); }; if (!this.hasOwnProperty("fetch")) { this.fetch = require("node-fetch"); }'))(require);
+
 
 import { TokenResponse } from './connectorApi/models/mappers';
+import './globals'
 
 /**
  * @module botbuilder
