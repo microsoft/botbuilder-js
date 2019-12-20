@@ -26,9 +26,9 @@ export class SimpleObjectMemory implements MemoryInterface {
         return new SimpleObjectMemory(obj);
     }
 
-    public getValue(path: string): { value: any; error: string } {
+    public getValue(path: string): any {
         if (this.memory === undefined) {
-            return {value: undefined, error: undefined};
+            return undefined;
         }
 
         const parts: string[] = path.split(/[.\[\]]+/).filter((u: string): boolean => u !== undefined && u !== '');
@@ -45,13 +45,13 @@ export class SimpleObjectMemory implements MemoryInterface {
             }
 
             if (error) {
-                return {value: undefined, error };
+                return undefined;
             }
 
             curScope = value;
         }
 
-        return {value, error: undefined};
+        return value;
     }
 
     /**
@@ -61,9 +61,9 @@ export class SimpleObjectMemory implements MemoryInterface {
      * because we can't and shouldn't smart create structure in the middle
      * you can implement a customzied Scope that support such behavior
      */
-    public setValue(path: string, input: any): { value: any; error: string } {
+    public setValue(path: string, input: any): void {
         if (this.memory === undefined) {
-            return {value: undefined, error: `Can't set value with in a null memory`};
+            return;;
         }
 
         const parts: string[] = path.split(/[.\[\]]+/).filter((u: string): boolean => u !== undefined && u !== '');
@@ -83,12 +83,12 @@ export class SimpleObjectMemory implements MemoryInterface {
             }
 
             if (error) {
-                return {value: undefined, error };
+                return;
             }
 
             if (curScope === undefined) {
                 curPath = curPath.replace(/(^\.*)/g, '');
-                return {value: undefined, error: `Can't set value to path: '${ path }', reason: '${ curPath }' is null` };
+                return;
             }
         }
 
@@ -108,17 +108,17 @@ export class SimpleObjectMemory implements MemoryInterface {
             }
 
             if (error) {
-                return {value: undefined, error};
+                return;
             }
         } else {
             error = Extensions.setProperty(curScope,parts[parts.length - 1], input).error;
             if (error) {
-                return {value: undefined, error: `Can set value to path: '${ path }', reason: ${ error }`};
+                return;
             }
         }
 
         this.versionNumber++;
-        return {value: input, error: undefined};
+        return;
     }
 
     public  version(): string {
