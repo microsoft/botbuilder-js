@@ -4,6 +4,7 @@ const { TestAdapter, TurnContext, NullTelemetryClient } = require('botbuilder-co
 const { QnAMaker } = require('../');
 const nock = require('nock');
 const fs = require('fs');
+const getFetch = require('../lib/globals').default;
 
 // Save test keys
 const knowledgeBaseId = process.env.QNAKNOWLEDGEBASEID;
@@ -745,6 +746,20 @@ describe('QnAMaker', function () {
             const descendingQnaResults = qnaResults.sort((a, b) => b.score - a.score);
 
             assert.strictEqual(qnaResults, descendingQnaResults, 'answers should be sorted from greatest to least score');
+        });
+    });
+
+    describe('getFetch()', function(){
+
+        it('Should return local fetch instance',async function(){
+            const fetch = getFetch();
+            assert(typeof fetch === 'function');
+        });
+
+        it('Should return fetch instance from global',function(){            
+            global.fetch = function() { return 'global fetch fake'; };
+            const fetch = getFetch();
+            assert.strictEqual('global fetch fake', fetch());
         });
     });
 });
