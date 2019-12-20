@@ -12,6 +12,7 @@ import { ConversationState, UserState } from 'botbuilder-core';
 import { ConversationMemoryScope } from './scopes/conversationMemoryScope';
 import { TurnMemoryScope } from './scopes/turnMemoryScope';
 import { UserMemoryScope } from './scopes/userMemoryScope';
+import { MemoryInterface } from 'botframework-expressions';
 
 export interface DialogStateManagerConfiguration {
     /**
@@ -33,7 +34,7 @@ export interface DialogStateManagerConfiguration {
  * of turn state. Path resolvers allow for shortcut behavior for mapping things like 
  * $foo -> dialog.foo
  */
-export class DialogStateManager {
+export class DialogStateManager implements MemoryInterface {
     private readonly dialogContext: DialogContext;
     private _config: DialogStateManagerConfiguration;
 
@@ -485,6 +486,10 @@ export class DialogStateManager {
         }
 
         return config;
+    }
+
+    public version(): string {
+        return '0';
     }
 }
 
