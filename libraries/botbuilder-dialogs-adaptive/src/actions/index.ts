@@ -21,7 +21,6 @@ export * from './logAction';
 export * from './repeatDialog';
 export * from './replaceDialog';
 export * from './sendActivity';
-export * from './sendList';
 export * from './setProperty';
 export * from './initProperty';
 export * from './httpRequest';

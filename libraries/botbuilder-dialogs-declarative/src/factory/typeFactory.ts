@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 
-import { AdaptiveDialog, SendActivity, TextInput, ConfirmInput, NumberInput, ChoiceInput, EndTurn, IfCondition, RegExpRecognizer, OnIntent, OnUnknownIntent, CancelAllDialogs, DeleteProperty, EditArray, EditActions, EmitEvent, EndDialog, ForEach, ForEachPage, LogAction, RepeatDialog, ReplaceDialog, SendList, SetProperty, DatetimeInput, OAuthInput, SwitchCondition, InitProperty, TraceActivity, HttpMethod, HttpRequest } from 'botbuilder-dialogs-adaptive';
+import { AdaptiveDialog, SendActivity, TextInput, ConfirmInput, NumberInput, ChoiceInput, EndTurn, IfCondition, RegExpRecognizer, OnIntent, OnUnknownIntent, CancelAllDialogs, DeleteProperty, EditArray, EditActions, EmitEvent, EndDialog, ForEach, ForEachPage, LogAction, RepeatDialog, ReplaceDialog, SetProperty, DatetimeInput, OAuthInput, SwitchCondition, InitProperty, TraceActivity, HttpMethod, HttpRequest } from 'botbuilder-dialogs-adaptive';
 
 import { ConfigurableTypeBuilder } from './configurableTypeBuilder';
 import { DefaultTypeBuilder } from './defaultTypeBuilder';
@@ -85,7 +85,6 @@ import { CustomTypeBuilder } from './customTypeBuilder';
         this.register('Microsoft.RepeatDialog', new ConfigurableTypeBuilder(RepeatDialog));
         this.register('Microsoft.ReplaceDialog', new ConfigurableTypeBuilder(ReplaceDialog));
         this.register('Microsoft.SendActivity', new ConfigurableTypeBuilder(SendActivity));
-        this.register('Microsoft.SendList', new ConfigurableTypeBuilder(SendList));
         this.register('Microsoft.SetProperty', new ConfigurableTypeBuilder(SetProperty));
         this.register('Microsoft.SwitchCondition', new ConfigurableTypeBuilder(SwitchCondition));
         this.register('Microsoft.InitProperty', new ConfigurableTypeBuilder(InitProperty));
