@@ -7,15 +7,12 @@
  */
 
 // set FormData and Fetch as global functions
-function setGlobals() {
-    if (!this.hasOwnProperty("FormData")) {
-        console.log('setting FormData as global function');
+(function() {
+    if (!this.hasOwnProperty("FormData")) { 
         this.FormData = require("form-data");
     }
+
     if (!this.hasOwnProperty("fetch")) {
-        console.log('setting fetch as global function');
         this.fetch = require("node-fetch");
     }
-}
-
-setGlobals();
+})();
