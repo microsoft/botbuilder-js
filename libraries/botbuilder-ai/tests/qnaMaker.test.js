@@ -4,7 +4,7 @@ const { TestAdapter, TurnContext, NullTelemetryClient } = require('botbuilder-co
 const { QnAMaker } = require('../');
 const nock = require('nock');
 const fs = require('fs');
-const getFetch = require('../lib/globals').default;
+const { getFetch } = require('../lib/globals');
 
 // Save test keys
 const knowledgeBaseId = process.env.QNAKNOWLEDGEBASEID;
@@ -749,17 +749,22 @@ describe('QnAMaker', function () {
         });
     });
 
-    describe('getFetch()', function(){
+    describe('getFetch()', function(){    
 
-        it('Should return local fetch instance',async function(){
+        it('Should return fetch instance from global', function(){            
+            global.fetch = function() { return 'global fetch fake'; };
+
             const fetch = getFetch();
-            assert(typeof fetch === 'function');
+            assert.strictEqual('global fetch fake', fetch());   
         });
 
-        it('Should return fetch instance from global',function(){            
-            global.fetch = function() { return 'global fetch fake'; };
+        it('Should set fetch API if it does not exist', function(){
+            if (global.fetch) {
+                delete global['fetch'];
+            }
+
             const fetch = getFetch();
-            assert.strictEqual('global fetch fake', fetch());
+            assert(typeof fetch === 'function');
         });
     });
 });

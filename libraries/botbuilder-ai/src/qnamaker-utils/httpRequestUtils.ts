@@ -11,7 +11,7 @@ const pjson: any = require('../../package.json');
 
 import { QnAMakerEndpoint } from '../qnamaker-interfaces/qnamakerEndpoint';
 
-import getFetch from '../globals'
+import { getFetch } from '../globals';
 const fetch = getFetch();
 
 /**
