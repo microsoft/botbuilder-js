@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 import { DialogTurnResult, DialogConfiguration, DialogContext, Dialog } from 'botbuilder-dialogs';
-import { Activity } from 'botbuilder-core';
+import { Activity, ActivityTypes } from 'botbuilder-core';
 
 export interface TraceActivityConfiguration extends DialogConfiguration {
     /**
@@ -26,6 +26,9 @@ export interface TraceActivityConfiguration extends DialogConfiguration {
 }
 
 export class TraceActivity<O extends object = {}> extends Dialog<O> {
+
+    public static declarativeType = 'Microsoft.TraceActivity';
+
     /**
      * Gets or sets name of the trace activity.
      */
@@ -41,27 +44,23 @@ export class TraceActivity<O extends object = {}> extends Dialog<O> {
      */
     public value?: string;
 
-    constructor();
-    constructor(name: string, valueType: string, value: string);
-    constructor(name?: string, valueType?: string, value?: string) {
+    public constructor();
+    public constructor(name: string, valueType: string, value: string);
+    public constructor(name?: string, valueType?: string, value?: string) {
         super();
         if (name) { this.name = name; }
         if (valueType) { this.valueType = valueType; }
         if (value) { this.value = value; }
     }
 
-    protected onComputeId(): string {
-        return `TraceActivity[${this.name}]`;
-    }
-
     public configure(config: TraceActivityConfiguration): this {
         return super.configure(config);
     }
 
-    public async beginDialog(dc: DialogContext): Promise<DialogTurnResult> {
+    public async beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {
         // Ensure planning context and condition
 
-        var value: Object = null;
+        let value: any;
 
         if (this.value) {
             value = dc.state.getValue(this.value);
@@ -69,13 +68,18 @@ export class TraceActivity<O extends object = {}> extends Dialog<O> {
             value = dc.state.getMemorySnapshot();
         }
 
-        var traceActivity: Activity = {
-            name: "Trace",
-            valueType: this.valueType ? this.valueType : "State",
-            value: value
-        } as Activity;
+        const traceActivity: Partial<Activity> = {
+            type: ActivityTypes.Trace,
+            timestamp: new Date(),
+            name: this.name || 'Trace',
+            value: value,
+            valueType: this.valueType || 'State'
+        };
         await dc.context.sendActivity(traceActivity);
-
         return await dc.endDialog(traceActivity);
+    }
+
+    protected onComputeId(): string {
+        return `TraceActivity[${ this.name }]`;
     }
 }

@@ -5,9 +5,9 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { OnDialogEvent } from './onDialogEvent';
-import { AdaptiveEventNames } from '../sequenceContext';
 import { Dialog } from 'botbuilder-dialogs';
+import { AdaptiveEventNames } from '../sequenceContext';
+import { OnDialogEvent } from './onDialogEvent';
 
 /**
  * Actions triggered when a UnknownIntent event has been emitted by the recognizer.
@@ -22,12 +22,14 @@ import { Dialog } from 'botbuilder-dialogs';
  */
 export class OnUnknownIntent extends OnDialogEvent {
 
+    public static declarativeType = 'Microsoft.OnUnknownIntent';
+
     /**
      * Creates a new `OnUnknownIntent` instance.
      * @param actions (Optional) The actions to add to the plan when the rule constraints are met.
      * @param condition (Optional) The condition which needs to be met for the actions to be executed.
      */
-    constructor(actions: Dialog[] = [], condition?: string) {
+    public constructor(actions: Dialog[] = [], condition?: string) {
         super(AdaptiveEventNames.unknownIntent, actions, condition);
     }
 }

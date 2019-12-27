@@ -5,26 +5,25 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { DialogTurnResult, Dialog, DialogConfiguration, DialogDependencies } from 'botbuilder-dialogs';
+import { DialogTurnResult, Dialog, DialogConfiguration, DialogDependencies, DialogContext } from 'botbuilder-dialogs';
 import { ActionChangeType, SequenceContext, ActionChangeList, ActionState } from '../sequenceContext';
 
 export interface EditActionsConfiguration extends DialogConfiguration {
-    /**
-     * The type of change to make to the dialogs list of actions.
-     */
     changeType?: ActionChangeType;
-
-    /**
-     * The actions to update the dialog with.
-     */
     actions?: Dialog[];
 }
 
 export class EditActions<O extends object = {}> extends Dialog<O> implements DialogDependencies {
-    /**
-     * The type of change to make to the dialogs list of actions.
-     */
-    public changeType: ActionChangeType;
+
+    public static declarativeType = 'Microsoft.EditActions';
+
+    public constructor();
+    public constructor(changeType: ActionChangeType, actions?: Dialog[]);
+    public constructor(changeType?: ActionChangeType, actions?: Dialog[]) {
+        super();
+        if (changeType) { this.changeType = changeType; }
+        if (actions) { this.actions = actions; }
+    }
 
     /**
      * The actions to update the dialog with.
@@ -32,45 +31,43 @@ export class EditActions<O extends object = {}> extends Dialog<O> implements Dia
     public actions: Dialog[];
 
     /**
-     * Creates a new `EditActions` instance.
-     * @param changeType The type of change to make to the dialogs list of actions.
-     * @param actions The actions to update the dialog with.
+     * The type of change to make to the dialogs list of actions.
      */
-    constructor();
-    constructor(changeType: ActionChangeType, actions: Dialog[]);
-    constructor(changeType?: ActionChangeType, actions?: Dialog[]) {
-        super();
-        if (changeType !== undefined) { this.changeType = changeType }
-        if (Array.isArray(actions)) { this.actions = actions }
-    }
+    public changeType: ActionChangeType;
 
-    protected onComputeId(): string {
-        const idList = this.actions.map(action => action.id);
-        return `EditActions[${this.changeType}|${idList.join(',')}]`;
+    public getDependencies(): Dialog[] {
+        return this.actions;
     }
 
     public configure(config: EditActionsConfiguration): this {
         return super.configure(config);
     }
 
-    public getDependencies(): Dialog[] {
-        return this.actions;
+    public async beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {
+        if (dc instanceof SequenceContext) {
+            const planActions = this.actions.map((action: Dialog): ActionState => {
+                return {
+                    dialogStack: [],
+                    dialogId: action.id,
+                    options: options
+                };
+            });
+
+            const changes: ActionChangeList = {
+                changeType: this.changeType,
+                actions: planActions
+            };
+
+            dc.queueChanges(changes);
+            return await dc.endDialog();
+        } else {
+            throw new Error(`EditAction should only be used in the context of an adaptive dialog.`);
+        }
     }
 
-    public async beginDialog(sequence: SequenceContext, options: O): Promise<DialogTurnResult> {
-        // Ensure planning context and condition
-        if (!(sequence instanceof SequenceContext)) { throw new Error(`EditAction should only be used in the context of an adaptive dialog.`) }
-        if (this.changeType == undefined) { throw new Error(`No 'changeType' specified.`) }
-
-        // Queue changes
-        const changes: ActionChangeList = {
-            changeType: this.changeType,
-            actions: this.actions.map((action) => {
-                return { dialogId: action.id, dialogStack: [] } as ActionState
-            })
-        };
-        sequence.queueChanges(changes);
-
-        return await sequence.endDialog();
+    protected onComputeId(): string {
+        const idList = this.actions.map((action: Dialog): string => action.id);
+        return `EditActions[${ this.changeType }|${ idList.join(',') }]`;
     }
+
 }

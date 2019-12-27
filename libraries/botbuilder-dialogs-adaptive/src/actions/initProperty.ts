@@ -20,7 +20,10 @@ export interface InitPropertyConfiguration extends DialogConfiguration {
     type?: string;
 }
 
-export class InitProperty extends Dialog {
+export class InitProperty<O extends object = {}> extends Dialog<O> {
+
+    public static declarativeType = 'Microsoft.InitProperty';
+
     /**
      * The in-memory property to set.
      */
@@ -36,38 +39,38 @@ export class InitProperty extends Dialog {
      * @param property The in-memory property to set.
      * @param type Type, either Array or Object.
      */
-    constructor();
-    constructor(property: string, type: string);
-    constructor(property?: string, type?: string) {
+    public constructor();
+    public constructor(property: string, type: string);
+    public constructor(property?: string, type?: string) {
         super();
         if (property) { this.property = property; }
         if (type) { this.type = type; }
-    }
-
-    protected onComputeId(): string {
-        return `InitProperty[${this.property}]`;
     }
 
     public configure(config: InitPropertyConfiguration): this {
         return super.configure(config);
     }
 
-    public async beginDialog(dc: DialogContext): Promise<DialogTurnResult> {
+    public async beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {
         // Ensure planning context and condition
-        if (!(dc instanceof SequenceContext)) { throw new Error(`${this.id}: should only be used within an AdaptiveDialog.`); }
+        if (!(dc instanceof SequenceContext)) { throw new Error(`${ this.id }: should only be used within an AdaptiveDialog.`); }
 
-        if (!this.property) { throw new Error(`${this.id}: no 'property' specified.`); }
-        if (!this.type) { throw new Error(`${this.id}: no 'type' specified.`); }
+        if (!this.property) { throw new Error(`${ this.id }: no 'property' specified.`); }
+        if (!this.type) { throw new Error(`${ this.id }: no 'type' specified.`); }
 
         switch (this.type.toLowerCase()) {
-            case "array":
+            case 'array':
                 dc.state.setValue(this.property, []);
                 break;
-            case "object":
+            case 'object':
                 dc.state.setValue(this.property, {});
                 break;
         }
 
         return await dc.endDialog();
+    }
+
+    protected onComputeId(): string {
+        return `InitProperty[${ this.property }]`;
     }
 }

@@ -5,15 +5,22 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { OnDialogEvent } from './onDialogEvent';
-import { AdaptiveEventNames } from '../sequenceContext';
 import { Dialog } from 'botbuilder-dialogs';
 import { ExpressionParserInterface, Expression, ExpressionType } from 'botframework-expressions';
+import { AdaptiveEventNames } from '../sequenceContext';
+import { OnDialogEvent, OnDialogEventConfiguration } from './onDialogEvent';
+
+export interface OnIntentConfiguration extends OnDialogEventConfiguration {
+    intent?: string;
+    entities?: string[];
+}
 
 /**
  * Actions triggered when an Activity has been received and the recognized intents and entities match specified list of intent and entity filters.
  */
 export class OnIntent extends OnDialogEvent {
+
+    public static declarativeType = 'Microsoft.OnIntent';
 
     /**
      * Gets or sets intent to match on.
@@ -32,10 +39,14 @@ export class OnIntent extends OnDialogEvent {
      * @param actions (Optional) The actions to add to the plan when the rule constraints are met.
      * @param condition (Optional) The condition which needs to be met for the actions to be executed.
      */
-    constructor(intent?: string, entities: string[] = [], actions: Dialog[] = [], condition?: string) {
+    public constructor(intent?: string, entities: string[] = [], actions: Dialog[] = [], condition?: string) {
         super(AdaptiveEventNames.recognizedIntent, actions, condition);
         this.intent = intent;
         this.entities = entities;
+    }
+
+    public configure(config: OnIntentConfiguration): this {
+        return super.configure(config);
     }
 
     public getExpression(parser: ExpressionParserInterface): Expression {

@@ -1,8 +1,14 @@
-import { TurnContext } from "botbuilder-core";
-import { TestAction } from "../testAction";
-import { AdaptiveTestAdapter } from "../adaptiveTestAdapter";
+import { TurnContext } from 'botbuilder-core';
+import { Configurable } from 'botbuilder-dialogs';
+import { TestAction } from '../testAction';
+import { AdaptiveTestAdapter } from '../adaptiveTestAdapter';
 
-export class UserDelay implements TestAction {
+export interface UserDelayConfiguration {
+    timespan?: number;
+}
+
+export class UserDelay extends Configurable implements TestAction {
+
     public static readonly declarativeType: string = 'Microsoft.Test.UserDelay';
 
     /**
@@ -10,7 +16,11 @@ export class UserDelay implements TestAction {
      */
     public timespan: number;
 
-    public async execute(_testAdapter: AdaptiveTestAdapter, _callback: (context: TurnContext) => Promise<any>) {
+    public configure(config: UserDelayConfiguration): this {
+        return super.configure(config);
+    }
+
+    public async execute(_testAdapter: AdaptiveTestAdapter, _callback: (context: TurnContext) => Promise<any>): Promise<any> {
         await Promise.resolve(resolve => setTimeout(resolve, this.timespan));
     }
 }

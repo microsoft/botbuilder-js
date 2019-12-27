@@ -5,9 +5,12 @@
     "id": "planningTest",
     "recognizer": {
       "$kind": "Microsoft.RegexRecognizer",
-      "intents": {
-        "JokeIntent": "joke"
-      }
+      "intents": [
+        {
+          "intent": "JokeIntent",
+          "pattern": "joke"
+        }
+      ]
     },
     "triggers": [
       {

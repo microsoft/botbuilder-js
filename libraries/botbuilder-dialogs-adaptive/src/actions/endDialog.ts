@@ -6,6 +6,7 @@
  * Licensed under the MIT License.
  */
 import { DialogTurnResult, DialogConfiguration, DialogContext, Dialog } from 'botbuilder-dialogs';
+import { Expression, ExpressionEngine } from 'botframework-expressions';
 
 export interface EndDialogConfiguration extends DialogConfiguration {
     /**
@@ -17,31 +18,58 @@ export interface EndDialogConfiguration extends DialogConfiguration {
 
 export class EndDialog<O extends object = {}> extends Dialog<O> {
 
+    public static declarativeType = 'Microsoft.EndDialog';
+
+    private _value: Expression;
+
     /**
      * Creates a new `EndDialog` instance.
-     * @param resultProperty (Optional) in-memory state property to return to the called dialog.
+     * @param value (Optional) A value expression for the result to be returned to the caller
      */
-    constructor(resultProperty?: string) {
+    public constructor();
+    public constructor(value?: string) {
         super();
-        if (resultProperty) { this.resultProperty = resultProperty }
+        if (value) { this.value = value; }
+    }
+
+    /**
+     * Get a value expression for the result to be returned to the caller.
+     */
+    public get value(): string {
+        return this._value ? this._value.toString() : undefined;
+    }
+
+    /**
+     * Set a value expression for the result to be returned to the caller.
+     */
+    public set value(value: string) {
+        this._value = value ? new ExpressionEngine().parse(value): undefined;
     }
 
     public configure(config: EndDialogConfiguration): this {
         return super.configure(config);
     }
 
-    protected onComputeId(): string {
-        return `EndDialog[${this.resultProperty || ''}]`;
+    public async beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {
+        if (this._value) {
+            const { value } = this._value.tryEvaluate(dc.state);
+            return await this.endParentDialog(dc, value);
+        }
+
+        return await this.endParentDialog(dc);
     }
 
-    /**
-     * (Optional) specifies an in-memory state property that should be returned to the calling
-     * dialog.
-     */
-    public resultProperty: string;
+    protected async endParentDialog(dc: DialogContext, result?: any): Promise<DialogTurnResult> {
+        if (dc.parent) {
+            const turnResult = await dc.parent.endDialog(result);
+            turnResult.parentEnded = true;
+            return turnResult;
+        } else {
+            return await dc.endDialog(result);
+        }
+    }
 
-    public async beginDialog(dc: DialogContext): Promise<DialogTurnResult> {
-        const result = this.resultProperty ? dc.state.getValue(this.resultProperty) : undefined;
-        return dc.parent ? await dc.parent.endDialog(result) : await dc.endDialog(result);
+    protected onComputeId(): string {
+        return `EndDialog[${ this.value || '' }]`;
     }
 }

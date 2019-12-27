@@ -8,6 +8,7 @@
 export * from './beginDialog';
 export * from './cancelAllDialogs';
 export * from './codeAction';
+export * from './deleteProperties';
 export * from './deleteProperty';
 export * from './editArray';
 export * from './editActions';
@@ -22,6 +23,7 @@ export * from './repeatDialog';
 export * from './replaceDialog';
 export * from './sendActivity';
 export * from './sendList';
+export * from './setProperties';
 export * from './setProperty';
 export * from './initProperty';
 export * from './httpRequest';

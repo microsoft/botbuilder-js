@@ -6,78 +6,68 @@
  * Licensed under the MIT License.
  */
 import { DialogTurnResult, DialogConfiguration, DialogContext, Dialog } from 'botbuilder-dialogs';
-import { ExpressionPropertyValue, ExpressionProperty } from '../expressionProperty';
+import { Expression, ExpressionEngine } from 'botframework-expressions';
 
 export interface SetPropertyConfiguration extends DialogConfiguration {
-    /**
-     * The in-memory property to set.
-     */
     property?: string;
-
-    /**
-     * The expression value to assign to the property.
-     */
-    value?: ExpressionPropertyValue<any>;
+    value?: string;
 }
 
 export class SetProperty<O extends object = {}> extends Dialog<O> {
+
+    public static declarativeType = 'Microsoft.SetProperty';
+
+    public constructor();
+    public constructor(property: string, value: string);
+    public constructor(property?: string, value?: string) {
+        super();
+        if (property) { this.property = property; }
+        if (value) { this.value = value; }
+    }
+
+    private _value: Expression;
+
     /**
-     * The in-memory property to set.
+     * Property path to put the value in.
      */
     public property: string;
 
     /**
-     * The value to assign to the property.
+     * Get the expression to get the value to put into property path.
      */
-    public value: ExpressionProperty<any>;
-
-    /**
-     * Creates a new `SetProperty` instance.
-     * @param property The in-memory property to set.
-     * @param value The expression value to assign to the property.
-     */
-    constructor();
-    constructor(property: string, value: ExpressionPropertyValue<any>);
-    constructor(property?: string, value?: ExpressionPropertyValue<any>) {
-        super();
-        if (property) { this.property = property }
-        if (value) { this.value = new ExpressionProperty(value) }
+    public get value(): string {
+        return this._value ? this._value.toString() : undefined;
     }
 
-    protected onComputeId(): string {
-        const label = this.value ? this.value.toString() : '';
-        return `SetProperty[${label}]`;
+    /**
+     * Set the expression to get the value to put into property path.
+     */
+    public set value(value: string) {
+        this._value = value ? new ExpressionEngine().parse(value) : undefined;
     }
 
     public configure(config: SetPropertyConfiguration): this {
-        for (const key in config) {
-            if (config.hasOwnProperty(key)) {
-                const value = config[key];
-                switch(key) {
-                    case 'value':
-                        this.value = new ExpressionProperty(value);
-                        break;
-                    default:
-                        super.configure({ [key]: value });
-                        break;
-                }
-
-            }
-        }
-
-        return this;
+        return super.configure(config);
     }
 
-    public async beginDialog(dc: DialogContext): Promise<DialogTurnResult> {
+    public async beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {
         // Ensure planning context and condition
-        if (!this.property) { throw new Error(`${this.id}: no 'property' specified.`) }
-        if (!this.value) { throw new Error(`${this.id}: no 'value' expression specified.`) }
+        if (!this.property) { throw new Error(`${ this.id }: no 'property' specified.`); }
+        if (!this.value) { throw new Error(`${ this.id }: no 'value' expression specified.`); }
 
         // Evaluate expression and save value
-        const memory = dc.state;
-        const value = this.value.evaluate(this.id, memory);
+        const { value, error } = this._value.tryEvaluate(dc.state);
+        if (error) {
+            throw new Error(`Expression evaluation resulted in an error. Expression: ${ this.value }. Error: ${ error }`);
+        }
         dc.state.setValue(this.property, value);
 
         return await dc.endDialog();
     }
+
+    protected onComputeId(): string {
+        const label = this.value ? this.value.toString() : '';
+        return `SetProperty[${ label }]`;
+    }
+
 }

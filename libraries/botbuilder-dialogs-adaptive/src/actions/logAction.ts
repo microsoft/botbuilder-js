@@ -13,60 +13,55 @@ export interface LogActionConfiguration extends DialogConfiguration {
     /**
      * The text template to log.
      */
-    template?: string;
+    text?: string;
 
     /**
      * If true, the message will both be logged to the console and sent as a trace activity.
      * Defaults to a value of false.
      */
-    sendTrace?: boolean;
+    traceActivity?: boolean;
 }
 
-export class LogAction extends Dialog {
+export class LogAction<O extends object = {}> extends Dialog<O> {
+
+    public static declarativeType = 'Microsoft.LogAction';
+
     /**
      * The text template to log.
      */
-    public template: string;
+    public text: string;
 
     /**
      * If true, the message will both be logged to the console and sent as a trace activity.
      * Defaults to a value of false.
      */
-    public sendTrace: boolean;
+    public traceActivity: boolean = false;
 
     /**
      * Creates a new `SendActivity` instance.
      * @param template The text template to log.
      * @param sendTrace (Optional) If true, the message will both be logged to the console and sent as a trace activity.  Defaults to a value of false.
      */
-    constructor();
-    constructor(template: string, sendTrace?: boolean);
-    constructor(template?: string, sendTrace = false) {
+    public constructor();
+    public constructor(text: string, traceActivity?: boolean);
+    public constructor(text?: string, traceActivity = false) {
         super();
-        if (template) { this.template = template }
-        this.sendTrace = sendTrace;
-    }
-
-    protected onComputeId(): string {
-        return `LogAction[${this.template}]`;
+        if (text) { this.text = text; }
+        this.traceActivity = traceActivity;
     }
 
     public configure(config: LogActionConfiguration): this {
         return super.configure(config);
     }
 
-    public async beginDialog(dc: DialogContext, options: object): Promise<DialogTurnResult> {
-        if (!this.template) { throw new Error(`${this.id}: no 'message' specified.`) }
+    public async beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {
+        if (!this.text) { throw new Error(`${ this.id }: no 'message' specified.`) }
 
-        // Format message
-        const data = Object.assign({
-            utterance: dc.context.activity.text || ''
-        }, dc.state, options);
-        const msg = format(this.template, dc);
+        const msg = format(this.text, dc);
 
         // Log to console and send trace if needed
         console.log(msg);
-        if (this.sendTrace) {
+        if (this.traceActivity) {
             const activity: Partial<Activity> = {
                 type: ActivityTypes.Trace,
                 name: 'LogAction',
@@ -77,5 +72,9 @@ export class LogAction extends Dialog {
         }
 
         return await dc.endDialog();
+    }
+
+    protected onComputeId(): string {
+        return `LogAction[${ this.text }]`;
     }
 }

@@ -6,22 +6,31 @@
  * Licensed under the MIT License.
  */
 import { TurnContext, RecognizerResult, ActivityTypes } from 'botbuilder-core';
+import { Configurable } from 'botbuilder-dialogs';
 import { Recognizer, createRecognizerResult, IntentMap } from './recognizer';
+import { IntentPattern } from './intentPattern';
 
-export class RegExpRecognizer implements Recognizer {
-    
-    public readonly intents: { name: string; expression: RegExp; }[] = [];
+export interface RegExpRecognizerConfiguration {
+    intents?: IntentPattern[];
+    multiIntentMode?: boolean;
+}
+
+export class RegexRecognizer extends Configurable implements Recognizer {
+
+    public static declarativeType = 'Microsoft.RegexRecognizer';
+
+    public intents: IntentPattern[] = [];
 
     public multiIntentMode = false;
 
-    constructor(multiIntentMode = false) {
+    public constructor();
+    public constructor(multiIntentMode = false) {
+        super();
         this.multiIntentMode = multiIntentMode;
     }
 
-    public addIntent(name: string, expression: RegExp): this {
-        const intent = name[0] == '#' ? name.substr(1) : name;
-        this.intents.push({ name: intent, expression: expression });
-        return this;
+    public configure(config: RegExpRecognizerConfiguration): this {
+        return super.configure(config);
     }
 
     public async recognize(context: TurnContext): Promise<RecognizerResult> {
@@ -31,9 +40,9 @@ export class RegExpRecognizer implements Recognizer {
         }
 
         // Identify matched intents
-        let hasMatch = false; 
+        let hasMatch = false;
         const utterance = context.activity.text || '';
-        const matched: { [name: string]: MatchedIntent; } = {};
+        const matched: { [name: string]: MatchedIntent } = {};
         for (let i = 0; i < this.intents.length; i++) {
             const match = this.matchIntent(i, utterance);
             if (match) {
@@ -52,13 +61,13 @@ export class RegExpRecognizer implements Recognizer {
 
         // Populate intents and entities matched
         const intents: IntentMap = {};
-        const entities: { [name:string]: string[]; } = {};
+        const entities: { [name: string]: string[] } = {};
         if (this.multiIntentMode) {
             // Return all intents and entities
             for (const name in matched) {
                 const match = matched[name];
                 intents[name] = { score: 1.0 };
-                this.addEntities(entities, match)
+                this.addEntities(entities, match);
             }
         } else {
             // Return top scoring intent
@@ -75,7 +84,7 @@ export class RegExpRecognizer implements Recognizer {
         return createRecognizerResult(utterance, intents, entities);
     }
 
-    private addEntities(entities: { [name:string]: string[]; }, match: MatchedIntent): void {
+    private addEntities(entities: { [name: string]: string[] }, match: MatchedIntent): void {
         for (const name in match.entities) {
             const value = match.entities[name];
             if (entities.hasOwnProperty(name)) {
@@ -89,13 +98,14 @@ export class RegExpRecognizer implements Recognizer {
         }
     }
 
-    private matchIntent(index: number, utterance: string): MatchedIntent|undefined {
+    private matchIntent(index: number, utterance: string): MatchedIntent | undefined {
         const intent = this.intents[index];
-        const matched = intent.expression.exec(utterance);
+        const regex = new RegExp(intent.pattern, 'i');
+        const matched = regex.exec(utterance);
         if (matched) {
             // Initialize result
             const result: MatchedIntent = {
-                intent: intent.name,
+                intent: intent.intent,
                 score: matched[0].length / utterance.length,
                 entities: {}
             };
@@ -121,6 +131,6 @@ export class RegExpRecognizer implements Recognizer {
 interface MatchedIntent {
     intent: string;
     score: number;
-    entities: { [key:string]: string; };
+    entities: { [key: string]: string };
 }
 

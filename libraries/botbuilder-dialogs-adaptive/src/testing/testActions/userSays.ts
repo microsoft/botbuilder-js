@@ -1,8 +1,15 @@
-import { TurnContext } from "botbuilder-core";
-import { TestAction } from "../testAction";
-import { AdaptiveTestAdapter } from "../adaptiveTestAdapter";
+import { TurnContext } from 'botbuilder-core';
+import { Configurable } from 'botbuilder-dialogs';
+import { TestAction } from '../testAction';
+import { AdaptiveTestAdapter } from '../adaptiveTestAdapter';
 
-export class UserSays implements TestAction {
+export interface UserSaysConfiguration {
+    text?: string;
+    user?: string;
+}
+
+export class UserSays extends Configurable implements TestAction {
+
     public static readonly declarativeType: string = 'Microsoft.Test.UserSays';
 
     /**
@@ -15,7 +22,11 @@ export class UserSays implements TestAction {
      */
     public user: string;
 
-    public async execute(testAdapter: AdaptiveTestAdapter, callback: (context: TurnContext) => Promise<any>) {
+    public configure(config: UserSaysConfiguration): this {
+        return super.configure(config);
+    }
+
+    public async execute(testAdapter: AdaptiveTestAdapter, callback: (context: TurnContext) => Promise<any>): Promise<any> {
         if (!this.text) {
             throw new Error('You must define the text property');
         }

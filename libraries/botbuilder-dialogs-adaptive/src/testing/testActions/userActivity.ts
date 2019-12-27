@@ -1,8 +1,15 @@
-import { Activity, TurnContext } from "botbuilder-core";
-import { TestAction } from "../testAction";
-import { AdaptiveTestAdapter } from "../adaptiveTestAdapter";
+import { Activity, TurnContext } from 'botbuilder-core';
+import { Configurable } from 'botbuilder-dialogs';
+import { TestAction } from '../testAction';
+import { AdaptiveTestAdapter } from '../adaptiveTestAdapter';
 
-export class UserActivity implements TestAction {
+export interface UserActivityConfiguration {
+    activity?: Activity;
+    user?: string;
+}
+
+export class UserActivity extends Configurable implements TestAction {
+
     public static readonly declarativeType: string = 'Microsoft.Test.UserActivity';
 
     /**
@@ -15,7 +22,11 @@ export class UserActivity implements TestAction {
      */
     public user: string;
 
-    public async execute(testAdapter: AdaptiveTestAdapter, callback: (context: TurnContext) => Promise<any>) {
+    public configure(config: UserActivityConfiguration): this {
+        return super.configure(config);
+    }
+
+    public async execute(testAdapter: AdaptiveTestAdapter, callback: (context: TurnContext) => Promise<any>): Promise<any> {
         if (!this.activity) {
             throw new Error('You must define one of Text of Activity properties');
         }

@@ -1,19 +1,30 @@
-import { OnCondition } from "./onCondition";
-import { Dialog } from "botbuilder-dialogs";
-import { ExpressionParserInterface, Expression, ExpressionType } from "botframework-expressions";
+import { Dialog } from 'botbuilder-dialogs';
+import { ExpressionParserInterface, Expression, ExpressionType } from 'botframework-expressions';
+import { OnCondition, OnConditionConfiguration } from './onCondition';
+
+export interface OnCustomEventConfiguration extends OnConditionConfiguration {
+    event?: string;
+}
 
 /**
  * Actions triggered when a custom dialog event is emitted.
  */
 export class OnCustomEvent extends OnCondition {
+
+    public static declarativeType = 'Microsoft.OnCustomEvent';
+
     /**
      * Gets or sets the custom event to fire on.
      */
     public event: string;
 
-    constructor(event?: string, actions: Dialog[] = [], condition?: string) {
+    public constructor(event?: string, actions: Dialog[] = [], condition?: string) {
         super(condition, actions);
         this.event = event;
+    }
+
+    public configure(config: OnCustomEventConfiguration): this {
+        return super.configure(config);
     }
 
     public getExpression(parser: ExpressionParserInterface): Expression {

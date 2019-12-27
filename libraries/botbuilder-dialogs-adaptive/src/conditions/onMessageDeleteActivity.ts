@@ -1,12 +1,15 @@
-import { OnActivity } from "./onActivity";
-import { Dialog } from "botbuilder-dialogs";
-import { ActivityTypes } from "botbuilder-core";
+import { ActivityTypes } from 'botbuilder-core';
+import { Dialog } from 'botbuilder-dialogs';
+import { OnActivity } from './onActivity';
 
 /**
  * Actions triggered when a MessageDeleteActivity is received.
  */
 export class OnMessageDeleteActivity extends OnActivity {
-    constructor(actions: Dialog[] = [], condition?: string) {
+
+    public static declarativeType = 'Microsoft.OnMessageDeleteActivity';
+
+    public constructor(actions: Dialog[] = [], condition?: string) {
         super(ActivityTypes.MessageDelete, actions, condition);
     }
 }

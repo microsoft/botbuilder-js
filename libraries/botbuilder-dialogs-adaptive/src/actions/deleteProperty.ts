@@ -6,6 +6,7 @@
  * Licensed under the MIT License.
  */
 import { DialogTurnResult, DialogConfiguration, DialogContext, Dialog } from 'botbuilder-dialogs';
+import { SequenceContext } from '../sequenceContext';
 
 export interface DeletePropertyConfiguration extends DialogConfiguration {
     /**
@@ -15,6 +16,9 @@ export interface DeletePropertyConfiguration extends DialogConfiguration {
 }
 
 export class DeleteProperty<O extends object = {}> extends Dialog<O> {
+
+    public static declarativeType = 'Microsoft.DeleteProperty';
+
     /**
      * The property to delete.
      */
@@ -24,21 +28,26 @@ export class DeleteProperty<O extends object = {}> extends Dialog<O> {
      * Creates a new `DeleteProperty` instance.
      * @param property (Optional) property to delete.
      */
-    constructor(property?: string) {
+    public constructor();
+    public constructor(property?: string) {
         super();
         if (property) { this.property = property; }
-    }
-
-    protected onComputeId(): string {
-        return `DeleteProperty[${this.property}]`;
     }
 
     public configure(config: DeletePropertyConfiguration): this {
         return super.configure(config);
     }
 
-    public async beginDialog(dc: DialogContext): Promise<DialogTurnResult> {
-        dc.state.deleteValue(this.property);
-        return await dc.endDialog();
+    public async beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {
+        if (dc instanceof SequenceContext) {
+            dc.state.deleteValue(this.property);
+            return await dc.endDialog();
+        } else {
+            throw new Error('`DeleteProperty` should only be used in the context of an adaptive dialog.');
+        }
+    }
+
+    protected onComputeId(): string {
+        return `DeleteProperty[${ this.property }]`;
     }
 }

@@ -11,5 +11,5 @@ export * from './confirmInput';
 export * from './inputDialog';
 export * from './numberInput';
 export * from './textInput';
-export * from './datetimeInput';
+export * from './dateTimeInput';
 export * from './oauthInput';

@@ -5,33 +5,33 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { InputDialogConfiguration, InputDialog, InputDialogOptions, InputState, PromptType } from "./inputDialog";
-import { DialogContext, Choice, ListStyle, ChoiceFactoryOptions, FindChoicesOptions, ChoiceFactory, recognizeChoices, ModelResult, FoundChoice } from "botbuilder-dialogs";
-import { Activity } from "botbuilder-core";
-import { ExpressionPropertyValue, ExpressionProperty } from "../expressionProperty";
+import { DialogContext, Choice, ListStyle, ChoiceFactoryOptions, FindChoicesOptions, ChoiceFactory, recognizeChoices, ModelResult, FoundChoice } from 'botbuilder-dialogs';
+import { Activity } from 'botbuilder-core';
+import { InputDialogConfiguration, InputDialog, InputState } from './inputDialog';
+import { ExpressionProperty } from '../expressionProperty';
 
 export interface ChoiceInputConfiguration extends InputDialogConfiguration {
-    outputFormat?: ChoiceOutputFormat;
-    choices?: ChoiceList | ExpressionPropertyValue<ChoiceList>;
-    appendChoices?: boolean;
-    defaultLocale?: string;
+    choices?: ExpressionProperty<Choice[]>;
     style?: ListStyle;
+    defaultLocale?: string;
+    outputFormat?: ChoiceOutputFormat;
     choiceOptions?: ChoiceFactoryOptions;
     recognizerOptions?: FindChoicesOptions;
 }
 
 export enum ChoiceOutputFormat {
-    value = 'value',
-    index = 'index'
+    Value = 'Value',
+    Index = 'Index'
 }
 
-export interface ChoiceInputOptions extends InputDialogOptions {
-    choices: ChoiceList;
+export interface ChoiceInputOptions {
+    choices: Choice[];
 }
 
-export type ChoiceList = (string | Choice)[];
+export class ChoiceInput extends InputDialog {
 
-export class ChoiceInput extends InputDialog<ChoiceInputOptions> {
+    public static declarativeType = 'Microsoft.ChoiceInput';
+
     /**
      * Default options for rendering the choices to the user based on locale.
      */
@@ -46,14 +46,10 @@ export class ChoiceInput extends InputDialog<ChoiceInputOptions> {
         'zh-cn': { inlineSeparator: '， ', inlineOr: ' 要么 ', inlineOrMore: '， 要么 ', includeNumbers: true }
     };
 
-    public outputFormat = ChoiceOutputFormat.value;
-
-    public choices: ExpressionProperty<ChoiceList>;
-
     /**
-     * The prompts default locale that should be recognized.
+     * List of choices to present to user.
      */
-    public defaultLocale?: string;
+    public choices: ExpressionProperty<Choice[]>;
 
     /**
      * Style of the "yes" and "no" choices rendered to the user when prompting.
@@ -62,6 +58,16 @@ export class ChoiceInput extends InputDialog<ChoiceInputOptions> {
      * Defaults to `ListStyle.auto`.
      */
     public style: ListStyle = ListStyle.auto;
+
+    /**
+     * The prompts default locale that should be recognized.
+     */
+    public defaultLocale?: string;
+
+    /**
+     * Control the format of the response (value or index of the choice).
+     */
+    public outputFormat = ChoiceOutputFormat.Value;
 
     /**
      * Additional options passed to the `ChoiceFactory` and used to tweak the style of choices
@@ -74,35 +80,12 @@ export class ChoiceInput extends InputDialog<ChoiceInputOptions> {
      */
     public recognizerOptions?: FindChoicesOptions;
 
-    constructor();
-    constructor(property: string, prompt: PromptType, choices: ChoiceList | ExpressionPropertyValue<ChoiceList>);
-    constructor(property: string, value: ExpressionPropertyValue<any>, prompt: PromptType, choices: ChoiceList | ExpressionPropertyValue<ChoiceList>);
-    constructor(property?: string, value?: ExpressionPropertyValue<any> | PromptType, prompt?: PromptType | ChoiceList | ExpressionPropertyValue<ChoiceList>, choices?: ChoiceList | ExpressionPropertyValue<ChoiceList>) {
-        super();
-        if (property) {
-            if (choices == undefined) {
-                choices = prompt as ChoiceList | ExpressionPropertyValue<any[]>;
-                prompt = value;
-                value = undefined;
-            }
-
-            // Initialize properties
-            this.property = property;
-            if (value !== undefined) { this.value = new ExpressionProperty(value as any) }
-            this.prompt.value = prompt as PromptType;
-
-            // If we were passed in a choice list then create a lambda that returns the list.
-            const expression = Array.isArray(choices) ? _ => choices : choices;
-            this.choices = new ExpressionProperty(expression as ExpressionPropertyValue<ChoiceList>);
-        }
-    }
-
     public configure(config: ChoiceInputConfiguration): this {
         for (const key in config) {
             if (config.hasOwnProperty(key)) {
                 const value = config[key];
                 switch (key) {
-                    case 'choice':
+                    case 'choices':
                         // If we were passed in a choice list then create a lambda that returns the list.
                         const expression = Array.isArray(value) ? _ => value : value;
                         this.choices = new ExpressionProperty(expression);
@@ -117,29 +100,18 @@ export class ChoiceInput extends InputDialog<ChoiceInputOptions> {
         return this;
     }
 
-    protected onComputeId(): string {
-        return `ChoiceInput[${this.prompt.value.toString()}]`;
-    }
-
     protected onInitializeOptions(dc: DialogContext, options: ChoiceInputOptions): ChoiceInputOptions {
-        if (!Array.isArray(options.choices)) {
-            if (this.choices) {
-                // Compute list of choices
-                const memory = dc.state;
-                const value = this.choices.evaluate(this.id, memory);
-                if (Array.isArray(value)) {
-                    options.choices = value;
-                } else {
-                    throw new Error(`${this.id}: no choices returned by expression.`);
-                }
-            } else {
-                throw new Error(`${this.id}: no choices specified.`);
+        if (!options || !options.choices || options.choices.length == 0) {
+            if (!options) {
+                options = { choices: [] };
             }
+            const choices = this.choices.getValue(dc.state);
+            options.choices = choices;
         }
         return super.onInitializeOptions(dc, options);
     }
 
-    protected async onRecognizeInput(dc: DialogContext, consultation: boolean): Promise<InputState> {
+    protected async onRecognizeInput(dc: DialogContext): Promise<InputState> {
         // Get input and options
         let input: string = dc.state.getValue(InputDialog.VALUE_PROPERTY).toString();
         const options: ChoiceInputOptions = dc.state.getValue(InputDialog.OPTIONS_PROPERTY);
@@ -161,11 +133,11 @@ export class ChoiceInput extends InputDialog<ChoiceInputOptions> {
         // Format output and return success
         const foundChoice: FoundChoice = results[0].resolution;
         switch (this.outputFormat) {
-            case ChoiceOutputFormat.value:
+            case ChoiceOutputFormat.Value:
             default:
                 dc.state.setValue(InputDialog.VALUE_PROPERTY, foundChoice.value);
                 break;
-            case ChoiceOutputFormat.index:
+            case ChoiceOutputFormat.Index:
                 dc.state.setValue(InputDialog.VALUE_PROPERTY, foundChoice.index);
                 break;
         }
@@ -190,4 +162,9 @@ export class ChoiceInput extends InputDialog<ChoiceInputOptions> {
         const choiceOptions: ChoiceFactoryOptions = this.choiceOptions || ChoiceInput.defaultChoiceOptions[locale];
         return this.appendChoices(prompt, channelId, choices, this.style, choiceOptions);
     }
+
+    protected onComputeId(): string {
+        return `ChoiceInput[${ this.prompt.value.toString() }]`;
+    }
+
 }

@@ -13,7 +13,7 @@ export interface SendActivityConfiguration extends DialogConfiguration {
     /**
      * Activity or message text to send the user.
      */
-    activityOrText?: Partial<Activity>|string;
+    activity?: Partial<Activity> | string;
 
     /**
      * (Optional) Structured Speech Markup Language (SSML) to speak to the user.
@@ -26,7 +26,9 @@ export interface SendActivityConfiguration extends DialogConfiguration {
     inputHint?: InputHints;
 }
 
-export class SendActivity extends Dialog {
+export class SendActivity<O extends object = {}> extends Dialog<O> {
+
+    public static declarativeType = 'Microsoft.SendActivity';
 
     /**
      * Creates a new `SendActivity` instance.
@@ -34,18 +36,15 @@ export class SendActivity extends Dialog {
      * @param speak (Optional) Structured Speech Markup Language (SSML) to speak to the user.
      * @param inputHint (Optional) input hint for the message. Defaults to a value of `InputHints.acceptingInput`.
      */
-    constructor();
-    constructor(activityOrText: Partial<Activity>|string, speak?: string, inputHint?: InputHints);
-    constructor(activityOrText?: Partial<Activity>|string, speak?: string, inputHint?: InputHints) {
+    public constructor();
+    public constructor(activityOrText: Partial<Activity> | string, speak?: string, inputHint?: InputHints);
+    public constructor(activityOrText?: Partial<Activity> | string, speak?: string, inputHint?: InputHints) {
         super();
-        if (activityOrText) { this.activityProperty.value = activityOrText }
-        if (speak) { this.activityProperty.speak = speak }
+        if (activityOrText) { this.activityProperty.value = activityOrText; }
+        if (speak) { this.activityProperty.speak = speak; }
         this.activityProperty.inputHint = inputHint || InputHints.AcceptingInput;
     }
 
-    protected onComputeId(): string {
-        return `SendActivity[${this.activityProperty.displayLabel}]`;
-    }
 
     /**
      * Activity to send the user.
@@ -55,11 +54,11 @@ export class SendActivity extends Dialog {
     /**
      * Public getter and setter for declarative activity configuration
      */
-    public get activity(): Partial<Activity>|string {
+    public get activity(): Partial<Activity> | string {
         return this.activityProperty.value;
     }
 
-    public set activity(value: Partial<Activity>|string) {
+    public set activity(value: Partial<Activity> | string) {
         this.activityProperty.value = value;
     }
 
@@ -73,7 +72,7 @@ export class SendActivity extends Dialog {
         return super.configure(config);
     }
 
-    public async beginDialog(dc: DialogContext, options: object): Promise<DialogTurnResult> {
+    public async beginDialog(dc: DialogContext, options: O): Promise<DialogTurnResult> {
         if (!this.activityProperty.hasValue()) {
             // throw new Error(`SendActivity: no activity assigned for action '${this.id}'.`)
             throw new Error(`SendActivity: no activity assigned for action.`)
@@ -82,9 +81,13 @@ export class SendActivity extends Dialog {
         // Send activity and return result
         const data = Object.assign({
             utterance: dc.context.activity.text || ''
-        }, dc.state,  options);
+        }, dc.state, options);
         const activity = this.activityProperty.format(dc, data);
         const result = await dc.context.sendActivity(activity);
         return await dc.endDialog(result);
+    }
+
+    protected onComputeId(): string {
+        return `SendActivity[${ this.activityProperty.displayLabel }]`;
     }
 }

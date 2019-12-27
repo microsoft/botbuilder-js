@@ -1,7 +1,13 @@
-import { Activity, ActivityTypes } from "botbuilder-core";
-import { AssertReplyActivity } from "./assertReplyActivity";
+import { Activity, ActivityTypes } from 'botbuilder-core';
+import { AssertReplyActivity, AssertReplyActivityConfiguration } from './assertReplyActivity';
+
+export interface AssertReplyConfiguration extends AssertReplyActivityConfiguration {
+    text?: string;
+    exact?: boolean;
+}
 
 export class AssertReply extends AssertReplyActivity {
+
     public static readonly declarativeType: string = 'Microsoft.Test.AssertReply';
 
     /**
@@ -13,6 +19,10 @@ export class AssertReply extends AssertReplyActivity {
      * A value indicating whether text should be an exact match.
      */
     public exact: boolean = true;
+
+    public configure(config: AssertReplyConfiguration): this {
+        return super.configure(config);
+    }
 
     public getConditionDescription(): string {
         return this.text;

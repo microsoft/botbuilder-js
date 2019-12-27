@@ -1,8 +1,14 @@
-import { TurnContext, ActivityTypes } from "botbuilder-core";
-import { TestAction } from "../testAction";
-import { AdaptiveTestAdapter } from "../adaptiveTestAdapter";
+import { TurnContext, ActivityTypes } from 'botbuilder-core';
+import { Configurable } from 'botbuilder-dialogs';
+import { TestAction } from '../testAction';
+import { AdaptiveTestAdapter } from '../adaptiveTestAdapter';
 
-export class UserTyping implements TestAction {
+export interface UserTypingConfiguration {
+    user?: string;
+}
+
+export class UserTyping extends Configurable implements TestAction {
+
     public static readonly declarativeType: string = 'Microsoft.Test.UserTyping';
 
     /**
@@ -10,7 +16,11 @@ export class UserTyping implements TestAction {
      */
     public user: string;
 
-    public async execute(testAdapter: AdaptiveTestAdapter, callback: (context: TurnContext) => Promise<any>) {
+    public configure(config: UserTypingConfiguration): this {
+        return super.configure(config);
+    }
+
+    public async execute(testAdapter: AdaptiveTestAdapter, callback: (context: TurnContext) => Promise<any>): Promise<any> {
         const typing = testAdapter.makeActivity();
         typing.type = ActivityTypes.Typing;
 

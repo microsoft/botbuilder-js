@@ -5,12 +5,21 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { MemoryStorage, ConversationState, UserState, TurnContext, BotAdapter, TestAdapter } from "botbuilder-core";
-import { Dialog, DialogManager } from "botbuilder-dialogs";
-import { TestAction } from "./testAction";
-import { AdaptiveTestAdapter } from "./adaptiveTestAdapter";
+import { MemoryStorage, ConversationState, UserState } from 'botbuilder-core';
+import { Dialog, DialogManager, Configurable } from 'botbuilder-dialogs';
+import { TestAction } from './testAction';
+import { AdaptiveTestAdapter } from './adaptiveTestAdapter';
 
-export class TestScript {
+export interface TestScriptConfiguration {
+    description?: string;
+    dialog?: Dialog;
+    locale?: string;
+    script?: TestAction[];
+    enableTrace?: boolean;
+}
+
+export class TestScript extends Configurable {
+
     public static readonly declarativeType = 'Microsoft.Test.Script';
 
     /**
@@ -38,12 +47,16 @@ export class TestScript {
      */
     public enableTrace: boolean = false;
 
+    public configure(config: TestScript): this {
+        return super.configure(config);
+    }
+
     /**
      * Starts the execution of the test sequence.
      * @param testName Name of the test
      * @param testAdapter (Optional) Test adapter
      */
-    public async execute(testName?: string, testAdapter?: AdaptiveTestAdapter) {
+    public async execute(testName?: string, testAdapter?: AdaptiveTestAdapter): Promise<void> {
         if (!testAdapter) {
             testAdapter = new AdaptiveTestAdapter(AdaptiveTestAdapter.createConversation(testName));
         }

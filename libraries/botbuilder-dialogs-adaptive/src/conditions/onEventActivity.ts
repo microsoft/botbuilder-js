@@ -1,12 +1,15 @@
-import { OnActivity } from "./onActivity";
-import { Dialog } from "botbuilder-dialogs";
-import { ActivityTypes } from "botbuilder-core";
+import { ActivityTypes } from 'botbuilder-core';
+import { Dialog } from 'botbuilder-dialogs';
+import { OnActivity } from './onActivity';
 
 /**
  * Actions triggered when an EventActivity is received.
  */
 export class OnEventActivity extends OnActivity {
-    constructor(actions: Dialog[] = [], condition?: string) {
+
+    public static declarativeType = 'Microsoft.OnEventActivity';
+
+    public constructor(actions: Dialog[] = [], condition?: string) {
         super(ActivityTypes.Event, actions, condition);
     }
 }

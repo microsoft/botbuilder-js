@@ -5,9 +5,12 @@
     "id": "planningTest",
     "recognizer": {
       "$kind": "Microsoft.RegexRecognizer",
-      "intents": {
-        "addColor": "I want (?<color>(red|green|blue|yellow))*"
-      }
+      "intents": [
+        {
+          "intent": "addColor",
+          "pattern": "I want (?<color>(red|green|blue|yellow))*"
+        }
+      ]
     },
     "triggers": [
       {

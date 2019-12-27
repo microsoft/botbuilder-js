@@ -5,106 +5,132 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { DialogTurnResult, DialogConfiguration, DialogDependencies } from 'botbuilder-dialogs';
+import { DialogTurnResult, DialogConfiguration, DialogDependencies, Dialog, DialogContext } from 'botbuilder-dialogs';
+import { Expression, ExpressionEngine } from 'botframework-expressions';
+import { SequenceContext } from '../sequenceContext';
+import { ActionScope } from './actionScope';
 import { Case } from './case';
-import { Dialog } from 'botbuilder-dialogs';
-import { Expression, ExpressionType } from 'botframework-expressions';
-import { ActionState, SequenceContext, ActionChangeType, ActionChangeList } from '../sequenceContext';
-import { ExpressionPropertyValue, ExpressionProperty } from '../expressionProperty';
 
 export interface SwitchConditionConfiguration extends DialogConfiguration {
-    /**
-     * The in-memory property to set.
-     */
-    condition?: ExpressionProperty<any>;
-
+    condition?: string;
     default?: Dialog[];
-
+    cases?: Case[];
+    defaultScope?: ActionScope;
 }
 
 export class SwitchCondition<O extends object = {}> extends Dialog<O> implements DialogDependencies {
 
-    private caseExpresssions = null;
+    public static declarativeType = 'Microsoft.SwitchCondition';
 
-    public condition: ExpressionProperty<any>;
-
-    public default: Dialog[];
-
-    public cases: Case[];
-
-    constructor();
-    constructor(condition: ExpressionPropertyValue<any>, defaultDialogs: Dialog[], cases: Case[]);
-    constructor(condition?: ExpressionPropertyValue<any>, defaultDialogs?: Dialog[], cases?: Case[]) {
+    public constructor();
+    public constructor(condition: string, defaultDialogs: Dialog[], cases: Case[]);
+    public constructor(condition?: string, defaultDialogs?: Dialog[], cases?: Case[]) {
         super();
-        if (condition) { this.condition = new ExpressionProperty(condition); }
+        if (condition) { this.condition = condition; }
         if (defaultDialogs) { this.default = defaultDialogs; }
         if (cases) { this.cases = cases; }
     }
 
-    protected onComputeId(): string {
-        return `SwitchCondition[${this.condition}]`;
+    private _caseExpresssions: any;
+
+    private _condition: Expression;
+
+    private _defaultScope: ActionScope;
+
+    /**
+     * Get condition expression against memory.
+     */
+    public get condition(): string {
+        return this._condition ? this._condition.toString() : undefined;
     }
 
-    public configure(config: SwitchConditionConfiguration): this {
-        return super.configure(config);
+    /**
+     * Set condition expression against memory.
+     */
+    public set condition(value: string) {
+        this._condition = value ? new ExpressionEngine().parse(value) : undefined;
     }
+
+    /**
+     * Default case.
+     */
+    public default: Dialog[] = [];
+
+    /**
+     * Cases.
+     */
+    public cases: Case[] = [];
 
     public getDependencies(): Dialog[] {
-        var dialogs: Dialog[] = [];
+        let dialogs: Dialog[] = [];
         if (this.default) {
-            dialogs = dialogs.concat(this.default);
+            dialogs = dialogs.concat(this.defaultScope);
         }
 
         if (this.cases) {
-            this.cases.forEach(conditionalCase => {
-                dialogs = dialogs.concat(conditionalCase.actions);
-            });
+            dialogs = dialogs.concat(this.cases);
         }
         return dialogs;
     }
 
-    public async beginDialog(sc: SequenceContext, options: O): Promise<DialogTurnResult> {
-        if (!(sc instanceof SequenceContext)) { throw new Error(`${this.id}: should only be used within an AdaptiveDialog.`) }
-
-        if (this.condition) {
-            if (this.caseExpresssions == null) {
-                this.caseExpresssions = {};
-                this.cases.forEach(c => {
-                    const expr = new Expression(ExpressionType.Equal, undefined, this.condition.expression, c.CreateValueExpression());
-                    expr.validate();
-                    const caseCondition = expr;
-                    this.caseExpresssions[c.value.toString()] = caseCondition;
-                });
+    public configure(config: SwitchConditionConfiguration): this {
+        for (const key in config) {
+            if (config.hasOwnProperty(key)) {
+                const value = config[key];
+                switch (key) {
+                    case 'cases':
+                        this.cases = (value as Case[]).map(v => new Case(v.value, v.actions));
+                        break;
+                    default:
+                        super.configure({ [key]: value });
+                        break;
+                }
             }
         }
 
-        var actionsToRun = this.default;
+        return this;
+    }
 
-        for (var caseCondition of this.cases) {
-            const caseExpression = this.caseExpresssions[caseCondition.value] as Expression;
-            var { value, error } = caseExpression.tryEvaluate(sc.state);
-            if (error != null) {
-                throw new Error(`Expression evaluation resulted in an error.
-                 Expression: ${this.caseExpresssions[caseCondition.value].ToString()}. Error: ${error}`);
+    public async beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {
+        if (dc instanceof SequenceContext) {
+            if (!this._caseExpresssions) {
+                this._caseExpresssions = {};
+                for (let i = 0; i < this.cases.length; i++) {
+                    const caseScope = this.cases[i];
+                    const caseCondition = Expression.equalsExpression(this._condition, caseScope.createValueExpression());
+                    this._caseExpresssions[caseScope.value] = caseCondition;
+                }
             }
 
-            if (value as boolean) {
-                actionsToRun = caseCondition.actions;
-                break;
+            let actionScope = this.defaultScope;
+
+            for (let i = 0; i < this.cases.length; i++) {
+                const caseScope = this.cases[i];
+                const caseCondition = this._caseExpresssions[caseScope.value] as Expression;
+                const { value, error } = caseCondition.tryEvaluate(dc.state);
+                if (error) {
+                    throw new Error(`Expression evaluation resulted in an error. Expression: ${ caseCondition.toString() }. Error: ${ error }`);
+                }
+
+                if (!!value) {
+                    actionScope = caseScope;
+                }
             }
+
+            return await dc.replaceDialog(actionScope.id);
+        } else {
+            throw new Error('`SwitchCondition` should only be used in the context of an adaptive dialog.');
         }
+    }
 
-        var planActions = actionsToRun.map(s => ({
-            "dialogStack": [],
-            "dialogId": s.id,
-            "options": options,
-        } as ActionState));
+    protected get defaultScope(): ActionScope {
+        if (!this._defaultScope) {
+            this._defaultScope = new ActionScope(this.default);
+        }
+        return this._defaultScope;
+    }
 
-        sc.queueChanges({
-            changeType: ActionChangeType.insertActions,
-            actions: planActions
-        } as ActionChangeList);
-
-        return await sc.endDialog();
+    protected onComputeId(): string {
+        return `SwitchCondition[${ this.condition }]`;
     }
 }

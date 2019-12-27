@@ -8,13 +8,11 @@
 import { DialogTurnResult, Dialog, DialogContext } from 'botbuilder-dialogs';
 import { ActivityTypes } from 'botbuilder-core';
 
-export class EndTurn extends Dialog {
+export class EndTurn<O extends object = {}> extends Dialog<O> {
 
-    protected onComputeId(): string {
-        return `EndTurn[]`;
-    }
+    public static declarativeType = 'Microsoft.EndTurn';
 
-    public async beginDialog(dc: DialogContext): Promise<DialogTurnResult> {
+    public async beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {
         return Dialog.EndOfTurn;
     }
 
@@ -25,5 +23,9 @@ export class EndTurn extends Dialog {
         } else {
             return Dialog.EndOfTurn;
         }
+    }
+
+    protected onComputeId(): string {
+        return `EndTurn[]`;
     }
 }

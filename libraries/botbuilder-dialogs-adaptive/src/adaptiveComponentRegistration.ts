@@ -5,92 +5,95 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { ComponentRegistration, TypeRegistration, ConfigurableTypeBuilder, DefaultTypeBuilder, CustomTypeBuilder } from 'botbuilder-dialogs-declarative';
-import { TextInput, ConfirmInput, NumberInput, ChoiceInput, AttachmentInput, DatetimeInput, InputDialog, OAuthInput } from './input';
-import { IfCondition, CancelAllDialogs, DeleteProperty, EditArray, EditActions, EmitEvent, EndDialog, EndTurn, ForEach, ForEachPage, LogAction, RepeatDialog, ReplaceDialog, SendActivity, SendList, SetProperty, BeginDialog, CodeAction, InitProperty, HttpRequest, SwitchCondition, TraceActivity } from './actions';
-import { OnActivity, OnBeginDialog, OnCancelDialog, OnCondition, OnConversationUpdateActivity, OnCustomEvent, OnDialogEvent, OnEndOfConversationActivity, OnError, OnEventActivity, OnHandoffActivity, OnIntent, OnInvokeActivity, OnMessageActivity, OnMessageDeleteActivity, OnMessageReactionActivity, OnMessageUpdateActivity, OnRepromptDialog, OnTypingActivity, OnUnknownIntent } from './conditions';
-import { RegExpRecognizer } from './recognizers';
+import {
+    ComponentRegistration, TypeRegistration, ConfigurableTypeBuilder
+} from 'botbuilder-dialogs-declarative';
+import {
+    AttachmentInput, ChoiceInput, ConfirmInput, DateTimeInput,
+    NumberInput, OAuthInput, TextInput
+} from './input';
+import {
+    BeginDialog, CancelAllDialogs, DeleteProperties, DeleteProperty,
+    EditArray, EditActions, EmitEvent, EndDialog, EndTurn, ForEach,
+    ForEachPage, HttpRequest, IfCondition, InitProperty, LogAction,
+    RepeatDialog, ReplaceDialog, SendActivity, SetProperties, SetProperty,
+    SwitchCondition, TraceActivity
+} from './actions';
+import {
+    OnActivity, OnBeginDialog, OnCancelDialog, OnCondition,
+    OnConversationUpdateActivity, OnCustomEvent, OnDialogEvent,
+    OnEndOfConversationActivity, OnError, OnEventActivity, OnHandoffActivity,
+    OnIntent, OnInvokeActivity, OnMessageActivity, OnMessageDeleteActivity,
+    OnMessageReactionActivity, OnMessageUpdateActivity, OnRepromptDialog,
+    OnTypingActivity, OnUnknownIntent
+} from './conditions';
+import { RegexRecognizer } from './recognizers';
 import { AdaptiveDialog } from './adaptiveDialog';
 
 export class AdaptiveComponentRegistration implements ComponentRegistration {
-    getTypes(): TypeRegistration[] {
+    public getTypes(): TypeRegistration[] {
         const types = [];
 
         // Input
-        types.push(new TypeRegistration('Microsoft.AttachmentInput', new ConfigurableTypeBuilder(AttachmentInput)));
-        types.push(new TypeRegistration('Microsoft.ChoiceInput', new ConfigurableTypeBuilder(ChoiceInput)));
-        types.push(new TypeRegistration('Microsoft.ConfirmInput', new ConfigurableTypeBuilder(ConfirmInput)));
-        types.push(new TypeRegistration('Microsoft.DatetimeInput', new ConfigurableTypeBuilder(DatetimeInput)));
-        types.push(new TypeRegistration('Microsoft.FloatInput', new ConfigurableTypeBuilder(NumberInput)));
-        types.push(new TypeRegistration('Microsoft.IntegerInput', new ConfigurableTypeBuilder(NumberInput)));
-        types.push(new TypeRegistration('Microsoft.OAuthInput', new ConfigurableTypeBuilder(OAuthInput)));
-        types.push(new TypeRegistration('Microsoft.TextInput', new ConfigurableTypeBuilder(TextInput)));
+        types.push(new TypeRegistration(AttachmentInput.declarativeType, new ConfigurableTypeBuilder(AttachmentInput)));
+        types.push(new TypeRegistration(ChoiceInput.declarativeType, new ConfigurableTypeBuilder(ChoiceInput)));
+        types.push(new TypeRegistration(ConfirmInput.declarativeType, new ConfigurableTypeBuilder(ConfirmInput)));
+        types.push(new TypeRegistration(DateTimeInput.declarativeType, new ConfigurableTypeBuilder(DateTimeInput)));
+        types.push(new TypeRegistration(NumberInput.declarativeType, new ConfigurableTypeBuilder(NumberInput)));
+        types.push(new TypeRegistration(OAuthInput.declarativeType, new ConfigurableTypeBuilder(OAuthInput)));
+        types.push(new TypeRegistration(TextInput.declarativeType, new ConfigurableTypeBuilder(TextInput)));
 
         // Actions
-        types.push(new TypeRegistration('Microsoft.BeginDialog', new ConfigurableTypeBuilder(BeginDialog)));
-        types.push(new TypeRegistration('Microsoft.CancelAllDialogs', new ConfigurableTypeBuilder(CancelAllDialogs)));
-        types.push(new TypeRegistration('Microsoft.DeleteProperty', new ConfigurableTypeBuilder(DeleteProperty)));
-        types.push(new TypeRegistration('Microsoft.EditArray', new ConfigurableTypeBuilder(EditArray)));
-        types.push(new TypeRegistration('Microsoft.EditActions', new ConfigurableTypeBuilder(EditActions)));
-        types.push(new TypeRegistration('Microsoft.ForEach', new ConfigurableTypeBuilder(ForEach)));
-        types.push(new TypeRegistration('Microsoft.ForEachPage', new ConfigurableTypeBuilder(ForEachPage)));
-        types.push(new TypeRegistration('Microsoft.EmitEvent', new ConfigurableTypeBuilder(EmitEvent)));
-        types.push(new TypeRegistration('Microsoft.EndDialog', new ConfigurableTypeBuilder(EndDialog)));
-        types.push(new TypeRegistration('Microsoft.EndTurn', new ConfigurableTypeBuilder(EndTurn)));
-        types.push(new TypeRegistration('Microsoft.IfCondition', new ConfigurableTypeBuilder(IfCondition)));
-        types.push(new TypeRegistration('Microsoft.LogAction', new ConfigurableTypeBuilder(LogAction)));
-        types.push(new TypeRegistration('Microsoft.RepeatDialog', new ConfigurableTypeBuilder(RepeatDialog)));
-        types.push(new TypeRegistration('Microsoft.ReplaceDialog', new ConfigurableTypeBuilder(ReplaceDialog)));
-        types.push(new TypeRegistration('Microsoft.SendActivity', new ConfigurableTypeBuilder(SendActivity)));
-        types.push(new TypeRegistration('Microsoft.SendList', new ConfigurableTypeBuilder(SendList)));
-        types.push(new TypeRegistration('Microsoft.SetProperty', new ConfigurableTypeBuilder(SetProperty)));
-        types.push(new TypeRegistration('Microsoft.InitProperty', new ConfigurableTypeBuilder(InitProperty)));
-        types.push(new TypeRegistration('Microsoft.HttpRequest', new ConfigurableTypeBuilder(HttpRequest)));
-        types.push(new TypeRegistration('Microsoft.SwitchCondition', new ConfigurableTypeBuilder(SwitchCondition)));
-        types.push(new TypeRegistration('Microsoft.TraceActivity', new ConfigurableTypeBuilder(TraceActivity)));
+        types.push(new TypeRegistration(BeginDialog.declarativeType, new ConfigurableTypeBuilder(BeginDialog)));
+        types.push(new TypeRegistration(CancelAllDialogs.declarativeType, new ConfigurableTypeBuilder(CancelAllDialogs)));
+        types.push(new TypeRegistration(DeleteProperties.declarativeType, new ConfigurableTypeBuilder(DeleteProperties)));
+        types.push(new TypeRegistration(DeleteProperty.declarativeType, new ConfigurableTypeBuilder(DeleteProperty)));
+        types.push(new TypeRegistration(EditArray.declarativeType, new ConfigurableTypeBuilder(EditArray)));
+        types.push(new TypeRegistration(EditActions.declarativeType, new ConfigurableTypeBuilder(EditActions)));
+        types.push(new TypeRegistration(EmitEvent.declarativeType, new ConfigurableTypeBuilder(EmitEvent)));
+        types.push(new TypeRegistration(ForEach.declarativeType, new ConfigurableTypeBuilder(ForEach)));
+        types.push(new TypeRegistration(ForEachPage.declarativeType, new ConfigurableTypeBuilder(ForEachPage)));
+        types.push(new TypeRegistration(EndDialog.declarativeType, new ConfigurableTypeBuilder(EndDialog)));
+        types.push(new TypeRegistration(EndTurn.declarativeType, new ConfigurableTypeBuilder(EndTurn)));
+        types.push(new TypeRegistration(HttpRequest.declarativeType, new ConfigurableTypeBuilder(HttpRequest)));
+        types.push(new TypeRegistration(IfCondition.declarativeType, new ConfigurableTypeBuilder(IfCondition)));
+        types.push(new TypeRegistration(InitProperty.declarativeType, new ConfigurableTypeBuilder(InitProperty)));
+        types.push(new TypeRegistration(LogAction.declarativeType, new ConfigurableTypeBuilder(LogAction)));
+        types.push(new TypeRegistration(RepeatDialog.declarativeType, new ConfigurableTypeBuilder(RepeatDialog)));
+        types.push(new TypeRegistration(ReplaceDialog.declarativeType, new ConfigurableTypeBuilder(ReplaceDialog)));
+        types.push(new TypeRegistration(SendActivity.declarativeType, new ConfigurableTypeBuilder(SendActivity)));
+        types.push(new TypeRegistration(SetProperties.declarativeType, new ConfigurableTypeBuilder(SetProperties)));
+        types.push(new TypeRegistration(SetProperty.declarativeType, new ConfigurableTypeBuilder(SetProperty)));
+        types.push(new TypeRegistration(SwitchCondition.declarativeType, new ConfigurableTypeBuilder(SwitchCondition)));
+        types.push(new TypeRegistration(TraceActivity.declarativeType, new ConfigurableTypeBuilder(TraceActivity)));
 
         // Dialogs
-        types.push(new TypeRegistration('Microsoft.AdaptiveDialog', new ConfigurableTypeBuilder(AdaptiveDialog)));
+        types.push(new TypeRegistration(AdaptiveDialog.declarativeType, new ConfigurableTypeBuilder(AdaptiveDialog)));
 
         // Conditions
-        types.push(new TypeRegistration('Microsoft.OnActivity', new DefaultTypeBuilder(OnActivity)));
-        types.push(new TypeRegistration('Microsoft.OnBeginDialog', new DefaultTypeBuilder(OnBeginDialog)));
-        types.push(new TypeRegistration('Microsoft.OnCancelDialog', new DefaultTypeBuilder(OnCancelDialog)));
-        types.push(new TypeRegistration('Microsoft.OnCondition', new DefaultTypeBuilder(OnCondition)));
-        types.push(new TypeRegistration('Microsoft.OnConversationUpdateActivity', new DefaultTypeBuilder(OnConversationUpdateActivity)));
-        types.push(new TypeRegistration('Microsoft.OnCustomEvent', new DefaultTypeBuilder(OnCustomEvent)));
-        types.push(new TypeRegistration('Microsoft.OnDialogEvent', new DefaultTypeBuilder(OnDialogEvent)));
-        types.push(new TypeRegistration('Microsoft.OnEndOfConversationActivity', new DefaultTypeBuilder(OnEndOfConversationActivity)));
-        types.push(new TypeRegistration('Microsoft.OnError', new DefaultTypeBuilder(OnError)));
-        types.push(new TypeRegistration('Microsoft.OnEventActivity', new DefaultTypeBuilder(OnEventActivity)));
-        types.push(new TypeRegistration('Microsoft.OnHandoffActivity', new DefaultTypeBuilder(OnHandoffActivity)));
-        types.push(new TypeRegistration('Microsoft.OnIntent', new DefaultTypeBuilder(OnIntent)));
-        types.push(new TypeRegistration('Microsoft.OnInvokeActivity', new DefaultTypeBuilder(OnInvokeActivity)));
-        types.push(new TypeRegistration('Microsoft.OnMessageActivity', new DefaultTypeBuilder(OnMessageActivity)));
-        types.push(new TypeRegistration('Microsoft.OnMessageDeleteActivity', new DefaultTypeBuilder(OnMessageDeleteActivity)));
-        types.push(new TypeRegistration('Microsoft.OnMessageReactionActivity', new DefaultTypeBuilder(OnMessageReactionActivity)));
-        types.push(new TypeRegistration('Microsoft.OnMessageUpdateActivity', new DefaultTypeBuilder(OnMessageUpdateActivity)));
-        types.push(new TypeRegistration('Microsoft.OnRepromptDialog', new DefaultTypeBuilder(OnRepromptDialog)));
-        types.push(new TypeRegistration('Microsoft.OnTypingActivity', new DefaultTypeBuilder(OnTypingActivity)));
-        types.push(new TypeRegistration('Microsoft.OnUnknownIntent', new DefaultTypeBuilder(OnUnknownIntent)));
+        types.push(new TypeRegistration(OnActivity.declarativeType, new ConfigurableTypeBuilder(OnActivity)));
+        types.push(new TypeRegistration(OnBeginDialog.declarativeType, new ConfigurableTypeBuilder(OnBeginDialog)));
+        types.push(new TypeRegistration(OnCancelDialog.declarativeType, new ConfigurableTypeBuilder(OnCancelDialog)));
+        types.push(new TypeRegistration(OnCondition.declarativeType, new ConfigurableTypeBuilder(OnCondition)));
+        types.push(new TypeRegistration(OnConversationUpdateActivity.declarativeType, new ConfigurableTypeBuilder(OnConversationUpdateActivity)));
+        types.push(new TypeRegistration(OnCustomEvent.declarativeType, new ConfigurableTypeBuilder(OnCustomEvent)));
+        types.push(new TypeRegistration(OnDialogEvent.declarativeType, new ConfigurableTypeBuilder(OnDialogEvent)));
+        types.push(new TypeRegistration(OnEndOfConversationActivity.declarativeType, new ConfigurableTypeBuilder(OnEndOfConversationActivity)));
+        types.push(new TypeRegistration(OnError.declarativeType, new ConfigurableTypeBuilder(OnError)));
+        types.push(new TypeRegistration(OnEventActivity.declarativeType, new ConfigurableTypeBuilder(OnEventActivity)));
+        types.push(new TypeRegistration(OnHandoffActivity.declarativeType, new ConfigurableTypeBuilder(OnHandoffActivity)));
+        types.push(new TypeRegistration(OnIntent.declarativeType, new ConfigurableTypeBuilder(OnIntent)));
+        types.push(new TypeRegistration(OnInvokeActivity.declarativeType, new ConfigurableTypeBuilder(OnInvokeActivity)));
+        types.push(new TypeRegistration(OnMessageActivity.declarativeType, new ConfigurableTypeBuilder(OnMessageActivity)));
+        types.push(new TypeRegistration(OnMessageDeleteActivity.declarativeType, new ConfigurableTypeBuilder(OnMessageDeleteActivity)));
+        types.push(new TypeRegistration(OnMessageReactionActivity.declarativeType, new ConfigurableTypeBuilder(OnMessageReactionActivity)));
+        types.push(new TypeRegistration(OnMessageUpdateActivity.declarativeType, new ConfigurableTypeBuilder(OnMessageUpdateActivity)));
+        types.push(new TypeRegistration(OnRepromptDialog.declarativeType, new ConfigurableTypeBuilder(OnRepromptDialog)));
+        types.push(new TypeRegistration(OnTypingActivity.declarativeType, new ConfigurableTypeBuilder(OnTypingActivity)));
+        types.push(new TypeRegistration(OnUnknownIntent.declarativeType, new ConfigurableTypeBuilder(OnUnknownIntent)));
 
         // Recognizers
-        types.push(new TypeRegistration('Microsoft.RegexRecognizer', new CustomTypeBuilder((config) => {
-            let recognizer = new RegExpRecognizer();
-
-            if (config && config['intents']) {
-                // The declarative format models intents and expressions as a dictionary
-                const intents: { [intent: string]: string } = <{ [intent: string]: string }>config['intents'];
-
-                if (intents) {
-                    for (const [key, value] of Object.entries(intents)) {
-                        recognizer.addIntent(key, new RegExp(value, 'i'));
-                    }
-                }
-            }
-
-            return recognizer;
-        })));
+        types.push(new TypeRegistration(RegexRecognizer.declarativeType, new ConfigurableTypeBuilder(RegexRecognizer)));
 
         return types;
     }

@@ -45,6 +45,9 @@ export interface AdaptiveDialogConfiguration extends DialogConfiguration {
 }
 
 export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
+
+    public static declarativeType = 'Microsoft.AdaptiveDialog';
+
     private readonly changeKey = Symbol('changes');
 
     private installedDependencies = false;
@@ -53,14 +56,14 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
      * Creates a new `AdaptiveDialog` instance.
      * @param dialogId (Optional) unique ID of the component within its parents dialog set.
      */
-    constructor(dialogId?: string) {
+    public constructor(dialogId?: string) {
         super(dialogId);
     }
 
     /**
      * Planning triggers to evaluate for each conversational turn.
      */
-    public readonly triggers: OnCondition[] = [];
+    public triggers: OnCondition[] = [];
 
     /**
      * (Optional) recognizer used to analyze any message utterances.
@@ -210,12 +213,14 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
         if (preBubble) {
             switch (event.name) {
                 case AdaptiveEventNames.beginDialog:
-                    const activityReceivedEvent: DialogEvent = {
-                        name: AdaptiveEventNames.activityReceived,
-                        value: sequence.context.activity,
-                        bubble: false
+                    if (!sequence.state.getValue('turn.activityProcessed')) {
+                        const activityReceivedEvent: DialogEvent = {
+                            name: AdaptiveEventNames.activityReceived,
+                            value: sequence.context.activity,
+                            bubble: false
+                        }
+                        handled = await this.processEvent(sequence, activityReceivedEvent, true);
                     }
-                    handled = await this.processEvent(sequence, activityReceivedEvent, true);
                     break;
                 case AdaptiveEventNames.activityReceived:
                     const activity = sequence.context.activity;
@@ -271,13 +276,15 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
         } else {
             switch (event.name) {
                 case AdaptiveEventNames.beginDialog:
-                    const activityReceivedEvent: DialogEvent = {
-                        name: AdaptiveEventNames.activityReceived,
-                        value: sequence.context.activity,
-                        bubble: false
-                    };
-                    // Emit trailing ActivityReceived event
-                    handled = await this.processEvent(sequence, activityReceivedEvent, false);
+                    if (!sequence.state.getValue('turn.activityProcessed')) {
+                        const activityReceivedEvent: DialogEvent = {
+                            name: AdaptiveEventNames.activityReceived,
+                            value: sequence.context.activity,
+                            bubble: false
+                        };
+                        // Emit trailing ActivityReceived event
+                        handled = await this.processEvent(sequence, activityReceivedEvent, false);
+                    }
                     break;
                 case AdaptiveEventNames.activityReceived:
                     const activity = sequence.context.activity;
