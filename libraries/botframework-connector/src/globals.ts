@@ -7,12 +7,16 @@
  */
 
 // set FormData and Fetch as global functions
-(function() {
-    if (!this.hasOwnProperty("FormData")) { 
-        this.FormData = require("form-data");
+function setGlobals() {
+    const env = (global || window) as any;
+    
+    if (!env.hasOwnProperty("FormData")) { 
+        env.FormData = require("form-data");
     }
 
-    if (!this.hasOwnProperty("fetch")) {
-        this.fetch = require("node-fetch");
+    if (!env.hasOwnProperty("fetch")) {
+        env.fetch = require("node-fetch");
     }
-})();
+}
+
+setGlobals();

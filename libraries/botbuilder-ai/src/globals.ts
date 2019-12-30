@@ -6,13 +6,11 @@
  * Licensed under the MIT License.
  */
 
-const nodeFetch = require('node-fetch');
-
 export function getFetch() {    
     const env = (global || window) as any;
 
     if (!env.hasOwnProperty('fetch')) {    
-        env.fetch = nodeFetch;
+        env.fetch = require('node-fetch');
         return env.fetch;
     }
     else {              
