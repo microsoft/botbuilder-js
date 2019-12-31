@@ -148,11 +148,11 @@ export class SkillHandler extends ChannelServiceHandler {
             const adapter: BotFrameworkAdapter = (context.adapter as BotFrameworkAdapter);
             // Cache the ClaimsIdentity and ConnectorClient on the context so that it's available inside of the bot's logic.
             context.turnState.set(adapter.BotIdentityKey, claimsIdentity);
-            const client = await adapter.createConnectorClientWithIdentity(activity.serviceUrl, claimsIdentity);
-            context.turnState.set(adapter.ConnectorClientKey, client);
             context.turnState.set(this.SkillConversationReferenceKey, skillConversationReference);
+            activity = TurnContext.applyConversationReference(activity, conversationReference) as Activity;
+            const client = adapter.createConnectorClient(activity.serviceUrl);
+            context.turnState.set(adapter.ConnectorClientKey, client);
 
-            TurnContext.applyConversationReference(activity, conversationReference);
             context.activity.id = replyToActivityId;
             switch (activity.type) {
                 case ActivityTypes.EndOfConversation:

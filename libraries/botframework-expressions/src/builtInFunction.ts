@@ -759,7 +759,7 @@ export class BuiltInFunctions {
 
         if (left == undefined) {
             // fully converted to path, so we just delegate to memory scope
-            return state.getValue(path);
+            return { value: state.getValue(path), error: undefined };
         } else {
             let newScope: any;
             let err: string;
@@ -768,7 +768,7 @@ export class BuiltInFunctions {
                 return {value: undefined, error: err};
             }
 
-            return new SimpleObjectMemory(newScope).getValue(path);
+            return { value: new SimpleObjectMemory(newScope).getValue(path), error: undefined };
         }
     }
 
@@ -784,7 +784,7 @@ export class BuiltInFunctions {
             ({ value: property, error } = children[1].tryEvaluate(state));
 
             if (!error) {
-                ({ value, error } = new SimpleObjectMemory(instance).getValue(property.toString()));
+                value = new SimpleObjectMemory(instance).getValue(property.toString());
             }
         }
 
@@ -893,7 +893,8 @@ export class BuiltInFunctions {
             return {value: undefined, error: err};
         }
 
-        return state.setValue(path, value);
+        state.setValue(path, value);
+        return {value, error: undefined};
     }
 
     private static foreach(expression: Expression, state: MemoryInterface): { value: any; error: string } {

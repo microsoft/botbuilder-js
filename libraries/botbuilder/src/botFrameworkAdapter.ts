@@ -1085,7 +1085,8 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
         if (!credentials) throw new Error('invalid credentials');
 
         let client: ConnectorClient = context.turnState.get(this.ConnectorClientKey);
-        if (!client) {
+        // Inspect the retrieved client to confirm that the serviceUrl is correct, if it isn't, create a new one.
+        if (!client || client['baseUri'] !== serviceUrl) {
             client = this.createConnectorClientInternal(serviceUrl, credentials);
         }
 
@@ -1098,7 +1099,7 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
      * @param appId 
      * @param oAuthScope 
      */
-    protected async buildCredentials(appId: string, oAuthScope: string = ''): Promise<AppCredentials> {
+    protected async buildCredentials(appId: string, oAuthScope?: string): Promise<AppCredentials> {
         // There is no cache for AppCredentials in JS as opposed to C#.
         // Instead of retrieving an AppCredentials from the Adapter instance, generate a new one
         const appPassword = await this.credentialsProvider.getAppPassword(appId);

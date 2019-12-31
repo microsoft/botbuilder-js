@@ -22,13 +22,13 @@
   "main": "lib/index.js",
   "typings": "lib/index.d.js",
   "dependencies": {
+    "@types/ws": "^6.0.3",
     "uuid": "^3.3.2",
     "ws": "^7.1.2"
   },
   "devDependencies": {
     "@types/chai": "^4.1.7",
     "@types/node": "^10.12.18",
-    "@types/ws": "^6.0.3",
     "@typescript-eslint/eslint-plugin": "^1.10.2",
     "@typescript-eslint/parser": "^1.10.2",
     "chai": "^4.2.0",
