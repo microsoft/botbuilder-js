@@ -8,7 +8,7 @@
 import * as Recognizers from '@microsoft/recognizers-text-choice';
 import { Activity } from 'botbuilder-core';
 import { DialogContext, Choice, ListStyle, ChoiceFactoryOptions, ChoiceFactory, recognizeChoices } from 'botbuilder-dialogs';
-import { ExpressionEngine } from 'botframework-expressions';
+import { ExpressionEngine, Expression } from 'botframework-expressions';
 import { InputDialogConfiguration, InputDialog, InputState } from './inputDialog';
 
 export interface ConfirmInputConfiguration extends InputDialogConfiguration {
@@ -37,6 +37,8 @@ export class ConfirmInput extends InputDialog {
         'zh-cn': { choices: ['是的', '不'], options: { inlineSeparator: '， ', inlineOr: ' 要么 ', inlineOrMore: '， 要么 ', includeNumbers: true } }
     };
 
+    private _outputFormatExpression: Expression;
+
     /**
      * The prompts default locale that should be recognized.
      */
@@ -62,9 +64,18 @@ export class ConfirmInput extends InputDialog {
     public confirmChoices?: Choice[];
 
     /**
-     * Output format expression.
+     * Get output format expression.
      */
-    public outputFormat?: string;
+    public get outputFormat(): string {
+        return this._outputFormatExpression ? this._outputFormatExpression.toString() : undefined;
+    }
+
+    /**
+     * Set output format expression.
+     */
+    public set outputFormat(value: string) {
+        this._outputFormatExpression = value ? new ExpressionEngine().parse(value): undefined;
+    }
 
     public configure(config: ConfirmInputConfiguration): this {
         return super.configure(config);
@@ -87,13 +98,12 @@ export class ConfirmInput extends InputDialog {
             if (results.length > 0 && results[0].resolution) {
                 input = results[0].resolution.value;
                 dc.state.setValue(InputDialog.VALUE_PROPERTY, !!input);
-                if (this.outputFormat) {
-                    const outputExpression = new ExpressionEngine().parse(this.outputFormat);
-                    const { value, error } = outputExpression.tryEvaluate(dc.state);
+                if (this._outputFormatExpression) {
+                    const { value, error } = this._outputFormatExpression.tryEvaluate(dc.state);
                     if (!error) {
                         dc.state.setValue(InputDialog.VALUE_PROPERTY, value);
                     } else {
-                        throw new Error(`OutputFormat expression evaluation resulted in an error. Expression: ${outputExpression.toString()}. Error: ${error}`);
+                        throw new Error(`OutputFormat expression evaluation resulted in an error. Expression: ${ this._outputFormatExpression.toString() }. Error: ${error}`);
                     }
                 }
                 return InputState.valid;
