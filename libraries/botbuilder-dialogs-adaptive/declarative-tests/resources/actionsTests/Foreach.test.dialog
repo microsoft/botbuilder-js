@@ -11,24 +11,24 @@
           {
             "$kind": "Microsoft.InitProperty",
             "property": "dialog.todo",
-            "type": "Array"
+            "type": "array"
           },
           {
             "$kind": "Microsoft.EditArray",
             "itemsProperty": "dialog.todo",
-            "changeType": "Push",
+            "changeType": "push",
             "value": "1"
           },
           {
             "$kind": "Microsoft.EditArray",
             "itemsProperty": "dialog.todo",
-            "changeType": "Push",
+            "changeType": "push",
             "value": "2"
           },
           {
             "$kind": "Microsoft.EditArray",
             "itemsProperty": "dialog.todo",
-            "changeType": "Push",
+            "changeType": "push",
             "value": "3"
           },
           {

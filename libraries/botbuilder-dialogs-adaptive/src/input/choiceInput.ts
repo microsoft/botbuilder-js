@@ -20,8 +20,8 @@ export interface ChoiceInputConfiguration extends InputDialogConfiguration {
 }
 
 export enum ChoiceOutputFormat {
-    Value = 'Value',
-    Index = 'Index'
+    value = 'value',
+    index = 'index'
 }
 
 export interface ChoiceInputOptions {
@@ -67,7 +67,7 @@ export class ChoiceInput extends InputDialog {
     /**
      * Control the format of the response (value or index of the choice).
      */
-    public outputFormat = ChoiceOutputFormat.Value;
+    public outputFormat = ChoiceOutputFormat.value;
 
     /**
      * Additional options passed to the `ChoiceFactory` and used to tweak the style of choices
@@ -133,11 +133,11 @@ export class ChoiceInput extends InputDialog {
         // Format output and return success
         const foundChoice: FoundChoice = results[0].resolution;
         switch (this.outputFormat) {
-            case ChoiceOutputFormat.Value:
+            case ChoiceOutputFormat.value:
             default:
                 dc.state.setValue(InputDialog.VALUE_PROPERTY, foundChoice.value);
                 break;
-            case ChoiceOutputFormat.Index:
+            case ChoiceOutputFormat.index:
                 dc.state.setValue(InputDialog.VALUE_PROPERTY, foundChoice.index);
                 break;
         }

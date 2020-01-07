@@ -27,10 +27,10 @@ export interface ActionChangeList {
 }
 
 export enum ActionChangeType {
-    insertActions = 'InsertActions',
-    appendActions = 'AppendActions',
-    endSequence = 'EndSequence',
-    replaceSequence = 'ReplaceSequence'
+    insertActions = 'insertActions',
+    appendActions = 'appendActions',
+    endSequence = 'endSequence',
+    replaceSequence = 'replaceSequence'
 }
 
 export enum AdaptiveEventNames {

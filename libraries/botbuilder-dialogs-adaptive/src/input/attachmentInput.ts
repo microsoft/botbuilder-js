@@ -14,15 +14,15 @@ export interface AttachmentInputConfiguration extends InputDialogConfiguration {
 }
 
 export enum AttachmentOutputFormat {
-    All = 'All',
-    First = 'First'
+    all = 'all',
+    first = 'first'
 }
 
 export class AttachmentInput extends InputDialog {
 
     public static declarativeType = 'Microsoft.AttachmentInput';
 
-    public outputFormat = AttachmentOutputFormat.First;
+    public outputFormat = AttachmentOutputFormat.first;
 
     public configure(config: AttachmentInputConfiguration): this {
         return super.configure(config);
@@ -48,10 +48,10 @@ export class AttachmentInput extends InputDialog {
 
         // Format output and return success
         switch (this.outputFormat) {
-            case AttachmentOutputFormat.All:
+            case AttachmentOutputFormat.all:
                 dc.state.setValue(InputDialog.VALUE_PROPERTY, attachments);
                 break;
-            case AttachmentOutputFormat.First:
+            case AttachmentOutputFormat.first:
                 dc.state.setValue(InputDialog.VALUE_PROPERTY, first);
                 break;
         }

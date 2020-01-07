@@ -16,11 +16,11 @@ export interface EditArrayConfiguration extends DialogConfiguration {
 }
 
 export enum ArrayChangeType {
-    push = 'Push',
-    pop = 'Pop',
-    take = 'Take',
-    remove = 'Remove',
-    clear = 'Clear'
+    push = 'push',
+    pop = 'pop',
+    take = 'take',
+    remove = 'remove',
+    clear = 'clear'
 }
 
 export class EditArray<O extends object = {}> extends Dialog<O> {
