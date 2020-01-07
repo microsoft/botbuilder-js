@@ -61,7 +61,7 @@ export class EditActions<O extends object = {}> extends Dialog<O> implements Dia
             dc.queueChanges(changes);
             return await dc.endDialog();
         } else {
-            throw new Error(`EditAction should only be used in the context of an adaptive dialog.`);
+            throw new Error(`EditActions should only be used in the context of an adaptive dialog.`);
         }
     }
 
