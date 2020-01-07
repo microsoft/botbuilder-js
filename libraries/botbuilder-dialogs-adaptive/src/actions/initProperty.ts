@@ -6,7 +6,6 @@
  * Licensed under the MIT License.
  */
 import { DialogTurnResult, DialogConfiguration, DialogContext, Dialog } from 'botbuilder-dialogs';
-import { SequenceContext } from '../sequenceContext';
 
 export interface InitPropertyConfiguration extends DialogConfiguration {
     /**
@@ -52,9 +51,6 @@ export class InitProperty<O extends object = {}> extends Dialog<O> {
     }
 
     public async beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {
-        // Ensure planning context and condition
-        if (!(dc instanceof SequenceContext)) { throw new Error(`${ this.id }: should only be used within an AdaptiveDialog.`); }
-
         if (!this.property) { throw new Error(`${ this.id }: no 'property' specified.`); }
         if (!this.type) { throw new Error(`${ this.id }: no 'type' specified.`); }
 

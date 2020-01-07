@@ -8,7 +8,6 @@
 import { DialogTurnResult, Dialog, DialogDependencies, DialogContext } from 'botbuilder-dialogs';
 import { Expression, ExpressionEngine } from 'botframework-expressions';
 import { ActionScope, ActionScopeConfiguration } from './actionScope';
-import { SequenceContext } from '../sequenceContext';
 
 export interface IfConditionConfiguration extends ActionScopeConfiguration {
     /**
@@ -82,18 +81,14 @@ export class IfCondition<O extends object = {}> extends Dialog<O> implements Dia
     }
 
     public async beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {
-        if (dc instanceof SequenceContext) {
-            const { value, error } = this._condition.tryEvaluate(dc.state);
-            const conditionResult = !error && value;
-            if (conditionResult) {
-                return await dc.replaceDialog(this.trueScope.id);
-            } else if (!conditionResult && this.falseScope.actions && this.falseScope.actions.length > 0) {
-                return await dc.replaceDialog(this.falseScope.id);
-            }
-            return await dc.endDialog();
-        } else {
-            throw new Error('`IfCondition` should only be used in the context of an adaptive dialog.');
+        const { value, error } = this._condition.tryEvaluate(dc.state);
+        const conditionResult = !error && value;
+        if (conditionResult) {
+            return await dc.replaceDialog(this.trueScope.id);
+        } else if (!conditionResult && this.falseScope.actions && this.falseScope.actions.length > 0) {
+            return await dc.replaceDialog(this.falseScope.id);
         }
+        return await dc.endDialog();
     }
 
     protected onComputeId(): string {

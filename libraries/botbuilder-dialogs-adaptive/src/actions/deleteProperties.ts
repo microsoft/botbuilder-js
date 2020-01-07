@@ -6,7 +6,6 @@
  * Licensed under the MIT License.
  */
 import { Dialog, DialogContext, DialogTurnResult, DialogConfiguration } from 'botbuilder-dialogs';
-import { SequenceContext } from '../sequenceContext';
 
 export interface DeletePropertiesConfiguration extends DialogConfiguration {
     properties?: string[];
@@ -32,17 +31,13 @@ export class DeleteProperties<O extends object = {}> extends Dialog<O> {
     }
 
     public async beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {
-        if (dc instanceof SequenceContext) {
-            if (this.properties && this.properties.length > 0) {
-                for (let i = 0; i < this.properties.length; i++) {
-                    dc.state.deleteValue(this.properties[i]);
-                }
+        if (this.properties && this.properties.length > 0) {
+            for (let i = 0; i < this.properties.length; i++) {
+                dc.state.deleteValue(this.properties[i]);
             }
-
-            return await dc.endDialog();
-        } else {
-            throw new Error('`DeleteProperties` should only be used in the context of an adaptive dialog.');
         }
+
+        return await dc.endDialog();
     }
 
     protected onComputeId(): string {
