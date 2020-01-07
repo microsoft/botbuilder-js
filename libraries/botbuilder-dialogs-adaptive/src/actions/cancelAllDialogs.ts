@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 import { DialogTurnResult, DialogContext, DialogConfiguration, Dialog } from 'botbuilder-dialogs';
-import { ExpressionEngine } from 'botframework-expressions';
+import { ExpressionEngine, Expression } from 'botframework-expressions';
 
 export interface CancelAllDialogsConfiguration extends DialogConfiguration {
     eventName?: string;
@@ -16,6 +16,8 @@ export interface CancelAllDialogsConfiguration extends DialogConfiguration {
 export class CancelAllDialogs<O extends object = {}> extends Dialog<O> {
 
     public static declarativeType = 'Microsoft.CancelAllDialogs';
+
+    private _eventValueExpression: Expression;
 
     public constructor();
     public constructor(eventName: string, eventValue?: string);
@@ -31,9 +33,18 @@ export class CancelAllDialogs<O extends object = {}> extends Dialog<O> {
     public eventName: string;
 
     /**
-     * Value expression for event value.
+     * Get value expression for event value.
      */
-    public eventValue: string;
+    public get eventValue(): string {
+        return this._eventValueExpression ? this._eventValueExpression.toString() : undefined;
+    }
+
+    /**
+     * Set value expression for event value.
+     */
+    public set eventValue(value: string) {
+        this._eventValueExpression = value ? new ExpressionEngine().parse(value) : undefined;
+    }
 
     public configure(config: CancelAllDialogsConfiguration): this {
         return super.configure(config);
@@ -41,9 +52,8 @@ export class CancelAllDialogs<O extends object = {}> extends Dialog<O> {
 
     public async beginDialog(dc: DialogContext, options: O): Promise<DialogTurnResult> {
         let eventValue: any;
-        if (this.eventValue) {
-            const eventValueExpression = new ExpressionEngine().parse(this.eventValue);
-            const { value } = eventValueExpression.tryEvaluate(dc.state);
+        if (this._eventValueExpression) {
+            const { value } = this._eventValueExpression.tryEvaluate(dc.state);
             eventValue = value;
         }
 

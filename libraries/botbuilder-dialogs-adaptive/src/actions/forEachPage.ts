@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 import { DialogTurnResult, Dialog, DialogContext } from 'botbuilder-dialogs';
-import { ExpressionEngine } from 'botframework-expressions';
+import { ExpressionEngine, Expression } from 'botframework-expressions';
 import { ActionScope, ActionScopeResult, ActionScopeConfiguration } from './actionScope';
 
 const FOREACHPAGE = 'dialog.foreach.page';
@@ -33,10 +33,21 @@ export class ForEachPage<O extends object = {}> extends ActionScope<O> {
 
     public static declarativeType = 'Microsoft.ForeachPage';
 
+    private _itemsPropertyExpression: Expression;
+
     /**
-     * Expression used to compute the list that should be enumerated.
+     * Get expression used to compute the list that should be enumerated.
      */
-    public itemsProperty: string;
+    public get itemsProperty(): string {
+        return this._itemsPropertyExpression ? this._itemsPropertyExpression.toString() : undefined;
+    }
+
+    /**
+     * Set expression used to compute the list that should be enumerated.
+     */
+    public set itemsProperty(value: string) {
+        this._itemsPropertyExpression = value ? new ExpressionEngine().parse(value) : undefined;
+    }
 
     public pageSize = 10;
 
@@ -65,16 +76,15 @@ export class ForEachPage<O extends object = {}> extends ActionScope<O> {
     }
 
     protected onComputeId(): string {
-        return `ForEachPage[${this.itemsProperty}]`;
+        return `ForEachPage[${ this.itemsProperty }]`;
     }
 
     private async nextPage(dc: DialogContext): Promise<DialogTurnResult> {
-        const itemsProperty = new ExpressionEngine().parse(this.itemsProperty);
         let pageIndex = dc.state.getValue(FOREACHPAGEINDEX, 0);
         const pageSize = this.pageSize;
         const itemOffset = pageSize * pageIndex;
 
-        const { value, error } = itemsProperty.tryEvaluate(dc.state);
+        const { value, error } = this._itemsPropertyExpression.tryEvaluate(dc.state);
         if (!error) {
             const page = this.getPage(value, itemOffset, pageSize);
             if (page && page.length > 0) {

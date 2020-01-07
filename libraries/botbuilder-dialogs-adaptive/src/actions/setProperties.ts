@@ -1,5 +1,5 @@
 import { Dialog, DialogContext, DialogTurnResult, DialogConfiguration } from 'botbuilder-dialogs';
-import { ExpressionEngine } from 'botframework-expressions';
+import { ExpressionEngine, Expression } from 'botframework-expressions';
 
 export class PropertyAssignment {
     public property: string;
@@ -14,10 +14,26 @@ export class SetProperties<O extends object = {}> extends Dialog<O> {
 
     public static declarativeType = 'Microsoft.SetProperties';
 
+    private _assignments: PropertyAssignment[] = [];
+
+    private _assignmentValueExpressions: Expression[] = [];
+
     /**
-     * Additional property settings as property/value pairs.
+     * Get additional property settings as property/value pairs.
      */
-    public assignments: PropertyAssignment[] = [];
+    public get assignments(): PropertyAssignment[] {
+        return this._assignments || [];
+    }
+
+    public set assignments(value: PropertyAssignment[]) {
+        this._assignments = value || [];
+        this._assignmentValueExpressions = [];
+        for (let i = 0; i < this._assignments.length; i++) {
+            const assignment = this._assignments[i];
+            const valExp = new ExpressionEngine().parse(assignment.value);
+            this._assignmentValueExpressions.push(valExp);
+        }
+    }
 
     public configure(config: SetPropertiesConfiguration): this {
         return super.configure(config);
@@ -26,11 +42,11 @@ export class SetProperties<O extends object = {}> extends Dialog<O> {
     public async beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {
         for (let i = 0; i < this.assignments.length; i++) {
             const assignment = this.assignments[i];
-            const valExp = new ExpressionEngine().parse(assignment.value);
+            const assignmentValueExpression = this._assignmentValueExpressions[i];
 
-            const { value, error } = valExp.tryEvaluate(dc.state);
+            const { value, error } = assignmentValueExpression.tryEvaluate(dc.state);
             if (error) {
-                throw new Error(`Expression evaluation resulted in an error. Expression: ${valExp.toString()}. Error: ${error}`);
+                throw new Error(`Expression evaluation resulted in an error. Expression: ${ assignmentValueExpression.toString() }. Error: ${ error }`);
             }
 
             dc.state.setValue(assignment.property, value);
