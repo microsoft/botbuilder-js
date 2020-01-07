@@ -1,3 +1,10 @@
+/**
+ * @module botbuilder-dialogs-adaptive
+ */
+/**
+ * Copyright (c) Microsoft Corporation. All rights reserved.
+ * Licensed under the MIT License.
+ */
 import { Dialog } from 'botbuilder-dialogs';
 import { ExpressionParserInterface, Expression, ExpressionType } from 'botframework-expressions';
 import { OnCondition, OnConditionConfiguration } from './onCondition';
