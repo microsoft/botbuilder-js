@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 import { DialogTurnResult, Dialog, DialogContext } from 'botbuilder-dialogs';
-import { ExpressionEngine } from 'botframework-expressions';
+import { ExpressionEngine, Expression } from 'botframework-expressions';
 import { ActionScope, ActionScopeResult, ActionScopeConfiguration } from './actionScope';
 
 const INDEX = 'dialog.foreach.index';
@@ -23,6 +23,8 @@ export class ForEach<O extends object = {}> extends ActionScope<O> {
 
     public static declarativeType = 'Microsoft.Foreach';
 
+    private _itemsPropertyExpression: Expression;
+
     public constructor();
     public constructor(itemsProperty: string, actions: Dialog[]);
     public constructor(itemsProperty?: string, actions?: Dialog[]) {
@@ -32,9 +34,18 @@ export class ForEach<O extends object = {}> extends ActionScope<O> {
     }
 
     /**
-     * Property path expression to the collection of items.
+     * Get property path expression to the collection of items.
      */
-    public itemsProperty: string;
+    public get itemsProperty(): string {
+        return this._itemsPropertyExpression ? this._itemsPropertyExpression.toString() : undefined;
+    }
+
+    /**
+     * Set property path expression to the collection of items.
+     */
+    public set itemsProperty(value: string) {
+        this._itemsPropertyExpression = value ? new ExpressionEngine().parse(value) : undefined;
+    }
 
     public getDependencies(): Dialog[] {
         return this.actions;
@@ -62,8 +73,7 @@ export class ForEach<O extends object = {}> extends ActionScope<O> {
     }
 
     protected async nextItem(dc: DialogContext): Promise<DialogTurnResult> {
-        const itemsProperty = new ExpressionEngine().parse(this.itemsProperty);
-        const { value } = itemsProperty.tryEvaluate(dc.state);
+        const { value } = this._itemsPropertyExpression.tryEvaluate(dc.state);
         let index = dc.state.getValue(INDEX);
 
         if (++index < value.length) {

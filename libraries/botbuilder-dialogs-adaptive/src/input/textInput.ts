@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 import { DialogContext } from 'botbuilder-dialogs';
-import { ExpressionEngine } from 'botframework-expressions';
+import { ExpressionEngine, Expression } from 'botframework-expressions';
 import { InputDialogConfiguration, InputDialog, InputState } from './inputDialog';
 
 export interface TextInputConfiguration extends InputDialogConfiguration {
@@ -17,7 +17,15 @@ export class TextInput extends InputDialog {
 
     public static declarativeType = 'Microsoft.TextInput';
 
-    public outputFormat: string;
+    private _outputFormatExpression: Expression;
+
+    public get outputFormat(): string {
+        return this._outputFormatExpression ? this._outputFormatExpression.toString() : undefined;
+    }
+
+    public set outputFormat(value: string) {
+        this._outputFormatExpression = value ? new ExpressionEngine().parse(value) : undefined;
+    }
 
     public configure(config: TextInputConfiguration): this {
         return super.configure(config);
@@ -31,13 +39,12 @@ export class TextInput extends InputDialog {
         // Treat input as a string
         let input: string = dc.state.getValue(InputDialog.VALUE_PROPERTY).toString();
 
-        if (this.outputFormat) {
-            const outputExpression = new ExpressionEngine().parse(this.outputFormat);
-            const { value, error } = outputExpression.tryEvaluate(dc.state);
+        if (this._outputFormatExpression) {
+            const { value, error } = this._outputFormatExpression.tryEvaluate(dc.state);
             if (!error) {
                 input = value.toString();
             } else {
-                throw new Error(`OutputFormat expression evaluation resulted in an error. Expression: ${ outputExpression.toString() }. Error: ${ error }`);
+                throw new Error(`OutputFormat expression evaluation resulted in an error. Expression: ${ this._outputFormatExpression.toString() }. Error: ${ error }`);
             }
         }
 
