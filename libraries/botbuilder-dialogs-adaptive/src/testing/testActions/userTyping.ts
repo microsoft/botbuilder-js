@@ -1,3 +1,10 @@
+/**
+ * @module botbuilder-dialogs-adaptive
+ */
+/**
+ * Copyright (c) Microsoft Corporation. All rights reserved.
+ * Licensed under the MIT License.
+ */
 import { TurnContext, ActivityTypes } from 'botbuilder-core';
 import { Configurable } from 'botbuilder-dialogs';
 import { TestAction } from '../testAction';

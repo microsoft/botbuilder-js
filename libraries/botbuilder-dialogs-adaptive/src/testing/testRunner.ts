@@ -1,3 +1,10 @@
+/**
+ * @module botbuilder-dialogs-adaptive
+ */
+/**
+ * Copyright (c) Microsoft Corporation. All rights reserved.
+ * Licensed under the MIT License.
+ */
 import { TypeFactory, TypeLoader, ResourceExplorer } from 'botbuilder-dialogs-declarative';
 import { AdaptiveComponentRegistration } from '../adaptiveComponentRegistration';
 import { AdaptiveTestComponentRegistration } from '../adaptiveTestComponentRegistration';
