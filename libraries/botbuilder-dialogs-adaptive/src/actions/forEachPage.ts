@@ -18,6 +18,7 @@ const FOREACHPAGEINDEX = 'dialog.foreach.pageindex';
 export interface ForEachPageConfiguration extends ActionScopeConfiguration {
     itemsProperty?: string;
     pageSize?: number;
+    disabled?: string;
 }
 
 /**
@@ -30,10 +31,14 @@ export interface ForEachPageConfiguration extends ActionScopeConfiguration {
  * `GotoDialog` action.
  */
 export class ForEachPage<O extends object = {}> extends ActionScope<O> {
-
     public static declarativeType = 'Microsoft.ForeachPage';
 
-    private _itemsPropertyExpression: Expression;
+    public constructor();
+    public constructor(itemsProperty?: string, pageSize: number = 10) {
+        super();
+        if (itemsProperty) { this.itemsProperty = itemsProperty; }
+        this.pageSize = pageSize;
+    }
 
     /**
      * Get expression used to compute the list that should be enumerated.
@@ -49,7 +54,28 @@ export class ForEachPage<O extends object = {}> extends ActionScope<O> {
         this._itemsPropertyExpression = value ? new ExpressionEngine().parse(value) : undefined;
     }
 
+    /**
+     * Page size, default to 10.
+     */
     public pageSize = 10;
+
+    /**
+     * Get an optional expression which if is true will disable this action.
+     */
+    public get disabled(): string {
+        return this._disabled ? this._disabled.toString() : undefined;
+    }
+
+    /**
+     * Set an optional expression which if is true will disable this action.
+     */
+    public set disabled(value: string) {
+        this._disabled = value ? new ExpressionEngine().parse(value) : undefined;
+    }
+
+    private _itemsPropertyExpression: Expression;
+
+    private _disabled: Expression;
 
     public getDependencies(): Dialog[] {
         return this.actions;
@@ -60,6 +86,12 @@ export class ForEachPage<O extends object = {}> extends ActionScope<O> {
     }
 
     public async beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {
+        if (this._disabled) {
+            const { value } = this._disabled.tryEvaluate(dc.state);
+            if (!!value) {
+                return await dc.endDialog();
+            }
+        }
         return await this.nextPage(dc);
     }
 

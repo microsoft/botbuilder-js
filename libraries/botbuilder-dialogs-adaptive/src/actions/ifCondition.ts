@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { DialogTurnResult, Dialog, DialogDependencies, DialogContext } from 'botbuilder-dialogs';
+import { DialogTurnResult, Dialog, DialogDependencies, DialogContext, Configurable } from 'botbuilder-dialogs';
 import { Expression, ExpressionEngine } from 'botframework-expressions';
 import { ActionScope, ActionScopeConfiguration } from './actionScope';
 
@@ -19,15 +19,12 @@ export interface IfConditionConfiguration extends ActionScopeConfiguration {
      * The actions to run if [condition](#condition) returns false.
      */
     elseActions?: Dialog[];
+
+    disabled?: string;
 }
 
-export class IfCondition<O extends object = {}> extends Dialog<O> implements DialogDependencies {
-
+export class IfCondition<O extends object = {}> extends Dialog<O> implements DialogDependencies, Configurable {
     public static declarativeType = 'Microsoft.IfCondition';
-
-    private _condition: Expression;
-    private _trueScope: ActionScope;
-    private _falseScope: ActionScope;
 
     public constructor();
     public constructor(condition?: string, elseActions?: Dialog[]) {
@@ -76,11 +73,44 @@ export class IfCondition<O extends object = {}> extends Dialog<O> implements Dia
         return this._falseScope;
     }
 
+    /**
+     * Get an optional expression which if is true will disable this action.
+     */
+    public get disabled(): string {
+        return this._disabled ? this._disabled.toString() : undefined;
+    }
+
+    /**
+     * Set an optional expression which if is true will disable this action.
+     */
+    public set disabled(value: string) {
+        this._disabled = value ? new ExpressionEngine().parse(value) : undefined;
+    }
+
+    private _condition: Expression;
+
+    private _trueScope: ActionScope;
+
+    private _falseScope: ActionScope;
+
+    private _disabled: Expression;
+
     public getDependencies(): Dialog[] {
         return [].concat(this.trueScope, this.falseScope);
     }
 
+    public configure(config: IfConditionConfiguration): this {
+        return super.configure(config);
+    }
+
     public async beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {
+        if (this._disabled) {
+            const { value } = this._disabled.tryEvaluate(dc.state);
+            if (!!value) {
+                return await dc.endDialog();
+            }
+        }
+
         const { value, error } = this._condition.tryEvaluate(dc.state);
         const conditionResult = !error && value;
         if (conditionResult) {
@@ -94,9 +124,5 @@ export class IfCondition<O extends object = {}> extends Dialog<O> implements Dia
     protected onComputeId(): string {
         const label = this.condition ? this.condition.toString() : '';
         return `If[${ label }]`;
-    }
-
-    public configure(config: IfConditionConfiguration): this {
-        return super.configure(config);
     }
 }

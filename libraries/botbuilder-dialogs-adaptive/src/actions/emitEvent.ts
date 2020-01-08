@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { DialogTurnResult, DialogContext, DialogConfiguration, Dialog } from 'botbuilder-dialogs';
+import { DialogTurnResult, DialogContext, DialogConfiguration, Dialog, Configurable } from 'botbuilder-dialogs';
 import { Expression, ExpressionEngine } from 'botframework-expressions';
 
 export interface EmitEventConfiguration extends DialogConfiguration {
@@ -13,13 +13,11 @@ export interface EmitEventConfiguration extends DialogConfiguration {
     eventValue?: string;
     bubbleEvent?: boolean;
     resultProperty?: string;
+    disabled?: string;
 }
 
-export class EmitEvent<O extends object = {}> extends Dialog<O> {
-
+export class EmitEvent<O extends object = {}> extends Dialog<O> implements Configurable {
     public static declarativeType = 'Microsoft.EmitEvent';
-
-    private _eventValue: Expression;
 
     public constructor();
     public constructor(eventName: string, eventValue?: string, bubbleEvent?: boolean);
@@ -54,11 +52,36 @@ export class EmitEvent<O extends object = {}> extends Dialog<O> {
      */
     public bubbleEvent: boolean;
 
+    /**
+     * Get an optional expression which if is true will disable this action.
+     */
+    public get disabled(): string {
+        return this._disabled ? this._disabled.toString() : undefined;
+    }
+
+    /**
+     * Set an optional expression which if is true will disable this action.
+     */
+    public set disabled(value: string) {
+        this._disabled = value ? new ExpressionEngine().parse(value) : undefined;
+    }
+
+    private _eventValue: Expression;
+
+    private _disabled: Expression;
+
     public configure(config: EmitEventConfiguration): this {
         return super.configure(config);
     }
 
     public async beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {
+        if (this._disabled) {
+            const { value } = this._disabled.tryEvaluate(dc.state);
+            if (!!value) {
+                return await dc.endDialog();
+            }
+        }
+
         let handled = false;
 
         if (this.eventValue) {

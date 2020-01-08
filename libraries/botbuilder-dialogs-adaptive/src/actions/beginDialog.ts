@@ -5,15 +5,16 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { DialogTurnResult, DialogContext, DialogReason } from 'botbuilder-dialogs';
+import { DialogTurnResult, DialogContext, DialogReason, TurnPath } from 'botbuilder-dialogs';
+import { Expression, ExpressionEngine } from 'botframework-expressions';
 import { BaseInvokeDialog, BaseInvokeDialogConfiguration } from './baseInvokeDialog';
 
 export interface BeginDialogConfiguration extends BaseInvokeDialogConfiguration {
     resultProperty?: string;
+    disabled?: string;
 }
 
 export class BeginDialog<O extends object = {}> extends BaseInvokeDialog<O> {
-
     public static declarativeType = 'Microsoft.BeginDialog';
 
     /**
@@ -32,15 +33,38 @@ export class BeginDialog<O extends object = {}> extends BaseInvokeDialog<O> {
      */
     public resultProperty?: string;
 
+    /**
+     * Get an optional expression which if is true will disable this action.
+     */
+    public get disabled(): string {
+        return this._disabled ? this._disabled.toString() : undefined;
+    }
+
+    /**
+     * Set an optional expression which if is true will disable this action.
+     */
+    public set disabled(value: string) {
+        this._disabled = value ? new ExpressionEngine().parse(value) : undefined;
+    }
+
+    private _disabled: Expression;
+
     public configure(config: BeginDialogConfiguration): this {
         return super.configure(config);
     }
 
     public async beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {
+        if (this._disabled) {
+            const { value } = this._disabled.tryEvaluate(dc.state);
+            if (!!value) {
+                return await dc.endDialog();
+            }
+        }
+
         const dialog = this.resolveDialog(dc);
         const boundOptions = this.bindOptions(dc, options);
         if (this.includeActivity) {
-            dc.state.setValue('turn.activityProcessed', false);
+            dc.state.setValue(TurnPath.ACTIVITYPROCESSED, false);
         }
         return await dc.beginDialog(dialog.id, boundOptions);
     }

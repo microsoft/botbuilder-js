@@ -13,11 +13,12 @@ import {
     NumberInput, OAuthInput, TextInput
 } from './input';
 import {
-    BeginDialog, CancelAllDialogs, DeleteProperties, DeleteProperty,
-    EditArray, EditActions, EmitEvent, EndDialog, EndTurn, ForEach,
-    ForEachPage, HttpRequest, IfCondition, InitProperty, LogAction,
+    BeginDialog, CancelAllDialogs, DeleteActivity, DeleteProperties,
+    DeleteProperty, EditArray, EditActions, EmitEvent, EndDialog, EndTurn,
+    ForEach, ForEachPage, GetActivityMembers, GetConversationMembers,
+    HttpRequest, IfCondition, InitProperty, LogAction,
     RepeatDialog, ReplaceDialog, SendActivity, SetProperties, SetProperty,
-    SwitchCondition, TraceActivity
+    SignOutUser, SwitchCondition, TraceActivity, UpdateActivity
 } from './actions';
 import {
     OnActivity, OnBeginDialog, OnCancelDialog, OnCondition,
@@ -46,6 +47,7 @@ export class AdaptiveComponentRegistration implements ComponentRegistration {
         // Actions
         types.push(new TypeRegistration(BeginDialog.declarativeType, new ConfigurableTypeBuilder(BeginDialog)));
         types.push(new TypeRegistration(CancelAllDialogs.declarativeType, new ConfigurableTypeBuilder(CancelAllDialogs)));
+        types.push(new TypeRegistration(DeleteActivity.declarativeType, new ConfigurableTypeBuilder(DeleteActivity)));
         types.push(new TypeRegistration(DeleteProperties.declarativeType, new ConfigurableTypeBuilder(DeleteProperties)));
         types.push(new TypeRegistration(DeleteProperty.declarativeType, new ConfigurableTypeBuilder(DeleteProperty)));
         types.push(new TypeRegistration(EditArray.declarativeType, new ConfigurableTypeBuilder(EditArray)));
@@ -53,6 +55,8 @@ export class AdaptiveComponentRegistration implements ComponentRegistration {
         types.push(new TypeRegistration(EmitEvent.declarativeType, new ConfigurableTypeBuilder(EmitEvent)));
         types.push(new TypeRegistration(ForEach.declarativeType, new ConfigurableTypeBuilder(ForEach)));
         types.push(new TypeRegistration(ForEachPage.declarativeType, new ConfigurableTypeBuilder(ForEachPage)));
+        types.push(new TypeRegistration(GetActivityMembers.declarativeType, new ConfigurableTypeBuilder(GetActivityMembers)));
+        types.push(new TypeRegistration(GetConversationMembers.declarativeType, new ConfigurableTypeBuilder(GetConversationMembers)));
         types.push(new TypeRegistration(EndDialog.declarativeType, new ConfigurableTypeBuilder(EndDialog)));
         types.push(new TypeRegistration(EndTurn.declarativeType, new ConfigurableTypeBuilder(EndTurn)));
         types.push(new TypeRegistration(HttpRequest.declarativeType, new ConfigurableTypeBuilder(HttpRequest)));
@@ -64,8 +68,10 @@ export class AdaptiveComponentRegistration implements ComponentRegistration {
         types.push(new TypeRegistration(SendActivity.declarativeType, new ConfigurableTypeBuilder(SendActivity)));
         types.push(new TypeRegistration(SetProperties.declarativeType, new ConfigurableTypeBuilder(SetProperties)));
         types.push(new TypeRegistration(SetProperty.declarativeType, new ConfigurableTypeBuilder(SetProperty)));
+        types.push(new TypeRegistration(SignOutUser.declarativeType, new ConfigurableTypeBuilder(SignOutUser)));
         types.push(new TypeRegistration(SwitchCondition.declarativeType, new ConfigurableTypeBuilder(SwitchCondition)));
         types.push(new TypeRegistration(TraceActivity.declarativeType, new ConfigurableTypeBuilder(TraceActivity)));
+        types.push(new TypeRegistration(UpdateActivity.declarativeType, new ConfigurableTypeBuilder(UpdateActivity)));
 
         // Dialogs
         types.push(new TypeRegistration(AdaptiveDialog.declarativeType, new ConfigurableTypeBuilder(AdaptiveDialog)));

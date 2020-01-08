@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { DialogTurnResult, DialogContext, DialogConfiguration, Dialog } from 'botbuilder-dialogs';
+import { DialogTurnResult, DialogContext, DialogConfiguration, Dialog, Configurable } from 'botbuilder-dialogs';
 import { Expression, ExpressionEngine } from 'botframework-expressions';
 
 export interface EditArrayConfiguration extends DialogConfiguration {
@@ -13,6 +13,7 @@ export interface EditArrayConfiguration extends DialogConfiguration {
     itemsProperty?: string;
     resultProperty?: string;
     value?: string;
+    disabled?: string;
 }
 
 export enum ArrayChangeType {
@@ -23,13 +24,8 @@ export enum ArrayChangeType {
     clear = 'clear'
 }
 
-export class EditArray<O extends object = {}> extends Dialog<O> {
-
+export class EditArray<O extends object = {}> extends Dialog<O> implements Configurable {
     public static declarativeType = 'Microsoft.EditArray';
-
-    private _value: Expression;
-    private _itemsProperty: Expression;
-    private _resultProperty: Expression;
 
     public constructor();
     public constructor(changeType: ArrayChangeType, itemsProperty: string, value?: string, resultProperty?: string);
@@ -55,7 +51,7 @@ export class EditArray<O extends object = {}> extends Dialog<O> {
     /**
      * Type of change being applied.
      */
-    public changeType: ArrayChangeType;
+    public changeType: ArrayChangeType = ArrayChangeType.push;
 
     /**
      * Get property path expression to the collection of items.
@@ -99,11 +95,40 @@ export class EditArray<O extends object = {}> extends Dialog<O> {
         this._value = value ? new ExpressionEngine().parse(value) : undefined;
     }
 
+    /**
+     * Get an optional expression which if is true will disable this action.
+     */
+    public get disabled(): string {
+        return this._disabled ? this._disabled.toString() : undefined;
+    }
+
+    /**
+     * Set an optional expression which if is true will disable this action.
+     */
+    public set disabled(value: string) {
+        this._disabled = value ? new ExpressionEngine().parse(value) : undefined;
+    }
+
+    private _value: Expression;
+
+    private _itemsProperty: Expression;
+
+    private _resultProperty: Expression;
+
+    private _disabled: Expression;
+
     public configure(config: EditArrayConfiguration): this {
         return super.configure(config);
     }
 
     public async beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {
+        if (this._disabled) {
+            const { value } = this._disabled.tryEvaluate(dc.state);
+            if (!!value) {
+                return await dc.endDialog();
+            }
+        }
+
         if (!this.itemsProperty) {
             throw new Error(`EditArray: "${ this.changeType }" operation couldn't be performed because the itemsProperty wasn't specified.`);
         }

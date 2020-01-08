@@ -6,9 +6,9 @@
  * Licensed under the MIT License.
  */
 import fetch from 'node-fetch';
-import { DialogTurnResult, DialogConfiguration, DialogContext, Dialog } from 'botbuilder-dialogs';
+import { DialogTurnResult, DialogConfiguration, DialogContext, Dialog, Configurable } from 'botbuilder-dialogs';
 import { Activity } from 'botbuilder-core';
-import { ExpressionEngine } from 'botframework-expressions';
+import { ExpressionEngine, Expression } from 'botframework-expressions';
 import * as stringTemplate from '../stringTemplate';
 
 export interface HttpRequestConfiguration extends DialogConfiguration {
@@ -19,6 +19,7 @@ export interface HttpRequestConfiguration extends DialogConfiguration {
     body?: object;
     responseType?: ResponsesTypes;
     resultProperty?: string;
+    disabled?: string;
 }
 
 export enum ResponsesTypes {
@@ -70,9 +71,29 @@ export enum HttpMethod {
     DELETE = 'DELETE'
 }
 
-export class HttpRequest<O extends object = {}> extends Dialog<O> {
-
+export class HttpRequest<O extends object = {}> extends Dialog<O> implements Configurable {
     public static declarativeType = 'Microsoft.HttpRequest';
+
+    public constructor();
+    public constructor(method: HttpMethod, url: string, headers: object,
+        body: object,
+        responseType: ResponsesTypes, resultProperty: string);
+    public constructor(method?: HttpMethod, url?: string, headers?: object,
+        body?: object,
+        responseType?: ResponsesTypes, resultProperty?: string) {
+        super();
+        this.method = method;
+        this.url = url;
+        this.headers = headers;
+        this.body = body;
+        if (responseType) {
+            this.responseType = responseType;
+        }
+        else {
+            this.responseType = ResponsesTypes.Json;
+        }
+        this.resultProperty = resultProperty;
+    }
 
     /**
      * Http Method
@@ -103,36 +124,33 @@ export class HttpRequest<O extends object = {}> extends Dialog<O> {
      */
     public resultProperty?: string;
 
-    public constructor();
-    public constructor(method: HttpMethod, url: string, headers: object,
-        body: object,
-        responseType: ResponsesTypes, resultProperty: string);
-    public constructor(method?: HttpMethod, url?: string, headers?: object,
-        body?: object,
-        responseType?: ResponsesTypes, resultProperty?: string) {
-        super();
-        this.method = method;
-        this.url = url;
-        this.headers = headers;
-        this.body = body;
-        if (responseType) {
-            this.responseType = responseType;
-        }
-        else {
-            this.responseType = ResponsesTypes.Json;
-        }
-        this.resultProperty = resultProperty;
+    /**
+     * Get an optional expression which if is true will disable this action.
+     */
+    public get disabled(): string {
+        return this._disabled ? this._disabled.toString() : undefined;
     }
 
-    protected onComputeId(): string {
-        return `HttpRequest[${ this.method } ${ this.url }]`;
+    /**
+     * Set an optional expression which if is true will disable this action.
+     */
+    public set disabled(value: string) {
+        this._disabled = value ? new ExpressionEngine().parse(value) : undefined;
     }
+
+    private _disabled: Expression;
 
     public configure(config: HttpRequestConfiguration): this {
         return super.configure(config);
     }
 
     public async beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {
+        if (this._disabled) {
+            const { value } = this._disabled.tryEvaluate(dc.state);
+            if (!!value) {
+                return await dc.endDialog();
+            }
+        }
 
         /**
          * TODO: replace the key value pair in json recursively
@@ -141,7 +159,7 @@ export class HttpRequest<O extends object = {}> extends Dialog<O> {
         const url = stringTemplate.format(this.url, dc);
         const headers = this.headers;
 
-        const instanceBody = this.ReplaceBodyRecursively(dc, this.body);
+        const instanceBody = this.replaceBodyRecursively(dc, this.body);
 
         const parsedBody = JSON.stringify(instanceBody);
         const parsedHeaders = Object.assign({ 'Content-Type': 'application/json' }, headers);
@@ -199,7 +217,11 @@ export class HttpRequest<O extends object = {}> extends Dialog<O> {
         return await dc.endDialog(result);
     }
 
-    private ReplaceBodyRecursively(dc: DialogContext, unit: object) {
+    protected onComputeId(): string {
+        return `HttpRequest[${ this.method } ${ this.url }]`;
+    }
+
+    private replaceBodyRecursively(dc: DialogContext, unit: object) {
         if (typeof unit === 'string') {
             let text: string = unit as string;
             if (text.startsWith('{') && text.endsWith('}')) {
@@ -215,7 +237,7 @@ export class HttpRequest<O extends object = {}> extends Dialog<O> {
         if (Array.isArray(unit)) {
             let result = [];
             unit.forEach(child => {
-                result.push(this.ReplaceBodyRecursively(dc, child));
+                result.push(this.replaceBodyRecursively(dc, child));
             })
             return result;
         }
@@ -223,7 +245,7 @@ export class HttpRequest<O extends object = {}> extends Dialog<O> {
         if (typeof unit === 'object') {
             let result = {};
             for (let key in unit) {
-                result[key] = this.ReplaceBodyRecursively(dc, unit[key]);
+                result[key] = this.replaceBodyRecursively(dc, unit[key]);
             }
             return result;
         }

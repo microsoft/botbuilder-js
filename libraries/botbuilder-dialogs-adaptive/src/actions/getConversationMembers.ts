@@ -5,25 +5,17 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { DialogTurnResult, DialogConfiguration, DialogContext, Dialog, Configurable } from 'botbuilder-dialogs';
+import { Configurable, Dialog, DialogContext, DialogTurnResult, DialogConfiguration } from 'botbuilder-dialogs';
 import { Expression, ExpressionEngine } from 'botframework-expressions';
 
-export interface DeletePropertyConfiguration extends DialogConfiguration {
-    /**
-     * The property to delete.
-     */
+export interface GetConversationMembersConfiguration extends DialogConfiguration {
     property?: string;
-
     disabled?: string;
 }
 
-export class DeleteProperty<O extends object = {}> extends Dialog<O> implements Configurable {
-    public static declarativeType = 'Microsoft.DeleteProperty';
+export class GetConversationMembers<O extends object = {}> extends Dialog<O> implements Configurable {
+    public static declarativeType = 'Microsoft.GetConversationMembers';
 
-    /**
-     * Creates a new `DeleteProperty` instance.
-     * @param property (Optional) property to delete.
-     */
     public constructor();
     public constructor(property?: string) {
         super();
@@ -31,7 +23,7 @@ export class DeleteProperty<O extends object = {}> extends Dialog<O> implements 
     }
 
     /**
-     * The property to delete.
+     * Property path to put the value in.
      */
     public property: string;
 
@@ -51,7 +43,7 @@ export class DeleteProperty<O extends object = {}> extends Dialog<O> implements 
 
     private _disabled: Expression;
 
-    public configure(config: DeletePropertyConfiguration): this {
+    public configure(config: GetConversationMembersConfiguration): this {
         return super.configure(config);
     }
 
@@ -63,11 +55,18 @@ export class DeleteProperty<O extends object = {}> extends Dialog<O> implements 
             }
         }
 
-        dc.state.deleteValue(this.property);
-        return await dc.endDialog();
+        const adapter = dc.context.adapter;
+        if (typeof adapter['getConversationMembers'] === 'function') {
+            const result = await adapter['getConversationMembers'].getConversationMembers(dc.context);
+            dc.state.setValue(this.property, result);
+            return await dc.endDialog(result);
+        } else {
+            throw new Error('getConversationMembers() not supported by the current adapter.');
+        }
     }
 
     protected onComputeId(): string {
-        return `DeleteProperty[${ this.property }]`;
+        return `GetConversationMembers[${ this.property }]`;
     }
 }
+ 

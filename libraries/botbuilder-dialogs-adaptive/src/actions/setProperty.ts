@@ -5,16 +5,16 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { DialogTurnResult, DialogConfiguration, DialogContext, Dialog } from 'botbuilder-dialogs';
+import { DialogTurnResult, DialogConfiguration, DialogContext, Dialog, Configurable } from 'botbuilder-dialogs';
 import { Expression, ExpressionEngine } from 'botframework-expressions';
 
 export interface SetPropertyConfiguration extends DialogConfiguration {
     property?: string;
     value?: string;
+    disabled?: string;
 }
 
-export class SetProperty<O extends object = {}> extends Dialog<O> {
-
+export class SetProperty<O extends object = {}> extends Dialog<O> implements Configurable {
     public static declarativeType = 'Microsoft.SetProperty';
 
     public constructor();
@@ -24,8 +24,6 @@ export class SetProperty<O extends object = {}> extends Dialog<O> {
         if (property) { this.property = property; }
         if (value) { this.value = value; }
     }
-
-    private _value: Expression;
 
     /**
      * Property path to put the value in.
@@ -46,12 +44,36 @@ export class SetProperty<O extends object = {}> extends Dialog<O> {
         this._value = value ? new ExpressionEngine().parse(value) : undefined;
     }
 
+    /**
+     * Get an optional expression which if is true will disable this action.
+     */
+    public get disabled(): string {
+        return this._disabled ? this._disabled.toString() : undefined;
+    }
+
+    /**
+     * Set an optional expression which if is true will disable this action.
+     */
+    public set disabled(value: string) {
+        this._disabled = value ? new ExpressionEngine().parse(value) : undefined;
+    }
+
+    private _value: Expression;
+
+    private _disabled: Expression;
+
     public configure(config: SetPropertyConfiguration): this {
         return super.configure(config);
     }
 
     public async beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {
-        // Ensure planning context and condition
+        if (this._disabled) {
+            const { value } = this._disabled.tryEvaluate(dc.state);
+            if (!!value) {
+                return await dc.endDialog();
+            }
+        }
+
         if (!this.property) { throw new Error(`${ this.id }: no 'property' specified.`); }
         if (!this.value) { throw new Error(`${ this.id }: no 'value' expression specified.`); }
 

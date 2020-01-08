@@ -5,16 +5,17 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { DialogTurnResult, Dialog, DialogConfiguration, DialogDependencies, DialogContext } from 'botbuilder-dialogs';
+import { DialogTurnResult, Dialog, DialogConfiguration, DialogDependencies, DialogContext, Configurable } from 'botbuilder-dialogs';
+import { Expression, ExpressionEngine } from 'botframework-expressions';
 import { ActionChangeType, SequenceContext, ActionChangeList, ActionState } from '../sequenceContext';
 
 export interface EditActionsConfiguration extends DialogConfiguration {
     changeType?: ActionChangeType;
     actions?: Dialog[];
+    disabled?: string;
 }
 
-export class EditActions<O extends object = {}> extends Dialog<O> implements DialogDependencies {
-
+export class EditActions<O extends object = {}> extends Dialog<O> implements DialogDependencies, Configurable {
     public static declarativeType = 'Microsoft.EditActions';
 
     public constructor();
@@ -35,6 +36,22 @@ export class EditActions<O extends object = {}> extends Dialog<O> implements Dia
      */
     public changeType: ActionChangeType;
 
+    /**
+     * Get an optional expression which if is true will disable this action.
+     */
+    public get disabled(): string {
+        return this._disabled ? this._disabled.toString() : undefined;
+    }
+
+    /**
+     * Set an optional expression which if is true will disable this action.
+     */
+    public set disabled(value: string) {
+        this._disabled = value ? new ExpressionEngine().parse(value) : undefined;
+    }
+
+    private _disabled: Expression;
+
     public getDependencies(): Dialog[] {
         return this.actions;
     }
@@ -44,6 +61,13 @@ export class EditActions<O extends object = {}> extends Dialog<O> implements Dia
     }
 
     public async beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {
+        if (this._disabled) {
+            const { value } = this._disabled.tryEvaluate(dc.state);
+            if (!!value) {
+                return await dc.endDialog();
+            }
+        }
+
         if (dc instanceof SequenceContext) {
             const planActions = this.actions.map((action: Dialog): ActionState => {
                 return {

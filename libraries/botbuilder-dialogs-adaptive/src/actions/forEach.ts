@@ -17,13 +17,11 @@ const VALUE = 'dialog.foreach.value';
  */
 export interface ForEachConfiguration extends ActionScopeConfiguration {
     itemsProperty?: string;
+    disabled?: string;
 }
 
 export class ForEach<O extends object = {}> extends ActionScope<O> {
-
     public static declarativeType = 'Microsoft.Foreach';
-
-    private _itemsPropertyExpression: Expression;
 
     public constructor();
     public constructor(itemsProperty: string, actions: Dialog[]);
@@ -47,6 +45,24 @@ export class ForEach<O extends object = {}> extends ActionScope<O> {
         this._itemsPropertyExpression = value ? new ExpressionEngine().parse(value) : undefined;
     }
 
+    /**
+     * Get an optional expression which if is true will disable this action.
+     */
+    public get disabled(): string {
+        return this._disabled ? this._disabled.toString() : undefined;
+    }
+
+    /**
+     * Set an optional expression which if is true will disable this action.
+     */
+    public set disabled(value: string) {
+        this._disabled = value ? new ExpressionEngine().parse(value) : undefined;
+    }
+
+    private _itemsPropertyExpression: Expression;
+
+    private _disabled: Expression;
+
     public getDependencies(): Dialog[] {
         return this.actions;
     }
@@ -56,6 +72,12 @@ export class ForEach<O extends object = {}> extends ActionScope<O> {
     }
 
     public async beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {
+        if (this._disabled) {
+            const { value } = this._disabled.tryEvaluate(dc.state);
+            if (!!value) {
+                return await dc.endDialog();
+            }
+        }
         dc.state.setValue(INDEX, -1);
         return await this.nextItem(dc);
     }
