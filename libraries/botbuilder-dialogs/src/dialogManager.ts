@@ -11,6 +11,8 @@ import { DialogTurnResult, Dialog, DialogTurnStatus } from './dialog';
 import { Configurable } from './configurable';
 import { DialogSet } from './dialogSet';
 import { DialogStateManagerConfiguration, DialogStateManager } from './memory';
+import { TurnPath } from './constants';
+import { DialogEvents } from './dialogEvents';
 
 const LAST_ACCESS: string = '_lastAccess';
 const DIALOGS: string = '_dialogs';
@@ -119,7 +121,7 @@ export class DialogManager extends Configurable {
 
         // Create DialogContext
         const dc = new DialogContext(this.dialogSet, context, dialogState);
-        dc.state.setValue('turn.activity', context.activity);
+        dc.state.setValue(TurnPath.ACTIVITY, context.activity);
 
         // Configure dialog state manager and load scopes
         const config = this.stateConfiguration ? this.stateConfiguration : DialogStateManager.createStandardConfiguration(this.conversationState, this.userState);
@@ -127,16 +129,26 @@ export class DialogManager extends Configurable {
         await dc.state.loadAllScopes();
 
         let turnResult: DialogTurnResult;
-        if (dc.activeDialog) {
-            // Continue dialog execution
-            // - This will apply any queued up interruptions and execute the current/next step(s).
-            turnResult = await dc.continueDialog();
-            if (turnResult.status == DialogTurnStatus.empty) {
-                // Begin root dialog
-                turnResult = await dc.beginDialog(this.rootDialogId);
+        while (true) {
+            try {
+                if (dc.activeDialog) {
+                    // Continue dialog execution
+                    // - This will apply any queued up interruptions and execute the current/next step(s).
+                    turnResult = await dc.continueDialog();
+                    if (turnResult.status == DialogTurnStatus.empty) {
+                        // Begin root dialog
+                        turnResult = await dc.beginDialog(this.rootDialogId);
+                    }
+                } else {
+                    turnResult = await dc.beginDialog(this.rootDialogId);
+                }
+                break;
+            } catch (err) {
+                const handled = await dc.emitEvent(DialogEvents.error, err, true, true);
+                if (!handled) {
+                    throw err;
+                }
             }
-        } else {
-            turnResult = await dc.beginDialog(this.rootDialogId);
         }
 
         // Save any memory changes
