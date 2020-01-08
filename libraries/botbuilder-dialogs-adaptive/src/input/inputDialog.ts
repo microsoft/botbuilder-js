@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { DialogConfiguration, Dialog, DialogContext, DialogTurnResult, DialogEvent, DialogReason, Choice, ListStyle, ChoiceFactoryOptions, ChoiceFactory, DialogEvents } from 'botbuilder-dialogs';
+import { DialogConfiguration, Dialog, DialogContext, DialogTurnResult, DialogEvent, DialogReason, Choice, ListStyle, ChoiceFactoryOptions, ChoiceFactory, DialogEvents, TurnPath } from 'botbuilder-dialogs';
 import { ActivityTypes, Activity, InputHints, MessageFactory } from 'botbuilder-core';
 import { ExpressionEngine, Expression } from 'botframework-expressions';
 import { ActivityProperty } from '../activityProperty';
@@ -144,7 +144,7 @@ export abstract class InputDialog extends Dialog {
         }
 
         // Are we continuing after an interruption?
-        const interrupted = dc.state.getValue('turn.interrupted', false);
+        const interrupted = dc.state.getValue(TurnPath.INTERRUPTED, false);
         const turnCount = dc.state.getValue(InputDialog.TURN_COUNT_PROPERTY, 0);
         const state = await this.recognizeInput(dc, interrupted ? 0 : turnCount);
         if (state === InputState.valid) {
@@ -334,7 +334,7 @@ export abstract class InputDialog extends Dialog {
             input = value;
         }
 
-        const activityProcessed = dc.state.getValue('turn.activityProcessed');
+        const activityProcessed = dc.state.getValue(TurnPath.ACTIVITYPROCESSED);
         if (!activityProcessed && !input && turnCount > 0) {
             if ((this.constructor.name) == 'AttachmentInput') {
                 input = dc.context.activity.attachments;
@@ -356,7 +356,7 @@ export abstract class InputDialog extends Dialog {
                     }
                 }
 
-                dc.state.setValue('turn.activityProcessed', true);
+                dc.state.setValue(TurnPath.ACTIVITYPROCESSED, true);
                 return InputState.valid;
             } else {
                 return state;

@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { Dialog } from 'botbuilder-dialogs';
+import { Dialog, TurnPath } from 'botbuilder-dialogs';
 import { ExpressionParserInterface, Expression, ExpressionType } from 'botframework-expressions';
 import { OnCondition, OnConditionConfiguration } from './onCondition';
 
@@ -35,7 +35,7 @@ export class OnCustomEvent extends OnCondition {
     }
 
     public getExpression(parser: ExpressionParserInterface): Expression {
-        const expression = parser.parse(`turn.dialogEvent.name == '${this.event}'`);
+        const expression = parser.parse(`${ TurnPath.DIALOGEVENT }.name == '${this.event}'`);
         return Expression.makeExpression(ExpressionType.And, undefined, expression, super.getExpression(parser));
     }
 }

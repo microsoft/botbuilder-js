@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { Dialog } from 'botbuilder-dialogs';
+import { Dialog, TurnPath } from 'botbuilder-dialogs';
 import { ExpressionParserInterface, Expression, ExpressionType } from 'botframework-expressions';
 import { AdaptiveEventNames } from '../sequenceContext';
 import { OnDialogEvent, OnDialogEventConfiguration } from './onDialogEvent';
@@ -55,12 +55,12 @@ export class OnIntent extends OnDialogEvent {
         }
 
         const trimmedIntent = this.intent.startsWith('#') ? this.intent.substring(1) : this.intent;
-        let intentExpression = parser.parse(`turn.recognized.intent == '${trimmedIntent}'`)
+        let intentExpression = parser.parse(`${ TurnPath.RECOGNIZED }.intent == '${trimmedIntent}'`)
 
         if (this.entities.length > 0) {
             intentExpression = Expression.makeExpression(ExpressionType.And,
                 undefined, intentExpression, ...this.entities.map(entity => {
-                    if (entity.startsWith('@') || entity.startsWith('turn.recognized')) {
+                    if (entity.startsWith('@') || entity.startsWith(TurnPath.RECOGNIZED)) {
                         return parser.parse(`exists(${entity})`);
                     }
                     return parser.parse(`exists(@${entity})`);

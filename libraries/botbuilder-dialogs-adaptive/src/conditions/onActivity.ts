@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { Dialog } from 'botbuilder-dialogs';
+import { Dialog, TurnPath } from 'botbuilder-dialogs';
 import { Expression, ExpressionType, ExpressionParserInterface } from 'botframework-expressions';
 import { AdaptiveEventNames } from '../sequenceContext';
 import { OnDialogEvent, OnDialogEventConfiguration } from './onDialogEvent';
@@ -37,7 +37,7 @@ export class OnActivity extends OnDialogEvent {
 
     public getExpression(parser: ExpressionParserInterface): Expression {
         // add constraints for activity type
-        const expression = parser.parse(`turn.activity.type == '${this.type}'`)
+        const expression = parser.parse(`${ TurnPath.ACTIVITY }.type == '${this.type}'`)
         return Expression.makeExpression(ExpressionType.And, undefined, expression, super.getExpression(parser));
     }
 }
