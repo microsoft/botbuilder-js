@@ -50,7 +50,7 @@
                         "property": "user.confirmed",
                         "prompt": "yes or no",
                         "unrecognizedPrompt": "I need a yes or no.",
-                        "outputFormat": "concat('confirmation: ', string(this.value))"
+                        "outputFormat": "concat('confirmation: ', this.value)"
                     },
                     {
                         "$kind": "Microsoft.SendActivity",
@@ -85,18 +85,6 @@
         {
             "$kind": "Microsoft.Test.AssertReply",
             "text": "confirmation: true"
-        },
-        {
-            "$kind": "Microsoft.Test.AssertReply",
-            "text": "yes or no (1) Yes or (2) No"
-        },
-        {
-            "$kind": "Microsoft.Test.UserSays",
-            "text": "nope"
-        },
-        {
-            "$kind": "Microsoft.Test.AssertReply",
-            "text": "confirmation: false"
         },
         {
             "$kind": "Microsoft.Test.AssertReply",

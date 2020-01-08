@@ -24,7 +24,7 @@
                         ],
                         "cases": [
                             {
-                                "value": "true",
+                                "value": "True",
                                 "actions": [
                                     {
                                         "$kind": "Microsoft.SendActivity",
@@ -33,7 +33,7 @@
                                 ]
                             },
                             {
-                                "value": "false",
+                                "value": "False",
                                 "actions": [
                                     {
                                         "$kind": "Microsoft.SendActivity",
