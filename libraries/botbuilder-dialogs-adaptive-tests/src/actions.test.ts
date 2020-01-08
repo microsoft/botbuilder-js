@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
 import 'mocha';
-import { TestRunner } from 'botbuilder-dialogs-adaptive';
+import { TestRunner } from './testing';
 
 describe('Actions', ()  => {
     const testRunner = new TestRunner('resources/actionsTests');

@@ -11,7 +11,7 @@ import {
 import {
     AttachmentInput, ChoiceInput, ConfirmInput, DateTimeInput,
     NumberInput, OAuthInput, TextInput
-} from './input';
+} from 'botbuilder-dialogs-adaptive';
 import {
     BeginDialog, CancelAllDialogs, DeleteActivity, DeleteProperties,
     DeleteProperty, EditArray, EditActions, EmitEvent, EndDialog, EndTurn,
@@ -19,7 +19,7 @@ import {
     HttpRequest, IfCondition, InitProperty, LogAction,
     RepeatDialog, ReplaceDialog, SendActivity, SetProperties, SetProperty,
     SignOutUser, SwitchCondition, TraceActivity, UpdateActivity
-} from './actions';
+} from 'botbuilder-dialogs-adaptive';
 import {
     OnActivity, OnBeginDialog, OnCancelDialog, OnCondition,
     OnConversationUpdateActivity, OnCustomEvent, OnDialogEvent,
@@ -27,9 +27,8 @@ import {
     OnIntent, OnInvokeActivity, OnMessageActivity, OnMessageDeleteActivity,
     OnMessageReactionActivity, OnMessageUpdateActivity, OnRepromptDialog,
     OnTypingActivity, OnUnknownIntent
-} from './conditions';
-import { RegexRecognizer } from './recognizers';
-import { AdaptiveDialog } from './adaptiveDialog';
+} from 'botbuilder-dialogs-adaptive';
+import { RegexRecognizer, AdaptiveDialog } from 'botbuilder-dialogs-adaptive';
 
 export class AdaptiveComponentRegistration implements ComponentRegistration {
     public getTypes(): TypeRegistration[] {

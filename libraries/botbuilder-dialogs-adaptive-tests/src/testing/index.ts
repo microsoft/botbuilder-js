@@ -1,5 +1,5 @@
 /**
- * @module botbuilder-dialogs-adaptive
+ * @module botbuilder-dialogs-adaptive-tests
  */
 /**
  * Copyright (c) Microsoft Corporation. All rights reserved.

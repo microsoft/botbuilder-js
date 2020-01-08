@@ -3,13 +3,14 @@
   "version": "1.0.0",
   "description": "",
   "scripts": {
-    "test": "tsc && nyc mocha tests/"
+    "test": "tsc && nyc mocha lib/*.test.js"
   },
   "dependencies": {
     "botbuilder-core": "4.1.6",
     "botbuilder-dialogs": "4.1.6",
     "botbuilder-dialogs-adaptive": "4.1.6",
-    "botbuilder-dialogs-declarative": "4.1.6"
+    "botbuilder-dialogs-declarative": "4.1.6",
+    "botframework-expressions": "~4.1.6"
   },
   "devDependencies": {
     "@types/mocha": "^2.2.47",

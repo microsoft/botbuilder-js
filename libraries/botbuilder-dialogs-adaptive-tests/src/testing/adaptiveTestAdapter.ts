@@ -1,11 +1,11 @@
 /**
- * @module botbuilder-dialogs-adaptive
+ * @module botbuilder-dialogs-adaptive-tests
  */
 /**
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { BotAdapter, IUserTokenProvider, TurnContext, Activity, ResourceResponse, ConversationReference, TokenResponse, ChannelAccount, RoleTypes, ConversationAccount, Middleware, ActivityTypes, IActivity } from "botbuilder-core";
+import { BotAdapter, IUserTokenProvider, TurnContext, Activity, ResourceResponse, ConversationReference, TokenResponse, ChannelAccount, RoleTypes, ConversationAccount, Middleware, ActivityTypes, IActivity } from 'botbuilder-core';
 
 export class AdaptiveTestAdapter extends BotAdapter implements IUserTokenProvider {
     private _sendTraceActivity: boolean = false;
