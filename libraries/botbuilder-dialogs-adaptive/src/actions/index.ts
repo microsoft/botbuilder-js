@@ -6,8 +6,10 @@
  * Licensed under the MIT License.
  */
 export * from './beginDialog';
+export * from './breakLoop';
 export * from './cancelAllDialogs';
 export * from './codeAction';
+export * from './continueLoop';
 export * from './deleteActivity';
 export * from './deleteProperties';
 export * from './deleteProperty';
@@ -20,6 +22,7 @@ export * from './forEach';
 export * from './forEachPage';
 export * from './getActivityMembers';
 export * from './getConversationMembers';
+export * from './gotoAction';
 export * from './httpRequest';
 export * from './ifCondition';
 export * from './initProperty';

@@ -13,12 +13,12 @@ import {
     NumberInput, OAuthInput, TextInput
 } from 'botbuilder-dialogs-adaptive';
 import {
-    BeginDialog, CancelAllDialogs, DeleteActivity, DeleteProperties,
-    DeleteProperty, EditArray, EditActions, EmitEvent, EndDialog, EndTurn,
-    ForEach, ForEachPage, GetActivityMembers, GetConversationMembers,
-    HttpRequest, IfCondition, InitProperty, LogAction,
-    RepeatDialog, ReplaceDialog, SendActivity, SetProperties, SetProperty,
-    SignOutUser, SwitchCondition, TraceActivity, UpdateActivity
+    BeginDialog, BreakLoop, CancelAllDialogs, ContinueLoop, DeleteActivity,
+    DeleteProperties, DeleteProperty, EditArray, EditActions, EmitEvent,
+    EndDialog, EndTurn, ForEach, ForEachPage, GetActivityMembers,
+    GetConversationMembers, GotoAction, HttpRequest, IfCondition, InitProperty,
+    LogAction, RepeatDialog, ReplaceDialog, SendActivity, SetProperties,
+    SetProperty, SignOutUser, SwitchCondition, TraceActivity, UpdateActivity
 } from 'botbuilder-dialogs-adaptive';
 import {
     OnActivity, OnBeginDialog, OnCancelDialog, OnCondition,
@@ -45,7 +45,9 @@ export class AdaptiveComponentRegistration implements ComponentRegistration {
 
         // Actions
         types.push(new TypeRegistration(BeginDialog.declarativeType, new ConfigurableTypeBuilder(BeginDialog)));
+        types.push(new TypeRegistration(BreakLoop.declarativeType, new ConfigurableTypeBuilder(BreakLoop)));
         types.push(new TypeRegistration(CancelAllDialogs.declarativeType, new ConfigurableTypeBuilder(CancelAllDialogs)));
+        types.push(new TypeRegistration(ContinueLoop.declarativeType, new ConfigurableTypeBuilder(ContinueLoop)));
         types.push(new TypeRegistration(DeleteActivity.declarativeType, new ConfigurableTypeBuilder(DeleteActivity)));
         types.push(new TypeRegistration(DeleteProperties.declarativeType, new ConfigurableTypeBuilder(DeleteProperties)));
         types.push(new TypeRegistration(DeleteProperty.declarativeType, new ConfigurableTypeBuilder(DeleteProperty)));
@@ -54,6 +56,7 @@ export class AdaptiveComponentRegistration implements ComponentRegistration {
         types.push(new TypeRegistration(EmitEvent.declarativeType, new ConfigurableTypeBuilder(EmitEvent)));
         types.push(new TypeRegistration(ForEach.declarativeType, new ConfigurableTypeBuilder(ForEach)));
         types.push(new TypeRegistration(ForEachPage.declarativeType, new ConfigurableTypeBuilder(ForEachPage)));
+        types.push(new TypeRegistration(GotoAction.declarativeType, new ConfigurableTypeBuilder(GotoAction)));
         types.push(new TypeRegistration(GetActivityMembers.declarativeType, new ConfigurableTypeBuilder(GetActivityMembers)));
         types.push(new TypeRegistration(GetConversationMembers.declarativeType, new ConfigurableTypeBuilder(GetConversationMembers)));
         types.push(new TypeRegistration(EndDialog.declarativeType, new ConfigurableTypeBuilder(EndDialog)));
