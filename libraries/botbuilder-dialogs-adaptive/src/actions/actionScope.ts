@@ -56,7 +56,7 @@ export class ActionScope<O extends object = {}> extends Dialog<O> implements Dia
     }
 
     public async resumeDialog(dc: DialogContext, _reason: DialogReason, result?: any): Promise<DialogTurnResult> {
-        if (typeof result === 'object' && result.hasOwnProperty('actionScopeCommand')) {
+        if (result && typeof result === 'object' && result.hasOwnProperty('actionScopeCommand')) {
             return await this.onActionScopeResult(dc, result as ActionScopeResult);
         }
 
@@ -90,7 +90,7 @@ export class ActionScope<O extends object = {}> extends Dialog<O> implements Dia
         } else if (dc.stack.length > 1) {
             return await dc.endDialog(actionScopeResult);
         } else {
-            throw new Error(`GotoAction: could not find an action of '${ actionScopeResult.actionId }.'`);
+            throw new Error(`GotoAction: could not find an action of '${ actionScopeResult.actionId }'`);
         }
     }
 

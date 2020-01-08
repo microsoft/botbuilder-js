@@ -75,7 +75,7 @@ export class SetProperty<O extends object = {}> extends Dialog<O> implements Con
         }
 
         if (!this.property) { throw new Error(`${ this.id }: no 'property' specified.`); }
-        if (!this.value) { throw new Error(`${ this.id }: no 'value' expression specified.`); }
+        if (!this._value) { throw new Error(`${ this.id }: no 'value' expression specified.`); }
 
         // Evaluate expression and save value
         const { value, error } = this._value.tryEvaluate(dc.state);
@@ -88,8 +88,7 @@ export class SetProperty<O extends object = {}> extends Dialog<O> implements Con
     }
 
     protected onComputeId(): string {
-        const label = this.value ? this.value.toString() : '';
-        return `SetProperty[${ label }]`;
+        return `SetProperty[${ this.value }]`;
     }
 
 }

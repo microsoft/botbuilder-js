@@ -8,10 +8,13 @@
 import { Dialog, DialogDependencies, Configurable } from 'botbuilder-dialogs';
 import { Expression, ExpressionParserInterface, ExpressionType, Constant, ExpressionEngine } from 'botframework-expressions';
 import { SequenceContext, ActionChangeList, ActionState, ActionChangeType } from '../sequenceContext';
+import { ActionScope } from '../actions/actionScope';
 
 export interface OnConditionConfiguration {
     condition?: string;
     actions?: Dialog[];
+    priority?: string;
+    runOnce?: boolean;
 }
 
 export class OnCondition extends Configurable implements DialogDependencies {
@@ -27,8 +30,11 @@ export class OnCondition extends Configurable implements DialogDependencies {
      */
     // evaluate(planning: SequenceContext, event: DialogEvent, preBubble: boolean): Promise<ActionChangeList[] | undefined>;
 
-    private readonly _extraConstraints: Expression[] = [];
+    private _actionScope: ActionScope;
+    private _extraConstraints: Expression[] = [];
     private _fullConstraint: Expression;
+    private _priorityString: string;
+    private _priorityExpression: Expression;
 
     /**
      * Gets or sets the condition which needs to be met for the actions to be executed (OPTIONAL).
@@ -39,6 +45,33 @@ export class OnCondition extends Configurable implements DialogDependencies {
      * Gets or sets the actions to add to the plan when the rule constraints are met.
      */
     public actions: Dialog[] = [];
+
+    /**
+     * Get thr rule priority expression where 0 is the highest and less than 0 is ignored.
+     */
+    public get priority(): string {
+        return this._priorityString;
+    }
+
+    /**
+     * Set thr rule priority expression where 0 is the highest and less than 0 is ignored.
+     */
+    public set priority(value: string) {
+        this._priorityExpression = undefined;
+        this._priorityString = value;
+    }
+
+    /**
+     * A value indicating whether rule should only run once per unique set of memory paths.
+     */
+    public runOnce: boolean;
+
+    protected get actionScope(): ActionScope {
+        if (!this._actionScope) {
+            this._actionScope = new ActionScope(this.actions);
+        }
+        return this._actionScope;
+    }
 
     /**
      * Create a new `OnCondition` instance.
@@ -75,17 +108,32 @@ export class OnCondition extends Configurable implements DialogDependencies {
                 allExpressions.push(...this._extraConstraints);
             }
 
-            if (allExpressions.length > 1) {
-                return Expression.makeExpression(ExpressionType.And, undefined, ...allExpressions);
-            } else if (allExpressions.length == 1) {
-                return allExpressions[0];
+            if (allExpressions.length > 0) {
+                this._fullConstraint = Expression.andExpression(...allExpressions);
             } else {
-                return new Constant(true);
+                this._fullConstraint = new Constant(true);
             }
         }
 
+        if (!this._priorityExpression) {
+            this._priorityExpression = parser.parse(this.priority);
+        }
+
         return this._fullConstraint;
-    };
+    }
+
+    /**
+     * Compute the current value of the priority expression and return it.
+     * @param context Context to use for evaluation.
+     * @returns Computed priority.
+     */
+    public currentPriority(context: SequenceContext): number {
+        const { value, error } = this._priorityExpression.tryEvaluate(context.state);
+        if (error || isNaN(value)) {
+            return -1;
+        }
+        return value;
+    }
 
     /**
      * Add external condition to the OnCondition
@@ -116,41 +164,21 @@ export class OnCondition extends Configurable implements DialogDependencies {
      * Get child dialog dependencies so they can be added to the containers dialogset.
      */
     public getDependencies(): Dialog[] {
-        const dependencies: Dialog[] = [];
-
-        for (let i = 0; i < this.actions.length; i++) {
-            const action = this.actions[i];
-            dependencies.push(action);
-
-            // Automatically add any child dependencies the dialog might have
-            if (typeof ((action as any) as DialogDependencies).getDependencies == 'function') {
-                ((action as any) as DialogDependencies).getDependencies().forEach((child) => dependencies.push(child));
-            }
-        }
-
-        return dependencies;
+        return [this.actionScope];
     }
 
     protected onCreateChangeList(planningContext: SequenceContext, dialogOptions?: any): ActionChangeList {
-        const actionChangeList: ActionChangeList = {
-            changeType: ActionChangeType.insertActions,
-            actions: []
+        const actionState: ActionState = {
+            dialogId: this.actionScope.id,
+            options: dialogOptions,
+            dialogStack: []
         };
 
-        for (let i = 0; i < this.actions.length; i++) {
-            const action = this.actions[i];
-            const actionState: ActionState = {
-                dialogId: action.id,
-                dialogStack: []
-            };
+        const changeList: ActionChangeList = {
+            changeType: ActionChangeType.insertActions,
+            actions: [actionState]
+        };
 
-            if (dialogOptions) {
-                actionState.options = dialogOptions
-            }
-
-            actionChangeList.actions.push(actionState);
-        }
-
-        return actionChangeList;
+        return changeList;
     }
 }

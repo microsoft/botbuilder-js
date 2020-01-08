@@ -7,7 +7,8 @@
  */
 import { Dialog, TurnPath } from 'botbuilder-dialogs';
 import { ExpressionParserInterface, Expression, ExpressionType } from 'botframework-expressions';
-import { AdaptiveEventNames } from '../sequenceContext';
+import { RecognizerResult } from 'botbuilder-core';
+import { AdaptiveEventNames, SequenceContext, ActionChangeList, ActionState, ActionChangeType } from '../sequenceContext';
 import { OnDialogEvent, OnDialogEventConfiguration } from './onDialogEvent';
 
 export interface OnIntentConfiguration extends OnDialogEventConfiguration {
@@ -68,5 +69,40 @@ export class OnIntent extends OnDialogEvent {
         }
 
         return Expression.makeExpression(ExpressionType.And, undefined, intentExpression, super.getExpression(parser));
+    }
+
+    protected onCreateChangeList(planning: SequenceContext, dialogOptions?: any): ActionChangeList {
+        const recognizerResult = planning.state.getValue<RecognizerResult>(`${TurnPath.DIALOGEVENT}.value`);
+        if (recognizerResult) {
+            // Get top scoring intent
+            let topIntent: string;
+            let topScore = -1;
+            for (const key in recognizerResult.intents) {
+                if (recognizerResult.intents.hasOwnProperty(key)) {
+                    if (topIntent == undefined) {
+                        topIntent = key;
+                        topScore = recognizerResult.intents[key].score;
+                    } else if (recognizerResult.intents[key].score > topScore) {
+                        topIntent = key;
+                        topScore = recognizerResult.intents[key].score;
+                    }
+                }
+            }
+
+            const actionState: ActionState = {
+                dialogId: this.actionScope.id,
+                options: dialogOptions,
+                dialogStack: []
+            };
+
+            const changeList: ActionChangeList = {
+                changeType: ActionChangeType.insertActions,
+                actions: [actionState]
+            };
+
+            return changeList;
+        }
+
+        return super.onCreateChangeList(planning, dialogOptions);
     }
 }
