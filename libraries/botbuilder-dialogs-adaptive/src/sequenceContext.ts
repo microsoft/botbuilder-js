@@ -174,6 +174,7 @@ export class SequenceContext<O extends object = {}> extends DialogContext {
                 Array.prototype.unshift.apply(this.actions, change.actions);
                 break;
             case ActionChangeType.appendActions:
+            case ActionChangeType.replaceSequence:
                 Array.prototype.push.apply(this.actions, change.actions);
                 break;
         }

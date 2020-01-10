@@ -7,6 +7,8 @@
  */
 
 export * from './typeLoader';
+export * from './typeRegistration';
+export * from './componentRegistration';
 export * from './factory/typeFactory';
 export * from './factory/configurableTypeBuilder';
 export * from './factory/customTypeBuilder';

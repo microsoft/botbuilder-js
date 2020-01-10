@@ -1,10 +1,18 @@
+/**
+ * @module botbuilder-dialogs-adaptive
+ */
+/**
+ * Copyright (c) Microsoft Corporation. All rights reserved.
+ * Licensed under the MIT License.
+ */
 import { Dialog } from 'botbuilder-dialogs';
 import { Expression, Constant } from 'botframework-expressions';
+import { ActionScope } from './actionScope';
 
-export class Case {
-    constructor(value: string, actions: Dialog[]) {
+export class Case extends ActionScope {
+    public constructor(value?: string, actions: Dialog[] = []) {
+        super(actions);
         this.value = value;
-        this.actions = actions;
     }
 
     /**
@@ -13,16 +21,29 @@ export class Case {
     public value: string;
 
     /**
-     * Gets or sets set of actions to be executed given that the condition of the switch matches the value of this case.
-     */
-    public actions: Dialog[];
-
-    /**
      * Creates an expression that returns the value in its primitive type. Still
      * assumes that switch case values are compile time constants and not expressions
      * that can be evaluated against state.
      */
-    public CreateValueExpression(): Expression {
+    public createValueExpression(): Expression {
+        let value = parseInt(this.value);
+        if (!isNaN(value)) {
+            return new Constant(value);
+        }
+
+        value = parseFloat(this.value);
+        if (!isNaN(value)) {
+            return new Constant(value);
+        }
+
+        if (this.value === 'true' || this.value === 'True') {
+            return new Constant(true);
+        }
+
+        if (this.value === 'false' || this.value === 'False') {
+            return new Constant(false);
+        }
+
         return new Constant(this.value);
     }
 }

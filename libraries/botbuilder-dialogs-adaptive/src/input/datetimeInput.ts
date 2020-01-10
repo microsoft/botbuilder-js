@@ -5,34 +5,31 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { InputDialogConfiguration, InputDialog, InputDialogOptions, InputState, PromptType } from "./inputDialog";
-import { DialogContext } from "botbuilder-dialogs";
 import * as Recognizers from '@microsoft/recognizers-text-date-time';
-import { ExpressionPropertyValue, ExpressionProperty } from "../expressionProperty";
+import { DialogContext } from 'botbuilder-dialogs';
+import { ExpressionEngine, Expression } from 'botframework-expressions';
+import { InputDialogConfiguration, InputDialog, InputState } from './inputDialog';
 
 
 export interface DatetimeInputConfiguration extends InputDialogConfiguration {
     defaultLocale?: string;
+    outputFormat?: string;
 }
 
-export class DatetimeInput extends InputDialog<InputDialogOptions> {
+export class DateTimeInput extends InputDialog {
 
-    public defaultLocale: string = null;
+    public static declarativeType = 'Microsoft.DateTimeInput';
 
-    constructor();
-    constructor(property: string, prompt: PromptType);
-    constructor(property: string, value: ExpressionPropertyValue<any>, prompt: PromptType);
-    constructor(property?: string, value?: ExpressionPropertyValue<any> | PromptType, prompt?: PromptType) {
-        super();
-        if (property) {
-            if (!prompt) {
-                prompt = value as PromptType;
-                value = undefined;
-            }
-            this.property = property;
-            if (value !== undefined) { this.value = new ExpressionProperty(value as any) }
-            this.prompt.value = prompt;
-        }
+    private _outputFormatExpression: Expression;
+
+    public defaultLocale: string;
+
+    public get outputFormat(): string {
+        return this._outputFormatExpression ? this._outputFormatExpression.toString() : undefined;
+    }
+
+    public set outputFormat(value: string) {
+        this._outputFormatExpression = value ? new ExpressionEngine().parse(value) : undefined;
     }
 
     public configure(config: DatetimeInputConfiguration): this {
@@ -40,18 +37,26 @@ export class DatetimeInput extends InputDialog<InputDialogOptions> {
     }
 
     protected onComputeId(): string {
-        return `DatetimeInput[${this.prompt.value.toString()}]`;
+        return `DateTimeInput[${ this.prompt.value.toString() }]`;
     }
 
-    protected async onRecognizeInput(dc: DialogContext, consultation: boolean): Promise<InputState> {
+    protected async onRecognizeInput(dc: DialogContext): Promise<InputState> {
         // Recognize input and filter out non-attachments
         const input: object = dc.state.getValue(InputDialog.VALUE_PROPERTY);
-        const utterance: string = dc.context.activity.text;
-        const locale: string = dc.context.activity.locale || this.defaultLocale || "en-us";
-        const results: any[] = Recognizers.recognizeDateTime(utterance, locale);
+        const locale: string = dc.context.activity.locale || this.defaultLocale || 'en-us';
+        const results: any[] = Recognizers.recognizeDateTime(input.toString(), locale);
 
         if (results.length > 0 && results[0].resolution) {
-            dc.state.setValue(InputDialog.VALUE_PROPERTY, results[0].resolution.values);
+            const values = results[0].resolution.values;
+            dc.state.setValue(InputDialog.VALUE_PROPERTY, values);
+            if (this._outputFormatExpression) {
+                const { value, error } = this._outputFormatExpression.tryEvaluate(dc.state);
+                if (!error) {
+                    dc.state.setValue(InputDialog.VALUE_PROPERTY, value);
+                } else {
+                    throw new Error(`OutputFormat expression evaluation resulted in an error. Expression: ${ this._outputFormatExpression.toString() }. Error: ${ error }`);
+                }
+            }
         } else {
             return InputState.unrecognized;
         }

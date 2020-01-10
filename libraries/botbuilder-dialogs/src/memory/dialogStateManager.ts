@@ -486,6 +486,10 @@ export class DialogStateManager {
 
         return config;
     }
+
+    public version(): string {
+        return '0';
+    }
 }
 
 /**

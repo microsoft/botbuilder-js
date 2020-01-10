@@ -5,27 +5,21 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { DialogTurnResult, DialogConfiguration, DialogContext, Dialog } from 'botbuilder-dialogs';
-import { ExpressionProperty, ExpressionPropertyValue } from '../expressionProperty';
-import fetch, * as request from "node-fetch";
+import fetch from 'node-fetch';
+import { DialogTurnResult, DialogConfiguration, DialogContext, Dialog, Configurable } from 'botbuilder-dialogs';
 import { Activity } from 'botbuilder-core';
+import { ExpressionEngine, Expression } from 'botframework-expressions';
 import * as stringTemplate from '../stringTemplate';
 
 export interface HttpRequestConfiguration extends DialogConfiguration {
-
     method?: HttpMethod;
-
     valueType?: string;
-
     url?: string;
-
     headers?: object;
-
     body?: object;
-
     responseType?: ResponsesTypes;
-
     resultProperty?: string;
+    disabled?: string;
 }
 
 export enum ResponsesTypes {
@@ -54,30 +48,52 @@ export enum HttpMethod {
     /**
      * Http GET
      */
-    GET = "GET",
+    GET = 'GET',
 
     /**
      * Http POST
      */
-    POST = "POST",
+    POST = 'POST',
 
     /**
      * Http PATCH
      */
-    PATCH = "PATCH",
+    PATCH = 'PATCH',
 
     /**
      * Http PUT
      */
-    PUT = "PUT",
+    PUT = 'PUT',
 
     /**
      * Http DELETE
      */
-    DELETE = "DELETE"
+    DELETE = 'DELETE'
 }
 
-export class HttpRequest<O extends object = {}> extends Dialog<O> {
+export class HttpRequest<O extends object = {}> extends Dialog<O> implements Configurable {
+    public static declarativeType = 'Microsoft.HttpRequest';
+
+    public constructor();
+    public constructor(method: HttpMethod, url: string, headers: object,
+        body: object,
+        responseType: ResponsesTypes, resultProperty: string);
+    public constructor(method?: HttpMethod, url?: string, headers?: object,
+        body?: object,
+        responseType?: ResponsesTypes, resultProperty?: string) {
+        super();
+        this.method = method;
+        this.url = url;
+        this.headers = headers;
+        this.body = body;
+        if (responseType) {
+            this.responseType = responseType;
+        }
+        else {
+            this.responseType = ResponsesTypes.Json;
+        }
+        this.resultProperty = resultProperty;
+    }
 
     /**
      * Http Method
@@ -108,36 +124,33 @@ export class HttpRequest<O extends object = {}> extends Dialog<O> {
      */
     public resultProperty?: string;
 
-    constructor();
-    constructor(method: HttpMethod, url: string, headers: object,
-        body: object,
-        responseType: ResponsesTypes, resultProperty: string);
-    constructor(method?: HttpMethod, url?: string, headers?: object,
-        body?: object,
-        responseType?: ResponsesTypes, resultProperty?: string) {
-        super();
-        this.method = method;
-        this.url = url;
-        this.headers = headers;
-        this.body = body;
-        if (responseType) {
-            this.responseType = responseType;
-        }
-        else {
-            this.responseType = ResponsesTypes.Json;
-        }
-        this.resultProperty = resultProperty;
+    /**
+     * Get an optional expression which if is true will disable this action.
+     */
+    public get disabled(): string {
+        return this._disabled ? this._disabled.toString() : undefined;
     }
 
-    protected onComputeId(): string {
-        return `HttpRequest[${this.method} ${this.url}]`;
+    /**
+     * Set an optional expression which if is true will disable this action.
+     */
+    public set disabled(value: string) {
+        this._disabled = value ? new ExpressionEngine().parse(value) : undefined;
     }
+
+    private _disabled: Expression;
 
     public configure(config: HttpRequestConfiguration): this {
         return super.configure(config);
     }
 
-    public async beginDialog(dc: DialogContext): Promise<DialogTurnResult> {
+    public async beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {
+        if (this._disabled) {
+            const { value } = this._disabled.tryEvaluate(dc.state);
+            if (!!value) {
+                return await dc.endDialog();
+            }
+        }
 
         /**
          * TODO: replace the key value pair in json recursively
@@ -146,7 +159,7 @@ export class HttpRequest<O extends object = {}> extends Dialog<O> {
         const url = stringTemplate.format(this.url, dc);
         const headers = this.headers;
 
-        const instanceBody = this.ReplaceBodyRecursively(dc, this.body);
+        const instanceBody = this.replaceBodyRecursively(dc, this.body);
 
         const parsedBody = JSON.stringify(instanceBody);
         const parsedHeaders = Object.assign({ 'Content-Type': 'application/json' }, headers);
@@ -204,12 +217,17 @@ export class HttpRequest<O extends object = {}> extends Dialog<O> {
         return await dc.endDialog(result);
     }
 
-    private ReplaceBodyRecursively(dc: DialogContext, unit: object) {
+    protected onComputeId(): string {
+        return `HttpRequest[${ this.method } ${ this.url }]`;
+    }
+
+    private replaceBodyRecursively(dc: DialogContext, unit: object) {
         if (typeof unit === 'string') {
             let text: string = unit as string;
             if (text.startsWith('{') && text.endsWith('}')) {
                 text = text.slice(1, text.length - 1);
-                return new ExpressionProperty(text).evaluate(this.id, dc.state);
+                const { value } = new ExpressionEngine().parse(text).tryEvaluate(dc.state);
+                return value;
             }
             else {
                 return stringTemplate.format(text, dc);
@@ -219,7 +237,7 @@ export class HttpRequest<O extends object = {}> extends Dialog<O> {
         if (Array.isArray(unit)) {
             let result = [];
             unit.forEach(child => {
-                result.push(this.ReplaceBodyRecursively(dc, child));
+                result.push(this.replaceBodyRecursively(dc, child));
             })
             return result;
         }
@@ -227,7 +245,7 @@ export class HttpRequest<O extends object = {}> extends Dialog<O> {
         if (typeof unit === 'object') {
             let result = {};
             for (let key in unit) {
-                result[key] = this.ReplaceBodyRecursively(dc, unit[key]);
+                result[key] = this.replaceBodyRecursively(dc, unit[key]);
             }
             return result;
         }

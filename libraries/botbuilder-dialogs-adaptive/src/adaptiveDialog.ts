@@ -11,7 +11,7 @@ import {
 } from 'botbuilder-core';
 import {
     Dialog, DialogInstance, DialogReason, DialogTurnResult, DialogTurnStatus, DialogEvent,
-    DialogContext, DialogConfiguration, DialogContainer, DialogDependencies
+    DialogContext, DialogConfiguration, DialogContainer, DialogDependencies, TurnPath
 } from 'botbuilder-dialogs';
 import {
     AdaptiveEventNames, SequenceContext, AdaptiveDialogState, ActionState
@@ -31,9 +31,23 @@ export interface AdaptiveDialogConfiguration extends DialogConfiguration {
      * (Optional) recognizer used to analyze any message utterances.
      */
     recognizer?: Recognizer;
+
+    /**
+     * (Optional) flag that determines whether the dialog automatically ends when the plan is out
+     * of actions. Defaults to `false` for the root dialog and `true` for child dialogs.
+     */
+    autoEndDialog?: boolean;
+
+    /**
+     * (Optional) The selector for picking the possible events to execute.
+     */
+    selector: TriggerSelector;
 }
 
 export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
+
+    public static declarativeType = 'Microsoft.AdaptiveDialog';
+
     private readonly changeKey = Symbol('changes');
 
     private installedDependencies = false;
@@ -42,14 +56,14 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
      * Creates a new `AdaptiveDialog` instance.
      * @param dialogId (Optional) unique ID of the component within its parents dialog set.
      */
-    constructor(dialogId?: string) {
+    public constructor(dialogId?: string) {
         super(dialogId);
     }
 
     /**
      * Planning triggers to evaluate for each conversational turn.
      */
-    public readonly triggers: OnCondition[] = [];
+    public triggers: OnCondition[] = [];
 
     /**
      * (Optional) recognizer used to analyze any message utterances.
@@ -185,7 +199,7 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
     //---------------------------------------------------------------------------------------------
 
     protected async processEvent(sequence: SequenceContext, event: DialogEvent, preBubble: boolean): Promise<boolean> {
-        sequence.state.setValue('turn.dialogEvent', event);
+        sequence.state.setValue(TurnPath.DIALOGEVENT, event);
 
         this.ensureDependenciesInstalled();
 
@@ -199,12 +213,14 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
         if (preBubble) {
             switch (event.name) {
                 case AdaptiveEventNames.beginDialog:
-                    const activityReceivedEvent: DialogEvent = {
-                        name: AdaptiveEventNames.activityReceived,
-                        value: sequence.context.activity,
-                        bubble: false
+                    if (!sequence.state.getValue(TurnPath.ACTIVITYPROCESSED)) {
+                        const activityReceivedEvent: DialogEvent = {
+                            name: AdaptiveEventNames.activityReceived,
+                            value: sequence.context.activity,
+                            bubble: false
+                        }
+                        handled = await this.processEvent(sequence, activityReceivedEvent, true);
                     }
-                    handled = await this.processEvent(sequence, activityReceivedEvent, true);
                     break;
                 case AdaptiveEventNames.activityReceived:
                     const activity = sequence.context.activity;
@@ -217,7 +233,7 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
                         };
                         await this.processEvent(sequence, recognizeUtteranceEvent, true);
 
-                        const recognized = sequence.state.getValue<RecognizerResult>('turn.recognized');
+                        const recognized = sequence.state.getValue<RecognizerResult>(TurnPath.RECOGNIZED);
                         const recognizedIntentEvent: DialogEvent = {
                             name: AdaptiveEventNames.recognizedIntent,
                             value: recognized,
@@ -227,14 +243,14 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
                     }
 
                     if (handled) {
-                        sequence.state.setValue('turn.interrupted', true);
+                        sequence.state.setValue(TurnPath.INTERRUPTED, true);
                     }
                     break;
                 case AdaptiveEventNames.recognizeUtterance:
                     if (sequence.context.activity.type == ActivityTypes.Message) {
                         // Recognize utterance
                         const recognized = await this.onRecognize(sequence.context);
-                        sequence.state.setValue('turn.recognized', recognized);
+                        sequence.state.setValue(TurnPath.RECOGNIZED, recognized);
 
                         // Get top scoring intent
                         let topIntent: string;
@@ -251,8 +267,8 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
                             }
                         }
 
-                        sequence.state.setValue('turn.recognized.intent', topIntent);
-                        sequence.state.setValue('turn.recognized.score', topScore);
+                        sequence.state.setValue(TurnPath.TOPINTENT, topIntent);
+                        sequence.state.setValue(TurnPath.TOPSCORE, topScore);
                         handled = true;
                     }
                     break;
@@ -260,13 +276,15 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
         } else {
             switch (event.name) {
                 case AdaptiveEventNames.beginDialog:
-                    const activityReceivedEvent: DialogEvent = {
-                        name: AdaptiveEventNames.activityReceived,
-                        value: sequence.context.activity,
-                        bubble: false
-                    };
-                    // Emit trailing ActivityReceived event
-                    handled = await this.processEvent(sequence, activityReceivedEvent, false);
+                    if (!sequence.state.getValue(TurnPath.ACTIVITYPROCESSED)) {
+                        const activityReceivedEvent: DialogEvent = {
+                            name: AdaptiveEventNames.activityReceived,
+                            value: sequence.context.activity,
+                            bubble: false
+                        };
+                        // Emit trailing ActivityReceived event
+                        handled = await this.processEvent(sequence, activityReceivedEvent, false);
+                    }
                     break;
                 case AdaptiveEventNames.activityReceived:
                     const activity = sequence.context.activity;
@@ -285,7 +303,7 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
                     }
 
                     if (handled) {
-                        sequence.state.setValue('turn.interrupted', true);
+                        sequence.state.setValue(TurnPath.INTERRUPTED, true);
                     }
                     break;
             }

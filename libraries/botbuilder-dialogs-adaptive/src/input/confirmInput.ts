@@ -5,21 +5,23 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { InputDialogConfiguration, InputDialog, InputDialogOptions, InputState, PromptType } from "./inputDialog";
-import { DialogContext, Choice, ListStyle, ChoiceFactoryOptions, ChoiceFactory, ModelResult, recognizeChoices } from "botbuilder-dialogs";
 import * as Recognizers from '@microsoft/recognizers-text-choice';
-import { Activity } from "botbuilder-core";
-import { ChoiceList } from "./choiceInput";
-import { ExpressionPropertyValue, ExpressionProperty } from "../expressionProperty";
+import { Activity } from 'botbuilder-core';
+import { DialogContext, Choice, ListStyle, ChoiceFactoryOptions, ChoiceFactory, recognizeChoices } from 'botbuilder-dialogs';
+import { ExpressionEngine, Expression } from 'botframework-expressions';
+import { InputDialogConfiguration, InputDialog, InputState } from './inputDialog';
 
 export interface ConfirmInputConfiguration extends InputDialogConfiguration {
     defaultLocale?: string;
     style?: ListStyle;
     choiceOptions?: ChoiceFactoryOptions;
-    confirmChoices?: ChoiceList;
+    confirmChoices?: Choice[];
+    outputFormat?: string;
 }
 
-export class ConfirmInput extends InputDialog<InputDialogOptions> {
+export class ConfirmInput extends InputDialog {
+
+    public static declarativeType = 'Microsoft.ConfirmInput';
 
     /**
      * Default options for rendering the choices to the user based on locale.
@@ -34,6 +36,8 @@ export class ConfirmInput extends InputDialog<InputDialogOptions> {
         'pt-br': { choices: ['Sim', 'Não'], options: { inlineSeparator: ', ', inlineOr: ' ou ', inlineOrMore: ', ou ', includeNumbers: true } },
         'zh-cn': { choices: ['是的', '不'], options: { inlineSeparator: '， ', inlineOr: ' 要么 ', inlineOrMore: '， 要么 ', includeNumbers: true } }
     };
+
+    private _outputFormatExpression: Expression;
 
     /**
      * The prompts default locale that should be recognized.
@@ -57,22 +61,20 @@ export class ConfirmInput extends InputDialog<InputDialogOptions> {
     /**
      * Custom list of choices to send for the prompt.
      */
-    public confirmChoices?: ChoiceList;
+    public confirmChoices?: Choice[];
 
-    constructor();
-    constructor(property: string, prompt: PromptType);
-    constructor(property: string, value: ExpressionPropertyValue<any>, prompt: PromptType);
-    constructor(property?: string, value?: ExpressionPropertyValue<any> | PromptType, prompt?: PromptType) {
-        super();
-        if (property) {
-            if (!prompt) {
-                prompt = value as PromptType;
-                value = undefined;
-            }
-            this.property = property;
-            if (value !== undefined) { this.value = new ExpressionProperty(value as any) }
-            this.prompt.value = prompt;
-        }
+    /**
+     * Get output format expression.
+     */
+    public get outputFormat(): string {
+        return this._outputFormatExpression ? this._outputFormatExpression.toString() : undefined;
+    }
+
+    /**
+     * Set output format expression.
+     */
+    public set outputFormat(value: string) {
+        this._outputFormatExpression = value ? new ExpressionEngine().parse(value): undefined;
     }
 
     public configure(config: ConfirmInputConfiguration): this {
@@ -80,10 +82,10 @@ export class ConfirmInput extends InputDialog<InputDialogOptions> {
     }
 
     protected onComputeId(): string {
-        return `ConfirmInput[${this.prompt.value.toString()}]`;
+        return `ConfirmInput[${ this.prompt.value.toString() }]`;
     }
 
-    protected async onRecognizeInput(dc: DialogContext, consultation: boolean): Promise<InputState> {
+    protected async onRecognizeInput(dc: DialogContext): Promise<InputState> {
         // Recognize input if needed
         let input: any = dc.state.getValue(InputDialog.VALUE_PROPERTY);
         if (typeof input !== 'boolean') {
@@ -95,6 +97,16 @@ export class ConfirmInput extends InputDialog<InputDialogOptions> {
             const results: any = Recognizers.recognizeBoolean(input, locale);
             if (results.length > 0 && results[0].resolution) {
                 input = results[0].resolution.value;
+                dc.state.setValue(InputDialog.VALUE_PROPERTY, !!input);
+                if (this._outputFormatExpression) {
+                    const { value, error } = this._outputFormatExpression.tryEvaluate(dc.state);
+                    if (!error) {
+                        dc.state.setValue(InputDialog.VALUE_PROPERTY, value);
+                    } else {
+                        throw new Error(`OutputFormat expression evaluation resulted in an error. Expression: ${ this._outputFormatExpression.toString() }. Error: ${error}`);
+                    }
+                }
+                return InputState.valid;
             } else {
                 // Fallback to trying the choice recognizer
                 const confirmChoices = this.confirmChoices || ConfirmInput.defaultChoiceOptions[locale].choices;
@@ -102,6 +114,7 @@ export class ConfirmInput extends InputDialog<InputDialogOptions> {
                 const results = recognizeChoices(input, choices);
                 if (results.length > 0) {
                     input = results[0].resolution.index == 0;
+                    dc.state.setValue(InputDialog.VALUE_PROPERTY, input);
                 } else {
                     return InputState.unrecognized;
                 }

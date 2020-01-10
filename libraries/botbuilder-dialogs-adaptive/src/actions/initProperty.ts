@@ -5,8 +5,8 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { DialogTurnResult, DialogConfiguration, DialogContext, Dialog } from 'botbuilder-dialogs';
-import { SequenceContext } from '../sequenceContext';
+import { DialogTurnResult, DialogConfiguration, DialogContext, Dialog, Configurable } from 'botbuilder-dialogs';
+import { Expression, ExpressionEngine } from 'botframework-expressions';
 
 export interface InitPropertyConfiguration extends DialogConfiguration {
     /**
@@ -18,9 +18,26 @@ export interface InitPropertyConfiguration extends DialogConfiguration {
      * Gets or sets type, either Array or Object.
      */
     type?: string;
+
+    disabled?: string;
 }
 
-export class InitProperty extends Dialog {
+export class InitProperty<O extends object = {}> extends Dialog<O> implements Configurable {
+    public static declarativeType = 'Microsoft.InitProperty';
+
+    /**
+     * Creates a new `Init` instance.
+     * @param property The in-memory property to set.
+     * @param type Type, either Array or Object.
+     */
+    public constructor();
+    public constructor(property: string, type: string);
+    public constructor(property?: string, type?: string) {
+        super();
+        if (property) { this.property = property; }
+        if (type) { this.type = type; }
+    }
+
     /**
      * The in-memory property to set.
      */
@@ -32,42 +49,49 @@ export class InitProperty extends Dialog {
     public type?: string;
 
     /**
-     * Creates a new `Init` instance.
-     * @param property The in-memory property to set.
-     * @param type Type, either Array or Object.
+     * Get an optional expression which if is true will disable this action.
      */
-    constructor();
-    constructor(property: string, type: string);
-    constructor(property?: string, type?: string) {
-        super();
-        if (property) { this.property = property; }
-        if (type) { this.type = type; }
+    public get disabled(): string {
+        return this._disabled ? this._disabled.toString() : undefined;
     }
 
-    protected onComputeId(): string {
-        return `InitProperty[${this.property}]`;
+    /**
+     * Set an optional expression which if is true will disable this action.
+     */
+    public set disabled(value: string) {
+        this._disabled = value ? new ExpressionEngine().parse(value) : undefined;
     }
+
+    private _disabled: Expression;
 
     public configure(config: InitPropertyConfiguration): this {
         return super.configure(config);
     }
 
-    public async beginDialog(dc: DialogContext): Promise<DialogTurnResult> {
-        // Ensure planning context and condition
-        if (!(dc instanceof SequenceContext)) { throw new Error(`${this.id}: should only be used within an AdaptiveDialog.`); }
+    public async beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {
+        if (this._disabled) {
+            const { value } = this._disabled.tryEvaluate(dc.state);
+            if (!!value) {
+                return await dc.endDialog();
+            }
+        }
 
-        if (!this.property) { throw new Error(`${this.id}: no 'property' specified.`); }
-        if (!this.type) { throw new Error(`${this.id}: no 'type' specified.`); }
+        if (!this.property) { throw new Error(`${ this.id }: no 'property' specified.`); }
+        if (!this.type) { throw new Error(`${ this.id }: no 'type' specified.`); }
 
         switch (this.type.toLowerCase()) {
-            case "array":
+            case 'array':
                 dc.state.setValue(this.property, []);
                 break;
-            case "object":
+            case 'object':
                 dc.state.setValue(this.property, {});
                 break;
         }
 
         return await dc.endDialog();
+    }
+
+    protected onComputeId(): string {
+        return `InitProperty[${ this.property }]`;
     }
 }

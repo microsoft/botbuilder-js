@@ -5,32 +5,47 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { DialogTurnResult, Dialog, DialogConfiguration, DialogDependencies } from 'botbuilder-dialogs';
-import { SequenceContext, ActionState, ActionChangeType } from '../sequenceContext';
-import { ExpressionPropertyValue, ExpressionProperty } from '../expressionProperty';
+import { DialogTurnResult, Dialog, DialogDependencies, DialogContext, Configurable } from 'botbuilder-dialogs';
+import { Expression, ExpressionEngine } from 'botframework-expressions';
+import { ActionScope, ActionScopeConfiguration } from './actionScope';
 
-export interface IfConditionConfiguration extends DialogConfiguration {
+export interface IfConditionConfiguration extends ActionScopeConfiguration {
     /**
      * The conditional expression to evaluate.
      */
-    condition?: ExpressionPropertyValue<boolean>;
-
-    /**
-     * The actions to run if [condition](#condition) returns true.
-     */
-    actions?: Dialog[];
+    condition?: string;
 
     /**
      * The actions to run if [condition](#condition) returns false.
      */
     elseActions?: Dialog[];
+
+    disabled?: string;
 }
 
-export class IfCondition extends Dialog implements DialogDependencies {
+export class IfCondition<O extends object = {}> extends Dialog<O> implements DialogDependencies, Configurable {
+    public static declarativeType = 'Microsoft.IfCondition';
+
+    public constructor();
+    public constructor(condition?: string, elseActions?: Dialog[]) {
+        super();
+        if (condition) { this.condition = condition; }
+        if (elseActions) { this.elseActions = elseActions; }
+    }
+
     /**
-     * The conditional expression to evaluate.
+     * Get conditional expression to evaluate.
      */
-    public condition: ExpressionProperty<boolean>;
+    public get condition(): string {
+        return this._condition ? this._condition.toString() : undefined;
+    }
+
+    /**
+     * Set conditional expression to evaluate.
+     */
+    public set condition(value: string) {
+        this._condition = value ? new ExpressionEngine().parse(value) : undefined;
+    }
 
     /**
      * The actions to run if [condition](#condition) returns true.
@@ -42,73 +57,72 @@ export class IfCondition extends Dialog implements DialogDependencies {
      */
     public elseActions: Dialog[] = [];
 
+    protected get trueScope(): ActionScope {
+        if (!this._trueScope) {
+            this._trueScope = new ActionScope(this.actions);
+            this._trueScope.id = `True${ this.id }`;
+        }
+        return this._trueScope;
+    }
+
+    protected get falseScope(): ActionScope {
+        if (!this._falseScope) {
+            this._falseScope = new ActionScope(this.elseActions);
+            this._falseScope.id = `False${ this.id }`;
+        }
+        return this._falseScope;
+    }
+
     /**
-     * Creates a new `IfCondition` instance.
-     * @param condition The conditional expression to evaluate.
-     * @param actions The actions to run if the condition returns true.
+     * Get an optional expression which if is true will disable this action.
      */
-    constructor(condition?: ExpressionPropertyValue<boolean>, actions?: Dialog[]) {
-        super();
-        if (condition) { this.condition = new ExpressionProperty(condition) }
-        if (Array.isArray(actions)) { this.actions = actions }
+    public get disabled(): string {
+        return this._disabled ? this._disabled.toString() : undefined;
+    }
+
+    /**
+     * Set an optional expression which if is true will disable this action.
+     */
+    public set disabled(value: string) {
+        this._disabled = value ? new ExpressionEngine().parse(value) : undefined;
+    }
+
+    private _condition: Expression;
+
+    private _trueScope: ActionScope;
+
+    private _falseScope: ActionScope;
+
+    private _disabled: Expression;
+
+    public getDependencies(): Dialog[] {
+        return [].concat(this.trueScope, this.falseScope);
+    }
+
+    public configure(config: IfConditionConfiguration): this {
+        return super.configure(config);
+    }
+
+    public async beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {
+        if (this._disabled) {
+            const { value } = this._disabled.tryEvaluate(dc.state);
+            if (!!value) {
+                return await dc.endDialog();
+            }
+        }
+
+        const { value, error } = this._condition.tryEvaluate(dc.state);
+        const conditionResult = !error && value;
+        if (conditionResult) {
+            return await dc.replaceDialog(this.trueScope.id);
+        } else if (!conditionResult && this.falseScope.actions && this.falseScope.actions.length > 0) {
+            return await dc.replaceDialog(this.falseScope.id);
+        }
+        return await dc.endDialog();
     }
 
     protected onComputeId(): string {
         const label = this.condition ? this.condition.toString() : '';
-        return `If[${label}]`;
-    }
-
-    public configure(config: IfConditionConfiguration): this {
-        for (const key in config) {
-            if (config.hasOwnProperty(key)) {
-                const value = config[key];
-                switch(key) {
-                    case 'condition':
-                        this.condition = new ExpressionProperty(value);
-                        break;
-                    default:
-                        super.configure({ [key]: value });
-                        break;
-                }
-            }
-        }
-
-        return this;
-    }
-
-    public getDependencies(): Dialog[] {
-        return this.actions.concat(this.elseActions);
-    }
-
-    public else(actions: Dialog[]): this {
-        this.elseActions = actions;
-        return this;
-    }
-
-    public async beginDialog(sequence: SequenceContext, options: object): Promise<DialogTurnResult> {
-        // Ensure planning context and condition
-        if (!(sequence instanceof SequenceContext)) { throw new Error(`${this.id}: should only be used within an AdaptiveDialog.`) }
-        if (!this.condition) { throw new Error(`${this.id}: no conditional expression specified.`) }
-
-        // Evaluate expression
-        const memory = sequence.state;
-        const value = this.condition.evaluate(this.id, memory);
-
-        // Check for truthy returned value
-        const triggered = value ? this.actions : this.elseActions;
-
-        // Queue up actions that should run after current action
-        if (triggered.length > 0) {
-            const actions = triggered.map((action) => {
-                return {
-                    dialogStack: [],
-                    dialogId: action.id,
-                    options: options
-                } as ActionState
-            });
-            await sequence.queueChanges({ changeType: ActionChangeType.insertActions, actions: actions });
-        }
-
-        return await sequence.endDialog();
+        return `If[${ label }]`;
     }
 }

@@ -11,28 +11,23 @@ import { AdaptiveDialog, SendActivity, TextInput, ConfirmInput, NumberInput, Cho
 import { ConfigurableTypeBuilder } from './configurableTypeBuilder';
 import { DefaultTypeBuilder } from './defaultTypeBuilder';
 import { ITypeBuilder } from './typeBuilder';
-import { CustomTypeBuilder } from './customTypeBuilder';
 
- /**
-  * Declarative type factory
-  */
- export class TypeFactory {
+/**
+ * Declarative type factory
+ */
+export class TypeFactory {
 
     /**
      * Internal type builder registry
      */
-    private readonly registrations: { [name: string] : ITypeBuilder } = {};
-
-    constructor() {
-        this.registerBuiltIns();
-    }
+    private readonly registrations: { [name: string]: ITypeBuilder } = {};
 
     /**
      * Registers a new type in the factory
      * @param name name under which to register the type
      * @param converter optional builder logic for the registered type. Will be invoked each time the type is built
      */
-    public register(name: string, builder?: ITypeBuilder) : void {
+    public register(name: string, builder?: ITypeBuilder): void {
 
         if (!name) {
             throw new Error(`TypeFactory: name must be provided to register in the factory`);
@@ -45,7 +40,7 @@ import { CustomTypeBuilder } from './customTypeBuilder';
         this.registrations[name] = builder;
     }
 
-    public build(name: string, config: object) : object {
+    public build(name: string, config: object): object {
 
         if (!name) {
             throw new Error(`TypeFactory: type name must be provided.`)
@@ -123,4 +118,4 @@ import { CustomTypeBuilder } from './customTypeBuilder';
             return recognizer;
         }));
     }
- }
+}

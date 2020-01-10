@@ -5,10 +5,9 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { InputDialogConfiguration, InputDialog, InputDialogOptions, InputState, PromptType } from "./inputDialog";
-import { DialogContext } from "botbuilder-dialogs";
-import { Attachment } from "botbuilder-core";
-import { ExpressionPropertyValue, ExpressionProperty } from "../expressionProperty";
+import { Attachment } from 'botbuilder-core';
+import { DialogContext } from 'botbuilder-dialogs';
+import { InputDialogConfiguration, InputDialog, InputState } from './inputDialog';
 
 export interface AttachmentInputConfiguration extends InputDialogConfiguration {
     outputFormat?: AttachmentOutputFormat;
@@ -19,32 +18,18 @@ export enum AttachmentOutputFormat {
     first = 'first'
 }
 
-export class AttachmentInput extends InputDialog<InputDialogOptions> {
+export class AttachmentInput extends InputDialog {
+
+    public static declarativeType = 'Microsoft.AttachmentInput';
 
     public outputFormat = AttachmentOutputFormat.first;
-
-    constructor();
-    constructor(property: string, prompt: PromptType);
-    constructor(property: string, value: ExpressionPropertyValue<any>, prompt: PromptType);
-    constructor(property?: string, value?: ExpressionPropertyValue<any> | PromptType, prompt?: PromptType) {
-        super();
-        if (property) {
-            if (!prompt) {
-                prompt = value as PromptType;
-                value = undefined;
-            }
-            this.property = property;
-            if (value !== undefined) { this.value = new ExpressionProperty(value as any) }
-            this.prompt.value = prompt;
-        }
-    }
 
     public configure(config: AttachmentInputConfiguration): this {
         return super.configure(config);
     }
 
     protected onComputeId(): string {
-        return `AttachmentInput[${this.prompt.value.toString()}]`;
+        return `AttachmentInput[${ this.prompt.value.toString() }]`;
     }
 
     protected getDefaultInput(dc: DialogContext): any {
@@ -52,7 +37,7 @@ export class AttachmentInput extends InputDialog<InputDialogOptions> {
         return Array.isArray(attachments) && attachments.length > 0 ? attachments : undefined;
     }
 
-    protected async onRecognizeInput(dc: DialogContext, consultation: boolean): Promise<InputState> {
+    protected async onRecognizeInput(dc: DialogContext): Promise<InputState> {
         // Recognize input and filter out non-attachments
         let input: Attachment | Attachment[] = dc.state.getValue(InputDialog.VALUE_PROPERTY);
         const attachments = Array.isArray(input) ? input : [input];
