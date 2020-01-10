@@ -63,7 +63,7 @@ export interface DialogDependencies {
  * ```
  */
 export class DialogSet {
-    private readonly dialogs: { [id: string]: Dialog; } = {};
+    private readonly dialogs: { [id: string]: Dialog } = {};
     private readonly dialogState: StatePropertyAccessor<DialogState>;
     private _telemetryClient: BotTelemetryClient;
     /**
@@ -79,7 +79,7 @@ export class DialogSet {
      * ```
      * @param dialogState (Optional) state property used to persist the sets dialog stack.
      */
-    constructor(dialogState?: StatePropertyAccessor<DialogState>) {
+    public constructor(dialogState?: StatePropertyAccessor<DialogState>) {
         this.dialogState = dialogState;
     }
 
@@ -102,7 +102,7 @@ export class DialogSet {
             let nextSuffix = 2;
             while (true) {
                 const suffixId = dialog.id + nextSuffix.toString();
-                if (!this.hasOwnProperty(suffixId)) {
+                if (!this.dialogs.hasOwnProperty(suffixId)) {
                     dialog.id = suffixId;
                     break;
                 } else {
@@ -121,7 +121,9 @@ export class DialogSet {
 
         // Automatically add any child dependencies the dialog might have
         if (typeof ((dialog as any) as DialogDependencies).getDependencies == 'function') {
-            ((dialog as any) as DialogDependencies).getDependencies().forEach((child) => this.add(child));
+            ((dialog as any) as DialogDependencies).getDependencies().forEach((child: Dialog): void => {
+                this.add(child);
+            });
         }
 
         return this;

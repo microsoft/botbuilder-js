@@ -5,33 +5,20 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { DialogTurnResult, Dialog, DialogConfiguration, DialogDependencies } from 'botbuilder-dialogs';
-import { SequenceContext, ActionChangeType, ActionChangeList } from '../sequenceContext';
-import { ExpressionPropertyValue, ExpressionProperty } from '../expressionProperty';
+import { DialogTurnResult, Dialog, DialogContext } from 'botbuilder-dialogs';
+import { ExpressionEngine, Expression } from 'botframework-expressions';
+import { ActionScope, ActionScopeResult, ActionScopeConfiguration } from './actionScope';
+
+const FOREACHPAGE = 'dialog.foreach.page';
+const FOREACHPAGEINDEX = 'dialog.foreach.pageindex';
 
 /**
  * Configuration info passed to a `ForEachPage` action.
  */
-export interface ForEachPageConfiguration extends DialogConfiguration {
-    /**
-     * Expression used to compute the list that should be enumerated.
-     */
-    list?: ExpressionPropertyValue<any[]|object>;
-
-    /**
-     * (Optional) expression to compute number of items per page. Defaults to "10".
-     */
-    pageSize?: ExpressionPropertyValue<number>;
-
-    /**
-     * In-memory property that will contain the current items value. Defaults to `dialog.value`.
-     */
-    valueProperty?: string;
-
-    /**
-     * Actions to be run for each page of items.
-     */
-    actions?: Dialog[];
+export interface ForEachPageConfiguration extends ActionScopeConfiguration {
+    itemsProperty?: string;
+    pageSize?: number;
+    disabled?: string;
 }
 
 /**
@@ -43,130 +30,117 @@ export interface ForEachPageConfiguration extends DialogConfiguration {
  * and defaults to a size of 10. The loop can be exited early by including either a `EndDialog` or
  * `GotoDialog` action.
  */
-export class ForEachPage extends Dialog implements DialogDependencies {
+export class ForEachPage<O extends object = {}> extends ActionScope<O> {
+    public static declarativeType = 'Microsoft.ForeachPage';
 
-    /**
-     * Creates a new `ForEachPage` instance.
-     * @param list Expression used to compute the list that should be enumerated.
-     * @param pageSize (Optional) number of items per page. Defaults to a value of 10.
-     * @param actions Actions to be run for each page of items.
-     */
-    constructor();
-    constructor(list: ExpressionPropertyValue<any[]|object>, actions: Dialog[]);
-    constructor(list: ExpressionPropertyValue<any[]|object>, pageSize: ExpressionPropertyValue<number>, actions: Dialog[]);
-    constructor(list?: ExpressionPropertyValue<any[]|object>, pageSizeOrActions?: ExpressionPropertyValue<number>|Dialog[], actions?: Dialog[]) {
+    public constructor();
+    public constructor(itemsProperty?: string, pageSize: number = 10) {
         super();
-        if (Array.isArray(pageSizeOrActions)) {
-            actions = pageSizeOrActions;
-            pageSizeOrActions = undefined;
-        }
-        if (list) { this.list = new ExpressionProperty(list) }
-        if (pageSizeOrActions) { this.pageSize = new ExpressionProperty(pageSizeOrActions as any) }
-        if (actions) { this.actions = actions }
-    }
-
-    protected onComputeId(): string {
-        const label = this.list ? this.list.toString() : '';
-        return `ForEachPage[${label}]`;
+        if (itemsProperty) { this.itemsProperty = itemsProperty; }
+        this.pageSize = pageSize;
     }
 
     /**
-     * Expression used to compute the list that should be enumerated.
+     * Get expression used to compute the list that should be enumerated.
      */
-    public list: ExpressionProperty<any[]|object>;
-
-    /**
-     * Number of items per page. Defaults to a value of 10.
-     */
-    public pageSize: ExpressionProperty<number> = new ExpressionProperty("10");
-
-    /**
-     * In-memory property that will contain the current items value. Defaults to `dialog.value`.
-     */
-    public valueProperty: string = 'dialog.value';
-
-    /**
-     * Actions to be run for each page of items.
-     */
-    public actions: Dialog[] = [];
-
-    public configure(config: ForEachPageConfiguration): this {
-        for (const key in config) {
-            if (config.hasOwnProperty(key)) {
-                const value = config[key];
-                switch(key) {
-                    case 'list':
-                        this.list = new ExpressionProperty(value);
-                        break;
-                    default:
-                        super.configure({ [key]: value });
-                        break;
-                }
-            }
-        }
-
-        return this;
+    public get itemsProperty(): string {
+        return this._itemsPropertyExpression ? this._itemsPropertyExpression.toString() : undefined;
     }
+
+    /**
+     * Set expression used to compute the list that should be enumerated.
+     */
+    public set itemsProperty(value: string) {
+        this._itemsPropertyExpression = value ? new ExpressionEngine().parse(value) : undefined;
+    }
+
+    /**
+     * Page size, default to 10.
+     */
+    public pageSize = 10;
+
+    /**
+     * Get an optional expression which if is true will disable this action.
+     */
+    public get disabled(): string {
+        return this._disabled ? this._disabled.toString() : undefined;
+    }
+
+    /**
+     * Set an optional expression which if is true will disable this action.
+     */
+    public set disabled(value: string) {
+        this._disabled = value ? new ExpressionEngine().parse(value) : undefined;
+    }
+
+    private _itemsPropertyExpression: Expression;
+
+    private _disabled: Expression;
 
     public getDependencies(): Dialog[] {
         return this.actions;
     }
 
-    public async beginDialog(sequence: SequenceContext, options: ForEachPageOptions): Promise<DialogTurnResult> {
-        // Ensure planning context
-        if (!(sequence instanceof SequenceContext)) { throw new Error(`${this.id}: should only be used within an AdaptiveDialog.`) }
-        if (!this.list) { throw new Error(`${this.id}: no list expression specified.`) }
-        if (!this.pageSize) { throw new Error(`${this.id}: no pageSize expression specified.`) }
-
-        // Unpack options
-        let { list, offset, pageSize } = options;
-        const memory = sequence.state;
-        if (list == undefined) { list = this.list.evaluate(this.id, memory) }
-        if (pageSize == undefined) { pageSize = this.pageSize.evaluate(this.id, memory) }
-        if (offset == undefined) { offset = 0 }
-
-        // Get next page of items
-        const page = this.getPage(list, offset, pageSize);
-
-        // Update current plan
-        if (page.length > 0) {
-            sequence.state.setValue(this.valueProperty, page);
-            const changes: ActionChangeList = {
-                changeType: ActionChangeType.insertActions,
-                actions: []
-            };
-            this.actions.forEach((action) => changes.actions.push({ dialogStack: [], dialogId: action.id }));
-            if (page.length == pageSize) {
-                // Add a call back into forEachPage() at the end of repeated actions.
-                // - A new offset is passed in which causes the next page of results to be returned.
-                changes.actions.push({
-                    dialogStack: [],
-                    dialogId: this.id,
-                    options: {
-                        list: list,
-                        offset: offset + pageSize,
-                        pageSize: pageSize
-                    }
-                });
-            }
-            sequence.queueChanges(changes);
-        }
-
-        return await sequence.endDialog();
+    public configure(config: ForEachPageConfiguration): this {
+        return super.configure(config);
     }
 
-    private getPage(list: any[]|object, offset: number, pageSize: number): any[] {
+    public async beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {
+        if (this._disabled) {
+            const { value } = this._disabled.tryEvaluate(dc.state);
+            if (!!value) {
+                return await dc.endDialog();
+            }
+        }
+        return await this.nextPage(dc);
+    }
+
+    protected async onEndOfActions(dc: DialogContext, result?: any): Promise<DialogTurnResult> {
+        return await this.nextPage(dc);
+    }
+
+    protected async onBreakLoop(dc: DialogContext, actionScopeResult: ActionScopeResult): Promise<DialogTurnResult> {
+        return await dc.endDialog();
+    }
+
+    protected async onContinueLoop(dc: DialogContext, actionScopeResult: ActionScopeResult): Promise<DialogTurnResult> {
+        return await this.nextPage(dc);
+    }
+
+    protected onComputeId(): string {
+        return `ForEachPage[${ this.itemsProperty }]`;
+    }
+
+    private async nextPage(dc: DialogContext): Promise<DialogTurnResult> {
+        let pageIndex = dc.state.getValue(FOREACHPAGEINDEX, 0);
+        const pageSize = this.pageSize;
+        const itemOffset = pageSize * pageIndex;
+
+        const { value, error } = this._itemsPropertyExpression.tryEvaluate(dc.state);
+        if (!error) {
+            const page = this.getPage(value, itemOffset, pageSize);
+            if (page && page.length > 0) {
+                dc.state.setValue(FOREACHPAGE, page);
+                dc.state.setValue(FOREACHPAGEINDEX, ++pageIndex);
+                return await this.beginAction(dc, 0);
+            }
+        }
+
+        return await dc.endDialog();
+    }
+
+    private getPage(list: any[] | object, index: number, pageSize: number): any[] {
         const page: any[] = [];
-        const end = offset + pageSize;
+        const end = index + pageSize;
         if (Array.isArray(list)) {
-            for (let i = offset; i >= offset && i < end; i++) {
+            for (let i = index; i < list.length && i < end; i++) {
                 page.push(list[i]);
             }
         } else if (typeof list === 'object') {
-            let i = 0;
+            let i = index;
             for (const key in list) {
                 if (list.hasOwnProperty(key)) {
-                    if (i >= offset && i < end) {
+                    if (i < end) {
                         page.push(list[key]);
                     }
                     i++;
@@ -175,10 +149,4 @@ export class ForEachPage extends Dialog implements DialogDependencies {
         }
         return page;
     }
-}
-
-interface ForEachPageOptions {
-    list: any[]|object;
-    offset?: number;
-    pageSize?: number;
 }

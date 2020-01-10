@@ -5,79 +5,90 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { DialogTurnResult, DialogConfiguration, DialogContext, Dialog } from 'botbuilder-dialogs';
-import { ExpressionPropertyValue, ExpressionProperty } from '../expressionProperty';
+import { DialogTurnResult, DialogConfiguration, DialogContext, Dialog, Configurable } from 'botbuilder-dialogs';
+import { Expression, ExpressionEngine } from 'botframework-expressions';
 
 export interface SetPropertyConfiguration extends DialogConfiguration {
-    /**
-     * The in-memory property to set.
-     */
     property?: string;
-
-    /**
-     * The expression value to assign to the property.
-     */
-    value?: ExpressionPropertyValue<any>;
+    value?: string;
+    disabled?: string;
 }
 
-export class SetProperty<O extends object = {}> extends Dialog<O> {
+export class SetProperty<O extends object = {}> extends Dialog<O> implements Configurable {
+    public static declarativeType = 'Microsoft.SetProperty';
+
+    public constructor();
+    public constructor(property: string, value: string);
+    public constructor(property?: string, value?: string) {
+        super();
+        if (property) { this.property = property; }
+        if (value) { this.value = value; }
+    }
+
     /**
-     * The in-memory property to set.
+     * Property path to put the value in.
      */
     public property: string;
 
     /**
-     * The value to assign to the property.
+     * Get the expression to get the value to put into property path.
      */
-    public value: ExpressionProperty<any>;
+    public get value(): string {
+        return this._value ? this._value.toString() : undefined;
+    }
 
     /**
-     * Creates a new `SetProperty` instance.
-     * @param property The in-memory property to set.
-     * @param value The expression value to assign to the property.
+     * Set the expression to get the value to put into property path.
      */
-    constructor();
-    constructor(property: string, value: ExpressionPropertyValue<any>);
-    constructor(property?: string, value?: ExpressionPropertyValue<any>) {
-        super();
-        if (property) { this.property = property }
-        if (value) { this.value = new ExpressionProperty(value) }
+    public set value(value: string) {
+        this._value = value ? new ExpressionEngine().parse(value) : undefined;
     }
 
-    protected onComputeId(): string {
-        const label = this.value ? this.value.toString() : '';
-        return `SetProperty[${label}]`;
+    /**
+     * Get an optional expression which if is true will disable this action.
+     */
+    public get disabled(): string {
+        return this._disabled ? this._disabled.toString() : undefined;
     }
+
+    /**
+     * Set an optional expression which if is true will disable this action.
+     */
+    public set disabled(value: string) {
+        this._disabled = value ? new ExpressionEngine().parse(value) : undefined;
+    }
+
+    private _value: Expression;
+
+    private _disabled: Expression;
 
     public configure(config: SetPropertyConfiguration): this {
-        for (const key in config) {
-            if (config.hasOwnProperty(key)) {
-                const value = config[key];
-                switch(key) {
-                    case 'value':
-                        this.value = new ExpressionProperty(value);
-                        break;
-                    default:
-                        super.configure({ [key]: value });
-                        break;
-                }
+        return super.configure(config);
+    }
 
+    public async beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {
+        if (this._disabled) {
+            const { value } = this._disabled.tryEvaluate(dc.state);
+            if (!!value) {
+                return await dc.endDialog();
             }
         }
 
-        return this;
-    }
-
-    public async beginDialog(dc: DialogContext): Promise<DialogTurnResult> {
-        // Ensure planning context and condition
-        if (!this.property) { throw new Error(`${this.id}: no 'property' specified.`) }
-        if (!this.value) { throw new Error(`${this.id}: no 'value' expression specified.`) }
+        if (!this.property) { throw new Error(`${ this.id }: no 'property' specified.`); }
+        if (!this._value) { throw new Error(`${ this.id }: no 'value' expression specified.`); }
 
         // Evaluate expression and save value
-        const memory = dc.state;
-        const value = this.value.evaluate(this.id, memory);
+        const { value, error } = this._value.tryEvaluate(dc.state);
+        if (error) {
+            throw new Error(`Expression evaluation resulted in an error. Expression: ${ this.value }. Error: ${ error }`);
+        }
         dc.state.setValue(this.property, value);
 
         return await dc.endDialog();
     }
+
+    protected onComputeId(): string {
+        return `SetProperty[${ this.value }]`;
+    }
+
 }

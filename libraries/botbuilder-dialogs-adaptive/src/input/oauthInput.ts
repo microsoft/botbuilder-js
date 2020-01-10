@@ -5,10 +5,9 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { InputDialogConfiguration, PromptType } from "./inputDialog";
-import { DialogContext, Dialog, DialogTurnResult, PromptOptions, PromptRecognizerResult } from "botbuilder-dialogs";
+import { DialogContext, Dialog, DialogTurnResult, PromptOptions, PromptRecognizerResult } from 'botbuilder-dialogs';
 import { Attachment, InputHints, TokenResponse, IUserTokenProvider, TurnContext, ActivityTypes, Activity, MessageFactory, CardFactory, OAuthLoginTimeoutKey } from "botbuilder-core";
-import { ExpressionPropertyValue, ExpressionProperty } from "../expressionProperty";
+import { InputDialogConfiguration, InputDialog, InputState } from './inputDialog';
 
 export interface OAuthInputConfiguration extends InputDialogConfiguration {
     /**
@@ -53,7 +52,9 @@ export const channels: any = {
 };
 
 
-export class OAuthInput extends Dialog {
+export class OAuthInput extends InputDialog {
+
+    public static declarativeType = 'Microsoft.OAuthInput'
 
     /**
      * Name of the OAuth connection being used.
@@ -74,14 +75,14 @@ export class OAuthInput extends Dialog {
      * (Optional) number of milliseconds the prompt will wait for the user to authenticate.
      * Defaults to a value `900,000` (15 minutes.)
      */
-    public timeout?: number;
+    public timeout?: number = 900000;
 
     /**
      * Gets or sets the memory property to use for token result.
      */
     public tokenProperty: string;
 
-    constructor(connectionName?: string, title?: string, text?: string, timeout?: number, tokenProperty?: string) {
+    public constructor(connectionName?: string, title?: string, text?: string, timeout?: number, tokenProperty?: string) {
         super();
         this.connectionName = connectionName;
         this.title = title;
@@ -214,6 +215,10 @@ export class OAuthInput extends Dialog {
         const adapter: IUserTokenProvider = context.adapter as IUserTokenProvider;
 
         return adapter.signOutUser(context, this.connectionName);
+    }
+
+    protected onRecognizeInput(dc: DialogContext): Promise<InputState> {
+        throw new Error('Method not implemented.');
     }
 
     private async sendOAuthCardAsync(context: TurnContext, prompt?: string | Partial<Activity>): Promise<void> {

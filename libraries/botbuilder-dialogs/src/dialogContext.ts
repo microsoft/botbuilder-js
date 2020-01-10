@@ -10,6 +10,7 @@ import { PromptOptions } from './prompts';
 import { DialogStateManager } from './memory';
 import { DialogContainer } from './dialogContainer';
 import { DialogEvents } from './dialogEvents';
+import { TurnPath } from './constants';
 
 /**
  * @private
@@ -375,7 +376,7 @@ export class DialogContext {
      */
     public async endDialog(result?: any): Promise<DialogTurnResult> {
         // End the active dialog
-        await this.endActiveDialog(DialogReason.endCalled);
+        await this.endActiveDialog(DialogReason.endCalled, result);
 
         // Resume parent dialog
         const instance: DialogInstance<any> = this.activeDialog;
@@ -495,7 +496,7 @@ export class DialogContext {
         return false;
     }
 
-    private async endActiveDialog(reason: DialogReason): Promise<void> {
+    private async endActiveDialog(reason: DialogReason, result?: any): Promise<void> {
         const instance: DialogInstance<any> = this.activeDialog;
         if (instance) {
             // Lookup dialog
@@ -507,6 +508,8 @@ export class DialogContext {
 
             // Pop dialog off stack
             this.stack.pop();
+
+            this.state.setValue(TurnPath.LASTRESULT, result);
         }
     }
 }

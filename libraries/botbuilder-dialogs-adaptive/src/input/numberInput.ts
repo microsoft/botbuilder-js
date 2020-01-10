@@ -5,45 +5,31 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { InputDialogConfiguration, InputDialog, InputDialogOptions, InputState, PromptType } from "./inputDialog";
-import { DialogContext } from "botbuilder-dialogs";
 import * as Recognizers from '@microsoft/recognizers-text-number';
-import { Activity } from "botbuilder-core";
-import { ExpressionProperty, ExpressionPropertyValue } from "../expressionProperty";
+import { Activity } from 'botbuilder-core';
+import { DialogContext } from 'botbuilder-dialogs';
+import { ExpressionEngine, Expression } from 'botframework-expressions';
+import { InputDialogConfiguration, InputDialog, InputState } from './inputDialog';
 
 export interface NumberInputConfiguration extends InputDialogConfiguration {
-    outputFormat?: NumberOutputFormat;
     defaultLocale?: string;
+    outputFormat?: string;
 }
 
-export enum NumberOutputFormat {
-    float = 'float',
-    integer = 'integer'
-}
+export class NumberInput extends InputDialog {
 
-export class NumberInput extends InputDialog<InputDialogOptions> {
+    public static declarativeType = 'Microsoft.NumberInput';
 
-    public outputFormat = NumberOutputFormat.float;
+    private _outputFormatExpression: Expression;
 
-    /**
-     * The prompts default locale that should be recognized.
-     */
     public defaultLocale?: string;
 
-    constructor();
-    constructor(property: string, prompt: PromptType);
-    constructor(property: string, value: ExpressionPropertyValue<any>, prompt: PromptType);
-    constructor(property?: string, value?: ExpressionPropertyValue<any> | PromptType, prompt?: PromptType) {
-        super();
-        if (property) {
-            if (!prompt) {
-                prompt = value as PromptType;
-                value = undefined;
-            }
-            this.property = property;
-            if (value !== undefined) { this.value = new ExpressionProperty(value as any) }
-            this.prompt.value = prompt;
-        }
+    public get outputFormat(): string {
+        return this._outputFormatExpression ? this._outputFormatExpression.toString() : undefined;
+    }
+
+    public set outputFormat(value: string) {
+        this._outputFormatExpression = value ? new ExpressionEngine().parse(value) : undefined;
     }
 
     public configure(config: NumberInputConfiguration): this {
@@ -51,10 +37,10 @@ export class NumberInput extends InputDialog<InputDialogOptions> {
     }
 
     protected onComputeId(): string {
-        return `NumberInput[${this.prompt.value.toString()}]`;
+        return `NumberInput[${ this.prompt.value.toString() }]`;
     }
 
-    protected async onRecognizeInput(dc: DialogContext, consultation: boolean): Promise<InputState> {
+    protected async onRecognizeInput(dc: DialogContext): Promise<InputState> {
         // Recognize input if needed
         let input: any = dc.state.getValue(InputDialog.VALUE_PROPERTY);
         if (typeof input !== 'number') {
@@ -71,15 +57,15 @@ export class NumberInput extends InputDialog<InputDialogOptions> {
             }
         }
 
-        // Format output and return success
-        switch (this.outputFormat) {
-            case NumberOutputFormat.float:
-            default:
-                dc.state.setValue(InputDialog.VALUE_PROPERTY, input);
-                break;
-            case NumberOutputFormat.integer:
-                dc.state.setValue(InputDialog.VALUE_PROPERTY, Math.floor(input));
-                break;
+        dc.state.setValue(InputDialog.VALUE_PROPERTY, input);
+
+        if (this._outputFormatExpression) {
+            const { value, error } = this._outputFormatExpression.tryEvaluate(dc.state);
+            if (!error) {
+                dc.state.setValue(InputDialog.VALUE_PROPERTY, value);
+            } else {
+                throw new Error(`OutputFormat expression evaluation resulted in an error. Expression ${ this._outputFormatExpression.toString() }. Error: ${ error }`);
+            }
         }
 
         return InputState.valid;

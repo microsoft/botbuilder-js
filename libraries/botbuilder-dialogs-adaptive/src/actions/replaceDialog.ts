@@ -5,89 +5,63 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { DialogTurnResult, DialogConfiguration, DialogContext, Dialog } from 'botbuilder-dialogs';
+import { DialogTurnResult, DialogContext, TurnPath } from 'botbuilder-dialogs';
+import { Expression, ExpressionEngine } from 'botframework-expressions';
+import { BaseInvokeDialog, BaseInvokeDialogConfiguration } from './baseInvokeDialog';
 
-export interface ReplaceDialogConfiguration extends DialogConfiguration {
-    /**
-     * ID of the dialog to replace the current one with.
-     */
-    dialogId: string;
-
-    /**
-     * (Optional) static options to pass to the goto dialog.
-     *
-     * @remarks
-     * These options will be merged with any dynamic options configured as
-     * [inputProperties](#inputproperties).
-     */
-    options?: object;
+export interface ReplaceDialogConfiguration extends BaseInvokeDialogConfiguration {
+    disabled?: string;
 }
 
-export class ReplaceDialog extends Dialog {
+export class ReplaceDialog<O extends object = {}> extends BaseInvokeDialog<O> {
+    public static declarativeType = 'Microsoft.ReplaceDialog';
 
     /**
      * Creates a new `ReplaceWithDialog` instance.
      * @param dialogId ID of the dialog to goto.
      * @param options (Optional) static options to pass the dialog.
      */
-    constructor();
-    constructor(dialogId: string, options?: object);
-    constructor(dialogId?: string, options?: object) {
-        super();
-        if (dialogId) { this.dialogId = dialogId }
-        if (options) { this.options = options }
-    }
-
-    protected onComputeId(): string {
-        return `ReplaceDialog[${this.dialogId}]`;
+    public constructor();
+    public constructor(dialogIdToCall: string, options?: O);
+    public constructor(dialogIdToCall?: string, options?: O) {
+        super(dialogIdToCall, options);
     }
 
     /**
-     * ID of the dialog to goto.
+     * Get an optional expression which if is true will disable this action.
      */
-    public dialogId: string;
+    public get disabled(): string {
+        return this._disabled ? this._disabled.toString() : undefined;
+    }
 
     /**
-     * (Optional) static options to pass to the goto dialog.
-     *
-     * @remarks
-     * These options will be merged with any dynamic options configured as
-     * [inputProperties](#inputproperties).
+     * Set an optional expression which if is true will disable this action.
      */
-    public options?: object;
+    public set disabled(value: string) {
+        this._disabled = value ? new ExpressionEngine().parse(value) : undefined;
+    }
+
+    private _disabled?: Expression;
 
     public configure(config: ReplaceDialogConfiguration): this {
         return super.configure(config);
     }
-
-    public async beginDialog (dc: DialogContext, options?: object): Promise<DialogTurnResult> {
-        options = Object.assign({}, options, this.options);
-        return await this.replaceParentDialog(dc, this.dialogId, options);
-    }
-
-    protected async replaceParentDialog(dc: DialogContext, dialogId: string, options?: object): Promise<DialogTurnResult> {
-        this.popCommands(dc);
-        if (dc.stack.length > 0 || !dc.parent) {
-            return await dc.replaceDialog(dialogId, options);
-        } else {
-            const turnResult = await dc.parent.replaceDialog(dialogId, options);
-            turnResult.parentEnded = true;
-            return turnResult;
-         }
-    }
-
-    private popCommands(dc: DialogContext): void {
-        // Pop all commands off the stack.
-        let i = dc.stack.length - 1;
-        while (i >= 0) {
-            // Commands store the index of the state they're inheriting so we can tell a command
-            // by looking to see if its state is of type 'number'.
-            if (typeof dc.stack[i].state === 'number') {
-                dc.stack.pop();
-                i--;
-            } else {
-                break;
+    
+    public async beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {
+        if (this._disabled) {
+            const { value } = this._disabled.tryEvaluate(dc.state);
+            if (!!value) {
+                return await dc.endDialog();
             }
         }
+
+        const dialog = this.resolveDialog(dc);
+        const boundOptions = this.bindOptions(dc, options);
+
+        if (this.includeActivity) {
+            dc.state.setValue(TurnPath.ACTIVITYPROCESSED, false);
+        }
+
+        return await dc.replaceDialog(dialog.id, boundOptions);
     }
 }

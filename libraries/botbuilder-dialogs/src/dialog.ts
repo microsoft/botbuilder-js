@@ -184,18 +184,6 @@ export interface DialogEvent {
     value?: any;
 }
 
-export interface DialogConfiguration {
-    id?: string;
-
-    tags?: string[];
-
-    inputBindings?: { [option: string]: string; };
-
-    outputBinding?: string;
-
-    telemetryClient?: BotTelemetryClient;
-}
-
 /**
  * Base class for all dialogs.
  */

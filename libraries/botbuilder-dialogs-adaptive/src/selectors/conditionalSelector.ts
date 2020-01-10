@@ -40,8 +40,7 @@ export class ConditionalSelector implements TriggerSelector {
     }
 
     public select(context: SequenceContext): Promise<number[]> {
-        const snapshot = context.state.getMemorySnapshot();
-        const { value, error } = this._condition.tryEvaluate(snapshot);
+        const { value, error } = this._condition.tryEvaluate(context.state);
         let selector: TriggerSelector;
         if (value && !error) {
             selector = this.ifTrue;

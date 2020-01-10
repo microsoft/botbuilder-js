@@ -1,5 +1,4 @@
 const { Configurable, TextPrompt, Dialog, DialogManager } = require('botbuilder-dialogs');
-const { AdaptiveDialog } = require('botbuilder-dialogs-adaptive');
 const { ConversationState, UserState } = require('botbuilder');
 const { MemoryStorage, TestAdapter } = require('botbuilder-core');
 const { TypeFactory, TypeLoader, IResourceProvider, FileResource, FileResourceProvider, ResourceExplorer } = require('../lib');

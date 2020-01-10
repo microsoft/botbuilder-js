@@ -5,14 +5,15 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { DialogTurnResult, DialogContext, DialogConfiguration, Dialog } from 'botbuilder-dialogs';
+import { DialogTurnResult, DialogContext, DialogConfiguration, Dialog, Configurable } from 'botbuilder-dialogs';
+import { Expression, ExpressionEngine } from 'botframework-expressions';
 
 export interface EditArrayConfiguration extends DialogConfiguration {
     changeType?: ArrayChangeType;
-
-    arrayProperty?: string;
-
-    itemProperty?: string;
+    itemsProperty?: string;
+    resultProperty?: string;
+    value?: string;
+    disabled?: string;
 }
 
 export enum ArrayChangeType {
@@ -23,93 +24,169 @@ export enum ArrayChangeType {
     clear = 'clear'
 }
 
-export class EditArray<O extends object = {}> extends Dialog<O> {
+export class EditArray<O extends object = {}> extends Dialog<O> implements Configurable {
+    public static declarativeType = 'Microsoft.EditArray';
 
-    constructor();
-    constructor(changeType: ArrayChangeType, arrayProperty: string, itemProperty?: string);
-    constructor(changeType?: ArrayChangeType, arrayProperty?: string, itemProperty?: string) {
+    public constructor();
+    public constructor(changeType: ArrayChangeType, itemsProperty: string, value?: string, resultProperty?: string);
+    public constructor(changeType?: ArrayChangeType, itemsProperty?: string, value?: string, resultProperty?: string) {
         super();
-        if (changeType) { this.changeType = changeType }
-        if (arrayProperty) { this.arrayProperty = arrayProperty }
-        if (itemProperty) { this.itemProperty = itemProperty }
+        if (changeType) { this.changeType = changeType; }
+        if (itemsProperty) { this.itemsProperty = itemsProperty; }
+        switch (changeType) {
+            case ArrayChangeType.clear:
+            case ArrayChangeType.pop:
+            case ArrayChangeType.take:
+                this.resultProperty = resultProperty;
+                break;
+            case ArrayChangeType.push:
+            case ArrayChangeType.remove:
+                this.value = value;
+                break;
+            default:
+                break;
+        }
     }
 
-    protected onComputeId(): string {
-        return `EditArray[${this.changeType}: ${this.arrayProperty}]`;
+    /**
+     * Type of change being applied.
+     */
+    public changeType: ArrayChangeType = ArrayChangeType.push;
+
+    /**
+     * Get property path expression to the collection of items.
+     */
+    public get itemsProperty(): string {
+        return this._itemsProperty ? this._itemsProperty.toString() : undefined;
     }
 
-    public changeType: ArrayChangeType;
+    /**
+     * Set property path expression to the collection of items.
+     */
+    public set itemsProperty(value: string) {
+        this._itemsProperty = value ? new ExpressionEngine().parse(value) : undefined;
+    }
 
-    public arrayProperty: string;
+    /**
+     * Get the path expression to store the result of action.
+     */
+    public get resultProperty(): string {
+        return this._resultProperty ? this._resultProperty.toString() : undefined;
+    }
 
-    public itemProperty: string;
+    /**
+     * Set the path expression to store the result of action.
+     */
+    public set resultProperty(value: string) {
+        this._resultProperty = value ? new ExpressionEngine().parse(value) : undefined;
+    }
+
+    /**
+     * Get the expression of the value to put onto the array.
+     */
+    public get value(): string {
+        return this._value ? this._value.toString() : undefined;
+    }
+
+    /**
+     * Set the expression of the value to put onto the array.
+     */
+    public set value(value: string) {
+        this._value = value ? new ExpressionEngine().parse(value) : undefined;
+    }
+
+    /**
+     * Get an optional expression which if is true will disable this action.
+     */
+    public get disabled(): string {
+        return this._disabled ? this._disabled.toString() : undefined;
+    }
+
+    /**
+     * Set an optional expression which if is true will disable this action.
+     */
+    public set disabled(value: string) {
+        this._disabled = value ? new ExpressionEngine().parse(value) : undefined;
+    }
+
+    private _value: Expression;
+
+    private _itemsProperty: Expression;
+
+    private _resultProperty: Expression;
+
+    private _disabled: Expression;
 
     public configure(config: EditArrayConfiguration): this {
         return super.configure(config);
     }
 
-    public async beginDialog(dc: DialogContext, options: O): Promise<DialogTurnResult> {
-        if (!this.arrayProperty) { throw new Error(`EditArray: "${this.changeType}" operation couldn't be performed because the listProperty wasn't specified.`) }
+    public async beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {
+        if (this._disabled) {
+            const { value } = this._disabled.tryEvaluate(dc.state);
+            if (!!value) {
+                return await dc.endDialog();
+            }
+        }
+
+        if (!this.itemsProperty) {
+            throw new Error(`EditArray: "${ this.changeType }" operation couldn't be performed because the itemsProperty wasn't specified.`);
+        }
 
         // Get list and ensure populated
-        let list: any[] = dc.state.getValue(this.arrayProperty);
-        if (!Array.isArray(list)) { list = [] }
+        let list: any[] = dc.state.getValue(this.itemsProperty);
+        // if (!Array.isArray(list)) { list = [] }
 
         // Manipulate list
-        let item: any;
-        let serialized: string;
-        let lastResult: any;
+        let result: any;
+        let evaluationResult: any;
         switch (this.changeType) {
             case ArrayChangeType.pop:
-                item = list.pop();
-                if (this.itemProperty) {
-                    dc.state.setValue(this.itemProperty, item);
-                }
-                lastResult = item;
+                result = list.pop();
                 break;
             case ArrayChangeType.push:
-                this.ensureItemProperty();
-                item = dc.state.getValue(this.itemProperty);
-                lastResult = item != undefined;
-                if (lastResult) {
-                    list.push(item);
+                this.ensureValue();
+                evaluationResult = this._value.tryEvaluate(dc.state);
+                if (evaluationResult.value && !evaluationResult.error) {
+                    list.push(evaluationResult.value);
                 }
                 break;
             case ArrayChangeType.take:
-                item = list.shift();
-                if (this.itemProperty) {
-                    dc.state.setValue(this.itemProperty, item);
-                }
-                lastResult = item;
+                result = list.shift();
                 break;
             case ArrayChangeType.remove:
-                this.ensureItemProperty();
-                item = dc.state.getValue(this.itemProperty);
-                if (item != undefined) {
-                    serialized = Array.isArray(item) || typeof item == 'object' ? JSON.stringify(item) : undefined;
-                    lastResult = false;
+                this.ensureValue();
+                evaluationResult = this._value.tryEvaluate(dc.state);
+                if (evaluationResult.value && !evaluationResult.error) {
+                    result = false;
                     for (let i = 0; i < list.length; i++) {
-                        if ((serialized && JSON.stringify(list[i]) == serialized) || item === list[i]) {
+                        if ((JSON.stringify(evaluationResult.value) == JSON.stringify(list[i])) || evaluationResult.value === list[i]) {
                             list.splice(i, 1);
-                            lastResult = true;
+                            result = true;
                             break;
                         }
                     }
                 }
                 break;
             case ArrayChangeType.clear:
-                lastResult = list.length > 0;
+                result = list.length > 0;
                 list = [];
                 break;
         }
 
         // Save list and last result
-        dc.state.setValue(this.arrayProperty, list);
-        dc.state.setValue('dialog.lastResult', lastResult);
+        dc.state.setValue(this.itemsProperty, list);
+        if (this.resultProperty) {
+            dc.state.setValue(this.resultProperty, result);
+        }
         return await dc.endDialog();
     }
 
-    private ensureItemProperty(): void {
-        if (!this.itemProperty) { throw new Error(`EditArray: "${this.changeType}" operation couldn't be performed for list "${this.arrayProperty}" because an itemProperty wasn't specified.`) }
+    protected onComputeId(): string {
+        return `EditArray[${ this.changeType }: ${ this.itemsProperty }]`;
+    }
+
+    private ensureValue(): void {
+        if (!this.value) { throw new Error(`EditArray: "${ this.changeType }" operation couldn't be performed for list "${ this.itemsProperty }" because a value wasn't specified.`) }
     }
 }

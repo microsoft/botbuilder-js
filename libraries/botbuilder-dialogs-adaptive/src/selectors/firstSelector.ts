@@ -29,8 +29,7 @@ export class FirstSelector implements TriggerSelector {
             for (let i = 0; i < this._conditionals.length; i++) {
                 const conditional = this._conditionals[i];
                 const expression = conditional.getExpression(this._parser);
-                const snapshot = context.state.getMemorySnapshot();
-                const { value, error } = expression.tryEvaluate(snapshot);
+                const { value, error } = expression.tryEvaluate(context.state);
                 if (value && !error) {
                     selection = i;
                     break;
