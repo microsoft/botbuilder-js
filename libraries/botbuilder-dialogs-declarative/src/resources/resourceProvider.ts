@@ -1,6 +1,3 @@
-import { debug } from "util";
-import { IResource } from "./resource";
-
 /**
  * @module botbuilder-dialogs-declarative
  */
@@ -8,6 +5,10 @@ import { IResource } from "./resource";
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
+
+
+import { debug } from "util";
+import { IResource } from "./resource";
 
 const path = require('path');
 const fs = require('fs');
