@@ -83,7 +83,7 @@ export class LogAction<O extends object = {}> extends Dialog<O> implements Confi
 
         if (!this.text) { throw new Error(`${ this.id }: no 'message' specified.`) }
 
-        const msg = this.text.bindToData(dc.context, dc.state);
+        const msg = await this.text.bindToData(dc.context, dc.state);
 
         // Log to console and send trace if needed
         console.log(msg);
