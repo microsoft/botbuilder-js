@@ -27,8 +27,8 @@ export class ResourceMultiLanguageGenerator extends MultiLanguageGeneratorBase {
     public tryGetGenerator(context: TurnContext, locale: string): {exist: boolean; result: LanguageGenerator} {
         const lgm: LanguageGeneratorManager = context.turnState.get('LanguageGeneratorManager');
         const resourceId = (locale === undefined || locale === '')? this.resourceId : this.resourceId.replace('.lg', `.${ locale }.lg`);
-        if (lgm._languageGenerator.has(resourceId)) {
-            return {exist: true, result: lgm._languageGenerator.get(resourceId)};
+        if (lgm.languageGenerator.has(resourceId)) {
+            return {exist: true, result: lgm.languageGenerator.get(resourceId)};
         } else {
             return {exist: false, result: undefined};
         }
