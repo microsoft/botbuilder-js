@@ -1,18 +1,11 @@
 import { FileResource } from "./fileResource";
 import { normalize, extname } from "path";
+import { readdirSync } from "fs";
 import { IResource } from "./resource";
 import { IResourceProvider } from "./resourceProvider";
 import { PathUtil } from "../pathUtil";
 import watch from "node-watch";
 import { EventEmitter } from "events";
-
-/**
- * @module botbuilder-dialogs-declarative
- */
-/**
- * Copyright (c) Microsoft Corporation. All rights reserved.
- * Licensed under the MIT License.
- */
 
 export class FolderResourceProvider implements IResourceProvider {
     private extensions: Set<string> = new Set<string>();
@@ -25,9 +18,9 @@ export class FolderResourceProvider implements IResourceProvider {
 
     private resources: Map<string, FileResource> = new Map<string, FileResource>();
 
-    public includeSubFolders: boolean;
+    public IncludeSubFolders: boolean;
 
-    public directory: string;
+    public Directory: string;
 
     constructor(folder: string, includeSubFolders: boolean = true, monitorChanges: boolean = true) {
 
@@ -35,10 +28,10 @@ export class FolderResourceProvider implements IResourceProvider {
 
         extensionsToInclude.forEach(e => this.extensions.add(e));
 
-        this.includeSubFolders = includeSubFolders;
+        this.IncludeSubFolders = includeSubFolders;
         folder = normalize(folder);
-        this.directory = folder;
-        const allFiles: string[] = PathUtil.getAllFiles(folder);
+        this.Directory = folder;
+        const allFiles: string[] = PathUtil.GetAllFiles(folder);
         const allFilteredFiles: string[] = allFiles.filter(f => this.extensions.has(extname(f)));
 
         allFilteredFiles.forEach(f => {
@@ -72,7 +65,7 @@ export class FolderResourceProvider implements IResourceProvider {
     }
 
     public id(): string {
-        return this.directory;
+        return this.Directory;
     }
 
 
