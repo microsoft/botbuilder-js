@@ -1,4 +1,4 @@
-/*
+/* 
 import * as Chinese from 'cldr-data/main/zh/numbers.json';
 import * as English from 'cldr-data/main/en/numbers.json';
 import * as French from 'cldr-data/main/fr/numbers.json';
