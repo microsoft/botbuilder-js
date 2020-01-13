@@ -1,16 +1,11 @@
-import { join } from "path";
-import { readdirSync, statSync, Stats } from "fs";
-
-/**
- * @module botbuilder-dialogs-declarative
- */
-/**
- * Copyright (c) Microsoft Corporation. All rights reserved.
- * Licensed under the MIT License.
- */
+import { normalize, join, resolve } from "path";
+import { readdirSync, statSync, lstatSync, Stats } from "fs";
 
 export class PathUtil {
-    public static getAllFiles(dir: string): string[] {
+    public static IsDirectory = source => lstatSync(source).isDirectory()
+    public static GetDirectories = source => readdirSync(source).map(name => join(source, name)).filter(PathUtil.IsDirectory)
+
+    public static GetAllFiles(dir: string): string[] {
         let results: string[] = [];
         let list: string[] = readdirSync(dir);
         list.forEach(file => {
@@ -18,7 +13,7 @@ export class PathUtil {
             var stat: Stats = statSync(file);
             if (stat && stat.isDirectory()) {
                 /* Recurse into a subdirectory */
-                results = results.concat(this.getAllFiles(file));
+                results = results.concat(this.GetAllFiles(file));
             } else {
                 /* Is a file */
                 results.push(file);
