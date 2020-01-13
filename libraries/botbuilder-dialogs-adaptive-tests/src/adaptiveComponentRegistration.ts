@@ -10,7 +10,7 @@ import {
 } from 'botbuilder-dialogs-declarative';
 import {
     AttachmentInput, ChoiceInput, ConfirmInput, DateTimeInput,
-    NumberInput, OAuthInput, TextInput
+    NumberInput, OAuthInput, TextInput, ResourceMultiLanguageGenerator, TemplateEngineLanguageGenerator, MultiLanguageGenerator
 } from 'botbuilder-dialogs-adaptive';
 import {
     BeginDialog, BreakLoop, CancelAllDialogs, ContinueLoop, DeleteActivity,
@@ -103,6 +103,10 @@ export class AdaptiveComponentRegistration implements ComponentRegistration {
         // Recognizers
         types.push(new TypeRegistration(RegexRecognizer.declarativeType, new ConfigurableTypeBuilder(RegexRecognizer)));
 
+        // Generators
+        //types.push(new TypeRegistration(RegexRecognizer.declarativeType, new ConfigurableTypeBuilder(ResourceMultiLanguageGenerator)));
+        //types.push(new TypeRegistration(RegexRecognizer.declarativeType, new ConfigurableTypeBuilder(MultiLanguageGenerator)));
+        //types.push(new TypeRegistration(RegexRecognizer.declarativeType, new ConfigurableTypeBuilder(TemplateEngineLanguageGenerator)));
         return types;
     }
 }

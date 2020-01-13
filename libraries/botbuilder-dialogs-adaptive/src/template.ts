@@ -11,7 +11,7 @@ import { TurnContext } from 'botbuilder-core';
 /**
  * Defines Template interface for binding data to T.
  */
-export interface Template {
+export interface TemplateInterface<T> {
 
     /**
      * Given the turn context bind to the data to create the object
@@ -19,5 +19,5 @@ export interface Template {
      * @param data data to bind to.
      * @returns instance.
      */
-    bindToData(turnContext: TurnContext, data: object): Promise<any>;
+    bindToData(turnContext: TurnContext, data: any): Promise<T>;
 }

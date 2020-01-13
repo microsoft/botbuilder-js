@@ -1,9 +1,9 @@
-import { Template } from '../template';
+import { TemplateInterface } from '../template';
 import { Activity, TurnContext } from 'botbuilder-core';
 
-export class StaticActivityTemplate implements Template {
+export class StaticActivityTemplate implements TemplateInterface<Partial<Activity>> {
     
-    public declarativeType: string = 'Microsoft.StaticActivityTemplate';
+    public static declarativeType: string = 'Microsoft.StaticActivityTemplate';
 
     public activity: Activity;
 
@@ -11,7 +11,7 @@ export class StaticActivityTemplate implements Template {
         this.activity = activity;
     };
 
-    public bindToData(context: TurnContext, data: object): Promise<Activity> {
+    public async bindToData(context: TurnContext, data: object): Promise<Partial<Activity>> {
         return Promise.resolve(this.activity);
     }
 

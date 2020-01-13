@@ -1,18 +1,17 @@
-import { Template } from '../template';
+import { TemplateInterface } from '../template';
 import { TurnContext, Activity } from 'botbuilder-core';
 import { LanguageGenerator } from '../languageGenerator';
 import { ActivityFactory } from 'botbuilder-lg';
 
-export class ActivityTemplate implements Template {
-    
-    public declarativeType: string = 'Microsoft.ActivityTemplate';
+export class ActivityTemplate implements TemplateInterface<Partial<Activity>> {
+    public static declarativeType: string = 'Microsoft.ActivityTemplate';
     public template: string;
 
     public constructor(template: string) {
         this.template = template;
     }
 
-    public async bindToData(context: TurnContext, data: object): Promise<Partial<Activity> | undefined> {
+    public async bindToData(context: TurnContext, data: object): Promise<Partial<Activity>> {
         if(this.template) {
             const languageGenerator: LanguageGenerator = context.turnState.get('LanguageGenerator');
             if (languageGenerator) {

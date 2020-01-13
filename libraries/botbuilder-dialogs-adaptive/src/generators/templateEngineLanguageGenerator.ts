@@ -18,7 +18,7 @@ import { normalize, basename } from 'path';
  * LanguageGenerator implementation which uses TemplateEngine. 
  */
 export class TemplateEngineLanguageGenerator implements LanguageGenerator{
-    public declarative: string = 'Microsoft.TemplateEngMineLanguageGenerator';
+    public static declarative: string = 'Microsoft.TemplateEngMineLanguageGenerator';
     
     private readonly DEFAULTLABEL: string  = 'Unknown';
 

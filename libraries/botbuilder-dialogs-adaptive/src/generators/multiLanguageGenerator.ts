@@ -14,7 +14,7 @@ import { TurnContext } from 'botbuilder-core';
  * and has a policy which controls fallback (try en-us -> en -> default).
  */
 export class MultiLanguageGenerator extends MultiLanguageGeneratorBase{
-    public declarativeType: string = 'Microsoft.MultiLanguageGenerator';
+    public static declarativeType: string = 'Microsoft.MultiLanguageGenerator';
 
     public languageGenerators: Map<string, LanguageGenerator> = new Map<string, LanguageGenerator>();
 

@@ -37,7 +37,7 @@ export class DateTimeInput extends InputDialog {
     }
 
     protected onComputeId(): string {
-        return `DateTimeInput[${ this.prompt.value.toString() }]`;
+        return `DateTimeInput[${ this.prompt.toString() }]`;
     }
 
     protected async onRecognizeInput(dc: DialogContext): Promise<InputState> {

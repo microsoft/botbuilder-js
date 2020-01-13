@@ -82,7 +82,7 @@ export class ConfirmInput extends InputDialog {
     }
 
     protected onComputeId(): string {
-        return `ConfirmInput[${ this.prompt.value.toString() }]`;
+        return `ConfirmInput[${ this.prompt.toString() }]`;
     }
 
     protected async onRecognizeInput(dc: DialogContext): Promise<InputState> {
@@ -124,7 +124,7 @@ export class ConfirmInput extends InputDialog {
         return InputState.valid;
     }
 
-    protected onRenderPrompt(dc: DialogContext, state: InputState): Partial<Activity> {
+    protected async onRenderPrompt(dc: DialogContext, state: InputState): Promise<Partial<Activity>> {
         // Determine locale
         let locale: string = dc.context.activity.locale || this.defaultLocale;
         if (!locale || !ConfirmInput.defaultChoiceOptions.hasOwnProperty(locale)) {
@@ -136,9 +136,9 @@ export class ConfirmInput extends InputDialog {
         const choices = ChoiceFactory.toChoices(confirmChoices);
 
         // Format prompt to send
-        const prompt = super.onRenderPrompt(dc, state);
+        const prompt = await super.onRenderPrompt(dc, state);
         const channelId: string = dc.context.activity.channelId;
         const choiceOptions: ChoiceFactoryOptions = this.choiceOptions || ConfirmInput.defaultChoiceOptions[locale].options;
-        return this.appendChoices(prompt, channelId, choices, this.style, choiceOptions);
+        return Promise.resolve(this.appendChoices(prompt, channelId, choices, this.style, choiceOptions));
     }
 }

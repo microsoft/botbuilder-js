@@ -1,10 +1,10 @@
-import { Template } from '../template';
+import { TemplateInterface } from '../template';
 import { TurnContext } from 'botbuilder-core';
 import { LanguageGenerator } from '../languageGenerator';
 
-export class TextTemplate implements Template {
+export class TextTemplate implements TemplateInterface<string> {
 
-    public declarativeType: string = 'Microsoft.TextTemplates';
+    public static declarativeType: string = 'Microsoft.TextTemplates';
 
     public template: string;
 
@@ -12,7 +12,7 @@ export class TextTemplate implements Template {
         this.template = template;
     }
 
-    public bindToData(context: TurnContext, data: object): Promise<string | undefined> {
+    public async bindToData(context: TurnContext, data: object): Promise<string> {
         if (!this.template) {
             throw new Error(`ArgumentNullException: ${ this.template }`);
         }
