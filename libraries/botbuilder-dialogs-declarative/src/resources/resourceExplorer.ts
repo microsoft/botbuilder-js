@@ -1,8 +1,13 @@
+/**
+ * @module botbuilder-dialogs-declarative
+ */
+/**
+ * Copyright (c) Microsoft Corporation. All rights reserved.
+ * Licensed under the MIT License.
+ */
+
 import { IResourceProvider } from "./resourceProvider";
-import { ResourceResponse } from "botbuilder-core";
-import { PathUtil } from "../pathUtil";
-import { normalize, join, dirname } from "path";
-import { readdirSync, statSync } from "fs";
+import { normalize, dirname } from "path";
 import { FolderResourceProvider } from "./folderResoureProvider";
 import { IResource } from "./resource";
 import { EventEmitter } from "events";
@@ -11,9 +16,6 @@ export class ResourceExplorer {
 
     private _emitter: EventEmitter = new EventEmitter();
     private _resourceProviders: IResourceProvider[] = [];
-
-    constructor() {
-    }
 
     get resourceProviders(): IResourceProvider[] {
         return this._resourceProviders;
@@ -83,6 +85,6 @@ export class ResourceExplorer {
             }
         }
 
-        return null;
+        return undefined;
     }
 }

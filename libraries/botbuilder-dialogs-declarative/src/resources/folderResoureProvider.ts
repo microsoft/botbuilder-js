@@ -1,6 +1,13 @@
+/**
+ * @module botbuilder-dialogs-declarative
+ */
+/**
+ * Copyright (c) Microsoft Corporation. All rights reserved.
+ * Licensed under the MIT License.
+ */
+
 import { FileResource } from "./fileResource";
 import { normalize, extname } from "path";
-import { readdirSync } from "fs";
 import { IResource } from "./resource";
 import { IResourceProvider } from "./resourceProvider";
 import { PathUtil } from "../pathUtil";
@@ -18,9 +25,9 @@ export class FolderResourceProvider implements IResourceProvider {
 
     private resources: Map<string, FileResource> = new Map<string, FileResource>();
 
-    public IncludeSubFolders: boolean;
+    public includeSubFolders: boolean;
 
-    public Directory: string;
+    public directory: string;
 
     constructor(folder: string, includeSubFolders: boolean = true, monitorChanges: boolean = true) {
 
@@ -28,10 +35,10 @@ export class FolderResourceProvider implements IResourceProvider {
 
         extensionsToInclude.forEach(e => this.extensions.add(e));
 
-        this.IncludeSubFolders = includeSubFolders;
+        this.includeSubFolders = includeSubFolders;
         folder = normalize(folder);
-        this.Directory = folder;
-        const allFiles: string[] = PathUtil.GetAllFiles(folder);
+        this.directory = folder;
+        const allFiles: string[] = PathUtil.getAllFiles(folder);
         const allFilteredFiles: string[] = allFiles.filter(f => this.extensions.has(extname(f)));
 
         allFilteredFiles.forEach(f => {
@@ -65,7 +72,7 @@ export class FolderResourceProvider implements IResourceProvider {
     }
 
     public id(): string {
-        return this.Directory;
+        return this.directory;
     }
 
 
