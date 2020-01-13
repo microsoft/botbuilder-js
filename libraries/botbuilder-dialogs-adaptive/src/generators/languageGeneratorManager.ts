@@ -34,11 +34,11 @@ export class LanguageGeneratorManager {
         const resources = await this._resourceExporer.getResources('lg');
         for (const resource of resources) {
             const generator = await this.getTemplateEngineLanguageGenerator(resource);
-            this._languageGenerator.set(resource.id().toLocaleLowerCase(), generator);
+            this.languageGenerator.set(resource.id().toLocaleLowerCase(), generator);
         }
     }
     
-    public _languageGenerator: Map<string, LanguageGenerator> = new Map<string, LanguageGenerator>();
+    public languageGenerator: Map<string, LanguageGenerator> = new Map<string, LanguageGenerator>();
 
     public static resourceExplorerResolver(locale: string, resourceMapping: Map<string, IResource[]>): ImportResolverDelegate {
         return  (source: string, id: string): {content: string; id: string} => {
