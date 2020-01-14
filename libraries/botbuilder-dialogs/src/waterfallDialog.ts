@@ -236,8 +236,7 @@ export class WaterfallDialog<O extends object = {}> extends Dialog<O> {
      * @param instance The instance of the current dialog.
      * @param reason The reason the dialog is ending.
      */
-    public async endDialog(context: TurnContext, instance: DialogInstance, reason: DialogReason) {
-
+    public async endDialog(context: TurnContext, instance: DialogInstance, reason: DialogReason): Promise<void> {
         const state: WaterfallDialogState = instance.state as WaterfallDialogState;
         const instanceId = state.values['instanceId'];
         if (reason === DialogReason.endCalled) {
@@ -256,7 +255,7 @@ export class WaterfallDialog<O extends object = {}> extends Dialog<O> {
         }
     }
 
-    private waterfallStepName(index) {
+    private waterfallStepName(index): string {
         // Log Waterfall Step event. Each event has a distinct name to hook up
         // to the Application Insights funnel.
         var stepName = '';
@@ -288,7 +287,7 @@ interface WaterfallDialogState {
  * instances of a given waterfall dialog.
  * Source: https://stackoverflow.com/questions/105034/create-guid-uuid-in-javascript
  */  
-function generate_guid() {
+function generate_guid(): string {
     function s4() {
         return Math.floor((1 + Math.random()) * 0x10000)
             .toString(16)
