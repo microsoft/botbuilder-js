@@ -5,9 +5,9 @@ export class StaticActivityTemplate implements TemplateInterface<Partial<Activit
     
     public static declarativeType: string = 'Microsoft.StaticActivityTemplate';
 
-    public activity: Activity;
+    public activity: Partial<Activity>;
 
-    public constructor(activity?: Activity) {
+    public constructor(activity?: Partial<Activity>) {
         this.activity = activity;
     };
 

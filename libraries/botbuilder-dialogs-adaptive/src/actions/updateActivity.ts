@@ -26,10 +26,10 @@ export class UpdateActivity<O extends object = {}> extends Dialog<O> implements 
         super();
         if (activityId) { this.activityId = activityId; }
         if (activity) { 
-            if (activity && typeof activity === 'string') { 
+            if (typeof activity === 'string') { 
                 this.activity = new ActivityTemplate(activity); 
             } else {
-                this.activity = new StaticActivityTemplate(activity as Activity); 
+                this.activity = new StaticActivityTemplate(activity); 
             }
         }
     }

@@ -19,5 +19,5 @@ export interface TemplateInterface<T> {
      * @param data data to bind to.
      * @returns instance.
      */
-    bindToData(turnContext: TurnContext, data: any): Promise<T>;
+    bindToData(turnContext: TurnContext, data: object): Promise<T>;
 }

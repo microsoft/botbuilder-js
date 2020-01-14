@@ -11,7 +11,6 @@ import { Expression, ExpressionEngine } from 'botframework-expressions';
 import { TemplateInterface } from '../template';
 import { ActivityTemplate } from '../templates/activityTemplate';
 import { StaticActivityTemplate } from '../templates/staticActivityTemplate';
-import { TextTemplate } from '../templates';
 
 export interface SendActivityConfiguration extends DialogConfiguration {
     /**
@@ -46,7 +45,7 @@ export class SendActivity<O extends object = {}> extends Dialog<O> implements Co
             if (typeof activity === 'string') { 
                 this.activity = new ActivityTemplate(activity); 
             } else {
-                this.activity = new StaticActivityTemplate(activity as Activity); 
+                this.activity = new StaticActivityTemplate(activity); 
             }
         }
     }
@@ -94,7 +93,7 @@ export class SendActivity<O extends object = {}> extends Dialog<O> implements Co
 
         if (!this.activity) {
             // throw new Error(`SendActivity: no activity assigned for action '${this.id}'.`)
-            throw new Error(`SendActivity: no activity assigned for action.`)
+            throw new Error(`SendActivity: no activity assigned for action.`);
         }
 
         // Send activity and return result
