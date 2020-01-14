@@ -6,23 +6,23 @@
  * Licensed under the MIT License.
  */
 import { IBrowserFileReader, IBrowserWebSocket, ISocket } from '../interfaces';
-import { isBrowser } from '../utilities';
+import { doesGlobalFileReaderExist, doesGlobalWebSocketExist } from '../utilities';
 
 const createWebSocket = function(url: string): IBrowserWebSocket {
     if (!url) {
         throw new TypeError('Unable to create WebSocket without url.');
     }
-    if (isBrowser()) {
+    if (doesGlobalWebSocketExist()) {
         return new Function(`return new WebSocket('${ url }');`)();
     }
-    throw new ReferenceError('Incorrect environment detected for BrowserWebSocket. Unable to create backing WebSocket for BrowserWebSocket.');
+    throw new ReferenceError('Unable to find global.WebSocket which is required for constructing a BrowserWebSocket.');
 };
 
 const createFileReader = function(): IBrowserFileReader {
-    if (isBrowser()) {
+    if (doesGlobalFileReaderExist()) {
         return new Function(`return new FileReader();`)();
     }
-    throw new ReferenceError('Incorrect environment detected for BrowserWebSocket. Unable to create backing FileReader for BrowserWebSocket.');
+    throw new ReferenceError('Unable to find global.FileReader. Unable to create FileReader for BrowserWebSocket.');
 };
 
 export class BrowserWebSocket implements ISocket {
