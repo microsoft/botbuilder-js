@@ -8,13 +8,15 @@
 import { DialogTurnResult, DialogConfiguration, DialogContext, Dialog, Configurable } from 'botbuilder-dialogs';
 import { Activity, InputHints } from 'botbuilder-core';
 import { Expression, ExpressionEngine } from 'botframework-expressions';
-import { ActivityProperty } from '../activityProperty';
+import { TemplateInterface } from '../template';
+import { ActivityTemplate } from '../templates/activityTemplate';
+import { StaticActivityTemplate } from '../templates/staticActivityTemplate';
 
 export interface SendActivityConfiguration extends DialogConfiguration {
     /**
      * Activity or message text to send the user.
      */
-    activity?: Partial<Activity> | string;
+    activity?: TemplateInterface<Partial<Activity>>;
 
     /**
      * (Optional) Structured Speech Markup Language (SSML) to speak to the user.
@@ -34,30 +36,25 @@ export class SendActivity<O extends object = {}> extends Dialog<O> implements Co
 
     /**
      * Creates a new `SendActivity` instance.
-     * @param activityOrText Activity or message text to send the user.
-     * @param speak (Optional) Structured Speech Markup Language (SSML) to speak to the user.
-     * @param inputHint (Optional) input hint for the message. Defaults to a value of `InputHints.acceptingInput`.
+     * @param activity Activity or message text to send the user.
      */
     public constructor();
-    public constructor(activityOrText: Partial<Activity> | string, speak?: string, inputHint?: InputHints);
-    public constructor(activityOrText?: Partial<Activity> | string, speak?: string, inputHint?: InputHints) {
+    public constructor(activity?: Partial<Activity> | string) {
         super();
-        if (activityOrText) { this._activityProperty.value = activityOrText; }
-        if (speak) { this._activityProperty.speak = speak; }
-        this._activityProperty.inputHint = inputHint || InputHints.AcceptingInput;
+        if (activity) { 
+            if (typeof activity === 'string') { 
+                this.activity = new ActivityTemplate(activity); 
+            } else {
+                this.activity = new StaticActivityTemplate(activity); 
+            }
+        }
     }
 
     /**
-     * Public getter and setter for declarative activity configuration
+     * Gets or sets template for the activity.
      */
-    public get activity(): Partial<Activity> | string {
-        return this._activityProperty.value;
-    }
-
-    public set activity(value: Partial<Activity> | string) {
-        this._activityProperty.value = value;
-    }
-
+    public activity: TemplateInterface<Partial<Activity>>;
+    
     /**
      * Get an optional expression which if is true will disable this action.
      */
@@ -72,7 +69,6 @@ export class SendActivity<O extends object = {}> extends Dialog<O> implements Co
         this._disabled = value ? new ExpressionEngine().parse(value) : undefined;
     }
 
-    private _activityProperty = new ActivityProperty();
 
     private _disabled: Expression;
 
@@ -87,6 +83,7 @@ export class SendActivity<O extends object = {}> extends Dialog<O> implements Co
     }
 
     public async beginDialog(dc: DialogContext, options: O): Promise<DialogTurnResult> {
+
         if (this._disabled) {
             const { value } = this._disabled.tryEvaluate(dc.state);
             if (!!value) {
@@ -94,21 +91,21 @@ export class SendActivity<O extends object = {}> extends Dialog<O> implements Co
             }
         }
 
-        if (!this._activityProperty.hasValue()) {
+        if (!this.activity) {
             // throw new Error(`SendActivity: no activity assigned for action '${this.id}'.`)
-            throw new Error(`SendActivity: no activity assigned for action.`)
+            throw new Error(`SendActivity: no activity assigned for action.`);
         }
 
         // Send activity and return result
         const data = Object.assign({
             utterance: dc.context.activity.text || ''
         }, dc.state, options);
-        const activity = this._activityProperty.format(dc, data);
-        const result = await dc.context.sendActivity(activity);
+        const activityResult = await this.activity.bindToData(dc.context, data);
+        const result = await dc.context.sendActivity(activityResult);
         return await dc.endDialog(result);
     }
 
     protected onComputeId(): string {
-        return `SendActivity[${ this._activityProperty.displayLabel }]`;
+        return `SendActivity[${ this.activity }]`;
     }
 }

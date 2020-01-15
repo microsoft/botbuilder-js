@@ -29,7 +29,7 @@ export class AttachmentInput extends InputDialog {
     }
 
     protected onComputeId(): string {
-        return `AttachmentInput[${ this.prompt.value.toString() }]`;
+        return `AttachmentInput[${ this.prompt.toString() }]`;
     }
 
     protected getDefaultInput(dc: DialogContext): any {

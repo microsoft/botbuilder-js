@@ -8,13 +8,14 @@
 import { DialogTurnResult, DialogConfiguration, DialogContext, Dialog, Configurable } from 'botbuilder-dialogs';
 import { Activity, ActivityTypes } from 'botbuilder-core';
 import { Expression, ExpressionEngine } from 'botframework-expressions';
-import { format } from '../stringTemplate';
+import { TemplateInterface } from '../template';
+import { TextTemplate } from '../templates';
 
 export interface LogActionConfiguration extends DialogConfiguration {
     /**
      * The text template to log.
      */
-    text?: string;
+    text?:  TemplateInterface<string>;
 
     /**
      * If true, the message will both be logged to the console and sent as a trace activity.
@@ -37,14 +38,14 @@ export class LogAction<O extends object = {}> extends Dialog<O> implements Confi
     public constructor(text: string, traceActivity?: boolean);
     public constructor(text?: string, traceActivity = false) {
         super();
-        if (text) { this.text = text; }
+        if (text) { this.text = new TextTemplate(text); }
         this.traceActivity = traceActivity;
     }
 
     /**
      * The text template to log.
      */
-    public text: string;
+    public text: TemplateInterface<string>;
 
     /**
      * If true, the message will both be logged to the console and sent as a trace activity.
@@ -82,7 +83,7 @@ export class LogAction<O extends object = {}> extends Dialog<O> implements Confi
 
         if (!this.text) { throw new Error(`${ this.id }: no 'message' specified.`) }
 
-        const msg = format(this.text, dc);
+        const msg = await this.text.bindToData(dc.context, dc.state);
 
         // Log to console and send trace if needed
         console.log(msg);

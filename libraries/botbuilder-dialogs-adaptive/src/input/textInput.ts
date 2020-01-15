@@ -32,7 +32,7 @@ export class TextInput extends InputDialog {
     }
 
     protected onComputeId(): string {
-        return `TextInput[${ this.prompt.value.toString() }]`;
+        return `TextInput[${ this.prompt.toString() }]`;
     }
 
     protected async onRecognizeInput(dc: DialogContext): Promise<InputState> {

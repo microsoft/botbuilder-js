@@ -8,16 +8,17 @@
 import { DialogConfiguration, Dialog, DialogContext, DialogTurnResult, DialogEvent, DialogReason, Choice, ListStyle, ChoiceFactoryOptions, ChoiceFactory, DialogEvents, TurnPath } from 'botbuilder-dialogs';
 import { ActivityTypes, Activity, InputHints, MessageFactory } from 'botbuilder-core';
 import { ExpressionEngine, Expression } from 'botframework-expressions';
-import { ActivityProperty } from '../activityProperty';
 import { AdaptiveEventNames } from '../sequenceContext';
+import { TemplateInterface } from '../template';
+import { ActivityTemplate } from '../templates/activityTemplate';
 
 export interface InputDialogConfiguration extends DialogConfiguration {
     allowInterruptions?: string;
     alwaysPrompt?: boolean;
     value?: string;
-    prompt?: ActivityProperty;
-    unrecognizedPrompt?: ActivityProperty;
-    invalidPrompt?: ActivityProperty;
+    prompt?: TemplateInterface<Partial<Activity>>;
+    unrecognizedPrompt?: TemplateInterface<Partial<Activity>>;
+    invalidPrompt?: TemplateInterface<Partial<Activity>>;
     property?: string;
     validations?: string[];
     maxTurnCount?: number;
@@ -70,22 +71,22 @@ export abstract class InputDialog extends Dialog {
     /**
      * The activity to send to the user.
      */
-    public prompt = new ActivityProperty();
+    public prompt: TemplateInterface<Partial<Activity>>;
 
     /**
      * The activity template for retrying prompt.
      */
-    public unrecognizedPrompt = new ActivityProperty();
+    public unrecognizedPrompt: TemplateInterface<Partial<Activity>>;
 
     /**
      * The activity template to send to the user whenever the value provided is invalid or not.
      */
-    public invalidPrompt = new ActivityProperty();
+    public invalidPrompt: TemplateInterface<Partial<Activity>>;
 
     /**
      * The activity template to send when maxTurnCount has be reached and the default value is used.
      */
-    public defaultValueResponse = new ActivityProperty();
+    public defaultValueResponse: TemplateInterface<Partial<Activity>>;
 
     /**
      * The expressions to run to validate the input.
@@ -101,15 +102,6 @@ export abstract class InputDialog extends Dialog {
      * The default value for the input dialog when maxTurnCount is exceeded.
      */
     public defaultValue?: string;
-
-    public constructor() {
-        super();
-
-        // Initialize input hints
-        this.prompt.inputHint = InputHints.ExpectingInput;
-        this.unrecognizedPrompt.inputHint = InputHints.ExpectingInput;
-        this.invalidPrompt.inputHint = InputHints.ExpectingInput;
-    }
 
     public async beginDialog(dc: DialogContext, options?: any): Promise<DialogTurnResult> {
         // Initialize and persist options
@@ -159,8 +151,8 @@ export abstract class InputDialog extends Dialog {
         } else {
             if (this.defaultValue) {
                 const { value } = new ExpressionEngine().parse(this.defaultValue).tryEvaluate(dc.state);
-                if (this.defaultValueResponse.hasValue()) {
-                    const response = this.defaultValueResponse.format(dc);
+                if (this.defaultValueResponse) {
+                    const response = await this.defaultValueResponse.bindToData(dc.context, dc.state);
                     await dc.context.sendActivity(response);
                 }
 
@@ -183,13 +175,13 @@ export abstract class InputDialog extends Dialog {
                 const value = config[key];
                 switch (key) {
                     case 'prompt':
-                        this.prompt.value = value;
+                        this.prompt = new ActivityTemplate(value);
                         break;
                     case 'unrecognizedPrompt':
-                        this.unrecognizedPrompt.value = value;
+                        this.unrecognizedPrompt = new ActivityTemplate(value);
                         break;
                     case 'invalidPrompt':
-                        this.invalidPrompt.value = value;
+                        this.invalidPrompt = new ActivityTemplate(value);
                         break;
                     case 'validations':
                         (value as any[]).forEach((exp) => this.validations.push(exp));
@@ -230,25 +222,25 @@ export abstract class InputDialog extends Dialog {
         return Object.assign({}, options);
     }
 
-    protected onRenderPrompt(dc: DialogContext, state: InputState): Partial<Activity> {
+    protected async onRenderPrompt(dc: DialogContext, state: InputState): Promise<Partial<Activity>> {
         switch (state) {
             case InputState.unrecognized:
-                if (this.unrecognizedPrompt.hasValue()) {
-                    return this.unrecognizedPrompt.format(dc);
-                } else if (this.invalidPrompt.hasValue()) {
-                    return this.invalidPrompt.format(dc);
+                if (this.unrecognizedPrompt) {
+                    return await this.unrecognizedPrompt.bindToData(dc.context, dc.state);
+                } else if (this.invalidPrompt) {
+                    return await this.invalidPrompt.bindToData(dc.context, dc.state);
                 }
                 break;
             case InputState.invalid:
-                if (this.invalidPrompt.hasValue()) {
-                    return this.invalidPrompt.format(dc);
-                } else if (this.unrecognizedPrompt.hasValue()) {
-                    return this.unrecognizedPrompt.format(dc);
+                if (this.invalidPrompt) {
+                    return await this.invalidPrompt.bindToData(dc.context, dc.state);
+                } else if (this.unrecognizedPrompt) {
+                    return await this.unrecognizedPrompt.bindToData(dc.context, dc.state);
                 }
                 break;
         }
 
-        return this.prompt.format(dc);
+        return await this.prompt.bindToData(dc.context, dc.state);
     }
 
     protected getDefaultInput(dc: DialogContext): any {
@@ -367,7 +359,7 @@ export abstract class InputDialog extends Dialog {
     }
 
     private async promptUser(dc: DialogContext, state: InputState): Promise<DialogTurnResult> {
-        const prompt = this.onRenderPrompt(dc, state);
+        const prompt = await this.onRenderPrompt(dc, state);
         await dc.context.sendActivity(prompt);
         return Dialog.EndOfTurn;
     }

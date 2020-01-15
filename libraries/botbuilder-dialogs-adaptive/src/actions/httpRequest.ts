@@ -9,7 +9,7 @@ import fetch from 'node-fetch';
 import { DialogTurnResult, DialogConfiguration, DialogContext, Dialog, Configurable } from 'botbuilder-dialogs';
 import { Activity } from 'botbuilder-core';
 import { ExpressionEngine, Expression } from 'botframework-expressions';
-import * as stringTemplate from '../stringTemplate';
+import { TextTemplate } from '../templates';
 
 export interface HttpRequestConfiguration extends DialogConfiguration {
     method?: HttpMethod;
@@ -156,10 +156,10 @@ export class HttpRequest<O extends object = {}> extends Dialog<O> implements Con
          * TODO: replace the key value pair in json recursively
          */
 
-        const url = stringTemplate.format(this.url, dc);
+        const url = await new TextTemplate(this.url).bindToData(dc.context, dc.state);
         const headers = this.headers;
 
-        const instanceBody = this.replaceBodyRecursively(dc, this.body);
+        const instanceBody = await this.replaceBodyRecursively(dc, this.body);
 
         const parsedBody = JSON.stringify(instanceBody);
         const parsedHeaders = Object.assign({ 'Content-Type': 'application/json' }, headers);
@@ -221,7 +221,7 @@ export class HttpRequest<O extends object = {}> extends Dialog<O> implements Con
         return `HttpRequest[${ this.method } ${ this.url }]`;
     }
 
-    private replaceBodyRecursively(dc: DialogContext, unit: object) {
+    private async replaceBodyRecursively(dc: DialogContext, unit: object): Promise<any> {
         if (typeof unit === 'string') {
             let text: string = unit as string;
             if (text.startsWith('{') && text.endsWith('}')) {
@@ -230,22 +230,23 @@ export class HttpRequest<O extends object = {}> extends Dialog<O> implements Con
                 return value;
             }
             else {
-                return stringTemplate.format(text, dc);
+                return await new TextTemplate(text).bindToData(dc.context, dc.state);
             }
         }
 
         if (Array.isArray(unit)) {
             let result = [];
-            unit.forEach(child => {
-                result.push(this.replaceBodyRecursively(dc, child));
-            })
+            for (const child of unit) {
+                result.push(await this.replaceBodyRecursively(dc, child));
+            }
+
             return result;
         }
 
         if (typeof unit === 'object') {
             let result = {};
             for (let key in unit) {
-                result[key] = this.replaceBodyRecursively(dc, unit[key]);
+                result[key] = await this.replaceBodyRecursively(dc, unit[key]);
             }
             return result;
         }

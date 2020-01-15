@@ -145,7 +145,7 @@ export class ChoiceInput extends InputDialog {
         return InputState.valid;
     }
 
-    protected onRenderPrompt(dc: DialogContext, state: InputState): Partial<Activity> {
+    protected async onRenderPrompt(dc: DialogContext, state: InputState): Promise<Partial<Activity>> {
         // Determine locale
         let locale: string = dc.context.activity.locale || this.defaultLocale;
         if (!locale || !ChoiceInput.defaultChoiceOptions.hasOwnProperty(locale)) {
@@ -157,14 +157,14 @@ export class ChoiceInput extends InputDialog {
         const choices = ChoiceFactory.toChoices(options.choices);
 
         // Format prompt to send
-        const prompt = super.onRenderPrompt(dc, state);
+        const prompt = await super.onRenderPrompt(dc, state);
         const channelId: string = dc.context.activity.channelId;
         const choiceOptions: ChoiceFactoryOptions = this.choiceOptions || ChoiceInput.defaultChoiceOptions[locale];
-        return this.appendChoices(prompt, channelId, choices, this.style, choiceOptions);
+        return Promise.resolve(this.appendChoices(prompt, channelId, choices, this.style, choiceOptions));
     }
 
     protected onComputeId(): string {
-        return `ChoiceInput[${ this.prompt.value.toString() }]`;
+        return `ChoiceInput[${ this.prompt.toString() }]`;
     }
 
 }
