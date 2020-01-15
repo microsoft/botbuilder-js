@@ -20,6 +20,7 @@
   "typings": "./lib/index.d.ts",
   "dependencies": {
     "@microsoft/recognizers-text-data-types-timex-expression": "^1.1.4",
+    "@types/lru-cache": "^5.1.0",
     "@types/moment-timezone": "^0.5.12",
     "@types/xmldom": "^0.1.29",
     "antlr4ts": "0.5.0-alpha.1",
@@ -31,7 +32,6 @@
   },
   "devDependencies": {
     "@types/jspath": "^0.4.0",
-    "@types/lru-cache": "^5.1.0",
     "@types/mocha": "^5.2.5",
     "@types/node": "^10.12.18",
     "nyc": "^11.4.1",
