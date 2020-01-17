@@ -14,7 +14,7 @@ import {
     ResourceResponse,
     TurnContext
 } from 'botbuilder-core';
-import { AuthenticationConfiguration, ICredentialProvider, ClaimsIdentity } from 'botframework-connector';
+import { AuthenticationConfiguration, AppCredentials, ICredentialProvider, ClaimsIdentity } from 'botframework-connector';
 
 import { ChannelServiceHandler } from '../channelServiceHandler';
 import { SkillConversationIdFactoryBase } from './skillConversationIdFactoryBase';
@@ -169,6 +169,11 @@ export class SkillHandler extends ChannelServiceHandler {
                     break;
             }
         };
+
+        // Add the channel service URL to the trusted services list so we can send messages back.
+        // the service URL for skills is trusted because it is applied based on the original request
+        // received by the root bot.
+        AppCredentials.trustServiceUrl(conversationReference.serviceUrl);
 
         await this.adapter.continueConversation(conversationReference, callback);
         return { id: uuid() };
