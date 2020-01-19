@@ -285,6 +285,7 @@ const dataSource = [
     ['utcNow(\'MM-DD-YY\')', moment(new Date().toISOString()).format('MM-DD-YY')],
     ['formatDateTime(notISOTimestamp)', '2018-03-15T13:00:00.000Z'],
     ['formatDateTime(notISOTimestamp, \'MM-dd-yy\')', '03-15-18'],
+    ['formatDateTime(notISOTimestamp, \'ddd\')', '03-15-18'],
     ['formatDateTime(\'2018-03-15\')', '2018-03-15T00:00:00.000Z'],
     ['formatDateTime(timestampObj)', '2018-03-15T13:00:00.000Z'],
     ['formatDateTime(unixTimestamp)', '2018-03-15T13:00:00.000Z'],
