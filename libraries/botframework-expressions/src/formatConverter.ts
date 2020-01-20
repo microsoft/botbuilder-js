@@ -1,3 +1,12 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/**
+ * @module botframework-expressions
+ */
+/**
+ * Copyright (c) Microsoft Corporation. All rights reserved.
+ * Licensed under the MIT License.
+ */
+
 enum State {
     None,
     LowerD1,
@@ -47,10 +56,14 @@ enum State {
     EscapeSequence,
 }
 
+/**
+ * Convert a CSharp style datetime format string to a Moment.js style datetime format string. Ref: https://docs.microsoft.com/en-us/dotnet/standard/base-types/custom-date-and-time-format-strings
+ * @param fmtString A CSharp style datetime format string. Ref: https://devhints.io/moment
+ * @returns A Momengt.js style datetime format string.
+ */
 export function convertCSharpDateTimeToMomentJS(fmtString: string): string {
     let fmtResult = '';
     let fmtState: any = State.None;
-    const fmtTolerant = true;
     let lTokenBuffer = '';
     const changeState = (newState): void => {
         switch (fmtState)
@@ -134,64 +147,29 @@ export function convertCSharpDateTimeToMomentJS(fmtString: string): string {
                 fmtResult += 'ss';
                 break;
             case State.LowerT1:
-                if (fmtTolerant)
-                {
-                    fmtResult += 'A';
-                }
-                else
-                {
-                    throw Error('Single Letter AM/PM not supported in MomentJS');
-                }
+                fmtResult += 'A';
                 break;
             case State.LowerT2:
                 fmtResult += 'A';
                 break;
             case State.LowerY1:
-                if (fmtTolerant)
-                {
-                    fmtResult += 'YY';
-                }
-                else
-                {
-                    throw Error('Single Letter Year not supported in MomentJS');
-                }
+                fmtResult += 'YY';
                 break;
             case State.LowerY2:
                 fmtResult += 'YY';
                 break;
             case State.LowerY3:
-                if (fmtTolerant)
-                {
-                    fmtResult += 'YYYY';
-                }
-                else
-                {
-                    throw Error('Three Letter Year not supported in MomentJS');
-                }
+                fmtResult += 'YYYY';
                 break;
             case State.LowerY4:
                 fmtResult += 'YYYY';
                 break;
             case State.LowerY5:
-                if (fmtTolerant)
-                {
-                    fmtResult += 'Y';
-                }
-                else
-                {
-                    throw Error('Five or more Letter Year not supported in MomentJS');
-                }
+                fmtResult += 'Y';
                 break;
             case State.LowerZ1:
             case State.LowerZ2:
-                if (fmtTolerant)
-                {
-                    fmtResult += 'ZZ';
-                }
-                else
-                {
-                    throw Error('Hours offset not supported in MomentJS');
-                }
+                fmtResult += 'ZZ';
                 break;
             case State.LowerZ3:
                 fmtResult += 'Z';
@@ -355,14 +333,7 @@ export function convertCSharpDateTimeToMomentJS(fmtString: string): string {
                     break;
                 case 'K':
                     changeState(State.None);
-                    if (fmtTolerant)
-                    {
-                        fmtResult += `Z`;
-                    }
-                    else
-                    {
-                        throw Error(`TimeZoneInformation not supported in MomentJS`);
-                    }
+                    fmtResult += `Z`;
                     break;
                 case 'm':
                     switch (fmtState)
