@@ -65,6 +65,24 @@ export function convertCSharpDateTimeToMomentJS(fmtString: string): string {
     let fmtResult = '';
     let fmtState: any = State.None;
     let lTokenBuffer = '';
+    if (fmtString.length === 0) {
+        return fmtResult;
+    }
+    if (fmtString.length === 1) {
+        switch (fmtString) {
+            case 'R':
+            case 'r':
+                throw Error(`RFC 1123 not supported  in MomentJS`);
+            case 'O':
+            case 'o':
+                return 'YYYY-MM-DDTHH:mm:ss.SSSSSSSZ';
+            case 'U':
+                throw new Error(`Universal Fulll Format not supported in MomentJS`);
+            case 'u':
+                throw new Error(`Universal Sortable Format not supported in MomentJS`);
+        }
+    }
+
     const changeState = (newState): void => {
         switch (fmtState)
         {
@@ -333,7 +351,7 @@ export function convertCSharpDateTimeToMomentJS(fmtString: string): string {
                     break;
                 case 'K':
                     changeState(State.None);
-                    fmtResult += `Z`;
+                    fmtResult += 'Z';
                     break;
                 case 'm':
                     switch (fmtState)
