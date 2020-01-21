@@ -7,7 +7,6 @@
  * Licensed under the MIT License.
  */
 
-
 const window = require('./custom.window');
 
 export function getFetch() {    
