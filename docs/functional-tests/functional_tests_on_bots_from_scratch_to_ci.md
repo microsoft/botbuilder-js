@@ -179,7 +179,200 @@ To add the deployment files:
        	└───deploymentTemplates
    ```
 
-3. Create a **template.json** file. Then, copy the content of the [windows template](https://github.com/microsoft/botbuilder-js/blob/master/libraries/functional-tests/functionaltestbot/template/windows/template.json) file used in the `functional-test` project of the **BotBuilder-JS** repository.
+3. Create a **template.json** file inside the `deploymentTemplates`. Then, copy the content
+
+   <details>
+   <summary>Click to expand template code</summary>
+   <p>
+   
+   ```json
+   {
+       "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+       "contentVersion": "1.0.0.0",
+       "parameters": {
+           "groupLocation": {
+               "type": "string",
+               "metadata": {
+                   "description": "Specifies the location of the Resource Group."
+               }
+           },
+           "groupName": {
+               "type": "string",
+               "metadata": {
+                   "description": "Specifies the name of the Resource Group."
+               }
+           },
+           "appId": {
+               "type": "string",
+               "metadata": {
+                   "description": "Active Directory App ID, set as MicrosoftAppId in the Web App's Application Settings."
+               }
+           },
+           "appSecret": {
+               "type": "string",
+               "metadata": {
+                   "description": "Active Directory App Password, set as MicrosoftAppPassword in the Web App's Application Settings."
+               }
+           },
+           "botId": {
+               "type": "string",
+               "metadata": {
+                   "description": "The globally unique and immutable bot ID. Also used to configure the displayName of the bot, which is mutable."
+               }
+           },
+           "botSku": {
+               "type": "string",
+               "metadata": {
+                   "description": "The pricing tier of the Bot Service Registration. Acceptable values are F0 and S1."
+               }
+           },
+           "newAppServicePlanName": {
+               "type": "string",
+               "metadata": {
+                   "description": "The name of the App Service Plan."
+               }
+           },
+           "newAppServicePlanSku": {
+               "type": "object",
+               "defaultValue": {
+                   "name": "S1",
+                   "tier": "Standard",
+                   "size": "S1",
+                   "family": "S",
+                   "capacity": 1
+               },
+               "metadata": {
+                   "description": "The SKU of the App Service Plan. Defaults to Standard values."
+               }
+           },
+           "newAppServicePlanLocation": {
+               "type": "string",
+               "metadata": {
+                   "description": "The location of the App Service Plan. Defaults to \"westus\"."
+               }
+           },
+           "newWebAppName": {
+               "type": "string",
+               "defaultValue": "",
+               "metadata": {
+                   "description": "The globally unique name of the Web App. Defaults to the value passed in for \"botId\"."
+               }
+           }
+       },
+       "variables": {
+           "appServicePlanName": "[parameters('newAppServicePlanName')]",
+           "resourcesLocation": "[parameters('newAppServicePlanLocation')]",
+           "webAppName": "[if(empty(parameters('newWebAppName')), parameters('botId'), parameters('newWebAppName'))]",
+           "siteHost": "[concat(variables('webAppName'), '.azurewebsites.net')]",
+           "botEndpoint": "[concat('https://', variables('siteHost'), '/api/mybot')]"
+       },
+       "resources": [
+           {
+               "name": "[parameters('groupName')]",
+               "type": "Microsoft.Resources/resourceGroups",
+               "apiVersion": "2018-05-01",
+               "location": "[parameters('groupLocation')]",
+               "properties": {
+               }
+           },
+           {
+               "type": "Microsoft.Resources/deployments",
+               "apiVersion": "2018-05-01",
+               "name": "storageDeployment",
+               "resourceGroup": "[parameters('groupName')]",
+               "dependsOn": [
+                   "[resourceId('Microsoft.Resources/resourceGroups/', parameters('groupName'))]"
+               ],
+               "properties": {
+                   "mode": "Incremental",
+                   "template": {
+                       "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+                       "contentVersion": "1.0.0.0",
+                       "parameters": {},
+                       "variables": {},
+                       "resources": [
+                           {
+                               "comments": "Create a new App Service Plan",
+                               "type": "Microsoft.Web/serverfarms",
+                               "name": "[variables('appServicePlanName')]",
+                               "apiVersion": "2018-02-01",
+                               "location": "[variables('resourcesLocation')]",
+                               "sku": "[parameters('newAppServicePlanSku')]",
+                               "properties": {
+                                   "name": "[variables('appServicePlanName')]"
+                               }
+                           },
+                           {
+                               "comments": "Create a Web App using the new App Service Plan",
+                               "type": "Microsoft.Web/sites",
+                               "apiVersion": "2015-08-01",
+                               "location": "[variables('resourcesLocation')]",
+                               "kind": "app",
+                               "dependsOn": [
+                                   "[resourceId('Microsoft.Web/serverfarms/', variables('appServicePlanName'))]"
+                               ],
+                               "name": "[variables('webAppName')]",
+                               "properties": {
+                                   "name": "[variables('webAppName')]",
+                                   "serverFarmId": "[variables('appServicePlanName')]",
+                                   "siteConfig": {
+                                       "appSettings": [
+                                           {
+                                               "name": "WEBSITE_NODE_DEFAULT_VERSION",
+                                               "value": "10.14.1"
+                                           },
+                                           {
+                                               "name": "MicrosoftAppId",
+                                               "value": "[parameters('appId')]"
+                                           },
+                                           {
+                                               "name": "MicrosoftAppPassword",
+                                               "value": "[parameters('appSecret')]"
+                                           }
+                                       ],
+                                       "cors": {
+                                           "allowedOrigins": [
+                                               "https://botservice.hosting.portal.azure.net",
+                                               "https://hosting.onecloud.azure-test.net/"
+                                           ]
+                                       }
+                                   }
+                               }
+                           },
+                           {
+                               "apiVersion": "2017-12-01",
+                               "type": "Microsoft.BotService/botServices",
+                               "name": "[parameters('botId')]",
+                               "location": "global",
+                               "kind": "bot",
+                               "sku": {
+                                   "name": "[parameters('botSku')]"
+                               },
+                               "properties": {
+                                   "name": "[parameters('botId')]",
+                                   "displayName": "[parameters('botId')]",
+                                   "endpoint": "[variables('botEndpoint')]",
+                                   "msaAppId": "[parameters('appId')]",
+                                   "developerAppInsightsApplicationId": null,
+                                   "developerAppInsightKey": null,
+                                   "publishingCredentials": null,
+                                   "storageResourceId": null
+                               },
+                               "dependsOn": [
+                                   "[resourceId('Microsoft.Web/sites/', variables('webAppName'))]"
+                               ]
+                           }
+                       ],
+                       "outputs": {}
+                   }
+               }
+           }
+       ]
+   }
+   ```
+   
+   </p>
+   </details>
 
 
 
@@ -206,7 +399,7 @@ To test the bot locally
 
    Once connected, the bot will send you a welcome message.
 
-    ![alt text](https://github.com/southworks/botbuilder-js/blob/add/deploy-bot-deploy-section/docs/media/bf-emulator-connected.png)
+    ![alt text](https://github.com/southworks/botbuilder-js/blob/add/deploy-bot-deploy-section/docs/functional-tests/images/bf-emulator-connected.png)
 
 
 
@@ -393,40 +586,23 @@ To set up an Azure Pipeline
 
 3. Create a new build pipeline. Then, select the ***use classic editor*** option. 
 
-   ![alt text](https://github.com/southworks/botbuilder-js/blob/add/deploy-bot-deploy-section/docs/media/new-pipeline-use-classic.-editor.png)
+   ![alt text](https://github.com/southworks/botbuilder-js/blob/add/deploy-bot-deploy-section/docs/functional-tests/images/new-pipeline-use-classic.-editor.png)
 
 4. Add the GitHub repository of the `functional-test` project. Then, click on **Empty job**
 
    - Note: You need to authorize the connection between Azure DevOps and GitHub repository. 
    
-   ![alt text](https://github.com/southworks/botbuilder-js/blob/add/deploy-bot-deploy-section/docs/media/choose-repository-select-empty-job.png)
+   ![alt text](https://github.com/southworks/botbuilder-js/blob/add/deploy-bot-deploy-section/docs/functional-tests/images/choose-repository-select-empty-job.png)
 
 5. In the **Variables tab**, add the next variables: **AppId**, **AppSecret**, **BotName**
 
    - Note: The `AppId` and `AppSecret` values refers to an App Registration. You can create one using the portal [here](https://go.microsoft.com/fwlink/?linkid=2083908)
 
-   ![alt text](https://github.com/southworks/botbuilder-js/blob/add/deploy-bot-deploy-section/docs/media/add-pipeline-variables.png)
+   ![alt text](https://github.com/southworks/botbuilder-js/blob/add/deploy-bot-deploy-section/docs/functional-tests/images/add-pipeline-variables.png)
 
    Set the variables **AppId**, **AppSecret** as locked variables. 
 
-   ![alt text](https://github.com/southworks/botbuilder-js/blob/add/deploy-bot-deploy-section/docs/media/lock-sensitive-var-data.png)
-
-6. In the **Task tab**, Add an **Azure Resource Group Deployment task** to create the Bot Resources, fill the fields: 
-
-   1. **Azure Subscription**
-      - Select an Azure Service Connection. This configuration allows to the Azure pipeline to create and manage Azure resources. You can follow this [guide](https://www.azuredevopslabs.com/labs/devopsserver/azureserviceprincipal/) to create an Azure service connection
-   2. **Resource Group**
-      - Use the *BotName* pipeline variable create before. you can access to its content with the next syntax $("BotName")
-   3. **Location**
-      - Select the location in where place the resources.
-   4. **Template**  
-      - Add the path to the Deployment template file of the bot ` test-bot/deploymentTemplates/template.json` 
-
-   ![alt text](https://github.com/southworks/botbuilder-js/blob/add/deploy-bot-deploy-section/docs/media/deploy-bot-resources.png)
-
-   Click on `“…”` next to the **Override Parameters** textbox and complete the field we highlighted on the image bellow (**serverfarmName**, **siteName**, **appId**, **appSecret** and **botId**) using quotation marks.
-
-   ![alt text](https://github.com/southworks/botbuilder-js/blob/add/deploy-bot-deploy-section/docs/media/deploy-bot-resources-parameters.png)
+   ![alt text](https://github.com/southworks/botbuilder-js/blob/add/deploy-bot-deploy-section/docs/functional-tests/images/lock-sensitive-var-data.png)
 
 7. Add an **Azure CLI** **task** to generate the *web.config* file necessary to deploy a bot source code to Azure. Configure the task with an *Azure subscription* and select the *script inline* options.
 
@@ -436,7 +612,7 @@ To set up an Azure Pipeline
    call az bot prepare-deploy --code-dir "$(System.DefaultWorkingDirectory)/test-bot" --lang Javascript
    ```
 
-   ![alt text](https://github.com/southworks/botbuilder-js/blob/add/deploy-bot-deploy-section/docs/media/prepare-to-deploy-task.png)
+   ![alt text](https://github.com/southworks/botbuilder-js/blob/add/deploy-bot-deploy-section/docs/functional-tests/images/prepare-to-deploy-task.png)
 
 8. Add a **PowerShell** **task** to compress the bot source code. Configure the task with the *'Inline'* script option.
 
@@ -450,35 +626,68 @@ To set up an Azure Pipeline
    Compress-Archive -Path $files -DestinationPath $ZipFileResult
    ```
 
-   ![alt text](https://github.com/southworks/botbuilder-js/blob/add/deploy-bot-deploy-section/docs/media/compress-bot-source-code-task.png)
+   ![alt text](https://github.com/southworks/botbuilder-js/blob/add/deploy-bot-deploy-section/docs/functional-tests/images/compress-bot-source-code-task.png)
 
-9. Add an **Azure CLI task** task to deploy the bot zip file and connect it to the *DirectLine* channel. The output with the secret key goes into a *.json* file. We will use this key to start a conversation with the bot in the test logic. Configure the task with an *Azure subscription* and select the *script inline* options.
+8. In the **Task tab**, Add an **Bot Deployment task** to deploy the bot zip file and connect it to the *DirectLine* channel. It will generate a *DirectLineCreate.json* file with a secret key. The key is used to start a conversation with the bot in the test logic. 
+
+   Install the task extension following the next [guide](https://docs.microsoft.com/en-us/azure/devops/marketplace/install-extension?view=azure-devops&tabs=browser). Then, complete the next fields. 
+
+   
+
+   - **Azure Subscription**
+     - Select an Azure Service Connection. This configuration allows to the Azure pipeline to create and manage Azure resources. You can follow this [guide](https://www.azuredevopslabs.com/labs/devopsserver/azureserviceprincipal/) to create an Azure service connection
+
+   - **Resource Group**
+     - Use the *BotName* pipeline variable create before. you can access to its content with the next syntax $("BotName")
+
+   - **Location**
+     - Select the location in where place the resources.
+
+   - **Template**  
+     - Add the path to the Deployment template file of the bot ` test-bot/deploymentTemplates/template.json` 
+
+   - **Zipped Bot**
+     - Add the path to the bot source code compressed before, As the zip file is in the root directory, you can just add the name of the file. `test-bot.zip`
+
+   - **Channels**
+     - Select the `Direct Line` channel. 
+
+   ![alt text](https://github.com/southworks/botbuilder-js/blob/add/deploy-bot-deploy-section/docs/functional-tests/images/bot-deployment-task.png)
+
+   Click on `“…”` next to the **Override Parameters** textbox. 
+   
+   In the **Override Template Parameters** popup window, click on **Add** button to get a new row.
+   Then, complete grid with the next values. 
+   
+   | Name                      | Value        |
+   | ------------------------- | ------------ |
+   | appId                     | $(AppId)     |
+   | appSecret                 | $(AppSecret) |
+   | groupLocation             | centralus    |
+   | groupName                 | $(BotName)   |
+   | botId                     | $(BotName)   |
+   | botSku                    | F0           |
+   | newAppServicePlanName     | $(BotName)   |
+   | newAppServicePlanLocation | centralus    |
+   | newWebAppName             | $(BotName)   |
+   
+   Finally, click on **OK** to save the values.
+
+9. Add the **PowerShell task** to read the *.json* file generated in the previous step and get the secret key to connect to the bot. Configure the task with the *'Inline'* script option.
 
    The script looks likes:
 
    ```powershell
-   call az webapp deployment source config-zip --resource-group "$(BotName)" --name "$(BotName)" --src "$(System.DefaultWorkingDirectory)/test-bot.zip"
+   $json = Get-Content '$(System.DefaultWorkingDirectory)\DirectLineCreate.json' | Out-String | ConvertFrom-Json
    
-   call az bot directline create -n "$(BotName)" -g "$(BotName)" > "$(System.DefaultWorkingDirectory)/DirectLineCreate.json"
+   $key = $json.properties.properties.sites.key
+   
+   echo "##vso[task.setvariable variable=DIRECT_LINE_KEY;]$key"
    ```
 
-   ![alt text](https://github.com/southworks/botbuilder-js/blob/add/deploy-bot-deploy-section/docs/media/deploy-and-set-direct-line-task.png)
+   ![alt text](https://github.com/southworks/botbuilder-js/blob/add/deploy-bot-deploy-section/docs/functional-tests/images/get-direct-line-key-task.png)
 
-10. Add the **PowerShell task** to read the *.json* file generated in the previous step and get the secret key to connect to the bot. Configure the task with the *'Inline'* script option.
-
-    The script looks likes:
-
-    ```powershell
-    $json = Get-Content '$(System.DefaultWorkingDirectory)\DirectLineCreate.json' | Out-String | ConvertFrom-Json
-
-    $key = $json.properties.properties.sites.key
-    
-    echo "##vso[task.setvariable variable=DIRECT_LINE_KEY;]$key"
-    ```
-
-    ![alt text](https://github.com/southworks/botbuilder-js/blob/add/deploy-bot-deploy-section/docs/media/get-direct-line-key-task.png)
-
-11. Configure the Pipeline to run the *functional-tests*
+10. Configure the Pipeline to run the *functional-tests*
 
     1. Add a Node Task
        1. Configure the *Version Spec* field to `10.x`
@@ -488,26 +697,26 @@ To set up an Azure Pipeline
        1. Command: `custom`
        2. Command and arguments: `run functional-test`
 
-    ![alt text](https://github.com/southworks/botbuilder-js/blob/add/deploy-bot-deploy-section/docs/media/run-functional-test-tasks.png)
+    ![alt text](https://github.com/southworks/botbuilder-js/blob/add/deploy-bot-deploy-section/docs/functional-tests/images/run-functional-test-tasks.png)
 
-12. After the Tests run, add a new **Azure CLI Task** to delete the resource group we've created.
+11. After the Tests run, add a new **Azure CLI Task** to delete the resource group we've created.
 
     The script looks likes
-    
+
     ```powershell
     call az group delete -n "$(BotName)" --yes
     ```
 
-    ![alt text](https://github.com/southworks/botbuilder-js/blob/add/deploy-bot-deploy-section/docs/media/delete-resources-task.png)
-    
+    ![alt text](https://github.com/southworks/botbuilder-js/blob/add/deploy-bot-deploy-section/docs/functional-tests/images/delete-resources-task.png)
+
     Is strongly recommend setting this task to run even if any of the previous tasks have failed or the build has been canceled. With this setting, we will ensure that the resources will be deleted from Azure even if the build fails at any step.
-    
-    ![alt text](https://github.com/southworks/botbuilder-js/blob/add/deploy-bot-deploy-section/docs/media/delete-resource-run-option-task.png)
 
-13. Click on **save and queue** button to run the build pipeline.
+    ![alt text](https://github.com/southworks/botbuilder-js/blob/add/deploy-bot-deploy-section/docs/functional-tests/images/delete-resource-run-option-task.png)
 
-    ![alt text](https://github.com/southworks/botbuilder-js/blob/add/deploy-bot-deploy-section/docs/media/save-and-queue.png)
+12. Click on **save and queue** button to run the build pipeline.
+
+    ![alt text](https://github.com/southworks/botbuilder-js/blob/add/deploy-bot-deploy-section/docs/functional-tests/images/save-and-queue.png)
 
     After running all the tasks, click on the NPM custom task. The log of the task displays the outcome of the functional test. 
 
-    ![alt text](https://github.com/southworks/botbuilder-js/blob/add/deploy-bot-deploy-section/docs/media/pipeline-process-result.png)
+    ![alt text](https://github.com/southworks/botbuilder-js/blob/add/deploy-bot-deploy-section/docs/functional-tests/images/pipeline-process-result.png)
