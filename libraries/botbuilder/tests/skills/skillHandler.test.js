@@ -1,7 +1,7 @@
 const { ok: assert, strictEqual } = require('assert');
-const { ActivityTypes } = require('botbuilder-core');
-const { AuthenticationConfiguration, ClaimsIdentity, SimpleCredentialProvider } = require('botframework-connector');
-const { ActivityHandler, BotFrameworkAdapter, SkillConversationIdFactoryBase, SkillHandler } = require('../../');
+const { ActivityHandler, ActivityTypes } = require('botbuilder-core');
+const { AppCredentials, AuthenticationConfiguration, ClaimsIdentity, SimpleCredentialProvider } = require('botframework-connector');
+const { BotFrameworkAdapter, SkillConversationIdFactoryBase, SkillHandler } = require('../../');
 
 class ConvIdFactory extends SkillConversationIdFactoryBase {
     constructor() {
@@ -114,6 +114,28 @@ describe('SkillHandler', function() {
                 }
             });
 
+            /* This test should be the first successful test to pass using the built-in logic for SkillHandler.processActivity() */
+            it(`should add the original activity's ServiceUrl to the TrustedServiceUrls in AppCredentials`, async () => {
+                const adapter = new BotFrameworkAdapter({});
+                const bot = new ActivityHandler();
+                const factory = new ConvIdFactory();
+                const creds = new SimpleCredentialProvider('', '');
+                const authConfig = new AuthenticationConfiguration();
+                const handler = new SkillHandler(adapter, bot, factory, creds, authConfig);
+                const serviceUrl = 'http://localhost/api/messages';
+                factory.refs['convId'] = { serviceUrl, conversation: { id: 'conversationId' } };
+                const skillActivity = {
+                    type: ActivityTypes.Event,
+                    serviceUrl,
+                };
+                bot.run = async (context) => {
+                    assert(context);
+                    assert(AppCredentials.isTrustedServiceUrl(serviceUrl), `ServiceUrl "${ serviceUrl }" should have been trusted and added to AppCredentials ServiceUrl cache.`);
+                };
+                assert(!AppCredentials.isTrustedServiceUrl(serviceUrl));
+                await handler.processActivity(identity, 'convId', 'replyId', skillActivity);
+            });
+
             const identity =  new ClaimsIdentity([{ type: 'aud', value: 'audience' }]);
             it('should cache the ClaimsIdentity, ConnectorClient and SkillConversationReference on the turnState', async () => {
                 const adapter = new BotFrameworkAdapter({});
@@ -123,7 +145,7 @@ describe('SkillHandler', function() {
                 const authConfig = new AuthenticationConfiguration();
                 const handler = new SkillHandler(adapter, bot, factory, creds, authConfig);
                 const serviceUrl = 'http://localhost/api/messages';
-                factory.refs['convId'] = 'conversationId';
+                factory.refs['convId'] = { serviceUrl, conversation: { id: 'conversationId' } };
                 const skillActivity = {
                     type: ActivityTypes.Event,
                     serviceUrl,
@@ -155,7 +177,7 @@ describe('SkillHandler', function() {
                 const value = '418';
                 const timestamp = '1Z';
                 const channelData = { channelData: 'data' };
-                factory.refs['convId'] = 'conversationId';
+                factory.refs['convId'] = { serviceUrl, conversation: { id: 'conversationId' } };
                 const skillActivity = {
                     type: ActivityTypes.Event,
                     name, relatesTo, entities,
@@ -196,7 +218,7 @@ describe('SkillHandler', function() {
                 const timestamp = '1Z';
                 const channelData = { channelData: 'data' };
                 const value = { three: 3 };
-                factory.refs['convId'] = 'conversationId';
+                factory.refs['convId'] = { serviceUrl, conversation: { id: 'conversationId' } };
                 const skillActivity = {
                     type: ActivityTypes.EndOfConversation,
                     text, code, replyToId, entities,
@@ -229,7 +251,7 @@ describe('SkillHandler', function() {
                 const authConfig = new AuthenticationConfiguration();
                 const handler = new SkillHandler(adapter, bot, factory, creds, authConfig);
                 const serviceUrl = 'http://localhost/api/messages';
-                factory.refs['convId'] = 'conversationId';
+                factory.refs['convId'] = { serviceUrl, conversation: { id: 'conversationId' } };
                 const text = 'Test';
                 const skillActivity = {
                     type: ActivityTypes.Message,

@@ -6,6 +6,8 @@
  * Licensed under the MIT License.
  */
 
+export * from './IBrowserFileReader';
+export * from './IBrowserWebSocket';
 export * from './INodeBuffer';
 export * from './INodeIncomingMessage';
 export * from './INodeSocket';

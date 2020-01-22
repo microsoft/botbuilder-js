@@ -20,7 +20,7 @@
     "url": "https://github.com/microsoft/botbuilder-js.git"
   },
   "main": "lib/index.js",
-  "typings": "lib/index.d.js",
+  "typings": "lib/index.d.ts",
   "dependencies": {
     "@types/ws": "^6.0.3",
     "uuid": "^3.3.2",

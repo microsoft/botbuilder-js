@@ -5,17 +5,35 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { ISocket } from '../interfaces/ISocket';
+import { IBrowserFileReader, IBrowserWebSocket, ISocket } from '../interfaces';
+import { doesGlobalFileReaderExist, doesGlobalWebSocketExist } from '../utilities';
+
+const createWebSocket = function(url: string): IBrowserWebSocket {
+    if (!url) {
+        throw new TypeError('Unable to create WebSocket without url.');
+    }
+    if (doesGlobalWebSocketExist()) {
+        return new Function(`return new WebSocket('${ url }');`)();
+    }
+    throw new ReferenceError('Unable to find global.WebSocket which is required for constructing a BrowserWebSocket.');
+};
+
+const createFileReader = function(): IBrowserFileReader {
+    if (doesGlobalFileReaderExist()) {
+        return new Function(`return new FileReader();`)();
+    }
+    throw new ReferenceError('Unable to find global.FileReader. Unable to create FileReader for BrowserWebSocket.');
+};
 
 export class BrowserWebSocket implements ISocket {
-    private webSocket: WebSocket;
+    private webSocket: IBrowserWebSocket;
 
     /**
      * Creates a new instance of the [BrowserWebSocket](xref:botframework-streaming.BrowserWebSocket) class.
      *
      * @param socket The socket object to build this connection on.
      */
-    public constructor(socket?: WebSocket) {
+    public constructor(socket?: IBrowserWebSocket) {
         if (socket) {
             this.webSocket = socket;
         }
@@ -31,7 +49,7 @@ export class BrowserWebSocket implements ISocket {
         let rejector;
 
         if (!this.webSocket) {
-            this.webSocket = new WebSocket(serverAddress);
+            this.webSocket = createWebSocket(serverAddress);
         }
 
         this.webSocket.onerror = (e): void => {
@@ -79,11 +97,11 @@ export class BrowserWebSocket implements ISocket {
         const bufferKey: string = 'buffer';
         let packets = [];
         this.webSocket.onmessage = (evt): void => {
-            let fileReader = new FileReader();
+            let fileReader = createFileReader();
             let queueEntry = {buffer: null};
             packets.push(queueEntry);
             fileReader.onload = (e): void => {
-                let t: FileReader = e.target as FileReader;
+                let t = e.target as IBrowserFileReader;
                 queueEntry[bufferKey] = t.result;
                 if (packets[0] === queueEntry) {
                     while(0 < packets.length && packets[0][bufferKey]) {
