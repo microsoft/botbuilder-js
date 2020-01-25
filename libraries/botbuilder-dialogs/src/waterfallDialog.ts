@@ -245,7 +245,7 @@ export class WaterfallDialog<O extends object = {}> extends Dialog<O> {
                 'InstanceId': instanceId,
             }});
         } else if (reason === DialogReason.cancelCalled) {
-            var index = state.stepIndex;
+            var index = instance.state[state.stepIndex];
             var stepName = this.waterfallStepName(index);
             this.telemetryClient.trackEvent({name: 'WaterfallCancel', properties: {
                 'DialogId': this.id,
@@ -288,7 +288,7 @@ interface WaterfallDialogState {
  * Source: https://stackoverflow.com/questions/105034/create-guid-uuid-in-javascript
  */  
 function generate_guid(): string {
-    function s4():string {
+    function s4(): string {
         return Math.floor((1 + Math.random()) * 0x10000)
             .toString(16)
             .substring(1);
