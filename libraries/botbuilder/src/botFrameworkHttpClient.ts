@@ -16,7 +16,8 @@ import {
     MicrosoftAppCredentials
 } from 'botframework-connector';
 
-import { InvokeResponse, USER_AGENT } from './botFrameworkAdapter';
+import { USER_AGENT } from './botFrameworkAdapter';
+import { InvokeResponse } from './interfaces';
 
 /**
  * HttpClient for calling skills from a Node.js BotBuilder V4 SDK bot.
