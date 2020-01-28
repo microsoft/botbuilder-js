@@ -16,6 +16,7 @@ import {
 } from '../payloadTransport';
 import { BrowserWebSocket } from './browserWebSocket';
 import { NodeWebSocket } from './nodeWebSocket';
+import { doesGlobalWebSocketExist } from '../utilities';
 import { WebSocketTransport } from './webSocketTransport';
 import { IStreamingTransportClient, IReceiveResponse } from '../interfaces';
 
@@ -59,7 +60,7 @@ export class WebSocketClient implements IStreamingTransportClient {
      * @returns A promise that will not resolve until the client stops listening for incoming messages.
      */
     public async connect(): Promise<void> {
-        if (typeof WebSocket !== 'undefined') {
+        if (doesGlobalWebSocketExist()) {
             const ws = new BrowserWebSocket();
             await ws.connect(this._url);
             const transport = new WebSocketTransport(ws);
