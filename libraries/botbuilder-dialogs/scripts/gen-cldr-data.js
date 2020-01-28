@@ -1,6 +1,7 @@
-/*
+/* 
 import * as Chinese from 'cldr-data/main/zh/numbers.json';
 import * as English from 'cldr-data/main/en/numbers.json';
+import * as French from 'cldr-data/main/fr/numbers.json';
 import * as Dutch from 'cldr-data/main/nl/numbers.json';
 import * as German from 'cldr-data/main/de/numbers.json';
 import * as Japanese from 'cldr-data/main/ja/numbers.json';
@@ -37,6 +38,7 @@ const cldrDataPackageVersion = '35.1.0';
 const numbersDirectoryPaths = [
     'main/zh',
     'main/en',
+    'main/fr',
     'main/nl',
     'main/de',
     'main/ja',
