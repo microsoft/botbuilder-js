@@ -32,18 +32,34 @@ describe('AppCredentials', () => {
         strictEqual(certCreds.certificatePrivateKey, CERT_KEY);
 
         const msAppCreds = new MicrosoftAppCredentials(APP_ID, APP_PASSWORD);
-        strictEqual(msAppCreds.appId, '2cd87869-38a0-4182-9251-d056e8f0ac24');
+        strictEqual(msAppCreds.appId, APP_ID);
         strictEqual(msAppCreds.appPassword, APP_PASSWORD);
     });
 
     describe('MicrosoftAppCredentials', () => {
         it('should set oAuthScope when passed in the constructor', () => {
             const oAuthScope = 'oAuthScope';
-            const tokenGenerator = new MicrosoftAppCredentials('2cd87869-38a0-4182-9251-d056e8f0ac24', undefined, undefined, oAuthScope);
+            const tokenGenerator = new MicrosoftAppCredentials(APP_ID, undefined, undefined, oAuthScope);
             strictEqual(tokenGenerator.oAuthScope, oAuthScope);
         });
+
+        it('should set update the tokenCacheKey when oAuthScope is set after construction', () => {
+            const tokenGenerator = new MicrosoftAppCredentials(APP_ID);
+            strictEqual(tokenGenerator.tokenCacheKey, `${APP_ID}${AuthenticationConstants.ToBotFromChannelTokenIssuer}-cache`);
+    
+            const oAuthScope = 'oAuthScope';
+            tokenGenerator.oAuthScope = oAuthScope;
+            strictEqual(tokenGenerator.tokenCacheKey, `${APP_ID}${oAuthScope}-cache`);
+
+            /* CertificateAppCredentials */
+            const certCreds = new CertificateAppCredentials(APP_ID, CERT_THUMBPRINT, CERT_KEY);
+            strictEqual(certCreds.tokenCacheKey, `${APP_ID}${AuthenticationConstants.ToBotFromChannelTokenIssuer}-cache`);
+            certCreds.oAuthScope = oAuthScope;
+            strictEqual(certCreds.tokenCacheKey, `${APP_ID}${oAuthScope}-cache`);
+        });
+
         it('should fail to get a token with an appId and no appPassword', async () => {
-            const tokenGenerator = new MicrosoftAppCredentials('2cd87869-38a0-4182-9251-d056e8f0ac24');
+            const tokenGenerator = new MicrosoftAppCredentials(APP_ID);
             try {
                 await tokenGenerator.getToken(true);
                 fail('Should not have successfully retrieved token.');

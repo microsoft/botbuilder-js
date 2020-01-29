@@ -16,17 +16,17 @@ export interface MemoryInterface {
      * get value from a given path, it can be a simple indenfiter like "a", or
      * a combined path like "a.b", "a.b[2]", "a.b[2].c", inside [] is guranteed to be a int number or a string.
      * @param path memory path.
-     * @returnsresovled value and error messsage if any. 
+     * @returns value.
      */
-    getValue(path: string): {value: string; error: string};
+    getValue(path: string): any;
 
     /**
      * Set value to a given path.
      * @param path memory path.
      * @param value value to set.
-     * @returns value set and error message if any.
+     * @returns value
      */
-    setValue(path: string, value: any): {value: string; error: string};
+    setValue(path: string, value: any): void;
 
     /**
      * Version is used to identify whether the a particular memory instance has been updated or not.

@@ -6,13 +6,12 @@
  * Licensed under the MIT License.
  */
 
-import { InvokeResponse, INVOKE_RESPONSE_KEY } from './botFrameworkAdapter';
+import { INVOKE_RESPONSE_KEY } from './botFrameworkAdapter';
 
 import {
     ActivityHandler,
     ActivityTypes,
     AppBasedLinkQuery,
-    ChannelAccount,
     ChannelInfo,
     FileConsentCardResponse,
     MessagingExtensionAction,
@@ -21,15 +20,14 @@ import {
     MessagingExtensionResponse,
     O365ConnectorCardActionQuery,
     SigninStateVerificationQuery,
-    TaskModuleTaskInfo,
     TaskModuleRequest,
     TaskModuleResponse,
-    TaskModuleResponseBase,
     TeamsChannelData,
     TeamsChannelAccount,
     TeamInfo,
     TurnContext
 } from 'botbuilder-core';
+import { InvokeResponse } from './interfaces';
 import { TeamsInfo } from './teamsInfo';
 
 export class TeamsActivityHandler extends ActivityHandler {

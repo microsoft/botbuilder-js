@@ -13,7 +13,8 @@ import { Activity, ActivityTypes, BotAdapter, BotCallbackHandlerKey, ChannelAcco
 import { AuthenticationConfiguration, AuthenticationConstants, ChannelValidation, ClaimsIdentity, ConnectorClient, EmulatorApiClient, GovernmentConstants, GovernmentChannelValidation, JwtTokenValidation, MicrosoftAppCredentials, AppCredentials, CertificateAppCredentials, SimpleCredentialProvider, TokenApiClient, TokenStatus, TokenApiModels, SkillValidation } from 'botframework-connector';
 import { INodeBuffer, INodeSocket, IReceiveRequest, ISocket, IStreamingTransportServer, NamedPipeServer, NodeWebSocketFactory, NodeWebSocketFactoryBase, RequestHandler, StreamingResponse, WebSocketServer } from 'botframework-streaming';
 
-import { StreamingHttpClient, TokenResolver } from './streaming';
+import { InvokeResponse, WebRequest, WebResponse } from './interfaces';
+import { defaultPipeName, GET, POST, MESSAGES_PATH, StreamingHttpClient, TokenResolver, VERSION_PATH } from './streaming';
 
 export enum StatusCodes {
     OK = 200,
@@ -31,90 +32,6 @@ export class StatusCodeError extends Error {
         super(message);
         this.statusCode = statusCode;
     }
-}
-
-/**
- * Represents an Express or Restify request object.
- * 
- * This interface supports the framework and is not intended to be called directly for your code.
- */
-export interface WebRequest {
-    /**
-     * Optional. The request body.
-     */
-    body?: any;
-
-    /***
-     * Optional. The request headers.
-     */
-    headers: any;
-
-    /***
-     * Optional. The request method.
-     */
-    method?: any;
-
-    /***
-     * Optional. The request parameters from the url.
-     */
-    params?: any;
-
-    /***
-     * Optional. The values from the query string.
-     */
-    query?: any;
-
-    /**
-     * When implemented in a derived class, adds a listener for an event.
-     * The framework uses this method to retrieve the request body when the
-     * [body](xref:botbuilder.WebRequest.body) property is `null` or `undefined`.
-     * 
-     * @param event The event name.
-     * @param args Arguments used to handle the event.
-     * 
-     * @returns A reference to the request object.
-     */
-    on(event: string, ...args: any[]): any;
-}
-
-/**
- * Represents an Express or Restify response object.
- * 
- * This interface supports the framework and is not intended to be called directly for your code.
- */
-export interface WebResponse {
-    /**
-     * 
-     * Optional. The underlying socket.
-     */
-    socket?: any;
-
-    /**
-     * When implemented in a derived class, sends a FIN packet.
-     * 
-     * @param args The arguments for the end event.
-     * 
-     * @returns A reference to the response object.
-     */
-    end(...args: any[]): any;
-
-    /**
-     * When implemented in a derived class, sends the response.
-     * 
-     * @param body The response payload.
-     * 
-     * @returns A reference to the response object.
-     */
-    send(body: any): any;
-
-    /**
-     * When implemented in a derived class, sets the HTTP status code for the response.
-     * 
-     * @param status The status code to use.
-     * 
-     * @returns The status code.
-     */
-    status(status: number): any;
 }
 
 /**
@@ -172,23 +89,6 @@ export interface BotFrameworkAdapterSettings {
     authConfig?: AuthenticationConfiguration;
 }
 
-/**
- * Represents a response returned by a bot when it receives an `invoke` activity.
- * 
- * This interface supports the framework and is not intended to be called directly for your code.
- */
-export interface InvokeResponse {
-    /**
-     * The HTTP status code of the response.
-     */
-    status: number;
-
-    /**
-     * Optional. The body of the response.
-     */
-    body?: any;
-}
-
 // Retrieve additional information, i.e., host operating system, host OS release, architecture, Node.js version
 const ARCHITECTURE: any = os.arch();
 const TYPE: any = os.type();
@@ -201,13 +101,6 @@ export const USER_AGENT: string = `Microsoft-BotFramework/3.1 BotBuilder/${ pjso
     `(Node.js,Version=${ NODE_VERSION }; ${ TYPE } ${ RELEASE }; ${ ARCHITECTURE })`;
 const OAUTH_ENDPOINT = 'https://api.botframework.com';
 const US_GOV_OAUTH_ENDPOINT = 'https://api.botframework.azure.us';
-
-// Streaming-specific constants
-const defaultPipeName = 'bfv4.pipes';
-const VERSION_PATH: string = '/api/version';
-const MESSAGES_PATH: string = '/api/messages';
-const GET: string = 'GET';
-const POST: string = 'POST';
 
 // This key is exported internally so that the TeamsActivityHandler will not overwrite any already set InvokeResponses.
 export const INVOKE_RESPONSE_KEY: symbol = Symbol('invokeResponse');
@@ -1085,7 +978,8 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
         if (!credentials) throw new Error('invalid credentials');
 
         let client: ConnectorClient = context.turnState.get(this.ConnectorClientKey);
-        if (!client) {
+        // Inspect the retrieved client to confirm that the serviceUrl is correct, if it isn't, create a new one.
+        if (!client || client['baseUri'] !== serviceUrl) {
             client = this.createConnectorClientInternal(serviceUrl, credentials);
         }
 
@@ -1098,7 +992,7 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
      * @param appId 
      * @param oAuthScope 
      */
-    protected async buildCredentials(appId: string, oAuthScope: string = ''): Promise<AppCredentials> {
+    protected async buildCredentials(appId: string, oAuthScope?: string): Promise<AppCredentials> {
         // There is no cache for AppCredentials in JS as opposed to C#.
         // Instead of retrieving an AppCredentials from the Adapter instance, generate a new one
         const appPassword = await this.credentialsProvider.getAppPassword(appId);
