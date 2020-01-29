@@ -618,9 +618,11 @@ describe('WaterfallDialog', function () {
         const id = 'waterfall';
         const index = 1;
         const dialog = new MyWaterfall(id);
+        var trackEventCalled;
         dialog.telemetryClient = {
             trackEvent(telemetry) {
                 assert(telemetry.properties.StepName == dialog.steps[index].name, `telemetry contains incorrect step name: "${telemetry.properties.StepName}"`);
+                trackEventCalled = true;
             }
         };
         await dialog.endDialog({}, {
@@ -630,5 +632,6 @@ describe('WaterfallDialog', function () {
                 values: { instanceId: '(guid)' }
             }
         }, DialogReason.cancelCalled);
+        assert(trackEventCalled, 'trackEvent was never called.');
     });
 });
