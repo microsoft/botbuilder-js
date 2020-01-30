@@ -27,10 +27,11 @@ module.exports = {
         botPage
             .setValue('@webchatMessageInput', 'Hello');
         botPage
-            .click('@webchatMessageInputSubmitButton', function(result) {
+            .click('@webchatMessageInputSubmitButton', function (result) {
                 // Assertion to check the button was clickable and got triggered
                 this.assert.strictEqual(result.status, 0, 'Message input working');
-            })
+            });
+        botPage
             .pause(250);
 
         await assertMessageIsPresentInPage(botPage, 'Hello', 'Webchat contains user message');
