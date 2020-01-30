@@ -27,7 +27,7 @@ module.exports = {
         botPage
             .setValue('@webchatMessageInput', 'Hello');
         botPage
-            .click('@webchatMessageInputSubtmitButton', function(result) {
+            .click('@webchatMessageInputSubmitButton', function(result) {
                 // Assertion to check the button was clickable and got triggered
                 this.assert.strictEqual(result.status, 0, 'Message input working');
             })
