@@ -78,6 +78,7 @@ steps:
     workingDir: ''
     verbose: false
     customCommand: 'run browser-functional-test firefox'
+  continueOnError: true
 
 - task: Npm@1
   displayName: 'run chrome tests'
@@ -86,6 +87,7 @@ steps:
     workingDir: ''
     verbose: false
     customCommand: 'run browser-functional-test chrome'
+  continueOnError: true
 
 #- task: AzureCLI@1
 #  displayName: 'Delete Resource Group'
