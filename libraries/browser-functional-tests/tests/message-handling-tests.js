@@ -25,7 +25,8 @@ module.exports = {
     'Echo bot webchat sends messages': async function(browser) {
         // Type 'Hello' in the webchat input box and send it to the bot
         botPage
-            .setValue('@webchatMessageInput', 'Hello')
+            .setValue('@webchatMessageInput', 'Hello');
+        botPage
             .click('@webchatMessageInputSubtmitButton', function(result) {
                 // Assertion to check the button was clickable and got triggered
                 this.assert.strictEqual(result.status, 0, 'Message input working');
