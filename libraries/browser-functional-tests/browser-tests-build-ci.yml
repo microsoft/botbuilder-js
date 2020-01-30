@@ -72,14 +72,6 @@ steps:
     verbose: false
 
 - task: Npm@1
-  displayName: 'run chrome tests'
-  inputs:
-    command: custom
-    workingDir: ''
-    verbose: false
-    customCommand: 'run browser-functional-test chrome'
-
-- task: Npm@1
   displayName: 'run firefox tests'
   inputs:
     command: custom
@@ -87,10 +79,18 @@ steps:
     verbose: false
     customCommand: 'run browser-functional-test firefox'
 
-- task: AzureCLI@1
-  displayName: 'Delete Resource Group'
+- task: Npm@1
+  displayName: 'run chrome tests'
   inputs:
-    azureSubscription: '$(AzureSubscription)'
-    scriptLocation: inlineScript
-    inlineScript: 'call az group delete -n BrowserBotTest --yes'
-  condition: succeededOrFailed()
+    command: custom
+    workingDir: ''
+    verbose: false
+    customCommand: 'run browser-functional-test chrome'
+
+#- task: AzureCLI@1
+#  displayName: 'Delete Resource Group'
+#  inputs:
+#    azureSubscription: '$(AzureSubscription)'
+#    scriptLocation: inlineScript
+#    inlineScript: 'call az group delete -n BrowserBotTest --yes'
+#  condition: succeededOrFailed()
