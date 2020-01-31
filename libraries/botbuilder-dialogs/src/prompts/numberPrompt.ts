@@ -9,11 +9,11 @@ import * as Recognizers from '@microsoft/recognizers-text-number';
 import { Activity, InputHints, TurnContext } from 'botbuilder-core';
 import { Prompt, PromptOptions, PromptRecognizerResult, PromptValidator } from './prompt';
 
-import { Chinese, Dutch, English, German, Japanese, LikelySubtags, NumberingSystem, Portuguese, Spanish } from "../i18n";
+import { Chinese, Dutch, English, French, German, Japanese, LikelySubtags, NumberingSystem, Portuguese, Spanish } from "../i18n";
 
 import * as Globalize from 'globalize';
 Globalize.load(
-    Chinese, English, Dutch, German, Japanese, LikelySubtags, NumberingSystem, Portuguese, Spanish    
+    Chinese, English, Dutch, French, German, Japanese, LikelySubtags, NumberingSystem, Portuguese, Spanish    
 );
 
 /**
