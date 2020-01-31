@@ -1,5 +1,5 @@
 const { ActivityTypes, ConversationState, MemoryStorage, TestAdapter } = require('botbuilder-core');
-const { Dialog, DialogSet, WaterfallDialog, DialogTurnStatus } = require('../');
+const { Dialog, DialogReason, DialogSet, DialogTurnStatus, WaterfallDialog } = require('../');
 
 const assert = require('assert');
 
@@ -28,7 +28,6 @@ class MyWaterfall extends WaterfallDialog {
         return await step.endDialog('ending WaterfallDialog.');
     }
 }
-
 
 describe('WaterfallDialog', function () {
     this.timeout(5000);
@@ -613,5 +612,26 @@ describe('WaterfallDialog', function () {
             .send('continue.')
             .assertReply('done.')
             .startTest();
+    });
+
+    it('should record the correct step name when cancelled.', async function() {
+        const id = 'waterfall';
+        const index = 1;
+        const dialog = new MyWaterfall(id);
+        var trackEventCalled;
+        dialog.telemetryClient = {
+            trackEvent(telemetry) {
+                assert(telemetry.properties.StepName == dialog.steps[index].name, `telemetry contains incorrect step name: "${telemetry.properties.StepName}"`);
+                trackEventCalled = true;
+            }
+        };
+        await dialog.endDialog({}, {
+            id,
+            state: {
+                stepIndex: index,
+                values: { instanceId: '(guid)' }
+            }
+        }, DialogReason.cancelCalled);
+        assert(trackEventCalled, 'trackEvent was never called.');
     });
 });
