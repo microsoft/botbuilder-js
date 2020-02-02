@@ -42,7 +42,7 @@ export class ResourceExplorer {
 
     public addResourceProvider(resourceProvider: IResourceProvider): ResourceExplorer {
         if (this._resourceProviders.some(r => r.id() === resourceProvider.id())) {
-            throw Error(`${resourceProvider.id()} has already been added as a resource`)
+            throw Error(`${resourceProvider.id()} has already been added as a resource`);
         }
 
         this._resourceProviders.push(resourceProvider);

@@ -16,7 +16,7 @@ export interface SendActivityConfiguration extends DialogConfiguration {
     /**
      * Activity or message text to send the user.
      */
-    activity?: TemplateInterface<Partial<Activity>>;
+    activity?: TemplateInterface<Partial<Activity>> | string;
 
     /**
      * (Optional) Structured Speech Markup Language (SSML) to speak to the user.
@@ -97,10 +97,19 @@ export class SendActivity<O extends object = {}> extends Dialog<O> implements Co
         }
 
         // Send activity and return result
-        const data = Object.assign({
-            utterance: dc.context.activity.text || ''
-        }, dc.state, options);
-        const activityResult = await this.activity.bindToData(dc.context, data);
+        let data = options;
+        const objects = Array.from(dc.context.turnState.values());
+        for (const obj of objects) {
+            if (obj.state) {
+                data = Object.assign(obj.state, data);
+            }
+        }
+        
+        let curActivity = undefined;
+        if (typeof this.activity === 'string') {
+            curActivity = new ActivityTemplate(this.activity);
+        }
+        const activityResult = await curActivity.bindToData(dc.context, data);
         const result = await dc.context.sendActivity(activityResult);
         return await dc.endDialog(result);
     }

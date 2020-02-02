@@ -44,17 +44,19 @@ export class LanguageGeneratorMiddleWare implements Middleware {
         }
 
         // miss LanguageGenerationComponentRegistration
-        const lgm = new LanguageGeneratorManager(this._resourceExplorer);
-        await lgm.loadResources();
-        context.turnState.set(this.languageGeneratorManagerKey, lgm);
-
+        if (context.turnState.get(this.languageGeneratorManagerKey) === undefined) {
+            const lgm = new LanguageGeneratorManager(this._resourceExplorer);
+            await lgm.loadResources();
+            context.turnState.set(this.languageGeneratorManagerKey, lgm);
+        }
+        
         if (this._languageGenerator === undefined) {
             throw new Error('no language generator defined');
         } else{
             context.turnState.set(this.languageGeneratorKey, this._languageGenerator);
         }
         
-        if (!next) {
+        if (next) {
             await next();
         }
     }

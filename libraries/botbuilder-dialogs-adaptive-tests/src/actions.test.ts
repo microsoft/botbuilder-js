@@ -3,6 +3,7 @@ import 'mocha';
 import { TestRunner } from './testing';
 
 describe('Actions', ()  => {
+    this.timeout(30000);
     const testRunner = new TestRunner('resources/actionsTests');
 
     it('BeginDialog', async () => {
