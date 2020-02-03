@@ -103,6 +103,10 @@ export class SendActivity<O extends object = {}> extends Dialog<O> implements Co
             if (obj.state) {
                 data = Object.assign(obj.state, data);
             }
+
+            if (obj.turn) {
+                data = Object.assign(obj.turn, data);
+            }
         }
         
         let curActivity = undefined;
