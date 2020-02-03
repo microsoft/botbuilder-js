@@ -75,14 +75,15 @@ export function convertCSharpDateTimeToMomentJS(fmtString: string): string {
                 throw Error(`RFC 1123 not supported  in MomentJS`);
             case 'O':
             case 'o':
-                return 'YYYY-MM-DDTHH:mm:ss.SSSSSSSZ';
+                fmtString = 'YYYY-MM-DDTHH:mm:ss.SSSSSSSZ';
+                break;
             case 'U':
                 throw new Error(`Universal Fulll Format not supported in MomentJS`);
             case 'u':
                 throw new Error(`Universal Sortable Format not supported in MomentJS`);
         }
     }
-
+    
     const changeState = (newState): void => {
         switch (fmtState)
         {
