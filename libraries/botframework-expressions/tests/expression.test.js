@@ -93,7 +93,7 @@ const dataSource = [
     ['replaceIgnoreCase(nullObj, \'L\', \'k\')', ''],
     ['replaceIgnoreCase(\'hello\', \'L\', nullObj)', 'heo'],
     ['split(\'hello\',\'e\')', ['h', 'llo']],
-    ['split(\'hell\')', ['h', 'e', 'l', 'l']],
+    ['split(\'hell\')', ['h', 'e', 'l', 'l', 'o']],
     ['split(nullObj,\'e\')', ['']],
     ['split(\'hello\',nullObj)', ['h', 'e', 'l', 'l', 'o']],
     ['split(nullObj,nullObj)', []],
