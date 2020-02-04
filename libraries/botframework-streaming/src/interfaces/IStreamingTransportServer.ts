@@ -16,4 +16,5 @@ export interface IStreamingTransportServer {
     start(): Promise<string>;
     disconnect(): void;
     send(request: StreamingRequest): Promise<IReceiveResponse>;
+    isConnected?: boolean;
 }

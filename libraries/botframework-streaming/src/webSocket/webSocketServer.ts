@@ -39,6 +39,10 @@ export class WebSocketServer implements IStreamingTransportServer {
      * @param requestHandler Optional [RequestHandler](xref:botframework-streaming.RequestHandler) to process incoming messages received by this server.
      */
     public constructor(socket: ISocket, requestHandler?: RequestHandler) {
+        if (!socket) {
+            throw new TypeError('WebSocketServer: Missing socket parameter');
+        }
+
         this._socket = socket;
         this._webSocketTransport = new WebSocketTransport(socket);
         this._requestHandler = requestHandler;

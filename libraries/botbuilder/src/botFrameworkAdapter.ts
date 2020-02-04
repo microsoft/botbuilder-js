@@ -335,7 +335,7 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
      * Used in streaming contexts to check if the streaming connection is still open for the bot to send activities.
      */
     public get isStreamingConnectionOpen(): boolean {
-        return (this.streamingServer as WebSocketServer).isConnected;
+        return this.streamingServer.isConnected;
     }
  
     /**
