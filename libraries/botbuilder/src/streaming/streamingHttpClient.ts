@@ -37,7 +37,8 @@ export class StreamingHttpClient implements HttpClient {
             throw new Error('StreamingHttpClient.sendRequest(): missing "httpRequest" parameter');
         }
         if (!this.server.isConnected) {
-            throw new Error('StreamingHttpClient.sendRequest(): Streaming connection is disconnected');
+            throw new Error('StreamingHttpClient.sendRequest(): Streaming connection is disconnected, and the request could not be sent.');
+
         }
 
         const request = this.mapHttpRequestToProtocolRequest(httpRequest);
