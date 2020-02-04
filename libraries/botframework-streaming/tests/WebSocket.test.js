@@ -195,6 +195,15 @@ describe('Streaming Extensions WebSocket Library Tests', () => {
             expect(server.disconnect()).to.not.throw;
         });
 
+        it('throws a TypeError during construction if missing the "socket" parameter', () => {
+            try {
+                new ws.WebSocketServer();
+            } catch (err) {
+                expect(err).to.be.instanceOf(TypeError);
+                expect(err.message).to.contain('WebSocketServer: Missing socket parameter');
+            }
+        });
+
         it('connects', (done) => {
             let server = new ws.WebSocketServer(new FauxSock, new protocol.RequestHandler());
             expect(server).to.be.instanceOf(ws.WebSocketServer);
