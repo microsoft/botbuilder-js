@@ -18,6 +18,7 @@ import { EvaluateExpressionDelegate, ExpressionEvaluator, ValidateExpressionDele
 import { ExpressionType } from './expressionType';
 import { Extensions } from './extensions';
 import { TimeZoneConverter } from './timeZoneConverter';
+import { convertCSharpDateTimeToMomentJS } from './formatConverter';
 import { MemoryInterface, SimpleObjectMemory, ComposedMemory } from './memory';
 
 /**
@@ -620,7 +621,14 @@ export class BuiltInFunctions {
     }
 
     public static timestampFormatter(formatter: string): string {
-        return formatter.replace(/dd/g, 'DD').replace(/yyyy/g, 'YYYY').replace(/d/g, 'D').replace(/y/g, 'Y');
+        let result = formatter;
+        try {
+            result = convertCSharpDateTimeToMomentJS(formatter);
+        } catch(e) {
+            // do nothing
+        }
+
+        return result;
     }
 
     public static timeUnitTransformer(duration: number, cSharpStr: string): { duration: number; tsStr: string } {
