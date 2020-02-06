@@ -5,132 +5,155 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { TurnContext, RecognizerResult, ActivityTypes } from 'botbuilder-core';
-import { Configurable } from 'botbuilder-dialogs';
-import { Recognizer, createRecognizerResult, IntentMap } from './recognizer';
+import { RecognizerResult, Entity, Activity, ActivityTypes } from 'botbuilder-core';
+import { Configurable, DialogContext } from 'botbuilder-dialogs';
+import { Recognizer } from './recognizer';
 import { IntentPattern } from './intentPattern';
+import { EntityRecognizer, TextEntity, EntityRecognizerSet } from './entityRecognizers';
 
-export interface RegExpRecognizerConfiguration {
+export interface RegexRecognizerConfiguration {
+    id?: string;
     intents?: IntentPattern[];
-    multiIntentMode?: boolean;
+    entities?: EntityRecognizer[];
 }
 
 export class RegexRecognizer extends Configurable implements Recognizer {
 
     public static declarativeType = 'Microsoft.RegexRecognizer';
 
+    /**
+     * Id of the recognizer.
+     */
+    public id: string;
+
+    /**
+     * Dictionary of patterns -> intent names.
+     */
     public intents: IntentPattern[] = [];
 
-    public multiIntentMode = false;
+    /**
+     * The entity recognizers.
+     */
+    public entities: EntityRecognizer[] = [];
 
-    public constructor();
-    public constructor(multiIntentMode = false) {
-        super();
-        this.multiIntentMode = multiIntentMode;
-    }
-
-    public configure(config: RegExpRecognizerConfiguration): this {
+    public configure(config: RegexRecognizerConfiguration): this {
         return super.configure(config);
     }
 
-    public async recognize(context: TurnContext): Promise<RecognizerResult> {
-        // Process only messages
-        if (context.activity.type !== ActivityTypes.Message) {
-            return createRecognizerResult(undefined);
+    public async recognize(dialogContext: DialogContext): Promise<RecognizerResult>;
+    public async recognize(dialogContext: DialogContext, textOrActivity: Activity): Promise<RecognizerResult>;
+    public async recognize(dialogContext: DialogContext, textOrActivity?: string | Activity, locale?: string): Promise<RecognizerResult> {
+        let text = '';
+        if (!textOrActivity) {
+            const activity: Activity = dialogContext.context.activity;
+            if (activity && activity.type == ActivityTypes.Message) {
+                text = activity.text;
+                locale = activity.locale;
+            }
+        } else if (typeof(textOrActivity) == 'object') {
+            const activity: Activity = textOrActivity;
+            if (activity.type == ActivityTypes.Message) {
+                text = activity.text;
+                locale = activity.locale;
+            }
+        } else if (typeof(textOrActivity) == 'string') {
+            text = textOrActivity;
         }
 
-        // Identify matched intents
-        let hasMatch = false;
-        const utterance = context.activity.text || '';
-        const matched: { [name: string]: MatchedIntent } = {};
+        const recognizerResult: RecognizerResult = {
+            text: text,
+            intents: {},
+            entities: {}
+        };
+
+        const entityPool: Entity[] = [];
+
+        const textEntity = new TextEntity(text);
+        textEntity['start'] = 0;
+        textEntity['end'] = text.length;
+        textEntity['score'] = 1.0;
+
+        entityPool.push(textEntity);
+
         for (let i = 0; i < this.intents.length; i++) {
-            const match = this.matchIntent(i, utterance);
-            if (match) {
-                const name = match.intent;
-                if (!matched.hasOwnProperty(name) || match.score > matched[name].score) {
-                    matched[name] = match;
-                    hasMatch = true;
+            const intentPattern = this.intents[i];
+            const matches = [...text.matchAll(intentPattern.regex)];
+            if (matches.length > 0) {
+                const intentKey = intentPattern.intent.split(' ').join('_');
+                if (!recognizerResult.intents.hasOwnProperty(intentKey)) {
+                    recognizerResult.intents[intentKey] = { score: 1.0 };
+                    recognizerResult.intents[intentKey]['pattern'] = intentPattern.pattern;
                 }
+
+                for (let j = 0; j < matches.length; j++) {
+                    const match = matches[j];
+                    if (match.groups) {
+                        for (const name in match.groups) {
+                            const text = match.groups[name];
+                            const entity: Entity = {
+                                type: name,
+                            };
+                            entity['text'] = text;
+                            entity['start'] = match.index;
+                            entity['end'] = match.index + text.length;
+                            entityPool.push(entity);
+                        }
+                    }
+                }
+
+                break;
             }
         }
 
-        // Return None intent if no matches
-        if (!hasMatch) {
-            return createRecognizerResult(utterance);
+        if (this.entities) {
+            const entitySet = new EntityRecognizerSet();
+            entitySet.push(...this.entities);
+            const newEntities = await entitySet.recognizeEntities(dialogContext, text, locale, entityPool);
+            if (newEntities.length > 0) {
+                entityPool.push(...newEntities);
+            }
         }
 
-        // Populate intents and entities matched
-        const intents: IntentMap = {};
-        const entities: { [name: string]: string[] } = {};
-        if (this.multiIntentMode) {
-            // Return all intents and entities
-            for (const name in matched) {
-                const match = matched[name];
-                intents[name] = { score: 1.0 };
-                this.addEntities(entities, match);
-            }
-        } else {
-            // Return top scoring intent
-            let top: MatchedIntent;
-            for (const name in matched) {
-                if (!top || matched[name].score > top.score) {
-                    top = matched[name];
-                }
-            }
-            intents[top.intent] = { score: top.score };
-            this.addEntities(entities, top);
-        }
-
-        return createRecognizerResult(utterance, intents, entities);
-    }
-
-    private addEntities(entities: { [name: string]: string[] }, match: MatchedIntent): void {
-        for (const name in match.entities) {
-            const value = match.entities[name];
-            if (entities.hasOwnProperty(name)) {
-                // Append if unique value
-                if (entities[name].indexOf(value) < 0) {
-                    entities[name].push(value);
-                }
+        for (let i = 0; i < entityPool.length; i++) {
+            const entityResult = entityPool[i];
+            let values = [];
+            if (!recognizerResult.entities.hasOwnProperty(entityResult.type)) {
+                recognizerResult.entities[entityResult.type] = values;
             } else {
-                entities[name] = [value];
+                values = recognizerResult.entities[entityResult.type];
             }
-        }
-    }
+            values.push(entityResult['text']);
 
-    private matchIntent(index: number, utterance: string): MatchedIntent | undefined {
-        const intent = this.intents[index];
-        const regex = new RegExp(intent.pattern, 'i');
-        const matched = regex.exec(utterance);
-        if (matched) {
-            // Initialize result
-            const result: MatchedIntent = {
-                intent: intent.intent,
-                score: matched[0].length / utterance.length,
-                entities: {}
+            let instanceRoot = {};
+            if (!recognizerResult.entities.hasOwnProperty('$instance')) {
+                recognizerResult.entities['$instance'] = instanceRoot;
+            } else {
+                instanceRoot = recognizerResult.entities['$instance'];
+            }
+
+            let instanceData = [];
+            if (!instanceRoot.hasOwnProperty(entityResult.type)) {
+                instanceRoot[entityResult.type] = instanceData;
+            } else {
+                instanceData = instanceRoot[entityResult.type];
+            }
+
+            const instance = {
+                startIndex: entityResult['start'],
+                endIndex: entityResult['end'],
+                score: 1.0,
+                text: entityResult['text'],
+                type: entityResult['type'],
+                resolution: entityResult['resolution']
             };
-
-            // Check for named capture groups
-            if (matched.groups) {
-                result.entities = matched.groups;
-            } else if (matched.length > 1) {
-                for (let i = 1; i < matched.length; i++) {
-                    result.entities[i.toString()] = matched[i];
-                }
-            }
-
-            return result;
-        } else {
-            return undefined;
+            instanceData.push(instance);
         }
+
+        if (Object.entries(recognizerResult.intents).length == 0) {
+            recognizerResult.intents['None'] = { score: 1.0 };
+        }
+
+        await dialogContext.context.sendTraceActivity('RegexRecognizer', recognizerResult, 'RecognizerResult', 'Regex RecognizerResult');
+        return recognizerResult;
     }
-
-
 }
-
-interface MatchedIntent {
-    intent: string;
-    score: number;
-    entities: { [key: string]: string };
-}
-

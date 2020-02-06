@@ -249,7 +249,7 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
                 case AdaptiveEventNames.recognizeUtterance:
                     if (sequence.context.activity.type == ActivityTypes.Message) {
                         // Recognize utterance
-                        const recognized = await this.onRecognize(sequence.context);
+                        const recognized = await this.onRecognize(sequence);
                         sequence.state.setValue(TurnPath.RECOGNIZED, recognized);
 
                         // Get top scoring intent
@@ -312,7 +312,8 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
         return handled;
     }
 
-    protected async onRecognize(context: TurnContext): Promise<RecognizerResult> {
+    protected async onRecognize(sequenceContext: SequenceContext): Promise<RecognizerResult> {
+        const context = sequenceContext.context;
         const { text, value } = context.activity;
         const noneIntent: RecognizerResult = {
             text: text || '',
@@ -343,7 +344,7 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
             // Call recognizer as normal and filter to top intent
             let topIntent: string;
             let topScore = -1;
-            const recognized = await this.recognizer.recognize(context);
+            const recognized = await this.recognizer.recognize(sequenceContext);
             for (const key in recognized.intents) {
                 if (recognized.intents.hasOwnProperty(key)) {
                     if (topIntent == undefined) {
