@@ -9,8 +9,6 @@ import { MemoryStorage, ConversationState, UserState } from 'botbuilder-core';
 import { Dialog, DialogManager, Configurable } from 'botbuilder-dialogs';
 import { TestAction } from './testAction';
 import { AdaptiveTestAdapter } from './adaptiveTestAdapter';
-import { ResourceExplorer, LanguageGeneratorMiddleWare } from 'botbuilder-dialogs-adaptive';
-import * as path from 'path';
 
 export interface TestScriptConfiguration {
     description?: string;
@@ -62,18 +60,6 @@ export class TestScript extends Configurable {
         if (!testAdapter) {
             testAdapter = new AdaptiveTestAdapter(AdaptiveTestAdapter.createConversation(testName));
         }
-
-        // how to inject LG middleware
-        const resourceExplorer = ResourceExplorer.loadProject(path.resolve('D:\\repos\\botbuilder-js\\libraries\\botbuilder-dialogs-adaptive\\tests\\lg'), [], false);
-        testAdapter.use(new LanguageGeneratorMiddleWare(resourceExplorer));
-        // const lgm = new LanguageGeneratorManager(resourceExplorer);
-        // await lgm.loadResources();
-        /*
-         context.turnState.set('LanguageGeneratorManager', lgm);
-        if (generator !== undefined) {
-            context.turnState.set('LanguageGenerator', generator);
-        }
-        */
 
         testAdapter.enableTrace = this.enableTrace;
         testAdapter.locale = this.locale;
