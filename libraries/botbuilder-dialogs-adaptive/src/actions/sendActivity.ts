@@ -97,13 +97,9 @@ export class SendActivity<O extends object = {}> extends Dialog<O> implements Co
         }
 
         // Send activity and return result
-        let data = options;
-        const objects = Array.from(dc.context.turnState.values());
-        for (const obj of objects) {
-            if (obj.state) {
-                data = Object.assign(obj.state, data);
-            }
-        }
+        const data = Object.assign({
+            utterance: dc.context.activity.text || ''
+        }, dc.state, options);
         
         let curActivity = undefined;
         if (typeof this.activity === 'string') {
