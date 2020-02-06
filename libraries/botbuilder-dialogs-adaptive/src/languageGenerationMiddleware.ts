@@ -47,7 +47,6 @@ export class LanguageGeneratorMiddleWare implements Middleware {
         const lgm = new LanguageGeneratorManager(this._resourceExplorer);
         await lgm.loadResources();
         context.turnState.set(this.languageGeneratorManagerKey, lgm);
-        
         if (this._languageGenerator === undefined) {
             throw new Error('no language generator defined');
         } else{
