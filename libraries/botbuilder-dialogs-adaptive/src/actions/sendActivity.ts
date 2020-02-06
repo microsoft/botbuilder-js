@@ -111,15 +111,11 @@ export class SendActivity<O extends object = {}> extends Dialog<O> implements Co
         }
 
         // Send activity and return result
-        const data = Object.assign({
+        const data = Object.assign(dc.state, {
             utterance: dc.context.activity.text || ''
-        }, dc.state, options);
+        }, options);
         
-        let curActivity = undefined;
-        if (typeof this.activity === 'string') {
-            curActivity = new ActivityTemplate(this.activity);
-        }
-        const activityResult = await curActivity.bindToData(dc.context, data);
+        const activityResult = await this.activity.bindToData(dc.context, data);
         const result = await dc.context.sendActivity(activityResult);
         return await dc.endDialog(result);
     }
