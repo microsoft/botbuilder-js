@@ -6,7 +6,8 @@
  * Licensed under the MIT License.
  */
 
-import { DialogContext, ModelResult, PromptCultureModels } from 'botbuilder-dialogs';
+import { Culture }  from '@microsoft/recognizers-text';
+import { DialogContext, ModelResult } from 'botbuilder-dialogs';
 import { Entity } from 'botbuilder-core';
 import { EntityRecognizer } from './entityRecognizer';
 import { TextEntity } from './textEntity';
@@ -14,7 +15,7 @@ import { TextEntity } from './textEntity';
 export abstract class TextEntityRecognizer implements EntityRecognizer {
     public async recognizeEntities(dialogContext: DialogContext, text: string, locale: string, entities: Entity[]): Promise<Entity[]> {
         const newEntities: Entity[] = [];
-        const culture = PromptCultureModels.mapToNearestLanguage(locale || '');
+        const culture = Culture.mapToNearestLanguage(locale || '');
         const textEntities: TextEntity[] = entities.filter((e: Entity): boolean => e.type == 'text').map((e: Entity): TextEntity => {
             const textEntity = new TextEntity();
             return Object.assign(textEntity, e);
