@@ -5,73 +5,73 @@ import { TestRunner } from './testing';
 describe('Actions', ()  => {
     const testRunner = new TestRunner('resources/actionsTests');
 
-    // it('BeginDialog', async () => {
-    //     await testRunner.runTestScript('Action_BeginDialog');
-    // });
+    it('BeginDialog', async () => {
+        await testRunner.runTestScript('Action_BeginDialog');
+    });
 
-    // it('BeginDialogWithActivity', async () => {
-    //     await testRunner.runTestScript('Action_BeginDialogWithActivity');
-    // });
+    it('BeginDialogWithActivity', async () => {
+        await testRunner.runTestScript('Action_BeginDialogWithActivity');
+    });
 
-    // it('ChoiceInput', async () => {
-    //     await testRunner.runTestScript('Action_ChoiceInput');
-    // });
+    it('ChoiceInput', async () => {
+        await testRunner.runTestScript('Action_ChoiceInput');
+    });
 
-    // it('ChoiceInputWithLocale', async () => {
-    //     await testRunner.runTestScript('Action_ChoiceInput_WithLocale');
-    // });
+    it('ChoiceInputWithLocale', async () => {
+        await testRunner.runTestScript('Action_ChoiceInput_WithLocale');
+    });
 
-    // it('ChoicesInMemory', async () => {
-    //     await testRunner.runTestScript('Action_ChoicesInMemory');
-    // });
+    it('ChoicesInMemory', async () => {
+        await testRunner.runTestScript('Action_ChoicesInMemory');
+    });
 
-    // it('ChoiceStringInMemory', async () => {
-    //     await testRunner.runTestScript('Action_ChoiceStringInMemory');
-    // });
+    it('ChoiceStringInMemory', async () => {
+        await testRunner.runTestScript('Action_ChoiceStringInMemory');
+    });
 
-    // it('ConfirmInput', async () => {
-    //     await testRunner.runTestScript('Action_ConfirmInput');
-    // });
+    it('ConfirmInput', async () => {
+        await testRunner.runTestScript('Action_ConfirmInput');
+    });
 
-    // it('DeleteActivity', async () => {
-    //     await testRunner.runTestScript('Action_DeleteActivity');
-    // });
+    it('DeleteActivity', async () => {
+        await testRunner.runTestScript('Action_DeleteActivity');
+    });
 
-    // it('DatetimeInput', async () => {
-    //     await testRunner.runTestScript('Action_DatetimeInput');
-    // });
+    it('DatetimeInput', async () => {
+        await testRunner.runTestScript('Action_DatetimeInput');
+    });
 
-    // it('DeleteProperties', async () => {
-    //     await testRunner.runTestScript('Action_DeleteProperties');
-    // });
+    it('DeleteProperties', async () => {
+        await testRunner.runTestScript('Action_DeleteProperties');
+    });
 
-    // it('DeleteProperty', async () => {
-    //     await testRunner.runTestScript('Action_DeleteProperty');
-    // });
+    it('DeleteProperty', async () => {
+        await testRunner.runTestScript('Action_DeleteProperty');
+    });
 
-    // it('DoActions', async () => {
-    //     await testRunner.runTestScript('Action_DoActions');
-    // });
+    it('DoActions', async () => {
+        await testRunner.runTestScript('Action_DoActions');
+    });
 
-    // it('EditActionReplaceSequence', async () => {
-    //     await testRunner.runTestScript('Action_EditActionReplaceSequence');
-    // });
+    it('EditActionReplaceSequence', async () => {
+        await testRunner.runTestScript('Action_EditActionReplaceSequence');
+    });
 
-    // it('EmitEvent', async () => {
-    //     await testRunner.runTestScript('Action_EmitEvent');
-    // });
+    it('EmitEvent', async () => {
+        await testRunner.runTestScript('Action_EmitEvent');
+    });
 
-    // it('EndDialog', async () => {
-    //     await testRunner.runTestScript('Action_EndDialog');
-    // });
+    it('EndDialog', async () => {
+        await testRunner.runTestScript('Action_EndDialog');
+    });
 
-    // it('Foreach', async () => {
-    //     await testRunner.runTestScript('Action_Foreach');
-    // });
+    it('Foreach', async () => {
+        await testRunner.runTestScript('Action_Foreach');
+    });
 
-    // it('ForeachPage_Empty', async () => {
-    //     await testRunner.runTestScript('Action_ForeachPage_Empty');
-    // });
+    it('ForeachPage_Empty', async () => {
+        await testRunner.runTestScript('Action_ForeachPage_Empty');
+    });
 
     // Missing LG support
     /*
@@ -87,29 +87,29 @@ describe('Actions', ()  => {
     });
     */
 
-    // it('GetActivityMembers', async () => {
-    //     await testRunner.runTestScript('Action_GetActivityMembers');
-    // });
+    it('GetActivityMembers', async () => {
+        await testRunner.runTestScript('Action_GetActivityMembers');
+    });
 
-    // it('GetConversationMembers', async () => {
-    //     await testRunner.runTestScript('Action_GetConversationMembers');
-    // });
+    it('GetConversationMembers', async () => {
+        await testRunner.runTestScript('Action_GetConversationMembers');
+    });
 
-    // it('GotoAction', async () => {
-    //     await testRunner.runTestScript('Action_GotoAction');
-    // });
+    it('GotoAction', async () => {
+        await testRunner.runTestScript('Action_GotoAction');
+    });
 
-    // it('IfCondition', async () => {
-    //     await testRunner.runTestScript('Action_IfCondition');
-    // });
+    it('IfCondition', async () => {
+        await testRunner.runTestScript('Action_IfCondition');
+    });
 
-    // it('InputDialog_ActivityProcessed', async () => {
-    //     await testRunner.runTestScript('InputDialog_ActivityProcessed');
-    // });
+    it('InputDialog_ActivityProcessed', async () => {
+        await testRunner.runTestScript('InputDialog_ActivityProcessed');
+    });
 
-    // it('NumerInput', async () => {
-    //     await testRunner.runTestScript('Action_NumberInput');
-    // });
+    it('NumerInput', async () => {
+        await testRunner.runTestScript('Action_NumberInput');
+    });
 
     it('NumerInputWithDefaultValue', async () => {
         await testRunner.runTestScript('Action_NumberInputWithDefaultValue');
@@ -122,67 +122,67 @@ describe('Actions', ()  => {
     });
     */
 
-    // it('RepeatDialog', async () => {
-    //     await testRunner.runTestScript('Action_RepeatDialog');
-    // });
+    it('RepeatDialog', async () => {
+        await testRunner.runTestScript('Action_RepeatDialog');
+    });
 
-    // it('ReplaceDialog', async () => {
-    //     await testRunner.runTestScript('Action_ReplaceDialog');
-    // });
+    it('ReplaceDialog', async () => {
+        await testRunner.runTestScript('Action_ReplaceDialog');
+    });
 
-    // it('SendActivity', async () => {
-    //     await testRunner.runTestScript('Action_SendActivity');
-    // });
+    it('SendActivity', async () => {
+        await testRunner.runTestScript('Action_SendActivity');
+    });
 
-    // it('SetProperties', async () => {
-    //     await testRunner.runTestScript('Action_SetProperties');
-    // });
+    it('SetProperties', async () => {
+        await testRunner.runTestScript('Action_SetProperties');
+    });
 
-    // it('SetProperty', async () => {
-    //     await testRunner.runTestScript('Action_SetProperty');
-    // });
+    it('SetProperty', async () => {
+        await testRunner.runTestScript('Action_SetProperty');
+    });
 
-    // it('SignOutUser', async () => {
-    //     await testRunner.runTestScript('Action_SignOutUser');
-    // });
+    it('SignOutUser', async () => {
+        await testRunner.runTestScript('Action_SignOutUser');
+    });
 
-    // it('Switch_Bool', async () => {
-    //     await testRunner.runTestScript('Action_Switch_Bool');
-    // });
+    it('Switch_Bool', async () => {
+        await testRunner.runTestScript('Action_Switch_Bool');
+    });
 
-    // it('Switch_Default', async () => {
-    //     await testRunner.runTestScript('Action_Switch_Default');
-    // });
+    it('Switch_Default', async () => {
+        await testRunner.runTestScript('Action_Switch_Default');
+    });
 
-    // it('Switch_Number', async () => {
-    //     await testRunner.runTestScript('Action_Switch_Number');
-    // });
+    it('Switch_Number', async () => {
+        await testRunner.runTestScript('Action_Switch_Number');
+    });
 
-    // it('Switch', async () => {
-    //     await testRunner.runTestScript('Action_Switch');
-    // });
+    it('Switch', async () => {
+        await testRunner.runTestScript('Action_Switch');
+    });
 
-    // it('TextInput', async () => {
-    //     await testRunner.runTestScript('Action_TextInput');
-    // });
+    it('TextInput', async () => {
+        await testRunner.runTestScript('Action_TextInput');
+    });
 
-    // it('TextInputWithInvalidPrompt', async () => {
-    //     await testRunner.runTestScript('Action_TextInputWithInvalidPrompt');
-    // });
+    it('TextInputWithInvalidPrompt', async () => {
+        await testRunner.runTestScript('Action_TextInputWithInvalidPrompt');
+    });
 
-    // it('TextInputWithValueExpression', async () => {
-    //     await testRunner.runTestScript('Action_TextInputWithValueExpression');
-    // });
+    it('TextInputWithValueExpression', async () => {
+        await testRunner.runTestScript('Action_TextInputWithValueExpression');
+    });
 
-    // it('TraceActivity', async () => {
-    //     await testRunner.runTestScript('Action_TraceActivity');
-    // });
+    it('TraceActivity', async () => {
+        await testRunner.runTestScript('Action_TraceActivity');
+    });
 
-    // it('UpdateActivity', async () => {
-    //     await testRunner.runTestScript('Action_UpdateActivity');
-    // });
+    it('UpdateActivity', async () => {
+        await testRunner.runTestScript('Action_UpdateActivity');
+    });
 
-    // it('WaitForInput', async () => {
-    //     await testRunner.runTestScript('Action_WaitForInput');
-    // });
+    it('WaitForInput', async () => {
+        await testRunner.runTestScript('Action_WaitForInput');
+    });
 });
