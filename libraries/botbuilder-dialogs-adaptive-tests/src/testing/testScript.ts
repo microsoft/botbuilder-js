@@ -64,7 +64,7 @@ export class TestScript extends Configurable {
         }
 
         // how to inject LG middleware
-        const resourceExplorer = ResourceExplorer.loadProject(path.resolve('D:\\repos\\botbuilder-js\\libraries\\botbuilder-dialogs-adaptive\\tests\\lg'), [], false);
+        const resourceExplorer = ResourceExplorer.loadProject(path.resolve(__dirname, '../../..'), [], false);
         testAdapter.use(new LanguageGeneratorMiddleWare(resourceExplorer));
         // const lgm = new LanguageGeneratorManager(resourceExplorer);
         // await lgm.loadResources();
