@@ -46,7 +46,7 @@ const badExpressions =
       'replaceIgnoreCase(one, \'l\', \'k\')', // replaceIgnoreCase only accept string parameter
       'replaceIgnoreCase(\'hi\', 1, \'k\')', // replaceIgnoreCase only accept string parameter
       'replaceIgnoreCase(\'hi\', \'l\', 1)', // replaceIgnoreCase only accept string parameter
-      'split(hello)', // split need two parameters
+      'split(hello, \'l\',  \'l\')', // split need one or two parameters
       'split(one, \'l\')', // split only accept string parameter
       'split(hello, 1)', // split only accept string parameter
       'substring(hello, 0.5)', // the second parameter of substring must be integer

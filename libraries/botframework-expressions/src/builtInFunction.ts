@@ -18,6 +18,7 @@ import { EvaluateExpressionDelegate, ExpressionEvaluator, ValidateExpressionDele
 import { ExpressionType } from './expressionType';
 import { Extensions } from './extensions';
 import { TimeZoneConverter } from './timeZoneConverter';
+import { convertCSharpDateTimeToMomentJS } from './formatConverter';
 import { MemoryInterface, SimpleObjectMemory, ComposedMemory } from './memory';
 
 /**
@@ -620,7 +621,14 @@ export class BuiltInFunctions {
     }
 
     public static timestampFormatter(formatter: string): string {
-        return formatter.replace(/dd/g, 'DD').replace(/yyyy/g, 'YYYY').replace(/d/g, 'D').replace(/y/g, 'Y');
+        let result = formatter;
+        try {
+            result = convertCSharpDateTimeToMomentJS(formatter);
+        } catch(e) {
+            // do nothing
+        }
+
+        return result;
     }
 
     public static timeUnitTransformer(duration: number, cSharpStr: string): { duration: number; tsStr: string } {
@@ -1887,9 +1895,9 @@ export class BuiltInFunctions {
                 (expression: Expression): void => BuiltInFunctions.validateArityAndAnyType(expression, 3, 3, ReturnType.String)),
             new ExpressionEvaluator(
                 ExpressionType.Split,
-                BuiltInFunctions.apply((args: any []): string[] => BuiltInFunctions.parseStringOrNull(args[0]).split(BuiltInFunctions.parseStringOrNull(args[1])), BuiltInFunctions.verifyStringOrNull),
+                BuiltInFunctions.apply((args: any []): string[] => BuiltInFunctions.parseStringOrNull(args[0]).split(BuiltInFunctions.parseStringOrNull(args[1]? args[1]: '')), BuiltInFunctions.verifyStringOrNull),
                 ReturnType.Object,
-                (expression: Expression): void => BuiltInFunctions.validateArityAndAnyType(expression, 2, 2, ReturnType.String)),
+                (expression: Expression): void => BuiltInFunctions.validateArityAndAnyType(expression, 1, 2, ReturnType.String)),
             new ExpressionEvaluator(
                 ExpressionType.Substring,
                 BuiltInFunctions.substring,
