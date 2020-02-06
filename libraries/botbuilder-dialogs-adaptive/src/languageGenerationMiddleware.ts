@@ -15,9 +15,10 @@ import { TemplateEngineLanguageGenerator, LanguageGeneratorManager } from './gen
 export class LanguageGeneratorMiddleWare implements Middleware {
     private readonly _resourceExplorer: ResourceExplorer;
     private readonly _defaultLg: string;
+    private readonly languageGeneratorManagerKey = 'LanguageGeneratorManager';
+    private readonly languageGeneratorKey = 'LanguageGenerator';
+    private _languageGeneratorManager: LanguageGeneratorManager;
     private _languageGenerator: LanguageGenerator;
-    private languageGeneratorManagerKey = 'LanguageGeneratorManager';
-    private languageGeneratorKey = 'LanguageGenerator';
 
     public constructor(resourceExpolrer: ResourceExplorer = undefined, defaultLg: string = undefined) {
         this._resourceExplorer = resourceExpolrer? resourceExpolrer : new ResourceExplorer();
@@ -34,8 +35,13 @@ export class LanguageGeneratorMiddleWare implements Middleware {
             throw new Error('context is null');
         }
 
-        if (this._languageGenerator === undefined) {
-            const resource =  await this._resourceExplorer.getResource(this._defaultLg);
+        if (!this._languageGeneratorManager) {
+            this._languageGeneratorManager = new LanguageGeneratorManager(this._resourceExplorer);
+            await this._languageGeneratorManager.loadResources();
+        }
+
+        if (!this._languageGenerator) {
+            const resource = await this._resourceExplorer.getResource(this._defaultLg);
             if (resource !== undefined) {
                 this._languageGenerator = new ResourceMultiLanguageGenerator(this._defaultLg);
             } else {
@@ -45,9 +51,7 @@ export class LanguageGeneratorMiddleWare implements Middleware {
 
         // miss LanguageGenerationComponentRegistration
         if (context.turnState.get(this.languageGeneratorManagerKey) === undefined) {
-            const lgm = new LanguageGeneratorManager(this._resourceExplorer);
-            await lgm.loadResources();
-            context.turnState.set(this.languageGeneratorManagerKey, lgm);
+            context.turnState.set(this.languageGeneratorManagerKey, this._languageGeneratorManager);
         }
         
         if (this._languageGenerator === undefined) {
@@ -60,7 +64,4 @@ export class LanguageGeneratorMiddleWare implements Middleware {
             await next();
         }
     }
-
-
-
 }
