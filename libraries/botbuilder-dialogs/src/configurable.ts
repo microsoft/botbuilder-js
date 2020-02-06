@@ -31,9 +31,6 @@ export abstract class Configurable {
                     } else {
                         this[key] = setting;
                     }
-                } else if ((key === 'text' || key === 'activity') && typeof setting === 'string') {
-                    this['activity'] = setting;
-                    this[key] = setting; 
                 } else if (setting !== undefined) {
                     this[key] = setting; 
                 }

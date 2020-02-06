@@ -79,7 +79,21 @@ export class SendActivity<O extends object = {}> extends Dialog<O> implements Co
      * This is just a convenience property for setting the dialogs [outputBinding](#outputbinding).
      */
     public configure(config: SendActivityConfiguration): this {
-        return super.configure(config);
+        for (const key in config) {
+            if (config.hasOwnProperty(key)) {
+                const value = config[key];
+                switch (key) {
+                    case 'activity':
+                        this.activity = new ActivityTemplate(value);
+                        break;
+                    default:
+                        super.configure({ [key]: value });
+                        break;
+                }
+            }
+        }
+
+        return this;
     }
 
     public async beginDialog(dc: DialogContext, options: O): Promise<DialogTurnResult> {
