@@ -2,7 +2,8 @@
 import 'mocha';
 import { TestRunner } from './testing';
 
-describe('TestScript', () => {
+describe('TestScript', function() {
+    this.timeout(5000);
     const testRunner = new TestRunner('resources/testScriptTests');
 
     it('AssertReply_Assertions', async () => {

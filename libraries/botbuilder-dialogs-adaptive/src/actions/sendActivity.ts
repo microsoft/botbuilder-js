@@ -16,7 +16,7 @@ export interface SendActivityConfiguration extends DialogConfiguration {
     /**
      * Activity or message text to send the user.
      */
-    activity?: TemplateInterface<Partial<Activity>>;
+    activity?: TemplateInterface<Partial<Activity>> | string;
 
     /**
      * (Optional) Structured Speech Markup Language (SSML) to speak to the user.
@@ -79,7 +79,21 @@ export class SendActivity<O extends object = {}> extends Dialog<O> implements Co
      * This is just a convenience property for setting the dialogs [outputBinding](#outputbinding).
      */
     public configure(config: SendActivityConfiguration): this {
-        return super.configure(config);
+        for (const key in config) {
+            if (config.hasOwnProperty(key)) {
+                const value = config[key];
+                switch (key) {
+                    case 'activity':
+                        this.activity = new ActivityTemplate(value);
+                        break;
+                    default:
+                        super.configure({ [key]: value });
+                        break;
+                }
+            }
+        }
+
+        return this;
     }
 
     public async beginDialog(dc: DialogContext, options: O): Promise<DialogTurnResult> {
@@ -97,9 +111,10 @@ export class SendActivity<O extends object = {}> extends Dialog<O> implements Co
         }
 
         // Send activity and return result
-        const data = Object.assign({
+        const data = Object.assign(dc.state, {
             utterance: dc.context.activity.text || ''
-        }, dc.state, options);
+        }, options);
+        
         const activityResult = await this.activity.bindToData(dc.context, data);
         const result = await dc.context.sendActivity(activityResult);
         return await dc.endDialog(result);

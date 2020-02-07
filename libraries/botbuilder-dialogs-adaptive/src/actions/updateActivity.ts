@@ -14,7 +14,7 @@ import { StaticActivityTemplate } from '../templates/staticActivityTemplate';
 
 export interface UpdateActivityConfiguration extends DialogConfiguration {
     activityId?: string;
-    activity?: TemplateInterface<Partial<Activity>>;
+    activity?: TemplateInterface<Partial<Activity>> | string;
     disabled?: string;
 }
 
@@ -73,7 +73,21 @@ export class UpdateActivity<O extends object = {}> extends Dialog<O> implements 
 
 
     public configure(config: UpdateActivityConfiguration): this {
-        return super.configure(config);
+        for (const key in config) {
+            if (config.hasOwnProperty(key)) {
+                const value = config[key];
+                switch (key) {
+                    case 'activity':
+                        this.activity = new ActivityTemplate(value);
+                        break;
+                    default:
+                        super.configure({ [key]: value });
+                        break;
+                }
+            }
+        }
+
+        return this;
     }
 
     public async beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {
