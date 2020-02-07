@@ -2,7 +2,8 @@
 import 'mocha';
 import { TestRunner } from './testing';
 
-describe('Conditions', () => {
+describe('Conditions', function() {
+    this.timeout(5000);
     const testRunner = new TestRunner('resources/conditionsTests');
 
     it('OnIntent', async () => {

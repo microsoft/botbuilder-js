@@ -16,9 +16,9 @@ export interface InputDialogConfiguration extends DialogConfiguration {
     allowInterruptions?: string;
     alwaysPrompt?: boolean;
     value?: string;
-    prompt?: TemplateInterface<Partial<Activity>>;
-    unrecognizedPrompt?: TemplateInterface<Partial<Activity>>;
-    invalidPrompt?: TemplateInterface<Partial<Activity>>;
+    prompt?: TemplateInterface<Partial<Activity>> | string;
+    unrecognizedPrompt?: TemplateInterface<Partial<Activity>> | string;
+    invalidPrompt?: TemplateInterface<Partial<Activity>> | string;
     property?: string;
     validations?: string[];
     maxTurnCount?: number;
