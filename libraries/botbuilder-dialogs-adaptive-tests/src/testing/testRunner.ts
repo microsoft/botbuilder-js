@@ -38,6 +38,7 @@ export class TestRunner {
         const json = await TestRunner.readPackageJson(path.join(this.resourcePath, `${testName}.test.dialog`));
         const script = await this.typeLoader.load(json) as TestScript;
         script.description = script.description || testName;
+        this.testAdapter.activeQueue = [];
         await script.execute(testName, this.testAdapter);
     }
 
