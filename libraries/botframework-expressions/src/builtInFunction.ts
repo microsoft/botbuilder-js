@@ -224,6 +224,32 @@ export class BuiltInFunctions {
     }
 
     /**
+     * Verify value is numeric.
+     * @param value alue to check.
+     * @param expression Expression that led to value.
+     * @returns Error or undefined if invalid.
+     */
+    public static verifyNumberOrNumericList(value: any, expression: Expression, _: number): string {
+        let error: string;
+        if (typeof value === 'number' && !Number.isNaN(value)) {
+            return error;
+        }
+
+        if (!Array.isArray(value)) {
+            error = `${ expression } is neither a list nor a number.`;
+        } else {
+            for (const elt of value) {
+                if (typeof elt !== 'number' || Number.isNaN(elt)) {
+                    error = `${ elt } is not a number in ${ expression }.`;
+                    break;
+                }
+            }
+        }
+
+        return error;
+    }
+
+    /**
      * Verify value is numeric list.
      * @param value alue to check.
      * @param expression Expression that led to value.
@@ -494,6 +520,16 @@ export class BuiltInFunctions {
     public static numeric(type: string, func: (arg0: any []) => any): ExpressionEvaluator {
         return new ExpressionEvaluator(type, BuiltInFunctions.applySequence(func, BuiltInFunctions.verifyNumber),
             ReturnType.Number, BuiltInFunctions.validateNumber);
+    }
+
+    /**
+     * Numeric operators that can have 1 or more args.
+     * @param type Expression type.
+     * @param func Function to apply.
+     */
+    public static numericOrNumericList(type: string, func: (arg0: any []) => any): ExpressionEvaluator {
+        return new ExpressionEvaluator(type, BuiltInFunctions.apply(func, BuiltInFunctions.verifyNumberOrNumericList),
+            ReturnType.Number, BuiltInFunctions.validateAtLeastOne);
     }
 
     /**
@@ -1649,8 +1685,54 @@ export class BuiltInFunctions {
 
                     return error;
                 }),
-            BuiltInFunctions.numeric(ExpressionType.Min, (args: any []): number => Math.min(args[0], args[1])),
-            BuiltInFunctions.numeric(ExpressionType.Max, (args: any []): number => Math.max(args[0], args[1])),
+            BuiltInFunctions.numericOrNumericList(ExpressionType.Min, (args: any []): number => {
+                let result = Number.POSITIVE_INFINITY;
+                if (args.length === 1) {
+                    if (Array.isArray(args[0])) {
+                        for (const value of args[0]) {
+                            result = Math.min(result, value);
+                        }
+                    } else {
+                        result =  Math.min(result, args[0]);
+                    }
+                } else {
+                    for (const arg of args) {
+                        if (Array.isArray(arg)) {
+                            for (const value of arg) {
+                                result = Math.min(result, value);
+                            }
+                        } else {
+                            result =  Math.min(result, arg);
+                        }
+                    }
+                }
+
+                return result;
+            }),
+            BuiltInFunctions.numericOrNumericList(ExpressionType.Max, (args: any []): number => {
+                let result = Number.NEGATIVE_INFINITY;
+                if (args.length === 1) {
+                    if (Array.isArray(args[0])) {
+                        for (const value of args[0]) {
+                            result = Math.max(result, value);
+                        }
+                    } else {
+                        result =  Math.max(result, args[0]);
+                    }
+                } else {
+                    for (const arg of args) {
+                        if (Array.isArray(arg)) {
+                            for (const value of arg) {
+                                result = Math.max(result, value);
+                            }
+                        } else {
+                            result =  Math.max(result, arg);
+                        }
+                    }
+                }
+
+                return result;
+            }),
             BuiltInFunctions.multivariateNumeric(ExpressionType.Power, (args: any []): number => Math.pow(args[0], args[1])),
             new ExpressionEvaluator(
                 ExpressionType.Mod,
@@ -1895,9 +1977,9 @@ export class BuiltInFunctions {
                 (expression: Expression): void => BuiltInFunctions.validateArityAndAnyType(expression, 3, 3, ReturnType.String)),
             new ExpressionEvaluator(
                 ExpressionType.Split,
-                BuiltInFunctions.apply((args: any []): string[] => BuiltInFunctions.parseStringOrNull(args[0]).split(BuiltInFunctions.parseStringOrNull(args[1])), BuiltInFunctions.verifyStringOrNull),
+                BuiltInFunctions.apply((args: any []): string[] => BuiltInFunctions.parseStringOrNull(args[0]).split(BuiltInFunctions.parseStringOrNull(args[1]? args[1]: '')), BuiltInFunctions.verifyStringOrNull),
                 ReturnType.Object,
-                (expression: Expression): void => BuiltInFunctions.validateArityAndAnyType(expression, 2, 2, ReturnType.String)),
+                (expression: Expression): void => BuiltInFunctions.validateArityAndAnyType(expression, 1, 2, ReturnType.String)),
             new ExpressionEvaluator(
                 ExpressionType.Substring,
                 BuiltInFunctions.substring,
