@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 import {
-    ComponentRegistration, TypeRegistration, ConfigurableTypeBuilder
+    ComponentRegistration, TypeRegistration, ConfigurableTypeBuilder, DefaultTypeBuilder
 } from 'botbuilder-dialogs-declarative';
 import {
     AttachmentInput, ChoiceInput, ConfirmInput, DateTimeInput,
@@ -27,6 +27,14 @@ import {
     OnIntent, OnInvokeActivity, OnMessageActivity, OnMessageDeleteActivity,
     OnMessageReactionActivity, OnMessageUpdateActivity, OnRepromptDialog,
     OnTypingActivity, OnUnknownIntent
+} from 'botbuilder-dialogs-adaptive';
+import {
+    AgeEntityRecognizer, ConfirmationEntityRecognizer, CurrencyEntityRecognizer,
+    DateTimeEntityRecognizer, DimensionEntityRecognizer, EmailEntityRecognizer,
+    GuidEntityRecognizer, HashtagEntityRecognizer, IpEntityRecognizer,
+    MentionEntityRecognizer, NumberEntityRecognizer, OrdinalEntityRecognizer,
+    PercentageEntityRecognizer, PhoneNumberEntityRecognizer, RegexEntityRecognizer,
+    TemperatureEntityRecognizer, UrlEntityRecognizer
 } from 'botbuilder-dialogs-adaptive';
 import { RegexRecognizer, AdaptiveDialog } from 'botbuilder-dialogs-adaptive';
 
@@ -101,6 +109,23 @@ export class AdaptiveComponentRegistration implements ComponentRegistration {
         types.push(new TypeRegistration(OnUnknownIntent.declarativeType, new ConfigurableTypeBuilder(OnUnknownIntent)));
 
         // Recognizers
+        types.push(new TypeRegistration(AgeEntityRecognizer.declarativeType, new DefaultTypeBuilder(AgeEntityRecognizer)));
+        types.push(new TypeRegistration(ConfirmationEntityRecognizer.declarativeType, new DefaultTypeBuilder(ConfirmationEntityRecognizer)));
+        types.push(new TypeRegistration(CurrencyEntityRecognizer.declarativeType, new DefaultTypeBuilder(CurrencyEntityRecognizer)));
+        types.push(new TypeRegistration(DateTimeEntityRecognizer.declarativeType, new DefaultTypeBuilder(DateTimeEntityRecognizer)));
+        types.push(new TypeRegistration(DimensionEntityRecognizer.declarativeType, new DefaultTypeBuilder(DimensionEntityRecognizer)));
+        types.push(new TypeRegistration(EmailEntityRecognizer.declarativeType, new DefaultTypeBuilder(EmailEntityRecognizer)));
+        types.push(new TypeRegistration(GuidEntityRecognizer.declarativeType, new DefaultTypeBuilder(GuidEntityRecognizer)));
+        types.push(new TypeRegistration(HashtagEntityRecognizer.declarativeType, new DefaultTypeBuilder(HashtagEntityRecognizer)));
+        types.push(new TypeRegistration(IpEntityRecognizer.declarativeType, new DefaultTypeBuilder(IpEntityRecognizer)));
+        types.push(new TypeRegistration(MentionEntityRecognizer.declarativeType, new DefaultTypeBuilder(MentionEntityRecognizer)));
+        types.push(new TypeRegistration(NumberEntityRecognizer.declarativeType, new DefaultTypeBuilder(NumberEntityRecognizer)));
+        types.push(new TypeRegistration(OrdinalEntityRecognizer.declarativeType, new DefaultTypeBuilder(OrdinalEntityRecognizer)));
+        types.push(new TypeRegistration(PercentageEntityRecognizer.declarativeType, new DefaultTypeBuilder(PercentageEntityRecognizer)));
+        types.push(new TypeRegistration(PhoneNumberEntityRecognizer.declarativeType, new DefaultTypeBuilder(PhoneNumberEntityRecognizer)));
+        types.push(new TypeRegistration(RegexEntityRecognizer.declarativeType, new ConfigurableTypeBuilder(RegexEntityRecognizer)));
+        types.push(new TypeRegistration(TemperatureEntityRecognizer.declarativeType, new DefaultTypeBuilder(TemperatureEntityRecognizer)));
+        types.push(new TypeRegistration(UrlEntityRecognizer.declarativeType, new DefaultTypeBuilder(UrlEntityRecognizer)));
         types.push(new TypeRegistration(RegexRecognizer.declarativeType, new ConfigurableTypeBuilder(RegexRecognizer)));
 
         // Generators

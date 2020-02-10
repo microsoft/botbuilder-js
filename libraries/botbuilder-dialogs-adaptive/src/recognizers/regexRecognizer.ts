@@ -37,7 +37,20 @@ export class RegexRecognizer extends Configurable implements Recognizer {
     public entities: EntityRecognizer[] = [];
 
     public configure(config: RegexRecognizerConfiguration): this {
-        return super.configure(config);
+        for (const key in config) {
+            if (config.hasOwnProperty(key)) {
+                const value = config[key];
+                switch (key) {
+                    case 'intents':
+                        this.intents = value.map((v: any): IntentPattern => new IntentPattern(v.intent, v.pattern));
+                        break;
+                    default:
+                        super.configure({ [key]: value });
+                        break;
+                }
+            }
+        }
+        return this;
     }
 
     public async recognize(dialogContext: DialogContext): Promise<RecognizerResult>;
