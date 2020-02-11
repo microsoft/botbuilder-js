@@ -31,7 +31,7 @@ export class IntentPattern {
     }
 
     public set pattern(value: string) {
-        this._pattern = value;
-        this.regex = new RegExp(value, 'ig');
+        this._pattern = value.startsWith('(?i)') ? value.substr(4) : value;
+        this.regex = new RegExp(this._pattern, 'ig');
     }
 }
