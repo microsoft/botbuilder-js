@@ -2,9 +2,9 @@
 import 'mocha';
 import { TestRunner } from './testing';
 
-describe('ActionScope', function() {
+describe('ActionScopeTests', function() {
     this.timeout(5000);
-    const testRunner = new TestRunner('resources/actionScopeTests');
+    const testRunner = new TestRunner('resources/ActionScopeTests');
 
     it('Break', async () => {
         await testRunner.runTestScript('ActionScope_Break');

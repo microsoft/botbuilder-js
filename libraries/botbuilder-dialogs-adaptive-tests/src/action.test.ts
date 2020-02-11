@@ -2,9 +2,9 @@
 import 'mocha';
 import { TestRunner } from './testing';
 
-describe('Actions', function() {
+describe('ActionTests', function() {
     this.timeout(10000);
-    const testRunner = new TestRunner('resources/actionsTests');
+    const testRunner = new TestRunner('resources/ActionTests');
 
     it('BeginDialog', async () => {
         await testRunner.runTestScript('Action_BeginDialog');

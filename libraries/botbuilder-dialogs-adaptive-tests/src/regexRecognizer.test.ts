@@ -2,9 +2,9 @@
 import 'mocha';
 import { TestRunner } from './testing';
 
-describe('Recognizers', function() {
+describe('RegexRecognizerTests', function() {
     this.timeout(5000);
-    const testRunner = new TestRunner('resources/recognizerTests');
+    const testRunner = new TestRunner('resources/RegexRecognizerTests');
 
     it('Entities', async () => {
         await testRunner.runTestScript('RegexRecognizerTests_Entities');
