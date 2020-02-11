@@ -19,7 +19,7 @@ import { ExpressionType } from './expressionType';
 import { Extensions } from './extensions';
 import { TimeZoneConverter } from './timeZoneConverter';
 import { convertCSharpDateTimeToMomentJS } from './formatConverter';
-import { MemoryInterface, SimpleObjectMemory, ComposedMemory } from './memory';
+import { MemoryInterface, SimpleObjectMemory, ComposedMemory, StackedMemory } from './memory';
 
 /**
  * Verify the result of an expression is of the appropriate type and return a string if not.
@@ -950,22 +950,20 @@ export class BuiltInFunctions {
 
         if (!error) {
             // 2nd parameter has been rewrite to $local.item
-            const iteratorName: string = (expression.children[1].children[0] as Constant).value as string;
             if (!Array.isArray(collection)) {
                 error = `${ expression.children[0] } is not a collection to run foreach`;
             } else {
+                const iteratorName = (expression.children[1].children[0] as Constant).value as string;
+                const stackedMemory = StackedMemory.wrap(state);
                 result = [];
                 for (const item of collection) {
                     const local: Map<string, any> = new Map<string, any>([
                         [iteratorName, item]
                     ]);
 
-                    const newMemory: Map<string, any> = new Map<string, MemoryInterface>([
-                        ['$global', state],
-                        ['$local', new SimpleObjectMemory(local)]
-                    ]);
-
-                    const { value: r, error: e } = expression.children[2].tryEvaluate(new ComposedMemory(newMemory));
+                    stackedMemory.push(SimpleObjectMemory.wrap(local));
+                    const { value: r, error: e } = expression.children[2].tryEvaluate(stackedMemory);
+                    stackedMemory.pop();
                     if (e !== undefined) {
                         return { value: undefined, error: e };
                     }
@@ -989,18 +987,17 @@ export class BuiltInFunctions {
             if (!Array.isArray(collection)) {
                 error = `${ expression.children[0] } is not a collection to run where`;
             } else {
+                const iteratorName = (expression.children[1].children[0] as Constant).value as string;
+                const stackedMemory = StackedMemory.wrap(state);
                 result = [];
                 for (const item of collection) {
                     const local: Map<string, any> = new Map<string, any>([
                         [iteratorName, item]
                     ]);
 
-                    const newMemory: Map<string, MemoryInterface> = new Map<string, MemoryInterface>([
-                        ['$global', state],
-                        ['$local', new SimpleObjectMemory(local)]
-                    ]);
-
-                    const { value: r, error: e } = expression.children[2].tryEvaluate(new ComposedMemory(newMemory));
+                    stackedMemory.push(SimpleObjectMemory.wrap(local));
+                    const { value: r, error: e } = expression.children[2].tryEvaluate(stackedMemory);
+                    stackedMemory.pop();
                     if (e !== undefined) {
                         return { value: undefined, error: e };
                     }
@@ -1028,12 +1025,6 @@ export class BuiltInFunctions {
         if (!(second.type === ExpressionType.Accessor && second.children.length === 1)) {
             throw new Error(`Second parameter of foreach is not an identifier : ${ second }`);
         }
-
-        const iteratorName: string = second.toString();
-
-        // rewrite the 2nd, 3rd paramater
-        expression.children[1] = BuiltInFunctions.rewriteAccessor(expression.children[1], iteratorName);
-        expression.children[2] = BuiltInFunctions.rewriteAccessor(expression.children[2], iteratorName);
     }
 
     private static validateIsMatch(expression: Expression): void {
@@ -1044,35 +1035,6 @@ export class BuiltInFunctions {
             // tslint:disable-next-line: restrict-plus-operands
             CommonRegex.CreateRegex((second as Constant).value + '');
         }
-    }
-
-    private static rewriteAccessor(expression: Expression, localVarName: string): Expression {
-        if (expression.type === ExpressionType.Accessor) {
-            if (expression.children.length === 2) {
-                expression.children[1] = BuiltInFunctions.rewriteAccessor(expression.children[1], localVarName);
-            } else {
-                const str: string = expression.toString();
-                let prefix = '$global';
-                if (str === localVarName || str.startsWith(localVarName.concat('.'))) {
-                    prefix = '$local';
-                }
-
-                expression.children = [
-                    expression.children[0],
-                    Expression.makeExpression(ExpressionType.Accessor, undefined, new Constant(prefix))
-                ];
-            }
-
-            return expression;
-        } else {
-            // rewite children if have any
-            for (let idx = 0; idx < expression.children.length; idx++) {
-                expression.children[idx] = BuiltInFunctions.rewriteAccessor(expression.children[idx], localVarName);
-            }
-
-            return expression;
-        }
-
     }
 
     private static isEmpty(instance: any): boolean {
