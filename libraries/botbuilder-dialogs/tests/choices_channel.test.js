@@ -1,5 +1,5 @@
 const assert = require('assert');
-const { supportsSuggestedActions, supportsCardActions, hasMessageFeed, getChannelId } = require('../lib/choices/channel');
+const { supportsSuggestedActions, supportsCardActions, hasMessageFeed, getChannelId } = require('../lib/choices');
 
 describe('channel methods', function() {
     this.timeout(5000);
