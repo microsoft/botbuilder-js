@@ -60,17 +60,17 @@ export class RegexRecognizer extends Configurable implements Recognizer {
         if (!textOrActivity) {
             const activity: Activity = dialogContext.context.activity;
             if (activity && activity.type == ActivityTypes.Message) {
-                text = activity.text;
+                text = activity.text || '';
                 locale = activity.locale;
             }
         } else if (typeof(textOrActivity) == 'object') {
             const activity: Activity = textOrActivity;
             if (activity.type == ActivityTypes.Message) {
-                text = activity.text;
+                text = activity.text || '';
                 locale = activity.locale;
             }
         } else if (typeof(textOrActivity) == 'string') {
-            text = textOrActivity;
+            text = textOrActivity || '';
         }
 
         const recognizerResult: RecognizerResult = {

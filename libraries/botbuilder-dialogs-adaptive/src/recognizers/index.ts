@@ -10,3 +10,4 @@ export * from './intentPattern';
 export * from './recognizer';
 export * from './recognizerSet';
 export * from './regexRecognizer';
+export * from './valueRecognizer';
