@@ -24,7 +24,7 @@ export class StackedMemory extends Array<MemoryInterface> implements MemoryInter
         if (this.length === 0) {
             return undefined;
         } else {
-            for (const memory of this) {
+            for (const memory of Array.from(this).reverse()) {
                 if (memory.getValue(path) !== undefined) {
                     return memory.getValue(path);
                 }
