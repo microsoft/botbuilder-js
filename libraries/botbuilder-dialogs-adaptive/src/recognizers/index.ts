@@ -8,4 +8,5 @@
 export * from './entityRecognizers';
 export * from './intentPattern';
 export * from './recognizer';
+export * from './recognizerSet';
 export * from './regexRecognizer';

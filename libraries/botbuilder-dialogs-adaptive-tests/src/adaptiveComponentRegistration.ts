@@ -36,7 +36,7 @@ import {
     PercentageEntityRecognizer, PhoneNumberEntityRecognizer, RegexEntityRecognizer,
     TemperatureEntityRecognizer, UrlEntityRecognizer
 } from 'botbuilder-dialogs-adaptive';
-import { RegexRecognizer, AdaptiveDialog } from 'botbuilder-dialogs-adaptive';
+import { RegexRecognizer, RecognizerSet, AdaptiveDialog } from 'botbuilder-dialogs-adaptive';
 
 export class AdaptiveComponentRegistration implements ComponentRegistration {
     public getTypes(): TypeRegistration[] {
@@ -127,6 +127,7 @@ export class AdaptiveComponentRegistration implements ComponentRegistration {
         types.push(new TypeRegistration(TemperatureEntityRecognizer.declarativeType, new DefaultTypeBuilder(TemperatureEntityRecognizer)));
         types.push(new TypeRegistration(UrlEntityRecognizer.declarativeType, new DefaultTypeBuilder(UrlEntityRecognizer)));
         types.push(new TypeRegistration(RegexRecognizer.declarativeType, new ConfigurableTypeBuilder(RegexRecognizer)));
+        types.push(new TypeRegistration(RecognizerSet.declarativeType, new ConfigurableTypeBuilder(RecognizerSet)));
 
         // Generators
         //types.push(new TypeRegistration(RegexRecognizer.declarativeType, new ConfigurableTypeBuilder(ResourceMultiLanguageGenerator)));
