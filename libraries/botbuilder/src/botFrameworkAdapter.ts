@@ -15,6 +15,7 @@ import { INodeBuffer, INodeSocket, IReceiveRequest, ISocket, IStreamingTransport
 
 import { InvokeResponse, WebRequest, WebResponse } from './interfaces';
 import { defaultPipeName, GET, POST, MESSAGES_PATH, StreamingHttpClient, TokenResolver, VERSION_PATH } from './streaming';
+import { ICredentialTokenProvider } from './credentialTokenProvider';
 
 export enum StatusCodes {
     OK = 200,
@@ -139,7 +140,7 @@ export const INVOKE_RESPONSE_KEY: symbol = Symbol('invokeResponse');
  * };
  * ```
  */
-export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvider, RequestHandler {
+export class BotFrameworkAdapter extends BotAdapter implements ICredentialTokenProvider, RequestHandler {
     // These keys are public to permit access to the keys from the adapter when it's a being
     // from library that does not have access to static properties off of BotFrameworkAdapter.
     // E.g. botbuilder-dialogs
@@ -518,6 +519,7 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
      * 
      * @returns A [TokenResponse](xref:botframework-schema.TokenResponse) object that contains the user token.
      */
+    public async getUserToken(context: TurnContext, connectionName: string, magicCode?: string): Promise<TokenResponse>;
     public async getUserToken(context: TurnContext, connectionName: string, magicCode?: string, oAuthAppCredentials?: AppCredentials): Promise<TokenResponse> {
         if (!context.activity.from || !context.activity.from.id) {
             throw new Error(`BotFrameworkAdapter.getUserToken(): missing from or from.id`);
@@ -546,6 +548,7 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
      * @param userId The ID of user to sign out.
      * @param oAuthAppCredentials AppCredentials for OAuth.
      */
+    public async signOutUser(context: TurnContext, connectionName?: string, userId?: string): Promise<void>;
     public async signOutUser(context: TurnContext, connectionName?: string, userId?: string, oAuthAppCredentials?: AppCredentials): Promise<void> {
         if (!context.activity.from || !context.activity.from.id) {
             throw new Error(`BotFrameworkAdapter.signOutUser(): missing from or from.id`);
@@ -568,6 +571,7 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
      * @param connectionName The name of the auth connection to use.
      * @param oAuthAppCredentials AppCredentials for OAuth.
      */
+    public async getSignInLink(context: TurnContext, connectionName: string): Promise<string>;
     public async getSignInLink(context: TurnContext, connectionName: string, oAuthAppCredentials?: AppCredentials): Promise<string> {
         this.checkEmulatingOAuthCards(context);
         const conversation: Partial<ConversationReference> = TurnContext.getConversationReference(context.activity);
@@ -595,6 +599,7 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
      * 
      * @returns The [TokenStatus](xref:botframework-connector.TokenStatus) objects retrieved.
      */
+    public async getTokenStatus(context: TurnContext, userId?: string, includeFilter?: string): Promise<TokenStatus[]>;
     public async getTokenStatus(context: TurnContext, userId?: string, includeFilter?: string, oAuthAppCredentials?: AppCredentials): Promise<TokenStatus[]> {
         if (!userId && (!context.activity.from || !context.activity.from.id)) {
             throw new Error(`BotFrameworkAdapter.getTokenStatus(): missing from or from.id`);
@@ -617,6 +622,7 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
      * 
      * @returns A map of the [TokenResponse](xref:botframework-schema.TokenResponse) objects by resource URL.
      */
+    public async getAadTokens(context: TurnContext, connectionName: string, resourceUrls: string[]): Promise<{[propertyName: string]: TokenResponse;}>;
     public async getAadTokens(context: TurnContext, connectionName: string, resourceUrls: string[], oAuthAppCredentials?: AppCredentials): Promise<{
         [propertyName: string]: TokenResponse;
     }> {

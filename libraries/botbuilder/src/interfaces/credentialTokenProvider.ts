@@ -6,21 +6,17 @@
  * Licensed under the MIT License.
  */
 
-import { TurnContext } from './turnContext';
-import { TokenResponse } from 'botframework-schema';
+import { IUserTokenProvider, TokenResponse, TurnContext } from 'botbuilder-core';
+import { AppCredentials } from 'botframework-connector';
 
-/**
- * Interface for User Token OAuth APIs for BotAdapters
- */
-export interface IUserTokenProvider {
+export interface ICredentialTokenProvider extends IUserTokenProvider {
     /**
      * Retrieves the OAuth token for a user that is in a sign-in flow.
      * @param context Context for the current turn of conversation with the user.
      * @param connectionName Name of the auth connection to use.
      * @param magicCode (Optional) Optional user entered code to validate.
-     * @param oAuthAppCredentials AppCredentials for OAuth.
      */
-    getUserToken(context: TurnContext, connectionName: string, magicCode?: string): Promise<TokenResponse>;
+    getUserToken(context: TurnContext, connectionName: string, magicCode?: string, appCredential?: AppCredentials): Promise<TokenResponse>;
 
     /**
      * Signs the user out with the token server.
@@ -28,7 +24,7 @@ export interface IUserTokenProvider {
      * @param connectionName Name of the auth connection to use.
      * @param oAuthAppCredentials AppCredentials for OAuth.
      */
-    signOutUser(context: TurnContext, connectionName: string): Promise<void>;
+    signOutUser(context: TurnContext, connectionName: string, appCredentials?: AppCredentials): Promise<void>;
 
     /**
      * Gets a signin link from the token server that can be sent as part of a SigninCard.
@@ -36,7 +32,7 @@ export interface IUserTokenProvider {
      * @param connectionName Name of the auth connection to use.
      * @param oAuthAppCredentials AppCredentials for OAuth.
      */
-    getSignInLink(context: TurnContext, connectionName: string): Promise<string>;
+    getSignInLink(context: TurnContext, connectionName: string, appCredentials?: AppCredentials): Promise<string>;
 
     /**
      * Signs the user out with the token server.
@@ -44,8 +40,7 @@ export interface IUserTokenProvider {
      * @param connectionName Name of the auth connection to use.
      * @param oAuthAppCredentials AppCredentials for OAuth.
      */
-    getAadTokens(context: TurnContext, connectionName: string, resourceUrls: string[]): Promise<{
+    getAadTokens(context: TurnContext, connectionName: string, resourceUrls: string[], appCredentials?: AppCredentials): Promise<{
         [propertyName: string]: TokenResponse;
     }>;
 }
-
