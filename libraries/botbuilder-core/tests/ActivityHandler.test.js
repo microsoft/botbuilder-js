@@ -22,11 +22,11 @@ describe('ActivityHandler', function() {
         await bot.run(context).catch(error => done(error));
     }
 
-    it(`should fire onTurn for any inbound activity`, async function (done) {
+    it(`should fire onTurn for any inbound activity`, async function(done) {
 
         const bot = new ActivityHandler();
 
-        bot.onTurn(async(context, next) => {
+        bot.onTurn(async (context, next) => {
             assert(true, 'onTurn not called');
             done();
             await next();
@@ -35,66 +35,66 @@ describe('ActivityHandler', function() {
         processActivity({type: 'any'}, bot, done);
     });
 
-    it(`should fire onMessage for any message activities`, async function (done) {
+    it(`should fire onMessage for any message activities`, async function(done) {
 
         const bot = new ActivityHandler();
 
-        bot.onMessage(async(context, next) => {
+        bot.onMessage(async (context, next) => {
             assert(true, 'onMessage not called');
             done();
             await next();
         });
 
-        processActivity({type: 'message'}, bot, done);
+        processActivity({type: ActivityTypes.Message}, bot, done);
     });
 
-    it(`calling  next allows following events to firing`, async function (done) {
+    it(`calling  next allows following events to firing`, async function(done) {
 
         const bot = new ActivityHandler();
 
-        bot.onTurn(async(context, next) => {
+        bot.onTurn(async (context, next) => {
             assert(true, 'onTurn not called');
             await next();
         });
 
-        bot.onMessage(async(context, next) => {
+        bot.onMessage(async (context, next) => {
             assert(true, 'onMessage not called');
             done();
             await next();
         });
 
-        processActivity({type: 'message'}, bot, done);
+        processActivity({type: ActivityTypes.Message}, bot, done);
     });
 
-    it(`omitting call to next prevents following events from firing`, async function (done) {
+    it(`omitting call to next prevents following events from firing`, async function(done) {
 
         const bot = new ActivityHandler();
 
-        bot.onTurn(async(context, next) => {
+        bot.onTurn(async (context, next) => {
             assert(true, 'onTurn not called');
             done();
         });
 
-        bot.onMessage(async(context, next) => {
+        bot.onMessage(async (context, next) => {
             assert(false, 'onMessage called improperly!');
             await next();
         });
 
-        processActivity({type: 'message'}, bot, done);
+        processActivity({type: ActivityTypes.Message}, bot, done);
     });
 
-    it(`binding 2 methods to the same event both fire`, async function (done) {
+    it(`binding 2 methods to the same event both fire`, async function(done) {
 
         const bot = new ActivityHandler();
         let count = 0;
 
-        bot.onMessage(async(context, next) => {
+        bot.onMessage(async (context, next) => {
             assert(true, 'event 1 did not fire');
             count++;
             await next();
         });
 
-        bot.onMessage(async(context, next) => {
+        bot.onMessage(async (context, next) => {
             assert(true, 'event 2 did not fire');
             count++;
 
@@ -103,14 +103,14 @@ describe('ActivityHandler', function() {
             await next();
         });
 
-        processActivity({type: 'message'}, bot, done);
+        processActivity({type: ActivityTypes.Message}, bot, done);
     });
 
-    it(`should fire onConversationUpdate`, async function (done) {
+    it(`should fire onConversationUpdate`, async function(done) {
 
         const bot = new ActivityHandler();
 
-        bot.onConversationUpdate(async(context, next) => {
+        bot.onConversationUpdate(async (context, next) => {
             assert(true, 'onConversationUpdate not called');
             done();
             await next();
@@ -119,11 +119,11 @@ describe('ActivityHandler', function() {
         processActivity({type: ActivityTypes.ConversationUpdate}, bot, done);
     });
 
-    it(`should fire onMembersAdded`, async function (done) {
+    it(`should fire onMembersAdded`, async function(done) {
 
         const bot = new ActivityHandler();
 
-        bot.onMembersAdded(async(context, next) => {
+        bot.onMembersAdded(async (context, next) => {
             assert(true, 'onConversationUpdate not called');
             done();
             await next();
@@ -132,11 +132,11 @@ describe('ActivityHandler', function() {
         processActivity({type: ActivityTypes.ConversationUpdate, membersAdded: [{id: 1}]}, bot, done);
     });
 
-    it(`should fire onMembersRemoved`, async function (done) {
+    it(`should fire onMembersRemoved`, async function(done) {
 
         const bot = new ActivityHandler();
 
-        bot.onMembersRemoved(async(context, next) => {
+        bot.onMembersRemoved(async (context, next) => {
             assert(true, 'onMembersRemoved not called');
             done();
             await next();
@@ -145,11 +145,11 @@ describe('ActivityHandler', function() {
         processActivity({type: ActivityTypes.ConversationUpdate, membersRemoved: [{id: 1}]}, bot, done);
     });
 
-    it(`should fire onMessageReaction`, async function (done) {
+    it(`should fire onMessageReaction`, async function(done) {
 
         const bot = new ActivityHandler();
 
-        bot.onMessageReaction(async(context, next) => {
+        bot.onMessageReaction(async (context, next) => {
             assert(true, 'onMessageReaction not called');
             done();
             await next();
@@ -158,11 +158,11 @@ describe('ActivityHandler', function() {
         processActivity({type: ActivityTypes.MessageReaction}, bot, done);
     });
 
-    it(`should fire onReactionsAdded`, async function (done) {
+    it(`should fire onReactionsAdded`, async function(done) {
 
         const bot = new ActivityHandler();
 
-        bot.onReactionsAdded(async(context, next) => {
+        bot.onReactionsAdded(async (context, next) => {
             assert(true, 'onReactionsAdded not called');
             done();
             await next();
@@ -171,11 +171,11 @@ describe('ActivityHandler', function() {
         processActivity({type: ActivityTypes.MessageReaction, reactionsAdded: [{type: 'like'}]}, bot, done);
     });
 
-    it(`should fire onReactionsRemoved`, async function (done) {
+    it(`should fire onReactionsRemoved`, async function(done) {
 
         const bot = new ActivityHandler();
 
-        bot.onReactionsRemoved(async(context, next) => {
+        bot.onReactionsRemoved(async (context, next) => {
             assert(true, 'onReactionsRemoved not called');
             done();
             await next();
@@ -184,11 +184,11 @@ describe('ActivityHandler', function() {
         processActivity({type: ActivityTypes.MessageReaction, reactionsRemoved: [{type: 'like'}]}, bot, done);
     });
     
-    it(`should fire onEvent`, async function (done) {
+    it(`should fire onEvent`, async function(done) {
 
         const bot = new ActivityHandler();
 
-        bot.onEvent(async(context, next) => {
+        bot.onEvent(async (context, next) => {
             assert(true, 'onEvent not called');
             done();
             await next();
@@ -197,12 +197,37 @@ describe('ActivityHandler', function() {
         processActivity({type: ActivityTypes.Event}, bot, done);
     });
 
-
-    it(`should fire onUnrecognizedActivityType`, async function (done) {
+    it(`should fire onEndOfConversation`, async function(done) {
 
         const bot = new ActivityHandler();
 
-        bot.onUnrecognizedActivityType(async(context, next) => {
+        bot.onEndOfConversation(async (context, next) => {
+            assert(true, 'onEndOfConversation not called');
+            done();
+            await next();
+        });
+
+        processActivity({type: ActivityTypes.EndOfConversation}, bot, done);
+    });
+
+    it(`should fire onTyping`, async function(done) {
+
+        const bot = new ActivityHandler();
+
+        bot.onTyping(async (context, next) => {
+            assert(true, 'onTyping not called');
+            done();
+            await next();
+        });
+
+        processActivity({type: ActivityTypes.Typing}, bot, done);
+    });
+
+    it(`should fire onUnrecognizedActivityType`, async function(done) {
+
+        const bot = new ActivityHandler();
+
+        bot.onUnrecognizedActivityType(async (context, next) => {
             assert(true, 'onUnrecognizedActivityType not called');
             done();
             await next();
@@ -211,11 +236,11 @@ describe('ActivityHandler', function() {
         processActivity({type: 'foo'}, bot, done);
     });
 
-    it(`should fire onDialog`, async function (done) {
+    it(`should fire onDialog`, async function(done) {
 
         const bot = new ActivityHandler();
 
-        bot.onDialog(async(context, next) => {
+        bot.onDialog(async (context, next) => {
             assert(true, 'onDialog not called');
             done();
             await next();
