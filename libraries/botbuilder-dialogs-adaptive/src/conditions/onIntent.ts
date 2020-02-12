@@ -74,21 +74,6 @@ export class OnIntent extends OnDialogEvent {
     protected onCreateChangeList(planning: SequenceContext, dialogOptions?: any): ActionChangeList {
         const recognizerResult = planning.state.getValue<RecognizerResult>(`${TurnPath.DIALOGEVENT}.value`);
         if (recognizerResult) {
-            // Get top scoring intent
-            let topIntent: string;
-            let topScore = -1;
-            for (const key in recognizerResult.intents) {
-                if (recognizerResult.intents.hasOwnProperty(key)) {
-                    if (topIntent == undefined) {
-                        topIntent = key;
-                        topScore = recognizerResult.intents[key].score;
-                    } else if (recognizerResult.intents[key].score > topScore) {
-                        topIntent = key;
-                        topScore = recognizerResult.intents[key].score;
-                    }
-                }
-            }
-
             const actionState: ActionState = {
                 dialogId: this.actionScope.id,
                 options: dialogOptions,
