@@ -18,7 +18,6 @@ export interface IUserTokenProvider {
      * @param context Context for the current turn of conversation with the user.
      * @param connectionName Name of the auth connection to use.
      * @param magicCode (Optional) Optional user entered code to validate.
-     * @param oAuthAppCredentials AppCredentials for OAuth.
      */
     getUserToken(context: TurnContext, connectionName: string, magicCode?: string): Promise<TokenResponse>;
 
@@ -26,7 +25,6 @@ export interface IUserTokenProvider {
      * Signs the user out with the token server.
      * @param context Context for the current turn of conversation with the user.
      * @param connectionName Name of the auth connection to use.
-     * @param oAuthAppCredentials AppCredentials for OAuth.
      */
     signOutUser(context: TurnContext, connectionName: string): Promise<void>;
 
@@ -34,7 +32,6 @@ export interface IUserTokenProvider {
      * Gets a signin link from the token server that can be sent as part of a SigninCard.
      * @param context Context for the current turn of conversation with the user.
      * @param connectionName Name of the auth connection to use.
-     * @param oAuthAppCredentials AppCredentials for OAuth.
      */
     getSignInLink(context: TurnContext, connectionName: string): Promise<string>;
 
@@ -42,7 +39,6 @@ export interface IUserTokenProvider {
      * Signs the user out with the token server.
      * @param context Context for the current turn of conversation with the user.
      * @param connectionName Name of the auth connection to use.
-     * @param oAuthAppCredentials AppCredentials for OAuth.
      */
     getAadTokens(context: TurnContext, connectionName: string, resourceUrls: string[]): Promise<{
         [propertyName: string]: TokenResponse;
