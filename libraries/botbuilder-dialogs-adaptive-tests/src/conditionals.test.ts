@@ -17,4 +17,8 @@ describe('ConditionalsTests', function() {
     it('OnActivityTypes', async () => {
         await testRunner.runTestScript('ConditionalsTests_OnActivityTypes');
     });
+
+    it('OnChooseIntent', async () => {
+        await testRunner.runTestScript('ConditionalsTests_OnChooseIntent');
+    });
 });
