@@ -21,7 +21,7 @@ import {
     SetProperty, SignOutUser, SwitchCondition, TraceActivity, UpdateActivity
 } from 'botbuilder-dialogs-adaptive';
 import {
-    OnActivity, OnBeginDialog, OnCancelDialog, OnCondition,
+    OnActivity, OnBeginDialog, OnCancelDialog, OnChooseIntent, OnCondition,
     OnConversationUpdateActivity, OnCustomEvent, OnDialogEvent,
     OnEndOfConversationActivity, OnError, OnEventActivity, OnHandoffActivity,
     OnIntent, OnInvokeActivity, OnMessageActivity, OnMessageDeleteActivity,
@@ -36,7 +36,7 @@ import {
     PercentageEntityRecognizer, PhoneNumberEntityRecognizer, RegexEntityRecognizer,
     TemperatureEntityRecognizer, UrlEntityRecognizer
 } from 'botbuilder-dialogs-adaptive';
-import { MultiLanguageRecognizer, RegexRecognizer, RecognizerSet, ValueRecognizer } from 'botbuilder-dialogs-adaptive';
+import { CrossTrainedRecognizerSet, MultiLanguageRecognizer, RegexRecognizer, RecognizerSet, ValueRecognizer } from 'botbuilder-dialogs-adaptive';
 import { AdaptiveDialog } from 'botbuilder-dialogs-adaptive';
 
 export class AdaptiveComponentRegistration implements ComponentRegistration {
@@ -91,6 +91,7 @@ export class AdaptiveComponentRegistration implements ComponentRegistration {
         types.push(new TypeRegistration(OnActivity.declarativeType, new ConfigurableTypeBuilder(OnActivity)));
         types.push(new TypeRegistration(OnBeginDialog.declarativeType, new ConfigurableTypeBuilder(OnBeginDialog)));
         types.push(new TypeRegistration(OnCancelDialog.declarativeType, new ConfigurableTypeBuilder(OnCancelDialog)));
+        types.push(new TypeRegistration(OnChooseIntent.declarativeType, new ConfigurableTypeBuilder(OnChooseIntent)));
         types.push(new TypeRegistration(OnCondition.declarativeType, new ConfigurableTypeBuilder(OnCondition)));
         types.push(new TypeRegistration(OnConversationUpdateActivity.declarativeType, new ConfigurableTypeBuilder(OnConversationUpdateActivity)));
         types.push(new TypeRegistration(OnCustomEvent.declarativeType, new ConfigurableTypeBuilder(OnCustomEvent)));
@@ -127,6 +128,7 @@ export class AdaptiveComponentRegistration implements ComponentRegistration {
         types.push(new TypeRegistration(RegexEntityRecognizer.declarativeType, new ConfigurableTypeBuilder(RegexEntityRecognizer)));
         types.push(new TypeRegistration(TemperatureEntityRecognizer.declarativeType, new DefaultTypeBuilder(TemperatureEntityRecognizer)));
         types.push(new TypeRegistration(UrlEntityRecognizer.declarativeType, new DefaultTypeBuilder(UrlEntityRecognizer)));
+        types.push(new TypeRegistration(CrossTrainedRecognizerSet.declarativeType, new ConfigurableTypeBuilder(CrossTrainedRecognizerSet)));
         types.push(new TypeRegistration(MultiLanguageRecognizer.declarativeType, new ConfigurableTypeBuilder(MultiLanguageRecognizer)));
         types.push(new TypeRegistration(RegexRecognizer.declarativeType, new ConfigurableTypeBuilder(RegexRecognizer)));
         types.push(new TypeRegistration(RecognizerSet.declarativeType, new ConfigurableTypeBuilder(RecognizerSet)));

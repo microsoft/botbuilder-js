@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 
-import { RecognizerResult, Activity } from 'botbuilder-core';
+import { RecognizerResult, Activity, getTopScoringIntent } from 'botbuilder-core';
 import { Configurable, DialogContext } from 'botbuilder-dialogs';
 import { Recognizer } from './recognizer';
 
@@ -56,7 +56,7 @@ export class RecognizerSet extends Configurable implements Recognizer {
         const results = await Promise.all(promises);
         for (let i = 0; i < results.length; i++) {
             const result = results[i];
-            const { intent } = RecognizerSet.getTopScoringIntent(result);
+            const { intent } = getTopScoringIntent(result);
             if (intent && intent != 'None') {
                 // merge text
                 if (!text) {
@@ -112,26 +112,5 @@ export class RecognizerSet extends Configurable implements Recognizer {
 
         const recognizerResult: RecognizerResult = { text, alteredText, intents, entities };
         return recognizerResult;
-    }
-
-    public static getTopScoringIntent(result: RecognizerResult): { intent: string, score: number } {
-        if (!result || !result.intents) {
-            throw new Error('result is empty');
-        }
-
-        let topIntent = '';
-        let topScore = 0.0;
-        for (const intent in result.intents) {
-            const score = result.intents[intent].score;
-            if (score > topScore) {
-                topScore = score;
-                topIntent = intent;
-            }
-        }
-
-        return {
-            intent: topIntent,
-            score: topScore
-        };
     }
 }
