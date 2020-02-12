@@ -11,11 +11,17 @@ import { DialogContext } from '../dialogContext';
 import { PromptOptions, PromptRecognizerResult,  PromptValidator } from './prompt';
 import { channels } from '../choices/channel';
 import { isSkillClaim } from './skillsHelpers';
+import { AppCredentials } from 'botframework-connector';
 
 /**
  * Settings used to configure an `OAuthPrompt` instance.
  */
 export interface OAuthPromptSettings {
+    /**
+     * AppCredentials for OAuth.
+     */
+    oAuthAppCredentials: AppCredentials;
+
     /**
      * Name of the OAuth connection being used.
      */
@@ -204,7 +210,7 @@ export class OAuthPrompt extends Dialog {
         // Get the token and call validator
         const adapter: IUserTokenProvider = context.adapter as IUserTokenProvider;
 
-        return await adapter.getUserToken(context, this.settings.connectionName, code);
+        return await adapter.getUserToken(context, this.settings.connectionName, code, this.settings.oAuthAppCredentials);
     }
 
     /**
@@ -231,7 +237,7 @@ export class OAuthPrompt extends Dialog {
         // Sign out user
         const adapter: IUserTokenProvider = context.adapter as IUserTokenProvider;
 
-        return adapter.signOutUser(context, this.settings.connectionName);
+        return adapter.signOutUser(context, this.settings.connectionName, this.settings.oAuthAppCredentials);
     }
 
     private async sendOAuthCardAsync(context: TurnContext, prompt?: string|Partial<Activity>): Promise<void> {
@@ -252,14 +258,14 @@ export class OAuthPrompt extends Dialog {
                 let cardActionType = ActionTypes.Signin;
                 let link: string;
                 if (OAuthPrompt.isFromStreamingConnection(context.activity)) {
-                    link = await (context.adapter as any).getSignInLink(context, this.settings.connectionName);
+                    link = await (context.adapter as any).getSignInLink(context, this.settings.connectionName, this.settings.oAuthAppCredentials);
                 } else {
                     // Retrieve the ClaimsIdentity from a BotFrameworkAdapter. For more information see
                     // https://github.com/microsoft/botbuilder-js/commit/b7932e37bb6e421985d5ce53edd9e82af6240a63#diff-3e3af334c0c6adf4906ee5e2a23beaebR250
                     const identity = context.turnState.get((context.adapter as any).BotIdentityKey);
                     if (identity && isSkillClaim(identity.claims)) {
                         // Force magic code for Skills (to be addressed in R8)
-                        link = await (context.adapter as any).getSignInLink(context, this.settings.connectionName);
+                        link = await (context.adapter as any).getSignInLink(context, this.settings.connectionName, this.settings.oAuthAppCredentials);
                         cardActionType = ActionTypes.OpenUrl;
                     }
                 }
@@ -279,7 +285,7 @@ export class OAuthPrompt extends Dialog {
             const cards: Attachment[] = msg.attachments.filter((a: Attachment) => a.contentType === CardFactory.contentTypes.signinCard);
             if (cards.length === 0) {
                 // Append signin card
-                const link: any = await (context.adapter as any).getSignInLink(context, this.settings.connectionName);
+                const link: any = await (context.adapter as any).getSignInLink(context, this.settings.connectionName, this.settings.oAuthAppCredentials);
                 msg.attachments.push(CardFactory.signinCard(
                     this.settings.title,
                     link,
