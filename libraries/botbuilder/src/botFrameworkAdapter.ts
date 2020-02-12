@@ -15,7 +15,7 @@ import { INodeBuffer, INodeSocket, IReceiveRequest, ISocket, IStreamingTransport
 
 import { InvokeResponse, WebRequest, WebResponse } from './interfaces';
 import { defaultPipeName, GET, POST, MESSAGES_PATH, StreamingHttpClient, TokenResolver, VERSION_PATH } from './streaming';
-import { ICredentialTokenProvider } from '.interfaces/credentialTokenProvider';
+import { ICredentialTokenProvider } from './interfaces/credentialTokenProvider';
 
 export enum StatusCodes {
     OK = 200,
