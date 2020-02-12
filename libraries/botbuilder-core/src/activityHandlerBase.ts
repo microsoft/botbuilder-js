@@ -60,6 +60,12 @@ export class ActivityHandlerBase {
             case ActivityTypes.Event:
                 await this.onEventActivity(context);
                 break;
+            case ActivityTypes.EndOfConversation:
+                await this.onEndOfConversationActivity(context);
+                break;
+            case ActivityTypes.Typing:
+                await this.onTypingActivity(context);
+                break;
             default:
             // handler for unknown or unhandled types
                 await this.onUnrecognizedActivity(context);
@@ -140,6 +146,32 @@ export class ActivityHandlerBase {
      * emission process.
      */
     protected async onEventActivity(context: TurnContext): Promise<void> {
+        return;
+    }
+
+    /**
+     * Provides a hook for emitting the _end of conversation_ event.
+     * 
+     * @param context The context object for the current turn.
+     * 
+     * @remarks
+     * Overwrite this method to run registered _end of conversation_ handlers and then continue the event
+     * emission process.
+     */
+    protected async onEndOfConversationActivity(context: TurnContext): Promise<void> {
+        return;
+    }
+
+    /**
+     * Provides a hook for emitting the _typing_ event.
+     * 
+     * @param context The context object for the current turn.
+     * 
+     * @remarks
+     * Overwrite this method to run registered _typing_ handlers and then continue the event
+     * emission process.
+     */
+    protected async onTypingActivity(context: TurnContext): Promise<void> {
         return;
     }
 
