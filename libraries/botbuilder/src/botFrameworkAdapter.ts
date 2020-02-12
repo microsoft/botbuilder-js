@@ -1008,18 +1008,18 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
     /**
      * Creates an OAuth API client.
      * 
-     * @param serviceUrl The client's service URL.
      * @param context The context object for the turn.
+     * @param serviceUrl The client's service URL.
      * @param oAuthAppCredentials AppCredentials for OAuth.
      * 
      * @remarks
      * Override this in a derived class to create a mock OAuth API client for unit testing.
      */
     protected createTokenApiClient(context: TurnContext, serviceUrl: string, oAuthAppCredentials: AppCredentials): TokenApiClient {
-        const credentials = oAuthAppCredentials ?? this.credentials;
-        const client = new TokenApiClient(credentials, { baseUri: serviceUrl, userAgent: USER_AGENT });
+        const tokenApiClientCredentials = oAuthAppCredentials ?? this.credentials;
+        const client = new TokenApiClient(tokenApiClientCredentials, { baseUri: serviceUrl, userAgent: USER_AGENT });
 
-        context.turnState.set(this.TokenApiClientCredentials, credentials);
+        context.turnState.set(this.TokenApiClientCredentials, tokenApiClientCredentials);
 
         return client;
     }
