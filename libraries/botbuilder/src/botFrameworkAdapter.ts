@@ -145,7 +145,7 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
     // E.g. botbuilder-dialogs
     public readonly BotIdentityKey: Symbol = Symbol('BotIdentity');
     public readonly ConnectorClientKey: Symbol = Symbol('ConnectorClient');
-    public readonly TokenApiClientCredentials: Symbol = Symbol('TokenApiClientCredentials');
+    public readonly TokenApiClientCredentialsKey: Symbol = Symbol('TokenApiClientCredentials');
 
     protected readonly credentials: AppCredentials;
     protected readonly credentialsProvider: SimpleCredentialProvider;
@@ -1019,7 +1019,7 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
         const tokenApiClientCredentials = oAuthAppCredentials ?? this.credentials;
         const client = new TokenApiClient(tokenApiClientCredentials, { baseUri: serviceUrl, userAgent: USER_AGENT });
 
-        context.turnState.set(this.TokenApiClientCredentials, tokenApiClientCredentials);
+        context.turnState.set(this.TokenApiClientCredentialsKey, tokenApiClientCredentials);
 
         return client;
     }
