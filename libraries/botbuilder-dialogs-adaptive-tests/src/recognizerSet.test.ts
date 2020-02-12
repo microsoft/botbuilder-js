@@ -2,7 +2,7 @@
 import 'mocha';
 import { TestRunner } from './testing';
 
-describe('RecognizerSetTest', function() {
+describe('RecognizerSetTests', function() {
     this.timeout(5000);
     const testRunner = new TestRunner('resources/RecognizerSetTests');
 
