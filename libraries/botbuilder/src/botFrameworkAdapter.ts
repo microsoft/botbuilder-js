@@ -1016,7 +1016,7 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
      * Override this in a derived class to create a mock OAuth API client for unit testing.
      */
     protected createTokenApiClient(context: TurnContext, serviceUrl: string, oAuthAppCredentials: AppCredentials): TokenApiClient {
-        const tokenApiClientCredentials = oAuthAppCredentials ?? this.credentials;
+        const tokenApiClientCredentials = oAuthAppCredentials ? oAuthAppCredentials : this.credentials;
         const client = new TokenApiClient(tokenApiClientCredentials, { baseUri: serviceUrl, userAgent: USER_AGENT });
 
         context.turnState.set(this.TokenApiClientCredentialsKey, tokenApiClientCredentials);
