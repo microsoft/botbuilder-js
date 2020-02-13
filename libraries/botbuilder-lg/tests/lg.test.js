@@ -254,6 +254,12 @@ describe('LG', function() {
                 variableOptions: ['coffee', 'userName', 'size', 'price'],
                 templateRefOptions: ['wPhrase', 'LatteOrderConfirmation', 'MochaOrderConfirmation', 'CuppuccinoOrderConfirmation']
             },
+            {
+                name: 'structureTemplate',
+                variableOptions: [ 'text', 'newText' ],
+                templateRefOptions: [ 'ST2' ]
+            
+            }
         ];
         for (const testItem of testData) {
             var engine = new TemplateEngine().addFile(GetExampleFilePath('Analyzer.lg'));

@@ -28,7 +28,7 @@ export class LGImport {
         this.id = this.extractId(parseTree);
     }
 
-    private readonly extractDescription = (parseTree: ImportDefinitionContext): string => parseTree.IMPORT_DESC().text.replace('[', '').replace(']', '');
+    private readonly extractDescription = (parseTree: ImportDefinitionContext): string => parseTree.text.replace('[', '').replace(']', '');
 
-    private readonly extractId = (parseTree: ImportDefinitionContext): string => parseTree.IMPORT_PATH().text.replace('(', '').replace(')', '');
+    private readonly extractId = (parseTree: ImportDefinitionContext): string => parseTree.text.replace('(', '').replace(')', '');
 }
