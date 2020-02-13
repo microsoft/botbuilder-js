@@ -1,12 +1,12 @@
-// Generated from LGFileParser.g4 by ANTLR 4.7.3-SNAPSHOT
+// Generated from LGFileParser.g4 by ANTLR 4.6-SNAPSHOT
 
 
 import { ParseTreeListener } from "antlr4ts/tree/ParseTreeListener";
 
-import { NormalBodyContext } from "./LGFileParser";
-import { IfElseBodyContext } from "./LGFileParser";
 import { SwitchCaseBodyContext } from "./LGFileParser";
+import { NormalBodyContext } from "./LGFileParser";
 import { StructuredBodyContext } from "./LGFileParser";
+import { IfElseBodyContext } from "./LGFileParser";
 import { FileContext } from "./LGFileParser";
 import { ParagraphContext } from "./LGFileParser";
 import { ErrorTemplateContext } from "./LGFileParser";
@@ -44,32 +44,6 @@ import { ImportDefinitionContext } from "./LGFileParser";
  */
 export interface LGFileParserListener extends ParseTreeListener {
 	/**
-	 * Enter a parse tree produced by the `normalBody`
-	 * labeled alternative in `LGFileParser.templateBody`.
-	 * @param ctx the parse tree
-	 */
-	enterNormalBody?: (ctx: NormalBodyContext) => void;
-	/**
-	 * Exit a parse tree produced by the `normalBody`
-	 * labeled alternative in `LGFileParser.templateBody`.
-	 * @param ctx the parse tree
-	 */
-	exitNormalBody?: (ctx: NormalBodyContext) => void;
-
-	/**
-	 * Enter a parse tree produced by the `ifElseBody`
-	 * labeled alternative in `LGFileParser.templateBody`.
-	 * @param ctx the parse tree
-	 */
-	enterIfElseBody?: (ctx: IfElseBodyContext) => void;
-	/**
-	 * Exit a parse tree produced by the `ifElseBody`
-	 * labeled alternative in `LGFileParser.templateBody`.
-	 * @param ctx the parse tree
-	 */
-	exitIfElseBody?: (ctx: IfElseBodyContext) => void;
-
-	/**
 	 * Enter a parse tree produced by the `switchCaseBody`
 	 * labeled alternative in `LGFileParser.templateBody`.
 	 * @param ctx the parse tree
@@ -83,6 +57,19 @@ export interface LGFileParserListener extends ParseTreeListener {
 	exitSwitchCaseBody?: (ctx: SwitchCaseBodyContext) => void;
 
 	/**
+	 * Enter a parse tree produced by the `normalBody`
+	 * labeled alternative in `LGFileParser.templateBody`.
+	 * @param ctx the parse tree
+	 */
+	enterNormalBody?: (ctx: NormalBodyContext) => void;
+	/**
+	 * Exit a parse tree produced by the `normalBody`
+	 * labeled alternative in `LGFileParser.templateBody`.
+	 * @param ctx the parse tree
+	 */
+	exitNormalBody?: (ctx: NormalBodyContext) => void;
+
+	/**
 	 * Enter a parse tree produced by the `structuredBody`
 	 * labeled alternative in `LGFileParser.templateBody`.
 	 * @param ctx the parse tree
@@ -94,6 +81,19 @@ export interface LGFileParserListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	exitStructuredBody?: (ctx: StructuredBodyContext) => void;
+
+	/**
+	 * Enter a parse tree produced by the `ifElseBody`
+	 * labeled alternative in `LGFileParser.templateBody`.
+	 * @param ctx the parse tree
+	 */
+	enterIfElseBody?: (ctx: IfElseBodyContext) => void;
+	/**
+	 * Exit a parse tree produced by the `ifElseBody`
+	 * labeled alternative in `LGFileParser.templateBody`.
+	 * @param ctx the parse tree
+	 */
+	exitIfElseBody?: (ctx: IfElseBodyContext) => void;
 
 	/**
 	 * Enter a parse tree produced by `LGFileParser.file`.

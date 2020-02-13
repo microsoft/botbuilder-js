@@ -1,12 +1,12 @@
-// Generated from LGFileParser.g4 by ANTLR 4.7.3-SNAPSHOT
+// Generated from LGFileParser.g4 by ANTLR 4.6-SNAPSHOT
 
 
 import { ParseTreeVisitor } from "antlr4ts/tree/ParseTreeVisitor";
 
-import { NormalBodyContext } from "./LGFileParser";
-import { IfElseBodyContext } from "./LGFileParser";
 import { SwitchCaseBodyContext } from "./LGFileParser";
+import { NormalBodyContext } from "./LGFileParser";
 import { StructuredBodyContext } from "./LGFileParser";
+import { IfElseBodyContext } from "./LGFileParser";
 import { FileContext } from "./LGFileParser";
 import { ParagraphContext } from "./LGFileParser";
 import { ErrorTemplateContext } from "./LGFileParser";
@@ -47,22 +47,6 @@ import { ImportDefinitionContext } from "./LGFileParser";
  */
 export interface LGFileParserVisitor<Result> extends ParseTreeVisitor<Result> {
 	/**
-	 * Visit a parse tree produced by the `normalBody`
-	 * labeled alternative in `LGFileParser.templateBody`.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	visitNormalBody?: (ctx: NormalBodyContext) => Result;
-
-	/**
-	 * Visit a parse tree produced by the `ifElseBody`
-	 * labeled alternative in `LGFileParser.templateBody`.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	visitIfElseBody?: (ctx: IfElseBodyContext) => Result;
-
-	/**
 	 * Visit a parse tree produced by the `switchCaseBody`
 	 * labeled alternative in `LGFileParser.templateBody`.
 	 * @param ctx the parse tree
@@ -71,12 +55,28 @@ export interface LGFileParserVisitor<Result> extends ParseTreeVisitor<Result> {
 	visitSwitchCaseBody?: (ctx: SwitchCaseBodyContext) => Result;
 
 	/**
+	 * Visit a parse tree produced by the `normalBody`
+	 * labeled alternative in `LGFileParser.templateBody`.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	visitNormalBody?: (ctx: NormalBodyContext) => Result;
+
+	/**
 	 * Visit a parse tree produced by the `structuredBody`
 	 * labeled alternative in `LGFileParser.templateBody`.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
 	visitStructuredBody?: (ctx: StructuredBodyContext) => Result;
+
+	/**
+	 * Visit a parse tree produced by the `ifElseBody`
+	 * labeled alternative in `LGFileParser.templateBody`.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	visitIfElseBody?: (ctx: IfElseBodyContext) => Result;
 
 	/**
 	 * Visit a parse tree produced by `LGFileParser.file`.

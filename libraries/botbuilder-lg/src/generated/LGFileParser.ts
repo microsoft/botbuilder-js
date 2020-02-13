@@ -1,4 +1,4 @@
-// Generated from LGFileParser.g4 by ANTLR 4.7.3-SNAPSHOT
+// Generated from LGFileParser.g4 by ANTLR 4.6-SNAPSHOT
 
 
 import { ATN } from "antlr4ts/atn/ATN";
@@ -1475,7 +1475,7 @@ export class LGFileParser extends Parser {
 	}
 
 	public static readonly _serializedATN: string =
-		"\x03\uC91D\uCABA\u058D\uAFBA\u4F53\u0607\uEA8B\uC241\x03-\xF0\x04\x02" +
+		"\x03\uAF6F\u8320\u479D\uB75C\u4880\u1605\u191C\uAB37\x03-\xF0\x04\x02" +
 		"\t\x02\x04\x03\t\x03\x04\x04\t\x04\x04\x05\t\x05\x04\x06\t\x06\x04\x07" +
 		"\t\x07\x04\b\t\b\x04\t\t\t\x04\n\t\n\x04\v\t\v\x04\f\t\f\x04\r\t\r\x04" +
 		"\x0E\t\x0E\x04\x0F\t\x0F\x04\x10\t\x10\x04\x11\t\x11\x04\x12\t\x12\x04" +
@@ -1505,24 +1505,24 @@ export class LGFileParser extends Parser {
 		"\x14\x02\x16\x02\x18\x02\x1A\x02\x1C\x02\x1E\x02 \x02\"\x02$\x02&\x02" +
 		"(\x02*\x02,\x02.\x020\x022\x024\x026\x028\x02:\x02\x02\n\x03\x02\r\x12" +
 		"\x03\x02\"#\x03\x02(-\x03\x02+-\x03\x02\x1C\x1E\x03\x02\x16\x18\x04\x02" +
-		"\x04\x04\x1D\x1E\x03\x02\x19\x1B\x02\xF7\x02=\x03\x02\x02\x02\x04G\x03" +
-		"\x02\x02\x02\x06J\x03\x02\x02\x02\bN\x03\x02\x02\x02\nR\x03\x02\x02\x02" +
-		"\f]\x03\x02\x02\x02\x0E`\x03\x02\x02\x02\x10h\x03\x02\x02\x02\x12y\x03" +
-		"\x02\x02\x02\x14{\x03\x02\x02\x02\x16\x88\x03\x02\x02\x02\x18\x90\x03" +
-		"\x02\x02\x02\x1A\x96\x03\x02\x02\x02\x1C\x99\x03\x02\x02\x02\x1E\x9D\x03" +
-		"\x02\x02\x02 \xA8\x03\x02\x02\x02\"\xAC\x03\x02\x02\x02$\xAE\x03\x02\x02" +
-		"\x02&\xB1\x03\x02\x02\x02(\xB7\x03\x02\x02\x02*\xB9\x03\x02\x02\x02,\xC7" +
-		"\x03\x02\x02\x02.\xCC\x03\x02\x02\x020\xD0\x03\x02\x02\x022\xD4\x03\x02" +
-		"\x02\x024\xDD\x03\x02\x02\x026\xE1\x03\x02\x02\x028\xE5\x03\x02\x02\x02" +
-		":\xED\x03\x02\x02\x02<>\x05\x04\x03\x02=<\x03\x02\x02\x02>?\x03\x02\x02" +
-		"\x02?@\x03\x02\x02\x02?=\x03\x02\x02\x02@A\x03\x02\x02\x02AB\x07\x02\x02" +
-		"\x03B\x03\x03\x02\x02\x02CH\x05\b\x05\x02DH\x05:\x1E\x02EH\x07\x02\x02" +
-		"\x03FH\x05\x06\x04\x02GC\x03\x02\x02\x02GD\x03\x02\x02\x02GE\x03\x02\x02" +
-		"\x02GF\x03\x02\x02\x02H\x05\x03\x02\x02\x02IK\x07\n\x02\x02JI\x03\x02" +
-		"\x02\x02KL\x03\x02\x02\x02LJ\x03\x02\x02\x02LM\x03\x02\x02\x02M\x07\x03" +
-		"\x02\x02\x02NP\x05\n\x06\x02OQ\x05\x12\n\x02PO\x03\x02\x02\x02PQ\x03\x02" +
-		"\x02\x02Q\t\x03\x02\x02\x02RX\x07\x06\x02\x02SU\x05\x0E\b\x02TV\x05\x10" +
-		"\t\x02UT\x03\x02\x02\x02UV\x03\x02\x02\x02VY\x03\x02\x02\x02WY\x05\f\x07" +
+		"\x04\x04\x1D\x1E\x03\x02\x19\x1B\xF7\x02=\x03\x02\x02\x02\x04G\x03\x02" +
+		"\x02\x02\x06J\x03\x02\x02\x02\bN\x03\x02\x02\x02\nR\x03\x02\x02\x02\f" +
+		"]\x03\x02\x02\x02\x0E`\x03\x02\x02\x02\x10h\x03\x02\x02\x02\x12y\x03\x02" +
+		"\x02\x02\x14{\x03\x02\x02\x02\x16\x88\x03\x02\x02\x02\x18\x90\x03\x02" +
+		"\x02\x02\x1A\x96\x03\x02\x02\x02\x1C\x99\x03\x02\x02\x02\x1E\x9D\x03\x02" +
+		"\x02\x02 \xA8\x03\x02\x02\x02\"\xAC\x03\x02\x02\x02$\xAE\x03\x02\x02\x02" +
+		"&\xB1\x03\x02\x02\x02(\xB7\x03\x02\x02\x02*\xB9\x03\x02\x02\x02,\xC7\x03" +
+		"\x02\x02\x02.\xCC\x03\x02\x02\x020\xD0\x03\x02\x02\x022\xD4\x03\x02\x02" +
+		"\x024\xDD\x03\x02\x02\x026\xE1\x03\x02\x02\x028\xE5\x03\x02\x02\x02:\xED" +
+		"\x03\x02\x02\x02<>\x05\x04\x03\x02=<\x03\x02\x02\x02>?\x03\x02\x02\x02" +
+		"?@\x03\x02\x02\x02?=\x03\x02\x02\x02@A\x03\x02\x02\x02AB\x07\x02\x02\x03" +
+		"B\x03\x03\x02\x02\x02CH\x05\b\x05\x02DH\x05:\x1E\x02EH\x07\x02\x02\x03" +
+		"FH\x05\x06\x04\x02GC\x03\x02\x02\x02GD\x03\x02\x02\x02GE\x03\x02\x02\x02" +
+		"GF\x03\x02\x02\x02H\x05\x03\x02\x02\x02IK\x07\n\x02\x02JI\x03\x02\x02" +
+		"\x02KL\x03\x02\x02\x02LJ\x03\x02\x02\x02LM\x03\x02\x02\x02M\x07\x03\x02" +
+		"\x02\x02NP\x05\n\x06\x02OQ\x05\x12\n\x02PO\x03\x02\x02\x02PQ\x03\x02\x02" +
+		"\x02Q\t\x03\x02\x02\x02RX\x07\x06\x02\x02SU\x05\x0E\b\x02TV\x05\x10\t" +
+		"\x02UT\x03\x02\x02\x02UV\x03\x02\x02\x02VY\x03\x02\x02\x02WY\x05\f\x07" +
 		"\x02XS\x03\x02\x02\x02XW\x03\x02\x02\x02Y\v\x03\x02\x02\x02Z\\\t\x02\x02" +
 		"\x02[Z\x03\x02\x02\x02\\_\x03\x02\x02\x02][\x03\x02\x02\x02]^\x03\x02" +
 		"\x02\x02^\r\x03\x02\x02\x02_]\x03\x02\x02\x02`e\x07\r\x02\x02ab\x07\x0E" +
@@ -1971,64 +1971,6 @@ export class TemplateBodyContext extends ParserRuleContext {
 		super.copyFrom(ctx);
 	}
 }
-export class NormalBodyContext extends TemplateBodyContext {
-	public normalTemplateBody(): NormalTemplateBodyContext {
-		return this.getRuleContext(0, NormalTemplateBodyContext);
-	}
-	constructor(ctx: TemplateBodyContext) {
-		super(ctx.parent, ctx.invokingState);
-		this.copyFrom(ctx);
-	}
-	// @Override
-	public enterRule(listener: LGFileParserListener): void {
-		if (listener.enterNormalBody) {
-			listener.enterNormalBody(this);
-		}
-	}
-	// @Override
-	public exitRule(listener: LGFileParserListener): void {
-		if (listener.exitNormalBody) {
-			listener.exitNormalBody(this);
-		}
-	}
-	// @Override
-	public accept<Result>(visitor: LGFileParserVisitor<Result>): Result {
-		if (visitor.visitNormalBody) {
-			return visitor.visitNormalBody(this);
-		} else {
-			return visitor.visitChildren(this);
-		}
-	}
-}
-export class IfElseBodyContext extends TemplateBodyContext {
-	public ifElseTemplateBody(): IfElseTemplateBodyContext {
-		return this.getRuleContext(0, IfElseTemplateBodyContext);
-	}
-	constructor(ctx: TemplateBodyContext) {
-		super(ctx.parent, ctx.invokingState);
-		this.copyFrom(ctx);
-	}
-	// @Override
-	public enterRule(listener: LGFileParserListener): void {
-		if (listener.enterIfElseBody) {
-			listener.enterIfElseBody(this);
-		}
-	}
-	// @Override
-	public exitRule(listener: LGFileParserListener): void {
-		if (listener.exitIfElseBody) {
-			listener.exitIfElseBody(this);
-		}
-	}
-	// @Override
-	public accept<Result>(visitor: LGFileParserVisitor<Result>): Result {
-		if (visitor.visitIfElseBody) {
-			return visitor.visitIfElseBody(this);
-		} else {
-			return visitor.visitChildren(this);
-		}
-	}
-}
 export class SwitchCaseBodyContext extends TemplateBodyContext {
 	public switchCaseTemplateBody(): SwitchCaseTemplateBodyContext {
 		return this.getRuleContext(0, SwitchCaseTemplateBodyContext);
@@ -2058,6 +2000,35 @@ export class SwitchCaseBodyContext extends TemplateBodyContext {
 		}
 	}
 }
+export class NormalBodyContext extends TemplateBodyContext {
+	public normalTemplateBody(): NormalTemplateBodyContext {
+		return this.getRuleContext(0, NormalTemplateBodyContext);
+	}
+	constructor(ctx: TemplateBodyContext) {
+		super(ctx.parent, ctx.invokingState);
+		this.copyFrom(ctx);
+	}
+	// @Override
+	public enterRule(listener: LGFileParserListener): void {
+		if (listener.enterNormalBody) {
+			listener.enterNormalBody(this);
+		}
+	}
+	// @Override
+	public exitRule(listener: LGFileParserListener): void {
+		if (listener.exitNormalBody) {
+			listener.exitNormalBody(this);
+		}
+	}
+	// @Override
+	public accept<Result>(visitor: LGFileParserVisitor<Result>): Result {
+		if (visitor.visitNormalBody) {
+			return visitor.visitNormalBody(this);
+		} else {
+			return visitor.visitChildren(this);
+		}
+	}
+}
 export class StructuredBodyContext extends TemplateBodyContext {
 	public structuredTemplateBody(): StructuredTemplateBodyContext {
 		return this.getRuleContext(0, StructuredTemplateBodyContext);
@@ -2082,6 +2053,35 @@ export class StructuredBodyContext extends TemplateBodyContext {
 	public accept<Result>(visitor: LGFileParserVisitor<Result>): Result {
 		if (visitor.visitStructuredBody) {
 			return visitor.visitStructuredBody(this);
+		} else {
+			return visitor.visitChildren(this);
+		}
+	}
+}
+export class IfElseBodyContext extends TemplateBodyContext {
+	public ifElseTemplateBody(): IfElseTemplateBodyContext {
+		return this.getRuleContext(0, IfElseTemplateBodyContext);
+	}
+	constructor(ctx: TemplateBodyContext) {
+		super(ctx.parent, ctx.invokingState);
+		this.copyFrom(ctx);
+	}
+	// @Override
+	public enterRule(listener: LGFileParserListener): void {
+		if (listener.enterIfElseBody) {
+			listener.enterIfElseBody(this);
+		}
+	}
+	// @Override
+	public exitRule(listener: LGFileParserListener): void {
+		if (listener.exitIfElseBody) {
+			listener.exitIfElseBody(this);
+		}
+	}
+	// @Override
+	public accept<Result>(visitor: LGFileParserVisitor<Result>): Result {
+		if (visitor.visitIfElseBody) {
+			return visitor.visitIfElseBody(this);
 		} else {
 			return visitor.visitChildren(this);
 		}
