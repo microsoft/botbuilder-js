@@ -137,11 +137,11 @@ class StaticCheckerInner extends AbstractParseTreeVisitor<Diagnostic[]> implemen
     public visitStructuredTemplateBody(context: lp.StructuredTemplateBodyContext): Diagnostic[] {
         let result: Diagnostic[] = [];
 
-        if (context.structuredBodyNameLine().errorStructuredName() !== null) {
+        if (context.structuredBodyNameLine().errorStructuredName() !== undefined) {
             result.push(this.buildLGDiagnostic({message: `Structured name format error.`, context: context.structuredBodyNameLine()}));
         }
 
-        if (context.structuredBodyEndLine() === null) {
+        if (context.structuredBodyEndLine() === undefined) {
             result.push(this.buildLGDiagnostic({message: `Structured LG missing ending ']'.`, context: context}));
         }
 
@@ -150,9 +150,9 @@ class StaticCheckerInner extends AbstractParseTreeVisitor<Diagnostic[]> implemen
             result.push(this.buildLGDiagnostic({message: `Structured LG content is empty.`, context: context}));
         } else {
             for (const body of bodys) {
-                if (body.errorStructureLine !== null) {
+                if (body.errorStructureLine() !== undefined) {
                     result.push(this.buildLGDiagnostic({message: `structured body format error.`, context: body.errorStructureLine()}));
-                } else if (body.objectStructureLine() !== null) {
+                } else if (body.objectStructureLine() !== undefined) {
                     result = result.concat(this.checkExpression(body.objectStructureLine().text, body.objectStructureLine()));
                 } else {
                     const structureValues = body.keyValueStructureLine().keyValueStructureValue();

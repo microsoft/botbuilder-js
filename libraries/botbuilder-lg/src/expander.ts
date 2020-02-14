@@ -98,7 +98,7 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGFi
         let expandedResult: any[] = [result];
         const bodys = stb.structuredBodyContentLine();
         for (const body  of bodys) {
-            const isKVPairBody = body.keyValueStructureLine() !== null;
+            const isKVPairBody = body.keyValueStructureLine() !== undefined;
             if (isKVPairBody) {
                 const property = body.keyValueStructureLine().STRUCTURE_IDENTIFIER().text.toLowerCase();
                 const value = this.visitStructureValue(body.keyValueStructureLine());
@@ -117,11 +117,12 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGFi
                     templateRefValues.set(id, value[0]);
                 }
             } else {
-                const propertyObjects = this.evalExpression(body.objectStructureLine().text).map(x => JSON.parse(x));
+                const propertyObjects: object[] = [];
+                this.evalExpression(body.objectStructureLine().text).forEach(x => propertyObjects.push(JSON.parse(x)));
                 const tempResult = [];
                 for (const res of expandedResult) {
                     for (const propertyObject of propertyObjects) {
-                        const tempRes = res;
+                        const tempRes = JSON.parse(JSON.stringify(res));
 
                         // Full reference to another structured template is limited to the structured template with same type
                         if (typeof propertyObject === 'object' && Evaluator.LGType in propertyObject && propertyObject[Evaluator.LGType].toString() === typeName) {
@@ -143,11 +144,11 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGFi
         const exps: string[] = expandedResult.map((x: string): string => JSON.stringify(x));
 
         let finalResult: string[] = exps;
-        for (const templateRefValue of templateRefValues) {
+        for (const templateRefValueKey of templateRefValues.keys()) {
             const tempRes: string[] = [];
             for (const res of finalResult) {
-                for (const refValue of templateRefValue[1]) {
-                    tempRes.push(res.replace(templateRefValue[0], refValue));
+                for (const refValue of templateRefValues.get(templateRefValueKey)){
+                    tempRes.push(res.replace(templateRefValueKey, refValue));
                 }
             }
 
@@ -160,10 +161,10 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGFi
     private visitStructureValue(ctx: lp.KeyValueStructureLineContext): string[] {
         const values = ctx.keyValueStructureValue();
 
-        let result: string[] = [];
+        let result: any[] = [];
         for (const item of values) {
             if (Evaluator.isPureExpression(item).hasExpr) {
-                result = result.concat(this.evalExpression(Evaluator.isPureExpression(item).expression));
+                result.push(this.evalExpression(Evaluator.isPureExpression(item).expression));
             } else {
                 let itemStringResult = [''];
                 for (const node of item.children) {
@@ -179,7 +180,8 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGFi
                             break;
                     }
                 }
-                result = result.concat(itemStringResult);
+
+                result.push(itemStringResult);
             }
         }
 

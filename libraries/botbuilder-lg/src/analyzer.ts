@@ -107,7 +107,7 @@ export class Analyzer extends AbstractParseTreeVisitor<AnalyzerResult> implement
 
         const bodys = ctx.structuredBodyContentLine();
         for (const body  of bodys) {
-            const isKVPairBody = body.keyValueStructureLine() !== null;
+            const isKVPairBody = body.keyValueStructureLine() !== undefined;
             if (isKVPairBody) {
                 result.union(this.visitStructureValue(body.keyValueStructureLine()));
             } else {
@@ -239,7 +239,7 @@ export class Analyzer extends AbstractParseTreeVisitor<AnalyzerResult> implement
                     expression = node.text;
                     break;
                 default:
-                    if (node.text === null || node.text === '') {
+                    if (node !== undefined && node.text !== '' && node.text !== ' ') {
                         return {hasExpr: false, expression: expression};
                     }
 
