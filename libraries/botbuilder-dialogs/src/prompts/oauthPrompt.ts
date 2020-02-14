@@ -5,13 +5,12 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { Activity, ActivityTypes, Attachment, CardFactory, InputHints, MessageFactory, OAuthLoginTimeoutKey, TokenResponse, TurnContext, IUserTokenProvider, OAuthCard, ActionTypes,  } from 'botbuilder-core';
+import { Activity, ActivityTypes, AppCredentialsProvider, Attachment, CardFactory, InputHints, MessageFactory, OAuthLoginTimeoutKey, TokenResponse, TurnContext, ICredentialTokenProvider, OAuthCard, ActionTypes,  } from 'botbuilder-core';
 import { Dialog, DialogTurnResult } from '../dialog';
 import { DialogContext } from '../dialogContext';
 import { PromptOptions, PromptRecognizerResult,  PromptValidator } from './prompt';
 import { channels } from '../choices/channel';
 import { isSkillClaim } from './skillsHelpers';
-import { AppCredentials } from 'botframework-connector';
 
 /**
  * Settings used to configure an `OAuthPrompt` instance.
@@ -20,7 +19,7 @@ export interface OAuthPromptSettings {
     /**
      * AppCredentials for OAuth.
      */
-    oAuthAppCredentials: AppCredentials;
+    oAuthAppCredentials: AppCredentialsProvider;
 
     /**
      * Name of the OAuth connection being used.
@@ -208,7 +207,7 @@ export class OAuthPrompt extends Dialog {
         }
 
         // Get the token and call validator
-        const adapter: IUserTokenProvider = context.adapter as IUserTokenProvider;
+        const adapter: ICredentialTokenProvider = context.adapter as ICredentialTokenProvider;
 
         return await adapter.getUserToken(context, this.settings.connectionName, code, this.settings.oAuthAppCredentials);
     }
@@ -235,9 +234,9 @@ export class OAuthPrompt extends Dialog {
         }
 
         // Sign out user
-        const adapter: IUserTokenProvider = context.adapter as IUserTokenProvider;
+        const adapter: ICredentialTokenProvider = context.adapter as ICredentialTokenProvider;
 
-        return adapter.signOutUser(context, this.settings.connectionName, this.settings.oAuthAppCredentials);
+        return adapter.signOutUser(context, this.settings.connectionName, null, this.settings.oAuthAppCredentials);
     }
 
     private async sendOAuthCardAsync(context: TurnContext, prompt?: string|Partial<Activity>): Promise<void> {

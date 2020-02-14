@@ -25,8 +25,9 @@ export interface IUserTokenProvider {
      * Signs the user out with the token server.
      * @param context Context for the current turn of conversation with the user.
      * @param connectionName Name of the auth connection to use.
+     * @param userId User id of user to sign out.
      */
-    signOutUser(context: TurnContext, connectionName: string): Promise<void>;
+    signOutUser(context: TurnContext, connectionName: string, userId?: string): Promise<void>;
 
     /**
      * Gets a signin link from the token server that can be sent as part of a SigninCard.
