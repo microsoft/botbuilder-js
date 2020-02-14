@@ -18,7 +18,7 @@ export interface ICredentialTokenProvider extends IUserTokenProvider {
      * @param connectionName Name of the auth connection to use.
      * @param magicCode (Optional) Optional user entered code to validate.
      */
-    getUserToken(context: TurnContext, connectionName: string, magicCode?: string, appCredential?: AppCredentialsProvider): Promise<TokenResponse>;
+    getUserToken(context: TurnContext, connectionName: string, magicCode?: string, appCredentials?: AppCredentialsProvider): Promise<TokenResponse>;
 
     /**
      * Signs the user out with the token server.
