@@ -11,7 +11,7 @@ lexer grammar LGFileLexer;
 //    so it would be very little effort to translate to other languages
 
 @lexer::members {
-  this.ignoreWS = true; // usually we ignore whitespace, but inside template, whitespace is significant
+  ignoreWS = true; // usually we ignore whitespace, but inside template, whitespace is significant
   inTemplate = false; // whether we are in the template
   beginOfTemplateBody = false; // whether we are at the begining of template body
   inMultiline = false; // whether we are in multiline
