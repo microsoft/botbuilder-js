@@ -1,4 +1,4 @@
-﻿﻿> condition error
+﻿> condition error
 # template
 - IF: hi
     - hello
@@ -31,4 +31,8 @@
 - IF  : @{true}
   - hi
 - ELSE  : 
+ - hi
+
+# template6
+- ELSE:
  - hi

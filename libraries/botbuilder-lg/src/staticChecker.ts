@@ -357,7 +357,7 @@ class StaticCheckerInner extends AbstractParseTreeVisitor<Diagnostic[]> implemen
         const multiLinePrefix = context.MULTILINE_PREFIX();
         const multiLineSuffix = context.MULTILINE_SUFFIX();
         
-        if (multiLinePrefix !== null &&  multiLineSuffix === null) {
+        if (multiLinePrefix !== undefined &&  multiLineSuffix === undefined) {
             result.push(this.buildLGDiagnostic({
                 message: 'Close ``` is missing.',
                 context: context

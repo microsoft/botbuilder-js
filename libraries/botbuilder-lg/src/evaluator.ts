@@ -124,7 +124,7 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGFilePa
             if (Evaluator.isPureExpression(item).hasExpr) {
                 result.push(this.evalExpression(Evaluator.isPureExpression(item).expression));
             } else {
-                let itemStringResult ='';
+                let itemStringResult = '';
                 for(const node of item.children) {
                     switch ((node as TerminalNode).symbol.type) {
                         case (lp.LGFileParser.ESCAPE_CHARACTER_IN_STRUCTURE_BODY): 
@@ -414,11 +414,13 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGFilePa
             '\\\\': '\\',
         };
 
-        if (exp in validCharactersDict) {
-            return validCharactersDict[exp];
-        } else {
-            return exp.substr(1);
-        }
+        return exp.replace(/\\[^\r\n]?/g, (sub: string): string => { 
+            if (sub in validCharactersDict) {
+                return validCharactersDict[sub];
+            } else {
+                return sub.substr(1);
+            }
+        });
     }
 
     private readonly fromFile = (): any => (args: readonly any[]): any => {

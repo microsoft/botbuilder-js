@@ -283,11 +283,13 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGFi
             '\\\\': '\\',
         };
 
-        if (exp in validCharactersDict) {
-            return validCharactersDict[exp];
-        } else {
-            return exp.substr(1);
-        }
+        return exp.replace(/\\[^\r\n]?/g, (sub: string): string => { 
+            if (sub in validCharactersDict) {
+                return validCharactersDict[sub];
+            } else {
+                return sub.substr(1);
+            }
+        });
     }
 
     private evalCondition(condition: lp.IfConditionContext): boolean {
