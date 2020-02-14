@@ -11,37 +11,37 @@ function GetErrors(mslgtool, fileName){
 }
 
 describe('MSLGTool', function() {
-    // it('TestValidateReturnStaticCheckerErrors', function() {
-    //     let errors = GetErrors(new MSLGTool(),'StaticCheckerErrors.lg');
-    //     assert.strictEqual(errors.length,6);
-    //     assert(errors[0].includes('There is no template body in template template'));
-    //     assert(errors[1].includes('condition is not end with else'));
-    //     assert(errors[2].includes('control flow is not starting with switch'));
-    //     assert(errors[3].includes('control flow is not ending with default statement'));
-    //     assert(errors[4].includes('control flow should have at least one case statement'));
-    //     assert(errors[5].includes('Not a valid template name line'));
-    // });
+    it('TestValidateReturnStaticCheckerErrors', function() {
+        let errors = GetErrors(new MSLGTool(),'StaticCheckerErrors.lg');
+        assert.strictEqual(errors.length,6);
+        assert(errors[0].includes('There is no template body in template template'));
+        assert(errors[1].includes('condition is not end with else'));
+        assert(errors[2].includes('control flow is not starting with switch'));
+        assert(errors[3].includes('control flow is not ending with default statement'));
+        assert(errors[4].includes('control flow should have at least one case statement'));
+        assert(errors[5].includes('Not a valid template name line'));
+    });
 
-    // it('TestValidateReturnNoErrors', function() {
-    //     let errors = GetErrors(new MSLGTool(),'ValidFile.lg');
-    //     assert.strictEqual(errors.length, 0);
-    // });
+    it('TestValidateReturnNoErrors', function() {
+        let errors = GetErrors(new MSLGTool(),'ValidFile.lg');
+        assert.strictEqual(errors.length, 0);
+    });
 
-    // it('TestCollateTemplates', function() {
-    //     const mslgTool = new MSLGTool();
-    //     let errors = GetErrors(mslgTool, 'CollateFile1.lg');
-    //     assert.strictEqual(errors.length, 0);
-    //     errors = GetErrors(mslgTool, 'CollateFile2.lg');
-    //     assert.strictEqual(errors.length, 0);
-    //     errors = GetErrors(mslgTool, 'CollateFile3.lg');
-    //     assert.strictEqual(errors.length, 0);
-    //     assert.strictEqual(mslgTool.collationMessages.length, 0);
-    //     assert.strictEqual(mslgTool.nameCollisions.length, 3);
-    //     assert.strictEqual(mslgTool.collatedTemplates.size, 5);
-    //     assert.strictEqual(mslgTool.collatedTemplates.get('Greeting').length, 3);
-    //     assert.strictEqual(mslgTool.collatedTemplates.get('TimeOfDayWithCondition').size, 3);
-    //     assert.strictEqual(mslgTool.collatedTemplates.get('TimeOfDay').length, 3);
-    // });
+    it('TestCollateTemplates', function() {
+        const mslgTool = new MSLGTool();
+        let errors = GetErrors(mslgTool, 'CollateFile1.lg');
+        assert.strictEqual(errors.length, 0);
+        errors = GetErrors(mslgTool, 'CollateFile2.lg');
+        assert.strictEqual(errors.length, 0);
+        errors = GetErrors(mslgTool, 'CollateFile3.lg');
+        assert.strictEqual(errors.length, 0);
+        assert.strictEqual(mslgTool.collationMessages.length, 0);
+        assert.strictEqual(mslgTool.nameCollisions.length, 3);
+        assert.strictEqual(mslgTool.collatedTemplates.size, 5);
+        assert.strictEqual(mslgTool.collatedTemplates.get('Greeting').length, 3);
+        assert.strictEqual(mslgTool.collatedTemplates.get('TimeOfDayWithCondition').size, 3);
+        assert.strictEqual(mslgTool.collatedTemplates.get('TimeOfDay').length, 3);
+    });
 
     it('TestCollateTemplatesOfStructuredLG', function() {
         const mslgTool = new MSLGTool();
