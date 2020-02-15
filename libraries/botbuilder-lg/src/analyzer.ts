@@ -207,7 +207,7 @@ export class Analyzer extends AbstractParseTreeVisitor<AnalyzerResult> implement
 
     private analyzeExpression(exp: string): AnalyzerResult {
         const result: AnalyzerResult =  new AnalyzerResult();
-        exp = exp.replace(/(^@*)/g, '')
+        exp = exp.replace(/(^\$*)/g, '')
             .replace(/(^{*)/g, '')
             .replace(/(}*$)/g, '');
         const parsed: Expression = this._expressionParser.parse(exp);
