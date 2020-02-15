@@ -8,8 +8,9 @@
 
 import { STATUS_CODES } from 'http';
 import * as os from 'os';
-import { Activity, ActivityTypes, BotAdapter, BotCallbackHandlerKey, ChannelAccount, ConversationAccount, ConversationParameters, ConversationReference, ConversationsResult, DeliveryModes, CredentialTokenProvider, InvokeResponse, ResourceResponse, TokenResponse, TurnContext } from 'botbuilder-core';
-import { AuthenticationConfiguration, AuthenticationConstants, ChannelValidation, ClaimsIdentity, ConnectorClient, EmulatorApiClient, GovernmentConstants, GovernmentChannelValidation, JwtTokenValidation, MicrosoftAppCredentials, AppCredentials, CertificateAppCredentials, SimpleCredentialProvider, TokenApiClient, TokenStatus, TokenApiModels, SkillValidation } from 'botframework-connector';
+
+import { Activity, ActivityTypes, BotAdapter, BotCallbackHandlerKey, ChannelAccount, ConversationAccount, ConversationParameters, ConversationReference, ConversationsResult, IExtendedUserTokenProvider, ResourceResponse, TokenResponse, TurnContext } from 'botbuilder-core';
+import { AuthenticationConfiguration, AuthenticationConstants, ChannelValidation, ClaimsIdentity, ConnectorClient, EmulatorApiClient, GovernmentConstants, GovernmentChannelValidation, JwtTokenValidation, MicrosoftAppCredentials, AppCredentials, CertificateAppCredentials, SimpleCredentialProvider, TokenApiClient, TokenStatus, TokenApiModels, SkillValidation, BotSignInGetSignInResourceResponse, TokenExchangeRequest } from 'botframework-connector';
 import { INodeBuffer, INodeSocket, IReceiveRequest, ISocket, IStreamingTransportServer, NamedPipeServer, NodeWebSocketFactory, NodeWebSocketFactoryBase, RequestHandler, StreamingResponse, WebSocketServer } from 'botframework-streaming';
 
 import { WebRequest, WebResponse } from './interfaces';
@@ -139,7 +140,7 @@ export const INVOKE_RESPONSE_KEY: symbol = Symbol('invokeResponse');
  * };
  * ```
  */
-export class BotFrameworkAdapter extends BotAdapter implements CredentialTokenProvider, RequestHandler {
+export class BotFrameworkAdapter extends BotAdapter implements IExtendedUserTokenProvider, RequestHandler {
     // These keys are public to permit access to the keys from the adapter when it's a being
     // from library that does not have access to static properties off of BotFrameworkAdapter.
     // E.g. botbuilder-dialogs
@@ -652,6 +653,41 @@ export class BotFrameworkAdapter extends BotAdapter implements CredentialTokenPr
         context.turnState.set(this.TokenApiClientCredentialsKey, client);
 
         return (await client.userToken.getAadTokens(userId, connectionName, { resourceUrls: resourceUrls }, { channelId: context.activity.channelId }))._response.parsedBody as {[propertyName: string]: TokenResponse };
+    }
+
+    public async getSignInResource(context: TurnContext, connectionName: string, userId?: string, finalRedirect?: string): Promise<BotSignInGetSignInResourceResponse>
+    {
+        if (!context.activity.from || !context.activity.from.id) {
+            throw new Error(`BotFrameworkAdapter.getSignInResource(): missing from or from.id`);
+        }
+
+        if(userId && context.activity.from.id != userId) {
+            throw new Error('BotFrameworkAdapter.getSiginInResource(): cannot get signin resource for a user that is different from the conversation');
+        }
+        
+        const url: string = this.oauthApiUrl(context);
+        const client: TokenApiClient = this.createTokenApiClient(url);
+        const conversation: Partial<ConversationReference> = TurnContext.getConversationReference(context.activity);
+
+        const state: any = {
+            ConnectionName: connectionName,
+            Conversation: conversation,
+            //RelatesTo = context.activity.RelatesTo,
+            MSAppId: (client.credentials as AppCredentials).appId
+        };
+        const finalState: string = Buffer.from(JSON.stringify(state)).toString('base64');
+        return await (client.botSignIn.getSignInResource(finalState));
+    }
+
+    public async exchangeToken(context: TurnContext, connectionName: string, userId: string, tokenExchangeRequest: TokenExchangeRequest): Promise<TokenResponse> {
+        if(tokenExchangeRequest && !tokenExchangeRequest.token && !tokenExchangeRequest.uri) {
+            throw new Error('BotFrameworkAdapter.exchangeToken(): Either a Token or Uri property is required on the TokenExchangeRequest');
+        }
+
+        const url: string = this.oauthApiUrl(context);
+        const client: TokenApiClient = this.createTokenApiClient(url);
+
+    return (await client.userToken.exchangeAsync(userId, connectionName, context.activity.channelId, tokenExchangeRequest))._response.parsedBody as TokenResponse;
     }
 
     /**

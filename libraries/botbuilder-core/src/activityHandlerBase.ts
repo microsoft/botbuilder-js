@@ -58,6 +58,9 @@ export class ActivityHandlerBase {
                 await this.onMessageReactionActivity(context);
                 break;
             case ActivityTypes.Event:
+                await this.onInvokeActivity(context);
+                break;
+            case ActivityTypes.Invoke:
                 await this.onEventActivity(context);
                 break;
             case ActivityTypes.EndOfConversation:
@@ -146,6 +149,10 @@ export class ActivityHandlerBase {
      * emission process.
      */
     protected async onEventActivity(context: TurnContext): Promise<void> {
+        return;
+    }
+
+    protected async onInvokeActivity(context: TurnContext): Promise<void|any> {
         return;
     }
 

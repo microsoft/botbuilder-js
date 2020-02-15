@@ -19,6 +19,7 @@ export * from './browserStorage';
 export * from './cardFactory';
 export * from './conversationState';
 export * from './invokeResponse';
+export * from './extendedUserTokenProvider';
 export * from './memoryStorage';
 export * from './memoryTranscriptStore';
 export * from './messageFactory';

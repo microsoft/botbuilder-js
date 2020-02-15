@@ -397,6 +397,15 @@ export class ActivityHandler extends ActivityHandlerBase {
         await this.handle(context, 'Message', this.defaultNextEvent(context));
     }
 
+    protected async OnInvokeActivity(context: TurnContext): Promise<void|any>{
+        if(context.activity.name && context.activity.name === '' || context.activity.name === '') {
+            await this.handle(context, context.activity.name, this.defaultNextEvent(context));
+        }
+        else {
+            await this.handle(context, 'Invoke', this.defaultNextEvent(context));
+        }
+    }
+
     /**
      * Runs all registered _endOfConversation_ handlers and then continues the event emission process.
      * 

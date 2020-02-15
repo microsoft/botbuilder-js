@@ -48,6 +48,33 @@ export class BotSignIn {
       getSignInUrlOperationSpec,
       callback) as Promise<Models.BotSignInGetSignInUrlResponse>;
   }
+
+  /**
+   * @param state
+   * @param [options] The optional parameters
+   * @returns Promise<Models.BotSignInGetSignInResourceResponse>
+   */
+  getSignInResource(state: string, options?: Models.BotSignInGetSignInResourceOptionalParams): Promise<Models.BotSignInGetSignInResourceResponse>;
+  /**
+   * @param state
+   * @param callback The callback
+   */
+  getSignInResource(state: string, callback: msRest.ServiceCallback<Models.SignInUrlResponse>): void;
+  /**
+   * @param state
+   * @param options The optional parameters
+   * @param callback The callback
+   */
+  getSignInResource(state: string, options: Models.BotSignInGetSignInResourceOptionalParams, callback: msRest.ServiceCallback<Models.SignInUrlResponse>): void;
+  getSignInResource(state: string, options?: Models.BotSignInGetSignInResourceOptionalParams | msRest.ServiceCallback<Models.SignInUrlResponse>, callback?: msRest.ServiceCallback<Models.SignInUrlResponse>): Promise<Models.BotSignInGetSignInResourceResponse> {
+    return this.client.sendOperationRequest(
+      {
+        state,
+        options
+      },
+      getSignInResourceOperationSpec,
+      callback) as Promise<Models.BotSignInGetSignInResourceResponse>;
+  }
 }
 
 // Operation Specifications
@@ -69,6 +96,24 @@ const getSignInUrlOperationSpec: msRest.OperationSpec = {
           name: "String"
         }
       }
+    },
+    default: {}
+  },
+  serializer
+};
+
+const getSignInResourceOperationSpec: msRest.OperationSpec = {
+  httpMethod: "GET",
+  path: "api/botsignin/GetSignInResource",
+  queryParameters: [
+    Parameters.state,
+    Parameters.codeChallenge,
+    Parameters.emulatorUrl,
+    Parameters.finalRedirect
+  ],
+  responses: {
+    200: {
+      bodyMapper: Mappers.SignInUrlResponse
     },
     default: {}
   },
