@@ -568,5 +568,4 @@ function assertReceiptCardActivity(activity) {
     assert.strictEqual(items[1].image.url, 'https://github.com/amido/azure-vector-icons/raw/master/renders/cloud-service.png');
     assert.strictEqual(items[1].price, '$ 45.00');
     assert.strictEqual(items[1].quantity, '720');
-
 }
