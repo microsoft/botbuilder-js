@@ -44,6 +44,7 @@ export class ActivityHandlerBase {
      * - Conversation update activities
      * - Message reaction activities
      * - Event activities
+     * - Invoke activities
      * - _Unrecognized_ activities, ones that this class has not otherwise defined an _on event_ method for.
      */
     protected async onTurnActivity(context: TurnContext): Promise<void> {
@@ -58,10 +59,10 @@ export class ActivityHandlerBase {
                 await this.onMessageReactionActivity(context);
                 break;
             case ActivityTypes.Event:
-                await this.onInvokeActivity(context);
+                await this.onEventActivity(context);
                 break;
             case ActivityTypes.Invoke:
-                await this.onEventActivity(context);
+                await this.onInvokeActivity(context);
                 break;
             case ActivityTypes.EndOfConversation:
                 await this.onEndOfConversationActivity(context);

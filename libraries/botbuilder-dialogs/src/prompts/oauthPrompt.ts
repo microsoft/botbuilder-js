@@ -341,20 +341,17 @@ export class OAuthPrompt extends Dialog {
                 await context.sendActivity(this.getTokenExchangeInvokeResponse(
                     400, 
                     'The bot received an InvokeActivity that is missing a TokenExchangeInvokeRequest value. This is required to be sent with the InvokeActivity.'));
-                }
-            else if (context.activity.value.connectionName != this.settings.connectionName) { 
+            } else if (context.activity.value.connectionName != this.settings.connectionName) { 
                 await context.sendActivity(this.getTokenExchangeInvokeResponse(
                     400, 
                     'The bot received an InvokeActivity with a TokenExchangeInvokeRequest containing a ConnectionName that does not match the ConnectionName' +  
                     'expected by the bots active OAuthPrompt. Ensure these names match when sending the InvokeActivityInvalid ConnectionName in the TokenExchangeInvokeRequest'));
-            }
-            else if (!('exchangeToken' in context.adapter)) {
+            } else if (!('exchangeToken' in context.adapter)) {
                 await context.sendActivity(this.getTokenExchangeInvokeResponse(
                     502, 
                     'The bot\'s BotAdapter does not support token exchange operations. Ensure the bot\'s Adapter supports the ITokenExchangeProvider interface.'));
                 throw new Error('OAuthPrompt.recognize(): not supported by the current adapter');
-            }
-            else {
+            } else {
                 const extendedUserTokenProvider : IExtendedUserTokenProvider = context.adapter as IExtendedUserTokenProvider;
                 const tokenExchangeResponse = await extendedUserTokenProvider.exchangeToken(context, this.settings.connectionName, context.activity.from.id, {token: context.activity.value.token});
 
@@ -362,15 +359,14 @@ export class OAuthPrompt extends Dialog {
                     await context.sendActivity(this.getTokenExchangeInvokeResponse(
                         409, 
                         'The bot is unable to exchange token. Proceed with regular login.'));
-                }
-                else {
+                } else {
                     await context.sendActivity(this.getTokenExchangeInvokeResponse(200, null, context.activity.value.id));
                     token = {
                         channelId: tokenExchangeResponse.channelId,
                         connectionName: tokenExchangeResponse.connectionName,
                         token : tokenExchangeResponse.token,
                         expiration: null
-                    };
+                };
                 }
             }
 
@@ -400,8 +396,6 @@ export class OAuthPrompt extends Dialog {
 
         return activity.type === ActivityTypes.Event && activity.name === 'tokens/response';
     }
-
-
 
     private isTeamsVerificationInvoke(context: TurnContext): boolean {
         const activity: Activity = context.activity;
