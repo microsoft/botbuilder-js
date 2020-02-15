@@ -1,4 +1,4 @@
-# template
+﻿﻿# template
 - @{templateRef()}
 
 # template1
@@ -12,5 +12,4 @@
 
 # otherTemplate
 - hi 
-
 
