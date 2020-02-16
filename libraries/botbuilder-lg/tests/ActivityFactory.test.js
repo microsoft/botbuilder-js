@@ -14,32 +14,32 @@ function getActivity(templateName, data){
 
 
 describe('ActivityFactoryTest', function() {
-    // it('inlineActivityFactory', function() {
-    //     let result = ActivityFactory.createActivity('text');
-    //     assert(result.text === 'text');
-    //     assert(result.speak === 'text');
-    // });
+    it('inlineActivityFactory', function() {
+        let result = ActivityFactory.createActivity('text');
+        assert(result.text === 'text');
+        assert(result.speak === 'text');
+    });
 
-    // it('NotSupportStructuredType', function() {
-    //     assert.throws(() => {getActivity('notSupport', undefined); }, Error);
-    // });
+    it('NotSupportStructuredType', function() {
+        assert.throws(() => {getActivity('notSupport', undefined); }, Error);
+    });
 
-    // it('HerocardWithCardAction', function() {
-    //     let data = {
-    //         title: 'titleContent',
-    //         text: 'textContent'
-    //     };
-    //     let result = getActivity('HerocardWithCardAction', data);
-    //     assertCardActionActivity(result);
-    // });
+    it('HerocardWithCardAction', function() {
+        let data = {
+            title: 'titleContent',
+            text: 'textContent'
+        };
+        let result = getActivity('HerocardWithCardAction', data);
+        assertCardActionActivity(result);
+    });
 
-    // it('adaptivecardActivity', function() {
-    //     let data = {
-    //         adaptiveCardTitle: 'test'
-    //     };
-    //     let result = getActivity('adaptivecardActivity', data);
-    //     assertAdaptiveCardActivity(result);
-    // });
+    it('adaptivecardActivity', function() {
+        let data = {
+            adaptiveCardTitle: 'test'
+        };
+        let result = getActivity('adaptivecardActivity', data);
+        assertAdaptiveCardActivity(result);
+    });
 
     it('externalAdaptiveCardActivity', function() {
         let data = {
@@ -568,5 +568,5 @@ function assertReceiptCardActivity(activity) {
     assert.strictEqual(items[1].image.url, 'https://github.com/amido/azure-vector-icons/raw/master/renders/cloud-service.png');
     assert.strictEqual(items[1].price, '$ 45.00');
     assert.strictEqual(items[1].quantity, '720');
-
+    
 }
