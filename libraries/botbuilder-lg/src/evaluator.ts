@@ -32,7 +32,7 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGFilePa
 
     // to support broswer, use look-ahead replace look-behind
     // original:/(?<!\\)@\{((\'[^\'\r\n]*\')|(\"[^\"\r\n]*\")|[^\r\n\{\}\'\"])*?\}/g;
-    public static readonly expressionRecognizeReverseRegex: RegExp = new RegExp(/\}((\'[^\'\r\n]*\')|(\"[^\"\r\n]*\")|([^\r\n\{\}\'\"]))*?\{@(?!\\)/g);
+    public static readonly expressionRecognizeReverseRegex: RegExp = new RegExp(/\}((\'[^\'\r\n]*\')|(\"[^\"\r\n]*\")|([^\r\n\{\}\'\"]))*?\{\$(?!\\)/g);
 
     public static readonly LGType = 'lgType';
     public static readonly activityAttachmentFunctionName = 'ActivityAttachment';
@@ -311,7 +311,7 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGFilePa
 
     private evalExpressionInCondition(exp: string): boolean {
         try {
-            exp = exp.replace(/(^@*)/g, '')
+            exp = exp.replace(/(^\$*)/g, '')
                 .replace(/(^{*)/g, '')
                 .replace(/(}*$)/g, '');
 
@@ -330,7 +330,7 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGFilePa
     }
 
     private evalExpression(exp: string): any {
-        exp = exp.replace(/(^@*)/g, '')
+        exp = exp.replace(/(^\$*)/g, '')
             .replace(/(^{*)/g, '')
             .replace(/(}*$)/g, '');
 
