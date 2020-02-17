@@ -307,7 +307,7 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGFi
 
     private evalExpressionInCondition(exp: string): boolean {
         try {
-            exp = exp.replace(/(^@*)/g, '')
+            exp = exp.replace(/(^\$*)/g, '')
                 .replace(/(^{*)/g, '')
                 .replace(/(}*$)/g, '');
 
@@ -326,7 +326,7 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGFi
     }
 
     private evalExpression(exp: string): string[] {
-        exp = exp.replace(/(^@*)/g, '')
+        exp = exp.replace(/(^\$*)/g, '')
             .replace(/(^{*)/g, '')
             .replace(/(}*$)/g, '');
 

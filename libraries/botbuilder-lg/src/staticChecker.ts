@@ -372,7 +372,7 @@ class StaticCheckerInner extends AbstractParseTreeVisitor<Diagnostic[]> implemen
 
     private checkExpression(exp: string, context: ParserRuleContext): Diagnostic[] {
         const result: Diagnostic[] = [];
-        exp = exp.replace(/(^@*)/g, '')
+        exp = exp.replace(/(^\$*)/g, '')
             .replace(/(^{*)/g, '')
             .replace(/(}*$)/g, '')
             .trim();

@@ -44,14 +44,14 @@ fragment EMPTY_OBJECT: '{' WHITESPACE* '}';
 
 fragment STRING_LITERAL : ('\'' (~['\r\n])* '\'') | ('"' (~["\r\n])* '"');
 
-fragment EXPRESSION_FRAGMENT : '@' '{' (STRING_LITERAL| ~[\r\n{}'"] | EMPTY_OBJECT )*? '}';
+fragment EXPRESSION_FRAGMENT : '$' '{' (STRING_LITERAL| ~[\r\n{}'"] | EMPTY_OBJECT )*? '}';
 
 fragment ESCAPE_CHARACTER_FRAGMENT : '\\' ~[\r\n]?;
 
 
 // top level elements
 COMMENTS
-  : ('>'|'$') ~('\r'|'\n')+ -> skip
+  : '>' ~('\r'|'\n')+ -> skip
   ;
 
 WS
@@ -205,7 +205,7 @@ TEXT_IN_STRUCTURE_NAME
 mode STRUCTURE_BODY_MODE;
 
 STRUCTURED_COMMENTS
-  : ('>'|'$') ~[\r\n]* '\r'?'\n' { !this.inStructuredValue && this.beginOfStructureProperty}? -> skip
+  : '>' ~[\r\n]* '\r'?'\n' { !this.inStructuredValue && this.beginOfStructureProperty}? -> skip
   ;
 
 WS_IN_STRUCTURE_BODY
