@@ -17,15 +17,15 @@ export class ComposedMemory implements MemoryInterface {
         this.memoryMap = memoryMap;
     }
 
-    public getValue(path: string): { value: any; error: string } {
+    public getValue(path: string): any {
         const prefix: string = path.split('.')[0];
         if (this.memoryMap.has(prefix)) {
             return this.memoryMap.get(prefix).getValue(path.substr(prefix.length + 1));
         }
-        return {value: undefined, error: `path not exists at ${ path }`};
+        return undefined;
     }
 
-    public setValue(_path: string, _value: any): { value: any; error: string } {
+    public setValue(_path: string, _value: any): void {
         throw new Error('Method not implemented.');
     }
 

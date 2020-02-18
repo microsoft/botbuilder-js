@@ -14,7 +14,7 @@ import {
     ResourceResponse,
     TurnContext
 } from 'botbuilder-core';
-import { AuthenticationConfiguration, ICredentialProvider, ClaimsIdentity } from 'botframework-connector';
+import { AuthenticationConfiguration, AppCredentials, ICredentialProvider, ClaimsIdentity } from 'botframework-connector';
 
 import { ChannelServiceHandler } from '../channelServiceHandler';
 import { SkillConversationIdFactoryBase } from './skillConversationIdFactoryBase';
@@ -148,11 +148,11 @@ export class SkillHandler extends ChannelServiceHandler {
             const adapter: BotFrameworkAdapter = (context.adapter as BotFrameworkAdapter);
             // Cache the ClaimsIdentity and ConnectorClient on the context so that it's available inside of the bot's logic.
             context.turnState.set(adapter.BotIdentityKey, claimsIdentity);
-            const client = await adapter.createConnectorClientWithIdentity(activity.serviceUrl, claimsIdentity);
-            context.turnState.set(adapter.ConnectorClientKey, client);
             context.turnState.set(this.SkillConversationReferenceKey, skillConversationReference);
+            activity = TurnContext.applyConversationReference(activity, conversationReference) as Activity;
+            const client = adapter.createConnectorClient(activity.serviceUrl);
+            context.turnState.set(adapter.ConnectorClientKey, client);
 
-            TurnContext.applyConversationReference(activity, conversationReference);
             context.activity.id = replyToActivityId;
             switch (activity.type) {
                 case ActivityTypes.EndOfConversation:
@@ -169,6 +169,11 @@ export class SkillHandler extends ChannelServiceHandler {
                     break;
             }
         };
+
+        // Add the channel service URL to the trusted services list so we can send messages back.
+        // the service URL for skills is trusted because it is applied based on the original request
+        // received by the root bot.
+        AppCredentials.trustServiceUrl(conversationReference.serviceUrl);
 
         await this.adapter.continueConversation(conversationReference, callback);
         return { id: uuid() };

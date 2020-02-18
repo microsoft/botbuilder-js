@@ -18,6 +18,8 @@ const DocumentBase: any = require('documentdb').DocumentBase; // tslint:disable-
 
 /**
  * Additional settings for configuring an instance of `CosmosDbStorage`.
+ * 
+ * @deprecated Please use CosmosDbPartitionedStorageOptions with CosmosDbPartitionedStorage instead.
  */
 export interface CosmosDbStorageSettings {
     /**
@@ -73,6 +75,8 @@ interface DocumentStoreItem {
 /**
  * Middleware that implements a CosmosDB based storage provider for a bot.
  *
+ * @deprecated Please use CosmosDbPartitionedStorage instead.
+ * 
  * @remarks
  * The `connectionPolicyConfigurator` handler can be used to further customize the connection to
  * CosmosDB (Connection mode, retry options, timeouts). More information at

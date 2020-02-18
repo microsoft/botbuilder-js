@@ -27,6 +27,8 @@ describe('ActivityHandlerBase', function() {
     let onConversationUpdateActivityCalled = false;
     let onMessageReactionCalled = false;
     let onEventCalled = false;
+    let onEndOfConversationCalled = false;
+    let onTypingCalled = false;
     let onUnrecognizedActivity = false;
 
     afterEach(function() {
@@ -35,6 +37,8 @@ describe('ActivityHandlerBase', function() {
         onConversationUpdateActivityCalled = false;
         onMessageReactionCalled = false;
         onEventCalled = false;
+        onEndOfConversationCalled = false;
+        onTypingCalled = false;
         onUnrecognizedActivity = false;
     });
 
@@ -113,6 +117,16 @@ describe('ActivityHandlerBase', function() {
             onEventCalled = true;
         }
 
+        async onEndOfConversationActivity(context) {
+            assert(context, 'context not found');
+            onEndOfConversationCalled = true;
+        }
+
+        async onTypingActivity(context) {
+            assert(context, 'context not found');
+            onTypingCalled = true;
+        }
+
         async onUnrecognizedActivity(context) {
             assert(context, 'context not found');
             onUnrecognizedActivity = true;
@@ -126,6 +140,8 @@ describe('ActivityHandlerBase', function() {
         processActivity({type: ActivityTypes.ConversationUpdate}, bot, done);
         processActivity({type: ActivityTypes.MessageReaction}, bot, done);
         processActivity({type: ActivityTypes.Event}, bot, done);
+        processActivity({type: ActivityTypes.EndOfConversation}, bot, done);
+        processActivity({type: ActivityTypes.Typing}, bot, done);
         processActivity({ type: 'unrecognized' }, bot, done);
 
         assert(onTurnActivityCalled, 'onTurnActivity was not called');
@@ -133,6 +149,8 @@ describe('ActivityHandlerBase', function() {
         assert(onConversationUpdateActivityCalled, 'onConversationUpdateActivity was not called');
         assert(onMessageReactionCalled, 'onMessageReactionActivity was not called');
         assert(onEventCalled, 'onEventActivity was not called');
+        assert(onEndOfConversationCalled, 'onEndOfConversationCalled was not called');
+        assert(onTypingCalled, 'onTypingCalled was not called');
         assert(onUnrecognizedActivity, 'onUnrecognizedActivity was not called');
         done();
     });

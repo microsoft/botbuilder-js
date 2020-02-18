@@ -12,9 +12,9 @@ Language generation is achieved through:
 
 ```markdown
 # greetingTemplate
-- Hello @{user.name}, how are you?
-- Good morning @{user.name}. It's nice to see you again.
-- Good day @{user.name}. What can I do for you today?
+- Hello ${user.name}, how are you?
+- Good morning ${user.name}. It's nice to see you again.
+- Good day ${user.name}. What can I do for you today?
 ```
 
 You can use language generation to:
@@ -33,15 +33,15 @@ Example here:
 ```markdown
     # HeroCardTemplate(buttonsCollection)
     [Herocard
-        title=@{TitleText())}
-        subtitle=@{SubText())}
-        text=@{DescriptionText())}
-        images=@{CardImages())}
-        buttons=@{buttonsCollection}
+        title=${TitleText())}
+        subtitle=${SubText())}
+        text=${DescriptionText())}
+        images=${CardImages())}
+        buttons=${buttonsCollection}
     ]
 
     # TitleText
-    - Here are some @{TitleSuffix()}
+    - Here are some ${TitleSuffix()}
 
     # TitleSuffix
     - cool photos

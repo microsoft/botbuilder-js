@@ -14,7 +14,7 @@ import {
     PayloadReceiver,
     PayloadSender
 } from '../payloadTransport';
-import { NamedPipeTransport } from './NamedPipeTransport';
+import { NamedPipeTransport } from './namedPipeTransport';
 import { IStreamingTransportServer, IReceiveResponse } from '../interfaces';
 
 /**
@@ -40,6 +40,10 @@ export class NamedPipeServer implements IStreamingTransportServer {
      * @param autoReconnect Optional setting to determine if the client sould attempt to reconnect automatically on disconnection events. Defaults to true.
      */
     public constructor(baseName: string, requestHandler?: RequestHandler, autoReconnect: boolean = true) {
+        if (!baseName) {
+            throw new TypeError('NamedPipeServer: Missing baseName parameter');
+        }
+
         this._baseName = baseName;
         this._requestHandler = requestHandler;
         this._autoReconnect = autoReconnect;
@@ -49,6 +53,13 @@ export class NamedPipeServer implements IStreamingTransportServer {
         this._protocolAdapter = new ProtocolAdapter(this._requestHandler, this._requestManager, this._sender, this._receiver);
         this._sender.disconnected = this.onConnectionDisconnected.bind(this);
         this._receiver.disconnected = this.onConnectionDisconnected.bind(this);
+    }
+
+    /**
+     * Returns true if currently connected.
+     */
+    public get isConnected(): boolean {
+        return !!(this._receiver.isConnected && this._sender.isConnected);
     }
 
     /**

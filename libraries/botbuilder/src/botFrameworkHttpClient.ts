@@ -16,7 +16,8 @@ import {
     MicrosoftAppCredentials
 } from 'botframework-connector';
 
-import { InvokeResponse, USER_AGENT } from './botFrameworkAdapter';
+import { USER_AGENT } from './botFrameworkAdapter';
+import { InvokeResponse } from './interfaces';
 
 /**
  * HttpClient for calling skills from a Node.js BotBuilder V4 SDK bot.
@@ -110,12 +111,11 @@ export class BotFrameworkHttpClient {
 
         const appPassword = await this.credentialProvider.getAppPassword(appId);
         if (JwtTokenValidation.isGovernment(this.channelService)) {
-            appCredentials = new MicrosoftAppCredentials(appId, appPassword, this.channelService);
+            appCredentials = new MicrosoftAppCredentials(appId, appPassword, this.channelService, oAuthScope);
             appCredentials.oAuthEndpoint = GovernmentConstants.ToChannelFromBotLoginUrl;
             appCredentials.oAuthScope = GovernmentConstants.ToChannelFromBotOAuthScope;
         } else {
-            appCredentials = new MicrosoftAppCredentials(appId, appPassword, this.channelService);
-            appCredentials.oAuthScope = !oAuthScope ? AuthenticationConstants.ToChannelFromBotOAuthScope : oAuthScope;
+            appCredentials = new MicrosoftAppCredentials(appId, appPassword, this.channelService, oAuthScope);
         }
 
         // Cache the credentials for later use

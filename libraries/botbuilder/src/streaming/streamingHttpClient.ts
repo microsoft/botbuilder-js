@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 
-import { WebResource, HttpOperationResponse, HttpClient } from 'botframework-connector/node_modules/@azure/ms-rest-js';
+import { WebResource, HttpOperationResponse, HttpClient } from '@azure/ms-rest-js';
 import { IStreamingTransportServer, StreamingRequest } from 'botframework-streaming';
 
 export class StreamingHttpClient implements HttpClient {
@@ -34,8 +34,13 @@ export class StreamingHttpClient implements HttpClient {
      */
     public async sendRequest(httpRequest: WebResource): Promise<HttpOperationResponse> {
         if (!httpRequest) {
-            throw new Error('SendRequest invalid parameter: httpRequest should be provided');
+            throw new Error('StreamingHttpClient.sendRequest(): missing "httpRequest" parameter');
         }
+        if (!this.server.isConnected) {
+            throw new Error('StreamingHttpClient.sendRequest(): Streaming connection is disconnected, and the request could not be sent.');
+
+        }
+
         const request = this.mapHttpRequestToProtocolRequest(httpRequest);
         request.path = request.path.substring(request.path.indexOf('/v3'));
         const res = await this.server.send(request);
