@@ -245,7 +245,7 @@ export class WaterfallDialog<O extends object = {}> extends Dialog<O> {
                 'InstanceId': instanceId,
             }});
         } else if (reason === DialogReason.cancelCalled) {
-            var index = instance.state[state.stepIndex];
+            var index = state.stepIndex;
             var stepName = this.waterfallStepName(index);
             this.telemetryClient.trackEvent({name: 'WaterfallCancel', properties: {
                 'DialogId': this.id,

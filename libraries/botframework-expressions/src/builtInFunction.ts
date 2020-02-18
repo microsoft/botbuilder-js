@@ -18,7 +18,8 @@ import { EvaluateExpressionDelegate, ExpressionEvaluator, ValidateExpressionDele
 import { ExpressionType } from './expressionType';
 import { Extensions } from './extensions';
 import { TimeZoneConverter } from './timeZoneConverter';
-import { MemoryInterface, SimpleObjectMemory, ComposedMemory } from './memory';
+import { convertCSharpDateTimeToMomentJS } from './formatConverter';
+import { MemoryInterface, SimpleObjectMemory, ComposedMemory, StackedMemory } from './memory';
 
 /**
  * Verify the result of an expression is of the appropriate type and return a string if not.
@@ -217,6 +218,32 @@ export class BuiltInFunctions {
         let error: string;
         if (typeof value !== 'number' || Number.isNaN(value)) {
             error = `${ expression } is not a number.`;
+        }
+
+        return error;
+    }
+
+    /**
+     * Verify value is numeric.
+     * @param value alue to check.
+     * @param expression Expression that led to value.
+     * @returns Error or undefined if invalid.
+     */
+    public static verifyNumberOrNumericList(value: any, expression: Expression, _: number): string {
+        let error: string;
+        if (typeof value === 'number' && !Number.isNaN(value)) {
+            return error;
+        }
+
+        if (!Array.isArray(value)) {
+            error = `${ expression } is neither a list nor a number.`;
+        } else {
+            for (const elt of value) {
+                if (typeof elt !== 'number' || Number.isNaN(elt)) {
+                    error = `${ elt } is not a number in ${ expression }.`;
+                    break;
+                }
+            }
         }
 
         return error;
@@ -496,6 +523,16 @@ export class BuiltInFunctions {
     }
 
     /**
+     * Numeric operators that can have 1 or more args.
+     * @param type Expression type.
+     * @param func Function to apply.
+     */
+    public static numericOrNumericList(type: string, func: (arg0: any []) => any): ExpressionEvaluator {
+        return new ExpressionEvaluator(type, BuiltInFunctions.apply(func, BuiltInFunctions.verifyNumberOrNumericList),
+            ReturnType.Number, BuiltInFunctions.validateAtLeastOne);
+    }
+
+    /**
      * Numeric operators that can have 2 or more args.
      * @param type Expression type.
      * @param func Function to apply.
@@ -620,7 +657,14 @@ export class BuiltInFunctions {
     }
 
     public static timestampFormatter(formatter: string): string {
-        return formatter.replace(/dd/g, 'DD').replace(/yyyy/g, 'YYYY').replace(/d/g, 'D').replace(/y/g, 'Y');
+        let result = formatter;
+        try {
+            result = convertCSharpDateTimeToMomentJS(formatter);
+        } catch(e) {
+            // do nothing
+        }
+
+        return result;
     }
 
     public static timeUnitTransformer(duration: number, cSharpStr: string): { duration: number; tsStr: string } {
@@ -906,22 +950,20 @@ export class BuiltInFunctions {
 
         if (!error) {
             // 2nd parameter has been rewrite to $local.item
-            const iteratorName: string = (expression.children[1].children[0] as Constant).value as string;
             if (!Array.isArray(collection)) {
                 error = `${ expression.children[0] } is not a collection to run foreach`;
             } else {
+                const iteratorName = (expression.children[1].children[0] as Constant).value as string;
+                const stackedMemory = StackedMemory.wrap(state);
                 result = [];
                 for (const item of collection) {
                     const local: Map<string, any> = new Map<string, any>([
                         [iteratorName, item]
                     ]);
 
-                    const newMemory: Map<string, any> = new Map<string, MemoryInterface>([
-                        ['$global', state],
-                        ['$local', new SimpleObjectMemory(local)]
-                    ]);
-
-                    const { value: r, error: e } = expression.children[2].tryEvaluate(new ComposedMemory(newMemory));
+                    stackedMemory.push(SimpleObjectMemory.wrap(local));
+                    const { value: r, error: e } = expression.children[2].tryEvaluate(stackedMemory);
+                    stackedMemory.pop();
                     if (e !== undefined) {
                         return { value: undefined, error: e };
                     }
@@ -945,18 +987,17 @@ export class BuiltInFunctions {
             if (!Array.isArray(collection)) {
                 error = `${ expression.children[0] } is not a collection to run where`;
             } else {
+                const iteratorName = (expression.children[1].children[0] as Constant).value as string;
+                const stackedMemory = StackedMemory.wrap(state);
                 result = [];
                 for (const item of collection) {
                     const local: Map<string, any> = new Map<string, any>([
                         [iteratorName, item]
                     ]);
 
-                    const newMemory: Map<string, MemoryInterface> = new Map<string, MemoryInterface>([
-                        ['$global', state],
-                        ['$local', new SimpleObjectMemory(local)]
-                    ]);
-
-                    const { value: r, error: e } = expression.children[2].tryEvaluate(new ComposedMemory(newMemory));
+                    stackedMemory.push(SimpleObjectMemory.wrap(local));
+                    const { value: r, error: e } = expression.children[2].tryEvaluate(stackedMemory);
+                    stackedMemory.pop();
                     if (e !== undefined) {
                         return { value: undefined, error: e };
                     }
@@ -984,12 +1025,6 @@ export class BuiltInFunctions {
         if (!(second.type === ExpressionType.Accessor && second.children.length === 1)) {
             throw new Error(`Second parameter of foreach is not an identifier : ${ second }`);
         }
-
-        const iteratorName: string = second.toString();
-
-        // rewrite the 2nd, 3rd paramater
-        expression.children[1] = BuiltInFunctions.rewriteAccessor(expression.children[1], iteratorName);
-        expression.children[2] = BuiltInFunctions.rewriteAccessor(expression.children[2], iteratorName);
     }
 
     private static validateIsMatch(expression: Expression): void {
@@ -1000,35 +1035,6 @@ export class BuiltInFunctions {
             // tslint:disable-next-line: restrict-plus-operands
             CommonRegex.CreateRegex((second as Constant).value + '');
         }
-    }
-
-    private static rewriteAccessor(expression: Expression, localVarName: string): Expression {
-        if (expression.type === ExpressionType.Accessor) {
-            if (expression.children.length === 2) {
-                expression.children[1] = BuiltInFunctions.rewriteAccessor(expression.children[1], localVarName);
-            } else {
-                const str: string = expression.toString();
-                let prefix = '$global';
-                if (str === localVarName || str.startsWith(localVarName.concat('.'))) {
-                    prefix = '$local';
-                }
-
-                expression.children = [
-                    expression.children[0],
-                    Expression.makeExpression(ExpressionType.Accessor, undefined, new Constant(prefix))
-                ];
-            }
-
-            return expression;
-        } else {
-            // rewite children if have any
-            for (let idx = 0; idx < expression.children.length; idx++) {
-                expression.children[idx] = BuiltInFunctions.rewriteAccessor(expression.children[idx], localVarName);
-            }
-
-            return expression;
-        }
-
     }
 
     private static isEmpty(instance: any): boolean {
@@ -1641,8 +1647,54 @@ export class BuiltInFunctions {
 
                     return error;
                 }),
-            BuiltInFunctions.numeric(ExpressionType.Min, (args: any []): number => Math.min(args[0], args[1])),
-            BuiltInFunctions.numeric(ExpressionType.Max, (args: any []): number => Math.max(args[0], args[1])),
+            BuiltInFunctions.numericOrNumericList(ExpressionType.Min, (args: any []): number => {
+                let result = Number.POSITIVE_INFINITY;
+                if (args.length === 1) {
+                    if (Array.isArray(args[0])) {
+                        for (const value of args[0]) {
+                            result = Math.min(result, value);
+                        }
+                    } else {
+                        result =  Math.min(result, args[0]);
+                    }
+                } else {
+                    for (const arg of args) {
+                        if (Array.isArray(arg)) {
+                            for (const value of arg) {
+                                result = Math.min(result, value);
+                            }
+                        } else {
+                            result =  Math.min(result, arg);
+                        }
+                    }
+                }
+
+                return result;
+            }),
+            BuiltInFunctions.numericOrNumericList(ExpressionType.Max, (args: any []): number => {
+                let result = Number.NEGATIVE_INFINITY;
+                if (args.length === 1) {
+                    if (Array.isArray(args[0])) {
+                        for (const value of args[0]) {
+                            result = Math.max(result, value);
+                        }
+                    } else {
+                        result =  Math.max(result, args[0]);
+                    }
+                } else {
+                    for (const arg of args) {
+                        if (Array.isArray(arg)) {
+                            for (const value of arg) {
+                                result = Math.max(result, value);
+                            }
+                        } else {
+                            result =  Math.max(result, arg);
+                        }
+                    }
+                }
+
+                return result;
+            }),
             BuiltInFunctions.multivariateNumeric(ExpressionType.Power, (args: any []): number => Math.pow(args[0], args[1])),
             new ExpressionEvaluator(
                 ExpressionType.Mod,
@@ -1887,9 +1939,9 @@ export class BuiltInFunctions {
                 (expression: Expression): void => BuiltInFunctions.validateArityAndAnyType(expression, 3, 3, ReturnType.String)),
             new ExpressionEvaluator(
                 ExpressionType.Split,
-                BuiltInFunctions.apply((args: any []): string[] => BuiltInFunctions.parseStringOrNull(args[0]).split(BuiltInFunctions.parseStringOrNull(args[1])), BuiltInFunctions.verifyStringOrNull),
+                BuiltInFunctions.apply((args: any []): string[] => BuiltInFunctions.parseStringOrNull(args[0]).split(BuiltInFunctions.parseStringOrNull(args[1]? args[1]: '')), BuiltInFunctions.verifyStringOrNull),
                 ReturnType.Object,
-                (expression: Expression): void => BuiltInFunctions.validateArityAndAnyType(expression, 2, 2, ReturnType.String)),
+                (expression: Expression): void => BuiltInFunctions.validateArityAndAnyType(expression, 1, 2, ReturnType.String)),
             new ExpressionEvaluator(
                 ExpressionType.Substring,
                 BuiltInFunctions.substring,

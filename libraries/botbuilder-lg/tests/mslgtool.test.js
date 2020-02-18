@@ -52,10 +52,10 @@ describe('MSLGTool', function() {
         assert.strictEqual(mslgTool.collationMessages.length, 0);
         assert.strictEqual(mslgTool.nameCollisions.length, 1);
         assert.strictEqual(mslgTool.collatedTemplates.size, 1);
-        assert.strictEqual(mslgTool.collatedTemplates.get('ST2')[0].replace(/\r\n/g, '\n'), '[MyStruct\n    Speak = bar\n    Text = zoo\n]');
-        assert.strictEqual(mslgTool.collatedTemplates.get('ST2')[1].replace(/\r\n/g, '\n'), '[MyStruct\n    Speak = hello\n    Text = world\n]');
+        assert.strictEqual(mslgTool.collatedTemplates.get('ST2')[0].replace(/\r\n/g, '\n'), '[MyStruct\n    Speak=bar\n    Text=zoo\n]');
+        assert.strictEqual(mslgTool.collatedTemplates.get('ST2')[1].replace(/\r\n/g, '\n'), '[MyStruct\n    Speak=hello\n    Text=world\n]');
         let result = mslgTool.collateTemplates();
-        assert.strictEqual(result.replace(/\r\n/g, '\n'), '# ST2\n[MyStruct\n    Speak = bar\n    Text = zoo\n]\n\n');
+        assert.strictEqual(result.replace(/\r\n/g, '\n'), '# ST2\n[MyStruct\n    Speak=bar\n    Text=zoo\n]\n\n');
     });
 
     it('TestExpandTemplate', function() {

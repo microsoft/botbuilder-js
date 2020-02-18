@@ -151,12 +151,12 @@ describe('LG', function() {
         assert.strictEqual(emptyEngine.evaluate('Hi'), 'Hi', emptyEngine.evaluate('Hi'));
         assert.strictEqual(emptyEngine.evaluate('Hi', ''), 'Hi', emptyEngine.evaluate('Hi', ''));
 
-        assert.strictEqual(emptyEngine.evaluate('Hi @{name}', { name: 'DL' }), 'Hi DL');
+        assert.strictEqual(emptyEngine.evaluate('Hi ${name}', { name: 'DL' }), 'Hi DL');
 
-        assert.strictEqual(emptyEngine.evaluate('Hi @{name.FirstName}@{name.LastName}', { name: { FirstName: 'D', LastName: 'L' } }), 'Hi DL');
+        assert.strictEqual(emptyEngine.evaluate('Hi ${name.FirstName}${name.LastName}', { name: { FirstName: 'D', LastName: 'L' } }), 'Hi DL');
         assert.strictEqual(emptyEngine.evaluate('Hi \n Hello', ''), 'Hi \n Hello');
         assert.strictEqual(emptyEngine.evaluate('Hi \r\n Hello', ''), 'Hi \r\n Hello');
-        assert.strictEqual(emptyEngine.evaluate('Hi \r\n @{name}', { name: 'DL' }), 'Hi \r\n DL');
+        assert.strictEqual(emptyEngine.evaluate('Hi \r\n ${name}', { name: 'DL' }), 'Hi \r\n DL');
         assert.strictEqual(new TemplateEngine().evaluate('Hi', ''), 'Hi');
     });
 
@@ -165,11 +165,11 @@ describe('LG', function() {
         assert.strictEqual(emptyEngine.evaluate('Hi'), 'Hi', emptyEngine.evaluate('Hi'));
         assert.strictEqual(emptyEngine.evaluate('Hi', ''), 'Hi', emptyEngine.evaluate('Hi', ''));
 
-        assert.strictEqual(emptyEngine.evaluate('Hi @{name}', { name: 'DL' }), 'Hi DL', emptyEngine.evaluate('Hi @{name}', { name: 'DL' }));
+        assert.strictEqual(emptyEngine.evaluate('Hi ${name}', { name: 'DL' }), 'Hi DL', emptyEngine.evaluate('Hi ${name}', { name: 'DL' }));
 
-        assert.strictEqual(emptyEngine.evaluate('Hi @{name.FirstName}@{name.LastName} @{RecentTasks()}', { name: { FirstName: 'D', LastName: 'L' } }), 'Hi DL You don\'t have any tasks.', emptyEngine.evaluate('Hi @{name.FirstName}@{name.LastName} @{RecentTasks()}', { name: { FirstName: 'D', LastName: 'L' } }));
+        assert.strictEqual(emptyEngine.evaluate('Hi ${name.FirstName}${name.LastName} ${RecentTasks()}', { name: { FirstName: 'D', LastName: 'L' } }), 'Hi DL You don\'t have any tasks.', emptyEngine.evaluate('Hi ${name.FirstName}${name.LastName} ${RecentTasks()}', { name: { FirstName: 'D', LastName: 'L' } }));
 
-        assert.strictEqual(emptyEngine.evaluate('Hi @{name.FirstName}@{name.LastName} @{RecentTasks()}', { name: { FirstName: 'D', LastName: 'L' }, recentTasks: ['task1'] }), 'Hi DL Your most recent task is task1. You can let me know if you want to add or complete a task.', emptyEngine.evaluate('Hi @{name.FirstName}@{name.LastName} @{RecentTasks()}', { name: { FirstName: 'D', LastName: 'L' }, recentTasks: ['task1'] }));
+        assert.strictEqual(emptyEngine.evaluate('Hi ${name.FirstName}${name.LastName} ${RecentTasks()}', { name: { FirstName: 'D', LastName: 'L' }, recentTasks: ['task1'] }), 'Hi DL Your most recent task is task1. You can let me know if you want to add or complete a task.', emptyEngine.evaluate('Hi ${name.FirstName}${name.LastName} ${RecentTasks()}', { name: { FirstName: 'D', LastName: 'L' }, recentTasks: ['task1'] }));
 
     });
 
@@ -254,6 +254,12 @@ describe('LG', function() {
                 variableOptions: ['coffee', 'userName', 'size', 'price'],
                 templateRefOptions: ['wPhrase', 'LatteOrderConfirmation', 'MochaOrderConfirmation', 'CuppuccinoOrderConfirmation']
             },
+            {
+                name: 'structureTemplate',
+                variableOptions: [ 'text', 'newText' ],
+                templateRefOptions: [ 'ST2' ]
+            
+            }
         ];
         for (const testItem of testData) {
             var engine = new TemplateEngine().addFile(GetExampleFilePath('Analyzer.lg'));
@@ -640,7 +646,7 @@ describe('LG', function() {
         }
 
         evaled = engine.evaluateTemplate('AskForAge.prompt3');
-        assert.deepStrictEqual(evaled, JSON.parse('{"lgType":"Activity","text":"@{GetAge()}","suggestions":["10 | cards","20 | cards"]}'));
+        assert.deepStrictEqual(evaled, JSON.parse('{"lgType":"Activity","text":"${GetAge()}","suggestions":["10 | cards","20 | cards"]}'));
 
         evaled = engine.evaluateTemplate('T1');
         assert.deepStrictEqual(evaled, JSON.parse('{"lgType":"Activity","text":"This is awesome","speak":"foo bar I can also speak!"}'));

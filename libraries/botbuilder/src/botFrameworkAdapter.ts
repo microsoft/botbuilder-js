@@ -225,6 +225,13 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
     }
 
     /**
+     * Used in streaming contexts to check if the streaming connection is still open for the bot to send activities.
+     */
+    public get isStreamingConnectionOpen(): boolean {
+        return this.streamingServer.isConnected;
+    }
+ 
+    /**
      * Asynchronously resumes a conversation with a user, possibly after some time has gone by.
      *
      * @param reference A reference to the conversation to continue.
@@ -835,6 +842,9 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
                         throw new Error(`BotFrameworkAdapter.sendActivity(): missing conversation id.`);
                     }
                     if (activity && BotFrameworkAdapter.isStreamingServiceUrl(activity.serviceUrl)) {
+                        if (!this.isStreamingConnectionOpen) {
+                            throw new Error('BotFrameworkAdapter.sendActivities(): Unable to send activity as Streaming connection is closed.');
+                        }
                         TokenResolver.checkForOAuthCards(this, context, activity as Activity);
                     }
                     const client = this.getOrCreateConnectorClient(context, activity.serviceUrl, this.credentials);
