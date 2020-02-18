@@ -2,7 +2,7 @@ const { Socket } = require('net');
 
 const { expect } = require('chai');
 const { spy } = require('sinon');
-const { ActivityHandler, ActivityTypes } = require('botbuilder-core');
+const { ActivityHandler, ActivityTypes, TurnContext } = require('botbuilder-core');
 
 const { BotFrameworkAdapter, StatusCodes } = require('../../');
 
@@ -48,6 +48,25 @@ describe('BotFrameworkAdapter Streaming tests', () => {
             await bot.run(context);
         });
         expect(adapter.streamingServer.disconnect()).to.not.throw;
+    });
+
+    it('sendActivities should throw an error if streaming connection is closed.', async () => {
+        const activity = {
+            serviceUrl: 'urn:botframework:WebSocket:wss://beep.com',
+            type: 'message'
+        };
+        const reply = {
+            conversation: { id: 'convo1' },
+            ...activity
+        };
+
+        const adapter = new BotFrameworkAdapter({});
+        adapter.streamingServer = { isConnected: false };
+        try {
+            await adapter.sendActivities(new TurnContext(adapter, activity), [reply]);
+        } catch (err) {
+            expect(err.message).contains('BotFrameworkAdapter.sendActivities(): Unable to send activity as Streaming connection is closed.');
+        }
     });
 
     it('starts and stops a websocket server', async () => {
