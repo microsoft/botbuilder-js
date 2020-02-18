@@ -5,11 +5,12 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { Activity, ActivityTypes, Attachment, CardFactory, InputHints, MessageFactory, OAuthLoginTimeoutKey, TokenResponse, TurnContext, IUserTokenProvider,  } from 'botbuilder-core';
+import { Activity, ActivityTypes, Attachment, CardFactory, InputHints, MessageFactory, OAuthLoginTimeoutKey, TokenResponse, TurnContext, IUserTokenProvider, OAuthCard, ActionTypes,  } from 'botbuilder-core';
 import { Dialog, DialogTurnResult } from '../dialog';
 import { DialogContext } from '../dialogContext';
 import { PromptOptions, PromptRecognizerResult,  PromptValidator } from './prompt';
 import { channels } from '../choices/channel';
+import { isSkillClaim } from './skillsHelpers';
 
 /**
  * Settings used to configure an `OAuthPrompt` instance.
@@ -158,7 +159,7 @@ export class OAuthPrompt extends Dialog {
         } else {
 
             if (state.state['attemptCount'] === undefined) {
-                state.state['attemptCount'] = 1;
+                state.state['attemptCount'] = 0;
             }
 
             // Validate the return value
@@ -169,7 +170,7 @@ export class OAuthPrompt extends Dialog {
                     recognized: recognized,
                     state: state.state,
                     options: state.options,
-                    attemptCount: state.state['attemptCount']
+                    attemptCount: ++state.state['attemptCount']
                 });
             } else if (recognized.succeeded) {
                 isValid = true;
@@ -248,17 +249,31 @@ export class OAuthPrompt extends Dialog {
         if (this.channelSupportsOAuthCard(context.activity.channelId)) {
             const cards: Attachment[] = msg.attachments.filter((a: Attachment) => a.contentType === CardFactory.contentTypes.oauthCard);
             if (cards.length === 0) {
-                let link: string = undefined;
+                let cardActionType = ActionTypes.Signin;
+                let link: string;
                 if (OAuthPrompt.isFromStreamingConnection(context.activity)) {
                     link = await (context.adapter as any).getSignInLink(context, this.settings.connectionName);
+                } else {
+                    // Retrieve the ClaimsIdentity from a BotFrameworkAdapter. For more information see
+                    // https://github.com/microsoft/botbuilder-js/commit/b7932e37bb6e421985d5ce53edd9e82af6240a63#diff-3e3af334c0c6adf4906ee5e2a23beaebR250
+                    const identity = context.turnState.get((context.adapter as any).BotIdentityKey);
+                    if (identity && isSkillClaim(identity.claims)) {
+                        // Force magic code for Skills (to be addressed in R8)
+                        link = await (context.adapter as any).getSignInLink(context, this.settings.connectionName);
+                        cardActionType = ActionTypes.OpenUrl;
+                    }
                 }
                 // Append oauth card
-                msg.attachments.push(CardFactory.oauthCard(
+                const card = CardFactory.oauthCard(
                     this.settings.connectionName,
                     this.settings.title,
                     this.settings.text,
                     link
-                ));
+                );
+
+                // Set the appropriate ActionType for the button.
+                (card.content as OAuthCard).buttons[0].type = cardActionType;
+                msg.attachments.push(card);
             }
         } else {
             const cards: Attachment[] = msg.attachments.filter((a: Attachment) => a.contentType === CardFactory.contentTypes.signinCard);
@@ -274,8 +289,7 @@ export class OAuthPrompt extends Dialog {
         }
 
         // Add the login timeout specified in OAuthPromptSettings to TurnState so it can be referenced if polling is needed
-        if (!context.turnState.get(OAuthLoginTimeoutKey) && this.settings.timeout)
-        {
+        if (!context.turnState.get(OAuthLoginTimeoutKey) && this.settings.timeout) {
             context.turnState.set(OAuthLoginTimeoutKey, this.settings.timeout);
         }
 

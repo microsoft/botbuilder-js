@@ -12,11 +12,12 @@ import { RequestManager } from '../payloads';
 import {
     PayloadReceiver,
     PayloadSender,
-    TransportDisconnectedEventArgs
+    TransportDisconnectedEvent
 } from '../payloadTransport';
-import { BrowserWebSocket } from './BrowserWebSocket';
-import { NodeWebSocket } from './NodeWebSocket';
-import { WebSocketTransport } from './WebSocketTransport';
+import { BrowserWebSocket } from './browserWebSocket';
+import { NodeWebSocket } from './nodeWebSocket';
+import { doesGlobalWebSocketExist } from '../utilities';
+import { WebSocketTransport } from './webSocketTransport';
 import { IStreamingTransportClient, IReceiveResponse } from '../interfaces';
 
 /**
@@ -59,7 +60,7 @@ export class WebSocketClient implements IStreamingTransportClient {
      * @returns A promise that will not resolve until the client stops listening for incoming messages.
      */
     public async connect(): Promise<void> {
-        if (typeof WebSocket !== 'undefined') {
+        if (doesGlobalWebSocketExist()) {
             const ws = new BrowserWebSocket();
             await ws.connect(this._url);
             const transport = new WebSocketTransport(ws);
@@ -82,8 +83,8 @@ export class WebSocketClient implements IStreamingTransportClient {
      * Stop this client from listening.
      */
     public disconnect(): void {
-        this._sender.disconnect(new TransportDisconnectedEventArgs('Disconnect was called.'));
-        this._receiver.disconnect(new TransportDisconnectedEventArgs('Disconnect was called.'));
+        this._sender.disconnect(new TransportDisconnectedEvent('Disconnect was called.'));
+        this._receiver.disconnect(new TransportDisconnectedEvent('Disconnect was called.'));
     }
 
     /**
@@ -98,7 +99,7 @@ export class WebSocketClient implements IStreamingTransportClient {
 
     private onConnectionDisconnected(sender: object, args: any): void {
         if (this._disconnectionHandler != null) {
-            this._disconnectionHandler("Disconnected");
+            this._disconnectionHandler('Disconnected');
             return;
         }
 

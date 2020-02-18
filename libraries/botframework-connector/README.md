@@ -23,36 +23,33 @@ More information: https://docs.microsoft.com/en-us/bot-framework/rest-api/bot-fr
 ### Example
 Client creation (with authentication), conversation initialization and activity send to user.
 ````javascript
-var BotConnector = require('botframework-connector');
+var { ConnectorClient, MicrosoftAppCredentials } = require('botframework-connector');
 
-var credentials = new BotConnector.MicrosoftAppCredentials({
-    appId: '<your-app-id>',
-    appPassword: '<your-app-password>'
-});
+async function connectToSlack() {
+    var credentials = new MicrosoftAppCredentials('<your-app-id>', '<your-app-password>');
 
-var botId = '<bot-id>';
-var recipientId = '<user-id>';
+    var botId = '<bot-id>';
+    var recipientId = '<user-id>';
 
-var client = new BotConnector.ConnectorClient(credentials, 'https://slack.botframework.com')
+    var client = new ConnectorClient(credentials, { baseUri: 'https://slack.botframework.com' });
 
-client.conversations.createConversation({
-    bot: { id: botId },
-    members: [
-        { id: recipientId }
-    ],
-    isGroup: false
-}).then(result => {
-    var conversationId = result.id;
-    return client.conversations.sendToConversation(conversationId, {
-        type: "message",
+    var conversationResponse = await client.conversations.createConversation({
+        bot: { id: botId },
+        members: [
+            { id: recipientId }
+        ],
+        isGroup: false
+    });
+
+    var acivityResponse = await client.conversations.sendToConversation(conversationResponse.id, {
+        type: 'message',
         from: { id: botId },
         recipient: { id: recipientId },
         text: 'This a message from Bot Connector Client (NodeJS)'
     });
-}).then(result => {
-    var activityId = result.id;
-    console.log('Sent reply with ActivityId:', activityId);
-});
+
+    console.log('Sent reply with ActivityId:', acivityResponse.id);
+}
 ````
 
 ### Simple EchoBot Example ([source code](../../samples/echobot-simple-ts))

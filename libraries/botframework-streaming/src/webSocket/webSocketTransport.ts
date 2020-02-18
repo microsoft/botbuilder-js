@@ -60,7 +60,7 @@ export class WebSocketTransport implements ITransportSender, ITransportReceiver 
     /**
      * Returns true if the transport is connected to a socket.
      */
-    public isConnected(): boolean {
+    public get isConnected(): boolean {
         return this._socket.isConnected;
     }
 

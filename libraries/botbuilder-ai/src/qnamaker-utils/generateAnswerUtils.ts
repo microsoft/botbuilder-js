@@ -17,6 +17,7 @@ import { QnARequestContext } from '../qnamaker-interfaces/qnaRequestContext';
 import { HttpRequestUtils } from './httpRequestUtils';
 
 import { QNAMAKER_TRACE_TYPE, QNAMAKER_TRACE_LABEL, QNAMAKER_TRACE_NAME } from '..';
+import { RankerTypes } from '../qnamaker-interfaces/rankerTypes';
 
 /**
  * Generate Answer api utils class.
@@ -58,8 +59,9 @@ export class GenerateAnswerUtils {
      */
     public async queryQnaServiceRaw(endpoint: QnAMakerEndpoint, question: string, options?: QnAMakerOptions): Promise<QnAMakerResults> {
         const url: string = `${ endpoint.host }/knowledgebases/${ endpoint.knowledgeBaseId }/generateanswer`;
-        const queryOptions: QnAMakerOptions = { ...this._options, ...options } as QnAMakerOptions;
-
+        var queryOptions: QnAMakerOptions = { ...this._options, ...options } as QnAMakerOptions;
+        
+        queryOptions.rankerType = !queryOptions.rankerType ? RankerTypes.default : queryOptions.rankerType;
         this.validateOptions(queryOptions);
 
         var payloadBody = JSON.stringify({
@@ -109,8 +111,8 @@ export class GenerateAnswerUtils {
      *
      * @param options (Optional) The options for the QnA Maker knowledge base. If null, constructor option is used for this instance.
      */
-    public validateOptions(options: QnAMakerOptions): void {
-        const { scoreThreshold, top } = options;
+    public validateOptions(options: QnAMakerOptions) {
+        const { scoreThreshold, top, rankerType } = options;
 
         if (scoreThreshold) {
             this.validateScoreThreshold(scoreThreshold);

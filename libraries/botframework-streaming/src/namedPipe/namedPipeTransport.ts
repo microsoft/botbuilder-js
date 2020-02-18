@@ -67,7 +67,7 @@ export class NamedPipeTransport implements ITransportSender, ITransportReceiver 
     /**
      * Returns true if currently connected.
      */
-    public isConnected(): boolean {
+    public get isConnected(): boolean {
         return !(!this._socket || this._socket.destroyed || this._socket.connecting);
     }
 

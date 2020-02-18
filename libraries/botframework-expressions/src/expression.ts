@@ -1,4 +1,3 @@
-
 /**
  * @module botframework-expressions
  */
@@ -8,8 +7,10 @@
  */
 import { BuiltInFunctions } from './builtInFunction';
 import { Constant } from './constant';
-import { ExpressionEvaluator } from './expressionEvaluator';
+import { ExpressionEvaluator, EvaluateExpressionDelegate } from './expressionEvaluator';
 import { ExpressionType } from './expressionType';
+import { SimpleObjectMemory, MemoryInterface } from './memory';
+import { Extensions } from './extensions';
 
 /**
  * Type expected from evalating an expression.
@@ -89,6 +90,96 @@ export class Expression {
     }
 
     /**
+     * Construct an expression from a EvaluateExpressionDelegate
+     * @param func Function to create an expression from.
+     */
+    public static lambaExpression(func: EvaluateExpressionDelegate): Expression {
+        return new Expression(ExpressionType.Lambda, new ExpressionEvaluator(ExpressionType.Lambda, func));
+    }
+
+    /**	
+     * Construct an expression from a lamba expression over the state.
+     * Exceptions will be caught and surfaced as an error string.
+     * @param func ambda expression to evaluate.
+     * @returns New expression.
+     */	
+    public static lambda(func: (arg0: any) => any): Expression {
+        return new Expression(ExpressionType.Lambda, new ExpressionEvaluator(ExpressionType.Lambda,
+            (_expression: Expression, state: any): { value: any; error: string } => {
+                let value: any;
+                let error: string;
+                try {
+                    value = func(state);
+                } catch (funcError) {
+                    error = funcError;
+                }
+
+                return { value, error };
+            }
+        ));
+    }
+
+    /**
+     * Construct and validate an Set a property expression to a value expression.
+     * @param property property expression.
+     * @param value value expression.
+     * @returns New expression.
+     */
+    public static setPathToValue(property: Expression, value: any): Expression {
+        if (value instanceof Expression) {
+            return Expression.makeExpression(ExpressionType.SetPathToValue, undefined, property, value);
+        } else {
+            return Expression.makeExpression(ExpressionType.SetPathToValue, undefined, property, new Constant(value));
+        }
+    }
+
+
+    /**
+     * Construct and validate an Equals expression.
+     * @param children Child clauses.
+     * @returns New expression.
+     */
+    public static equalsExpression(...children: Expression[]): Expression {
+        return Expression.makeExpression(ExpressionType.Equal, undefined, ...children);
+    }
+
+    /**
+     * Construct and validate an And expression.
+     * @param children Child clauses.
+     * @returns New expression.
+     */
+    public static andExpression(...children: Expression[]): Expression {
+        if (children.length > 1) {
+            return Expression.makeExpression(ExpressionType.And, undefined, ...children);
+        } else {
+            return children[0];
+        }
+    }
+
+    /**
+     * Construct and validate an Or expression.
+     * @param children Child clauses.
+     * @returns New expression.
+     */
+    public static orExpression(...children: Expression[]): Expression {
+        if (children.length > 1) {
+            return Expression.makeExpression(ExpressionType.Or, undefined, ...children);
+        } else {
+            return children[0];
+        }
+    }
+
+    /**
+     * Construct and validate an Not expression.
+     * @param children Child clauses.
+     * @returns New expression.
+     */	
+    public static notExpression(child: Expression): Expression {
+        return Expression.makeExpression(ExpressionType.Not, undefined, child);
+    }
+
+
+    /**
      * Validate immediate expression.
      */
     // tslint:disable-next-line: no-void-expression
@@ -109,7 +200,10 @@ export class Expression {
      * Global state to evaluate accessor expressions against.  Can Dictionary be otherwise reflection is used to access property and then indexer.
      * @param state
      */
-    public tryEvaluate(state: any): { value: any; error: string } {
+    public tryEvaluate(state: MemoryInterface | any): { value: any; error: string } {
+        if(!Extensions.isMemoryInterface(state)) {
+            state = SimpleObjectMemory.wrap(state);
+        }
         return this.evaluator.tryEvaluate(this, state);
     }
 

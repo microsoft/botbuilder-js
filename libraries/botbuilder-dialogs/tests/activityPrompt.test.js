@@ -1,4 +1,4 @@
-const { ConversationState, MemoryStorage, TestAdapter } = require('botbuilder-core');
+const { ActivityTypes, ConversationState, MemoryStorage, TestAdapter } = require('botbuilder-core');
 const { ActivityPrompt, DialogReason, DialogSet, DialogTurnStatus } =  require('../');
 const assert = require('assert');
 
@@ -76,7 +76,7 @@ describe('ActivityPrompt', function () {
             .assertReply('Please send an activity.');
     });
 
-    it('should re-prompt with custom retyrPrompt if validator returned false.', async function () {
+    it('should re-prompt with custom retryPrompt if validator returned false.', async function () {
         const adapter = new TestAdapter(async turnContext => {
             const dc = await dialogs.createContext(turnContext);
 
@@ -103,6 +103,57 @@ describe('ActivityPrompt', function () {
             .assertReply('Please send activity.')
             .send('test')
             .assertReply('Activity not received.');
+    });
+
+    it('should see attemptCount increment.', async function() {
+        const convoState = new ConversationState(new MemoryStorage());
+        
+        const dialogState = convoState.createProperty('dialogState');
+        const dialogs = new DialogSet(dialogState);
+        
+        dialogs.add(new SimpleActivityPrompt('prompt', async prompt => {
+            assert(prompt, `validator missing PromptValidatorContext.`);
+            assert(typeof prompt.recognized.value === 'object', 'recognized.value was not an object.');
+            if (prompt.recognized.value.type !== ActivityTypes.Event) {
+                prompt.context.sendActivity(`attemptCount ${ prompt.attemptCount }`);
+                return false;
+            }
+            return true;
+        }));
+        
+        const adapter = new TestAdapter(async turnContext => {
+            const dc = await dialogs.createContext(turnContext);
+
+            const results = await dc.continueDialog();
+            if (results.status === DialogTurnStatus.empty) {
+                await dc.prompt('prompt', { prompt: 'Please send activity.', retryPrompt: 'Activity not received.' });
+            } else if (results.status === DialogTurnStatus.complete) {
+                const reply = results.result.type;
+                await turnContext.sendActivity(`You sent a(n) ${ reply }`);
+            }
+            await convoState.saveChanges(turnContext);
+        });
+        
+        await adapter.send('Hello')
+            .assertReply('Please send activity.')
+            .send('100')
+            .assertReply('attemptCount 1')
+            .send('200')
+            .assertReply('attemptCount 2')
+            .send('300')
+            .assertReply('attemptCount 3')
+            .send({ type: ActivityTypes.Event })
+            .assertReply(`You sent a(n) ${ ActivityTypes.Event }`)
+            .send('Another!')
+            .assertReply('Please send activity.')
+            .send('100')
+            .assertReply('attemptCount 1')
+            .send('200')
+            .assertReply('attemptCount 2')
+            .send('300')
+            .assertReply('attemptCount 3')
+            .send({ type: ActivityTypes.Event })
+            .assertReply(`You sent a(n) ${ ActivityTypes.Event }`);
     });
 
     it('should have resumeDialog() prompt user and return Dialog.EndOfTurn.', async function () {

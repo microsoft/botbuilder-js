@@ -54,4 +54,14 @@ export interface QnAMakerOptions {
      * Id of the current question asked.
      */
     qnaId?: number;
+
+    /**
+     * A value indicating whether to call test or prod environment of knowledgebase. 
+     */
+    isTest?: boolean;
+
+    /**
+     * Ranker types.
+     */
+    rankerType?: string;
 }

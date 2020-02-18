@@ -6,4 +6,6 @@
  * Licensed under the MIT License.
  */
 
+export * from './doesGlobalFileReaderExist';
+export * from './doesGlobalWebSocketExist';
 export * from './protocol-base';

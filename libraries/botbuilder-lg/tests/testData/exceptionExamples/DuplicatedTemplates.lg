@@ -1,8 +1,10 @@
-﻿# template1
+﻿[import](DuplicatedTemplatesInImportFiles.lg)
+
+# template1
  - hi
 
- # template1(name)
+# template1(name)
  - hi
 
- # template1
- - hi 
+# template1
+ - hi
