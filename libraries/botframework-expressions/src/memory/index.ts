@@ -9,3 +9,4 @@
 export * from './memoryInterface';
 export * from './composedMemory';
 export * from './simpleObjectMemory';
+export * from './stackedMemory';

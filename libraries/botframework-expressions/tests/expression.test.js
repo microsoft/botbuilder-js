@@ -383,6 +383,10 @@ const dataSource = [
     ['join(foreach(items, item, item), \',\')', 'zero,one,two'],
     ['join(foreach(nestedItems, i, i.x + first(nestedItems).x), \',\')', '2,3,4', ['nestedItems']],
     ['join(foreach(items, item, concat(item, string(count(items)))), \',\')', 'zero3,one3,two3', ['items']],
+    ['join(foreach(doubleNestedItems, items, join(foreach(items, item, item.x), ",")), ",")', '1,2,3'],
+    ['join(foreach(doubleNestedItems, items, join(foreach(items, item, concat(y, string(item.x))), ",")), ",")', 'y1,y2,y3'],
+    ['count(where(doubleNestedItems, items, count(where(items, item, item.x == 1)) == 1))', 1],
+    ['count(where(doubleNestedItems, items, count(where(items, item, count(items) == 1)) == 1))', 1],
     ['join(select(items, item, item), \',\')', 'zero,one,two'],
     ['join(select(nestedItems, i, i.x + first(nestedItems).x), \',\')', '2,3,4', ['nestedItems']],
     ['join(select(items, item, concat(item, string(count(items)))), \',\')', 'zero3,one3,two3', ['items']],
@@ -551,7 +555,11 @@ const scope = {
       options: { xxx: 'options',  yyy : ['optionY1', 'optionY2' ] },
       title: 'Dialog Title',
       subTitle: 'Dialog Sub Title'
-  }
+  },
+    doubleNestedItems: [
+        [{ x: 1 }, { x: 2 }],
+        [{ x: 3 }],
+    ],
 };
 
 describe('expression functional test', () => {

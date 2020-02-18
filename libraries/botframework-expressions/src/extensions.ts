@@ -22,24 +22,11 @@ export class Extensions {
      * @returns Hash set of the static reference paths.
      */
     public static references(expression: Expression): string[] {
-        let references: Set<string> = new Set<string>();
-        const path: string = this.referenceWalk(expression, references);
+        const {path, refs} = this.referenceWalk(expression);
         if (path !== undefined) {
-            references = references.add(path);
+            refs.add(path);
         }
-
-        const filteredReferences: Set<string> = new Set<string>();
-        references.forEach((x: string): void => {
-            if (!x.startsWith('$local.')) {
-                if (x.startsWith('$global.')) {
-                    filteredReferences.add(x.substr(8));
-                } else {
-                    filteredReferences.add(x);
-                }
-            }
-        });
-
-        return Array.from(filteredReferences);
+        return Array.from(refs);
     }
 
     /**
@@ -67,9 +54,10 @@ export class Extensions {
      * @param extension If present, called to override lookup for things like template expansion.
      * @returns Accessor path of expression.
      */
-    public static referenceWalk(expression: Expression, references: Set<string>,
-        extension?: (arg0: Expression) => boolean): string {
+    public static referenceWalk(expression: Expression,
+        extension?: (arg0: Expression) => boolean): {path:string; refs:Set<string>} {
         let path: string;
+        let refs = new Set<string>();
         if (extension === undefined || !extension(expression)) {
             const children: Expression[] = expression.children;
             if (expression.type === ExpressionType.Accessor) {
@@ -80,7 +68,7 @@ export class Extensions {
                 }
 
                 if (children.length === 2) {
-                    path = Extensions.referenceWalk(children[1], references, extension);
+                    ({path, refs} = Extensions.referenceWalk(children[1], extension));
                     if (path !== undefined) {
                         path = path.concat('.', prop);
                     }
@@ -88,7 +76,7 @@ export class Extensions {
                     // because for example, first(items).x should not return x as refs
                 }
             } else if (expression.type === ExpressionType.Element) {
-                path = Extensions.referenceWalk(children[0], references, extension);
+                ({path, refs}  = Extensions.referenceWalk(children[0], extension));
                 if (path !== undefined) {
                     if (children[1] instanceof Constant) {
                         const cnst: Constant = children[1] as Constant;
@@ -98,24 +86,51 @@ export class Extensions {
                             path += `[${ cnst.value }]`;
                         }
                     } else {
-                        references.add(path);
+                        refs.add(path);
                     }
                 }
-                const idxPath: string = Extensions.referenceWalk(children[1], references, extension);
+                const result = Extensions.referenceWalk(children[1], extension);
+                const idxPath = result.path;
+                const refs1 = result.refs;
+                refs = new Set([...refs, ...refs1]);
                 if (idxPath !== undefined) {
-                    references.add(idxPath);
+                    refs.add(idxPath);
+                } 
+            } else if (expression.type === ExpressionType.Foreach || 
+                    expression.type === ExpressionType.Where ||
+                    expression.type === ExpressionType.Select ) {
+                let result = Extensions.referenceWalk(children[0], extension);
+                const child0Path = result.path;
+                const refs0 = result.refs;
+                if (child0Path !== undefined) {
+                    refs0.add(child0Path);
                 }
+
+                result = Extensions.referenceWalk(children[2], extension);
+                const child2Path = result.path;
+                const refs2 = result.refs;
+                if (child2Path !== undefined) {
+                    refs2.add(child2Path);
+                }
+
+                const iteratorName = (children[1].children[0] as Constant).value as string;
+                var nonLocalRefs2 = Array.from(refs2).filter(x => !(x === iteratorName || x.startsWith(iteratorName + '.') || x.startsWith(iteratorName + '[')));
+                refs = new Set([...refs, ...refs0, ...nonLocalRefs2]);
+
             } else {
                 for (const child of expression.children) {
-                    const childPath: string = Extensions.referenceWalk(child, references, extension);
+                    const result = Extensions.referenceWalk(child, extension);
+                    const childPath = result.path;
+                    const refs0 = result.refs;
+                    refs = new Set([...refs, ...refs0])
                     if (childPath !== undefined) {
-                        references.add(childPath);
+                        refs.add(childPath);
                     }
                 }
             }
         }
 
-        return path;
+        return {path, refs}
     }
 
     /**
