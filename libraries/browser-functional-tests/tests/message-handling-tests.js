@@ -25,11 +25,13 @@ module.exports = {
     'Echo bot webchat sends messages': async function(browser) {
         // Type 'Hello' in the webchat input box and send it to the bot
         botPage
-            .setValue('@webchatMessageInput', 'Hello')
-            .click('@webchatMessageInputSubtmitButton', function(result) {
+            .setValue('@webchatMessageInput', 'Hello');
+        botPage
+            .click('@webchatMessageInputSubmitButton', function (result) {
                 // Assertion to check the button was clickable and got triggered
                 this.assert.strictEqual(result.status, 0, 'Message input working');
-            })
+            });
+        botPage
             .pause(250);
 
         await assertMessageIsPresentInPage(botPage, 'Hello', 'Webchat contains user message');

@@ -14,7 +14,6 @@ const StaticCheckExceptionData  = [
     'TemplateParamsNotMatchArgsNum.lg',
     'ErrorSeperateChar.lg',
     'ErrorSeperateChar2.lg',
-    'MultilineVariation.lg',
     'InvalidTemplateName.lg',
     'InvalidTemplateName2.lg',
     'DuplicatedTemplates.lg',
@@ -27,9 +26,6 @@ const StaticCheckExceptionData  = [
 
 const StaticCheckWariningData  = [
     'EmptyLGFile.lg',
-    'OnlyNoMatchRule.lg',
-    'NoMatchRule.lg',
-    'SwitchCaseWarning.lg',
     'EmptyTemplate.lg',
 ];
 
@@ -62,6 +58,7 @@ describe('LGExceptionTest', function() {
             var isFail = false;
             try {
                 new TemplateEngine().addFile(GetExampleFilePath(testDateItem));
+                console.log(testDateItem);
                 isFail = true;
             } catch (e) {
                 console.log(e.message);

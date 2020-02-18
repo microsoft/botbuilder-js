@@ -3,15 +3,15 @@
 
 > No match rule
 # template2
-- IF: @{foo == 'bar'}
+- IF: ${foo == 'bar'}
    - ok
 
 # template3
--CASE: @{'bar'}
+-CASE: ${'bar'}
    - bar   
 
 # template4 
-- SWITCH:@{foo}
+- SWITCH:${foo}
 - default:
    -bar
 
