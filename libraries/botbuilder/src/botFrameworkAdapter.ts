@@ -531,7 +531,7 @@ export class BotFrameworkAdapter extends BotAdapter implements IExtendedUserToke
             throw new Error(`BotFrameworkAdapter.getUserToken(): missing from or from.id`);
         }
         if (!connectionName) {
-        	throw new Error('getUserToken() requires a connectionName but none was provided.');
+            throw new Error('getUserToken() requires a connectionName but none was provided.');
         }
         this.checkEmulatingOAuthCards(context);
         const userId: string = context.activity.from.id;
@@ -667,14 +667,19 @@ export class BotFrameworkAdapter extends BotAdapter implements IExtendedUserToke
      */
     public async getSignInResource(context: TurnContext, connectionName: string, userId?: string, finalRedirect?: string): Promise<TokenApiModels.BotSignInGetSignInResourceResponse>
     {
+        if (!connectionName) {
+            throw new Error('getUserToken() requires a connectionName but none was provided.');
+        }
+
         if (!context.activity.from || !context.activity.from.id) {
             throw new Error(`BotFrameworkAdapter.getSignInResource(): missing from or from.id`);
         }
 
+        // what to do when userId is null (same for finalRedirect)
         if(userId && context.activity.from.id != userId) {
             throw new Error('BotFrameworkAdapter.getSiginInResource(): cannot get signin resource for a user that is different from the conversation');
         }
-        
+
         const url: string = this.oauthApiUrl(context);
         const client: TokenApiClient = this.createTokenApiClient(url);
         const conversation: Partial<ConversationReference> = TurnContext.getConversationReference(context.activity);
@@ -699,6 +704,14 @@ export class BotFrameworkAdapter extends BotAdapter implements IExtendedUserToke
      * @param tokenExchangeRequest The exchange request details, either a token to exchange or a uri to exchange.
      */ 
     public async exchangeToken(context: TurnContext, connectionName: string, userId: string, tokenExchangeRequest: TokenExchangeRequest): Promise<TokenResponse> {
+        if (!connectionName) {
+            throw new Error('exchangeToken() requires a connectionName but none was provided.');
+        }
+
+        if (!userId) {
+            throw new Error('exchangeToken() requires an userId but none was provided.');
+        }
+        
         if(tokenExchangeRequest && !tokenExchangeRequest.token && !tokenExchangeRequest.uri) {
             throw new Error('BotFrameworkAdapter.exchangeToken(): Either a Token or Uri property is required on the TokenExchangeRequest');
         }

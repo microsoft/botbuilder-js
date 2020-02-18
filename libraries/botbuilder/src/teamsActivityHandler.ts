@@ -66,6 +66,10 @@ export class TeamsActivityHandler extends ActivityHandler {
                         await this.handleTeamsSigninVerifyState(context, context.activity.value);
                         return TeamsActivityHandler.createInvokeResponse();
 
+                    case 'signin/tokenExchange':
+                        await this.handleTeamsSigninTokenExchange(context, context.activity.value);
+                        return TeamsActivityHandler.createInvokeResponse();
+
                     case 'fileConsent/invoke':
                         return TeamsActivityHandler.createInvokeResponse(await this.handleTeamsFileConsent(context, context.activity.value));
 
@@ -181,6 +185,15 @@ export class TeamsActivityHandler extends ActivityHandler {
      * @param action
      */
     protected async handleTeamsSigninVerifyState(context: TurnContext, query: SigninStateVerificationQuery): Promise<void> {
+        throw new Error('NotImplemented');
+    }
+
+    /**
+     * Receives invoke activities with Activity name of 'signin/tokenExchange'
+     * @param context
+     * @param action
+     */
+    protected async handleTeamsSigninTokenExchange(context: TurnContext, query: SigninStateVerificationQuery): Promise<void> {
         throw new Error('NotImplemented');
     }
 
