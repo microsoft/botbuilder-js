@@ -27,9 +27,8 @@ export class TestRunner {
         this.typeLoader.addComponent(new AdaptiveComponentRegistration());
         this.typeLoader.addComponent(new AdaptiveTestComponentRegistration());
 
-        this.testAdapter = new AdaptiveTestAdapter(AdaptiveTestAdapter.createConversation('botbuilder-dialogs-adaptive-tests'));
-        // how to inject LG middleware
         const lgResourceExplorer = LgResourceExplorer.loadProject('resources/lg', [], false);
+        this.testAdapter = new AdaptiveTestAdapter(AdaptiveTestAdapter.createConversation('botbuilder-dialogs-adaptive-tests'));
         this.testAdapter.use(new LanguageGeneratorMiddleWare(lgResourceExplorer));
 
     }

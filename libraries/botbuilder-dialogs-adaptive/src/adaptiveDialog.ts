@@ -7,7 +7,7 @@
  */
 import {
     TurnContext, BotTelemetryClient, NullTelemetryClient, ActivityTypes,
-    RecognizerResult
+    RecognizerResult, getTopScoringIntent
 } from 'botbuilder-core';
 import {
     Dialog, DialogInstance, DialogReason, DialogTurnResult, DialogTurnStatus, DialogEvent,
@@ -249,26 +249,13 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
                 case AdaptiveEventNames.recognizeUtterance:
                     if (sequence.context.activity.type == ActivityTypes.Message) {
                         // Recognize utterance
-                        const recognized = await this.onRecognize(sequence.context);
+                        const recognized = await this.onRecognize(sequence);
                         sequence.state.setValue(TurnPath.RECOGNIZED, recognized);
 
                         // Get top scoring intent
-                        let topIntent: string;
-                        let topScore = -1;
-                        for (const key in recognized.intents) {
-                            if (recognized.intents.hasOwnProperty(key)) {
-                                if (topIntent == undefined) {
-                                    topIntent = key;
-                                    topScore = recognized.intents[key].score;
-                                } else if (recognized.intents[key].score > topScore) {
-                                    topIntent = key;
-                                    topScore = recognized.intents[key].score;
-                                }
-                            }
-                        }
-
-                        sequence.state.setValue(TurnPath.TOPINTENT, topIntent);
-                        sequence.state.setValue(TurnPath.TOPSCORE, topScore);
+                        const { intent, score } = getTopScoringIntent(recognized);
+                        sequence.state.setValue(TurnPath.TOPINTENT, intent);
+                        sequence.state.setValue(TurnPath.TOPSCORE, score);
                         handled = true;
                     }
                     break;
@@ -312,7 +299,8 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
         return handled;
     }
 
-    protected async onRecognize(context: TurnContext): Promise<RecognizerResult> {
+    protected async onRecognize(sequenceContext: SequenceContext): Promise<RecognizerResult> {
+        const context = sequenceContext.context;
         const { text, value } = context.activity;
         const noneIntent: RecognizerResult = {
             text: text || '',
@@ -341,24 +329,13 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
             return recognized;
         } else if (this.recognizer) {
             // Call recognizer as normal and filter to top intent
-            let topIntent: string;
-            let topScore = -1;
-            const recognized = await this.recognizer.recognize(context);
+            const recognized = await this.recognizer.recognize(sequenceContext);
+            const { intent } = getTopScoringIntent(recognized);
             for (const key in recognized.intents) {
-                if (recognized.intents.hasOwnProperty(key)) {
-                    if (topIntent == undefined) {
-                        topIntent = key;
-                        topScore = recognized.intents[key].score;
-                    } else if (recognized.intents[key].score > topScore) {
-                        delete recognized.intents[topIntent];
-                        topIntent = key;
-                        topScore = recognized.intents[key].score;
-                    } else {
-                        delete recognized.intents[key];
-                    }
+                if (key != intent) {
+                    delete recognized[key];
                 }
             }
-
             return recognized;
         } else {
             return noneIntent;

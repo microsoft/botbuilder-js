@@ -5,14 +5,16 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { TurnContext, RecognizerResult } from 'botbuilder-core';
+import { RecognizerResult, Activity } from 'botbuilder-core';
+import { DialogContext } from 'botbuilder-dialogs';
 
 export interface Recognizer {
-    recognize(context: TurnContext): Promise<RecognizerResult>;
+    id: string;
+    recognize(dialogContext: DialogContext, textOrActivity?: string | Activity, locale?: string): Promise<RecognizerResult>;
 }
 
 export interface IntentMap {
-    [name: string]: { score: number; };
+    [name: string]: { score: number };
 }
 
 export function createRecognizerResult(text: string, intents?: IntentMap, entities?: object ): RecognizerResult {
