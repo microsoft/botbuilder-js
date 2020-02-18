@@ -93,6 +93,7 @@ const dataSource = [
     ['replaceIgnoreCase(nullObj, \'L\', \'k\')', ''],
     ['replaceIgnoreCase(\'hello\', \'L\', nullObj)', 'heo'],
     ['split(\'hello\',\'e\')', ['h', 'llo']],
+    ['split(\'hello\')', ['h', 'e', 'l', 'l', 'o']],
     ['split(nullObj,\'e\')', ['']],
     ['split(\'hello\',nullObj)', ['h', 'e', 'l', 'l', 'o']],
     ['split(nullObj,nullObj)', []],
@@ -144,10 +145,6 @@ const dataSource = [
     ['lastIndexOf(newGuid(), \'-\')', 23],
     ['lastIndexOf(newGuid(), \'-\')', 23],
     ['lastIndexOf(hello, \'-\')', -1],
-    ['sortBy(items)', ['one', 'two', 'zero']],
-    ['sortBy(nestedItems, \'x\')[0].x', 1],
-    ['sortByDescending(items)', ['zero', 'two', 'one']],
-    ['sortByDescending(nestedItems, \'x\')[0].x', 3],
 
     // Logical comparison functions tests
     ['and(1 == 1, 1 < 2, 1 > 2)', false],
@@ -185,6 +182,8 @@ const dataSource = [
     ['lessOrEquals(one, two)', true],
     ['equals(hello, \'hello\')', true],
     ['equals(bag.index, 3)', true],
+    ['equals(min(createArray(1,2,3,4), 5.0), 1.0)', true],
+    ['equals(max(createArray(1,2,3,4), 5.0), 5)', true],
     ['equals(bag.index, 2)', false],
     ['equals(hello == \'world\', bool(\'true\'))', false],
     ['equals(hello == \'world\', bool(0))', false],
@@ -247,12 +246,16 @@ const dataSource = [
     ['add(1.0, 2.0)', 3.0],
     ['add(mul(1, 2), 3)', 5],
     ['max(mul(1, 2), 5) ', 5],
+    ['max(createArray(1,2,3,4), 5.0) ', 5.0],
+    ['max(createArray(1,2,3,4)) ', 4],
     ['max(5)', 5],
     ['max(4, 5) ', 5],
     ['min(mul(1, 2), 5) ', 2],
     ['min(4, 5) ', 4],
     ['min(4)', 4],
     ['min(1.0, two) + max(one, 2.0)', 3.0, oneTwo],
+    ['min(createArray(1,2,3,4)) ', 1],
+    ['min(createArray(1,2,3,4), 5.0) ', 1],
     ['sub(2, 1)', 1],
     ['sub(2, 1, 1)', 0],
     ['sub(2.0, 0.5)', 1.5],
@@ -289,6 +292,22 @@ const dataSource = [
     ['utcNow(\'MM-DD-YY\')', moment(new Date().toISOString()).format('MM-DD-YY')],
     ['formatDateTime(notISOTimestamp)', '2018-03-15T13:00:00.000Z'],
     ['formatDateTime(notISOTimestamp, \'MM-dd-yy\')', '03-15-18'],
+    ['formatDateTime(notISOTimestamp, \'ddd\')', 'Thu'],
+    ['formatDateTime(notISOTimestamp, \'dddd\')', 'Thursday'],
+    ['formatDateTime(\'2018-03-15T00:00:00.000Z\', \'yyyy\')', '2018'],
+    ['formatDateTime(\'2018-03-15T00:00:00.000Z\', \'yyyy-MM-dd-\\d\')', '2018-03-15-4'],
+    ['formatDateTime(\'2018-03-15T00:00:00.010Z\', \'FFFF\')', '0100'],
+    ['formatDateTime(\'2018-03-15T00:00:00.010Z\', \'FFFFFF\')', '010000'],
+    ['formatDateTime(\'2018-03-15T00:00:00.010Z\', \'FFF\')', '010'],
+    ['formatDateTime(\'2018-03-15T09:00:00.010\', \'hh\')', '09'],
+    ['formatDateTime(\'2018-03-15T09:00:00.010\', \'MMMM\')', 'March'],
+    ['formatDateTime(\'2018-03-15T09:00:00.010\', \'MMM\')', 'Mar'],
+    ['length(formatDateTime(\'2018-03-15T09:00:00.010\', \'z\'))', 5],
+    ['length(formatDateTime(\'2018-03-15T09:00:00.010\', \'zzz\'))', 6],
+    ['formatDateTime(formatDateTime(\'2018-03-15T00:00:00.000Z\', \'o\'), \'yyyy\')', '2018'],
+    ['formatDateTime(\'2018-03-15T00:00:00.123Z\', \'fff\')', '123'],
+    ['formatDateTime(\'2018-03-15T11:00:00.123\', \'t\')', 'AM'],
+    ['formatDateTime(\'2018-03-15T11:00:00.123\', \'tt\')', 'AM'],
     ['formatDateTime(\'2018-03-15\')', '2018-03-15T00:00:00.000Z'],
     ['formatDateTime(timestampObj)', '2018-03-15T13:00:00.000Z'],
     ['formatDateTime(unixTimestamp)', '2018-03-15T13:00:00.000Z'],
@@ -364,6 +383,10 @@ const dataSource = [
     ['join(foreach(items, item, item), \',\')', 'zero,one,two'],
     ['join(foreach(nestedItems, i, i.x + first(nestedItems).x), \',\')', '2,3,4', ['nestedItems']],
     ['join(foreach(items, item, concat(item, string(count(items)))), \',\')', 'zero3,one3,two3', ['items']],
+    ['join(foreach(doubleNestedItems, items, join(foreach(items, item, item.x), ",")), ",")', '1,2,3'],
+    ['join(foreach(doubleNestedItems, items, join(foreach(items, item, concat(y, string(item.x))), ",")), ",")', 'y1,y2,y3'],
+    ['count(where(doubleNestedItems, items, count(where(items, item, item.x == 1)) == 1))', 1],
+    ['count(where(doubleNestedItems, items, count(where(items, item, count(items) == 1)) == 1))', 1],
     ['join(select(items, item, item), \',\')', 'zero,one,two'],
     ['join(select(nestedItems, i, i.x + first(nestedItems).x), \',\')', '2,3,4', ['nestedItems']],
     ['join(select(items, item, concat(item, string(count(items)))), \',\')', 'zero3,one3,two3', ['items']],
@@ -384,6 +407,10 @@ const dataSource = [
     ['subArray(createArray(\'a\', \'b\', \'c\', \'d\'), 1)', ['b', 'c', 'd']],
     ['range(1, 4)', [1, 2, 3, 4]],
     ['range(-1, 3)', [-1, 0, 1]],
+    ['sortBy(items)', ['one', 'two', 'zero']],
+    ['sortBy(nestedItems, \'x\')[0].x', 1],
+    ['sortByDescending(items)', ['zero', 'two', 'one']],
+    ['sortByDescending(nestedItems, \'x\')[0].x', 3],
 
     // Object manipulation and construction functions tests
     ['string(addProperty(json(\'{"key1":"value1"}\'), \'key2\',\'value2\'))', '{"key1":"value1","key2":"value2"}'],
@@ -393,51 +420,16 @@ const dataSource = [
     ['jPath(jsonStr, pathStr )', ['Jazz', 'Accord']],
     ['jPath(jsonStr, \'.automobiles[0].maker\' )', ['Nissan']],
 
-    // Short hand expression tests
-    ['@city == \'Bellevue\'', false, ['turn.recognized.entities.city']],
-    ['@city', 'Seattle', ['turn.recognized.entities.city']],
-    ['@city == \'Seattle\'', true, ['turn.recognized.entities.city']],
-    ['@ordinal[1]', '2', ['turn.recognized.entities.ordinal']],
-    ['@[\'city\']', 'Seattle', ['turn.recognized.entities.city']],
-    ['@[concat(\'cit\', \'y\')]', 'Seattle', ['turn.recognized.entities']],
-    ['@[concat(cit, y)]', 'Seattle', ['turn.recognized.entities','cit','y']],
-    ['#BookFlight == \'BookFlight\'', true, ['turn.recognized.intents.BookFlight']],
-    ['#BookHotel[1].Where', 'Kirkland', ['turn.recognized.intents.BookHotel[1].Where']],
-    ['exists(#BookFlight)', true, ['turn.recognized.intents.BookFlight']],
-    ['$title', 'Dialog Title', ['dialog.title']],
-    ['$subTitle', 'Dialog Sub Title', ['dialog.subTitle']],
-    ['~xxx', 'instance', ['dialog.instance.xxx']],
-    ['~[\'yyy\'].instanceY', 'instanceY', ['dialog.instance.yyy.instanceY']],
-    ['%xxx', 'options', ['dialog.options.xxx']],
-    ['%[\'xxx\']', 'options', ['dialog.options.xxx']],
-    ['%yyy[1]', 'optionY2', ['dialog.options.yyy[1]']],
-    ['^x', 3],
-    ['^y', 2],
-    ['^z', 1],
-    ['count(@@CompositeList1) == 1 && count(@@CompositeList1[0]) == 1', true, ['turn.recognized.entities.CompositeList1', 'turn.recognized.entities.CompositeList1[0]']],
-    ['count(@CompositeList2) == 2 && (@CompositeList2)[0] == \'firstItem\'', true, ['turn.recognized.entities.CompositeList2']],
-
     // Memory access tests
     ['getProperty(bag, concat(\'na\',\'me\'))', 'mybag'],
-    ['getProperty(bag, \'Name\')', 'mybag'],
-    ['getProperty(bag.set, \'FOUR\')', 4.0],
     ['items[2]', 'two', ['items[2]']],
     ['bag.list[bag.index - 2]', 'blue', ['bag.list', 'bag.index']],
     ['items[nestedItems[1].x]', 'two', ['items', 'nestedItems[1].x']],
     ['bag[\'name\']', 'mybag'],
     ['bag[substring(concat(\'na\',\'me\',\'more\'), 0, length(\'name\'))]', 'mybag'],
-    ['bag[\'NAME\']', 'mybag'],
-    ['bag.set[concat(\'Fo\', \'UR\')]', 4.0],
+    ['items[1+1]', 'two'],
     ['getProperty(undefined, \'p\')', undefined],
     ['(getProperty(undefined, \'p\'))[1]', undefined],
-
-    // Dialog tests
-    ['user.lists.todo[int(@ordinal[0]) - 1] != null', true],
-    ['user.lists.todo[int(@ordinal[0]) + 3] != null', false],
-    ['count(user.lists.todo) > int(@ordinal[0])', true],
-    ['count(user.lists.todo) >= int(@ordinal[0])', true],
-    ['user.lists.todo[int(@ordinal[0]) - 1]', 'todo1'],
-    ['user.lists[user.listType][int(@ordinal[0]) - 1]', 'todo1'],
 
     // regex test
     ['isMatch(\'abc\', \'^[ab]+$\')', false], // simple character classes ([abc]), "+" (one or more)
@@ -469,20 +461,25 @@ const dataSource = [
     ['', ''],
 
     // SetPathToValue tests
-    ['setPathToValue(@@blah.woof, 1+2) + @@blah.woof', 6],
     ['setPathToValue(path.simple, 3) + path.simple', 6],
     ['setPathToValue(path.simple, 5) + path.simple', 10],
     ['setPathToValue(path.array[0], 7) + path.array[0]', 14],
     ['setPathToValue(path.array[1], 9) + path.array[1]', 18],
+    /*
     ['setPathToValue(path.darray[2][0], 11) + path.darray[2][0]', 22],
     ['setPathToValue(path.darray[2][3].foo, 13) + path.darray[2][3].foo', 26],
     ['setPathToValue(path.overwrite, 3) + setPathToValue(path.overwrite[0], 4) + path.overwrite[0]', 11],
     ['setPathToValue(path.overwrite[0], 3) + setPathToValue(path.overwrite, 4) + path.overwrite', 11],
     ['setPathToValue(path.overwrite.prop, 3) + setPathToValue(path.overwrite, 4) + path.overwrite', 11],
     ['setPathToValue(path.overwrite.prop, 3) + setPathToValue(path.overwrite[0], 4) + path.overwrite[0]', 11],
+    */
+    ['setPathToValue(path.x, null)', undefined],
 ];
 
 const scope = {
+    path: {
+        array: [1]
+    },
     one: 1.0,
     two: 2.0,
     hello: 'hello',
@@ -559,12 +556,10 @@ const scope = {
       title: 'Dialog Title',
       subTitle: 'Dialog Sub Title'
   },
-    callstack:
-  [
-      { x: 3 },
-      { x: 2, y: 2 },
-      { x: 1, y: 1, z: 1 }
-  ]
+    doubleNestedItems: [
+        [{ x: 1 }, { x: 2 }],
+        [{ x: 3 }],
+    ],
 };
 
 describe('expression functional test', () => {
@@ -580,7 +575,7 @@ describe('expression functional test', () => {
             const expected = data[1];
 
             //Assert Object Equals
-            if (actual instanceof Array && expected instanceof Array) {
+            if (Array.isArray(actual) && Array.isArray(expected)) {
                 const [isSuccess, errorMessage] = isArraySame(actual, expected);
                 if (!isSuccess) {
                     assert.fail(errorMessage);

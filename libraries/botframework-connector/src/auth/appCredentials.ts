@@ -30,19 +30,30 @@ export abstract class AppCredentials implements msrest.ServiceClientCredentials 
     public appId: string;
 
     public oAuthEndpoint: string;
-    public oAuthScope: string = AuthenticationConstants.ToBotFromChannelTokenIssuer;
-    public readonly tokenCacheKey: string;
+    private _oAuthScope: string;
+    public tokenCacheKey: string;
     protected refreshingToken: Promise<adal.TokenResponse> | null = null;
     protected readonly authenticationContext: adal.AuthenticationContext;
 
-    constructor(appId: string, channelAuthTenant?: string) {
+    constructor(appId: string, channelAuthTenant?: string, oAuthScope: string = AuthenticationConstants.ToBotFromChannelTokenIssuer) {
         this.appId = appId;
         const tenant = channelAuthTenant && channelAuthTenant.length > 0
             ? channelAuthTenant
             : AuthenticationConstants.DefaultChannelAuthTenant;
         this.oAuthEndpoint = AuthenticationConstants.ToChannelFromBotLoginUrlPrefix + tenant;
-        this.tokenCacheKey = `${ appId }-cache`;
-        this.authenticationContext = new adal.AuthenticationContext(this.oAuthEndpoint);
+        this.oAuthScope = oAuthScope;
+        // aadApiVersion is set to '1.5' to avoid the "spn:" concatenation on the audience claim
+        // For more info, see https://github.com/AzureAD/azure-activedirectory-library-for-nodejs/issues/128
+        this.authenticationContext = new adal.AuthenticationContext(this.oAuthEndpoint, true, undefined, '1.5');
+    }
+
+    public get oAuthScope(): string {
+        return this._oAuthScope
+    }
+
+    public set oAuthScope(value: string) {
+        this._oAuthScope = value;
+        this.tokenCacheKey = `${ this.appId }${ this.oAuthScope }-cache`;
     }
 
     /**

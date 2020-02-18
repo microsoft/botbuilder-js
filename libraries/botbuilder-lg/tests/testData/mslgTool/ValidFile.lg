@@ -1,34 +1,34 @@
 # ShowAlarm(alarm)
-- {alarm.time} at {alarm.date}
-- {alarm.time} of {alarm.date}
+- ${alarm.time} at ${alarm.date}
+- ${alarm.time} of ${alarm.date}
 
 # ShowAlarmsWithForeach
-- IF: {count(alarms) == 1}
-   - You have one alarm [ShowAlarm(alarms[0])]
-- ELSEIF: {count(alarms) == 2}
-  - You have {count(alarms)} alarms, {join(foreach(alarms, alarm, ShowAlarm(alarm)), ', ', ' and ')}
+- IF: ${count(alarms) == 1}
+   - You have one alarm ${ShowAlarm(alarms[0])}
+- ELSEIF: ${count(alarms) == 2}
+  - You have ${count(alarms)} alarms, ${join(foreach(alarms, alarm, ShowAlarm(alarm)), ', ', ' and ')}
 - ELSE:
   - You don't have any alarms
 
 # ShowAlarmsWithLgTemplate
-- IF: {count(alarms) == 1}
-   - You have one alarm [ShowAlarm(alarms[0])]
-- ELSEIF: {count(alarms) == 2}
-  - You have {count(alarms)} alarms, they are {ShowAlarm(alarms[1])}
+- IF: ${count(alarms) == 1}
+   - You have one alarm ${ShowAlarm(alarms[0])}
+- ELSEIF: ${count(alarms) == 2}
+  - You have ${count(alarms)} alarms, they are ${ShowAlarm(alarms[1])}
 - ELSE:
   - You don't have any alarms
 
 # ShowAlarmsWithMultiLine
 -```
-You have @{count(alarms)} alarms.
-They are @{ShowAlarm(alarms[1])}
+You have ${count(alarms)} alarms.
+They are ${ShowAlarm(alarms[1])}
 ```
 
 # bookTransportTicket
--SWITCH:{pass}
-- CASE: {'Flight'}
+-SWITCH:${pass}
+- CASE: ${'Flight'}
     - Flight ticket booked
-- CASE: {'Train'}
+- CASE: ${'Train'}
     - Train ticket booked
 - DEFAULT:
    - Shuttle ticket booked
@@ -38,10 +38,10 @@ They are @{ShowAlarm(alarms[1])}
 - Hello
 
 # T2
-- {prebuilt.length(T1())}
+- ${prebuilt.length(T1())}
 
 # T3
-- {count(T1())}
+- ${count(T1())}
 
 # T4
-- {substring(T1(), 1, 2)}
+- ${substring(T1(), 1, 2)}

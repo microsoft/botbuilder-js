@@ -1,7 +1,7 @@
 const assert = require('assert');
-const { TurnContext } = require('botbuilder-core');
+const { ActivityTypes, TurnContext } = require('botbuilder-core');
 const connector = require('botframework-connector');
-const { CertificateAppCredentials } = require('botframework-connector');
+const { AuthenticationConstants, CertificateAppCredentials, ConnectorClient, MicrosoftAppCredentials } = require('botframework-connector');
 const { BotFrameworkAdapter } = require('../');
 
 const reference = {
@@ -30,17 +30,46 @@ class AdapterUnderTest extends BotFrameworkAdapter {
         this.newServiceUrl = undefined;
     }
 
-    testAuthenticateRequest(request, authHeader) { return super.authenticateRequest(request, authHeader) }
+    async testAuthenticateRequest(request, authHeader) {
+        const claims = await super.authenticateRequestInternal(request, authHeader);
+        if (!claims.isAuthenticated) { throw new Error('Unauthorized Access. Request is not authorized'); }
+    }
     testCreateConnectorClient(serviceUrl) { return super.createConnectorClient(serviceUrl) }
 
     authenticateRequest(request, authHeader) {
-        assert(request, `authenticateRequest() not passed request.`);
-        assert(authHeader === this.expectAuthHeader, `authenticateRequest() not passed expected authHeader.`);
-        return this.failAuth ? Promise.reject(new Error('failed auth')) : Promise.resolve();
+        return this.authenticateRequestInternal.bind(this)(request, authHeader);
+    }
+
+    authenticateRequestInternal(request, authHeader) {
+        assert(request, `authenticateRequestInternal() not passed request.`);
+        assert(authHeader === this.expectAuthHeader, `authenticateRequestInternal() not passed expected authHeader.`);
+        return this.failAuth ? Promise.reject(new Error('failed auth')) : Promise.resolve({});
     }
 
     createConnectorClient(serviceUrl) {
         assert(serviceUrl, `createConnectorClient() not passed serviceUrl.`);
+        return this.mockConnectorClient.bind(this)();
+    }
+
+    createConnectorClientWithIdentity(serviceUrl, identity) {
+        assert(serviceUrl, `createConnectorClientWithIdentity() not passed serviceUrl.`);
+        assert(identity, `createConnectorClientWithIdentity() not passed identity.`);
+        return this.mockConnectorClient.bind(this)();
+    }
+
+    createConnectorClientInternal(serviceUrl, credentials) {
+        assert(serviceUrl, `createConnectorClientInternal() not passed serviceUrl.`);
+        assert(credentials, `createConnectorClientInternal() not passed credentials.`);
+        return this.mockConnectorClient.bind(this)();
+    }
+    getOrCreateConnectorClient(context, serviceUrl, credentials) {
+        assert(context, `createConnectorClient() not passed context.`);
+        assert(serviceUrl, `createConnectorClient() not passed serviceUrl.`);
+        assert(credentials, `createConnectorClient() not passed credentials.`);
+        return this.mockConnectorClient.bind(this)();
+    }
+
+    mockConnectorClient() {
         return {
             conversations: {
                 replyToActivity: (conversationId, activityId, activity) => {
@@ -128,17 +157,16 @@ class MockResponse {
 
 function assertResponse(res, statusCode, hasBody) {
     assert(res.ended, `response not ended.`);
-    assert(res.statusCode === statusCode, `response has invalid statusCode.`);
+    assert.strictEqual(res.statusCode, statusCode);
     if (hasBody) {
         assert(res.body, `response missing body.`);
     } else {
-        assert(res.body === undefined, `response has unexpected body.`);
+        assert.strictEqual(res.body, undefined);
     }
 }
 
 describe(`BotFrameworkAdapter`, function () {
     this.timeout(5000);
-
     describe('constructor()', () => {
         it(`should use CertificateAppCredentials when certificateThumbprint and certificatePrivateKey are provided`, () => {
             const certificatePrivateKey = 'key';
@@ -191,31 +219,63 @@ describe(`BotFrameworkAdapter`, function () {
     });
 
     describe('authenticateRequest()', () => {
-        it(`should authenticateRequest() if no appId or appPassword.`, function (done) {
+        it(`should work if no appId or appPassword.`, async () => {
             const req = new MockRequest(incomingMessage);
             const adapter = new AdapterUnderTest();
-            adapter.testAuthenticateRequest(req, '').then(() => done());
+            await adapter.testAuthenticateRequest(req, '');
         });
     
-        it(`should fail to authenticateRequest() if appId+appPassword and no headers.`, function (done) {
+        it(`should fail if appId+appPassword and no headers.`, async () => {
             const req = new MockRequest(incomingMessage);
             const adapter = new AdapterUnderTest({ appId: 'bogusApp', appPassword: 'bogusPassword' });
-            adapter.testAuthenticateRequest(req, '').then(() => {
-                assert(false, `shouldn't succeed.`);
-            }, (err) => {
-                assert(err, `error not returned.`);
-                done();
-            });
+            try {
+                await adapter.testAuthenticateRequest(req, '');
+            } catch (e) {
+                assert.strictEqual(e.message, 'Unauthorized Access. Request is not authorized');
+            }
         });
     });
 
-    it(`should createConnectorClient().`, function (done) {
-        const req = new MockRequest(incomingMessage);
-        const adapter = new AdapterUnderTest();
-        const client = adapter.testCreateConnectorClient(reference.serviceUrl);
-        assert(client, `client not returned.`);
-        assert(client.conversations, `invalid client returned.`);
-        done();
+    describe('buildCredentials()', () => {
+        it('should return credentials with correct parameters', async () => {
+            const adapter = new BotFrameworkAdapter({appId: 'appId', appPassword: 'appPassword'});
+            const creds = await adapter.buildCredentials('appId', 'scope');
+            assert.strictEqual(creds.appId, 'appId');
+            assert.strictEqual(creds.appPassword, 'appPassword');
+            assert.strictEqual(creds.oAuthScope, 'scope');
+        });
+    
+        it('should return credentials with default public Azure values', async () => {
+            const adapter = new BotFrameworkAdapter({appId: 'appId', appPassword: 'appPassword'});
+            const creds = await adapter.buildCredentials('appId');
+            assert.strictEqual(creds.appId, 'appId');
+            assert.strictEqual(creds.appPassword, 'appPassword');
+            assert.strictEqual(creds.oAuthScope, AuthenticationConstants.ToBotFromChannelTokenIssuer);
+    
+            const oAuthEndpoint = AuthenticationConstants.ToChannelFromBotLoginUrlPrefix + AuthenticationConstants.DefaultChannelAuthTenant;
+            assert.strictEqual(creds.oAuthEndpoint, oAuthEndpoint);
+        });
+    });
+
+    describe('get/create ConnectorClient methods', () => {
+        it(`should createConnectorClient().`, function (done) {
+            const req = new MockRequest(incomingMessage);
+            const adapter = new AdapterUnderTest();
+            const client = adapter.testCreateConnectorClient(reference.serviceUrl);
+            assert(client, `client not returned.`);
+            assert(client.conversations, `invalid client returned.`);
+            done();
+        });
+
+        it('getOrCreateConnectorClient should create a new client if the cached serviceUrl does not match the provided one', () => {
+            const adapter = new BotFrameworkAdapter();
+            const context = new TurnContext(adapter, { type: ActivityTypes.Message, text: 'hello', serviceUrl: 'http://bing.com' });
+            const cc = new ConnectorClient(new MicrosoftAppCredentials('', ''), {baseUri: 'http://bing.com'});
+            context.turnState.set(adapter.ConnectorClientKey, cc);
+
+            const client = adapter.getOrCreateConnectorClient(context, 'https://botframework.com', adapter.credentials);
+            assert.notEqual(client.baseUri, cc.baseUri);
+        });
     });
 
     it(`should processActivity().`, function (done) {
@@ -336,15 +396,14 @@ describe(`BotFrameworkAdapter`, function () {
         });
     });
 
-    it(`should receive a properties property on the conversation object in processActivity().`, function (done) {
+    it(`should receive a properties property on the conversation object in processActivity().`, async () => {
         const incoming = TurnContext.applyConversationReference({ type: 'message', text: 'foo', callerId: 'foo' }, reference, true);
         incoming.channelId = 'msteams';
         const req = new MockBodyRequest(incoming);
         const res = new MockResponse();
         const adapter = new AdapterUnderTest();
-        adapter.processActivity(req, res, (context) => {
+        await adapter.processActivity(req, res, async (context) => {
             assert(context.activity.conversation.properties.foo === 'bar');
-            done();
         });
     });
 
@@ -358,9 +417,13 @@ describe(`BotFrameworkAdapter`, function () {
         }).then(() => {
             assert(false, `shouldn't have passed.`);
         }, (err) => {
-            assert(err, `error not returned.`);
-            assertResponse(res, 401, true);
-            done();
+            try {
+                assert(err, `error not returned.`);
+                assertResponse(res, 401, true);
+                done();
+            } catch (e) {
+                done(e);
+            }
         });
     });
 
@@ -371,7 +434,7 @@ describe(`BotFrameworkAdapter`, function () {
         adapter.processActivity(req, res, (context) => {
             throw new Error(`bot exception`);
         }).then(() => {
-            assert(false, `shouldn't have passed.`);
+            done(new Error(`shouldn't have passed.`));
         }, (err) => {
             assert(err, `error not returned.`);
             assertResponse(res, 500, true);
@@ -460,10 +523,14 @@ describe(`BotFrameworkAdapter`, function () {
         const adapter = new AdapterUnderTest();
         const context = new TurnContext(adapter, incomingMessage);
         adapter.sendActivities(context, [outgoingMessage]).then((responses) => {
-            assert(Array.isArray(responses), `array of responses not returned.`);
-            assert(responses.length === 1, `invalid number of responses returned.`);
-            assert(responses[0].id === '5678', `invalid response returned.`);
-            done();
+            try {
+                assert(Array.isArray(responses), `array of responses not returned.`);
+                assert(responses.length === 1, `invalid number of responses returned.`);
+                assert(responses[0].id === '5678', `invalid response returned.`);
+                done();
+            } catch (e) {
+                done(e);
+            }
         });
     });
 
@@ -471,9 +538,13 @@ describe(`BotFrameworkAdapter`, function () {
         const adapter = new AdapterUnderTest();
         const context = new TurnContext(adapter, incomingMessage);
         adapter.sendActivities(context, [outgoingMessage, outgoingMessage]).then((responses) => {
-            assert(Array.isArray(responses), `array of responses not returned.`);
-            assert(responses.length === 2, `invalid number of responses returned.`);
-            done();
+            try {
+                assert(Array.isArray(responses), `array of responses not returned.`);
+                assert(responses.length === 2, `invalid number of responses returned.`);
+                done();
+            } catch (e) {
+                done(e);
+            }
         });
     });
 
@@ -508,10 +579,14 @@ describe(`BotFrameworkAdapter`, function () {
         const res = new MockResponse();
         const adapter = new AdapterUnderTest();
         adapter.processActivity(req, res, (context) => {
-            return context.sendActivity({ type: 'invokeResponse', value: { status: 200, body: 'body' }})
+            return context.sendActivity({ type: 'invokeResponse', value: { status: 200, body: 'body' }});
         }).then(() => {
-            assertResponse(res, 200, true);
-            done();
+            try {
+                assertResponse(res, 200, true);
+                done();
+            } catch (e) {
+                done(e);
+            }
         });
     });
 
@@ -522,11 +597,16 @@ describe(`BotFrameworkAdapter`, function () {
         adapter.processActivity(req, res, (context) => {
             // don't return anything
         }).then(() => {
-            assert(false, `shouldn't have passed.`);
+            assert(false, `processActivtiy with InvokeResponse shouldn't passed.`);
         }, (err) => {
-            assert(err, `error not returned.`);
-            assertResponse(res, 501, false);
-            done();
+            try {
+                assert.notStrictEqual(err.message, `processActivtiy with InvokeResponse shouldn't passed.`);
+                assert(err, `error not returned.`);
+                assertResponse(res, 501, false);
+                done();
+            } catch (e) {
+                done(e);
+            }
         });
     });
 
@@ -579,10 +659,10 @@ describe(`BotFrameworkAdapter`, function () {
         });
     });
 
-    it(`should updateActivity().`, function (done) {
+    it(`should updateActivity().`, async () => {
         const adapter = new AdapterUnderTest();
         const context = new TurnContext(adapter, incomingMessage);
-        adapter.updateActivity(context, incomingMessage).then(() => done());
+        await adapter.updateActivity(context, incomingMessage);
     });
 
     it(`should fail to updateActivity() if serviceUrl missing.`, function (done) {
@@ -621,10 +701,10 @@ describe(`BotFrameworkAdapter`, function () {
         });
     });
 
-    it(`should deleteActivity().`, function (done) {
+    it(`should deleteActivity().`, async () => {
         const adapter = new AdapterUnderTest();
         const context = new TurnContext(adapter, incomingMessage);
-        adapter.deleteActivity(context, reference).then(() => done());
+        await adapter.deleteActivity(context, reference);
     });
 
     it(`should fail to deleteActivity() if serviceUrl missing.`, function (done) {
@@ -664,15 +744,15 @@ describe(`BotFrameworkAdapter`, function () {
     });
 
     // This unit test doesn't work anymore because client.UserAgentInfo was removed, so we can't inspect the user agent string
-    // it(`should create a User-Agent header with the same info as the host machine.`, function (done) {
-    //     const adapter = new BotFrameworkAdapter();
-    //     const client = adapter.createConnectorClient('https://example.com');
-    //     //const userAgentHeader = client.userAgentInfo.value;
-    //     const pjson = require('../package.json');
-    //     const userAgent = 'Microsoft-BotFramework/3.1 BotBuilder/' + pjson.version + ' (Node.js,Version=' + process.version + '; ' + os.type() + ' ' + os.release() + '; ' + os.arch() + ')';
-    //     // assert(userAgentHeader.includes(userAgent), `ConnectorClient doesn't have user-agent header created by BotFrameworkAdapter or header is incorrect.`);
-    //     done();
-    // });
+    xit(`should create a User-Agent header with the same info as the host machine.`, function (done) {
+        const adapter = new BotFrameworkAdapter();
+        const client = adapter.createConnectorClient('https://example.com');
+        //const userAgentHeader = client.userAgentInfo.value;
+        const pjson = require('../package.json');
+        const userAgent = 'Microsoft-BotFramework/3.1 BotBuilder/' + pjson.version + ' (Node.js,Version=' + process.version + '; ' + os.type() + ' ' + os.release() + '; ' + os.arch() + ')';
+        // assert(userAgentHeader.includes(userAgent), `ConnectorClient doesn't have user-agent header created by BotFrameworkAdapter or header is incorrect.`);
+        done();
+    });
 
     it(`should set openIdMetadata property on ChannelValidation`, function (done) {
         const testEndpoint = "http://rainbows.com";
@@ -685,7 +765,6 @@ describe(`BotFrameworkAdapter`, function () {
 
     it(`should set openIdMetadata property on GovernmentChannelValidation`, function (done) {
         const testEndpoint = "http://azure.com/configuration";
-        console.error(connector.GovernmentChannelValidation);
         const original = connector.GovernmentChannelValidation.OpenIdMetadataEndpoint;
         const adapter = new BotFrameworkAdapter({openIdMetadata: testEndpoint});
         assert(testEndpoint === connector.GovernmentChannelValidation.OpenIdMetadataEndpoint, `GovernmentChannelValidation.OpenIdMetadataEndpoint was not set.`);

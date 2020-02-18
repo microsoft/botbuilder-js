@@ -252,6 +252,26 @@ describe('QnAMaker', function () {
             assert.strictEqual(qnaResults[0].score < 1, true, 'score should be low');
         });
 
+        it('should call qnamaker with isTest true', async function() {
+            const qna = new QnAMaker(endpoint);
+            const turnContext = new TestContext({ text: "Q11" });
+            const options = { top: 1, context: null, isTest: true };
+            
+            const qnaResults = await qna.getAnswers(turnContext, options);
+
+            assert.strictEqual(qnaResults.length, 0, 'no answers should be returned');
+        });
+
+        it('should call qnamaker with rankerType questionOnly', async function() {
+            const qna = new QnAMaker(endpoint);
+            const turnContext = new TestContext({ text: "Q11" });
+            const options = { top: 1, context: null, rankerType: "questionOnly" };
+            
+            const qnaResults = await qna.getAnswers(turnContext, options);
+
+            assert.strictEqual(qnaResults.length, 2, 'no answers should be returned');
+        });
+
         it('should return answer with timeout option specified', async function() {
             const timeoutOption = { timeout: 500000 };
             const qna = new QnAMaker(endpoint, timeoutOption);

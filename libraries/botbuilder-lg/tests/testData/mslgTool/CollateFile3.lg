@@ -3,19 +3,19 @@
 - Hi
 
 # TimeOfDayWithCondition
-- IF: {time == 'morning'}
-    - [Greeting] Morning
-- ELSEIF: {time == 'evening'}
-    - [Greeting] Evening
+- IF: ${time == 'morning'}
+    - ${Greeting()} Morning
+- ELSEIF: ${time == 'evening'}
+    - ${Greeting()} Evening
 - ELSE:
-    - [Greeting] Afternoon
+    - ${Greeting()} Afternoon
 
 # greetInAWeek
-- SWITCH: {day}
-    - CASE: {'Saturday'}
+- SWITCH: ${day}
+    - CASE: ${'Saturday'}
         - Happy Saturday!
         - Nice Saturday!
-    - CASE: {'Sunday'}
+    - CASE: ${'Sunday'}
         - Happy Sunday!
         - Nice Sunday!
     - DEFAULT:
