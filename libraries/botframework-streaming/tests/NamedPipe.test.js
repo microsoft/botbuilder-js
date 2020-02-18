@@ -347,6 +347,15 @@ describe('Streaming Extensions NamedPipe Library Tests', () => {
             expect(server.disconnect()).to.not.throw;
         });
 
+        it('throws a TypeError during construction if missing the "baseName" parameter', () => {
+            try {
+                new np.NamedPipeServer();
+            } catch (err) {
+                expect(err).to.be.instanceOf(TypeError);
+                expect(err.message).to.contain('NamedPipeServer: Missing baseName parameter');
+            }
+        });
+
         it('starts the server without throwing', () => {
             let server = new np.NamedPipeServer('pipeA', new protocol.RequestHandler(), false);
             expect(server).to.be.instanceOf(np.NamedPipeServer);
@@ -362,6 +371,14 @@ describe('Streaming Extensions NamedPipe Library Tests', () => {
             expect(server.disconnect()).to.not.throw;
         });
 
+        it('returns true if isConnected === true on _receiver & _sender', () => {
+            const server = new np.NamedPipeServer('pipeisConnected', new protocol.RequestHandler(), false);
+
+            expect(server.isConnected).to.be.false;
+            server._receiver = { isConnected: true };
+            server._sender = { isConnected: true };
+            expect(server.isConnected).to.be.true;            
+        });
 
         it('sends without throwing', (done) => {
             let server = new np.NamedPipeServer('pipeA', new protocol.RequestHandler(), false);
