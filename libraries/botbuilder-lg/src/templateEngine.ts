@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { ExpressionEngine, MemoryInterface} from 'botframework-expressions';
+import { ExpressionEngine, MemoryInterface} from 'adaptive-expressions';
 import * as fs from 'fs';
 import * as path from 'path';
 import { Analyzer, AnalyzerResult } from './analyzer';
