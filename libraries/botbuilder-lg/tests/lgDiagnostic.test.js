@@ -1,4 +1,4 @@
-const { LGParser } = require('../');
+const { LGParser, DiagnosticSeverity } = require('../');
 const assert = require('assert');
 const fs = require('fs');
 
@@ -20,5 +20,6 @@ describe('LGExceptionTest', function() {
     it('TestConditionFormatError', function() {
         var diagnostics = GetDiagnostics('ConditionFormatError.lg');
         assert.strictEqual(diagnostics.length, 10);
+        assert.strictEqual(diagnostics[0].severity, DiagnosticSeverity.Warning);
     });
 });
