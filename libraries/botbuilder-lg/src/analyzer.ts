@@ -8,7 +8,7 @@
  */
 // tslint:disable-next-line: no-submodule-imports
 import { AbstractParseTreeVisitor, TerminalNode } from 'antlr4ts/tree';
-import { Expression, ExpressionEngine, ExpressionParserInterface, Extensions } from 'botframework-expressions';
+import { Expression, ExpressionEngine, ExpressionParserInterface, Extensions } from 'adaptive-expressions';
 import { keyBy } from 'lodash';
 import { EvaluationTarget } from './evaluationTarget';
 import { Evaluator } from './evaluator';

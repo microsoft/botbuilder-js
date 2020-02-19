@@ -1,7 +1,4 @@
 /**
- * @module botbuilder-dialogs
- */
-/**
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
@@ -10,79 +7,128 @@ import { DialogContext } from './dialogContext';
 import { Configurable } from './configurable';
 
 /**
- * Tracking information persisted for an instance of a dialog on the stack.
- * @param T (Optional) type of state being persisted for the dialog.
+ * Contains state information for an instance of a dialog on the stack.
+ * 
+ * @typeparam T Optional. The type that represents state information for the dialog.
+ * 
+ * @remarks
+ * This contains information for a specific instance of a dialog on a dialog stack.
+ * The dialog stack is associated with a specific dialog context and dialog set.
+ * Information about the dialog stack as a whole is persisted to storage using a dialog state object.
+ * 
+ * **See also**
+ * - [DialogState](xref:botbuilder-dialogs.DialogState)
+ * - [DialogContext](xref:botbuilder-dialogs.DialogContext)
+ * - [DialogSet](xref:botbuilder-dialogs.DialogSet)
+ * - [Dialog](xref:botbuilder-dialogs.Dialog)
  */
 export interface DialogInstance<T = any> {
     /**
-     * ID of the dialog this instance is for.
+     * ID of this dialog
+     * 
+     * @remarks
+     * Dialog state is associated with a specific dialog set.
+     * This ID is the the dialog's [id](xref:botbuilder-dialogs.Dialog.id) within that dialog set.
+     * 
+     * **See also**
+     * - [DialogState](xref:botbuilder-dialogs.DialogState)
+     * - [DialogSet](xref:botbuilder-dialogs.DialogSet)
      */
     id: string;
 
     /**
-     * The instances persisted state.
+     * The state information for this instance of this dialog.
      */
     state: T;
 }
 
 /**
- * Codes indicating why a waterfall step is being called.
+ * Indicates why a dialog method is being called.
+ * 
+ * @remarks
+ * Use a dialog context to control the dialogs in a dialog set. The dialog context will pass a reference to itself
+ * to the dialog method it calls. It also passes in the _reason_ why the specific method is being called.
+ * 
+ * **See also**
+ * - [DialogContext](xref:botbuilder-dialogs.DialogContext)
+ * - [DialogSet](xref:botbuilder-dialogs.DialogSet)
+ * - [Dialog](xref:botbuilder-dialogs.Dialog)
  */
 export enum DialogReason {
     /**
-     * A dialog is being started through a call to `DialogContext.beginDialog()`.
+     * The dialog is being started from
+     * [DialogContext.beginDialog](xref:botbuilder-dialogs.DialogContext.beginDialog) or
+     * [DialogContext.replaceDialog](xref:botbuilder-dialogs.DialogContext.replaceDialog).
      */
     beginCalled = 'beginCalled',
 
     /**
-     * A dialog is being continued through a call to `DialogContext.continueDialog()`.
+     * The dialog is being continued from
+     * [DialogContext.continueDialog](xref:botbuilder-dialogs.DialogContext.continueDialog).
      */
     continueCalled = 'continueCalled',
 
     /**
-     * A dialog ended normally through a call to `DialogContext.endDialog()`.
+     * The dialog is being ended from
+     * [DialogContext.endDialog](xref:botbuilder-dialogs.DialogContext.endDialog).
      */
     endCalled = 'endCalled',
 
     /**
-     * A dialog is ending because its being replaced through a call to `DialogContext.replaceDialog()`.
+     * The dialog is being ended from
+     * [DialogContext.replaceDialog](xref:botbuilder-dialogs.DialogContext.replaceDialog).
      */
     replaceCalled = 'replaceCalled',
 
     /**
-     * A dialog was cancelled as part of a call to `DialogContext.cancelAllDialogs()`.
+     * The dialog is being cancelled from
+     * [DialogContext.cancelAllDialogs](xref:botbuilder-dialogs.DialogContext.cancelAllDialogs).
      */
     cancelCalled = 'cancelCalled',
 
     /**
-     * A step was advanced through a call to `WaterfallStepContext.next()`.
+     * A step in a [WaterfallDialog](xref:botbuilder-dialogs.WaterfallDialog) is being called
+     * because the previous step in the waterfall dialog called
+     * [WaterfallStepContext.next](xref:botbuilder-dialogs.WaterfallStepContext.next).
      */
     nextCalled = 'nextCalled'
 }
 
 /**
- * Codes indicating the state of the dialog stack after a call to `DialogContext.continueDialog()`
- * or `DialogContext.beginDialog()`.
+ * Represents the state of the dialog stack after a dialog context attempts to begin, continue,
+ * or otherwise manipulate one or more dialogs.
+ * 
+ * **See also**
+ * - [DialogContext](xref:botbuilder-dialogs.DialogContext)
+ * - [Dialog](xref:botbuilder-dialogs.Dialog)
  */
 export enum DialogTurnStatus {
     /**
-     * Indicates that there is currently nothing on the dialog stack.
+     * The dialog stack is empty.
+     * 
+     * @remarks
+     * Indicates that the dialog stack was initially empty when the operation was attempted.
      */
     empty = 'empty',
 
     /**
-     * Indicates that the dialog on top is waiting for a response from the user.
+     * The active dialog on top of the stack is waiting for a response from the user.
      */
     waiting = 'waiting',
 
     /**
-     * Indicates that the dialog completed successfully, the result is available, and the stack is
-     * empty.
+     * The last dialog on the stack completed successfully.
+     * 
+     * @remarks
+     * Indicates that a result might be available and the stack is now empty.
+     * 
+     * **See also**
+     * - [DialogTurnResult.result](xref:botbuilder-dialogs.DialogTurnResult.result)
      */
     complete = 'complete',
 
     /**
-     * Indicates that the dialog was cancelled and the stack is empty.
+     * All dialogs on the stack were cancelled and the stack is empty.
      */
     cancelled = 'cancelled'
 }
@@ -117,54 +163,63 @@ export interface DialogConfiguration {
 }
 
 /**
- * Returned by `Dialog.continueDialog()` and `DialogContext.beginDialog()` to indicate whether a
- * dialog is still active after the turn has been processed by the dialog.
+ * Represents the result of a dialog context's attempt to begin, continue,
+ * or otherwise manipulate one or more dialogs.
  *
+ * @typeparam T Optional. The type that represents a result returned by the active dialog when it
+ *      successfully completes.
+ * 
  * @remarks
- * This can be used to determine if the dialog stack is empty:
+ * This can be used to determine if a dialog completed and a result is available, or if the stack
+ * was initially empty and a dialog should be started.
  *
  * ```JavaScript
- * const result = await dialogContext.continueDialog();
- *
- * if (result.status == DialogTurnStatus.empty) {
- *     await dialogContext.beginDialog('helpDialog');
- * }
- * ```
- *
- * Or to access the result of a dialog that just completed:
- *
- * ```JavaScript
- * const result = await dialogContext.continueDialog();
+ * const dc = await dialogs.createContext(turnContext);
+ * const result = await dc.continueDialog();
  *
  * if (result.status == DialogTurnStatus.completed) {
  *     const survey = result.result;
  *     await submitSurvey(survey);
  * } else if (result.status == DialogTurnStatus.empty) {
- *     await dialogContext.beginDialog('surveyDialog');
+ *     await dc.beginDialog('surveyDialog');
  * }
  * ```
- * @param T (Optional) type of result returned by the active dialog when it calls `DialogContext.endDialog()`.
+ * 
+ * **See also**
+ * - [DialogContext](xref:botbuilder-dialogs.DialogContext)
+ * - [DialogSet](xref:botbuilder-dialogs.DialogSet)
+ * - [Dialog](xref:botbuilder-dialogs.Dialog)
  */
 export interface DialogTurnResult<T = any> {
     /**
-     * Gets or sets the current status of the stack.
+     * The state of the dialog stack after a dialog context's attempt.
      */
     status: DialogTurnStatus;
 
     /**
-     * Final result returned by a dialog that just completed. Can be `undefined` even when [hasResult](#hasResult) is true.
+     * The result, if any, returned by the last dialog on the stack.
+     * 
+     * @remarks
+     * A result value is available only if
+     * the stack is now empty,
+     * the last dialog on the stack completed normally,
+     * and the last dialog returned a result to the dialog context.
      */
     result?: T;
 }
 
 /**
- * Base class for all dialogs.
+ * Defines the core behavior for all dialogs.
  */
 export abstract class Dialog<O extends object = {}> extends Configurable {
     private _id: string;
 
     /**
-     * Signals the end of a turn by a dialog method or waterfall/sequence step.
+     * Gets a default end-of-turn result.
+     * 
+     * @remarks
+     * This result indicates that a dialog (or a logical step within a dialog) has completed
+     * processing for the current turn, is still active, and is waiting for more input.
      */
     public static EndOfTurn: DialogTurnResult = { status: DialogTurnStatus.waiting };
 
@@ -175,7 +230,8 @@ export abstract class Dialog<O extends object = {}> extends Configurable {
     protected _telemetryClient: BotTelemetryClient =  new NullTelemetryClient();
 
     /**
-     * Creates a new Dialog instance.
+     * Creates a new instance of the [Dialog](xref:botbuilder-dialogs.Dialog) class.
+     * 
      * @param dialogId Optional. unique ID of the dialog.
      */
     constructor(dialogId?: string) {
@@ -201,39 +257,58 @@ export abstract class Dialog<O extends object = {}> extends Configurable {
    }
 
     /** 
-     * Retrieve the telemetry client for this dialog.
+     * Gets the telemetry client for this dialog.
      */
     public get telemetryClient(): BotTelemetryClient {
         return this._telemetryClient;
     }
 
     /** 
-     * Set the telemetry client for this dialog.
+     * Sets the telemetry client for this dialog.
      */
     public set telemetryClient(client: BotTelemetryClient) {
         this._telemetryClient = client ? client : new NullTelemetryClient();
     }
 
-
     /**
-     * Called when a new instance of the dialog has been pushed onto the stack and is being
-     * activated.
+     * When overridden in a derived class, starts the dialog.
      *
+     * @param dc The context for the current dialog turn.
+     * @param options Optional. Arguments to use when the dialog starts.
+     * 
      * @remarks
-     * MUST be overridden by derived class. Dialogs that only support single-turn conversations
-     * should call `return await DialogContext.endDialog();` at the end of their implementation.
-     * @param dc The dialog context for the current turn of conversation.
-     * @param options (Optional) arguments that were passed to the dialog in the call to `DialogContext.beginDialog()`.
+     * Derived dialogs must override this method.
+     * 
+     * The [DialogContext](xref:botbuilder-dialogs.DialogContext) calls this method when it creates
+     * a new [DialogInstance](xref:botbuilder-dialogs.DialogInstance) for this dialog, pushes it
+     * onto the dialog stack, and starts the dialog.
+     * 
+     * A dialog that represents a single-turn conversation should await
+     * [DialogContext.endDialog](xref:botbuilder-dialogs.DialogContext.endDialog) before exiting this method.
+     * 
+     * **See also**
+     * - [DialogContext.beginDialog](xref:botbuilder-dialogs.DialogContext.beginDialog)
+     * - [DialogContext.replaceDialog](xref:botbuilder-dialogs.DialogContext.replaceDialog)
      */
     public abstract beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult>;
 
     /**
-     * Called when an instance of the dialog is the active dialog and a new activity is received.
+     * When overridden in a derived class, continues the dialog.
      *
+     * @param dc The context for the current dialog turn.
+     * 
      * @remarks
-     * SHOULD be overridden by dialogs that support multi-turn conversations. The default
-     * implementation calls `DialogContext.endDialog()`.
-     * @param dc The dialog context for the current turn of conversation.
+     * Derived dialogs that support multiple-turn conversations should override this method.
+     * By default, this method signals that the dialog is complete and returns.
+     * 
+     * The [DialogContext](xref:botbuilder-dialogs.DialogContext) calls this method when it continues
+     * the dialog.
+     * 
+     * To signal to the dialog context that this dialog has completed, await
+     * [DialogContext.endDialog](xref:botbuilder-dialogs.DialogContext.endDialog) before exiting this method.
+     * 
+     * **See also**
+     * - [DialogContext.continueDialog](xref:botbuilder-dialogs.DialogContext.continueDialog)
      */
     public async continueDialog(dc: DialogContext): Promise<DialogTurnResult> {
         // By default just end the current dialog.
@@ -241,15 +316,29 @@ export abstract class Dialog<O extends object = {}> extends Configurable {
     }
 
     /**
-     * Called when an instance of the dialog is being returned to from another dialog.
+     * When overridden in a derived class, resumes the dialog after the dialog above it on the stack completes.
      *
+     * @param dc The context for the current dialog turn.
+     * @param reason The reason the dialog is resuming. This will typically be
+     *      [DialogReason.endCalled](xref:botbuilder-dialogs.DialogReason.endCalled)
+     * @param result Optional. The return value, if any, from the dialog that ended.
+     * 
      * @remarks
-     * SHOULD be overridden by multi-turn dialogs that start other dialogs using
-     * `DialogContext.beginDialog()` or `DialogContext.prompt()`. The default implementation calls
-     * `DialogContext.endDialog()` with any results returned from the ending dialog.
-     * @param dc The dialog context for the current turn of conversation.
-     * @param reason The reason the dialog is being resumed. This will typically be a value of `DialogReason.endCalled`.
-     * @param result (Optional) value returned from the dialog that was called. The type of the value returned is dependant on the dialog that was called.
+     * Derived dialogs that support multiple-turn conversations should override this method.
+     * By default, this method signals that the dialog is complete and returns.
+     * 
+     * The [DialogContext](xref:botbuilder-dialogs.DialogContext) calls this method when it resumes
+     * the dialog. If the previous dialog on the stack returned a value, that value is in the `result`
+     * parameter.
+     * 
+     * To start a _child_ dialog, use [DialogContext.beginDialog](xref:botbuilder-dialogs.DialogContext.beginDialog)
+     * or [DialogContext.prompt](xref:botbuilder-dialogs.DialogContext.prompt); however, this dialog will not
+     * necessarily be the one that started the child dialog.
+     * To signal to the dialog context that this dialog has completed, await
+     * [DialogContext.endDialog](xref:botbuilder-dialogs.DialogContext.endDialog) before exiting this method.
+     * 
+     * **See also**
+     * - [DialogContext.endDialog](xref:botbuilder-dialogs.DialogContext.endDialog)
      */
     public async resumeDialog(dc: DialogContext, reason: DialogReason, result?: any): Promise<DialogTurnResult> {
         // By default just end the current dialog and return result to parent.
@@ -257,27 +346,44 @@ export abstract class Dialog<O extends object = {}> extends Configurable {
     }
 
     /**
-     * Called when the dialog has been requested to re-prompt the user for input.
+     * When overridden in a derived class, reprompts the user for input.
      *
+     * @param context The context object for the turn.
+     * @param instance Current state information for this dialog.
+     * 
      * @remarks
-     * SHOULD be overridden by multi-turn dialogs that wish to provide custom re-prompt logic. The
-     * default implementation performs no action.
-     * @param context Context for the current turn of conversation.
-     * @param instance The instance of the current dialog.
+     * Derived dialogs that support validation and re-prompt logic should override this method.
+     * By default, this method has no effect.
+     * 
+     * The [DialogContext](xref:botbuilder-dialogs.DialogContext) calls this method when the current
+     * dialog should re-request input from the user. This method is implemented for prompt dialogs.
+     * 
+     * **See also**
+     * - [DialogContext.repromptDialog](xref:botbuilder-dialogs.DialogContext.repromptDialog)
+     * - [Prompt](xref:botbuilder-dialogs.Prompt)
      */
     public async repromptDialog(context: TurnContext, instance: DialogInstance): Promise<void> {
         // No-op by default
     }
 
     /**
-     * Called when the dialog is ending.
+     * When overridden in a derived class, performs clean up for the dialog before it ends.
      *
-     * @remarks
-     * SHOULD be overridden by dialogs that wish to perform some logging or cleanup action anytime
-     * the dialog ends.
-     * @param context Context for the current turn of conversation.
-     * @param instance The instance of the current dialog.
+     * @param context The context object for the turn.
+     * @param instance Current state information for this dialog.
      * @param reason The reason the dialog is ending.
+     * 
+     * @remarks
+     * Derived dialogs that need to perform logging or cleanup before ending should override this method.
+     * By default, this method has no effect.
+     * 
+     * The [DialogContext](xref:botbuilder-dialogs.DialogContext) calls this method when the current
+     * dialog is ending.
+     * 
+     * **See also**
+     * - [DialogContext.cancelAllDialogs](xref:botbuilder-dialogs.DialogContext.cancelAllDialogs)
+     * - [DialogContext.endDialog](xref:botbuilder-dialogs.DialogContext.endDialog)
+     * - [DialogContext.replaceDialog](xref:botbuilder-dialogs.DialogContext.replaceDialog)
      */
     public async endDialog(context: TurnContext, instance: DialogInstance, reason: DialogReason): Promise<void> {
         // No-op by default
