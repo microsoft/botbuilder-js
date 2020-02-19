@@ -206,12 +206,25 @@ const dataSource = [
     ['and(hello, "hello")', true],
     ['or(items, (2 + 2) <= (4 - 1))', true], // true || false
     ['or(0, false)', true], // true || false
-    ['not(hello)', false], // false
-    ['not(10)', false],
+    ['not(hello)', false], // false'not(10)', false],
     ['not(0)', false],
     ['if(hello, \'r1\', \'r2\')', 'r1'],
     ['if(null, \'r1\', \'r2\')', 'r2'],
     ['if(hello * 5, \'r1\', \'r2\')', 'r2'],
+    ['emptyList == []', true],
+    ['emptyList != []', false],
+    ['emptyList == {}', false],
+    ['emptyObject == {}', true],
+    ['emptyObject != {}', false],
+    ['emptyObject == []', false],
+    ['emptyJObject == {}', true],
+    ['emptyJObject != {}', false],
+    ['emptyJObject == []', false],
+    ['emptyList == [ ]', true],
+    ['emptyList == {  }', false],
+    ['emptyObject == {  }', true],
+    ['emptyObject == [  ]', false],
+    
 
     // Conversion functions tests
     ['float(\'10.333\')', 10.333],
@@ -477,6 +490,10 @@ const dataSource = [
 ];
 
 const scope = {
+    emptyList:[],
+    emptyObject: new Map(),
+    emptyJObject: {},
+
     path: {
         array: [1]
     },

@@ -18,6 +18,7 @@ import { LGTemplate } from './lgTemplate';
 import { ImportResolver } from './importResolver';
 import * as path from 'path';
 import * as fs from 'fs';
+import { LGExtensions } from './lgExtensions';
 
 /**
  * Evaluation tuntime engine
@@ -310,9 +311,7 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGFilePa
 
     private evalExpressionInCondition(exp: string): boolean {
         try {
-            exp = exp.replace(/(^\$*)/g, '')
-                .replace(/(^{*)/g, '')
-                .replace(/(}*$)/g, '');
+            exp = LGExtensions.trimExpression(exp);
 
             const { value: result, error }: { value: any; error: string } = this.evalByExpressionEngine(exp, this.currentTarget().scope);
             if (error !== undefined
@@ -329,9 +328,7 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGFilePa
     }
 
     private evalExpression(exp: string): any {
-        exp = exp.replace(/(^\$*)/g, '')
-            .replace(/(^{*)/g, '')
-            .replace(/(}*$)/g, '');
+        exp = LGExtensions.trimExpression(exp);
 
         const { value: result, error }: { value: any; error: string } = this.evalByExpressionEngine(exp, this.currentTarget().scope);
         if (error !== undefined) {

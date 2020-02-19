@@ -762,4 +762,28 @@ describe('LG', function() {
         assert.strictEqual(evaled2, espectedResult);
         assert.strictEqual(evaled3, espectedResult);
     });
+
+    it('TestEmptyArratAndObject', function() {
+        var engine = new TemplateEngine().addFile(GetExampleFilePath('EmptyArrayAndObject.lg'));
+
+        var evaled = engine.evaluateTemplate('template', {list:[], obj: {}});
+        assert.strictEqual(evaled, 'list and obj are both empty');
+
+        var evaled = engine.evaluateTemplate('template', {list:[], obj:new Map()});
+        assert.strictEqual(evaled, 'list and obj are both empty');
+
+        var evaled = engine.evaluateTemplate('template', {list:['hi'], obj: {}});
+        assert.strictEqual(evaled, 'obj is empty');
+
+        var evaled = engine.evaluateTemplate('template', {list:[], obj: {a: 'a'}});
+        assert.strictEqual(evaled, 'list is empty');
+
+        const map = new Map();
+        map.set('a', 'a');
+        var evaled = engine.evaluateTemplate('template', {list:[], obj: map});
+        assert.strictEqual(evaled, 'list is empty');
+
+        var evaled = engine.evaluateTemplate('template', {list:[{}], obj : {a : 'a'}});
+        assert.strictEqual(evaled, 'list and obj are both not empty.');        
+    });
 });

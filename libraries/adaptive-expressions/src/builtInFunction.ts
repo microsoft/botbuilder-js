@@ -1627,6 +1627,46 @@ export class BuiltInFunctions {
         return {value: result, error};
     }
 
+    private static isEqual(args: any []): boolean {
+        if (args.length === 0 ) {
+            return false;
+        }
+
+        if (args[0] === undefined || args[0] === null) {
+            return args[1] === undefined || args[1] === null;
+        }
+
+        if (Array.isArray(args[0]) && args[0].length === 0 && Array.isArray(args[1]) && args[1].length === 0) {
+            return true;
+        }
+
+        if (BuiltInFunctions.getPropertyCount(args[0]) === 0 && BuiltInFunctions.getPropertyCount(args[1]) === 0) {
+            return true;
+        }
+
+        try
+        {
+            return args[0] === args[1];
+        }
+        catch
+        {
+            return false;
+        }
+    }
+
+    private static getPropertyCount(obj: any): number {
+        let count = -1;
+        if (!Array.isArray(obj)) {
+            if (obj instanceof Map) {
+                count = obj.size;
+            } else if (typeof obj === 'object') {
+                count = Object.keys(obj).length;
+            }
+        }
+
+        return count;
+    }
+
     // tslint:disable-next-line: max-func-body-length
     private static buildFunctionLookup(): Map<string, ExpressionEvaluator> {
         // tslint:disable-next-line: no-unnecessary-local-variable
@@ -1832,10 +1872,10 @@ export class BuiltInFunctions {
                 (args: any []): boolean => args[0] <= args[1], BuiltInFunctions.validateBinaryNumberOrString, BuiltInFunctions.verifyNumberOrString),
             BuiltInFunctions.comparison(
                 ExpressionType.Equal,
-                (args: any []): boolean => args[0] === args[1], BuiltInFunctions.validateBinary),
+                this.isEqual, BuiltInFunctions.validateBinary),
             BuiltInFunctions.comparison(
                 ExpressionType.NotEqual,
-                (args: any []): boolean => args[0] !== args[1], BuiltInFunctions.validateBinary),
+                (args: any []): boolean => !this.isEqual(args), BuiltInFunctions.validateBinary),
             BuiltInFunctions.comparison(
                 ExpressionType.GreaterThan,
                 (args: any []): boolean => args[0] > args[1], BuiltInFunctions.validateBinaryNumberOrString, BuiltInFunctions.verifyNumberOrString),

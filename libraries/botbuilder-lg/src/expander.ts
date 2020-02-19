@@ -16,6 +16,7 @@ import { Evaluator } from './evaluator';
 import * as lp from './generated/LGFileParser';
 import { LGFileParserVisitor } from './generated/LGFileParserVisitor';
 import { LGTemplate } from './lgTemplate';
+import { LGExtensions } from './lgExtensions';
 
 // tslint:disable-next-line: max-classes-per-file
 // tslint:disable-next-line: completed-docs
@@ -307,9 +308,7 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGFi
 
     private evalExpressionInCondition(exp: string): boolean {
         try {
-            exp = exp.replace(/(^\$*)/g, '')
-                .replace(/(^{*)/g, '')
-                .replace(/(}*$)/g, '');
+            exp = LGExtensions.trimExpression(exp);
 
             const { value: result, error }: { value: any; error: string } = this.evalByExpressionEngine(exp, this.currentTarget().scope);
             if (error
@@ -326,9 +325,7 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGFi
     }
 
     private evalExpression(exp: string): string[] {
-        exp = exp.replace(/(^\$*)/g, '')
-            .replace(/(^{*)/g, '')
-            .replace(/(}*$)/g, '');
+        exp = LGExtensions.trimExpression(exp);
 
         const { value: result, error }: { value: any; error: string } = this.evalByExpressionEngine(exp, this.currentTarget().scope);
         if (error) {
