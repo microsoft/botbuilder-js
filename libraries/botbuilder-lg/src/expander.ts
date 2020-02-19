@@ -42,7 +42,7 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGFi
         }
 
         if (this.evalutationTargetStack.find((u: EvaluationTarget): boolean => u.templateName === templateName)) {
-            throw new Error(`Loop deteced: ${ this.evalutationTargetStack.reverse()
+            throw new Error(`Loop detected: ${ this.evalutationTargetStack.reverse()
                 .map((u: EvaluationTarget): string => u.templateName)
                 .join(' => ') }`);
         }

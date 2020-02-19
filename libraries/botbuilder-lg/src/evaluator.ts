@@ -57,7 +57,7 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGFilePa
         }
 
         if (this.evalutationTargetStack.find((u: EvaluationTarget): boolean => u.templateName === templateName) !== undefined) {
-            throw new Error(`Loop deteced: ${ this.evalutationTargetStack.reverse()
+            throw new Error(`Loop detected: ${ this.evalutationTargetStack.reverse()
                 .map((u: EvaluationTarget): string => u.templateName)
                 .join(' => ') }`);
         }
