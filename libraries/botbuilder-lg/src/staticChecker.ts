@@ -410,9 +410,10 @@ class StaticCheckerInner extends AbstractParseTreeVisitor<Diagnostic[]> implemen
  */
 export class StaticChecker {
     private readonly expressionEngine: ExpressionEngine;
-
-    public constructor(expressionEngine?: ExpressionEngine) {
+    private readonly lgFile: LGFile;
+    public constructor(lgFile: LGFile, expressionEngine?: ExpressionEngine) {
         this.expressionEngine = expressionEngine ? expressionEngine : new ExpressionEngine();
+        this.lgFile= lgFile;
     }
 
     public checkFiles(filePaths: string[], importResolver?: ImportResolverDelegate): Diagnostic[] {
@@ -447,5 +448,9 @@ export class StaticChecker {
         result = result.concat(staticChecker.check());
 
         return result;
+    }
+
+    public check(): Diagnostic[] {
+        return new StaticCheckerInner(this.lgFile).check();
     }
 }

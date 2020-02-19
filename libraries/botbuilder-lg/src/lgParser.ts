@@ -16,6 +16,7 @@ import { LGImport } from './lgImport';
 import { LGTemplate } from './lgTemplate';
 import { LGFile } from './lgFile';
 import { normalizePath } from './extensions';
+import { StaticChecker } from './staticChecker'
 import { LGException } from './lgException';
 import * as path from 'path';
 import * as fs from 'fs';
@@ -57,6 +58,8 @@ export class LGParser {
             lgFile.imports = parsedResult.imports;
             diagnostics = diagnostics.concat(parsedResult.invalidTemplateErrors);
             lgFile.references = this.getReferences(lgFile, importResolver);
+            const semanticErrors = new StaticChecker(lgFile).check();
+            diagnostics = diagnostics.concat(semanticErrors);
         } catch (err)
         {
             if (err instanceof LGException) {
@@ -138,10 +141,15 @@ export class LGParser {
     }
 
     private static getInvalidTemplateErrors(fileContext: FileContext, id: string): Diagnostic[] {
-        var errorTemplates = fileContext == null ? [] :
-            fileContext.paragraph()
-                .map(x => x.errorTemplate())
-                .filter(x => x != null);
+        let errorTemplates = [];
+        if (fileContext !== undefined) {
+            for (const parag of fileContext.paragraph()) {
+                const errTem =parag.errorTemplate();
+                if (errTem) {
+                    errorTemplates = errorTemplates.concat(errTem);
+                }
+            }
+        }
 
         return errorTemplates.map(u => this.buildDiagnostic("error context.", u, id));
     }
