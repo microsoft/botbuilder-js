@@ -17,6 +17,7 @@ expression
  
 primaryExpression 
     : '(' expression ')'                      #parenthesisExp
+    | CONSTANT                                #constantAtom
     | NUMBER                                  #numericAtom
     | STRING                                  #stringAtom
     | IDENTIFIER                              #idAtom
@@ -41,5 +42,7 @@ IDENTIFIER : (LETTER | '_' | '#' | '@' | '@@' | '$' | '%') (LETTER | DIGIT | '-'
 NEWLINE : '\r'? '\n' -> skip;
 
 STRING : ('\'' (~'\'')* '\'') | ('"' (~'"')* '"');
+
+CONSTANT : ('[' WHITESPACE* ']') | ('{' WHITESPACE* '}');
 
 INVALID_TOKEN_DEFAULT_MODE : . ;

@@ -1,16 +1,10 @@
-/**
- * @module adaptive-expressions
- */
-/**
- * Copyright (c) Microsoft Corporation. All rights reserved.
- * Licensed under the MIT License.
- */
 // Generated from ../Expression.g4 by ANTLR 4.6-SNAPSHOT
 
 
 import { ParseTreeVisitor } from "antlr4ts/tree/ParseTreeVisitor";
 
 import { FuncInvokeExpContext } from "./ExpressionParser";
+import { ConstantAtomContext } from "./ExpressionParser";
 import { IdAtomContext } from "./ExpressionParser";
 import { StringAtomContext } from "./ExpressionParser";
 import { IndexAccessExpContext } from "./ExpressionParser";
@@ -41,6 +35,14 @@ export interface ExpressionVisitor<Result> extends ParseTreeVisitor<Result> {
 	 * @return the visitor result
 	 */
 	visitFuncInvokeExp?: (ctx: FuncInvokeExpContext) => Result;
+
+	/**
+	 * Visit a parse tree produced by the `constantAtom`
+	 * labeled alternative in `ExpressionParser.primaryExpression`.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	visitConstantAtom?: (ctx: ConstantAtomContext) => Result;
 
 	/**
 	 * Visit a parse tree produced by the `idAtom`
