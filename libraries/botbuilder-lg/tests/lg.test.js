@@ -786,4 +786,17 @@ describe('LG', function() {
         var evaled = engine.evaluateTemplate('template', {list:[{}], obj : {a : 'a'}});
         assert.strictEqual(evaled, 'list and obj are both not empty.');        
     });
+
+    it('TestIsTemplateFunction', function() {
+        var engine = new TemplateEngine().addFile(GetExampleFilePath('IsTemplate.lg'));
+
+        var evaled = engine.evaluateTemplate('template2', {templateName:'template1'});
+        assert.strictEqual(evaled, 'template template1 exists');
+
+        var evaled = engine.evaluateTemplate('template2', {templateName:'wPhrase'});
+        assert.strictEqual(evaled, 'template wPhrase exists');
+
+        var evaled = engine.evaluateTemplate('template2', {templateName:'xxx'});
+        assert.strictEqual(evaled, 'template xxx does not exist'); 
+    });
 });
