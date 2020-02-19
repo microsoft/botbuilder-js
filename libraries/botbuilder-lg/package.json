@@ -20,7 +20,7 @@
   "typings": "./lib/index.d.ts",
   "dependencies": {
     "antlr4ts": "0.5.0-alpha.1",
-    "botframework-expressions": "4.1.6",
+    "adaptive-expressions": "4.1.6",
     "lodash": "^4.17.11",
     "uuid": "^3.3.3",
     "botbuilder-core": "4.1.6"
