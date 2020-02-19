@@ -250,6 +250,18 @@ export class ActivityHandler extends ActivityHandlerBase {
         return this.on('Event', handler);
     }
 
+    /**
+     * Registers an activity event handler for the _invoke_ event, emitted for every incoming event activity.
+     * 
+     * @param handler The event handler.
+     * 
+     * @remarks
+     * Returns a reference to the [ActivityHandler](xref:botbuilder-core.ActivityHandler) object.
+     * 
+     * To handle a `signin/verifyState` invoke event or `signin/tokenExchange`, use the
+     * [onInvokeActivity](xref:botbuilder-core.ActivityHandler.onInvokeActivity) sub-type
+     * event handler. To handle other named events, add logic to this handler.
+     */    
     public onInvoke(handler: BotHandler): this {
         return this.on('Invoke', handler);
     }

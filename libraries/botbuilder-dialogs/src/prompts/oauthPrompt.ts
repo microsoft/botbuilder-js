@@ -11,14 +11,18 @@ import { DialogContext } from '../dialogContext';
 import { PromptOptions, PromptRecognizerResult,  PromptValidator } from './prompt';
 import { isSkillClaim } from './skillsHelpers';
 
-// documentation missing
-class TokenExchangeInvokeRequest {
+/**
+ * Request body accepted for a token exchange invoke activity.
+ */
+interface TokenExchangeInvokeRequest {
     id: string;
     connectionName: string;
     token: string;
 }
 
-// documentation missing
+/**
+ * Response body returned for a token exchange invoke activity.
+ */
 class TokenExchangeInvokeResponse {
     id: string;
     connectionName: string;
