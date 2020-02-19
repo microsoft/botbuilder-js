@@ -122,11 +122,48 @@ describe('BotFrameworkAdapter Streaming tests', () => {
                 await bot.run(context);
                 throw new Error('useWebSocket should have thrown an error');
             }).catch(err => {
-                expect(err.message).to.equal('Unauthorized. No valid identity.');
-                const socketResponse = MockNetSocket.createNonSuccessResponse(401);
+                expect(err.message).to.equal('Unauthorized. Is not authenticated');
+                const socketResponse = MockNetSocket.createNonSuccessResponse(401, err.message);
                 expect(writeSpy.called).to.be.true;
                 expect(writeSpy.calledWithExactly(socketResponse)).to.be.true;
                 expect(destroySpy.calledOnceWithExactly()).to.be.true;
+            });
+        });
+
+        it('returns status code 400 when request is missing Authorization header', async () => {
+            const bot = new ActivityHandler();
+            settings = new TestAdapterSettings('appId', 'password');
+            const adapter = new BotFrameworkAdapter(settings);
+            const requestWithoutAuthHeader = new MockHttpRequest();
+            
+            const socket = new MockNetSocket();
+            const writeSpy = spy(socket, 'write');
+            const destroySpy = spy(socket, 'destroy');
+
+            await adapter.useWebSocket(requestWithoutAuthHeader, socket, Buffer.from([]), async (context) => {
+                await bot.run(context);
+                
+                throw new Error('useWebSocket should have thrown an error');
+            }).catch(err => {
+                expect(err.message).to.equal("'authHeader' required.");
+                const socketResponse = MockNetSocket.createNonSuccessResponse(400, err.message);
+                expect(writeSpy.called).to.be.true;
+                expect(writeSpy.calledWithExactly(socketResponse)).to.be.true;
+                expect(destroySpy.calledOnceWithExactly()).to.be.true;
+            });
+        });
+
+        it('returns status code 500 when request logic is not callable', async () => {
+            const adapter = new BotFrameworkAdapter(new TestAdapterSettings());
+            const request = new MockHttpRequest();
+            const socket = new MockNetSocket();
+
+            const useWebSocketSpy = spy(adapter, 'useWebSocket');
+            const uncallableLogic = null;
+
+            await adapter.useWebSocket(request, socket, Buffer.from([]), uncallableLogic).catch(err => {
+                expect(err.message).to.equal('Streaming logic needs to be provided to `useWebSocket`');
+                expect(useWebSocketSpy.called).to.be.true;
             });
         });
     });
