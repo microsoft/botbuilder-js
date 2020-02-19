@@ -10,13 +10,12 @@ import { LGTemplate } from './lgTemplate';
 import { LGImport } from './lgImport';
 import { Diagnostic, DiagnosticSeverity } from './diagnostic';
 import { ExpressionEngine, SimpleObjectMemory } from 'botframework-expressions';
-import { ImportResolverDelegate } from './importResolver';
+import { ImportResolverDelegate } from './lgParser';
 import { Evaluator } from './evaluator';
 import { CustomizedMemory } from './customizedMemory';
 import { Expander } from './expander';
 import { AnalyzerResult, Analyzer } from './analyzer';
 import { LGParser } from './lgParser';
-import { error } from 'util';
 
 /// <summary>
 /// LG entrance, including properties that LG file has, and evaluate functions.
