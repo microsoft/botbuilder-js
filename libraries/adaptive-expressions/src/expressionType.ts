@@ -122,6 +122,7 @@ export class ExpressionType {
     public static readonly SubArray: string = 'subArray';
     public static readonly SortBy: string = 'sortBy';
     public static readonly SortByDescending: string = 'sortByDescending';
+    public static readonly IndicesAndValues: string = 'indicesAndValues';
 
     // Misc
     public static readonly Constant: string = 'Constant';
