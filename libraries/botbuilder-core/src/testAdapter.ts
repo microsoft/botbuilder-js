@@ -9,8 +9,12 @@
 import assert from 'assert';
 import { Activity, ActivityTypes, ConversationReference, ResourceResponse, TokenResponse } from 'botframework-schema';
 import { BotAdapter } from './botAdapter';
+import {IExtendedUserTokenProvider} from './extendedUserTokenProvider';
 import { TurnContext } from './turnContext';
-import { IUserTokenProvider } from './userTokenProvider';
+import { basename } from 'path';
+import { BotSignInGetSignInResourceResponse, TokenExchangeRequest} from 'botframework-connector';
+import { SignInUrlResponse } from 'botframework-connector/lib/tokenApi/models/mappers';
+import { stringify } from 'querystring';
 
 /**
  * Signature for a function that can be used to inspect individual activities returned by a bot
@@ -42,7 +46,7 @@ export type TestActivityInspector = (activity: Partial<Activity>, description: s
  *        .then(() => done());
  * ```
  */
-export class TestAdapter extends BotAdapter implements IUserTokenProvider {
+export class TestAdapter extends BotAdapter implements IExtendedUserTokenProvider {
     /**
      * @private
      * INTERNAL: used to drive the promise chain forward when running tests.
@@ -391,6 +395,51 @@ export class TestAdapter extends BotAdapter implements IUserTokenProvider {
         return undefined;
     }
 
+    
+    private _exchangeableTokens : {[key: string]: ExchangeableToken} = {};
+    public addExchangeableToken(connectionName: string, channelId: string, userId: string, exchangeableItem: string, token: string) {
+        const key: ExchangeableToken = new ExchangeableToken();
+        key.ChannelId = channelId;
+        key.ConnectionName = connectionName;
+        key.UserId = userId;
+        key.exchangeableItem = exchangeableItem;
+        key.Token = token;
+        this._exchangeableTokens[key.toKey()] = key;
+    }
+
+    public async getSignInResource(context: TurnContext, connectionName: string, userId?: string, finalRedirect?: string): Promise<BotSignInGetSignInResourceResponse> {
+        return {
+            signInLink: `https://fake.com/oauthsignin/${connectionName}/${context.activity.channelId}/${userId}`,
+            tokenExchangeResource: {
+                id: String(Math.random()),
+                providerId: null,
+                uri: `api://${connectionName}/resource`
+
+            },
+            _response: null
+        }
+    }
+
+
+    public async exchangeToken(context: TurnContext, connectionName: string, userId: string, tokenExchangeRequest: TokenExchangeRequest): Promise<TokenResponse> {
+        const exchangeableValue: string = tokenExchangeRequest.token ? tokenExchangeRequest.token : tokenExchangeRequest.uri;
+        const key = new ExchangeableToken();
+        key.ChannelId = context.activity.channelId;
+        key.ConnectionName = connectionName;
+        key.exchangeableItem =  exchangeableValue;
+        key.UserId = userId;
+
+        const tokenExchangeResponse = this._exchangeableTokens[key.toKey()];
+        return tokenExchangeResponse ? 
+            {
+                channelId: key.ChannelId,
+                connectionName: key.ConnectionName,
+                token: tokenExchangeResponse.Token,
+                expiration: null
+            } :
+            null;
+    }
+
     /**
      * Indicates if the activity is a reply from the bot (role == 'bot')
      *
@@ -425,6 +474,20 @@ class UserToken {
 class TokenMagicCode {
     public Key: UserToken;
     public MagicCode: string;
+}
+
+class ExchangeableToken extends UserToken {
+    public exchangeableItem: string;
+
+    public EqualsKey(rhs: ExchangeableToken): boolean {
+        return rhs != null &&
+            this.exchangeableItem === rhs.exchangeableItem &&
+            super.EqualsKey(rhs);
+    }
+
+    public toKey(): string {
+        return this.exchangeableItem;
+    }
 }
 
 /**

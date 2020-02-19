@@ -11,13 +11,15 @@ import { DialogContext } from '../dialogContext';
 import { PromptOptions, PromptRecognizerResult,  PromptValidator } from './prompt';
 import { isSkillClaim } from './skillsHelpers';
 
+// documentation missing
 class TokenExchangeInvokeRequest {
     id: string;
     connectionName: string;
     token: string;
 }
 
-export class TokenExchangeInvokeResponse {
+// documentation missing
+class TokenExchangeInvokeResponse {
     id: string;
     connectionName: string;
     failureDetail: string;
@@ -426,7 +428,7 @@ export class OAuthPrompt extends Dialog {
     private isTokenExchangeRequestInvoke(context: TurnContext): boolean {
         const activity: Activity = context.activity;
 
-        return activity.type === ActivityTypes.Invoke && activity.name === 'signin/tokenExchange'
+        return activity.type === ActivityTypes.Invoke && activity.name === 'signin/tokenExchange';
     }
 
     private channelSupportsOAuthCard(channelId: string): boolean {

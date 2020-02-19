@@ -250,6 +250,10 @@ export class ActivityHandler extends ActivityHandlerBase {
         return this.on('Event', handler);
     }
 
+    public onInvoke(handler: BotHandler): this {
+        return this.on('Invoke', handler);
+    }
+
     /**
      * Registers an activity event handler for the _end of conversation_ activity.
      * 

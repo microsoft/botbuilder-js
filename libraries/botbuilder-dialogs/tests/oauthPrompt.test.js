@@ -465,6 +465,70 @@ describe('OAuthPrompt', function () {
             });
         });
     });
+
+    describe('OAuthPrompt should be able to exchange tokens', async function() {
+        it('Should handle token exchange invoke requests via OAuthPrompt', async function() {
+            // Initialize TestAdapter
+            const adapter = new TestAdapter(async (turnContext) => {
+                const dc = await dialogs.createContext(turnContext);
+                const results = await dc.continueDialog();
+                if(results.status === DialogTurnStatus.empty) {
+                    await dc.prompt('OAuthPrompt', {});
+                }
+                else if(results.status === DialogTurnStatus.complete) {
+                    if (results.result.token) {
+                        await turnContext.sendActivity(`Logged in.`);
+                    }
+                    else {
+                        await turnContext.sendActivity('Failed');
+                    }
+                }
+                await convoState.saveChanges(turnContext);
+            });
+
+            const connectionName = 'myConnection';
+            const exchangeToken = 'exch123';
+            const token = 'abc123';
+
+            //Create new ConversationState with MemoryStorage
+            const convoState = new ConversationState(new MemoryStorage());
+
+            //Create a DialogState property, DialogSet and OAuthPrompt
+            const dialogState = convoState.createProperty('dialogState');
+            const dialogs = new DialogSet(dialogState);
+
+            dialogs.add(new OAuthPrompt('OAuthPrompt', {
+                connectionName,
+                title: 'Sign in',
+                timeout: 30000,
+                text: 'Please sign in'
+            }));
+
+            await adapter
+            .send('hello')
+            .assertReply(activity => {
+                assert.strictEqual(activity.attachments.length, 1);
+                assert.strictEqual(activity.attachments[0].contentType, CardFactory.contentTypes.oauthCard);
+                assert(activity.inputHint === InputHints.AcceptingInput);
+
+                // Add an exchangeable token to the adapter
+                adapter.addExchangeableToken(connectionName, activity.channelId, activity.recipient.id, exchangeToken, token);
+            })
+            .send({
+                type: ActivityTypes.Invoke,
+                name: 'signin/tokenExchange',
+                value: {
+                    id: null,
+                    connectionName: connectionName,
+                    token: exchangeToken
+                }
+            })
+            .assertReply(a => {
+                assert.strictEqual('invokeResponse', a.type);
+            })
+            .assertReply('Logged in.');
+        });
+    });
 });
 
 function createReply(activity) {
