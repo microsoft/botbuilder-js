@@ -668,6 +668,9 @@ describe('LG', function() {
 
         evaled = engine.evaluateTemplate('templateWithSquareBrackets', {manufacturer: {Name : 'Acme Co'}});
         assert.deepStrictEqual(evaled, JSON.parse('{"lgType":"Struct","text":"Acme Co"}'));
+
+        evaled = engine.evaluateTemplate('ValueWithEqualsMark', {name : 'Jack'});
+        assert.deepStrictEqual(evaled, JSON.parse('{"lgType":"Activity","text":"Hello! welcome back. I have your name = Jack"}'));
     });
 
     it('TestEvaluateOnce', function() {
