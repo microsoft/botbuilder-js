@@ -798,9 +798,9 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
 
         if (processError) {
             if (processError && (processError as Error).stack) {
-                throw new Error(`BotFrameworkAdapter.processActivity(): ${ status } ERROR\n ${ processError.stack }`);
+                throw new Error(`BotFrameworkAdapter.processActivityDirect(): ERROR\n ${ processError.stack }`);
             } else {
-                throw new Error(`BotFrameworkAdapter.processActivity(): ${ status } ERROR`);
+                throw new Error(`BotFrameworkAdapter.processActivityDirect(): ERROR`);
             }
         }
     }
