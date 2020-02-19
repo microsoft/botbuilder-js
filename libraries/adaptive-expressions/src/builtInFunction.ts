@@ -1346,6 +1346,27 @@ export class BuiltInFunctions {
         };
     }
 
+    private static indicesAndValues(expression: Expression, state: any): {value: any; error: string} {
+        let result: object = undefined;
+        let error: string = undefined;
+        let value: any = undefined;
+        ({value, error} = expression.children[0].tryEvaluate(state));
+        if (error === undefined) {
+            if (Array.isArray(value)) {
+                const tempList = [];
+                for (let i = 0; i < value.length; i++) {
+                    tempList.push({index: i, value: value[i]});
+                }
+
+                result = tempList;
+            } else {
+                error = `${ expression.children[0] } is not array.`;
+            }
+        }
+
+        return {value: result, error};
+    } 
+
     private static toBinary(stringToConvert: string): string {
         let result = '';
         for (const element of stringToConvert) {
@@ -1851,6 +1872,9 @@ export class BuiltInFunctions {
                 ReturnType.Object,
                 (expression: Expression): void => BuiltInFunctions.validateOrder(expression, [ReturnType.String], ReturnType.Object)
             ),
+            new ExpressionEvaluator(ExpressionType.IndicesAndValues, 
+                (expression: Expression, state: any): {value: any; error: string} => BuiltInFunctions.indicesAndValues(expression, state), 
+                ReturnType.Object, BuiltInFunctions.validateUnary),
             BuiltInFunctions.comparison(
                 ExpressionType.LessThan,
                 (args: any []): boolean => args[0] < args[1], BuiltInFunctions.validateBinaryNumberOrString, BuiltInFunctions.verifyNumberOrString),
