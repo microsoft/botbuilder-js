@@ -6,45 +6,62 @@
  * Licensed under the MIT License.
  */
 import { Dialog, DialogDependencies, DialogContext, DialogTurnResult, DialogConfiguration, Configurable } from 'botbuilder-dialogs';
-import { ExpressionEngine } from 'botframework-expressions';
+import { ValueExpression, DialogExpression, StringExpression, ObjectExpression, BoolExpression } from '../expressionProperties';
 
 export interface BaseInvokeDialogConfiguration extends DialogConfiguration {
     options?: object;
     dialog?: Dialog;
-    includeActivity?: boolean;
+    activityProcessed?: boolean | string;
 }
 
 export class BaseInvokeDialog<O extends object = {}> extends Dialog<O> implements DialogDependencies, Configurable {
-    /**
-     * Expression for dialogId to call.
-     */
-    private dialogIdToCall: string;
-
     public constructor(dialogIdToCall?: string, bindingOptions?: O) {
         super();
-        this.dialogIdToCall = dialogIdToCall;
+        if (dialogIdToCall) {
+            this.dialog = new DialogExpression(dialogIdToCall);
+        }
         if (bindingOptions) {
-            this.options = bindingOptions;
+            this.options = new ObjectExpression<object>(bindingOptions);
         }
     }
 
     /**
      * Configurable options for the dialog.
      */
-    public options: object;
+    public options: ObjectExpression<object>;
 
     /**
      * The dialog to call.
      */
-    public dialog: Dialog;
+    public dialog: DialogExpression;
 
     /**
-     * If this flag is true, then the activity is flagged to be processed by the new dialog.
+     * A value indicating whether to have the new dialog should process the activity.
      */
-    public includeActivity: boolean;
+    public activityProcessed: BoolExpression = new BoolExpression(true);
 
     public configure(config: BaseInvokeDialogConfiguration): this {
-        return super.configure(config);
+        for (const key in config) {
+            if (config.hasOwnProperty(key)) {
+                const value = config[key];
+                switch (key) {
+                    case 'options':
+                        this.options = new ObjectExpression<object>(value);
+                        break;
+                    case 'dialog':
+                        this.dialog = new DialogExpression(value);
+                        break;
+                    case 'activityProcessed':
+                        this.activityProcessed = new BoolExpression(value);
+                        break;
+                    default:
+                        super.configure({ [key]: value });
+                        break;
+                }
+            }
+        }
+
+        return this;
     }
 
     public beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult<any>> {
@@ -52,43 +69,38 @@ export class BaseInvokeDialog<O extends object = {}> extends Dialog<O> implement
     }
 
     public getDependencies(): Dialog<{}>[] {
-        if (this.dialog) {
-            return [this.dialog];
+        if (this.dialog && this.dialog.value) {
+            return [this.dialog.value];
         }
         return [];
     }
 
     protected onComputeId(): string {
-        return `${ this.constructor.name }[${ this.dialog ? this.dialog.id : this.dialogIdToCall }]`;
+        return `${ this.constructor.name }[${ this.dialog && this.dialog.toString() }]`;
     }
 
     protected resolveDialog(dc: DialogContext): Dialog {
-        if (this.dialog) {
-            return this.dialog;
+        if (this.dialog && this.dialog.value) {
+            return this.dialog.value;
         }
 
-        if (!this.dialogIdToCall) {
-            throw new Error(`A dialog is required to be called.`);
-        }
-
-        const dialog = dc.findDialog(this.dialogIdToCall);
+        const stringExpression = new StringExpression(`=${ this.dialog.expressionText }`);
+        const dialogId = stringExpression.getValue(dc.state);
+        const dialog = dc.findDialog(dialogId);
         if (!dialog) {
-            throw new Error(`${ this.dialogIdToCall } not found.`);
+            throw new Error(`${ this.dialog.toString() } not found.`);
         }
 
         return dialog;
     }
 
-    protected bindOptions(dc: DialogContext, options: any): any {
-        const bindingOptions = Object.assign({}, this.options, options);
+    protected bindOptions(dc: DialogContext, options: object): object {
+        const bindingOptions = Object.assign({}, this.options.getValue(dc.state), options);
         const boundOptions = {};
 
         for (const key in bindingOptions) {
-            const val = bindingOptions[key];
-            const { value, error } = new ExpressionEngine().parse(val).tryEvaluate(dc.state);
-            if (error) {
-                throw new Error(error);
-            }
+            const binding = bindingOptions[key];
+            const value = new ValueExpression(binding.value).getValue(dc.state);
             boundOptions[key] = value;
         }
 

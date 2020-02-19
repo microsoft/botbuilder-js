@@ -5,24 +5,31 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { Expression, ExpressionEngine } from "botframework-expressions";
-import { OnCondition } from "../conditions/onCondition";
-import { TriggerSelector } from "../triggerSelector";
-import { SequenceContext } from "../sequenceContext";
+import { Configurable } from 'botbuilder-dialogs';
+import { OnCondition } from '../conditions/onCondition';
+import { TriggerSelector } from '../triggerSelector';
+import { SequenceContext } from '../sequenceContext';
+import { BoolExpression } from '../expressionProperties';
+
+export interface ConditionalSelectorConfiguration {
+    condition?: string | boolean;
+    ifTrue?: TriggerSelector;
+    ifFalse?: TriggerSelector;
+}
 
 /**
  * Select between two rule selectors based on a condition.
  */
-export class ConditionalSelector implements TriggerSelector {
+export class ConditionalSelector extends Configurable implements TriggerSelector {
+    public static declarativeType = 'Microsoft.ConditionalSelector';
+
     private _conditionals: OnCondition[];
     private _evaluate: boolean;
-    private _condition: Expression;
 
     /**
-     * Gets or sets expression that determines which selector to use.
+     * Expression that determines which selector to use.
      */
-    public get condition(): string { return this._condition.toString() }
-    public set condition(value: string) { this._condition = value ? new ExpressionEngine().parse(value) : undefined }
+    public condition: BoolExpression;
 
     /**
      * Gets or sets selector if condition is true.
@@ -34,15 +41,32 @@ export class ConditionalSelector implements TriggerSelector {
      */
     public ifFalse: TriggerSelector;
 
+    public configure(config: ConditionalSelectorConfiguration): this {
+        for (const key in config) {
+            if (config.hasOwnProperty(key)) {
+                const value = config[key];
+                switch (key) {
+                    case 'condition':
+                        this.condition = new BoolExpression(value);
+                        break;
+                    default:
+                        super.configure({ [key]: value });
+                        break;
+                }
+            }
+        }
+
+        return this;
+    }
+
     public initialize(conditionals: OnCondition[], evaluate: boolean): void {
         this._conditionals = conditionals;
         this._evaluate = evaluate;
     }
 
     public select(context: SequenceContext): Promise<number[]> {
-        const { value, error } = this._condition.tryEvaluate(context.state);
         let selector: TriggerSelector;
-        if (value && !error) {
+        if (this.condition && this.condition.getValue(context.state)) {
             selector = this.ifTrue;
             this.ifTrue.initialize(this._conditionals, this._evaluate);
         } else {

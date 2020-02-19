@@ -6,11 +6,11 @@
  * Licensed under the MIT License.
  */
 import { DialogTurnResult, DialogContext, TurnPath } from 'botbuilder-dialogs';
-import { Expression, ExpressionEngine } from 'botframework-expressions';
 import { BaseInvokeDialog, BaseInvokeDialogConfiguration } from './baseInvokeDialog';
+import { ObjectExpression, BoolExpression } from '../expressionProperties';
 
 export interface RepeatDialogConfiguration extends BaseInvokeDialogConfiguration {
-    disabled?: string;
+    disabled?: string | boolean;
 }
 
 export class RepeatDialog<O extends object = {}> extends BaseInvokeDialog<O> {
@@ -19,31 +19,35 @@ export class RepeatDialog<O extends object = {}> extends BaseInvokeDialog<O> {
     public constructor();
     public constructor(options?: O) {
         super();
-        if (options) { this.options = options; }
+        if (options) { this.options = new ObjectExpression<object>(options); }
     }
 
     /**
-     * Get an optional expression which if is true will disable this action.
+     * An optional expression which if is true will disable this action.
      */
-    public get disabled(): string {
-        return this._disabled ? this._disabled.toString() : undefined;
-    }
+    public disabled?: BoolExpression;
 
-    /**
-     * Set an optional expression which if is true will disable this action.
-     */
-    public set disabled(value: string) {
-        this._disabled = value ? new ExpressionEngine().parse(value) : undefined;
-    }
+    public configure(config: RepeatDialogConfiguration): this {
+        for (const key in config) {
+            if (config.hasOwnProperty(key)) {
+                const value = config[key];
+                switch (key) {
+                    case 'disabled':
+                        this.disabled = new BoolExpression(value);
+                        break;
+                    default:
+                        super.configure({ [key]: value });
+                        break;
+                }
+            }
+        }
 
-    private _disabled: Expression;
+        return this;
+    }
 
     public async beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {
-        if (this._disabled) {
-            const { value } = this._disabled.tryEvaluate(dc.state);
-            if (!!value) {
-                return await dc.endDialog();
-            }
+        if (this.disabled && this.disabled.getValue(dc.state)) {
+            return await dc.endDialog();
         }
 
         const boundOptions = this.bindOptions(dc, options);
@@ -57,9 +61,7 @@ export class RepeatDialog<O extends object = {}> extends BaseInvokeDialog<O> {
         repeatedIds.push(targetDialogId);
         dc.state.setValue(TurnPath.REPEATEDIDS, repeatedIds);
 
-        if (this.includeActivity) {
-            dc.state.setValue(TurnPath.ACTIVITYPROCESSED, false);
-        }
+        dc.state.setValue(TurnPath.ACTIVITYPROCESSED, this.activityProcessed.getValue(dc.state));
 
         const turnResult = await dc.parent.replaceDialog(dc.parent.activeDialog.id, boundOptions);
         turnResult.parentEnded = true;

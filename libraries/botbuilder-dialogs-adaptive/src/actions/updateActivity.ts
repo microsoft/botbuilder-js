@@ -6,16 +6,16 @@
  * Licensed under the MIT License.
  */
 import { Configurable, Dialog, DialogContext, DialogTurnResult, DialogConfiguration } from 'botbuilder-dialogs';
-import { Expression, ExpressionEngine } from 'botframework-expressions';
 import { Activity } from 'botbuilder-core';
 import { TemplateInterface } from '../template';
 import { ActivityTemplate } from '../templates/activityTemplate';
 import { StaticActivityTemplate } from '../templates/staticActivityTemplate';
+import { StringExpression, BoolExpression } from '../expressionProperties';
 
 export interface UpdateActivityConfiguration extends DialogConfiguration {
+    activity?: string;
     activityId?: string;
-    activity?: TemplateInterface<Partial<Activity>> | string;
-    disabled?: string;
+    disabled?: string | boolean;
 }
 
 export class UpdateActivity<O extends object = {}> extends Dialog<O> implements Configurable {
@@ -24,7 +24,9 @@ export class UpdateActivity<O extends object = {}> extends Dialog<O> implements 
     public constructor();
     public constructor(activityId?: string, activity?: Partial<Activity> | string) {
         super();
-        if (activityId) { this.activityId = activityId; }
+        if (activityId) {
+            this.activityId = new StringExpression(activityId);
+        }
         if (activity) { 
             if (typeof activity === 'string') { 
                 this.activity = new ActivityTemplate(activity); 
@@ -40,36 +42,14 @@ export class UpdateActivity<O extends object = {}> extends Dialog<O> implements 
     public activity: TemplateInterface<Partial<Activity>>;
 
     /**
-     * Get the expression which resolves to the activityId to update.
+     * The expression which resolves to the activityId to update.
      */
-    public get activityId(): string {
-        return this._activityId ? this._activityId.toString() : undefined;
-    }
+    public activityId: StringExpression;
 
     /**
-     * Set the expression which resolves to the activityId to update.
+     * An optional expression which if is true will disable this action.
      */
-    public set activityId(value: string) {
-        this._activityId = value ? new ExpressionEngine().parse(value) : undefined;
-    }
-
-    /**
-     * Get an optional expression which if is true will disable this action.
-     */
-    public get disabled(): string {
-        return this._disabled ? this._disabled.toString() : undefined;
-    }
-
-    /**
-     * Set an optional expression which if is true will disable this action.
-     */
-    public set disabled(value: string) {
-        this._disabled = value ? new ExpressionEngine().parse(value) : undefined;
-    }
-
-    private _activityId: Expression;
-
-    private _disabled: Expression;
+    public disabled?: BoolExpression;
 
 
     public configure(config: UpdateActivityConfiguration): this {
@@ -79,6 +59,12 @@ export class UpdateActivity<O extends object = {}> extends Dialog<O> implements 
                 switch (key) {
                     case 'activity':
                         this.activity = new ActivityTemplate(value);
+                        break;
+                    case 'activityId':
+                        this.activityId = new StringExpression(value);
+                        break;
+                    case 'disabled':
+                        this.disabled = new BoolExpression(value);
                         break;
                     default:
                         super.configure({ [key]: value });
@@ -91,11 +77,8 @@ export class UpdateActivity<O extends object = {}> extends Dialog<O> implements 
     }
 
     public async beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {
-        if (this._disabled) {
-            const { value } = this._disabled.tryEvaluate(dc.state);
-            if (!!value) {
-                return await dc.endDialog();
-            }
+        if (this.disabled && this.disabled.getValue(dc.state)) {
+            return await dc.endDialog();
         }
 
         if (!this.activity) {
@@ -107,10 +90,7 @@ export class UpdateActivity<O extends object = {}> extends Dialog<O> implements 
         }, dc.state, options);
         const activityResult = await this.activity.bindToData(dc.context, data);
 
-        const { value, error } = this._activityId.tryEvaluate(dc.state);
-        if (error) {
-            throw new Error(error);
-        }
+        const value = this.activityId.getValue(dc.state);
         activityResult.id = value.toString();
 
         const result = await dc.context.updateActivity(activityResult);

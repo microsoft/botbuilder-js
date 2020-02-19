@@ -7,103 +7,119 @@
  */
 import { DialogTurnResult, DialogConfiguration, DialogContext, Dialog, Configurable } from 'botbuilder-dialogs';
 import { Activity, ActivityTypes } from 'botbuilder-core';
-import { Expression, ExpressionEngine } from 'botframework-expressions';
+import { ValueExpression, StringExpression, BoolExpression } from '../expressionProperties';
 
 export interface TraceActivityConfiguration extends DialogConfiguration {
-    /**
-     * Gets or sets name of the trace activity.
-     */
     name?: string;
 
-    /**
-     * Gets or sets value type of the trace activity.
-     */
     valueType?: string;
 
-    /**
-     * Gets or sets value expression to send as the value.
-     */
-    value?: string;
+    value?: any;
 
-    disabled?: string;
+    label?: string;
+
+    disabled?: string | boolean;
 }
 
 export class TraceActivity<O extends object = {}> extends Dialog<O> implements Configurable {
     public static declarativeType = 'Microsoft.TraceActivity';
 
     public constructor();
-    public constructor(name: string, valueType: string, value: string);
-    public constructor(name?: string, valueType?: string, value?: string) {
+    public constructor(name: string, valueType: string, value: any, label: string);
+    public constructor(name?: string, valueType?: string, value?: any, label?: string) {
         super();
-        if (name) { this.name = name; }
-        if (valueType) { this.valueType = valueType; }
-        if (value) { this.value = value; }
+        if (name) { this.name = new StringExpression(name); }
+        if (valueType) { this.valueType = new StringExpression(valueType); }
+        if (value) { this.value = new ValueExpression(value); }
+        if (label) { this.label = new StringExpression(label); }
     }
 
     /**
      * Gets or sets name of the trace activity.
      */
-    public name?: string;
+    public name?: StringExpression;
 
     /**
      * Gets or sets value type of the trace activity.
      */
-    public valueType?: string;
+    public valueType?: StringExpression;
 
     /**
      * Gets or sets value expression to send as the value.
      */
-    public value?: string;
+    public value?: ValueExpression;
 
     /**
-     * Get an optional expression which if is true will disable this action.
+     * Gets or sets a label to use when describing a trace activity.
      */
-    public get disabled(): string {
-        return this._disabled ? this._disabled.toString() : undefined;
-    }
+    public label?: StringExpression;
 
     /**
-     * Set an optional expression which if is true will disable this action.
+     * An optional expression which if is true will disable this action.
      */
-    public set disabled(value: string) {
-        this._disabled = value ? new ExpressionEngine().parse(value) : undefined;
-    }
-
-    private _disabled: Expression;
+    public disabled?: BoolExpression;
 
 
     public configure(config: TraceActivityConfiguration): this {
-        return super.configure(config);
+        for (const key in config) {
+            if (config.hasOwnProperty(key)) {
+                const value = config[key];
+                switch (key) {
+                    case 'name':
+                        this.name = new StringExpression(value);
+                        break;
+                    case 'valueType':
+                        this.valueType = new StringExpression(value);
+                        break;
+                    case 'value':
+                        this.value = new ValueExpression(value);
+                        break;
+                    case 'label':
+                        this.label = new StringExpression(value);
+                        break;
+                    case 'disabled':
+                        this.disabled = new BoolExpression(value);
+                        break;
+                    default:
+                        super.configure({ [key]: value });
+                        break;
+                }
+            }
+        }
+
+        return this;
     }
 
     public async beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {
-        if (this._disabled) {
-            const { value } = this._disabled.tryEvaluate(dc.state);
-            if (!!value) {
-                return await dc.endDialog();
-            }
+        if (this.disabled && this.disabled.getValue(dc.state)) {
+            return await dc.endDialog();
         }
 
         let value: any;
 
         if (this.value) {
-            value = dc.state.getValue(this.value);
+            value = this.value.getValue(dc.state);
         } else {
             value = dc.state.getMemorySnapshot();
         }
 
+        const name = (this.name && this.name.getValue(dc.state)) || 'Trace';
+        const valueType = (this.valueType && this.valueType.getValue(dc.state)) || 'State';
+        const label = (this.label && this.label.getValue(dc.state)) || (dc.parent && dc.parent.activeDialog && dc.parent.activeDialog.id) || '';
+
         const traceActivity: Partial<Activity> = {
             type: ActivityTypes.Trace,
             timestamp: new Date(),
-            name: this.name || 'Trace',
-            value: value,
-            valueType: this.valueType || 'State'
+            name,
+            value,
+            valueType,
+            label
         };
         await dc.context.sendActivity(traceActivity);
         return await dc.endDialog(traceActivity);
     }
 
     protected onComputeId(): string {
-        return `TraceActivity[${ this.name }]`;
+        return `TraceActivity[${ this.name.toString() }]`;
     }
 }

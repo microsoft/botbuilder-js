@@ -6,21 +6,15 @@
  * Licensed under the MIT License.
  */
 import { DialogTurnResult, Dialog, DialogDependencies, DialogContext, Configurable } from 'botbuilder-dialogs';
-import { Expression, ExpressionEngine } from 'botframework-expressions';
 import { ActionScope, ActionScopeConfiguration } from './actionScope';
+import { BoolExpression } from '../expressionProperties';
 
 export interface IfConditionConfiguration extends ActionScopeConfiguration {
-    /**
-     * The conditional expression to evaluate.
-     */
-    condition?: string;
+    condition?: string | boolean;
 
-    /**
-     * The actions to run if [condition](#condition) returns false.
-     */
     elseActions?: Dialog[];
 
-    disabled?: string;
+    disabled?: string | boolean;
 }
 
 export class IfCondition<O extends object = {}> extends Dialog<O> implements DialogDependencies, Configurable {
@@ -29,23 +23,14 @@ export class IfCondition<O extends object = {}> extends Dialog<O> implements Dia
     public constructor();
     public constructor(condition?: string, elseActions?: Dialog[]) {
         super();
-        if (condition) { this.condition = condition; }
+        if (condition) { this.condition = new BoolExpression(condition); }
         if (elseActions) { this.elseActions = elseActions; }
     }
 
     /**
-     * Get conditional expression to evaluate.
+     * Conditional expression to evaluate.
      */
-    public get condition(): string {
-        return this._condition ? this._condition.toString() : undefined;
-    }
-
-    /**
-     * Set conditional expression to evaluate.
-     */
-    public set condition(value: string) {
-        this._condition = value ? new ExpressionEngine().parse(value) : undefined;
-    }
+    public condition: BoolExpression;
 
     /**
      * The actions to run if [condition](#condition) returns true.
@@ -74,45 +59,45 @@ export class IfCondition<O extends object = {}> extends Dialog<O> implements Dia
     }
 
     /**
-     * Get an optional expression which if is true will disable this action.
+     * An optional expression which if is true will disable this action.
      */
-    public get disabled(): string {
-        return this._disabled ? this._disabled.toString() : undefined;
-    }
-
-    /**
-     * Set an optional expression which if is true will disable this action.
-     */
-    public set disabled(value: string) {
-        this._disabled = value ? new ExpressionEngine().parse(value) : undefined;
-    }
-
-    private _condition: Expression;
+    public disabled?: BoolExpression;
 
     private _trueScope: ActionScope;
 
     private _falseScope: ActionScope;
-
-    private _disabled: Expression;
 
     public getDependencies(): Dialog[] {
         return [].concat(this.trueScope, this.falseScope);
     }
 
     public configure(config: IfConditionConfiguration): this {
-        return super.configure(config);
-    }
-
-    public async beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {
-        if (this._disabled) {
-            const { value } = this._disabled.tryEvaluate(dc.state);
-            if (!!value) {
-                return await dc.endDialog();
+        for (const key in config) {
+            if (config.hasOwnProperty(key)) {
+                const value = config[key];
+                switch (key) {
+                    case 'condition':
+                        this.condition = new BoolExpression(value);
+                        break;
+                    case 'disabled':
+                        this.disabled = new BoolExpression(value);
+                        break;
+                    default:
+                        super.configure({ [key]: value });
+                        break;
+                }
             }
         }
 
-        const { value, error } = this._condition.tryEvaluate(dc.state);
-        const conditionResult = !error && value;
+        return this;
+    }
+
+    public async beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {
+        if (this.disabled && this.disabled.getValue(dc.state)) {
+            return await dc.endDialog();
+        }
+
+        const conditionResult = this.condition.getValue(dc.state);
         if (conditionResult) {
             return await dc.replaceDialog(this.trueScope.id);
         } else if (!conditionResult && this.falseScope.actions && this.falseScope.actions.length > 0) {

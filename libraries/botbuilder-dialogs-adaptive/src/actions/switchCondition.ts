@@ -9,13 +9,13 @@ import { DialogTurnResult, DialogConfiguration, DialogDependencies, Dialog, Dial
 import { Expression, ExpressionEngine } from 'botframework-expressions';
 import { ActionScope } from './actionScope';
 import { Case } from './case';
+import { BoolExpression } from '../expressionProperties';
 
 export interface SwitchConditionConfiguration extends DialogConfiguration {
     condition?: string;
     default?: Dialog[];
     cases?: Case[];
-    defaultScope?: ActionScope;
-    disabled?: string;
+    disabled?: string | boolean;
 }
 
 export class SwitchCondition<O extends object = {}> extends Dialog<O> implements DialogDependencies, Configurable {
@@ -25,24 +25,15 @@ export class SwitchCondition<O extends object = {}> extends Dialog<O> implements
     public constructor(condition: string, defaultDialogs: Dialog[], cases: Case[]);
     public constructor(condition?: string, defaultDialogs?: Dialog[], cases?: Case[]) {
         super();
-        if (condition) { this.condition = condition; }
+        if (condition) { this.condition = new ExpressionEngine().parse(condition); }
         if (defaultDialogs) { this.default = defaultDialogs; }
         if (cases) { this.cases = cases; }
     }
 
     /**
-     * Get condition expression against memory.
+     * Condition expression against memory.
      */
-    public get condition(): string {
-        return this._condition ? this._condition.toString() : undefined;
-    }
-
-    /**
-     * Set condition expression against memory.
-     */
-    public set condition(value: string) {
-        this._condition = value ? new ExpressionEngine().parse(value) : undefined;
-    }
+    public condition: Expression;
 
     /**
      * Default case.
@@ -55,26 +46,13 @@ export class SwitchCondition<O extends object = {}> extends Dialog<O> implements
     public cases: Case[] = [];
 
     /**
-     * Get an optional expression which if is true will disable this action.
+     * An optional expression which if is true will disable this action.
      */
-    public get disabled(): string {
-        return this._disabled ? this._disabled.toString() : undefined;
-    }
-
-    /**
-     * Set an optional expression which if is true will disable this action.
-     */
-    public set disabled(value: string) {
-        this._disabled = value ? new ExpressionEngine().parse(value) : undefined;
-    }
+    public disabled?: BoolExpression;
 
     private _caseExpresssions: any;
 
-    private _condition: Expression;
-
     private _defaultScope: ActionScope;
-
-    private _disabled: Expression;
 
     public getDependencies(): Dialog[] {
         let dialogs: Dialog[] = [];
@@ -93,8 +71,14 @@ export class SwitchCondition<O extends object = {}> extends Dialog<O> implements
             if (config.hasOwnProperty(key)) {
                 const value = config[key];
                 switch (key) {
+                    case 'condition':
+                        this.condition = new ExpressionEngine().parse(value);
+                        break;
                     case 'cases':
                         this.cases = (value as Case[]).map(v => new Case(v.value, v.actions));
+                        break;
+                    case 'disabled':
+                        this.disabled = new BoolExpression(value);
                         break;
                     default:
                         super.configure({ [key]: value });
@@ -107,18 +91,15 @@ export class SwitchCondition<O extends object = {}> extends Dialog<O> implements
     }
 
     public async beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {
-        if (this._disabled) {
-            const { value } = this._disabled.tryEvaluate(dc.state);
-            if (!!value) {
-                return await dc.endDialog();
-            }
+        if (this.disabled && this.disabled.getValue(dc.state)) {
+            return await dc.endDialog();
         }
 
         if (!this._caseExpresssions) {
             this._caseExpresssions = {};
             for (let i = 0; i < this.cases.length; i++) {
                 const caseScope = this.cases[i];
-                const caseCondition = Expression.equalsExpression(this._condition, caseScope.createValueExpression());
+                const caseCondition = Expression.equalsExpression(this.condition, caseScope.createValueExpression());
                 this._caseExpresssions[caseScope.value] = caseCondition;
             }
         }
@@ -149,6 +130,6 @@ export class SwitchCondition<O extends object = {}> extends Dialog<O> implements
     }
 
     protected onComputeId(): string {
-        return `SwitchCondition[${ this.condition }]`;
+        return `SwitchCondition[${ this.condition.toString() }]`;
     }
 }

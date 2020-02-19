@@ -6,12 +6,12 @@
  * Licensed under the MIT License.
  */
 import { DialogTurnResult, DialogContext, DialogReason, TurnPath } from 'botbuilder-dialogs';
-import { Expression, ExpressionEngine } from 'botframework-expressions';
 import { BaseInvokeDialog, BaseInvokeDialogConfiguration } from './baseInvokeDialog';
+import { StringExpression, BoolExpression } from '../expressionProperties';
 
 export interface BeginDialogConfiguration extends BaseInvokeDialogConfiguration {
     resultProperty?: string;
-    disabled?: string;
+    disabled?: string | boolean;
 }
 
 export class BeginDialog<O extends object = {}> extends BaseInvokeDialog<O> {
@@ -31,47 +31,48 @@ export class BeginDialog<O extends object = {}> extends BaseInvokeDialog<O> {
     /**
      * (Optional) property path to store the dialog result in.
      */
-    public resultProperty?: string;
+    public resultProperty?: StringExpression;
 
     /**
-     * Get an optional expression which if is true will disable this action.
+     * An optional expression which if is true will disable this action.
      */
-    public get disabled(): string {
-        return this._disabled ? this._disabled.toString() : undefined;
-    }
-
-    /**
-     * Set an optional expression which if is true will disable this action.
-     */
-    public set disabled(value: string) {
-        this._disabled = value ? new ExpressionEngine().parse(value) : undefined;
-    }
-
-    private _disabled: Expression;
+    public disabled?: BoolExpression;
 
     public configure(config: BeginDialogConfiguration): this {
-        return super.configure(config);
+        for (const key in config) {
+            if (config.hasOwnProperty(key)) {
+                const value = config[key];
+                switch (key) {
+                    case 'resultProperty':
+                        this.resultProperty = new StringExpression(value);
+                        break;
+                    case 'disabled':
+                        this.disabled = new BoolExpression(value);
+                        break;
+                    default:
+                        super.configure({ [key]: value });
+                        break;
+                }
+            }
+        }
+
+        return this;
     }
 
     public async beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {
-        if (this._disabled) {
-            const { value } = this._disabled.tryEvaluate(dc.state);
-            if (!!value) {
-                return await dc.endDialog();
-            }
+        if (this.disabled && this.disabled.getValue(dc.state)) {
+            return await dc.endDialog();
         }
 
         const dialog = this.resolveDialog(dc);
         const boundOptions = this.bindOptions(dc, options);
-        if (this.includeActivity) {
-            dc.state.setValue(TurnPath.ACTIVITYPROCESSED, false);
-        }
+        dc.state.setValue(TurnPath.ACTIVITYPROCESSED, this.activityProcessed.getValue(dc.state));
         return await dc.beginDialog(dialog.id, boundOptions);
     }
 
     public async resumeDialog(dc: DialogContext, reason: DialogReason, result: any = null): Promise<DialogTurnResult> {
         if (this.resultProperty) {
-            dc.state.setValue(this.resultProperty, result);
+            dc.state.setValue(this.resultProperty.getValue(dc.state), result);
         }
         return await dc.endDialog(result);
     }

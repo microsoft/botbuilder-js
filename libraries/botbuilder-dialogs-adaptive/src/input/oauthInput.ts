@@ -8,6 +8,7 @@
 import { DialogContext, Dialog, DialogTurnResult, PromptOptions, PromptRecognizerResult } from 'botbuilder-dialogs';
 import { Attachment, InputHints, TokenResponse, IUserTokenProvider, TurnContext, ActivityTypes, Activity, MessageFactory, CardFactory, OAuthLoginTimeoutKey } from "botbuilder-core";
 import { InputDialogConfiguration, InputDialog, InputState } from './inputDialog';
+import { StringExpression, NumberExpression } from '../expressionProperties';
 
 export interface OAuthInputConfiguration extends InputDialogConfiguration {
     /**
@@ -59,39 +60,64 @@ export class OAuthInput extends InputDialog {
     /**
      * Name of the OAuth connection being used.
      */
-    public connectionName: string;
+    public connectionName: StringExpression;
 
     /**
      * Title of the cards signin button.
      */
-    public title: string;
+    public title: StringExpression;
 
     /**
      * (Optional) additional text to include on the signin card.
      */
-    public text?: string;
+    public text?: StringExpression;
 
     /**
      * (Optional) number of milliseconds the prompt will wait for the user to authenticate.
      * Defaults to a value `900,000` (15 minutes.)
      */
-    public timeout?: number = 900000;
+    public timeout?: NumberExpression = new NumberExpression(900000);
 
-    /**
-     * Gets or sets the memory property to use for token result.
-     */
-    public tokenProperty: string;
-
-    public constructor(connectionName?: string, title?: string, text?: string, timeout?: number, tokenProperty?: string) {
+    public constructor(connectionName?: string, title?: string, text?: string, timeout?: number) {
         super();
-        this.connectionName = connectionName;
-        this.title = title;
-        this.text = text;
-        this.timeout = timeout;
-        this.tokenProperty = tokenProperty;
+        this.connectionName = new StringExpression(connectionName);
+        this.title = new StringExpression(title);
+        this.text = new StringExpression(text);
+        if (timeout) { this.timeout = new NumberExpression(timeout); }
+    }
+
+    public configure(config: OAuthInputConfiguration): this {
+        for (const key in config) {
+            if (config.hasOwnProperty(key)) {
+                const value = config[key];
+                switch (key) {
+                    case 'connectionName':
+                        this.connectionName = new StringExpression(value);
+                        break;
+                    case 'title':
+                        this.title = new StringExpression(value);
+                        break;
+                    case 'text':
+                        this.text = new StringExpression(value);
+                        break;
+                    case 'timeout':
+                        this.timeout = new NumberExpression(value);
+                        break;
+                    default:
+                        super.configure({ [key]: value });
+                        break;
+                }
+            }
+        }
+
+        return this;
     }
 
     public async beginDialog(dc: DialogContext, options?: PromptOptions): Promise<DialogTurnResult> {
+        if (this.disabled && this.disabled.getValue(dc.state)) {
+            return await dc.endDialog();
+        }
+
         // Ensure prompts have input hint set
         const o: Partial<PromptOptions> = { ...options };
         if (o.prompt && typeof o.prompt === 'object' && typeof o.prompt.inputHint !== 'string') {
@@ -102,25 +128,25 @@ export class OAuthInput extends InputDialog {
         }
 
         // Initialize prompt state
-        const timeout: number = typeof this.timeout === 'number' ? this.timeout : 900000;
+        const timeout: number = this.timeout.getValue(dc.state) || 900000;
         const state: OAuthPromptState = dc.activeDialog.state as OAuthPromptState;
         state.state = {};
         state.options = o;
         state.expires = new Date().getTime() + timeout;
 
         // Attempt to get the users token
-        const output: TokenResponse = await this.getUserToken(dc.context);
+        const output: TokenResponse = await this.getUserToken(dc);
         if (output !== undefined) {
             // Set token into token property
-            if (this.tokenProperty) {
-                dc.state.setValue(this.tokenProperty, output);
+            if (this.property) {
+                dc.state.setValue(this.property.getValue(dc.state), output);
             }
 
             // Return token
             return await dc.endDialog(output);
         } else {
             // Prompt user to login
-            await this.sendOAuthCardAsync(dc.context, state.options.prompt);
+            await this.sendOAuthCardAsync(dc, state.options.prompt);
 
             return Dialog.EndOfTurn;
         }
@@ -128,7 +154,7 @@ export class OAuthInput extends InputDialog {
 
     public async continueDialog(dc: DialogContext): Promise<DialogTurnResult> {
         // Recognize token
-        const recognized: PromptRecognizerResult<TokenResponse> = await this.recognizeToken(dc.context);
+        const recognized: PromptRecognizerResult<TokenResponse> = await this.recognizeToken(dc);
 
         // Check for timeout
         const state: OAuthPromptState = dc.activeDialog.state as OAuthPromptState;
@@ -136,8 +162,8 @@ export class OAuthInput extends InputDialog {
         const hasTimedOut: boolean = isMessage && (new Date().getTime() > state.expires);
         if (hasTimedOut) {
             // Set token into token property
-            if (this.tokenProperty) {
-                dc.state.setValue(this.tokenProperty, null);
+            if (this.property) {
+                dc.state.setValue(this.property.getValue(dc.state), null);
             }
 
             return await dc.endDialog(undefined);
@@ -157,8 +183,8 @@ export class OAuthInput extends InputDialog {
             // Return recognized value or re-prompt
             if (isValid) {
                 // Set token into token property
-                if (this.tokenProperty) {
-                    dc.state.setValue(this.tokenProperty, recognized.value);
+                if (this.property) {
+                    dc.state.setValue(this.property.getValue(dc.state), recognized.value);
                 }
 
                 return await dc.endDialog(recognized.value);
@@ -178,16 +204,16 @@ export class OAuthInput extends InputDialog {
      * @param context Context reference the user that's being looked up.
      * @param code (Optional) login code received from the user.
      */
-    public async getUserToken(context: TurnContext, code?: string): Promise<TokenResponse | undefined> {
+    public async getUserToken(dc: DialogContext, code?: string): Promise<TokenResponse | undefined> {
         // Validate adapter type
-        if (!('getUserToken' in context.adapter)) {
+        if (!('getUserToken' in dc.context.adapter)) {
             throw new Error(`OAuthPrompt.getUserToken(): not supported for the current adapter.`);
         }
 
         // Get the token and call validator
-        const adapter: IUserTokenProvider = context.adapter as IUserTokenProvider;
+        const adapter: IUserTokenProvider = dc.context.adapter as IUserTokenProvider;
 
-        return await adapter.getUserToken(context, this.connectionName, code);
+        return await adapter.getUserToken(dc.context, this.connectionName.getValue(dc.state), code);
     }
 
     /**
@@ -205,25 +231,25 @@ export class OAuthInput extends InputDialog {
      * ```
      * @param context Context referencing the user that's being signed out.
      */
-    public async signOutUser(context: TurnContext): Promise<void> {
+    public async signOutUser(dc: DialogContext): Promise<void> {
         // Validate adapter type
-        if (!('signOutUser' in context.adapter)) {
+        if (!('signOutUser' in dc.context.adapter)) {
             throw new Error(`OAuthPrompt.signOutUser(): not supported for the current adapter.`);
         }
 
         // Sign out user
-        const adapter: IUserTokenProvider = context.adapter as IUserTokenProvider;
+        const adapter: IUserTokenProvider = dc.context.adapter as IUserTokenProvider;
 
-        return adapter.signOutUser(context, this.connectionName);
+        return adapter.signOutUser(dc.context, this.connectionName.getValue(dc.state));
     }
 
     protected onRecognizeInput(dc: DialogContext): Promise<InputState> {
         throw new Error('Method not implemented.');
     }
 
-    private async sendOAuthCardAsync(context: TurnContext, prompt?: string | Partial<Activity>): Promise<void> {
+    private async sendOAuthCardAsync(dc: DialogContext, prompt?: string | Partial<Activity>): Promise<void> {
         // Validate adapter type
-        if (!('getUserToken' in context.adapter)) {
+        if (!('getUserToken' in dc.context.adapter)) {
             throw new Error(`OAuthPrompt.prompt(): not supported for the current adapter.`);
         }
 
@@ -233,18 +259,18 @@ export class OAuthInput extends InputDialog {
         if (!Array.isArray(msg.attachments)) { msg.attachments = []; }
 
         // Add login card as needed
-        if (this.channelSupportsOAuthCard(context.activity.channelId)) {
+        if (this.channelSupportsOAuthCard(dc.context.activity.channelId)) {
             const cards: Attachment[] = msg.attachments.filter((a: Attachment) => a.contentType === CardFactory.contentTypes.oauthCard);
             if (cards.length === 0) {
                 let link: string = undefined;
-                if (this.isFromStreamingConnection(context.activity)) {
-                    link = await (context.adapter as any).getSignInLink(context, this.connectionName);
+                if (this.isFromStreamingConnection(dc.context.activity)) {
+                    link = await (dc.context.adapter as any).getSignInLink(dc.context, this.connectionName.getValue(dc.state));
                 }
                 // Append oauth card
                 msg.attachments.push(CardFactory.oauthCard(
-                    this.connectionName,
-                    this.title,
-                    this.text,
+                    this.connectionName.getValue(dc.state),
+                    this.title.getValue(dc.state),
+                    this.text.getValue(dc.state),
                     link
                 ));
             }
@@ -252,45 +278,45 @@ export class OAuthInput extends InputDialog {
             const cards: Attachment[] = msg.attachments.filter((a: Attachment) => a.contentType === CardFactory.contentTypes.signinCard);
             if (cards.length === 0) {
                 // Append signin card
-                const link: any = await (context.adapter as any).getSignInLink(context, this.connectionName);
+                const link: any = await (dc.context.adapter as any).getSignInLink(dc.context, this.connectionName.getValue(dc.state));
                 msg.attachments.push(CardFactory.signinCard(
-                    this.title,
+                    this.title.getValue(dc.state),
                     link,
-                    this.text
+                    this.text.getValue(dc.state)
                 ));
             }
         }
 
         // Add the login timeout specified in OAuthPromptSettings to TurnState so it can be referenced if polling is needed
-        if (!context.turnState.get(OAuthLoginTimeoutKey) && this.timeout) {
-            context.turnState.set(OAuthLoginTimeoutKey, this.timeout);
+        if (!dc.context.turnState.get(OAuthLoginTimeoutKey) && this.timeout) {
+            dc.context.turnState.set(OAuthLoginTimeoutKey, this.timeout.getValue(dc.state));
         }
 
         // Send prompt
-        await context.sendActivity(msg);
+        await dc.context.sendActivity(msg);
     }
 
-    private async recognizeToken(context: TurnContext): Promise<PromptRecognizerResult<TokenResponse>> {
+    private async recognizeToken(dc: DialogContext): Promise<PromptRecognizerResult<TokenResponse>> {
         let token: TokenResponse | undefined;
-        if (this.isTokenResponseEvent(context)) {
-            token = context.activity.value as TokenResponse;
-        } else if (this.isTeamsVerificationInvoke(context)) {
-            const code: any = context.activity.value.state;
+        if (this.isTokenResponseEvent(dc.context)) {
+            token = dc.context.activity.value as TokenResponse;
+        } else if (this.isTeamsVerificationInvoke(dc.context)) {
+            const code: any = dc.context.activity.value.state;
             try {
-                token = await this.getUserToken(context, code);
+                token = await this.getUserToken(dc, code);
                 if (token !== undefined) {
-                    await context.sendActivity({ type: 'invokeResponse', value: { status: 200 } });
+                    await dc.context.sendActivity({ type: 'invokeResponse', value: { status: 200 } });
                 } else {
-                    await context.sendActivity({ type: 'invokeResponse', value: { status: 404 } });
+                    await dc.context.sendActivity({ type: 'invokeResponse', value: { status: 404 } });
                 }
             }
             catch (e) {
-                await context.sendActivity({ type: 'invokeResponse', value: { status: 500 } });
+                await dc.context.sendActivity({ type: 'invokeResponse', value: { status: 500 } });
             }
-        } else if (context.activity.type === ActivityTypes.Message) {
-            const matched: RegExpExecArray = /(\d{6})/.exec(context.activity.text);
+        } else if (dc.context.activity.type === ActivityTypes.Message) {
+            const matched: RegExpExecArray = /(\d{6})/.exec(dc.context.activity.text);
             if (matched && matched.length > 1) {
-                token = await this.getUserToken(context, matched[1]);
+                token = await this.getUserToken(dc, matched[1]);
             }
         }
 

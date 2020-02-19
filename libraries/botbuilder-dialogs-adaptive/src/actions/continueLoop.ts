@@ -6,42 +6,42 @@
  * Licensed under the MIT License.
  */
 import { DialogTurnResult, Dialog, DialogContext, Configurable, DialogConfiguration } from 'botbuilder-dialogs';
-import { Expression, ExpressionEngine } from 'botframework-expressions';
 import { ActionScopeResult, ActionScopeCommands } from './actionScope';
+import { BoolExpression } from '../expressionProperties';
 
 export interface ContinueLoopConfiguration extends DialogConfiguration {
-    disabled?: string;
+    disabled?: string | boolean;
 }
 
 export class ContinueLoop<O extends object = {}> extends Dialog<O> implements Configurable {
     public static declarativeType = 'Microsoft.ContinueLoop';
 
     /**
-     * Get an optional expression which if is true will disable this action.
+     * An optional expression which if is true will disable this action.
      */
-    public get disabled(): string {
-        return this._disabled ? this._disabled.toString() : undefined;
-    }
-
-    /**
-     * Set an optional expression which if is true will disable this action.
-     */
-    public set disabled(value: string) {
-        this._disabled = value ? new ExpressionEngine().parse(value) : undefined;
-    }
-
-    private _disabled: Expression;
+    public disabled?: BoolExpression;
 
     public configure(config: ContinueLoopConfiguration): this {
-        return super.configure(config);
+        for (const key in config) {
+            if (config.hasOwnProperty(key)) {
+                const value = config[key];
+                switch (key) {
+                    case 'disabled':
+                        this.disabled = new BoolExpression(value);
+                        break;
+                    default:
+                        super.configure({ [key]: value });
+                        break;
+                }
+            }
+        }
+
+        return this;
     }
 
     public async beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {
-        if (this._disabled) {
-            const { value } = this._disabled.tryEvaluate(dc.state);
-            if (!!value) {
-                return await dc.endDialog();
-            }
+        if (this.disabled && this.disabled.getValue(dc.state)) {
+            return await dc.endDialog();
         }
 
         const actionScopeResult: ActionScopeResult = {

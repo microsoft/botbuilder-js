@@ -6,8 +6,8 @@
  * Licensed under the MIT License.
  */
 import { DialogTurnResult, Dialog, DialogContext } from 'botbuilder-dialogs';
-import { ExpressionEngine, Expression } from 'botframework-expressions';
 import { ActionScope, ActionScopeResult, ActionScopeConfiguration } from './actionScope';
+import { StringExpression, BoolExpression } from '../expressionProperties';
 
 const INDEX = 'dialog.foreach.index';
 const VALUE = 'dialog.foreach.value';
@@ -17,7 +17,7 @@ const VALUE = 'dialog.foreach.value';
  */
 export interface ForEachConfiguration extends ActionScopeConfiguration {
     itemsProperty?: string;
-    disabled?: string;
+    disabled?: string | boolean;
 }
 
 export class ForEach<O extends object = {}> extends ActionScope<O> {
@@ -27,56 +27,48 @@ export class ForEach<O extends object = {}> extends ActionScope<O> {
     public constructor(itemsProperty: string, actions: Dialog[]);
     public constructor(itemsProperty?: string, actions?: Dialog[]) {
         super();
-        if (itemsProperty) { this.itemsProperty = itemsProperty; }
+        if (itemsProperty) { this.itemsProperty = new StringExpression(itemsProperty); }
         if (actions) { this.actions = actions; }
     }
 
     /**
-     * Get property path expression to the collection of items.
+     * Property path expression to the collection of items.
      */
-    public get itemsProperty(): string {
-        return this._itemsPropertyExpression ? this._itemsPropertyExpression.toString() : undefined;
-    }
+    public itemsProperty: StringExpression;
 
     /**
-     * Set property path expression to the collection of items.
+     * An optional expression which if is true will disable this action.
      */
-    public set itemsProperty(value: string) {
-        this._itemsPropertyExpression = value ? new ExpressionEngine().parse(value) : undefined;
-    }
-
-    /**
-     * Get an optional expression which if is true will disable this action.
-     */
-    public get disabled(): string {
-        return this._disabled ? this._disabled.toString() : undefined;
-    }
-
-    /**
-     * Set an optional expression which if is true will disable this action.
-     */
-    public set disabled(value: string) {
-        this._disabled = value ? new ExpressionEngine().parse(value) : undefined;
-    }
-
-    private _itemsPropertyExpression: Expression;
-
-    private _disabled: Expression;
+    public disabled?: BoolExpression;
 
     public getDependencies(): Dialog[] {
         return this.actions;
     }
 
     public configure(config: ForEachConfiguration): this {
-        return super.configure(config);
+        for (const key in config) {
+            if (config.hasOwnProperty(key)) {
+                const value = config[key];
+                switch (key) {
+                    case 'itemsProperty':
+                        this.itemsProperty = new StringExpression(value);
+                        break;
+                    case 'disabled':
+                        this.disabled = new BoolExpression(value);
+                        break;
+                    default:
+                        super.configure({ [key]: value });
+                        break;
+                }
+            }
+        }
+
+        return this;
     }
 
     public async beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {
-        if (this._disabled) {
-            const { value } = this._disabled.tryEvaluate(dc.state);
-            if (!!value) {
-                return await dc.endDialog();
-            }
+        if (this.disabled && this.disabled.getValue(dc.state)) {
+            return await dc.endDialog();
         }
         dc.state.setValue(INDEX, -1);
         return await this.nextItem(dc);
@@ -95,11 +87,12 @@ export class ForEach<O extends object = {}> extends ActionScope<O> {
     }
 
     protected async nextItem(dc: DialogContext): Promise<DialogTurnResult> {
-        const { value } = this._itemsPropertyExpression.tryEvaluate(dc.state);
+        const itemsProperty = this.itemsProperty.getValue(dc.state);
+        const items: any[] = dc.state.getValue(itemsProperty, []);
         let index = dc.state.getValue(INDEX);
 
-        if (++index < value.length) {
-            dc.state.setValue(VALUE, value[index]);
+        if (++index < items.length) {
+            dc.state.setValue(VALUE, items[index]);
             dc.state.setValue(INDEX, index);
             return await this.beginAction(dc, 0);
         } else {
@@ -108,7 +101,7 @@ export class ForEach<O extends object = {}> extends ActionScope<O> {
     }
 
     protected onComputeId(): string {
-        return `ForEach[${ this.itemsProperty }]`;
+        return `ForEach[${ this.itemsProperty.toString() }]`;
     }
 
 }

@@ -6,11 +6,11 @@
  * Licensed under the MIT License.
  */
 import { Configurable, Dialog, DialogContext, DialogTurnResult, DialogConfiguration } from 'botbuilder-dialogs';
-import { Expression, ExpressionEngine } from 'botframework-expressions';
+import { StringExpression, BoolExpression } from '../expressionProperties';
 
 export interface GetConversationMembersConfiguration extends DialogConfiguration {
     property?: string;
-    disabled?: string;
+    disabled?: string | boolean;
 }
 
 export class GetConversationMembers<O extends object = {}> extends Dialog<O> implements Configurable {
@@ -19,46 +19,49 @@ export class GetConversationMembers<O extends object = {}> extends Dialog<O> imp
     public constructor();
     public constructor(property?: string) {
         super();
-        if (property) { this.property = property; }
+        if (property) { this.property = new StringExpression(property); }
     }
 
     /**
      * Property path to put the value in.
      */
-    public property: string;
+    public property: StringExpression;
 
     /**
-     * Get an optional expression which if is true will disable this action.
+     * An optional expression which if is true will disable this action.
      */
-    public get disabled(): string {
-        return this._disabled ? this._disabled.toString() : undefined;
-    }
-
-    /**
-     * Set an optional expression which if is true will disable this action.
-     */
-    public set disabled(value: string) {
-        this._disabled = value ? new ExpressionEngine().parse(value) : undefined;
-    }
-
-    private _disabled: Expression;
+    public disabled?: BoolExpression;
 
     public configure(config: GetConversationMembersConfiguration): this {
-        return super.configure(config);
+        for (const key in config) {
+            if (config.hasOwnProperty(key)) {
+                const value = config[key];
+                switch (key) {
+                    case 'property':
+                        this.property = new StringExpression(value);
+                        break;
+                    case 'disabled':
+                        this.disabled = new BoolExpression(value);
+                        break;
+                    default:
+                        super.configure({ [key]: value });
+                        break;
+                }
+            }
+        }
+
+        return this;
     }
 
     public async beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {
-        if (this._disabled) {
-            const { value } = this._disabled.tryEvaluate(dc.state);
-            if (!!value) {
-                return await dc.endDialog();
-            }
+        if (this.disabled && this.disabled.getValue(dc.state)) {
+            return await dc.endDialog();
         }
 
         const adapter = dc.context.adapter;
         if (typeof adapter['getConversationMembers'] === 'function') {
             const result = await adapter['getConversationMembers'].getConversationMembers(dc.context);
-            dc.state.setValue(this.property, result);
+            dc.state.setValue(this.property.getValue(dc.state), result);
             return await dc.endDialog(result);
         } else {
             throw new Error('getConversationMembers() not supported by the current adapter.');
@@ -66,7 +69,7 @@ export class GetConversationMembers<O extends object = {}> extends Dialog<O> imp
     }
 
     protected onComputeId(): string {
-        return `GetConversationMembers[${ this.property }]`;
+        return `GetConversationMembers[${ this.property.toString() }]`;
     }
 }
  

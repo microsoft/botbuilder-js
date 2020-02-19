@@ -6,14 +6,14 @@
  * Licensed under the MIT License.
  */
 import { DialogTurnResult, DialogContext, DialogConfiguration, Dialog, Configurable } from 'botbuilder-dialogs';
-import { Expression, ExpressionEngine } from 'botframework-expressions';
+import { ValueExpression, StringExpression, BoolExpression, EnumExpression } from '../expressionProperties';
 
 export interface EditArrayConfiguration extends DialogConfiguration {
-    changeType?: ArrayChangeType;
+    changeType?: string | ArrayChangeType;
     itemsProperty?: string;
     resultProperty?: string;
-    value?: string;
-    disabled?: string;
+    value?: any;
+    disabled?: string | boolean;
 }
 
 export enum ArrayChangeType {
@@ -28,20 +28,20 @@ export class EditArray<O extends object = {}> extends Dialog<O> implements Confi
     public static declarativeType = 'Microsoft.EditArray';
 
     public constructor();
-    public constructor(changeType: ArrayChangeType, itemsProperty: string, value?: string, resultProperty?: string);
-    public constructor(changeType?: ArrayChangeType, itemsProperty?: string, value?: string, resultProperty?: string) {
+    public constructor(changeType: ArrayChangeType, itemsProperty: string, value?: any, resultProperty?: string);
+    public constructor(changeType?: ArrayChangeType, itemsProperty?: string, value?: any, resultProperty?: string) {
         super();
-        if (changeType) { this.changeType = changeType; }
-        if (itemsProperty) { this.itemsProperty = itemsProperty; }
+        if (changeType) { this.changeType = new EnumExpression(changeType); }
+        if (itemsProperty) { this.itemsProperty = new StringExpression(itemsProperty); }
         switch (changeType) {
             case ArrayChangeType.clear:
             case ArrayChangeType.pop:
             case ArrayChangeType.take:
-                this.resultProperty = resultProperty;
+                this.resultProperty = new StringExpression(resultProperty);
                 break;
             case ArrayChangeType.push:
             case ArrayChangeType.remove:
-                this.value = value;
+                this.value = new ValueExpression(value);
                 break;
             default:
                 break;
@@ -51,104 +51,82 @@ export class EditArray<O extends object = {}> extends Dialog<O> implements Confi
     /**
      * Type of change being applied.
      */
-    public changeType: ArrayChangeType = ArrayChangeType.push;
+    public changeType: EnumExpression<ArrayChangeType> = new EnumExpression(ArrayChangeType.push);
 
     /**
-     * Get property path expression to the collection of items.
+     * Property path expression to the collection of items.
      */
-    public get itemsProperty(): string {
-        return this._itemsProperty ? this._itemsProperty.toString() : undefined;
-    }
+    public itemsProperty: StringExpression;
 
     /**
-     * Set property path expression to the collection of items.
+     * The path expression to store the result of action.
      */
-    public set itemsProperty(value: string) {
-        this._itemsProperty = value ? new ExpressionEngine().parse(value) : undefined;
-    }
+    public resultProperty: StringExpression;
 
     /**
-     * Get the path expression to store the result of action.
+     * The expression of the value to put onto the array.
      */
-    public get resultProperty(): string {
-        return this._resultProperty ? this._resultProperty.toString() : undefined;
-    }
+    public value: ValueExpression;
 
     /**
-     * Set the path expression to store the result of action.
+     * An optional expression which if is true will disable this action.
      */
-    public set resultProperty(value: string) {
-        this._resultProperty = value ? new ExpressionEngine().parse(value) : undefined;
-    }
-
-    /**
-     * Get the expression of the value to put onto the array.
-     */
-    public get value(): string {
-        return this._value ? this._value.toString() : undefined;
-    }
-
-    /**
-     * Set the expression of the value to put onto the array.
-     */
-    public set value(value: string) {
-        this._value = value ? new ExpressionEngine().parse(value) : undefined;
-    }
-
-    /**
-     * Get an optional expression which if is true will disable this action.
-     */
-    public get disabled(): string {
-        return this._disabled ? this._disabled.toString() : undefined;
-    }
-
-    /**
-     * Set an optional expression which if is true will disable this action.
-     */
-    public set disabled(value: string) {
-        this._disabled = value ? new ExpressionEngine().parse(value) : undefined;
-    }
-
-    private _value: Expression;
-
-    private _itemsProperty: Expression;
-
-    private _resultProperty: Expression;
-
-    private _disabled: Expression;
+    public disabled?: BoolExpression;
 
     public configure(config: EditArrayConfiguration): this {
-        return super.configure(config);
-    }
-
-    public async beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {
-        if (this._disabled) {
-            const { value } = this._disabled.tryEvaluate(dc.state);
-            if (!!value) {
-                return await dc.endDialog();
+        for (const key in config) {
+            if (config.hasOwnProperty(key)) {
+                const value = config[key];
+                switch (key) {
+                    case 'changeType':
+                        this.changeType = new EnumExpression<ArrayChangeType>(value);
+                        break;
+                    case 'itemsProperty':
+                        this.itemsProperty = new StringExpression(value);
+                        break;
+                    case 'resultProperty':
+                        this.resultProperty = new StringExpression(value);
+                        break;
+                    case 'value':
+                        this.value = new ValueExpression(value);
+                        break;
+                    case 'disabled':
+                        this.disabled = new BoolExpression(value);
+                        break;
+                    default:
+                        super.configure({ [key]: value });
+                        break;
+                }
             }
         }
 
+        return this;
+    }
+
+    public async beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {
+        if (this.disabled && this.disabled.getValue(dc.state)) {
+            return await dc.endDialog();
+        }
+
         if (!this.itemsProperty) {
-            throw new Error(`EditArray: "${ this.changeType }" operation couldn't be performed because the itemsProperty wasn't specified.`);
+            throw new Error(`EditArray: "${ this.changeType.toString() }" operation couldn't be performed because the itemsProperty wasn't specified.`);
         }
 
         // Get list and ensure populated
-        let list: any[] = dc.state.getValue(this.itemsProperty);
-        // if (!Array.isArray(list)) { list = [] }
+        let list: any[] = dc.state.getValue(this.itemsProperty.getValue(dc.state), []);
 
         // Manipulate list
         let result: any;
         let evaluationResult: any;
-        switch (this.changeType) {
+        switch (this.changeType.getValue(dc.state)) {
             case ArrayChangeType.pop:
                 result = list.pop();
                 break;
             case ArrayChangeType.push:
                 this.ensureValue();
-                evaluationResult = this._value.tryEvaluate(dc.state);
-                if (evaluationResult.value && !evaluationResult.error) {
-                    list.push(evaluationResult.value);
+                evaluationResult = this.value.getValue(dc.state);
+                if (evaluationResult != undefined) {
+                    list.push(evaluationResult);
                 }
                 break;
             case ArrayChangeType.take:
@@ -156,11 +134,11 @@ export class EditArray<O extends object = {}> extends Dialog<O> implements Confi
                 break;
             case ArrayChangeType.remove:
                 this.ensureValue();
-                evaluationResult = this._value.tryEvaluate(dc.state);
-                if (evaluationResult.value && !evaluationResult.error) {
+                evaluationResult = this.value.getValue(dc.state);
+                if (evaluationResult != undefined) {
                     result = false;
                     for (let i = 0; i < list.length; i++) {
-                        if ((JSON.stringify(evaluationResult.value) == JSON.stringify(list[i])) || evaluationResult.value === list[i]) {
+                        if ((JSON.stringify(evaluationResult) == JSON.stringify(list[i])) || evaluationResult === list[i]) {
                             list.splice(i, 1);
                             result = true;
                             break;
@@ -175,18 +153,18 @@ export class EditArray<O extends object = {}> extends Dialog<O> implements Confi
         }
 
         // Save list and last result
-        dc.state.setValue(this.itemsProperty, list);
+        dc.state.setValue(this.itemsProperty.getValue(dc.state), list);
         if (this.resultProperty) {
-            dc.state.setValue(this.resultProperty, result);
+            dc.state.setValue(this.resultProperty.getValue(dc.state), result);
         }
         return await dc.endDialog();
     }
 
     protected onComputeId(): string {
-        return `EditArray[${ this.changeType }: ${ this.itemsProperty }]`;
+        return `EditArray[${ this.changeType.toString() }: ${ this.itemsProperty.toString() }]`;
     }
 
     private ensureValue(): void {
-        if (!this.value) { throw new Error(`EditArray: "${ this.changeType }" operation couldn't be performed for list "${ this.itemsProperty }" because a value wasn't specified.`) }
+        if (!this.value) { throw new Error(`EditArray: "${ this.changeType.toString() }" operation couldn't be performed for list "${ this.itemsProperty }" because a value wasn't specified.`) }
     }
 }

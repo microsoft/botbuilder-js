@@ -6,12 +6,12 @@
  * Licensed under the MIT License.
  */
 import { DialogTurnResult, DialogContext, DialogConfiguration, Dialog, Configurable } from 'botbuilder-dialogs';
-import { ExpressionEngine, Expression } from 'botframework-expressions';
+import { StringExpression, BoolExpression } from '../expressionProperties';
 
 export interface CancelAllDialogsConfiguration extends DialogConfiguration {
     eventName?: string;
     eventValue?: string;
-    disabled?: string;
+    disabled?: string | boolean;
 }
 
 export class CancelAllDialogs<O extends object = {}> extends Dialog<O> implements Configurable {
@@ -21,75 +21,61 @@ export class CancelAllDialogs<O extends object = {}> extends Dialog<O> implement
     public constructor(eventName: string, eventValue?: string);
     public constructor(eventName?: string, eventValue?: string) {
         super();
-        this.eventName = eventName;
-        this.eventValue = eventValue;
+        this.eventName = new StringExpression(eventName);
+        this.eventValue = new StringExpression(eventValue);
     }
 
     /**
-     * Event name.
+     * Expression for event name.
      */
-    public eventName: string;
+    public eventName: StringExpression;
 
     /**
-     * Get value expression for event value.
+     * Expression for event value.
      */
-    public get eventValue(): string {
-        return this._eventValueExpression ? this._eventValueExpression.toString() : undefined;
-    }
+    public eventValue: StringExpression;
 
-    /**
-     * Set value expression for event value.
-     */
-    public set eventValue(value: string) {
-        this._eventValueExpression = value ? new ExpressionEngine().parse(value) : undefined;
-    }
-
-    /**
-     * Get an optional expression which if is true will disable this action.
-     */
-    public get disabled(): string {
-        return this._disabled ? this._disabled.toString() : undefined;
-    }
-
-    /**
-     * Set an optional expression which if is true will disable this action.
-     */
-    public set disabled(value: string) {
-        this._disabled = value ? new ExpressionEngine().parse(value) : undefined;
-    }
-
-    private _eventValueExpression: Expression;
-
-    private _disabled: Expression;
+    private disabled: BoolExpression;
 
     public configure(config: CancelAllDialogsConfiguration): this {
-        return super.configure(config);
-    }
-
-    public async beginDialog(dc: DialogContext, options: O): Promise<DialogTurnResult> {
-        if (this._disabled) {
-            const { value } = this._disabled.tryEvaluate(dc.state);
-            if (!!value) {
-                return await dc.endDialog();
+        for (const key in config) {
+            if (config.hasOwnProperty(key)) {
+                const value = config[key];
+                switch (key) {
+                    case 'eventName':
+                        this.eventName = new StringExpression(value);
+                        break;
+                    case 'eventValue':
+                        this.eventValue = new StringExpression(value);
+                        break;
+                    case 'disabled':
+                        this.disabled = new BoolExpression(value);
+                        break;
+                    default:
+                        super.configure({ [key]: value });
+                        break;
+                }
             }
         }
 
-        let eventValue: any;
-        if (this._eventValueExpression) {
-            const { value } = this._eventValueExpression.tryEvaluate(dc.state);
-            eventValue = value;
+        return this;
+    }
+
+    public async beginDialog(dc: DialogContext, options: O): Promise<DialogTurnResult> {
+        if (this.disabled && this.disabled.getValue(dc.state)) {
+            return await dc.endDialog();
         }
 
         if (!dc.parent) {
-            return await dc.cancelAllDialogs(true, this.eventName, eventValue);
+            return await dc.cancelAllDialogs(true, this.eventName.getValue(dc.state), this.eventValue.getValue(dc.state));
         } else {
-            const turnResult = await dc.cancelAllDialogs(true, this.eventName, eventValue);
+            const turnResult = await dc.cancelAllDialogs(true, this.eventName.getValue(dc.state), this.eventValue.getValue(dc.state));
             turnResult.parentEnded = true;
             return turnResult;
         }
     }
 
     protected onComputeId(): string {
-        return `CancelAllDialogs[${ this.eventName || '' }]`;
+        return `CancelAllDialogs[${ this.eventName.toString() || '' }]`;
     }
 }

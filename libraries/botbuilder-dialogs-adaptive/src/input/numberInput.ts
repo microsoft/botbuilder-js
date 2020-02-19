@@ -8,8 +8,8 @@
 import * as Recognizers from '@microsoft/recognizers-text-number';
 import { Activity } from 'botbuilder-core';
 import { DialogContext } from 'botbuilder-dialogs';
-import { ExpressionEngine, Expression } from 'botframework-expressions';
 import { InputDialogConfiguration, InputDialog, InputState } from './inputDialog';
+import { StringExpression, NumberExpression } from '../expressionProperties';
 
 export interface NumberInputConfiguration extends InputDialogConfiguration {
     defaultLocale?: string;
@@ -20,20 +20,29 @@ export class NumberInput extends InputDialog {
 
     public static declarativeType = 'Microsoft.NumberInput';
 
-    private _outputFormatExpression: Expression;
+    public defaultLocale?: StringExpression;
 
-    public defaultLocale?: string;
-
-    public get outputFormat(): string {
-        return this._outputFormatExpression ? this._outputFormatExpression.toString() : undefined;
-    }
-
-    public set outputFormat(value: string) {
-        this._outputFormatExpression = value ? new ExpressionEngine().parse(value) : undefined;
-    }
+    public outputFormat?: NumberExpression;
 
     public configure(config: NumberInputConfiguration): this {
-        return super.configure(config);
+        for (const key in config) {
+            if (config.hasOwnProperty(key)) {
+                const value = config[key];
+                switch (key) {
+                    case 'defaultLocale':
+                        this.defaultLocale = new StringExpression(value);
+                        break;
+                    case 'outputFormat':
+                        this.outputFormat = new NumberExpression(value);
+                        break;
+                    default:
+                        super.configure({ [key]: value });
+                        break;
+                }
+            }
+        }
+
+        return this;
     }
 
     protected onComputeId(): string {
@@ -46,7 +55,7 @@ export class NumberInput extends InputDialog {
         if (typeof input !== 'number') {
             // Find locale to use
             const activity: Activity = dc.context.activity;
-            const locale = activity.locale || this.defaultLocale || 'en-us';
+            const locale = activity.locale || this.defaultLocale.getValue(dc.state) || 'en-us';
 
             // Recognize input
             const results: any = Recognizers.recognizeNumber(input, locale);
@@ -59,13 +68,9 @@ export class NumberInput extends InputDialog {
 
         dc.state.setValue(InputDialog.VALUE_PROPERTY, input);
 
-        if (this._outputFormatExpression) {
-            const { value, error } = this._outputFormatExpression.tryEvaluate(dc.state);
-            if (!error) {
-                dc.state.setValue(InputDialog.VALUE_PROPERTY, value);
-            } else {
-                throw new Error(`OutputFormat expression evaluation resulted in an error. Expression ${ this._outputFormatExpression.toString() }. Error: ${ error }`);
-            }
+        if (this.outputFormat) {
+            const value = this.outputFormat.getValue(dc.state);
+            dc.state.setValue(InputDialog.VALUE_PROPERTY, value);
         }
 
         return InputState.valid;

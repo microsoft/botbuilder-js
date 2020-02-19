@@ -7,22 +7,24 @@
  */
 import { DialogConfiguration, Dialog, DialogContext, DialogTurnResult, DialogEvent, DialogReason, Choice, ListStyle, ChoiceFactoryOptions, ChoiceFactory, DialogEvents, TurnPath } from 'botbuilder-dialogs';
 import { ActivityTypes, Activity, InputHints, MessageFactory } from 'botbuilder-core';
-import { ExpressionEngine, Expression } from 'botframework-expressions';
+import { ExpressionEngine } from 'botframework-expressions';
 import { AdaptiveEventNames } from '../sequenceContext';
 import { TemplateInterface } from '../template';
 import { ActivityTemplate } from '../templates/activityTemplate';
+import { ValueExpression, StringExpression, BoolExpression, NumberExpression } from '../expressionProperties';
 
 export interface InputDialogConfiguration extends DialogConfiguration {
-    allowInterruptions?: string;
-    alwaysPrompt?: boolean;
-    value?: string;
-    prompt?: TemplateInterface<Partial<Activity>> | string;
-    unrecognizedPrompt?: TemplateInterface<Partial<Activity>> | string;
-    invalidPrompt?: TemplateInterface<Partial<Activity>> | string;
+    alwaysPrompt?: string | boolean;
+    allowInterruptions?: string | boolean;
+    value?: any;
+    prompt?: string;
+    unrecognizedPrompt?: string;
+    invalidPrompt?: string;
     property?: string;
     validations?: string[];
-    maxTurnCount?: number;
-    defaultValue?: string;
+    maxTurnCount?: string | number;
+    defaultValue?: any;
+    disabled?: string | boolean;
 }
 
 export enum InputState {
@@ -37,36 +39,25 @@ export abstract class InputDialog extends Dialog {
     public static VALUE_PROPERTY = 'this.value';
     public static TURN_COUNT_PROPERTY = 'this.turnCount';
 
-    private _allowInterruptions: Expression;
-
     /**
      * A value indicating whether the input should always prompt the user regardless of there being a value or not.
      */
-    public alwaysPrompt = false;
+    public alwaysPrompt: BoolExpression;
 
     /**
-     * Get interruption policy.
+     * Interruption policy.
      */
-    public get allowInterruptions(): string {
-        return this._allowInterruptions ? this._allowInterruptions.toString() : undefined;
-    }
-
-    /**
-     * Set interruption policy.
-     */
-    public set allowInterruptions(value: string) {
-        this._allowInterruptions = value ? new ExpressionEngine().parse(value) : undefined;
-    }
+    public allowInterruptions: BoolExpression;
 
     /**
      * The value expression which the input will be bound to.
      */
-    public property: string;
+    public property: StringExpression;
 
     /**
      * A value expression which can be used to initialize the input prompt.
      */
-    public value: string;
+    public value: ValueExpression;
 
     /**
      * The activity to send to the user.
@@ -96,30 +87,40 @@ export abstract class InputDialog extends Dialog {
     /**
      * Maximum number of times to ask the user for this value before the dialog gives up.
      */
-    public maxTurnCount?: number;
+    public maxTurnCount?: NumberExpression;
 
     /**
      * The default value for the input dialog when maxTurnCount is exceeded.
      */
-    public defaultValue?: string;
+    public defaultValue?: ValueExpression;
+
+    /**
+     * An optional expression which if is true will disable this action.
+     */
+    public disabled?: BoolExpression;
 
     public async beginDialog(dc: DialogContext, options?: any): Promise<DialogTurnResult> {
+        if (this.disabled && this.disabled.getValue(dc.state)) {
+            return await dc.endDialog();
+        }
+
         // Initialize and persist options
         const opts = this.onInitializeOptions(dc, options || {});
         dc.state.setValue(InputDialog.OPTIONS_PROPERTY, opts);
 
         // Initialize turn count & input
         dc.state.setValue(InputDialog.TURN_COUNT_PROPERTY, 0);
-        if (this.property && this.alwaysPrompt) {
-            dc.state.deleteValue(this.property);
+        if (this.property && this.alwaysPrompt && this.alwaysPrompt.getValue(dc.state)) {
+            dc.state.deleteValue(this.property.getValue(dc.state));
         }
 
         // Recognize input
-        const state = this.alwaysPrompt ? InputState.missing : await this.recognizeInput(dc, 0);
+        const state = (this.alwaysPrompt && this.alwaysPrompt.getValue(dc.state)) ? InputState.missing : await this.recognizeInput(dc, 0);
         if (state == InputState.valid) {
             // Return input
+            const property = this.property.getValue(dc.state);
             const value = dc.state.getValue(InputDialog.VALUE_PROPERTY);
-            dc.state.setValue(this.property, value);
+            dc.state.setValue(property, value);
             return await dc.endDialog(value);
         } else {
             // Prompt user
@@ -142,21 +143,22 @@ export abstract class InputDialog extends Dialog {
         if (state === InputState.valid) {
             const input = dc.state.getValue(InputDialog.VALUE_PROPERTY);
             if (this.property) {
-                dc.state.setValue(this.property, input);
+                dc.state.setValue(this.property.getValue(dc.state), input);
             }
             return await dc.endDialog(input);
-        } else if (!this.maxTurnCount || turnCount < this.maxTurnCount) {
+        } else if (!this.maxTurnCount || turnCount < this.maxTurnCount.getValue(dc.state)) {
             dc.state.setValue(InputDialog.TURN_COUNT_PROPERTY, turnCount + 1);
             return await this.promptUser(dc, state);
         } else {
             if (this.defaultValue) {
-                const { value } = new ExpressionEngine().parse(this.defaultValue).tryEvaluate(dc.state);
                 if (this.defaultValueResponse) {
                     const response = await this.defaultValueResponse.bindToData(dc.context, dc.state);
                     await dc.context.sendActivity(response);
                 }
 
-                dc.state.setValue(this.property, value);
+                const property = this.property.getValue(dc.state);
+                const value = this.defaultValue.getValue(dc.state);
+                dc.state.setValue(property, value);
                 return await dc.endDialog(value);
             }
         }
@@ -174,6 +176,12 @@ export abstract class InputDialog extends Dialog {
             if (config.hasOwnProperty(key)) {
                 const value = config[key];
                 switch (key) {
+                    case 'alwaysPrompt':
+                        this.alwaysPrompt = new BoolExpression(value);
+                        break;
+                    case 'allowInterruptions':
+                        this.allowInterruptions = new BoolExpression(value);
+                        break;
                     case 'prompt':
                         this.prompt = new ActivityTemplate(value);
                         break;
@@ -183,13 +191,24 @@ export abstract class InputDialog extends Dialog {
                     case 'invalidPrompt':
                         this.invalidPrompt = new ActivityTemplate(value);
                         break;
+                    case 'property':
+                        this.property = new StringExpression(value);
+                        break;
                     case 'validations':
                         (value as any[]).forEach((exp) => this.validations.push(exp));
                         break;
                     case 'value':
-                        this.value = value;
+                        this.value = new ValueExpression(value);
+                        break;
                     case 'defaultValue':
-                        this.defaultValue = value;
+                        this.defaultValue = new ValueExpression(value);
+                        break;
+                    case 'maxTurnCount':
+                        this.maxTurnCount = new NumberExpression(value);
+                        break;
+                    case 'disabled':
+                        this.disabled = new BoolExpression(value);
+                        break;
                     default:
                         super.configure({ [key]: value });
                         break;
@@ -205,12 +224,9 @@ export abstract class InputDialog extends Dialog {
             if (dc.parent) {
                 dc.parent.emitEvent(AdaptiveEventNames.recognizeUtterance, dc.context.activity, false);
             }
-            let canInterrupt = true;
-            if (this.allowInterruptions) {
-                const { value, error } = this._allowInterruptions.tryEvaluate(dc.state);
-                canInterrupt = !error && !!value;
+            if (this.allowInterruptions && this.allowInterruptions.getValue(dc.state)) {
+                return true;
             }
-            return !canInterrupt;
         }
 
         return false;
@@ -260,7 +276,7 @@ export abstract class InputDialog extends Dialog {
     protected appendChoices(
         prompt: Partial<Activity>,
         channelId: string,
-        choices: (string | Choice)[],
+        choices: Choice[],
         style: ListStyle,
         options?: ChoiceFactoryOptions
     ): Partial<Activity> {
@@ -314,15 +330,13 @@ export abstract class InputDialog extends Dialog {
     private async recognizeInput(dc: DialogContext, turnCount: number): Promise<InputState> {
         let input: any;
         if (this.property) {
-            input = dc.state.getValue(this.property);
-            dc.state.deleteValue(this.property);
+            const property = this.property.getValue(dc.state);
+            input = dc.state.getValue(property);
+            dc.state.deleteValue(property);
         }
 
         if (!input && this.value) {
-            const { value, error } = new ExpressionEngine().parse(this.value).tryEvaluate(dc.state);
-            if (error) {
-                throw new Error(`In InputDialog, this.value expression evaluation resulted in an error. Expression: ${ this.value }. Error: ${ error }`);
-            }
+            const value = this.value.getValue(dc.state);
             input = value;
         }
 

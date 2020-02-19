@@ -6,19 +6,20 @@
  * Licensed under the MIT License.
  */
 import { Dialog, DialogDependencies, Configurable } from 'botbuilder-dialogs';
-import { Expression, ExpressionParserInterface, ExpressionType, Constant, ExpressionEngine } from 'botframework-expressions';
+import { Expression, ExpressionParserInterface, Constant, ExpressionEngine } from 'botframework-expressions';
 import { SequenceContext, ActionChangeList, ActionState, ActionChangeType } from '../sequenceContext';
 import { ActionScope } from '../actions/actionScope';
+import { BoolExpression } from '../expressionProperties';
 
 export interface OnConditionConfiguration {
-    condition?: string;
+    condition?: string | boolean;
     actions?: Dialog[];
     priority?: string;
     runOnce?: boolean;
 }
 
 export class OnCondition extends Configurable implements DialogDependencies {
-    
+
     public static declarativeType = 'Microsoft.OnCondition';
 
     /**
@@ -39,7 +40,7 @@ export class OnCondition extends Configurable implements DialogDependencies {
     /**
      * Gets or sets the condition which needs to be met for the actions to be executed (OPTIONAL).
      */
-    public condition: string;
+    public condition: BoolExpression;
 
     /**
      * Gets or sets the actions to add to the plan when the rule constraints are met.
@@ -80,12 +81,26 @@ export class OnCondition extends Configurable implements DialogDependencies {
      */
     public constructor(condition?: string, actions: Dialog[] = []) {
         super();
-        this.condition = condition;
+        if (this.condition) { this.condition = new BoolExpression(condition); }
         this.actions = actions;
     }
 
     public configure(config: OnConditionConfiguration): this {
-        return super.configure(config);
+        for (const key in config) {
+            if (config.hasOwnProperty(key)) {
+                const value = config[key];
+                switch (key) {
+                    case 'condition':
+                        this.condition = new BoolExpression(value);
+                        break;
+                    default:
+                        super.configure({ [key]: value });
+                        break;
+                }
+            }
+        }
+
+        return this;
     }
 
     /**
@@ -98,9 +113,9 @@ export class OnCondition extends Configurable implements DialogDependencies {
             const allExpressions: Expression[] = [];
             if (this.condition) {
                 try {
-                    allExpressions.push(parser.parse(this.condition));
+                    allExpressions.push(this.condition.toExpression());
                 } catch (err) {
-                    throw Error(`Invalid constraint expression: ${this.condition}, ${err.toString()}`);
+                    throw Error(`Invalid constraint expression: ${ this.condition.toString() }, ${ err.toString() }`);
                 }
             }
 
@@ -139,14 +154,14 @@ export class OnCondition extends Configurable implements DialogDependencies {
      * Add external condition to the OnCondition
      * @param condition External constraint to add, it will be AND'ed to all other constraints.
      */
-    public addExternalCondition(condition: string) {
+    public addExternalCondition(condition: string): void {
         if (condition) {
             try {
                 const parser = new ExpressionEngine();
                 this._extraConstraints.push(parser.parse(condition));
                 this._fullConstraint = undefined;
             } catch (err) {
-                throw Error(`Invalid constraint expression: ${condition}, ${err.toString()}`);
+                throw Error(`Invalid constraint expression: ${ condition }, ${ err.toString() }`);
             }
         }
     }

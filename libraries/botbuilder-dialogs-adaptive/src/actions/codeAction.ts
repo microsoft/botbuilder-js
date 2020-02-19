@@ -6,29 +6,28 @@
  * Licensed under the MIT License.
  */
 import { DialogTurnResult, DialogContext, Dialog } from 'botbuilder-dialogs';
-import { SequenceContext } from '../sequenceContext';
+import { BoolExpression } from '../expressionProperties';
 
-export type CodeActionHandler<T extends DialogContext = SequenceContext> = (context: T, options?: object) => Promise<DialogTurnResult>;
+export type CodeActionHandler = (dc: DialogContext, options?: object) => Promise<DialogTurnResult>;
 
-export class CodeAction<T extends DialogContext = SequenceContext, O extends object = {}> extends Dialog<O> {
-    private handler: CodeActionHandler<T>;
+export class CodeAction<O extends object = {}> extends Dialog<O> {
+    private codeHandler: CodeActionHandler;
 
-    constructor(handler: CodeActionHandler<T>);
-    constructor(id: string, handler: CodeActionHandler<T>);
-    constructor(idOrHandler: string|CodeActionHandler<T>, handler?: CodeActionHandler<T>) {
-        if (typeof idOrHandler === 'function') {
-            handler = idOrHandler;
-            idOrHandler = undefined;
-        }
-        super(idOrHandler as string);
-        this.handler = handler;
+    public disabled?: BoolExpression;
+
+    public constructor(codeHandler: CodeActionHandler) {
+        super();
+        this.codeHandler = codeHandler;
     }
 
     protected onComputeId(): string {
-        return `CodeAction[${this.handler.toString()}]`;
+        return `CodeAction[${ this.codeHandler.toString() }]`;
     }
 
-    public async beginDialog(context: T, options: O): Promise<DialogTurnResult> {
-        return await this.handler(context, options);
+    public async beginDialog(dc: DialogContext, options: O): Promise<DialogTurnResult> {
+        if (this.disabled && this.disabled.getValue(dc.state)) {
+            return await dc.endDialog();
+        }
+        return await this.codeHandler(dc, options);
     }
 }

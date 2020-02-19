@@ -6,11 +6,12 @@
  * Licensed under the MIT License.
  */
 import { Dialog, DialogContext, DialogTurnResult, DialogConfiguration } from 'botbuilder-dialogs';
-import { ExpressionEngine } from 'botframework-expressions';
+import { ExpressionEngine, Expression } from 'botframework-expressions';
+import { StringExpression } from 'botbuilder-dialogs-adaptive';
 
 export interface AssertConditionConfiguration extends DialogConfiguration {
-    condition?: string;
-    description?: string;
+    condition?: string | Expression;
+    description?: string | StringExpression;
 }
 
 export class AssertCondition<O extends object = {}> extends Dialog<O> {
@@ -20,27 +21,47 @@ export class AssertCondition<O extends object = {}> extends Dialog<O> {
     /**
      * Condition which must be true.
      */
-    public condition: string;
+    public condition: Expression;
 
     /**
      * Description of assertion.
      */
-    public description: string;
+    public description: StringExpression;
 
     public configure(config: AssertConditionConfiguration): this {
-        return super.configure(config);
+        for (const key in config) {
+            if (config.hasOwnProperty(key)) {
+                const value = config[key];
+                switch (key) {
+                    case 'condition':
+                        this.condition = value instanceof Expression ? value : new ExpressionEngine().parse(value);
+                        break;
+                    case 'value':
+                        this.description = value instanceof StringExpression ? value : new StringExpression(value);
+                        break;
+                    default:
+                        super.configure({ [key]: value });
+                        break;
+                }
+            }
+        }
+
+        return this;
     }
 
     public async beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {
-        const parser = new ExpressionEngine()
-        const { value, error } = parser.parse(this.condition).tryEvaluate(dc.state);
-        if (!value || error) {
-            throw new Error(this.description);
+        const { value } = this.condition.tryEvaluate(dc.state);
+        if (!value) {
+            let desc = this.description.getValue(dc.state);
+            if (!desc) {
+                desc = this.condition.toString();
+            }
+            throw new Error(desc);
         }
         return dc.endDialog();
     }
 
     protected onComputeId(): string {
-        return `AssertCondition[${ this.condition }]`;
+        return `AssertCondition[${ this.condition.toString() }]`;
     }
 }

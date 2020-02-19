@@ -6,13 +6,13 @@
  * Licensed under the MIT License.
  */
 import { DialogTurnResult, Dialog, DialogConfiguration, DialogDependencies, DialogContext, Configurable } from 'botbuilder-dialogs';
-import { Expression, ExpressionEngine } from 'botframework-expressions';
 import { ActionChangeType, SequenceContext, ActionChangeList, ActionState } from '../sequenceContext';
+import { BoolExpression, EnumExpression } from '../expressionProperties';
 
 export interface EditActionsConfiguration extends DialogConfiguration {
-    changeType?: ActionChangeType;
     actions?: Dialog[];
-    disabled?: string;
+    changeType?: string | ActionChangeType;
+    disabled?: string | boolean;
 }
 
 export class EditActions<O extends object = {}> extends Dialog<O> implements DialogDependencies, Configurable {
@@ -22,7 +22,7 @@ export class EditActions<O extends object = {}> extends Dialog<O> implements Dia
     public constructor(changeType: ActionChangeType, actions?: Dialog[]);
     public constructor(changeType?: ActionChangeType, actions?: Dialog[]) {
         super();
-        if (changeType) { this.changeType = changeType; }
+        if (changeType) { this.changeType = new EnumExpression(changeType); }
         if (actions) { this.actions = actions; }
     }
 
@@ -34,38 +34,41 @@ export class EditActions<O extends object = {}> extends Dialog<O> implements Dia
     /**
      * The type of change to make to the dialogs list of actions.
      */
-    public changeType: ActionChangeType;
+    public changeType: EnumExpression<ActionChangeType>;
 
     /**
-     * Get an optional expression which if is true will disable this action.
+     * An optional expression which if is true will disable this action.
      */
-    public get disabled(): string {
-        return this._disabled ? this._disabled.toString() : undefined;
-    }
-
-    /**
-     * Set an optional expression which if is true will disable this action.
-     */
-    public set disabled(value: string) {
-        this._disabled = value ? new ExpressionEngine().parse(value) : undefined;
-    }
-
-    private _disabled: Expression;
+    public disabled?: BoolExpression;
 
     public getDependencies(): Dialog[] {
         return this.actions;
     }
 
     public configure(config: EditActionsConfiguration): this {
-        return super.configure(config);
+        for (const key in config) {
+            if (config.hasOwnProperty(key)) {
+                const value = config[key];
+                switch (key) {
+                    case 'disabled':
+                        this.disabled = new BoolExpression(value);
+                        break;
+                    case 'changeType':
+                        this.changeType = new EnumExpression(value);
+                        break;
+                    default:
+                        super.configure({ [key]: value });
+                        break;
+                }
+            }
+        }
+
+        return this;
     }
 
     public async beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {
-        if (this._disabled) {
-            const { value } = this._disabled.tryEvaluate(dc.state);
-            if (!!value) {
-                return await dc.endDialog();
-            }
+        if (this.disabled && this.disabled.getValue(dc.state)) {
+            return await dc.endDialog();
         }
 
         if (dc instanceof SequenceContext) {
@@ -78,7 +81,7 @@ export class EditActions<O extends object = {}> extends Dialog<O> implements Dia
             });
 
             const changes: ActionChangeList = {
-                changeType: this.changeType,
+                changeType: this.changeType.getValue(dc.state),
                 actions: planActions
             };
 
@@ -91,7 +94,7 @@ export class EditActions<O extends object = {}> extends Dialog<O> implements Dia
 
     protected onComputeId(): string {
         const idList = this.actions.map((action: Dialog): string => action.id);
-        return `EditActions[${ this.changeType }|${ idList.join(',') }]`;
+        return `EditActions[${ this.changeType.toString() }|${ idList.join(',') }]`;
     }
 
 }

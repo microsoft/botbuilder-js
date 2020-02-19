@@ -6,11 +6,11 @@
  * Licensed under the MIT License.
  */
 import { Configurable, Dialog, DialogContext, DialogTurnResult, DialogConfiguration } from 'botbuilder-dialogs';
-import { Expression, ExpressionEngine } from 'botframework-expressions';
+import { StringExpression, BoolExpression } from '../expressionProperties';
 
 export interface DeleteActivityConfiguration extends DialogConfiguration {
     activityId?: string;
-    disabled?: string;
+    disabled?: string | boolean;
 }
 
 export class DeleteActivity<O extends object = {}> extends Dialog<O> implements Configurable {
@@ -19,64 +19,51 @@ export class DeleteActivity<O extends object = {}> extends Dialog<O> implements 
     public constructor();
     public constructor(activityId?: string) {
         super();
-        if (activityId) { this.activityId = activityId; }
+        if (activityId) { this.activityId = new StringExpression(activityId); }
     }
 
     /**
-     * Get the expression which resolves to the activityId to update.
+     * The expression which resolves to the activityId to update.
      */
-    public get activityId(): string {
-        return this._activityId ? this._activityId.toString() : undefined;
-    }
+    public activityId: StringExpression;
 
     /**
-     * Set the expression which resolves to the activityId to update.
+     * An optional expression which if is true will disable this action.
      */
-    public set activityId(value: string) {
-        this._activityId = value ? new ExpressionEngine().parse(value) : undefined;
-    }
-
-    /**
-     * Get an optional expression which if is true will disable this action.
-     */
-    public get disabled(): string {
-        return this._disabled ? this._disabled.toString() : undefined;
-    }
-
-    /**
-     * Set an optional expression which if is true will disable this action.
-     */
-    public set disabled(value: string) {
-        this._disabled = value ? new ExpressionEngine().parse(value) : undefined;
-    }
-
-    private _activityId: Expression;
-
-    private _disabled: Expression;
+    public disabled?: BoolExpression;
 
     public configure(config: DeleteActivityConfiguration): this {
-        return super.configure(config);
-    }
-
-    public async beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {
-        if (this._disabled) {
-            const { value } = this._disabled.tryEvaluate(dc.state);
-            if (!!value) {
-                return await dc.endDialog();
+        for (const key in config) {
+            if (config.hasOwnProperty(key)) {
+                const value = config[key];
+                switch (key) {
+                    case 'activityId':
+                        this.activityId = new StringExpression(value);
+                        break;
+                    case 'disabled':
+                        this.disabled = new BoolExpression(value);
+                    default:
+                        super.configure({ [key]: value });
+                        break;
+                }
             }
         }
 
-        const { value, error } = this._activityId.tryEvaluate(dc.state);
-        if (error) {
-            throw new Error(error);
+        return this;
+    }
+
+    public async beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {
+        if (this.disabled && this.disabled.getValue(dc.state)) {
+            return await dc.endDialog();
         }
 
+        const value = this.activityId.getValue(dc.state);
         const id = value.toString();
         await dc.context.deleteActivity(id);
         return await dc.endDialog();
     }
 
     protected onComputeId(): string {
-        return `DeleteActivity[${ this.activityId }]`;
+        return `DeleteActivity[${ this.activityId.toString() }]`;
     }
 }
