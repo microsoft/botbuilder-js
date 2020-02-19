@@ -206,12 +206,25 @@ const dataSource = [
     ['and(hello, "hello")', true],
     ['or(items, (2 + 2) <= (4 - 1))', true], // true || false
     ['or(0, false)', true], // true || false
-    ['not(hello)', false], // false
-    ['not(10)', false],
+    ['not(hello)', false], // false'not(10)', false],
     ['not(0)', false],
     ['if(hello, \'r1\', \'r2\')', 'r1'],
     ['if(null, \'r1\', \'r2\')', 'r2'],
     ['if(hello * 5, \'r1\', \'r2\')', 'r2'],
+    ['emptyList == []', true],
+    ['emptyList != []', false],
+    ['emptyList == {}', false],
+    ['emptyObject == {}', true],
+    ['emptyObject != {}', false],
+    ['emptyObject == []', false],
+    ['emptyJObject == {}', true],
+    ['emptyJObject != {}', false],
+    ['emptyJObject == []', false],
+    ['emptyList == [ ]', true],
+    ['emptyList == {  }', false],
+    ['emptyObject == {  }', true],
+    ['emptyObject == [  ]', false],
+    
 
     // Conversion functions tests
     ['float(\'10.333\')', 10.333],
@@ -386,6 +399,8 @@ const dataSource = [
     ['join(foreach(items, item, concat(item, string(count(items)))), \',\')', 'zero3,one3,two3', ['items']],
     ['join(foreach(doubleNestedItems, items, join(foreach(items, item, item.x), ",")), ",")', '1,2,3'],
     ['join(foreach(doubleNestedItems, items, join(foreach(items, item, concat(y, string(item.x))), ",")), ",")', 'y1,y2,y3'],
+    ['join(foreach(dialog, item, item.key), ",")', 'instance,options,title,subTitle'],
+    ['foreach(dialog, item, item.value)[1].xxx', 'options'],
     ['join(foreach(indicesAndValues(items), item, item.value), ",")', 'zero,one,two'],
     ['count(where(doubleNestedItems, items, count(where(items, item, item.x == 1)) == 1))', 1],
     ['count(where(doubleNestedItems, items, count(where(items, item, count(items) == 1)) == 1))', 1],
@@ -394,6 +409,7 @@ const dataSource = [
     ['join(select(items, item, concat(item, string(count(items)))), \',\')', 'zero3,one3,two3', ['items']],
     ['join(where(items, item, item == \'two\'), \',\')', 'two'],
     ['join(foreach(where(nestedItems, item, item.x > 1), result, result.x), \',\')', '2,3', ['nestedItems']],
+    ['string(where(dialog, item, item.value=="Dialog Title"))', '{\"title\":\"Dialog Title\"}'],
     ['last(items)', 'two'],
     ['last(\'hello\')', 'o'],
     ['last(createArray(0, 1, 2))', 2],
@@ -479,6 +495,10 @@ const dataSource = [
 ];
 
 const scope = {
+    emptyList:[],
+    emptyObject: new Map(),
+    emptyJObject: {},
+
     path: {
         array: [1]
     },

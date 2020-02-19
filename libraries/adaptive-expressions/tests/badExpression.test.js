@@ -264,7 +264,7 @@ const badExpressions =
       'join(hello, \'hi\')',// first param must list
       'join(items, 1)',// second param must string 
       'join(items, \'1\', 2)',// second param must string 
-      'foreach(hello, item, item)',// first arg is not list
+      'foreach(hello, item, item)',// first arg is not list or struture
       'foreach(items, item)',//should have three parameters
       'foreach(items, item, item2, item3)',//should have three parameters
       'foreach(items, add(1), item)',// Second paramter of foreach is not an identifier
@@ -276,7 +276,7 @@ const badExpressions =
       'select(items, add(1), item)', // second paramter of foreach is not an identifier
       'select(items, 1, item)', // second paramter error
       'select(items, x, sum(x))', // third paramter error
-      'where(hello, item, item)', // first arg is not list
+      'where(hello, item, item)', // first arg is not list or structure
       'where(items, item)', //should have three parameters
       'where(items, item, item2, item3)', //should have three parameters
       'where(items, add(1), item)', // Second paramter of where is not an identifier

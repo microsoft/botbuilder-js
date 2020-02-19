@@ -944,19 +944,26 @@ export class BuiltInFunctions {
     private static foreach(expression: Expression, state: MemoryInterface): { value: any; error: string } {
         let result: any[];
         let error: string;
-        let collection: any;
+        let instance: any;
 
-        ({ value: collection, error } = expression.children[0].tryEvaluate(state));
+        ({ value: instance, error } = expression.children[0].tryEvaluate(state));
 
         if (!error) {
             // 2nd parameter has been rewrite to $local.item
-            if (!Array.isArray(collection)) {
-                error = `${ expression.children[0] } is not a collection to run foreach`;
+            const iteratorName = (expression.children[1].children[0] as Constant).value as string;
+            let arr = [];
+            if (Array.isArray(instance)) {
+                arr = instance;
+            } else if (typeof instance === 'object') {
+                Object.keys(instance).forEach(u => arr.push({key: u, value: instance[u]}));
             } else {
-                const iteratorName = (expression.children[1].children[0] as Constant).value as string;
+                error = `${ expression.children[0] } is not a collection or structure object to run foreach`;
+            }
+
+            if (!error) {
                 const stackedMemory = StackedMemory.wrap(state);
                 result = [];
-                for (const item of collection) {
+                for (const item of arr) {
                     const local: Map<string, any> = new Map<string, any>([
                         [iteratorName, item]
                     ]);
@@ -976,21 +983,29 @@ export class BuiltInFunctions {
     }
 
     private static where(expression: Expression, state: MemoryInterface): { value: any; error: string } {
-        let result: any[];
+        let result: any;
         let error: string;
-        let collection: any;
+        let instance: any;
 
-        ({ value: collection, error } = expression.children[0].tryEvaluate(state));
+        ({ value: instance, error } = expression.children[0].tryEvaluate(state));
 
         if (!error) {
-            const iteratorName: string = (expression.children[1].children[0] as Constant).value as string;
-            if (!Array.isArray(collection)) {
-                error = `${ expression.children[0] } is not a collection to run where`;
+            const iteratorName = (expression.children[1].children[0] as Constant).value as string;
+            let arr: any[] = [];
+            let isInstanceArray = false;
+            if (Array.isArray(instance)) {
+                arr = instance;
+                isInstanceArray = true;
+            } else if (typeof instance === 'object') {
+                Object.keys(instance).forEach(u => arr.push({key: u, value: instance[u]}));
             } else {
-                const iteratorName = (expression.children[1].children[0] as Constant).value as string;
+                error = `${ expression.children[0] } is not a collection or structure object to run foreach`;
+            }
+
+            if (!error) {
                 const stackedMemory = StackedMemory.wrap(state);
-                result = [];
-                for (const item of collection) {
+                const arrResult = [];
+                for (const item of arr) {
                     const local: Map<string, any> = new Map<string, any>([
                         [iteratorName, item]
                     ]);
@@ -1003,8 +1018,20 @@ export class BuiltInFunctions {
                     }
 
                     if ((Boolean(r))) {
-                        result.push(local.get(iteratorName));
+                        arrResult.push(local.get(iteratorName));
                     }
+                }
+
+                //reconstruct object if instance is object, otherwise, return array result
+                if (!isInstanceArray) {
+                    let objResult = {};
+                    for(const item of arrResult) {
+                        objResult[item.key] = item.value;
+                    }
+
+                    result = objResult;
+                } else {
+                    result = arrResult;
                 }
             }
         }
@@ -1648,6 +1675,46 @@ export class BuiltInFunctions {
         return {value: result, error};
     }
 
+    private static isEqual(args: any []): boolean {
+        if (args.length === 0 ) {
+            return false;
+        }
+
+        if (args[0] === undefined || args[0] === null) {
+            return args[1] === undefined || args[1] === null;
+        }
+
+        if (Array.isArray(args[0]) && args[0].length === 0 && Array.isArray(args[1]) && args[1].length === 0) {
+            return true;
+        }
+
+        if (BuiltInFunctions.getPropertyCount(args[0]) === 0 && BuiltInFunctions.getPropertyCount(args[1]) === 0) {
+            return true;
+        }
+
+        try
+        {
+            return args[0] === args[1];
+        }
+        catch
+        {
+            return false;
+        }
+    }
+
+    private static getPropertyCount(obj: any): number {
+        let count = -1;
+        if (!Array.isArray(obj)) {
+            if (obj instanceof Map) {
+                count = obj.size;
+            } else if (typeof obj === 'object') {
+                count = Object.keys(obj).length;
+            }
+        }
+
+        return count;
+    }
+
     // tslint:disable-next-line: max-func-body-length
     private static buildFunctionLookup(): Map<string, ExpressionEvaluator> {
         // tslint:disable-next-line: no-unnecessary-local-variable
@@ -1856,10 +1923,10 @@ export class BuiltInFunctions {
                 (args: any []): boolean => args[0] <= args[1], BuiltInFunctions.validateBinaryNumberOrString, BuiltInFunctions.verifyNumberOrString),
             BuiltInFunctions.comparison(
                 ExpressionType.Equal,
-                (args: any []): boolean => args[0] === args[1], BuiltInFunctions.validateBinary),
+                this.isEqual, BuiltInFunctions.validateBinary),
             BuiltInFunctions.comparison(
                 ExpressionType.NotEqual,
-                (args: any []): boolean => args[0] !== args[1], BuiltInFunctions.validateBinary),
+                (args: any []): boolean => !this.isEqual(args), BuiltInFunctions.validateBinary),
             BuiltInFunctions.comparison(
                 ExpressionType.GreaterThan,
                 (args: any []): boolean => args[0] > args[1], BuiltInFunctions.validateBinaryNumberOrString, BuiltInFunctions.verifyNumberOrString),
