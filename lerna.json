@@ -9,7 +9,7 @@
     "libraries/botbuilder-dialogs",
     "libraries/botbuilder-testing",
     "libraries/botbuilder-lg",
-    "libraries/botframework-expressions",
+    "libraries/adaptive-expressions",
     "libraries/botframework-config",
     "libraries/botframework-connector",
     "libraries/botframework-schema",
