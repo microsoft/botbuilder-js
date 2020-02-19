@@ -45,7 +45,7 @@ export type BotHandler = (context: TurnContext, next: () => Promise<void>) => Pr
  * | Turn | Emitted first for every activity. |
  * | Type-specific | Emitted for the specific activity type, before emitting an event for any sub-type. |
  * | Sub-type | Emitted for certain specialized events, based on activity content. |
- * | Dialog | Emitted as the final activity processing event. Designed for passing control to a dialog. |
+ * | Dialog | Emitted as the final activity processing event. |
  *
  * For example:
  * 
@@ -54,7 +54,7 @@ export type BotHandler = (context: TurnContext, next: () => Promise<void>) => Pr
  *
  * server.post('/api/messages', (req, res) => {
  *     adapter.processActivity(req, res, async (context) => {
- *         // Route to main dialog.
+ *         // Route to bot's activity logic.
  *         await bot.run(context);
  *     });
  * });
@@ -332,18 +332,6 @@ export class ActivityHandler extends ActivityHandlerBase {
      * @remarks
      * Returns a reference to the [ActivityHandler](xref:botbuilder-core.ActivityHandler) object.
      * 
-     * For example:
-     * ```javascript
-     * bot.onDialog(async (context, next) => {
-     *      if (context.activity.type === ActivityTypes.Message) {
-     *          const dialogContext = await dialogSet.createContext(context);
-     *          const results = await dialogContext.continueDialog();
-     *          await conversationState.saveChanges(context);
-     *      }
-     *
-     *      await next();
-     * });
-     * ```
      */
     public onDialog(handler: BotHandler): this {
         return this.on('Dialog', handler);
@@ -363,7 +351,7 @@ export class ActivityHandler extends ActivityHandlerBase {
      * ```javascript
      *  server.post('/api/messages', (req, res) => {
      *      adapter.processActivity(req, res, async (context) => {
-     *          // Route to main dialog.
+     *          // Route to bot's activity logic.
      *          await bot.run(context);
      *      });
      * });
