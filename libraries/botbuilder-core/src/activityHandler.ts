@@ -45,7 +45,7 @@ export type BotHandler = (context: TurnContext, next: () => Promise<void>) => Pr
  * | Turn | Emitted first for every activity. |
  * | Type-specific | Emitted for the specific activity type, before emitting an event for any sub-type. |
  * | Sub-type | Emitted for certain specialized events, based on activity content. |
- * | Dialog | Emitted as the final activity processing event. Designed for passing control to a dialog. |
+ * | Dialog | Emitted as the final activity processing event. |
  *
  * For example:
  * 
@@ -54,7 +54,7 @@ export type BotHandler = (context: TurnContext, next: () => Promise<void>) => Pr
  *
  * server.post('/api/messages', (req, res) => {
  *     adapter.processActivity(req, res, async (context) => {
- *         // Route to main dialog.
+ *         // Route to bot's activity logic.
  *         await bot.run(context);
  *     });
  * });
@@ -251,6 +251,38 @@ export class ActivityHandler extends ActivityHandlerBase {
     }
 
     /**
+     * Registers an activity event handler for the _end of conversation_ activity.
+     * 
+     * @param handler The event handler.
+     * 
+     * @remarks
+     * Returns a reference to the [ActivityHandler](xref:botbuilder-core.ActivityHandler) object.
+     * 
+     * This activity is typically send from a Skill to a Skill caller indicating the end of that particular child conversation.
+     * 
+     * To handle an End of Conversation, use the
+     * [onEndOfConversation](xref:botbuilder-core.ActivityHandler.onEndOfConversation) type-specific event handler.
+     */
+    public onEndOfConversation(handler: BotHandler): this {
+        return this.on('EndOfConversation', handler);
+    }
+
+    /**
+     * Registers an activity event handler for the _typing_ activity.
+     * 
+     * @param handler The event handler.
+     * 
+     * @remarks
+     * Returns a reference to the [ActivityHandler](xref:botbuilder-core.ActivityHandler) object.
+     * 
+     * To handle a Typing event, use the
+     * [onTyping](xref:botbuilder-core.ActivityHandler.onTyping) type-specific event handler.
+     */
+    public onTyping(handler: BotHandler): this {
+        return this.on('Typing', handler);
+    }
+
+    /**
      * Registers an activity event handler for the _tokens-response_ event, emitted for any incoming
      * `tokens/response` event activity. These are generated as part of the OAuth authentication flow.
      * 
@@ -270,7 +302,7 @@ export class ActivityHandler extends ActivityHandlerBase {
     public onTokenResponseEvent(handler: BotHandler): this {
         return this.on('TokenResponseEvent', handler);
     }
-
+        
     /**
      * Registers an activity event handler for the _unrecognized activity type_ event, emitted for an
      * incoming activity with a type for which the [ActivityHandler](xref:botbuilder-core.ActivityHandler)
@@ -300,18 +332,6 @@ export class ActivityHandler extends ActivityHandlerBase {
      * @remarks
      * Returns a reference to the [ActivityHandler](xref:botbuilder-core.ActivityHandler) object.
      * 
-     * For example:
-     * ```javascript
-     * bot.onDialog(async (context, next) => {
-     *      if (context.activity.type === ActivityTypes.Message) {
-     *          const dialogContext = await dialogSet.createContext(context);
-     *          const results = await dialogContext.continueDialog();
-     *          await conversationState.saveChanges(context);
-     *      }
-     *
-     *      await next();
-     * });
-     * ```
      */
     public onDialog(handler: BotHandler): this {
         return this.on('Dialog', handler);
@@ -331,7 +351,7 @@ export class ActivityHandler extends ActivityHandlerBase {
      * ```javascript
      *  server.post('/api/messages', (req, res) => {
      *      adapter.processActivity(req, res, async (context) => {
-     *          // Route to main dialog.
+     *          // Route to bot's activity logic.
      *          await bot.run(context);
      *      });
      * });
@@ -375,6 +395,38 @@ export class ActivityHandler extends ActivityHandlerBase {
      */
     protected async onMessageActivity(context: TurnContext): Promise<void> {
         await this.handle(context, 'Message', this.defaultNextEvent(context));
+    }
+
+    /**
+     * Runs all registered _endOfConversation_ handlers and then continues the event emission process.
+     * 
+     * @param context The context object for the current turn.
+     * 
+     * @remarks
+     * Overwrite this method to support channel-specific behavior across multiple channels.
+     * 
+     * The default logic is to call any handlers registered via
+     * [onEndOfConversationActivity](xref:botbuilder-core.ActivityHandler.onMessage),
+     * and then continue by calling [defaultNextEvent](xref:botbuilder-core.ActivityHandler.defaultNextEvent).
+     */
+    protected async onEndOfConversationActivity(context: TurnContext): Promise<void> {
+        await this.handle(context, 'EndOfConversation', this.defaultNextEvent(context));
+    }
+
+    /**
+     * Runs all registered _typing_ handlers and then continues the event emission process.
+     * 
+     * @param context The context object for the current turn.
+     * 
+     * @remarks
+     * Overwrite this method to support channel-specific behavior across multiple channels.
+     * 
+     * The default logic is to call any handlers registered via
+     * [onTypingActivity](xref:botbuilder-core.ActivityHandler.onTypingActivity),
+     * and then continue by calling [defaultNextEvent](xref:botbuilder-core.ActivityHandler.defaultNextEvent).
+     */
+    protected async onTypingActivity(context: TurnContext): Promise<void> {
+        await this.handle(context, 'Typing', this.defaultNextEvent(context));
     }
 
     /**

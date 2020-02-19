@@ -8,13 +8,14 @@
  */
 // tslint:disable-next-line: no-submodule-imports
 import { AbstractParseTreeVisitor, TerminalNode } from 'antlr4ts/tree';
-import { Expression, ExpressionEngine, ExpressionParserInterface, Extensions } from 'botframework-expressions';
+import { Expression, ExpressionEngine, ExpressionParserInterface, Extensions } from 'adaptive-expressions';
 import { keyBy } from 'lodash';
 import { EvaluationTarget } from './evaluationTarget';
 import { Evaluator } from './evaluator';
 import * as lp from './generated/LGFileParser';
 import { LGFileParserVisitor } from './generated/LGFileParserVisitor';
 import { LGTemplate } from './lgTemplate';
+import { LGExtensions } from './lgExtensions';
 
 // tslint:disable-next-line: completed-docs
 export class AnalyzerResult {
@@ -105,30 +106,31 @@ export class Analyzer extends AbstractParseTreeVisitor<AnalyzerResult> implement
     public visitStructuredTemplateBody(ctx: lp.StructuredTemplateBodyContext): AnalyzerResult {
         const result: AnalyzerResult = new AnalyzerResult();
 
-        const bodys: TerminalNode[] = ctx.structuredBodyContentLine().STRUCTURED_CONTENT();
+        const bodys = ctx.structuredBodyContentLine();
         for (const body  of bodys) {
-            const line: string = body.text.trim();
-            if (line === '') {
-                continue;
+            const isKVPairBody = body.keyValueStructureLine() !== undefined;
+            if (isKVPairBody) {
+                result.union(this.visitStructureValue(body.keyValueStructureLine()));
+            } else {
+                result.union(this.analyzeExpression(body.objectStructureLine().text));
             }
-            const start: number = line.indexOf('=');
-            if (start > 0) {
-                // make it insensitive
-                const property: string = line.substr(0, start).trim().toLowerCase();
-                const originValue: string = line.substr(start + 1).trim();
-                const valueArray: string[] = Evaluator.wrappedRegExSplit(originValue, Evaluator.escapeSeperatorReverseRegex);
-                if (valueArray.length === 1) {
-                    result.union(this.analyzeText(originValue));
-                } else {
-                    const valueList: any[] = [];
-                    for (const item of valueArray) {
-                        result.union(this.analyzeText(item.trim()));
-                    }
+        }
 
-                    result[property] = valueList;
+        return result;
+    }
+
+    public visitStructureValue(ctx: lp.KeyValueStructureLineContext): AnalyzerResult {
+        const result: AnalyzerResult = new AnalyzerResult();
+
+        const values = ctx.keyValueStructureValue();
+        for (const value of values) {
+            if (this.isPureExpression(value).hasExpr) {
+                result.union(this.analyzeExpression(this.isPureExpression(value).expression));
+            } else {
+                const exprs = value.EXPRESSION_IN_STRUCTURE_BODY();
+                for (const expr of exprs) {
+                    result.union(this.analyzeExpression(expr.text));
                 }
-            } else if (this.isPureExpression(line)) {
-                result.union(this.analyzeExpression(line));
             }
         }
 
@@ -204,34 +206,9 @@ export class Analyzer extends AbstractParseTreeVisitor<AnalyzerResult> implement
         return result;
     }
 
-    private analyzeText(exp: string): AnalyzerResult {
-        if (exp === undefined || exp.length === 0) {
-            return new AnalyzerResult();
-        }
-
-        if (this.isPureExpression(exp)) {
-            return this.analyzeExpression(exp);
-        } else {
-            // unescape \|
-            return this.analyzeTextContainsExpression(exp);
-        }
-    }
-
-    private analyzeTextContainsExpression(exp: string): AnalyzerResult {
-        const result: AnalyzerResult =  new AnalyzerResult();
-        const reversedExps: RegExpMatchArray = exp.split('').reverse().join('').match(Evaluator.expressionRecognizeReverseRegex);
-        const expressionsRaw: string[] = reversedExps.map((e: string): string => e.split('').reverse().join('')).reverse();
-        const expressions: string[] = expressionsRaw.filter((e: string): boolean => e.length > 0);
-        expressions.forEach((item: string): AnalyzerResult => result.union(this.analyzeExpression(item)));
-
-        return result;
-    }
-
     private analyzeExpression(exp: string): AnalyzerResult {
         const result: AnalyzerResult =  new AnalyzerResult();
-        exp = exp.replace(/(^@*)/g, '')
-            .replace(/(^{*)/g, '')
-            .replace(/(}*$)/g, '');
+        exp = LGExtensions.trimExpression(exp);
         const parsed: Expression = this._expressionParser.parse(exp);
 
         const references: readonly string[] = Extensions.references(parsed);
@@ -245,18 +222,30 @@ export class Analyzer extends AbstractParseTreeVisitor<AnalyzerResult> implement
         return this.evalutationTargetStack[this.evalutationTargetStack.length - 1];
     }
 
-    private isPureExpression(exp: string): boolean {
-        if (!exp) {
-            return false;
+    public isPureExpression(ctx: lp.KeyValueStructureValueContext):  {hasExpr: boolean; expression: string | undefined} {
+        let expression = ctx.text;
+        let hasExpr = false;
+        for (const node of ctx.children) {
+            switch ((node as TerminalNode).symbol.type) {
+                case (lp.LGFileParser.ESCAPE_CHARACTER_IN_STRUCTURE_BODY):
+                    return {hasExpr, expression};
+                case (lp.LGFileParser.EXPRESSION_IN_STRUCTURE_BODY):
+                    if (hasExpr) {
+                        return {hasExpr: false, expression: expression};
+                    }
+
+                    hasExpr = true;
+                    expression = node.text;
+                    break;
+                default:
+                    if (node !== undefined && node.text !== '' && node.text !== ' ') {
+                        return {hasExpr: false, expression: expression};
+                    }
+
+                    break;
+            }
         }
 
-        exp = exp.trim();
-        const reversedExps: RegExpMatchArray = exp.split('').reverse().join('').match(Evaluator.expressionRecognizeReverseRegex);
-        // If there is no match, expressions could be null
-        if (!reversedExps || reversedExps.length !== 1) {
-            return false;
-        } else {
-            return reversedExps[0].split('').reverse().join('') === exp;
-        }
+        return {hasExpr: hasExpr, expression: expression};
     }
 }

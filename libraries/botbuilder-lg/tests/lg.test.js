@@ -1,5 +1,5 @@
 const { TemplateEngine, LGParser } = require('../');
-const { SimpleObjectMemory } = require('botframework-expressions');
+const { SimpleObjectMemory } = require('adaptive-expressions');
 const assert = require('assert');
 const fs = require('fs');
 
@@ -151,12 +151,12 @@ describe('LG', function() {
         assert.strictEqual(emptyEngine.evaluate('Hi'), 'Hi', emptyEngine.evaluate('Hi'));
         assert.strictEqual(emptyEngine.evaluate('Hi', ''), 'Hi', emptyEngine.evaluate('Hi', ''));
 
-        assert.strictEqual(emptyEngine.evaluate('Hi @{name}', { name: 'DL' }), 'Hi DL');
+        assert.strictEqual(emptyEngine.evaluate('Hi ${name}', { name: 'DL' }), 'Hi DL');
 
-        assert.strictEqual(emptyEngine.evaluate('Hi @{name.FirstName}@{name.LastName}', { name: { FirstName: 'D', LastName: 'L' } }), 'Hi DL');
+        assert.strictEqual(emptyEngine.evaluate('Hi ${name.FirstName}${name.LastName}', { name: { FirstName: 'D', LastName: 'L' } }), 'Hi DL');
         assert.strictEqual(emptyEngine.evaluate('Hi \n Hello', ''), 'Hi \n Hello');
         assert.strictEqual(emptyEngine.evaluate('Hi \r\n Hello', ''), 'Hi \r\n Hello');
-        assert.strictEqual(emptyEngine.evaluate('Hi \r\n @{name}', { name: 'DL' }), 'Hi \r\n DL');
+        assert.strictEqual(emptyEngine.evaluate('Hi \r\n ${name}', { name: 'DL' }), 'Hi \r\n DL');
         assert.strictEqual(new TemplateEngine().evaluate('Hi', ''), 'Hi');
     });
 
@@ -165,11 +165,11 @@ describe('LG', function() {
         assert.strictEqual(emptyEngine.evaluate('Hi'), 'Hi', emptyEngine.evaluate('Hi'));
         assert.strictEqual(emptyEngine.evaluate('Hi', ''), 'Hi', emptyEngine.evaluate('Hi', ''));
 
-        assert.strictEqual(emptyEngine.evaluate('Hi @{name}', { name: 'DL' }), 'Hi DL', emptyEngine.evaluate('Hi @{name}', { name: 'DL' }));
+        assert.strictEqual(emptyEngine.evaluate('Hi ${name}', { name: 'DL' }), 'Hi DL', emptyEngine.evaluate('Hi ${name}', { name: 'DL' }));
 
-        assert.strictEqual(emptyEngine.evaluate('Hi @{name.FirstName}@{name.LastName} @{RecentTasks()}', { name: { FirstName: 'D', LastName: 'L' } }), 'Hi DL You don\'t have any tasks.', emptyEngine.evaluate('Hi @{name.FirstName}@{name.LastName} @{RecentTasks()}', { name: { FirstName: 'D', LastName: 'L' } }));
+        assert.strictEqual(emptyEngine.evaluate('Hi ${name.FirstName}${name.LastName} ${RecentTasks()}', { name: { FirstName: 'D', LastName: 'L' } }), 'Hi DL You don\'t have any tasks.', emptyEngine.evaluate('Hi ${name.FirstName}${name.LastName} ${RecentTasks()}', { name: { FirstName: 'D', LastName: 'L' } }));
 
-        assert.strictEqual(emptyEngine.evaluate('Hi @{name.FirstName}@{name.LastName} @{RecentTasks()}', { name: { FirstName: 'D', LastName: 'L' }, recentTasks: ['task1'] }), 'Hi DL Your most recent task is task1. You can let me know if you want to add or complete a task.', emptyEngine.evaluate('Hi @{name.FirstName}@{name.LastName} @{RecentTasks()}', { name: { FirstName: 'D', LastName: 'L' }, recentTasks: ['task1'] }));
+        assert.strictEqual(emptyEngine.evaluate('Hi ${name.FirstName}${name.LastName} ${RecentTasks()}', { name: { FirstName: 'D', LastName: 'L' }, recentTasks: ['task1'] }), 'Hi DL Your most recent task is task1. You can let me know if you want to add or complete a task.', emptyEngine.evaluate('Hi ${name.FirstName}${name.LastName} ${RecentTasks()}', { name: { FirstName: 'D', LastName: 'L' }, recentTasks: ['task1'] }));
 
     });
 
@@ -254,6 +254,12 @@ describe('LG', function() {
                 variableOptions: ['coffee', 'userName', 'size', 'price'],
                 templateRefOptions: ['wPhrase', 'LatteOrderConfirmation', 'MochaOrderConfirmation', 'CuppuccinoOrderConfirmation']
             },
+            {
+                name: 'structureTemplate',
+                variableOptions: [ 'text', 'newText' ],
+                templateRefOptions: [ 'ST2' ]
+            
+            }
         ];
         for (const testItem of testData) {
             var engine = new TemplateEngine().addFile(GetExampleFilePath('Analyzer.lg'));
@@ -640,7 +646,7 @@ describe('LG', function() {
         }
 
         evaled = engine.evaluateTemplate('AskForAge.prompt3');
-        assert.deepStrictEqual(evaled, JSON.parse('{"lgType":"Activity","text":"@{GetAge()}","suggestions":["10 | cards","20 | cards"]}'));
+        assert.deepStrictEqual(evaled, JSON.parse('{"lgType":"Activity","text":"${GetAge()}","suggestions":["10 | cards","20 | cards"]}'));
 
         evaled = engine.evaluateTemplate('T1');
         assert.deepStrictEqual(evaled, JSON.parse('{"lgType":"Activity","text":"This is awesome","speak":"foo bar I can also speak!"}'));
@@ -662,6 +668,9 @@ describe('LG', function() {
 
         evaled = engine.evaluateTemplate('templateWithSquareBrackets', {manufacturer: {Name : 'Acme Co'}});
         assert.deepStrictEqual(evaled, JSON.parse('{"lgType":"Struct","text":"Acme Co"}'));
+
+        evaled = engine.evaluateTemplate('ValueWithEqualsMark', {name : 'Jack'});
+        assert.deepStrictEqual(evaled, JSON.parse('{"lgType":"Activity","text":"Hello! welcome back. I have your name = Jack"}'));
     });
 
     it('TestEvaluateOnce', function() {
@@ -755,5 +764,42 @@ describe('LG', function() {
         assert.strictEqual(evaled1, espectedResult);
         assert.strictEqual(evaled2, espectedResult);
         assert.strictEqual(evaled3, espectedResult);
+    });
+
+    it('TestEmptyArratAndObject', function() {
+        var engine = new TemplateEngine().addFile(GetExampleFilePath('EmptyArrayAndObject.lg'));
+
+        var evaled = engine.evaluateTemplate('template', {list:[], obj: {}});
+        assert.strictEqual(evaled, 'list and obj are both empty');
+
+        var evaled = engine.evaluateTemplate('template', {list:[], obj:new Map()});
+        assert.strictEqual(evaled, 'list and obj are both empty');
+
+        var evaled = engine.evaluateTemplate('template', {list:['hi'], obj: {}});
+        assert.strictEqual(evaled, 'obj is empty');
+
+        var evaled = engine.evaluateTemplate('template', {list:[], obj: {a: 'a'}});
+        assert.strictEqual(evaled, 'list is empty');
+
+        const map = new Map();
+        map.set('a', 'a');
+        var evaled = engine.evaluateTemplate('template', {list:[], obj: map});
+        assert.strictEqual(evaled, 'list is empty');
+
+        var evaled = engine.evaluateTemplate('template', {list:[{}], obj : {a : 'a'}});
+        assert.strictEqual(evaled, 'list and obj are both not empty.');        
+    });
+
+    it('TestIsTemplateFunction', function() {
+        var engine = new TemplateEngine().addFile(GetExampleFilePath('IsTemplate.lg'));
+
+        var evaled = engine.evaluateTemplate('template2', {templateName:'template1'});
+        assert.strictEqual(evaled, 'template template1 exists');
+
+        var evaled = engine.evaluateTemplate('template2', {templateName:'wPhrase'});
+        assert.strictEqual(evaled, 'template wPhrase exists');
+
+        var evaled = engine.evaluateTemplate('template2', {templateName:'xxx'});
+        assert.strictEqual(evaled, 'template xxx does not exist'); 
     });
 });

@@ -8,7 +8,7 @@
 // tslint:disable-next-line: no-submodule-imports
 import { ParserRuleContext } from 'antlr4ts';
 import { AbstractParseTreeVisitor, TerminalNode } from 'antlr4ts/tree';
-import { ExpressionEngine, ExpressionParserInterface } from 'botframework-expressions';
+import { ExpressionEngine, ExpressionParserInterface } from 'adaptive-expressions';
 import * as fs from 'fs';
 import { keyBy } from 'lodash';
 import * as path from 'path';
@@ -23,6 +23,7 @@ import { LGResource } from './lgResource';
 import { LGTemplate } from './lgTemplate';
 import { Position } from './position';
 import { Range } from './range';
+import { LGExtensions } from './lgExtensions';
 
 
 // tslint:disable-next-line: completed-docs
@@ -137,45 +138,29 @@ class StaticCheckerInner extends AbstractParseTreeVisitor<Diagnostic[]> implemen
     public visitStructuredTemplateBody(context: lp.StructuredTemplateBodyContext): Diagnostic[] {
         let result: Diagnostic[] = [];
 
-        const typeName: string = context.structuredBodyNameLine().STRUCTURED_CONTENT().text.trim();
-        if (!this.structuredNameRegex.test(typeName)) {
-            result.push(this.buildLGDiagnostic({
-                message: `Structured type ${ typeName } is invalid. Letter, number, '_', '-' and '.' is allowed.`,
-                context: context.structuredBodyNameLine()}));
+        if (context.structuredBodyNameLine().errorStructuredName() !== undefined) {
+            result.push(this.buildLGDiagnostic({message: `Structured name format error.`, context: context.structuredBodyNameLine()}));
         }
 
-        const content: lp.StructuredBodyContentLineContext = context.structuredBodyContentLine();
-        let bodys: TerminalNode[] = [];
-        if (content) {
-            bodys = content.STRUCTURED_CONTENT();
+        if (context.structuredBodyEndLine() === undefined) {
+            result.push(this.buildLGDiagnostic({message: `Structured LG missing ending ']'.`, context: context}));
         }
 
-        if (bodys === undefined || bodys.length === 0 || bodys.find((u: TerminalNode): boolean => u !== undefined && u.text.trim().length !== 0) === undefined) {
-            result.push(this.buildLGDiagnostic({
-                message: `Structured content is empty`,
-                context: content}));
+        const bodys = context.structuredBodyContentLine();
+        if (bodys === null || bodys.length === 0) {
+            result.push(this.buildLGDiagnostic({message: `Structured LG content is empty.`, context: context}));
         } else {
             for (const body of bodys) {
-                const line: string = body.text.trim();
-
-                if (line !== '') {
-                    const start: number = line.indexOf('=');
-                    if (start < 0 && !Evaluator.isPureExpression(line)) {
-                        result.push(this.buildLGDiagnostic({
-                            message: `Structured content does not support`,
-                            context: content}));
-                    } else if (start > 0) {
-                        const originValue: string = line.substr(start + 1).trim();
-                        const valueArray: string[] = Evaluator.wrappedRegExSplit(originValue, Evaluator.escapeSeperatorReverseRegex);
-                        if (valueArray.length === 1) {
-                            result = result.concat(this.checkText(originValue, context));
-                        } else {
-                            for (const item of valueArray) {
-                                result = result.concat(this.checkText(item.trim(), context));
-                            }
+                if (body.errorStructureLine() !== undefined) {
+                    result.push(this.buildLGDiagnostic({message: `structured body format error.`, context: body.errorStructureLine()}));
+                } else if (body.objectStructureLine() !== undefined) {
+                    result = result.concat(this.checkExpression(body.objectStructureLine().text, body.objectStructureLine()));
+                } else {
+                    const structureValues = body.keyValueStructureLine().keyValueStructureValue();
+                    for (const structureValue of structureValues) {
+                        for (const expr of structureValue.EXPRESSION_IN_STRUCTURE_BODY()) {
+                            result = result.concat(this.checkExpression(expr.text, context));
                         }
-                    } else if (Evaluator.isPureExpression(line)) {
-                        result = result.concat(this.checkExpression(line, context));
                     }
                 }
             }
@@ -370,10 +355,10 @@ class StaticCheckerInner extends AbstractParseTreeVisitor<Diagnostic[]> implemen
             result = result.concat(this.checkExpression(expression.text, context));
         }
 
-        const multiLinePrefixNum: number = context.MULTILINE_PREFIX().length;
-        const multiLineSuffixNum: number = context.MULTILINE_SUFFIX().length;
+        const multiLinePrefix = context.MULTILINE_PREFIX();
+        const multiLineSuffix = context.MULTILINE_SUFFIX();
         
-        if (multiLinePrefixNum > 0 && multiLinePrefixNum > multiLineSuffixNum) {
+        if (multiLinePrefix !== undefined &&  multiLineSuffix === undefined) {
             result.push(this.buildLGDiagnostic({
                 message: 'Close ``` is missing.',
                 context: context
@@ -386,25 +371,9 @@ class StaticCheckerInner extends AbstractParseTreeVisitor<Diagnostic[]> implemen
         return [];
     }
 
-    private checkText(exp: string, context: ParserRuleContext): Diagnostic[] {
-        let result: Diagnostic[] = [];
-        const matches: string[] = exp.split('').reverse().join('').match(Evaluator.expressionRecognizeReverseRegex);
-
-        if (matches) {
-            for (const match of matches) {
-                result = result.concat(this.checkExpression(match.split('').reverse().join(''), context));
-            }
-        }
-
-        return result;
-    }
-
     private checkExpression(exp: string, context: ParserRuleContext): Diagnostic[] {
         const result: Diagnostic[] = [];
-        exp = exp.replace(/(^@*)/g, '')
-            .replace(/(^{*)/g, '')
-            .replace(/(}*$)/g, '')
-            .trim();
+        exp = LGExtensions.trimExpression(exp);
 
         try {
             this.expressionParser.parse(exp);

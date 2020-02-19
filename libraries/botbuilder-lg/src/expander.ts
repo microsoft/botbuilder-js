@@ -8,7 +8,7 @@
  */
 // tslint:disable-next-line: no-submodule-imports
 import { AbstractParseTreeVisitor, TerminalNode } from 'antlr4ts/tree';
-import { BuiltInFunctions, EvaluatorLookup, Expression, ExpressionEngine, ExpressionEvaluator, ReturnType } from 'botframework-expressions';
+import { BuiltInFunctions, EvaluatorLookup, Expression, ExpressionEngine, ExpressionEvaluator, ReturnType } from 'adaptive-expressions';
 import { keyBy } from 'lodash';
 import { v4 as uuid } from 'uuid';
 import { EvaluationTarget } from './evaluationTarget';
@@ -16,6 +16,7 @@ import { Evaluator } from './evaluator';
 import * as lp from './generated/LGFileParser';
 import { LGFileParserVisitor } from './generated/LGFileParserVisitor';
 import { LGTemplate } from './lgTemplate';
+import { LGExtensions } from './lgExtensions';
 
 // tslint:disable-next-line: max-classes-per-file
 // tslint:disable-next-line: completed-docs
@@ -90,52 +91,39 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGFi
 
     // tslint:disable-next-line: cyclomatic-complexity
     public visitStructuredBody(ctx: lp.StructuredBodyContext): string[] {
-        const idToStringMap: Map<string, string> = new Map<string, string>();
+        const templateRefValues: Map<string, string> = new Map<string, string>();
         const stb: lp.StructuredTemplateBodyContext = ctx.structuredTemplateBody();
         const result: any = {};
-        const typeName: string = stb.structuredBodyNameLine().STRUCTURED_CONTENT().text.trim();
+        const typeName: string = stb.structuredBodyNameLine().STRUCTURE_NAME().text.trim();
         result.lgType = typeName;
         let expandedResult: any[] = [result];
-        const bodys: TerminalNode[] = stb.structuredBodyContentLine().STRUCTURED_CONTENT();
+        const bodys = stb.structuredBodyContentLine();
         for (const body  of bodys) {
-            const line: string = body.text.trim();
-            if (line === '') {
-                continue;
-            }
-            const start: number = line.indexOf('=');
-            if (start > 0) {
-                // make it insensitive
-                const property: string = line.substr(0, start).trim().toLowerCase();
-                const originValue: string = line.substr(start + 1).trim();
-
-                const valueArray: string[] = Evaluator.wrappedRegExSplit(originValue, Evaluator.escapeSeperatorReverseRegex);
-                if (valueArray.length === 1) {
-                    const id: string = uuid();
-                    expandedResult.forEach((x: any): any => x[property] = id);
-                    idToStringMap.set(id, originValue);
-                } else {
-                    const valueList: any[] = [];
-                    for (const item of valueArray) {
-                        const id: string = uuid();
+            const isKVPairBody = body.keyValueStructureLine() !== undefined;
+            if (isKVPairBody) {
+                const property = body.keyValueStructureLine().STRUCTURE_IDENTIFIER().text.toLowerCase();
+                const value = this.visitStructureValue(body.keyValueStructureLine());
+                if (value.length > 1) {
+                    const valueList = [];
+                    for (const item of value) {
+                        const id = this.newGuid();
                         valueList.push(id);
-                        idToStringMap.set(id, item.trim());
+                        templateRefValues.set(id, item);
                     }
 
-                    expandedResult.forEach((x: any): any => x[property] = valueList);
+                    expandedResult.forEach(x => x[property] = valueList);
+                } else {
+                    const id = this.newGuid();
+                    expandedResult.forEach(x => x[property] = id);
+                    templateRefValues.set(id, value[0]);
                 }
-            } else if (Evaluator.isPureExpression(line)) {
-                // [MyStruct
-                // Text = foo
-                // {ST2()}
-                // ]
-
-                // When the same property exists in both the calling template as well as callee,
-                //the content in caller will trump any content in the callee.
-                const propertyObjects: any[] = this.evalExpression(line).map((x: string): any => JSON.parse(x));
-                const tempResult: any[] = [];
+            } else {
+                const propertyObjects: object[] = [];
+                this.evalExpression(body.objectStructureLine().text).forEach(x => propertyObjects.push(JSON.parse(x)));
+                const tempResult = [];
                 for (const res of expandedResult) {
                     for (const propertyObject of propertyObjects) {
-                        const tempRes: any = JSON.parse(JSON.stringify(res));
+                        const tempRes = JSON.parse(JSON.stringify(res));
 
                         // Full reference to another structured template is limited to the structured template with same type
                         if (typeof propertyObject === 'object' && Evaluator.LGType in propertyObject && propertyObject[Evaluator.LGType].toString() === typeName) {
@@ -145,7 +133,7 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGFi
                                 }
                             }
                         }
-
+                        
                         tempResult.push(tempRes);
                     }
                 }
@@ -155,21 +143,13 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGFi
         }
 
         const exps: string[] = expandedResult.map((x: string): string => JSON.stringify(x));
-        const templateRefValues: Map<string, string[]> = new Map<string, string[]>();
-        for (const idToString of idToStringMap) {
-            if (idToString[1].startsWith('@{') && idToString[1].endsWith('}')) {
-                templateRefValues.set(idToString[0], this.evalExpression(idToString[1]));
-            } else {
-                templateRefValues.set(idToString[0], this.evalText(idToString[1]));
-            }
-        }
 
         let finalResult: string[] = exps;
-        for (const templateRefValue of templateRefValues) {
+        for (const templateRefValueKey of templateRefValues.keys()) {
             const tempRes: string[] = [];
             for (const res of finalResult) {
-                for (const refValue of templateRefValue[1]) {
-                    tempRes.push(res.replace(templateRefValue[0], refValue));
+                for (const refValue of templateRefValues.get(templateRefValueKey)){
+                    tempRes.push(res.replace(templateRefValueKey, refValue));
                 }
             }
 
@@ -177,6 +157,36 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGFi
         }
 
         return finalResult;
+    }
+
+    private visitStructureValue(ctx: lp.KeyValueStructureLineContext): string[] {
+        const values = ctx.keyValueStructureValue();
+
+        let result: any[] = [];
+        for (const item of values) {
+            if (Evaluator.isPureExpression(item).hasExpr) {
+                result.push(this.evalExpression(Evaluator.isPureExpression(item).expression));
+            } else {
+                let itemStringResult = [''];
+                for (const node of item.children) {
+                    switch ((node as TerminalNode).symbol.type) {
+                        case (lp.LGFileParser.ESCAPE_CHARACTER_IN_STRUCTURE_BODY):
+                            itemStringResult = this.stringArrayConcat(itemStringResult, [this.evalEscape(node.text)]);
+                            break;
+                        case (lp.LGFileParser.EXPRESSION_IN_STRUCTURE_BODY):
+                            itemStringResult = this.stringArrayConcat(itemStringResult, this.evalExpression(node.text));
+                            break;
+                        default:
+                            itemStringResult = this.stringArrayConcat(itemStringResult, [node.text]);
+                            break;
+                    }
+                }
+
+                result.push(itemStringResult);
+            }
+        }
+
+        return result;
     }
 
     public visitSwitchCaseBody(ctx: lp.SwitchCaseBodyContext): string[] {
@@ -274,11 +284,13 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGFi
             '\\\\': '\\',
         };
 
-        if (exp in validCharactersDict) {
-            return validCharactersDict[exp];
-        } else {
-            return exp.substr(1);
-        }
+        return exp.replace(/\\[^\r\n]?/g, (sub: string): string => { 
+            if (sub in validCharactersDict) {
+                return validCharactersDict[sub];
+            } else {
+                return sub.substr(1);
+            }
+        });
     }
 
     private evalCondition(condition: lp.IfConditionContext): boolean {
@@ -296,9 +308,7 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGFi
 
     private evalExpressionInCondition(exp: string): boolean {
         try {
-            exp = exp.replace(/(^@*)/g, '')
-                .replace(/(^{*)/g, '')
-                .replace(/(}*$)/g, '');
+            exp = LGExtensions.trimExpression(exp);
 
             const { value: result, error }: { value: any; error: string } = this.evalByExpressionEngine(exp, this.currentTarget().scope);
             if (error
@@ -315,9 +325,7 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGFi
     }
 
     private evalExpression(exp: string): string[] {
-        exp = exp.replace(/(^@*)/g, '')
-            .replace(/(^{*)/g, '')
-            .replace(/(}*$)/g, '');
+        exp = LGExtensions.trimExpression(exp);
 
         const { value: result, error }: { value: any; error: string } = this.evalByExpressionEngine(exp, this.currentTarget().scope);
         if (error) {
@@ -419,39 +427,13 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGFi
         return expanderExpression;
     }
 
-    private evalTextContainsExpression(exp: string): string[] {
-        const templateRefValues: Map<string, string[]> = new Map<string, string[]>();
-        let matches: any = exp.split('').reverse().join('').match(Evaluator.expressionRecognizeReverseRegex);
-        if (matches) {
-            matches = matches.map((e: string): string => e.split('').reverse().join('')).reverse();
-            for (const match of matches) {
-                templateRefValues.set(match, this.evalExpression(match));
-            }
-        }
+    private newGuid(): string {
+        return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c: any): string => {
+            const r: number = Math.random() * 16 | 0;
+            // tslint:disable-next-line: no-bitwise
+            const v: number = c === 'x' ? r : (r & 0x3 | 0x8);
 
-        let result: string[] = [exp];
-        for (const templateRefValue of templateRefValues) {
-            const tempRes: string[] = [];
-            for (const res of result) {
-                for (const refValue of templateRefValue[1]) {
-                    tempRes.push(res.replace(templateRefValue[0], refValue));
-                }
-            }
-            result = tempRes;
-        }
-
-        return result;
-    }
-
-    private evalText(exp: string): string[] {
-        if (!exp) {
-            return [exp];
-        }
-
-        if (Evaluator.isPureExpression(exp)) {
-            return this.evalExpression(exp);
-        } else {
-            return this.evalTextContainsExpression(exp).map((x: string): string => x.replace(/\\(.)/g, '$1'));
-        }
+            return v.toString(16);
+        });
     }
 }
