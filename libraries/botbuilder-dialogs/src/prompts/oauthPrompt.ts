@@ -339,7 +339,7 @@ export class OAuthPrompt extends Dialog {
                 await context.sendActivity({ type: 'invokeResponse', value: { status: 500 }});
             }
         } else if (this.isTokenExchangeRequestInvoke(context)) {
-            if(!(context.activity.value instanceof TokenExchangeInvokeRequest)) {
+            if(!(context.activity.value && this.isTokenExchangeRequest(context.activity.value))) {
                 await context.sendActivity(this.getTokenExchangeInvokeResponse(
                     400, 
                     'The bot received an InvokeActivity that is missing a TokenExchangeInvokeRequest value. This is required to be sent with the InvokeActivity.'));
@@ -429,6 +429,13 @@ export class OAuthPrompt extends Dialog {
         const activity: Activity = context.activity;
 
         return activity.type === ActivityTypes.Invoke && activity.name === 'signin/tokenExchange';
+    }
+
+    private isTokenExchangeRequest(obj: unknown) : obj is TokenExchangeInvokeRequest {
+        if(obj.hasOwnProperty('connectionName') && obj.hasOwnProperty('token')) {
+            return true;
+        }
+        return false;
     }
 
     private channelSupportsOAuthCard(channelId: string): boolean {
