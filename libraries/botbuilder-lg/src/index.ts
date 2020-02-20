@@ -22,3 +22,4 @@ export * from './position';
 export * from './evaluationTarget';
 export * from './activityFactory';
 export * from './activityChecker';
+export * from './lgExtensions';

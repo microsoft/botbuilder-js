@@ -15,6 +15,7 @@ import { Evaluator } from './evaluator';
 import * as lp from './generated/LGFileParser';
 import { LGFileParserVisitor } from './generated/LGFileParserVisitor';
 import { LGTemplate } from './lgTemplate';
+import { LGExtensions } from './lgExtensions';
 
 // tslint:disable-next-line: completed-docs
 export class AnalyzerResult {
@@ -207,9 +208,7 @@ export class Analyzer extends AbstractParseTreeVisitor<AnalyzerResult> implement
 
     private analyzeExpression(exp: string): AnalyzerResult {
         const result: AnalyzerResult =  new AnalyzerResult();
-        exp = exp.replace(/(^\$*)/g, '')
-            .replace(/(^{*)/g, '')
-            .replace(/(}*$)/g, '');
+        exp = LGExtensions.trimExpression(exp);
         const parsed: Expression = this._expressionParser.parse(exp);
 
         const references: readonly string[] = Extensions.references(parsed);
