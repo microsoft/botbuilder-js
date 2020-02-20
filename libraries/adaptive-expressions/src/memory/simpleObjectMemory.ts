@@ -9,6 +9,9 @@ import { Extensions } from '../extensions';
  * Licensed under the MIT License.
  */
 
+/**
+ * Simple implement of MemoryInterface
+ */
 export class SimpleObjectMemory implements MemoryInterface {
 
     private memory: any = undefined;
@@ -18,6 +21,11 @@ export class SimpleObjectMemory implements MemoryInterface {
         this.memory = memory;
     }
 
+    /**
+     * Transfer an common object to simple memory.
+     * @param obj  Common object.
+     * @returns Simple memory instance.
+     */
     public static wrap(obj: any): MemoryInterface {
         if(Extensions.isMemoryInterface(obj)) {
             return obj;

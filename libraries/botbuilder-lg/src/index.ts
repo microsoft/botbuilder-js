@@ -23,3 +23,8 @@ export * from './evaluationTarget';
 export * from './activityFactory';
 export * from './activityChecker';
 export * from './lgExtensions';
+export * from './analyzerResult';
+export * from './lgErrors';
+export * from './evaluator';
+export * from './errorListener';
+export * from './customizedMemory';

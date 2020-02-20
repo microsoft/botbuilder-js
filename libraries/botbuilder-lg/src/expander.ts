@@ -8,7 +8,7 @@
  */
 // tslint:disable-next-line: no-submodule-imports
 import { AbstractParseTreeVisitor, TerminalNode } from 'antlr4ts/tree';
-import { BuiltInFunctions, EvaluatorLookup, Expression, ExpressionEngine, ExpressionEvaluator, ReturnType } from 'adaptive-expressions';
+import { ExpressionFunctions, EvaluatorLookup, Expression, ExpressionEngine, ExpressionEvaluator, ReturnType } from 'adaptive-expressions';
 import { keyBy } from 'lodash';
 import { v4 as uuid } from 'uuid';
 import { EvaluationTarget } from './evaluationTarget';
@@ -20,8 +20,18 @@ import { LGExtensions } from './lgExtensions';
 
 // tslint:disable-next-line: max-classes-per-file
 // tslint:disable-next-line: completed-docs
+/**
+ * LG template expander.
+ */
 export class Expander extends AbstractParseTreeVisitor<string[]> implements LGFileParserVisitor<string[]> {
+    /**
+     * Templates.
+     */
     public readonly templates: LGTemplate[];
+
+    /**
+     * TemplateMap.
+     */
     public readonly templateMap: {[name: string]: LGTemplate};
     private readonly evalutationTargetStack: EvaluationTarget[] = [];
     private readonly expanderExpressionEngine: ExpressionEngine;
@@ -37,6 +47,12 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGFi
         this.evaluatorExpressionEngine = new ExpressionEngine(this.customizedEvaluatorLookup(expressionEngine.EvaluatorLookup, false));
     }
 
+    /**
+     * Expand the results of a template with given name and scope.
+     * @param templateName Given template name.
+     * @param scope Given scope.
+     * @returns All possiable results.
+     */
     public expandTemplate(templateName: string, scope: any): string[] {
         if (!(templateName in this.templateMap)) {
             throw new Error(`No such template: ${ templateName }`);
@@ -371,9 +387,9 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGFi
 
         if (this.templateMap[name]) {
             if (isExpander) {
-                return new ExpressionEvaluator(name, BuiltInFunctions.apply(this.templateExpander(name)), ReturnType.String, this.validTemplateReference);
+                return new ExpressionEvaluator(name, ExpressionFunctions.apply(this.templateExpander(name)), ReturnType.String, this.validTemplateReference);
             } else {
-                return new ExpressionEvaluator(name, BuiltInFunctions.apply(this.templateEvaluator(name)), ReturnType.String, this.validTemplateReference);
+                return new ExpressionEvaluator(name, ExpressionFunctions.apply(this.templateEvaluator(name)), ReturnType.String, this.validTemplateReference);
             }
         }
 

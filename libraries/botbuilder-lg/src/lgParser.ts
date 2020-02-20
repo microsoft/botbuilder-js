@@ -28,8 +28,6 @@ import { Range } from './range';
 
 export declare type ImportResolverDelegate = (source: string, resourceId: string) => { content: string; id: string };
 
-declare type AntlrParseResult = { templates: LGTemplate[]; imports: LGImport[]; invalidTemplateErrors: Diagnostic[]};
-
 /**
  * LG Parser
  */
@@ -48,6 +46,13 @@ export class LGParser {
         return LGParser.parseText(content, fullPath, importResolver);
     }
 
+    /**
+     * Parser to turn lg content into a LGFile.
+     * @param content ext content contains lg templates.
+     * @param id id is the identifier of content. If importResolver is null, id must be a full path string. 
+     * @param importResolver resolver to resolve LG import id to template text.
+     * @returns entity.
+     */
     public static parseText(content: string, id: string = '', importResolver: ImportResolverDelegate = null): LGFile {
         importResolver = importResolver? importResolver : LGParser.defaultFileResolver;
         const lgFile = new LGFile(undefined, undefined, undefined, undefined, content, id = id, undefined, importResolver = importResolver);
@@ -88,7 +93,7 @@ export class LGParser {
         return { content, id: importPath };
     }
 
-    private static antlrParse(text: string, id: string = ''): AntlrParseResult {
+    private static antlrParse(text: string, id: string = ''): { templates: LGTemplate[]; imports: LGImport[]; invalidTemplateErrors: Diagnostic[]} {
         const fileContext: FileContext = this.getFileContentContext(text, id);
         const templates: LGTemplate[] = this.extractLGTemplates(fileContext, text, id);
         const imports: LGImport[] = this.extractLGImports(fileContext, id);

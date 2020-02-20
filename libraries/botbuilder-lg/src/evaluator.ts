@@ -7,7 +7,7 @@
  */
 // tslint:disable-next-line: no-submodule-imports
 import { AbstractParseTreeVisitor, TerminalNode } from 'antlr4ts/tree';
-import { BuiltInFunctions, Constant, EvaluatorLookup, Expression, ExpressionEngine, ExpressionEvaluator, ExpressionType, ReturnType, SimpleObjectMemory } from 'adaptive-expressions';
+import { ExpressionFunctions, Constant, EvaluatorLookup, Expression, ExpressionEngine, ExpressionEvaluator, ExpressionType, ReturnType, SimpleObjectMemory } from 'adaptive-expressions';
 import { keyBy } from 'lodash';
 import { CustomizedMemory } from './customizedMemory';
 import { EvaluationTarget } from './evaluationTarget';
@@ -23,8 +23,20 @@ import { LGExtensions } from './lgExtensions';
  */
 // tslint:disable-next-line: max-classes-per-file
 export class Evaluator extends AbstractParseTreeVisitor<any> implements LGFileParserVisitor<any> {
+
+    /**
+     * Templates.
+     */
     public readonly templates: LGTemplate[];
+
+    /**
+     * Expression engine.
+     */
     public readonly expressionEngine: ExpressionEngine;
+
+    /**
+     * TemplateMap.
+     */
     public readonly templateMap: { [name: string]: LGTemplate };
     private readonly evalutationTargetStack: EvaluationTarget[] = [];
 
@@ -51,6 +63,12 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGFilePa
         return inputString.split('').reverse().join('').split(regex).map((e: string): string => e.split('').reverse().join('')).reverse();
     }
 
+    /**
+     * Evaluate a template with given name and scope.
+     * @param templateName template name.
+     * @param scope scope.
+     * @returns Evaluate result.
+     */
     public evaluateTemplate(templateName: string, scope: any): any {
         if (!(templateName in this.templateMap)) {
             throw new Error(`No such template: ${ templateName }`);
@@ -383,23 +401,23 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGFilePa
 
         if (this.templateMap[name]) {
             // tslint:disable-next-line: max-line-length
-            return new ExpressionEvaluator(name, BuiltInFunctions.apply(this.templateEvaluator(name)), ReturnType.Object, this.validTemplateReference);
+            return new ExpressionEvaluator(name, ExpressionFunctions.apply(this.templateEvaluator(name)), ReturnType.Object, this.validTemplateReference);
         }
 
         if (name === Evaluator.templateFunctionName) {
-            return new ExpressionEvaluator(Evaluator.templateFunctionName, BuiltInFunctions.apply(this.templateFunction()), ReturnType.Object, this.validateTemplateFunction);
+            return new ExpressionEvaluator(Evaluator.templateFunctionName, ExpressionFunctions.apply(this.templateFunction()), ReturnType.Object, this.validateTemplateFunction);
         }
 
         if (name === Evaluator.fromFileFunctionName) {
-            return new ExpressionEvaluator(Evaluator.fromFileFunctionName, BuiltInFunctions.apply(this.fromFile()), ReturnType.Object, this.validateFromFile);
+            return new ExpressionEvaluator(Evaluator.fromFileFunctionName, ExpressionFunctions.apply(this.fromFile()), ReturnType.Object, this.validateFromFile);
         }
 
         if (name === Evaluator.activityAttachmentFunctionName) {
-            return new ExpressionEvaluator(Evaluator.activityAttachmentFunctionName, BuiltInFunctions.apply(this.activityAttachment()), ReturnType.Object, this.validateActivityAttachment);
+            return new ExpressionEvaluator(Evaluator.activityAttachmentFunctionName, ExpressionFunctions.apply(this.activityAttachment()), ReturnType.Object, this.validateActivityAttachment);
         }
 
         if (name === Evaluator.isTemplateFunctionName) {
-            return new ExpressionEvaluator(Evaluator.isTemplateFunctionName, BuiltInFunctions.apply(this.isTemplate()), ReturnType.Boolean, this.validateIsTemplate);
+            return new ExpressionEvaluator(Evaluator.isTemplateFunctionName, ExpressionFunctions.apply(this.isTemplate()), ReturnType.Boolean, this.validateIsTemplate);
         }
 
         return baseLookup(name);

@@ -9,7 +9,7 @@
 import { ANTLRInputStream, CommonTokenStream } from 'antlr4ts';
 // tslint:disable-next-line: no-submodule-imports
 import { AbstractParseTreeVisitor, ParseTree } from 'antlr4ts/tree';
-import { BuiltInFunctions } from '../builtInFunction';
+import { ExpressionFunctions } from '../expressionFunctions';
 import { Constant } from '../constant';
 import { Expression } from '../expression';
 import { EvaluatorLookup } from '../expressionEvaluator';
@@ -24,6 +24,9 @@ import { Util } from './util';
  * Parser to turn strings into Expression
  */
 export class ExpressionEngine implements ExpressionParserInterface {
+    /**
+     * The elegate to lookup function information from the type.
+     */
     public readonly EvaluatorLookup: EvaluatorLookup;
 
     // tslint:disable-next-line: typedef
@@ -154,7 +157,7 @@ export class ExpressionEngine implements ExpressionParserInterface {
     };
 
     public constructor(lookup?: EvaluatorLookup) {
-        this.EvaluatorLookup = lookup === undefined ? BuiltInFunctions.lookup : lookup;
+        this.EvaluatorLookup = lookup === undefined ? ExpressionFunctions.lookup : lookup;
     }
 
     protected static antlrParse(expression: string): ParseTree {
@@ -174,6 +177,11 @@ export class ExpressionEngine implements ExpressionParserInterface {
         return undefined;
     }
 
+    /**
+     * Parse the input into an expression.
+     * @param expression Expression to parse.
+     * @returns Expression tree.
+     */
     public parse(expression: string): Expression {
 
         if (expression === undefined || expression === null || expression === '') {

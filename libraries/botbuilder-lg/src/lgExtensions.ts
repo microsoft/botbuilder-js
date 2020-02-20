@@ -8,7 +8,16 @@
 
 import * as path from 'path';
 
+/**
+ * Extension methods for LG.
+ */
 export class LGExtensions {
+
+    /**
+     * trim expression. ${abc} => abc,  ${a == {}} => a == {}.
+     * @param expression input expression string.
+     * @returns pure expression string.
+     */
     public static trimExpression(expression: string): string {
         let result = expression.trim();
         if (result.startsWith('$')) {
