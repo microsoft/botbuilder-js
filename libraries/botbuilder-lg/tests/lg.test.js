@@ -443,6 +443,14 @@ describe('LG', function() {
         assert(evaled[0] === 'ey' || evaled[0] === 'el');
     });
 
+    it('TestInlineEvaluate', function() {
+        var LGFile = LGParser.parseFile(GetExampleFilePath('2.lg'));
+        console.log(LGFile.diagnostics);
+        var evaled = LGFile.evaluate('hello');
+        assert.strictEqual('hello', evaled);
+
+    });
+
     it('TestEvalExpression', function() {
         var LGFile = LGParser.parseFile(GetExampleFilePath('EvalExpression.lg'));
         const userName = 'MS';

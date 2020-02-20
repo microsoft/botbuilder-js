@@ -50,7 +50,7 @@ export class LGParser {
 
     public static parseText(content: string, id: string = '', importResolver: ImportResolverDelegate = null): LGFile {
         importResolver = importResolver? importResolver : LGParser.defaultFileResolver;
-        const lgFile = new LGFile(undefined, undefined, undefined, undefined, content, id = id, undefined, importResolver = importResolver);
+        const lgFile = new LGFile(undefined, undefined, undefined, undefined, content, id, undefined, importResolver);
         let diagnostics: Diagnostic[] = [];
         try{
             const parsedResult = LGParser.antlrParse(content, id);
@@ -72,6 +72,54 @@ export class LGParser {
         lgFile.diagnostics = diagnostics;
 
         return lgFile;
+    }
+
+    /// <summary>
+    /// Parser to turn lg content into a <see cref="LGFile"/> based on the original LGFile.
+    /// </summary>
+    /// <param name="content">Text content contains lg templates.</param>
+    /// <param name="lgFile">original LGFile.</param>
+    /// <returns>new <see cref="LGFile"/> entity.</returns>
+    public static parseTextWithRef(content: string, lgFile: LGFile): LGFile {
+        if (lgFile == null)
+        {
+            throw Error(`LGFile`);
+        }
+
+        console.log(lgFile.templates);
+        const id = 'inline content';
+        const newLgFile =new LGFile(undefined, undefined, undefined, undefined, undefined, undefined, undefined, lgFile.importResolver);
+        //console.log(newLgFile.templates);
+        let diagnostics: Diagnostic[] = [];
+        try
+        {
+            const antlrResult = this.antlrParse(content, id);
+            const templates = antlrResult.templates;
+            const imports = antlrResult.imports; 
+            const invalidTemplateErrors = antlrResult.invalidTemplateErrors;
+            newLgFile.templates = templates;
+            newLgFile.imports = imports;
+            diagnostics = diagnostics.concat(invalidTemplateErrors);
+
+            newLgFile.references = this.getReferences(newLgFile, newLgFile.importResolver)
+                .concat(lgFile.references)
+                .concat([ lgFile ]);
+
+            var semanticErrors = new StaticChecker(newLgFile).check();
+            diagnostics = diagnostics.concat(semanticErrors);
+        }
+        catch (err)
+        {
+            if (err instanceof LGException) {
+                diagnostics = diagnostics.concat(err.getDiagnostic());
+            } else {
+                diagnostics.push(this.buildDiagnostic(err.Message, undefined, id));
+            }
+        }
+
+        newLgFile.diagnostics = diagnostics;
+
+        return newLgFile;
     }
 
     public static defaultFileResolver(sourceId: string, resourceId: string): {content: string; id: string} {
