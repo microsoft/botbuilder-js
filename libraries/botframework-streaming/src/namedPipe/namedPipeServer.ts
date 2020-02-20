@@ -15,7 +15,25 @@ import {
     PayloadSender
 } from '../payloadTransport';
 import { NamedPipeTransport } from './namedPipeTransport';
-import { IStreamingTransportServer, IReceiveResponse } from '../interfaces';
+import { IStreamingTransportServer, IReceiveResponse, INodeServer, INodeSocket } from '../interfaces';
+import { doesGlobalServerExist } from '../utilities';
+
+// function(callback): INodeServer <-- type hint
+// says I'm "missing the following properties from type 'Server': address, getConnections, ref, unref, and 18 more"
+// when I try adding type hint
+const createNodeServer = function(callback: (socket: INodeSocket) => void) {
+    if (!callback) {
+        throw new TypeError('Unable to create NodeNetServer without callback.');
+    }
+
+    if (doesGlobalServerExist()) {
+        return new Function(`return new Server(${ callback });`)();
+    }
+
+    throw new ReferenceError('Unable to find global.Server. Unable to create Server for NamedPipeServer.');
+}
+
+// const getNodeNetServerConstructor = new Function(`const { Server } = require('net'); return Server;`);
 
 /**
 * Streaming transport server implementation that uses named pipes for inter-process communication.
@@ -71,9 +89,9 @@ export class NamedPipeServer implements IStreamingTransportServer {
         if (this._receiver.isConnected || this._sender.isConnected || this._incomingServer || this._outgoingServer) {
             this.disconnect();
         }
-
+        // const Server = getNodeNetServer();
         const incoming = new Promise(resolve => {
-            this._incomingServer = new Server((socket: Socket): void => {
+            this._incomingServer = createNodeServer((socket: Socket): void => {
                 this._receiver.connect(new NamedPipeTransport(socket));
                 resolve();
             });

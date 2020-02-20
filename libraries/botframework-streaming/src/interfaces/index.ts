@@ -10,6 +10,7 @@ export * from './IBrowserFileReader';
 export * from './IBrowserWebSocket';
 export * from './INodeBuffer';
 export * from './INodeIncomingMessage';
+export * from './INodeServer';
 export * from './INodeSocket';
 export * from './IReceiveRequest';
 export * from './IReceiveResponse';

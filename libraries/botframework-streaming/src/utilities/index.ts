@@ -8,4 +8,5 @@
 
 export * from './doesGlobalFileReaderExist';
 export * from './doesGlobalWebSocketExist';
+export * from './doesGlobalServerExist';
 export * from './protocol-base';
