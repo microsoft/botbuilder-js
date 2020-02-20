@@ -23,7 +23,8 @@ const badExpressions =
       '\'hello\'.length()',// not support currently
 
       // Operators test
-      '\'1\' + 2', // params should be number
+      'istrue + 1', // params should be number or string
+      'one + two + nullObj', // Operator '+' or add cannot be applied to operands of type 'number' and null object.
       '\'1\' * 2', // params should be number
       '\'1\' - 2', // params should be number
       '\'1\' / 2', // params should be number
@@ -140,7 +141,7 @@ const badExpressions =
       'max()', // function need 1 or more than 1 parameters
       'min(hello, one)', // param should be number
       'min()', // function need 1 or more than 1 parameters
-      'add(hello, 2)', // param should be number
+      'add(istrue, 2)', // param should be number or string
       'add()', // arg count doesn't match
       'add(five, six)', // no such variables
       'add(one)', // add function need two or more parameters
@@ -353,6 +354,7 @@ const scope = {
     hello: 'hello',
     world: 'world',
     istrue: true,
+    nullObj: undefined,
     bag:
   {
       three: 3.0,
