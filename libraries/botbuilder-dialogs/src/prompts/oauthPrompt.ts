@@ -9,7 +9,8 @@ import { Activity, ActivityTypes, Attachment, CardFactory, InputHints, MessageFa
 import { Dialog, DialogTurnResult } from '../dialog';
 import { DialogContext } from '../dialogContext';
 import { PromptOptions, PromptRecognizerResult,  PromptValidator } from './prompt';
-import { channels } from '../choices/channel';
+import { Channels } from '../../../botframework-schema/lib';
+// import { channels } from '../choices/channel';
 import { isSkillClaim } from './skillsHelpers';
 
 /**
@@ -345,10 +346,10 @@ export class OAuthPrompt extends Dialog {
 
     private channelSupportsOAuthCard(channelId: string): boolean {
         switch (channelId) {
-            case channels.msteams:
-            case channels.cortana:
-            case channels.skype:
-            case channels.skypeforbusiness:
+            case Channels.Msteams:
+            case Channels.Cortana:
+            case Channels.Skype:
+            case Channels.Skypeforbusiness:
                 return false;
             default:
         }

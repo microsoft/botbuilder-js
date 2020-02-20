@@ -1,7 +1,7 @@
 const assert = require('assert');
 const { ActionTypes, ActivityTypes, CardFactory, ConversationState, InputHints, MemoryStorage, TestAdapter, TurnContext } = require('botbuilder-core');
 const { OAuthPrompt, DialogSet, DialogTurnStatus, ListStyle } = require('../');
-const { channels } = require('../lib/choices/channel');
+const { Channels } = require('../../botframework-schema/lib/index');
 const { AuthConstants } = require('../lib/prompts/skillsHelpers');
 
 const beginMessage = { text: `begin`, type: 'message' };
@@ -301,7 +301,7 @@ describe('OAuthPrompt', function () {
                 const fakeAdapter = {};
                 const context = new TurnContext(fakeAdapter, {
                     activity: {
-                        channelId: channels.webchat,
+                        channelId: Channels.Webchat,
                         serviceUrl: 'https://bing.com',
                     }
                 });
@@ -325,7 +325,7 @@ describe('OAuthPrompt', function () {
                 });
                 const context = new TurnContext(adapter, {
                     activity: {
-                        channelId: channels.webchat,
+                        channelId: Channels.Webchat,
                         serviceUrl: 'https://bing.com',
                     }
                 });
@@ -361,7 +361,7 @@ describe('OAuthPrompt', function () {
                 });
                 const context = new TurnContext(adapter, {
                     activity: {
-                        channelId: channels.webchat,
+                        channelId: Channels.Webchat,
                         serviceUrl: 'https://bing.com',
                     }
                 });
@@ -399,7 +399,7 @@ describe('OAuthPrompt', function () {
                     text, title,
                 });
                 const context = new TurnContext(adapter, {
-                    channelId: channels.webchat,
+                    channelId: Channels.Webchat,
                     serviceUrl: 'wss://bing.com',
                 });
                 // Override sendActivity
@@ -434,7 +434,7 @@ describe('OAuthPrompt', function () {
                 });
                 const context = new TurnContext(adapter, {
                     activity: {
-                        channelId: channels.webchat,
+                        channelId: Channels.Webchat,
                         serviceUrl: 'https://bing.com',
                     }
                 });

@@ -6,28 +6,29 @@
  * Licensed under the MIT License.
  */
 import { TurnContext } from 'botbuilder-core';
+import { Channels } from '../../../botframework-schema/lib/index';
 
-/**
- * @private
- */
-export const channels: any = {
-    console: 'console',
-    cortana: 'cortana',
-    directline: 'directline',
-    email: 'email',
-    emulator: 'emulator',
-    facebook: 'facebook',
-    groupme: 'groupme',
-    kik: 'kik',
-    line: 'line',
-    msteams: 'msteams',
-    skype: 'skype',
-    skypeforbusiness: 'skypeforbusiness',
-    slack: 'slack',
-    sms: 'sms',
-    telegram: 'telegram',
-    webchat: 'webchat'
-};
+// /**
+//  * @private
+//  */
+// export const channels: any = {
+//     console: 'console',
+//     cortana: 'cortana',
+//     directline: 'directline',
+//     email: 'email',
+//     emulator: 'emulator',
+//     facebook: 'facebook',
+//     groupme: 'groupme',
+//     kik: 'kik',
+//     line: 'line',
+//     msteams: 'msteams',
+//     skype: 'skype',
+//     skypeforbusiness: 'skypeforbusiness',
+//     slack: 'slack',
+//     sms: 'sms',
+//     telegram: 'telegram',
+//     webchat: 'webchat'
+// };
 
 /**
  * @private
@@ -36,18 +37,18 @@ export const channels: any = {
  */
 export function supportsSuggestedActions(channelId: string, buttonCnt: number = 100): boolean {
     switch (channelId) {
-        case channels.facebook:
-        case channels.skype:
+        case Channels.Facebook:
+        case Channels.Skype:
             return (buttonCnt <= 10);
-        case channels.line:
+        case Channels.Line:
             return (buttonCnt <= 13);
-        case channels.kik:
+        case Channels.Kik:
             return (buttonCnt <= 20);
-        case channels.slack:
-        case channels.telegram:
-        case channels.emulator:
-        case channels.directline:
-        case channels.webchat:
+        case Channels.Slack:
+        case Channels.Telegram:
+        case Channels.Emulator:
+        case Channels.Directline:
+        case Channels.Webchat:
             return (buttonCnt <= 100);
         default:
             return false;
@@ -61,17 +62,17 @@ export function supportsSuggestedActions(channelId: string, buttonCnt: number = 
  */
 export function supportsCardActions(channelId: string, buttonCnt: number = 100): boolean {
     switch (channelId) {
-        case channels.facebook:
-        case channels.skype:
-        case channels.msteams:
+        case Channels.Facebook:
+        case Channels.Skype:
+        case Channels.Msteams:
             return (buttonCnt <= 3);
-        case channels.line:
+        case Channels.Line:
             return (buttonCnt <= 99);
-        case channels.slack:
-        case channels.emulator:
-        case channels.directline:
-        case channels.webchat:
-        case channels.cortana:
+        case Channels.Slack:
+        case Channels.Emulator:
+        case Channels.Directline:
+        case Channels.Webchat:
+        case Channels.Cortana:
             return (buttonCnt <= 100);
         default:
             return false;
@@ -84,7 +85,7 @@ export function supportsCardActions(channelId: string, buttonCnt: number = 100):
  */
 export function hasMessageFeed(channelId: string): boolean {
     switch (channelId) {
-        case channels.cortana:
+        case Channels.Cortana:
             return false;
         default:
             return true;
