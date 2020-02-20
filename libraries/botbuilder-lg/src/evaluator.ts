@@ -1,4 +1,3 @@
-
 /**
  * @module botbuilder-lg
  */
@@ -15,7 +14,6 @@ import { EvaluationTarget } from './evaluationTarget';
 import * as lp from './generated/LGFileParser';
 import { LGFileParserVisitor } from './generated/LGFileParserVisitor';
 import { LGTemplate } from './lgTemplate';
-import { ImportResolver } from './importResolver';
 import * as path from 'path';
 import * as fs from 'fs';
 import { LGExtensions } from './lgExtensions';
@@ -59,7 +57,7 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGFilePa
         }
 
         if (this.evalutationTargetStack.find((u: EvaluationTarget): boolean => u.templateName === templateName) !== undefined) {
-            throw new Error(`Loop deteced: ${ this.evalutationTargetStack.reverse()
+            throw new Error(`Loop detected: ${ this.evalutationTargetStack.reverse()
                 .map((u: EvaluationTarget): string => u.templateName)
                 .join(' => ') }`);
         }
@@ -441,7 +439,7 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGFilePa
     }
 
     private readonly fromFile = (): any => (args: readonly any[]): any => {
-        const filePath: string = path.normalize(ImportResolver.normalizePath(args[0].toString()));
+        const filePath: string = LGExtensions.normalizePath(args[0].toString());
         const resourcePath: string = this.getResourcePath(filePath);
         const stringContent = fs.readFileSync(resourcePath, 'utf-8');
 
@@ -460,7 +458,7 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGFilePa
                 throw new Error('relative path is not support in browser.');
             }
             const template: LGTemplate = this.templateMap[this.currentTarget().templateName];
-            const sourcePath: string = path.normalize(ImportResolver.normalizePath(template.source));
+            const sourcePath: string = LGExtensions.normalizePath(template.source);
             let baseFolder: string = __dirname;
             if (path.isAbsolute(sourcePath)){
                 baseFolder = path.dirname(sourcePath);

@@ -10,12 +10,10 @@ import { Analyzer } from './analyzer';
 import { Diagnostic } from './diagnostic';
 import { Expander } from './expander';
 import { Extractor } from './extractor';
-import { ImportResolver } from './importResolver';
 import { LGParser } from './lgParser';
 import { LGTemplate } from './lgTemplate';
 import { Position } from './position';
 import { Range } from './range';
-import { StaticChecker } from './staticChecker';
 
 // tslint:disable-next-line: completed-docs
 export class MSLGTool {
@@ -31,13 +29,14 @@ export class MSLGTool {
     }
 
     public validateFile(lgFileContent: string, id?: string): string[] {
-        const diagnostic: Diagnostic[] = new StaticChecker().checkText(lgFileContent, id, ImportResolver.fileResolver);
+        const lgFile = LGParser.parseText(lgFileContent, id);
+        const diagnostic: Diagnostic[] = lgFile.diagnostics;
         if (diagnostic.length !== 0) {
             return diagnostic.map((error: Diagnostic): string => error.toString());
         }
 
         // extract templates
-        this.templates = LGParser.parse(lgFileContent).templates;
+        this.templates = LGParser.parseText(lgFileContent).templates;
         if (this.templates && this.templates.length > 0) {
             this.runTemplateExtractor(this.templates);
         }
