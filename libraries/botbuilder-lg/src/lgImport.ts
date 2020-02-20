@@ -9,16 +9,28 @@
 import { ImportDefinitionContext } from './generated/LGFileParser';
 
 /**
- * LG Import
+ * Here is a data model that can help users understand and use the LG import definition in LG files easily. 
  */
 export class LGImport {
 
+    /**
+     * Description of the import, what's included by '[]' in a lg file.
+     */
     public description: string;
 
+    /**
+     * Id of this import.
+     */
     public id: string;
 
+    /**
+     * origin root source of the import.
+     */
     public source: string;
 
+    /**
+     * The parse tree of this lg file.
+     */
     public parseTree: ImportDefinitionContext;
 
     public constructor(parseTree: ImportDefinitionContext, source: string = '') {

@@ -31,10 +31,14 @@ export class Diagnostic {
     public constructor(
         range: Range,
         message: string,
-        severity: DiagnosticSeverity = DiagnosticSeverity.Error) {
+        severity: DiagnosticSeverity = DiagnosticSeverity.Error,
+        source: string = undefined,
+        code: string = undefined) {
         this.message = message;
         this.range = range;
         this.severity = severity;
+        this.source = source;
+        this.code = code;
     }
 
     public toString(): string {

@@ -7,7 +7,11 @@
  */
 
 /**
- * Convert TimeZone between Windows and Iana.
+ * Time zone converter.
+ * (1) From Windows (.NET) timezone to iana timezone.
+ * (2) From iana timezone to windows (.NET) timezone.
+ * windows ref: https://support.microsoft.com/en-us/help/22803/daylight-saving-time.
+ * iana ref: https://www.iana.org/time-zones.
  */
 export class TimeZoneConverter {
     private static readonly ianaToWindowsMap: Map<string, string> = new Map<string, string>();
@@ -524,6 +528,11 @@ export class TimeZoneConverter {
     Yakutsk Standard Time,001,Asia/Yakutsk\
     Yakutsk Standard Time,RU,Asia/Yakutsk Asia/Khandyga';
 
+    /**
+     * convert IANA timezone format to windows timezone format.
+     * @param ianaTimeZoneId IANA timezone format.
+     * @returns windows timezone format.
+     */
     public static ianaToWindows(ianaTimeZoneId: string): string {
         this.loadData();
         if (this.ianaToWindowsMap.has(ianaTimeZoneId)) {
@@ -533,6 +542,11 @@ export class TimeZoneConverter {
         return ianaTimeZoneId;
     }
 
+    /**
+     * Convert windows timezone to iana timezone.
+     * @param windowsTimeZoneId Windows timezone format.
+     * @returns Iana timezone format.
+     */
     public static windowsToIana(windowsTimeZoneId: string): string {
         this.loadData();
         if (this.windowsToIanaMap.has(`001|${ windowsTimeZoneId }`)) {
@@ -542,6 +556,11 @@ export class TimeZoneConverter {
         return windowsTimeZoneId;
     }
 
+    /**
+     * Verify the string is windows timezone or iana string
+     * @param timezoneStr time zone string
+     * @returns is the string is time zone string
+     */
     public static verifyTimeZoneStr(timezoneStr: string): boolean {
         this.loadData();
 
