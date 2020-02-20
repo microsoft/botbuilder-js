@@ -117,6 +117,25 @@ export class ExpressionEngine implements ExpressionParserInterface {
             }
         }
 
+        public visitConstantAtom(context: ep.ConstantAtomContext): Expression {
+            let text: string = context.text;
+            if (text.startsWith('[') && text.endsWith(']')) {
+                text = text.substr(1, text.length - 2).trim();
+                if (text === '') {
+                    return new Constant([]);
+                }
+            }
+
+            if (text.startsWith('{') && text.endsWith('}')) {
+                text = text.substr(1, text.length - 2).trim();
+                if (text === '') {
+                    return new Constant({});
+                }
+            }
+
+            throw new Error(`Unrecognized constant: ${ text }`);
+        }
+
         protected defaultResult = (): Expression => new Constant('');
 
         private readonly MakeExpression = (type: string, ...children: Expression[]): Expression =>

@@ -21,6 +21,7 @@ import { LGParser, ImportResolverDelegate } from './lgParser';
 import { LGErrors } from './lgErrors';
 import { Position } from './position';
 import { Range } from './range';
+import { LGExtensions } from './lgExtensions';
 
 /// <summary>
 /// LG managed code checker.
@@ -376,10 +377,7 @@ class StaticCheckerInner extends AbstractParseTreeVisitor<Diagnostic[]> implemen
 
     private checkExpression(exp: string, context: ParserRuleContext): Diagnostic[] {
         const result: Diagnostic[] = [];
-        exp = exp.replace(/(^\$*)/g, '')
-            .replace(/(^{*)/g, '')
-            .replace(/(}*$)/g, '')
-            .trim();
+        exp = LGExtensions.trimExpression(exp);
 
         try {
             this.expressionParser.parse(exp);
