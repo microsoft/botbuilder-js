@@ -443,6 +443,26 @@ describe('LG', function() {
         assert(evaled[0] === 'ey' || evaled[0] === 'el');
     });
 
+    it('TestInlineEvaluate', function() {
+        var LGFile = LGParser.parseFile(GetExampleFilePath('2.lg'));
+        var evaled = LGFile.evaluate('hello');
+        assert.strictEqual('hello', evaled);
+
+        evaled = LGFile.evaluate('${wPhrase()}');
+        var options =[ 'Hi', 'Hello', 'Hiya' ];
+        assert.strictEqual(options.includes(evaled), true);
+
+        var errMessage = '';
+        try {
+            LGFile.evaluate('${ErrrorTemplate()}');
+        } catch (e) {
+            errMessage = e.toString();
+        }
+
+        assert.strictEqual(errMessage.includes(`it's not a built-in function or a customized function`), true);
+
+    });
+
     it('TestEvalExpression', function() {
         var LGFile = LGParser.parseFile(GetExampleFilePath('EvalExpression.lg'));
         const userName = 'MS';

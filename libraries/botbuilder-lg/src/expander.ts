@@ -8,15 +8,15 @@
  */
 // tslint:disable-next-line: no-submodule-imports
 import { AbstractParseTreeVisitor, TerminalNode } from 'antlr4ts/tree';
-import { ExpressionFunctions, EvaluatorLookup, Expression, ExpressionEngine, ExpressionEvaluator, ReturnType } from 'adaptive-expressions';
+import { ExpressionFunctions, EvaluatorLookup, Expression, ExpressionEngine, ExpressionEvaluator, ReturnType, SimpleObjectMemory } from 'adaptive-expressions';
 import { keyBy } from 'lodash';
-import { v4 as uuid } from 'uuid';
 import { EvaluationTarget } from './evaluationTarget';
 import { Evaluator } from './evaluator';
 import * as lp from './generated/LGFileParser';
 import { LGFileParserVisitor } from './generated/LGFileParserVisitor';
 import { LGTemplate } from './lgTemplate';
 import { LGExtensions } from './lgExtensions';
+import { CustomizedMemory } from './customizedMemory';
 
 // tslint:disable-next-line: max-classes-per-file
 // tslint:disable-next-line: completed-docs
@@ -63,6 +63,11 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGFi
                 .map((u: EvaluationTarget): string => u.templateName)
                 .join(' => ') }`);
         }
+
+        if(!(scope instanceof CustomizedMemory)) {
+            scope = new CustomizedMemory(SimpleObjectMemory.wrap(scope));
+        }
+        
         // Using a stack to track the evalution trace
         this.evalutationTargetStack.push(new EvaluationTarget(templateName, scope));
         const result: string[] = this.visit(this.templateMap[templateName].parseTree);

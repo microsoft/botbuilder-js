@@ -9,10 +9,9 @@
 import { LGTemplate } from './lgTemplate';
 import { LGImport } from './lgImport';
 import { Diagnostic, DiagnosticSeverity } from './diagnostic';
-import { ExpressionEngine, SimpleObjectMemory } from 'adaptive-expressions';
+import { ExpressionEngine } from 'adaptive-expressions';
 import { ImportResolverDelegate } from './lgParser';
 import { Evaluator } from './evaluator';
-import { CustomizedMemory } from './customizedMemory';
 import { Expander } from './expander';
 import { Analyzer } from './analyzer';
 import { LGParser } from './lgParser';
@@ -135,9 +134,8 @@ export class LGFile {
     public evaluateTemplate(templateName: string, scope: object = undefined): object {
         this.checkErrors();
 
-        const memory = SimpleObjectMemory.wrap(scope);
         const evaluator = new Evaluator(this.allTemplates, this.expressionEngine);
-        return evaluator.evaluateTemplate(templateName, new CustomizedMemory(memory));
+        return evaluator.evaluateTemplate(templateName, scope);
     }
 
     /// <summary>
@@ -151,7 +149,7 @@ export class LGFile {
         this.checkErrors();
 
         const expander = new Expander(this.allTemplates, this.expressionEngine);
-        return expander.expandTemplate(templateName, new CustomizedMemory(scope));
+        return expander.expandTemplate(templateName, scope);
     }
 
     /// <summary>
@@ -165,6 +163,34 @@ export class LGFile {
 
         const analyzer = new Analyzer(this.allTemplates, this.expressionEngine);
         return analyzer.analyzeTemplate(templateName);
+    }
+
+    /// <summary>
+    /// Use to evaluate an inline template str.
+    /// </summary>
+    /// <param name="inlineStr">inline string which will be evaluated.</param>
+    /// <param name="scope">scope object or JToken.</param>
+    /// <returns>Evaluate result.</returns>
+    public evaluate(inlineStr: string, scope: any = undefined): any
+    {
+        if (inlineStr === undefined)
+        {
+            throw Error(`inline string is null.`);
+        }
+
+        this.checkErrors();
+
+        // wrap inline string with "# name and -" to align the evaluation process
+        const fakeTemplateId = this.newGuid();
+        const multiLineMark = '```';
+
+        inlineStr = !(inlineStr.trim().startsWith(multiLineMark) && inlineStr.includes('\n'))
+            ? `${ multiLineMark }${ inlineStr }${ multiLineMark }` : inlineStr;
+
+        const newContent = `#${ fakeTemplateId } \r\n - ${ inlineStr }`;
+
+        const newLgFile = LGParser.parseTextWithRef(newContent, this);
+        return newLgFile.evaluateTemplate(fakeTemplateId, scope);
     }
 
     /**
@@ -359,5 +385,13 @@ export class LGFile {
         }
     }
 
+    private newGuid(): string {
+        return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c: any): string => {
+            const r: number = Math.random() * 16 | 0;
+            // tslint:disable-next-line: no-bitwise
+            const v: number = c === 'x' ? r : (r & 0x3 | 0x8);
 
+            return v.toString(16);
+        });
+    }
 }
