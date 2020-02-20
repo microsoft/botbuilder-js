@@ -164,6 +164,12 @@ export class LGFile {
         return analyzer.analyzeTemplate(templateName);
     }
 
+    /// <summary>
+    /// Use to evaluate an inline template str.
+    /// </summary>
+    /// <param name="inlineStr">inline string which will be evaluated.</param>
+    /// <param name="scope">scope object or JToken.</param>
+    /// <returns>Evaluate result.</returns>
     public evaluate(inlineStr: string, scope: any = undefined): any
     {
         if (inlineStr === undefined)
