@@ -388,7 +388,7 @@ export class BuiltInFunctions {
         let error: string;
         try {
             const parsedData: Date = new Date(value);
-            if (BuiltInFunctions.isNumber(parsedData.getTime())) {
+            if (Number.isNaN(parsedData.getTime())) {
                 error = `${ value } is not a valid datetime string.`;
             }
         } catch (e) {
@@ -407,7 +407,7 @@ export class BuiltInFunctions {
         let error: string;
         try {
             const parsedData: Date = new Date(value);
-            if (!BuiltInFunctions.isNumber(parsedData.getTime())) {
+            if (Number.isNaN(parsedData.getTime())) {
                 error = `${ value } is not a valid datetime string.`;
             } else if (parsedData.toISOString() !== value) {
                 error = `${ value } is not a ISO format datetime string.`;
@@ -547,7 +547,7 @@ export class BuiltInFunctions {
 
                 }
 
-                return {soFar, undefined};
+                return {value: soFar, error: undefined};
             },
             verify
         );

@@ -143,7 +143,6 @@ const badExpressions =
       'min()', // function need 1 or more than 1 parameters
       'add(istrue, 2)', // param should be number or string
       'add()', // arg count doesn't match
-      'add(five, six)', // no such variables
       'add(one)', // add function need two or more parameters
       'sub(hello, 2)', // param should be number
       'sub()', // arg count doesn't match
