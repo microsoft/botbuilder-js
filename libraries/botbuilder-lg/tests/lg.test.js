@@ -1,5 +1,5 @@
 const { LGParser } = require('../');
-const { SimpleObjectMemory } = require('botframework-expressions');
+const { SimpleObjectMemory } = require('adaptive-expressions');
 const assert = require('assert');
 const fs = require('fs');
 

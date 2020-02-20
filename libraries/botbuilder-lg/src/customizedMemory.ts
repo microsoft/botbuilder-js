@@ -1,12 +1,12 @@
 /**
- * @module botframework-expressions
+ * @module botbuilder-lg
  */
 /**
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
 
-import { MemoryInterface, SimpleObjectMemory } from 'botframework-expressions';
+import { MemoryInterface, SimpleObjectMemory } from 'adaptive-expressions';
 
 export class CustomizedMemory implements MemoryInterface {
 

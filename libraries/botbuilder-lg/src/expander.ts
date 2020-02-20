@@ -8,7 +8,7 @@
  */
 // tslint:disable-next-line: no-submodule-imports
 import { AbstractParseTreeVisitor, TerminalNode } from 'antlr4ts/tree';
-import { BuiltInFunctions, EvaluatorLookup, Expression, ExpressionEngine, ExpressionEvaluator, ReturnType } from 'botframework-expressions';
+import { BuiltInFunctions, EvaluatorLookup, Expression, ExpressionEngine, ExpressionEvaluator, ReturnType } from 'adaptive-expressions';
 import { keyBy } from 'lodash';
 import { v4 as uuid } from 'uuid';
 import { EvaluationTarget } from './evaluationTarget';
