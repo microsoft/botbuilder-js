@@ -62,6 +62,10 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGFilePa
                 .join(' => ') }`);
         }
 
+        if(!(scope instanceof CustomizedMemory)) {
+            scope = new CustomizedMemory(SimpleObjectMemory.wrap(scope));
+        }
+
         const templateTarget: EvaluationTarget = new EvaluationTarget(templateName, scope);
         const currentEvulateId: string = templateTarget.getId();
 
