@@ -1,14 +1,14 @@
-const { TemplateEngine, ActivityFactory } = require('../lib');
+const { LGParser, ActivityFactory } = require('../lib');
 const assert = require('assert');
 
 function getTemplateEngine(){
     const filePath =  `${ __dirname }/testData/Examples/NormalStructuredLG.lg`;
-    return new TemplateEngine().addFile(filePath);
+    return LGParser.parseFile(filePath);
 }
 
 function getActivity(templateName, data){
-    const engine = getTemplateEngine();
-    const lgResult = engine.evaluateTemplate(templateName, data);
+    const lgFile = getTemplateEngine();
+    const lgResult = lgFile.evaluateTemplate(templateName, data);
     return ActivityFactory.createActivity(lgResult);
 }
 

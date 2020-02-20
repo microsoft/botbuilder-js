@@ -24,6 +24,7 @@ import { Diagnostic, DiagnosticSeverity } from './diagnostic';
 import { Position } from './position';
 import { ParserRuleContext } from 'antlr4ts';
 import { Range } from './range';
+import { error } from 'util';
 
 
 export declare type ImportResolverDelegate = (source: string, resourceId: string) => { content: string; id: string };
@@ -80,9 +81,11 @@ export class LGParser {
             // get full path for importPath relative to path which is doing the import.
             importPath = normalizePath(path.join(path.dirname(sourceId), importPath));
         }
-
+        if (!fs.existsSync(importPath) || !fs.statSync(importPath).isFile()) {
+            throw Error(`Could not find file: ${ importPath }`);
+        }
         const content: string = fs.readFileSync(importPath, 'utf-8');
-
+        
         return { content, id: importPath };
     }
 
@@ -127,7 +130,7 @@ export class LGParser {
                 if (err instanceof LGException) {
                     throw err;
                 } else {
-                    throw new LGException(err.Message, [ this.buildDiagnostic(err.Message, undefined, start.id) ]);
+                    throw new LGException(err.message, [ this.buildDiagnostic(err.message, undefined, start.id) ]);
                 }
             }
         }

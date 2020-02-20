@@ -9,7 +9,7 @@
 import { LGTemplate } from './lgTemplate';
 import { LGImport } from './lgImport';
 import { Diagnostic, DiagnosticSeverity } from './diagnostic';
-import { ExpressionEngine, SimpleObjectMemory } from 'botframework-expressions';
+import { ExpressionEngine, SimpleObjectMemory } from 'adaptive-expressions';
 import { ImportResolverDelegate } from './lgParser';
 import { Evaluator } from './evaluator';
 import { CustomizedMemory } from './customizedMemory';

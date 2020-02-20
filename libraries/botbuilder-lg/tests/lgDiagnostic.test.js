@@ -115,7 +115,7 @@ describe(`LGExceptionTest`, function() {
 
         assert.strictEqual(1, diagnostics.length);
         assert.strictEqual(DiagnosticSeverity.Error, diagnostics[0].severity);
-        //assert.strictEqual(diagnostics[0].message.includes(`Could not find file`), true);
+        assert.strictEqual(diagnostics[0].message.includes(`Could not find file`), true);
     });
 
     it(`TestLgTemplateFunctionError`, function() {

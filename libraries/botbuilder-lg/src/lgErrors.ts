@@ -32,7 +32,7 @@ export class LGErrors
 
     public static invalidWhitespaceInSwitchCase = 'At most 1 whitespace is allowed between SWITCH/CASE/DEFAULT and :.';
 
-    public static notStartWithSwitchInSwitchCase = 'control flow is not start with switch';
+    public static notStartWithSwitchInSwitchCase = 'control flow is not starting with switch';
 
     public static multipleSwithStatementInSwitchCase = 'control flow can not have more than one switch statement';
 
