@@ -1106,7 +1106,7 @@ export class BuiltInFunctions {
     }
 
     private static isNumber(instance: any): boolean {
-        return typeof instance === 'number' && !Number.isNaN(instance);
+        return instance !== undefined && instance !== null && typeof instance === 'number' && !Number.isNaN(instance);
     }
 
     private static isEmpty(instance: any): boolean {
