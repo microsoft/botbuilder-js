@@ -14,7 +14,6 @@ import * as path from 'path';
 import { Diagnostic, DiagnosticSeverity } from './diagnostic';
 import { Evaluator } from './evaluator';
 import * as lp from './generated/LGFileParser';
-import { normalizePath } from './extensions';
 import { LGFileParserVisitor } from './generated/LGFileParserVisitor';
 import { LGFile } from './lgFile';
 import { LGParser, ImportResolverDelegate } from './lgParser';
@@ -419,7 +418,7 @@ export class StaticChecker {
         filePaths.forEach((filePath: string): void => {
             importResolver = importResolver ? importResolver : LGParser.defaultFileResolver;
 
-            filePath = normalizePath(filePath);
+            filePath = LGExtensions.normalizePath(filePath);
             const lgFile: LGFile = LGParser.parseText(fs.readFileSync(filePath, 'utf-8'), filePath);
             const staticChecker = new StaticCheckerInner(lgFile, this.expressionEngine);
             result = result.concat(staticChecker.check());
@@ -434,7 +433,7 @@ export class StaticChecker {
 
     public checkText(content: string, id?: string, importResolver?: ImportResolverDelegate): Diagnostic[] {
         if (!importResolver) {
-            const importPath: string = normalizePath(id);
+            const importPath: string = LGExtensions.normalizePath(id);
             if (!path.isAbsolute(importPath)) {
                 throw new Error('[Error] id must be full path when importResolver is empty');
             }

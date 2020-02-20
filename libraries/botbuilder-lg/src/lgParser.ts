@@ -15,8 +15,8 @@ import { FileContext, ImportDefinitionContext, LGFileParser, ParagraphContext, T
 import { LGImport } from './lgImport';
 import { LGTemplate } from './lgTemplate';
 import { LGFile } from './lgFile';
-import { normalizePath } from './extensions';
-import { StaticChecker } from './staticChecker'
+import { StaticChecker } from './staticChecker';
+import { LGExtensions } from './lgExtensions';
 import { LGException } from './lgException';
 import * as path from 'path';
 import * as fs from 'fs';
@@ -24,7 +24,6 @@ import { Diagnostic, DiagnosticSeverity } from './diagnostic';
 import { Position } from './position';
 import { ParserRuleContext } from 'antlr4ts';
 import { Range } from './range';
-import { error } from 'util';
 
 
 export declare type ImportResolverDelegate = (source: string, resourceId: string) => { content: string; id: string };
@@ -43,7 +42,7 @@ export class LGParser {
     * @returns new lg file.
     */
     public static parseFile(filePath: string, importResolver: ImportResolverDelegate): LGFile {
-        const fullPath = normalizePath(filePath);
+        const fullPath = LGExtensions.normalizePath(filePath);
         const content = fs.readFileSync(fullPath, 'utf-8');
 
         return LGParser.parseText(content, fullPath, importResolver);
@@ -76,10 +75,10 @@ export class LGParser {
     }
 
     public static defaultFileResolver(sourceId: string, resourceId: string): {content: string; id: string} {
-        let importPath = normalizePath(resourceId);
+        let importPath = LGExtensions.normalizePath(resourceId);
         if (!path.isAbsolute(importPath)) {
             // get full path for importPath relative to path which is doing the import.
-            importPath = normalizePath(path.join(path.dirname(sourceId), importPath));
+            importPath = LGExtensions.normalizePath(path.join(path.dirname(sourceId), importPath));
         }
         if (!fs.existsSync(importPath) || !fs.statSync(importPath).isFile()) {
             throw Error(`Could not find file: ${ importPath }`);
