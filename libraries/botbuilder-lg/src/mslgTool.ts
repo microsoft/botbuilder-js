@@ -14,7 +14,6 @@ import { LGParser } from './lgParser';
 import { LGTemplate } from './lgTemplate';
 import { Position } from './position';
 import { Range } from './range';
-import { StaticChecker } from './staticChecker';
 
 // tslint:disable-next-line: completed-docs
 export class MSLGTool {
