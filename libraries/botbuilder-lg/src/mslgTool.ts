@@ -31,7 +31,7 @@ export class MSLGTool {
 
     public validateFile(lgFileContent: string, id?: string): string[] {
         const lgFile = LGParser.parseText(lgFileContent, id);
-        const diagnostic: Diagnostic[] = new StaticChecker(lgFile).check();
+        const diagnostic: Diagnostic[] = lgFile.diagnostics;
         if (diagnostic.length !== 0) {
             return diagnostic.map((error: Diagnostic): string => error.toString());
         }

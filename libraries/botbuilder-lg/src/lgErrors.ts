@@ -1,3 +1,11 @@
+/**
+ * @module botbuilder-lg
+ */
+/**
+ * Copyright (c) Microsoft Corporation. All rights reserved.
+ * Licensed under the MIT License.
+ */
+
 export class LGErrors
 {
     public static noTemplate = 'File must have at least one template definition';

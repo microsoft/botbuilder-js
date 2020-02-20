@@ -7,6 +7,8 @@
  * Licensed under the MIT License.
  */
 
+import * as path from 'path';
+
 /// <summary>
 /// Normalize authored path to os path.
 /// </summary>
@@ -20,9 +22,9 @@
 export function normalizePath(ambiguousPath: string): string {
     if (process.platform === 'win32') {
         // map linux/mac sep -> windows
-        return ambiguousPath.replace(/\//g, '\\');
+        return path.normalize(ambiguousPath.replace(/\//g, '\\'));
     } else {
         // map windows sep -> linux/mac
-        return ambiguousPath.replace(/\\/g, '/');
+        return path.normalize(ambiguousPath.replace(/\\/g, '/'));
     }
 }

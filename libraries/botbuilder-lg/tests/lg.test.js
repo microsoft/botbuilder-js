@@ -567,7 +567,7 @@ describe('LG', function() {
         evaled = LGFile.evaluateTemplate('templateWithSquareBrackets', {manufacturer: {Name : 'Acme Co'}});
         assert.deepStrictEqual(evaled, JSON.parse('{"lgType":"Struct","text":"Acme Co"}'));
 
-        evaled = engine.evaluateTemplate('ValueWithEqualsMark', {name : 'Jack'});
+        evaled = LGFile.evaluateTemplate('ValueWithEqualsMark', {name : 'Jack'});
         assert.deepStrictEqual(evaled, JSON.parse('{"lgType":"Activity","text":"Hello! welcome back. I have your name = Jack"}'));
     });
 
@@ -665,39 +665,39 @@ describe('LG', function() {
     });
 
     it('TestEmptyArratAndObject', function() {
-        var engine = new TemplateEngine().addFile(GetExampleFilePath('EmptyArrayAndObject.lg'));
+        var LGFile = LGParser.parseFile(GetExampleFilePath('EmptyArrayAndObject.lg'));
 
-        var evaled = engine.evaluateTemplate('template', {list:[], obj: {}});
+        var evaled = LGFile.evaluateTemplate('template', {list:[], obj: {}});
         assert.strictEqual(evaled, 'list and obj are both empty');
 
-        var evaled = engine.evaluateTemplate('template', {list:[], obj:new Map()});
+        var evaled = LGFile.evaluateTemplate('template', {list:[], obj:new Map()});
         assert.strictEqual(evaled, 'list and obj are both empty');
 
-        var evaled = engine.evaluateTemplate('template', {list:['hi'], obj: {}});
+        var evaled = LGFile.evaluateTemplate('template', {list:['hi'], obj: {}});
         assert.strictEqual(evaled, 'obj is empty');
 
-        var evaled = engine.evaluateTemplate('template', {list:[], obj: {a: 'a'}});
+        var evaled = LGFile.evaluateTemplate('template', {list:[], obj: {a: 'a'}});
         assert.strictEqual(evaled, 'list is empty');
 
         const map = new Map();
         map.set('a', 'a');
-        var evaled = engine.evaluateTemplate('template', {list:[], obj: map});
+        var evaled = LGFile.evaluateTemplate('template', {list:[], obj: map});
         assert.strictEqual(evaled, 'list is empty');
 
-        var evaled = engine.evaluateTemplate('template', {list:[{}], obj : {a : 'a'}});
+        var evaled = LGFile.evaluateTemplate('template', {list:[{}], obj : {a : 'a'}});
         assert.strictEqual(evaled, 'list and obj are both not empty.');        
     });
 
     it('TestIsTemplateFunction', function() {
-        var engine = new TemplateEngine().addFile(GetExampleFilePath('IsTemplate.lg'));
+        var LGFile = LGParser.parseFile(GetExampleFilePath('IsTemplate.lg'));
 
-        var evaled = engine.evaluateTemplate('template2', {templateName:'template1'});
+        var evaled = LGFile.evaluateTemplate('template2', {templateName:'template1'});
         assert.strictEqual(evaled, 'template template1 exists');
 
-        var evaled = engine.evaluateTemplate('template2', {templateName:'wPhrase'});
+        var evaled = LGFile.evaluateTemplate('template2', {templateName:'wPhrase'});
         assert.strictEqual(evaled, 'template wPhrase exists');
 
-        var evaled = engine.evaluateTemplate('template2', {templateName:'xxx'});
+        var evaled = LGFile.evaluateTemplate('template2', {templateName:'xxx'});
         assert.strictEqual(evaled, 'template xxx does not exist'); 
     });
 });
