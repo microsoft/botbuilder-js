@@ -8,28 +8,6 @@
 import { TurnContext } from 'botbuilder-core';
 import { Channels } from '../../../botframework-schema/lib/index';
 
-// /**
-//  * @private
-//  */
-// export const channels: any = {
-//     console: 'console',
-//     cortana: 'cortana',
-//     directline: 'directline',
-//     email: 'email',
-//     emulator: 'emulator',
-//     facebook: 'facebook',
-//     groupme: 'groupme',
-//     kik: 'kik',
-//     line: 'line',
-//     msteams: 'msteams',
-//     skype: 'skype',
-//     skypeforbusiness: 'skypeforbusiness',
-//     slack: 'slack',
-//     sms: 'sms',
-//     telegram: 'telegram',
-//     webchat: 'webchat'
-// };
-
 /**
  * @private
  * @param channelId the id of a channel
