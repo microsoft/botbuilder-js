@@ -50,7 +50,10 @@ export class LGParser {
 
     public static parseText(content: string, id: string = '', importResolver: ImportResolverDelegate = null): LGFile {
         importResolver = importResolver? importResolver : LGParser.defaultFileResolver;
-        const lgFile = new LGFile(undefined, undefined, undefined, undefined, content, id, undefined, importResolver);
+        let lgFile = new LGFile();
+        lgFile.content = content;
+        lgFile.id = id;
+        lgFile.importResolver = importResolver;
         let diagnostics: Diagnostic[] = [];
         try{
             const parsedResult = LGParser.antlrParse(content, id);
@@ -87,7 +90,10 @@ export class LGParser {
         }
 
         const id = 'inline content';
-        const newLgFile =new LGFile(undefined, undefined, undefined, undefined, content, id, undefined, lgFile.importResolver);
+        let newLgFile = new LGFile();
+        newLgFile.content = content;
+        newLgFile.id = id;
+        newLgFile.importResolver = lgFile.importResolver;
         let diagnostics: Diagnostic[] = [];
         try
         {
