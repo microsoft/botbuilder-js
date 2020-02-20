@@ -216,7 +216,7 @@ export class BuiltInFunctions {
      */
     public static verifyNumber(value: any, expression: Expression, _: number): string {
         let error: string;
-        if (typeof value !== 'number' || Number.isNaN(value)) {
+        if (!BuiltInFunctions.isNumber(value)) {
             error = `${ expression } is not a number.`;
         }
 
@@ -231,7 +231,7 @@ export class BuiltInFunctions {
      */
     public static verifyNumberOrNumericList(value: any, expression: Expression, _: number): string {
         let error: string;
-        if (typeof value === 'number' && !Number.isNaN(value)) {
+        if (BuiltInFunctions.isNumber(value)) {
             return error;
         }
 
@@ -239,7 +239,7 @@ export class BuiltInFunctions {
             error = `${ expression } is neither a list nor a number.`;
         } else {
             for (const elt of value) {
-                if (typeof elt !== 'number' || Number.isNaN(elt)) {
+                if (!BuiltInFunctions.isNumber(elt)) {
                     error = `${ elt } is not a number in ${ expression }.`;
                     break;
                 }
@@ -261,7 +261,7 @@ export class BuiltInFunctions {
             error = `${ expression } is not a list.`;
         } else {
             for (const elt of value) {
-                if (typeof elt !== 'number' || Number.isNaN(elt)) {
+                if (!BuiltInFunctions.isNumber(elt)) {
                     error = `${ elt } is not a number in ${ expression }.`;
                     break;
                 }
@@ -340,6 +340,15 @@ export class BuiltInFunctions {
         return error;
     }
 
+    public static VerifyNumberOrStringOrNull(value: any, expression: Expression, _: number): string {
+        let error: string;
+        if (typeof value !== 'string' && value !== undefined && !BuiltInFunctions.isNumber(value) ) {
+            error = `${ expression } is neither a number nor string`;
+        }
+
+        return error;
+    }
+
     /**
      * Verify value is a number or string.
      * @param value alue to check.
@@ -348,7 +357,7 @@ export class BuiltInFunctions {
      */
     public static verifyNumberOrString(value: any, expression: Expression, _: number): string {
         let error: string;
-        if (value === undefined || !(typeof value === 'number' && !Number.isNaN(value)) && typeof value !== 'string') {
+        if (value === undefined || (!BuiltInFunctions.isNumber(value) && typeof value !== 'string')) {
             error = `${ expression } is not string or number.`;
         }
 
@@ -507,6 +516,38 @@ export class BuiltInFunctions {
                 }
 
                 return soFar;
+            },
+            verify
+        );
+    }
+
+    /**
+     * Generate an expression delegate that applies function on the accumulated value after verifying all children.
+     * @param func Function to apply.
+     * @param verify Function to check each arg for validity.
+     * @returns Delegate for evaluating an expression.
+     */
+    public static applySequenceWithError(func: (arg0: any []) => any, verify?: VerifyExpression): EvaluateExpressionDelegate {
+        return BuiltInFunctions.applyWithError(
+            (args: any []): any => {
+                const binaryArgs: any[] = [undefined, undefined];
+                let soFar: any = args[0];
+                let value: any;
+                let error: string;
+                // tslint:disable-next-line: prefer-for-of
+                for (let i = 1; i < args.length; i++) {
+                    binaryArgs[0] = soFar;
+                    binaryArgs[1] = args[i];
+                    ({value, error} = func(binaryArgs));
+                    if (error) {
+                        return {value, error};
+                    } else {
+                        soFar = value;
+                    }
+
+                }
+
+                return {value: soFar, error: undefined};
             },
             verify
         );
@@ -1062,6 +1103,10 @@ export class BuiltInFunctions {
             // tslint:disable-next-line: restrict-plus-operands
             CommonRegex.CreateRegex((second as Constant).value + '');
         }
+    }
+
+    private static isNumber(instance: any): boolean {
+        return instance !== undefined && instance !== null && typeof instance === 'number' && !Number.isNaN(instance);
     }
 
     private static isEmpty(instance: any): boolean {
@@ -1721,7 +1766,6 @@ export class BuiltInFunctions {
         const functions: ExpressionEvaluator[] = [
             //Math
             new ExpressionEvaluator(ExpressionType.Element, BuiltInFunctions.extractElement, ReturnType.Object, this.validateBinary),
-            BuiltInFunctions.multivariateNumeric(ExpressionType.Add, (args: any []): number => Number(args[0]) + Number(args[1])),
             BuiltInFunctions.multivariateNumeric(ExpressionType.Subtract, (args: any []): number => Number(args[0]) - Number(args[1])),
             BuiltInFunctions.multivariateNumeric(ExpressionType.Multiply, (args: any []): number => Number(args[0]) * Number(args[1])),
             BuiltInFunctions.multivariateNumeric(
@@ -1815,6 +1859,37 @@ export class BuiltInFunctions {
                     BuiltInFunctions.verifyNumericList),
                 ReturnType.Number,
                 BuiltInFunctions.validateUnary),
+            new ExpressionEvaluator(
+                ExpressionType.Add,
+                BuiltInFunctions.applySequenceWithError(
+                    (args: any []): any => {
+                        let value: any;
+                        let error: string;
+                        const stringConcat = !BuiltInFunctions.isNumber(args[0]) || !BuiltInFunctions.isNumber(args[1]);
+                        if (((args[0] === null || args[0] === undefined) && BuiltInFunctions.isNumber(args[1]))
+                                || ((args[1] === null || args[1] === undefined) && BuiltInFunctions.isNumber(args[0])))
+                        {
+                            error = 'Operator \'+\' or add cannot be applied to operands of type \'number\' and null object.';
+                        }
+                        else if (stringConcat) {
+                            if ((args[0] === null || args[0] === undefined) && (args[1] === null || args[1] === undefined)) {
+                                value = '';
+                            } else if (args[0] === null || args[0] === undefined) {
+                                value = args[1].toString();
+                            } else if (args[1] === null || args[1] === undefined) {
+                                value = args[0].toString();
+                            } else {
+                                value = args[0].toString() + args[1].toString();
+                            }
+                        } else {
+                            value = args[0] + args[1];
+                        }
+
+                        return {value, error};
+                    },
+                    BuiltInFunctions.VerifyNumberOrStringOrNull),
+                ReturnType.Object,
+                (expression: Expression): void =>  BuiltInFunctions.validateArityAndAnyType(expression, 2, Number.MAX_SAFE_INTEGER)),
             new ExpressionEvaluator(
                 ExpressionType.Count,
                 BuiltInFunctions.apply(
@@ -2580,7 +2655,7 @@ export class BuiltInFunctions {
                     (args: any []): any => {
                         let error: string;
                         const value: number = parseFloat(args[0]);
-                        if (value === undefined || Number.isNaN(value)) {
+                        if (!BuiltInFunctions.isNumber(value)) {
                             error = `parameter ${ args[0] } is not a valid number string.`;
                         }
 
@@ -2593,7 +2668,7 @@ export class BuiltInFunctions {
                     (args: any []): any => {
                         let error: string;
                         const value: number = parseInt(args[0], 10);
-                        if (value === undefined || Number.isNaN(value)) {
+                        if (!BuiltInFunctions.isNumber(value)) {
                             error = `parameter ${ args[0] } is not a valid number string.`;
                         }
 
