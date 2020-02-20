@@ -23,6 +23,7 @@ import { LGResource } from './lgResource';
 import { LGTemplate } from './lgTemplate';
 import { Position } from './position';
 import { Range } from './range';
+import { LGExtensions } from './lgExtensions';
 
 
 // tslint:disable-next-line: completed-docs
@@ -372,10 +373,7 @@ class StaticCheckerInner extends AbstractParseTreeVisitor<Diagnostic[]> implemen
 
     private checkExpression(exp: string, context: ParserRuleContext): Diagnostic[] {
         const result: Diagnostic[] = [];
-        exp = exp.replace(/(^\$*)/g, '')
-            .replace(/(^{*)/g, '')
-            .replace(/(}*$)/g, '')
-            .trim();
+        exp = LGExtensions.trimExpression(exp);
 
         try {
             this.expressionParser.parse(exp);

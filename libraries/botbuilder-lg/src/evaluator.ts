@@ -18,6 +18,7 @@ import { LGTemplate } from './lgTemplate';
 import { ImportResolver } from './importResolver';
 import * as path from 'path';
 import * as fs from 'fs';
+import { LGExtensions } from './lgExtensions';
 
 /**
  * Evaluation tuntime engine
@@ -37,6 +38,7 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGFilePa
     public static readonly activityAttachmentFunctionName = 'ActivityAttachment';
     public static readonly fromFileFunctionName = 'fromFile';
     public static readonly templateFunctionName = 'template';
+    public static readonly isTemplateFunctionName = 'isTemplate';
 
     public constructor(templates: LGTemplate[], expressionEngine: ExpressionEngine) {
         super();
@@ -310,9 +312,7 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGFilePa
 
     private evalExpressionInCondition(exp: string): boolean {
         try {
-            exp = exp.replace(/(^\$*)/g, '')
-                .replace(/(^{*)/g, '')
-                .replace(/(}*$)/g, '');
+            exp = LGExtensions.trimExpression(exp);
 
             const { value: result, error }: { value: any; error: string } = this.evalByExpressionEngine(exp, this.currentTarget().scope);
             if (error !== undefined
@@ -329,9 +329,7 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGFilePa
     }
 
     private evalExpression(exp: string): any {
-        exp = exp.replace(/(^\$*)/g, '')
-            .replace(/(^{*)/g, '')
-            .replace(/(}*$)/g, '');
+        exp = LGExtensions.trimExpression(exp);
 
         const { value: result, error }: { value: any; error: string } = this.evalByExpressionEngine(exp, this.currentTarget().scope);
         if (error !== undefined) {
@@ -402,6 +400,10 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGFilePa
             return new ExpressionEvaluator(Evaluator.activityAttachmentFunctionName, BuiltInFunctions.apply(this.activityAttachment()), ReturnType.Object, this.validateActivityAttachment);
         }
 
+        if (name === Evaluator.isTemplateFunctionName) {
+            return new ExpressionEvaluator(Evaluator.isTemplateFunctionName, BuiltInFunctions.apply(this.isTemplate()), ReturnType.Boolean, this.validateIsTemplate);
+        }
+
         return baseLookup(name);
     }
 
@@ -420,6 +422,22 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGFilePa
                 return sub.substr(1);
             }
         });
+    }
+
+    private readonly isTemplate = (): any => (args: readonly any[]): boolean => {
+        const templateName = args[0].toString();
+        return templateName in this.templateMap;
+    }
+
+    private readonly validateIsTemplate = (expression: Expression): void => {
+        if (expression.children.length !== 1) {
+            throw new Error(`isTemplate should have one parameter`);
+        }
+
+        const children0: Expression = expression.children[0];
+        if (children0.returnType !== ReturnType.Object && children0.returnType !== ReturnType.String) {
+            throw new Error(`${ children0 } can't be used as a template name, must be a string value`);
+        }
     }
 
     private readonly fromFile = (): any => (args: readonly any[]): any => {
