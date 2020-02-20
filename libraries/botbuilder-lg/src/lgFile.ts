@@ -164,7 +164,7 @@ export class LGFile {
         return analyzer.analyzeTemplate(templateName);
     }
 
-    public evaluate(inlineStr: string, scope: any = null): any
+    public evaluate(inlineStr: string, scope: any = undefined): any
     {
         if (inlineStr === undefined)
         {
@@ -177,13 +177,12 @@ export class LGFile {
         const fakeTemplateId = this.newGuid();
         const multiLineMark = '```';
 
-        inlineStr = !inlineStr.trim().startsWith(multiLineMark) && inlineStr.includes('\n')
+        inlineStr = !(inlineStr.trim().startsWith(multiLineMark) && inlineStr.includes('\n'))
             ? `${ multiLineMark }${ inlineStr }${ multiLineMark }` : inlineStr;
 
-        const newContent = `${ fakeTemplateId } \r\n - ${ inlineStr }`;
+        const newContent = `#${ fakeTemplateId } \r\n - ${ inlineStr }`;
 
-        const newLgFile = LGParser.parseTextWithRef(newContent, this as LGFile);
-        console.log(newLgFile.templates);
+        const newLgFile = LGParser.parseTextWithRef(newContent, this);
         return newLgFile.evaluateTemplate(fakeTemplateId, scope);
     }
 

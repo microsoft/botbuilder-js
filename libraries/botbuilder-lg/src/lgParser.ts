@@ -86,10 +86,8 @@ export class LGParser {
             throw Error(`LGFile`);
         }
 
-        console.log(lgFile.templates);
         const id = 'inline content';
-        const newLgFile =new LGFile(undefined, undefined, undefined, undefined, undefined, undefined, undefined, lgFile.importResolver);
-        //console.log(newLgFile.templates);
+        const newLgFile =new LGFile(undefined, undefined, undefined, undefined, content, id, undefined, lgFile.importResolver);
         let diagnostics: Diagnostic[] = [];
         try
         {

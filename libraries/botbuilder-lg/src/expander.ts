@@ -10,7 +10,6 @@
 import { AbstractParseTreeVisitor, TerminalNode } from 'antlr4ts/tree';
 import { BuiltInFunctions, EvaluatorLookup, Expression, ExpressionEngine, ExpressionEvaluator, ReturnType, SimpleObjectMemory } from 'adaptive-expressions';
 import { keyBy } from 'lodash';
-import { v4 as uuid } from 'uuid';
 import { EvaluationTarget } from './evaluationTarget';
 import { Evaluator } from './evaluator';
 import * as lp from './generated/LGFileParser';

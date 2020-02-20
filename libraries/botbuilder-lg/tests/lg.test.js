@@ -445,9 +445,21 @@ describe('LG', function() {
 
     it('TestInlineEvaluate', function() {
         var LGFile = LGParser.parseFile(GetExampleFilePath('2.lg'));
-        console.log(LGFile.diagnostics);
         var evaled = LGFile.evaluate('hello');
         assert.strictEqual('hello', evaled);
+
+        evaled = LGFile.evaluate('${wPhrase()}');
+        var options =[ 'Hi', 'Hello', 'Hiya' ];
+        assert.strictEqual(options.includes(evaled), true);
+
+        var errMessage = '';
+        try {
+            LGFile.evaluate('${ErrrorTemplate()}');
+        } catch (e) {
+            errMessage = e.toString();
+        }
+
+        assert.strictEqual(errMessage.includes(`it's not a built-in function or a customized function`), true);
 
     });
 
