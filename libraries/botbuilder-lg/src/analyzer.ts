@@ -16,32 +16,19 @@ import * as lp from './generated/LGFileParser';
 import { LGFileParserVisitor } from './generated/LGFileParserVisitor';
 import { LGTemplate } from './lgTemplate';
 import { LGExtensions } from './lgExtensions';
-
-// tslint:disable-next-line: completed-docs
-export class AnalyzerResult {
-    public Variables: string[];
-    public TemplateReferences: string[];
-
-    public constructor(variables: string[] = [], templateRefNames: string[] = []) {
-        this.Variables = Array.from(new Set(variables));
-        this.TemplateReferences = Array.from(new Set(templateRefNames));
-    }
-
-    public union(outputItem: AnalyzerResult): this {
-        this.Variables = Array.from(new Set(this.Variables.concat(outputItem.Variables)));
-        this.TemplateReferences = Array.from(new Set(this.TemplateReferences.concat(outputItem.TemplateReferences)));
-
-        return this;
-    }
-}
+import { AnalyzerResult } from './analyzerResult';
 
 // tslint:disable-next-line: max-classes-per-file
 /**
  * Analyzer engine. To analyse which variable may be used
  */
 export class Analyzer extends AbstractParseTreeVisitor<AnalyzerResult> implements LGFileParserVisitor<AnalyzerResult> {
+    /**
+     * Templates.
+     */
     public readonly templates: LGTemplate[];
-    public readonly templateMap: {[name: string]: LGTemplate};
+
+    private readonly templateMap: {[name: string]: LGTemplate};
     private readonly evalutationTargetStack: EvaluationTarget[] = [];
     private readonly _expressionParser: ExpressionParserInterface;
 
@@ -55,6 +42,11 @@ export class Analyzer extends AbstractParseTreeVisitor<AnalyzerResult> implement
         this._expressionParser = evaluator.expressionEngine;
     }
 
+    /**
+     * Analyzer a template to get the static analyzer results.
+     * @param templateName Template name.
+     * @returns analyze result including variables and template references.
+     */
     public analyzeTemplate(templateName: string): AnalyzerResult {
         if (!(templateName in this.templateMap)) {
             throw new Error(`No such template: ${ templateName }`);

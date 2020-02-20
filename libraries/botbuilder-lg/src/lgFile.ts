@@ -13,8 +13,9 @@ import { ExpressionEngine } from 'adaptive-expressions';
 import { ImportResolverDelegate } from './lgParser';
 import { Evaluator } from './evaluator';
 import { Expander } from './expander';
-import { AnalyzerResult, Analyzer } from './analyzer';
+import { Analyzer } from './analyzer';
 import { LGParser } from './lgParser';
+import { AnalyzerResult } from './analyzerResult';
 
 /// <summary>
 /// LG entrance, including properties that LG file has, and evaluate functions.

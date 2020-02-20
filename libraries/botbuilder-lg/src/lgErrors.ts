@@ -6,6 +6,9 @@
  * Licensed under the MIT License.
  */
 
+/**
+  * Centralized LG errors.
+  */
 export class LGErrors
 {
     public static readonly noTemplate = 'File must have at least one template definition';

@@ -16,6 +16,9 @@ import { Position } from './position';
 import { Range } from './range';
 
 // tslint:disable-next-line: completed-docs
+/**
+ * mslg tool, that make some api for mslg cli tool and other debug tools.
+ */
 export class MSLGTool {
     public collationMessages: string[] = [];
     public collatedTemplates: Map<string, any> = new Map<string, any>();
@@ -28,6 +31,12 @@ export class MSLGTool {
         this.expressionEngine = expressionEngine !== undefined ? expressionEngine : new ExpressionEngine();
     }
 
+    /**
+     * validate a lg file.
+     * @param lgFileContent lg file content.
+     * @param id id.
+     * @returns diagnostics.
+     */
     public validateFile(lgFileContent: string, id?: string): string[] {
         const lgFile = LGParser.parseText(lgFileContent, id);
         const diagnostic: Diagnostic[] = lgFile.diagnostics;
@@ -50,12 +59,20 @@ export class MSLGTool {
         return analyzer.analyzeTemplate(templateName).Variables;
     }
 
+    /**
+     * expand a template.
+     * @param templateName template name. 
+     * @param scope scope.
+     */
     public expandTemplate(templateName: string, scope?: any): string[] {
         const expander: Expander = new Expander(this.templates, this.expressionEngine);
 
         return expander.expandTemplate(templateName, scope);
     }
 
+    /**
+     * collate templates.
+     */
     public collateTemplates(): string {
         let result = '';
         if (!this.collationMessages || this.collationMessages.length === 0) {

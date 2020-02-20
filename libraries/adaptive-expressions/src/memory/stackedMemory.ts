@@ -9,7 +9,12 @@ import { MemoryInterface } from './memoryInterface';
  * Licensed under the MIT License.
  */
 
+/**
+ * Stack implements of MemoryInterface.
+ * Memory variables have a hierarchical relationship.
+ */
 export class StackedMemory extends Array<MemoryInterface> implements MemoryInterface {
+
     public static wrap(memory: MemoryInterface): StackedMemory {
         if (memory instanceof StackedMemory) {
             return memory;

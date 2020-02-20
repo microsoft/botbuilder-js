@@ -12,6 +12,9 @@ import { Position } from './position';
 import { Range } from './range';
 
 // tslint:disable-next-line: completed-docs
+/**
+ * LG parser error listener.
+ */
 export class ErrorListener implements ANTLRErrorListener<any> {
     private readonly source: string;
     public constructor(errorSource: string) {
