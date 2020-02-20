@@ -84,7 +84,7 @@ export class LGParser {
     /// <param name="lgFile">original LGFile.</param>
     /// <returns>new <see cref="LGFile"/> entity.</returns>
     public static parseTextWithRef(content: string, lgFile: LGFile): LGFile {
-        if (lgFile == null)
+        if (!lgFile)
         {
             throw Error(`LGFile`);
         }
