@@ -20,6 +20,7 @@
     "url": "https://github.com/microsoft/botbuilder-js.git"
   },
   "main": "lib/index.js",
+  "browser": "browser/index-browser.js",
   "typings": "lib/index.d.ts",
   "dependencies": {
     "@types/ws": "^6.0.3",
@@ -41,12 +42,12 @@
     "typescript": "3.5.3"
   },
   "scripts": {
-    "build": "tsc",
-    "clean": "erase /q /s .\\lib",
+    "build": "tsc -p tsconfig.json && tsc -p tsconfig-browser.json",
+    "clean": "erase /q /s .\\lib .\\browser",
     "eslint": "eslint  ./src/*.ts ./src/**/*.ts",
     "eslint-fix": "eslint  ./src/*.ts ./src/**/*.ts --fix",
     "set-version": "npm version --allow-same-version ${Version}",
-    "test": "tsc && nyc mocha tests/"
+    "test": "npm run build && nyc mocha tests/"
   },
   "files": [
     "/lib",
