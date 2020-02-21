@@ -26,7 +26,7 @@
     "@microsoft/recognizers-text-suite": "1.1.4",
     "@types/node": "^10.12.18",
     "botbuilder-core": "4.1.6",
-    "botframework-schema": "C:/Users/AshleyFinafrock/Desktop/botbuilder-js/libraries/botframework-schema",
+    "botframework-schema": "../botframework-schema",
     "globalize": "^1.4.2"
   },
   "devDependencies": {
