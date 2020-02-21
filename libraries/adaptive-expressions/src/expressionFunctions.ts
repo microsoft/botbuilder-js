@@ -817,7 +817,7 @@ export class ExpressionFunctions {
      * @param expression 
      * @param state 
      */
-    private static tryAccumulatePath(expression: Expression, state: MemoryInterface): {path: string; left: Expression; error: string} {
+    public static tryAccumulatePath(expression: Expression, state: MemoryInterface): {path: string; left: Expression; error: string} {
         let path = '';
         let left = expression;
         while (left !== undefined) {
@@ -833,11 +833,14 @@ export class ExpressionFunctions {
                     return {path: undefined, left: undefined, error};
                 }
 
-                if (isNaN(parseInt(value)) && typeof value !== 'string') {
+                if (ExpressionFunctions.isNumber(parseInt(value))) {
+                    path = `[${ value }].${ path }`;
+                } else if (typeof value === 'string'){
+                    path = `['${ value }'].${ path }`;
+                } else {
                     return {path: undefined, left: undefined, error:`${ left.children[1].toString() } dones't return a int or string`};
                 }
 
-                path = `[${ value }].${ path }`;
                 left = left.children[0];
             } else {
                 break;
