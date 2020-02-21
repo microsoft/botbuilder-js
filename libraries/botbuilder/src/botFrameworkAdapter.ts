@@ -279,7 +279,7 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
     public async continueConversation(reference: Partial<ConversationReference>, logic: (context: TurnContext) => Promise<void>): Promise<void>;
     public async continueConversation(...args): Promise<void> {
         let claimsIdentity, reference, logic;
-        if (args.length === 3) {
+        if (args.length >= 3) {
             claimsIdentity = args[0];
             reference = args[1];
             logic = args[2];
