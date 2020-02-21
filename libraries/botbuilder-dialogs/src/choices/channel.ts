@@ -6,7 +6,6 @@
  * Licensed under the MIT License.
  */
 import { TurnContext } from 'botbuilder-core';
-// import { Channels } from '../../../botframework-schema/lib/index';
 import { Channels } from 'botframework-schema';
 
 /**

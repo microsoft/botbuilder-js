@@ -1,7 +1,7 @@
 const assert = require('assert');
 const { ActionTypes, ActivityTypes, CardFactory, ConversationState, InputHints, MemoryStorage, TestAdapter, TurnContext } = require('botbuilder-core');
 const { OAuthPrompt, DialogSet, DialogTurnStatus, ListStyle } = require('../');
-const { Channels } = require('../../botframework-schema/lib/index');
+const { Channels } = require('botframework-schema');
 const { AuthConstants } = require('../lib/prompts/skillsHelpers');
 
 const beginMessage = { text: `begin`, type: 'message' };
