@@ -275,15 +275,28 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
      * });
      * ```
      */
-    public async continueConversation(reference: Partial<ConversationReference>, logic: (context: TurnContext) => Promise<void>): Promise<void> {
-        const request: Partial<Activity> = TurnContext.applyConversationReference(
+    public async continueConversation(claimsIdentity: ClaimsIdentity, reference: Partial<ConversationReference>, logic: (context: TurnContext) => Promise<void>): Promise<void>;
+    public async continueConversation(reference: Partial<ConversationReference>, logic: (context: TurnContext) => Promise<void>): Promise<void>;
+    public async continueConversation(...args): Promise<void> {
+        let claimsIdentity, reference, logic;
+        if (args.length === 3) {
+            claimsIdentity = args[0];
+            reference = args[1];
+            logic = args[2];
+        } else {
+            reference = args[0];
+            logic = args[1];
+        }
+        const request = TurnContext.applyConversationReference(
             { type: 'event', name: 'continueConversation' },
             reference,
             true
         );
-        const context: TurnContext = this.createContext(request);
-
-        await this.runMiddleware(context, logic as any);
+        const context = new TurnContext(this, request);
+        if (claimsIdentity) {
+            context.turnState.set(this.BotIdentityKey, claimsIdentity);
+        }
+        return this.runMiddleware(context, logic);
     }
 
     /**
