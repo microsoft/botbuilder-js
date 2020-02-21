@@ -1,4 +1,4 @@
-// Generated from ../Expression.g4 by ANTLR 4.6-SNAPSHOT
+// Generated from ../ExpressionParser.g4 by ANTLR 4.6-SNAPSHOT
 
 
 import { ParseTreeListener } from "antlr4ts/tree/ParseTreeListener";
@@ -8,6 +8,7 @@ import { ConstantAtomContext } from "./ExpressionParser";
 import { IdAtomContext } from "./ExpressionParser";
 import { StringAtomContext } from "./ExpressionParser";
 import { IndexAccessExpContext } from "./ExpressionParser";
+import { StringInterpolationAtomContext } from "./ExpressionParser";
 import { MemberAccessExpContext } from "./ExpressionParser";
 import { ParenthesisExpContext } from "./ExpressionParser";
 import { NumericAtomContext } from "./ExpressionParser";
@@ -17,6 +18,8 @@ import { PrimaryExpContext } from "./ExpressionParser";
 import { FileContext } from "./ExpressionParser";
 import { ExpressionContext } from "./ExpressionParser";
 import { PrimaryExpressionContext } from "./ExpressionParser";
+import { StringInterpolationContext } from "./ExpressionParser";
+import { TextContentContext } from "./ExpressionParser";
 import { ArgsListContext } from "./ExpressionParser";
 
 
@@ -24,7 +27,7 @@ import { ArgsListContext } from "./ExpressionParser";
  * This interface defines a complete listener for a parse tree produced by
  * `ExpressionParser`.
  */
-export interface ExpressionListener extends ParseTreeListener {
+export interface ExpressionParserListener extends ParseTreeListener {
 	/**
 	 * Enter a parse tree produced by the `funcInvokeExp`
 	 * labeled alternative in `ExpressionParser.primaryExpression`.
@@ -89,6 +92,19 @@ export interface ExpressionListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	exitIndexAccessExp?: (ctx: IndexAccessExpContext) => void;
+
+	/**
+	 * Enter a parse tree produced by the `stringInterpolationAtom`
+	 * labeled alternative in `ExpressionParser.primaryExpression`.
+	 * @param ctx the parse tree
+	 */
+	enterStringInterpolationAtom?: (ctx: StringInterpolationAtomContext) => void;
+	/**
+	 * Exit a parse tree produced by the `stringInterpolationAtom`
+	 * labeled alternative in `ExpressionParser.primaryExpression`.
+	 * @param ctx the parse tree
+	 */
+	exitStringInterpolationAtom?: (ctx: StringInterpolationAtomContext) => void;
 
 	/**
 	 * Enter a parse tree produced by the `memberAccessExp`
@@ -200,6 +216,28 @@ export interface ExpressionListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	exitPrimaryExpression?: (ctx: PrimaryExpressionContext) => void;
+
+	/**
+	 * Enter a parse tree produced by `ExpressionParser.stringInterpolation`.
+	 * @param ctx the parse tree
+	 */
+	enterStringInterpolation?: (ctx: StringInterpolationContext) => void;
+	/**
+	 * Exit a parse tree produced by `ExpressionParser.stringInterpolation`.
+	 * @param ctx the parse tree
+	 */
+	exitStringInterpolation?: (ctx: StringInterpolationContext) => void;
+
+	/**
+	 * Enter a parse tree produced by `ExpressionParser.textContent`.
+	 * @param ctx the parse tree
+	 */
+	enterTextContent?: (ctx: TextContentContext) => void;
+	/**
+	 * Exit a parse tree produced by `ExpressionParser.textContent`.
+	 * @param ctx the parse tree
+	 */
+	exitTextContent?: (ctx: TextContentContext) => void;
 
 	/**
 	 * Enter a parse tree produced by `ExpressionParser.argsList`.
