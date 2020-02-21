@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { BuiltInFunctions } from './builtInFunction';
+import { ExpressionFunctions } from './expressionFunctions';
 import { Constant } from './constant';
 import { ExpressionEvaluator, EvaluateExpressionDelegate } from './expressionEvaluator';
 import { ExpressionType } from './expressionType';
@@ -72,7 +72,7 @@ export class Expression {
      * @param children Child expressions.
      */
     public constructor(type: string, evaluator: ExpressionEvaluator, ...children: Expression[]) {
-        this.evaluator = evaluator === undefined ? BuiltInFunctions.lookup(type) : evaluator;
+        this.evaluator = evaluator === undefined ? ExpressionFunctions.lookup(type) : evaluator;
         this.children = children;
     }
 

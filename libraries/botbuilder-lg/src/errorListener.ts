@@ -6,12 +6,15 @@
  * Licensed under the MIT License.
  */
 import { ANTLRErrorListener, RecognitionException, Recognizer } from 'antlr4ts';
-import { Diagnostic } from './diagnostic';
+import { Diagnostic, DiagnosticSeverity } from './diagnostic';
 import { LGException } from './lgException';
 import { Position } from './position';
 import { Range } from './range';
 
 // tslint:disable-next-line: completed-docs
+/**
+ * LG parser error listener.
+ */
 export class ErrorListener implements ANTLRErrorListener<any> {
     private readonly source: string;
     public constructor(errorSource: string) {
@@ -35,7 +38,7 @@ export class ErrorListener implements ANTLRErrorListener<any> {
         if (this.source !== undefined && this.source !== '') {
             msg = `source: ${ this.source }, ${ msg }`;
         }
-        const diagnostic: Diagnostic = new Diagnostic(range, msg);
+        const diagnostic: Diagnostic = new Diagnostic(range, msg, DiagnosticSeverity.Error, this.source);
 
         throw new LGException(diagnostic.toString(), [diagnostic]);
     }
