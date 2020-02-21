@@ -2077,9 +2077,18 @@ export class ExpressionFunctions {
                 ExpressionFunctions.validateUnary),
             new ExpressionEvaluator(
                 ExpressionType.Concat,
-                ExpressionFunctions.apply((args: any []): string => ''.concat(...args.map((arg): string => ExpressionFunctions.parseStringOrNull(arg))), ExpressionFunctions.verifyStringOrNull),
+                ExpressionFunctions.apply((args: any []): string => {
+                    let result = '';
+                    for (const arg of args) {
+                        if (arg !== undefined && arg !== null) {
+                            result += arg.toString();
+                        }
+                    }
+
+                    return result;
+                }),
                 ReturnType.String,
-                ExpressionFunctions.validateString),
+                ExpressionFunctions.validateAtLeastOne),
             new ExpressionEvaluator(
                 ExpressionType.Length,
                 ExpressionFunctions.apply((args: any []): number => (ExpressionFunctions.parseStringOrNull(args[0])).length, ExpressionFunctions.verifyStringOrNull),
@@ -2936,7 +2945,7 @@ export class ExpressionFunctions {
         lookup.set('lessOrEquals', lookup.get(ExpressionType.LessThanOrEqual));
         lookup.set('not', lookup.get(ExpressionType.Not));
         lookup.set('or', lookup.get(ExpressionType.Or));
-        lookup.set('concat', lookup.get(ExpressionType.Concat));
+        lookup.set('&', lookup.get(ExpressionType.Concat));
 
         return lookup;
     }
