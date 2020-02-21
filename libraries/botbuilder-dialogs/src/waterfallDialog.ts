@@ -198,7 +198,7 @@ export class WaterfallDialog<O extends object = {}> extends Dialog<O> {
         return await this.steps[step.index](step);
     }
 
-    private async runStep(dc: DialogContext, index: number, reason: DialogReason, result?: any): Promise<DialogTurnResult> {
+    protected async runStep(dc: DialogContext, index: number, reason: DialogReason, result?: any): Promise<DialogTurnResult> {
         if (index < this.steps.length) {
             // Update persisted step index
             const state: WaterfallDialogState = dc.activeDialog.state as WaterfallDialogState;

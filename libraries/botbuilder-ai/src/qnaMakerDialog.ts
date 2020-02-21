@@ -6,10 +6,11 @@
  * Licensed under the MIT License.
  */
 import { Activity, ActivityTypes } from 'botbuilder-core';
-import { WaterfallDialog, Dialog, DialogTurnResult, DialogContext, WaterfallStepContext, DialogTurnStatus } from 'botbuilder-dialogs';
+import { WaterfallDialog, Dialog, DialogTurnResult, DialogContext, WaterfallStepContext, DialogTurnStatus, DialogReason } from 'botbuilder-dialogs';
 import { QnAMakerOptions } from './qnamaker-interfaces/qnamakerOptions';
 import { RankerTypes } from './qnamaker-interfaces/rankerTypes';
-import { QnAMaker } from './';
+import { QnAMaker, QnAMakerResult } from './';
+import { FeedbackRecord, FeedbackRecords } from './qnamaker-interfaces';
 
 export interface QnAMakerDialogResponseOptions {
     activeLearningCardTitle: string;
@@ -25,9 +26,17 @@ export interface QnAMakerDialogOptions {
 
 export class QnAMakerDialog extends WaterfallDialog {
     
-    private QnAContextData: string;
-    private PreviousQnAId: string;
-    private Options: string;
+    private QnAContextData: string = 'previousContextData';
+    private PreviousQnAId: string = 'previousQnAId';
+    private Options: string = 'options';
+    private QnAData: string = 'qnaData';
+    private CurrentQuery: string = 'currentQuery';
+
+    private DefaultCardTitle: string = "Did you mean:";
+    private DefaultCardNoMatchText: string = "None of the above.";
+    private DefaultCardNoMatchResponse: string = "Thanks for the feedback.";
+    private DefaultNoAnswer: string = "No QnAMaker answers found.";
+
     private maximumScoreForLowScoreVariation: number;
     private knowledgeBaseId: any;
     private hostName: any;
@@ -42,9 +51,6 @@ export class QnAMakerDialog extends WaterfallDialog {
 
     constructor(knowledgeBaseId, endpointKey, hostName, noAnswer = null, threshold = 0.3, activeLearningCardTitle = 'Did you mean:', cardNoMatchText = 'None of the above.', top = 3, cardNoMatchResponse = null, strictFilters = null, dialogId = 'QnAMakerDialog') {
         super(dialogId);
-        this.QnAContextData = 'qnaContextData';
-        this.PreviousQnAId = 'prevQnAId';
-        this.Options = 'options';
         this.maximumScoreForLowScoreVariation = 0.95;
         this.knowledgeBaseId = knowledgeBaseId;
         this.hostName = hostName;
@@ -57,10 +63,10 @@ export class QnAMakerDialog extends WaterfallDialog {
         this.noAnswer = noAnswer;
         this.cardNoMatchResponse = cardNoMatchResponse;
 
-        super.addStep(this.callGenerateAnswer.bind(this));
-        super.addStep(this.callTrain.bind(this));
-        super.addStep(this.checkForMultiTurnPrompt.bind(this));
-        super.addStep(this.displayQnAResult.bind(this));
+        this.addStep(this.callGenerateAnswer.bind(this));
+        this.addStep(this.callTrain.bind(this));
+        this.addStep(this.checkForMultiTurnPrompt.bind(this));
+        this.addStep(this.displayQnAResult.bind(this));
     }
 
     public async beginDialog(dc: DialogContext, options?: object): Promise<DialogTurnResult> {
@@ -71,18 +77,17 @@ export class QnAMakerDialog extends WaterfallDialog {
             return Dialog.EndOfTurn; 
         }
 
-        var dialogOptions;
-        dialogOptions.qnaDialogResponseOptions = await this.getQnAResponseOptions(dc);
-        dialogOptions.qnaMakerOptions = await this.getQnAMakerOptions(dc);
+        var dialogOptions: QnAMakerDialogOptions = {
+            qnaDialogResponseOptions: await this.getQnAResponseOptions(dc),
+            qnaMakerOptions: await this.getQnAMakerOptions(dc)
+        };
 
         if(options)
         {
             Object.assign(dialogOptions, options);
         }
 
-        dc.activeDialog.state.options = dialogOptions || {};
-
-        await super.beginDialog(dc);
+        return await super.beginDialog(dc, dialogOptions);
     }
 
     private async getQnAMakerOptions(dc: DialogContext): Promise<QnAMakerOptions> {
@@ -106,20 +111,20 @@ export class QnAMakerDialog extends WaterfallDialog {
     }
 
     private async callGenerateAnswer(step: WaterfallStepContext): Promise<DialogTurnResult> {
-        const dialogOptions = step.activeDialog.state.options;
+        const dialogOptions = step.activeDialog.state[this.Options];
         dialogOptions.qnaMakerOptions.qnaId = 0;
         dialogOptions.qnaMakerOptions.context = { previousQnAId: 0, previousUserQuery: '' };
 
-        step.values['currentQuery'] = step.context.activity.text;
+        step.values[this.CurrentQuery] = step.context.activity.text;
         var previousContextData: { [key: string]: number } = {};
         var previousQnAId = 0;
         
         if (step.activeDialog.state.previousQnAId) {
-            previousQnAId = step.activeDialog.state.previousQnAId;
+            previousQnAId = step.activeDialog.state[this.PreviousQnAId];
         }
         
         if (step.activeDialog.state.previousContextData) {
-            previousContextData = step.activeDialog.state.previousContextData;
+            previousContextData = step.activeDialog.state[this.QnAContextData];
         }
         
         if (previousQnAId > 0) {
@@ -140,10 +145,10 @@ export class QnAMakerDialog extends WaterfallDialog {
         };
 
         previousQnAId = -1;
-        step.activeDialog.state.previousQnAId = previousQnAId;
+        step.activeDialog.state[this.PreviousQnAId] = previousQnAId;
         const isActiveLearningEnabled = qnaResponse.activeLearningEnabled;
         
-        step.values['qnaData'] = response.answers;
+        step.values[this.QnAData] = response.answers;
         
         if (isActiveLearningEnabled && qnaResponse.answers.length > 0 && qnaResponse.answers[0].score <= this.maximumScoreForLowScoreVariation) {
             qnaResponse.answers = qna.getLowScoreVariation(qnaResponse.answers);
@@ -157,7 +162,7 @@ export class QnAMakerDialog extends WaterfallDialog {
                 
             //var message = QnACardBuilder
             await step.context.sendActivity('This is a placeholder until the cardholder is built');
-            step.activeDialog.state.options = dialogOptions;
+            step.activeDialog.state[this.Options] = dialogOptions;
             
             return { status: DialogTurnStatus.waiting, result: undefined };
         }
@@ -168,21 +173,140 @@ export class QnAMakerDialog extends WaterfallDialog {
             result.push(response.answers[0]);
         }
         
-        step.values['qnaData'] = result;
-        step.activeDialog.state.options = dialogOptions;
+        step.values[this.QnAData] = result;
+        step.activeDialog.state[this.Options] = dialogOptions;
         return await step.next(result);
     }
 
     private async callTrain(step: WaterfallStepContext): Promise<DialogTurnResult> {
-        return await Dialog.EndOfTurn;
+        const dialogOptions:QnAMakerDialogOptions = step.activeDialog.state[this.Options];
+        const trainResponses:QnAMakerResult[] = step.values[this.QnAData];
+        const currentQuery:string = step.values[this.CurrentQuery];
+
+        const reply = step.context.activity.text;
+
+        if(trainResponses.length > 1)
+        {
+            const qnaResult = trainResponses.filter(r => r.questions[0] == reply);
+
+            if(qnaResult)
+            {
+                var results: QnAMakerResult[];
+                results.push(qnaResult[0]);
+                step.values[this.QnAData] = results;
+
+                var records: FeedbackRecord[];
+                records.push({
+                    userId: step.context.activity.id,
+                    userQuestion: currentQuery,
+                    qnaId: qnaResult[0].id.toString()
+                });
+
+                var feedbackRecords: FeedbackRecords;
+                feedbackRecords.feedbackRecords = records;
+
+                var qnaClient = await this.getQnAClient();
+                await qnaClient.callTrainAsync(feedbackRecords);
+
+                return await step.next(qnaResult[0]);
+            } 
+            else if(reply == dialogOptions.qnaDialogResponseOptions.cardNoMatchText)
+            {
+                const activity = dialogOptions.qnaDialogResponseOptions.cardNoMatchResponse;
+                if(activity)
+                {
+                    await step.context.sendActivity(activity);
+                }
+                else
+                {
+                    await step.context.sendActivity(this.DefaultCardNoMatchResponse);
+                }
+
+                return step.endDialog();
+            }
+            else
+            {
+                return await super.runStep(step, 0, DialogReason.beginCalled);
+            }
+        }
+
+        return await step.next(step.result);
     }
 
     private async checkForMultiTurnPrompt(step: WaterfallStepContext): Promise<DialogTurnResult> {
-        return await Dialog.EndOfTurn;
+        const dialogOptions:QnAMakerDialogOptions = step.activeDialog.state[this.Options];
+
+        const response: QnAMakerResult[] = step.result;
+        if(response && response.length > 0)
+        {
+            const answer = response[0];
+
+            if(answer.context && answer.context.prompts.length > 0)
+            {
+                var previousContextData: { [key: string]: number } = {};
+
+                answer.context.prompts.forEach(prompt => {
+                    previousContextData[prompt.displayText] = prompt.qnaId;
+                });
+
+                step.activeDialog.state[this.QnAContextData] = previousContextData;
+                step.activeDialog.state[this.PreviousQnAId] = answer.id;
+                step.activeDialog.state[this.Options] = dialogOptions;
+
+                //const message = 
+                await step.context.sendActivity('This is a placeholder until the cardholder is built');
+
+                return { status: DialogTurnStatus.waiting, result: undefined };
+            }
+        }
+
+        return step.next(step.result);
     }
 
     private async displayQnAResult(step: WaterfallStepContext): Promise<DialogTurnResult> {
-        return await Dialog.EndOfTurn;
+        const dialogOptions:QnAMakerDialogOptions = step.activeDialog.state[this.Options];
+        const reply = step.context.activity.text;
+
+        if (reply == dialogOptions.qnaDialogResponseOptions.cardNoMatchText)
+        {
+            const activity = dialogOptions.qnaDialogResponseOptions.cardNoMatchResponse;
+            if(activity)
+            {
+                await step.context.sendActivity(activity);
+            }
+            else
+            {
+                await step.context.sendActivity(this.DefaultCardNoMatchResponse);
+            }
+
+            return step.endDialog();
+        }
+
+        const previousQnaId = step.activeDialog.state[this.PreviousQnAId];
+        if(previousQnaId > 0)
+        {
+            return await super.runStep(step, 0, DialogReason.beginCalled);
+        }
+
+        const response: QnAMakerResult[] = step.result;
+        if(response && response.length > 0)
+        {
+            await step.context.sendActivity(response[0].answer);
+        }
+        else
+        {
+            const activity = dialogOptions.qnaDialogResponseOptions.noAnswer;
+            if(activity)
+            {
+                await step.context.sendActivity(activity);
+            }
+            else
+            {
+                await step.context.sendActivity(this.DefaultNoAnswer);
+            }
+        }
+
+        return await step.endDialog(step.result);
     }
 
     private getQnAClient(): QnAMaker {
