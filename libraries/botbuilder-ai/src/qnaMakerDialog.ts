@@ -11,6 +11,7 @@ import { QnAMakerOptions } from './qnamaker-interfaces/qnamakerOptions';
 import { RankerTypes } from './qnamaker-interfaces/rankerTypes';
 import { QnAMaker, QnAMakerResult } from './';
 import { FeedbackRecord, FeedbackRecords } from './qnamaker-interfaces';
+import { QnACardBuilder } from './qnaCardBuilder';
 
 export interface QnAMakerDialogResponseOptions {
     activeLearningCardTitle: string;
@@ -111,7 +112,7 @@ export class QnAMakerDialog extends WaterfallDialog {
     }
 
     private async callGenerateAnswer(step: WaterfallStepContext): Promise<DialogTurnResult> {
-        const dialogOptions = step.activeDialog.state[this.Options];
+        const dialogOptions: QnAMakerDialogOptions = step.activeDialog.state[this.Options];
         dialogOptions.qnaMakerOptions.qnaId = 0;
         dialogOptions.qnaMakerOptions.context = { previousQnAId: 0, previousUserQuery: '' };
 
@@ -155,16 +156,19 @@ export class QnAMakerDialog extends WaterfallDialog {
             
             if (qnaResponse.answers && qnaResponse.answers.length > 1) {
                 var suggestedQuestions;
-                qnaResponse.answers.forEach(answer => {
-                        suggestedQuestions.push(answer.questions[0]);
-                });
-            }
                 
-            //var message = QnACardBuilder
-            await step.context.sendActivity('This is a placeholder until the cardholder is built');
-            step.activeDialog.state[this.Options] = dialogOptions;
+                qnaResponse.answers.forEach(answer => {
+                    suggestedQuestions.push(answer.questions[0]);
+                });
+
+                var cardBuilder = new QnACardBuilder();
+                var message = cardBuilder.GetSuggestionsCard(suggestedQuestions, dialogOptions.qnaDialogResponseOptions.activeLearningCardTitle, dialogOptions.qnaDialogResponseOptions.cardNoMatchText); 
+                await step.context.sendActivity(message);
+
+                step.activeDialog.state[this.Options] = dialogOptions;
             
-            return { status: DialogTurnStatus.waiting, result: undefined };
+                return { status: DialogTurnStatus.waiting, result: undefined };
+            }
         }
 
         const result = [];
@@ -253,8 +257,9 @@ export class QnAMakerDialog extends WaterfallDialog {
                 step.activeDialog.state[this.PreviousQnAId] = answer.id;
                 step.activeDialog.state[this.Options] = dialogOptions;
 
-                //const message = 
-                await step.context.sendActivity('This is a placeholder until the cardholder is built');
+                var cardBuilder = new QnACardBuilder();
+                var message = cardBuilder.getQnAPromptsCard(answer, dialogOptions.qnaDialogResponseOptions.cardNoMatchText) 
+                await step.context.sendActivity(message);
 
                 return { status: DialogTurnStatus.waiting, result: undefined };
             }
