@@ -7,6 +7,21 @@ const moment = require('moment');
 const one = ['one'];
 const oneTwo = ['one', 'two'];
 const dataSource = [
+
+    // string interpolation test
+    ['`hi`', 'hi'],
+    ['`hi\\``', 'hi`'],
+    ['`${world}`', 'world'],
+    ['`hi ${string(\'jack\\`\')}`', 'hi jack`'],
+    ['`\\${world}`', '${world}'],
+    ['length(`hello ${world}`)', 'hello world'.length],
+    ['json(`{"foo": "${hello}","item": "${world}"}`).foo', 'hello'],
+    ['`hello ${world}` == \'hello world\'', true],
+    ['`hello ${world}` != \'hello hello\'', true],
+    ['`hello ${user.nickname}` == \'hello John\'', true],
+    ['`hello ${user.nickname}` != \'hello Dong\'', true],
+
+
     // Operators tests
     ['1 + 2', 3],
     ['- 1 + 2', 1],
@@ -318,7 +333,7 @@ const dataSource = [
     ['formatDateTime(notISOTimestamp, \'ddd\')', 'Thu'],
     ['formatDateTime(notISOTimestamp, \'dddd\')', 'Thursday'],
     ['formatDateTime(\'2018-03-15T00:00:00.000Z\', \'yyyy\')', '2018'],
-    ['formatDateTime(\'2018-03-15T00:00:00.000Z\', \'yyyy-MM-dd-\\d\')', '2018-03-15-4'],
+    ['formatDateTime(\'2018-03-15T00:00:00.000Z\', \'yyyy-MM-dd-\\\\d\')', '2018-03-15-4'],
     ['formatDateTime(\'2018-03-15T00:00:00.010Z\', \'FFFF\')', '0100'],
     ['formatDateTime(\'2018-03-15T00:00:00.010Z\', \'FFFFFF\')', '010000'],
     ['formatDateTime(\'2018-03-15T00:00:00.010Z\', \'FFF\')', '010'],
@@ -482,8 +497,8 @@ const dataSource = [
     ['isMatch(\'abacaxc\', \'ab.??c\')', true], // "??" (lazy versions)
     ['isMatch(\'12abc34\', \'([0-9]+)([a-z]+)([0-9]+)\')', true], // "(...)" (simple group)
     ['isMatch(\'12abc\', \'([0-9]+)([a-z]+)([0-9]+)\')', false], // "(...)" (simple group)
-    [`isMatch('a', '\\w{1}')`, true], // "\w" (match [a-zA-Z0-9_])
-    [`isMatch('1', '\\d{1}')`, true], // "\d" (match [0-9])
+    ['isMatch("a", "\\\\w{1}")', true], // "\w" (match [a-zA-Z0-9_])
+    ['isMatch("1", "\\\\d{1}")', true], // "\d" (match [0-9])
 
     // Empty expression
     ['', ''],
@@ -546,6 +561,7 @@ const scope = {
     unixTimestamp: 1521118800,
     user: 
   {
+      nickname:'John',
       lists:
     {
         todo: ['todo1', 'todo2', 'todo3']

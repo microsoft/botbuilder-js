@@ -690,21 +690,21 @@ describe('LG', function() {
         var evaled = LGFile.evaluateTemplate('template', {list:[], obj: {}});
         assert.strictEqual(evaled, 'list and obj are both empty');
 
-        var evaled = LGFile.evaluateTemplate('template', {list:[], obj:new Map()});
+        evaled = LGFile.evaluateTemplate('template', {list:[], obj:new Map()});
         assert.strictEqual(evaled, 'list and obj are both empty');
 
-        var evaled = LGFile.evaluateTemplate('template', {list:['hi'], obj: {}});
+        evaled = LGFile.evaluateTemplate('template', {list:['hi'], obj: {}});
         assert.strictEqual(evaled, 'obj is empty');
 
-        var evaled = LGFile.evaluateTemplate('template', {list:[], obj: {a: 'a'}});
+        evaled = LGFile.evaluateTemplate('template', {list:[], obj: {a: 'a'}});
         assert.strictEqual(evaled, 'list is empty');
 
         const map = new Map();
         map.set('a', 'a');
-        var evaled = LGFile.evaluateTemplate('template', {list:[], obj: map});
+        evaled = LGFile.evaluateTemplate('template', {list:[], obj: map});
         assert.strictEqual(evaled, 'list is empty');
 
-        var evaled = LGFile.evaluateTemplate('template', {list:[{}], obj : {a : 'a'}});
+        evaled = LGFile.evaluateTemplate('template', {list:[{}], obj : {a : 'a'}});
         assert.strictEqual(evaled, 'list and obj are both not empty.');        
     });
 
@@ -714,10 +714,32 @@ describe('LG', function() {
         var evaled = LGFile.evaluateTemplate('template2', {templateName:'template1'});
         assert.strictEqual(evaled, 'template template1 exists');
 
-        var evaled = LGFile.evaluateTemplate('template2', {templateName:'wPhrase'});
+        evaled = LGFile.evaluateTemplate('template2', {templateName:'wPhrase'});
         assert.strictEqual(evaled, 'template wPhrase exists');
 
-        var evaled = LGFile.evaluateTemplate('template2', {templateName:'xxx'});
+        evaled = LGFile.evaluateTemplate('template2', {templateName:'xxx'});
         assert.strictEqual(evaled, 'template xxx does not exist'); 
+    });
+
+    it('TestStringInterpolation', function() {
+        var LGFile = LGParser.parseFile(GetExampleFilePath('StringInterpolation.lg'));
+
+        var evaled = LGFile.evaluateTemplate('simpleStringTemplate');
+        assert.strictEqual(evaled, 'say hi');
+
+        evaled = LGFile.evaluateTemplate('StringTemplateWithVariable', {w:'world'});
+        assert.strictEqual(evaled, 'hello world');
+
+        evaled = LGFile.evaluateTemplate('StringTemplateWithMixing', {name:'jack'});
+        assert.strictEqual(evaled, 'I know your name is jack'); 
+
+        evaled = LGFile.evaluateTemplate('StringTemplateWithJson', {h:'hello', w: 'world'});
+        assert.strictEqual(evaled, 'get \'h\' value : hello');
+
+        evaled = LGFile.evaluateTemplate('StringTemplateWithEscape');
+        assert.strictEqual(evaled, 'just want to output ${bala\`bala}'); 
+
+        evaled = LGFile.evaluateTemplate('StringTemplateWithTemplateRef');
+        assert.strictEqual(evaled, 'hello jack , welcome. nice weather!'); 
     });
 });

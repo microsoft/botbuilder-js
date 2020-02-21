@@ -1,4 +1,4 @@
-// Generated from ../Expression.g4 by ANTLR 4.6-SNAPSHOT
+// Generated from ../ExpressionParser.g4 by ANTLR 4.6-SNAPSHOT
 
 
 import { ParseTreeVisitor } from "antlr4ts/tree/ParseTreeVisitor";
@@ -8,6 +8,7 @@ import { ConstantAtomContext } from "./ExpressionParser";
 import { IdAtomContext } from "./ExpressionParser";
 import { StringAtomContext } from "./ExpressionParser";
 import { IndexAccessExpContext } from "./ExpressionParser";
+import { StringInterpolationAtomContext } from "./ExpressionParser";
 import { MemberAccessExpContext } from "./ExpressionParser";
 import { ParenthesisExpContext } from "./ExpressionParser";
 import { NumericAtomContext } from "./ExpressionParser";
@@ -17,6 +18,8 @@ import { PrimaryExpContext } from "./ExpressionParser";
 import { FileContext } from "./ExpressionParser";
 import { ExpressionContext } from "./ExpressionParser";
 import { PrimaryExpressionContext } from "./ExpressionParser";
+import { StringInterpolationContext } from "./ExpressionParser";
+import { TextContentContext } from "./ExpressionParser";
 import { ArgsListContext } from "./ExpressionParser";
 
 
@@ -27,7 +30,7 @@ import { ArgsListContext } from "./ExpressionParser";
  * @param <Result> The return type of the visit operation. Use `void` for
  * operations with no return type.
  */
-export interface ExpressionVisitor<Result> extends ParseTreeVisitor<Result> {
+export interface ExpressionParserVisitor<Result> extends ParseTreeVisitor<Result> {
 	/**
 	 * Visit a parse tree produced by the `funcInvokeExp`
 	 * labeled alternative in `ExpressionParser.primaryExpression`.
@@ -67,6 +70,14 @@ export interface ExpressionVisitor<Result> extends ParseTreeVisitor<Result> {
 	 * @return the visitor result
 	 */
 	visitIndexAccessExp?: (ctx: IndexAccessExpContext) => Result;
+
+	/**
+	 * Visit a parse tree produced by the `stringInterpolationAtom`
+	 * labeled alternative in `ExpressionParser.primaryExpression`.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	visitStringInterpolationAtom?: (ctx: StringInterpolationAtomContext) => Result;
 
 	/**
 	 * Visit a parse tree produced by the `memberAccessExp`
@@ -136,6 +147,20 @@ export interface ExpressionVisitor<Result> extends ParseTreeVisitor<Result> {
 	 * @return the visitor result
 	 */
 	visitPrimaryExpression?: (ctx: PrimaryExpressionContext) => Result;
+
+	/**
+	 * Visit a parse tree produced by `ExpressionParser.stringInterpolation`.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	visitStringInterpolation?: (ctx: StringInterpolationContext) => Result;
+
+	/**
+	 * Visit a parse tree produced by `ExpressionParser.textContent`.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	visitTextContent?: (ctx: TextContentContext) => Result;
 
 	/**
 	 * Visit a parse tree produced by `ExpressionParser.argsList`.
