@@ -25,13 +25,13 @@ describe(`LGExceptionTest`, function() {
         assert.strictEqual(DiagnosticSeverity.Error, diagnostics[1].severity);
         assert.strictEqual(diagnostics[1].message.includes(`if and elseif should followed by one valid expression`), true);
         assert.strictEqual(DiagnosticSeverity.Error, diagnostics[2].severity);
-        assert.strictEqual(diagnostics[2].message.includes(`condition can't have more than one if`), true);
+        assert.strictEqual(diagnostics[2].message.includes(`condition can not have more than one if`), true);
         assert.strictEqual(DiagnosticSeverity.Warning, diagnostics[3].severity);
         assert.strictEqual(diagnostics[3].message.includes(`condition is not end with else`), true);
         assert.strictEqual(DiagnosticSeverity.Error, diagnostics[4].severity);
         assert.strictEqual(diagnostics[4].message.includes(`else should not followed by any expression`), true);
         assert.strictEqual(DiagnosticSeverity.Error, diagnostics[5].severity);
-        assert.strictEqual(diagnostics[5].message.includes(`condition can't have more than one if`), true);
+        assert.strictEqual(diagnostics[5].message.includes(`condition can not have more than one if`), true);
         assert.strictEqual(DiagnosticSeverity.Error, diagnostics[6].severity);
         assert.strictEqual(diagnostics[6].message.includes(`only elseif is allowed in middle of condition`), true);
         assert.strictEqual(DiagnosticSeverity.Error, diagnostics[7].severity);
@@ -88,9 +88,9 @@ describe(`LGExceptionTest`, function() {
 
         assert.strictEqual(5, diagnostics.length);
         assert.strictEqual(DiagnosticSeverity.Error, diagnostics[0].severity);
-        assert.strictEqual(diagnostics[0].message.includes(`structured body format error`), true);
+        assert.strictEqual(diagnostics[0].message.includes(`Structured body format error`), true);
         assert.strictEqual(DiagnosticSeverity.Error, diagnostics[1].severity);
-        assert.strictEqual(diagnostics[1].message.includes(`Structured LG content is empty`), true);
+        assert.strictEqual(diagnostics[1].message.includes(`Structured content is empty`), true);
         assert.strictEqual(DiagnosticSeverity.Error, diagnostics[2].severity);
         assert.strictEqual(diagnostics[2].message.includes(`does not have an evaluator`), true);
         assert.strictEqual(DiagnosticSeverity.Error, diagnostics[3].severity);
@@ -166,7 +166,7 @@ describe(`LGExceptionTest`, function() {
         assert.strictEqual(DiagnosticSeverity.Error, diagnostics[0].severity);
         assert.strictEqual(diagnostics[0].message.includes(`At most 1 whitespace is allowed between SWITCH/CASE/DEFAULT and :.`), true);
         assert.strictEqual(DiagnosticSeverity.Error, diagnostics[1].severity);
-        assert.strictEqual(diagnostics[1].message.includes(`control flow cannot have more than one switch statement`), true);
+        assert.strictEqual(diagnostics[1].message.includes(`control flow can not have more than one switch statement`), true);
         assert.strictEqual(DiagnosticSeverity.Error, diagnostics[2].severity);
         assert.strictEqual(diagnostics[2].message.includes(`control flow is not starting with switch`), true);
         assert.strictEqual(DiagnosticSeverity.Warning, diagnostics[3].severity);

@@ -17,13 +17,13 @@ export class LGErrors
 
     public static readonly invalidTemplateBody = 'Invalid template body line, did you miss "-" at line begin';
 
-    public static readonly invalidStrucName = 'structured name format error.';
+    public static readonly invalidStrucName = 'Structured name format error.';
 
-    public static readonly missingStrucEnd = 'structured LG missing ending "]"';
+    public static readonly missingStrucEnd = 'Structured LG missing ending "]"';
 
     public static readonly emptyStrucContent = 'Structured content is empty';
 
-    public static readonly invalidStrucBody = 'structured body format error.';
+    public static readonly invalidStrucBody = 'Structured body format error.';
 
     public static readonly invalidWhitespaceInCondition = 'At most 1 whitespace is allowed between IF/ELSEIF/ELSE and :';
 

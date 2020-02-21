@@ -16,6 +16,7 @@ import { Expander } from './expander';
 import { Analyzer } from './analyzer';
 import { LGParser } from './lgParser';
 import { AnalyzerResult } from './analyzerResult';
+import { LGErrors } from './lgErrors';
 
 /// <summary>
 /// LG entrance, including properties that LG file has, and evaluate functions.
@@ -227,7 +228,7 @@ export class LGFile {
     public addTemplate(templateName: string, parameters: string[], templateBody: string): LGFile {
         const template: LGTemplate = this.templates.find((u: LGTemplate): boolean => u.name === templateName);
         if (template !== undefined) {
-            throw new Error(`template ${ templateName } already exists.`);
+            throw new Error(LGErrors.templateExist(templateName));
         }
 
         const templateNameLine: string = this.buildTemplateNameLine(templateName, parameters);

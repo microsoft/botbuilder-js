@@ -53,7 +53,7 @@ export class CustomizedMemory implements MemoryInterface {
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     public setValue(_path: string, _value: any): void {
-        return;
+        throw Error(`Method not implemented.`)
     }
 
     public  version(): string {

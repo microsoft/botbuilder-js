@@ -17,6 +17,7 @@ import { LGFileParserVisitor } from './generated/LGFileParserVisitor';
 import { LGTemplate } from './lgTemplate';
 import { LGExtensions } from './lgExtensions';
 import { CustomizedMemory } from './customizedMemory';
+import { LGErrors } from './lgErrors';
 
 // tslint:disable-next-line: max-classes-per-file
 // tslint:disable-next-line: completed-docs
@@ -55,11 +56,11 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGFi
      */
     public expandTemplate(templateName: string, scope: any): string[] {
         if (!(templateName in this.templateMap)) {
-            throw new Error(`No such template: ${ templateName }`);
+            throw new Error(LGErrors.templateNotExist(templateName));
         }
 
         if (this.evalutationTargetStack.find((u: EvaluationTarget): boolean => u.templateName === templateName)) {
-            throw new Error(`Loop detected: ${ this.evalutationTargetStack.reverse()
+            throw new Error(`${ LGErrors.loopDetected } ${ this.evalutationTargetStack.reverse()
                 .map((u: EvaluationTarget): string => u.templateName)
                 .join(' => ') }`);
         }
@@ -350,10 +351,10 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGFi
 
         const { value: result, error }: { value: any; error: string } = this.evalByExpressionEngine(exp, this.currentTarget().scope);
         if (error) {
-            throw new Error(`Error occurs when evaluating expression ${ exp }: ${ error }`);
+            throw new Error(LGErrors.errorExpression(exp, error));
         }
         if (result === undefined) {
-            throw new Error(`Error occurs when evaluating expression '${ exp }': ${ exp } is evaluated to null`);
+            throw new Error(LGErrors.nullExpression(exp));
         }
 
         if (Array.isArray(result)) {
@@ -421,14 +422,14 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGFi
         const templateName: string = expression.type;
 
         if (!this.templateMap[templateName]) {
-            throw new Error(`no such template '${ templateName }' to call in ${ expression }`);
+            throw new Error(LGErrors.templateNotExist(templateName));
         }
 
         const expectedArgsCount: number = this.templateMap[templateName].parameters.length;
         const actualArgsCount: number = expression.children.length;
 
         if (expectedArgsCount !== actualArgsCount) {
-            throw new Error(`arguments mismatch for template ${ templateName }, expect ${ expectedArgsCount } actual ${ actualArgsCount }`);
+            throw new Error(LGErrors.argumentMismatch(templateName, expectedArgsCount, actualArgsCount));
         }
     }
 
