@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
 /* eslint-disable @typescript-eslint/no-var-requires */
-const { ExpressionEngine, Extensions } = require('../');
+const { ExpressionEngine, Extensions, SimpleObjectMemory, ExpressionFunctions } = require('../');
 const assert = require('assert');
 const moment = require('moment');
 
@@ -644,6 +644,43 @@ describe('expression functional test', () => {
                 }
             }
         }
+    });
+
+    it('Test AccumulatePath', () => {
+        const scope = {
+            f: 'foo',
+            b: 'bar',
+            z: {
+                z: 'zar'
+            },
+            n: 2
+        };
+        const memory = new SimpleObjectMemory(scope);
+        let parser = new ExpressionEngine();
+        
+        // normal case, note, we doesn't append a " yet
+        let exp = parser.parse('a[f].b[n].z');
+        let path = undefined;
+        let left = undefined;
+        let error = undefined;
+        ({path, left, error} = ExpressionFunctions.tryAccumulatePath(exp, memory));
+        assert.strictEqual(path, 'a[\'foo\'].b[2].z');
+
+        // normal case
+        exp = parser.parse('a[z.z][z.z].y');
+        ({path, left, error} = ExpressionFunctions.tryAccumulatePath(exp, memory));
+        assert.strictEqual(path, 'a[\'zar\'][\'zar\'].y');
+
+        // normal case
+        exp = parser.parse('a.b[z.z]');
+        ({path, left, error} = ExpressionFunctions.tryAccumulatePath(exp, memory));
+        assert.strictEqual(path, 'a.b[\'zar\']');
+        
+        // stop evaluate at middle
+        exp = parser.parse('json(x).b');
+        ({path, left, error} = ExpressionFunctions.tryAccumulatePath(exp, memory));
+        assert.strictEqual(path, 'b');
+        
     });
 });
 

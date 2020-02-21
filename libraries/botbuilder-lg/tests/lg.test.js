@@ -742,4 +742,33 @@ describe('LG', function() {
         evaled = LGFile.evaluateTemplate('StringTemplateWithTemplateRef');
         assert.strictEqual(evaled, 'hello jack , welcome. nice weather!'); 
     });
+
+    it('TestMemoryAccessPath', function() {
+        var LGFile = LGParser.parseFile(GetExampleFilePath('MemoryAccess.lg'));
+
+        const scope = {
+            myProperty: {
+                name: 'p1'
+            },
+            turn: {
+                properties: {
+                    p1: {
+                        enum: 'p1enum'
+                    }
+                }
+            }
+        };
+
+        // this evaulate will hit memory access twice
+        // first for "property", and get "p1", from local
+        // sencond for "turn.property[p1].enum" and get "p1enum" from global
+        var evaled = LGFile.evaluateTemplate('T1', scope);
+        assert.strictEqual(evaled, 'p1enum');
+
+        // this evaulate will hit memory access twice
+        // first for "myProperty.name", and get "p1", from global
+        // sencond for "turn.property[p1].enum" and get "p1enum" from global 
+        evaled = LGFile.evaluateTemplate('T3', scope);
+        assert.strictEqual(evaled, 'p1enum');
+    });
 });
