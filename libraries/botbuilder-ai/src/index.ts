@@ -12,5 +12,6 @@ export * from './geographyV2';
 export * from './instanceData';
 export * from './intentData';
 export * from './numberWithUnits';
-export * from './qnamaker-interfaces/index'
+export * from './qnamaker-interfaces/index';
+export * from './qnaMakerDialog';
 export * from './ordinalV2';
