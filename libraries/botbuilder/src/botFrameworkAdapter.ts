@@ -143,7 +143,6 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
     // These keys are public to permit access to the keys from the adapter when it's a being
     // from library that does not have access to static properties off of BotFrameworkAdapter.
     // E.g. botbuilder-dialogs
-    public readonly BotIdentityKey: Symbol = Symbol('BotIdentity');
     public readonly ConnectorClientKey: Symbol = Symbol('ConnectorClient');
 
     protected readonly credentials: AppCredentials;
