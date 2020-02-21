@@ -89,6 +89,11 @@ export class ShowTypingMiddleware implements Middleware {
             if (hTimeout) { clearTimeout(hTimeout); }
         }
 
+        function stopIntervalWithError(err: Error): void {
+            stopInterval();
+            throw err;
+        }
+
         if (context.activity.type === ActivityTypes.Message) {
             // Set a property to track whether or not the turn is finished.
             // When it flips to true, we won't send anymore typing indicators.
@@ -98,7 +103,7 @@ export class ShowTypingMiddleware implements Middleware {
 
         // Let the rest of the process run.
         // After everything has run, stop the indicator!
-        return await next().then(stopInterval, stopInterval);
+        return await next().then(stopInterval, stopIntervalWithError);
 
     }
     private async sendTypingActivity(context: TurnContext): Promise<void> {
