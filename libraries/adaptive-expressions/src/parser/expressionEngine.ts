@@ -8,14 +8,14 @@
  */
 import { ANTLRInputStream, CommonTokenStream } from 'antlr4ts';
 // tslint:disable-next-line: no-submodule-imports
-import { AbstractParseTreeVisitor, ParseTree } from 'antlr4ts/tree';
-import { BuiltInFunctions } from '../builtInFunction';
+import { AbstractParseTreeVisitor, ParseTree, TerminalNode } from 'antlr4ts/tree';
+import { ExpressionFunctions } from '../expressionFunctions';
 import { Constant } from '../constant';
 import { Expression } from '../expression';
 import { EvaluatorLookup } from '../expressionEvaluator';
 import { ExpressionParserInterface } from '../expressionParser';
 import { ExpressionType } from '../expressionType';
-import { ExpressionLexer, ExpressionParser, ExpressionVisitor } from './generated';
+import { ExpressionLexer, ExpressionParser, ExpressionParserVisitor } from './generated';
 import * as ep from './generated/ExpressionParser';
 import { ParseErrorListener } from './parseErrorListener';
 import { Util } from './util';
@@ -24,10 +24,13 @@ import { Util } from './util';
  * Parser to turn strings into Expression
  */
 export class ExpressionEngine implements ExpressionParserInterface {
+    /**
+     * The elegate to lookup function information from the type.
+     */
     public readonly EvaluatorLookup: EvaluatorLookup;
 
     // tslint:disable-next-line: typedef
-    private readonly ExpressionTransformer = class extends AbstractParseTreeVisitor<Expression> implements ExpressionVisitor<Expression> {
+    private readonly ExpressionTransformer = class extends AbstractParseTreeVisitor<Expression> implements ExpressionParserVisitor<Expression> {
 
         private readonly _lookup: EvaluatorLookup = undefined;
         public constructor(lookup: EvaluatorLookup) {
@@ -117,6 +120,35 @@ export class ExpressionEngine implements ExpressionParserInterface {
             }
         }
 
+        public visitStringInterpolationAtom(context: ep.StringInterpolationAtomContext): Expression {
+            let children: Expression[] = [];
+
+            for (const node  of context.stringInterpolation().children) {
+                if (node instanceof TerminalNode){
+                    switch((node as TerminalNode).symbol.type) {
+                        case ep.ExpressionParser.TEMPLATE:
+                            const expressionString = this.trimExpression(node.text);
+                            children.push(new ExpressionEngine(this._lookup).parse(expressionString));
+                            break;
+                        case ep.ExpressionParser.TEXT_CONTENT:
+                            children.push(new Constant(node.text));
+                            break;
+                        case ep.ExpressionParser.ESCAPE_CHARACTER:
+                            children.push(new Constant(Util.unescape(node.text)));
+                            break;
+                        default:
+                            break;
+                    }
+                } else {
+                    children.push(new Constant(node.text));
+                }
+                
+            }
+
+            return this.MakeExpression(ExpressionType.Concat, ...children);
+
+        }
+
         public visitConstantAtom(context: ep.ConstantAtomContext): Expression {
             let text: string = context.text;
             if (text.startsWith('[') && text.endsWith(']')) {
@@ -151,10 +183,27 @@ export class ExpressionEngine implements ExpressionParserInterface {
 
             return result;
         }
+
+        private trimExpression(expression: string): string {
+            let result = expression.trim();
+            if (result.startsWith('$')) {
+                result = result.substr(1);
+            }
+    
+            result = result.trim();
+            
+            if (result.startsWith('{') && result.endsWith('}')) {
+                result = result.substr(1, result.length - 2);
+            }
+    
+            return result.trim();
+        }
+
+        
     };
 
     public constructor(lookup?: EvaluatorLookup) {
-        this.EvaluatorLookup = lookup === undefined ? BuiltInFunctions.lookup : lookup;
+        this.EvaluatorLookup = lookup === undefined ? ExpressionFunctions.lookup : lookup;
     }
 
     protected static antlrParse(expression: string): ParseTree {
@@ -174,6 +223,11 @@ export class ExpressionEngine implements ExpressionParserInterface {
         return undefined;
     }
 
+    /**
+     * Parse the input into an expression.
+     * @param expression Expression to parse.
+     * @returns Expression tree.
+     */
     public parse(expression: string): Expression {
 
         if (expression === undefined || expression === null || expression === '') {

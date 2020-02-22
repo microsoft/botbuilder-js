@@ -8,20 +8,30 @@
  */
 // tslint:disable-next-line: no-submodule-imports
 import { AbstractParseTreeVisitor, TerminalNode } from 'antlr4ts/tree';
-import { BuiltInFunctions, EvaluatorLookup, Expression, ExpressionEngine, ExpressionEvaluator, ReturnType } from 'adaptive-expressions';
+import { ExpressionFunctions, EvaluatorLookup, Expression, ExpressionEngine, ExpressionEvaluator, ReturnType, SimpleObjectMemory } from 'adaptive-expressions';
 import { keyBy } from 'lodash';
-import { v4 as uuid } from 'uuid';
 import { EvaluationTarget } from './evaluationTarget';
 import { Evaluator } from './evaluator';
 import * as lp from './generated/LGFileParser';
 import { LGFileParserVisitor } from './generated/LGFileParserVisitor';
 import { LGTemplate } from './lgTemplate';
 import { LGExtensions } from './lgExtensions';
+import { CustomizedMemory } from './customizedMemory';
 
 // tslint:disable-next-line: max-classes-per-file
 // tslint:disable-next-line: completed-docs
+/**
+ * LG template expander.
+ */
 export class Expander extends AbstractParseTreeVisitor<string[]> implements LGFileParserVisitor<string[]> {
+    /**
+     * Templates.
+     */
     public readonly templates: LGTemplate[];
+
+    /**
+     * TemplateMap.
+     */
     public readonly templateMap: {[name: string]: LGTemplate};
     private readonly evalutationTargetStack: EvaluationTarget[] = [];
     private readonly expanderExpressionEngine: ExpressionEngine;
@@ -37,16 +47,27 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGFi
         this.evaluatorExpressionEngine = new ExpressionEngine(this.customizedEvaluatorLookup(expressionEngine.EvaluatorLookup, false));
     }
 
+    /**
+     * Expand the results of a template with given name and scope.
+     * @param templateName Given template name.
+     * @param scope Given scope.
+     * @returns All possiable results.
+     */
     public expandTemplate(templateName: string, scope: any): string[] {
         if (!(templateName in this.templateMap)) {
             throw new Error(`No such template: ${ templateName }`);
         }
 
         if (this.evalutationTargetStack.find((u: EvaluationTarget): boolean => u.templateName === templateName)) {
-            throw new Error(`Loop deteced: ${ this.evalutationTargetStack.reverse()
+            throw new Error(`Loop detected: ${ this.evalutationTargetStack.reverse()
                 .map((u: EvaluationTarget): string => u.templateName)
                 .join(' => ') }`);
         }
+
+        if(!(scope instanceof CustomizedMemory)) {
+            scope = new CustomizedMemory(SimpleObjectMemory.wrap(scope));
+        }
+        
         // Using a stack to track the evalution trace
         this.evalutationTargetStack.push(new EvaluationTarget(templateName, scope));
         const result: string[] = this.visit(this.templateMap[templateName].parseTree);
@@ -371,9 +392,9 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGFi
 
         if (this.templateMap[name]) {
             if (isExpander) {
-                return new ExpressionEvaluator(name, BuiltInFunctions.apply(this.templateExpander(name)), ReturnType.String, this.validTemplateReference);
+                return new ExpressionEvaluator(name, ExpressionFunctions.apply(this.templateExpander(name)), ReturnType.String, this.validTemplateReference);
             } else {
-                return new ExpressionEvaluator(name, BuiltInFunctions.apply(this.templateEvaluator(name)), ReturnType.String, this.validTemplateReference);
+                return new ExpressionEvaluator(name, ExpressionFunctions.apply(this.templateEvaluator(name)), ReturnType.String, this.validTemplateReference);
             }
         }
 

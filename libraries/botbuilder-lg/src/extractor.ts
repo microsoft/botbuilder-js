@@ -14,6 +14,9 @@ import { LGFileParserVisitor } from './generated/LGFileParserVisitor';
 import { LGTemplate } from './lgTemplate';
 
 // tslint:disable-next-line: completed-docs
+/**
+ * Lg template extracter.
+ */
 export class Extractor extends AbstractParseTreeVisitor<Map<string, any>> implements LGFileParserVisitor<Map<string, any>> {
     public readonly templates: LGTemplate[];
     public readonly templateMap: {[name: string]: LGTemplate};
