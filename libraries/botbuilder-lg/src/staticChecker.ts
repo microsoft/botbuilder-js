@@ -93,7 +93,7 @@ class StaticCheckerInner extends AbstractParseTreeVisitor<Diagnostic[]> implemen
                 this.visitedTemplateNames.push(templateName);
                 for (const reference of this.lgFile.references)
                 {
-                    var sameTemplates = reference.templates.filter(u => u.name == templateName);
+                    var sameTemplates = reference.templates.filter(u => u.name === templateName);
                     for(const sameTemplate of sameTemplates)
                     {
                         result.push(this.buildLGDiagnostic({message: LGErrors.duplicatedTemplateInDiffTemplate(sameTemplate.name, sameTemplate.source), context: templateNameLine}));
@@ -106,7 +106,7 @@ class StaticCheckerInner extends AbstractParseTreeVisitor<Diagnostic[]> implemen
                 }
                 else
                 {
-                    if (context.templateBody() == null)
+                    if (context.templateBody())
                     {
                         result.push(this.buildLGDiagnostic({message: LGErrors.noTemplateBody(templateName), severity: DiagnosticSeverity.Warning, context: context.templateNameLine()}));
                     }
@@ -128,7 +128,7 @@ class StaticCheckerInner extends AbstractParseTreeVisitor<Diagnostic[]> implemen
 
             if (errorTemplateStr) {
                 result.push(this.buildLGDiagnostic({
-                    message: `Invalid template body line, did you miss '-' at line begin`,
+                    message: LGErrors.invalidTemplateBody,
                     context: errorTemplateStr}));
             } else {
                 result = result.concat(this.visit(templateStr));
@@ -150,7 +150,7 @@ class StaticCheckerInner extends AbstractParseTreeVisitor<Diagnostic[]> implemen
         }
 
         const bodys = context.structuredBodyContentLine();
-        if (bodys === null || bodys.length === 0) {
+        if (!bodys || bodys.length === 0) {
             result.push(this.buildLGDiagnostic({message: LGErrors.emptyStrucContent, context: context}));
         } else {
             for (const body of bodys) {

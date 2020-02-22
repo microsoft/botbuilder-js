@@ -25,9 +25,9 @@ export class CustomizedMemory implements MemoryInterface {
      */
     public localMemory: MemoryInterface;
 
-    public constructor(scope?: any) {
+    public constructor(scope?: any, localMemory: MemoryInterface = undefined) {
         this.globalMemory = !scope ? undefined : SimpleObjectMemory.wrap(scope);
-        this.localMemory = undefined;
+        this.localMemory = localMemory;
     }
 
     /**
@@ -53,7 +53,7 @@ export class CustomizedMemory implements MemoryInterface {
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     public setValue(_path: string, _value: any): void {
-        throw Error(`Method not implemented.`)
+        return;
     }
 
     public  version(): string {

@@ -8,6 +8,7 @@
  */
 // tslint:disable-next-line: no-submodule-imports
 import { AbstractParseTreeVisitor, TerminalNode } from 'antlr4ts/tree';
+import { ParserRuleContext } from 'antlr4ts/ParserRuleContext';
 import { ExpressionFunctions, EvaluatorLookup, Expression, ExpressionEngine, ExpressionEvaluator, ReturnType, SimpleObjectMemory } from 'adaptive-expressions';
 import { keyBy } from 'lodash';
 import { EvaluationTarget } from './evaluationTarget';
@@ -34,14 +35,16 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGFi
      * TemplateMap.
      */
     public readonly templateMap: {[name: string]: LGTemplate};
-    private readonly evalutationTargetStack: EvaluationTarget[] = [];
+    private readonly evaluationTargetStack: EvaluationTarget[] = [];
     private readonly expanderExpressionEngine: ExpressionEngine;
     private readonly evaluatorExpressionEngine: ExpressionEngine;
+    private readonly strictMode: boolean;
 
-    public constructor(templates: LGTemplate[], expressionEngine: ExpressionEngine) {
+    public constructor(templates: LGTemplate[], expressionEngine: ExpressionEngine, strictMode: boolean = false) {
         super();
         this.templates = templates;
         this.templateMap = keyBy(templates, (t: LGTemplate): string => t.name);
+        this.strictMode = strictMode;
 
         // generate a new customzied expression engine by injecting the template as functions
         this.expanderExpressionEngine = new ExpressionEngine(this.customizedEvaluatorLookup(expressionEngine.EvaluatorLookup, true));
@@ -59,8 +62,8 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGFi
             throw new Error(LGErrors.templateNotExist(templateName));
         }
 
-        if (this.evalutationTargetStack.find((u: EvaluationTarget): boolean => u.templateName === templateName)) {
-            throw new Error(`${ LGErrors.loopDetected } ${ this.evalutationTargetStack.reverse()
+        if (this.evaluationTargetStack.find((u: EvaluationTarget): boolean => u.templateName === templateName)) {
+            throw new Error(`${ LGErrors.loopDetected } ${ this.evaluationTargetStack.reverse()
                 .map((u: EvaluationTarget): string => u.templateName)
                 .join(' => ') }`);
         }
@@ -70,9 +73,9 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGFi
         }
         
         // Using a stack to track the evalution trace
-        this.evalutationTargetStack.push(new EvaluationTarget(templateName, scope));
+        this.evaluationTargetStack.push(new EvaluationTarget(templateName, scope));
         const result: string[] = this.visit(this.templateMap[templateName].parseTree);
-        this.evalutationTargetStack.pop();
+        this.evaluationTargetStack.pop();
 
         return result;
     }
@@ -141,7 +144,7 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGFi
                 }
             } else {
                 const propertyObjects: object[] = [];
-                this.evalExpression(body.objectStructureLine().text).forEach(x => propertyObjects.push(JSON.parse(x)));
+                this.evalExpression(body.objectStructureLine().text, body.objectStructureLine()).forEach(x => propertyObjects.push(JSON.parse(x)));
                 const tempResult = [];
                 for (const res of expandedResult) {
                     for (const propertyObject of propertyObjects) {
@@ -187,7 +190,7 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGFi
         let result: any[] = [];
         for (const item of values) {
             if (Evaluator.isPureExpression(item).hasExpr) {
-                result.push(this.evalExpression(Evaluator.isPureExpression(item).expression));
+                result.push(this.evalExpression(Evaluator.isPureExpression(item).expression, ctx));
             } else {
                 let itemStringResult = [''];
                 for (const node of item.children) {
@@ -196,7 +199,8 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGFi
                             itemStringResult = this.stringArrayConcat(itemStringResult, [this.evalEscape(node.text)]);
                             break;
                         case (lp.LGFileParser.EXPRESSION_IN_STRUCTURE_BODY):
-                            itemStringResult = this.stringArrayConcat(itemStringResult, this.evalExpression(node.text));
+                            const errorPrefix = `Property '` + ctx.STRUCTURE_IDENTIFIER().text + `':`;
+                            itemStringResult =this.stringArrayConcat(itemStringResult, this.evalExpression(node.text, ctx, errorPrefix));
                             break;
                         default:
                             itemStringResult = this.stringArrayConcat(itemStringResult, [node.text]);
@@ -216,7 +220,8 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGFi
         const length: number = switchcaseNodes.length;
         const switchNode: lp.SwitchCaseRuleContext = switchcaseNodes[0];
         const switchExprs: TerminalNode[] = switchNode.switchCaseStat().EXPRESSION();
-        const switchExprResult: string[] = this.evalExpression(switchExprs[0].text);
+        const switchErrorPrefix = `Switch '` + switchExprs[0].text + `': `;
+        const switchExprResult = this.evalExpression(switchExprs[0].text, switchcaseNodes[0].switchCaseStat(), switchErrorPrefix);
         let idx = 0;
         for (const caseNode of switchcaseNodes) {
             if (idx === 0) {
@@ -234,7 +239,8 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGFi
             }
 
             const caseExprs: TerminalNode[] = caseNode.switchCaseStat().EXPRESSION();
-            const caseExprResult: string[] = this.evalExpression(caseExprs[0].text);
+            const caseErrorPrefix = `Case '` + caseExprs[0].text + `': `;
+            var caseExprResult = this.evalExpression(caseExprs[0].text, caseNode.switchCaseStat(), caseErrorPrefix);
             //condition: check whether two string array have same elements
             if (switchExprResult.sort().toString() === caseExprResult.sort().toString()) {
                 return this.visit(caseNode.normalTemplateBody());
@@ -247,6 +253,7 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGFi
     }
 
     public visitNormalTemplateString(ctx: lp.NormalTemplateStringContext): string[] {
+        var prefixErrorMsg = LGExtensions.getPrefixErrorMessage(ctx);
         let result: string[] = [''];
         for (const node of ctx.children) {
             const innerNode: TerminalNode =  node as TerminalNode;
@@ -259,7 +266,7 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGFi
                     result = this.stringArrayConcat(result, [this.evalEscape(innerNode.text)]);
                     break;
                 case lp.LGFileParser.EXPRESSION: {
-                    result = this.stringArrayConcat(result, this.evalExpression(innerNode.text));
+                    result = this.stringArrayConcat(result, this.evalExpression(innerNode.text, ctx, prefixErrorMsg));
                     break;
                 }
                 default: {
@@ -295,7 +302,7 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGFi
     }
 
     private currentTarget(): EvaluationTarget {
-        return this.evalutationTargetStack[this.evalutationTargetStack.length - 1];
+        return this.evaluationTargetStack[this.evaluationTargetStack.length - 1];
     }
 
     private evalEscape(exp: string): string {
@@ -316,52 +323,99 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGFi
     }
 
     private evalCondition(condition: lp.IfConditionContext): boolean {
-        const expressions: TerminalNode[] = condition.EXPRESSION();
-        if (!expressions || expressions.length === 0) {
+        const expression: TerminalNode = condition.EXPRESSION()[0];
+        if (!expression) {
             return true;    // no expression means it's else
         }
 
-        if (this.evalExpressionInCondition(expressions[0].text)) {
+        if (this.evalExpressionInCondition(expression.text, condition, `Condition '` + expression.text + `':`)) {
             return true;
         }
 
         return false;
     }
 
-    private evalExpressionInCondition(exp: string): boolean {
-        try {
-            exp = LGExtensions.trimExpression(exp);
+    private evalExpressionInCondition(exp: string, context: ParserRuleContext = undefined, errorPrefix: string = ''): boolean {
+        exp = LGExtensions.trimExpression(exp);
+        let result: any;
+        let error: string;
+        ({value: result, error: error} = this.evalByExpressionEngine(exp, this.currentTarget().scope));
 
-            const { value: result, error }: { value: any; error: string } = this.evalByExpressionEngine(exp, this.currentTarget().scope);
-            if (error
-                || result === undefined
-                || typeof result === 'boolean' && !Boolean(result)
-                || Number.isInteger(result) && Number(result) === 0) {
-                return false;
+        if (this.strictMode && (error || !result))
+        {
+            let errorMsg = '';
+
+            let childErrorMsg = '';
+            if (error)
+            {
+                childErrorMsg += error;
+            }
+            else if (!result)
+            {
+                childErrorMsg += LGErrors.nullExpression(exp);
             }
 
-            return true;
-        } catch (error) {
+            if (context != null)
+            {
+                errorMsg += LGErrors.errorExpression(context.text, this.currentTarget().templateName, errorPrefix);
+            }
+
+            if (this.evaluationTargetStack.length > 0)
+            {
+                this.evaluationTargetStack.pop();
+            }
+
+            throw new Error(childErrorMsg + errorMsg);
+        } else if (error || !result)
+        {
             return false;
         }
+
+        return true;
     }
 
-    private evalExpression(exp: string): string[] {
+    private evalExpression(exp: string, context: ParserRuleContext, errorPrefix: string = ''): string[] {
         exp = LGExtensions.trimExpression(exp);
+        let result: any;
+        let error: string;
+        ({value: result, error: error} = this.evalByExpressionEngine(exp, this.currentTarget().scope));
 
-        const { value: result, error }: { value: any; error: string } = this.evalByExpressionEngine(exp, this.currentTarget().scope);
-        if (error) {
-            throw new Error(LGErrors.errorExpression(exp, error));
-        }
-        if (result === undefined) {
-            throw new Error(LGErrors.nullExpression(exp));
+        if (error || (!result && this.strictMode))
+        {
+            let errorMsg = '';
+
+            let childErrorMsg = '';
+            if (error)
+            {
+                childErrorMsg += error;
+            }
+            else if (!result)
+            {
+                childErrorMsg += LGErrors.nullExpression(exp);
+            }
+
+            if (context != null)
+            {
+                errorMsg += LGErrors.errorExpression(context.text, this.currentTarget().templateName, errorPrefix);
+            }
+
+            if (this.evaluationTargetStack.length > 0)
+            {
+                this.evaluationTargetStack.pop();
+            }
+
+            throw new Error(childErrorMsg + errorMsg);
+        } else if (!result && !this.strictMode)
+        {
+            result = `null`;
         }
 
-        if (Array.isArray(result)) {
-            return result;
-        } else {
-            return [result.toString()];
+        if (Array.isArray(result))
+        {
+            return result.map(u => u.toString());
         }
+
+        return [ result.ToString() ];
     }
 
     private evalByExpressionEngine(exp: string, scope: any): any {

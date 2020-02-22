@@ -7,7 +7,7 @@
  */
 
 import * as path from 'path';
-
+import * as lp from './generated/LGFileParser';
 /**
  * Extension methods for LG.
  */
@@ -51,5 +51,54 @@ export class LGExtensions {
             // map windows sep -> linux/mac
             return path.normalize(ambiguousPath.replace(/\\/g, '/'));
         }
+    }
+
+    /// <summary>
+    /// Get prefix error message from normal template sting context.
+    /// </summary>
+    /// <param name="context">normal template sting context.</param>
+    /// <returns>prefix error message.</returns>
+    public static getPrefixErrorMessage(context: lp.NormalTemplateStringContext): string
+    {
+        let errorPrefix = '';
+        if(context.parent &&  context.parent.parent && context.parent.parent.parent){
+            if (context.parent.parent.parent instanceof lp.IfConditionRuleContext) {
+                const conditionContext = context.parent.parent.parent;
+                let tempMsg = '';
+                if (conditionContext.ifCondition() && conditionContext.ifCondition().EXPRESSION(0)) {
+                    tempMsg = conditionContext.ifCondition().EXPRESSION(0).text;
+                }
+                errorPrefix = `Condition '` + tempMsg + `': `;
+            } else {
+                if (context.parent.parent.parent instanceof lp.SwitchCaseRuleContext )
+                {
+                    const switchCaseContext = context.parent.parent.parent;
+                    var state = switchCaseContext.switchCaseStat();
+                    if (state && state.DEFAULT())
+                    {
+                        errorPrefix = `Case 'Default':`;
+                    }
+                    else if (state && state.SWITCH())
+                    {
+                        let tempMsg = '';
+                        if (state.EXPRESSION(0)) {
+                            tempMsg = state.EXPRESSION(0).text;
+                        }
+                        errorPrefix = `Switch '${ tempMsg } ':`;
+                    }
+                    else if (state && state.CASE())
+                    {
+                        let tempMsg = '';
+                        if (state.EXPRESSION(0)) {
+                            tempMsg = state.EXPRESSION(0).text;
+                        }
+                        errorPrefix = `Case '${ tempMsg }':`;
+                    }
+                }
+            }
+        }
+        
+
+        return errorPrefix;
     }
 }
