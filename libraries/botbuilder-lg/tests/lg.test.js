@@ -776,6 +776,6 @@ describe('LG', function() {
         var LGFile = LGParser.parseFile(GetExampleFilePath('ReExecute.lg'));
 
         // may be has different values
-        var evaled = LGFile.evaluateTemplate('templateWithSameParams', {param1:'ms', param2:'newms'});
+        LGFile.evaluateTemplate('templateWithSameParams', {param1:'ms', param2:'newms'});
     });
 });
