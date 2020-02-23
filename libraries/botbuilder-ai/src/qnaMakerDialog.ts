@@ -10,49 +10,90 @@ import { WaterfallDialog, Dialog, DialogTurnResult, DialogContext, WaterfallStep
 import { QnAMakerOptions } from './qnamaker-interfaces/qnamakerOptions';
 import { RankerTypes } from './qnamaker-interfaces/rankerTypes';
 import { QnAMaker, QnAMakerResult } from './';
-import { FeedbackRecord, FeedbackRecords } from './qnamaker-interfaces';
+import { FeedbackRecord, FeedbackRecords, QnAMakerMetadata } from './qnamaker-interfaces';
 import { QnACardBuilder } from './qnaCardBuilder';
 
+/**
+ * QnAMakerDialog response options.
+ */
 export interface QnAMakerDialogResponseOptions {
+    /**
+    * Title for active learning card.
+    */
     activeLearningCardTitle: string;
+    /**
+    * Text shown for 'no match' option on active learning card.
+    */
     cardNoMatchText: string;
+    /**
+    * Activity to be sent in the event of no answer found in KB.
+    */
     noAnswer: Activity;
+    /**
+    * Activity to be sent in the end that the 'no match' option is selected on active learning card.
+    */
     cardNoMatchResponse: Activity;
 }
 
+/**
+ * Options for QnAMakerDialog.
+ */
 export interface QnAMakerDialogOptions {
+    /**
+    * Options for QnAMaker knowledgebase.
+    */
     qnaMakerOptions: QnAMakerOptions;
+    /**
+    * QnAMakerDialog response options.
+    */
     qnaDialogResponseOptions: QnAMakerDialogResponseOptions;
 }
 
+/**
+ * Query QnAMaker knowledgebase using user utterance. The dialog will also present user with appropriate multi-turn prompt or active learning options.
+ */
 export class QnAMakerDialog extends WaterfallDialog {
     
-    private QnAContextData: string = 'previousContextData';
-    private PreviousQnAId: string = 'previousQnAId';
-    private Options: string = 'options';
-    private QnAData: string = 'qnaData';
-    private CurrentQuery: string = 'currentQuery';
+    // state and step value key constants
+    private qnAContextData: string = 'previousContextData';
+    private previousQnAId: string = 'previousQnAId';
+    private options: string = 'options';
+    private qnAData: string = 'qnaData';
+    private currentQuery: string = 'currentQuery';
 
-    private DefaultCardTitle: string = "Did you mean:";
-    private DefaultCardNoMatchText: string = "None of the above.";
-    private DefaultCardNoMatchResponse: string = "Thanks for the feedback.";
-    private DefaultNoAnswer: string = "No QnAMaker answers found.";
+    // Dialog options parameters
+    private defaultCardNoMatchResponse: string = "Thanks for the feedback.";
+    private defaultNoAnswer: string = "No QnAMaker answers found.";
+    private maximumScoreForLowScoreVariation: number = 0.95;
 
-    private maximumScoreForLowScoreVariation: number;
     private knowledgeBaseId: any;
     private hostName: any;
     private endpointKey: any;
     private threshold: number;
     private top: number;
+    private noAnswer: Activity;
     private activeLearningCardTitle: string;
     private cardNoMatchText: string;
     private strintFilters: any;
-    private noAnswer: any;
-    private cardNoMatchResponse: any;
+    private cardNoMatchResponse: Activity;
 
-    constructor(knowledgeBaseId, endpointKey, hostName, noAnswer = null, threshold = 0.3, activeLearningCardTitle = 'Did you mean:', cardNoMatchText = 'None of the above.', top = 3, cardNoMatchResponse = null, strictFilters = null, dialogId = 'QnAMakerDialog') {
+    /**
+     * Creates a new QnAMakerDialog instance.
+     * @param knowledgeBaseId The Id of the QnAMaker knowledgebase to be queried.
+     * @param endpointKey The endpoint key to use when querying the knowledgebase.
+     * @param hostName Hostname to be used to form the QnAMaker host URL, which follows the following format https://{hostName}.azurewebsites.net/qnamaker
+     * @param noAnswer (Optional) Activity to be sent in the event no answer is found within the knowledgebase.
+     * @param threshold (Optional) The threshold above which to treat answers found from the knowledgebase as a match.
+     * @param activeLearningCardTitle (Optional) Title of the card displayed showing active learning options if active learning is enabled.
+     * @param cardNoMatchText (Optional) Text to be show on a button alongside active learning options, allowing a user to indicate none of the options are applicable.
+     * @param top (Optional) Maximum number of answers to return from the knowledgebase.
+     * @param cardNoMatchResponse (Optional) Activity to be sent if the user selects the no match option on an active learning card.
+     * @param strictFilters (Optional) QnAMakerMetadata collection used to filter / boost queries to the knowledgebase.
+     * @param dialogId (Optional) Id of the created dialog. Default is 'QnAMakerDialog'.
+     */
+    constructor(knowledgeBaseId, endpointKey, hostName, noAnswer = null, threshold = 0.3, activeLearningCardTitle = 'Did you mean:', cardNoMatchText = 'None of the above.', top = 3, cardNoMatchResponse: Activity = null, strictFilters: QnAMakerMetadata[] = null, dialogId = 'QnAMakerDialog') {
         super(dialogId);
-        this.maximumScoreForLowScoreVariation = 0.95;
+
         this.knowledgeBaseId = knowledgeBaseId;
         this.hostName = hostName;
         this.endpointKey = endpointKey;
@@ -78,9 +119,9 @@ export class QnAMakerDialog extends WaterfallDialog {
             return Dialog.EndOfTurn; 
         }
 
-        var dialogOptions: QnAMakerDialogOptions = {
-            qnaDialogResponseOptions: await this.getQnAResponseOptions(dc),
-            qnaMakerOptions: await this.getQnAMakerOptions(dc)
+        const dialogOptions: QnAMakerDialogOptions = {
+            qnaDialogResponseOptions: await this.getQnAResponseOptions(),
+            qnaMakerOptions: await this.getQnAMakerOptions()
         };
 
         if(options)
@@ -91,7 +132,10 @@ export class QnAMakerDialog extends WaterfallDialog {
         return await super.beginDialog(dc, dialogOptions);
     }
 
-    private async getQnAMakerOptions(dc: DialogContext): Promise<QnAMakerOptions> {
+    /**
+     * Returns a new instance of QnAMakerOptions.
+    **/
+    private async getQnAMakerOptions(): Promise<QnAMakerOptions> {
         return {
             scoreThreshold: this.threshold,
             strictFilters: this.strintFilters,
@@ -102,7 +146,10 @@ export class QnAMakerDialog extends WaterfallDialog {
         };
     };
     
-    private async getQnAResponseOptions(dc: DialogContext): Promise<QnAMakerDialogResponseOptions> {
+    /**
+     * Returns a new instance of QnAMakerResponseOptions.
+    **/
+    private async getQnAResponseOptions(): Promise<QnAMakerDialogResponseOptions> {
         return {
             activeLearningCardTitle: this.activeLearningCardTitle,
             cardNoMatchResponse: this.cardNoMatchResponse,
@@ -111,22 +158,18 @@ export class QnAMakerDialog extends WaterfallDialog {
         };
     }
 
+    /**
+     * Queries the knowledgebase and either passes result to the next step or constructs and displays an active learning card
+     * if active learning is enabled and multiple score close answers are returned.
+    **/
     private async callGenerateAnswer(step: WaterfallStepContext): Promise<DialogTurnResult> {
-        const dialogOptions: QnAMakerDialogOptions = step.activeDialog.state[this.Options];
+        const dialogOptions: QnAMakerDialogOptions = step.activeDialog.state[this.options];
         dialogOptions.qnaMakerOptions.qnaId = 0;
         dialogOptions.qnaMakerOptions.context = { previousQnAId: 0, previousUserQuery: '' };
 
-        step.values[this.CurrentQuery] = step.context.activity.text;
-        var previousContextData: { [key: string]: number } = {};
-        var previousQnAId = 0;
-        
-        if (step.activeDialog.state.previousQnAId) {
-            previousQnAId = step.activeDialog.state[this.PreviousQnAId];
-        }
-        
-        if (step.activeDialog.state.previousContextData) {
-            previousContextData = step.activeDialog.state[this.QnAContextData];
-        }
+        step.values[this.currentQuery] = step.context.activity.text;
+        const previousContextData: { [key: string]: number } = step.activeDialog.state[this.qnAContextData] ? step.activeDialog.state[this.qnAContextData] : {};
+        var previousQnAId = step.activeDialog.state[this.previousQnAId] ? step.activeDialog.state[this.previousQnAId] : 0;
         
         if (previousQnAId > 0) {
             dialogOptions.qnaMakerOptions.context = { previousQnAId: previousQnAId, previousUserQuery: '' };
@@ -146,86 +189,80 @@ export class QnAMakerDialog extends WaterfallDialog {
         };
 
         previousQnAId = -1;
-        step.activeDialog.state[this.PreviousQnAId] = previousQnAId;
+        step.activeDialog.state[this.previousQnAId] = previousQnAId;
         const isActiveLearningEnabled = qnaResponse.activeLearningEnabled;
         
-        step.values[this.QnAData] = response.answers;
+        step.values[this.qnAData] = response.answers;
         
         if (isActiveLearningEnabled && qnaResponse.answers.length > 0 && qnaResponse.answers[0].score <= this.maximumScoreForLowScoreVariation) {
             qnaResponse.answers = qna.getLowScoreVariation(qnaResponse.answers);
             
             if (qnaResponse.answers && qnaResponse.answers.length > 1) {
-                var suggestedQuestions;
+                var suggestedQuestions: string[] = [];
                 
                 qnaResponse.answers.forEach(answer => {
                     suggestedQuestions.push(answer.questions[0]);
                 });
 
-                var cardBuilder = new QnACardBuilder();
-                var message = cardBuilder.GetSuggestionsCard(suggestedQuestions, dialogOptions.qnaDialogResponseOptions.activeLearningCardTitle, dialogOptions.qnaDialogResponseOptions.cardNoMatchText); 
+                var message = new QnACardBuilder().GetSuggestionsCard(suggestedQuestions, dialogOptions.qnaDialogResponseOptions.activeLearningCardTitle, dialogOptions.qnaDialogResponseOptions.cardNoMatchText); 
                 await step.context.sendActivity(message);
 
-                step.activeDialog.state[this.Options] = dialogOptions;
+                step.activeDialog.state[this.options] = dialogOptions;
             
                 return { status: DialogTurnStatus.waiting, result: undefined };
             }
         }
 
-        const result = [];
+        const result: QnAMakerResult[] = [];
         
         if (response.answers && response.answers.length > 0) {
             result.push(response.answers[0]);
         }
         
-        step.values[this.QnAData] = result;
-        step.activeDialog.state[this.Options] = dialogOptions;
+        step.values[this.qnAData] = result;
+        step.activeDialog.state[this.options] = dialogOptions;
         return await step.next(result);
     }
 
+    /**
+     * If active learning options were displayed in the previous step and the user has selected an option other
+     * than 'no match' then the training API is called, passing the user's chosen question back to the knowledgebase.
+     * If no active learning options were displayed in the previous step, the incoming result is immediately passed to the next step.
+    **/
     private async callTrain(step: WaterfallStepContext): Promise<DialogTurnResult> {
-        const dialogOptions:QnAMakerDialogOptions = step.activeDialog.state[this.Options];
-        const trainResponses:QnAMakerResult[] = step.values[this.QnAData];
-        const currentQuery:string = step.values[this.CurrentQuery];
+        const dialogOptions: QnAMakerDialogOptions = step.activeDialog.state[this.options];
+        const trainResponses: QnAMakerResult[] = step.values[this.qnAData];
+        const currentQuery: string = step.values[this.currentQuery];
 
         const reply = step.context.activity.text;
 
-        if(trainResponses.length > 1)
+        if(trainResponses && trainResponses.length > 1)
         {
             const qnaResult = trainResponses.filter(r => r.questions[0] == reply);
 
-            if(qnaResult)
+            if(qnaResult && qnaResult.length > 0)
             {
-                var results: QnAMakerResult[];
+                var results: QnAMakerResult[] = [];
                 results.push(qnaResult[0]);
-                step.values[this.QnAData] = results;
+                step.values[this.qnAData] = results;
 
-                var records: FeedbackRecord[];
+                var records: FeedbackRecord[] = [];
                 records.push({
                     userId: step.context.activity.id,
                     userQuestion: currentQuery,
                     qnaId: qnaResult[0].id.toString()
                 });
 
-                var feedbackRecords: FeedbackRecords;
-                feedbackRecords.feedbackRecords = records;
+                var feedbackRecords: FeedbackRecords = { feedbackRecords: records };
 
-                var qnaClient = await this.getQnAClient();
-                await qnaClient.callTrainAsync(feedbackRecords);
+                await this.getQnAClient().callTrainAsync(feedbackRecords);
 
-                return await step.next(qnaResult[0]);
+                return await step.next(qnaResult);
             } 
             else if(reply == dialogOptions.qnaDialogResponseOptions.cardNoMatchText)
             {
                 const activity = dialogOptions.qnaDialogResponseOptions.cardNoMatchResponse;
-                if(activity)
-                {
-                    await step.context.sendActivity(activity);
-                }
-                else
-                {
-                    await step.context.sendActivity(this.DefaultCardNoMatchResponse);
-                }
-
+                await step.context.sendActivity(activity ? activity : this.defaultCardNoMatchResponse);
                 return step.endDialog();
             }
             else
@@ -237,10 +274,15 @@ export class QnAMakerDialog extends WaterfallDialog {
         return await step.next(step.result);
     }
 
+    /**
+     * If multi turn prompts are included with the answer returned from the knowledgebase, this step constructs
+     * and sends an activity with a hero card displaying the answer and the multi turn prompt options.
+     * If no multi turn prompts exist then the result incoming result is passed to the next step.
+    **/
     private async checkForMultiTurnPrompt(step: WaterfallStepContext): Promise<DialogTurnResult> {
-        const dialogOptions:QnAMakerDialogOptions = step.activeDialog.state[this.Options];
-
+        const dialogOptions: QnAMakerDialogOptions = step.activeDialog.state[this.options];
         const response: QnAMakerResult[] = step.result;
+
         if(response && response.length > 0)
         {
             const answer = response[0];
@@ -253,12 +295,11 @@ export class QnAMakerDialog extends WaterfallDialog {
                     previousContextData[prompt.displayText] = prompt.qnaId;
                 });
 
-                step.activeDialog.state[this.QnAContextData] = previousContextData;
-                step.activeDialog.state[this.PreviousQnAId] = answer.id;
-                step.activeDialog.state[this.Options] = dialogOptions;
+                step.activeDialog.state[this.qnAContextData] = previousContextData;
+                step.activeDialog.state[this.previousQnAId] = answer.id;
+                step.activeDialog.state[this.options] = dialogOptions;
 
-                var cardBuilder = new QnACardBuilder();
-                var message = cardBuilder.getQnAPromptsCard(answer, dialogOptions.qnaDialogResponseOptions.cardNoMatchText) 
+                var message = new QnACardBuilder().getQnAPromptsCard(answer); 
                 await step.context.sendActivity(message);
 
                 return { status: DialogTurnStatus.waiting, result: undefined };
@@ -268,26 +309,23 @@ export class QnAMakerDialog extends WaterfallDialog {
         return step.next(step.result);
     }
 
+    /**
+     * Displays an appropriate response based on the incoming result to the user.If an answer has been identified it 
+     * is sent to the user. Alternatively, if no answer has been identified or the user has indicated 'no match' on an
+     * active learning card, then an appropriate message is sent to the user.
+    **/
     private async displayQnAResult(step: WaterfallStepContext): Promise<DialogTurnResult> {
-        const dialogOptions:QnAMakerDialogOptions = step.activeDialog.state[this.Options];
+        const dialogOptions:QnAMakerDialogOptions = step.activeDialog.state[this.options];
         const reply = step.context.activity.text;
 
         if (reply == dialogOptions.qnaDialogResponseOptions.cardNoMatchText)
         {
             const activity = dialogOptions.qnaDialogResponseOptions.cardNoMatchResponse;
-            if(activity)
-            {
-                await step.context.sendActivity(activity);
-            }
-            else
-            {
-                await step.context.sendActivity(this.DefaultCardNoMatchResponse);
-            }
-
+            await step.context.sendActivity(activity ? activity : this.defaultCardNoMatchResponse);
             return step.endDialog();
         }
 
-        const previousQnaId = step.activeDialog.state[this.PreviousQnAId];
+        const previousQnaId = step.activeDialog.state[this.previousQnAId];
         if(previousQnaId > 0)
         {
             return await super.runStep(step, 0, DialogReason.beginCalled);
@@ -301,19 +339,15 @@ export class QnAMakerDialog extends WaterfallDialog {
         else
         {
             const activity = dialogOptions.qnaDialogResponseOptions.noAnswer;
-            if(activity)
-            {
-                await step.context.sendActivity(activity);
-            }
-            else
-            {
-                await step.context.sendActivity(this.DefaultNoAnswer);
-            }
+            await step.context.sendActivity(activity ? activity : this.defaultNoAnswer);
         }
 
         return await step.endDialog(step.result);
     }
 
+    /**
+     * Creates and returns an instance of the QnAMaker class used to query the knowledgebase.
+    **/
     private getQnAClient(): QnAMaker {
         const endpoint = {
             knowledgeBaseId: this.knowledgeBaseId,

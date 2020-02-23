@@ -1,7 +1,24 @@
+/**
+ * @module botbuilder-ai
+ */
+/**
+ * Copyright (c) Microsoft Corporation. All rights reserved.
+ * Licensed under the MIT License.
+ */
 import { Activity, MessageFactory, CardAction, CardFactory } from 'botbuilder-core';
 import { QnAMakerResult } from './';
 
+/**
+ * Provides methods to create activities containing hero cards for showing active learning or multi-turn prompt options for the QnAMakerDialog.
+ */
 export class QnACardBuilder {
+
+    /**
+     * Returns an activity with a hero card attachment, containing buttons for active learning suggestions.
+     * @param suggestionsList List of suggestions to be displayed on hero card.
+     * @param cardTitle Title of the hero card.
+     * @param cardNoMatchText Text for button to be added to card to allow user to select 'no match'.
+     */
     public GetSuggestionsCard(suggestionsList: string[], cardTitle: string, cardNoMatchText: string): Partial<Activity> {
         if (!suggestionsList) { throw new Error('Missing suggestionsList'); }
 
@@ -25,16 +42,18 @@ export class QnACardBuilder {
             title: cardNoMatchText
         });
 
-        const plCard = CardFactory.heroCard('', null, buttonList);
-        const message = MessageFactory.attachment(plCard, cardTitle);
+        const promptsCard = CardFactory.heroCard('', null, buttonList);
+        const message = MessageFactory.attachment(promptsCard, cardTitle);
 
         return message;
     }
 
-    public getQnAPromptsCard(result: QnAMakerResult, cardNoMatchText: string): Partial<Activity> {
+    /**
+     * Returns an activity with answer text and a hero card attachment, containing buttons for multi turn prompts.
+     * @param result QnAMaker result containing the answer text and multi turn prompts to be displayed.
+     */
+    public getQnAPromptsCard(result: QnAMakerResult): Partial<Activity> {
         if (!result) { throw new Error('Missing QnAMaker result'); }
-
-        if (!cardNoMatchText) { throw new Error('Missing cardNoMatchText'); }
 
         var buttonList: CardAction[] = [];
 
@@ -46,8 +65,8 @@ export class QnACardBuilder {
             });
         });
 
-        const plCard = CardFactory.heroCard('', null, buttonList);
-        const message = MessageFactory.attachment(plCard, '');
+        const promptsCard = CardFactory.heroCard('', null, buttonList);
+        const message = MessageFactory.attachment(promptsCard, result.answer);
 
         return message;
     }
