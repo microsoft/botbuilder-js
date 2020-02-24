@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 
-export * from './browserWebSocket';
-export * from './webSocketClient';
-export * from './webSocketServer';
-export * from './webSocketTransport';
+export { BrowserWebSocket } from './browserWebSocket';
+export { WebSocketClient } from './webSocketClient';
+export { WebSocketServer } from './webSocketServer';
+export { WebSocketTransport } from './webSocketTransport';
