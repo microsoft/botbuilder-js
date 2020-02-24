@@ -51,6 +51,7 @@
   },
   "files": [
     "/lib",
-    "/src"
+    "/src",
+    "/browser"
   ]
 }
