@@ -33,13 +33,18 @@ export declare type ImportResolverDelegate = (source: string, resourceId: string
  */
 export class LGParser {
 
+    /// <summary>
+    /// option regex.
+    /// </summary>
+    private static readonly optionRegex: RegExp = new RegExp(/^> *!#(.*)$/);
+
     /**
     * parse a file and return LG file.
     * @param filePath LG absolute file path..
     * @param importResolver resolver to resolve LG import id to template text.
     * @returns new lg file.
     */
-    public static parseFile(filePath: string, importResolver: ImportResolverDelegate): LGFile {
+    public static parseFile(filePath: string, importResolver: ImportResolverDelegate = undefined): LGFile {
         const fullPath = LGExtensions.normalizePath(filePath);
         const content = fs.readFileSync(fullPath, 'utf-8');
 
@@ -53,7 +58,7 @@ export class LGParser {
      * @param importResolver resolver to resolve LG import id to template text.
      * @returns entity.
      */
-    public static parseText(content: string, id: string = '', importResolver: ImportResolverDelegate = null): LGFile {
+    public static parseText(content: string, id: string = '', importResolver: ImportResolverDelegate = undefined): LGFile {
         importResolver = importResolver? importResolver : LGParser.defaultFileResolver;
         let lgFile = new LGFile();
         lgFile.content = content;
@@ -64,6 +69,7 @@ export class LGParser {
             const parsedResult = LGParser.antlrParse(content, id);
             lgFile.templates = parsedResult.templates;
             lgFile.imports = parsedResult.imports;
+            lgFile.options = parsedResult.options;
             diagnostics = diagnostics.concat(parsedResult.invalidTemplateErrors);
             lgFile.references = this.getReferences(lgFile, importResolver);
             const semanticErrors = new StaticChecker(lgFile).check();
@@ -106,8 +112,10 @@ export class LGParser {
             const templates = antlrResult.templates;
             const imports = antlrResult.imports; 
             const invalidTemplateErrors = antlrResult.invalidTemplateErrors;
+            const options = antlrResult.options;
             newLgFile.templates = templates;
             newLgFile.imports = imports;
+            newLgFile.options = options;
             diagnostics = diagnostics.concat(invalidTemplateErrors);
 
             newLgFile.references = this.getReferences(newLgFile, newLgFile.importResolver)
@@ -145,13 +153,13 @@ export class LGParser {
         return { content, id: importPath };
     }
 
-    private static antlrParse(text: string, id: string = ''): { templates: LGTemplate[]; imports: LGImport[]; invalidTemplateErrors: Diagnostic[]} {
+    private static antlrParse(text: string, id: string = ''): { templates: LGTemplate[]; imports: LGImport[]; invalidTemplateErrors: Diagnostic[]; options: string[]} {
         const fileContext: FileContext = this.getFileContentContext(text, id);
         const templates: LGTemplate[] = this.extractLGTemplates(fileContext, text, id);
         const imports: LGImport[] = this.extractLGImports(fileContext, id);
         const invalidTemplateErrors: Diagnostic[] = this.getInvalidTemplateErrors(fileContext, id);
-
-        return { templates, imports, invalidTemplateErrors};
+        const options: string[] = this.extractLGOptions(fileContext);
+        return { templates, imports, invalidTemplateErrors, options};
     }
 
     private static getReferences(file: LGFile, importResolver: ImportResolverDelegate): LGFile[] {
@@ -197,6 +205,37 @@ export class LGParser {
         const startPosition: Position = context === undefined?  new Position(0, 0) : new Position(context.start.line, context.start.charPositionInLine);
         const endPosition: Position = context === undefined?  new Position(0, 0) : new Position(context.stop.line, context.stop.charPositionInLine + context.stop.text.length);
         return new Diagnostic(new Range(startPosition, endPosition), message, DiagnosticSeverity.Error, source);
+    }
+
+    /**
+    * Extract LG options from the parse tree of a file.
+    * @param file LG file context from ANTLR parser. 
+    * @returns a string list of options
+    */
+    private static extractLGOptions(file: FileContext): string[] {
+        return  !file ? [] :
+            file.paragraph()
+                .map(x => x.optionsDefinition())
+                .filter(x => x !== undefined)
+                .map(t => this.extractOption(t.text))
+                .filter(t => t !== undefined && t !== '');
+    }
+
+    private static extractOption(originalText): string
+    {
+        let result = '';
+        if (!originalText)
+        {
+            return result;
+        }
+
+        var matchResult = originalText.match(this.optionRegex);
+        if (matchResult && matchResult.length === 2)
+        {
+            result = matchResult[1];
+        }
+
+        return result;
     }
 
     private static getInvalidTemplateErrors(fileContext: FileContext, id: string): Diagnostic[] {

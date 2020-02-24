@@ -59,10 +59,7 @@ class StaticCheckerInner extends AbstractParseTreeVisitor<Diagnostic[]> implemen
 
         if (this.lgFile.allTemplates.length === 0)
         {
-            result.push(this.buildLGDiagnostic({
-                message: LGErrors.noTemplate,
-                severity: DiagnosticSeverity.Warning
-            }));
+            result.push(this.buildLGDiagnostic(LGErrors.noTemplate, DiagnosticSeverity.Warning, undefined, false));
 
             return result;
         }
@@ -76,9 +73,9 @@ class StaticCheckerInner extends AbstractParseTreeVisitor<Diagnostic[]> implemen
         var result = [];
         var templateNameLine = context.templateNameLine();
         var errorTemplateName = templateNameLine.errorTemplateName();
-        if (errorTemplateName != null)
+        if (errorTemplateName)
         {
-            result.push(this.buildLGDiagnostic({message: LGErrors.invalidTemplateName, context: errorTemplateName}));
+            result.push(this.buildLGDiagnostic(LGErrors.invalidTemplateName, undefined, errorTemplateName, false));
         }
         else
         {
@@ -86,7 +83,7 @@ class StaticCheckerInner extends AbstractParseTreeVisitor<Diagnostic[]> implemen
 
             if (this.visitedTemplateNames.includes(templateName))
             {
-                result.push(this.buildLGDiagnostic({message: LGErrors.duplicatedTemplateInSameTemplate(templateName), context: templateNameLine}));
+                result.push(this.buildLGDiagnostic(LGErrors.duplicatedTemplateInSameTemplate(templateName),undefined, templateNameLine));
             }
             else
             {
@@ -96,7 +93,7 @@ class StaticCheckerInner extends AbstractParseTreeVisitor<Diagnostic[]> implemen
                     var sameTemplates = reference.templates.filter(u => u.name === templateName);
                     for(const sameTemplate of sameTemplates)
                     {
-                        result.push(this.buildLGDiagnostic({message: LGErrors.duplicatedTemplateInDiffTemplate(sameTemplate.name, sameTemplate.source), context: templateNameLine}));
+                        result.push(this.buildLGDiagnostic( LGErrors.duplicatedTemplateInDiffTemplate(sameTemplate.name, sameTemplate.source), undefined, templateNameLine));
                     }
                 }
 
@@ -108,7 +105,7 @@ class StaticCheckerInner extends AbstractParseTreeVisitor<Diagnostic[]> implemen
                 {
                     if (context.templateBody())
                     {
-                        result.push(this.buildLGDiagnostic({message: LGErrors.noTemplateBody(templateName), severity: DiagnosticSeverity.Warning, context: context.templateNameLine()}));
+                        result.push(this.buildLGDiagnostic(LGErrors.noTemplateBody(templateName), DiagnosticSeverity.Warning, context.templateNameLine()));
                     }
                     else
                     {
@@ -127,9 +124,7 @@ class StaticCheckerInner extends AbstractParseTreeVisitor<Diagnostic[]> implemen
             const errorTemplateStr: lp.ErrorTemplateStringContext = templateStr.errorTemplateString();
 
             if (errorTemplateStr) {
-                result.push(this.buildLGDiagnostic({
-                    message: LGErrors.invalidTemplateBody,
-                    context: errorTemplateStr}));
+                result.push(this.buildLGDiagnostic(LGErrors.invalidTemplateBody, undefined, errorTemplateStr));
             } else {
                 result = result.concat(this.visit(templateStr));
             }
@@ -142,27 +137,28 @@ class StaticCheckerInner extends AbstractParseTreeVisitor<Diagnostic[]> implemen
         let result: Diagnostic[] = [];
 
         if (context.structuredBodyNameLine().errorStructuredName() !== undefined) {
-            result.push(this.buildLGDiagnostic({message: LGErrors.invalidStrucName, context: context.structuredBodyNameLine()}));
+            result.push(this.buildLGDiagnostic(LGErrors.invalidStrucName, undefined, context.structuredBodyNameLine()));
         }
 
         if (context.structuredBodyEndLine() === undefined) {
-            result.push(this.buildLGDiagnostic({message: LGErrors.missingStrucEnd, context: context}));
+            result.push(this.buildLGDiagnostic(LGErrors.missingStrucEnd, undefined, context));
         }
 
         const bodys = context.structuredBodyContentLine();
         if (!bodys || bodys.length === 0) {
-            result.push(this.buildLGDiagnostic({message: LGErrors.emptyStrucContent, context: context}));
+            result.push(this.buildLGDiagnostic(LGErrors.emptyStrucContent, undefined, context));
         } else {
             for (const body of bodys) {
                 if (body.errorStructureLine() !== undefined) {
-                    result.push(this.buildLGDiagnostic({message: LGErrors.invalidStrucBody, context: body.errorStructureLine()}));
+                    result.push(this.buildLGDiagnostic(LGErrors.invalidStrucBody, undefined, body.errorStructureLine()));
                 } else if (body.objectStructureLine() !== undefined) {
                     result = result.concat(this.checkExpression(body.objectStructureLine().text, body.objectStructureLine()));
                 } else {
                     const structureValues = body.keyValueStructureLine().keyValueStructureValue();
+                    const errorPrefix = `Property  '` + body.keyValueStructureLine().text + `':`;
                     for (const structureValue of structureValues) {
                         for (const expr of structureValue.EXPRESSION_IN_STRUCTURE_BODY()) {
-                            result = result.concat(this.checkExpression(expr.text, context));
+                            result = result.concat(this.checkExpression(expr.text, structureValue, errorPrefix));
                         }
                     }
                 }
@@ -188,67 +184,41 @@ class StaticCheckerInner extends AbstractParseTreeVisitor<Diagnostic[]> implemen
                     conditionNode.ELSE();
 
             if (node.text.split(' ').length - 1 > 1) {
-                result.push(this.buildLGDiagnostic({
-                    // tslint:disable-next-line: max-line-length
-                    message: LGErrors.invalidWhitespaceInCondition,
-                    context: conditionNode
-                }));
+                result.push(this.buildLGDiagnostic(LGErrors.invalidWhitespaceInCondition, undefined, conditionNode));
             }
 
             if (idx === 0 && !ifExpr) {
-                result.push(this.buildLGDiagnostic({
-                    message: LGErrors.notStartWithIfInCondition,
-                    severity: DiagnosticSeverity.Warning,
-                    context: conditionNode
-                }));
+                result.push(this.buildLGDiagnostic(LGErrors.notStartWithIfInCondition, DiagnosticSeverity.Warning, conditionNode));
             }
 
             if (idx > 0 && ifExpr) {
-                result.push(this.buildLGDiagnostic({
-                    message: LGErrors.multipleIfInCondition,
-                    context: conditionNode
-                }));
+                result.push(this.buildLGDiagnostic(LGErrors.multipleIfInCondition, undefined, conditionNode));
             }
 
             if (idx === ifRules.length - 1 && !elseExpr) {
-                result.push(this.buildLGDiagnostic({
-                    message: LGErrors.notEndWithElseInCondition,
-                    severity: DiagnosticSeverity.Warning,
-                    context: conditionNode
-                }));
+                result.push(this.buildLGDiagnostic(LGErrors.notEndWithElseInCondition, DiagnosticSeverity.Warning, conditionNode));
             }
 
             if (idx > 0 && idx < ifRules.length - 1 && !elseIfExpr) {
-                result.push(this.buildLGDiagnostic({
-                    message: LGErrors.invalidMiddleInCondition,
-                    context: conditionNode
-                }));
+                result.push(this.buildLGDiagnostic(LGErrors.invalidMiddleInCondition, undefined, conditionNode));
             }
 
             if (!elseExpr) {
                 if (ifRule.ifCondition().EXPRESSION().length !== 1) {
-                    result.push(this.buildLGDiagnostic({
-                        message: LGErrors.invalidExpressionInCondition,
-                        context: conditionNode
-                    }));
+                    result.push(this.buildLGDiagnostic(LGErrors.invalidExpressionInCondition,undefined, conditionNode));
                 } else {
-                    result = result.concat(this.checkExpression(ifRule.ifCondition().EXPRESSION(0).text, conditionNode));
+                    const errorPrefix =  `Condition '` + conditionNode.EXPRESSION(0).text + `': `;
+                    result = result.concat(this.checkExpression(ifRule.ifCondition().EXPRESSION(0).text, conditionNode, errorPrefix));
                 }
             } else {
                 if (ifRule.ifCondition().EXPRESSION().length !== 0) {
-                    result.push(this.buildLGDiagnostic({
-                        message: LGErrors.extraExpressionInCondition,
-                        context: conditionNode
-                    }));
+                    result.push(this.buildLGDiagnostic(LGErrors.extraExpressionInCondition, undefined, conditionNode));
                 }
             }
             if (ifRule.normalTemplateBody() !== undefined) {
                 result = result.concat(this.visit(ifRule.normalTemplateBody()));
             } else {
-                result.push(this.buildLGDiagnostic({
-                    message: LGErrors.missingTemplateBodyInCondition,
-                    context: conditionNode
-                }));
+                result.push(this.buildLGDiagnostic(LGErrors.missingTemplateBodyInCondition, undefined, conditionNode));
             }
 
             idx = idx + 1;
@@ -273,76 +243,48 @@ class StaticCheckerInner extends AbstractParseTreeVisitor<Diagnostic[]> implemen
                 caseExpr ? switchCaseStat.CASE() :
                     switchCaseStat.DEFAULT();
             if (node.text.split(' ').length - 1 > 1) {
-                result.push(this.buildLGDiagnostic({
-                    // tslint:disable-next-line: max-line-length
-                    message: LGErrors.invalidWhitespaceInSwitchCase,
-                    context: switchCaseStat
-                }));
+                result.push(this.buildLGDiagnostic(LGErrors.invalidWhitespaceInSwitchCase, undefined, switchCaseStat));
             }
 
             if (idx === 0 && !switchExpr) {
-                result.push(this.buildLGDiagnostic({
-                    message: LGErrors.notStartWithSwitchInSwitchCase,
-                    context: switchCaseStat
-                }));
+                result.push(this.buildLGDiagnostic(LGErrors.notStartWithSwitchInSwitchCase, undefined, switchCaseStat));
             }
 
             if (idx > 0 && switchExpr) {
-                result.push(this.buildLGDiagnostic({
-                    message: LGErrors.multipleSwithStatementInSwitchCase,
-                    context: switchCaseStat
-                }));
+                result.push(this.buildLGDiagnostic(LGErrors.multipleSwithStatementInSwitchCase, undefined, switchCaseStat));
             }
 
             if (idx > 0 && idx < length - 1 && !caseExpr) {
-                result.push(this.buildLGDiagnostic({
-                    message: LGErrors.invalidStatementInMiddlerOfSwitchCase,
-                    context: switchCaseStat
-                }));
+                result.push(this.buildLGDiagnostic(LGErrors.invalidStatementInMiddlerOfSwitchCase, undefined, switchCaseStat));
             }
 
             if (idx === length - 1 && (caseExpr || defaultExpr)) {
                 if (caseExpr) {
-                    result.push(this.buildLGDiagnostic({
-                        message: LGErrors.notEndWithDefaultInSwitchCase,
-                        severity: DiagnosticSeverity.Warning,
-                        context: switchCaseStat
-                    }));
+                    result.push(this.buildLGDiagnostic(LGErrors.notEndWithDefaultInSwitchCase, DiagnosticSeverity.Warning, switchCaseStat));
                 } else {
                     if (length === 2) {
-                        result.push(this.buildLGDiagnostic({
-                            message: LGErrors.missingCaseInSwitchCase,
-                            severity: DiagnosticSeverity.Warning,
-                            context: switchCaseStat
-                        }));
+                        result.push(this.buildLGDiagnostic(LGErrors.missingCaseInSwitchCase, DiagnosticSeverity.Warning, switchCaseStat));
                     }
                 }
             }
             if (switchExpr || caseExpr) {
                 if (switchCaseStat.EXPRESSION().length !== 1) {
-                    result.push(this.buildLGDiagnostic({
-                        message: LGErrors.invalidExpressionInSwiathCase,
-                        context: switchCaseStat
-                    }));
+                    result.push(this.buildLGDiagnostic(LGErrors.invalidExpressionInSwiathCase, undefined, switchCaseStat));
                 } else {
-                    result = result.concat(this.checkExpression(switchCaseStat.EXPRESSION(0).text, switchCaseStat));
+                    let errorPrefix = switchExpr? `Switch` : `Case`;
+                    errorPrefix += ` '` + switchCaseStat.EXPRESSION(0).text + `': `;
+                    result = result.concat(this.checkExpression(switchCaseStat.EXPRESSION(0).text, switchCaseStat, errorPrefix));
                 }
             } else {
                 if (switchCaseStat.EXPRESSION().length !== 0 || switchCaseStat.TEXT().length !== 0) {
-                    result.push(this.buildLGDiagnostic({
-                        message: LGErrors.extraExpressionInSwitchCase,
-                        context: switchCaseStat
-                    }));
+                    result.push(this.buildLGDiagnostic(LGErrors.extraExpressionInSwitchCase, undefined, switchCaseStat));
                 }
             }
             if (caseExpr || defaultExpr) {
                 if (iterNode.normalTemplateBody()) {
                     result = result.concat(this.visit(iterNode.normalTemplateBody()));
                 } else {
-                    result.push(this.buildLGDiagnostic({
-                        message: LGErrors.missingTemplateBodyInSwitchCase,
-                        context: switchCaseStat
-                    }));
+                    result.push(this.buildLGDiagnostic(LGErrors.missingTemplateBodyInSwitchCase, undefined, switchCaseStat));
                 }
             }
             idx = idx + 1;
@@ -352,20 +294,18 @@ class StaticCheckerInner extends AbstractParseTreeVisitor<Diagnostic[]> implemen
     }
 
     public visitNormalTemplateString(context: lp.NormalTemplateStringContext): Diagnostic[] {
+        const prefixErrorMsg = context.getPrefixMessage();
         let result: Diagnostic[] = [];
 
         for (const expression of context.EXPRESSION()) {
-            result = result.concat(this.checkExpression(expression.text, context));
+            result = result.concat(this.checkExpression(expression.text, context, prefixErrorMsg));
         }
 
         const multiLinePrefix = context.MULTILINE_PREFIX();
         const multiLineSuffix = context.MULTILINE_SUFFIX();
         
         if (multiLinePrefix !== undefined &&  multiLineSuffix === undefined) {
-            result.push(this.buildLGDiagnostic({
-                message: LGErrors.noEndingInMultiline,
-                context: context
-            }));
+            result.push(this.buildLGDiagnostic(LGErrors.noEndingInMultiline, undefined, context));
         }
         return result;
     }
@@ -374,17 +314,15 @@ class StaticCheckerInner extends AbstractParseTreeVisitor<Diagnostic[]> implemen
         return [];
     }
 
-    private checkExpression(exp: string, context: ParserRuleContext): Diagnostic[] {
+    private checkExpression(exp: string, context: ParserRuleContext, prefix: string = ''): Diagnostic[] {
         const result: Diagnostic[] = [];
         exp = LGExtensions.trimExpression(exp);
 
         try {
             this.expressionParser.parse(exp);
         } catch (e) {
-            result.push(this.buildLGDiagnostic({
-                message: e.message.concat(` in expression '${ exp }'`),
-                context: context
-            }));
+            const errorMsg = prefix + LGErrors.expressionParseError(exp) + e.message;
+            result.push(this.buildLGDiagnostic(errorMsg, undefined, context));
 
             return result;
         }
@@ -392,13 +330,14 @@ class StaticCheckerInner extends AbstractParseTreeVisitor<Diagnostic[]> implemen
         return result;
     }
 
-    private buildLGDiagnostic(parameters: { message: string; severity?: DiagnosticSeverity; context?: ParserRuleContext }): Diagnostic {
-        const startPosition = parameters.context === undefined ? new Position(0, 0) : new Position(parameters.context.start.line, parameters.context.start.charPositionInLine);
-        const stopPosition = parameters.context === undefined ? new Position(0, 0) : new Position(parameters.context.stop.line, parameters.context.stop.charPositionInLine + parameters.context.stop.text.length);
-        const severity = parameters.severity? parameters.severity : DiagnosticSeverity.Error;
+    private buildLGDiagnostic( message: string, severity: DiagnosticSeverity = undefined, context: ParserRuleContext = undefined, includeTemplateNameInfo: boolean = true): Diagnostic {
+        const startPosition = context === undefined ? new Position(0, 0) : new Position(context.start.line, context.start.charPositionInLine);
+        const stopPosition = context === undefined ? new Position(0, 0) : new Position(context.stop.line, context.stop.charPositionInLine + context.stop.text.length);
+        severity = severity? severity : DiagnosticSeverity.Error;
         const range = new Range(startPosition, stopPosition);
+        message = (this.visitedTemplateNames.length > 0 && includeTemplateNameInfo)? `${ this.visitedTemplateNames.reverse().find(x => true) }`+ message : message;
         
-        return new Diagnostic(range, parameters.message, severity, this.lgFile.id);
+        return new Diagnostic(range, message, severity, this.lgFile.id);
     }
 }
 
