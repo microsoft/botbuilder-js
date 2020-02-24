@@ -341,6 +341,7 @@ describe('ChoicePrompt', function () {
             'en-us',
             'fr-fr',
             'de-de',
+            'it-it',
             'ja-jp',
             'pt-br',
             'zh-cn'

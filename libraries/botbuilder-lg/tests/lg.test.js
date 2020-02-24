@@ -771,4 +771,11 @@ describe('LG', function() {
         evaled = LGFile.evaluateTemplate('T3', scope);
         assert.strictEqual(evaled, 'p1enum');
     });
+
+    it('TestReExecute', function() {
+        var LGFile = LGParser.parseFile(GetExampleFilePath('ReExecute.lg'));
+
+        // may be has different values
+        LGFile.evaluateTemplate('templateWithSameParams', {param1:'ms', param2:'newms'});
+    });
 });
