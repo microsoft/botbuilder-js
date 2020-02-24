@@ -1,5 +1,6 @@
 import { MemoryInterface } from './memoryInterface';
 import { Extensions } from '../extensions';
+import { Util } from '../parser/util';
 
 /**
  * @module adaptive-expressions
@@ -39,7 +40,15 @@ export class SimpleObjectMemory implements MemoryInterface {
             return undefined;
         }
 
-        const parts: string[] = path.split(/[.\[\]]+/).filter((u: string): boolean => u !== undefined && u !== '');
+        const parts: string[] = path.split(/[.\[\]]+/)
+            .filter((u: string): boolean => u !== undefined && u !== '')
+            .map((u: string): string => {
+                if ((u.startsWith('"') && u.endsWith('"')) || (u.startsWith('\'') && u.endsWith('\''))) {
+                    return u.substr(1, u.length - 2);
+                } else {
+                    return u;
+                }
+            });
         let value: any;
         let curScope = this.memory;
 
@@ -74,7 +83,15 @@ export class SimpleObjectMemory implements MemoryInterface {
             return;;
         }
 
-        const parts: string[] = path.split(/[.\[\]]+/).filter((u: string): boolean => u !== undefined && u !== '');
+        const parts: string[] = path.split(/[.\[\]]+/)
+            .filter((u: string): boolean => u !== undefined && u !== '')
+            .map((u: string): string => {
+                if ((u.startsWith('"') && u.endsWith('"')) || (u.startsWith('\'') && u.endsWith('\''))) {
+                    return u.substr(1, u.length - 2);
+                } else {
+                    return u;
+                }
+            });
         let curScope: any = this.memory;
         let curPath = '';
         let error: string = undefined;
