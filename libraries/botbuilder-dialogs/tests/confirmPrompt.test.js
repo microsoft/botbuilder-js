@@ -322,6 +322,7 @@ describe('ConfirmPrompt', function () {
             'fr-fr',
             'de-de',
             'ja-jp',
+            'it-it',
             'pt-br',
             'zh-cn'
         ];
@@ -556,7 +557,7 @@ describe('ConfirmPrompt', function () {
             .assertReply(`The result found is 'true'.`);
     });
 
-    it('should recogize valid number and default to en if locale invalid string.', async function () {
+    it('should recognize valid number and default to en if locale invalid string.', async function () {
         const adapter = new TestAdapter(async (turnContext) => {
 
             turnContext.activity.locale = 'invalid-locale';
@@ -591,7 +592,7 @@ describe('ConfirmPrompt', function () {
             .assertReply(`The result found is 'true'.`);
     });
 
-    it('should recogize valid number and default to en if defaultLocale invalid string.', async function () {
+    it('should recognize valid number and default to en if defaultLocale invalid string.', async function () {
         const adapter = new TestAdapter(async (turnContext) => {
 
             const dc = await dialogs.createContext(turnContext);
