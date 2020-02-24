@@ -415,7 +415,7 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGFi
             return result.map(u => u.toString());
         }
 
-        return [ result.ToString() ];
+        return [ result.toString() ];
     }
 
     private evalByExpressionEngine(exp: string, scope: any): any {

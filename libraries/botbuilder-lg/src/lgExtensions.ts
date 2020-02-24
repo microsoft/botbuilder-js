@@ -65,10 +65,11 @@ export class LGExtensions {
             if (context.parent.parent.parent instanceof lp.IfConditionRuleContext) {
                 const conditionContext = context.parent.parent.parent;
                 let tempMsg = '';
-                if (conditionContext.ifCondition() && conditionContext.ifCondition().EXPRESSION(0)) {
+                const tempCtx = conditionContext.ifCondition();
+                if (conditionContext.ifCondition() && conditionContext.ifCondition().EXPRESSION().length > 1) {
                     tempMsg = conditionContext.ifCondition().EXPRESSION(0).text;
+                    errorPrefix = `Condition '` + tempMsg + `': `;
                 }
-                errorPrefix = `Condition '` + tempMsg + `': `;
             } else {
                 if (context.parent.parent.parent instanceof lp.SwitchCaseRuleContext )
                 {

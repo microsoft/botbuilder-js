@@ -277,7 +277,7 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGFilePa
         const switchNode: lp.SwitchCaseRuleContext = switchcaseNodes[0];
         const switchExprs: TerminalNode[] = switchNode.switchCaseStat().EXPRESSION();
         const switchErrorPrefix = `Switch '` + switchExprs[0].text + `': `;
-        const switchExprResult = this.evalExpression(switchExprs[0].text, switchcaseNodes[0].switchCaseStat(), switchErrorPrefix).ToString();
+        const switchExprResult = this.evalExpression(switchExprs[0].text, switchcaseNodes[0].switchCaseStat(), switchErrorPrefix).toString();
         let idx = 0;
         for (const caseNode of switchcaseNodes) {
             if (idx === 0) {
@@ -295,7 +295,7 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGFilePa
 
             const caseExprs: TerminalNode[] = caseNode.switchCaseStat().EXPRESSION();
             const caseErrorPrefix = `Case '` + caseExprs[0].text + `': `;
-            const caseExprResult = this.evalExpression(caseExprs[0].text, caseNode.switchCaseStat(), caseErrorPrefix).ToString();
+            const caseExprResult = this.evalExpression(caseExprs[0].text, caseNode.switchCaseStat(), caseErrorPrefix).toString();
             if (switchExprResult === caseExprResult) {
                 return this.visit(caseNode.normalTemplateBody());
             }
@@ -328,7 +328,7 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGFilePa
             return true;                                            // no expression means it's else
         }
 
-        if (this.evalExpressionInCondition(expression[0].text, condition, `Condition '` + expression.text + `':`)) {
+        if (this.evalExpressionInCondition(expression.text, condition, `Condition '` + expression.text + `':`)) {
             return true;
         }
 

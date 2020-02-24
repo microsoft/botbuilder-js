@@ -294,7 +294,7 @@ class StaticCheckerInner extends AbstractParseTreeVisitor<Diagnostic[]> implemen
     }
 
     public visitNormalTemplateString(context: lp.NormalTemplateStringContext): Diagnostic[] {
-        const prefixErrorMsg = context.getPrefixMessage();
+        const prefixErrorMsg = LGExtensions.getPrefixErrorMessage(context);
         let result: Diagnostic[] = [];
 
         for (const expression of context.EXPRESSION()) {
