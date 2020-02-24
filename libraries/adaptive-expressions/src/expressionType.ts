@@ -41,7 +41,7 @@ export class ExpressionType {
     public static readonly Not: string = '!';
 
     // String
-    public static readonly Concat: string = '&';
+    public static readonly Concat: string = 'concat';
     public static readonly Length: string = 'length';
     public static readonly Replace: string = 'replace';
     public static readonly ReplaceIgnoreCase: string = 'replaceIgnoreCase';

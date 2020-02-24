@@ -10,7 +10,8 @@ const invalidExpressions = [
     'func(A,b,b,)',
     '"hello\'',
     'user.lists.{dialog.listName}',
-    '\'hello\'.length()'
+    '\'hello\'.length()',
+    '`hi` world'
 ];
 
 const badExpressions =
@@ -30,13 +31,11 @@ const badExpressions =
       '\'1\' / 2', // params should be number
       '\'1\' % 2', // params should be number
       '\'1\' ^ 2', // params should be number
-      '\'string\'&one', // $ can only accept string parameter
       '1/0', // can not divide 0
 
       // String functions test
-      'concat(one, hello)', // concat can only accept string parameter
       'length(one, 1)', // length can only have one param
-      'length(concat(one, hello))', //children func error
+      'length(replace(hello))', //children func error
       'replace(hello)', // replace need three parameters
       'replace(one, \'l\', \'k\')', // replace only accept string parameter
       'replace(\'hi\', 1, \'k\')', // replace only accept string parameter

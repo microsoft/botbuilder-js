@@ -41,14 +41,15 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGFilePa
     private readonly evalutationTargetStack: EvaluationTarget[] = [];
 
     // to support broswer, use look-ahead replace look-behind
-    // original:/(?<!\\)@\{((\'[^\'\r\n]*\')|(\"[^\"\r\n]*\")|[^\r\n\{\}\'\"])*?\}/g;
-    public static readonly expressionRecognizeReverseRegex: RegExp = new RegExp(/\}((\'[^\'\r\n]*\')|(\"[^\"\r\n]*\")|([^\r\n\{\}\'\"]))*?\{\$(?!\\)/g);
+    // original:/(?<!\\)$\{((\'[^\'\r\n]*\')|(\"[^\"\r\n]*\")|(\`(\\\`|[^\`])*\`)|[^\r\n\{\}\'\"\`])*?\}/g;
+    public static readonly expressionRecognizeReverseRegex: RegExp = new RegExp(/\}((\'[^\'\r\n]*\')|(\"[^\"\r\n]*\")|(\`(\\\`|[^\`])*\`)|([^\r\n\{\}\'\"\`]))*?\{\$(?!\\)/g);
 
     public static readonly LGType = 'lgType';
     public static readonly activityAttachmentFunctionName = 'ActivityAttachment';
     public static readonly fromFileFunctionName = 'fromFile';
     public static readonly templateFunctionName = 'template';
     public static readonly isTemplateFunctionName = 'isTemplate';
+    private static readonly ReExecuteSuffix = '!';
 
     public constructor(templates: LGTemplate[], expressionEngine: ExpressionEngine) {
         super();
@@ -65,11 +66,15 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGFilePa
 
     /**
      * Evaluate a template with given name and scope.
-     * @param templateName template name.
+     * @param inputTemplateName template name.
      * @param scope scope.
      * @returns Evaluate result.
      */
-    public evaluateTemplate(templateName: string, scope: any): any {
+    public evaluateTemplate(inputTemplateName: string, scope: any): any {
+        let templateName: string;
+        let reExecute: boolean;
+        ({reExecute, pureTemplateName: templateName} = this.parseTemplateName(inputTemplateName));
+
         if (!(templateName in this.templateMap)) {
             throw new Error(`No such template: ${ templateName }`);
         }
@@ -91,7 +96,7 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGFilePa
 
         if (this.evalutationTargetStack.length !== 0) {
             previousEvaluateTarget = this.evalutationTargetStack[this.evalutationTargetStack.length - 1];
-            if (previousEvaluateTarget.evaluatedChildren.has(currentEvulateId)) {
+            if (!reExecute && previousEvaluateTarget.evaluatedChildren.has(currentEvulateId)) {
                 return previousEvaluateTarget.evaluatedChildren.get(currentEvulateId);
             }
         }
@@ -236,7 +241,9 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGFilePa
         }).join('');
     }
 
-    public constructScope(templateName: string, args: any[]): any {
+    public constructScope(inputTemplateName: string, args: any[]): any {
+        var templateName = this.parseTemplateName(inputTemplateName).pureTemplateName;
+
         if (!this.templateMap[templateName]) {
             throw new Error(`No such template ${ templateName }`);
         }
@@ -403,9 +410,10 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGFilePa
             return baseLookup(name.substring(prebuiltPrefix.length));
         }
 
-        if (this.templateMap[name]) {
+        var templateName = this.parseTemplateName(name).pureTemplateName;
+        if (templateName in this.templateMap) {
             // tslint:disable-next-line: max-line-length
-            return new ExpressionEvaluator(name, ExpressionFunctions.apply(this.templateEvaluator(name)), ReturnType.Object, this.validTemplateReference);
+            return new ExpressionEvaluator(templateName, ExpressionFunctions.apply(this.templateEvaluator(name)), ReturnType.Object, this.validTemplateReference);
         }
 
         if (name === Evaluator.templateFunctionName) {
@@ -431,8 +439,7 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGFilePa
         const validCharactersDict: any = {
             '\\r': '\r',
             '\\n': '\n',
-            '\\t': '\t',
-            '\\\\': '\\',
+            '\\t': '\t'
         };
 
         return exp.replace(/\\[^\r\n]?/g, (sub: string): string => { 
@@ -580,6 +587,18 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGFilePa
 
         if (expectedArgsCount !== actualArgsCount) {
             throw new Error(`arguments mismatch for template ${ templateName }, expect ${ expectedArgsCount } actual ${ actualArgsCount }`);
+        }
+    }
+
+    private parseTemplateName(templateName: string): { reExecute: boolean; pureTemplateName: string } {
+        if (!templateName) {
+            throw new Error('template name is empty.');
+        }
+
+        if (templateName.endsWith(Evaluator.ReExecuteSuffix)) {
+            return {reExecute:true, pureTemplateName: templateName.substr(0, templateName.length - Evaluator.ReExecuteSuffix.length)};
+        } else {
+            return {reExecute:false, pureTemplateName: templateName};
         }
     }
 }
