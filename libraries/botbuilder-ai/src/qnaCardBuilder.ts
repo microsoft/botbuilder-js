@@ -19,8 +19,8 @@ export class QnACardBuilder {
      * @param cardTitle Title of the hero card.
      * @param cardNoMatchText Text for button to be added to card to allow user to select 'no match'.
      */
-    public GetSuggestionsCard(suggestionsList: string[], cardTitle: string, cardNoMatchText: string): Partial<Activity> {
-        if (!suggestionsList) { throw new Error('Missing suggestionsList'); }
+    public static getSuggestionsCard(suggestionsList: string[], cardTitle: string, cardNoMatchText: string): Partial<Activity> {
+        if (!Array.isArray(suggestionsList)) { throw new Error('Missing suggestionsList'); }
 
         if (!cardTitle) { throw new Error('Missing cardTitle'); }
 
@@ -42,7 +42,7 @@ export class QnACardBuilder {
             title: cardNoMatchText
         });
 
-        const promptsCard = CardFactory.heroCard('', null, buttonList);
+        const promptsCard = CardFactory.heroCard('', undefined, buttonList);
         const message = MessageFactory.attachment(promptsCard, cardTitle);
 
         return message;
@@ -52,7 +52,7 @@ export class QnACardBuilder {
      * Returns an activity with answer text and a hero card attachment, containing buttons for multi turn prompts.
      * @param result QnAMaker result containing the answer text and multi turn prompts to be displayed.
      */
-    public getQnAPromptsCard(result: QnAMakerResult): Partial<Activity> {
+    public static getQnAPromptsCard(result: QnAMakerResult): Partial<Activity> {
         if (!result) { throw new Error('Missing QnAMaker result'); }
 
         var buttonList: CardAction[] = [];
@@ -65,7 +65,7 @@ export class QnACardBuilder {
             });
         });
 
-        const promptsCard = CardFactory.heroCard('', null, buttonList);
+        const promptsCard = CardFactory.heroCard('', undefined, buttonList);
         const message = MessageFactory.attachment(promptsCard, result.answer);
 
         return message;
