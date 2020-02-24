@@ -7,6 +7,6 @@
  * Licensed under the MIT License.
  */
 export * from './ExpressionLexer';
-export * from './ExpressionListener';
+export * from './ExpressionParserListener';
 export * from './ExpressionParser';
-export * from './ExpressionVisitor';
+export * from './ExpressionParserVisitor';
