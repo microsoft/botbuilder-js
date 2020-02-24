@@ -18,16 +18,19 @@ export class Util {
         return str.trim();
     }
 
-    public static unescape(str: string): string {
-        if (str !== undefined) {
-            str = str.replace(/\\\\/g, '\\')
-                .replace(/\\n/g, '\n')
-                .replace(/\\r/g, '\r')
-                .replace(/\\t/g, '\t')
-                .replace(/\\"/g, '"')
-                .replace(/\\'/g, '\'');
-        }
+    public static unescape(exp: string): string {
+        const validCharactersDict: any = {
+            '\\r': '\r',
+            '\\n': '\n',
+            '\\t': '\t'
+        };
 
-        return str;
+        return exp.replace(/\\[^\r\n]?/g, (sub: string): string => { 
+            if (sub in validCharactersDict) {
+                return validCharactersDict[sub];
+            } else {
+                return sub.substr(1);
+            }
+        });
     }
 }

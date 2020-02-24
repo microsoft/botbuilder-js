@@ -1,5 +1,6 @@
 import { MemoryInterface } from './memoryInterface';
 import { Extensions } from '../extensions';
+import { Util } from '../parser/util';
 
 /**
  * @module adaptive-expressions
@@ -9,6 +10,9 @@ import { Extensions } from '../extensions';
  * Licensed under the MIT License.
  */
 
+/**
+ * Simple implement of MemoryInterface
+ */
 export class SimpleObjectMemory implements MemoryInterface {
 
     private memory: any = undefined;
@@ -18,6 +22,11 @@ export class SimpleObjectMemory implements MemoryInterface {
         this.memory = memory;
     }
 
+    /**
+     * Transfer an common object to simple memory.
+     * @param obj  Common object.
+     * @returns Simple memory instance.
+     */
     public static wrap(obj: any): MemoryInterface {
         if(Extensions.isMemoryInterface(obj)) {
             return obj;
@@ -31,7 +40,15 @@ export class SimpleObjectMemory implements MemoryInterface {
             return undefined;
         }
 
-        const parts: string[] = path.split(/[.\[\]]+/).filter((u: string): boolean => u !== undefined && u !== '');
+        const parts: string[] = path.split(/[.\[\]]+/)
+            .filter((u: string): boolean => u !== undefined && u !== '')
+            .map((u: string): string => {
+                if ((u.startsWith('"') && u.endsWith('"')) || (u.startsWith('\'') && u.endsWith('\''))) {
+                    return u.substr(1, u.length - 2);
+                } else {
+                    return u;
+                }
+            });
         let value: any;
         let curScope = this.memory;
 
@@ -66,7 +83,15 @@ export class SimpleObjectMemory implements MemoryInterface {
             return;;
         }
 
-        const parts: string[] = path.split(/[.\[\]]+/).filter((u: string): boolean => u !== undefined && u !== '');
+        const parts: string[] = path.split(/[.\[\]]+/)
+            .filter((u: string): boolean => u !== undefined && u !== '')
+            .map((u: string): string => {
+                if ((u.startsWith('"') && u.endsWith('"')) || (u.startsWith('\'') && u.endsWith('\''))) {
+                    return u.substr(1, u.length - 2);
+                } else {
+                    return u;
+                }
+            });
         let curScope: any = this.memory;
         let curPath = '';
         let error: string = undefined;
