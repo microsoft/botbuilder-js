@@ -68,7 +68,7 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGFi
                 .join(' => ') }`);
         }
 
-        if(!(scope instanceof CustomizedMemory)) {
+        if (!(scope instanceof CustomizedMemory)) {
             scope = new CustomizedMemory(SimpleObjectMemory.wrap(scope));
         }
         
@@ -173,7 +173,7 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGFi
         for (const templateRefValueKey of templateRefValues.keys()) {
             const tempRes: string[] = [];
             for (const res of finalResult) {
-                for (const refValue of templateRefValues.get(templateRefValueKey)){
+                for (const refValue of templateRefValues.get(templateRefValueKey)) {
                     tempRes.push(res.replace(templateRefValueKey, refValue));
                 }
             }
@@ -285,10 +285,6 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGFi
         if (args.length === 0) {
             // no args to construct, inherit from current scope
             return this.currentTarget().scope;
-        }
-
-        if (parameters && (args === undefined || parameters.length !== args.length)) {
-            throw new Error(`The length of required parameters does not match the length of provided parameters.`);
         }
 
         const newScope: any = {};

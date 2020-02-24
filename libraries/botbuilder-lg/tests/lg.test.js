@@ -684,7 +684,7 @@ describe('LG', function() {
         assert.strictEqual(evaled3, espectedResult);
     });
 
-    it('TestEmptyArratAndObject', function() {
+    it('TestEmptyArrayAndObject', function() {
         var LGFile = LGParser.parseFile(GetExampleFilePath('EmptyArrayAndObject.lg'));
 
         var evaled = LGFile.evaluateTemplate('template', {list:[], obj: {}});
@@ -707,6 +707,21 @@ describe('LG', function() {
         evaled = LGFile.evaluateTemplate('template', {list:[{}], obj : {a : 'a'}});
         assert.strictEqual(evaled, 'list and obj are both not empty.');        
     });
+
+    it('TestNullTolerant', function() {
+        var lgFile = LGParser.parseFile(GetExampleFilePath('NullTolerant.lg'));
+
+        var evaled = lgFile.evaluateTemplate('template1');
+        assert.strictEqual('null', evaled);
+
+        evaled = lgFile.evaluateTemplate('template2');
+        assert.strictEqual(`result is 'null'`, evaled);
+
+        var jObjEvaled = lgFile.evaluateTemplate('template3');
+        assert.strictEqual('null', jObjEvaled['key1']);
+
+    });
+
 
     it('TestIsTemplateFunction', function() {
         var LGFile = LGParser.parseFile(GetExampleFilePath('IsTemplate.lg'));

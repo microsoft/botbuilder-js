@@ -103,7 +103,7 @@ class StaticCheckerInner extends AbstractParseTreeVisitor<Diagnostic[]> implemen
                 }
                 else
                 {
-                    if (context.templateBody())
+                    if (!context.templateBody())
                     {
                         result.push(this.buildLGDiagnostic(LGErrors.noTemplateBody(templateName), DiagnosticSeverity.Warning, context.templateNameLine()));
                     }
@@ -335,7 +335,7 @@ class StaticCheckerInner extends AbstractParseTreeVisitor<Diagnostic[]> implemen
         const stopPosition = context === undefined ? new Position(0, 0) : new Position(context.stop.line, context.stop.charPositionInLine + context.stop.text.length);
         severity = severity? severity : DiagnosticSeverity.Error;
         const range = new Range(startPosition, stopPosition);
-        message = (this.visitedTemplateNames.length > 0 && includeTemplateNameInfo)? `${ this.visitedTemplateNames.reverse().find(x => true) }`+ message : message;
+        message = (this.visitedTemplateNames.length > 0 && includeTemplateNameInfo)? `[${ this.visitedTemplateNames.reverse().find(x => true) }]`+ message : message;
         
         return new Diagnostic(range, message, severity, this.lgFile.id);
     }

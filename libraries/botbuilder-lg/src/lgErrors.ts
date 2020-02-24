@@ -82,7 +82,7 @@ export class LGErrors {
  
     public static readonly nullExpression = (expression): string => `'${ expression }' evaluated to null. `;
  
-    public static readonly argumentMismatch = (templateName: string, expectedCount: number, actualCount: number): string => `arguments mismatch for template '${ templateName }'. Expecting '${ expectedCount }' arguments, actual '${ actualCount }'. `;
+    public static readonly argumentMismatch = (templateName: string, expectedCount: number, actualCount: number): string => `arguments mismatch for template '` + `${ templateName }` + `'. Expecting '` + `${ expectedCount }` +`' arguments, actual '` + `${ actualCount }` +`'. `;
  
     public static readonly errorTemplateNameformat = (templateName: string): string => `'${ templateName }' cannot be used as a template name. Template names must be avalid . `;
  

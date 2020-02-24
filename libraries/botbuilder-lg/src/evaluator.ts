@@ -88,7 +88,7 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGFilePa
                 .join(' => ') }`);
         }
 
-        if(!(scope instanceof CustomizedMemory)) {
+        if (!(scope instanceof CustomizedMemory)) {
             scope = new CustomizedMemory(SimpleObjectMemory.wrap(scope));
         }
 
@@ -374,7 +374,7 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGFilePa
         return true;
     }
 
-    private evalExpression(exp: string, context: ParserRuleContext = undefined, errorPrefix: string = ""): any
+    private evalExpression(exp: string, context: ParserRuleContext = undefined, errorPrefix: string = ''): any
     {
         exp = LGExtensions.trimExpression(exp);
         let result: any;
@@ -528,7 +528,7 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGFilePa
             const template: LGTemplate = this.templateMap[this.currentTarget().templateName];
             const sourcePath: string = LGExtensions.normalizePath(template.source);
             let baseFolder: string = __dirname;
-            if (path.isAbsolute(sourcePath)){
+            if (path.isAbsolute(sourcePath)) {
                 baseFolder = path.dirname(sourcePath);
             }
 
@@ -603,7 +603,7 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGFilePa
         const actualArgsCount: number = expression.children.length;
 
         if (expectedArgsCount !== actualArgsCount) {
-            throw new Error(`arguments mismatch for template ${ templateName }, expect ${ expectedArgsCount } actual ${ actualArgsCount }`);
+            throw new Error(LGErrors.argumentMismatch(templateName, expectedArgsCount, actualArgsCount));
         }
     }
 

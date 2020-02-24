@@ -1012,7 +1012,7 @@ export class ExpressionFunctions {
 
         ({ value: instance, error } = expression.children[0].tryEvaluate(state));
         if (!instance) {
-            error = `${ expression.children[0] } evaluated to null.`;
+            error = `'${ expression.children[0] }' evaluated to null.`;
         }
 
         if (!error) {

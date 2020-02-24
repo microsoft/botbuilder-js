@@ -122,7 +122,9 @@ export class LGFile {
     /// If strict mode is on, expression would throw exception instead of return
     /// null or make the condition failed.
     /// </value>
-    public strictMode: boolean = this.getStrictModeFromOptions(this.options);
+    public strictMode: boolean;
+
+    public updateStrictMode = (): void => {this.strictMode = this.getStrictModeFromOptions(this.options);};
 
 
     /// <summary>
@@ -299,7 +301,7 @@ export class LGFile {
         if (stopLine < originList.length - 1) {
             // insert at the middle of the content
             destList.push('\r\n');
-            if (replaceString){
+            if (replaceString) {
                 destList.push(replaceString);
                 destList.push('\r\n');
             }
@@ -307,7 +309,7 @@ export class LGFile {
             destList.push(...this.trimList(originList.slice(stopLine + 1)));
         } else {
             // insert at the tail of the content
-            if (replaceString){
+            if (replaceString) {
                 destList.push('\r\n');
                 destList.push(replaceString);
             }

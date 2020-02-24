@@ -61,11 +61,10 @@ export class LGExtensions {
     public static getPrefixErrorMessage(context: lp.NormalTemplateStringContext): string
     {
         let errorPrefix = '';
-        if(context.parent &&  context.parent.parent && context.parent.parent.parent){
+        if (context.parent &&  context.parent.parent && context.parent.parent.parent) {
             if (context.parent.parent.parent instanceof lp.IfConditionRuleContext) {
                 const conditionContext = context.parent.parent.parent;
                 let tempMsg = '';
-                const tempCtx = conditionContext.ifCondition();
                 if (conditionContext.ifCondition() && conditionContext.ifCondition().EXPRESSION().length > 1) {
                     tempMsg = conditionContext.ifCondition().EXPRESSION(0).text;
                     errorPrefix = `Condition '` + tempMsg + `': `;

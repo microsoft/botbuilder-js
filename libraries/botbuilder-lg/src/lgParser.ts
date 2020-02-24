@@ -70,6 +70,7 @@ export class LGParser {
             lgFile.templates = parsedResult.templates;
             lgFile.imports = parsedResult.imports;
             lgFile.options = parsedResult.options;
+            lgFile.updateStrictMode();
             diagnostics = diagnostics.concat(parsedResult.invalidTemplateErrors);
             lgFile.references = this.getReferences(lgFile, importResolver);
             const semanticErrors = new StaticChecker(lgFile).check();
