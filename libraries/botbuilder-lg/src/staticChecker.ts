@@ -9,14 +9,11 @@
 import { ParserRuleContext } from 'antlr4ts';
 import { AbstractParseTreeVisitor, TerminalNode } from 'antlr4ts/tree';
 import { ExpressionEngine, ExpressionParserInterface } from 'adaptive-expressions';
-import * as fs from 'fs';
-import * as path from 'path';
 import { Diagnostic, DiagnosticSeverity } from './diagnostic';
 import { Evaluator } from './evaluator';
 import * as lp from './generated/LGFileParser';
 import { LGFileParserVisitor } from './generated/LGFileParserVisitor';
 import { LGFile } from './lgFile';
-import { LGParser, ImportResolverDelegate } from './lgParser';
 import { LGErrors } from './lgErrors';
 import { Position } from './position';
 import { Range } from './range';
