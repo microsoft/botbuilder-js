@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 import { MemoryScope } from "./memoryScope";
-import { ScopePath } from "./scopePath";
+import { ScopePath } from "../../constants";
 import { DialogContext } from "../../dialogContext";
 
 /**

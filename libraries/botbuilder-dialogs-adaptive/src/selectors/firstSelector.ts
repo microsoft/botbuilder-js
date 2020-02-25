@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { ExpressionEngine } from "botframework-expressions";
+import { ExpressionEngine, ExpressionParserInterface } from "botframework-expressions";
 import { OnCondition } from "../conditions/onCondition";
 import { SequenceContext } from "../sequenceContext";
 import { TriggerSelector } from "../triggerSelector";
@@ -16,7 +16,11 @@ import { TriggerSelector } from "../triggerSelector";
 export class FirstSelector implements TriggerSelector {
     private _conditionals: OnCondition[];
     private _evaluate: boolean;
-    private readonly _parser: ExpressionEngine = new ExpressionEngine();
+
+    /**
+     * Gets or sets the expression parser to use.
+     */
+    public parser: ExpressionParserInterface = new ExpressionEngine()
 
     public initialize(conditionals: OnCondition[], evaluate: boolean) {
         this._conditionals = conditionals;
@@ -28,7 +32,7 @@ export class FirstSelector implements TriggerSelector {
         if (this._evaluate) {
             for (let i = 0; i < this._conditionals.length; i++) {
                 const conditional = this._conditionals[i];
-                const expression = conditional.getExpression(this._parser);
+                const expression = conditional.getExpression(this.parser);
                 const { value, error } = expression.tryEvaluate(context.state);
                 if (value && !error) {
                     selection = i;

@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 import { Dialog } from 'botbuilder-dialogs';
-import { AdaptiveEventNames } from '../sequenceContext';
+import { AdaptiveEvents } from '../sequenceContext';
 import { OnDialogEvent } from './onDialogEvent';
 
 /**
@@ -17,6 +17,6 @@ export class OnCancelDialog extends OnDialogEvent {
     public static declarativeType = 'Microsoft.OnCancelDialog';
 
     public constructor(actions: Dialog[] = [], condtion?: string) {
-        super(AdaptiveEventNames.cancelDialog, actions, condtion);
+        super(AdaptiveEvents.cancelDialog, actions, condtion);
     }
 }

@@ -16,7 +16,11 @@ import { SequenceContext } from "../sequenceContext";
 export class TrueSelector implements TriggerSelector {
     private _conditionals: OnCondition[];
     private _evaluate: boolean;
-    private _parser: ExpressionParserInterface = new ExpressionEngine();
+
+    /**
+     * Gets or sets the expression parser to use.
+     */
+    public parser: ExpressionParserInterface = new ExpressionEngine()
 
     initialize(conditionals: OnCondition[], evaluate: boolean): void {
         this._conditionals = conditionals;
@@ -29,7 +33,7 @@ export class TrueSelector implements TriggerSelector {
         for (let i = 0; i < this._conditionals.length; i++) {
             if (this._evaluate) {
                 const conditional = this._conditionals[i];
-                const expression = conditional.getExpression(this._parser);
+                const expression = conditional.getExpression(this.parser);
                 const { value, error } = expression.tryEvaluate(context.state);
                 if (value && !error) {
                     candidates.push(i);

@@ -7,7 +7,7 @@
  */
 import { BotStateMemoryScope } from './botStateMemoryScope';
 import { ConversationState } from 'botbuilder-core';
-import { ScopePath } from './scopePath';
+import { ScopePath } from '../../constants';
 
 /**
  * Memory that's scoped to the current conversation.

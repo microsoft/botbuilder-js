@@ -5,10 +5,12 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { Dialog, DialogDependencies, Configurable } from 'botbuilder-dialogs';
-import { Expression, ExpressionParserInterface, ExpressionType, Constant, ExpressionEngine } from 'botframework-expressions';
+import { Dialog, DialogDependencies, Configurable, DialogStateManager } from 'botbuilder-dialogs';
+import { Expression, ExpressionParserInterface, ExpressionType, Constant, ExpressionEngine, ExpressionEvaluator, ReturnType, BuiltInFunctions } from 'botframework-expressions';
 import { SequenceContext, ActionChangeList, ActionState, ActionChangeType } from '../sequenceContext';
 import { ActionScope } from '../actions/actionScope';
+import { BoolExpression } from '../expressions';
+import { AdaptiveDialog } from '../adaptiveDialog';
 
 export interface OnConditionConfiguration {
     condition?: string;
@@ -39,7 +41,7 @@ export class OnCondition extends Configurable implements DialogDependencies {
     /**
      * Gets or sets the condition which needs to be met for the actions to be executed (OPTIONAL).
      */
-    public condition: string;
+    public condition: BoolExpression;
 
     /**
      * Gets or sets the actions to add to the plan when the rule constraints are met.
@@ -47,14 +49,14 @@ export class OnCondition extends Configurable implements DialogDependencies {
     public actions: Dialog[] = [];
 
     /**
-     * Get thr rule priority expression where 0 is the highest and less than 0 is ignored.
+     * Get the rule priority expression where 0 is the highest and less than 0 is ignored.
      */
     public get priority(): string {
         return this._priorityString;
     }
 
     /**
-     * Set thr rule priority expression where 0 is the highest and less than 0 is ignored.
+     * Set the rule priority expression where 0 is the highest and less than 0 is ignored.
      */
     public set priority(value: string) {
         this._priorityExpression = undefined;
@@ -65,6 +67,11 @@ export class OnCondition extends Configurable implements DialogDependencies {
      * A value indicating whether rule should only run once per unique set of memory paths.
      */
     public runOnce: boolean;
+
+    /**
+     * Id for condition.
+     */
+    public id: string;
 
     protected get actionScope(): ActionScope {
         if (!this._actionScope) {
@@ -80,7 +87,7 @@ export class OnCondition extends Configurable implements DialogDependencies {
      */
     public constructor(condition?: string, actions: Dialog[] = []) {
         super();
-        this.condition = condition;
+        this.condition = condition ? new BoolExpression(condition) : undefined;
         this.actions = actions;
     }
 
@@ -98,7 +105,7 @@ export class OnCondition extends Configurable implements DialogDependencies {
             const allExpressions: Expression[] = [];
             if (this.condition) {
                 try {
-                    allExpressions.push(parser.parse(this.condition));
+                    allExpressions.push(this.condition.toExpression());
                 } catch (err) {
                     throw Error(`Invalid constraint expression: ${this.condition}, ${err.toString()}`);
                 }
@@ -113,10 +120,23 @@ export class OnCondition extends Configurable implements DialogDependencies {
             } else {
                 this._fullConstraint = new Constant(true);
             }
-        }
 
-        if (!this._priorityExpression) {
-            this._priorityExpression = parser.parse(this.priority);
+            if (this.runOnce) {
+                // TODO: Once we add support for the MostSpecificSelector the code below will need
+                //       some tweaking to wrap runOnce with a call to 'ignore'.
+                const runOnce = new ExpressionEvaluator(`runOnce${this.id}`, (exp, state: DialogStateManager) => {
+                    const basePath = `${AdaptiveDialog.conditionTracker}.${this.id}.`;
+                    const lastRun: number = state.getValue(basePath + 'lastRun');
+                    const paths: string[] = state.getValue(basePath + "paths");
+                    var changed = state.anyPathChanged(lastRun, paths);
+                    return { value: changed, error: undefined };
+                }, ReturnType.Boolean, BuiltInFunctions.validateUnary);
+
+                this._fullConstraint = Expression.andExpression(
+                    this._fullConstraint,
+                    new Expression(runOnce.type, runOnce)
+                )
+            }
         }
 
         return this._fullConstraint;

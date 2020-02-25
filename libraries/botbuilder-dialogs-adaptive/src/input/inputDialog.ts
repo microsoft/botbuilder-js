@@ -8,7 +8,7 @@
 import { DialogConfiguration, Dialog, DialogContext, DialogTurnResult, DialogEvent, DialogReason, Choice, ListStyle, ChoiceFactoryOptions, ChoiceFactory, DialogEvents, TurnPath } from 'botbuilder-dialogs';
 import { ActivityTypes, Activity, InputHints, MessageFactory } from 'botbuilder-core';
 import { ExpressionEngine, Expression } from 'botframework-expressions';
-import { AdaptiveEventNames } from '../sequenceContext';
+import { AdaptiveEvents } from '../sequenceContext';
 import { TemplateInterface } from '../template';
 import { ActivityTemplate } from '../templates/activityTemplate';
 
@@ -203,7 +203,7 @@ export abstract class InputDialog extends Dialog {
     protected async onPreBubbleEvent(dc: DialogContext, event: DialogEvent): Promise<boolean> {
         if (event.name === DialogEvents.activityReceived && dc.context.activity.type === ActivityTypes.Message) {
             if (dc.parent) {
-                dc.parent.emitEvent(AdaptiveEventNames.recognizeUtterance, dc.context.activity, false);
+                dc.parent.emitEvent(AdaptiveEvents.recognizeUtterance, dc.context.activity, false);
             }
             let canInterrupt = true;
             if (this.allowInterruptions) {

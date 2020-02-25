@@ -7,11 +7,17 @@
  */
 import { OnCondition } from "./conditions";
 import { SequenceContext } from "./sequenceContext";
+import { ExpressionParserInterface } from "botframework-expressions";
 
 /**
  * Select the trigger to execute in a given state.
  */
 export interface TriggerSelector {
+    /**
+     * Gets or sets the expression parser for expressions.
+     */
+    parser: ExpressionParserInterface;
+
     /**
      * Initialize the selector with the set of rules.
      * @param conditionals Possible rules to match.

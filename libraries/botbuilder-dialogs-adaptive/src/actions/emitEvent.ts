@@ -21,7 +21,7 @@ export class EmitEvent<O extends object = {}> extends Dialog<O> implements Confi
 
     public constructor();
     public constructor(eventName: string, eventValue?: string, bubbleEvent?: boolean);
-    public constructor(eventName?: string, eventValue?: string, bubbleEvent = true) {
+    public constructor(eventName?: string, eventValue?: string, bubbleEvent = false) {
         super();
         this.eventName = eventName;
         this.eventValue = eventValue;

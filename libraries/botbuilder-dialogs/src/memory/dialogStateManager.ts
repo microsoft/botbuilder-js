@@ -12,6 +12,7 @@ import { ConversationState, UserState } from 'botbuilder-core';
 import { ConversationMemoryScope } from './scopes/conversationMemoryScope';
 import { TurnMemoryScope } from './scopes/turnMemoryScope';
 import { UserMemoryScope } from './scopes/userMemoryScope';
+import { DialogPath } from '../constants';
 
 export interface DialogStateManagerConfiguration {
     /**
@@ -24,6 +25,8 @@ export interface DialogStateManagerConfiguration {
      */
     readonly memoryScopes: MemoryScope[];
 }
+
+const PATH_TRACKER = 'dialog._tracker.paths';
 
 /**
  * The DialogStateManager manages memory scopes and path resolvers.
@@ -106,8 +109,12 @@ export class DialogStateManager {
      */
     public setValue(pathExpression: string, value: any): void {
         // Get path segments
-        const segments = this.parsePath(this.transformPath(pathExpression));
+        const tpath = this.transformPath(pathExpression);
+        const segments = this.parsePath(tpath);
         if (segments.length < 1) { throw new Error(`DialogStateManager.setValue: path wasn't specified.`) }
+
+        // Track changes
+        this.trackChange(tpath);
 
         // Get memory scope to update
         const scope = this.getMemoryScope(segments[0].toString());
@@ -152,8 +159,12 @@ export class DialogStateManager {
      */
     public deleteValue(pathExpression: string): void {
         // Get path segments
-        const segments = this.parsePath(this.transformPath(pathExpression));
+        const tpath = this.transformPath(pathExpression);
+        const segments = this.parsePath(tpath);
         if (segments.length < 2) { throw new Error(`DialogStateManager.deleteValue: invalid path of '${pathExpression}'.`) }
+
+        // Track change
+        this.trackChange(tpath);
 
         // Get memory scope to update
         const scope = this.getMemoryScope(segments[0].toString());
@@ -223,9 +234,10 @@ export class DialogStateManager {
      * @remarks
      * A path of `profile.address[0]` will be normalized to `profile.address.0`.    
      * @param pathExpression The path to normalize.
+     * @param allowNestedPaths Optional. If `false` then detection of a nested path will cause an empty path to be returned. Defaults to 'true'.
      * @returns The normalized path.
      */
-    public parsePath(pathExpression: string): (string|number)[] {
+    public parsePath(pathExpression: string, allowNestedPaths = true): (string|number)[] {
         // Expand path segments
         let segment = '';
         let depth = 0;
@@ -279,11 +291,14 @@ export class DialogStateManager {
                         } else if (isIndex(segment)) {
                             // Array index
                             output.push(parseInt(segment));
-                        } else {
+                        } else if (allowNestedPaths) {
                             // Resolve nested value
                             const val = this.getValue(segment);
                             const t = typeof val;
                             output.push(t == 'string' || t == 'number' ? val : '');
+                        } else {
+                            // Abort parsing and return empty path (used for change tracking.)
+                            return [];
                         }
                         segment = '';
                     }
@@ -357,6 +372,70 @@ export class DialogStateManager {
         });
 
         return output;
+    }
+
+    /**
+     * Track when specific paths are changed.
+     * @param paths Paths to track.
+     * @returns Normalized paths to pass to [anyPathChanged()](#anypathchanged).
+     */
+    public trackPaths(paths: string[]): string[] {
+        const allPaths: string[] = [];
+        paths.forEach((path) => {
+            const tpath = this.transformPath(path);
+            const segments = this.parsePath(tpath, false);
+            if (segments.length > 0 && (segments.length == 1 || !segments[1].toString().startsWith('_'))) {
+                // Normalize path and initialize change tracker
+                const npath = segments.join('_').toLowerCase();
+                this.setValue(`${PATH_TRACKER}.${npath}`, 0);
+
+                // Return normalized path
+                allPaths.push(npath);
+
+            }
+        });
+
+        return allPaths;
+    }
+
+    /**
+     * Check to see if any path has changed since watermark.
+     * @param counter Time counter to compare to.
+     * @param paths Paths from [trackPaths()](#trackpaths) to check.
+     * @returns True if any path has changed since counter.
+     */
+    public anyPathChanged(counter: number, paths: string[]): boolean {
+        let found = false;
+        if (paths) {
+            for (let i = 0; i < paths.length; i++) {
+                if (this.getValue(`${PATH_TRACKER}.${paths[i]}`, 0) > counter) {
+                    found = true;
+                    break;
+                }
+            }
+        }
+
+        return found;
+    }
+
+    private trackChange(path: string): void {
+        // Normalize path and scan for any matches or children that match.
+        // - We're appending an extra '_' so that we can do substring matches and
+        //   avoid any false positives.
+        let counter: number = undefined;
+        const npath = this.parsePath(path, false).join('_') + '_';
+        const tracking: object = this.getValue(PATH_TRACKER) || {};
+        for (const key in tracking) {
+            if (`${key}_`.startsWith(npath)) {
+                // Populate counter on first use
+                if (counter == undefined) {
+                    counter = this.getValue(DialogPath.EventCounter);
+                }
+
+                // Update tracking watermark
+                this.setValue(`${PATH_TRACKER}.${key}`, counter);
+            }
+        }
     }
 
     private resolveSegments(memory: object, segments: (string|number)[], assignment?: boolean): any {

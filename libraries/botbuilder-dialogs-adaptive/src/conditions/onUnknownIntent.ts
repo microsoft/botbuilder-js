@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 import { Dialog } from 'botbuilder-dialogs';
-import { AdaptiveEventNames } from '../sequenceContext';
+import { AdaptiveEvents } from '../sequenceContext';
 import { OnDialogEvent } from './onDialogEvent';
 
 /**
@@ -30,6 +30,6 @@ export class OnUnknownIntent extends OnDialogEvent {
      * @param condition (Optional) The condition which needs to be met for the actions to be executed.
      */
     public constructor(actions: Dialog[] = [], condition?: string) {
-        super(AdaptiveEventNames.unknownIntent, actions, condition);
+        super(AdaptiveEvents.unknownIntent, actions, condition);
     }
 }

@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { Expression, ExpressionEngine } from "botframework-expressions";
+import { Expression, ExpressionEngine, ExpressionParser, ExpressionParserInterface } from "botframework-expressions";
 import { OnCondition } from "../conditions/onCondition";
 import { TriggerSelector } from "../triggerSelector";
 import { SequenceContext } from "../sequenceContext";
@@ -33,6 +33,11 @@ export class ConditionalSelector implements TriggerSelector {
      * Gets or sets selector if condition is false.
      */
     public ifFalse: TriggerSelector;
+
+    /**
+     * Gets or sets the expression parser to use.
+     */
+    public parser: ExpressionParserInterface = new ExpressionEngine()
 
     public initialize(conditionals: OnCondition[], evaluate: boolean): void {
         this._conditionals = conditionals;

@@ -6,4 +6,7 @@
  * Licensed under the MIT License.
  */
 
+export * from './dialogPath';
+export * from './scopePath';
+export * from './thisPath';
 export * from './turnPath';
