@@ -529,7 +529,8 @@ export class BotFrameworkAdapter extends BotAdapter implements ICredentialTokenP
         this.checkEmulatingOAuthCards(context);
         const userId: string = context.activity.from.id;
         const url: string = this.oauthApiUrl(context);
-        const client: TokenApiClient = this.createTokenApiClient(context, url, oAuthAppCredentials);
+        const client: TokenApiClient = this.createTokenApiClient(url, oAuthAppCredentials);
+        context.turnState.set(this.TokenApiClientCredentialsKey, client);
 
         const result: TokenApiModels.UserTokenGetTokenResponse = await client.userToken.getToken(userId, connectionName, { code: magicCode, channelId: context.activity.channelId });
         if (!result || !result.token || result._response.status == 404) {
@@ -558,7 +559,9 @@ export class BotFrameworkAdapter extends BotAdapter implements ICredentialTokenP
         
         this.checkEmulatingOAuthCards(context);
         const url: string = this.oauthApiUrl(context);
-        const client: TokenApiClient = this.createTokenApiClient(context, url, oAuthAppCredentials);
+        const client: TokenApiClient = this.createTokenApiClient(url, oAuthAppCredentials);
+        context.turnState.set(this.TokenApiClientCredentialsKey, client);
+
         await client.userToken.signOut(userId, { connectionName: connectionName, channelId: context.activity.channelId } );
     }
 
@@ -575,7 +578,8 @@ export class BotFrameworkAdapter extends BotAdapter implements ICredentialTokenP
         this.checkEmulatingOAuthCards(context);
         const conversation: Partial<ConversationReference> = TurnContext.getConversationReference(context.activity);
         const url: string = this.oauthApiUrl(context);
-        const client: TokenApiClient = this.createTokenApiClient(context, url, oAuthAppCredentials);
+        const client: TokenApiClient = this.createTokenApiClient(url, oAuthAppCredentials);
+        context.turnState.set(this.TokenApiClientCredentialsKey, client);
         const state: any = {
             ConnectionName: connectionName,
             Conversation: conversation,
@@ -606,7 +610,8 @@ export class BotFrameworkAdapter extends BotAdapter implements ICredentialTokenP
         this.checkEmulatingOAuthCards(context);
         userId = userId || context.activity.from.id;
         const url: string = this.oauthApiUrl(context);
-        const client: TokenApiClient = this.createTokenApiClient(context, url, oAuthAppCredentials);
+        const client: TokenApiClient = this.createTokenApiClient(url, oAuthAppCredentials);
+        context.turnState.set(this.TokenApiClientCredentialsKey, client);
         
         return (await client.userToken.getTokenStatus(userId, {channelId: context.activity.channelId, include: includeFilter}))._response.parsedBody;
     }
@@ -631,7 +636,8 @@ export class BotFrameworkAdapter extends BotAdapter implements ICredentialTokenP
         this.checkEmulatingOAuthCards(context);
         const userId: string = context.activity.from.id;
         const url: string = this.oauthApiUrl(context);
-        const client: TokenApiClient = this.createTokenApiClient(context, url, oAuthAppCredentials);
+        const client: TokenApiClient = this.createTokenApiClient(url, oAuthAppCredentials);
+        context.turnState.set(this.TokenApiClientCredentialsKey, client);
 
         return (await client.userToken.getAadTokens(userId, connectionName, { resourceUrls: resourceUrls }, { channelId: context.activity.channelId }))._response.parsedBody as {[propertyName: string]: TokenResponse };
     }
@@ -1013,18 +1019,15 @@ export class BotFrameworkAdapter extends BotAdapter implements ICredentialTokenP
     /**
      * Creates an OAuth API client.
      * 
-     * @param context The context object for the turn.
      * @param serviceUrl The client's service URL.
      * @param oAuthAppCredentials AppCredentials for OAuth.
      * 
      * @remarks
      * Override this in a derived class to create a mock OAuth API client for unit testing.
      */
-    protected createTokenApiClient(context: TurnContext, serviceUrl: string, oAuthAppCredentials: AppCredentials): TokenApiClient {
+    protected createTokenApiClient(serviceUrl: string, oAuthAppCredentials: AppCredentials): TokenApiClient {
         const tokenApiClientCredentials = oAuthAppCredentials ? oAuthAppCredentials : this.credentials;
         const client = new TokenApiClient(tokenApiClientCredentials, { baseUri: serviceUrl, userAgent: USER_AGENT });
-
-        context.turnState.set(this.TokenApiClientCredentialsKey, tokenApiClientCredentials);
 
         return client;
     }
