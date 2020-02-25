@@ -35,7 +35,7 @@
     "source-map-support": "^0.5.3",
     "ts-node": "^4.1.0",
     "typescript": "3.5.3",
-    "unzip": "^0.1.11",
+    "unzipper": "^0.10.9",
     "uuid": "^3.3.2"
   },
   "scripts": {
