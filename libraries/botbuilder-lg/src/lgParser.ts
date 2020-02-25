@@ -218,7 +218,7 @@ export class LGParser {
                 .filter(t => t !== undefined && t !== '');
     }
 
-    private static extractOption(originalText): string
+    private static extractOption(originalText: string): string
     {
         let result = '';
         if (!originalText)
