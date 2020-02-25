@@ -67,40 +67,6 @@ export class StaticChecker extends AbstractParseTreeVisitor<Diagnostic[]> implem
         return result;
     }
 
-    public checkFiles(filePaths: string[], importResolver?: ImportResolverDelegate): Diagnostic[] {
-        let result: Diagnostic[] = [];
-        filePaths.forEach((filePath: string): void => {
-            importResolver = importResolver ? importResolver : LGParser.defaultFileResolver;
-
-            filePath = LGExtensions.normalizePath(filePath);
-            const lgFile: LGFile = LGParser.parseText(fs.readFileSync(filePath, 'utf-8'), filePath);
-            const staticChecker = new StaticChecker(lgFile);
-            result = result.concat(staticChecker.check());
-        });
-
-        return result;
-    }
-
-    public checkFile(filePath: string, importResolver?: ImportResolverDelegate): Diagnostic[] {
-        return this.checkFiles([filePath], importResolver);
-    }
-
-    public checkText(content: string, id?: string, importResolver?: ImportResolverDelegate): Diagnostic[] {
-        if (!importResolver) {
-            const importPath: string = LGExtensions.normalizePath(id);
-            if (!path.isAbsolute(importPath)) {
-                throw new Error('[Error] id must be full path when importResolver is empty');
-            }
-        }
-
-        let result: Diagnostic[] = [];
-        const lgFile: LGFile = LGParser.parseText(content, id);
-        const staticChecker = new StaticChecker(lgFile, this.baseExpressionEngine);
-        result = result.concat(staticChecker.check());
-
-        return result;
-    }
-
     public visitTemplateDefinition(context: lp.TemplateDefinitionContext): Diagnostic[]
     {
         var result = [];

@@ -78,7 +78,7 @@ export class LGParser {
             lgFile.updateStrictMode();
             diagnostics = diagnostics.concat(parsedResult.invalidTemplateErrors);
             lgFile.references = this.getReferences(lgFile, importResolver);
-            const semanticErrors = new StaticChecker(lgFile).check();
+            const semanticErrors = new StaticChecker(lgFile, lgFile.expressionEngine).check();
             diagnostics = diagnostics.concat(semanticErrors);
         } catch (err) {
             if (err instanceof LGException) {

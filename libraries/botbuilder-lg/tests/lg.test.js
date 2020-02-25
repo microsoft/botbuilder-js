@@ -805,9 +805,9 @@ describe('LG', function() {
                 return ExpressionFunctions.lookup(func);
             }
         });
-        let template = LGParser.parseFile(GetExampleFilePath("CustomFunction.lg"), undefined, engine);
+        let template = LGParser.parseFile(GetExampleFilePath('CustomFunction.lg'), undefined, engine);
         assert.equal(template.expressionEngine, engine);
         let result = template.evaluateTemplate('template', {});
-        assert.strictEqual(result, 3)
+        assert.strictEqual(result, 3);
     });
 });
