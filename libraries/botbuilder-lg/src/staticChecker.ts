@@ -31,16 +31,15 @@ class StaticCheckerInner extends AbstractParseTreeVisitor<Diagnostic[]> implemen
     private visitedTemplateNames: string[];
     private _expressionParser: ExpressionParserInterface;
 
-    public constructor(lgFile: LGFile, expressionEngine: ExpressionEngine = null) {
+    public constructor(lgFile: LGFile) {
         super();
         this.lgFile = lgFile;
-        this.baseExpressionEngine = expressionEngine? expressionEngine : new ExpressionEngine();
+        this.baseExpressionEngine = lgFile.expressionEngine;
     }
 
     // Create a property because we want this to be lazy loaded
     private get expressionParser(): ExpressionParserInterface {
-        if (this._expressionParser === undefined)
-        {
+        if (this._expressionParser === undefined) {
             // create an evaluator to leverage it's customized function look up for checking
             var evaluator = new Evaluator(this.lgFile.allTemplates, this.baseExpressionEngine);
             this._expressionParser = evaluator.expressionEngine;
@@ -57,8 +56,7 @@ class StaticCheckerInner extends AbstractParseTreeVisitor<Diagnostic[]> implemen
         this.visitedTemplateNames = [];
         var result = [];
 
-        if (this.lgFile.allTemplates.length === 0)
-        {
+        if (this.lgFile.allTemplates.length === 0) {
             result.push(this.buildLGDiagnostic({
                 message: LGErrors.noTemplate,
                 severity: DiagnosticSeverity.Warning
@@ -71,47 +69,36 @@ class StaticCheckerInner extends AbstractParseTreeVisitor<Diagnostic[]> implemen
         return result;
     }
 
-    public visitTemplateDefinition(context: lp.TemplateDefinitionContext): Diagnostic[]
-    {
+    public visitTemplateDefinition(context: lp.TemplateDefinitionContext): Diagnostic[] {
         var result = [];
         var templateNameLine = context.templateNameLine();
         var errorTemplateName = templateNameLine.errorTemplateName();
-        if (errorTemplateName != null)
-        {
-            result.push(this.buildLGDiagnostic({message: LGErrors.invalidTemplateName, context: errorTemplateName}));
+        if (errorTemplateName != null) {
+            result.push(this.buildLGDiagnostic({ message: LGErrors.invalidTemplateName, context: errorTemplateName }));
         }
-        else
-        {
+        else {
             var templateName = context.templateNameLine().templateName().text;
 
-            if (this.visitedTemplateNames.includes(templateName))
-            {
-                result.push(this.buildLGDiagnostic({message: LGErrors.duplicatedTemplateInSameTemplate(templateName), context: templateNameLine}));
+            if (this.visitedTemplateNames.includes(templateName)) {
+                result.push(this.buildLGDiagnostic({ message: LGErrors.duplicatedTemplateInSameTemplate(templateName), context: templateNameLine }));
             }
-            else
-            {
+            else {
                 this.visitedTemplateNames.push(templateName);
-                for (const reference of this.lgFile.references)
-                {
+                for (const reference of this.lgFile.references) {
                     var sameTemplates = reference.templates.filter(u => u.name == templateName);
-                    for(const sameTemplate of sameTemplates)
-                    {
-                        result.push(this.buildLGDiagnostic({message: LGErrors.duplicatedTemplateInDiffTemplate(sameTemplate.name, sameTemplate.source), context: templateNameLine}));
+                    for (const sameTemplate of sameTemplates) {
+                        result.push(this.buildLGDiagnostic({ message: LGErrors.duplicatedTemplateInDiffTemplate(sameTemplate.name, sameTemplate.source), context: templateNameLine }));
                     }
                 }
 
-                if (result.length > 0)
-                {
+                if (result.length > 0) {
                     return result;
                 }
-                else
-                {
-                    if (context.templateBody() == null)
-                    {
-                        result.push(this.buildLGDiagnostic({message: LGErrors.noTemplateBody(templateName), severity: DiagnosticSeverity.Warning, context: context.templateNameLine()}));
+                else {
+                    if (context.templateBody() == null) {
+                        result.push(this.buildLGDiagnostic({ message: LGErrors.noTemplateBody(templateName), severity: DiagnosticSeverity.Warning, context: context.templateNameLine() }));
                     }
-                    else
-                    {
+                    else {
                         result = result.concat(this.visit(context.templateBody()));
                     }
                 }
@@ -129,7 +116,8 @@ class StaticCheckerInner extends AbstractParseTreeVisitor<Diagnostic[]> implemen
             if (errorTemplateStr) {
                 result.push(this.buildLGDiagnostic({
                     message: `Invalid template body line, did you miss '-' at line begin`,
-                    context: errorTemplateStr}));
+                    context: errorTemplateStr
+                }));
             } else {
                 result = result.concat(this.visit(templateStr));
             }
@@ -142,20 +130,20 @@ class StaticCheckerInner extends AbstractParseTreeVisitor<Diagnostic[]> implemen
         let result: Diagnostic[] = [];
 
         if (context.structuredBodyNameLine().errorStructuredName() !== undefined) {
-            result.push(this.buildLGDiagnostic({message: `Structured name format error.`, context: context.structuredBodyNameLine()}));
+            result.push(this.buildLGDiagnostic({ message: `Structured name format error.`, context: context.structuredBodyNameLine() }));
         }
 
         if (context.structuredBodyEndLine() === undefined) {
-            result.push(this.buildLGDiagnostic({message: `Structured LG missing ending ']'.`, context: context}));
+            result.push(this.buildLGDiagnostic({ message: `Structured LG missing ending ']'.`, context: context }));
         }
 
         const bodys = context.structuredBodyContentLine();
         if (bodys === null || bodys.length === 0) {
-            result.push(this.buildLGDiagnostic({message: `Structured LG content is empty.`, context: context}));
+            result.push(this.buildLGDiagnostic({ message: `Structured LG content is empty.`, context: context }));
         } else {
             for (const body of bodys) {
                 if (body.errorStructureLine() !== undefined) {
-                    result.push(this.buildLGDiagnostic({message: `structured body format error.`, context: body.errorStructureLine()}));
+                    result.push(this.buildLGDiagnostic({ message: `structured body format error.`, context: body.errorStructureLine() }));
                 } else if (body.objectStructureLine() !== undefined) {
                     result = result.concat(this.checkExpression(body.objectStructureLine().text, body.objectStructureLine()));
                 } else {
@@ -178,7 +166,7 @@ class StaticCheckerInner extends AbstractParseTreeVisitor<Diagnostic[]> implemen
 
         let idx = 0;
         for (const ifRule of ifRules) {
-            const  conditionNode: lp.IfConditionContext = ifRule.ifCondition();
+            const conditionNode: lp.IfConditionContext = ifRule.ifCondition();
             const ifExpr: boolean = conditionNode.IF() !== undefined;
             const elseIfExpr: boolean = conditionNode.ELSEIF() !== undefined;
             const elseExpr: boolean = conditionNode.ELSE() !== undefined;
@@ -360,8 +348,8 @@ class StaticCheckerInner extends AbstractParseTreeVisitor<Diagnostic[]> implemen
 
         const multiLinePrefix = context.MULTILINE_PREFIX();
         const multiLineSuffix = context.MULTILINE_SUFFIX();
-        
-        if (multiLinePrefix !== undefined &&  multiLineSuffix === undefined) {
+
+        if (multiLinePrefix !== undefined && multiLineSuffix === undefined) {
             result.push(this.buildLGDiagnostic({
                 message: 'Close ``` is missing.',
                 context: context
@@ -382,7 +370,7 @@ class StaticCheckerInner extends AbstractParseTreeVisitor<Diagnostic[]> implemen
             this.expressionParser.parse(exp);
         } catch (e) {
             result.push(this.buildLGDiagnostic({
-                message: e.message.concat(` in expression '${ exp }'`),
+                message: e.message.concat(` in expression '${exp}'`),
                 context: context
             }));
 
@@ -395,9 +383,9 @@ class StaticCheckerInner extends AbstractParseTreeVisitor<Diagnostic[]> implemen
     private buildLGDiagnostic(parameters: { message: string; severity?: DiagnosticSeverity; context?: ParserRuleContext }): Diagnostic {
         const startPosition = parameters.context === undefined ? new Position(0, 0) : new Position(parameters.context.start.line, parameters.context.start.charPositionInLine);
         const stopPosition = parameters.context === undefined ? new Position(0, 0) : new Position(parameters.context.stop.line, parameters.context.stop.charPositionInLine + parameters.context.stop.text.length);
-        const severity = parameters.severity? parameters.severity : DiagnosticSeverity.Error;
+        const severity = parameters.severity ? parameters.severity : DiagnosticSeverity.Error;
         const range = new Range(startPosition, stopPosition);
-        
+
         return new Diagnostic(range, parameters.message, severity, this.lgFile.id);
     }
 }
@@ -408,9 +396,9 @@ class StaticCheckerInner extends AbstractParseTreeVisitor<Diagnostic[]> implemen
 export class StaticChecker {
     private readonly expressionEngine: ExpressionEngine;
     private readonly lgFile: LGFile;
-    public constructor(lgFile: LGFile, expressionEngine?: ExpressionEngine) {
-        this.expressionEngine = expressionEngine ? expressionEngine : new ExpressionEngine();
-        this.lgFile= lgFile;
+    public constructor(lgFile: LGFile) {
+        this.expressionEngine = lgFile.expressionEngine;
+        this.lgFile = lgFile;
     }
 
     public checkFiles(filePaths: string[], importResolver?: ImportResolverDelegate): Diagnostic[] {
@@ -420,7 +408,7 @@ export class StaticChecker {
 
             filePath = LGExtensions.normalizePath(filePath);
             const lgFile: LGFile = LGParser.parseText(fs.readFileSync(filePath, 'utf-8'), filePath);
-            const staticChecker = new StaticCheckerInner(lgFile, this.expressionEngine);
+            const staticChecker = new StaticCheckerInner(lgFile);
             result = result.concat(staticChecker.check());
         });
 
@@ -441,7 +429,7 @@ export class StaticChecker {
 
         let result: Diagnostic[] = [];
         const lgFile: LGFile = LGParser.parseText(content, id);
-        const staticChecker = new StaticCheckerInner(lgFile, this.expressionEngine);
+        const staticChecker = new StaticCheckerInner(lgFile);
         result = result.concat(staticChecker.check());
 
         return result;
