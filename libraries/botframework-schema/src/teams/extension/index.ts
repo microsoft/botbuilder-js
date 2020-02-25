@@ -56,7 +56,7 @@ export interface O365ConnectorCardActionBase {
 }
 
 /**
- * Defines values for Type1.
+ * Defines values for O365ConnectorCardInputType.
  * Possible values include: 'textInput', 'dateInput', 'multichoiceInput'
  * @readonly
  * @enum {string}
