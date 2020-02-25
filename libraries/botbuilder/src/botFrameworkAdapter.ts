@@ -226,6 +226,13 @@ export class BotFrameworkAdapter extends BotAdapter implements ICredentialTokenP
     }
 
     /**
+     * Used in streaming contexts to check if the streaming connection is still open for the bot to send activities.
+     */
+    public get isStreamingConnectionOpen(): boolean {
+        return this.streamingServer.isConnected;
+    }
+ 
+    /**
      * Asynchronously resumes a conversation with a user, possibly after some time has gone by.
      *
      * @param reference A reference to the conversation to continue.
@@ -808,9 +815,9 @@ export class BotFrameworkAdapter extends BotAdapter implements ICredentialTokenP
 
         if (processError) {
             if (processError && (processError as Error).stack) {
-                throw new Error(`BotFrameworkAdapter.processActivity(): ${ status } ERROR\n ${ processError.stack }`);
+                throw new Error(`BotFrameworkAdapter.processActivityDirect(): ERROR\n ${ processError.stack }`);
             } else {
-                throw new Error(`BotFrameworkAdapter.processActivity(): ${ status } ERROR`);
+                throw new Error(`BotFrameworkAdapter.processActivityDirect(): ERROR`);
             }
         }
     }
@@ -852,6 +859,9 @@ export class BotFrameworkAdapter extends BotAdapter implements ICredentialTokenP
                         throw new Error(`BotFrameworkAdapter.sendActivity(): missing conversation id.`);
                     }
                     if (activity && BotFrameworkAdapter.isStreamingServiceUrl(activity.serviceUrl)) {
+                        if (!this.isStreamingConnectionOpen) {
+                            throw new Error('BotFrameworkAdapter.sendActivities(): Unable to send activity as Streaming connection is closed.');
+                        }
                         TokenResolver.checkForOAuthCards(this, context, activity as Activity);
                     }
                     const client = this.getOrCreateConnectorClient(context, activity.serviceUrl, this.credentials);
@@ -1226,10 +1236,14 @@ export class BotFrameworkAdapter extends BotAdapter implements ICredentialTokenP
         } catch (err) {
             // If the authenticateConnection call fails, send back the correct error code and close
             // the connection.
-            if (typeof(err.message) === 'string' && err.message.toLowerCase().startsWith('unauthorized')) {
-                abortWebSocketUpgrade(socket, 401);
-            } else if (typeof(err.message) === 'string' && err.message.toLowerCase().startsWith(`'authheader'`)) {
-                abortWebSocketUpgrade(socket, 400);
+            if (typeof(err.message) === 'string') {
+                if (err.message.toLowerCase().startsWith('unauthorized')) {
+                    abortWebSocketUpgrade(socket, 401, err.message);
+                } else if (err.message.toLowerCase().startsWith(`'authheader'`)) {
+                    abortWebSocketUpgrade(socket, 400, err.message);
+                } else {
+                    abortWebSocketUpgrade(socket, 500, err.message);
+                }
             } else {
                 abortWebSocketUpgrade(socket, 500);
             }
@@ -1365,10 +1379,10 @@ function delay(timeout: number): Promise<void> {
     });
 }
 
-function abortWebSocketUpgrade(socket: INodeSocket, code: number) {
+function abortWebSocketUpgrade(socket: INodeSocket, code: number, message?: string) {
     if (socket.writable) {
         const connectionHeader = `Connection: 'close'\r\n`;
-        socket.write(`HTTP/1.1 ${code} ${STATUS_CODES[code]}\r\n${connectionHeader}\r\n`);
+        socket.write(`HTTP/1.1 ${code} ${STATUS_CODES[code]}\r\n${message}\r\n${connectionHeader}\r\n`);
     }
 
     socket.destroy();

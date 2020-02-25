@@ -10,4 +10,10 @@
     "rootDir": "./src",
     "types" : ["node"]
   },
+  "exclude": [
+    "**/index-browser.ts",
+    "browser",
+    "lib",
+    "node_modules"
+  ]
 }

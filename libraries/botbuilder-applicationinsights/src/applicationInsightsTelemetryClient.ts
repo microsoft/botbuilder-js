@@ -8,6 +8,7 @@
 import * as appInsights from 'applicationinsights';
 import { Activity, BotTelemetryClient, TelemetryDependency, TelemetryEvent, TelemetryException, TelemetryTrace } from 'botbuilder-core';
 import * as cls from 'cls-hooked';
+import * as crypto from 'crypto';
 const ns: any = cls.createNamespace('my.request');
 
 // This is the currently recommended work-around for using Application Insights with async/await
@@ -132,16 +133,19 @@ function addBotIdentifiers(envelope: appInsights.Contracts.Envelope, context: { 
         const userId: string = activity.from ? activity.from.id : '';
         const channelId: string = activity.channelId || '';
         const conversationId: string = activity.conversation ? activity.conversation.id : '';
+        // Hashed ID is used due to max session ID length for App Insights session Id
+        const sessionId: string = conversationId ? crypto.createHash('sha256').update(conversationId).digest('base64') : '';
 
         // set user id and session id
         envelope.tags[appInsights.defaultClient.context.keys.userId] = channelId + userId;
-        envelope.tags[appInsights.defaultClient.context.keys.sessionId] = conversationId;
+        envelope.tags[appInsights.defaultClient.context.keys.sessionId] = sessionId;
 
         // Add additional properties
         telemetryItem.properties = telemetryItem.properties || {};
         telemetryItem.properties.activityId = activity.id;
         telemetryItem.properties.channelId = channelId;
         telemetryItem.properties.activityType = activity.type;
+        telemetryItem.properties.conversationId = conversationId;
     }
 
     return true;
