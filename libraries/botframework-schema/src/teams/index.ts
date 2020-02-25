@@ -1241,17 +1241,17 @@ export type ActivityImageType = 'avatar' | 'article';
 export type Os = 'default' | 'iOS' | 'android' | 'windows';
 
 /**
- * Defines values for O365ConnectorCardInputBase.
+ * Defines values for O365ConnectorCardInputBaseType.
  * Possible values include: 'textInput', 'dateInput', 'multichoiceInput'
  * @readonly
  * @enum {string}
  */
-export type O365ConnectorCardInputBase = 'textInput' | 'dateInput' | 'multichoiceInput';
+export type O365ConnectorCardInputBaseType = 'textInput' | 'dateInput' | 'multichoiceInput';
 
 /**
- * @deprecated Use O365ConnectorCardInputBase instead.
+ * @deprecated Use O365ConnectorCardInputBaseType instead.
  */
-export type Type1 = O365ConnectorCardInputBase;
+export type Type1 = O365ConnectorCardInputBaseType;
 
 /**
  * Defines values for Style.
@@ -1326,12 +1326,12 @@ export type Importance = 'normal' | 'high' | 'urgent';
 export type CommandContext = 'message' | 'compose' | 'commandbox';
 
 /**
- * Defines values for BotMessagePreviewAction.
+ * Defines values for BotMessagePreviewActionType.
  * Possible values include: 'edit', 'send'
  * @readonly
  * @enum {string}
  */
-export type BotMessagePreviewAction = 'edit' | 'send';
+export type BotMessagePreviewActionType = 'edit' | 'send';
 
 /**
  * Defines values for BotMessagePreviewType.
@@ -1345,7 +1345,7 @@ export type BotMessagePreviewType = 'message' | 'continue';
 /**
  * @deprecated Use BotMessagePreviewType
  */
-export type Type2 = BotMessagePreviewAction
+export type Type2 = BotMessagePreviewActionType
 
 /**
  * Defines values for AttachmentLayout.

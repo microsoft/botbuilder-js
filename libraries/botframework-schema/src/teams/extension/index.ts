@@ -71,7 +71,7 @@ export type O365ConnectorCardInputType = 'textInput' | 'dateInput' | 'multichoic
  */
 export interface O365ConnectorCardInputBase {
   /**
-   * @member {Type1} [type] Input type name. Possible values include:
+   * @member {O365ConnectorCardInputBaseType} [type] Input type name. Possible values include:
    * 'textInput', 'dateInput', 'multichoiceInput'
    */
   '@type'?: O365ConnectorCardInputType;
