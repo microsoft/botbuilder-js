@@ -1219,10 +1219,14 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
         } catch (err) {
             // If the authenticateConnection call fails, send back the correct error code and close
             // the connection.
-            if (typeof(err.message) === 'string' && err.message.toLowerCase().startsWith('unauthorized')) {
-                abortWebSocketUpgrade(socket, 401);
-            } else if (typeof(err.message) === 'string' && err.message.toLowerCase().startsWith(`'authheader'`)) {
-                abortWebSocketUpgrade(socket, 400);
+            if (typeof(err.message) === 'string') {
+                if (err.message.toLowerCase().startsWith('unauthorized')) {
+                    abortWebSocketUpgrade(socket, 401, err.message);
+                } else if (err.message.toLowerCase().startsWith(`'authheader'`)) {
+                    abortWebSocketUpgrade(socket, 400, err.message);
+                } else {
+                    abortWebSocketUpgrade(socket, 500, err.message);
+                }
             } else {
                 abortWebSocketUpgrade(socket, 500);
             }
@@ -1358,10 +1362,10 @@ function delay(timeout: number): Promise<void> {
     });
 }
 
-function abortWebSocketUpgrade(socket: INodeSocket, code: number) {
+function abortWebSocketUpgrade(socket: INodeSocket, code: number, message?: string) {
     if (socket.writable) {
         const connectionHeader = `Connection: 'close'\r\n`;
-        socket.write(`HTTP/1.1 ${code} ${STATUS_CODES[code]}\r\n${connectionHeader}\r\n`);
+        socket.write(`HTTP/1.1 ${code} ${STATUS_CODES[code]}\r\n${message}\r\n${connectionHeader}\r\n`);
     }
 
     socket.destroy();
