@@ -6,13 +6,13 @@
  * Licensed under the MIT License.
  */
 
-import { BotFrameworkHttpClient, SkillConversationIdFactoryBase } from 'botbuilder'; // bad import
+import { BotFrameworkClient, SkillConversationIdFactoryBase } from 'botbuilder-core';
 
 export interface SkillDialogOptions {
     
     botId: string;
 
-    skillClient: BotFrameworkHttpClient;
+    skillClient: BotFrameworkClient;
 
     skillHostEndpoint: string;
 

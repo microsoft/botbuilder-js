@@ -6,8 +6,7 @@
  * Licensed under the MIT License.
  */
 
-import { BotFrameworkSkill } from 'botbuilder'; // bad import
-import { Activity, ActivityTypes, ConversationState, StatePropertyAccessor, TurnContext } from 'botbuilder-core';
+import { Activity, ActivityTypes, BotFrameworkSkill, ConversationState, ConversationReference, StatePropertyAccessor, TurnContext } from 'botbuilder-core';
 import { Dialog, DialogTurnResult } from './dialog';
 import { DialogContext } from './dialogContext';
 import { SkillDialogArgs } from './skillDialogArgs';
@@ -124,8 +123,8 @@ export class SkillDialog extends Dialog {
         await this._conversationState.saveChanges(dc.context, true);
     
         // Create a conversationId to interact with the skill and send the activity
-        const skillConversationId = await this._dialogOptions.conversationIdFactory.createSkillConversationId(TurnContext.getConversationReference(activity));
-        const response = await this._dialogOptions.skillClient.postActivity(this._dialogOptions.botId, skillInfo.AppId, skillInfo.SkillEndpoint, this._dialogOptions.skillHostEndpoint, skillConversationId, activity);
+        const skillConversationId = await this._dialogOptions.conversationIdFactory.createSkillConversationId(TurnContext.getConversationReference(activity) as ConversationReference);
+        const response = await this._dialogOptions.skillClient.postActivity(this._dialogOptions.botId, skillInfo.appId, skillInfo.skillEndpoint, this._dialogOptions.skillHostEndpoint, skillConversationId, activity);
     
         // Inspect the skill response status
         if (!(response.status >= 200 && response.status <= 299)) {

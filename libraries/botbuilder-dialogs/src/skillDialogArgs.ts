@@ -6,8 +6,7 @@
  * Licensed under the MIT License.
  */
 
-import { BotFrameworkSkill } from 'botbuilder'; // bad import
-import { Activity } from 'botbuilder-core';
+import { Activity, BotFrameworkSkill } from 'botbuilder-core';
 
 /**
  * A class with dialog arguments for a SkillDialog.
