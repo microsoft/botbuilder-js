@@ -1,4 +1,3 @@
-
 /**
  * @module botbuilder-lg
  */
@@ -8,14 +7,13 @@
  */
 // tslint:disable-next-line: no-submodule-imports
 import { AbstractParseTreeVisitor, TerminalNode } from 'antlr4ts/tree';
-import { BuiltInFunctions, Constant, EvaluatorLookup, Expression, ExpressionEngine, ExpressionEvaluator, ExpressionType, ReturnType, SimpleObjectMemory } from 'adaptive-expressions';
+import { ExpressionFunctions, Constant, EvaluatorLookup, Expression, ExpressionEngine, ExpressionEvaluator, ExpressionType, ReturnType, SimpleObjectMemory } from 'adaptive-expressions';
 import { keyBy } from 'lodash';
 import { CustomizedMemory } from './customizedMemory';
 import { EvaluationTarget } from './evaluationTarget';
 import * as lp from './generated/LGFileParser';
 import { LGFileParserVisitor } from './generated/LGFileParserVisitor';
 import { LGTemplate } from './lgTemplate';
-import { ImportResolver } from './importResolver';
 import * as path from 'path';
 import * as fs from 'fs';
 import { LGExtensions } from './lgExtensions';
@@ -25,20 +23,33 @@ import { LGExtensions } from './lgExtensions';
  */
 // tslint:disable-next-line: max-classes-per-file
 export class Evaluator extends AbstractParseTreeVisitor<any> implements LGFileParserVisitor<any> {
+
+    /**
+     * Templates.
+     */
     public readonly templates: LGTemplate[];
+
+    /**
+     * Expression engine.
+     */
     public readonly expressionEngine: ExpressionEngine;
+
+    /**
+     * TemplateMap.
+     */
     public readonly templateMap: { [name: string]: LGTemplate };
     private readonly evalutationTargetStack: EvaluationTarget[] = [];
 
     // to support broswer, use look-ahead replace look-behind
-    // original:/(?<!\\)@\{((\'[^\'\r\n]*\')|(\"[^\"\r\n]*\")|[^\r\n\{\}\'\"])*?\}/g;
-    public static readonly expressionRecognizeReverseRegex: RegExp = new RegExp(/\}((\'[^\'\r\n]*\')|(\"[^\"\r\n]*\")|([^\r\n\{\}\'\"]))*?\{\$(?!\\)/g);
+    // original:/(?<!\\)$\{((\'[^\'\r\n]*\')|(\"[^\"\r\n]*\")|(\`(\\\`|[^\`])*\`)|[^\r\n\{\}\'\"\`])*?\}/g;
+    public static readonly expressionRecognizeReverseRegex: RegExp = new RegExp(/\}((\'[^\'\r\n]*\')|(\"[^\"\r\n]*\")|(\`(\\\`|[^\`])*\`)|([^\r\n\{\}\'\"\`]))*?\{\$(?!\\)/g);
 
     public static readonly LGType = 'lgType';
     public static readonly activityAttachmentFunctionName = 'ActivityAttachment';
     public static readonly fromFileFunctionName = 'fromFile';
     public static readonly templateFunctionName = 'template';
     public static readonly isTemplateFunctionName = 'isTemplate';
+    private static readonly ReExecuteSuffix = '!';
 
     public constructor(templates: LGTemplate[], expressionEngine: ExpressionEngine) {
         super();
@@ -53,15 +64,29 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGFilePa
         return inputString.split('').reverse().join('').split(regex).map((e: string): string => e.split('').reverse().join('')).reverse();
     }
 
-    public evaluateTemplate(templateName: string, scope: any): any {
+    /**
+     * Evaluate a template with given name and scope.
+     * @param inputTemplateName template name.
+     * @param scope scope.
+     * @returns Evaluate result.
+     */
+    public evaluateTemplate(inputTemplateName: string, scope: any): any {
+        let templateName: string;
+        let reExecute: boolean;
+        ({reExecute, pureTemplateName: templateName} = this.parseTemplateName(inputTemplateName));
+
         if (!(templateName in this.templateMap)) {
             throw new Error(`No such template: ${ templateName }`);
         }
 
         if (this.evalutationTargetStack.find((u: EvaluationTarget): boolean => u.templateName === templateName) !== undefined) {
-            throw new Error(`Loop deteced: ${ this.evalutationTargetStack.reverse()
+            throw new Error(`Loop detected: ${ this.evalutationTargetStack.reverse()
                 .map((u: EvaluationTarget): string => u.templateName)
                 .join(' => ') }`);
+        }
+
+        if(!(scope instanceof CustomizedMemory)) {
+            scope = new CustomizedMemory(SimpleObjectMemory.wrap(scope));
         }
 
         const templateTarget: EvaluationTarget = new EvaluationTarget(templateName, scope);
@@ -71,7 +96,7 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGFilePa
 
         if (this.evalutationTargetStack.length !== 0) {
             previousEvaluateTarget = this.evalutationTargetStack[this.evalutationTargetStack.length - 1];
-            if (previousEvaluateTarget.evaluatedChildren.has(currentEvulateId)) {
+            if (!reExecute && previousEvaluateTarget.evaluatedChildren.has(currentEvulateId)) {
                 return previousEvaluateTarget.evaluatedChildren.get(currentEvulateId);
             }
         }
@@ -216,7 +241,9 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGFilePa
         }).join('');
     }
 
-    public constructScope(templateName: string, args: any[]): any {
+    public constructScope(inputTemplateName: string, args: any[]): any {
+        var templateName = this.parseTemplateName(inputTemplateName).pureTemplateName;
+
         if (!this.templateMap[templateName]) {
             throw new Error(`No such template ${ templateName }`);
         }
@@ -383,25 +410,26 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGFilePa
             return baseLookup(name.substring(prebuiltPrefix.length));
         }
 
-        if (this.templateMap[name]) {
+        var templateName = this.parseTemplateName(name).pureTemplateName;
+        if (templateName in this.templateMap) {
             // tslint:disable-next-line: max-line-length
-            return new ExpressionEvaluator(name, BuiltInFunctions.apply(this.templateEvaluator(name)), ReturnType.Object, this.validTemplateReference);
+            return new ExpressionEvaluator(templateName, ExpressionFunctions.apply(this.templateEvaluator(name)), ReturnType.Object, this.validTemplateReference);
         }
 
         if (name === Evaluator.templateFunctionName) {
-            return new ExpressionEvaluator(Evaluator.templateFunctionName, BuiltInFunctions.apply(this.templateFunction()), ReturnType.Object, this.validateTemplateFunction);
+            return new ExpressionEvaluator(Evaluator.templateFunctionName, ExpressionFunctions.apply(this.templateFunction()), ReturnType.Object, this.validateTemplateFunction);
         }
 
         if (name === Evaluator.fromFileFunctionName) {
-            return new ExpressionEvaluator(Evaluator.fromFileFunctionName, BuiltInFunctions.apply(this.fromFile()), ReturnType.Object, this.validateFromFile);
+            return new ExpressionEvaluator(Evaluator.fromFileFunctionName, ExpressionFunctions.apply(this.fromFile()), ReturnType.Object, this.validateFromFile);
         }
 
         if (name === Evaluator.activityAttachmentFunctionName) {
-            return new ExpressionEvaluator(Evaluator.activityAttachmentFunctionName, BuiltInFunctions.apply(this.activityAttachment()), ReturnType.Object, this.validateActivityAttachment);
+            return new ExpressionEvaluator(Evaluator.activityAttachmentFunctionName, ExpressionFunctions.apply(this.activityAttachment()), ReturnType.Object, this.validateActivityAttachment);
         }
 
         if (name === Evaluator.isTemplateFunctionName) {
-            return new ExpressionEvaluator(Evaluator.isTemplateFunctionName, BuiltInFunctions.apply(this.isTemplate()), ReturnType.Boolean, this.validateIsTemplate);
+            return new ExpressionEvaluator(Evaluator.isTemplateFunctionName, ExpressionFunctions.apply(this.isTemplate()), ReturnType.Boolean, this.validateIsTemplate);
         }
 
         return baseLookup(name);
@@ -411,8 +439,7 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGFilePa
         const validCharactersDict: any = {
             '\\r': '\r',
             '\\n': '\n',
-            '\\t': '\t',
-            '\\\\': '\\',
+            '\\t': '\t'
         };
 
         return exp.replace(/\\[^\r\n]?/g, (sub: string): string => { 
@@ -441,7 +468,7 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGFilePa
     }
 
     private readonly fromFile = (): any => (args: readonly any[]): any => {
-        const filePath: string = path.normalize(ImportResolver.normalizePath(args[0].toString()));
+        const filePath: string = LGExtensions.normalizePath(args[0].toString());
         const resourcePath: string = this.getResourcePath(filePath);
         const stringContent = fs.readFileSync(resourcePath, 'utf-8');
 
@@ -460,7 +487,7 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGFilePa
                 throw new Error('relative path is not support in browser.');
             }
             const template: LGTemplate = this.templateMap[this.currentTarget().templateName];
-            const sourcePath: string = path.normalize(ImportResolver.normalizePath(template.source));
+            const sourcePath: string = LGExtensions.normalizePath(template.source);
             let baseFolder: string = __dirname;
             if (path.isAbsolute(sourcePath)){
                 baseFolder = path.dirname(sourcePath);
@@ -560,6 +587,18 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGFilePa
 
         if (expectedArgsCount !== actualArgsCount) {
             throw new Error(`arguments mismatch for template ${ templateName }, expect ${ expectedArgsCount } actual ${ actualArgsCount }`);
+        }
+    }
+
+    private parseTemplateName(templateName: string): { reExecute: boolean; pureTemplateName: string } {
+        if (!templateName) {
+            throw new Error('template name is empty.');
+        }
+
+        if (templateName.endsWith(Evaluator.ReExecuteSuffix)) {
+            return {reExecute:true, pureTemplateName: templateName.substr(0, templateName.length - Evaluator.ReExecuteSuffix.length)};
+        } else {
+            return {reExecute:false, pureTemplateName: templateName};
         }
     }
 }

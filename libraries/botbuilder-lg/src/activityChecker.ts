@@ -13,6 +13,9 @@ import { Range } from './range';
 import { Position } from './position';
 import { Evaluator } from './evaluator';
 
+/**
+ *  Structure LG result checker.
+ */
 export class ActivityChecker {
     public static readonly genericCardTypeMapping: Map<string, string> = new Map<string, string>
     ([
@@ -35,6 +38,11 @@ export class ActivityChecker {
 
     public static readonly cardActionProperties: string[] = ['type','title','image','text','displayText','value','channelData'];
 
+    /**
+     * check the LG result before generate an Activity.
+     * @param lgResult lg output.
+     * @returns Diagnostic list.
+     */
     public static check(lgResult: any): Diagnostic[] {
         if (lgResult === undefined) {
             return [this.buildDiagnostic('LG output is empty', false)];

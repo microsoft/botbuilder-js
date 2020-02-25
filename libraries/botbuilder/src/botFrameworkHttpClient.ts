@@ -55,6 +55,10 @@ export class BotFrameworkHttpClient {
             throw new Error('BotFrameworkHttpClient.postActivity(): Unable to get appCredentials to connect to the skill');
         }
 
+        if (activity.conversation === undefined) {
+            throw new Error('BotFrameworkHttpClient.postActivity(): Activity must have a ConversationReference');
+        }
+
         // Get token for the skill call
         const token = appCredentials.appId === '' && appCredentials.appPassword === '' ? null : await appCredentials.getToken();
 
@@ -72,7 +76,8 @@ export class BotFrameworkHttpClient {
                     Accept: 'application/json',
                     'Content-Type': 'application/json',
                     'User-Agent': USER_AGENT
-                }
+                },
+                validateStatus: function () { return true; }                
             };
 
             if (token) {

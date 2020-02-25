@@ -8,6 +8,9 @@
 import { ANTLRErrorListener, RecognitionException, Recognizer } from 'antlr4ts';
 
 // tslint:disable-next-line: completed-docs
+/**
+ * Expression parser error listener.
+ */
 export class ParseErrorListener implements ANTLRErrorListener<any> {
     public static readonly Instance: ParseErrorListener = new ParseErrorListener();
 
