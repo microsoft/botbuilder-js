@@ -97,7 +97,7 @@ export class LGFile {
         this.references = references? references : [];
         this.content = content? content : '';
         this.id = id? id : '';
-        this.expressionEngine = expressionEngine? expressionEngine : new ExpressionEngine();
+        this.expressionEngine = expressionEngine || new ExpressionEngine();
         this.importResolver = importResolverDelegate;
     }
 
