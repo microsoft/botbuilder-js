@@ -342,6 +342,11 @@ export class TurnContext {
     }
 
     /**
+     * List of activities to send when `context.activity.deliveryMode == 'buffered'`.
+     */
+    public readonly bufferedActivities: Partial<Activity>[] = [];
+
+    /**
      * Asynchronously sends an activity to the sender of the incoming activity.
      *
      * @param name The activity or text to send.
@@ -457,13 +462,27 @@ export class TurnContext {
         });
 
         return this.emit(this._onSendActivities, output, () => {
-            return this.adapter.sendActivities(this, output)
-                .then((responses: ResourceResponse[]) => {
-                    // Set responded flag
-                    if (sentNonTraceActivity) { this.responded = true; }
-
-                    return responses;
+            if (this.activity.deliveryMode === 'buffered') {
+                // Append activities to buffer
+                const responses: ResourceResponse[] = [];
+                output.forEach((a) => {
+                    this.bufferedActivities.push(a);
+                    responses.push({ id: undefined });
                 });
+
+                // Set responded flag
+                if (sentNonTraceActivity) { this.responded = true; }
+
+                return Promise.resolve(responses);
+            } else {
+                return this.adapter.sendActivities(this, output)
+                    .then((responses: ResourceResponse[]) => {
+                        // Set responded flag
+                        if (sentNonTraceActivity) { this.responded = true; }
+
+                        return responses;
+                    });
+            }
         });
     }
 
