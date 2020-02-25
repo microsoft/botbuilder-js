@@ -852,7 +852,7 @@ export interface MessagingExtensionAction extends TaskModuleRequest {
    * @member {BotMessagePreviewAction} [botMessagePreviewAction] Bot message
    * preview action taken by user. Possible values include: 'edit', 'send'
    */
-  botMessagePreviewAction?: BotMessagePreviewAction;
+  botMessagePreviewAction?: BotMessagePreviewActionType;
   /**
    * @member {Activity[]} [botActivityPreview]
    */
@@ -872,10 +872,10 @@ export interface MessagingExtensionAction extends TaskModuleRequest {
  */
 export interface TaskModuleResponseBase {
   /**
-   * @member {BotMessagePreviewAction} [type] Choice of action options when responding to the
+   * @member {BotMessagePreviewActionType} [type] Choice of action options when responding to the
    * task/submit message. Possible values include: 'message', 'continue'
    */
-  type?: BotMessagePreviewAction;
+  type?: BotMessagePreviewActionType;
 }
 
 /**
