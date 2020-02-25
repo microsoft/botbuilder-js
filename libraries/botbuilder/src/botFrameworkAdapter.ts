@@ -1165,8 +1165,8 @@ export class BotFrameworkAdapter extends BotAdapter implements IUserTokenProvide
                 } else {
                     response.statusCode = StatusCodes.NOT_IMPLEMENTED;
                 }
-            } else if (body.deliveryMode === 'buffered') {
-                response.setBody(context.bufferedActivities);
+            } else if (body.deliveryMode === 'bufferedReplies') {
+                response.setBody(context.bufferedReplies);
                 response.statusCode = StatusCodes.OK;
             } else {
                 response.statusCode = StatusCodes.OK;
