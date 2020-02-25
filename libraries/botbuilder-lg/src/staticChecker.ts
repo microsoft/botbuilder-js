@@ -39,8 +39,7 @@ export class StaticChecker extends AbstractParseTreeVisitor<Diagnostic[]> implem
 
     // Create a property because we want this to be lazy loaded
     private get expressionParser(): ExpressionParserInterface {
-        if (this._expressionParser === undefined)
-        {
+        if (this._expressionParser === undefined) {
             // create an evaluator to leverage it's customized function look up for checking
             var evaluator = new Evaluator(this.lgFile.allTemplates, this.baseExpressionEngine);
             this._expressionParser = evaluator.expressionEngine;
@@ -75,7 +74,7 @@ export class StaticChecker extends AbstractParseTreeVisitor<Diagnostic[]> implem
 
             filePath = LGExtensions.normalizePath(filePath);
             const lgFile: LGFile = LGParser.parseText(fs.readFileSync(filePath, 'utf-8'), filePath);
-            const staticChecker = new StaticChecker(lgFile, this.baseExpressionEngine);
+            const staticChecker = new StaticChecker(lgFile);
             result = result.concat(staticChecker.check());
         });
 
@@ -111,16 +110,14 @@ export class StaticChecker extends AbstractParseTreeVisitor<Diagnostic[]> implem
         {
             result.push(this.buildLGDiagnostic(LGErrors.invalidTemplateName, undefined, errorTemplateName, false));
         }
-        else
-        {
+        else {
             var templateName = context.templateNameLine().templateName().text;
 
             if (this.visitedTemplateNames.includes(templateName))
             {
                 result.push(this.buildLGDiagnostic(LGErrors.duplicatedTemplateInSameTemplate(templateName),undefined, templateNameLine));
             }
-            else
-            {
+            else {
                 this.visitedTemplateNames.push(templateName);
                 for (const reference of this.lgFile.references)
                 {
@@ -131,8 +128,7 @@ export class StaticChecker extends AbstractParseTreeVisitor<Diagnostic[]> implem
                     }
                 }
 
-                if (result.length > 0)
-                {
+                if (result.length > 0) {
                     return result;
                 }
                 else
@@ -141,8 +137,7 @@ export class StaticChecker extends AbstractParseTreeVisitor<Diagnostic[]> implem
                     {
                         result.push(this.buildLGDiagnostic(LGErrors.noTemplateBody(templateName), DiagnosticSeverity.Warning, context.templateNameLine()));
                     }
-                    else
-                    {
+                    else {
                         result = result.concat(this.visit(context.templateBody()));
                     }
                 }
@@ -208,7 +203,7 @@ export class StaticChecker extends AbstractParseTreeVisitor<Diagnostic[]> implem
 
         let idx = 0;
         for (const ifRule of ifRules) {
-            const  conditionNode: lp.IfConditionContext = ifRule.ifCondition();
+            const conditionNode: lp.IfConditionContext = ifRule.ifCondition();
             const ifExpr: boolean = conditionNode.IF() !== undefined;
             const elseIfExpr: boolean = conditionNode.ELSEIF() !== undefined;
             const elseExpr: boolean = conditionNode.ELSE() !== undefined;

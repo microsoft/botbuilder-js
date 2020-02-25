@@ -25,7 +25,7 @@ import { Util } from './util';
  */
 export class ExpressionEngine implements ExpressionParserInterface {
     /**
-     * The elegate to lookup function information from the type.
+     * The delegate to lookup function information from the type.
      */
     public readonly EvaluatorLookup: EvaluatorLookup;
 

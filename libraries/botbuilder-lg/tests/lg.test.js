@@ -1,5 +1,5 @@
 const { LGParser } = require('../');
-const { SimpleObjectMemory } = require('adaptive-expressions');
+const { SimpleObjectMemory, ExpressionEngine, ExpressionEvaluator, ExpressionFunctions, ReturnType} = require('adaptive-expressions');
 const assert = require('assert');
 const fs = require('fs');
 
@@ -31,7 +31,7 @@ describe('LG', function() {
         assert.strictEqual(evaled.includes(userName), true, `The result ${ evaled } does not contiain ${ userName }`);
     });
 
-    it('TestBaicConditionalTemplate', function() {
+    it('TestBasicConditionalTemplate', function() {
         let LGFile = LGParser.parseFile(GetExampleFilePath('5.lg'));
 
         let evaled = LGFile.evaluateTemplate('time-of-day-readout', { timeOfDay: 'morning' });
@@ -792,5 +792,22 @@ describe('LG', function() {
 
         // may be has different values
         LGFile.evaluateTemplate('templateWithSameParams', {param1:'ms', param2:'newms'});
+    });
+
+    it('TestCustomFunction', function() {
+        let engine = new ExpressionEngine((func) => {
+            if (func === 'custom') {
+                return ExpressionFunctions.numeric('custom', 
+                    args => {
+                        return args[0] + args[1];
+                    });
+            } else {
+                return ExpressionFunctions.lookup(func);
+            }
+        });
+        let template = LGParser.parseFile(GetExampleFilePath("CustomFunction.lg"), undefined, engine);
+        assert.equal(template.expressionEngine, engine);
+        let result = template.evaluateTemplate('template', {});
+        assert.strictEqual(result, 3)
     });
 });
