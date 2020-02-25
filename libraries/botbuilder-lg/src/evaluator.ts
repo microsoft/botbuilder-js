@@ -381,7 +381,7 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGFilePa
         let error: string;
         ({value: result, error: error} = this.evalByExpressionEngine(exp, this.currentTarget().scope));
 
-        if (error || (!result && this.strictMode))
+        if (error || (result === undefined && this.strictMode))
         {
             let errorMsg = '';
 
@@ -390,7 +390,7 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGFilePa
             {
                 childErrorMsg += error;
             }
-            else if (!result)
+            else if (result === undefined)
             {
                 childErrorMsg += LGErrors.nullExpression(exp);
             }
