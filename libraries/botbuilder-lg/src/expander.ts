@@ -351,7 +351,7 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGFi
                 childErrorMsg += LGErrors.nullExpression(exp);
             }
 
-            if (context != null)
+            if (context)
             {
                 errorMsg += LGErrors.errorExpression(context.text, this.currentTarget().templateName, errorPrefix);
             }
@@ -376,7 +376,7 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGFi
         let error: string;
         ({value: result, error: error} = this.evalByExpressionEngine(exp, this.currentTarget().scope));
 
-        if (error || (!result && this.strictMode))
+        if (error || (result ===  undefined && this.strictMode))
         {
             let errorMsg = '';
 
@@ -385,12 +385,12 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGFi
             {
                 childErrorMsg += error;
             }
-            else if (!result)
+            else if (result === undefined)
             {
                 childErrorMsg += LGErrors.nullExpression(exp);
             }
 
-            if (context != null)
+            if (context !== undefined)
             {
                 errorMsg += LGErrors.errorExpression(context.text, this.currentTarget().templateName, errorPrefix);
             }
@@ -401,7 +401,7 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGFi
             }
 
             throw new Error(childErrorMsg + errorMsg);
-        } else if (!result && !this.strictMode)
+        } else if (result === undefined && !this.strictMode)
         {
             result = `null`;
         }

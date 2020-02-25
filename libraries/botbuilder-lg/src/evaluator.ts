@@ -355,7 +355,7 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGFilePa
                 childErrorMsg += LGErrors.nullExpression(exp);
             }
 
-            if (context != null)
+            if (context)
             {
                 errorMsg += LGErrors.errorExpression(context.text, this.currentTarget().templateName, errorPrefix);
             }
@@ -407,7 +407,7 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGFilePa
 
             throw new Error(childErrorMsg + errorMsg);
         }
-        else if (!result && !this.strictMode)
+        else if (result === undefined && !this.strictMode)
         {
             result = `null`;
         }

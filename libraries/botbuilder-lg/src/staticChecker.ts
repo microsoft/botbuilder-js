@@ -25,13 +25,13 @@ import { LGExtensions } from './lgExtensions';
 /// <summary>
 /// LG managed code checker.
 /// </summary>
-class StaticCheckerInner extends AbstractParseTreeVisitor<Diagnostic[]> implements LGFileParserVisitor<Diagnostic[]> {
+export class StaticChecker extends AbstractParseTreeVisitor<Diagnostic[]> implements LGFileParserVisitor<Diagnostic[]> {
     private readonly baseExpressionEngine: ExpressionEngine;
     private readonly lgFile: LGFile;
     private visitedTemplateNames: string[];
     private _expressionParser: ExpressionParserInterface;
 
-    public constructor(lgFile: LGFile, expressionEngine: ExpressionEngine = null) {
+    public constructor(lgFile: LGFile, expressionEngine: ExpressionEngine = undefined) {
         super();
         this.lgFile = lgFile;
         this.baseExpressionEngine = expressionEngine? expressionEngine : new ExpressionEngine();
@@ -65,6 +65,40 @@ class StaticCheckerInner extends AbstractParseTreeVisitor<Diagnostic[]> implemen
         }
 
         this.lgFile.templates.forEach(t => result = result.concat(this.visit(t.parseTree)));
+        return result;
+    }
+
+    public checkFiles(filePaths: string[], importResolver?: ImportResolverDelegate): Diagnostic[] {
+        let result: Diagnostic[] = [];
+        filePaths.forEach((filePath: string): void => {
+            importResolver = importResolver ? importResolver : LGParser.defaultFileResolver;
+
+            filePath = LGExtensions.normalizePath(filePath);
+            const lgFile: LGFile = LGParser.parseText(fs.readFileSync(filePath, 'utf-8'), filePath);
+            const staticChecker = new StaticChecker(lgFile, this.baseExpressionEngine);
+            result = result.concat(staticChecker.check());
+        });
+
+        return result;
+    }
+
+    public checkFile(filePath: string, importResolver?: ImportResolverDelegate): Diagnostic[] {
+        return this.checkFiles([filePath], importResolver);
+    }
+
+    public checkText(content: string, id?: string, importResolver?: ImportResolverDelegate): Diagnostic[] {
+        if (!importResolver) {
+            const importPath: string = LGExtensions.normalizePath(id);
+            if (!path.isAbsolute(importPath)) {
+                throw new Error('[Error] id must be full path when importResolver is empty');
+            }
+        }
+
+        let result: Diagnostic[] = [];
+        const lgFile: LGFile = LGParser.parseText(content, id);
+        const staticChecker = new StaticChecker(lgFile, this.baseExpressionEngine);
+        result = result.concat(staticChecker.check());
+
         return result;
     }
 
@@ -338,55 +372,5 @@ class StaticCheckerInner extends AbstractParseTreeVisitor<Diagnostic[]> implemen
         message = (this.visitedTemplateNames.length > 0 && includeTemplateNameInfo)? `[${ this.visitedTemplateNames.reverse().find(x => true) }]`+ message : message;
         
         return new Diagnostic(range, message, severity, this.lgFile.id);
-    }
-}
-
-/**
- * Static checker tool
- */
-export class StaticChecker {
-    private readonly expressionEngine: ExpressionEngine;
-    private readonly lgFile: LGFile;
-    public constructor(lgFile: LGFile, expressionEngine?: ExpressionEngine) {
-        this.expressionEngine = expressionEngine ? expressionEngine : new ExpressionEngine();
-        this.lgFile= lgFile;
-    }
-
-    public checkFiles(filePaths: string[], importResolver?: ImportResolverDelegate): Diagnostic[] {
-        let result: Diagnostic[] = [];
-        filePaths.forEach((filePath: string): void => {
-            importResolver = importResolver ? importResolver : LGParser.defaultFileResolver;
-
-            filePath = LGExtensions.normalizePath(filePath);
-            const lgFile: LGFile = LGParser.parseText(fs.readFileSync(filePath, 'utf-8'), filePath);
-            const staticChecker = new StaticCheckerInner(lgFile, this.expressionEngine);
-            result = result.concat(staticChecker.check());
-        });
-
-        return result;
-    }
-
-    public checkFile(filePath: string, importResolver?: ImportResolverDelegate): Diagnostic[] {
-        return this.checkFiles([filePath], importResolver);
-    }
-
-    public checkText(content: string, id?: string, importResolver?: ImportResolverDelegate): Diagnostic[] {
-        if (!importResolver) {
-            const importPath: string = LGExtensions.normalizePath(id);
-            if (!path.isAbsolute(importPath)) {
-                throw new Error('[Error] id must be full path when importResolver is empty');
-            }
-        }
-
-        let result: Diagnostic[] = [];
-        const lgFile: LGFile = LGParser.parseText(content, id);
-        const staticChecker = new StaticCheckerInner(lgFile, this.expressionEngine);
-        result = result.concat(staticChecker.check());
-
-        return result;
-    }
-
-    public check(): Diagnostic[] {
-        return new StaticCheckerInner(this.lgFile).check();
     }
 }

@@ -384,7 +384,7 @@ export class LGFile {
     }
 
     private buildTemplateNameLine(templateName: string, parameters: string[]): string {
-        if (parameters === undefined || parameters === null) {
+        if (parameters === undefined || parameters === undefined) {
             return `# ${ templateName }`;
         } else {
             return `# ${ templateName }(${ parameters.join(', ') })`;
