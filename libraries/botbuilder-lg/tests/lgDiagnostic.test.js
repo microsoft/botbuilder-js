@@ -197,163 +197,45 @@ describe(`LGExceptionTest`, function() {
 
     it(`TestLoopDetected`, function() {
         var lgFile = GetLGFile(`LoopDetected.lg`);
-        var errorMessage = '';
-        var isSuccessful = false;
-        try {
-            lgFile.evaluateTemplate(`wPhrase`);
-            isSuccessful = true;
-        } catch(e) {
-            errorMessage = e.toString();
-        }
-
-        assert.strictEqual(isSuccessful, false);
-        assert.strictEqual(errorMessage.includes(LGErrors.loopDetected), true);
         
-
-        try {
-            lgFile.analyzeTemplate(`wPhrase`);
-            isSuccessful = true;
-        } catch(e) {
-            errorMessage = e.toString();
-        }
-
-        assert.strictEqual(isSuccessful, false);
-        assert.strictEqual(errorMessage.includes(LGErrors.loopDetected), true);
+        assert.throws(() => lgFile.evaluateTemplate(`wPhrase`), Error(`Loop detected: welcome-user => wPhrase[wPhrase]  Error occurred when evaluating '-\${wPhrase()}'. [welcome-user]  Error occurred when evaluating '-\${welcome-user()}'. `));
+        
+        assert.throws(() => lgFile.analyzeTemplate(`wPhrase`), Error('Loop detected: welcome-user => wPhrase'),);
     });
 
     it(`AddTextWithWrongId`, function() {
         var diagnostics = LGParser.parseText(`[import](xx.lg) \r\n # t \n - hi`, `a.lg`).diagnostics;
         assert.strictEqual(1, diagnostics.length);
-        //assert.strictEqual(diagnostics[0].message.includes(`Could not find file`), true);
+        assert.strictEqual(diagnostics[0].message.includes(`Could not find file`), true);
     });
 
     it(`TestErrorExpression`, function() {
         var lgFile = GetLGFile(`ErrorExpression.lg`);
-        var errorMessage = '';
-        var isSuccessful = false;
-        try {
-            lgFile.evaluateTemplate(`template1`);
-            isSuccessful = true;
-        } catch(e) {
-            errorMessage = e.toString();
-        }
-
-        assert.strictEqual(isSuccessful, false);
-        assert.strictEqual(errorMessage.includes(`Error occurred when evaluating`), true);
+        assert.throws(() => lgFile.evaluateTemplate(`template1`), Error(`first(createArray(1, 2)) is neither a string nor a null object.[template1]  Error occurred when evaluating '-\${length(first(createArray(1,2)))}'. `));
     });
 
     it('TestRunTimeErrors', function() {
         var lgFile = GetLGFile('RunTimeErrors.lg');
 
-        var errorMessage = '';
-        var isSuccessful = false;
-        try {
-            lgFile.evaluateTemplate(`template1`);
-            isSuccessful = true;
-        } catch(e) {
-            errorMessage = e.toString();
-        }
-        assert.strictEqual(isSuccessful, false);
-        assert.strictEqual(errorMessage, `Error: 'dialog.abc' evaluated to null. [template1]  Error occurred when evaluating '-I want \${dialog.abc}'. `);
+        assert.throws(() => lgFile.evaluateTemplate(`template1`), Error(`'dialog.abc' evaluated to null. [template1]  Error occurred when evaluating '-I want \${dialog.abc}'. `));
 
-        var errorMessage = '';
-        var isSuccessful = false;
-        try {
-            lgFile.evaluateTemplate(`prebuilt1`);
-            isSuccessful = true;
-        } catch(e) {
-            errorMessage = e.toString();
-        }
-        assert.strictEqual(isSuccessful, false);
-        assert.strictEqual(errorMessage, `Error: 'dialog.abc' evaluated to null.[prebuilt1]  Error occurred when evaluating '-I want \${foreach(dialog.abc, item, template1())}'. `);
+        assert.throws(() => lgFile.evaluateTemplate(`prebuilt1`), Error(`'dialog.abc' evaluated to null.[prebuilt1]  Error occurred when evaluating '-I want \${foreach(dialog.abc, item, template1())}'. `));
 
-        var errorMessage = '';
-        var isSuccessful = false;
-        try {
-            lgFile.evaluateTemplate(`template2`);
-            isSuccessful = true;
-        } catch(e) {
-            errorMessage = e.toString();
-        }
-        assert.strictEqual(isSuccessful, false);
-        assert.strictEqual(errorMessage, `Error: 'dialog.abc' evaluated to null. [template1]  Error occurred when evaluating '-I want \${dialog.abc}'. [template2]  Error occurred when evaluating '-With composition \${template1()}'. `);
+        assert.throws(() => lgFile.evaluateTemplate(`template2`), Error(`'dialog.abc' evaluated to null. [template1]  Error occurred when evaluating '-I want \${dialog.abc}'. [template2]  Error occurred when evaluating '-With composition \${template1()}'. `));
 
-        var errorMessage = '';
-        var isSuccessful = false;
-        try {
-            lgFile.evaluateTemplate('conditionalTemplate1', { dialog : true });
-            isSuccessful = true;
-        } catch(e) {
-            errorMessage = e.toString();
-        }
-        assert.strictEqual(isSuccessful, false);
-        assert.strictEqual(errorMessage.includes(`Error: 'dialog.abc' evaluated to null. [template1]  Error occurred when evaluating '-I want \${dialog.abc}'. [conditionalTemplate1] Condition '\${dialog}':  Error occurred when evaluating '-I want \${template1()}'.`), true);
+        assert.throws(() => lgFile.evaluateTemplate('conditionalTemplate1', { dialog : true }), Error(`'dialog.abc' evaluated to null. [template1]  Error occurred when evaluating '-I want \${dialog.abc}'. [conditionalTemplate1] Condition '\${dialog}':  Error occurred when evaluating '-I want \${template1()}'. `));
 
-        var errorMessage = '';
-        var isSuccessful = false;
-        try {
-            lgFile.evaluateTemplate(`conditionalTemplate2`);
-            isSuccessful = true;
-        } catch(e) {
-            errorMessage = e.toString();
-        }
-        assert.strictEqual(isSuccessful, false);
-        assert.strictEqual(errorMessage, `Error: 'dialog.abc' evaluated to null. [conditionalTemplate2] Condition '\${dialog.abc}': Error occurred when evaluating '-IF :\${dialog.abc}'. `);
+        assert.throws(() => lgFile.evaluateTemplate(`conditionalTemplate2`), Error(`'dialog.abc' evaluated to null. [conditionalTemplate2] Condition '\${dialog.abc}': Error occurred when evaluating '-IF :\${dialog.abc}'. `));
 
-        var errorMessage = '';
-        var isSuccessful = false;
-        try {
-            lgFile.evaluateTemplate(`structured1`);
-            isSuccessful = true;
-        } catch(e) {
-            errorMessage = e.toString();
-        }
-        assert.strictEqual(isSuccessful, false);
-        assert.strictEqual(errorMessage, `Error: 'dialog.abc' evaluated to null. [structured1] Property 'Text': Error occurred when evaluating 'Text=I want \${dialog.abc}'. `);
+        assert.throws(() => lgFile.evaluateTemplate(`structured1`), Error(`'dialog.abc' evaluated to null. [structured1] Property 'Text': Error occurred when evaluating 'Text=I want \${dialog.abc}'. `));
 
-        var errorMessage = '';
-        var isSuccessful = false;
-        try {
-            lgFile.evaluateTemplate(`structured2`);
-            isSuccessful = true;
-        } catch(e) {
-            errorMessage = e.toString();
-        }
-        assert.strictEqual(isSuccessful, false);
-        assert.strictEqual(errorMessage, `Error: 'dialog.abc' evaluated to null. [template1]  Error occurred when evaluating '-I want \${dialog.abc}'. [structured2] Property 'Text': Error occurred when evaluating 'Text=I want \${template1()}'. `);
+        assert.throws(() => lgFile.evaluateTemplate(`structured2`), Error(`'dialog.abc' evaluated to null. [template1]  Error occurred when evaluating '-I want \${dialog.abc}'. [structured2] Property 'Text': Error occurred when evaluating 'Text=I want \${template1()}'. `));
         
-        var errorMessage = '';
-        var isSuccessful = false;
-        try {
-            lgFile.evaluateTemplate(`structured3`);
-            isSuccessful = true;
-        } catch(e) {
-            errorMessage = e.toString();
-        }
-        assert.strictEqual(isSuccessful, false);
-        assert.strictEqual(errorMessage, `Error: 'dialog.abc' evaluated to null. [template1]  Error occurred when evaluating '-I want \${dialog.abc}'. [structured2] Property 'Text': Error occurred when evaluating 'Text=I want \${template1()}'. [structured3]  Error occurred when evaluating '\${structured2()}'. `);
-
-        var errorMessage = '';
-        var isSuccessful = false;
-        try {
-            lgFile.evaluateTemplate(`switchcase1`, { turn : { testValue : 1 } });
-            isSuccessful = true;
-        } catch(e) {
-            errorMessage = e.toString();
-        }
-        assert.strictEqual(isSuccessful, false);
-        assert.strictEqual(errorMessage, `Error: 'dialog.abc' evaluated to null. [switchcase1] Case '\${1}': Error occurred when evaluating '-I want \${dialog.abc}'. `);
-
-        var errorMessage = '';
-        var isSuccessful = false;
-        try {
-            lgFile.evaluateTemplate(`switchcase2`, { turn : { testValue : 0 } });
-            isSuccessful = true;
-        } catch(e) {
-            errorMessage = e.toString();
-        }
-        assert.strictEqual(isSuccessful, false);
-        assert.strictEqual(errorMessage, `Error: 'dialog.abc' evaluated to null. [switchcase2] Case 'Default': Error occurred when evaluating '-I want \${dialog.abc}'. `);
+        assert.throws(() => lgFile.evaluateTemplate(`structured3`), Error(`'dialog.abc' evaluated to null. [template1]  Error occurred when evaluating '-I want \${dialog.abc}'. [structured2] Property 'Text': Error occurred when evaluating 'Text=I want \${template1()}'. [structured3]  Error occurred when evaluating '\${structured2()}'. `))
+        
+        assert.throws(() => lgFile.evaluateTemplate(`switchcase1`, { turn : { testValue : 1 } }), Error(`'dialog.abc' evaluated to null. [switchcase1] Case '\${1}': Error occurred when evaluating '-I want \${dialog.abc}'. `));
+        
+        assert.throws(() => lgFile.evaluateTemplate(`switchcase2`, { turn : { testValue : 0 } }), Error(`'dialog.abc' evaluated to null. [switchcase2] Case 'Default': Error occurred when evaluating '-I want \${dialog.abc}'. `));
     });
 
     // it(`TestExpressionFormatError`, function() {
