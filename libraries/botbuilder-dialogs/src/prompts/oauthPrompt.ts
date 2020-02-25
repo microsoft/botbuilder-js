@@ -5,11 +5,10 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { Activity, ActivityTypes, Attachment, CardFactory, InputHints, MessageFactory, OAuthLoginTimeoutKey, TokenResponse, TurnContext, IUserTokenProvider, OAuthCard, ActionTypes,  } from 'botbuilder-core';
+import { Activity, ActivityTypes, Attachment, CardFactory, Channels, InputHints, MessageFactory, OAuthLoginTimeoutKey, TokenResponse, TurnContext, IUserTokenProvider, OAuthCard, ActionTypes,  } from 'botbuilder-core';
 import { Dialog, DialogTurnResult } from '../dialog';
 import { DialogContext } from '../dialogContext';
 import { PromptOptions, PromptRecognizerResult,  PromptValidator } from './prompt';
-import { Channels } from 'botframework-schema';
 import { isSkillClaim } from './skillsHelpers';
 
 /**
