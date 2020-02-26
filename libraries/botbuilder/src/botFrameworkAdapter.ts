@@ -526,6 +526,7 @@ export class BotFrameworkAdapter extends BotAdapter implements ICredentialTokenP
      * @returns A [TokenResponse](xref:botframework-schema.TokenResponse) object that contains the user token.
      */
     public async getUserToken(context: TurnContext, connectionName: string, magicCode?: string): Promise<TokenResponse>;
+    public async getUserToken(context: TurnContext, connectionName: string, magicCode?: string, oAuthAppCredentials?: AppCredentials): Promise<TokenResponse>;
     public async getUserToken(context: TurnContext, connectionName: string, magicCode?: string, oAuthAppCredentials?: AppCredentials): Promise<TokenResponse> {
         if (!context.activity.from || !context.activity.from.id) {
             throw new Error(`BotFrameworkAdapter.getUserToken(): missing from or from.id`);
@@ -556,6 +557,7 @@ export class BotFrameworkAdapter extends BotAdapter implements ICredentialTokenP
      * @param oAuthAppCredentials AppCredentials for OAuth.
      */
     public async signOutUser(context: TurnContext, connectionName?: string, userId?: string): Promise<void>;
+    public async signOutUser(context: TurnContext, connectionName?: string, userId?: string, oAuthAppCredentials?: AppCredentials): Promise<void>;
     public async signOutUser(context: TurnContext, connectionName?: string, userId?: string, oAuthAppCredentials?: AppCredentials): Promise<void> {
         if (!context.activity.from || !context.activity.from.id) {
             throw new Error(`BotFrameworkAdapter.signOutUser(): missing from or from.id`);
@@ -581,6 +583,7 @@ export class BotFrameworkAdapter extends BotAdapter implements ICredentialTokenP
      * @param oAuthAppCredentials AppCredentials for OAuth.
      */
     public async getSignInLink(context: TurnContext, connectionName: string): Promise<string>;
+    public async getSignInLink(context: TurnContext, connectionName: string, oAuthAppCredentials?: AppCredentials): Promise<string>;
     public async getSignInLink(context: TurnContext, connectionName: string, oAuthAppCredentials?: AppCredentials): Promise<string> {
         this.checkEmulatingOAuthCards(context);
         const conversation: Partial<ConversationReference> = TurnContext.getConversationReference(context.activity);
@@ -610,6 +613,7 @@ export class BotFrameworkAdapter extends BotAdapter implements ICredentialTokenP
      * @returns The [TokenStatus](xref:botframework-connector.TokenStatus) objects retrieved.
      */
     public async getTokenStatus(context: TurnContext, userId?: string, includeFilter?: string): Promise<TokenStatus[]>;
+    public async getTokenStatus(context: TurnContext, userId?: string, includeFilter?: string, oAuthAppCredentials?: AppCredentials): Promise<TokenStatus[]>;
     public async getTokenStatus(context: TurnContext, userId?: string, includeFilter?: string, oAuthAppCredentials?: AppCredentials): Promise<TokenStatus[]> {
         if (!userId && (!context.activity.from || !context.activity.from.id)) {
             throw new Error(`BotFrameworkAdapter.getTokenStatus(): missing from or from.id`);
@@ -634,9 +638,8 @@ export class BotFrameworkAdapter extends BotAdapter implements ICredentialTokenP
      * @returns A map of the [TokenResponse](xref:botframework-schema.TokenResponse) objects by resource URL.
      */
     public async getAadTokens(context: TurnContext, connectionName: string, resourceUrls: string[]): Promise<{[propertyName: string]: TokenResponse;}>;
-    public async getAadTokens(context: TurnContext, connectionName: string, resourceUrls: string[], oAuthAppCredentials?: AppCredentials): Promise<{
-        [propertyName: string]: TokenResponse;
-    }> {
+    public async getAadTokens(context: TurnContext, connectionName: string, resourceUrls: string[], oAuthAppCredentials?: AppCredentials): Promise<{[propertyName: string]: TokenResponse;}>;
+    public async getAadTokens(context: TurnContext, connectionName: string, resourceUrls: string[], oAuthAppCredentials?: AppCredentials): Promise<{[propertyName: string]: TokenResponse;}> {
         if (!context.activity.from || !context.activity.from.id) {
             throw new Error(`BotFrameworkAdapter.getAadTokens(): missing from or from.id`);
         }
