@@ -173,7 +173,7 @@ export class LGParser {
     }
 
     private static resolveImportResources(start: LGFile, resourcesFound: Set<LGFile>, importResolver: ImportResolverDelegate): void {
-        var resourceIds = start.imports.map(lg => lg.id);
+        var resourceIds = start.imports.map((lg: LGImport): string => lg.id);
         resourcesFound.add(start);
 
         for (const id of resourceIds) {
