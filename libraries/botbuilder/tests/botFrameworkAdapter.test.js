@@ -1024,6 +1024,98 @@ describe(`BotFrameworkAdapter`, function () {
         assert(false, `should have thrown an error message`);
     });
 
+    describe('getSignInLink()', () => {
+        it(`should throw if userName != from.id`, async () => {
+            const adapter = new BotFrameworkAdapter();
+            const context = new TurnContext(adapter, incomingMessage);
+            try {
+                const response = await adapter.getSignInLink(context, 'aConnectionName', new MicrosoftAppCredentials('abc', 'abc'), 'invalidId');
+            } catch (err) {
+                assert(err.message === `cannot retrieve OAuth signin link for a user that's different from the conversation`);
+                return;
+            }
+            assert(false, `should have thrown an error message`);
+        });
+        it(`should return return a sign-in URL with context and connectionName`, async () => {
+            const argsPassedToMockClient = [];
+            class MockTokenApiClient {
+                constructor() {
+                    this.botSignIn = {
+                        getSignInUrl: async (...args) => {
+                            argsPassedToMockClient.push({getSignInUrl: args});
+                            return {
+                                _response: {status: 200, bodyAsText: 'http://mockedurl.com' }
+                            }
+                        }
+                    };
+                    this.credentials = new MicrosoftAppCredentials('abc', 'abc');
+                }
+    
+            }
+            const {TokenApiClient} = connector;
+            connector.TokenApiClient = MockTokenApiClient;
+
+            const adapter = new BotFrameworkAdapter();
+            const context = new TurnContext(adapter, incomingMessage);
+            const response = await adapter.getSignInLink(context, 'aConnectionName');
+            assert(response, 'http://mockedurl.com');
+
+            connector.TokenApiClient = TokenApiClient; // restore
+        });
+        it(`should return return a sign-in URL with context connectionName, oauthAppCredentials`, async () => {
+            const argsPassedToMockClient = [];
+            class MockTokenApiClient {
+                constructor() {
+                    this.botSignIn = {
+                        getSignInUrl: async (...args) => {
+                            argsPassedToMockClient.push({getSignInUrl: args});
+                            return {
+                                _response: {status: 200, bodyAsText: 'http://mockedurl.com' }
+                            }
+                        }
+                    };
+                    this.credentials = new MicrosoftAppCredentials('abc', 'abc');
+                }
+    
+            }
+            const {TokenApiClient} = connector;
+            connector.TokenApiClient = MockTokenApiClient;
+
+            const adapter = new BotFrameworkAdapter();
+            const context = new TurnContext(adapter, incomingMessage);
+            const response = await adapter.getSignInLink(context, 'aConnectionName', new MicrosoftAppCredentials('abc', 'abc'));
+            assert(response, 'http://mockedurl.com');
+
+            connector.TokenApiClient = TokenApiClient; // restore
+        });
+        it(`should return return a sign-in URL with context connectionName, oauthAppCredentials, userId, finalRedirect`, async () => {
+            const argsPassedToMockClient = [];
+            class MockTokenApiClient {
+                constructor() {
+                    this.botSignIn = {
+                        getSignInUrl: async (...args) => {
+                            argsPassedToMockClient.push({getSignInUrl: args});
+                            return {
+                                _response: {status: 200, bodyAsText: 'http://mockedurl.com' }
+                            }
+                        }
+                    };
+                    this.credentials = new MicrosoftAppCredentials('abc', 'abc');
+                }
+    
+            }
+            const {TokenApiClient} = connector;
+            connector.TokenApiClient = MockTokenApiClient;
+
+            const adapter = new BotFrameworkAdapter();
+            const context = new TurnContext(adapter, incomingMessage);
+            const response = await adapter.getSignInLink(context, 'aConnectionName', new MicrosoftAppCredentials('abc', 'abc'), incomingMessage.from.id, 'http://finalredirect.com');
+            assert(response, 'http://mockedurl.com');
+
+            connector.TokenApiClient = TokenApiClient; // restore
+        });
+    });
+
     describe('getTokenStatus()', () => {
         xit(`should return the status of every connection the user has`, async () => {
             const adapter = new AdapterUnderTest();
