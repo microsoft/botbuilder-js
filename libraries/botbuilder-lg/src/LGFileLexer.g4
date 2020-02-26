@@ -46,12 +46,16 @@ fragment STRING_LITERAL : ('\'' (~['\r\n])* '\'') | ('"' (~["\r\n])* '"');
 
 fragment STRING_INTERPOLATION : '`' ('\\`' | ~'`')* '`';
 
-fragment EXPRESSION_FRAGMENT : '$' '{' (STRING_LITERAL|STRING_INTERPOLATION|EMPTY_OBJECT|~[\r\n{}'"`])*? '}';
+fragment EXPRESSION_FRAGMENT : '$' '{' (STRING_LITERAL | STRING_INTERPOLATION | EMPTY_OBJECT | ~[\r\n{}'"`] )+ '}'?;
 
 fragment ESCAPE_CHARACTER_FRAGMENT : '\\' ~[\r\n]?;
 
 
 // top level elements
+OPTIONS
+  : '>' WHITESPACE* '!#' ~('\r'|'\n')+
+  ;
+
 COMMENTS
   : '>' ~('\r'|'\n')+ -> skip
   ;

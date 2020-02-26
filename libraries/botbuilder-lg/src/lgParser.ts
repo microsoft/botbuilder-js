@@ -33,6 +33,11 @@ export declare type ImportResolverDelegate = (source: string, resourceId: string
  */
 export class LGParser {
 
+    /// <summary>
+    /// option regex.
+    /// </summary>
+    private static readonly optionRegex: RegExp = new RegExp(/^> *!#(.*)$/);
+
     /**
     * parse a file and return LG file.
     * @param filePath LG absolute file path..
@@ -69,9 +74,11 @@ export class LGParser {
             const parsedResult = LGParser.antlrParse(content, id);
             lgFile.templates = parsedResult.templates;
             lgFile.imports = parsedResult.imports;
+            lgFile.options = parsedResult.options;
+            lgFile.updateStrictMode();
             diagnostics = diagnostics.concat(parsedResult.invalidTemplateErrors);
             lgFile.references = this.getReferences(lgFile, importResolver);
-            const semanticErrors = new StaticChecker(lgFile).check();
+            const semanticErrors = new StaticChecker(lgFile, lgFile.expressionEngine).check();
             diagnostics = diagnostics.concat(semanticErrors);
         } catch (err) {
             if (err instanceof LGException) {
@@ -108,8 +115,10 @@ export class LGParser {
             const templates = antlrResult.templates;
             const imports = antlrResult.imports;
             const invalidTemplateErrors = antlrResult.invalidTemplateErrors;
+            const options = antlrResult.options;
             newLgFile.templates = templates;
             newLgFile.imports = imports;
+            newLgFile.options = options;
             diagnostics = diagnostics.concat(invalidTemplateErrors);
 
             newLgFile.references = this.getReferences(newLgFile, newLgFile.importResolver)
@@ -146,13 +155,13 @@ export class LGParser {
         return { content, id: importPath };
     }
 
-    private static antlrParse(text: string, id: string = ''): { templates: LGTemplate[]; imports: LGImport[]; invalidTemplateErrors: Diagnostic[] } {
+    private static antlrParse(text: string, id: string = ''): { templates: LGTemplate[]; imports: LGImport[]; invalidTemplateErrors: Diagnostic[]; options: string[]} {
         const fileContext: FileContext = this.getFileContentContext(text, id);
         const templates: LGTemplate[] = this.extractLGTemplates(fileContext, text, id);
         const imports: LGImport[] = this.extractLGImports(fileContext, id);
         const invalidTemplateErrors: Diagnostic[] = this.getInvalidTemplateErrors(fileContext, id);
-
-        return { templates, imports, invalidTemplateErrors };
+        const options: string[] = this.extractLGOptions(fileContext);
+        return { templates, imports, invalidTemplateErrors, options};
     }
 
     private static getReferences(file: LGFile, importResolver: ImportResolverDelegate): LGFile[] {
@@ -164,7 +173,7 @@ export class LGParser {
     }
 
     private static resolveImportResources(start: LGFile, resourcesFound: Set<LGFile>, importResolver: ImportResolverDelegate): void {
-        var resourceIds = start.imports.map(lg => lg.id);
+        var resourceIds = start.imports.map((lg: LGImport): string => lg.id);
         resourcesFound.add(start);
 
         for (const id of resourceIds) {
@@ -193,6 +202,37 @@ export class LGParser {
         const startPosition: Position = context === undefined ? new Position(0, 0) : new Position(context.start.line, context.start.charPositionInLine);
         const endPosition: Position = context === undefined ? new Position(0, 0) : new Position(context.stop.line, context.stop.charPositionInLine + context.stop.text.length);
         return new Diagnostic(new Range(startPosition, endPosition), message, DiagnosticSeverity.Error, source);
+    }
+
+    /**
+    * Extract LG options from the parse tree of a file.
+    * @param file LG file context from ANTLR parser. 
+    * @returns a string list of options
+    */
+    private static extractLGOptions(file: FileContext): string[] {
+        return  !file ? [] :
+            file.paragraph()
+                .map(x => x.optionsDefinition())
+                .filter(x => x !== undefined)
+                .map(t => this.extractOption(t.text))
+                .filter(t => t !== undefined && t !== '');
+    }
+
+    private static extractOption(originalText: string): string
+    {
+        let result = '';
+        if (!originalText)
+        {
+            return result;
+        }
+
+        var matchResult = originalText.match(this.optionRegex);
+        if (matchResult && matchResult.length === 2)
+        {
+            result = matchResult[1];
+        }
+
+        return result;
     }
 
     private static getInvalidTemplateErrors(fileContext: FileContext, id: string): Diagnostic[] {

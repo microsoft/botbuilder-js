@@ -11,8 +11,8 @@ class MockNetSocket {
     destroy(err) { }
 }
 
-MockNetSocket.createNonSuccessResponse = (code) => {
-    return `HTTP/1.1 ${code} ${STATUS_CODES[code]}\r\nConnection: 'close'\r\n\r\n`;
+MockNetSocket.createNonSuccessResponse = (code, message) => {
+    return `HTTP/1.1 ${code} ${STATUS_CODES[code]}\r\n${message}\r\nConnection: 'close'\r\n\r\n`;
 };
 
 module.exports.MockNetSocket = MockNetSocket;

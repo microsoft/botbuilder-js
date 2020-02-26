@@ -1011,6 +1011,9 @@ export class ExpressionFunctions {
         let instance: any;
 
         ({ value: instance, error } = expression.children[0].tryEvaluate(state));
+        if (!instance) {
+            error = `'${ expression.children[0] }' evaluated to null.`;
+        }
 
         if (!error) {
             // 2nd parameter has been rewrite to $local.item

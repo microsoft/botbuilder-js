@@ -708,6 +708,21 @@ describe('LG', function() {
         assert.strictEqual(evaled, 'list and obj are both not empty.');        
     });
 
+    it('TestNullTolerant', function() {
+        var lgFile = LGParser.parseFile(GetExampleFilePath('NullTolerant.lg'));
+
+        var evaled = lgFile.evaluateTemplate('template1');
+        assert.strictEqual('null', evaled);
+
+        evaled = lgFile.evaluateTemplate('template2');
+        assert.strictEqual(`result is 'null'`, evaled);
+
+        var jObjEvaled = lgFile.evaluateTemplate('template3');
+        assert.strictEqual('null', jObjEvaled['key1']);
+
+    });
+
+
     it('TestIsTemplateFunction', function() {
         var LGFile = LGParser.parseFile(GetExampleFilePath('IsTemplate.lg'));
 
@@ -790,9 +805,9 @@ describe('LG', function() {
                 return ExpressionFunctions.lookup(func);
             }
         });
-        let template = LGParser.parseFile(GetExampleFilePath("CustomFunction.lg"), undefined, engine);
+        let template = LGParser.parseFile(GetExampleFilePath('CustomFunction.lg'), undefined, engine);
         assert.equal(template.expressionEngine, engine);
         let result = template.evaluateTemplate('template', {});
-        assert.strictEqual(result, 3)
+        assert.strictEqual(result, 3);
     });
 });
