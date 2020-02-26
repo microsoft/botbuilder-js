@@ -14,6 +14,8 @@
     "libraries/botframework-connector",
     "libraries/botframework-schema",
     "libraries/functional-tests",
+    "libraries/functional-tests/dialogToDialog/dialogRootBot",
+    "libraries/functional-tests/dialogToDialog/dialogSkillBot",
     "libraries/testbot",
     "libraries/botframework-streaming",
     "transcripts"
