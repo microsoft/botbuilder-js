@@ -18,6 +18,5 @@ export class Position {
         this.character = character;
     }
 
-    public test = (): string => 'Hello';
     public toString = (): string => `line ${ this.line }:${ this.character }`;
 }
