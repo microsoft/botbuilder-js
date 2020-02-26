@@ -40,6 +40,7 @@
     "exclude": [
       "**/botframework*/**/generated/**",
       "**/botbuilder*/**/generated/**",
+      "**/adaptive-expressions/**/generated/**",
       "**/botframework-luis/**",
       "**/tests/**",
       "**/tools/**",
