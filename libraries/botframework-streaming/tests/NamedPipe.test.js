@@ -340,24 +340,6 @@ describe('Streaming Extensions NamedPipe Library Tests', () => {
     });
 
     describe('NamedPipe Server Tests', () => {
-        // it('test new Func', () => {
-        //     // console.log(module);
-        //     const getNetServerConstructor = function() {
-        //         const testModule = module;
-        //         const netty = testModule.require('net');
-        //         const netServerCtor = netty.Server;
-        //         // new Function(`
-        //         //     if (typeof require !== undefined){ return ${netServerCtor}; }
-        //         //     return 'require doesnt exist'
-        //         // `);
-        //         return netServerCtor;
-        //     }
-        //     const typeOfReq = typeof require
-        //     const result = getNetServerConstructor()
-        //     // expect(result).to.be.instanceOf(Server);
-        //     // expect(result).to.equal('require exists')
-        //     expect(typeOfReq).to.equal('function')
-        // });
 
         it('creates a new server', () => {
             let server = new np.NamedPipeServer('pipeA', new protocol.RequestHandler(), false);
