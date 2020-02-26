@@ -31,7 +31,7 @@ export class StaticChecker extends AbstractParseTreeVisitor<Diagnostic[]> implem
     public constructor(lgFile: LGFile, expressionEngine: ExpressionEngine = undefined) {
         super();
         this.lgFile = lgFile;
-        this.baseExpressionEngine = expressionEngine? expressionEngine : new ExpressionEngine();
+        this.baseExpressionEngine = expressionEngine || new ExpressionEngine();
     }
 
     // Create a property because we want this to be lazy loaded
