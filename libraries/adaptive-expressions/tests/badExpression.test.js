@@ -75,12 +75,12 @@ const badExpressions =
       'newGuid(one)',// should have no parameters
       'indexOf(hello)',// should have two parameters
       'indexOf(hello, world, one)', // should have two parameters
-      'indexOf(hello, one)', // both parameters should be string
-      'indexOf(one, hello)', // both parameters should be string
+      'indexOf(hello, one)', // second parameter should be string
+      'indexOf(one, hello)', // first parameter should be list or string
       'lastIndexOf(hello)',// should have two parameters
       'lastIndexOf(hello, world, one)', // should have two parameters
-      'lastIndexOf(hello, one)', // both parameters should be string
-      'lastIndexOf(one, hello)', // both parameters should be string
+      'lastIndexOf(hello, one)', // second parameter should be string
+      'lastIndexOf(one, hello)', // first parameter should be list or string
 
       // Logical comparison functions test
       'greater(one, hello)', // string and integer are not comparable
