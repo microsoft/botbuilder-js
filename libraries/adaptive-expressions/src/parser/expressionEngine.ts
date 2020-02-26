@@ -209,6 +209,7 @@ export class ExpressionEngine implements ExpressionParserInterface {
     protected static antlrParse(expression: string): ParseTree {
         const inputStream: ANTLRInputStream = new ANTLRInputStream(expression);
         const lexer: ExpressionLexer = new ExpressionLexer(inputStream);
+        lexer.removeErrorListeners();
         const tokenStream: CommonTokenStream = new CommonTokenStream(lexer);
         const parser: ExpressionParser = new ExpressionParser(tokenStream);
         parser.removeErrorListeners();

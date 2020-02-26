@@ -16,6 +16,7 @@ import { Expander } from './expander';
 import { Analyzer } from './analyzer';
 import { LGParser } from './lgParser';
 import { AnalyzerResult } from './analyzerResult';
+import { LGErrors } from './lgErrors';
 
 /// <summary>
 /// LG entrance, including properties that LG file has, and evaluate functions.
@@ -89,8 +90,17 @@ export class LGFile {
     /// </value>
     public importResolver: ImportResolverDelegate;
 
+    /// <summary>
+    /// Gets or sets lG file options.
+    /// </summary>
+    /// <value>
+    /// LG file options.
+    /// </value>
+    public options: string[];
+
     public constructor(templates: LGTemplate[] = undefined, imports: LGImport[] = undefined, diagnostics: Diagnostic[] = undefined, references: LGFile[] = undefined,
-        content: string = undefined, id: string = undefined, expressionEngine: ExpressionEngine = undefined, importResolverDelegate: ImportResolverDelegate = undefined) {
+        content: string = undefined, id: string = undefined, expressionEngine: ExpressionEngine = undefined, importResolverDelegate: ImportResolverDelegate = undefined,
+        options: string[] = undefined) {
         this.templates = templates? templates : [];
         this.imports = imports? imports : [];
         this.diagnostics = diagnostics? diagnostics : [];
@@ -99,7 +109,23 @@ export class LGFile {
         this.id = id? id : '';
         this.expressionEngine = expressionEngine || new ExpressionEngine();
         this.importResolver = importResolverDelegate;
+        this.options = options? options : [];
     }
+
+    /// <summary>
+    /// Gets a value indicating whether lG parser/checker/evaluate strict mode.
+    /// If strict mode is on, expression would throw exception instead of return
+    /// null or make the condition failed.
+    /// </summary>
+    /// <value>
+    /// A value indicating whether lG parser/checker/evaluate strict mode.
+    /// If strict mode is on, expression would throw exception instead of return
+    /// null or make the condition failed.
+    /// </value>
+    public strictMode: boolean;
+
+    public updateStrictMode = (): void => {this.strictMode = this.getStrictModeFromOptions(this.options);};
+
 
     /// <summary>
     /// Gets get all templates from current lg file and reference lg files.
@@ -134,7 +160,7 @@ export class LGFile {
     public evaluateTemplate(templateName: string, scope: object = undefined): object {
         this.checkErrors();
 
-        const evaluator = new Evaluator(this.allTemplates, this.expressionEngine);
+        const evaluator = new Evaluator(this.allTemplates, this.expressionEngine, this.strictMode);
         return evaluator.evaluateTemplate(templateName, scope);
     }
 
@@ -148,7 +174,7 @@ export class LGFile {
     public expandTemplate(templateName: string, scope: object = undefined): string[] {
         this.checkErrors();
 
-        const expander = new Expander(this.allTemplates, this.expressionEngine);
+        const expander = new Expander(this.allTemplates, this.expressionEngine, this.strictMode);
         return expander.expandTemplate(templateName, scope);
     }
 
@@ -227,7 +253,7 @@ export class LGFile {
     public addTemplate(templateName: string, parameters: string[], templateBody: string): LGFile {
         const template: LGTemplate = this.templates.find((u: LGTemplate): boolean => u.name === templateName);
         if (template !== undefined) {
-            throw new Error(`template ${ templateName } already exists.`);
+            throw new Error(LGErrors.templateExist(templateName));
         }
 
         const templateNameLine: string = this.buildTemplateNameLine(templateName, parameters);
@@ -275,7 +301,7 @@ export class LGFile {
         if (stopLine < originList.length - 1) {
             // insert at the middle of the content
             destList.push('\r\n');
-            if (replaceString){
+            if (replaceString) {
                 destList.push(replaceString);
                 destList.push('\r\n');
             }
@@ -283,7 +309,7 @@ export class LGFile {
             destList.push(...this.trimList(originList.slice(stopLine + 1)));
         } else {
             // insert at the tail of the content
-            if (replaceString){
+            if (replaceString) {
                 destList.push('\r\n');
                 destList.push(replaceString);
             }
@@ -358,7 +384,7 @@ export class LGFile {
     }
 
     private buildTemplateNameLine(templateName: string, parameters: string[]): string {
-        if (parameters === undefined || parameters === null) {
+        if (parameters === undefined || parameters === undefined) {
             return `# ${ templateName }`;
         } else {
             return `# ${ templateName }(${ parameters.join(', ') })`;
@@ -383,6 +409,37 @@ export class LGFile {
                 throw Error(errors.join('\n'));
             }
         }
+    }
+
+    private getStrictModeFromOptions(options: string[]): boolean {
+        let result = false;
+        if (!options)
+        {
+            return result;
+        }
+
+        const strictModeKey = '@strict';
+        for (const option of options)
+        {
+            if (option && option.includes('=')) {
+                const index = option.indexOf('=');
+                const key = option.substring(0, index).trim();
+                const value = option.substring(index + 1).trim().toLowerCase();
+                if (key === strictModeKey)
+                {
+                    if (value === 'true')
+                    {
+                        result = true;
+                    }
+                    else if (value == 'false')
+                    {
+                        result = false;
+                    }
+                }
+            }
+        }
+
+        return result;
     }
 
     private newGuid(): string {
