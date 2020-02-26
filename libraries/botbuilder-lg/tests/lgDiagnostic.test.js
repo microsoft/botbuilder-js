@@ -238,3 +238,9 @@ describe(`LGExceptionTest`, function() {
         assert.throws(() => lgFile.evaluateTemplate(`switchcase2`, { turn : { testValue : 0 } }), Error(`'dialog.abc' evaluated to null. [switchcase2] Case 'Default': Error occurred when evaluating '-I want \${dialog.abc}'. `));
     });
 });
+
+it(`TestExpressionFormatError`, function() {
+    var diagnostics = GetDiagnostics(`ExpressionFormatError.lg`);
+    assert.strictEqual(diagnostics.length, 1);
+    assert.strictEqual(diagnostics[0].message.includes(`Close } is missing in Expression`), true);
+});
