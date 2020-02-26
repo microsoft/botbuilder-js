@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 
-export class WebResource { }
+export interface WebResource {}
 
 export interface AppCredentialsProvider {
     signRequest(webResource: WebResource): Promise<WebResource>;
