@@ -43,8 +43,8 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGFilePa
     private readonly strictMode: boolean;
 
     // to support broswer, use look-ahead replace look-behind
-    // original:/(?<!\\)$\{((\'[^\'\r\n]*\')|(\"[^\"\r\n]*\")|(\`(\\\`|[^\`])*\`)|[^\r\n\{\}\'\"\`])*?\}/g;
-    public static readonly expressionRecognizeReverseRegex: RegExp = new RegExp(/\}((\'[^\'\r\n]*\')|(\"[^\"\r\n]*\")|(\`(\\\`|[^\`])*\`)|([^\r\n\{\}\'\"\`]))*?\{\$(?!\\)/g);
+    // original:/(?<!\\)$\{((\'[^\'\r\n]*\')|(\"[^\"\r\n]*\")|(\`(\\\`|[^\`])*\`)|[^\r\n\{\}\'\"\`])+\}?/g;
+    public static readonly expressionRecognizeReverseRegex: RegExp = new RegExp(/\}?((\'[^\'\r\n]*\')|(\"[^\"\r\n]*\")|(\`(\\\`|[^\`])*\`)|([^\r\n\{\}\'\"\`]))+\{\$(?!\\)/g);
 
     public static readonly LGType = 'lgType';
     public static readonly activityAttachmentFunctionName = 'ActivityAttachment';

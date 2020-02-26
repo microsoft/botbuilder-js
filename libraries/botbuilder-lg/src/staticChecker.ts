@@ -308,15 +308,19 @@ export class StaticChecker extends AbstractParseTreeVisitor<Diagnostic[]> implem
 
     private checkExpression(exp: string, context: ParserRuleContext, prefix: string = ''): Diagnostic[] {
         const result: Diagnostic[] = [];
-        exp = LGExtensions.trimExpression(exp);
+        if(!exp.endsWith('}')) {
+            result.push(this.buildLGDiagnostic(LGErrors.noCloseBracket, undefined, context));
+        } else {
+            exp = LGExtensions.trimExpression(exp);
 
-        try {
-            this.expressionParser.parse(exp);
-        } catch (e) {
-            const errorMsg = prefix + LGErrors.expressionParseError(exp) + e.message;
-            result.push(this.buildLGDiagnostic(errorMsg, undefined, context));
-
-            return result;
+            try {
+                this.expressionParser.parse(exp);
+            } catch (e) {
+                const errorMsg = prefix + LGErrors.expressionParseError(exp) + e.message;
+                result.push(this.buildLGDiagnostic(errorMsg, undefined, context));
+    
+                return result;
+            }
         }
 
         return result;
