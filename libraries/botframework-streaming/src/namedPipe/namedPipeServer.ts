@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-// import { Socket } from 'net';
+// import { Socket, Server } from 'net';
 import { ProtocolAdapter } from '../protocolAdapter';
 import { RequestHandler } from '../requestHandler';
 import { StreamingRequest } from '../streamingRequest';
@@ -16,19 +16,7 @@ import {
 } from '../payloadTransport';
 import { NamedPipeTransport } from './namedPipeTransport';
 import { INodeSocket2, IStreamingTransportServer, IReceiveResponse } from '../interfaces';
-import { getNetServerConstructor } from '../utilities';
-
-const createNodeServer = function(callback: (socket: INodeSocket2) => void) {
-    if (!callback) {
-        throw new TypeError('Unable to create NodeNetServer without callback.');
-    }
-
-    try {
-        return getNetServerConstructor()(callback);
-    } catch (error) {
-        throw error;
-    }
-}
+import { createNodeServer } from '../utilities';
 
 /**
 * Streaming transport server implementation that uses named pipes for inter-process communication.

@@ -11,6 +11,7 @@ export * from './IBrowserWebSocket';
 export * from './INodeBuffer';
 export * from './INodeIncomingMessage';
 export * from './INodeSocket';
+export * from './INodeSocket2';
 export * from './IReceiveRequest';
 export * from './IReceiveResponse';
 export * from './ISocket';

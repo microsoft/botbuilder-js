@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 // import { Socket } from 'net';
-import { INodeSocket2 } from '../interfaces/INodeSocket';
+import { INodeSocket2 } from '../interfaces/INodeSocket2';
 import { ITransportSender } from '../interfaces/ITransportSender';
 import { ITransportReceiver } from '../interfaces/ITransportReceiver';
 

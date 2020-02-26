@@ -17,23 +17,3 @@ export interface INodeSocket {
     write(str: string, cb?: Function): boolean;
     destroy(error?: Error): void;
 }
-
-export interface INodeSocket2 {
-    connecting: boolean;
-    destroyed: boolean;
-    writable: boolean;
-
-    end(str: string, cb?: Function): void;
-    destroy(error?: Error): void;
-    write(buffer: Buffer, cb?: Function): boolean;
-
-    on(event: string, listener: (...args: any[]) => void): this;
-    on(event: "close", listener: (had_error: boolean) => void): this;
-    on(event: "connect", listener: () => void): this;
-    on(event: "data", listener: (data: Buffer) => void): this;
-    on(event: "drain", listener: () => void): this;
-    on(event: "end", listener: () => void): this;
-    on(event: "error", listener: (err: Error) => void): this;
-    on(event: "lookup", listener: (err: Error, address: string, family: string | number, host: string) => void): this;
-    on(event: "timeout", listener: () => void): this;
-}

@@ -8,5 +8,5 @@
 
 export * from './doesGlobalFileReaderExist';
 export * from './doesGlobalWebSocketExist';
-export * from './getNetServerConstructor';
+export * from './createNodeServer';
 export * from './protocol-base';

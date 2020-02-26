@@ -1,6 +1,7 @@
 const net = require('net');
 const np = require('../lib');
 const npt = require('../lib/namedPipe/namedPipeTransport');
+const NodeServerUtils = require('../lib/utilities/createNodeServer');
 const protocol = require('../lib');
 const  chai  = require('chai');
 var expect = chai.expect;
@@ -413,6 +414,30 @@ describe('Streaming Extensions NamedPipe Library Tests', () => {
             }
             expect(server.disconnect()).to.not.throw;
             done();
+        });
+
+        
+        it('calling createNodeServer() should throw if passing in a callback that\'s not a function', () => {
+            const stringCallback = 'Not a real callback function.';
+            expect(() => NodeServerUtils.createNodeServer(stringCallback)).to.throw;
+        });
+
+        it('should not throw when choosing not to pass in a callback at all into createNodeServer()', () => {
+            expect(() => NodeServerUtils.createNodeServer()).to.not.throw;
+        });
+
+        it('should return a Server when calling createNodeServer()', () => {
+            const server = NodeServerUtils.createNodeServer();
+
+            expect(server).to.not.be.null;
+            expect(server).to.be.instanceOf(Object);
+        });
+
+        it('should return the constructor when calling getNodeServerConstructor()', () => {
+            const netServerCtor = NodeServerUtils.getNetServerConstructor();
+
+            expect(netServerCtor).to.not.be.null;
+            expect(typeof netServerCtor).to.equal('function');
         });
     });
 });
