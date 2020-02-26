@@ -17,6 +17,7 @@ import { LGFileParserVisitor } from './generated/LGFileParserVisitor';
 import { LGTemplate } from './lgTemplate';
 import { LGExtensions } from './lgExtensions';
 import { AnalyzerResult } from './analyzerResult';
+import {LGErrors} from './lgErrors';
 
 // tslint:disable-next-line: max-classes-per-file
 /**
@@ -49,11 +50,11 @@ export class Analyzer extends AbstractParseTreeVisitor<AnalyzerResult> implement
      */
     public analyzeTemplate(templateName: string): AnalyzerResult {
         if (!(templateName in this.templateMap)) {
-            throw new Error(`No such template: ${ templateName }`);
+            throw new Error(LGErrors.templateNotExist(templateName));
         }
 
         if (this.evalutationTargetStack.find((u: EvaluationTarget): boolean => u.templateName === templateName) !== undefined) {
-            throw new Error(`Loop detected: ${ this.evalutationTargetStack.reverse()
+            throw new Error(`${ LGErrors.loopDetected } ${ this.evalutationTargetStack.reverse()
                 .map((u: EvaluationTarget): string => u.templateName)
                 .join(' => ') }`);
         }
@@ -79,7 +80,7 @@ export class Analyzer extends AbstractParseTreeVisitor<AnalyzerResult> implement
             }
         }
 
-        throw Error(`template name match failed`);
+        return new AnalyzerResult();
     }
 
     public visitNormalBody(ctx: lp.NormalBodyContext): AnalyzerResult {
