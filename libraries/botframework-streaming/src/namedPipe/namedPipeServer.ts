@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { Server, Socket } from 'net';
+// import { Socket } from 'net';
 import { ProtocolAdapter } from '../protocolAdapter';
 import { RequestHandler } from '../requestHandler';
 import { StreamingRequest } from '../streamingRequest';
@@ -15,14 +15,27 @@ import {
     PayloadSender
 } from '../payloadTransport';
 import { NamedPipeTransport } from './namedPipeTransport';
-import { IStreamingTransportServer, IReceiveResponse } from '../interfaces';
+import { INodeSocket2, IStreamingTransportServer, IReceiveResponse } from '../interfaces';
+import { getNetServerConstructor } from '../utilities';
+
+const createNodeServer = function(callback: (socket: INodeSocket2) => void) {
+    if (!callback) {
+        throw new TypeError('Unable to create NodeNetServer without callback.');
+    }
+
+    try {
+        return getNetServerConstructor()(callback);
+    } catch (error) {
+        throw error;
+    }
+}
 
 /**
 * Streaming transport server implementation that uses named pipes for inter-process communication.
 */
 export class NamedPipeServer implements IStreamingTransportServer {
-    private _outgoingServer: Server;
-    private _incomingServer: Server;
+    private _outgoingServer
+    private _incomingServer
     private readonly _baseName: string;
     private readonly _requestHandler: RequestHandler;
     private readonly _sender: PayloadSender;
@@ -73,14 +86,15 @@ export class NamedPipeServer implements IStreamingTransportServer {
         }
 
         const incoming = new Promise(resolve => {
-            this._incomingServer = new Server((socket: Socket): void => {
-                this._receiver.connect(new NamedPipeTransport(socket));
-                resolve();
-            });
+                this._incomingServer =  createNodeServer((socket: INodeSocket2): void => {
+                    this._receiver.connect(new NamedPipeTransport(socket));
+                    resolve();
+                });
+
         });
 
         const outgoing = new Promise(resolve => {
-            this._outgoingServer = new Server((socket: Socket): void => {
+            this._outgoingServer = createNodeServer((socket: INodeSocket2): void => {
                 this._sender.connect(new NamedPipeTransport(socket));
                 resolve();
             });
@@ -90,7 +104,7 @@ export class NamedPipeServer implements IStreamingTransportServer {
         // Anything awaiting on them will be blocked for the duration of the session,
         // which is useful when detecting premature terminations, but requires an unawaited
         // promise during the process of establishing the connection.
-        Promise.all([incoming, outgoing]);
+        await Promise.all([incoming, outgoing]);
 
         const { PipePath, ServerIncomingPath, ServerOutgoingPath } = NamedPipeTransport;
         const incomingPipeName = PipePath + this._baseName + ServerIncomingPath;

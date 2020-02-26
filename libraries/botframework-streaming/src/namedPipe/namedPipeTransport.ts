@@ -5,11 +5,12 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { Socket } from 'net';
+// import { Socket } from 'net';
+import { INodeSocket2 } from '../interfaces/INodeSocket';
 import { ITransportSender } from '../interfaces/ITransportSender';
 import { ITransportReceiver } from '../interfaces/ITransportReceiver';
 
-
+// const testSocket = new Socket();
 /**
  * Named pipes based transport sender and receiver abstraction
  */
@@ -18,7 +19,7 @@ export class NamedPipeTransport implements ITransportSender, ITransportReceiver 
     public static readonly ServerIncomingPath: string = '.incoming';
     public static readonly ServerOutgoingPath: string = '.outgoing';
 
-    private _socket: Socket;
+    private _socket: INodeSocket2;
     private readonly _queue: Buffer[];
     private _active: Buffer;
     private _activeOffset: number;
@@ -31,7 +32,7 @@ export class NamedPipeTransport implements ITransportSender, ITransportReceiver 
      *
      * @param socket The socket object to build this connection on.
      */
-    public constructor(socket: Socket) {
+    public constructor(socket: INodeSocket2) {
         this._socket = socket;
         this._queue = [];
         this._activeOffset = 0;
