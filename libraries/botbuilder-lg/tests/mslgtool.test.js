@@ -1,5 +1,5 @@
 
-const { MSLGTool } = require('../');
+const { MSLGTool, LGErrors } = require('../');
 const assert = require('assert');
 const fs = require('fs');
 
@@ -14,12 +14,12 @@ describe('MSLGTool', function() {
     it('TestValidateReturnStaticCheckerErrors', function() {
         let errors = GetErrors(new MSLGTool(),'StaticCheckerErrors.lg');
         assert.strictEqual(errors.length,6);
-        assert(errors[0].includes('There is no template body in template template'));
-        assert(errors[1].includes('condition is not end with else'));
-        assert(errors[2].includes('control flow is not starting with switch'));
-        assert(errors[3].includes('control flow is not ending with default statement'));
-        assert(errors[4].includes('control flow should have at least one case statement'));
-        assert(errors[5].includes('Not a valid template name line'));
+        assert(errors[0].includes(LGErrors.noTemplateBody('template')));
+        assert(errors[1].includes(LGErrors.notEndWithElseInCondition));
+        assert(errors[2].includes(LGErrors.notStartWithSwitchInSwitchCase));
+        assert(errors[3].includes(LGErrors.notEndWithDefaultInSwitchCase));
+        assert(errors[4].includes(LGErrors.missingCaseInSwitchCase));
+        assert(errors[5].includes(LGErrors.invalidTemplateName));
     });
 
     it('TestValidateReturnNoErrors', function() {

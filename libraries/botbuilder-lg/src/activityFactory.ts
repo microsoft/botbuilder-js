@@ -131,7 +131,7 @@ export class ActivityFactory {
                 value: ''
             };
 
-            if(type === 'cardaction') {
+            if (type === 'cardaction') {
                 for (const key of Object.keys(action)) {
                     const property: string = key.trim();
                     if (property === Evaluator.LGType) {
@@ -194,9 +194,9 @@ export class ActivityFactory {
         const type: string = this.getStructureType(input);
         if (ActivityChecker.genericCardTypeMapping.has(type)) {
             attachment = this.getCardAttachment(ActivityChecker.genericCardTypeMapping.get(type), input);
-        } else if(type === 'adaptivecard') {
+        } else if (type === 'adaptivecard') {
             attachment = CardFactory.adaptiveCard(input);
-        } else if(type === 'attachment') {
+        } else if (type === 'attachment') {
             attachment = this.getNormalAttachment(input);
         } else {
             attachment = {contentType: type, content: input};
@@ -319,7 +319,7 @@ export class ActivityFactory {
     private static normalizedToList(item: any): any[] {
         if (item === undefined) {
             return [];
-        } else if (Array.isArray(item)){
+        } else if (Array.isArray(item)) {
             return item;
         } else {
             return [item];
@@ -335,7 +335,7 @@ export class ActivityFactory {
 
         lgStringResult = lgStringResult.trim();
 
-        if (lgStringResult === '' || !lgStringResult.startsWith('{') || !lgStringResult.endsWith('}')){
+        if (lgStringResult === '' || !lgStringResult.startsWith('{') || !lgStringResult.endsWith('}')) {
             return undefined;
         }
 

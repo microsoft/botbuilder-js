@@ -45,14 +45,14 @@ export class EvaluationTarget {
         const memory = this.scope as CustomizedMemory;
         let result = this.templateName;
         if (memory) {
-            if (memory.globalMemory){
+            if (memory.globalMemory) {
                 const version = memory.globalMemory.version();
                 if (version) {
                     result = result.concat(version);
                 }
             }
 
-            if (memory.localMemory){
+            if (memory.localMemory) {
                 const localMemoryString = memory.localMemory.toString();
                 if (localMemoryString) {
                     result = result.concat(localMemoryString);
