@@ -92,7 +92,7 @@ export class NamedPipeServer implements IStreamingTransportServer {
         // Anything awaiting on them will be blocked for the duration of the session,
         // which is useful when detecting premature terminations, but requires an unawaited
         // promise during the process of establishing the connection.
-        await Promise.all([incoming, outgoing]);
+        Promise.all([incoming, outgoing]);
 
         const { PipePath, ServerIncomingPath, ServerOutgoingPath } = NamedPipeTransport;
         const incomingPipeName = PipePath + this._baseName + ServerIncomingPath;
