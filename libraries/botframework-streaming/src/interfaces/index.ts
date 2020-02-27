@@ -9,7 +9,6 @@
 export * from './IBrowserFileReader';
 export * from './IBrowserWebSocket';
 export * from './IEventEmitter';
-export * from './INodeHeadBuffer';
 export * from './INodeBuffer';
 export * from './INodeIncomingMessage';
 export * from './INodeServer';
