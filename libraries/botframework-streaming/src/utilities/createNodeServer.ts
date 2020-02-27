@@ -1,6 +1,3 @@
-import { INodeSocket } from '../interfaces/INodeSocket';
-import { INodeServer } from '../interfaces/INodeServer';
-
 /**
  * @module botframework-streaming
  */
@@ -8,6 +5,8 @@ import { INodeServer } from '../interfaces/INodeServer';
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
+
+ import { INodeServer, INodeSocket} from '../interfaces';
 
 export const createNodeServer = function(callback?: (socket: INodeSocket) => void): INodeServer {
     if (callback && typeof callback !== 'function') {

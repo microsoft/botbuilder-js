@@ -420,15 +420,15 @@ describe('Streaming Extensions NamedPipe Library Tests', () => {
         
         it('calling createNodeServer() should throw if passing in a callback that\'s not a function', () => {
             const stringCallback = 'Not a real callback function.';
-            expect(() => NodeServerUtils.createNodeServer(stringCallback)).to.throw;
+            expect(() => createNodeServer(stringCallback)).to.throw;
         });
 
         it('should not throw when choosing not to pass in a callback at all into createNodeServer()', () => {
-            expect(() => NodeServerUtils.createNodeServer()).to.not.throw;
+            expect(() => createNodeServer()).to.not.throw;
         });
 
         it('should return a Server when calling createNodeServer()', () => {
-            const server = NodeServerUtils.createNodeServer();
+            const server = createNodeServer();
 
             expect(server).to.not.be.null;
             expect(server).to.be.instanceOf(Object);
@@ -436,7 +436,7 @@ describe('Streaming Extensions NamedPipe Library Tests', () => {
         });
 
         it('should return the constructor when calling getNodeServerConstructor()', () => {
-            const netServerCtor = NodeServerUtils.getNetServerConstructor();
+            const netServerCtor = getNetServerConstructor();
 
             expect(netServerCtor).to.not.be.null;
             expect(typeof netServerCtor).to.equal('function');

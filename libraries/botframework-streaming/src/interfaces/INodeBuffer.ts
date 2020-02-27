@@ -17,21 +17,22 @@ export interface INodeBuffer {
 
     copy(targetBuffer: Uint8Array, targetStart?: number, sourceStart?: number, sourceEnd?: number): number;
 
-    readBigUInt64BE(offset?: number): bigint;
-    readBigUInt64LE(offset?: number): bigint;
-    readBigInt64BE(offset?: number): bigint;
-    readBigInt64LE(offset?: number): bigint;
+    readBigUInt64BE?(offset?: number): bigint;
+    readBigUInt64LE?(offset?: number): bigint;
+    readBigInt64BE?(offset?: number): bigint;
+    readBigInt64LE?(offset?: number): bigint;
 
     toString(encoding?: string, start?: number, end?: number): string;
 
-    write(string: string, encoding?: BufferEncoding): number;
-    write(string: string, offset: number, encoding?: BufferEncoding): number;
-    write(string: string, offset: number, length: number, encoding?: BufferEncoding): number;
+    // write(string: string, encoding?: BufferEncoding): number;
+    write(string: string, offset?: number, length?: number, encoding?: string): number;
+    // write(string: string, offset: number, encoding?: BufferEncoding): number;
+    // write(string: string, offset: number, length: number, encoding?: BufferEncoding): number;
 
-    writeBigInt64BE(value: bigint, offset?: number): number;
-    writeBigInt64LE(value: bigint, offset?: number): number;
-    writeBigUInt64BE(value: bigint, offset?: number): number;
-    writeBigUInt64LE(value: bigint, offset?: number): number;
+    writeBigInt64BE?(value: bigint, offset?: number): number;
+    writeBigInt64LE?(value: bigint, offset?: number): number;
+    writeBigUInt64BE?(value: bigint, offset?: number): number;
+    writeBigUInt64LE?(value: bigint, offset?: number): number;
 
     /**
      * Determines whether an array includes a certain element, returning true or false as appropriate.

@@ -21,10 +21,18 @@ export interface INodeSocket extends Duplex{
 
     address(): AddressInfo | string;
 
-    connect(options: any, connectionListener?: () => void): this;
-    connect(port: number, host: string, connectionListener?: () => void): this;
-    connect(port: number, connectionListener?: () => void): this;
-    connect(path: string, connectionListener?: () => void): this;
+    // connect(options: any | number, connectionListener?: Function): any; 
+    // connect(port: number, host: string, connectionListener?: Function): any; 
+    // connect(port: number, connectionListener?: Function): any; 
+    // connect(path: string, connectionListener?: Function): any;
+
+    connect(options: any, connectionListener?: () => void): any;
+    connect(port: number, host: string, connectionListener?: () => void): any;
+    connect(port: number, connectionListener?: () => void): any;
+    connect(path: string, connectionListener?: () => void): any;
+
+
+
     
     end(cb?: () => void): void; 
     end(chunk: any, cb?: () => void): void; 
@@ -43,11 +51,18 @@ export interface INodeSocket extends Duplex{
     setKeepAlive(enable?: boolean, initialDelay?: number): this;
     setNoDelay(noDelay?: boolean): this;
     
-    write(buffer: ValidBuffer, cb?: (err?: Error) => void): boolean;
-    write(str: string | Uint8Array, encoding?: string, cb?: (err?: Error) => void): boolean;
+    // write(buffer: ValidBuffer, cb?: (err?: Error) => void): boolean;
+    // write(str: string | Uint8Array, encoding?: string, cb?: (err?: Error) => void): boolean;
     
-    ref(): this;
-    unref(): this;
+    write(buffer: ValidBuffer): boolean; 
+    write(buffer: ValidBuffer, cb?: (err?: Error) => void): boolean; 
+    write(str: string, cb?: Function): boolean; 
+    write(str: string, encoding?: string, cb?: Function): boolean; 
+    write(str: string, encoding?: string, fd?: string): boolean; 
+    write(data: any, encoding?: string, callback?: Function): void; 
+
+    ref(): void;
+    unref(): void;
 
     readonly bytesRead: number;
     readonly bufferSize: number;
@@ -56,6 +71,23 @@ export interface INodeSocket extends Duplex{
     readonly localPort: number;
 
 }
+
+// type SocketConnectOpts = TcpSocketConnectOpts | IpcSocketConnectOpts;
+// type LookupFunction = (hostname: string, options: any, callback: (err: NodeJS.ErrnoException | null, address: string, family: number) => void) => void;
+
+// interface TcpSocketConnectOpts {
+//     port: number;
+//     host?: string;
+//     localAddress?: string;
+//     localPort?: number;
+//     hints?: number;
+//     family?: number;
+//     lookup?: LookupFunction;
+// }
+
+// interface IpcSocketConnectOpts {
+//     path: string;
+// }
 
 interface AddressInfo {
     address: string;
