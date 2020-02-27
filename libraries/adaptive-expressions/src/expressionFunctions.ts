@@ -2219,11 +2219,7 @@ export class ExpressionFunctions {
                             if (args[1] === undefined || typeof args[1] === 'string') {
                                 const str = ExpressionFunctions.parseStringOrNull(args[0]);
                                 const searchValue = ExpressionFunctions.parseStringOrNull(args[1]);
-                                if (searchValue === '' && str !== '') {
-                                    value = str.length - 1;
-                                } else {
-                                    value = str.lastIndexOf(searchValue);
-                                } 
+                                value = str.lastIndexOf(searchValue, str.length - 1);
                             } else {
                                 error = `Can only look for indexof string in ${ expression }`;
                             }
