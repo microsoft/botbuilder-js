@@ -596,3 +596,15 @@ describe('Bot Framework Connector SDK', function() {
         });
     });
 });
+
+describe('setGlobals()', function(){
+
+    before(function(){
+        require('../lib/globals');
+    });
+
+    it('Should return fetch and FormData as global functions',async function(){             
+        assert(typeof global.fetch === 'function');
+        assert(typeof global.FormData === 'function');
+    });
+});
