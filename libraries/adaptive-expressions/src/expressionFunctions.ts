@@ -838,7 +838,7 @@ export class ExpressionFunctions {
                 } else if (typeof value === 'string'){
                     path = `['${ value }'].${ path }`;
                 } else {
-                    return {path: undefined, left: undefined, error:`${ left.children[1].toString() } dones't return a int or string`};
+                    return {path: undefined, left: undefined, error:`${ left.children[1].toString() } doesn't return an int or string`};
                 }
 
                 left = left.children[0];
@@ -1011,6 +1011,9 @@ export class ExpressionFunctions {
         let instance: any;
 
         ({ value: instance, error } = expression.children[0].tryEvaluate(state));
+        if (!instance) {
+            error = `'${ expression.children[0] }' evaluated to null.`;
+        }
 
         if (!error) {
             // 2nd parameter has been rewrite to $local.item
@@ -1167,7 +1170,7 @@ export class ExpressionFunctions {
     }
 
     private static _and(expression: Expression, state: MemoryInterface): { value: any; error: string } {
-        let result = false;
+        let result = true;
         let error: string;
         for (const child of expression.children) {
             ({ value: result, error } = child.tryEvaluate(state));
@@ -2062,7 +2065,7 @@ export class ExpressionFunctions {
                 ExpressionType.Empty,
                 (args: any []): boolean => this.isEmpty(args[0]),
                 ExpressionFunctions.validateUnary,
-                ExpressionFunctions.verifyNumberOrString),
+                ExpressionFunctions.verifyContainer),
             new ExpressionEvaluator(
                 ExpressionType.And,
                 (expression: Expression, state: MemoryInterface): { value: any; error: string } => ExpressionFunctions._and(expression, state),
@@ -2180,15 +2183,55 @@ export class ExpressionFunctions {
             ),
             new ExpressionEvaluator(
                 ExpressionType.IndexOf,
-                ExpressionFunctions.apply((args: any []): number => ExpressionFunctions.parseStringOrNull(args[0]).indexOf(ExpressionFunctions.parseStringOrNull(args[1])), ExpressionFunctions.verifyStringOrNull),
+                (expression: Expression, state: any): { value: any; error: string } => {
+                    let value = -1;
+                    let error: string;
+                    let args: any [];
+                    ({ args, error } = ExpressionFunctions.evaluateChildren(expression, state));
+                    if (!error) {
+                        if (args[0] == undefined || typeof args[0] === 'string') {
+                            if (args[1] === undefined || typeof args[1] === 'string') {
+                                value = ExpressionFunctions.parseStringOrNull(args[0]).indexOf(ExpressionFunctions.parseStringOrNull(args[1]));
+                            } else {
+                                error = `Can only look for indexof string in ${ expression }`;
+                            }
+                        } else if (Array.isArray(args[0])){
+                            value = args[0].indexOf(args[1]);
+                        } else {
+                            error = `${ expression } works only on string or list.`;
+                        }
+                    }
+                
+                    return { value, error };
+                },
                 ReturnType.Number,
-                (expression: Expression): void => ExpressionFunctions.validateArityAndAnyType(expression, 2, 2, ReturnType.String)
+                (expression: Expression): void => ExpressionFunctions.validateArityAndAnyType(expression, 2, 2, ReturnType.String, ReturnType.Boolean, ReturnType.Number, ReturnType.Object)
             ),
             new ExpressionEvaluator(
                 ExpressionType.LastIndexOf,
-                ExpressionFunctions.apply((args: any []): number => ExpressionFunctions.parseStringOrNull(args[0]).lastIndexOf(ExpressionFunctions.parseStringOrNull(args[1])), ExpressionFunctions.verifyStringOrNull),
+                (expression: Expression, state: any): { value: any; error: string } => {
+                    let value = -1;
+                    let error: string;
+                    let args: any [];
+                    ({ args, error } = ExpressionFunctions.evaluateChildren(expression, state));
+                    if (!error) {
+                        if (args[0] == undefined || typeof args[0] === 'string') {
+                            if (args[1] === undefined || typeof args[1] === 'string') {
+                                value = ExpressionFunctions.parseStringOrNull(args[0]).lastIndexOf(ExpressionFunctions.parseStringOrNull(args[1]));
+                            } else {
+                                error = `Can only look for indexof string in ${ expression }`;
+                            }
+                        } else if (Array.isArray(args[0])){
+                            value = args[0].lastIndexOf(args[1]);
+                        } else {
+                            error = `${ expression } works only on string or list.`;
+                        }
+                    }
+                
+                    return { value, error };
+                },
                 ReturnType.Number,
-                (expression: Expression): void => ExpressionFunctions.validateArityAndAnyType(expression, 2, 2, ReturnType.String)
+                (expression: Expression): void => ExpressionFunctions.validateArityAndAnyType(expression, 2, 2, ReturnType.String, ReturnType.Boolean, ReturnType.Number, ReturnType.Object)
             ),
             new ExpressionEvaluator(
                 ExpressionType.Join,
