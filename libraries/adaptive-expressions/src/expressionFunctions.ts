@@ -2217,7 +2217,9 @@ export class ExpressionFunctions {
                     if (!error) {
                         if (args[0] == undefined || typeof args[0] === 'string') {
                             if (args[1] === undefined || typeof args[1] === 'string') {
-                                value = ExpressionFunctions.parseStringOrNull(args[0]).lastIndexOf(ExpressionFunctions.parseStringOrNull(args[1]));
+                                const str = ExpressionFunctions.parseStringOrNull(args[0]);
+                                const searchValue = ExpressionFunctions.parseStringOrNull(args[1]);
+                                value = str.lastIndexOf(searchValue, str.length - 1);
                             } else {
                                 error = `Can only look for indexof string in ${ expression }`;
                             }
