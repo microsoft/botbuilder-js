@@ -21,8 +21,8 @@ import { createNodeServer } from '../utilities';
 * Streaming transport server implementation that uses named pipes for inter-process communication.
 */
 export class NamedPipeServer implements IStreamingTransportServer {
-    private _outgoingServer: INodeServer
-    private _incomingServer: INodeServer
+    private _outgoingServer: INodeServer;
+    private _incomingServer: INodeServer;
     private readonly _baseName: string;
     private readonly _requestHandler: RequestHandler;
     private readonly _sender: PayloadSender;
