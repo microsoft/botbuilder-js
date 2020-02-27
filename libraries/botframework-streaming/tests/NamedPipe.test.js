@@ -432,9 +432,12 @@ describe('Streaming Extensions NamedPipe Library Tests', () => {
             expect(server).to.not.throw;
             expect(server).to.not.be.null;
             expect(server).to.be.instanceOf(Object);
+            expect(typeof server.listen).to.equal('function');
+            expect(typeof server.close).to.equal('function');
         });
 
         it('should return the factory when calling getServerFactory()', () => {
+            expect(getServerFactory()).to.not.throw;
             const serverFactoryFunction = getServerFactory();
             expect(serverFactoryFunction).to.not.be.null;
             expect(typeof serverFactoryFunction).to.equal('function');
