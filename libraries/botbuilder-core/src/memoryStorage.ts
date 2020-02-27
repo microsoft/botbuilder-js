@@ -39,6 +39,7 @@ export class MemoryStorage  implements Storage {
 
     public read(keys: string[]): Promise<StoreItems> {
         return new Promise<StoreItems>((resolve: any, reject: any): void => {
+            if (!keys) { throw new ReferenceError(`Keys are required when reading.`); }
             const data: StoreItems = {};
             keys.forEach((key: string) => {
                 const item: string = this.memory[key];
@@ -59,10 +60,11 @@ export class MemoryStorage  implements Storage {
         }
 
         return new Promise<void>((resolve: any, reject: any): void => {
+            if (!changes) { throw new ReferenceError(`Changes are required when writing.`); }
             Object.keys(changes).forEach((key: any) => {
                 const newItem: any = changes[key];
                 const old: string = this.memory[key];
-                if (!old || newItem.eTag === '*') {
+                if (!old || newItem.eTag === '*' || !newItem.eTag) {
                     saveItem(key, newItem);
                 } else {
                     const oldItem: any = <any>JSON.parse(old);
