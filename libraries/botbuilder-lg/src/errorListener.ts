@@ -10,6 +10,7 @@ import { Diagnostic, DiagnosticSeverity } from './diagnostic';
 import { LGException } from './lgException';
 import { Position } from './position';
 import { Range } from './range';
+import { LGErrors } from './lgErrors';
 
 // tslint:disable-next-line: completed-docs
 /**
@@ -34,11 +35,7 @@ export class ErrorListener implements ANTLRErrorListener<any> {
         // tslint:disable-next-line: restrict-plus-operands
         const stopPosition: Position = new Position(line, charPositionInLine + offendingSymbol.stopIndex - offendingSymbol.startIndex + 1);
         const range: Range = new Range(startPosition, stopPosition);
-        msg = `syntax error message: ${ msg }`;
-        if (this.source !== undefined && this.source !== '') {
-            msg = `source: ${ this.source }, ${ msg }`;
-        }
-        const diagnostic: Diagnostic = new Diagnostic(range, msg, DiagnosticSeverity.Error, this.source);
+        const diagnostic: Diagnostic = new Diagnostic(range, LGErrors.syntaxError, DiagnosticSeverity.Error, this.source);
 
         throw new LGException(diagnostic.toString(), [diagnostic]);
     }
