@@ -5,7 +5,6 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-// import { Socket, Server } from 'net';
 import { ProtocolAdapter } from '../protocolAdapter';
 import { RequestHandler } from '../requestHandler';
 import { StreamingRequest } from '../streamingRequest';
@@ -15,15 +14,15 @@ import {
     PayloadSender
 } from '../payloadTransport';
 import { NamedPipeTransport } from './namedPipeTransport';
-import { INodeSocket2, IStreamingTransportServer, IReceiveResponse } from '../interfaces';
+import { INodeServer, INodeSocket, IStreamingTransportServer, IReceiveResponse } from '../interfaces';
 import { createNodeServer } from '../utilities';
 
 /**
 * Streaming transport server implementation that uses named pipes for inter-process communication.
 */
 export class NamedPipeServer implements IStreamingTransportServer {
-    private _outgoingServer
-    private _incomingServer
+    private _outgoingServer: INodeServer
+    private _incomingServer: INodeServer
     private readonly _baseName: string;
     private readonly _requestHandler: RequestHandler;
     private readonly _sender: PayloadSender;
@@ -74,7 +73,7 @@ export class NamedPipeServer implements IStreamingTransportServer {
         }
 
         const incoming = new Promise(resolve => {
-                this._incomingServer =  createNodeServer((socket: INodeSocket2): void => {
+                this._incomingServer =  createNodeServer((socket: INodeSocket): void => {
                     this._receiver.connect(new NamedPipeTransport(socket));
                     resolve();
                 });
@@ -82,7 +81,7 @@ export class NamedPipeServer implements IStreamingTransportServer {
         });
 
         const outgoing = new Promise(resolve => {
-            this._outgoingServer = createNodeServer((socket: INodeSocket2): void => {
+            this._outgoingServer = createNodeServer((socket: INodeSocket): void => {
                 this._sender.connect(new NamedPipeTransport(socket));
                 resolve();
             });

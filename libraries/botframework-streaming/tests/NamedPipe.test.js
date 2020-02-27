@@ -431,6 +431,7 @@ describe('Streaming Extensions NamedPipe Library Tests', () => {
 
             expect(server).to.not.be.null;
             expect(server).to.be.instanceOf(Object);
+            // expect(server instanceof INodeServer);
         });
 
         it('should return the constructor when calling getNodeServerConstructor()', () => {

@@ -8,10 +8,11 @@
 
 export * from './IBrowserFileReader';
 export * from './IBrowserWebSocket';
+export * from './IEventEmitter';
 export * from './INodeBuffer';
 export * from './INodeIncomingMessage';
+export * from './INodeServer';
 export * from './INodeSocket';
-export * from './INodeSocket2';
 export * from './IReceiveRequest';
 export * from './IReceiveResponse';
 export * from './ISocket';

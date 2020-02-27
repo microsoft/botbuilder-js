@@ -12,7 +12,6 @@ export {
     INodeBuffer,
     INodeIncomingMessage,
     INodeSocket,
-    INodeSocket2,
     IReceiveRequest,
     IReceiveResponse,
     ISocket,

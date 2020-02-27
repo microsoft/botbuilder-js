@@ -13,6 +13,7 @@ import { PayloadConstants } from '../payloads/payloadConstants';
 import { TransportDisconnectedEvent } from './transportDisconnectedEvent';
 import { ITransportReceiver } from '../interfaces/ITransportReceiver';
 import { IHeader } from '../interfaces/IHeader';
+import { INodeBuffer } from '../interfaces/INodeBuffer';
 
 /**
  * Payload receiver for straming.
@@ -21,8 +22,8 @@ export class PayloadReceiver {
     public isConnected: boolean;
     public disconnected: TransportDisconnectedEventHandler = function(sender, events){};
     private _receiver: ITransportReceiver;
-    private _receiveHeaderBuffer: Buffer;
-    private _receivePayloadBuffer: Buffer;
+    private _receiveHeaderBuffer: INodeBuffer;
+    private _receivePayloadBuffer: INodeBuffer;
     private _getStream: (header: IHeader) => SubscribableStream;
     private _receiveAction: (header: IHeader, stream: SubscribableStream, length: number) => void;
 

@@ -1,3 +1,5 @@
+import { INodeBuffer } from "./INodeBuffer";
+
 /**
  * @module botframework-streaming
  */
@@ -12,7 +14,7 @@
  */
 export interface ISocket {
     isConnected: boolean;
-    write(buffer: Buffer);
+    write(buffer: INodeBuffer);
     connect(serverAddress: string): Promise<void>;
     close();
     setOnMessageHandler(handler: (x: any) => void);
