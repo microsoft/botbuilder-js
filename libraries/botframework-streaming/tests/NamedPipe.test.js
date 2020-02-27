@@ -1,7 +1,7 @@
 const net = require('net');
 const np = require('../lib');
 const npt = require('../lib/namedPipe/namedPipeTransport');
-const { createNodeServer, getNetServerConstructor } = require('../lib/utilities/createNodeServer');
+const { createNodeServer, getServerFactory } = require('../lib/utilities/createNodeServer');
 
 const protocol = require('../lib');
 const  chai  = require('chai');
@@ -430,13 +430,13 @@ describe('Streaming Extensions NamedPipe Library Tests', () => {
         it('should return a Server when calling createNodeServer()', () => {
             const server = createNodeServer();
 
+            expect(server).to.not.throw;
             expect(server).to.not.be.null;
             expect(server).to.be.instanceOf(Object);
-            // expect(server instanceof INodeServer);
         });
 
-        it('should return the constructor when calling getNodeServerConstructor()', () => {
-            const netServerCtor = getNetServerConstructor();
+        it('should return the factory when calling getServerFactory()', () => {
+            const netServerCtor = getServerFactory();
 
             expect(netServerCtor).to.not.be.null;
             expect(typeof netServerCtor).to.equal('function');

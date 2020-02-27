@@ -14,6 +14,7 @@ import { IEventEmitter } from '.';
  * This interface supports the framework and is not intended to be called directly for your code.
  */
 export interface INodeServer extends IEventEmitter {
+    constructor: this;
     close(callback?: (err?: Error) => void): this;
     listen(port?: number, hostname?: string, backlog?: number, listeningListener?: () => void): this;
     listen(path: string, listeningListener?: () => void): this;
