@@ -2219,7 +2219,7 @@ export class ExpressionFunctions {
                             if (args[1] === undefined || typeof args[1] === 'string') {
                                 const str = ExpressionFunctions.parseStringOrNull(args[0]);
                                 const searchValue = ExpressionFunctions.parseStringOrNull(args[1]);
-                                if (searchValue === '') {
+                                if (searchValue === '' && str !== '') {
                                     value = str.length - 1;
                                 } else {
                                     value = str.lastIndexOf(searchValue);

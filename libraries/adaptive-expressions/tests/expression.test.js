@@ -171,6 +171,7 @@ const dataSource = [
     ['indexOf(createArray(\'abc\', \'def\', \'ghi\'), \'klm\')', -1],
     ['lastIndexOf(nullObj, \'-\')', -1],
     ['lastIndexOf(hello, nullObj)', 4],
+    ['lastIndexOf(nullObj, nullObj)', 0],
     ['lastIndexOf(newGuid(), \'-\')', 23],
     ['lastIndexOf(newGuid(), \'-\')', 23],
     ['lastIndexOf(hello, \'-\')', -1],
