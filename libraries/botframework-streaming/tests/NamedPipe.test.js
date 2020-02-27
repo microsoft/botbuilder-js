@@ -429,17 +429,22 @@ describe('Streaming Extensions NamedPipe Library Tests', () => {
 
         it('should return a Server when calling createNodeServer()', () => {
             const server = createNodeServer();
-
             expect(server).to.not.throw;
             expect(server).to.not.be.null;
             expect(server).to.be.instanceOf(Object);
         });
 
         it('should return the factory when calling getServerFactory()', () => {
-            const netServerCtor = getServerFactory();
+            const serverFactoryFunction = getServerFactory();
+            expect(serverFactoryFunction).to.not.be.null;
+            expect(typeof serverFactoryFunction).to.equal('function');
+        });
 
-            expect(netServerCtor).to.not.be.null;
-            expect(typeof netServerCtor).to.equal('function');
+        it('should throw if the callback isn\'t a valid connection listener callback', () => {
+            const notASocket = 'not a Socket';
+            const callback = (notASocket) => { };
+            const serverFactory = getServerFactory();
+            expect(serverFactory(callback)).to.throw;
         });
     });
 });
