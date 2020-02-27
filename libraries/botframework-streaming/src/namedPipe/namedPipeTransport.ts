@@ -10,7 +10,6 @@ import { INodeSocket } from '../interfaces/INodeSocket';
 import { ITransportSender } from '../interfaces/ITransportSender';
 import { ITransportReceiver } from '../interfaces/ITransportReceiver';
 
-// const testSocket = new Socket();
 /**
  * Named pipes based transport sender and receiver abstraction
  */

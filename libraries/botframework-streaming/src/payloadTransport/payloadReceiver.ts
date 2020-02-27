@@ -16,7 +16,7 @@ import { IHeader } from '../interfaces/IHeader';
 import { INodeBuffer } from '../interfaces/INodeBuffer';
 
 /**
- * Payload receiver for straming.
+ * Payload receiver for streaming.
  */
 export class PayloadReceiver {
     public isConnected: boolean;
