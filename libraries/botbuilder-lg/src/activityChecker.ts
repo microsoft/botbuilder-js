@@ -169,7 +169,7 @@ export class ActivityChecker {
 
         if (typeof value === 'object') {
             const type: string = this.getStructureType(value);
-            if (type !== 'cardaction'){
+            if (type !== 'cardaction') {
                 result.push(this.buildDiagnostic(`'${ type }' is not card action type.`, false));
             } else {
                 result.push(...this.checkCardActionPropertyName(value));
@@ -236,7 +236,7 @@ export class ActivityChecker {
         } else if (type === 'adaptivecard') {
             // TODO
             // check adaptivecard format
-        } else if(type === 'attachment') {
+        } else if (type === 'attachment') {
             // TODO
             // Check attachment format
         } else {
@@ -311,7 +311,7 @@ export class ActivityChecker {
     private static normalizedToList(item: any): any[] {
         if (item === undefined) {
             return [];
-        } else if (Array.isArray(item)){
+        } else if (Array.isArray(item)) {
             return item;
         } else {
             return [item];

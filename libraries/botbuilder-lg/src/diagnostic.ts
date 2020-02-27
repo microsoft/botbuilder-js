@@ -43,8 +43,8 @@ export class Diagnostic {
 
     public toString(): string {
 
-        // ignore error range if source is "inline"
-        if (this.source === 'inline') {
+        // ignore error range if source is "inline content"
+        if (this.source === 'inline content') {
             return `[${ DiagnosticSeverity[this.severity] }] ${ this.message.toString() }`;
         } else {
             return `[${ DiagnosticSeverity[this.severity] }] ${ this.range.toString() }: ${ this.message.toString() }`;
