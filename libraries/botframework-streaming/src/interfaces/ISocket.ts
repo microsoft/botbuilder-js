@@ -1,5 +1,3 @@
-import { INodeBuffer } from "./INodeBuffer";
-
 /**
  * @module botframework-streaming
  */
@@ -12,6 +10,9 @@ import { INodeBuffer } from "./INodeBuffer";
  * The interface implemented by any compatible socket transport, typically used
  * with the WebSocket server or client.
  */
+
+import { INodeBuffer } from "./INodeBuffer";
+
 export interface ISocket {
     isConnected: boolean;
     write(buffer: INodeBuffer);
