@@ -2,7 +2,6 @@ const net = require('net');
 const np = require('../lib');
 const npt = require('../lib/namedPipe/namedPipeTransport');
 const { createNodeServer, getServerFactory } = require('../lib/utilities/createNodeServer');
-
 const protocol = require('../lib');
 const  chai  = require('chai');
 var expect = chai.expect;
