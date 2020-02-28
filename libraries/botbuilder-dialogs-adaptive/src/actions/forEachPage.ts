@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 import { DialogTurnResult, Dialog, DialogContext } from 'botbuilder-dialogs';
-import { ExpressionEngine, Expression } from 'botframework-expressions';
+import { ExpressionEngine, Expression } from 'adaptive-expressions';
 import { ActionScope, ActionScopeResult, ActionScopeConfiguration } from './actionScope';
 
 const FOREACHPAGE = 'dialog.foreach.page';

@@ -88,6 +88,15 @@ export class PromptCultureModels {
         noInLanguage: 'Nein',
     }
 
+    public static Italian: PromptCultureModel = {
+        locale: Culture.Italian,
+        separator: ', ',
+        inlineOr: ' o ',
+        inlineOrMore: ' o ',
+        yesInLanguage: 'Si',
+        noInLanguage: 'No',
+    }
+
     public static Japanese: PromptCultureModel = {
         locale: Culture.Japanese,
         separator: '、 ',
@@ -152,6 +161,7 @@ export class PromptCultureModels {
             PromptCultureModels.English,
             PromptCultureModels.French,
             PromptCultureModels.German,
+            PromptCultureModels.Italian,
             PromptCultureModels.Japanese,
             PromptCultureModels.Portuguese,
             PromptCultureModels.Spanish,

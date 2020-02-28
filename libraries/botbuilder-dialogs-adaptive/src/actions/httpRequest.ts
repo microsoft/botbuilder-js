@@ -8,7 +8,7 @@
 import fetch from 'node-fetch';
 import { DialogTurnResult, DialogConfiguration, DialogContext, Dialog, Configurable } from 'botbuilder-dialogs';
 import { Activity } from 'botbuilder-core';
-import { ExpressionEngine, Expression } from 'botframework-expressions';
+import { ExpressionEngine, Expression } from 'adaptive-expressions';
 import { TextTemplate } from '../templates';
 
 export interface HttpRequestConfiguration extends DialogConfiguration {

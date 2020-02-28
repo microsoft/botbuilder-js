@@ -1,12 +1,19 @@
 {
   "compilerOptions": {
     "target": "es6",
-    "lib": ["es2015", "dom"],
+    "lib": ["es2015"],
     "module": "commonjs",
     "declaration": true,
+    "declarationMap": true,
     "sourceMap": true,
     "outDir": "./lib",
     "rootDir": "./src",
     "types" : ["node"]
   },
+  "exclude": [
+    "**/index-browser.ts",
+    "browser",
+    "lib",
+    "node_modules"
+  ]
 }

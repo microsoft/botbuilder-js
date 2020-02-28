@@ -8,7 +8,7 @@
 import * as Recognizers from '@microsoft/recognizers-text-choice';
 import { Activity } from 'botbuilder-core';
 import { DialogContext, Choice, ListStyle, ChoiceFactoryOptions, ChoiceFactory, recognizeChoices } from 'botbuilder-dialogs';
-import { ExpressionEngine, Expression } from 'botframework-expressions';
+import { ExpressionEngine, Expression } from 'adaptive-expressions';
 import { InputDialogConfiguration, InputDialog, InputState } from './inputDialog';
 
 export interface ConfirmInputConfiguration extends InputDialogConfiguration {

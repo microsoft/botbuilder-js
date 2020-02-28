@@ -192,7 +192,7 @@ describe('Streaming Extensions NamedPipe Library Tests', () => {
             sock.writable = true;
             let transport = new npt.NamedPipeTransport(sock, 'fakeSocket2');
             expect(transport).to.be.instanceOf(npt.NamedPipeTransport);
-            expect(transport.isConnected()).to.be.true;
+            expect(transport.isConnected).to.be.true;
             expect( () => transport.close()).to.not.throw;
         });
 
@@ -203,9 +203,8 @@ describe('Streaming Extensions NamedPipe Library Tests', () => {
             sock.writable = true;
             let transport = new npt.NamedPipeTransport(sock, 'fakeSocket3');
             expect(transport).to.be.instanceOf(npt.NamedPipeTransport);
-            expect( transport.close()).to.not.throw;
-            let exists = transport.isConnected();
-            expect(exists).to.be.false;
+            expect(transport.close()).to.not.throw;
+            expect(transport.isConnected).to.be.false;
         });
 
         it('writes to the socket', () => {
@@ -215,7 +214,7 @@ describe('Streaming Extensions NamedPipe Library Tests', () => {
             sock.writable = true;
             let transport = new npt.NamedPipeTransport(sock, 'fakeSocket4');
             expect(transport).to.be.instanceOf(npt.NamedPipeTransport);
-            expect(transport.isConnected()).to.be.true;
+            expect(transport.isConnected).to.be.true;
             let buff = Buffer.from('hello', 'utf8');
             let sent = transport.send(buff);
             expect(sent).to.equal(5);
@@ -229,7 +228,7 @@ describe('Streaming Extensions NamedPipe Library Tests', () => {
             sock.writable = true;
             let transport = new npt.NamedPipeTransport(sock, 'fakeSocket5');
             expect(transport).to.be.instanceOf(npt.NamedPipeTransport);
-            expect(transport.isConnected()).to.be.true;
+            expect(transport.isConnected).to.be.true;
             sock.writable = false;
             let buff = Buffer.from('hello', 'utf8');
             let sent = transport.send(buff);
@@ -244,7 +243,7 @@ describe('Streaming Extensions NamedPipe Library Tests', () => {
             sock.writable = true;
             let transport = new npt.NamedPipeTransport(sock, 'fakeSocket5');
             expect(transport).to.be.instanceOf(npt.NamedPipeTransport);
-            expect(transport.isConnected()).to.be.true;
+            expect(transport.isConnected).to.be.true;
             expect(transport.receive(5)).to.throw;
             expect( () => transport.close()).to.not.throw;
         });
@@ -256,7 +255,7 @@ describe('Streaming Extensions NamedPipe Library Tests', () => {
             sock.writable = true;
             let transport = new npt.NamedPipeTransport(sock);
             expect(transport).to.be.instanceOf(npt.NamedPipeTransport);
-            expect(transport.isConnected()).to.be.true;
+            expect(transport.isConnected).to.be.true;
             transport.receive(12).catch();
             transport.socketReceive(Buffer.from('Hello World!', 'utf8'));
 
@@ -271,7 +270,7 @@ describe('Streaming Extensions NamedPipe Library Tests', () => {
             sock.writable = true;
             let transport = new npt.NamedPipeTransport(sock, 'fakeSocket6');
             expect(transport).to.be.instanceOf(npt.NamedPipeTransport);
-            expect(transport.isConnected()).to.be.true;
+            expect(transport.isConnected).to.be.true;
             transport.socketClose();
             expect(transport._active).to.be.null;
             expect(transport._activeReceiveResolve).to.be.null;
@@ -288,7 +287,7 @@ describe('Streaming Extensions NamedPipe Library Tests', () => {
             sock.writable = true;
             let transport = new npt.NamedPipeTransport(sock, 'fakeSocket6');
             expect(transport).to.be.instanceOf(npt.NamedPipeTransport);
-            expect(transport.isConnected()).to.be.true;
+            expect(transport.isConnected).to.be.true;
             transport.socketError();
             expect(transport._active).to.be.null;
             expect(transport._activeReceiveResolve).to.be.null;
@@ -305,7 +304,7 @@ describe('Streaming Extensions NamedPipe Library Tests', () => {
             sock.writable = true;
             let transport = new npt.NamedPipeTransport(sock, 'fakeSocket6');
             expect(transport).to.be.instanceOf(npt.NamedPipeTransport);
-            expect(transport.isConnected()).to.be.true;
+            expect(transport.isConnected).to.be.true;
             let buff = Buffer.from('hello', 'utf8');
             expect(transport.socketReceive(buff)).to.not.throw;
         });
@@ -348,6 +347,15 @@ describe('Streaming Extensions NamedPipe Library Tests', () => {
             expect(server.disconnect()).to.not.throw;
         });
 
+        it('throws a TypeError during construction if missing the "baseName" parameter', () => {
+            try {
+                new np.NamedPipeServer();
+            } catch (err) {
+                expect(err).to.be.instanceOf(TypeError);
+                expect(err.message).to.contain('NamedPipeServer: Missing baseName parameter');
+            }
+        });
+
         it('starts the server without throwing', () => {
             let server = new np.NamedPipeServer('pipeA', new protocol.RequestHandler(), false);
             expect(server).to.be.instanceOf(np.NamedPipeServer);
@@ -363,6 +371,14 @@ describe('Streaming Extensions NamedPipe Library Tests', () => {
             expect(server.disconnect()).to.not.throw;
         });
 
+        it('returns true if isConnected === true on _receiver & _sender', () => {
+            const server = new np.NamedPipeServer('pipeisConnected', new protocol.RequestHandler(), false);
+
+            expect(server.isConnected).to.be.false;
+            server._receiver = { isConnected: true };
+            server._sender = { isConnected: true };
+            expect(server.isConnected).to.be.true;            
+        });
 
         it('sends without throwing', (done) => {
             let server = new np.NamedPipeServer('pipeA', new protocol.RequestHandler(), false);

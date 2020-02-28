@@ -1,0 +1,22 @@
+{
+  "compilerOptions": {
+    "target": "es5",
+    "lib": ["es2015"],
+    "module": "commonjs",
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true,
+    "outDir": "./browser",
+    "rootDir": "./src",
+    "types" : ["node"]
+  },
+  "exclude": [
+    "browser",
+    "lib",
+    "node_modules",
+    "./src/index.ts",
+    "./src/webSocket/index.ts",
+    "./src/webSocket/nodeWebSocket.ts",
+    "src/namedPipe"
+  ]
+}

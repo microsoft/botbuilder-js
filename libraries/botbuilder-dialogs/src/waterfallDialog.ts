@@ -198,7 +198,7 @@ export class WaterfallDialog<O extends object = {}> extends Dialog<O> {
         return await this.steps[step.index](step);
     }
 
-    private async runStep(dc: DialogContext, index: number, reason: DialogReason, result?: any): Promise<DialogTurnResult> {
+    protected async runStep(dc: DialogContext, index: number, reason: DialogReason, result?: any): Promise<DialogTurnResult> {
         if (index < this.steps.length) {
             // Update persisted step index
             const state: WaterfallDialogState = dc.activeDialog.state as WaterfallDialogState;
@@ -237,8 +237,7 @@ export class WaterfallDialog<O extends object = {}> extends Dialog<O> {
      * @param instance The instance of the current dialog.
      * @param reason The reason the dialog is ending.
      */
-    public async endDialog(context: TurnContext, instance: DialogInstance, reason: DialogReason) {
-
+    public async endDialog(context: TurnContext, instance: DialogInstance, reason: DialogReason): Promise<void> {
         const state: WaterfallDialogState = instance.state as WaterfallDialogState;
         const instanceId = state.values['instanceId'];
         if (reason === DialogReason.endCalled) {
@@ -247,7 +246,7 @@ export class WaterfallDialog<O extends object = {}> extends Dialog<O> {
                 'InstanceId': instanceId,
             }});
         } else if (reason === DialogReason.cancelCalled) {
-            var index = instance.state[state.stepIndex];
+            var index = state.stepIndex;
             var stepName = this.waterfallStepName(index);
             this.telemetryClient.trackEvent({name: 'WaterfallCancel', properties: {
                 'DialogId': this.id,
@@ -257,7 +256,7 @@ export class WaterfallDialog<O extends object = {}> extends Dialog<O> {
         }
     }
 
-    private waterfallStepName(index) {
+    private waterfallStepName(index: number): string {
         // Log Waterfall Step event. Each event has a distinct name to hook up
         // to the Application Insights funnel.
         var stepName = '';
@@ -288,9 +287,9 @@ interface WaterfallDialogState {
  * This function generates a GUID-like random number that should be sufficient for our purposes of tracking 
  * instances of a given waterfall dialog.
  * Source: https://stackoverflow.com/questions/105034/create-guid-uuid-in-javascript
- */
-function generate_guid() {
-    function s4() {
+ */  
+function generate_guid(): string {
+    function s4(): string {
         return Math.floor((1 + Math.random()) * 0x10000)
             .toString(16)
             .substring(1);

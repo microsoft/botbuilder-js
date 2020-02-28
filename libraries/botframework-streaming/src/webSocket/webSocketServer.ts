@@ -12,10 +12,10 @@ import { RequestManager } from '../payloads';
 import {
     PayloadReceiver,
     PayloadSender,
-    TransportDisconnectedEventArgs
+    TransportDisconnectedEvent
 } from '../payloadTransport';
 import { ISocket } from '../interfaces/ISocket';
-import { WebSocketTransport } from './WebSocketTransport';
+import { WebSocketTransport } from './webSocketTransport';
 import { IStreamingTransportServer, IReceiveResponse } from '../interfaces';
 
 /**
@@ -30,6 +30,7 @@ export class WebSocketServer implements IStreamingTransportServer {
     private readonly _protocolAdapter: ProtocolAdapter;
     private readonly _webSocketTransport: WebSocketTransport;
     private _closedSignal;
+    private _socket: ISocket;
 
     /**
      * Creates a new instance of the [WebSocketServer](xref:botframework-streaming.WebSocketServer) class.
@@ -38,6 +39,11 @@ export class WebSocketServer implements IStreamingTransportServer {
      * @param requestHandler Optional [RequestHandler](xref:botframework-streaming.RequestHandler) to process incoming messages received by this server.
      */
     public constructor(socket: ISocket, requestHandler?: RequestHandler) {
+        if (!socket) {
+            throw new TypeError('WebSocketServer: Missing socket parameter');
+        }
+
+        this._socket = socket;
         this._webSocketTransport = new WebSocketTransport(socket);
         this._requestHandler = requestHandler;
 
@@ -51,6 +57,13 @@ export class WebSocketServer implements IStreamingTransportServer {
         this._protocolAdapter = new ProtocolAdapter(this._requestHandler, this._requestManager, this._sender, this._receiver);
 
         this._closedSignal = (x: string): string => { return x; };
+    }
+
+    /**
+     * Examines the stored ISocket and returns true if the socket connection is open.
+     */
+    public get isConnected(): boolean {
+        return this._socket.isConnected;
     }
 
     /**
@@ -79,11 +92,15 @@ export class WebSocketServer implements IStreamingTransportServer {
      * Stop this server.
      */
     public disconnect(): void {
-        this._sender.disconnect(new TransportDisconnectedEventArgs('Disconnect was called.'));
-        this._receiver.disconnect(new TransportDisconnectedEventArgs('Disconnect was called.'));
+        this._sender.disconnect(new TransportDisconnectedEvent('Disconnect was called.'));
+        this._receiver.disconnect(new TransportDisconnectedEvent('Disconnect was called.'));
     }
 
-    private onConnectionDisconnected(sender: PayloadReceiver | PayloadSender, e?: TransportDisconnectedEventArgs): void {
+    /**
+     * @param sender The PayloadReceiver or PayloadSender that triggered or received a disconnect.
+     * @param e TransportDisconnectedEvent
+     */
+    private onConnectionDisconnected(sender: PayloadReceiver | PayloadSender, e?: TransportDisconnectedEvent): void {
         if (this._closedSignal) {
             this._closedSignal('close');
             this._closedSignal = null;

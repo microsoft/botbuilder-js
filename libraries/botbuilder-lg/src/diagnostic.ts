@@ -31,16 +31,20 @@ export class Diagnostic {
     public constructor(
         range: Range,
         message: string,
-        severity: DiagnosticSeverity = DiagnosticSeverity.Error) {
+        severity: DiagnosticSeverity = DiagnosticSeverity.Error,
+        source: string = undefined,
+        code: string = undefined) {
         this.message = message;
         this.range = range;
         this.severity = severity;
+        this.source = source;
+        this.code = code;
     }
 
     public toString(): string {
 
-        // ignore error range if source is "inline"
-        if (this.source === 'inline') {
+        // ignore error range if source is "inline content"
+        if (this.source === 'inline content') {
             return `[${ DiagnosticSeverity[this.severity] }] ${ this.message.toString() }`;
         } else {
             return `[${ DiagnosticSeverity[this.severity] }] ${ this.range.toString() }: ${ this.message.toString() }`;

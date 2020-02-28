@@ -8,7 +8,7 @@
 import { Diagnostic } from './diagnostic';
 
 /**
- * Customized LG Exception
+ * LG Exception that contains diagnostics.
  */
 export class LGException  extends Error {
 
@@ -19,6 +19,9 @@ export class LGException  extends Error {
         Object.setPrototypeOf(this, LGException .prototype);
     }
 
+    /**
+     * Diagnostics.
+     */
     public getDiagnostic(): Diagnostic[] {
         return this.diagnostics;
     }

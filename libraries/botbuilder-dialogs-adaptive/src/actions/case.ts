@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 import { Dialog } from 'botbuilder-dialogs';
-import { Expression, Constant } from 'botframework-expressions';
+import { Expression, Constant } from 'adaptive-expressions';
 import { ActionScope } from './actionScope';
 
 export class Case extends ActionScope {

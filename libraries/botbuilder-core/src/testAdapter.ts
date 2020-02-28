@@ -185,11 +185,22 @@ export class TestAdapter extends BotAdapter implements IUserTokenProvider {
         if (!request.id) { request.id = (this.nextId++).toString(); }
 
         // Create context object and run middleware
-        const context: TurnContext = new TurnContext(this, request);
+        const context: TurnContext = this.createContext(request);
 
         return this.runMiddleware(context, this.logic);
     }
 
+     /**
+     * Creates a turn context.
+     *
+     * @param request An incoming request body.
+     *
+     * @remarks
+     * Override this in a derived class to modify how the adapter creates a turn context.
+     */
+    protected createContext(request: Partial<Activity>): TurnContext {
+        return new TurnContext(this, request);
+    }
     /**
      * Sends something to the bot. This returns a new `TestFlow` instance which can be used to add
      * additional steps for inspecting the bots reply and then sending additional activities.

@@ -5,9 +5,9 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { MemoryScope } from "./memoryScope";
-import { ScopePath } from "./scopePath";
-import { DialogContext } from "../../dialogContext";
+import { MemoryScope } from './memoryScope';
+import { ScopePath } from './scopePath';
+import { DialogContext } from '../../dialogContext';
 
 /**
  * ThisMemoryScope maps "this" -> dc.activeDialog.state
