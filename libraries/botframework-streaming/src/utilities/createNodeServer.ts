@@ -36,9 +36,9 @@ function isNetServer(o: any): o is INodeServer {
 }
 
 function hasCloseMethod(o: any): o is INodeServer {
-    if (o.close && typeof o.close === 'function') return true;
+    return (o.close && typeof o.close === 'function') ? true : false;
 }
 
 function hasListenMethod(o: any): o is INodeServer {
-    if(o.listen && typeof o.listen === 'function') return true;
+    return (o.listen && typeof o.listen === 'function') ? true : false;
 }
