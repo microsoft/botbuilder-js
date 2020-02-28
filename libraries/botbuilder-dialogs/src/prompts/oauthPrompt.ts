@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { Activity, ActivityTypes, Attachment, CardFactory, Channels, InputHints, MessageFactory, OAuthLoginTimeoutKey, TokenResponse, TurnContext, IUserTokenProvider, OAuthCard, ActionTypes,  } from 'botbuilder-core';
+import { Activity, ActivityTypes, AppCredentials, Attachment, CardFactory, Channels, InputHints, MessageFactory, OAuthLoginTimeoutKey, TokenResponse, TurnContext, CredentialTokenProvider, OAuthCard, ActionTypes, } from 'botbuilder-core';
 import { Dialog, DialogTurnResult } from '../dialog';
 import { DialogContext } from '../dialogContext';
 import { PromptOptions, PromptRecognizerResult,  PromptValidator } from './prompt';
@@ -15,6 +15,11 @@ import { isSkillClaim } from './skillsHelpers';
  * Settings used to configure an `OAuthPrompt` instance.
  */
 export interface OAuthPromptSettings {
+    /**
+     * AppCredentials for OAuth.
+     */
+    oAuthAppCredentials: AppCredentials;
+
     /**
      * Name of the OAuth connection being used.
      */
@@ -104,7 +109,6 @@ export interface OAuthPromptSettings {
  * ```
  */
 export class OAuthPrompt extends Dialog {
-
     /**
      * Creates a new OAuthPrompt instance.
      * @param dialogId Unique ID of the dialog within its parent `DialogSet` or `ComponentDialog`.
@@ -201,9 +205,9 @@ export class OAuthPrompt extends Dialog {
         }
 
         // Get the token and call validator
-        const adapter: IUserTokenProvider = context.adapter as IUserTokenProvider;
+        const adapter: CredentialTokenProvider = context.adapter as CredentialTokenProvider;
 
-        return await adapter.getUserToken(context, this.settings.connectionName, code);
+        return await adapter.getUserToken(context, this.settings.connectionName, code, this.settings.oAuthAppCredentials);
     }
 
     /**
@@ -228,9 +232,9 @@ export class OAuthPrompt extends Dialog {
         }
 
         // Sign out user
-        const adapter: IUserTokenProvider = context.adapter as IUserTokenProvider;
+        const adapter: CredentialTokenProvider = context.adapter as CredentialTokenProvider;
 
-        return adapter.signOutUser(context, this.settings.connectionName);
+        return adapter.signOutUser(context, this.settings.connectionName, null, this.settings.oAuthAppCredentials);
     }
 
     private async sendOAuthCardAsync(context: TurnContext, prompt?: string|Partial<Activity>): Promise<void> {
@@ -251,14 +255,14 @@ export class OAuthPrompt extends Dialog {
                 let cardActionType = ActionTypes.Signin;
                 let link: string;
                 if (OAuthPrompt.isFromStreamingConnection(context.activity)) {
-                    link = await (context.adapter as any).getSignInLink(context, this.settings.connectionName);
+                    link = await (context.adapter as CredentialTokenProvider).getSignInLink(context, this.settings.connectionName, this.settings.oAuthAppCredentials);
                 } else {
                     // Retrieve the ClaimsIdentity from a BotFrameworkAdapter. For more information see
                     // https://github.com/microsoft/botbuilder-js/commit/b7932e37bb6e421985d5ce53edd9e82af6240a63#diff-3e3af334c0c6adf4906ee5e2a23beaebR250
                     const identity = context.turnState.get((context.adapter as any).BotIdentityKey);
                     if (identity && isSkillClaim(identity.claims)) {
                         // Force magic code for Skills (to be addressed in R8)
-                        link = await (context.adapter as any).getSignInLink(context, this.settings.connectionName);
+                        link = await (context.adapter as CredentialTokenProvider).getSignInLink(context, this.settings.connectionName, this.settings.oAuthAppCredentials);
                         cardActionType = ActionTypes.OpenUrl;
                     }
                 }
@@ -278,7 +282,7 @@ export class OAuthPrompt extends Dialog {
             const cards: Attachment[] = msg.attachments.filter((a: Attachment) => a.contentType === CardFactory.contentTypes.signinCard);
             if (cards.length === 0) {
                 // Append signin card
-                const link: any = await (context.adapter as any).getSignInLink(context, this.settings.connectionName);
+                const link: any = await (context.adapter as CredentialTokenProvider).getSignInLink(context, this.settings.connectionName, this.settings.oAuthAppCredentials);
                 msg.attachments.push(CardFactory.signinCard(
                     this.settings.title,
                     link,
