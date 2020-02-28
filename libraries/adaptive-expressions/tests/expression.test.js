@@ -425,6 +425,7 @@ const dataSource = [
     ['first(1)', undefined],
     ['first(nestedItems).x', 1, ['nestedItems']],
     ['first(where(indicesAndValues(items), elt, elt.index > 1)).value', 'two'],
+    ['first(where(indicesAndValues(bag), elt, elt.index === "three")).value', 3.0]
     ['join(items,\',\')', 'zero,one,two'],
     ['join(createArray(\'a\', \'b\', \'c\'), \'.\')', 'a.b.c'],
     ['join(createArray(\'a\', \'b\', \'c\'), \',\', \' and \')', 'a,b and c'],
@@ -463,7 +464,10 @@ const dataSource = [
     ['sortBy(nestedItems, \'x\')[0].x', 1],
     ['sortByDescending(items)', ['zero', 'two', 'one']],
     ['sortByDescending(nestedItems, \'x\')[0].x', 3],
-
+    ['flatten(createArray([1, [2], [[3, 4], [5, 6]]))', [1, 2, 3, 4, 5, 6]],
+    ['flatten(createArray([1, [2], [[3, 4], [5, 6]], 1))', [1, 2, [3, 4], [5, 6]]],
+    ['unique(createArray([1, 5, 1]))', [1, 5]],
+ 
     // Object manipulation and construction functions tests
     ['string(addProperty(json(\'{"key1":"value1"}\'), \'key2\',\'value2\'))', '{"key1":"value1","key2":"value2"}'],
     ['string(setProperty(json(\'{"key1":"value1"}\'), \'key1\',\'value2\'))', '{"key1":"value2"}'],
