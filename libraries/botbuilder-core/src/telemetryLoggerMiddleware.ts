@@ -188,7 +188,7 @@ export class TelemetryLoggerMiddleware implements Middleware {
     protected async fillReceiveEventProperties(activity: Activity, telemetryProperties?: {[key: string]:string}): Promise<{ [key: string]: string }> {
         const properties: { [key: string]: string } = {};
 
-        properties[this.telemetryConstants.fromIdProperty] = activity.from.id || '';        
+        properties[this.telemetryConstants.fromIdProperty] = activity.from ? activity.from.id : '';        
         properties[this.telemetryConstants.conversationNameProperty] = activity.conversation.name || '';        
         properties[this.telemetryConstants.localeProperty] = activity.locale || '';
         properties[this.telemetryConstants.recipientIdProperty] = activity.recipient.id;
@@ -197,8 +197,8 @@ export class TelemetryLoggerMiddleware implements Middleware {
         // Use the LogPersonalInformation flag to toggle logging PII data, text and user name are common examples
         if (this.logPersonalInformation) {
 
-          if (activity.from.name && activity.from.name.trim()) {
-            properties[this.telemetryConstants.fromNameProperty] = activity.from.name;
+          if (activity.from && activity.from.name && activity.from.name.trim()) {
+            properties[this.telemetryConstants.fromNameProperty] = activity.from ? activity.from.name : '';;
             }
 
             if (activity.text && activity.text.trim()) {
