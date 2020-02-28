@@ -1430,8 +1430,15 @@ export class ExpressionFunctions {
                 }
 
                 result = tempList;
-            } else {
-                error = `${ expression.children[0] } is not array.`;
+            } if (typeof value === 'object') {
+                const tempList = [];
+                for (let [index, val] of Object.entries(value)) {
+                    tempList.push({index: index, value: val});
+                }
+
+                result = tempList;
+            }else {
+                error = `${ expression.children[0] } is not array or object.`;
             }
         }
 
@@ -2012,6 +2019,23 @@ export class ExpressionFunctions {
                 ExpressionFunctions.sortBy(true),
                 ReturnType.Object,
                 (expression: Expression): void => ExpressionFunctions.validateOrder(expression, [ReturnType.String], ReturnType.Object)
+            ),
+            new ExpressionEvaluator(
+                ExpressionType.Flatten,
+                ExpressionFunctions.apply(
+                    args => {
+                        let array = args[0]
+                        let depth = args.length > 1 ? args[1] : 100
+                        return (array as any).flat(depth)
+                    }),
+                ReturnType.Object,
+                (expression: Expression): void => ExpressionFunctions.validateOrder(expression, [ReturnType.Number], ReturnType.Object)
+            ),
+            new ExpressionEvaluator(
+                ExpressionType.Unique,
+                ExpressionFunctions.apply(args => [... new Set(args[0])]),
+                ReturnType.Object,
+                (expression: Expression): void => ExpressionFunctions.validateOrder(expression, [], ReturnType.Object)
             ),
             new ExpressionEvaluator(ExpressionType.IndicesAndValues, 
                 (expression: Expression, state: any): {value: any; error: string} => ExpressionFunctions.indicesAndValues(expression, state), 
