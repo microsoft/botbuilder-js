@@ -9,8 +9,7 @@
 /**
  * Provides details for token polling.
  */
-export interface TokenPollingSettings
-{
+export interface TokenPollingSettings {
     /**
      * Polling timeout time in milliseconds. This is equivalent to login flow timeout.
      */
@@ -30,8 +29,7 @@ export const OAuthLoginTimeoutKey: string = 'loginTimeout';
 /**
  * Name of the token polling settings key.
  */
-export const TokenPollingSettingsKey: string = "tokenPollingSettings";
-
+export const TokenPollingSettingsKey: string = 'tokenPollingSettings';
  
 /**
  *  Default amount of time an OAuthCard will remain active (clickable and actively waiting for a token).

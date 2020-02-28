@@ -55,7 +55,8 @@ export class TokenResolver {
 
     private static pollForToken(adapter: BotFrameworkAdapter, context: TurnContext, activity: Activity, connectionName: string, pollingTimeout: Date, log?: string[]) {
         if (pollingTimeout > new Date()) {
-            adapter.getUserToken(context, connectionName).then((tokenResponse: TokenResponse) => {
+            const tokenApiClientCredentials = context.turnState.get(adapter.TokenApiClientCredentialsKey);
+            adapter.getUserToken(context, connectionName, null, tokenApiClientCredentials).then((tokenResponse: TokenResponse) => {
                 let pollingIntervalMs = TokenResolver.PollingIntervalMs;
                 if (tokenResponse) {
                     if (tokenResponse.token) {
