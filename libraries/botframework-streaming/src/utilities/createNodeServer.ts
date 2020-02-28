@@ -12,11 +12,15 @@ export const createNodeServer = function(callback?: (socket: INodeSocket) => voi
     if (callback && typeof callback !== 'function') {
         throw new TypeError(`Invalid callback; callback parameter must be a function to create Node 'net' Server.`);
     }
-
-    const server = getServerFactory()(callback);
-    if (isNetServer(server)) return server;
-
-    throw new TypeError(`Invalid server type. Could not create a Node Server with the given createNodeServer() arguments.`);
+    
+    try {
+        const server = getServerFactory()(callback);
+        if (isNetServer(server)) {
+            return server;
+        }
+    } catch (error) {
+        throw error;
+    }
 }
 
 export const getServerFactory = function(): Function {

@@ -420,7 +420,7 @@ describe('Streaming Extensions NamedPipe Library Tests', () => {
         
         it('calling createNodeServer() should throw if passing in a callback that\'s not a function', () => {
             const stringCallback = 'Not a real callback function.';
-            expect(() => createNodeServer(stringCallback)).to.throw;
+            expect(() => createNodeServer(stringCallback)).to.throw(TypeError);
         });
 
         it('should not throw when choosing not to pass in a callback at all into createNodeServer()', () => {
@@ -449,5 +449,6 @@ describe('Streaming Extensions NamedPipe Library Tests', () => {
             const serverFactory = getServerFactory();
             expect(serverFactory(callback)).to.throw;
         });
+
     });
 });

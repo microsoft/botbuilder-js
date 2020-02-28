@@ -108,16 +108,6 @@ export interface INodeSocket {
     rawListeners(event: string | symbol): Function[];
 
     removeAllListeners(event?: string | symbol): this;
-
-    removeListener(event: "close", listener: () => void): this;
-    removeListener(event: "data", listener: (chunk: any) => void): this;
-    removeListener(event: "drain", listener: () => void): this;
-    removeListener(event: "end", listener: () => void): this;
-    removeListener(event: "error", listener: (err: Error) => void): this;
-    removeListener(event: "finish", listener: () => void): this;
-    removeListener(event: "pipe", listener: (src: any) => void): this;
-    removeListener(event: "readable", listener: () => void): this;
-    removeListener(event: "unpipe", listener: (src: any) => void): this;
     removeListener(event: string | symbol, listener: (...args: any[]) => void): this;
 
     [Symbol.asyncIterator](): AsyncIterableIterator<any>;
@@ -135,17 +125,18 @@ export interface INodeSocket {
     
     _write(chunk: any, encoding: string, callback: (error?: Error | null) => void): void;
     _writev?(chunks: Array<{ chunk: any, encoding: string }>, callback: (error?: Error | null) => void): void;
-    write(buffer: ValidBuffer): boolean; 
+
     write(buffer: ValidBuffer, cb?: (err?: Error) => void): boolean; 
-    write(str: string, cb?: Function): boolean; 
     write(str: string, encoding?: string, cb?: Function): boolean; 
+    write(buffer: ValidBuffer): boolean; 
+    write(str: string, cb?: Function): boolean; 
     write(str: string, encoding?: string, fd?: string): boolean; 
     write(data: any, encoding?: string, callback?: Function): void; 
     write(chunk: any, cb?: (error: Error | null | undefined) => void): boolean;
     write(chunk: any, encoding?: string, cb?: (error: Error | null | undefined) => void): boolean;
 
-    ref(): void;
-    unref(): void;
+    ref(): any;
+    unref(): any;
 }
 
 interface AddressInfo {
