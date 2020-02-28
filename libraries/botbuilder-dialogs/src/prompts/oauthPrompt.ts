@@ -245,7 +245,7 @@ export class OAuthPrompt extends Dialog {
         if (!Array.isArray(msg.attachments)) { msg.attachments = []; }
 
         // Add login card as needed
-        if (this.channelSupportsOAuthCard(context.activity.channelId)) {
+        if (this.isOAuthCardSupported(context)) {
             const cards: Attachment[] = msg.attachments.filter((a: Attachment) => a.contentType === CardFactory.contentTypes.oauthCard);
             if (cards.length === 0) {
                 let cardActionType = ActionTypes.Signin;
@@ -340,6 +340,26 @@ export class OAuthPrompt extends Dialog {
         const activity: Activity = context.activity;
 
         return activity.type === ActivityTypes.Invoke && activity.name === 'signin/verifyState';
+    }
+
+    private isOAuthCardSupported(context: TurnContext) {
+        // Azure Bot Service OAuth cards are not supported in the community adapters. Since community adapters
+        // have a 'name' in them, we cast the adapter to 'any' to check for the name.
+        const adapter:any = context.adapter;
+        if (adapter.name) {
+            switch(adapter.name) {
+                case 'Facebook Adapter':
+                case 'Google Hangouts Adapter':
+                case 'Slack Adapter':
+                case 'Twilio SMS Adapter':
+                case 'Web Adapter':
+                case 'Webex Adapter':
+                case 'Botkit CMS':
+                    return false;
+                default:
+            }
+        }
+        return this.channelSupportsOAuthCard(context.activity.channelId);
     }
 
     private channelSupportsOAuthCard(channelId: string): boolean {
