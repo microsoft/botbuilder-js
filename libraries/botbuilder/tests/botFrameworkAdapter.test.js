@@ -903,7 +903,7 @@ describe(`BotFrameworkAdapter`, function () {
     it(`should throw error if missing from in getUserToken()`, async function () {
         try {
             const adapter = new AdapterUnderTest();
-            await adapter.getUserToken({ activity: {} });
+            await adapter.getUserToken({ activity: {}, turnState: new Map() });
         } catch (err) {
             assert(err.message === 'BotFrameworkAdapter.getUserToken(): missing from or from.id',
                 `expected "BotFrameworkAdapter.getUserToken(): missing from or from.id" Error message, not "${ err.message }"`);
@@ -915,7 +915,7 @@ describe(`BotFrameworkAdapter`, function () {
     it(`should throw error if missing from.id in getUserToken()`, async function () {
         try {
             const adapter = new AdapterUnderTest();
-            await adapter.getUserToken({ activity: { from: {} } });
+            await adapter.getUserToken({ activity: { from: {} }, turnState: new Map() });
         } catch (err) {
             assert(err.message === 'BotFrameworkAdapter.getUserToken(): missing from or from.id',
                 `expected "BotFrameworkAdapter.getUserToken(): missing from or from.id" Error message, not "${ err.message }"`);
@@ -927,7 +927,7 @@ describe(`BotFrameworkAdapter`, function () {
 	it(`should throw error if missing connectionName`, async function () {
 		try {
 			const adapter = new AdapterUnderTest();
-			await adapter.getUserToken({ activity: { from: {id: 'some id'} } });
+			await adapter.getUserToken({ activity: { from: {id: 'some id'} }, turnState: new Map() });
 		} catch (err) {
 			assert(err.message === 'getUserToken() requires a connectionName but none was provided.',
 				`expected "getUserToken() requires a connectionName but none was provided." Error message, not "${ err.message }"`);
@@ -956,7 +956,7 @@ describe(`BotFrameworkAdapter`, function () {
 		connector.TokenApiClient = MockTokenApiClient;
 		const adapter = new AdapterUnderTest();
 		const token = await adapter.getUserToken(
-			{ activity: { channelId: 'The Facebook', from: {id: 'some id'} } },
+            { activity: { channelId: 'The Facebook', from: {id: 'some id'} }, turnState: new Map() },
 			'aConnectionName');
 
 		assert.ok(JSON.stringify(token) === JSON.stringify({
@@ -979,7 +979,7 @@ describe(`BotFrameworkAdapter`, function () {
     it(`should throw error if missing from in signOutUser()`, async function () {
         try {
             const adapter = new AdapterUnderTest();
-            await adapter.signOutUser({ activity: {} });
+            await adapter.signOutUser({ activity: {}, turnState: new Map() });
         } catch (err) {
             assert(err.message === 'BotFrameworkAdapter.signOutUser(): missing from or from.id',
                 `expected "BotFrameworkAdapter.signOutUser(): missing from or from.id" Error message, not "${ err.message }"`);
@@ -991,7 +991,7 @@ describe(`BotFrameworkAdapter`, function () {
     it(`should throw error if missing from.id in signOutUser()`, async function () {
         try {
             const adapter = new AdapterUnderTest();
-            await adapter.signOutUser({ activity: { from: {} } });
+            await adapter.signOutUser({ activity: { from: {} }, turnState: new Map() });
         } catch (err) {
             assert(err.message === 'BotFrameworkAdapter.signOutUser(): missing from or from.id',
                 `expected "BotFrameworkAdapter.signOutUser(): missing from or from.id" Error message, not "${ err.message }"`);
@@ -1003,7 +1003,7 @@ describe(`BotFrameworkAdapter`, function () {
     it(`should throw error if missing from in getAadTokens()`, async function () {
         try {
             const adapter = new AdapterUnderTest();
-            await adapter.getAadTokens({ activity: {} });
+            await adapter.getAadTokens({ activity: {}, turnState: new Map() });
         } catch (err) {
             assert(err.message === 'BotFrameworkAdapter.getAadTokens(): missing from or from.id',
                 `expected "BotFrameworkAdapter.getAadTokens(): missing from or from.id" Error message, not "${ err.message }"`);
@@ -1015,7 +1015,7 @@ describe(`BotFrameworkAdapter`, function () {
     it(`should throw error if missing from.id in getAadTokens()`, async function () {
         try {
             const adapter = new AdapterUnderTest();
-            await adapter.getAadTokens({ activity: { from: {} } });
+            await adapter.getAadTokens({ activity: { from: {} }, turnState: new Map() });
         } catch (err) {
             assert(err.message === 'BotFrameworkAdapter.getAadTokens(): missing from or from.id',
                 `expected "BotFrameworkAdapter.getAadTokens(): missing from or from.id" Error message, not "${ err.message }"`);
@@ -1036,7 +1036,7 @@ describe(`BotFrameworkAdapter`, function () {
             try {
                 const adapter = new AdapterUnderTest();
     
-                await adapter.getTokenStatus({ activity: {} });
+                await adapter.getTokenStatus({ activity: {}, turnState: new Map() });
             } catch (err) {
                 assert(err.message === 'BotFrameworkAdapter.getTokenStatus(): missing from or from.id',
                     `expected "BotFrameworkAdapter.getTokenStatus(): missing from or from.id" Error message, not "${ err.message }"`);
@@ -1048,7 +1048,7 @@ describe(`BotFrameworkAdapter`, function () {
         it(`should throw error if missing from.id in getTokenStatus()`, async function () {
             try {
                 const adapter = new AdapterUnderTest();
-                await adapter.getTokenStatus({ activity: { from: {} } });
+                await adapter.getTokenStatus({ activity: { from: {} }, turnState: new Map() });
             } catch (err) {
                 assert(err.message === 'BotFrameworkAdapter.getTokenStatus(): missing from or from.id',
                     `expected "BotFrameworkAdapter.getTokenStatus(): missing from or from.id" Error message, not "${ err.message }"`);

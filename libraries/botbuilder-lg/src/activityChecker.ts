@@ -13,6 +13,9 @@ import { Range } from './range';
 import { Position } from './position';
 import { Evaluator } from './evaluator';
 
+/**
+ *  Structure LG result checker.
+ */
 export class ActivityChecker {
     public static readonly genericCardTypeMapping: Map<string, string> = new Map<string, string>
     ([
@@ -35,6 +38,11 @@ export class ActivityChecker {
 
     public static readonly cardActionProperties: string[] = ['type','title','image','text','displayText','value','channelData'];
 
+    /**
+     * check the LG result before generate an Activity.
+     * @param lgResult lg output.
+     * @returns Diagnostic list.
+     */
     public static check(lgResult: any): Diagnostic[] {
         if (lgResult === undefined) {
             return [this.buildDiagnostic('LG output is empty', false)];
@@ -161,7 +169,7 @@ export class ActivityChecker {
 
         if (typeof value === 'object') {
             const type: string = this.getStructureType(value);
-            if (type !== 'cardaction'){
+            if (type !== 'cardaction') {
                 result.push(this.buildDiagnostic(`'${ type }' is not card action type.`, false));
             } else {
                 result.push(...this.checkCardActionPropertyName(value));
@@ -228,7 +236,7 @@ export class ActivityChecker {
         } else if (type === 'adaptivecard') {
             // TODO
             // check adaptivecard format
-        } else if(type === 'attachment') {
+        } else if (type === 'attachment') {
             // TODO
             // Check attachment format
         } else {
@@ -303,7 +311,7 @@ export class ActivityChecker {
     private static normalizedToList(item: any): any[] {
         if (item === undefined) {
             return [];
-        } else if (Array.isArray(item)){
+        } else if (Array.isArray(item)) {
             return item;
         } else {
             return [item];

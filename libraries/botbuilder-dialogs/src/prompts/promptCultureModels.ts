@@ -43,6 +43,7 @@ export interface PromptCultureModel {
  * Class container for currently-supported Culture Models in Confirm and Choice Prompt.
  */
 export class PromptCultureModels {
+
     public static Chinese: PromptCultureModel = {
         locale: Culture.Chinese,
         separator: ', ',
@@ -86,6 +87,15 @@ export class PromptCultureModels {
         inlineOrMore: ', oder ',
         yesInLanguage: 'Ja',
         noInLanguage: 'Nein',
+    }
+
+    public static Italian: PromptCultureModel = {
+        locale: Culture.Italian,
+        separator: ', ',
+        inlineOr: ' o ',
+        inlineOrMore: ' o ',
+        yesInLanguage: 'Si',
+        noInLanguage: 'No',
     }
 
     public static Japanese: PromptCultureModel = {
@@ -152,6 +162,7 @@ export class PromptCultureModels {
             PromptCultureModels.English,
             PromptCultureModels.French,
             PromptCultureModels.German,
+            PromptCultureModels.Italian,
             PromptCultureModels.Japanese,
             PromptCultureModels.Portuguese,
             PromptCultureModels.Spanish,

@@ -6,12 +6,16 @@
  * Licensed under the MIT License.
  */
 import { ANTLRErrorListener, RecognitionException, Recognizer } from 'antlr4ts';
-import { Diagnostic } from './diagnostic';
+import { Diagnostic, DiagnosticSeverity } from './diagnostic';
 import { LGException } from './lgException';
 import { Position } from './position';
 import { Range } from './range';
+import { LGErrors } from './lgErrors';
 
 // tslint:disable-next-line: completed-docs
+/**
+ * LG parser error listener.
+ */
 export class ErrorListener implements ANTLRErrorListener<any> {
     private readonly source: string;
     public constructor(errorSource: string) {
@@ -31,11 +35,7 @@ export class ErrorListener implements ANTLRErrorListener<any> {
         // tslint:disable-next-line: restrict-plus-operands
         const stopPosition: Position = new Position(line, charPositionInLine + offendingSymbol.stopIndex - offendingSymbol.startIndex + 1);
         const range: Range = new Range(startPosition, stopPosition);
-        msg = `syntax error message: ${ msg }`;
-        if (this.source !== undefined && this.source !== '') {
-            msg = `source: ${ this.source }, ${ msg }`;
-        }
-        const diagnostic: Diagnostic = new Diagnostic(range, msg);
+        const diagnostic: Diagnostic = new Diagnostic(range, LGErrors.syntaxError, DiagnosticSeverity.Error, this.source);
 
         throw new LGException(diagnostic.toString(), [diagnostic]);
     }

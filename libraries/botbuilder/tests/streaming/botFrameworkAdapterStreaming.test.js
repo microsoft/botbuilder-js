@@ -2,7 +2,7 @@ const { Socket } = require('net');
 
 const { expect } = require('chai');
 const { spy } = require('sinon');
-const { ActivityHandler, ActivityTypes } = require('botbuilder-core');
+const { ActivityHandler, ActivityTypes, TurnContext } = require('botbuilder-core');
 
 const { BotFrameworkAdapter, StatusCodes } = require('../../');
 
@@ -48,6 +48,25 @@ describe('BotFrameworkAdapter Streaming tests', () => {
             await bot.run(context);
         });
         expect(adapter.streamingServer.disconnect()).to.not.throw;
+    });
+
+    it('sendActivities should throw an error if streaming connection is closed.', async () => {
+        const activity = {
+            serviceUrl: 'urn:botframework:WebSocket:wss://beep.com',
+            type: 'message'
+        };
+        const reply = {
+            conversation: { id: 'convo1' },
+            ...activity
+        };
+
+        const adapter = new BotFrameworkAdapter({});
+        adapter.streamingServer = { isConnected: false };
+        try {
+            await adapter.sendActivities(new TurnContext(adapter, activity), [reply]);
+        } catch (err) {
+            expect(err.message).contains('BotFrameworkAdapter.sendActivities(): Unable to send activity as Streaming connection is closed.');
+        }
     });
 
     it('starts and stops a websocket server', async () => {
@@ -98,17 +117,63 @@ describe('BotFrameworkAdapter Streaming tests', () => {
             const socket = new MockNetSocket();
             const writeSpy = spy(socket, 'write');
             const destroySpy = spy(socket, 'destroy');
-            
-            await adapter.useWebSocket(request, socket, Buffer.from([]), async (context) => {
-                await bot.run(context);
-                throw new Error('useWebSocket should have thrown an error');
-            }).catch(err => {
+
+            try {
+                await adapter.useWebSocket(request, socket, Buffer.from([]), async (context) => {
+                    await bot.run(context);
+                });
+            } catch (err) {
                 expect(err.message).to.equal('Unauthorized. No valid identity.');
-                const socketResponse = MockNetSocket.createNonSuccessResponse(401);
+                const socketResponse = MockNetSocket.createNonSuccessResponse(401, err.message);
                 expect(writeSpy.called).to.be.true;
                 expect(writeSpy.calledWithExactly(socketResponse)).to.be.true;
                 expect(destroySpy.calledOnceWithExactly()).to.be.true;
-            });
+            }
+        });
+
+        it('returns status code 400 when request is missing Authorization header', async () => {
+            const bot = new ActivityHandler();
+            settings = new TestAdapterSettings('appId', 'password');
+            const adapter = new BotFrameworkAdapter(settings);
+            const requestWithoutAuthHeader = new MockHttpRequest();
+            
+            const socket = new MockNetSocket();
+            const writeSpy = spy(socket, 'write');
+            const destroySpy = spy(socket, 'destroy');
+
+            try {
+                await adapter.useWebSocket(requestWithoutAuthHeader, socket, Buffer.from([]), async (context) => {
+                    await bot.run(context);
+                });
+            } catch (err) {
+                expect(err.message).to.equal("'authHeader' required.");
+                const socketResponse = MockNetSocket.createNonSuccessResponse(400, err.message);
+                expect(writeSpy.called).to.be.true;
+                expect(writeSpy.calledWithExactly(socketResponse)).to.be.true;
+                expect(destroySpy.calledOnceWithExactly()).to.be.true;
+            };
+        });
+
+        try {
+            
+        } catch (error) {
+            
+        }
+
+        it('returns status code 500 when request logic is not callable', async () => {
+            const adapter = new BotFrameworkAdapter(new TestAdapterSettings());
+            const request = new MockHttpRequest();
+            const socket = new MockNetSocket();
+
+            const useWebSocketSpy = spy(adapter, 'useWebSocket');
+            const uncallableLogic = null;
+
+            try {
+                await adapter.useWebSocket(request, socket, Buffer.from([]), uncallableLogic);    
+            } catch (err) {
+                expect(err.message).to.equal('Streaming logic needs to be provided to `useWebSocket`');
+                expect(useWebSocketSpy.called).to.be.true;
+            }
         });
     });
 
