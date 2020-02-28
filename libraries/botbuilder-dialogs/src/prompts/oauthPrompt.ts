@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { Activity, ActivityTypes, AppCredentialsProvider, Attachment, CardFactory, Channels, InputHints, MessageFactory, OAuthLoginTimeoutKey, TokenResponse, TurnContext, CredentialTokenProvider, OAuthCard, ActionTypes, } from 'botbuilder-core';
+import { Activity, ActivityTypes, AppCredentials, Attachment, CardFactory, Channels, InputHints, MessageFactory, OAuthLoginTimeoutKey, TokenResponse, TurnContext, CredentialTokenProvider, OAuthCard, ActionTypes, } from 'botbuilder-core';
 import { Dialog, DialogTurnResult } from '../dialog';
 import { DialogContext } from '../dialogContext';
 import { PromptOptions, PromptRecognizerResult,  PromptValidator } from './prompt';
@@ -18,7 +18,7 @@ export interface OAuthPromptSettings {
     /**
      * AppCredentials for OAuth.
      */
-    oAuthAppCredentials: AppCredentialsProvider;
+    oAuthAppCredentials: AppCredentials;
 
     /**
      * Name of the OAuth connection being used.
