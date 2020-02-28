@@ -7,7 +7,7 @@
  */
 
 /**
- * Connected service types supported.
+ * @deprecated See https://aka.ms/bot-file-basics for more information.
  */
 export enum ServiceTypes {
     AppInsights = 'appInsights',
@@ -23,7 +23,7 @@ export enum ServiceTypes {
 }
 
 /**
- * JSON description of a connected service.
+ * @deprecated See https://aka.ms/bot-file-basics for more information.
  */
 export interface IConnectedService {
     /**
@@ -43,11 +43,7 @@ export interface IConnectedService {
 }
 
 /**
- * JSON description of an endpoint service.
- *
- * @remarks
- * - [type](#type) SHOULD be set to `ServiceTypes.Endpoint`.
- * - [id](#id) SHOULD be set to the bots ID.
+ * @deprecated See https://aka.ms/bot-file-basics for more information.
  */
 export interface IEndpointService extends IConnectedService {
     /**
@@ -74,7 +70,7 @@ export interface IEndpointService extends IConnectedService {
 }
 
 /**
- * JSON description of an azure service.
+ * @deprecated See https://aka.ms/bot-file-basics for more information.
  */
 export interface IAzureService extends IConnectedService {
     /**
@@ -99,10 +95,7 @@ export interface IAzureService extends IConnectedService {
 }
 
 /**
- * JSON description of an Azure Bot Service.
- *
- * @remarks
- * - [type](#type) SHOULD be set to `ServiceTypes.Bot`.
+ * @deprecated See https://aka.ms/bot-file-basics for more information.
  */
 export interface IBotService extends IAzureService {
     /**
@@ -112,10 +105,7 @@ export interface IBotService extends IAzureService {
 }
 
 /**
- * JSON description of an App Insights service.
- *
- * @remarks
- * - [type](#type) SHOULD be set to `ServiceTypes.AppInsights`.
+ * @deprecated See https://aka.ms/bot-file-basics for more information.
  */
 export interface IAppInsightsService extends IAzureService {
     /**
@@ -135,10 +125,7 @@ export interface IAppInsightsService extends IAzureService {
 }
 
 /**
- * JSON description of a blob storage service.
- *
- * @remarks
- * - [type](#type) SHOULD be set to `ServiceTypes.BlobStorage`.
+ * @deprecated See https://aka.ms/bot-file-basics for more information.
  */
 export interface IBlobStorageService extends IAzureService {
     /**
@@ -153,10 +140,7 @@ export interface IBlobStorageService extends IAzureService {
 }
 
 /**
- * JSON description of a CosmosDB service.
- *
- * @remarks
- * - [type](#type) SHOULD be set to `ServiceTypes.CosmosDB`.
+ * @deprecated See https://aka.ms/bot-file-basics for more information.
  */
 export interface ICosmosDBService extends IAzureService {
     /**
@@ -181,11 +165,7 @@ export interface ICosmosDBService extends IAzureService {
 }
 
 /**
- * JSON description of a LUIS service.
- *
- * @remarks
- * - [type](#type) SHOULD be set to `ServiceTypes.Luis`.
- * - [id](#id) SHOULD be set to the LUIS appid.
+ * @deprecated See https://aka.ms/bot-file-basics for more information.
  */
 export interface ILuisService extends IConnectedService {
     /**
@@ -220,10 +200,7 @@ export interface ILuisService extends IConnectedService {
 }
 
 /**
- * JSON description of a dispatch service.
- *
- * @remarks
- * - [type](#type) SHOULD be set to `ServiceTypes.Dispatch`.
+ * @deprecated See https://aka.ms/bot-file-basics for more information.
  */
 export interface IDispatchService extends ILuisService {
     /**
@@ -233,10 +210,7 @@ export interface IDispatchService extends ILuisService {
 }
 
 /**
- * JSON description of a generic service.
- *
- * @remarks
- * - [type](#type) SHOULD be set to `ServiceTypes.Generic`.
+ * @deprecated See https://aka.ms/bot-file-basics for more information.
  */
 export interface IGenericService extends IConnectedService {
     /**
@@ -251,10 +225,7 @@ export interface IGenericService extends IConnectedService {
 }
 
 /**
- * JSON description of a QnA Maker service.
- *
- * @remarks
- * - [type](#type) SHOULD be set to `ServiceTypes.QnA`.
+ * @deprecated See https://aka.ms/bot-file-basics for more information.
  */
 export interface IQnAService extends IConnectedService {
     /**
@@ -279,10 +250,7 @@ export interface IQnAService extends IConnectedService {
 }
 
 /**
- * JSON description of a file.
- *
- * @remarks
- * - [type](#type) SHOULD be set to `ServiceTypes.File`.
+ * @deprecated See https://aka.ms/bot-file-basics for more information.
  */
 export interface IFileService extends IConnectedService {
     /**
@@ -292,7 +260,7 @@ export interface IFileService extends IConnectedService {
 }
 
 /**
- * JSON description of a bot configuration file.
+ * @deprecated See https://aka.ms/bot-file-basics for more information.
  */
 export interface IBotConfiguration {
     /**
