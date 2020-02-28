@@ -165,11 +165,20 @@ const dataSource = [
     ['indexOf(hello, \'-\')', -1],
     ['indexOf(nullObj, \'-\')', -1],
     ['indexOf(hello, nullObj)', 0],
+    ['indexOf(json(\'["a", "b"]\'), "a")', 0],
+    ['indexOf(json(\'["a", "b"]\'), \'c\')', -1],
+    ['indexOf(createArray(\'abc\', \'def\', \'ghi\'), \'def\')', 1],
+    ['indexOf(createArray(\'abc\', \'def\', \'ghi\'), \'klm\')', -1],
     ['lastIndexOf(nullObj, \'-\')', -1],
-    ['lastIndexOf(hello, nullObj)', 5],
+    ['lastIndexOf(hello, nullObj)', 4],
+    ['lastIndexOf(nullObj, nullObj)', 0],
     ['lastIndexOf(newGuid(), \'-\')', 23],
     ['lastIndexOf(newGuid(), \'-\')', 23],
     ['lastIndexOf(hello, \'-\')', -1],
+    ['lastIndexOf(json(\'["a", "b", "a"]\'), "a")', 2],
+    ['lastIndexOf(json(\'["a", "b"]\'), \'c\')', -1],
+    ['lastIndexOf(createArray(\'abc\', \'def\', \'ghi\', \'def\'), \'def\')', 3],
+    ['lastIndexOf(createArray(\'abc\', \'def\', \'ghi\'), \'klm\')', -1],
 
     // Logical comparison functions tests
     ['and(1 == 1, 1 < 2, 1 > 2)', false],
@@ -418,6 +427,7 @@ const dataSource = [
     ['first(1)', undefined],
     ['first(nestedItems).x', 1, ['nestedItems']],
     ['first(where(indicesAndValues(items), elt, elt.index > 1)).value', 'two'],
+    ['first(where(indicesAndValues(bag), elt, elt.index === "three")).value', 3.0]
     ['join(items,\',\')', 'zero,one,two'],
     ['join(createArray(\'a\', \'b\', \'c\'), \'.\')', 'a.b.c'],
     ['join(createArray(\'a\', \'b\', \'c\'), \',\', \' and \')', 'a,b and c'],
@@ -456,7 +466,10 @@ const dataSource = [
     ['sortBy(nestedItems, \'x\')[0].x', 1],
     ['sortByDescending(items)', ['zero', 'two', 'one']],
     ['sortByDescending(nestedItems, \'x\')[0].x', 3],
-
+    ['flatten(createArray([1, [2], [[3, 4], [5, 6]]))', [1, 2, 3, 4, 5, 6]],
+    ['flatten(createArray([1, [2], [[3, 4], [5, 6]], 1))', [1, 2, [3, 4], [5, 6]]],
+    ['unique(createArray([1, 5, 1]))', [1, 5]],
+ 
     // Object manipulation and construction functions tests
     ['string(addProperty(json(\'{"key1":"value1"}\'), \'key2\',\'value2\'))', '{"key1":"value1","key2":"value2"}'],
     ['string(setProperty(json(\'{"key1":"value1"}\'), \'key1\',\'value2\'))', '{"key1":"value2"}'],

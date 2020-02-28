@@ -123,6 +123,8 @@ export class ExpressionType {
     public static readonly SortBy: string = 'sortBy';
     public static readonly SortByDescending: string = 'sortByDescending';
     public static readonly IndicesAndValues: string = 'indicesAndValues';
+    public static readonly Flatten: string = 'flatten';
+    public static readonly Unique: string = 'unique';
 
     // Misc
     public static readonly Constant: string = 'Constant';
