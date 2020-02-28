@@ -45,4 +45,3 @@ export interface IUserTokenProvider {
         [propertyName: string]: TokenResponse;
     }>;
 }
-

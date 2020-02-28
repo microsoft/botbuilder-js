@@ -11,7 +11,7 @@ import { IUserTokenProvider } from './userTokenProvider';
 import { TurnContext } from './turnContext';
 import { TokenResponse } from 'botframework-schema';
 
-export interface ICredentialTokenProvider extends IUserTokenProvider {
+export interface CredentialTokenProvider extends IUserTokenProvider {
     /**
      * Retrieves the OAuth token for a user that is in a sign-in flow.
      * @param context Context for the current turn of conversation with the user.

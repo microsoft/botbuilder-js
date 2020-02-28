@@ -6,6 +6,9 @@
  * Licensed under the MIT License.
  */
 
+ /**
+  * Internal interface representing the WebResource from @azure/ms-rest-js@1.2.6
+  */
 export interface WebResource {}
 
 export interface AppCredentialsProvider {
