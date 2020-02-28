@@ -581,10 +581,14 @@ export class BotFrameworkAdapter extends BotAdapter implements CredentialTokenPr
      * @param context The context object for the turn.
      * @param connectionName The name of the auth connection to use.
      * @param oAuthAppCredentials AppCredentials for OAuth.
+     * @param userId The user id that will be associated with the token.
+     * @param finalRedirect The final URL that the OAuth flow will redirect to.
      */
-    public async getSignInLink(context: TurnContext, connectionName: string): Promise<string>;
-    public async getSignInLink(context: TurnContext, connectionName: string, oAuthAppCredentials?: AppCredentials): Promise<string>;
-    public async getSignInLink(context: TurnContext, connectionName: string, oAuthAppCredentials?: AppCredentials): Promise<string> {
+    public async getSignInLink(context: TurnContext, connectionName: string, oAuthAppCredentials?: AppCredentials, userId?: string, finalRedirect?: string): Promise<string> {
+        if (userId && userId != context.activity.from.id) {
+            throw new ReferenceError(`cannot retrieve OAuth signin link for a user that's different from the conversation`);
+        }
+
         this.checkEmulatingOAuthCards(context);
         const conversation: Partial<ConversationReference> = TurnContext.getConversationReference(context.activity);
         const url: string = this.oauthApiUrl(context);
@@ -597,7 +601,7 @@ export class BotFrameworkAdapter extends BotAdapter implements CredentialTokenPr
         };
 
         const finalState: string = Buffer.from(JSON.stringify(state)).toString('base64');
-        return (await client.botSignIn.getSignInUrl(finalState, { channelId: context.activity.channelId }))._response.bodyAsText;
+        return (await client.botSignIn.getSignInUrl(finalState, { channelId: context.activity.channelId, finalRedirect }))._response.bodyAsText;
     }
 
     /** 
