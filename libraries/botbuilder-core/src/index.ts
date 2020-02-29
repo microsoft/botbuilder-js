@@ -35,3 +35,5 @@ export * from './turnContext';
 export * from './userState';
 export * from './userTokenProvider';
 export * from './userTokenSettings';
+export * from './appCredentials';
+export * from './credentialTokenProvider';

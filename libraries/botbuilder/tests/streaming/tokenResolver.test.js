@@ -16,7 +16,7 @@ class MockAdapter extends BotFrameworkAdapter {
         return context;
     }
 
-    getUserToken(context, connectionName, magicCode) {
+    getUserToken(context, connectionName, magicCode, oAuthAppCredentials) {
         return Promise.resolve(this.getUserTokenCallback());
     }
 }
