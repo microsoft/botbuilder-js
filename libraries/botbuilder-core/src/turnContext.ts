@@ -2,7 +2,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { Activity, ActivityTypes, ConversationReference, InputHints, ResourceResponse, Mention } from 'botframework-schema';
+import { Activity, ActivityTypes, ConversationReference, DeliveryModes, InputHints, ResourceResponse, Mention } from 'botframework-schema';
 import { BotAdapter } from './botAdapter';
 import { shallowCopy } from './internal';
 
@@ -462,7 +462,7 @@ export class TurnContext {
         });
 
         return this.emit(this._onSendActivities, output, () => {
-            if (this.activity.deliveryMode === 'bufferedReplies') {
+            if (this.activity.deliveryMode === DeliveryModes.BufferedReplies) {
                 // Append activities to buffer
                 const responses: ResourceResponse[] = [];
                 output.forEach((a) => {
