@@ -8,8 +8,7 @@
 
 import { STATUS_CODES } from 'http';
 import * as os from 'os';
-
-import { Activity, ActivityTypes, BotAdapter, BotCallbackHandlerKey, ChannelAccount, ConversationAccount, ConversationParameters, ConversationReference, ConversationsResult, CredentialTokenProvider, ResourceResponse, TokenResponse, TurnContext } from 'botbuilder-core';
+import { Activity, ActivityTypes, BotAdapter, BotCallbackHandlerKey, ChannelAccount, ConversationAccount, ConversationParameters, ConversationReference, ConversationsResult, DeliveryModes, CredentialTokenProvider, ResourceResponse, TokenResponse, TurnContext } from 'botbuilder-core';
 import { AuthenticationConfiguration, AuthenticationConstants, ChannelValidation, ClaimsIdentity, ConnectorClient, EmulatorApiClient, GovernmentConstants, GovernmentChannelValidation, JwtTokenValidation, MicrosoftAppCredentials, AppCredentials, CertificateAppCredentials, SimpleCredentialProvider, TokenApiClient, TokenStatus, TokenApiModels, SkillValidation } from 'botframework-connector';
 import { INodeBuffer, INodeSocket, IReceiveRequest, ISocket, IStreamingTransportServer, NamedPipeServer, NodeWebSocketFactory, NodeWebSocketFactoryBase, RequestHandler, StreamingResponse, WebSocketServer } from 'botframework-streaming';
 
@@ -759,6 +758,9 @@ export class BotFrameworkAdapter extends BotAdapter implements CredentialTokenPr
                 } else {
                     status = 501;
                 }
+            } else if (request.deliveryMode === DeliveryModes.BufferedReplies) {
+                body = context.bufferedReplies;
+                status = StatusCodes.OK;
             } else {
                 status = 200;
             }
@@ -1192,6 +1194,9 @@ export class BotFrameworkAdapter extends BotAdapter implements CredentialTokenPr
                 } else {
                     response.statusCode = StatusCodes.NOT_IMPLEMENTED;
                 }
+            } else if (body.deliveryMode === DeliveryModes.BufferedReplies) {
+                response.setBody(context.bufferedReplies);
+                response.statusCode = StatusCodes.OK;
             } else {
                 response.statusCode = StatusCodes.OK;
             }
