@@ -1793,6 +1793,25 @@ export class ExpressionFunctions {
         return count;
     }
 
+    private static flattern(arr: any[], dept: number): any[]{
+        dept = typeof dept === 'undefined' ? 1 : dept;
+        if (typeof dept !== 'number') {
+            return;
+        }
+      
+        let res = JSON.parse(JSON.stringify(arr));
+
+        let reduceArr = (_arr): any => _arr.reduce((prevItem, curItem): any =>  prevItem.concat(curItem),[]);
+      
+        for (let i = 0; i < dept; i++) {
+            let hasArrayItem = res.some((item): boolean => Array.isArray(item));
+            if (hasArrayItem) {
+                res = reduceArr(res);
+            }
+        }
+        return res;
+    }
+
     // tslint:disable-next-line: max-func-body-length
     private static buildFunctionLookup(): Map<string, ExpressionEvaluator> {
         // tslint:disable-next-line: no-unnecessary-local-variable
@@ -2024,9 +2043,9 @@ export class ExpressionFunctions {
                 ExpressionType.Flatten,
                 ExpressionFunctions.apply(
                     args => {
-                        let array = args[0]
-                        let depth = args.length > 1 ? args[1] : 100
-                        return array.flat(depth)
+                        let array = args[0];
+                        let depth = args.length > 1 ? args[1] : 100;
+                        return ExpressionFunctions.flattern(array, depth);
                     }),
                 ReturnType.Object,
                 (expression: Expression): void => ExpressionFunctions.validateOrder(expression, [ReturnType.Number], ReturnType.Object)
