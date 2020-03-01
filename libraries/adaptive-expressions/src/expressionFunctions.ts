@@ -1793,7 +1793,7 @@ export class ExpressionFunctions {
         return count;
     }
 
-    private static flattern(arr: any[], dept: number): any[]{
+    private static flatten(arr: any[], dept: number): any[]{
         dept = typeof dept === 'undefined' ? 1 : dept;
         if (typeof dept !== 'number') {
             return;
@@ -2045,7 +2045,7 @@ export class ExpressionFunctions {
                     args => {
                         let array = args[0];
                         let depth = args.length > 1 ? args[1] : 100;
-                        return ExpressionFunctions.flattern(array, depth);
+                        return ExpressionFunctions.flatten(array, depth);
                     }),
                 ReturnType.Object,
                 (expression: Expression): void => ExpressionFunctions.validateOrder(expression, [ReturnType.Number], ReturnType.Object)
