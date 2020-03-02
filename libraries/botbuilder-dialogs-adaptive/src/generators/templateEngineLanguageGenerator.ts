@@ -8,67 +8,52 @@
 
 import { LanguageGenerator } from '../languageGenerator';
 import { TurnContext } from 'botbuilder-core';
-import{ TemplateEngine } from 'botbuilder-lg';
+import{ LGFile, LGParser } from 'botbuilder-lg';
 import { IResource } from '../resources';
-import { MultiLanguageResourceLoader } from '../multiLanguageResourceLoader';
+import { LanguageResourceLoader } from '../languageResourceLoader';
 import { LanguageGeneratorManager } from './languageGeneratorManager';
 import { normalize, basename } from 'path';
 
 /**
- * LanguageGenerator implementation which uses TemplateEngine. 
+ * LanguageGenerator implementation which uses LGFile. 
  */
 export class TemplateEngineLanguageGenerator implements LanguageGenerator{
     public static declarative: string = 'Microsoft.TemplateEngMineLanguageGenerator';
     
     private readonly DEFAULTLABEL: string  = 'Unknown';
 
-    private readonly multiLangEngines: Map<string, TemplateEngine> = new Map<string, TemplateEngine>();
+    private readonly multiLangEngines: Map<string, LGFile> = new Map<string, LGFile>();
 
-    private engine: TemplateEngine;
+    private lgFile: LGFile;
 
     public id: string = '';
 
-    public constructor(templateEngine?: TemplateEngine) {
-        if (templateEngine !== undefined) {
-            this.engine = templateEngine;
-        } else {
-            this.engine = new TemplateEngine();
+    public constructor(arg1?: LGFile | string, arg2?: string | Map<string,IResource[]>, arg3?: Map<string,IResource[]>) {
+        if (arguments.length === 0) {
+            this.lgFile = new LGFile();
+        } else if(arguments.length === 1 && arg1 instanceof LGFile) {
+            this.lgFile = arg1;
+        } else if (arguments.length === 2 && typeof arg1 === 'string' && arg2 instanceof Map) {
+            const filePath = normalize(arg1 as string);
+            const resourceMapping = arg2 as  Map<string,IResource[]>;
+            this.id = basename(filePath);
+            const {prefix: _, language: locale} = LanguageResourceLoader.parseLGFileName(this.id);
+            const importResolver = LanguageGeneratorManager.resourceExplorerResolver(locale, resourceMapping);
+            this.lgFile = LGParser.parseFile(filePath, importResolver);
+        } else if (arguments.length === 3 && typeof arg1 === 'string' && typeof arg2 === 'string' && arg3 instanceof Map) {
+            const id = arg2 as string;
+            this.id = id !== undefined? id : this.DEFAULTLABEL;
+            const {prefix: _, language: locale} = LanguageResourceLoader.parseLGFileName(arg2);
+            const resourceMapping = arg3 as  Map<string,IResource[]>;
+            const importResolver = LanguageGeneratorManager.resourceExplorerResolver(locale, resourceMapping);
+            const lgText = arg1? arg1 : '';
+            this.lgFile = LGParser.parseText(lgText, id, importResolver);
         }
-    }
-
-    public addTemplateEngineFromText(lgText: string, id: string, resourceMapping: Map<string,IResource[]>): TemplateEngineLanguageGenerator {
-        this.id = id !== undefined? id : this.DEFAULTLABEL;
-        const {prefix: _, language: locale} = MultiLanguageResourceLoader.parseLGFileName(id);
-        const fallbackLocale: string = MultiLanguageResourceLoader.fallbackLocale(locale.toLocaleLowerCase(), Array.from(resourceMapping.keys()));
-        for (const mappingKey of resourceMapping.keys()) {
-            if (fallbackLocale === ''  || fallbackLocale === mappingKey) {
-                const engine = new TemplateEngine().addText(lgText !== undefined? lgText : '', id, LanguageGeneratorManager.resourceExplorerResolver(mappingKey, resourceMapping));
-                this.multiLangEngines.set(mappingKey, engine);
-            }
-        }
-
-        return this;
-    }
-
-    public addTemplateEngineFromFile(filePath: string, resourceMapping: Map<string,IResource[]>): TemplateEngineLanguageGenerator {
-        filePath = normalize(filePath);
-        this.id = basename(filePath);
-        const {prefix: _, language: locale} = MultiLanguageResourceLoader.parseLGFileName(this.id);
-        const fallbackLocale = MultiLanguageResourceLoader.fallbackLocale(locale, Array.from(resourceMapping.keys()));
-        for (const mappingKey of resourceMapping.keys()) {
-            if (fallbackLocale === ''  || fallbackLocale === mappingKey) {
-                const engine = new TemplateEngine().addFile(filePath, LanguageGeneratorManager.resourceExplorerResolver(mappingKey, resourceMapping));
-                this.multiLangEngines.set(mappingKey, engine);
-            }
-        }
-
-        return this;
     }
     
     public generate(turnContext: TurnContext, template: string, data: object): Promise<string> {
-        this.engine = this.initTemplateEngine(turnContext);
         try {
-            return Promise.resolve(this.engine.evaluate(template, data).toString());
+            return Promise.resolve(this.lgFile.evaluate(template, data).toString());
         } catch(e) {
             if (this.id !== undefined && this.id === '') {
                 throw Error(`${ this.id }:${ e }`);
@@ -76,17 +61,5 @@ export class TemplateEngineLanguageGenerator implements LanguageGenerator{
 
             throw Error(e);
         }
-    }
-
-    private initTemplateEngine(turnContext: TurnContext): TemplateEngine {
-        const locale = turnContext.activity.locale? turnContext.activity.locale.toLocaleLowerCase() : '';
-        if (this.multiLangEngines.size > 0) {
-            const fallbackLocale = MultiLanguageResourceLoader.fallbackLocale(locale.toLocaleLowerCase(), Array.from(this.multiLangEngines.keys()));
-            this.engine = this.multiLangEngines.get(fallbackLocale);
-        } else {
-            this.engine = this.engine? this.engine : new TemplateEngine();
-        }
-
-        return this.engine;
     }
 }

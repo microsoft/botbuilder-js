@@ -13,8 +13,8 @@
 import { IResource, ResourceExplorer } from './resources';
 import { LanguagePolicy } from  './languagePolicy';
 
-export class MultiLanguageResourceLoader {
-    public static async load(resourceExplorer: ResourceExplorer): Promise<Map<string, IResource[]>> {
+export class LanguageResourceLoader {
+    public static async groupByLocale(resourceExplorer: ResourceExplorer): Promise<Map<string, IResource[]>> {
         const resourceMapping: Map<string, IResource[]> = new Map<string, IResource[]>();
         const allResouces: IResource[] =  await resourceExplorer.getResources('lg');
         const languagePolicy = LanguagePolicy.defaultPolicy;

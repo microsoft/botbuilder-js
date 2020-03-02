@@ -17,5 +17,5 @@ export * from './expressionProperty';
 export * from './sequenceContext';
 export * from './languageGenerationMiddleware';
 export * from './languageGenerator';
-export * from './multiLanguageResourceLoader';
+export * from './languageResourceLoader';
 export * from './templates';
