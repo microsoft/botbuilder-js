@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { Activity, ActivityTypes, Attachment, CardFactory, InputHints, MessageFactory, OAuthLoginTimeoutKey, TokenResponse, TurnContext, IUserTokenProvider, OAuthCard, ActionTypes, IExtendedUserTokenProvider } from 'botbuilder-core';
+import { Activity, ActivityTypes, Attachment, AppCredentials, CardFactory, Channels, InputHints, MessageFactory, OAuthLoginTimeoutKey, TokenResponse, TurnContext, IUserTokenProvider, OAuthCard, ActionTypes, IExtendedUserTokenProvider } from 'botbuilder-core';
 import { Dialog, DialogTurnResult } from '../dialog';
 import { DialogContext } from '../dialogContext';
 import { PromptOptions, PromptRecognizerResult,  PromptValidator } from './prompt';
@@ -229,7 +229,7 @@ export class OAuthPrompt extends Dialog {
         }
 
         // Get the token and call validator
-        const adapter: CredentialTokenProvider = context.adapter as CredentialTokenProvider;
+        const adapter: IExtendedUserTokenProvider = context.adapter as IExtendedUserTokenProvider;
 
         return await adapter.getUserToken(context, this.settings.connectionName, code, this.settings.oAuthAppCredentials);
     }
@@ -256,7 +256,7 @@ export class OAuthPrompt extends Dialog {
         }
 
         // Sign out user
-        const adapter: CredentialTokenProvider = context.adapter as CredentialTokenProvider;
+        const adapter: IExtendedUserTokenProvider = context.adapter as IExtendedUserTokenProvider;
 
         return adapter.signOutUser(context, this.settings.connectionName, null, this.settings.oAuthAppCredentials);
     }
@@ -279,14 +279,14 @@ export class OAuthPrompt extends Dialog {
                 let cardActionType = ActionTypes.Signin;
                 let link: string;
                 if (OAuthPrompt.isFromStreamingConnection(context.activity)) {
-                    link = await (context.adapter as CredentialTokenProvider).getSignInLink(context, this.settings.connectionName, this.settings.oAuthAppCredentials);
+                    link = await (context.adapter as IExtendedUserTokenProvider).getSignInLink(context, this.settings.connectionName, this.settings.oAuthAppCredentials);
                 } else {
                     // Retrieve the ClaimsIdentity from a BotFrameworkAdapter. For more information see
                     // https://github.com/microsoft/botbuilder-js/commit/b7932e37bb6e421985d5ce53edd9e82af6240a63#diff-3e3af334c0c6adf4906ee5e2a23beaebR250
                     const identity = context.turnState.get((context.adapter as any).BotIdentityKey);
                     if (identity && isSkillClaim(identity.claims)) {
                         // Force magic code for Skills (to be addressed in R8)
-                        link = await (context.adapter as CredentialTokenProvider).getSignInLink(context, this.settings.connectionName, this.settings.oAuthAppCredentials);
+                        link = await (context.adapter as IExtendedUserTokenProvider).getSignInLink(context, this.settings.connectionName, this.settings.oAuthAppCredentials);
                         cardActionType = ActionTypes.OpenUrl;
                     }
                 }
@@ -306,7 +306,7 @@ export class OAuthPrompt extends Dialog {
             const cards: Attachment[] = msg.attachments.filter((a: Attachment) => a.contentType === CardFactory.contentTypes.signinCard);
             if (cards.length === 0) {
                 // Append signin card
-                const link: any = await (context.adapter as CredentialTokenProvider).getSignInLink(context, this.settings.connectionName, this.settings.oAuthAppCredentials);
+                const link: any = await (context.adapter as IExtendedUserTokenProvider).getSignInLink(context, this.settings.connectionName, this.settings.oAuthAppCredentials);
                 msg.attachments.push(CardFactory.signinCard(
                     this.settings.title,
                     link,

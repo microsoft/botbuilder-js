@@ -9,7 +9,7 @@
 import { STATUS_CODES } from 'http';
 import * as os from 'os';
 
-import { Activity, ActivityTypes, BotAdapter, BotCallbackHandlerKey, ChannelAccount, ConversationAccount, ConversationParameters, ConversationReference, ConversationsResult, IExtendedUserTokenProvider, ResourceResponse, TokenResponse, TurnContext } from 'botbuilder-core';
+import { Activity, ActivityTypes, BotAdapter, BotCallbackHandlerKey, ChannelAccount, ConversationAccount, ConversationParameters, ConversationReference, ConversationsResult, DeliveryModes, IExtendedUserTokenProvider, ResourceResponse, TokenResponse, TurnContext } from 'botbuilder-core';
 import { AuthenticationConfiguration, AuthenticationConstants, ChannelValidation, ClaimsIdentity, ConnectorClient, EmulatorApiClient, GovernmentConstants, GovernmentChannelValidation, JwtTokenValidation, MicrosoftAppCredentials, AppCredentials, CertificateAppCredentials, SimpleCredentialProvider, TokenApiClient, TokenStatus, TokenApiModels, SkillValidation, TokenExchangeRequest } from 'botframework-connector';
 import { INodeBuffer, INodeSocket, IReceiveRequest, ISocket, IStreamingTransportServer, NamedPipeServer, NodeWebSocketFactory, NodeWebSocketFactoryBase, RequestHandler, StreamingResponse, WebSocketServer } from 'botframework-streaming';
 
@@ -665,7 +665,7 @@ export class BotFrameworkAdapter extends BotAdapter implements IExtendedUserToke
      * 
      * @returns The [BotSignInGetSignInResourceResponse](xref:botframework-connector.BotSignInGetSignInResourceResponse) object.
      */
-    public async getSignInResource(context: TurnContext, connectionName: string, userId?: string, finalRedirect?: string): Promise<TokenApiModels.BotSignInGetSignInResourceResponse>
+    public async getSignInResource(context: TurnContext, connectionName: string, userId?: string, finalRedirect?: string, appCredentials?: AppCredentials): Promise<TokenApiModels.BotSignInGetSignInResourceResponse>
     {
         if (!connectionName) {
             throw new Error('getUserToken() requires a connectionName but none was provided.');
@@ -681,7 +681,7 @@ export class BotFrameworkAdapter extends BotAdapter implements IExtendedUserToke
         }
 
         const url: string = this.oauthApiUrl(context);
-        const client: TokenApiClient = this.createTokenApiClient(url);
+        const client: TokenApiClient = this.createTokenApiClient(url, appCredentials);
         const conversation: Partial<ConversationReference> = TurnContext.getConversationReference(context.activity);
 
         const state: any = {
@@ -703,7 +703,7 @@ export class BotFrameworkAdapter extends BotAdapter implements IExtendedUserToke
      * @param userId The user id that will be associated with the token.
      * @param tokenExchangeRequest The exchange request details, either a token to exchange or a uri to exchange.
      */ 
-    public async exchangeToken(context: TurnContext, connectionName: string, userId: string, tokenExchangeRequest: TokenExchangeRequest): Promise<TokenResponse> {
+    public async exchangeToken(context: TurnContext, connectionName: string, userId: string, tokenExchangeRequest: TokenExchangeRequest, appCredentials?: AppCredentials): Promise<TokenResponse> {
         if (!connectionName) {
             throw new Error('exchangeToken() requires a connectionName but none was provided.');
         }
@@ -717,7 +717,7 @@ export class BotFrameworkAdapter extends BotAdapter implements IExtendedUserToke
         }
 
         const url: string = this.oauthApiUrl(context);
-        const client: TokenApiClient = this.createTokenApiClient(url);
+        const client: TokenApiClient = this.createTokenApiClient(url, appCredentials);
 
         return (await client.userToken.exchangeAsync(userId, connectionName, context.activity.channelId, tokenExchangeRequest))._response.parsedBody as TokenResponse;
     }
