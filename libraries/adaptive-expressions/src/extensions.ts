@@ -19,7 +19,7 @@ export class Extensions {
      * Return all static paths to memory.  If there is a computed element index, then the path is terminated there,
      * but you might get other paths from the computed part as well.
      * @param expression Expression to get references from.
-     * @returns Hash set of the static reference paths.
+     * @returns List of the static reference paths.
      */
     public static references(expression: Expression): string[] {
         const {path, refs} = this.referenceWalk(expression);

@@ -1,5 +1,5 @@
 const { LGParser } = require('../');
-const { SimpleObjectMemory } = require('adaptive-expressions');
+const { SimpleObjectMemory, ExpressionEngine, ExpressionEvaluator, ExpressionFunctions, ReturnType} = require('adaptive-expressions');
 const assert = require('assert');
 const fs = require('fs');
 
@@ -31,7 +31,7 @@ describe('LG', function() {
         assert.strictEqual(evaled.includes(userName), true, `The result ${ evaled } does not contiain ${ userName }`);
     });
 
-    it('TestBaicConditionalTemplate', function() {
+    it('TestBasicConditionalTemplate', function() {
         let LGFile = LGParser.parseFile(GetExampleFilePath('5.lg'));
 
         let evaled = LGFile.evaluateTemplate('time-of-day-readout', { timeOfDay: 'morning' });
@@ -684,7 +684,7 @@ describe('LG', function() {
         assert.strictEqual(evaled3, espectedResult);
     });
 
-    it('TestEmptyArratAndObject', function() {
+    it('TestEmptyArrayAndObject', function() {
         var LGFile = LGParser.parseFile(GetExampleFilePath('EmptyArrayAndObject.lg'));
 
         var evaled = LGFile.evaluateTemplate('template', {list:[], obj: {}});
@@ -707,6 +707,21 @@ describe('LG', function() {
         evaled = LGFile.evaluateTemplate('template', {list:[{}], obj : {a : 'a'}});
         assert.strictEqual(evaled, 'list and obj are both not empty.');        
     });
+
+    it('TestNullTolerant', function() {
+        var lgFile = LGParser.parseFile(GetExampleFilePath('NullTolerant.lg'));
+
+        var evaled = lgFile.evaluateTemplate('template1');
+        assert.strictEqual('null', evaled);
+
+        evaled = lgFile.evaluateTemplate('template2');
+        assert.strictEqual(`result is 'null'`, evaled);
+
+        var jObjEvaled = lgFile.evaluateTemplate('template3');
+        assert.strictEqual('null', jObjEvaled['key1']);
+
+    });
+
 
     it('TestIsTemplateFunction', function() {
         var LGFile = LGParser.parseFile(GetExampleFilePath('IsTemplate.lg'));
@@ -777,5 +792,22 @@ describe('LG', function() {
 
         // may be has different values
         LGFile.evaluateTemplate('templateWithSameParams', {param1:'ms', param2:'newms'});
+    });
+
+    it('TestCustomFunction', function() {
+        let engine = new ExpressionEngine((func) => {
+            if (func === 'custom') {
+                return ExpressionFunctions.numeric('custom', 
+                    args => {
+                        return args[0] + args[1];
+                    });
+            } else {
+                return ExpressionFunctions.lookup(func);
+            }
+        });
+        let template = LGParser.parseFile(GetExampleFilePath('CustomFunction.lg'), undefined, engine);
+        assert.equal(template.expressionEngine, engine);
+        let result = template.evaluateTemplate('template', {});
+        assert.strictEqual(result, 3);
     });
 });

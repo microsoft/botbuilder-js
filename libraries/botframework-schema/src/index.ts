@@ -1762,6 +1762,7 @@ export enum ActivityImportance {
 export enum DeliveryModes {
   Normal = 'normal',
   Notification = 'notification',
+  BufferedReplies = 'bufferedReplies'
 }
 
 /**
@@ -1796,5 +1797,35 @@ export enum SemanticActionStateTypes {
   Start = 'start',
   Continue = 'continue',
   Done = 'done',
+}
+
+/**
+ * Defines values for ChannelIds for Channels.
+ * Possible values include: 'console', 'cortana', 'directline', 'directlinespeech', 'email',
+ * 'emulator', 'facebook', 'groupme', 'kik', 'line', 'msteams', 'skype', 'skypeforbusiness',
+ * 'slack', 'sms', 'telegram', 'test', 'twilio-sms', 'webchat'
+ * @readonly
+ * @enum {string}
+ */
+export enum Channels {
+  Console = 'console',
+  Cortana = 'cortana',
+  Directline = 'directline',
+  DirectlineSpeech = 'directlinespeech',
+  Email = 'email',
+  Emulator = 'emulator',
+  Facebook = 'facebook',
+  Groupme = 'groupme',
+  Kik = 'kik',
+  Line = 'line',
+  Msteams = 'msteams',
+  Skype = 'skype',
+  Skypeforbusiness = 'skypeforbusiness',
+  Slack = 'slack',
+  Sms = 'sms',
+  Telegram = 'telegram',
+  Test = 'test',
+  Twilio = 'twilio-sms',
+  Webchat = 'webchat'  
 }
 

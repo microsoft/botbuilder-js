@@ -75,6 +75,7 @@ export class CommonRegex {
     private static antlrParse(pattern: string): ParseTree {
         const inputStream: ANTLRInputStream = new ANTLRInputStream(pattern);
         const lexer: CommonRegexLexer = new CommonRegexLexer(inputStream);
+        lexer.removeErrorListeners();
         const tokenStream: CommonTokenStream = new CommonTokenStream(lexer);
         const parser: CommonRegexParser = new CommonRegexParser(tokenStream);
         parser.removeErrorListeners();

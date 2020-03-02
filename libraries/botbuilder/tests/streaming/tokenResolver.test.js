@@ -16,7 +16,7 @@ class MockAdapter extends BotFrameworkAdapter {
         return context;
     }
 
-    getUserToken(context, connectionName, magicCode) {
+    getUserToken(context, connectionName, magicCode, oAuthAppCredentials) {
         return Promise.resolve(this.getUserTokenCallback());
     }
 }
@@ -216,7 +216,8 @@ describe(`TokenResolver`, function () {
         });
         const returnTokenResponse = () => 
         { 
-            doneResolve('done');
+            // Give token code 100ms to run
+            setTimeout(() => doneResolve('done'), 100);
             return { properties: { tokenPollingSettings: { timeout: 0 } } };
         };
         const botLogic= (ctx) => {
@@ -246,7 +247,8 @@ describe(`TokenResolver`, function () {
             if (i < 2) {
                 return { properties: { tokenPollingSettings: { interval: 100 } } };
             } else {
-                doneResolve('done');
+                // Give token code 100ms to run
+                setTimeout(() => doneResolve('done'), 100);
                 return { properties: { tokenPollingSettings: { timeout: 0 } } };
             }
         };
