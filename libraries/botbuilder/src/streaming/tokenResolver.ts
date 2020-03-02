@@ -19,6 +19,7 @@ import {
     TokenPollingSettings,
     TokenPollingSettingsKey,
     TurnContext,
+    tokenResponseEventName,
 } from 'botbuilder-core';
 
 /**
@@ -104,7 +105,7 @@ export class TokenResolver {
             replyToId: relatesTo.activityId,
             channelId: relatesTo.channelId,
             conversation: relatesTo.conversation,
-            name: 'tokens/response',
+            name: tokenResponseEventName,
             relatesTo: <ConversationReference>relatesTo,
             value: {
                 token: token,

@@ -396,7 +396,8 @@ export class TestAdapter extends BotAdapter implements IExtendedUserTokenProvide
     }
 
     
-    private _exchangeableTokens : {[key: string]: ExchangeableToken} = {};
+    private exchangeableTokens : {[key: string]: ExchangeableToken} = {};
+
     public addExchangeableToken(connectionName: string, channelId: string, userId: string, exchangeableItem: string, token: string) {
         const key: ExchangeableToken = new ExchangeableToken();
         key.ChannelId = channelId;
@@ -404,12 +405,12 @@ export class TestAdapter extends BotAdapter implements IExtendedUserTokenProvide
         key.UserId = userId;
         key.exchangeableItem = exchangeableItem;
         key.Token = token;
-        this._exchangeableTokens[key.toKey()] = key;
+        this.exchangeableTokens[key.toKey()] = key;
     }
 
     public async getSignInResource(context: TurnContext, connectionName: string, userId?: string, finalRedirect?: string): Promise<BotSignInGetSignInResourceResponse> {
         return {
-            signInLink: `https://fake.com/oauthsignin/${connectionName}/${context.activity.channelId}/${userId}`,
+            signInLink: `https://botframeworktestadapter.com/oauthsignin/${connectionName}/${context.activity.channelId}/${userId}`,
             tokenExchangeResource: {
                 id: String(Math.random()),
                 providerId: null,
@@ -429,7 +430,7 @@ export class TestAdapter extends BotAdapter implements IExtendedUserTokenProvide
         key.exchangeableItem =  exchangeableValue;
         key.UserId = userId;
 
-        const tokenExchangeResponse = this._exchangeableTokens[key.toKey()];
+        const tokenExchangeResponse = this.exchangeableTokens[key.toKey()];
         return tokenExchangeResponse ? 
             {
                 channelId: key.ChannelId,

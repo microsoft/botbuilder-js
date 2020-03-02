@@ -7,6 +7,8 @@
  */
 
 export * from 'botframework-schema';
+export * from './authContants';
+export * from './appCredentials';
 export * from './activityHandler';
 export * from './activityHandlerBase';
 export * from './autoSaveStateMiddleware';
@@ -38,5 +40,3 @@ export * from './turnContext';
 export * from './userState';
 export * from './userTokenProvider';
 export * from './userTokenSettings';
-export * from './appCredentials';
-export * from './credentialTokenProvider';

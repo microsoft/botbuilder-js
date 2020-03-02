@@ -26,7 +26,9 @@ import {
     TeamsChannelData,
     TeamsChannelAccount,
     TeamInfo,
-    TurnContext
+    TurnContext,
+    tokenExchangeOperationName,
+    verifyStateOperationName
 } from 'botbuilder-core';
 import { TeamsInfo } from './teamsInfo';
 
@@ -62,11 +64,11 @@ export class TeamsActivityHandler extends ActivityHandler {
                 return await this.handleTeamsCardActionInvoke(context);
             } else {
                 switch (context.activity.name) {
-                    case 'signin/verifyState':
+                    case verifyStateOperationName:
                         await this.handleTeamsSigninVerifyState(context, context.activity.value);
                         return TeamsActivityHandler.createInvokeResponse();
 
-                    case 'signin/tokenExchange':
+                    case tokenExchangeOperationName:
                         await this.handleTeamsSigninTokenExchange(context, context.activity.value);
                         return TeamsActivityHandler.createInvokeResponse();
 

@@ -4,6 +4,7 @@
  */
 import { ChannelAccount, MessageReaction, TurnContext } from '.';
 import { ActivityHandlerBase } from './activityHandlerBase';
+import { verifyStateOperationName, tokenExchangeOperationName, tokenResponseEventName } from './authContants';
 
 /**
  * Describes a bot activity event handler, for use with an [ActivityHandler](xref:botbuilder-core.ActivityHandler) object.
@@ -391,7 +392,6 @@ export class ActivityHandler extends ActivityHandlerBase {
      * The default logic is to call any handlers registered via [onTurn](xref:botbuilder-core.ActivityHandler.onTurn),
      * and then continue by calling [ActivityHandlerBase.onTurnActivity](xref:botbuilder-core.ActivityHandlerBase.onTurnActivity).
      */
-    //maybe handle invoke here instead of in base
     protected async onTurnActivity(context: TurnContext): Promise<void> {
         await this.handle(context, 'Turn', async () => {
             await super.onTurnActivity(context);
@@ -426,13 +426,14 @@ export class ActivityHandler extends ActivityHandlerBase {
      * and then continue by calling [defaultNextEvent](xref:botbuilder-core.ActivityHandler.defaultNextEvent).
     */
     protected async onInvokeActivity(context: TurnContext): Promise<void|any> {
-        if(context.activity.name && context.activity.name === 'signin/verifyState' || context.activity.name === 'signin/tokenExchange') {
+        if(context.activity.name && context.activity.name === verifyStateOperationName || context.activity.name === tokenExchangeOperationName) {
             await this.onSignInInvoke(context);
         }
         else {
             await this.handle(context, 'Invoke', this.defaultNextEvent(context));
         }
     }
+
     /*
      * Runs all registered _signin invoke activity type_ handlers and then continues the event emission process.
      * 
@@ -648,7 +649,7 @@ export class ActivityHandler extends ActivityHandlerBase {
      * - Continue by calling [defaultNextEvent](xref:botbuilder-core.ActivityHandler.defaultNextEvent).
      */
     protected async dispatchEventActivity(context: TurnContext): Promise<void> {
-        if (context.activity.name === 'tokens/response') {
+        if (context.activity.name === tokenResponseEventName) {
             await this.handle(context, 'TokenResponseEvent', this.defaultNextEvent(context));
         } else {
             await this.defaultNextEvent(context)();

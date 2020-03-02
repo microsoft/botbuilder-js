@@ -5,7 +5,8 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { Activity, ActivityTypes, Attachment, AppCredentials, CardFactory, Channels, InputHints, MessageFactory, OAuthLoginTimeoutKey, TokenResponse, TurnContext, IUserTokenProvider, OAuthCard, ActionTypes, IExtendedUserTokenProvider } from 'botbuilder-core';
+import { Activity, ActivityTypes, Attachment, AppCredentials, CardFactory, Channels, InputHints, MessageFactory, OAuthLoginTimeoutKey, TokenResponse, TurnContext, IUserTokenProvider, OAuthCard, ActionTypes, IExtendedUserTokenProvider, verifyStateOperationName, tokenExchangeOperationName, tokenResponseEventName } from 'botbuilder-core';
+import { StatusCodes} from 'botbuilder';
 import { Dialog, DialogTurnResult } from '../dialog';
 import { DialogContext } from '../dialogContext';
 import { PromptOptions, PromptRecognizerResult,  PromptValidator } from './prompt';
@@ -28,7 +29,7 @@ class TokenExchangeInvokeResponse {
     connectionName: string;
     failureDetail: string;
 
-    constructor(id:string, connectionName:string, failureDetail:string){
+    constructor(id:string, connectionName:string, failureDetail:string) {
         this.id = id;
         this.connectionName = connectionName;
         this.failureDetail = failureDetail;
@@ -333,7 +334,7 @@ export class OAuthPrompt extends Dialog {
             try {
                 token = await this.getUserToken(context, code);
                 if (token !== undefined) {
-                    await context.sendActivity({ type: 'invokeResponse', value: { status: 200 }});
+                    await context.sendActivity({ type: 'invokeResponse', value: { status: StatusCodes }});
                 } else {
                     await context.sendActivity({ type: 'invokeResponse', value: { status: 404 }});
                 }
@@ -343,39 +344,42 @@ export class OAuthPrompt extends Dialog {
                 await context.sendActivity({ type: 'invokeResponse', value: { status: 500 }});
             }
         } else if (this.isTokenExchangeRequestInvoke(context)) {
+            // Received activity is not a token exchange request
             if(!(context.activity.value && this.isTokenExchangeRequest(context.activity.value))) {
                 await context.sendActivity(this.getTokenExchangeInvokeResponse(
-                    400, 
+                    StatusCodes.BAD_REQUEST, 
                     'The bot received an InvokeActivity that is missing a TokenExchangeInvokeRequest value. This is required to be sent with the InvokeActivity.'));
-            } else if (context.activity.value.connectionName != this.settings.connectionName) { 
+            } else if (context.activity.value.connectionName != this.settings.connectionName) {
+                // Connection name on activity does not match that of setting
                 await context.sendActivity(this.getTokenExchangeInvokeResponse(
-                    400, 
+                    StatusCodes.BAD_REQUEST, 
                     'The bot received an InvokeActivity with a TokenExchangeInvokeRequest containing a ConnectionName that does not match the ConnectionName' +  
                     'expected by the bots active OAuthPrompt. Ensure these names match when sending the InvokeActivityInvalid ConnectionName in the TokenExchangeInvokeRequest'));
             } else if (!('exchangeToken' in context.adapter)) {
+                // Token Exchange not supported in the adapter
                 await context.sendActivity(this.getTokenExchangeInvokeResponse(
-                    502, 
+                    StatusCodes.BAD_GATEWAY, 
                     'The bot\'s BotAdapter does not support token exchange operations. Ensure the bot\'s Adapter supports the ITokenExchangeProvider interface.'));
                 throw new Error('OAuthPrompt.recognize(): not supported by the current adapter');
             } else {
+                // No errors. Proceed with token exchange
                 const extendedUserTokenProvider : IExtendedUserTokenProvider = context.adapter as IExtendedUserTokenProvider;
                 const tokenExchangeResponse = await extendedUserTokenProvider.exchangeToken(context, this.settings.connectionName, context.activity.from.id, {token: context.activity.value.token});
 
                 if(!tokenExchangeResponse || !tokenExchangeResponse.token) {
                     await context.sendActivity(this.getTokenExchangeInvokeResponse(
-                        409, 
+                        StatusCodes.CONFLICT, 
                         'The bot is unable to exchange token. Proceed with regular login.'));
                 } else {
-                    await context.sendActivity(this.getTokenExchangeInvokeResponse(200, null, context.activity.value.id));
+                    await context.sendActivity(this.getTokenExchangeInvokeResponse(StatusCodes.OK, null, context.activity.value.id));
                     token = {
                         channelId: tokenExchangeResponse.channelId,
                         connectionName: tokenExchangeResponse.connectionName,
                         token : tokenExchangeResponse.token,
                         expiration: null
-                };
+                    };
                 }
             }
-
         } else if (context.activity.type === ActivityTypes.Message) {
             const matched: RegExpExecArray = /(\d{6})/.exec(context.activity.text);
             if (matched && matched.length > 1) {
@@ -400,13 +404,13 @@ export class OAuthPrompt extends Dialog {
     private isTokenResponseEvent(context: TurnContext): boolean {
         const activity: Activity = context.activity;
 
-        return activity.type === ActivityTypes.Event && activity.name === 'tokens/response';
+        return activity.type === ActivityTypes.Event && activity.name === tokenResponseEventName;
     }
 
     private isTeamsVerificationInvoke(context: TurnContext): boolean {
         const activity: Activity = context.activity;
 
-        return activity.type === ActivityTypes.Invoke && activity.name === 'signin/verifyState';
+        return activity.type === ActivityTypes.Invoke && activity.name === verifyStateOperationName;
     }
 
     private isOAuthCardSupported(context: TurnContext) {
@@ -432,7 +436,7 @@ export class OAuthPrompt extends Dialog {
     private isTokenExchangeRequestInvoke(context: TurnContext): boolean {
         const activity: Activity = context.activity;
 
-        return activity.type === ActivityTypes.Invoke && activity.name === 'signin/tokenExchange';
+        return activity.type === ActivityTypes.Invoke && activity.name === tokenExchangeOperationName;
     }
 
     private isTokenExchangeRequest(obj: unknown) : obj is TokenExchangeInvokeRequest {

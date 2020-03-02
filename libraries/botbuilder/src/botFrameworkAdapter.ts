@@ -22,9 +22,11 @@ export enum StatusCodes {
     UNAUTHORIZED = 401,
     NOT_FOUND = 404,
     METHOD_NOT_ALLOWED = 405,
+    CONFLICT = 409,
     UPGRADE_REQUIRED = 426,
     INTERNAL_SERVER_ERROR = 500,
     NOT_IMPLEMENTED = 501,
+    BAD_GATEWAY = 502
 }
 
 export class StatusCodeError extends Error {
@@ -596,7 +598,8 @@ export class BotFrameworkAdapter extends BotAdapter implements IExtendedUserToke
         const state: any = {
             ConnectionName: connectionName,
             Conversation: conversation,
-            MsAppId: (client.credentials as AppCredentials).appId
+            MsAppId: (client.credentials as AppCredentials).appId,
+            RelatesTo: context.activity.relatesTo
         };
 
         const finalState: string = Buffer.from(JSON.stringify(state)).toString('base64');
@@ -687,7 +690,7 @@ export class BotFrameworkAdapter extends BotAdapter implements IExtendedUserToke
         const state: any = {
             ConnectionName: connectionName,
             Conversation: conversation,
-            //RelatesTo = context.activity.RelatesTo,
+            relatesTo: context.activity.relatesTo,
             MSAppId: (client.credentials as AppCredentials).appId
         };
         const finalState: string = Buffer.from(JSON.stringify(state)).toString('base64');
