@@ -1255,8 +1255,6 @@ export class ExpressionFunctions {
                 }
             } else if (str === undefined) {
                 result = '';
-            } else {
-                error = `${ expression.children[0] } is neither a string nor a null object.`;
             }
         }
 
