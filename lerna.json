@@ -16,6 +16,8 @@
     "libraries/functional-tests",
     "libraries/testbot",
     "libraries/botframework-streaming",
+    "libraries/testskills/skillparent",
+    "libraries/testskills/skillchild",
     "transcripts"
   ],
   "version": "independent",
