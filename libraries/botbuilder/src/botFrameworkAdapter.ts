@@ -175,7 +175,7 @@ export class BotFrameworkAdapter extends BotAdapter implements CredentialTokenPr
      * The [BotFrameworkAdapterSettings](xref:botbuilder.BotFrameworkAdapterSettings) class defines
      * the available adapter settings.
      */
-    constructor(settings?: Partial<BotFrameworkAdapterSettings>) {
+    public constructor(settings?: Partial<BotFrameworkAdapterSettings>) {
         super();
         this.settings = { appId: '', appPassword: '', ...settings };
         
