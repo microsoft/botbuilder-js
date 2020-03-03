@@ -36,12 +36,9 @@ export class FileResource implements IResource {
         return this.resourceId;
     }
 
-    public readText() : Promise<string> {
+    public readText(): string {
         const filePath = this.path;
-        return new Promise<string>(function(resolve, reject) {
-            fs.readFile(filePath, 'utf8', (err, data) => {
-                err ? reject(err) : resolve(data)
-            });
-        });
+        const temp =  fs.readFileSync(filePath, 'utf-8');
+        return temp;
     }
 }

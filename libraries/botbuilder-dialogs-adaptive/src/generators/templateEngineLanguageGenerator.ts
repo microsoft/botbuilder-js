@@ -9,7 +9,7 @@
 import { LanguageGenerator } from '../languageGenerator';
 import { TurnContext } from 'botbuilder-core';
 import{ LGFile, LGParser } from 'botbuilder-lg';
-import { IResource } from '../resources';
+import { IResource } from 'botbuilder-dialogs-declarative';
 import { LanguageResourceLoader } from '../languageResourceLoader';
 import { LanguageGeneratorManager } from './languageGeneratorManager';
 import { normalize, basename } from 'path';

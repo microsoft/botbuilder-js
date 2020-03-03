@@ -10,7 +10,7 @@
  * Class which manages cache of all LG resources from a ResourceExplorer. 
  * This class automatically updates the cache when resource change events occure.
  */
-import { IResource, ResourceExplorer, FileResource } from '../resources';
+import { IResource, ResourceExplorer, FileResource } from 'botbuilder-dialogs-declarative';
 import { LanguageResourceLoader } from '../languageResourceLoader';
 import { LanguageGenerator } from '../languageGenerator';
 import { TemplateEngineLanguageGenerator } from './templateEngineLanguageGenerator';
@@ -43,15 +43,14 @@ export class LanguageGeneratorManager {
     public static resourceExplorerResolver(locale: string, resourceMapping: Map<string, IResource[]>): ImportResolverDelegate {
         return  (source: string, id: string): {content: string; id: string} => {
             const fallbaclLocale = LanguageResourceLoader.fallbackLocale(locale, Array.from(resourceMapping.keys()));
-            const resources: IResource[] = resourceMapping[fallbaclLocale];
+            const resources: IResource[] = resourceMapping.get(fallbaclLocale.toLowerCase());
 
             const resourceName = basename(normalize(id));
-            const resource: IResource = resources.filter((u): void => {
-                LanguageResourceLoader.parseLGFileName(u.id()).prefix.toLowerCase() === LanguageResourceLoader.parseLGFileName(resourceName).prefix.toLowerCase();
-            })[0];
+            const resource = resources.find(u => 
+                LanguageResourceLoader.parseLGFileName(u.id()).prefix.toLowerCase() === LanguageResourceLoader.parseLGFileName(resourceName).prefix.toLowerCase());
 
             if (resource === undefined) {
-                return {content: '', id: resource.id()};
+                throw Error(`There is no matching LG resource for ${ resourceName }`);
             } else {
                 const text = resource.readText();
                 return {content: text, id: resource.id()};

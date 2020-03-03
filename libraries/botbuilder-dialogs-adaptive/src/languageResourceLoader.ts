@@ -10,7 +10,7 @@
  * load all lg resource and split them into different language group.
  */
 
-import { IResource, ResourceExplorer } from './resources';
+import { IResource, ResourceExplorer } from 'botbuilder-dialogs-declarative';
 import { LanguagePolicy } from  './languagePolicy';
 
 export class LanguageResourceLoader {
@@ -23,11 +23,11 @@ export class LanguageResourceLoader {
             const existNames = new Set<string>();
             for (const index in suffixs) {
                 const suffix = suffixs[index];
-                if (!locale || !suffix ) {
+                if (!locale || suffix ) {
                     const resourcesWithSuffix = allResouces.filter((u): boolean => this.parseLGFileName(u.id()).language === suffix);
                     resourcesWithSuffix.forEach((u): void => {
                         const resourceName = u.id();
-                        const length = (suffix !== undefined && suffix !== '')? 3 : 4;
+                        const length = (!suffix)? 3 : 4;
                         const prefixName = resourceName.substring(0, resourceName.length - suffix.length - length);
                         if (!existNames.has(prefixName)) {
                             existNames.add(prefixName);
@@ -76,7 +76,7 @@ export class LanguageResourceLoader {
             throw new TypeError('Invalid Arguments');
         }
 
-        if (optionalLocales.includes(locale)) {
+        if (optionalLocales.includes(locale.toLowerCase())) {
             return locale;
         }
 
@@ -99,8 +99,8 @@ export class LanguageResourceLoader {
     private static fallbackMultiLangResource(resourceMapping: Map<string, IResource[]>): Map<string, IResource[]> {
         const resourcePoolDict = new Map<string, IResource[]>();
         for (const currentLocale of resourceMapping.keys()) {
-            const currentResourcePool: IResource[] = resourceMapping[currentLocale];
-            const existLocale  = Object.keys(resourcePoolDict).filter((u): boolean => this.hasSameResourcePool(resourcePoolDict[u], currentResourcePool))[0];
+            const currentResourcePool: IResource[] = resourceMapping.get(currentLocale);
+            const existLocale  = Array.from(resourcePoolDict.keys()).find(u => this.hasSameResourcePool(resourcePoolDict.get(u), currentResourcePool));
             if (existLocale === undefined) {
                 resourcePoolDict.set(currentLocale, currentResourcePool);
             } else {
@@ -142,7 +142,7 @@ export class LanguageResourceLoader {
 
         if ((resourceMapping1 === undefined && resourceMapping2 !== undefined)
         || (resourceMapping1 !== undefined && resourceMapping2 === undefined)
-        || resourceMapping1.length != resourceMapping2.length) {
+        || (resourceMapping1.length != resourceMapping2.length)) {
             return false;
         }
 

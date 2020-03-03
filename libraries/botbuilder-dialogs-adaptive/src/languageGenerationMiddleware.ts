@@ -7,7 +7,7 @@
  */
 
 import { Middleware, TurnContext } from 'botbuilder-core';
-import { ResourceExplorer } from './resources';
+import { ResourceExplorer } from 'botbuilder-dialogs-declarative';
 import { LanguageGenerator } from './languageGenerator';
 import { ResourceMultiLanguageGenerator } from './generators/resourceMultiLanguageGenerator';
 import { TemplateEngineLanguageGenerator, LanguageGeneratorManager } from './generators';

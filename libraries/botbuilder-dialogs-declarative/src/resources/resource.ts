@@ -13,5 +13,5 @@ const fs = require('fs');
 
 export interface IResource {
     id(): string;
-    readText() : Promise<string>;
+    readText(): string;
 }

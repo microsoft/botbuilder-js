@@ -10,7 +10,6 @@ export * from './recognizers';
 export * from './actions';
 export * from './conditions';
 export * from './generators';
-export * from './resources';
 export * from './selectors';
 export * from './adaptiveDialog';
 export * from './expressionProperty';

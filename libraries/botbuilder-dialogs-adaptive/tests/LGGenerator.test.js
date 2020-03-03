@@ -37,7 +37,47 @@ async function getTurnContext(locale, generator) {
 }
 
 describe('LGLanguageGenerator', function() {
-    this.timeout(2000);
+    this.timeout(20000);
+
+    it('TestNotFoundTemplate', async function() {
+        const context = getTurnContext('');
+        const lg = new TemplateEngineLanguageGenerator();
+        assert.throws(() => {lg.generate(context, '${tesdfdfsst()}', undefined);}, Error);
+    });
+
+    it('TestMultiLangImport', async function() {
+        const lgResourceGroup = await LanguageResourceLoader.groupByLocale(resourceExplorer);
+
+        let resource = await resourceExplorer.getResource('a.en-US.lg');
+        const generator = new TemplateEngineLanguageGenerator(resource.fullName, lgResourceGroup);
+        let result = await generator.generate(getTurnContext(), '${templatea()}', undefined);
+        assert.strictEqual(result, 'from a.en-us.lg');
+
+        result = await generator.generate(getTurnContext(), '${templateb()}', undefined);
+        assert.strictEqual(result, 'from b.en-us.lg');
+
+        result = await generator.generate(getTurnContext(), '${templatec()}', undefined);
+        assert.strictEqual(result, 'from c.en.lg');
+
+        assert.throws(() => {generator.generate(getTurnContext(), '${greeting()}', undefined);}, Error);
+
+        resource = await resourceExplorer.getResource('a.lg');
+        const generator1 = new TemplateEngineLanguageGenerator(resource.fullName, lgResourceGroup);
+
+        result = await generator1.generate(getTurnContext(), '${templatea()}', undefined);
+        assert.strictEqual(result, 'from a.lg');
+
+        result = await generator1.generate(getTurnContext(), '${templateb()}', undefined);
+        assert.strictEqual(result, 'from b.lg');
+
+        result = await generator1.generate(getTurnContext(), '${templatec()}', undefined);
+        assert.strictEqual(result, 'from c.lg');
+
+        result = await generator1.generate(getTurnContext(), '${greeting()}', undefined);
+        assert.strictEqual(result, 'hi');
+
+
+    });
 
     it('TestMultiLangGenerator', async function() {
         const lg = new MultiLanguageGenerator();
