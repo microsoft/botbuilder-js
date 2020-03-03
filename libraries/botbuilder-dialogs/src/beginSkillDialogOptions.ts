@@ -11,7 +11,7 @@ import { Activity } from 'botbuilder-core';
 /**
  * A class with dialog arguments for a SkillDialog.
  */
-export interface SkillDialogArgs {
+export interface BeginSkillDialogOptions {
     /**
      * The Activity to send to the skill.
      */

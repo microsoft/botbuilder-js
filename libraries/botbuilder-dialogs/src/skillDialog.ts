@@ -19,7 +19,7 @@ import {
     DialogTurnResult
 } from './dialog';
 import { DialogContext } from './dialogContext';
-import { SkillDialogArgs } from './skillDialogArgs';
+import { BeginSkillDialogOptions } from './beginSkillDialogOptions';
 import { SkillDialogOptions } from './skillDialogOptions';
 
 export class SkillDialog extends Dialog {
@@ -102,12 +102,12 @@ export class SkillDialog extends Dialog {
         return Object.assign({} as Activity, activity);
     }
 
-    private static validateBeginDialogArgs(options: any): SkillDialogArgs {
+    private static validateBeginDialogArgs(options: any): BeginSkillDialogOptions {
         if (!options) {
             throw new TypeError('Missing options parameter');
         }
 
-        const dialogArgs = options as SkillDialogArgs;
+        const dialogArgs = options as BeginSkillDialogOptions;
 
         if (!dialogArgs.activity) {
             throw new TypeError(`"activity" is undefined or null in options.`);
