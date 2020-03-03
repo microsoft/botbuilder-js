@@ -187,4 +187,22 @@ describe('recognizeChoices()', function() {
         assertChoice(found[1], 'blue', 2, 1.0);
         done();
     });
+
+    it('should not find a choice if recognizeOrdinals option disabled.', function (done) {
+        const found = recognizeChoices(`first`, colorChoices, { recognizeOrdinals: false });
+        assert(found.length === 0, `Invalid token count of '${found.length}' returned.`);
+        done();
+    });
+
+    it('should not find a choice if recognizeNumbers option disabled.', function (done) {
+        const found = recognizeChoices(`1`, colorChoices, { recognizeNumbers: false });
+        assert(found.length === 0, `Invalid token count of '${found.length}' returned.`);
+        done();
+    });
+
+    it('should not find a choice if both recognizeOrdinals and recognizeNumbers options are disabled.', function (done) {
+        const found = recognizeChoices(`the first and third one please.`, colorChoices, { recognizeOrdinals: false, recognizeNumbers: false });
+        assert(found.length === 0, `Invalid token count of '${found.length}' returned.`);
+        done();
+    });
 });
