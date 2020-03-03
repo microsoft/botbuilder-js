@@ -142,7 +142,6 @@ export class BotFrameworkAdapter extends BotAdapter implements CredentialTokenPr
     // These keys are public to permit access to the keys from the adapter when it's a being
     // from library that does not have access to static properties off of BotFrameworkAdapter.
     // E.g. botbuilder-dialogs
-    public readonly BotIdentityKey: Symbol = Symbol('BotIdentity');
     public readonly ConnectorClientKey: Symbol = Symbol('ConnectorClient');
     public readonly TokenApiClientCredentialsKey: Symbol = Symbol('TokenApiClientCredentials');
 
@@ -282,9 +281,8 @@ export class BotFrameworkAdapter extends BotAdapter implements CredentialTokenPr
             reference,
             true
         );
-        const context: TurnContext = this.createContext(request);
-
-        await this.runMiddleware(context, logic as any);
+        const context = this.createContext(request);
+        await this.runMiddleware(context, logic);
     }
 
     /**
