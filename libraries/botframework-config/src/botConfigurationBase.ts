@@ -13,8 +13,7 @@ import { IAppInsightsService, IBlobStorageService, IBotConfiguration, IBotServic
     IQnAService, ServiceTypes } from './schema';
 
 /**
- * This is class which allows you to manipulate in memory representations of bot configuration with
- * no nodejs dependencies.
+ * @deprecated See https://aka.ms/bot-file-basics for more information.
  */
 export class BotConfigurationBase implements Partial<IBotConfiguration> {
 
