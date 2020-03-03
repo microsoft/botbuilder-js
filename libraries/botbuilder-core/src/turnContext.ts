@@ -2,7 +2,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { Activity, ActivityTypes, ConversationReference, InputHints, ResourceResponse, Mention } from 'botframework-schema';
+import { Activity, ActivityTypes, ConversationReference, DeliveryModes, InputHints, ResourceResponse, Mention } from 'botframework-schema';
 import { BotAdapter } from './botAdapter';
 import { shallowCopy } from './internal';
 
@@ -342,6 +342,11 @@ export class TurnContext {
     }
 
     /**
+     * List of activities to send when `context.activity.deliveryMode == 'buffered'`.
+     */
+    public readonly bufferedReplies: Partial<Activity>[] = [];
+
+    /**
      * Asynchronously sends an activity to the sender of the incoming activity.
      *
      * @param name The activity or text to send.
@@ -457,13 +462,27 @@ export class TurnContext {
         });
 
         return this.emit(this._onSendActivities, output, () => {
-            return this.adapter.sendActivities(this, output)
-                .then((responses: ResourceResponse[]) => {
-                    // Set responded flag
-                    if (sentNonTraceActivity) { this.responded = true; }
-
-                    return responses;
+            if (this.activity.deliveryMode === DeliveryModes.BufferedReplies) {
+                // Append activities to buffer
+                const responses: ResourceResponse[] = [];
+                output.forEach((a) => {
+                    this.bufferedReplies.push(a);
+                    responses.push({ id: undefined });
                 });
+
+                // Set responded flag
+                if (sentNonTraceActivity) { this.responded = true; }
+
+                return Promise.resolve(responses);
+            } else {
+                return this.adapter.sendActivities(this, output)
+                    .then((responses: ResourceResponse[]) => {
+                        // Set responded flag
+                        if (sentNonTraceActivity) { this.responded = true; }
+
+                        return responses;
+                    });
+            }
         });
     }
 

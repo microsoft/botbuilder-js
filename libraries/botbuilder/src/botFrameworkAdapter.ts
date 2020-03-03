@@ -8,8 +8,7 @@
 
 import { STATUS_CODES } from 'http';
 import * as os from 'os';
-
-import { Activity, ActivityTypes, BotAdapter, BotCallbackHandlerKey, ChannelAccount, ConversationAccount, ConversationParameters, ConversationReference, ConversationsResult, CredentialTokenProvider, ResourceResponse, TokenResponse, TurnContext } from 'botbuilder-core';
+import { Activity, ActivityTypes, BotAdapter, BotCallbackHandlerKey, ChannelAccount, ConversationAccount, ConversationParameters, ConversationReference, ConversationsResult, DeliveryModes, CredentialTokenProvider, ResourceResponse, TokenResponse, TurnContext } from 'botbuilder-core';
 import { AuthenticationConfiguration, AuthenticationConstants, ChannelValidation, ClaimsIdentity, ConnectorClient, EmulatorApiClient, GovernmentConstants, GovernmentChannelValidation, JwtTokenValidation, MicrosoftAppCredentials, AppCredentials, CertificateAppCredentials, SimpleCredentialProvider, TokenApiClient, TokenStatus, TokenApiModels, SkillValidation } from 'botframework-connector';
 import { INodeBuffer, INodeSocket, IReceiveRequest, ISocket, IStreamingTransportServer, NamedPipeServer, NodeWebSocketFactory, NodeWebSocketFactoryBase, RequestHandler, StreamingResponse, WebSocketServer } from 'botframework-streaming';
 
@@ -143,7 +142,6 @@ export class BotFrameworkAdapter extends BotAdapter implements CredentialTokenPr
     // These keys are public to permit access to the keys from the adapter when it's a being
     // from library that does not have access to static properties off of BotFrameworkAdapter.
     // E.g. botbuilder-dialogs
-    public readonly BotIdentityKey: Symbol = Symbol('BotIdentity');
     public readonly ConnectorClientKey: Symbol = Symbol('ConnectorClient');
     public readonly TokenApiClientCredentialsKey: Symbol = Symbol('TokenApiClientCredentials');
 
@@ -283,9 +281,8 @@ export class BotFrameworkAdapter extends BotAdapter implements CredentialTokenPr
             reference,
             true
         );
-        const context: TurnContext = this.createContext(request);
-
-        await this.runMiddleware(context, logic as any);
+        const context = this.createContext(request);
+        await this.runMiddleware(context, logic);
     }
 
     /**
@@ -581,10 +578,14 @@ export class BotFrameworkAdapter extends BotAdapter implements CredentialTokenPr
      * @param context The context object for the turn.
      * @param connectionName The name of the auth connection to use.
      * @param oAuthAppCredentials AppCredentials for OAuth.
+     * @param userId The user id that will be associated with the token.
+     * @param finalRedirect The final URL that the OAuth flow will redirect to.
      */
-    public async getSignInLink(context: TurnContext, connectionName: string): Promise<string>;
-    public async getSignInLink(context: TurnContext, connectionName: string, oAuthAppCredentials?: AppCredentials): Promise<string>;
-    public async getSignInLink(context: TurnContext, connectionName: string, oAuthAppCredentials?: AppCredentials): Promise<string> {
+    public async getSignInLink(context: TurnContext, connectionName: string, oAuthAppCredentials?: AppCredentials, userId?: string, finalRedirect?: string): Promise<string> {
+        if (userId && userId != context.activity.from.id) {
+            throw new ReferenceError(`cannot retrieve OAuth signin link for a user that's different from the conversation`);
+        }
+
         this.checkEmulatingOAuthCards(context);
         const conversation: Partial<ConversationReference> = TurnContext.getConversationReference(context.activity);
         const url: string = this.oauthApiUrl(context);
@@ -597,7 +598,7 @@ export class BotFrameworkAdapter extends BotAdapter implements CredentialTokenPr
         };
 
         const finalState: string = Buffer.from(JSON.stringify(state)).toString('base64');
-        return (await client.botSignIn.getSignInUrl(finalState, { channelId: context.activity.channelId }))._response.bodyAsText;
+        return (await client.botSignIn.getSignInUrl(finalState, { channelId: context.activity.channelId, finalRedirect }))._response.bodyAsText;
     }
 
     /** 
@@ -755,6 +756,9 @@ export class BotFrameworkAdapter extends BotAdapter implements CredentialTokenPr
                 } else {
                     status = 501;
                 }
+            } else if (request.deliveryMode === DeliveryModes.BufferedReplies) {
+                body = context.bufferedReplies;
+                status = StatusCodes.OK;
             } else {
                 status = 200;
             }
@@ -1188,6 +1192,9 @@ export class BotFrameworkAdapter extends BotAdapter implements CredentialTokenPr
                 } else {
                     response.statusCode = StatusCodes.NOT_IMPLEMENTED;
                 }
+            } else if (body.deliveryMode === DeliveryModes.BufferedReplies) {
+                response.setBody(context.bufferedReplies);
+                response.statusCode = StatusCodes.OK;
             } else {
                 response.statusCode = StatusCodes.OK;
             }
