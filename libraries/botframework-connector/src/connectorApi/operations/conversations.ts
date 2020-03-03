@@ -711,9 +711,15 @@ const getConversationMembersOperationSpec: msRest.OperationSpec = {
   responses: {
     200: {
       bodyMapper: {
-        serializedName: "parsedResult",
+        serializedName: "parsedResponse",
         type: {
-            name: "Composite",
+            name: "Sequence",
+            element: {
+                type: {
+                    name: "Composite",
+                    className: "ChannelAccount"
+                }
+            }
         }
       }
     },
