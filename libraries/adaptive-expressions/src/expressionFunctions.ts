@@ -963,6 +963,24 @@ export class ExpressionFunctions {
         }
     }
 
+    private static canBeModified(value: any, property: string, expected?: number): boolean {	
+        let modifiable = false;	
+        if (expected !== undefined) {	
+            // Modifiable list	
+            modifiable = Array.isArray(value);	
+        } else {	
+            // Modifiable object	
+            modifiable = value instanceof Map;	
+            if (!modifiable) {	
+                if (typeof value === 'object') {	
+                    modifiable = value.hasOwnProperty(property);	
+                }	
+            }	
+        }	
+
+        return modifiable;	
+    }
+
     private static setPathToValue(expression: Expression, state: MemoryInterface): { value: any; error: string } {
         let path: string;
         let left: Expression;
