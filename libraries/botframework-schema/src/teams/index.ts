@@ -164,6 +164,17 @@ export interface TeamsChannelAccount extends ChannelAccount {
   userPrincipalName?: string;
 }
 
+export interface TeamsPagedMembersResult {
+        /**
+     * Paging token
+     */
+    continuationToken: string;
+    /**
+     * The Channel Accounts.
+     */
+    members: TeamsChannelAccount[];
+}
+
 /**
  * @interface
  * An interface representing O365ConnectorCardFact.
