@@ -36,7 +36,7 @@
     "eslint": "^5.16.0",
     "eslint-plugin-only-warn": "^1.0.1",
     "mocha": "^6.2.0",
-    "nyc": "^14.1.1",
+    "nyc": "^15.0.0",
     "sinon": "^7.4.1",
     "ts-node": "^4.1.0",
     "typescript": "3.5.3"
