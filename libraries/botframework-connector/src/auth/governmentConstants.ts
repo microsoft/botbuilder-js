@@ -14,12 +14,12 @@ export namespace GovernmentConstants {
     /**
      * TO CHANNEL FROM BOT: Login URL
      */
-    export const ToChannelFromBotLoginUrl = 'https://login.microsoftonline.us/cab8a31a-1906-4287-a0d8-4eef66b95f6e/oauth2/v2.0/token';
+    export const ToChannelFromBotLoginUrl = 'https://login.microsoftonline.us/cab8a31a-1906-4287-a0d8-4eef66b95f6e';
 
     /**
      * TO CHANNEL FROM BOT: OAuth scope to request
      */
-    export const ToChannelFromBotOAuthScope = 'https://api.botframework.us/.default';
+    export const ToChannelFromBotOAuthScope = 'https://api.botframework.us';
 
     /**
      * TO BOT FROM CHANNEL: Token issuer

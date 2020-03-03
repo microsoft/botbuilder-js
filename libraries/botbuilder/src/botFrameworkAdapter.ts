@@ -8,8 +8,7 @@
 
 import { STATUS_CODES } from 'http';
 import * as os from 'os';
-
-import { Activity, ActivityTypes, BotAdapter, BotCallbackHandlerKey, ChannelAccount, ConversationAccount, ConversationParameters, ConversationReference, ConversationsResult, CredentialTokenProvider, ResourceResponse, TokenResponse, TurnContext } from 'botbuilder-core';
+import { Activity, ActivityTypes, BotAdapter, BotCallbackHandlerKey, ChannelAccount, ConversationAccount, ConversationParameters, ConversationReference, ConversationsResult, DeliveryModes, CredentialTokenProvider, ResourceResponse, TokenResponse, TurnContext } from 'botbuilder-core';
 import { AuthenticationConfiguration, AuthenticationConstants, ChannelValidation, ClaimsIdentity, ConnectorClient, EmulatorApiClient, GovernmentConstants, GovernmentChannelValidation, JwtTokenValidation, MicrosoftAppCredentials, AppCredentials, CertificateAppCredentials, SimpleCredentialProvider, TokenApiClient, TokenStatus, TokenApiModels, SkillValidation } from 'botframework-connector';
 import { INodeBuffer, INodeSocket, IReceiveRequest, ISocket, IStreamingTransportServer, NamedPipeServer, NodeWebSocketFactory, NodeWebSocketFactoryBase, RequestHandler, StreamingResponse, WebSocketServer } from 'botframework-streaming';
 
@@ -28,7 +27,8 @@ export enum StatusCodes {
 }
 
 export class StatusCodeError extends Error {
-    constructor(public readonly statusCode: StatusCodes, message?: string) {
+    public readonly statusCode: StatusCodes;
+    public constructor(statusCode: StatusCodes, message?: string) {
         super(message);
         this.statusCode = statusCode;
     }
@@ -95,7 +95,7 @@ const TYPE: any = os.type();
 const RELEASE: any = os.release();
 const NODE_VERSION: any = process.version;
 
-// tslint:disable-next-line:no-var-requires no-require-imports
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const pjson: any = require('../package.json');
 export const USER_AGENT: string = `Microsoft-BotFramework/3.1 BotBuilder/${ pjson.version } ` +
     `(Node.js,Version=${ NODE_VERSION }; ${ TYPE } ${ RELEASE }; ${ ARCHITECTURE })`;
@@ -143,7 +143,6 @@ export class BotFrameworkAdapter extends BotAdapter implements CredentialTokenPr
     // These keys are public to permit access to the keys from the adapter when it's a being
     // from library that does not have access to static properties off of BotFrameworkAdapter.
     // E.g. botbuilder-dialogs
-    public readonly BotIdentityKey: Symbol = Symbol('BotIdentity');
     public readonly ConnectorClientKey: Symbol = Symbol('ConnectorClient');
     public readonly TokenApiClientCredentialsKey: Symbol = Symbol('TokenApiClientCredentials');
 
@@ -176,7 +175,7 @@ export class BotFrameworkAdapter extends BotAdapter implements CredentialTokenPr
      * The [BotFrameworkAdapterSettings](xref:botbuilder.BotFrameworkAdapterSettings) class defines
      * the available adapter settings.
      */
-    constructor(settings?: Partial<BotFrameworkAdapterSettings>) {
+    public constructor(settings?: Partial<BotFrameworkAdapterSettings>) {
         super();
         this.settings = { appId: '', appPassword: '', ...settings };
         
@@ -216,7 +215,7 @@ export class BotFrameworkAdapter extends BotAdapter implements CredentialTokenPr
         // Relocate the tenantId field used by MS Teams to a new location (from channelData to conversation)
         // This will only occur on activities from teams that include tenant info in channelData but NOT in conversation,
         // thus should be future friendly.  However, once the the transition is complete. we can remove this.
-        this.use(async(context, next) => {
+        this.use(async (context, next): Promise<void> => {
             if (context.activity.channelId === 'msteams' && context.activity && context.activity.conversation && !context.activity.conversation.tenantId && context.activity.channelData && context.activity.channelData.tenant) {
                 context.activity.conversation.tenantId = context.activity.channelData.tenant.id;
             }
@@ -283,9 +282,8 @@ export class BotFrameworkAdapter extends BotAdapter implements CredentialTokenPr
             reference,
             true
         );
-        const context: TurnContext = this.createContext(request);
-
-        await this.runMiddleware(context, logic as any);
+        const context = this.createContext(request);
+        await this.runMiddleware(context, logic);
     }
 
     /**
@@ -641,9 +639,9 @@ export class BotFrameworkAdapter extends BotAdapter implements CredentialTokenPr
      * 
      * @returns A map of the [TokenResponse](xref:botframework-schema.TokenResponse) objects by resource URL.
      */
-    public async getAadTokens(context: TurnContext, connectionName: string, resourceUrls: string[]): Promise<{[propertyName: string]: TokenResponse;}>;
-    public async getAadTokens(context: TurnContext, connectionName: string, resourceUrls: string[], oAuthAppCredentials?: AppCredentials): Promise<{[propertyName: string]: TokenResponse;}>;
-    public async getAadTokens(context: TurnContext, connectionName: string, resourceUrls: string[], oAuthAppCredentials?: AppCredentials): Promise<{[propertyName: string]: TokenResponse;}> {
+    public async getAadTokens(context: TurnContext, connectionName: string, resourceUrls: string[]): Promise<{[propertyName: string]: TokenResponse}>;
+    public async getAadTokens(context: TurnContext, connectionName: string, resourceUrls: string[], oAuthAppCredentials?: AppCredentials): Promise<{[propertyName: string]: TokenResponse}>;
+    public async getAadTokens(context: TurnContext, connectionName: string, resourceUrls: string[], oAuthAppCredentials?: AppCredentials): Promise<{[propertyName: string]: TokenResponse}> {
         if (!context.activity.from || !context.activity.from.id) {
             throw new Error(`BotFrameworkAdapter.getAadTokens(): missing from or from.id`);
         }
@@ -759,6 +757,9 @@ export class BotFrameworkAdapter extends BotAdapter implements CredentialTokenPr
                 } else {
                     status = 501;
                 }
+            } else if (request.deliveryMode === DeliveryModes.BufferedReplies) {
+                body = context.bufferedReplies;
+                status = StatusCodes.OK;
             } else {
                 status = 200;
             }
@@ -961,12 +962,6 @@ export class BotFrameworkAdapter extends BotAdapter implements CredentialTokenPr
                 // Since the scope is different, we will create a new instance of the AppCredentials
                 // so this.credentials.oAuthScope isn't overridden.
                 credentials = await this.buildCredentials(botAppId, scope);
-
-                if (JwtTokenValidation.isGovernment(this.settings.channelService)) {
-                    credentials.oAuthEndpoint = GovernmentConstants.ToChannelFromBotLoginUrl;
-                    // Not sure that this code is correct because the scope was set earlier.
-                    credentials.oAuthScope = GovernmentConstants.ToChannelFromBotOAuthScope;
-                }
             }
         }
 
@@ -984,7 +979,7 @@ export class BotFrameworkAdapter extends BotAdapter implements CredentialTokenPr
             // Check if we have a streaming server. Otherwise, requesting a connector client
             // for a non-existent streaming connection results in an error
             if (!this.streamingServer) {
-                throw new Error(`Cannot create streaming connector client for serviceUrl ${serviceUrl} without a streaming connection. Call 'useWebSocket' or 'useNamedPipe' to start a streaming connection.`)
+                throw new Error(`Cannot create streaming connector client for serviceUrl ${ serviceUrl } without a streaming connection. Call 'useWebSocket' or 'useNamedPipe' to start a streaming connection.`);
             }
 
             return new ConnectorClient(
@@ -1023,6 +1018,7 @@ export class BotFrameworkAdapter extends BotAdapter implements CredentialTokenPr
     /**
      * 
      * @remarks
+     * When building credentials for bot-to-bot communication, oAuthScope must be passed in.
      * @param appId 
      * @param oAuthScope 
      */
@@ -1030,7 +1026,13 @@ export class BotFrameworkAdapter extends BotAdapter implements CredentialTokenPr
         // There is no cache for AppCredentials in JS as opposed to C#.
         // Instead of retrieving an AppCredentials from the Adapter instance, generate a new one
         const appPassword = await this.credentialsProvider.getAppPassword(appId);
-        return new MicrosoftAppCredentials(appId, appPassword, undefined, oAuthScope);
+        const credentials = new MicrosoftAppCredentials(appId, appPassword, this.settings.channelAuthTenant, oAuthScope);
+        if (JwtTokenValidation.isGovernment(this.settings.channelService)) {
+            credentials.oAuthEndpoint = GovernmentConstants.ToChannelFromBotLoginUrl;
+            credentials.oAuthScope = oAuthScope || GovernmentConstants.ToChannelFromBotOAuthScope;
+        }
+
+        return credentials;
     }
 
     /**
@@ -1192,6 +1194,9 @@ export class BotFrameworkAdapter extends BotAdapter implements CredentialTokenPr
                 } else {
                     response.statusCode = StatusCodes.NOT_IMPLEMENTED;
                 }
+            } else if (body.deliveryMode === DeliveryModes.BufferedReplies) {
+                response.setBody(context.bufferedReplies);
+                response.statusCode = StatusCodes.OK;
             } else {
                 response.statusCode = StatusCodes.OK;
             }
@@ -1365,10 +1370,10 @@ function parseRequest(req: WebRequest): Promise<Activity> {
             }
         } else {
             let requestData = '';
-            req.on('data', (chunk: string) => {
+            req.on('data', (chunk: string): void => {
                 requestData += chunk;
             });
-            req.on('end', () => {
+            req.on('end', (): void => {
                 try {
                     req.body = JSON.parse(requestData);
                     returnActivity(req.body);
@@ -1381,15 +1386,15 @@ function parseRequest(req: WebRequest): Promise<Activity> {
 }
 
 function delay(timeout: number): Promise<void> {
-    return new Promise((resolve) => {
+    return new Promise((resolve): void => {
         setTimeout(resolve, timeout);
     });
 }
 
-function abortWebSocketUpgrade(socket: INodeSocket, code: number, message?: string) {
+function abortWebSocketUpgrade(socket: INodeSocket, code: number, message?: string): void {
     if (socket.writable) {
         const connectionHeader = `Connection: 'close'\r\n`;
-        socket.write(`HTTP/1.1 ${code} ${STATUS_CODES[code]}\r\n${message}\r\n${connectionHeader}\r\n`);
+        socket.write(`HTTP/1.1 ${ code } ${ STATUS_CODES[code] }\r\n${ message }\r\n${ connectionHeader }\r\n`);
     }
 
     socket.destroy();
