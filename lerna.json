@@ -18,6 +18,8 @@
     "libraries/functional-tests/dialogToDialog/dialogSkillBot",
     "libraries/testbot",
     "libraries/botframework-streaming",
+    "libraries/testskills/skillparent",
+    "libraries/testskills/skillchild",
     "transcripts"
   ],
   "version": "independent",

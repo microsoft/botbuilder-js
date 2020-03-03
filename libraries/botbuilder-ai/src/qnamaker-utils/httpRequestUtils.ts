@@ -8,9 +8,11 @@
 
 import * as os from 'os';
 const pjson: any = require('../../package.json');
-const request = (new Function('require', 'if (!this.hasOwnProperty("fetch")) { return require("node-fetch"); } else { return this.fetch; }'))(require);
 
 import { QnAMakerEndpoint } from '../qnamaker-interfaces/qnamakerEndpoint';
+
+import { getFetch } from '../globals';
+const fetch = getFetch();
 
 /**
  * Http request utils class.
@@ -43,7 +45,7 @@ export class HttpRequestUtils {
 
         const headers: any = this.getHeaders(endpoint);
 
-        const qnaResult: any = await request(requestUrl, {
+        const qnaResult: any = await fetch(requestUrl, {
             method: 'POST',
             headers: headers,
             timeout: timeout,

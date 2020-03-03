@@ -838,7 +838,7 @@ export class ExpressionFunctions {
                 } else if (typeof value === 'string'){
                     path = `['${ value }'].${ path }`;
                 } else {
-                    return {path: undefined, left: undefined, error:`${ left.children[1].toString() } dones't return a int or string`};
+                    return {path: undefined, left: undefined, error:`${ left.children[1].toString() } doesn't return an int or string`};
                 }
 
                 left = left.children[0];
@@ -1170,7 +1170,7 @@ export class ExpressionFunctions {
     }
 
     private static _and(expression: Expression, state: MemoryInterface): { value: any; error: string } {
-        let result = false;
+        let result = true;
         let error: string;
         for (const child of expression.children) {
             ({ value: result, error } = child.tryEvaluate(state));
@@ -1430,8 +1430,15 @@ export class ExpressionFunctions {
                 }
 
                 result = tempList;
-            } else {
-                error = `${ expression.children[0] } is not array.`;
+            } else if (typeof value === 'object') {
+                const tempList = [];                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            
+                for (let [index, val] of Object.entries(value)) {
+                    tempList.push({index: index, value: val});
+                }
+
+                result = tempList;
+            }else {
+                error = `${ expression.children[0] } is not array or object.`;
             }
         }
 
@@ -1786,6 +1793,25 @@ export class ExpressionFunctions {
         return count;
     }
 
+    private static flatten(arr: any[], dept: number): any[]{
+        dept = typeof dept === 'undefined' ? 1 : dept;
+        if (typeof dept !== 'number') {
+            return;
+        }
+      
+        let res = JSON.parse(JSON.stringify(arr));
+
+        let reduceArr = (_arr): any => _arr.reduce((prevItem, curItem): any =>  prevItem.concat(curItem),[]);
+      
+        for (let i = 0; i < dept; i++) {
+            let hasArrayItem = res.some((item): boolean => Array.isArray(item));
+            if (hasArrayItem) {
+                res = reduceArr(res);
+            }
+        }
+        return res;
+    }
+
     // tslint:disable-next-line: max-func-body-length
     private static buildFunctionLookup(): Map<string, ExpressionEvaluator> {
         // tslint:disable-next-line: no-unnecessary-local-variable
@@ -2013,6 +2039,23 @@ export class ExpressionFunctions {
                 ReturnType.Object,
                 (expression: Expression): void => ExpressionFunctions.validateOrder(expression, [ReturnType.String], ReturnType.Object)
             ),
+            new ExpressionEvaluator(
+                ExpressionType.Flatten,
+                ExpressionFunctions.apply(
+                    args => {
+                        let array = args[0];
+                        let depth = args.length > 1 ? args[1] : 100;
+                        return ExpressionFunctions.flatten(array, depth);
+                    }),
+                ReturnType.Object,
+                (expression: Expression): void => ExpressionFunctions.validateOrder(expression, [ReturnType.Number], ReturnType.Object)
+            ),
+            new ExpressionEvaluator(
+                ExpressionType.Unique,
+                ExpressionFunctions.apply(args => [... new Set(args[0])]),
+                ReturnType.Object,
+                (expression: Expression): void => ExpressionFunctions.validateOrder(expression, [], ReturnType.Object)
+            ),
             new ExpressionEvaluator(ExpressionType.IndicesAndValues, 
                 (expression: Expression, state: any): {value: any; error: string} => ExpressionFunctions.indicesAndValues(expression, state), 
                 ReturnType.Object, ExpressionFunctions.validateUnary),
@@ -2065,7 +2108,7 @@ export class ExpressionFunctions {
                 ExpressionType.Empty,
                 (args: any []): boolean => this.isEmpty(args[0]),
                 ExpressionFunctions.validateUnary,
-                ExpressionFunctions.verifyNumberOrString),
+                ExpressionFunctions.verifyContainer),
             new ExpressionEvaluator(
                 ExpressionType.And,
                 (expression: Expression, state: MemoryInterface): { value: any; error: string } => ExpressionFunctions._and(expression, state),
@@ -2183,15 +2226,57 @@ export class ExpressionFunctions {
             ),
             new ExpressionEvaluator(
                 ExpressionType.IndexOf,
-                ExpressionFunctions.apply((args: any []): number => ExpressionFunctions.parseStringOrNull(args[0]).indexOf(ExpressionFunctions.parseStringOrNull(args[1])), ExpressionFunctions.verifyStringOrNull),
+                (expression: Expression, state: any): { value: any; error: string } => {
+                    let value = -1;
+                    let error: string;
+                    let args: any [];
+                    ({ args, error } = ExpressionFunctions.evaluateChildren(expression, state));
+                    if (!error) {
+                        if (args[0] == undefined || typeof args[0] === 'string') {
+                            if (args[1] === undefined || typeof args[1] === 'string') {
+                                value = ExpressionFunctions.parseStringOrNull(args[0]).indexOf(ExpressionFunctions.parseStringOrNull(args[1]));
+                            } else {
+                                error = `Can only look for indexof string in ${ expression }`;
+                            }
+                        } else if (Array.isArray(args[0])){
+                            value = args[0].indexOf(args[1]);
+                        } else {
+                            error = `${ expression } works only on string or list.`;
+                        }
+                    }
+                
+                    return { value, error };
+                },
                 ReturnType.Number,
-                (expression: Expression): void => ExpressionFunctions.validateArityAndAnyType(expression, 2, 2, ReturnType.String)
+                (expression: Expression): void => ExpressionFunctions.validateArityAndAnyType(expression, 2, 2, ReturnType.String, ReturnType.Boolean, ReturnType.Number, ReturnType.Object)
             ),
             new ExpressionEvaluator(
                 ExpressionType.LastIndexOf,
-                ExpressionFunctions.apply((args: any []): number => ExpressionFunctions.parseStringOrNull(args[0]).lastIndexOf(ExpressionFunctions.parseStringOrNull(args[1])), ExpressionFunctions.verifyStringOrNull),
+                (expression: Expression, state: any): { value: any; error: string } => {
+                    let value = -1;
+                    let error: string;
+                    let args: any [];
+                    ({ args, error } = ExpressionFunctions.evaluateChildren(expression, state));
+                    if (!error) {
+                        if (args[0] == undefined || typeof args[0] === 'string') {
+                            if (args[1] === undefined || typeof args[1] === 'string') {
+                                const str = ExpressionFunctions.parseStringOrNull(args[0]);
+                                const searchValue = ExpressionFunctions.parseStringOrNull(args[1]);
+                                value = str.lastIndexOf(searchValue, str.length - 1);
+                            } else {
+                                error = `Can only look for indexof string in ${ expression }`;
+                            }
+                        } else if (Array.isArray(args[0])){
+                            value = args[0].lastIndexOf(args[1]);
+                        } else {
+                            error = `${ expression } works only on string or list.`;
+                        }
+                    }
+                
+                    return { value, error };
+                },
                 ReturnType.Number,
-                (expression: Expression): void => ExpressionFunctions.validateArityAndAnyType(expression, 2, 2, ReturnType.String)
+                (expression: Expression): void => ExpressionFunctions.validateArityAndAnyType(expression, 2, 2, ReturnType.String, ReturnType.Boolean, ReturnType.Number, ReturnType.Object)
             ),
             new ExpressionEvaluator(
                 ExpressionType.Join,
