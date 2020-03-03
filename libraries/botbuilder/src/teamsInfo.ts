@@ -52,10 +52,14 @@ export class TeamsInfo {
         }
     }
 
-    public static async getPagedMembers(context: TurnContext, options?: TeamsConnectorModels.ConversationsGetConversationPagedMembersOptionalParams): Promise<TeamsPagedMembersResult> {
+    public static async getPagedMembers(context: TurnContext, pageSize?: number, continuationToken?: string): Promise<TeamsPagedMembersResult> {
         const teamId = this.getTeamId(context);
+        const options: TeamsConnectorModels.ConversationsGetConversationPagedMembersOptionalParams = {
+            "continuationToken" : continuationToken,
+            "pageSize": pageSize
+        }
         if (teamId) {
-            return await this.getPagedTeamMembers(context, options, teamId);
+            return await this.getPagedTeamMembers(context, teamId, pageSize, continuationToken);
         } else {
             const conversation = context.activity.conversation;
             const conversationId = conversation && conversation.id ? conversation.id : undefined;
@@ -82,10 +86,15 @@ export class TeamsInfo {
         return this.getMembersInternal(this.getConnectorClient(context), t);
     }
 
-    public static async getPagedTeamMembers(context: TurnContext, options?: TeamsConnectorModels.ConversationsGetConversationPagedMembersOptionalParams, teamId?: string): Promise<TeamsPagedMembersResult> {
+    public static async getPagedTeamMembers(context: TurnContext, teamId?: string, pageSize?: number, continuationToken?: string): Promise<TeamsPagedMembersResult> {
         const t = teamId || this.getTeamId(context);
         if (!t) {
             throw new Error('This method is only valid within the scope of a MS Teams Team.');
+        }
+
+        const options: TeamsConnectorModels.ConversationsGetConversationPagedMembersOptionalParams = {
+            "continuationToken" : continuationToken,
+            "pageSize": pageSize
         }
         return this.getPagedMembersInternal(this.getConnectorClient(context), t, options);
     }
