@@ -19,7 +19,7 @@ export namespace GovernmentConstants {
     /**
      * TO CHANNEL FROM BOT: OAuth scope to request
      */
-    export const ToChannelFromBotOAuthScope = 'https://api.botframework.us/.default';
+    export const ToChannelFromBotOAuthScope = 'https://api.botframework.us/';
 
     /**
      * TO BOT FROM CHANNEL: Token issuer

@@ -27,7 +27,8 @@ export enum StatusCodes {
 }
 
 export class StatusCodeError extends Error {
-    constructor(public readonly statusCode: StatusCodes, message?: string) {
+    public readonly statusCode: StatusCodes;
+    public constructor(statusCode: StatusCodes, message?: string) {
         super(message);
         this.statusCode = statusCode;
     }
@@ -94,7 +95,7 @@ const TYPE: any = os.type();
 const RELEASE: any = os.release();
 const NODE_VERSION: any = process.version;
 
-// tslint:disable-next-line:no-var-requires no-require-imports
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const pjson: any = require('../package.json');
 export const USER_AGENT: string = `Microsoft-BotFramework/3.1 BotBuilder/${ pjson.version } ` +
     `(Node.js,Version=${ NODE_VERSION }; ${ TYPE } ${ RELEASE }; ${ ARCHITECTURE })`;
@@ -215,7 +216,7 @@ export class BotFrameworkAdapter extends BotAdapter implements CredentialTokenPr
         // Relocate the tenantId field used by MS Teams to a new location (from channelData to conversation)
         // This will only occur on activities from teams that include tenant info in channelData but NOT in conversation,
         // thus should be future friendly.  However, once the the transition is complete. we can remove this.
-        this.use(async(context, next) => {
+        this.use(async (context, next): Promise<void> => {
             if (context.activity.channelId === 'msteams' && context.activity && context.activity.conversation && !context.activity.conversation.tenantId && context.activity.channelData && context.activity.channelData.tenant) {
                 context.activity.conversation.tenantId = context.activity.channelData.tenant.id;
             }
@@ -640,9 +641,9 @@ export class BotFrameworkAdapter extends BotAdapter implements CredentialTokenPr
      * 
      * @returns A map of the [TokenResponse](xref:botframework-schema.TokenResponse) objects by resource URL.
      */
-    public async getAadTokens(context: TurnContext, connectionName: string, resourceUrls: string[]): Promise<{[propertyName: string]: TokenResponse;}>;
-    public async getAadTokens(context: TurnContext, connectionName: string, resourceUrls: string[], oAuthAppCredentials?: AppCredentials): Promise<{[propertyName: string]: TokenResponse;}>;
-    public async getAadTokens(context: TurnContext, connectionName: string, resourceUrls: string[], oAuthAppCredentials?: AppCredentials): Promise<{[propertyName: string]: TokenResponse;}> {
+    public async getAadTokens(context: TurnContext, connectionName: string, resourceUrls: string[]): Promise<{[propertyName: string]: TokenResponse}>;
+    public async getAadTokens(context: TurnContext, connectionName: string, resourceUrls: string[], oAuthAppCredentials?: AppCredentials): Promise<{[propertyName: string]: TokenResponse}>;
+    public async getAadTokens(context: TurnContext, connectionName: string, resourceUrls: string[], oAuthAppCredentials?: AppCredentials): Promise<{[propertyName: string]: TokenResponse}> {
         if (!context.activity.from || !context.activity.from.id) {
             throw new Error(`BotFrameworkAdapter.getAadTokens(): missing from or from.id`);
         }
@@ -986,7 +987,7 @@ export class BotFrameworkAdapter extends BotAdapter implements CredentialTokenPr
             // Check if we have a streaming server. Otherwise, requesting a connector client
             // for a non-existent streaming connection results in an error
             if (!this.streamingServer) {
-                throw new Error(`Cannot create streaming connector client for serviceUrl ${serviceUrl} without a streaming connection. Call 'useWebSocket' or 'useNamedPipe' to start a streaming connection.`)
+                throw new Error(`Cannot create streaming connector client for serviceUrl ${ serviceUrl } without a streaming connection. Call 'useWebSocket' or 'useNamedPipe' to start a streaming connection.`);
             }
 
             return new ConnectorClient(
@@ -1370,10 +1371,10 @@ function parseRequest(req: WebRequest): Promise<Activity> {
             }
         } else {
             let requestData = '';
-            req.on('data', (chunk: string) => {
+            req.on('data', (chunk: string): void => {
                 requestData += chunk;
             });
-            req.on('end', () => {
+            req.on('end', (): void => {
                 try {
                     req.body = JSON.parse(requestData);
                     returnActivity(req.body);
@@ -1386,15 +1387,15 @@ function parseRequest(req: WebRequest): Promise<Activity> {
 }
 
 function delay(timeout: number): Promise<void> {
-    return new Promise((resolve) => {
+    return new Promise((resolve): void => {
         setTimeout(resolve, timeout);
     });
 }
 
-function abortWebSocketUpgrade(socket: INodeSocket, code: number, message?: string) {
+function abortWebSocketUpgrade(socket: INodeSocket, code: number, message?: string): void {
     if (socket.writable) {
         const connectionHeader = `Connection: 'close'\r\n`;
-        socket.write(`HTTP/1.1 ${code} ${STATUS_CODES[code]}\r\n${message}\r\n${connectionHeader}\r\n`);
+        socket.write(`HTTP/1.1 ${ code } ${ STATUS_CODES[code] }\r\n${ message }\r\n${ connectionHeader }\r\n`);
     }
 
     socket.destroy();
