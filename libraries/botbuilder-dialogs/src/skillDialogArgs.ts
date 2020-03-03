@@ -6,17 +6,12 @@
  * Licensed under the MIT License.
  */
 
-import { Activity, BotFrameworkSkill } from 'botbuilder-core';
+import { Activity } from 'botbuilder-core';
 
 /**
  * A class with dialog arguments for a SkillDialog.
  */
 export interface SkillDialogArgs {
-    /**
-     * The BotFrameworkSkill that the dialog will call.
-     */
-    skill: BotFrameworkSkill;
-
     /**
      * The Activity to send to the skill.
      */
