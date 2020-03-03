@@ -118,7 +118,6 @@ export class BotFrameworkHttpClient {
         if (JwtTokenValidation.isGovernment(this.channelService)) {
             appCredentials = new MicrosoftAppCredentials(appId, appPassword, this.channelService, oAuthScope);
             appCredentials.oAuthEndpoint = GovernmentConstants.ToChannelFromBotLoginUrl;
-            appCredentials.oAuthScope = GovernmentConstants.ToChannelFromBotOAuthScope;
         } else {
             appCredentials = new MicrosoftAppCredentials(appId, appPassword, this.channelService, oAuthScope);
         }

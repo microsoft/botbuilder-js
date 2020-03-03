@@ -964,12 +964,6 @@ export class BotFrameworkAdapter extends BotAdapter implements CredentialTokenPr
                 // Since the scope is different, we will create a new instance of the AppCredentials
                 // so this.credentials.oAuthScope isn't overridden.
                 credentials = await this.buildCredentials(botAppId, scope);
-
-                if (JwtTokenValidation.isGovernment(this.settings.channelService)) {
-                    credentials.oAuthEndpoint = GovernmentConstants.ToChannelFromBotLoginUrl;
-                    // Not sure that this code is correct because the scope was set earlier.
-                    credentials.oAuthScope = GovernmentConstants.ToChannelFromBotOAuthScope;
-                }
             }
         }
 
@@ -1026,6 +1020,7 @@ export class BotFrameworkAdapter extends BotAdapter implements CredentialTokenPr
     /**
      * 
      * @remarks
+     * When building credentials for bot-to-bot communication, oAuthScope must be passed in.
      * @param appId 
      * @param oAuthScope 
      */
