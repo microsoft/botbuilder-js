@@ -83,7 +83,7 @@ export class TeamsInfo {
         if (!t) {
             throw new Error('This method is only valid within the scope of a MS Teams Team.');
         }
-        return this.getMembersInternal(this.getConnectorClient(context), t);
+        return await this.getMembersInternal(this.getConnectorClient(context), t);
     }
 
     public static async getPagedTeamMembers(context: TurnContext, teamId?: string, pageSize?: number, continuationToken?: string): Promise<TeamsPagedMembersResult> {
@@ -96,7 +96,7 @@ export class TeamsInfo {
             "continuationToken" : continuationToken,
             "pageSize": pageSize
         }
-        return this.getPagedMembersInternal(this.getConnectorClient(context), t, options);
+        return await this.getPagedMembersInternal(this.getConnectorClient(context), t, options);
     }
 
     public static async getTeamMember(context: TurnContext, teamId?: string, userId?: string): Promise<TeamsChannelAccount> {
@@ -104,7 +104,7 @@ export class TeamsInfo {
         if (!t) {
             throw new Error('This method is only valid within the scope of a MS Teams Team.');
         }
-        return this.getMemberInternal(this.getConnectorClient(context), t, userId);
+        return await this.getMemberInternal(this.getConnectorClient(context), t, userId);
     }
 
     private static async getMembersInternal(connectorClient: ConnectorClient, conversationId: string): Promise<TeamsChannelAccount[]> {
