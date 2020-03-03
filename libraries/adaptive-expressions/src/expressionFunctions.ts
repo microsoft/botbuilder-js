@@ -1430,8 +1430,15 @@ export class ExpressionFunctions {
                 }
 
                 result = tempList;
-            } else {
-                error = `${ expression.children[0] } is not array.`;
+            } else if (typeof value === 'object') {
+                const tempList = [];                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            
+                for (let [index, val] of Object.entries(value)) {
+                    tempList.push({index: index, value: val});
+                }
+
+                result = tempList;
+            }else {
+                error = `${ expression.children[0] } is not array or object.`;
             }
         }
 
@@ -1786,6 +1793,25 @@ export class ExpressionFunctions {
         return count;
     }
 
+    private static flatten(arr: any[], dept: number): any[]{
+        dept = typeof dept === 'undefined' ? 1 : dept;
+        if (typeof dept !== 'number') {
+            return;
+        }
+      
+        let res = JSON.parse(JSON.stringify(arr));
+
+        let reduceArr = (_arr): any => _arr.reduce((prevItem, curItem): any =>  prevItem.concat(curItem),[]);
+      
+        for (let i = 0; i < dept; i++) {
+            let hasArrayItem = res.some((item): boolean => Array.isArray(item));
+            if (hasArrayItem) {
+                res = reduceArr(res);
+            }
+        }
+        return res;
+    }
+
     // tslint:disable-next-line: max-func-body-length
     private static buildFunctionLookup(): Map<string, ExpressionEvaluator> {
         // tslint:disable-next-line: no-unnecessary-local-variable
@@ -2012,6 +2038,23 @@ export class ExpressionFunctions {
                 ExpressionFunctions.sortBy(true),
                 ReturnType.Object,
                 (expression: Expression): void => ExpressionFunctions.validateOrder(expression, [ReturnType.String], ReturnType.Object)
+            ),
+            new ExpressionEvaluator(
+                ExpressionType.Flatten,
+                ExpressionFunctions.apply(
+                    args => {
+                        let array = args[0];
+                        let depth = args.length > 1 ? args[1] : 100;
+                        return ExpressionFunctions.flatten(array, depth);
+                    }),
+                ReturnType.Object,
+                (expression: Expression): void => ExpressionFunctions.validateOrder(expression, [ReturnType.Number], ReturnType.Object)
+            ),
+            new ExpressionEvaluator(
+                ExpressionType.Unique,
+                ExpressionFunctions.apply(args => [... new Set(args[0])]),
+                ReturnType.Object,
+                (expression: Expression): void => ExpressionFunctions.validateOrder(expression, [], ReturnType.Object)
             ),
             new ExpressionEvaluator(ExpressionType.IndicesAndValues, 
                 (expression: Expression, state: any): {value: any; error: string} => ExpressionFunctions.indicesAndValues(expression, state), 

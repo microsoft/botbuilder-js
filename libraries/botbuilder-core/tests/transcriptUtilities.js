@@ -10,7 +10,7 @@ const url = require('url');
 const promisify = require('util').promisify;
 const readFileAsync = promisify(fs.readFile);
 const request = require("request");
-const unzip = require('unzip');
+const unzip = require('unzipper');
 const rimraf = require('rimraf');
 
 const chatdown = require('chatdown');
