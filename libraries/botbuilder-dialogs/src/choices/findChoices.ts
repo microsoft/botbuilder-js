@@ -70,6 +70,16 @@ export interface FindChoicesOptions extends FindValuesOptions {
      * Defaults to `false`.
      */
     noAction?: boolean;
+
+    /**
+     * (Optional) Default is `true`.  If `false`, the Number Model will not be used to check the utterance for numbers.
+     */
+    recognizeNumbers?: boolean;
+
+    /**
+     * (Optional) Default is `true`.  If `false`, the Ordinal Model will not be used to check the utterance for ordinal numbers.
+     */
+    recognizeOrdinals?: boolean;
 }
 
 /**
