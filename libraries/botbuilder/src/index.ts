@@ -10,7 +10,6 @@ export {
     BotFrameworkAdapter,
     BotFrameworkAdapterSettings,
     INVOKE_RESPONSE_KEY,
-    StatusCodes,
     StatusCodeError,
 } from './botFrameworkAdapter';
 export { BotFrameworkHttpClient } from './botFrameworkHttpClient';

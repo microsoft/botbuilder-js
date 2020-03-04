@@ -7,13 +7,11 @@
  */
 // tslint:disable-next-line:no-require-imports
 import assert from 'assert';
-import { Activity, ActivityTypes, ConversationReference, ResourceResponse, TokenResponse } from 'botframework-schema';
+import { Activity, ActivityTypes, ConversationReference, ResourceResponse, TokenResponse, TokenExchangeRequest, SignInUrlResponse } from 'botframework-schema';
 import { BotAdapter } from './botAdapter';
-import {IExtendedUserTokenProvider} from './extendedUserTokenProvider';
+import {ExtendedUserTokenProvider} from './extendedUserTokenProvider';
 import { TurnContext } from './turnContext';
 import { basename } from 'path';
-import { BotSignInGetSignInResourceResponse, TokenExchangeRequest} from 'botframework-connector';
-import { SignInUrlResponse } from 'botframework-connector/lib/tokenApi/models/mappers';
 import { stringify } from 'querystring';
 
 /**
@@ -46,7 +44,7 @@ export type TestActivityInspector = (activity: Partial<Activity>, description: s
  *        .then(() => done());
  * ```
  */
-export class TestAdapter extends BotAdapter implements IExtendedUserTokenProvider {
+export class TestAdapter extends BotAdapter implements ExtendedUserTokenProvider {
     /**
      * @private
      * INTERNAL: used to drive the promise chain forward when running tests.
@@ -408,7 +406,7 @@ export class TestAdapter extends BotAdapter implements IExtendedUserTokenProvide
         this.exchangeableTokens[key.toKey()] = key;
     }
 
-    public async getSignInResource(context: TurnContext, connectionName: string, userId?: string, finalRedirect?: string): Promise<BotSignInGetSignInResourceResponse> {
+    public async getSignInResource(context: TurnContext, connectionName: string, userId?: string, finalRedirect?: string): Promise<SignInUrlResponse> {
         return {
             signInLink: `https://botframeworktestadapter.com/oauthsignin/${connectionName}/${context.activity.channelId}/${userId}`,
             tokenExchangeResource: {
@@ -416,8 +414,7 @@ export class TestAdapter extends BotAdapter implements IExtendedUserTokenProvide
                 providerId: null,
                 uri: `api://${connectionName}/resource`
 
-            },
-            _response: null
+            }
         }
     }
 

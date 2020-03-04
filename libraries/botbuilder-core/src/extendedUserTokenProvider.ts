@@ -9,13 +9,12 @@
 import { AppCredentials } from './appCredentials';
 import { IUserTokenProvider } from './userTokenProvider';
 import { TurnContext } from './turnContext';
-import { TokenResponse } from 'botframework-schema';
-import { BotSignInGetSignInResourceResponse, TokenExchangeRequest } from 'botframework-connector'
+import { SignInUrlResponse ,TokenResponse, TokenExchangeRequest } from 'botframework-schema';
 
 /**
  * Interface for User Token OAuth Single Sign On and Token Exchange APIs for BotAdapters
  */
-export interface IExtendedUserTokenProvider extends IUserTokenProvider{
+export interface ExtendedUserTokenProvider extends IUserTokenProvider {
     /**
      * Retrieves the OAuth token for a user that is in a sign-in flow.
      * @param context Context for the current turn of conversation with the user.
@@ -56,7 +55,7 @@ export interface IExtendedUserTokenProvider extends IUserTokenProvider{
      * @param context Context for the current turn of conversation with the user.
      * @param connectionName Name of the auth connection to use.
      */    
-    getSignInResource(context: TurnContext, connectionName: string): Promise<BotSignInGetSignInResourceResponse>;
+    getSignInResource(context: TurnContext, connectionName: string): Promise<SignInUrlResponse>;
 
     /**
      * Get the raw signin resource to be sent to the user for signin for a connection name.
@@ -65,7 +64,7 @@ export interface IExtendedUserTokenProvider extends IUserTokenProvider{
      * @param userId The user id that will be associated with the token.
      * @param finalRedirect The final URL that the OAuth flow will redirect to.
      */   
-    getSignInResource(context: TurnContext, connectionName: string, userId: string, finalRedirect?: string): Promise<BotSignInGetSignInResourceResponse>;
+    getSignInResource(context: TurnContext, connectionName: string, userId: string, finalRedirect?: string): Promise<SignInUrlResponse>;
 
     /**
      * Get the raw signin resource to be sent to the user for signin for a connection name.
@@ -74,7 +73,7 @@ export interface IExtendedUserTokenProvider extends IUserTokenProvider{
      * @param userId The user id that will be associated with the token.
      * @param finalRedirect The final URL that the OAuth flow will redirect to.
      */   
-    getSignInResource(context: TurnContext, connectionName: string, userId: string, finalRedirect?: string, appCredentials?: AppCredentials): Promise<BotSignInGetSignInResourceResponse>;
+    getSignInResource(context: TurnContext, connectionName: string, userId: string, finalRedirect?: string, appCredentials?: AppCredentials): Promise<SignInUrlResponse>;
 
     /**
      * Performs a token exchange operation such as for single sign-on.

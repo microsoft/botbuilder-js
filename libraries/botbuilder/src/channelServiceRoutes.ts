@@ -6,10 +6,10 @@
  * Licensed under the MIT License.
  */
 
-import { Activity, ConversationParameters, Transcript, AttachmentData } from 'botbuilder-core';
+import { Activity, AttachmentData, ConversationParameters, StatusCodes, Transcript } from 'botbuilder-core';
 
 import { ChannelServiceHandler } from './channelServiceHandler';
-import { StatusCodeError, StatusCodes } from './botFrameworkAdapter';
+import { StatusCodeError } from './botFrameworkAdapter';
 import { WebRequest, WebResponse } from './interfaces';
 
 export type RouteHandler = (request: WebRequest, response: WebResponse) => void;

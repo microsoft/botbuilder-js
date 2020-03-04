@@ -18,3 +18,4 @@ export { TokenApiClient, TokenApiModels } from './tokenApi/tokenApiClient';
 export { EmulatorApiClient } from './emulatorApiClient';
 export * from './tokenApi/models'
 export * from './teams';
+export { SignInUrlResponse, TokenExchangeRequest } from 'botframework-schema'; 

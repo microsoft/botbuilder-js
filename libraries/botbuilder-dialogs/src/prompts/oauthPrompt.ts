@@ -5,12 +5,12 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { Activity, ActivityTypes, Attachment, AppCredentials, CardFactory, Channels, InputHints, MessageFactory, OAuthLoginTimeoutKey, TokenResponse, TurnContext, IUserTokenProvider, OAuthCard, ActionTypes, IExtendedUserTokenProvider, verifyStateOperationName, tokenExchangeOperationName, tokenResponseEventName } from 'botbuilder-core';
-import { StatusCodes} from 'botbuilder';
+import { Activity, ActivityTypes, Attachment, AppCredentials, CardFactory, Channels, InputHints, MessageFactory, OAuthLoginTimeoutKey, TokenResponse, TurnContext, IUserTokenProvider, OAuthCard, ActionTypes, ExtendedUserTokenProvider, verifyStateOperationName, StatusCodes, tokenExchangeOperationName, tokenResponseEventName } from 'botbuilder-core';
 import { Dialog, DialogTurnResult } from '../dialog';
 import { DialogContext } from '../dialogContext';
 import { PromptOptions, PromptRecognizerResult,  PromptValidator } from './prompt';
 import { isSkillClaim } from './skillsHelpers';
+import { BotSignInGetSignInResourceResponse } from '../../../botframework-connector/lib';
 
 /**
  * Request body accepted for a token exchange invoke activity.
@@ -230,7 +230,7 @@ export class OAuthPrompt extends Dialog {
         }
 
         // Get the token and call validator
-        const adapter: IExtendedUserTokenProvider = context.adapter as IExtendedUserTokenProvider;
+        const adapter: ExtendedUserTokenProvider = context.adapter as ExtendedUserTokenProvider;
 
         return await adapter.getUserToken(context, this.settings.connectionName, code, this.settings.oAuthAppCredentials);
     }
@@ -257,7 +257,7 @@ export class OAuthPrompt extends Dialog {
         }
 
         // Sign out user
-        const adapter: IExtendedUserTokenProvider = context.adapter as IExtendedUserTokenProvider;
+        const adapter: ExtendedUserTokenProvider = context.adapter as ExtendedUserTokenProvider;
 
         return adapter.signOutUser(context, this.settings.connectionName, null, this.settings.oAuthAppCredentials);
     }
@@ -278,25 +278,23 @@ export class OAuthPrompt extends Dialog {
             const cards: Attachment[] = msg.attachments.filter((a: Attachment) => a.contentType === CardFactory.contentTypes.oauthCard);
             if (cards.length === 0) {
                 let cardActionType = ActionTypes.Signin;
-                let link: string;
-                if (OAuthPrompt.isFromStreamingConnection(context.activity)) {
-                    link = await (context.adapter as IExtendedUserTokenProvider).getSignInLink(context, this.settings.connectionName, this.settings.oAuthAppCredentials);
-                } else {
-                    // Retrieve the ClaimsIdentity from a BotFrameworkAdapter. For more information see
-                    // https://github.com/microsoft/botbuilder-js/commit/b7932e37bb6e421985d5ce53edd9e82af6240a63#diff-3e3af334c0c6adf4906ee5e2a23beaebR250
-                    const identity = context.turnState.get((context.adapter as any).BotIdentityKey);
-                    if (identity && isSkillClaim(identity.claims)) {
-                        // Force magic code for Skills (to be addressed in R8)
-                        link = await (context.adapter as IExtendedUserTokenProvider).getSignInLink(context, this.settings.connectionName, this.settings.oAuthAppCredentials);
-                        cardActionType = ActionTypes.OpenUrl;
-                    }
+                const signInResource = await (context.adapter as ExtendedUserTokenProvider).getSignInResource(context, this.settings.connectionName, context.activity.from.id, null, this.settings.oAuthAppCredentials);
+                let link = signInResource.signInLink;
+                const identity = context.turnState.get((context.adapter as any).BotIdentityKey);
+                if(identity && isSkillClaim(identity.claims)) {
+                    cardActionType = ActionTypes.OpenUrl;
                 }
+                else {
+                    link = null;
+                }
+
                 // Append oauth card
                 const card = CardFactory.oauthCard(
                     this.settings.connectionName,
                     this.settings.title,
                     this.settings.text,
-                    link
+                    link,
+                    signInResource.tokenExchangeResource
                 );
 
                 // Set the appropriate ActionType for the button.
@@ -307,10 +305,10 @@ export class OAuthPrompt extends Dialog {
             const cards: Attachment[] = msg.attachments.filter((a: Attachment) => a.contentType === CardFactory.contentTypes.signinCard);
             if (cards.length === 0) {
                 // Append signin card
-                const link: any = await (context.adapter as IExtendedUserTokenProvider).getSignInLink(context, this.settings.connectionName, this.settings.oAuthAppCredentials);
+                const signInResource = await (context.adapter as ExtendedUserTokenProvider).getSignInResource(context, this.settings.connectionName, context.activity.from.id, null, this.settings.oAuthAppCredentials);
                 msg.attachments.push(CardFactory.signinCard(
                     this.settings.title,
-                    link,
+                    signInResource.signInLink,
                     this.settings.text
                 ));
             }
@@ -363,7 +361,7 @@ export class OAuthPrompt extends Dialog {
                 throw new Error('OAuthPrompt.recognize(): not supported by the current adapter');
             } else {
                 // No errors. Proceed with token exchange
-                const extendedUserTokenProvider : IExtendedUserTokenProvider = context.adapter as IExtendedUserTokenProvider;
+                const extendedUserTokenProvider : ExtendedUserTokenProvider = context.adapter as ExtendedUserTokenProvider;
                 const tokenExchangeResponse = await extendedUserTokenProvider.exchangeToken(context, this.settings.connectionName, context.activity.from.id, {token: context.activity.value.token});
 
                 if(!tokenExchangeResponse || !tokenExchangeResponse.token) {

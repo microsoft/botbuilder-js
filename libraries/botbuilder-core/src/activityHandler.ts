@@ -4,7 +4,8 @@
  */
 import { ChannelAccount, MessageReaction, TurnContext } from '.';
 import { ActivityHandlerBase } from './activityHandlerBase';
-import { verifyStateOperationName, tokenExchangeOperationName, tokenResponseEventName } from './authContants';
+import { verifyStateOperationName, tokenExchangeOperationName, tokenResponseEventName } from './signInConstants';
+import { InvokeResponse } from './invokeResponse';
 
 /**
  * Describes a bot activity event handler, for use with an [ActivityHandler](xref:botbuilder-core.ActivityHandler) object.
@@ -425,7 +426,7 @@ export class ActivityHandler extends ActivityHandlerBase {
      * [onInvoke](xref:botbuilder-core.ActivityHandler.onInvoke),
      * and then continue by calling [defaultNextEvent](xref:botbuilder-core.ActivityHandler.defaultNextEvent).
     */
-    protected async onInvokeActivity(context: TurnContext): Promise<void|any> {
+    protected async onInvokeActivity(context: TurnContext): Promise<void|InvokeResponse> {
         if(context.activity.name && context.activity.name === verifyStateOperationName || context.activity.name === tokenExchangeOperationName) {
             await this.onSignInInvoke(context);
         }

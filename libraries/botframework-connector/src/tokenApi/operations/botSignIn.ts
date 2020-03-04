@@ -9,6 +9,7 @@ import * as Models from "../models";
 import * as Mappers from "../models/botSignInMappers";
 import * as Parameters from "../models/parameters";
 import { TokenApiClientContext } from "../tokenApiClientContext";
+import { SignInUrlResponse } from "botframework-schema";
 
 /** Class representing a BotSignIn. */
 export class BotSignIn {
@@ -59,14 +60,14 @@ export class BotSignIn {
    * @param state
    * @param callback The callback
    */
-  getSignInResource(state: string, callback: msRest.ServiceCallback<Models.SignInUrlResponse>): void;
+  getSignInResource(state: string, callback: msRest.ServiceCallback<SignInUrlResponse>): void;
   /**
    * @param state
    * @param options The optional parameters
    * @param callback The callback
    */
-  getSignInResource(state: string, options: Models.BotSignInGetSignInResourceOptionalParams, callback: msRest.ServiceCallback<Models.SignInUrlResponse>): void;
-  getSignInResource(state: string, options?: Models.BotSignInGetSignInResourceOptionalParams | msRest.ServiceCallback<Models.SignInUrlResponse>, callback?: msRest.ServiceCallback<Models.SignInUrlResponse>): Promise<Models.BotSignInGetSignInResourceResponse> {
+  getSignInResource(state: string, options: Models.BotSignInGetSignInResourceOptionalParams, callback: msRest.ServiceCallback<SignInUrlResponse>): void;
+  getSignInResource(state: string, options?: Models.BotSignInGetSignInResourceOptionalParams | msRest.ServiceCallback<SignInUrlResponse>, callback?: msRest.ServiceCallback<SignInUrlResponse>): Promise<Models.BotSignInGetSignInResourceResponse> {
     return this.client.sendOperationRequest(
       {
         state,

@@ -17,6 +17,7 @@ import {
     ConversationsResult,
     PagedMembersResult,
     ResourceResponse,
+    StatusCodes,
     Transcript,
 } from 'botbuilder-core';
 import {
@@ -26,7 +27,7 @@ import {
     ICredentialProvider,
     JwtTokenValidation
 } from 'botframework-connector';
-import { StatusCodeError, StatusCodes } from './botFrameworkAdapter';
+import { StatusCodeError } from './botFrameworkAdapter';
 
 /**
  * The ChannelServiceHandler implements API to forward activity to a skill and

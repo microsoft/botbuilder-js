@@ -9,6 +9,7 @@ import * as Models from "../models";
 import * as Mappers from "../models/userTokenMappers";
 import * as Parameters from "../models/parameters";
 import { TokenApiClientContext } from "../tokenApiClientContext";
+import { TokenExchangeRequest } from "botframework-schema";
 
 /** Class representing a UserToken. */
 export class UserToken {
@@ -150,7 +151,7 @@ export class UserToken {
    * @param [options] The optional parameters
    * @returns Promise<Models.UserTokenExchangeAsyncResponse>
    */
-  exchangeAsync(userId: string, connectionName: string, channelId: string, exchangeRequest: Models.TokenExchangeRequest, options?: msRest.RequestOptionsBase): Promise<Models.UserTokenExchangeAsyncResponse>;
+  exchangeAsync(userId: string, connectionName: string, channelId: string, exchangeRequest: TokenExchangeRequest, options?: msRest.RequestOptionsBase): Promise<Models.UserTokenExchangeAsyncResponse>;
   /**
    * @param userId
    * @param connectionName
@@ -158,7 +159,7 @@ export class UserToken {
    * @param exchangeRequest
    * @param callback The callback
    */
-  exchangeAsync(userId: string, connectionName: string, channelId: string, exchangeRequest: Models.TokenExchangeRequest, callback: msRest.ServiceCallback<any>): void;
+  exchangeAsync(userId: string, connectionName: string, channelId: string, exchangeRequest: TokenExchangeRequest, callback: msRest.ServiceCallback<any>): void;
   /**
    * @param userId
    * @param connectionName
@@ -167,8 +168,8 @@ export class UserToken {
    * @param options The optional parameters
    * @param callback The callback
    */
-  exchangeAsync(userId: string, connectionName: string, channelId: string, exchangeRequest: Models.TokenExchangeRequest, options: msRest.RequestOptionsBase, callback: msRest.ServiceCallback<any>): void;
-  exchangeAsync(userId: string, connectionName: string, channelId: string, exchangeRequest: Models.TokenExchangeRequest, options?: msRest.RequestOptionsBase | msRest.ServiceCallback<any>, callback?: msRest.ServiceCallback<any>): Promise<Models.UserTokenExchangeAsyncResponse> {
+  exchangeAsync(userId: string, connectionName: string, channelId: string, exchangeRequest: TokenExchangeRequest, options: msRest.RequestOptionsBase, callback: msRest.ServiceCallback<any>): void;
+  exchangeAsync(userId: string, connectionName: string, channelId: string, exchangeRequest: TokenExchangeRequest, options?: msRest.RequestOptionsBase | msRest.ServiceCallback<any>, callback?: msRest.ServiceCallback<any>): Promise<Models.UserTokenExchangeAsyncResponse> {
     return this.client.sendOperationRequest(
       {
         userId,

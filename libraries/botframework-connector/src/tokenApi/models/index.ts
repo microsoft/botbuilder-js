@@ -6,41 +6,7 @@
 
 import { ServiceClientOptions } from "@azure/ms-rest-js";
 import * as msRest from "@azure/ms-rest-js";
-
-
-/**
- * @interface
- * An interface representing TokenExchangeResource.
- */
-export interface TokenExchangeResource {
-  /**
-   * @member {string} [id]
-   */
-  id?: string;
-  /**
-   * @member {string} [uri]
-   */
-  uri?: string;
-  /**
-   * @member {string} [providerId]
-   */
-  providerId?: string;
-}
-
-/**
- * @interface
- * An interface representing SignInUrlResponse.
- */
-export interface SignInUrlResponse {
-  /**
-   * @member {string} [signInLink]
-   */
-  signInLink?: string;
-  /**
-   * @member {TokenExchangeResource} [tokenExchangeResource]
-   */
-  tokenExchangeResource?: TokenExchangeResource;
-}
+import { SignInUrlResponse } from "botframework-schema";
 
 /**
  * @interface
@@ -147,21 +113,6 @@ export interface TokenStatus {
    * service provider for which this Token belongs to
    */
   serviceProviderDisplayName?: string;
-}
-
-/**
- * @interface
- * An interface representing TokenExchangeRequest.
- */
-export interface TokenExchangeRequest {
-  /**
-   * @member {string} [uri]
-   */
-  uri?: string;
-  /**
-   * @member {string} [token]
-   */
-  token?: string;
 }
 
 /**

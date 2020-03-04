@@ -2,7 +2,7 @@ const { Socket } = require('net');
 
 const { expect } = require('chai');
 const { spy } = require('sinon');
-const { ActivityHandler, ActivityTypes, TurnContext } = require('botbuilder-core');
+const { ActivityHandler, ActivityTypes, StatusCodes, TurnContext } = require('botbuilder-core');
 
 const { BotFrameworkAdapter, StatusCodes } = require('../../');
 

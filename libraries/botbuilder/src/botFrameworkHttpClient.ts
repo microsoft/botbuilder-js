@@ -17,7 +17,6 @@ import {
 } from 'botframework-connector';
 
 import { USER_AGENT } from './botFrameworkAdapter';
-import { ConversationReference } from 'botframework-connector/lib/connectorApi/models/mappers';
 
 /**
  * HttpClient for calling skills from a Node.js BotBuilder V4 SDK bot.
