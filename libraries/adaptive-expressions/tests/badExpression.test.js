@@ -50,7 +50,7 @@ const badExpressions =
       'split(one, \'l\')', // split only accept string parameter
       'split(hello, 1)', // split only accept string parameter
       'substring(hello, 0.5)', // the second parameter of substring must be integer
-      'substring(one, 0)', // the first parameter of substring must be string
+      'substring(two, 0)', // the first parameter of substring must be string or null
       'substring(hello, 10)', // the start index is out of the range of the string length
       'substring(hello, 0, hello)', // length is not integer
       'substring(hello, 0, \'hello\')', // length is not integer

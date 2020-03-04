@@ -2,7 +2,7 @@ const { LGParser, ActivityChecker } = require('../lib');
 const assert = require('assert');
 
 function getTemplateEngine(){
-    const filePath =  `${ __dirname }/testData/Examples/DiagnosticStructuredLG.lg`;
+    const filePath =  `${ __dirname }/testData/examples/DiagnosticStructuredLG.lg`;
     return LGParser.parseFile(filePath);
 }
 
