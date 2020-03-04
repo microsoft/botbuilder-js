@@ -345,6 +345,23 @@ export class Conversations {
   }
 
   /**
+   * @param conversationId Conversation ID
+   * @param memberId MemberId for the user
+   * @param options The optional parameters
+   * @param callback The callback
+   */
+  getConversationMember(conversationId: string, memberId: string, options?: msRest.RequestOptionsBase | msRest.ServiceCallback<Models.ChannelAccount[]>, callback?: msRest.ServiceCallback<Models.ChannelAccount[]>): Promise<Models.ConversationsGetConversationMemberResponse> {
+    return this.client.sendOperationRequest(
+      {
+        conversationId,
+        memberId,
+        options
+      },
+      getConversationMemberOperationSpec,
+      callback) as Promise<Models.ConversationsGetConversationMemberResponse>;
+  }
+
+  /**
    * Enumerate the members of a conversation one page at a time.
    *
    * This REST API takes a ConversationId. Optionally a pageSize and/or continuationToken can be
@@ -696,13 +713,13 @@ const getConversationMembersOperationSpec: msRest.OperationSpec = {
       bodyMapper: {
         serializedName: "parsedResponse",
         type: {
-          name: "Sequence",
-          element: {
-            type: {
-              name: "Composite",
-              className: "ChannelAccount"
+            name: "Sequence",
+            element: {
+                type: {
+                    name: "Composite",
+                    className: "ChannelAccount"
+                }
             }
-          }
         }
       }
     },
@@ -712,6 +729,24 @@ const getConversationMembersOperationSpec: msRest.OperationSpec = {
   },
   serializer
 };
+
+const getConversationMemberOperationSpec: msRest.OperationSpec = {
+    httpMethod: "GET",
+    path: "v3/conversations/{conversationId}/members/{memberId}",
+    urlParameters: [
+      Parameters.conversationId,
+      Parameters.memberId
+    ],
+    responses: {
+      200: {
+        bodyMapper: Mappers.ChannelAccount,
+      },
+      default: {
+        bodyMapper: Mappers.ErrorResponse
+      }
+    },
+    serializer
+  };
 
 const getConversationPagedMembersOperationSpec: msRest.OperationSpec = {
   httpMethod: "GET",
