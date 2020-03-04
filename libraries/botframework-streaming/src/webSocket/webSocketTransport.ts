@@ -5,7 +5,8 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { ISocket } from '../interfaces';
+import { INodeBuffer } from '../interfaces/INodeBuffer';
+import { ISocket } from '../interfaces/ISocket';
 import { ITransportSender } from '../interfaces/ITransportSender';
 import { ITransportReceiver } from '../interfaces/ITransportReceiver';
 
@@ -14,10 +15,10 @@ import { ITransportReceiver } from '../interfaces/ITransportReceiver';
  */
 export class WebSocketTransport implements ITransportSender, ITransportReceiver {
     private _socket: ISocket;
-    private readonly _queue: Buffer[];
-    private _active: Buffer;
+    private readonly _queue: INodeBuffer[];
+    private _active: INodeBuffer;
     private _activeOffset: number;
-    private _activeReceiveResolve: (resolve: Buffer) => void;
+    private _activeReceiveResolve: (resolve: INodeBuffer) => void;
     private _activeReceiveReject: (reason?: any) => void;
     private _activeReceiveCount: number;
 
@@ -47,7 +48,7 @@ export class WebSocketTransport implements ITransportSender, ITransportReceiver 
      *
      * @param buffer The buffered data to send out over the connection.
      */
-    public send(buffer: Buffer): number {
+    public send(buffer: INodeBuffer): number {
         if (this._socket && this._socket.isConnected) {
             this._socket.write(buffer);
 
@@ -79,14 +80,14 @@ export class WebSocketTransport implements ITransportSender, ITransportReceiver 
      * @param count The number of bytes to attempt to receive.
      * @returns A buffer populated with the received data.
      */
-    public async receive(count: number): Promise<Buffer> {
+    public async receive(count: number): Promise<INodeBuffer> {
         if (this._activeReceiveResolve) {
             throw new Error('Cannot call receiveAsync more than once before it has returned.');
         }
 
         this._activeReceiveCount = count;
 
-        let promise = new Promise<Buffer>((resolve, reject): void => {
+        let promise = new Promise<INodeBuffer>((resolve, reject): void => {
             this._activeReceiveResolve = resolve;
             this._activeReceiveReject = reject;
         });
@@ -101,7 +102,7 @@ export class WebSocketTransport implements ITransportSender, ITransportReceiver 
      *
      * @param data A buffer to store incoming data in.
      */
-    public onReceive(data: Buffer): void {
+    public onReceive(data: INodeBuffer): void {
         if (this._queue && data && data.byteLength > 0) {
             this._queue.push(Buffer.from(data));
             this.trySignalData();

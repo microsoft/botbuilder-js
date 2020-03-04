@@ -7,6 +7,7 @@
  */
 import { IHeader } from '../interfaces/IHeader';
 import { PayloadConstants } from './payloadConstants';
+import { INodeBuffer } from '../interfaces/INodeBuffer';
 
 /**
  * Streaming header serializer
@@ -34,7 +35,7 @@ export class HeaderSerializer {
      * @param header The header to serialize.
      * @param buffer The buffer into which to serialize the header.
      */
-    public static serialize(header: IHeader, buffer: Buffer): void {
+    public static serialize(header: IHeader, buffer: INodeBuffer): void {
         buffer.write(header.payloadType, this.TypeOffset, 1,  this.Encoding);
         buffer.write(this.Delimiter, this.TypeDelimiterOffset, 1, this.Encoding);
         buffer.write(this.headerLengthPadder(header.payloadLength, this.LengthLength, '0'), this.LengthOffset, this.LengthLength, this.Encoding);
@@ -51,7 +52,7 @@ export class HeaderSerializer {
      * @param buffer The buffer from which to obtain the data to deserialize.
      * @returns The deserialized header from the buffer.
      */
-    public static deserialize(buffer: Buffer): IHeader {
+    public static deserialize(buffer: INodeBuffer): IHeader {
         let jsonBuffer = buffer.toString(this.Encoding);
         let headerArray = jsonBuffer.split(this.Delimiter);
 

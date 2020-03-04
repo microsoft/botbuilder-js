@@ -8,7 +8,6 @@
 
 import * as crypto from 'crypto';
 import { IncomingMessage, request } from 'http';
-import { Socket } from 'net';
 import * as WebSocket from 'ws';
 
 import { INodeIncomingMessage, INodeBuffer, INodeSocket, ISocket } from '../interfaces';
@@ -37,7 +36,7 @@ export class NodeWebSocket implements ISocket {
         this.wsServer = new WebSocket.Server({ noServer: true });
         return new Promise<void>((resolve, reject) => {
             try {
-                this.wsServer.handleUpgrade(req as IncomingMessage, socket as Socket, head as Buffer, (websocket) => {
+                this.wsServer.handleUpgrade(req as IncomingMessage, socket as INodeSocket, head as INodeBuffer, (websocket) => {
                     this.wsSocket = websocket;
                     resolve();
                 });
