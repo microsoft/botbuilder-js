@@ -8,11 +8,11 @@
 
 import { STATUS_CODES } from 'http';
 import * as os from 'os';
-import { Activity, ActivityTypes, BotAdapter, BotCallbackHandlerKey, ChannelAccount, ConversationAccount, ConversationParameters, ConversationReference, ConversationsResult, DeliveryModes, CredentialTokenProvider, ResourceResponse, TokenResponse, TurnContext } from 'botbuilder-core';
+import { Activity, ActivityTypes, BotAdapter, BotCallbackHandlerKey, ChannelAccount, ConversationAccount, ConversationParameters, ConversationReference, ConversationsResult, DeliveryModes, CredentialTokenProvider, InvokeResponse, ResourceResponse, TokenResponse, TurnContext } from 'botbuilder-core';
 import { AuthenticationConfiguration, AuthenticationConstants, ChannelValidation, ClaimsIdentity, ConnectorClient, EmulatorApiClient, GovernmentConstants, GovernmentChannelValidation, JwtTokenValidation, MicrosoftAppCredentials, AppCredentials, CertificateAppCredentials, SimpleCredentialProvider, TokenApiClient, TokenStatus, TokenApiModels, SkillValidation } from 'botframework-connector';
 import { INodeBuffer, INodeSocket, IReceiveRequest, ISocket, IStreamingTransportServer, NamedPipeServer, NodeWebSocketFactory, NodeWebSocketFactoryBase, RequestHandler, StreamingResponse, WebSocketServer } from 'botframework-streaming';
 
-import { InvokeResponse, WebRequest, WebResponse } from './interfaces';
+import { WebRequest, WebResponse } from './interfaces';
 import { defaultPipeName, GET, POST, MESSAGES_PATH, StreamingHttpClient, TokenResolver, VERSION_PATH } from './streaming';
 
 export enum StatusCodes {

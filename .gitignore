@@ -8,6 +8,10 @@
 *.zip
 *.vscode
 
+# Functional Tests
+libraries/functional-tests/**/lib
+libraries/functional-tests/**/*.vscode/launch.json
+
 # User-specific files
 *.suo
 *.user

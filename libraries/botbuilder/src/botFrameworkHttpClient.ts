@@ -7,7 +7,7 @@
  */
 
 import axios from 'axios';
-import { Activity } from 'botbuilder-core';
+import { Activity, BotFrameworkClient, InvokeResponse } from 'botbuilder-core';
 import {
     AuthenticationConstants,
     GovernmentConstants,
@@ -17,19 +17,20 @@ import {
 } from 'botframework-connector';
 
 import { USER_AGENT } from './botFrameworkAdapter';
-import { InvokeResponse } from './interfaces';
 
 /**
  * HttpClient for calling skills from a Node.js BotBuilder V4 SDK bot.
  */
-export class BotFrameworkHttpClient {
+export class BotFrameworkHttpClient extends BotFrameworkClient {
     /**
      * Cache for appCredentials to speed up token acquisition (a token is not requested unless is expired)
      * AppCredentials are cached using appId + scope (this last parameter is only used if the app credentials are used to call a skill)
      */
     private static readonly appCredentialMapCache: Map<string, MicrosoftAppCredentials> = new Map<string, MicrosoftAppCredentials>();
 
+
     public constructor(private readonly credentialProvider: ICredentialProvider, private readonly channelService?: string) {
+        super();
         if (!this.credentialProvider) {
             throw new Error('BotFrameworkHttpClient(): missing credentialProvider');
         }
