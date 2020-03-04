@@ -809,5 +809,7 @@ describe('LG', function() {
         assert.equal(template.expressionEngine, engine);
         let result = template.evaluateTemplate('template', {});
         assert.strictEqual(result, 3);
+        result = template.evaluateTemplate('callSub', {});
+        assert.strictEqual(result, 12);
     });
 });
