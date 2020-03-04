@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 
-import { ConversationReference } from 'botbuilder-core';
+import { ConversationReference } from 'botframework-schema';
 
 /**
  * Defines the methods of a factory that is used to create unique conversation IDs for skill conversations.
