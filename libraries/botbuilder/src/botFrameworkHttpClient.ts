@@ -17,7 +17,6 @@ import {
 } from 'botframework-connector';
 
 import { USER_AGENT } from './botFrameworkAdapter';
-import { InvokeResponse } from './interfaces';
 import { ConversationReference } from 'botframework-connector/lib/connectorApi/models/mappers';
 
 /**
