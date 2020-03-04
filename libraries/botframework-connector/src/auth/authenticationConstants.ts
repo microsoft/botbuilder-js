@@ -31,7 +31,7 @@ export namespace AuthenticationConstants {
     /**
      * TO CHANNEL FROM BOT: OAuth scope to request
      */
-    export const ToChannelFromBotOAuthScope = 'https://api.botframework.com/';
+    export const ToChannelFromBotOAuthScope = 'https://api.botframework.com';
 
     /**
      * TO BOT FROM CHANNEL: Token issuer
