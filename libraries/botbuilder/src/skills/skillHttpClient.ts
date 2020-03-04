@@ -5,12 +5,9 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { Activity, ConversationReference, TurnContext } from 'botbuilder-core';
+import { Activity, BotFrameworkSkill, ConversationReference, InvokeResponse, SkillConversationIdFactoryBase, TurnContext } from 'botbuilder-core';
 import { ICredentialProvider } from 'botframework-connector';
 import { BotFrameworkHttpClient } from '../botFrameworkHttpClient';
-import { BotFrameworkSkill } from './botFrameworkSkill';
-import { InvokeResponse } from '../interfaces';
-import { SkillConversationIdFactoryBase } from './skillConversationIdFactoryBase';    
 
 /**
  * A BotFrameworkHttpClient specialized for Skills that encapsulates Conversation ID generation.

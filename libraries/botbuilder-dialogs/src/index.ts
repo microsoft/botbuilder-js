@@ -15,5 +15,8 @@ export * from './dialogContainer';
 export * from './dialogContext';
 export * from './dialogEvents';
 export * from './dialogSet';
+export * from './skillDialog';
+export * from './skillDialogOptions';
+export * from './beginSkillDialogOptions';
 export * from './waterfallDialog';
 export * from './waterfallStepContext';

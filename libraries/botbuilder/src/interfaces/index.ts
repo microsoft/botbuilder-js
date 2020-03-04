@@ -6,6 +6,5 @@
  * Licensed under the MIT License.
  */
 
-export * from './invokeResponse';
 export * from './webRequest';
 export * from './webResponse';

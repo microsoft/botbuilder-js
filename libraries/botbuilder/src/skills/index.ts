@@ -6,7 +6,5 @@
  * Licensed under the MIT License.
  */
 
-export * from './botFrameworkSkill';
-export * from './skillConversationIdFactoryBase';
 export * from './skillHandler';
 export * from './skillHttpClient';
