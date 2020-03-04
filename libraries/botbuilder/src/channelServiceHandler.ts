@@ -26,7 +26,8 @@ import {
     ICredentialProvider,
     JwtTokenValidation
 } from 'botframework-connector';
-import { StatusCodeError, StatusCodes } from './botFrameworkAdapter';
+import { StatusCodes } from './botFrameworkAdapter';
+import { StatusCodeError } from './statusCodeError';
 
 /**
  * The ChannelServiceHandler implements API to forward activity to a skill and

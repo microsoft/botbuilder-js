@@ -26,14 +26,6 @@ export enum StatusCodes {
     NOT_IMPLEMENTED = 501,
 }
 
-export class StatusCodeError extends Error {
-    public readonly statusCode: StatusCodes;
-    public constructor(statusCode: StatusCodes, message?: string) {
-        super(message);
-        this.statusCode = statusCode;
-    }
-}
-
 /**
  * Contains settings used to configure a [BotFrameworkAdapter](xref:botbuilder.BotFrameworkAdapter) instance.
  */
