@@ -7,6 +7,7 @@
  */
 
 import {
+    Activity,
     ChannelAccount,
     ChannelInfo,
     ConversationList,
@@ -15,11 +16,14 @@ import {
     TeamDetails,
     TurnContext,
     PagedMembersResult,
-    TeamsPagedMembersResult
+    TeamsPagedMembersResult,
+    ConversationParameters,
+    ConversationReference
 } from 'botbuilder-core';
 import { ConnectorClient, TeamsConnectorClient, TeamsConnectorModels} from 'botframework-connector';
 
 import { BotFrameworkAdapter } from './botFrameworkAdapter';
+
 
 export class TeamsInfo {
     public static async getTeamDetails(context: TurnContext, teamId?: string): Promise<TeamDetails> {
@@ -29,6 +33,36 @@ export class TeamsInfo {
         }
 
         return await this.getTeamsConnectorClient(context).teams.fetchTeamDetails(t);
+    }
+
+    public static async sendMessageToTeamsChannel(context: TurnContext, activity: Partial<Activity>, teamsChannelId: string): Promise<[Partial<ConversationReference>, string]> {
+        if (context == null){
+            throw new Error("TurnContext cannot be null");
+        }
+
+        if (activity == null){
+            throw new Error("Activity cannot be null");
+        }
+
+        if (teamsChannelId == null || teamsChannelId == ""){
+            throw new Error("The teamsChannelId cannot be null or empty");
+        }
+
+        const convoParams = <ConversationParameters>{
+            isGroup: true,
+            channelData: {
+                channel: {
+                    id: teamsChannelId
+                }
+            },
+            activity: activity
+        }
+
+        const connectorClient = (<BotFrameworkAdapter>context.adapter).createConnectorClient(context.activity.serviceUrl);
+        const conversationResourceResponse = await connectorClient.conversations.createConversation(convoParams);
+        const conversationReference = TurnContext.getConversationReference(context.activity);
+        conversationReference.conversation.id = conversationResourceResponse.id;
+        return [conversationReference, conversationResourceResponse.activityId];       
     }
 
     public static async getTeamChannels(context: TurnContext, teamId?: string): Promise<ChannelInfo[]> {
