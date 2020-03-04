@@ -34,7 +34,7 @@
     "@types/jspath": "^0.4.0",
     "@types/mocha": "^5.2.5",
     "@types/node": "^10.12.18",
-    "nyc": "^11.4.1",
+    "nyc": "^15.0.0",
     "ts-node": "^4.1.0",
     "typescript": "3.5.3"
   },
