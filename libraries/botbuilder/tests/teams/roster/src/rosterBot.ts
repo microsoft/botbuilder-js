@@ -19,32 +19,12 @@ export class RosterBot extends TeamsActivityHandler {
 
         // See https://aka.ms/about-bot-activity-message to learn more about the message and other activity types.
         this.onMessage(async (context, next) => {
-            await context.sendActivity(MessageFactory.text(`Echo: ${context.activity.text}`));
             TurnContext.removeRecipientMention(context.activity);
-            const text = context.activity.text ? context.activity.text.trim() : '';
-            switch (text) {
-                case "show members":
-                    await this.showMembers(context);
-                    break;
+            const msg = MessageFactory.text(`Echo: ${context.activity.text}`);
+            var id = (await TeamsInfo.getTeamDetails(context)).id;
 
-                case "show channels":
-                    await this.showChannels(context);
-                    break;
-
-                case "show details":
-                    await this.showDetails(context);
-                    break;
-
-                case "show member":
-                    await this.showMember(context);
-                    break;
-
-                default:
-                    await context.sendActivity(
-                        'Invalid command. Type "Show channels" to see a channel list. Type "Show members" to see a list of members in a team. ' +
-                        'Type "show group chat members" to see members in a group chat.');
-                    break;
-            }
+            const response = await TeamsInfo.sendMessageToTeamsChannel(context, msg, id);
+            await context.sendActivity(MessageFactory.text(response.toString()));
             // By calling next() you ensure that the next BotHandler is run.
             await next();
         });

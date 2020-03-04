@@ -7,6 +7,7 @@
  */
 
 import {
+    Activity,
     ChannelAccount,
     ChannelInfo,
     ConversationList,
@@ -15,7 +16,8 @@ import {
     TeamDetails,
     TurnContext,
     PagedMembersResult,
-    TeamsPagedMembersResult
+    TeamsPagedMembersResult,
+    ConversationParameters
 } from 'botbuilder-core';
 import { ConnectorClient, TeamsConnectorClient, TeamsConnectorModels} from 'botframework-connector';
 
@@ -29,6 +31,24 @@ export class TeamsInfo {
         }
 
         return await this.getTeamsConnectorClient(context).teams.fetchTeamDetails(t);
+    }
+
+    public static async sendMessageToTeamsChannel(context: TurnContext, activity: Partial<Activity>, teamsChannelId: string){
+        const convoParams = <ConversationParameters>{
+            isGroup: true,
+            channelData: {
+                channel: {
+                    is: teamsChannelId
+                }
+            },
+            activity: activity
+        }
+
+        const connectorClient = (<BotFrameworkAdapter>context.adapter).createConnectorClient(context.activity.serviceUrl);
+        const conversationResourceResponse = await connectorClient.conversations.createConversation(convoParams);
+        const conversationReference = TurnContext.getConversationReference(context.activity);
+        conversationReference.conversation.id = conversationResourceResponse.id;
+        return [conversationReference, conversationResourceResponse.activityId];       
     }
 
     public static async getTeamChannels(context: TurnContext, teamId?: string): Promise<ChannelInfo[]> {
