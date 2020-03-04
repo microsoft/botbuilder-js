@@ -7,6 +7,7 @@
  */
 import { SubscribableStream } from './subscribableStream';
 import { PayloadAssembler } from './assemblers';
+import { INodeBuffer } from './interfaces/INodeBuffer';
 
 export class ContentStream {
     public id: string;
@@ -57,7 +58,7 @@ export class ContentStream {
 
     private async readAll(): Promise<Record<string, any>> {
     // do a read-all
-        let allData: Buffer[] = [];
+        let allData: INodeBuffer[] = [];
         let count = 0;
         let stream = this.getStream();
 
@@ -65,14 +66,14 @@ export class ContentStream {
         while (count < stream.length) {
             let chunk = stream.read(stream.length);
             allData.push(chunk);
-            count += (chunk as Buffer).length;
+            count += (chunk as INodeBuffer).length;
         }
 
         if (count < this.length) {
             let readToEnd = new Promise<boolean>((resolve): void => {
                 let callback = (cs: ContentStream) => (chunk: any): void => {
                     allData.push(chunk);
-                    count += (chunk as Buffer).length;
+                    count += (chunk as INodeBuffer).length;
                     if (count === cs.length) {
                         resolve(true);
                     }

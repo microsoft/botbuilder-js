@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { IBrowserFileReader, IBrowserWebSocket, ISocket } from '../interfaces';
+import { IBrowserFileReader, IBrowserWebSocket, ISocket, INodeBuffer } from '../interfaces';
 import { doesGlobalFileReaderExist, doesGlobalWebSocketExist } from '../utilities';
 
 const createWebSocket = function(url: string): IBrowserWebSocket {
@@ -79,7 +79,7 @@ export class BrowserWebSocket implements ISocket {
      *
      * @param buffer The buffer of data to send across the connection.
      */
-    public write(buffer: Buffer): void {
+    public write(buffer: INodeBuffer): void {
         this.webSocket.send(buffer);
     }
 
