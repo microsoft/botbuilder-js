@@ -64,6 +64,13 @@ export function recognizeChoices(utterance: string, choices: (string|Choice)[], 
             // TODO: Should this log an error or do something?
         }
     }
+    
+    // Initialize options
+    options = Object.assign({
+        locale: 'en-us',
+        recognizeNumbers: true,
+        recognizeOrdinals: true
+    } as FindChoicesOptions, options);
 
     // Normalize choices
     const list: Choice[] = (choices || []).map(
@@ -76,16 +83,17 @@ export function recognizeChoices(utterance: string, choices: (string|Choice)[], 
     // - We only want to use a single strategy for returning results to avoid issues where utterances
     //   like the "the third one" or "the red one" or "the first division book" would miss-recognize as
     //   a numerical index or ordinal as well.
-    const locale: string = options && options.locale ? options.locale : 'en-us';
     let matched: ModelResult<FoundChoice>[] = findChoices(utterance, list, options);
     if (matched.length === 0) {
         // Next try finding by ordinal
-        const ordinals: ModelResult[] = Recognizers.recognizeOrdinal(utterance, locale);
-        if (ordinals.length > 0) {
+        if (options.recognizeOrdinals) {
+            const ordinals: ModelResult[] = Recognizers.recognizeOrdinal(utterance, options.locale);
             ordinals.forEach(matchChoiceByIndex);
-        } else {
-            // Finally try by numerical index
-            Recognizers.recognizeNumber(utterance, locale).forEach(matchChoiceByIndex);
+        }
+
+        // Finally try by numerical index
+        if (matched.length === 0 && options.recognizeNumbers) {
+            Recognizers.recognizeNumber(utterance, options.locale).forEach(matchChoiceByIndex);
         }
 
         // Sort any found matches by their position within the utterance.

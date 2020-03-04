@@ -11,6 +11,7 @@ import { ExpressionEvaluator, EvaluateExpressionDelegate } from './expressionEva
 import { ExpressionType } from './expressionType';
 import { SimpleObjectMemory, MemoryInterface } from './memory';
 import { Extensions } from './extensions';
+import { ExpressionEngine } from './parser';
 
 /**
  * Type expected from evalating an expression.
@@ -74,6 +75,10 @@ export class Expression {
     public constructor(type: string, evaluator: ExpressionEvaluator, ...children: Expression[]) {
         this.evaluator = evaluator === undefined ? ExpressionFunctions.lookup(type) : evaluator;
         this.children = children;
+    }
+
+    public static parse(expression: string): Expression {
+        return new ExpressionEngine().parse(expression);
     }
 
     /**

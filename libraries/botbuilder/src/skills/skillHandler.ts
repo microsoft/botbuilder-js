@@ -12,12 +12,12 @@ import {
     ActivityTypes,
     BotAdapter,
     ResourceResponse,
+    SkillConversationIdFactoryBase,
     TurnContext
 } from 'botbuilder-core';
 import { AuthenticationConfiguration, AppCredentials, ICredentialProvider, ClaimsIdentity } from 'botframework-connector';
 
 import { ChannelServiceHandler } from '../channelServiceHandler';
-import { SkillConversationIdFactoryBase } from './skillConversationIdFactoryBase';
 import { BotFrameworkAdapter } from '../botFrameworkAdapter';
 
 /**

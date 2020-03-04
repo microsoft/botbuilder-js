@@ -1762,6 +1762,7 @@ export enum ActivityImportance {
 export enum DeliveryModes {
   Normal = 'normal',
   Notification = 'notification',
+  BufferedReplies = 'bufferedReplies'
 }
 
 /**

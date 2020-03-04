@@ -1,6 +1,7 @@
 const net = require('net');
 const np = require('../lib');
 const npt = require('../lib/namedPipe/namedPipeTransport');
+const { createNodeServer, getServerFactory } = require('../lib/utilities/createNodeServer');
 const protocol = require('../lib');
 const  chai  = require('chai');
 var expect = chai.expect;
@@ -414,5 +415,39 @@ describe('Streaming Extensions NamedPipe Library Tests', () => {
             expect(server.disconnect()).to.not.throw;
             done();
         });
+
+        
+        it('calling createNodeServer() should throw if passing in a callback that\'s not a function', () => {
+            const stringCallback = 'Not a real callback function.';
+            expect(() => createNodeServer(stringCallback)).to.throw(TypeError);
+        });
+
+        it('should not throw when choosing not to pass in a callback at all into createNodeServer()', () => {
+            expect(() => createNodeServer()).to.not.throw;
+        });
+
+        it('should return a Server when calling createNodeServer()', () => {
+            const server = createNodeServer();
+            expect(server).to.not.throw;
+            expect(server).to.not.be.null;
+            expect(server).to.be.instanceOf(Object);
+            expect(typeof server.listen).to.equal('function');
+            expect(typeof server.close).to.equal('function');
+        });
+
+        it('should return the factory when calling getServerFactory()', () => {
+            expect(getServerFactory()).to.not.throw;
+            const serverFactoryFunction = getServerFactory();
+            expect(serverFactoryFunction).to.not.be.null;
+            expect(typeof serverFactoryFunction).to.equal('function');
+        });
+
+        it('should throw if the callback isn\'t a valid connection listener callback', () => {
+            const notASocket = 'not a Socket';
+            const callback = (notASocket) => { };
+            const serverFactory = getServerFactory();
+            expect(serverFactory(callback)).to.throw;
+        });
+
     });
 });

@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 
-import * as adal from 'adal-node'
+import * as adal from 'adal-node';
 import { AppCredentials } from './appCredentials';
 
 /**
@@ -15,21 +15,21 @@ import { AppCredentials } from './appCredentials';
 export class MicrosoftAppCredentials extends AppCredentials {
     public appPassword: string;
 
-    constructor(appId: string, appPassword: string, channelAuthTenant?: string, oAuthScope?: string) {
+    public constructor(appId: string, appPassword: string, channelAuthTenant?: string, oAuthScope?: string) {
         super(appId, channelAuthTenant, oAuthScope);
         this.appPassword = appPassword;
     }
 
     protected async refreshToken(): Promise<adal.TokenResponse> {
         if (!this.refreshingToken) {
-            this.refreshingToken = new Promise<adal.TokenResponse>((resolve, reject) => {
-                this.authenticationContext.acquireTokenWithClientCredentials(this.oAuthScope, this.appId, this.appPassword, function(err, tokenResponse) {
+            this.refreshingToken = new Promise<adal.TokenResponse>((resolve, reject): void => {
+                this.authenticationContext.acquireTokenWithClientCredentials(this.oAuthScope, this.appId, this.appPassword, function(err, tokenResponse): void {
                     if (err) {
                         reject(err);
                     } else {
                         resolve(tokenResponse as adal.TokenResponse);
                     }
-                  });
+                });
 
             });
         }

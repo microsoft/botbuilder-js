@@ -14,6 +14,7 @@ import {
     AppBasedLinkQuery,
     ChannelInfo,
     FileConsentCardResponse,
+    InvokeResponse,
     MessagingExtensionAction,
     MessagingExtensionActionResponse,
     MessagingExtensionQuery,
@@ -27,7 +28,6 @@ import {
     TeamInfo,
     TurnContext
 } from 'botbuilder-core';
-import { InvokeResponse } from './interfaces';
 import { TeamsInfo } from './teamsInfo';
 
 export class TeamsActivityHandler extends ActivityHandler {

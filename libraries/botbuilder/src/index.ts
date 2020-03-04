@@ -19,7 +19,6 @@ export { ChannelServiceRoutes, RouteHandler, WebServer } from './channelServiceR
 export * from './fileTranscriptStore';
 export * from './inspectionMiddleware';
 export {
-    InvokeResponse,
     WebRequest,
     WebResponse
 } from './interfaces';

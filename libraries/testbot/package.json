@@ -10,11 +10,11 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
+    "@microsoft/recognizers-text-data-types-timex-expression": "^1.1.4",
     "botbuilder": "4.1.6",
     "botbuilder-ai": "4.1.6",
     "botbuilder-dialogs": "4.1.6",
     "botbuilder-testing": "4.1.6",
-    "@microsoft/recognizers-text-data-types-timex-expression": "^1.1.4",
     "dotenv": "^6.1.0",
     "restify": "^8.3.0"
   },
@@ -22,6 +22,6 @@
     "@types/mocha": "^2.2.47",
     "assert": "^1.4.1",
     "mocha": "^5.2.0",
-    "nyc": "^11.4.1"
+    "nyc": "^15.0.0"
   }
 }

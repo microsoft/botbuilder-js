@@ -7,7 +7,7 @@
  */
 
 import axios from 'axios';
-import { Activity } from 'botbuilder-core';
+import { Activity, BotFrameworkClient, InvokeResponse } from 'botbuilder-core';
 import {
     AuthenticationConstants,
     GovernmentConstants,
@@ -17,19 +17,20 @@ import {
 } from 'botframework-connector';
 
 import { USER_AGENT } from './botFrameworkAdapter';
-import { InvokeResponse } from './interfaces';
 
 /**
  * HttpClient for calling skills from a Node.js BotBuilder V4 SDK bot.
  */
-export class BotFrameworkHttpClient {
+export class BotFrameworkHttpClient extends BotFrameworkClient {
     /**
      * Cache for appCredentials to speed up token acquisition (a token is not requested unless is expired)
      * AppCredentials are cached using appId + scope (this last parameter is only used if the app credentials are used to call a skill)
      */
     private static readonly appCredentialMapCache: Map<string, MicrosoftAppCredentials> = new Map<string, MicrosoftAppCredentials>();
 
-    constructor(private readonly credentialProvider: ICredentialProvider, private readonly channelService?: string) {
+
+    public constructor(private readonly credentialProvider: ICredentialProvider, private readonly channelService?: string) {
+        super();
         if (!this.credentialProvider) {
             throw new Error('BotFrameworkHttpClient(): missing credentialProvider');
         }
@@ -96,6 +97,18 @@ export class BotFrameworkHttpClient {
         }
     }
 
+    protected async buildCredentials(appId: string, oAuthScope?: string): Promise<MicrosoftAppCredentials> {
+        const appPassword = await this.credentialProvider.getAppPassword(appId);
+        let appCredentials;        
+        if (JwtTokenValidation.isGovernment(this.channelService)) {
+            appCredentials = new MicrosoftAppCredentials(appId, appPassword, undefined, oAuthScope);
+            appCredentials.oAuthEndpoint = GovernmentConstants.ToChannelFromBotLoginUrl;
+        } else {
+            appCredentials = new MicrosoftAppCredentials(appId, appPassword, undefined, oAuthScope);
+        }
+        return appCredentials;
+    }
+
     /**
      * Gets the application credentials. App Credentials are cached so as to ensure we are not refreshing
      * token every time.
@@ -114,14 +127,8 @@ export class BotFrameworkHttpClient {
             return appCredentials;
         }
 
-        const appPassword = await this.credentialProvider.getAppPassword(appId);
-        if (JwtTokenValidation.isGovernment(this.channelService)) {
-            appCredentials = new MicrosoftAppCredentials(appId, appPassword, this.channelService, oAuthScope);
-            appCredentials.oAuthEndpoint = GovernmentConstants.ToChannelFromBotLoginUrl;
-            appCredentials.oAuthScope = GovernmentConstants.ToChannelFromBotOAuthScope;
-        } else {
-            appCredentials = new MicrosoftAppCredentials(appId, appPassword, this.channelService, oAuthScope);
-        }
+        // Credentials not found in cache, build them
+        appCredentials = await this.buildCredentials(appId, oAuthScope);
 
         // Cache the credentials for later use
         BotFrameworkHttpClient.appCredentialMapCache.set(cacheKey, appCredentials);

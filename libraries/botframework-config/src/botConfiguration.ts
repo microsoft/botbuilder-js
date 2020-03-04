@@ -30,11 +30,7 @@ interface InternalBotConfig {
 }
 
 /**
- * BotConfiguration represents configuration information for a bot.
- *
- * @remarks
- * It is typically loaded from a .bot file on disk. This class implements methods for encrypting
- * and manipulating the in-memory representation of the configuration.
+ * @deprecated See https://aka.ms/bot-file-basics for more information.
  */
 export class BotConfiguration extends BotConfigurationBase {
 
