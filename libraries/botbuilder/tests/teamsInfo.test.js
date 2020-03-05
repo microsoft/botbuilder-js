@@ -26,8 +26,31 @@ class TestContext extends TurnContext {
 }
 
 describe('TeamsInfo', () => {
-    describe('sendMessageToTeamsChannel()', () =>{
-        it('should error if context is null', async () =>{
+    describe('sendMessageToTeamsChannel()', () => {
+        it('should work with correct information'), async() => {
+            const newConversation = [
+                {
+                    "activityid": "activityid123",
+                },
+                "resourceresponseid"
+            ];
+
+            const fetchNewConversation = nock('https://smba.trafficmanager.net/amer')
+                .post('/v3/conversations')
+                .reply(200, { newConversation });
+
+            const context = new TestContext(teamActivity);
+            const msg = MessageFactory.text("test message");
+            const teamChannelId = "19%3AgeneralChannelIdgeneralChannelId%40thread.skype";
+
+            const response = await TeamsInfo.sendMessageToTeamsChannel(context,msg, teamChannelId);
+            assert(fetchNewConversation.isDone());
+            assert(Array.isArray(response));
+            assert(newConversation[0]["activityid"] == "activityid123");
+            assert(response[1] == "resourceresponseid");
+        }
+
+        it('should error if context is null', async () => {
             try {
                 await TeamsInfo.sendMessageToTeamsChannel(null, teamActivity, "teamID");
             } catch (err){
@@ -35,7 +58,7 @@ describe('TeamsInfo', () => {
             }
         });
 
-        it('should error if activity is null', async () =>{
+        it('should error if activity is null', async () => {
             const context = new TestContext(teamActivity);
             try {
                 await TeamsInfo.sendMessageToTeamsChannel(context, null, "teamID");
@@ -44,7 +67,7 @@ describe('TeamsInfo', () => {
             }
         });
 
-        it('should error if teamID is a blank string', async () =>{
+        it('should error if teamID is a blank string', async () => {
             const context = new TestContext(teamActivity);
             try {
                 await TeamsInfo.sendMessageToTeamsChannel(context, teamActivity, "");
@@ -53,7 +76,7 @@ describe('TeamsInfo', () => {
             }
         });
 
-        it('should error if teamID is null', async () =>{
+        it('should error if teamID is null', async () => {
             const context = new TestContext(teamActivity);
             try {
                 await TeamsInfo.sendMessageToTeamsChannel(context, teamActivity, null);

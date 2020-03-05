@@ -36,15 +36,15 @@ export class TeamsInfo {
     }
 
     public static async sendMessageToTeamsChannel(context: TurnContext, activity: Partial<Activity>, teamsChannelId: string): Promise<[Partial<ConversationReference>, string]> {
-        if (context == null){
+        if (!context) {
             throw new Error("TurnContext cannot be null");
         }
 
-        if (activity == null){
+        if (!activity) {
             throw new Error("Activity cannot be null");
         }
 
-        if (teamsChannelId == null || teamsChannelId == ""){
+        if (!teamsChannelId || !teamsChannelId) {
             throw new Error("The teamsChannelId cannot be null or empty");
         }
 
