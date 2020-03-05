@@ -8,7 +8,7 @@
 // tslint:disable-next-line: no-submodule-imports
 import { AbstractParseTreeVisitor, TerminalNode } from 'antlr4ts/tree';
 import { ParserRuleContext } from 'antlr4ts/ParserRuleContext';
-import { ExpressionFunctions, Constant, EvaluatorLookup, Expression, ExpressionEngine, ExpressionEvaluator, ExpressionType, ReturnType, SimpleObjectMemory } from 'adaptive-expressions';
+import { ExpressionFunctions, Constant, EvaluatorLookup, Expression, ExpressionParser, ExpressionEvaluator, ExpressionType, ReturnType, SimpleObjectMemory } from 'adaptive-expressions';
 import { keyBy } from 'lodash';
 import { CustomizedMemory } from './customizedMemory';
 import { EvaluationTarget } from './evaluationTarget';
@@ -20,7 +20,7 @@ import * as fs from 'fs';
 import { LGExtensions } from './lgExtensions';
 import { LGErrors } from './lgErrors';
 /**
- * Evaluation tuntime engine
+ * Evaluation runtime engine
  */
 // tslint:disable-next-line: max-classes-per-file
 export class Evaluator extends AbstractParseTreeVisitor<any> implements LGFileParserVisitor<any> {
@@ -31,9 +31,9 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGFilePa
     public readonly templates: LGTemplate[];
 
     /**
-     * Expression engine.
+     * Expression parser.
      */
-    public readonly expressionEngine: ExpressionEngine;
+    public readonly expressionParser: ExpressionParser;
 
     /**
      * TemplateMap.
@@ -53,14 +53,14 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGFilePa
     public static readonly isTemplateFunctionName = 'isTemplate';
     private static readonly ReExecuteSuffix = '!';
 
-    public constructor(templates: LGTemplate[], expressionEngine: ExpressionEngine, strictMode: boolean = false) {
+    public constructor(templates: LGTemplate[], expressionParser: ExpressionParser, strictMode: boolean = false) {
         super();
         this.templates = templates;
         this.templateMap = keyBy(templates, (t: LGTemplate): string => t.name);
         this.strictMode = strictMode;
 
-        // generate a new customzied expression engine by injecting the template as functions
-        this.expressionEngine = new ExpressionEngine(this.customizedEvaluatorLookup(expressionEngine.EvaluatorLookup));
+        // generate a new customzied expression parser by injecting the template as functions
+        this.expressionParser = new ExpressionParser(this.customizedEvaluatorLookup(expressionParser.EvaluatorLookup));
     }
 
     public static wrappedRegExSplit(inputString: string, regex: RegExp): string[] {
@@ -339,7 +339,7 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGFilePa
         exp = LGExtensions.trimExpression(exp);
         let result: any;
         let error: string;
-        ({value: result, error: error} = this.evalByExpressionEngine(exp, this.currentTarget().scope));
+        ({value: result, error: error} = this.evalByAdaptiveExpression(exp, this.currentTarget().scope));
 
         if (this.strictMode && (error || !result))
         {
@@ -379,7 +379,7 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGFilePa
         exp = LGExtensions.trimExpression(exp);
         let result: any;
         let error: string;
-        ({value: result, error: error} = this.evalByExpressionEngine(exp, this.currentTarget().scope));
+        ({value: result, error: error} = this.evalByAdaptiveExpression(exp, this.currentTarget().scope));
 
         if (error || (result === undefined && this.strictMode))
         {
@@ -442,18 +442,22 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGFilePa
         return {hasExpr: hasExpr, expression: expression};
     }
 
-    private evalByExpressionEngine(exp: string, scope: any): { value: any; error: string } {
-        const parse: Expression = this.expressionEngine.parse(exp);
+    private evalByAdaptiveExpression(exp: string, scope: any): { value: any; error: string } {
+        const parse: Expression = this.expressionParser.parse(exp);
 
         return parse.tryEvaluate(scope);
     }
 
     // Genearte a new lookup function based on one lookup function
     private readonly customizedEvaluatorLookup = (baseLookup: EvaluatorLookup): any => (name: string): any => {
-        const prebuiltPrefix = 'prebuilt.';
+        const standardFunction = baseLookup(name);
 
-        if (name.startsWith(prebuiltPrefix)) {
-            return baseLookup(name.substring(prebuiltPrefix.length));
+        if (standardFunction !== undefined) {
+            return standardFunction;
+        }
+
+        if (name.startsWith('lg.')) {
+            name = name.substring(3);
         }
 
         var templateName = this.parseTemplateName(name).pureTemplateName;
@@ -482,7 +486,7 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGFilePa
             return new ExpressionEvaluator(Evaluator.isTemplateFunctionName, ExpressionFunctions.apply(this.isTemplate()), ReturnType.Boolean, ExpressionFunctions.validateUnaryString);
         }
 
-        return baseLookup(name);
+        return undefined;
     }
 
     private evalEscape(exp: string): string {

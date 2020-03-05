@@ -24,7 +24,7 @@ import { Diagnostic, DiagnosticSeverity } from './diagnostic';
 import { Position } from './position';
 import { ParserRuleContext } from 'antlr4ts';
 import { Range } from './range';
-import { ExpressionEngine } from 'adaptive-expressions';
+import { ExpressionParser } from 'adaptive-expressions';
 
 export declare type ImportResolverDelegate = (source: string, resourceId: string) => { content: string; id: string };
 
@@ -42,14 +42,14 @@ export class LGParser {
     * parse a file and return LG file.
     * @param filePath LG absolute file path..
     * @param importResolver resolver to resolve LG import id to template text.
-    * @param expressionEngine Expression engine for evaluating expressions.
+    * @param expressionParser Expression parser for evaluating expressions.
     * @returns new lg file.
     */
-    public static parseFile(filePath: string, importResolver?: ImportResolverDelegate, expressionEngine?: ExpressionEngine): LGFile {
+    public static parseFile(filePath: string, importResolver?: ImportResolverDelegate, expressionParser?: ExpressionParser): LGFile {
         const fullPath = LGExtensions.normalizePath(filePath);
         const content = fs.readFileSync(fullPath, 'utf-8');
 
-        return LGParser.parseText(content, fullPath, importResolver, expressionEngine);
+        return LGParser.parseText(content, fullPath, importResolver, expressionParser);
     }
 
     /**
@@ -57,17 +57,17 @@ export class LGParser {
      * @param content ext content contains lg templates.
      * @param id id is the identifier of content. If importResolver is null, id must be a full path string. 
      * @param importResolver resolver to resolve LG import id to template text.
-     * @param expressionEngine Expression engine for evaluating expressions.
+     * @param expressionParser Expression parser for evaluating expressions.
      * @returns entity.
      */
-    public static parseText(content: string, id: string = '', importResolver?: ImportResolverDelegate, expressionEngine?: ExpressionEngine): LGFile {
+    public static parseText(content: string, id: string = '', importResolver?: ImportResolverDelegate, expressionParser?: ExpressionParser): LGFile {
         importResolver = importResolver ? importResolver : LGParser.defaultFileResolver;
         let lgFile = new LGFile();
         lgFile.content = content;
         lgFile.id = id;
         lgFile.importResolver = importResolver;
-        if (expressionEngine) {
-            lgFile.expressionEngine = expressionEngine;
+        if (expressionParser) {
+            lgFile.expressionParser = expressionParser;
         }
         let diagnostics: Diagnostic[] = [];
         try {
@@ -78,7 +78,7 @@ export class LGParser {
             lgFile.updateStrictMode();
             diagnostics = diagnostics.concat(parsedResult.invalidTemplateErrors);
             lgFile.references = this.getReferences(lgFile, importResolver);
-            const semanticErrors = new StaticChecker(lgFile, lgFile.expressionEngine).check();
+            const semanticErrors = new StaticChecker(lgFile, lgFile.expressionParser).check();
             diagnostics = diagnostics.concat(semanticErrors);
         } catch (err) {
             if (err instanceof LGException) {

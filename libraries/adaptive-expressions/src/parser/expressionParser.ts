@@ -13,29 +13,29 @@ import { ExpressionFunctions } from '../expressionFunctions';
 import { Constant } from '../constant';
 import { Expression } from '../expression';
 import { EvaluatorLookup } from '../expressionEvaluator';
-import { ExpressionParserInterface } from '../expressionParser';
+import { ExpressionParserInterface } from '../expressionParserInterface';
 import { ExpressionType } from '../expressionType';
-import { ExpressionLexer, ExpressionParser, ExpressionParserVisitor } from './generated';
-import * as ep from './generated/ExpressionParser';
+import {  ExpressionAntlrLexer, ExpressionAntlrParser, ExpressionAntlrParserVisitor } from './generated';
+import * as ep from './generated/ExpressionAntlrParser';
 import { ParseErrorListener } from './parseErrorListener';
 import { Util } from './util';
 
 /**
  * Parser to turn strings into Expression
  */
-export class ExpressionEngine implements ExpressionParserInterface {
+export class ExpressionParser implements ExpressionParserInterface {
     /**
      * The delegate to lookup function information from the type.
      */
     public readonly EvaluatorLookup: EvaluatorLookup;
 
     // tslint:disable-next-line: typedef
-    private readonly ExpressionTransformer = class extends AbstractParseTreeVisitor<Expression> implements ExpressionParserVisitor<Expression> {
+    private readonly ExpressionTransformer = class extends AbstractParseTreeVisitor<Expression> implements ExpressionAntlrParserVisitor<Expression> {
 
-        private readonly _lookup: EvaluatorLookup = undefined;
+        private readonly _lookupFunction: EvaluatorLookup = undefined;
         public constructor(lookup: EvaluatorLookup) {
             super();
-            this._lookup = lookup;
+            this._lookupFunction = lookup;
         }
 
         public transform = (context: ParseTree): Expression => this.visit(context);
@@ -126,14 +126,14 @@ export class ExpressionEngine implements ExpressionParserInterface {
             for (const node  of context.stringInterpolation().children) {
                 if (node instanceof TerminalNode){
                     switch((node as TerminalNode).symbol.type) {
-                        case ep.ExpressionParser.TEMPLATE:
+                        case ep.ExpressionAntlrParser.TEMPLATE:
                             const expressionString = this.trimExpression(node.text);
-                            children.push(new ExpressionEngine(this._lookup).parse(expressionString));
+                            children.push(Expression.parse(expressionString, this._lookupFunction));
                             break;
-                        case ep.ExpressionParser.TEXT_CONTENT:
+                        case ep.ExpressionAntlrParser.TEXT_CONTENT:
                             children.push(new Constant(node.text));
                             break;
-                        case ep.ExpressionParser.ESCAPE_CHARACTER:
+                        case ep.ExpressionAntlrParser.ESCAPE_CHARACTER:
                             children.push(new Constant(Util.unescape(node.text)));
                             break;
                         default:
@@ -170,8 +170,14 @@ export class ExpressionEngine implements ExpressionParserInterface {
 
         protected defaultResult = (): Expression => new Constant('');
 
-        private readonly MakeExpression = (type: string, ...children: Expression[]): Expression =>
-            Expression.makeExpression(type, this._lookup(type), ...children)
+        private readonly MakeExpression = (functionType: string, ...children: Expression[]): Expression => {
+            if (!this._lookupFunction(functionType)) {
+                throw Error(`${ functionType } does not have an evaluator, it's not a built-in function or a custom function.`);
+            }
+
+            return Expression.makeExpression(functionType, this._lookupFunction(functionType), ...children);
+        }
+           
 
         private processArgsList(context: ep.ArgsListContext): Expression[] {
             const result: Expression[] = [];
@@ -203,15 +209,15 @@ export class ExpressionEngine implements ExpressionParserInterface {
     };
 
     public constructor(lookup?: EvaluatorLookup) {
-        this.EvaluatorLookup = lookup === undefined ? ExpressionFunctions.lookup : lookup;
+        this.EvaluatorLookup = lookup === undefined ? Expression.lookup : lookup;
     }
 
     protected static antlrParse(expression: string): ParseTree {
         const inputStream: ANTLRInputStream = new ANTLRInputStream(expression);
-        const lexer: ExpressionLexer = new ExpressionLexer(inputStream);
+        const lexer: ExpressionAntlrLexer = new ExpressionAntlrLexer(inputStream);
         lexer.removeErrorListeners();
         const tokenStream: CommonTokenStream = new CommonTokenStream(lexer);
-        const parser: ExpressionParser = new ExpressionParser(tokenStream);
+        const parser: ExpressionAntlrParser = new ExpressionAntlrParser(tokenStream);
         parser.removeErrorListeners();
         parser.addErrorListener(ParseErrorListener.Instance);
         parser.buildParseTree = true;
@@ -234,7 +240,7 @@ export class ExpressionEngine implements ExpressionParserInterface {
         if (expression === undefined || expression === null || expression === '') {
             return new Constant('');
         } else {
-            return new this.ExpressionTransformer(this.EvaluatorLookup).transform(ExpressionEngine.antlrParse(expression));
+            return new this.ExpressionTransformer(this.EvaluatorLookup).transform(ExpressionParser.antlrParse(expression));
         }
     }
 }

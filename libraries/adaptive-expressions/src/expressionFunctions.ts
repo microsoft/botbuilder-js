@@ -54,7 +54,10 @@ export class ExpressionFunctions {
      */
     public static readonly UnixMilliSecondToTicksConstant: number = 621355968000000000;
 
-    public static _functions: Map<string, ExpressionEvaluator> = ExpressionFunctions.buildFunctionLookup();
+    /**
+     * Read only Dictionary of built in functions.
+     */
+    public static readonly standardFunctions: ReadonlyMap<string, ExpressionEvaluator> = ExpressionFunctions.getStandardFunctions();
 
     /**
      * Validate that expression has a certain number of children that are of any of the supported types.
@@ -702,19 +705,6 @@ export class ExpressionFunctions {
         }
 
         return { value, error };
-    }
-
-    /**
-     * Lookup a built-in function information by type.
-     * @param type Type to look up.
-     */
-    public static lookup(type: string): ExpressionEvaluator {
-        const evaluator: ExpressionEvaluator = ExpressionFunctions._functions.get(type);
-        if (!evaluator) {
-            throw new Error(`${ type } does not have an evaluator, it's not a built-in function or a customized function`);
-        }
-
-        return evaluator;
     }
 
     public static timestampFormatter(formatter: string): string {
@@ -1812,8 +1802,10 @@ export class ExpressionFunctions {
         return res;
     }
 
+
+
     // tslint:disable-next-line: max-func-body-length
-    private static buildFunctionLookup(): Map<string, ExpressionEvaluator> {
+    private static getStandardFunctions(): ReadonlyMap<string, ExpressionEvaluator> {
         // tslint:disable-next-line: no-unnecessary-local-variable
         const functions: ExpressionEvaluator[] = [
             //Math
@@ -3038,6 +3030,6 @@ export class ExpressionFunctions {
         lookup.set('or', lookup.get(ExpressionType.Or));
         lookup.set('&', lookup.get(ExpressionType.Concat));
 
-        return lookup;
+        return lookup as ReadonlyMap<string, ExpressionEvaluator>;
     }
 }

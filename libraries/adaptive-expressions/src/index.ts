@@ -9,7 +9,7 @@ export * from './expressionFunctions';
 export * from './constant';
 export * from './expression';
 export * from './expressionEvaluator';
-export * from './expressionParser';
+export * from './expressionParserInterface';
 export * from './expressionType';
 export * from './extensions';
 export * from './timeZoneConverter';
