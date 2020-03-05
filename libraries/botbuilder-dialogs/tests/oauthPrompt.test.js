@@ -290,9 +290,19 @@ describe('OAuthPrompt', function () {
                 }
 
                 async getUserToken(context, magicCode) {
-                    assert(context, 'context not passed in to getSignInLink call.');
+                    assert(context, 'context not passed in to getUserToken call.');
                     assert(magicCode, 'magicCode not passed in to getUserToken call');
                     return 'token';
+                }
+
+                async getSignInResource(context, connectionName, userId) {
+                    assert(context, 'context not passed in to getSignInResource call.');
+                    assert(connectionName, 'connectionName not passed in to getSignInResource call');
+                    assert(userId, 'userId not passed in to getSignInResource call');
+                    return {
+                        signInLink: this.signInLink,
+                        tokenExchangeResource: this.tokenExchangeResource
+                    };
                 }
             }
 
@@ -318,14 +328,19 @@ describe('OAuthPrompt', function () {
                 const title = 'myTitle';
                 const text = 'Sign in here';
                 const signInLink = 'https://dev.botframework.com';
+                const tokenExchangeResource = {
+                    id: 'id',
+                    uri: 'some uri'
+                };
                 const adapter = new SendActivityAdapter({
                     connectionName, signInLink,
-                    text, title,
+                    text, title, tokenExchangeResource
                 });
                 const context = new TurnContext(adapter, {
-                    activity: {
-                        channelId: Channels.Webchat,
-                        serviceUrl: 'https://bing.com',
+                    channelId: Channels.Webchat,
+                    serviceUrl: 'https://bing.com',
+                    from: {
+                        id: 'someId'
                     }
                 });
                 // Override sendActivity
@@ -354,14 +369,19 @@ describe('OAuthPrompt', function () {
                 const title = 'myTitle';
                 const text = 'Sign in here';
                 const signInLink = 'https://dev.botframework.com';
+                const tokenExchangeResource = {
+                    id: 'id',
+                    uri: 'some uri'
+                };
                 const adapter = new SendActivityAdapter({
                     connectionName, signInLink,
-                    text, title,
+                    text, title, tokenExchangeResource
                 });
                 const context = new TurnContext(adapter, {
-                    activity: {
-                        channelId: Channels.Webchat,
-                        serviceUrl: 'https://bing.com',
+                    channelId: Channels.Webchat,
+                    serviceUrl: 'https://bing.com',
+                    from: {
+                        id: 'someId'
                     }
                 });
                 context.turnState.set(adapter.BotIdentityKey, new ClaimsIdentity([
@@ -400,6 +420,9 @@ describe('OAuthPrompt', function () {
                 const context = new TurnContext(adapter, {
                     channelId: Channels.Webchat,
                     serviceUrl: 'wss://bing.com',
+                    from: {
+                        id: 'someId'
+                    }
                 });
                 // Override sendActivity
                 context.sendActivity = async function(activity) {
@@ -432,9 +455,10 @@ describe('OAuthPrompt', function () {
                     text, title,
                 });
                 const context = new TurnContext(adapter, {
-                    activity: {
-                        channelId: Channels.Webchat,
-                        serviceUrl: 'https://bing.com',
+                    channelId: Channels.Webchat,
+                    serviceUrl: 'https://bing.com',
+                    from: {
+                        id: 'someId'
                     }
                 });
                 context.turnState.set(adapter.BotIdentityKey, new ClaimsIdentity([

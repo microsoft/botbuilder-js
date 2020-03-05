@@ -4,7 +4,7 @@ const { expect } = require('chai');
 const { spy } = require('sinon');
 const { ActivityHandler, ActivityTypes, StatusCodes, TurnContext } = require('botbuilder-core');
 
-const { BotFrameworkAdapter, StatusCodes } = require('../../');
+const { BotFrameworkAdapter} = require('../../');
 
 // Import Helper Classes
 const { MockHttpRequest } = require('./mockHttpRequest');

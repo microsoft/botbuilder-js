@@ -285,7 +285,7 @@ export class OAuthPrompt extends Dialog {
                     cardActionType = ActionTypes.OpenUrl;
                 }
                 else {
-                    link = null;
+                    link = undefined;
                 }
 
                 // Append oauth card
