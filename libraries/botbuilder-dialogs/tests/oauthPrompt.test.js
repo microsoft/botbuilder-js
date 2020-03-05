@@ -7,12 +7,12 @@ const beginMessage = { text: `begin`, type: 'message' };
 const answerMessage = { text: `yes`, type: 'message' };
 const invalidMessage = { text: `what?`, type: 'message' };
 
-describe('OAuthPrompt', function () {
+describe('OAuthPrompt', function() {
     this.timeout(5000);
 
-    it('should call OAuthPrompt', async function () {
-        var connectionName = "myConnection";
-        var token = "abc123";
+    it('should call OAuthPrompt', async function() {
+        var connectionName = 'myConnection';
+        var token = 'abc123';
 
         // Initialize TestAdapter.
         const adapter = new TestAdapter(async (turnContext) => {
@@ -39,10 +39,10 @@ describe('OAuthPrompt', function () {
         const dialogState = convoState.createProperty('dialogState');
         const dialogs = new DialogSet(dialogState);
         dialogs.add(new OAuthPrompt('prompt', {
-                connectionName,
-                title: 'Login',
-                timeout: 300000
-            }));
+            connectionName,
+            title: 'Login',
+            timeout: 300000
+        }));
 
         await adapter.send('Hello')
             .assertReply(activity  => {
@@ -59,7 +59,7 @@ describe('OAuthPrompt', function () {
                 var from = eventActivity.from;
                 eventActivity.from = eventActivity.recipient;
                 eventActivity.recipient = from;
-                eventActivity.name = "tokens/response";
+                eventActivity.name = 'tokens/response';
                 eventActivity.value = {
                     connectionName,
                     token
@@ -70,10 +70,10 @@ describe('OAuthPrompt', function () {
             .assertReply('Logged in.');
     });
 
-    it('should call OAuthPrompt with code', async function () {
-        var connectionName = "myConnection";
-        var token = "abc123";
-        var magicCode = "888999";
+    it('should call OAuthPrompt with code', async function() {
+        var connectionName = 'myConnection';
+        var token = 'abc123';
+        var magicCode = '888999';
 
         // Initialize TestAdapter.
         const adapter = new TestAdapter(async (turnContext) => {
@@ -100,10 +100,10 @@ describe('OAuthPrompt', function () {
         const dialogState = convoState.createProperty('dialogState');
         const dialogs = new DialogSet(dialogState);
         dialogs.add(new OAuthPrompt('prompt', {
-                connectionName,
-                title: 'Login',
-                timeout: 300000
-            }));
+            connectionName,
+            title: 'Login',
+            timeout: 300000
+        }));
 
         await adapter.send('Hello')
             .assertReply(activity  => {
@@ -194,9 +194,9 @@ describe('OAuthPrompt', function () {
             .assertReply('Logged in');
     });
 
-    it('should call OAuthPrompt for streaming connection', async function () {
-        var connectionName = "myConnection";
-        var token = "abc123";
+    it('should call OAuthPrompt for streaming connection', async function() {
+        var connectionName = 'myConnection';
+        var token = 'abc123';
 
         // Initialize TestAdapter.
         const adapter = new TestAdapter(async (turnContext) => {
@@ -223,10 +223,10 @@ describe('OAuthPrompt', function () {
         const dialogState = convoState.createProperty('dialogState');
         const dialogs = new DialogSet(dialogState);
         dialogs.add(new OAuthPrompt('prompt', {
-                connectionName,
-                title: 'Login',
-                timeout: 300000
-            }));
+            connectionName,
+            title: 'Login',
+            timeout: 300000
+        }));
 
         const streamingActivity = {
             activityId: '1234',
@@ -260,7 +260,7 @@ describe('OAuthPrompt', function () {
                 var from = eventActivity.from;
                 eventActivity.from = eventActivity.recipient;
                 eventActivity.recipient = from;
-                eventActivity.name = "tokens/response";
+                eventActivity.name = 'tokens/response';
                 eventActivity.value = {
                     connectionName,
                     token
@@ -495,7 +495,7 @@ describe('OAuthPrompt', function () {
         const connectionName = 'myConnection';
         const exchangeToken = 'exch123';
         const token = 'abc123';
-        this.beforeEach(function () {
+        this.beforeEach(function() {
             adapter = new TestAdapter(async (turnContext) => {
                 const userId = 'blah';
                 adapter.addExchangeableToken(connectionName, turnContext.activity.channelId, userId, exchangeToken, token);
@@ -521,8 +521,8 @@ describe('OAuthPrompt', function () {
 
         it('Test adapter should be able to perform token exchanges for token', async function() {
             await adapter
-            .send('hello');
-        })
+                .send('hello');
+        });
     });
 
     describe('OAuthPrompt should be able to exchange tokens', async function() {
@@ -530,7 +530,7 @@ describe('OAuthPrompt', function () {
         const connectionName = 'myConnection';
         const exchangeToken = 'exch123';
         const token = 'abc123';
-        this.beforeEach(function () {
+        this.beforeEach(function() {
             // Initialize TestAdapter
             adapter = new TestAdapter(async (turnContext) => {
                 const dc = await dialogs.createContext(turnContext);
@@ -567,110 +567,82 @@ describe('OAuthPrompt', function () {
 
         it('Should handle token exchange invoke requests via OAuthPrompt', async function() {
             await adapter
-            .send('hello')
-            .assertReply(activity => {
-                assert.strictEqual(activity.attachments.length, 1);
-                assert.strictEqual(activity.attachments[0].contentType, CardFactory.contentTypes.oauthCard);
-                assert(activity.inputHint === InputHints.AcceptingInput);
+                .send('hello')
+                .assertReply(activity => {
+                    assert.strictEqual(activity.attachments.length, 1);
+                    assert.strictEqual(activity.attachments[0].contentType, CardFactory.contentTypes.oauthCard);
+                    assert(activity.inputHint === InputHints.AcceptingInput);
 
-                // Add an exchangeable token to the adapter
-                adapter.addExchangeableToken(connectionName, activity.channelId, activity.recipient.id, exchangeToken, token);
-            })
-            .send({
-                type: ActivityTypes.Invoke,
-                name: 'signin/tokenExchange',
-                value: {
-                    id: null,
-                    connectionName: connectionName,
-                    token: exchangeToken
-                }
-            })
-            .assertReply(a => {
-                assert.strictEqual('invokeResponse', a.type);
-                assert(a.value);
-                assert.strictEqual(a.value.status, 200);
-                assert.strictEqual(a.value.body.connectionName, connectionName);
-                assert(a.value.body.failureDetail === null);
-            })
-            .assertReply('Logged in.');
+                    // Add an exchangeable token to the adapter
+                    adapter.addExchangeableToken(connectionName, activity.channelId, activity.recipient.id, exchangeToken, token);
+                })
+                .send({
+                    type: ActivityTypes.Invoke,
+                    name: 'signin/tokenExchange',
+                    value: {
+                        id: null,
+                        connectionName: connectionName,
+                        token: exchangeToken
+                    }
+                })
+                .assertReply(a => {
+                    assert.strictEqual('invokeResponse', a.type);
+                    assert(a.value);
+                    assert.strictEqual(a.value.status, 200);
+                    assert.strictEqual(a.value.body.connectionName, connectionName);
+                    assert(a.value.body.failureDetail === null);
+                })
+                .assertReply('Logged in.');
         });
 
         it('Should reject token exchange requests if token cannot be exchanged', async function() {
             await adapter
-            .send('hello')
-            .assertReply(activity => {
-                assert.strictEqual(activity.attachments.length, 1);
-                assert.strictEqual(activity.attachments[0].contentType, CardFactory.contentTypes.oauthCard);
-                assert(activity.inputHint === InputHints.AcceptingInput);
+                .send('hello')
+                .assertReply(activity => {
+                    assert.strictEqual(activity.attachments.length, 1);
+                    assert.strictEqual(activity.attachments[0].contentType, CardFactory.contentTypes.oauthCard);
+                    assert(activity.inputHint === InputHints.AcceptingInput);
 
                 // No exchangeable token is added to the adapter
-            })
-            .send({
-                type: ActivityTypes.Invoke,
-                name: 'signin/tokenExchange',
-                value: {
-                    id: null,
-                    connectionName: connectionName,
-                    token: exchangeToken
-                }
-            })
-            .assertReply(a => {
-                assert.strictEqual('invokeResponse', a.type);
-                assert(a.value);
-                assert.strictEqual(a.value.status, 409);
-                assert(a.value.body.failureDetail);
-            });
+                })
+                .send({
+                    type: ActivityTypes.Invoke,
+                    name: 'signin/tokenExchange',
+                    value: {
+                        id: null,
+                        connectionName: connectionName,
+                        token: exchangeToken
+                    }
+                })
+                .assertReply(a => {
+                    assert.strictEqual('invokeResponse', a.type);
+                    assert(a.value);
+                    assert.strictEqual(a.value.status, 409);
+                    assert(a.value.body.failureDetail);
+                });
         });
 
         it('Should reject token exhchange requests with no body', async function() {
             await adapter
-            .send('hello')
-            .assertReply(activity => {
-                assert.strictEqual(activity.attachments.length, 1);
-                assert.strictEqual(activity.attachments[0].contentType, CardFactory.contentTypes.oauthCard);
-                assert(activity.inputHint === InputHints.AcceptingInput);
+                .send('hello')
+                .assertReply(activity => {
+                    assert.strictEqual(activity.attachments.length, 1);
+                    assert.strictEqual(activity.attachments[0].contentType, CardFactory.contentTypes.oauthCard);
+                    assert(activity.inputHint === InputHints.AcceptingInput);
 
                 // No exchangeable token is added to the adapter
-            })
-            .send({
-                type: ActivityTypes.Invoke,
-                name: 'signin/tokenExchange'
+                })
+                .send({
+                    type: ActivityTypes.Invoke,
+                    name: 'signin/tokenExchange'
                 //no body is sent
-            })
-            .assertReply(a => {
-                assert.strictEqual('invokeResponse', a.type);
-                assert(a.value);
-                assert.strictEqual(a.value.status, 400);
-                assert(a.value.body.failureDetail);
-            });
-        });
-
-        it('Should reject token exhchange requests with wrong connection name', async function() {
-            await adapter
-            .send('hello')
-            .assertReply(activity => {
-                assert.strictEqual(activity.attachments.length, 1);
-                assert.strictEqual(activity.attachments[0].contentType, CardFactory.contentTypes.oauthCard);
-                assert(activity.inputHint === InputHints.AcceptingInput);
-
-                // No exchangeable token is added to the adapter
-            })
-            .send({
-                type: ActivityTypes.Invoke,
-                name: 'signin/tokenExchange',
-                value: {
-                    id: null,
-                    connectionName: 'foobar',
-                    token: exchangeToken
-                }
-            })
-            .assertReply(a => {
-                assert.strictEqual('invokeResponse', a.type);
-                assert(a.value);
-                assert.strictEqual(a.value.status, 400);
-                assert.strictEqual(a.value.body.connectionName, connectionName);
-                assert(a.value.body.failureDetail);
-            });
+                })
+                .assertReply(a => {
+                    assert.strictEqual('invokeResponse', a.type);
+                    assert(a.value);
+                    assert.strictEqual(a.value.status, 400);
+                    assert(a.value.body.failureDetail);
+                });
         });
     });
 });

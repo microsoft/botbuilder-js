@@ -427,7 +427,7 @@ export class ActivityHandler extends ActivityHandlerBase {
      * and then continue by calling [defaultNextEvent](xref:botbuilder-core.ActivityHandler.defaultNextEvent).
     */
     protected async onInvokeActivity(context: TurnContext): Promise<void|InvokeResponse> {
-        if(context.activity.name && context.activity.name === verifyStateOperationName || context.activity.name === tokenExchangeOperationName) {
+        if(context.activity.name && (context.activity.name === verifyStateOperationName || context.activity.name === tokenExchangeOperationName)) {
             await this.onSignInInvoke(context);
         }
         else {
