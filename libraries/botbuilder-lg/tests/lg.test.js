@@ -808,7 +808,5 @@ describe('LG', function() {
         assert.equal(lgFile.expressionParser, parser);
         let result = lgFile.evaluateTemplate('template', {});
         assert.strictEqual(result, 3);
-        result = template.evaluateTemplate('callSub', {});
-        assert.strictEqual(result, 12);
     });
 });
