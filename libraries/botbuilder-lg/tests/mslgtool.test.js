@@ -23,7 +23,7 @@ describe('MSLGTool', function() {
     });
 
     it('TestValidateReturnNoErrors', function() {
-        let errors = GetErrors(new MSLGTool(),'ValidFile.lg');
+        const errors = GetErrors(new MSLGTool(),'ValidFile.lg');
         assert.strictEqual(errors.length, 0);
     });
 
