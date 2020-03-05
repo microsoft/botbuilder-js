@@ -9,3 +9,5 @@
 export { BotFrameworkClient } from './botFrameworkClient';
 export { BotFrameworkSkill } from './botFrameworkSkill';
 export { SkillConversationIdFactoryBase } from './skillConversationIdFactoryBase';
+export { SkillConversationReference } from './skillConversationReference';
+export { SkillConversationIdFactoryOptions } from './skillConversationIdFactoryOptions';
