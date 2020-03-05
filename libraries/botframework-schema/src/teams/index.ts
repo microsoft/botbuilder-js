@@ -5,6 +5,7 @@
  */
 
  // The Teams schemas was manually added to botframework-schema. This file has been updated import from the botframework-schema and the extension folder.
+ // The ChannelCount and MemberCount fields were manually added to the TeamDetails definition.
 import * as teams from './extension';
 import { Activity, Attachment, CardAction, ChannelAccount } from '../';
 export * from './extension';
@@ -59,6 +60,15 @@ export interface TeamDetails {
    * the team.
    */
   aadGroupId?: string;
+    /**
+   * @member {number} [channelCount] Count of channels in the team.
+   */
+  channelCount?: number;
+  /**
+   * @member {number} [memberCount] Count of members in the team.
+   * the team.
+   */
+  memberCount?: number;
 }
 
 /**
