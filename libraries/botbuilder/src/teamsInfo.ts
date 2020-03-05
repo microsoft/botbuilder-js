@@ -35,7 +35,7 @@ export class TeamsInfo {
         return await this.getTeamsConnectorClient(context).teams.fetchTeamDetails(t);
     }
 
-    public static async sendMessageToTeamsChannel(context: TurnContext, activity: Partial<Activity>, teamsChannelId: string): Promise<[Partial<ConversationReference>, string]> {
+    public static async sendMessageToTeamsChannel(context: TurnContext, activity: Activity, teamsChannelId: string): Promise<[ConversationReference, string]> {
         if (!context) {
             throw new Error("TurnContext cannot be null");
         }
@@ -48,7 +48,7 @@ export class TeamsInfo {
             throw new Error("The teamsChannelId cannot be null or empty");
         }
 
-        const convoParams = <ConversationParameters>{
+        const convoParams = {
             isGroup: true,
             channelData: {
                 channel: {
@@ -56,13 +56,12 @@ export class TeamsInfo {
                 }
             },
             activity: activity
-        }
-
-        const connectorClient = (<BotFrameworkAdapter>context.adapter).createConnectorClient(context.activity.serviceUrl);
+        } as ConversationParameters;
+        const connectorClient = (context.adapter as BotFrameworkAdapter).createConnectorClient(context.activity.serviceUrl);
         const conversationResourceResponse = await connectorClient.conversations.createConversation(convoParams);
         const conversationReference = TurnContext.getConversationReference(context.activity);
         conversationReference.conversation.id = conversationResourceResponse.id;
-        return [conversationReference, conversationResourceResponse.activityId];       
+        return [conversationReference as ConversationReference, conversationResourceResponse.activityId];       
     }
 
     public static async getTeamChannels(context: TurnContext, teamId?: string): Promise<ChannelInfo[]> {

@@ -1,6 +1,6 @@
 const assert = require('assert');
 const nock = require('nock');
-const { TurnContext } = require('botbuilder-core');
+const { TurnContext, MessageFactory } = require('botbuilder-core');
 const { BotFrameworkAdapter, TeamsInfo } = require('../');
 
 beforeEach(function (done) {
@@ -27,7 +27,7 @@ class TestContext extends TurnContext {
 
 describe('TeamsInfo', () => {
     describe('sendMessageToTeamsChannel()', () => {
-        it('should work with correct information'), async() => {
+        it('should work with correct information', async() => {
             const newConversation = [
                 {
                     "activityid": "activityid123",
@@ -47,8 +47,8 @@ describe('TeamsInfo', () => {
             assert(fetchNewConversation.isDone());
             assert(Array.isArray(response));
             assert(newConversation[0]["activityid"] == "activityid123");
-            assert(response[1] == "resourceresponseid");
-        }
+            assert(newConversation[1] == "resourceresponseid");
+        });
 
         it('should error if context is null', async () => {
             try {
