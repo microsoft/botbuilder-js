@@ -236,11 +236,11 @@ export class ExpressionParser implements ExpressionParserInterface {
      * @returns Expression tree.
      */
     public parse(expression: string): Expression {
-
         if (expression === undefined || expression === null || expression === '') {
             return new Constant('');
         } else {
-            return new this.ExpressionTransformer(this.EvaluatorLookup).transform(ExpressionParser.antlrParse(expression));
+            const temp = ExpressionParser.antlrParse(expression);
+            return new this.ExpressionTransformer(this.EvaluatorLookup).transform(temp);
         }
     }
 }

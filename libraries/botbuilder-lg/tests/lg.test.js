@@ -793,7 +793,7 @@ describe('LG', function() {
         LGFile.evaluateTemplate('templateWithSameParams', {param1:'ms', param2:'newms'});
     });
 
-    it('TestCustomFunction', function() {
+    it.only('TestCustomFunction', function() {
         let parser = new ExpressionParser((func) => {
             if (func === 'custom') {
                 return ExpressionFunctions.numeric('custom', 
@@ -808,5 +808,7 @@ describe('LG', function() {
         assert.equal(lgFile.expressionParser, parser);
         let result = lgFile.evaluateTemplate('template', {});
         assert.strictEqual(result, 3);
+        result = template.evaluateTemplate('callSub', {});
+        assert.strictEqual(result, 12);
     });
 });
