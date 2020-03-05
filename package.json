@@ -27,7 +27,7 @@
     "eslint": "^5.16.0",
     "eslint-plugin-only-warn": "^1.0.1",
     "lerna": "^3.2.1",
-    "mocha": "^5.2.0",
+    "mocha": "^6.1.4",
     "ms-rest-azure": "^2.6.0",
     "read-text-file": "^1.1.0",
     "replace-in-file": "^4.1.0",
