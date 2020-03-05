@@ -57,7 +57,7 @@ OPTIONS
   ;
 
 COMMENTS
-  : '>' ~('\r'|'\n')+ -> skip
+  : '>' ~('\r'|'\n')* -> skip
   ;
 
 WS

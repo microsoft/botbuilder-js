@@ -235,8 +235,11 @@ export class LGFile {
         const templateNameLine: string = this.buildTemplateNameLine(newTemplateName, parameters);
         const newTemplateBody: string = this.convertTemplateBody(templateBody);
         const content = `${ templateNameLine }\r\n${ newTemplateBody }\r\n`;
-        const startLine: number = template.parseTree.start.line - 1;
-        const stopLine: number = template.parseTree.stop.line - 1;
+
+        let startLine: number;
+        let stopLine: number;
+
+        ({startLine, stopLine} = template.getTemplateRange());
         const newContent: string = this.replaceRangeContent(this.content, startLine, stopLine, content);
         this.initialize(LGParser.parseText(newContent, this.id, this.importResolver));
 
@@ -275,8 +278,10 @@ export class LGFile {
             return this;
         }
 
-        const startLine: number = template.parseTree.start.line - 1;
-        const stopLine: number = template.parseTree.stop.line - 1;
+        let startLine: number;
+        let stopLine: number;
+
+        ({startLine, stopLine} = template.getTemplateRange());
 
         const newContent: string = this.replaceRangeContent(this.content, startLine, stopLine, undefined);
         this.initialize(LGParser.parseText(newContent, this.id, this.importResolver));

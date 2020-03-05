@@ -45,7 +45,7 @@ export class MSLGTool {
         }
 
         // extract templates
-        this.templates = LGParser.parseText(lgFileContent).templates;
+        this.templates = lgFile.templates;
         if (this.templates && this.templates.length > 0) {
             this.runTemplateExtractor(this.templates);
         }
