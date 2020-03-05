@@ -183,7 +183,7 @@ export class LGParser {
                 const path = result.id;
                 const notExist = Array.from(resourcesFound).filter(u => u.id === path).length === 0;
                 if (notExist) {
-                    var childResource = LGParser.parseText(content, path, importResolver, start.expressionEngine);
+                    var childResource = LGParser.parseText(content, path, importResolver, start.expressionParser);
                     this.resolveImportResources(childResource, resourcesFound, importResolver);
                 }
             }
