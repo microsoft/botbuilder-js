@@ -228,9 +228,6 @@ export abstract class Prompt<T> extends Dialog {
                 options: state.options,
                 attemptCount: ++state.state['attemptCount']
             });
-            if (state.state['attemptCount'] !== undefined) {
-                state.state['attemptCount']++;
-            }
         } else if (recognized.succeeded) {
             isValid = true;
         }
