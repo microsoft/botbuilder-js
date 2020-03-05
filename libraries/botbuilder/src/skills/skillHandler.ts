@@ -13,9 +13,10 @@ import {
     BotAdapter,
     ResourceResponse,
     SkillConversationIdFactoryBase,
-    TurnContext
+    TurnContext,
+    SkillConversationReference
 } from 'botbuilder-core';
-import { AuthenticationConfiguration, AppCredentials, ICredentialProvider, ClaimsIdentity } from 'botframework-connector';
+import { AuthenticationConfiguration, AppCredentials, ICredentialProvider, ClaimsIdentity, JwtTokenValidation, GovernmentConstants, AuthenticationConstants } from 'botframework-connector';
 
 import { ChannelServiceHandler } from '../channelServiceHandler';
 import { BotFrameworkAdapter } from '../botFrameworkAdapter';
@@ -25,6 +26,10 @@ import { BotFrameworkAdapter } from '../botFrameworkAdapter';
  */
 export class SkillHandler extends ChannelServiceHandler {
     public readonly SkillConversationReferenceKey: Symbol = Symbol('SkillConversationReference');
+    private readonly adapter: BotAdapter;
+    private readonly bot: ActivityHandlerBase;
+    private readonly conversationIdFactory: SkillConversationIdFactoryBase;
+
     /**
      * Initializes a new instance of the SkillHandler class.
      * @param adapter An instance of the BotAdapter that will handle the request.
@@ -34,10 +39,10 @@ export class SkillHandler extends ChannelServiceHandler {
      * @param authConfig The authentication configuration.
      * @param channelService The string indicating if the bot is working in Public Azure or in Azure Government (https://aka.ms/AzureGovDocs).
      */
-    constructor(
-        private readonly adapter: BotAdapter,
-        private readonly bot: ActivityHandlerBase,
-        private readonly conversationIdFactory: SkillConversationIdFactoryBase,
+    public constructor(
+        adapter: BotAdapter,
+        bot: ActivityHandlerBase,
+        conversationIdFactory: SkillConversationIdFactoryBase,
         credentialProvider: ICredentialProvider,
         authConfig: AuthenticationConfiguration,
         channelService?: string
@@ -49,6 +54,10 @@ export class SkillHandler extends ChannelServiceHandler {
         if (!conversationIdFactory) {
             throw new Error('missing conversationIdFactory.');
         }
+
+        this.adapter = adapter;
+        this.bot = bot;
+        this.conversationIdFactory = conversationIdFactory;
     }
 
     /**
@@ -130,11 +139,36 @@ export class SkillHandler extends ChannelServiceHandler {
     }
 
     private async processActivity(claimsIdentity: ClaimsIdentity, conversationId: string, replyToActivityId: string, activity: Activity): Promise<ResourceResponse> {
-        const conversationReference = await this.conversationIdFactory.getConversationReference(conversationId);
-        if (!conversationReference) {
+
+        let skillConversationReference: SkillConversationReference;
+        try {
+            skillConversationReference = await this.conversationIdFactory.getSkillConversationReference(conversationId);
+        } catch (err) {
+            // If the factory has overridden getSkillConversationReference, call the deprecated getConversationReference().
+            // In this scenario, the oAuthScope paired with the ConversationReference can only be used for talking with
+            // an official channel, not another bot.
+            if (err.message === 'Not Implemented') {
+                const conversationReference = await this.conversationIdFactory.getConversationReference(conversationId);
+                skillConversationReference = {
+                    conversationReference,
+                    oAuthScope: JwtTokenValidation.isGovernment(this.channelService) ?
+                        GovernmentConstants.ToChannelFromBotOAuthScope :
+                        AuthenticationConstants.ToChannelFromBotOAuthScope
+                };
+            } else {
+                // Re-throw all other errors. 
+                throw err;
+            }
+        }
+
+        if (!skillConversationReference) {
+            throw new Error('skillConversationReference not found');
+        }
+        if (!skillConversationReference.conversationReference) {
             throw new Error('conversationReference not found.');
         }
-        const skillConversationReference = TurnContext.getConversationReference(activity);
+
+        const activityConversationReference = TurnContext.getConversationReference(activity);
 
         /**
          * Callback passed to the BotFrameworkAdapter.createConversation() call.
@@ -148,8 +182,8 @@ export class SkillHandler extends ChannelServiceHandler {
             const adapter: BotFrameworkAdapter = (context.adapter as BotFrameworkAdapter);
             // Cache the ClaimsIdentity and ConnectorClient on the context so that it's available inside of the bot's logic.
             context.turnState.set(adapter.BotIdentityKey, claimsIdentity);
-            context.turnState.set(this.SkillConversationReferenceKey, skillConversationReference);
-            activity = TurnContext.applyConversationReference(activity, conversationReference) as Activity;
+            context.turnState.set(this.SkillConversationReferenceKey, activityConversationReference);
+            activity = TurnContext.applyConversationReference(activity, skillConversationReference.conversationReference) as Activity;
             const client = adapter.createConnectorClient(activity.serviceUrl);
             context.turnState.set(adapter.ConnectorClientKey, client);
 
@@ -173,17 +207,17 @@ export class SkillHandler extends ChannelServiceHandler {
         // Add the channel service URL to the trusted services list so we can send messages back.
         // the service URL for skills is trusted because it is applied based on the original request
         // received by the root bot.
-        AppCredentials.trustServiceUrl(conversationReference.serviceUrl);
+        AppCredentials.trustServiceUrl(skillConversationReference.conversationReference.serviceUrl);
 
-        await this.adapter.continueConversation(conversationReference, callback);
+        await (this.adapter as BotFrameworkAdapter).continueConversation(skillConversationReference.conversationReference, skillConversationReference.oAuthScope, callback);
         return { id: uuid() };
     }
 }
 
 // Helper function to generate an UUID.
 // Code is from @stevenic: https://github.com/stevenic
-function uuid() {
-    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
+function uuid(): string {
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c): string => {
         const r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
         return v.toString(16);
     });

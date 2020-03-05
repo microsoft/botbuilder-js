@@ -34,25 +34,27 @@ import { StatusCodeError } from './statusCodeError';
  * implements routing ChannelAPI calls from the Skill up through the bot/adapter.
  */
 export class ChannelServiceHandler {
+    private readonly credentialProvider: ICredentialProvider;
+    private readonly authConfig: AuthenticationConfiguration;
+    protected readonly channelService: string;
+
     /**
      * Initializes a new instance of the ChannelServiceHandler class, using a credential provider.
      * @param credentialProvider The credential provider.
      * @param authConfig The authentication configuration.
      * @param channelService A string representing the channel provider.
      */
-    constructor(
-        private readonly credentialProvider: ICredentialProvider,
-        private readonly authConfig: AuthenticationConfiguration,
-        private readonly channelService?: string) {
-        if (!this.channelService) {
-            this.channelService = process.env[AuthenticationConstants.ChannelService];
-        }
-        if (!this.credentialProvider) {
+    public constructor(credentialProvider: ICredentialProvider, authConfig: AuthenticationConfiguration, channelService?: string) {
+        if (!credentialProvider) {
             throw new Error('BotFrameworkHttpClient(): missing credentialProvider');
         }
-        if (!this.authConfig) {
+        if (!authConfig) {
             throw new Error('BotFrameworkHttpClient(): missing authConfig');
         }
+        
+        this.credentialProvider = credentialProvider;
+        this.authConfig = authConfig;
+        this.channelService = channelService || process.env[AuthenticationConstants.ChannelService];
     }
 
     public async handleSendToConversation(authHeader: string, conversationId: string, activity: Activity): Promise<ResourceResponse> {

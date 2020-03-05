@@ -27,7 +27,8 @@ export * from './privateConversationState';
 export * from './propertyManager';
 export * from './recognizerResult';
 export * from './showTypingMiddleware';
-export { BotFrameworkSkill, BotFrameworkClient, SkillConversationIdFactoryBase } from './skills';
+export { BotFrameworkSkill, BotFrameworkClient, SkillConversationIdFactoryBase, SkillConversationReference,
+    SkillConversationIdFactoryOptions } from './skills';
 export * from './skypeMentionNormalizeMiddleware';
 export * from './storage';
 export * from './telemetryLoggerMiddleware';

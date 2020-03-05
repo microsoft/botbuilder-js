@@ -269,8 +269,8 @@ export class BotFrameworkAdapter extends BotAdapter implements CredentialTokenPr
      * });
      * ```
      */
-    public async continueConversation(reference: Partial<ConversationReference>, oAuthScope: string, logic: (context: TurnContext) => Promise<void>): Promise<void>
     public async continueConversation(reference: Partial<ConversationReference>, logic: (context: TurnContext) => Promise<void>): Promise<void>
+    public async continueConversation(reference: Partial<ConversationReference>, oAuthScope: string, logic: (context: TurnContext) => Promise<void>): Promise<void>
     public async continueConversation(reference: Partial<ConversationReference>, oAuthScopeOrlogic: string | ((context: TurnContext) => Promise<void> ), logic?: (context: TurnContext) => Promise<void>): Promise<void> {
         let audience = oAuthScopeOrlogic as string;
         let callback = typeof oAuthScopeOrlogic === 'function' ? oAuthScopeOrlogic : logic;
