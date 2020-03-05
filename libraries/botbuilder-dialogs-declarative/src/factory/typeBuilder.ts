@@ -8,5 +8,5 @@
 
  
 export interface ITypeBuilder {
-    build(config: object) : object;
+    build(config: object): object;
 }

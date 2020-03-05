@@ -7,7 +7,7 @@
  */
 import { Activity, TurnContext } from 'botbuilder-core';
 import { Configurable } from 'botbuilder-dialogs';
-import { ExpressionEngine } from 'botframework-expressions';
+import { ExpressionEngine } from 'adaptive-expressions';
 import { TestAction } from '../testAction';
 import { AdaptiveTestAdapter } from '../adaptiveTestAdapter';
 

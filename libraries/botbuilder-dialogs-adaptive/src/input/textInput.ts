@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 import { DialogContext } from 'botbuilder-dialogs';
-import { ExpressionEngine, Expression } from 'botframework-expressions';
+import { ExpressionEngine, Expression } from 'adaptive-expressions';
 import { InputDialogConfiguration, InputDialog, InputState } from './inputDialog';
 
 export interface TextInputConfiguration extends InputDialogConfiguration {

@@ -20,7 +20,7 @@ module.exports = {
         webchatMessageInput: {
             selector: 'input[data-id=webchat-sendbox-input]'
         },
-        webchatMessageInputSubtmitButton: {
+        webchatMessageInputSubmitButton: {
             selector: 'div.main > div:nth-child(3) > button'
         }
     }

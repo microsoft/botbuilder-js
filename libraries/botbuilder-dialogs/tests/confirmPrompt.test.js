@@ -204,6 +204,39 @@ describe('ConfirmPrompt', function () {
             .assertReply(`The result found is 'false'.`)
     });
 
+    it('should send retryPrompt if user sends attachment and no text.', async function () {
+        const adapter = new TestAdapter(async (turnContext) => {
+            const dc = await dialogs.createContext(turnContext);
+
+            const results = await dc.continueDialog();
+            if (results.status === DialogTurnStatus.empty) {
+                await dc.prompt('prompt', {
+                    prompt: 'Please confirm. Yes or No',
+                    retryPrompt: `Please reply with 'Yes' or 'No'.`
+                });
+            } else if (results.status === DialogTurnStatus.complete) {
+                await turnContext.sendActivity(`The result found is '${ results.result }'.`);
+            }
+            await convoState.saveChanges(turnContext);
+        });
+
+        const convoState = new ConversationState(new MemoryStorage());
+
+        const dialogState = convoState.createProperty('dialogState');
+        const dialogs = new DialogSet(dialogState);
+        const confirmPrompt = new ConfirmPrompt('prompt');
+        confirmPrompt.style = ListStyle.none;
+        dialogs.add(confirmPrompt);
+
+
+        await adapter.send('Hello')
+            .assertReply('Please confirm. Yes or No')
+            .send({ type: ActivityTypes.Message, attachments: ['ignoreThis']})
+            .assertReply(`Please reply with 'Yes' or 'No'.`)
+            .send('no')
+            .assertReply(`The result found is 'false'.`)
+    });
+
     it('should use defaultLocale when rendering choices', async function () {
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);
@@ -322,6 +355,7 @@ describe('ConfirmPrompt', function () {
             'fr-fr',
             'de-de',
             'ja-jp',
+            'it-it',
             'pt-br',
             'zh-cn'
         ];
@@ -521,7 +555,7 @@ describe('ConfirmPrompt', function () {
             .assertReply(`The result found is 'true'.`);
     });
 
-    it('should recogize valid number and default to en if locale is null.', async function () {
+    it('should recognize valid number and default to en if locale is null.', async function () {
         const adapter = new TestAdapter(async (turnContext) => {
 
             turnContext.activity.locale = null;
@@ -556,7 +590,7 @@ describe('ConfirmPrompt', function () {
             .assertReply(`The result found is 'true'.`);
     });
 
-    it('should recogize valid number and default to en if locale invalid string.', async function () {
+    it('should recognize valid number and default to en if locale invalid string.', async function () {
         const adapter = new TestAdapter(async (turnContext) => {
 
             turnContext.activity.locale = 'invalid-locale';
@@ -591,7 +625,7 @@ describe('ConfirmPrompt', function () {
             .assertReply(`The result found is 'true'.`);
     });
 
-    it('should recogize valid number and default to en if defaultLocale invalid string.', async function () {
+    it('should recognize valid number and default to en if defaultLocale invalid string.', async function () {
         const adapter = new TestAdapter(async (turnContext) => {
 
             const dc = await dialogs.createContext(turnContext);

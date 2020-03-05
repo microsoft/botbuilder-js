@@ -1,6 +1,3 @@
-import { ITypeBuilder } from "./typeBuilder";
-import { Configurable } from "botbuilder-dialogs";
-
 /**
  * @module botbuilder-dialogs-declarative
  */
@@ -8,6 +5,9 @@ import { Configurable } from "botbuilder-dialogs";
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
+
+import { Configurable } from 'botbuilder-dialogs';
+import { ITypeBuilder } from './typeBuilder';
 
 export class ConfigurableTypeBuilder implements ITypeBuilder {
 

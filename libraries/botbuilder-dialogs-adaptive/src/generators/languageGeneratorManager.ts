@@ -10,8 +10,8 @@
  * Class which manages cache of all LG resources from a ResourceExplorer. 
  * This class automatically updates the cache when resource change events occure.
  */
-import { IResource, ResourceExplorer, FileResource } from '../resources';
-import { MultiLanguageResourceLoader } from '../multiLanguageResourceLoader';
+import { IResource, ResourceExplorer, FileResource } from 'botbuilder-dialogs-declarative';
+import { LanguageResourceLoader } from '../languageResourceLoader';
 import { LanguageGenerator } from '../languageGenerator';
 import { TemplateEngineLanguageGenerator } from './templateEngineLanguageGenerator';
 import { normalize, basename} from 'path';
@@ -42,16 +42,15 @@ export class LanguageGeneratorManager {
 
     public static resourceExplorerResolver(locale: string, resourceMapping: Map<string, IResource[]>): ImportResolverDelegate {
         return  (source: string, id: string): {content: string; id: string} => {
-            const fallbaclLocale = MultiLanguageResourceLoader.fallbackLocale(locale, Array.from(resourceMapping.keys()));
-            const resources: IResource[] = resourceMapping[fallbaclLocale];
+            const fallbaclLocale = LanguageResourceLoader.fallbackLocale(locale, Array.from(resourceMapping.keys()));
+            const resources: IResource[] = resourceMapping.get(fallbaclLocale.toLowerCase());
 
             const resourceName = basename(normalize(id));
-            const resource: IResource = resources.filter((u): void => {
-                MultiLanguageResourceLoader.parseLGFileName(u.id()).prefix.toLowerCase() === MultiLanguageResourceLoader.parseLGFileName(resourceName).prefix.toLowerCase();
-            })[0];
+            const resource = resources.find(u => 
+                LanguageResourceLoader.parseLGFileName(u.id()).prefix.toLowerCase() === LanguageResourceLoader.parseLGFileName(resourceName).prefix.toLowerCase());
 
             if (resource === undefined) {
-                return {content: '', id: resource.id()};
+                throw Error(`There is no matching LG resource for ${ resourceName }`);
             } else {
                 const text = resource.readText();
                 return {content: text, id: resource.id()};
@@ -65,14 +64,14 @@ export class LanguageGeneratorManager {
     // }
 
     private async getTemplateEngineLanguageGenerator(resource: IResource): Promise<TemplateEngineLanguageGenerator> {
-        this._multiLanguageResources = await MultiLanguageResourceLoader.load(this._resourceExporer);
+        this._multiLanguageResources = await LanguageResourceLoader.groupByLocale(this._resourceExporer);
         const fileResource = resource as FileResource;
         if (fileResource !== undefined) {
-            const templateEngineLanguageGenerator = new TemplateEngineLanguageGenerator().addTemplateEngineFromFile(fileResource.fullName, this._multiLanguageResources);
+            const templateEngineLanguageGenerator = new TemplateEngineLanguageGenerator(fileResource.fullName, this._multiLanguageResources);
             return Promise.resolve(templateEngineLanguageGenerator);
         } else {
             const text = await resource.readText();
-            const templateEngineLanguageGenerator = new TemplateEngineLanguageGenerator().addTemplateEngineFromText(text, resource.id(), this._multiLanguageResources);
+            const templateEngineLanguageGenerator = new TemplateEngineLanguageGenerator(text, resource.id(), this._multiLanguageResources);
             return Promise.resolve(templateEngineLanguageGenerator);
         }
     }

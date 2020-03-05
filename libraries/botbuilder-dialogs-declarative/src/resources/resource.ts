@@ -1,5 +1,3 @@
-import { debug } from "util";
-
 /**
  * @module botbuilder-dialogs-declarative
  */
@@ -8,10 +6,7 @@ import { debug } from "util";
  * Licensed under the MIT License.
  */
 
-const path = require('path');
-const fs = require('fs');
-
 export interface IResource {
     id(): string;
-    readText() : Promise<string>;
+    readText(): string;
 }

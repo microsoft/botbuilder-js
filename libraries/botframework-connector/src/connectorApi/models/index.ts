@@ -221,6 +221,26 @@ export type ConversationsGetConversationMembersResponse = Array<ChannelAccount> 
 };
 
 /**
+ * Contains response data for the getConversationMember operation.
+ */
+export type ConversationsGetConversationMemberResponse = ChannelAccount & {
+    /**
+     * The underlying HTTP response.
+     */
+    _response: msRest.HttpResponse & {
+      /**
+       * The response body as text (string format)
+       */
+      bodyAsText: string;
+
+      /**
+       * The response body as parsed JSON or XML
+       */
+      parsedBody: ChannelAccount;
+    };
+  };
+
+/**
  * Contains response data for the getConversationPagedMembers operation.
  */
 export type ConversationsGetConversationPagedMembersResponse = PagedMembersResult & {

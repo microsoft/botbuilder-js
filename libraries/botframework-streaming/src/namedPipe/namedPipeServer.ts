@@ -5,7 +5,6 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { Server, Socket } from 'net';
 import { ProtocolAdapter } from '../protocolAdapter';
 import { RequestHandler } from '../requestHandler';
 import { StreamingRequest } from '../streamingRequest';
@@ -14,15 +13,16 @@ import {
     PayloadReceiver,
     PayloadSender
 } from '../payloadTransport';
-import { NamedPipeTransport } from './NamedPipeTransport';
-import { IStreamingTransportServer, IReceiveResponse } from '../interfaces';
+import { NamedPipeTransport } from './namedPipeTransport';
+import { INodeServer, INodeSocket, IStreamingTransportServer, IReceiveResponse } from '../interfaces';
+import { createNodeServer } from '../utilities';
 
 /**
 * Streaming transport server implementation that uses named pipes for inter-process communication.
 */
 export class NamedPipeServer implements IStreamingTransportServer {
-    private _outgoingServer: Server;
-    private _incomingServer: Server;
+    private _outgoingServer: INodeServer;
+    private _incomingServer: INodeServer;
     private readonly _baseName: string;
     private readonly _requestHandler: RequestHandler;
     private readonly _sender: PayloadSender;
@@ -40,6 +40,10 @@ export class NamedPipeServer implements IStreamingTransportServer {
      * @param autoReconnect Optional setting to determine if the client sould attempt to reconnect automatically on disconnection events. Defaults to true.
      */
     public constructor(baseName: string, requestHandler?: RequestHandler, autoReconnect: boolean = true) {
+        if (!baseName) {
+            throw new TypeError('NamedPipeServer: Missing baseName parameter');
+        }
+
         this._baseName = baseName;
         this._requestHandler = requestHandler;
         this._autoReconnect = autoReconnect;
@@ -49,6 +53,13 @@ export class NamedPipeServer implements IStreamingTransportServer {
         this._protocolAdapter = new ProtocolAdapter(this._requestHandler, this._requestManager, this._sender, this._receiver);
         this._sender.disconnected = this.onConnectionDisconnected.bind(this);
         this._receiver.disconnected = this.onConnectionDisconnected.bind(this);
+    }
+
+    /**
+     * Returns true if currently connected.
+     */
+    public get isConnected(): boolean {
+        return !!(this._receiver.isConnected && this._sender.isConnected);
     }
 
     /**
@@ -62,14 +73,15 @@ export class NamedPipeServer implements IStreamingTransportServer {
         }
 
         const incoming = new Promise(resolve => {
-            this._incomingServer = new Server((socket: Socket): void => {
-                this._receiver.connect(new NamedPipeTransport(socket));
-                resolve();
-            });
+                this._incomingServer =  createNodeServer((socket: INodeSocket): void => {
+                    this._receiver.connect(new NamedPipeTransport(socket));
+                    resolve();
+                });
+
         });
 
         const outgoing = new Promise(resolve => {
-            this._outgoingServer = new Server((socket: Socket): void => {
+            this._outgoingServer = createNodeServer((socket: INodeSocket): void => {
                 this._sender.connect(new NamedPipeTransport(socket));
                 resolve();
             });

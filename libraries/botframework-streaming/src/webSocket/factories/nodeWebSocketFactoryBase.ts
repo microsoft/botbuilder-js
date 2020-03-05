@@ -6,10 +6,8 @@
  * Licensed under the MIT License.
  */
 
-import { IncomingMessage } from 'http';
-import { Socket } from 'net';
-import { ISocket } from '../../interfaces';
+import { INodeIncomingMessage, INodeBuffer, INodeSocket, ISocket } from '../../interfaces';
 
 export abstract class NodeWebSocketFactoryBase {
-    public abstract createWebSocket(req: IncomingMessage, socket: Socket, head: Buffer): ISocket;
+    public abstract createWebSocket(req: INodeIncomingMessage, socket: INodeSocket, head: INodeBuffer): Promise<ISocket>;
 }

@@ -5,10 +5,10 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { Socket } from 'net';
+import { INodeBuffer } from '../interfaces/INodeBuffer';
+import { INodeSocket } from '../interfaces/INodeSocket';
 import { ITransportSender } from '../interfaces/ITransportSender';
 import { ITransportReceiver } from '../interfaces/ITransportReceiver';
-
 
 /**
  * Named pipes based transport sender and receiver abstraction
@@ -18,11 +18,11 @@ export class NamedPipeTransport implements ITransportSender, ITransportReceiver 
     public static readonly ServerIncomingPath: string = '.incoming';
     public static readonly ServerOutgoingPath: string = '.outgoing';
 
-    private _socket: Socket;
-    private readonly _queue: Buffer[];
-    private _active: Buffer;
+    private _socket: INodeSocket;
+    private readonly _queue: INodeBuffer[];
+    private _active: INodeBuffer;
     private _activeOffset: number;
-    private _activeReceiveResolve: (resolve: Buffer) => void;
+    private _activeReceiveResolve: (resolve: INodeBuffer) => void;
     private _activeReceiveReject: (reason?: any) => void;
     private _activeReceiveCount: number;
 
@@ -31,7 +31,7 @@ export class NamedPipeTransport implements ITransportSender, ITransportReceiver 
      *
      * @param socket The socket object to build this connection on.
      */
-    public constructor(socket: Socket) {
+    public constructor(socket: INodeSocket) {
         this._socket = socket;
         this._queue = [];
         this._activeOffset = 0;
@@ -54,7 +54,7 @@ export class NamedPipeTransport implements ITransportSender, ITransportReceiver 
      *
      * @param buffer The buffer full of data to send out across the socket.
      */
-    public send(buffer: Buffer): number {
+    public send(buffer: INodeBuffer): number {
         if (this._socket && !this._socket.connecting && this._socket.writable) {
             this._socket.write(buffer);
 
@@ -67,7 +67,7 @@ export class NamedPipeTransport implements ITransportSender, ITransportReceiver 
     /**
      * Returns true if currently connected.
      */
-    public isConnected(): boolean {
+    public get isConnected(): boolean {
         return !(!this._socket || this._socket.destroyed || this._socket.connecting);
     }
 
@@ -84,14 +84,14 @@ export class NamedPipeTransport implements ITransportSender, ITransportReceiver 
     /**
      * Receive from the transport into the buffer.
      */
-    public receive(count: number): Promise<Buffer> {
+    public receive(count: number): Promise<INodeBuffer> {
         if (this._activeReceiveResolve) {
             throw new Error('Cannot call receive more than once before it has returned.');
         }
 
         this._activeReceiveCount = count;
 
-        let promise = new Promise<Buffer>((resolve, reject): void => {
+        let promise = new Promise<INodeBuffer>((resolve, reject): void => {
             this._activeReceiveResolve = resolve;
             this._activeReceiveReject = reject;
         });
@@ -101,7 +101,7 @@ export class NamedPipeTransport implements ITransportSender, ITransportReceiver 
         return promise;
     }
 
-    private socketReceive(data: Buffer): void {
+    private socketReceive(data: INodeBuffer): void {
         if (this._queue && data && data.length > 0) {
             this._queue.push(data);
             this.trySignalData();

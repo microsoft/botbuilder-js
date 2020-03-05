@@ -19,11 +19,11 @@ const ACTIVITY_RECEIVED_EMITTED = Symbol('ActivityReceivedEmitted');
 
 /**
  * Contains dialog state, information about the state of the dialog stack, for a specific [DialogSet](xref:botbuilder-dialogs.DialogSet).
- *
+ * 
  * @remarks
  * State is read from and saved to storage each turn, and state cache for the turn is managed through
  * the [TurnContext](xref:botbuilder-core.TurnContext).
- *
+ * 
  * For more information, see the articles on
  * [Managing state](https://docs.microsoft.com/azure/bot-service/bot-builder-concept-state) and
  * [Dialogs library](https://docs.microsoft.com/azure/bot-service/bot-builder-concept-dialog).
@@ -40,9 +40,11 @@ export interface DialogState {
  *
  * @remarks
  * This includes the turn context, information about the dialog set, and the state of the dialog stack.
- *
- * Use a dialog set's [createContext](xref:botbuilder-dialogs.DialogSet.createContext) method to create the dialog context.
- * Use the methods of the dialog context to manage the progression of dialogs in the set.
+ * 
+ * From code outside of a dialog in the set, use [DialogSet.createContext](xref:botbuilder-dialogs.DialogSet.createContext)
+ * to create the dialog context. Then use the methods of the dialog context to manage the progression of dialogs in the set.
+ * 
+ * When you implement a dialog, the dialog context is a parameter available to the various methods you override or implement.
  *
  * For example:
  * ```JavaScript
@@ -70,7 +72,7 @@ export class DialogContext {
 
     /**
      * The parent dialog context for this dialog context, or `undefined` if this context doesn't have a parent.
-     *
+     * 
      * @remarks
      * When it attempts to start a dialog, the dialog context searches for the [Dialog.id](xref:botbuilder-dialogs.Dialog.id)
      * in its [dialogs](xref:botbuilder-dialogs.DialogContext.dialogs). If the dialog to start is not found
@@ -137,6 +139,9 @@ export class DialogContext {
      * @param dialogId ID of the dialog to start.
      * @param options Optional. Arguments to pass into the dialog when it starts.
      *
+     * @param dialogId ID of the dialog to start.
+     * @param options Optional. Arguments to pass into the dialog when it starts.
+     * 
      * @remarks
      * If there's already an active dialog on the stack, that dialog will be paused until
      * it is again the top dialog on the stack.
@@ -348,8 +353,9 @@ export class DialogContext {
      * Ends a dialog and pops it off the stack. Returns an optional result to the dialog's parent.
      *
      * @param result Optional. A result to pass to the parent logic. This might be the next dialog
-     *      on the stack, or it might be the bot's turn handler, if this was the last dialog on the stack.
-     *
+     *      on the stack, or if this was the last dialog on the stack, a parent dialog context or
+     *      the bot's turn handler.
+     * 
      * @remarks
      * The _parent_ dialog is the next dialog on the dialog stack, if there is one. This method
      * calls the parent's [Dialog.resumeDialog](xref:botbuilder-dialogs.Dialog.resumeDialog) method,
@@ -452,7 +458,7 @@ export class DialogContext {
         }
     }
 
-        /// <summary>
+    /// <summary>
     /// Searches for a dialog with a given ID.
     /// Emits a named event for the current dialog, or someone who started it, to handle.
     /// </summary>

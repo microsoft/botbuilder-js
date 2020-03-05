@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 import { DialogTurnResult, DialogContext, DialogConfiguration, Dialog, Configurable } from 'botbuilder-dialogs';
-import { ExpressionEngine, Expression } from 'botframework-expressions';
+import { ExpressionEngine, Expression } from 'adaptive-expressions';
 
 export interface CancelAllDialogsConfiguration extends DialogConfiguration {
     eventName?: string;

@@ -11,7 +11,7 @@ export namespace AuthenticationConstants {
      * 
      * DEPRECATED: DO NOT USE
      */
-    export const ToChannelFromBotLoginUrl = 'https://login.microsoftonline.com/botframework.com/oauth2/v2.0/token';
+    export const ToChannelFromBotLoginUrl = 'https://login.microsoftonline.com/botframework.com';
 
     /**
      * TO CHANNEL FROM BOT: Login URL prefix
@@ -31,7 +31,7 @@ export namespace AuthenticationConstants {
     /**
      * TO CHANNEL FROM BOT: OAuth scope to request
      */
-    export const ToChannelFromBotOAuthScope = 'https://api.botframework.com/.default';
+    export const ToChannelFromBotOAuthScope = 'https://api.botframework.com/';
 
     /**
      * TO BOT FROM CHANNEL: Token issuer

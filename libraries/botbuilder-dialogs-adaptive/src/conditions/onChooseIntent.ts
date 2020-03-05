@@ -7,7 +7,7 @@
  */
 
 import { Dialog, TurnPath } from 'botbuilder-dialogs';
-import { Expression, ExpressionParserInterface } from 'botframework-expressions';
+import { Expression, ExpressionParserInterface } from 'adaptive-expressions';
 import { OnIntent, OnIntentConfiguration } from './onIntent';
 
 export interface OnChooseIntentConfiguration extends OnIntentConfiguration {

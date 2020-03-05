@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 import { DialogTurnResult, DialogConfiguration, DialogDependencies, Dialog, DialogContext, Configurable } from 'botbuilder-dialogs';
-import { Expression, ExpressionEngine } from 'botframework-expressions';
+import { Expression, ExpressionEngine } from 'adaptive-expressions';
 import { ActionScope } from './actionScope';
 import { Case } from './case';
 

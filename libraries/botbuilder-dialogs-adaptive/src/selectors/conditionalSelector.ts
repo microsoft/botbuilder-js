@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { Expression, ExpressionEngine } from "botframework-expressions";
+import { Expression, ExpressionEngine } from "adaptive-expressions";
 import { OnCondition } from "../conditions/onCondition";
 import { TriggerSelector } from "../triggerSelector";
 import { SequenceContext } from "../sequenceContext";

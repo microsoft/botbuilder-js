@@ -6,8 +6,8 @@
  * Licensed under the MIT License.
  */
 
-import { join } from "path";
-import { readdirSync, statSync, lstatSync, Stats } from "fs";
+import { join } from 'path';
+import { readdirSync, statSync, lstatSync, Stats } from 'fs';
 
 export class PathUtil {
     public static IsDirectory = source => lstatSync(source).isDirectory()

@@ -18,7 +18,7 @@ export interface Claim {
  */
 export class ClaimsIdentity {
     public readonly isAuthenticated: boolean;
-    private readonly claims: Claim[];
+    public readonly claims: Claim[];
 
     constructor(claims: Claim[], isAuthenticated: boolean) {
         this.claims = claims;

@@ -6,7 +6,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { ExpressionEngine, Expression } from 'botframework-expressions';
+import { ExpressionEngine, Expression } from 'adaptive-expressions';
 
 export class ExpressionProperty<T> {
     private _expression: Expression;

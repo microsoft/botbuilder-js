@@ -3,11 +3,18 @@ const path = require('path');
 
 const nockBack = require('nock').back;
 
+/**
+ * https://github.com/nock/nock#modes
+ * Setting environment:
+ *     PowerShell: $env:MOCK_MODE="<desiredMode>"
+ *     Command Prompt: set MOCK_MODE=<desiredMode>
+ *     VS Code's launch.json: "env": { "MOCK_MODE": "<desiredMode>" },
+ */
 const MockMode = Object.freeze({
-    'wild': 'wild',
-    'dryrun': 'dryrun',
-    'record': 'record',
-    'lockdown': 'lockdown'
+    wild: 'wild',
+    dryrun: 'dryrun',
+    record: 'record',
+    lockdown: 'lockdown'
 });
 
 function usingNock(test, mode, options = null) {

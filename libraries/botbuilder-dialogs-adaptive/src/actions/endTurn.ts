@@ -7,7 +7,7 @@
  */
 import { DialogTurnResult, Dialog, DialogContext, DialogConfiguration, Configurable } from 'botbuilder-dialogs';
 import { ActivityTypes } from 'botbuilder-core';
-import { Expression, ExpressionEngine } from 'botframework-expressions';
+import { Expression, ExpressionEngine } from 'adaptive-expressions';
 
 export interface EndTurnConfiguration extends DialogConfiguration {
     disabled?: string;

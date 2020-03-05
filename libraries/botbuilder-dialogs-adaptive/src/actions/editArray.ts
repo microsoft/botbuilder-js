@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 import { DialogTurnResult, DialogContext, DialogConfiguration, Dialog, Configurable } from 'botbuilder-dialogs';
-import { Expression, ExpressionEngine } from 'botframework-expressions';
+import { Expression, ExpressionEngine } from 'adaptive-expressions';
 
 export interface EditArrayConfiguration extends DialogConfiguration {
     changeType?: ArrayChangeType;

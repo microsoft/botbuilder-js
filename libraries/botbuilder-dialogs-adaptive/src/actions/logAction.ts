@@ -7,7 +7,7 @@
  */
 import { DialogTurnResult, DialogConfiguration, DialogContext, Dialog, Configurable } from 'botbuilder-dialogs';
 import { Activity, ActivityTypes } from 'botbuilder-core';
-import { Expression, ExpressionEngine } from 'botframework-expressions';
+import { Expression, ExpressionEngine } from 'adaptive-expressions';
 import { TemplateInterface } from '../template';
 import { TextTemplate } from '../templates';
 

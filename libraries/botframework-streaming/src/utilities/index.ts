@@ -6,4 +6,7 @@
  * Licensed under the MIT License.
  */
 
+export * from './doesGlobalFileReaderExist';
+export * from './doesGlobalWebSocketExist';
+export * from './createNodeServer';
 export * from './protocol-base';
