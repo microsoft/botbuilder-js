@@ -1,18 +1,13 @@
-const { Configurable, TextPrompt, Dialog, DialogManager } = require('botbuilder-dialogs');
-const { AdaptiveDialog } = require('botbuilder-dialogs-adaptive');
-const { MemoryStorage, TestAdapter } = require('botbuilder-core');
-const { FileResource, FileResourceProvider, FolderResourceProvider, ResourceExplorer } = require('../lib');
+const { ResourceExplorer } = require('../lib');
 const assert = require('assert');
-const fs = require('fs');
-const path = require('path');
 
-describe('ResourecExplorer', function () {
+describe('ResourecExplorer', function() {
     this.timeout(5000);
 
     it('ResourecExplorer load specific folder with lg extension', async () => {
 
         let explorer = new ResourceExplorer();
-        explorer.addFolder(`${__dirname}/resources/08 - ExternalLanguage`);
+        explorer.addFolder(`${ __dirname }/resources/08 - ExternalLanguage`, true, false);
 
         let lgResources = await explorer.getResources('lg');
 
@@ -22,7 +17,7 @@ describe('ResourecExplorer', function () {
     it('ResourecExplorer load specific folder with dialog extension', async () => {
 
         let explorer = new ResourceExplorer();
-        explorer.addFolder(`${__dirname}/resources/07 - BeginDialog`);
+        explorer.addFolder(`${ __dirname }/resources/07 - BeginDialog`, true, false);
 
         let dialogResources = await explorer.getResources('dialog');
 

@@ -58,7 +58,7 @@ export class FolderResourceProvider implements IResourceProvider {
     }
 
     public async getResources(extension: string): Promise<IResource[]> {
-        extension = `.${extension.toLowerCase()}`;
+        extension = `.${ extension.toLowerCase() }`;
 
         let filteredResources: IResource[] = [];
 
