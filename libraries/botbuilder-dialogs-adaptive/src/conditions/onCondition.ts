@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 import { Dialog, DialogDependencies, Configurable } from 'botbuilder-dialogs';
-import { Expression, ExpressionParserInterface, Constant, ExpressionEngine } from 'botframework-expressions';
+import { Expression, ExpressionParserInterface, Constant, ExpressionEngine } from 'adaptive-expressions';
 import { SequenceContext, ActionChangeList, ActionState, ActionChangeType } from '../sequenceContext';
 import { ActionScope } from '../actions/actionScope';
 import { BoolExpression } from '../expressionProperties';

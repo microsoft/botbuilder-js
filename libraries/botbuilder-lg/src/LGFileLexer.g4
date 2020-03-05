@@ -11,17 +11,16 @@ lexer grammar LGFileLexer;
 //    so it would be very little effort to translate to other languages
 
 @lexer::members {
-  ignoreWS = true;             // usually we ignore whitespace, but inside template, whitespace is significant
-  expectKeywords = false;        // whether we are expecting IF/ELSEIF/ELSE or Switch/Case/Default keywords
+  ignoreWS = true; // usually we ignore whitespace, but inside template, whitespace is significant
+  inTemplate = false; // whether we are in the template
+  beginOfTemplateBody = false; // whether we are at the begining of template body
+  inMultiline = false; // whether we are in multiline
+  beginOfTemplateLine = false;// weather we are at the begining of template string
+  inStructuredValue = false; // weather we are in the structure value
+  beginOfStructureProperty = false; // weather we are at the begining of structure property
 }
 
-fragment LETTER: 'a'..'z' | 'A'..'Z';
-fragment NUMBER: '0'..'9';
-
-fragment WHITESPACE
-  : ' '|'\t'|'\ufeff'|'\u00a0'
-  ;
-
+// fragments
 fragment A: 'a' | 'A';
 fragment C: 'c' | 'C';
 fragment D: 'd' | 'D';
@@ -35,12 +34,30 @@ fragment T: 't' | 'T';
 fragment U: 'u' | 'U';
 fragment W: 'w' | 'W';
 
+fragment LETTER: 'a'..'z' | 'A'..'Z';
+
+fragment NUMBER: '0'..'9';
+
+fragment WHITESPACE : ' '|'\t'|'\ufeff'|'\u00a0';
+
+fragment EMPTY_OBJECT: '{' WHITESPACE* '}';
+
 fragment STRING_LITERAL : ('\'' (~['\r\n])* '\'') | ('"' (~["\r\n])* '"');
-fragment EXPRESSION_FRAGMENT : '@' '{' (STRING_LITERAL| ~[\r\n{}'"] )*? '}';
+
+fragment STRING_INTERPOLATION : '`' ('\\`' | ~'`')* '`';
+
+fragment EXPRESSION_FRAGMENT : '$' '{' (STRING_LITERAL | STRING_INTERPOLATION | EMPTY_OBJECT | ~[\r\n{}'"`] )+ '}'?;
+
 fragment ESCAPE_CHARACTER_FRAGMENT : '\\' ~[\r\n]?;
 
+
+// top level elements
+OPTIONS
+  : '>' WHITESPACE* '!#' ~('\r'|'\n')+
+  ;
+
 COMMENTS
-  : ('>'|'$') ~('\r'|'\n')+ NEWLINE? -> skip
+  : '>' ~('\r'|'\n')* -> skip
   ;
 
 WS
@@ -48,35 +65,27 @@ WS
   ;
 
 NEWLINE
-  : '\r'? '\n'
+  : '\r'? '\n' -> skip
   ;
 
 HASH
-  : '#' -> pushMode(TEMPLATE_NAME_MODE)
+  : '#' { this.inTemplate = true; this.beginOfTemplateBody = false; } -> pushMode(TEMPLATE_NAME_MODE)
   ;
 
 DASH
-  : '-' {this.expectKeywords = true;} -> pushMode(TEMPLATE_BODY_MODE)
+  : '-' { this.inTemplate }? { this.beginOfTemplateLine = true; this.beginOfTemplateBody = false; } -> pushMode(TEMPLATE_BODY_MODE)
   ;
 
 LEFT_SQUARE_BRACKET
-  : '[' -> pushMode(STRUCTURED_TEMPLATE_BODY_MODE)
+  : '[' { this.inTemplate && this.beginOfTemplateBody }? -> pushMode(STRUCTURE_NAME_MODE)
   ;
 
-RIGHT_SQUARE_BRACKET
-  : ']'
+IMPORT
+  : '[' ~[\r\n[\]]*? ']' '(' ~[\r\n()]*? ')' { this.inTemplate = false;}
   ;
 
-IMPORT_DESC
-  : '[' ~[\r\n]*? ']'
-  ;
-
-IMPORT_PATH
-  : '(' ~[\r\n]*? ')'
-  ;
-
-INVALID_TOKEN_DEFAULT_MODE
-  : .
+INVALID_TOKEN
+  : . { this.inTemplate = false; this.beginOfTemplateBody = false; }
   ;
 
 mode TEMPLATE_NAME_MODE;
@@ -86,7 +95,7 @@ WS_IN_NAME
   ;
 
 NEWLINE_IN_NAME
-  : '\r'? '\n' -> type(NEWLINE), popMode
+  : '\r'? '\n' { this.beginOfTemplateBody = true;}-> skip, popMode
   ;
 
 IDENTIFIER
@@ -115,85 +124,58 @@ TEXT_IN_NAME
 
 mode TEMPLATE_BODY_MODE;
 
-// a little tedious on the rules, a big improvement on portability
-WS_IN_BODY_IGNORED
+WS_IN_BODY
   : WHITESPACE+  {this.ignoreWS}? -> skip
   ;
 
-WS_IN_BODY
-  : WHITESPACE+  -> type(WS)
-  ;
-
 MULTILINE_PREFIX
-  : '```' -> pushMode(MULTILINE)
+  : '```' { !this.inMultiline  && this.beginOfTemplateLine }? { this.inMultiline = true; this.beginOfTemplateLine = false;}-> pushMode(MULTILINE_MODE)
   ;
 
 NEWLINE_IN_BODY
-  : '\r'? '\n' {this.ignoreWS = true;} -> type(NEWLINE), popMode
+  : '\r'? '\n' { this.ignoreWS = true;} -> skip, popMode
   ;
 
 IF
-  : I F WHITESPACE* ':'  {this.expectKeywords}? { this.ignoreWS = true;}
+  : I F WHITESPACE* ':'  { this.beginOfTemplateLine}? { this.ignoreWS = true; this.beginOfTemplateLine = false;}
   ;
 
 ELSEIF
-  : E L S E WHITESPACE* I F WHITESPACE* ':' {this.expectKeywords}? { this.ignoreWS = true;}
+  : E L S E WHITESPACE* I F WHITESPACE* ':' {this.beginOfTemplateLine}? { this.ignoreWS = true; this.beginOfTemplateLine = false;}
   ;
 
 ELSE
-  : E L S E WHITESPACE* ':' {this.expectKeywords}? { this.ignoreWS = true;}
+  : E L S E WHITESPACE* ':' { this.beginOfTemplateLine }? { this.ignoreWS = true; this.beginOfTemplateLine = false;}
   ;
 
 SWITCH
-  : S W I T C H WHITESPACE* ':' {this.expectKeywords}? {this.ignoreWS = true;}
+  : S W I T C H WHITESPACE* ':' {this.beginOfTemplateLine}? { this.ignoreWS = true; this.beginOfTemplateLine = false;}
   ;
 
 CASE
-  : C A S E WHITESPACE* ':' {this.expectKeywords}? {this.ignoreWS = true;}
+  : C A S E WHITESPACE* ':' {this.beginOfTemplateLine}? { this.ignoreWS = true; this.beginOfTemplateLine = false;}
   ;
 
 DEFAULT
-  : D E F A U L T WHITESPACE* ':' {this.expectKeywords}? { this.ignoreWS = true;}
+  : D E F A U L T WHITESPACE* ':' {this.beginOfTemplateLine}? { this.ignoreWS = true; this.beginOfTemplateLine = false;}
   ;
 
 ESCAPE_CHARACTER
-  : ESCAPE_CHARACTER_FRAGMENT  { this.ignoreWS = false; this.expectKeywords = false;}
+  : ESCAPE_CHARACTER_FRAGMENT  { this.ignoreWS = false; this.beginOfTemplateLine = false;}
   ;
 
 EXPRESSION
-  : EXPRESSION_FRAGMENT  { this.ignoreWS = false; this.expectKeywords = false;}
+  : EXPRESSION_FRAGMENT  { this.ignoreWS = false; this.beginOfTemplateLine = false;}
   ;
 
 TEXT
-  : ~[\r\n]+?  { this.ignoreWS = false; this.expectKeywords = false;}
+  : ~[\r\n]+?  { this.ignoreWS = false; this.beginOfTemplateLine = false;}
   ;
 
-mode STRUCTURED_TEMPLATE_BODY_MODE;
-
-WS_IN_STRUCTURED
-  : WHITESPACE+
-  ;
-
-STRUCTURED_COMMENTS
-  : ('>'|'$') ~[\r\n]* '\r'?'\n' -> skip
-  ;
-
-STRUCTURED_NEWLINE
-  : '\r'? '\n'
-  ;
-
-STRUCTURED_TEMPLATE_BODY_END
-  : WS_IN_STRUCTURED? RIGHT_SQUARE_BRACKET WS_IN_STRUCTURED? -> popMode
-  ;
-
-STRUCTURED_CONTENT
-  : ~[\r\n]+
-  ;
-
-mode MULTILINE;
+mode MULTILINE_MODE;
 
 MULTILINE_SUFFIX
-  : '```' -> popMode
+  : '```' { this.inMultiline = false; } -> popMode
   ;
 
 MULTILINE_ESCAPE_CHARACTER
@@ -207,3 +189,64 @@ MULTILINE_EXPRESSION
 MULTILINE_TEXT
   : (('\r'? '\n') | ~[\r\n])+? -> type(TEXT)
   ;
+
+mode STRUCTURE_NAME_MODE;
+
+WS_IN_STRUCTURE_NAME
+  : WHITESPACE+ -> skip
+  ;
+
+NEWLINE_IN_STRUCTURE_NAME
+  : '\r'? '\n' { this.ignoreWS = true;} {this.beginOfStructureProperty = true;}-> skip, pushMode(STRUCTURE_BODY_MODE)
+  ;
+
+STRUCTURE_NAME
+  : (LETTER | NUMBER | '_') (LETTER | NUMBER | '-' | '_' | '.')*
+  ;
+
+TEXT_IN_STRUCTURE_NAME
+  : ~[\r\n]+?
+  ;
+
+mode STRUCTURE_BODY_MODE;
+
+STRUCTURED_COMMENTS
+  : '>' ~[\r\n]* '\r'?'\n' { !this.inStructuredValue && this.beginOfStructureProperty}? -> skip
+  ;
+
+WS_IN_STRUCTURE_BODY
+  : WHITESPACE+ {this.ignoreWS}? -> skip
+  ;
+
+STRUCTURED_NEWLINE
+  : '\r'? '\n' { this.ignoreWS = true; this.inStructuredValue = false; this.beginOfStructureProperty = true;}
+  ;
+
+STRUCTURED_BODY_END
+  : ']' {!this.inStructuredValue}? { this.inTemplate = false; this.beginOfTemplateBody = false;} -> popMode, popMode
+  ;
+
+STRUCTURE_IDENTIFIER
+  : (LETTER | NUMBER | '_') (LETTER | NUMBER | '-' | '_' | '.')* { !this.inStructuredValue && this.beginOfStructureProperty}? {this.beginOfStructureProperty = false;}
+  ;
+
+STRUCTURE_EQUALS
+  : '=' {!this.inStructuredValue}? {this.inStructuredValue = true;} 
+  ;
+
+STRUCTURE_OR_MARK
+  : '|' { this.ignoreWS = true; }
+  ;
+
+ESCAPE_CHARACTER_IN_STRUCTURE_BODY
+  : ESCAPE_CHARACTER_FRAGMENT { this.ignoreWS = false; }
+  ;
+
+EXPRESSION_IN_STRUCTURE_BODY
+  : EXPRESSION_FRAGMENT { this.ignoreWS = false; }
+  ;
+
+TEXT_IN_STRUCTURE_BODY
+  : ~[\r\n]+?  { this.ignoreWS = false; this.beginOfStructureProperty = false;}
+  ;
+

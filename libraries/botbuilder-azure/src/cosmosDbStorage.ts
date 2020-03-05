@@ -18,6 +18,8 @@ const DocumentBase: any = require('documentdb').DocumentBase; // tslint:disable-
 
 /**
  * Additional settings for configuring an instance of `CosmosDbStorage`.
+ * 
+ * @deprecated Please use CosmosDbPartitionedStorageOptions with CosmosDbPartitionedStorage instead.
  */
 export interface CosmosDbStorageSettings {
     /**
@@ -46,6 +48,7 @@ export interface CosmosDbStorageSettings {
     documentCollectionRequestOptions?: RequestOptions;
     /**
       * (Optional) partitionKey that are passed when the document CosmosDbStorage is created.
+      * @deprecated Please use [[CosmosDbPartitionedStorage]]. See https://github.com/microsoft/botframework-sdk/issues/5467
       */
     partitionKey?: string;
 }
@@ -72,6 +75,8 @@ interface DocumentStoreItem {
 /**
  * Middleware that implements a CosmosDB based storage provider for a bot.
  *
+ * @deprecated Please use CosmosDbPartitionedStorage instead.
+ * 
  * @remarks
  * The `connectionPolicyConfigurator` handler can be used to further customize the connection to
  * CosmosDB (Connection mode, retry options, timeouts). More information at
@@ -86,7 +91,7 @@ export class CosmosDbStorage implements Storage {
     private databaseCreationRequestOption: RequestOptions;
 
     /**
-     * Creates a new ConsmosDbStorage instance.
+     * Creates a new CosmosDbStorage instance.
      *
      * @param settings Setting to configure the provider.
      * @param connectionPolicyConfigurator (Optional) An optional delegate that accepts a ConnectionPolicy for customizing policies. More information at http://azure.github.io/azure-documentdb-node/global.html#ConnectionPolicy

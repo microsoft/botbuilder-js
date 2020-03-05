@@ -47,15 +47,14 @@ export class TranscriptLoggerMiddleware implements Middleware {
 
         // hook up onSend pipeline
         context.onSendActivities(async (ctx: TurnContext, activities: Partial<Activity>[], next2: () => Promise<ResourceResponse[]>) => {
-            // run full pipeline
+            // Run full pipeline.
             const responses: ResourceResponse[] = await next2();
 
             activities.map((a: Partial<Activity>, index: number) => {
                 const clonedActivity = this.cloneActivity(a);
-                // If present, set the id of the cloned activity to the id received from the server.
-                if (index < responses.length) {
-                    clonedActivity.id = responses[index].id;
-                }
+                clonedActivity.id = responses && responses[index] ?
+                    responses[index].id :
+                    clonedActivity.id;
 
                 // For certain channels, a ResourceResponse with an id is not always sent to the bot.
                 // This fix uses the timestamp on the activity to populate its id for logging the transcript.
@@ -208,7 +207,7 @@ export interface TranscriptStore extends TranscriptLogger {
      * Get activities for a conversation (Aka the transcript)
      * @param channelId Channel Id.
      * @param conversationId Conversation Id.
-     * @param continuationToken Continuatuation token to page through results.
+     * @param continuationToken Continuation token to page through results.
      * @param startDate Earliest time to include.
      */
     getTranscriptActivities(
@@ -221,7 +220,7 @@ export interface TranscriptStore extends TranscriptLogger {
     /**
      * List conversations in the channelId.
      * @param channelId Channel Id.
-     * @param continuationToken Continuatuation token to page through results.
+     * @param continuationToken Continuation token to page through results.
      */
     listTranscripts(channelId: string, continuationToken?: string): Promise<PagedResult<TranscriptInfo>>;
 

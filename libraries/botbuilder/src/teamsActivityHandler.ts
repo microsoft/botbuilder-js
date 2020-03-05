@@ -6,25 +6,23 @@
  * Licensed under the MIT License.
  */
 
-import { InvokeResponse, INVOKE_RESPONSE_KEY } from './botFrameworkAdapter';
+import { INVOKE_RESPONSE_KEY } from './botFrameworkAdapter';
 
 import {
     ActivityHandler,
     ActivityTypes,
     AppBasedLinkQuery,
-    ChannelAccount,
     ChannelInfo,
     FileConsentCardResponse,
+    InvokeResponse,
     MessagingExtensionAction,
     MessagingExtensionActionResponse,
     MessagingExtensionQuery,
     MessagingExtensionResponse,
     O365ConnectorCardActionQuery,
     SigninStateVerificationQuery,
-    TaskModuleTaskInfo,
     TaskModuleRequest,
     TaskModuleResponse,
-    TaskModuleResponseBase,
     TeamsChannelData,
     TeamsChannelAccount,
     TeamInfo,

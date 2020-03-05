@@ -25,6 +25,7 @@
     "@microsoft/recognizers-text-date-time": "1.1.2",
     "@types/node": "^10.12.18",
     "botbuilder-core": "4.1.6",
+    "botbuilder-dialogs": "4.1.6",
     "moment": "^2.20.1",
     "node-fetch": "^2.3.0",
     "url-parse": "^1.4.4"
@@ -36,9 +37,10 @@
     "fs-extra": "^7.0.1",
     "mocha": "^5.2.0",
     "nock": "^10.0.3",
-    "nyc": "^11.4.1",
+    "nyc": "^15.0.0",
     "source-map-support": "^0.5.3",
-    "ts-node": "^4.1.0"
+    "ts-node": "^4.1.0",
+    "typescript": "3.5.3"
   },
   "scripts": {
     "test": "tsc && nyc mocha tests/",

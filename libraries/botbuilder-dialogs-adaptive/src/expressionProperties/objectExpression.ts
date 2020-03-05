@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 
-import { Expression } from 'botframework-expressions';
+import { Expression } from 'adaptive-expressions';
 import { ExpressionProperty } from '../expressionProperty';
 
 export class ObjectExpression<T> extends ExpressionProperty<T> {

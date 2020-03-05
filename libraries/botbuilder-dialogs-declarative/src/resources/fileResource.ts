@@ -6,24 +6,22 @@
  * Licensed under the MIT License.
  */
 
-import { debug } from "util";
-import { IResource } from "./resource";
+import { IResource } from './resource';
 
-const path = require('path');
-const fs = require('fs');
+import fs = require('fs');
 
 export class FileResource implements IResource {
 
-    private resourceId: string; 
+    private resourceId: string;
     private path: string;
 
     constructor(path: string) {
         if (!path) {
-            throw new Error("path");
+            throw new Error('path');
         }
 
         this.path = path;
-        
+
         // The id will be the file name, without the path
         this.resourceId = this.path.replace(/^.*[\\\/]/, '');
     }
@@ -36,12 +34,9 @@ export class FileResource implements IResource {
         return this.resourceId;
     }
 
-    public readText() : Promise<string> {
+    public readText(): string {
         const filePath = this.path;
-        return new Promise<string>(function(resolve, reject) {
-            fs.readFile(filePath, 'utf8', (err, data) => {
-                err ? reject(err) : resolve(data)
-            });
-        });
+        const temp = fs.readFileSync(filePath, 'utf-8');
+        return temp;
     }
 }

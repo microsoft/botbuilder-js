@@ -164,6 +164,17 @@ export interface TeamsChannelAccount extends ChannelAccount {
   userPrincipalName?: string;
 }
 
+export interface TeamsPagedMembersResult {
+        /**
+     * Paging token
+     */
+    continuationToken: string;
+    /**
+     * The Channel Accounts.
+     */
+    members: TeamsChannelAccount[];
+}
+
 /**
  * @interface
  * An interface representing O365ConnectorCardFact.
@@ -852,7 +863,7 @@ export interface MessagingExtensionAction extends TaskModuleRequest {
    * @member {BotMessagePreviewAction} [botMessagePreviewAction] Bot message
    * preview action taken by user. Possible values include: 'edit', 'send'
    */
-  botMessagePreviewAction?: BotMessagePreviewAction;
+  botMessagePreviewAction?: BotMessagePreviewActionType;
   /**
    * @member {Activity[]} [botActivityPreview]
    */
@@ -872,10 +883,10 @@ export interface MessagingExtensionAction extends TaskModuleRequest {
  */
 export interface TaskModuleResponseBase {
   /**
-   * @member {Type2} [type] Choice of action options when responding to the
+   * @member {BotMessagePreviewActionType} [type] Choice of action options when responding to the
    * task/submit message. Possible values include: 'message', 'continue'
    */
-  type?: Type2;
+  type?: BotMessagePreviewActionType;
 }
 
 /**
@@ -918,10 +929,10 @@ export interface MessagingExtensionResult {
    */
   attachmentLayout?: AttachmentLayout;
   /**
-   * @member {Type3} [type] The type of the result. Possible values include:
+   * @member {MessagingExtensionResultType} [type] The type of the result. Possible values include:
    * 'result', 'auth', 'config', 'message', 'botMessagePreview'
    */
-  type?: Type3;
+  type?: MessagingExtensionResultType;
   /**
    * @member {MessagingExtensionAttachment[]} [attachments] (Only when type is
    * result) Attachments
@@ -1241,12 +1252,17 @@ export type ActivityImageType = 'avatar' | 'article';
 export type Os = 'default' | 'iOS' | 'android' | 'windows';
 
 /**
- * Defines values for Type1.
+ * Defines values for O365ConnectorCardInputBaseType.
  * Possible values include: 'textInput', 'dateInput', 'multichoiceInput'
  * @readonly
  * @enum {string}
  */
-export type Type1 = 'textInput' | 'dateInput' | 'multichoiceInput';
+export type O365ConnectorCardInputBaseType = 'textInput' | 'dateInput' | 'multichoiceInput';
+
+/**
+ * @deprecated Use O365ConnectorCardInputBaseType instead.
+ */
+export type Type1 = O365ConnectorCardInputBaseType;
 
 /**
  * Defines values for Style.
@@ -1321,20 +1337,26 @@ export type Importance = 'normal' | 'high' | 'urgent';
 export type CommandContext = 'message' | 'compose' | 'commandbox';
 
 /**
- * Defines values for BotMessagePreviewAction.
+ * Defines values for BotMessagePreviewActionType.
  * Possible values include: 'edit', 'send'
  * @readonly
  * @enum {string}
  */
-export type BotMessagePreviewAction = 'edit' | 'send';
+export type BotMessagePreviewActionType = 'edit' | 'send';
 
 /**
- * Defines values for Type2.
+ * Defines values for BotMessagePreviewType.
  * Possible values include: 'message', 'continue'
  * @readonly
  * @enum {string}
  */
-export type Type2 = 'message' | 'continue';
+export type BotMessagePreviewType = 'message' | 'continue';
+
+
+/**
+ * @deprecated Use BotMessagePreviewType
+ */
+export type Type2 = BotMessagePreviewActionType
 
 /**
  * Defines values for AttachmentLayout.
@@ -1345,13 +1367,18 @@ export type Type2 = 'message' | 'continue';
 export type AttachmentLayout = 'list' | 'grid';
 
 /**
- * Defines values for Type3.
+ * Defines values for MessagingExtensionResultType.
  * Possible values include: 'result', 'auth', 'config', 'message', 'botMessagePreview'
  * @readonly
  * @enum {string}
  */
-export type Type3 = 'result' | 'auth' | 'config' | 'message' | 'botMessagePreview';
+export type MessagingExtensionResultType = 'result' | 'auth' | 'config' | 'message' | 'botMessagePreview';
 
+
+/**
+ * @deprecated Use MessagingExtensionResultType instead
+ */
+export type Type3 = MessagingExtensionResultType
 /**
  * Defines values for Action.
  * Possible values include: 'accept', 'decline'

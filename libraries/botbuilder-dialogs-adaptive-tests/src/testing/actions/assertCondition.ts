@@ -6,8 +6,8 @@
  * Licensed under the MIT License.
  */
 import { Dialog, DialogContext, DialogTurnResult, DialogConfiguration } from 'botbuilder-dialogs';
-import { ExpressionEngine, Expression } from 'botframework-expressions';
 import { StringExpression } from 'botbuilder-dialogs-adaptive';
+import { ExpressionEngine, Expression } from 'adaptive-expressions';
 
 export interface AssertConditionConfiguration extends DialogConfiguration {
     condition?: string | Expression;

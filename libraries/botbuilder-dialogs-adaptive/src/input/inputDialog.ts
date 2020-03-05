@@ -7,7 +7,7 @@
  */
 import { DialogConfiguration, Dialog, DialogContext, DialogTurnResult, DialogEvent, DialogReason, Choice, ListStyle, ChoiceFactoryOptions, ChoiceFactory, DialogEvents, TurnPath } from 'botbuilder-dialogs';
 import { ActivityTypes, Activity, InputHints, MessageFactory } from 'botbuilder-core';
-import { ExpressionEngine } from 'botframework-expressions';
+import { ExpressionEngine } from 'adaptive-expressions';
 import { AdaptiveEventNames } from '../sequenceContext';
 import { TemplateInterface } from '../template';
 import { ActivityTemplate } from '../templates/activityTemplate';

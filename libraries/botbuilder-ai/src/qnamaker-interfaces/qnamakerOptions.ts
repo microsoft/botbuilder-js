@@ -14,7 +14,7 @@ import { QnARequestContext } from './qnaRequestContext';
  */
 export interface QnAMakerOptions {
     /**
-     * (Optional) minimum score accepted.
+     * (Optional) The minimum score threshold, used to filter returned results. Values range from score of 0.0 to 1.0.
      *
      * @remarks
      * Defaults to "0.3".
@@ -54,4 +54,14 @@ export interface QnAMakerOptions {
      * Id of the current question asked.
      */
     qnaId?: number;
+
+    /**
+     * A value indicating whether to call test or prod environment of knowledgebase. 
+     */
+    isTest?: boolean;
+
+    /**
+     * Ranker types.
+     */
+    rankerType?: string;
 }

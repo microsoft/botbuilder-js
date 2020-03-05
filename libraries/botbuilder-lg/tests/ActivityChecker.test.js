@@ -1,14 +1,14 @@
-const { TemplateEngine, ActivityChecker } = require('../lib');
+const { LGParser, ActivityChecker } = require('../lib');
 const assert = require('assert');
 
 function getTemplateEngine(){
-    const filePath =  `${ __dirname }/testData/Examples/DiagnosticStructuredLG.lg`;
-    return new TemplateEngine().addFile(filePath);
+    const filePath =  `${ __dirname }/testData/examples/DiagnosticStructuredLG.lg`;
+    return LGParser.parseFile(filePath);
 }
 
 function getDiagnostics(templateName, data){
-    const engine = getTemplateEngine();
-    const lgResult = engine.evaluateTemplate(templateName, data);
+    const lgfile = getTemplateEngine();
+    const lgResult = lgfile.evaluateTemplate(templateName, data);
     return ActivityChecker.check(lgResult);
 }
 

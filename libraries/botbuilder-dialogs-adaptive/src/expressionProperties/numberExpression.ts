@@ -7,7 +7,7 @@
  */
 
 import { ExpressionProperty } from '../expressionProperty';
-import { Expression } from 'botframework-expressions';
+import { Expression } from 'adaptive-expressions';
 
 export class NumberExpression extends ExpressionProperty<number> {
     public constructor(value?: number | string | Expression) {

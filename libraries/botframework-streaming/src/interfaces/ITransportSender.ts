@@ -6,10 +6,11 @@
  * Licensed under the MIT License.
  */
 import { ITransport } from './ITransport';
+import { INodeBuffer } from './INodeBuffer';
 
 /**
  * Definition of a streaming transport that can send requests.
  */
 export interface ITransportSender extends ITransport {
-    send(buffer: Buffer): number;
+    send(buffer: INodeBuffer): number;
 }

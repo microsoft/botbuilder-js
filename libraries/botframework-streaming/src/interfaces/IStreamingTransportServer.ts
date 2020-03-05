@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 import { IReceiveResponse } from './IReceiveResponse';
-import { StreamingRequest } from '../StreamingRequest';
+import { StreamingRequest } from '../streamingRequest';
 
 /**
  * Abstraction to define the characteristics of a streaming transport server. 
@@ -16,4 +16,5 @@ export interface IStreamingTransportServer {
     start(): Promise<string>;
     disconnect(): void;
     send(request: StreamingRequest): Promise<IReceiveResponse>;
+    isConnected?: boolean;
 }

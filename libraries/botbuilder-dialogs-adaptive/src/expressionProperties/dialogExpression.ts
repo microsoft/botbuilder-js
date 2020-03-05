@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 
-import { Expression } from 'botframework-expressions';
+import { Expression } from 'adaptive-expressions';
 import { Dialog } from 'botbuilder-dialogs';
 import { ObjectExpression } from './objectExpression';
 

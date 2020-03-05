@@ -6,9 +6,24 @@
  * Licensed under the MIT License.
  */
 
-export * from './botFrameworkAdapter';
+export {
+    BotFrameworkAdapter,
+    BotFrameworkAdapterSettings,
+    INVOKE_RESPONSE_KEY,
+    StatusCodes,
+    StatusCodeError,
+} from './botFrameworkAdapter';
+export { BotFrameworkHttpClient } from './botFrameworkHttpClient';
+export { ChannelServiceHandler } from './channelServiceHandler';
+export { ChannelServiceRoutes, RouteHandler, WebServer } from './channelServiceRoutes';
 export * from './fileTranscriptStore';
 export * from './inspectionMiddleware';
+export {
+    WebRequest,
+    WebResponse
+} from './interfaces';
+export * from './skills';
+export { StreamingHttpClient, TokenResolver } from './streaming';
 export * from './teamsActivityHandler';
 export * from './teamsActivityHelpers';
 export * from './teamsInfo';

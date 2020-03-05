@@ -1,14 +1,14 @@
-const { TemplateEngine, ActivityFactory } = require('../lib');
+const { LGParser, ActivityFactory } = require('../lib');
 const assert = require('assert');
 
 function getTemplateEngine(){
-    const filePath =  `${ __dirname }/testData/Examples/NormalStructuredLG.lg`;
-    return new TemplateEngine().addFile(filePath);
+    const filePath =  `${ __dirname }/testData/examples/NormalStructuredLG.lg`;
+    return LGParser.parseFile(filePath);
 }
 
 function getActivity(templateName, data){
-    const engine = getTemplateEngine();
-    const lgResult = engine.evaluateTemplate(templateName, data);
+    const lgFile = getTemplateEngine();
+    const lgResult = lgFile.evaluateTemplate(templateName, data);
     return ActivityFactory.createActivity(lgResult);
 }
 
@@ -568,5 +568,5 @@ function assertReceiptCardActivity(activity) {
     assert.strictEqual(items[1].image.url, 'https://github.com/amido/azure-vector-icons/raw/master/renders/cloud-service.png');
     assert.strictEqual(items[1].price, '$ 45.00');
     assert.strictEqual(items[1].quantity, '720');
-
+    
 }

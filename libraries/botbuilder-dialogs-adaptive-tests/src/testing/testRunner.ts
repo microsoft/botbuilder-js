@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { ResourceExplorer as LgResourceExplorer, LanguageGeneratorMiddleWare } from 'botbuilder-dialogs-adaptive';
+import { LanguageGeneratorMiddleWare } from 'botbuilder-dialogs-adaptive';
 import { TypeFactory, TypeLoader, ResourceExplorer } from 'botbuilder-dialogs-declarative';
 import { AdaptiveComponentRegistration } from '../adaptiveComponentRegistration';
 import { AdaptiveTestComponentRegistration } from '../adaptiveTestComponentRegistration';
@@ -27,7 +27,7 @@ export class TestRunner {
         this.typeLoader.addComponent(new AdaptiveComponentRegistration());
         this.typeLoader.addComponent(new AdaptiveTestComponentRegistration());
 
-        const lgResourceExplorer = LgResourceExplorer.loadProject('resources/lg', [], false);
+        const lgResourceExplorer = ResourceExplorer.loadProject('resources/lg', [], false);
         this.testAdapter = new AdaptiveTestAdapter(AdaptiveTestAdapter.createConversation('botbuilder-dialogs-adaptive-tests'));
         this.testAdapter.use(new LanguageGeneratorMiddleWare(lgResourceExplorer));
 

@@ -163,7 +163,7 @@ export interface CardAction {
   /**
    * The type of action implemented by this button. Possible values include: 'openUrl', 'imBack',
    * 'postBack', 'playAudio', 'playVideo', 'showImage', 'downloadFile', 'signin', 'call',
-   * 'payment', 'messageBack', 'openApp'
+   * messageBack', 'openApp'
    */
   type: ActionTypes | string;
   /**
@@ -1251,6 +1251,7 @@ export interface TokenResponse {
 
 /**
  * W3C Payment Method Data for Microsoft Pay
+ * @deprecated Bot Framework no longer supports payments
  */
 export interface MicrosoftPayMethodData {
   /**
@@ -1269,6 +1270,7 @@ export interface MicrosoftPayMethodData {
 
 /**
  * Address within a Payment Request
+ * @deprecated Bot Framework no longer supports payments
  */
 export interface PaymentAddress {
   /**
@@ -1324,6 +1326,7 @@ export interface PaymentAddress {
 
 /**
  * Supplies monetary amounts
+ * @deprecated Bot Framework no longer supports payments
  */
 export interface PaymentCurrencyAmount {
   /**
@@ -1342,6 +1345,7 @@ export interface PaymentCurrencyAmount {
 
 /**
  * Indicates what the payment request is for and the value asked for
+ * @deprecated Bot Framework no longer supports payments
  */
 export interface PaymentItem {
   /**
@@ -1360,6 +1364,7 @@ export interface PaymentItem {
 
 /**
  * Describes a shipping option
+ * @deprecated Bot Framework no longer supports payments
  */
 export interface PaymentShippingOption {
   /**
@@ -1382,6 +1387,7 @@ export interface PaymentShippingOption {
 
 /**
  * Provides details that modify the PaymentDetails based on payment method identifier
+ * @deprecated Bot Framework no longer supports payments
  */
 export interface PaymentDetailsModifier {
   /**
@@ -1407,6 +1413,7 @@ export interface PaymentDetailsModifier {
 
 /**
  * Provides information about the requested transaction
+ * @deprecated Bot Framework no longer supports payments
  */
 export interface PaymentDetails {
   /**
@@ -1434,6 +1441,7 @@ export interface PaymentDetails {
 /**
  * Indicates a set of supported payment methods and any associated payment method specific data for
  * those methods
+ * @deprecated Bot Framework no longer supports payments
  */
 export interface PaymentMethodData {
   /**
@@ -1450,6 +1458,7 @@ export interface PaymentMethodData {
 
 /**
  * Provides information about the options desired for the payment request
+ * @deprecated Bot Framework no longer supports payments
  */
 export interface PaymentOptions {
   /**
@@ -1481,6 +1490,7 @@ export interface PaymentOptions {
 
 /**
  * A request to make a payment
+ * @deprecated Bot Framework no longer supports payments
  */
 export interface PaymentRequest {
   /**
@@ -1508,6 +1518,7 @@ export interface PaymentRequest {
 /**
  * A PaymentResponse is returned when a user has selected a payment method and approved a payment
  * request
+ * @deprecated Bot Framework no longer supports payments
  */
 export interface PaymentResponse {
   /**
@@ -1545,6 +1556,7 @@ export interface PaymentResponse {
 
 /**
  * Payload delivered when completing a payment request
+ * @deprecated Bot Framework no longer supports payments
  */
 export interface PaymentRequestComplete {
   /**
@@ -1563,6 +1575,7 @@ export interface PaymentRequestComplete {
 
 /**
  * Result from a completed payment request
+ * @deprecated Bot Framework no longer supports payments
  */
 export interface PaymentRequestCompleteResult {
   /**
@@ -1573,6 +1586,7 @@ export interface PaymentRequestCompleteResult {
 
 /**
  * An update to a payment request
+ * @deprecated Bot Framework no longer supports payments
  */
 export interface PaymentRequestUpdate {
   /**
@@ -1595,6 +1609,7 @@ export interface PaymentRequestUpdate {
 
 /**
  * A result object from a Payment Request Update invoke operation
+ * @deprecated Bot Framework no longer supports payments
  */
 export interface PaymentRequestUpdateResult {
   /**
@@ -1690,7 +1705,7 @@ export enum InputHints {
 /**
  * Defines values for ActionTypes.
  * Possible values include: 'openUrl', 'imBack', 'postBack', 'playAudio', 'playVideo', 'showImage',
- * 'downloadFile', 'signin', 'call', 'payment', 'messageBack', 'openApp'
+ * 'downloadFile', 'signin', 'call', messageBack', 'openApp'
  * @readonly
  * @enum {string}
  */
@@ -1704,6 +1719,7 @@ export enum ActionTypes {
   DownloadFile = 'downloadFile',
   Signin = 'signin',
   Call = 'call',
+  // @deprecated Bot Framework no longer supports payments
   Payment = 'payment',
   MessageBack = 'messageBack',
   OpenApp = 'openApp',
@@ -1746,6 +1762,7 @@ export enum ActivityImportance {
 export enum DeliveryModes {
   Normal = 'normal',
   Notification = 'notification',
+  BufferedReplies = 'bufferedReplies'
 }
 
 /**
@@ -1780,5 +1797,35 @@ export enum SemanticActionStateTypes {
   Start = 'start',
   Continue = 'continue',
   Done = 'done',
+}
+
+/**
+ * Defines values for ChannelIds for Channels.
+ * Possible values include: 'console', 'cortana', 'directline', 'directlinespeech', 'email',
+ * 'emulator', 'facebook', 'groupme', 'kik', 'line', 'msteams', 'skype', 'skypeforbusiness',
+ * 'slack', 'sms', 'telegram', 'test', 'twilio-sms', 'webchat'
+ * @readonly
+ * @enum {string}
+ */
+export enum Channels {
+  Console = 'console',
+  Cortana = 'cortana',
+  Directline = 'directline',
+  DirectlineSpeech = 'directlinespeech',
+  Email = 'email',
+  Emulator = 'emulator',
+  Facebook = 'facebook',
+  Groupme = 'groupme',
+  Kik = 'kik',
+  Line = 'line',
+  Msteams = 'msteams',
+  Skype = 'skype',
+  Skypeforbusiness = 'skypeforbusiness',
+  Slack = 'slack',
+  Sms = 'sms',
+  Telegram = 'telegram',
+  Test = 'test',
+  Twilio = 'twilio-sms',
+  Webchat = 'webchat'  
 }
 

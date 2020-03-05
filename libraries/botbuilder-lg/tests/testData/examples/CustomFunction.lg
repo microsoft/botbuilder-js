@@ -1,0 +1,8 @@
+# template
+- ${custom(1, 2)}
+
+# callSub
+- ${sub()}
+
+[CustomFunctionsSub.lg](./CustomFunctionSub.lg)
+

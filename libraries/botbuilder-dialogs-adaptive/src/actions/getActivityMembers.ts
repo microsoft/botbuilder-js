@@ -6,7 +6,6 @@
  * Licensed under the MIT License.
  */
 import { Configurable, Dialog, DialogContext, DialogTurnResult, DialogConfiguration } from 'botbuilder-dialogs';
-import { Expression, ExpressionEngine } from 'botframework-expressions';
 import { StringExpression, BoolExpression } from '../expressionProperties';
 
 export interface GetActivityMembersConfiguration extends DialogConfiguration {

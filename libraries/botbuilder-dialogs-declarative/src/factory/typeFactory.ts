@@ -45,7 +45,7 @@ export class TypeFactory {
         const builder = this.registrations[name];
 
         if (!builder) {
-            throw new Error(`TypeFactory: type ${name} not registered in factory.`)
+            throw new Error(`TypeFactory: type ${ name } not registered in factory.`)
         }
 
         return builder.build(config);

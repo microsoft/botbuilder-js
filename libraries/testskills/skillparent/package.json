@@ -1,0 +1,16 @@
+{
+  "name": "skillparent",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "botbuilder": "4.1.6",
+    "botframework-connector": "4.1.6",
+    "restify": "^8.5.1"
+  }
+}

@@ -4,6 +4,7 @@ const { TestAdapter, TurnContext, NullTelemetryClient } = require('botbuilder-co
 const { QnAMaker } = require('../');
 const nock = require('nock');
 const fs = require('fs');
+const { getFetch } = require('../lib/globals');
 
 // Save test keys
 const knowledgeBaseId = process.env.QNAKNOWLEDGEBASEID;
@@ -250,6 +251,26 @@ describe('QnAMaker', function () {
 
             assert.strictEqual(qnaResults.length, 2, 'one answer should be returned');
             assert.strictEqual(qnaResults[0].score < 1, true, 'score should be low');
+        });
+
+        it('should call qnamaker with isTest true', async function() {
+            const qna = new QnAMaker(endpoint);
+            const turnContext = new TestContext({ text: "Q11" });
+            const options = { top: 1, context: null, isTest: true };
+            
+            const qnaResults = await qna.getAnswers(turnContext, options);
+
+            assert.strictEqual(qnaResults.length, 0, 'no answers should be returned');
+        });
+
+        it('should call qnamaker with rankerType questionOnly', async function() {
+            const qna = new QnAMaker(endpoint);
+            const turnContext = new TestContext({ text: "Q11" });
+            const options = { top: 1, context: null, rankerType: "questionOnly" };
+            
+            const qnaResults = await qna.getAnswers(turnContext, options);
+
+            assert.strictEqual(qnaResults.length, 2, 'no answers should be returned');
         });
 
         it('should return answer with timeout option specified', async function() {
@@ -725,6 +746,25 @@ describe('QnAMaker', function () {
             const descendingQnaResults = qnaResults.sort((a, b) => b.score - a.score);
 
             assert.strictEqual(qnaResults, descendingQnaResults, 'answers should be sorted from greatest to least score');
+        });
+    });
+
+    describe('getFetch()', function(){    
+
+        it('Should return fetch instance from global', function(){            
+            global.fetch = function() { return 'global fetch fake'; };
+
+            const fetch = getFetch();
+            assert.strictEqual('global fetch fake', fetch());   
+        });
+
+        it('Should set fetch API if it does not exist', function(){
+            if (global.fetch) {
+                delete global['fetch'];
+            }
+
+            const fetch = getFetch();
+            assert(typeof fetch === 'function');
         });
     });
 });

@@ -19,20 +19,23 @@
   "main": "./lib/index.js",
   "typings": "./lib/index.d.ts",
   "dependencies": {
+    "adaptive-expressions": "4.1.6",
     "antlr4ts": "0.5.0-alpha.1",
-    "botframework-expressions": "4.1.6",
+    "botbuilder-core": "4.1.6",
     "lodash": "^4.17.11",
-    "uuid": "^3.3.3",
-    "botbuilder-core": "4.1.6"
+    "path": "^0.12.7",
+    "uuid": "^3.3.3"
   },
   "devDependencies": {
     "@types/mocha": "^5.2.5",
     "@types/node": "^10.12.18",
-    "nyc": "^11.4.1",
-    "ts-node": "^4.1.0"
+    "mocha": "^5.2.0",
+    "nyc": "^15.0.0",
+    "ts-node": "^4.1.0",
+    "typescript": "3.5.3"
   },
   "scripts": {
-    "test": "tsc && nyc mocha tests/ --timeout 60000",
+    "test": "tsc && mocha tests/ --timeout 60000",
     "build": "tsc",
     "build-docs": "typedoc --theme markdown --entryPoint botbuilder-lg --excludePrivate --includeDeclarations --ignoreCompilerErrors --module amd --out ..\\..\\doc\\botbuilder-lg .\\lib\\index.d.ts --hideGenerator --name \"Bot Builder SDK - LG\" --readme none",
     "clean": "erase /q /s .\\lib",

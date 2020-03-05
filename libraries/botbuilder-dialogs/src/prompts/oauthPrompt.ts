@@ -5,16 +5,21 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { Activity, ActivityTypes, Attachment, CardFactory, InputHints, MessageFactory, OAuthLoginTimeoutKey, TokenResponse, TurnContext, IUserTokenProvider,  } from 'botbuilder-core';
+import { Activity, ActivityTypes, AppCredentials, Attachment, CardFactory, Channels, InputHints, MessageFactory, OAuthLoginTimeoutKey, TokenResponse, TurnContext, CredentialTokenProvider, OAuthCard, ActionTypes, } from 'botbuilder-core';
 import { Dialog, DialogTurnResult } from '../dialog';
 import { DialogContext } from '../dialogContext';
 import { PromptOptions, PromptRecognizerResult,  PromptValidator } from './prompt';
-import { channels } from '../choices/channel';
+import { isSkillClaim } from './skillsHelpers';
 
 /**
  * Settings used to configure an `OAuthPrompt` instance.
  */
 export interface OAuthPromptSettings {
+    /**
+     * AppCredentials for OAuth.
+     */
+    oAuthAppCredentials: AppCredentials;
+
     /**
      * Name of the OAuth connection being used.
      */
@@ -104,7 +109,6 @@ export interface OAuthPromptSettings {
  * ```
  */
 export class OAuthPrompt extends Dialog {
-
     /**
      * Creates a new OAuthPrompt instance.
      * @param dialogId Unique ID of the dialog within its parent `DialogSet` or `ComponentDialog`.
@@ -158,7 +162,7 @@ export class OAuthPrompt extends Dialog {
         } else {
 
             if (state.state['attemptCount'] === undefined) {
-                state.state['attemptCount'] = 1;
+                state.state['attemptCount'] = 0;
             }
 
             // Validate the return value
@@ -169,7 +173,7 @@ export class OAuthPrompt extends Dialog {
                     recognized: recognized,
                     state: state.state,
                     options: state.options,
-                    attemptCount: state.state['attemptCount']
+                    attemptCount: ++state.state['attemptCount']
                 });
             } else if (recognized.succeeded) {
                 isValid = true;
@@ -201,9 +205,9 @@ export class OAuthPrompt extends Dialog {
         }
 
         // Get the token and call validator
-        const adapter: IUserTokenProvider = context.adapter as IUserTokenProvider;
+        const adapter: CredentialTokenProvider = context.adapter as CredentialTokenProvider;
 
-        return await adapter.getUserToken(context, this.settings.connectionName, code);
+        return await adapter.getUserToken(context, this.settings.connectionName, code, this.settings.oAuthAppCredentials);
     }
 
     /**
@@ -228,9 +232,9 @@ export class OAuthPrompt extends Dialog {
         }
 
         // Sign out user
-        const adapter: IUserTokenProvider = context.adapter as IUserTokenProvider;
+        const adapter: CredentialTokenProvider = context.adapter as CredentialTokenProvider;
 
-        return adapter.signOutUser(context, this.settings.connectionName);
+        return adapter.signOutUser(context, this.settings.connectionName, null, this.settings.oAuthAppCredentials);
     }
 
     private async sendOAuthCardAsync(context: TurnContext, prompt?: string|Partial<Activity>): Promise<void> {
@@ -245,26 +249,40 @@ export class OAuthPrompt extends Dialog {
         if (!Array.isArray(msg.attachments)) { msg.attachments = []; }
 
         // Add login card as needed
-        if (this.channelSupportsOAuthCard(context.activity.channelId)) {
+        if (this.isOAuthCardSupported(context)) {
             const cards: Attachment[] = msg.attachments.filter((a: Attachment) => a.contentType === CardFactory.contentTypes.oauthCard);
             if (cards.length === 0) {
-                let link: string = undefined;
+                let cardActionType = ActionTypes.Signin;
+                let link: string;
                 if (OAuthPrompt.isFromStreamingConnection(context.activity)) {
-                    link = await (context.adapter as any).getSignInLink(context, this.settings.connectionName);
+                    link = await (context.adapter as CredentialTokenProvider).getSignInLink(context, this.settings.connectionName, this.settings.oAuthAppCredentials);
+                } else {
+                    // Retrieve the ClaimsIdentity from a BotFrameworkAdapter. For more information see
+                    // https://github.com/microsoft/botbuilder-js/commit/b7932e37bb6e421985d5ce53edd9e82af6240a63#diff-3e3af334c0c6adf4906ee5e2a23beaebR250
+                    const identity = context.turnState.get((context.adapter as any).BotIdentityKey);
+                    if (identity && isSkillClaim(identity.claims)) {
+                        // Force magic code for Skills (to be addressed in R8)
+                        link = await (context.adapter as CredentialTokenProvider).getSignInLink(context, this.settings.connectionName, this.settings.oAuthAppCredentials);
+                        cardActionType = ActionTypes.OpenUrl;
+                    }
                 }
                 // Append oauth card
-                msg.attachments.push(CardFactory.oauthCard(
+                const card = CardFactory.oauthCard(
                     this.settings.connectionName,
                     this.settings.title,
                     this.settings.text,
                     link
-                ));
+                );
+
+                // Set the appropriate ActionType for the button.
+                (card.content as OAuthCard).buttons[0].type = cardActionType;
+                msg.attachments.push(card);
             }
         } else {
             const cards: Attachment[] = msg.attachments.filter((a: Attachment) => a.contentType === CardFactory.contentTypes.signinCard);
             if (cards.length === 0) {
                 // Append signin card
-                const link: any = await (context.adapter as any).getSignInLink(context, this.settings.connectionName);
+                const link: any = await (context.adapter as CredentialTokenProvider).getSignInLink(context, this.settings.connectionName, this.settings.oAuthAppCredentials);
                 msg.attachments.push(CardFactory.signinCard(
                     this.settings.title,
                     link,
@@ -274,8 +292,7 @@ export class OAuthPrompt extends Dialog {
         }
 
         // Add the login timeout specified in OAuthPromptSettings to TurnState so it can be referenced if polling is needed
-        if (!context.turnState.get(OAuthLoginTimeoutKey) && this.settings.timeout)
-        {
+        if (!context.turnState.get(OAuthLoginTimeoutKey) && this.settings.timeout) {
             context.turnState.set(OAuthLoginTimeoutKey, this.settings.timeout);
         }
 
@@ -329,12 +346,32 @@ export class OAuthPrompt extends Dialog {
         return activity.type === ActivityTypes.Invoke && activity.name === 'signin/verifyState';
     }
 
+    private isOAuthCardSupported(context: TurnContext) {
+        // Azure Bot Service OAuth cards are not supported in the community adapters. Since community adapters
+        // have a 'name' in them, we cast the adapter to 'any' to check for the name.
+        const adapter:any = context.adapter;
+        if (adapter.name) {
+            switch(adapter.name) {
+                case 'Facebook Adapter':
+                case 'Google Hangouts Adapter':
+                case 'Slack Adapter':
+                case 'Twilio SMS Adapter':
+                case 'Web Adapter':
+                case 'Webex Adapter':
+                case 'Botkit CMS':
+                    return false;
+                default:
+            }
+        }
+        return this.channelSupportsOAuthCard(context.activity.channelId);
+    }
+
     private channelSupportsOAuthCard(channelId: string): boolean {
         switch (channelId) {
-            case channels.msteams:
-            case channels.cortana:
-            case channels.skype:
-            case channels.skypeforbusiness:
+            case Channels.Msteams:
+            case Channels.Cortana:
+            case Channels.Skype:
+            case Channels.Skypeforbusiness:
                 return false;
             default:
         }

@@ -1,5 +1,3 @@
-import { ITypeBuilder } from "./typeBuilder";
-
 /**
  * @module botbuilder-dialogs-declarative
  */
@@ -7,6 +5,8 @@ import { ITypeBuilder } from "./typeBuilder";
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
+
+import { ITypeBuilder } from './typeBuilder';
 
 export class DefaultTypeBuilder implements ITypeBuilder {
 

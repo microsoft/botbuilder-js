@@ -1,3 +1,4 @@
+/browser
 /lib
 /node_modules
 *.js.map

@@ -10,19 +10,20 @@ import { PayloadTypes } from '../payloads/payloadTypes';
 import { HeaderSerializer } from '../payloads/headerSerializer';
 import { SubscribableStream } from '../subscribableStream';
 import { PayloadConstants } from '../payloads/payloadConstants';
-import { TransportDisconnectedEventArgs } from './TransportDisconnectedEventArgs';
+import { TransportDisconnectedEvent } from './transportDisconnectedEvent';
 import { ITransportReceiver } from '../interfaces/ITransportReceiver';
 import { IHeader } from '../interfaces/IHeader';
+import { INodeBuffer } from '../interfaces/INodeBuffer';
 
 /**
- * Payload receiver for straming.
+ * Payload receiver for streaming.
  */
 export class PayloadReceiver {
     public isConnected: boolean;
     public disconnected: TransportDisconnectedEventHandler = function(sender, events){};
     private _receiver: ITransportReceiver;
-    private _receiveHeaderBuffer: Buffer;
-    private _receivePayloadBuffer: Buffer;
+    private _receiveHeaderBuffer: INodeBuffer;
+    private _receivePayloadBuffer: INodeBuffer;
     private _getStream: (header: IHeader) => SubscribableStream;
     private _receiveAction: (header: IHeader, stream: SubscribableStream, length: number) => void;
 
@@ -57,7 +58,7 @@ export class PayloadReceiver {
      *
      * @param e Event arguments to include when broadcasting disconnection event.
      */
-    public disconnect(e?: TransportDisconnectedEventArgs): void {
+    public disconnect(e?: TransportDisconnectedEvent): void {
         let didDisconnect;
         try {
             if (this.isConnected) {
@@ -67,13 +68,13 @@ export class PayloadReceiver {
             }
         } catch (error) {
             this.isConnected = false;
-            this.disconnected(this, new TransportDisconnectedEventArgs(error.message));
+            this.disconnected(this, new TransportDisconnectedEvent(error.message));
         }
         this._receiver = null;
         this.isConnected = false;
 
         if (didDisconnect) {
-            this.disconnected(this, e || TransportDisconnectedEventArgs.Empty);
+            this.disconnected(this, e || TransportDisconnectedEvent.Empty);
         }
     }
 
@@ -122,7 +123,7 @@ export class PayloadReceiver {
                 }
             } catch (error) {
                 isClosed = true;
-                this.disconnect(new TransportDisconnectedEventArgs(error.message));
+                this.disconnect(new TransportDisconnectedEvent(error.message));
             }
         }
     }

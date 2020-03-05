@@ -8,7 +8,7 @@
 import fetch from 'node-fetch';
 import { DialogTurnResult, DialogConfiguration, DialogContext, Dialog, Configurable } from 'botbuilder-dialogs';
 import { Activity } from 'botbuilder-core';
-import { ExpressionEngine } from 'botframework-expressions';
+import { ExpressionEngine } from 'adaptive-expressions';
 import { TextTemplate } from '../templates';
 import { ValueExpression, StringExpression, BoolExpression, EnumExpression } from '../expressionProperties';
 

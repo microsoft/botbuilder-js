@@ -1,9 +1,14 @@
 /**
  * @module botbuilder
  */
-(new Function('require', 'if (!this.hasOwnProperty("FormData")) { this.FormData = require("form-data"); }; if (!this.hasOwnProperty("fetch")) { this.fetch = require("node-fetch"); }'))(require);
+/**
+ * Copyright (c) Microsoft Corporation. All rights reserved.
+ * Licensed under the MIT License.
+ */
 
-import { TokenResponse } from './connectorApi/models/mappers';
+import './globals';
+
+(new Function('require', 'if (!this.hasOwnProperty("FormData")) { this.FormData = require("form-data"); }; if (!this.hasOwnProperty("fetch")) { this.fetch = require("node-fetch"); }'))(require);
 
 export * from './auth';
 export { ConnectorClient } from './connectorApi/connectorClient';

@@ -25,11 +25,13 @@ module.exports = {
     'Echo bot webchat sends messages': async function(browser) {
         // Type 'Hello' in the webchat input box and send it to the bot
         botPage
-            .setValue('@webchatMessageInput', 'Hello')
-            .click('@webchatMessageInputSubtmitButton', function(result) {
+            .setValue('@webchatMessageInput', 'Hello');
+        botPage
+            .click('@webchatMessageInputSubmitButton', function (result) {
                 // Assertion to check the button was clickable and got triggered
                 this.assert.strictEqual(result.status, 0, 'Message input working');
-            })
+            });
+        botPage
             .pause(250);
 
         await assertMessageIsPresentInPage(botPage, 'Hello', 'Webchat contains user message');
@@ -45,19 +47,23 @@ async function assertMessageIsPresentInPage(pageInstance, textSearch, assertMess
     await pageInstance.api.elements('@webchatMessagesList', function(messagesWebElements) {
         for (let index = 0; (index < messagesWebElements.value.length); index++) {
             const webElement = messagesWebElements.value[index];
-            messagesListPromises.push(new Promise(function(resolve){
-                pageInstance.api.elementIdText(webElement.ELEMENT, function(elementText) {
+            messagesListPromises.push((function(resolve) {
+                // Workaround for different implementations of the WebDriver API
+                // This will be fixed when all browsers makes use of Selenium Server v4 which is compliant with the W3C WebDriver standards
+                var elementId = webElement.ELEMENT != undefined ? webElement.ELEMENT : webElement.values()[0];
+                pageInstance.api.elementIdText(elementId, function(elementText) {
                     resolve(elementText.value == textSearch);
                 });
             }));
         }
     }).then(function(){
         Promise.all(messagesListPromises)
-        .then(function (results) {
-            let messageExists = results.some(function (value) {
-                return value;
+            .then(function (results) {
+                let messageExists = results.some(function (value) {
+                    return value;
+                });
+                // Check if any of the existing messages was equal to the needle.
+                pageInstance.assert.strictEqual(messageExists, true, assertMessage);
             });
-            pageInstance.assert.strictEqual(messageExists, true, assertMessage);
-        });
     });
 }
