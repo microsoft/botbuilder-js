@@ -26,6 +26,43 @@ class TestContext extends TurnContext {
 }
 
 describe('TeamsInfo', () => {
+    describe('sendMessageToTeamsChannel()', () =>{
+        it('should error if context is null', async () =>{
+            try {
+                await TeamsInfo.sendMessageToTeamsChannel(null, teamActivity, "teamID");
+            } catch (err){
+                assert(err.message === 'TurnContext cannot be null');
+            }
+        });
+
+        it('should error if activity is null', async () =>{
+            const context = new TestContext(teamActivity);
+            try {
+                await TeamsInfo.sendMessageToTeamsChannel(context, null, "teamID");
+            } catch (err){
+                assert(err.message === 'Activity cannot be null');
+            }
+        });
+
+        it('should error if teamID is a blank string', async () =>{
+            const context = new TestContext(teamActivity);
+            try {
+                await TeamsInfo.sendMessageToTeamsChannel(context, teamActivity, "");
+            } catch (err){
+                assert(err.message === 'The teamsChannelId cannot be null or empty');
+            }
+        });
+
+        it('should error if teamID is null', async () =>{
+            const context = new TestContext(teamActivity);
+            try {
+                await TeamsInfo.sendMessageToTeamsChannel(context, teamActivity, null);
+            } catch (err){
+                assert(err.message === 'The teamsChannelId cannot be null or empty');
+            }
+        });
+    });
+
     describe('getTeamChannels()', () => {
         it('should error in 1-on-1 chat', async () => {
             const context = new TestContext(oneOnOneActivity);

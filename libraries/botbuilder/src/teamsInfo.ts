@@ -17,11 +17,13 @@ import {
     TurnContext,
     PagedMembersResult,
     TeamsPagedMembersResult,
-    ConversationParameters
+    ConversationParameters,
+    ConversationReference
 } from 'botbuilder-core';
 import { ConnectorClient, TeamsConnectorClient, TeamsConnectorModels} from 'botframework-connector';
 
 import { BotFrameworkAdapter } from './botFrameworkAdapter';
+
 
 export class TeamsInfo {
     public static async getTeamDetails(context: TurnContext, teamId?: string): Promise<TeamDetails> {
@@ -33,12 +35,24 @@ export class TeamsInfo {
         return await this.getTeamsConnectorClient(context).teams.fetchTeamDetails(t);
     }
 
-    public static async sendMessageToTeamsChannel(context: TurnContext, activity: Partial<Activity>, teamsChannelId: string){
+    public static async sendMessageToTeamsChannel(context: TurnContext, activity: Partial<Activity>, teamsChannelId: string): Promise<[Partial<ConversationReference>, string]> {
+        if (context == null){
+            throw new Error("TurnContext cannot be null");
+        }
+
+        if (activity == null){
+            throw new Error("Activity cannot be null");
+        }
+
+        if (teamsChannelId == null || teamsChannelId == ""){
+            throw new Error("The teamsChannelId cannot be null or empty");
+        }
+
         const convoParams = <ConversationParameters>{
             isGroup: true,
             channelData: {
                 channel: {
-                    is: teamsChannelId
+                    id: teamsChannelId
                 }
             },
             activity: activity
