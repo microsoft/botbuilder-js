@@ -278,6 +278,27 @@ describe(`BotFrameworkAdapter`, function () {
         });
     });
 
+    it(`processActivity() should respect bufferedReplies if it's set via logic`, async () => {
+        const req = new MockRequest(incomingMessage);
+        const res = new MockResponse();
+        const adapter = new AdapterUnderTest();
+        await adapter.processActivity(req, res, async (context) => {
+            context.activity.deliveryMode = 'bufferedReplies';
+            await context.sendActivity({ type: 'message', text: 'Hello Buffered World!' });
+        });
+        assertResponse(res, 200, true);
+    });
+
+    it(`processActivity() should not respect invokeResponses if the incoming request was of type "invoke"`, async () => {
+        const req = new MockRequest(incomingMessage);
+        const res = new MockResponse();
+        const adapter = new AdapterUnderTest();
+        await adapter.processActivity(req, res, async (context) => {
+            await context.sendActivity({ type: 'invokeResponse', text: 'InvokeResponse Test' });
+        });
+        assertResponse(res, 200, false);
+    });
+
     it(`should processActivity().`, function (done) {
         let called = false;
         const req = new MockRequest(incomingMessage);
