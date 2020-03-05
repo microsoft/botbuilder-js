@@ -28,3 +28,4 @@ export * from './lgErrors';
 export * from './evaluator';
 export * from './errorListener';
 export * from './customizedMemory';
+export * from './expander';
