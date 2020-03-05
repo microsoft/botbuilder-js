@@ -6,11 +6,11 @@
  * Licensed under the MIT License.
  */
 
-import { IResourceProvider } from "./resourceProvider";
-import { normalize, dirname } from "path";
-import { FolderResourceProvider } from "./folderResoureProvider";
-import { IResource } from "./resource";
-import { EventEmitter } from "events";
+import { IResourceProvider } from './resourceProvider';
+import { normalize, dirname } from 'path';
+import { FolderResourceProvider } from './folderResoureProvider';
+import { IResource } from './resource';
+import { EventEmitter } from 'events';
 
 export class ResourceExplorer {
 
@@ -43,7 +43,7 @@ export class ResourceExplorer {
 
     public addResourceProvider(resourceProvider: IResourceProvider): ResourceExplorer {
         if (this._resourceProviders.some(r => r.id() === resourceProvider.id())) {
-            throw Error(`${resourceProvider.id()} has already been added as a resource`)
+            throw Error(`${ resourceProvider.id() } has already been added as a resource`)
         }
 
         this._resourceProviders.push(resourceProvider);

@@ -6,13 +6,13 @@
  * Licensed under the MIT License.
  */
 
-import { FileResource } from "./fileResource";
-import { normalize, extname } from "path";
-import { IResource } from "./resource";
-import { IResourceProvider } from "./resourceProvider";
-import { PathUtil } from "../pathUtil";
-import watch from "node-watch";
-import { EventEmitter } from "events";
+import { FileResource } from './fileResource';
+import { normalize, extname } from 'path';
+import { IResource } from './resource';
+import { IResourceProvider } from './resourceProvider';
+import { PathUtil } from '../pathUtil';
+import watch from 'node-watch';
+import { EventEmitter } from 'events';
 
 export class FolderResourceProvider implements IResourceProvider {
     private extensions: Set<string> = new Set<string>();
@@ -31,7 +31,7 @@ export class FolderResourceProvider implements IResourceProvider {
 
     constructor(folder: string, includeSubFolders: boolean = true, monitorChanges: boolean = true) {
 
-        const extensionsToInclude: string[] = [".lg", ".qna", ".lu", ".dialog", ".schema", ".md"];
+        const extensionsToInclude: string[] = ['.lg', '.qna', '.lu', '.dialog', '.schema', '.md'];
 
         extensionsToInclude.forEach(e => this.extensions.add(e));
 
@@ -48,7 +48,7 @@ export class FolderResourceProvider implements IResourceProvider {
 
         if (monitorChanges) {
             watch(folder, { recursive: true }, (type, filename) => {
-                this._emitter.emit("changed", new FileResource(filename));
+                this._emitter.emit('changed', new FileResource(filename));
             });
         }
     }

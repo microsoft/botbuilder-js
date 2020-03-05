@@ -1,5 +1,3 @@
-import { ITypeBuilder } from "./typeBuilder";
-
 /**
  * @module botbuilder-dialogs-declarative
  */
@@ -8,11 +6,13 @@ import { ITypeBuilder } from "./typeBuilder";
  * Licensed under the MIT License.
  */
 
+import { ITypeBuilder } from './typeBuilder';
+
 export class CustomTypeBuilder implements ITypeBuilder {
 
     constructor(private factory: (config: object) => object) {}
 
-    public build(config: object) : object {
+    public build(config: object): object {
         return this.factory(config);
     }
 }

@@ -1,8 +1,3 @@
-import { debug } from "util";
-import { IResourceProvider } from "./resourceProvider";
-import { IResource } from "./resource";
-import { FileResource } from "./fileResource";
-
 /**
  * @module botbuilder-dialogs-declarative
  */
@@ -10,9 +5,12 @@ import { FileResource } from "./fileResource";
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
+import { IResourceProvider } from './resourceProvider';
+import { IResource } from './resource';
+import { FileResource } from './fileResource';
 
-const path = require('path');
-const fs = require('fs');
+import path = require('path');
+import fs = require('fs');
 
 export class FileResourceProvider implements IResourceProvider {
 
@@ -34,7 +32,7 @@ export class FileResourceProvider implements IResourceProvider {
 
         // Normalize extensions to include the starting '.' character to match file libraries expectations
         if (fileExtension[0] != '.') {
-            fileExtension = `.${fileExtension}`;
+            fileExtension = `.${ fileExtension }`;
         }
         let resources: IResource[] = [];
 

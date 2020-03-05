@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { ITypeBuilder } from "./factory/typeBuilder";
+import { ITypeBuilder } from './factory/typeBuilder';
 
 export class TypeRegistration {
     constructor(name: string, builder: ITypeBuilder) {

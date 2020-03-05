@@ -7,11 +7,7 @@
  */
 
 
-import { debug } from "util";
-import { IResource } from "./resource";
-
-const path = require('path');
-const fs = require('fs');
+import { IResource } from './resource';
 
 export interface IResourceProvider {
     id(): string;
