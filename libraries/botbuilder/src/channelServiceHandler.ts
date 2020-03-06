@@ -27,7 +27,6 @@ import {
     ICredentialProvider,
     JwtTokenValidation
 } from 'botframework-connector';
-import { StatusCodes } from './botFrameworkAdapter';
 import { StatusCodeError } from './statusCodeError';
 
 /**

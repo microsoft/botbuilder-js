@@ -8,7 +8,6 @@
 
 import { Activity, AttachmentData, ConversationParameters, StatusCodes, Transcript } from 'botbuilder-core';
 
-import { StatusCodes } from './botFrameworkAdapter';
 import { ChannelServiceHandler } from './channelServiceHandler';
 import { StatusCodeError } from './statusCodeError';
 import { WebRequest, WebResponse } from './interfaces';
