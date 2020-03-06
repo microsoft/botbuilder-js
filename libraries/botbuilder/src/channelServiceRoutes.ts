@@ -8,8 +8,9 @@
 
 import { Activity, ConversationParameters, Transcript, AttachmentData } from 'botbuilder-core';
 
+import { StatusCodes } from './botFrameworkAdapter';
 import { ChannelServiceHandler } from './channelServiceHandler';
-import { StatusCodeError, StatusCodes } from './botFrameworkAdapter';
+import { StatusCodeError } from './statusCodeError';
 import { WebRequest, WebResponse } from './interfaces';
 
 export type RouteHandler = (request: WebRequest, response: WebResponse) => void;

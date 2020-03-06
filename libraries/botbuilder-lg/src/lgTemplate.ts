@@ -7,7 +7,7 @@
  */
 // tslint:disable-next-line: no-submodule-imports
 import { TerminalNode } from 'antlr4ts/tree';
-import { ParametersContext, TemplateBodyContext, TemplateDefinitionContext, TemplateNameContext} from './generated/LGFileParser';
+import { ParametersContext, TemplateBodyContext, TemplateDefinitionContext, TemplateNameContext, FileContext} from './generated/LGFileParser';
 
 /**
  * Here is a data model that can easily understanded and used as the context or all kinds of visitors
@@ -39,14 +39,40 @@ export class LGTemplate {
         this.parseTree = parseTree;
         this.source = source;
 
-        this.name = this.extractName(parseTree);
-        this.parameters = this.extractParameters(parseTree);
-        this.body = this.extractBody(parseTree, lgfileContent);
+        this.name = this.extractName();
+        this.parameters = this.extractParameters();
+        this.body = this.extractBody(lgfileContent);
     }
 
-    private readonly extractName = (parseTree: TemplateDefinitionContext): string => {
+    public getTemplateRange(): {startLine: number; stopLine: number} {
+        const startLine: number = this.parseTree.start.line - 1;
+        let  stopLine: number = this.parseTree.stop.line - 1;
+        if(this.parseTree.parent && this.parseTree.parent.parent && this.parseTree.parent.parent instanceof FileContext) {
+            const fileContext = this.parseTree.parent.parent as FileContext;
+            const templateDefinitions = fileContext.paragraph()
+                .map((u): TemplateDefinitionContext => u.templateDefinition())
+                .filter((u): boolean => u !== undefined);
+            
+            const currentIndex = templateDefinitions.indexOf(this.parseTree);
+            if (currentIndex >= 0 && currentIndex < templateDefinitions.length - 1) {
+                // in the middle of templates
+                stopLine = templateDefinitions[currentIndex + 1].start.line - 2;
+            } else {
+                // last item
+                stopLine = fileContext.stop.line - 1;
+            }
+
+            if (stopLine <= startLine)
+            {
+                stopLine = startLine;
+            }
+        }
+
+        return {startLine, stopLine};
+    }
+    private readonly extractName = (): string => {
         // tslint:disable-next-line: newline-per-chained-call
-        const nameContext: TemplateNameContext = parseTree.templateNameLine().templateName();
+        const nameContext: TemplateNameContext = this.parseTree.templateNameLine().templateName();
         if (!nameContext || !nameContext.text) {
             return '';
         }
@@ -54,9 +80,9 @@ export class LGTemplate {
         return  nameContext.text;
     }
 
-    private readonly extractParameters = (parseTree: TemplateDefinitionContext): string[] => {
+    private readonly extractParameters = (): string[] => {
         // tslint:disable-next-line: newline-per-chained-call
-        const parameters: ParametersContext = parseTree.templateNameLine().parameters();
+        const parameters: ParametersContext = this.parseTree.templateNameLine().parameters();
         if (parameters !== undefined) {
             // tslint:disable-next-line: newline-per-chained-call
             return parameters.IDENTIFIER().map((x: TerminalNode): string => x.text);
@@ -65,16 +91,13 @@ export class LGTemplate {
         return [];
     }
 
-    private readonly extractBody = (parseTree: TemplateDefinitionContext, lgfileContent: string): string => {
-        const templateBody: TemplateBodyContext = parseTree.templateBody();
-        if (!templateBody) {
-            return '';
-        }
+    private readonly extractBody = (lgfileContent: string): string => {
+        let startLine: number;
+        let stopLine: number;
 
-        const startLine: number = templateBody.start.line - 1;
-        const stopLine: number = templateBody.stop.line - 1;
+        ({startLine, stopLine} = this.getTemplateRange());
 
-        return this.getRangeContent(lgfileContent, startLine, stopLine);
+        return startLine >= stopLine ? '' : this.getRangeContent(lgfileContent, startLine + 1, stopLine);
     }
 
     private getRangeContent(originString: string, startLine: number, stopLine: number): string {
