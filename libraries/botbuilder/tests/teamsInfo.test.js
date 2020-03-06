@@ -1,6 +1,6 @@
 const assert = require('assert');
 const nock = require('nock');
-const { TurnContext } = require('botbuilder-core');
+const { TurnContext, MessageFactory } = require('botbuilder-core');
 const { BotFrameworkAdapter, TeamsInfo } = require('../');
 
 beforeEach(function (done) {
@@ -26,6 +26,66 @@ class TestContext extends TurnContext {
 }
 
 describe('TeamsInfo', () => {
+    describe('sendMessageToTeamsChannel()', () => {
+        it('should work with correct information', async() => {
+            const newConversation = [
+                {
+                    "activityid": "activityid123",
+                },
+                "resourceresponseid"
+            ];
+
+            const fetchNewConversation = nock('https://smba.trafficmanager.net/amer')
+                .post('/v3/conversations')
+                .reply(200, { newConversation });
+
+            const context = new TestContext(teamActivity);
+            const msg = MessageFactory.text("test message");
+            const teamChannelId = "19%3AgeneralChannelIdgeneralChannelId%40thread.skype";
+
+            const response = await TeamsInfo.sendMessageToTeamsChannel(context,msg, teamChannelId);
+            assert(fetchNewConversation.isDone());
+            assert(Array.isArray(response));
+            assert(newConversation[0]["activityid"] == "activityid123");
+            assert(newConversation[1] == "resourceresponseid");
+        });
+
+        it('should error if context is null', async () => {
+            try {
+                await TeamsInfo.sendMessageToTeamsChannel(null, teamActivity, "teamID");
+            } catch (err){
+                assert(err.message === 'TurnContext cannot be null');
+            }
+        });
+
+        it('should error if activity is null', async () => {
+            const context = new TestContext(teamActivity);
+            try {
+                await TeamsInfo.sendMessageToTeamsChannel(context, null, "teamID");
+            } catch (err){
+                assert(err.message === 'Activity cannot be null');
+            }
+        });
+
+        it('should error if teamID is a blank string', async () => {
+            const context = new TestContext(teamActivity);
+            try {
+                await TeamsInfo.sendMessageToTeamsChannel(context, teamActivity, "");
+            } catch (err){
+                assert(err.message === 'The teamsChannelId cannot be null or empty');
+            }
+        });
+
+        it('should error if teamID is null', async () => {
+            const context = new TestContext(teamActivity);
+            try {
+                await TeamsInfo.sendMessageToTeamsChannel(context, teamActivity, null);
+            } catch (err){
+                assert(err.message === 'The teamsChannelId cannot be null or empty');
+            }
+        });
+    });
+
     describe('getTeamChannels()', () => {
         it('should error in 1-on-1 chat', async () => {
             const context = new TestContext(oneOnOneActivity);
