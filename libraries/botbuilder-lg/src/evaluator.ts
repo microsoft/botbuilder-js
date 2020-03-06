@@ -455,7 +455,7 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGFilePa
         if (standardFunction !== undefined) {
             return standardFunction;
         }
-
+        
         if (name.startsWith('lg.')) {
             name = name.substring(3);
         }

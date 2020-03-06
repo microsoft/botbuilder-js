@@ -2,6 +2,9 @@
 - ${custom(1, 2)}
 
 # callSub
-- ${sub()}
+- ${refSub()}
 
-[import](CustomFunctionSub.lg)
+#refSub
+- ${custom(4, 8)}
+
+>[import](CustomFunctionSub.lg)
