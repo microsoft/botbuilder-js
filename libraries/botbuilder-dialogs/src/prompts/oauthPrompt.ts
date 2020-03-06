@@ -5,12 +5,11 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { Activity, ActivityTypes, Attachment, AppCredentials, CardFactory, Channels, InputHints, MessageFactory, OAuthLoginTimeoutKey, TokenResponse, TurnContext, IUserTokenProvider, OAuthCard, ActionTypes, ExtendedUserTokenProvider, verifyStateOperationName, StatusCodes, tokenExchangeOperationName, tokenResponseEventName } from 'botbuilder-core';
+import { Activity, ActivityTypes, Attachment, AppCredentials, CardFactory, Channels, InputHints, MessageFactory, OAuthLoginTimeoutKey, TokenResponse, TurnContext, OAuthCard, ActionTypes, ExtendedUserTokenProvider, verifyStateOperationName, StatusCodes, tokenExchangeOperationName, tokenResponseEventName } from 'botbuilder-core';
 import { Dialog, DialogTurnResult } from '../dialog';
 import { DialogContext } from '../dialogContext';
 import { PromptOptions, PromptRecognizerResult,  PromptValidator } from './prompt';
 import { isSkillClaim } from './skillsHelpers';
-import { BotSignInGetSignInResourceResponse } from '../../../botframework-connector/lib';
 
 /**
  * Request body accepted for a token exchange invoke activity.
@@ -334,7 +333,7 @@ export class OAuthPrompt extends Dialog {
             try {
                 token = await this.getUserToken(context, code);
                 if (token !== undefined) {
-                    await context.sendActivity({ type: 'invokeResponse', value: { status: StatusCodes }});
+                    await context.sendActivity({ type: 'invokeResponse', value: { status: StatusCodes.OK }});
                 } else {
                     await context.sendActivity({ type: 'invokeResponse', value: { status: 404 }});
                 }
@@ -391,11 +390,12 @@ export class OAuthPrompt extends Dialog {
         return token !== undefined ? { succeeded: true, value: token } : { succeeded: false };
     }
 
-    private getTokenExchangeInvokeResponse (status: number, failureDetail: string, id: string = null) {
-        return {
+    private getTokenExchangeInvokeResponse(status: number, failureDetail: string, id?: string): Activity {
+        const invokeResponse: Partial<Activity> = {
             type: 'invokeResponse',
-            value: {status: status, body: new TokenExchangeInvokeResponse(id, this.settings.connectionName, failureDetail)}
+            value: { status, body: new TokenExchangeInvokeResponse(id, this.settings.connectionName, failureDetail)}
         };
+        return invokeResponse as Activity;
     }
 
     private static isFromStreamingConnection(activity: Activity): boolean {
@@ -414,10 +414,10 @@ export class OAuthPrompt extends Dialog {
         return activity.type === ActivityTypes.Invoke && activity.name === verifyStateOperationName;
     }
 
-    private isOAuthCardSupported(context: TurnContext) {
+    private isOAuthCardSupported(context: TurnContext): boolean {
         // Azure Bot Service OAuth cards are not supported in the community adapters. Since community adapters
         // have a 'name' in them, we cast the adapter to 'any' to check for the name.
-        const adapter:any = context.adapter;
+        const adapter: any = context.adapter;
         if (adapter.name) {
             switch(adapter.name) {
                 case 'Facebook Adapter':
@@ -440,7 +440,7 @@ export class OAuthPrompt extends Dialog {
         return activity.type === ActivityTypes.Invoke && activity.name === tokenExchangeOperationName;
     }
 
-    private isTokenExchangeRequest(obj: unknown) : obj is TokenExchangeInvokeRequest {
+    private isTokenExchangeRequest(obj: unknown): obj is TokenExchangeInvokeRequest {
         if(obj.hasOwnProperty('token')) {
             return true;
         }
