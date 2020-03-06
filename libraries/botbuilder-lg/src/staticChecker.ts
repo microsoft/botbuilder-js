@@ -8,7 +8,7 @@
 // tslint:disable-next-line: no-submodule-imports
 import { ParserRuleContext } from 'antlr4ts';
 import { AbstractParseTreeVisitor, TerminalNode } from 'antlr4ts/tree';
-import { ExpressionEngine, ExpressionParserInterface } from 'adaptive-expressions';
+import { ExpressionParser, ExpressionParserInterface } from 'adaptive-expressions';
 import { Diagnostic, DiagnosticSeverity } from './diagnostic';
 import { Evaluator } from './evaluator';
 import * as lp from './generated/LGFileParser';
@@ -23,23 +23,23 @@ import { LGExtensions } from './lgExtensions';
 /// LG managed code checker.
 /// </summary>
 export class StaticChecker extends AbstractParseTreeVisitor<Diagnostic[]> implements LGFileParserVisitor<Diagnostic[]> {
-    private readonly baseExpressionEngine: ExpressionEngine;
+    private readonly baseExpressionParser: ExpressionParser;
     private readonly lgFile: LGFile;
     private visitedTemplateNames: string[];
     private _expressionParser: ExpressionParserInterface;
 
-    public constructor(lgFile: LGFile, expressionEngine: ExpressionEngine = undefined) {
+    public constructor(lgFile: LGFile, expressionParser: ExpressionParser = undefined) {
         super();
         this.lgFile = lgFile;
-        this.baseExpressionEngine = expressionEngine || new ExpressionEngine();
+        this.baseExpressionParser = expressionParser || new ExpressionParser();
     }
 
     // Create a property because we want this to be lazy loaded
     private get expressionParser(): ExpressionParserInterface {
         if (this._expressionParser === undefined) {
             // create an evaluator to leverage it's customized function look up for checking
-            var evaluator = new Evaluator(this.lgFile.allTemplates, this.baseExpressionEngine);
-            this._expressionParser = evaluator.expressionEngine;
+            var evaluator = new Evaluator(this.lgFile.allTemplates, this.baseExpressionParser);
+            this._expressionParser = evaluator.expressionParser;
         }
 
         return this._expressionParser;

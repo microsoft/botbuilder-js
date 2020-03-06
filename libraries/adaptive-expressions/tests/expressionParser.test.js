@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
 /* eslint-disable @typescript-eslint/no-var-requires */
-const { Expression, Extensions, SimpleObjectMemory, ExpressionFunctions } = require('../');
+const { Expression, Extensions, SimpleObjectMemory, ExpressionFunctions } = require('../lib');
 const assert = require('assert');
 const moment = require('moment');
 
@@ -624,7 +624,7 @@ const scope = {
     ],
 };
 
-describe('expression functional test', () => {
+describe('expression parser functional test', () => {
     it('should get right evaluate result', () => {
         for (const data of dataSource) {
             const input = data[0].toString();

@@ -1,5 +1,5 @@
 const { LGParser } = require('../');
-const { SimpleObjectMemory, ExpressionEngine, ExpressionEvaluator, ExpressionFunctions, ReturnType} = require('adaptive-expressions');
+const { SimpleObjectMemory, ExpressionParser, ExpressionFunctions, Expression } = require('adaptive-expressions');
 const assert = require('assert');
 const fs = require('fs');
 
@@ -274,9 +274,6 @@ describe('LG', function() {
         assert.strictEqual(evaled.trim(), 'hello world', `Evaled is ${ evaled }`);
 
         evaled = LGFile.evaluateTemplate('dupNameWithTemplate');
-        assert.strictEqual(evaled, 'calculate length of ms by user\'s template', `Evaled is ${ evaled }`);
-
-        evaled = LGFile.evaluateTemplate('dupNameWithBuiltinFunc');
         assert.strictEqual(evaled, 2, `Evaled is ${ evaled }`);
     });
 
@@ -461,7 +458,7 @@ describe('LG', function() {
             errMessage = e.toString();
         }
 
-        assert.strictEqual(errMessage.includes(`it's not a built-in function or a customized function`), true);
+        assert.strictEqual(errMessage.includes(`it's not a built-in function or a custom function`), true);
 
     });
 
@@ -797,21 +794,21 @@ describe('LG', function() {
     });
 
     it('TestCustomFunction', function() {
-        let engine = new ExpressionEngine((func) => {
+        let parser = new ExpressionParser((func) => {
             if (func === 'custom') {
                 return ExpressionFunctions.numeric('custom', 
                     args => {
                         return args[0] + args[1];
                     });
             } else {
-                return ExpressionFunctions.lookup(func);
+                return Expression.lookup(func);
             }
         });
-        let template = LGParser.parseFile(GetExampleFilePath('CustomFunction.lg'), undefined, engine);
-        assert.equal(template.expressionEngine, engine);
-        let result = template.evaluateTemplate('template', {});
+        let lgFile = LGParser.parseFile(GetExampleFilePath('CustomFunction.lg'), undefined, parser);
+        assert.equal(lgFile.expressionParser, parser);
+        let result = lgFile.evaluateTemplate('template', {});
         assert.strictEqual(result, 3);
-        result = template.evaluateTemplate('callSub', {});
+        result = lgFile.evaluateTemplate('callSub', {});
         assert.strictEqual(result, 12);
     });
 });
