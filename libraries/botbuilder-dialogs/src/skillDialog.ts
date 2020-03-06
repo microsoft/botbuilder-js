@@ -134,7 +134,7 @@ export class SkillDialog extends Dialog {
         // Only accept Message or Event activities
         if (dialogArgs.activity.type !== ActivityTypes.Message && dialogArgs.activity.type !== ActivityTypes.Event) {
             // Just forward to the remote skill
-            throw new TypeError(`Only ${ ActivityTypes.Message } and ${ ActivityTypes.Event } activities are supported. Received activity of type ${ dialogArgs.activity.type } in options.`);
+            throw new TypeError(`Only "${ ActivityTypes.Message }" and "${ ActivityTypes.Event }" activities are supported. Received activity of type "${ dialogArgs.activity.type }" in options.`);
         }
 
         return dialogArgs;
@@ -165,7 +165,7 @@ export class SkillDialog extends Dialog {
         const skillInfo = this.dialogOptions.skill;
         await this.dialogOptions.conversationState.saveChanges(context, true);
 
-        const response = await this.dialogOptions.skillClient.postActivity<Activity[]>(this.dialogOptions.botId, skillInfo.appId, skillInfo.skillEndpoint, skillInfo.skillEndpoint, skillConversationId, activity);
+        const response = await this.dialogOptions.skillClient.postActivity<Activity[]>(this.dialogOptions.botId, skillInfo.appId, skillInfo.skillEndpoint, this.dialogOptions.skillHostEndpoint, skillConversationId, activity);
 
         // Inspect the skill response status
         if (!(response.status >= 200 && response.status <= 299)) {
