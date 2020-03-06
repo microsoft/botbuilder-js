@@ -8,7 +8,7 @@
  */
 // tslint:disable-next-line: no-submodule-imports
 import { AbstractParseTreeVisitor, TerminalNode } from 'antlr4ts/tree';
-import { Expression, ExpressionEngine, ExpressionParserInterface, Extensions } from 'adaptive-expressions';
+import { Expression, ExpressionParserInterface, Extensions, ExpressionParser } from 'adaptive-expressions';
 import { keyBy } from 'lodash';
 import { EvaluationTarget } from './evaluationTarget';
 import { Evaluator } from './evaluator';
@@ -33,14 +33,14 @@ export class Analyzer extends AbstractParseTreeVisitor<AnalyzerResult> implement
     private readonly evalutationTargetStack: EvaluationTarget[] = [];
     private readonly _expressionParser: ExpressionParserInterface;
 
-    public constructor(templates: LGTemplate[], expressionEngine: ExpressionEngine) {
+    public constructor(templates: LGTemplate[], expressionParser: ExpressionParser) {
         super();
         this.templates = templates;
         this.templateMap = keyBy(templates, (t: LGTemplate): string => t.name);
 
         // create an evaluator to leverage it's customized function look up for checking
-        const evaluator: Evaluator = new Evaluator(this.templates, expressionEngine);
-        this._expressionParser = evaluator.expressionEngine;
+        const evaluator: Evaluator = new Evaluator(this.templates, expressionParser);
+        this._expressionParser = evaluator.expressionParser;
     }
 
     /**

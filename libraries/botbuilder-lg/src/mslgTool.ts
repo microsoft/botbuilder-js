@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { ExpressionEngine } from 'adaptive-expressions';
+import { ExpressionParser } from 'adaptive-expressions';
 import { Analyzer } from './analyzer';
 import { Diagnostic } from './diagnostic';
 import { Expander } from './expander';
@@ -25,10 +25,10 @@ export class MSLGTool {
     public nameCollisions: string[] = [];
 
     private templates: LGTemplate[];
-    private readonly expressionEngine: ExpressionEngine;
+    private readonly expressionParser: ExpressionParser;
 
-    public constructor(expressionEngine?: ExpressionEngine) {
-        this.expressionEngine = expressionEngine !== undefined ? expressionEngine : new ExpressionEngine();
+    public constructor(expressionParser?: ExpressionParser) {
+        this.expressionParser = expressionParser !== undefined ? expressionParser : new ExpressionParser();
     }
 
     /**
@@ -54,7 +54,7 @@ export class MSLGTool {
     }
 
     public getTemplateVariables(templateName: string): string[] {
-        const analyzer: Analyzer = new Analyzer(this.templates, this.expressionEngine);
+        const analyzer: Analyzer = new Analyzer(this.templates, this.expressionParser);
 
         return analyzer.analyzeTemplate(templateName).Variables;
     }
@@ -65,7 +65,7 @@ export class MSLGTool {
      * @param scope scope.
      */
     public expandTemplate(templateName: string, scope?: any): string[] {
-        const expander: Expander = new Expander(this.templates, this.expressionEngine);
+        const expander: Expander = new Expander(this.templates, this.expressionParser);
 
         return expander.expandTemplate(templateName, scope);
     }

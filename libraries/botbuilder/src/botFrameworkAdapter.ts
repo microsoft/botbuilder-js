@@ -8,23 +8,14 @@
 
 import { STATUS_CODES } from 'http';
 import * as os from 'os';
-import { Activity, ActivityTypes, BotAdapter, BotCallbackHandlerKey, ChannelAccount, ConversationAccount, ConversationParameters, ConversationReference, ConversationsResult, DeliveryModes, CredentialTokenProvider, InvokeResponse, ResourceResponse, TokenResponse, TurnContext } from 'botbuilder-core';
-import { AuthenticationConfiguration, AuthenticationConstants, ChannelValidation, Claim, ClaimsIdentity, ConnectorClient, EmulatorApiClient, GovernmentConstants, GovernmentChannelValidation, JwtTokenValidation, MicrosoftAppCredentials, AppCredentials, CertificateAppCredentials, SimpleCredentialProvider, TokenApiClient, TokenStatus, TokenApiModels, SkillValidation } from 'botframework-connector';
+
+import { Activity, ActivityTypes, BotAdapter, BotCallbackHandlerKey, ChannelAccount, ConversationAccount, ConversationParameters, ConversationReference, ConversationsResult, DeliveryModes,InvokeResponse, ExtendedUserTokenProvider, ResourceResponse, StatusCodes, TokenResponse, TurnContext } from 'botbuilder-core';
+import { AuthenticationConfiguration, AuthenticationConstants, ChannelValidation, Claim, ClaimsIdentity, ConnectorClient, EmulatorApiClient, GovernmentConstants, GovernmentChannelValidation, JwtTokenValidation, MicrosoftAppCredentials, AppCredentials, CertificateAppCredentials, SimpleCredentialProvider, TokenApiClient, TokenStatus, TokenApiModels, SignInUrlResponse, SkillValidation, TokenExchangeRequest } from 'botframework-connector';
+
 import { INodeBuffer, INodeSocket, IReceiveRequest, ISocket, IStreamingTransportServer, NamedPipeServer, NodeWebSocketFactory, NodeWebSocketFactoryBase, RequestHandler, StreamingResponse, WebSocketServer } from 'botframework-streaming';
 
 import { WebRequest, WebResponse } from './interfaces';
 import { defaultPipeName, GET, POST, MESSAGES_PATH, StreamingHttpClient, TokenResolver, VERSION_PATH } from './streaming';
-
-export enum StatusCodes {
-    OK = 200,
-    BAD_REQUEST = 400,
-    UNAUTHORIZED = 401,
-    NOT_FOUND = 404,
-    METHOD_NOT_ALLOWED = 405,
-    UPGRADE_REQUIRED = 426,
-    INTERNAL_SERVER_ERROR = 500,
-    NOT_IMPLEMENTED = 501,
-}
 
 /**
  * Contains settings used to configure a [BotFrameworkAdapter](xref:botbuilder.BotFrameworkAdapter) instance.
@@ -131,7 +122,7 @@ export const INVOKE_RESPONSE_KEY: symbol = Symbol('invokeResponse');
  * };
  * ```
  */
-export class BotFrameworkAdapter extends BotAdapter implements CredentialTokenProvider, RequestHandler {
+export class BotFrameworkAdapter extends BotAdapter implements ExtendedUserTokenProvider, RequestHandler {
     // These keys are public to permit access to the keys from the adapter when it's a being
     // from library that does not have access to static properties off of BotFrameworkAdapter.
     // E.g. botbuilder-dialogs
@@ -548,7 +539,7 @@ export class BotFrameworkAdapter extends BotAdapter implements CredentialTokenPr
             throw new Error(`BotFrameworkAdapter.getUserToken(): missing from or from.id`);
         }
         if (!connectionName) {
-        	throw new Error('getUserToken() requires a connectionName but none was provided.');
+            throw new Error('getUserToken() requires a connectionName but none was provided.');
         }
         this.checkEmulatingOAuthCards(context);
         const userId: string = context.activity.from.id;
@@ -613,7 +604,8 @@ export class BotFrameworkAdapter extends BotAdapter implements CredentialTokenPr
         const state: any = {
             ConnectionName: connectionName,
             Conversation: conversation,
-            MsAppId: (client.credentials as AppCredentials).appId
+            MsAppId: (client.credentials as AppCredentials).appId,
+            RelatesTo: context.activity.relatesTo
         };
 
         const finalState: string = Buffer.from(JSON.stringify(state)).toString('base64');
@@ -670,6 +662,73 @@ export class BotFrameworkAdapter extends BotAdapter implements CredentialTokenPr
         context.turnState.set(this.TokenApiClientCredentialsKey, client);
 
         return (await client.userToken.getAadTokens(userId, connectionName, { resourceUrls: resourceUrls }, { channelId: context.activity.channelId }))._response.parsedBody as {[propertyName: string]: TokenResponse };
+    }
+
+    /**
+     * Asynchronously Get the raw signin resource to be sent to the user for signin.
+     * 
+     * @param context The context object for the turn.
+     * @param connectionName The name of the auth connection to use.
+     * @param userId The user id that will be associated with the token.
+     * @param finalRedirect The final URL that the OAuth flow will redirect to.
+     * 
+     * @returns The [BotSignInGetSignInResourceResponse](xref:botframework-connector.BotSignInGetSignInResourceResponse) object.
+     */
+    public async getSignInResource(context: TurnContext, connectionName: string, userId?: string, finalRedirect?: string, appCredentials?: AppCredentials): Promise<SignInUrlResponse>
+    {
+        if (!connectionName) {
+            throw new Error('getUserToken() requires a connectionName but none was provided.');
+        }
+
+        if (!context.activity.from || !context.activity.from.id) {
+            throw new Error(`BotFrameworkAdapter.getSignInResource(): missing from or from.id`);
+        }
+
+        // what to do when userId is null (same for finalRedirect)
+        if(userId && context.activity.from.id != userId) {
+            throw new Error('BotFrameworkAdapter.getSiginInResource(): cannot get signin resource for a user that is different from the conversation');
+        }
+
+        const url: string = this.oauthApiUrl(context);
+        const client: TokenApiClient = this.createTokenApiClient(url, appCredentials);
+        const conversation: Partial<ConversationReference> = TurnContext.getConversationReference(context.activity);
+
+        const state: any = {
+            ConnectionName: connectionName,
+            Conversation: conversation,
+            relatesTo: context.activity.relatesTo,
+            MSAppId: (client.credentials as AppCredentials).appId
+        };
+        const finalState: string = Buffer.from(JSON.stringify(state)).toString('base64');
+        const options: TokenApiModels.BotSignInGetSignInResourceOptionalParams = {finalRedirect: finalRedirect};
+        
+        return await (client.botSignIn.getSignInResource(finalState, options));
+    }
+
+    /**
+     * Asynchronously Performs a token exchange operation such as for single sign-on.
+     * @param context Context for the current turn of conversation with the user.
+     * @param connectionName Name of the auth connection to use.
+     * @param userId The user id that will be associated with the token.
+     * @param tokenExchangeRequest The exchange request details, either a token to exchange or a uri to exchange.
+     */ 
+    public async exchangeToken(context: TurnContext, connectionName: string, userId: string, tokenExchangeRequest: TokenExchangeRequest, appCredentials?: AppCredentials): Promise<TokenResponse> {
+        if (!connectionName) {
+            throw new Error('exchangeToken() requires a connectionName but none was provided.');
+        }
+
+        if (!userId) {
+            throw new Error('exchangeToken() requires an userId but none was provided.');
+        }
+        
+        if(tokenExchangeRequest && !tokenExchangeRequest.token && !tokenExchangeRequest.uri) {
+            throw new Error('BotFrameworkAdapter.exchangeToken(): Either a Token or Uri property is required on the TokenExchangeRequest');
+        }
+
+        const url: string = this.oauthApiUrl(context);
+        const client: TokenApiClient = this.createTokenApiClient(url, appCredentials);
+
+        return (await client.userToken.exchangeAsync(userId, connectionName, context.activity.channelId, tokenExchangeRequest))._response.parsedBody as TokenResponse;
     }
 
     /**

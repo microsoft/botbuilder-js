@@ -17,6 +17,7 @@ import {
     ConversationsResult,
     PagedMembersResult,
     ResourceResponse,
+    StatusCodes,
     Transcript,
 } from 'botbuilder-core';
 import {
@@ -26,7 +27,6 @@ import {
     ICredentialProvider,
     JwtTokenValidation
 } from 'botframework-connector';
-import { StatusCodes } from './botFrameworkAdapter';
 import { StatusCodeError } from './statusCodeError';
 
 /**

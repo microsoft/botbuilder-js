@@ -1024,6 +1024,10 @@ export interface OAuthCard {
    */
   connectionName: string;
   /**
+   * The token exchange resource for single sign on
+   */
+  tokenExchangeResource: TokenExchangeResource;
+  /**
    * Action to use to perform signin
    */
   buttons: CardAction[];
@@ -1618,6 +1622,54 @@ export interface PaymentRequestUpdateResult {
   details: PaymentDetails;
 }
 
+/**
+ * @interface
+ * An interface representing SignInUrlResponse.
+ */
+export interface SignInUrlResponse {
+  /**
+   * @member {string} [signInLink]
+   */
+  signInLink?: string;
+  /**
+   * @member {TokenExchangeResource} [tokenExchangeResource]
+   */
+  tokenExchangeResource?: TokenExchangeResource;
+}
+
+/**
+ * @interface
+ * An interface representing TokenExchangeResource.
+ */
+export interface TokenExchangeResource {
+  /**
+   * @member {string} [id]
+   */
+  id?: string;
+  /**
+   * @member {string} [uri]
+   */
+  uri?: string;
+  /**
+   * @member {string} [providerId]
+   */
+  providerId?: string;
+}
+
+/**
+ * @interface
+ * An interface representing TokenExchangeRequest.
+ */
+export interface TokenExchangeRequest {
+  /**
+   * @member {string} [uri]
+   */
+  uri?: string;
+  /**
+   * @member {string} [token]
+   */
+  token?: string;
+}
 
 /**
  * Defines values for RoleTypes.

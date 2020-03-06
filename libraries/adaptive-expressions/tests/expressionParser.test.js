@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
 /* eslint-disable @typescript-eslint/no-var-requires */
-const { Expression, Extensions, SimpleObjectMemory, ExpressionFunctions } = require('../');
+const { Expression, Extensions, SimpleObjectMemory, ExpressionFunctions } = require('../lib');
 const assert = require('assert');
 const moment = require('moment');
 
@@ -624,7 +624,7 @@ const scope = {
     ],
 };
 
-describe('expression functional test', () => {
+describe('expression parser functional test', () => {
     it('should get right evaluate result', () => {
         for (const data of dataSource) {
             const input = data[0].toString();
@@ -656,6 +656,21 @@ describe('expression functional test', () => {
                 if (!isSuccess) {
                     assert.fail(errorMessage);
                 }
+            }
+
+            //ToString re-parse
+            const newExpr = Expression.parse(parsed.toString());
+            const newActual = newExpr.tryEvaluate(scope).value;
+            if (Array.isArray(actual) && Array.isArray(newActual)) {
+                const [isSuccess, errorMessage] = isArraySame(actual, newActual);
+                if (!isSuccess) {
+                    assert.fail(errorMessage);
+                }
+            } else if (typeof newActual === 'number') {
+                assert(parseFloat(actual) === newActual, `actual is: ${ actual } for case ${ input }`);
+            }
+            else {
+                assert(actual === newActual, `actual is: ${ actual } for case ${ input }`);
             }
         }
     });

@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
-const { ExpressionEngine } = require('../');
+const { ExpressionParser } = require('../');
 const assert = require('assert');
 
 const invalidExpressions = [
@@ -407,7 +407,7 @@ describe('expression functional test', () => {
             const input = expression;
             try {
                 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-                var { value: actual, error } = new ExpressionEngine().parse(input).tryEvaluate(scope);
+                var { value: actual, error } = new ExpressionParser().parse(input).tryEvaluate(scope);
                 if (error === undefined) {
                     isFail = true;
                 } else {
@@ -427,7 +427,7 @@ describe('expression functional test', () => {
         for (const expression of invalidExpressions) {
             const input = expression;
             try {
-                new ExpressionEngine().parse(input);
+                new ExpressionParser().parse(input);
                 assert.fail(`Test expression ${ input } did not throw expected exception`);
             } catch (e) {
                 console.log(e.message);

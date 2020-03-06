@@ -9,7 +9,7 @@
 import { ExpressionEvaluator } from './expressionEvaluator';
 
 /**
- * Interface for adding custom functions to the expression engine.
+ * Interface for adding custom functions to the expression parser.
  */
 export interface ComponentExpressionFunctionsInteerface {
 

@@ -9,6 +9,7 @@ import * as Models from "../models";
 import * as Mappers from "../models/userTokenMappers";
 import * as Parameters from "../models/parameters";
 import { TokenApiClientContext } from "../tokenApiClientContext";
+import { TokenExchangeRequest } from "botframework-schema";
 
 /** Class representing a UserToken. */
 export class UserToken {
@@ -76,7 +77,7 @@ export class UserToken {
    * @param callback The callback
    */
   getAadTokens(userId: string, connectionName: string, aadResourceUrls: Models.AadResourceUrls, options: Models.UserTokenGetAadTokensOptionalParams, callback: msRest.ServiceCallback<{ [propertyName: string]: Models.TokenResponse }>): void;
-  getAadTokens(userId: string, connectionName: string, aadResourceUrls: Models.AadResourceUrls, options?: Models.UserTokenGetAadTokensOptionalParams, callback?: msRest.ServiceCallback<{ [propertyName: string]: Models.TokenResponse }>): Promise<Models.UserTokenGetAadTokensResponse> {
+  getAadTokens(userId: string, connectionName: string, aadResourceUrls: Models.AadResourceUrls, options?: Models.UserTokenGetAadTokensOptionalParams | msRest.ServiceCallback<{ [propertyName: string]: Models.TokenResponse }>, callback?: msRest.ServiceCallback<{ [propertyName: string]: Models.TokenResponse }>): Promise<Models.UserTokenGetAadTokensResponse> {
     return this.client.sendOperationRequest(
       {
         userId,
@@ -141,6 +142,45 @@ export class UserToken {
       getTokenStatusOperationSpec,
       callback) as Promise<Models.UserTokenGetTokenStatusResponse>;
   }
+
+  /**
+   * @param userId
+   * @param connectionName
+   * @param channelId
+   * @param exchangeRequest
+   * @param [options] The optional parameters
+   * @returns Promise<Models.UserTokenExchangeAsyncResponse>
+   */
+  exchangeAsync(userId: string, connectionName: string, channelId: string, exchangeRequest: TokenExchangeRequest, options?: msRest.RequestOptionsBase): Promise<Models.UserTokenExchangeAsyncResponse>;
+  /**
+   * @param userId
+   * @param connectionName
+   * @param channelId
+   * @param exchangeRequest
+   * @param callback The callback
+   */
+  exchangeAsync(userId: string, connectionName: string, channelId: string, exchangeRequest: TokenExchangeRequest, callback: msRest.ServiceCallback<any>): void;
+  /**
+   * @param userId
+   * @param connectionName
+   * @param channelId
+   * @param exchangeRequest
+   * @param options The optional parameters
+   * @param callback The callback
+   */
+  exchangeAsync(userId: string, connectionName: string, channelId: string, exchangeRequest: TokenExchangeRequest, options: msRest.RequestOptionsBase, callback: msRest.ServiceCallback<any>): void;
+  exchangeAsync(userId: string, connectionName: string, channelId: string, exchangeRequest: TokenExchangeRequest, options?: msRest.RequestOptionsBase | msRest.ServiceCallback<any>, callback?: msRest.ServiceCallback<any>): Promise<Models.UserTokenExchangeAsyncResponse> {
+    return this.client.sendOperationRequest(
+      {
+        userId,
+        connectionName,
+        channelId,
+        exchangeRequest,
+        options
+      },
+      exchangeAsyncOperationSpec,
+      callback) as Promise<Models.UserTokenExchangeAsyncResponse>;
+  }
 }
 
 // Operation Specifications
@@ -151,7 +191,7 @@ const getTokenOperationSpec: msRest.OperationSpec = {
   queryParameters: [
     Parameters.userId,
     Parameters.connectionName0,
-    Parameters.channelId,
+    Parameters.channelId0,
     Parameters.code
   ],
   responses: {
@@ -174,7 +214,7 @@ const getAadTokensOperationSpec: msRest.OperationSpec = {
   queryParameters: [
     Parameters.userId,
     Parameters.connectionName0,
-    Parameters.channelId
+    Parameters.channelId0
   ],
   requestBody: {
     parameterPath: "aadResourceUrls",
@@ -211,7 +251,7 @@ const signOutOperationSpec: msRest.OperationSpec = {
   queryParameters: [
     Parameters.userId,
     Parameters.connectionName1,
-    Parameters.channelId
+    Parameters.channelId0
   ],
   responses: {
     200: {
@@ -235,7 +275,7 @@ const getTokenStatusOperationSpec: msRest.OperationSpec = {
   path: "api/usertoken/GetTokenStatus",
   queryParameters: [
     Parameters.userId,
-    Parameters.channelId,
+    Parameters.channelId0,
     Parameters.include
   ],
   responses: {
@@ -252,6 +292,38 @@ const getTokenStatusOperationSpec: msRest.OperationSpec = {
           }
         }
       }
+    },
+    default: {
+      bodyMapper: Mappers.ErrorResponse
+    }
+  },
+  serializer
+};
+
+const exchangeAsyncOperationSpec: msRest.OperationSpec = {
+  httpMethod: "POST",
+  path: "api/usertoken/exchange",
+  queryParameters: [
+    Parameters.userId,
+    Parameters.connectionName0,
+    Parameters.channelId1
+  ],
+  requestBody: {
+    parameterPath: "exchangeRequest",
+    mapper: {
+      ...Mappers.TokenExchangeRequest,
+      required: true
+    }
+  },
+  responses: {
+    200: {
+      bodyMapper: Mappers.TokenResponse
+    },
+    400: {
+      bodyMapper: Mappers.ErrorResponse
+    },
+    404: {
+      bodyMapper: Mappers.TokenResponse
     },
     default: {
       bodyMapper: Mappers.ErrorResponse
