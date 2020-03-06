@@ -47,9 +47,25 @@ export class Constant extends Expression {
         }
 
         if (typeof this.value === 'string') {
-            return `'${ this.value }'`;
+            if (this.value.includes('\\')) {
+                this.value = this.value.replace(/\\/g, '\\\\');
+            }
+
+            return this.value.includes(`'`) ? `"${ this.value }"` : `'${ this.value }'`;
+        } 
+        
+        if (typeof this.value === 'number') {
+            return this.value.toString();
         }
 
-        return !this.value ? undefined : this.value.toString();
+        if (Array.isArray(this.value)) {
+            this.value = '[' + this.value.join(' ') + ']';
+        }
+
+        if(typeof this.value === 'object') {
+            this.value = JSON.stringify(this.value);
+        }
+
+        return this.value === undefined ? undefined : this.value.toString();
     }
 }

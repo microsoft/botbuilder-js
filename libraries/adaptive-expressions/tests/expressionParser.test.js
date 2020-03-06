@@ -657,6 +657,21 @@ describe('expression parser functional test', () => {
                     assert.fail(errorMessage);
                 }
             }
+
+            //ToString re-parse
+            const newExpr = Expression.parse(parsed.toString());
+            const newActual = newExpr.tryEvaluate(scope).value;
+            if (Array.isArray(actual) && Array.isArray(newActual)) {
+                const [isSuccess, errorMessage] = isArraySame(actual, newActual);
+                if (!isSuccess) {
+                    assert.fail(errorMessage);
+                }
+            } else if (typeof newActual === 'number') {
+                assert(parseFloat(actual) === newActual, `actual is: ${ actual } for case ${ input }`);
+            }
+            else {
+                assert(actual === newActual, `actual is: ${ actual } for case ${ input }`);
+            }
         }
     });
 
