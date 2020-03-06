@@ -1807,14 +1807,14 @@ export enum ActivityImportance {
 
 /**
  * Defines values for DeliveryModes.
- * Possible values include: 'normal', 'notification'
+ * Possible values include: 'normal', 'notification', 'expectsReply'
  * @readonly
  * @enum {string}
  */
 export enum DeliveryModes {
   Normal = 'normal',
   Notification = 'notification',
-  BufferedReplies = 'bufferedReplies'
+  ExpectsReply = 'expectsReply'
 }
 
 /**

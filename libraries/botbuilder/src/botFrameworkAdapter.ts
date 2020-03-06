@@ -837,7 +837,7 @@ export class BotFrameworkAdapter extends BotAdapter implements ExtendedUserToken
                 } else {
                     status = 501;
                 }
-            } else if (request.deliveryMode === DeliveryModes.BufferedReplies) {
+            } else if (request.deliveryMode === DeliveryModes.ExpectsReply) {
                 body = context.bufferedReplies;
                 status = StatusCodes.OK;
             } else {
@@ -1271,7 +1271,7 @@ export class BotFrameworkAdapter extends BotAdapter implements ExtendedUserToken
                 } else {
                     response.statusCode = StatusCodes.NOT_IMPLEMENTED;
                 }
-            } else if (body.deliveryMode === DeliveryModes.BufferedReplies) {
+            } else if (body.deliveryMode === DeliveryModes.ExpectsReply) {
                 response.setBody(context.bufferedReplies);
                 response.statusCode = StatusCodes.OK;
             } else {

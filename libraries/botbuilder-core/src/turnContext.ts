@@ -342,7 +342,7 @@ export class TurnContext {
     }
 
     /**
-     * List of activities to send when `context.activity.deliveryMode == 'buffered'`.
+     * List of activities to send when `context.activity.deliveryMode == 'expectsReply'`.
      */
     public readonly bufferedReplies: Partial<Activity>[] = [];
 
@@ -462,7 +462,7 @@ export class TurnContext {
         });
 
         return this.emit(this._onSendActivities, output, () => {
-            if (this.activity.deliveryMode === DeliveryModes.BufferedReplies) {
+            if (this.activity.deliveryMode === DeliveryModes.ExpectsReply) {
                 // Append activities to buffer
                 const responses: ResourceResponse[] = [];
                 output.forEach((a) => {

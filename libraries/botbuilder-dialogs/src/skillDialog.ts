@@ -173,7 +173,7 @@ export class SkillDialog extends Dialog {
         }
 
         let eocActivity: Activity;
-        if (activity.deliveryMode == DeliveryModes.BufferedReplies && response.body) {
+        if (activity.deliveryMode == DeliveryModes.ExpectsReply && response.body) {
             // Process replies in the response.Body.
             if (Array.isArray(response.body)) {
                 response.body.forEach(async (fromSkillActivity: Activity): Promise<void> => {
