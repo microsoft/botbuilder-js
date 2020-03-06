@@ -281,8 +281,10 @@ export class OAuthPrompt extends Dialog {
                 const signInResource = await (context.adapter as ExtendedUserTokenProvider).getSignInResource(context, this.settings.connectionName, context.activity.from.id, null, this.settings.oAuthAppCredentials);
                 let link = signInResource.signInLink;
                 const identity = context.turnState.get((context.adapter as any).BotIdentityKey);
-                if(identity && isSkillClaim(identity.claims)) {
-                    cardActionType = ActionTypes.OpenUrl;
+                if((identity && isSkillClaim(identity.claims)) || OAuthPrompt.isFromStreamingConnection(context.activity)) {
+                    if(context.activity.channelId === Channels.Emulator) {
+                        cardActionType = ActionTypes.OpenUrl;
+                    }
                 }
                 else {
                     link = undefined;
@@ -347,7 +349,14 @@ export class OAuthPrompt extends Dialog {
                 await context.sendActivity(this.getTokenExchangeInvokeResponse(
                     StatusCodes.BAD_REQUEST, 
                     'The bot received an InvokeActivity that is missing a TokenExchangeInvokeRequest value. This is required to be sent with the InvokeActivity.'));
-            } else if (!('exchangeToken' in context.adapter)) {
+            } else if (context.activity.value.connectionName != this.settings.connectionName) {
+            // Connection name on activity does not match that of setting
+            await context.sendActivity(this.getTokenExchangeInvokeResponse(
+                StatusCodes.BAD_REQUEST, 
+                'The bot received an InvokeActivity with a TokenExchangeInvokeRequest containing a ConnectionName that does not match the ConnectionName' +  
+                'expected by the bots active OAuthPrompt. Ensure these names match when sending the InvokeActivityInvalid ConnectionName in the TokenExchangeInvokeRequest'));            
+            }
+            else if (!('exchangeToken' in context.adapter)) {
                 // Token Exchange not supported in the adapter
                 await context.sendActivity(this.getTokenExchangeInvokeResponse(
                     StatusCodes.BAD_GATEWAY, 

@@ -378,7 +378,7 @@ describe('OAuthPrompt', function() {
                     text, title, tokenExchangeResource
                 });
                 const context = new TurnContext(adapter, {
-                    channelId: Channels.Webchat,
+                    channelId: Channels.Emulator,
                     serviceUrl: 'https://bing.com',
                     from: {
                         id: 'someId'
@@ -641,6 +641,34 @@ describe('OAuthPrompt', function() {
                     assert.strictEqual('invokeResponse', a.type);
                     assert(a.value);
                     assert.strictEqual(a.value.status, 400);
+                    assert(a.value.body.failureDetail);
+                });
+        });
+
+        it('Should reject token exhchange requests with wrong connection name', async function() {
+            await adapter
+                .send('hello')
+                .assertReply(activity => {
+                    assert.strictEqual(activity.attachments.length, 1);
+                    assert.strictEqual(activity.attachments[0].contentType, CardFactory.contentTypes.oauthCard);
+                    assert(activity.inputHint === InputHints.AcceptingInput);
+
+                // No exchangeable token is added to the adapter
+                })
+                .send({
+                    type: ActivityTypes.Invoke,
+                    name: 'signin/tokenExchange',
+                    value: {
+                        id: null,
+                        connectionName: 'foobar',
+                        token: exchangeToken
+                    }
+                })
+                .assertReply(a => {
+                    assert.strictEqual('invokeResponse', a.type);
+                    assert(a.value);
+                    assert.strictEqual(a.value.status, 400);
+                    assert.strictEqual(a.value.body.connectionName, connectionName);
                     assert(a.value.body.failureDetail);
                 });
         });
