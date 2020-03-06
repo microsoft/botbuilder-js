@@ -9,8 +9,7 @@
 export {
     BotFrameworkAdapter,
     BotFrameworkAdapterSettings,
-    INVOKE_RESPONSE_KEY,
-    StatusCodes,
+    INVOKE_RESPONSE_KEY
 } from './botFrameworkAdapter';
 export { BotFrameworkHttpClient } from './botFrameworkHttpClient';
 export { ChannelServiceHandler } from './channelServiceHandler';

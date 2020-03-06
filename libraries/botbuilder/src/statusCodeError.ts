@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 
-import { StatusCodes } from './botFrameworkAdapter';
+import { StatusCodes } from 'botbuilder-core';
 
 export class StatusCodeError extends Error {
     public readonly statusCode: StatusCodes;

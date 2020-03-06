@@ -72,6 +72,22 @@ export class BotFrameworkHttpClient extends BotFrameworkClient {
         const originalServiceUrl = activity.serviceUrl;
         const originalCallerId = activity.callerId;
         try {
+            activity.relatesTo = {
+                serviceUrl: activity.serviceUrl,
+                activityId: activity.id,
+                channelId: activity.channelId,
+                conversation: {
+                    id: activity.conversation.id,
+                    name: activity.conversation.name,
+                    conversationType: activity.conversation.conversationType,
+                    aadObjectId: activity.conversation.aadObjectId,
+                    isGroup: activity.conversation.isGroup,
+                    properties: activity.conversation.properties,
+                    role: activity.conversation.role,
+                    tenantId: activity.conversation.tenantId
+                },
+                bot: null
+            };
             activity.conversation.id = conversationId;
             activity.serviceUrl = serviceUrl;
             activity.callerId = fromBotId;

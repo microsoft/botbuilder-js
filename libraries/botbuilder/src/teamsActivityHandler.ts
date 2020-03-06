@@ -26,7 +26,9 @@ import {
     TeamsChannelData,
     TeamsChannelAccount,
     TeamInfo,
-    TurnContext
+    TurnContext,
+    tokenExchangeOperationName,
+    verifyStateOperationName
 } from 'botbuilder-core';
 import { TeamsInfo } from './teamsInfo';
 
@@ -62,8 +64,12 @@ export class TeamsActivityHandler extends ActivityHandler {
                 return await this.handleTeamsCardActionInvoke(context);
             } else {
                 switch (context.activity.name) {
-                    case 'signin/verifyState':
+                    case verifyStateOperationName:
                         await this.handleTeamsSigninVerifyState(context, context.activity.value);
+                        return TeamsActivityHandler.createInvokeResponse();
+
+                    case tokenExchangeOperationName:
+                        await this.handleTeamsSigninTokenExchange(context, context.activity.value);
                         return TeamsActivityHandler.createInvokeResponse();
 
                     case 'fileConsent/invoke':
@@ -181,6 +187,15 @@ export class TeamsActivityHandler extends ActivityHandler {
      * @param action
      */
     protected async handleTeamsSigninVerifyState(context: TurnContext, query: SigninStateVerificationQuery): Promise<void> {
+        throw new Error('NotImplemented');
+    }
+
+    /**
+     * Receives invoke activities with Activity name of 'signin/tokenExchange'
+     * @param context
+     * @param action
+     */
+    protected async handleTeamsSigninTokenExchange(context: TurnContext, query: SigninStateVerificationQuery): Promise<void> {
         throw new Error('NotImplemented');
     }
 

@@ -2,7 +2,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { ActionTypes, AnimationCard, Attachment, AudioCard, CardAction, CardImage, HeroCard, MediaUrl, OAuthCard, O365ConnectorCard, ReceiptCard, SigninCard, ThumbnailCard, VideoCard } from 'botframework-schema';
+import { ActionTypes, AnimationCard, Attachment, AudioCard, CardAction, CardImage, HeroCard, MediaUrl, OAuthCard, O365ConnectorCard, ReceiptCard, SigninCard, ThumbnailCard, TokenExchangeResource, VideoCard } from 'botframework-schema';
 
 /**
  * Provides methods for formatting the various card types a bot can return.
@@ -179,12 +179,13 @@ export class CardFactory {
      * @remarks
      * OAuth cards support the Bot Framework's single sign on (SSO) service.
      */
-    public static oauthCard(connectionName: string, title: string, text?: string, link?: string): Attachment {
+    public static oauthCard(connectionName: string, title: string, text?: string, link?: string, tokenExchangeResource?: TokenExchangeResource): Attachment {
         const card: Partial<OAuthCard> = {
             buttons: [
                 { type: ActionTypes.Signin, title: title, value: link, channelData: undefined }
             ],
-            connectionName: connectionName
+            connectionName,
+            tokenExchangeResource
         };
         if (text) { card.text = text; }
 

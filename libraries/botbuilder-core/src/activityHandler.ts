@@ -4,6 +4,8 @@
  */
 import { ChannelAccount, MessageReaction, TurnContext } from '.';
 import { ActivityHandlerBase } from './activityHandlerBase';
+import { verifyStateOperationName, tokenExchangeOperationName, tokenResponseEventName } from './signInConstants';
+import { InvokeResponse } from './invokeResponse';
 
 /**
  * Describes a bot activity event handler, for use with an [ActivityHandler](xref:botbuilder-core.ActivityHandler) object.
@@ -251,6 +253,22 @@ export class ActivityHandler extends ActivityHandlerBase {
     }
 
     /**
+     * Registers an activity event handler for the _invoke_ event, emitted for every incoming event activity.
+     * 
+     * @param handler The event handler.
+     * 
+     * @remarks
+     * Returns a reference to the [ActivityHandler](xref:botbuilder-core.ActivityHandler) object.
+     * 
+     * To handle a `signin/verifyState` invoke event or `signin/tokenExchange`, use the
+     * [onInvokeActivity](xref:botbuilder-core.ActivityHandler.onInvokeActivity) sub-type
+     * event handler. To handle other named events, add logic to this handler.
+     */    
+    public onInvoke(handler: BotHandler): this {
+        return this.on('Invoke', handler);
+    }
+
+    /**
      * Registers an activity event handler for the _end of conversation_ activity.
      * 
      * @param handler The event handler.
@@ -395,6 +413,41 @@ export class ActivityHandler extends ActivityHandlerBase {
      */
     protected async onMessageActivity(context: TurnContext): Promise<void> {
         await this.handle(context, 'Message', this.defaultNextEvent(context));
+    }
+
+    /*
+     * Runs all registered _invoke_ handlers and then continues the event emission process.
+     * 
+     * @param context The context object for the current turn.
+     * 
+     * @remarks
+     * Overwrite this method to support channel-specific behavior across multiple channels.
+     * The default logic is to call any handlers registered via
+     * [onInvoke](xref:botbuilder-core.ActivityHandler.onInvoke),
+     * and then continue by calling [defaultNextEvent](xref:botbuilder-core.ActivityHandler.defaultNextEvent).
+    */
+    protected async onInvokeActivity(context: TurnContext): Promise<void|InvokeResponse> {
+        if(context.activity.name && (context.activity.name === verifyStateOperationName || context.activity.name === tokenExchangeOperationName)) {
+            await this.onSignInInvoke(context);
+        }
+        else {
+            await this.handle(context, 'Invoke', this.defaultNextEvent(context));
+        }
+    }
+
+    /*
+     * Runs all registered _signin invoke activity type_ handlers and then continues the event emission process.
+     * 
+     * @param context The context object for the current turn.
+     * 
+     * @remarks
+     * Overwrite this method to support channel-specific behavior across multiple channels.
+     * The default logic is to call any handlers registered via
+     * [onSignInInvoke](xref:botbuilder-core.ActivityHandler.onSignInInvoke),
+     * and then continue by calling [defaultNextEvent](xref:botbuilder-core.ActivityHandler.defaultNextEvent).
+    */
+    protected async onSignInInvoke(context: TurnContext): Promise<void> {
+        await this.handle(context, 'Invoke', this.defaultNextEvent(context));
     }
 
     /**
@@ -597,7 +650,7 @@ export class ActivityHandler extends ActivityHandlerBase {
      * - Continue by calling [defaultNextEvent](xref:botbuilder-core.ActivityHandler.defaultNextEvent).
      */
     protected async dispatchEventActivity(context: TurnContext): Promise<void> {
-        if (context.activity.name === 'tokens/response') {
+        if (context.activity.name === tokenResponseEventName) {
             await this.handle(context, 'TokenResponseEvent', this.defaultNextEvent(context));
         } else {
             await this.defaultNextEvent(context)();
