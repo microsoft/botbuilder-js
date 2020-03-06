@@ -30,6 +30,7 @@ export abstract class BotAdapter {
     protected middleware: MiddlewareSet = new MiddlewareSet();
     private turnError: (context: TurnContext, error: Error) => Promise<void>;
     public readonly BotIdentityKey: Symbol = Symbol('BotIdentity');
+    public readonly OAuthScopeKey: Symbol = Symbol('OAuthScope');
 
     /**
      * Asynchronously sends a set of outgoing activities to a channel server.

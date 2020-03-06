@@ -2,24 +2,7 @@ const { ok: assert, strictEqual } = require('assert');
 const { ActivityHandler, ActivityTypes } = require('botbuilder-core');
 const { AppCredentials, AuthenticationConfiguration, ClaimsIdentity, SimpleCredentialProvider } = require('botframework-connector');
 const { BotFrameworkAdapter, SkillConversationIdFactoryBase, SkillHandler } = require('../../');
-
-class ConvIdFactory extends SkillConversationIdFactoryBase {
-    constructor() {
-        super();
-        this.refs = {};
-        this.skillId = 'skillId';
-    }
-    async createSkillConversationId(convRef = { conversation: { id: undefined }}) {
-        this.refs[this.skillId] = convRef;
-        return this.skillId;
-    }
-    async getConversationReference(skillConvId) {
-        return this.refs[skillConvId];
-    }
-    async deleteConversationReference(skillConvId) {
-        this.refs[skillConvId] = undefined;
-    }
-}
+const { ConversationIdFactory } = require('./conversationIdFactory');
 
 describe('SkillHandler', function() {
     this.timeout(3000);
@@ -51,7 +34,7 @@ describe('SkillHandler', function() {
         const creds = new SimpleCredentialProvider('', '');
         const authConfig = new AuthenticationConfiguration();
 
-        const handler = new SkillHandler(adapter, bot, new ConvIdFactory(), creds, authConfig);
+        const handler = new SkillHandler(adapter, bot, new ConversationIdFactory(), creds, authConfig);
     });
 
     it('should call processActivity() from onReplyToActivity()', async () => {
@@ -106,7 +89,10 @@ describe('SkillHandler', function() {
                 const bot = new ActivityHandler();
                 const creds = new SimpleCredentialProvider('', '');
                 const authConfig = new AuthenticationConfiguration();
-                const handler = new SkillHandler(adapter, bot, new ConvIdFactory(), creds, authConfig);
+                const factory = new ConversationIdFactory();
+                factory.disableCreateWithOptions = true;
+                factory.disableGetSkillConversationReference = true;
+                const handler = new SkillHandler(adapter, bot, factory, creds, authConfig);
                 try {
                     await handler.processActivity({}, 'convId', 'replyId', {});
                 } catch (e) {
@@ -118,7 +104,9 @@ describe('SkillHandler', function() {
             it(`should add the original activity's ServiceUrl to the TrustedServiceUrls in AppCredentials`, async () => {
                 const adapter = new BotFrameworkAdapter({});
                 const bot = new ActivityHandler();
-                const factory = new ConvIdFactory();
+                const factory = new ConversationIdFactory();
+                factory.disableCreateWithOptions = true;
+                factory.disableGetSkillConversationReference = true;
                 const creds = new SimpleCredentialProvider('', '');
                 const authConfig = new AuthenticationConfiguration();
                 const handler = new SkillHandler(adapter, bot, factory, creds, authConfig);
@@ -140,7 +128,9 @@ describe('SkillHandler', function() {
             it('should cache the ClaimsIdentity, ConnectorClient and SkillConversationReference on the turnState', async () => {
                 const adapter = new BotFrameworkAdapter({});
                 const bot = new ActivityHandler();
-                const factory = new ConvIdFactory();
+                const factory = new ConversationIdFactory();
+                factory.disableCreateWithOptions = true;
+                factory.disableGetSkillConversationReference = true;
                 const creds = new SimpleCredentialProvider('', '');
                 const authConfig = new AuthenticationConfiguration();
                 const handler = new SkillHandler(adapter, bot, factory, creds, authConfig);
@@ -164,7 +154,9 @@ describe('SkillHandler', function() {
             it('should call bot logic for Event activities from a skill and modify context.activity', async () => {
                 const adapter = new BotFrameworkAdapter({});
                 const bot = new ActivityHandler();
-                const factory = new ConvIdFactory();
+                const factory = new ConversationIdFactory();
+                factory.disableCreateWithOptions = true;
+                factory.disableGetSkillConversationReference = true;
                 const creds = new SimpleCredentialProvider('', '');
                 const authConfig = new AuthenticationConfiguration();
                 const handler = new SkillHandler(adapter, bot, factory, creds, authConfig);
@@ -205,7 +197,9 @@ describe('SkillHandler', function() {
             it('should call bot logic for EndOfConversation activities from a skill and modify context.activity', async () => {
                 const adapter = new BotFrameworkAdapter({});
                 const bot = new ActivityHandler();
-                const factory = new ConvIdFactory();
+                const factory = new ConversationIdFactory();
+                factory.disableCreateWithOptions = true;
+                factory.disableGetSkillConversationReference = true;
                 const creds = new SimpleCredentialProvider('', '');
                 const authConfig = new AuthenticationConfiguration();
                 const handler = new SkillHandler(adapter, bot, factory, creds, authConfig);
@@ -246,7 +240,9 @@ describe('SkillHandler', function() {
             it('should forward activity from Skill for other ActivityTypes', async () => {
                 const adapter = new BotFrameworkAdapter({});
                 const bot = new ActivityHandler();
-                const factory = new ConvIdFactory();
+                const factory = new ConversationIdFactory();
+                factory.disableCreateWithOptions = true;
+                factory.disableGetSkillConversationReference = true;
                 const creds = new SimpleCredentialProvider('', '');
                 const authConfig = new AuthenticationConfiguration();
                 const handler = new SkillHandler(adapter, bot, factory, creds, authConfig);
