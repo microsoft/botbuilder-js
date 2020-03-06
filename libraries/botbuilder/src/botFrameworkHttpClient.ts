@@ -22,21 +22,24 @@ import { USER_AGENT } from './botFrameworkAdapter';
  * HttpClient for calling skills from a Node.js BotBuilder V4 SDK bot.
  */
 export class BotFrameworkHttpClient extends BotFrameworkClient {
+
+    protected readonly channelService: string;
+
     /**
      * Cache for appCredentials to speed up token acquisition (a token is not requested unless is expired)
      * AppCredentials are cached using appId + scope (this last parameter is only used if the app credentials are used to call a skill)
      */
     private static readonly appCredentialMapCache: Map<string, MicrosoftAppCredentials> = new Map<string, MicrosoftAppCredentials>();
+    private readonly credentialProvider: ICredentialProvider;
 
-
-    public constructor(private readonly credentialProvider: ICredentialProvider, private readonly channelService?: string) {
+    public constructor(credentialProvider: ICredentialProvider, channelService?: string) {
         super();
-        if (!this.credentialProvider) {
+        if (!credentialProvider) {
             throw new Error('BotFrameworkHttpClient(): missing credentialProvider');
         }
-        if (!this.channelService) {
-            this.channelService = process.env[AuthenticationConstants.ChannelService];
-        }
+
+        this.credentialProvider = credentialProvider;
+        this.channelService = channelService || process.env[AuthenticationConstants.ChannelService];
     }
 
     /**
@@ -50,7 +53,7 @@ export class BotFrameworkHttpClient extends BotFrameworkClient {
      * @param conversationId A conversation ID to use for the conversation with the skill.
      * @param activity Activity to forward.
      */
-    public async postActivity(fromBotId: string, toBotId: string, toUrl: string, serviceUrl: string, conversationId: string, activity: Activity): Promise<InvokeResponse> {
+    public async postActivity<T>(fromBotId: string, toBotId: string, toUrl: string, serviceUrl: string, conversationId: string, activity: Activity): Promise<InvokeResponse<T>> {
         const appCredentials = await this.getAppCredentials(fromBotId, toBotId);
         if (!appCredentials) {
             throw new Error('BotFrameworkHttpClient.postActivity(): Unable to get appCredentials to connect to the skill');
@@ -94,7 +97,7 @@ export class BotFrameworkHttpClient extends BotFrameworkClient {
                     'Content-Type': 'application/json',
                     'User-Agent': USER_AGENT
                 },
-                validateStatus: function () { return true; }                
+                validateStatus: (): boolean => true
             };
 
             if (token) {
@@ -102,7 +105,7 @@ export class BotFrameworkHttpClient extends BotFrameworkClient {
             }
             
             const response = await axios.post(toUrl, activity, config);
-            const invokeResponse: InvokeResponse = { status: response.status, body: response.data };
+            const invokeResponse: InvokeResponse<T> = { status: response.status, body: response.data };
 
             return invokeResponse;
         } finally {

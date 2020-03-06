@@ -9,7 +9,7 @@
 import { LGTemplate } from './lgTemplate';
 import { LGImport } from './lgImport';
 import { Diagnostic, DiagnosticSeverity } from './diagnostic';
-import { ExpressionEngine } from 'adaptive-expressions';
+import { ExpressionParser } from 'adaptive-expressions';
 import { ImportResolverDelegate } from './lgParser';
 import { Evaluator } from './evaluator';
 import { Expander } from './expander';
@@ -80,7 +80,7 @@ export class LGFile {
     /// <value>
     /// expression parser.
     /// </value>
-    public expressionEngine: ExpressionEngine;
+    public expressionParser: ExpressionParser;
 
     /// <summary>
     /// Gets or sets delegate for resolving resource id of imported lg file.
@@ -99,7 +99,7 @@ export class LGFile {
     public options: string[];
 
     public constructor(templates: LGTemplate[] = undefined, imports: LGImport[] = undefined, diagnostics: Diagnostic[] = undefined, references: LGFile[] = undefined,
-        content: string = undefined, id: string = undefined, expressionEngine: ExpressionEngine = undefined, importResolverDelegate: ImportResolverDelegate = undefined,
+        content: string = undefined, id: string = undefined, expressionParser: ExpressionParser = undefined, importResolverDelegate: ImportResolverDelegate = undefined,
         options: string[] = undefined) {
         this.templates = templates? templates : [];
         this.imports = imports? imports : [];
@@ -107,7 +107,7 @@ export class LGFile {
         this.references = references? references : [];
         this.content = content? content : '';
         this.id = id? id : '';
-        this.expressionEngine = expressionEngine || new ExpressionEngine();
+        this.expressionParser = expressionParser || new ExpressionParser();
         this.importResolver = importResolverDelegate;
         this.options = options? options : [];
     }
@@ -160,7 +160,7 @@ export class LGFile {
     public evaluateTemplate(templateName: string, scope: object = undefined): object {
         this.checkErrors();
 
-        const evaluator = new Evaluator(this.allTemplates, this.expressionEngine, this.strictMode);
+        const evaluator = new Evaluator(this.allTemplates, this.expressionParser, this.strictMode);
         return evaluator.evaluateTemplate(templateName, scope);
     }
 
@@ -174,7 +174,7 @@ export class LGFile {
     public expandTemplate(templateName: string, scope: object = undefined): string[] {
         this.checkErrors();
 
-        const expander = new Expander(this.allTemplates, this.expressionEngine, this.strictMode);
+        const expander = new Expander(this.allTemplates, this.expressionParser, this.strictMode);
         return expander.expandTemplate(templateName, scope);
     }
 
@@ -187,7 +187,7 @@ export class LGFile {
     public analyzeTemplate(templateName: string): AnalyzerResult {
         this.checkErrors();
 
-        const analyzer = new Analyzer(this.allTemplates, this.expressionEngine);
+        const analyzer = new Analyzer(this.allTemplates, this.expressionParser);
         return analyzer.analyzeTemplate(templateName);
     }
 
@@ -235,8 +235,11 @@ export class LGFile {
         const templateNameLine: string = this.buildTemplateNameLine(newTemplateName, parameters);
         const newTemplateBody: string = this.convertTemplateBody(templateBody);
         const content = `${ templateNameLine }\r\n${ newTemplateBody }\r\n`;
-        const startLine: number = template.parseTree.start.line - 1;
-        const stopLine: number = template.parseTree.stop.line - 1;
+
+        let startLine: number;
+        let stopLine: number;
+
+        ({startLine, stopLine} = template.getTemplateRange());
         const newContent: string = this.replaceRangeContent(this.content, startLine, stopLine, content);
         this.initialize(LGParser.parseText(newContent, this.id, this.importResolver));
 
@@ -275,8 +278,10 @@ export class LGFile {
             return this;
         }
 
-        const startLine: number = template.parseTree.start.line - 1;
-        const stopLine: number = template.parseTree.stop.line - 1;
+        let startLine: number;
+        let stopLine: number;
+
+        ({startLine, stopLine} = template.getTemplateRange());
 
         const newContent: string = this.replaceRangeContent(this.content, startLine, stopLine, undefined);
         this.initialize(LGParser.parseText(newContent, this.id, this.importResolver));
@@ -399,7 +404,7 @@ export class LGFile {
         this.content = lgfile.content;
         this.importResolver = lgfile.importResolver;
         this.id = lgfile.id;
-        this.expressionEngine = lgfile.expressionEngine;
+        this.expressionParser = lgfile.expressionParser;
     }
 
     private checkErrors(): void {

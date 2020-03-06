@@ -9,7 +9,7 @@
 // tslint:disable-next-line: no-submodule-imports
 import { AbstractParseTreeVisitor, TerminalNode } from 'antlr4ts/tree';
 import { ParserRuleContext } from 'antlr4ts/ParserRuleContext';
-import { ExpressionFunctions, EvaluatorLookup, Expression, ExpressionEngine, ExpressionEvaluator, ReturnType, SimpleObjectMemory } from 'adaptive-expressions';
+import { ExpressionFunctions, EvaluatorLookup, Expression, ExpressionParser, ExpressionEvaluator, ReturnType, SimpleObjectMemory } from 'adaptive-expressions';
 import { keyBy } from 'lodash';
 import { EvaluationTarget } from './evaluationTarget';
 import { Evaluator } from './evaluator';
@@ -36,19 +36,19 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGFi
      */
     public readonly templateMap: {[name: string]: LGTemplate};
     private readonly evaluationTargetStack: EvaluationTarget[] = [];
-    private readonly expanderExpressionEngine: ExpressionEngine;
-    private readonly evaluatorExpressionEngine: ExpressionEngine;
+    private readonly expanderExpressionParser: ExpressionParser;
+    private readonly evaluatorExpressionParser: ExpressionParser;
     private readonly strictMode: boolean;
 
-    public constructor(templates: LGTemplate[], expressionEngine: ExpressionEngine, strictMode: boolean = false) {
+    public constructor(templates: LGTemplate[], expressionParser: ExpressionParser, strictMode: boolean = false) {
         super();
         this.templates = templates;
         this.templateMap = keyBy(templates, (t: LGTemplate): string => t.name);
         this.strictMode = strictMode;
 
-        // generate a new customzied expression engine by injecting the template as functions
-        this.expanderExpressionEngine = new ExpressionEngine(this.customizedEvaluatorLookup(expressionEngine.EvaluatorLookup, true));
-        this.evaluatorExpressionEngine = new ExpressionEngine(this.customizedEvaluatorLookup(expressionEngine.EvaluatorLookup, false));
+        // generate a new customzied expression parser by injecting the template as functions
+        this.expanderExpressionParser = new ExpressionParser(this.customizedEvaluatorLookup(expressionParser.EvaluatorLookup, true));
+        this.evaluatorExpressionParser = new ExpressionParser(this.customizedEvaluatorLookup(expressionParser.EvaluatorLookup, false));
     }
 
     /**
@@ -335,7 +335,7 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGFi
         exp = LGExtensions.trimExpression(exp);
         let result: any;
         let error: string;
-        ({value: result, error: error} = this.evalByExpressionEngine(exp, this.currentTarget().scope));
+        ({value: result, error: error} = this.evalByAdaptiveExpression(exp, this.currentTarget().scope));
 
         if (this.strictMode && (error || !result))
         {
@@ -374,7 +374,7 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGFi
         exp = LGExtensions.trimExpression(exp);
         let result: any;
         let error: string;
-        ({value: result, error: error} = this.evalByExpressionEngine(exp, this.currentTarget().scope));
+        ({value: result, error: error} = this.evalByAdaptiveExpression(exp, this.currentTarget().scope));
 
         if (error || (result ===  undefined && this.strictMode))
         {
@@ -414,9 +414,9 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGFi
         return [ result.toString() ];
     }
 
-    private evalByExpressionEngine(exp: string, scope: any): any {
-        const expanderExpression: Expression = this.expanderExpressionEngine.parse(exp);
-        const evaluatorExpression: Expression = this.evaluatorExpressionEngine.parse(exp);
+    private evalByAdaptiveExpression(exp: string, scope: any): any {
+        const expanderExpression: Expression = this.expanderExpressionParser.parse(exp);
+        const evaluatorExpression: Expression = this.evaluatorExpressionParser.parse(exp);
         const parse: Expression = this.reconstructExpression(expanderExpression, evaluatorExpression, false);
 
         return parse.tryEvaluate(scope);

@@ -10,7 +10,7 @@ export {
     BotFrameworkAdapter,
     BotFrameworkAdapterSettings,
     INVOKE_RESPONSE_KEY,
-    StatusCodeError,
+    StatusCodes
 } from './botFrameworkAdapter';
 export { BotFrameworkHttpClient } from './botFrameworkHttpClient';
 export { ChannelServiceHandler } from './channelServiceHandler';
@@ -22,6 +22,7 @@ export {
     WebResponse
 } from './interfaces';
 export * from './skills';
+export { StatusCodeError } from './statusCodeError';
 export { StreamingHttpClient, TokenResolver } from './streaming';
 export * from './teamsActivityHandler';
 export * from './teamsActivityHelpers';

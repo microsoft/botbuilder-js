@@ -7,11 +7,19 @@
  */
 import { ExpressionFunctions } from './expressionFunctions';
 import { Constant } from './constant';
-import { ExpressionEvaluator, EvaluateExpressionDelegate } from './expressionEvaluator';
+import { ExpressionEvaluator, EvaluateExpressionDelegate, EvaluatorLookup } from './expressionEvaluator';
 import { ExpressionType } from './expressionType';
 import { SimpleObjectMemory, MemoryInterface } from './memory';
 import { Extensions } from './extensions';
-import { ExpressionEngine } from './parser';
+import { ExpressionParser } from './parser';
+
+/**
+ * key value pair to add method in FunctionTable 
+ */
+type keyValuePair = {
+    key: string;
+    value: ExpressionEvaluator;
+}
 
 /**
  * Type expected from evalating an expression.
@@ -67,19 +75,132 @@ export class Expression {
     protected readonly evaluator: ExpressionEvaluator;
 
     /**
-     * xpression constructor.
+     * FunctionTable is a dictionary which merges BuiltinFunctions.Functions with a CustomDictionary.
+     */
+    private static readonly FunctionTable = class implements Map<string, ExpressionEvaluator> {
+        private readonly customFunctions = new Map<string, ExpressionEvaluator>();
+
+        public keys(): IterableIterator<string> {
+            const keysOfAllFunctions = Array.from(ExpressionFunctions.standardFunctions.keys()).concat(Array.from(this.customFunctions.keys()));
+            return keysOfAllFunctions[Symbol.iterator]();
+        }
+
+        public values(): IterableIterator<ExpressionEvaluator> {
+            const valuesOfAllFunctions = Array.from(ExpressionFunctions.standardFunctions.values()).concat(Array.from(this.customFunctions.values()));
+            return valuesOfAllFunctions[Symbol.iterator]();
+        }
+
+        public get size(): number {
+            return ExpressionFunctions.standardFunctions.size + this.customFunctions.size;
+        }
+
+        public get isReadOnly(): boolean { 
+            return false;
+        }
+
+        public get(key: string): ExpressionEvaluator {
+
+            if(ExpressionFunctions.standardFunctions.get(key)) {
+                return ExpressionFunctions.standardFunctions.get(key);
+            }
+
+            if (this.customFunctions.get(key)) {
+                return this.customFunctions.get(key);
+            }
+
+            return undefined;
+        }
+
+        public set(key: string, value: ExpressionEvaluator): this {
+            if(ExpressionFunctions.standardFunctions.get(key)) {
+                throw Error(`You can't overwrite a built in function.`);
+            }
+
+            this.customFunctions.set(key, value);
+            return this;
+
+        }
+
+        public add(item: keyValuePair | string, value: ExpressionEvaluator = undefined): void{
+            if(arguments.length === 1 && item instanceof Object) {
+                this.set(item.key, item.value);
+            } else if (arguments.length == 2 && typeof item === 'string') {
+                this.set(item, value);
+            }
+        }
+
+        public clear(): void {
+            this.customFunctions.clear();
+        }
+
+        public has(key: string): boolean {
+            return ExpressionFunctions.standardFunctions.has(key) || this.customFunctions.has(key);
+        }
+
+        public delete(key: string): boolean {
+            return this.customFunctions.delete(key);
+        }
+
+        public forEach(callbackfn: (value: ExpressionEvaluator, key: string, map: Map<string, ExpressionEvaluator>) => void, thisArg?: any): void {
+            throw Error(`forEach function not implemented`);
+        }
+
+        public entries(): IterableIterator<[string, ExpressionEvaluator]> {
+            throw Error(`entries function not implemented`);
+        }
+
+        public get [Symbol.iterator](): () => IterableIterator<[string, ExpressionEvaluator]>  {
+            throw Error(`Symbol.iterator function not implemented`);
+        }
+
+        public get [Symbol.toStringTag](): string {
+            throw Error(`Symbol.toStringTag function not implemented`);
+        }
+    }
+    /**
+     * Dictionary of function => ExpressionEvaluator.
+     * This is all available functions, you can add custom functions to it, but you cannot
+     * replace builtin functions.  If you clear the dictionary, it will be reset to the built in functions.
+     */
+    public static readonly functions: Map<string, ExpressionEvaluator> = new Expression.FunctionTable();
+
+    /**
+     * expression constructor.
      * @param type Type of expression from ExpressionType
      * @param evaluator Information about how to validate and evaluate expression.
      * @param children Child expressions.
      */
     public constructor(type: string, evaluator: ExpressionEvaluator, ...children: Expression[]) {
-        this.evaluator = evaluator === undefined ? ExpressionFunctions.lookup(type) : evaluator;
-        this.children = children;
+        if(evaluator) {
+            this.evaluator = evaluator;
+            this.children = children;
+        } else if(type !== undefined) {
+            if (!Expression.functions.get(type)) {
+                throw Error(`${ type } does not have an evaluator, it's not a built-in function or a custom function.`);
+            }
+
+            this.evaluator = Expression.functions.get(type);
+            this.children = children;
+        }
     }
 
-    public static parse(expression: string): Expression {
-        return new ExpressionEngine().parse(expression);
+    public static parse(expression: string, lookup: EvaluatorLookup): Expression {
+        return new ExpressionParser(lookup? lookup : Expression.lookup).parse(expression);
     }
+
+    /**
+     * Lookup a ExpressionEvaluator (function) by name.
+     * @param functionName name of function to lookup
+     * @returns a ExpressionEvaluator that corresponding to the funtion name
+     */
+    public static lookup(functionName: string): ExpressionEvaluator {
+        const exprEvaluator = Expression.functions.get(functionName);
+        if (!exprEvaluator) {
+            return undefined;
+        }
+
+        return exprEvaluator;
+    };
 
     /**
      * Make an expression and validate it.

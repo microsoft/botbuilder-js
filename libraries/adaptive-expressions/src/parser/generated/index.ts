@@ -6,7 +6,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-export * from './ExpressionLexer';
-export * from './ExpressionParserListener';
-export * from './ExpressionParser';
-export * from './ExpressionParserVisitor';
+export * from './ExpressionAntlrLexer';
+export * from './ExpressionAntlrParserListener';
+export * from './ExpressionAntlrParser';
+export * from './ExpressionAntlrParserVisitor';
