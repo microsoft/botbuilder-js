@@ -9,7 +9,7 @@
 import { STATUS_CODES } from 'http';
 import * as os from 'os';
 import { Activity, ActivityTypes, BotAdapter, BotCallbackHandlerKey, ChannelAccount, ConversationAccount, ConversationParameters, ConversationReference, ConversationsResult, DeliveryModes, CredentialTokenProvider, InvokeResponse, ResourceResponse, TokenResponse, TurnContext } from 'botbuilder-core';
-import { AuthenticationConfiguration, AuthenticationConstants, ChannelValidation, ClaimsIdentity, ConnectorClient, EmulatorApiClient, GovernmentConstants, GovernmentChannelValidation, JwtTokenValidation, MicrosoftAppCredentials, AppCredentials, CertificateAppCredentials, SimpleCredentialProvider, TokenApiClient, TokenStatus, TokenApiModels, SkillValidation } from 'botframework-connector';
+import { AuthenticationConfiguration, AuthenticationConstants, ChannelValidation, Claim, ClaimsIdentity, ConnectorClient, EmulatorApiClient, GovernmentConstants, GovernmentChannelValidation, JwtTokenValidation, MicrosoftAppCredentials, AppCredentials, CertificateAppCredentials, SimpleCredentialProvider, TokenApiClient, TokenStatus, TokenApiModels, SkillValidation } from 'botframework-connector';
 import { INodeBuffer, INodeSocket, IReceiveRequest, ISocket, IStreamingTransportServer, NamedPipeServer, NodeWebSocketFactory, NodeWebSocketFactoryBase, RequestHandler, StreamingResponse, WebSocketServer } from 'botframework-streaming';
 
 import { WebRequest, WebResponse } from './interfaces';
@@ -24,14 +24,6 @@ export enum StatusCodes {
     UPGRADE_REQUIRED = 426,
     INTERNAL_SERVER_ERROR = 500,
     NOT_IMPLEMENTED = 501,
-}
-
-export class StatusCodeError extends Error {
-    public readonly statusCode: StatusCodes;
-    public constructor(statusCode: StatusCodes, message?: string) {
-        super(message);
-        this.statusCode = statusCode;
-    }
 }
 
 /**
@@ -235,6 +227,7 @@ export class BotFrameworkAdapter extends BotAdapter implements CredentialTokenPr
      * Asynchronously resumes a conversation with a user, possibly after some time has gone by.
      *
      * @param reference A reference to the conversation to continue.
+     * @param oAuthScope The intended recipient of any sent activities.
      * @param logic The asynchronous method to call after the adapter middleware runs.
      * 
      * @remarks
@@ -276,14 +269,39 @@ export class BotFrameworkAdapter extends BotAdapter implements CredentialTokenPr
      * });
      * ```
      */
-    public async continueConversation(reference: Partial<ConversationReference>, logic: (context: TurnContext) => Promise<void>): Promise<void> {
+    public async continueConversation(reference: Partial<ConversationReference>, logic: (context: TurnContext) => Promise<void>): Promise<void>
+    public async continueConversation(reference: Partial<ConversationReference>, oAuthScope: string, logic: (context: TurnContext) => Promise<void>): Promise<void>
+    public async continueConversation(reference: Partial<ConversationReference>, oAuthScopeOrlogic: string | ((context: TurnContext) => Promise<void> ), logic?: (context: TurnContext) => Promise<void>): Promise<void> {
+        let audience = oAuthScopeOrlogic as string;
+        let callback = typeof oAuthScopeOrlogic === 'function' ? oAuthScopeOrlogic : logic;
+
+        if (typeof oAuthScopeOrlogic === 'function') {
+            // Because the OAuthScope parameter was not provided, get the correct value via the channelService.
+            // In this scenario, the ConnectorClient for the continued conversation can only communicate with
+            // official channels, not with other bots.
+            audience = JwtTokenValidation.isGovernment(this.settings.channelService) ? GovernmentConstants.ToChannelFromBotOAuthScope : AuthenticationConstants.ToChannelFromBotOAuthScope;
+        }
+
+        let credentials: AppCredentials = this.credentials;
+
+        // If the provided OAuthScope doesn't match the current one on the instance's credentials, create
+        // a new AppCredentials with the correct OAuthScope.
+        if (credentials.oAuthScope !== audience) {
+            // The BotFrameworkAdapter JavaScript implementation supports one Bot per instance, so get
+            // the botAppId from the credentials.
+            credentials = await this.buildCredentials(this.credentials.appId, audience);
+        }
+
+        const connectorClient = this.createConnectorClientInternal(reference.serviceUrl, credentials);
         const request: Partial<Activity> = TurnContext.applyConversationReference(
             { type: 'event', name: 'continueConversation' },
             reference,
             true
         );
         const context = this.createContext(request);
-        await this.runMiddleware(context, logic);
+        context.turnState.set(this.OAuthScopeKey, audience);
+        context.turnState.set(this.ConnectorClientKey, connectorClient);
+        await this.runMiddleware(context, callback);
     }
 
     /**
@@ -744,6 +762,9 @@ export class BotFrameworkAdapter extends BotAdapter implements CredentialTokenPr
             const connectorClient = await this.createConnectorClientWithIdentity(request.serviceUrl, identity);
             context.turnState.set(this.ConnectorClientKey, connectorClient);
 
+            const oAuthScope: string = SkillValidation.isSkillClaim(identity.claims) ? JwtTokenValidation.getAppIdFromClaims(identity.claims) : this.credentials.oAuthScope;
+            context.turnState.set(this.OAuthScopeKey, oAuthScope);
+
             context.turnState.set(BotCallbackHandlerKey, logic);
             await this.runMiddleware(context, logic);
 
@@ -948,22 +969,8 @@ export class BotFrameworkAdapter extends BotAdapter implements CredentialTokenPr
         const botAppId = identity.getClaimValue(AuthenticationConstants.AudienceClaim) ||
             identity.getClaimValue(AuthenticationConstants.AppIdClaim);
 
-        // Anonymous claims and non-skill claims should fall through without modifying the scope.
-        let credentials: AppCredentials = this.credentials;
-
-        // If the request is for skills, we need to create an AppCredentials instance with
-        // the correct scope for communication between the caller and the skill.
-        if (botAppId && SkillValidation.isSkillClaim(identity.claims)) {
-            const scope = JwtTokenValidation.getAppIdFromClaims(identity.claims);
-            if (this.credentials.oAuthScope === scope) {
-                // Do nothing, the current credentials and its scope are valid for the skill.
-                // i.e. the adatper instance is pre-configured to talk with one skill.
-            } else {
-                // Since the scope is different, we will create a new instance of the AppCredentials
-                // so this.credentials.oAuthScope isn't overridden.
-                credentials = await this.buildCredentials(botAppId, scope);
-            }
-        }
+        const oAuthScope = await this.getOAuthScope(botAppId, identity.claims);
+        const credentials = await this.buildCredentials(botAppId, oAuthScope);
 
         const client: ConnectorClient = this.createConnectorClientInternal(serviceUrl, credentials);
         return client;
@@ -1013,6 +1020,17 @@ export class BotFrameworkAdapter extends BotAdapter implements CredentialTokenPr
         }
 
         return client;
+    }
+
+    private async getOAuthScope(botAppId: string, claims: Claim[]): Promise<string> {
+        // If the Claims are for skills, we need to create an AppCredentials instance with
+        // the correct scope for communication between the caller and the skill.
+        if (botAppId && SkillValidation.isSkillClaim(claims)) {
+            return JwtTokenValidation.getAppIdFromClaims(claims);
+        }
+
+        // Return the current credentials' OAuthScope.
+        return this.credentials.oAuthScope;
     }
 
     /**
@@ -1282,7 +1300,7 @@ export class BotFrameworkAdapter extends BotAdapter implements CredentialTokenPr
 
         // Add serviceUrl from claim to static cache to trigger token refreshes.
         const serviceUrl = claims.getClaimValue(AuthenticationConstants.ServiceUrlClaim);
-        MicrosoftAppCredentials.trustServiceUrl(serviceUrl);
+        AppCredentials.trustServiceUrl(serviceUrl);
 
         if (!claims.isAuthenticated) { throw new Error('Unauthorized Access. Request is not authorized'); }
     }

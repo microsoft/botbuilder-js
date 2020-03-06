@@ -11,7 +11,7 @@
  * 
  * This interface supports the framework and is not intended to be called directly for your code.
  */
-export interface InvokeResponse {
+export interface InvokeResponse<T = any> {
     /**
      * The HTTP status code of the response.
      */
@@ -20,5 +20,5 @@ export interface InvokeResponse {
     /**
      * Optional. The body of the response.
      */
-    body?: any;
+    body?: T;
 }

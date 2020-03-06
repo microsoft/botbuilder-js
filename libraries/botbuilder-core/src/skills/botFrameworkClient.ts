@@ -21,5 +21,5 @@ export abstract class BotFrameworkClient {
      * @param conversationId A conversation ID to use for the conversation with the skill.
      * @param activity Activity to forward.
      */
-    public abstract postActivity(fromBotId: string, toBotId: string, toUrl: string, serviceUrl: string, conversationId: string, activity: Activity): Promise<InvokeResponse>
+    public abstract postActivity<T>(fromBotId: string, toBotId: string, toUrl: string, serviceUrl: string, conversationId: string, activity: Activity): Promise<InvokeResponse<T>>
 }
