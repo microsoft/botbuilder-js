@@ -4,7 +4,4 @@
 # callSub
 - ${refSub()}
 
-#refSub
-- ${custom(4, 8)}
-
->[import](CustomFunctionSub.lg)
+[import](CustomFunctionSub.lg)

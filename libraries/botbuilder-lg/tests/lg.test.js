@@ -1,5 +1,5 @@
 const { LGParser } = require('../');
-const { SimpleObjectMemory, ExpressionParser, ExpressionFunctions } = require('adaptive-expressions');
+const { SimpleObjectMemory, ExpressionParser, ExpressionFunctions, Expression } = require('adaptive-expressions');
 const assert = require('assert');
 const fs = require('fs');
 
@@ -793,7 +793,7 @@ describe('LG', function() {
         LGFile.evaluateTemplate('templateWithSameParams', {param1:'ms', param2:'newms'});
     });
 
-    it.only('TestCustomFunction', function() {
+    it('TestCustomFunction', function() {
         let parser = new ExpressionParser((func) => {
             if (func === 'custom') {
                 return ExpressionFunctions.numeric('custom', 

@@ -44,10 +44,10 @@ export class ExpressionParser implements ExpressionParserInterface {
             const unaryOperationName: string = context.getChild(0).text;
             const operand: Expression = this.visit(context.expression());
             if (unaryOperationName === ExpressionType.Subtract || unaryOperationName === ExpressionType.Add) {
-                return this.MakeExpression(unaryOperationName, new Constant(0), operand);
+                return this.makeExpression(unaryOperationName, new Constant(0), operand);
             }
 
-            return this.MakeExpression(unaryOperationName, operand);
+            return this.makeExpression(unaryOperationName, operand);
         }
 
         public visitBinaryOpExp(context: ep.BinaryOpExpContext): Expression {
@@ -55,7 +55,7 @@ export class ExpressionParser implements ExpressionParserInterface {
             const left: Expression = this.visit(context.expression(0));
             const right: Expression = this.visit(context.expression(1));
 
-            return this.MakeExpression(binaryOperationName, left, right);
+            return this.makeExpression(binaryOperationName, left, right);
         }
 
         public visitFuncInvokeExp(context: ep.FuncInvokeExpContext): Expression {
@@ -64,7 +64,7 @@ export class ExpressionParser implements ExpressionParserInterface {
             // Remove the check to check primaryExpression is just an IDENTIFIER to support "." in template name
             const functionName: string = context.primaryExpression().text;
 
-            return this.MakeExpression(functionName, ...parameters);
+            return this.makeExpression(functionName, ...parameters);
         }
 
         public visitIdAtom(context: ep.IdAtomContext): Expression {
@@ -78,7 +78,7 @@ export class ExpressionParser implements ExpressionParserInterface {
             } else if (symbol === 'null' || symbol === 'undefined') {
                 result = new Constant(undefined);
             } else {
-                result = this.MakeExpression(ExpressionType.Accessor, new Constant(symbol));
+                result = this.makeExpression(ExpressionType.Accessor, new Constant(symbol));
             }
 
             return result;
@@ -90,14 +90,14 @@ export class ExpressionParser implements ExpressionParserInterface {
 
             instance = this.visit(context.primaryExpression());
 
-            return this.MakeExpression(ExpressionType.Element, instance, property);
+            return this.makeExpression(ExpressionType.Element, instance, property);
         }
 
         public visitMemberAccessExp(context: ep.MemberAccessExpContext): Expression {
             const property: string = context.IDENTIFIER().text;
             const instance: Expression = this.visit(context.primaryExpression());
 
-            return this.MakeExpression(ExpressionType.Accessor, new Constant(property), instance);
+            return this.makeExpression(ExpressionType.Accessor, new Constant(property), instance);
         }
 
         public visitNumericAtom(context: ep.NumericAtomContext): Expression {
@@ -145,7 +145,7 @@ export class ExpressionParser implements ExpressionParserInterface {
                 
             }
 
-            return this.MakeExpression(ExpressionType.Concat, ...children);
+            return this.makeExpression(ExpressionType.Concat, ...children);
 
         }
 
@@ -170,7 +170,7 @@ export class ExpressionParser implements ExpressionParserInterface {
 
         protected defaultResult = (): Expression => new Constant('');
 
-        private readonly MakeExpression = (functionType: string, ...children: Expression[]): Expression => {
+        private readonly makeExpression = (functionType: string, ...children: Expression[]): Expression => {
             if (!this._lookupFunction(functionType)) {
                 throw Error(`${ functionType } does not have an evaluator, it's not a built-in function or a custom function.`);
             }
@@ -239,8 +239,7 @@ export class ExpressionParser implements ExpressionParserInterface {
         if (expression === undefined || expression === null || expression === '') {
             return new Constant('');
         } else {
-            const temp = ExpressionParser.antlrParse(expression);
-            return new this.ExpressionTransformer(this.EvaluatorLookup).transform(temp);
+            return new this.ExpressionTransformer(this.EvaluatorLookup).transform(ExpressionParser.antlrParse(expression));
         }
     }
 }
