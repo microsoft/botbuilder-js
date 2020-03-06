@@ -14,6 +14,7 @@ import {
     SkillConversationIdFactoryOptions,
     TurnContext
 } from 'botbuilder-core';
+import { BeginSkillDialogOptions } from './beginSkillDialogOptions';
 import {
     Dialog,
     DialogInstance,
@@ -21,7 +22,7 @@ import {
     DialogTurnResult
 } from './dialog';
 import { DialogContext } from './dialogContext';
-import { BeginSkillDialogOptions } from './beginSkillDialogOptions';
+import { DialogEvents } from './dialogEvents';
 import { SkillDialogOptions } from './skillDialogOptions';
 
 export class SkillDialog extends Dialog {
@@ -110,6 +111,22 @@ export class SkillDialog extends Dialog {
         }
 
         await super.endDialog(context, instance, reason);
+    }
+
+    public async repromptDialog(context: TurnContext, instance: DialogInstance): Promise<void> {
+        // Create and send an envent to the skill so it can resume the dialog.
+        const repromptEvent = { type: ActivityTypes.Event, name: DialogEvents.repromptDialog };
+
+        const reference = TurnContext.getConversationReference(context.activity);
+        // Apply conversation reference and common properties from incoming activity before sending.
+        const activity: Activity = TurnContext.applyConversationReference(repromptEvent, reference, true) as Activity;
+        
+        await this.sendToSkill(context, activity);
+    }
+
+    public async resumeDialog(dc: DialogContext, reason: DialogReason, result?: any): Promise<DialogTurnResult> {
+        await this.repromptDialog(dc.context, dc.activeDialog);
+        return Dialog.EndOfTurn;
     }
 
     /**

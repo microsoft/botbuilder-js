@@ -1,6 +1,6 @@
 const { equal, ok: assert, strictEqual } = require('assert');
 const { ActivityTypes, TestAdapter, SkillConversationIdFactoryBase, TurnContext } = require('botbuilder-core');
-const { DialogContext, SkillDialog } = require('../');
+const { Dialog, DialogContext, SkillDialog } = require('../');
 
 const DEFAULT_OAUTHSCOPE = 'https://api.botframework.com';
 const DEFAULT_GOV_OAUTHSCOPE = 'https://api.botframework.us';
@@ -21,8 +21,35 @@ function typeErrorValidator(e, expectedMessage) {
 describe('SkillDialog', function() {
     this.timeout(3000);
 
-    it('', async () => {
+    it('repromptDialog() should call sendToSkill()', async () => {
+        const adapter = new TestAdapter(/* logic param not required */);
+        const context = new TurnContext(adapter, { type: ActivityTypes.Message, id: 'activity-id' });
+        context.turnState.set(adapter.OAuthScopeKey, DEFAULT_OAUTHSCOPE);
+        const dialog = new SkillDialog({} , 'SkillDialog');
+        
+        let sendToSkillCalled = false;
+        dialog.sendToSkill = () => {
+            sendToSkillCalled = true;
+        };
+        
+        await dialog.repromptDialog(context, {});
+        assert(sendToSkillCalled, 'sendToSkill not called');
+    });
 
+    it('resumeDialog() should call repromptDialog()', async () => {
+        const adapter = new TestAdapter(/* logic param not required */);
+        const context = new TurnContext(adapter, { type: ActivityTypes.Message, id: 'activity-id' });
+        context.turnState.set(adapter.OAuthScopeKey, DEFAULT_OAUTHSCOPE);
+        const dialog = new SkillDialog({} , 'SkillDialog');
+        
+        let repromptDialogCalled = false;
+        dialog.repromptDialog = () => {
+            repromptDialogCalled = true;
+        };
+        
+        const result = await dialog.resumeDialog(context, {});
+        assert(repromptDialogCalled, 'sendToSkill not called');
+        strictEqual(result, Dialog.EndOfTurn);
     });
 
     describe('(private) validateBeginDialogArgs()', () => {
@@ -66,7 +93,7 @@ describe('SkillDialog', function() {
     describe('(private) sendToSkill()', () => {
         it(`should rethrow the error if its message is not "Not Implemented" error`, async () => {
             const adapter = new TestAdapter(/* logic param not required */);
-            const context = new TurnContext(adapter, { activity: {} });
+            const context = new TurnContext(adapter, { type: ActivityTypes.Message });
             context.turnState.set(adapter.OAuthScopeKey, DEFAULT_OAUTHSCOPE);
             const dialog = new SkillDialog({
                 botId: 'botId',

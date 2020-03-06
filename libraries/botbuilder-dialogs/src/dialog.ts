@@ -234,7 +234,7 @@ export abstract class Dialog<O extends object = {}> extends Configurable {
      * 
      * @param dialogId Optional. unique ID of the dialog.
      */
-    constructor(dialogId?: string) {
+    public constructor(dialogId?: string) {
         super();
         this.id = dialogId;
     }
@@ -245,16 +245,16 @@ export abstract class Dialog<O extends object = {}> extends Configurable {
      * @remarks
      * This will be automatically generated if not specified.
      */
-   public get id(): string {
-       if (this._id === undefined) {
-           this._id = this.onComputeId();
-       }
-       return this._id;
-   }
+    public get id(): string {
+        if (this._id === undefined) {
+            this._id = this.onComputeId();
+        }
+        return this._id;
+    }
 
-   public set id(value: string) {
-       this._id = value;
-   }
+    public set id(value: string) {
+        this._id = value;
+    }
 
     /** 
      * Gets the telemetry client for this dialog.
