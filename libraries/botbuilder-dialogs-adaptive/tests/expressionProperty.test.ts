@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
 import * as assert from 'assert';
-import { ArrayExpression, BoolExpression, EnumExpression, IntExpression, NumberExpression, ObjectExpression, StringExpression, ValueExpression } from '../';
+import { ArrayExpression, BoolExpression, EnumExpression, NumberExpression, ObjectExpression, StringExpression, ValueExpression, DialogExpression, AdaptiveDialog } from '../';
 
 describe('expressionProperty tests', () => {
     it('ArrayExpression string', () => {
@@ -84,14 +84,42 @@ describe('expressionProperty tests', () => {
         assert.equal(result, false);
     });
 
+    it('DialogExpression', () => {
+        const dialog = new AdaptiveDialog('AskNameDialog');
+        const data = { test: dialog };
+        let val = new DialogExpression('=test');
+        assert.notEqual(val.expressionText, undefined);
+        assert.equal(val.value, undefined);
+        let result = val.getValue(data);
+        assert.equal(result, dialog);
+
+        val = new DialogExpression('test');
+        assert.notEqual(val.expressionText, undefined);
+        assert.equal(val.value, undefined);
+        result = val.getValue(data);
+        assert.equal(result, 'test');
+
+        val = new DialogExpression(dialog);
+        assert.equal(val.expressionText, undefined);
+        assert.notEqual(val.value, undefined);
+        result = val.getValue(data);
+        assert.equal(result, dialog);
+    });
+
     it('EnumExpression', () => {
         enum TestEnum { One, Two, Three };
         const data = { test: TestEnum.Three };
 
-        let val = new EnumExpression<TestEnum>('=test');
+        let val = new EnumExpression<TestEnum>('test');
         assert.notEqual(val.expressionText, undefined);
         assert.equal(val.value, undefined);
         let result = val.getValue(data);
+        assert.equal(result, TestEnum.Three);
+
+        val = new EnumExpression<TestEnum>('=test');
+        assert.notEqual(val.expressionText, undefined);
+        assert.equal(val.value, undefined);
+        result = val.getValue(data);
         assert.equal(result, TestEnum.Three);
 
         val = new EnumExpression<TestEnum>(TestEnum.Three);
@@ -99,40 +127,6 @@ describe('expressionProperty tests', () => {
         assert.equal(val.value, TestEnum.Three);
         result = val.getValue(data);
         assert.equal(result, TestEnum.Three);
-    });
-
-    it('IntExpression', () => {
-        const data = { test: 13 };
-
-        let val = new IntExpression('test');
-        assert.notEqual(val.expressionText, undefined);
-        assert.equal(val.value, undefined);
-        let result = val.getValue(data);
-        assert.equal(result, 13);
-
-        val = new IntExpression('=test');
-        assert.notEqual(val.expressionText, undefined);
-        assert.equal(val.value, undefined);
-        result = val.getValue(data);
-        assert.equal(result, 13);
-
-        val = new IntExpression('13');
-        assert.notEqual(val.expressionText, undefined);
-        assert.equal(val.value, undefined);
-        result = val.getValue(data);
-        assert.equal(result, 13);
-
-        val = new IntExpression('=13');
-        assert.notEqual(val.expressionText, undefined);
-        assert.equal(val.value, undefined);
-        result = val.getValue(data);
-        assert.equal(result, 13);
-
-        val = new IntExpression(13);
-        assert.equal(val.expressionText, undefined);
-        assert.equal(val.value, 13);
-        result = val.getValue(data);
-        assert.equal(result, 13);
     });
 
     it('NumberExpression', function() {
@@ -194,12 +188,6 @@ describe('expressionProperty tests', () => {
         result = val.getValue(data);
         assert.equal(result.age, 13);
         assert.equal(result.name, 'joe');
-
-        val = new ObjectExpression<Foo>(() => data.test);
-        assert.equal(val.value, undefined);
-        result = val.getValue(data);
-        assert.equal(result.age, 13);
-        assert.equal(result.name, 'joe');
     });
 
     it('StringExpression', () => {
@@ -208,20 +196,20 @@ describe('expressionProperty tests', () => {
         let str = new StringExpression('test');
         assert.equal(str.expressionText, '=`test`');
         assert.equal(str.value, undefined);
-        // let result = str.getValue(data);
-        // assert.equal(result, 'test');
+        let result = str.getValue(data);
+        assert.equal(result, 'test');
 
         str = new StringExpression('=test');
         assert.equal(str.expressionText, '=test');
         assert.equal(str.value, undefined);
-        // result = str.getValue(data);
-        // assert.equal(result, 'joe');
+        result = str.getValue(data);
+        assert.equal(result, 'joe');
 
         str = new StringExpression('Hello ${test}');
         assert.equal(str.expressionText, '=`Hello ${test}`');
         assert.equal(str.value, undefined);
-        // result = str.getValue(data);
-        // assert.equal(result, 'Hello joe');
+        result = str.getValue(data);
+        assert.equal(result, 'Hello joe');
     });
 
     it('ValueExpression', () => {
@@ -230,25 +218,25 @@ describe('expressionProperty tests', () => {
         let val = new ValueExpression('test');
         assert.equal(val.expressionText, '=`test`');
         assert.equal(val.value, undefined);
-        // let result = val.getValue(data);
-        // assert.equal(result, 'test');
+        let result = val.getValue(data);
+        assert.equal(result, 'test');
 
         val = new ValueExpression('=test');
         assert.equal(val.expressionText, '=test');
         assert.equal(val.value, undefined);
-        let result = val.getValue(data);
+        result = val.getValue(data);
         assert.equal(JSON.stringify(result), JSON.stringify(data.test));
 
         val = new ValueExpression(data.test);
-        assert.notEqual(val.expressionText, undefined);
-        assert.equal(val.value, undefined);
-        // result = val.getValue(data);
-        // assert.equal(JSON.stringify(result), JSON.stringify(data.test));
+        assert.equal(val.expressionText, undefined);
+        assert.notEqual(val.value, undefined);
+        result = val.getValue(data);
+        assert.equal(JSON.stringify(result), JSON.stringify(data.test));
 
         val = new ValueExpression('Hello ${test.x}');
         assert.equal(val.expressionText, '=`Hello ${test.x}`');
         assert.equal(val.value, undefined);
-        // result = val.getValue(data);
-        // assert.equal(result, 'Hello 13');
+        result = val.getValue(data);
+        assert.equal(result, 'Hello 13');
     });
 });

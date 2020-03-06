@@ -77,18 +77,25 @@ export class ExpressionProperty<T> {
     }
 
     public setValue(value: any): void {
-        if (typeof value == 'string') {
-            const expressionText = value.startsWith('=') ? value.substr(1) : value;
+        if (value == undefined || value == null) {
             this.value = undefined;
-            this._expression = new ExpressionEngine().parse(expressionText);
+            this.expressionText = undefined;
+            this._expression = undefined;
+            return;
+        }
+
+        if (typeof value == 'string') {
+            this.value = undefined;
+            const expressionText = value.startsWith('=') ? value.substr(1) : value;
             this.expressionText = expressionText;
+            this._expression = new ExpressionEngine().parse(this.expressionText);
             return;
         }
 
         if (value instanceof Expression) {
             this.value = undefined;
-            this._expression = value;
             this.expressionText = value.toString();
+            this._expression = value;
             return;
         }
 

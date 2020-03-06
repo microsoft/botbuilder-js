@@ -6,15 +6,15 @@
  * Licensed under the MIT License.
  */
 
-import { Expression } from 'adaptive-expressions';
-import { ExpressionProperty } from '../expressionProperty';
+import { ExpressionProperty } from './expressionProperty';
 
-export class ObjectExpression<T> extends ExpressionProperty<T> {
-    public constructor(value?: object | string | Expression | ((arg0: any) => any)) {
-        if (typeof value == 'function') {
-            super(Expression.lambda(value as (arg0: any) => any));
-        } else {
-            super(value);
-        }
+/**
+ * ObjectExpression<T> - represents a property which is either an object of type T or a string expression which resolves to an object of type T.
+ * @remarks
+ * String values are always interpreted as an expression, whether it has '=' prefix or not.
+ */
+export class ObjectExpression<O extends object = {}> extends ExpressionProperty<O> {
+    public constructor(value?: string | O) {
+        super(value);
     }
 }

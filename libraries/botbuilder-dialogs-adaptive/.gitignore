@@ -3,3 +3,4 @@
 /**/lib/*
 coverage
 .nyc_output
+tests/expressionProperty.test.js

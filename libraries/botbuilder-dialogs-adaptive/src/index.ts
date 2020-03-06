@@ -12,7 +12,6 @@ export * from './conditions';
 export * from './generators';
 export * from './selectors';
 export * from './adaptiveDialog';
-export * from './expressionProperty';
 export * from './expressionProperties';
 export * from './sequenceContext';
 export * from './languageGenerationMiddleware';

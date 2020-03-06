@@ -6,11 +6,19 @@
  * Licensed under the MIT License.
  */
 
-import { Expression } from 'adaptive-expressions';
-import { ExpressionProperty } from '../expressionProperty';
+import { ExpressionProperty } from './expressionProperty';
 
+/**
+ * EnumExpression - represents a property which is either an enum of T or a string expression which resolves to an enum.
+ * @remarks
+ * String values are always interpreted as an expression whether it has '=' prefix or not, as string values cannot be parsed to enum values.
+ */
 export class EnumExpression<T> extends ExpressionProperty<T> {
-    public constructor(value: number | string | Expression) {
+    public constructor(value: T | string) {
         super(value);
+    }
+
+    public setValue(value: T | string): void {
+        super.setValue(value);
     }
 }

@@ -10,6 +10,7 @@ export * from './arrayExpression';
 export * from './boolExpression';
 export * from './dialogExpression';
 export * from './enumExpression';
+export * from './expressionProperty';
 export * from './numberExpression';
 export * from './objectExpression';
 export * from './stringExpression';

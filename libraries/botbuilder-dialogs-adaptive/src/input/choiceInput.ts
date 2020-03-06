@@ -86,7 +86,7 @@ export class ChoiceInput extends InputDialog {
                 const value = config[key];
                 switch (key) {
                     case 'choices':
-                        this.choices = new ObjectExpression<Choice[]>(value);
+                        this.choices = new ArrayExpression<Choice>(value);
                         break;
                     case 'style':
                         this.style = new EnumExpression<ListStyle>(value);
