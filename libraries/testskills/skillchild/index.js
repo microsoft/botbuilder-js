@@ -1,10 +1,18 @@
 
 const restify = require('restify');
+const path = require('path');
 
-const { BotFrameworkAdapter } = require('botbuilder');
+const { BotFrameworkAdapter, ConversationState, MemoryStorage, UserState } = require('botbuilder');
 const { ChildBot } = require('./childBot');
+const { MainDialog } = require('./mainDialog');
 
-const adapter = new BotFrameworkAdapter();
+const ENV_FILE = path.join(__dirname, '.env');
+require('dotenv').config({ path: ENV_FILE});
+
+const adapter = new BotFrameworkAdapter({
+    appId: process.env.MicrosoftAppId,
+    appPassword: process.env.MicrosoftAppPassword
+})
 
 // Create HTTP server
 const server = restify.createServer();
@@ -13,7 +21,12 @@ server.listen(3979, function() {
     console.log(`\nGet Bot Framework Emulator: https://aka.ms/botframework-emulator`);
 });
 
-const bot = new ChildBot();
+const memoryStorage = new MemoryStorage();
+const conversationState = new ConversationState(memoryStorage);
+const userState = new UserState(memoryStorage);
+
+const dialog = new MainDialog();
+const bot = new ChildBot(conversationState, userState, dialog);
 
 // Listen for incoming activities and route them to your bot main dialog.
 server.post('/api/messages', (req, res) => {
