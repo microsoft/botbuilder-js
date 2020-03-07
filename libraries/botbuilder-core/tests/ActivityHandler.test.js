@@ -197,18 +197,6 @@ describe('ActivityHandler', function() {
         processActivity({type: ActivityTypes.Event}, bot, done);
     });
 
-    it(`should fire onInvoke`, async function (done) {
-        const bot = new ActivityHandler();
-
-        bot.onInvoke(async(context, next) => {
-            assert(true, 'onInvoke not called');
-            done();
-            await next();
-        });
-
-        processActivity({type: ActivityTypes.Invoke}, bot, done);
-    });
-
     it(`should fire onEndOfConversation`, async function(done) {
 
         const bot = new ActivityHandler();

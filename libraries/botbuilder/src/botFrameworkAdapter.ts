@@ -9,7 +9,7 @@
 import { STATUS_CODES } from 'http';
 import * as os from 'os';
 
-import { Activity, ActivityTypes, BotAdapter, BotCallbackHandlerKey, ChannelAccount, ConversationAccount, ConversationParameters, ConversationReference, ConversationsResult, DeliveryModes,InvokeResponse, ExtendedUserTokenProvider, ResourceResponse, StatusCodes, TokenResponse, TurnContext } from 'botbuilder-core';
+import { Activity, ActivityTypes, BotAdapter, BotCallbackHandlerKey, ChannelAccount, ConversationAccount, ConversationParameters, ConversationReference, ConversationsResult, DeliveryModes,InvokeResponse, ExtendedUserTokenProvider, ResourceResponse, StatusCodes, TokenResponse, TurnContext, INVOKE_RESPONSE_KEY } from 'botbuilder-core';
 import { AuthenticationConfiguration, AuthenticationConstants, ChannelValidation, Claim, ClaimsIdentity, ConnectorClient, EmulatorApiClient, GovernmentConstants, GovernmentChannelValidation, JwtTokenValidation, MicrosoftAppCredentials, AppCredentials, CertificateAppCredentials, SimpleCredentialProvider, TokenApiClient, TokenStatus, TokenApiModels, SignInUrlResponse, SkillValidation, TokenExchangeRequest } from 'botframework-connector';
 
 import { INodeBuffer, INodeSocket, IReceiveRequest, ISocket, IStreamingTransportServer, NamedPipeServer, NodeWebSocketFactory, NodeWebSocketFactoryBase, RequestHandler, StreamingResponse, WebSocketServer } from 'botframework-streaming';
@@ -86,7 +86,7 @@ const OAUTH_ENDPOINT = 'https://api.botframework.com';
 const US_GOV_OAUTH_ENDPOINT = 'https://api.botframework.azure.us';
 
 // This key is exported internally so that the TeamsActivityHandler will not overwrite any already set InvokeResponses.
-export const INVOKE_RESPONSE_KEY: symbol = Symbol('invokeResponse');
+//export const INVOKE_RESPONSE_KEY: symbol = Symbol('invokeResponse');
 
 /**
  * A [BotAdapter](xref:botbuilder-core.BotAdapter) that can connect a bot to a service endpoint.
@@ -937,7 +937,7 @@ export class BotFrameworkAdapter extends BotAdapter implements ExtendedUserToken
                     responses.push({} as ResourceResponse);
                     break;
                 case 'invokeResponse':
-                // Cache response to context object. This will be retrieved when turn completes.
+                    // Cache response to context object. This will be retrieved when turn completes.
                     context.turnState.set(INVOKE_RESPONSE_KEY, activity);
                     responses.push({} as ResourceResponse);
                     break;
@@ -1263,11 +1263,12 @@ export class BotFrameworkAdapter extends BotAdapter implements ExtendedUserToken
 
             if (body.type === ActivityTypes.Invoke) {
                 let invokeResponse: any = context.turnState.get(INVOKE_RESPONSE_KEY);
-
                 if (invokeResponse && invokeResponse.value) {
                     const value: InvokeResponse = invokeResponse.value;
                     response.statusCode = value.status;
-                    response.setBody(value.body);
+                    if (value.body) {      
+                        response.setBody(value.body);
+                    }
                 } else {
                     response.statusCode = StatusCodes.NOT_IMPLEMENTED;
                 }

@@ -843,6 +843,8 @@ describe('TeamsActivityHandler', () => {
                 await bot.run(context);
             });
     
+            console.log('>>>>>>>>>>>>> test');
+
             await adapter.send(activity);
             assert(onDialogCalled, 'onDialog handler not called'); 
             assert(handleTeamsSigninVerifyStateCalled, 'handleTeamsSigninVerifyState handler not called'); 
