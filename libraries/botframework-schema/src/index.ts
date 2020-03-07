@@ -481,7 +481,7 @@ export interface Activity {
   importance?: ActivityImportance | string;
   /**
    * A delivery hint to signal to the recipient alternate delivery paths for the activity.
-   * The default delivery mode is "default". Possible values include: 'normal', 'notification', 'expectReplies'
+   * The default delivery mode is "default". Possible values include: 'normal', 'notification', 'expectReplies', 'ephemeral'
    */
   deliveryMode?: DeliveryModes | string;
   /**
@@ -1807,14 +1807,15 @@ export enum ActivityImportance {
 
 /**
  * Defines values for DeliveryModes.
- * Possible values include: 'normal', 'notification', 'expectReplies'
+ * Possible values include: 'normal', 'notification', 'expectReplies', 'ephemeral'
  * @readonly
  * @enum {string}
  */
 export enum DeliveryModes {
   Normal = 'normal',
   Notification = 'notification',
-  ExpectReplies = 'expectReplies'
+  ExpectReplies = 'expectReplies',
+  Ephemeral = 'ephemeral'
 }
 
 /**
