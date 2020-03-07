@@ -49,13 +49,13 @@ export class LGFile {
     public diagnostics: Diagnostic[];
 
     /// <summary>
-    /// Gets or sets all references that this LG file has from <see cref="Imports"/>.
+    /// Gets or sets all references that this LG file has from Imports
     /// Notice: reference includs all child imports from the lg file,
     /// not only the children belong to this lgfile directly.
     /// so, reference count may >= imports count. 
     /// </summary>
     /// <value>
-    /// all references that this LG file has from <see cref="Imports"/>.
+    /// all references that this LG file has from Imports
     /// </value>
     public references: LGFile[];
 

@@ -1,6 +1,5 @@
 import { MemoryInterface } from './memoryInterface';
 import { Extensions } from '../extensions';
-import { Util } from '../parser/util';
 
 /**
  * @module adaptive-expressions

@@ -42,22 +42,22 @@ export class Constant extends Expression {
     }
 
     public toString(): string {
-        let result = undefined;
+        
         if (this.value === undefined) {
-            result = 'null';
+            return 'null';
         } else if (typeof this.value === 'string') {
-            result = this.value;
+            let result = this.value;
             if (result.includes('\\')) {
                 result = result.replace(/\\/g, '\\\\');
             }
 
-            result = result.includes(`'`) ? `"${ result }"` : `'${ result }'`;
-        } else if (Array.isArray(this.value)) {
-            result = '[' + this.value.join(' ') + ']';
+            return result.includes(`'`) ? `"${ result }"` : `'${ result }'`;
+        } else if (typeof this.value === 'number') {
+            return this.value.toString();
         } else if(typeof this.value === 'object') {
-            result = JSON.stringify(this.value);
+            return JSON.stringify(this.value);
         }
 
-        return result === undefined ? undefined : result.toString();
+        return this.value.toString();
     }
 }

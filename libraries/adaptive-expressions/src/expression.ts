@@ -113,7 +113,7 @@ export class Expression {
 
         }
 
-        public add(item: {key: string; value: ExpressionEvaluator} | string, value: ExpressionEvaluator = undefined): void{
+        public add(item: {key: string; value: ExpressionEvaluator} | string, value: ExpressionEvaluator|undefined): void{
             if(arguments.length === 1 && item instanceof Object) {
                 this.set(item.key, item.value);
             } else if (arguments.length == 2 && typeof item === 'string') {
@@ -177,8 +177,8 @@ export class Expression {
         }
     }
 
-    public static parse(expression: string, lookup: EvaluatorLookup): Expression {
-        return new ExpressionParser(lookup? lookup : Expression.lookup).parse(expression);
+    public static parse(expression: string, lookup?: EvaluatorLookup): Expression {
+        return new ExpressionParser(lookup || Expression.lookup).parse(expression);
     }
 
     /**

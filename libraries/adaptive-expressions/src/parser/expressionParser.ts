@@ -205,7 +205,7 @@ export class ExpressionParser implements ExpressionParserInterface {
     };
 
     public constructor(lookup?: EvaluatorLookup) {
-        this.EvaluatorLookup = lookup === undefined ? Expression.lookup : lookup;
+        this.EvaluatorLookup = lookup || Expression.lookup;
     }
 
     protected static antlrParse(expression: string): ParseTree {

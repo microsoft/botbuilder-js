@@ -52,14 +52,14 @@ export class LGParser {
 
     /**
      * Parser to turn lg content into a LGFile.
-     * @param content ext content contains lg templates.
-     * @param id id is the identifier of content. If importResolver is null, id must be a full path string. 
+     * @param content text content contains lg templates.
+     * @param id id is the identifier of content. If importResolver is undefined, id must be a full path string. 
      * @param importResolver resolver to resolve LG import id to template text.
      * @param expressionParser Expression parser for evaluating expressions.
      * @returns entity.
      */
     public static parseText(content: string, id: string = '', importResolver?: ImportResolverDelegate, expressionParser?: ExpressionParser): LGFile {
-        importResolver = importResolver ? importResolver : LGParser.defaultFileResolver;
+        importResolver = importResolver || LGParser.defaultFileResolver;
         let lgFile = new LGFile();
         lgFile.content = content;
         lgFile.id = id;
@@ -92,11 +92,11 @@ export class LGParser {
     }
 
     /// <summary>
-    /// Parser to turn lg content into a <see cref="LGFile"/> based on the original LGFile.
+    /// Parser to turn lg content into a LGFile based on the original LGFile.
     /// </summary>
     /// <param name="content">Text content contains lg templates.</param>
     /// <param name="lgFile">original LGFile.</param>
-    /// <returns>new <see cref="LGFile"/> entity.</returns>
+    /// <returns>new LGFile entity.</returns>
     public static parseTextWithRef(content: string, lgFile: LGFile): LGFile {
         if (!lgFile) {
             throw Error(`LGFile`);
@@ -195,8 +195,8 @@ export class LGParser {
         }
     }
 
-    private static buildDiagnostic(message: string, context: ParserRuleContext = undefined, source: string = undefined): Diagnostic {
-        message = message === undefined ? '' : message;
+    private static buildDiagnostic(message: string, context?: ParserRuleContext, source?: string): Diagnostic {
+        message = message || '';
         const startPosition: Position = context === undefined ? new Position(0, 0) : new Position(context.start.line, context.start.charPositionInLine);
         const endPosition: Position = context === undefined ? new Position(0, 0) : new Position(context.stop.line, context.stop.charPositionInLine + context.stop.text.length);
         return new Diagnostic(new Range(startPosition, endPosition), message, DiagnosticSeverity.Error, source);

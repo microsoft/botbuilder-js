@@ -57,7 +57,7 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGFilePa
         this.templateMap = keyBy(templates, (t: LGTemplate): string => t.name);
         this.strictMode = strictMode;
 
-        // generate a new customzied expression parser by injecting the template as functions
+        // generate a new customzied expression parser by injecting the templates as functions
         this.expressionParser = new ExpressionParser(this.customizedEvaluatorLookup(expressionParser.EvaluatorLookup));
     }
 
@@ -80,7 +80,7 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGFilePa
             throw new Error(LGErrors.templateNotExist(templateName));
         }
 
-        if (!this.evaluationTargetStack.some((u: EvaluationTarget): boolean => u.templateName === templateName)) {
+        if (this.evaluationTargetStack.some((u: EvaluationTarget): boolean => u.templateName === templateName)) {
             throw new Error(`${ LGErrors.loopDetected } ${ this.evaluationTargetStack.reverse()
                 .map((u: EvaluationTarget): string => u.templateName)
                 .join(' => ') }`);
@@ -332,7 +332,7 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGFilePa
         return false;
     }
 
-    private evalExpressionInCondition(exp: string, context: ParserRuleContext = undefined, errorPrefix: string = ''): boolean {
+    private evalExpressionInCondition(exp: string, context?: ParserRuleContext, errorPrefix: string = ''): boolean {
         exp = LGExtensions.trimExpression(exp);
         let result: any;
         let error: string;
@@ -371,7 +371,7 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGFilePa
         return true;
     }
 
-    private evalExpression(exp: string, context: ParserRuleContext = undefined, errorPrefix: string = ''): any
+    private evalExpression(exp: string, context?: ParserRuleContext, errorPrefix: string = ''): any
     {
         exp = LGExtensions.trimExpression(exp);
         let result: any;

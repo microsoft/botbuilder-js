@@ -600,7 +600,7 @@ export class ExpressionFunctions {
      * @param func Function to apply.
      */
     public static multivariateNumeric(type: string, func: (arg0: any []) => any, verify?: VerifyExpression): ExpressionEvaluator {
-        return new ExpressionEvaluator(type, ExpressionFunctions.applySequence(func, verify !== undefined ? verify : ExpressionFunctions.verifyNumber),
+        return new ExpressionEvaluator(type, ExpressionFunctions.applySequence(func, verify || ExpressionFunctions.verifyNumber),
             ReturnType.Number, ExpressionFunctions.validateTwoOrMoreThanTwoNumbers);
     }
     /**
@@ -1383,7 +1383,7 @@ export class ExpressionFunctions {
                         ({value: propertyName, error} = expression.children[1].tryEvaluate(state));
 
                         if (!error) {
-                            propertyName = propertyName === undefined ? '' : propertyName;
+                            propertyName = propertyName || '';
                         }
                         if (isDescending) {
                             result = lodash.sortBy(arr, propertyName).reverse();
@@ -1777,9 +1777,8 @@ export class ExpressionFunctions {
     }
 
     private static flatten(arr: any[], dept: number): any[]{
-        dept = typeof dept === 'undefined' ? 1 : dept;
-        if (typeof dept !== 'number') {
-            return;
+        if (!ExpressionFunctions.isNumber(dept) || dept < 1) {
+            dept = 1;
         }
       
         let res = JSON.parse(JSON.stringify(arr));
@@ -2163,7 +2162,7 @@ export class ExpressionFunctions {
                 (expression: Expression): void => ExpressionFunctions.validateArityAndAnyType(expression, 3, 3, ReturnType.String)),
             new ExpressionEvaluator(
                 ExpressionType.Split,
-                ExpressionFunctions.apply((args: any []): string[] => ExpressionFunctions.parseStringOrNull(args[0]).split(ExpressionFunctions.parseStringOrNull(args[1]? args[1]: '')), ExpressionFunctions.verifyStringOrNull),
+                ExpressionFunctions.apply((args: any []): string[] => ExpressionFunctions.parseStringOrNull(args[0]).split(ExpressionFunctions.parseStringOrNull(args[1] || '')), ExpressionFunctions.verifyStringOrNull),
                 ReturnType.Object,
                 (expression: Expression): void => ExpressionFunctions.validateArityAndAnyType(expression, 1, 2, ReturnType.String)),
             new ExpressionEvaluator(

@@ -249,7 +249,7 @@ export class StaticChecker extends AbstractParseTreeVisitor<Diagnostic[]> implem
                 if (switchCaseStat.EXPRESSION().length !== 1) {
                     result.push(this.buildLGDiagnostic(LGErrors.invalidExpressionInSwiathCase, undefined, switchCaseStat));
                 } else {
-                    let errorPrefix = switchExpr? 'Switch' : 'Case';
+                    let errorPrefix = switchExpr ? 'Switch' : 'Case';
                     errorPrefix += ` '${ switchCaseStat.EXPRESSION(0).text }': `;
                     result = result.concat(this.checkExpression(switchCaseStat.EXPRESSION(0).text, switchCaseStat, errorPrefix));
                 }
@@ -317,7 +317,7 @@ export class StaticChecker extends AbstractParseTreeVisitor<Diagnostic[]> implem
         const stopPosition = context === undefined ? new Position(0, 0) : new Position(context.stop.line, context.stop.charPositionInLine + context.stop.text.length);
         severity = severity? severity : DiagnosticSeverity.Error;
         const range = new Range(startPosition, stopPosition);
-        message = (this.visitedTemplateNames.length > 0 && includeTemplateNameInfo)? `[${ this.visitedTemplateNames[this.visitedTemplateNames.length - 1] }]${ message }]`: message;
+        message = (this.visitedTemplateNames.length > 0 && includeTemplateNameInfo)? `[${ this.visitedTemplateNames[this.visitedTemplateNames.length - 1] }]`+ message : message;
         
         return new Diagnostic(range, message, severity, this.lgFile.id);
     }

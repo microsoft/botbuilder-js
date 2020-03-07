@@ -18,7 +18,7 @@ import { AnalyzerResult } from './analyzerResult';
 import {LGErrors} from './lgErrors';
 
 /**
- * Analyzer engine. To analyse which variable may be used
+ * Analyzer engine. To to get the static analyzer results.
  */
 export class Analyzer extends AbstractParseTreeVisitor<AnalyzerResult> implements LGFileParserVisitor<AnalyzerResult> {
     /**
@@ -35,7 +35,7 @@ export class Analyzer extends AbstractParseTreeVisitor<AnalyzerResult> implement
         this.templates = templates;
         this.templateMap = keyBy(templates, (t: LGTemplate): string => t.name);
 
-        // create an evaluator to leverage it's customized function look up for checking
+        // create an evaluator to leverage its customized function look up for checking
         const evaluator: Evaluator = new Evaluator(this.templates, expressionParser);
         this._expressionParser = evaluator.expressionParser;
     }

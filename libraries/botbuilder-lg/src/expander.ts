@@ -309,7 +309,7 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGFi
         return false;
     }
 
-    private evalExpressionInCondition(exp: string, context: ParserRuleContext = undefined, errorPrefix: string = ''): boolean {
+    private evalExpressionInCondition(exp: string, context?: ParserRuleContext, errorPrefix: string = ''): boolean {
         exp = LGExtensions.trimExpression(exp);
         let result: any;
         let error: string;
@@ -411,7 +411,6 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGFi
         return result;
     }
 
-    // Genearte a new lookup function based on one lookup function
     private readonly customizedEvaluatorLookup = (baseLookup: EvaluatorLookup, isExpander: boolean): any => (name: string): ExpressionEvaluator => {
         const prebuiltPrefix = 'prebuilt.';
 

@@ -57,7 +57,7 @@ export class ExpressionEvaluator {
         this._evaluator = evaluator;
         this.returnType = returnType;
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        this._validator = validator === undefined ? ((expr: Expression): any => { }) : validator;
+        this._validator = validator || ((expr: Expression): any => { });
     }
 
     /**
