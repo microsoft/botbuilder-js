@@ -344,7 +344,7 @@ export class TurnContext {
     /**
      * List of activities to send when `context.activity.deliveryMode == 'expectReplies'`.
      */
-    public readonly bufferedReplyActivties: Partial<Activity>[] = [];
+    public readonly bufferedReplyActivities: Partial<Activity>[] = [];
 
     /**
      * Asynchronously sends an activity to the sender of the incoming activity.
@@ -466,7 +466,7 @@ export class TurnContext {
                 // Append activities to buffer
                 const responses: ResourceResponse[] = [];
                 output.forEach((a) => {
-                    this.bufferedReplyActivties.push(a);
+                    this.bufferedReplyActivities.push(a);
                     responses.push({ id: undefined });
                 });
 
