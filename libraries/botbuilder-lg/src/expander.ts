@@ -1,4 +1,3 @@
-
 /**
  * @module botbuilder-lg
  */
@@ -6,7 +5,6 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-// tslint:disable-next-line: no-submodule-imports
 import { AbstractParseTreeVisitor, TerminalNode } from 'antlr4ts/tree';
 import { ParserRuleContext } from 'antlr4ts/ParserRuleContext';
 import { ExpressionFunctions, EvaluatorLookup, Expression, ExpressionParser, ExpressionEvaluator, ReturnType, SimpleObjectMemory } from 'adaptive-expressions';
@@ -20,8 +18,6 @@ import { LGExtensions } from './lgExtensions';
 import { CustomizedMemory } from './customizedMemory';
 import { LGErrors } from './lgErrors';
 
-// tslint:disable-next-line: max-classes-per-file
-// tslint:disable-next-line: completed-docs
 /**
  * LG template expander.
  */
@@ -114,7 +110,6 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGFi
         return undefined;
     }
 
-    // tslint:disable-next-line: cyclomatic-complexity
     public visitStructuredBody(ctx: lp.StructuredBodyContext): string[] {
         const templateRefValues: Map<string, string> = new Map<string, string>();
         const stb: lp.StructuredTemplateBodyContext = ctx.structuredTemplateBody();
@@ -136,15 +131,15 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGFi
                         templateRefValues.set(id, item);
                     }
 
-                    expandedResult.forEach(x => x[property] = valueList);
+                    expandedResult.forEach((x): any[] => x[property] = valueList);
                 } else {
                     const id = this.newGuid();
-                    expandedResult.forEach(x => x[property] = id);
+                    expandedResult.forEach((x): string => x[property] = id);
                     templateRefValues.set(id, value[0]);
                 }
             } else {
                 const propertyObjects: object[] = [];
-                this.evalExpression(body.objectStructureLine().text, body.objectStructureLine()).forEach(x => propertyObjects.push(JSON.parse(x)));
+                this.evalExpression(body.objectStructureLine().text, body.objectStructureLine()).forEach((x): number => propertyObjects.push(JSON.parse(x)));
                 const tempResult = [];
                 for (const res of expandedResult) {
                     for (const propertyObject of propertyObjects) {
@@ -189,17 +184,17 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGFi
 
         let result: any[] = [];
         for (const item of values) {
-            if (Evaluator.isPureExpression(item).hasExpr) {
-                result.push(this.evalExpression(Evaluator.isPureExpression(item).expression, ctx));
+            if (LGExtensions.isPureExpression(item).hasExpr) {
+                result.push(this.evalExpression(LGExtensions.isPureExpression(item).expression, ctx));
             } else {
                 let itemStringResult = [''];
                 for (const node of item.children) {
                     switch ((node as TerminalNode).symbol.type) {
                         case (lp.LGFileParser.ESCAPE_CHARACTER_IN_STRUCTURE_BODY):
-                            itemStringResult = this.stringArrayConcat(itemStringResult, [this.evalEscape(node.text)]);
+                            itemStringResult = this.stringArrayConcat(itemStringResult, [LGExtensions.evalEscape(node.text)]);
                             break;
                         case (lp.LGFileParser.EXPRESSION_IN_STRUCTURE_BODY):
-                            const errorPrefix = `Property '` + ctx.STRUCTURE_IDENTIFIER().text + `':`;
+                            const errorPrefix = `Property '${ ctx.STRUCTURE_IDENTIFIER().text }':`;
                             itemStringResult =this.stringArrayConcat(itemStringResult, this.evalExpression(node.text, ctx, errorPrefix));
                             break;
                         default:
@@ -220,7 +215,7 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGFi
         const length: number = switchcaseNodes.length;
         const switchNode: lp.SwitchCaseRuleContext = switchcaseNodes[0];
         const switchExprs: TerminalNode[] = switchNode.switchCaseStat().EXPRESSION();
-        const switchErrorPrefix = `Switch '` + switchExprs[0].text + `': `;
+        const switchErrorPrefix = `Switch '${ switchExprs[0].text }': `;
         const switchExprResult = this.evalExpression(switchExprs[0].text, switchcaseNodes[0].switchCaseStat(), switchErrorPrefix);
         let idx = 0;
         for (const caseNode of switchcaseNodes) {
@@ -239,7 +234,7 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGFi
             }
 
             const caseExprs: TerminalNode[] = caseNode.switchCaseStat().EXPRESSION();
-            const caseErrorPrefix = `Case '` + caseExprs[0].text + `': `;
+            const caseErrorPrefix = `Case '${ caseExprs[0].text }': `;
             var caseExprResult = this.evalExpression(caseExprs[0].text, caseNode.switchCaseStat(), caseErrorPrefix);
             //condition: check whether two string array have same elements
             if (switchExprResult.sort().toString() === caseExprResult.sort().toString()) {
@@ -263,7 +258,7 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGFi
                 case lp.LGFileParser.DASH:
                     break;
                 case lp.LGFileParser.ESCAPE_CHARACTER:
-                    result = this.stringArrayConcat(result, [this.evalEscape(innerNode.text)]);
+                    result = this.stringArrayConcat(result, [LGExtensions.evalEscape(innerNode.text)]);
                     break;
                 case lp.LGFileParser.EXPRESSION: {
                     result = this.stringArrayConcat(result, this.evalExpression(innerNode.text, ctx, prefixErrorMsg));
@@ -299,23 +294,6 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGFi
 
     private currentTarget(): EvaluationTarget {
         return this.evaluationTargetStack[this.evaluationTargetStack.length - 1];
-    }
-
-    private evalEscape(exp: string): string {
-        const validCharactersDict: any = {
-            '\\r': '\r',
-            '\\n': '\n',
-            '\\t': '\t',
-            '\\\\': '\\',
-        };
-
-        return exp.replace(/\\[^\r\n]?/g, (sub: string): string => { 
-            if (sub in validCharactersDict) {
-                return validCharactersDict[sub];
-            } else {
-                return sub.substr(1);
-            }
-        });
     }
 
     private evalCondition(condition: lp.IfConditionContext): boolean {
@@ -408,7 +386,7 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGFi
 
         if (Array.isArray(result))
         {
-            return result.map(u => u.toString());
+            return result.map((u): string => u.toString());
         }
 
         return [ result.toString() ];
@@ -456,7 +434,6 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGFi
         const newScope: any = this.constructScope(templateName, Array.from(args));
 
         const value: string[] = this.expandTemplate(templateName, newScope);
-        // tslint:disable-next-line: insecure-random
         const randomNumber: number = Math.floor(Math.random() * value.length);
 
         return value[randomNumber];
@@ -502,7 +479,6 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGFi
     private newGuid(): string {
         return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c: any): string => {
             const r: number = Math.random() * 16 | 0;
-            // tslint:disable-next-line: no-bitwise
             const v: number = c === 'x' ? r : (r & 0x3 | 0x8);
 
             return v.toString(16);

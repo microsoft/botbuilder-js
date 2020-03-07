@@ -114,7 +114,7 @@ export class Extensions {
                 }
 
                 const iteratorName = (children[1].children[0] as Constant).value as string;
-                var nonLocalRefs2 = Array.from(refs2).filter(x => !(x === iteratorName || x.startsWith(iteratorName + '.') || x.startsWith(iteratorName + '[')));
+                var nonLocalRefs2 = Array.from(refs2).filter((x): boolean => !(x === iteratorName || x.startsWith(iteratorName + '.') || x.startsWith(iteratorName + '[')));
                 refs = new Set([...refs, ...refs0, ...nonLocalRefs2]);
 
             } else {
@@ -122,7 +122,7 @@ export class Extensions {
                     const result = Extensions.referenceWalk(child, extension);
                     const childPath = result.path;
                     const refs0 = result.refs;
-                    refs = new Set([...refs, ...refs0])
+                    refs = new Set([...refs, ...refs0]);
                     if (childPath !== undefined) {
                         refs.add(childPath);
                     }
@@ -130,7 +130,7 @@ export class Extensions {
             }
         }
 
-        return {path, refs}
+        return {path, refs};
     }
 
     /**

@@ -11,7 +11,6 @@ export * from './lgParser';
 export * from './generated';
 export * from './staticChecker';
 export * from './analyzer';
-export * from './mslgTool';
 export * from './lgTemplate';
 export * from './diagnostic';
 export * from './lgException';

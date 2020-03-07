@@ -117,8 +117,8 @@ export class Analyzer extends AbstractParseTreeVisitor<AnalyzerResult> implement
 
         const values = ctx.keyValueStructureValue();
         for (const value of values) {
-            if (this.isPureExpression(value).hasExpr) {
-                result.union(this.analyzeExpression(this.isPureExpression(value).expression));
+            if (LGExtensions.isPureExpression(value).hasExpr) {
+                result.union(this.analyzeExpression(LGExtensions.isPureExpression(value).expression));
             } else {
                 const exprs = value.EXPRESSION_IN_STRUCTURE_BODY();
                 for (const expr of exprs) {
@@ -213,32 +213,5 @@ export class Analyzer extends AbstractParseTreeVisitor<AnalyzerResult> implement
 
     private currentTarget(): EvaluationTarget {
         return this.evalutationTargetStack[this.evalutationTargetStack.length - 1];
-    }
-
-    public isPureExpression(ctx: lp.KeyValueStructureValueContext):  {hasExpr: boolean; expression: string | undefined} {
-        let expression = ctx.text;
-        let hasExpr = false;
-        for (const node of ctx.children) {
-            switch ((node as TerminalNode).symbol.type) {
-                case (lp.LGFileParser.ESCAPE_CHARACTER_IN_STRUCTURE_BODY):
-                    return {hasExpr, expression};
-                case (lp.LGFileParser.EXPRESSION_IN_STRUCTURE_BODY):
-                    if (hasExpr) {
-                        return {hasExpr: false, expression: expression};
-                    }
-
-                    hasExpr = true;
-                    expression = node.text;
-                    break;
-                default:
-                    if (node !== undefined && node.text !== '' && node.text !== ' ') {
-                        return {hasExpr: false, expression: expression};
-                    }
-
-                    break;
-            }
-        }
-
-        return {hasExpr: hasExpr, expression: expression};
     }
 }

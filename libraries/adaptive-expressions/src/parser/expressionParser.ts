@@ -9,7 +9,6 @@
 import { ANTLRInputStream, CommonTokenStream } from 'antlr4ts';
 // tslint:disable-next-line: no-submodule-imports
 import { AbstractParseTreeVisitor, ParseTree, TerminalNode } from 'antlr4ts/tree';
-import { ExpressionFunctions } from '../expressionFunctions';
 import { Constant } from '../constant';
 import { Expression } from '../expression';
 import { EvaluatorLookup } from '../expressionEvaluator';
