@@ -18,7 +18,7 @@ import { EvaluateExpressionDelegate, ExpressionEvaluator, ValidateExpressionDele
 import { ExpressionType } from './expressionType';
 import { Extensions } from './extensions';
 import { TimeZoneConverter } from './timeZoneConverter';
-import { convertCSharpDateTimeToMomentJS } from './formatConverter';
+import { convertCSharpDateTimeToMomentJS } from './datetimeFormatConverter';
 import { MemoryInterface, SimpleObjectMemory, StackedMemory } from './memory';
 
 /**
@@ -531,7 +531,6 @@ export class ExpressionFunctions {
             (args: any []): any => {
                 const binaryArgs: any[] = [undefined, undefined];
                 let soFar: any = args[0];
-                // tslint:disable-next-line: prefer-for-of
                 for (let i = 1; i < args.length; i++) {
                     binaryArgs[0] = soFar;
                     binaryArgs[1] = args[i];
@@ -557,7 +556,6 @@ export class ExpressionFunctions {
                 let soFar: any = args[0];
                 let value: any;
                 let error: string;
-                // tslint:disable-next-line: prefer-for-of
                 for (let i = 1; i < args.length; i++) {
                     binaryArgs[0] = soFar;
                     binaryArgs[1] = args[i];
@@ -692,7 +690,6 @@ export class ExpressionFunctions {
                 return { value: result, error };
             },
             ReturnType.String,
-            // tslint:disable-next-line: no-void-expression
             (expr: Expression): void => ExpressionFunctions.validateArityAndAnyType(expr, 2, 3, ReturnType.String, ReturnType.Number));
     }
 
@@ -770,7 +767,6 @@ export class ExpressionFunctions {
     private static newGuid(): string {
         return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c: any): string => {
             const r: number = Math.random() * 16 | 0;
-            // tslint:disable-next-line: no-bitwise
             const v: number = c === 'x' ? r : (r & 0x3 | 0x8);
 
             return v.toString(16);
@@ -1006,13 +1002,12 @@ export class ExpressionFunctions {
         }
 
         if (!error) {
-            // 2nd parameter has been rewrite to $local.item
             const iteratorName = (expression.children[1].children[0] as Constant).value as string;
             let arr = [];
             if (Array.isArray(instance)) {
                 arr = instance;
             } else if (typeof instance === 'object') {
-                Object.keys(instance).forEach(u => arr.push({key: u, value: instance[u]}));
+                Object.keys(instance).forEach((u): number => arr.push({key: u, value: instance[u]}));
             } else {
                 error = `${ expression.children[0] } is not a collection or structure object to run foreach`;
             }
@@ -1054,7 +1049,7 @@ export class ExpressionFunctions {
                 arr = instance;
                 isInstanceArray = true;
             } else if (typeof instance === 'object') {
-                Object.keys(instance).forEach(u => arr.push({key: u, value: instance[u]}));
+                Object.keys(instance).forEach((u): number => arr.push({key: u, value: instance[u]}));
             } else {
                 error = `${ expression.children[0] } is not a collection or structure object to run foreach`;
             }
@@ -1116,8 +1111,7 @@ export class ExpressionFunctions {
 
         const second: Expression = expression.children[1];
         if (second.returnType === ReturnType.String && second.type === ExpressionType.Constant) {
-            // tslint:disable-next-line: restrict-plus-operands
-            CommonRegex.CreateRegex((second as Constant).value + '');
+            CommonRegex.CreateRegex((second as Constant).value.toString());
         }
     }
 
@@ -1439,7 +1433,6 @@ export class ExpressionFunctions {
         let result = '';
         for (const element of stringToConvert) {
             const binaryElement: string = element.charCodeAt(0).toString(2);
-            // tslint:disable-next-line: prefer-array-literal
             result += new Array(9 - binaryElement.length).join('0').concat(binaryElement);
         }
 
@@ -1802,11 +1795,7 @@ export class ExpressionFunctions {
         return res;
     }
 
-
-
-    // tslint:disable-next-line: max-func-body-length
     private static getStandardFunctions(): ReadonlyMap<string, ExpressionEvaluator> {
-        // tslint:disable-next-line: no-unnecessary-local-variable
         const functions: ExpressionEvaluator[] = [
             //Math
             new ExpressionEvaluator(ExpressionType.Element, ExpressionFunctions.extractElement, ReturnType.Object, this.validateBinary),
@@ -1961,7 +1950,6 @@ export class ExpressionFunctions {
                             error = 'Second paramter must be more than zero';
                         }
 
-                        // tslint:disable-next-line: prefer-array-literal
                         const result: number[] = [...Array(args[1]).keys()].map((u: number): number => u + Number(args[0]));
 
                         return { value: result, error };
@@ -2034,7 +2022,7 @@ export class ExpressionFunctions {
             new ExpressionEvaluator(
                 ExpressionType.Flatten,
                 ExpressionFunctions.apply(
-                    args => {
+                    (args: any []): any[] => {
                         let array = args[0];
                         let depth = args.length > 1 ? args[1] : 100;
                         return ExpressionFunctions.flatten(array, depth);
@@ -2044,7 +2032,7 @@ export class ExpressionFunctions {
             ),
             new ExpressionEvaluator(
                 ExpressionType.Unique,
-                ExpressionFunctions.apply(args => [... new Set(args[0])]),
+                ExpressionFunctions.apply((args: any []): any[] => [... new Set(args[0])]),
                 ReturnType.Object,
                 (expression: Expression): void => ExpressionFunctions.validateOrder(expression, [], ReturnType.Object)
             ),
@@ -2823,7 +2811,6 @@ export class ExpressionFunctions {
                             error = `Min value ${ args[0] } cannot be greater than max value ${ args[1] }.`;
                         }
 
-                        // tslint:disable-next-line: insecure-random
                         const value: any = Math.floor(Math.random() * (Number(args[1]) - Number(args[0])) + Number(args[0]));
 
                         return { value, error };
@@ -2855,7 +2842,6 @@ export class ExpressionFunctions {
                 ExpressionFunctions.validateUnary),
             new ExpressionEvaluator(
                 ExpressionType.DataUriToString,
-                // tslint:disable-next-line: restrict-plus-operands
                 ExpressionFunctions.apply((args: Readonly<any>): string => Buffer.from(args[0].slice(args[0].indexOf(',') + 1), 'base64').toString(), ExpressionFunctions.verifyString),
                 ReturnType.String,
                 ExpressionFunctions.validateUnary),

@@ -1,4 +1,3 @@
-
 /**
  * @module botbuilder-lg
  */
@@ -6,7 +5,6 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-// tslint:disable-next-line: no-submodule-imports
 import { AbstractParseTreeVisitor, TerminalNode } from 'antlr4ts/tree';
 import { Expression, ExpressionParserInterface, Extensions, ExpressionParser } from 'adaptive-expressions';
 import { keyBy } from 'lodash';
@@ -19,7 +17,6 @@ import { LGExtensions } from './lgExtensions';
 import { AnalyzerResult } from './analyzerResult';
 import {LGErrors} from './lgErrors';
 
-// tslint:disable-next-line: max-classes-per-file
 /**
  * Analyzer engine. To analyse which variable may be used
  */

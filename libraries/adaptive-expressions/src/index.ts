@@ -19,4 +19,4 @@ export * from './parser';
 export * from './memory';
 export * from './regexErrorListener';
 export * from './componentExpressionFunctions';
-export * from './formatConverter';
+export * from './datetimeFormatConverter';

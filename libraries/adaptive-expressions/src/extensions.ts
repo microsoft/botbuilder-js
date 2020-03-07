@@ -55,7 +55,7 @@ export class Extensions {
      * @returns Accessor path of expression.
      */
     public static referenceWalk(expression: Expression,
-        extension?: (arg0: Expression) => boolean): {path:string; refs:Set<string>} {
+        extension?: (arg0: Expression) => boolean): {path: string; refs: Set<string>} {
         let path: string;
         let refs = new Set<string>();
         if (extension === undefined || !extension(expression)) {
@@ -146,7 +146,6 @@ export class Extensions {
         }
 
         let value: any;
-        // tslint:disable-next-line: prefer-const
         let error: string;
         // todo, Is there a better way to access value, or any case is not listed below?
         if (instance instanceof Map && instance as Map<string, any>!== undefined) {

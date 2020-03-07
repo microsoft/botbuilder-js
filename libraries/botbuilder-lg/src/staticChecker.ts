@@ -5,7 +5,6 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-// tslint:disable-next-line: no-submodule-imports
 import { ParserRuleContext } from 'antlr4ts';
 import { AbstractParseTreeVisitor, TerminalNode } from 'antlr4ts/tree';
 import { ExpressionParser, ExpressionParserInterface } from 'adaptive-expressions';
@@ -207,7 +206,6 @@ export class StaticChecker extends AbstractParseTreeVisitor<Diagnostic[]> implem
         return result;
     }
 
-    // tslint:disable-next-line: cyclomatic-complexity
     public visitSwitchCaseBody(context: lp.SwitchCaseBodyContext): Diagnostic[] {
         let result: Diagnostic[] = [];
         const switchCaseNodes: lp.SwitchCaseRuleContext[] = context.switchCaseTemplateBody().switchCaseRule();

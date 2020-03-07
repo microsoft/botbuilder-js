@@ -17,6 +17,7 @@ import { Analyzer } from './analyzer';
 import { LGParser } from './lgParser';
 import { AnalyzerResult } from './analyzerResult';
 import { LGErrors } from './lgErrors';
+import { LGExtensions } from './lgExtensions';
 
 /// <summary>
 /// LG entrance, including properties that LG file has, and evaluate functions.
@@ -212,7 +213,7 @@ export class LGFile {
         this.checkErrors();
 
         // wrap inline string with "# name and -" to align the evaluation process
-        const fakeTemplateId = this.newGuid();
+        const fakeTemplateId = LGExtensions.newGuid();
         const multiLineMark = '```';
 
         inlineStr = !(inlineStr.trim().startsWith(multiLineMark) && inlineStr.includes('\n'))
@@ -451,15 +452,5 @@ export class LGFile {
         }
 
         return result;
-    }
-
-    private newGuid(): string {
-        return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c: any): string => {
-            const r: number = Math.random() * 16 | 0;
-            // tslint:disable-next-line: no-bitwise
-            const v: number = c === 'x' ? r : (r & 0x3 | 0x8);
-
-            return v.toString(16);
-        });
     }
 }

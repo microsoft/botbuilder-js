@@ -5,13 +5,11 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-// tslint:disable-next-line: no-submodule-imports
 import { ANTLRInputStream } from 'antlr4ts/ANTLRInputStream';
-// tslint:disable-next-line: no-submodule-imports
 import { CommonTokenStream } from 'antlr4ts/CommonTokenStream';
 import { ErrorListener } from './errorListener';
 import { LGFileLexer } from './generated/LGFileLexer';
-import { FileContext, ImportDefinitionContext, LGFileParser, ParagraphContext, TemplateDefinitionContext } from './generated/LGFileParser';
+import { FileContext, ImportDefinitionContext, LGFileParser, ParagraphContext, TemplateDefinitionContext, OptionsDefinitionContext } from './generated/LGFileParser';
 import { LGImport } from './lgImport';
 import { LGTemplate } from './lgTemplate';
 import { LGFile } from './lgFile';
@@ -75,7 +73,7 @@ export class LGParser {
             lgFile.templates = parsedResult.templates;
             lgFile.imports = parsedResult.imports;
             lgFile.options = parsedResult.options;
-            lgFile.updateStrictMode();
+
             diagnostics = diagnostics.concat(parsedResult.invalidTemplateErrors);
             lgFile.references = this.getReferences(lgFile, importResolver);
             const semanticErrors = new StaticChecker(lgFile, lgFile.expressionParser).check();
@@ -148,7 +146,7 @@ export class LGParser {
             importPath = LGExtensions.normalizePath(path.join(path.dirname(sourceId), importPath));
         }
         if (!fs.existsSync(importPath) || !fs.statSync(importPath).isFile()) {
-            throw Error(`Could not find file: ${importPath}`);
+            throw Error(`Could not find file: ${ importPath }`);
         }
         const content: string = fs.readFileSync(importPath, 'utf-8');
 
@@ -181,7 +179,7 @@ export class LGParser {
                 const result = importResolver(start.id, id);
                 const content = result.content;
                 const path = result.id;
-                const notExist = Array.from(resourcesFound).filter(u => u.id === path).length === 0;
+                const notExist = Array.from(resourcesFound).filter((u): boolean => u.id === path).length === 0;
                 if (notExist) {
                     var childResource = LGParser.parseText(content, path, importResolver, start.expressionParser);
                     this.resolveImportResources(childResource, resourcesFound, importResolver);
@@ -212,10 +210,10 @@ export class LGParser {
     private static extractLGOptions(file: FileContext): string[] {
         return  !file ? [] :
             file.paragraph()
-                .map(x => x.optionsDefinition())
-                .filter(x => x !== undefined)
-                .map(t => this.extractOption(t.text))
-                .filter(t => t !== undefined && t !== '');
+                .map((x): OptionsDefinitionContext => x.optionsDefinition())
+                .filter((x): boolean => x !== undefined)
+                .map((t): string => this.extractOption(t.text))
+                .filter((t): boolean => t !== undefined && t !== '');
     }
 
     private static extractOption(originalText: string): string
@@ -246,7 +244,7 @@ export class LGParser {
             }
         }
 
-        return errorTemplates.map(u => this.buildDiagnostic("error context.", u, id));
+        return errorTemplates.map((u): Diagnostic => this.buildDiagnostic('error context.', u, id));
     }
 
     private static getFileContentContext(text: string, source: string): FileContext {

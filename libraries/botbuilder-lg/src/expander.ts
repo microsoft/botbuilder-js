@@ -126,14 +126,14 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGFi
                 if (value.length > 1) {
                     const valueList = [];
                     for (const item of value) {
-                        const id = this.newGuid();
+                        const id = LGExtensions.newGuid();
                         valueList.push(id);
                         templateRefValues.set(id, item);
                     }
 
                     expandedResult.forEach((x): any[] => x[property] = valueList);
                 } else {
-                    const id = this.newGuid();
+                    const id = LGExtensions.newGuid();
                     expandedResult.forEach((x): string => x[property] = id);
                     templateRefValues.set(id, value[0]);
                 }
@@ -474,14 +474,5 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGFi
         }
 
         return expanderExpression;
-    }
-
-    private newGuid(): string {
-        return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c: any): string => {
-            const r: number = Math.random() * 16 | 0;
-            const v: number = c === 'x' ? r : (r & 0x3 | 0x8);
-
-            return v.toString(16);
-        });
     }
 }
