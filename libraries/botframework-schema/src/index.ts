@@ -580,6 +580,16 @@ export interface ConversationsResult {
 }
 
 /**
+ * Expected Replies in response to DeliveryModes.ExpectReplies
+ */
+export interface ExpectedReplies {
+  /**
+   * A collection of Activities that conforms to the ExpectedReplies schema.
+   */
+  activities: Activity[];
+}
+
+/**
  * A response containing a resource ID
  */
 export interface ResourceResponse {
