@@ -57,7 +57,7 @@ class ParentBot extends ActivityHandler {
 
                 var activity = { type: ActivityTypes.Message, text: 'parent to child' };
                 TurnContext.applyConversationReference(activity, TurnContext.getConversationReference(context.activity), true);
-                activity.deliveryMode = DeliveryModes.BufferedReplies;
+                activity.deliveryMode = DeliveryModes.ExpectReplies;
 
                 var response = await client.postActivity(
                     null,
@@ -69,7 +69,7 @@ class ParentBot extends ActivityHandler {
 
                 if (response.status == 200)
                 {
-                    await context.sendActivities(response.body);
+                    await context.sendActivities(response.body.activities);
                 }
 
                 await context.sendActivity('parent: after child');

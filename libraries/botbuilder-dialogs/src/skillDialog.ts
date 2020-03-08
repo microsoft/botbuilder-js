@@ -11,6 +11,7 @@ import {
     ActivityTypes,
     ConversationReference,
     DeliveryModes,
+    ExpectedReplies,
     SkillConversationIdFactoryOptions,
     TurnContext
 } from 'botbuilder-core';
@@ -182,7 +183,7 @@ export class SkillDialog extends Dialog {
         const skillInfo = this.dialogOptions.skill;
         await this.dialogOptions.conversationState.saveChanges(context, true);
 
-        const response = await this.dialogOptions.skillClient.postActivity<Activity[]>(this.dialogOptions.botId, skillInfo.appId, skillInfo.skillEndpoint, this.dialogOptions.skillHostEndpoint, skillConversationId, activity);
+        const response = await this.dialogOptions.skillClient.postActivity<ExpectedReplies>(this.dialogOptions.botId, skillInfo.appId, skillInfo.skillEndpoint, this.dialogOptions.skillHostEndpoint, skillConversationId, activity);
 
         // Inspect the skill response status
         if (!(response.status >= 200 && response.status <= 299)) {
@@ -190,10 +191,10 @@ export class SkillDialog extends Dialog {
         }
 
         let eocActivity: Activity;
-        if (activity.deliveryMode == DeliveryModes.BufferedReplies && response.body) {
+        if (activity.deliveryMode == DeliveryModes.ExpectReplies && response.body && response.body.activities) {
             // Process replies in the response.Body.
-            if (Array.isArray(response.body)) {
-                response.body.forEach(async (fromSkillActivity: Activity): Promise<void> => {
+            if (Array.isArray(response.body.activities)) {
+                response.body.activities.forEach(async (fromSkillActivity: Activity): Promise<void> => {
                     if (fromSkillActivity.type === ActivityTypes.EndOfConversation) {
                         // Capture the EndOfConversation activity if it was sent from skill
                         eocActivity = fromSkillActivity;
