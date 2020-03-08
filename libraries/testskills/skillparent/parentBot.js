@@ -69,7 +69,7 @@ class ParentBot extends ActivityHandler {
 
                 if (response.status == 200)
                 {
-                    await context.sendActivities(response.body);
+                    await context.sendActivities(response.body.activities);
                 }
 
                 await context.sendActivity('parent: after child');

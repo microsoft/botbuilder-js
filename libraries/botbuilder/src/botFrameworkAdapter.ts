@@ -9,7 +9,7 @@
 import { STATUS_CODES } from 'http';
 import * as os from 'os';
 
-import { Activity, ActivityTypes, BotAdapter, BotCallbackHandlerKey, ChannelAccount, ConversationAccount, ConversationParameters, ConversationReference, ConversationsResult, DeliveryModes,InvokeResponse, ExtendedUserTokenProvider, ResourceResponse, StatusCodes, TokenResponse, TurnContext } from 'botbuilder-core';
+import { Activity, ActivityTypes, BotAdapter, BotCallbackHandlerKey, ChannelAccount, ConversationAccount, ConversationParameters, ConversationReference, ConversationsResult, DeliveryModes, ExpectedReplies, InvokeResponse, ExtendedUserTokenProvider, ResourceResponse, StatusCodes, TokenResponse, TurnContext } from 'botbuilder-core';
 import { AuthenticationConfiguration, AuthenticationConstants, ChannelValidation, Claim, ClaimsIdentity, ConnectorClient, EmulatorApiClient, GovernmentConstants, GovernmentChannelValidation, JwtTokenValidation, MicrosoftAppCredentials, AppCredentials, CertificateAppCredentials, SimpleCredentialProvider, TokenApiClient, TokenStatus, TokenApiModels, SignInUrlResponse, SkillValidation, TokenExchangeRequest } from 'botframework-connector';
 
 import { INodeBuffer, INodeSocket, IReceiveRequest, ISocket, IStreamingTransportServer, NamedPipeServer, NodeWebSocketFactory, NodeWebSocketFactoryBase, RequestHandler, StreamingResponse, WebSocketServer } from 'botframework-streaming';
@@ -838,7 +838,8 @@ export class BotFrameworkAdapter extends BotAdapter implements ExtendedUserToken
                     status = 501;
                 }
             } else if (request.deliveryMode === DeliveryModes.ExpectReplies) {
-                body = context.bufferedReplyActivities;
+                const expectedReplies: ExpectedReplies = { activities: context.bufferedReplyActivities as Activity[]  };
+                body = expectedReplies;
                 status = StatusCodes.OK;
             } else {
                 status = 200;
@@ -1272,7 +1273,8 @@ export class BotFrameworkAdapter extends BotAdapter implements ExtendedUserToken
                     response.statusCode = StatusCodes.NOT_IMPLEMENTED;
                 }
             } else if (body.deliveryMode === DeliveryModes.ExpectReplies) {
-                response.setBody(context.bufferedReplyActivities);
+                const replies: ExpectedReplies = { activities : context.bufferedReplyActivities as Activity[] };
+                response.setBody(replies);
                 response.statusCode = StatusCodes.OK;
             } else {
                 response.statusCode = StatusCodes.OK;
