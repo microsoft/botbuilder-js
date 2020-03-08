@@ -8,6 +8,7 @@
 
 import * as path from 'path';
 import * as lp from './generated/LGFileParser';
+import { TerminalNode } from 'antlr4ts/tree';
 /**
  * Extension methods for LG.
  */
@@ -101,5 +102,64 @@ export class LGExtensions {
         
 
         return errorPrefix;
+    }
+
+    /**
+     * If a value is pure Expression.
+     * @param ctx Key value structure value context.
+     */
+    public static isPureExpression(ctx: lp.KeyValueStructureValueContext):  {hasExpr: boolean; expression: string | undefined} {
+        let expression = ctx.text;
+        let hasExpr = false;
+        for (const node of ctx.children) {
+            switch ((node as TerminalNode).symbol.type) {
+                case (lp.LGFileParser.ESCAPE_CHARACTER_IN_STRUCTURE_BODY):
+                    return {hasExpr, expression};
+                case (lp.LGFileParser.EXPRESSION_IN_STRUCTURE_BODY):
+                    if (hasExpr) {
+                        return {hasExpr: false, expression: expression};
+                    }
+
+                    hasExpr = true;
+                    expression = node.text;
+                    break;
+                default:
+                    if (node !== undefined && node.text !== '' && node.text !== ' ') {
+                        return {hasExpr: false, expression: expression};
+                    }
+
+                    break;
+            }
+        }
+
+        return {hasExpr: hasExpr, expression: expression};
+    }
+
+    public static evalEscape(exp: string): string {
+        const validCharactersDict: any = {
+            '\\r': '\r',
+            '\\n': '\n',
+            '\\t': '\t'
+        };
+
+        return exp.replace(/\\[^\r\n]?/g, (sub: string): string => { 
+            if (sub in validCharactersDict) {
+                return validCharactersDict[sub];
+            } else {
+                return sub.substr(1);
+            }
+        });
+    }
+
+    /**
+     * Generate new guid string.
+     */
+    public static newGuid(): string {
+        return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c: any): string => {
+            const r: number = Math.random() * 16 | 0;
+            const v: number = c === 'x' ? r : (r & 0x3 | 0x8);
+
+            return v.toString(16);
+        });
     }
 }

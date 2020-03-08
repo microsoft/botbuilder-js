@@ -14,14 +14,6 @@ import { Extensions } from './extensions';
 import { ExpressionParser } from './parser';
 
 /**
- * key value pair to add method in FunctionTable 
- */
-type keyValuePair = {
-    key: string;
-    value: ExpressionEvaluator;
-}
-
-/**
  * Type expected from evalating an expression.
  */
 export enum ReturnType {
@@ -121,7 +113,7 @@ export class Expression {
 
         }
 
-        public add(item: keyValuePair | string, value: ExpressionEvaluator = undefined): void{
+        public add(item: {key: string; value: ExpressionEvaluator} | string, value: ExpressionEvaluator|undefined): void{
             if(arguments.length === 1 && item instanceof Object) {
                 this.set(item.key, item.value);
             } else if (arguments.length == 2 && typeof item === 'string') {
@@ -141,7 +133,8 @@ export class Expression {
             return this.customFunctions.delete(key);
         }
 
-        public forEach(callbackfn: (value: ExpressionEvaluator, key: string, map: Map<string, ExpressionEvaluator>) => void, thisArg?: any): void {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        public forEach(_callbackfn: (value: ExpressionEvaluator, key: string, map: Map<string, ExpressionEvaluator>) => void, thisArg?: any): void {
             throw Error(`forEach function not implemented`);
         }
 
@@ -184,8 +177,8 @@ export class Expression {
         }
     }
 
-    public static parse(expression: string, lookup: EvaluatorLookup): Expression {
-        return new ExpressionParser(lookup? lookup : Expression.lookup).parse(expression);
+    public static parse(expression: string, lookup?: EvaluatorLookup): Expression {
+        return new ExpressionParser(lookup || Expression.lookup).parse(expression);
     }
 
     /**

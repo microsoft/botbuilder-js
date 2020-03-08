@@ -1,4 +1,3 @@
-
 /**
  * @module botbuilder-lg
  */
@@ -6,7 +5,6 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-// tslint:disable-next-line: no-submodule-imports
 import { AbstractParseTreeVisitor, TerminalNode } from 'antlr4ts/tree';
 import { Expression, ExpressionParserInterface, Extensions, ExpressionParser } from 'adaptive-expressions';
 import { keyBy } from 'lodash';
@@ -19,9 +17,8 @@ import { LGExtensions } from './lgExtensions';
 import { AnalyzerResult } from './analyzerResult';
 import {LGErrors} from './lgErrors';
 
-// tslint:disable-next-line: max-classes-per-file
 /**
- * Analyzer engine. To analyse which variable may be used
+ * Analyzer engine. To to get the static analyzer results.
  */
 export class Analyzer extends AbstractParseTreeVisitor<AnalyzerResult> implements LGFileParserVisitor<AnalyzerResult> {
     /**
@@ -38,7 +35,7 @@ export class Analyzer extends AbstractParseTreeVisitor<AnalyzerResult> implement
         this.templates = templates;
         this.templateMap = keyBy(templates, (t: LGTemplate): string => t.name);
 
-        // create an evaluator to leverage it's customized function look up for checking
+        // create an evaluator to leverage its customized function look up for checking
         const evaluator: Evaluator = new Evaluator(this.templates, expressionParser);
         this._expressionParser = evaluator.expressionParser;
     }
@@ -117,8 +114,8 @@ export class Analyzer extends AbstractParseTreeVisitor<AnalyzerResult> implement
 
         const values = ctx.keyValueStructureValue();
         for (const value of values) {
-            if (this.isPureExpression(value).hasExpr) {
-                result.union(this.analyzeExpression(this.isPureExpression(value).expression));
+            if (LGExtensions.isPureExpression(value).hasExpr) {
+                result.union(this.analyzeExpression(LGExtensions.isPureExpression(value).expression));
             } else {
                 const exprs = value.EXPRESSION_IN_STRUCTURE_BODY();
                 for (const expr of exprs) {
@@ -213,32 +210,5 @@ export class Analyzer extends AbstractParseTreeVisitor<AnalyzerResult> implement
 
     private currentTarget(): EvaluationTarget {
         return this.evalutationTargetStack[this.evalutationTargetStack.length - 1];
-    }
-
-    public isPureExpression(ctx: lp.KeyValueStructureValueContext):  {hasExpr: boolean; expression: string | undefined} {
-        let expression = ctx.text;
-        let hasExpr = false;
-        for (const node of ctx.children) {
-            switch ((node as TerminalNode).symbol.type) {
-                case (lp.LGFileParser.ESCAPE_CHARACTER_IN_STRUCTURE_BODY):
-                    return {hasExpr, expression};
-                case (lp.LGFileParser.EXPRESSION_IN_STRUCTURE_BODY):
-                    if (hasExpr) {
-                        return {hasExpr: false, expression: expression};
-                    }
-
-                    hasExpr = true;
-                    expression = node.text;
-                    break;
-                default:
-                    if (node !== undefined && node.text !== '' && node.text !== ' ') {
-                        return {hasExpr: false, expression: expression};
-                    }
-
-                    break;
-            }
-        }
-
-        return {hasExpr: hasExpr, expression: expression};
     }
 }

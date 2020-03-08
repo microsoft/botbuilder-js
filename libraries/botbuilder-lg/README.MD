@@ -78,7 +78,7 @@ the result could be:
 the structured name would be placed into property 'lgType'.
 See more tests here : [structured LG test][4]
 
-By this, You can use the `ActivityFactory.createActivity(lgResult)` method to transform the lg output into a Bot Framework activity to post back to the user. 
+By this, You can use the `ActivityFactory.fromObject(lgResult)` method to transform the lg output into a Bot Framework activity to post back to the user. 
 
 see more samples here: [Structured LG to Activity][5]
 
@@ -91,26 +91,22 @@ Then make sure you include the platform specific language generation library.
 For C#, add Microsoft.Bot.Builder.LanguageGeneration.
 For NodeJS, add botbuilder-lg
 
-Load the template manager with your .lg file(s)
+Load the template manager with your .lg file
 
 ```typescript
-    // multi lg files
-    let lgEngine = new TemplateEngine.addFiles(filePaths, importResolver?);
-
-    // single lg file
-    let lgEngine = new TemplateEngine.addFile(filePath, importResolver?);
+    let lgFile = new LGParser.parseFile(filePath, importResolver?, expressionParser?);
 ```
 
-When you need template expansion, call the templateEngine and pass in the relevant template name
+When you need template expansion, call the LGFile and pass in the relevant template name
 
 ```typescript
-    await turnContext.sendActivity(lgEngine.evaluateTemplate("<TemplateName>", entitiesCollection));
+    await turnContext.sendActivity(lgFile.evaluateTemplate("<TemplateName>", entitiesCollection));
 ```
 
 If your template needs specific entity values to be passed for resolution/ expansion, you can pass them in on the call to `evaluateTemplate`
 
 ```typescript
-    await turnContext.sendActivity(lgEngine.evaluateTemplate("WordGameReply", { GameName = "MarcoPolo" } ));
+    await turnContext.sendActivity(lgFile.evaluateTemplate("WordGameReply", { GameName = "MarcoPolo" } ));
 ```
 
 [1]:https://github.com/Microsoft/BotBuilder/blob/master/specs/botframework-activity/botframework-activity.md

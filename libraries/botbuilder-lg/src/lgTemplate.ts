@@ -5,9 +5,8 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-// tslint:disable-next-line: no-submodule-imports
 import { TerminalNode } from 'antlr4ts/tree';
-import { ParametersContext, TemplateBodyContext, TemplateDefinitionContext, TemplateNameContext, FileContext} from './generated/LGFileParser';
+import { ParametersContext, TemplateDefinitionContext, TemplateNameContext, FileContext} from './generated/LGFileParser';
 
 /**
  * Here is a data model that can easily understanded and used as the context or all kinds of visitors
@@ -71,7 +70,6 @@ export class LGTemplate {
         return {startLine, stopLine};
     }
     private readonly extractName = (): string => {
-        // tslint:disable-next-line: newline-per-chained-call
         const nameContext: TemplateNameContext = this.parseTree.templateNameLine().templateName();
         if (!nameContext || !nameContext.text) {
             return '';
@@ -81,10 +79,8 @@ export class LGTemplate {
     }
 
     private readonly extractParameters = (): string[] => {
-        // tslint:disable-next-line: newline-per-chained-call
         const parameters: ParametersContext = this.parseTree.templateNameLine().parameters();
         if (parameters !== undefined) {
-            // tslint:disable-next-line: newline-per-chained-call
             return parameters.IDENTIFIER().map((x: TerminalNode): string => x.text);
         }
 

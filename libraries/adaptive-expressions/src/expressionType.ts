@@ -100,8 +100,6 @@ export class ExpressionType {
     public static readonly Base64ToBinary: string = 'base64ToBinary';
     public static readonly Base64ToString: string = 'base64ToString';
     public static readonly UriComponent: string = 'uriComponent';
-    // TODO
-    // xml
 
     // Memory
     public static readonly Accessor: string = 'Accessor';
@@ -144,7 +142,7 @@ export class ExpressionType {
     
     // TODO
     // xPath
-    // jPath
+    // xml
 
     // URI parsing functions
     public static readonly UriHost: string = 'uriHost';
