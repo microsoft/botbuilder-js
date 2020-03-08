@@ -17,6 +17,7 @@ import { Analyzer } from './analyzer';
 import { LGParser } from './lgParser';
 import { AnalyzerResult } from './analyzerResult';
 import { LGErrors } from './lgErrors';
+import { LGExtensions } from './lgExtensions';
 
 /// <summary>
 /// LG entrance, including properties that LG file has, and evaluate functions.
@@ -48,13 +49,13 @@ export class LGFile {
     public diagnostics: Diagnostic[];
 
     /// <summary>
-    /// Gets or sets all references that this LG file has from <see cref="Imports"/>.
+    /// Gets or sets all references that this LG file has from Imports
     /// Notice: reference includs all child imports from the lg file,
     /// not only the children belong to this lgfile directly.
     /// so, reference count may >= imports count. 
     /// </summary>
     /// <value>
-    /// all references that this LG file has from <see cref="Imports"/>.
+    /// all references that this LG file has from Imports
     /// </value>
     public references: LGFile[];
 
@@ -98,18 +99,24 @@ export class LGFile {
     /// </value>
     public options: string[];
 
-    public constructor(templates: LGTemplate[] = undefined, imports: LGImport[] = undefined, diagnostics: Diagnostic[] = undefined, references: LGFile[] = undefined,
-        content: string = undefined, id: string = undefined, expressionParser: ExpressionParser = undefined, importResolverDelegate: ImportResolverDelegate = undefined,
-        options: string[] = undefined) {
-        this.templates = templates? templates : [];
-        this.imports = imports? imports : [];
-        this.diagnostics = diagnostics? diagnostics : [];
-        this.references = references? references : [];
-        this.content = content? content : '';
-        this.id = id? id : '';
+    public constructor(templates?: LGTemplate[],
+        imports?: LGImport[],
+        diagnostics?: Diagnostic[],
+        references?: LGFile[],
+        content?: string,
+        id?: string,
+        expressionParser?: ExpressionParser,
+        importResolverDelegate?: ImportResolverDelegate,
+        options?: string[]) {
+        this.templates = templates || [];
+        this.imports = imports || [];
+        this.diagnostics = diagnostics || [];
+        this.references = references || [];
+        this.content = content || '';
+        this.id = id || '';
         this.expressionParser = expressionParser || new ExpressionParser();
         this.importResolver = importResolverDelegate;
-        this.options = options? options : [];
+        this.options = options || [];
     }
 
     /// <summary>
@@ -122,10 +129,9 @@ export class LGFile {
     /// If strict mode is on, expression would throw exception instead of return
     /// null or make the condition failed.
     /// </value>
-    public strictMode: boolean;
-
-    public updateStrictMode = (): void => {this.strictMode = this.getStrictModeFromOptions(this.options);};
-
+    public get strictMode(): boolean {
+        return this.getStrictModeFromOptions(this.options);
+    }
 
     /// <summary>
     /// Gets get all templates from current lg file and reference lg files.
@@ -136,7 +142,7 @@ export class LGFile {
     public get allTemplates(): LGTemplate[] {
         let result = this.templates;
         this.references.forEach((ref): LGTemplate[] => result = result.concat(ref.templates));
-        return result;
+        return Array.from(new Set(result));
     }
 
     /// <summary>
@@ -148,7 +154,7 @@ export class LGFile {
     public get allDiagnostics(): Diagnostic[] {
         let result = this.diagnostics;
         this.references.forEach((ref): Diagnostic[] => result = result.concat(ref.diagnostics));
-        return result;
+        return Array.from(new Set(result));
     }
 
     /// <summary>
@@ -157,7 +163,7 @@ export class LGFile {
     /// <param name="templateName">Template name to be evaluated.</param>
     /// <param name="scope">The state visible in the evaluation.</param>
     /// <returns>Evaluate result.</returns>
-    public evaluateTemplate(templateName: string, scope: object = undefined): object {
+    public evaluateTemplate(templateName: string, scope?: object): any {
         this.checkErrors();
 
         const evaluator = new Evaluator(this.allTemplates, this.expressionParser, this.strictMode);
@@ -171,7 +177,7 @@ export class LGFile {
     /// <param name="templateName">Template name to be evaluated.</param>
     /// <param name="scope">The state visible in the evaluation.</param>
     /// <returns>Expand result.</returns>
-    public expandTemplate(templateName: string, scope: object = undefined): string[] {
+    public expandTemplate(templateName: string, scope?: object): string[] {
         this.checkErrors();
 
         const expander = new Expander(this.allTemplates, this.expressionParser, this.strictMode);
@@ -197,17 +203,17 @@ export class LGFile {
     /// <param name="inlineStr">inline string which will be evaluated.</param>
     /// <param name="scope">scope object or JToken.</param>
     /// <returns>Evaluate result.</returns>
-    public evaluate(inlineStr: string, scope: any = undefined): any
+    public evaluate(inlineStr: string, scope?: object): any
     {
         if (inlineStr === undefined)
         {
-            throw Error(`inline string is null.`);
+            throw Error('inline string is empty');
         }
 
         this.checkErrors();
 
         // wrap inline string with "# name and -" to align the evaluation process
-        const fakeTemplateId = this.newGuid();
+        const fakeTemplateId = LGExtensions.newGuid();
         const multiLineMark = '```';
 
         inlineStr = !(inlineStr.trim().startsWith(multiLineMark) && inlineStr.includes('\n'))
@@ -298,7 +304,7 @@ export class LGFile {
         const destList: string[] = [];
 
         if (startLine < 0 || startLine > stopLine || stopLine >= originList.length) {
-            throw new Error(`index out of range.`);
+            throw new Error('index out of range.');
         }
 
         destList.push(...this.trimList(originList.slice(0, startLine)));
@@ -379,7 +385,6 @@ export class LGFile {
     }
 
     private wrapTemplateBodyString(replaceItem: string): string {
-        // tslint:disable-next-line: newline-per-chained-call
         const isStartWithHash: boolean = replaceItem.trimLeft().startsWith('#');
         if (isStartWithHash) {
             return `- ${ replaceItem.trimLeft() }`;
@@ -389,6 +394,7 @@ export class LGFile {
     }
 
     private buildTemplateNameLine(templateName: string, parameters: string[]): string {
+        // if parameters is null or undefined, ignore ()
         if (parameters === undefined || parameters === undefined) {
             return `# ${ templateName }`;
         } else {
@@ -405,11 +411,12 @@ export class LGFile {
         this.importResolver = lgfile.importResolver;
         this.id = lgfile.id;
         this.expressionParser = lgfile.expressionParser;
+        this.options = lgfile.options;
     }
 
     private checkErrors(): void {
         if (this.allDiagnostics) {
-            const errors = this.allDiagnostics.filter(u => u.severity === DiagnosticSeverity.Error);
+            const errors = this.allDiagnostics.filter((u): boolean => u.severity === DiagnosticSeverity.Error);
             if (errors.length !== 0) {
                 throw Error(errors.join('\n'));
             }
@@ -445,15 +452,5 @@ export class LGFile {
         }
 
         return result;
-    }
-
-    private newGuid(): string {
-        return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c: any): string => {
-            const r: number = Math.random() * 16 | 0;
-            // tslint:disable-next-line: no-bitwise
-            const v: number = c === 'x' ? r : (r & 0x3 | 0x8);
-
-            return v.toString(16);
-        });
     }
 }

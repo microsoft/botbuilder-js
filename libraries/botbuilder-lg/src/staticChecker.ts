@@ -5,7 +5,6 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-// tslint:disable-next-line: no-submodule-imports
 import { ParserRuleContext } from 'antlr4ts';
 import { AbstractParseTreeVisitor, TerminalNode } from 'antlr4ts/tree';
 import { ExpressionParser, ExpressionParserInterface } from 'adaptive-expressions';
@@ -28,7 +27,7 @@ export class StaticChecker extends AbstractParseTreeVisitor<Diagnostic[]> implem
     private visitedTemplateNames: string[];
     private _expressionParser: ExpressionParserInterface;
 
-    public constructor(lgFile: LGFile, expressionParser: ExpressionParser = undefined) {
+    public constructor(lgFile: LGFile, expressionParser?: ExpressionParser) {
         super();
         this.lgFile = lgFile;
         this.baseExpressionParser = expressionParser || new ExpressionParser();
@@ -60,7 +59,7 @@ export class StaticChecker extends AbstractParseTreeVisitor<Diagnostic[]> implem
             return result;
         }
 
-        this.lgFile.templates.forEach(t => result = result.concat(this.visit(t.parseTree)));
+        this.lgFile.templates.forEach((t): Diagnostic[] => result = result.concat(this.visit(t.parseTree)));
         return result;
     }
 
@@ -69,40 +68,28 @@ export class StaticChecker extends AbstractParseTreeVisitor<Diagnostic[]> implem
         var result = [];
         var templateNameLine = context.templateNameLine();
         var errorTemplateName = templateNameLine.errorTemplateName();
-        if (errorTemplateName)
-        {
+        if (errorTemplateName) {
             result.push(this.buildLGDiagnostic(LGErrors.invalidTemplateName, undefined, errorTemplateName, false));
-        }
-        else {
+        } else {
             var templateName = context.templateNameLine().templateName().text;
 
-            if (this.visitedTemplateNames.includes(templateName))
-            {
+            if (this.visitedTemplateNames.includes(templateName)) {
                 result.push(this.buildLGDiagnostic(LGErrors.duplicatedTemplateInSameTemplate(templateName),undefined, templateNameLine));
-            }
-            else {
+            } else {
                 this.visitedTemplateNames.push(templateName);
-                for (const reference of this.lgFile.references)
-                {
-                    var sameTemplates = reference.templates.filter(u => u.name === templateName);
-                    for(const sameTemplate of sameTemplates)
-                    {
+                for (const reference of this.lgFile.references) {
+                    var sameTemplates = reference.templates.filter((u): boolean => u.name === templateName);
+                    for(const sameTemplate of sameTemplates) {
                         result.push(this.buildLGDiagnostic( LGErrors.duplicatedTemplateInDiffTemplate(sameTemplate.name, sameTemplate.source), undefined, templateNameLine));
                     }
                 }
 
                 if (result.length > 0) {
                     return result;
-                }
-                else
-                {
-                    if (!context.templateBody())
-                    {
-                        result.push(this.buildLGDiagnostic(LGErrors.noTemplateBody(templateName), DiagnosticSeverity.Warning, context.templateNameLine()));
-                    }
-                    else {
-                        result = result.concat(this.visit(context.templateBody()));
-                    }
+                } else if (!context.templateBody()) {
+                    result.push(this.buildLGDiagnostic(LGErrors.noTemplateBody(templateName), DiagnosticSeverity.Warning, context.templateNameLine()));
+                } else {
+                    result = result.concat(this.visit(context.templateBody()));
                 }
             }
         }
@@ -219,7 +206,6 @@ export class StaticChecker extends AbstractParseTreeVisitor<Diagnostic[]> implem
         return result;
     }
 
-    // tslint:disable-next-line: cyclomatic-complexity
     public visitSwitchCaseBody(context: lp.SwitchCaseBodyContext): Diagnostic[] {
         let result: Diagnostic[] = [];
         const switchCaseNodes: lp.SwitchCaseRuleContext[] = context.switchCaseTemplateBody().switchCaseRule();
@@ -263,8 +249,8 @@ export class StaticChecker extends AbstractParseTreeVisitor<Diagnostic[]> implem
                 if (switchCaseStat.EXPRESSION().length !== 1) {
                     result.push(this.buildLGDiagnostic(LGErrors.invalidExpressionInSwiathCase, undefined, switchCaseStat));
                 } else {
-                    let errorPrefix = switchExpr? `Switch` : `Case`;
-                    errorPrefix += ` '` + switchCaseStat.EXPRESSION(0).text + `': `;
+                    let errorPrefix = switchExpr ? 'Switch' : 'Case';
+                    errorPrefix += ` '${ switchCaseStat.EXPRESSION(0).text }': `;
                     result = result.concat(this.checkExpression(switchCaseStat.EXPRESSION(0).text, switchCaseStat, errorPrefix));
                 }
             } else {
@@ -331,7 +317,7 @@ export class StaticChecker extends AbstractParseTreeVisitor<Diagnostic[]> implem
         const stopPosition = context === undefined ? new Position(0, 0) : new Position(context.stop.line, context.stop.charPositionInLine + context.stop.text.length);
         severity = severity? severity : DiagnosticSeverity.Error;
         const range = new Range(startPosition, stopPosition);
-        message = (this.visitedTemplateNames.length > 0 && includeTemplateNameInfo)? `[${ this.visitedTemplateNames.reverse().find(x => true) }]`+ message : message;
+        message = (this.visitedTemplateNames.length > 0 && includeTemplateNameInfo)? `[${ this.visitedTemplateNames[this.visitedTemplateNames.length - 1] }]`+ message : message;
         
         return new Diagnostic(range, message, severity, this.lgFile.id);
     }

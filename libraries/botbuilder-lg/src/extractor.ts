@@ -6,14 +6,12 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-// tslint:disable-next-line: no-submodule-imports
 import { AbstractParseTreeVisitor, TerminalNode } from 'antlr4ts/tree';
 import { keyBy } from 'lodash';
 import * as lp from './generated/LGFileParser';
 import { LGFileParserVisitor } from './generated/LGFileParserVisitor';
 import { LGTemplate } from './lgTemplate';
 
-// tslint:disable-next-line: completed-docs
 /**
  * Lg template extracter.
  */
@@ -69,7 +67,7 @@ export class Extractor extends AbstractParseTreeVisitor<Map<string, any>> implem
         const lineStart = '    ';
         const structName = context.structuredTemplateBody().structuredBodyNameLine().text;
         let fullStr = structName + '\n';
-        context.structuredTemplateBody().structuredBodyContentLine().forEach(line => fullStr += lineStart + line.text + '\n');
+        context.structuredTemplateBody().structuredBodyContentLine().forEach((line): string => fullStr += lineStart + line.text + '\n');
         fullStr += context.structuredTemplateBody().structuredBodyEndLine().text;
 
         result.set(fullStr, undefined);
@@ -100,7 +98,6 @@ export class Extractor extends AbstractParseTreeVisitor<Map<string, any>> implem
                     result.set(conditionLabel.toUpperCase().concat(' ') + expressions[0].text, childTemplateBodyResult);
                 }
             } else {
-                // tslint:disable-next-line: no-backbone-get-set-outside-model
                 result.set('ELSE:', childTemplateBodyResult);
             }
         }
@@ -133,7 +130,6 @@ export class Extractor extends AbstractParseTreeVisitor<Map<string, any>> implem
             if (caseExpr) {
                 result.set(conditionLabel.toUpperCase().concat(' ') + expressions[0].text, childTemplateBodyResult);
             } else {
-                // tslint:disable-next-line: no-backbone-get-set-outside-model
                 result.set('DEFALUT:', childTemplateBodyResult);
             }
         }

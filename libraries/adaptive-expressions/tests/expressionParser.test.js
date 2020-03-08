@@ -522,14 +522,6 @@ const dataSource = [
     ['setPathToValue(path.simple, 5) + path.simple', 10],
     ['setPathToValue(path.array[0], 7) + path.array[0]', 14],
     ['setPathToValue(path.array[1], 9) + path.array[1]', 18],
-    /*
-    ['setPathToValue(path.darray[2][0], 11) + path.darray[2][0]', 22],
-    ['setPathToValue(path.darray[2][3].foo, 13) + path.darray[2][3].foo', 26],
-    ['setPathToValue(path.overwrite, 3) + setPathToValue(path.overwrite[0], 4) + path.overwrite[0]', 11],
-    ['setPathToValue(path.overwrite[0], 3) + setPathToValue(path.overwrite, 4) + path.overwrite', 11],
-    ['setPathToValue(path.overwrite.prop, 3) + setPathToValue(path.overwrite, 4) + path.overwrite', 11],
-    ['setPathToValue(path.overwrite.prop, 3) + setPathToValue(path.overwrite[0], 4) + path.overwrite[0]', 11],
-    */
     ['setPathToValue(path.x, null)', undefined],
 ];
 
@@ -636,42 +628,18 @@ describe('expression parser functional test', () => {
 
             const expected = data[1];
 
-            //Assert Object Equals
-            if (Array.isArray(actual) && Array.isArray(expected)) {
-                const [isSuccess, errorMessage] = isArraySame(actual, expected);
-                if (!isSuccess) {
-                    assert.fail(errorMessage);
-                }
-            } else if (typeof expected === 'number') {
-                assert(parseFloat(actual) === expected, `actual is: ${ actual } for case ${ input }`);
-            }
-            else {
-                assert(actual === expected, `actual is: ${ actual } for case ${ input }`);
-            }
+            assertObjectEquals(actual, expected);
 
             //Assert ExpectedRefs
             if (data.length === 3) {
                 const actualRefs = Extensions.references(parsed);
-                const [isSuccess, errorMessage] = isArraySame(actualRefs.sort(), data[2].sort());
-                if (!isSuccess) {
-                    assert.fail(errorMessage);
-                }
+                assertObjectEquals(actualRefs.sort(), data[2].sort());
             }
 
             //ToString re-parse
             const newExpr = Expression.parse(parsed.toString());
             const newActual = newExpr.tryEvaluate(scope).value;
-            if (Array.isArray(actual) && Array.isArray(newActual)) {
-                const [isSuccess, errorMessage] = isArraySame(actual, newActual);
-                if (!isSuccess) {
-                    assert.fail(errorMessage);
-                }
-            } else if (typeof newActual === 'number') {
-                assert(parseFloat(actual) === newActual, `actual is: ${ actual } for case ${ input }`);
-            }
-            else {
-                assert(actual === newActual, `actual is: ${ actual } for case ${ input }`);
-            }
+            assertObjectEquals(newActual, actual);
         }
     });
 
@@ -689,8 +657,6 @@ describe('expression parser functional test', () => {
         // normal case, note, we doesn't append a " yet
         let exp = Expression.parse('a[f].b[n].z');
         let path = undefined;
-        let left = undefined;
-        let error = undefined;
         ({path, left, error} = ExpressionFunctions.tryAccumulatePath(exp, memory));
         assert.strictEqual(path, 'a[\'foo\'].b[2].z');
 
@@ -712,20 +678,17 @@ describe('expression parser functional test', () => {
     });
 });
 
-var isArraySame = (actual, expected) => { //return [isSuccess, errorMessage]
-    if (actual.length !== expected.length) return [false, `expected length: ${ expected.length }, actual length: ${ actual.length }`];
-
-    for (let i = 0; i < actual.length; i++) {
-        if (Array.isArray(actual[i]) && Array.isArray(expected[i])) {
-            if (!isArraySame(actual[i], expected[i])) {
-                return [false, `actual is: ${ actual[i] }, expected is: ${ expected[i] }`]
-            }
-        } else if (Array.isArray(actual[i]) || Array.isArray(expected[i])){
-            return [false, `actual is: ${ actual[i] }, expected is: ${ expected[i] }`]
-        } else if (actual[i] !== expected[i])  {
-            return [false, `actual is: ${ actual[i] }, expected is: ${ expected[i] }`];
+var assertObjectEquals = (actual, expected) => {
+    if (actual === undefined || expected === undefined) {
+        return;
+    } else if (typeof actual === 'number' && typeof expected === 'number') {
+        assert.equal(parseFloat(actual), parseFloat(expected), `actual is: ${ actual }, expected is ${ expected }`);
+    } else if (Array.isArray(actual) && Array.isArray(expected)) {
+        assert.equal(actual.length, expected.length);
+        for(let i = 0; i< actual.length; i++) {
+            assertObjectEquals(actual[i], expected[i], `actual is: ${ actual[i] }, expected is ${ expected[i] }`);
         }
+    } else {
+        assert.equal(actual, expected, `actual is: ${ actual }, expected is ${ expected }`);
     }
-
-    return [true, ''];
 };
