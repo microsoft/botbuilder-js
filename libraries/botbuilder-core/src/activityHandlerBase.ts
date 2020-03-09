@@ -7,6 +7,11 @@ import {
     ChannelAccount,
     MessageReaction,
     TurnContext } from '.';
+import { InvokeResponse } from './invokeResponse';
+import { StatusCodes } from './statusCodes';
+
+// This key is exported internally so that subclassed ActivityHandlers and BotAdapters will not overwrite any already set InvokeResponses.
+export const INVOKE_RESPONSE_KEY: symbol = Symbol('invokeResponse');
 
 /**
  * Defines the core behavior for event-emitting activity handlers for bots.
@@ -62,7 +67,11 @@ export class ActivityHandlerBase {
                 await this.onEventActivity(context);
                 break;
             case ActivityTypes.Invoke:
-                await this.onInvokeActivity(context);
+                const invokeResponse = await this.onInvokeActivity(context);
+                // If onInvokeActivity has already sent an InvokeResponse, do not send another one.
+                if (invokeResponse && !context.turnState.get(INVOKE_RESPONSE_KEY)) {
+                    await context.sendActivity({ value: invokeResponse, type: 'invokeResponse' });
+                }
                 break;
             case ActivityTypes.EndOfConversation:
                 await this.onEndOfConversationActivity(context);
@@ -153,8 +162,16 @@ export class ActivityHandlerBase {
         return;
     }
 
-    protected async onInvokeActivity(context: TurnContext): Promise<void|any> {
-        return;
+    /**
+     * Provides a hook for invoke calls.
+     * 
+     * @param context The context object for the current turn.
+     * 
+     * @remarks
+     * Overwrite this method to handle particular invoke calls.
+     */
+    protected async onInvokeActivity(context: TurnContext): Promise<InvokeResponse> {
+        return { status: StatusCodes.NOT_IMPLEMENTED };
     }
 
     /**
