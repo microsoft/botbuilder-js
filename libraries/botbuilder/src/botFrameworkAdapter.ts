@@ -85,9 +85,6 @@ export const USER_AGENT: string = `Microsoft-BotFramework/3.1 BotBuilder/${ pjso
 const OAUTH_ENDPOINT = 'https://api.botframework.com';
 const US_GOV_OAUTH_ENDPOINT = 'https://api.botframework.azure.us';
 
-// This key is exported internally so that the TeamsActivityHandler will not overwrite any already set InvokeResponses.
-//export const INVOKE_RESPONSE_KEY: symbol = Symbol('invokeResponse');
-
 /**
  * A [BotAdapter](xref:botbuilder-core.BotAdapter) that can connect a bot to a service endpoint.
  * Implements [IUserTokenProvider](xref:botbuilder-core.IUserTokenProvider).
@@ -835,13 +832,13 @@ export class BotFrameworkAdapter extends BotAdapter implements ExtendedUserToken
                     status = value.status;
                     body = value.body;
                 } else {
-                    status = 501;
+                    status = StatusCodes.NOT_IMPLEMENTED;
                 }
             } else if (request.deliveryMode === DeliveryModes.BufferedReplies) {
                 body = context.bufferedReplies;
                 status = StatusCodes.OK;
             } else {
-                status = 200;
+                status = StatusCodes.OK;
             }
         } catch (err) {
             // Catch the error to try and throw the stacktrace out of processActivity()
