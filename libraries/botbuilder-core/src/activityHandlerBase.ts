@@ -8,7 +8,9 @@ import {
     MessageReaction,
     TurnContext } from '.';
 import { InvokeResponse } from './invokeResponse';
+import { StatusCodes } from './statusCodes';
 
+// This key is exported internally so that subclassed ActivityHandlers and BotAdapters will not overwrite any already set InvokeResponses.
 export const INVOKE_RESPONSE_KEY: symbol = Symbol('invokeResponse');
 
 /**
@@ -169,7 +171,7 @@ export class ActivityHandlerBase {
      * Overwrite this method to handle particular invoke calls.
      */
     protected async onInvokeActivity(context: TurnContext): Promise<InvokeResponse> {
-        return { status: 501 };
+        return { status: StatusCodes.NOT_IMPLEMENTED };
     }
 
     /**

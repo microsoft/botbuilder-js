@@ -2,10 +2,13 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { ChannelAccount, MessageReaction, TurnContext } from '.';
+
+import { MessageReaction } from 'botframework-schema';
 import { ActivityHandlerBase } from './activityHandlerBase';
-import { verifyStateOperationName, tokenExchangeOperationName, tokenResponseEventName } from './signInConstants';
 import { InvokeResponse } from './invokeResponse';
+import { verifyStateOperationName, tokenExchangeOperationName, tokenResponseEventName } from './signInConstants';
+import { StatusCodes } from './statusCodes';
+import { TurnContext } from './turnContext';
 
 /**
  * Describes a bot activity event handler, for use with an [ActivityHandler](xref:botbuilder-core.ActivityHandler) object.
@@ -413,13 +416,13 @@ export class ActivityHandler extends ActivityHandlerBase {
         try {
             if (context.activity.name && (context.activity.name === verifyStateOperationName || context.activity.name === tokenExchangeOperationName)) {
                 await this.onSignInInvoke(context);
-                return { status: 200 };
+                return { status: StatusCodes.OK };
             }
             throw new Error('NotImplemented');
         }
         catch (err) {
             if (err.message === 'NotImplemented') {
-                return { status: 501 };
+                return { status: StatusCodes.NOT_IMPLEMENTED };
             }
             throw err;
         }
