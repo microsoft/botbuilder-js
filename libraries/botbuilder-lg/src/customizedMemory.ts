@@ -25,7 +25,7 @@ export class CustomizedMemory implements MemoryInterface {
      */
     public localMemory: MemoryInterface;
 
-    public constructor(scope?: any, localMemory: MemoryInterface = undefined) {
+    public constructor(scope?: any, localMemory?: MemoryInterface) {
         this.globalMemory = !scope ? undefined : SimpleObjectMemory.wrap(scope);
         this.localMemory = localMemory;
     }

@@ -1,4 +1,3 @@
-
 /**
  * @module adaptive-expressions
  */
@@ -7,9 +6,7 @@
  * Licensed under the MIT License.
  */
 import { ANTLRInputStream, CommonTokenStream } from 'antlr4ts';
-// tslint:disable-next-line: no-submodule-imports
 import { AbstractParseTreeVisitor, ParseTree, TerminalNode } from 'antlr4ts/tree';
-import { ExpressionFunctions } from '../expressionFunctions';
 import { Constant } from '../constant';
 import { Expression } from '../expression';
 import { EvaluatorLookup } from '../expressionEvaluator';
@@ -29,7 +26,6 @@ export class ExpressionParser implements ExpressionParserInterface {
      */
     public readonly EvaluatorLookup: EvaluatorLookup;
 
-    // tslint:disable-next-line: typedef
     private readonly ExpressionTransformer = class extends AbstractParseTreeVisitor<Expression> implements ExpressionAntlrParserVisitor<Expression> {
 
         private readonly _lookupFunction: EvaluatorLookup = undefined;
@@ -209,7 +205,7 @@ export class ExpressionParser implements ExpressionParserInterface {
     };
 
     public constructor(lookup?: EvaluatorLookup) {
-        this.EvaluatorLookup = lookup === undefined ? Expression.lookup : lookup;
+        this.EvaluatorLookup = lookup || Expression.lookup;
     }
 
     protected static antlrParse(expression: string): ParseTree {

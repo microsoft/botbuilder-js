@@ -22,7 +22,7 @@ export const AuthConstants = {
 
 export const GovConstants = {
     ToBotFromChannelTokenIssuer: 'https://api.botframework.us'
-}
+};
 
 /**
  * @ignore
@@ -82,20 +82,20 @@ export function getAppIdFromClaims(claims: { [key: string]: any }[]): string {
     }
     let appId: string;
 
-        // Depending on Version, the AppId is either in the
-        // appid claim (Version 1) or the 'azp' claim (Version 2).
-        const versionClaim = claims.find(c => c.type === AuthConstants.VersionClaim);
-        const versionValue = versionClaim && versionClaim.value;
-        if (!versionValue || versionValue === '1.0') {
-            // No version or a version of '1.0' means we should look for
-            // the claim in the 'appid' claim.
-            const appIdClaim = claims.find(c => c.type === AuthConstants.AppIdClaim);
-            appId = appIdClaim && appIdClaim.value;
-        } else if (versionValue === '2.0') {
-            // Version '2.0' puts the AppId in the 'azp' claim.
-            const azpClaim = claims.find(c => c.type === AuthConstants.AuthorizedParty);
-            appId = azpClaim && azpClaim.value;
-        }
+    // Depending on Version, the AppId is either in the
+    // appid claim (Version 1) or the 'azp' claim (Version 2).
+    const versionClaim = claims.find(c => c.type === AuthConstants.VersionClaim);
+    const versionValue = versionClaim && versionClaim.value;
+    if (!versionValue || versionValue === '1.0') {
+        // No version or a version of '1.0' means we should look for
+        // the claim in the 'appid' claim.
+        const appIdClaim = claims.find(c => c.type === AuthConstants.AppIdClaim);
+        appId = appIdClaim && appIdClaim.value;
+    } else if (versionValue === '2.0') {
+        // Version '2.0' puts the AppId in the 'azp' claim.
+        const azpClaim = claims.find(c => c.type === AuthConstants.AuthorizedParty);
+        appId = azpClaim && azpClaim.value;
+    }
 
         return appId;
 }

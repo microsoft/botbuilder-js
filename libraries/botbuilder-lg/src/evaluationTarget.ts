@@ -27,7 +27,7 @@ export class EvaluationTarget {
     public scope: any;
 
     /**
-     * The children template that this template has evaluated currently. 
+     * The children templates that this template has evaluated currently. 
      */
     public  evaluatedChildren: Map<string, any>;
     public constructor(templateName: string, scope: any) {
@@ -38,7 +38,7 @@ export class EvaluationTarget {
 
     /**
      * Get current instance id. If two target has the same Id,
-     * we can say they have the same template evaluation.
+     * we can say they have the same template evaluation result.
      * @returns id.
      */
     public getId(): string {

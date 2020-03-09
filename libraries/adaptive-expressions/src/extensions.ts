@@ -55,7 +55,7 @@ export class Extensions {
      * @returns Accessor path of expression.
      */
     public static referenceWalk(expression: Expression,
-        extension?: (arg0: Expression) => boolean): {path:string; refs:Set<string>} {
+        extension?: (arg0: Expression) => boolean): {path: string; refs: Set<string>} {
         let path: string;
         let refs = new Set<string>();
         if (extension === undefined || !extension(expression)) {
@@ -114,7 +114,7 @@ export class Extensions {
                 }
 
                 const iteratorName = (children[1].children[0] as Constant).value as string;
-                var nonLocalRefs2 = Array.from(refs2).filter(x => !(x === iteratorName || x.startsWith(iteratorName + '.') || x.startsWith(iteratorName + '[')));
+                var nonLocalRefs2 = Array.from(refs2).filter((x): boolean => !(x === iteratorName || x.startsWith(iteratorName + '.') || x.startsWith(iteratorName + '[')));
                 refs = new Set([...refs, ...refs0, ...nonLocalRefs2]);
 
             } else {
@@ -122,7 +122,7 @@ export class Extensions {
                     const result = Extensions.referenceWalk(child, extension);
                     const childPath = result.path;
                     const refs0 = result.refs;
-                    refs = new Set([...refs, ...refs0])
+                    refs = new Set([...refs, ...refs0]);
                     if (childPath !== undefined) {
                         refs.add(childPath);
                     }
@@ -130,7 +130,7 @@ export class Extensions {
             }
         }
 
-        return {path, refs}
+        return {path, refs};
     }
 
     /**
@@ -146,7 +146,6 @@ export class Extensions {
         }
 
         let value: any;
-        // tslint:disable-next-line: prefer-const
         let error: string;
         // todo, Is there a better way to access value, or any case is not listed below?
         if (instance instanceof Map && instance as Map<string, any>!== undefined) {

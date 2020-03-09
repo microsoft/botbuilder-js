@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { Activity, ActivityTypes, Attachment, AppCredentials, CardFactory, Channels, InputHints, MessageFactory, OAuthLoginTimeoutKey, TokenResponse, TurnContext, OAuthCard, ActionTypes, ExtendedUserTokenProvider, verifyStateOperationName, StatusCodes, tokenExchangeOperationName, tokenResponseEventName } from 'botbuilder-core';
+import { Activity, ActivityTypes, Attachment, AppCredentials, BotAdapter, CardFactory, Channels, InputHints, MessageFactory, OAuthLoginTimeoutKey, TokenResponse, TurnContext, OAuthCard, ActionTypes, ExtendedUserTokenProvider, verifyStateOperationName, StatusCodes, tokenExchangeOperationName, tokenResponseEventName } from 'botbuilder-core';
 import { Dialog, DialogTurnResult } from '../dialog';
 import { DialogContext } from '../dialogContext';
 import { PromptOptions, PromptRecognizerResult,  PromptValidator } from './prompt';
@@ -279,7 +279,7 @@ export class OAuthPrompt extends Dialog {
                 let cardActionType = ActionTypes.Signin;
                 const signInResource = await (context.adapter as ExtendedUserTokenProvider).getSignInResource(context, this.settings.connectionName, context.activity.from.id, null, this.settings.oAuthAppCredentials);
                 let link = signInResource.signInLink;
-                const identity = context.turnState.get((context.adapter as any).BotIdentityKey);
+                const identity = context.turnState.get((context.adapter as BotAdapter).BotIdentityKey);
                 if((identity && isSkillClaim(identity.claims)) || OAuthPrompt.isFromStreamingConnection(context.activity)) {
                     if(context.activity.channelId === Channels.Emulator) {
                         cardActionType = ActionTypes.OpenUrl;

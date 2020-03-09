@@ -481,7 +481,7 @@ export interface Activity {
   importance?: ActivityImportance | string;
   /**
    * A delivery hint to signal to the recipient alternate delivery paths for the activity.
-   * The default delivery mode is "default". Possible values include: 'normal', 'notification'
+   * The default delivery mode is "default". Possible values include: 'normal', 'notification', 'expectReplies', 'ephemeral'
    */
   deliveryMode?: DeliveryModes | string;
   /**
@@ -577,6 +577,16 @@ export interface ConversationsResult {
    * List of conversations
    */
   conversations: ConversationMembers[];
+}
+
+/**
+ * Expected Replies in response to DeliveryModes.ExpectReplies
+ */
+export interface ExpectedReplies {
+  /**
+   * A collection of Activities that conforms to the ExpectedReplies schema.
+   */
+  activities: Activity[];
 }
 
 /**
@@ -1807,14 +1817,15 @@ export enum ActivityImportance {
 
 /**
  * Defines values for DeliveryModes.
- * Possible values include: 'normal', 'notification'
+ * Possible values include: 'normal', 'notification', 'expectReplies', 'ephemeral'
  * @readonly
  * @enum {string}
  */
 export enum DeliveryModes {
   Normal = 'normal',
   Notification = 'notification',
-  BufferedReplies = 'bufferedReplies'
+  ExpectReplies = 'expectReplies',
+  Ephemeral = 'ephemeral'
 }
 
 /**

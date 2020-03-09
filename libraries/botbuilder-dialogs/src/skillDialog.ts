@@ -11,9 +11,11 @@ import {
     ActivityTypes,
     ConversationReference,
     DeliveryModes,
+    ExpectedReplies,
     SkillConversationIdFactoryOptions,
     TurnContext
 } from 'botbuilder-core';
+import { BeginSkillDialogOptions } from './beginSkillDialogOptions';
 import {
     Dialog,
     DialogInstance,
@@ -21,7 +23,7 @@ import {
     DialogTurnResult
 } from './dialog';
 import { DialogContext } from './dialogContext';
-import { BeginSkillDialogOptions } from './beginSkillDialogOptions';
+import { DialogEvents } from './dialogEvents';
 import { SkillDialogOptions } from './skillDialogOptions';
 
 export class SkillDialog extends Dialog {
@@ -112,6 +114,22 @@ export class SkillDialog extends Dialog {
         await super.endDialog(context, instance, reason);
     }
 
+    public async repromptDialog(context: TurnContext, instance: DialogInstance): Promise<void> {
+        // Create and send an envent to the skill so it can resume the dialog.
+        const repromptEvent = { type: ActivityTypes.Event, name: DialogEvents.repromptDialog };
+
+        const reference = TurnContext.getConversationReference(context.activity);
+        // Apply conversation reference and common properties from incoming activity before sending.
+        const activity: Activity = TurnContext.applyConversationReference(repromptEvent, reference, true) as Activity;
+        
+        await this.sendToSkill(context, activity);
+    }
+
+    public async resumeDialog(dc: DialogContext, reason: DialogReason, result?: any): Promise<DialogTurnResult> {
+        await this.repromptDialog(dc.context, dc.activeDialog);
+        return Dialog.EndOfTurn;
+    }
+
     /**
      * Clones the Activity entity.
      * @param activity Activity to clone.
@@ -165,7 +183,7 @@ export class SkillDialog extends Dialog {
         const skillInfo = this.dialogOptions.skill;
         await this.dialogOptions.conversationState.saveChanges(context, true);
 
-        const response = await this.dialogOptions.skillClient.postActivity<Activity[]>(this.dialogOptions.botId, skillInfo.appId, skillInfo.skillEndpoint, this.dialogOptions.skillHostEndpoint, skillConversationId, activity);
+        const response = await this.dialogOptions.skillClient.postActivity<ExpectedReplies>(this.dialogOptions.botId, skillInfo.appId, skillInfo.skillEndpoint, this.dialogOptions.skillHostEndpoint, skillConversationId, activity);
 
         // Inspect the skill response status
         if (!(response.status >= 200 && response.status <= 299)) {
@@ -173,10 +191,10 @@ export class SkillDialog extends Dialog {
         }
 
         let eocActivity: Activity;
-        if (activity.deliveryMode == DeliveryModes.BufferedReplies && response.body) {
+        if (activity.deliveryMode == DeliveryModes.ExpectReplies && response.body && response.body.activities) {
             // Process replies in the response.Body.
-            if (Array.isArray(response.body)) {
-                response.body.forEach(async (fromSkillActivity: Activity): Promise<void> => {
+            if (Array.isArray(response.body.activities)) {
+                response.body.activities.forEach(async (fromSkillActivity: Activity): Promise<void> => {
                     if (fromSkillActivity.type === ActivityTypes.EndOfConversation) {
                         // Capture the EndOfConversation activity if it was sent from skill
                         eocActivity = fromSkillActivity;

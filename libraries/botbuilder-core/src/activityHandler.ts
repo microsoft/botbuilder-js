@@ -2,11 +2,13 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { ChannelAccount, MessageReaction, TurnContext } from '.';
+
+import { MessageReaction } from 'botframework-schema';
 import { ActivityHandlerBase } from './activityHandlerBase';
-import { verifyStateOperationName, tokenExchangeOperationName, tokenResponseEventName } from './signInConstants';
 import { InvokeResponse } from './invokeResponse';
+import { verifyStateOperationName, tokenExchangeOperationName, tokenResponseEventName } from './signInConstants';
 import { StatusCodes } from './statusCodes';
+import { TurnContext } from './turnContext';
 
 /**
  * Describes a bot activity event handler, for use with an [ActivityHandler](xref:botbuilder-core.ActivityHandler) object.
