@@ -11,7 +11,7 @@ import { ImportDefinitionContext } from './generated/LGFileParser';
 /**
  * Here is a data model that can help users understand and use the LG import definition in LG files easily. 
  */
-export class LGImport {
+export class TemplateImport {
 
     /**
      * Description of the import, what's included by '[]' in a lg file.

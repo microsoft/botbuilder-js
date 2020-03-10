@@ -13,11 +13,11 @@ import { CustomizedMemory } from './customizedMemory';
 import { EvaluationTarget } from './evaluationTarget';
 import * as lp from './generated/LGFileParser';
 import { LGFileParserVisitor } from './generated/LGFileParserVisitor';
-import { LGTemplate } from './lgTemplate';
+import { Template } from './template';
 import * as path from 'path';
 import * as fs from 'fs';
-import { LGExtensions } from './lgExtensions';
-import { LGErrors } from './lgErrors';
+import { TemplateExtensions } from './templateExtensions';
+import { TemplateErrors } from './templateErrors';
 /**
  * Evaluation runtime engine
  */
@@ -26,7 +26,7 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGFilePa
     /**
      * Templates.
      */
-    public readonly templates: LGTemplate[];
+    public readonly templates: Template[];
 
     /**
      * Expression parser.
@@ -36,7 +36,7 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGFilePa
     /**
      * TemplateMap.
      */
-    public readonly templateMap: { [name: string]: LGTemplate };
+    public readonly templateMap: { [name: string]: Template };
     private readonly evaluationTargetStack: EvaluationTarget[] = [];
     private readonly strictMode: boolean;
 
@@ -49,12 +49,12 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGFilePa
     public static readonly fromFileFunctionName = 'fromFile';
     public static readonly templateFunctionName = 'template';
     public static readonly isTemplateFunctionName = 'isTemplate';
-    private static readonly ReExecuteSuffix = '!';
+    public static readonly ReExecuteSuffix = '!';
 
-    public constructor(templates: LGTemplate[], expressionParser: ExpressionParser, strictMode: boolean = false) {
+    public constructor(templates: Template[], expressionParser: ExpressionParser, strictMode: boolean = false) {
         super();
         this.templates = templates;
-        this.templateMap = keyBy(templates, (t: LGTemplate): string => t.name);
+        this.templateMap = keyBy(templates, (t: Template): string => t.name);
         this.strictMode = strictMode;
 
         // generate a new customzied expression parser by injecting the templates as functions
@@ -77,11 +77,11 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGFilePa
         ({reExecute, pureTemplateName: templateName} = this.parseTemplateName(inputTemplateName));
 
         if (!(templateName in this.templateMap)) {
-            throw new Error(LGErrors.templateNotExist(templateName));
+            throw new Error(TemplateErrors.templateNotExist(templateName));
         }
 
         if (this.evaluationTargetStack.some((u: EvaluationTarget): boolean => u.templateName === templateName)) {
-            throw new Error(`${ LGErrors.loopDetected } ${ this.evaluationTargetStack.reverse()
+            throw new Error(`${ TemplateErrors.loopDetected } ${ this.evaluationTargetStack.reverse()
                 .map((u: EvaluationTarget): string => u.templateName)
                 .join(' => ') }`);
         }
@@ -148,14 +148,14 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGFilePa
 
         const result = [];
         for(const item of values) {
-            if (LGExtensions.isPureExpression(item).hasExpr) {
-                result.push(this.evalExpression(LGExtensions.isPureExpression(item).expression, ctx));
+            if (TemplateExtensions.isPureExpression(item).hasExpr) {
+                result.push(this.evalExpression(TemplateExtensions.isPureExpression(item).expression, ctx));
             } else {
                 let itemStringResult = '';
                 for(const node of item.children) {
                     switch ((node as TerminalNode).symbol.type) {
                         case (lp.LGFileParser.ESCAPE_CHARACTER_IN_STRUCTURE_BODY): 
-                            itemStringResult += LGExtensions.evalEscape(node.text);
+                            itemStringResult += TemplateExtensions.evalEscape(node.text);
                             break;
                         
                         case (lp.LGFileParser.EXPRESSION_IN_STRUCTURE_BODY):
@@ -208,7 +208,7 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGFilePa
     }
 
     public visitNormalTemplateString(ctx: lp.NormalTemplateStringContext): string {
-        const prefixErrorMsg = LGExtensions.getPrefixErrorMessage(ctx);
+        const prefixErrorMsg = TemplateExtensions.getPrefixErrorMessage(ctx);
         const result: any[] = [];
         for (const node of ctx.children) {
             const innerNode: TerminalNode = node as TerminalNode;
@@ -218,7 +218,7 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGFilePa
                 case lp.LGFileParser.DASH:
                     break;
                 case lp.LGFileParser.ESCAPE_CHARACTER:
-                    result.push(LGExtensions.evalEscape(innerNode.text));
+                    result.push(TemplateExtensions.evalEscape(innerNode.text));
                     break;
                 case lp.LGFileParser.EXPRESSION:
                     result.push(this.evalExpression(innerNode.text, ctx, prefixErrorMsg));
@@ -247,7 +247,7 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGFilePa
         var templateName = this.parseTemplateName(inputTemplateName).pureTemplateName;
 
         if (!(templateName in this.templateMap)) {
-            throw new Error(LGErrors.templateNotExist(templateName));
+            throw new Error(TemplateErrors.templateNotExist(templateName));
         }
 
         const parameters: string[] = this.templateMap[templateName].parameters;
@@ -262,7 +262,7 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGFilePa
         parameters.map((e: string, i: number): void => newScope[e] = args[i]);
         const memory = currentScope as CustomizedMemory;
         if (!memory) {
-            throw new Error(LGErrors.invalidMemory);
+            throw new Error(TemplateErrors.invalidMemory);
         }
 
         return new CustomizedMemory(memory.globalMemory, SimpleObjectMemory.wrap(newScope));
@@ -333,7 +333,7 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGFilePa
     }
 
     private evalExpressionInCondition(exp: string, context?: ParserRuleContext, errorPrefix: string = ''): boolean {
-        exp = LGExtensions.trimExpression(exp);
+        exp = TemplateExtensions.trimExpression(exp);
         let result: any;
         let error: string;
         ({value: result, error: error} = this.evalByAdaptiveExpression(exp, this.currentTarget().scope));
@@ -349,12 +349,12 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGFilePa
             }
             else if (!result)
             {
-                childErrorMsg += LGErrors.nullExpression(exp);
+                childErrorMsg += TemplateErrors.nullExpression(exp);
             }
 
             if (context)
             {
-                errorMsg += LGErrors.errorExpression(context.text, this.currentTarget().templateName, errorPrefix);
+                errorMsg += TemplateErrors.errorExpression(context.text, this.currentTarget().templateName, errorPrefix);
             }
 
             if (this.evaluationTargetStack.length > 0)
@@ -373,7 +373,7 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGFilePa
 
     private evalExpression(exp: string, context?: ParserRuleContext, errorPrefix: string = ''): any
     {
-        exp = LGExtensions.trimExpression(exp);
+        exp = TemplateExtensions.trimExpression(exp);
         let result: any;
         let error: string;
         ({value: result, error: error} = this.evalByAdaptiveExpression(exp, this.currentTarget().scope));
@@ -389,12 +389,12 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGFilePa
             }
             else if (result === undefined)
             {
-                childErrorMsg += LGErrors.nullExpression(exp);
+                childErrorMsg += TemplateErrors.nullExpression(exp);
             }
 
             if (context)
             {
-                errorMsg += LGErrors.errorExpression(context.text, this.currentTarget().templateName, errorPrefix);
+                errorMsg += TemplateErrors.errorExpression(context.text, this.currentTarget().templateName, errorPrefix);
             }
 
             if (this.evaluationTargetStack.length > 0)
@@ -464,12 +464,12 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGFilePa
     }
 
     private readonly fromFile = (): any => (args: readonly any[]): any => {
-        const filePath: string = LGExtensions.normalizePath(args[0].toString());
+        const filePath: string = TemplateExtensions.normalizePath(args[0].toString());
         const resourcePath: string = this.getResourcePath(filePath);
         const stringContent = fs.readFileSync(resourcePath, 'utf-8');
 
         const result = this.wrappedEvalTextContainsExpression(stringContent, Evaluator.expressionRecognizeReverseRegex);
-        return LGExtensions.evalEscape(result);
+        return TemplateExtensions.evalEscape(result);
     }
 
     private getResourcePath(filePath: string): string {
@@ -482,8 +482,8 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGFilePa
             if (inBrowser) {
                 throw new Error('relative path is not support in browser.');
             }
-            const template: LGTemplate = this.templateMap[this.currentTarget().templateName];
-            const sourcePath: string = LGExtensions.normalizePath(template.source);
+            const template: Template = this.templateMap[this.currentTarget().templateName];
+            const sourcePath: string = TemplateExtensions.normalizePath(template.source);
             let baseFolder: string = __dirname;
             if (path.isAbsolute(sourcePath)) {
                 baseFolder = path.dirname(sourcePath);
@@ -518,7 +518,7 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGFilePa
 
         // Validate return type
         if (children0.returnType !== ReturnType.Object && children0.returnType !== ReturnType.String) {
-            throw new Error(LGErrors.errorTemplateNameformat(children0.toString()));
+            throw new Error(TemplateErrors.errorTemplateNameformat(children0.toString()));
         }
 
         // Validate more if the name is string constant
@@ -531,7 +531,7 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGFilePa
     private checkTemplateReference(templateName: string, children: Expression[]): void{
         if (!(templateName in this.templateMap))
         {
-            throw new Error(LGErrors.templateNotExist(templateName));
+            throw new Error(TemplateErrors.templateNotExist(templateName));
         }
 
         var expectedArgsCount = this.templateMap[templateName].parameters.length;
@@ -539,7 +539,7 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGFilePa
 
         if (actualArgsCount !== 0 && expectedArgsCount !== actualArgsCount)
         {
-            throw new Error(LGErrors.argumentMismatch(templateName, expectedArgsCount, actualArgsCount));
+            throw new Error(TemplateErrors.argumentMismatch(templateName, expectedArgsCount, actualArgsCount));
         }
     }
 
@@ -550,18 +550,7 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGFilePa
     }
 
     private readonly validTemplateReference = (expression: Expression): void => {
-        const templateName: string = expression.type;
-
-        if (!(templateName in this.templateMap)) {
-            throw new Error(`no such template '${ templateName }' to call in ${ expression }`);
-        }
-
-        const expectedArgsCount: number = this.templateMap[templateName].parameters.length;
-        const actualArgsCount: number = expression.children.length;
-
-        if (expectedArgsCount !== actualArgsCount) {
-            throw new Error(LGErrors.argumentMismatch(templateName, expectedArgsCount, actualArgsCount));
-        }
+        return this.checkTemplateReference(expression.type, expression.children);
     }
 
     private parseTemplateName(templateName: string): { reExecute: boolean; pureTemplateName: string } {

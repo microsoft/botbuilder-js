@@ -12,7 +12,7 @@ import { TerminalNode } from 'antlr4ts/tree';
 /**
  * Extension methods for LG.
  */
-export class LGExtensions {
+export class TemplateExtensions {
 
     /**
      * trim expression. ${abc} => abc,  ${a == {}} => a == {}.

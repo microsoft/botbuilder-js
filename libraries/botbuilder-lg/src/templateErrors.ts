@@ -9,7 +9,7 @@
 /**
   * Centralized LG errors.
   */
-export class LGErrors {
+export class TemplateErrors {
     public static readonly noTemplate: string = `LG file must have at least one template definition. `;
  
     public static readonly invalidTemplateName: string = `Invalid template name. Template name should start with letter/number/_ and can only contains letter/number/_/./-. `;

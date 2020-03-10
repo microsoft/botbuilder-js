@@ -94,19 +94,19 @@ For NodeJS, add botbuilder-lg
 Load the template manager with your .lg file
 
 ```typescript
-    let lgFile = new LGParser.parseFile(filePath, importResolver?, expressionParser?);
+    let templates = new Templates.parseFile(filePath, importResolver?, expressionParser?);
 ```
 
-When you need template expansion, call the LGFile and pass in the relevant template name
+When you need template expansion, call the templates and pass in the relevant template name
 
 ```typescript
-    await turnContext.sendActivity(lgFile.evaluateTemplate("<TemplateName>", entitiesCollection));
+    await turnContext.sendActivity(templates.evaluate("<TemplateName>", entitiesCollection));
 ```
 
 If your template needs specific entity values to be passed for resolution/ expansion, you can pass them in on the call to `evaluateTemplate`
 
 ```typescript
-    await turnContext.sendActivity(lgFile.evaluateTemplate("WordGameReply", { GameName = "MarcoPolo" } ));
+    await turnContext.sendActivity(templates.evaluate("WordGameReply", { GameName = "MarcoPolo" } ));
 ```
 
 [1]:https://github.com/Microsoft/BotBuilder/blob/master/specs/botframework-activity/botframework-activity.md

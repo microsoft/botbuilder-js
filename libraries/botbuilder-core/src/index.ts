@@ -7,6 +7,7 @@
  */
 
 export * from 'botframework-schema';
+export * from './activityFactory';
 export * from './appCredentials';
 export * from './activityHandler';
 export * from './activityHandlerBase';
