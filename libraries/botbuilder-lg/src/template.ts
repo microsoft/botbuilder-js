@@ -12,7 +12,7 @@ import { ParametersContext, TemplateDefinitionContext, TemplateNameContext, File
  * Here is a data model that can easily understanded and used as the context or all kinds of visitors
  * wether it's evalator, static checker, anayler.. etc
  */
-export class LGTemplate {
+export class Template {
     /**
      * Name of the template, what's followed by '#' in a LG file
      */

@@ -1,6 +1,5 @@
-const { LGParser, DiagnosticSeverity, LGErrors } = require(`../`);
+const { Templates, DiagnosticSeverity, TemplateErrors } = require(`../`);
 const assert = require(`assert`);
-const fs = require(`fs`);
 
 function GetExceptionExampleFilePath(fileName) {
     return `${ __dirname }/testData/exceptionExamples/` + fileName;
@@ -8,12 +7,12 @@ function GetExceptionExampleFilePath(fileName) {
 
 function GetLGFile(fileName) {
     var filePath = GetExceptionExampleFilePath(fileName);
-    return LGParser.parseFile(filePath);
+    return Templates.parseFile(filePath);
 }
 
 function GetDiagnostics(fileName) {
     var filePath = GetExceptionExampleFilePath(fileName);
-    return LGParser.parseFile(filePath).diagnostics;
+    return Templates.parseFile(filePath).diagnostics;
 }
 
 describe(`LGExceptionTest`, function() {
@@ -21,25 +20,25 @@ describe(`LGExceptionTest`, function() {
         var diagnostics = GetDiagnostics(`ConditionFormatError.lg`);
         assert.strictEqual(diagnostics.length, 10);
         assert.strictEqual(diagnostics[0].severity, DiagnosticSeverity.Warning);
-        assert.strictEqual(diagnostics[0].message.includes(LGErrors.notEndWithElseInCondition), true);
+        assert.strictEqual(diagnostics[0].message.includes(TemplateErrors.notEndWithElseInCondition), true);
         assert.strictEqual(DiagnosticSeverity.Error, diagnostics[1].severity);
-        assert.strictEqual(diagnostics[1].message.includes(LGErrors.invalidExpressionInCondition), true);
+        assert.strictEqual(diagnostics[1].message.includes(TemplateErrors.invalidExpressionInCondition), true);
         assert.strictEqual(DiagnosticSeverity.Error, diagnostics[2].severity);
-        assert.strictEqual(diagnostics[2].message.includes(LGErrors.multipleIfInCondition), true);
+        assert.strictEqual(diagnostics[2].message.includes(TemplateErrors.multipleIfInCondition), true);
         assert.strictEqual(DiagnosticSeverity.Warning, diagnostics[3].severity);
-        assert.strictEqual(diagnostics[3].message.includes(LGErrors.notEndWithElseInCondition), true);
+        assert.strictEqual(diagnostics[3].message.includes(TemplateErrors.notEndWithElseInCondition), true);
         assert.strictEqual(DiagnosticSeverity.Error, diagnostics[4].severity);
-        assert.strictEqual(diagnostics[4].message.includes(LGErrors.extraExpressionInCondition), true);
+        assert.strictEqual(diagnostics[4].message.includes(TemplateErrors.extraExpressionInCondition), true);
         assert.strictEqual(DiagnosticSeverity.Error, diagnostics[5].severity);
-        assert.strictEqual(diagnostics[5].message.includes(LGErrors.multipleIfInCondition), true);
+        assert.strictEqual(diagnostics[5].message.includes(TemplateErrors.multipleIfInCondition), true);
         assert.strictEqual(DiagnosticSeverity.Error, diagnostics[6].severity);
-        assert.strictEqual(diagnostics[6].message.includes(LGErrors.invalidMiddleInCondition), true);
+        assert.strictEqual(diagnostics[6].message.includes(TemplateErrors.invalidMiddleInCondition), true);
         assert.strictEqual(DiagnosticSeverity.Error, diagnostics[7].severity);
-        assert.strictEqual(diagnostics[7].message.includes(LGErrors.invalidWhitespaceInCondition), true);
+        assert.strictEqual(diagnostics[7].message.includes(TemplateErrors.invalidWhitespaceInCondition), true);
         assert.strictEqual(DiagnosticSeverity.Error, diagnostics[8].severity);
-        assert.strictEqual(diagnostics[8].message.includes(LGErrors.invalidWhitespaceInCondition), true);
+        assert.strictEqual(diagnostics[8].message.includes(TemplateErrors.invalidWhitespaceInCondition), true);
         assert.strictEqual(DiagnosticSeverity.Warning, diagnostics[9].severity);
-        assert.strictEqual(diagnostics[9].message.includes(LGErrors.notStartWithIfInCondition), true);
+        assert.strictEqual(diagnostics[9].message.includes(TemplateErrors.notStartWithIfInCondition), true);
     });
 
     it(`TestDuplicatedTemplates`, function() {
@@ -47,18 +46,18 @@ describe(`LGExceptionTest`, function() {
 
         assert.strictEqual(2, diagnostics.length);
         assert.strictEqual(DiagnosticSeverity.Error, diagnostics[0].severity);
-        assert.strictEqual(diagnostics[0].message.includes(LGErrors.duplicatedTemplateInSameTemplate('template1')), true);
+        assert.strictEqual(diagnostics[0].message.includes(TemplateErrors.duplicatedTemplateInSameTemplate('template1')), true);
         assert.strictEqual(DiagnosticSeverity.Error, diagnostics[1].severity);
-        assert.strictEqual(diagnostics[1].message.includes(LGErrors.duplicatedTemplateInSameTemplate('template1')), true);
+        assert.strictEqual(diagnostics[1].message.includes(TemplateErrors.duplicatedTemplateInSameTemplate('template1')), true);
 
         var lgFile = GetLGFile(`DuplicatedTemplates.lg`);
         var allDiagnostics = lgFile.allDiagnostics;
 
         assert.strictEqual(4, allDiagnostics.length);
         assert.strictEqual(DiagnosticSeverity.Error, allDiagnostics[0].severity);
-        assert.strictEqual(allDiagnostics[0].message.includes(LGErrors.duplicatedTemplateInSameTemplate('template1')), true);
+        assert.strictEqual(allDiagnostics[0].message.includes(TemplateErrors.duplicatedTemplateInSameTemplate('template1')), true);
         assert.strictEqual(DiagnosticSeverity.Error, allDiagnostics[1].severity);
-        assert.strictEqual(allDiagnostics[1].message.includes(LGErrors.duplicatedTemplateInSameTemplate('template1')), true);
+        assert.strictEqual(allDiagnostics[1].message.includes(TemplateErrors.duplicatedTemplateInSameTemplate('template1')), true);
         assert.strictEqual(DiagnosticSeverity.Error, allDiagnostics[2].severity);
         assert.strictEqual(allDiagnostics[2].message.includes(`Duplicated definitions found for template: 'basicTemplate'`), true);
         assert.strictEqual(DiagnosticSeverity.Error, allDiagnostics[3].severity);
@@ -80,7 +79,7 @@ describe(`LGExceptionTest`, function() {
 
         assert.strictEqual(1, diagnostics.length);
         assert.strictEqual(DiagnosticSeverity.Warning, diagnostics[0].severity);
-        assert.strictEqual(diagnostics[0].message.includes(LGErrors.noTemplateBody('template')), true);
+        assert.strictEqual(diagnostics[0].message.includes(TemplateErrors.noTemplateBody('template')), true);
     });
 
     it(`TestErrorStructuredTemplate`, function() {
@@ -88,15 +87,15 @@ describe(`LGExceptionTest`, function() {
 
         assert.strictEqual(5, diagnostics.length);
         assert.strictEqual(DiagnosticSeverity.Error, diagnostics[0].severity);
-        assert.strictEqual(diagnostics[0].message.includes(LGErrors.invalidStrucBody), true);
+        assert.strictEqual(diagnostics[0].message.includes(TemplateErrors.invalidStrucBody), true);
         assert.strictEqual(DiagnosticSeverity.Error, diagnostics[1].severity);
-        assert.strictEqual(diagnostics[1].message.includes(LGErrors.emptyStrucContent), true);
+        assert.strictEqual(diagnostics[1].message.includes(TemplateErrors.emptyStrucContent), true);
         assert.strictEqual(DiagnosticSeverity.Error, diagnostics[2].severity);
         assert.strictEqual(diagnostics[2].message.includes(`Error occurred when parsing expression 'NOTemplate()'. NOTemplate does not have an evaluator`), true);
         assert.strictEqual(DiagnosticSeverity.Error, diagnostics[3].severity);
         assert.strictEqual(diagnostics[3].message.includes(`Error occurred when parsing expression 'NOTemplate()'. NOTemplate does not have an evaluator`), true);
         assert.strictEqual(DiagnosticSeverity.Error, diagnostics[4].severity);
-        assert.strictEqual(diagnostics[4].message.includes(LGErrors.invalidStrucName), true);
+        assert.strictEqual(diagnostics[4].message.includes(TemplateErrors.invalidStrucName), true);
     });
 
     it(`TestErrorTemplateName`, function() {
@@ -106,7 +105,7 @@ describe(`LGExceptionTest`, function() {
         for(const diagnostic of diagnostics)
         {
             assert.strictEqual(DiagnosticSeverity.Error, diagnostic.severity);
-            assert.strictEqual(diagnostic.message.includes(LGErrors.invalidTemplateName), true);
+            assert.strictEqual(diagnostic.message.includes(TemplateErrors.invalidTemplateName), true);
         }
     });
 
@@ -133,7 +132,7 @@ describe(`LGExceptionTest`, function() {
 
         assert.strictEqual(1, diagnostics.length);
         assert.strictEqual(DiagnosticSeverity.Error, diagnostics[0].severity);
-        assert.strictEqual(diagnostics[0].message.includes(LGErrors.noEndingInMultiline), true);
+        assert.strictEqual(diagnostics[0].message.includes(TemplateErrors.noEndingInMultiline), true);
     });
 
     it(`TestNoNormalTemplateBody`, function() {
@@ -141,11 +140,11 @@ describe(`LGExceptionTest`, function() {
 
         assert.strictEqual(3, diagnostics.length);
         assert.strictEqual(DiagnosticSeverity.Warning, diagnostics[0].severity);
-        assert.strictEqual(diagnostics[0].message.includes(LGErrors.notEndWithElseInCondition), true);
+        assert.strictEqual(diagnostics[0].message.includes(TemplateErrors.notEndWithElseInCondition), true);
         assert.strictEqual(DiagnosticSeverity.Error, diagnostics[1].severity);
-        assert.strictEqual(diagnostics[1].message.includes(LGErrors.missingTemplateBodyInCondition), true);
+        assert.strictEqual(diagnostics[1].message.includes(TemplateErrors.missingTemplateBodyInCondition), true);
         assert.strictEqual(DiagnosticSeverity.Error, diagnostics[2].severity);
-        assert.strictEqual(diagnostics[2].message.includes(LGErrors.missingTemplateBodyInCondition), true);
+        assert.strictEqual(diagnostics[2].message.includes(TemplateErrors.missingTemplateBodyInCondition), true);
     });
 
     it(`TestNoTemplateRef`, function() {
@@ -166,76 +165,76 @@ describe(`LGExceptionTest`, function() {
 
         assert.strictEqual(14, diagnostics.length);
         assert.strictEqual(DiagnosticSeverity.Error, diagnostics[0].severity);
-        assert.strictEqual(diagnostics[0].message.includes(LGErrors.invalidWhitespaceInSwitchCase), true);
+        assert.strictEqual(diagnostics[0].message.includes(TemplateErrors.invalidWhitespaceInSwitchCase), true);
         assert.strictEqual(DiagnosticSeverity.Error, diagnostics[1].severity);
-        assert.strictEqual(diagnostics[1].message.includes(LGErrors.multipleSwithStatementInSwitchCase), true);
+        assert.strictEqual(diagnostics[1].message.includes(TemplateErrors.multipleSwithStatementInSwitchCase), true);
         assert.strictEqual(DiagnosticSeverity.Error, diagnostics[2].severity);
-        assert.strictEqual(diagnostics[2].message.includes(LGErrors.notStartWithSwitchInSwitchCase), true);
+        assert.strictEqual(diagnostics[2].message.includes(TemplateErrors.notStartWithSwitchInSwitchCase), true);
         assert.strictEqual(DiagnosticSeverity.Warning, diagnostics[3].severity);
-        assert.strictEqual(diagnostics[3].message.includes(LGErrors.missingCaseInSwitchCase), true);
+        assert.strictEqual(diagnostics[3].message.includes(TemplateErrors.missingCaseInSwitchCase), true);
         assert.strictEqual(DiagnosticSeverity.Error, diagnostics[4].severity);
-        assert.strictEqual(diagnostics[4].message.includes(LGErrors.invalidStatementInMiddlerOfSwitchCase), true);
+        assert.strictEqual(diagnostics[4].message.includes(TemplateErrors.invalidStatementInMiddlerOfSwitchCase), true);
         assert.strictEqual(DiagnosticSeverity.Warning, diagnostics[5].severity);
-        assert.strictEqual(diagnostics[5].message.includes(LGErrors.notEndWithDefaultInSwitchCase), true);
+        assert.strictEqual(diagnostics[5].message.includes(TemplateErrors.notEndWithDefaultInSwitchCase), true);
         assert.strictEqual(DiagnosticSeverity.Error, diagnostics[6].severity);
-        assert.strictEqual(diagnostics[6].message.includes(LGErrors.extraExpressionInSwitchCase), true);
+        assert.strictEqual(diagnostics[6].message.includes(TemplateErrors.extraExpressionInSwitchCase), true);
         assert.strictEqual(DiagnosticSeverity.Error, diagnostics[7].severity);
-        assert.strictEqual(diagnostics[7].message.includes(LGErrors.missingTemplateBodyInSwitchCase), true);
+        assert.strictEqual(diagnostics[7].message.includes(TemplateErrors.missingTemplateBodyInSwitchCase), true);
         assert.strictEqual(DiagnosticSeverity.Error, diagnostics[8].severity);
-        assert.strictEqual(diagnostics[8].message.includes((LGErrors.extraExpressionInSwitchCase)), true);
+        assert.strictEqual(diagnostics[8].message.includes((TemplateErrors.extraExpressionInSwitchCase)), true);
         assert.strictEqual(DiagnosticSeverity.Error, diagnostics[9].severity);
-        assert.strictEqual(diagnostics[9].message.includes(LGErrors.missingTemplateBodyInSwitchCase), true);
+        assert.strictEqual(diagnostics[9].message.includes(TemplateErrors.missingTemplateBodyInSwitchCase), true);
         assert.strictEqual(DiagnosticSeverity.Error, diagnostics[10].severity);
-        assert.strictEqual(diagnostics[10].message.includes(LGErrors.invalidExpressionInSwiathCase), true);
+        assert.strictEqual(diagnostics[10].message.includes(TemplateErrors.invalidExpressionInSwiathCase), true);
         assert.strictEqual(DiagnosticSeverity.Error, diagnostics[11].severity);
-        assert.strictEqual(diagnostics[11].message.includes(LGErrors.extraExpressionInSwitchCase), true);
+        assert.strictEqual(diagnostics[11].message.includes(TemplateErrors.extraExpressionInSwitchCase), true);
         assert.strictEqual(DiagnosticSeverity.Warning, diagnostics[12].severity);
-        assert.strictEqual(diagnostics[12].message.includes(LGErrors.missingCaseInSwitchCase), true);
+        assert.strictEqual(diagnostics[12].message.includes(TemplateErrors.missingCaseInSwitchCase), true);
         assert.strictEqual(DiagnosticSeverity.Warning, diagnostics[13].severity);
-        assert.strictEqual(diagnostics[13].message.includes(LGErrors.notEndWithDefaultInSwitchCase), true);
+        assert.strictEqual(diagnostics[13].message.includes(TemplateErrors.notEndWithDefaultInSwitchCase), true);
     });
 
     it(`TestLoopDetected`, function() {
         var lgFile = GetLGFile(`LoopDetected.lg`);
         
-        assert.throws(() => lgFile.evaluateTemplate(`wPhrase`), Error(`Loop detected: welcome-user => wPhrase[wPhrase]  Error occurred when evaluating '-\${wPhrase()}'. [welcome-user]  Error occurred when evaluating '-\${welcome-user()}'. `));
+        assert.throws(() => lgFile.evaluate(`wPhrase`), Error(`Loop detected: welcome-user => wPhrase[wPhrase]  Error occurred when evaluating '-\${wPhrase()}'. [welcome-user]  Error occurred when evaluating '-\${welcome-user()}'. `));
         
         assert.throws(() => lgFile.analyzeTemplate(`wPhrase`), Error('Loop detected: welcome-user => wPhrase'),);
     });
 
     it(`AddTextWithWrongId`, function() {
-        var diagnostics = LGParser.parseText(`[import](xx.lg) \r\n # t \n - hi`, `a.lg`).diagnostics;
+        var diagnostics = Templates.parseText(`[import](xx.lg) \r\n # t \n - hi`, `a.lg`).diagnostics;
         assert.strictEqual(1, diagnostics.length);
         assert.strictEqual(diagnostics[0].message.includes(`Could not find file`), true);
     });
 
     it(`TestErrorExpression`, function() {
         var lgFile = GetLGFile(`ErrorExpression.lg`);
-        assert.throws(() => lgFile.evaluateTemplate(`template1`), Error(`first(createArray(1, 2)) is neither a string nor a null object.[template1]  Error occurred when evaluating '-\${length(first(createArray(1,2)))}'. `));
+        assert.throws(() => lgFile.evaluate(`template1`), Error(`first(createArray(1, 2)) is neither a string nor a null object.[template1]  Error occurred when evaluating '-\${length(first(createArray(1,2)))}'. `));
     });
 
     it('TestRunTimeErrors', function() {
         var lgFile = GetLGFile('RunTimeErrors.lg');
 
-        assert.throws(() => lgFile.evaluateTemplate(`template1`), Error(`'dialog.abc' evaluated to null. [template1]  Error occurred when evaluating '-I want \${dialog.abc}'. `));
+        assert.throws(() => lgFile.evaluate(`template1`), Error(`'dialog.abc' evaluated to null. [template1]  Error occurred when evaluating '-I want \${dialog.abc}'. `));
 
-        assert.throws(() => lgFile.evaluateTemplate(`prebuilt1`), Error(`'dialog.abc' evaluated to null.[prebuilt1]  Error occurred when evaluating '-I want \${foreach(dialog.abc, item, template1())}'. `));
+        assert.throws(() => lgFile.evaluate(`prebuilt1`), Error(`'dialog.abc' evaluated to null.[prebuilt1]  Error occurred when evaluating '-I want \${foreach(dialog.abc, item, template1())}'. `));
 
-        assert.throws(() => lgFile.evaluateTemplate(`template2`), Error(`'dialog.abc' evaluated to null. [template1]  Error occurred when evaluating '-I want \${dialog.abc}'. [template2]  Error occurred when evaluating '-With composition \${template1()}'. `));
+        assert.throws(() => lgFile.evaluate(`template2`), Error(`'dialog.abc' evaluated to null. [template1]  Error occurred when evaluating '-I want \${dialog.abc}'. [template2]  Error occurred when evaluating '-With composition \${template1()}'. `));
 
-        assert.throws(() => lgFile.evaluateTemplate('conditionalTemplate1', { dialog : true }), Error(`'dialog.abc' evaluated to null. [template1]  Error occurred when evaluating '-I want \${dialog.abc}'. [conditionalTemplate1] Condition '\${dialog}':  Error occurred when evaluating '-I want \${template1()}'. `));
+        assert.throws(() => lgFile.evaluate('conditionalTemplate1', { dialog : true }), Error(`'dialog.abc' evaluated to null. [template1]  Error occurred when evaluating '-I want \${dialog.abc}'. [conditionalTemplate1] Condition '\${dialog}':  Error occurred when evaluating '-I want \${template1()}'. `));
 
-        assert.throws(() => lgFile.evaluateTemplate(`conditionalTemplate2`), Error(`'dialog.abc' evaluated to null. [conditionalTemplate2] Condition '\${dialog.abc}': Error occurred when evaluating '-IF :\${dialog.abc}'. `));
+        assert.throws(() => lgFile.evaluate(`conditionalTemplate2`), Error(`'dialog.abc' evaluated to null. [conditionalTemplate2] Condition '\${dialog.abc}': Error occurred when evaluating '-IF :\${dialog.abc}'. `));
 
-        assert.throws(() => lgFile.evaluateTemplate(`structured1`), Error(`'dialog.abc' evaluated to null. [structured1] Property 'Text': Error occurred when evaluating 'Text=I want \${dialog.abc}'. `));
+        assert.throws(() => lgFile.evaluate(`structured1`), Error(`'dialog.abc' evaluated to null. [structured1] Property 'Text': Error occurred when evaluating 'Text=I want \${dialog.abc}'. `));
 
-        assert.throws(() => lgFile.evaluateTemplate(`structured2`), Error(`'dialog.abc' evaluated to null. [template1]  Error occurred when evaluating '-I want \${dialog.abc}'. [structured2] Property 'Text': Error occurred when evaluating 'Text=I want \${template1()}'. `));
+        assert.throws(() => lgFile.evaluate(`structured2`), Error(`'dialog.abc' evaluated to null. [template1]  Error occurred when evaluating '-I want \${dialog.abc}'. [structured2] Property 'Text': Error occurred when evaluating 'Text=I want \${template1()}'. `));
         
-        assert.throws(() => lgFile.evaluateTemplate(`structured3`), Error(`'dialog.abc' evaluated to null. [template1]  Error occurred when evaluating '-I want \${dialog.abc}'. [structured2] Property 'Text': Error occurred when evaluating 'Text=I want \${template1()}'. [structured3]  Error occurred when evaluating '\${structured2()}'. `))
+        assert.throws(() => lgFile.evaluate(`structured3`), Error(`'dialog.abc' evaluated to null. [template1]  Error occurred when evaluating '-I want \${dialog.abc}'. [structured2] Property 'Text': Error occurred when evaluating 'Text=I want \${template1()}'. [structured3]  Error occurred when evaluating '\${structured2()}'. `))
         
-        assert.throws(() => lgFile.evaluateTemplate(`switchcase1`, { turn : { testValue : 1 } }), Error(`'dialog.abc' evaluated to null. [switchcase1] Case '\${1}': Error occurred when evaluating '-I want \${dialog.abc}'. `));
+        assert.throws(() => lgFile.evaluate(`switchcase1`, { turn : { testValue : 1 } }), Error(`'dialog.abc' evaluated to null. [switchcase1] Case '\${1}': Error occurred when evaluating '-I want \${dialog.abc}'. `));
         
-        assert.throws(() => lgFile.evaluateTemplate(`switchcase2`, { turn : { testValue : 0 } }), Error(`'dialog.abc' evaluated to null. [switchcase2] Case 'Default': Error occurred when evaluating '-I want \${dialog.abc}'. `));
+        assert.throws(() => lgFile.evaluate(`switchcase2`, { turn : { testValue : 0 } }), Error(`'dialog.abc' evaluated to null. [switchcase2] Case 'Default': Error occurred when evaluating '-I want \${dialog.abc}'. `));
     });
 });
 

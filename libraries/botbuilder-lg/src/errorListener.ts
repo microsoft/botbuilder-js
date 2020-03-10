@@ -7,10 +7,10 @@
  */
 import { ANTLRErrorListener, RecognitionException, Recognizer } from 'antlr4ts';
 import { Diagnostic, DiagnosticSeverity } from './diagnostic';
-import { LGException } from './lgException';
+import { TemplateException } from './templateException';
 import { Position } from './position';
 import { Range } from './range';
-import { LGErrors } from './lgErrors';
+import { TemplateErrors } from './templateErrors';
 
 /**
  * LG parser error listener.
@@ -33,8 +33,8 @@ export class ErrorListener implements ANTLRErrorListener<any> {
         const startPosition: Position = new Position(line, charPositionInLine);
         const stopPosition: Position = new Position(line, charPositionInLine + offendingSymbol.stopIndex - offendingSymbol.startIndex + 1);
         const range: Range = new Range(startPosition, stopPosition);
-        const diagnostic: Diagnostic = new Diagnostic(range, LGErrors.syntaxError, DiagnosticSeverity.Error, this.source);
+        const diagnostic: Diagnostic = new Diagnostic(range, TemplateErrors.syntaxError, DiagnosticSeverity.Error, this.source);
 
-        throw new LGException(diagnostic.toString(), [diagnostic]);
+        throw new TemplateException(diagnostic.toString(), [diagnostic]);
     }
 }

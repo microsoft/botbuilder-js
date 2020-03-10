@@ -10,12 +10,12 @@ import { CommonTokenStream } from 'antlr4ts/CommonTokenStream';
 import { ErrorListener } from './errorListener';
 import { LGFileLexer } from './generated/LGFileLexer';
 import { FileContext, ImportDefinitionContext, LGFileParser, ParagraphContext, TemplateDefinitionContext, OptionsDefinitionContext } from './generated/LGFileParser';
-import { LGImport } from './lgImport';
-import { LGTemplate } from './lgTemplate';
-import { LGFile } from './lgFile';
+import { TemplateImport } from './templateImport';
+import { Template } from './template';
+import { Templates } from './templates';
 import { StaticChecker } from './staticChecker';
-import { LGExtensions } from './lgExtensions';
-import { LGException } from './lgException';
+import { TemplateExtensions } from './templateExtensions';
+import { TemplateException } from './templateException';
 import * as path from 'path';
 import * as fs from 'fs';
 import { Diagnostic, DiagnosticSeverity } from './diagnostic';
@@ -29,7 +29,7 @@ export declare type ImportResolverDelegate = (source: string, resourceId: string
 /**
  * LG Parser
  */
-export class LGParser {
+export class TemplateParser {
 
     /// <summary>
     /// option regex.
@@ -43,11 +43,11 @@ export class LGParser {
     * @param expressionParser Expression parser for evaluating expressions.
     * @returns new lg file.
     */
-    public static parseFile(filePath: string, importResolver?: ImportResolverDelegate, expressionParser?: ExpressionParser): LGFile {
-        const fullPath = LGExtensions.normalizePath(filePath);
+    public static parseFile(filePath: string, importResolver?: ImportResolverDelegate, expressionParser?: ExpressionParser): Templates {
+        const fullPath = TemplateExtensions.normalizePath(filePath);
         const content = fs.readFileSync(fullPath, 'utf-8');
 
-        return LGParser.parseText(content, fullPath, importResolver, expressionParser);
+        return TemplateParser.parseText(content, fullPath, importResolver, expressionParser);
     }
 
     /**
@@ -58,9 +58,9 @@ export class LGParser {
      * @param expressionParser Expression parser for evaluating expressions.
      * @returns entity.
      */
-    public static parseText(content: string, id: string = '', importResolver?: ImportResolverDelegate, expressionParser?: ExpressionParser): LGFile {
-        importResolver = importResolver || LGParser.defaultFileResolver;
-        let lgFile = new LGFile();
+    public static parseText(content: string, id: string = '', importResolver?: ImportResolverDelegate, expressionParser?: ExpressionParser): Templates {
+        importResolver = importResolver || TemplateParser.defaultFileResolver;
+        let lgFile = new Templates();
         lgFile.content = content;
         lgFile.id = id;
         lgFile.importResolver = importResolver;
@@ -69,7 +69,7 @@ export class LGParser {
         }
         let diagnostics: Diagnostic[] = [];
         try {
-            const parsedResult = LGParser.antlrParse(content, id);
+            const parsedResult = TemplateParser.antlrParse(content, id);
             lgFile.templates = parsedResult.templates;
             lgFile.imports = parsedResult.imports;
             lgFile.options = parsedResult.options;
@@ -79,7 +79,7 @@ export class LGParser {
             const semanticErrors = new StaticChecker(lgFile, lgFile.expressionParser).check();
             diagnostics = diagnostics.concat(semanticErrors);
         } catch (err) {
-            if (err instanceof LGException) {
+            if (err instanceof TemplateException) {
                 diagnostics = diagnostics.concat(err.getDiagnostic());
             } else {
                 diagnostics.push(this.buildDiagnostic(err.Message, undefined, id));
@@ -97,13 +97,13 @@ export class LGParser {
     /// <param name="content">Text content contains lg templates.</param>
     /// <param name="lgFile">original LGFile.</param>
     /// <returns>new LGFile entity.</returns>
-    public static parseTextWithRef(content: string, lgFile: LGFile): LGFile {
+    public static parseTextWithRef(content: string, lgFile: Templates): Templates {
         if (!lgFile) {
             throw Error(`LGFile`);
         }
 
         const id = 'inline content';
-        let newLgFile = new LGFile();
+        let newLgFile = new Templates();
         newLgFile.content = content;
         newLgFile.id = id;
         newLgFile.importResolver = lgFile.importResolver;
@@ -127,7 +127,7 @@ export class LGParser {
             diagnostics = diagnostics.concat(semanticErrors);
         }
         catch (err) {
-            if (err instanceof LGException) {
+            if (err instanceof TemplateException) {
                 diagnostics = diagnostics.concat(err.getDiagnostic());
             } else {
                 diagnostics.push(this.buildDiagnostic(err.Message, undefined, id));
@@ -140,10 +140,10 @@ export class LGParser {
     }
 
     public static defaultFileResolver(sourceId: string, resourceId: string): { content: string; id: string } {
-        let importPath = LGExtensions.normalizePath(resourceId);
+        let importPath = TemplateExtensions.normalizePath(resourceId);
         if (!path.isAbsolute(importPath)) {
             // get full path for importPath relative to path which is doing the import.
-            importPath = LGExtensions.normalizePath(path.join(path.dirname(sourceId), importPath));
+            importPath = TemplateExtensions.normalizePath(path.join(path.dirname(sourceId), importPath));
         }
         if (!fs.existsSync(importPath) || !fs.statSync(importPath).isFile()) {
             throw Error(`Could not find file: ${ importPath }`);
@@ -153,25 +153,25 @@ export class LGParser {
         return { content, id: importPath };
     }
 
-    private static antlrParse(text: string, id: string = ''): { templates: LGTemplate[]; imports: LGImport[]; invalidTemplateErrors: Diagnostic[]; options: string[]} {
+    private static antlrParse(text: string, id: string = ''): { templates: Template[]; imports: TemplateImport[]; invalidTemplateErrors: Diagnostic[]; options: string[]} {
         const fileContext: FileContext = this.getFileContentContext(text, id);
-        const templates: LGTemplate[] = this.extractLGTemplates(fileContext, text, id);
-        const imports: LGImport[] = this.extractLGImports(fileContext, id);
+        const templates: Template[] = this.extractLGTemplates(fileContext, text, id);
+        const imports: TemplateImport[] = this.extractLGImports(fileContext, id);
         const invalidTemplateErrors: Diagnostic[] = this.getInvalidTemplateErrors(fileContext, id);
         const options: string[] = this.extractLGOptions(fileContext);
         return { templates, imports, invalidTemplateErrors, options};
     }
 
-    private static getReferences(file: LGFile, importResolver: ImportResolverDelegate): LGFile[] {
-        var resourcesFound = new Set<LGFile>();
+    private static getReferences(file: Templates, importResolver: ImportResolverDelegate): Templates[] {
+        var resourcesFound = new Set<Templates>();
         this.resolveImportResources(file, resourcesFound, importResolver);
 
         resourcesFound.delete(file);
         return Array.from(resourcesFound);
     }
 
-    private static resolveImportResources(start: LGFile, resourcesFound: Set<LGFile>, importResolver: ImportResolverDelegate): void {
-        var resourceIds = start.imports.map((lg: LGImport): string => lg.id);
+    private static resolveImportResources(start: Templates, resourcesFound: Set<Templates>, importResolver: ImportResolverDelegate): void {
+        var resourceIds = start.imports.map((lg: TemplateImport): string => lg.id);
         resourcesFound.add(start);
 
         for (const id of resourceIds) {
@@ -181,15 +181,15 @@ export class LGParser {
                 const path = result.id;
                 const notExist = Array.from(resourcesFound).filter((u): boolean => u.id === path).length === 0;
                 if (notExist) {
-                    var childResource = LGParser.parseText(content, path, importResolver, start.expressionParser);
+                    var childResource = TemplateParser.parseText(content, path, importResolver, start.expressionParser);
                     this.resolveImportResources(childResource, resourcesFound, importResolver);
                 }
             }
             catch (err) {
-                if (err instanceof LGException) {
+                if (err instanceof TemplateException) {
                     throw err;
                 } else {
-                    throw new LGException(err.message, [this.buildDiagnostic(err.message, undefined, start.id)]);
+                    throw new TemplateException(err.message, [this.buildDiagnostic(err.message, undefined, start.id)]);
                 }
             }
         }
@@ -263,7 +263,7 @@ export class LGParser {
         return parser.file();
     }
 
-    private static extractLGTemplates(file: FileContext, lgfileContent: string, source: string = ''): LGTemplate[] {
+    private static extractLGTemplates(file: FileContext, lgfileContent: string, source: string = ''): Template[] {
         if (!file) {
             return [];
         }
@@ -272,10 +272,10 @@ export class LGParser {
             .map((x: ParagraphContext): TemplateDefinitionContext => x.templateDefinition())
             .filter((x: TemplateDefinitionContext): boolean => x !== undefined);
 
-        return templates.map((x: TemplateDefinitionContext): LGTemplate => new LGTemplate(x, lgfileContent, source));
+        return templates.map((x: TemplateDefinitionContext): Template => new Template(x, lgfileContent, source));
     }
 
-    private static extractLGImports(file: FileContext, source: string = ''): LGImport[] {
+    private static extractLGImports(file: FileContext, source: string = ''): TemplateImport[] {
         if (!file) {
             return [];
         }
@@ -284,6 +284,6 @@ export class LGParser {
             .map((x: ParagraphContext): ImportDefinitionContext => x.importDefinition())
             .filter((x: ImportDefinitionContext): boolean => x !== undefined);
 
-        return imports.map((x: ImportDefinitionContext): LGImport => new LGImport(x, source));
+        return imports.map((x: ImportDefinitionContext): TemplateImport => new TemplateImport(x, source));
     }
 }

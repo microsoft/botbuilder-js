@@ -5,26 +5,26 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-export * from './lgFile';
+export * from './templates';
 export * from './evaluator';
-export * from './lgParser';
+export * from './templateParser';
 export * from './generated';
 export * from './staticChecker';
 export * from './analyzer';
-export * from './lgTemplate';
+export * from './template';
 export * from './diagnostic';
-export * from './lgException';
+export * from './templateException';
 export * from './extractor';
-export * from './lgImport';
+export * from './templateImport';
 export * from './range';
 export * from './position';
 export * from './evaluationTarget';
 export * from './activityFactory';
-export * from './activityChecker';
-export * from './lgExtensions';
+export * from './templateExtensions';
 export * from './analyzerResult';
-export * from './lgErrors';
+export * from './templateErrors';
 export * from './evaluator';
 export * from './errorListener';
 export * from './customizedMemory';
 export * from './expander';
+export * from './multiLanguageLG';
