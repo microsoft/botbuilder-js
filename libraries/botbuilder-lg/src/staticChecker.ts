@@ -23,13 +23,13 @@ import { TemplateExtensions } from './templateExtensions';
 /// </summary>
 export class StaticChecker extends AbstractParseTreeVisitor<Diagnostic[]> implements LGFileParserVisitor<Diagnostic[]> {
     private readonly baseExpressionParser: ExpressionParser;
-    private readonly lgFile: Templates;
+    private readonly templates: Templates;
     private visitedTemplateNames: string[];
     private _expressionParser: ExpressionParserInterface;
 
-    public constructor(lgFile: Templates, expressionParser?: ExpressionParser) {
+    public constructor(templates: Templates, expressionParser?: ExpressionParser) {
         super();
-        this.lgFile = lgFile;
+        this.templates = templates;
         this.baseExpressionParser = expressionParser || new ExpressionParser();
     }
 
@@ -37,7 +37,7 @@ export class StaticChecker extends AbstractParseTreeVisitor<Diagnostic[]> implem
     private get expressionParser(): ExpressionParserInterface {
         if (this._expressionParser === undefined) {
             // create an evaluator to leverage it's customized function look up for checking
-            var evaluator = new Evaluator(this.lgFile.allTemplates, this.baseExpressionParser);
+            var evaluator = new Evaluator(this.templates.allTemplates, this.baseExpressionParser);
             this._expressionParser = evaluator.expressionParser;
         }
 
@@ -52,14 +52,14 @@ export class StaticChecker extends AbstractParseTreeVisitor<Diagnostic[]> implem
         this.visitedTemplateNames = [];
         var result = [];
 
-        if (this.lgFile.allTemplates.length === 0)
+        if (this.templates.allTemplates.length === 0)
         {
             result.push(this.buildLGDiagnostic(TemplateErrors.noTemplate, DiagnosticSeverity.Warning, undefined, false));
 
             return result;
         }
 
-        this.lgFile.items.forEach((t): Diagnostic[] => result = result.concat(this.visit(t.parseTree)));
+        this.templates.items.forEach((t): Diagnostic[] => result = result.concat(this.visit(t.parseTree)));
         return result;
     }
 
@@ -77,7 +77,7 @@ export class StaticChecker extends AbstractParseTreeVisitor<Diagnostic[]> implem
                 result.push(this.buildLGDiagnostic(TemplateErrors.duplicatedTemplateInSameTemplate(templateName),undefined, templateNameLine));
             } else {
                 this.visitedTemplateNames.push(templateName);
-                for (const reference of this.lgFile.references) {
+                for (const reference of this.templates.references) {
                     var sameTemplates = reference.items.filter((u): boolean => u.name === templateName);
                     for(const sameTemplate of sameTemplates) {
                         result.push(this.buildLGDiagnostic( TemplateErrors.duplicatedTemplateInDiffTemplate(sameTemplate.name, sameTemplate.source), undefined, templateNameLine));
@@ -319,6 +319,6 @@ export class StaticChecker extends AbstractParseTreeVisitor<Diagnostic[]> implem
         const range = new Range(startPosition, stopPosition);
         message = (this.visitedTemplateNames.length > 0 && includeTemplateNameInfo)? `[${ this.visitedTemplateNames[this.visitedTemplateNames.length - 1] }]`+ message : message;
         
-        return new Diagnostic(range, message, severity, this.lgFile.id);
+        return new Diagnostic(range, message, severity, this.templates.id);
     }
 }

@@ -245,8 +245,8 @@ export class Templates {
 
         const newContent = `#${ fakeTemplateId } \r\n - ${ inlineStr }`;
 
-        const newLgFile = TemplateParser.parseTextWithRef(newContent, this);
-        return newLgFile.evaluate(fakeTemplateId, scope);
+        const newTemplates = TemplateParser.parseTextWithRef(newContent, this);
+        return newTemplates.evaluate(fakeTemplateId, scope);
     }
 
     /**
@@ -426,16 +426,16 @@ export class Templates {
         }
     }
 
-    private initialize(lgfile: Templates): void {
-        this.items = lgfile.items;
-        this.imports = lgfile.imports;
-        this.diagnostics = lgfile.diagnostics;
-        this.references = lgfile.references;
-        this.content = lgfile.content;
-        this.importResolver = lgfile.importResolver;
-        this.id = lgfile.id;
-        this.expressionParser = lgfile.expressionParser;
-        this.options = lgfile.options;
+    private initialize(templates: Templates): void {
+        this.items = templates.items;
+        this.imports = templates.imports;
+        this.diagnostics = templates.diagnostics;
+        this.references = templates.references;
+        this.content = templates.content;
+        this.importResolver = templates.importResolver;
+        this.id = templates.id;
+        this.expressionParser = templates.expressionParser;
+        this.options = templates.options;
     }
 
     private checkErrors(): void {

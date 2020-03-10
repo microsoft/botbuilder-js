@@ -19,7 +19,6 @@ export * from './templateImport';
 export * from './range';
 export * from './position';
 export * from './evaluationTarget';
-export * from './activityFactory';
 export * from './templateExtensions';
 export * from './analyzerResult';
 export * from './templateErrors';

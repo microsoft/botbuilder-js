@@ -60,23 +60,23 @@ export class TemplateParser {
      */
     public static parseText(content: string, id: string = '', importResolver?: ImportResolverDelegate, expressionParser?: ExpressionParser): Templates {
         importResolver = importResolver || TemplateParser.defaultFileResolver;
-        let lgFile = new Templates();
-        lgFile.content = content;
-        lgFile.id = id;
-        lgFile.importResolver = importResolver;
+        let templates = new Templates();
+        templates.content = content;
+        templates.id = id;
+        templates.importResolver = importResolver;
         if (expressionParser) {
-            lgFile.expressionParser = expressionParser;
+            templates.expressionParser = expressionParser;
         }
         let diagnostics: Diagnostic[] = [];
         try {
             const parsedResult = TemplateParser.antlrParse(content, id);
-            lgFile.items = parsedResult.templates;
-            lgFile.imports = parsedResult.imports;
-            lgFile.options = parsedResult.options;
+            templates.items = parsedResult.templates;
+            templates.imports = parsedResult.imports;
+            templates.options = parsedResult.options;
 
             diagnostics = diagnostics.concat(parsedResult.invalidTemplateErrors);
-            lgFile.references = this.getReferences(lgFile, importResolver);
-            const semanticErrors = new StaticChecker(lgFile, lgFile.expressionParser).check();
+            templates.references = this.getReferences(templates, importResolver);
+            const semanticErrors = new StaticChecker(templates, templates.expressionParser).check();
             diagnostics = diagnostics.concat(semanticErrors);
         } catch (err) {
             if (err instanceof TemplateException) {
@@ -86,9 +86,9 @@ export class TemplateParser {
             }
         }
 
-        lgFile.diagnostics = diagnostics;
+        templates.diagnostics = diagnostics;
 
-        return lgFile;
+        return templates;
     }
 
     /// <summary>
@@ -97,16 +97,16 @@ export class TemplateParser {
     /// <param name="content">Text content contains lg templates.</param>
     /// <param name="lgFile">original LGFile.</param>
     /// <returns>new LGFile entity.</returns>
-    public static parseTextWithRef(content: string, lgFile: Templates): Templates {
-        if (!lgFile) {
-            throw Error(`LGFile`);
+    public static parseTextWithRef(content: string, originalTemplates: Templates): Templates {
+        if (!originalTemplates) {
+            throw Error(`templates is empty`);
         }
 
         const id = 'inline content';
-        let newLgFile = new Templates();
-        newLgFile.content = content;
-        newLgFile.id = id;
-        newLgFile.importResolver = lgFile.importResolver;
+        let newTemplates = new Templates();
+        newTemplates.content = content;
+        newTemplates.id = id;
+        newTemplates.importResolver = originalTemplates.importResolver;
         let diagnostics: Diagnostic[] = [];
         try {
             const antlrResult = this.antlrParse(content, id);
@@ -114,16 +114,16 @@ export class TemplateParser {
             const imports = antlrResult.imports;
             const invalidTemplateErrors = antlrResult.invalidTemplateErrors;
             const options = antlrResult.options;
-            newLgFile.items = templates;
-            newLgFile.imports = imports;
-            newLgFile.options = options;
+            newTemplates.items = templates;
+            newTemplates.imports = imports;
+            newTemplates.options = options;
             diagnostics = diagnostics.concat(invalidTemplateErrors);
 
-            newLgFile.references = this.getReferences(newLgFile, newLgFile.importResolver)
-                .concat(lgFile.references)
-                .concat([lgFile]);
+            newTemplates.references = this.getReferences(newTemplates, newTemplates.importResolver)
+                .concat(originalTemplates.references)
+                .concat([originalTemplates]);
 
-            var semanticErrors = new StaticChecker(newLgFile).check();
+            var semanticErrors = new StaticChecker(newTemplates).check();
             diagnostics = diagnostics.concat(semanticErrors);
         }
         catch (err) {
@@ -134,9 +134,9 @@ export class TemplateParser {
             }
         }
 
-        newLgFile.diagnostics = diagnostics;
+        newTemplates.diagnostics = diagnostics;
 
-        return newLgFile;
+        return newTemplates;
     }
 
     public static defaultFileResolver(sourceId: string, resourceId: string): { content: string; id: string } {

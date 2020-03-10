@@ -1,4 +1,5 @@
-const { Templates, ActivityFactory } = require('../lib');
+const { Templates } = require('../lib');
+const {ActivityFactory} = require('botbuilder-core')
 const assert = require('assert');
 
 function getTemplates(){
@@ -7,15 +8,15 @@ function getTemplates(){
 }
 
 function getActivity(templateName, data){
-    const lgFile = getTemplates();
-    const lgResult = lgFile.evaluate(templateName, data);
+    const templates = getTemplates();
+    const lgResult = templates.evaluate(templateName, data);
     return ActivityFactory.fromObject(lgResult);
 }
 
 function getDiagnostics(templateName, data){
     const filePath =  `${ __dirname }/testData/examples/DiagnosticStructuredLG.lg`;
-    const lgfile =  Templates.parseFile(filePath);
-    const lgResult = lgfile.evaluate(templateName, data);
+    const templates =  Templates.parseFile(filePath);
+    const lgResult = templates.evaluate(templateName, data);
     return ActivityFactory.checkLGResult(lgResult) ;
 }
 
