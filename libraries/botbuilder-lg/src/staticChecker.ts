@@ -59,7 +59,7 @@ export class StaticChecker extends AbstractParseTreeVisitor<Diagnostic[]> implem
             return result;
         }
 
-        this.templates.items.forEach((t): Diagnostic[] => result = result.concat(this.visit(t.parseTree)));
+        this.templates.toArray().forEach((t): Diagnostic[] => result = result.concat(this.visit(t.parseTree)));
         return result;
     }
 
@@ -78,7 +78,7 @@ export class StaticChecker extends AbstractParseTreeVisitor<Diagnostic[]> implem
             } else {
                 this.visitedTemplateNames.push(templateName);
                 for (const reference of this.templates.references) {
-                    var sameTemplates = reference.items.filter((u): boolean => u.name === templateName);
+                    var sameTemplates = reference.toArray().filter((u): boolean => u.name === templateName);
                     for(const sameTemplate of sameTemplates) {
                         result.push(this.buildLGDiagnostic( TemplateErrors.duplicatedTemplateInDiffTemplate(sameTemplate.name, sameTemplate.source), undefined, templateNameLine));
                     }

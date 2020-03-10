@@ -34,7 +34,13 @@ describe('ActivityFactoryTest', function() {
             text: 'textContent'
         };
 
-        const cardActionLgResult = getTemplates().evaluateText('${HerocardWithCardAction()}', data);
+        let cnt = 0;
+        const tmpl = getTemplates();
+        for (let t of tmpl) {
+            cnt++;
+        }
+
+        const cardActionLgResult = tmpl.evaluateText('${HerocardWithCardAction()}', data);
         result = ActivityFactory.fromObject(cardActionLgResult);
         assertCardActionActivity(result);
 

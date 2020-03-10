@@ -22,15 +22,8 @@ import { TemplateExtensions } from './templateExtensions';
 /// <summary>
 /// LG entrance, including properties that LG file has, and evaluate functions.
 /// </summary>
-export class Templates {
-
-    /// <summary>
-    /// Gets or sets templates that this LG file contains directly.
-    /// </summary>
-    /// <value>
-    /// templates that this LG file contains directly.
-    /// </value>
-    public items: Template[];
+export class Templates implements Iterable<Template> {
+    private items: Template[];
 
     /// <summary>
     /// Gets or sets import elements that this LG file contains directly.
@@ -117,6 +110,37 @@ export class Templates {
         this.expressionParser = expressionParser || new ExpressionParser();
         this.importResolver = importResolverDelegate;
         this.options = options || [];
+    }
+
+    /**
+     * Returns a new iterator for the template collection.
+     */
+    public [Symbol.iterator](): Iterator<Template> {
+        let index = 0;
+        return {
+            next: (): IteratorResult<Template> => {
+                if (index < this.items.length) {
+                    return { done: false, value: this.items[index++] };
+                } else {
+                    return { done: true, value: undefined };
+                }
+            }
+        }
+    }
+
+    /**
+     * Returns a reference to the internal list of collection templates.
+     */
+    public toArray(): Template[] {
+        return this.items;
+    }
+
+    /**
+     * Appends 1 or more templates to the collection.
+     * @param args List of templates to add.
+     */
+    public push(...args: Template[]): void {
+        args.forEach(t => this.items.push(t));
     }
 
     /// <summary>

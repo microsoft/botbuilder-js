@@ -9,6 +9,17 @@ function GetExampleFilePath(fileName) {
 
 
 describe('LG', function() {
+    it('TestEnumeration', function () {
+        let cnt = 0;
+        let templates = Templates.parseFile(GetExampleFilePath('2.lg'));
+        for (let t of templates) {
+            assert.strictEqual(typeof t, 'object');
+            assert.strictEqual(t.name, 'wPhrase');
+            cnt++;
+        }
+        assert.strictEqual(cnt, 1);
+    });
+
     it('TestBasic', function() {
         let templates = Templates.parseFile(GetExampleFilePath('2.lg'));
         let evaled = templates.evaluate('wPhrase');
