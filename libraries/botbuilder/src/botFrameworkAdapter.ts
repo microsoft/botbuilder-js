@@ -272,12 +272,19 @@ export class BotFrameworkAdapter extends BotAdapter implements ExtendedUserToken
 
         let credentials: AppCredentials = this.credentials;
 
-        // If the provided OAuthScope doesn't match the current one on the instance's credentials, create
-        // a new AppCredentials with the correct OAuthScope.
-        if (credentials.oAuthScope !== audience) {
-            // The BotFrameworkAdapter JavaScript implementation supports one Bot per instance, so get
-            // the botAppId from the credentials.
-            credentials = await this.buildCredentials(this.credentials.appId, audience);
+        // For authenticated flows (where the bot has an AppId), the ConversationReference's serviceUrl needs
+        // to be trusted for the bot to acquire a token when sending activities to the conversation.
+        // For anonymous flows, the serviceUrl should not be trusted.
+        if (credentials.appId) {
+            AppCredentials.trustServiceUrl(reference.serviceUrl);
+
+            // If the provided OAuthScope doesn't match the current one on the instance's credentials, create
+            // a new AppCredentials with the correct OAuthScope.
+            if (credentials.oAuthScope !== audience) {
+                // The BotFrameworkAdapter JavaScript implementation supports one Bot per instance, so get
+                // the botAppId from the credentials.
+                credentials = await this.buildCredentials(this.credentials.appId, audience);
+            }
         }
 
         const connectorClient = this.createConnectorClientInternal(reference.serviceUrl, credentials);
