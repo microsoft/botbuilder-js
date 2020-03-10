@@ -170,7 +170,7 @@ export class Templates {
     }
 
     /**
-     * Parser to turn lg content into a LGFile.
+     * Parser to turn lg content into a Templates.
      * @param content text content contains lg templates.
      * @param id id is the identifier of content. If importResolver is undefined, id must be a full path string. 
      * @param importResolver resolver to resolve LG import id to template text.

@@ -51,7 +51,7 @@ export class TemplateParser {
     }
 
     /**
-     * Parser to turn lg content into a LGFile.
+     * Parser to turn lg content into a Templates.
      * @param content text content contains lg templates.
      * @param id id is the identifier of content. If importResolver is undefined, id must be a full path string. 
      * @param importResolver resolver to resolve LG import id to template text.
@@ -91,12 +91,11 @@ export class TemplateParser {
         return templates;
     }
 
-    /// <summary>
-    /// Parser to turn lg content into a LGFile based on the original LGFile.
-    /// </summary>
-    /// <param name="content">Text content contains lg templates.</param>
-    /// <param name="lgFile">original LGFile.</param>
-    /// <returns>new LGFile entity.</returns>
+    /**
+     * Parser to turn lg content into a Templates based on the original Templates.
+     * @param content Text content contains lg templates.
+     * @param originalTemplates original templates
+     */
     public static parseTextWithRef(content: string, originalTemplates: Templates): Templates {
         if (!originalTemplates) {
             throw Error(`templates is empty`);
