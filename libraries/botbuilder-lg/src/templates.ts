@@ -6,31 +6,24 @@
  * Licensed under the MIT License.
  */
 
-import { LGTemplate } from './lgTemplate';
-import { LGImport } from './lgImport';
+import { Template } from './template';
+import { TemplateImport } from './templateImport';
 import { Diagnostic, DiagnosticSeverity } from './diagnostic';
 import { ExpressionParser } from 'adaptive-expressions';
-import { ImportResolverDelegate } from './lgParser';
+import { ImportResolverDelegate } from './templateParser';
 import { Evaluator } from './evaluator';
 import { Expander } from './expander';
 import { Analyzer } from './analyzer';
-import { LGParser } from './lgParser';
+import { TemplateParser } from './templateParser';
 import { AnalyzerResult } from './analyzerResult';
-import { LGErrors } from './lgErrors';
-import { LGExtensions } from './lgExtensions';
+import { TemplateErrors } from './templateErrors';
+import { TemplateExtensions } from './templateExtensions';
 
 /// <summary>
 /// LG entrance, including properties that LG file has, and evaluate functions.
 /// </summary>
-export class LGFile {
-
-    /// <summary>
-    /// Gets or sets templates that this LG file contains directly.
-    /// </summary>
-    /// <value>
-    /// templates that this LG file contains directly.
-    /// </value>
-    public templates: LGTemplate[];
+export class Templates implements Iterable<Template> {
+    private items: Template[];
 
     /// <summary>
     /// Gets or sets import elements that this LG file contains directly.
@@ -38,7 +31,7 @@ export class LGFile {
     /// <value>
     /// import elements that this LG file contains directly.
     /// </value>
-    public imports: LGImport[];
+    public imports: TemplateImport[];
 
     /// <summary>
     /// Gets or sets diagnostics.
@@ -57,7 +50,7 @@ export class LGFile {
     /// <value>
     /// all references that this LG file has from Imports
     /// </value>
-    public references: LGFile[];
+    public references: Templates[];
 
     /// <summary>
     /// Gets or sets LG content.
@@ -99,16 +92,16 @@ export class LGFile {
     /// </value>
     public options: string[];
 
-    public constructor(templates?: LGTemplate[],
-        imports?: LGImport[],
+    public constructor(items?: Template[],
+        imports?: TemplateImport[],
         diagnostics?: Diagnostic[],
-        references?: LGFile[],
+        references?: Templates[],
         content?: string,
         id?: string,
         expressionParser?: ExpressionParser,
         importResolverDelegate?: ImportResolverDelegate,
         options?: string[]) {
-        this.templates = templates || [];
+        this.items = items || [];
         this.imports = imports || [];
         this.diagnostics = diagnostics || [];
         this.references = references || [];
@@ -117,6 +110,37 @@ export class LGFile {
         this.expressionParser = expressionParser || new ExpressionParser();
         this.importResolver = importResolverDelegate;
         this.options = options || [];
+    }
+
+    /**
+     * Returns a new iterator for the template collection.
+     */
+    public [Symbol.iterator](): Iterator<Template> {
+        let index = 0;
+        return {
+            next: (): IteratorResult<Template> => {
+                if (index < this.items.length) {
+                    return { done: false, value: this.items[index++] };
+                } else {
+                    return { done: true, value: undefined };
+                }
+            }
+        }
+    }
+
+    /**
+     * Returns a reference to the internal list of collection templates.
+     */
+    public toArray(): Template[] {
+        return this.items;
+    }
+
+    /**
+     * Appends 1 or more templates to the collection.
+     * @param args List of templates to add.
+     */
+    public push(...args: Template[]): void {
+        args.forEach(t => this.items.push(t));
     }
 
     /// <summary>
@@ -139,9 +163,9 @@ export class LGFile {
     /// <value>
     /// All templates from current lg file and reference lg files.
     /// </value>
-    public get allTemplates(): LGTemplate[] {
-        let result = this.templates;
-        this.references.forEach((ref): LGTemplate[] => result = result.concat(ref.templates));
+    public get allTemplates(): Template[] {
+        let result = this.items;
+        this.references.forEach((ref): Template[] => result = result.concat(ref.items));
         return Array.from(new Set(result));
     }
 
@@ -157,13 +181,37 @@ export class LGFile {
         return Array.from(new Set(result));
     }
 
+
+    /**
+    * parse a file and return LG file.
+    * @param filePath LG absolute file path..
+    * @param importResolver resolver to resolve LG import id to template text.
+    * @param expressionParser Expression parser for evaluating expressions.
+    * @returns new lg file.
+    */
+    public static parseFile(filePath: string, importResolver?: ImportResolverDelegate, expressionParser?: ExpressionParser): Templates {
+        return TemplateParser.parseFile(filePath, importResolver, expressionParser);
+    }
+
+    /**
+     * Parser to turn lg content into a Templates.
+     * @param content text content contains lg templates.
+     * @param id id is the identifier of content. If importResolver is undefined, id must be a full path string. 
+     * @param importResolver resolver to resolve LG import id to template text.
+     * @param expressionParser Expression parser for evaluating expressions.
+     * @returns entity.
+     */
+    public static parseText(content: string, id: string = '', importResolver?: ImportResolverDelegate, expressionParser?: ExpressionParser): Templates {
+        return TemplateParser.parseText(content, id, importResolver, expressionParser);
+    }
+
     /// <summary>
     /// Evaluate a template with given name and scope.
     /// </summary>
     /// <param name="templateName">Template name to be evaluated.</param>
     /// <param name="scope">The state visible in the evaluation.</param>
     /// <returns>Evaluate result.</returns>
-    public evaluateTemplate(templateName: string, scope?: object): any {
+    public evaluate(templateName: string, scope?: object): any {
         this.checkErrors();
 
         const evaluator = new Evaluator(this.allTemplates, this.expressionParser, this.strictMode);
@@ -203,7 +251,7 @@ export class LGFile {
     /// <param name="inlineStr">inline string which will be evaluated.</param>
     /// <param name="scope">scope object or JToken.</param>
     /// <returns>Evaluate result.</returns>
-    public evaluate(inlineStr: string, scope?: object): any
+    public evaluateText(inlineStr: string, scope?: object): any
     {
         if (inlineStr === undefined)
         {
@@ -213,7 +261,7 @@ export class LGFile {
         this.checkErrors();
 
         // wrap inline string with "# name and -" to align the evaluation process
-        const fakeTemplateId = LGExtensions.newGuid();
+        const fakeTemplateId = TemplateExtensions.newGuid();
         const multiLineMark = '```';
 
         inlineStr = !(inlineStr.trim().startsWith(multiLineMark) && inlineStr.includes('\n'))
@@ -221,8 +269,8 @@ export class LGFile {
 
         const newContent = `#${ fakeTemplateId } \r\n - ${ inlineStr }`;
 
-        const newLgFile = LGParser.parseTextWithRef(newContent, this);
-        return newLgFile.evaluateTemplate(fakeTemplateId, scope);
+        const newTemplates = TemplateParser.parseTextWithRef(newContent, this);
+        return newTemplates.evaluate(fakeTemplateId, scope);
     }
 
     /**
@@ -232,8 +280,8 @@ export class LGFile {
     * @param templateBody new  template body.
     * @returns new lg file.
     */
-    public updateTemplate(templateName: string, newTemplateName: string, parameters: string[], templateBody: string): LGFile {
-        const template: LGTemplate = this.templates.find((u: LGTemplate): boolean => u.name === templateName);
+    public updateTemplate(templateName: string, newTemplateName: string, parameters: string[], templateBody: string): Templates {
+        const template: Template = this.items.find((u: Template): boolean => u.name === templateName);
         if (template === undefined) {
             return this;
         }
@@ -247,7 +295,7 @@ export class LGFile {
 
         ({startLine, stopLine} = template.getTemplateRange());
         const newContent: string = this.replaceRangeContent(this.content, startLine, stopLine, content);
-        this.initialize(LGParser.parseText(newContent, this.id, this.importResolver));
+        this.initialize(TemplateParser.parseText(newContent, this.id, this.importResolver));
 
         return this;
     }
@@ -259,16 +307,16 @@ export class LGFile {
     * @param templateBody new  template body.
     * @returns new lg file.
     */
-    public addTemplate(templateName: string, parameters: string[], templateBody: string): LGFile {
-        const template: LGTemplate = this.templates.find((u: LGTemplate): boolean => u.name === templateName);
+    public addTemplate(templateName: string, parameters: string[], templateBody: string): Templates {
+        const template: Template = this.items.find((u: Template): boolean => u.name === templateName);
         if (template !== undefined) {
-            throw new Error(LGErrors.templateExist(templateName));
+            throw new Error(TemplateErrors.templateExist(templateName));
         }
 
         const templateNameLine: string = this.buildTemplateNameLine(templateName, parameters);
         const newTemplateBody: string = this.convertTemplateBody(templateBody);
         const newContent = `${ this.content.trimRight() }\r\n\r\n${ templateNameLine }\r\n${ newTemplateBody }\r\n`;
-        this.initialize(LGParser.parseText(newContent, this.id, this.importResolver));
+        this.initialize(TemplateParser.parseText(newContent, this.id, this.importResolver));
 
         return this;
     }
@@ -278,8 +326,8 @@ export class LGFile {
     * @param templateName which template should delete.
     * @returns return the new lg file.
     */
-    public deleteTemplate(templateName: string): LGFile {
-        const template: LGTemplate = this.templates.find((u: LGTemplate): boolean => u.name === templateName);
+    public deleteTemplate(templateName: string): Templates {
+        const template: Template = this.items.find((u: Template): boolean => u.name === templateName);
         if (template === undefined) {
             return this;
         }
@@ -290,7 +338,7 @@ export class LGFile {
         ({startLine, stopLine} = template.getTemplateRange());
 
         const newContent: string = this.replaceRangeContent(this.content, startLine, stopLine, undefined);
-        this.initialize(LGParser.parseText(newContent, this.id, this.importResolver));
+        this.initialize(TemplateParser.parseText(newContent, this.id, this.importResolver));
 
         return this;
     }
@@ -402,16 +450,16 @@ export class LGFile {
         }
     }
 
-    private initialize(lgfile: LGFile): void {
-        this.templates = lgfile.templates;
-        this.imports = lgfile.imports;
-        this.diagnostics = lgfile.diagnostics;
-        this.references = lgfile.references;
-        this.content = lgfile.content;
-        this.importResolver = lgfile.importResolver;
-        this.id = lgfile.id;
-        this.expressionParser = lgfile.expressionParser;
-        this.options = lgfile.options;
+    private initialize(templates: Templates): void {
+        this.items = templates.items;
+        this.imports = templates.imports;
+        this.diagnostics = templates.diagnostics;
+        this.references = templates.references;
+        this.content = templates.content;
+        this.importResolver = templates.importResolver;
+        this.id = templates.id;
+        this.expressionParser = templates.expressionParser;
+        this.options = templates.options;
     }
 
     private checkErrors(): void {
