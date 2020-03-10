@@ -29,8 +29,8 @@ describe('LG', function() {
 
     it('TestBasicTemplateReference', function() {
         let templates = Templates.parseFile(GetExampleFilePath('3.lg'));
-        console.log(templates.items[0].body);
-        console.log(templates.items[1].body);
+        console.log(templates.toArray()[0].body);
+        console.log(templates.toArray()[1].body);
         let evaled = templates.evaluate('welcome-user', undefined);
         const options = ['Hi', 'Hello', 'Hiya', 'Hi :)', 'Hello :)', 'Hiya :)'];
         assert.strictEqual(options.includes(evaled), true, `The result ${ evaled } is not in those options [${ options.join(',') }]`);
@@ -501,45 +501,45 @@ describe('LG', function() {
     it('TestLGResource', function() {
         var templates = Templates.parseText(fs.readFileSync(GetExampleFilePath('2.lg'), 'utf-8'));
 
-        assert.strictEqual(templates.items.length, 1);
+        assert.strictEqual(templates.toArray().length, 1);
         assert.strictEqual(templates.imports.length, 0);
-        assert.strictEqual(templates.items[0].name, 'wPhrase');
-        assert.strictEqual(templates.items[0].body.replace(/\r\n/g, '\n'), '> this is an in-template comment\n- Hi\n- Hello\n- Hiya\n- Hi');
+        assert.strictEqual(templates.toArray()[0].name, 'wPhrase');
+        assert.strictEqual(templates.toArray()[0].body.replace(/\r\n/g, '\n'), '> this is an in-template comment\n- Hi\n- Hello\n- Hiya\n- Hi');
 
         templates = templates.addTemplate('newtemplate', ['age', 'name'], '- hi ');
-        assert.strictEqual(templates.items.length, 2);
+        assert.strictEqual(templates.toArray().length, 2);
         assert.strictEqual(templates.imports.length, 0);
-        assert.strictEqual(templates.items[1].name, 'newtemplate');
-        assert.strictEqual(templates.items[1].parameters.length, 2);
-        assert.strictEqual(templates.items[1].parameters[0], 'age');
-        assert.strictEqual(templates.items[1].parameters[1], 'name');
-        assert.strictEqual(templates.items[1].body.replace(/\r\n/g, '\n'), '- hi \n');
+        assert.strictEqual(templates.toArray()[1].name, 'newtemplate');
+        assert.strictEqual(templates.toArray()[1].parameters.length, 2);
+        assert.strictEqual(templates.toArray()[1].parameters[0], 'age');
+        assert.strictEqual(templates.toArray()[1].parameters[1], 'name');
+        assert.strictEqual(templates.toArray()[1].body.replace(/\r\n/g, '\n'), '- hi \n');
 
         templates = templates.addTemplate('newtemplate2', undefined, '- hi2 ');
-        assert.strictEqual(templates.items.length, 3);
-        assert.strictEqual(templates.items[2].name, 'newtemplate2');
-        assert.strictEqual(templates.items[2].body.replace(/\r\n/g, '\n'), '- hi2 \n');
+        assert.strictEqual(templates.toArray().length, 3);
+        assert.strictEqual(templates.toArray()[2].name, 'newtemplate2');
+        assert.strictEqual(templates.toArray()[2].body.replace(/\r\n/g, '\n'), '- hi2 \n');
 
         templates = templates.updateTemplate('newtemplate', 'newtemplateName', ['newage', 'newname'], '- new hi\r\n#hi');
-        assert.strictEqual(templates.items.length, 3);
+        assert.strictEqual(templates.toArray().length, 3);
         assert.strictEqual(templates.imports.length, 0);
-        assert.strictEqual(templates.items[1].name, 'newtemplateName');
-        assert.strictEqual(templates.items[1].parameters.length, 2);
-        assert.strictEqual(templates.items[1].parameters[0], 'newage');
-        assert.strictEqual(templates.items[1].parameters[1], 'newname');
-        assert.strictEqual(templates.items[1].body.replace(/\r\n/g, '\n'), '- new hi\n- #hi\n');
+        assert.strictEqual(templates.toArray()[1].name, 'newtemplateName');
+        assert.strictEqual(templates.toArray()[1].parameters.length, 2);
+        assert.strictEqual(templates.toArray()[1].parameters[0], 'newage');
+        assert.strictEqual(templates.toArray()[1].parameters[1], 'newname');
+        assert.strictEqual(templates.toArray()[1].body.replace(/\r\n/g, '\n'), '- new hi\n- #hi\n');
 
         templates = templates.updateTemplate('newtemplate2', 'newtemplateName2', ['newage2', 'newname2'], '- new hi\r\n#hi2');
-        assert.strictEqual(templates.items.length, 3);
+        assert.strictEqual(templates.toArray().length, 3);
         assert.strictEqual(templates.imports.length, 0);
-        assert.strictEqual(templates.items[2].name, 'newtemplateName2');
-        assert.strictEqual(templates.items[2].body.replace(/\r\n/g, '\n'), '- new hi\n- #hi2\n');
+        assert.strictEqual(templates.toArray()[2].name, 'newtemplateName2');
+        assert.strictEqual(templates.toArray()[2].body.replace(/\r\n/g, '\n'), '- new hi\n- #hi2\n');
 
         templates = templates.deleteTemplate('newtemplateName');
-        assert.strictEqual(templates.items.length, 2);
+        assert.strictEqual(templates.toArray().length, 2);
 
         templates = templates.deleteTemplate('newtemplateName2');
-        assert.strictEqual(templates.items.length, 1);
+        assert.strictEqual(templates.toArray().length, 1);
     });
 
     it('TestMemoryScope', function() {
