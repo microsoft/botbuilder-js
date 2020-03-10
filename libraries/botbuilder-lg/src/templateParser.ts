@@ -70,7 +70,7 @@ export class TemplateParser {
         let diagnostics: Diagnostic[] = [];
         try {
             const parsedResult = TemplateParser.antlrParse(content, id);
-            lgFile.templates = parsedResult.templates;
+            lgFile.items = parsedResult.templates;
             lgFile.imports = parsedResult.imports;
             lgFile.options = parsedResult.options;
 
@@ -114,7 +114,7 @@ export class TemplateParser {
             const imports = antlrResult.imports;
             const invalidTemplateErrors = antlrResult.invalidTemplateErrors;
             const options = antlrResult.options;
-            newLgFile.templates = templates;
+            newLgFile.items = templates;
             newLgFile.imports = imports;
             newLgFile.options = options;
             diagnostics = diagnostics.concat(invalidTemplateErrors);

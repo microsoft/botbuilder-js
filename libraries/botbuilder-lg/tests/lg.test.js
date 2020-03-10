@@ -18,8 +18,8 @@ describe('LG', function() {
 
     it('TestBasicTemplateReference', function() {
         let lgFile = Templates.parseFile(GetExampleFilePath('3.lg'));
-        console.log(lgFile.templates[0].body);
-        console.log(lgFile.templates[1].body);
+        console.log(lgFile.items[0].body);
+        console.log(lgFile.items[1].body);
         let evaled = lgFile.evaluate('welcome-user', undefined);
         const options = ['Hi', 'Hello', 'Hiya', 'Hi :)', 'Hello :)', 'Hiya :)'];
         assert.strictEqual(options.includes(evaled), true, `The result ${ evaled } is not in those options [${ options.join(',') }]`);
@@ -490,45 +490,45 @@ describe('LG', function() {
     it('TestLGResource', function() {
         var lgResource = Templates.parseText(fs.readFileSync(GetExampleFilePath('2.lg'), 'utf-8'));
 
-        assert.strictEqual(lgResource.templates.length, 1);
+        assert.strictEqual(lgResource.items.length, 1);
         assert.strictEqual(lgResource.imports.length, 0);
-        assert.strictEqual(lgResource.templates[0].name, 'wPhrase');
-        assert.strictEqual(lgResource.templates[0].body.replace(/\r\n/g, '\n'), '> this is an in-template comment\n- Hi\n- Hello\n- Hiya\n- Hi');
+        assert.strictEqual(lgResource.items[0].name, 'wPhrase');
+        assert.strictEqual(lgResource.items[0].body.replace(/\r\n/g, '\n'), '> this is an in-template comment\n- Hi\n- Hello\n- Hiya\n- Hi');
 
         lgResource = lgResource.addTemplate('newtemplate', ['age', 'name'], '- hi ');
-        assert.strictEqual(lgResource.templates.length, 2);
+        assert.strictEqual(lgResource.items.length, 2);
         assert.strictEqual(lgResource.imports.length, 0);
-        assert.strictEqual(lgResource.templates[1].name, 'newtemplate');
-        assert.strictEqual(lgResource.templates[1].parameters.length, 2);
-        assert.strictEqual(lgResource.templates[1].parameters[0], 'age');
-        assert.strictEqual(lgResource.templates[1].parameters[1], 'name');
-        assert.strictEqual(lgResource.templates[1].body.replace(/\r\n/g, '\n'), '- hi \n');
+        assert.strictEqual(lgResource.items[1].name, 'newtemplate');
+        assert.strictEqual(lgResource.items[1].parameters.length, 2);
+        assert.strictEqual(lgResource.items[1].parameters[0], 'age');
+        assert.strictEqual(lgResource.items[1].parameters[1], 'name');
+        assert.strictEqual(lgResource.items[1].body.replace(/\r\n/g, '\n'), '- hi \n');
 
         lgResource = lgResource.addTemplate('newtemplate2', undefined, '- hi2 ');
-        assert.strictEqual(lgResource.templates.length, 3);
-        assert.strictEqual(lgResource.templates[2].name, 'newtemplate2');
-        assert.strictEqual(lgResource.templates[2].body.replace(/\r\n/g, '\n'), '- hi2 \n');
+        assert.strictEqual(lgResource.items.length, 3);
+        assert.strictEqual(lgResource.items[2].name, 'newtemplate2');
+        assert.strictEqual(lgResource.items[2].body.replace(/\r\n/g, '\n'), '- hi2 \n');
 
         lgResource = lgResource.updateTemplate('newtemplate', 'newtemplateName', ['newage', 'newname'], '- new hi\r\n#hi');
-        assert.strictEqual(lgResource.templates.length, 3);
+        assert.strictEqual(lgResource.items.length, 3);
         assert.strictEqual(lgResource.imports.length, 0);
-        assert.strictEqual(lgResource.templates[1].name, 'newtemplateName');
-        assert.strictEqual(lgResource.templates[1].parameters.length, 2);
-        assert.strictEqual(lgResource.templates[1].parameters[0], 'newage');
-        assert.strictEqual(lgResource.templates[1].parameters[1], 'newname');
-        assert.strictEqual(lgResource.templates[1].body.replace(/\r\n/g, '\n'), '- new hi\n- #hi\n');
+        assert.strictEqual(lgResource.items[1].name, 'newtemplateName');
+        assert.strictEqual(lgResource.items[1].parameters.length, 2);
+        assert.strictEqual(lgResource.items[1].parameters[0], 'newage');
+        assert.strictEqual(lgResource.items[1].parameters[1], 'newname');
+        assert.strictEqual(lgResource.items[1].body.replace(/\r\n/g, '\n'), '- new hi\n- #hi\n');
 
         lgResource = lgResource.updateTemplate('newtemplate2', 'newtemplateName2', ['newage2', 'newname2'], '- new hi\r\n#hi2');
-        assert.strictEqual(lgResource.templates.length, 3);
+        assert.strictEqual(lgResource.items.length, 3);
         assert.strictEqual(lgResource.imports.length, 0);
-        assert.strictEqual(lgResource.templates[2].name, 'newtemplateName2');
-        assert.strictEqual(lgResource.templates[2].body.replace(/\r\n/g, '\n'), '- new hi\n- #hi2\n');
+        assert.strictEqual(lgResource.items[2].name, 'newtemplateName2');
+        assert.strictEqual(lgResource.items[2].body.replace(/\r\n/g, '\n'), '- new hi\n- #hi2\n');
 
         lgResource = lgResource.deleteTemplate('newtemplateName');
-        assert.strictEqual(lgResource.templates.length, 2);
+        assert.strictEqual(lgResource.items.length, 2);
 
         lgResource = lgResource.deleteTemplate('newtemplateName2');
-        assert.strictEqual(lgResource.templates.length, 1);
+        assert.strictEqual(lgResource.items.length, 1);
     });
 
     it('TestMemoryScope', function() {

@@ -30,7 +30,7 @@ export class Templates {
     /// <value>
     /// templates that this LG file contains directly.
     /// </value>
-    public templates: Template[];
+    public items: Template[];
 
     /// <summary>
     /// Gets or sets import elements that this LG file contains directly.
@@ -99,7 +99,7 @@ export class Templates {
     /// </value>
     public options: string[];
 
-    public constructor(templates?: Template[],
+    public constructor(items?: Template[],
         imports?: TemplateImport[],
         diagnostics?: Diagnostic[],
         references?: Templates[],
@@ -108,7 +108,7 @@ export class Templates {
         expressionParser?: ExpressionParser,
         importResolverDelegate?: ImportResolverDelegate,
         options?: string[]) {
-        this.templates = templates || [];
+        this.items = items || [];
         this.imports = imports || [];
         this.diagnostics = diagnostics || [];
         this.references = references || [];
@@ -140,8 +140,8 @@ export class Templates {
     /// All templates from current lg file and reference lg files.
     /// </value>
     public get allTemplates(): Template[] {
-        let result = this.templates;
-        this.references.forEach((ref): Template[] => result = result.concat(ref.templates));
+        let result = this.items;
+        this.references.forEach((ref): Template[] => result = result.concat(ref.items));
         return Array.from(new Set(result));
     }
 
@@ -257,7 +257,7 @@ export class Templates {
     * @returns new lg file.
     */
     public updateTemplate(templateName: string, newTemplateName: string, parameters: string[], templateBody: string): Templates {
-        const template: Template = this.templates.find((u: Template): boolean => u.name === templateName);
+        const template: Template = this.items.find((u: Template): boolean => u.name === templateName);
         if (template === undefined) {
             return this;
         }
@@ -284,7 +284,7 @@ export class Templates {
     * @returns new lg file.
     */
     public addTemplate(templateName: string, parameters: string[], templateBody: string): Templates {
-        const template: Template = this.templates.find((u: Template): boolean => u.name === templateName);
+        const template: Template = this.items.find((u: Template): boolean => u.name === templateName);
         if (template !== undefined) {
             throw new Error(TemplateErrors.templateExist(templateName));
         }
@@ -303,7 +303,7 @@ export class Templates {
     * @returns return the new lg file.
     */
     public deleteTemplate(templateName: string): Templates {
-        const template: Template = this.templates.find((u: Template): boolean => u.name === templateName);
+        const template: Template = this.items.find((u: Template): boolean => u.name === templateName);
         if (template === undefined) {
             return this;
         }
@@ -427,7 +427,7 @@ export class Templates {
     }
 
     private initialize(lgfile: Templates): void {
-        this.templates = lgfile.templates;
+        this.items = lgfile.items;
         this.imports = lgfile.imports;
         this.diagnostics = lgfile.diagnostics;
         this.references = lgfile.references;
