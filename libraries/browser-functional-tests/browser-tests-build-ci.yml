@@ -1,5 +1,9 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
-# Licensed under the MIT License.
+#
+# Run functional tests on browser bot deployed to Azure.
+#
+
+pool:
+  vmImage: 'vs2017-win2016'
 
 trigger:
     - master
@@ -7,14 +11,12 @@ trigger:
 pr:
     - master
 
-pool:
-  vmImage: 'vs2017-win2016'
-
 variables:
   TestResourceGroup: 'BrowserBotTest'
   TestAppServicePlan: 'BrowserBotServicePlan'
   TestWebApp: 'BrowserBotWebApp'
   TESTURI: 'https://$(TestWebApp).azurewebsites.net/'
+#  AzureSubscription: define this in Azure
 
 steps:
 
