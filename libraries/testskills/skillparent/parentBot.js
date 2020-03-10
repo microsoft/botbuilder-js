@@ -32,7 +32,7 @@ class ParentBot extends ActivityHandler {
                 else if( context.activity.text === 'skill login' || context.activity.text === 'skill logout') {
                     let cloneActivity = MessageFactory.text(context.activity.text);
                     TurnContext.applyConversationReference(cloneActivity, TurnContext.getConversationReference(context.activity), true);
-                    cloneActivity.deliveryMode = DeliveryModes.BufferedReplies;
+                    cloneActivity.deliveryMode = DeliveryModes.ExpectReplies;
                     const skillResponse = await client.postActivity(
                         process.env.MicrosoftAppId,
                         process.env.SkillMicrosoftAppId,
@@ -43,8 +43,8 @@ class ParentBot extends ActivityHandler {
                     );
 
                     if(skillResponse.status === StatusCodes.OK) {
-                        if(!(await this.interceptOAuthCards(skillResponse.body, context, client))) {
-                            await context.sendActivities(skillResponse.body);
+                        if(!(await this.interceptOAuthCards(skillResponse.body.activities, context, client))) {
+                            await context.sendActivities(skillResponse.body.activities);
                         }
                     }
                 }
