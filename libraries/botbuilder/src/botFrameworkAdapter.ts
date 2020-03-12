@@ -283,7 +283,7 @@ export class BotFrameworkAdapter extends BotAdapter implements ExtendedUserToken
             if (credentials.oAuthScope !== audience) {
                 // The BotFrameworkAdapter JavaScript implementation supports one Bot per instance, so get
                 // the botAppId from the credentials.
-                credentials = await this.buildCredentials(this.credentials.appId, audience);
+                credentials = await this.buildCredentials(credentials.appId, audience);
             }
         }
 
