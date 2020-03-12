@@ -13,8 +13,8 @@ import { BotFrameworkHttpClient } from '../botFrameworkHttpClient';
  * A BotFrameworkHttpClient specialized for Skills that encapsulates Conversation ID generation.
  */
 export class SkillHttpClient extends BotFrameworkHttpClient {
-
     private readonly conversationIdFactory: SkillConversationIdFactoryBase;
+
     public constructor(credentialProvider: ICredentialProvider, conversationIdFactory: SkillConversationIdFactoryBase, channelService?: string) {
         super(credentialProvider, channelService);
         if (!conversationIdFactory) {
@@ -24,19 +24,26 @@ export class SkillHttpClient extends BotFrameworkHttpClient {
         this.conversationIdFactory = conversationIdFactory;
     }
 
-
     /**
-     * 
-     * @param originatingAudience 
-     * @param fromBotId 
-     * @param toSkill 
-     * @param callbackUrl 
-     * @param activity 
+     * Uses the SkillConversationIdFactory to create or retrieve a Skill Conversation Id, and sends the activity.
+     * @template T The type of body in the InvokeResponse. 
+     * @param originatingAudience The OAuth audience scope, used during token retrieval. (Either https://api.botframework.com or bot app id.)
+     * @param fromBotId The MicrosoftAppId of the bot sending the activity.
+     * @param toSkill The skill to create the Conversation Id for.
+     * @param callbackUrl The callback Url for the skill host.
+     * @param activity The activity to send.
      */
     public async postToSkill<T>(originatingAudience: string, fromBotId: string, toSkill: BotFrameworkSkill, callbackUrl: string, activity: Activity): Promise<InvokeResponse<T>>;
-    public async postToSkill<T>(fromBotId: string, toSkill: BotFrameworkSkill, callbackUrl: string, activity: Activity): Promise<InvokeResponse>;
-    public async postToSkill<T>(audienceOrFromBotId: string, fromBotIdOrSkill: string | BotFrameworkSkill, toSkillOrCallbackUrl: BotFrameworkSkill | string, callbackUrlOrActivity: string | Activity, activityToForward?: Activity): Promise<InvokeResponse<T>> {
-        
+    /**
+     * Uses the SkillConversationIdFactory to create or retrieve a Skill Conversation Id, and sends the activity.
+     * @deprecated This overload is deprecated. Please use SkillHttpClient.postToSkill() that takes an `originatingAudience`.
+     * @param fromBotId The MicrosoftAppId of the bot sending the activity.
+     * @param toSkill The skill to create the Conversation Id for.
+     * @param callbackUrl The callback Url for the skill host.
+     * @param activity The activity to send.
+     */
+    public async postToSkill(fromBotId: string, toSkill: BotFrameworkSkill, callbackUrl: string, activity: Activity): Promise<InvokeResponse>;
+    public async postToSkill<T = any>(audienceOrFromBotId: string, fromBotIdOrSkill: string | BotFrameworkSkill, toSkillOrCallbackUrl: BotFrameworkSkill | string, callbackUrlOrActivity: string | Activity, activityToForward?: Activity): Promise<InvokeResponse<T>> {
         let originatingAudience: string;
         let fromBotId: string;
         if (typeof fromBotIdOrSkill === 'string') {

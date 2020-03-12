@@ -31,7 +31,11 @@ export * from './propertyManager';
 export * from './recognizerResult';
 export * from './showTypingMiddleware';
 export * from './signInConstants';
-export { BotFrameworkSkill, BotFrameworkClient, SkillConversationIdFactoryBase, SkillConversationReference,
+export {
+    BotFrameworkSkill,
+    BotFrameworkClient,
+    SkillConversationIdFactoryBase,
+    SkillConversationReference,
     SkillConversationIdFactoryOptions } from './skills';
 export * from './skypeMentionNormalizeMiddleware';
 export * from './statusCodes';
