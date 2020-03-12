@@ -91,5 +91,5 @@ function getActiveDialogContext(dialogContext: DialogContext): DialogContext {
 function isEocComingFromParent(context: TurnContext): boolean {
     // To determine the direction we check callerId property which is set to the parent bot
     // by the BotFrameworkHttpClient on outgoing requests.
-    return !(!!context.activity.callerId);
+    return !!context.activity.callerId;
 }
