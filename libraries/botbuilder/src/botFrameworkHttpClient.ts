@@ -97,7 +97,7 @@ export class BotFrameworkHttpClient implements BotFrameworkClient {
             };
             activity.conversation.id = conversationId;
             activity.serviceUrl = serviceUrl;
-            activity.callerId = fromBotId;
+            activity.callerId = `urn:botframework:aadappid:${ fromBotId }`;
             const config = {
                 headers: {
                     Accept: 'application/json',
