@@ -6,6 +6,22 @@ import { DialogSet } from './dialogSet';
 import { isSkillClaim } from './prompts/skillsHelpers';
 
 export async function runDialog(dialog: Dialog, context: TurnContext, accessor: StatePropertyAccessor<DialogState>): Promise<void> {
+    if (!dialog) {
+        throw new Error('runDialog(): missing dialog');
+    }
+
+    if (!context) {
+        throw new Error('runDialog(): missing context');
+    }
+
+    if (!context.activity) {
+        throw new Error('runDialog(): missing context.activity');
+    }
+
+    if (!accessor) {
+        throw new Error('runDialog(): missing accessor');
+    }
+
     const dialogSet = new DialogSet(accessor);
     dialogSet.telemetryClient = dialog.telemetryClient;
     dialogSet.add(dialog);
@@ -16,11 +32,11 @@ export async function runDialog(dialog: Dialog, context: TurnContext, accessor: 
     const identity = context.turnState.get(context.adapter.BotIdentityKey);
     if (identity && isSkillClaim(identity.claims)) {
         // The bot is running as a skill.
-        if (context.activity.type === ActivityTypes.EndOfConversation && dialogContext.stack.length > 0) {
+        if (context.activity.type === ActivityTypes.EndOfConversation && dialogContext.stack.length > 0 &&  isEocComingFromParent(context)) {
             // Handle remote cancellation request if we have something in the stack.
             const activeDialogContext = getActiveDialogContext(dialogContext);
             
-            const remoteCancelText = 'Skill was canceled by a request from the host.';
+            const remoteCancelText = 'Skill was canceled through an EndOfConversation activity from the parent.';
             await context.sendTraceActivity(telemetryEventName, undefined, undefined, `${ remoteCancelText }`);
 
             // Send cancellation message to the top dialog in the stack to ensure all the parents are canceled in the right order. 
@@ -67,4 +83,13 @@ function getActiveDialogContext(dialogContext: DialogContext): DialogContext {
     }
 
     return getActiveDialogContext(child);
+}
+
+// We should only cancel the current dialog stack if the EoC activity is coming from a parent (a root bot or another skill).
+// When the EoC is coming back from a child, we should just process that EoC normally through the 
+// dialog stack and let the child dialogs handle that.
+function isEocComingFromParent(context: TurnContext): boolean {
+    // To determine the direction we check callerId property which is set to the parent bot
+    // by the BotFrameworkHttpClient on outgoing requests.
+    return !(!!context.activity.callerId);
 }
