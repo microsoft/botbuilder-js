@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 
-import { AppCredentials } from './appCredentials';
+import { CoreAppCredentials } from './coreAppCredentials';
 import { IUserTokenProvider } from './userTokenProvider';
 import { TurnContext } from './turnContext';
 import { SignInUrlResponse ,TokenResponse, TokenExchangeRequest } from 'botframework-schema';
@@ -21,7 +21,7 @@ export interface ExtendedUserTokenProvider extends IUserTokenProvider {
      * @param connectionName Name of the auth connection to use.
      * @param magicCode (Optional) Optional user entered code to validate.
      */
-    getUserToken(context: TurnContext, connectionName: string, magicCode?: string, appCredentials?: AppCredentials): Promise<TokenResponse>;
+    getUserToken(context: TurnContext, connectionName: string, magicCode?: string, appCredentials?: CoreAppCredentials): Promise<TokenResponse>;
 
     /**
      * Signs the user out with the token server.
@@ -30,7 +30,7 @@ export interface ExtendedUserTokenProvider extends IUserTokenProvider {
      * @param userId User id of user to sign out.
      * @param oAuthAppCredentials AppCredentials for OAuth.
      */
-    signOutUser(context: TurnContext, connectionName: string, userId?: string, appCredentials?: AppCredentials): Promise<void>;
+    signOutUser(context: TurnContext, connectionName: string, userId?: string, appCredentials?: CoreAppCredentials): Promise<void>;
 
     /**
      * Gets a signin link from the token server that can be sent as part of a SigninCard.
@@ -38,7 +38,7 @@ export interface ExtendedUserTokenProvider extends IUserTokenProvider {
      * @param connectionName Name of the auth connection to use.
      * @param oAuthAppCredentials AppCredentials for OAuth.
      */
-    getSignInLink(context: TurnContext, connectionName: string, appCredentials?: AppCredentials): Promise<string>;
+    getSignInLink(context: TurnContext, connectionName: string, appCredentials?: CoreAppCredentials): Promise<string>;
 
     /**
      * Signs the user out with the token server.
@@ -46,7 +46,7 @@ export interface ExtendedUserTokenProvider extends IUserTokenProvider {
      * @param connectionName Name of the auth connection to use.
      * @param oAuthAppCredentials AppCredentials for OAuth.
      */
-    getAadTokens(context: TurnContext, connectionName: string, resourceUrls: string[], appCredentials?: AppCredentials): Promise<{
+    getAadTokens(context: TurnContext, connectionName: string, resourceUrls: string[], appCredentials?: CoreAppCredentials): Promise<{
         [propertyName: string]: TokenResponse;
     }>;
 
@@ -73,7 +73,7 @@ export interface ExtendedUserTokenProvider extends IUserTokenProvider {
      * @param userId The user id that will be associated with the token.
      * @param finalRedirect The final URL that the OAuth flow will redirect to.
      */   
-    getSignInResource(context: TurnContext, connectionName: string, userId: string, finalRedirect?: string, appCredentials?: AppCredentials): Promise<SignInUrlResponse>;
+    getSignInResource(context: TurnContext, connectionName: string, userId: string, finalRedirect?: string, appCredentials?: CoreAppCredentials): Promise<SignInUrlResponse>;
 
     /**
      * Performs a token exchange operation such as for single sign-on.
@@ -91,5 +91,5 @@ export interface ExtendedUserTokenProvider extends IUserTokenProvider {
      * @param userId The user id that will be associated with the token.
      * @param tokenExchangeRequest The exchange request details, either a token to exchange or a uri to exchange.
      */  
-    exchangeToken(context: TurnContext, connectionName: string, userId: string, tokenExchangeRequest: TokenExchangeRequest, appCredentials: AppCredentials): Promise<TokenResponse>;
+    exchangeToken(context: TurnContext, connectionName: string, userId: string, tokenExchangeRequest: TokenExchangeRequest, appCredentials: CoreAppCredentials): Promise<TokenResponse>;
 }
