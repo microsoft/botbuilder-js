@@ -1122,9 +1122,8 @@ export class BotFrameworkAdapter extends BotAdapter implements ExtendedUserToken
      * @remarks
      * Override this in a derived class to create a mock OAuth API client for unit testing.
      */
-    protected createTokenApiClient(serviceUrl: string, oAuthAppCredentials: AppCredentials): TokenApiClient;
-    protected createTokenApiClient(serviceUrl: string, oAuthAppCredentials: CoreAppCredentials): TokenApiClient;
-    protected createTokenApiClient(serviceUrl: string, oAuthAppCredentials: AppCredentials): TokenApiClient {
+    protected createTokenApiClient(serviceUrl: string, oAuthAppCredentials?: CoreAppCredentials): TokenApiClient;
+    protected createTokenApiClient(serviceUrl: string, oAuthAppCredentials?: AppCredentials): TokenApiClient {
         const tokenApiClientCredentials = oAuthAppCredentials ? oAuthAppCredentials : this.credentials;
         const client = new TokenApiClient(tokenApiClientCredentials, { baseUri: serviceUrl, userAgent: USER_AGENT });
 
