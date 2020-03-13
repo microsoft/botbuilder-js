@@ -6,9 +6,9 @@
  * Licensed under the MIT License.
  */
 
- /**
-  * Internal interface representing the "WebResource" from @azure/ms-rest-js@1.2.6
-  */
+/**
+ * Internal interface representing the "WebResource" from @azure/ms-rest-js@1.2.6
+ */
 interface WebResource {}
 
 /**
