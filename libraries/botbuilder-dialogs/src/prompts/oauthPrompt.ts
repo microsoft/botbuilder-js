@@ -42,7 +42,7 @@ export interface OAuthPromptSettings {
     /**
      * AppCredentials for OAuth.
      */
-    oAuthAppCredentials: AppCredentials;
+    oAuthAppCredentials?: AppCredentials;
 
     /**
      * Name of the OAuth connection being used.
