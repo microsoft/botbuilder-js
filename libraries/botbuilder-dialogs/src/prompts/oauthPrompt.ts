@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { Activity, ActivityTypes, Attachment, AppCredentials, BotAdapter, CardFactory, Channels, InputHints, MessageFactory, OAuthLoginTimeoutKey, TokenResponse, TurnContext, OAuthCard, ActionTypes, ExtendedUserTokenProvider, verifyStateOperationName, StatusCodes, tokenExchangeOperationName, tokenResponseEventName } from 'botbuilder-core';
+import { Activity, ActivityTypes, Attachment, CoreAppCredentials, BotAdapter, CardFactory, Channels, InputHints, MessageFactory, OAuthLoginTimeoutKey, TokenResponse, TurnContext, OAuthCard, ActionTypes, ExtendedUserTokenProvider, verifyStateOperationName, StatusCodes, tokenExchangeOperationName, tokenResponseEventName } from 'botbuilder-core';
 import { Dialog, DialogTurnResult } from '../dialog';
 import { DialogContext } from '../dialogContext';
 import { PromptOptions, PromptRecognizerResult,  PromptValidator } from './prompt';
@@ -42,7 +42,7 @@ export interface OAuthPromptSettings {
     /**
      * AppCredentials for OAuth.
      */
-    oAuthAppCredentials: AppCredentials;
+    oAuthAppCredentials?: CoreAppCredentials;
 
     /**
      * Name of the OAuth connection being used.

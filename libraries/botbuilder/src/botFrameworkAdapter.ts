@@ -9,7 +9,7 @@
 import { STATUS_CODES } from 'http';
 import * as os from 'os';
 
-import { Activity, ActivityTypes, BotAdapter, BotCallbackHandlerKey, ChannelAccount, ConversationAccount, ConversationParameters, ConversationReference, ConversationsResult, DeliveryModes, ExpectedReplies, InvokeResponse, ExtendedUserTokenProvider, ResourceResponse, StatusCodes, TokenResponse, TurnContext, INVOKE_RESPONSE_KEY } from 'botbuilder-core';
+import { Activity, ActivityTypes, CoreAppCredentials, BotAdapter, BotCallbackHandlerKey, ChannelAccount, ConversationAccount, ConversationParameters, ConversationReference, ConversationsResult, DeliveryModes, ExpectedReplies, InvokeResponse, ExtendedUserTokenProvider, ResourceResponse, StatusCodes, TokenResponse, TurnContext, INVOKE_RESPONSE_KEY } from 'botbuilder-core';
 import { AuthenticationConfiguration, AuthenticationConstants, ChannelValidation, Claim, ClaimsIdentity, ConnectorClient, EmulatorApiClient, GovernmentConstants, GovernmentChannelValidation, JwtTokenValidation, MicrosoftAppCredentials, AppCredentials, CertificateAppCredentials, SimpleCredentialProvider, TokenApiClient, TokenStatus, TokenApiModels, SignInUrlResponse, SkillValidation, TokenExchangeRequest } from 'botframework-connector';
 
 import { INodeBuffer, INodeSocket, IReceiveRequest, ISocket, IStreamingTransportServer, NamedPipeServer, NodeWebSocketFactory, NodeWebSocketFactoryBase, RequestHandler, StreamingResponse, WebSocketServer } from 'botframework-streaming';
@@ -530,7 +530,7 @@ export class BotFrameworkAdapter extends BotAdapter implements ExtendedUserToken
      * @returns A [TokenResponse](xref:botframework-schema.TokenResponse) object that contains the user token.
      */
     public async getUserToken(context: TurnContext, connectionName: string, magicCode?: string): Promise<TokenResponse>;
-    public async getUserToken(context: TurnContext, connectionName: string, magicCode?: string, oAuthAppCredentials?: AppCredentials): Promise<TokenResponse>;
+    public async getUserToken(context: TurnContext, connectionName: string, magicCode?: string, oAuthAppCredentials?: CoreAppCredentials): Promise<TokenResponse>;
     public async getUserToken(context: TurnContext, connectionName: string, magicCode?: string, oAuthAppCredentials?: AppCredentials): Promise<TokenResponse> {
         if (!context.activity.from || !context.activity.from.id) {
             throw new Error(`BotFrameworkAdapter.getUserToken(): missing from or from.id`);
@@ -561,7 +561,7 @@ export class BotFrameworkAdapter extends BotAdapter implements ExtendedUserToken
      * @param oAuthAppCredentials AppCredentials for OAuth.
      */
     public async signOutUser(context: TurnContext, connectionName?: string, userId?: string): Promise<void>;
-    public async signOutUser(context: TurnContext, connectionName?: string, userId?: string, oAuthAppCredentials?: AppCredentials): Promise<void>;
+    public async signOutUser(context: TurnContext, connectionName?: string, userId?: string, oAuthAppCredentials?: CoreAppCredentials): Promise<void>;
     public async signOutUser(context: TurnContext, connectionName?: string, userId?: string, oAuthAppCredentials?: AppCredentials): Promise<void> {
         if (!context.activity.from || !context.activity.from.id) {
             throw new Error(`BotFrameworkAdapter.signOutUser(): missing from or from.id`);
@@ -588,6 +588,8 @@ export class BotFrameworkAdapter extends BotAdapter implements ExtendedUserToken
      * @param userId The user id that will be associated with the token.
      * @param finalRedirect The final URL that the OAuth flow will redirect to.
      */
+    public async getSignInLink(context: TurnContext, connectionName: string, oAuthAppCredentials?: AppCredentials, userId?: string, finalRedirect?: string): Promise<string>
+    public async getSignInLink(context: TurnContext, connectionName: string, oAuthAppCredentials?: CoreAppCredentials, userId?: string, finalRedirect?: string): Promise<string>
     public async getSignInLink(context: TurnContext, connectionName: string, oAuthAppCredentials?: AppCredentials, userId?: string, finalRedirect?: string): Promise<string> {
         if (userId && userId != context.activity.from.id) {
             throw new ReferenceError(`cannot retrieve OAuth signin link for a user that's different from the conversation`);
@@ -622,7 +624,7 @@ export class BotFrameworkAdapter extends BotAdapter implements ExtendedUserToken
      * @returns The [TokenStatus](xref:botframework-connector.TokenStatus) objects retrieved.
      */
     public async getTokenStatus(context: TurnContext, userId?: string, includeFilter?: string): Promise<TokenStatus[]>;
-    public async getTokenStatus(context: TurnContext, userId?: string, includeFilter?: string, oAuthAppCredentials?: AppCredentials): Promise<TokenStatus[]>;
+    public async getTokenStatus(context: TurnContext, userId?: string, includeFilter?: string, oAuthAppCredentials?: CoreAppCredentials): Promise<TokenStatus[]>;
     public async getTokenStatus(context: TurnContext, userId?: string, includeFilter?: string, oAuthAppCredentials?: AppCredentials): Promise<TokenStatus[]> {
         if (!userId && (!context.activity.from || !context.activity.from.id)) {
             throw new Error(`BotFrameworkAdapter.getTokenStatus(): missing from or from.id`);
@@ -647,7 +649,7 @@ export class BotFrameworkAdapter extends BotAdapter implements ExtendedUserToken
      * @returns A map of the [TokenResponse](xref:botframework-schema.TokenResponse) objects by resource URL.
      */
     public async getAadTokens(context: TurnContext, connectionName: string, resourceUrls: string[]): Promise<{[propertyName: string]: TokenResponse}>;
-    public async getAadTokens(context: TurnContext, connectionName: string, resourceUrls: string[], oAuthAppCredentials?: AppCredentials): Promise<{[propertyName: string]: TokenResponse}>;
+    public async getAadTokens(context: TurnContext, connectionName: string, resourceUrls: string[], oAuthAppCredentials?: CoreAppCredentials): Promise<{[propertyName: string]: TokenResponse}>;
     public async getAadTokens(context: TurnContext, connectionName: string, resourceUrls: string[], oAuthAppCredentials?: AppCredentials): Promise<{[propertyName: string]: TokenResponse}> {
         if (!context.activity.from || !context.activity.from.id) {
             throw new Error(`BotFrameworkAdapter.getAadTokens(): missing from or from.id`);
@@ -671,8 +673,7 @@ export class BotFrameworkAdapter extends BotAdapter implements ExtendedUserToken
      * 
      * @returns The [BotSignInGetSignInResourceResponse](xref:botframework-connector.BotSignInGetSignInResourceResponse) object.
      */
-    public async getSignInResource(context: TurnContext, connectionName: string, userId?: string, finalRedirect?: string, appCredentials?: AppCredentials): Promise<SignInUrlResponse>
-    {
+    public async getSignInResource(context: TurnContext, connectionName: string, userId?: string, finalRedirect?: string, appCredentials?: CoreAppCredentials): Promise<SignInUrlResponse> {
         if (!connectionName) {
             throw new Error('getUserToken() requires a connectionName but none was provided.');
         }
@@ -681,13 +682,14 @@ export class BotFrameworkAdapter extends BotAdapter implements ExtendedUserToken
             throw new Error(`BotFrameworkAdapter.getSignInResource(): missing from or from.id`);
         }
 
-        // what to do when userId is null (same for finalRedirect)
-        if(userId && context.activity.from.id != userId) {
+        // The provided userId doesn't match the from.id on the activity. (same for finalRedirect)
+        if (userId && context.activity.from.id !== userId) {
             throw new Error('BotFrameworkAdapter.getSiginInResource(): cannot get signin resource for a user that is different from the conversation');
         }
 
         const url: string = this.oauthApiUrl(context);
-        const client: TokenApiClient = this.createTokenApiClient(url, appCredentials);
+        const credentials = appCredentials as AppCredentials;
+        const client: TokenApiClient = this.createTokenApiClient(url, credentials);
         const conversation: Partial<ConversationReference> = TurnContext.getConversationReference(context.activity);
 
         const state: any = {
@@ -709,6 +711,7 @@ export class BotFrameworkAdapter extends BotAdapter implements ExtendedUserToken
      * @param userId The user id that will be associated with the token.
      * @param tokenExchangeRequest The exchange request details, either a token to exchange or a uri to exchange.
      */ 
+    public async exchangeToken(context: TurnContext, connectionName: string, userId: string, tokenExchangeRequest: TokenExchangeRequest, appCredentials?: CoreAppCredentials): Promise<TokenResponse>
     public async exchangeToken(context: TurnContext, connectionName: string, userId: string, tokenExchangeRequest: TokenExchangeRequest, appCredentials?: AppCredentials): Promise<TokenResponse> {
         if (!connectionName) {
             throw new Error('exchangeToken() requires a connectionName but none was provided.');
@@ -742,7 +745,7 @@ export class BotFrameworkAdapter extends BotAdapter implements ExtendedUserToken
     public async emulateOAuthCards(contextOrServiceUrl: TurnContext | string, emulate: boolean): Promise<void> {
         this.isEmulatingOAuthCards = emulate;
         const url: string = this.oauthApiUrl(contextOrServiceUrl);
-        await EmulatorApiClient.emulateOAuthCards(this.credentials as AppCredentials,  url, emulate);
+        await EmulatorApiClient.emulateOAuthCards(this.credentials,  url, emulate);
     }
 
     /**
@@ -1119,7 +1122,8 @@ export class BotFrameworkAdapter extends BotAdapter implements ExtendedUserToken
      * @remarks
      * Override this in a derived class to create a mock OAuth API client for unit testing.
      */
-    protected createTokenApiClient(serviceUrl: string, oAuthAppCredentials: AppCredentials): TokenApiClient {
+    protected createTokenApiClient(serviceUrl: string, oAuthAppCredentials?: CoreAppCredentials): TokenApiClient;
+    protected createTokenApiClient(serviceUrl: string, oAuthAppCredentials?: AppCredentials): TokenApiClient {
         const tokenApiClientCredentials = oAuthAppCredentials ? oAuthAppCredentials : this.credentials;
         const client = new TokenApiClient(tokenApiClientCredentials, { baseUri: serviceUrl, userAgent: USER_AGENT });
 
