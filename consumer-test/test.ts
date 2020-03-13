@@ -1,0 +1,27 @@
+import * as l1 from '../libraries/adaptive-expressions';
+import * as l2 from '../libraries/botbuilder';
+import * as l3 from '../libraries/botbuilder-ai';
+import * as l4 from '../libraries/botbuilder-applicationinsights';
+import * as l5 from '../libraries/botbuilder-azure';
+import * as l6 from '../libraries/botbuilder-core';
+import * as l7 from '../libraries/botbuilder-dialogs';
+import * as l8 from '../libraries/botbuilder-lg';
+import * as l9 from '../libraries/botbuilder-testing';
+import * as l10 from '../libraries/botframework-config';
+import * as l11 from '../libraries/botframework-connector';
+import * as l13 from '../libraries/botframework-schema';
+import * as l14 from '../libraries/botframework-streaming';
+
+console.log(Object.keys(l1));
+console.log(Object.keys(l2));
+console.log(Object.keys(l3));
+console.log(Object.keys(l4));
+console.log(Object.keys(l5));
+console.log(Object.keys(l6));
+console.log(Object.keys(l7));
+console.log(Object.keys(l8));
+console.log(Object.keys(l9));
+console.log(Object.keys(l10));
+console.log(Object.keys(l11));
+console.log(Object.keys(l13));
+console.log(Object.keys(l14));
