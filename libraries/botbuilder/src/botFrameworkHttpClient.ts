@@ -30,7 +30,7 @@ export class BotFrameworkHttpClient implements BotFrameworkClient {
      * Cache for appCredentials to speed up token acquisition (a token is not requested unless is expired)
      * AppCredentials are cached using appId + scope (this last parameter is only used if the app credentials are used to call a skill)
      */
-    private static readonly appCredentialMapCache: Map<string, MicrosoftAppCredentials> = new Map<string, MicrosoftAppCredentials>();
+    private static readonly appCredentialMapCache: Map<string, AppCredentials> = new Map<string, AppCredentials>();
     private readonly credentialProvider: ICredentialProvider;
 
     public constructor(credentialProvider: ICredentialProvider, channelService?: string) {
@@ -71,7 +71,7 @@ export class BotFrameworkHttpClient implements BotFrameworkClient {
         }
 
         // Get token for the skill call
-        const token = appCredentials.appId === '' && appCredentials.appPassword === '' ? null : await appCredentials.getToken();
+        const token = appCredentials.appId ? await appCredentials.getToken() : null;
 
         // Capture current activity settings before changing them.
         // TODO: DO we need to set the activity ID? (events that are created manually don't have it).
@@ -142,7 +142,7 @@ export class BotFrameworkHttpClient implements BotFrameworkClient {
      * @param appId The application identifier (AAD Id for the bot).
      * @param oAuthScope The scope for the token, skills will use the Skill App Id.
      */
-    private async getAppCredentials(appId: string, oAuthScope?: string): Promise<MicrosoftAppCredentials> {
+    private async getAppCredentials(appId: string, oAuthScope?: string): Promise<AppCredentials> {
         if (!appId) {
             return new MicrosoftAppCredentials('', '');
         }
