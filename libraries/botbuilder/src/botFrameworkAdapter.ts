@@ -588,7 +588,9 @@ export class BotFrameworkAdapter extends BotAdapter implements ExtendedUserToken
      * @param userId The user id that will be associated with the token.
      * @param finalRedirect The final URL that the OAuth flow will redirect to.
      */
-    public async getSignInLink(context: TurnContext, connectionName: string, oAuthAppCredentials?: CoreAppCredentials, userId?: string, finalRedirect?: string): Promise<string> {
+    public async getSignInLink(context: TurnContext, connectionName: string, oAuthAppCredentials?: AppCredentials, userId?: string, finalRedirect?: string): Promise<string>
+    public async getSignInLink(context: TurnContext, connectionName: string, oAuthAppCredentials?: CoreAppCredentials, userId?: string, finalRedirect?: string): Promise<string>
+    public async getSignInLink(context: TurnContext, connectionName: string, oAuthAppCredentials?: AppCredentials, userId?: string, finalRedirect?: string): Promise<string> {
         if (userId && userId != context.activity.from.id) {
             throw new ReferenceError(`cannot retrieve OAuth signin link for a user that's different from the conversation`);
         }
@@ -596,7 +598,7 @@ export class BotFrameworkAdapter extends BotAdapter implements ExtendedUserToken
         this.checkEmulatingOAuthCards(context);
         const conversation: Partial<ConversationReference> = TurnContext.getConversationReference(context.activity);
         const url: string = this.oauthApiUrl(context);
-        const client: TokenApiClient = this.createTokenApiClient(url, oAuthAppCredentials as AppCredentials);
+        const client: TokenApiClient = this.createTokenApiClient(url, oAuthAppCredentials);
         context.turnState.set(this.TokenApiClientCredentialsKey, client);
         const state: any = {
             ConnectionName: connectionName,
@@ -671,8 +673,7 @@ export class BotFrameworkAdapter extends BotAdapter implements ExtendedUserToken
      * 
      * @returns The [BotSignInGetSignInResourceResponse](xref:botframework-connector.BotSignInGetSignInResourceResponse) object.
      */
-    public async getSignInResource(context: TurnContext, connectionName: string, userId?: string, finalRedirect?: string, appCredentials?: CoreAppCredentials): Promise<SignInUrlResponse>
-    public async getSignInResource(context: TurnContext, connectionName: string, userId?: string, finalRedirect?: string, appCredentials?: AppCredentials): Promise<SignInUrlResponse> {
+    public async getSignInResource(context: TurnContext, connectionName: string, userId?: string, finalRedirect?: string, appCredentials?: CoreAppCredentials): Promise<SignInUrlResponse> {
         if (!connectionName) {
             throw new Error('getUserToken() requires a connectionName but none was provided.');
         }
@@ -687,7 +688,8 @@ export class BotFrameworkAdapter extends BotAdapter implements ExtendedUserToken
         }
 
         const url: string = this.oauthApiUrl(context);
-        const client: TokenApiClient = this.createTokenApiClient(url, appCredentials);
+        const credentials = appCredentials as AppCredentials;
+        const client: TokenApiClient = this.createTokenApiClient(url, credentials);
         const conversation: Partial<ConversationReference> = TurnContext.getConversationReference(context.activity);
 
         const state: any = {
@@ -743,7 +745,7 @@ export class BotFrameworkAdapter extends BotAdapter implements ExtendedUserToken
     public async emulateOAuthCards(contextOrServiceUrl: TurnContext | string, emulate: boolean): Promise<void> {
         this.isEmulatingOAuthCards = emulate;
         const url: string = this.oauthApiUrl(contextOrServiceUrl);
-        await EmulatorApiClient.emulateOAuthCards(this.credentials as AppCredentials,  url, emulate);
+        await EmulatorApiClient.emulateOAuthCards(this.credentials,  url, emulate);
     }
 
     /**
@@ -1120,9 +1122,10 @@ export class BotFrameworkAdapter extends BotAdapter implements ExtendedUserToken
      * @remarks
      * Override this in a derived class to create a mock OAuth API client for unit testing.
      */
-    protected createTokenApiClient(serviceUrl: string, oAuthAppCredentials: CoreAppCredentials): TokenApiClient {
-        const credentials = oAuthAppCredentials as AppCredentials;
-        const tokenApiClientCredentials = credentials ? credentials : this.credentials;
+    protected createTokenApiClient(serviceUrl: string, oAuthAppCredentials: AppCredentials): TokenApiClient;
+    protected createTokenApiClient(serviceUrl: string, oAuthAppCredentials: CoreAppCredentials): TokenApiClient;
+    protected createTokenApiClient(serviceUrl: string, oAuthAppCredentials: AppCredentials): TokenApiClient {
+        const tokenApiClientCredentials = oAuthAppCredentials ? oAuthAppCredentials : this.credentials;
         const client = new TokenApiClient(tokenApiClientCredentials, { baseUri: serviceUrl, userAgent: USER_AGENT });
 
         return client;
