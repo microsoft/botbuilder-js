@@ -280,7 +280,12 @@ export class OAuthPrompt extends Dialog {
                 const signInResource = await (context.adapter as ExtendedUserTokenProvider).getSignInResource(context, this.settings.connectionName, context.activity.from.id, null, this.settings.oAuthAppCredentials);
                 let link = signInResource.signInLink;
                 const identity = context.turnState.get((context.adapter as BotAdapter).BotIdentityKey);
-                if((identity && isSkillClaim(identity.claims)) || OAuthPrompt.isFromStreamingConnection(context.activity)) {
+                
+                // use the SignInLink when 
+                //   in speech channel or
+                //   bot is a skill or
+                //   an extra OAuthAppCredentials is being passed in
+                if((identity && isSkillClaim(identity.claims)) || OAuthPrompt.isFromStreamingConnection(context.activity) || this.settings.oAuthAppCredentials) {
                     if(context.activity.channelId === Channels.Emulator) {
                         cardActionType = ActionTypes.OpenUrl;
                     }
