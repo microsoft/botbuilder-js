@@ -18,9 +18,9 @@ import { Position } from './position';
 import { Range } from './range';
 import { TemplateExtensions } from './templateExtensions';
 
-/// <summary>
-/// LG managed code checker.
-/// </summary>
+/**
+ * LG managed code checker.
+ */
 export class StaticChecker extends AbstractParseTreeVisitor<Diagnostic[]> implements LGFileParserVisitor<Diagnostic[]> {
     private readonly baseExpressionParser: ExpressionParser;
     private readonly templates: Templates;
@@ -44,10 +44,10 @@ export class StaticChecker extends AbstractParseTreeVisitor<Diagnostic[]> implem
         return this._expressionParser;
     }
 
-    /// <summary>
-    /// Return error messages list.
-    /// </summary>
-    /// <returns>report result.</returns>
+    /**
+     * Return error messages list.
+     * @returns report result.
+     */
     public check(): Diagnostic[] {
         this.visitedTemplateNames = [];
         var result = [];

@@ -19,77 +19,53 @@ import { AnalyzerResult } from './analyzerResult';
 import { TemplateErrors } from './templateErrors';
 import { TemplateExtensions } from './templateExtensions';
 
-/// <summary>
-/// LG entrance, including properties that LG file has, and evaluate functions.
-/// </summary>
+/**
+ * LG entrance, including properties that LG file has, and evaluate functions.
+ */
 export class Templates implements Iterable<Template> {
     private items: Template[];
 
-    /// <summary>
-    /// Gets or sets import elements that this LG file contains directly.
-    /// </summary>
-    /// <value>
-    /// import elements that this LG file contains directly.
-    /// </value>
+    /**
+     * import elements that this LG file contains directly.
+     */
     public imports: TemplateImport[];
 
-    /// <summary>
-    /// Gets or sets diagnostics.
-    /// </summary>
-    /// <value>
-    /// diagnostics.
-    /// </value>
+    /**
+     * diagnostics.
+     */
     public diagnostics: Diagnostic[];
 
-    /// <summary>
-    /// Gets or sets all references that this LG file has from Imports
-    /// Notice: reference includs all child imports from the lg file,
-    /// not only the children belong to this lgfile directly.
-    /// so, reference count may >= imports count. 
-    /// </summary>
-    /// <value>
-    /// all references that this LG file has from Imports
-    /// </value>
+    /**
+     * all references that this LG file has from Imports
+     * otice: reference includs all child imports from the lg file,
+     * not only the children belong to this lgfile directly.
+     * so, reference count may >= imports count.
+     */
     public references: Templates[];
 
-    /// <summary>
-    /// Gets or sets LG content.
-    /// </summary>
-    /// <value>
-    /// LG content.
-    /// </value>
+    /**
+     * LG content.
+     */
     public content: string;
 
-    /// <summary>
-    /// Gets or sets id of this LG file.
-    /// </summary>
-    /// <value>
-    /// id of this lg source. For file, is full path.
-    /// </value>
+    /**
+     * id of this lg source. For file, is full path.
+     */
     public id: string;
 
-    /// <summary>
-    /// Gets or sets expression parser.
-    /// </summary>
-    /// <value>
-    /// expression parser.
-    /// </value>
+    /**
+     * expression parser.
+     */
     public expressionParser: ExpressionParser;
 
-    /// <summary>
-    /// Gets or sets delegate for resolving resource id of imported lg file.
-    /// </summary>
-    /// <value>
-    /// Delegate for resolving resource id of imported lg file.
-    /// </value>
+    /**
+     * Delegate for resolving resource id of imported lg file.
+     */
     public importResolver: ImportResolverDelegate;
 
-    /// <summary>
-    /// Gets or sets lG file options.
-    /// </summary>
-    /// <value>
-    /// LG file options.
-    /// </value>
+    /**
+     * LG file options.
+     */
     public options: string[];
 
     public constructor(items?: Template[],
@@ -143,38 +119,27 @@ export class Templates implements Iterable<Template> {
         args.forEach(t => this.items.push(t));
     }
 
-    /// <summary>
-    /// Gets a value indicating whether lG parser/checker/evaluate strict mode.
-    /// If strict mode is on, expression would throw exception instead of return
-    /// null or make the condition failed.
-    /// </summary>
-    /// <value>
-    /// A value indicating whether lG parser/checker/evaluate strict mode.
-    /// If strict mode is on, expression would throw exception instead of return
-    /// null or make the condition failed.
-    /// </value>
+    /**
+     * A value indicating whether lG parser/checker/evaluate strict mode.
+     * If strict mode is on, expression would throw exception instead of return
+     * null or make the condition failed.
+     */
     public get strictMode(): boolean {
         return this.getStrictModeFromOptions(this.options);
     }
 
-    /// <summary>
-    /// Gets get all templates from current lg file and reference lg files.
-    /// </summary>
-    /// <value>
-    /// All templates from current lg file and reference lg files.
-    /// </value>
+    /**
+     * All templates from current lg file and reference lg files.
+     */
     public get allTemplates(): Template[] {
         let result = this.items;
         this.references.forEach((ref): Template[] => result = result.concat(ref.items));
         return Array.from(new Set(result));
     }
 
-    /// <summary>
-    /// Gets get all diagnostics from current lg file and reference lg files.
-    /// </summary>
-    /// <value>
-    /// All diagnostics from current lg file and reference lg files.
-    /// </value>
+    /**
+     * All diagnostics from current lg file and reference lg files.
+     */
     public get allDiagnostics(): Diagnostic[] {
         let result = this.diagnostics;
         this.references.forEach((ref): Diagnostic[] => result = result.concat(ref.diagnostics));
@@ -205,12 +170,12 @@ export class Templates implements Iterable<Template> {
         return TemplateParser.parseText(content, id, importResolver, expressionParser);
     }
 
-    /// <summary>
-    /// Evaluate a template with given name and scope.
-    /// </summary>
-    /// <param name="templateName">Template name to be evaluated.</param>
-    /// <param name="scope">The state visible in the evaluation.</param>
-    /// <returns>Evaluate result.</returns>
+    /**
+     * Evaluate a template with given name and scope.
+     * @param templateName Template name to be evaluated.
+     * @param scope The state visible in the evaluation.
+     * @returns Evaluate result.
+     */
     public evaluate(templateName: string, scope?: object): any {
         this.checkErrors();
 
@@ -218,13 +183,13 @@ export class Templates implements Iterable<Template> {
         return evaluator.evaluateTemplate(templateName, scope);
     }
 
-    /// <summary>
-    /// Expand a template with given name and scope.
-    /// Return all possible responses instead of random one.
-    /// </summary>
-    /// <param name="templateName">Template name to be evaluated.</param>
-    /// <param name="scope">The state visible in the evaluation.</param>
-    /// <returns>Expand result.</returns>
+    /**
+     * Expand a template with given name and scope.
+     * Return all possible responses instead of random one.
+     * @param templateName Template name to be evaluated.
+     * @param scope The state visible in the evaluation.
+     * @returns Expand result.
+     */
     public expandTemplate(templateName: string, scope?: object): string[] {
         this.checkErrors();
 
@@ -232,12 +197,11 @@ export class Templates implements Iterable<Template> {
         return expander.expandTemplate(templateName, scope);
     }
 
-    /// <summary>
-    /// (experimental)
-    /// Analyzer a template to get the static analyzer results including variables and template references.
-    /// </summary>
-    /// <param name="templateName">Template name to be evaluated.</param>
-    /// <returns>analyzer result.</returns>
+    /**
+     * Analyzer a template to get the static analyzer results including variables and template references.
+     * @param templateName Template name to be evaluated.
+     * @returns analyzer result.
+     */
     public analyzeTemplate(templateName: string): AnalyzerResult {
         this.checkErrors();
 
@@ -245,12 +209,11 @@ export class Templates implements Iterable<Template> {
         return analyzer.analyzeTemplate(templateName);
     }
 
-    /// <summary>
-    /// Use to evaluate an inline template str.
-    /// </summary>
-    /// <param name="inlineStr">inline string which will be evaluated.</param>
-    /// <param name="scope">scope object or JToken.</param>
-    /// <returns>Evaluate result.</returns>
+    /**
+     * Use to evaluate an inline template str.
+     * @param inlineStr inline string which will be evaluated.
+     * @param scope scope object or JToken.
+     */
     public evaluateText(inlineStr: string, scope?: object): any
     {
         if (inlineStr === undefined)

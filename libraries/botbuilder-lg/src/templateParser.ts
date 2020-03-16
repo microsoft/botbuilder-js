@@ -31,9 +31,9 @@ export declare type ImportResolverDelegate = (source: string, resourceId: string
  */
 export class TemplateParser {
 
-    /// <summary>
-    /// option regex.
-    /// </summary>
+    /**
+     * option regex.
+     */
     private static readonly optionRegex: RegExp = new RegExp(/^> *!#(.*)$/);
 
     /**
