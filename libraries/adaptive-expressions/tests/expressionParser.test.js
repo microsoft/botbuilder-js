@@ -432,6 +432,7 @@ const dataSource = [
     ['uriScheme(\'http://www.contoso.com/catalog/shownew.htm?date=today\')', 'http'],
 
     // Collection functions tests
+    ['createArray(hello)', ['hello']],
     ['sum(createArray(1, 2))', 3],
     ['sum(createArray(one, two, 3))', 6.0],
     ['average(createArray(1, 2))', 1.5],
