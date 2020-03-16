@@ -467,22 +467,6 @@ describe(`BotFrameworkAdapter`, function () {
         });
     });
 
-    it(`should continueConversation().`, function (done) {
-        let called = false;
-        const adapter = new AdapterUnderTest();
-        adapter.continueConversation(reference, (context) => {
-            assert(context, `context not passed.`);
-            assert(context.activity, `context has no request.`);
-            assert(context.activity.type === 'event', `request has invalid type.`);
-            assert(context.activity.from && context.activity.from.id === reference.user.id, `request has invalid from.id.`);
-            assert(context.activity.recipient && context.activity.recipient.id === reference.bot.id, `request has invalid recipient.id.`);
-            called = true;
-        }).then(() => {
-            assert(called, `bot logic not called.`);
-            done();
-        });
-    });
-
     it(`should createConversation().`, function (done) {
         let called = false;
         const adapter = new AdapterUnderTest();
@@ -1198,6 +1182,56 @@ describe(`BotFrameworkAdapter`, function () {
     });
 
     describe('continueConversation', function() {
+        it(`should succeed.`, function (done) {
+            let called = false;
+            const adapter = new AdapterUnderTest();
+            adapter.continueConversation(reference, (context) => {
+                assert(context, `context not passed.`);
+                assert(context.activity, `context has no request.`);
+                assert(context.activity.type === 'event', `request has invalid type.`);
+                assert(context.activity.from && context.activity.from.id === reference.user.id, `request has invalid from.id.`);
+                assert(context.activity.recipient && context.activity.recipient.id === reference.bot.id, `request has invalid recipient.id.`);
+                called = true;
+            }).then(() => {
+                assert(called, `bot logic not called.`);
+                done();
+            });
+        });
+
+        it(`should not trust reference.serviceUrl if there is no AppId on the credentials.`, function (done) {
+            let called = false;
+            const adapter = new AdapterUnderTest();
+            adapter.continueConversation(reference, (context) => {
+                assert(context, `context not passed.`);
+                assert(context.activity, `context has no request.`);
+                assert(context.activity.type === 'event', `request has invalid type.`);
+                assert(context.activity.from && context.activity.from.id === reference.user.id, `request has invalid from.id.`);
+                assert(context.activity.recipient && context.activity.recipient.id === reference.bot.id, `request has invalid recipient.id.`);
+                assert(!MicrosoftAppCredentials.isTrustedServiceUrl('https://example.org/channel'));
+                called = true;
+            }).then(() => {
+                assert(called, `bot logic not called.`);
+                done();
+            });
+        });
+
+        it(`should trust reference.serviceUrl if there is an AppId on the credentials.`, function (done) {
+            let called = false;
+            const adapter = new AdapterUnderTest({ appId: '2id', appPassword: '2pw' });
+            adapter.continueConversation(reference, (context) => {
+                assert(context, `context not passed.`);
+                assert(context.activity, `context has no request.`);
+                assert(context.activity.type === 'event', `request has invalid type.`);
+                assert(context.activity.from && context.activity.from.id === reference.user.id, `request has invalid from.id.`);
+                assert(context.activity.recipient && context.activity.recipient.id === reference.bot.id, `request has invalid recipient.id.`);
+                assert(MicrosoftAppCredentials.isTrustedServiceUrl('https://example.org/channel'));
+                called = true;
+            }).then(() => {
+                assert(called, `bot logic not called.`);
+                done();
+            });
+        });
+
         it(`should work with oAuthScope and logic passed in.`, async () => {
             let called = false;
             const adapter = new AdapterUnderTest();
