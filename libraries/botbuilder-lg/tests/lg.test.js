@@ -54,6 +54,14 @@ describe('LG', function() {
         assert.strictEqual(evaled === 'Good evening' || evaled === 'Evening! ', true, `Evaled is ${ evaled }`);
     });
 
+    it('TestMultiLineExpressionInLG', function() {
+        let templates = Templates.parseFile(GetExampleFilePath('MultiLineExpr.lg'));
+        let evaled = templates.evaluate('definition');
+        assert.strictEqual(evaled, 10);
+        evaled = templates.evaluate('definition2');
+        assert.strictEqual(evaled, 'this is book list: Ender\'s Game, Dune');
+    });
+
     it('TestBasicConditionalTemplateWithoutDefault', function() {
         let templates = Templates.parseFile(GetExampleFilePath('5.lg'));
 

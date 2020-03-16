@@ -1,0 +1,9 @@
+>Demo How LG can evalute a multiple line defined expression
+#definition
+- ${count(concat('hello',
+'world'))}
+
+# definition2 
+- this is book list: ${join(createArray("Ender's Game", 
+"Dune")
+, ", ")}
