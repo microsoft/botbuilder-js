@@ -153,4 +153,13 @@ export class ExpressionType {
 
     // Regar expression
     public static readonly IsMatch: string = 'isMatch';
+
+    //Type Checking 
+    public static readonly isString: string = 'isString';
+    public static readonly isInteger: string = 'isInteger';
+    public static readonly isArray: string = 'isArray';
+    public static readonly isObject: string = 'isObject';
+    public static readonly isFloat: string = 'isFloat';
+    public static readonly isDateTime: string = 'isDateTime';
+    public static readonly isBoolean: string = 'isBoolean';
 }

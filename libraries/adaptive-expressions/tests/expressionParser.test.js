@@ -74,10 +74,14 @@ const dataSource = [
     ['float(5.5) <= float(4 - 1)', false],
     ['\'string\'&\'builder\'', 'stringbuilder'],
     ['"string"&"builder"', 'stringbuilder'],
+    ['"string"&\n"builder"', 'stringbuilder'],
+    ['"string"&\r\n"builder"', 'stringbuilder'],
     ['one > 0.5 && two < 2.5', true, oneTwo],
     ['notThere > 4', false],
     ['float(5.5) && float(0.0)', true],
     ['hello && "hello"', true],
+    ['hello &&\n "hello"', true],
+    ['hello &&\r\n "hello"', true],
     ['items || ((2 + 2) <= (4 - 1))', true], // true || false
     ['0 || false', true], // true || false
     ['0 ||\n false', true], // true || false
@@ -515,6 +519,24 @@ const dataSource = [
     ['isMatch("a", "\\\\w{1}")', true], // "\w" (match [a-zA-Z0-9_])
     ['isMatch("1", "\\\\d{1}")', true], // "\d" (match [0-9])
 
+    //Type Checking Tests
+    ['isString(hello)', true],
+    ['isString("Monday")', true],
+    ['isString(one)', false],
+    ['isInteger(one)', true],
+    ['isInteger(1)', true],
+    ['isInteger(1.23)', false],
+    ['isFloat(one)', false],
+    ['isFloat(1)', false],
+    ['isFloat(1.23)', true],
+    ['isArray(hello)', false],
+    ['isArray(createArray(1,2,3))', true],
+    ['isObject(hello)', false],
+    ['isObject(dialog)', true],
+    ['isBoolean(hello)', false],
+    ['isBoolean(1 == one)', true],
+    ['isDateTime(hello)', false],
+    ['isDateTime(timestamp)', true],
     // Empty expression
     ['', ''],
 

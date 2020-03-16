@@ -2983,7 +2983,37 @@ export class ExpressionFunctions {
                         return {value, error};
                     }),
                 ReturnType.Boolean,
-                ExpressionFunctions.validateIsMatch)
+                ExpressionFunctions.validateIsMatch),
+            
+            // Type Checking Functions
+            new ExpressionEvaluator(ExpressionType.isString, ExpressionFunctions.apply(
+                (args: any[]): boolean =>  typeof args[0] === 'string'),
+            ReturnType.Boolean,
+            ExpressionFunctions.validateUnary),
+            new ExpressionEvaluator(ExpressionType.isInteger, ExpressionFunctions.apply(
+                (args: any[]): boolean =>  typeof args[0] === 'number' && args[0] % 1 === 0),
+            ReturnType.Boolean,
+            ExpressionFunctions.validateUnary),
+            new ExpressionEvaluator(ExpressionType.isFloat, ExpressionFunctions.apply(
+                (args: any[]): boolean =>  typeof args[0] === 'number' && args[0] % 1 !== 0),
+            ReturnType.Boolean,
+            ExpressionFunctions.validateUnary),
+            new ExpressionEvaluator(ExpressionType.isArray, ExpressionFunctions.apply(
+                (args: any[]): boolean => Array.isArray(args[0])),
+            ReturnType.Boolean,
+            ExpressionFunctions.validateUnary),
+            new ExpressionEvaluator(ExpressionType.isObject, ExpressionFunctions.apply(
+                (args: any[]): boolean => typeof args[0] === 'object'),
+            ReturnType.Boolean,
+            ExpressionFunctions.validateUnary),
+            new ExpressionEvaluator(ExpressionType.isBoolean, ExpressionFunctions.apply(
+                (args: any[]): boolean => typeof args[0] === 'boolean'),
+            ReturnType.Boolean,
+            ExpressionFunctions.validateUnary),
+            new ExpressionEvaluator(ExpressionType.isDateTime, ExpressionFunctions.apply(
+                (args: any[]): boolean => typeof args[0] === 'string' && this.verifyISOTimestamp(args[0]) === undefined),
+            ReturnType.Boolean,
+            ExpressionFunctions.validateUnary)
         ];
 
         const lookup: Map<string, ExpressionEvaluator> = new Map<string, ExpressionEvaluator>();

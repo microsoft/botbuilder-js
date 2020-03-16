@@ -65,6 +65,9 @@ describe('LG', function() {
 
         evaled = templates.evaluate('time-of-day-readout-without-default2', { timeOfDay: 'evening' });
         assert.strictEqual(evaled, undefined, `Evaled is ${ evaled } which should be undefined.`);
+
+        evaled = templates.evaluate('time-of-day-with-two-expression', { timeOfDay: 'afternoon' });
+        assert.strictEqual(evaled === 'GoodDay!' || evaled === 'How is going?', true, `Evaled is ${ evaled }`);
     });
 
     it('TestBasicTemplateRefWithParameters', function() {

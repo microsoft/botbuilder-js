@@ -43,3 +43,10 @@
 - IF: ${timeOfDay == 'morning'}
     - Good morning
     - Morning! 
+
+> Conditional with multiline expressions
+# time-of-day-with-two-expression
+- IF: ${timeOfDay == 'morning' ||
+        timeOfDay == 'afternoon'}
+    - GoodDay!
+    - How is going?
