@@ -13,7 +13,7 @@ expression
     | expression (SINGLE_AND) expression                                      #binaryOpExp
     | expression (LESS_THAN|LESS_OR_EQUAl|MORE_THAN|MORE_OR_EQUAL) expression #binaryOpExp
     | expression DOUBLE_AND expression                                        #binaryOpExp
-    | expression DOUBLE_VERTICAL_CYLINDER expression                          #binaryOpExp
+    | expression DOUBLE_VERTICAL_CYLINDER NEWLINE? expression                 #binaryOpExp
     | primaryExpression                                                       #primaryExp
     ;
  

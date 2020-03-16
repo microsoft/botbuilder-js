@@ -2819,11 +2819,6 @@ export class ExpressionFunctions {
                 ExpressionFunctions.validateBinaryNumber),
             new ExpressionEvaluator(ExpressionType.CreateArray, ExpressionFunctions.apply((args: any []): any[] => Array.from(args)), ReturnType.Object),
             new ExpressionEvaluator(
-                ExpressionType.Array,
-                ExpressionFunctions.apply((args: any []): any[] => [args[0]], ExpressionFunctions.verifyString),
-                ReturnType.Object,
-                ExpressionFunctions.validateUnary),
-            new ExpressionEvaluator(
                 ExpressionType.Binary,
                 ExpressionFunctions.apply((args: any []): string => this.toBinary(args[0]), ExpressionFunctions.verifyString),
                 ReturnType.String,

@@ -80,6 +80,8 @@ const dataSource = [
     ['hello && "hello"', true],
     ['items || ((2 + 2) <= (4 - 1))', true], // true || false
     ['0 || false', true], // true || false
+    ['0 ||\n false', true], // true || false
+    ['0 ||\r\n false', true], // true || false
     ['!(hello)', false], // false
     ['!(10)', false],
     ['!(0)', false],
@@ -276,7 +278,6 @@ const dataSource = [
     ['bool(\'hi\')', true],
     ['createArray(\'h\', \'e\', \'l\', \'l\', \'o\')', ['h', 'e', 'l', 'l', 'o']],
     ['createArray(1, bool(0), string(bool(1)), float(\'10\'))', [1, true, 'true', 10.0]],
-    ['array(hello)', ['hello']],
     ['binary(hello)', '0110100001100101011011000110110001101111'],
     ['dataUri(hello)', 'data:text/plain;charset=utf-8;base64,aGVsbG8='],
     ['dataUriToBinary(dataUri(hello))', '011001000110000101110100011000010011101001110100011001010111100001110100001011110111000001101100011000010110100101101110001110110110001101101000011000010111001001110011011001010111010000111101011101010111010001100110001011010011100000111011011000100110000101110011011001010011011000110100001011000110000101000111010101100111001101100010010001110011100000111101'],
@@ -342,8 +343,8 @@ const dataSource = [
     ['formatDateTime(notISOTimestamp, \'ddd\')', 'Thu'],
     ['formatDateTime(notISOTimestamp, \'dddd\')', 'Thursday'],
     ['formatDateTime(\'2018-03-15T00:00:00.000Z\', \'yyyy\')', '2018'],
-//    ['formatDateTime(\'2018-03-15T00:00:00.000Z\', \'yyyy-MM-dd-\\\\d\')', '2018-03-15-4'],
-// - Fails in the US
+    //    ['formatDateTime(\'2018-03-15T00:00:00.000Z\', \'yyyy-MM-dd-\\\\d\')', '2018-03-15-4'],
+    // - Fails in the US
     ['formatDateTime(\'2018-03-15T00:00:00.010Z\', \'FFFF\')', '0100'],
     ['formatDateTime(\'2018-03-15T00:00:00.010Z\', \'FFFFFF\')', '010000'],
     ['formatDateTime(\'2018-03-15T00:00:00.010Z\', \'FFF\')', '010'],
@@ -366,9 +367,9 @@ const dataSource = [
     ['subtractFromTime(timestamp, 1, \'Hour\')', '2018-03-15T12:00:00.111Z'],
     ['subtractFromTime(timestamp, 1, \'Minute\')', '2018-03-15T12:59:00.111Z'],
     ['subtractFromTime(timestamp, 1, \'Second\')', '2018-03-15T12:59:59.111Z'],
-//    ['dateReadBack(timestamp, addDays(timestamp, 1))', 'tomorrow'],
-//    ['dateReadBack(addDays(timestamp, 1),timestamp)', 'yesterday'],
-// - Fails in the US
+    //    ['dateReadBack(timestamp, addDays(timestamp, 1))', 'tomorrow'],
+    //    ['dateReadBack(addDays(timestamp, 1),timestamp)', 'yesterday'],
+    // - Fails in the US
     ['getTimeOfDay(\'2018-03-15T00:00:00.000Z\')', 'midnight'],
     ['getTimeOfDay(\'2018-03-15T08:00:00.000Z\')', 'morning'],
     ['getTimeOfDay(\'2018-03-15T12:00:00.000Z\')', 'noon'],

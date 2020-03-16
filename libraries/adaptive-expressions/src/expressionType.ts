@@ -90,7 +90,6 @@ export class ExpressionType {
     public static readonly Int: string = 'int';
     public static readonly String: string = 'string';
     public static readonly Bool: string = 'bool';
-    public static readonly Array: string = 'array';
     public static readonly Binary: string = 'binary';
     public static readonly DataUri: string = 'dataUri';
     public static readonly DataUriToBinary: string = 'dataUriToBinary';
