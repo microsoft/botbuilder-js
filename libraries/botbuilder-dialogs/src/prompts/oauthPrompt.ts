@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { Activity, ActivityTypes, Attachment, AppCredentials, BotAdapter, CardFactory, Channels, InputHints, MessageFactory, OAuthLoginTimeoutKey, TokenResponse, TurnContext, OAuthCard, ActionTypes, ExtendedUserTokenProvider, verifyStateOperationName, StatusCodes, tokenExchangeOperationName, tokenResponseEventName } from 'botbuilder-core';
+import { Activity, ActivityTypes, Attachment, CoreAppCredentials, BotAdapter, CardFactory, Channels, InputHints, MessageFactory, OAuthLoginTimeoutKey, TokenResponse, TurnContext, OAuthCard, ActionTypes, ExtendedUserTokenProvider, verifyStateOperationName, StatusCodes, tokenExchangeOperationName, tokenResponseEventName } from 'botbuilder-core';
 import { Dialog, DialogTurnResult } from '../dialog';
 import { DialogContext } from '../dialogContext';
 import { PromptOptions, PromptRecognizerResult,  PromptValidator } from './prompt';
@@ -42,7 +42,7 @@ export interface OAuthPromptSettings {
     /**
      * AppCredentials for OAuth.
      */
-    oAuthAppCredentials: AppCredentials;
+    oAuthAppCredentials?: CoreAppCredentials;
 
     /**
      * Name of the OAuth connection being used.
@@ -280,7 +280,12 @@ export class OAuthPrompt extends Dialog {
                 const signInResource = await (context.adapter as ExtendedUserTokenProvider).getSignInResource(context, this.settings.connectionName, context.activity.from.id, null, this.settings.oAuthAppCredentials);
                 let link = signInResource.signInLink;
                 const identity = context.turnState.get((context.adapter as BotAdapter).BotIdentityKey);
-                if((identity && isSkillClaim(identity.claims)) || OAuthPrompt.isFromStreamingConnection(context.activity)) {
+                
+                // use the SignInLink when 
+                //   in speech channel or
+                //   bot is a skill or
+                //   an extra OAuthAppCredentials is being passed in
+                if((identity && isSkillClaim(identity.claims)) || OAuthPrompt.isFromStreamingConnection(context.activity) || this.settings.oAuthAppCredentials) {
                     if(context.activity.channelId === Channels.Emulator) {
                         cardActionType = ActionTypes.OpenUrl;
                     }

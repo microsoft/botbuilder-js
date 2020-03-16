@@ -313,3 +313,6 @@ package-lock.json
 
 *.tsbuildinfo
 *.js.map
+
+consumer-test/**.js
+consumer-test/**.json

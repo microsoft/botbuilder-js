@@ -8,7 +8,7 @@
 
 export * from 'botframework-schema';
 export * from './activityFactory';
-export * from './appCredentials';
+export * from './coreAppCredentials';
 export * from './activityHandler';
 export * from './activityHandlerBase';
 export * from './autoSaveStateMiddleware';
@@ -31,7 +31,11 @@ export * from './propertyManager';
 export * from './recognizerResult';
 export * from './showTypingMiddleware';
 export * from './signInConstants';
-export { BotFrameworkSkill, BotFrameworkClient, SkillConversationIdFactoryBase, SkillConversationReference,
+export {
+    BotFrameworkSkill,
+    BotFrameworkClient,
+    SkillConversationIdFactoryBase,
+    SkillConversationReference,
     SkillConversationIdFactoryOptions } from './skills';
 export * from './skypeMentionNormalizeMiddleware';
 export * from './statusCodes';
