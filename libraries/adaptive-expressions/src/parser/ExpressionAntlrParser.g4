@@ -5,16 +5,16 @@ options { tokenVocab=ExpressionAntlrLexer; }
 file: expression EOF;
 
 expression
-    : (NON|SUBSTRACT|PLUS) NEWLINE? expression                                             #unaryOpExp
-    | <assoc=right> expression XOR NEWLINE? expression                                     #binaryOpExp 
-    | expression (ASTERISK|SLASH|PERCENT) NEWLINE? expression                              #binaryOpExp
-    | expression (PLUS|SUBSTRACT) NEWLINE? expression                                      #binaryOpExp
-    | expression (DOUBLE_EQUAL|NOT_EQUAL) NEWLINE? expression                              #binaryOpExp
-    | expression (SINGLE_AND) NEWLINE? expression                                          #binaryOpExp
-    | expression (LESS_THAN|LESS_OR_EQUAl|MORE_THAN|MORE_OR_EQUAL) NEWLINE? expression     #binaryOpExp
-    | expression DOUBLE_AND NEWLINE? expression                                            #binaryOpExp
-    | expression DOUBLE_VERTICAL_CYLINDER NEWLINE? expression                              #binaryOpExp
-    | primaryExpression                                                                    #primaryExp
+    : (NON|SUBSTRACT|PLUS) expression                                             #unaryOpExp
+    | <assoc=right> expression XOR expression                                     #binaryOpExp 
+    | expression (ASTERISK|SLASH|PERCENT) expression                              #binaryOpExp
+    | expression (PLUS|SUBSTRACT) expression                                      #binaryOpExp
+    | expression (DOUBLE_EQUAL|NOT_EQUAL) expression                              #binaryOpExp
+    | expression (SINGLE_AND) expression                                          #binaryOpExp
+    | expression (LESS_THAN|LESS_OR_EQUAl|MORE_THAN|MORE_OR_EQUAL) expression     #binaryOpExp
+    | expression DOUBLE_AND expression                                            #binaryOpExp
+    | expression DOUBLE_VERTICAL_CYLINDER expression                              #binaryOpExp
+    | primaryExpression                                                           #primaryExp
     ;
  
 primaryExpression 
