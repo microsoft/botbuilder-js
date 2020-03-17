@@ -9,6 +9,7 @@ import { MemoryStorage, ConversationState, UserState } from 'botbuilder-core';
 import { Dialog, DialogManager, Configurable } from 'botbuilder-dialogs';
 import { TestAction } from './testAction';
 import { AdaptiveTestAdapter } from './adaptiveTestAdapter';
+import { DialogExpression } from 'botbuilder-dialogs-adaptive';
 
 export interface TestScriptConfiguration {
     description?: string;
@@ -30,7 +31,7 @@ export class TestScript extends Configurable {
     /**
      * The dialog to use for the root dialog.
      */
-    public dialog: Dialog;
+    public dialog: DialogExpression;
 
     /**
      * The locale (default: en-us).
@@ -65,7 +66,7 @@ export class TestScript extends Configurable {
         testAdapter.locale = this.locale;
 
         const bot = new DialogManager();
-        bot.rootDialog = this.dialog;
+        bot.rootDialog = this.dialog.value;
         bot.conversationState = new ConversationState(new MemoryStorage());
         bot.userState = new UserState(new MemoryStorage());
 
