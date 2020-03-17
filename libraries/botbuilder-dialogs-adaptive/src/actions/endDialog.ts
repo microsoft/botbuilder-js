@@ -80,6 +80,6 @@ export class EndDialog<O extends object = {}> extends Dialog<O> implements Confi
     }
 
     protected onComputeId(): string {
-        return `EndDialog[${ this.value.toString() || '' }]`;
+        return `EndDialog[${ this.value ? this.value.toString() : '' }]`;
     }
 }

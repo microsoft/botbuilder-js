@@ -85,6 +85,6 @@ export class GetActivityMembers<O extends object = {}> extends Dialog implements
     }
 
     protected onComputeId(): string {
-        return `GetActivityMembers[${ this.activityId.toString() },${ this.property.toString() }]`;
+        return `GetActivityMembers[${ this.activityId ? this.activityId.toString() : '' }, ${ this.property ? this.property.toString() : '' }]`;
     }
 }
