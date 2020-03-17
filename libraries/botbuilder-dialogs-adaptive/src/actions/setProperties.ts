@@ -1,9 +1,20 @@
 import { Dialog, DialogContext, DialogTurnResult, DialogConfiguration, Configurable } from 'botbuilder-dialogs';
+import { Converter } from 'botbuilder-dialogs-declarative';
 import { ValueExpression, StringExpression, BoolExpression } from '../expressionProperties';
 
 export interface PropertyAssignment {
     property: StringExpression;
     value: ValueExpression;
+}
+
+export class PropertyAssignmentConverter implements Converter {
+    public convert(assignment: { property: string, value: any }): PropertyAssignment {
+        const propertyAssignment: PropertyAssignment = {
+            property: new StringExpression(assignment.property),
+            value: new ValueExpression(assignment.value)
+        };
+        return propertyAssignment;
+    }
 }
 
 export interface SetPropertiesConfiguration extends DialogConfiguration {
