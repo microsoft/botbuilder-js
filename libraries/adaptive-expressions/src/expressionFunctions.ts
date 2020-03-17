@@ -2991,11 +2991,11 @@ export class ExpressionFunctions {
             ReturnType.Boolean,
             ExpressionFunctions.validateUnary),
             new ExpressionEvaluator(ExpressionType.isInteger, ExpressionFunctions.apply(
-                (args: any[]): boolean =>  typeof args[0] === 'number' && args[0] % 1 === 0),
+                (args: any[]): boolean =>  this.isNumber(args[0]) &&  Number.isInteger(args[0])),
             ReturnType.Boolean,
             ExpressionFunctions.validateUnary),
             new ExpressionEvaluator(ExpressionType.isFloat, ExpressionFunctions.apply(
-                (args: any[]): boolean =>  typeof args[0] === 'number' && args[0] % 1 !== 0),
+                (args: any[]): boolean =>  this.isNumber(args[0]) && !Number.isInteger(args[0])),
             ReturnType.Boolean,
             ExpressionFunctions.validateUnary),
             new ExpressionEvaluator(ExpressionType.isArray, ExpressionFunctions.apply(
