@@ -48,13 +48,13 @@ export class ConfirmInput extends InputDialog {
      * @remarks
      * Defaults to `ListStyle.auto`.
      */
-    public style: EnumExpression<ListStyle> = new EnumExpression(ListStyle.auto);
+    public style: EnumExpression = new EnumExpression(ListStyle.auto);
 
     /**
      * Additional options passed to the `ChoiceFactory` and used to tweak the style of choices
      * rendered to the user.
      */
-    public choiceOptions?: ObjectExpression<ChoiceFactoryOptions>;
+    public choiceOptions?: ObjectExpression<ChoiceFactoryOptions> = new ObjectExpression();
 
     /**
      * Custom list of choices to send for the prompt.
@@ -75,7 +75,7 @@ export class ConfirmInput extends InputDialog {
                         this.defaultLocale = new StringExpression(value);
                         break;
                     case 'style':
-                        this.style = new EnumExpression<ListStyle>(value);
+                        this.style = new EnumExpression(value);
                         break;
                     case 'choiceOptions':
                         this.choiceOptions = new ObjectExpression<ChoiceFactoryOptions>(value);

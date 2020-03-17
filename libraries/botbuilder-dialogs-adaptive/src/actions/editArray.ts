@@ -51,7 +51,7 @@ export class EditArray<O extends object = {}> extends Dialog<O> implements Confi
     /**
      * Type of change being applied.
      */
-    public changeType: EnumExpression<ArrayChangeType> = new EnumExpression(ArrayChangeType.push);
+    public changeType: EnumExpression = new EnumExpression(ArrayChangeType.push);
 
     /**
      * Property path expression to the collection of items.
@@ -79,7 +79,7 @@ export class EditArray<O extends object = {}> extends Dialog<O> implements Confi
                 const value = config[key];
                 switch (key) {
                     case 'changeType':
-                        this.changeType = new EnumExpression<ArrayChangeType>(value);
+                        this.changeType = new EnumExpression(value);
                         break;
                     case 'itemsProperty':
                         this.itemsProperty = new StringExpression(value);

@@ -34,7 +34,7 @@ export class EditActions<O extends object = {}> extends Dialog<O> implements Dia
     /**
      * The type of change to make to the dialogs list of actions.
      */
-    public changeType: EnumExpression<ActionChangeType>;
+    public changeType: EnumExpression;
 
     /**
      * An optional expression which if is true will disable this action.

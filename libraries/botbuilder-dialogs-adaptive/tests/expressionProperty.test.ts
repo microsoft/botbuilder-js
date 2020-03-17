@@ -110,19 +110,13 @@ describe('expressionProperty tests', () => {
         enum TestEnum { One, Two, Three };
         const data = { test: TestEnum.Three };
 
-        let val = new EnumExpression<TestEnum>('test');
+        let val = new EnumExpression('=test');
         assert.notEqual(val.expressionText, undefined);
         assert.equal(val.value, undefined);
         let result = val.getValue(data);
         assert.equal(result, TestEnum.Three);
 
-        val = new EnumExpression<TestEnum>('=test');
-        assert.notEqual(val.expressionText, undefined);
-        assert.equal(val.value, undefined);
-        result = val.getValue(data);
-        assert.equal(result, TestEnum.Three);
-
-        val = new EnumExpression<TestEnum>(TestEnum.Three);
+        val = new EnumExpression(TestEnum.Three);
         assert.equal(val.expressionText, undefined);
         assert.equal(val.value, TestEnum.Three);
         result = val.getValue(data);

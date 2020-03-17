@@ -57,7 +57,7 @@ export class ChoiceInput extends InputDialog {
      * @remarks
      * Defaults to `ListStyle.auto`.
      */
-    public style: EnumExpression<ListStyle> = new EnumExpression(ListStyle.auto);
+    public style: EnumExpression = new EnumExpression(ListStyle.auto);
 
     /**
      * The prompts default locale that should be recognized.
@@ -67,18 +67,18 @@ export class ChoiceInput extends InputDialog {
     /**
      * Control the format of the response (value or index of the choice).
      */
-    public outputFormat: EnumExpression<ChoiceOutputFormat> = new EnumExpression(ChoiceOutputFormat.value);
+    public outputFormat: EnumExpression = new EnumExpression(ChoiceOutputFormat.value);
 
     /**
      * Additional options passed to the `ChoiceFactory` and used to tweak the style of choices
      * rendered to the user.
      */
-    public choiceOptions?: ObjectExpression<ChoiceFactoryOptions>;
+    public choiceOptions?: ObjectExpression<ChoiceFactoryOptions> = new ObjectExpression();
 
     /**
      * Additional options passed to the underlying `recognizeChoices()` function.
      */
-    public recognizerOptions?: ObjectExpression<FindChoicesOptions>;
+    public recognizerOptions?: ObjectExpression<FindChoicesOptions> = new ObjectExpression();
 
     public configure(config: ChoiceInputConfiguration): this {
         for (const key in config) {
@@ -89,13 +89,13 @@ export class ChoiceInput extends InputDialog {
                         this.choices = new ArrayExpression<Choice>(value);
                         break;
                     case 'style':
-                        this.style = new EnumExpression<ListStyle>(value);
+                        this.style = new EnumExpression(value);
                         break;
                     case 'defaultLocale':
                         this.defaultLocale = new StringExpression(value);
                         break;
                     case 'outputFormat':
-                        this.outputFormat = new EnumExpression<ChoiceOutputFormat>(value);
+                        this.outputFormat = new EnumExpression(value);
                         break;
                     case 'choiceOptions':
                         this.choiceOptions = new ObjectExpression<ChoiceFactoryOptions>(value);

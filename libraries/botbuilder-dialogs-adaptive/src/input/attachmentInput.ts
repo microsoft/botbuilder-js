@@ -23,7 +23,7 @@ export class AttachmentInput extends InputDialog {
 
     public static declarativeType = 'Microsoft.AttachmentInput';
 
-    public outputFormat: EnumExpression<AttachmentOutputFormat> = new EnumExpression<AttachmentOutputFormat>(AttachmentOutputFormat.first);
+    public outputFormat: EnumExpression = new EnumExpression(AttachmentOutputFormat.first);
 
     public configure(config: AttachmentInputConfiguration): this {
         for (const key in config) {
@@ -31,7 +31,7 @@ export class AttachmentInput extends InputDialog {
                 const value = config[key];
                 switch (key) {
                     case 'outputFormat':
-                        this.outputFormat = new EnumExpression<AttachmentOutputFormat>(value);
+                        this.outputFormat = new EnumExpression(value);
                         break;
                     default:
                         super.configure({ [key]: value });
