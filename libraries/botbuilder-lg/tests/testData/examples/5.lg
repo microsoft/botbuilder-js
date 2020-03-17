@@ -42,4 +42,4 @@
 # time-of-day-readout-without-default2
 - IF: ${timeOfDay == 'morning'}
     - Good morning
-    - Morning!
+    - Morning! 
