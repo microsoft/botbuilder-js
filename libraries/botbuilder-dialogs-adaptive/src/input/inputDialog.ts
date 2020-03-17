@@ -222,11 +222,19 @@ export abstract class InputDialog extends Dialog {
     protected async onPreBubbleEvent(dc: DialogContext, event: DialogEvent): Promise<boolean> {
         if (event.name === DialogEvents.activityReceived && dc.context.activity.type === ActivityTypes.Message) {
             if (dc.parent) {
+                // ask parent to perform recognition
                 dc.parent.emitEvent(AdaptiveEventNames.recognizeUtterance, dc.context.activity, false);
             }
-            if (this.allowInterruptions && this.allowInterruptions.getValue(dc.state)) {
-                return true;
+
+            // should we allow interruptions
+            let canInterrupt = true;
+            if (this.allowInterruptions) {
+                const allowInterruptions = this.allowInterruptions.getValue(dc.state);
+                canInterrupt = !!allowInterruptions;
             }
+
+            // stop bubbling if interruptions are NOT allowed
+            return !canInterrupt;
         }
 
         return false;
