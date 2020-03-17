@@ -11,7 +11,7 @@ import {
 } from 'botbuilder-core';
 import {
     Dialog, DialogInstance, DialogReason, DialogTurnResult, DialogTurnStatus, DialogEvent,
-    DialogContext, DialogConfiguration, DialogContainer, DialogDependencies, TurnPath
+    DialogContext, DialogContainer, DialogDependencies, TurnPath
 } from 'botbuilder-dialogs';
 import {
     AdaptiveEventNames, SequenceContext, AdaptiveDialogState, ActionState
@@ -21,32 +21,7 @@ import { Recognizer } from './recognizers';
 import { TriggerSelector } from './triggerSelector';
 import { FirstSelector } from './selectors';
 
-export interface AdaptiveDialogConfiguration extends DialogConfiguration {
-    /**
-     * (Optional) planning triggers to evaluate for each conversational turn.
-     */
-    triggers?: OnCondition[];
-
-    /**
-     * (Optional) recognizer used to analyze any message utterances.
-     */
-    recognizer?: Recognizer;
-
-    /**
-     * (Optional) flag that determines whether the dialog automatically ends when the plan is out
-     * of actions. Defaults to `false` for the root dialog and `true` for child dialogs.
-     */
-    autoEndDialog?: boolean;
-
-    /**
-     * (Optional) The selector for picking the possible events to execute.
-     */
-    selector: TriggerSelector;
-}
-
 export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
-
-    public static declarativeType = 'Microsoft.AdaptiveDialog';
 
     private readonly changeKey = Symbol('changes');
 
@@ -193,10 +168,6 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
     public getDependencies(): Dialog[] {
         this.ensureDependenciesInstalled();
         return [];
-    }
-
-    public configure(config: AdaptiveDialogConfiguration): this {
-        return super.configure(config);
     }
 
     //---------------------------------------------------------------------------------------------

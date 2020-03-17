@@ -7,12 +7,8 @@
  */
 import { Attachment } from 'botbuilder-core';
 import { DialogContext } from 'botbuilder-dialogs';
-import { InputDialogConfiguration, InputDialog, InputState } from './inputDialog';
+import { InputDialog, InputState } from './inputDialog';
 import { EnumExpression } from '../expressionProperties';
-
-export interface AttachmentInputConfiguration extends InputDialogConfiguration {
-    outputFormat?: string | AttachmentOutputFormat;
-}
 
 export enum AttachmentOutputFormat {
     all = 'all',
@@ -21,27 +17,7 @@ export enum AttachmentOutputFormat {
 
 export class AttachmentInput extends InputDialog {
 
-    public static declarativeType = 'Microsoft.AttachmentInput';
-
     public outputFormat: EnumExpression = new EnumExpression(AttachmentOutputFormat.first);
-
-    public configure(config: AttachmentInputConfiguration): this {
-        for (const key in config) {
-            if (config.hasOwnProperty(key)) {
-                const value = config[key];
-                switch (key) {
-                    case 'outputFormat':
-                        this.outputFormat = new EnumExpression(value);
-                        break;
-                    default:
-                        super.configure({ [key]: value });
-                        break;
-                }
-            }
-        }
-
-        return this;
-    }
 
     protected onComputeId(): string {
         return `AttachmentInput[${ this.prompt.toString() }]`;

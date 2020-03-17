@@ -8,21 +8,10 @@
 import * as Recognizers from '@microsoft/recognizers-text-choice';
 import { Activity } from 'botbuilder-core';
 import { DialogContext, Choice, ListStyle, ChoiceFactoryOptions, ChoiceFactory, recognizeChoices } from 'botbuilder-dialogs';
-import { InputDialogConfiguration, InputDialog, InputState } from './inputDialog';
+import { InputDialog, InputState } from './inputDialog';
 import { StringExpression, ObjectExpression, ArrayExpression, EnumExpression } from '../expressionProperties';
 
-export interface ConfirmInputConfiguration extends InputDialogConfiguration {
-    defaultLocale?: string;
-    style?: string | ListStyle;
-    choiceOptions?: ChoiceFactoryOptions;
-    confirmChoices?: Choice[];
-    outputFormat?: string;
-}
-
 export class ConfirmInput extends InputDialog {
-
-    public static declarativeType = 'Microsoft.ConfirmInput';
-
     /**
      * Default options for rendering the choices to the user based on locale.
      */
@@ -65,35 +54,6 @@ export class ConfirmInput extends InputDialog {
      * The expression of output format.
      */
     public outputFormat: StringExpression;
-
-    public configure(config: ConfirmInputConfiguration): this {
-        for (const key in config) {
-            if (config.hasOwnProperty(key)) {
-                const value = config[key];
-                switch (key) {
-                    case 'defaultLocale':
-                        this.defaultLocale = new StringExpression(value);
-                        break;
-                    case 'style':
-                        this.style = new EnumExpression(value);
-                        break;
-                    case 'choiceOptions':
-                        this.choiceOptions = new ObjectExpression<ChoiceFactoryOptions>(value);
-                        break;
-                    case 'confirmChoices':
-                        this.confirmChoices = new ArrayExpression<Choice>(value);
-                    case 'outputFormat':
-                        this.outputFormat = new StringExpression(value);
-                        break;
-                    default:
-                        super.configure({ [key]: value });
-                        break;
-                }
-            }
-        }
-
-        return this;
-    }
 
     protected onComputeId(): string {
         return `ConfirmInput[${ this.prompt.toString() }]`;

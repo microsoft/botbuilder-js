@@ -7,43 +7,14 @@
  */
 import * as Recognizers from '@microsoft/recognizers-text-date-time';
 import { DialogContext } from 'botbuilder-dialogs';
-import { InputDialogConfiguration, InputDialog, InputState } from './inputDialog';
+import { InputDialog, InputState } from './inputDialog';
 import { StringExpression } from '../expressionProperties';
 
-
-export interface DatetimeInputConfiguration extends InputDialogConfiguration {
-    defaultLocale?: string;
-    outputFormat?: string;
-}
-
 export class DateTimeInput extends InputDialog {
-
-    public static declarativeType = 'Microsoft.DateTimeInput';
 
     public defaultLocale: StringExpression;
 
     public outputFormat: StringExpression;
-
-    public configure(config: DatetimeInputConfiguration): this {
-        for (const key in config) {
-            if (config.hasOwnProperty(key)) {
-                const value = config[key];
-                switch (key) {
-                    case 'defaultLocale':
-                        this.defaultLocale = new StringExpression(value);
-                        break;
-                    case 'outputFormat':
-                        this.outputFormat = new StringExpression(value);
-                        break;
-                    default:
-                        super.configure({ [key]: value });
-                        break;
-                }
-            }
-        }
-
-        return this;
-    }
 
     protected onComputeId(): string {
         return `DateTimeInput[${ this.prompt.toString() }]`;

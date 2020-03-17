@@ -7,25 +7,14 @@
  */
 
 import { RecognizerResult, Activity, getTopScoringIntent } from 'botbuilder-core';
-import { Configurable, DialogContext } from 'botbuilder-dialogs';
+import { DialogContext } from 'botbuilder-dialogs';
 import { Recognizer } from './recognizer';
 
-export interface RecognizerSetConfiguration {
-    id?: string;
-    recognizers?: Recognizer[];
-}
-
-export class RecognizerSet extends Configurable implements Recognizer {
-
-    public static declarativeType = 'Microsoft.RecognizerSet';
+export class RecognizerSet implements Recognizer {
 
     public id: string;
 
     public recognizers: Recognizer[] = [];
-
-    public configure(config: RecognizerSetConfiguration): this {
-        return super.configure(config);
-    }
 
     public async recognize(dialogContext: DialogContext): Promise<RecognizerResult>;
     public async recognize(dialogContext: DialogContext, textOrActivity: Activity): Promise<RecognizerResult>;

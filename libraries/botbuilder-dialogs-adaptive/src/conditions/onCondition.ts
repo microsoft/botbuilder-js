@@ -5,23 +5,13 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { Dialog, DialogDependencies, Configurable } from 'botbuilder-dialogs';
+import { Dialog, DialogDependencies } from 'botbuilder-dialogs';
 import { Expression, ExpressionParserInterface, Constant, ExpressionEngine } from 'adaptive-expressions';
 import { SequenceContext, ActionChangeList, ActionState, ActionChangeType } from '../sequenceContext';
 import { ActionScope } from '../actions/actionScope';
 import { BoolExpression } from '../expressionProperties';
 
-export interface OnConditionConfiguration {
-    condition?: string | boolean;
-    actions?: Dialog[];
-    priority?: string;
-    runOnce?: boolean;
-}
-
-export class OnCondition extends Configurable implements DialogDependencies {
-
-    public static declarativeType = 'Microsoft.OnCondition';
-
+export class OnCondition implements DialogDependencies {
     /**
      * Evaluates the rule and returns a predicted set of changes that should be applied to the
      * current plan.
@@ -79,27 +69,8 @@ export class OnCondition extends Configurable implements DialogDependencies {
      * @param actions (Optional) The actions to add to the plan when the rule constraints are met.
      */
     public constructor(condition?: string, actions: Dialog[] = []) {
-        super();
         if (this.condition) { this.condition = new BoolExpression(condition); }
         this.actions = actions;
-    }
-
-    public configure(config: OnConditionConfiguration): this {
-        for (const key in config) {
-            if (config.hasOwnProperty(key)) {
-                const value = config[key];
-                switch (key) {
-                    case 'condition':
-                        this.condition = new BoolExpression(value);
-                        break;
-                    default:
-                        super.configure({ [key]: value });
-                        break;
-                }
-            }
-        }
-
-        return this;
     }
 
     /**

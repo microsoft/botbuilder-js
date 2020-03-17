@@ -5,27 +5,12 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { DialogConfiguration, Dialog, DialogContext, DialogTurnResult, DialogEvent, DialogReason, Choice, ListStyle, ChoiceFactoryOptions, ChoiceFactory, DialogEvents, TurnPath } from 'botbuilder-dialogs';
+import { Dialog, DialogContext, DialogTurnResult, DialogEvent, DialogReason, Choice, ListStyle, ChoiceFactoryOptions, ChoiceFactory, DialogEvents, TurnPath } from 'botbuilder-dialogs';
 import { ActivityTypes, Activity, InputHints, MessageFactory } from 'botbuilder-core';
 import { ExpressionEngine } from 'adaptive-expressions';
 import { AdaptiveEventNames } from '../sequenceContext';
 import { TemplateInterface } from '../template';
-import { ActivityTemplate } from '../templates/activityTemplate';
 import { ValueExpression, StringExpression, BoolExpression, NumberExpression } from '../expressionProperties';
-
-export interface InputDialogConfiguration extends DialogConfiguration {
-    alwaysPrompt?: string | boolean;
-    allowInterruptions?: string | boolean;
-    value?: any;
-    prompt?: string;
-    unrecognizedPrompt?: string;
-    invalidPrompt?: string;
-    property?: string;
-    validations?: string[];
-    maxTurnCount?: string | number;
-    defaultValue?: any;
-    disabled?: string | boolean;
-}
 
 export enum InputState {
     missing = 'missing',
@@ -169,54 +154,6 @@ export abstract class InputDialog extends Dialog {
     public async resumeDialog(dc: DialogContext, reason: DialogReason, result?: any): Promise<DialogTurnResult> {
         // Re-send initial prompt
         return await this.promptUser(dc, InputState.missing);
-    }
-
-    public configure(config: InputDialogConfiguration): this {
-        for (const key in config) {
-            if (config.hasOwnProperty(key)) {
-                const value = config[key];
-                switch (key) {
-                    case 'alwaysPrompt':
-                        this.alwaysPrompt = new BoolExpression(value);
-                        break;
-                    case 'allowInterruptions':
-                        this.allowInterruptions = new BoolExpression(value);
-                        break;
-                    case 'prompt':
-                        this.prompt = new ActivityTemplate(value);
-                        break;
-                    case 'unrecognizedPrompt':
-                        this.unrecognizedPrompt = new ActivityTemplate(value);
-                        break;
-                    case 'invalidPrompt':
-                        this.invalidPrompt = new ActivityTemplate(value);
-                        break;
-                    case 'property':
-                        this.property = new StringExpression(value);
-                        break;
-                    case 'validations':
-                        (value as any[]).forEach((exp) => this.validations.push(exp));
-                        break;
-                    case 'value':
-                        this.value = new ValueExpression(value);
-                        break;
-                    case 'defaultValue':
-                        this.defaultValue = new ValueExpression(value);
-                        break;
-                    case 'maxTurnCount':
-                        this.maxTurnCount = new NumberExpression(value);
-                        break;
-                    case 'disabled':
-                        this.disabled = new BoolExpression(value);
-                        break;
-                    default:
-                        super.configure({ [key]: value });
-                        break;
-                }
-            }
-        }
-
-        return this;
     }
 
     protected async onPreBubbleEvent(dc: DialogContext, event: DialogEvent): Promise<boolean> {

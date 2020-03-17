@@ -8,42 +8,14 @@
 import * as Recognizers from '@microsoft/recognizers-text-number';
 import { Activity } from 'botbuilder-core';
 import { DialogContext } from 'botbuilder-dialogs';
-import { InputDialogConfiguration, InputDialog, InputState } from './inputDialog';
+import { InputDialog, InputState } from './inputDialog';
 import { StringExpression, NumberExpression } from '../expressionProperties';
 
-export interface NumberInputConfiguration extends InputDialogConfiguration {
-    defaultLocale?: string;
-    outputFormat?: string;
-}
-
 export class NumberInput extends InputDialog {
-
-    public static declarativeType = 'Microsoft.NumberInput';
 
     public defaultLocale?: StringExpression;
 
     public outputFormat?: NumberExpression;
-
-    public configure(config: NumberInputConfiguration): this {
-        for (const key in config) {
-            if (config.hasOwnProperty(key)) {
-                const value = config[key];
-                switch (key) {
-                    case 'defaultLocale':
-                        this.defaultLocale = new StringExpression(value);
-                        break;
-                    case 'outputFormat':
-                        this.outputFormat = new NumberExpression(value);
-                        break;
-                    default:
-                        super.configure({ [key]: value });
-                        break;
-                }
-            }
-        }
-
-        return this;
-    }
 
     protected onComputeId(): string {
         return `NumberInput[${ this.prompt.toString() }]`;

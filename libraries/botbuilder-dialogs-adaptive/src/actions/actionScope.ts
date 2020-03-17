@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { Dialog, DialogDependencies, DialogContext, DialogTurnResult, DialogReason, DialogConfiguration } from 'botbuilder-dialogs';
+import { Dialog, DialogDependencies, DialogContext, DialogTurnResult, DialogReason } from 'botbuilder-dialogs';
 
 const OFFSET_KEY = 'this.offset';
 
@@ -18,10 +18,6 @@ export enum ActionScopeCommands {
 export interface ActionScopeResult {
     actionScopeCommand: string;
     actionId?: string;
-}
-
-export interface ActionScopeConfiguration extends DialogConfiguration {
-    actions?: Dialog[];
 }
 
 export class ActionScope<O extends object = {}> extends Dialog<O> implements DialogDependencies {
@@ -41,10 +37,6 @@ export class ActionScope<O extends object = {}> extends Dialog<O> implements Dia
 
     public getDependencies(): Dialog[] {
         return this.actions;
-    }
-
-    public configure(config: ActionScopeConfiguration): this {
-        return super.configure(config);
     }
 
     public async beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {

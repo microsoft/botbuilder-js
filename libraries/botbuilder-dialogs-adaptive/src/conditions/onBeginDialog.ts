@@ -14,8 +14,6 @@ import { AdaptiveEventNames } from '../sequenceContext';
  */
 export class OnBeginDialog extends OnDialogEvent {
 
-    public static declarativeType = 'Microsoft.OnBeginDialog';
-
     public constructor(actions: Dialog[] = [], condition?: string) {
         super(AdaptiveEventNames.beginDialog, actions, condition);
     }

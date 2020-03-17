@@ -7,31 +7,8 @@
  */
 import { DialogContext, Dialog, DialogTurnResult, PromptOptions, PromptRecognizerResult } from 'botbuilder-dialogs';
 import { Attachment, InputHints, TokenResponse, IUserTokenProvider, TurnContext, ActivityTypes, Activity, MessageFactory, CardFactory, OAuthLoginTimeoutKey } from 'botbuilder-core';
-import { InputDialogConfiguration, InputDialog, InputState } from './inputDialog';
+import { InputDialog, InputState } from './inputDialog';
 import { StringExpression, NumberExpression } from '../expressionProperties';
-
-export interface OAuthInputConfiguration extends InputDialogConfiguration {
-    /**
-     * Name of the OAuth connection being used.
-     */
-    connectionName: string;
-
-    /**
-     * Title of the cards signin button.
-     */
-    title: string;
-
-    /**
-     * (Optional) additional text to include on the signin card.
-     */
-    text?: string;
-
-    /**
-     * (Optional) number of milliseconds the prompt will wait for the user to authenticate.
-     * Defaults to a value `900,000` (15 minutes.)
-     */
-    timeout?: number;
-}
 
 export const channels: any = {
     console: 'console',
@@ -54,9 +31,6 @@ export const channels: any = {
 
 
 export class OAuthInput extends InputDialog {
-
-    public static declarativeType = 'Microsoft.OAuthInput'
-
     /**
      * Name of the OAuth connection being used.
      */
@@ -84,33 +58,6 @@ export class OAuthInput extends InputDialog {
         this.title = new StringExpression(title);
         this.text = new StringExpression(text);
         if (timeout) { this.timeout = new NumberExpression(timeout); }
-    }
-
-    public configure(config: OAuthInputConfiguration): this {
-        for (const key in config) {
-            if (config.hasOwnProperty(key)) {
-                const value = config[key];
-                switch (key) {
-                    case 'connectionName':
-                        this.connectionName = new StringExpression(value);
-                        break;
-                    case 'title':
-                        this.title = new StringExpression(value);
-                        break;
-                    case 'text':
-                        this.text = new StringExpression(value);
-                        break;
-                    case 'timeout':
-                        this.timeout = new NumberExpression(value);
-                        break;
-                    default:
-                        super.configure({ [key]: value });
-                        break;
-                }
-            }
-        }
-
-        return this;
     }
 
     public async beginDialog(dc: DialogContext, options?: PromptOptions): Promise<DialogTurnResult> {

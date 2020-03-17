@@ -6,22 +6,12 @@
  * Licensed under the MIT License.
  */
 import { MemoryStorage, ConversationState, UserState } from 'botbuilder-core';
-import { Dialog, DialogManager, Configurable } from 'botbuilder-dialogs';
+import { DialogManager } from 'botbuilder-dialogs';
 import { TestAction } from './testAction';
 import { AdaptiveTestAdapter } from './adaptiveTestAdapter';
 import { DialogExpression } from 'botbuilder-dialogs-adaptive';
 
-export interface TestScriptConfiguration {
-    description?: string;
-    dialog?: Dialog;
-    locale?: string;
-    script?: TestAction[];
-    enableTrace?: boolean;
-}
-
-export class TestScript extends Configurable {
-
-    public static readonly declarativeType = 'Microsoft.Test.Script';
+export class TestScript {
 
     /**
      * A description of the test sequence.
@@ -47,10 +37,6 @@ export class TestScript extends Configurable {
      * If true then trace activities will be sent to the test script.
      */
     public enableTrace: boolean = false;
-
-    public configure(config: TestScript): this {
-        return super.configure(config);
-    }
 
     /**
      * Starts the execution of the test sequence.

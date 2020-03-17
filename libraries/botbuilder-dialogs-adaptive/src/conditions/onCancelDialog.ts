@@ -14,8 +14,6 @@ import { OnDialogEvent } from './onDialogEvent';
  */
 export class OnCancelDialog extends OnDialogEvent {
     
-    public static declarativeType = 'Microsoft.OnCancelDialog';
-
     public constructor(actions: Dialog[] = [], condtion?: string) {
         super(AdaptiveEventNames.cancelDialog, actions, condtion);
     }

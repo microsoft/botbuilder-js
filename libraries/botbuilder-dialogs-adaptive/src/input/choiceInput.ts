@@ -7,17 +7,8 @@
  */
 import { DialogContext, Choice, ListStyle, ChoiceFactoryOptions, FindChoicesOptions, ChoiceFactory, recognizeChoices, ModelResult, FoundChoice } from 'botbuilder-dialogs';
 import { Activity } from 'botbuilder-core';
-import { InputDialogConfiguration, InputDialog, InputState } from './inputDialog';
+import { InputDialog, InputState } from './inputDialog';
 import { ObjectExpression, StringExpression, ArrayExpression, EnumExpression } from '../expressionProperties';
-
-export interface ChoiceInputConfiguration extends InputDialogConfiguration {
-    choices?: string | Choice[];
-    style?: string | ListStyle;
-    defaultLocale?: string;
-    outputFormat?: string | ChoiceOutputFormat;
-    choiceOptions?: string | ChoiceFactoryOptions;
-    recognizerOptions?: string | FindChoicesOptions;
-}
 
 export enum ChoiceOutputFormat {
     value = 'value',
@@ -29,9 +20,6 @@ export interface ChoiceInputOptions {
 }
 
 export class ChoiceInput extends InputDialog {
-
-    public static declarativeType = 'Microsoft.ChoiceInput';
-
     /**
      * Default options for rendering the choices to the user based on locale.
      */
@@ -79,39 +67,6 @@ export class ChoiceInput extends InputDialog {
      * Additional options passed to the underlying `recognizeChoices()` function.
      */
     public recognizerOptions?: ObjectExpression<FindChoicesOptions> = new ObjectExpression();
-
-    public configure(config: ChoiceInputConfiguration): this {
-        for (const key in config) {
-            if (config.hasOwnProperty(key)) {
-                const value = config[key];
-                switch (key) {
-                    case 'choices':
-                        this.choices = new ArrayExpression<Choice>(value);
-                        break;
-                    case 'style':
-                        this.style = new EnumExpression(value);
-                        break;
-                    case 'defaultLocale':
-                        this.defaultLocale = new StringExpression(value);
-                        break;
-                    case 'outputFormat':
-                        this.outputFormat = new EnumExpression(value);
-                        break;
-                    case 'choiceOptions':
-                        this.choiceOptions = new ObjectExpression<ChoiceFactoryOptions>(value);
-                        break;
-                    case 'recognizerOptions':
-                        this.recognizerOptions = new ObjectExpression<FindChoicesOptions>(value);
-                        break;
-                    default:
-                        super.configure({ [key]: value });
-                        break;
-                }
-            }
-        }
-
-        return this;
-    }
 
     protected onInitializeOptions(dc: DialogContext, options: ChoiceInputOptions): ChoiceInputOptions {
         if (!options || !options.choices || options.choices.length == 0) {

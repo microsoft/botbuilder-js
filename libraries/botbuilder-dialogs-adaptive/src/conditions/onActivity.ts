@@ -8,19 +8,12 @@
 import { Dialog, TurnPath } from 'botbuilder-dialogs';
 import { Expression, ExpressionType, ExpressionParserInterface } from 'adaptive-expressions';
 import { AdaptiveEventNames } from '../sequenceContext';
-import { OnDialogEvent, OnDialogEventConfiguration } from './onDialogEvent';
-
-export interface OnActivityConfiguration extends OnDialogEventConfiguration {
-    type?: string;
-}
+import { OnDialogEvent } from './onDialogEvent';
 
 /**
  * Actions triggered when a Activity of a given type is received.
  */
 export class OnActivity extends OnDialogEvent {
-
-    public static declarativeType = 'Microsoft.OnActivity';
-
     /**
      * Gets or sets the ActivityType which must be matched for this to trigger.
      */
@@ -29,10 +22,6 @@ export class OnActivity extends OnDialogEvent {
     public constructor(type?: string, actions: Dialog[] = [], condition?: string) {
         super(AdaptiveEventNames.activityReceived, actions, condition);
         this.type = type;
-    }
-
-    public configure(config: OnActivityConfiguration): this {
-        return super.configure(config);
     }
 
     public getExpression(parser: ExpressionParserInterface): Expression {

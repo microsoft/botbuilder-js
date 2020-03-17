@@ -5,22 +5,13 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { DialogTurnResult, DialogConfiguration, DialogContext, Dialog, Configurable } from 'botbuilder-dialogs';
+import { DialogTurnResult, DialogContext, Dialog } from 'botbuilder-dialogs';
 import { Activity, ActivityTypes } from 'botbuilder-core';
 import { TemplateInterface } from '../template';
 import { TextTemplate } from '../templates';
 import { StringExpression, BoolExpression } from '../expressionProperties';
 
-export interface LogActionConfiguration extends DialogConfiguration {
-    text?: string;
-    traceActivity?: string | boolean;
-    label?: string;
-    disabled?: string | boolean;
-}
-
-export class LogAction<O extends object = {}> extends Dialog<O> implements Configurable {
-    public static declarativeType = 'Microsoft.LogAction';
-
+export class LogAction<O extends object = {}> extends Dialog<O> {
     /**
      * Creates a new `SendActivity` instance.
      * @param template The text template to log.
@@ -53,33 +44,6 @@ export class LogAction<O extends object = {}> extends Dialog<O> implements Confi
      * An optional expression which if is true will disable this action.
      */
     public disabled?: BoolExpression;
-
-    public configure(config: LogActionConfiguration): this {
-        for (const key in config) {
-            if (config.hasOwnProperty(key)) {
-                const value = config[key];
-                switch (key) {
-                    case 'text':
-                        this.text = new TextTemplate(value);
-                        break;
-                    case 'traceActivity':
-                        this.traceActivity = new BoolExpression(value);
-                        break;
-                    case 'label':
-                        this.label = new StringExpression(value);
-                        break;
-                    case 'disabled':
-                        this.disabled = new BoolExpression(value);
-                        break;
-                    default:
-                        super.configure({ [key]: value });
-                        break;
-                }
-            }
-        }
-
-        return this;
-    }
 
     public async beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {
         if (this.disabled && this.disabled.getValue(dc.state)) {

@@ -6,20 +6,11 @@
  * Licensed under the MIT License.
  */
 import { Activity, TurnContext } from 'botbuilder-core';
-import { Configurable } from 'botbuilder-dialogs';
 import { ExpressionEngine } from 'adaptive-expressions';
 import { TestAction } from '../testAction';
 import { AdaptiveTestAdapter } from '../adaptiveTestAdapter';
 
-export interface AssertReplyActivityConfiguration {
-    description?: string;
-    timeout?: number;
-    assertions?: string[];
-}
-
-export class AssertReplyActivity extends Configurable implements TestAction {
-    public static readonly declarativeType: string = 'Microsoft.Test.AssertReplyActivity';
-
+export class AssertReplyActivity implements TestAction {
     /**
      * Description of what this assertion is.
      */
@@ -34,10 +25,6 @@ export class AssertReplyActivity extends Configurable implements TestAction {
      * The expressions for assertions.
      */
     public assertions: string[];
-
-    public configure(config: AssertReplyActivityConfiguration): this {
-        return super.configure(config);
-    }
 
     public getConditionDescription(): string {
         return this.description || this.assertions.join('\n');

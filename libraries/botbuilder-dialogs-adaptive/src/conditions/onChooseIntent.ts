@@ -8,24 +8,14 @@
 
 import { Dialog, TurnPath } from 'botbuilder-dialogs';
 import { Expression, ExpressionParserInterface } from 'adaptive-expressions';
-import { OnIntent, OnIntentConfiguration } from './onIntent';
-
-export interface OnChooseIntentConfiguration extends OnIntentConfiguration {
-    intents?: string[];
-}
+import { OnIntent } from './onIntent';
 
 export class OnChooseIntent extends OnIntent {
-
-    public static declarativeType = 'Microsoft.OnChooseIntent';
 
     public intents: string[] = [];
 
     public constructor(actons: Dialog[] = [], condition?: string) {
         super('ChooseIntent', [], actons, condition);
-    }
-
-    public configure(config: OnChooseIntentConfiguration): this {
-        return super.configure(config);
     }
 
     public getExpression(parser: ExpressionParserInterface): Expression {

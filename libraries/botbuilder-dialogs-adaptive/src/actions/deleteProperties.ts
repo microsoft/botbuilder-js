@@ -5,17 +5,10 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { Dialog, DialogContext, DialogTurnResult, DialogConfiguration, Configurable } from 'botbuilder-dialogs';
+import { Dialog, DialogContext, DialogTurnResult } from 'botbuilder-dialogs';
 import { StringExpression, BoolExpression } from '../expressionProperties';
 
-export interface DeletePropertiesConfiguration extends DialogConfiguration {
-    properties?: string[];
-    disabled?: string | boolean;
-}
-
-export class DeleteProperties<O extends object = {}> extends Dialog<O> implements Configurable {
-    public static declarativeType = 'Microsoft.DeleteProperties';
-
+export class DeleteProperties<O extends object = {}> extends Dialog<O> {
     public constructor();
     public constructor(properties?: string[]) {
         super();
@@ -33,29 +26,6 @@ export class DeleteProperties<O extends object = {}> extends Dialog<O> implement
      * An optional expression which if is true will disable this action.
      */
     public disabled?: BoolExpression;
-
-    public configure(config: DeletePropertiesConfiguration): this {
-        for (const key in config) {
-            if (config.hasOwnProperty(key)) {
-                const value = config[key];
-                switch (key) {
-                    case 'properties':
-                        if (Array.isArray(value)) {
-                            this.properties = value.map((item): StringExpression => new StringExpression(item));
-                            break;
-                        }
-                    case 'disabled':
-                        this.disabled = new BoolExpression(value);
-                        break;
-                    default:
-                        super.configure({ [key]: value });
-                        break;
-                }
-            }
-        }
-
-        return this;
-    }
 
     public async beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {
         if (this.disabled && this.disabled.getValue(dc.state)) {

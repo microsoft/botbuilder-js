@@ -5,18 +5,11 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { DialogTurnResult, Dialog, DialogContext, Configurable, DialogConfiguration } from 'botbuilder-dialogs';
+import { DialogTurnResult, Dialog, DialogContext } from 'botbuilder-dialogs';
 import { ActionScopeResult, ActionScopeCommands } from './actionScope';
 import { StringExpression, BoolExpression } from '../expressionProperties';
 
-export interface GotoActionConfiguration extends DialogConfiguration {
-    actionId?: string;
-    disabled?: string | boolean;
-}
-
-export class GotoAction<O extends object = {}> extends Dialog<O> implements Configurable {
-    public static declarativeType = 'Microsoft.GotoAction';
-
+export class GotoAction<O extends object = {}> extends Dialog<O> {
     public constructor();
     public constructor(actionId?: string) {
         super();
@@ -32,27 +25,6 @@ export class GotoAction<O extends object = {}> extends Dialog<O> implements Conf
      * An optional expression which if is true will disable this action.
      */
     public disabled?: BoolExpression;
-
-    public configure(config: GotoActionConfiguration): this {
-        for (const key in config) {
-            if (config.hasOwnProperty(key)) {
-                const value = config[key];
-                switch (key) {
-                    case 'actionId':
-                        this.actionId = new StringExpression(value);
-                        break;
-                    case 'disabled':
-                        this.disabled = new BoolExpression(value);
-                        break;
-                    default:
-                        super.configure({ [key]: value });
-                        break;
-                }
-            }
-        }
-
-        return this;
-    }
 
     public async beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {
         if (this.disabled && this.disabled.getValue(dc.state)) {

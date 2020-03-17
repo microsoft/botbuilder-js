@@ -5,19 +5,11 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { DialogTurnResult, Dialog, DialogConfiguration, DialogDependencies, DialogContext, Configurable } from 'botbuilder-dialogs';
+import { DialogTurnResult, Dialog, DialogDependencies, DialogContext } from 'botbuilder-dialogs';
 import { ActionChangeType, SequenceContext, ActionChangeList, ActionState } from '../sequenceContext';
 import { BoolExpression, EnumExpression } from '../expressionProperties';
 
-export interface EditActionsConfiguration extends DialogConfiguration {
-    actions?: Dialog[];
-    changeType?: string | ActionChangeType;
-    disabled?: string | boolean;
-}
-
-export class EditActions<O extends object = {}> extends Dialog<O> implements DialogDependencies, Configurable {
-    public static declarativeType = 'Microsoft.EditActions';
-
+export class EditActions<O extends object = {}> extends Dialog<O> implements DialogDependencies {
     public constructor();
     public constructor(changeType: ActionChangeType, actions?: Dialog[]);
     public constructor(changeType?: ActionChangeType, actions?: Dialog[]) {
@@ -43,27 +35,6 @@ export class EditActions<O extends object = {}> extends Dialog<O> implements Dia
 
     public getDependencies(): Dialog[] {
         return this.actions;
-    }
-
-    public configure(config: EditActionsConfiguration): this {
-        for (const key in config) {
-            if (config.hasOwnProperty(key)) {
-                const value = config[key];
-                switch (key) {
-                    case 'disabled':
-                        this.disabled = new BoolExpression(value);
-                        break;
-                    case 'changeType':
-                        this.changeType = new EnumExpression(value);
-                        break;
-                    default:
-                        super.configure({ [key]: value });
-                        break;
-                }
-            }
-        }
-
-        return this;
     }
 
     public async beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {

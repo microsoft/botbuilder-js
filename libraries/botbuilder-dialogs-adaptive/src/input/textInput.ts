@@ -6,36 +6,12 @@
  * Licensed under the MIT License.
  */
 import { DialogContext } from 'botbuilder-dialogs';
-import { InputDialogConfiguration, InputDialog, InputState } from './inputDialog';
+import { InputDialog, InputState } from './inputDialog';
 import { StringExpression } from '../expressionProperties';
-
-export interface TextInputConfiguration extends InputDialogConfiguration {
-    outputFormat?: string;
-}
 
 export class TextInput extends InputDialog {
 
-    public static declarativeType = 'Microsoft.TextInput';
-
     public outputFormat: StringExpression;
-
-    public configure(config: TextInputConfiguration): this {
-        for (const key in config) {
-            if (config.hasOwnProperty(key)) {
-                const value = config[key];
-                switch (key) {
-                    case 'outputFormat':
-                        this.outputFormat = new StringExpression(value);
-                        break;
-                    default:
-                        super.configure({ [key]: value });
-                        break;
-                }
-            }
-        }
-
-        return this;
-    }
 
     protected onComputeId(): string {
         return `TextInput[${ this.prompt.toString() }]`;

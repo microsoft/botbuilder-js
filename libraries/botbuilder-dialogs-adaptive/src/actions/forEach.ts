@@ -6,23 +6,13 @@
  * Licensed under the MIT License.
  */
 import { DialogTurnResult, Dialog, DialogContext } from 'botbuilder-dialogs';
-import { ActionScope, ActionScopeResult, ActionScopeConfiguration } from './actionScope';
+import { ActionScope, ActionScopeResult } from './actionScope';
 import { StringExpression, BoolExpression } from '../expressionProperties';
 
 const INDEX = 'dialog.foreach.index';
 const VALUE = 'dialog.foreach.value';
 
-/**
- * Configuration info passed to a `ForEach` action.
- */
-export interface ForEachConfiguration extends ActionScopeConfiguration {
-    itemsProperty?: string;
-    disabled?: string | boolean;
-}
-
 export class ForEach<O extends object = {}> extends ActionScope<O> {
-    public static declarativeType = 'Microsoft.Foreach';
-
     public constructor();
     public constructor(itemsProperty: string, actions: Dialog[]);
     public constructor(itemsProperty?: string, actions?: Dialog[]) {
@@ -43,27 +33,6 @@ export class ForEach<O extends object = {}> extends ActionScope<O> {
 
     public getDependencies(): Dialog[] {
         return this.actions;
-    }
-
-    public configure(config: ForEachConfiguration): this {
-        for (const key in config) {
-            if (config.hasOwnProperty(key)) {
-                const value = config[key];
-                switch (key) {
-                    case 'itemsProperty':
-                        this.itemsProperty = new StringExpression(value);
-                        break;
-                    case 'disabled':
-                        this.disabled = new BoolExpression(value);
-                        break;
-                    default:
-                        super.configure({ [key]: value });
-                        break;
-                }
-            }
-        }
-
-        return this;
     }
 
     public async beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {

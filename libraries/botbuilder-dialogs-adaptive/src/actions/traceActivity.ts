@@ -5,25 +5,11 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { DialogTurnResult, DialogConfiguration, DialogContext, Dialog, Configurable } from 'botbuilder-dialogs';
+import { DialogTurnResult, DialogContext, Dialog } from 'botbuilder-dialogs';
 import { Activity, ActivityTypes } from 'botbuilder-core';
 import { ValueExpression, StringExpression, BoolExpression } from '../expressionProperties';
 
-export interface TraceActivityConfiguration extends DialogConfiguration {
-    name?: string;
-
-    valueType?: string;
-
-    value?: any;
-
-    label?: string;
-
-    disabled?: string | boolean;
-}
-
-export class TraceActivity<O extends object = {}> extends Dialog<O> implements Configurable {
-    public static declarativeType = 'Microsoft.TraceActivity';
-
+export class TraceActivity<O extends object = {}> extends Dialog<O> {
     public constructor();
     public constructor(name: string, valueType: string, value: any, label: string);
     public constructor(name?: string, valueType?: string, value?: any, label?: string) {
@@ -58,36 +44,6 @@ export class TraceActivity<O extends object = {}> extends Dialog<O> implements C
      * An optional expression which if is true will disable this action.
      */
     public disabled?: BoolExpression;
-
-    public configure(config: TraceActivityConfiguration): this {
-        for (const key in config) {
-            if (config.hasOwnProperty(key)) {
-                const value = config[key];
-                switch (key) {
-                    case 'name':
-                        this.name = new StringExpression(value);
-                        break;
-                    case 'valueType':
-                        this.valueType = new StringExpression(value);
-                        break;
-                    case 'value':
-                        this.value = new ValueExpression(value);
-                        break;
-                    case 'label':
-                        this.label = new StringExpression(value);
-                        break;
-                    case 'disabled':
-                        this.disabled = new BoolExpression(value);
-                        break;
-                    default:
-                        super.configure({ [key]: value });
-                        break;
-                }
-            }
-        }
-
-        return this;
-    }
 
     public async beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {
         if (this.disabled && this.disabled.getValue(dc.state)) {

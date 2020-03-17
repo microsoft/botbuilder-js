@@ -7,27 +7,16 @@
  */
 
 import { RecognizerResult, Activity, getTopScoringIntent } from 'botbuilder-core';
-import { Configurable, DialogContext } from 'botbuilder-dialogs';
+import { DialogContext } from 'botbuilder-dialogs';
 import { Recognizer } from './recognizer';
-
-export interface CrossTrainedRecognizerSetConfiguration {
-    id?: string;
-    recognizers?: Recognizer[];
-}
 
 const deferPrefix = 'DeferToRecognizer_';
 
-export class CrossTrainedRecognizerSet extends Configurable implements Recognizer {
-
-    public static declarativeType = 'Microsoft.CrossTrainedRecognizerSet';
+export class CrossTrainedRecognizerSet implements Recognizer {
 
     public id: string;
 
     public recognizers: Recognizer[] = [];
-
-    public configure(config: CrossTrainedRecognizerSetConfiguration): this {
-        return super.configure(config);
-    }
 
     public async recognize(dialogContext: DialogContext): Promise<RecognizerResult>;
     public async recognize(dialogContext: DialogContext, textOrActivity: Activity): Promise<RecognizerResult>;

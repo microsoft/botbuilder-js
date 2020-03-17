@@ -1,4 +1,4 @@
-import { Dialog, DialogContext, DialogTurnResult, DialogConfiguration, Configurable } from 'botbuilder-dialogs';
+import { Dialog, DialogContext, DialogTurnResult } from 'botbuilder-dialogs';
 import { Converter } from 'botbuilder-dialogs-declarative';
 import { ValueExpression, StringExpression, BoolExpression } from '../expressionProperties';
 
@@ -8,7 +8,7 @@ export interface PropertyAssignment {
 }
 
 export class PropertyAssignmentConverter implements Converter {
-    public convert(assignment: { property: string, value: any }): PropertyAssignment {
+    public convert(assignment: { property: string; value: any }): PropertyAssignment {
         const propertyAssignment: PropertyAssignment = {
             property: new StringExpression(assignment.property),
             value: new ValueExpression(assignment.value)
@@ -17,14 +17,7 @@ export class PropertyAssignmentConverter implements Converter {
     }
 }
 
-export interface SetPropertiesConfiguration extends DialogConfiguration {
-    assignments?: PropertyAssignment[];
-    disabled?: string | boolean;
-}
-
-export class SetProperties<O extends object = {}> extends Dialog<O> implements Configurable {
-    public static declarativeType = 'Microsoft.SetProperties';
-
+export class SetProperties<O extends object = {}> extends Dialog<O> {
     public constructor();
     public constructor(assignments?: PropertyAssignment[]) {
         super();
@@ -40,32 +33,6 @@ export class SetProperties<O extends object = {}> extends Dialog<O> implements C
      * An optional expression which if is true will disable this action.
      */
     public disabled?: BoolExpression;
-
-    public configure(config: SetPropertiesConfiguration): this {
-        for (const key in config) {
-            if (config.hasOwnProperty(key)) {
-                const value = config[key];
-                switch (key) {
-                    case 'assignments':
-                        this.assignments = value.map((item): PropertyAssignment => {
-                            return {
-                                property: item.property instanceof StringExpression ? item.property : new StringExpression(item.property),
-                                value: item.value instanceof ValueExpression ? item.value : new ValueExpression(item.value)
-                            };
-                        });
-                        break;
-                    case 'disabled':
-                        this.disabled = new BoolExpression(value);
-                        break;
-                    default:
-                        super.configure({ [key]: value });
-                        break;
-                }
-            }
-        }
-
-        return this;
-    }
 
     public async beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {
         if (this.disabled && this.disabled.getValue(dc.state)) {

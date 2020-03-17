@@ -21,9 +21,6 @@ import { OnDialogEvent } from './onDialogEvent';
  * This provides the parent dialogs the opportunity to handle global commands as fallback interruption.
  */
 export class OnUnknownIntent extends OnDialogEvent {
-
-    public static declarativeType = 'Microsoft.OnUnknownIntent';
-
     /**
      * Creates a new `OnUnknownIntent` instance.
      * @param actions (Optional) The actions to add to the plan when the rule constraints are met.

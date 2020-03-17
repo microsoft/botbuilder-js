@@ -6,17 +6,9 @@
  * Licensed under the MIT License.
  */
 import { Activity, ActivityTypes } from 'botbuilder-core';
-import { AssertReplyActivity, AssertReplyActivityConfiguration } from './assertReplyActivity';
-
-export interface AssertReplyConfiguration extends AssertReplyActivityConfiguration {
-    text?: string;
-    exact?: boolean;
-}
+import { AssertReplyActivity } from './assertReplyActivity';
 
 export class AssertReply extends AssertReplyActivity {
-
-    public static readonly declarativeType: string = 'Microsoft.Test.AssertReply';
-
     /**
      * The text value to look for in the reply.
      */
@@ -26,10 +18,6 @@ export class AssertReply extends AssertReplyActivity {
      * A value indicating whether text should be an exact match.
      */
     public exact: boolean = true;
-
-    public configure(config: AssertReplyConfiguration): this {
-        return super.configure(config);
-    }
 
     public getConditionDescription(): string {
         return this.text;

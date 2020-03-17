@@ -4,7 +4,6 @@ import { LanguageGenerator } from '../languageGenerator';
 import { ActivityFactory } from 'botbuilder-lg';
 
 export class ActivityTemplate implements TemplateInterface<Partial<Activity>> {
-    public static declarativeType: string = 'Microsoft.ActivityTemplate';
     public template: string;
 
     public constructor(template: string) {

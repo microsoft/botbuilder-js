@@ -14,8 +14,6 @@ import { OnDialogEvent } from './onDialogEvent';
  */
 export class OnRepromptDialog extends OnDialogEvent {
 
-    public static declarativeType = 'Microsoft.OnRepromptDialog';
-
     public constructor(actions: Dialog[] = [], condition?: string) {
         super(AdaptiveEventNames.repromptDialog, actions, condition);
     }

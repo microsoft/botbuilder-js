@@ -5,21 +5,11 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { DialogTurnResult, Dialog, DialogDependencies, DialogContext, Configurable } from 'botbuilder-dialogs';
-import { ActionScope, ActionScopeConfiguration } from './actionScope';
+import { DialogTurnResult, Dialog, DialogDependencies, DialogContext } from 'botbuilder-dialogs';
+import { ActionScope } from './actionScope';
 import { BoolExpression } from '../expressionProperties';
 
-export interface IfConditionConfiguration extends ActionScopeConfiguration {
-    condition?: string | boolean;
-
-    elseActions?: Dialog[];
-
-    disabled?: string | boolean;
-}
-
-export class IfCondition<O extends object = {}> extends Dialog<O> implements DialogDependencies, Configurable {
-    public static declarativeType = 'Microsoft.IfCondition';
-
+export class IfCondition<O extends object = {}> extends Dialog<O> implements DialogDependencies {
     public constructor();
     public constructor(condition?: string, elseActions?: Dialog[]) {
         super();
@@ -69,27 +59,6 @@ export class IfCondition<O extends object = {}> extends Dialog<O> implements Dia
 
     public getDependencies(): Dialog[] {
         return [].concat(this.trueScope, this.falseScope);
-    }
-
-    public configure(config: IfConditionConfiguration): this {
-        for (const key in config) {
-            if (config.hasOwnProperty(key)) {
-                const value = config[key];
-                switch (key) {
-                    case 'condition':
-                        this.condition = new BoolExpression(value);
-                        break;
-                    case 'disabled':
-                        this.disabled = new BoolExpression(value);
-                        break;
-                    default:
-                        super.configure({ [key]: value });
-                        break;
-                }
-            }
-        }
-
-        return this;
     }
 
     public async beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {

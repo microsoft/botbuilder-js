@@ -5,16 +5,10 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { Dialog, DialogDependencies, DialogContext, DialogTurnResult, DialogConfiguration, Configurable } from 'botbuilder-dialogs';
+import { Dialog, DialogDependencies, DialogContext, DialogTurnResult } from 'botbuilder-dialogs';
 import { ValueExpression, DialogExpression, StringExpression, ObjectExpression, BoolExpression } from '../expressionProperties';
 
-export interface BaseInvokeDialogConfiguration extends DialogConfiguration {
-    options?: object;
-    dialog?: Dialog;
-    activityProcessed?: boolean | string;
-}
-
-export class BaseInvokeDialog<O extends object = {}> extends Dialog<O> implements DialogDependencies, Configurable {
+export class BaseInvokeDialog<O extends object = {}> extends Dialog<O> implements DialogDependencies {
     public constructor(dialogIdToCall?: string, bindingOptions?: O) {
         super();
         if (dialogIdToCall) {
@@ -39,27 +33,6 @@ export class BaseInvokeDialog<O extends object = {}> extends Dialog<O> implement
      * A value indicating whether to have the new dialog should process the activity.
      */
     public activityProcessed: BoolExpression = new BoolExpression(true);
-
-    public configure(config: BaseInvokeDialogConfiguration): this {
-        for (const key in config) {
-            if (config.hasOwnProperty(key)) {
-                const value = config[key];
-                switch (key) {
-                    case 'options':
-                        this.options = new ObjectExpression<object>(value);
-                        break;
-                    case 'activityProcessed':
-                        this.activityProcessed = new BoolExpression(value);
-                        break;
-                    default:
-                        super.configure({ [key]: value });
-                        break;
-                }
-            }
-        }
-
-        return this;
-    }
 
     public beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult<any>> {
         throw new Error('Method not implemented.');

@@ -73,8 +73,6 @@ export enum HttpMethod {
 }
 
 export class HttpRequest<O extends object = {}> extends Dialog<O> implements Configurable {
-    public static declarativeType = 'Microsoft.HttpRequest';
-
     public constructor();
     public constructor(method: HttpMethod, url: string, headers: { [key: string]: string }, body: any);
     public constructor(method?: HttpMethod, url?: string, headers?: { [key: string]: string }, body?: any) {

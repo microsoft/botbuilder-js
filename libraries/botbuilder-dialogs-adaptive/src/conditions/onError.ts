@@ -14,8 +14,6 @@ import { OnDialogEvent } from './onDialogEvent';
  */
 export class OnError extends OnDialogEvent {
 
-    public static declarativeType = 'Microsoft.OnError';
-
     public constructor(actions: Dialog[] = [], condition?: string) {
         super(AdaptiveEventNames.error, actions, condition);
     }

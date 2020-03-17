@@ -9,20 +9,12 @@ import { Dialog, TurnPath } from 'botbuilder-dialogs';
 import { ExpressionParserInterface, Expression, ExpressionType } from 'adaptive-expressions';
 import { RecognizerResult } from 'botbuilder-core';
 import { AdaptiveEventNames, SequenceContext, ActionChangeList, ActionState, ActionChangeType } from '../sequenceContext';
-import { OnDialogEvent, OnDialogEventConfiguration } from './onDialogEvent';
-
-export interface OnIntentConfiguration extends OnDialogEventConfiguration {
-    intent?: string;
-    entities?: string[];
-}
+import { OnDialogEvent } from './onDialogEvent';
 
 /**
  * Actions triggered when an Activity has been received and the recognized intents and entities match specified list of intent and entity filters.
  */
 export class OnIntent extends OnDialogEvent {
-
-    public static declarativeType = 'Microsoft.OnIntent';
-
     /**
      * Gets or sets intent to match on.
      */
@@ -44,10 +36,6 @@ export class OnIntent extends OnDialogEvent {
         super(AdaptiveEventNames.recognizedIntent, actions, condition);
         this.intent = intent;
         this.entities = entities;
-    }
-
-    public configure(config: OnIntentConfiguration): this {
-        return super.configure(config);
     }
 
     public getExpression(parser: ExpressionParserInterface): Expression {

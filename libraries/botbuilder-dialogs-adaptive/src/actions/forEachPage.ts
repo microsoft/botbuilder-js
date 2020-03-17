@@ -6,20 +6,11 @@
  * Licensed under the MIT License.
  */
 import { DialogTurnResult, Dialog, DialogContext } from 'botbuilder-dialogs';
-import { ActionScope, ActionScopeResult, ActionScopeConfiguration } from './actionScope';
+import { ActionScope, ActionScopeResult } from './actionScope';
 import { StringExpression, BoolExpression, NumberExpression } from '../expressionProperties';
 
 const FOREACHPAGE = 'dialog.foreach.page';
 const FOREACHPAGEINDEX = 'dialog.foreach.pageindex';
-
-/**
- * Configuration info passed to a `ForEachPage` action.
- */
-export interface ForEachPageConfiguration extends ActionScopeConfiguration {
-    itemsProperty?: string;
-    pageSize?: string | number;
-    disabled?: string | boolean;
-}
 
 /**
  * Executes a set of actions once for each page of results in an in-memory list or collection.
@@ -31,8 +22,6 @@ export interface ForEachPageConfiguration extends ActionScopeConfiguration {
  * `GotoDialog` action.
  */
 export class ForEachPage<O extends object = {}> extends ActionScope<O> {
-    public static declarativeType = 'Microsoft.ForeachPage';
-
     public constructor();
     public constructor(itemsProperty?: string, pageSize: number = 10) {
         super();
@@ -57,30 +46,6 @@ export class ForEachPage<O extends object = {}> extends ActionScope<O> {
 
     public getDependencies(): Dialog[] {
         return this.actions;
-    }
-
-    public configure(config: ForEachPageConfiguration): this {
-        for (const key in config) {
-            if (config.hasOwnProperty(key)) {
-                const value = config[key];
-                switch (key) {
-                    case 'itemsProperty':
-                        this.itemsProperty = new StringExpression(value);
-                        break;
-                    case 'pageSize':
-                        this.pageSize = new NumberExpression(value);
-                        break;
-                    case 'disabled':
-                        this.disabled = new BoolExpression(value);
-                        break;
-                    default:
-                        super.configure({ [key]: value });
-                        break;
-                }
-            }
-        }
-
-        return this;
     }
 
     public async beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {

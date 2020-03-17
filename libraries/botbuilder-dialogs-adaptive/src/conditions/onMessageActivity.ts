@@ -14,8 +14,6 @@ import { OnActivity } from './onActivity';
  */
 export class OnMessageActivity extends OnActivity {
 
-    public static declarativeType = 'Microsoft.OnMessageActivity';
-
     public constructor(actions: Dialog[] = [], condition?: string) {
         super(ActivityTypes.Message, actions, condition);
     }

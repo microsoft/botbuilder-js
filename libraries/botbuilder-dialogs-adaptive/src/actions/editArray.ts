@@ -5,16 +5,8 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { DialogTurnResult, DialogContext, DialogConfiguration, Dialog, Configurable } from 'botbuilder-dialogs';
+import { DialogTurnResult, DialogContext, Dialog } from 'botbuilder-dialogs';
 import { ValueExpression, StringExpression, BoolExpression, EnumExpression } from '../expressionProperties';
-
-export interface EditArrayConfiguration extends DialogConfiguration {
-    changeType?: string | ArrayChangeType;
-    itemsProperty?: string;
-    resultProperty?: string;
-    value?: any;
-    disabled?: string | boolean;
-}
 
 export enum ArrayChangeType {
     push = 'push',
@@ -24,9 +16,7 @@ export enum ArrayChangeType {
     clear = 'clear'
 }
 
-export class EditArray<O extends object = {}> extends Dialog<O> implements Configurable {
-    public static declarativeType = 'Microsoft.EditArray';
-
+export class EditArray<O extends object = {}> extends Dialog<O> {
     public constructor();
     public constructor(changeType: ArrayChangeType, itemsProperty: string, value?: any, resultProperty?: string);
     public constructor(changeType?: ArrayChangeType, itemsProperty?: string, value?: any, resultProperty?: string) {
@@ -72,36 +62,6 @@ export class EditArray<O extends object = {}> extends Dialog<O> implements Confi
      * An optional expression which if is true will disable this action.
      */
     public disabled?: BoolExpression;
-
-    public configure(config: EditArrayConfiguration): this {
-        for (const key in config) {
-            if (config.hasOwnProperty(key)) {
-                const value = config[key];
-                switch (key) {
-                    case 'changeType':
-                        this.changeType = new EnumExpression(value);
-                        break;
-                    case 'itemsProperty':
-                        this.itemsProperty = new StringExpression(value);
-                        break;
-                    case 'resultProperty':
-                        this.resultProperty = new StringExpression(value);
-                        break;
-                    case 'value':
-                        this.value = new ValueExpression(value);
-                        break;
-                    case 'disabled':
-                        this.disabled = new BoolExpression(value);
-                        break;
-                    default:
-                        super.configure({ [key]: value });
-                        break;
-                }
-            }
-        }
-
-        return this;
-    }
 
     public async beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {
         if (this.disabled && this.disabled.getValue(dc.state)) {

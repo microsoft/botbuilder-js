@@ -5,22 +5,13 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { DialogTurnResult, DialogConfiguration, DialogDependencies, Dialog, DialogContext, Configurable } from 'botbuilder-dialogs';
+import { DialogTurnResult, DialogDependencies, Dialog, DialogContext } from 'botbuilder-dialogs';
 import { Expression, ExpressionEngine } from 'adaptive-expressions';
 import { ActionScope } from './actionScope';
 import { Case } from './case';
 import { BoolExpression } from '../expressionProperties';
 
-export interface SwitchConditionConfiguration extends DialogConfiguration {
-    condition?: string;
-    default?: Dialog[];
-    cases?: Case[];
-    disabled?: string | boolean;
-}
-
-export class SwitchCondition<O extends object = {}> extends Dialog<O> implements DialogDependencies, Configurable {
-    public static declarativeType = 'Microsoft.SwitchCondition';
-
+export class SwitchCondition<O extends object = {}> extends Dialog<O> implements DialogDependencies {
     public constructor();
     public constructor(condition: string, defaultDialogs: Dialog[], cases: Case[]);
     public constructor(condition?: string, defaultDialogs?: Dialog[], cases?: Case[]) {
@@ -64,30 +55,6 @@ export class SwitchCondition<O extends object = {}> extends Dialog<O> implements
             dialogs = dialogs.concat(this.cases);
         }
         return dialogs;
-    }
-
-    public configure(config: SwitchConditionConfiguration): this {
-        for (const key in config) {
-            if (config.hasOwnProperty(key)) {
-                const value = config[key];
-                switch (key) {
-                    case 'condition':
-                        this.condition = new ExpressionEngine().parse(value);
-                        break;
-                    case 'cases':
-                        this.cases = (value as Case[]).map(v => new Case(v.value, v.actions));
-                        break;
-                    case 'disabled':
-                        this.disabled = new BoolExpression(value);
-                        break;
-                    default:
-                        super.configure({ [key]: value });
-                        break;
-                }
-            }
-        }
-
-        return this;
     }
 
     public async beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {

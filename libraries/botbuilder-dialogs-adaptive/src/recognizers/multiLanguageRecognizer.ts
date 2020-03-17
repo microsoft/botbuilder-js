@@ -7,28 +7,17 @@
  */
 
 import { RecognizerResult, Activity, ActivityTypes } from 'botbuilder-core';
-import { Configurable, DialogContext } from 'botbuilder-dialogs';
+import { DialogContext } from 'botbuilder-dialogs';
 import { Recognizer } from './recognizer';
 import { LanguagePolicy } from '../languagePolicy';
 
-export interface MultiLanguageRecognizerConfiguration {
-    id?: string;
-    recognizers?: { [locale: string]: Recognizer };
-}
-
-export class MultiLanguageRecognizer extends Configurable implements Recognizer {
-
-    public static declarativeType = 'Microsoft.MultiLanguageRecognizer';
+export class MultiLanguageRecognizer implements Recognizer {
 
     public id: string;
 
     public languagePolicy: any = LanguagePolicy.defaultPolicy;
 
     public recognizers: { [locale: string]: Recognizer };
-
-    public configure(config: MultiLanguageRecognizerConfiguration): this {
-        return super.configure(config);
-    }
 
     public async recognize(dialogContext: DialogContext): Promise<RecognizerResult>;
     public async recognize(dialogContext: DialogContext, textOrActivity: Activity): Promise<RecognizerResult>;
