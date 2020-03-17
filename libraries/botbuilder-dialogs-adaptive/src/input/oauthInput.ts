@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 import { DialogContext, Dialog, DialogTurnResult, PromptOptions, PromptRecognizerResult } from 'botbuilder-dialogs';
-import { Attachment, InputHints, TokenResponse, IUserTokenProvider, TurnContext, ActivityTypes, Activity, MessageFactory, CardFactory, OAuthLoginTimeoutKey } from "botbuilder-core";
+import { Attachment, InputHints, TokenResponse, IUserTokenProvider, TurnContext, ActivityTypes, Activity, MessageFactory, CardFactory, OAuthLoginTimeoutKey } from 'botbuilder-core';
 import { InputDialogConfiguration, InputDialog, InputState } from './inputDialog';
 import { StringExpression, NumberExpression } from '../expressionProperties';
 

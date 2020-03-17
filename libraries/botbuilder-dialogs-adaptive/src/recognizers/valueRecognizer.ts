@@ -52,12 +52,6 @@ export class ValueRecognizer extends Configurable implements Recognizer {
             }
         }
 
-        /*
-        if (Object.entries(recognizerResult.intents).length == 0) {
-            recognizerResult.intents['None'] = { score: 1.0 };
-        }
-        */
-
         return recognizerResult;
     }
 }

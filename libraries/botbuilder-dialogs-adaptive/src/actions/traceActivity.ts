@@ -59,7 +59,6 @@ export class TraceActivity<O extends object = {}> extends Dialog<O> implements C
      */
     public disabled?: BoolExpression;
 
-
     public configure(config: TraceActivityConfiguration): this {
         for (const key in config) {
             if (config.hasOwnProperty(key)) {

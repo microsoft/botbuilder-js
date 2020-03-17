@@ -8,9 +8,8 @@
 import { Configurable, Dialog, DialogContext, DialogTurnResult, DialogConfiguration } from 'botbuilder-dialogs';
 import { Activity } from 'botbuilder-core';
 import { TemplateInterface } from '../template';
-import { ActivityTemplate } from '../templates/activityTemplate';
-import { StaticActivityTemplate } from '../templates/staticActivityTemplate';
 import { StringExpression, BoolExpression } from '../expressionProperties';
+import { ActivityTemplate, StaticActivityTemplate } from '../templates';
 
 export interface UpdateActivityConfiguration extends DialogConfiguration {
     activity?: string;
@@ -50,7 +49,6 @@ export class UpdateActivity<O extends object = {}> extends Dialog<O> implements 
      * An optional expression which if is true will disable this action.
      */
     public disabled?: BoolExpression;
-
 
     public configure(config: UpdateActivityConfiguration): this {
         for (const key in config) {

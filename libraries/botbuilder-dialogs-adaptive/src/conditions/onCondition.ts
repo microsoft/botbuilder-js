@@ -29,7 +29,6 @@ export class OnCondition extends Configurable implements DialogDependencies {
      * @param event The current event being evaluated.
      * @param preBubble If `true`, the leading edge of the event is being evaluated.
      */
-    // evaluate(planning: SequenceContext, event: DialogEvent, preBubble: boolean): Promise<ActionChangeList[] | undefined>;
 
     private _actionScope: ActionScope;
     private _extraConstraints: Expression[] = [];
