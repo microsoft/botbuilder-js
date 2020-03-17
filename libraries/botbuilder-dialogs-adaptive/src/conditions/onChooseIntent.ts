@@ -21,7 +21,7 @@ export class OnChooseIntent extends OnIntent {
     public intents: string[] = [];
 
     public constructor(actons: Dialog[] = [], condition?: string) {
-        super('chooseintent', [], actons, condition);
+        super('ChooseIntent', [], actons, condition);
     }
 
     public configure(config: OnChooseIntentConfiguration): this {
@@ -31,7 +31,7 @@ export class OnChooseIntent extends OnIntent {
     public getExpression(parser: ExpressionParserInterface): Expression {
         if (this.intents.length > 0) {
             const constraints = this.intents.map((intent: string): Expression => {
-                return parser.parse(`${ TurnPath.RECOGNIZED }.intents.chooseintent.${ intent } != null`);
+                return parser.parse(`contains(jPath(${ TurnPath.RECOGNIZED }, '$.candidates[*].intent'), '${ intent }')`);
             });
             return Expression.andExpression(super.getExpression(parser), ...constraints);
         }
