@@ -20,8 +20,8 @@ export class RegexEntityRecognizer extends TextEntityRecognizer {
     public constructor();
     public constructor(name?: string, pattern?: string) {
         super();
-        this.name = name;
-        this.pattern = pattern;
+        if (name) { this.name = name; }
+        if (pattern) { this.pattern = pattern; }
     }
 
     public name: string;
@@ -31,6 +31,9 @@ export class RegexEntityRecognizer extends TextEntityRecognizer {
     }
 
     public set pattern(value: string) {
+        if (value.startsWith('(?i)')) {
+            value = value.substr(4);
+        }
         this._pattern = value;
         this._regex = new RegExp(value, 'ig');
     }
