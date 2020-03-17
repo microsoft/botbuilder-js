@@ -7,8 +7,16 @@
  */
 export class IntentPattern {
     private _intent: string;
+    private _pattern: string;
 
-    public pattern: string;
+    public constructor(intent?: string, pattern?: string) {
+        if (intent && pattern) {
+            this.intent = intent;
+            this.pattern = pattern;
+        }
+    }
+
+    public regex: RegExp;
 
     public get intent(): string {
         return this._intent;
@@ -16,5 +24,14 @@ export class IntentPattern {
 
     public set intent(value: string) {
         this._intent = value[0] == '#' ? value.substr(1) : value;
+    }
+
+    public get pattern(): string {
+        return this._pattern;
+    }
+
+    public set pattern(value: string) {
+        this._pattern = value.startsWith('(?i)') ? value.substr(4) : value;
+        this.regex = new RegExp(this._pattern, 'ig');
     }
 }

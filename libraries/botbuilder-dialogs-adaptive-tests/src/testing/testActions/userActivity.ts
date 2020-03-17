@@ -54,6 +54,7 @@ export class UserActivity extends Configurable implements TestAction {
             activity.from.id = this.user;
             activity.from.name = this.user;
         }
+        activity.locale = testAdapter.locale;
 
         await testAdapter.processActivity(activity, callback);
     }

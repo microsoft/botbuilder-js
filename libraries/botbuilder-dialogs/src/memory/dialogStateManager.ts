@@ -326,7 +326,9 @@ export class DialogStateManager {
                         }
                         break;
                     default:
-                        if (isValidPathChar(c)) {
+                        if (i > 1 && pathExpression[i - 1] == '.' && c == '$') {
+                            segment += c; // x.$foo should be valid
+                        } else if (isValidPathChar(c)) {
                             segment += c;
                         } else {
                             throw new Error(`DialogStateManager.normalizePath: Invalid path detected - ${pathExpression}`);
