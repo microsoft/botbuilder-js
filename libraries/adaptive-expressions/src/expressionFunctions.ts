@@ -2819,11 +2819,6 @@ export class ExpressionFunctions {
                 ExpressionFunctions.validateBinaryNumber),
             new ExpressionEvaluator(ExpressionType.CreateArray, ExpressionFunctions.apply((args: any []): any[] => Array.from(args)), ReturnType.Object),
             new ExpressionEvaluator(
-                ExpressionType.Array,
-                ExpressionFunctions.apply((args: any []): any[] => [args[0]], ExpressionFunctions.verifyString),
-                ReturnType.Object,
-                ExpressionFunctions.validateUnary),
-            new ExpressionEvaluator(
                 ExpressionType.Binary,
                 ExpressionFunctions.apply((args: any []): string => this.toBinary(args[0]), ExpressionFunctions.verifyString),
                 ReturnType.String,
@@ -2988,7 +2983,37 @@ export class ExpressionFunctions {
                         return {value, error};
                     }),
                 ReturnType.Boolean,
-                ExpressionFunctions.validateIsMatch)
+                ExpressionFunctions.validateIsMatch),
+            
+            // Type Checking Functions
+            new ExpressionEvaluator(ExpressionType.isString, ExpressionFunctions.apply(
+                (args: any[]): boolean =>  typeof args[0] === 'string'),
+            ReturnType.Boolean,
+            ExpressionFunctions.validateUnary),
+            new ExpressionEvaluator(ExpressionType.isInteger, ExpressionFunctions.apply(
+                (args: any[]): boolean =>  this.isNumber(args[0]) &&  Number.isInteger(args[0])),
+            ReturnType.Boolean,
+            ExpressionFunctions.validateUnary),
+            new ExpressionEvaluator(ExpressionType.isFloat, ExpressionFunctions.apply(
+                (args: any[]): boolean =>  this.isNumber(args[0]) && !Number.isInteger(args[0])),
+            ReturnType.Boolean,
+            ExpressionFunctions.validateUnary),
+            new ExpressionEvaluator(ExpressionType.isArray, ExpressionFunctions.apply(
+                (args: any[]): boolean => Array.isArray(args[0])),
+            ReturnType.Boolean,
+            ExpressionFunctions.validateUnary),
+            new ExpressionEvaluator(ExpressionType.isObject, ExpressionFunctions.apply(
+                (args: any[]): boolean => typeof args[0] === 'object'),
+            ReturnType.Boolean,
+            ExpressionFunctions.validateUnary),
+            new ExpressionEvaluator(ExpressionType.isBoolean, ExpressionFunctions.apply(
+                (args: any[]): boolean => typeof args[0] === 'boolean'),
+            ReturnType.Boolean,
+            ExpressionFunctions.validateUnary),
+            new ExpressionEvaluator(ExpressionType.isDateTime, ExpressionFunctions.apply(
+                (args: any[]): boolean => typeof args[0] === 'string' && this.verifyISOTimestamp(args[0]) === undefined),
+            ReturnType.Boolean,
+            ExpressionFunctions.validateUnary)
         ];
 
         const lookup: Map<string, ExpressionEvaluator> = new Map<string, ExpressionEvaluator>();

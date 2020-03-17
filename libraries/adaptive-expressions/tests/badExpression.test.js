@@ -343,7 +343,16 @@ const badExpressions =
 
       // SetPathToValue tests
       'setPathToValue(2+3, 4)', // Not a real path
-      'setPathToValue(a)' // Missing value
+      'setPathToValue(a)', // Missing value
+
+      //Type Checking
+      'isString(hello, hello)', // should have one parameter
+      'isInteger(one, hello)', // should have one parameter
+      'isFloat(1.324, hello)', // should have one parameter
+      'isArray(createArrat(1,2,3), hello)', // should have one parameter
+      'isBoolean(true, false)', // should have one parameter
+      'isDateTime("2018-03-15T13:00:00.111Z", hello)', // should have one parameter
+      'isObject({}, false)', // should have one parameter
   ];
 
 const scope = {
