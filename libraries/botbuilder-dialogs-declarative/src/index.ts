@@ -6,9 +6,9 @@
  * Licensed under the MIT License.
  */
 
-export * from './typeLoader';
-export * from './typeRegistration';
+export * from './builderRegistration';
 export * from './componentRegistration';
+export * from './converter';
 export * from './factory/typeFactory';
 export * from './factory/configurableTypeBuilder';
 export * from './factory/customTypeBuilder';

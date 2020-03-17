@@ -6,44 +6,45 @@
  * Licensed under the MIT License.
  */
 
+import { normalize, dirname, join } from 'path';
+import { EventEmitter } from 'events';
 import { IResourceProvider } from './resourceProvider';
-import { normalize, dirname } from 'path';
 import { FolderResourceProvider } from './folderResoureProvider';
 import { IResource } from './resource';
-import { EventEmitter } from 'events';
+import { PathUtil } from '../pathUtil';
+import { TypeFactory } from '../factory/typeFactory';
+import { ComponentRegistration } from '../componentRegistration';
 
 export class ResourceExplorer {
-
-    private _emitter: EventEmitter = new EventEmitter();
+    private _factory: TypeFactory = new TypeFactory();
     private _resourceProviders: IResourceProvider[] = [];
+    private _emitter: EventEmitter = new EventEmitter();
 
-    get resourceProviders(): IResourceProvider[] {
+    public get resourceProviders(): IResourceProvider[] {
         return this._resourceProviders;
     }
 
-    get emitter(): EventEmitter {
+    public get emitter(): EventEmitter {
         return this._emitter;
     }
 
-    public static loadProject(projectFile: string, ignoreFolders: string[], monitorChanges: boolean) {
-        let explorer: ResourceExplorer = new ResourceExplorer();
+    public loadProject(projectFile: string, ignoreFolders: string[], monitorChanges: boolean = true): ResourceExplorer {
         projectFile = normalize(projectFile);
-
-        ignoreFolders = ignoreFolders.map(f => normalize(f));
+        ignoreFolders = ignoreFolders.map((f): string => normalize(f));
         const projectFolder = dirname(projectFile);
         if (ignoreFolders) {
-            explorer.addFolders(projectFolder, ignoreFolders, monitorChanges);
+            this.addFolders(projectFolder, ignoreFolders, monitorChanges);
         }
         else {
-            explorer.addResourceProvider(new FolderResourceProvider(projectFolder, true, monitorChanges));
+            this.addResourceProvider(new FolderResourceProvider(projectFolder, true, monitorChanges));
         }
 
-        return explorer;
+        return this;
     }
 
     public addResourceProvider(resourceProvider: IResourceProvider): ResourceExplorer {
-        if (this._resourceProviders.some(r => r.id() === resourceProvider.id())) {
-            throw Error(`${ resourceProvider.id() } has already been added as a resource`)
+        if (this._resourceProviders.some((r): boolean => r.id() === resourceProvider.id())) {
+            throw Error(`${ resourceProvider.id() } has already been added as a resource`);
         }
 
         this._resourceProviders.push(resourceProvider);
@@ -51,25 +52,47 @@ export class ResourceExplorer {
         return this;
     }
 
-    public addFolders(folder: string, ignoreFolders: string[] = null, monitorChanges: boolean = true): ResourceExplorer {
+    public addFolder(folder: string, includeSubFolders: boolean = true, monitorChanges: boolean = true): ResourceExplorer {
+        let folderResourceProvider: FolderResourceProvider = new FolderResourceProvider(folder, includeSubFolders, monitorChanges);
+        folderResourceProvider.emitter = this._emitter;
+        this.addResourceProvider(folderResourceProvider);
+
+        return this;
+    }
+
+    public addFolders(folder: string, ignoreFolders?: string[], monitorChanges: boolean = true): ResourceExplorer {
         if (ignoreFolders) {
             folder = normalize(folder);
             this.addFolder(folder, false, monitorChanges);
+            const ignoreFoldersSet = new Set<string>(ignoreFolders.map((p): string => join(folder, p)));
+            const subFolders = PathUtil.GetDirectories(folder);
+            for (let i = 0; i < subFolders.length; i++) {
+                const subFolder = subFolders[i];
+                if (!ignoreFoldersSet.has(subFolder)) {
+                    this.addFolder(subFolder, true, monitorChanges);
+                }
+            }
+        } else {
+            this.addFolder(folder, true, monitorChanges);
         }
 
         return this;
     }
 
-    public addFolder(folder: string, includeSubFolders: boolean = true, monitorChanges: boolean = true) {
-        let folderResourceProvider: FolderResourceProvider = new FolderResourceProvider(folder, includeSubFolders, monitorChanges);
-        folderResourceProvider.emitter = this._emitter;
-        this.addResourceProvider(folderResourceProvider);
+    public addComponent(component: ComponentRegistration): ResourceExplorer {
+        const builders = component.getTypeBuilders();
+        for (let i = 0; i < builders.length; i++) {
+            const type = builders[i];
+            this._factory.register(type.name, type.builder);
+        }
+
+        return this;
     }
 
-    public async getResources(fileExtension: string): Promise<IResource[]> {
+    public getResources(fileExtension: string): IResource[] {
         let resources: IResource[] = [];
         for (const rp of this._resourceProviders) {
-            for (const rpResources of await rp.getResources(fileExtension)) {
+            for (const rpResources of rp.getResources(fileExtension)) {
                 resources.push(rpResources);
             }
         }
@@ -77,14 +100,38 @@ export class ResourceExplorer {
         return resources;
     }
 
-    public async getResource(id: string): Promise<IResource> {
+    public getResource(id: string): IResource {
         for (const rp of this._resourceProviders) {
-            const rpResource: IResource = await rp.getResource(id);
-            if (rpResource) {
-                return rpResource;
+            const resource: IResource = rp.getResource(id);
+            if (resource) {
+                return resource;
             }
         }
 
         return undefined;
+    }
+
+    public buildType(config: object): object {
+        if (typeof config == 'object') {
+            const kind = config['$kind'] || config['$type'];
+            if (kind) {
+                const result = this._factory.build(kind, config);
+                return result;
+            } else {
+                for (const key in config) {
+                    config[key] = this.buildType(config[key]);
+                }
+            }
+        }
+        return config;
+    }
+
+    public loadType(resource: string | IResource): object {
+        if (typeof resource == 'string') {
+            resource = this.getResource(resource);
+        }
+        const json = resource.readText();
+        const result = JSON.parse(json);
+        return this.buildType(result as object);
     }
 }

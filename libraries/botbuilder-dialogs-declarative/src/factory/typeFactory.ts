@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 
-import { ITypeBuilder } from './typeBuilder';
+import { TypeBuilder } from './typeBuilder';
 
 /**
  * Declarative type factory
@@ -16,14 +16,14 @@ export class TypeFactory {
     /**
      * Internal type builder registry
      */
-    private readonly registrations: { [name: string]: ITypeBuilder } = {};
+    private readonly registrations: { [name: string]: TypeBuilder } = {};
 
     /**
      * Registers a new type in the factory
      * @param name name under which to register the type
      * @param converter optional builder logic for the registered type. Will be invoked each time the type is built
      */
-    public register(name: string, builder?: ITypeBuilder): void {
+    public register(name: string, builder?: TypeBuilder): void {
 
         if (!name) {
             throw new Error(`TypeFactory: name must be provided to register in the factory`);

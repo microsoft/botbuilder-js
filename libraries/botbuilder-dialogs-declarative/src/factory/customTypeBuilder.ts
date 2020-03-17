@@ -6,9 +6,9 @@
  * Licensed under the MIT License.
  */
 
-import { ITypeBuilder } from './typeBuilder';
+import { TypeBuilder } from './typeBuilder';
 
-export class CustomTypeBuilder implements ITypeBuilder {
+export class CustomTypeBuilder implements TypeBuilder {
 
     constructor(private factory: (config: object) => object) {}
 

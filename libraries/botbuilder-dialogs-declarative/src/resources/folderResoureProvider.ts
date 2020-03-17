@@ -6,74 +6,70 @@
  * Licensed under the MIT License.
  */
 
-import { FileResource } from './fileResource';
+import watch from 'node-watch';
+import { EventEmitter } from 'events';
 import { normalize, extname } from 'path';
+import { FileResource } from './fileResource';
 import { IResource } from './resource';
 import { IResourceProvider } from './resourceProvider';
 import { PathUtil } from '../pathUtil';
-import watch from 'node-watch';
-import { EventEmitter } from 'events';
+
+const extensionsToInclude: string[] = ['.lg', '.qna', '.lu', '.dialog', '.schema', '.md'];
 
 export class FolderResourceProvider implements IResourceProvider {
-    private extensions: Set<string> = new Set<string>();
-
     private _emitter: EventEmitter;
 
-    set emitter(e: EventEmitter) {
+    public set emitter(e: EventEmitter) {
         this._emitter = e;
     }
 
-    private resources: Map<string, FileResource> = new Map<string, FileResource>();
+    private _resources: Map<string, FileResource> = new Map<string, FileResource>();
 
-    public includeSubFolders: boolean;
+    public extensions: Set<string> = new Set<string>(extensionsToInclude);
 
     public directory: string;
 
-    constructor(folder: string, includeSubFolders: boolean = true, monitorChanges: boolean = true) {
-
-        const extensionsToInclude: string[] = ['.lg', '.qna', '.lu', '.dialog', '.schema', '.md'];
-
-        extensionsToInclude.forEach(e => this.extensions.add(e));
-
-        this.includeSubFolders = includeSubFolders;
-        folder = normalize(folder);
-        this.directory = folder;
-        const allFiles: string[] = PathUtil.getAllFiles(folder);
-        const allFilteredFiles: string[] = allFiles.filter(f => this.extensions.has(extname(f)));
-
-        allFilteredFiles.forEach(f => {
-            const fileResource: FileResource = new FileResource(f);
-            this.resources.set(fileResource.id(), fileResource);
-        });
-
-        if (monitorChanges) {
-            watch(folder, { recursive: true }, (type, filename) => {
-                this._emitter.emit('changed', new FileResource(filename));
-            });
-        }
-    }
-
-    public async getResource(id: string): Promise<IResource> {
-        return this.resources.has(id) ? this.resources.get(id) : null;
-    }
-
-    public async getResources(extension: string): Promise<IResource[]> {
-        extension = `.${ extension.toLowerCase() }`;
-
-        let filteredResources: IResource[] = [];
-
-        for (let key of this.resources.keys()) {
-            if (key.toLowerCase().endsWith(extension)) {
-                filteredResources.push(this.resources.get(key));
-            }
-        }
-
-        return filteredResources;
-    }
+    public includeSubFolders: boolean;
 
     public id(): string {
         return this.directory;
     }
 
+    public constructor(folder: string, includeSubFolders: boolean = true, monitorChanges: boolean = true) {
+        this.includeSubFolders = includeSubFolders;
+        folder = normalize(folder);
+        this.directory = folder;
+        const files: string[] = PathUtil.getAllFiles(folder);
+        const filteredFiles: string[] = files.filter((f): boolean => this.extensions.has(extname(f)));
 
+        for (let i = 0; i < filteredFiles.length; i++) {
+            const filename = filteredFiles[i];
+            const fileResource: FileResource = new FileResource(filename);
+            this._resources.set(fileResource.id(), fileResource);
+        }
+
+        if (monitorChanges) {
+            watch(folder, { recursive: true }, (type, filename): void => {
+                this._emitter.emit('changed', new FileResource(filename));
+            });
+        }
+    }
+
+    public getResource(id: string): IResource {
+        return this._resources.has(id) ? this._resources.get(id) : undefined;
+    }
+
+    public getResources(extension: string): IResource[] {
+        extension = extension.startsWith('.') ? extension.toLowerCase() : `.${ extension.toLowerCase() }`;
+
+        let resources: IResource[] = [];
+
+        for (let key of this._resources.keys()) {
+            if (key.toLowerCase().endsWith(extension)) {
+                resources.push(this._resources.get(key));
+            }
+        }
+
+        return resources;
+    }
 }

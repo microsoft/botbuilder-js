@@ -11,6 +11,6 @@ import { IResource } from './resource';
 
 export interface IResourceProvider {
     id(): string;
-    getResource(id: string): Promise<IResource>;
-    getResources(ex: string): Promise<IResource[]>;
+    getResource(id: string): IResource;
+    getResources(ex: string): IResource[];
 }

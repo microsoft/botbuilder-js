@@ -6,7 +6,6 @@
  * Licensed under the MIT License.
  */
 
- 
-export interface TypeBuilder {
-    build(config: object): object;
+export interface Converter {
+    convert(value: any): any;
 }
