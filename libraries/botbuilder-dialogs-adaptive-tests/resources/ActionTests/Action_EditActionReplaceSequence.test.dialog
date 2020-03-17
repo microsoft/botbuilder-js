@@ -9,7 +9,7 @@
             "intents": [
                 {
                     "intent": "Replace",
-                    "pattern": "replace"
+                    "pattern": "(?i)replace"
                 }
             ]
         },

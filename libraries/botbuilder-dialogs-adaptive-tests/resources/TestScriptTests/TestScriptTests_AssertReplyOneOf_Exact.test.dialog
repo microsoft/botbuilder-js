@@ -16,10 +16,21 @@
                 "hi User1",
                 "foobar"
             ],
-            "assertions": [
-                "length(text) > 0",
-                "type == 'message'"
-            ]
+            "exact": true
+        },
+        {
+            "$kind": "Microsoft.Test.UserSays",
+            "text": "hello"
+        },
+        {
+            "$kind": "Microsoft.Test.AssertReplyOneOf",
+            "text": [
+                "Hi",
+                "hello",
+                "user1",
+                "foobar"
+            ],
+            "exact": false
         }
     ]
 }

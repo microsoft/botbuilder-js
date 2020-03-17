@@ -10,7 +10,7 @@
                     {
                         "$kind": "Microsoft.SetProperty",
                         "property": "user.counter",
-                        "value": "10"
+                        "value": 10
                     },
                     {
                         "$kind": "Microsoft.IfCondition",

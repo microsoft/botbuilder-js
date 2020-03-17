@@ -1,28 +1,22 @@
-{
+﻿{
     "$schema": "../../../../schemas/sdk.schema",
     "$kind": "Microsoft.Test.Script",
     "dialog": {
         "$kind": "Microsoft.AdaptiveDialog",
-        "id": "testDialog",
+        "id": "planningTest",
         "triggers": [
             {
-                "$kind": "Microsoft.OnBeginDialog",
+                "$kind": "Microsoft.OnUnknownIntent",
                 "actions": [
                     {
-                        "$kind": "Microsoft.TextInput",
-                        "property": "user.name",
-                        "prompt": "Hello, what is your name?"
+                        "$kind": "Microsoft.AttachmentInput",
+                        "property": "user.photo",
+                        "prompt": "Hello, upload a photo",
+                        "unrecognizedPrompt": "Send a photo please"
                     },
                     {
                         "$kind": "Microsoft.SendActivity",
-                        "activity": "Hello ${user.name}, nice to meet you!"
-                    },
-                    {
-                        "$kind": "Microsoft.EndTurn",
-                        "id": "EndTurn"
-                    },
-                    {
-                        "$kind": "Microsoft.RepeatDialog"
+                        "activity": "Content url ${user.photo.contentUrl}"
                     }
                 ]
             }
@@ -37,23 +31,31 @@
         },
         {
             "$kind": "Microsoft.Test.AssertReply",
-            "text": "Hello, what is your name?"
+            "text": "Hello, upload a photo"
         },
         {
             "$kind": "Microsoft.Test.UserSays",
-            "text": "Carlos"
+            "text": "c"
         },
         {
             "$kind": "Microsoft.Test.AssertReply",
-            "text": "Hello Carlos, nice to meet you!"
+            "text": "Send a photo please"
         },
         {
-            "$kind": "Microsoft.Test.UserSays",
-            "text": "hi"
+            "$kind": "Microsoft.Test.UserActivity",
+            "activity": {
+                "type": "message",
+                "attachments": [
+                    {
+                        "contentType": "image/jpg",
+                        "contentUrl": "http://example.org/photo"
+                    }
+                ]
+            }
         },
         {
             "$kind": "Microsoft.Test.AssertReply",
-            "text": "Hello Carlos, nice to meet you!"
+            "text": "Content url http://example.org/photo"
         }
     ]
 }
