@@ -183,11 +183,16 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
     public createChildContext(parent: DialogContext): DialogContext | undefined {
         const actions = this.getActions(parent.activeDialog);
         if (actions.length > 0) {
-            if (!Array.isArray(actions[0].dialogStack)) { actions[0].dialogStack = [] }
+            if (!Array.isArray(actions[0].dialogStack)) { actions[0].dialogStack = []; }
             return SequenceContext.create(parent, this.dialogs, actions[0].dialogStack, actions, this.changeKey);
         } else {
             return undefined;
         }
+    }
+
+    public getDependencies(): Dialog[] {
+        this.ensureDependenciesInstalled();
+        return [];
     }
 
     public configure(config: AdaptiveDialogConfiguration): this {
@@ -218,7 +223,7 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
                             name: AdaptiveEventNames.activityReceived,
                             value: sequence.context.activity,
                             bubble: false
-                        }
+                        };
                         handled = await this.processEvent(sequence, activityReceivedEvent, true);
                     }
                     break;
@@ -238,7 +243,7 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
                             name: AdaptiveEventNames.recognizedIntent,
                             value: recognized,
                             bubble: false
-                        }
+                        };
                         handled = await this.processEvent(sequence, recognizedIntentEvent, true);
                     }
 
@@ -374,7 +379,7 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
         const action = this.createChildContext(sequence) as SequenceContext;
         if (action) {
             // Continue current action
-            console.log(`running action: ${action.actions[0].dialogId}`);
+            console.log(`running action: ${ action.actions[0].dialogId }`);
             let result = await action.continueDialog();
 
             // Start action if not continued
@@ -435,7 +440,7 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
     }
 
     private getUniqueInstanceId(dc: DialogContext): string {
-        return dc.stack.length > 0 ? `${dc.stack.length}:${dc.activeDialog.id}` : '';
+        return dc.stack.length > 0 ? `${ dc.stack.length }:${ dc.activeDialog.id }` : '';
     }
 
     private shouldEnd(dc: DialogContext): boolean {
@@ -452,8 +457,8 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
 
     private getActions(instance: DialogInstance): ActionState[] {
         const state: AdaptiveDialogState<O> = instance.state;
-        if (!state._adaptive) { state._adaptive = {} }
-        if (!Array.isArray(state._adaptive.actions)) { state._adaptive.actions = [] }
+        if (!state._adaptive) { state._adaptive = {}; }
+        if (!Array.isArray(state._adaptive.actions)) { state._adaptive.actions = []; }
         return state._adaptive.actions;
     }
 }
