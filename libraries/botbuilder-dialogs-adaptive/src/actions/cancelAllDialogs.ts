@@ -35,7 +35,7 @@ export class CancelAllDialogs<O extends object = {}> extends Dialog<O> implement
      */
     public eventValue: StringExpression;
 
-    private disabled: BoolExpression;
+    public disabled: BoolExpression;
 
     public configure(config: CancelAllDialogsConfiguration): this {
         for (const key in config) {

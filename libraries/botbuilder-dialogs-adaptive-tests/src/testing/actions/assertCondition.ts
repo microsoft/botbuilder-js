@@ -52,7 +52,7 @@ export class AssertCondition<O extends object = {}> extends Dialog<O> {
     public async beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {
         const { value } = this.condition.tryEvaluate(dc.state);
         if (!value) {
-            let desc = this.description.getValue(dc.state);
+            let desc = this.description && this.description.getValue(dc.state);
             if (!desc) {
                 desc = this.condition.toString();
             }

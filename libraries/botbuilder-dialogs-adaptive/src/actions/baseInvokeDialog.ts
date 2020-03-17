@@ -28,7 +28,7 @@ export class BaseInvokeDialog<O extends object = {}> extends Dialog<O> implement
     /**
      * Configurable options for the dialog.
      */
-    public options: ObjectExpression<object>;
+    public options: ObjectExpression<object> = new ObjectExpression<object>();
 
     /**
      * The dialog to call.
@@ -47,9 +47,6 @@ export class BaseInvokeDialog<O extends object = {}> extends Dialog<O> implement
                 switch (key) {
                     case 'options':
                         this.options = new ObjectExpression<object>(value);
-                        break;
-                    case 'dialog':
-                        this.dialog = new DialogExpression(value);
                         break;
                     case 'activityProcessed':
                         this.activityProcessed = new BoolExpression(value);

@@ -68,7 +68,10 @@ export class SignOutUser<O extends object = {}> extends Dialog<O> implements Con
             return await dc.endDialog();
         }
 
-        const userId: string = this.userId.getValue(dc.state);
+        let userId: string;
+        if (this.userId) {
+            userId = this.userId.getValue(dc.state);
+        }
         const connectionName: string = this.connectionName.getValue(dc.state);
 
         const adapter = dc.context.adapter;
@@ -81,6 +84,6 @@ export class SignOutUser<O extends object = {}> extends Dialog<O> implements Con
     }
 
     protected onComputeId(): string {
-        return `SignOutUser[${ this.connectionName.toString() }, ${ this.userId.toString() }]`;
+        return `SignOutUser[${ this.connectionName ? this.connectionName.toString() : '' }, ${ this.userId ? this.userId.toString() : '' }]`;
     }
 }
