@@ -6,9 +6,8 @@
  * Licensed under the MIT License.
  */
 
-
 import { Activity, TestAdapter, Middleware, ConversationState, MemoryStorage, AutoSaveStateMiddleware, TurnContext } from 'botbuilder-core';
-import { Dialog,  DialogSet, DialogTurnStatus, DialogTurnResult } from 'botbuilder-dialogs';
+import { Dialog, DialogContext, DialogSet, DialogTurnStatus, DialogTurnResult } from 'botbuilder-dialogs';
 
 /**
  * A client for testing dialogs in isolation.
@@ -16,8 +15,17 @@ import { Dialog,  DialogSet, DialogTurnStatus, DialogTurnResult } from 'botbuild
 export class DialogTestClient {
 
     private readonly _callback: (turnContext: TurnContext) => Promise<void>;
+    private _dialogContext: DialogContext = null;
     private readonly _testAdapter: TestAdapter;
+
+    /**
+     * A DialogTurnResult instance with the result of the last turn.
+     */
     public dialogTurnResult: DialogTurnResult;
+
+    /**
+     * A ConversationState instance for the current test client.
+     */
     public conversationState: ConversationState;
 
     /**
@@ -40,7 +48,7 @@ export class DialogTestClient {
      */
     public constructor(channelId: string, targetDialog: Dialog, initialDialogOptions?: any, middlewares?: Middleware[], conversationState?: ConversationState);
     public constructor(testAdapter: TestAdapter, targetDialog: Dialog, initialDialogOptions?: any, middlewares?: Middleware[], conversationState?: ConversationState)
-    constructor(channelOrAdapter: string|TestAdapter, targetDialog: Dialog, initialDialogOptions?: any, middlewares?: Middleware[], conversationState?: ConversationState) {
+    public constructor(channelOrAdapter: string|TestAdapter, targetDialog: Dialog, initialDialogOptions?: any, middlewares?: Middleware[], conversationState?: ConversationState) {
         this.conversationState = conversationState || new ConversationState(new MemoryStorage());
 
         let dialogState = this.conversationState.createProperty('DialogState');
@@ -56,6 +64,15 @@ export class DialogTestClient {
         }
 
         this.addUserMiddlewares(middlewares);
+    }
+
+    /**
+     * Gets a reference for the DialogContext.
+     * @remarks
+     * This property will be null until at least one activity is sent to DialogTestClient.
+     */
+    public get dialogContext(): DialogContext {
+        return this._dialogContext;
     }
 
     /**
@@ -75,31 +92,30 @@ export class DialogTestClient {
     /**
      * Get the next reply waiting to be delivered (if one exists)
      */
-    public getNextReply() {
+    public getNextReply(): Partial<Activity> {
         return this._testAdapter.activityBuffer.shift();
     }
 
     private getDefaultCallback(targetDialog: Dialog, initialDialogOptions: any, dialogState: any): (turnContext: TurnContext) => Promise<void> {
 
-        return async (turnContext: TurnContext) => {
+        return async (turnContext: TurnContext): Promise<void> => {
 
             const dialogSet = new DialogSet(dialogState);
             dialogSet.add(targetDialog);
 
-            const dialogContext = await dialogSet.createContext(turnContext);
-            this.dialogTurnResult = await dialogContext.continueDialog();
+            this._dialogContext = await dialogSet.createContext(turnContext);
+            this.dialogTurnResult = await this._dialogContext.continueDialog();
             if (this.dialogTurnResult.status === DialogTurnStatus.empty) {
-                this.dialogTurnResult = await dialogContext.beginDialog(targetDialog.id, initialDialogOptions);
+                this.dialogTurnResult = await this._dialogContext.beginDialog(targetDialog.id, initialDialogOptions);
             }
         };
     }
 
     private addUserMiddlewares(middlewares: Middleware[]): void {
         if (middlewares != null) {
-            middlewares.forEach((middleware) => {
+            middlewares.forEach((middleware): void => {
                 this._testAdapter.use(middleware);
             });
         }
     }
-
 }

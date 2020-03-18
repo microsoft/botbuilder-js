@@ -5,7 +5,7 @@
 
 const { DialogTestClient, DialogTestLogger } = require('../');
 const { ComponentDialog, TextPrompt, WaterfallDialog, DialogTurnStatus, DialogSet } = require('botbuilder-dialogs');
-const assert = require('assert');
+const { ok: assert, strictEqual } = require('assert');
 
 
 describe('DialogTestClient', function() {
@@ -18,6 +18,23 @@ describe('DialogTestClient', function() {
     it('should create a DialogTestClient with a custom channelId', async function() {
         let client = new DialogTestClient('custom', null);
         assert(client._testAdapter.template.channelId == 'custom', 'Created with wrong channel id');
+    });
+
+    it('should set a dialogContext after an activity is received', async function() {
+        let dialog = new WaterfallDialog('waterfall', [
+            async step => {
+                await step.context.sendActivity('hello');
+                return step.endDialog();
+            }
+        ]);
+
+        let client = new DialogTestClient('test', dialog);
+        strictEqual(client.dialogContext, null);
+        let reply = await client.sendActivity('hello');
+        assert(client.dialogContext, 'client.dialogContext not found');
+        assert(reply.text == 'hello', 'dialog responded with incorrect message');
+        assert(reply.channelId == 'test', 'test channel id didnt get set');
+        assert(client.dialogTurnResult.status == DialogTurnStatus.complete, 'dialog did not end properly');
     });
 
     it('should process a single turn waterfall dialog', async function() {
