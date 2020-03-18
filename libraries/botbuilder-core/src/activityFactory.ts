@@ -115,6 +115,8 @@ export class ActivityFactory {
             activity = MessageFactory.attachment(this.getAttachment(lgValue));
         } else if (type === 'activity') {
             activity = this.buildActivity(lgValue);
+        } else if (lgValue){
+            activity = this.buildActivityFromText(JSON.stringify(lgValue).trim());
         }
 
         return activity;
@@ -370,6 +372,10 @@ export class ActivityFactory {
 
         try {
             lgStructuredResult = JSON.parse(lgStringResult);
+            const type = this.getStructureType(lgStringResult);
+            if (!type || type.trim() === '') {
+                return undefined;
+            }
         } catch (error) {
             return undefined;
         }
@@ -380,15 +386,18 @@ export class ActivityFactory {
     private static checkStructuredResult(input: any): string[] {
         const result: string[] = [];
         const type: string = this.getStructureType(input);
+
+        if (!type || type.trim() === '') {
+            return result;
+        }
+
         if (this.genericCardTypeMapping.has(type) || type === 'attachment') {
             result.push(...this.checkAttachment(input));
         } else if (type === 'activity') {
             result.push(...this.checkActivity(input));
         } else {
-            const diagnosticMessage: string = (type === undefined || type === '') ? 
-                `'${ this.lgType }' does not exist in lg output json object.`
-                : `Type '${ type }' is not supported currently.`;
-            result.push(this.buildDiagnostic(diagnosticMessage));
+            const diagnosticMessage = `Type '${ type }' is not supported currently.`;
+            result.push(this.buildDiagnostic(diagnosticMessage, false));
         }
 
         return result;

@@ -8,6 +8,9 @@ const one = ['one'];
 const oneTwo = ['one', 'two'];
 const dataSource = [
 
+    // accessProperty and accessIndex
+    ['alist[0].Name', 'item1'],
+
     // string interpolation test
     ['`hi`', 'hi'],
     ['`hi\\``', 'hi`'],
@@ -572,6 +575,14 @@ const dataSource = [
 ];
 
 const scope = {
+    alist: [
+        {
+            Name: 'item1'
+        },
+        {
+            Name: 'item2'
+        }
+    ],
     emptyList:[],
     emptyObject: new Map(),
     emptyJObject: {},
