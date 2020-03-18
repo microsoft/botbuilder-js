@@ -47,7 +47,9 @@ describe('ActivityFactoryTest', function() {
     });
 
     it('NotSupportStructuredType', function() {
-        assert.throws(() => {getActivity('notSupport', undefined); }, Error);
+        const result = getActivity('notSupport', undefined);
+        assert.strictEqual(result.attachments, undefined);
+        assert.strictEqual(result.text.replace(/\r\n/g, '\n').replace(/\n/g, '').replace(/\s+/g, ''), '{"lgType":"Acti","key":"value"}');
     });
 
     it('HerocardWithCardAction', function() {
@@ -266,16 +268,12 @@ describe('ActivityFactoryTest', function() {
         let diagnostics = ActivityFactory.checkLGResult('Not a valid json');
         assert(diagnostics.length === 1);
         assert.strictEqual(diagnostics[0], '[WARNING]LG output is not a json object, and will fallback to string format.');
-
-        diagnostics = ActivityFactory.checkLGResult('{}');
-        assert(diagnostics.length === 1);
-        assert.strictEqual(diagnostics[0], `[ERROR]'lgType' does not exist in lg output json object.`);
     });
 
     it('CheckStructuredLGDiagnostics', function() {
         let diagnostics = getDiagnostics('ErrorStructuredType', undefined);
         assert(diagnostics.length === 1);
-        assert.strictEqual(diagnostics[0], `[ERROR]Type 'mystruct' is not supported currently.`);
+        assert.strictEqual(diagnostics[0], `[WARNING]Type 'mystruct' is not supported currently.`);
 
         diagnostics = getDiagnostics('ErrorActivityType', undefined);
         assert(diagnostics.length === 2);

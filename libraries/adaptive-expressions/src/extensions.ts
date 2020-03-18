@@ -200,17 +200,9 @@ export class Extensions {
         let value: any;
         let error: string;
 
-        let count = -1;
         if (Array.isArray(instance)) {
-            count = instance.length;
-        } else if (instance instanceof Map) {
-            count = (instance as Map<string, any>).size;
-        }
-        const indexer: string[] = Object.keys(instance);
-        if (count !== -1 && indexer.length > 0) {
-            if (index >= 0 && count > index) {
-                const idyn: any = instance;
-                value = idyn[index];
+            if (index >= 0 && index < instance.length) {
+                value = instance[index];
             } else {
                 error = `${ index } is out of range for ${ instance }`;
             }
