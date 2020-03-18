@@ -57,14 +57,14 @@ describe('LG', function() {
     it('TestMultiLineExprLG', function() {
         let templates = Templates.parseFile(GetExampleFilePath('MultiLineExpr.lg'));
 
-        // let evaled = templates.evaluate('ExprInCondition', { userName: 'Henry', day: 'Monday' });
-        // assert.strictEqual(evaled === 'Not today', true, `Evaled is ${ evaled }`);
+        let evaled = templates.evaluate('ExprInCondition', { userName: 'Henry', day: 'Monday' });
+        assert.strictEqual(evaled === 'Not today', true, `Evaled is ${ evaled }`);
 
-        // evaled = templates.evaluate('definition');
-        // assert.strictEqual(evaled, 10);
+        evaled = templates.evaluate('definition');
+        assert.strictEqual(evaled, 10);
 
-        // evaled = templates.evaluate('template');
-        // assert.strictEqual(evaled, 15);
+        evaled = templates.evaluate('template');
+        assert.strictEqual(evaled, 15);
 
 
     });
