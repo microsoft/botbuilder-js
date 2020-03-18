@@ -54,7 +54,7 @@ describe('LG', function() {
         assert.strictEqual(evaled === 'Good evening' || evaled === 'Evening! ', true, `Evaled is ${ evaled }`);
     });
 
-    it.only('TestMultiLineExprLG', function() {
+    it('TestMultiLineExprLG', function() {
         let templates = Templates.parseFile(GetExampleFilePath('MultiLineExpr.lg'));
 
         // let evaled = templates.evaluate('ExprInCondition', { userName: 'Henry', day: 'Monday' });
