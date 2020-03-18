@@ -244,7 +244,8 @@ export class ChannelServiceRoutes {
         return new Promise((resolve, reject) => {
             if (req.body) {
                 try {
-                    validateActivity(resolve, req.body);
+                    const activity = validateActivity(req.body);
+                    resolve(activity);
                 } catch (err) {
                     reject(new StatusCodeError(StatusCodes.BAD_REQUEST, err.message));
                 }
@@ -256,7 +257,8 @@ export class ChannelServiceRoutes {
                 req.on('end', () => {
                     try {
                         const body = JSON.parse(requestData);
-                        validateActivity(resolve, body);
+                        const activity = validateActivity(body);
+                        resolve(activity);
                     } catch (err) {
                         reject(new StatusCodeError(StatusCodes.BAD_REQUEST, err.message));
                     }

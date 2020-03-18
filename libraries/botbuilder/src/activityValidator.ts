@@ -8,20 +8,20 @@
 
 import { Activity } from 'botbuilder-core';
 
-export function validateActivity(resolve: any, activity: Activity): void{
-    if (typeof activity !== 'object') { throw new Error(`activityValidator.validateActivity(): invalid request body.`); }
-    if (typeof activity.type !== 'string') { throw new Error(`activityValidator.validateActivity(): missing activity type.`); }
+export function validateActivity(activity: Activity): Activity {
+    if (typeof activity !== 'object') { throw new Error(`validateActivity(): invalid request body.`); }
+    if (typeof activity.type !== 'string') { throw new Error(`validateActivity(): missing activity type.`); }
     if (typeof activity.timestamp === 'string') { activity.timestamp = new Date(activity.timestamp); }
     if (typeof activity.expiration === 'string') { activity.expiration = new Date(activity.expiration); }
-    if (typeof activity.localTimestamp === 'string') { 
+    if (typeof activity.localTimestamp === 'string') {
         // Since Javascript Date object is UTC, this code will pull the TimezoneOffset and put it
         // in activity.localTimezoneOffset to preserve the value.
-        let [d, fullTime] = (activity.localTimestamp as string).split('T');
-        if(fullTime){
-            let [t, tz] = fullTime.split(/(?=[+-])/);
+        const [d, fullTime] = (activity.localTimestamp as string).split('T');
+        if(fullTime) {
+            const [t, tz] = fullTime.split(/(?=[+-])/);
             activity.localTimezoneOffset = tz;
         }
         activity.localTimestamp = new Date(activity.localTimestamp); 
     }
-    resolve(activity);
+    return activity;
 };

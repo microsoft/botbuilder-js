@@ -1445,7 +1445,8 @@ function parseRequest(req: WebRequest): Promise<Activity> {
     return new Promise((resolve: any, reject: any): void => {
         if (req.body) {
             try {
-                validateActivity(resolve, req.body);
+                const activity = validateActivity(req.body);
+                resolve(activity);
             } catch (err) {
                 reject(err);
             }
@@ -1457,7 +1458,8 @@ function parseRequest(req: WebRequest): Promise<Activity> {
             req.on('end', (): void => {
                 try {
                     req.body = JSON.parse(requestData);
-                    validateActivity(resolve, req.body);
+                    const activity = validateActivity(req.body);
+                    resolve(activity);
                 } catch (err) {
                     reject(err);
                 }
