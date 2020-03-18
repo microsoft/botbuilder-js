@@ -54,6 +54,21 @@ describe('LG', function() {
         assert.strictEqual(evaled === 'Good evening' || evaled === 'Evening! ', true, `Evaled is ${ evaled }`);
     });
 
+    it('TestMultiLineExprLG', function() {
+        let templates = Templates.parseFile(GetExampleFilePath('MultiLineExpr.lg'));
+
+        let evaled = templates.evaluate('ExprInCondition', { userName: 'Henry', day: 'Monday' });
+        assert.strictEqual(evaled === 'Not today', true, `Evaled is ${ evaled }`);
+
+        evaled = templates.evaluate('definition');
+        assert.strictEqual(evaled, 10);
+
+        evaled = templates.evaluate('template');
+        assert.strictEqual(evaled, 15);
+
+
+    });
+
     it('TestBasicConditionalTemplateWithoutDefault', function() {
         let templates = Templates.parseFile(GetExampleFilePath('5.lg'));
 

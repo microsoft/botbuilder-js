@@ -243,3 +243,21 @@ it(`TestExpressionFormatError`, function() {
     assert.strictEqual(diagnostics.length, 1);
     assert.strictEqual(diagnostics[0].message.includes(`Close } is missing in Expression`), true);
 });
+
+it(`TestMultiLineExpressionInLG`, function() {
+    var diagnostics = GetDiagnostics(`MultiLineExprError.lg`);
+    assert.strictEqual(diagnostics.length, 1);
+    assert.strictEqual(diagnostics[0].message.includes(`Close } is missing in Expression`), true);
+
+    diagnostics = Templates.parseText('#Demo2\r\n- ${createArray(1,\r\n, 2,3)').diagnostics;
+    assert.strictEqual(diagnostics.length, 1);
+    assert.strictEqual(diagnostics[0].message.includes(`Close } is missing in Expression`), true);
+
+    diagnostics = Templates.parseText('#Demo4\r\n- ${createArray(1,\r\n2,3)\r\n> this is a comment').diagnostics;
+    assert.strictEqual(diagnostics.length, 1);
+    assert.strictEqual(diagnostics[0].message.includes(`Close } is missing in Expression`), true);
+
+    diagnostics = Templates.parseText('#Demo4\r\n- ${createArray(1,\r\n2,3)\r\n#AnotherTemplate').diagnostics;
+    assert.strictEqual(diagnostics.length, 1);
+    assert.strictEqual(diagnostics[0].message.includes(`Close } is missing in Expression`), true);
+});
