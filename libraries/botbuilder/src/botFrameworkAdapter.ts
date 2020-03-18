@@ -17,6 +17,8 @@ import { INodeBuffer, INodeSocket, IReceiveRequest, ISocket, IStreamingTransport
 import { WebRequest, WebResponse } from './interfaces';
 import { defaultPipeName, GET, POST, MESSAGES_PATH, StreamingHttpClient, TokenResolver, VERSION_PATH } from './streaming';
 
+import { validateActivity } from './activityValidator';
+
 /**
  * Contains settings used to configure a [BotFrameworkAdapter](xref:botbuilder.BotFrameworkAdapter) instance.
  */
@@ -1441,18 +1443,9 @@ export class BotFrameworkAdapter extends BotAdapter implements ExtendedUserToken
  */
 function parseRequest(req: WebRequest): Promise<Activity> {
     return new Promise((resolve: any, reject: any): void => {
-        function returnActivity(activity: Activity): void {
-            if (typeof activity !== 'object') { throw new Error(`BotFrameworkAdapter.parseRequest(): invalid request body.`); }
-            if (typeof activity.type !== 'string') { throw new Error(`BotFrameworkAdapter.parseRequest(): missing activity type.`); }
-            if (typeof activity.timestamp === 'string') { activity.timestamp = new Date(activity.timestamp); }
-            if (typeof activity.localTimestamp === 'string') { activity.localTimestamp = new Date(activity.localTimestamp); }
-            if (typeof activity.expiration === 'string') { activity.expiration = new Date(activity.expiration); }
-            resolve(activity);
-        }
-
         if (req.body) {
             try {
-                returnActivity(req.body);
+                validateActivity(resolve, req.body);
             } catch (err) {
                 reject(err);
             }
@@ -1464,7 +1457,7 @@ function parseRequest(req: WebRequest): Promise<Activity> {
             req.on('end', (): void => {
                 try {
                     req.body = JSON.parse(requestData);
-                    returnActivity(req.body);
+                    validateActivity(resolve, req.body);
                 } catch (err) {
                     reject(err);
                 }

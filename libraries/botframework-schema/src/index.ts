@@ -496,6 +496,11 @@ export interface Activity {
    * An optional programmatic action accompanying this request
    */
   semanticAction?: SemanticAction;
+  /**
+   * Contains the local timezone offset of the message if present.
+   * This is parsed from localTimestamp before converting to Date.
+   */
+  localTimezoneOffset?: string;
 }
 
 /**
