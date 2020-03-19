@@ -23,6 +23,8 @@ const dataSource = [
     ['`hello ${world}` != \'hello hello\'', true],
     ['`hello ${user.nickname}` == \'hello John\'', true],
     ['`hello ${user.nickname}` != \'hello Dong\'', true],
+    ['`hi\\`[1,2,3]`', 'hi`[1,2,3]'],
+    ['`hi ${[\'jack\\`\', \'queen\', \'king\']}`', 'hi jack`,queen,king'],
 
 
     // Operators tests
@@ -307,6 +309,8 @@ const dataSource = [
     ['bool(\'false\')', true], // we make it true, because it is not empty
     ['bool(\'hi\')', true],
     ['[1,2,3]', [1,2,3]],
+    ['[1,2,3, [4,5]]', [1,2,3, [4,5]]],
+    ['\"[1,2,3]\"', '[1,2,3]'],
     ['[1, bool(0), string(bool(1)), float(\'10\')]', [1, true, 'true', 10.0]],
     ['createArray(\'h\', \'e\', \'l\', \'l\', \'o\')', ['h', 'e', 'l', 'l', 'o']],
     ['createArray(1, bool(0), string(bool(1)), float(\'10\'))', [1, true, 'true', 10.0]],
