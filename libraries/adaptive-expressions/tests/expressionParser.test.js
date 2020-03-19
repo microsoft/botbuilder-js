@@ -25,6 +25,9 @@ const dataSource = [
     ['`hello ${user.nickname}` != \'hello Dong\'', true],
     ['`hi\\`[1,2,3]`', 'hi`[1,2,3]'],
     ['`hi ${[\'jack\\`\', \'queen\', \'king\']}`', 'hi jack`,queen,king'],
+    ['`abc ${concat("[", "]")}`', 'abc []'],
+    ['`[] ${concat("[]")}`', '[] []'],
+    ['`hi ${count(["a", "b", "c"])}`', `hi 3`],
 
 
     // Operators tests
@@ -135,6 +138,7 @@ const dataSource = [
     ['length(nullObj)', 0],
     ['length("hello")', 5],
     ['length(concat(hello,world))', 10],
+    ['length(concat("[]", "abc"))', 5],
     ['length(hello + world)', 10],
     ['count(\'hello\')', 5],
     ['count("hello")', 5],
@@ -202,6 +206,7 @@ const dataSource = [
     ['indexOf(json(\'["a", "b"]\'), "a")', 0],
     ['indexOf(json(\'["a", "b"]\'), \'c\')', -1],
     ['indexOf(createArray(\'abc\', \'def\', \'ghi\'), \'def\')', 1],
+    ['indexOf([\'abc\', \'def\', \'ghi\'], \'def\')', 1],
     ['indexOf(createArray(\'abc\', \'def\', \'ghi\'), \'klm\')', -1],
     ['lastIndexOf(nullObj, \'-\')', -1],
     ['lastIndexOf(hello, nullObj)', 4],
@@ -312,6 +317,10 @@ const dataSource = [
     ['[1,2,3, [4,5]]', [1,2,3, [4,5]]],
     ['\"[1,2,3]\"', '[1,2,3]'],
     ['[1, bool(0), string(bool(1)), float(\'10\')]', [1, true, 'true', 10.0]],
+    ['[\'a\', \'b[]\', \'c[][][]\'][1]', 'b[]'],
+    ['[\'a\', [\'b\', \'c\']][1][0]', 'b'],
+    ['union(["a", "b", "c"], ["d", ["e", "f"], "g"][1])', ['a', 'b', 'c', 'e', 'f']],
+    ['union(["a", "b", "c"], ["d", ["e", "f"], "g"][1])[1]', ['b']],
     ['createArray(\'h\', \'e\', \'l\', \'l\', \'o\')', ['h', 'e', 'l', 'l', 'o']],
     ['createArray(1, bool(0), string(bool(1)), float(\'10\'))', [1, true, 'true', 10.0]],
     ['binary(hello)', '0110100001100101011011000110110001101111'],
