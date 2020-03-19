@@ -9,7 +9,7 @@
 import { normalize, dirname, join } from 'path';
 import { EventEmitter } from 'events';
 import { IResourceProvider } from './resourceProvider';
-import { FolderResourceProvider } from './folderResoureProvider';
+import { FolderResourceProvider } from './folderResourceProvider';
 import { IResource } from './resource';
 import { PathUtil } from '../pathUtil';
 import { TypeFactory } from '../factory/typeFactory';
