@@ -26,6 +26,7 @@ const dataSource = [
 
 
     // Operators tests
+
     ['1 + 2', 3],
     ['1 +\n 2', 3],
     ['1 \n+ 2', 3],
@@ -305,6 +306,8 @@ const dataSource = [
     ['bool(hello * 5)', false],
     ['bool(\'false\')', true], // we make it true, because it is not empty
     ['bool(\'hi\')', true],
+    ['[1,2,3]', [1,2,3]],
+    ['[1, bool(0), string(bool(1)), float(\'10\')]', [1, true, 'true', 10.0]],
     ['createArray(\'h\', \'e\', \'l\', \'l\', \'o\')', ['h', 'e', 'l', 'l', 'o']],
     ['createArray(1, bool(0), string(bool(1)), float(\'10\'))', [1, true, 'true', 10.0]],
     ['binary(hello)', '0110100001100101011011000110110001101111'],
