@@ -177,6 +177,142 @@ export class Expression {
         }
     }
 
+    /**
+     * Do a deep equality between expressions.
+     * @param other Other expression.
+     * @returns True if expressions are the same.
+     */
+    public deepEquals(other: Expression): boolean {
+        let eq = false;
+        if (!other) {
+            eq = this.type === other.type;
+            if (eq) {
+                eq = this.children.length === other.children.length;
+                if (this.type === ExpressionType.And || this.type === ExpressionType.Or) {
+                    // And/Or do not depand on order
+                    for(let i = 0; eq && i< this.children.length; i++) {
+                        const primary = this.children[0];
+                        let found = false;
+                        for (var j = 0; j < this.children.length; j++) {
+                            if (primary.deepEquals(other.children[j])) {
+                                found = true;
+                                break;
+                            }
+                        }
+
+                        eq = found;
+                    }
+                } else {
+                    for (let i = 0; eq && i< this.children.length; i++) {
+                        eq = this.children[i].deepEquals(other.children[i]);
+                    }
+                }
+            }
+        }
+        return eq;
+    }
+
+    /**
+     * Return the static reference paths to memory.
+     * Return all static paths to memory.  If there is a computed element index, then the path is terminated there,
+     * but you might get other paths from the computed part as well.
+     * @param expression Expression to get references from.
+     * @returns List of the static reference paths.
+     */
+    public references(): string[] {
+        const {path, refs} = this.referenceWalk(this);
+        if (path !== undefined) {
+            refs.add(path);
+        }
+        return Array.from(refs);
+    }
+
+    /**
+     * Walking function for identifying static memory references in an expression.
+     * @param expression Expression to analyze.
+     * @param references Tracking for references found.
+     * @param extension If present, called to override lookup for things like template expansion.
+     * @returns Accessor path of expression.
+     */
+    public referenceWalk(expression: Expression,
+        extension?: (arg0: Expression) => boolean): {path: string; refs: Set<string>} {
+        let path: string;
+        let refs = new Set<string>();
+        if (extension === undefined || !extension(expression)) {
+            const children: Expression[] = expression.children;
+            if (expression.type === ExpressionType.Accessor) {
+                const prop: string = (children[0] as Constant).value as string;
+
+                if (children.length === 1) {
+                    path = prop;
+                }
+
+                if (children.length === 2) {
+                    ({path, refs} = this.referenceWalk(children[1], extension));
+                    if (path !== undefined) {
+                        path = path.concat('.', prop);
+                    }
+                    // if path is null we still keep it null, won't append prop
+                    // because for example, first(items).x should not return x as refs
+                }
+            } else if (expression.type === ExpressionType.Element) {
+                ({path, refs}  = this.referenceWalk(children[0], extension));
+                if (path !== undefined) {
+                    if (children[1] instanceof Constant) {
+                        const cnst: Constant = children[1] as Constant;
+                        if (cnst.returnType === ReturnType.String) {
+                            path += `.${ cnst.value }`;
+                        } else {
+                            path += `[${ cnst.value }]`;
+                        }
+                    } else {
+                        refs.add(path);
+                    }
+                }
+                const result = this.referenceWalk(children[1], extension);
+                const idxPath = result.path;
+                const refs1 = result.refs;
+                refs = new Set([...refs, ...refs1]);
+                if (idxPath !== undefined) {
+                    refs.add(idxPath);
+                } 
+            } else if (expression.type === ExpressionType.Foreach || 
+                    expression.type === ExpressionType.Where ||
+                    expression.type === ExpressionType.Select ) {
+                let result = this.referenceWalk(children[0], extension);
+                const child0Path = result.path;
+                const refs0 = result.refs;
+                if (child0Path !== undefined) {
+                    refs0.add(child0Path);
+                }
+
+                result = this.referenceWalk(children[2], extension);
+                const child2Path = result.path;
+                const refs2 = result.refs;
+                if (child2Path !== undefined) {
+                    refs2.add(child2Path);
+                }
+
+                const iteratorName = (children[1].children[0] as Constant).value as string;
+                var nonLocalRefs2 = Array.from(refs2).filter((x): boolean => !(x === iteratorName || x.startsWith(iteratorName + '.') || x.startsWith(iteratorName + '[')));
+                refs = new Set([...refs, ...refs0, ...nonLocalRefs2]);
+
+            } else {
+                for (const child of expression.children) {
+                    const result = this.referenceWalk(child, extension);
+                    const childPath = result.path;
+                    const refs0 = result.refs;
+                    refs = new Set([...refs, ...refs0]);
+                    if (childPath !== undefined) {
+                        refs.add(childPath);
+                    }
+                }
+            }
+        }
+
+        return {path, refs};
+    }
+
     public static parse(expression: string, lookup?: EvaluatorLookup): Expression {
         return new ExpressionParser(lookup || Expression.lookup).parse(expression);
     }

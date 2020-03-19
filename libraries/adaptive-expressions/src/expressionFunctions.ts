@@ -693,6 +693,86 @@ export class ExpressionFunctions {
             (expr: Expression): void => ExpressionFunctions.validateArityAndAnyType(expr, 2, 3, ReturnType.String, ReturnType.Number));
     }
 
+    /**
+     * Lookup a property in IDictionary, JObject or through reflection.
+     * @param instance Instance with property.
+     * @param property Property to lookup.
+     * @returns Value and error information if any.
+     */
+    public static accessProperty(instance: any, property: string): { value: any; error: string } {
+        // NOTE: This returns null rather than an error if property is not present
+        if (!instance) {
+            return { value: undefined, error: undefined };
+        }
+
+        let value: any;
+        let error: string;
+        // todo, Is there a better way to access value, or any case is not listed below?
+        if (instance instanceof Map && instance as Map<string, any>!== undefined) {
+            const instanceMap: Map<string, any> = instance as Map<string, any>;
+            value = instanceMap.get(property);
+            if (value === undefined) {
+                const prop: string = Array.from(instanceMap.keys()).find((k: string): boolean => k.toLowerCase() === property.toLowerCase());
+                if (prop !== undefined) {
+                    value = instanceMap.get(prop);
+                }
+            }
+        } else {
+            const prop: string = Object.keys(instance).find((k: string): boolean => k.toLowerCase() === property.toLowerCase());
+            if (prop !== undefined) {
+                value = instance[prop];
+            }
+        }
+
+        return { value, error };
+    }
+
+    /**
+     * Set a property in Map or Object.
+     * @param instance Instance to set.
+     * @param property Property to set.
+     * @param value Value to set.
+     * @returns set value.
+     */
+    public static setProperty(instance: any, property: string, value: any): { value: any; error: string } {
+        const result: any = value;
+        if (instance instanceof Map) {
+            instance.set(property, value);
+        } else {
+            instance[property] = value;
+        }
+
+        return {value: result, error: undefined};
+    }
+
+    /**
+     * Lookup a property in IDictionary, JObject or through reflection.
+     * @param instance Instance with property.
+     * @param property Property to lookup.
+     * @returns Value and error information if any.
+     */
+    public static accessIndex(instance: any, index: number): { value: any; error: string } {
+        // NOTE: This returns null rather than an error if property is not present
+        if (instance === null || instance === undefined) {
+            return { value: undefined, error: undefined };
+        }
+
+        let value: any;
+        let error: string;
+
+        if (Array.isArray(instance)) {
+            if (index >= 0 && index < instance.length) {
+                value = instance[index];
+            } else {
+                error = `${ index } is out of range for ${ instance }`;
+            }
+        } else {
+            error = `${ instance } is not a collection.`;
+        }
+
+        return { value, error };
+    }
+
     private static parseTimestamp(timeStamp: string, transform?: (arg0: moment.Moment) => any): { value: any; error: string } {
         let value: any;
         const error: string = this.verifyISOTimestamp(timeStamp);
@@ -937,9 +1017,9 @@ export class ExpressionFunctions {
             ({ value: idxValue, error } = index.tryEvaluate(state));
             if (!error) {
                 if (Number.isInteger(idxValue)) {
-                    ({ value, error } = Extensions.accessIndex(inst, Number(idxValue)));
+                    ({ value, error } = ExpressionFunctions.accessIndex(inst, Number(idxValue)));
                 } else if (typeof idxValue === 'string') {
-                    ({ value, error } = Extensions.accessProperty(inst, idxValue.toString()));
+                    ({ value, error } = ExpressionFunctions.accessProperty(inst, idxValue.toString()));
                 } else {
                     error = `Could not coerce ${ index } to an int or string.`;
                 }
@@ -2074,7 +2154,7 @@ export class ExpressionFunctions {
                             found = (args[0] as Map<string, any>).get(args[1]) !== undefined;
                         } else if (typeof args[1] === 'string') {
                             let value: any;
-                            ({ value, error } = Extensions.accessProperty(args[0], args[1]));
+                            ({ value, error } = ExpressionFunctions.accessProperty(args[0], args[1]));
                             found = !error && value !== undefined;
                         }
                     }
@@ -2874,7 +2954,7 @@ export class ExpressionFunctions {
                         }
 
                         if (Array.isArray(args[0]) && args[0].length > 0) {
-                            first = Extensions.accessIndex(args[0], 0).value;
+                            first = ExpressionFunctions.accessIndex(args[0], 0).value;
                         }
 
                         return first;
@@ -2891,7 +2971,7 @@ export class ExpressionFunctions {
                         }
 
                         if (Array.isArray(args[0]) && args[0].length > 0) {
-                            last = Extensions.accessIndex(args[0], args[0].length - 1).value;
+                            last = ExpressionFunctions.accessIndex(args[0], args[0].length - 1).value;
                         }
 
                         return last;

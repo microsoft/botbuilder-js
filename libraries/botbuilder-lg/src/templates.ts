@@ -10,11 +10,11 @@ import { Template } from './template';
 import { TemplateImport } from './templateImport';
 import { Diagnostic, DiagnosticSeverity } from './diagnostic';
 import { ExpressionParser } from 'adaptive-expressions';
-import { ImportResolverDelegate } from './templateParser';
+import { ImportResolverDelegate } from './templatesParser';
 import { Evaluator } from './evaluator';
 import { Expander } from './expander';
 import { Analyzer } from './analyzer';
-import { TemplateParser } from './templateParser';
+import { TemplatesParser } from './templatesParser';
 import { AnalyzerResult } from './analyzerResult';
 import { TemplateErrors } from './templateErrors';
 import { TemplateExtensions } from './templateExtensions';
@@ -155,7 +155,7 @@ export class Templates implements Iterable<Template> {
     * @returns new lg file.
     */
     public static parseFile(filePath: string, importResolver?: ImportResolverDelegate, expressionParser?: ExpressionParser): Templates {
-        return TemplateParser.parseFile(filePath, importResolver, expressionParser);
+        return TemplatesParser.parseFile(filePath, importResolver, expressionParser);
     }
 
     /**
@@ -167,7 +167,7 @@ export class Templates implements Iterable<Template> {
      * @returns entity.
      */
     public static parseText(content: string, id: string = '', importResolver?: ImportResolverDelegate, expressionParser?: ExpressionParser): Templates {
-        return TemplateParser.parseText(content, id, importResolver, expressionParser);
+        return TemplatesParser.parseText(content, id, importResolver, expressionParser);
     }
 
     /**
@@ -232,7 +232,7 @@ export class Templates implements Iterable<Template> {
 
         const newContent = `#${ fakeTemplateId } \r\n - ${ inlineStr }`;
 
-        const newTemplates = TemplateParser.parseTextWithRef(newContent, this);
+        const newTemplates = TemplatesParser.parseTextWithRef(newContent, this);
         return newTemplates.evaluate(fakeTemplateId, scope);
     }
 
@@ -258,7 +258,7 @@ export class Templates implements Iterable<Template> {
 
         ({startLine, stopLine} = template.getTemplateRange());
         const newContent: string = this.replaceRangeContent(this.content, startLine, stopLine, content);
-        this.initialize(TemplateParser.parseText(newContent, this.id, this.importResolver));
+        this.initialize(TemplatesParser.parseText(newContent, this.id, this.importResolver));
 
         return this;
     }
@@ -279,7 +279,7 @@ export class Templates implements Iterable<Template> {
         const templateNameLine: string = this.buildTemplateNameLine(templateName, parameters);
         const newTemplateBody: string = this.convertTemplateBody(templateBody);
         const newContent = `${ this.content.trimRight() }\r\n\r\n${ templateNameLine }\r\n${ newTemplateBody }\r\n`;
-        this.initialize(TemplateParser.parseText(newContent, this.id, this.importResolver));
+        this.initialize(TemplatesParser.parseText(newContent, this.id, this.importResolver));
 
         return this;
     }
@@ -301,7 +301,7 @@ export class Templates implements Iterable<Template> {
         ({startLine, stopLine} = template.getTemplateRange());
 
         const newContent: string = this.replaceRangeContent(this.content, startLine, stopLine, undefined);
-        this.initialize(TemplateParser.parseText(newContent, this.id, this.importResolver));
+        this.initialize(TemplatesParser.parseText(newContent, this.id, this.importResolver));
 
         return this;
     }

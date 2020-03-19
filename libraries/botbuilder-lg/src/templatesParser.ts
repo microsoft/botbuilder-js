@@ -29,7 +29,7 @@ export declare type ImportResolverDelegate = (source: string, resourceId: string
 /**
  * LG Parser
  */
-export class TemplateParser {
+export class TemplatesParser {
 
     /**
      * option regex.
@@ -47,7 +47,7 @@ export class TemplateParser {
         const fullPath = TemplateExtensions.normalizePath(filePath);
         const content = fs.readFileSync(fullPath, 'utf-8');
 
-        return TemplateParser.parseText(content, fullPath, importResolver, expressionParser);
+        return TemplatesParser.parseText(content, fullPath, importResolver, expressionParser);
     }
 
     /**
@@ -59,7 +59,7 @@ export class TemplateParser {
      * @returns entity.
      */
     public static parseText(content: string, id: string = '', importResolver?: ImportResolverDelegate, expressionParser?: ExpressionParser): Templates {
-        importResolver = importResolver || TemplateParser.defaultFileResolver;
+        importResolver = importResolver || TemplatesParser.defaultFileResolver;
         let templates = new Templates();
         templates.content = content;
         templates.id = id;
@@ -69,7 +69,7 @@ export class TemplateParser {
         }
         let diagnostics: Diagnostic[] = [];
         try {
-            const parsedResult = TemplateParser.antlrParse(content, id);
+            const parsedResult = TemplatesParser.antlrParse(content, id);
             parsedResult.templates.forEach(t => templates.push(t));
             templates.imports = parsedResult.imports;
             templates.options = parsedResult.options;
@@ -180,7 +180,7 @@ export class TemplateParser {
                 const path = result.id;
                 const notExist = Array.from(resourcesFound).filter((u): boolean => u.id === path).length === 0;
                 if (notExist) {
-                    var childResource = TemplateParser.parseText(content, path, importResolver, start.expressionParser);
+                    var childResource = TemplatesParser.parseText(content, path, importResolver, start.expressionParser);
                     this.resolveImportResources(childResource, resourcesFound, importResolver);
                 }
             }

@@ -7,7 +7,7 @@
  */
 export * from './templates';
 export * from './evaluator';
-export * from './templateParser';
+export * from './templatesParser';
 export * from './generated';
 export * from './staticChecker';
 export * from './analyzer';

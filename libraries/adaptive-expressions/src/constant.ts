@@ -41,6 +41,19 @@ export class Constant extends Expression {
         this.value = value;
     }
 
+    
+    public  deepEquals(other: Expression): boolean {
+        let eq: boolean;
+        if (!other || other.type !== this.type) {
+            eq = false; 
+        } else {
+            let otherVal = (other as Constant).value;
+            eq = this.value === otherVal;
+        }
+
+        return eq;
+    }
+
     public toString(): string {
         
         if (this.value === undefined) {

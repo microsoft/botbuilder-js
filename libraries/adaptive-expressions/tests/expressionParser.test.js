@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
 /* eslint-disable @typescript-eslint/no-var-requires */
-const { Expression, Extensions, SimpleObjectMemory, ExpressionFunctions } = require('../lib');
+const { Expression, SimpleObjectMemory, ExpressionFunctions } = require('../lib');
 const assert = require('assert');
 const moment = require('moment');
 
@@ -689,7 +689,7 @@ describe('expression parser functional test', () => {
 
             //Assert ExpectedRefs
             if (data.length === 3) {
-                const actualRefs = Extensions.references(parsed);
+                const actualRefs = parsed.references();
                 assertObjectEquals(actualRefs.sort(), data[2].sort());
             }
 
