@@ -8,7 +8,6 @@
 import { Expression, ReturnType } from './expression';
 import { ExpressionEvaluator } from './expressionEvaluator';
 import { ExpressionType } from './expressionType';
-import { equal } from 'assert';
 
 /**
  * Construct an expression constant.
