@@ -322,6 +322,8 @@ const dataSource = [
     ['union(["a", "b", "c"], ["d", ["e", "f"], "g"][1])', ['a', 'b', 'c', 'e', 'f']],
     ['union(["a", "b", "c"], ["d", ["e", "f"], "g"][1])[1]', ['b']],
     ['createArray(\'h\', \'e\', \'l\', \'l\', \'o\')', ['h', 'e', 'l', 'l', 'o']],
+    ['createArray()', []],
+    ['[]', []],
     ['createArray(1, bool(0), string(bool(1)), float(\'10\'))', [1, true, 'true', 10.0]],
     ['binary(hello)', '0110100001100101011011000110110001101111'],
     ['dataUri(hello)', 'data:text/plain;charset=utf-8;base64,aGVsbG8='],
