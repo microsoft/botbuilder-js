@@ -8,6 +8,7 @@
 import { Expression, ReturnType } from './expression';
 import { ExpressionEvaluator } from './expressionEvaluator';
 import { ExpressionType } from './expressionType';
+import { equal } from 'assert';
 
 /**
  * Construct an expression constant.
@@ -39,6 +40,19 @@ export class Constant extends Expression {
             }
         ));
         this.value = value;
+    }
+
+    
+    public  deepEquals(other: Expression): boolean {
+        let eq: boolean;
+        if (!other || other.type !== this.type) {
+            eq = false; 
+        } else {
+            let otherVal = (other as Constant).value;
+            eq = this.value === otherVal;
+        }
+
+        return eq;
     }
 
     public toString(): string {
