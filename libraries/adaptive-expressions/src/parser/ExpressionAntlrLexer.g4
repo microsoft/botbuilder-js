@@ -52,8 +52,13 @@ OPEN_SQUARE_BRACKET: '[';
 
 CLOSE_SQUARE_BRACKET: ']';
 
+OPEN_CURLY_BRACKET: '{';
+
+CLOSE_CURLY_BRACKET: '}';
+
 COMMA: ',';
 
+COLON: ':';
 
 NUMBER : DIGIT + ( '.' DIGIT +)? ;
 
@@ -65,15 +70,13 @@ NEWLINE : '\r'? '\n' -> skip;
 
 STRING : ('\'' (~'\'')* '\'') | ('"' (~'"')* '"');
 
-CONSTANT : ('{' WHITESPACE* '}');
-
 INVALID_TOKEN_DEFAULT_MODE : . ;
 
 mode STRING_INTERPOLATION_MODE;
 
 STRING_INTERPOLATION_END : '`' {this.ignoreWS = true;} -> type(STRING_INTERPOLATION_START), popMode;
 
-TEMPLATE : '$' '{' (STRING | ~[\r\n{}'"])*? '}';
+TEMPLATE : '$' '{' (STRING | ~[\r\n'"`])* '}';
 
 ESCAPE_CHARACTER : '\\' ~[\r\n]?;
 

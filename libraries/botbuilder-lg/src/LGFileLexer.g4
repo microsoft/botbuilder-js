@@ -44,7 +44,7 @@ fragment STRING_LITERAL : ('\'' (~['\r\n])* '\'') | ('"' (~["\r\n])* '"');
 
 fragment STRING_INTERPOLATION : '`' ('\\`' | ~'`')* '`';
 
-fragment OBJECT_DEFINITION: '{' (STRING_LITERAL ':' (STRING_LITERAL | STRING_INTERPOLATION | ~[{}'"`]))* '}';
+fragment OBJECT_DEFINITION: '{' (STRING_LITERAL ':' (STRING_LITERAL | ~[{}'"`]))* '}';
 
 fragment EXPRESSION_FRAGMENT : '$' '{' (STRING_LITERAL | STRING_INTERPOLATION | OBJECT_DEFINITION | ~[}'"`] )+ '}'?;
 

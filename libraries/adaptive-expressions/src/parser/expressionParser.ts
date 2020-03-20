@@ -121,11 +121,22 @@ export class ExpressionParser implements ExpressionParserInterface {
             }
         }
 
+        public visitArrayCreationExp(context: ep.ArrayCreationExpContext): Expression {
+            const parameters: Expression[] = this.processArgsList(context.argsList());
+            return this.makeExpression(ExpressionType.CreateArray, ...parameters);
+        } 
+
+        public visitJsonCreationExp(context: ep.JsonCreationExpContext): Expression {
+            return this.makeExpression(ExpressionType.Json, new Constant(context.text));
+        }
+
+
         public visitStringInterpolationAtom(context: ep.StringInterpolationAtomContext): Expression {
             let children: Expression[] = [];
 
-            for (const node  of context.stringInterpolation().children) {
+            for (const node of context.stringInterpolation().children) {
                 if (node instanceof TerminalNode){
+                    const type = (node as TerminalNode).symbol.type;
                     switch((node as TerminalNode).symbol.type) {
                         case ep.ExpressionAntlrParser.TEMPLATE:
                             const expressionString = this.trimExpression(node.text);
@@ -148,25 +159,6 @@ export class ExpressionParser implements ExpressionParserInterface {
 
             return this.makeExpression(ExpressionType.Concat, ...children);
 
-        }
-
-        public visitConstantAtom(context: ep.ConstantAtomContext): Expression {
-            let text: string = context.text;
-            if (text.startsWith('[') && text.endsWith(']')) {
-                text = text.substr(1, text.length - 2).trim();
-                if (text === '') {
-                    return new Constant([]);
-                }
-            }
-
-            if (text.startsWith('{') && text.endsWith('}')) {
-                text = text.substr(1, text.length - 2).trim();
-                if (text === '') {
-                    return new Constant({});
-                }
-            }
-
-            throw new Error(`Unrecognized constant: ${ text }`);
         }
 
         protected defaultResult = (): Expression => new Constant('');

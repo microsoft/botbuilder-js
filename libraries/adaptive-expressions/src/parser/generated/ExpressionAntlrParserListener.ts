@@ -4,8 +4,8 @@
 import { ParseTreeListener } from "antlr4ts/tree/ParseTreeListener";
 
 import { FuncInvokeExpContext } from "./ExpressionAntlrParser";
-import { ConstantAtomContext } from "./ExpressionAntlrParser";
 import { IdAtomContext } from "./ExpressionAntlrParser";
+import { JsonCreationExpContext } from "./ExpressionAntlrParser";
 import { StringAtomContext } from "./ExpressionAntlrParser";
 import { IndexAccessExpContext } from "./ExpressionAntlrParser";
 import { StringInterpolationAtomContext } from "./ExpressionAntlrParser";
@@ -22,6 +22,8 @@ import { PrimaryExpressionContext } from "./ExpressionAntlrParser";
 import { StringInterpolationContext } from "./ExpressionAntlrParser";
 import { TextContentContext } from "./ExpressionAntlrParser";
 import { ArgsListContext } from "./ExpressionAntlrParser";
+import { KeyValuePairListContext } from "./ExpressionAntlrParser";
+import { KeyValuePairContext } from "./ExpressionAntlrParser";
 
 
 /**
@@ -43,19 +45,6 @@ export interface ExpressionAntlrParserListener extends ParseTreeListener {
 	exitFuncInvokeExp?: (ctx: FuncInvokeExpContext) => void;
 
 	/**
-	 * Enter a parse tree produced by the `constantAtom`
-	 * labeled alternative in `ExpressionAntlrParser.primaryExpression`.
-	 * @param ctx the parse tree
-	 */
-	enterConstantAtom?: (ctx: ConstantAtomContext) => void;
-	/**
-	 * Exit a parse tree produced by the `constantAtom`
-	 * labeled alternative in `ExpressionAntlrParser.primaryExpression`.
-	 * @param ctx the parse tree
-	 */
-	exitConstantAtom?: (ctx: ConstantAtomContext) => void;
-
-	/**
 	 * Enter a parse tree produced by the `idAtom`
 	 * labeled alternative in `ExpressionAntlrParser.primaryExpression`.
 	 * @param ctx the parse tree
@@ -67,6 +56,19 @@ export interface ExpressionAntlrParserListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	exitIdAtom?: (ctx: IdAtomContext) => void;
+
+	/**
+	 * Enter a parse tree produced by the `jsonCreationExp`
+	 * labeled alternative in `ExpressionAntlrParser.primaryExpression`.
+	 * @param ctx the parse tree
+	 */
+	enterJsonCreationExp?: (ctx: JsonCreationExpContext) => void;
+	/**
+	 * Exit a parse tree produced by the `jsonCreationExp`
+	 * labeled alternative in `ExpressionAntlrParser.primaryExpression`.
+	 * @param ctx the parse tree
+	 */
+	exitJsonCreationExp?: (ctx: JsonCreationExpContext) => void;
 
 	/**
 	 * Enter a parse tree produced by the `stringAtom`
@@ -263,5 +265,27 @@ export interface ExpressionAntlrParserListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	exitArgsList?: (ctx: ArgsListContext) => void;
+
+	/**
+	 * Enter a parse tree produced by `ExpressionAntlrParser.keyValuePairList`.
+	 * @param ctx the parse tree
+	 */
+	enterKeyValuePairList?: (ctx: KeyValuePairListContext) => void;
+	/**
+	 * Exit a parse tree produced by `ExpressionAntlrParser.keyValuePairList`.
+	 * @param ctx the parse tree
+	 */
+	exitKeyValuePairList?: (ctx: KeyValuePairListContext) => void;
+
+	/**
+	 * Enter a parse tree produced by `ExpressionAntlrParser.keyValuePair`.
+	 * @param ctx the parse tree
+	 */
+	enterKeyValuePair?: (ctx: KeyValuePairContext) => void;
+	/**
+	 * Exit a parse tree produced by `ExpressionAntlrParser.keyValuePair`.
+	 * @param ctx the parse tree
+	 */
+	exitKeyValuePair?: (ctx: KeyValuePairContext) => void;
 }
 
