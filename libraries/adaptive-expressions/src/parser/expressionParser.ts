@@ -107,6 +107,11 @@ export class ExpressionParser implements ExpressionParserInterface {
 
         public visitParenthesisExp = (context: ep.ParenthesisExpContext): Expression => this.visit(context.expression());
 
+        public visitArrayCreationExp(context: ep.ArrayCreationExpContext): Expression {
+            const parameters: Expression[] = this.processArgsList(context.argsList());
+            return this.makeExpression(ExpressionType.CreateArray, ...parameters);
+        } 
+
         public visitStringAtom(context: ep.StringAtomContext): Expression {
             const text: string = context.text;
             if (text.startsWith('\'')) {
