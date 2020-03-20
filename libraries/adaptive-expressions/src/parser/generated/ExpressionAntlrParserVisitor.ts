@@ -1,4 +1,4 @@
-// Generated from ExpressionAntlrParser.g4 by ANTLR 4.6-SNAPSHOT
+// Generated from ../ExpressionAntlrParser.g4 by ANTLR 4.6-SNAPSHOT
 
 
 import { ParseTreeVisitor } from "antlr4ts/tree/ParseTreeVisitor";
