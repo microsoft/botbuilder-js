@@ -60,6 +60,8 @@ COMMA: ',';
 
 COLON: ':';
 
+DOLLAR: '$';
+
 NUMBER : DIGIT + ( '.' DIGIT +)? ;
 
 WHITESPACE : (' '|'\t'|'\ufeff'|'\u00a0') {this.ignoreWS}? -> skip;
@@ -76,10 +78,11 @@ mode STRING_INTERPOLATION_MODE;
 
 STRING_INTERPOLATION_END : '`' {this.ignoreWS = true;} -> type(STRING_INTERPOLATION_START), popMode;
 
-TEMPLATE : '$' '{' (STRING | ~[\r\n'"`])* '}';
-
 ESCAPE_CHARACTER : '\\' ~[\r\n]?;
 
 TEXT_CONTENT :  '\\`' | ~[\r\n];
+
+TEXT_IN_TEMPLATE: ~[\r\n{}'"];
+
 
 

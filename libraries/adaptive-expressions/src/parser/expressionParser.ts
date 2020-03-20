@@ -121,11 +121,6 @@ export class ExpressionParser implements ExpressionParserInterface {
             }
         }
 
-        public visitArrayCreationExp(context: ep.ArrayCreationExpContext): Expression {
-            const parameters: Expression[] = this.processArgsList(context.argsList());
-            return this.makeExpression(ExpressionType.CreateArray, ...parameters);
-        } 
-
         public visitJsonCreationExp(context: ep.JsonCreationExpContext): Expression {
             return this.makeExpression(ExpressionType.Json, new Constant(context.text));
         }
@@ -138,7 +133,7 @@ export class ExpressionParser implements ExpressionParserInterface {
                 if (node instanceof TerminalNode){
                     const type = (node as TerminalNode).symbol.type;
                     switch((node as TerminalNode).symbol.type) {
-                        case ep.ExpressionAntlrParser.TEMPLATE:
+                        case ep.ExpressionAntlrParser:
                             const expressionString = this.trimExpression(node.text);
                             children.push(Expression.parse(expressionString, this._lookupFunction));
                             break;

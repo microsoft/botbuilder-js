@@ -18,7 +18,7 @@ const dataSource = [
     // ['`hi ${string(\'jack\\`\')}`', 'hi jack`'],
     // ['`\\${world}`', '${world}'],
     // ['length(`hello ${world}`)', 'hello world'.length],
-    ['json(`{"foo": "${hello}","item": "${world}"}`).foo', 'hello'],
+    ['json(`{"foo": ${hello},"item": ${world}}`)', 'hello'],
     // ['`hi\\`[1,2,3]`', 'hi`[1,2,3]'],
     // ['`hi ${[\'jack\\`\', \'queen\', \'king\']}`', 'hi jack`,queen,king'],
     // ['`abc ${concat("[", "]")}`', 'abc []'],

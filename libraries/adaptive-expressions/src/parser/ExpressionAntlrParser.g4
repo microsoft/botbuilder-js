@@ -20,7 +20,7 @@ expression
 primaryExpression 
     : OPEN_BRACKET expression CLOSE_BRACKET                                  #parenthesisExp
     | OPEN_SQUARE_BRACKET argsList? CLOSE_SQUARE_BRACKET                     #arrayCreationExp
-    | OPEN_CURLY_BRACKET keyValuePairList? CLOSE_CURLY_BRACKET                #jsonCreationExp
+    | OPEN_CURLY_BRACKET keyValuePairList? CLOSE_CURLY_BRACKET               #jsonCreationExp
     | NUMBER                                                                 #numericAtom
     | STRING                                                                 #stringAtom
     | IDENTIFIER                                                             #idAtom
@@ -31,7 +31,15 @@ primaryExpression
     ;
 
 stringInterpolation
-    : STRING_INTERPOLATION_START (ESCAPE_CHARACTER | TEMPLATE | textContent)+ STRING_INTERPOLATION_START
+    : STRING_INTERPOLATION_START (ESCAPE_CHARACTER | template | textContent)+ STRING_INTERPOLATION_START
+    ;
+
+template
+    : DOLLAR OPEN_CURLY_BRACKET (STRING | objectDefinition | )* CLOSE_CURLY_BRACKET
+    ;
+
+objectDefinition
+    : OPEN_CURLY_BRACKET keyValuePairList? CLOSE_CURLY_BRACKET
     ;
 
 textContent
@@ -48,4 +56,8 @@ keyValuePairList
 
 keyValuePair
     : STRING COLON expression
+    ;
+
+textInTemplate
+    : TEXT_IN_TEMPLATE+
     ;
