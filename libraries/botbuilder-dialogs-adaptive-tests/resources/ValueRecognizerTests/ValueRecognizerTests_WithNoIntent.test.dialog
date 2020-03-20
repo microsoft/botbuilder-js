@@ -48,6 +48,7 @@
             },
             {
                 "$kind": "Microsoft.OnUnknownIntent",
+                "condition": "@age == null",
                 "actions": [
                     {
                         "$kind": "Microsoft.SendActivity",
