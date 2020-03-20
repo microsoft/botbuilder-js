@@ -122,7 +122,7 @@ export abstract class InputDialog extends Dialog {
         }
 
         // Are we continuing after an interruption?
-        const interrupted = dc.state.getValue(TurnPath.INTERRUPTED, false);
+        const interrupted = dc.state.getValue(TurnPath.interrupted, false);
         const turnCount = dc.state.getValue(InputDialog.TURN_COUNT_PROPERTY, 0);
         const state = await this.recognizeInput(dc, interrupted ? 0 : turnCount);
         if (state === InputState.valid) {
@@ -285,7 +285,7 @@ export abstract class InputDialog extends Dialog {
             input = value;
         }
 
-        const activityProcessed = dc.state.getValue(TurnPath.ACTIVITYPROCESSED);
+        const activityProcessed = dc.state.getValue(TurnPath.activityProcessed);
         if (!activityProcessed && !input && turnCount > 0) {
             if ((this.constructor.name) == 'AttachmentInput') {
                 input = dc.context.activity.attachments;
@@ -307,7 +307,7 @@ export abstract class InputDialog extends Dialog {
                     }
                 }
 
-                dc.state.setValue(TurnPath.ACTIVITYPROCESSED, true);
+                dc.state.setValue(TurnPath.activityProcessed, true);
                 return InputState.valid;
             } else {
                 return state;

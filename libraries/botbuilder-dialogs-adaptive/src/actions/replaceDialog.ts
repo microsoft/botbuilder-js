@@ -34,7 +34,7 @@ export class ReplaceDialog<O extends object = {}> extends BaseInvokeDialog<O> {
         const dialog = this.resolveDialog(dc);
         const boundOptions = this.bindOptions(dc, options);
 
-        dc.state.setValue(TurnPath.ACTIVITYPROCESSED, this.activityProcessed.getValue(dc.state));
+        dc.state.setValue(TurnPath.activityProcessed, this.activityProcessed.getValue(dc.state));
 
         return await dc.replaceDialog(dialog.id, boundOptions);
     }

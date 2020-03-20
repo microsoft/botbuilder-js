@@ -29,15 +29,15 @@ export class RepeatDialog<O extends object = {}> extends BaseInvokeDialog<O> {
         const boundOptions = this.bindOptions(dc, options);
         const targetDialogId = dc.parent.activeDialog.id;
 
-        const repeatedIds: string[] = dc.state.getValue(TurnPath.REPEATEDIDS, []);
+        const repeatedIds: string[] = dc.state.getValue(TurnPath.repeatedIds, []);
         if (repeatedIds.includes(targetDialogId)) {
             throw new Error(`Recursive loop detected, ${ targetDialogId } cannot be repeated twice in one turn.`);
         }
 
         repeatedIds.push(targetDialogId);
-        dc.state.setValue(TurnPath.REPEATEDIDS, repeatedIds);
+        dc.state.setValue(TurnPath.repeatedIds, repeatedIds);
 
-        dc.state.setValue(TurnPath.ACTIVITYPROCESSED, this.activityProcessed.getValue(dc.state));
+        dc.state.setValue(TurnPath.activityProcessed, this.activityProcessed.getValue(dc.state));
 
         const turnResult = await dc.parent.replaceDialog(dc.parent.activeDialog.id, boundOptions);
         turnResult.parentEnded = true;

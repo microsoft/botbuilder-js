@@ -31,7 +31,7 @@ export class OnDialogEvent extends OnCondition {
 
     public getExpression(parser: ExpressionParserInterface): Expression {
         return Expression.makeExpression(ExpressionType.And, undefined,
-            parser.parse(`${ TurnPath.DIALOGEVENT }.name == '${ this.event }'`),
+            parser.parse(`${ TurnPath.dialogEvent }.name == '${ this.event }'`),
             super.getExpression(parser));
     }
 }

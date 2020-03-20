@@ -44,15 +44,15 @@ export class OnIntent extends OnDialogEvent {
         }
 
         const trimmedIntent = this.intent.startsWith('#') ? this.intent.substring(1) : this.intent;
-        let intentExpression = parser.parse(`${ TurnPath.RECOGNIZED }.intent == '${trimmedIntent}'`)
+        let intentExpression = parser.parse(`${ TurnPath.recognized }.intent == '${ trimmedIntent }'`)
 
         if (this.entities.length > 0) {
             intentExpression = Expression.makeExpression(ExpressionType.And,
                 undefined, intentExpression, ...this.entities.map(entity => {
-                    if (entity.startsWith('@') || entity.startsWith(TurnPath.RECOGNIZED)) {
-                        return parser.parse(`exists(${entity})`);
+                    if (entity.startsWith('@') || entity.startsWith(TurnPath.recognized)) {
+                        return parser.parse(`exists(${ entity })`);
                     }
-                    return parser.parse(`exists(@${entity})`);
+                    return parser.parse(`exists(@${ entity })`);
                 }));
         }
 
@@ -60,7 +60,7 @@ export class OnIntent extends OnDialogEvent {
     }
 
     protected onCreateChangeList(planning: SequenceContext, dialogOptions?: any): ActionChangeList {
-        const recognizerResult = planning.state.getValue<RecognizerResult>(`${TurnPath.DIALOGEVENT}.value`);
+        const recognizerResult = planning.state.getValue<RecognizerResult>(`${ TurnPath.dialogEvent }.value`);
         if (recognizerResult) {
             const actionState: ActionState = {
                 dialogId: this.actionScope.id,
@@ -70,7 +70,8 @@ export class OnIntent extends OnDialogEvent {
 
             const changeList: ActionChangeList = {
                 changeType: ActionChangeType.insertActions,
-                actions: [actionState]
+                actions: [actionState],
+                turn: {}
             };
 
             return changeList;

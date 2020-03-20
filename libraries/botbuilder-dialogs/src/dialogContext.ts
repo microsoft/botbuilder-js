@@ -7,10 +7,9 @@ import { Choice } from './choices';
 import { Dialog, DialogInstance, DialogReason, DialogTurnResult, DialogTurnStatus, DialogEvent } from './dialog';
 import { DialogSet } from './dialogSet';
 import { PromptOptions } from './prompts';
-import { DialogStateManager } from './memory';
+import { DialogStateManager, TurnPath } from './memory';
 import { DialogContainer } from './dialogContainer';
 import { DialogEvents } from './dialogEvents';
-import { TurnPath } from './constants';
 
 /**
  * @private
@@ -515,7 +514,7 @@ export class DialogContext {
             // Pop dialog off stack
             this.stack.pop();
 
-            this.state.setValue(TurnPath.LASTRESULT, result);
+            this.state.setValue(TurnPath.lastResult, result);
         }
     }
 }

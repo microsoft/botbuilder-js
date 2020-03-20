@@ -24,7 +24,7 @@ export class OnCustomEvent extends OnCondition {
     }
 
     public getExpression(parser: ExpressionParserInterface): Expression {
-        const expression = parser.parse(`${ TurnPath.DIALOGEVENT }.name == '${this.event}'`);
+        const expression = parser.parse(`${ TurnPath.dialogEvent }.name == '${ this.event }'`);
         return Expression.makeExpression(ExpressionType.And, undefined, expression, super.getExpression(parser));
     }
 }
