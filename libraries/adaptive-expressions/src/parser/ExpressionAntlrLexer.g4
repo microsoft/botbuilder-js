@@ -65,7 +65,7 @@ NEWLINE : '\r'? '\n' -> skip;
 
 STRING : ('\'' (~'\'')* '\'') | ('"' (~'"')* '"');
 
-CONSTANT : ('[' WHITESPACE* ']') | ('{' WHITESPACE* '}');
+CONSTANT : ('{' WHITESPACE* '}');
 
 INVALID_TOKEN_DEFAULT_MODE : . ;
 
@@ -78,5 +78,3 @@ TEMPLATE : '$' '{' (STRING | ~[\r\n{}'"])*? '}';
 ESCAPE_CHARACTER : '\\' ~[\r\n]?;
 
 TEXT_CONTENT :  '\\`' | ~[\r\n];
-
-
