@@ -59,7 +59,7 @@ NUMBER : DIGIT + ( '.' DIGIT +)? ;
 
 WHITESPACE : (' '|'\t'|'\ufeff'|'\u00a0') {this.ignoreWS}? -> skip;
 
-IDENTIFIER : (LETTER | '_' | '#' | '@' | '@@' | '$' | '%') (LETTER | DIGIT | '-' | '_')* '!'?;
+IDENTIFIER : (LETTER | '_' | '#' | '@' | '@@' | '$' | '%') (LETTER | DIGIT | '-' | '_')*;
 
 NEWLINE : '\r'? '\n' -> skip;
 
@@ -78,5 +78,3 @@ TEMPLATE : '$' '{' (STRING | ~[\r\n{}'"])*? '}';
 ESCAPE_CHARACTER : '\\' ~[\r\n]?;
 
 TEXT_CONTENT :  '\\`' | ~[\r\n];
-
-
