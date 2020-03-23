@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 import { ANTLRInputStream, CommonTokenStream } from 'antlr4ts';
-import { AbstractParseTreeVisitor, ParseTree, TerminalNode } from 'antlr4ts/tree';
+import { AbstractParseTreeVisitor, ParseTree } from 'antlr4ts/tree';
 import { Constant } from '../constant';
 import { Expression } from '../expression';
 import { EvaluatorLookup } from '../expressionEvaluator';
@@ -16,6 +16,13 @@ import {  ExpressionAntlrLexer, ExpressionAntlrParser, ExpressionAntlrParserVisi
 import * as ep from './generated/ExpressionAntlrParser';
 import { ParseErrorListener } from './parseErrorListener';
 import { Util } from './util';
+
+enum State {
+    None,
+    EscapeSquence,
+    Dollor,
+    Template
+}
 
 /**
  * Parser to turn strings into Expression
@@ -129,33 +136,98 @@ export class ExpressionParser implements ExpressionParserInterface {
             return this.makeExpression(ExpressionType.Json, new Constant(context.text));
         }
 
-
         public visitStringInterpolationAtom(context: ep.StringInterpolationAtomContext): Expression {
             let children: Expression[] = [];
+            const interStr = context.text.substring(1, context.text.length - 1);
+            let templateStr = '';
+            let tokenBuffer = '';
+            let fmtState: any = State.None;
 
-            for (const node of context.stringInterpolation().children) {
-                if (node instanceof TerminalNode){
-                    switch((node as TerminalNode).symbol.type) {
-                        case ep.ExpressionAntlrParser.TEMPLATE:
-                            const expressionString = this.trimExpression(node.text);
-                            children.push(Expression.parse(expressionString, this._lookupFunction));
-                            break;
-                        case ep.ExpressionAntlrParser.TEXT_CONTENT:
-                            children.push(new Constant(node.text));
-                            break;
-                        case ep.ExpressionAntlrParser.ESCAPE_CHARACTER:
-                            children.push(new Constant(Util.unescape(node.text)));
-                            break;
-                        default:
-                            break;
+            const changeState = (newState): void => { 
+                switch(fmtState) 
+                {
+                    case (State.EscapeSquence):
+                        children.push(new Constant(Util.unescape(tokenBuffer)));
+                        tokenBuffer = ''; 
+                        break;
+                    case (State.Template):
+                        children.push(Expression.parse(this.trimExpression(templateStr), this._lookupFunction));
+                        templateStr = '';
+                        break;
+                } 
+
+                fmtState = newState;
+            };
+
+            let curlyBracketLevel = 0;
+            let singleQuoteLevel = 0;
+            let doubleQuoteLevel = 0;
+
+            for (const char of interStr) {
+                if (fmtState === State.EscapeSquence) {
+                    tokenBuffer += char;
+                    changeState(State.None);
+                }
+
+                else if (fmtState === State.None && char === '\\') {
+                    tokenBuffer += char;
+                    changeState(State.EscapeSquence);
+                }
+
+                else if(char === '$' && fmtState === State.None) {
+                    templateStr += char;
+                    changeState(State.Dollor);
+                }
+
+                else if (char === '{' && fmtState === State.Dollor) {
+                    curlyBracketLevel += 1;
+                    templateStr += char;
+                    changeState(State.Template);
+                }
+
+                else if(fmtState === State.Template) {
+                    if (char === '\'') {
+                        if (doubleQuoteLevel === 0) {
+                            doubleQuoteLevel += 1;
+                        } else {
+                            doubleQuoteLevel -= 1;
+                        }
+
+                        templateStr += char;
+                    } else if (char === '\"') {
+                        if (singleQuoteLevel === 0) {
+                            singleQuoteLevel += 1;
+                        } else {
+                            singleQuoteLevel -= 1;
+                        }
+                        
+                        templateStr += char;
+                    } else if (char === '{') {
+                        if (singleQuoteLevel === 0 && doubleQuoteLevel === 0) {
+                            curlyBracketLevel += 1;
+                        }
+
+                        templateStr += char;
+                    } else if (char === '}') {
+                        if (singleQuoteLevel === 0 && doubleQuoteLevel === 0) {
+                            curlyBracketLevel -= 1;
+                        }
+
+                        templateStr += char;
+                        if (curlyBracketLevel === 0) {
+                            changeState(State.None);
+                        }
+                    } else {
+                        templateStr += char;
                     }
                 } else {
-                    children.push(new Constant(node.text));
+                    children.push(new Constant(char));
                 }
-                
             }
+            
 
-            return this.makeExpression(ExpressionType.Concat, ...children);
+            const result =  this.makeExpression(ExpressionType.Concat, ...children);
+            return result;
 
         }
 

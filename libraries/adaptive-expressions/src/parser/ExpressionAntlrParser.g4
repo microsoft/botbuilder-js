@@ -34,10 +34,6 @@ objectDefinition
     : OPEN_CURLY_BRACKET keyValuePairList? CLOSE_CURLY_BRACKET
     ;
 
-textContent
-    : TEXT_CONTENT+
-    ;
-
 argsList
     : expression (COMMA expression)*
     ;
