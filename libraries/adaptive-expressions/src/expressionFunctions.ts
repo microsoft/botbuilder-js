@@ -3057,7 +3057,7 @@ export class ExpressionFunctions {
                             error = 'regular expression is empty.';
                         } else {
                             const regex: RegExp = CommonRegex.CreateRegex(args[1]);
-                            value = regex.test(args[0]);
+                            value = regex.test(args[0].toString());
                         }
 
                         return {value, error};

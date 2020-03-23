@@ -58,7 +58,11 @@ export class ExpressionParser implements ExpressionParserInterface {
             const parameters: Expression[] = this.processArgsList(context.argsList());
 
             // Remove the check to check primaryExpression is just an IDENTIFIER to support "." in template name
-            const functionName: string = context.primaryExpression().text;
+            let functionName: string = context.primaryExpression().text;
+
+            if (context.NON() !== undefined) {
+                functionName += context.NON().text;
+            }
 
             return this.makeExpression(functionName, ...parameters);
         }

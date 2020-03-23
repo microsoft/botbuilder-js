@@ -1234,6 +1234,7 @@ export class FuncInvokeExpContext extends PrimaryExpressionContext {
 	}
 	public OPEN_BRACKET(): TerminalNode { return this.getToken(ExpressionAntlrParser.OPEN_BRACKET, 0); }
 	public CLOSE_BRACKET(): TerminalNode { return this.getToken(ExpressionAntlrParser.CLOSE_BRACKET, 0); }
+	public NON(): TerminalNode | undefined { return this.tryGetToken(ExpressionAntlrParser.NON, 0); }
 	public argsList(): ArgsListContext | undefined {
 		return this.tryGetRuleContext(0, ArgsListContext);
 	}
