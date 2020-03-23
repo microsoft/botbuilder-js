@@ -32,7 +32,7 @@ export class CommonRegex {
             result = this.regexCache.get(pattern);
         } else {
             if (!pattern || !this.isCommonRegex(pattern)) {
-                throw new Error(`A regular expression parsing error occurred.`);
+                throw new Error(`'${ pattern }' is not a valid regex.`);
             }
 
             result = this.getRegExpFromString(pattern);
