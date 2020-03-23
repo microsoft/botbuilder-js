@@ -8,29 +8,29 @@ const one = ['one'];
 const oneTwo = ['one', 'two'];
 const dataSource = [
 
-    // // accessProperty and accessIndex
-    // ['alist[0].Name', 'item1'],
+    // accessProperty and accessIndex
+    ['alist[0].Name', 'item1'],
 
-    // // string interpolation test
-    // ['`hi`', 'hi'],
-    // ['`hi\\``', 'hi`'],
-    // ['`${world}`', 'world'],
-    // ['`hi ${string(\'jack\\`\')}`', 'hi jack`'],
-    // ['`\\${world}`', '${world}'],
-    // ['length(`hello ${world}`)', 'hello world'.length],
-    ['json(`{"foo": ${hello},"item": ${world}}`)', 'hello'],
-    // ['`hi\\`[1,2,3]`', 'hi`[1,2,3]'],
-    // ['`hi ${[\'jack\\`\', \'queen\', \'king\']}`', 'hi jack`,queen,king'],
-    // ['`abc ${concat("[", "]")}`', 'abc []'],
-    // ['`[] ${concat("[]")}`', '[] []'],
-    // ['`hi ${count(["a", "b", "c"])}`', `hi 3`],
-    // ['`hello ${world}` == \'hello world\'', true],
-    // ['`hello ${world}` != \'hello hello\'', true],
-    // ['`hello ${user.nickname}` == \'hello John\'', true],
-    // ['`hello ${user.nickname}` != \'hello Dong\'', true],
-    // ['`hello ${string({"obj":  1})}`', 'hello {"obj":1}'],
-    // ['`hello ${string({"obj":  "${not expr}"})}`', 'hello {"obj":"${not expr}"}'],
-    // ['`hello ${string({"obj":  {"a": 1}})}`', 'hello {"obj":{"a":1}}'],
+    // string interpolation test
+    ['`hi`', 'hi'],
+    ['`hi\\``', 'hi`'],
+    ['`${world}`', 'world'],
+    ['`hi ${string(\'jack\\`\')}`', 'hi jack`'],
+    ['`\\${world}`', '${world}'],
+    ['length(`hello ${world}`)', 'hello world'.length],
+    ['json(`{"foo": "${hello}","item": "${world}"}`).foo', 'hello'],
+    ['`hi\\`[1,2,3]`', 'hi`[1,2,3]'],
+    ['`hi ${[\'jack\\`\', \'queen\', \'king\']}`', 'hi jack`,queen,king'],
+    ['`abc ${concat("[", "]")}`', 'abc []'],
+    ['`[] ${concat("[]")}`', '[] []'],
+    ['`hi ${count(["a", "b", "c"])}`', `hi 3`],
+    ['`hello ${world}` == \'hello world\'', true],
+    ['`hello ${world}` != \'hello hello\'', true],
+    ['`hello ${user.nickname}` == \'hello John\'', true],
+    ['`hello ${user.nickname}` != \'hello Dong\'', true],
+    ['`hello ${string({"obj":  1})}`', 'hello {"obj":1}'],
+    ['`hello ${string({"obj":  "${not expr}"})}`', 'hello {"obj":"${not expr}"}'],
+    ['`hello ${string({"obj":  {"a": 1}})}`', 'hello {"obj":{"a":1}}'],
 
 
     // Operators tests

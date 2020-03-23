@@ -7,8 +7,6 @@ lexer grammar ExpressionAntlrLexer;
 fragment LETTER : [a-zA-Z];
 fragment DIGIT : [0-9];
 
-STRING_INTERPOLATION_START : '`' { this.ignoreWS = false;} -> pushMode(STRING_INTERPOLATION_MODE);
-
 // operators
 PLUS: '+';
 
@@ -74,15 +72,4 @@ STRING : ('\'' (~'\'')* '\'') | ('"' (~'"')* '"');
 
 INVALID_TOKEN_DEFAULT_MODE : . ;
 
-mode STRING_INTERPOLATION_MODE;
-
-STRING_INTERPOLATION_END : '`' {this.ignoreWS = true;} -> type(STRING_INTERPOLATION_START), popMode;
-
-ESCAPE_CHARACTER : '\\' ~[\r\n]?;
-
-TEXT_CONTENT :  '\\`' | ~[\r\n];
-
-TEXT_IN_TEMPLATE: ~[\r\n{}'"];
-
-
-
+STRING_INTERPOLATION:  '`' ('\\`' | ~'`')* '`';

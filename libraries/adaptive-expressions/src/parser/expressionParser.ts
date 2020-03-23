@@ -135,9 +135,8 @@ export class ExpressionParser implements ExpressionParserInterface {
 
             for (const node of context.stringInterpolation().children) {
                 if (node instanceof TerminalNode){
-                    const type = (node as TerminalNode).symbol.type;
                     switch((node as TerminalNode).symbol.type) {
-                        case ep.ExpressionAntlrParser:
+                        case ep.ExpressionAntlrParser.TEMPLATE:
                             const expressionString = this.trimExpression(node.text);
                             children.push(Expression.parse(expressionString, this._lookupFunction));
                             break;

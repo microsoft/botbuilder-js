@@ -24,18 +24,10 @@ primaryExpression
     | NUMBER                                                                 #numericAtom
     | STRING                                                                 #stringAtom
     | IDENTIFIER                                                             #idAtom
-    | stringInterpolation                                                    #stringInterpolationAtom
+    | STRING_INTERPOLATION                                                   #stringInterpolationAtom
     | primaryExpression DOT IDENTIFIER                                       #memberAccessExp
     | primaryExpression NON? OPEN_BRACKET argsList? CLOSE_BRACKET            #funcInvokeExp
     | primaryExpression OPEN_SQUARE_BRACKET expression CLOSE_SQUARE_BRACKET  #indexAccessExp
-    ;
-
-stringInterpolation
-    : STRING_INTERPOLATION_START (ESCAPE_CHARACTER | template | textContent)+ STRING_INTERPOLATION_START
-    ;
-
-template
-    : DOLLAR OPEN_CURLY_BRACKET (STRING | objectDefinition | )* CLOSE_CURLY_BRACKET
     ;
 
 objectDefinition
@@ -56,8 +48,4 @@ keyValuePairList
 
 keyValuePair
     : STRING COLON expression
-    ;
-
-textInTemplate
-    : TEXT_IN_TEMPLATE+
     ;

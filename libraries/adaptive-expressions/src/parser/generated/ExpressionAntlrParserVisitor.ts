@@ -20,7 +20,6 @@ import { FileContext } from "./ExpressionAntlrParser";
 import { ExpressionContext } from "./ExpressionAntlrParser";
 import { PrimaryExpressionContext } from "./ExpressionAntlrParser";
 import { StringInterpolationContext } from "./ExpressionAntlrParser";
-import { TemplateContext } from "./ExpressionAntlrParser";
 import { ObjectDefinitionContext } from "./ExpressionAntlrParser";
 import { TextContentContext } from "./ExpressionAntlrParser";
 import { ArgsListContext } from "./ExpressionAntlrParser";
@@ -167,13 +166,6 @@ export interface ExpressionAntlrParserVisitor<Result> extends ParseTreeVisitor<R
 	 * @return the visitor result
 	 */
 	visitStringInterpolation?: (ctx: StringInterpolationContext) => Result;
-
-	/**
-	 * Visit a parse tree produced by `ExpressionAntlrParser.template`.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	visitTemplate?: (ctx: TemplateContext) => Result;
 
 	/**
 	 * Visit a parse tree produced by `ExpressionAntlrParser.objectDefinition`.

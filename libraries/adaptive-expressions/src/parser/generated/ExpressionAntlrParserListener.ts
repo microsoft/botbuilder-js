@@ -20,7 +20,6 @@ import { FileContext } from "./ExpressionAntlrParser";
 import { ExpressionContext } from "./ExpressionAntlrParser";
 import { PrimaryExpressionContext } from "./ExpressionAntlrParser";
 import { StringInterpolationContext } from "./ExpressionAntlrParser";
-import { TemplateContext } from "./ExpressionAntlrParser";
 import { ObjectDefinitionContext } from "./ExpressionAntlrParser";
 import { TextContentContext } from "./ExpressionAntlrParser";
 import { ArgsListContext } from "./ExpressionAntlrParser";
@@ -245,17 +244,6 @@ export interface ExpressionAntlrParserListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	exitStringInterpolation?: (ctx: StringInterpolationContext) => void;
-
-	/**
-	 * Enter a parse tree produced by `ExpressionAntlrParser.template`.
-	 * @param ctx the parse tree
-	 */
-	enterTemplate?: (ctx: TemplateContext) => void;
-	/**
-	 * Exit a parse tree produced by `ExpressionAntlrParser.template`.
-	 * @param ctx the parse tree
-	 */
-	exitTemplate?: (ctx: TemplateContext) => void;
 
 	/**
 	 * Enter a parse tree produced by `ExpressionAntlrParser.objectDefinition`.
