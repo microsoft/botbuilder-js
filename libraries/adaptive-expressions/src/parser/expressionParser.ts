@@ -28,6 +28,7 @@ export class ExpressionParser implements ExpressionParserInterface {
 
     private readonly ExpressionTransformer = class extends AbstractParseTreeVisitor<Expression> implements ExpressionAntlrParserVisitor<Expression> {
 
+        private readonly escapeRegex: RegExp = new RegExp(/\\[^\r\n]?/g);
         private readonly _lookupFunction: EvaluatorLookup = undefined;
         public constructor(lookup: EvaluatorLookup) {
             super();
@@ -117,12 +118,16 @@ export class ExpressionParser implements ExpressionParserInterface {
         } 
 
         public visitStringAtom(context: ep.StringAtomContext): Expression {
-            const text: string = context.text;
-            if (text.startsWith('\'')) {
-                return new Constant(Util.unescape(Util.trim(context.text, '\'')));
-            } else { // start with ""
-                return new Constant(Util.unescape(Util.trim(context.text, '"')));
+            let text: string = context.text;
+            if (text.startsWith('\'') && text.endsWith('\'')) {
+                text = text.substr(1, text.length - 2).replace(/\\'/g, '\'');
+            } else if (text.startsWith('"') && text.endsWith('"')) { // start with ""
+                text = text.substr(1, text.length - 2).replace(/\\"/g, '"');
+            } else {
+                throw new Error(`Invalid string ${ text }`);
             }
+
+            return new Constant(this.evalEscape(text));
         }
 
         public visitStringInterpolationAtom(context: ep.StringInterpolationAtomContext): Expression {
@@ -139,13 +144,14 @@ export class ExpressionParser implements ExpressionParserInterface {
                             children.push(new Constant(node.text));
                             break;
                         case ep.ExpressionAntlrParser.ESCAPE_CHARACTER:
-                            children.push(new Constant(Util.unescape(node.text)));
+                            children.push(new Constant(this.evalEscape(node.text).replace(/\\`/g, '`').replace(/\\\$/g, '$')));
                             break;
                         default:
                             break;
                     }
                 } else {
-                    children.push(new Constant(node.text));
+                    const text = this.evalEscape(node.text);
+                    children.push(new Constant(text));
                 }
                 
             }
@@ -210,7 +216,22 @@ export class ExpressionParser implements ExpressionParserInterface {
             return result.trim();
         }
 
-        
+        private evalEscape(text: string): string {
+            const validCharactersDict: any = {
+                '\\r': '\r',
+                '\\n': '\n',
+                '\\t': '\t',
+                '\\\\': '\\'
+            };
+    
+            return text.replace(this.escapeRegex, (sub: string): string => { 
+                if (sub in validCharactersDict) {
+                    return validCharactersDict[sub];
+                } else {
+                    return sub;
+                }
+            });
+        }
     };
 
     public constructor(lookup?: EvaluatorLookup) {
