@@ -9,7 +9,7 @@ function GetExampleFilePath(fileName) {
 
 
 describe('LG', function() {
-    it('TestEnumeration', function () {
+    it('TestEnumeration', function() {
         let cnt = 0;
         let templates = Templates.parseFile(GetExampleFilePath('2.lg'));
         for (let t of templates) {
@@ -202,7 +202,10 @@ describe('LG', function() {
     it('TestEscapeCharacter', function() {
         var templates = Templates.parseFile(GetExampleFilePath('EscapeCharacter.lg'));
         var evaled = templates.evaluate('wPhrase', undefined);
-        assert.strictEqual(evaled, 'Hi \r\n\t[]{}\\', 'Happy path failed.');
+        assert.strictEqual(evaled, 'Hi \r\n\t\\', 'Happy path failed.');
+
+        var evaled = templates.evaluate('AtEscapeChar', undefined);
+        assert.strictEqual(evaled, 'Hi{1+1}[wPhrase]{wPhrase()}${wPhrase()}2${1+1}', 'Happy path failed.');
 
         evaled = templates.evaluate('otherEscape', undefined);
         assert.strictEqual(evaled, 'Hi y ', 'Happy path failed.');
