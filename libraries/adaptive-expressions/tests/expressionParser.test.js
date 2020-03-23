@@ -544,6 +544,8 @@ const dataSource = [
     ['isMatch(\'12abc\', \'([0-9]+)([a-z]+)([0-9]+)\')', false], // "(...)" (simple group)
     ['isMatch("a", "\\\\w{1}")', true], // "\w" (match [a-zA-Z0-9_])
     ['isMatch("1", "\\\\d{1}")', true], // "\d" (match [0-9])
+    ['isMatch("12.5", "[0-9]+(\\\\.5)")', true], // "\." (match .)
+    ['isMatch("12x5", "[0-9]+(\\\\.5)")', false], // "\." (match .)
 
     //Type Checking Tests
     ['isString(hello)', true],
