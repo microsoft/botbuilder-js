@@ -12,6 +12,7 @@ import { StringInterpolationAtomContext } from "./ExpressionAntlrParser";
 import { MemberAccessExpContext } from "./ExpressionAntlrParser";
 import { ParenthesisExpContext } from "./ExpressionAntlrParser";
 import { NumericAtomContext } from "./ExpressionAntlrParser";
+import { ArrayCreationExpContext } from "./ExpressionAntlrParser";
 import { UnaryOpExpContext } from "./ExpressionAntlrParser";
 import { BinaryOpExpContext } from "./ExpressionAntlrParser";
 import { PrimaryExpContext } from "./ExpressionAntlrParser";
@@ -144,6 +145,19 @@ export interface ExpressionAntlrParserListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	exitNumericAtom?: (ctx: NumericAtomContext) => void;
+
+	/**
+	 * Enter a parse tree produced by the `arrayCreationExp`
+	 * labeled alternative in `ExpressionAntlrParser.primaryExpression`.
+	 * @param ctx the parse tree
+	 */
+	enterArrayCreationExp?: (ctx: ArrayCreationExpContext) => void;
+	/**
+	 * Exit a parse tree produced by the `arrayCreationExp`
+	 * labeled alternative in `ExpressionAntlrParser.primaryExpression`.
+	 * @param ctx the parse tree
+	 */
+	exitArrayCreationExp?: (ctx: ArrayCreationExpContext) => void;
 
 	/**
 	 * Enter a parse tree produced by the `unaryOpExp`
