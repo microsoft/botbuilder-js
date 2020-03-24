@@ -9,7 +9,7 @@ import { DialogTurnResult, DialogDependencies, Dialog, DialogContext } from 'bot
 import { Expression, ExpressionEngine } from 'adaptive-expressions';
 import { ActionScope } from './actionScope';
 import { Case } from './case';
-import { BoolExpression } from '../expressionProperties';
+import { BoolExpression } from '../expressions';
 
 export class SwitchCondition<O extends object = {}> extends Dialog<O> implements DialogDependencies {
     public constructor();

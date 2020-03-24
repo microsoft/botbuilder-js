@@ -10,7 +10,7 @@ import { ActivityTypes, Activity, InputHints, MessageFactory } from 'botbuilder-
 import { ExpressionEngine } from 'adaptive-expressions';
 import { AdaptiveEventNames } from '../sequenceContext';
 import { TemplateInterface } from '../template';
-import { ValueExpression, StringExpression, BoolExpression, NumberExpression } from '../expressionProperties';
+import { ValueExpression, StringExpression, BoolExpression, NumberExpression } from '../expressions';
 
 export enum InputState {
     missing = 'missing',

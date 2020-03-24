@@ -9,7 +9,7 @@ import * as Recognizers from '@microsoft/recognizers-text-choice';
 import { Activity } from 'botbuilder-core';
 import { DialogContext, Choice, ListStyle, ChoiceFactoryOptions, ChoiceFactory, recognizeChoices } from 'botbuilder-dialogs';
 import { InputDialog, InputState } from './inputDialog';
-import { StringExpression, ObjectExpression, ArrayExpression, EnumExpression } from '../expressionProperties';
+import { StringExpression, ObjectExpression, ArrayExpression, EnumExpression } from '../expressions';
 
 export class ConfirmInput extends InputDialog {
     /**

@@ -7,7 +7,7 @@
  */
 
 import { Converter } from 'botbuilder-dialogs-declarative';
-import { NumberExpression } from '../expressionProperties';
+import { NumberExpression } from '../expressions';
 
 export class NumberExpressionConverter implements Converter {
     public convert(value: string | number): NumberExpression {

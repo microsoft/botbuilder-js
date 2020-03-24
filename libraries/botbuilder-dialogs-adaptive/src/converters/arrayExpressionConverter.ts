@@ -7,7 +7,7 @@
  */
 
 import { Converter } from 'botbuilder-dialogs-declarative';
-import { ArrayExpression } from '../expressionProperties';
+import { ArrayExpression } from '../expressions';
 
 export class ArrayExpressionConverter<T> implements Converter {
     public convert(value: T[]): ArrayExpression<T> {

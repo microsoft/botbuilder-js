@@ -7,7 +7,7 @@
  */
 import { DialogTurnResult, Dialog, DialogContext } from 'botbuilder-dialogs';
 import { ActionScopeResult, ActionScopeCommands } from './actionScope';
-import { StringExpression, BoolExpression } from '../expressionProperties';
+import { StringExpression, BoolExpression } from '../expressions';
 
 export class GotoAction<O extends object = {}> extends Dialog<O> {
     public constructor();

@@ -8,7 +8,7 @@
 import * as Recognizers from '@microsoft/recognizers-text-date-time';
 import { DialogContext } from 'botbuilder-dialogs';
 import { InputDialog, InputState } from './inputDialog';
-import { StringExpression } from '../expressionProperties';
+import { StringExpression } from '../expressions';
 
 export class DateTimeInput extends InputDialog {
 

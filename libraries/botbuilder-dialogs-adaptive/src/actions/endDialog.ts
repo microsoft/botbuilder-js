@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 import { DialogTurnResult, DialogContext, Dialog } from 'botbuilder-dialogs';
-import { ValueExpression, BoolExpression } from '../expressionProperties';
+import { ValueExpression, BoolExpression } from '../expressions';
 
 export class EndDialog<O extends object = {}> extends Dialog<O> {
     /**

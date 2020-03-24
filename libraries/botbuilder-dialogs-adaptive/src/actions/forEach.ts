@@ -7,7 +7,7 @@
  */
 import { DialogTurnResult, Dialog, DialogContext } from 'botbuilder-dialogs';
 import { ActionScope, ActionScopeResult } from './actionScope';
-import { StringExpression, BoolExpression } from '../expressionProperties';
+import { StringExpression, BoolExpression } from '../expressions';
 
 const INDEX = 'dialog.foreach.index';
 const VALUE = 'dialog.foreach.value';

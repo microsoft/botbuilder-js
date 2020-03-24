@@ -11,7 +11,7 @@ export * from './adaptiveDialog';
 export * from './adaptiveTypeBuilder';
 export * from './conditions';
 export * from './converters';
-export * from './expressionProperties';
+export * from './expressions';
 export * from './generators';
 export * from './input';
 export * from './languageGenerationMiddleware';

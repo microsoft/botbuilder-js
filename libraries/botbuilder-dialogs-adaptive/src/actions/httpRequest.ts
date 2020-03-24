@@ -10,7 +10,7 @@ import { DialogTurnResult, DialogConfiguration, DialogContext, Dialog, Configura
 import { Activity } from 'botbuilder-core';
 import { ExpressionEngine } from 'adaptive-expressions';
 import { TextTemplate } from '../templates';
-import { ValueExpression, StringExpression, BoolExpression, EnumExpression } from '../expressionProperties';
+import { ValueExpression, StringExpression, BoolExpression, EnumExpression } from '../expressions';
 
 export interface HttpRequestConfiguration extends DialogConfiguration {
     method?: HttpMethod;

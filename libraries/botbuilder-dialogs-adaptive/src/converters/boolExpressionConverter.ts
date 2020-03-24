@@ -7,7 +7,7 @@
  */
 
 import { Converter } from 'botbuilder-dialogs-declarative';
-import { BoolExpression } from '../expressionProperties';
+import { BoolExpression } from '../expressions';
 
 export class BoolExpressionConverter implements Converter {
     public convert(value: any): BoolExpression {

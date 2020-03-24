@@ -7,7 +7,7 @@
  */
 import { DialogTurnResult, Dialog, DialogDependencies, DialogContext } from 'botbuilder-dialogs';
 import { ActionChangeType, SequenceContext, ActionChangeList, ActionState } from '../sequenceContext';
-import { BoolExpression, EnumExpression } from '../expressionProperties';
+import { BoolExpression, EnumExpression } from '../expressions';
 
 export class EditActions<O extends object = {}> extends Dialog<O> implements DialogDependencies {
     public constructor();

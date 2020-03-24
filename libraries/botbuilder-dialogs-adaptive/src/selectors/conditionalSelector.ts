@@ -8,7 +8,7 @@
 import { OnCondition } from '../conditions/onCondition';
 import { TriggerSelector } from '../triggerSelector';
 import { SequenceContext } from '../sequenceContext';
-import { BoolExpression } from '../expressionProperties';
+import { BoolExpression } from '../expressions';
 
 /**
  * Select between two rule selectors based on a condition.

@@ -8,7 +8,7 @@
 import { Attachment } from 'botbuilder-core';
 import { DialogContext } from 'botbuilder-dialogs';
 import { InputDialog, InputState } from './inputDialog';
-import { EnumExpression } from '../expressionProperties';
+import { EnumExpression } from '../expressions';
 
 export enum AttachmentOutputFormat {
     all = 'all',

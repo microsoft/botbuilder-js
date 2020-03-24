@@ -7,7 +7,7 @@
  */
 import { DialogTurnResult, DialogContext, Dialog } from 'botbuilder-dialogs';
 import { Activity, ActivityTypes } from 'botbuilder-core';
-import { ValueExpression, StringExpression, BoolExpression } from '../expressionProperties';
+import { ValueExpression, StringExpression, BoolExpression } from '../expressions';
 
 export class TraceActivity<O extends object = {}> extends Dialog<O> {
     public constructor();

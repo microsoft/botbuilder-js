@@ -7,7 +7,7 @@
  */
 import { DialogTurnResult, DialogContext, DialogReason, TurnPath } from 'botbuilder-dialogs';
 import { BaseInvokeDialog } from './baseInvokeDialog';
-import { StringExpression, BoolExpression } from '../expressionProperties';
+import { StringExpression, BoolExpression } from '../expressions';
 
 export class BeginDialog<O extends object = {}> extends BaseInvokeDialog<O> {
     /**

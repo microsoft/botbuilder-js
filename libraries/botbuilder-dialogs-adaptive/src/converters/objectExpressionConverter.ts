@@ -7,7 +7,7 @@
  */
 
 import { Converter } from 'botbuilder-dialogs-declarative';
-import { ObjectExpression } from '../expressionProperties';
+import { ObjectExpression } from '../expressions';
 
 export class ObjectExpressionConverter<T extends object = {}> implements Converter {
     public convert(value: T): ObjectExpression<T> {

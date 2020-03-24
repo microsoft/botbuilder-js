@@ -7,7 +7,7 @@
  */
 import { DialogTurnResult, Dialog, DialogDependencies, DialogContext } from 'botbuilder-dialogs';
 import { ActionScope } from './actionScope';
-import { BoolExpression } from '../expressionProperties';
+import { BoolExpression } from '../expressions';
 
 export class IfCondition<O extends object = {}> extends Dialog<O> implements DialogDependencies {
     public constructor();

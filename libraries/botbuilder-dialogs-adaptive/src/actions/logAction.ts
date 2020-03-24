@@ -9,7 +9,7 @@ import { DialogTurnResult, DialogContext, Dialog } from 'botbuilder-dialogs';
 import { Activity, ActivityTypes } from 'botbuilder-core';
 import { TemplateInterface } from '../template';
 import { TextTemplate } from '../templates';
-import { StringExpression, BoolExpression } from '../expressionProperties';
+import { StringExpression, BoolExpression } from '../expressions';
 
 export class LogAction<O extends object = {}> extends Dialog<O> {
     /**

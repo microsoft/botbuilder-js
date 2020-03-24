@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 import { DialogTurnResult, DialogContext, Dialog } from 'botbuilder-dialogs';
-import { StringExpression, BoolExpression } from '../expressionProperties';
+import { StringExpression, BoolExpression } from '../expressions';
 
 export class CancelAllDialogs<O extends object = {}> extends Dialog<O> {
     public constructor();

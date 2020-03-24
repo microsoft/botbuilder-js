@@ -8,7 +8,7 @@
 import { Dialog, DialogContext, DialogTurnResult } from 'botbuilder-dialogs';
 import { Activity } from 'botbuilder-core';
 import { TemplateInterface } from '../template';
-import { StringExpression, BoolExpression } from '../expressionProperties';
+import { StringExpression, BoolExpression } from '../expressions';
 import { ActivityTemplate, StaticActivityTemplate } from '../templates';
 
 export class UpdateActivity<O extends object = {}> extends Dialog<O> {

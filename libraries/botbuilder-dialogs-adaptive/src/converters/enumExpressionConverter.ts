@@ -7,7 +7,7 @@
  */
 
 import { Converter } from 'botbuilder-dialogs-declarative';
-import { EnumExpression } from '../expressionProperties';
+import { EnumExpression } from '../expressions';
 
 export class EnumExpressionConverter implements Converter {
     private _enumValue: object;

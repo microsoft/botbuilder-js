@@ -9,7 +9,7 @@ import * as Recognizers from '@microsoft/recognizers-text-number';
 import { Activity } from 'botbuilder-core';
 import { DialogContext } from 'botbuilder-dialogs';
 import { InputDialog, InputState } from './inputDialog';
-import { StringExpression, NumberExpression } from '../expressionProperties';
+import { StringExpression, NumberExpression } from '../expressions';
 
 export class NumberInput extends InputDialog {
 

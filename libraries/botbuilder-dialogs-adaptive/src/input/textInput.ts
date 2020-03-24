@@ -7,7 +7,7 @@
  */
 import { DialogContext } from 'botbuilder-dialogs';
 import { InputDialog, InputState } from './inputDialog';
-import { StringExpression } from '../expressionProperties';
+import { StringExpression } from '../expressions';
 
 export class TextInput extends InputDialog {
 

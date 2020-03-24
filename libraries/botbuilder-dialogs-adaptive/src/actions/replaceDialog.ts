@@ -7,7 +7,7 @@
  */
 import { DialogTurnResult, DialogContext, TurnPath } from 'botbuilder-dialogs';
 import { BaseInvokeDialog } from './baseInvokeDialog';
-import { BoolExpression } from '../expressionProperties';
+import { BoolExpression } from '../expressions';
 
 export class ReplaceDialog<O extends object = {}> extends BaseInvokeDialog<O> {
     /**

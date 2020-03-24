@@ -7,7 +7,7 @@
  */
 import { DialogTurnResult, DialogContext, TurnPath } from 'botbuilder-dialogs';
 import { BaseInvokeDialog } from './baseInvokeDialog';
-import { ObjectExpression, BoolExpression } from '../expressionProperties';
+import { ObjectExpression, BoolExpression } from '../expressions';
 
 export class RepeatDialog<O extends object = {}> extends BaseInvokeDialog<O> {
     public constructor();
