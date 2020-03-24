@@ -244,6 +244,9 @@ describe('LG', function() {
 
         evaled = templates.evaluate('nestedSample', undefined);
         assert.strictEqual(evaled, 'i like three movies, they are "\\"name1", "name2" and "{name3"');
+
+        evaled = templates.evaluate('dollarsymbol', undefined);
+        assert.strictEqual(evaled, '$ $ ${\'hi\'} hi');
     });
 
     it('TestAnalyzer', function() {
