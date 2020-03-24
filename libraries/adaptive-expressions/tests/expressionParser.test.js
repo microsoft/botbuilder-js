@@ -9,6 +9,7 @@ const oneTwo = ['one', 'two'];
 const dataSource = [
 
     // accessProperty and accessIndex
+    ['$index', 'index'],
     ['`hi\\``', 'hi`'], // `hi\`` -> hi`
     ['`hi\\y`', 'hi\\y'], // `hi\y` -> hi\y
     ['`\\${a}`', '${a}'], // `\${a}` -> ${a}
@@ -603,6 +604,7 @@ const dataSource = [
 ];
 
 const scope = {
+    "$index": "index",
     alist: [
         {
             Name: 'item1'
