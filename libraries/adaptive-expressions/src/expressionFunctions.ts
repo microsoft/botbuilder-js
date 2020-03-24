@@ -2974,9 +2974,9 @@ export class ExpressionFunctions {
                         const prop = String(args[1]);
                         if (prop in temp) {
                             error = `${ prop } already exists`;
+                        } else {
+                            temp[String(args[1])] = args[2];
                         }
-
-                        temp[String(args[1])] = args[2];
 
                         return {value: temp, error};
                     }),
