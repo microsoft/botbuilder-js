@@ -36,7 +36,7 @@ export class SimpleObjectMemory implements MemoryInterface {
     }
 
     public getValue(path: string): any {
-        if (this.memory === undefined || path.length === 0 || (path[0] !== '[' && !path[0].match(/[a-z]/i))) {
+        if (this.memory === undefined || path.length === 0) {
             return undefined;
         }
 
