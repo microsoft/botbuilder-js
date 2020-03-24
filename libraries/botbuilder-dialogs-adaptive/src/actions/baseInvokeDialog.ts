@@ -54,8 +54,8 @@ export class BaseInvokeDialog<O extends object = {}> extends Dialog<O> implement
             return this.dialog.value;
         }
 
-        const stringExpression = new StringExpression(`=${ this.dialog.expressionText }`);
-        const dialogId = stringExpression.getValue(dc.state);
+        const expression = this.dialog.toExpression();
+        const { value: dialogId } = expression.tryEvaluate(dc.state);
         const dialog = dc.findDialog(dialogId);
         if (!dialog) {
             throw new Error(`${ this.dialog.toString() } not found.`);

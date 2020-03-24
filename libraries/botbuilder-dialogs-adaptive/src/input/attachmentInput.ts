@@ -17,7 +17,7 @@ export enum AttachmentOutputFormat {
 
 export class AttachmentInput extends InputDialog {
 
-    public outputFormat: EnumExpression = new EnumExpression(AttachmentOutputFormat.first);
+    public outputFormat: EnumExpression<AttachmentOutputFormat> = new EnumExpression<AttachmentOutputFormat>(AttachmentOutputFormat.first);
 
     protected onComputeId(): string {
         return `AttachmentInput[${ this.prompt.toString() }]`;

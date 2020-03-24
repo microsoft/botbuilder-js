@@ -8,11 +8,7 @@
 import { DialogContext, DialogState, DialogSet, DialogInstance } from 'botbuilder-dialogs';
 
 export interface AdaptiveDialogState<O extends Object> {
-    options: O;
-    _adaptive: {
-        actions?: ActionState[];
-    };
-    result?: any;
+    actions?: ActionState[];
 }
 
 export interface ActionState extends DialogState {
@@ -21,30 +17,111 @@ export interface ActionState extends DialogState {
 }
 
 export interface ActionChangeList {
+    /**
+     * Type of change being made.
+     */
     changeType: ActionChangeType;
+
+    /**
+     * Ordered list of actions for change.
+     */
     actions?: ActionState[];
-    tags?: string[];
+
+    /**
+     * Turn state associated with the change.
+     * @remarks
+     * The current turn state will be update when the plan change is applied.
+     */
+    turn?: { [key: string]: string };
 }
 
 export enum ActionChangeType {
+    /**
+     * Add the change actions to the head of the sequence.
+     */
     insertActions = 'insertActions',
+
+    /**
+     * Add the change actions to the tail of the sequence.
+     */
     appendActions = 'appendActions',
+
+    /**
+     * Terminate the action sequence.
+     */
     endSequence = 'endSequence',
+
+    /**
+     * Terminate the action sequence, then add the change actions.
+     */
     replaceSequence = 'replaceSequence'
 }
 
-export enum AdaptiveEventNames {
+export enum AdaptiveEvents {
+    /**
+     * Raised when a dialog is started.
+     */
     beginDialog = 'beginDialog',
+
+    /**
+     * Raised when a dialog has been asked to re-prompt.
+     */
     repromptDialog = 'repromptDialog',
+
+    /**
+     * Raised when a dialog is being canceled.
+     */
     cancelDialog = 'cancelDialog',
+
+    /**
+     * Raised when an new activity has been received.
+     */
     activityReceived = 'activityReceived',
+
+    /**
+     * Raised when an error has occurred.
+     */
     error = 'error',
+
+    /**
+     * Raised when utterance is received.
+     */
     recognizeUtterance = 'recognizeUtterance',
+
+    /**
+     * Raised when intent is recognized from utterance.
+     */
     recognizedIntent = 'recognizedIntent',
+
+    /**
+     * Raised when no intent can be recognized from utterance.
+     */
     unknownIntent = 'unknownIntent',
-    conversationMembersAdded = 'conversationMembersAdded',
-    sequenceStarted = 'sequenceStarted',
-    sequenceEnded = 'sequenceEnded'
+
+    /**
+     * Raised when all actions and ambiguity events have been finished.
+     */
+    endOfActions = 'endOfActions',
+
+    /**
+     * aised when there are multiple possible entity to property mappings.
+     */
+    chooseProperty = 'chooseProperty',
+
+    /**
+     * Raised when there are multiple possible resolutions of an entity.
+     */
+    chooseEntity = 'chooseEntity',
+
+    /**
+     * Raised when a property should be cleared.
+     */
+    clearProperty = 'clearProperty',
+
+    /**
+     * Raised when an entity should be assigned to a property.
+     */
+    assignEntity = 'assignEntity'
 }
 
 export class SequenceContext<O extends object = {}> extends DialogContext {
@@ -109,13 +186,23 @@ export class SequenceContext<O extends object = {}> extends DialogContext {
     public async applyChanges(): Promise<boolean> {
         const queue: ActionChangeList[] = this.context.turnState.get(this._changeKey) || [];
         if (Array.isArray(queue) && queue.length > 0) {
+            // Clear current change list
             this.context.turnState.delete(this._changeKey);
 
             // Apply each queued set of changes
             for (let i = 0; i < queue.length; i++) {
+                const change = queue[i];
+
+                // Apply memory changes for turn
+                if (change.turn) {
+                    for (const key in change.turn) {
+                        if (change.turn.hasOwnProperty(key)) {
+                            this.state.setValue(`turn.${key}`, change.turn[key]);
+                        }
+                    }
+                }
 
                 // Apply plan changes
-                const change = queue[i];
                 switch (change.changeType) {
                     case ActionChangeType.insertActions:
                     case ActionChangeType.appendActions:
@@ -124,7 +211,6 @@ export class SequenceContext<O extends object = {}> extends DialogContext {
                     case ActionChangeType.endSequence:
                         if (this.actions.length > 0) {
                             this.actions.splice(0, this.actions.length);
-                            await this.emitEvent(AdaptiveEventNames.sequenceEnded, undefined, false);
                         }
                         break;
                     case ActionChangeType.replaceSequence:
@@ -165,9 +251,6 @@ export class SequenceContext<O extends object = {}> extends DialogContext {
     }
 
     private async updateSequence(change: ActionChangeList): Promise<void> {
-        // Initialize sequence if needed
-        const newSequence = this.actions.length == 0;
-
         // Update sequence
         switch (change.changeType) {
             case ActionChangeType.insertActions:
@@ -177,11 +260,6 @@ export class SequenceContext<O extends object = {}> extends DialogContext {
             case ActionChangeType.replaceSequence:
                 Array.prototype.push.apply(this.actions, change.actions);
                 break;
-        }
-
-        // Emit sequenceStarted event
-        if (newSequence) {
-            await this.emitEvent(AdaptiveEventNames.sequenceStarted, undefined, false);
         }
     }
 }

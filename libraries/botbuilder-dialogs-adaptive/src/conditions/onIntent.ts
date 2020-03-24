@@ -8,7 +8,7 @@
 import { Dialog, TurnPath } from 'botbuilder-dialogs';
 import { ExpressionParserInterface, Expression, ExpressionType } from 'adaptive-expressions';
 import { RecognizerResult } from 'botbuilder-core';
-import { AdaptiveEventNames, SequenceContext, ActionChangeList, ActionState, ActionChangeType } from '../sequenceContext';
+import { AdaptiveEvents, SequenceContext, ActionChangeList, ActionState, ActionChangeType } from '../sequenceContext';
 import { OnDialogEvent } from './onDialogEvent';
 
 /**
@@ -33,7 +33,7 @@ export class OnIntent extends OnDialogEvent {
      * @param condition (Optional) The condition which needs to be met for the actions to be executed.
      */
     public constructor(intent?: string, entities: string[] = [], actions: Dialog[] = [], condition?: string) {
-        super(AdaptiveEventNames.recognizedIntent, actions, condition);
+        super(AdaptiveEvents.recognizedIntent, actions, condition);
         this.intent = intent;
         this.entities = entities;
     }

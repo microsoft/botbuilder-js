@@ -7,7 +7,7 @@
  */
 import { Dialog } from 'botbuilder-dialogs';
 import { OnDialogEvent } from './onDialogEvent';
-import { AdaptiveEventNames } from '../sequenceContext';
+import { AdaptiveEvents } from '../sequenceContext';
 
 /**
  * Actions triggered when a dialog is started via BeginDialog().
@@ -15,6 +15,6 @@ import { AdaptiveEventNames } from '../sequenceContext';
 export class OnBeginDialog extends OnDialogEvent {
 
     public constructor(actions: Dialog[] = [], condition?: string) {
-        super(AdaptiveEventNames.beginDialog, actions, condition);
+        super(AdaptiveEvents.beginDialog, actions, condition);
     }
 }

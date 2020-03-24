@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 import { Dialog } from 'botbuilder-dialogs';
-import { AdaptiveEventNames } from '../sequenceContext';
+import { AdaptiveEvents } from '../sequenceContext';
 import { OnDialogEvent } from './onDialogEvent';
 
 /**
@@ -15,6 +15,6 @@ import { OnDialogEvent } from './onDialogEvent';
 export class OnRepromptDialog extends OnDialogEvent {
 
     public constructor(actions: Dialog[] = [], condition?: string) {
-        super(AdaptiveEventNames.repromptDialog, actions, condition);
+        super(AdaptiveEvents.repromptDialog, actions, condition);
     }
 }

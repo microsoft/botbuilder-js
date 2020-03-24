@@ -37,7 +37,7 @@ export class ConfirmInput extends InputDialog {
      * @remarks
      * Defaults to `ListStyle.auto`.
      */
-    public style: EnumExpression = new EnumExpression(ListStyle.auto);
+    public style: EnumExpression<ListStyle> = new EnumExpression<ListStyle>(ListStyle.auto);
 
     /**
      * Additional options passed to the `ChoiceFactory` and used to tweak the style of choices

@@ -14,7 +14,7 @@ export class EditActions<O extends object = {}> extends Dialog<O> implements Dia
     public constructor(changeType: ActionChangeType, actions?: Dialog[]);
     public constructor(changeType?: ActionChangeType, actions?: Dialog[]) {
         super();
-        if (changeType) { this.changeType = new EnumExpression(changeType); }
+        if (changeType) { this.changeType = new EnumExpression<ActionChangeType>(changeType); }
         if (actions) { this.actions = actions; }
     }
 
@@ -26,7 +26,7 @@ export class EditActions<O extends object = {}> extends Dialog<O> implements Dia
     /**
      * The type of change to make to the dialogs list of actions.
      */
-    public changeType: EnumExpression;
+    public changeType: EnumExpression<ActionChangeType>;
 
     /**
      * An optional expression which if is true will disable this action.

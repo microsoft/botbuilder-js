@@ -6,9 +6,13 @@
  * Licensed under the MIT License.
  */
 export * from './onActivity';
+export * from './onAssignEntity';
 export * from './onBeginDialog';
 export * from './onCancelDialog';
+export * from './onChooseEntity';
 export * from './onChooseIntent';
+export * from './onChooseProperty';
+export * from './onClearProperty';
 export * from './onCondition';
 export * from './onConversationUpdateActivity';
 export * from './onCustomEvent';
@@ -26,3 +30,5 @@ export * from './onMessageUpdateActivity';
 export * from './onRepromptDialog';
 export * from './onTypingActivity';
 export * from './onUnknownIntent';
+
+// add new exports alphabetically

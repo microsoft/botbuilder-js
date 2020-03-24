@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 import { Dialog } from 'botbuilder-dialogs';
-import { AdaptiveEventNames } from '../sequenceContext';
+import { AdaptiveEvents, SequenceContext, ActionChangeList, ActionChangeType } from '../sequenceContext';
 import { OnDialogEvent } from './onDialogEvent';
 
 /**
@@ -15,6 +15,15 @@ import { OnDialogEvent } from './onDialogEvent';
 export class OnError extends OnDialogEvent {
 
     public constructor(actions: Dialog[] = [], condition?: string) {
-        super(AdaptiveEventNames.error, actions, condition);
+        super(AdaptiveEvents.error, actions, condition);
+    }
+
+    public onCreateChangeList(planningContext: SequenceContext, dialogOptions?: any): ActionChangeList {
+        const changeList = super.onCreateChangeList(planningContext, dialogOptions);
+
+        // For OnError handling we want to replace the old plan with whatever the error plan is, 
+        // since the old plan blew up.
+        changeList.changeType = ActionChangeType.replaceSequence;
+        return changeList;
     }
 }

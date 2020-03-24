@@ -5,11 +5,12 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { Dialog, DialogDependencies } from 'botbuilder-dialogs';
-import { Expression, ExpressionParserInterface, Constant, ExpressionEngine } from 'adaptive-expressions';
+import { Dialog, DialogDependencies, DialogStateManager } from 'botbuilder-dialogs';
+import { Expression, ExpressionParserInterface, Constant, ExpressionEngine, ExpressionEvaluator, ReturnType, ExpressionFunctions } from 'adaptive-expressions';
 import { SequenceContext, ActionChangeList, ActionState, ActionChangeType } from '../sequenceContext';
 import { ActionScope } from '../actions/actionScope';
 import { BoolExpression } from '../expressions';
+import { AdaptiveDialog } from '../adaptiveDialog';
 
 export class OnCondition implements DialogDependencies {
     /**
@@ -37,14 +38,14 @@ export class OnCondition implements DialogDependencies {
     public actions: Dialog[] = [];
 
     /**
-     * Get thr rule priority expression where 0 is the highest and less than 0 is ignored.
+     * Get the rule priority expression where 0 is the highest and less than 0 is ignored.
      */
     public get priority(): string {
         return this._priorityString;
     }
 
     /**
-     * Set thr rule priority expression where 0 is the highest and less than 0 is ignored.
+     * Set the rule priority expression where 0 is the highest and less than 0 is ignored.
      */
     public set priority(value: string) {
         this._priorityExpression = undefined;
@@ -55,6 +56,11 @@ export class OnCondition implements DialogDependencies {
      * A value indicating whether rule should only run once per unique set of memory paths.
      */
     public runOnce: boolean;
+
+    /**
+     * Id for condition.
+     */
+    public id: string;
 
     protected get actionScope(): ActionScope {
         if (!this._actionScope) {
@@ -69,7 +75,7 @@ export class OnCondition implements DialogDependencies {
      * @param actions (Optional) The actions to add to the plan when the rule constraints are met.
      */
     public constructor(condition?: string, actions: Dialog[] = []) {
-        if (this.condition) { this.condition = new BoolExpression(condition); }
+        this.condition = condition ? new BoolExpression(condition) : undefined;
         this.actions = actions;
     }
 
@@ -98,10 +104,23 @@ export class OnCondition implements DialogDependencies {
             } else {
                 this._fullConstraint = new Constant(true);
             }
-        }
 
-        if (!this._priorityExpression) {
-            this._priorityExpression = parser.parse(this.priority);
+            if (this.runOnce) {
+                // TODO: Once we add support for the MostSpecificSelector the code below will need
+                //       some tweaking to wrap runOnce with a call to 'ignore'.
+                const runOnce = new ExpressionEvaluator(`runOnce${ this.id }`, (exp, state: DialogStateManager) => {
+                    const basePath = `${ AdaptiveDialog.conditionTracker }.${ this.id }.`;
+                    const lastRun: number = state.getValue(basePath + 'lastRun');
+                    const paths: string[] = state.getValue(basePath + "paths");
+                    var changed = state.anyPathChanged(lastRun, paths);
+                    return { value: changed, error: undefined };
+                }, ReturnType.Boolean, ExpressionFunctions.validateUnary);
+
+                this._fullConstraint = Expression.andExpression(
+                    this._fullConstraint,
+                    new Expression(runOnce.type, runOnce)
+                )
+            }
         }
 
         return this._fullConstraint;

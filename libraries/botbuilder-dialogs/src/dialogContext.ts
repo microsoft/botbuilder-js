@@ -457,16 +457,16 @@ export class DialogContext {
         }
     }
 
-    /// <summary>
-    /// Searches for a dialog with a given ID.
-    /// Emits a named event for the current dialog, or someone who started it, to handle.
-    /// </summary>
-    /// <param name="name">Name of the event to raise.</param>
-    /// <param name="value">Value to send along with the event.</param>
-    /// <param name="bubble">Flag to control whether the event should be bubbled to its parent if not handled locally. Defaults to a value of `true`.</param>
-    /// <param name="fromLeaf">Whether the event is emitted from a leaf node.</param>
-    /// <param name="cancellationToken">The cancellation token.</param>
-    /// <returns>True if the event was handled.</returns>
+    /**
+     * Searches for a dialog with a given ID.
+     * @remarks
+     * Emits a named event for the current dialog, or someone who started it, to handle.
+     * @param name Name of the event to raise.
+     * @param value Optional. Value to send along with the event.
+     * @param bubble Optional. Flag to control whether the event should be bubbled to its parent if not handled locally. Defaults to a value of `true`.
+     * @param fromLeaf Optional. Whether the event is emitted from a leaf node.
+     * @returns `true` if the event was handled.
+     */
     public async emitEvent(name: string, value?: any, bubble = true, fromLeaf = false): Promise<boolean> {
         // Initialize event
         const dialogEvent: DialogEvent = {

@@ -10,8 +10,8 @@ import { ValueExpression, StringExpression, BoolExpression } from '../expression
 
 export class EmitEvent<O extends object = {}> extends Dialog<O> {
     public constructor();
-    public constructor(eventName: string, eventValue?: any, bubbleEvent?: boolean);
-    public constructor(eventName?: string, eventValue?: any, bubbleEvent = true) {
+    public constructor(eventName: string, eventValue?: string, bubbleEvent?: boolean);
+    public constructor(eventName?: string, eventValue?: string, bubbleEvent = false) {
         super();
         if (eventName) { this.eventName = new StringExpression(eventName); }
         if (eventValue) { this.eventValue = new ValueExpression(eventValue); }

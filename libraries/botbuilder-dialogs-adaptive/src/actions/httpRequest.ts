@@ -115,7 +115,7 @@ export class HttpRequest<O extends object = {}> extends Dialog<O> implements Con
     /**
      * The response type of the response
      */
-    public responseType?: EnumExpression = new EnumExpression(ResponsesTypes.Json);
+    public responseType?: EnumExpression<ResponsesTypes> = new EnumExpression<ResponsesTypes>(ResponsesTypes.Json);
 
     /**
      * Gets or sets the property expression to store the HTTP response in.
@@ -148,7 +148,7 @@ export class HttpRequest<O extends object = {}> extends Dialog<O> implements Con
                         this.body = new ValueExpression(value);
                         break;
                     case 'responseType':
-                        this.responseType = new EnumExpression(value);
+                        this.responseType = new EnumExpression<ResponsesTypes>(value);
                         break;
                     case 'resultProperty':
                         this.resultProperty = new StringExpression(value);

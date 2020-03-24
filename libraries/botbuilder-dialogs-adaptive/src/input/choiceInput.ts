@@ -45,7 +45,7 @@ export class ChoiceInput extends InputDialog {
      * @remarks
      * Defaults to `ListStyle.auto`.
      */
-    public style: EnumExpression = new EnumExpression(ListStyle.auto);
+    public style: EnumExpression<ListStyle> = new EnumExpression<ListStyle>(ListStyle.auto);
 
     /**
      * The prompts default locale that should be recognized.
@@ -55,7 +55,7 @@ export class ChoiceInput extends InputDialog {
     /**
      * Control the format of the response (value or index of the choice).
      */
-    public outputFormat: EnumExpression = new EnumExpression(ChoiceOutputFormat.value);
+    public outputFormat: EnumExpression<ChoiceOutputFormat> = new EnumExpression<ChoiceOutputFormat>(ChoiceOutputFormat.value);
 
     /**
      * Additional options passed to the `ChoiceFactory` and used to tweak the style of choices

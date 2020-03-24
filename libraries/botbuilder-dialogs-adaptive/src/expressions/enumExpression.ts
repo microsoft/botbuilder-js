@@ -6,6 +6,7 @@
  * Licensed under the MIT License.
  */
 
+import { Expression } from 'adaptive-expressions';
 import { ExpressionProperty } from './expressionProperty';
 
 /**
@@ -13,22 +14,8 @@ import { ExpressionProperty } from './expressionProperty';
  * @remarks
  * String values are always interpreted as an expression whether it has '=' prefix or not, as string values cannot be parsed to enum values.
  */
-export class EnumExpression extends ExpressionProperty<any> {
-    public constructor(value: any) {
+export class EnumExpression<T> extends ExpressionProperty<T> {
+    public constructor(value: T | string | Expression) {
         super(value);
-    }
-
-    public setValue(value: any): void {
-        super.setValue(undefined); // reset value and expression
-        
-        if (typeof value == 'string') {
-            if (value.startsWith('=')) {
-                this.expressionText = value;
-            } else {
-                this.value = value;
-            }
-            return;
-        }
-        super.setValue(value);
     }
 }

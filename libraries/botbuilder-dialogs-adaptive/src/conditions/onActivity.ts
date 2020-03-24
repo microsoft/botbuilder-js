@@ -7,8 +7,8 @@
  */
 import { Dialog, TurnPath } from 'botbuilder-dialogs';
 import { Expression, ExpressionType, ExpressionParserInterface } from 'adaptive-expressions';
-import { AdaptiveEventNames } from '../sequenceContext';
 import { OnDialogEvent } from './onDialogEvent';
+import { AdaptiveEvents } from '../sequenceContext';
 
 /**
  * Actions triggered when a Activity of a given type is received.
@@ -20,7 +20,7 @@ export class OnActivity extends OnDialogEvent {
     public type: string;
 
     public constructor(type?: string, actions: Dialog[] = [], condition?: string) {
-        super(AdaptiveEventNames.activityReceived, actions, condition);
+        super(AdaptiveEvents.activityReceived, actions, condition);
         this.type = type;
     }
 

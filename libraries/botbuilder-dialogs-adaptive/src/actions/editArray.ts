@@ -21,7 +21,7 @@ export class EditArray<O extends object = {}> extends Dialog<O> {
     public constructor(changeType: ArrayChangeType, itemsProperty: string, value?: any, resultProperty?: string);
     public constructor(changeType?: ArrayChangeType, itemsProperty?: string, value?: any, resultProperty?: string) {
         super();
-        if (changeType) { this.changeType = new EnumExpression(changeType); }
+        if (changeType) { this.changeType = new EnumExpression<ArrayChangeType>(changeType); }
         if (itemsProperty) { this.itemsProperty = new StringExpression(itemsProperty); }
         switch (changeType) {
             case ArrayChangeType.clear:
@@ -41,7 +41,7 @@ export class EditArray<O extends object = {}> extends Dialog<O> {
     /**
      * Type of change being applied.
      */
-    public changeType: EnumExpression = new EnumExpression(ArrayChangeType.push);
+    public changeType: EnumExpression<ArrayChangeType> = new EnumExpression<ArrayChangeType>(ArrayChangeType.push);
 
     /**
      * Property path expression to the collection of items.

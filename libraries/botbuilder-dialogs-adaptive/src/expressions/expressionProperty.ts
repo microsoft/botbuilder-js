@@ -1,4 +1,3 @@
-
 /**
  * @module botbuilder-dialogs-adaptive
  */
@@ -6,99 +5,101 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { ExpressionEngine, Expression } from 'adaptive-expressions';
+import { Expression, ExpressionEngine } from 'adaptive-expressions';
 
+let engine: ExpressionEngine = undefined;
+
+/**
+ * Base class which defines a Expression or value for a property.
+ */
 export class ExpressionProperty<T> {
-    private _expression: Expression;
+    private defaultValue: T;
 
-    public constructor(value?: any) {
+    public constructor(value?: T | string | Expression, defaultValue?: T) {
+        this.defaultValue = defaultValue;
         this.setValue(value);
     }
 
     public value: T;
 
-    public expressionText: string;
+    public expression: Expression;
 
     public toString(): string {
-        if (this.expressionText) {
-            if (this.expressionText.startsWith('=')) {
-                return this.expressionText;
-            } else {
-                return `=${ this.expressionText }`;
-            }
-        }
-
-        if (this.value == undefined || this.value == null) {
-            return undefined;
-        }
-        return this.value.toString();
+        return this.expression ? `=${ this.expression.toString() }` : (this.value ? this.value.toString() : '');
     }
 
     public toExpression(): Expression {
-        if (this._expression) {
-            return this._expression;
+        if (this.expression) {
+            return this.expression;
         }
 
-        if (this.expressionText) {
-            const expressionText = this.expressionText.startsWith('=') ? this.expressionText.substr(1) : this.expressionText;
-            this._expression = new ExpressionEngine().parse(expressionText);
-            return this._expression;
+        // Generate expression
+        const engine = ExpressionProperty.engine;
+        switch (typeof this.value) {
+            case 'string':
+            case 'number':
+            case 'boolean':
+                return engine.parse(this.value.toString());
+            default:
+                if (this.value == undefined || this.value == null) {
+                    return engine.parse('null');
+                } else {
+                    return engine.parse(`json(${ JSON.stringify(this.value) })`);
+                }
         }
-
-        if (this.value == undefined || this.value == null) {
-            this._expression = new ExpressionEngine().parse('');
-            return this._expression;
-        }
-
-        if (typeof this.value == 'string' || typeof this.value == 'number' || typeof this.value == 'boolean') {
-            this._expression = new ExpressionEngine().parse(this.value.toString());
-            return this._expression;
-        }
-
-        this._expression = new ExpressionEngine().parse(`json(${ JSON.stringify(this.value) })`);
-        return this._expression;
     }
 
-    public getValue(data: any): T {
-        if (!this._expression && this.expressionText) {
-            const expressionText = this.expressionText.startsWith('=') ? this.expressionText.substr(1) : this.expressionText;
-            this._expression = new ExpressionEngine().parse(expressionText);
-        }
+    /**
+     * Get the value.
+     * @remarks
+     * An error will be thrown if value is an invalid expression.
+     * @param data Data to use for expression binding.
+     * @returns the value.
+     */
+    public getValue(data: object): T {
+        const { value, error } = this.tryGetValue(data);
+        if (error) { throw error; }
 
-        if (this._expression) {
-            const { value, error } = this._expression.tryEvaluate(data);
-            if (error) {
-                return undefined;
-            }
-            return value;
-        }
-
-        return this.value;
+        return value;
     }
 
-    public setValue(value: any): void {
-        if (value == undefined || value == null) {
-            this.value = undefined;
-            this.expressionText = undefined;
-            this._expression = undefined;
-            return;
+    /**
+     * Try to Get the value.
+     * @param data Data to use for expression binding.
+     * @returns the value or an error.
+     */
+    public tryGetValue(data: object): { value: T; error: Error } {
+        if (this.expression) {
+            return this.expression.tryEvaluate(data) as any;
         }
+
+        return { value: this.value, error: undefined };
+    }
+
+    public setValue(value: T | string | Expression): void {
+        this.value == this.defaultValue;
+        this.expression = undefined;
 
         if (typeof value == 'string') {
-            this.value = undefined;
-            const expressionText = value.startsWith('=') ? value.substr(1) : value;
-            this.expressionText = expressionText;
-            this._expression = new ExpressionEngine().parse(this.expressionText);
-            return;
+            if (value.startsWith('=')) { value = value.substr(1); }
+            this.expression = ExpressionProperty.engine.parse(value);
+        } else if (value instanceof Expression) {
+            this.expression = value;
+        } else if (value !== undefined) {
+            this.value = value;
+        }
+    }
+
+    public static get engine(): ExpressionEngine {
+        if (engine == undefined) {
+            engine = new ExpressionEngine();
         }
 
-        if (value instanceof Expression) {
-            this.value = undefined;
-            this.expressionText = value.toString();
-            this._expression = value;
-            return;
-        }
+        return engine;
+    }
 
-        this.value = value as T;
+    public static set engine(value: ExpressionEngine) {
+        engine = value;
     }
 }
+

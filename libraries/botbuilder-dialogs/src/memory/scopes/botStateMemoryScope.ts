@@ -5,9 +5,9 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { MemoryScope } from "./memoryScope";
-import { DialogContext } from "../../dialogContext";
 import { BotState } from 'botbuilder-core';
+import { MemoryScope } from './memoryScope';
+import { DialogContext } from '../../dialogContext';
 
 /**
  * Base class for memory scopes based on BotState.
@@ -16,7 +16,7 @@ export class BotStateMemoryScope extends MemoryScope {
     private readonly _state: BotState;
     private readonly _propertyName: string;
 
-    constructor(name: string, botState: BotState, propertyName?: string) {
+    public constructor(name: string, botState: BotState, propertyName?: string) {
         super(name, true);
 
         // Create property accessor
@@ -28,10 +28,10 @@ export class BotStateMemoryScope extends MemoryScope {
         // Get state
         const state = this._state.get(dc.context);
         if (state == undefined) { throw new Error(`BotStateMemory.getMemory: load() should be called before retrieving memory.`) }
-        
+
         // Ensure memory initialized
         let memory = state[this._propertyName];
-        if (typeof memory !== "object") {
+        if (typeof memory !== 'object') {
             state[this._propertyName] = memory = {};
         }
 
