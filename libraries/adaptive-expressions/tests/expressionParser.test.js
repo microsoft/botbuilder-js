@@ -19,6 +19,7 @@ const dataSource = [
     ['`\\${world}`', '${world}'],
     ['length(`hello ${world}`)', 'hello world'.length],
     ['json(`{"foo": "${hello}","item": "${world}"}`).foo', 'hello'],
+    ['json(`{"foo": "${{"text":"hello"}}","item": "${world}"}`).foo.text', 'hello'],
     ['`hi\\`[1,2,3]`', 'hi`[1,2,3]'],
     ['`hi ${[\'jack\\`\', \'queen\', \'king\']}`', 'hi jack`,queen,king'],
     ['`abc ${concat("[", "]")}`', 'abc []'],
@@ -31,7 +32,6 @@ const dataSource = [
     ['`hello ${string({"obj":  1})}`', 'hello {"obj":1}'],
     ['`hello ${string({"obj":  "${not expr}"})}`', 'hello {"obj":"${not expr}"}'],
     ['`hello ${string({"obj":  {"a": 1}})}`', 'hello {"obj":{"a":1}}'],
-
 
     // Operators tests
 
@@ -207,6 +207,7 @@ const dataSource = [
     ['indexOf(nullObj, \'-\')', -1],
     ['indexOf(hello, nullObj)', 0],
     ['indexOf(json(\'["a", "b"]\'), "a")', 0],
+    ['indexOf({["a", "b"]}, "a")', 0],
     ['indexOf(json(\'["a", "b"]\'), \'c\')', -1],
     ['indexOf(createArray(\'abc\', \'def\', \'ghi\'), \'def\')', 1],
     ['indexOf([\'abc\', \'def\', \'ghi\'], \'def\')', 1],

@@ -40,13 +40,15 @@ fragment NUMBER: '0'..'9';
 
 fragment WHITESPACE : ' '|'\t'|'\ufeff'|'\u00a0';
 
+fragment EMPTY_OBJECT: '{' WHITESPACE* '}';
+
 fragment STRING_LITERAL : ('\'' (~['\r\n])* '\'') | ('"' (~["\r\n])* '"');
 
 fragment STRING_INTERPOLATION : '`' ('\\`' | ~'`')* '`';
 
 fragment OBJECT_DEFINITION: '{' (STRING_LITERAL ':' (STRING_LITERAL | ~[{}'"`]))* '}';
 
-fragment EXPRESSION_FRAGMENT : '$' '{' (STRING_LITERAL | STRING_INTERPOLATION | OBJECT_DEFINITION | ~[}'"`] )+ '}'?;
+fragment EXPRESSION_FRAGMENT : '$' '{' (STRING_LITERAL | STRING_INTERPOLATION | EMPTY_OBJECT | ~[}'"`] )+ '}'?;
 
 fragment ESCAPE_CHARACTER_FRAGMENT : '\\' ~[\r\n]?;
 
