@@ -41,8 +41,8 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGFilePa
     private readonly strictMode: boolean;
 
     // to support broswer, use look-ahead replace look-behind
-    // original:/(?<!\\)$\{((\'[^\'\r\n]*\')|(\"[^\"\r\n]*\")|(\`(\\\`|[^\`])*\`)|[^\r\n\{\}\'\"\`])+\}?/g;
-    public static readonly expressionRecognizeReverseRegex: RegExp = new RegExp(/\}?((\'[^\'\r\n]*\')|(\"[^\"\r\n]*\")|(\`(\\\`|[^\`])*\`)|([^\r\n\{\}\'\"\`]))+\{\$(?!\\)/g);
+    // PCRE: (?<!\\)\${(('(\\('|\\)|[^'])*?')|("(\\("|\\)|[^"])*?")|(`(\\(`|\\)|[^`])*?`)|([^\r\n{}'"`])|({\s*}))+}?
+    public static readonly expressionRecognizeReverseRegex: RegExp = new RegExp(/\}?(('((('|\\)\\)|[^'])*?')|("(\\("|\\)|[^"])*?")|(`(\\(`|\\)|[^`])*?`)|([^\r\n{}'"`])|({\s*}))+{\$(?!\\)/gm);
 
     public static readonly LGType = 'lgType';
     public static readonly activityAttachmentFunctionName = 'ActivityAttachment';
@@ -155,7 +155,7 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGFilePa
                 for(const node of item.children) {
                     switch ((node as TerminalNode).symbol.type) {
                         case (lp.LGFileParser.ESCAPE_CHARACTER_IN_STRUCTURE_BODY): 
-                            itemStringResult += TemplateExtensions.evalEscape(node.text);
+                            itemStringResult += TemplateExtensions.evalEscape(node.text.replace(/\\\|/g, '|'));
                             break;
                         
                         case (lp.LGFileParser.EXPRESSION_IN_STRUCTURE_BODY):

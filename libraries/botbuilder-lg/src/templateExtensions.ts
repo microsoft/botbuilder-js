@@ -137,14 +137,17 @@ export class TemplateExtensions {
         const validCharactersDict: any = {
             '\\r': '\r',
             '\\n': '\n',
-            '\\t': '\t'
+            '\\t': '\t',
+            '\\\\': '\\'
         };
 
         return exp.replace(/\\[^\r\n]?/g, (sub: string): string => { 
             if (sub in validCharactersDict) {
                 return validCharactersDict[sub];
-            } else {
+            } else if (sub === '\\$') {
                 return sub.substr(1);
+            }else {
+                return sub;
             }
         });
     }
