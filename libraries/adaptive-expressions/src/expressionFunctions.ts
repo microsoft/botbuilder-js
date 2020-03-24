@@ -2978,7 +2978,7 @@ export class ExpressionFunctions {
 
                         temp[String(args[1])] = args[2];
 
-                        return temp;
+                        return {value: temp, error};
                     }),
                 ReturnType.Object,
                 (expression: Expression): void => ExpressionFunctions.validateOrder(expression, undefined, ReturnType.Object, ReturnType.String, ReturnType.Object)),
