@@ -12,6 +12,7 @@ import { StringInterpolationAtomContext } from "./ExpressionAntlrParser";
 import { MemberAccessExpContext } from "./ExpressionAntlrParser";
 import { ParenthesisExpContext } from "./ExpressionAntlrParser";
 import { NumericAtomContext } from "./ExpressionAntlrParser";
+import { ArrayCreationExpContext } from "./ExpressionAntlrParser";
 import { UnaryOpExpContext } from "./ExpressionAntlrParser";
 import { BinaryOpExpContext } from "./ExpressionAntlrParser";
 import { PrimaryExpContext } from "./ExpressionAntlrParser";
@@ -102,6 +103,14 @@ export interface ExpressionAntlrParserVisitor<Result> extends ParseTreeVisitor<R
 	 * @return the visitor result
 	 */
 	visitNumericAtom?: (ctx: NumericAtomContext) => Result;
+
+	/**
+	 * Visit a parse tree produced by the `arrayCreationExp`
+	 * labeled alternative in `ExpressionAntlrParser.primaryExpression`.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	visitArrayCreationExp?: (ctx: ArrayCreationExpContext) => Result;
 
 	/**
 	 * Visit a parse tree produced by the `unaryOpExp`

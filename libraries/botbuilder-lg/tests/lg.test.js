@@ -9,7 +9,7 @@ function GetExampleFilePath(fileName) {
 
 
 describe('LG', function() {
-    it('TestEnumeration', function () {
+    it('TestEnumeration', function() {
         let cnt = 0;
         let templates = Templates.parseFile(GetExampleFilePath('2.lg'));
         for (let t of templates) {
@@ -202,10 +202,13 @@ describe('LG', function() {
     it('TestEscapeCharacter', function() {
         var templates = Templates.parseFile(GetExampleFilePath('EscapeCharacter.lg'));
         var evaled = templates.evaluate('wPhrase', undefined);
-        assert.strictEqual(evaled, 'Hi \r\n\t[]{}\\', 'Happy path failed.');
+        assert.strictEqual(evaled, 'Hi \r\n\t\\', 'Happy path failed.');
+
+        var evaled = templates.evaluate('AtEscapeChar', undefined);
+        assert.strictEqual(evaled, 'Hi{1+1}[wPhrase]{wPhrase()}${wPhrase()}2${1+1}', 'Happy path failed.');
 
         evaled = templates.evaluate('otherEscape', undefined);
-        assert.strictEqual(evaled, 'Hi y ', 'Happy path failed.');
+        assert.strictEqual(evaled, 'Hi \\y \\', 'Happy path failed.');
 
         evaled = templates.evaluate('escapeInExpression', undefined);
         assert.strictEqual(evaled, 'Hi hello\\\\');
@@ -230,6 +233,20 @@ describe('LG', function() {
 
         evaled = templates.evaluate('showTodo', undefined);
         assert.strictEqual(evaled.replace(/\r\n/g, '\n'), '\n    You don\'t have any "t\\\\odo\'".\n    ');
+
+        evaled = templates.evaluate('getUserName', undefined);
+        assert.strictEqual(evaled, 'super "x man"');
+
+        evaled = templates.evaluate('structure1', undefined);
+        assert.strictEqual(evaled.lgType, 'struct');
+        assert.strictEqual(evaled.list[0], 'a');
+        assert.strictEqual(evaled.list[1], 'b|c');
+
+        evaled = templates.evaluate('nestedSample', undefined);
+        assert.strictEqual(evaled, 'i like three movies, they are "\\"name1", "name2" and "{name3"');
+
+        evaled = templates.evaluate('dollarsymbol', undefined);
+        assert.strictEqual(evaled, '$ $ ${\'hi\'} hi');
     });
 
     it('TestAnalyzer', function() {

@@ -63,9 +63,9 @@ IDENTIFIER : (LETTER | '_' | '#' | '@' | '@@' | '$' | '%') (LETTER | DIGIT | '-'
 
 NEWLINE : '\r'? '\n' -> skip;
 
-STRING : ('\'' (~'\'')* '\'') | ('"' (~'"')* '"');
+STRING : ('\'' (('\\'('\''|'\\'))|(~'\''))*? '\'') | ('"' (('\\'('"'|'\\'))|(~'"'))*? '"');
 
-CONSTANT : ('[' WHITESPACE* ']') | ('{' WHITESPACE* '}');
+CONSTANT : ('{' WHITESPACE* '}');
 
 INVALID_TOKEN_DEFAULT_MODE : . ;
 
@@ -77,6 +77,6 @@ TEMPLATE : '$' '{' (STRING | ~[\r\n{}'"])*? '}';
 
 ESCAPE_CHARACTER : '\\' ~[\r\n]?;
 
-TEXT_CONTENT :  '\\`' | ~[\r\n];
+TEXT_CONTENT :  ~[\r\n];
 
 

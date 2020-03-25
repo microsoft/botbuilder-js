@@ -1029,24 +1029,6 @@ export class ExpressionFunctions {
         }
     }
 
-    private static canBeModified(value: any, property: string, expected?: number): boolean {
-        let modifiable = false;
-        if (expected !== undefined) {
-            // Modifiable list
-            modifiable = Array.isArray(value);
-        } else {
-            // Modifiable object
-            modifiable = value instanceof Map;
-            if (!modifiable) {
-                if (typeof value === 'object') {
-                    modifiable = value.hasOwnProperty(property);
-                }
-            }
-        }
-
-        return modifiable;
-    }
-
     private static setPathToValue(expression: Expression, state: MemoryInterface): { value: any; error: string } {
         let path: string;
         let left: Expression;
@@ -2985,12 +2967,18 @@ export class ExpressionFunctions {
                 (expression: Expression): void => ExpressionFunctions.validateOrder(expression, undefined, ReturnType.String)),
             new ExpressionEvaluator(
                 ExpressionType.AddProperty,
-                ExpressionFunctions.apply(
+                ExpressionFunctions.applyWithError(
                     (args: any []): any => {
+                        let error: string;
                         const temp: any = args[0];
-                        temp[String(args[1])] = args[2];
+                        const prop = String(args[1]);
+                        if (prop in temp) {
+                            error = `${ prop } already exists`;
+                        } else {
+                            temp[String(args[1])] = args[2];
+                        }
 
-                        return temp;
+                        return {value: temp, error};
                     }),
                 ReturnType.Object,
                 (expression: Expression): void => ExpressionFunctions.validateOrder(expression, undefined, ReturnType.Object, ReturnType.String, ReturnType.Object)),
@@ -3056,12 +3044,12 @@ export class ExpressionFunctions {
                             value = false;
                             error = 'regular expression is empty.';
                         } else {
-                            const regex: RegExp = CommonRegex.CreateRegex(args[1]);
-                            value = regex.test(args[0]);
+                            const regex: RegExp = CommonRegex.CreateRegex(args[1].toString());
+                            value = regex.test(args[0].toString());
                         }
 
                         return {value, error};
-                    }),
+                    }, ExpressionFunctions.verifyStringOrNull),
                 ReturnType.Boolean,
                 ExpressionFunctions.validateIsMatch),
             
