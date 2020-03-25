@@ -51,12 +51,13 @@ export class StringExpression extends ExpressionProperty<string> {
         if (typeof value == 'string' && !value.startsWith('=')) {
             // Trim off the escape char for equals (\=foo) should simply be the string (=foo).
             if (value.startsWith('\\=')) {
-                value = value.substr(2);
+                value = value.substr(1);
             }
 
             // Initialize value
             this.value = value;
             this.expression = undefined;
+            return;
         }
 
         super.setValue(value);

@@ -21,6 +21,7 @@ export * from './adaptiveDialog';
 export * from './languageGenerationMiddleware';
 export * from './languageGenerator';
 export * from './languagePolicy';
+export * from './languageResourceLoader';
 export * from './propertySchema';
 export * from './schemaHelper';
 export * from './sequenceContext';

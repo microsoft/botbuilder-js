@@ -77,7 +77,7 @@ export class ExpressionProperty<T> {
     }
 
     public setValue(value: T | string | Expression): void {
-        this.value == this.defaultValue;
+        this.value = this.defaultValue;
         this.expression = undefined;
 
         if (typeof value == 'string') {
