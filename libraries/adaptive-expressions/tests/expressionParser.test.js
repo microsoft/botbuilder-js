@@ -728,7 +728,7 @@ describe('expression parser functional test', () => {
             const newActual = newExpr.tryEvaluate(scope).value;
             assertObjectEquals(newActual, actual);
         }
-    });
+    }).timeout(5000);
 
     it('Test AccumulatePath', () => {
         const scope = {
