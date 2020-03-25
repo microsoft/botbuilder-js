@@ -12,7 +12,7 @@ import { AdaptiveTypeBuilder } from './adaptiveTypeBuilder';
 import { AdaptiveDialog } from './adaptiveDialog';
 import { BeginDialog, BreakLoop, CancelAllDialogs, ContinueLoop, DeleteActivity, DeleteProperties, DeleteProperty, EditActions, EditArray, EmitEvent, EndDialog, EndTurn, ForEach, ForEachPage, GetActivityMembers, GetConversationMembers, GotoAction, IfCondition, LogAction, RepeatDialog, ReplaceDialog, SendActivity, SetProperties, SetProperty, SignOutUser, SwitchCondition, TraceActivity, UpdateActivity, ArrayChangeType, PropertyAssignmentConverter } from './actions';
 import { AttachmentInput, ChoiceInput, ConfirmInput, DateTimeInput, NumberInput, OAuthInput, TextInput, AttachmentOutputFormat, ChoiceOutputFormat } from './input';
-import { OnActivity, OnBeginDialog, OnCancelDialog, OnChooseIntent, OnCondition, OnConversationUpdateActivity, OnCustomEvent, OnDialogEvent, OnEndOfConversationActivity, OnError, OnEventActivity, OnHandoffActivity, OnIntent, OnInvokeActivity, OnMessageActivity, OnMessageDeleteActivity, OnMessageReactionActivity, OnMessageUpdateActivity, OnRepromptDialog, OnTypingActivity, OnUnknownIntent } from './conditions';
+import { OnActivity, OnAssignEntity, OnBeginDialog, OnCancelDialog, OnChooseEntity, OnChooseIntent, OnChooseProperty, OnClearProperty, OnCondition, OnConversationUpdateActivity, OnCustomEvent, OnDialogEvent, OnEndOfActions, OnEndOfConversationActivity, OnError, OnEventActivity, OnHandoffActivity, OnIntent, OnInvokeActivity, OnMessageActivity, OnMessageDeleteActivity, OnMessageReactionActivity, OnMessageUpdateActivity, OnRepromptDialog, OnTypingActivity, OnUnknownIntent } from './conditions';
 import { CrossTrainedRecognizerSet, MultiLanguageRecognizer, RecognizerSet, ValueRecognizer, RegexRecognizer, IntentPatternConverter } from './recognizers';
 import { AgeEntityRecognizer, ConfirmationEntityRecognizer, CurrencyEntityRecognizer, DateTimeEntityRecognizer, DimensionEntityRecognizer, EmailEntityRecognizer, GuidEntityRecognizer, HashtagEntityRecognizer, IpEntityRecognizer, MentionEntityRecognizer, NumberEntityRecognizer, OrdinalEntityRecognizer, PercentageEntityRecognizer, PhoneNumberEntityRecognizer, RegexEntityRecognizer, TemperatureEntityRecognizer, UrlEntityRecognizer } from './recognizers/entityRecognizers';
 import { ObjectExpressionConverter, DialogExpressionConverter, BoolExpressionConverter, StringExpressionConverter, EnumExpressionConverter, ValueExpressionConverter, NumberExpressionConverter, TextTemplateConverter, ActivityTemplateConverter, ExpressionConverter, ArrayExpressionConverter } from './converters';
@@ -183,13 +183,18 @@ export class AdaptiveDialogComponentRegistration implements ComponentRegistratio
             'condition': new BoolExpressionConverter()
         };
         this.registerBuilder('Microsoft.OnActivity', new AdaptiveTypeBuilder(OnActivity, this._resourceExplorer, OnConditionConverters));
+        this.registerBuilder('Microsoft.OnAssignEntity', new AdaptiveTypeBuilder(OnAssignEntity, this._resourceExplorer, OnConditionConverters));
         this.registerBuilder('Microsoft.OnBeginDialog', new AdaptiveTypeBuilder(OnBeginDialog, this._resourceExplorer, OnConditionConverters));
         this.registerBuilder('Microsoft.OnCancelDialog', new AdaptiveTypeBuilder(OnCancelDialog, this._resourceExplorer, OnConditionConverters));
+        this.registerBuilder('Microsoft.OnChooseEntity', new AdaptiveTypeBuilder(OnChooseEntity, this._resourceExplorer, OnConditionConverters));
         this.registerBuilder('Microsoft.OnChooseIntent', new AdaptiveTypeBuilder(OnChooseIntent, this._resourceExplorer, OnConditionConverters));
+        this.registerBuilder('Microsoft.OnChooseProperty', new AdaptiveTypeBuilder(OnChooseProperty, this._resourceExplorer, OnConditionConverters));
+        this.registerBuilder('Microsoft.OnClearProperty', new AdaptiveTypeBuilder(OnClearProperty, this._resourceExplorer, OnConditionConverters));
         this.registerBuilder('Microsoft.OnCondition', new AdaptiveTypeBuilder(OnCondition, this._resourceExplorer, OnConditionConverters));
         this.registerBuilder('Microsoft.OnConversationUpdateActivity', new AdaptiveTypeBuilder(OnConversationUpdateActivity, this._resourceExplorer, OnConditionConverters));
         this.registerBuilder('Microsoft.OnCustomEvent', new AdaptiveTypeBuilder(OnCustomEvent, this._resourceExplorer, OnConditionConverters));
         this.registerBuilder('Microsoft.OnDialogEvent', new AdaptiveTypeBuilder(OnDialogEvent, this._resourceExplorer, OnConditionConverters));
+        this.registerBuilder('Microsoft.OnEndOfActions', new AdaptiveTypeBuilder(OnEndOfActions, this._resourceExplorer, OnConditionConverters));
         this.registerBuilder('Microsoft.OnEndOfConversationActivity', new AdaptiveTypeBuilder(OnEndOfConversationActivity, this._resourceExplorer, OnConditionConverters));
         this.registerBuilder('Microsoft.OnError', new AdaptiveTypeBuilder(OnError, this._resourceExplorer, OnConditionConverters));
         this.registerBuilder('Microsoft.OnEventActivity', new AdaptiveTypeBuilder(OnEventActivity, this._resourceExplorer, OnConditionConverters));

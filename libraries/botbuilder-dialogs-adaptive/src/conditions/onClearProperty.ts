@@ -15,8 +15,6 @@ import { OnDialogEvent } from './onDialogEvent';
  */
 export class OnClearProperty extends OnDialogEvent {
 
-    public static declarativeType = 'Microsoft.OnClearProperty';
-
     public constructor(property?: string, actions: Dialog[] = [], condition?: string) {
         super(AdaptiveEvents.chooseEntity, actions, condition);
         this.property = property;

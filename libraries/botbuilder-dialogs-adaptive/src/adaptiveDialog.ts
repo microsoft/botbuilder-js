@@ -26,7 +26,6 @@ import { LanguageGenerator } from './languageGenerator';
 
 export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
 
-    public static declarativeType = 'Microsoft.AdaptiveDialog';
     public static conditionTracker = 'dialog._tracker.conditions';
     
     private readonly adaptiveKey = '_adaptive';

@@ -14,8 +14,6 @@ import { AdaptiveEvents } from '../sequenceContext';
  */
 export class OnEndOfActions extends OnDialogEvent {
 
-    public static declarativeType = 'Microsoft.OnEndOfActions';
-
     /**
      * Creates a new `OnEndOfActions` instance.
      * @param event (Optional) The event to fire on.

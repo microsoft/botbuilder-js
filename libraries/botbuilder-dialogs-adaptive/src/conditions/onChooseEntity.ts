@@ -15,8 +15,6 @@ import { OnDialogEvent } from './onDialogEvent';
  */
 export class OnChooseEntity extends OnDialogEvent {
 
-    public static declarativeType = 'Microsoft.OnChooseEntity';
-
     public constructor(property?: string, entity?: string, actions: Dialog[] = [], condition?: string) {
         super(AdaptiveEvents.chooseEntity, actions, condition);
         this.property = property;
