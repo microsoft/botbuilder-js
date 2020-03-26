@@ -57,7 +57,7 @@ export class DialogTestClient {
 
         if (typeof channelOrAdapter == 'string') {
             const channelIdToUse: string = channelOrAdapter;
-            this._testAdapter = new TestAdapter(this._callback, {channelId: channelIdToUse}).use(new AutoSaveStateMiddleware(this.conversationState));
+            this._testAdapter = new TestAdapter('t', this._callback, {channelId: channelIdToUse}).use(new AutoSaveStateMiddleware(this.conversationState));
         } else {
             const testAdapterToUse: TestAdapter = channelOrAdapter;
             this._testAdapter = testAdapterToUse;
