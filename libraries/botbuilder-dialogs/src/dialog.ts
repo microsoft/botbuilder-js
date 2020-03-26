@@ -130,7 +130,12 @@ export enum DialogTurnStatus {
     /**
      * All dialogs on the stack were cancelled and the stack is empty.
      */
-    cancelled = 'cancelled'
+    cancelled = 'cancelled',
+
+    /**
+     * Current dialog completed successfully, but turn should end.
+     */
+    completeAndWait = 'completeAndWait'
 }
 
 export interface DialogEvent {

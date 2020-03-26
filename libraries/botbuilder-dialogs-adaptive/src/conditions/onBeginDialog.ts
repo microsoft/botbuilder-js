@@ -7,7 +7,7 @@
  */
 import { Dialog } from 'botbuilder-dialogs';
 import { OnDialogEvent } from './onDialogEvent';
-import { AdaptiveEvents } from '../sequenceContext';
+import { AdaptiveEvents } from '../adaptiveEvents';
 
 /**
  * Actions triggered when a dialog is started via BeginDialog().

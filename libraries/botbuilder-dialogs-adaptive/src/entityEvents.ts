@@ -7,8 +7,7 @@
  */
 import { EntityAssignment, AssignEntityOperations } from './entityAssignment';
 import { DialogContext, DialogPath } from 'botbuilder-dialogs';
-import { AdaptiveEvents } from './sequenceContext';
-import { eventNames } from 'cluster';
+import { AdaptiveEvents } from './adaptiveEvents';
 import { NormalizedEntityInfos, EntityInfo } from './entityInfo';
 import { SchemaHelper } from './schemaHelper';
 
@@ -141,7 +140,7 @@ export class EntityEvents {
                 }
             });
             candidates = remaining;
-            
+
             // If expected binds entity, drop alternatives
             if (candidate.isExpected && candidate.entity.name != "utterance") {
                 alternatives = alternatives.filter(a => a.isExpected);
@@ -180,7 +179,7 @@ export class EntityEvents {
             // Add to appropriate queue
             if (!mapped) {
                 if (alternatives.length == 1) {
-                    EntityEvents.addMappingToQueue(_this, candidate); 
+                    EntityEvents.addMappingToQueue(_this, candidate);
                 } else {
                     // Needs disambiguation
                     _this.chooseProperties.push(alternatives);
@@ -219,7 +218,7 @@ export class EntityEvents {
         _this.clearProperties.forEach((entry) => {
             propertyQueues(entry).clearProperties.push(entry);
         });
-        
+
         _this.chooseProperties.forEach((entry) => {
             entry.forEach((choice) => {
                 propertyQueues(choice.property).chooseProperties.push(entry);
@@ -287,11 +286,10 @@ export class EntityEvents {
             const assignEntities = propertyQueues.assignEntities.filter(e => e.entity.whenRecognized == eventCounter);
             const chooseEntities = propertyQueues.chooseEntities.filter(e => e.entity.whenRecognized == eventCounter);
             const chooseProperties = propertyQueues.chooseProperties.filter(e => e[0].entity.whenRecognized == eventCounter);
-            if (!property.isArray && 
+            if (!property.isArray &&
                 (assignEntities.length > 0
-                || chooseEntities.length > 0
-                || chooseProperties.length > 0)) 
-            {
+                    || chooseEntities.length > 0
+                    || chooseProperties.length > 0)) {
                 // Remove all old operations on property because there is a new one
                 propertyQueues.assignEntities = assignEntities;
                 propertyQueues.chooseEntities = chooseEntities;

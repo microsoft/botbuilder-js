@@ -8,9 +8,9 @@
 import { Dialog, DialogContext, DialogTurnResult, DialogEvent, DialogReason, Choice, ListStyle, ChoiceFactoryOptions, ChoiceFactory, DialogEvents, TurnPath } from 'botbuilder-dialogs';
 import { ActivityTypes, Activity, InputHints, MessageFactory } from 'botbuilder-core';
 import { ExpressionEngine } from 'adaptive-expressions';
-import { AdaptiveEvents } from '../sequenceContext';
 import { TemplateInterface } from '../template';
 import { ValueExpression, StringExpression, BoolExpression, NumberExpression } from '../expressions';
+import { AdaptiveEvents } from '../adaptiveEvents';
 
 export enum InputState {
     missing = 'missing',

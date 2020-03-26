@@ -6,8 +6,11 @@
  * Licensed under the MIT License.
  */
 import { DialogTurnResult, Dialog, DialogDependencies, DialogContext } from 'botbuilder-dialogs';
-import { ActionChangeType, SequenceContext, ActionChangeList, ActionState } from '../sequenceContext';
 import { BoolExpression, EnumExpression } from '../expressions';
+import { ActionContext } from '../actionContext';
+import { ActionChangeType } from '../actionChangeType';
+import { ActionState } from '../actionState';
+import { ActionChangeList } from '../actionChangeList';
 
 export class EditActions<O extends object = {}> extends Dialog<O> implements DialogDependencies {
     public constructor();
@@ -42,7 +45,7 @@ export class EditActions<O extends object = {}> extends Dialog<O> implements Dia
             return await dc.endDialog();
         }
 
-        if (dc instanceof SequenceContext) {
+        if (dc instanceof ActionContext) {
             const planActions = this.actions.map((action: Dialog): ActionState => {
                 return {
                     dialogStack: [],

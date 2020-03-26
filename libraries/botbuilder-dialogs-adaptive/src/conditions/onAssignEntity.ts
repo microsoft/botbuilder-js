@@ -7,7 +7,7 @@
  */
 import { Dialog, TurnPath } from 'botbuilder-dialogs';
 import { Expression, ExpressionParserInterface } from 'adaptive-expressions';
-import { AdaptiveEvents } from '../sequenceContext';
+import { AdaptiveEvents } from '../adaptiveEvents';
 import { OnDialogEvent } from './onDialogEvent';
 
 /**

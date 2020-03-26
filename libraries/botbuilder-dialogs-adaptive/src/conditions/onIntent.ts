@@ -8,8 +8,12 @@
 import { Dialog, TurnPath } from 'botbuilder-dialogs';
 import { ExpressionParserInterface, Expression, ExpressionType } from 'adaptive-expressions';
 import { RecognizerResult } from 'botbuilder-core';
-import { AdaptiveEvents, SequenceContext, ActionChangeList, ActionState, ActionChangeType } from '../sequenceContext';
 import { OnDialogEvent } from './onDialogEvent';
+import { ActionContext } from '../actionContext';
+import { AdaptiveEvents } from '../adaptiveEvents';
+import { ActionChangeList } from '../actionChangeList';
+import { ActionState } from '../actionState';
+import { ActionChangeType } from '../actionChangeType';
 
 /**
  * Actions triggered when an Activity has been received and the recognized intents and entities match specified list of intent and entity filters.
@@ -59,8 +63,8 @@ export class OnIntent extends OnDialogEvent {
         return Expression.makeExpression(ExpressionType.And, undefined, intentExpression, super.getExpression(parser));
     }
 
-    protected onCreateChangeList(planning: SequenceContext, dialogOptions?: any): ActionChangeList {
-        const recognizerResult = planning.state.getValue<RecognizerResult>(`${ TurnPath.dialogEvent }.value`);
+    protected onCreateChangeList(actionContext: ActionContext, dialogOptions?: any): ActionChangeList {
+        const recognizerResult = actionContext.state.getValue<RecognizerResult>(`${ TurnPath.dialogEvent }.value`);
         if (recognizerResult) {
             const actionState: ActionState = {
                 dialogId: this.actionScope.id,
@@ -77,6 +81,6 @@ export class OnIntent extends OnDialogEvent {
             return changeList;
         }
 
-        return super.onCreateChangeList(planning, dialogOptions);
+        return super.onCreateChangeList(actionContext, dialogOptions);
     }
 }

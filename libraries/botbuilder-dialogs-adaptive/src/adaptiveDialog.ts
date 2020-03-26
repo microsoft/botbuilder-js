@@ -9,28 +9,26 @@ import {
     TurnContext, BotTelemetryClient, NullTelemetryClient, ActivityTypes,
     Activity, RecognizerResult, getTopScoringIntent
 } from 'botbuilder-core';
-import {
-    Dialog, DialogInstance, DialogReason, DialogTurnResult, DialogTurnStatus, DialogEvent,
-    DialogContext, DialogContainer, DialogDependencies, TurnPath, DialogPath
-} from 'botbuilder-dialogs';
+import { Dialog, DialogInstance, DialogReason, DialogTurnResult, DialogTurnStatus, DialogEvent, DialogContext, DialogContainer, DialogDependencies, TurnPath, DialogPath, DialogState } from 'botbuilder-dialogs';
 import { Extensions } from 'adaptive-expressions';
-import {
-    AdaptiveEvents, SequenceContext, AdaptiveDialogState, ActionState
-} from './sequenceContext';
 import { OnCondition } from './conditions';
 import { Recognizer } from './recognizers';
 import { TriggerSelector } from './triggerSelector';
 import { FirstSelector } from './selectors';
 import { SchemaHelper } from './schemaHelper';
 import { LanguageGenerator } from './languageGenerator';
+import { ActionContext } from './actionContext';
+import { EntityEvents } from './entityEvents';
+import { AdaptiveEvents } from './adaptiveEvents';
+import { AdaptiveDialogState } from './actionDialogState';
+import { ActionState } from './actionState';
 
 export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
-
     public static conditionTracker = 'dialog._tracker.conditions';
-    
+
     private readonly adaptiveKey = '_adaptive';
     private readonly generatorTurnKey = Symbol('generatorTurn');
-    private readonly changeKey = Symbol('changes');
+    private readonly changeTurnKey = Symbol('changeTurn');
 
     private installedDependencies = false;
     private needsTracker = false;
@@ -55,7 +53,7 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
     public generator?: LanguageGenerator;
 
     /**
-     * Trigger handlers to respond to conditions which modify the executing plan. 
+     * Trigger handlers to respond to conditions which modify the executing plan.
      */
     public triggers: OnCondition[] = [];
 
@@ -87,7 +85,7 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
         this.dialogSchema = new SchemaHelper(value);
     }
 
-    public get schema(): object|undefined {
+    public get schema(): object | undefined {
         return this.dialogSchema ? this.dialogSchema.schema : undefined;
     }
 
@@ -166,9 +164,9 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
                     if (trigger.runOnce && trigger.condition) {
                         const references = Extensions.references(trigger.condition.toExpression());
                         var paths = dcState.trackPaths(references);
-                        var triggerPath = `${AdaptiveDialog.conditionTracker}.${trigger.id}.`;
-                        dcState.setValue(triggerPath + "paths", paths);
-                        dcState.setValue(triggerPath + "lastRun", 0);
+                        var triggerPath = `${ AdaptiveDialog.conditionTracker }.${ trigger.id }.`;
+                        dcState.setValue(triggerPath + 'paths', paths);
+                        dcState.setValue(triggerPath + 'lastRun', 0);
                     }
                 });
             }
@@ -204,17 +202,17 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
     }
 
     protected async onPreBubbleEvent(dc: DialogContext, event: DialogEvent): Promise<boolean> {
-        const sequence = this.toSequenceContext(dc);
+        const actionContext = this.toActionContext(dc);
 
         // Process event and queue up any potential interruptions
-        return await this.processEvent(sequence, event, true);
+        return await this.processEvent(actionContext, event, true);
     }
 
     protected async onPostBubbleEvent(dc: DialogContext, event: DialogEvent): Promise<boolean> {
-        const sequence = this.toSequenceContext(dc);
+        const actionContext = this.toActionContext(dc);
 
         // Process event and queue up any potential interruptions
-        return await this.processEvent(sequence, event, false);
+        return await this.processEvent(actionContext, event, false);
     }
 
     public async resumeDialog(dc: DialogContext, reason: DialogReason, result?: any): Promise<DialogTurnResult> {
@@ -243,14 +241,21 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
         }
     }
 
-    public createChildContext(parent: DialogContext): DialogContext | undefined {
-        const actions = this.getActions(parent.activeDialog);
-        if (actions.length > 0) {
-            if (!Array.isArray(actions[0].dialogStack)) { actions[0].dialogStack = []; }
-            return SequenceContext.create(parent, this.dialogs, actions[0].dialogStack, actions, this.changeKey);
-        } else {
-            return undefined;
+    public createChildContext(dc: DialogContext): DialogContext {
+        const activeDialogState = dc.activeDialog.state;
+        let state: AdaptiveDialogState = activeDialogState[this.adaptiveKey];
+        if (!state) {
+            state = { actions: [] };
         }
+
+        if (state.actions && state.actions.length > 0) {
+            return new DialogContext(
+                this.dialogs,
+                dc.context,
+                state.actions[0]
+            );
+        }
+        return undefined;
     }
 
     public getDependencies(): Dialog[] {
@@ -262,58 +267,80 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
     // Event Processing
     //---------------------------------------------------------------------------------------------
 
-    protected async processEvent(sequence: SequenceContext, event: DialogEvent, preBubble: boolean): Promise<boolean> {
-        const dcState = sequence.state;
-
+    protected async processEvent(actionContext: ActionContext, dialogEvent: DialogEvent, preBubble: boolean): Promise<boolean> {
         // Save into turn
-        dcState.setValue(TurnPath.dialogEvent, event);
+        actionContext.state.setValue(TurnPath.dialogEvent, dialogEvent);
+
+        let activity = actionContext.state.getValue<Activity>(TurnPath.activity);
+
+        // some dialogevents get promoted into turn state for general access outside of the dialogevent.
+        // This allows events to be fired (in the case of ChooseIntent), or in interruption (Activity) 
+        // Triggers all expressed against turn.recognized or turn.activity, and this mapping maintains that 
+        // any event that is emitted updates those for the rest of rule evaluation.
+        switch (dialogEvent.name) {
+            case AdaptiveEvents.recognizedIntent:
+                // we have received a RecognizedIntent event
+                // get the value and promote to turn.recognized, topintent, topscore and lastintent
+                const recognizedResult = actionContext.state.getValue<RecognizerResult>(`${ TurnPath.dialogEvent }.value`);
+                const { intent, score } = getTopScoringIntent(recognizedResult);
+                actionContext.state.setValue(TurnPath.recognized, recognizedResult);
+                actionContext.state.setValue(TurnPath.topIntent, intent);
+                actionContext.state.setValue(TurnPath.topScore, score);
+                actionContext.state.setValue(DialogPath.lastEvent, intent);
+
+                // process entities for ambiguity processing (We do this regardless of who handles the event)
+                this.processEntities(actionContext, activity);
+                break;
+            case AdaptiveEvents.activityReceived:
+                // we received an ActivityReceived event, promote the activity into turn.activity
+                actionContext.state.setValue(TurnPath.activity, dialogEvent.value);
+                activity = dialogEvent.value as Activity;
+                break;
+        }
 
         this.ensureDependenciesInstalled();
 
         // Count of events processed
-        var count = dcState.getValue(DialogPath.eventCounter);
-        dcState.setValue(DialogPath.eventCounter, ++count);
-        
+        var count = actionContext.state.getValue(DialogPath.eventCounter);
+        actionContext.state.setValue(DialogPath.eventCounter, ++count);
+
         // Look for triggered rule
-        let handled = await this.queueFirstMatch(sequence);
+        let handled = await this.queueFirstMatch(actionContext);
         if (handled) {
             return true;
         }
 
         // Perform default processing
-        let activity: Partial<Activity>;
         if (preBubble) {
-            switch (event.name) {
+            switch (dialogEvent.name) {
                 case AdaptiveEvents.beginDialog:
-                    if (!sequence.state.getValue(TurnPath.activityProcessed)) {
+                    if (!actionContext.state.getValue(TurnPath.activityProcessed)) {
                         const activityReceivedEvent: DialogEvent = {
                             name: AdaptiveEvents.activityReceived,
-                            value: sequence.context.activity,
+                            value: actionContext.context.activity,
                             bubble: false
                         };
-                        handled = await this.processEvent(sequence, activityReceivedEvent, true);
+                        handled = await this.processEvent(actionContext, activityReceivedEvent, true);
                     }
                     break;
                 case AdaptiveEvents.activityReceived:
-                    activity = event.value; // WAS sequence.context.activity;
                     if (activity.type === ActivityTypes.Message) {
-                        // Recognize utterance
+                        // Recognize utterance (ignore handled)
                         const recognizeUtteranceEvent: DialogEvent = {
                             name: AdaptiveEvents.recognizeUtterance,
-                            value: event.value, // WAS sequence.context.activity,
+                            value: activity,
                             bubble: false
                         };
-                        await this.processEvent(sequence, recognizeUtteranceEvent, true);
+                        await this.processEvent(actionContext, recognizeUtteranceEvent, true);
 
                         // Emit leading RecognizedIntent event
-                        const recognized = sequence.state.getValue<RecognizerResult>(TurnPath.recognized);
+                        const recognized = actionContext.state.getValue<RecognizerResult>(TurnPath.recognized);
                         const recognizedIntentEvent: DialogEvent = {
                             name: AdaptiveEvents.recognizedIntent,
                             value: recognized,
                             bubble: false
-                        }
-                        this.processEntities(sequence);
-                        handled = await this.processEvent(sequence, recognizedIntentEvent, true);
+                        };
+                        handled = await this.processEvent(actionContext, recognizedIntentEvent, true);
                     }
 
                     // Has an interruption occurred?
@@ -321,49 +348,42 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
                     //   continued.  The developer can clear this flag if they want the input to instead
                     //   process the users utterance when its continued.
                     if (handled) {
-                        sequence.state.setValue(TurnPath.interrupted, true);
+                        actionContext.state.setValue(TurnPath.interrupted, true);
                     }
                     break;
                 case AdaptiveEvents.recognizeUtterance:
-                    activity = event.value; // WAS sequence.context.activity;
                     if (activity.type == ActivityTypes.Message) {
                         // Recognize utterance
-                        const recognized = await this.onRecognize(sequence, activity);
-                        sequence.state.setValue(TurnPath.recognized, recognized);
-
-                        // Get top scoring intent
-                        const { intent, score } = getTopScoringIntent(recognized);
-                        sequence.state.setValue(TurnPath.topIntent, intent);
-                        sequence.state.setValue(DialogPath.lastIntent, intent);
-                        sequence.state.setValue(TurnPath.topScore, score);
+                        const recognized = await this.onRecognize(actionContext, activity);
+                        // TODO figure out way to not use turn state to pass this value back to caller.
+                        actionContext.state.setValue(TurnPath.recognized, recognized);
                         handled = true;
                     }
                     break;
             }
         } else {
-            switch (event.name) {
+            switch (dialogEvent.name) {
                 case AdaptiveEvents.beginDialog:
-                    if (!sequence.state.getValue(TurnPath.activityProcessed)) {
+                    if (!actionContext.state.getValue(TurnPath.activityProcessed)) {
                         const activityReceivedEvent: DialogEvent = {
                             name: AdaptiveEvents.activityReceived,
-                            value: sequence.context.activity,
+                            value: activity,
                             bubble: false
                         };
                         // Emit trailing ActivityReceived event
-                        handled = await this.processEvent(sequence, activityReceivedEvent, false);
+                        handled = await this.processEvent(actionContext, activityReceivedEvent, false);
                     }
                     break;
                 case AdaptiveEvents.activityReceived:
-                    activity = event.value; // WAS sequence.context.activity;
                     if (activity.type === ActivityTypes.Message) {
                         // Do we have an empty sequence?
-                        if (sequence.actions.length == 0) {
+                        if (actionContext.actions.length == 0) {
                             const unknownIntentEvent: DialogEvent = {
                                 name: AdaptiveEvents.unknownIntent,
                                 bubble: false
                             };
                             // Emit trailing UnknownIntent event
-                            handled = await this.processEvent(sequence, unknownIntentEvent, false);
+                            handled = await this.processEvent(actionContext, unknownIntentEvent, false);
                         } else {
                             handled = false;
                         }
@@ -374,7 +394,7 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
                     //   continued.  The developer can clear this flag if they want the input to instead
                     //   process the users utterance when its continued.
                     if (handled) {
-                        sequence.state.setValue(TurnPath.interrupted, true);
+                        actionContext.state.setValue(TurnPath.interrupted, true);
                     }
                     break;
             }
@@ -425,13 +445,13 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
         }
     }
 
-    private async queueFirstMatch(sequenceContext: SequenceContext): Promise<boolean> {
-        const selection = await this.selector.select(sequenceContext);
+    private async queueFirstMatch(actionContext: ActionContext): Promise<boolean> {
+        const selection = await this.selector.select(actionContext);
         if (selection.length > 0) {
             const evt = this.triggers[selection[0]];
-            const changes = await evt.execute(sequenceContext);
+            const changes = await evt.execute(actionContext);
             if (changes && changes.length > 0) {
-                sequenceContext.queueChanges(changes[0]);
+                actionContext.queueChanges(changes[0]);
                 return true;
             }
         }
@@ -445,73 +465,95 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
 
     protected async continueActions(dc: DialogContext): Promise<DialogTurnResult> {
         // Apply any queued up changes
-        const sequence = this.toSequenceContext(dc);
-        await sequence.applyChanges();
+        const actionContext = this.toActionContext(dc);
+        await actionContext.applyChanges();
 
         // Get a unique instance ID for the current stack entry.
         // - We need to do this because things like cancellation can cause us to be removed
         //   from the stack and we want to detect this so we can stop processing actions.
-        const instanceId = this.getUniqueInstanceId(sequence);
+        const instanceId = this.getUniqueInstanceId(actionContext);
 
-        // Create context for active action
-        const action = this.createChildContext(sequence) as SequenceContext;
-        if (action) {
-            // Continue current action
-            console.log(`running action: ${ action.actions[0].dialogId }`);
-            let result = await action.continueDialog();
+        try {
+            this.onPushScopedServices(dc.context);
 
-            // Start action if not continued
-            if (result.status == DialogTurnStatus.empty && this.getUniqueInstanceId(sequence) == instanceId) {
-                const nextAction = action.actions[0];
-                result = await action.beginDialog(nextAction.dialogId, nextAction.options);
+            // Create context for active action
+            let actionDC = this.createChildContext(actionContext);
+            while (actionDC) {
+                // Continue current action
+                let result = await actionDC.continueDialog();
+
+                // Start action if not continued
+                if (result.status == DialogTurnStatus.empty && this.getUniqueInstanceId(actionContext) == instanceId) {
+                    const nextAction = actionContext.actions[0];
+                    result = await actionDC.beginDialog(nextAction.dialogId, nextAction.options);
+                }
+
+                // Is the step waiting for input or were we cancelled?
+                if (result.status == DialogTurnStatus.waiting || this.getUniqueInstanceId(actionContext) != instanceId) {
+                    return result;
+                }
+
+                // End current step
+                await this.endCurrentAction(actionContext);
+
+                if (result.status == DialogTurnStatus.completeAndWait) {
+                    // Child dialog completed, but wants us to wait for a new activity
+                    result.status = DialogTurnStatus.waiting;
+                    return result;
+                }
+
+                let parentChanges = false;
+                let root = actionContext;
+                let parent = actionContext.parent;
+                while (parent) {
+                    const ac = parent as ActionContext;
+                    if (ac && ac.changes && ac.changes.length > 0) {
+                        parentChanges = true;
+                    }
+                    root = parent as ActionContext;
+                    parent = root.parent;
+                }
+
+                // Execute next step
+                if (parentChanges) {
+                    // Recursively call continueDialog() to apply parent changes and continue execution
+                    return await root.continueDialog();
+                }
+
+                // Apply any locale changes and fetch next action
+                await actionContext.applyChanges();
+                actionDC = this.createChildContext(actionContext);
             }
-
-            // Increment turns action count
-            // - This helps dialogs being resumed from an interruption to determine if they
-            //   should re-prompt or not.
-            const actionCount = sequence.state.getValue('turn.actionCount');
-            sequence.state.setValue('turn.actionCount', typeof actionCount == 'number' ? actionCount + 1 : 1);
-
-            // Is the action waiting for input or were we cancelled?
-            if (result.status == DialogTurnStatus.waiting || this.getUniqueInstanceId(sequence) != instanceId) {
-                return result;
-            }
-
-            // End current action
-            await this.endCurrentAction(sequence);
-
-            // Execute next action
-            // - We call continueDialog() on the root dialog to ensure any changes queued up
-            //   by the previous actions are applied.
-            let root: DialogContext = sequence;
-            while (root.parent) {
-                root = root.parent;
-            }
-            return await root.continueDialog();
-        } else {
-            return await this.onEndOfActions(sequence);
+        } finally {
+            this.onPopScopedServices(dc.context);
         }
+
+        return await this.onEndOfActions(actionContext);
     }
 
-    protected async endCurrentAction(sequence: SequenceContext): Promise<boolean> {
-        if (sequence.actions.length > 0) {
-            sequence.actions.shift();
+    protected async endCurrentAction(actionContext: ActionContext): Promise<boolean> {
+        if (actionContext.actions.length > 0) {
+            actionContext.actions.shift();
         }
 
         return false;
     }
 
-    protected async onEndOfActions(sequence: SequenceContext): Promise<DialogTurnResult> {
-        // End dialog and return result
-        if (sequence.activeDialog) {
-            if (this.shouldEnd(sequence)) {
-                const result = sequence.state.getValue(this.defaultResultProperty);
-                return await sequence.endDialog(result);
+    protected async onEndOfActions(actionContext: ActionContext): Promise<DialogTurnResult> {
+        // Is the current dialog still on the stack?
+        if (actionContext.activeDialog) {
+            // Completed actions so continue processing entity queues
+            const handled = await this.processQueues(actionContext);
+            if (handled) {
+                // Still processing queues
+                return await this.continueActions(actionContext);
+            } else if (this.shouldEnd(actionContext)) {
+                const result = actionContext.state.getValue(this.defaultResultProperty);
+                return await actionContext.endDialog(result);
             }
             return Dialog.EndOfTurn;
-        } else {
-            return { status: DialogTurnStatus.cancelled };
         }
+        return { status: DialogTurnStatus.cancelled };
     }
 
     protected onPushScopedServices(context: TurnContext): void {
@@ -540,12 +582,104 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
         return this.autoEndDialog;
     }
 
-    private toSequenceContext(dc: DialogContext): SequenceContext<O> {
-        return SequenceContext.clone(dc, this.getActions(dc.activeDialog), this.changeKey);
+    private toActionContext(dc: DialogContext): ActionContext {
+        const activeDialogState = dc.activeDialog.state;
+        let state: AdaptiveDialogState = activeDialogState[this.adaptiveKey];
+
+        if (!state) {
+            state = { actions: [] };
+            activeDialogState[this.adaptiveKey] = state;
+        }
+
+        if (!state.actions) {
+            state.actions = [];
+        }
+
+        const dialogState: DialogState = { dialogStack: dc.stack };
+        const actionContext = new ActionContext(
+            dc.dialogs,
+            dc,
+            dialogState,
+            state.actions,
+            this.changeTurnKey
+        );
+        actionContext.parent = dc.parent;
+        return actionContext;
+    }
+
+    /**
+     * This function goes through the ambiguity queues and emits events if present.
+     * In order ClearProperties, AssignEntity, ChooseProperties, ChooseEntity, EndOfActions.
+     */
+    private async processQueues(actionContext: ActionContext): Promise<boolean> {
+        let evt: DialogEvent;
+        const queues = EntityEvents.read(actionContext);
+        let changed = false;
+        if (queues.clearProperties.length > 0) {
+            const val = queues.clearProperties.shift();
+            evt = {
+                name: AdaptiveEvents.clearProperty,
+                value: val,
+                bubble: false
+            };
+            changed = true;
+        } else if (queues.assignEntities.length > 0) {
+            const val = queues.assignEntities.shift();
+            evt = {
+                name: AdaptiveEvents.assignEntity,
+                value: val,
+                bubble: false
+            };
+            // TODO: (from C#) For now, I'm going to dereference to a one-level array value.  There is a bug in the current code in the distinction between
+            // @ which is supposed to unwrap down to non-array and @@ which returns the whole thing. @ in the curent code works by doing [0] which
+            // is not enough.
+            let entity = val.entity.value;
+            if (!(Array.isArray(entity))) {
+                entity = [entity];
+            }
+
+            actionContext.state.setValue(`${ TurnPath.recognized }.entities.${ val.entity.name }`, entity);
+            changed = true;
+        } else if (queues.chooseProperties.length > 0) {
+            const val = queues.chooseProperties.shift();
+            evt = {
+                name: AdaptiveEvents.chooseProperty,
+                value: val,
+                bubble: false
+            };
+        } else if (queues.chooseEntities.length > 0) {
+            const val = queues.chooseEntities.shift();
+            evt = {
+                name: AdaptiveEvents.chooseEntity,
+                value: val,
+                bubble: false
+            };
+        } else {
+            evt = {
+                name: AdaptiveEvents.endOfActions,
+                bubble: false
+            };
+        }
+
+        if (changed) {
+            EntityEvents.write(actionContext, queues);
+        }
+
+        actionContext.state.setValue(DialogPath.lastEvent, evt.name);
+        let handled = await this.processEvent(actionContext, evt, true);
+        if (!handled) {
+            // If event wasn't handled, remove it from queues and keep going if things changed
+            if (EntityEvents.dequeueEvent(queues, evt.name as AdaptiveEvents)) {
+                EntityEvents.write(actionContext, queues);
+                handled = await this.processQueues(actionContext);
+            }
+        }
+
+        return handled;
     }
 
     private getActions(instance: DialogInstance): ActionState[] {
-        const state: AdaptiveDialogState<O> = instance.state[this.adaptiveKey];
+        const state: AdaptiveDialogState = instance.state[this.adaptiveKey];
         return state && Array.isArray(state.actions) ? state.actions : [];
     }
 
@@ -556,7 +690,7 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
      * Assign entities to possible properties
      * Merge new queues into existing queues of ambiguity events
     */
-    private processEntities(sequence: SequenceContext): void {
+    private processEntities(actionContext: ActionContext, activity: Activity): void {
         /*
         const dcState = sequence.state;
 
@@ -589,5 +723,4 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
         }
         */
     }
-
 }

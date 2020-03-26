@@ -6,8 +6,9 @@
  * Licensed under the MIT License.
  */
 export * from './actions';
-export * from './adaptiveDialogComponentRegistration';
+export * from './actionContext';
 export * from './adaptiveDialog';
+export * from './adaptiveDialogComponentRegistration';
 export * from './adaptiveTypeBuilder';
 export * from './conditions';
 export * from './converters';
@@ -24,7 +25,6 @@ export * from './languagePolicy';
 export * from './languageResourceLoader';
 export * from './propertySchema';
 export * from './schemaHelper';
-export * from './sequenceContext';
 export * from './template';
 export * from './triggerSelector';
 

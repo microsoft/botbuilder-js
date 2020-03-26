@@ -7,10 +7,13 @@
  */
 import { Dialog, DialogDependencies, DialogStateManager } from 'botbuilder-dialogs';
 import { Expression, ExpressionParserInterface, Constant, ExpressionEngine, ExpressionEvaluator, ReturnType, ExpressionFunctions } from 'adaptive-expressions';
-import { SequenceContext, ActionChangeList, ActionState, ActionChangeType } from '../sequenceContext';
 import { ActionScope } from '../actions/actionScope';
 import { BoolExpression } from '../expressions';
 import { AdaptiveDialog } from '../adaptiveDialog';
+import { ActionContext } from '../actionContext';
+import { ActionChangeList } from '../actionChangeList';
+import { ActionState } from '../actionState';
+import { ActionChangeType } from '../actionChangeType';
 
 export class OnCondition implements DialogDependencies {
     /**
@@ -128,11 +131,11 @@ export class OnCondition implements DialogDependencies {
 
     /**
      * Compute the current value of the priority expression and return it.
-     * @param context Context to use for evaluation.
+     * @param actionContext Context to use for evaluation.
      * @returns Computed priority.
      */
-    public currentPriority(context: SequenceContext): number {
-        const { value, error } = this._priorityExpression.tryEvaluate(context.state);
+    public currentPriority(actionContext: ActionContext): number {
+        const { value, error } = this._priorityExpression.tryEvaluate(actionContext.state);
         if (error || isNaN(value)) {
             return -1;
         }
@@ -157,11 +160,11 @@ export class OnCondition implements DialogDependencies {
 
     /**
      * Method called to execute the condition's actions.
-     * @param planningContext Context.
+     * @param actionContext Context.
      * @returns A promise with plan change list.
      */
-    public async execute(planningContext: SequenceContext): Promise<ActionChangeList[]> {
-        return [this.onCreateChangeList(planningContext)];
+    public async execute(actionContext: ActionContext): Promise<ActionChangeList[]> {
+        return [this.onCreateChangeList(actionContext)];
     }
 
     /**
@@ -171,7 +174,7 @@ export class OnCondition implements DialogDependencies {
         return [this.actionScope];
     }
 
-    protected onCreateChangeList(planningContext: SequenceContext, dialogOptions?: any): ActionChangeList {
+    protected onCreateChangeList(actionContext: ActionContext, dialogOptions?: any): ActionChangeList {
         const actionState: ActionState = {
             dialogId: this.actionScope.id,
             options: dialogOptions,

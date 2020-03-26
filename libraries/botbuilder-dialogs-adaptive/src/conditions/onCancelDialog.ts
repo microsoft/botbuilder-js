@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 import { Dialog } from 'botbuilder-dialogs';
-import { AdaptiveEvents } from '../sequenceContext';
+import { AdaptiveEvents } from '../adaptiveEvents';
 import { OnDialogEvent } from './onDialogEvent';
 
 /**

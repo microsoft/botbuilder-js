@@ -6,8 +6,8 @@
  * Licensed under the MIT License.
  */
 import { Dialog } from 'botbuilder-dialogs';
-import { AdaptiveEvents } from '../sequenceContext';
 import { OnDialogEvent } from './onDialogEvent';
+import { AdaptiveEvents } from '../adaptiveEvents';
 
 /**
  * Actions triggered when an RepromptDialog event is emitted.

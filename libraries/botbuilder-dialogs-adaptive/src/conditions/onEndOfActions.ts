@@ -7,7 +7,7 @@
  */
 import { Dialog } from 'botbuilder-dialogs';
 import { OnDialogEvent } from './onDialogEvent';
-import { AdaptiveEvents } from '../sequenceContext';
+import { AdaptiveEvents } from '../adaptiveEvents';
 
 /**
  * Triggered when all actions and ambiguity events have been processed.

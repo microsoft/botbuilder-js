@@ -8,8 +8,8 @@
 import { ExpressionEngine, ExpressionParserInterface } from 'adaptive-expressions';
 import { OnCondition } from '../conditions/onCondition';
 import { TriggerSelector } from '../triggerSelector';
-import { SequenceContext } from '../sequenceContext';
 import { BoolExpression } from '../expressions';
+import { ActionContext } from '../actionContext';
 
 /**
  * Select between two rule selectors based on a condition.
@@ -43,15 +43,15 @@ export class ConditionalSelector implements TriggerSelector {
         this._evaluate = evaluate;
     }
 
-    public select(context: SequenceContext): Promise<number[]> {
+    public select(actionContext: ActionContext): Promise<number[]> {
         let selector: TriggerSelector;
-        if (this.condition && this.condition.getValue(context.state)) {
+        if (this.condition && this.condition.getValue(actionContext.state)) {
             selector = this.ifTrue;
             this.ifTrue.initialize(this._conditionals, this._evaluate);
         } else {
             selector = this.ifFalse;
             this.ifFalse.initialize(this._conditionals, this._evaluate);
         }
-        return selector.select(context);
+        return selector.select(actionContext);
     }
 }

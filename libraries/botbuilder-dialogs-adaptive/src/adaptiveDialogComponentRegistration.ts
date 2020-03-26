@@ -16,7 +16,7 @@ import { OnActivity, OnAssignEntity, OnBeginDialog, OnCancelDialog, OnChooseEnti
 import { CrossTrainedRecognizerSet, MultiLanguageRecognizer, RecognizerSet, ValueRecognizer, RegexRecognizer, IntentPatternConverter } from './recognizers';
 import { AgeEntityRecognizer, ConfirmationEntityRecognizer, CurrencyEntityRecognizer, DateTimeEntityRecognizer, DimensionEntityRecognizer, EmailEntityRecognizer, GuidEntityRecognizer, HashtagEntityRecognizer, IpEntityRecognizer, MentionEntityRecognizer, NumberEntityRecognizer, OrdinalEntityRecognizer, PercentageEntityRecognizer, PhoneNumberEntityRecognizer, RegexEntityRecognizer, TemperatureEntityRecognizer, UrlEntityRecognizer } from './recognizers/entityRecognizers';
 import { ObjectExpressionConverter, DialogExpressionConverter, BoolExpressionConverter, StringExpressionConverter, EnumExpressionConverter, ValueExpressionConverter, NumberExpressionConverter, TextTemplateConverter, ActivityTemplateConverter, ExpressionConverter, ArrayExpressionConverter } from './converters';
-import { ActionChangeType } from './sequenceContext';
+import { ActionChangeType } from './actionChangeType';
 import { CaseConverter } from './actions/case';
 
 export class AdaptiveDialogComponentRegistration implements ComponentRegistration {
