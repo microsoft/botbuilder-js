@@ -19,6 +19,7 @@ import { GenerateAnswerUtils } from './qnamaker-utils/generateAnswerUtils';
 import { ActiveLearningUtils } from './qnamaker-utils/activeLearningUtils';
 import { TrainUtils } from './qnamaker-utils/trainUtils';
 import { QnAMakerResults } from './qnamaker-interfaces/qnamakerResults';
+import { RankerTypes } from './qnamaker-interfaces/rankerTypes';
 
 export const QNAMAKER_TRACE_TYPE = 'https://www.qnamaker.ai/schemas/trace';
 export const QNAMAKER_TRACE_NAME = 'QnAMaker';
@@ -86,7 +87,8 @@ export class QnAMaker implements QnAMakerTelemetryClient {
             top = 1,
             strictFilters = [] as QnAMakerMetadata[],
             metadataBoost = [] as QnAMakerMetadata[],
-            timeout = 100000
+            timeout = 100000,
+            rankerType = RankerTypes.default
         } = options;
 
         this._options = {
@@ -94,7 +96,8 @@ export class QnAMaker implements QnAMakerTelemetryClient {
             top,
             strictFilters,
             metadataBoost,
-            timeout
+            timeout,
+            rankerType
         } as QnAMakerOptions;
 
         this.generateAnswerUtils = new GenerateAnswerUtils(this._options, this.endpoint);
