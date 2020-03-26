@@ -24,6 +24,7 @@
     "botframework-schema": "4.1.6"
   },
   "devDependencies": {
+    "@microsoft/api-extractor": "~7.7.10",
     "@types/mocha": "^2.2.47",
     "@types/node": "^12.6.9",
     "mocha": "^5.2.0",
@@ -34,11 +35,13 @@
     "unzipper": "^0.10.9"
   },
   "scripts": {
-    "test": "tsc && nyc mocha tests/",
     "build": "tsc",
     "build-docs": "typedoc --theme markdown --entryPoint botbuilder --excludePrivate --includeDeclarations --ignoreCompilerErrors --module amd --out ..\\..\\doc\\botbuilder .\\lib\\index.d.ts ..\\botbuilder-core\\lib\\index.d.ts ..\\botframework-schema\\lib\\index.d.ts --hideGenerator --name \"Bot Builder SDK\" --readme none",
+    "build:rollup": "npm run clean && npm run build && api-extractor run --verbose --local",
     "clean": "erase /q /s .\\lib",
-    "set-version": "npm version --allow-same-version ${Version}"
+    "set-version": "npm version --allow-same-version ${Version}",
+    "test": "tsc && nyc mocha tests/",
+    "test:compat": "api-extractor run --verbose"
   },
   "files": [
     "/lib",
