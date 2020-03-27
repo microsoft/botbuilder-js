@@ -57,8 +57,13 @@ export class LuisRecognizerV3 extends LuisRecognizerInternal {
         const uri = this.buildUrl();
         const httpOptions = this.buildRequestBody(utterance);
 
-        const data = await fetch(uri, httpOptions)
+        const data = await fetch(uri, httpOptions);
         const response = await data.json();
+        if (response.error) {
+            const errObj = response.error;
+            const errMessage = errObj.code ? `${ errObj.code }: ${ errObj.message }` : errObj.message;
+            throw new Error(`[LUIS Recognition Error]: ${ errMessage }`);
+        }
         const result: RecognizerResult = {
             text: utterance,
             intents : getIntents(response.prediction),
