@@ -163,4 +163,16 @@ export class TemplateExtensions {
             return v.toString(16);
         });
     }
+
+    /**
+     * read line from text.
+     * @param input text content.
+     */
+    public static readLine(input: string): string[] {
+        if (!input) {
+            return [];
+        }
+
+        return input.replace(/\r\n/g, '\n').split('\n');
+    }
 }
