@@ -45,7 +45,7 @@ export class EditActions<O extends object = {}> extends Dialog<O> implements Dia
             return await dc.endDialog();
         }
 
-        if (dc instanceof ActionContext) {
+        if (dc.parent instanceof ActionContext) {
             const planActions = this.actions.map((action: Dialog): ActionState => {
                 return {
                     dialogStack: [],
@@ -59,7 +59,7 @@ export class EditActions<O extends object = {}> extends Dialog<O> implements Dia
                 actions: planActions
             };
 
-            dc.queueChanges(changes);
+            dc.parent.queueChanges(changes);
             return await dc.endDialog();
         } else {
             throw new Error(`EditActions should only be used in the context of an adaptive dialog.`);

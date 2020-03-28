@@ -15,7 +15,7 @@ export class ActionContext extends DialogContext {
     private readonly _changeKey: symbol;
 
     public constructor(dialogs: DialogSet, parentDialogContext: DialogContext, state: DialogState, actions: ActionState[], changeKey: symbol) {
-        super(dialogs, parentDialogContext.context, state);
+        super(dialogs, parentDialogContext, state);
         this.actions = actions;
         this._changeKey = changeKey;
     }
@@ -53,10 +53,14 @@ export class ActionContext extends DialogContext {
                         this.actions.push(...change.actions);
                         break;
                     case ActionChangeType.endSequence:
-                        this.actions = [];
+                        if (this.actions.length > 0) {
+                            this.actions.splice(0, this.actions.length);
+                        }
                         break;
                     case ActionChangeType.replaceSequence:
-                        this.actions = [];
+                        if (this.actions.length > 0) {
+                            this.actions.splice(0, this.actions.length);
+                        }
                         this.actions.push(...change.actions);
                         break;
                 }

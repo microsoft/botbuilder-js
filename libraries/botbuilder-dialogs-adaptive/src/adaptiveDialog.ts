@@ -20,8 +20,7 @@ import { LanguageGenerator } from './languageGenerator';
 import { ActionContext } from './actionContext';
 import { EntityEvents } from './entityEvents';
 import { AdaptiveEvents } from './adaptiveEvents';
-import { AdaptiveDialogState } from './actionDialogState';
-import { ActionState } from './actionState';
+import { AdaptiveDialogState } from './adaptiveDialogState';
 
 export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
     public static conditionTracker = 'dialog._tracker.conditions';
@@ -226,18 +225,18 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
         return Dialog.EndOfTurn;
     }
 
-    public async repromptDialog(context: TurnContext, instance: DialogInstance): Promise<void> {
-        this.onPushScopedServices(context);
+    public async repromptDialog(turnContext: TurnContext, instance: DialogInstance): Promise<void> {
         try {
+            this.onPushScopedServices(turnContext);
             // Forward to current sequence action
-            const actions = this.getActions(instance);
-            if (actions.length > 0) {
+            const state: AdaptiveDialogState = instance.state[this.adaptiveKey];
+            if (state && state.actions && state.actions.length > 0) {
                 // We need to mockup a DialogContext so that we can call repromptDialog() for the active action
-                const actionDC: DialogContext = new DialogContext(this.dialogs, context, actions[0]);
+                const actionDC: DialogContext = new DialogContext(this.dialogs, turnContext, state.actions[0]);
                 await actionDC.repromptDialog();
             }
         } finally {
-            this.onPopScopedServices(context);
+            this.onPopScopedServices(turnContext);
         }
     }
 
@@ -249,11 +248,7 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
         }
 
         if (state.actions && state.actions.length > 0) {
-            return new DialogContext(
-                this.dialogs,
-                dc.context,
-                state.actions[0]
-            );
+            return new DialogContext(this.dialogs, dc, state.actions[0]);
         }
         return undefined;
     }
@@ -596,14 +591,12 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
         }
 
         const dialogState: DialogState = { dialogStack: dc.stack };
-        const actionContext = new ActionContext(
-            dc.dialogs,
-            dc,
-            dialogState,
-            state.actions,
-            this.changeTurnKey
-        );
+        const actionContext = new ActionContext(dc.dialogs, dc, dialogState, state.actions, this.changeTurnKey);
         actionContext.parent = dc.parent;
+        // use configuration of dc's state
+        if (!actionContext.parent) {
+            actionContext.state.configuration = dc.state.configuration;
+        }
         return actionContext;
     }
 
@@ -669,18 +662,13 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
         let handled = await this.processEvent(actionContext, evt, true);
         if (!handled) {
             // If event wasn't handled, remove it from queues and keep going if things changed
-            if (EntityEvents.dequeueEvent(queues, evt.name as AdaptiveEvents)) {
+            if (EntityEvents.dequeueEvent(queues, evt.name)) {
                 EntityEvents.write(actionContext, queues);
                 handled = await this.processQueues(actionContext);
             }
         }
 
         return handled;
-    }
-
-    private getActions(instance: DialogInstance): ActionState[] {
-        const state: AdaptiveDialogState = instance.state[this.adaptiveKey];
-        return state && Array.isArray(state.actions) ? state.actions : [];
     }
 
     /**

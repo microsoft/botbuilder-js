@@ -55,19 +55,19 @@ export class DialogContext {
     /**
      * Gets the dialogs that can be called directly from this context.
      */
-    public readonly dialogs: DialogSet;
+    public dialogs: DialogSet;
 
     /**
      * Gets the context object for the turn.
      */
-    public readonly context: TurnContext;
+    public context: TurnContext;
 
     /**
      * Gets the current dialog stack.
      */
-    public readonly stack: DialogInstance[];
+    public stack: DialogInstance[];
 
-    public readonly state: DialogStateManager;
+    public state: DialogStateManager;
 
     /**
      * The parent dialog context for this dialog context, or `undefined` if this context doesn't have a parent.
@@ -77,7 +77,7 @@ export class DialogContext {
      * in its [dialogs](xref:botbuilder-dialogs.DialogContext.dialogs). If the dialog to start is not found
      * in this dialog context, it searches in its parent dialog context, and so on.
      */
-    public parent: DialogContext|undefined;
+    public parent: DialogContext | undefined;
 
     /**
       * Creates an new instance of the [DialogContext](xref:botbuilder-dialogs.DialogContext) class.
@@ -89,9 +89,10 @@ export class DialogContext {
       * @param state The state object to use to read and write dialog state to storage.
       * @param dialogContext The dialog context to clone.
       */
-     constructor(dialogContext: DialogContext);
-     constructor(dialogs: DialogSet, context: TurnContext, state: DialogState);
-     constructor(dialogsOrDC: DialogSet|DialogContext, context?: TurnContext, state?: DialogState) {
+    public constructor(dialogContext: DialogContext);
+    public constructor(dialogs: DialogSet, contextOrDC: TurnContext, state: DialogState);
+    public constructor(dialogs: DialogSet, contextOrDC: DialogContext, state: DialogState);
+    public constructor(dialogsOrDC: DialogSet | DialogContext, contextOrDC?: TurnContext | DialogContext, state?: DialogState) {
         if (dialogsOrDC instanceof DialogContext) {
             this.dialogs = dialogsOrDC.dialogs;
             this.context = dialogsOrDC.context;
@@ -100,8 +101,13 @@ export class DialogContext {
             this.parent = dialogsOrDC.parent;
         } else {
             if (!Array.isArray(state.dialogStack)) { state.dialogStack = []; }
+            if (contextOrDC instanceof DialogContext) {
+                this.context = contextOrDC.context;
+                this.parent = contextOrDC;
+            } else {
+                this.context = contextOrDC;
+            }
             this.dialogs = dialogsOrDC;
-            this.context = context;
             this.stack = state.dialogStack;
             this.state = new DialogStateManager(this);
         }
@@ -111,14 +117,14 @@ export class DialogContext {
      * Returns the state information for the dialog on the top of the dialog stack, or `undefined` if
      * the stack is empty.
      */
-    public get activeDialog(): DialogInstance|undefined {
+    public get activeDialog(): DialogInstance | undefined {
         return this.stack.length > 0 ? this.stack[this.stack.length - 1] : undefined;
     }
 
     /**
      * Returns dialog context for child if the active dialog is a container.
      */
-    public get child(): DialogContext|undefined {
+    public get child(): DialogContext | undefined {
         var instance = this.activeDialog;
         if (instance != undefined) {
             // Is active dialog a container?
@@ -247,7 +253,7 @@ export class DialogContext {
      * - [dialogs](xref:botbuilder-dialogs.DialogContext.dialogs)
      * - [parent](xref:botbuilder-dialogs.DialogContext.parent)
      */
-    public findDialog(dialogId: string): Dialog|undefined {
+    public findDialog(dialogId: string): Dialog | undefined {
         let dialog = this.dialogs.find(dialogId);
         if (!dialog && this.parent) {
             dialog = this.parent.findDialog(dialogId);
@@ -291,8 +297,7 @@ export class DialogContext {
             options = { ...promptOrOptions as PromptOptions };
         }
 
-        if (choices)
-        {
+        if (choices) {
             options.choices = choices;
         }
 
