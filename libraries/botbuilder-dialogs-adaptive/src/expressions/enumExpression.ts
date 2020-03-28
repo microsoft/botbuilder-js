@@ -18,4 +18,18 @@ export class EnumExpression<T> extends ExpressionProperty<T> {
     public constructor(value: T | string | Expression) {
         super(value);
     }
+
+    public setValue(value: T | string | Expression): void {
+        this.value = undefined;
+        this.expression = undefined;
+
+        if (typeof value == 'string' && !value.startsWith('=')) {
+            // Initialize value
+            this.value = value as T;
+            this.expression = undefined;
+            return;
+        }
+
+        super.setValue(value);
+    }
 }
