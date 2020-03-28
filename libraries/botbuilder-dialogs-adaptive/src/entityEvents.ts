@@ -76,7 +76,7 @@ export class EntityEvents {
      * @param eventName Event to remove.
      * @returns True if the specified event was found.
      */
-    static dequeueEvent(_this: EntityEvents, eventName: AdaptiveEvents): boolean {
+    static dequeueEvent(_this: EntityEvents, eventName: string): boolean {
         if (!Array.isArray(_this[eventName])) {
             return false
         }
