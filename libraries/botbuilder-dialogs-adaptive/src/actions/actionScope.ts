@@ -49,6 +49,7 @@ export class ActionScope<O extends object = {}> extends Dialog<O> implements Dia
     }
 
     public async continueDialog(dc: DialogContext): Promise<DialogTurnResult> {
+        // We're being continued after an interruption so just run next action
         return await this.onNextAction(dc);
     }
 
@@ -109,15 +110,19 @@ export class ActionScope<O extends object = {}> extends Dialog<O> implements Dia
             parent = root.parent;
         }
 
+        // Apply any changes
         if (hasChanges) {
+            // Recursively call continueDialog() to apply changes and continue execution.
             return await root.continueDialog();
         }
 
+        // Increment our offset into the actions and being the next action
         const nextOffset = dc.state.getValue(OFFSET_KEY, 0) + 1;
         if (nextOffset < this.actions.length) {
             return await this.beginAction(dc, nextOffset);
         }
 
+        // else we fire the end of actions
         return await this.onEndOfActions(dc, result);
     }
 
