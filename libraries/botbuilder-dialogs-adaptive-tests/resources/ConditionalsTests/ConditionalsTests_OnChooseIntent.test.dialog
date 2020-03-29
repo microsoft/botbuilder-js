@@ -56,6 +56,29 @@
                 "$kind": "Microsoft.OnChooseIntent",
                 "intents": [
                     "x",
+                    "y",
+                    "z"
+                ],
+                "actions": [
+                    {
+                        "$kind": "Microsoft.SendActivity",
+                        "activity": "ChooseIntent:x,y,z"
+                    },
+                    {
+                        "$kind": "Microsoft.EmitEvent",
+                        "eventName": "recognizedIntent",
+                        "eventValue": "=turn.dialogEvent.value.candidates[1].result"
+                    },
+                    {
+                        "$kind": "Microsoft.SendActivity",
+                        "activity": "emit done"
+                    }
+                ]
+            },
+            {
+                "$kind": "Microsoft.OnChooseIntent",
+                "intents": [
+                    "x",
                     "y"
                 ],
                 "actions": [
@@ -75,29 +98,6 @@
                     {
                         "$kind": "Microsoft.SendActivity",
                         "activity": "ChooseIntent:x,z"
-                    }
-                ]
-            },
-            {
-                "$kind": "Microsoft.OnChooseIntent",
-                "intents": [
-                    "x",
-                    "y",
-                    "z"
-                ],
-                "actions": [
-                    {
-                        "$kind": "Microsoft.SendActivity",
-                        "activity": "ChooseIntent:x,y,z"
-                    },
-                    {
-                        "$kind": "Microsoft.EmitEvent",
-                        "eventName": "recognizedIntent",
-                        "eventValue": "=turn.dialogEvent.value.candidates[1].result"
-                    },
-                    {
-                        "$kind": "Microsoft.SendActivity",
-                        "activity": "emit done"
                     }
                 ]
             },

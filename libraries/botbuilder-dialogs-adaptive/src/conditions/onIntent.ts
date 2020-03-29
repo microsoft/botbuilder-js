@@ -48,7 +48,7 @@ export class OnIntent extends OnDialogEvent {
         }
 
         const trimmedIntent = this.intent.startsWith('#') ? this.intent.substring(1) : this.intent;
-        let intentExpression = parser.parse(`${ TurnPath.recognized }.intent == '${ trimmedIntent }'`)
+        let intentExpression = parser.parse(`${ TurnPath.recognized }.intent == '${ trimmedIntent }'`);
 
         if (this.entities.length > 0) {
             intentExpression = Expression.makeExpression(ExpressionType.And,
