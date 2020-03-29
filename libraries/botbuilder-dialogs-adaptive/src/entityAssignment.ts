@@ -58,8 +58,8 @@ export class EntityAssignment {
      * Print an assignment as a string.
      * @param _this Source assignment.
      */
-    static toString(_this: Partial<EntityAssignment>): string {
-        return `${_this.isExpected ? "+" : ''}${_this.property} = ${_this.operation}(${EntityInfo.toString(_this.entity)})`;
+    public static toString(_this: Partial<EntityAssignment>): string {
+        return `${ _this.isExpected ? '+' : '' }${ _this.property } = ${ _this.operation }(${ EntityInfo.toString(_this.entity) })`;
     }
 
     /**
@@ -69,7 +69,7 @@ export class EntityAssignment {
      * @param expected Current expected properties.
      * @param dialogSchema Dialog schema.
      */
-    static findCandidates(entities: NormalizedEntityInfos, expected: string[], dialogSchema: SchemaHelper): Partial<EntityAssignment>[] {
+    public static findCandidates(entities: NormalizedEntityInfos, expected: string[], dialogSchema: SchemaHelper): Partial<EntityAssignment>[] {
         const candidates: Partial<EntityAssignment>[] = [];
         const globalExpectedOnly: string[] = dialogSchema.schema['$expectedOnly'] || [];
         dialogSchema.property.children.forEach((propSchema) => {
@@ -93,14 +93,14 @@ export class EntityAssignment {
 
         return candidates;
     }
- 
+
     /**
      * @private
      * Have each property pick which overlapping entity is the best one
      * @param candidates Candidate assignments to filter.
      * @param dialogSchema Dialog schema.
      */
-    static removeOverlappingPerProperty(candidates: Partial<EntityAssignment>[], dialogSchema: SchemaHelper): Partial<EntityAssignment>[] {
+    public static removeOverlappingPerProperty(candidates: Partial<EntityAssignment>[], dialogSchema: SchemaHelper): Partial<EntityAssignment>[] {
         // Group mappings by property
         const perProperty = candidates.reduce<{ [path: string]: Partial<EntityAssignment>[] }>((accumulator, assignment) => {
             if (accumulator.hasOwnProperty(assignment.property)) {

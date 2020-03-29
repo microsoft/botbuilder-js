@@ -21,6 +21,7 @@ import { ActionContext } from './actionContext';
 import { EntityEvents } from './entityEvents';
 import { AdaptiveEvents } from './adaptiveEvents';
 import { AdaptiveDialogState } from './adaptiveDialogState';
+import { EntityInfo } from './entityInfo';
 
 export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
     public static conditionTracker = 'dialog._tracker.conditions';
@@ -679,36 +680,57 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
      * Merge new queues into existing queues of ambiguity events
     */
     private processEntities(actionContext: ActionContext, activity: Activity): void {
-        /*
-        const dcState = sequence.state;
-
-        if (this.dialogSchema)
-        {
-            if (dcState.TryGetValue<string>(DialogPath.LastEvent, out var lastEvent))
-            {
-                dcState.RemoveValue(DialogPath.LastEvent);
+        if (this.dialogSchema) {
+            const lastEvent = actionContext.state.getValue(DialogPath.lastEvent);
+            if (lastEvent) {
+                actionContext.state.deleteValue(DialogPath.lastEvent);
             }
 
-            var queues = EntityEvents.Read(context);
-            var entities = NormalizeEntities(context);
-            var utterance = context.Context.Activity?.AsMessageActivity()?.Text;
-            if (!dcState.TryGetValue<string[]>(DialogPath.ExpectedProperties, out var expected))
-            {
-                expected = new string[0];
-            }
+            const queues = EntityEvents.read(actionContext);
+            const entities = EntityInfo.normalizeEntities(actionContext);
+            const utterance = activity.type == ActivityTypes.Message ? activity.text : '';
+            const expected: string[] = actionContext.state.getValue(DialogPath.expectedProperties, []);
 
             // Utterance is a special entity that corresponds to the full utterance
-            entities["utterance"] = new List<EntityInfo> { new EntityInfo { Priority = int.MaxValue, Coverage = 1.0, Start = 0, End = utterance.Length, Name = "utterance", Score = 0.0, Type = "string", Value = utterance, Text = utterance } };
-            var recognized = AssignEntities(context, entities, expected, queues, lastEvent);
-            var unrecognized = SplitUtterance(utterance, recognized);
+            entities['utterance'] = [Object.assign(new EntityInfo(), {
+                priority: Number.MAX_SAFE_INTEGER,
+                coverage: 1,
+                start: 0,
+                end: utterance.length,
+                name: 'utterance',
+                score: 0,
+                type: 'string',
+                value: utterance,
+                text: utterance
+            })];
+            const recognized = EntityEvents.assignEntities(queues, actionContext, entities, expected, lastEvent, this.dialogSchema);
+            const unrecognized = this.splitUtterance(utterance, recognized);
 
             // TODO: Is this actually useful information?
-            dcState.SetValue(TurnPath.UNRECOGNIZEDTEXT, unrecognized);
-            dcState.SetValue(TurnPath.RECOGNIZEDENTITIES, recognized);
-            var turn = dcState.GetValue<uint>(DialogPath.EventCounter);
-            CombineOldEntityToProperties(queues, turn);
-            queues.Write(context);
+            actionContext.state.setValue(TurnPath.unrecognizedText, unrecognized);
+            actionContext.state.setValue(TurnPath.recognizedEntities, recognized);
+            const turn = actionContext.state.getValue(DialogPath.eventCounter);
+            EntityEvents.combineOldEntityToProperties(queues, turn, this.dialogSchema);
+            EntityEvents.write(actionContext, queues);
         }
-        */
+    }
+
+    private splitUtterance(utterance: string, recognized: Partial<EntityInfo>[]): string[] {
+        const unrecognized = [];
+        var current = 0;
+        for (let i = 0; i < recognized.length; i++){
+            const entity = recognized[i];
+            if (entity.start > current) {
+                unrecognized.push(utterance.substr(current, entity.start - current).trim());
+            }
+
+            current = entity.end;
+        }
+
+        if (current < utterance.length) {
+            unrecognized.push(utterance.substr(current));
+        }
+
+        return unrecognized;
     }
 }

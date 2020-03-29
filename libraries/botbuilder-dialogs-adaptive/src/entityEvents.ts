@@ -39,7 +39,7 @@ export class EntityEvents {
     /**
      * Creates a new `EntityEvents` instance.
      */
-    static create(): EntityEvents {
+    public static create(): EntityEvents {
         return {
             assignEntities: [],
             chooseEntities: [],
@@ -52,7 +52,7 @@ export class EntityEvents {
      * Read event queues from memory. 
      * @param dc Context for current turn of conversation.
      */
-    static read(dc: DialogContext): EntityEvents {
+    public static read(dc: DialogContext): EntityEvents {
         let events = dc.state.getValue(EVENT_QUEUES);
         if (!events) {
             events = EntityEvents.create();
@@ -66,7 +66,7 @@ export class EntityEvents {
      * @param dc Context for current turn of conversation.
      * @param events Event queues to save.
      */
-    static write(dc: DialogContext, events: EntityEvents): void {
+    public static write(dc: DialogContext, events: EntityEvents): void {
         dc.state.setValue(EVENT_QUEUES, events);
     }
 
@@ -76,9 +76,9 @@ export class EntityEvents {
      * @param eventName Event to remove.
      * @returns True if the specified event was found.
      */
-    static dequeueEvent(_this: EntityEvents, eventName: string): boolean {
+    public static dequeueEvent(_this: EntityEvents, eventName: string): boolean {
         if (!Array.isArray(_this[eventName])) {
-            return false
+            return false;
         }
 
         // Remove first item from queue
@@ -94,7 +94,7 @@ export class EntityEvents {
      * @param _this Source event queues. 
      * @param mapping Mapping to queue.
      */
-    static addMappingToQueue(_this: EntityEvents, mapping: Partial<EntityAssignment>): void {
+    public static addMappingToQueue(_this: EntityEvents, mapping: Partial<EntityAssignment>): void {
         // TODO: Should this normalization be moved to normalizeEntities() ?
         if (Array.isArray(mapping.entity.value)) {
             if (mapping.entity.value.length > 1) {
@@ -118,7 +118,7 @@ export class EntityEvents {
      * @param lastEvent The last event that was processed.
      * @param dialogSchema Dialog schema.
      */
-    static addToQueues(_this: EntityEvents, dc: DialogContext, entities: NormalizedEntityInfos, expected: string[], lastEvent: string, dialogSchema: SchemaHelper): Partial<EntityInfo>[] {
+    public static addToQueues(_this: EntityEvents, dc: DialogContext, entities: NormalizedEntityInfos, expected: string[], lastEvent: string, dialogSchema: SchemaHelper): Partial<EntityInfo>[] {
         // Find a filtered and sorted list of candidates
         // - All candidates with isExpected == true will be first.
         let candidates = EntityAssignment.findCandidates(entities, expected, dialogSchema);
@@ -196,7 +196,7 @@ export class EntityEvents {
      * Create a set of queues for each property.
      * @param _this Source event queues. 
      */
-    static createPerPropertyQueues(_this: EntityEvents): { [path: string]: EntityEvents } {
+    public static createPerPropertyQueues(_this: EntityEvents): { [path: string]: EntityEvents } {
         const propertyToQueues: { [path: string]: EntityEvents } = {};
 
         function propertyQueues(path: string): EntityEvents {
@@ -233,7 +233,7 @@ export class EntityEvents {
      * @param _this Source event queues. 
      * @param dialogSchema Dialog schema.
      */
-    static combineNewEntityProperties(_this: EntityEvents, dialogSchema: SchemaHelper): void {
+    public static combineNewEntityProperties(_this: EntityEvents, dialogSchema: SchemaHelper): void {
         const propertyToQueues = EntityEvents.createPerPropertyQueues(_this);
         for (const path in propertyToQueues) {
             const property = dialogSchema.pathToSchema(path);
@@ -278,7 +278,7 @@ export class EntityEvents {
      * @param eventCounter Current turn number.
      * @param dialogSchema Dialog schema.
      */
-    static combineOldEntityToProperties(_this: EntityEvents, eventCounter: number, dialogSchema: SchemaHelper): void {
+    public static combineOldEntityToProperties(_this: EntityEvents, eventCounter: number, dialogSchema: SchemaHelper): void {
         const propertyToQueues = EntityEvents.createPerPropertyQueues(_this);
         for (const path in propertyToQueues) {
             const property = dialogSchema.pathToSchema(path);
@@ -309,7 +309,7 @@ export class EntityEvents {
      * @param lastEvent The last event that was processed.
      * @param dialogSchema Dialog schema.
      */
-    static assignEntities(_this: EntityEvents, dc: DialogContext, entities: NormalizedEntityInfos, expected: string[], lastEvent: string, dialogSchema: SchemaHelper): Partial<EntityInfo>[] {
+    public static assignEntities(_this: EntityEvents, dc: DialogContext, entities: NormalizedEntityInfos, expected: string[], lastEvent: string, dialogSchema: SchemaHelper): Partial<EntityInfo>[] {
         const recognized = EntityEvents.addToQueues(_this, dc, entities, expected, lastEvent, dialogSchema);
         EntityEvents.combineNewEntityProperties(_this, dialogSchema);
 

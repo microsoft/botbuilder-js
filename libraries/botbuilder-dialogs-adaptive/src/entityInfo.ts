@@ -5,7 +5,8 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { RecognizerResult } from 'botbuilder-core';
+import { TurnPath, DialogPath } from 'botbuilder-dialogs';
+import { ActionContext } from './actionContext';
 
 export interface EntityInfo {
     /**
@@ -68,7 +69,7 @@ export interface EntityInfo {
  * @private
  */
 export interface NormalizedEntityInfos {
-    [name: string]: Partial<EntityInfo>[]; 
+    [name: string]: Partial<EntityInfo>[];
 }
 
 export class EntityInfo {
@@ -76,8 +77,8 @@ export class EntityInfo {
      * Print an entity as a string.
      * @param _this Source entity.
      */
-    static toString(_this: Partial<EntityInfo>): string {
-        return `${_this.name}:${_this.value} P${_this.priority} ${_this.score} ${_this.coverage}`;
+    public static toString(_this: Partial<EntityInfo>): string {
+        return `${ _this.name }:${ _this.value } P${ _this.priority } ${ _this.score } ${ _this.coverage }`;
     }
 
     /**
@@ -85,7 +86,7 @@ export class EntityInfo {
      * @param _this Source entity. 
      * @param entity Entity to compare.
      */
-    static overlaps(_this: Partial<EntityInfo>, entity: Partial<EntityInfo>): boolean {
+    public static overlaps(_this: Partial<EntityInfo>, entity: Partial<EntityInfo>): boolean {
         return _this.start <= entity.end && _this.end >= entity.start;
     }
 
@@ -94,7 +95,7 @@ export class EntityInfo {
      * @param _this Source entity. 
      * @param entity Entity to compare.
      */
-    static alternative(_this: Partial<EntityInfo>, entity: Partial<EntityInfo>): boolean {
+    public static alternative(_this: Partial<EntityInfo>, entity: Partial<EntityInfo>): boolean {
         return _this.start == entity.start && _this.end == entity.end;
     }
 
@@ -103,7 +104,7 @@ export class EntityInfo {
      * @param _this Source entity. 
      * @param entity Entity to compare.
      */
-    static covers(_this: Partial<EntityInfo>, entity: Partial<EntityInfo>): boolean {
+    public static covers(_this: Partial<EntityInfo>, entity: Partial<EntityInfo>): boolean {
         return _this.start <= entity.start && _this.end >= entity.end && _this.end - _this.start > entity.end - entity.start;
     }
 
@@ -119,10 +120,12 @@ export class EntityInfo {
      * @param recognized Recognizer results to normalize.
      * @param eventCounter Watermark for the current turn.
      */
-    static normalizeEntities(recognized: RecognizerResult, eventCounter: number): NormalizedEntityInfos {
+    public static normalizeEntities(actionContext: ActionContext): NormalizedEntityInfos {
         const entityToInfo: NormalizedEntityInfos = {};
+        const recognized = actionContext.state.getValue(TurnPath.recognized);
         const text = recognized.text;
         const entities: { [name: string]: any[] } = recognized.entities || {};
+        const turn = actionContext.state.getValue(DialogPath.eventCounter);
         const metaData = entities['$instance'] as object;
         for (const name in entities) {
             const values = entities[name];
@@ -131,7 +134,7 @@ export class EntityInfo {
                 for (var i = 0; i < values.length; ++i) {
                     const val = values[i];
                     const instance: any = instances ? instances[i] : {};
-                    
+
                     // Create info(s) array on first access
                     if (!entityToInfo.hasOwnProperty(name)) {
                         entityToInfo[name] = [];
@@ -139,7 +142,7 @@ export class EntityInfo {
 
                     // Initialize info object
                     const info: Partial<EntityInfo> = {
-                        whenRecognized: eventCounter,
+                        whenRecognized: turn,
                         name: name,
                         value: val,
                         start: instance['startIndex'] || 0,
@@ -202,7 +205,7 @@ export class EntityInfo {
      * @param _this Source entity. 
      * @param entities Normalized set of entities to modify.
      */
-    static removeOverlappingEntities(_this: EntityInfo, entities: NormalizedEntityInfos): void {
+    public static removeOverlappingEntities(_this: EntityInfo, entities: NormalizedEntityInfos): void {
         for (const name in entities) {
             const infos = entities[name];
             if (Array.isArray(infos)) {

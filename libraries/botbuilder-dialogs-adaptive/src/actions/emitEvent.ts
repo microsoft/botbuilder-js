@@ -43,13 +43,26 @@ export class EmitEvent<O extends object = {}> extends Dialog<O> {
             return await dc.endDialog();
         }
 
-        let handled = false;
-
+        let eventName: string;
+        if (this.eventName) {
+            eventName = this.eventName.getValue(dc.state);
+        }
+    
+        let eventValue: any;
         if (this.eventValue) {
-            const value = this.eventValue.getValue(dc.state);
-            handled = await dc.emitEvent(this.eventName.getValue(dc.state), value, this.bubbleEvent.getValue(dc.state), false);
+            eventValue = this.eventValue.getValue(dc.state);
+        }
+
+        let bubbleEvent = false;
+        if (this.bubbleEvent) {
+            bubbleEvent = this.bubbleEvent.getValue(dc.state);
+        }
+
+        let handled = false;
+        if (dc.parent) {
+            handled = await dc.parent.emitEvent(eventName, eventValue, bubbleEvent, false);
         } else {
-            handled = await dc.emitEvent(this.eventName.getValue(dc.state), this.eventValue, this.bubbleEvent.getValue(dc.state), false);
+            handled = await dc.emitEvent(eventName, eventValue, bubbleEvent, false);
         }
 
         return await dc.endDialog(handled);
