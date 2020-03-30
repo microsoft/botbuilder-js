@@ -7,7 +7,7 @@
  */
 import { ExpressionProperty } from './expressionProperty';
 import { Expression } from 'adaptive-expressions';
-import { LGFile } from 'botbuilder-lg';
+import { Templates } from 'botbuilder-lg';
 
 /**
  * Represents a property which is either a string value or a string expression.
@@ -23,7 +23,7 @@ import { LGFile } from 'botbuilder-lg';
  *     prop = "\=user" => "=user".
  */
 export class StringExpression extends ExpressionProperty<string> {
-    private readonly engine = new LGFile();
+    private readonly engine = new Templates();
 
     public constructor(value?: string | Expression) {
         super(value);
@@ -33,7 +33,7 @@ export class StringExpression extends ExpressionProperty<string> {
         if (typeof this.value == 'string') {
             let v: string, e: Error;
             try {
-                v = this.engine.evaluate(this.value, data);
+                v = this.engine.evaluateText(this.value, data);
             } catch (err) {
                 e = err;
             }

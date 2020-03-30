@@ -8,7 +8,7 @@
 
 import { LanguageGenerator } from '../languageGenerator';
 import { TurnContext } from 'botbuilder-core';
-import{ LGFile, LGParser } from 'botbuilder-lg';
+import { Templates } from 'botbuilder-lg';
 import { IResource } from 'botbuilder-dialogs-declarative';
 import { LanguageResourceLoader } from '../languageResourceLoader';
 import { LanguageGeneratorManager } from './languageGeneratorManager';
@@ -22,24 +22,22 @@ export class TemplateEngineLanguageGenerator implements LanguageGenerator{
     
     private readonly DEFAULTLABEL: string  = 'Unknown';
 
-    private readonly multiLangEngines: Map<string, LGFile> = new Map<string, LGFile>();
-
-    private lgFile: LGFile;
+    private lg: Templates;
 
     public id: string = '';
 
-    public constructor(arg1?: LGFile | string, arg2?: string | Map<string,IResource[]>, arg3?: Map<string,IResource[]>) {
+    public constructor(arg1?: Templates | string, arg2?: string | Map<string,IResource[]>, arg3?: Map<string,IResource[]>) {
         if (arguments.length === 0) {
-            this.lgFile = new LGFile();
-        } else if(arguments.length === 1 && arg1 instanceof LGFile) {
-            this.lgFile = arg1;
+            this.lg = new Templates();
+        } else if(arguments.length === 1 && arg1 instanceof Templates) {
+            this.lg = arg1;
         } else if (arguments.length === 2 && typeof arg1 === 'string' && arg2 instanceof Map) {
             const filePath = normalize(arg1 as string);
             const resourceMapping = arg2 as  Map<string,IResource[]>;
             this.id = basename(filePath);
             const {prefix: _, language: locale} = LanguageResourceLoader.parseLGFileName(this.id);
             const importResolver = LanguageGeneratorManager.resourceExplorerResolver(locale, resourceMapping);
-            this.lgFile = LGParser.parseFile(filePath, importResolver);
+            this.lg = Templates.parseFile(filePath, importResolver);
         } else if (arguments.length === 3 && typeof arg1 === 'string' && typeof arg2 === 'string' && arg3 instanceof Map) {
             const id = arg2 as string;
             this.id = id !== undefined? id : this.DEFAULTLABEL;
@@ -47,13 +45,13 @@ export class TemplateEngineLanguageGenerator implements LanguageGenerator{
             const resourceMapping = arg3 as  Map<string,IResource[]>;
             const importResolver = LanguageGeneratorManager.resourceExplorerResolver(locale, resourceMapping);
             const lgText = arg1? arg1 : '';
-            this.lgFile = LGParser.parseText(lgText, id, importResolver);
+            this.lg = Templates.parseText(lgText, id, importResolver);
         }
     }
     
     public generate(turnContext: TurnContext, template: string, data: object): Promise<string> {
         try {
-            return Promise.resolve(this.lgFile.evaluate(template, data).toString());
+            return Promise.resolve(this.lg.evaluateText(template, data).toString());
         } catch(e) {
             if (this.id !== undefined && this.id === '') {
                 throw Error(`${ this.id }:${ e }`);
