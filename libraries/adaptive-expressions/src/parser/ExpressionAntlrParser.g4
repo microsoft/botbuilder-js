@@ -24,7 +24,7 @@ primaryExpression
     | NUMBER                                                                                 #numericAtom
     | STRING                                                                                 #stringAtom
     | IDENTIFIER                                                                             #idAtom
-    | stringInterpolation                                                                   #stringInterpolationAtom
+    | stringInterpolation                                                                    #stringInterpolationAtom
     | primaryExpression DOT IDENTIFIER                                                       #memberAccessExp
     | primaryExpression NON? OPEN_BRACKET argsList? CLOSE_BRACKET                            #funcInvokeExp
     | primaryExpression OPEN_SQUARE_BRACKET expression CLOSE_SQUARE_BRACKET                  #indexAccessExp
