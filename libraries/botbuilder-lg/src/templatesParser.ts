@@ -47,7 +47,7 @@ export class TemplatesParser {
         const fullPath = TemplateExtensions.normalizePath(filePath);
         const content = fs.readFileSync(fullPath, 'utf-8');
 
-        return TemplatesParser.parseText(content, fullPath, importResolver, expressionParser);
+        return TemplatesParser.innerParseText(content, fullPath, importResolver, expressionParser);
     }
 
     /**
@@ -59,36 +59,7 @@ export class TemplatesParser {
      * @returns entity.
      */
     public static parseText(content: string, id: string = '', importResolver?: ImportResolverDelegate, expressionParser?: ExpressionParser): Templates {
-        importResolver = importResolver || TemplatesParser.defaultFileResolver;
-        let templates = new Templates();
-        templates.content = content;
-        templates.id = id;
-        templates.importResolver = importResolver;
-        if (expressionParser) {
-            templates.expressionParser = expressionParser;
-        }
-        let diagnostics: Diagnostic[] = [];
-        try {
-            const parsedResult = TemplatesParser.antlrParse(content, id);
-            parsedResult.templates.forEach(t => templates.push(t));
-            templates.imports = parsedResult.imports;
-            templates.options = parsedResult.options;
-
-            diagnostics = diagnostics.concat(parsedResult.invalidTemplateErrors);
-            templates.references = this.getReferences(templates, importResolver);
-            const semanticErrors = new StaticChecker(templates, templates.expressionParser).check();
-            diagnostics = diagnostics.concat(semanticErrors);
-        } catch (err) {
-            if (err instanceof TemplateException) {
-                diagnostics = diagnostics.concat(err.getDiagnostic());
-            } else {
-                diagnostics.push(this.buildDiagnostic(err.Message, undefined, id));
-            }
-        }
-
-        templates.diagnostics = diagnostics;
-
-        return templates;
+        return TemplatesParser.innerParseText(content, id, importResolver, expressionParser);
     }
 
     /**
@@ -118,7 +89,7 @@ export class TemplatesParser {
             newTemplates.options = options;
             diagnostics = diagnostics.concat(invalidTemplateErrors);
 
-            newTemplates.references = this.getReferences(newTemplates, newTemplates.importResolver)
+            newTemplates.references = this.getReferences(newTemplates)
                 .concat(originalTemplates.references)
                 .concat([originalTemplates]);
 
@@ -152,6 +123,58 @@ export class TemplatesParser {
         return { content, id: importPath };
     }
 
+    /**
+     * Parser to turn lg content into a Templates.
+     * @param content text content contains lg templates.
+     * @param id id is the identifier of content. If importResolver is undefined, id must be a full path string. 
+     * @param importResolver resolver to resolve LG import id to template text.
+     * @param expressionParser Expression parser for evaluating expressions.
+     * @param cachedTemplates give the file path and templates to avoid parsing and to improve performance.
+     * @returns entity.
+     */
+    public static innerParseText(content: string,
+        id: string = '',
+        importResolver?: ImportResolverDelegate,
+        expressionParser?: ExpressionParser,
+        cachedTemplates?: Map<string, Templates>): Templates {
+        cachedTemplates = cachedTemplates || new Map<string, Templates>();
+
+        if (cachedTemplates.has(id)) {
+            return cachedTemplates.get(id);
+        }
+
+        importResolver = importResolver || TemplatesParser.defaultFileResolver;
+        let templates = new Templates();
+        templates.content = content;
+        templates.id = id;
+        templates.importResolver = importResolver;
+        if (expressionParser) {
+            templates.expressionParser = expressionParser;
+        }
+        let diagnostics: Diagnostic[] = [];
+        try {
+            const parsedResult = TemplatesParser.antlrParse(content, id);
+            parsedResult.templates.forEach(t => templates.push(t));
+            templates.imports = parsedResult.imports;
+            templates.options = parsedResult.options;
+
+            diagnostics = diagnostics.concat(parsedResult.invalidTemplateErrors);
+            templates.references = this.getReferences(templates, cachedTemplates);
+            const semanticErrors = new StaticChecker(templates).check();
+            diagnostics = diagnostics.concat(semanticErrors);
+        } catch (err) {
+            if (err instanceof TemplateException) {
+                diagnostics = diagnostics.concat(err.getDiagnostic());
+            } else {
+                diagnostics.push(this.buildDiagnostic(err.Message, undefined, id));
+            }
+        }
+
+        templates.diagnostics = diagnostics;
+
+        return templates;
+    }
+
     private static antlrParse(text: string, id: string = ''): { templates: Template[]; imports: TemplateImport[]; invalidTemplateErrors: Diagnostic[]; options: string[]} {
         const fileContext: FileContext = this.getFileContentContext(text, id);
         const templates: Template[] = this.extractLGTemplates(fileContext, text, id);
@@ -161,27 +184,34 @@ export class TemplatesParser {
         return { templates, imports, invalidTemplateErrors, options};
     }
 
-    private static getReferences(file: Templates, importResolver: ImportResolverDelegate): Templates[] {
+    private static getReferences(file: Templates, cachedTemplates?: Map<string, Templates>): Templates[] {
         var resourcesFound = new Set<Templates>();
-        this.resolveImportResources(file, resourcesFound, importResolver);
+        this.resolveImportResources(file, resourcesFound, cachedTemplates || new Map<string, Templates>());
 
         resourcesFound.delete(file);
         return Array.from(resourcesFound);
     }
 
-    private static resolveImportResources(start: Templates, resourcesFound: Set<Templates>, importResolver: ImportResolverDelegate): void {
+    private static resolveImportResources(start: Templates, resourcesFound: Set<Templates>, cachedTemplates?: Map<string, Templates>): void {
         var resourceIds = start.imports.map((lg: TemplateImport): string => lg.id);
         resourcesFound.add(start);
 
         for (const id of resourceIds) {
             try {
-                const result = importResolver(start.id, id);
+                const result = start.importResolver(start.id, id);
                 const content = result.content;
                 const path = result.id;
                 const notExist = Array.from(resourcesFound).filter((u): boolean => u.id === path).length === 0;
                 if (notExist) {
-                    var childResource = TemplatesParser.parseText(content, path, importResolver, start.expressionParser);
-                    this.resolveImportResources(childResource, resourcesFound, importResolver);
+                    let childResource: Templates;
+                    if (cachedTemplates.has(path)) {
+                        childResource = cachedTemplates.get(path);
+                    } else {
+                        childResource = TemplatesParser.innerParseText(content, path, start.importResolver, start.expressionParser, cachedTemplates);
+                        cachedTemplates.set(path, childResource);
+                    }
+
+                    this.resolveImportResources(childResource, resourcesFound, cachedTemplates);
                 }
             }
             catch (err) {

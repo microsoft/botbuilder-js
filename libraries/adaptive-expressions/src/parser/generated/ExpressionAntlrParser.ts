@@ -28,65 +28,73 @@ import { ExpressionAntlrParserVisitor } from "./ExpressionAntlrParserVisitor";
 
 
 export class ExpressionAntlrParser extends Parser {
-	public static readonly PLUS = 1;
-	public static readonly SUBSTRACT = 2;
-	public static readonly NON = 3;
-	public static readonly XOR = 4;
-	public static readonly ASTERISK = 5;
-	public static readonly SLASH = 6;
-	public static readonly PERCENT = 7;
-	public static readonly DOUBLE_EQUAL = 8;
-	public static readonly NOT_EQUAL = 9;
-	public static readonly SINGLE_AND = 10;
-	public static readonly DOUBLE_AND = 11;
-	public static readonly DOUBLE_VERTICAL_CYLINDER = 12;
-	public static readonly LESS_THAN = 13;
-	public static readonly MORE_THAN = 14;
-	public static readonly LESS_OR_EQUAl = 15;
-	public static readonly MORE_OR_EQUAL = 16;
-	public static readonly OPEN_BRACKET = 17;
-	public static readonly CLOSE_BRACKET = 18;
-	public static readonly DOT = 19;
-	public static readonly OPEN_SQUARE_BRACKET = 20;
-	public static readonly CLOSE_SQUARE_BRACKET = 21;
-	public static readonly OPEN_CURLY_BRACKET = 22;
-	public static readonly CLOSE_CURLY_BRACKET = 23;
-	public static readonly COMMA = 24;
-	public static readonly COLON = 25;
-	public static readonly DOLLAR = 26;
-	public static readonly NUMBER = 27;
-	public static readonly WHITESPACE = 28;
-	public static readonly IDENTIFIER = 29;
-	public static readonly NEWLINE = 30;
-	public static readonly STRING = 31;
-	public static readonly INVALID_TOKEN_DEFAULT_MODE = 32;
-	public static readonly STRING_INTERPOLATION = 33;
+	public static readonly STRING_INTERPOLATION_START = 1;
+	public static readonly PLUS = 2;
+	public static readonly SUBSTRACT = 3;
+	public static readonly NON = 4;
+	public static readonly XOR = 5;
+	public static readonly ASTERISK = 6;
+	public static readonly SLASH = 7;
+	public static readonly PERCENT = 8;
+	public static readonly DOUBLE_EQUAL = 9;
+	public static readonly NOT_EQUAL = 10;
+	public static readonly SINGLE_AND = 11;
+	public static readonly DOUBLE_AND = 12;
+	public static readonly DOUBLE_VERTICAL_CYLINDER = 13;
+	public static readonly LESS_THAN = 14;
+	public static readonly MORE_THAN = 15;
+	public static readonly LESS_OR_EQUAl = 16;
+	public static readonly MORE_OR_EQUAL = 17;
+	public static readonly OPEN_BRACKET = 18;
+	public static readonly CLOSE_BRACKET = 19;
+	public static readonly DOT = 20;
+	public static readonly OPEN_SQUARE_BRACKET = 21;
+	public static readonly CLOSE_SQUARE_BRACKET = 22;
+	public static readonly OPEN_CURLY_BRACKET = 23;
+	public static readonly CLOSE_CURLY_BRACKET = 24;
+	public static readonly COMMA = 25;
+	public static readonly COLON = 26;
+	public static readonly DOLLAR = 27;
+	public static readonly NUMBER = 28;
+	public static readonly WHITESPACE = 29;
+	public static readonly IDENTIFIER = 30;
+	public static readonly NEWLINE = 31;
+	public static readonly STRING = 32;
+	public static readonly INVALID_TOKEN_DEFAULT_MODE = 33;
+	public static readonly EMPTY_OBJECT = 34;
+	public static readonly OBJECT_DEFINITION = 35;
+	public static readonly TEMPLATE = 36;
+	public static readonly ESCAPE_CHARACTER = 37;
+	public static readonly TEXT_CONTENT = 38;
 	public static readonly RULE_file = 0;
 	public static readonly RULE_expression = 1;
 	public static readonly RULE_primaryExpression = 2;
-	public static readonly RULE_argsList = 3;
-	public static readonly RULE_keyValuePairList = 4;
-	public static readonly RULE_keyValuePair = 5;
-	public static readonly RULE_key = 6;
+	public static readonly RULE_stringInterpolation = 3;
+	public static readonly RULE_textContent = 4;
+	public static readonly RULE_argsList = 5;
+	public static readonly RULE_keyValuePairList = 6;
+	public static readonly RULE_keyValuePair = 7;
+	public static readonly RULE_key = 8;
 	// tslint:disable:no-trailing-whitespace
 	public static readonly ruleNames: string[] = [
-		"file", "expression", "primaryExpression", "argsList", "keyValuePairList", 
-		"keyValuePair", "key",
+		"file", "expression", "primaryExpression", "stringInterpolation", "textContent", 
+		"argsList", "keyValuePairList", "keyValuePair", "key",
 	];
 
 	private static readonly _LITERAL_NAMES: Array<string | undefined> = [
-		undefined, "'+'", "'-'", "'!'", "'^'", "'*'", "'/'", "'%'", "'=='", undefined, 
-		"'&'", "'&&'", "'||'", "'<'", "'>'", "'<='", "'>='", "'('", "')'", "'.'", 
-		"'['", "']'", "'{'", "'}'", "','", "':'", "'$'",
+		undefined, undefined, "'+'", "'-'", "'!'", "'^'", "'*'", "'/'", "'%'", 
+		"'=='", undefined, "'&'", "'&&'", "'||'", "'<'", "'>'", "'<='", "'>='", 
+		"'('", "')'", "'.'", "'['", "']'", "'{'", "'}'", "','", "':'", "'$'",
 	];
 	private static readonly _SYMBOLIC_NAMES: Array<string | undefined> = [
-		undefined, "PLUS", "SUBSTRACT", "NON", "XOR", "ASTERISK", "SLASH", "PERCENT", 
-		"DOUBLE_EQUAL", "NOT_EQUAL", "SINGLE_AND", "DOUBLE_AND", "DOUBLE_VERTICAL_CYLINDER", 
-		"LESS_THAN", "MORE_THAN", "LESS_OR_EQUAl", "MORE_OR_EQUAL", "OPEN_BRACKET", 
-		"CLOSE_BRACKET", "DOT", "OPEN_SQUARE_BRACKET", "CLOSE_SQUARE_BRACKET", 
-		"OPEN_CURLY_BRACKET", "CLOSE_CURLY_BRACKET", "COMMA", "COLON", "DOLLAR", 
-		"NUMBER", "WHITESPACE", "IDENTIFIER", "NEWLINE", "STRING", "INVALID_TOKEN_DEFAULT_MODE", 
-		"STRING_INTERPOLATION",
+		undefined, "STRING_INTERPOLATION_START", "PLUS", "SUBSTRACT", "NON", "XOR", 
+		"ASTERISK", "SLASH", "PERCENT", "DOUBLE_EQUAL", "NOT_EQUAL", "SINGLE_AND", 
+		"DOUBLE_AND", "DOUBLE_VERTICAL_CYLINDER", "LESS_THAN", "MORE_THAN", "LESS_OR_EQUAl", 
+		"MORE_OR_EQUAL", "OPEN_BRACKET", "CLOSE_BRACKET", "DOT", "OPEN_SQUARE_BRACKET", 
+		"CLOSE_SQUARE_BRACKET", "OPEN_CURLY_BRACKET", "CLOSE_CURLY_BRACKET", "COMMA", 
+		"COLON", "DOLLAR", "NUMBER", "WHITESPACE", "IDENTIFIER", "NEWLINE", "STRING", 
+		"INVALID_TOKEN_DEFAULT_MODE", "EMPTY_OBJECT", "OBJECT_DEFINITION", "TEMPLATE", 
+		"ESCAPE_CHARACTER", "TEXT_CONTENT",
 	];
 	public static readonly VOCABULARY: Vocabulary = new VocabularyImpl(ExpressionAntlrParser._LITERAL_NAMES, ExpressionAntlrParser._SYMBOLIC_NAMES, []);
 
@@ -117,9 +125,9 @@ export class ExpressionAntlrParser extends Parser {
 		try {
 			this.enterOuterAlt(_localctx, 1);
 			{
-			this.state = 14;
+			this.state = 18;
 			this.expression(0);
-			this.state = 15;
+			this.state = 19;
 			this.match(ExpressionAntlrParser.EOF);
 			}
 		}
@@ -157,7 +165,7 @@ export class ExpressionAntlrParser extends Parser {
 			let _alt: number;
 			this.enterOuterAlt(_localctx, 1);
 			{
-			this.state = 21;
+			this.state = 25;
 			this._errHandler.sync(this);
 			switch (this._input.LA(1)) {
 			case ExpressionAntlrParser.PLUS:
@@ -168,7 +176,7 @@ export class ExpressionAntlrParser extends Parser {
 				this._ctx = _localctx;
 				_prevctx = _localctx;
 
-				this.state = 18;
+				this.state = 22;
 				_la = this._input.LA(1);
 				if (!((((_la) & ~0x1F) === 0 && ((1 << _la) & ((1 << ExpressionAntlrParser.PLUS) | (1 << ExpressionAntlrParser.SUBSTRACT) | (1 << ExpressionAntlrParser.NON))) !== 0))) {
 				this._errHandler.recoverInline(this);
@@ -180,22 +188,22 @@ export class ExpressionAntlrParser extends Parser {
 					this._errHandler.reportMatch(this);
 					this.consume();
 				}
-				this.state = 19;
+				this.state = 23;
 				this.expression(10);
 				}
 				break;
+			case ExpressionAntlrParser.STRING_INTERPOLATION_START:
 			case ExpressionAntlrParser.OPEN_BRACKET:
 			case ExpressionAntlrParser.OPEN_SQUARE_BRACKET:
 			case ExpressionAntlrParser.OPEN_CURLY_BRACKET:
 			case ExpressionAntlrParser.NUMBER:
 			case ExpressionAntlrParser.IDENTIFIER:
 			case ExpressionAntlrParser.STRING:
-			case ExpressionAntlrParser.STRING_INTERPOLATION:
 				{
 				_localctx = new PrimaryExpContext(_localctx);
 				this._ctx = _localctx;
 				_prevctx = _localctx;
-				this.state = 20;
+				this.state = 24;
 				this.primaryExpression(0);
 				}
 				break;
@@ -203,7 +211,7 @@ export class ExpressionAntlrParser extends Parser {
 				throw new NoViableAltException(this);
 			}
 			this._ctx._stop = this._input.tryLT(-1);
-			this.state = 49;
+			this.state = 53;
 			this._errHandler.sync(this);
 			_alt = this.interpreter.adaptivePredict(this._input, 2, this._ctx);
 			while (_alt !== 2 && _alt !== ATN.INVALID_ALT_NUMBER) {
@@ -213,20 +221,20 @@ export class ExpressionAntlrParser extends Parser {
 					}
 					_prevctx = _localctx;
 					{
-					this.state = 47;
+					this.state = 51;
 					this._errHandler.sync(this);
 					switch ( this.interpreter.adaptivePredict(this._input, 1, this._ctx) ) {
 					case 1:
 						{
 						_localctx = new BinaryOpExpContext(new ExpressionContext(_parentctx, _parentState));
 						this.pushNewRecursionContext(_localctx, _startState, ExpressionAntlrParser.RULE_expression);
-						this.state = 23;
+						this.state = 27;
 						if (!(this.precpred(this._ctx, 9))) {
 							throw new FailedPredicateException(this, "this.precpred(this._ctx, 9)");
 						}
-						this.state = 24;
+						this.state = 28;
 						this.match(ExpressionAntlrParser.XOR);
-						this.state = 25;
+						this.state = 29;
 						this.expression(9);
 						}
 						break;
@@ -235,11 +243,11 @@ export class ExpressionAntlrParser extends Parser {
 						{
 						_localctx = new BinaryOpExpContext(new ExpressionContext(_parentctx, _parentState));
 						this.pushNewRecursionContext(_localctx, _startState, ExpressionAntlrParser.RULE_expression);
-						this.state = 26;
+						this.state = 30;
 						if (!(this.precpred(this._ctx, 8))) {
 							throw new FailedPredicateException(this, "this.precpred(this._ctx, 8)");
 						}
-						this.state = 27;
+						this.state = 31;
 						_la = this._input.LA(1);
 						if (!((((_la) & ~0x1F) === 0 && ((1 << _la) & ((1 << ExpressionAntlrParser.ASTERISK) | (1 << ExpressionAntlrParser.SLASH) | (1 << ExpressionAntlrParser.PERCENT))) !== 0))) {
 						this._errHandler.recoverInline(this);
@@ -251,7 +259,7 @@ export class ExpressionAntlrParser extends Parser {
 							this._errHandler.reportMatch(this);
 							this.consume();
 						}
-						this.state = 28;
+						this.state = 32;
 						this.expression(9);
 						}
 						break;
@@ -260,11 +268,11 @@ export class ExpressionAntlrParser extends Parser {
 						{
 						_localctx = new BinaryOpExpContext(new ExpressionContext(_parentctx, _parentState));
 						this.pushNewRecursionContext(_localctx, _startState, ExpressionAntlrParser.RULE_expression);
-						this.state = 29;
+						this.state = 33;
 						if (!(this.precpred(this._ctx, 7))) {
 							throw new FailedPredicateException(this, "this.precpred(this._ctx, 7)");
 						}
-						this.state = 30;
+						this.state = 34;
 						_la = this._input.LA(1);
 						if (!(_la === ExpressionAntlrParser.PLUS || _la === ExpressionAntlrParser.SUBSTRACT)) {
 						this._errHandler.recoverInline(this);
@@ -276,7 +284,7 @@ export class ExpressionAntlrParser extends Parser {
 							this._errHandler.reportMatch(this);
 							this.consume();
 						}
-						this.state = 31;
+						this.state = 35;
 						this.expression(8);
 						}
 						break;
@@ -285,11 +293,11 @@ export class ExpressionAntlrParser extends Parser {
 						{
 						_localctx = new BinaryOpExpContext(new ExpressionContext(_parentctx, _parentState));
 						this.pushNewRecursionContext(_localctx, _startState, ExpressionAntlrParser.RULE_expression);
-						this.state = 32;
+						this.state = 36;
 						if (!(this.precpred(this._ctx, 6))) {
 							throw new FailedPredicateException(this, "this.precpred(this._ctx, 6)");
 						}
-						this.state = 33;
+						this.state = 37;
 						_la = this._input.LA(1);
 						if (!(_la === ExpressionAntlrParser.DOUBLE_EQUAL || _la === ExpressionAntlrParser.NOT_EQUAL)) {
 						this._errHandler.recoverInline(this);
@@ -301,7 +309,7 @@ export class ExpressionAntlrParser extends Parser {
 							this._errHandler.reportMatch(this);
 							this.consume();
 						}
-						this.state = 34;
+						this.state = 38;
 						this.expression(7);
 						}
 						break;
@@ -310,15 +318,15 @@ export class ExpressionAntlrParser extends Parser {
 						{
 						_localctx = new BinaryOpExpContext(new ExpressionContext(_parentctx, _parentState));
 						this.pushNewRecursionContext(_localctx, _startState, ExpressionAntlrParser.RULE_expression);
-						this.state = 35;
+						this.state = 39;
 						if (!(this.precpred(this._ctx, 5))) {
 							throw new FailedPredicateException(this, "this.precpred(this._ctx, 5)");
 						}
 						{
-						this.state = 36;
+						this.state = 40;
 						this.match(ExpressionAntlrParser.SINGLE_AND);
 						}
-						this.state = 37;
+						this.state = 41;
 						this.expression(6);
 						}
 						break;
@@ -327,11 +335,11 @@ export class ExpressionAntlrParser extends Parser {
 						{
 						_localctx = new BinaryOpExpContext(new ExpressionContext(_parentctx, _parentState));
 						this.pushNewRecursionContext(_localctx, _startState, ExpressionAntlrParser.RULE_expression);
-						this.state = 38;
+						this.state = 42;
 						if (!(this.precpred(this._ctx, 4))) {
 							throw new FailedPredicateException(this, "this.precpred(this._ctx, 4)");
 						}
-						this.state = 39;
+						this.state = 43;
 						_la = this._input.LA(1);
 						if (!((((_la) & ~0x1F) === 0 && ((1 << _la) & ((1 << ExpressionAntlrParser.LESS_THAN) | (1 << ExpressionAntlrParser.MORE_THAN) | (1 << ExpressionAntlrParser.LESS_OR_EQUAl) | (1 << ExpressionAntlrParser.MORE_OR_EQUAL))) !== 0))) {
 						this._errHandler.recoverInline(this);
@@ -343,7 +351,7 @@ export class ExpressionAntlrParser extends Parser {
 							this._errHandler.reportMatch(this);
 							this.consume();
 						}
-						this.state = 40;
+						this.state = 44;
 						this.expression(5);
 						}
 						break;
@@ -352,13 +360,13 @@ export class ExpressionAntlrParser extends Parser {
 						{
 						_localctx = new BinaryOpExpContext(new ExpressionContext(_parentctx, _parentState));
 						this.pushNewRecursionContext(_localctx, _startState, ExpressionAntlrParser.RULE_expression);
-						this.state = 41;
+						this.state = 45;
 						if (!(this.precpred(this._ctx, 3))) {
 							throw new FailedPredicateException(this, "this.precpred(this._ctx, 3)");
 						}
-						this.state = 42;
+						this.state = 46;
 						this.match(ExpressionAntlrParser.DOUBLE_AND);
-						this.state = 43;
+						this.state = 47;
 						this.expression(4);
 						}
 						break;
@@ -367,20 +375,20 @@ export class ExpressionAntlrParser extends Parser {
 						{
 						_localctx = new BinaryOpExpContext(new ExpressionContext(_parentctx, _parentState));
 						this.pushNewRecursionContext(_localctx, _startState, ExpressionAntlrParser.RULE_expression);
-						this.state = 44;
+						this.state = 48;
 						if (!(this.precpred(this._ctx, 2))) {
 							throw new FailedPredicateException(this, "this.precpred(this._ctx, 2)");
 						}
-						this.state = 45;
+						this.state = 49;
 						this.match(ExpressionAntlrParser.DOUBLE_VERTICAL_CYLINDER);
-						this.state = 46;
+						this.state = 50;
 						this.expression(3);
 						}
 						break;
 					}
 					}
 				}
-				this.state = 51;
+				this.state = 55;
 				this._errHandler.sync(this);
 				_alt = this.interpreter.adaptivePredict(this._input, 2, this._ctx);
 			}
@@ -420,7 +428,7 @@ export class ExpressionAntlrParser extends Parser {
 			let _alt: number;
 			this.enterOuterAlt(_localctx, 1);
 			{
-			this.state = 72;
+			this.state = 76;
 			this._errHandler.sync(this);
 			switch (this._input.LA(1)) {
 			case ExpressionAntlrParser.OPEN_BRACKET:
@@ -429,11 +437,11 @@ export class ExpressionAntlrParser extends Parser {
 				this._ctx = _localctx;
 				_prevctx = _localctx;
 
-				this.state = 53;
+				this.state = 57;
 				this.match(ExpressionAntlrParser.OPEN_BRACKET);
-				this.state = 54;
+				this.state = 58;
 				this.expression(0);
-				this.state = 55;
+				this.state = 59;
 				this.match(ExpressionAntlrParser.CLOSE_BRACKET);
 				}
 				break;
@@ -442,19 +450,19 @@ export class ExpressionAntlrParser extends Parser {
 				_localctx = new ArrayCreationExpContext(_localctx);
 				this._ctx = _localctx;
 				_prevctx = _localctx;
-				this.state = 57;
+				this.state = 61;
 				this.match(ExpressionAntlrParser.OPEN_SQUARE_BRACKET);
-				this.state = 59;
+				this.state = 63;
 				this._errHandler.sync(this);
 				_la = this._input.LA(1);
-				if ((((_la) & ~0x1F) === 0 && ((1 << _la) & ((1 << ExpressionAntlrParser.PLUS) | (1 << ExpressionAntlrParser.SUBSTRACT) | (1 << ExpressionAntlrParser.NON) | (1 << ExpressionAntlrParser.OPEN_BRACKET) | (1 << ExpressionAntlrParser.OPEN_SQUARE_BRACKET) | (1 << ExpressionAntlrParser.OPEN_CURLY_BRACKET) | (1 << ExpressionAntlrParser.NUMBER) | (1 << ExpressionAntlrParser.IDENTIFIER) | (1 << ExpressionAntlrParser.STRING))) !== 0) || _la === ExpressionAntlrParser.STRING_INTERPOLATION) {
+				if (((((_la - 1)) & ~0x1F) === 0 && ((1 << (_la - 1)) & ((1 << (ExpressionAntlrParser.STRING_INTERPOLATION_START - 1)) | (1 << (ExpressionAntlrParser.PLUS - 1)) | (1 << (ExpressionAntlrParser.SUBSTRACT - 1)) | (1 << (ExpressionAntlrParser.NON - 1)) | (1 << (ExpressionAntlrParser.OPEN_BRACKET - 1)) | (1 << (ExpressionAntlrParser.OPEN_SQUARE_BRACKET - 1)) | (1 << (ExpressionAntlrParser.OPEN_CURLY_BRACKET - 1)) | (1 << (ExpressionAntlrParser.NUMBER - 1)) | (1 << (ExpressionAntlrParser.IDENTIFIER - 1)) | (1 << (ExpressionAntlrParser.STRING - 1)))) !== 0)) {
 					{
-					this.state = 58;
+					this.state = 62;
 					this.argsList();
 					}
 				}
 
-				this.state = 61;
+				this.state = 65;
 				this.match(ExpressionAntlrParser.CLOSE_SQUARE_BRACKET);
 				}
 				break;
@@ -463,26 +471,26 @@ export class ExpressionAntlrParser extends Parser {
 				_localctx = new JsonCreationExpContext(_localctx);
 				this._ctx = _localctx;
 				_prevctx = _localctx;
-				this.state = 62;
+				this.state = 66;
 				this.match(ExpressionAntlrParser.OPEN_CURLY_BRACKET);
-				this.state = 65;
+				this.state = 69;
 				this._errHandler.sync(this);
 				switch ( this.interpreter.adaptivePredict(this._input, 4, this._ctx) ) {
 				case 1:
 					{
-					this.state = 63;
+					this.state = 67;
 					this.keyValuePairList();
 					}
 					break;
 
 				case 2:
 					{
-					this.state = 64;
+					this.state = 68;
 					this.expression(0);
 					}
 					break;
 				}
-				this.state = 67;
+				this.state = 71;
 				this.match(ExpressionAntlrParser.CLOSE_CURLY_BRACKET);
 				}
 				break;
@@ -491,7 +499,7 @@ export class ExpressionAntlrParser extends Parser {
 				_localctx = new NumericAtomContext(_localctx);
 				this._ctx = _localctx;
 				_prevctx = _localctx;
-				this.state = 68;
+				this.state = 72;
 				this.match(ExpressionAntlrParser.NUMBER);
 				}
 				break;
@@ -500,7 +508,7 @@ export class ExpressionAntlrParser extends Parser {
 				_localctx = new StringAtomContext(_localctx);
 				this._ctx = _localctx;
 				_prevctx = _localctx;
-				this.state = 69;
+				this.state = 73;
 				this.match(ExpressionAntlrParser.STRING);
 				}
 				break;
@@ -509,24 +517,24 @@ export class ExpressionAntlrParser extends Parser {
 				_localctx = new IdAtomContext(_localctx);
 				this._ctx = _localctx;
 				_prevctx = _localctx;
-				this.state = 70;
+				this.state = 74;
 				this.match(ExpressionAntlrParser.IDENTIFIER);
 				}
 				break;
-			case ExpressionAntlrParser.STRING_INTERPOLATION:
+			case ExpressionAntlrParser.STRING_INTERPOLATION_START:
 				{
 				_localctx = new StringInterpolationAtomContext(_localctx);
 				this._ctx = _localctx;
 				_prevctx = _localctx;
-				this.state = 71;
-				this.match(ExpressionAntlrParser.STRING_INTERPOLATION);
+				this.state = 75;
+				this.stringInterpolation();
 				}
 				break;
 			default:
 				throw new NoViableAltException(this);
 			}
 			this._ctx._stop = this._input.tryLT(-1);
-			this.state = 93;
+			this.state = 97;
 			this._errHandler.sync(this);
 			_alt = this.interpreter.adaptivePredict(this._input, 9, this._ctx);
 			while (_alt !== 2 && _alt !== ATN.INVALID_ALT_NUMBER) {
@@ -536,20 +544,20 @@ export class ExpressionAntlrParser extends Parser {
 					}
 					_prevctx = _localctx;
 					{
-					this.state = 91;
+					this.state = 95;
 					this._errHandler.sync(this);
 					switch ( this.interpreter.adaptivePredict(this._input, 8, this._ctx) ) {
 					case 1:
 						{
 						_localctx = new MemberAccessExpContext(new PrimaryExpressionContext(_parentctx, _parentState));
 						this.pushNewRecursionContext(_localctx, _startState, ExpressionAntlrParser.RULE_primaryExpression);
-						this.state = 74;
+						this.state = 78;
 						if (!(this.precpred(this._ctx, 3))) {
 							throw new FailedPredicateException(this, "this.precpred(this._ctx, 3)");
 						}
-						this.state = 75;
+						this.state = 79;
 						this.match(ExpressionAntlrParser.DOT);
-						this.state = 76;
+						this.state = 80;
 						this.match(ExpressionAntlrParser.IDENTIFIER);
 						}
 						break;
@@ -558,33 +566,33 @@ export class ExpressionAntlrParser extends Parser {
 						{
 						_localctx = new FuncInvokeExpContext(new PrimaryExpressionContext(_parentctx, _parentState));
 						this.pushNewRecursionContext(_localctx, _startState, ExpressionAntlrParser.RULE_primaryExpression);
-						this.state = 77;
+						this.state = 81;
 						if (!(this.precpred(this._ctx, 2))) {
 							throw new FailedPredicateException(this, "this.precpred(this._ctx, 2)");
 						}
-						this.state = 79;
+						this.state = 83;
 						this._errHandler.sync(this);
 						_la = this._input.LA(1);
 						if (_la === ExpressionAntlrParser.NON) {
 							{
-							this.state = 78;
+							this.state = 82;
 							this.match(ExpressionAntlrParser.NON);
 							}
 						}
 
-						this.state = 81;
+						this.state = 85;
 						this.match(ExpressionAntlrParser.OPEN_BRACKET);
-						this.state = 83;
+						this.state = 87;
 						this._errHandler.sync(this);
 						_la = this._input.LA(1);
-						if ((((_la) & ~0x1F) === 0 && ((1 << _la) & ((1 << ExpressionAntlrParser.PLUS) | (1 << ExpressionAntlrParser.SUBSTRACT) | (1 << ExpressionAntlrParser.NON) | (1 << ExpressionAntlrParser.OPEN_BRACKET) | (1 << ExpressionAntlrParser.OPEN_SQUARE_BRACKET) | (1 << ExpressionAntlrParser.OPEN_CURLY_BRACKET) | (1 << ExpressionAntlrParser.NUMBER) | (1 << ExpressionAntlrParser.IDENTIFIER) | (1 << ExpressionAntlrParser.STRING))) !== 0) || _la === ExpressionAntlrParser.STRING_INTERPOLATION) {
+						if (((((_la - 1)) & ~0x1F) === 0 && ((1 << (_la - 1)) & ((1 << (ExpressionAntlrParser.STRING_INTERPOLATION_START - 1)) | (1 << (ExpressionAntlrParser.PLUS - 1)) | (1 << (ExpressionAntlrParser.SUBSTRACT - 1)) | (1 << (ExpressionAntlrParser.NON - 1)) | (1 << (ExpressionAntlrParser.OPEN_BRACKET - 1)) | (1 << (ExpressionAntlrParser.OPEN_SQUARE_BRACKET - 1)) | (1 << (ExpressionAntlrParser.OPEN_CURLY_BRACKET - 1)) | (1 << (ExpressionAntlrParser.NUMBER - 1)) | (1 << (ExpressionAntlrParser.IDENTIFIER - 1)) | (1 << (ExpressionAntlrParser.STRING - 1)))) !== 0)) {
 							{
-							this.state = 82;
+							this.state = 86;
 							this.argsList();
 							}
 						}
 
-						this.state = 85;
+						this.state = 89;
 						this.match(ExpressionAntlrParser.CLOSE_BRACKET);
 						}
 						break;
@@ -593,22 +601,22 @@ export class ExpressionAntlrParser extends Parser {
 						{
 						_localctx = new IndexAccessExpContext(new PrimaryExpressionContext(_parentctx, _parentState));
 						this.pushNewRecursionContext(_localctx, _startState, ExpressionAntlrParser.RULE_primaryExpression);
-						this.state = 86;
+						this.state = 90;
 						if (!(this.precpred(this._ctx, 1))) {
 							throw new FailedPredicateException(this, "this.precpred(this._ctx, 1)");
 						}
-						this.state = 87;
+						this.state = 91;
 						this.match(ExpressionAntlrParser.OPEN_SQUARE_BRACKET);
-						this.state = 88;
+						this.state = 92;
 						this.expression(0);
-						this.state = 89;
+						this.state = 93;
 						this.match(ExpressionAntlrParser.CLOSE_SQUARE_BRACKET);
 						}
 						break;
 					}
 					}
 				}
-				this.state = 95;
+				this.state = 99;
 				this._errHandler.sync(this);
 				_alt = this.interpreter.adaptivePredict(this._input, 9, this._ctx);
 			}
@@ -629,28 +637,134 @@ export class ExpressionAntlrParser extends Parser {
 		return _localctx;
 	}
 	// @RuleVersion(0)
-	public argsList(): ArgsListContext {
-		let _localctx: ArgsListContext = new ArgsListContext(this._ctx, this.state);
-		this.enterRule(_localctx, 6, ExpressionAntlrParser.RULE_argsList);
+	public stringInterpolation(): StringInterpolationContext {
+		let _localctx: StringInterpolationContext = new StringInterpolationContext(this._ctx, this.state);
+		this.enterRule(_localctx, 6, ExpressionAntlrParser.RULE_stringInterpolation);
 		let _la: number;
 		try {
 			this.enterOuterAlt(_localctx, 1);
 			{
-			this.state = 96;
+			this.state = 100;
+			this.match(ExpressionAntlrParser.STRING_INTERPOLATION_START);
+			this.state = 104;
+			this._errHandler.sync(this);
+			_la = this._input.LA(1);
+			do {
+				{
+				this.state = 104;
+				this._errHandler.sync(this);
+				switch (this._input.LA(1)) {
+				case ExpressionAntlrParser.ESCAPE_CHARACTER:
+					{
+					this.state = 101;
+					this.match(ExpressionAntlrParser.ESCAPE_CHARACTER);
+					}
+					break;
+				case ExpressionAntlrParser.TEMPLATE:
+					{
+					this.state = 102;
+					this.match(ExpressionAntlrParser.TEMPLATE);
+					}
+					break;
+				case ExpressionAntlrParser.TEXT_CONTENT:
+					{
+					this.state = 103;
+					this.textContent();
+					}
+					break;
+				default:
+					throw new NoViableAltException(this);
+				}
+				}
+				this.state = 106;
+				this._errHandler.sync(this);
+				_la = this._input.LA(1);
+			} while (((((_la - 36)) & ~0x1F) === 0 && ((1 << (_la - 36)) & ((1 << (ExpressionAntlrParser.TEMPLATE - 36)) | (1 << (ExpressionAntlrParser.ESCAPE_CHARACTER - 36)) | (1 << (ExpressionAntlrParser.TEXT_CONTENT - 36)))) !== 0));
+			this.state = 108;
+			this.match(ExpressionAntlrParser.STRING_INTERPOLATION_START);
+			}
+		}
+		catch (re) {
+			if (re instanceof RecognitionException) {
+				_localctx.exception = re;
+				this._errHandler.reportError(this, re);
+				this._errHandler.recover(this, re);
+			} else {
+				throw re;
+			}
+		}
+		finally {
+			this.exitRule();
+		}
+		return _localctx;
+	}
+	// @RuleVersion(0)
+	public textContent(): TextContentContext {
+		let _localctx: TextContentContext = new TextContentContext(this._ctx, this.state);
+		this.enterRule(_localctx, 8, ExpressionAntlrParser.RULE_textContent);
+		try {
+			let _alt: number;
+			this.enterOuterAlt(_localctx, 1);
+			{
+			this.state = 111;
+			this._errHandler.sync(this);
+			_alt = 1;
+			do {
+				switch (_alt) {
+				case 1:
+					{
+					{
+					this.state = 110;
+					this.match(ExpressionAntlrParser.TEXT_CONTENT);
+					}
+					}
+					break;
+				default:
+					throw new NoViableAltException(this);
+				}
+				this.state = 113;
+				this._errHandler.sync(this);
+				_alt = this.interpreter.adaptivePredict(this._input, 12, this._ctx);
+			} while (_alt !== 2 && _alt !== ATN.INVALID_ALT_NUMBER);
+			}
+		}
+		catch (re) {
+			if (re instanceof RecognitionException) {
+				_localctx.exception = re;
+				this._errHandler.reportError(this, re);
+				this._errHandler.recover(this, re);
+			} else {
+				throw re;
+			}
+		}
+		finally {
+			this.exitRule();
+		}
+		return _localctx;
+	}
+	// @RuleVersion(0)
+	public argsList(): ArgsListContext {
+		let _localctx: ArgsListContext = new ArgsListContext(this._ctx, this.state);
+		this.enterRule(_localctx, 10, ExpressionAntlrParser.RULE_argsList);
+		let _la: number;
+		try {
+			this.enterOuterAlt(_localctx, 1);
+			{
+			this.state = 115;
 			this.expression(0);
-			this.state = 101;
+			this.state = 120;
 			this._errHandler.sync(this);
 			_la = this._input.LA(1);
 			while (_la === ExpressionAntlrParser.COMMA) {
 				{
 				{
-				this.state = 97;
+				this.state = 116;
 				this.match(ExpressionAntlrParser.COMMA);
-				this.state = 98;
+				this.state = 117;
 				this.expression(0);
 				}
 				}
-				this.state = 103;
+				this.state = 122;
 				this._errHandler.sync(this);
 				_la = this._input.LA(1);
 			}
@@ -673,26 +787,26 @@ export class ExpressionAntlrParser extends Parser {
 	// @RuleVersion(0)
 	public keyValuePairList(): KeyValuePairListContext {
 		let _localctx: KeyValuePairListContext = new KeyValuePairListContext(this._ctx, this.state);
-		this.enterRule(_localctx, 8, ExpressionAntlrParser.RULE_keyValuePairList);
+		this.enterRule(_localctx, 12, ExpressionAntlrParser.RULE_keyValuePairList);
 		let _la: number;
 		try {
 			this.enterOuterAlt(_localctx, 1);
 			{
-			this.state = 104;
+			this.state = 123;
 			this.keyValuePair();
-			this.state = 109;
+			this.state = 128;
 			this._errHandler.sync(this);
 			_la = this._input.LA(1);
 			while (_la === ExpressionAntlrParser.COMMA) {
 				{
 				{
-				this.state = 105;
+				this.state = 124;
 				this.match(ExpressionAntlrParser.COMMA);
-				this.state = 106;
+				this.state = 125;
 				this.keyValuePair();
 				}
 				}
-				this.state = 111;
+				this.state = 130;
 				this._errHandler.sync(this);
 				_la = this._input.LA(1);
 			}
@@ -715,15 +829,15 @@ export class ExpressionAntlrParser extends Parser {
 	// @RuleVersion(0)
 	public keyValuePair(): KeyValuePairContext {
 		let _localctx: KeyValuePairContext = new KeyValuePairContext(this._ctx, this.state);
-		this.enterRule(_localctx, 10, ExpressionAntlrParser.RULE_keyValuePair);
+		this.enterRule(_localctx, 14, ExpressionAntlrParser.RULE_keyValuePair);
 		try {
 			this.enterOuterAlt(_localctx, 1);
 			{
-			this.state = 112;
+			this.state = 131;
 			this.key();
-			this.state = 113;
+			this.state = 132;
 			this.match(ExpressionAntlrParser.COLON);
-			this.state = 114;
+			this.state = 133;
 			this.expression(0);
 			}
 		}
@@ -744,12 +858,12 @@ export class ExpressionAntlrParser extends Parser {
 	// @RuleVersion(0)
 	public key(): KeyContext {
 		let _localctx: KeyContext = new KeyContext(this._ctx, this.state);
-		this.enterRule(_localctx, 12, ExpressionAntlrParser.RULE_key);
+		this.enterRule(_localctx, 16, ExpressionAntlrParser.RULE_key);
 		let _la: number;
 		try {
 			this.enterOuterAlt(_localctx, 1);
 			{
-			this.state = 116;
+			this.state = 135;
 			_la = this._input.LA(1);
 			if (!(_la === ExpressionAntlrParser.IDENTIFIER || _la === ExpressionAntlrParser.STRING)) {
 			this._errHandler.recoverInline(this);
@@ -831,58 +945,66 @@ export class ExpressionAntlrParser extends Parser {
 	}
 
 	public static readonly _serializedATN: string =
-		"\x03\uAF6F\u8320\u479D\uB75C\u4880\u1605\u191C\uAB37\x03#y\x04\x02\t\x02" +
-		"\x04\x03\t\x03\x04\x04\t\x04\x04\x05\t\x05\x04\x06\t\x06\x04\x07\t\x07" +
-		"\x04\b\t\b\x03\x02\x03\x02\x03\x02\x03\x03\x03\x03\x03\x03\x03\x03\x05" +
-		"\x03\x18\n\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03" +
+		"\x03\uAF6F\u8320\u479D\uB75C\u4880\u1605\u191C\uAB37\x03(\x8C\x04\x02" +
+		"\t\x02\x04\x03\t\x03\x04\x04\t\x04\x04\x05\t\x05\x04\x06\t\x06\x04\x07" +
+		"\t\x07\x04\b\t\b\x04\t\t\t\x04\n\t\n\x03\x02\x03\x02\x03\x02\x03\x03\x03" +
+		"\x03\x03\x03\x03\x03\x05\x03\x1C\n\x03\x03\x03\x03\x03\x03\x03\x03\x03" +
 		"\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03" +
-		"\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x07\x03" +
-		"2\n\x03\f\x03\x0E\x035\v\x03\x03\x04\x03\x04\x03\x04\x03\x04\x03\x04\x03" +
-		"\x04\x03\x04\x05\x04>\n\x04\x03\x04\x03\x04\x03\x04\x03\x04\x05\x04D\n" +
-		"\x04\x03\x04\x03\x04\x03\x04\x03\x04\x03\x04\x05\x04K\n\x04\x03\x04\x03" +
-		"\x04\x03\x04\x03\x04\x03\x04\x05\x04R\n\x04\x03\x04\x03\x04\x05\x04V\n" +
-		"\x04\x03\x04\x03\x04\x03\x04\x03\x04\x03\x04\x03\x04\x07\x04^\n\x04\f" +
-		"\x04\x0E\x04a\v\x04\x03\x05\x03\x05\x03\x05\x07\x05f\n\x05\f\x05\x0E\x05" +
-		"i\v\x05\x03\x06\x03\x06\x03\x06\x07\x06n\n\x06\f\x06\x0E\x06q\v\x06\x03" +
-		"\x07\x03\x07\x03\x07\x03\x07\x03\b\x03\b\x03\b\x02\x02\x04\x04\x06\t\x02" +
-		"\x02\x04\x02\x06\x02\b\x02\n\x02\f\x02\x0E\x02\x02\b\x03\x02\x03\x05\x03" +
-		"\x02\x07\t\x03\x02\x03\x04\x03\x02\n\v\x03\x02\x0F\x12\x04\x02\x1F\x1F" +
-		"!!\x8A\x02\x10\x03\x02\x02\x02\x04\x17\x03\x02\x02\x02\x06J\x03\x02\x02" +
-		"\x02\bb\x03\x02\x02\x02\nj\x03\x02\x02\x02\fr\x03\x02\x02\x02\x0Ev\x03" +
-		"\x02\x02\x02\x10\x11\x05\x04\x03\x02\x11\x12\x07\x02\x02\x03\x12\x03\x03" +
-		"\x02\x02\x02\x13\x14\b\x03\x01\x02\x14\x15\t\x02\x02\x02\x15\x18\x05\x04" +
-		"\x03\f\x16\x18\x05\x06\x04\x02\x17\x13\x03\x02\x02\x02\x17\x16\x03\x02" +
-		"\x02\x02\x183\x03\x02\x02\x02\x19\x1A\f\v\x02\x02\x1A\x1B\x07\x06\x02" +
-		"\x02\x1B2\x05\x04\x03\v\x1C\x1D\f\n\x02\x02\x1D\x1E\t\x03\x02\x02\x1E" +
-		"2\x05\x04\x03\v\x1F \f\t\x02\x02 !\t\x04\x02\x02!2\x05\x04\x03\n\"#\f" +
-		"\b\x02\x02#$\t\x05\x02\x02$2\x05\x04\x03\t%&\f\x07\x02\x02&\'\x07\f\x02" +
-		"\x02\'2\x05\x04\x03\b()\f\x06\x02\x02)*\t\x06\x02\x02*2\x05\x04\x03\x07" +
-		"+,\f\x05\x02\x02,-\x07\r\x02\x02-2\x05\x04\x03\x06./\f\x04\x02\x02/0\x07" +
-		"\x0E\x02\x0202\x05\x04\x03\x051\x19\x03\x02\x02\x021\x1C\x03\x02\x02\x02" +
-		"1\x1F\x03\x02\x02\x021\"\x03\x02\x02\x021%\x03\x02\x02\x021(\x03\x02\x02" +
-		"\x021+\x03\x02\x02\x021.\x03\x02\x02\x0225\x03\x02\x02\x0231\x03\x02\x02" +
-		"\x0234\x03\x02\x02\x024\x05\x03\x02\x02\x0253\x03\x02\x02\x0267\b\x04" +
-		"\x01\x0278\x07\x13\x02\x0289\x05\x04\x03\x029:\x07\x14\x02\x02:K\x03\x02" +
-		"\x02\x02;=\x07\x16\x02\x02<>\x05\b\x05\x02=<\x03\x02\x02\x02=>\x03\x02" +
-		"\x02\x02>?\x03\x02\x02\x02?K\x07\x17\x02\x02@C\x07\x18\x02\x02AD\x05\n" +
-		"\x06\x02BD\x05\x04\x03\x02CA\x03\x02\x02\x02CB\x03\x02\x02\x02CD\x03\x02" +
-		"\x02\x02DE\x03\x02\x02\x02EK\x07\x19\x02\x02FK\x07\x1D\x02\x02GK\x07!" +
-		"\x02\x02HK\x07\x1F\x02\x02IK\x07#\x02\x02J6\x03\x02\x02\x02J;\x03\x02" +
-		"\x02\x02J@\x03\x02\x02\x02JF\x03\x02\x02\x02JG\x03\x02\x02\x02JH\x03\x02" +
-		"\x02\x02JI\x03\x02\x02\x02K_\x03\x02\x02\x02LM\f\x05\x02\x02MN\x07\x15" +
-		"\x02\x02N^\x07\x1F\x02\x02OQ\f\x04\x02\x02PR\x07\x05\x02\x02QP\x03\x02" +
-		"\x02\x02QR\x03\x02\x02\x02RS\x03\x02\x02\x02SU\x07\x13\x02\x02TV\x05\b" +
-		"\x05\x02UT\x03\x02\x02\x02UV\x03\x02\x02\x02VW\x03\x02\x02\x02W^\x07\x14" +
-		"\x02\x02XY\f\x03\x02\x02YZ\x07\x16\x02\x02Z[\x05\x04\x03\x02[\\\x07\x17" +
-		"\x02\x02\\^\x03\x02\x02\x02]L\x03\x02\x02\x02]O\x03\x02\x02\x02]X\x03" +
-		"\x02\x02\x02^a\x03\x02\x02\x02_]\x03\x02\x02\x02_`\x03\x02\x02\x02`\x07" +
-		"\x03\x02\x02\x02a_\x03\x02\x02\x02bg\x05\x04\x03\x02cd\x07\x1A\x02\x02" +
-		"df\x05\x04\x03\x02ec\x03\x02\x02\x02fi\x03\x02\x02\x02ge\x03\x02\x02\x02" +
-		"gh\x03\x02\x02\x02h\t\x03\x02\x02\x02ig\x03\x02\x02\x02jo\x05\f\x07\x02" +
-		"kl\x07\x1A\x02\x02ln\x05\f\x07\x02mk\x03\x02\x02\x02nq\x03\x02\x02\x02" +
-		"om\x03\x02\x02\x02op\x03\x02\x02\x02p\v\x03\x02\x02\x02qo\x03\x02\x02" +
-		"\x02rs\x05\x0E\b\x02st\x07\x1B\x02\x02tu\x05\x04\x03\x02u\r\x03\x02\x02" +
-		"\x02vw\t\x07\x02\x02w\x0F\x03\x02\x02\x02\x0E\x1713=CJQU]_go";
+		"\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03" +
+		"\x03\x03\x03\x03\x07\x036\n\x03\f\x03\x0E\x039\v\x03\x03\x04\x03\x04\x03" +
+		"\x04\x03\x04\x03\x04\x03\x04\x03\x04\x05\x04B\n\x04\x03\x04\x03\x04\x03" +
+		"\x04\x03\x04\x05\x04H\n\x04\x03\x04\x03\x04\x03\x04\x03\x04\x03\x04\x05" +
+		"\x04O\n\x04\x03\x04\x03\x04\x03\x04\x03\x04\x03\x04\x05\x04V\n\x04\x03" +
+		"\x04\x03\x04\x05\x04Z\n\x04\x03\x04\x03\x04\x03\x04\x03\x04\x03\x04\x03" +
+		"\x04\x07\x04b\n\x04\f\x04\x0E\x04e\v\x04\x03\x05\x03\x05\x03\x05\x03\x05" +
+		"\x06\x05k\n\x05\r\x05\x0E\x05l\x03\x05\x03\x05\x03\x06\x06\x06r\n\x06" +
+		"\r\x06\x0E\x06s\x03\x07\x03\x07\x03\x07\x07\x07y\n\x07\f\x07\x0E\x07|" +
+		"\v\x07\x03\b\x03\b\x03\b\x07\b\x81\n\b\f\b\x0E\b\x84\v\b\x03\t\x03\t\x03" +
+		"\t\x03\t\x03\n\x03\n\x03\n\x02\x02\x04\x04\x06\v\x02\x02\x04\x02\x06\x02" +
+		"\b\x02\n\x02\f\x02\x0E\x02\x10\x02\x12\x02\x02\b\x03\x02\x04\x06\x03\x02" +
+		"\b\n\x03\x02\x04\x05\x03\x02\v\f\x03\x02\x10\x13\x04\x02  \"\"\x9F\x02" +
+		"\x14\x03\x02\x02\x02\x04\x1B\x03\x02\x02\x02\x06N\x03\x02\x02\x02\bf\x03" +
+		"\x02\x02\x02\nq\x03\x02\x02\x02\fu\x03\x02\x02\x02\x0E}\x03\x02\x02\x02" +
+		"\x10\x85\x03\x02\x02\x02\x12\x89\x03\x02\x02\x02\x14\x15\x05\x04\x03\x02" +
+		"\x15\x16\x07\x02\x02\x03\x16\x03\x03\x02\x02\x02\x17\x18\b\x03\x01\x02" +
+		"\x18\x19\t\x02\x02\x02\x19\x1C\x05\x04\x03\f\x1A\x1C\x05\x06\x04\x02\x1B" +
+		"\x17\x03\x02\x02\x02\x1B\x1A\x03\x02\x02\x02\x1C7\x03\x02\x02\x02\x1D" +
+		"\x1E\f\v\x02\x02\x1E\x1F\x07\x07\x02\x02\x1F6\x05\x04\x03\v !\f\n\x02" +
+		"\x02!\"\t\x03\x02\x02\"6\x05\x04\x03\v#$\f\t\x02\x02$%\t\x04\x02\x02%" +
+		"6\x05\x04\x03\n&\'\f\b\x02\x02\'(\t\x05\x02\x02(6\x05\x04\x03\t)*\f\x07" +
+		"\x02\x02*+\x07\r\x02\x02+6\x05\x04\x03\b,-\f\x06\x02\x02-.\t\x06\x02\x02" +
+		".6\x05\x04\x03\x07/0\f\x05\x02\x0201\x07\x0E\x02\x0216\x05\x04\x03\x06" +
+		"23\f\x04\x02\x0234\x07\x0F\x02\x0246\x05\x04\x03\x055\x1D\x03\x02\x02" +
+		"\x025 \x03\x02\x02\x025#\x03\x02\x02\x025&\x03\x02\x02\x025)\x03\x02\x02" +
+		"\x025,\x03\x02\x02\x025/\x03\x02\x02\x0252\x03\x02\x02\x0269\x03\x02\x02" +
+		"\x0275\x03\x02\x02\x0278\x03\x02\x02\x028\x05\x03\x02\x02\x0297\x03\x02" +
+		"\x02\x02:;\b\x04\x01\x02;<\x07\x14\x02\x02<=\x05\x04\x03\x02=>\x07\x15" +
+		"\x02\x02>O\x03\x02\x02\x02?A\x07\x17\x02\x02@B\x05\f\x07\x02A@\x03\x02" +
+		"\x02\x02AB\x03\x02\x02\x02BC\x03\x02\x02\x02CO\x07\x18\x02\x02DG\x07\x19" +
+		"\x02\x02EH\x05\x0E\b\x02FH\x05\x04\x03\x02GE\x03\x02\x02\x02GF\x03\x02" +
+		"\x02\x02GH\x03\x02\x02\x02HI\x03\x02\x02\x02IO\x07\x1A\x02\x02JO\x07\x1E" +
+		"\x02\x02KO\x07\"\x02\x02LO\x07 \x02\x02MO\x05\b\x05\x02N:\x03\x02\x02" +
+		"\x02N?\x03\x02\x02\x02ND\x03\x02\x02\x02NJ\x03\x02\x02\x02NK\x03\x02\x02" +
+		"\x02NL\x03\x02\x02\x02NM\x03\x02\x02\x02Oc\x03\x02\x02\x02PQ\f\x05\x02" +
+		"\x02QR\x07\x16\x02\x02Rb\x07 \x02\x02SU\f\x04\x02\x02TV\x07\x06\x02\x02" +
+		"UT\x03\x02\x02\x02UV\x03\x02\x02\x02VW\x03\x02\x02\x02WY\x07\x14\x02\x02" +
+		"XZ\x05\f\x07\x02YX\x03\x02\x02\x02YZ\x03\x02\x02\x02Z[\x03\x02\x02\x02" +
+		"[b\x07\x15\x02\x02\\]\f\x03\x02\x02]^\x07\x17\x02\x02^_\x05\x04\x03\x02" +
+		"_`\x07\x18\x02\x02`b\x03\x02\x02\x02aP\x03\x02\x02\x02aS\x03\x02\x02\x02" +
+		"a\\\x03\x02\x02\x02be\x03\x02\x02\x02ca\x03\x02\x02\x02cd\x03\x02\x02" +
+		"\x02d\x07\x03\x02\x02\x02ec\x03\x02\x02\x02fj\x07\x03\x02\x02gk\x07\'" +
+		"\x02\x02hk\x07&\x02\x02ik\x05\n\x06\x02jg\x03\x02\x02\x02jh\x03\x02\x02" +
+		"\x02ji\x03\x02\x02\x02kl\x03\x02\x02\x02lj\x03\x02\x02\x02lm\x03\x02\x02" +
+		"\x02mn\x03\x02\x02\x02no\x07\x03\x02\x02o\t\x03\x02\x02\x02pr\x07(\x02" +
+		"\x02qp\x03\x02\x02\x02rs\x03\x02\x02\x02sq\x03\x02\x02\x02st\x03\x02\x02" +
+		"\x02t\v\x03\x02\x02\x02uz\x05\x04\x03\x02vw\x07\x1B\x02\x02wy\x05\x04" +
+		"\x03\x02xv\x03\x02\x02\x02y|\x03\x02\x02\x02zx\x03\x02\x02\x02z{\x03\x02" +
+		"\x02\x02{\r\x03\x02\x02\x02|z\x03\x02\x02\x02}\x82\x05\x10\t\x02~\x7F" +
+		"\x07\x1B\x02\x02\x7F\x81\x05\x10\t\x02\x80~\x03\x02\x02\x02\x81\x84\x03" +
+		"\x02\x02\x02\x82\x80\x03\x02\x02\x02\x82\x83\x03\x02\x02\x02\x83\x0F\x03" +
+		"\x02\x02\x02\x84\x82\x03\x02\x02\x02\x85\x86\x05\x12\n\x02\x86\x87\x07" +
+		"\x1C\x02\x02\x87\x88\x05\x04\x03\x02\x88\x11\x03\x02\x02\x02\x89\x8A\t" +
+		"\x07\x02\x02\x8A\x13\x03\x02\x02\x02\x11\x1B57AGNUYacjlsz\x82";
 	public static __ATN: ATN;
 	public static get _ATN(): ATN {
 		if (!ExpressionAntlrParser.__ATN) {
@@ -1218,7 +1340,9 @@ export class IndexAccessExpContext extends PrimaryExpressionContext {
 	}
 }
 export class StringInterpolationAtomContext extends PrimaryExpressionContext {
-	public STRING_INTERPOLATION(): TerminalNode { return this.getToken(ExpressionAntlrParser.STRING_INTERPOLATION, 0); }
+	public stringInterpolation(): StringInterpolationContext {
+		return this.getRuleContext(0, StringInterpolationContext);
+	}
 	constructor(ctx: PrimaryExpressionContext) {
 		super(ctx.parent, ctx.invokingState);
 		this.copyFrom(ctx);
@@ -1359,6 +1483,109 @@ export class ArrayCreationExpContext extends PrimaryExpressionContext {
 	public accept<Result>(visitor: ExpressionAntlrParserVisitor<Result>): Result {
 		if (visitor.visitArrayCreationExp) {
 			return visitor.visitArrayCreationExp(this);
+		} else {
+			return visitor.visitChildren(this);
+		}
+	}
+}
+
+
+export class StringInterpolationContext extends ParserRuleContext {
+	public STRING_INTERPOLATION_START(): TerminalNode[];
+	public STRING_INTERPOLATION_START(i: number): TerminalNode;
+	public STRING_INTERPOLATION_START(i?: number): TerminalNode | TerminalNode[] {
+		if (i === undefined) {
+			return this.getTokens(ExpressionAntlrParser.STRING_INTERPOLATION_START);
+		} else {
+			return this.getToken(ExpressionAntlrParser.STRING_INTERPOLATION_START, i);
+		}
+	}
+	public ESCAPE_CHARACTER(): TerminalNode[];
+	public ESCAPE_CHARACTER(i: number): TerminalNode;
+	public ESCAPE_CHARACTER(i?: number): TerminalNode | TerminalNode[] {
+		if (i === undefined) {
+			return this.getTokens(ExpressionAntlrParser.ESCAPE_CHARACTER);
+		} else {
+			return this.getToken(ExpressionAntlrParser.ESCAPE_CHARACTER, i);
+		}
+	}
+	public TEMPLATE(): TerminalNode[];
+	public TEMPLATE(i: number): TerminalNode;
+	public TEMPLATE(i?: number): TerminalNode | TerminalNode[] {
+		if (i === undefined) {
+			return this.getTokens(ExpressionAntlrParser.TEMPLATE);
+		} else {
+			return this.getToken(ExpressionAntlrParser.TEMPLATE, i);
+		}
+	}
+	public textContent(): TextContentContext[];
+	public textContent(i: number): TextContentContext;
+	public textContent(i?: number): TextContentContext | TextContentContext[] {
+		if (i === undefined) {
+			return this.getRuleContexts(TextContentContext);
+		} else {
+			return this.getRuleContext(i, TextContentContext);
+		}
+	}
+	constructor(parent: ParserRuleContext | undefined, invokingState: number) {
+		super(parent, invokingState);
+	}
+	// @Override
+	public get ruleIndex(): number { return ExpressionAntlrParser.RULE_stringInterpolation; }
+	// @Override
+	public enterRule(listener: ExpressionAntlrParserListener): void {
+		if (listener.enterStringInterpolation) {
+			listener.enterStringInterpolation(this);
+		}
+	}
+	// @Override
+	public exitRule(listener: ExpressionAntlrParserListener): void {
+		if (listener.exitStringInterpolation) {
+			listener.exitStringInterpolation(this);
+		}
+	}
+	// @Override
+	public accept<Result>(visitor: ExpressionAntlrParserVisitor<Result>): Result {
+		if (visitor.visitStringInterpolation) {
+			return visitor.visitStringInterpolation(this);
+		} else {
+			return visitor.visitChildren(this);
+		}
+	}
+}
+
+
+export class TextContentContext extends ParserRuleContext {
+	public TEXT_CONTENT(): TerminalNode[];
+	public TEXT_CONTENT(i: number): TerminalNode;
+	public TEXT_CONTENT(i?: number): TerminalNode | TerminalNode[] {
+		if (i === undefined) {
+			return this.getTokens(ExpressionAntlrParser.TEXT_CONTENT);
+		} else {
+			return this.getToken(ExpressionAntlrParser.TEXT_CONTENT, i);
+		}
+	}
+	constructor(parent: ParserRuleContext | undefined, invokingState: number) {
+		super(parent, invokingState);
+	}
+	// @Override
+	public get ruleIndex(): number { return ExpressionAntlrParser.RULE_textContent; }
+	// @Override
+	public enterRule(listener: ExpressionAntlrParserListener): void {
+		if (listener.enterTextContent) {
+			listener.enterTextContent(this);
+		}
+	}
+	// @Override
+	public exitRule(listener: ExpressionAntlrParserListener): void {
+		if (listener.exitTextContent) {
+			listener.exitTextContent(this);
+		}
+	}
+	// @Override
+	public accept<Result>(visitor: ExpressionAntlrParserVisitor<Result>): Result {
+		if (visitor.visitTextContent) {
+			return visitor.visitTextContent(this);
 		} else {
 			return visitor.visitChildren(this);
 		}

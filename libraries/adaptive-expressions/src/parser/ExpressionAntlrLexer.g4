@@ -7,6 +7,8 @@ lexer grammar ExpressionAntlrLexer;
 fragment LETTER : [a-zA-Z];
 fragment DIGIT : [0-9];
 
+STRING_INTERPOLATION_START : '`' { this.ignoreWS = false;} -> pushMode(STRING_INTERPOLATION_MODE);
+
 // operators
 PLUS: '+';
 
@@ -68,8 +70,22 @@ IDENTIFIER : (LETTER | '_' | '#' | '@' | '@@' | '$' | '%') (LETTER | DIGIT | '-'
 
 NEWLINE : '\r'? '\n' -> skip;
 
-STRING : ('\'' (~'\'')* '\'') | ('"' (~'"')* '"');
+STRING : ('\'' (('\\'('\''|'\\'))|(~'\''))*? '\'') | ('"' (('\\'('"'|'\\'))|(~'"'))*? '"');
 
 INVALID_TOKEN_DEFAULT_MODE : . ;
 
-STRING_INTERPOLATION:  '`' ('\\`' | ~'`')* '`';
+mode STRING_INTERPOLATION_MODE;
+
+STRING_INTERPOLATION_END : '`' {this.ignoreWS = true;} -> type(STRING_INTERPOLATION_START), popMode;
+
+EMPTY_OBJECT: '{' WHITESPACE* '}';
+
+OBJECT_DEFINITION
+  : '{' ((STRING | IDENTIFIER) ':' (~[{}\r\n] | OBJECT_DEFINITION)+)* '}'
+  ;
+
+TEMPLATE : '$' '{' (STRING | EMPTY_OBJECT | OBJECT_DEFINITION | ~[}'"`])+ '}';
+
+ESCAPE_CHARACTER : '\\' ~[\r\n]?;
+
+TEXT_CONTENT :  ~[\r\n];

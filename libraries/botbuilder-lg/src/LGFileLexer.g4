@@ -42,9 +42,9 @@ fragment WHITESPACE : ' '|'\t'|'\ufeff'|'\u00a0';
 
 fragment EMPTY_OBJECT: '{' WHITESPACE* '}';
 
-fragment STRING_LITERAL : ('\'' (~['\r\n])* '\'') | ('"' (~["\r\n])* '"');
+fragment STRING_LITERAL : ('\'' (('\\'('\''|'\\'))|(~'\''))*? '\'') | ('"' (('\\'('"'|'\\'))|(~'"'))*? '"');
 
-fragment STRING_INTERPOLATION : '`' ('\\`' | ~'`')* '`';
+fragment STRING_INTERPOLATION : '`' (('\\'('`'|'\\'))|(~'`'))*? '`';
 
 fragment ESCAPE_CHARACTER_FRAGMENT : '\\' ~[\r\n]?;
 
@@ -75,11 +75,11 @@ DASH
   ;
 
 OBJECT_DEFINITION
-  : '{' ((STRING_LITERAL | IDENTIFIER) ':' (~[{}\r\n] |OBJECT_DEFINITION)+)* '}'
+  : '{' ((STRING_LITERAL | IDENTIFIER) ':' (~[{}\r\n] | OBJECT_DEFINITION)+)* '}'
   ;
 
 EXPRESSION_FRAGMENT
-  : '$' '{' (STRING_LITERAL | STRING_INTERPOLATION| EMPTY_OBJECT | OBJECT_DEFINITION | ~[}'"`])+ '}'?
+  : '$' '{' (STRING_LITERAL | STRING_INTERPOLATION | EMPTY_OBJECT | OBJECT_DEFINITION | ~[}'"`])+ '}'?
   ;
 
 LEFT_SQUARE_BRACKET

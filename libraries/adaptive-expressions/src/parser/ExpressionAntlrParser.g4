@@ -24,10 +24,18 @@ primaryExpression
     | NUMBER                                                                                 #numericAtom
     | STRING                                                                                 #stringAtom
     | IDENTIFIER                                                                             #idAtom
-    | STRING_INTERPOLATION                                                                   #stringInterpolationAtom
+    | stringInterpolation                                                                   #stringInterpolationAtom
     | primaryExpression DOT IDENTIFIER                                                       #memberAccessExp
     | primaryExpression NON? OPEN_BRACKET argsList? CLOSE_BRACKET                            #funcInvokeExp
     | primaryExpression OPEN_SQUARE_BRACKET expression CLOSE_SQUARE_BRACKET                  #indexAccessExp
+    ;
+
+stringInterpolation
+    : STRING_INTERPOLATION_START (ESCAPE_CHARACTER | TEMPLATE | textContent)+ STRING_INTERPOLATION_START
+    ;
+
+textContent
+    : TEXT_CONTENT+
     ;
 
 argsList

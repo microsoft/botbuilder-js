@@ -19,6 +19,8 @@ import { PrimaryExpContext } from "./ExpressionAntlrParser";
 import { FileContext } from "./ExpressionAntlrParser";
 import { ExpressionContext } from "./ExpressionAntlrParser";
 import { PrimaryExpressionContext } from "./ExpressionAntlrParser";
+import { StringInterpolationContext } from "./ExpressionAntlrParser";
+import { TextContentContext } from "./ExpressionAntlrParser";
 import { ArgsListContext } from "./ExpressionAntlrParser";
 import { KeyValuePairListContext } from "./ExpressionAntlrParser";
 import { KeyValuePairContext } from "./ExpressionAntlrParser";
@@ -231,6 +233,28 @@ export interface ExpressionAntlrParserListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	exitPrimaryExpression?: (ctx: PrimaryExpressionContext) => void;
+
+	/**
+	 * Enter a parse tree produced by `ExpressionAntlrParser.stringInterpolation`.
+	 * @param ctx the parse tree
+	 */
+	enterStringInterpolation?: (ctx: StringInterpolationContext) => void;
+	/**
+	 * Exit a parse tree produced by `ExpressionAntlrParser.stringInterpolation`.
+	 * @param ctx the parse tree
+	 */
+	exitStringInterpolation?: (ctx: StringInterpolationContext) => void;
+
+	/**
+	 * Enter a parse tree produced by `ExpressionAntlrParser.textContent`.
+	 * @param ctx the parse tree
+	 */
+	enterTextContent?: (ctx: TextContentContext) => void;
+	/**
+	 * Exit a parse tree produced by `ExpressionAntlrParser.textContent`.
+	 * @param ctx the parse tree
+	 */
+	exitTextContent?: (ctx: TextContentContext) => void;
 
 	/**
 	 * Enter a parse tree produced by `ExpressionAntlrParser.argsList`.
