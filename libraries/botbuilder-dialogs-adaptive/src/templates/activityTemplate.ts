@@ -1,7 +1,6 @@
+import { TurnContext, Activity, ActivityFactory, MessageFactory } from 'botbuilder-core';
 import { TemplateInterface } from '../template';
-import { TurnContext, Activity } from 'botbuilder-core';
 import { LanguageGenerator } from '../languageGenerator';
-import { ActivityFactory } from 'botbuilder-lg';
 
 export class ActivityTemplate implements TemplateInterface<Partial<Activity>> {
     public template: string;
@@ -15,12 +14,10 @@ export class ActivityTemplate implements TemplateInterface<Partial<Activity>> {
             const languageGenerator: LanguageGenerator = context.turnState.get('LanguageGenerator');
             if (languageGenerator) {
                 const lgStringResult = await languageGenerator.generate(context, this.template, data);
-                const result = ActivityFactory.createActivity(lgStringResult);
+                const result = ActivityFactory.fromObject(lgStringResult);
                 return Promise.resolve(result);
             } else {
-                let message = ActivityFactory.createActivity('');
-                message.text = this.template;
-                message.speak = this.template;
+                const message = MessageFactory.text(this.template, this.template);
                 return Promise.resolve(message);
             }  
         }
