@@ -45,11 +45,9 @@
   },
   "scripts": {
     "build": "tsc",
-    "build:rollup": "npm run clean && npm run build && api-extractor run --verbose --local",
     "clean": "erase /q /s .\\lib",
     "set-version": "npm version --allow-same-version ${Version}",
-    "test": "tsc && nyc mocha tests/ --timeout 60000 --inspect",
-    "test:compat": "api-extractor run --verbose"
+    "test": "tsc && nyc mocha tests/ --timeout 60000 --inspect"
   },
   "files": [
     "/lib",
