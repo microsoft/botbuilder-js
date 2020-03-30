@@ -70,16 +70,26 @@ export class PayloadSender {
 
     private writePacket(packet: ISendPacket): void {
         try {
-            let sendHeaderBuffer: Buffer = Buffer.alloc(PayloadConstants.MaxHeaderLength);
-            HeaderSerializer.serialize(packet.header, sendHeaderBuffer);
-            this.sender.send(sendHeaderBuffer);
-
             if (packet.header.payloadLength > 0 && packet.payload) {
-                let count = packet.header.payloadLength;
-                while (count > 0) {
+
+                let leftOver = packet.header.payloadLength;
+
+                while (leftOver > 0) {                   
+                    let count = leftOver <= PayloadConstants.MaxPayloadLength ? leftOver : PayloadConstants.MaxPayloadLength;
                     let chunk = packet.payload.read(count);
+
+                    var header = packet.header;
+                    header.payloadLength = count;
+                    header.end = leftOver <= PayloadConstants.MaxPayloadLength;
+
+                    let sendHeaderBuffer: Buffer = Buffer.alloc(PayloadConstants.MaxHeaderLength);
+
+                    HeaderSerializer.serialize(header, sendHeaderBuffer);
+
+                    this.sender.send(sendHeaderBuffer);
+
                     this.sender.send(chunk);
-                    count -= chunk.length;
+                    leftOver-= chunk.length;
                 }
 
                 if (packet.sentCallback) {

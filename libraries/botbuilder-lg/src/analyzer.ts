@@ -1,4 +1,3 @@
-
 /**
  * @module botbuilder-lg
  */
@@ -6,41 +5,39 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-// tslint:disable-next-line: no-submodule-imports
 import { AbstractParseTreeVisitor, TerminalNode } from 'antlr4ts/tree';
-import { Expression, ExpressionEngine, ExpressionParserInterface, Extensions } from 'adaptive-expressions';
+import { Expression, ExpressionParserInterface, ExpressionParser } from 'adaptive-expressions';
 import { keyBy } from 'lodash';
 import { EvaluationTarget } from './evaluationTarget';
 import { Evaluator } from './evaluator';
 import * as lp from './generated/LGFileParser';
 import { LGFileParserVisitor } from './generated/LGFileParserVisitor';
-import { LGTemplate } from './lgTemplate';
-import { LGExtensions } from './lgExtensions';
+import { Template } from './template';
+import { TemplateExtensions } from './templateExtensions';
 import { AnalyzerResult } from './analyzerResult';
-import {LGErrors} from './lgErrors';
+import {TemplateErrors} from './templateErrors';
 
-// tslint:disable-next-line: max-classes-per-file
 /**
- * Analyzer engine. To analyse which variable may be used
+ * Analyzer engine. To to get the static analyzer results.
  */
 export class Analyzer extends AbstractParseTreeVisitor<AnalyzerResult> implements LGFileParserVisitor<AnalyzerResult> {
     /**
      * Templates.
      */
-    public readonly templates: LGTemplate[];
+    public readonly templates: Template[];
 
-    private readonly templateMap: {[name: string]: LGTemplate};
+    private readonly templateMap: {[name: string]: Template};
     private readonly evalutationTargetStack: EvaluationTarget[] = [];
     private readonly _expressionParser: ExpressionParserInterface;
 
-    public constructor(templates: LGTemplate[], expressionEngine: ExpressionEngine) {
+    public constructor(templates: Template[], expressionParser: ExpressionParser) {
         super();
         this.templates = templates;
-        this.templateMap = keyBy(templates, (t: LGTemplate): string => t.name);
+        this.templateMap = keyBy(templates, (t: Template): string => t.name);
 
-        // create an evaluator to leverage it's customized function look up for checking
-        const evaluator: Evaluator = new Evaluator(this.templates, expressionEngine);
-        this._expressionParser = evaluator.expressionEngine;
+        // create an evaluator to leverage its customized function look up for checking
+        const evaluator: Evaluator = new Evaluator(this.templates, expressionParser);
+        this._expressionParser = evaluator.expressionParser;
     }
 
     /**
@@ -50,11 +47,11 @@ export class Analyzer extends AbstractParseTreeVisitor<AnalyzerResult> implement
      */
     public analyzeTemplate(templateName: string): AnalyzerResult {
         if (!(templateName in this.templateMap)) {
-            throw new Error(LGErrors.templateNotExist(templateName));
+            throw new Error(TemplateErrors.templateNotExist(templateName));
         }
 
         if (this.evalutationTargetStack.find((u: EvaluationTarget): boolean => u.templateName === templateName) !== undefined) {
-            throw new Error(`${ LGErrors.loopDetected } ${ this.evalutationTargetStack.reverse()
+            throw new Error(`${ TemplateErrors.loopDetected } ${ this.evalutationTargetStack.reverse()
                 .map((u: EvaluationTarget): string => u.templateName)
                 .join(' => ') }`);
         }
@@ -117,8 +114,8 @@ export class Analyzer extends AbstractParseTreeVisitor<AnalyzerResult> implement
 
         const values = ctx.keyValueStructureValue();
         for (const value of values) {
-            if (this.isPureExpression(value).hasExpr) {
-                result.union(this.analyzeExpression(this.isPureExpression(value).expression));
+            if (TemplateExtensions.isPureExpression(value).hasExpr) {
+                result.union(this.analyzeExpression(TemplateExtensions.isPureExpression(value).expression));
             } else {
                 const exprs = value.EXPRESSION_IN_STRUCTURE_BODY();
                 for (const expr of exprs) {
@@ -201,10 +198,10 @@ export class Analyzer extends AbstractParseTreeVisitor<AnalyzerResult> implement
 
     private analyzeExpression(exp: string): AnalyzerResult {
         const result: AnalyzerResult =  new AnalyzerResult();
-        exp = LGExtensions.trimExpression(exp);
+        exp = TemplateExtensions.trimExpression(exp);
         const parsed: Expression = this._expressionParser.parse(exp);
 
-        const references: readonly string[] = Extensions.references(parsed);
+        const references: readonly string[] = parsed.references();
         result.union(new AnalyzerResult(references.slice(), []));
         result.union(this.analyzeExpressionDirectly(parsed));
 
@@ -213,32 +210,5 @@ export class Analyzer extends AbstractParseTreeVisitor<AnalyzerResult> implement
 
     private currentTarget(): EvaluationTarget {
         return this.evalutationTargetStack[this.evalutationTargetStack.length - 1];
-    }
-
-    public isPureExpression(ctx: lp.KeyValueStructureValueContext):  {hasExpr: boolean; expression: string | undefined} {
-        let expression = ctx.text;
-        let hasExpr = false;
-        for (const node of ctx.children) {
-            switch ((node as TerminalNode).symbol.type) {
-                case (lp.LGFileParser.ESCAPE_CHARACTER_IN_STRUCTURE_BODY):
-                    return {hasExpr, expression};
-                case (lp.LGFileParser.EXPRESSION_IN_STRUCTURE_BODY):
-                    if (hasExpr) {
-                        return {hasExpr: false, expression: expression};
-                    }
-
-                    hasExpr = true;
-                    expression = node.text;
-                    break;
-                default:
-                    if (node !== undefined && node.text !== '' && node.text !== ' ') {
-                        return {hasExpr: false, expression: expression};
-                    }
-
-                    break;
-            }
-        }
-
-        return {hasExpr: hasExpr, expression: expression};
     }
 }

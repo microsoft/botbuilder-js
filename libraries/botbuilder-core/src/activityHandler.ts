@@ -2,8 +2,13 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { MessageReaction, TurnContext } from '.';
+
+import { MessageReaction } from 'botframework-schema';
 import { ActivityHandlerBase } from './activityHandlerBase';
+import { InvokeResponse } from './invokeResponse';
+import { verifyStateOperationName, tokenExchangeOperationName, tokenResponseEventName } from './signInConstants';
+import { StatusCodes } from './statusCodes';
+import { TurnContext } from './turnContext';
 
 /**
  * Describes a bot activity event handler, for use with an [ActivityHandler](xref:botbuilder-core.ActivityHandler) object.
@@ -397,6 +402,47 @@ export class ActivityHandler extends ActivityHandlerBase {
         await this.handle(context, 'Message', this.defaultNextEvent(context));
     }
 
+    /*
+     * Provides default behavior for invoke activities.
+     * 
+     * @param context The context object for the current turn.
+     * 
+     * @remarks
+     * Overwrite this method to support channel-specific behavior across multiple channels.
+     * The default logic is to check for a signIn invoke and handle that
+     * and then continue by calling [defaultNextEvent](xref:botbuilder-core.ActivityHandler.defaultNextEvent).
+    */
+    protected async onInvokeActivity(context: TurnContext): Promise<InvokeResponse> {
+        try {
+            if (context.activity.name && (context.activity.name === verifyStateOperationName || context.activity.name === tokenExchangeOperationName)) {
+                await this.onSignInInvoke(context);
+                return { status: StatusCodes.OK };
+            }
+            throw new Error('NotImplemented');
+        }
+        catch (err) {
+            if (err.message === 'NotImplemented') {
+                return { status: StatusCodes.NOT_IMPLEMENTED };
+            }
+            throw err;
+        }
+        finally {
+            this.defaultNextEvent(context)();
+        }
+    }
+
+    /*
+     * Handle _signin invoke activity type_.
+     * 
+     * @param context The context object for the current turn.
+     * 
+     * @remarks
+     * Overwrite this method to support channel-specific behavior across multiple channels.
+    */
+    protected async onSignInInvoke(context: TurnContext): Promise<void> {
+        throw new Error('NotImplemented');
+    }
+
     /**
      * Runs all registered _endOfConversation_ handlers and then continues the event emission process.
      * 
@@ -597,7 +643,7 @@ export class ActivityHandler extends ActivityHandlerBase {
      * - Continue by calling [defaultNextEvent](xref:botbuilder-core.ActivityHandler.defaultNextEvent).
      */
     protected async dispatchEventActivity(context: TurnContext): Promise<void> {
-        if (context.activity.name === 'tokens/response') {
+        if (context.activity.name === tokenResponseEventName) {
             await this.handle(context, 'TokenResponseEvent', this.defaultNextEvent(context));
         } else {
             await this.defaultNextEvent(context)();

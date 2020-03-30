@@ -15,7 +15,7 @@ import {
 
 export interface SkillDialogOptions {
     /**
-     * The the Microsoft app ID of the bot calling the skill.
+     * The Microsoft app ID of the bot calling the skill.
      */
     botId: string;
 

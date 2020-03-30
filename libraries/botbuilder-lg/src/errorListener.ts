@@ -7,12 +7,11 @@
  */
 import { ANTLRErrorListener, RecognitionException, Recognizer } from 'antlr4ts';
 import { Diagnostic, DiagnosticSeverity } from './diagnostic';
-import { LGException } from './lgException';
+import { TemplateException } from './templateException';
 import { Position } from './position';
 import { Range } from './range';
-import { LGErrors } from './lgErrors';
+import { TemplateErrors } from './templateErrors';
 
-// tslint:disable-next-line: completed-docs
 /**
  * LG parser error listener.
  */
@@ -27,16 +26,15 @@ export class ErrorListener implements ANTLRErrorListener<any> {
         offendingSymbol: any,
         line: number,
         charPositionInLine: number,
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         msg: string,
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         e: RecognitionException | undefined): void {
         const startPosition: Position = new Position(line, charPositionInLine);
-        // tslint:disable-next-line: max-line-length
-        // tslint:disable-next-line: restrict-plus-operands
         const stopPosition: Position = new Position(line, charPositionInLine + offendingSymbol.stopIndex - offendingSymbol.startIndex + 1);
         const range: Range = new Range(startPosition, stopPosition);
-        const diagnostic: Diagnostic = new Diagnostic(range, LGErrors.syntaxError, DiagnosticSeverity.Error, this.source);
+        const diagnostic: Diagnostic = new Diagnostic(range, TemplateErrors.syntaxError, DiagnosticSeverity.Error, this.source);
 
-        throw new LGException(diagnostic.toString(), [diagnostic]);
+        throw new TemplateException(diagnostic.toString(), [diagnostic]);
     }
 }

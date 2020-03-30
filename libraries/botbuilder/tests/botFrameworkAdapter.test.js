@@ -1,7 +1,7 @@
 const assert = require('assert');
 const { ActivityTypes, TurnContext } = require('botbuilder-core');
 const connector = require('botframework-connector');
-const { AuthenticationConstants, CertificateAppCredentials, ConnectorClient, MicrosoftAppCredentials } = require('botframework-connector');
+const { AuthenticationConstants, CertificateAppCredentials, ConnectorClient, GovernmentConstants, MicrosoftAppCredentials } = require('botframework-connector');
 const { BotFrameworkAdapter } = require('../');
 
 const reference = {
@@ -30,6 +30,10 @@ class AdapterUnderTest extends BotFrameworkAdapter {
         this.newServiceUrl = undefined;
     }
 
+    getOAuthScope() {
+        return this.credentials.oAuthScope;
+    }
+
     async testAuthenticateRequest(request, authHeader) {
         const claims = await super.authenticateRequestInternal(request, authHeader);
         if (!claims.isAuthenticated) { throw new Error('Unauthorized Access. Request is not authorized'); }
@@ -43,7 +47,7 @@ class AdapterUnderTest extends BotFrameworkAdapter {
     authenticateRequestInternal(request, authHeader) {
         assert(request, `authenticateRequestInternal() not passed request.`);
         assert(authHeader === this.expectAuthHeader, `authenticateRequestInternal() not passed expected authHeader.`);
-        return this.failAuth ? Promise.reject(new Error('failed auth')) : Promise.resolve({});
+        return this.failAuth ? Promise.reject(new Error('failed auth')) : Promise.resolve({ claims: [] });
     }
 
     createConnectorClient(serviceUrl) {
@@ -278,12 +282,12 @@ describe(`BotFrameworkAdapter`, function () {
         });
     });
 
-    it(`processActivity() should respect bufferedReplies if it's set via logic`, async () => {
+    it(`processActivity() should respect expectReplies if it's set via logic`, async () => {
         const req = new MockRequest(incomingMessage);
         const res = new MockResponse();
         const adapter = new AdapterUnderTest();
         await adapter.processActivity(req, res, async (context) => {
-            context.activity.deliveryMode = 'bufferedReplies';
+            context.activity.deliveryMode = 'expectReplies';
             await context.sendActivity({ type: 'message', text: 'Hello Buffered World!' });
         });
         assertResponse(res, 200, true);
@@ -459,22 +463,6 @@ describe(`BotFrameworkAdapter`, function () {
         }, (err) => {
             assert(err, `error not returned.`);
             assertResponse(res, 500, true);
-            done();
-        });
-    });
-
-    it(`should continueConversation().`, function (done) {
-        let called = false;
-        const adapter = new AdapterUnderTest();
-        adapter.continueConversation(reference, (context) => {
-            assert(context, `context not passed.`);
-            assert(context.activity, `context has no request.`);
-            assert(context.activity.type === 'event', `request has invalid type.`);
-            assert(context.activity.from && context.activity.from.id === reference.user.id, `request has invalid from.id.`);
-            assert(context.activity.recipient && context.activity.recipient.id === reference.bot.id, `request has invalid recipient.id.`);
-            called = true;
-        }).then(() => {
-            assert(called, `bot logic not called.`);
             done();
         });
     });
@@ -1168,6 +1156,113 @@ describe(`BotFrameworkAdapter`, function () {
                 return;
             }
             assert(false, `should have thrown an error message`);
+        });
+    });
+
+    it('getOAuthScope', async () => {
+        const adapter = new BotFrameworkAdapter({});
+        // Missing botAppId
+        assert.strictEqual(AuthenticationConstants.ToChannelFromBotOAuthScope, await adapter.getOAuthScope());
+
+        // Empty Claims
+        assert.strictEqual(AuthenticationConstants.ToChannelFromBotOAuthScope, await adapter.getOAuthScope('botAppId', []));
+
+        // Non-skill Claims
+        assert.strictEqual(AuthenticationConstants.ToChannelFromBotOAuthScope, await adapter.getOAuthScope('botAppId', [{type: 'aud', value: 'botAppId'}, {type: 'azp', value: 'botAppId'}]));
+
+        const govAdapter = new BotFrameworkAdapter({ channelService: GovernmentConstants.ChannelService });
+        // Missing botAppId
+        assert.strictEqual(GovernmentConstants.ToChannelFromBotOAuthScope, await govAdapter.getOAuthScope(''));
+        
+        // Empty Claims
+        assert.strictEqual(GovernmentConstants.ToChannelFromBotOAuthScope, await govAdapter.getOAuthScope('botAppId', []));
+        
+        // Non-skill Claims
+        assert.strictEqual(GovernmentConstants.ToChannelFromBotOAuthScope, await govAdapter.getOAuthScope('botAppId', [{type: 'aud', value: 'botAppId'}, {type: 'azp', value: 'botAppId'}]));
+    });
+
+    describe('continueConversation', function() {
+        it(`should succeed.`, function (done) {
+            let called = false;
+            const adapter = new AdapterUnderTest();
+            adapter.continueConversation(reference, (context) => {
+                assert(context, `context not passed.`);
+                assert(context.activity, `context has no request.`);
+                assert(context.activity.type === 'event', `request has invalid type.`);
+                assert(context.activity.from && context.activity.from.id === reference.user.id, `request has invalid from.id.`);
+                assert(context.activity.recipient && context.activity.recipient.id === reference.bot.id, `request has invalid recipient.id.`);
+                called = true;
+            }).then(() => {
+                assert(called, `bot logic not called.`);
+                done();
+            });
+        });
+
+        it(`should not trust reference.serviceUrl if there is no AppId on the credentials.`, function (done) {
+            let called = false;
+            const adapter = new AdapterUnderTest();
+            adapter.continueConversation(reference, (context) => {
+                assert(context, `context not passed.`);
+                assert(context.activity, `context has no request.`);
+                assert(context.activity.type === 'event', `request has invalid type.`);
+                assert(context.activity.from && context.activity.from.id === reference.user.id, `request has invalid from.id.`);
+                assert(context.activity.recipient && context.activity.recipient.id === reference.bot.id, `request has invalid recipient.id.`);
+                assert(!MicrosoftAppCredentials.isTrustedServiceUrl('https://example.org/channel'));
+                called = true;
+            }).then(() => {
+                assert(called, `bot logic not called.`);
+                done();
+            });
+        });
+
+        it(`should trust reference.serviceUrl if there is an AppId on the credentials.`, function (done) {
+            let called = false;
+            const adapter = new AdapterUnderTest({ appId: '2id', appPassword: '2pw' });
+            adapter.continueConversation(reference, (context) => {
+                assert(context, `context not passed.`);
+                assert(context.activity, `context has no request.`);
+                assert(context.activity.type === 'event', `request has invalid type.`);
+                assert(context.activity.from && context.activity.from.id === reference.user.id, `request has invalid from.id.`);
+                assert(context.activity.recipient && context.activity.recipient.id === reference.bot.id, `request has invalid recipient.id.`);
+                assert(MicrosoftAppCredentials.isTrustedServiceUrl('https://example.org/channel'));
+                called = true;
+            }).then(() => {
+                assert(called, `bot logic not called.`);
+                done();
+            });
+        });
+
+        it(`should work with oAuthScope and logic passed in.`, async () => {
+            let called = false;
+            const adapter = new AdapterUnderTest();
+            // Change the adapter's credentials' oAuthScope value.
+            const testOAuthScope = 'TestTest';
+            adapter.credentials.oAuthScope = testOAuthScope;
+            await adapter.continueConversation(reference, testOAuthScope, (context) => {
+                assert(context, `context not passed.`);
+                assert(context.activity, `context has no request.`);
+                assert.strictEqual(context.activity.type, 'event');
+                assert.strictEqual((context.activity.from && context.activity.from.id), reference.user.id);
+                assert.strictEqual((context.activity.recipient && context.activity.recipient.id), reference.bot.id);
+                assert.strictEqual(context.turnState.get(context.adapter.OAuthScopeKey), testOAuthScope);
+                called = true;
+            });
+            assert(called, `bot logic not called.`);
+        });
+
+        it(`should work with Gov cloud and only logic passed in.`, async () => {
+            let called = false;
+            const adapter = new AdapterUnderTest({ channelService: GovernmentConstants.ChannelService });
+            await adapter.continueConversation(reference, (context) => {
+                assert(context, `context not passed.`);
+                assert(context.activity, `context has no request.`);
+                assert.strictEqual(context.activity.type, 'event');
+                assert.strictEqual((context.activity.from && context.activity.from.id), reference.user.id);
+                assert.strictEqual((context.activity.recipient && context.activity.recipient.id), reference.bot.id);
+                assert.strictEqual(context.turnState.get(context.adapter.OAuthScopeKey), GovernmentConstants.ToChannelFromBotOAuthScope);
+                called = true;
+            });
+            assert(called, `bot logic not called.`);
         });
     });
 });

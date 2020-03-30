@@ -10,8 +10,12 @@ import {
     Activity,
     ActivityTypes,
     ConversationReference,
+    DeliveryModes,
+    ExpectedReplies,
+    SkillConversationIdFactoryOptions,
     TurnContext
 } from 'botbuilder-core';
+import { BeginSkillDialogOptions } from './beginSkillDialogOptions';
 import {
     Dialog,
     DialogInstance,
@@ -19,11 +23,14 @@ import {
     DialogTurnResult
 } from './dialog';
 import { DialogContext } from './dialogContext';
-import { BeginSkillDialogOptions } from './beginSkillDialogOptions';
+import { DialogEvents } from './dialogEvents';
 import { SkillDialogOptions } from './skillDialogOptions';
 
 export class SkillDialog extends Dialog {
     protected dialogOptions: SkillDialogOptions;
+
+    // This key uses a simple namespace as Symbols are not serializable.
+    private readonly DeliveryModeStateKey: string = 'SkillDialog.deliveryMode';
 
     /**
      * A sample dialog that can wrap remote calls to a skill.
@@ -43,7 +50,7 @@ export class SkillDialog extends Dialog {
         this.dialogOptions = dialogOptions;
     }
 
-    public async beginDialog(dc: DialogContext, options?: {}): Promise<DialogTurnResult> {
+    public async beginDialog(dc: DialogContext, options?: any): Promise<DialogTurnResult> {
         const dialogArgs = SkillDialog.validateBeginDialogArgs(options);
 
         await dc.context.sendTraceActivity(`${ this.id }.beginDialog()`, undefined, undefined, `Using activity of type: ${ dialogArgs.activity.type }`);
@@ -54,8 +61,14 @@ export class SkillDialog extends Dialog {
         // Apply conversation reference and common properties from incoming activity before sending.
         const skillActivity = TurnContext.applyConversationReference(clonedActivity, TurnContext.getConversationReference(dc.context.activity), true) as Activity;
 
+        // Store the deliveryMode of the first forwarded activity
+        dc.activeDialog.state[this.DeliveryModeStateKey] = dialogArgs.activity.deliveryMode;
+
         // Send the activity to the skill.
-        await this.sendToSkill(dc.context, skillActivity);
+        const eocActivity = await this.sendToSkill(dc.context, skillActivity);
+        if (eocActivity) {
+            return await dc.endDialog(eocActivity.value);
+        }
         return Dialog.EndOfTurn;
     }
 
@@ -71,8 +84,15 @@ export class SkillDialog extends Dialog {
 
         // Forward only Message and Event activities to the skill
         if (dc.context.activity.type === ActivityTypes.Message || dc.context.activity.type === ActivityTypes.Event) {
+            // Create deep clone of the original activity to avoid altering it before forwarding it.
+            const skillActivity = this.cloneActivity(dc.context.activity);
+            skillActivity.deliveryMode = dc.activeDialog.state[this.DeliveryModeStateKey] as string;
+
             // Just forward to the remote skill
-            await this.sendToSkill(dc.context, dc.context.activity);
+            const eocActivity = await this.sendToSkill(dc.context, skillActivity);
+            if (eocActivity) {
+                return await dc.endDialog(eocActivity.value);
+            }
         }
 
         return Dialog.EndOfTurn;
@@ -92,6 +112,22 @@ export class SkillDialog extends Dialog {
         }
 
         await super.endDialog(context, instance, reason);
+    }
+
+    public async repromptDialog(context: TurnContext, instance: DialogInstance): Promise<void> {
+        // Create and send an envent to the skill so it can resume the dialog.
+        const repromptEvent = { type: ActivityTypes.Event, name: DialogEvents.repromptDialog };
+
+        const reference = TurnContext.getConversationReference(context.activity);
+        // Apply conversation reference and common properties from incoming activity before sending.
+        const activity: Activity = TurnContext.applyConversationReference(repromptEvent, reference, true) as Activity;
+        
+        await this.sendToSkill(context, activity);
+    }
+
+    public async resumeDialog(dc: DialogContext, reason: DialogReason, result?: any): Promise<DialogTurnResult> {
+        await this.repromptDialog(dc.context, dc.activeDialog);
+        return Dialog.EndOfTurn;
     }
 
     /**
@@ -116,25 +152,59 @@ export class SkillDialog extends Dialog {
         // Only accept Message or Event activities
         if (dialogArgs.activity.type !== ActivityTypes.Message && dialogArgs.activity.type !== ActivityTypes.Event) {
             // Just forward to the remote skill
-            throw new TypeError(`Only ${ ActivityTypes.Message } and ${ ActivityTypes.Event } activities are supported. Received activity of type ${ dialogArgs.activity.type } in options.`);
+            throw new TypeError(`Only "${ ActivityTypes.Message }" and "${ ActivityTypes.Event }" activities are supported. Received activity of type "${ dialogArgs.activity.type }" in options.`);
         }
 
         return dialogArgs;
     }
 
-    private async sendToSkill(context: TurnContext, activity: Activity): Promise<void> {
+    private async sendToSkill(context: TurnContext, activity: Activity): Promise<Activity> {
         // Create a conversationId to interact with the skill and send the activity
-        const skillConversationId = await this.dialogOptions.conversationIdFactory.createSkillConversationId(TurnContext.getConversationReference(activity) as ConversationReference);
+        const conversationIdFactoryOptions: SkillConversationIdFactoryOptions = {
+            fromBotOAuthScope: context.turnState.get(context.adapter.OAuthScopeKey),
+            fromBotId: this.dialogOptions.botId,
+            activity: activity,
+            botFrameworkSkill: this.dialogOptions.skill
+        };
+
+        // Create a conversationId to interact with the skill and send the activity
+        let skillConversationId: string;
+        try {
+            skillConversationId = await this.dialogOptions.conversationIdFactory.createSkillConversationIdWithOptions(conversationIdFactoryOptions);
+        } catch (err) {
+            if (err.message !== 'Not Implemented') throw err;
+            // If the SkillConversationIdFactoryBase implementation doesn't support createSkillConversationIdWithOptions(),
+            // use createSkillConversationId() instead.
+            skillConversationId = await this.dialogOptions.conversationIdFactory.createSkillConversationId(TurnContext.getConversationReference(activity) as ConversationReference);
+        }
 
         // Always save state before forwarding
         // (the dialog stack won't get updated with the skillDialog and things won't work if you don't)
-        await this.dialogOptions.conversationState.saveChanges(context, true);
         const skillInfo = this.dialogOptions.skill;
-        const response = await this.dialogOptions.skillClient.postActivity(this.dialogOptions.botId, skillInfo.appId, skillInfo.skillEndpoint, skillInfo.skillEndpoint, skillConversationId, activity);
+        await this.dialogOptions.conversationState.saveChanges(context, true);
+
+        const response = await this.dialogOptions.skillClient.postActivity<ExpectedReplies>(this.dialogOptions.botId, skillInfo.appId, skillInfo.skillEndpoint, this.dialogOptions.skillHostEndpoint, skillConversationId, activity);
 
         // Inspect the skill response status
         if (!(response.status >= 200 && response.status <= 299)) {
             throw new Error(`Error invoking the skill id: "${ skillInfo.id }" at "${ skillInfo.skillEndpoint }" (status is ${ response.status }). \r\n ${ response.body }`);
         }
+
+        let eocActivity: Activity;
+        if (activity.deliveryMode == DeliveryModes.ExpectReplies && response.body && response.body.activities) {
+            // Process replies in the response.Body.
+            if (Array.isArray(response.body.activities)) {
+                response.body.activities.forEach(async (fromSkillActivity: Activity): Promise<void> => {
+                    if (fromSkillActivity.type === ActivityTypes.EndOfConversation) {
+                        // Capture the EndOfConversation activity if it was sent from skill
+                        eocActivity = fromSkillActivity;
+                    } else {
+                        await context.sendActivity(fromSkillActivity);
+                    }
+                });
+            }
+        }
+
+        return eocActivity;
     }
 }

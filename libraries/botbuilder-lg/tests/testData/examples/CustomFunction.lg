@@ -2,7 +2,6 @@
 - ${custom(1, 2)}
 
 # callSub
-- ${sub()}
+- ${refSub()}
 
-[CustomFunctionsSub.lg](./CustomFunctionSub.lg)
-
+[import](CustomFunctionSub.lg)

@@ -90,7 +90,6 @@ export class ExpressionType {
     public static readonly Int: string = 'int';
     public static readonly String: string = 'string';
     public static readonly Bool: string = 'bool';
-    public static readonly Array: string = 'array';
     public static readonly Binary: string = 'binary';
     public static readonly DataUri: string = 'dataUri';
     public static readonly DataUriToBinary: string = 'dataUriToBinary';
@@ -100,8 +99,6 @@ export class ExpressionType {
     public static readonly Base64ToBinary: string = 'base64ToBinary';
     public static readonly Base64ToString: string = 'base64ToString';
     public static readonly UriComponent: string = 'uriComponent';
-    // TODO
-    // xml
 
     // Memory
     public static readonly Accessor: string = 'Accessor';
@@ -144,7 +141,7 @@ export class ExpressionType {
     
     // TODO
     // xPath
-    // jPath
+    // xml
 
     // URI parsing functions
     public static readonly UriHost: string = 'uriHost';
@@ -156,4 +153,13 @@ export class ExpressionType {
 
     // Regar expression
     public static readonly IsMatch: string = 'isMatch';
+
+    //Type Checking 
+    public static readonly isString: string = 'isString';
+    public static readonly isInteger: string = 'isInteger';
+    public static readonly isArray: string = 'isArray';
+    public static readonly isObject: string = 'isObject';
+    public static readonly isFloat: string = 'isFloat';
+    public static readonly isDateTime: string = 'isDateTime';
+    public static readonly isBoolean: string = 'isBoolean';
 }

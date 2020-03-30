@@ -956,6 +956,28 @@ export const ConversationsResult: msRest.CompositeMapper = {
   }
 };
 
+export const ExpectedReplies: msRest.CompositeMapper = {
+  serializedName: "ExpectedReplies",
+  type: {
+    name: "Composite",
+    className: "ExpectedReplies",
+    modelProperties: {
+      activities: {
+        serializedName: "activities",
+        type: {
+          name: "Sequence",
+          element: {
+            type: {
+              name: "Composite",
+              className: "Activity"
+            }
+          }
+        }
+      }
+    }
+  }
+};
+
 export const ResourceResponse: msRest.CompositeMapper = {
   serializedName: "ResourceResponse",
   type: {

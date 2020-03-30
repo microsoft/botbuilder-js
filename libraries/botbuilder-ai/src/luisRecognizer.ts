@@ -170,12 +170,12 @@ export interface LuisRecognizerOptionsV3 extends LuisRecognizerOptions {
     /**
      * (Optional) Dynamic lists of things like contact names to recognize at query time..
      */
-    dynamicLists?: any[];
+    dynamicLists?: Array<any>;
 
     /**
      * (Optional) External entities recognized in query.
      */
-    externalEntities?: any[];
+    externalEntities?: Array<any>;
 
     /**
      * (Optional) Boolean for if external entities should be preferred to the results from LUIS models.

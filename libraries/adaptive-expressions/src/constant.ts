@@ -14,6 +14,8 @@ import { ExpressionType } from './expressionType';
  */
 export class Constant extends Expression {
 
+    // original regex: (?<!\\)'
+    private readonly singleQuotRegex: RegExp = new RegExp(/'(?!\\)/g);
     /**
      * Constant value.
      */
@@ -41,15 +43,43 @@ export class Constant extends Expression {
         this.value = value;
     }
 
+    
+    public  deepEquals(other: Expression): boolean {
+        let eq: boolean;
+        if (!other || other.type !== this.type) {
+            eq = false; 
+        } else {
+            let otherVal = (other as Constant).value;
+            eq = this.value === otherVal;
+        }
+
+        return eq;
+    }
+
     public toString(): string {
+        
         if (this.value === undefined) {
             return 'null';
+        } else if (typeof this.value === 'string') {
+            let result = this.value;
+
+            result = result.replace(/\\/g, '\\\\');
+            result = this.reverseString(this.reverseString(result).replace(this.singleQuotRegex, (): any => '\'\\'));
+            return `'${ result }'`;
+        } else if (typeof this.value === 'number') {
+            return this.value.toString();
+        } else if(typeof this.value === 'object') {
+            return JSON.stringify(this.value);
         }
 
-        if (typeof this.value === 'string') {
-            return `'${ this.value }'`;
+        return this.value.toString();
+    }
+
+    private reverseString(str: string | undefined): string {
+        if (!str) {
+            return str;
         }
 
-        return !this.value ? undefined : this.value.toString();
+        return str.split('').reverse().join('');
     }
 }

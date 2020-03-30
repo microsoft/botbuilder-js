@@ -143,9 +143,6 @@ export class DialogContext {
      *
      * @param dialogId ID of the dialog to start.
      * @param options Optional. Arguments to pass into the dialog when it starts.
-     *
-     * @param dialogId ID of the dialog to start.
-     * @param options Optional. Arguments to pass into the dialog when it starts.
      * 
      * @remarks
      * If there's already an active dialog on the stack, that dialog will be paused until
@@ -161,7 +158,7 @@ export class DialogContext {
      * ```JavaScript
      * const result = await dc.beginDialog('greeting', { name: user.name });
      * ```
-     *
+     * 
      * **See also**
      * - [endDialog](xref:botbuilder-dialogs.DialogContext.endDialog)
      * - [prompt](xref:botbuilder-dialogs.DialogContext.prompt)
@@ -186,15 +183,15 @@ export class DialogContext {
 
     /**
      * Cancels all dialogs on the dialog stack, and clears stack.
-     *
+     * 
      * @param cancelParents Optional. If `true` all parent dialogs will be cancelled as well.
-     * @param eventName Optional. Name of a custom event to raise as dialogs are cancelled. This defaults to [cancelDialog](xref:botbuilder-dialogs.DialogEvents.cancelDialog).
+     * @param eventName Optional. Name of a custom event to raise as dialogs are cancelled. This defaults to [cancelDialog](xref:botbuilder-dialogs.DialogEvents.cancelDialog). 
      * @param eventValue Optional. Value to pass along with custom cancellation event.
      *
      * @remarks
      * This calls each dialog's [Dialog.endDialog](xref:botbuilder-dialogs.Dialog.endDialog) method before
      * removing the dialog from the stack.
-     *
+     * 
      * If there were any dialogs on the stack initially, the [status](xref:botbuilder-dialogs.DialogTurnResult.status)
      * of the return value is [cancelled](xref:botbuilder-dialogs.DialogTurnStatus.cancelled); otherwise, it's
      * [empty](xref:botbuilder-dialogs.DialogTurnStatus.empty).
@@ -217,7 +214,7 @@ export class DialogContext {
             while (dc != undefined) {
                 if (dc.stack.length > 0) {
                     // Check to see if the dialog wants to handle the event
-                    // - We skip notifying the first dialog which actually called cancelAllDialogs()
+                    // - We skip notifying the first dialog which actually called cancelAllDialogs() 
                     if (notify) {
                         const handled = await dc.emitEvent(eventName, eventValue, false, false);
                         if (handled) {
@@ -242,13 +239,13 @@ export class DialogContext {
 
     /**
      * Searches for a dialog with a given ID.
-     *
+     * 
      * @param dialogId ID of the dialog to search for.
-     *
+     * 
      * @remarks
      * If the dialog to start is not found in the [DialogSet](xref:botbuilder-dialogs.DialogSet) associated
      * with this dialog context, it attempts to find the dialog in its parent dialog context.
-     *
+     * 
      * **See also**
      * - [dialogs](xref:botbuilder-dialogs.DialogContext.dialogs)
      * - [parent](xref:botbuilder-dialogs.DialogContext.parent)
@@ -263,14 +260,14 @@ export class DialogContext {
 
     /**
      * Helper function to simplify formatting the options for calling a prompt dialog.
-     *
+     * 
      * @param dialogId ID of the prompt dialog to start.
      * @param promptOrOptions The text of the initial prompt to send the user,
      *      the activity to send as the initial prompt, or
      *      the object with which to format the prompt dialog.
      * @param choices Optional. Array of choices for the user to choose from,
      *      for use with a [ChoicePrompt](xref:botbuilder-dialogs.ChoicePrompt).
-     *
+     * 
      * @remarks
      * This helper method formats the object to use as the `options` parameter, and then calls
      * [beginDialog](xref:botbuilder-dialogs.DialogContext.beginDialog) to start the specified prompt dialog.
@@ -316,7 +313,7 @@ export class DialogContext {
      * the status of the dialog stack after this method completes.
      *
      * Typically, you would call this from within your bot's turn handler.
-     *
+     * 
      * For example:
      * ```JavaScript
      * const result = await dc.continueDialog();
@@ -369,16 +366,16 @@ export class DialogContext {
      *
      * The [status](xref:botbuilder-dialogs.DialogTurnResult.status) of returned object describes
      * the status of the dialog stack after this method completes.
-     *
+     * 
      * Typically, you would call this from within the logic for a specific dialog to signal back to
      * the dialog context that the dialog has completed, the dialog should be removed from the stack,
      * and the parent dialog should resume.
-     *
+     * 
      * For example:
      * ```JavaScript
      * return await dc.endDialog(returnValue);
      * ```
-     *
+     * 
      * **See also**
      * - [beginDialog](xref:botbuilder-dialogs.DialogContext.beginDialog)
      * - [replaceDialog](xref:botbuilder-dialogs.DialogContext.replaceDialog)
@@ -410,13 +407,13 @@ export class DialogContext {
      *
      * @param dialogId ID of the dialog to start.
      * @param options Optional. Arguments to pass into the new dialog when it starts.
-     *
+     * 
      * @remarks
      * This is particularly useful for creating a loop or redirecting to another dialog.
      *
      * The [status](xref:botbuilder-dialogs.DialogTurnResult.status) of returned object describes
      * the status of the dialog stack after this method completes.
-     *
+     * 
      * This method is similar to ending the current dialog and immediately beginning the new one.
      * However, the parent dialog is neither resumed nor otherwise notified.
      *

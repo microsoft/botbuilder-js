@@ -231,7 +231,7 @@ describe(`TokenResolver`, function () {
 
         await done;
 
-        // assert(log.indexOf('End polling') !== -1, 'did not end polling');
+        assert(log.indexOf('End polling') !== -1, 'did not end polling');
     });
 
     it(`should change interval polling`, async function () {

@@ -167,6 +167,35 @@ export interface DialogConfiguration {
     telemetryClient?: BotTelemetryClient;
 }
 
+export interface DialogEvent {
+    /**
+     * Flag indicating whether the event will be bubbled to the parent `DialogContext`. 
+     */
+    bubble: boolean;
+
+    /**
+     * Name of the event being raised.
+     */
+    name: string;
+
+    /**
+     * Optional. Value associated with the event.
+     */
+    value?: any;
+}
+
+export interface DialogConfiguration {
+    /**
+     * Static id of the dialog.
+     */
+    id?: string;
+
+    /**
+     * Telemetry client the dialog should use. 
+     */
+    telemetryClient?: BotTelemetryClient;
+}
+
 /**
  * Represents the result of a dialog context's attempt to begin, continue,
  * or otherwise manipulate one or more dialogs.
@@ -219,24 +248,6 @@ export interface DialogTurnResult<T = any> {
     parentEnded?: boolean;
 }
 
-export interface DialogEvent {
-    /**
-     * If `true` the event will be bubbled to the parent `DialogContext` if not handled by the
-     * current dialog.
-     */
-    bubble: boolean;
-
-    /**
-     * Name of the event being raised.
-     */
-    name: string;
-
-    /**
-     * (Optional) value associated with the event.
-     */
-    value?: any;
-}
-
 /**
  * Defines the core behavior for all dialogs.
  */
@@ -263,7 +274,7 @@ export abstract class Dialog<O extends object = {}> extends Configurable {
      * 
      * @param dialogId Optional. unique ID of the dialog.
      */
-    constructor(dialogId?: string) {
+    public constructor(dialogId?: string) {
         super();
         this.id = dialogId;
     }
@@ -274,16 +285,16 @@ export abstract class Dialog<O extends object = {}> extends Configurable {
      * @remarks
      * This will be automatically generated if not specified.
      */
-   public get id(): string {
-       if (this._id === undefined) {
-           this._id = this.onComputeId();
-       }
-       return this._id;
-   }
+    public get id(): string {
+        if (this._id === undefined) {
+            this._id = this.onComputeId();
+        }
+        return this._id;
+    }
 
-   public set id(value: string) {
-       this._id = value;
-   }
+    public set id(value: string) {
+        this._id = value;
+    }
 
     /** 
      * Gets the telemetry client for this dialog.
@@ -444,7 +455,7 @@ export abstract class Dialog<O extends object = {}> extends Configurable {
 
     /**
      * Called before an event is bubbled to its parent.
-     *
+     * 
      * @remarks
      * This is a good place to perform interception of an event as returning `true` will prevent
      * any further bubbling of the event to the dialogs parents and will also prevent any child
@@ -459,7 +470,7 @@ export abstract class Dialog<O extends object = {}> extends Configurable {
 
     /**
      * Called after an event was bubbled to all parents and wasn't handled.
-     *
+     * 
      * @remarks
      * This is a good place to perform default processing logic for an event. Returning `true` will
      * prevent any processing of the event by child dialogs.

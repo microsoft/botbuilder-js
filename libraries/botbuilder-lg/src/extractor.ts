@@ -6,29 +6,27 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-// tslint:disable-next-line: no-submodule-imports
 import { AbstractParseTreeVisitor, TerminalNode } from 'antlr4ts/tree';
 import { keyBy } from 'lodash';
 import * as lp from './generated/LGFileParser';
 import { LGFileParserVisitor } from './generated/LGFileParserVisitor';
-import { LGTemplate } from './lgTemplate';
+import { Template } from './template';
 
-// tslint:disable-next-line: completed-docs
 /**
  * Lg template extracter.
  */
 export class Extractor extends AbstractParseTreeVisitor<Map<string, any>> implements LGFileParserVisitor<Map<string, any>> {
-    public readonly templates: LGTemplate[];
-    public readonly templateMap: {[name: string]: LGTemplate};
-    public constructor(templates: LGTemplate[]) {
+    public readonly templates: Template[];
+    public readonly templateMap: {[name: string]: Template};
+    public constructor(templates: Template[]) {
         super();
         this.templates = templates;
-        this.templateMap = keyBy(templates, (t: LGTemplate): string => t.name);
+        this.templateMap = keyBy(templates, (t: Template): string => t.name);
     }
 
     public extract(): Map<string, any>[] {
         const result: Map<string, any>[] = [];
-        this.templates.forEach((template: LGTemplate): any => {
+        this.templates.forEach((template: Template): any => {
             result.push(this.visit(template.parseTree));
         });
 
@@ -69,7 +67,7 @@ export class Extractor extends AbstractParseTreeVisitor<Map<string, any>> implem
         const lineStart = '    ';
         const structName = context.structuredTemplateBody().structuredBodyNameLine().text;
         let fullStr = structName + '\n';
-        context.structuredTemplateBody().structuredBodyContentLine().forEach(line => fullStr += lineStart + line.text + '\n');
+        context.structuredTemplateBody().structuredBodyContentLine().forEach((line): string => fullStr += lineStart + line.text + '\n');
         fullStr += context.structuredTemplateBody().structuredBodyEndLine().text;
 
         result.set(fullStr, undefined);
@@ -100,7 +98,6 @@ export class Extractor extends AbstractParseTreeVisitor<Map<string, any>> implem
                     result.set(conditionLabel.toUpperCase().concat(' ') + expressions[0].text, childTemplateBodyResult);
                 }
             } else {
-                // tslint:disable-next-line: no-backbone-get-set-outside-model
                 result.set('ELSE:', childTemplateBodyResult);
             }
         }
@@ -133,7 +130,6 @@ export class Extractor extends AbstractParseTreeVisitor<Map<string, any>> implem
             if (caseExpr) {
                 result.set(conditionLabel.toUpperCase().concat(' ') + expressions[0].text, childTemplateBodyResult);
             } else {
-                // tslint:disable-next-line: no-backbone-get-set-outside-model
                 result.set('DEFALUT:', childTemplateBodyResult);
             }
         }

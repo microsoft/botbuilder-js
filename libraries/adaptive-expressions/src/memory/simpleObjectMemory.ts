@@ -1,6 +1,6 @@
 import { MemoryInterface } from './memoryInterface';
 import { Extensions } from '../extensions';
-import { Util } from '../parser/util';
+import { ExpressionFunctions } from '../expressionFunctions';
 
 /**
  * @module adaptive-expressions
@@ -36,7 +36,7 @@ export class SimpleObjectMemory implements MemoryInterface {
     }
 
     public getValue(path: string): any {
-        if (this.memory === undefined || path.length === 0 || (path[0] !== '[' && !path[0].match(/[a-z]/i))) {
+        if (this.memory === undefined || path.length === 0) {
             return undefined;
         }
 
@@ -56,9 +56,9 @@ export class SimpleObjectMemory implements MemoryInterface {
             let error: string;
             const idx = parseInt(part);
             if(!isNaN(idx) && Array.isArray(curScope)) {
-                ({value, error} = Extensions.accessIndex(curScope, idx));
+                ({value, error} = ExpressionFunctions.accessIndex(curScope, idx));
             } else {
-                ({value, error} = Extensions.accessProperty(curScope, part));
+                ({value, error} = ExpressionFunctions.accessProperty(curScope, part));
             }
 
             if (error) {
@@ -101,10 +101,10 @@ export class SimpleObjectMemory implements MemoryInterface {
             const idx = parseInt(parts[i]);
             if(!isNaN(idx) && Array.isArray(curScope)) {
                 curPath = `[${ parts[i] }]`;
-                ({value: curScope, error} = Extensions.accessIndex(curScope, idx));
+                ({value: curScope, error} = ExpressionFunctions.accessIndex(curScope, idx));
             } else {
                 curPath = `.${ parts[i] }`;
-                ({value: curScope, error} = Extensions.accessProperty(curScope, parts[i]));
+                ({value: curScope, error} = ExpressionFunctions.accessProperty(curScope, parts[i]));
             }
 
             if (error) {
@@ -136,7 +136,7 @@ export class SimpleObjectMemory implements MemoryInterface {
                 return;
             }
         } else {
-            error = Extensions.setProperty(curScope,parts[parts.length - 1], input).error;
+            error = ExpressionFunctions.setProperty(curScope,parts[parts.length - 1], input).error;
             if (error) {
                 return;
             }

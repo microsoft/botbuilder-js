@@ -8,31 +8,13 @@
 
 import { STATUS_CODES } from 'http';
 import * as os from 'os';
-import { Activity, ActivityTypes, BotAdapter, BotCallbackHandlerKey, ChannelAccount, ConversationAccount, ConversationParameters, ConversationReference, ConversationsResult, DeliveryModes, CredentialTokenProvider, InvokeResponse, ResourceResponse, TokenResponse, TurnContext } from 'botbuilder-core';
-import { AuthenticationConfiguration, AuthenticationConstants, ChannelValidation, ClaimsIdentity, ConnectorClient, EmulatorApiClient, GovernmentConstants, GovernmentChannelValidation, JwtTokenValidation, MicrosoftAppCredentials, AppCredentials, CertificateAppCredentials, SimpleCredentialProvider, TokenApiClient, TokenStatus, TokenApiModels, SkillValidation } from 'botframework-connector';
+import { Activity, ActivityTypes, CoreAppCredentials, BotAdapter, BotCallbackHandlerKey, ChannelAccount, ConversationAccount, ConversationParameters, ConversationReference, ConversationsResult, DeliveryModes, ExpectedReplies, InvokeResponse, ExtendedUserTokenProvider, ResourceResponse, StatusCodes, TokenResponse, TurnContext, INVOKE_RESPONSE_KEY } from 'botbuilder-core';
+import { AuthenticationConfiguration, AuthenticationConstants, ChannelValidation, Claim, ClaimsIdentity, ConnectorClient, EmulatorApiClient, GovernmentConstants, GovernmentChannelValidation, JwtTokenValidation, MicrosoftAppCredentials, AppCredentials, CertificateAppCredentials, SimpleCredentialProvider, TokenApiClient, TokenStatus, TokenApiModels, SignInUrlResponse, SkillValidation, TokenExchangeRequest } from 'botframework-connector';
+
 import { INodeBuffer, INodeSocket, IReceiveRequest, ISocket, IStreamingTransportServer, NamedPipeServer, NodeWebSocketFactory, NodeWebSocketFactoryBase, RequestHandler, StreamingResponse, WebSocketServer } from 'botframework-streaming';
 
 import { WebRequest, WebResponse } from './interfaces';
 import { defaultPipeName, GET, POST, MESSAGES_PATH, StreamingHttpClient, TokenResolver, VERSION_PATH } from './streaming';
-
-export enum StatusCodes {
-    OK = 200,
-    BAD_REQUEST = 400,
-    UNAUTHORIZED = 401,
-    NOT_FOUND = 404,
-    METHOD_NOT_ALLOWED = 405,
-    UPGRADE_REQUIRED = 426,
-    INTERNAL_SERVER_ERROR = 500,
-    NOT_IMPLEMENTED = 501,
-}
-
-export class StatusCodeError extends Error {
-    public readonly statusCode: StatusCodes;
-    public constructor(statusCode: StatusCodes, message?: string) {
-        super(message);
-        this.statusCode = statusCode;
-    }
-}
 
 /**
  * Contains settings used to configure a [BotFrameworkAdapter](xref:botbuilder.BotFrameworkAdapter) instance.
@@ -102,9 +84,6 @@ export const USER_AGENT: string = `Microsoft-BotFramework/3.1 BotBuilder/${ pjso
 const OAUTH_ENDPOINT = 'https://api.botframework.com';
 const US_GOV_OAUTH_ENDPOINT = 'https://api.botframework.azure.us';
 
-// This key is exported internally so that the TeamsActivityHandler will not overwrite any already set InvokeResponses.
-export const INVOKE_RESPONSE_KEY: symbol = Symbol('invokeResponse');
-
 /**
  * A [BotAdapter](xref:botbuilder-core.BotAdapter) that can connect a bot to a service endpoint.
  * Implements [IUserTokenProvider](xref:botbuilder-core.IUserTokenProvider).
@@ -139,7 +118,7 @@ export const INVOKE_RESPONSE_KEY: symbol = Symbol('invokeResponse');
  * };
  * ```
  */
-export class BotFrameworkAdapter extends BotAdapter implements CredentialTokenProvider, RequestHandler {
+export class BotFrameworkAdapter extends BotAdapter implements ExtendedUserTokenProvider, RequestHandler {
     // These keys are public to permit access to the keys from the adapter when it's a being
     // from library that does not have access to static properties off of BotFrameworkAdapter.
     // E.g. botbuilder-dialogs
@@ -235,6 +214,7 @@ export class BotFrameworkAdapter extends BotAdapter implements CredentialTokenPr
      * Asynchronously resumes a conversation with a user, possibly after some time has gone by.
      *
      * @param reference A reference to the conversation to continue.
+     * @param oAuthScope The intended recipient of any sent activities.
      * @param logic The asynchronous method to call after the adapter middleware runs.
      * 
      * @remarks
@@ -276,14 +256,46 @@ export class BotFrameworkAdapter extends BotAdapter implements CredentialTokenPr
      * });
      * ```
      */
-    public async continueConversation(reference: Partial<ConversationReference>, logic: (context: TurnContext) => Promise<void>): Promise<void> {
+    public async continueConversation(reference: Partial<ConversationReference>, logic: (context: TurnContext) => Promise<void>): Promise<void>
+    public async continueConversation(reference: Partial<ConversationReference>, oAuthScope: string, logic: (context: TurnContext) => Promise<void>): Promise<void>
+    public async continueConversation(reference: Partial<ConversationReference>, oAuthScopeOrlogic: string | ((context: TurnContext) => Promise<void> ), logic?: (context: TurnContext) => Promise<void>): Promise<void> {
+        let audience = oAuthScopeOrlogic as string;
+        let callback = typeof oAuthScopeOrlogic === 'function' ? oAuthScopeOrlogic : logic;
+
+        if (typeof oAuthScopeOrlogic === 'function') {
+            // Because the OAuthScope parameter was not provided, get the correct value via the channelService.
+            // In this scenario, the ConnectorClient for the continued conversation can only communicate with
+            // official channels, not with other bots.
+            audience = JwtTokenValidation.isGovernment(this.settings.channelService) ? GovernmentConstants.ToChannelFromBotOAuthScope : AuthenticationConstants.ToChannelFromBotOAuthScope;
+        }
+
+        let credentials: AppCredentials = this.credentials;
+
+        // For authenticated flows (where the bot has an AppId), the ConversationReference's serviceUrl needs
+        // to be trusted for the bot to acquire a token when sending activities to the conversation.
+        // For anonymous flows, the serviceUrl should not be trusted.
+        if (credentials.appId) {
+            AppCredentials.trustServiceUrl(reference.serviceUrl);
+
+            // If the provided OAuthScope doesn't match the current one on the instance's credentials, create
+            // a new AppCredentials with the correct OAuthScope.
+            if (credentials.oAuthScope !== audience) {
+                // The BotFrameworkAdapter JavaScript implementation supports one Bot per instance, so get
+                // the botAppId from the credentials.
+                credentials = await this.buildCredentials(credentials.appId, audience);
+            }
+        }
+
+        const connectorClient = this.createConnectorClientInternal(reference.serviceUrl, credentials);
         const request: Partial<Activity> = TurnContext.applyConversationReference(
             { type: 'event', name: 'continueConversation' },
             reference,
             true
         );
         const context = this.createContext(request);
-        await this.runMiddleware(context, logic);
+        context.turnState.set(this.OAuthScopeKey, audience);
+        context.turnState.set(this.ConnectorClientKey, connectorClient);
+        await this.runMiddleware(context, callback);
     }
 
     /**
@@ -524,13 +536,13 @@ export class BotFrameworkAdapter extends BotAdapter implements CredentialTokenPr
      * @returns A [TokenResponse](xref:botframework-schema.TokenResponse) object that contains the user token.
      */
     public async getUserToken(context: TurnContext, connectionName: string, magicCode?: string): Promise<TokenResponse>;
-    public async getUserToken(context: TurnContext, connectionName: string, magicCode?: string, oAuthAppCredentials?: AppCredentials): Promise<TokenResponse>;
+    public async getUserToken(context: TurnContext, connectionName: string, magicCode?: string, oAuthAppCredentials?: CoreAppCredentials): Promise<TokenResponse>;
     public async getUserToken(context: TurnContext, connectionName: string, magicCode?: string, oAuthAppCredentials?: AppCredentials): Promise<TokenResponse> {
         if (!context.activity.from || !context.activity.from.id) {
             throw new Error(`BotFrameworkAdapter.getUserToken(): missing from or from.id`);
         }
         if (!connectionName) {
-        	throw new Error('getUserToken() requires a connectionName but none was provided.');
+            throw new Error('getUserToken() requires a connectionName but none was provided.');
         }
         this.checkEmulatingOAuthCards(context);
         const userId: string = context.activity.from.id;
@@ -555,7 +567,7 @@ export class BotFrameworkAdapter extends BotAdapter implements CredentialTokenPr
      * @param oAuthAppCredentials AppCredentials for OAuth.
      */
     public async signOutUser(context: TurnContext, connectionName?: string, userId?: string): Promise<void>;
-    public async signOutUser(context: TurnContext, connectionName?: string, userId?: string, oAuthAppCredentials?: AppCredentials): Promise<void>;
+    public async signOutUser(context: TurnContext, connectionName?: string, userId?: string, oAuthAppCredentials?: CoreAppCredentials): Promise<void>;
     public async signOutUser(context: TurnContext, connectionName?: string, userId?: string, oAuthAppCredentials?: AppCredentials): Promise<void> {
         if (!context.activity.from || !context.activity.from.id) {
             throw new Error(`BotFrameworkAdapter.signOutUser(): missing from or from.id`);
@@ -582,6 +594,8 @@ export class BotFrameworkAdapter extends BotAdapter implements CredentialTokenPr
      * @param userId The user id that will be associated with the token.
      * @param finalRedirect The final URL that the OAuth flow will redirect to.
      */
+    public async getSignInLink(context: TurnContext, connectionName: string, oAuthAppCredentials?: AppCredentials, userId?: string, finalRedirect?: string): Promise<string>
+    public async getSignInLink(context: TurnContext, connectionName: string, oAuthAppCredentials?: CoreAppCredentials, userId?: string, finalRedirect?: string): Promise<string>
     public async getSignInLink(context: TurnContext, connectionName: string, oAuthAppCredentials?: AppCredentials, userId?: string, finalRedirect?: string): Promise<string> {
         if (userId && userId != context.activity.from.id) {
             throw new ReferenceError(`cannot retrieve OAuth signin link for a user that's different from the conversation`);
@@ -595,7 +609,8 @@ export class BotFrameworkAdapter extends BotAdapter implements CredentialTokenPr
         const state: any = {
             ConnectionName: connectionName,
             Conversation: conversation,
-            MsAppId: (client.credentials as AppCredentials).appId
+            MsAppId: (client.credentials as AppCredentials).appId,
+            RelatesTo: context.activity.relatesTo
         };
 
         const finalState: string = Buffer.from(JSON.stringify(state)).toString('base64');
@@ -615,7 +630,7 @@ export class BotFrameworkAdapter extends BotAdapter implements CredentialTokenPr
      * @returns The [TokenStatus](xref:botframework-connector.TokenStatus) objects retrieved.
      */
     public async getTokenStatus(context: TurnContext, userId?: string, includeFilter?: string): Promise<TokenStatus[]>;
-    public async getTokenStatus(context: TurnContext, userId?: string, includeFilter?: string, oAuthAppCredentials?: AppCredentials): Promise<TokenStatus[]>;
+    public async getTokenStatus(context: TurnContext, userId?: string, includeFilter?: string, oAuthAppCredentials?: CoreAppCredentials): Promise<TokenStatus[]>;
     public async getTokenStatus(context: TurnContext, userId?: string, includeFilter?: string, oAuthAppCredentials?: AppCredentials): Promise<TokenStatus[]> {
         if (!userId && (!context.activity.from || !context.activity.from.id)) {
             throw new Error(`BotFrameworkAdapter.getTokenStatus(): missing from or from.id`);
@@ -640,7 +655,7 @@ export class BotFrameworkAdapter extends BotAdapter implements CredentialTokenPr
      * @returns A map of the [TokenResponse](xref:botframework-schema.TokenResponse) objects by resource URL.
      */
     public async getAadTokens(context: TurnContext, connectionName: string, resourceUrls: string[]): Promise<{[propertyName: string]: TokenResponse}>;
-    public async getAadTokens(context: TurnContext, connectionName: string, resourceUrls: string[], oAuthAppCredentials?: AppCredentials): Promise<{[propertyName: string]: TokenResponse}>;
+    public async getAadTokens(context: TurnContext, connectionName: string, resourceUrls: string[], oAuthAppCredentials?: CoreAppCredentials): Promise<{[propertyName: string]: TokenResponse}>;
     public async getAadTokens(context: TurnContext, connectionName: string, resourceUrls: string[], oAuthAppCredentials?: AppCredentials): Promise<{[propertyName: string]: TokenResponse}> {
         if (!context.activity.from || !context.activity.from.id) {
             throw new Error(`BotFrameworkAdapter.getAadTokens(): missing from or from.id`);
@@ -652,6 +667,74 @@ export class BotFrameworkAdapter extends BotAdapter implements CredentialTokenPr
         context.turnState.set(this.TokenApiClientCredentialsKey, client);
 
         return (await client.userToken.getAadTokens(userId, connectionName, { resourceUrls: resourceUrls }, { channelId: context.activity.channelId }))._response.parsedBody as {[propertyName: string]: TokenResponse };
+    }
+
+    /**
+     * Asynchronously Get the raw signin resource to be sent to the user for signin.
+     * 
+     * @param context The context object for the turn.
+     * @param connectionName The name of the auth connection to use.
+     * @param userId The user id that will be associated with the token.
+     * @param finalRedirect The final URL that the OAuth flow will redirect to.
+     * 
+     * @returns The [BotSignInGetSignInResourceResponse](xref:botframework-connector.BotSignInGetSignInResourceResponse) object.
+     */
+    public async getSignInResource(context: TurnContext, connectionName: string, userId?: string, finalRedirect?: string, appCredentials?: CoreAppCredentials): Promise<SignInUrlResponse> {
+        if (!connectionName) {
+            throw new Error('getUserToken() requires a connectionName but none was provided.');
+        }
+
+        if (!context.activity.from || !context.activity.from.id) {
+            throw new Error(`BotFrameworkAdapter.getSignInResource(): missing from or from.id`);
+        }
+
+        // The provided userId doesn't match the from.id on the activity. (same for finalRedirect)
+        if (userId && context.activity.from.id !== userId) {
+            throw new Error('BotFrameworkAdapter.getSiginInResource(): cannot get signin resource for a user that is different from the conversation');
+        }
+
+        const url: string = this.oauthApiUrl(context);
+        const credentials = appCredentials as AppCredentials;
+        const client: TokenApiClient = this.createTokenApiClient(url, credentials);
+        const conversation: Partial<ConversationReference> = TurnContext.getConversationReference(context.activity);
+
+        const state: any = {
+            ConnectionName: connectionName,
+            Conversation: conversation,
+            relatesTo: context.activity.relatesTo,
+            MSAppId: (client.credentials as AppCredentials).appId
+        };
+        const finalState: string = Buffer.from(JSON.stringify(state)).toString('base64');
+        const options: TokenApiModels.BotSignInGetSignInResourceOptionalParams = {finalRedirect: finalRedirect};
+        
+        return await (client.botSignIn.getSignInResource(finalState, options));
+    }
+
+    /**
+     * Asynchronously Performs a token exchange operation such as for single sign-on.
+     * @param context Context for the current turn of conversation with the user.
+     * @param connectionName Name of the auth connection to use.
+     * @param userId The user id that will be associated with the token.
+     * @param tokenExchangeRequest The exchange request details, either a token to exchange or a uri to exchange.
+     */ 
+    public async exchangeToken(context: TurnContext, connectionName: string, userId: string, tokenExchangeRequest: TokenExchangeRequest, appCredentials?: CoreAppCredentials): Promise<TokenResponse>
+    public async exchangeToken(context: TurnContext, connectionName: string, userId: string, tokenExchangeRequest: TokenExchangeRequest, appCredentials?: AppCredentials): Promise<TokenResponse> {
+        if (!connectionName) {
+            throw new Error('exchangeToken() requires a connectionName but none was provided.');
+        }
+
+        if (!userId) {
+            throw new Error('exchangeToken() requires an userId but none was provided.');
+        }
+        
+        if(tokenExchangeRequest && !tokenExchangeRequest.token && !tokenExchangeRequest.uri) {
+            throw new Error('BotFrameworkAdapter.exchangeToken(): Either a Token or Uri property is required on the TokenExchangeRequest');
+        }
+
+        const url: string = this.oauthApiUrl(context);
+        const client: TokenApiClient = this.createTokenApiClient(url, appCredentials);
+
+        return (await client.userToken.exchangeAsync(userId, connectionName, context.activity.channelId, tokenExchangeRequest))._response.parsedBody as TokenResponse;
     }
 
     /**
@@ -668,7 +751,7 @@ export class BotFrameworkAdapter extends BotAdapter implements CredentialTokenPr
     public async emulateOAuthCards(contextOrServiceUrl: TurnContext | string, emulate: boolean): Promise<void> {
         this.isEmulatingOAuthCards = emulate;
         const url: string = this.oauthApiUrl(contextOrServiceUrl);
-        await EmulatorApiClient.emulateOAuthCards(this.credentials as AppCredentials,  url, emulate);
+        await EmulatorApiClient.emulateOAuthCards(this.credentials,  url, emulate);
     }
 
     /**
@@ -744,6 +827,9 @@ export class BotFrameworkAdapter extends BotAdapter implements CredentialTokenPr
             const connectorClient = await this.createConnectorClientWithIdentity(request.serviceUrl, identity);
             context.turnState.set(this.ConnectorClientKey, connectorClient);
 
+            const oAuthScope: string = SkillValidation.isSkillClaim(identity.claims) ? JwtTokenValidation.getAppIdFromClaims(identity.claims) : this.credentials.oAuthScope;
+            context.turnState.set(this.OAuthScopeKey, oAuthScope);
+
             context.turnState.set(BotCallbackHandlerKey, logic);
             await this.runMiddleware(context, logic);
 
@@ -755,13 +841,14 @@ export class BotFrameworkAdapter extends BotAdapter implements CredentialTokenPr
                     status = value.status;
                     body = value.body;
                 } else {
-                    status = 501;
+                    status = StatusCodes.NOT_IMPLEMENTED;
                 }
-            } else if (request.deliveryMode === DeliveryModes.BufferedReplies) {
-                body = context.bufferedReplies;
+            } else if (request.deliveryMode === DeliveryModes.ExpectReplies) {
+                const expectedReplies: ExpectedReplies = { activities: context.bufferedReplyActivities as Activity[]  };
+                body = expectedReplies;
                 status = StatusCodes.OK;
             } else {
-                status = 200;
+                status = StatusCodes.OK;
             }
         } catch (err) {
             // Catch the error to try and throw the stacktrace out of processActivity()
@@ -948,22 +1035,8 @@ export class BotFrameworkAdapter extends BotAdapter implements CredentialTokenPr
         const botAppId = identity.getClaimValue(AuthenticationConstants.AudienceClaim) ||
             identity.getClaimValue(AuthenticationConstants.AppIdClaim);
 
-        // Anonymous claims and non-skill claims should fall through without modifying the scope.
-        let credentials: AppCredentials = this.credentials;
-
-        // If the request is for skills, we need to create an AppCredentials instance with
-        // the correct scope for communication between the caller and the skill.
-        if (botAppId && SkillValidation.isSkillClaim(identity.claims)) {
-            const scope = JwtTokenValidation.getAppIdFromClaims(identity.claims);
-            if (this.credentials.oAuthScope === scope) {
-                // Do nothing, the current credentials and its scope are valid for the skill.
-                // i.e. the adatper instance is pre-configured to talk with one skill.
-            } else {
-                // Since the scope is different, we will create a new instance of the AppCredentials
-                // so this.credentials.oAuthScope isn't overridden.
-                credentials = await this.buildCredentials(botAppId, scope);
-            }
-        }
+        const oAuthScope = await this.getOAuthScope(botAppId, identity.claims);
+        const credentials = await this.buildCredentials(botAppId, oAuthScope);
 
         const client: ConnectorClient = this.createConnectorClientInternal(serviceUrl, credentials);
         return client;
@@ -1015,6 +1088,17 @@ export class BotFrameworkAdapter extends BotAdapter implements CredentialTokenPr
         return client;
     }
 
+    private async getOAuthScope(botAppId: string, claims: Claim[]): Promise<string> {
+        // If the Claims are for skills, we need to create an AppCredentials instance with
+        // the correct scope for communication between the caller and the skill.
+        if (botAppId && SkillValidation.isSkillClaim(claims)) {
+            return JwtTokenValidation.getAppIdFromClaims(claims);
+        }
+
+        // Return the current credentials' OAuthScope.
+        return this.credentials.oAuthScope;
+    }
+
     /**
      * 
      * @remarks
@@ -1044,7 +1128,8 @@ export class BotFrameworkAdapter extends BotAdapter implements CredentialTokenPr
      * @remarks
      * Override this in a derived class to create a mock OAuth API client for unit testing.
      */
-    protected createTokenApiClient(serviceUrl: string, oAuthAppCredentials: AppCredentials): TokenApiClient {
+    protected createTokenApiClient(serviceUrl: string, oAuthAppCredentials?: CoreAppCredentials): TokenApiClient;
+    protected createTokenApiClient(serviceUrl: string, oAuthAppCredentials?: AppCredentials): TokenApiClient {
         const tokenApiClientCredentials = oAuthAppCredentials ? oAuthAppCredentials : this.credentials;
         const client = new TokenApiClient(tokenApiClientCredentials, { baseUri: serviceUrl, userAgent: USER_AGENT });
 
@@ -1186,16 +1271,18 @@ export class BotFrameworkAdapter extends BotAdapter implements CredentialTokenPr
 
             if (body.type === ActivityTypes.Invoke) {
                 let invokeResponse: any = context.turnState.get(INVOKE_RESPONSE_KEY);
-
                 if (invokeResponse && invokeResponse.value) {
                     const value: InvokeResponse = invokeResponse.value;
                     response.statusCode = value.status;
-                    response.setBody(value.body);
+                    if (value.body) {      
+                        response.setBody(value.body);
+                    }
                 } else {
                     response.statusCode = StatusCodes.NOT_IMPLEMENTED;
                 }
-            } else if (body.deliveryMode === DeliveryModes.BufferedReplies) {
-                response.setBody(context.bufferedReplies);
+            } else if (body.deliveryMode === DeliveryModes.ExpectReplies) {
+                const replies: ExpectedReplies = { activities : context.bufferedReplyActivities as Activity[] };
+                response.setBody(replies);
                 response.statusCode = StatusCodes.OK;
             } else {
                 response.statusCode = StatusCodes.OK;
@@ -1282,7 +1369,7 @@ export class BotFrameworkAdapter extends BotAdapter implements CredentialTokenPr
 
         // Add serviceUrl from claim to static cache to trigger token refreshes.
         const serviceUrl = claims.getClaimValue(AuthenticationConstants.ServiceUrlClaim);
-        MicrosoftAppCredentials.trustServiceUrl(serviceUrl);
+        AppCredentials.trustServiceUrl(serviceUrl);
 
         if (!claims.isAuthenticated) { throw new Error('Unauthorized Access. Request is not authorized'); }
     }

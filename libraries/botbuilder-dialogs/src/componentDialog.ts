@@ -93,7 +93,6 @@ export class ComponentDialog<O extends object = {}> extends DialogContainer<O> {
             // Return result to calling dialog
             return await this.endComponent(outerDC, turnResult.result);
         }
-        
         // Just signal end of turn
         return Dialog.EndOfTurn;
     }

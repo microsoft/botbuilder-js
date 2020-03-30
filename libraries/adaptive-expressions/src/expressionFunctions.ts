@@ -18,7 +18,7 @@ import { EvaluateExpressionDelegate, ExpressionEvaluator, ValidateExpressionDele
 import { ExpressionType } from './expressionType';
 import { Extensions } from './extensions';
 import { TimeZoneConverter } from './timeZoneConverter';
-import { convertCSharpDateTimeToMomentJS } from './formatConverter';
+import { convertCSharpDateTimeToMomentJS } from './datetimeFormatConverter';
 import { MemoryInterface, SimpleObjectMemory, StackedMemory } from './memory';
 
 /**
@@ -54,7 +54,10 @@ export class ExpressionFunctions {
      */
     public static readonly UnixMilliSecondToTicksConstant: number = 621355968000000000;
 
-    public static _functions: Map<string, ExpressionEvaluator> = ExpressionFunctions.buildFunctionLookup();
+    /**
+     * Read only Dictionary of built in functions.
+     */
+    public static readonly standardFunctions: ReadonlyMap<string, ExpressionEvaluator> = ExpressionFunctions.getStandardFunctions();
 
     /**
      * Validate that expression has a certain number of children that are of any of the supported types.
@@ -528,7 +531,6 @@ export class ExpressionFunctions {
             (args: any []): any => {
                 const binaryArgs: any[] = [undefined, undefined];
                 let soFar: any = args[0];
-                // tslint:disable-next-line: prefer-for-of
                 for (let i = 1; i < args.length; i++) {
                     binaryArgs[0] = soFar;
                     binaryArgs[1] = args[i];
@@ -554,7 +556,6 @@ export class ExpressionFunctions {
                 let soFar: any = args[0];
                 let value: any;
                 let error: string;
-                // tslint:disable-next-line: prefer-for-of
                 for (let i = 1; i < args.length; i++) {
                     binaryArgs[0] = soFar;
                     binaryArgs[1] = args[i];
@@ -599,7 +600,7 @@ export class ExpressionFunctions {
      * @param func Function to apply.
      */
     public static multivariateNumeric(type: string, func: (arg0: any []) => any, verify?: VerifyExpression): ExpressionEvaluator {
-        return new ExpressionEvaluator(type, ExpressionFunctions.applySequence(func, verify !== undefined ? verify : ExpressionFunctions.verifyNumber),
+        return new ExpressionEvaluator(type, ExpressionFunctions.applySequence(func, verify || ExpressionFunctions.verifyNumber),
             ReturnType.Number, ExpressionFunctions.validateTwoOrMoreThanTwoNumbers);
     }
     /**
@@ -689,8 +690,87 @@ export class ExpressionFunctions {
                 return { value: result, error };
             },
             ReturnType.String,
-            // tslint:disable-next-line: no-void-expression
             (expr: Expression): void => ExpressionFunctions.validateArityAndAnyType(expr, 2, 3, ReturnType.String, ReturnType.Number));
+    }
+
+    /**
+     * Lookup a property in IDictionary, JObject or through reflection.
+     * @param instance Instance with property.
+     * @param property Property to lookup.
+     * @returns Value and error information if any.
+     */
+    public static accessProperty(instance: any, property: string): { value: any; error: string } {
+        // NOTE: This returns null rather than an error if property is not present
+        if (!instance) {
+            return { value: undefined, error: undefined };
+        }
+
+        let value: any;
+        let error: string;
+        // todo, Is there a better way to access value, or any case is not listed below?
+        if (instance instanceof Map && instance as Map<string, any>!== undefined) {
+            const instanceMap: Map<string, any> = instance as Map<string, any>;
+            value = instanceMap.get(property);
+            if (value === undefined) {
+                const prop: string = Array.from(instanceMap.keys()).find((k: string): boolean => k.toLowerCase() === property.toLowerCase());
+                if (prop !== undefined) {
+                    value = instanceMap.get(prop);
+                }
+            }
+        } else {
+            const prop: string = Object.keys(instance).find((k: string): boolean => k.toLowerCase() === property.toLowerCase());
+            if (prop !== undefined) {
+                value = instance[prop];
+            }
+        }
+
+        return { value, error };
+    }
+
+    /**
+     * Set a property in Map or Object.
+     * @param instance Instance to set.
+     * @param property Property to set.
+     * @param value Value to set.
+     * @returns set value.
+     */
+    public static setProperty(instance: any, property: string, value: any): { value: any; error: string } {
+        const result: any = value;
+        if (instance instanceof Map) {
+            instance.set(property, value);
+        } else {
+            instance[property] = value;
+        }
+
+        return {value: result, error: undefined};
+    }
+
+    /**
+     * Lookup a property in IDictionary, JObject or through reflection.
+     * @param instance Instance with property.
+     * @param property Property to lookup.
+     * @returns Value and error information if any.
+     */
+    public static accessIndex(instance: any, index: number): { value: any; error: string } {
+        // NOTE: This returns null rather than an error if property is not present
+        if (instance === null || instance === undefined) {
+            return { value: undefined, error: undefined };
+        }
+
+        let value: any;
+        let error: string;
+
+        if (Array.isArray(instance)) {
+            if (index >= 0 && index < instance.length) {
+                value = instance[index];
+            } else {
+                error = `${ index } is out of range for ${ instance }`;
+            }
+        } else {
+            error = `${ instance } is not a collection.`;
+        }
+
+        return { value, error };
     }
 
     private static parseTimestamp(timeStamp: string, transform?: (arg0: moment.Moment) => any): { value: any; error: string } {
@@ -702,19 +782,6 @@ export class ExpressionFunctions {
         }
 
         return { value, error };
-    }
-
-    /**
-     * Lookup a built-in function information by type.
-     * @param type Type to look up.
-     */
-    public static lookup(type: string): ExpressionEvaluator {
-        const evaluator: ExpressionEvaluator = ExpressionFunctions._functions.get(type);
-        if (!evaluator) {
-            throw new Error(`${ type } does not have an evaluator, it's not a built-in function or a customized function`);
-        }
-
-        return evaluator;
     }
 
     public static timestampFormatter(formatter: string): string {
@@ -780,7 +847,6 @@ export class ExpressionFunctions {
     private static newGuid(): string {
         return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c: any): string => {
             const r: number = Math.random() * 16 | 0;
-            // tslint:disable-next-line: no-bitwise
             const v: number = c === 'x' ? r : (r & 0x3 | 0x8);
 
             return v.toString(16);
@@ -951,9 +1017,9 @@ export class ExpressionFunctions {
             ({ value: idxValue, error } = index.tryEvaluate(state));
             if (!error) {
                 if (Number.isInteger(idxValue)) {
-                    ({ value, error } = Extensions.accessIndex(inst, Number(idxValue)));
+                    ({ value, error } = ExpressionFunctions.accessIndex(inst, Number(idxValue)));
                 } else if (typeof idxValue === 'string') {
-                    ({ value, error } = Extensions.accessProperty(inst, idxValue.toString()));
+                    ({ value, error } = ExpressionFunctions.accessProperty(inst, idxValue.toString()));
                 } else {
                     error = `Could not coerce ${ index } to an int or string.`;
                 }
@@ -961,24 +1027,6 @@ export class ExpressionFunctions {
                 return { value, error };
             }
         }
-    }
-
-    private static canBeModified(value: any, property: string, expected?: number): boolean {
-        let modifiable = false;
-        if (expected !== undefined) {
-            // Modifiable list
-            modifiable = Array.isArray(value);
-        } else {
-            // Modifiable object
-            modifiable = value instanceof Map;
-            if (!modifiable) {
-                if (typeof value === 'object') {
-                    modifiable = value.hasOwnProperty(property);
-                }
-            }
-        }
-
-        return modifiable;
     }
 
     private static setPathToValue(expression: Expression, state: MemoryInterface): { value: any; error: string } {
@@ -1016,13 +1064,12 @@ export class ExpressionFunctions {
         }
 
         if (!error) {
-            // 2nd parameter has been rewrite to $local.item
             const iteratorName = (expression.children[1].children[0] as Constant).value as string;
             let arr = [];
             if (Array.isArray(instance)) {
                 arr = instance;
             } else if (typeof instance === 'object') {
-                Object.keys(instance).forEach(u => arr.push({key: u, value: instance[u]}));
+                Object.keys(instance).forEach((u): number => arr.push({key: u, value: instance[u]}));
             } else {
                 error = `${ expression.children[0] } is not a collection or structure object to run foreach`;
             }
@@ -1064,7 +1111,7 @@ export class ExpressionFunctions {
                 arr = instance;
                 isInstanceArray = true;
             } else if (typeof instance === 'object') {
-                Object.keys(instance).forEach(u => arr.push({key: u, value: instance[u]}));
+                Object.keys(instance).forEach((u): number => arr.push({key: u, value: instance[u]}));
             } else {
                 error = `${ expression.children[0] } is not a collection or structure object to run foreach`;
             }
@@ -1126,8 +1173,7 @@ export class ExpressionFunctions {
 
         const second: Expression = expression.children[1];
         if (second.returnType === ReturnType.String && second.type === ExpressionType.Constant) {
-            // tslint:disable-next-line: restrict-plus-operands
-            CommonRegex.CreateRegex((second as Constant).value + '');
+            CommonRegex.CreateRegex((second as Constant).value.toString());
         }
     }
 
@@ -1399,7 +1445,7 @@ export class ExpressionFunctions {
                         ({value: propertyName, error} = expression.children[1].tryEvaluate(state));
 
                         if (!error) {
-                            propertyName = propertyName === undefined ? '' : propertyName;
+                            propertyName = propertyName || '';
                         }
                         if (isDescending) {
                             result = lodash.sortBy(arr, propertyName).reverse();
@@ -1449,7 +1495,6 @@ export class ExpressionFunctions {
         let result = '';
         for (const element of stringToConvert) {
             const binaryElement: string = element.charCodeAt(0).toString(2);
-            // tslint:disable-next-line: prefer-array-literal
             result += new Array(9 - binaryElement.length).join('0').concat(binaryElement);
         }
 
@@ -1794,9 +1839,8 @@ export class ExpressionFunctions {
     }
 
     private static flatten(arr: any[], dept: number): any[]{
-        dept = typeof dept === 'undefined' ? 1 : dept;
-        if (typeof dept !== 'number') {
-            return;
+        if (!ExpressionFunctions.isNumber(dept) || dept < 1) {
+            dept = 1;
         }
       
         let res = JSON.parse(JSON.stringify(arr));
@@ -1812,9 +1856,7 @@ export class ExpressionFunctions {
         return res;
     }
 
-    // tslint:disable-next-line: max-func-body-length
-    private static buildFunctionLookup(): Map<string, ExpressionEvaluator> {
-        // tslint:disable-next-line: no-unnecessary-local-variable
+    private static getStandardFunctions(): ReadonlyMap<string, ExpressionEvaluator> {
         const functions: ExpressionEvaluator[] = [
             //Math
             new ExpressionEvaluator(ExpressionType.Element, ExpressionFunctions.extractElement, ReturnType.Object, this.validateBinary),
@@ -1969,7 +2011,6 @@ export class ExpressionFunctions {
                             error = 'Second paramter must be more than zero';
                         }
 
-                        // tslint:disable-next-line: prefer-array-literal
                         const result: number[] = [...Array(args[1]).keys()].map((u: number): number => u + Number(args[0]));
 
                         return { value: result, error };
@@ -2042,7 +2083,7 @@ export class ExpressionFunctions {
             new ExpressionEvaluator(
                 ExpressionType.Flatten,
                 ExpressionFunctions.apply(
-                    args => {
+                    (args: any []): any[] => {
                         let array = args[0];
                         let depth = args.length > 1 ? args[1] : 100;
                         return ExpressionFunctions.flatten(array, depth);
@@ -2052,7 +2093,7 @@ export class ExpressionFunctions {
             ),
             new ExpressionEvaluator(
                 ExpressionType.Unique,
-                ExpressionFunctions.apply(args => [... new Set(args[0])]),
+                ExpressionFunctions.apply((args: any []): any[] => [... new Set(args[0])]),
                 ReturnType.Object,
                 (expression: Expression): void => ExpressionFunctions.validateOrder(expression, [], ReturnType.Object)
             ),
@@ -2095,7 +2136,7 @@ export class ExpressionFunctions {
                             found = (args[0] as Map<string, any>).get(args[1]) !== undefined;
                         } else if (typeof args[1] === 'string') {
                             let value: any;
-                            ({ value, error } = Extensions.accessProperty(args[0], args[1]));
+                            ({ value, error } = ExpressionFunctions.accessProperty(args[0], args[1]));
                             found = !error && value !== undefined;
                         }
                     }
@@ -2183,7 +2224,7 @@ export class ExpressionFunctions {
                 (expression: Expression): void => ExpressionFunctions.validateArityAndAnyType(expression, 3, 3, ReturnType.String)),
             new ExpressionEvaluator(
                 ExpressionType.Split,
-                ExpressionFunctions.apply((args: any []): string[] => ExpressionFunctions.parseStringOrNull(args[0]).split(ExpressionFunctions.parseStringOrNull(args[1]? args[1]: '')), ExpressionFunctions.verifyStringOrNull),
+                ExpressionFunctions.apply((args: any []): string[] => ExpressionFunctions.parseStringOrNull(args[0]).split(ExpressionFunctions.parseStringOrNull(args[1] || '')), ExpressionFunctions.verifyStringOrNull),
                 ReturnType.Object,
                 (expression: Expression): void => ExpressionFunctions.validateArityAndAnyType(expression, 1, 2, ReturnType.String)),
             new ExpressionEvaluator(
@@ -2831,7 +2872,6 @@ export class ExpressionFunctions {
                             error = `Min value ${ args[0] } cannot be greater than max value ${ args[1] }.`;
                         }
 
-                        // tslint:disable-next-line: insecure-random
                         const value: any = Math.floor(Math.random() * (Number(args[1]) - Number(args[0])) + Number(args[0]));
 
                         return { value, error };
@@ -2840,11 +2880,6 @@ export class ExpressionFunctions {
                 ReturnType.Number,
                 ExpressionFunctions.validateBinaryNumber),
             new ExpressionEvaluator(ExpressionType.CreateArray, ExpressionFunctions.apply((args: any []): any[] => Array.from(args)), ReturnType.Object),
-            new ExpressionEvaluator(
-                ExpressionType.Array,
-                ExpressionFunctions.apply((args: any []): any[] => [args[0]], ExpressionFunctions.verifyString),
-                ReturnType.Object,
-                ExpressionFunctions.validateUnary),
             new ExpressionEvaluator(
                 ExpressionType.Binary,
                 ExpressionFunctions.apply((args: any []): string => this.toBinary(args[0]), ExpressionFunctions.verifyString),
@@ -2863,7 +2898,6 @@ export class ExpressionFunctions {
                 ExpressionFunctions.validateUnary),
             new ExpressionEvaluator(
                 ExpressionType.DataUriToString,
-                // tslint:disable-next-line: restrict-plus-operands
                 ExpressionFunctions.apply((args: Readonly<any>): string => Buffer.from(args[0].slice(args[0].indexOf(',') + 1), 'base64').toString(), ExpressionFunctions.verifyString),
                 ReturnType.String,
                 ExpressionFunctions.validateUnary),
@@ -2902,7 +2936,7 @@ export class ExpressionFunctions {
                         }
 
                         if (Array.isArray(args[0]) && args[0].length > 0) {
-                            first = Extensions.accessIndex(args[0], 0).value;
+                            first = ExpressionFunctions.accessIndex(args[0], 0).value;
                         }
 
                         return first;
@@ -2919,7 +2953,7 @@ export class ExpressionFunctions {
                         }
 
                         if (Array.isArray(args[0]) && args[0].length > 0) {
-                            last = Extensions.accessIndex(args[0], args[0].length - 1).value;
+                            last = ExpressionFunctions.accessIndex(args[0], args[0].length - 1).value;
                         }
 
                         return last;
@@ -2933,12 +2967,18 @@ export class ExpressionFunctions {
                 (expression: Expression): void => ExpressionFunctions.validateOrder(expression, undefined, ReturnType.String)),
             new ExpressionEvaluator(
                 ExpressionType.AddProperty,
-                ExpressionFunctions.apply(
+                ExpressionFunctions.applyWithError(
                     (args: any []): any => {
+                        let error: string;
                         const temp: any = args[0];
-                        temp[String(args[1])] = args[2];
+                        const prop = String(args[1]);
+                        if (prop in temp) {
+                            error = `${ prop } already exists`;
+                        } else {
+                            temp[String(args[1])] = args[2];
+                        }
 
-                        return temp;
+                        return {value: temp, error};
                     }),
                 ReturnType.Object,
                 (expression: Expression): void => ExpressionFunctions.validateOrder(expression, undefined, ReturnType.Object, ReturnType.String, ReturnType.Object)),
@@ -3004,14 +3044,44 @@ export class ExpressionFunctions {
                             value = false;
                             error = 'regular expression is empty.';
                         } else {
-                            const regex: RegExp = CommonRegex.CreateRegex(args[1]);
-                            value = regex.test(args[0]);
+                            const regex: RegExp = CommonRegex.CreateRegex(args[1].toString());
+                            value = regex.test(args[0].toString());
                         }
 
                         return {value, error};
-                    }),
+                    }, ExpressionFunctions.verifyStringOrNull),
                 ReturnType.Boolean,
-                ExpressionFunctions.validateIsMatch)
+                ExpressionFunctions.validateIsMatch),
+            
+            // Type Checking Functions
+            new ExpressionEvaluator(ExpressionType.isString, ExpressionFunctions.apply(
+                (args: any[]): boolean =>  typeof args[0] === 'string'),
+            ReturnType.Boolean,
+            ExpressionFunctions.validateUnary),
+            new ExpressionEvaluator(ExpressionType.isInteger, ExpressionFunctions.apply(
+                (args: any[]): boolean =>  this.isNumber(args[0]) &&  Number.isInteger(args[0])),
+            ReturnType.Boolean,
+            ExpressionFunctions.validateUnary),
+            new ExpressionEvaluator(ExpressionType.isFloat, ExpressionFunctions.apply(
+                (args: any[]): boolean =>  this.isNumber(args[0]) && !Number.isInteger(args[0])),
+            ReturnType.Boolean,
+            ExpressionFunctions.validateUnary),
+            new ExpressionEvaluator(ExpressionType.isArray, ExpressionFunctions.apply(
+                (args: any[]): boolean => Array.isArray(args[0])),
+            ReturnType.Boolean,
+            ExpressionFunctions.validateUnary),
+            new ExpressionEvaluator(ExpressionType.isObject, ExpressionFunctions.apply(
+                (args: any[]): boolean => typeof args[0] === 'object'),
+            ReturnType.Boolean,
+            ExpressionFunctions.validateUnary),
+            new ExpressionEvaluator(ExpressionType.isBoolean, ExpressionFunctions.apply(
+                (args: any[]): boolean => typeof args[0] === 'boolean'),
+            ReturnType.Boolean,
+            ExpressionFunctions.validateUnary),
+            new ExpressionEvaluator(ExpressionType.isDateTime, ExpressionFunctions.apply(
+                (args: any[]): boolean => typeof args[0] === 'string' && this.verifyISOTimestamp(args[0]) === undefined),
+            ReturnType.Boolean,
+            ExpressionFunctions.validateUnary)
         ];
 
         const lookup: Map<string, ExpressionEvaluator> = new Map<string, ExpressionEvaluator>();
@@ -3038,6 +3108,6 @@ export class ExpressionFunctions {
         lookup.set('or', lookup.get(ExpressionType.Or));
         lookup.set('&', lookup.get(ExpressionType.Concat));
 
-        return lookup;
+        return lookup as ReadonlyMap<string, ExpressionEvaluator>;
     }
 }

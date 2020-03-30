@@ -6,11 +6,8 @@
  * Licensed under the MIT License.
  */
 
-import { INVOKE_RESPONSE_KEY } from './botFrameworkAdapter';
-
 import {
     ActivityHandler,
-    ActivityTypes,
     AppBasedLinkQuery,
     ChannelInfo,
     FileConsentCardResponse,
@@ -26,7 +23,9 @@ import {
     TeamsChannelData,
     TeamsChannelAccount,
     TeamInfo,
-    TurnContext
+    TurnContext,
+    tokenExchangeOperationName,
+    verifyStateOperationName
 } from 'botbuilder-core';
 import { TeamsInfo } from './teamsInfo';
 
@@ -36,36 +35,13 @@ export class TeamsActivityHandler extends ActivityHandler {
      * 
      * @param context 
      */
-    protected async onTurnActivity(context: TurnContext): Promise<void> {
-        switch (context.activity.type) {
-            case ActivityTypes.Invoke:
-                const invokeResponse = await this.onInvokeActivity(context);
-                // If onInvokeActivity has already sent an InvokeResponse, do not send another one.
-                if (invokeResponse && !context.turnState.get(INVOKE_RESPONSE_KEY)) {
-                    await context.sendActivity({ value: invokeResponse, type: 'invokeResponse' });
-                }
-                await this.defaultNextEvent(context)();
-                break;
-            default:
-                await super.onTurnActivity(context);
-                break;
-        }
-    }
-
-    /**
-     * 
-     * @param context 
-     */
     protected async onInvokeActivity(context: TurnContext): Promise<InvokeResponse> {
+        let runEvents = true;
         try {
             if (!context.activity.name && context.activity.channelId === 'msteams') {
                 return await this.handleTeamsCardActionInvoke(context);
             } else {
                 switch (context.activity.name) {
-                    case 'signin/verifyState':
-                        await this.handleTeamsSigninVerifyState(context, context.activity.value);
-                        return TeamsActivityHandler.createInvokeResponse();
-
                     case 'fileConsent/invoke':
                         return TeamsActivityHandler.createInvokeResponse(await this.handleTeamsFileConsent(context, context.activity.value));
 
@@ -106,7 +82,8 @@ export class TeamsActivityHandler extends ActivityHandler {
                         return TeamsActivityHandler.createInvokeResponse(await this.handleTeamsTaskModuleSubmit(context, context.activity.value));
 
                     default:
-                        throw new Error('NotImplemented');
+                        runEvents = false;
+                        return super.onInvokeActivity(context);
                 }
             }
         } catch (err) {
@@ -116,6 +93,10 @@ export class TeamsActivityHandler extends ActivityHandler {
                 return { status: 400 };
             }
             throw err;
+        } finally {
+            if (runEvents) {
+                this.defaultNextEvent(context)();
+            }
         }
     }
 
@@ -175,12 +156,33 @@ export class TeamsActivityHandler extends ActivityHandler {
         throw new Error('NotImplemented');
     }
 
+    /*
+     * override default because to call teams specific events
+     */
+    protected async onSignInInvoke(context: TurnContext): Promise<void> {
+        switch (context.activity.name) {
+            case verifyStateOperationName:
+                await this.handleTeamsSigninVerifyState(context, context.activity.value);
+            case tokenExchangeOperationName:
+                await this.handleTeamsSigninTokenExchange(context, context.activity.value);
+        }
+    }
+
     /**
      * Receives invoke activities with Activity name of 'signin/verifyState'
      * @param context
      * @param action
      */
     protected async handleTeamsSigninVerifyState(context: TurnContext, query: SigninStateVerificationQuery): Promise<void> {
+        throw new Error('NotImplemented');
+    }
+
+    /**
+     * Receives invoke activities with Activity name of 'signin/tokenExchange'
+     * @param context
+     * @param action
+     */
+    protected async handleTeamsSigninTokenExchange(context: TurnContext, query: SigninStateVerificationQuery): Promise<void> {
         throw new Error('NotImplemented');
     }
 

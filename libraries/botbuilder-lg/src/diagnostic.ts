@@ -32,8 +32,8 @@ export class Diagnostic {
         range: Range,
         message: string,
         severity: DiagnosticSeverity = DiagnosticSeverity.Error,
-        source: string = undefined,
-        code: string = undefined) {
+        source?: string ,
+        code?: string) {
         this.message = message;
         this.range = range;
         this.severity = severity;

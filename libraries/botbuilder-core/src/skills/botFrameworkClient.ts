@@ -9,7 +9,7 @@
 import { Activity } from 'botframework-schema';
 import { InvokeResponse } from '../invokeResponse';
 
-export abstract class BotFrameworkClient {   
+export interface BotFrameworkClient {   
     /**
      * Forwards an activity to a another bot.
      * @remarks
@@ -21,5 +21,5 @@ export abstract class BotFrameworkClient {
      * @param conversationId A conversation ID to use for the conversation with the skill.
      * @param activity Activity to forward.
      */
-    public abstract postActivity(fromBotId: string, toBotId: string, toUrl: string, serviceUrl: string, conversationId: string, activity: Activity): Promise<InvokeResponse>
+    postActivity: (<T>(fromBotId: string, toBotId: string, toUrl: string, serviceUrl: string, conversationId: string, activity: Activity) => Promise<InvokeResponse<T>>) | ((fromBotId: string, toBotId: string, toUrl: string, serviceUrl: string, conversationId: string, activity: Activity) => Promise<InvokeResponse>);
 }

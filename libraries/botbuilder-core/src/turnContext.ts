@@ -344,9 +344,9 @@ export class TurnContext {
     }
 
     /**
-     * List of activities to send when `context.activity.deliveryMode == 'buffered'`.
+     * List of activities to send when `context.activity.deliveryMode == 'expectReplies'`.
      */
-    public readonly bufferedReplies: Partial<Activity>[] = [];
+    public readonly bufferedReplyActivities: Partial<Activity>[] = [];
 
     /**
      * Asynchronously sends an activity to the sender of the incoming activity.
@@ -464,11 +464,11 @@ export class TurnContext {
         });
 
         return this.emit(this._onSendActivities, output, () => {
-            if (this.activity.deliveryMode === DeliveryModes.BufferedReplies) {
+            if (this.activity.deliveryMode === DeliveryModes.ExpectReplies) {
                 // Append activities to buffer
                 const responses: ResourceResponse[] = [];
                 output.forEach((a) => {
-                    this.bufferedReplies.push(a);
+                    this.bufferedReplyActivities.push(a);
                     responses.push({ id: undefined });
                 });
 

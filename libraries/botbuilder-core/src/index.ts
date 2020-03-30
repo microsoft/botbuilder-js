@@ -7,11 +7,12 @@
  */
 
 export * from 'botframework-schema';
+export * from './activityFactory';
+export * from './coreAppCredentials';
 export * from './activityHandler';
 export * from './activityHandlerBase';
 export * from './autoSaveStateMiddleware';
 export * from './botAdapter';
-export * from './botAdapterSet';
 export * from './botState';
 export * from './botStatePropertyAccessor';
 export * from './botStateSet';
@@ -20,6 +21,7 @@ export * from './browserStorage';
 export * from './cardFactory';
 export * from './conversationState';
 export * from './invokeResponse';
+export * from './extendedUserTokenProvider';
 export * from './memoryStorage';
 export * from './memoryTranscriptStore';
 export * from './messageFactory';
@@ -28,8 +30,15 @@ export * from './privateConversationState';
 export * from './propertyManager';
 export * from './recognizerResult';
 export * from './showTypingMiddleware';
-export { BotFrameworkSkill, BotFrameworkClient, SkillConversationIdFactoryBase } from './skills';
+export * from './signInConstants';
+export {
+    BotFrameworkSkill,
+    BotFrameworkClient,
+    SkillConversationIdFactoryBase,
+    SkillConversationReference,
+    SkillConversationIdFactoryOptions } from './skills';
 export * from './skypeMentionNormalizeMiddleware';
+export * from './statusCodes';
 export * from './storage';
 export * from './telemetryLoggerMiddleware';
 export * from './testAdapter';
@@ -38,5 +47,3 @@ export * from './turnContext';
 export * from './userState';
 export * from './userTokenProvider';
 export * from './userTokenSettings';
-export * from './appCredentials';
-export * from './credentialTokenProvider';

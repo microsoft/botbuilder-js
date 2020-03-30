@@ -10,27 +10,16 @@
  * util class
  */
 export class Util {
+    /**
+     * trim char 
+     * @param str input string 
+     * @param char trim character
+     */
     public static trim(str: string, char: string): string {
         if (char !== undefined) {
             return str.replace(new RegExp(''.concat('^\\', char, '+|\\', char, '+$'), 'g'), '');
         }
 
         return str.trim();
-    }
-
-    public static unescape(exp: string): string {
-        const validCharactersDict: any = {
-            '\\r': '\r',
-            '\\n': '\n',
-            '\\t': '\t'
-        };
-
-        return exp.replace(/\\[^\r\n]?/g, (sub: string): string => { 
-            if (sub in validCharactersDict) {
-                return validCharactersDict[sub];
-            } else {
-                return sub.substr(1);
-            }
-        });
     }
 }

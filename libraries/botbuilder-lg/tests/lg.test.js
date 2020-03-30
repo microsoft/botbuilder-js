@@ -1,5 +1,5 @@
-const { LGParser } = require('../');
-const { SimpleObjectMemory, ExpressionEngine, ExpressionEvaluator, ExpressionFunctions, ReturnType} = require('adaptive-expressions');
+const { Templates } = require('../');
+const { SimpleObjectMemory, ExpressionParser, ExpressionFunctions, Expression } = require('adaptive-expressions');
 const assert = require('assert');
 const fs = require('fs');
 
@@ -9,89 +9,115 @@ function GetExampleFilePath(fileName) {
 
 
 describe('LG', function() {
+    it('TestEnumeration', function() {
+        let cnt = 0;
+        let templates = Templates.parseFile(GetExampleFilePath('2.lg'));
+        for (let t of templates) {
+            assert.strictEqual(typeof t, 'object');
+            assert.strictEqual(t.name, 'wPhrase');
+            cnt++;
+        }
+        assert.strictEqual(cnt, 1);
+    });
+
     it('TestBasic', function() {
-        let LGFile = LGParser.parseFile(GetExampleFilePath('2.lg'));
-        let evaled = LGFile.evaluateTemplate('wPhrase');
+        let templates = Templates.parseFile(GetExampleFilePath('2.lg'));
+        let evaled = templates.evaluate('wPhrase');
         const options = ['Hi', 'Hello', 'Hiya'];
         assert.strictEqual(options.includes(evaled), true, `The result ${ evaled } is not in those options [${ options.join(',') }]`);
     });
 
     it('TestBasicTemplateReference', function() {
-        let LGFile = LGParser.parseFile(GetExampleFilePath('3.lg'));
-        console.log(LGFile.templates[0].body)
-        console.log(LGFile.templates[1].body)
-        let evaled = LGFile.evaluateTemplate('welcome-user', undefined);
+        let templates = Templates.parseFile(GetExampleFilePath('3.lg'));
+        console.log(templates.toArray()[0].body);
+        console.log(templates.toArray()[1].body);
+        let evaled = templates.evaluate('welcome-user', undefined);
         const options = ['Hi', 'Hello', 'Hiya', 'Hi :)', 'Hello :)', 'Hiya :)'];
         assert.strictEqual(options.includes(evaled), true, `The result ${ evaled } is not in those options [${ options.join(',') }]`);
     });
 
     it('TestBasicTemplateRefAndEntityRef', function() {
-        let LGFile = LGParser.parseFile(GetExampleFilePath('4.lg'));
+        let templates = Templates.parseFile(GetExampleFilePath('4.lg'));
         let userName = 'DL';
-        let evaled = LGFile.evaluateTemplate('welcome-user', { userName: userName });
+        let evaled = templates.evaluate('welcome-user', { userName: userName });
         const options = ['Hi', 'Hello', 'Hiya ', 'Hi :)', 'Hello :)', 'Hiya :)'];
         assert.strictEqual(evaled.includes(userName), true, `The result ${ evaled } does not contiain ${ userName }`);
     });
 
     it('TestBasicConditionalTemplate', function() {
-        let LGFile = LGParser.parseFile(GetExampleFilePath('5.lg'));
+        let templates = Templates.parseFile(GetExampleFilePath('5.lg'));
 
-        let evaled = LGFile.evaluateTemplate('time-of-day-readout', { timeOfDay: 'morning' });
+        let evaled = templates.evaluate('time-of-day-readout', { timeOfDay: 'morning' });
         assert.strictEqual(evaled === 'Good morning' || evaled === 'Morning! ', true, `Evaled is ${ evaled }`);
 
-        evaled = LGFile.evaluateTemplate('time-of-day-readout', { timeOfDay: 'evening' });
+        evaled = templates.evaluate('time-of-day-readout', { timeOfDay: 'evening' });
         assert.strictEqual(evaled === 'Good evening' || evaled === 'Evening! ', true, `Evaled is ${ evaled }`);
     });
 
+    it('TestMultiLineExprLG', function() {
+        let templates = Templates.parseFile(GetExampleFilePath('MultiLineExpr.lg'));
+
+        let evaled = templates.evaluate('ExprInCondition', { userName: 'Henry', day: 'Monday' });
+        assert.strictEqual(evaled === 'Not today', true, `Evaled is ${ evaled }`);
+
+        evaled = templates.evaluate('definition');
+        assert.strictEqual(evaled, 10);
+
+        evaled = templates.evaluate('template');
+        assert.strictEqual(evaled, 15);
+
+
+    });
+
     it('TestBasicConditionalTemplateWithoutDefault', function() {
-        let LGFile = LGParser.parseFile(GetExampleFilePath('5.lg'));
+        let templates = Templates.parseFile(GetExampleFilePath('5.lg'));
 
-        let evaled = LGFile.evaluateTemplate('time-of-day-readout-without-default', { timeOfDay: 'morning' });
+        let evaled = templates.evaluate('time-of-day-readout-without-default', { timeOfDay: 'morning' });
         assert.strictEqual(evaled === 'Good morning' || evaled === 'Morning! ', true, `Evaled is ${ evaled }`);
 
-        evaled = LGFile.evaluateTemplate('time-of-day-readout-without-default2', { timeOfDay: 'morning' });
+        evaled = templates.evaluate('time-of-day-readout-without-default2', { timeOfDay: 'morning' });
         assert.strictEqual(evaled === 'Good morning' || evaled === 'Morning! ', true, `Evaled is ${ evaled }`);
 
-        evaled = LGFile.evaluateTemplate('time-of-day-readout-without-default2', { timeOfDay: 'evening' });
+        evaled = templates.evaluate('time-of-day-readout-without-default2', { timeOfDay: 'evening' });
         assert.strictEqual(evaled, undefined, `Evaled is ${ evaled } which should be undefined.`);
     });
 
     it('TestBasicTemplateRefWithParameters', function() {
-        let LGFile = LGParser.parseFile(GetExampleFilePath('6.lg'));
+        let templates = Templates.parseFile(GetExampleFilePath('6.lg'));
 
-        let evaled = LGFile.evaluateTemplate('welcome', undefined);
+        let evaled = templates.evaluate('welcome', undefined);
         const options1 = ['Hi DongLei :)', 'Hey DongLei :)', 'Hello DongLei :)'];
         assert.strictEqual(options1.includes(evaled), true, `Evaled is ${ evaled }`);
 
         const options2 = ['Hi DL :)', 'Hey DL :)', 'Hello DL :)'];
-        evaled = LGFile.evaluateTemplate('welcome', { userName: 'DL' });
+        evaled = templates.evaluate('welcome', { userName: 'DL' });
         assert.strictEqual(options2.includes(evaled), true, `Evaled is ${ evaled }`);
     });
 
     it('TestBasicSwitchCaseTemplate', function() {
-        let LGFile = LGParser.parseFile(GetExampleFilePath('switchcase.lg'));
-        let evaled1 = LGFile.evaluateTemplate('greetInAWeek', { day: 'Saturday' });
+        let templates = Templates.parseFile(GetExampleFilePath('switchcase.lg'));
+        let evaled1 = templates.evaluate('greetInAWeek', { day: 'Saturday' });
         assert.strictEqual(evaled1 === 'Happy Saturday!', true, `Evaled is ${ evaled1 }`);
 
-        let evaled3 = LGFile.evaluateTemplate('greetInAWeek', { day: 'Monday' });
+        let evaled3 = templates.evaluate('greetInAWeek', { day: 'Monday' });
         assert.strictEqual(evaled3 === 'Work Hard!', true, `Evaled is ${ evaled3 }`);
     });
 
     it('TestBasicListSupport', function() {
-        let LGFile = LGParser.parseFile(GetExampleFilePath('BasicList.lg'));
+        let templates = Templates.parseFile(GetExampleFilePath('BasicList.lg'));
 
-        let evaled = LGFile.evaluateTemplate('BasicJoin', { items: ['1'] });
+        let evaled = templates.evaluate('BasicJoin', { items: ['1'] });
         assert.strictEqual(evaled, '1', `Evaled is ${ evaled }`);
 
-        evaled = LGFile.evaluateTemplate('BasicJoin', { items: ['1', '2'] });
+        evaled = templates.evaluate('BasicJoin', { items: ['1', '2'] });
         assert.strictEqual(evaled, '1, 2', `Evaled is ${ evaled }`);
 
-        evaled = LGFile.evaluateTemplate('BasicJoin', { items: ['1', '2', '3'] });
+        evaled = templates.evaluate('BasicJoin', { items: ['1', '2', '3'] });
         assert.strictEqual(evaled, '1, 2 and 3', `Evaled is ${ evaled }`);
     });
 
     it('TestBasicExtendedFunctions', function() {
-        let LGFile = LGParser.parseFile(GetExampleFilePath('6.lg'));
+        let templates = Templates.parseFile(GetExampleFilePath('6.lg'));
         const alarms = [
             {
                 time: '7 am',
@@ -103,18 +129,18 @@ describe('LG', function() {
             }
         ];
 
-        let evaled = LGFile.evaluateTemplate('ShowAlarmsWithForeach', { alarms: alarms });
+        let evaled = templates.evaluate('ShowAlarmsWithForeach', { alarms: alarms });
         assert.strictEqual(evaled === 'You have 2 alarms, 7 am at tomorrow and 8 pm at tomorrow', true, `Evaled is ${ evaled }`);
 
-        evaled = LGFile.evaluateTemplate('ShowAlarmsWithLgTemplate', { alarms: alarms });
+        evaled = templates.evaluate('ShowAlarmsWithLgTemplate', { alarms: alarms });
         assert.strictEqual(evaled === 'You have 2 alarms, 7 am at tomorrow and 8 pm at tomorrow', true, `Evaled is ${ evaled }`);
 
-        evaled = LGFile.evaluateTemplate('ShowAlarmsWithDynamicLgTemplate', { alarms: alarms, templateName: 'ShowAlarm' });
+        evaled = templates.evaluate('ShowAlarmsWithDynamicLgTemplate', { alarms: alarms, templateName: 'ShowAlarm' });
         assert.strictEqual(evaled === 'You have 2 alarms, 7 am at tomorrow and 8 pm at tomorrow', true, `Evaled is ${ evaled }`);
     });
 
     it('TestCaseInsensitive', function() {
-        let LGFile = LGParser.parseFile(GetExampleFilePath('CaseInsensitive.lg'));
+        let templates = Templates.parseFile(GetExampleFilePath('CaseInsensitive.lg'));
         const alarms = [
             {
                 time: '7 am',
@@ -126,84 +152,101 @@ describe('LG', function() {
             }
         ];
 
-        let evaled = LGFile.evaluateTemplate('ShowAlarms', { alarms: alarms });
+        let evaled = templates.evaluate('ShowAlarms', { alarms: alarms });
         assert.strictEqual(evaled === 'You have two alarms', true, `Evaled is ${ evaled }`);
 
-        let evaled1 = LGFile.evaluateTemplate('greetInAWeek', { day: 'Saturday' });
+        let evaled1 = templates.evaluate('greetInAWeek', { day: 'Saturday' });
         assert.strictEqual(evaled1 === 'Happy Saturday!', true, `Evaled is ${ evaled1 }`);
     });
 
     it('TestListWithOnlyOneElement', function() {
-        var LGFile = LGParser.parseFile(GetExampleFilePath('8.lg'));
-        var evaled = LGFile.evaluateTemplate('ShowTasks', { recentTasks: ['Task1'] });
+        var templates = Templates.parseFile(GetExampleFilePath('8.lg'));
+        var evaled = templates.evaluate('ShowTasks', { recentTasks: ['Task1'] });
         assert.strictEqual(evaled === 'Your most recent task is Task1. You can let me know if you want to add or complete a task.', true, `Evaled is ${ evaled }`);
     });
 
     it('TestTemplateNameWithDotIn', function() {
-        var LGFile = LGParser.parseFile(GetExampleFilePath('TemplateNameWithDot.lg'));
-        var evaled1 = LGFile.evaluateTemplate('Hello.World', '');
+        var templates = Templates.parseFile(GetExampleFilePath('TemplateNameWithDot.lg'));
+        var evaled1 = templates.evaluate('Hello.World', '');
         assert.strictEqual(evaled1 === 'Hello World', true, `Evaled is ${ evaled1 }`);
 
-        var evaled2 = LGFile.evaluateTemplate('Hello', '');
+        var evaled2 = templates.evaluate('Hello', '');
         assert.strictEqual(evaled2 === 'Hello World', true, `Evaled is ${ evaled2 }`);
     });
 
     it('TestMultiLine', function() {
-        var LGFile = LGParser.parseFile(GetExampleFilePath('MultilineTextForAdaptiveCard.lg'));
-        var evaled1 = LGFile.evaluateTemplate('wPhrase', '');
+        var templates = Templates.parseFile(GetExampleFilePath('MultilineTextForAdaptiveCard.lg'));
+        var evaled1 = templates.evaluate('wPhrase', '');
         var options1 = ['\r\ncardContent\r\n', 'hello', '\ncardContent\n'];
         assert.strictEqual(options1.includes(evaled1), true, `1.Evaled is ${ evaled1 }`);
 
-        var evaled2 = LGFile.evaluateTemplate('nameTemplate', { name: 'N' });
+        var evaled2 = templates.evaluate('nameTemplate', { name: 'N' });
         var options2 = ['\r\nN\r\n', 'N', '\nN\n'];
         assert.strictEqual(options2.includes(evaled2), true, `2.Evaled is ${ evaled2 }`);
 
-        var evaled3 = LGFile.evaluateTemplate('adaptivecardsTemplate', '');
+        var evaled3 = templates.evaluate('adaptivecardsTemplate', '');
         console.log(evaled3);
 
-        var evaled4 = LGFile.evaluateTemplate('refTemplate', '');
+        var evaled4 = templates.evaluate('refTemplate', '');
         var options4 = ['\r\nhi\r\n', '\nhi\n'];
         assert.strictEqual(options4.includes(evaled4), true, `4.Evaled is ${ evaled4 }`);
     });
 
     it('TestTemplateRef', function() {
-        var LGFile = LGParser.parseFile(GetExampleFilePath('TemplateRef.lg'));
+        var templates = Templates.parseFile(GetExampleFilePath('TemplateRef.lg'));
         var scope = { time: 'morning', name: 'Dong Lei' };
-        var evaled1 = LGFile.evaluateTemplate('Hello', scope);
+        var evaled1 = templates.evaluate('Hello', scope);
         assert.strictEqual(evaled1, 'Good morning Dong Lei', `Evaled is ${ evaled1 }`);
     });
 
     it('TestEscapeCharacter', function() {
-        var LGFile = LGParser.parseFile(GetExampleFilePath('EscapeCharacter.lg'));
-        var evaled = LGFile.evaluateTemplate('wPhrase', undefined);
-        assert.strictEqual(evaled, 'Hi \r\n\t[]{}\\', 'Happy path failed.');
+        var templates = Templates.parseFile(GetExampleFilePath('EscapeCharacter.lg'));
+        var evaled = templates.evaluate('wPhrase', undefined);
+        assert.strictEqual(evaled, 'Hi \r\n\t\\', 'Happy path failed.');
 
-        evaled = LGFile.evaluateTemplate('otherEscape', undefined);
-        assert.strictEqual(evaled, 'Hi y ', 'Happy path failed.');
+        var evaled = templates.evaluate('AtEscapeChar', undefined);
+        assert.strictEqual(evaled, 'Hi{1+1}[wPhrase]{wPhrase()}${wPhrase()}2${1+1}', 'Happy path failed.');
 
-        evaled = LGFile.evaluateTemplate('escapeInExpression', undefined);
+        evaled = templates.evaluate('otherEscape', undefined);
+        assert.strictEqual(evaled, 'Hi \\y \\', 'Happy path failed.');
+
+        evaled = templates.evaluate('escapeInExpression', undefined);
         assert.strictEqual(evaled, 'Hi hello\\\\');
 
-        evaled = LGFile.evaluateTemplate('escapeInExpression2', undefined);
+        evaled = templates.evaluate('escapeInExpression2', undefined);
         assert.strictEqual(evaled, 'Hi hello\'');
 
-        evaled = LGFile.evaluateTemplate('escapeInExpression3', undefined);
+        evaled = templates.evaluate('escapeInExpression3', undefined);
         assert.strictEqual(evaled, 'Hi hello"');
 
-        evaled = LGFile.evaluateTemplate('escapeInExpression4', undefined);
+        evaled = templates.evaluate('escapeInExpression4', undefined);
         assert.strictEqual(evaled, 'Hi hello"');
 
-        evaled = LGFile.evaluateTemplate('escapeInExpression5', undefined);
+        evaled = templates.evaluate('escapeInExpression5', undefined);
         assert.strictEqual(evaled, 'Hi hello\n');
 
-        evaled = LGFile.evaluateTemplate('escapeInExpression6', undefined);
+        evaled = templates.evaluate('escapeInExpression6', undefined);
         assert.strictEqual(evaled, 'Hi hello\n');
 
-        evaled = LGFile.evaluateTemplate('showTodo', { todos: ['A', 'B', 'C'] });
+        evaled = templates.evaluate('showTodo', { todos: ['A', 'B', 'C'] });
         assert.strictEqual(evaled.replace(/\r\n/g, '\n'), '\n    Your most recent 3 tasks are\n    * A\n* B\n* C\n    ');
 
-        evaled = LGFile.evaluateTemplate('showTodo', undefined);
+        evaled = templates.evaluate('showTodo', undefined);
         assert.strictEqual(evaled.replace(/\r\n/g, '\n'), '\n    You don\'t have any "t\\\\odo\'".\n    ');
+
+        evaled = templates.evaluate('getUserName', undefined);
+        assert.strictEqual(evaled, 'super "x man"');
+
+        evaled = templates.evaluate('structure1', undefined);
+        assert.strictEqual(evaled.lgType, 'struct');
+        assert.strictEqual(evaled.list[0], 'a');
+        assert.strictEqual(evaled.list[1], 'b|c');
+
+        evaled = templates.evaluate('nestedSample', undefined);
+        assert.strictEqual(evaled, 'i like three movies, they are "\\"name1", "name2" and "{name3"');
+
+        evaled = templates.evaluate('dollarsymbol', undefined);
+        assert.strictEqual(evaled, '$ $ ${\'hi\'} hi');
     });
 
     it('TestAnalyzer', function() {
@@ -237,8 +280,8 @@ describe('LG', function() {
             }
         ];
         for (const testItem of testData) {
-            var LGFile = LGParser.parseFile(GetExampleFilePath('Analyzer.lg'));
-            var evaled1 = LGFile.analyzeTemplate(testItem.name);
+            var templates = Templates.parseFile(GetExampleFilePath('Analyzer.lg'));
+            var evaled1 = templates.analyzeTemplate(testItem.name);
             var variableEvaled = evaled1.Variables;
             var variableEvaledOptions = testItem.variableOptions;
             assert.strictEqual(variableEvaled.length, variableEvaledOptions.length);
@@ -251,122 +294,119 @@ describe('LG', function() {
     });
 
     it('TestlgTemplateFunction', function() {
-        var LGFile = LGParser.parseFile(GetExampleFilePath('lgTemplate.lg'));
-        var evaled = LGFile.evaluateTemplate('TemplateC', '');
+        var templates = Templates.parseFile(GetExampleFilePath('lgTemplate.lg'));
+        var evaled = templates.evaluate('TemplateC', '');
         var options = ['Hi', 'Hello'];
         assert.strictEqual(options.includes(evaled), true);
 
-        evaled = LGFile.evaluateTemplate('TemplateD', { b: 'morning' });
+        evaled = templates.evaluate('TemplateD', { b: 'morning' });
         options = ['Hi morning', 'Hello morning'];
         assert.strictEqual(options.includes(evaled), true);
     });
 
     it('TestTemplateAsFunction', function() {
-        var LGFile = LGParser.parseFile(GetExampleFilePath('TemplateAsFunction.lg'));
+        var templates = Templates.parseFile(GetExampleFilePath('TemplateAsFunction.lg'));
 
-        var evaled = LGFile.evaluateTemplate('Test2');
+        var evaled = templates.evaluate('Test2');
         assert.strictEqual(evaled, 'hello world', `Evaled is ${ evaled }`);
 
-        evaled = LGFile.evaluateTemplate('Test3');
+        evaled = templates.evaluate('Test3');
         assert.strictEqual(evaled, 'hello world', `Evaled is ${ evaled }`);
 
-        evaled = LGFile.evaluateTemplate('Test4');
+        evaled = templates.evaluate('Test4');
         assert.strictEqual(evaled.trim(), 'hello world', `Evaled is ${ evaled }`);
 
-        evaled = LGFile.evaluateTemplate('dupNameWithTemplate');
-        assert.strictEqual(evaled, 'calculate length of ms by user\'s template', `Evaled is ${ evaled }`);
-
-        evaled = LGFile.evaluateTemplate('dupNameWithBuiltinFunc');
+        evaled = templates.evaluate('dupNameWithTemplate');
         assert.strictEqual(evaled, 2, `Evaled is ${ evaled }`);
     });
 
     it('TestAnalyzelgTemplateFunction', function() {
-        var LGFile = LGParser.parseFile(GetExampleFilePath('lgTemplate.lg'));
-        var evaled = LGFile.analyzeTemplate('TemplateD');
+        var templates = Templates.parseFile(GetExampleFilePath('lgTemplate.lg'));
+        var evaled = templates.analyzeTemplate('TemplateD');
         var variableEvaled = evaled.Variables;
         var options = ['b'];
         assert.strictEqual(variableEvaled.length, options.length);
         options.forEach(e => assert.strictEqual(variableEvaled.includes(e), true));
     });
 
-    it('TestImportLgFiles', function() {
-        var LGFile = LGParser.parseFile(GetExampleFilePath('importExamples/import.lg'));
+    it('TestImporttemplatess', function() {
+        var templates = Templates.parseFile(GetExampleFilePath('importExamples/import.lg'));
 
         // Assert 6.lg is imported only once when there are several relative paths which point to the same file.
         // Assert import cycle loop is handled well as expected when a file imports itself.
-        assert.strictEqual(LGFile.allTemplates.length, 14);
+        assert.strictEqual(templates.allTemplates.length, 14);
 
         const options1 = ['Hi', 'Hello', 'Hey'];
-        var evaled = LGFile.evaluateTemplate('basicTemplate');
+        var evaled = templates.evaluate('basicTemplate');
         assert.strictEqual(options1.includes(evaled), true, `Evaled is ${ evaled }`);
 
         const options2 = ['Hi DongLei :)', 'Hey DongLei :)', 'Hello DongLei :)'];
-        evaled = LGFile.evaluateTemplate('welcome');
+        evaled = templates.evaluate('welcome');
         assert.strictEqual(options2.includes(evaled), true, `Evaled is ${ evaled }`);
 
         const options3 = ['Hi DL :)', 'Hey DL :)', 'Hello DL :)'];
-        evaled = LGFile.evaluateTemplate('welcome', { userName: 'DL' });
+        evaled = templates.evaluate('welcome', { userName: 'DL' });
         assert.strictEqual(options3.includes(evaled), true, `Evaled is ${ evaled }`);
 
         const options4 = ['Hi 2', 'Hello 2'];
-        evaled = LGFile.evaluateTemplate('basicTemplate2');
+        evaled = templates.evaluate('basicTemplate2');
         assert.strictEqual(options4.includes(evaled), true, `Evaled is ${ evaled }`);
 
         const options5 = ['Hi 2', 'Hello 2'];
-        evaled = LGFile.evaluateTemplate('template3');
+        evaled = templates.evaluate('template3');
         assert.strictEqual(options5.includes(evaled), true, `Evaled is ${ evaled }`);
 
         // Assert 6.lg of relative path is imported from text.
-        LGFile = LGParser.parseText(`# basicTemplate\r\n- Hi\r\n- Hello\r\n[import](./6.lg)`, GetExampleFilePath('xx.lg'));
+        templates = Templates.parseText(`# basicTemplate\r\n- Hi\r\n- Hello\r\n[import](./6.lg)`, GetExampleFilePath('xx.lg'));
 
-        assert.strictEqual(LGFile.allTemplates.length, 8);
+        assert.strictEqual(templates.allTemplates.length, 8);
 
-        evaled = LGFile.evaluateTemplate('basicTemplate');
+        evaled = templates.evaluate('basicTemplate');
         assert.strictEqual(options1.includes(evaled), true, `Evaled is ${ evaled }`);
 
-        evaled = LGFile.evaluateTemplate('welcome');
+        evaled = templates.evaluate('welcome');
         assert.strictEqual(options2.includes(evaled), true, `Evaled is ${ evaled }`);
 
-        evaled = LGFile.evaluateTemplate('welcome', { userName: 'DL' });
+        evaled = templates.evaluate('welcome', { userName: 'DL' });
         assert.strictEqual(options3.includes(evaled), true, `Evaled is ${ evaled }`);
     });
 
     it('TestRegex', function() {
-        var LGFile = LGParser.parseFile(GetExampleFilePath('Regex.lg'));
-        var evaled = LGFile.evaluateTemplate('wPhrase');
+        var templates = Templates.parseFile(GetExampleFilePath('Regex.lg'));
+        var evaled = templates.evaluate('wPhrase');
         assert.strictEqual(evaled, 'Hi');
 
-        var evaled = LGFile.evaluateTemplate('wPhrase', {name: 'jack'});
+        var evaled = templates.evaluate('wPhrase', {name: 'jack'});
         assert.strictEqual(evaled, 'Hi jack');
 
-        var evaled = LGFile.evaluateTemplate('wPhrase', {name: 'morethanfive'});
+        var evaled = templates.evaluate('wPhrase', {name: 'morethanfive'});
         assert.strictEqual(evaled, 'Hi');
     });
 
     it('TestExpandTemplate', function() {
-        var LGFile = LGParser.parseFile(GetExampleFilePath('Expand.lg'));
+        var templates = Templates.parseFile(GetExampleFilePath('Expand.lg'));
         
         // without scope
-        var evaled = LGFile.expandTemplate('FinalGreeting');
+        var evaled = templates.expandTemplate('FinalGreeting');
         assert.strictEqual(evaled.length, 4, `Evaled is ${ evaled }`);
         let expectedResults = ['Hi Morning', 'Hi Evening', 'Hello Morning', 'Hello Evening'];
         expectedResults.forEach(x => assert(evaled.includes(x)));
 
         // with scope
-        evaled = LGFile.expandTemplate('TimeOfDayWithCondition', { time: 'evening'});
+        evaled = templates.expandTemplate('TimeOfDayWithCondition', { time: 'evening'});
         assert.strictEqual(evaled.length, 2, `Evaled is ${ evaled }`);
         expectedResults = ['Hi Evening', 'Hello Evening'];
         expectedResults.forEach(x => assert(evaled.includes(x)));
 
         // with scope
-        evaled = LGFile.expandTemplate('greetInAWeek', {day:'Sunday'});
+        evaled = templates.expandTemplate('greetInAWeek', {day:'Sunday'});
         assert.strictEqual(evaled.length, 2, `Evaled is ${ evaled }`);
         expectedResults = ['Nice Sunday!', 'Happy Sunday!'];
         expectedResults.forEach(x => assert(evaled.includes(x)));
     });
 
     it('TestExpandTemplateWithRef', function() {
-        var LGFile = LGParser.parseFile(GetExampleFilePath('Expand.lg'));
+        var templates = Templates.parseFile(GetExampleFilePath('Expand.lg'));
         
         const alarms = [
             {
@@ -379,14 +419,14 @@ describe('LG', function() {
             }
         ];
         
-        var evaled = LGFile.expandTemplate('ShowAlarmsWithLgTemplate', {alarms});
+        var evaled = templates.expandTemplate('ShowAlarmsWithLgTemplate', {alarms});
         assert.strictEqual(evaled.length, 2, `Evaled is ${ evaled }`);
         assert.strictEqual(evaled[0], 'You have 2 alarms, they are 8 pm at tomorrow', `Evaled is ${ evaled }`);
         assert.strictEqual(evaled[1], 'You have 2 alarms, they are 8 pm of tomorrow', `Evaled is ${ evaled }`);
     });
 
     it('TestExpandTemplateWithRefInMultiLine', function() {
-        var LGFile = LGParser.parseFile(GetExampleFilePath('Expand.lg'));
+        var templates = Templates.parseFile(GetExampleFilePath('Expand.lg'));
         
         const alarms = [
             {
@@ -399,7 +439,7 @@ describe('LG', function() {
             }
         ];
         
-        var evaled = LGFile.expandTemplate('ShowAlarmsWithMultiLine', {alarms});
+        var evaled = templates.expandTemplate('ShowAlarmsWithMultiLine', {alarms});
         assert.strictEqual(evaled.length, 2, `Evaled is ${ evaled }`);
         const eval1Options = ['\r\nYou have 2 alarms.\r\nThey are 8 pm at tomorrow\r\n', '\nYou have 2 alarms.\nThey are 8 pm at tomorrow\n'];
         const eval2Options = ['\r\nYou have 2 alarms.\r\nThey are 8 pm of tomorrow\r\n', '\nYou have 2 alarms.\nThey are 8 pm of tomorrow\n'];
@@ -408,7 +448,7 @@ describe('LG', function() {
     });
 
     it('TestExpandTemplateWithFunction', function() {
-        var LGFile = LGParser.parseFile(GetExampleFilePath('Expand.lg'));
+        var templates = Templates.parseFile(GetExampleFilePath('Expand.lg'));
         
         const alarms = [
             {
@@ -421,7 +461,7 @@ describe('LG', function() {
             }
         ];
         
-        var evaled = LGFile.expandTemplate('ShowAlarmsWithForeach', {alarms});
+        var evaled = templates.expandTemplate('ShowAlarmsWithForeach', {alarms});
         assert.strictEqual(evaled.length, 1, `Evaled is ${ evaled }`);
         const evalOptions = [
             'You have 2 alarms, 7 am at tomorrow and 8 pm at tomorrow',
@@ -432,111 +472,111 @@ describe('LG', function() {
 
         assert(evalOptions.includes(evaled[0]));
 
-        evaled = LGFile.expandTemplate('T2');
+        evaled = templates.expandTemplate('T2');
         assert.strictEqual(evaled.length, 1, `Evaled is ${ evaled }`);
         assert(evaled[0] === '3' || evaled[0] === '5');
 
-        evaled = LGFile.expandTemplate('T3');
+        evaled = templates.expandTemplate('T3');
         assert.strictEqual(evaled.length, 1, `Evaled is ${ evaled }`);
         assert(evaled[0] === '3' || evaled[0] === '5');
 
-        evaled = LGFile.expandTemplate('T4');
+        evaled = templates.expandTemplate('T4');
         assert.strictEqual(evaled.length, 1, `Evaled is ${ evaled }`);
         assert(evaled[0] === 'ey' || evaled[0] === 'el');
     });
 
     it('TestInlineEvaluate', function() {
-        var LGFile = LGParser.parseFile(GetExampleFilePath('2.lg'));
-        var evaled = LGFile.evaluate('hello');
+        var templates = Templates.parseFile(GetExampleFilePath('2.lg'));
+        var evaled = templates.evaluateText('hello');
         assert.strictEqual('hello', evaled);
 
-        evaled = LGFile.evaluate('${wPhrase()}');
+        evaled = templates.evaluateText('${wPhrase()}');
         var options =[ 'Hi', 'Hello', 'Hiya' ];
         assert.strictEqual(options.includes(evaled), true);
 
         var errMessage = '';
         try {
-            LGFile.evaluate('${ErrrorTemplate()}');
+            templates.evaluateText('${ErrrorTemplate()}');
         } catch (e) {
             errMessage = e.toString();
         }
 
-        assert.strictEqual(errMessage.includes(`it's not a built-in function or a customized function`), true);
+        assert.strictEqual(errMessage.includes(`it's not a built-in function or a custom function`), true);
 
     });
 
     it('TestEvalExpression', function() {
-        var LGFile = LGParser.parseFile(GetExampleFilePath('EvalExpression.lg'));
+        var templates = Templates.parseFile(GetExampleFilePath('EvalExpression.lg'));
         const userName = 'MS';
-        var evaled = LGFile.evaluateTemplate('template1', {userName});
+        var evaled = templates.evaluate('template1', {userName});
         assert.strictEqual(evaled, 'Hi MS', `Evaled is ${ evaled }`);
 
-        evaled = LGFile.evaluateTemplate('template2', {userName});
+        evaled = templates.evaluate('template2', {userName});
         assert.strictEqual(evaled, 'Hi MS', `Evaled is ${ evaled }`);
 
-        evaled = LGFile.evaluateTemplate('template3', {userName});
+        evaled = templates.evaluate('template3', {userName});
         assert.strictEqual(evaled, 'HiMS', `Evaled is ${ evaled }`);
 
         const options1 = ['\r\nHi MS\r\n', '\nHi MS\n'];
-        evaled = LGFile.evaluateTemplate('template4', { userName});
+        evaled = templates.evaluate('template4', { userName});
         assert.strictEqual(options1.includes(evaled), true, `Evaled is ${ evaled }`);
 
         const options2 = ['\r\nHiMS\r\n', '\nHiMS\n'];
-        evaled = LGFile.evaluateTemplate('template5', { userName});
+        evaled = templates.evaluate('template5', { userName});
         assert.strictEqual(options2.includes(evaled), true, `Evaled is ${ evaled }`);
 
-        evaled = LGFile.evaluateTemplate('template6', {userName});
+        evaled = templates.evaluate('template6', {userName});
         assert.strictEqual(evaled, 'goodmorning', `Evaled is ${ evaled }`);
     });
 
 
     it('TestLGResource', function() {
-        var lgResource = LGParser.parseText(fs.readFileSync(GetExampleFilePath('2.lg'), 'utf-8'));
+        var templates = Templates.parseText(fs.readFileSync(GetExampleFilePath('2.lg'), 'utf-8'));
 
-        assert.strictEqual(lgResource.templates.length, 1);
-        assert.strictEqual(lgResource.imports.length, 0);
-        assert.strictEqual(lgResource.templates[0].name, 'wPhrase');
-        assert.strictEqual(lgResource.templates[0].body.replace(/\r\n/g, '\n'), '> this is an in-template comment\n- Hi\n- Hello\n- Hiya\n- Hi');
+        assert.strictEqual(templates.toArray().length, 1);
+        assert.strictEqual(templates.imports.length, 0);
+        assert.strictEqual(templates.toArray()[0].name, 'wPhrase');
+        assert.strictEqual(templates.toArray()[0].body.replace(/\r\n/g, '\n'), '> this is an in-template comment\n- Hi\n- Hello\n- Hiya\n- Hi');
 
-        lgResource = lgResource.addTemplate('newtemplate', ['age', 'name'], '- hi ');
-        assert.strictEqual(lgResource.templates.length, 2);
-        assert.strictEqual(lgResource.imports.length, 0);
-        assert.strictEqual(lgResource.templates[1].name, 'newtemplate');
-        assert.strictEqual(lgResource.templates[1].parameters.length, 2);
-        assert.strictEqual(lgResource.templates[1].parameters[0], 'age');
-        assert.strictEqual(lgResource.templates[1].parameters[1], 'name');
-        assert.strictEqual(lgResource.templates[1].body.replace(/\r\n/g, '\n'), '- hi \n');
+        templates = templates.addTemplate('newtemplate', ['age', 'name'], '- hi ');
+        assert.strictEqual(templates.toArray().length, 2);
+        assert.strictEqual(templates.imports.length, 0);
+        assert.strictEqual(templates.toArray()[1].name, 'newtemplate');
+        assert.strictEqual(templates.toArray()[1].parameters.length, 2);
+        assert.strictEqual(templates.toArray()[1].parameters[0], 'age');
+        assert.strictEqual(templates.toArray()[1].parameters[1], 'name');
+        assert.strictEqual(templates.toArray()[1].body.replace(/\r\n/g, '\n'), '- hi ');
 
-        lgResource = lgResource.addTemplate('newtemplate2', undefined, '- hi2 ');
-        assert.strictEqual(lgResource.templates.length, 3);
-        assert.strictEqual(lgResource.templates[2].name, 'newtemplate2');
-        assert.strictEqual(lgResource.templates[2].body.replace(/\r\n/g, '\n'), '- hi2 \n');
+        templates = templates.addTemplate('newtemplate2', undefined, '- hi2 ');
+        assert.strictEqual(templates.toArray().length, 3);
+        assert.strictEqual(templates.toArray()[2].name, 'newtemplate2');
+        assert.strictEqual(templates.toArray()[2].body.replace(/\r\n/g, '\n'), '- hi2 ');
 
-        lgResource = lgResource.updateTemplate('newtemplate', 'newtemplateName', ['newage', 'newname'], '- new hi\r\n#hi');
-        assert.strictEqual(lgResource.templates.length, 3);
-        assert.strictEqual(lgResource.imports.length, 0);
-        assert.strictEqual(lgResource.templates[1].name, 'newtemplateName');
-        assert.strictEqual(lgResource.templates[1].parameters.length, 2);
-        assert.strictEqual(lgResource.templates[1].parameters[0], 'newage');
-        assert.strictEqual(lgResource.templates[1].parameters[1], 'newname');
-        assert.strictEqual(lgResource.templates[1].body.replace(/\r\n/g, '\n'), '- new hi\n- #hi\n');
+        templates = templates.updateTemplate('newtemplate', 'newtemplateName', ['newage', 'newname'], '- new hi\r\n#hi');
+        assert.strictEqual(templates.toArray().length, 3);
+        assert.strictEqual(templates.imports.length, 0);
+        assert.strictEqual(templates.toArray()[1].name, 'newtemplateName');
+        assert.strictEqual(templates.toArray()[1].parameters.length, 2);
+        assert.strictEqual(templates.toArray()[1].parameters[0], 'newage');
+        assert.strictEqual(templates.toArray()[1].parameters[1], 'newname');
+        assert.strictEqual(templates.toArray()[1].body.replace(/\r\n/g, '\n'), '- new hi\n- #hi');
 
-        lgResource = lgResource.updateTemplate('newtemplate2', 'newtemplateName2', ['newage2', 'newname2'], '- new hi\r\n#hi2');
-        assert.strictEqual(lgResource.templates.length, 3);
-        assert.strictEqual(lgResource.imports.length, 0);
-        assert.strictEqual(lgResource.templates[2].name, 'newtemplateName2');
-        assert.strictEqual(lgResource.templates[2].body.replace(/\r\n/g, '\n'), '- new hi\n- #hi2\n');
+        templates = templates.updateTemplate('newtemplate2', 'newtemplateName2', ['newage2', 'newname2'], '- new hi\r\n#hi2');
+        assert.strictEqual(templates.toArray().length, 3);
+        assert.strictEqual(templates.imports.length, 0);
+        assert.strictEqual(templates.toArray()[2].name, 'newtemplateName2');
+        assert.strictEqual(templates.toArray()[2].body.replace(/\r\n/g, '\n'), '- new hi\n- #hi2');
 
-        lgResource = lgResource.deleteTemplate('newtemplateName');
-        assert.strictEqual(lgResource.templates.length, 2);
+        templates = templates.deleteTemplate('newtemplateName');
+        assert.strictEqual(templates.toArray().length, 2);
 
-        lgResource = lgResource.deleteTemplate('newtemplateName2');
-        assert.strictEqual(lgResource.templates.length, 1);
+        templates = templates.deleteTemplate('newtemplateName2');
+        assert.strictEqual(templates.toArray().length, 1);
     });
 
     it('TestMemoryScope', function() {
-        var LGFile = LGParser.parseFile(GetExampleFilePath('MemoryScope.lg'));
-        var evaled = LGFile.evaluateTemplate('T1', { turn: { name: 'Dong', count: 3 } });
+        var templates = Templates.parseFile(GetExampleFilePath('MemoryScope.lg'));
+        var evaled = templates.evaluate('T1', { turn: { name: 'Dong', count: 3 } });
         assert.strictEqual(evaled, 'Hi Dong, welcome to Seattle, Seattle is a beautiful place, how many burgers do you want, 3?');
 
         const objscope = {
@@ -548,55 +588,55 @@ describe('LG', function() {
         };
         var scope = new SimpleObjectMemory(objscope);
          
-        evaled = LGFile.evaluateTemplate('AskBread', scope);
+        evaled = templates.evaluate('AskBread', scope);
         assert.strictEqual(evaled, 'Which Bread, A or B do you want?');
     });
 
     it('TestStructuredTemplate', function() {
-        var LGFile = LGParser.parseFile(GetExampleFilePath('StructuredTemplate.lg'));
+        var templates = Templates.parseFile(GetExampleFilePath('StructuredTemplate.lg'));
 
-        var evaled = LGFile.evaluateTemplate('AskForAge.prompt');
+        var evaled = templates.evaluate('AskForAge.prompt');
         assert.equal(evaled.text, evaled.speak);
 
-        evaled = LGFile.evaluateTemplate('AskForAge.prompt2');
+        evaled = templates.evaluate('AskForAge.prompt2');
         if (evaled.text.includes('how old')){
             assert.deepStrictEqual(evaled, JSON.parse('{"lgType":"Activity","text":"how old are you?","suggestedactions":["10","20","30"]}'));
         } else {
             assert.deepStrictEqual(evaled, JSON.parse('{"lgType":"Activity","text":"what\'s your age?","suggestedactions":["10","20","30"]}'));
         }
 
-        evaled = LGFile.evaluateTemplate('AskForAge.prompt3');
+        evaled = templates.evaluate('AskForAge.prompt3');
         assert.deepStrictEqual(evaled, JSON.parse('{"lgType":"Activity","text":"${GetAge()}","suggestions":["10 | cards","20 | cards"]}'));
 
-        evaled = LGFile.evaluateTemplate('T1');
+        evaled = templates.evaluate('T1');
         assert.deepStrictEqual(evaled, JSON.parse('{"lgType":"Activity","text":"This is awesome","speak":"foo bar I can also speak!"}'));
 
-        evaled = LGFile.evaluateTemplate('ST1');
+        evaled = templates.evaluate('ST1');
         assert.deepStrictEqual(evaled, JSON.parse('{"lgType":"MyStruct","text":"foo","speak":"bar"}'));
 
-        evaled = LGFile.evaluateTemplate('AskForColor');
+        evaled = templates.evaluate('AskForColor');
         assert.deepStrictEqual(evaled, JSON.parse('{"lgType":"Activity","suggestedactions":[{"lgType":"MyStruct","speak":"bar","text":"zoo"},{"lgType":"Activity","speak":"I can also speak!"}]}'));
 
-        evaled = LGFile.evaluateTemplate('MultiExpression');
+        evaled = templates.evaluate('MultiExpression');
         assert.equal(evaled, '{"lgType":"Activity","speak":"I can also speak!"} {"lgType":"MyStruct","text":"hi"}');
 
-        evaled = LGFile.evaluateTemplate('StructuredTemplateRef');
+        evaled = templates.evaluate('StructuredTemplateRef');
         assert.deepStrictEqual(evaled, JSON.parse('{"lgType":"MyStruct","text":"hi"}'));
 
-        evaled = LGFile.evaluateTemplate('MultiStructuredRef');
+        evaled = templates.evaluate('MultiStructuredRef');
         assert.deepStrictEqual(evaled, JSON.parse('{"lgType":"MyStruct","list":[{"lgType":"SubStruct","text":"hello"},{"lgType":"SubStruct","text":"world"}]}'));
 
-        evaled = LGFile.evaluateTemplate('templateWithSquareBrackets', {manufacturer: {Name : 'Acme Co'}});
+        evaled = templates.evaluate('templateWithSquareBrackets', {manufacturer: {Name : 'Acme Co'}});
         assert.deepStrictEqual(evaled, JSON.parse('{"lgType":"Struct","text":"Acme Co"}'));
 
-        evaled = LGFile.evaluateTemplate('ValueWithEqualsMark', {name : 'Jack'});
+        evaled = templates.evaluate('ValueWithEqualsMark', {name : 'Jack'});
         assert.deepStrictEqual(evaled, JSON.parse('{"lgType":"Activity","text":"Hello! welcome back. I have your name = Jack"}'));
     });
 
     it('TestEvaluateOnce', function() {
-        var LGFile = LGParser.parseFile(GetExampleFilePath('EvaluateOnce.lg'));
+        var templates = Templates.parseFile(GetExampleFilePath('EvaluateOnce.lg'));
 
-        var evaled = LGFile.evaluateTemplate('templateWithSameParams', { param: 'ms' });
+        var evaled = templates.evaluate('templateWithSameParams', { param: 'ms' });
         assert.notEqual(evaled, undefined);
         
         const resultList = evaled.split(' ');
@@ -605,29 +645,29 @@ describe('LG', function() {
         assert.equal(resultList[0], resultList[1]);
 
         // maybe has different values
-        evaled = LGFile.evaluateTemplate('templateWithDifferentParams', { param1: 'ms', param2: 'newms' });
+        evaled = templates.evaluate('templateWithDifferentParams', { param1: 'ms', param2: 'newms' });
     });
 
     it('TestConditionExpression', function() {
-        var LGFile = LGParser.parseFile(GetExampleFilePath('ConditionExpression.lg'));
+        var templates = Templates.parseFile(GetExampleFilePath('ConditionExpression.lg'));
 
-        var evaled = LGFile.evaluateTemplate('conditionTemplate', { num: 1 });
+        var evaled = templates.evaluate('conditionTemplate', { num: 1 });
         assert.equal(evaled, 'Your input is one');
         
-        evaled = LGFile.evaluateTemplate('conditionTemplate', { num: 2 });
+        evaled = templates.evaluate('conditionTemplate', { num: 2 });
         assert.equal(evaled, 'Your input is two');
 
-        evaled = LGFile.evaluateTemplate('conditionTemplate', { num: 3 });
+        evaled = templates.evaluate('conditionTemplate', { num: 3 });
         assert.equal(evaled, 'Your input is three');
 
-        evaled = LGFile.evaluateTemplate('conditionTemplate', { num: 4 });
+        evaled = templates.evaluate('conditionTemplate', { num: 4 });
         assert.equal(evaled, 'Your input is not one, two or three');
     });
 
     it('TestExpandTemplateWithStructuredLG', function() {
-        var LGFile = LGParser.parseFile(GetExampleFilePath('StructuredTemplate.lg'));
+        var templates = Templates.parseFile(GetExampleFilePath('StructuredTemplate.lg'));
 
-        var evaled = LGFile.expandTemplate('AskForAge.prompt');
+        var evaled = templates.expandTemplate('AskForAge.prompt');
         assert.strictEqual(evaled.length, 4, `Evaled is ${ evaled }`);
     
         let expectedResults = [
@@ -638,7 +678,7 @@ describe('LG', function() {
         ];
         expectedResults.forEach( u => assert(evaled.includes(u)));
 
-        evaled = LGFile.expandTemplate('ExpanderT1');
+        evaled = templates.expandTemplate('ExpanderT1');
         assert.strictEqual(evaled.length, 4, `Evaled is ${ evaled }`);
     
         expectedResults = [
@@ -651,35 +691,35 @@ describe('LG', function() {
     });
 
     it('TestExpressionextract', function() {
-        var LGFile = LGParser.parseFile(GetExampleFilePath('ExpressionExtract.lg'));
+        var templates = Templates.parseFile(GetExampleFilePath('ExpressionExtract.lg'));
 
-        var evaled1 = LGFile.evaluateTemplate('templateWithBrackets');
-        var evaled2 = LGFile.evaluateTemplate('templateWithBrackets2');
-        var evaled3 = LGFile.evaluateTemplate('templateWithBrackets3').toString().trim();
+        var evaled1 = templates.evaluate('templateWithBrackets');
+        var evaled2 = templates.evaluate('templateWithBrackets2');
+        var evaled3 = templates.evaluate('templateWithBrackets3').toString().trim();
         let espectedResult = 'don\'t mix {} and \'{}\'';
         assert.strictEqual(evaled1, espectedResult);
         assert.strictEqual(evaled2, espectedResult);
         assert.strictEqual(evaled3, espectedResult);
 
-        evaled1 = LGFile.evaluateTemplate('templateWithQuotationMarks');
-        evaled2 = LGFile.evaluateTemplate('templateWithQuotationMarks2');
-        evaled3 = LGFile.evaluateTemplate('templateWithQuotationMarks3').toString().trim();
+        evaled1 = templates.evaluate('templateWithQuotationMarks');
+        evaled2 = templates.evaluate('templateWithQuotationMarks2');
+        evaled3 = templates.evaluate('templateWithQuotationMarks3').toString().trim();
         espectedResult = 'don\'t mix {"} and ""\'"';
         assert.strictEqual(evaled1, espectedResult);
         assert.strictEqual(evaled2, espectedResult);
         assert.strictEqual(evaled3, espectedResult);
         
-        evaled1 = LGFile.evaluateTemplate('templateWithUnpairedBrackets1');
-        evaled2 = LGFile.evaluateTemplate('templateWithUnpairedBrackets12');
-        evaled3 = LGFile.evaluateTemplate('templateWithUnpairedBrackets13').toString().trim();
+        evaled1 = templates.evaluate('templateWithUnpairedBrackets1');
+        evaled2 = templates.evaluate('templateWithUnpairedBrackets12');
+        evaled3 = templates.evaluate('templateWithUnpairedBrackets13').toString().trim();
         espectedResult = '{prefix 5 sufix';
         assert.strictEqual(evaled1, espectedResult);
         assert.strictEqual(evaled2, espectedResult);
         assert.strictEqual(evaled3, espectedResult);
 
-        evaled1 = LGFile.evaluateTemplate('templateWithUnpairedBrackets2');
-        evaled2 = LGFile.evaluateTemplate('templateWithUnpairedBrackets22');
-        evaled3 = LGFile.evaluateTemplate('templateWithUnpairedBrackets23').toString().trim();
+        evaled1 = templates.evaluate('templateWithUnpairedBrackets2');
+        evaled2 = templates.evaluate('templateWithUnpairedBrackets22');
+        evaled3 = templates.evaluate('templateWithUnpairedBrackets23').toString().trim();
         espectedResult = 'prefix 5 sufix}';
         assert.strictEqual(evaled1, espectedResult);
         assert.strictEqual(evaled2, espectedResult);
@@ -687,81 +727,81 @@ describe('LG', function() {
     });
 
     it('TestEmptyArrayAndObject', function() {
-        var LGFile = LGParser.parseFile(GetExampleFilePath('EmptyArrayAndObject.lg'));
+        var templates = Templates.parseFile(GetExampleFilePath('EmptyArrayAndObject.lg'));
 
-        var evaled = LGFile.evaluateTemplate('template', {list:[], obj: {}});
+        var evaled = templates.evaluate('template', {list:[], obj: {}});
         assert.strictEqual(evaled, 'list and obj are both empty');
 
-        evaled = LGFile.evaluateTemplate('template', {list:[], obj:new Map()});
+        evaled = templates.evaluate('template', {list:[], obj:new Map()});
         assert.strictEqual(evaled, 'list and obj are both empty');
 
-        evaled = LGFile.evaluateTemplate('template', {list:['hi'], obj: {}});
+        evaled = templates.evaluate('template', {list:['hi'], obj: {}});
         assert.strictEqual(evaled, 'obj is empty');
 
-        evaled = LGFile.evaluateTemplate('template', {list:[], obj: {a: 'a'}});
+        evaled = templates.evaluate('template', {list:[], obj: {a: 'a'}});
         assert.strictEqual(evaled, 'list is empty');
 
         const map = new Map();
         map.set('a', 'a');
-        evaled = LGFile.evaluateTemplate('template', {list:[], obj: map});
+        evaled = templates.evaluate('template', {list:[], obj: map});
         assert.strictEqual(evaled, 'list is empty');
 
-        evaled = LGFile.evaluateTemplate('template', {list:[{}], obj : {a : 'a'}});
+        evaled = templates.evaluate('template', {list:[{}], obj : {a : 'a'}});
         assert.strictEqual(evaled, 'list and obj are both not empty.');        
     });
 
     it('TestNullTolerant', function() {
-        var lgFile = LGParser.parseFile(GetExampleFilePath('NullTolerant.lg'));
+        var templates = Templates.parseFile(GetExampleFilePath('NullTolerant.lg'));
 
-        var evaled = lgFile.evaluateTemplate('template1');
+        var evaled = templates.evaluate('template1');
         assert.strictEqual('null', evaled);
 
-        evaled = lgFile.evaluateTemplate('template2');
+        evaled = templates.evaluate('template2');
         assert.strictEqual(`result is 'null'`, evaled);
 
-        var jObjEvaled = lgFile.evaluateTemplate('template3');
+        var jObjEvaled = templates.evaluate('template3');
         assert.strictEqual('null', jObjEvaled['key1']);
 
     });
 
 
     it('TestIsTemplateFunction', function() {
-        var LGFile = LGParser.parseFile(GetExampleFilePath('IsTemplate.lg'));
+        var templates = Templates.parseFile(GetExampleFilePath('IsTemplate.lg'));
 
-        var evaled = LGFile.evaluateTemplate('template2', {templateName:'template1'});
+        var evaled = templates.evaluate('template2', {templateName:'template1'});
         assert.strictEqual(evaled, 'template template1 exists');
 
-        evaled = LGFile.evaluateTemplate('template2', {templateName:'wPhrase'});
+        evaled = templates.evaluate('template2', {templateName:'wPhrase'});
         assert.strictEqual(evaled, 'template wPhrase exists');
 
-        evaled = LGFile.evaluateTemplate('template2', {templateName:'xxx'});
+        evaled = templates.evaluate('template2', {templateName:'xxx'});
         assert.strictEqual(evaled, 'template xxx does not exist'); 
     });
 
     it('TestStringInterpolation', function() {
-        var LGFile = LGParser.parseFile(GetExampleFilePath('StringInterpolation.lg'));
+        var templates = Templates.parseFile(GetExampleFilePath('StringInterpolation.lg'));
 
-        var evaled = LGFile.evaluateTemplate('simpleStringTemplate');
+        var evaled = templates.evaluate('simpleStringTemplate');
         assert.strictEqual(evaled, 'say hi');
 
-        evaled = LGFile.evaluateTemplate('StringTemplateWithVariable', {w:'world'});
+        evaled = templates.evaluate('StringTemplateWithVariable', {w:'world'});
         assert.strictEqual(evaled, 'hello world');
 
-        evaled = LGFile.evaluateTemplate('StringTemplateWithMixing', {name:'jack'});
+        evaled = templates.evaluate('StringTemplateWithMixing', {name:'jack'});
         assert.strictEqual(evaled, 'I know your name is jack'); 
 
-        evaled = LGFile.evaluateTemplate('StringTemplateWithJson', {h:'hello', w: 'world'});
+        evaled = templates.evaluate('StringTemplateWithJson', {h:'hello', w: 'world'});
         assert.strictEqual(evaled, 'get \'h\' value : hello');
 
-        evaled = LGFile.evaluateTemplate('StringTemplateWithEscape');
+        evaled = templates.evaluate('StringTemplateWithEscape');
         assert.strictEqual(evaled, 'just want to output ${bala\`bala}'); 
 
-        evaled = LGFile.evaluateTemplate('StringTemplateWithTemplateRef');
+        evaled = templates.evaluate('StringTemplateWithTemplateRef');
         assert.strictEqual(evaled, 'hello jack , welcome. nice weather!'); 
     });
 
     it('TestMemoryAccessPath', function() {
-        var LGFile = LGParser.parseFile(GetExampleFilePath('MemoryAccess.lg'));
+        var templates = Templates.parseFile(GetExampleFilePath('MemoryAccess.lg'));
 
         const scope = {
             myProperty: {
@@ -779,39 +819,39 @@ describe('LG', function() {
         // this evaulate will hit memory access twice
         // first for "property", and get "p1", from local
         // sencond for "turn.property[p1].enum" and get "p1enum" from global
-        var evaled = LGFile.evaluateTemplate('T1', scope);
+        var evaled = templates.evaluate('T1', scope);
         assert.strictEqual(evaled, 'p1enum');
 
         // this evaulate will hit memory access twice
         // first for "myProperty.name", and get "p1", from global
         // sencond for "turn.property[p1].enum" and get "p1enum" from global 
-        evaled = LGFile.evaluateTemplate('T3', scope);
+        evaled = templates.evaluate('T3', scope);
         assert.strictEqual(evaled, 'p1enum');
     });
 
     it('TestReExecute', function() {
-        var LGFile = LGParser.parseFile(GetExampleFilePath('ReExecute.lg'));
+        var templates = Templates.parseFile(GetExampleFilePath('ReExecute.lg'));
 
         // may be has different values
-        LGFile.evaluateTemplate('templateWithSameParams', {param1:'ms', param2:'newms'});
+        templates.evaluate('templateWithSameParams', {param1:'ms', param2:'newms'});
     });
 
     it('TestCustomFunction', function() {
-        let engine = new ExpressionEngine((func) => {
+        let parser = new ExpressionParser((func) => {
             if (func === 'custom') {
                 return ExpressionFunctions.numeric('custom', 
                     args => {
                         return args[0] + args[1];
                     });
             } else {
-                return ExpressionFunctions.lookup(func);
+                return Expression.lookup(func);
             }
         });
-        let template = LGParser.parseFile(GetExampleFilePath('CustomFunction.lg'), undefined, engine);
-        assert.equal(template.expressionEngine, engine);
-        let result = template.evaluateTemplate('template', {});
+        let templates = Templates.parseFile(GetExampleFilePath('CustomFunction.lg'), undefined, parser);
+        assert.equal(templates.expressionParser, parser);
+        let result = templates.evaluate('template', {});
         assert.strictEqual(result, 3);
-        result = template.evaluateTemplate('callSub', {});
+        result = templates.evaluate('callSub', {});
         assert.strictEqual(result, 12);
     });
 });

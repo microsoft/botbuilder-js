@@ -47,5 +47,5 @@ export interface WebRequest {
      * 
      * @returns A reference to the request object.
      */
-    on(event: string, ...args: any[]): any;
+    on?(event: string, ...args: any[]): any;
 }

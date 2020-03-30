@@ -481,7 +481,7 @@ export interface Activity {
   importance?: ActivityImportance | string;
   /**
    * A delivery hint to signal to the recipient alternate delivery paths for the activity.
-   * The default delivery mode is "default". Possible values include: 'normal', 'notification'
+   * The default delivery mode is "default". Possible values include: 'normal', 'notification', 'expectReplies', 'ephemeral'
    */
   deliveryMode?: DeliveryModes | string;
   /**
@@ -577,6 +577,16 @@ export interface ConversationsResult {
    * List of conversations
    */
   conversations: ConversationMembers[];
+}
+
+/**
+ * Expected Replies in response to DeliveryModes.ExpectReplies
+ */
+export interface ExpectedReplies {
+  /**
+   * A collection of Activities that conforms to the ExpectedReplies schema.
+   */
+  activities: Activity[];
 }
 
 /**
@@ -1023,6 +1033,10 @@ export interface OAuthCard {
    * The name of the registered connection
    */
   connectionName: string;
+  /**
+   * The token exchange resource for single sign on
+   */
+  tokenExchangeResource: TokenExchangeResource;
   /**
    * Action to use to perform signin
    */
@@ -1618,6 +1632,54 @@ export interface PaymentRequestUpdateResult {
   details: PaymentDetails;
 }
 
+/**
+ * @interface
+ * An interface representing SignInUrlResponse.
+ */
+export interface SignInUrlResponse {
+  /**
+   * @member {string} [signInLink]
+   */
+  signInLink?: string;
+  /**
+   * @member {TokenExchangeResource} [tokenExchangeResource]
+   */
+  tokenExchangeResource?: TokenExchangeResource;
+}
+
+/**
+ * @interface
+ * An interface representing TokenExchangeResource.
+ */
+export interface TokenExchangeResource {
+  /**
+   * @member {string} [id]
+   */
+  id?: string;
+  /**
+   * @member {string} [uri]
+   */
+  uri?: string;
+  /**
+   * @member {string} [providerId]
+   */
+  providerId?: string;
+}
+
+/**
+ * @interface
+ * An interface representing TokenExchangeRequest.
+ */
+export interface TokenExchangeRequest {
+  /**
+   * @member {string} [uri]
+   */
+  uri?: string;
+  /**
+   * @member {string} [token]
+   */
+  token?: string;
+}
 
 /**
  * Defines values for RoleTypes.
@@ -1755,14 +1817,15 @@ export enum ActivityImportance {
 
 /**
  * Defines values for DeliveryModes.
- * Possible values include: 'normal', 'notification'
+ * Possible values include: 'normal', 'notification', 'expectReplies', 'ephemeral'
  * @readonly
  * @enum {string}
  */
 export enum DeliveryModes {
   Normal = 'normal',
   Notification = 'notification',
-  BufferedReplies = 'bufferedReplies'
+  ExpectReplies = 'expectReplies',
+  Ephemeral = 'ephemeral'
 }
 
 /**
