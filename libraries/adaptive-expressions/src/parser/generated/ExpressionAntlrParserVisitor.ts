@@ -19,10 +19,10 @@ import { PrimaryExpContext } from "./ExpressionAntlrParser";
 import { FileContext } from "./ExpressionAntlrParser";
 import { ExpressionContext } from "./ExpressionAntlrParser";
 import { PrimaryExpressionContext } from "./ExpressionAntlrParser";
-import { ObjectDefinitionContext } from "./ExpressionAntlrParser";
 import { ArgsListContext } from "./ExpressionAntlrParser";
 import { KeyValuePairListContext } from "./ExpressionAntlrParser";
 import { KeyValuePairContext } from "./ExpressionAntlrParser";
+import { KeyContext } from "./ExpressionAntlrParser";
 
 
 /**
@@ -159,13 +159,6 @@ export interface ExpressionAntlrParserVisitor<Result> extends ParseTreeVisitor<R
 	visitPrimaryExpression?: (ctx: PrimaryExpressionContext) => Result;
 
 	/**
-	 * Visit a parse tree produced by `ExpressionAntlrParser.objectDefinition`.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	visitObjectDefinition?: (ctx: ObjectDefinitionContext) => Result;
-
-	/**
 	 * Visit a parse tree produced by `ExpressionAntlrParser.argsList`.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -185,5 +178,12 @@ export interface ExpressionAntlrParserVisitor<Result> extends ParseTreeVisitor<R
 	 * @return the visitor result
 	 */
 	visitKeyValuePair?: (ctx: KeyValuePairContext) => Result;
+
+	/**
+	 * Visit a parse tree produced by `ExpressionAntlrParser.key`.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	visitKey?: (ctx: KeyContext) => Result;
 }
 

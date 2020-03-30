@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 import { ANTLRInputStream, CommonTokenStream } from 'antlr4ts';
-import { AbstractParseTreeVisitor, ParseTree } from 'antlr4ts/tree';
+import { AbstractParseTreeVisitor, ParseTree, TerminalNode } from 'antlr4ts/tree';
 import { Constant } from '../constant';
 import { Expression } from '../expression';
 import { EvaluatorLookup } from '../expressionEvaluator';
@@ -133,7 +133,24 @@ export class ExpressionParser implements ExpressionParserInterface {
         }
 
         public visitJsonCreationExp(context: ep.JsonCreationExpContext): Expression {
-            return this.makeExpression(ExpressionType.Json, new Constant(context.text));
+            let expr: Expression = new Constant({});
+            if (context.keyValuePairList()) {
+                for (const kvPair of context.keyValuePairList().keyValuePair()) {
+                    let key = '';
+                    const node = kvPair.key().children[0];
+                    if (node instanceof TerminalNode) {
+                        if (node.symbol.type === ep.ExpressionAntlrParser.IDENTIFIER) {
+                            key = node.text;
+                        } else {
+                            key = node.text.substring(1, node.text.length - 1);
+                        }
+                    } 
+                    
+                    expr = this.makeExpression(ExpressionType.SetProperty, expr, new Constant(key), this.visit(kvPair.expression()));
+                }
+            }
+
+            return expr;
         }
 
         public visitStringInterpolationAtom(context: ep.StringInterpolationAtomContext): Expression {

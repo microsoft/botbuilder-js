@@ -19,10 +19,10 @@ import { PrimaryExpContext } from "./ExpressionAntlrParser";
 import { FileContext } from "./ExpressionAntlrParser";
 import { ExpressionContext } from "./ExpressionAntlrParser";
 import { PrimaryExpressionContext } from "./ExpressionAntlrParser";
-import { ObjectDefinitionContext } from "./ExpressionAntlrParser";
 import { ArgsListContext } from "./ExpressionAntlrParser";
 import { KeyValuePairListContext } from "./ExpressionAntlrParser";
 import { KeyValuePairContext } from "./ExpressionAntlrParser";
+import { KeyContext } from "./ExpressionAntlrParser";
 
 
 /**
@@ -233,17 +233,6 @@ export interface ExpressionAntlrParserListener extends ParseTreeListener {
 	exitPrimaryExpression?: (ctx: PrimaryExpressionContext) => void;
 
 	/**
-	 * Enter a parse tree produced by `ExpressionAntlrParser.objectDefinition`.
-	 * @param ctx the parse tree
-	 */
-	enterObjectDefinition?: (ctx: ObjectDefinitionContext) => void;
-	/**
-	 * Exit a parse tree produced by `ExpressionAntlrParser.objectDefinition`.
-	 * @param ctx the parse tree
-	 */
-	exitObjectDefinition?: (ctx: ObjectDefinitionContext) => void;
-
-	/**
 	 * Enter a parse tree produced by `ExpressionAntlrParser.argsList`.
 	 * @param ctx the parse tree
 	 */
@@ -275,5 +264,16 @@ export interface ExpressionAntlrParserListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	exitKeyValuePair?: (ctx: KeyValuePairContext) => void;
+
+	/**
+	 * Enter a parse tree produced by `ExpressionAntlrParser.key`.
+	 * @param ctx the parse tree
+	 */
+	enterKey?: (ctx: KeyContext) => void;
+	/**
+	 * Exit a parse tree produced by `ExpressionAntlrParser.key`.
+	 * @param ctx the parse tree
+	 */
+	exitKey?: (ctx: KeyContext) => void;
 }
 

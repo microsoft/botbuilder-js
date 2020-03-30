@@ -29,11 +29,11 @@ const dataSource = [
     ['`hello ${world}` != \'hello hello\'', true],
     ['`hello ${user.nickname}` == \'hello John\'', true],
     ['`hello ${user.nickname}` != \'hello Dong\'', true],
-    ['`hello ${string({"obj":  1})}`', 'hello {"obj":1}'],
-    ['`hello ${string({"obj":  "${not expr}"})}`', 'hello {"obj":"${not expr}"}'],
-    ['`hello ${string({"obj":  {"a": 1}})}`', 'hello {"obj":{"a":1}}'],
+    ['`hello ${string({obj:  1})}`', 'hello {"obj":1}'],
+    ['`hello ${string({obj:  "${not expr}"})}`', 'hello {"obj":"${not expr}"}'],
+    ['`hello ${string({obj:  {"a": 1}})}`', 'hello {"obj":{"a":1}}'],
 
-    // Operators tests
+    //Operators tests
 
     ['1 + 2', 3],
     ['1 +\n 2', 3],
@@ -207,7 +207,6 @@ const dataSource = [
     ['indexOf(nullObj, \'-\')', -1],
     ['indexOf(hello, nullObj)', 0],
     ['indexOf(json(\'["a", "b"]\'), "a")', 0],
-    ['indexOf({["a", "b"]}, "a")', 0],
     ['indexOf(json(\'["a", "b"]\'), \'c\')', -1],
     ['indexOf(createArray(\'abc\', \'def\', \'ghi\'), \'def\')', 1],
     ['indexOf([\'abc\', \'def\', \'ghi\'], \'def\')', 1],
@@ -338,6 +337,7 @@ const dataSource = [
     ['base64ToBinary(base64(hello))', '0110000101000111010101100111001101100010010001110011100000111101'],
     ['base64ToString(base64(hello))', 'hello'],
     ['uriComponent(\'http://contoso.com\')', 'http%3A%2F%2Fcontoso.com'],
+    ['{a: 1, b: newExpr}.b', 'new land'],
 
     // Math functions tests
     ['add(1, 2, 3)', 6],
@@ -522,7 +522,8 @@ const dataSource = [
     ['flatten(createArray(1,createArray(2),createArray(createArray(3, 4), createArray(5,6))))', [1, 2, 3, 4, 5, 6]],
     ['flatten(createArray(1,createArray(2),createArray(createArray(3, 4), createArray(5,6))), 1)', [1, 2, [3,4], [5,6]]],
     ['unique(createArray(1, 5, 1))', [1, 5]],
-    // Object manipulation and construction functions tests
+    
+    //Object manipulation and construction functions tests
     ['string(addProperty(json(\'{"key1":"value1"}\'), \'key2\',\'value2\'))', '{"key1":"value1","key2":"value2"}'],
     ['string(addProperty({"key1":"value1"}, \'key2\',\'value2\'))', '{"key1":"value1","key2":"value2"}'],
     ['string(setProperty(json(\'{"key1":"value1"}\'), \'key1\',\'value2\'))', '{"key1":"value2"}'],
@@ -624,6 +625,7 @@ const scope = {
     two: 2.0,
     hello: 'hello',
     world: 'world',
+    newExpr: 'new land',
     cit: 'cit',
     y: 'y',
     istrue: true,

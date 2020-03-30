@@ -20,7 +20,7 @@ expression
 primaryExpression 
     : OPEN_BRACKET expression CLOSE_BRACKET                                                  #parenthesisExp
     | OPEN_SQUARE_BRACKET argsList? CLOSE_SQUARE_BRACKET                                     #arrayCreationExp
-    | OPEN_CURLY_BRACKET (keyValuePairList | expression)? CLOSE_CURLY_BRACKET                    #jsonCreationExp
+    | OPEN_CURLY_BRACKET (keyValuePairList | expression)? CLOSE_CURLY_BRACKET                #jsonCreationExp
     | NUMBER                                                                                 #numericAtom
     | STRING                                                                                 #stringAtom
     | IDENTIFIER                                                                             #idAtom
@@ -39,5 +39,9 @@ keyValuePairList
     ;
 
 keyValuePair
-    : STRING COLON expression
+    : key COLON expression
+    ;
+
+key
+    : (IDENTIFIER | STRING)
     ;

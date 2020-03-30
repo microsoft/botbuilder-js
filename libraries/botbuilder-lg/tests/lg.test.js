@@ -510,6 +510,21 @@ describe('LG', function() {
 
         evaled = templates.evaluate('template6', {userName});
         assert.strictEqual(evaled, 'goodmorning', `Evaled is ${ evaled }`);
+
+        evaled = templates.evaluate('template7');
+        assert.strictEqual(evaled, '{"a":"hello"}', `Evaled is ${ evaled }`);
+
+        evaled = templates.evaluate('template8');
+        assert.strictEqual(evaled, '{"a":{"v":1}}', `Evaled is ${ evaled }`);
+
+        evaled = templates.evaluate('template9', {value: {v: 1}});
+        assert.strictEqual(evaled, '{"a":{"v":1}}', `Evaled is ${ evaled }`);
+
+        evaled = templates.evaluate('template10');
+        assert.strictEqual(evaled, 13, `Evaled is ${ evaled }`);
+
+        evaled = templates.evaluate('template11');
+        assert.strictEqual(evaled, 18, `Evaled is ${ evaled }`);
     });
 
 

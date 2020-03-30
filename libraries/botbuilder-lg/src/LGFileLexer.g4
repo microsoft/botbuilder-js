@@ -46,10 +46,6 @@ fragment STRING_LITERAL : ('\'' (~['\r\n])* '\'') | ('"' (~["\r\n])* '"');
 
 fragment STRING_INTERPOLATION : '`' ('\\`' | ~'`')* '`';
 
-fragment OBJECT_DEFINITION: '{' (STRING_LITERAL ':' (STRING_LITERAL | ~[{}'"`]))* '}';
-
-fragment EXPRESSION_FRAGMENT : '$' '{' (STRING_LITERAL | STRING_INTERPOLATION | EMPTY_OBJECT | ~[}'"`] )+ '}'?;
-
 fragment ESCAPE_CHARACTER_FRAGMENT : '\\' ~[\r\n]?;
 
 
@@ -76,6 +72,14 @@ HASH
 
 DASH
   : '-' { this.inTemplate }? { this.beginOfTemplateLine = true; this.beginOfTemplateBody = false; } -> pushMode(TEMPLATE_BODY_MODE)
+  ;
+
+OBJECT_DEFINITION
+  : '{' ((STRING_LITERAL | IDENTIFIER) ':' (~[{}\r\n] |OBJECT_DEFINITION)+)* '}'
+  ;
+
+EXPRESSION_FRAGMENT
+  : '$' '{' (STRING_LITERAL | STRING_INTERPOLATION| EMPTY_OBJECT | OBJECT_DEFINITION | ~[}'"`])+ '}'?
   ;
 
 LEFT_SQUARE_BRACKET
