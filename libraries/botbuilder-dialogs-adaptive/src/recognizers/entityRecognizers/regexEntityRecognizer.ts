@@ -9,19 +9,12 @@ import { ModelResult } from 'botbuilder-dialogs';
  * Licensed under the MIT License.
  */
 
-export interface RegexEntityRecognizerConfiguration {
-    name?: string;
-    pattern?: string;
-}
-
 export class RegexEntityRecognizer extends TextEntityRecognizer {
-    public static declarativeType = 'Microsoft.RegexEntityRecognizer';
-
     public constructor();
     public constructor(name?: string, pattern?: string) {
         super();
-        this.name = name;
-        this.pattern = pattern;
+        if (name) { this.name = name; }
+        if (pattern) { this.pattern = pattern; }
     }
 
     public name: string;
@@ -31,12 +24,11 @@ export class RegexEntityRecognizer extends TextEntityRecognizer {
     }
 
     public set pattern(value: string) {
+        if (value.startsWith('(?i)')) {
+            value = value.substr(4);
+        }
         this._pattern = value;
         this._regex = new RegExp(value, 'ig');
-    }
-
-    public configure(config: RegexEntityRecognizerConfiguration): this {
-        return super.configure(config);
     }
 
     private _pattern: string;

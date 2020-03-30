@@ -6,19 +6,10 @@
  * Licensed under the MIT License.
  */
 import { TurnContext, ActivityTypes, ChannelAccount, RoleTypes } from 'botbuilder-core';
-import { Configurable } from 'botbuilder-dialogs';
 import { TestAction } from '../testAction';
 import { AdaptiveTestAdapter } from '../adaptiveTestAdapter';
 
-export interface UserConversationUpdateConfiguration {
-    membersAdded?: string[];
-    membersRemoved?: string[];
-}
-
-export class UserConversationUpdate extends Configurable implements TestAction {
-
-    public static readonly declarativeType: string = 'Microsoft.Test.UserConversationUpdate';
-
+export class UserConversationUpdate implements TestAction {
     /**
      * The members added names.
      */
@@ -28,10 +19,6 @@ export class UserConversationUpdate extends Configurable implements TestAction {
      * The members removed names.
      */
     public membersRemoved: string[];
-
-    public configure(config: UserConversationUpdateConfiguration): this {
-        return super.configure(config);
-    }
 
     public async execute(testAdapter: AdaptiveTestAdapter, callback: (context: TurnContext) => Promise<any>): Promise<any> {
         const activity = testAdapter.makeActivity();

@@ -108,6 +108,8 @@ export const BotCallbackHandlerKey = 'botCallbackHandler';
 // tslint:disable-next-line:no-empty-interface
 export interface TurnContext {}
 
+const TURN_STATE_SCOPE_CACHE = Symbol('turnStateScopeCache');
+
 /**
  * Provides context for a turn of a bot.
  *
@@ -739,6 +741,35 @@ export class TurnContext {
      */
     public get turnState(): Map<any, any> {
         return this._turnState;
+    }
+
+    public pushTurnState(key: any, value: any): void {
+        // Get current value and add to scope cache
+        const current = this.turnState.get(key);
+        const cache: Map<any, any[]> = this.turnState.get(TURN_STATE_SCOPE_CACHE) || new Map<any, any[]>();
+        if (cache.has(key)) {
+            cache.get(key).push(current);
+        } else {
+            cache.set(key, [current]);
+        }
+
+        // Set new (or current) value and save cache
+        if (value == undefined) { value = current }
+        this.turnState.set(key, value);
+        this.turnState.set(TURN_STATE_SCOPE_CACHE, cache);
+    }
+
+    public popTurnState(key: any): void {
+        // Get previous value from scope cache
+        let previous: any;
+        const cache: Map<any, any[]> = this.turnState.get(TURN_STATE_SCOPE_CACHE) || new Map<any, any[]>();
+        if (cache.has(key)) {
+            previous = cache.get(key).pop();
+        }
+
+        // Restore previous value and save cache
+        this.turnState.set(key, previous);
+        this.turnState.set(TURN_STATE_SCOPE_CACHE, cache);
     }
 
     private emit<T>(

@@ -9,45 +9,45 @@
                 "$kind": "Microsoft.OnBeginDialog",
                 "actions": [
                     {
-                        "$kind": "Microsoft.InitProperty",
+                        "$kind": "Microsoft.SetProperty",
                         "property": "dialog.todo",
-                        "type": "array"
+                        "value": "=[]"
                     },
                     {
                         "$kind": "Microsoft.EditArray",
                         "itemsProperty": "dialog.todo",
                         "changeType": "push",
-                        "value": "1"
+                        "value": "=1"
                     },
                     {
                         "$kind": "Microsoft.EditArray",
                         "itemsProperty": "dialog.todo",
                         "changeType": "push",
-                        "value": "2"
+                        "value": "=2"
                     },
                     {
                         "$kind": "Microsoft.EditArray",
                         "itemsProperty": "dialog.todo",
                         "changeType": "push",
-                        "value": "3"
+                        "value": "=3"
                     },
                     {
                         "$kind": "Microsoft.EditArray",
                         "itemsProperty": "dialog.todo",
                         "changeType": "push",
-                        "value": "4"
+                        "value": "=4"
                     },
                     {
                         "$kind": "Microsoft.EditArray",
                         "itemsProperty": "dialog.todo",
                         "changeType": "push",
-                        "value": "5"
+                        "value": "=5"
                     },
                     {
                         "$kind": "Microsoft.EditArray",
                         "itemsProperty": "dialog.todo",
                         "changeType": "push",
-                        "value": "6"
+                        "value": "=6"
                     },
                     {
                         "$kind": "Microsoft.Foreach",
@@ -64,7 +64,7 @@
                             },
                             {
                                 "$kind": "Microsoft.SendActivity",
-                                "activity": "index is: @{dialog.foreach.index} and value is: @{dialog.foreach.value}"
+                                "activity": "index is: ${dialog.foreach.index} and value is: ${dialog.foreach.value}"
                             }
                         ]
                     },

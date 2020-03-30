@@ -5,99 +5,70 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { DialogTurnResult, DialogContext, DialogConfiguration, Dialog, Configurable } from 'botbuilder-dialogs';
-import { Expression, ExpressionEngine } from 'adaptive-expressions';
+import { DialogTurnResult, DialogContext, Dialog } from 'botbuilder-dialogs';
+import { ValueExpression, StringExpression, BoolExpression } from '../expressions';
 
-export interface EmitEventConfiguration extends DialogConfiguration {
-    eventName?: string;
-    eventValue?: string;
-    bubbleEvent?: boolean;
-    resultProperty?: string;
-    disabled?: string;
-}
-
-export class EmitEvent<O extends object = {}> extends Dialog<O> implements Configurable {
-    public static declarativeType = 'Microsoft.EmitEvent';
-
+export class EmitEvent<O extends object = {}> extends Dialog<O> {
     public constructor();
     public constructor(eventName: string, eventValue?: string, bubbleEvent?: boolean);
-    public constructor(eventName?: string, eventValue?: string, bubbleEvent = true) {
+    public constructor(eventName?: string, eventValue?: string, bubbleEvent = false) {
         super();
-        this.eventName = eventName;
-        this.eventValue = eventValue;
-        this.bubbleEvent = bubbleEvent;
+        if (eventName) { this.eventName = new StringExpression(eventName); }
+        if (eventValue) { this.eventValue = new ValueExpression(eventValue); }
+        this.bubbleEvent = new BoolExpression(bubbleEvent);
     }
 
     /**
      * The name of the event to emit.
      */
-    public eventName: string;
+    public eventName: StringExpression;
 
     /**
-     * Get the memory property path to use to get the value to send as part of the event.
+     * The memory property path to use to get the value to send as part of the event.
      */
-    public get eventValue(): string {
-        return this._eventValue ? this._eventValue.toString() : undefined;
-    }
-
-    /**
-     * Set the memory property path to use to get the value to send as part of the event.
-     */
-    public set eventValue(value: string) {
-        this._eventValue = value ? new ExpressionEngine().parse(value) : undefined;
-    }
+    public eventValue: ValueExpression;
 
     /**
      * A value indicating whether gets or sets whether the event should bubble or not.
      */
-    public bubbleEvent: boolean;
+    public bubbleEvent: BoolExpression;
 
     /**
-     * Get an optional expression which if is true will disable this action.
+     * An optional expression which if is true will disable this action.
      */
-    public get disabled(): string {
-        return this._disabled ? this._disabled.toString() : undefined;
-    }
-
-    /**
-     * Set an optional expression which if is true will disable this action.
-     */
-    public set disabled(value: string) {
-        this._disabled = value ? new ExpressionEngine().parse(value) : undefined;
-    }
-
-    private _eventValue: Expression;
-
-    private _disabled: Expression;
-
-    public configure(config: EmitEventConfiguration): this {
-        return super.configure(config);
-    }
+    public disabled?: BoolExpression;
 
     public async beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {
-        if (this._disabled) {
-            const { value } = this._disabled.tryEvaluate(dc.state);
-            if (!!value) {
-                return await dc.endDialog();
-            }
+        if (this.disabled && this.disabled.getValue(dc.state)) {
+            return await dc.endDialog();
+        }
+
+        let eventName: string;
+        if (this.eventName) {
+            eventName = this.eventName.getValue(dc.state);
+        }
+    
+        let eventValue: any;
+        if (this.eventValue) {
+            eventValue = this.eventValue.getValue(dc.state);
+        }
+
+        let bubbleEvent = false;
+        if (this.bubbleEvent) {
+            bubbleEvent = this.bubbleEvent.getValue(dc.state);
         }
 
         let handled = false;
-
-        if (this.eventValue) {
-            const { value, error } = this._eventValue.tryEvaluate(dc.state);
-            if (error) {
-                throw new Error(`Expression evaluation resulted in an error. Expression: ${ this.eventValue }. Error: ${ error }`);
-            }
-            handled = await dc.emitEvent(this.eventName, value, this.bubbleEvent, false);
+        if (dc.parent) {
+            handled = await dc.parent.emitEvent(eventName, eventValue, bubbleEvent, false);
         } else {
-            handled = await dc.emitEvent(this.eventName, this.eventValue, this.bubbleEvent, false);
+            handled = await dc.emitEvent(eventName, eventValue, bubbleEvent, false);
         }
 
         return await dc.endDialog(handled);
     }
 
     protected onComputeId(): string {
-        return `EmitEvent[${ this.eventName || '' }]`;
+        return `EmitEvent[${ this.eventName.toString() || '' }]`;
     }
 }

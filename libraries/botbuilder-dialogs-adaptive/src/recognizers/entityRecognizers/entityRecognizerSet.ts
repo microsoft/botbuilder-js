@@ -12,8 +12,6 @@ import { EntityRecognizer } from './entityRecognizer';
 import { TextEntity } from './textEntity';
 
 export class EntityRecognizerSet extends Array<EntityRecognizer> {
-    public static declarativeType = 'Microsoft.EntityRecognizerSet';
-
     public async recognizeEntities(dialogContext: DialogContext, text: string, locale: string, entities: Entity[] = []): Promise<Entity[]> {
         const allNewEntities: Entity[] = [];
         let entitiesToProcess: Entity[] = [...entities];

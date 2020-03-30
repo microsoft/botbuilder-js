@@ -5,16 +5,16 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { MemoryScope } from "./memoryScope";
-import { ScopePath } from "./scopePath";
-import { DialogContext } from "../../dialogContext";
+import { MemoryScope } from './memoryScope';
+import { ScopePath } from '../scopePath';
+import { DialogContext } from '../../dialogContext';
 
 /**
  * SettingsMemoryScope maps "settings" -> process.env
  */
 export class SettingsMemoryScope extends MemoryScope {
-    constructor() {
-        super(ScopePath.SETTINGS, false);
+    public constructor() {
+        super(ScopePath.settings, false);
     }
 
     public getMemory(dc: DialogContext): object {

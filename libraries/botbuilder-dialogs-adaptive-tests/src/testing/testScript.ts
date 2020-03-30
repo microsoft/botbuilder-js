@@ -6,21 +6,12 @@
  * Licensed under the MIT License.
  */
 import { MemoryStorage, ConversationState, UserState } from 'botbuilder-core';
-import { Dialog, DialogManager, Configurable } from 'botbuilder-dialogs';
+import { DialogManager } from 'botbuilder-dialogs';
 import { TestAction } from './testAction';
 import { AdaptiveTestAdapter } from './adaptiveTestAdapter';
+import { DialogExpression } from 'botbuilder-dialogs-adaptive';
 
-export interface TestScriptConfiguration {
-    description?: string;
-    dialog?: Dialog;
-    locale?: string;
-    script?: TestAction[];
-    enableTrace?: boolean;
-}
-
-export class TestScript extends Configurable {
-
-    public static readonly declarativeType = 'Microsoft.Test.Script';
+export class TestScript {
 
     /**
      * A description of the test sequence.
@@ -30,7 +21,7 @@ export class TestScript extends Configurable {
     /**
      * The dialog to use for the root dialog.
      */
-    public dialog: Dialog;
+    public dialog: DialogExpression;
 
     /**
      * The locale (default: en-us).
@@ -47,10 +38,6 @@ export class TestScript extends Configurable {
      */
     public enableTrace: boolean = false;
 
-    public configure(config: TestScript): this {
-        return super.configure(config);
-    }
-
     /**
      * Starts the execution of the test sequence.
      * @param testName Name of the test
@@ -65,7 +52,7 @@ export class TestScript extends Configurable {
         testAdapter.locale = this.locale;
 
         const bot = new DialogManager();
-        bot.rootDialog = this.dialog;
+        bot.rootDialog = this.dialog.value;
         bot.conversationState = new ConversationState(new MemoryStorage());
         bot.userState = new UserState(new MemoryStorage());
 

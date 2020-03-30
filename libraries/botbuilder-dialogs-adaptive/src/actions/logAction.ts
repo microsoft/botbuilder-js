@@ -5,41 +5,23 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { DialogTurnResult, DialogConfiguration, DialogContext, Dialog, Configurable } from 'botbuilder-dialogs';
+import { DialogTurnResult, DialogContext, Dialog } from 'botbuilder-dialogs';
 import { Activity, ActivityTypes } from 'botbuilder-core';
-import { Expression, ExpressionEngine } from 'adaptive-expressions';
 import { TemplateInterface } from '../template';
 import { TextTemplate } from '../templates';
+import { StringExpression, BoolExpression } from '../expressions';
 
-export interface LogActionConfiguration extends DialogConfiguration {
-    /**
-     * The text template to log.
-     */
-    text?:  TemplateInterface<string>;
-
-    /**
-     * If true, the message will both be logged to the console and sent as a trace activity.
-     * Defaults to a value of false.
-     */
-    traceActivity?: boolean;
-
-    disabled?: string;
-}
-
-export class LogAction<O extends object = {}> extends Dialog<O> implements Configurable {
-    public static declarativeType = 'Microsoft.LogAction';
-
+export class LogAction<O extends object = {}> extends Dialog<O> {
     /**
      * Creates a new `SendActivity` instance.
      * @param template The text template to log.
      * @param sendTrace (Optional) If true, the message will both be logged to the console and sent as a trace activity.  Defaults to a value of false.
      */
     public constructor();
-    public constructor(text: string, traceActivity?: boolean);
-    public constructor(text?: string, traceActivity = false) {
+    public constructor(text: string);
+    public constructor(text?: string) {
         super();
         if (text) { this.text = new TextTemplate(text); }
-        this.traceActivity = traceActivity;
     }
 
     /**
@@ -51,34 +33,21 @@ export class LogAction<O extends object = {}> extends Dialog<O> implements Confi
      * If true, the message will both be logged to the console and sent as a trace activity.
      * Defaults to a value of false.
      */
-    public traceActivity: boolean = false;
+    public traceActivity: BoolExpression = new BoolExpression(false);
 
     /**
-     * Get an optional expression which if is true will disable this action.
+     * A label to use when describing a trace activity.
      */
-    public get disabled(): string {
-        return this._disabled ? this._disabled.toString() : undefined;
-    }
+    public label: StringExpression;
 
     /**
-     * Set an optional expression which if is true will disable this action.
+     * An optional expression which if is true will disable this action.
      */
-    public set disabled(value: string) {
-        this._disabled = value ? new ExpressionEngine().parse(value) : undefined;
-    }
-
-    private _disabled: Expression;
-
-    public configure(config: LogActionConfiguration): this {
-        return super.configure(config);
-    }
+    public disabled?: BoolExpression;
 
     public async beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {
-        if (this._disabled) {
-            const { value } = this._disabled.tryEvaluate(dc.state);
-            if (!!value) {
-                return await dc.endDialog();
-            }
+        if (this.disabled && this.disabled.getValue(dc.state)) {
+            return await dc.endDialog();
         }
 
         if (!this.text) { throw new Error(`${ this.id }: no 'message' specified.`) }
@@ -87,12 +56,21 @@ export class LogAction<O extends object = {}> extends Dialog<O> implements Confi
 
         // Log to console and send trace if needed
         console.log(msg);
-        if (this.traceActivity) {
+        let label = '';
+        if (this.label) {
+            label = this.label.getValue(dc.state);
+        } else {
+            if (dc.parent && dc.parent.activeDialog && dc.parent.activeDialog.id)  {
+                label = dc.parent.activeDialog.id;
+            }
+        }
+        if (this.traceActivity && this.traceActivity.getValue(dc.state)) {
             const activity: Partial<Activity> = {
                 type: ActivityTypes.Trace,
                 name: 'LogAction',
                 valueType: 'string',
-                value: msg
+                value: msg,
+                label: label
             };
             await dc.context.sendActivity(activity);
         }

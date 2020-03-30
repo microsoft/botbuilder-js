@@ -5,7 +5,8 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { Dialog, DialogDependencies, DialogContext, DialogTurnResult, DialogReason, DialogConfiguration } from 'botbuilder-dialogs';
+import { Dialog, DialogDependencies, DialogContext, DialogTurnResult, DialogReason } from 'botbuilder-dialogs';
+import { ActionContext } from '../actionContext';
 
 const OFFSET_KEY = 'this.offset';
 
@@ -18,10 +19,6 @@ export enum ActionScopeCommands {
 export interface ActionScopeResult {
     actionScopeCommand: string;
     actionId?: string;
-}
-
-export interface ActionScopeConfiguration extends DialogConfiguration {
-    actions?: Dialog[];
 }
 
 export class ActionScope<O extends object = {}> extends Dialog<O> implements DialogDependencies {
@@ -43,10 +40,6 @@ export class ActionScope<O extends object = {}> extends Dialog<O> implements Dia
         return this.actions;
     }
 
-    public configure(config: ActionScopeConfiguration): this {
-        return super.configure(config);
-    }
-
     public async beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {
         if (this.actions && this.actions.length > 0) {
             return await this.beginAction(dc, 0);
@@ -55,17 +48,17 @@ export class ActionScope<O extends object = {}> extends Dialog<O> implements Dia
         }
     }
 
+    public async continueDialog(dc: DialogContext): Promise<DialogTurnResult> {
+        // We're being continued after an interruption so just run next action
+        return await this.onNextAction(dc);
+    }
+
     public async resumeDialog(dc: DialogContext, _reason: DialogReason, result?: any): Promise<DialogTurnResult> {
         if (result && typeof result === 'object' && result.hasOwnProperty('actionScopeCommand')) {
             return await this.onActionScopeResult(dc, result as ActionScopeResult);
         }
 
-        const nextOffset = dc.state.getValue(OFFSET_KEY, 0) + 1;
-        if (nextOffset < this.actions.length) {
-            return await this.beginAction(dc, nextOffset);
-        }
-
-        return await this.onEndOfActions(dc, result);
+        return await this.onNextAction(dc, result);
     }
 
     protected async onActionScopeResult(dc: DialogContext, actionScopeResult: ActionScopeResult): Promise<DialogTurnResult> {
@@ -100,6 +93,37 @@ export class ActionScope<O extends object = {}> extends Dialog<O> implements Dia
 
     protected async onContinueLoop(dc: DialogContext, actionScopeResult: ActionScopeResult): Promise<DialogTurnResult> {
         return await dc.endDialog(actionScopeResult);
+    }
+
+    protected async onNextAction(dc: DialogContext, result?: any): Promise<DialogTurnResult> {
+        // Check for any plan changes
+        let hasChanges = false;
+        let root = dc;
+        let parent = dc;
+        while (parent) {
+            const ac = parent as ActionContext;
+            if (ac && ac.changes && ac.changes.length > 0) {
+                hasChanges = true;
+            }
+
+            root = parent;
+            parent = root.parent;
+        }
+
+        // Apply any changes
+        if (hasChanges) {
+            // Recursively call continueDialog() to apply changes and continue execution.
+            return await root.continueDialog();
+        }
+
+        // Increment our offset into the actions and being the next action
+        const nextOffset = dc.state.getValue(OFFSET_KEY, 0) + 1;
+        if (nextOffset < this.actions.length) {
+            return await this.beginAction(dc, nextOffset);
+        }
+
+        // else we fire the end of actions
+        return await this.onEndOfActions(dc, result);
     }
 
     protected async onEndOfActions(dc: DialogContext, result?: any): Promise<DialogTurnResult> {

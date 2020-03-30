@@ -7,22 +7,12 @@
  */
 
 import { RecognizerResult, Activity, ActivityTypes } from 'botbuilder-core';
-import { Configurable, DialogContext } from 'botbuilder-dialogs';
+import { DialogContext } from 'botbuilder-dialogs';
 import { Recognizer } from './recognizer';
 
-export interface ValueRecognizerConfiguration {
-    id?: string;
-}
-
-export class ValueRecognizer extends Configurable implements Recognizer {
-
-    public static declarativeType = 'Microsoft.ValueRecognizer';
+export class ValueRecognizer implements Recognizer {
 
     public id: string;
-
-    public configure(config: ValueRecognizerConfiguration): this {
-        return super.configure(config);
-    }
 
     public async recognize(dialogContext: DialogContext): Promise<RecognizerResult>;
     public async recognize(dialogContext: DialogContext, activity?: Activity): Promise<RecognizerResult> {
@@ -51,12 +41,6 @@ export class ValueRecognizer extends Configurable implements Recognizer {
                 }
             }
         }
-
-        /*
-        if (Object.entries(recognizerResult.intents).length == 0) {
-            recognizerResult.intents['None'] = { score: 1.0 };
-        }
-        */
 
         return recognizerResult;
     }

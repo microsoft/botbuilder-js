@@ -5,21 +5,10 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { DialogTurnResult, DialogConfiguration, DialogContext, Dialog, Configurable } from 'botbuilder-dialogs';
-import { Expression, ExpressionEngine } from 'adaptive-expressions';
+import { DialogTurnResult, DialogContext, Dialog } from 'botbuilder-dialogs';
+import { BoolExpression, StringExpression } from '../expressions';
 
-export interface DeletePropertyConfiguration extends DialogConfiguration {
-    /**
-     * The property to delete.
-     */
-    property?: string;
-
-    disabled?: string;
-}
-
-export class DeleteProperty<O extends object = {}> extends Dialog<O> implements Configurable {
-    public static declarativeType = 'Microsoft.DeleteProperty';
-
+export class DeleteProperty<O extends object = {}> extends Dialog<O> {
     /**
      * Creates a new `DeleteProperty` instance.
      * @param property (Optional) property to delete.
@@ -27,47 +16,29 @@ export class DeleteProperty<O extends object = {}> extends Dialog<O> implements 
     public constructor();
     public constructor(property?: string) {
         super();
-        if (property) { this.property = property; }
+        if (property) { this.property = new StringExpression(property); }
     }
 
     /**
      * The property to delete.
      */
-    public property: string;
+    public property: StringExpression;
 
     /**
-     * Get an optional expression which if is true will disable this action.
+     * An optional expression which if is true will disable this action.
      */
-    public get disabled(): string {
-        return this._disabled ? this._disabled.toString() : undefined;
-    }
-
-    /**
-     * Set an optional expression which if is true will disable this action.
-     */
-    public set disabled(value: string) {
-        this._disabled = value ? new ExpressionEngine().parse(value) : undefined;
-    }
-
-    private _disabled: Expression;
-
-    public configure(config: DeletePropertyConfiguration): this {
-        return super.configure(config);
-    }
+    public disabled?: BoolExpression;
 
     public async beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {
-        if (this._disabled) {
-            const { value } = this._disabled.tryEvaluate(dc.state);
-            if (!!value) {
-                return await dc.endDialog();
-            }
+        if (this.disabled && this.disabled.getValue(dc.state)) {
+            return await dc.endDialog();
         }
 
-        dc.state.deleteValue(this.property);
+        dc.state.deleteValue(this.property.getValue(dc.state));
         return await dc.endDialog();
     }
 
     protected onComputeId(): string {
-        return `DeleteProperty[${ this.property }]`;
+        return `DeleteProperty[${ this.property.toString() }]`;
     }
 }

@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 import { MemoryScope } from './memoryScope';
-import { ScopePath } from './scopePath';
+import { ScopePath } from '../scopePath';
 import { DialogContext } from '../../dialogContext';
 import { DialogContainer } from '../../dialogContainer';
 
@@ -14,8 +14,8 @@ import { DialogContainer } from '../../dialogContainer';
  * DialogMemoryScope maps "dialog" -> dc.parent.activeDialog.state || dc.activeDialog.state
  */
 export class DialogMemoryScope extends MemoryScope {
-    constructor() {
-        super(ScopePath.DIALOG);
+    public constructor() {
+        super(ScopePath.dialog);
     }
 
     public getMemory(dc: DialogContext): object {

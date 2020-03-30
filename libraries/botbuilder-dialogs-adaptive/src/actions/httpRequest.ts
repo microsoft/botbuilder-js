@@ -8,18 +8,19 @@
 import fetch from 'node-fetch';
 import { DialogTurnResult, DialogConfiguration, DialogContext, Dialog, Configurable } from 'botbuilder-dialogs';
 import { Activity } from 'botbuilder-core';
-import { ExpressionEngine, Expression } from 'adaptive-expressions';
+import { ExpressionEngine } from 'adaptive-expressions';
 import { TextTemplate } from '../templates';
+import { ValueExpression, StringExpression, BoolExpression, EnumExpression } from '../expressions';
 
 export interface HttpRequestConfiguration extends DialogConfiguration {
     method?: HttpMethod;
-    valueType?: string;
+    contentType?: string;
     url?: string;
-    headers?: object;
-    body?: object;
-    responseType?: ResponsesTypes;
+    headers?: { [key: string]: string };
+    body?: any;
+    responseType?: string | ResponsesTypes;
     resultProperty?: string;
-    disabled?: string;
+    disabled?: string | boolean;
 }
 
 export enum ResponsesTypes {
@@ -72,104 +73,133 @@ export enum HttpMethod {
 }
 
 export class HttpRequest<O extends object = {}> extends Dialog<O> implements Configurable {
-    public static declarativeType = 'Microsoft.HttpRequest';
-
     public constructor();
-    public constructor(method: HttpMethod, url: string, headers: object,
-        body: object,
-        responseType: ResponsesTypes, resultProperty: string);
-    public constructor(method?: HttpMethod, url?: string, headers?: object,
-        body?: object,
-        responseType?: ResponsesTypes, resultProperty?: string) {
+    public constructor(method: HttpMethod, url: string, headers: { [key: string]: string }, body: any);
+    public constructor(method?: HttpMethod, url?: string, headers?: { [key: string]: string }, body?: any) {
         super();
-        this.method = method;
-        this.url = url;
-        this.headers = headers;
-        this.body = body;
-        if (responseType) {
-            this.responseType = responseType;
+        this.method = method || HttpMethod.GET;
+        this.url = new StringExpression(url);
+        if (headers) {
+            this.headers = {};
+            for (const key in headers) {
+                this.headers[key] = new StringExpression(headers[key]);
+            }
         }
-        else {
-            this.responseType = ResponsesTypes.Json;
-        }
-        this.resultProperty = resultProperty;
+        this.body = new ValueExpression(body);
     }
 
     /**
      * Http Method
      */
-    public method?: HttpMethod;
+    public method?: HttpMethod = HttpMethod.GET;
+
+    /**
+     * Content type of request body
+     */
+    public contentType?: StringExpression = new StringExpression('application/json');
 
     /**
      * Http Url
      */
-    public url?: string;
+    public url?: StringExpression;
 
     /**
      * Http Headers
      */
-    public headers?: object;
+    public headers?: { [key: string]: StringExpression } = {};
     /**
      * Http Body
      */
-    public body?: object;
+    public body?: ValueExpression;
 
     /**
      * The response type of the response
      */
-    public responseType?: ResponsesTypes;
+    public responseType?: EnumExpression<ResponsesTypes> = new EnumExpression<ResponsesTypes>(ResponsesTypes.Json);
 
     /**
      * Gets or sets the property expression to store the HTTP response in.
      */
-    public resultProperty?: string;
+    public resultProperty?: StringExpression;
 
     /**
-     * Get an optional expression which if is true will disable this action.
+     * An optional expression which if is true will disable this action.
      */
-    public get disabled(): string {
-        return this._disabled ? this._disabled.toString() : undefined;
-    }
-
-    /**
-     * Set an optional expression which if is true will disable this action.
-     */
-    public set disabled(value: string) {
-        this._disabled = value ? new ExpressionEngine().parse(value) : undefined;
-    }
-
-    private _disabled: Expression;
+    public disabled?: BoolExpression;
 
     public configure(config: HttpRequestConfiguration): this {
-        return super.configure(config);
+        for (const key in config) {
+            if (config.hasOwnProperty(key)) {
+                const value = config[key];
+                switch (key) {
+                    case 'contentType':
+                        this.contentType = new StringExpression(value);
+                        break;
+                    case 'url':
+                        this.url = new StringExpression(value);
+                        break;
+                    case 'headers':
+                        this.headers = {};
+                        for (const key in value) {
+                            this.headers[key] = new StringExpression(value[key]);
+                        }
+                        break;
+                    case 'body':
+                        this.body = new ValueExpression(value);
+                        break;
+                    case 'responseType':
+                        this.responseType = new EnumExpression<ResponsesTypes>(value);
+                        break;
+                    case 'resultProperty':
+                        this.resultProperty = new StringExpression(value);
+                        break;
+                    case 'disabled':
+                        this.disabled = new BoolExpression(value);
+                        break;
+                    default:
+                        super.configure({ [key]: value });
+                        break;
+                }
+            }
+        }
+
+        return this;
     }
 
     public async beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {
-        if (this._disabled) {
-            const { value } = this._disabled.tryEvaluate(dc.state);
-            if (!!value) {
-                return await dc.endDialog();
-            }
+        if (this.disabled && this.disabled.getValue(dc.state)) {
+            return await dc.endDialog();
         }
 
         /**
          * TODO: replace the key value pair in json recursively
          */
 
-        const url = await new TextTemplate(this.url).bindToData(dc.context, dc.state);
-        const headers = this.headers;
+        const instanceUrl = this.url.getValue(dc.state);
+        const instanceHeaders = {};
+        for (const key in this.headers) {
+            instanceHeaders[key] = this.headers[key].getValue(dc.state);
+        }
 
-        const instanceBody = await this.replaceBodyRecursively(dc, this.body);
+        let instanceBody: any;
+        if (this.body) {
+            instanceBody = this.body.getValue(dc.state);
+        }
+
+        if (instanceBody) {
+            instanceBody = await this.replaceBodyRecursively(dc, instanceBody);
+        }
 
         const parsedBody = JSON.stringify(instanceBody);
-        const parsedHeaders = Object.assign({ 'Content-Type': 'application/json' }, headers);
+        const contentType = this.contentType.getValue(dc.state) || 'application/json';
+        const parsedHeaders = Object.assign({ 'Content-Type': contentType }, instanceHeaders);
 
         let response: any;
 
         switch (this.method) {
             case HttpMethod.DELETE:
             case HttpMethod.GET:
-                response = await fetch(url, {
+                response = await fetch(instanceUrl, {
                     method: this.method.toString(),
                     headers: parsedHeaders,
                 });
@@ -177,7 +207,7 @@ export class HttpRequest<O extends object = {}> extends Dialog<O> implements Con
             case HttpMethod.PUT:
             case HttpMethod.PATCH:
             case HttpMethod.POST:
-                response = await fetch(url, {
+                response = await fetch(instanceUrl, {
                     method: this.method.toString(),
                     headers: parsedHeaders,
                     body: parsedBody,
@@ -188,12 +218,12 @@ export class HttpRequest<O extends object = {}> extends Dialog<O> implements Con
         const jsonResult = await response.json();
 
         let result: Result = {
-            headers: headers,
+            headers: instanceHeaders,
             statusCode: response.status,
             reasonPhrase: response.statusText
         };
 
-        switch (this.responseType) {
+        switch (this.responseType.getValue(dc.state)) {
             case ResponsesTypes.Activity:
                 result.content = jsonResult;
                 dc.context.sendActivity(jsonResult as Activity);
@@ -211,7 +241,7 @@ export class HttpRequest<O extends object = {}> extends Dialog<O> implements Con
         }
 
         if (this.resultProperty) {
-            dc.state.setValue(this.resultProperty, result);
+            dc.state.setValue(this.resultProperty.getValue(dc.state), result);
         }
 
         return await dc.endDialog(result);

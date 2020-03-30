@@ -7,12 +7,12 @@
  */
 
 import { Culture }  from '@microsoft/recognizers-text';
-import { DialogContext, ModelResult, Configurable } from 'botbuilder-dialogs';
+import { DialogContext, ModelResult } from 'botbuilder-dialogs';
 import { Entity } from 'botbuilder-core';
 import { EntityRecognizer } from './entityRecognizer';
 import { TextEntity } from './textEntity';
 
-export abstract class TextEntityRecognizer extends Configurable implements EntityRecognizer {
+export abstract class TextEntityRecognizer implements EntityRecognizer {
     public async recognizeEntities(dialogContext: DialogContext, text: string, locale: string, entities: Entity[]): Promise<Entity[]> {
         const newEntities: Entity[] = [];
         const culture = Culture.mapToNearestLanguage(locale || '');

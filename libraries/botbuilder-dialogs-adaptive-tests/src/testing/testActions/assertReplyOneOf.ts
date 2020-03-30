@@ -6,16 +6,9 @@
  * Licensed under the MIT License.
  */
 import { Activity, ActivityTypes } from 'botbuilder-core';
-import { AssertReplyActivity, AssertReplyActivityConfiguration } from './assertReplyActivity';
-
-export interface AssertReplyOneOfConfiguration extends AssertReplyActivityConfiguration {
-    text?: string[];
-    exact?: boolean;
-}
+import { AssertReplyActivity } from './assertReplyActivity';
 
 export class AssertReplyOneOf extends AssertReplyActivity {
-    public static readonly declarativeType: string = 'Microsoft.Test.AssertReplyOneOf';
-
     /**
      * The text variations.
      */
@@ -25,10 +18,6 @@ export class AssertReplyOneOf extends AssertReplyActivity {
      * A value indicating whether exact match policy should be used.
      */
     public exact: boolean = true;
-
-    public configure(config: AssertReplyOneOfConfiguration): this {
-        return super.configure(config);
-    }
 
     public getConditionDescription(): string {
         return this.text.join('\n');
@@ -53,7 +42,7 @@ export class AssertReplyOneOf extends AssertReplyActivity {
         }
 
         if (!found) {
-            throw new Error(this.description || `Text ${activity.text} didn't match one of expected text: ${this.text.join('\n')}`);
+            throw new Error(this.description || `Text ${ activity.text } didn't match one of expected text: ${ this.text.join('\n') }`);
         }
 
         super.validateReply(activity);

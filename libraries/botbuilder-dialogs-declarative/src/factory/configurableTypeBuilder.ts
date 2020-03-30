@@ -7,13 +7,13 @@
  */
 
 import { Configurable } from 'botbuilder-dialogs';
-import { ITypeBuilder } from './typeBuilder';
+import { TypeBuilder } from './typeBuilder';
 
-export class ConfigurableTypeBuilder implements ITypeBuilder {
+export class ConfigurableTypeBuilder implements TypeBuilder {
 
-    constructor(private factory: new () => Configurable) {}
+    public constructor(private factory: new () => Configurable) { }
 
-    public build(config: object) : object {
+    public build(config: object): object {
         let configurable = new this.factory();
         return configurable.configure(config);
     }

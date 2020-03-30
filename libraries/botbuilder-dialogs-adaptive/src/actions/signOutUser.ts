@@ -5,82 +5,46 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { Configurable, Dialog, DialogContext, DialogTurnResult, DialogConfiguration } from 'botbuilder-dialogs';
-import { Expression, ExpressionEngine } from 'adaptive-expressions';
+import { Dialog, DialogContext, DialogTurnResult } from 'botbuilder-dialogs';
+import { StringExpression, BoolExpression } from '../expressions';
 
-export interface SignOutUserConfiguration extends DialogConfiguration {
-    userId?: string;
-    connectionName?: string;
-    disabled?: string;
-}
-
-export class SignOutUser<O extends object = {}> extends Dialog<O> implements Configurable {
-    public static declarativeType = 'Microsoft.SignOutUser';
-
+export class SignOutUser<O extends object = {}> extends Dialog<O> {
     public constructor();
     public constructor(userId?: string, connectionName?: string) {
         super();
-        if (userId) { this.userId = userId; }
-        if (connectionName) { this.connectionName = connectionName; }
+        if (userId) { this.userId = new StringExpression(userId); }
+        if (connectionName) { this.connectionName = new StringExpression(connectionName); }
     }
 
     /**
-     * Get the expression which resolves to the userId to sign out.
+     * The expression which resolves to the userId to sign out.
      */
-    public get userId(): string {
-        return this._userId ? this._userId.toString() : undefined;
-    }
+    public userId: StringExpression;
 
     /**
-     * Set the expression which resolves to the userId to sign out.
+     * The name of the OAuth connection.
      */
-    public set userId(value: string) {
-        this._userId = value ? new ExpressionEngine().parse(value) : undefined;
-    }
-
-    public connectionName: string;
+    public connectionName: StringExpression;
 
     /**
-     * Get an optional expression which if is true will disable this action.
+     * An optional expression which if is true will disable this action.
      */
-    public get disabled(): string {
-        return this._disabled ? this._disabled.toString() : undefined;
-    }
-
-    /**
-     * Set an optional expression which if is true will disable this action.
-     */
-    public set disabled(value: string) {
-        this._disabled = value ? new ExpressionEngine().parse(value) : undefined;
-    }
-
-    private _userId: Expression;
-
-    private _disabled: Expression;
-
-    public configure(config: SignOutUserConfiguration): this {
-        return super.configure(config);
-    }
+    public disabled?: BoolExpression;
 
     public async beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {
-        if (this._disabled) {
-            const { value } = this._disabled.tryEvaluate(dc.state);
-            if (!!value) {
-                return await dc.endDialog();
-            }
+        if (this.disabled && this.disabled.getValue(dc.state)) {
+            return await dc.endDialog();
         }
 
         let userId: string;
-        if (this._userId) {
-            const { value } = this._userId.tryEvaluate(dc.state);
-            if (value) {
-                userId = value.toString();
-            }
+        if (this.userId) {
+            userId = this.userId.getValue(dc.state);
         }
+        const connectionName: string = this.connectionName.getValue(dc.state);
 
         const adapter = dc.context.adapter;
         if (typeof adapter['signOutUser'] === 'function') {
-            await adapter['signOutUser'](dc.context, this.connectionName, userId);
+            await adapter['signOutUser'](dc.context, connectionName, userId);
             return await dc.endDialog();
         } else {
             throw new Error('signOutUser() not supported by the current adapter.');
@@ -88,6 +52,6 @@ export class SignOutUser<O extends object = {}> extends Dialog<O> implements Con
     }
 
     protected onComputeId(): string {
-        return `SignOutUser[${ this.connectionName }, ${ this.userId }]`;
+        return `SignOutUser[${ this.connectionName ? this.connectionName.toString() : '' }, ${ this.userId ? this.userId.toString() : '' }]`;
     }
 }

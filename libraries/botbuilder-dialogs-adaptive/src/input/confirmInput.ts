@@ -8,21 +8,10 @@
 import * as Recognizers from '@microsoft/recognizers-text-choice';
 import { Activity } from 'botbuilder-core';
 import { DialogContext, Choice, ListStyle, ChoiceFactoryOptions, ChoiceFactory, recognizeChoices } from 'botbuilder-dialogs';
-import { ExpressionEngine, Expression } from 'adaptive-expressions';
-import { InputDialogConfiguration, InputDialog, InputState } from './inputDialog';
-
-export interface ConfirmInputConfiguration extends InputDialogConfiguration {
-    defaultLocale?: string;
-    style?: ListStyle;
-    choiceOptions?: ChoiceFactoryOptions;
-    confirmChoices?: Choice[];
-    outputFormat?: string;
-}
+import { InputDialog, InputState } from './inputDialog';
+import { StringExpression, ObjectExpression, ArrayExpression, EnumExpression } from '../expressions';
 
 export class ConfirmInput extends InputDialog {
-
-    public static declarativeType = 'Microsoft.ConfirmInput';
-
     /**
      * Default options for rendering the choices to the user based on locale.
      */
@@ -37,12 +26,10 @@ export class ConfirmInput extends InputDialog {
         'zh-cn': { choices: ['是的', '不'], options: { inlineSeparator: '， ', inlineOr: ' 要么 ', inlineOrMore: '， 要么 ', includeNumbers: true } }
     };
 
-    private _outputFormatExpression: Expression;
-
     /**
      * The prompts default locale that should be recognized.
      */
-    public defaultLocale?: string;
+    public defaultLocale?: StringExpression;
 
     /**
      * Style of the "yes" and "no" choices rendered to the user when prompting.
@@ -50,36 +37,23 @@ export class ConfirmInput extends InputDialog {
      * @remarks
      * Defaults to `ListStyle.auto`.
      */
-    public style: ListStyle = ListStyle.auto;
+    public style: EnumExpression<ListStyle> = new EnumExpression<ListStyle>(ListStyle.auto);
 
     /**
      * Additional options passed to the `ChoiceFactory` and used to tweak the style of choices
      * rendered to the user.
      */
-    public choiceOptions?: ChoiceFactoryOptions;
+    public choiceOptions?: ObjectExpression<ChoiceFactoryOptions> = new ObjectExpression();
 
     /**
      * Custom list of choices to send for the prompt.
      */
-    public confirmChoices?: Choice[];
+    public confirmChoices?: ArrayExpression<Choice>;
 
     /**
-     * Get output format expression.
+     * The expression of output format.
      */
-    public get outputFormat(): string {
-        return this._outputFormatExpression ? this._outputFormatExpression.toString() : undefined;
-    }
-
-    /**
-     * Set output format expression.
-     */
-    public set outputFormat(value: string) {
-        this._outputFormatExpression = value ? new ExpressionEngine().parse(value): undefined;
-    }
-
-    public configure(config: ConfirmInputConfiguration): this {
-        return super.configure(config);
-    }
+    public outputFormat: StringExpression;
 
     protected onComputeId(): string {
         return `ConfirmInput[${ this.prompt.toString() }]`;
@@ -91,25 +65,21 @@ export class ConfirmInput extends InputDialog {
         if (typeof input !== 'boolean') {
             // Find locale to use
             const activity: Activity = dc.context.activity;
-            const locale = activity.locale || this.defaultLocale || 'en-us';
+            const locale = activity.locale || this.defaultLocale.getValue(dc.state) || 'en-us';
 
             // Recognize input
             const results: any = Recognizers.recognizeBoolean(input, locale);
             if (results.length > 0 && results[0].resolution) {
                 input = results[0].resolution.value;
                 dc.state.setValue(InputDialog.VALUE_PROPERTY, !!input);
-                if (this._outputFormatExpression) {
-                    const { value, error } = this._outputFormatExpression.tryEvaluate(dc.state);
-                    if (!error) {
-                        dc.state.setValue(InputDialog.VALUE_PROPERTY, value);
-                    } else {
-                        throw new Error(`OutputFormat expression evaluation resulted in an error. Expression: ${ this._outputFormatExpression.toString() }. Error: ${error}`);
-                    }
+                if (this.outputFormat) {
+                    const value = this.outputFormat.getValue(dc.state);
+                    dc.state.setValue(InputDialog.VALUE_PROPERTY, value);
                 }
                 return InputState.valid;
             } else {
                 // Fallback to trying the choice recognizer
-                const confirmChoices = this.confirmChoices || ConfirmInput.defaultChoiceOptions[locale].choices;
+                const confirmChoices = (this.confirmChoices && this.confirmChoices.getValue(dc.state)) || ConfirmInput.defaultChoiceOptions[locale].choices;
                 const choices = ChoiceFactory.toChoices(confirmChoices);
                 const results = recognizeChoices(input, choices);
                 if (results.length > 0) {
@@ -126,19 +96,20 @@ export class ConfirmInput extends InputDialog {
 
     protected async onRenderPrompt(dc: DialogContext, state: InputState): Promise<Partial<Activity>> {
         // Determine locale
-        let locale: string = dc.context.activity.locale || this.defaultLocale;
+        let locale: string = dc.context.activity.locale || this.defaultLocale.getValue(dc.state);
         if (!locale || !ConfirmInput.defaultChoiceOptions.hasOwnProperty(locale)) {
             locale = 'en-us';
         }
 
         // Format choices
-        const confirmChoices = this.confirmChoices || ConfirmInput.defaultChoiceOptions[locale].choices;
+        const confirmChoices = (this.confirmChoices && this.confirmChoices.getValue(dc.state)) || ConfirmInput.defaultChoiceOptions[locale].choices;
         const choices = ChoiceFactory.toChoices(confirmChoices);
 
         // Format prompt to send
         const prompt = await super.onRenderPrompt(dc, state);
         const channelId: string = dc.context.activity.channelId;
-        const choiceOptions: ChoiceFactoryOptions = this.choiceOptions || ConfirmInput.defaultChoiceOptions[locale].options;
-        return Promise.resolve(this.appendChoices(prompt, channelId, choices, this.style, choiceOptions));
+        const choiceOptions: ChoiceFactoryOptions = (this.choiceOptions && this.choiceOptions.getValue(dc.state)) || ConfirmInput.defaultChoiceOptions[locale].options;
+        const style = this.style.getValue(dc.state)
+        return Promise.resolve(this.appendChoices(prompt, channelId, choices, style, choiceOptions));
     }
 }

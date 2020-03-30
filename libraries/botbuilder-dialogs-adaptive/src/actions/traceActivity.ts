@@ -5,105 +5,76 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { DialogTurnResult, DialogConfiguration, DialogContext, Dialog, Configurable } from 'botbuilder-dialogs';
+import { DialogTurnResult, DialogContext, Dialog } from 'botbuilder-dialogs';
 import { Activity, ActivityTypes } from 'botbuilder-core';
-import { Expression, ExpressionEngine } from 'adaptive-expressions';
+import { ValueExpression, StringExpression, BoolExpression } from '../expressions';
 
-export interface TraceActivityConfiguration extends DialogConfiguration {
-    /**
-     * Gets or sets name of the trace activity.
-     */
-    name?: string;
-
-    /**
-     * Gets or sets value type of the trace activity.
-     */
-    valueType?: string;
-
-    /**
-     * Gets or sets value expression to send as the value.
-     */
-    value?: string;
-
-    disabled?: string;
-}
-
-export class TraceActivity<O extends object = {}> extends Dialog<O> implements Configurable {
-    public static declarativeType = 'Microsoft.TraceActivity';
-
+export class TraceActivity<O extends object = {}> extends Dialog<O> {
     public constructor();
-    public constructor(name: string, valueType: string, value: string);
-    public constructor(name?: string, valueType?: string, value?: string) {
+    public constructor(name: string, valueType: string, value: any, label: string);
+    public constructor(name?: string, valueType?: string, value?: any, label?: string) {
         super();
-        if (name) { this.name = name; }
-        if (valueType) { this.valueType = valueType; }
-        if (value) { this.value = value; }
+        if (name) { this.name = new StringExpression(name); }
+        if (valueType) { this.valueType = new StringExpression(valueType); }
+        if (value) { this.value = new ValueExpression(value); }
+        if (label) { this.label = new StringExpression(label); }
     }
 
     /**
      * Gets or sets name of the trace activity.
      */
-    public name?: string;
+    public name?: StringExpression;
 
     /**
      * Gets or sets value type of the trace activity.
      */
-    public valueType?: string;
+    public valueType?: StringExpression;
 
     /**
      * Gets or sets value expression to send as the value.
      */
-    public value?: string;
+    public value?: ValueExpression;
 
     /**
-     * Get an optional expression which if is true will disable this action.
+     * Gets or sets a label to use when describing a trace activity.
      */
-    public get disabled(): string {
-        return this._disabled ? this._disabled.toString() : undefined;
-    }
+    public label?: StringExpression;
 
     /**
-     * Set an optional expression which if is true will disable this action.
+     * An optional expression which if is true will disable this action.
      */
-    public set disabled(value: string) {
-        this._disabled = value ? new ExpressionEngine().parse(value) : undefined;
-    }
-
-    private _disabled: Expression;
-
-
-    public configure(config: TraceActivityConfiguration): this {
-        return super.configure(config);
-    }
+    public disabled?: BoolExpression;
 
     public async beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {
-        if (this._disabled) {
-            const { value } = this._disabled.tryEvaluate(dc.state);
-            if (!!value) {
-                return await dc.endDialog();
-            }
+        if (this.disabled && this.disabled.getValue(dc.state)) {
+            return await dc.endDialog();
         }
 
         let value: any;
 
         if (this.value) {
-            value = dc.state.getValue(this.value);
+            value = this.value.getValue(dc.state);
         } else {
             value = dc.state.getMemorySnapshot();
         }
 
+        const name = (this.name && this.name.getValue(dc.state)) || 'Trace';
+        const valueType = (this.valueType && this.valueType.getValue(dc.state)) || 'State';
+        const label = (this.label && this.label.getValue(dc.state)) || (dc.parent && dc.parent.activeDialog && dc.parent.activeDialog.id) || '';
+
         const traceActivity: Partial<Activity> = {
             type: ActivityTypes.Trace,
             timestamp: new Date(),
-            name: this.name || 'Trace',
-            value: value,
-            valueType: this.valueType || 'State'
+            name,
+            value,
+            valueType,
+            label
         };
         await dc.context.sendActivity(traceActivity);
         return await dc.endDialog(traceActivity);
     }
 
     protected onComputeId(): string {
-        return `TraceActivity[${ this.name }]`;
+        return `TraceActivity[${ this.name.toString() }]`;
     }
 }

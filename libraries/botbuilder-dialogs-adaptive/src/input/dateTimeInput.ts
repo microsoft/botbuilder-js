@@ -7,34 +7,14 @@
  */
 import * as Recognizers from '@microsoft/recognizers-text-date-time';
 import { DialogContext } from 'botbuilder-dialogs';
-import { ExpressionEngine, Expression } from 'adaptive-expressions';
-import { InputDialogConfiguration, InputDialog, InputState } from './inputDialog';
-
-
-export interface DatetimeInputConfiguration extends InputDialogConfiguration {
-    defaultLocale?: string;
-    outputFormat?: string;
-}
+import { InputDialog, InputState } from './inputDialog';
+import { StringExpression } from '../expressions';
 
 export class DateTimeInput extends InputDialog {
 
-    public static declarativeType = 'Microsoft.DateTimeInput';
+    public defaultLocale: StringExpression;
 
-    private _outputFormatExpression: Expression;
-
-    public defaultLocale: string;
-
-    public get outputFormat(): string {
-        return this._outputFormatExpression ? this._outputFormatExpression.toString() : undefined;
-    }
-
-    public set outputFormat(value: string) {
-        this._outputFormatExpression = value ? new ExpressionEngine().parse(value) : undefined;
-    }
-
-    public configure(config: DatetimeInputConfiguration): this {
-        return super.configure(config);
-    }
+    public outputFormat: StringExpression;
 
     protected onComputeId(): string {
         return `DateTimeInput[${ this.prompt.toString() }]`;
@@ -43,19 +23,15 @@ export class DateTimeInput extends InputDialog {
     protected async onRecognizeInput(dc: DialogContext): Promise<InputState> {
         // Recognize input and filter out non-attachments
         const input: object = dc.state.getValue(InputDialog.VALUE_PROPERTY);
-        const locale: string = dc.context.activity.locale || this.defaultLocale || 'en-us';
+        const locale: string = dc.context.activity.locale || this.defaultLocale.getValue(dc.state) || 'en-us';
         const results: any[] = Recognizers.recognizeDateTime(input.toString(), locale);
 
         if (results.length > 0 && results[0].resolution) {
             const values = results[0].resolution.values;
             dc.state.setValue(InputDialog.VALUE_PROPERTY, values);
-            if (this._outputFormatExpression) {
-                const { value, error } = this._outputFormatExpression.tryEvaluate(dc.state);
-                if (!error) {
-                    dc.state.setValue(InputDialog.VALUE_PROPERTY, value);
-                } else {
-                    throw new Error(`OutputFormat expression evaluation resulted in an error. Expression: ${ this._outputFormatExpression.toString() }. Error: ${ error }`);
-                }
+            if (this.outputFormat) {
+                const value = this.outputFormat.getValue(dc.state);
+                dc.state.setValue(InputDialog.VALUE_PROPERTY, value);
             }
         } else {
             return InputState.unrecognized;

@@ -14,8 +14,6 @@ import { OnActivity } from './onActivity';
  */
 export class OnInvokeActivity extends OnActivity {
 
-    public static declarativeType = 'Microsoft.OnInvokeActivity';
-
     public constructor(actions: Dialog[] = [], condition?: string) {
         super(ActivityTypes.Invoke, actions, condition);
     }

@@ -13,7 +13,7 @@ function GetExampleFilePath() {
     return `${__dirname}/tests/`;
 }
 
-const resourceExplorer = ResourceExplorer.loadProject(GetExampleFilePath(), [], false);
+const resourceExplorer = new ResourceExplorer().loadProject(GetExampleFilePath(), [], false);
 //resourceExplorer.getResource('test.lg').then(e => e.readText().then(f => console.log(f)));
 
 class MockLanguageGegerator {

@@ -7,6 +7,7 @@
  */
 import { Dialog } from 'botbuilder-dialogs';
 import { Expression, Constant } from 'adaptive-expressions';
+import { Converter, ResourceExplorer } from 'botbuilder-dialogs-declarative';
 import { ActionScope } from './actionScope';
 
 export class Case extends ActionScope {
@@ -45,5 +46,16 @@ export class Case extends ActionScope {
         }
 
         return new Constant(this.value);
+    }
+}
+
+export class CaseConverter implements Converter {
+    private _resourceExplorer: ResourceExplorer;
+
+    public constructor(resourceExplorer: ResourceExplorer) {
+        this._resourceExplorer = resourceExplorer;
+    }
+    public convert(config: { value: string; actions: Dialog[] }): Case {
+        return new Case(config.value, config.actions);
     }
 }

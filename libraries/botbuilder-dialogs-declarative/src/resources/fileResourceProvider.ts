@@ -24,7 +24,7 @@ export class FileResourceProvider implements IResourceProvider {
         this.directories.push(path);
     }
 
-    public async getResources(fileExtension: string): Promise<IResource[]> {
+    public getResources(fileExtension: string): IResource[] {
 
         if (!fileExtension) {
             throw new Error(`ResourceProvider: file extension should be provided`);
@@ -53,13 +53,13 @@ export class FileResourceProvider implements IResourceProvider {
         return this.directories.toString();
     }
 
-    public async getResource(id: string): Promise<IResource> {
+    public getResource(id: string): IResource {
 
         if (!id) {
             throw new Error(`Resource id must be provided.`);
         }
 
-        const resources: IResource[] = await this.getResources(path.extname(id));
+        const resources: IResource[] = this.getResources(path.extname(id));
 
         for (let resource of resources) {
             if (resource.id() == id) {

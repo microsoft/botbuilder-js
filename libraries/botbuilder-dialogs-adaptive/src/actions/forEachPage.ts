@@ -6,20 +6,11 @@
  * Licensed under the MIT License.
  */
 import { DialogTurnResult, Dialog, DialogContext } from 'botbuilder-dialogs';
-import { ExpressionEngine, Expression } from 'adaptive-expressions';
-import { ActionScope, ActionScopeResult, ActionScopeConfiguration } from './actionScope';
+import { ActionScope, ActionScopeResult } from './actionScope';
+import { StringExpression, BoolExpression, NumberExpression } from '../expressions';
 
 const FOREACHPAGE = 'dialog.foreach.page';
 const FOREACHPAGEINDEX = 'dialog.foreach.pageindex';
-
-/**
- * Configuration info passed to a `ForEachPage` action.
- */
-export interface ForEachPageConfiguration extends ActionScopeConfiguration {
-    itemsProperty?: string;
-    pageSize?: number;
-    disabled?: string;
-}
 
 /**
  * Executes a set of actions once for each page of results in an in-memory list or collection.
@@ -31,66 +22,35 @@ export interface ForEachPageConfiguration extends ActionScopeConfiguration {
  * `GotoDialog` action.
  */
 export class ForEachPage<O extends object = {}> extends ActionScope<O> {
-    public static declarativeType = 'Microsoft.ForeachPage';
-
     public constructor();
     public constructor(itemsProperty?: string, pageSize: number = 10) {
         super();
-        if (itemsProperty) { this.itemsProperty = itemsProperty; }
-        this.pageSize = pageSize;
+        if (itemsProperty) { this.itemsProperty = new StringExpression(itemsProperty); }
+        this.pageSize = new NumberExpression(pageSize);
     }
 
     /**
-     * Get expression used to compute the list that should be enumerated.
+     * Expression used to compute the list that should be enumerated.
      */
-    public get itemsProperty(): string {
-        return this._itemsPropertyExpression ? this._itemsPropertyExpression.toString() : undefined;
-    }
-
-    /**
-     * Set expression used to compute the list that should be enumerated.
-     */
-    public set itemsProperty(value: string) {
-        this._itemsPropertyExpression = value ? new ExpressionEngine().parse(value) : undefined;
-    }
+    public itemsProperty: StringExpression;
 
     /**
      * Page size, default to 10.
      */
-    public pageSize = 10;
+    public pageSize: NumberExpression = new NumberExpression(10) ;
 
     /**
-     * Get an optional expression which if is true will disable this action.
+     * An optional expression which if is true will disable this action.
      */
-    public get disabled(): string {
-        return this._disabled ? this._disabled.toString() : undefined;
-    }
-
-    /**
-     * Set an optional expression which if is true will disable this action.
-     */
-    public set disabled(value: string) {
-        this._disabled = value ? new ExpressionEngine().parse(value) : undefined;
-    }
-
-    private _itemsPropertyExpression: Expression;
-
-    private _disabled: Expression;
+    public disabled?: BoolExpression;
 
     public getDependencies(): Dialog[] {
         return this.actions;
     }
 
-    public configure(config: ForEachPageConfiguration): this {
-        return super.configure(config);
-    }
-
     public async beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {
-        if (this._disabled) {
-            const { value } = this._disabled.tryEvaluate(dc.state);
-            if (!!value) {
-                return await dc.endDialog();
-            }
+        if (this.disabled && this.disabled.getValue(dc.state)) {
+            return await dc.endDialog();
         }
         return await this.nextPage(dc);
     }
@@ -108,24 +68,24 @@ export class ForEachPage<O extends object = {}> extends ActionScope<O> {
     }
 
     protected onComputeId(): string {
-        return `ForEachPage[${ this.itemsProperty }]`;
+        return `ForEachPage[${ this.itemsProperty.toString() }]`;
     }
 
     private async nextPage(dc: DialogContext): Promise<DialogTurnResult> {
         let pageIndex = dc.state.getValue(FOREACHPAGEINDEX, 0);
-        const pageSize = this.pageSize;
+        const pageSize = this.pageSize.getValue(dc.state);
         const itemOffset = pageSize * pageIndex;
 
-        const { value, error } = this._itemsPropertyExpression.tryEvaluate(dc.state);
-        if (!error) {
-            const page = this.getPage(value, itemOffset, pageSize);
+        const itemsProperty = this.itemsProperty.getValue(dc.state);
+        const items: any[] = dc.state.getValue(itemsProperty, []);
+        if (items.length > 0) {
+            const page = this.getPage(items, itemOffset, pageSize);
             if (page && page.length > 0) {
                 dc.state.setValue(FOREACHPAGE, page);
                 dc.state.setValue(FOREACHPAGEINDEX, ++pageIndex);
                 return await this.beginAction(dc, 0);
             }
         }
-
         return await dc.endDialog();
     }
 

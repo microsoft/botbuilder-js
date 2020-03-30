@@ -6,30 +6,12 @@
  * Licensed under the MIT License.
  */
 import { DialogContext } from 'botbuilder-dialogs';
-import { ExpressionEngine, Expression } from 'adaptive-expressions';
-import { InputDialogConfiguration, InputDialog, InputState } from './inputDialog';
-
-export interface TextInputConfiguration extends InputDialogConfiguration {
-    outputFormat?: string;
-}
+import { InputDialog, InputState } from './inputDialog';
+import { StringExpression } from '../expressions';
 
 export class TextInput extends InputDialog {
 
-    public static declarativeType = 'Microsoft.TextInput';
-
-    private _outputFormatExpression: Expression;
-
-    public get outputFormat(): string {
-        return this._outputFormatExpression ? this._outputFormatExpression.toString() : undefined;
-    }
-
-    public set outputFormat(value: string) {
-        this._outputFormatExpression = value ? new ExpressionEngine().parse(value) : undefined;
-    }
-
-    public configure(config: TextInputConfiguration): this {
-        return super.configure(config);
-    }
+    public outputFormat: StringExpression;
 
     protected onComputeId(): string {
         return `TextInput[${ this.prompt.toString() }]`;
@@ -39,13 +21,9 @@ export class TextInput extends InputDialog {
         // Treat input as a string
         let input: string = dc.state.getValue(InputDialog.VALUE_PROPERTY).toString();
 
-        if (this._outputFormatExpression) {
-            const { value, error } = this._outputFormatExpression.tryEvaluate(dc.state);
-            if (!error) {
-                input = value.toString();
-            } else {
-                throw new Error(`OutputFormat expression evaluation resulted in an error. Expression: ${ this._outputFormatExpression.toString() }. Error: ${ error }`);
-            }
+        if (this.outputFormat) {
+            const value = this.outputFormat.getValue(dc.state);
+            input = value.toString();
         }
 
         // Save formated value and ensure length > 0

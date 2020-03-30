@@ -5,15 +5,15 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { ITypeBuilder } from './factory/typeBuilder';
+import { Converter } from './converter';
 
-export class TypeRegistration {
-    constructor(name: string, builder: ITypeBuilder) {
+export class ConverterRegistration {
+    public constructor(name: string, converter: Converter) {
         this.name = name;
-        this.builder = builder;
+        this.converter = converter;
     }
 
     public name: string;
 
-    public builder: ITypeBuilder;
+    public converter: Converter;
 }

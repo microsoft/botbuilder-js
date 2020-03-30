@@ -11,8 +11,6 @@ import { ModelResult } from 'botbuilder-dialogs';
 import { TextEntityRecognizer } from './textEntityRecognizer';
 
 export class EmailEntityRecognizer extends TextEntityRecognizer {
-    public static declarativeType = 'Microsoft.EmailEntityRecognizer';
-
     protected recognize(text: string, culture: string): ModelResult[] {
         return recognizeEmail(text, culture);
     }

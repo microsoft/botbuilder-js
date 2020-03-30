@@ -7,6 +7,6 @@
  */
 
  
-export interface ITypeBuilder {
+export interface TypeBuilder {
     build(config: object): object;
 }

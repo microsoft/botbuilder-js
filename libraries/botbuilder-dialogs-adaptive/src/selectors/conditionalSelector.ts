@@ -5,10 +5,11 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { Expression, ExpressionEngine } from "adaptive-expressions";
-import { OnCondition } from "../conditions/onCondition";
-import { TriggerSelector } from "../triggerSelector";
-import { SequenceContext } from "../sequenceContext";
+import { ExpressionEngine, ExpressionParserInterface } from 'adaptive-expressions';
+import { OnCondition } from '../conditions/onCondition';
+import { TriggerSelector } from '../triggerSelector';
+import { BoolExpression } from '../expressions';
+import { ActionContext } from '../actionContext';
 
 /**
  * Select between two rule selectors based on a condition.
@@ -16,13 +17,11 @@ import { SequenceContext } from "../sequenceContext";
 export class ConditionalSelector implements TriggerSelector {
     private _conditionals: OnCondition[];
     private _evaluate: boolean;
-    private _condition: Expression;
 
     /**
-     * Gets or sets expression that determines which selector to use.
+     * Expression that determines which selector to use.
      */
-    public get condition(): string { return this._condition.toString() }
-    public set condition(value: string) { this._condition = value ? new ExpressionEngine().parse(value) : undefined }
+    public condition: BoolExpression;
 
     /**
      * Gets or sets selector if condition is true.
@@ -34,21 +33,25 @@ export class ConditionalSelector implements TriggerSelector {
      */
     public ifFalse: TriggerSelector;
 
+    /**
+     * Gets or sets the expression parser to use.
+     */
+    public parser: ExpressionParserInterface = new ExpressionEngine()
+
     public initialize(conditionals: OnCondition[], evaluate: boolean): void {
         this._conditionals = conditionals;
         this._evaluate = evaluate;
     }
 
-    public select(context: SequenceContext): Promise<number[]> {
-        const { value, error } = this._condition.tryEvaluate(context.state);
+    public select(actionContext: ActionContext): Promise<number[]> {
         let selector: TriggerSelector;
-        if (value && !error) {
+        if (this.condition && this.condition.getValue(actionContext.state)) {
             selector = this.ifTrue;
             this.ifTrue.initialize(this._conditionals, this._evaluate);
         } else {
             selector = this.ifFalse;
             this.ifFalse.initialize(this._conditionals, this._evaluate);
         }
-        return selector.select(context);
+        return selector.select(actionContext);
     }
 }

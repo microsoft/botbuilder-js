@@ -7,27 +7,16 @@
  */
 
 import { RecognizerResult, Activity, getTopScoringIntent } from 'botbuilder-core';
-import { Configurable, DialogContext } from 'botbuilder-dialogs';
+import { DialogContext } from 'botbuilder-dialogs';
 import { Recognizer } from './recognizer';
-
-export interface CrossTrainedRecognizerSetConfiguration {
-    id?: string;
-    recognizers?: Recognizer[];
-}
 
 const deferPrefix = 'DeferToRecognizer_';
 
-export class CrossTrainedRecognizerSet extends Configurable implements Recognizer {
-
-    public static declarativeType = 'Microsoft.CrossTrainedRecognizerSet';
+export class CrossTrainedRecognizerSet implements Recognizer {
 
     public id: string;
 
     public recognizers: Recognizer[] = [];
-
-    public configure(config: CrossTrainedRecognizerSetConfiguration): this {
-        return super.configure(config);
-    }
 
     public async recognize(dialogContext: DialogContext): Promise<RecognizerResult>;
     public async recognize(dialogContext: DialogContext, textOrActivity: Activity): Promise<RecognizerResult>;
@@ -71,42 +60,99 @@ export class CrossTrainedRecognizerSet extends Configurable implements Recognize
         let consensusRecognizedId: string;
         for (let i = 0; i < this.recognizers.length; i++) {
             const recognizer = this.recognizers[i];
-            const intent: string = intents[recognizer.id];
-            if (!intent.startsWith(deferPrefix)) {
-                if (!consensusRecognizedId) {
-                    consensusRecognizedId = recognizer.id;
-                } else {
-                    if (intent == 'None') {
-                        continue;
-                    } else if (intents[consensusRecognizedId] == 'None') {
-                        consensusRecognizedId = recognizer.id;
-                    } else {
-                        return this.createChooseIntentResult(text, recognizerResults);
-                    }
+            let recognizerId = recognizer.id;
+            let intent: string = intents[recognizer.id];
+            if (this.isRedirect(intent)) {
+                // follow redirect and see where it takes us
+                recognizerId = this.getRedirectId(intent);
+                intent = intents[recognizerId];
+                while (recognizerId != recognizer.id && this.isRedirect(intent)) {
+                    recognizerId = this.getRedirectId(intent);
+                    intent = intents[recognizerId];
+                }
+
+                // if we ended up back at the recognizer.id and we have no consensus then it's a none intent
+                if (recognizerId == recognizer.id && !consensusRecognizedId) {
+                    const recognizerResult: RecognizerResult = {
+                        text: recognizerResults[recognizer.id].text,
+                        intents: { 'None': { score: 1.0 } }
+                    };
+                    return recognizerResult;
+                }
+            }
+
+            // we have a real intent and it's the first one we found
+            if (!consensusRecognizedId) {
+                if (intent != 'None') {
+                    consensusRecognizedId = recognizerId;
                 }
             } else {
-                const redirectId = intent.substr(deferPrefix.length);
-                const redirectIntent = intents[redirectId];
-                if (redirectIntent.startsWith(deferPrefix)) {
-                    return this.createChooseIntentResult(text, recognizerResults);
+                // we have a second recognizer result which is either none or real
+                // if one of them is None intent, then go with the other one
+                if (intent == 'None') {
+                    // then we are fine with the one we have, just ignore this one
+                    continue;
+                } else if (recognizerId == consensusRecognizedId) {
+                    // this is more consensus for this recognizer
+                    continue;
+                } else {
+                    return this.createChooseIntentResult(recognizerResults);
                 }
             }
         }
 
-        return recognizerResults[consensusRecognizedId];
+        // we have consensus for consensusRecognizer, return the results of that recognizer as the result
+        if (consensusRecognizedId) {
+            return recognizerResults[consensusRecognizedId];
+        }
+
+        // return none
+        const recognizerResult: RecognizerResult = {
+            text,
+            intents: { 'None': { score: 1.0 } }
+        };
+        return recognizerResult;
     }
 
-    private createChooseIntentResult(text: string, recognizerResults: { [name: string]: RecognizerResult }): RecognizerResult {
-        const chooseIntentResult = { score: 0.5 };
+    private createChooseIntentResult(recognizerResults: { [name: string]: RecognizerResult }): RecognizerResult {
+        let text: string;
+        const candidates: object[] = [];
+
         for (const key in recognizerResults) {
             const result = recognizerResults[key];
-            const { intent } = getTopScoringIntent(result);
-            chooseIntentResult[intent] = result;
+            text = result.text;
+            const { intent, score } = getTopScoringIntent(result);
+            if (!this.isRedirect(intent) && intent != 'None') {
+                candidates.push({
+                    id: key,
+                    intent,
+                    score,
+                    result
+                });
+            }
         }
-        const intents = {};
-        intents['chooseintent'] = chooseIntentResult;
 
-        const recognizerResult: RecognizerResult = { text, intents };
+        if (candidates.length > 0) {
+            const recognizerResult: RecognizerResult = {
+                text,
+                intents: { 'ChooseIntent': { score: 1.0 } },
+                candidates
+            };
+            return recognizerResult;
+        }
+
+        const recognizerResult: RecognizerResult = {
+            text,
+            intents: { 'None': { score: 1.0 } }
+        };
         return recognizerResult;
+    }
+
+    private isRedirect(intent: string): boolean {
+        return intent.startsWith(deferPrefix);
+    }
+
+    private getRedirectId(intent: string): string {
+        return intent.substr(deferPrefix.length);
     }
 }

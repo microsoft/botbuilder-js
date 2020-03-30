@@ -2,8 +2,6 @@ import { TemplateInterface } from '../template';
 import { Activity, TurnContext } from 'botbuilder-core';
 
 export class StaticActivityTemplate implements TemplateInterface<Partial<Activity>> {
-    
-    public static declarativeType: string = 'Microsoft.StaticActivityTemplate';
 
     public activity: Partial<Activity>;
 

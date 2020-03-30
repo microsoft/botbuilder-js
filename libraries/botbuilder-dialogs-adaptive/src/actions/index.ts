@@ -25,7 +25,6 @@ export * from './getConversationMembers';
 export * from './gotoAction';
 export * from './httpRequest';
 export * from './ifCondition';
-export * from './initProperty';
 export * from './logAction';
 export * from './repeatDialog';
 export * from './replaceDialog';

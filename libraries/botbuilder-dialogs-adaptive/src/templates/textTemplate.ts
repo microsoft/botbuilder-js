@@ -4,8 +4,6 @@ import { LanguageGenerator } from '../languageGenerator';
 
 export class TextTemplate implements TemplateInterface<string> {
 
-    public static declarativeType: string = 'Microsoft.TextTemplates';
-
     public template: string;
 
     public constructor(template: string) {

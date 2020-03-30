@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 import { Dialog } from 'botbuilder-dialogs';
-import { AdaptiveEventNames } from '../sequenceContext';
+import { AdaptiveEvents } from '../adaptiveEvents';
 import { OnDialogEvent } from './onDialogEvent';
 
 /**
@@ -21,15 +21,12 @@ import { OnDialogEvent } from './onDialogEvent';
  * This provides the parent dialogs the opportunity to handle global commands as fallback interruption.
  */
 export class OnUnknownIntent extends OnDialogEvent {
-
-    public static declarativeType = 'Microsoft.OnUnknownIntent';
-
     /**
      * Creates a new `OnUnknownIntent` instance.
      * @param actions (Optional) The actions to add to the plan when the rule constraints are met.
      * @param condition (Optional) The condition which needs to be met for the actions to be executed.
      */
     public constructor(actions: Dialog[] = [], condition?: string) {
-        super(AdaptiveEventNames.unknownIntent, actions, condition);
+        super(AdaptiveEvents.unknownIntent, actions, condition);
     }
 }

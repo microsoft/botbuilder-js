@@ -5,23 +5,29 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { OnCondition } from "./conditions";
-import { SequenceContext } from "./sequenceContext";
+import { OnCondition } from './conditions';
+import { ExpressionParserInterface } from 'adaptive-expressions';
+import { ActionContext } from './actionContext';
 
 /**
  * Select the trigger to execute in a given state.
  */
 export interface TriggerSelector {
     /**
+     * Gets or sets the expression parser for expressions.
+     */
+    parser: ExpressionParserInterface;
+
+    /**
      * Initialize the selector with the set of rules.
-     * @param conditionals Possible rules to match.
+     * @param conditionHandlers Possible rules to match.
      * @param evaluate True if rules should be evaluated on select.
      */
-    initialize(conditionals: OnCondition[], evaluate: boolean): void;
+    initialize(conditionHandlers: OnCondition[], evaluate: boolean): void;
 
     /**
      * Select the best rule to execute.
-     * @param context Dialog context for evaluation.
+     * @param actionContext Dialog context for evaluation.
      */
-    select(context: SequenceContext): Promise<number[]>;
+    select(actionContext: ActionContext): Promise<number[]>;
 }

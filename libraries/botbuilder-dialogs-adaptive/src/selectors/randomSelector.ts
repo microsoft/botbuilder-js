@@ -5,10 +5,10 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { ExpressionParserInterface, ExpressionEngine } from "adaptive-expressions";
-import { TriggerSelector } from "../triggerSelector";
-import { OnCondition } from "../conditions";
-import { SequenceContext } from "../sequenceContext";
+import { ExpressionParserInterface, ExpressionEngine } from 'adaptive-expressions';
+import { TriggerSelector } from '../triggerSelector';
+import { OnCondition } from '../conditions';
+import { ActionContext } from '../actionContext';
 
 /**
  * Select a random true rule implementation of TriggerSelector.
@@ -16,20 +16,24 @@ import { SequenceContext } from "../sequenceContext";
 export class RandomSelector implements TriggerSelector {
     private _conditionals: OnCondition[];
     private _evaluate: boolean;
-    private _parser: ExpressionParserInterface = new ExpressionEngine();
+
+    /**
+     * Gets or sets the expression parser to use.
+     */
+    public parser: ExpressionParserInterface = new ExpressionEngine()
 
     public initialize(conditionals: OnCondition[], evaluate: boolean): void {
         this._conditionals = conditionals;
         this._evaluate = evaluate;
     }
 
-    public select(context: SequenceContext): Promise<number[]> {
+    public select(actionContext: ActionContext): Promise<number[]> {
         const candidates = [];
         for (let i = 0; i < this._conditionals.length; i++) {
             if (this._evaluate) {
                 const conditional = this._conditionals[i];
-                const expression = conditional.getExpression(this._parser);
-                const { value, error } = expression.tryEvaluate(context.state);
+                const expression = conditional.getExpression(this.parser);
+                const { value, error } = expression.tryEvaluate(actionContext.state);
                 if (value && !error) {
                     candidates.push(i);
                 }

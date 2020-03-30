@@ -74,19 +74,13 @@ describe('ActionTests', function() {
         await testRunner.runTestScript('Action_ForeachPage_Empty');
     });
 
-    // Missing LG support
-    /*
     it('ForeachPage_Partial', async () => {
         await testRunner.runTestScript('Action_ForeachPage_Partial');
     });
-    */
 
-    // Missing LG support
-    /*
     it('ForeachPage', async () => {
         await testRunner.runTestScript('Action_ForeachPage');
     });
-    */
 
     it('GetActivityMembers', async () => {
         await testRunner.runTestScript('Action_GetActivityMembers');
@@ -116,12 +110,9 @@ describe('ActionTests', function() {
         await testRunner.runTestScript('Action_NumberInputWithDefaultValue');
     });
 
-    // Missing EntityRecognizer support
-    /*
-    it('NumerInputWithValueExpression', async () => {
+    it('NumberInputWithValueExpression', async () => {
         await testRunner.runTestScript('Action_NumberInputWithValueExpression');
     });
-    */
 
     it('RepeatDialog', async () => {
         await testRunner.runTestScript('Action_RepeatDialog');

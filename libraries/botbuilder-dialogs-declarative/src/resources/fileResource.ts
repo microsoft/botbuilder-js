@@ -15,7 +15,7 @@ export class FileResource implements IResource {
     private resourceId: string;
     private path: string;
 
-    constructor(path: string) {
+    public constructor(path: string) {
         if (!path) {
             throw new Error('path');
         }
@@ -38,5 +38,9 @@ export class FileResource implements IResource {
         const filePath = this.path;
         const temp = fs.readFileSync(filePath, 'utf-8');
         return temp;
+    }
+
+    public toString(): string {
+        return this.id();
     }
 }

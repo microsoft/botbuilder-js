@@ -7,17 +7,8 @@
  */
 import { DialogContext, Choice, ListStyle, ChoiceFactoryOptions, FindChoicesOptions, ChoiceFactory, recognizeChoices, ModelResult, FoundChoice } from 'botbuilder-dialogs';
 import { Activity } from 'botbuilder-core';
-import { InputDialogConfiguration, InputDialog, InputState } from './inputDialog';
-import { ExpressionProperty } from '../expressionProperty';
-
-export interface ChoiceInputConfiguration extends InputDialogConfiguration {
-    choices?: ExpressionProperty<Choice[]>;
-    style?: ListStyle;
-    defaultLocale?: string;
-    outputFormat?: ChoiceOutputFormat;
-    choiceOptions?: ChoiceFactoryOptions;
-    recognizerOptions?: FindChoicesOptions;
-}
+import { InputDialog, InputState } from './inputDialog';
+import { ObjectExpression, StringExpression, ArrayExpression, EnumExpression } from '../expressions';
 
 export enum ChoiceOutputFormat {
     value = 'value',
@@ -29,9 +20,6 @@ export interface ChoiceInputOptions {
 }
 
 export class ChoiceInput extends InputDialog {
-
-    public static declarativeType = 'Microsoft.ChoiceInput';
-
     /**
      * Default options for rendering the choices to the user based on locale.
      */
@@ -49,7 +37,7 @@ export class ChoiceInput extends InputDialog {
     /**
      * List of choices to present to user.
      */
-    public choices: ExpressionProperty<Choice[]>;
+    public choices: ArrayExpression<Choice>;
 
     /**
      * Style of the "yes" and "no" choices rendered to the user when prompting.
@@ -57,48 +45,28 @@ export class ChoiceInput extends InputDialog {
      * @remarks
      * Defaults to `ListStyle.auto`.
      */
-    public style: ListStyle = ListStyle.auto;
+    public style: EnumExpression<ListStyle> = new EnumExpression<ListStyle>(ListStyle.auto);
 
     /**
      * The prompts default locale that should be recognized.
      */
-    public defaultLocale?: string;
+    public defaultLocale?: StringExpression;
 
     /**
      * Control the format of the response (value or index of the choice).
      */
-    public outputFormat = ChoiceOutputFormat.value;
+    public outputFormat: EnumExpression<ChoiceOutputFormat> = new EnumExpression<ChoiceOutputFormat>(ChoiceOutputFormat.value);
 
     /**
      * Additional options passed to the `ChoiceFactory` and used to tweak the style of choices
      * rendered to the user.
      */
-    public choiceOptions?: ChoiceFactoryOptions;
+    public choiceOptions?: ObjectExpression<ChoiceFactoryOptions> = new ObjectExpression();
 
     /**
      * Additional options passed to the underlying `recognizeChoices()` function.
      */
-    public recognizerOptions?: FindChoicesOptions;
-
-    public configure(config: ChoiceInputConfiguration): this {
-        for (const key in config) {
-            if (config.hasOwnProperty(key)) {
-                const value = config[key];
-                switch (key) {
-                    case 'choices':
-                        // If we were passed in a choice list then create a lambda that returns the list.
-                        const expression = Array.isArray(value) ? _ => value : value;
-                        this.choices = new ExpressionProperty(expression);
-                        break;
-                    default:
-                        super.configure({ [key]: value });
-                        break;
-                }
-            }
-        }
-
-        return this;
-    }
+    public recognizerOptions?: ObjectExpression<FindChoicesOptions> = new ObjectExpression();
 
     protected onInitializeOptions(dc: DialogContext, options: ChoiceInputOptions): ChoiceInputOptions {
         if (!options || !options.choices || options.choices.length == 0) {
@@ -121,8 +89,8 @@ export class ChoiceInput extends InputDialog {
 
         // Initialize recognizer options
         const activity: Activity = dc.context.activity;
-        const opt: FindChoicesOptions = Object.assign({}, this.recognizerOptions);
-        opt.locale = activity.locale || opt.locale || this.defaultLocale || 'en-us';
+        const opt: FindChoicesOptions = Object.assign({}, this.recognizerOptions.getValue(dc.state));
+        opt.locale = activity.locale || opt.locale || this.defaultLocale.getValue(dc.state) || 'en-us';
 
         // Recognize input
         const results: ModelResult<FoundChoice>[] = recognizeChoices(input, choices, opt);
@@ -132,7 +100,7 @@ export class ChoiceInput extends InputDialog {
 
         // Format output and return success
         const foundChoice: FoundChoice = results[0].resolution;
-        switch (this.outputFormat) {
+        switch (this.outputFormat.getValue(dc.state)) {
             case ChoiceOutputFormat.value:
             default:
                 dc.state.setValue(InputDialog.VALUE_PROPERTY, foundChoice.value);
@@ -147,20 +115,19 @@ export class ChoiceInput extends InputDialog {
 
     protected async onRenderPrompt(dc: DialogContext, state: InputState): Promise<Partial<Activity>> {
         // Determine locale
-        let locale: string = dc.context.activity.locale || this.defaultLocale;
+        let locale: string = dc.context.activity.locale || this.defaultLocale.getValue(dc.state);
         if (!locale || !ChoiceInput.defaultChoiceOptions.hasOwnProperty(locale)) {
             locale = 'en-us';
         }
 
-        // Format choices
-        const options: ChoiceInputOptions = dc.state.getValue(InputDialog.OPTIONS_PROPERTY);
-        const choices = ChoiceFactory.toChoices(options.choices);
+        const choices: Choice[] = this.choices.getValue(dc.state);
 
         // Format prompt to send
         const prompt = await super.onRenderPrompt(dc, state);
         const channelId: string = dc.context.activity.channelId;
-        const choiceOptions: ChoiceFactoryOptions = this.choiceOptions || ChoiceInput.defaultChoiceOptions[locale];
-        return Promise.resolve(this.appendChoices(prompt, channelId, choices, this.style, choiceOptions));
+        const choiceOptions: ChoiceFactoryOptions = (this.choiceOptions && this.choiceOptions.getValue(dc.state)) || ChoiceInput.defaultChoiceOptions[locale];
+        const style = this.style.getValue(dc.state);
+        return Promise.resolve(this.appendChoices(prompt, channelId, choices, style, choiceOptions));
     }
 
     protected onComputeId(): string {

@@ -14,8 +14,6 @@ import { OnActivity } from './onActivity';
  */
 export class OnTypingActivity extends OnActivity {
 
-    public static declarativeType = 'Microsoft.OnTypingActivity';
-
     public constructor(actions: Dialog[] = [], condition?: string) {
         super(ActivityTypes.Typing, actions, condition);
     }

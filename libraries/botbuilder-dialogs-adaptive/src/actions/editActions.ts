@@ -5,24 +5,19 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { DialogTurnResult, Dialog, DialogConfiguration, DialogDependencies, DialogContext, Configurable } from 'botbuilder-dialogs';
-import { Expression, ExpressionEngine } from 'adaptive-expressions';
-import { ActionChangeType, SequenceContext, ActionChangeList, ActionState } from '../sequenceContext';
+import { DialogTurnResult, Dialog, DialogDependencies, DialogContext } from 'botbuilder-dialogs';
+import { BoolExpression, EnumExpression } from '../expressions';
+import { ActionContext } from '../actionContext';
+import { ActionChangeType } from '../actionChangeType';
+import { ActionState } from '../actionState';
+import { ActionChangeList } from '../actionChangeList';
 
-export interface EditActionsConfiguration extends DialogConfiguration {
-    changeType?: ActionChangeType;
-    actions?: Dialog[];
-    disabled?: string;
-}
-
-export class EditActions<O extends object = {}> extends Dialog<O> implements DialogDependencies, Configurable {
-    public static declarativeType = 'Microsoft.EditActions';
-
+export class EditActions<O extends object = {}> extends Dialog<O> implements DialogDependencies {
     public constructor();
     public constructor(changeType: ActionChangeType, actions?: Dialog[]);
     public constructor(changeType?: ActionChangeType, actions?: Dialog[]) {
         super();
-        if (changeType) { this.changeType = changeType; }
+        if (changeType) { this.changeType = new EnumExpression<ActionChangeType>(changeType); }
         if (actions) { this.actions = actions; }
     }
 
@@ -34,41 +29,23 @@ export class EditActions<O extends object = {}> extends Dialog<O> implements Dia
     /**
      * The type of change to make to the dialogs list of actions.
      */
-    public changeType: ActionChangeType;
+    public changeType: EnumExpression<ActionChangeType>;
 
     /**
-     * Get an optional expression which if is true will disable this action.
+     * An optional expression which if is true will disable this action.
      */
-    public get disabled(): string {
-        return this._disabled ? this._disabled.toString() : undefined;
-    }
-
-    /**
-     * Set an optional expression which if is true will disable this action.
-     */
-    public set disabled(value: string) {
-        this._disabled = value ? new ExpressionEngine().parse(value) : undefined;
-    }
-
-    private _disabled: Expression;
+    public disabled?: BoolExpression;
 
     public getDependencies(): Dialog[] {
         return this.actions;
     }
 
-    public configure(config: EditActionsConfiguration): this {
-        return super.configure(config);
-    }
-
     public async beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {
-        if (this._disabled) {
-            const { value } = this._disabled.tryEvaluate(dc.state);
-            if (!!value) {
-                return await dc.endDialog();
-            }
+        if (this.disabled && this.disabled.getValue(dc.state)) {
+            return await dc.endDialog();
         }
 
-        if (dc instanceof SequenceContext) {
+        if (dc.parent instanceof ActionContext) {
             const planActions = this.actions.map((action: Dialog): ActionState => {
                 return {
                     dialogStack: [],
@@ -78,11 +55,11 @@ export class EditActions<O extends object = {}> extends Dialog<O> implements Dia
             });
 
             const changes: ActionChangeList = {
-                changeType: this.changeType,
+                changeType: this.changeType.getValue(dc.state),
                 actions: planActions
             };
 
-            dc.queueChanges(changes);
+            dc.parent.queueChanges(changes);
             return await dc.endDialog();
         } else {
             throw new Error(`EditActions should only be used in the context of an adaptive dialog.`);
@@ -91,7 +68,7 @@ export class EditActions<O extends object = {}> extends Dialog<O> implements Dia
 
     protected onComputeId(): string {
         const idList = this.actions.map((action: Dialog): string => action.id);
-        return `EditActions[${ this.changeType }|${ idList.join(',') }]`;
+        return `EditActions[${ this.changeType.toString() }|${ idList.join(',') }]`;
     }
 
 }

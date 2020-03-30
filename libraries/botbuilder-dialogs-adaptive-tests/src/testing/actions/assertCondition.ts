@@ -5,42 +5,34 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { Dialog, DialogContext, DialogTurnResult, DialogConfiguration } from 'botbuilder-dialogs';
-import { ExpressionEngine } from 'adaptive-expressions';
-
-export interface AssertConditionConfiguration extends DialogConfiguration {
-    condition?: string;
-    description?: string;
-}
+import { Dialog, DialogContext, DialogTurnResult } from 'botbuilder-dialogs';
+import { StringExpression } from 'botbuilder-dialogs-adaptive';
+import { Expression } from 'adaptive-expressions';
 
 export class AssertCondition<O extends object = {}> extends Dialog<O> {
-
-    public static readonly declarativeType: string = 'Microsoft.Test.AssertCondition';
-
     /**
      * Condition which must be true.
      */
-    public condition: string;
+    public condition: Expression;
 
     /**
      * Description of assertion.
      */
-    public description: string;
-
-    public configure(config: AssertConditionConfiguration): this {
-        return super.configure(config);
-    }
+    public description: StringExpression;
 
     public async beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {
-        const parser = new ExpressionEngine()
-        const { value, error } = parser.parse(this.condition).tryEvaluate(dc.state);
-        if (!value || error) {
-            throw new Error(this.description);
+        const { value } = this.condition.tryEvaluate(dc.state);
+        if (!value) {
+            let desc = this.description && this.description.getValue(dc.state);
+            if (!desc) {
+                desc = this.condition.toString();
+            }
+            throw new Error(desc);
         }
         return dc.endDialog();
     }
 
     protected onComputeId(): string {
-        return `AssertCondition[${ this.condition }]`;
+        return `AssertCondition[${ this.condition.toString() }]`;
     }
 }

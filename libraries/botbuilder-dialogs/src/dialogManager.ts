@@ -10,8 +10,7 @@ import { DialogContext, DialogState } from './dialogContext';
 import { DialogTurnResult, Dialog, DialogTurnStatus } from './dialog';
 import { Configurable } from './configurable';
 import { DialogSet } from './dialogSet';
-import { DialogStateManagerConfiguration, DialogStateManager } from './memory';
-import { TurnPath } from './constants';
+import { DialogStateManagerConfiguration, DialogStateManager, TurnPath } from './memory';
 import { DialogEvents } from './dialogEvents';
 
 const LAST_ACCESS: string = '_lastAccess';
@@ -121,7 +120,7 @@ export class DialogManager extends Configurable {
 
         // Create DialogContext
         const dc = new DialogContext(this.dialogSet, context, dialogState);
-        dc.state.setValue(TurnPath.ACTIVITY, context.activity);
+        dc.state.setValue(TurnPath.activity, context.activity);
 
         // Configure dialog state manager and load scopes
         const config = this.stateConfiguration ? this.stateConfiguration : DialogStateManager.createStandardConfiguration(this.conversationState, this.userState);

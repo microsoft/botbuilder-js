@@ -6,21 +6,12 @@
  * Licensed under the MIT License.
  */
 import { RecognizerResult, Entity, Activity, ActivityTypes } from 'botbuilder-core';
-import { Configurable, DialogContext } from 'botbuilder-dialogs';
+import { DialogContext } from 'botbuilder-dialogs';
 import { Recognizer } from './recognizer';
 import { IntentPattern } from './intentPattern';
 import { EntityRecognizer, TextEntity, EntityRecognizerSet } from './entityRecognizers';
 
-export interface RegexRecognizerConfiguration {
-    id?: string;
-    intents?: IntentPattern[];
-    entities?: EntityRecognizer[];
-}
-
-export class RegexRecognizer extends Configurable implements Recognizer {
-
-    public static declarativeType = 'Microsoft.RegexRecognizer';
-
+export class RegexRecognizer implements Recognizer {
     /**
      * Id of the recognizer.
      */
@@ -35,23 +26,6 @@ export class RegexRecognizer extends Configurable implements Recognizer {
      * The entity recognizers.
      */
     public entities: EntityRecognizer[] = [];
-
-    public configure(config: RegexRecognizerConfiguration): this {
-        for (const key in config) {
-            if (config.hasOwnProperty(key)) {
-                const value = config[key];
-                switch (key) {
-                    case 'intents':
-                        this.intents = value.map((v: any): IntentPattern => new IntentPattern(v.intent, v.pattern));
-                        break;
-                    default:
-                        super.configure({ [key]: value });
-                        break;
-                }
-            }
-        }
-        return this;
-    }
 
     public async recognize(dialogContext: DialogContext): Promise<RecognizerResult>;
     public async recognize(dialogContext: DialogContext, textOrActivity: Activity): Promise<RecognizerResult>;

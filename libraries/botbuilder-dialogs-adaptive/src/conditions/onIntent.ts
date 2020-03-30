@@ -8,21 +8,17 @@
 import { Dialog, TurnPath } from 'botbuilder-dialogs';
 import { ExpressionParserInterface, Expression, ExpressionType } from 'adaptive-expressions';
 import { RecognizerResult } from 'botbuilder-core';
-import { AdaptiveEventNames, SequenceContext, ActionChangeList, ActionState, ActionChangeType } from '../sequenceContext';
-import { OnDialogEvent, OnDialogEventConfiguration } from './onDialogEvent';
-
-export interface OnIntentConfiguration extends OnDialogEventConfiguration {
-    intent?: string;
-    entities?: string[];
-}
+import { OnDialogEvent } from './onDialogEvent';
+import { ActionContext } from '../actionContext';
+import { AdaptiveEvents } from '../adaptiveEvents';
+import { ActionChangeList } from '../actionChangeList';
+import { ActionState } from '../actionState';
+import { ActionChangeType } from '../actionChangeType';
 
 /**
  * Actions triggered when an Activity has been received and the recognized intents and entities match specified list of intent and entity filters.
  */
 export class OnIntent extends OnDialogEvent {
-
-    public static declarativeType = 'Microsoft.OnIntent';
-
     /**
      * Gets or sets intent to match on.
      */
@@ -41,13 +37,9 @@ export class OnIntent extends OnDialogEvent {
      * @param condition (Optional) The condition which needs to be met for the actions to be executed.
      */
     public constructor(intent?: string, entities: string[] = [], actions: Dialog[] = [], condition?: string) {
-        super(AdaptiveEventNames.recognizedIntent, actions, condition);
+        super(AdaptiveEvents.recognizedIntent, actions, condition);
         this.intent = intent;
         this.entities = entities;
-    }
-
-    public configure(config: OnIntentConfiguration): this {
-        return super.configure(config);
     }
 
     public getExpression(parser: ExpressionParserInterface): Expression {
@@ -56,23 +48,23 @@ export class OnIntent extends OnDialogEvent {
         }
 
         const trimmedIntent = this.intent.startsWith('#') ? this.intent.substring(1) : this.intent;
-        let intentExpression = parser.parse(`${ TurnPath.RECOGNIZED }.intent == '${trimmedIntent}'`)
+        let intentExpression = parser.parse(`${ TurnPath.recognized }.intent == '${ trimmedIntent }'`);
 
         if (this.entities.length > 0) {
             intentExpression = Expression.makeExpression(ExpressionType.And,
                 undefined, intentExpression, ...this.entities.map(entity => {
-                    if (entity.startsWith('@') || entity.startsWith(TurnPath.RECOGNIZED)) {
-                        return parser.parse(`exists(${entity})`);
+                    if (entity.startsWith('@') || entity.startsWith(TurnPath.recognized)) {
+                        return parser.parse(`exists(${ entity })`);
                     }
-                    return parser.parse(`exists(@${entity})`);
+                    return parser.parse(`exists(@${ entity })`);
                 }));
         }
 
         return Expression.makeExpression(ExpressionType.And, undefined, intentExpression, super.getExpression(parser));
     }
 
-    protected onCreateChangeList(planning: SequenceContext, dialogOptions?: any): ActionChangeList {
-        const recognizerResult = planning.state.getValue<RecognizerResult>(`${TurnPath.DIALOGEVENT}.value`);
+    protected onCreateChangeList(actionContext: ActionContext, dialogOptions?: any): ActionChangeList {
+        const recognizerResult = actionContext.state.getValue<RecognizerResult>(`${ TurnPath.dialogEvent }.value`);
         if (recognizerResult) {
             const actionState: ActionState = {
                 dialogId: this.actionScope.id,
@@ -82,12 +74,13 @@ export class OnIntent extends OnDialogEvent {
 
             const changeList: ActionChangeList = {
                 changeType: ActionChangeType.insertActions,
-                actions: [actionState]
+                actions: [actionState],
+                turn: {}
             };
 
             return changeList;
         }
 
-        return super.onCreateChangeList(planning, dialogOptions);
+        return super.onCreateChangeList(actionContext, dialogOptions);
     }
 }
