@@ -7,7 +7,7 @@
  */
 import { Dialog, DialogContext, DialogTurnResult, DialogEvent, DialogReason, Choice, ListStyle, ChoiceFactoryOptions, ChoiceFactory, DialogEvents, TurnPath } from 'botbuilder-dialogs';
 import { ActivityTypes, Activity, InputHints, MessageFactory } from 'botbuilder-core';
-import { ExpressionEngine } from 'adaptive-expressions';
+import { ExpressionParser } from 'adaptive-expressions';
 import { TemplateInterface } from '../template';
 import { ValueExpression, StringExpression, BoolExpression, NumberExpression } from '../expressions';
 import { AdaptiveEvents } from '../adaptiveEvents';
@@ -299,7 +299,7 @@ export abstract class InputDialog extends Dialog {
             if (state == InputState.valid) {
                 for (let i = 0; i < this.validations.length; i++) {
                     const validation = this.validations[i];
-                    const exp = new ExpressionEngine().parse(validation);
+                    const exp = new ExpressionParser().parse(validation);
                     const { value } = exp.tryEvaluate(dc.state);
                     if (!value) {
                         return InputState.invalid;

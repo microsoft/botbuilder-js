@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 import { Activity, TurnContext } from 'botbuilder-core';
-import { ExpressionEngine } from 'adaptive-expressions';
+import { ExpressionParser } from 'adaptive-expressions';
 import { TestAction } from '../testAction';
 import { AdaptiveTestAdapter } from '../adaptiveTestAdapter';
 
@@ -32,7 +32,7 @@ export class AssertReplyActivity implements TestAction {
 
     public validateReply(activity: Activity): void {
         if (this.assertions) {
-            const engine = new ExpressionEngine();
+            const engine = new ExpressionParser();
             for (let i = 0; i < this.assertions.length; i++) {
                 const assertion = this.assertions[i];
                 const { value, error } = engine.parse(assertion).tryEvaluate(activity);

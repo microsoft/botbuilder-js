@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { ExpressionParserInterface, ExpressionEngine } from 'adaptive-expressions';
+import { ExpressionParserInterface, ExpressionParser } from 'adaptive-expressions';
 import { TriggerSelector } from '../triggerSelector';
 import { OnCondition } from '../conditions';
 import { ActionContext } from '../actionContext';
@@ -20,7 +20,7 @@ export class TrueSelector implements TriggerSelector {
     /**
      * Gets or sets the expression parser to use.
      */
-    public parser: ExpressionParserInterface = new ExpressionEngine()
+    public parser: ExpressionParserInterface = new ExpressionParser()
 
     public initialize(conditionals: OnCondition[], evaluate: boolean): void {
         this._conditionals = conditionals;

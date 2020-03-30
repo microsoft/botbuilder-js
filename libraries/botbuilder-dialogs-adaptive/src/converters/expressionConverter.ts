@@ -6,11 +6,11 @@
  * Licensed under the MIT License.
  */
 
-import { Expression, ExpressionEngine } from 'adaptive-expressions';
+import { Expression, ExpressionParser } from 'adaptive-expressions';
 import { Converter } from 'botbuilder-dialogs-declarative';
 
 export class ExpressionConverter implements Converter {
     public convert(value: string): Expression {
-        return new ExpressionEngine().parse(value);
+        return new ExpressionParser().parse(value);
     }
 }

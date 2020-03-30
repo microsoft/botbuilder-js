@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 import { Dialog, DialogDependencies, DialogStateManager } from 'botbuilder-dialogs';
-import { Expression, ExpressionParserInterface, Constant, ExpressionEngine, ExpressionEvaluator, ReturnType, ExpressionFunctions } from 'adaptive-expressions';
+import { Expression, ExpressionParserInterface, Constant, ExpressionParser, ExpressionEvaluator, ReturnType, ExpressionFunctions } from 'adaptive-expressions';
 import { ActionScope } from '../actions/actionScope';
 import { BoolExpression } from '../expressions';
 import { AdaptiveDialog } from '../adaptiveDialog';
@@ -149,7 +149,7 @@ export class OnCondition implements DialogDependencies {
     public addExternalCondition(condition: string): void {
         if (condition) {
             try {
-                const parser = new ExpressionEngine();
+                const parser = new ExpressionParser();
                 this._extraConstraints.push(parser.parse(condition));
                 this._fullConstraint = undefined;
             } catch (err) {

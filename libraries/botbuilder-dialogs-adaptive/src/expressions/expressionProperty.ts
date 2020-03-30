@@ -5,9 +5,9 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { Expression, ExpressionEngine } from 'adaptive-expressions';
+import { Expression, ExpressionParser } from 'adaptive-expressions';
 
-let engine: ExpressionEngine = undefined;
+let engine: ExpressionParser = undefined;
 
 /**
  * Base class which defines a Expression or value for a property.
@@ -90,15 +90,15 @@ export class ExpressionProperty<T> {
         }
     }
 
-    public static get engine(): ExpressionEngine {
+    public static get engine(): ExpressionParser {
         if (engine == undefined) {
-            engine = new ExpressionEngine();
+            engine = new ExpressionParser();
         }
 
         return engine;
     }
 
-    public static set engine(value: ExpressionEngine) {
+    public static set engine(value: ExpressionParser) {
         engine = value;
     }
 }

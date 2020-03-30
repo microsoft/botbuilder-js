@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 import { DialogTurnResult, DialogDependencies, Dialog, DialogContext } from 'botbuilder-dialogs';
-import { Expression, ExpressionEngine } from 'adaptive-expressions';
+import { Expression, ExpressionParser } from 'adaptive-expressions';
 import { ActionScope } from './actionScope';
 import { Case } from './case';
 import { BoolExpression } from '../expressions';
@@ -16,7 +16,7 @@ export class SwitchCondition<O extends object = {}> extends Dialog<O> implements
     public constructor(condition: string, defaultDialogs: Dialog[], cases: Case[]);
     public constructor(condition?: string, defaultDialogs?: Dialog[], cases?: Case[]) {
         super();
-        if (condition) { this.condition = new ExpressionEngine().parse(condition); }
+        if (condition) { this.condition = new ExpressionParser().parse(condition); }
         if (defaultDialogs) { this.default = defaultDialogs; }
         if (cases) { this.cases = cases; }
     }

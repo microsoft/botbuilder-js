@@ -8,7 +8,7 @@
 import fetch from 'node-fetch';
 import { DialogTurnResult, DialogConfiguration, DialogContext, Dialog, Configurable } from 'botbuilder-dialogs';
 import { Activity } from 'botbuilder-core';
-import { ExpressionEngine } from 'adaptive-expressions';
+import { ExpressionParser } from 'adaptive-expressions';
 import { TextTemplate } from '../templates';
 import { ValueExpression, StringExpression, BoolExpression, EnumExpression } from '../expressions';
 
@@ -256,7 +256,7 @@ export class HttpRequest<O extends object = {}> extends Dialog<O> implements Con
             let text: string = unit as string;
             if (text.startsWith('{') && text.endsWith('}')) {
                 text = text.slice(1, text.length - 1);
-                const { value } = new ExpressionEngine().parse(text).tryEvaluate(dc.state);
+                const { value } = new ExpressionParser().parse(text).tryEvaluate(dc.state);
                 return value;
             }
             else {
