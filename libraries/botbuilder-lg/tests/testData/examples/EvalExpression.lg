@@ -24,10 +24,10 @@ Hi${userName}
 - ${string({a: "hello"})}
 
 # template8
-- ${string({a: {"v": 1}})}
+- ${string({user: {name: "Allen"}})}
 
 #template9
-- ${string({a: value})}
+- ${string({ctx: value})}
 
 #template10
 - ${(addProperty({a:12}, 'b', 13)).b}

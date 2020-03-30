@@ -75,7 +75,7 @@ DASH
   ;
 
 OBJECT_DEFINITION
-  : '{' ((STRING_LITERAL | IDENTIFIER) ':' (~[{}\r\n] | OBJECT_DEFINITION)+)* '}'
+  : '{' (IDENTIFIER ':' (~[{}\r\n] | OBJECT_DEFINITION)+)* '}'
   ;
 
 EXPRESSION_FRAGMENT

@@ -15,14 +15,6 @@ import { ExpressionType } from '../expressionType';
 import {  ExpressionAntlrLexer, ExpressionAntlrParser, ExpressionAntlrParserVisitor } from './generated';
 import * as ep from './generated/ExpressionAntlrParser';
 import { ParseErrorListener } from './parseErrorListener';
-import { Util } from './util';
-
-enum State {
-    None,
-    EscapeSquence,
-    Dollor,
-    Template
-}
 
 /**
  * Parser to turn strings into Expression
@@ -173,6 +165,9 @@ export class ExpressionParser implements ExpressionParserInterface {
                             break;
                         case ep.ExpressionAntlrParser.ESCAPE_CHARACTER:
                             children.push(new Constant(this.evalEscape(node.text).replace(/\\`/g, '`').replace(/\\\$/g, '$')));
+                            break;
+                        case ep.ExpressionAntlrParser.EMPTY_OBJECT:
+                            children.push(new Constant(node.text));
                             break;
                         default:
                             break;

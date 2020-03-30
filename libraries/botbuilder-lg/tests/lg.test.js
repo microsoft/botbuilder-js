@@ -532,10 +532,10 @@ describe('LG', function() {
         assert.strictEqual(evaled, '{"a":"hello"}', `Evaled is ${ evaled }`);
 
         evaled = templates.evaluate('template8');
-        assert.strictEqual(evaled, '{"a":{"v":1}}', `Evaled is ${ evaled }`);
+        assert.strictEqual(evaled, '{"user":{"name":"Allen"}}', `Evaled is ${ evaled }`);
 
-        evaled = templates.evaluate('template9', {value: {v: 1}});
-        assert.strictEqual(evaled, '{"a":{"v":1}}', `Evaled is ${ evaled }`);
+        evaled = templates.evaluate('template9', {value: {count: 13}});
+        assert.strictEqual(evaled, '{"ctx":{"count":13}}', `Evaled is ${ evaled }`);
 
         evaled = templates.evaluate('template10');
         assert.strictEqual(evaled, 13, `Evaled is ${ evaled }`);
