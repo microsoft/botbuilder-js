@@ -162,7 +162,7 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
             if (this.needsTracker && dcState.getValue(AdaptiveDialog.conditionTracker) == undefined) {
                 this.triggers.forEach((trigger) => {
                     if (trigger.runOnce && trigger.condition) {
-                        const references = Extensions.references(trigger.condition.toExpression());
+                        const references = trigger.condition.toExpression().references();
                         var paths = dcState.trackPaths(references);
                         var triggerPath = `${ AdaptiveDialog.conditionTracker }.${ trigger.id }.`;
                         dcState.setValue(triggerPath + 'paths', paths);
