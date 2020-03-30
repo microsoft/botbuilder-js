@@ -27,10 +27,10 @@ export class StaticChecker extends AbstractParseTreeVisitor<Diagnostic[]> implem
     private visitedTemplateNames: string[];
     private _expressionParser: ExpressionParserInterface;
 
-    public constructor(templates: Templates, expressionParser?: ExpressionParser) {
+    public constructor(templates: Templates) {
         super();
         this.templates = templates;
-        this.baseExpressionParser = expressionParser || new ExpressionParser();
+        this.baseExpressionParser = templates.expressionParser || new ExpressionParser();
     }
 
     // Create a property because we want this to be lazy loaded
