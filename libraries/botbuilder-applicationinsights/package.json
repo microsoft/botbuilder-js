@@ -26,6 +26,7 @@
     "cls-hooked": "^4.2.2"
   },
   "devDependencies": {
+    "@microsoft/api-extractor": "^7.7.10",
     "@types/mocha": "^2.2.47",
     "assert": "^1.4.1",
     "chatdown": "^1.0.2",
@@ -37,11 +38,13 @@
     "typescript": "3.5.3"
   },
   "scripts": {
-    "test": "tsc && nyc mocha tests/",
     "build": "tsc",
     "build-docs": "typedoc --theme markdown --entryPoint botbuilder-applicationinsights --excludePrivate --includeDeclarations --ignoreCompilerErrors --module amd --out ..\\..\\doc\\botbuilder-applicationinsights .\\lib\\index.d.ts --hideGenerator --name \"Bot Builder SDK - Application Insights\" --readme none",
+    "build:rollup": "npm run clean && npm run build && api-extractor run --verbose --local",
     "clean": "erase /q /s .\\lib",
-    "set-version": "npm version --allow-same-version ${Version}"
+    "set-version": "npm version --allow-same-version ${Version}",
+    "test": "tsc && nyc mocha tests/",
+    "test:compat": "api-extractor run --verbose"
   },
   "files": [
     "/lib",

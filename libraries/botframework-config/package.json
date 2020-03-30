@@ -25,6 +25,7 @@
     "url": "git@github.com:Microsoft/botbuilder-js.git"
   },
   "devDependencies": {
+    "@microsoft/api-extractor": "^7.7.10",
     "@types/uuid": "^3.4.3",
     "mocha": "^5.2.0",
     "typescript": "3.5.3"
@@ -35,9 +36,11 @@
     "uuid": "^3.3.2"
   },
   "scripts": {
-    "test": "tsc && nyc mocha tests/",
     "build": "tsc",
+    "build:rollup": "npm run clean && npm run build && api-extractor run --verbose --local",
     "clean": "erase /q /s .\\lib",
-    "set-version": "npm version --allow-same-version ${Version}"
+    "set-version": "npm version --allow-same-version ${Version}",
+    "test": "tsc && nyc mocha tests/",
+    "test:compat": "api-extractor run --verbose"
   }
 }
