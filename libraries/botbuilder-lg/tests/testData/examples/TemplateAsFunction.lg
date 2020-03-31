@@ -2,7 +2,7 @@
 - ${join(list, ' ')}
 
 # Test2
-- ${ShowList(createArray('hello', 'world'))}
+- ${ShowList(['hello', 'world'])}
 
 # Test3
 - ${ShowList(createArray('hello', 'world'))}

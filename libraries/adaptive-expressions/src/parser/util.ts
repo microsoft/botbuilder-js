@@ -22,24 +22,4 @@ export class Util {
 
         return str.trim();
     }
-
-    /**
-     * escape \r \n \t and other characters
-     * @param exp 
-     */
-    public static unescape(exp: string): string {
-        const validCharactersDict: any = {
-            '\\r': '\r',
-            '\\n': '\n',
-            '\\t': '\t'
-        };
-
-        return exp.replace(/\\[^\r\n]?/g, (sub: string): string => { 
-            if (sub in validCharactersDict) {
-                return validCharactersDict[sub];
-            } else {
-                return sub.substr(1);
-            }
-        });
-    }
 }

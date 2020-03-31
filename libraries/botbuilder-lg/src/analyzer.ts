@@ -201,7 +201,7 @@ export class Analyzer extends AbstractParseTreeVisitor<AnalyzerResult> implement
         exp = TemplateExtensions.trimExpression(exp);
         const parsed: Expression = this._expressionParser.parse(exp);
 
-        const references: readonly string[] = Extensions.references(parsed);
+        const references: readonly string[] = parsed.references();
         result.union(new AnalyzerResult(references.slice(), []));
         result.union(this.analyzeExpressionDirectly(parsed));
 

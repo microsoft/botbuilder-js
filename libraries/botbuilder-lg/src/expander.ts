@@ -193,7 +193,7 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGFi
                 for (const node of item.children) {
                     switch ((node as TerminalNode).symbol.type) {
                         case (lp.LGFileParser.ESCAPE_CHARACTER_IN_STRUCTURE_BODY):
-                            itemStringResult = this.stringArrayConcat(itemStringResult, [TemplateExtensions.evalEscape(node.text)]);
+                            itemStringResult = this.stringArrayConcat(itemStringResult, [TemplateExtensions.evalEscape(node.text.replace(/\\\|/g, '|'))]);
                             break;
                         case (lp.LGFileParser.EXPRESSION_IN_STRUCTURE_BODY):
                             const errorPrefix = `Property '${ ctx.STRUCTURE_IDENTIFIER().text }':`;

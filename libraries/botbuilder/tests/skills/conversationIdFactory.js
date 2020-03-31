@@ -1,4 +1,4 @@
-const { SkillConversationIdFactoryBase, } = require('botbuilder-core');
+const { SkillConversationIdFactoryBase, TurnContext } = require('botbuilder-core');
 
 class ConversationIdFactory extends SkillConversationIdFactoryBase {
     constructor() {
@@ -9,9 +9,12 @@ class ConversationIdFactory extends SkillConversationIdFactoryBase {
         this.disableGetSkillConversationReference = false;
     }
 
-    async createSkillConversationIdWithOptions(opts) {
+    async createSkillConversationIdWithOptions(options) {
         if (this.disableCreateWithOptions) super.createSkillConversationIdWithOptions();
-        this.refs[this.skillId] = convRef;
+        this.refs[this.skillId] = {
+            conversationReference: TurnContext.getConversationReference(options.activity),
+            oAuthScope: options.fromBotOAuthScope
+        };
         return this.skillId;
     }
 
