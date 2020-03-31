@@ -14,7 +14,7 @@
 export class Options {
     public nullSubstitution: (name: string) => object;
 
-    public constructor(opt?: (name: string) => object) {
-        this.nullSubstitution = opt? opt : undefined;
+    public constructor(opt?: Options) {
+        this.nullSubstitution = opt? opt.nullSubstitution : undefined;
     }
 }

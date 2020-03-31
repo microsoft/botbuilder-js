@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
 /* eslint-disable @typescript-eslint/no-var-requires */
-const { Expression, SimpleObjectMemory, ExpressionFunctions } = require('../lib');
+const { Expression, SimpleObjectMemory, ExpressionFunctions, Options } = require('../lib');
 const assert = require('assert');
 const moment = require('moment');
 
@@ -744,24 +744,78 @@ describe('expression parser functional test', () => {
         // normal case, note, we doesn't append a " yet
         let exp = Expression.parse('a[f].b[n].z');
         let path = undefined;
-        ({path, left, error} = ExpressionFunctions.tryAccumulatePath(exp, memory));
+        ({path, left, error} = ExpressionFunctions.tryAccumulatePath(exp, memory, undefined));
         assert.strictEqual(path, 'a[\'foo\'].b[2].z');
 
         // normal case
         exp = Expression.parse('a[z.z][z.z].y');
-        ({path, left, error} = ExpressionFunctions.tryAccumulatePath(exp, memory));
+        ({path, left, error} = ExpressionFunctions.tryAccumulatePath(exp, memory, undefined));
         assert.strictEqual(path, 'a[\'zar\'][\'zar\'].y');
 
         // normal case
         exp = Expression.parse('a.b[z.z]');
-        ({path, left, error} = ExpressionFunctions.tryAccumulatePath(exp, memory));
+        ({path, left, error} = ExpressionFunctions.tryAccumulatePath(exp, memory, undefined));
         assert.strictEqual(path, 'a.b[\'zar\']');
         
         // stop evaluate at middle
         exp = Expression.parse('json(x).b');
-        ({path, left, error} = ExpressionFunctions.tryAccumulatePath(exp, memory));
+        ({path, left, error} = ExpressionFunctions.tryAccumulatePath(exp, memory, undefined));
         assert.strictEqual(path, 'b');
         
+    });
+
+    it('Test Evaluation Options', () => { 
+        var mockMemory = {};
+
+        var options = new Options();
+        options.nullSubstitution = (path) => `${ path } is undefined`;
+        let value = undefined;
+        let error = undefined;
+
+        // normal case null value is substituted
+        var exp = Expression.parse('foo');
+        ({value, error} = exp.tryEvaluate(mockMemory, options));
+        assert.strictEqual(value, 'foo is undefined');
+        
+        // in boolean context, substitution is not allowed, use raw value instead
+        exp = Expression.parse('if(foo, 1, 2)');
+        ({value, error} = exp.tryEvaluate(mockMemory, options));
+        assert.strictEqual(value, 2);
+
+        // in boolean context, substitution is not allowed, use raw value instead
+        exp = Expression.parse('foo && true');
+        ({value, error} = exp.tryEvaluate(mockMemory, options));
+        assert.strictEqual(value, false);
+
+        // in boolean context, substitution is not allowed, use raw value instead
+        exp = Expression.parse('foo || true');
+        ({value, error} = exp.tryEvaluate(mockMemory, options));
+        assert.strictEqual(value, true);
+
+        // in boolean context, substitution is not allowed, use raw value instead
+        exp = Expression.parse('foo == "foo is undefined"');
+        ({value, error} = exp.tryEvaluate(mockMemory, options));
+        assert.strictEqual(value, false);
+
+        // in boolean context, substitution is not allowed, use raw value instead
+        exp = Expression.parse('not(foo)');
+        ({value, error} = exp.tryEvaluate(mockMemory, options));
+        assert.strictEqual(value, true);
+
+        // in boolean context, substitution is not allowed, use raw value instead
+        exp = Expression.parse('bool(foo)');
+        ({value, error} = exp.tryEvaluate(mockMemory, options));
+        assert.strictEqual(value, false);
+
+        // concat is evaluated in boolean context also, use raw value
+        exp = Expression.parse('if(concat(foo, "bar"), 1, 2)');
+        ({value, error} = exp.tryEvaluate(mockMemory, options));
+        assert.strictEqual(value, 1);
+
+        // index is not boolean context, but it also requires raw value
+        exp = Expression.parse('a[b]');
+        ({value, error} = exp.tryEvaluate(mockMemory, options));
+        assert.strictEqual(error !== undefined, true);
     });
 });
 

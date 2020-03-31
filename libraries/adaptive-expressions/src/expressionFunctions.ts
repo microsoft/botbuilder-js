@@ -16,7 +16,6 @@ import { Constant } from './constant';
 import { Expression, ReturnType } from './expression';
 import { EvaluateExpressionDelegate, ExpressionEvaluator, ValidateExpressionDelegate } from './expressionEvaluator';
 import { ExpressionType } from './expressionType';
-import { Extensions } from './extensions';
 import { TimeZoneConverter } from './timeZoneConverter';
 import { convertCSharpDateTimeToMomentJS } from './datetimeFormatConverter';
 import { MemoryInterface, SimpleObjectMemory, StackedMemory } from './memory';
@@ -620,7 +619,9 @@ export class ExpressionFunctions {
                 let result = false;
                 let error: string;
                 let args: any [];
-                ({ args, error } = ExpressionFunctions.evaluateChildren(expression, state, new Options(), verify));
+                const newOptions = new Options(options);
+                newOptions.nullSubstitution = undefined;
+                ({ args, error } = ExpressionFunctions.evaluateChildren(expression, state, newOptions, verify));
                 if (!error) {
                     const isNumber: boolean = args && args.length > 0 && typeof args[0] === 'number';
                     for (const arg of args) {
@@ -935,7 +936,7 @@ export class ExpressionFunctions {
 
         if (left == undefined) {
             // fully converted to path, so we just delegate to memory scope
-            return { value: state.getValue(path), error: undefined };
+            return { value: ExpressionFunctions.wrapGetValue(state, path, options), error: undefined };
         } else {
             let newScope: any;
             let err: string;
@@ -944,7 +945,7 @@ export class ExpressionFunctions {
                 return {value: undefined, error: err};
             }
 
-            return { value: new SimpleObjectMemory(newScope).getValue(path), error: undefined };
+            return { value: ExpressionFunctions.wrapGetValue(new SimpleObjectMemory(newScope), path, options), error: undefined };
         }
     }
 
@@ -960,7 +961,7 @@ export class ExpressionFunctions {
             ({ value: property, error } = children[1].tryEvaluate(state, options));
 
             if (!error) {
-                value = new SimpleObjectMemory(instance).getValue(property.toString());
+                value = ExpressionFunctions.wrapGetValue(new SimpleObjectMemory(instance), property.toString(), options);
             }
         }
 
@@ -1007,16 +1008,31 @@ export class ExpressionFunctions {
         return {value: result, error};
     }
 
-    private static extractElement(expression: Expression, state: MemoryInterface): { value: any; error: string } {
+    private static wrapGetValue(state: MemoryInterface, path: string, options: Options): any {
+        let result = state.getValue(path);
+        if (result !== undefined) {
+            return result;
+        }
+
+        if(options && options.nullSubstitution !== undefined) {
+            return options.nullSubstitution(path);
+        }
+
+        return undefined;
+    }
+
+    private static extractElement(expression: Expression, state: MemoryInterface, options: Options): { value: any; error: string } {
         let value: any;
         let error: string;
         const instance: Expression = expression.children[0];
         const index: Expression = expression.children[1];
         let inst: any;
-        ({ value: inst, error } = instance.tryEvaluate(state));
+        ({ value: inst, error } = instance.tryEvaluate(state, options));
         if (!error) {
             let idxValue: any;
-            ({ value: idxValue, error } = index.tryEvaluate(state));
+            const newOptions = new Options(options);
+            newOptions.nullSubstitution = undefined;
+            ({ value: idxValue, error } = index.tryEvaluate(state, newOptions));
             if (!error) {
                 if (Number.isInteger(idxValue)) {
                     ({ value, error } = ExpressionFunctions.accessIndex(inst, Number(idxValue)));
@@ -1031,11 +1047,11 @@ export class ExpressionFunctions {
         }
     }
 
-    private static setPathToValue(expression: Expression, state: MemoryInterface): { value: any; error: string } {
+    private static setPathToValue(expression: Expression, state: MemoryInterface, options: Options): { value: any; error: string } {
         let path: string;
         let left: Expression;
         let error: string;
-        ({path, left, error} = ExpressionFunctions.tryAccumulatePath(expression.children[0], state));
+        ({path, left, error} = ExpressionFunctions.tryAccumulatePath(expression.children[0], state, options));
         if (error !== undefined) {
             return {value: undefined, error};
         }
@@ -1046,7 +1062,7 @@ export class ExpressionFunctions {
         }  
         let value: any;
         let err: string;
-        ({value, error: err} = expression.children[1].tryEvaluate(state));
+        ({value, error: err} = expression.children[1].tryEvaluate(state, options));
         if (err) {
             return {value: undefined, error: err};
         }
@@ -1055,12 +1071,12 @@ export class ExpressionFunctions {
         return {value, error: undefined};
     }
 
-    private static foreach(expression: Expression, state: MemoryInterface): { value: any; error: string } {
+    private static foreach(expression: Expression, state: MemoryInterface, options: Options): { value: any; error: string } {
         let result: any[];
         let error: string;
         let instance: any;
 
-        ({ value: instance, error } = expression.children[0].tryEvaluate(state));
+        ({ value: instance, error } = expression.children[0].tryEvaluate(state, options));
         if (!instance) {
             error = `'${ expression.children[0] }' evaluated to null.`;
         }
@@ -1085,7 +1101,7 @@ export class ExpressionFunctions {
                     ]);
 
                     stackedMemory.push(SimpleObjectMemory.wrap(local));
-                    const { value: r, error: e } = expression.children[2].tryEvaluate(stackedMemory);
+                    const { value: r, error: e } = expression.children[2].tryEvaluate(stackedMemory, options);
                     stackedMemory.pop();
                     if (e !== undefined) {
                         return { value: undefined, error: e };
@@ -1098,12 +1114,12 @@ export class ExpressionFunctions {
         return { value: result, error };
     }
 
-    private static where(expression: Expression, state: MemoryInterface): { value: any; error: string } {
+    private static where(expression: Expression, state: MemoryInterface, options: Options): { value: any; error: string } {
         let result: any;
         let error: string;
         let instance: any;
 
-        ({ value: instance, error } = expression.children[0].tryEvaluate(state));
+        ({ value: instance, error } = expression.children[0].tryEvaluate(state, options));
 
         if (!error) {
             const iteratorName = (expression.children[1].children[0] as Constant).value as string;
@@ -1127,7 +1143,9 @@ export class ExpressionFunctions {
                     ]);
 
                     stackedMemory.push(SimpleObjectMemory.wrap(local));
-                    const { value: r, error: e } = expression.children[2].tryEvaluate(stackedMemory);
+                    const newOptions = new Options(options);
+                    newOptions.nullSubstitution = undefined;
+                    const { value: r, error: e } = expression.children[2].tryEvaluate(stackedMemory, newOptions);
                     stackedMemory.pop();
                     if (e !== undefined) {
                         return { value: undefined, error: e };
@@ -1217,11 +1235,13 @@ export class ExpressionFunctions {
         return result;
     }
 
-    private static _and(expression: Expression, state: MemoryInterface): { value: any; error: string } {
+    private static _and(expression: Expression, state: MemoryInterface, options: Options): { value: any; error: string } {
         let result = true;
         let error: string;
         for (const child of expression.children) {
-            ({ value: result, error } = child.tryEvaluate(state));
+            const newOptions = new Options(options);
+            newOptions.nullSubstitution = undefined;
+            ({ value: result, error } = child.tryEvaluate(state, newOptions));
             if (!error) {
                 if (this.isLogicTrue(result)) {
                     result = true;
@@ -1239,11 +1259,13 @@ export class ExpressionFunctions {
         return { value: result, error };
     }
 
-    private static _or(expression: Expression, state: MemoryInterface): { value: any; error: string } {
+    private static _or(expression: Expression, state: MemoryInterface, options: Options): { value: any; error: string } {
         let result = false;
         let error: string;
         for (const child of expression.children) {
-            ({ value: result, error } = child.tryEvaluate(state));
+            const newOptions = new Options(options);
+            newOptions.nullSubstitution = undefined;
+            ({ value: result, error } = child.tryEvaluate(state, newOptions));
             if (!error) {
                 if (this.isLogicTrue(result)) {
                     result = true;
@@ -1257,10 +1279,12 @@ export class ExpressionFunctions {
         return { value: result, error };
     }
 
-    private static _not(expression: Expression, state: MemoryInterface): { value: any; error: string } {
+    private static _not(expression: Expression, state: MemoryInterface, options: Options): { value: any; error: string } {
         let result = false;
         let error: string;
-        ({ value: result, error } = expression.children[0].tryEvaluate(state));
+        const newOptions = new Options(options);
+        newOptions.nullSubstitution = undefined;
+        ({ value: result, error } = expression.children[0].tryEvaluate(state, newOptions));
         if (!error) {
             result = !this.isLogicTrue(result);
         } else {
@@ -1271,31 +1295,33 @@ export class ExpressionFunctions {
         return { value: result, error };
     }
 
-    private static _if(expression: Expression, state: MemoryInterface): { value: any; error: string } {
+    private static _if(expression: Expression, state: MemoryInterface, options: Options): { value: any; error: string } {
         let result: any;
         let error: string;
-        ({ value: result, error } = expression.children[0].tryEvaluate(state));
+        const newOptions = new Options(options);
+        newOptions.nullSubstitution = undefined;
+        ({ value: result, error } = expression.children[0].tryEvaluate(state, newOptions));
         if (!error && this.isLogicTrue(result)) {
-            ({ value: result, error } = expression.children[1].tryEvaluate(state));
+            ({ value: result, error } = expression.children[1].tryEvaluate(state, options));
         } else {
-            ({ value: result, error } = expression.children[2].tryEvaluate(state));
+            ({ value: result, error } = expression.children[2].tryEvaluate(state, options));
         }
 
         return { value: result, error };
     }
 
-    private static substring(expression: Expression, state: MemoryInterface): { value: any; error: string } {
+    private static substring(expression: Expression, state: MemoryInterface, options: Options): { value: any; error: string } {
         let result: any;
         let error: any;
         let str: string;
-        ({ value: str, error } = expression.children[0].tryEvaluate(state));
+        ({ value: str, error } = expression.children[0].tryEvaluate(state, options));
 
         if (!error) {
             if (typeof str === 'string') {
                 let start: number;
 
                 const startExpr: Expression = expression.children[1];
-                ({ value: start, error } = startExpr.tryEvaluate(state));
+                ({ value: start, error } = startExpr.tryEvaluate(state, options));
                 if (!error && !Number.isInteger(start)) {
                     error = `${ startExpr } is not an integer.`;
                 } else if (start < 0 || start >= str.length) {
@@ -1308,7 +1334,7 @@ export class ExpressionFunctions {
                         length = str.length - start;
                     } else {
                         const lengthExpr: Expression = expression.children[2];
-                        ({ value: length, error } = lengthExpr.tryEvaluate(state));
+                        ({ value: length, error } = lengthExpr.tryEvaluate(state, options));
                         if (!error && !Number.isInteger(length)) {
                             error = `${ lengthExpr } is not an integer`;
                         } else if (length < 0 || Number(start) + Number(length) > str.length) {
@@ -1329,18 +1355,18 @@ export class ExpressionFunctions {
         return { value: result, error };
     }
 
-    private static skip(expression: Expression, state: any): { value: any; error: string } {
+    private static skip(expression: Expression, state: any, options: Options): { value: any; error: string } {
         let result: any;
         let error: any;
         let arr: any;
-        ({ value: arr, error } = expression.children[0].tryEvaluate(state));
+        ({ value: arr, error } = expression.children[0].tryEvaluate(state, options));
 
         if (!error) {
             if (Array.isArray(arr)) {
                 let start: number;
 
                 const startExpr: Expression = expression.children[1];
-                ({ value: start, error } = startExpr.tryEvaluate(state));
+                ({ value: start, error } = startExpr.tryEvaluate(state, options));
                 if (!error && !Number.isInteger(start)) {
                     error = `${ startExpr } is not an integer.`;
                 } else if (start < 0 || start >= arr.length) {
@@ -1357,18 +1383,18 @@ export class ExpressionFunctions {
         return { value: result, error };
     }
 
-    private static take(expression: Expression, state: any): { value: any; error: string } {
+    private static take(expression: Expression, state: any, options: Options): { value: any; error: string } {
         let result: any;
         let error: any;
         let arr: any;
-        ({ value: arr, error } = expression.children[0].tryEvaluate(state));
+        ({ value: arr, error } = expression.children[0].tryEvaluate(state, options));
 
         if (!error) {
             if (Array.isArray(arr) || typeof arr === 'string') {
                 let start: number;
 
                 const startExpr: Expression = expression.children[1];
-                ({ value: start, error } = startExpr.tryEvaluate(state));
+                ({ value: start, error } = startExpr.tryEvaluate(state, options));
                 if (!error && !Number.isInteger(start)) {
                     error = `${ startExpr } is not an integer.`;
                 } else if (start < 0 || start >= arr.length) {
@@ -1385,18 +1411,18 @@ export class ExpressionFunctions {
         return { value: result, error };
     }
 
-    private static subArray(expression: Expression, state: any): { value: any; error: string } {
+    private static subArray(expression: Expression, state: any, options: Options): { value: any; error: string } {
         let result: any;
         let error: any;
         let arr: any;
-        ({ value: arr, error } = expression.children[0].tryEvaluate(state));
+        ({ value: arr, error } = expression.children[0].tryEvaluate(state, options));
 
         if (!error) {
             if (Array.isArray(arr)) {
                 let start: number;
 
                 const startExpr: Expression = expression.children[1];
-                ({ value: start, error } = startExpr.tryEvaluate(state));
+                ({ value: start, error } = startExpr.tryEvaluate(state, options));
                 if (!error && !Number.isInteger(start)) {
                     error = `${ startExpr } is not an integer.`;
                 } else if (start < 0 || start >= arr.length) {
@@ -1408,7 +1434,7 @@ export class ExpressionFunctions {
                         end = arr.length;
                     } else {
                         const endExpr: Expression = expression.children[2];
-                        ({ value: end, error } = endExpr.tryEvaluate(state));
+                        ({ value: end, error } = endExpr.tryEvaluate(state, options));
                         if (!error && !Number.isInteger(end)) {
                             error = `${ endExpr } is not an integer`;
                         } else if (end < 0 || end > arr.length) {
@@ -1428,11 +1454,11 @@ export class ExpressionFunctions {
     }
 
     private static sortBy(isDescending: boolean): EvaluateExpressionDelegate {
-        return (expression: Expression, state: any): { value: any; error: string } => {
+        return (expression: Expression, state: any, options: Options): { value: any; error: string } => {
             let result: any;
             let error: string;
             let oriArr: any;
-            ({ value: oriArr, error } = expression.children[0].tryEvaluate(state));
+            ({ value: oriArr, error } = expression.children[0].tryEvaluate(state, options));
             if (!error) {
                 if (Array.isArray(oriArr)) {
                     const arr: any = oriArr.slice(0);
@@ -1444,7 +1470,7 @@ export class ExpressionFunctions {
                         }
                     } else {
                         let propertyName: string;
-                        ({value: propertyName, error} = expression.children[1].tryEvaluate(state));
+                        ({value: propertyName, error} = expression.children[1].tryEvaluate(state, options));
 
                         if (!error) {
                             propertyName = propertyName || '';
@@ -1465,11 +1491,11 @@ export class ExpressionFunctions {
         };
     }
 
-    private static indicesAndValues(expression: Expression, state: any): {value: any; error: string} {
+    private static indicesAndValues(expression: Expression, state: any, options: Options): {value: any; error: string} {
         let result: object = undefined;
         let error: string = undefined;
         let value: any = undefined;
-        ({value, error} = expression.children[0].tryEvaluate(state));
+        ({value, error} = expression.children[0].tryEvaluate(state, options));
         if (error === undefined) {
             if (Array.isArray(value)) {
                 const tempList = [];
@@ -2100,7 +2126,7 @@ export class ExpressionFunctions {
                 (expression: Expression): void => ExpressionFunctions.validateOrder(expression, [], ReturnType.Object)
             ),
             new ExpressionEvaluator(ExpressionType.IndicesAndValues, 
-                (expression: Expression, state: any): {value: any; error: string} => ExpressionFunctions.indicesAndValues(expression, state), 
+                (expression: Expression, state: any, options: Options): {value: any; error: string} => ExpressionFunctions.indicesAndValues(expression, state, options), 
                 ReturnType.Object, ExpressionFunctions.validateUnary),
             ExpressionFunctions.comparison(
                 ExpressionType.LessThan,
@@ -2125,11 +2151,11 @@ export class ExpressionFunctions {
                 (args: any []): boolean => args[0] !== undefined, ExpressionFunctions.validateUnary, ExpressionFunctions.verifyNumberOrString),
             new ExpressionEvaluator(
                 ExpressionType.Contains,
-                (expression: Expression, state: any): { value: any; error: string } => {
+                (expression: Expression, state: any, options: Options): { value: any; error: string } => {
                     let found = false;
                     let error: any;
                     let args: any [];
-                    ({ args, error } = ExpressionFunctions.evaluateChildren(expression, state));
+                    ({ args, error } = ExpressionFunctions.evaluateChildren(expression, state, options));
 
                     if (!error) {
                         if (typeof args[0] === 'string' && typeof args[1] === 'string' || Array.isArray(args[0])) {
@@ -2154,17 +2180,17 @@ export class ExpressionFunctions {
                 ExpressionFunctions.verifyContainer),
             new ExpressionEvaluator(
                 ExpressionType.And,
-                (expression: Expression, state: MemoryInterface): { value: any; error: string } => ExpressionFunctions._and(expression, state),
+                (expression: Expression, state: MemoryInterface, options: Options): { value: any; error: string } => ExpressionFunctions._and(expression, state, options),
                 ReturnType.Boolean,
                 ExpressionFunctions.validateAtLeastOne),
             new ExpressionEvaluator(
                 ExpressionType.Or,
-                (expression: Expression, state: MemoryInterface): { value: any; error: string } => ExpressionFunctions._or(expression, state),
+                (expression: Expression, state: MemoryInterface, options: Options): { value: any; error: string } => ExpressionFunctions._or(expression, state, options),
                 ReturnType.Boolean,
                 ExpressionFunctions.validateAtLeastOne),
             new ExpressionEvaluator(
                 ExpressionType.Not,
-                (expression: Expression, state: MemoryInterface): { value: any; error: string } => ExpressionFunctions._not(expression, state),
+                (expression: Expression, state: MemoryInterface, options: Options): { value: any; error: string } => ExpressionFunctions._not(expression, state, options),
                 ReturnType.Boolean,
                 ExpressionFunctions.validateUnary),
             new ExpressionEvaluator(
@@ -2269,11 +2295,11 @@ export class ExpressionFunctions {
             ),
             new ExpressionEvaluator(
                 ExpressionType.IndexOf,
-                (expression: Expression, state: any): { value: any; error: string } => {
+                (expression: Expression, state: any, options: Options): { value: any; error: string } => {
                     let value = -1;
                     let error: string;
                     let args: any [];
-                    ({ args, error } = ExpressionFunctions.evaluateChildren(expression, state));
+                    ({ args, error } = ExpressionFunctions.evaluateChildren(expression, state, options));
                     if (!error) {
                         if (args[0] == undefined || typeof args[0] === 'string') {
                             if (args[1] === undefined || typeof args[1] === 'string') {
@@ -2295,11 +2321,11 @@ export class ExpressionFunctions {
             ),
             new ExpressionEvaluator(
                 ExpressionType.LastIndexOf,
-                (expression: Expression, state: any): { value: any; error: string } => {
+                (expression: Expression, state: any, options: Options): { value: any; error: string } => {
                     let value = -1;
                     let error: string;
                     let args: any [];
-                    ({ args, error } = ExpressionFunctions.evaluateChildren(expression, state));
+                    ({ args, error } = ExpressionFunctions.evaluateChildren(expression, state, options));
                     if (!error) {
                         if (args[0] == undefined || typeof args[0] === 'string') {
                             if (args[1] === undefined || typeof args[1] === 'string') {
@@ -2323,11 +2349,11 @@ export class ExpressionFunctions {
             ),
             new ExpressionEvaluator(
                 ExpressionType.Join,
-                (expression: Expression, state: any): { value: any; error: string } => {
+                (expression: Expression, state: any, options: Options): { value: any; error: string } => {
                     let value: any;
                     let error: string;
                     let args: any [];
-                    ({ args, error } = ExpressionFunctions.evaluateChildren(expression, state));
+                    ({ args, error } = ExpressionFunctions.evaluateChildren(expression, state, options));
                     if (!error) {
                         if (!Array.isArray(args[0])) {
                             error = `${ expression.children[0] } evaluates to ${ args[0] } which is not a list.`;
@@ -2426,11 +2452,11 @@ export class ExpressionFunctions {
                 (expression: Expression): void => ExpressionFunctions.validateOrder(expression, [ReturnType.String], ReturnType.Object)),
             new ExpressionEvaluator(
                 ExpressionType.SubtractFromTime,
-                (expr: Expression, state: any): { value: any; error: string } => {
+                (expr: Expression, state: any, options: Options): { value: any; error: string } => {
                     let value: any;
                     let error: any;
                     let args: any [];
-                    ({ args, error } = ExpressionFunctions.evaluateChildren(expr, state));
+                    ({ args, error } = ExpressionFunctions.evaluateChildren(expr, state, options));
                     if (!error) {
                         if (typeof args[0] === 'string' && Number.isInteger(args[1]) && typeof args[2] === 'string') {
                             const format: string = (args.length === 4 ? ExpressionFunctions.timestampFormatter(args[3]) : ExpressionFunctions.DefaultDateTimeFormat);
@@ -2501,11 +2527,11 @@ export class ExpressionFunctions {
                 (expression: Expression): void => ExpressionFunctions.validateOrder(expression, undefined, ReturnType.String)),
             new ExpressionEvaluator(
                 ExpressionType.GetFutureTime,
-                (expr: Expression, state: any): { value: any; error: string } => {
+                (expr: Expression, state: any, options: Options): { value: any; error: string } => {
                     let value: any;
                     let error: any;
                     let args: any [];
-                    ({ args, error } = ExpressionFunctions.evaluateChildren(expr, state));
+                    ({ args, error } = ExpressionFunctions.evaluateChildren(expr, state, options));
                     if (!error) {
                         if (Number.isInteger(args[0]) && typeof args[1] === 'string') {
                             const format: string = (args.length === 3 ? ExpressionFunctions.timestampFormatter(args[2]) : ExpressionFunctions.DefaultDateTimeFormat);
@@ -2528,11 +2554,11 @@ export class ExpressionFunctions {
             ),
             new ExpressionEvaluator(
                 ExpressionType.GetPastTime,
-                (expr: Expression, state: any): { value: any; error: string } => {
+                (expr: Expression, state: any, options: Options): { value: any; error: string } => {
                     let value: any;
                     let error: any;
                     let args: any [];
-                    ({ args, error } = ExpressionFunctions.evaluateChildren(expr, state));
+                    ({ args, error } = ExpressionFunctions.evaluateChildren(expr, state, options));
                     if (!error) {
                         if (Number.isInteger(args[0]) && typeof args[1] === 'string') {
                             const format: string = (args.length === 3 ? ExpressionFunctions.timestampFormatter(args[2]) : ExpressionFunctions.DefaultDateTimeFormat);
@@ -2555,11 +2581,11 @@ export class ExpressionFunctions {
             ),
             new ExpressionEvaluator(
                 ExpressionType.ConvertFromUTC,
-                (expr: Expression, state: any): { value: any; error: string } => {
+                (expr: Expression, state: any, options: Options): { value: any; error: string } => {
                     let value: any;
                     let error: string;
                     let args: any [];
-                    ({args, error} = ExpressionFunctions.evaluateChildren(expr, state));
+                    ({args, error} = ExpressionFunctions.evaluateChildren(expr, state, options));
                     if (!error) {
                         const format: string = (args.length === 3) ? ExpressionFunctions.timestampFormatter(args[2]) : this.DefaultDateTimeFormat;
                         if (typeof(args[0]) === 'string' && typeof(args[1]) === 'string') {
@@ -2576,11 +2602,11 @@ export class ExpressionFunctions {
             ),
             new ExpressionEvaluator(
                 ExpressionType.ConvertToUTC,
-                (expr: Expression, state: any): { value: any; error: string } => {
+                (expr: Expression, state: any, options: Options): { value: any; error: string } => {
                     let value: any;
                     let error: string;
                     let args: any [];
-                    ({args, error} = ExpressionFunctions.evaluateChildren(expr, state));
+                    ({args, error} = ExpressionFunctions.evaluateChildren(expr, state, options));
                     if (!error) {
                         const format: string = (args.length === 3) ? ExpressionFunctions.timestampFormatter(args[2]) : this.DefaultDateTimeFormat;
                         if (typeof(args[0]) === 'string' && typeof(args[1]) === 'string') {
@@ -2597,11 +2623,11 @@ export class ExpressionFunctions {
             ),
             new ExpressionEvaluator(
                 ExpressionType.AddToTime,
-                (expr: Expression, state: any): { value: any; error: string } => {
+                (expr: Expression, state: any, options: Options): { value: any; error: string } => {
                     let value: any;
                     let error: string;
                     let args: any [];
-                    ({args, error} = ExpressionFunctions.evaluateChildren(expr, state));
+                    ({args, error} = ExpressionFunctions.evaluateChildren(expr, state, options));
                     if (!error) {
                         const format: string = (args.length === 4) ? ExpressionFunctions.timestampFormatter(args[3]) : this.DefaultDateTimeFormat;
                         if (typeof(args[0]) === 'string' && Number.isInteger(args[1]) && typeof(args[2]) === 'string') {
@@ -2618,11 +2644,11 @@ export class ExpressionFunctions {
             ),
             new ExpressionEvaluator(
                 ExpressionType.StartOfDay,
-                (expr: Expression, state: any): { value: any; error: string } => {
+                (expr: Expression, state: any, options: Options): { value: any; error: string } => {
                     let value: any;
                     let error: string;
                     let args: any [];
-                    ({args, error} = ExpressionFunctions.evaluateChildren(expr, state));
+                    ({args, error} = ExpressionFunctions.evaluateChildren(expr, state, options));
                     if (!error) {
                         const format: string = (args.length === 2) ? ExpressionFunctions.timestampFormatter(args[1]) : this.DefaultDateTimeFormat;
                         if (typeof(args[0]) === 'string') {
@@ -2639,11 +2665,11 @@ export class ExpressionFunctions {
             ),
             new ExpressionEvaluator(
                 ExpressionType.StartOfHour,
-                (expr: Expression, state: any): { value: any; error: string } => {
+                (expr: Expression, state: any, options: Options): { value: any; error: string } => {
                     let value: any;
                     let error: string;
                     let args: any [];
-                    ({args, error} = ExpressionFunctions.evaluateChildren(expr, state));
+                    ({args, error} = ExpressionFunctions.evaluateChildren(expr, state, options));
                     if (!error) {
                         const format: string = (args.length === 2) ? ExpressionFunctions.timestampFormatter(args[1]) : this.DefaultDateTimeFormat;
                         if (typeof(args[0]) === 'string') {
@@ -2660,11 +2686,11 @@ export class ExpressionFunctions {
             ),
             new ExpressionEvaluator(
                 ExpressionType.StartOfMonth,
-                (expr: Expression, state: any): { value: any; error: string } => {
+                (expr: Expression, state: any, options: Options): { value: any; error: string } => {
                     let value: any;
                     let error: string;
                     let args: any [];
-                    ({args, error} = ExpressionFunctions.evaluateChildren(expr, state));
+                    ({args, error} = ExpressionFunctions.evaluateChildren(expr, state, options));
                     if (!error) {
                         const format: string = (args.length === 2) ? ExpressionFunctions.timestampFormatter(args[1]) : this.DefaultDateTimeFormat;
                         if (typeof(args[0]) === 'string') {
@@ -2681,11 +2707,11 @@ export class ExpressionFunctions {
             ),
             new ExpressionEvaluator(
                 ExpressionType.Ticks,
-                (expr: Expression, state: any): { value: any; error: string } => {
+                (expr: Expression, state: any, options: Options): { value: any; error: string } => {
                     let value: any;
                     let error: string;
                     let args: any [];
-                    ({args, error} = ExpressionFunctions.evaluateChildren(expr, state));
+                    ({args, error} = ExpressionFunctions.evaluateChildren(expr, state, options));
                     if (!error) {
                         if (typeof(args[0]) === 'string') {
                             ({value, error} = ExpressionFunctions.ticks(args[0]));
@@ -2700,11 +2726,11 @@ export class ExpressionFunctions {
                 ExpressionFunctions.validateUnary),
             new ExpressionEvaluator(
                 ExpressionType.UriHost,
-                (expr: Expression, state: any): { value: any; error: string } => {
+                (expr: Expression, state: any, options: Options): { value: any; error: string } => {
                     let value: any;
                     let error: string;
                     let args: any [];
-                    ({args, error} = ExpressionFunctions.evaluateChildren(expr, state));
+                    ({args, error} = ExpressionFunctions.evaluateChildren(expr, state, options));
                     if (!error) {
                         if (typeof(args[0]) === 'string') {
                             ({value, error} = ExpressionFunctions.uriHost(args[0]));
@@ -2719,11 +2745,11 @@ export class ExpressionFunctions {
                 ExpressionFunctions.validateUnary),
             new ExpressionEvaluator(
                 ExpressionType.UriPath,
-                (expr: Expression, state: any): { value: any; error: string } => {
+                (expr: Expression, state: any, options: Options): { value: any; error: string } => {
                     let value: any;
                     let error: string;
                     let args: any [];
-                    ({args, error} = ExpressionFunctions.evaluateChildren(expr, state));
+                    ({args, error} = ExpressionFunctions.evaluateChildren(expr, state, options));
                     if (!error) {
                         if (typeof(args[0]) === 'string') {
                             ({value, error} = ExpressionFunctions.uriPath(args[0]));
@@ -2738,11 +2764,11 @@ export class ExpressionFunctions {
                 ExpressionFunctions.validateUnary),
             new ExpressionEvaluator(
                 ExpressionType.UriPathAndQuery,
-                (expr: Expression, state: any): { value: any; error: string } => {
+                (expr: Expression, state: any, options: Options): { value: any; error: string } => {
                     let value: any;
                     let error: string;
                     let args: any [];
-                    ({args, error} = ExpressionFunctions.evaluateChildren(expr, state));
+                    ({args, error} = ExpressionFunctions.evaluateChildren(expr, state, options));
                     if (!error) {
                         if (typeof(args[0]) === 'string') {
                             ({value, error} = ExpressionFunctions.uriPathAndQuery(args[0]));
@@ -2757,11 +2783,11 @@ export class ExpressionFunctions {
                 ExpressionFunctions.validateUnary),
             new ExpressionEvaluator(
                 ExpressionType.UriQuery,
-                (expr: Expression, state: any): { value: any; error: string } => {
+                (expr: Expression, state: any, options: Options): { value: any; error: string } => {
                     let value: any;
                     let error: string;
                     let args: any [];
-                    ({args, error} = ExpressionFunctions.evaluateChildren(expr, state));
+                    ({args, error} = ExpressionFunctions.evaluateChildren(expr, state, options));
                     if (!error) {
                         if (typeof(args[0]) === 'string') {
                             ({value, error} = ExpressionFunctions.uriQuery(args[0]));
@@ -2776,11 +2802,11 @@ export class ExpressionFunctions {
                 ExpressionFunctions.validateUnary),
             new ExpressionEvaluator(
                 ExpressionType.UriPort,
-                (expr: Expression, state: any): { value: any; error: string } => {
+                (expr: Expression, state: any, options: Options): { value: any; error: string } => {
                     let value: any;
                     let error: string;
                     let args: any [];
-                    ({args, error} = ExpressionFunctions.evaluateChildren(expr, state));
+                    ({args, error} = ExpressionFunctions.evaluateChildren(expr, state, options));
                     if (!error) {
                         if (typeof(args[0]) === 'string') {
                             ({value, error} = ExpressionFunctions.uriPort(args[0]));
@@ -2795,11 +2821,11 @@ export class ExpressionFunctions {
                 ExpressionFunctions.validateUnary),
             new ExpressionEvaluator(
                 ExpressionType.UriScheme,
-                (expr: Expression, state: any): { value: any; error: string } => {
+                (expr: Expression, state: any, options: Options): { value: any; error: string } => {
                     let value: any;
                     let error: string;
                     let args: any [];
-                    ({args, error} = ExpressionFunctions.evaluateChildren(expr, state));
+                    ({args, error} = ExpressionFunctions.evaluateChildren(expr, state, options));
                     if (!error) {
                         if (typeof(args[0]) === 'string') {
                             ({value, error} = ExpressionFunctions.uriScheme(args[0]));
@@ -2862,7 +2888,7 @@ export class ExpressionFunctions {
                 (expression: Expression): void => ExpressionFunctions.validateOrder(expression, undefined, ReturnType.Object, ReturnType.String)),
             new ExpressionEvaluator(
                 ExpressionType.If,
-                (expression: Expression, state: MemoryInterface): { value: any; error: string } => ExpressionFunctions._if(expression, state),
+                (expression: Expression, state: MemoryInterface, options: Options): { value: any; error: string } => ExpressionFunctions._if(expression, state, options),
                 ReturnType.Object,
                 (expr: Expression): void => ExpressionFunctions.validateArityAndAnyType(expr, 3, 3)),
             new ExpressionEvaluator(
