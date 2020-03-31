@@ -20,6 +20,7 @@ import { Extensions } from './extensions';
 import { TimeZoneConverter } from './timeZoneConverter';
 import { convertCSharpDateTimeToMomentJS } from './datetimeFormatConverter';
 import { MemoryInterface, SimpleObjectMemory, StackedMemory } from './memory';
+import { Options } from './options';
 
 /**
  * Verify the result of an expression is of the appropriate type and return a string if not.
@@ -449,13 +450,13 @@ export class ExpressionFunctions {
      * @param verify Optional function to verify each child's result.
      * @returns List of child values or error message.
      */
-    public static evaluateChildren(expression: Expression, state: MemoryInterface, verify?: VerifyExpression): { args: any []; error: string } {
+    public static evaluateChildren(expression: Expression, state: MemoryInterface, options: Options, verify?: VerifyExpression): { args: any []; error: string } {
         const args: any[] = [];
         let value: any;
         let error: string;
         let pos = 0;
         for (const child of expression.children) {
-            ({ value, error } = child.tryEvaluate(state));
+            ({ value, error } = child.tryEvaluate(state, options));
             if (error) {
                 break;
             }
@@ -479,11 +480,11 @@ export class ExpressionFunctions {
      * @returns Delegate for evaluating an expression.
      */
     public static apply(func: (arg0: any []) => any, verify?: VerifyExpression): EvaluateExpressionDelegate {
-        return (expression: Expression, state: MemoryInterface): { value: any; error: string } => {
+        return (expression: Expression, state: MemoryInterface, options: Options): { value: any; error: string } => {
             let value: any;
             let error: string;
             let args: any [];
-            ({ args, error } = ExpressionFunctions.evaluateChildren(expression, state, verify));
+            ({ args, error } = ExpressionFunctions.evaluateChildren(expression, state, options, verify));
             if (!error) {
                 try {
                     value = func(args);
@@ -503,11 +504,11 @@ export class ExpressionFunctions {
      * @returns Delegate for evaluating an expression.
      */
     public static applyWithError(func: (arg0: any []) => any, verify?: VerifyExpression): EvaluateExpressionDelegate {
-        return (expression: Expression, state: MemoryInterface): { value: any; error: string } => {
+        return (expression: Expression, state: MemoryInterface, options: Options): { value: any; error: string } => {
             let value: any;
             let error: string;
             let args: any [];
-            ({ args, error } = ExpressionFunctions.evaluateChildren(expression, state, verify));
+            ({ args, error } = ExpressionFunctions.evaluateChildren(expression, state, options, verify));
             if (!error) {
                 try {
                     ({ value, error } = func(args));
@@ -615,11 +616,11 @@ export class ExpressionFunctions {
     public static comparison(type: string, func: (arg0: any []) => boolean, validator: ValidateExpressionDelegate, verify?: VerifyExpression): ExpressionEvaluator {
         return new ExpressionEvaluator(
             type,
-            (expression: Expression, state: MemoryInterface): { value: any; error: string } => {
+            (expression: Expression, state: MemoryInterface, options: Options): { value: any; error: string } => {
                 let result = false;
                 let error: string;
                 let args: any [];
-                ({ args, error } = ExpressionFunctions.evaluateChildren(expression, state, verify));
+                ({ args, error } = ExpressionFunctions.evaluateChildren(expression, state, new Options(), verify));
                 if (!error) {
                     const isNumber: boolean = args && args.length > 0 && typeof args[0] === 'number';
                     for (const arg of args) {
@@ -666,12 +667,12 @@ export class ExpressionFunctions {
     public static timeTransform(type: string, func: (timestamp: moment.Moment, numOfTransformation: any) => any): ExpressionEvaluator {
         return new ExpressionEvaluator(
             type,
-            (expression: Expression, state: MemoryInterface): { value: any; error: string } => {
+            (expression: Expression, state: MemoryInterface, options: Options): { value: any; error: string } => {
                 let result: any;
                 let error: string;
                 let value: any;
                 let args: any [];
-                ({ args, error } = ExpressionFunctions.evaluateChildren(expression, state));
+                ({ args, error } = ExpressionFunctions.evaluateChildren(expression, state, options));
                 if (!error) {
                     if (typeof args[0] === 'string' && typeof args[1] === 'number') {
                         ({ value, error } = ExpressionFunctions.parseTimestamp(args[0]));
@@ -880,10 +881,11 @@ export class ExpressionFunctions {
     /**
      * Try to accumulate the path from an Accessor or Element, from right to left
      * return the accumulated path and the expression left unable to accumulate
-     * @param expression 
-     * @param state 
+     * @param expression
+     * @param state scope
+     * @param options Options used in evaluation
      */
-    public static tryAccumulatePath(expression: Expression, state: MemoryInterface): {path: string; left: Expression; error: string} {
+    public static tryAccumulatePath(expression: Expression, state: MemoryInterface, options: Options): {path: string; left: Expression; error: string} {
         let path = '';
         let left = expression;
         while (left !== undefined) {
@@ -893,7 +895,7 @@ export class ExpressionFunctions {
             } else if (left.type === ExpressionType.Element) {
                 let value: any;
                 let error: string;
-                ({value, error} = left.children[1].tryEvaluate(state));
+                ({value, error} = left.children[1].tryEvaluate(state, options));
 
                 if (error !== undefined) {
                     return {path: undefined, left: undefined, error};
@@ -922,11 +924,11 @@ export class ExpressionFunctions {
         return {path, left, error:undefined};
     }
 
-    private static accessor(expression: Expression, state: MemoryInterface): { value: any; error: string } {
+    private static accessor(expression: Expression, state: MemoryInterface, options: Options): { value: any; error: string } {
         let path: string;
         let left: Expression;
         let error: string;
-        ({path, left, error} = ExpressionFunctions.tryAccumulatePath(expression, state));
+        ({path, left, error} = ExpressionFunctions.tryAccumulatePath(expression, state, options));
         if (error) {
             return {value: undefined, error};
         }
@@ -937,7 +939,7 @@ export class ExpressionFunctions {
         } else {
             let newScope: any;
             let err: string;
-            ({value: newScope, error: err} = left.tryEvaluate(state));
+            ({value: newScope, error: err} = left.tryEvaluate(state, options));
             if (err) {
                 return {value: undefined, error: err};
             }
@@ -946,16 +948,16 @@ export class ExpressionFunctions {
         }
     }
 
-    private static getProperty(expression: Expression, state: MemoryInterface): { value: any; error: string } {
+    private static getProperty(expression: Expression, state: MemoryInterface, options: Options): { value: any; error: string } {
         let value: any;
         let error: string;
         let instance: any;
         let property: any;
 
         const children: Expression[] = expression.children;
-        ({ value: instance, error } = children[0].tryEvaluate(state));
+        ({ value: instance, error } = children[0].tryEvaluate(state, options));
         if (!error) {
-            ({ value: property, error } = children[1].tryEvaluate(state));
+            ({ value: property, error } = children[1].tryEvaluate(state, options));
 
             if (!error) {
                 value = new SimpleObjectMemory(instance).getValue(property.toString());

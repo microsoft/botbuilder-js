@@ -15,6 +15,7 @@ export * from './extensions';
 export * from './timeZoneConverter';
 export * from './generated';
 export * from './commonRegex';
+export * from './options';
 export * from './parser';
 export * from './memory';
 export * from './regexErrorListener';
