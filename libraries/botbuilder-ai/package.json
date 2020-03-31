@@ -31,7 +31,7 @@
     "url-parse": "^1.4.4"
   },
   "devDependencies": {
-    "@microsoft/api-extractor": "^7.7.10",
+    "@microsoft/api-extractor": "^7.7.12",
     "@types/mocha": "^2.2.47",
     "@types/node-fetch": "^2.3.2",
     "codelyzer": "^4.1.0",

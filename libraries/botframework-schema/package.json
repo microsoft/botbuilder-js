@@ -20,7 +20,7 @@
   "main": "./lib/index.js",
   "typings": "./lib/index.d.ts",
   "devDependencies": {
-    "@microsoft/api-extractor": "^7.7.10",
+    "@microsoft/api-extractor": "^7.7.12",
     "typescript": "3.5.3"
   },
   "scripts": {

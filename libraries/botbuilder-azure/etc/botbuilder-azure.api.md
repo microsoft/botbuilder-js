@@ -9,7 +9,7 @@ import { ConnectionPolicy } from 'documentdb';
 import { CosmosClientOptions } from '@azure/cosmos';
 import { PagedResult } from 'botbuilder';
 import { RequestOptions } from 'documentdb';
-import { Storage } from 'botbuilder';
+import { Storage as Storage_2 } from 'botbuilder';
 import { StoreItems } from 'botbuilder';
 import { TranscriptInfo } from 'botbuilder';
 import { TranscriptStore } from 'botbuilder';
@@ -24,7 +24,7 @@ export class AzureBlobTranscriptStore implements TranscriptStore {
     }
 
 // @public
-export class BlobStorage implements Storage {
+export class BlobStorage implements Storage_2 {
     constructor(settings: BlobStorageSettings);
     // (undocumented)
     delete(keys: string[]): Promise<void>;
@@ -51,7 +51,7 @@ export namespace CosmosDbKeyEscape {
 }
 
 // @public
-export class CosmosDbPartitionedStorage implements Storage {
+export class CosmosDbPartitionedStorage implements Storage_2 {
     constructor(cosmosDbStorageOptions: CosmosDbPartitionedStorageOptions);
     // (undocumented)
     delete(keys: string[]): Promise<void>;
@@ -75,7 +75,7 @@ export interface CosmosDbPartitionedStorageOptions {
 }
 
 // @public @deprecated
-export class CosmosDbStorage implements Storage {
+export class CosmosDbStorage implements Storage_2 {
     constructor(settings: CosmosDbStorageSettings, connectionPolicyConfigurator?: (policy: ConnectionPolicy) => void);
     // (undocumented)
     delete(keys: string[]): Promise<void>;

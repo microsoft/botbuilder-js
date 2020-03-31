@@ -28,7 +28,7 @@
     "ws": "^7.1.2"
   },
   "devDependencies": {
-    "@microsoft/api-extractor": "^7.7.10",
+    "@microsoft/api-extractor": "^7.7.12",
     "@types/chai": "^4.1.7",
     "@types/node": "^10.12.18",
     "@typescript-eslint/eslint-plugin": "^1.10.2",

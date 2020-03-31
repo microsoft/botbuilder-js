@@ -52,7 +52,7 @@ import { SignInUrlResponse } from 'botframework-connector';
 import { SimpleCredentialProvider } from 'botframework-connector';
 import { SkillConversationIdFactoryBase } from 'botbuilder-core';
 import { StatusCodes } from 'botbuilder-core';
-import { Storage } from 'botbuilder-core';
+import { Storage as Storage_2 } from 'botbuilder-core';
 import { StreamingResponse } from 'botframework-streaming';
 import { TaskModuleRequest } from 'botbuilder-core';
 import { TaskModuleResponse } from 'botbuilder-core';
@@ -235,7 +235,7 @@ export class InspectionMiddleware extends InterceptionMiddleware {
 
 // @public
 export class InspectionState extends BotState {
-    constructor(storage: Storage);
+    constructor(storage: Storage_2);
     // (undocumented)
     protected getStorageKey(turnContext: TurnContext): string;
 }

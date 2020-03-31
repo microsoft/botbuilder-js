@@ -31,7 +31,7 @@
     "rsa-pem-from-mod-exp": "^0.8.4"
   },
   "devDependencies": {
-    "@microsoft/api-extractor": "^7.7.10",
+    "@microsoft/api-extractor": "^7.7.12",
     "@types/mocha": "^2.2.47",
     "codelyzer": "^4.1.0",
     "dotenv": "^5.0.1",

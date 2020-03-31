@@ -140,7 +140,7 @@ export type BotHandler = (context: TurnContext, next: () => Promise<void>) => Pr
 
 // @public
 export class BotState implements PropertyManager {
-    constructor(storage: Storage, storageKey: StorageKeyFactory);
+    constructor(storage: Storage_2, storageKey: StorageKeyFactory);
     clear(context: TurnContext): Promise<void>;
     createProperty<T = any>(name: string): StatePropertyAccessor<T>;
     delete(context: TurnContext): Promise<void>;
@@ -148,7 +148,7 @@ export class BotState implements PropertyManager {
     load(context: TurnContext, force?: boolean): Promise<any>;
     saveChanges(context: TurnContext, force?: boolean): Promise<void>;
     // (undocumented)
-    protected storage: Storage;
+    protected storage: Storage_2;
     // (undocumented)
     protected storageKey: StorageKeyFactory;
 }
@@ -243,7 +243,7 @@ export class ConsoleTranscriptLogger implements TranscriptLogger {
 
 // @public
 export class ConversationState extends BotState {
-    constructor(storage: Storage, namespace?: string);
+    constructor(storage: Storage_2, namespace?: string);
     getStorageKey(context: TurnContext): string | undefined;
     }
 
@@ -291,7 +291,7 @@ export interface IUserTokenProvider {
 }
 
 // @public
-export class MemoryStorage implements Storage {
+export class MemoryStorage implements Storage_2 {
     constructor(memory?: {
         [k: string]: string;
     });
@@ -373,7 +373,7 @@ export interface PagedResult<T> {
 
 // @public
 export class PrivateConversationState extends BotState {
-    constructor(storage: Storage, namespace?: string);
+    constructor(storage: Storage_2, namespace?: string);
     getStorageKey(context: TurnContext): string | undefined;
     }
 
@@ -487,11 +487,13 @@ export enum StatusCodes {
 }
 
 // @public
-export interface Storage {
+interface Storage_2 {
     delete(keys: string[]): Promise<void>;
     read(keys: string[]): Promise<StoreItems>;
     write(changes: StoreItems): Promise<void>;
 }
+
+export { Storage_2 as Storage }
 
 // @public
 export type StorageKeyFactory = (context: TurnContext) => Promise<string>;
@@ -733,7 +735,7 @@ export type UpdateActivityHandler = (context: TurnContext, activity: Partial<Act
 
 // @public
 export class UserState extends BotState {
-    constructor(storage: Storage, namespace?: string);
+    constructor(storage: Storage_2, namespace?: string);
     getStorageKey(context: TurnContext): string | undefined;
     }
 

@@ -31,7 +31,7 @@
     "moment-timezone": "^0.5.25"
   },
   "devDependencies": {
-    "@microsoft/api-extractor": "^7.7.10",
+    "@microsoft/api-extractor": "^7.7.12",
     "@types/jspath": "^0.4.0",
     "@types/mocha": "^5.2.5",
     "@types/node": "^10.12.18",
