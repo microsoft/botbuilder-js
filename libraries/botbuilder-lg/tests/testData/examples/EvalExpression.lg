@@ -30,7 +30,7 @@ Hi${userName}
 - ${string({ctx: value})}
 
 #template10
-- ${(addProperty({a:12}, 'b', 13)).b}
+- ${(addProperty({a:12, c: 15}, 'b', 13)).b}
 
 #template11
 - ${(setProperty({}, 'user', {age: 18})).user.age}

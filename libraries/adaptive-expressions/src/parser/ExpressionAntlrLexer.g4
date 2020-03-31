@@ -78,11 +78,9 @@ mode STRING_INTERPOLATION_MODE;
 
 STRING_INTERPOLATION_END : '`' {this.ignoreWS = true;} -> type(STRING_INTERPOLATION_START), popMode;
 
-EMPTY_OBJECT: '{' WHITESPACE* '}';
+OBJECT_DEFINITION: '{' ((WHITESPACE) | (IDENTIFIER ':' ( STRING | ~[{}\r\n'"`] | OBJECT_DEFINITION)+))* '}';
 
-OBJECT_DEFINITION: '{' (IDENTIFIER ':' (STRING | ~[{}\r\n'"`] | OBJECT_DEFINITION)+)* '}';
-
-TEMPLATE : '$' '{' (STRING | EMPTY_OBJECT | OBJECT_DEFINITION | ~[{}'"`])+ '}';
+TEMPLATE : '$' '{' (STRING | OBJECT_DEFINITION | ~[{}'"`])+ '}';
 
 ESCAPE_CHARACTER : '\\' ~[\r\n]?;
 

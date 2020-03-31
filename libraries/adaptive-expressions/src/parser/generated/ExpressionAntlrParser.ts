@@ -61,11 +61,10 @@ export class ExpressionAntlrParser extends Parser {
 	public static readonly NEWLINE = 31;
 	public static readonly STRING = 32;
 	public static readonly INVALID_TOKEN_DEFAULT_MODE = 33;
-	public static readonly EMPTY_OBJECT = 34;
-	public static readonly OBJECT_DEFINITION = 35;
-	public static readonly TEMPLATE = 36;
-	public static readonly ESCAPE_CHARACTER = 37;
-	public static readonly TEXT_CONTENT = 38;
+	public static readonly OBJECT_DEFINITION = 34;
+	public static readonly TEMPLATE = 35;
+	public static readonly ESCAPE_CHARACTER = 36;
+	public static readonly TEXT_CONTENT = 37;
 	public static readonly RULE_file = 0;
 	public static readonly RULE_expression = 1;
 	public static readonly RULE_primaryExpression = 2;
@@ -93,8 +92,8 @@ export class ExpressionAntlrParser extends Parser {
 		"MORE_OR_EQUAL", "OPEN_BRACKET", "CLOSE_BRACKET", "DOT", "OPEN_SQUARE_BRACKET", 
 		"CLOSE_SQUARE_BRACKET", "OPEN_CURLY_BRACKET", "CLOSE_CURLY_BRACKET", "COMMA", 
 		"COLON", "DOLLAR", "NUMBER", "WHITESPACE", "IDENTIFIER", "NEWLINE", "STRING", 
-		"INVALID_TOKEN_DEFAULT_MODE", "EMPTY_OBJECT", "OBJECT_DEFINITION", "TEMPLATE", 
-		"ESCAPE_CHARACTER", "TEXT_CONTENT",
+		"INVALID_TOKEN_DEFAULT_MODE", "OBJECT_DEFINITION", "TEMPLATE", "ESCAPE_CHARACTER", 
+		"TEXT_CONTENT",
 	];
 	public static readonly VOCABULARY: Vocabulary = new VocabularyImpl(ExpressionAntlrParser._LITERAL_NAMES, ExpressionAntlrParser._SYMBOLIC_NAMES, []);
 
@@ -672,10 +671,10 @@ export class ExpressionAntlrParser extends Parser {
 					this.textContent();
 					}
 					break;
-				case ExpressionAntlrParser.EMPTY_OBJECT:
+				case ExpressionAntlrParser.OBJECT_DEFINITION:
 					{
 					this.state = 104;
-					this.match(ExpressionAntlrParser.EMPTY_OBJECT);
+					this.match(ExpressionAntlrParser.OBJECT_DEFINITION);
 					}
 					break;
 				default:
@@ -685,7 +684,7 @@ export class ExpressionAntlrParser extends Parser {
 				this.state = 107;
 				this._errHandler.sync(this);
 				_la = this._input.LA(1);
-			} while (((((_la - 34)) & ~0x1F) === 0 && ((1 << (_la - 34)) & ((1 << (ExpressionAntlrParser.EMPTY_OBJECT - 34)) | (1 << (ExpressionAntlrParser.TEMPLATE - 34)) | (1 << (ExpressionAntlrParser.ESCAPE_CHARACTER - 34)) | (1 << (ExpressionAntlrParser.TEXT_CONTENT - 34)))) !== 0));
+			} while (((((_la - 34)) & ~0x1F) === 0 && ((1 << (_la - 34)) & ((1 << (ExpressionAntlrParser.OBJECT_DEFINITION - 34)) | (1 << (ExpressionAntlrParser.TEMPLATE - 34)) | (1 << (ExpressionAntlrParser.ESCAPE_CHARACTER - 34)) | (1 << (ExpressionAntlrParser.TEXT_CONTENT - 34)))) !== 0));
 			this.state = 109;
 			this.match(ExpressionAntlrParser.STRING_INTERPOLATION_START);
 			}
@@ -951,7 +950,7 @@ export class ExpressionAntlrParser extends Parser {
 	}
 
 	public static readonly _serializedATN: string =
-		"\x03\uAF6F\u8320\u479D\uB75C\u4880\u1605\u191C\uAB37\x03(\x8D\x04\x02" +
+		"\x03\uAF6F\u8320\u479D\uB75C\u4880\u1605\u191C\uAB37\x03\'\x8D\x04\x02" +
 		"\t\x02\x04\x03\t\x03\x04\x04\t\x04\x04\x05\t\x05\x04\x06\t\x06\x04\x07" +
 		"\t\x07\x04\b\t\b\x04\t\t\t\x04\n\t\n\x03\x02\x03\x02\x03\x02\x03\x03\x03" +
 		"\x03\x03\x03\x03\x03\x05\x03\x1C\n\x03\x03\x03\x03\x03\x03\x03\x03\x03" +
@@ -999,10 +998,10 @@ export class ExpressionAntlrParser extends Parser {
 		"\x04\x03\x02_`\x07\x18\x02\x02`b\x03\x02\x02\x02aP\x03\x02\x02\x02aS\x03" +
 		"\x02\x02\x02a\\\x03\x02\x02\x02be\x03\x02\x02\x02ca\x03\x02\x02\x02cd" +
 		"\x03\x02\x02\x02d\x07\x03\x02\x02\x02ec\x03\x02\x02\x02fk\x07\x03\x02" +
-		"\x02gl\x07\'\x02\x02hl\x07&\x02\x02il\x05\n\x06\x02jl\x07$\x02\x02kg\x03" +
+		"\x02gl\x07&\x02\x02hl\x07%\x02\x02il\x05\n\x06\x02jl\x07$\x02\x02kg\x03" +
 		"\x02\x02\x02kh\x03\x02\x02\x02ki\x03\x02\x02\x02kj\x03\x02\x02\x02lm\x03" +
 		"\x02\x02\x02mk\x03\x02\x02\x02mn\x03\x02\x02\x02no\x03\x02\x02\x02op\x07" +
-		"\x03\x02\x02p\t\x03\x02\x02\x02qs\x07(\x02\x02rq\x03\x02\x02\x02st\x03" +
+		"\x03\x02\x02p\t\x03\x02\x02\x02qs\x07\'\x02\x02rq\x03\x02\x02\x02st\x03" +
 		"\x02\x02\x02tr\x03\x02\x02\x02tu\x03\x02\x02\x02u\v\x03\x02\x02\x02v{" +
 		"\x05\x04\x03\x02wx\x07\x1B\x02\x02xz\x05\x04\x03\x02yw\x03\x02\x02\x02" +
 		"z}\x03\x02\x02\x02{y\x03\x02\x02\x02{|\x03\x02\x02\x02|\r\x03\x02\x02" +
@@ -1534,13 +1533,13 @@ export class StringInterpolationContext extends ParserRuleContext {
 			return this.getRuleContext(i, TextContentContext);
 		}
 	}
-	public EMPTY_OBJECT(): TerminalNode[];
-	public EMPTY_OBJECT(i: number): TerminalNode;
-	public EMPTY_OBJECT(i?: number): TerminalNode | TerminalNode[] {
+	public OBJECT_DEFINITION(): TerminalNode[];
+	public OBJECT_DEFINITION(i: number): TerminalNode;
+	public OBJECT_DEFINITION(i?: number): TerminalNode | TerminalNode[] {
 		if (i === undefined) {
-			return this.getTokens(ExpressionAntlrParser.EMPTY_OBJECT);
+			return this.getTokens(ExpressionAntlrParser.OBJECT_DEFINITION);
 		} else {
-			return this.getToken(ExpressionAntlrParser.EMPTY_OBJECT, i);
+			return this.getToken(ExpressionAntlrParser.OBJECT_DEFINITION, i);
 		}
 	}
 	constructor(parent: ParserRuleContext | undefined, invokingState: number) {

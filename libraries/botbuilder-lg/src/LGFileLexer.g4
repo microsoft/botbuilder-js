@@ -40,8 +40,6 @@ fragment NUMBER: '0'..'9';
 
 fragment WHITESPACE : ' '|'\t'|'\ufeff'|'\u00a0';
 
-fragment EMPTY_OBJECT: '{' WHITESPACE* '}';
-
 fragment STRING_LITERAL : ('\'' (('\\'('\''|'\\'))|(~'\''))*? '\'') | ('"' (('\\'('"'|'\\'))|(~'"'))*? '"');
 
 fragment STRING_INTERPOLATION : '`' (('\\'('`'|'\\'))|(~'`'))*? '`';
@@ -75,11 +73,11 @@ DASH
   ;
 
 OBJECT_DEFINITION
-  : '{' (IDENTIFIER ':' (~[{}\r\n] | OBJECT_DEFINITION)+)* '}'
+  : '{' ((WHITESPACE) | (IDENTIFIER ':' ( STRING_LITERAL | ~[{}\r\n'"`] | OBJECT_DEFINITION)+))* '}'
   ;
 
 EXPRESSION_FRAGMENT
-  : '$' '{' (STRING_LITERAL | STRING_INTERPOLATION | EMPTY_OBJECT | OBJECT_DEFINITION | ~[}'"`])+ '}'?
+  : '$' '{' (STRING_LITERAL | STRING_INTERPOLATION | OBJECT_DEFINITION | ~[}'"`])+ '}'?
   ;
 
 LEFT_SQUARE_BRACKET
