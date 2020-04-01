@@ -1482,7 +1482,8 @@ function delay(timeout: number): Promise<void> {
 function abortWebSocketUpgrade(socket: INodeSocket, code: number, message?: string): void {
     if (socket.writable) {
         const connectionHeader = `Connection: 'close'\r\n`;
-        socket.write(`HTTP/1.1 ${ code } ${ STATUS_CODES[code] }\r\n${ message }\r\n${ connectionHeader }\r\n`);
+        const writeMessage = `HTTP/1.1 ${ code } ${ STATUS_CODES[code] }\r\n${ message }\r\n${ connectionHeader }\r\n`;
+        socket.write(writeMessage);
     }
 
     socket.destroy();
