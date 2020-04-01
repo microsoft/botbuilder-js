@@ -154,12 +154,6 @@ describe('BotFrameworkAdapter Streaming tests', () => {
             };
         });
 
-        try {
-            
-        } catch (error) {
-            
-        }
-
         it('returns status code 500 when request logic is not callable', async () => {
             const adapter = new BotFrameworkAdapter(new TestAdapterSettings());
             const request = new MockHttpRequest();
