@@ -1010,11 +1010,11 @@ export class ExpressionFunctions {
 
     private static wrapGetValue(state: MemoryInterface, path: string, options: Options): any {
         let result = state.getValue(path);
-        if (result !== undefined) {
+        if (result !== undefined && result !== null) {
             return result;
         }
 
-        if(options && options.nullSubstitution !== undefined) {
+        if(options.nullSubstitution !== undefined) {
             return options.nullSubstitution(path);
         }
 

@@ -460,6 +460,8 @@ export class Expression {
         if(!Extensions.isMemoryInterface(state)) {
             state = SimpleObjectMemory.wrap(state);
         }
+
+        options = options? options : new Options();
         return this.evaluator.tryEvaluate(this, state, options);
     }
 
