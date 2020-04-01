@@ -496,11 +496,17 @@ export interface Activity {
    * An optional programmatic action accompanying this request
    */
   semanticAction?: SemanticAction;
-  /**
-   * Contains the local timezone offset of the message if present.
-   * This is parsed from localTimestamp before converting to Date.
-   */
-  localTimezoneOffset?: string;
+}
+
+/**
+ * This interface is used to preserve the original string values of dates on Activities.
+ * When an Activity is received, timestamps are converted to Dates.  Due to how Javascript
+ * Date objects are UTC, timezone offset values are lost.
+ */
+export interface ActivityTimestamps extends Activity {
+  rawTimestamp?: string;
+  rawExpiration?: string;
+  rawLocalTimestamp?: string;
 }
 
 /**
