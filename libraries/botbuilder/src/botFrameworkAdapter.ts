@@ -17,7 +17,7 @@ import { INodeBuffer, INodeSocket, IReceiveRequest, ISocket, IStreamingTransport
 import { WebRequest, WebResponse } from './interfaces';
 import { defaultPipeName, GET, POST, MESSAGES_PATH, StreamingHttpClient, TokenResolver, VERSION_PATH } from './streaming';
 
-import { validateActivity } from './activityValidator';
+import { validateAndFixActivity } from './activityValidator';
 
 /**
  * Contains settings used to configure a [BotFrameworkAdapter](xref:botbuilder.BotFrameworkAdapter) instance.
@@ -1445,7 +1445,7 @@ function parseRequest(req: WebRequest): Promise<Activity> {
     return new Promise((resolve: any, reject: any): void => {
         if (req.body) {
             try {
-                const activity = validateActivity(req.body);
+                const activity = validateAndFixActivity(req.body);
                 resolve(activity);
             } catch (err) {
                 reject(err);
@@ -1458,7 +1458,7 @@ function parseRequest(req: WebRequest): Promise<Activity> {
             req.on('end', (): void => {
                 try {
                     req.body = JSON.parse(requestData);
-                    const activity = validateActivity(req.body);
+                    const activity = validateAndFixActivity(req.body);
                     resolve(activity);
                 } catch (err) {
                     reject(err);

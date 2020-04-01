@@ -8,9 +8,9 @@
 
 import { Activity, ActivityTimestamps } from 'botbuilder-core';
 
-export function validateActivity(activity: Activity): Activity {
-    if (typeof activity !== 'object') { throw new Error(`validateActivity(): invalid request body.`); }
-    if (typeof activity.type !== 'string') { throw new Error(`validateActivity(): missing activity type.`); }
+export function validateAndFixActivity(activity: Activity): Activity {
+    if (typeof activity !== 'object') { throw new Error(`validateAndFixActivity(): invalid request body.`); }
+    if (typeof activity.type !== 'string') { throw new Error(`validateAndFixActivity(): missing activity type.`); }
     if (typeof activity.timestamp === 'string') {
         (activity as ActivityTimestamps).rawTimestamp = activity.timestamp;
         activity.timestamp = new Date(activity.timestamp);

@@ -14,7 +14,7 @@ import { WebRequest, WebResponse } from './interfaces';
 
 export type RouteHandler = (request: WebRequest, response: WebResponse) => void;
 
-import { validateActivity } from './activityValidator';
+import { validateAndFixActivity } from './activityValidator';
 
 /**
  * Interface representing an Express Application or a Restify Server.
@@ -244,7 +244,7 @@ export class ChannelServiceRoutes {
         return new Promise((resolve, reject) => {
             if (req.body) {
                 try {
-                    const activity = validateActivity(req.body);
+                    const activity = validateAndFixActivity(req.body);
                     resolve(activity);
                 } catch (err) {
                     reject(new StatusCodeError(StatusCodes.BAD_REQUEST, err.message));
@@ -257,7 +257,7 @@ export class ChannelServiceRoutes {
                 req.on('end', () => {
                     try {
                         const body = JSON.parse(requestData);
-                        const activity = validateActivity(body);
+                        const activity = validateAndFixActivity(body);
                         resolve(activity);
                     } catch (err) {
                         reject(new StatusCodeError(StatusCodes.BAD_REQUEST, err.message));
