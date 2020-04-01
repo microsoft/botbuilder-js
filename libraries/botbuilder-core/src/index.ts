@@ -38,7 +38,6 @@ export {
     SkillConversationReference,
     SkillConversationIdFactoryOptions } from './skills';
 export * from './skypeMentionNormalizeMiddleware';
-export * from './statusCodes';
 export * from './storage';
 export * from './telemetryLoggerMiddleware';
 export * from './testAdapter';

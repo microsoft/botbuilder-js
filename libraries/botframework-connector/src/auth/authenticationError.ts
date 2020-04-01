@@ -1,11 +1,8 @@
 /**
- * @module botbuilder
- */
-/**
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { StatusCodes } from '../../../botbuilder-core';
+import { StatusCodes } from 'botframework-schema';
 
 export class AuthenticationError extends Error {
     constructor(
