@@ -58,17 +58,20 @@ export class FunctionTable implements Map<string, ExpressionEvaluator> {
 
     }
 
-    public add(item: {key: string; value: ExpressionEvaluator} | string, value?: ExpressionEvaluator | customFunction): void{
+    public add(item: {key: string; value: ExpressionEvaluator}): void;
+    public add(key: string, value: ExpressionEvaluator): void;
+    public add(key: string, value: customFunction): void;
+    public add(param1: {key: string; value: ExpressionEvaluator} | string, param2?: ExpressionEvaluator | customFunction): void{
         if(arguments.length === 1) {
-            if (item instanceof Object) {
-                this.set(item.key, item.value);
+            if (param1 instanceof Object) {
+                this.set(param1.key, param1.value);
             }
         } else {
-            if (typeof item === 'string') {
-                if (value instanceof ExpressionEvaluator){
-                    this.set(item, value);
+            if (typeof param1 === 'string') {
+                if (param2 instanceof ExpressionEvaluator){
+                    this.set(param1, param2);
                 } else {
-                    this.set(item, new ExpressionEvaluator(item, ExpressionFunctions.apply(value)));
+                    this.set(param1, new ExpressionEvaluator(param1, ExpressionFunctions.apply(param2)));
                 }
             } 
         }
