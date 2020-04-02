@@ -125,7 +125,7 @@ describe('BotFrameworkAdapter Streaming tests', () => {
             } catch (err) {
                 expect(err.message).to.equal('Unauthorized. No valid identity.');
                 // expect(err.message).to.equal('Unauthorized. Is not authenticated');
-                const socketResponse = MockNetSocket.createResponseFromError(err);
+                const socketResponse = MockNetSocket.createNonSuccessResponse(401, err.message);
                 expect(writeSpy.called).to.be.true;
                 expect(writeSpy.calledWithExactly(socketResponse)).to.be.true;
                 expect(destroySpy.calledOnceWithExactly()).to.be.true;
@@ -148,7 +148,7 @@ describe('BotFrameworkAdapter Streaming tests', () => {
                 });
             } catch (err) {
                 expect(err.message).to.equal("'authHeader' required.");
-                const socketResponse = MockNetSocket.createResponseFromError(err);
+                const socketResponse = MockNetSocket.createNonSuccessResponse(400, err.message);
                 expect(writeSpy.called, 'write() was not called').to.be.true;
                 expect(writeSpy.calledWithExactly(socketResponse)).to.be.true;
                 expect(destroySpy.calledOnceWithExactly()).to.be.true;

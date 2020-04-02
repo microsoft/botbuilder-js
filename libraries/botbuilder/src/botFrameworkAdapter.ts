@@ -10,7 +10,7 @@ import { STATUS_CODES } from 'http';
 import * as os from 'os';
 
 import { Activity, ActivityTypes, CoreAppCredentials, BotAdapter, BotCallbackHandlerKey, ChannelAccount, ConversationAccount, ConversationParameters, ConversationReference, ConversationsResult, DeliveryModes, ExpectedReplies, ExtendedUserTokenProvider, InvokeResponse, INVOKE_RESPONSE_KEY, IStatusCodeError, ResourceResponse, StatusCodes, TokenResponse, TurnContext } from 'botbuilder-core';
-import { AuthenticationConfiguration, AuthenticationConstants, ChannelValidation, Claim, ClaimsIdentity, ConnectorClient, EmulatorApiClient, GovernmentConstants, GovernmentChannelValidation, JwtTokenValidation, MicrosoftAppCredentials, AppCredentials, CertificateAppCredentials, SimpleCredentialProvider, TokenApiClient, TokenStatus, TokenApiModels, SignInUrlResponse, SkillValidation, TokenExchangeRequest } from 'botframework-connector';
+import { AuthenticationConfiguration, AuthenticationConstants, ChannelValidation, Claim, ClaimsIdentity, ConnectorClient, EmulatorApiClient, GovernmentConstants, GovernmentChannelValidation, JwtTokenValidation, MicrosoftAppCredentials, AppCredentials, CertificateAppCredentials, SimpleCredentialProvider, TokenApiClient, TokenStatus, TokenApiModels, SignInUrlResponse, SkillValidation, TokenExchangeRequest, AuthenticationError } from 'botframework-connector';
 
 import { INodeBuffer, INodeSocket, IReceiveRequest, ISocket, IStreamingTransportServer, NamedPipeServer, NodeWebSocketFactory, NodeWebSocketFactoryBase, RequestHandler, StreamingResponse, WebSocketServer } from 'botframework-streaming';
 
@@ -1334,12 +1334,7 @@ export class BotFrameworkAdapter extends BotAdapter implements ExtendedUserToken
         try {
             await this.authenticateConnection(req, this.settings.channelService);
         } catch (err) {
-            // If the authenticateConnection call fails, send back the correct error code and close
-            // the connection.
-            this.abortWebSocketUpgrade(socket, err);
-
-
-            // Re-throw the error so the developer will know what occurred.
+            writeErrAndDestroySocket(socket, err);
             throw err;
         }
 
@@ -1364,16 +1359,6 @@ export class BotFrameworkAdapter extends BotAdapter implements ExtendedUserToken
         AppCredentials.trustServiceUrl(serviceUrl);
 
         if (!claims.isAuthenticated) { throw new Error('Unauthorized Access. Request is not authorized'); }
-    }
-
-    private abortWebSocketUpgrade(socket: INodeSocket, error: IStatusCodeError): void {
-        if (socket.writable) {
-            const connectionHeader = `Connection: 'close'\r\n`;
-            const writeMessage = `HTTP/1.1 ${ error.statusCode } ${ StatusCodes[error.statusCode] }\r\n${ error.message }\r\n${ connectionHeader }\r\n`;
-            socket.write(writeMessage);
-        }
-    
-        socket.destroy();
     }
 
     /**
@@ -1478,6 +1463,50 @@ function delay(timeout: number): Promise<void> {
     return new Promise((resolve): void => {
         setTimeout(resolve, timeout);
     });
+}
+
+/**
+* Creates an error message with status code to write to socket, then closes the connection.
+* 
+* @param socket The raw socket connection between the bot (server) and channel/caller (client).
+* @param err The error. If the error includes a status code, it will be included in the message written to the socket.
+*/
+function writeErrAndDestroySocket(socket: INodeSocket, err: any): void {
+    if (socket.writable) {
+        const connectionHeader = `Connection: 'close'\r\n`;
+
+        let message = '';
+        AuthenticationError.isStatusCodeError(err) ? 
+            message = `HTTP/1.1 ${ err.statusCode } ${ StatusCodes[err.statusCode] }\r\n${ err.message }\r\n${ connectionHeader }\r\n`
+            : message = determineStatusCodeAndBuildMessage(err);
+        
+        socket.write(message);
+    }
+    socket.destroy();
+}
+
+
+function determineStatusCodeAndBuildMessage(err: any): string {
+    let code: number;
+    let errMessage = err.message || 'Internet Server Error';
+    const connectionHeader = `Connection: 'close'\r\n`;
+    
+    let builtMessage = '';
+    code = determineStatusCode(errMessage);
+    builtMessage = `HTTP/1.1 ${ code } ${ StatusCodes[code] }\r\n${ errMessage }\r\n${ connectionHeader }\r\n`;
+    
+    return builtMessage;
+}
+
+function determineStatusCode(message: string): StatusCodes {
+    if (typeof(message) === 'string') {
+        if (message.toLowerCase().startsWith('unauthorized')) {
+            return 401;
+        } else if (message.toLowerCase().startsWith(`'authheader'`)) {
+            return 400;
+        } 
+    }
+    return 500;
 }
 
 function abortWebSocketUpgrade(socket: INodeSocket, code: number, message?: string): void {
