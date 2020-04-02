@@ -14,6 +14,8 @@ import { WebRequest, WebResponse } from './interfaces';
 
 export type RouteHandler = (request: WebRequest, response: WebResponse) => void;
 
+import { validateAndFixActivity } from './activityValidator';
+
 /**
  * Interface representing an Express Application or a Restify Server.
  */
@@ -240,18 +242,10 @@ export class ChannelServiceRoutes {
 
     private static readActivity(req: WebRequest): Promise<Activity> {
         return new Promise((resolve, reject) => {
-            function returnActivity(activity) {
-                if (typeof activity !== 'object') { throw new Error(`Invalid request body.`); }
-                if (typeof activity.type !== 'string') { throw new Error(`Missing activity type.`); }
-                if (typeof activity.timestamp === 'string') { activity.timestamp = new Date(activity.timestamp); }
-                if (typeof activity.localTimestamp === 'string') { activity.localTimestamp = new Date(activity.localTimestamp); }
-                if (typeof activity.expiration === 'string') { activity.expiration = new Date(activity.expiration); }
-                resolve(activity);
-            }
-    
             if (req.body) {
                 try {
-                    returnActivity(req.body);
+                    const activity = validateAndFixActivity(req.body);
+                    resolve(activity);
                 } catch (err) {
                     reject(new StatusCodeError(StatusCodes.BAD_REQUEST, err.message));
                 }
@@ -263,7 +257,8 @@ export class ChannelServiceRoutes {
                 req.on('end', () => {
                     try {
                         const body = JSON.parse(requestData);
-                        returnActivity(body);
+                        const activity = validateAndFixActivity(body);
+                        resolve(activity);
                     } catch (err) {
                         reject(new StatusCodeError(StatusCodes.BAD_REQUEST, err.message));
                     }
