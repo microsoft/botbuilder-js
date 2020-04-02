@@ -107,7 +107,7 @@ export class ExpressionParser implements ExpressionParserInterface {
                 return new Constant(numberValue);
             }
 
-            throw Error(`${ context.text } is not a number.`);
+            throw new Error(`${ context.text } is not a number.`);
         }
 
         public visitParenthesisExp = (context: ep.ParenthesisExpContext): Expression => this.visit(context.expression());
@@ -183,7 +183,7 @@ export class ExpressionParser implements ExpressionParserInterface {
 
         private readonly makeExpression = (functionType: string, ...children: Expression[]): Expression => {
             if (!this._lookupFunction(functionType)) {
-                throw Error(`${ functionType } does not have an evaluator, it's not a built-in function or a custom function.`);
+                throw new Error(`${ functionType } does not have an evaluator, it's not a built-in function or a custom function.`);
             }
 
             return Expression.makeExpression(functionType, this._lookupFunction(functionType), ...children);
