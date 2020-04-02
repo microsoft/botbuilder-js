@@ -1910,3 +1910,8 @@ export enum StatusCodes {
   NOT_IMPLEMENTED = 501,
   BAD_GATEWAY = 502
 }
+
+export interface IStatusCodeError {
+  statusCode: StatusCodes;
+  message?: string;
+}

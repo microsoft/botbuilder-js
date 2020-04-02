@@ -13,6 +13,8 @@ import { GovernmentConstants } from './governmentConstants';
 import { ICredentialProvider } from './credentialProvider';
 import { JwtTokenExtractor } from './jwtTokenExtractor';
 import { JwtTokenValidation } from './jwtTokenValidation';
+import { AuthenticationError } from './authenticationError';
+import { StatusCodes } from 'botframework-schema';
 
 /**
  * Validates and Examines JWT tokens from the Bot Framework Emulator
@@ -119,12 +121,12 @@ export namespace EmulatorValidation {
         const identity: ClaimsIdentity = await tokenExtractor.getIdentityFromAuthHeader(authHeader, channelId, authConfig.requiredEndorsements);
         if (!identity) {
             // No valid identity. Not Authorized.
-            throw new Error('Unauthorized. No valid identity.');
+            throw new AuthenticationError('Unauthorized. No valid identity.', StatusCodes.UNAUTHORIZED);
         }
 
         if (!identity.isAuthenticated) {
             // The token is in some way invalid. Not Authorized.
-            throw new Error('Unauthorized. Is not authenticated');
+            throw new AuthenticationError('Unauthorized. Is not authenticated', StatusCodes.UNAUTHORIZED);
         }
 
         // Now check that the AppID in the claimset matches
@@ -133,7 +135,7 @@ export namespace EmulatorValidation {
         // Async validation.
         const versionClaim: string = identity.getClaimValue(AuthenticationConstants.VersionClaim);
         if (versionClaim === null) {
-            throw new Error('Unauthorized. "ver" claim is required on Emulator Tokens.');
+            throw new AuthenticationError('Unauthorized. "ver" claim is required on Emulator Tokens.', StatusCodes.UNAUTHORIZED);
         }
 
         let appId = '';
@@ -146,7 +148,7 @@ export namespace EmulatorValidation {
             const appIdClaim: string = identity.getClaimValue(AuthenticationConstants.AppIdClaim);
             if (!appIdClaim) {
                 // No claim around AppID. Not Authorized.
-                throw new Error('Unauthorized. "appid" claim is required on Emulator Token version "1.0".');
+                throw new AuthenticationError('Unauthorized. "appid" claim is required on Emulator Token version "1.0".', StatusCodes.UNAUTHORIZED);
             }
 
             appId = appIdClaim;
@@ -155,17 +157,17 @@ export namespace EmulatorValidation {
             const appZClaim: string = identity.getClaimValue(AuthenticationConstants.AuthorizedParty);
             if (!appZClaim) {
                 // No claim around AppID. Not Authorized.
-                throw new Error('Unauthorized. "azp" claim is required on Emulator Token version "2.0".');
+                throw new AuthenticationError('Unauthorized. "azp" claim is required on Emulator Token version "2.0".', StatusCodes.UNAUTHORIZED);
             }
 
             appId = appZClaim;
         } else {
             // Unknown Version. Not Authorized.
-            throw new Error(`Unauthorized. Unknown Emulator Token version "${ versionClaim }".`);
+            throw new AuthenticationError(`Unauthorized. Unknown Emulator Token version "${ versionClaim }".`, StatusCodes.UNAUTHORIZED);
         }
 
         if (!await credentials.isValidAppId(appId)) {
-            throw new Error(`Unauthorized. Invalid AppId passed on token: ${ appId }`);
+            throw new AuthenticationError(`Unauthorized. Invalid AppId passed on token: ${ appId }`, StatusCodes.UNAUTHORIZED);
         }
 
         return identity;

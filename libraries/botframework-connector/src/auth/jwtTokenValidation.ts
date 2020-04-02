@@ -5,9 +5,10 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { Activity } from 'botframework-schema';
+import { Activity, StatusCodes } from 'botframework-schema';
 
 import { AppCredentials } from './appCredentials';
+import { AuthenticationError } from './authenticationError';
 import { AuthenticationConfiguration } from './authenticationConfiguration';
 import { AuthenticationConstants } from './authenticationConstants';
 import { ChannelValidation } from './channelValidation';
@@ -46,7 +47,7 @@ export namespace JwtTokenValidation {
                 return new ClaimsIdentity([], true);
             }
 
-            throw new Error('Unauthorized Access. Request is not authorized');
+            throw new AuthenticationError('Unauthorized Access. Request is not authorized', StatusCodes.UNAUTHORIZED);
         }
 
         const claimsIdentity: ClaimsIdentity =
@@ -65,7 +66,7 @@ export namespace JwtTokenValidation {
         serviceUrl: string = '',
         authConfig: AuthenticationConfiguration = new AuthenticationConfiguration()
     ): Promise<ClaimsIdentity> {
-        if (!authHeader.trim()) { throw new Error('\'authHeader\' required.'); }
+        if (!authHeader.trim()) { throw new AuthenticationError('\'authHeader\' required.', StatusCodes.BAD_REQUEST); }
 
         const identity = await authenticateToken(authHeader, credentials, channelService, channelId, authConfig, serviceUrl);
 

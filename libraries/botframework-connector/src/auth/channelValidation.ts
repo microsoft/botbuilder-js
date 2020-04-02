@@ -51,7 +51,7 @@ export namespace ChannelValidation {
         const serviceUrlClaim: string = identity.getClaimValue(AuthenticationConstants.ServiceUrlClaim);
         if (serviceUrlClaim !== serviceUrl) {
             // Claim must match. Not Authorized.
-            throw new Error('Unauthorized. ServiceUrl claim do not match.');
+            throw new AuthenticationError('Unauthorized. ServiceUrl claim do not match.', StatusCodes.UNAUTHORIZED);
         }
 
         return identity;
