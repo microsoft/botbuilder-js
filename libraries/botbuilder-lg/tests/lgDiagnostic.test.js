@@ -85,7 +85,7 @@ describe(`LGExceptionTest`, function() {
     it(`TestErrorStructuredTemplate`, function() {
         var diagnostics = GetDiagnostics(`ErrorStructuredTemplate.lg`);
 
-        assert.strictEqual(5, diagnostics.length);
+        assert.strictEqual(8, diagnostics.length);
         assert.strictEqual(DiagnosticSeverity.Error, diagnostics[0].severity);
         assert.strictEqual(diagnostics[0].message.includes(TemplateErrors.invalidStrucBody), true);
         assert.strictEqual(DiagnosticSeverity.Error, diagnostics[1].severity);
@@ -96,6 +96,12 @@ describe(`LGExceptionTest`, function() {
         assert.strictEqual(diagnostics[3].message.includes(`Error occurred when parsing expression 'NOTemplate()'. NOTemplate does not have an evaluator`), true);
         assert.strictEqual(DiagnosticSeverity.Error, diagnostics[4].severity);
         assert.strictEqual(diagnostics[4].message.includes(TemplateErrors.invalidStrucName), true);
+        assert.strictEqual(DiagnosticSeverity.Error, diagnostics[5].severity);
+        assert.strictEqual(diagnostics[5].message.includes(TemplateErrors.invalidStrucName), true);
+        assert.strictEqual(DiagnosticSeverity.Error, diagnostics[6].severity);
+        assert.strictEqual(diagnostics[6].message.includes(TemplateErrors.missingStrucEnd), true);
+        assert.strictEqual(DiagnosticSeverity.Error, diagnostics[7].severity);
+        assert.strictEqual(diagnostics[7].message.includes(TemplateErrors.invalidStrucBody), true);
     });
 
     it(`TestErrorTemplateName`, function() {
@@ -230,7 +236,7 @@ describe(`LGExceptionTest`, function() {
 
         assert.throws(() => templates.evaluate(`structured2`), Error(`'dialog.abc' evaluated to null. [template1]  Error occurred when evaluating '-I want \${dialog.abc}'. [structured2] Property 'Text': Error occurred when evaluating 'Text=I want \${template1()}'. `));
         
-        assert.throws(() => templates.evaluate(`structured3`), Error(`'dialog.abc' evaluated to null. [template1]  Error occurred when evaluating '-I want \${dialog.abc}'. [structured2] Property 'Text': Error occurred when evaluating 'Text=I want \${template1()}'. [structured3]  Error occurred when evaluating '\${structured2()}'. `))
+        assert.throws(() => templates.evaluate(`structured3`), Error(`'dialog.abc' evaluated to null. [template1]  Error occurred when evaluating '-I want \${dialog.abc}'. [structured2] Property 'Text': Error occurred when evaluating 'Text=I want \${template1()}'. [structured3]  Error occurred when evaluating '\${structured2()}'. `));
         
         assert.throws(() => templates.evaluate(`switchcase1`, { turn : { testValue : 1 } }), Error(`'dialog.abc' evaluated to null. [switchcase1] Case '\${1}': Error occurred when evaluating '-I want \${dialog.abc}'. `));
         
