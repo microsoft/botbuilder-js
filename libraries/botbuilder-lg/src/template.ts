@@ -98,11 +98,10 @@ export class Template {
     }
 
     private getRangeContent(originString: string, startLine: number, stopLine: number): string {
-        if (startLine < 0 || startLine > stopLine) {
+        const originList: string[] = TemplateExtensions.readLine(originString);
+        if (startLine < 0 || startLine > stopLine || stopLine >= originList.length) {
             throw new Error(`index out of range.`);
         }
-
-        const originList: string[] = TemplateExtensions.readLine(originString);
 
         const destList: string[] = originList.slice(startLine, stopLine + 1);
 

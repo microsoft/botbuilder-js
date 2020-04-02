@@ -5,13 +5,14 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { ExpressionFunctions } from './expressionFunctions';
+import { FunctionTable } from './functionTable';
 import { Constant } from './constant';
 import { ExpressionEvaluator, EvaluateExpressionDelegate, EvaluatorLookup } from './expressionEvaluator';
 import { ExpressionType } from './expressionType';
 import { SimpleObjectMemory, MemoryInterface } from './memory';
 import { Extensions } from './extensions';
 import { ExpressionParser } from './parser';
+import { Options } from './options';
 
 /**
  * Type expected from evalating an expression.
@@ -67,95 +68,11 @@ export class Expression {
     protected readonly evaluator: ExpressionEvaluator;
 
     /**
-     * FunctionTable is a dictionary which merges BuiltinFunctions.Functions with a CustomDictionary.
-     */
-    private static readonly FunctionTable = class implements Map<string, ExpressionEvaluator> {
-        private readonly customFunctions = new Map<string, ExpressionEvaluator>();
-
-        public keys(): IterableIterator<string> {
-            const keysOfAllFunctions = Array.from(ExpressionFunctions.standardFunctions.keys()).concat(Array.from(this.customFunctions.keys()));
-            return keysOfAllFunctions[Symbol.iterator]();
-        }
-
-        public values(): IterableIterator<ExpressionEvaluator> {
-            const valuesOfAllFunctions = Array.from(ExpressionFunctions.standardFunctions.values()).concat(Array.from(this.customFunctions.values()));
-            return valuesOfAllFunctions[Symbol.iterator]();
-        }
-
-        public get size(): number {
-            return ExpressionFunctions.standardFunctions.size + this.customFunctions.size;
-        }
-
-        public get isReadOnly(): boolean { 
-            return false;
-        }
-
-        public get(key: string): ExpressionEvaluator {
-
-            if(ExpressionFunctions.standardFunctions.get(key)) {
-                return ExpressionFunctions.standardFunctions.get(key);
-            }
-
-            if (this.customFunctions.get(key)) {
-                return this.customFunctions.get(key);
-            }
-
-            return undefined;
-        }
-
-        public set(key: string, value: ExpressionEvaluator): this {
-            if(ExpressionFunctions.standardFunctions.get(key)) {
-                throw Error(`You can't overwrite a built in function.`);
-            }
-
-            this.customFunctions.set(key, value);
-            return this;
-
-        }
-
-        public add(item: {key: string; value: ExpressionEvaluator} | string, value: ExpressionEvaluator|undefined): void{
-            if(arguments.length === 1 && item instanceof Object) {
-                this.set(item.key, item.value);
-            } else if (arguments.length == 2 && typeof item === 'string') {
-                this.set(item, value);
-            }
-        }
-
-        public clear(): void {
-            this.customFunctions.clear();
-        }
-
-        public has(key: string): boolean {
-            return ExpressionFunctions.standardFunctions.has(key) || this.customFunctions.has(key);
-        }
-
-        public delete(key: string): boolean {
-            return this.customFunctions.delete(key);
-        }
-
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        public forEach(_callbackfn: (value: ExpressionEvaluator, key: string, map: Map<string, ExpressionEvaluator>) => void, thisArg?: any): void {
-            throw Error(`forEach function not implemented`);
-        }
-
-        public entries(): IterableIterator<[string, ExpressionEvaluator]> {
-            throw Error(`entries function not implemented`);
-        }
-
-        public get [Symbol.iterator](): () => IterableIterator<[string, ExpressionEvaluator]>  {
-            throw Error(`Symbol.iterator function not implemented`);
-        }
-
-        public get [Symbol.toStringTag](): string {
-            throw Error(`Symbol.toStringTag function not implemented`);
-        }
-    }
-    /**
      * Dictionary of function => ExpressionEvaluator.
      * This is all available functions, you can add custom functions to it, but you cannot
      * replace builtin functions.  If you clear the dictionary, it will be reset to the built in functions.
      */
-    public static readonly functions: Map<string, ExpressionEvaluator> = new Expression.FunctionTable();
+    public static readonly functions: FunctionTable = new FunctionTable();
 
     /**
      * expression constructor.
@@ -360,7 +277,7 @@ export class Expression {
      */	
     public static lambda(func: (arg0: any) => any): Expression {
         return new Expression(ExpressionType.Lambda, new ExpressionEvaluator(ExpressionType.Lambda,
-            (_expression: Expression, state: any): { value: any; error: string } => {
+            (_expression: Expression, state: any, _: Options): { value: any; error: string } => {
                 let value: any;
                 let error: string;
                 try {
@@ -455,11 +372,13 @@ export class Expression {
      * Global state to evaluate accessor expressions against.  Can Dictionary be otherwise reflection is used to access property and then indexer.
      * @param state
      */
-    public tryEvaluate(state: MemoryInterface | any): { value: any; error: string } {
+    public tryEvaluate(state: MemoryInterface | any, options: Options = undefined): { value: any; error: string } {
         if(!Extensions.isMemoryInterface(state)) {
             state = SimpleObjectMemory.wrap(state);
         }
-        return this.evaluator.tryEvaluate(this, state);
+
+        options = options? options : new Options();
+        return this.evaluator.tryEvaluate(this, state, options);
     }
 
     public toString(): string {
