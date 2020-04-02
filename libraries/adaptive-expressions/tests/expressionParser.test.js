@@ -28,7 +28,7 @@ const dataSource = [
     ['`\\${world}`', '${world}'],
     ['length(`hello ${world}`)', 'hello world'.length],
     ['json(`{"foo": "${hello}","item": "${world}"}`).foo', 'hello'],
-    ['json(`{"foo": "${{text:"hello"}}","item": "${world}"}`).foo.text', 'hello'],
+    ['json(`{"foo":${{text:"hello"}},"item": "${world}"}`).foo.text', 'hello'],
     ['`hi\\`[1,2,3]`', 'hi`[1,2,3]'],
     ['`hi ${[\'jack`\', \'queen\', \'king\']}`', 'hi jack`,queen,king'],
     ['`abc ${concat("[", "]")}`', 'abc []'],
@@ -534,6 +534,7 @@ const dataSource = [
     
     //Object manipulation and construction functions tests
     ['string(addProperty(json(\'{"key1":"value1"}\'), \'key2\',\'value2\'))', '{"key1":"value1","key2":"value2"}'],
+    ['foreach(items, x, addProperty({}, "a", x))[0].a', 'zero'],
     ['string(addProperty({"key1":"value1"}, \'key2\',\'value2\'))', '{"key1":"value1","key2":"value2"}'],
     ['string(setProperty(json(\'{"key1":"value1"}\'), \'key1\',\'value2\'))', '{"key1":"value2"}'],
     ['string(setProperty({"key1":"value1"}, \'key1\',\'value2\'))', '{"key1":"value2"}'],
@@ -727,7 +728,6 @@ describe('expression parser functional test', () => {
             assert(error === undefined, `input: ${ input }, Has error: ${ error }`);
 
             const expected = data[1];
-
             assertObjectEquals(actual, expected);
 
             //Assert ExpectedRefs
@@ -833,8 +833,10 @@ describe('expression parser functional test', () => {
 });
 
 var assertObjectEquals = (actual, expected) => {
-    if (actual === undefined || expected === undefined) {
+    if (actual === undefined && expected === undefined) {
         return;
+    } else if(actual === undefined || expected === undefined) {
+        assert.fail();
     } else if (typeof actual === 'number' && typeof expected === 'number') {
         assert.equal(parseFloat(actual), parseFloat(expected), `actual is: ${ actual }, expected is ${ expected }`);
     } else if (Array.isArray(actual) && Array.isArray(expected)) {

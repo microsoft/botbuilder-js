@@ -130,7 +130,7 @@ export class ExpressionParser implements ExpressionParserInterface {
         }
 
         public visitJsonCreationExp(context: ep.JsonCreationExpContext): Expression {
-            let expr: Expression = new Constant({});
+            let expr: Expression = this.makeExpression(ExpressionType.Json, new Constant('{}'));
             if (context.keyValuePairList()) {
                 for (const kvPair of context.keyValuePairList().keyValuePair()) {
                     let key = '';
