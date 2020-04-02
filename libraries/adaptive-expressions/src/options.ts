@@ -12,7 +12,7 @@
 
 
 export class Options {
-    public nullSubstitution: (name: string) => object;
+    public nullSubstitution: (path: string) => any;
 
     public constructor(opt?: Options) {
         this.nullSubstitution = opt? opt.nullSubstitution : undefined;
