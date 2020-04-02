@@ -102,7 +102,7 @@ export class Templates implements Iterable<Template> {
                     return { done: true, value: undefined };
                 }
             }
-        }
+        };
     }
 
     /**
@@ -310,26 +310,15 @@ export class Templates implements Iterable<Template> {
     }
 
     private replaceRangeContent(originString: string, startLine: number, stopLine: number, replaceString: string): string {
-
-        if (startLine < 0 || startLine > stopLine) {
+        const originList: string[] = TemplateExtensions.readLine(originString);
+        if (startLine < 0 || startLine > stopLine || stopLine >= originList.length) {
             throw new Error('index out of range.');
         }
 
-        const originList: string[] = TemplateExtensions.readLine(originString);
         const destList: string[] = [];
-        let replaced = false;
-        for (let lineNumber = 0; lineNumber < originList.length; lineNumber++) {
-            if (lineNumber < startLine || lineNumber > stopLine) {
-                destList.push(originList[lineNumber]);
-            } else {
-                if (!replaced) {
-                    replaced = true;
-                    if (replaceString) {
-                        destList.push(replaceString);
-                    }
-                }
-            }
-        }
+        destList.push(...originList.slice(0, startLine + 1));
+        destList.push(replaceString);
+        destList.push(...originList.slice(stopLine + 1));
 
         return destList.join(this.newLine);
     }
@@ -341,12 +330,7 @@ export class Templates implements Iterable<Template> {
 
         const replaceList: string[] = TemplateExtensions.readLine(templateBody);
         const destList: string[] = replaceList.map((u: string): string => {
-            const isStartWithHash: boolean = u.trimLeft().startsWith('#');
-            if (isStartWithHash) {
-                return `- ${ u.trimLeft() }`;
-            } else {
-                return u;
-            }
+            return u.trimLeft().startsWith('#') ? `- ${ u.trimLeft() }` : u;
         });
 
         return destList.join(this.newLine);
