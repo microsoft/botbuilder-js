@@ -316,7 +316,7 @@ export class Templates implements Iterable<Template> {
         }
 
         const destList: string[] = [];
-        destList.push(...originList.slice(0, startLine + 1));
+        destList.push(...originList.slice(0, startLine));
         destList.push(replaceString);
         destList.push(...originList.slice(stopLine + 1));
 
