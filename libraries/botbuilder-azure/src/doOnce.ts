@@ -7,13 +7,15 @@
  */
 
 export class DoOnce<T> {
-    private task: Promise<T>;
+    private task: {
+        [dbAndContainerKey: string]: Promise<T>;
+    } = {};
 
-    public waitFor(fn: () => Promise<T>): Promise<T> {
-        if (!this.task) {
-            this.task = fn();
+    public waitFor(dbAndContainerKey: string, fn: () => Promise<T>): Promise<T> {
+        if (!this.task[dbAndContainerKey]) {
+            this.task[dbAndContainerKey] = fn();
         }
 
-        return this.task;
+        return this.task[dbAndContainerKey];
     }
 }

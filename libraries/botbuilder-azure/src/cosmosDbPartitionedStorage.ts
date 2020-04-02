@@ -244,7 +244,8 @@ export class CosmosDbPartitionedStorage implements Storage {
                     ...this.cosmosDbStorageOptions.cosmosClientOptions,
                 });
             }
-            this.container = await _doOnce.waitFor(async ()=> await this.getOrCreateContainer());
+            const dbAndContainerKey = `${ this.cosmosDbStorageOptions.databaseId }-${ this.cosmosDbStorageOptions.containerId }`;
+            this.container = await _doOnce.waitFor(dbAndContainerKey, async () => await this.getOrCreateContainer());
         }
     }
     
