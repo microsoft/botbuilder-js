@@ -13,7 +13,12 @@ export class DoOnce<T> {
 
     public waitFor(dbAndContainerKey: string, fn: () => Promise<T>): Promise<T> {
         if (!this.task[dbAndContainerKey]) {
-            this.task[dbAndContainerKey] = fn();
+            // Surround in a try/catch so that if container creation fails, it can retry and succeed later.
+            try {
+                this.task[dbAndContainerKey] = fn();
+            } catch (err) {
+                console.error(err);
+            }
         }
 
         return this.task[dbAndContainerKey];
