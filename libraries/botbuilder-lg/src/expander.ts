@@ -319,29 +319,14 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGFi
 
         if (this.strictMode && (error || !result))
         {
-            let errorMsg = '';
-
-            let childErrorMsg = '';
-            if (error)
-            {
-                childErrorMsg += error;
-            }
-            else if (!result)
-            {
-                childErrorMsg += TemplateErrors.nullExpression(exp);
-            }
-
-            if (context)
-            {
-                errorMsg += TemplateErrors.errorExpression(context.text, this.currentTarget().templateName, errorPrefix);
-            }
+            const templateName = this.currentTarget().templateName;
 
             if (this.evaluationTargetStack.length > 0)
             {
                 this.evaluationTargetStack.pop();
             }
 
-            throw new Error(childErrorMsg + errorMsg);
+            Evaluator.checkExpressionResult(exp, error, result, templateName, context, errorPrefix);
         } else if (error || !result)
         {
             return false;
@@ -358,29 +343,14 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGFi
 
         if (error || (result ===  undefined && this.strictMode))
         {
-            let errorMsg = '';
-
-            let childErrorMsg = '';
-            if (error)
-            {
-                childErrorMsg += error;
-            }
-            else if (result === undefined)
-            {
-                childErrorMsg += TemplateErrors.nullExpression(exp);
-            }
-
-            if (context !== undefined)
-            {
-                errorMsg += TemplateErrors.errorExpression(context.text, this.currentTarget().templateName, errorPrefix);
-            }
+            const templateName = this.currentTarget().templateName;
 
             if (this.evaluationTargetStack.length > 0)
             {
                 this.evaluationTargetStack.pop();
             }
 
-            throw new Error(childErrorMsg + errorMsg);
+            Evaluator.checkExpressionResult(exp, error, result, templateName, context, errorPrefix);
         } else if (result === undefined && !this.strictMode)
         {
             result = `null`;

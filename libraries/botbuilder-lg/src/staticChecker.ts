@@ -308,7 +308,8 @@ export class StaticChecker extends AbstractParseTreeVisitor<Diagnostic[]> implem
             try {
                 this.expressionParser.parse(exp);
             } catch (e) {
-                const errorMsg = prefix + TemplateErrors.expressionParseError(exp) + e.message;
+                const suffixErrorMsg = Evaluator.concatErrorMsg(TemplateErrors.expressionParseError(exp), e.message);
+                const errorMsg = Evaluator.concatErrorMsg(prefix, suffixErrorMsg);
                 result.push(this.buildLGDiagnostic(errorMsg, undefined, context));
     
                 return result;
