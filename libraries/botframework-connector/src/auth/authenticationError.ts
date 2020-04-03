@@ -18,9 +18,13 @@ export class AuthenticationError extends Error implements IStatusCodeError {
         return err && err.statusCode && typeof err.statusCode === "number";
     }
 
+    /**
+     * Used to determine a status code from the error message for non-`IStatusCodeError`'s.
+     * @param err The error thrown, used to determine an appropriate status code.
+     */
     public static determineStatusCodeAndBuildMessage(err: any): string {
         let code: number;
-        let errMessage = err.message || 'Internet Server Error';
+        let errMessage = (err && err.message) ? err.message : 'Internet Server Error';
         const connectionHeader = `Connection: 'close'\r\n`;
         
         let builtMessage = '';

@@ -9,6 +9,8 @@ import { decode, verify, VerifyOptions } from 'jsonwebtoken';
 import { Claim,  ClaimsIdentity } from './claimsIdentity';
 import { EndorsementsValidator } from './endorsementsValidator';
 import { OpenIdMetadata } from './openIdMetadata';
+import { AuthenticationError } from './authenticationError';
+import { StatusCodes } from 'botframework-schema';
 
 export class JwtTokenExtractor {
 
@@ -94,7 +96,7 @@ export class JwtTokenExtractor {
         const keyId: string = decodedToken.header.kid;
         const metadata: any = await this.openIdMetadata.getKey(keyId);
         if (!metadata) {
-            throw new Error('Signing Key could not be retrieved.');
+            throw new AuthenticationError('Signing Key could not be retrieved.', StatusCodes.NOT_FOUND);
         }
 
         try {
@@ -106,20 +108,29 @@ export class JwtTokenExtractor {
             if (Array.isArray(endorsements) && endorsements.length !== 0) {
                 const isEndorsed: boolean = EndorsementsValidator.validate(channelId, endorsements);
                 if (!isEndorsed) {
-                    throw new Error(`Could not validate endorsement for key: ${ keyId } with endorsements: ${ endorsements.join(',') }`);
+                    throw new AuthenticationError(
+                        `Could not validate endorsement for key: ${ keyId } with endorsements: ${ endorsements.join(',') }`,
+                        StatusCodes.BAD_REQUEST
+                    );
                 }
 
                 // Verify that additional endorsements are satisfied. If no additional endorsements are expected, the requirement is satisfied as well
                 const additionalEndorsementsSatisfied = requiredEndorsements.every(endorsement => EndorsementsValidator.validate(endorsement, endorsements));
 
                 if (!additionalEndorsementsSatisfied) {
-                    throw new Error(`Could not validate additional endorsement for key: ${keyId} with endorsements: ${requiredEndorsements.join(',')}. Expected endorsements: ${requiredEndorsements.join(',')}`);
+                    throw new AuthenticationError(
+                        `Could not validate additional endorsement for key: ${keyId} with endorsements: ${requiredEndorsements.join(',')}. Expected endorsements: ${requiredEndorsements.join(',')}`,
+                        StatusCodes.BAD_REQUEST
+                    );
                 }
             }
 
             if (this.tokenValidationParameters.algorithms) {
                 if (this.tokenValidationParameters.algorithms.indexOf(decodedToken.header.alg) === -1) {
-                    throw new Error(`"Token signing algorithm '${ decodedToken.header.alg }' not in allowed list`);
+                    throw new AuthenticationError(
+                        `"Token signing algorithm '${ decodedToken.header.alg }' not in allowed list`,
+                        StatusCodes.BAD_REQUEST
+                    );
                 }
             }
 

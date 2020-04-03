@@ -5,6 +5,10 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
+
+import { AuthenticationError } from "./authenticationError";
+import { StatusCodes } from "botframework-schema";
+
 // tslint:disable-next-line:no-var-requires no-require-imports
 const getPem: any = require('rsa-pem-from-mod-exp');
 // tslint:disable-next-line:no-var-requires no-require-imports
@@ -51,11 +55,11 @@ export class OpenIdMetadata {
                 this.lastUpdated = new Date().getTime();
                 this.keys = (await getKeyResponse.json()).keys as IKey[];
             } else {
-                throw new Error(`Failed to load Keys: ${ getKeyResponse.status }`);
+                throw new AuthenticationError(`Failed to load Keys: ${ getKeyResponse.status }`, StatusCodes.BAD_REQUEST);
             }
 
         } else {
-            throw new Error(`Failed to load openID config: ${ res.status }`);
+            throw new AuthenticationError(`Failed to load openID config: ${ res.status }`, StatusCodes.NOT_FOUND);
         }
     }
 
