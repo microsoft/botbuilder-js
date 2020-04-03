@@ -28,6 +28,7 @@ const dataSource = [
     ['`\\${world}`', '${world}'],
     ['length(`hello ${world}`)', 'hello world'.length],
     ['json(`{"foo":"${hello}","item":"${world}"}`).foo', 'hello'],
+    ['`{expr: hello all}`', '{expr: hello all}'],
     ['json(`{"foo":${{text:"hello"}},"item": "${world}"}`).foo.text', 'hello'],
     ['json(`{"foo":${{text:"hello", cool: "hot", obj:{new: 123}}},"item": "${world}"}`).foo.text', 'hello'],
     ['`hi\\`[1,2,3]`', 'hi`[1,2,3]'],
