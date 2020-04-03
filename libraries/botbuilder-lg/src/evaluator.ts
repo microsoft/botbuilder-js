@@ -311,6 +311,39 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGFilePa
         return '';
     }
 
+    public static concatErrorMsg(firstError: string, secondError: string): string {
+        let errorMsg: string;
+        if (!firstError) {
+            errorMsg = secondError;
+        } else if (!secondError){
+            errorMsg = firstError;
+        } else {
+            errorMsg = firstError + ' ' + secondError;
+        }
+        return errorMsg;
+    }
+
+    public static checkExpressionResult(exp: string, error: string, result: any, templateName: string, context?: ParserRuleContext, errorPrefix: string = ''): void {
+        let errorMsg = '';
+
+        let childErrorMsg = '';
+        if (error)
+        {
+            childErrorMsg = Evaluator.concatErrorMsg(childErrorMsg, error);
+        }
+        else if (!result)
+        {
+            childErrorMsg = Evaluator.concatErrorMsg(childErrorMsg, TemplateErrors.nullExpression(exp));
+        }
+
+        if (context)
+        {
+            errorMsg = Evaluator.concatErrorMsg(errorMsg, TemplateErrors.errorExpression(context.text, templateName, errorPrefix));
+        }
+
+        throw new Error(Evaluator.concatErrorMsg(childErrorMsg, errorMsg));
+    }
+
     private currentTarget(): EvaluationTarget {
         // just don't want to write evaluationTargetStack.Peek() everywhere
         return this.evaluationTargetStack[this.evaluationTargetStack.length - 1];
@@ -340,29 +373,14 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGFilePa
 
         if (this.strictMode && (error || !result))
         {
-            let errorMsg = '';
-
-            let childErrorMsg = '';
-            if (error)
-            {
-                childErrorMsg += error;
-            }
-            else if (!result)
-            {
-                childErrorMsg += TemplateErrors.nullExpression(exp);
-            }
-
-            if (context)
-            {
-                errorMsg += TemplateErrors.errorExpression(context.text, this.currentTarget().templateName, errorPrefix);
-            }
+            const templateName = this.currentTarget().templateName;
 
             if (this.evaluationTargetStack.length > 0)
             {
                 this.evaluationTargetStack.pop();
             }
 
-            throw new Error(childErrorMsg + errorMsg);
+            Evaluator.checkExpressionResult(exp, error, result, templateName, context, errorPrefix);
         } else if (error || !result)
         {
             return false;
@@ -380,29 +398,14 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGFilePa
 
         if (error || (result === undefined && this.strictMode))
         {
-            let errorMsg = '';
-
-            let childErrorMsg = '';
-            if (error)
-            {
-                childErrorMsg += error;
-            }
-            else if (result === undefined)
-            {
-                childErrorMsg += TemplateErrors.nullExpression(exp);
-            }
-
-            if (context)
-            {
-                errorMsg += TemplateErrors.errorExpression(context.text, this.currentTarget().templateName, errorPrefix);
-            }
+            const templateName = this.currentTarget().templateName;
 
             if (this.evaluationTargetStack.length > 0)
             {
                 this.evaluationTargetStack.pop();
             }
 
-            throw new Error(childErrorMsg + errorMsg);
+            Evaluator.checkExpressionResult(exp, error, result, templateName, context, errorPrefix);
         }
         else if (result === undefined && !this.strictMode)
         {
