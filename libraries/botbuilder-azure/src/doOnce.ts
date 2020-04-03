@@ -8,14 +8,14 @@
 
 export class DoOnce<T> {
     private task: {
-        [dbAndContainerKey: string]: Promise<T>;
+        [key: string]: Promise<T>;
     } = {};
 
-    public waitFor(dbAndContainerKey: string, fn: () => Promise<T>): Promise<T> {
-        if (!this.task[dbAndContainerKey]) {
-            this.task[dbAndContainerKey] = fn();
+    public waitFor(key: string, fn: () => Promise<T>): Promise<T> {
+        if (!this.task[key]) {
+            this.task[key] = fn();
         }
 
-        return this.task[dbAndContainerKey];
+        return this.task[key];
     }
 }
