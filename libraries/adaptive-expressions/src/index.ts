@@ -21,3 +21,4 @@ export * from './memory';
 export * from './regexErrorListener';
 export * from './componentExpressionFunctions';
 export * from './datetimeFormatConverter';
+export * from './functionTable';
