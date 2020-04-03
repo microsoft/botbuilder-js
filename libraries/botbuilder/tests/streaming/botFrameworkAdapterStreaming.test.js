@@ -149,7 +149,7 @@ describe('BotFrameworkAdapter Streaming tests', () => {
             } catch (err) {
                 expect(err.message).to.equal("'authHeader' required.");
                 const socketResponse = MockNetSocket.createNonSuccessResponse(400, err.message);
-                expect(writeSpy.called, 'write() was not called').to.be.true;
+                expect(writeSpy.called).to.be.true;
                 expect(writeSpy.calledWithExactly(socketResponse)).to.be.true;
                 expect(destroySpy.calledOnceWithExactly()).to.be.true;
             };

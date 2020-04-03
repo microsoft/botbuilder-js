@@ -1473,7 +1473,7 @@ function writeErrAndDestroySocket(socket: INodeSocket, err: any): void {
         let message = '';
         AuthenticationError.isStatusCodeError(err) ? 
             message = `HTTP/1.1 ${ err.statusCode } ${ StatusCodes[err.statusCode] }\r\n${ err.message }\r\n${ connectionHeader }\r\n`
-            : message = determineStatusCodeAndBuildMessage(err);
+            : message = AuthenticationError.determineStatusCodeAndBuildMessage(err);
         
         socket.write(message);
     }
@@ -1481,28 +1481,7 @@ function writeErrAndDestroySocket(socket: INodeSocket, err: any): void {
 }
 
 
-function determineStatusCodeAndBuildMessage(err: any): string {
-    let code: number;
-    let errMessage = err.message || 'Internet Server Error';
-    const connectionHeader = `Connection: 'close'\r\n`;
-    
-    let builtMessage = '';
-    code = determineStatusCode(errMessage);
-    builtMessage = `HTTP/1.1 ${ code } ${ StatusCodes[code] }\r\n${ errMessage }\r\n${ connectionHeader }\r\n`;
-    
-    return builtMessage;
-}
 
-function determineStatusCode(message: string): StatusCodes {
-    if (typeof(message) === 'string') {
-        if (message.toLowerCase().startsWith('unauthorized')) {
-            return 401;
-        } else if (message.toLowerCase().startsWith(`'authheader'`)) {
-            return 400;
-        } 
-    }
-    return 500;
-}
 
 function abortWebSocketUpgrade(socket: INodeSocket, code: number, message?: string): void {
     if (socket.writable) {
