@@ -143,20 +143,7 @@ export class ExpressionParser implements ExpressionParserInterface {
                         }
                     }
 
-                    const valueNode = kvPair.value();
-                    let value: Expression = undefined;
-                    if (valueNode instanceof TerminalNode) {
-                        if(valueNode.symbol.type === ep.ExpressionAntlrParser.TEMPLATE){
-                            const exprString = this.trimExpression(valueNode.text);
-                            value = Expression.parse(exprString, this._lookupFunction);
-                        }
-                    } else {
-                        if ( valueNode instanceof ep.ExpressionContext) {
-                            value = this.visit(valueNode);
-                        }
-                    }
-
-                    expr = this.makeExpression(ExpressionType.SetProperty, expr, new Constant(key), value);
+                    expr = this.makeExpression(ExpressionType.SetProperty, expr, new Constant(key), this.visit(kvPair.expression()));
                 }
             }
 
@@ -178,9 +165,6 @@ export class ExpressionParser implements ExpressionParserInterface {
                             break;
                         case ep.ExpressionAntlrParser.ESCAPE_CHARACTER:
                             children.push(new Constant(this.evalEscape(node.text).replace(/\\`/g, '`').replace(/\\\$/g, '$')));
-                            break;
-                        case ep.ExpressionAntlrParser.OBJECT_DEFINITION:
-                            children.push(Expression.parse(node.text, this._lookupFunction));
                             break;
                         default:
                             break;

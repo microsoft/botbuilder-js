@@ -25,7 +25,6 @@ import { ArgsListContext } from "./ExpressionAntlrParser";
 import { KeyValuePairListContext } from "./ExpressionAntlrParser";
 import { KeyValuePairContext } from "./ExpressionAntlrParser";
 import { KeyContext } from "./ExpressionAntlrParser";
-import { ValueContext } from "./ExpressionAntlrParser";
 
 
 /**
@@ -300,16 +299,5 @@ export interface ExpressionAntlrParserListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	exitKey?: (ctx: KeyContext) => void;
-
-	/**
-	 * Enter a parse tree produced by `ExpressionAntlrParser.value`.
-	 * @param ctx the parse tree
-	 */
-	enterValue?: (ctx: ValueContext) => void;
-	/**
-	 * Exit a parse tree produced by `ExpressionAntlrParser.value`.
-	 * @param ctx the parse tree
-	 */
-	exitValue?: (ctx: ValueContext) => void;
 }
 

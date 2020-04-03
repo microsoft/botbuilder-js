@@ -31,7 +31,7 @@ primaryExpression
     ;
 
 stringInterpolation
-    : STRING_INTERPOLATION_START (ESCAPE_CHARACTER | TEMPLATE | textContent | OBJECT_DEFINITION)+ STRING_INTERPOLATION_START
+    : STRING_INTERPOLATION_START (ESCAPE_CHARACTER | TEMPLATE | textContent)+ STRING_INTERPOLATION_START
     ;
 
 textContent
@@ -47,13 +47,9 @@ keyValuePairList
     ;
 
 keyValuePair
-    : key COLON value
+    : key COLON expression
     ;
 
 key
     : (IDENTIFIER | STRING)
-    ;
-
-value
-    : (TEMPLATE | expression)
     ;
