@@ -47,9 +47,13 @@ keyValuePairList
     ;
 
 keyValuePair
-    : key COLON expression
+    : key COLON value
     ;
 
 key
     : (IDENTIFIER | STRING)
+    ;
+
+value
+    : (TEMPLATE | expression)
     ;

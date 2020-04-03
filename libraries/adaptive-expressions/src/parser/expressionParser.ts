@@ -134,16 +134,29 @@ export class ExpressionParser implements ExpressionParserInterface {
             if (context.keyValuePairList()) {
                 for (const kvPair of context.keyValuePairList().keyValuePair()) {
                     let key = '';
-                    const node = kvPair.key().children[0];
-                    if (node instanceof TerminalNode) {
-                        if (node.symbol.type === ep.ExpressionAntlrParser.IDENTIFIER) {
-                            key = node.text;
+                    const keyNode = kvPair.key().children[0];
+                    if (keyNode instanceof TerminalNode) {
+                        if (keyNode.symbol.type === ep.ExpressionAntlrParser.IDENTIFIER) {
+                            key = keyNode.text;
                         } else {
-                            key = node.text.substring(1, node.text.length - 1);
+                            key = keyNode.text.substring(1, keyNode.text.length - 1);
                         }
-                    } 
-                    
-                    expr = this.makeExpression(ExpressionType.SetProperty, expr, new Constant(key), this.visit(kvPair.expression()));
+                    }
+
+                    const valueNode = kvPair.value();
+                    let value: Expression = undefined;
+                    if (valueNode instanceof TerminalNode) {
+                        if(valueNode.symbol.type === ep.ExpressionAntlrParser.TEMPLATE){
+                            const exprString = this.trimExpression(valueNode.text);
+                            value = Expression.parse(exprString, this._lookupFunction);
+                        }
+                    } else {
+                        if ( valueNode instanceof ep.ExpressionContext) {
+                            value = this.visit(valueNode);
+                        }
+                    }
+
+                    expr = this.makeExpression(ExpressionType.SetProperty, expr, new Constant(key), value);
                 }
             }
 
@@ -167,7 +180,7 @@ export class ExpressionParser implements ExpressionParserInterface {
                             children.push(new Constant(this.evalEscape(node.text).replace(/\\`/g, '`').replace(/\\\$/g, '$')));
                             break;
                         case ep.ExpressionAntlrParser.OBJECT_DEFINITION:
-                            children.push(new Constant(node.text));
+                            children.push(Expression.parse(node.text, this._lookupFunction));
                             break;
                         default:
                             break;

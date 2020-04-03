@@ -25,6 +25,7 @@ import { ArgsListContext } from "./ExpressionAntlrParser";
 import { KeyValuePairListContext } from "./ExpressionAntlrParser";
 import { KeyValuePairContext } from "./ExpressionAntlrParser";
 import { KeyContext } from "./ExpressionAntlrParser";
+import { ValueContext } from "./ExpressionAntlrParser";
 
 
 /**
@@ -201,5 +202,12 @@ export interface ExpressionAntlrParserVisitor<Result> extends ParseTreeVisitor<R
 	 * @return the visitor result
 	 */
 	visitKey?: (ctx: KeyContext) => Result;
+
+	/**
+	 * Visit a parse tree produced by `ExpressionAntlrParser.value`.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	visitValue?: (ctx: ValueContext) => Result;
 }
 
