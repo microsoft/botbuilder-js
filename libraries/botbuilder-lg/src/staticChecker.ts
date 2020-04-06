@@ -123,26 +123,32 @@ export class StaticChecker extends AbstractParseTreeVisitor<Diagnostic[]> implem
             result.push(this.buildLGDiagnostic(TemplateErrors.missingStrucEnd, undefined, context));
         }
 
-        const bodys = context.structuredBodyContentLine();
-        if (!bodys || bodys.length === 0) {
-            result.push(this.buildLGDiagnostic(TemplateErrors.emptyStrucContent, undefined, context));
+        const errors = context.errorStructureLine();
+        if (errors && errors.length > 0){
+            for (const error of errors) {
+                result.push(this.buildLGDiagnostic(TemplateErrors.invalidStrucBody, undefined, error));
+            }
         } else {
-            for (const body of bodys) {
-                if (body.errorStructureLine() !== undefined) {
-                    result.push(this.buildLGDiagnostic(TemplateErrors.invalidStrucBody, undefined, body.errorStructureLine()));
-                } else if (body.objectStructureLine() !== undefined) {
-                    result = result.concat(this.checkExpression(body.objectStructureLine().text, body.objectStructureLine()));
-                } else {
-                    const structureValues = body.keyValueStructureLine().keyValueStructureValue();
-                    const errorPrefix = `Property  '` + body.keyValueStructureLine().text + `':`;
-                    for (const structureValue of structureValues) {
-                        for (const expr of structureValue.EXPRESSION_IN_STRUCTURE_BODY()) {
-                            result = result.concat(this.checkExpression(expr.text, structureValue, errorPrefix));
+            const bodys = context.structuredBodyContentLine();
+            if (!bodys || bodys.length === 0) {
+                result.push(this.buildLGDiagnostic(TemplateErrors.emptyStrucContent, undefined, context));
+            } else {
+                for (const body of bodys) {
+                    if (body.objectStructureLine() !== undefined) {
+                        result = result.concat(this.checkExpression(body.objectStructureLine().text, body.objectStructureLine()));
+                    } else {
+                        const structureValues = body.keyValueStructureLine().keyValueStructureValue();
+                        const errorPrefix = `Property  '` + body.keyValueStructureLine().text + `':`;
+                        for (const structureValue of structureValues) {
+                            for (const expr of structureValue.EXPRESSION_IN_STRUCTURE_BODY()) {
+                                result = result.concat(this.checkExpression(expr.text, structureValue, errorPrefix));
+                            }
                         }
                     }
                 }
             }
         }
+
 
         return result;
     }
@@ -302,7 +308,8 @@ export class StaticChecker extends AbstractParseTreeVisitor<Diagnostic[]> implem
             try {
                 this.expressionParser.parse(exp);
             } catch (e) {
-                const errorMsg = prefix + TemplateErrors.expressionParseError(exp) + e.message;
+                const suffixErrorMsg = Evaluator.concatErrorMsg(TemplateErrors.expressionParseError(exp), e.message);
+                const errorMsg = Evaluator.concatErrorMsg(prefix, suffixErrorMsg);
                 result.push(this.buildLGDiagnostic(errorMsg, undefined, context));
     
                 return result;
