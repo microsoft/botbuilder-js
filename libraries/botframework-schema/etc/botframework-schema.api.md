@@ -95,6 +95,16 @@ export enum ActivityImportance {
 }
 
 // @public
+export interface ActivityTimestamps extends Activity {
+    // (undocumented)
+    rawExpiration?: string;
+    // (undocumented)
+    rawLocalTimestamp?: string;
+    // (undocumented)
+    rawTimestamp?: string;
+}
+
+// @public
 export enum ActivityTypes {
     // (undocumented)
     ContactRelationUpdate = "contactRelationUpdate",
