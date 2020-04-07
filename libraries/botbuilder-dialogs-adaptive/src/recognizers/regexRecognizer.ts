@@ -37,13 +37,13 @@ export class RegexRecognizer implements Recognizer {
                 text = activity.text || '';
                 locale = activity.locale;
             }
-        } else if (typeof(textOrActivity) == 'object') {
+        } else if (typeof (textOrActivity) == 'object') {
             const activity: Activity = textOrActivity;
             if (activity.type == ActivityTypes.Message) {
                 text = activity.text || '';
                 locale = activity.locale;
             }
-        } else if (typeof(textOrActivity) == 'string') {
+        } else if (typeof (textOrActivity) == 'string') {
             text = textOrActivity || '';
         }
 
@@ -64,7 +64,17 @@ export class RegexRecognizer implements Recognizer {
 
         for (let i = 0; i < this.intents.length; i++) {
             const intentPattern = this.intents[i];
-            const matches = [...text.matchAll(intentPattern.regex)];
+
+            const matches = [];
+            let matched: RegExpExecArray;
+            const regexp = intentPattern.regex;
+            while (matched = regexp.exec(text)) {
+                matches.push(matched);
+                if (regexp.lastIndex == text.length) {
+                    break; // to avoid infinite loop
+                }
+            }
+
             if (matches.length > 0) {
                 const intentKey = intentPattern.intent.split(' ').join('_');
                 if (!recognizerResult.intents.hasOwnProperty(intentKey)) {

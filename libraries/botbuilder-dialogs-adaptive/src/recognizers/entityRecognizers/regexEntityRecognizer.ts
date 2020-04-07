@@ -28,17 +28,25 @@ export class RegexEntityRecognizer extends TextEntityRecognizer {
             value = value.substr(4);
         }
         this._pattern = value;
-        this._regex = new RegExp(value, 'ig');
     }
 
     private _pattern: string;
 
-    private _regex: RegExp;
-
     protected recognize(text: string, culture: string): ModelResult[] {
         const results: ModelResult[] = [];
 
-        for (const match of text.matchAll(this._regex)) {
+        const matches = [];
+        let matched: RegExpExecArray;
+        const regexp = new RegExp(this._pattern, 'ig');
+        while (matched = regexp.exec(text)) {
+            matches.push(matched);
+            if (regexp.lastIndex == text.length) {
+                break; // to avoid infinite loop
+            }
+        }
+
+        for (let i = 0; i < matches.length; i++) {
+            const match = matches[i];
             const text = match[0];
             const result: ModelResult = {
                 typeName: this.name,
