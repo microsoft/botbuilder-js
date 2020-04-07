@@ -220,4 +220,54 @@ describe('CosmosDbPartitionedStorage - Base Storage Tests', function() {
         assert.strictEqual(testRan, true);
         return nockDone();
     });
+    it('support using multiple databases', async function() {
+        checkEmulator();
+        const { nockDone } = await usingNock(this.test, mode, options);
+
+        const newDb = 'new-db';
+
+        const defaultSettings = getSettings();
+        const settingsWithNewDb = getSettings();
+        settingsWithNewDb.databaseId = newDb;
+
+        // cosmosDbPartitionedStorage requires the user creates the db,
+        // so we need to create it for the test
+        let dbCreateClient = new CosmosClient({ endpoint: settingsWithNewDb.cosmosDbEndpoint, key: settingsWithNewDb.authKey, agent: new https.Agent({ rejectUnauthorized: false }) });
+        try {
+            await dbCreateClient.database(newDb).delete();
+        } catch (err) { }
+        await dbCreateClient.databases.create({ id: newDb });
+
+        const defaultClient = new CosmosDbPartitionedStorage(defaultSettings);
+        await assert.doesNotReject(async () => await defaultClient.initialize());
+
+        const newClient = new CosmosDbPartitionedStorage(settingsWithNewDb);
+        await assert.doesNotReject(async () => await newClient.initialize());
+
+        await assert.doesNotReject(async () => await newClient.client.database(newDb).container(settingsWithNewDb.containerId).read());
+
+        await dbCreateClient.database(newDb).delete();
+        
+        return nockDone();
+    });
+    it('support using multiple containers', async function() {
+        checkEmulator();
+        const { nockDone } = await usingNock(this.test, mode, options);
+
+        const newContainer = 'new-container';
+
+        const defaultSettings = getSettings();
+        const settingsWithNewContainer = getSettings();
+        settingsWithNewContainer.containerId = newContainer;
+
+        const defaultClient = new CosmosDbPartitionedStorage(defaultSettings);
+        await assert.doesNotReject(async () => await defaultClient.initialize());
+
+        const newClient = new CosmosDbPartitionedStorage(settingsWithNewContainer);
+        await assert.doesNotReject(async () => await newClient.initialize());
+
+        await assert.doesNotReject(async () => await newClient.client.database(settingsWithNewContainer.databaseId).container(newContainer).read());
+
+        return nockDone();
+    });
 });

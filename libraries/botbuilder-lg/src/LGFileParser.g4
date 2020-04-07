@@ -46,7 +46,7 @@ templateBody
     ;
 
 structuredTemplateBody
-    : structuredBodyNameLine ((structuredBodyContentLine STRUCTURED_NEWLINE)+)? structuredBodyEndLine?
+    : structuredBodyNameLine (((structuredBodyContentLine? STRUCTURED_NEWLINE) | errorStructureLine)+)? structuredBodyEndLine?
     ;
 
 structuredBodyNameLine
@@ -60,7 +60,6 @@ errorStructuredName
 structuredBodyContentLine
     : keyValueStructureLine
     | objectStructureLine
-    | errorStructureLine
     ;
 
 errorStructureLine

@@ -869,4 +869,20 @@ describe('LG', function() {
         result = templates.evaluate('callSub', {});
         assert.strictEqual(result, 12);
     });
+
+    it('TestCustomFunction2', function() {
+        Expression.functions.add('contoso.sqrt', (args) => {
+            let result = null;
+            if (args[0] !== undefined ) {
+                const inputFloat = parseFloat(args[0]);
+                result = Math.sqrt(inputFloat);
+            }
+
+            return result;
+        });
+
+        let templates = Templates.parseFile(GetExampleFilePath('CustomFunction2.lg'), undefined);
+        var evaled = templates.evaluate('custom', {});
+        assert.equal(evaled, 6.0);
+    });
 });

@@ -613,36 +613,59 @@ export class LGFileParser extends Parser {
 			{
 			this.state = 124;
 			this.structuredBodyNameLine();
-			this.state = 132;
+			this.state = 134;
 			this._errHandler.sync(this);
 			_la = this._input.LA(1);
-			if (((((_la - 41)) & ~0x1F) === 0 && ((1 << (_la - 41)) & ((1 << (LGFileParser.STRUCTURE_IDENTIFIER - 41)) | (1 << (LGFileParser.STRUCTURE_EQUALS - 41)) | (1 << (LGFileParser.STRUCTURE_OR_MARK - 41)) | (1 << (LGFileParser.ESCAPE_CHARACTER_IN_STRUCTURE_BODY - 41)) | (1 << (LGFileParser.EXPRESSION_IN_STRUCTURE_BODY - 41)) | (1 << (LGFileParser.TEXT_IN_STRUCTURE_BODY - 41)))) !== 0)) {
+			if (((((_la - 37)) & ~0x1F) === 0 && ((1 << (_la - 37)) & ((1 << (LGFileParser.STRUCTURED_NEWLINE - 37)) | (1 << (LGFileParser.STRUCTURE_IDENTIFIER - 37)) | (1 << (LGFileParser.STRUCTURE_EQUALS - 37)) | (1 << (LGFileParser.STRUCTURE_OR_MARK - 37)) | (1 << (LGFileParser.ESCAPE_CHARACTER_IN_STRUCTURE_BODY - 37)) | (1 << (LGFileParser.EXPRESSION_IN_STRUCTURE_BODY - 37)) | (1 << (LGFileParser.TEXT_IN_STRUCTURE_BODY - 37)))) !== 0)) {
 				{
-				this.state = 128;
+				this.state = 130;
 				this._errHandler.sync(this);
 				_la = this._input.LA(1);
 				do {
 					{
-					{
-					this.state = 125;
-					this.structuredBodyContentLine();
-					this.state = 126;
-					this.match(LGFileParser.STRUCTURED_NEWLINE);
-					}
-					}
 					this.state = 130;
 					this._errHandler.sync(this);
+					switch ( this.interpreter.adaptivePredict(this._input, 12, this._ctx) ) {
+					case 1:
+						{
+						{
+						this.state = 126;
+						this._errHandler.sync(this);
+						_la = this._input.LA(1);
+						if (_la === LGFileParser.STRUCTURE_IDENTIFIER || _la === LGFileParser.EXPRESSION_IN_STRUCTURE_BODY) {
+							{
+							this.state = 125;
+							this.structuredBodyContentLine();
+							}
+						}
+
+						this.state = 128;
+						this.match(LGFileParser.STRUCTURED_NEWLINE);
+						}
+						}
+						break;
+
+					case 2:
+						{
+						this.state = 129;
+						this.errorStructureLine();
+						}
+						break;
+					}
+					}
+					this.state = 132;
+					this._errHandler.sync(this);
 					_la = this._input.LA(1);
-				} while (((((_la - 41)) & ~0x1F) === 0 && ((1 << (_la - 41)) & ((1 << (LGFileParser.STRUCTURE_IDENTIFIER - 41)) | (1 << (LGFileParser.STRUCTURE_EQUALS - 41)) | (1 << (LGFileParser.STRUCTURE_OR_MARK - 41)) | (1 << (LGFileParser.ESCAPE_CHARACTER_IN_STRUCTURE_BODY - 41)) | (1 << (LGFileParser.EXPRESSION_IN_STRUCTURE_BODY - 41)) | (1 << (LGFileParser.TEXT_IN_STRUCTURE_BODY - 41)))) !== 0));
+				} while (((((_la - 37)) & ~0x1F) === 0 && ((1 << (_la - 37)) & ((1 << (LGFileParser.STRUCTURED_NEWLINE - 37)) | (1 << (LGFileParser.STRUCTURE_IDENTIFIER - 37)) | (1 << (LGFileParser.STRUCTURE_EQUALS - 37)) | (1 << (LGFileParser.STRUCTURE_OR_MARK - 37)) | (1 << (LGFileParser.ESCAPE_CHARACTER_IN_STRUCTURE_BODY - 37)) | (1 << (LGFileParser.EXPRESSION_IN_STRUCTURE_BODY - 37)) | (1 << (LGFileParser.TEXT_IN_STRUCTURE_BODY - 37)))) !== 0));
 				}
 			}
 
-			this.state = 135;
+			this.state = 137;
 			this._errHandler.sync(this);
 			_la = this._input.LA(1);
 			if (_la === LGFileParser.STRUCTURED_BODY_END) {
 				{
-				this.state = 134;
+				this.state = 136;
 				this.structuredBodyEndLine();
 				}
 			}
@@ -670,21 +693,21 @@ export class LGFileParser extends Parser {
 		try {
 			this.enterOuterAlt(_localctx, 1);
 			{
-			this.state = 137;
+			this.state = 139;
 			this.match(LGFileParser.LEFT_SQUARE_BRACKET);
-			this.state = 140;
+			this.state = 142;
 			this._errHandler.sync(this);
-			switch ( this.interpreter.adaptivePredict(this._input, 14, this._ctx) ) {
+			switch ( this.interpreter.adaptivePredict(this._input, 16, this._ctx) ) {
 			case 1:
 				{
-				this.state = 138;
+				this.state = 140;
 				this.match(LGFileParser.STRUCTURE_NAME);
 				}
 				break;
 
 			case 2:
 				{
-				this.state = 139;
+				this.state = 141;
 				this.errorStructuredName();
 				}
 				break;
@@ -713,13 +736,13 @@ export class LGFileParser extends Parser {
 		try {
 			this.enterOuterAlt(_localctx, 1);
 			{
-			this.state = 145;
+			this.state = 147;
 			this._errHandler.sync(this);
 			_la = this._input.LA(1);
 			while (_la === LGFileParser.STRUCTURE_NAME || _la === LGFileParser.TEXT_IN_STRUCTURE_NAME) {
 				{
 				{
-				this.state = 142;
+				this.state = 144;
 				_la = this._input.LA(1);
 				if (!(_la === LGFileParser.STRUCTURE_NAME || _la === LGFileParser.TEXT_IN_STRUCTURE_NAME)) {
 				this._errHandler.recoverInline(this);
@@ -733,7 +756,7 @@ export class LGFileParser extends Parser {
 				}
 				}
 				}
-				this.state = 147;
+				this.state = 149;
 				this._errHandler.sync(this);
 				_la = this._input.LA(1);
 			}
@@ -758,32 +781,25 @@ export class LGFileParser extends Parser {
 		let _localctx: StructuredBodyContentLineContext = new StructuredBodyContentLineContext(this._ctx, this.state);
 		this.enterRule(_localctx, 24, LGFileParser.RULE_structuredBodyContentLine);
 		try {
-			this.state = 151;
+			this.state = 152;
 			this._errHandler.sync(this);
-			switch ( this.interpreter.adaptivePredict(this._input, 16, this._ctx) ) {
-			case 1:
+			switch (this._input.LA(1)) {
+			case LGFileParser.STRUCTURE_IDENTIFIER:
 				this.enterOuterAlt(_localctx, 1);
 				{
-				this.state = 148;
+				this.state = 150;
 				this.keyValueStructureLine();
 				}
 				break;
-
-			case 2:
+			case LGFileParser.EXPRESSION_IN_STRUCTURE_BODY:
 				this.enterOuterAlt(_localctx, 2);
 				{
-				this.state = 149;
+				this.state = 151;
 				this.objectStructureLine();
 				}
 				break;
-
-			case 3:
-				this.enterOuterAlt(_localctx, 3);
-				{
-				this.state = 150;
-				this.errorStructureLine();
-				}
-				break;
+			default:
+				throw new NoViableAltException(this);
 			}
 		}
 		catch (re) {
@@ -806,32 +822,39 @@ export class LGFileParser extends Parser {
 		this.enterRule(_localctx, 26, LGFileParser.RULE_errorStructureLine);
 		let _la: number;
 		try {
+			let _alt: number;
 			this.enterOuterAlt(_localctx, 1);
 			{
-			this.state = 154;
+			this.state = 155;
 			this._errHandler.sync(this);
-			_la = this._input.LA(1);
+			_alt = 1;
 			do {
-				{
-				{
-				this.state = 153;
-				_la = this._input.LA(1);
-				if (!(((((_la - 41)) & ~0x1F) === 0 && ((1 << (_la - 41)) & ((1 << (LGFileParser.STRUCTURE_IDENTIFIER - 41)) | (1 << (LGFileParser.STRUCTURE_EQUALS - 41)) | (1 << (LGFileParser.STRUCTURE_OR_MARK - 41)) | (1 << (LGFileParser.ESCAPE_CHARACTER_IN_STRUCTURE_BODY - 41)) | (1 << (LGFileParser.EXPRESSION_IN_STRUCTURE_BODY - 41)) | (1 << (LGFileParser.TEXT_IN_STRUCTURE_BODY - 41)))) !== 0))) {
-				this._errHandler.recoverInline(this);
-				} else {
-					if (this._input.LA(1) === Token.EOF) {
-						this.matchedEOF = true;
-					}
+				switch (_alt) {
+				case 1:
+					{
+					{
+					this.state = 154;
+					_la = this._input.LA(1);
+					if (!(((((_la - 39)) & ~0x1F) === 0 && ((1 << (_la - 39)) & ((1 << (LGFileParser.STRUCTURE_IDENTIFIER - 39)) | (1 << (LGFileParser.STRUCTURE_EQUALS - 39)) | (1 << (LGFileParser.STRUCTURE_OR_MARK - 39)) | (1 << (LGFileParser.ESCAPE_CHARACTER_IN_STRUCTURE_BODY - 39)) | (1 << (LGFileParser.EXPRESSION_IN_STRUCTURE_BODY - 39)) | (1 << (LGFileParser.TEXT_IN_STRUCTURE_BODY - 39)))) !== 0))) {
+					this._errHandler.recoverInline(this);
+					} else {
+						if (this._input.LA(1) === Token.EOF) {
+							this.matchedEOF = true;
+						}
 
-					this._errHandler.reportMatch(this);
-					this.consume();
+						this._errHandler.reportMatch(this);
+						this.consume();
+					}
+					}
+					}
+					break;
+				default:
+					throw new NoViableAltException(this);
 				}
-				}
-				}
-				this.state = 156;
+				this.state = 157;
 				this._errHandler.sync(this);
-				_la = this._input.LA(1);
-			} while (((((_la - 41)) & ~0x1F) === 0 && ((1 << (_la - 41)) & ((1 << (LGFileParser.STRUCTURE_IDENTIFIER - 41)) | (1 << (LGFileParser.STRUCTURE_EQUALS - 41)) | (1 << (LGFileParser.STRUCTURE_OR_MARK - 41)) | (1 << (LGFileParser.ESCAPE_CHARACTER_IN_STRUCTURE_BODY - 41)) | (1 << (LGFileParser.EXPRESSION_IN_STRUCTURE_BODY - 41)) | (1 << (LGFileParser.TEXT_IN_STRUCTURE_BODY - 41)))) !== 0));
+				_alt = this.interpreter.adaptivePredict(this._input, 19, this._ctx);
+			} while (_alt !== 2 && _alt !== ATN.INVALID_ALT_NUMBER);
 			}
 		}
 		catch (re) {
@@ -856,25 +879,25 @@ export class LGFileParser extends Parser {
 		try {
 			this.enterOuterAlt(_localctx, 1);
 			{
-			this.state = 158;
-			this.match(LGFileParser.STRUCTURE_IDENTIFIER);
 			this.state = 159;
-			this.match(LGFileParser.STRUCTURE_EQUALS);
+			this.match(LGFileParser.STRUCTURE_IDENTIFIER);
 			this.state = 160;
+			this.match(LGFileParser.STRUCTURE_EQUALS);
+			this.state = 161;
 			this.keyValueStructureValue();
-			this.state = 165;
+			this.state = 166;
 			this._errHandler.sync(this);
 			_la = this._input.LA(1);
 			while (_la === LGFileParser.STRUCTURE_OR_MARK) {
 				{
 				{
-				this.state = 161;
-				this.match(LGFileParser.STRUCTURE_OR_MARK);
 				this.state = 162;
+				this.match(LGFileParser.STRUCTURE_OR_MARK);
+				this.state = 163;
 				this.keyValueStructureValue();
 				}
 				}
-				this.state = 167;
+				this.state = 168;
 				this._errHandler.sync(this);
 				_la = this._input.LA(1);
 			}
@@ -902,13 +925,13 @@ export class LGFileParser extends Parser {
 		try {
 			this.enterOuterAlt(_localctx, 1);
 			{
-			this.state = 169;
+			this.state = 170;
 			this._errHandler.sync(this);
 			_la = this._input.LA(1);
 			do {
 				{
 				{
-				this.state = 168;
+				this.state = 169;
 				_la = this._input.LA(1);
 				if (!(((((_la - 44)) & ~0x1F) === 0 && ((1 << (_la - 44)) & ((1 << (LGFileParser.ESCAPE_CHARACTER_IN_STRUCTURE_BODY - 44)) | (1 << (LGFileParser.EXPRESSION_IN_STRUCTURE_BODY - 44)) | (1 << (LGFileParser.TEXT_IN_STRUCTURE_BODY - 44)))) !== 0))) {
 				this._errHandler.recoverInline(this);
@@ -922,7 +945,7 @@ export class LGFileParser extends Parser {
 				}
 				}
 				}
-				this.state = 171;
+				this.state = 172;
 				this._errHandler.sync(this);
 				_la = this._input.LA(1);
 			} while (((((_la - 44)) & ~0x1F) === 0 && ((1 << (_la - 44)) & ((1 << (LGFileParser.ESCAPE_CHARACTER_IN_STRUCTURE_BODY - 44)) | (1 << (LGFileParser.EXPRESSION_IN_STRUCTURE_BODY - 44)) | (1 << (LGFileParser.TEXT_IN_STRUCTURE_BODY - 44)))) !== 0));
@@ -949,7 +972,7 @@ export class LGFileParser extends Parser {
 		try {
 			this.enterOuterAlt(_localctx, 1);
 			{
-			this.state = 173;
+			this.state = 174;
 			this.match(LGFileParser.EXPRESSION_IN_STRUCTURE_BODY);
 			}
 		}
@@ -974,7 +997,7 @@ export class LGFileParser extends Parser {
 		try {
 			this.enterOuterAlt(_localctx, 1);
 			{
-			this.state = 175;
+			this.state = 176;
 			this.match(LGFileParser.STRUCTURED_BODY_END);
 			}
 		}
@@ -1000,7 +1023,7 @@ export class LGFileParser extends Parser {
 			let _alt: number;
 			this.enterOuterAlt(_localctx, 1);
 			{
-			this.state = 178;
+			this.state = 179;
 			this._errHandler.sync(this);
 			_alt = 1;
 			do {
@@ -1008,7 +1031,7 @@ export class LGFileParser extends Parser {
 				case 1:
 					{
 					{
-					this.state = 177;
+					this.state = 178;
 					this.templateString();
 					}
 					}
@@ -1016,9 +1039,9 @@ export class LGFileParser extends Parser {
 				default:
 					throw new NoViableAltException(this);
 				}
-				this.state = 180;
+				this.state = 181;
 				this._errHandler.sync(this);
-				_alt = this.interpreter.adaptivePredict(this._input, 20, this._ctx);
+				_alt = this.interpreter.adaptivePredict(this._input, 22, this._ctx);
 			} while (_alt !== 2 && _alt !== ATN.INVALID_ALT_NUMBER);
 			}
 		}
@@ -1041,20 +1064,20 @@ export class LGFileParser extends Parser {
 		let _localctx: TemplateStringContext = new TemplateStringContext(this._ctx, this.state);
 		this.enterRule(_localctx, 38, LGFileParser.RULE_templateString);
 		try {
-			this.state = 184;
+			this.state = 185;
 			this._errHandler.sync(this);
 			switch (this._input.LA(1)) {
 			case LGFileParser.DASH:
 				this.enterOuterAlt(_localctx, 1);
 				{
-				this.state = 182;
+				this.state = 183;
 				this.normalTemplateString();
 				}
 				break;
 			case LGFileParser.INVALID_TOKEN:
 				this.enterOuterAlt(_localctx, 2);
 				{
-				this.state = 183;
+				this.state = 184;
 				this.errorTemplateString();
 				}
 				break;
@@ -1084,25 +1107,25 @@ export class LGFileParser extends Parser {
 		try {
 			this.enterOuterAlt(_localctx, 1);
 			{
-			this.state = 186;
+			this.state = 187;
 			this.match(LGFileParser.DASH);
-			this.state = 188;
+			this.state = 189;
 			this._errHandler.sync(this);
 			_la = this._input.LA(1);
 			if (_la === LGFileParser.MULTILINE_PREFIX) {
 				{
-				this.state = 187;
+				this.state = 188;
 				this.match(LGFileParser.MULTILINE_PREFIX);
 				}
 			}
 
-			this.state = 193;
+			this.state = 194;
 			this._errHandler.sync(this);
 			_la = this._input.LA(1);
 			while ((((_la) & ~0x1F) === 0 && ((1 << _la) & ((1 << LGFileParser.ESCAPE_CHARACTER) | (1 << LGFileParser.EXPRESSION) | (1 << LGFileParser.TEXT))) !== 0)) {
 				{
 				{
-				this.state = 190;
+				this.state = 191;
 				_la = this._input.LA(1);
 				if (!((((_la) & ~0x1F) === 0 && ((1 << _la) & ((1 << LGFileParser.ESCAPE_CHARACTER) | (1 << LGFileParser.EXPRESSION) | (1 << LGFileParser.TEXT))) !== 0))) {
 				this._errHandler.recoverInline(this);
@@ -1116,16 +1139,16 @@ export class LGFileParser extends Parser {
 				}
 				}
 				}
-				this.state = 195;
+				this.state = 196;
 				this._errHandler.sync(this);
 				_la = this._input.LA(1);
 			}
-			this.state = 197;
+			this.state = 198;
 			this._errHandler.sync(this);
 			_la = this._input.LA(1);
 			if (_la === LGFileParser.MULTILINE_SUFFIX) {
 				{
-				this.state = 196;
+				this.state = 197;
 				this.match(LGFileParser.MULTILINE_SUFFIX);
 				}
 			}
@@ -1154,7 +1177,7 @@ export class LGFileParser extends Parser {
 			let _alt: number;
 			this.enterOuterAlt(_localctx, 1);
 			{
-			this.state = 200;
+			this.state = 201;
 			this._errHandler.sync(this);
 			_alt = 1;
 			do {
@@ -1162,7 +1185,7 @@ export class LGFileParser extends Parser {
 				case 1:
 					{
 					{
-					this.state = 199;
+					this.state = 200;
 					this.match(LGFileParser.INVALID_TOKEN);
 					}
 					}
@@ -1170,9 +1193,9 @@ export class LGFileParser extends Parser {
 				default:
 					throw new NoViableAltException(this);
 				}
-				this.state = 202;
+				this.state = 203;
 				this._errHandler.sync(this);
-				_alt = this.interpreter.adaptivePredict(this._input, 25, this._ctx);
+				_alt = this.interpreter.adaptivePredict(this._input, 27, this._ctx);
 			} while (_alt !== 2 && _alt !== ATN.INVALID_ALT_NUMBER);
 			}
 		}
@@ -1198,17 +1221,17 @@ export class LGFileParser extends Parser {
 		try {
 			this.enterOuterAlt(_localctx, 1);
 			{
-			this.state = 205;
+			this.state = 206;
 			this._errHandler.sync(this);
 			_la = this._input.LA(1);
 			do {
 				{
 				{
-				this.state = 204;
+				this.state = 205;
 				this.ifConditionRule();
 				}
 				}
-				this.state = 207;
+				this.state = 208;
 				this._errHandler.sync(this);
 				_la = this._input.LA(1);
 			} while (_la === LGFileParser.DASH);
@@ -1235,14 +1258,14 @@ export class LGFileParser extends Parser {
 		try {
 			this.enterOuterAlt(_localctx, 1);
 			{
-			this.state = 209;
+			this.state = 210;
 			this.ifCondition();
-			this.state = 211;
+			this.state = 212;
 			this._errHandler.sync(this);
-			switch ( this.interpreter.adaptivePredict(this._input, 27, this._ctx) ) {
+			switch ( this.interpreter.adaptivePredict(this._input, 29, this._ctx) ) {
 			case 1:
 				{
-				this.state = 210;
+				this.state = 211;
 				this.normalTemplateBody();
 				}
 				break;
@@ -1271,9 +1294,9 @@ export class LGFileParser extends Parser {
 		try {
 			this.enterOuterAlt(_localctx, 1);
 			{
-			this.state = 213;
-			this.match(LGFileParser.DASH);
 			this.state = 214;
+			this.match(LGFileParser.DASH);
+			this.state = 215;
 			_la = this._input.LA(1);
 			if (!((((_la) & ~0x1F) === 0 && ((1 << _la) & ((1 << LGFileParser.IF) | (1 << LGFileParser.ELSEIF) | (1 << LGFileParser.ELSE))) !== 0))) {
 			this._errHandler.recoverInline(this);
@@ -1285,13 +1308,13 @@ export class LGFileParser extends Parser {
 				this._errHandler.reportMatch(this);
 				this.consume();
 			}
-			this.state = 218;
+			this.state = 219;
 			this._errHandler.sync(this);
 			_la = this._input.LA(1);
 			while ((((_la) & ~0x1F) === 0 && ((1 << _la) & ((1 << LGFileParser.WS) | (1 << LGFileParser.EXPRESSION) | (1 << LGFileParser.TEXT))) !== 0)) {
 				{
 				{
-				this.state = 215;
+				this.state = 216;
 				_la = this._input.LA(1);
 				if (!((((_la) & ~0x1F) === 0 && ((1 << _la) & ((1 << LGFileParser.WS) | (1 << LGFileParser.EXPRESSION) | (1 << LGFileParser.TEXT))) !== 0))) {
 				this._errHandler.recoverInline(this);
@@ -1305,7 +1328,7 @@ export class LGFileParser extends Parser {
 				}
 				}
 				}
-				this.state = 220;
+				this.state = 221;
 				this._errHandler.sync(this);
 				_la = this._input.LA(1);
 			}
@@ -1333,17 +1356,17 @@ export class LGFileParser extends Parser {
 		try {
 			this.enterOuterAlt(_localctx, 1);
 			{
-			this.state = 222;
+			this.state = 223;
 			this._errHandler.sync(this);
 			_la = this._input.LA(1);
 			do {
 				{
 				{
-				this.state = 221;
+				this.state = 222;
 				this.switchCaseRule();
 				}
 				}
-				this.state = 224;
+				this.state = 225;
 				this._errHandler.sync(this);
 				_la = this._input.LA(1);
 			} while (_la === LGFileParser.DASH);
@@ -1370,14 +1393,14 @@ export class LGFileParser extends Parser {
 		try {
 			this.enterOuterAlt(_localctx, 1);
 			{
-			this.state = 226;
+			this.state = 227;
 			this.switchCaseStat();
-			this.state = 228;
+			this.state = 229;
 			this._errHandler.sync(this);
-			switch ( this.interpreter.adaptivePredict(this._input, 30, this._ctx) ) {
+			switch ( this.interpreter.adaptivePredict(this._input, 32, this._ctx) ) {
 			case 1:
 				{
-				this.state = 227;
+				this.state = 228;
 				this.normalTemplateBody();
 				}
 				break;
@@ -1406,9 +1429,9 @@ export class LGFileParser extends Parser {
 		try {
 			this.enterOuterAlt(_localctx, 1);
 			{
-			this.state = 230;
-			this.match(LGFileParser.DASH);
 			this.state = 231;
+			this.match(LGFileParser.DASH);
+			this.state = 232;
 			_la = this._input.LA(1);
 			if (!((((_la) & ~0x1F) === 0 && ((1 << _la) & ((1 << LGFileParser.SWITCH) | (1 << LGFileParser.CASE) | (1 << LGFileParser.DEFAULT))) !== 0))) {
 			this._errHandler.recoverInline(this);
@@ -1420,13 +1443,13 @@ export class LGFileParser extends Parser {
 				this._errHandler.reportMatch(this);
 				this.consume();
 			}
-			this.state = 235;
+			this.state = 236;
 			this._errHandler.sync(this);
 			_la = this._input.LA(1);
 			while ((((_la) & ~0x1F) === 0 && ((1 << _la) & ((1 << LGFileParser.WS) | (1 << LGFileParser.EXPRESSION) | (1 << LGFileParser.TEXT))) !== 0)) {
 				{
 				{
-				this.state = 232;
+				this.state = 233;
 				_la = this._input.LA(1);
 				if (!((((_la) & ~0x1F) === 0 && ((1 << _la) & ((1 << LGFileParser.WS) | (1 << LGFileParser.EXPRESSION) | (1 << LGFileParser.TEXT))) !== 0))) {
 				this._errHandler.recoverInline(this);
@@ -1440,7 +1463,7 @@ export class LGFileParser extends Parser {
 				}
 				}
 				}
-				this.state = 237;
+				this.state = 238;
 				this._errHandler.sync(this);
 				_la = this._input.LA(1);
 			}
@@ -1467,7 +1490,7 @@ export class LGFileParser extends Parser {
 		try {
 			this.enterOuterAlt(_localctx, 1);
 			{
-			this.state = 238;
+			this.state = 239;
 			this.match(LGFileParser.IMPORT);
 			}
 		}
@@ -1492,7 +1515,7 @@ export class LGFileParser extends Parser {
 		try {
 			this.enterOuterAlt(_localctx, 1);
 			{
-			this.state = 240;
+			this.state = 241;
 			this.match(LGFileParser.OPTIONS);
 			}
 		}
@@ -1512,7 +1535,7 @@ export class LGFileParser extends Parser {
 	}
 
 	public static readonly _serializedATN: string =
-		"\x03\uAF6F\u8320\u479D\uB75C\u4880\u1605\u191C\uAB37\x030\xF5\x04\x02" +
+		"\x03\uAF6F\u8320\u479D\uB75C\u4880\u1605\u191C\uAB37\x03.\xF6\x04\x02" +
 		"\t\x02\x04\x03\t\x03\x04\x04\t\x04\x04\x05\t\x05\x04\x06\t\x06\x04\x07" +
 		"\t\x07\x04\b\t\b\x04\t\t\t\x04\n\t\n\x04\v\t\v\x04\f\t\f\x04\r\t\r\x04" +
 		"\x0E\t\x0E\x04\x0F\t\x0F\x04\x10\t\x10\x04\x11\t\x11\x04\x12\t\x12\x04" +
@@ -1525,101 +1548,101 @@ export class LGFileParser extends Parser {
 		"\x03\x07\x07\x07_\n\x07\f\x07\x0E\x07b\v\x07\x03\b\x03\b\x03\b\x07\bg" +
 		"\n\b\f\b\x0E\bj\v\b\x03\t\x03\t\x03\t\x03\t\x07\tp\n\t\f\t\x0E\ts\v\t" +
 		"\x05\tu\n\t\x03\t\x03\t\x03\n\x03\n\x03\n\x03\n\x05\n}\n\n\x03\v\x03\v" +
-		"\x03\v\x03\v\x06\v\x83\n\v\r\v\x0E\v\x84\x05\v\x87\n\v\x03\v\x05\v\x8A" +
-		"\n\v\x03\f\x03\f\x03\f\x05\f\x8F\n\f\x03\r\x07\r\x92\n\r\f\r\x0E\r\x95" +
-		"\v\r\x03\x0E\x03\x0E\x03\x0E\x05\x0E\x9A\n\x0E\x03\x0F\x06\x0F\x9D\n\x0F" +
-		"\r\x0F\x0E\x0F\x9E\x03\x10\x03\x10\x03\x10\x03\x10\x03\x10\x07\x10\xA6" +
-		"\n\x10\f\x10\x0E\x10\xA9\v\x10\x03\x11\x06\x11\xAC\n\x11\r\x11\x0E\x11" +
-		"\xAD\x03\x12\x03\x12\x03\x13\x03\x13\x03\x14\x06\x14\xB5\n\x14\r\x14\x0E" +
-		"\x14\xB6\x03\x15\x03\x15\x05\x15\xBB\n\x15\x03\x16\x03\x16\x05\x16\xBF" +
-		"\n\x16\x03\x16\x07\x16\xC2\n\x16\f\x16\x0E\x16\xC5\v\x16\x03\x16\x05\x16" +
-		"\xC8\n\x16\x03\x17\x06\x17\xCB\n\x17\r\x17\x0E\x17\xCC\x03\x18\x06\x18" +
-		"\xD0\n\x18\r\x18\x0E\x18\xD1\x03\x19\x03\x19\x05\x19\xD6\n\x19\x03\x1A" +
-		"\x03\x1A\x03\x1A\x07\x1A\xDB\n\x1A\f\x1A\x0E\x1A\xDE\v\x1A\x03\x1B\x06" +
-		"\x1B\xE1\n\x1B\r\x1B\x0E\x1B\xE2\x03\x1C\x03\x1C\x05\x1C\xE7\n\x1C\x03" +
-		"\x1D\x03\x1D\x03\x1D\x07\x1D\xEC\n\x1D\f\x1D\x0E\x1D\xEF\v\x1D\x03\x1E" +
-		"\x03\x1E\x03\x1F\x03\x1F\x03\x1F\x03A\x02\x02 \x02\x02\x04\x02\x06\x02" +
-		"\b\x02\n\x02\f\x02\x0E\x02\x10\x02\x12\x02\x14\x02\x16\x02\x18\x02\x1A" +
-		"\x02\x1C\x02\x1E\x02 \x02\"\x02$\x02&\x02(\x02*\x02,\x02.\x020\x022\x02" +
-		"4\x026\x028\x02:\x02<\x02\x02\n\x03\x02\x10\x15\x03\x02%&\x03\x02+0\x03" +
-		"\x02.0\x03\x02\x1F!\x03\x02\x19\x1B\x04\x02\x05\x05 !\x03\x02\x1C\x1E" +
-		"\xFC\x02?\x03\x02\x02\x02\x04J\x03\x02\x02\x02\x06M\x03\x02\x02\x02\b" +
-		"Q\x03\x02\x02\x02\nU\x03\x02\x02\x02\f`\x03\x02\x02\x02\x0Ec\x03\x02\x02" +
-		"\x02\x10k\x03\x02\x02\x02\x12|\x03\x02\x02\x02\x14~\x03\x02\x02\x02\x16" +
-		"\x8B\x03\x02\x02\x02\x18\x93\x03\x02\x02\x02\x1A\x99\x03\x02\x02\x02\x1C" +
-		"\x9C\x03\x02\x02\x02\x1E\xA0\x03\x02\x02\x02 \xAB\x03\x02\x02\x02\"\xAF" +
-		"\x03\x02\x02\x02$\xB1\x03\x02\x02\x02&\xB4\x03\x02\x02\x02(\xBA\x03\x02" +
-		"\x02\x02*\xBC\x03\x02\x02\x02,\xCA\x03\x02\x02\x02.\xCF\x03\x02\x02\x02" +
-		"0\xD3\x03\x02\x02\x022\xD7\x03\x02\x02\x024\xE0\x03\x02\x02\x026\xE4\x03" +
-		"\x02\x02\x028\xE8\x03\x02\x02\x02:\xF0\x03\x02\x02\x02<\xF2\x03\x02\x02" +
-		"\x02>@\x05\x04\x03\x02?>\x03\x02\x02\x02@A\x03\x02\x02\x02AB\x03\x02\x02" +
-		"\x02A?\x03\x02\x02\x02BC\x03\x02\x02\x02CD\x07\x02\x02\x03D\x03\x03\x02" +
-		"\x02\x02EK\x05\b\x05\x02FK\x05:\x1E\x02GK\x05<\x1F\x02HK\x07\x02\x02\x03" +
-		"IK\x05\x06\x04\x02JE\x03\x02\x02\x02JF\x03\x02\x02\x02JG\x03\x02\x02\x02" +
-		"JH\x03\x02\x02\x02JI\x03\x02\x02\x02K\x05\x03\x02\x02\x02LN\x07\r\x02" +
-		"\x02ML\x03\x02\x02\x02NO\x03\x02\x02\x02OM\x03\x02\x02\x02OP\x03\x02\x02" +
-		"\x02P\x07\x03\x02\x02\x02QS\x05\n\x06\x02RT\x05\x12\n\x02SR\x03\x02\x02" +
-		"\x02ST\x03\x02\x02\x02T\t\x03\x02\x02\x02U[\x07\x07\x02\x02VX\x05\x0E" +
-		"\b\x02WY\x05\x10\t\x02XW\x03\x02\x02\x02XY\x03\x02\x02\x02Y\\\x03\x02" +
-		"\x02\x02Z\\\x05\f\x07\x02[V\x03\x02\x02\x02[Z\x03\x02\x02\x02\\\v\x03" +
-		"\x02\x02\x02]_\t\x02\x02\x02^]\x03\x02\x02\x02_b\x03\x02\x02\x02`^\x03" +
-		"\x02\x02\x02`a\x03\x02\x02\x02a\r\x03\x02\x02\x02b`\x03\x02\x02\x02ch" +
-		"\x07\x10\x02\x02de\x07\x11\x02\x02eg\x07\x10\x02\x02fd\x03\x02\x02\x02" +
-		"gj\x03\x02\x02\x02hf\x03\x02\x02\x02hi\x03\x02\x02\x02i\x0F\x03\x02\x02" +
-		"\x02jh\x03\x02\x02\x02kt\x07\x12\x02\x02lq\x07\x10\x02\x02mn\x07\x14\x02" +
-		"\x02np\x07\x10\x02\x02om\x03\x02\x02\x02ps\x03\x02\x02\x02qo\x03\x02\x02" +
-		"\x02qr\x03\x02\x02\x02ru\x03\x02\x02\x02sq\x03\x02\x02\x02tl\x03\x02\x02" +
-		"\x02tu\x03\x02\x02\x02uv\x03\x02\x02\x02vw\x07\x13\x02\x02w\x11\x03\x02" +
-		"\x02\x02x}\x05&\x14\x02y}\x05.\x18\x02z}\x054\x1B\x02{}\x05\x14\v\x02" +
-		"|x\x03\x02\x02\x02|y\x03\x02\x02\x02|z\x03\x02\x02\x02|{\x03\x02\x02\x02" +
-		"}\x13\x03\x02\x02\x02~\x86\x05\x16\f\x02\x7F\x80\x05\x1A\x0E\x02\x80\x81" +
-		"\x07)\x02\x02\x81\x83\x03\x02\x02\x02\x82\x7F\x03\x02\x02\x02\x83\x84" +
-		"\x03\x02\x02\x02\x84\x82\x03\x02\x02\x02\x84\x85\x03\x02\x02\x02\x85\x87" +
-		"\x03\x02\x02\x02\x86\x82\x03\x02\x02\x02\x86\x87\x03\x02\x02\x02\x87\x89" +
-		"\x03\x02\x02\x02\x88\x8A\x05$\x13\x02\x89\x88\x03\x02\x02\x02\x89\x8A" +
-		"\x03\x02\x02\x02\x8A\x15\x03\x02\x02\x02\x8B\x8E\x07\v\x02\x02\x8C\x8F" +
-		"\x07%\x02\x02\x8D\x8F\x05\x18\r\x02\x8E\x8C\x03\x02\x02\x02\x8E\x8D\x03" +
-		"\x02\x02\x02\x8F\x17\x03\x02\x02\x02\x90\x92\t\x03\x02\x02\x91\x90\x03" +
-		"\x02\x02\x02\x92\x95\x03\x02\x02\x02\x93\x91\x03\x02\x02\x02\x93\x94\x03" +
-		"\x02\x02\x02\x94\x19\x03\x02\x02\x02\x95\x93\x03\x02\x02\x02\x96\x9A\x05" +
-		"\x1E\x10\x02\x97\x9A\x05\"\x12\x02\x98\x9A\x05\x1C\x0F\x02\x99\x96\x03" +
-		"\x02\x02\x02\x99\x97\x03\x02\x02\x02\x99\x98\x03\x02\x02\x02\x9A\x1B\x03" +
-		"\x02\x02\x02\x9B\x9D\t\x04\x02\x02\x9C\x9B\x03\x02\x02\x02\x9D\x9E\x03" +
-		"\x02\x02\x02\x9E\x9C\x03\x02\x02\x02\x9E\x9F\x03\x02\x02\x02\x9F\x1D\x03" +
-		"\x02\x02\x02\xA0\xA1\x07+\x02\x02\xA1\xA2\x07,\x02\x02\xA2\xA7\x05 \x11" +
-		"\x02\xA3\xA4\x07-\x02\x02\xA4\xA6\x05 \x11\x02\xA5\xA3\x03\x02\x02\x02" +
-		"\xA6\xA9\x03\x02\x02\x02\xA7\xA5\x03\x02\x02\x02\xA7\xA8\x03\x02\x02\x02" +
-		"\xA8\x1F\x03\x02\x02\x02\xA9\xA7\x03\x02\x02\x02\xAA\xAC\t\x05\x02\x02" +
-		"\xAB\xAA\x03\x02\x02\x02\xAC\xAD\x03\x02\x02\x02\xAD\xAB\x03\x02\x02\x02" +
-		"\xAD\xAE\x03\x02\x02\x02\xAE!\x03\x02\x02\x02\xAF\xB0\x07/\x02\x02\xB0" +
-		"#\x03\x02\x02\x02\xB1\xB2\x07*\x02\x02\xB2%\x03\x02\x02\x02\xB3\xB5\x05" +
-		"(\x15\x02\xB4\xB3\x03\x02\x02\x02\xB5\xB6\x03\x02\x02\x02\xB6\xB4\x03" +
-		"\x02\x02\x02\xB6\xB7\x03\x02\x02\x02\xB7\'\x03\x02\x02\x02\xB8\xBB\x05" +
-		"*\x16\x02\xB9\xBB\x05,\x17\x02\xBA\xB8\x03\x02\x02\x02\xBA\xB9\x03\x02" +
-		"\x02\x02\xBB)\x03\x02\x02\x02\xBC\xBE\x07\b\x02\x02\xBD\xBF\x07\x17\x02" +
-		"\x02\xBE\xBD\x03\x02\x02\x02\xBE\xBF\x03\x02\x02\x02\xBF\xC3\x03\x02\x02" +
-		"\x02\xC0\xC2\t\x06\x02\x02\xC1\xC0\x03\x02\x02\x02\xC2\xC5\x03\x02\x02" +
-		"\x02\xC3\xC1\x03\x02\x02\x02\xC3\xC4\x03\x02\x02\x02\xC4\xC7\x03\x02\x02" +
-		"\x02\xC5\xC3\x03\x02\x02\x02\xC6\xC8\x07\"\x02\x02\xC7\xC6\x03\x02\x02" +
-		"\x02\xC7\xC8\x03\x02\x02\x02\xC8+\x03\x02\x02\x02\xC9\xCB\x07\r\x02\x02" +
-		"\xCA\xC9\x03\x02\x02\x02\xCB\xCC\x03\x02\x02\x02\xCC\xCA\x03\x02\x02\x02" +
-		"\xCC\xCD\x03\x02\x02\x02\xCD-\x03\x02\x02\x02\xCE\xD0\x050\x19\x02\xCF" +
-		"\xCE\x03\x02\x02\x02\xD0\xD1\x03\x02\x02\x02\xD1\xCF\x03\x02\x02\x02\xD1" +
-		"\xD2\x03\x02\x02\x02\xD2/\x03\x02\x02\x02\xD3\xD5\x052\x1A\x02\xD4\xD6" +
-		"\x05&\x14\x02\xD5\xD4\x03\x02\x02\x02\xD5\xD6\x03\x02\x02\x02\xD61\x03" +
-		"\x02\x02\x02\xD7\xD8\x07\b\x02\x02\xD8\xDC\t\x07\x02\x02\xD9\xDB\t\b\x02" +
-		"\x02\xDA\xD9\x03\x02\x02\x02\xDB\xDE\x03\x02\x02\x02\xDC\xDA\x03\x02\x02" +
-		"\x02\xDC\xDD\x03\x02\x02\x02\xDD3\x03\x02\x02\x02\xDE\xDC\x03\x02\x02" +
-		"\x02\xDF\xE1\x056\x1C\x02\xE0\xDF\x03\x02\x02\x02\xE1\xE2\x03\x02\x02" +
-		"\x02\xE2\xE0\x03\x02\x02\x02\xE2\xE3\x03\x02\x02\x02\xE35\x03\x02\x02" +
-		"\x02\xE4\xE6\x058\x1D\x02\xE5\xE7\x05&\x14\x02\xE6\xE5\x03\x02\x02\x02" +
-		"\xE6\xE7\x03\x02\x02\x02\xE77\x03\x02\x02\x02\xE8\xE9\x07\b\x02\x02\xE9" +
-		"\xED\t\t\x02\x02\xEA\xEC\t\b\x02\x02\xEB\xEA\x03\x02\x02\x02\xEC\xEF\x03" +
-		"\x02\x02\x02\xED\xEB\x03\x02\x02\x02\xED\xEE\x03\x02\x02\x02\xEE9\x03" +
-		"\x02\x02\x02\xEF\xED\x03\x02\x02\x02\xF0\xF1\x07\f\x02\x02\xF1;\x03\x02" +
-		"\x02\x02\xF2\xF3\x07\x03\x02\x02\xF3=\x03\x02\x02\x02\"AJOSX[`hqt|\x84" +
-		"\x86\x89\x8E\x93\x99\x9E\xA7\xAD\xB6\xBA\xBE\xC3\xC7\xCC\xD1\xD5\xDC\xE2" +
-		"\xE6\xED";
+		"\x05\v\x81\n\v\x03\v\x03\v\x06\v\x85\n\v\r\v\x0E\v\x86\x05\v\x89\n\v\x03" +
+		"\v\x05\v\x8C\n\v\x03\f\x03\f\x03\f\x05\f\x91\n\f\x03\r\x07\r\x94\n\r\f" +
+		"\r\x0E\r\x97\v\r\x03\x0E\x03\x0E\x05\x0E\x9B\n\x0E\x03\x0F\x06\x0F\x9E" +
+		"\n\x0F\r\x0F\x0E\x0F\x9F\x03\x10\x03\x10\x03\x10\x03\x10\x03\x10\x07\x10" +
+		"\xA7\n\x10\f\x10\x0E\x10\xAA\v\x10\x03\x11\x06\x11\xAD\n\x11\r\x11\x0E" +
+		"\x11\xAE\x03\x12\x03\x12\x03\x13\x03\x13\x03\x14\x06\x14\xB6\n\x14\r\x14" +
+		"\x0E\x14\xB7\x03\x15\x03\x15\x05\x15\xBC\n\x15\x03\x16\x03\x16\x05\x16" +
+		"\xC0\n\x16\x03\x16\x07\x16\xC3\n\x16\f\x16\x0E\x16\xC6\v\x16\x03\x16\x05" +
+		"\x16\xC9\n\x16\x03\x17\x06\x17\xCC\n\x17\r\x17\x0E\x17\xCD\x03\x18\x06" +
+		"\x18\xD1\n\x18\r\x18\x0E\x18\xD2\x03\x19\x03\x19\x05\x19\xD7\n\x19\x03" +
+		"\x1A\x03\x1A\x03\x1A\x07\x1A\xDC\n\x1A\f\x1A\x0E\x1A\xDF\v\x1A\x03\x1B" +
+		"\x06\x1B\xE2\n\x1B\r\x1B\x0E\x1B\xE3\x03\x1C\x03\x1C\x05\x1C\xE8\n\x1C" +
+		"\x03\x1D\x03\x1D\x03\x1D\x07\x1D\xED\n\x1D\f\x1D\x0E\x1D\xF0\v\x1D\x03" +
+		"\x1E\x03\x1E\x03\x1F\x03\x1F\x03\x1F\x03A\x02\x02 \x02\x02\x04\x02\x06" +
+		"\x02\b\x02\n\x02\f\x02\x0E\x02\x10\x02\x12\x02\x14\x02\x16\x02\x18\x02" +
+		"\x1A\x02\x1C\x02\x1E\x02 \x02\"\x02$\x02&\x02(\x02*\x02,\x02.\x020\x02" +
+		"2\x024\x026\x028\x02:\x02<\x02\x02\n\x03\x02\x0E\x13\x03\x02#$\x03\x02" +
+		").\x03\x02,.\x03\x02\x1D\x1F\x03\x02\x17\x19\x04\x02\x05\x05\x1E\x1F\x03" +
+		"\x02\x1A\x1C\xFE\x02?\x03\x02\x02\x02\x04J\x03\x02\x02\x02\x06M\x03\x02" +
+		"\x02\x02\bQ\x03\x02\x02\x02\nU\x03\x02\x02\x02\f`\x03\x02\x02\x02\x0E" +
+		"c\x03\x02\x02\x02\x10k\x03\x02\x02\x02\x12|\x03\x02\x02\x02\x14~\x03\x02" +
+		"\x02\x02\x16\x8D\x03\x02\x02\x02\x18\x95\x03\x02\x02\x02\x1A\x9A\x03\x02" +
+		"\x02\x02\x1C\x9D\x03\x02\x02\x02\x1E\xA1\x03\x02\x02\x02 \xAC\x03\x02" +
+		"\x02\x02\"\xB0\x03\x02\x02\x02$\xB2\x03\x02\x02\x02&\xB5\x03\x02\x02\x02" +
+		"(\xBB\x03\x02\x02\x02*\xBD\x03\x02\x02\x02,\xCB\x03\x02\x02\x02.\xD0\x03" +
+		"\x02\x02\x020\xD4\x03\x02\x02\x022\xD8\x03\x02\x02\x024\xE1\x03\x02\x02" +
+		"\x026\xE5\x03\x02\x02\x028\xE9\x03\x02\x02\x02:\xF1\x03\x02\x02\x02<\xF3" +
+		"\x03\x02\x02\x02>@\x05\x04\x03\x02?>\x03\x02\x02\x02@A\x03\x02\x02\x02" +
+		"AB\x03\x02\x02\x02A?\x03\x02\x02\x02BC\x03\x02\x02\x02CD\x07\x02\x02\x03" +
+		"D\x03\x03\x02\x02\x02EK\x05\b\x05\x02FK\x05:\x1E\x02GK\x05<\x1F\x02HK" +
+		"\x07\x02\x02\x03IK\x05\x06\x04\x02JE\x03\x02\x02\x02JF\x03\x02\x02\x02" +
+		"JG\x03\x02\x02\x02JH\x03\x02\x02\x02JI\x03\x02\x02\x02K\x05\x03\x02\x02" +
+		"\x02LN\x07\v\x02\x02ML\x03\x02\x02\x02NO\x03\x02\x02\x02OM\x03\x02\x02" +
+		"\x02OP\x03\x02\x02\x02P\x07\x03\x02\x02\x02QS\x05\n\x06\x02RT\x05\x12" +
+		"\n\x02SR\x03\x02\x02\x02ST\x03\x02\x02\x02T\t\x03\x02\x02\x02U[\x07\x07" +
+		"\x02\x02VX\x05\x0E\b\x02WY\x05\x10\t\x02XW\x03\x02\x02\x02XY\x03\x02\x02" +
+		"\x02Y\\\x03\x02\x02\x02Z\\\x05\f\x07\x02[V\x03\x02\x02\x02[Z\x03\x02\x02" +
+		"\x02\\\v\x03\x02\x02\x02]_\t\x02\x02\x02^]\x03\x02\x02\x02_b\x03\x02\x02" +
+		"\x02`^\x03\x02\x02\x02`a\x03\x02\x02\x02a\r\x03\x02\x02\x02b`\x03\x02" +
+		"\x02\x02ch\x07\x0E\x02\x02de\x07\x0F\x02\x02eg\x07\x0E\x02\x02fd\x03\x02" +
+		"\x02\x02gj\x03\x02\x02\x02hf\x03\x02\x02\x02hi\x03\x02\x02\x02i\x0F\x03" +
+		"\x02\x02\x02jh\x03\x02\x02\x02kt\x07\x10\x02\x02lq\x07\x0E\x02\x02mn\x07" +
+		"\x12\x02\x02np\x07\x0E\x02\x02om\x03\x02\x02\x02ps\x03\x02\x02\x02qo\x03" +
+		"\x02\x02\x02qr\x03\x02\x02\x02ru\x03\x02\x02\x02sq\x03\x02\x02\x02tl\x03" +
+		"\x02\x02\x02tu\x03\x02\x02\x02uv\x03\x02\x02\x02vw\x07\x11\x02\x02w\x11" +
+		"\x03\x02\x02\x02x}\x05&\x14\x02y}\x05.\x18\x02z}\x054\x1B\x02{}\x05\x14" +
+		"\v\x02|x\x03\x02\x02\x02|y\x03\x02\x02\x02|z\x03\x02\x02\x02|{\x03\x02" +
+		"\x02\x02}\x13\x03\x02\x02\x02~\x88\x05\x16\f\x02\x7F\x81\x05\x1A\x0E\x02" +
+		"\x80\x7F\x03\x02\x02\x02\x80\x81\x03\x02\x02\x02\x81\x82\x03\x02\x02\x02" +
+		"\x82\x85\x07\'\x02\x02\x83\x85\x05\x1C\x0F\x02\x84\x80\x03\x02\x02\x02" +
+		"\x84\x83\x03\x02\x02\x02\x85\x86\x03\x02\x02\x02\x86\x84\x03\x02\x02\x02" +
+		"\x86\x87\x03\x02\x02\x02\x87\x89\x03\x02\x02\x02\x88\x84\x03\x02\x02\x02" +
+		"\x88\x89\x03\x02\x02\x02\x89\x8B\x03\x02\x02\x02\x8A\x8C\x05$\x13\x02" +
+		"\x8B\x8A\x03\x02\x02\x02\x8B\x8C\x03\x02\x02\x02\x8C\x15\x03\x02\x02\x02" +
+		"\x8D\x90\x07\t\x02\x02\x8E\x91\x07#\x02\x02\x8F\x91\x05\x18\r\x02\x90" +
+		"\x8E\x03\x02\x02\x02\x90\x8F\x03\x02\x02\x02\x91\x17\x03\x02\x02\x02\x92" +
+		"\x94\t\x03\x02\x02\x93\x92\x03\x02\x02\x02\x94\x97\x03\x02\x02\x02\x95" +
+		"\x93\x03\x02\x02\x02\x95\x96\x03\x02\x02\x02\x96\x19\x03\x02\x02\x02\x97" +
+		"\x95\x03\x02\x02\x02\x98\x9B\x05\x1E\x10\x02\x99\x9B\x05\"\x12\x02\x9A" +
+		"\x98\x03\x02\x02\x02\x9A\x99\x03\x02\x02\x02\x9B\x1B\x03\x02\x02\x02\x9C" +
+		"\x9E\t\x04\x02\x02\x9D\x9C\x03\x02\x02\x02\x9E\x9F\x03\x02\x02\x02\x9F" +
+		"\x9D\x03\x02\x02\x02\x9F\xA0\x03\x02\x02\x02\xA0\x1D\x03\x02\x02\x02\xA1" +
+		"\xA2\x07)\x02\x02\xA2\xA3\x07*\x02\x02\xA3\xA8\x05 \x11\x02\xA4\xA5\x07" +
+		"+\x02\x02\xA5\xA7\x05 \x11\x02\xA6\xA4\x03\x02\x02\x02\xA7\xAA\x03\x02" +
+		"\x02\x02\xA8\xA6\x03\x02\x02\x02\xA8\xA9\x03\x02\x02\x02\xA9\x1F\x03\x02" +
+		"\x02\x02\xAA\xA8\x03\x02\x02\x02\xAB\xAD\t\x05\x02\x02\xAC\xAB\x03\x02" +
+		"\x02\x02\xAD\xAE\x03\x02\x02\x02\xAE\xAC\x03\x02\x02\x02\xAE\xAF\x03\x02" +
+		"\x02\x02\xAF!\x03\x02\x02\x02\xB0\xB1\x07-\x02\x02\xB1#\x03\x02\x02\x02" +
+		"\xB2\xB3\x07(\x02\x02\xB3%\x03\x02\x02\x02\xB4\xB6\x05(\x15\x02\xB5\xB4" +
+		"\x03\x02\x02\x02\xB6\xB7\x03\x02\x02\x02\xB7\xB5\x03\x02\x02\x02\xB7\xB8" +
+		"\x03\x02\x02\x02\xB8\'\x03\x02\x02\x02\xB9\xBC\x05*\x16\x02\xBA\xBC\x05" +
+		",\x17\x02\xBB\xB9\x03\x02\x02\x02\xBB\xBA\x03\x02\x02\x02\xBC)\x03\x02" +
+		"\x02\x02\xBD\xBF\x07\b\x02\x02\xBE\xC0\x07\x15\x02\x02\xBF\xBE\x03\x02" +
+		"\x02\x02\xBF\xC0\x03\x02\x02\x02\xC0\xC4\x03\x02\x02\x02\xC1\xC3\t\x06" +
+		"\x02\x02\xC2\xC1\x03\x02\x02\x02\xC3\xC6\x03\x02\x02\x02\xC4\xC2\x03\x02" +
+		"\x02\x02\xC4\xC5\x03\x02\x02\x02\xC5\xC8\x03\x02\x02\x02\xC6\xC4\x03\x02" +
+		"\x02\x02\xC7\xC9\x07 \x02\x02\xC8\xC7\x03\x02\x02\x02\xC8\xC9\x03\x02" +
+		"\x02\x02\xC9+\x03\x02\x02\x02\xCA\xCC\x07\v\x02\x02\xCB\xCA\x03\x02\x02" +
+		"\x02\xCC\xCD\x03\x02\x02\x02\xCD\xCB\x03\x02\x02\x02\xCD\xCE\x03\x02\x02" +
+		"\x02\xCE-\x03\x02\x02\x02\xCF\xD1\x050\x19\x02\xD0\xCF\x03\x02\x02\x02" +
+		"\xD1\xD2\x03\x02\x02\x02\xD2\xD0\x03\x02\x02\x02\xD2\xD3\x03\x02\x02\x02" +
+		"\xD3/\x03\x02\x02\x02\xD4\xD6\x052\x1A\x02\xD5\xD7\x05&\x14\x02\xD6\xD5" +
+		"\x03\x02\x02\x02\xD6\xD7\x03\x02\x02\x02\xD71\x03\x02\x02\x02\xD8\xD9" +
+		"\x07\b\x02\x02\xD9\xDD\t\x07\x02\x02\xDA\xDC\t\b\x02\x02\xDB\xDA\x03\x02" +
+		"\x02\x02\xDC\xDF\x03\x02\x02\x02\xDD\xDB\x03\x02\x02\x02\xDD\xDE\x03\x02" +
+		"\x02\x02\xDE3\x03\x02\x02\x02\xDF\xDD\x03\x02\x02\x02\xE0\xE2\x056\x1C" +
+		"\x02\xE1\xE0\x03\x02\x02\x02\xE2\xE3\x03\x02\x02\x02\xE3\xE1\x03\x02\x02" +
+		"\x02\xE3\xE4\x03\x02\x02\x02\xE45\x03\x02\x02\x02\xE5\xE7\x058\x1D\x02" +
+		"\xE6\xE8\x05&\x14\x02\xE7\xE6\x03\x02\x02\x02\xE7\xE8\x03\x02\x02\x02" +
+		"\xE87\x03\x02\x02\x02\xE9\xEA\x07\b\x02\x02\xEA\xEE\t\t\x02\x02\xEB\xED" +
+		"\t\b\x02\x02\xEC\xEB\x03\x02\x02\x02\xED\xF0\x03\x02\x02\x02\xEE\xEC\x03" +
+		"\x02\x02\x02\xEE\xEF\x03\x02\x02\x02\xEF9\x03\x02\x02\x02\xF0\xEE\x03" +
+		"\x02\x02\x02\xF1\xF2\x07\n\x02\x02\xF2;\x03\x02\x02\x02\xF3\xF4\x07\x03" +
+		"\x02\x02\xF4=\x03\x02\x02\x02$AJOSX[`hqt|\x80\x84\x86\x88\x8B\x90\x95" +
+		"\x9A\x9F\xA8\xAE\xB7\xBB\xBF\xC4\xC8\xCD\xD2\xD6\xDD\xE3\xE7\xEE";
 	public static __ATN: ATN;
 	public static get _ATN(): ATN {
 		if (!LGFileParser.__ATN) {
@@ -2138,13 +2161,13 @@ export class StructuredTemplateBodyContext extends ParserRuleContext {
 	public structuredBodyEndLine(): StructuredBodyEndLineContext | undefined {
 		return this.tryGetRuleContext(0, StructuredBodyEndLineContext);
 	}
-	public structuredBodyContentLine(): StructuredBodyContentLineContext[];
-	public structuredBodyContentLine(i: number): StructuredBodyContentLineContext;
-	public structuredBodyContentLine(i?: number): StructuredBodyContentLineContext | StructuredBodyContentLineContext[] {
+	public errorStructureLine(): ErrorStructureLineContext[];
+	public errorStructureLine(i: number): ErrorStructureLineContext;
+	public errorStructureLine(i?: number): ErrorStructureLineContext | ErrorStructureLineContext[] {
 		if (i === undefined) {
-			return this.getRuleContexts(StructuredBodyContentLineContext);
+			return this.getRuleContexts(ErrorStructureLineContext);
 		} else {
-			return this.getRuleContext(i, StructuredBodyContentLineContext);
+			return this.getRuleContext(i, ErrorStructureLineContext);
 		}
 	}
 	public STRUCTURED_NEWLINE(): TerminalNode[];
@@ -2154,6 +2177,15 @@ export class StructuredTemplateBodyContext extends ParserRuleContext {
 			return this.getTokens(LGFileParser.STRUCTURED_NEWLINE);
 		} else {
 			return this.getToken(LGFileParser.STRUCTURED_NEWLINE, i);
+		}
+	}
+	public structuredBodyContentLine(): StructuredBodyContentLineContext[];
+	public structuredBodyContentLine(i: number): StructuredBodyContentLineContext;
+	public structuredBodyContentLine(i?: number): StructuredBodyContentLineContext | StructuredBodyContentLineContext[] {
+		if (i === undefined) {
+			return this.getRuleContexts(StructuredBodyContentLineContext);
+		} else {
+			return this.getRuleContext(i, StructuredBodyContentLineContext);
 		}
 	}
 	constructor(parent: ParserRuleContext | undefined, invokingState: number) {
@@ -2271,9 +2303,6 @@ export class StructuredBodyContentLineContext extends ParserRuleContext {
 	}
 	public objectStructureLine(): ObjectStructureLineContext | undefined {
 		return this.tryGetRuleContext(0, ObjectStructureLineContext);
-	}
-	public errorStructureLine(): ErrorStructureLineContext | undefined {
-		return this.tryGetRuleContext(0, ErrorStructureLineContext);
 	}
 	constructor(parent: ParserRuleContext | undefined, invokingState: number) {
 		super(parent, invokingState);
