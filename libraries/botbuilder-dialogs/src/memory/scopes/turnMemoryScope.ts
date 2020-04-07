@@ -5,16 +5,21 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { MemoryScope } from "./memoryScope";
-import { ScopePath } from "./scopePath";
-import { DialogContext } from "../../dialogContext";
+import { MemoryScope } from './memoryScope';
+import { ScopePath } from '../scopePath';
+import { DialogContext } from '../../dialogContext';
+
+/**
+ * @private
+ */
+const TURN_STATE = Symbol('turn');
 
 /**
  * TurnMemoryScope represents memory scoped to the current turn.
  */
 export class TurnMemoryScope extends MemoryScope {
-    constructor() {
-        super(ScopePath.TURN);
+    public constructor() {
+        super(ScopePath.turn);
     }
 
     public getMemory(dc: DialogContext): object {
@@ -35,8 +40,3 @@ export class TurnMemoryScope extends MemoryScope {
         dc.context.turnState.set(TURN_STATE, memory);
     }
 }
-
-/**
- * @private
- */
-const TURN_STATE = Symbol('turn');
