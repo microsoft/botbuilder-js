@@ -29,7 +29,6 @@ const dataSource = [
     ['length(`hello ${world}`)', 'hello world'.length],
     ['json(`{"foo":"${hello}","item":"${world}"}`).foo', 'hello'],
     ['`{expr: hello all}`', '{expr: hello all}'],
-    ['{text:"hello"}.text', 'hello'],
     ['json(`{"foo":${{text:"hello"}},"item": "${world}"}`).foo.text', 'hello'],
     ['json(`{"foo":${{text:"hello", cool: "hot", obj:{new: 123}}},"item": "${world}"}`).foo.text', 'hello'],
     ['`hi\\`[1,2,3]`', 'hi`[1,2,3]'],
@@ -536,6 +535,7 @@ const dataSource = [
     ['unique(createArray(1, 5, 1))', [1, 5]],
     
     //Object manipulation and construction functions tests
+    ['{text:"hello"}.text', 'hello'],
     ['string(addProperty(json(\'{"key1":"value1"}\'), \'key2\',\'value2\'))', '{"key1":"value1","key2":"value2"}'],
     ['foreach(items, x, addProperty({}, "a", x))[0].a', 'zero'],
     ['string(addProperty({"key1":"value1"}, \'key2\',\'value2\'))', '{"key1":"value1","key2":"value2"}'],
