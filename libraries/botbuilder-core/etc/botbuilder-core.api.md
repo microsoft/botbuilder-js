@@ -616,7 +616,7 @@ export type TestActivityInspector = (activity: Partial<Activity>, description: s
 
 // @public
 export class TestAdapter extends BotAdapter implements ExtendedUserTokenProvider {
-    constructor(logic: (context: TurnContext) => Promise<void>, template?: Partial<Activity>, sendTraceActivities?: boolean);
+    constructor(test: string, logic: (context: TurnContext) => Promise<void>, template?: Partial<Activity>, sendTraceActivities?: boolean);
     readonly activityBuffer: Partial<Activity>[];
     // (undocumented)
     addExchangeableToken(connectionName: string, channelId: string, userId: string, exchangeableItem: string, token: string): void;
