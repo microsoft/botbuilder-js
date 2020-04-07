@@ -7,7 +7,7 @@
  */
 
 import { STATUS_CODES } from 'http';
-import * as os from 'os';
+import { arch, release, type } from 'os';
 
 import { Activity, ActivityTypes, CoreAppCredentials, BotAdapter, BotCallbackHandlerKey, ChannelAccount, ConversationAccount, ConversationParameters, ConversationReference, ConversationsResult, DeliveryModes, ExpectedReplies, InvokeResponse, ExtendedUserTokenProvider, ResourceResponse, StatusCodes, TokenResponse, TurnContext, INVOKE_RESPONSE_KEY } from 'botbuilder-core';
 import { AuthenticationConfiguration, AuthenticationConstants, ChannelValidation, Claim, ClaimsIdentity, ConnectorClient, EmulatorApiClient, GovernmentConstants, GovernmentChannelValidation, JwtTokenValidation, MicrosoftAppCredentials, AppCredentials, CertificateAppCredentials, SimpleCredentialProvider, TokenApiClient, TokenStatus, TokenApiModels, SignInUrlResponse, SkillValidation, TokenExchangeRequest } from 'botframework-connector';
@@ -16,6 +16,8 @@ import { INodeBuffer, INodeSocket, IReceiveRequest, ISocket, IStreamingTransport
 
 import { WebRequest, WebResponse } from './interfaces';
 import { defaultPipeName, GET, POST, MESSAGES_PATH, StreamingHttpClient, TokenResolver, VERSION_PATH } from './streaming';
+
+import { validateAndFixActivity } from './activityValidator';
 
 /**
  * Contains settings used to configure a [BotFrameworkAdapter](xref:botbuilder.BotFrameworkAdapter) instance.
@@ -73,9 +75,9 @@ export interface BotFrameworkAdapterSettings {
 }
 
 // Retrieve additional information, i.e., host operating system, host OS release, architecture, Node.js version
-const ARCHITECTURE: any = os.arch();
-const TYPE: any = os.type();
-const RELEASE: any = os.release();
+const ARCHITECTURE: any = arch();
+const TYPE: any = type();
+const RELEASE: any = release();
 const NODE_VERSION: any = process.version;
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
@@ -1441,18 +1443,10 @@ export class BotFrameworkAdapter extends BotAdapter implements ExtendedUserToken
  */
 function parseRequest(req: WebRequest): Promise<Activity> {
     return new Promise((resolve: any, reject: any): void => {
-        function returnActivity(activity: Activity): void {
-            if (typeof activity !== 'object') { throw new Error(`BotFrameworkAdapter.parseRequest(): invalid request body.`); }
-            if (typeof activity.type !== 'string') { throw new Error(`BotFrameworkAdapter.parseRequest(): missing activity type.`); }
-            if (typeof activity.timestamp === 'string') { activity.timestamp = new Date(activity.timestamp); }
-            if (typeof activity.localTimestamp === 'string') { activity.localTimestamp = new Date(activity.localTimestamp); }
-            if (typeof activity.expiration === 'string') { activity.expiration = new Date(activity.expiration); }
-            resolve(activity);
-        }
-
         if (req.body) {
             try {
-                returnActivity(req.body);
+                const activity = validateAndFixActivity(req.body);
+                resolve(activity);
             } catch (err) {
                 reject(err);
             }
@@ -1464,7 +1458,8 @@ function parseRequest(req: WebRequest): Promise<Activity> {
             req.on('end', (): void => {
                 try {
                     req.body = JSON.parse(requestData);
-                    returnActivity(req.body);
+                    const activity = validateAndFixActivity(req.body);
+                    resolve(activity);
                 } catch (err) {
                     reject(err);
                 }

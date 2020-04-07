@@ -545,12 +545,12 @@ describe('LG', function() {
         assert.strictEqual(templates.toArray()[1].parameters.length, 2);
         assert.strictEqual(templates.toArray()[1].parameters[0], 'age');
         assert.strictEqual(templates.toArray()[1].parameters[1], 'name');
-        assert.strictEqual(templates.toArray()[1].body.replace(/\r\n/g, '\n'), '- hi \n');
+        assert.strictEqual(templates.toArray()[1].body.replace(/\r\n/g, '\n'), '- hi ');
 
         templates = templates.addTemplate('newtemplate2', undefined, '- hi2 ');
         assert.strictEqual(templates.toArray().length, 3);
         assert.strictEqual(templates.toArray()[2].name, 'newtemplate2');
-        assert.strictEqual(templates.toArray()[2].body.replace(/\r\n/g, '\n'), '- hi2 \n');
+        assert.strictEqual(templates.toArray()[2].body.replace(/\r\n/g, '\n'), '- hi2 ');
 
         templates = templates.updateTemplate('newtemplate', 'newtemplateName', ['newage', 'newname'], '- new hi\r\n#hi');
         assert.strictEqual(templates.toArray().length, 3);
@@ -559,13 +559,13 @@ describe('LG', function() {
         assert.strictEqual(templates.toArray()[1].parameters.length, 2);
         assert.strictEqual(templates.toArray()[1].parameters[0], 'newage');
         assert.strictEqual(templates.toArray()[1].parameters[1], 'newname');
-        assert.strictEqual(templates.toArray()[1].body.replace(/\r\n/g, '\n'), '- new hi\n- #hi\n');
+        assert.strictEqual(templates.toArray()[1].body.replace(/\r\n/g, '\n'), '- new hi\n- #hi');
 
         templates = templates.updateTemplate('newtemplate2', 'newtemplateName2', ['newage2', 'newname2'], '- new hi\r\n#hi2');
         assert.strictEqual(templates.toArray().length, 3);
         assert.strictEqual(templates.imports.length, 0);
         assert.strictEqual(templates.toArray()[2].name, 'newtemplateName2');
-        assert.strictEqual(templates.toArray()[2].body.replace(/\r\n/g, '\n'), '- new hi\n- #hi2\n');
+        assert.strictEqual(templates.toArray()[2].body.replace(/\r\n/g, '\n'), '- new hi\n- #hi2');
 
         templates = templates.deleteTemplate('newtemplateName');
         assert.strictEqual(templates.toArray().length, 2);
@@ -853,5 +853,21 @@ describe('LG', function() {
         assert.strictEqual(result, 3);
         result = templates.evaluate('callSub', {});
         assert.strictEqual(result, 12);
+    });
+
+    it('TestCustomFunction2', function() {
+        Expression.functions.add('contoso.sqrt', (args) => {
+            let result = null;
+            if (args[0] !== undefined ) {
+                const inputFloat = parseFloat(args[0]);
+                result = Math.sqrt(inputFloat);
+            }
+
+            return result;
+        });
+
+        let templates = Templates.parseFile(GetExampleFilePath('CustomFunction2.lg'), undefined);
+        var evaled = templates.evaluate('custom', {});
+        assert.equal(evaled, 6.0);
     });
 });

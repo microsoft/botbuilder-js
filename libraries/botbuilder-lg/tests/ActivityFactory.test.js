@@ -1,3 +1,5 @@
+// this test would be migrated to adaptive dialog package
+/*
 const { Templates } = require('../lib');
 const {ActivityFactory} = require('botbuilder-core')
 const assert = require('assert');
@@ -623,3 +625,5 @@ function assertReceiptCardActivity(activity) {
     assert.strictEqual(items[1].quantity, '720');
     
 }
+
+*/

@@ -23,6 +23,7 @@ import { TemplateExtensions } from './templateExtensions';
  * LG entrance, including properties that LG file has, and evaluate functions.
  */
 export class Templates implements Iterable<Template> {
+    private readonly newLine: string = '\r\n';
     private items: Template[];
 
     /**
@@ -101,7 +102,7 @@ export class Templates implements Iterable<Template> {
                     return { done: true, value: undefined };
                 }
             }
-        }
+        };
     }
 
     /**
@@ -214,10 +215,8 @@ export class Templates implements Iterable<Template> {
      * @param inlineStr inline string which will be evaluated.
      * @param scope scope object or JToken.
      */
-    public evaluateText(inlineStr: string, scope?: object): any
-    {
-        if (inlineStr === undefined)
-        {
+    public evaluateText(inlineStr: string, scope?: object): any {
+        if (inlineStr === undefined) {
             throw Error('inline string is empty');
         }
 
@@ -230,7 +229,7 @@ export class Templates implements Iterable<Template> {
         inlineStr = !(inlineStr.trim().startsWith(multiLineMark) && inlineStr.includes('\n'))
             ? `${ multiLineMark }${ inlineStr }${ multiLineMark }` : inlineStr;
 
-        const newContent = `#${ fakeTemplateId } \r\n - ${ inlineStr }`;
+        const newContent = `#${ fakeTemplateId } ${ this.newLine } - ${ inlineStr }`;
 
         const newTemplates = TemplatesParser.parseTextWithRef(newContent, this);
         return newTemplates.evaluate(fakeTemplateId, scope);
@@ -251,12 +250,12 @@ export class Templates implements Iterable<Template> {
 
         const templateNameLine: string = this.buildTemplateNameLine(newTemplateName, parameters);
         const newTemplateBody: string = this.convertTemplateBody(templateBody);
-        const content = `${ templateNameLine }\r\n${ newTemplateBody }\r\n`;
+        const content = `${ templateNameLine }${ this.newLine }${ newTemplateBody }`;
 
         let startLine: number;
         let stopLine: number;
 
-        ({startLine, stopLine} = template.getTemplateRange());
+        ({ startLine, stopLine } = template.getTemplateRange());
         const newContent: string = this.replaceRangeContent(this.content, startLine, stopLine, content);
         this.initialize(TemplatesParser.parseText(newContent, this.id, this.importResolver));
 
@@ -278,7 +277,7 @@ export class Templates implements Iterable<Template> {
 
         const templateNameLine: string = this.buildTemplateNameLine(templateName, parameters);
         const newTemplateBody: string = this.convertTemplateBody(templateBody);
-        const newContent = `${ this.content.trimRight() }\r\n\r\n${ templateNameLine }\r\n${ newTemplateBody }\r\n`;
+        const newContent = `${ this.content }${ this.newLine }${ templateNameLine }${ this.newLine }${ newTemplateBody }`;
         this.initialize(TemplatesParser.parseText(newContent, this.id, this.importResolver));
 
         return this;
@@ -298,7 +297,7 @@ export class Templates implements Iterable<Template> {
         let startLine: number;
         let stopLine: number;
 
-        ({startLine, stopLine} = template.getTemplateRange());
+        ({ startLine, stopLine } = template.getTemplateRange());
 
         const newContent: string = this.replaceRangeContent(this.content, startLine, stopLine, undefined);
         this.initialize(TemplatesParser.parseText(newContent, this.id, this.importResolver));
@@ -311,77 +310,17 @@ export class Templates implements Iterable<Template> {
     }
 
     private replaceRangeContent(originString: string, startLine: number, stopLine: number, replaceString: string): string {
-        const originList: string[] = originString.split('\n');
-        const destList: string[] = [];
-
+        const originList: string[] = TemplateExtensions.readLine(originString);
         if (startLine < 0 || startLine > stopLine || stopLine >= originList.length) {
             throw new Error('index out of range.');
         }
 
-        destList.push(...this.trimList(originList.slice(0, startLine)));
+        const destList: string[] = [];
+        destList.push(...originList.slice(0, startLine));
+        destList.push(replaceString);
+        destList.push(...originList.slice(stopLine + 1));
 
-        if (stopLine < originList.length - 1) {
-            // insert at the middle of the content
-            destList.push('\r\n');
-            if (replaceString) {
-                destList.push(replaceString);
-                destList.push('\r\n');
-            }
-
-            destList.push(...this.trimList(originList.slice(stopLine + 1)));
-        } else {
-            // insert at the tail of the content
-            if (replaceString) {
-                destList.push('\r\n');
-                destList.push(replaceString);
-            }
-        }
-
-        return this.buildNewLGContent(this.trimList(destList));
-    }
-
-    /**
-     * trim the newlines at the beginning or at the tail of the array
-     * @param input input array
-     */
-    private trimList(input: string[]): string[] {
-        if (input === undefined) {
-            return undefined;
-        }
-
-        let startIndex = 0;
-        let endIndex = input.length;
-
-        for(let i = 0; i< input.length; i++) {
-            if (input[i].trim() !== '') {
-                startIndex = i;
-                break;
-            }
-        }
-
-        for(let i = input.length - 1; i >= 0; i--) {
-            if (input[i].trim() !== '') {
-                endIndex = i + 1;
-                break;
-            }
-        }
-
-        return input.slice(startIndex, endIndex);
-    }
-
-    private buildNewLGContent(destList: string[]): string {
-        let result = '';
-        for (let i = 0; i < destList.length; i++) {
-            const currentItem: string = destList[i];
-            result = result.concat(currentItem);
-            if (currentItem.endsWith('\r')) {
-                result = result.concat('\n');
-            } else if (i < destList.length - 1 && !currentItem.endsWith('\r\n')) {
-                result = result.concat('\r\n');
-            }
-        }
-
-        return result;
+        return destList.join(this.newLine);
     }
 
     private convertTemplateBody(templateBody: string): string {
@@ -389,19 +328,12 @@ export class Templates implements Iterable<Template> {
             return '';
         }
 
-        const replaceList: string[] = templateBody.split('\n');
-        const wrappedReplaceList: string[] = replaceList.map((u: string): string => this.wrapTemplateBodyString(u));
+        const replaceList: string[] = TemplateExtensions.readLine(templateBody);
+        const destList: string[] = replaceList.map((u: string): string => {
+            return u.trimLeft().startsWith('#') ? `- ${ u.trimLeft() }` : u;
+        });
 
-        return wrappedReplaceList.join('\n');
-    }
-
-    private wrapTemplateBodyString(replaceItem: string): string {
-        const isStartWithHash: boolean = replaceItem.trimLeft().startsWith('#');
-        if (isStartWithHash) {
-            return `- ${ replaceItem.trimLeft() }`;
-        } else {
-            return replaceItem;
-        }
+        return destList.join(this.newLine);
     }
 
     private buildTemplateNameLine(templateName: string, parameters: string[]): string {
@@ -429,33 +361,28 @@ export class Templates implements Iterable<Template> {
         if (this.allDiagnostics) {
             const errors = this.allDiagnostics.filter((u): boolean => u.severity === DiagnosticSeverity.Error);
             if (errors.length !== 0) {
-                throw Error(errors.join('\n'));
+                throw Error(errors.join(this.newLine));
             }
         }
     }
 
     private getStrictModeFromOptions(options: string[]): boolean {
         let result = false;
-        if (!options)
-        {
+        if (!options) {
             return result;
         }
 
         const strictModeKey = '@strict';
-        for (const option of options)
-        {
+        for (const option of options) {
             if (option && option.includes('=')) {
                 const index = option.indexOf('=');
                 const key = option.substring(0, index).trim();
                 const value = option.substring(index + 1).trim().toLowerCase();
-                if (key === strictModeKey)
-                {
-                    if (value === 'true')
-                    {
+                if (key === strictModeKey) {
+                    if (value === 'true') {
                         result = true;
                     }
-                    else if (value == 'false')
-                    {
+                    else if (value == 'false') {
                         result = false;
                     }
                 }

@@ -30,6 +30,7 @@
     "fs-extra": "^7.0.1"
   },
   "devDependencies": {
+    "@microsoft/api-extractor": "^7.7.12",
     "@types/mocha": "^2.2.47",
     "assert": "^1.4.1",
     "chatdown": "^1.0.2",
@@ -45,8 +46,10 @@
     "test": "tsc && nyc mocha --recursive \"tests/**/*.test.js\"",
     "build": "tsc",
     "build-docs": "typedoc --theme markdown --entryPoint botbuilder --excludePrivate --includeDeclarations --ignoreCompilerErrors --module amd --out ..\\..\\doc\\botbuilder .\\lib\\index.d.ts ..\\botbuilder-core\\lib\\index.d.ts ..\\botframework-schema\\lib\\index.d.ts --hideGenerator --name \"Bot Builder SDK\" --readme none",
+    "build:rollup": "npm run clean && npm run build && api-extractor run --verbose --local",
     "clean": "erase /q /s .\\lib",
-    "set-version": "npm version --allow-same-version ${Version}"
+    "set-version": "npm version --allow-same-version ${Version}",
+    "test:compat": "api-extractor run --verbose"
   },
   "files": [
     "/lib",

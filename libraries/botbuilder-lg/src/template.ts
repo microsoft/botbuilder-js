@@ -7,6 +7,7 @@
  */
 import { TerminalNode } from 'antlr4ts/tree';
 import { ParametersContext, TemplateDefinitionContext, TemplateNameContext, FileContext} from './generated/LGFileParser';
+import { TemplateExtensions } from './templateExtensions';
 
 /**
  * Here is a data model that can easily understanded and used as the context or all kinds of visitors
@@ -97,19 +98,14 @@ export class Template {
     }
 
     private getRangeContent(originString: string, startLine: number, stopLine: number): string {
-        const originList: string[] = originString.split('\n');
+        const originList: string[] = TemplateExtensions.readLine(originString);
         if (startLine < 0 || startLine > stopLine || stopLine >= originList.length) {
             throw new Error(`index out of range.`);
         }
 
         const destList: string[] = originList.slice(startLine, stopLine + 1);
 
-        let result: string = destList.join('\n');
-        if (result.endsWith('\r')) {
-            result = result.substr(0, result.length - 1);
-        }
-
-        return result;
+        return destList.join('\r\n');
     }
 
     public toString(): string {
