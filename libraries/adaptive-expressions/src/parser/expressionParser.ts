@@ -160,9 +160,6 @@ export class ExpressionParser implements ExpressionParserInterface {
                             const expressionString = this.trimExpression(node.text);
                             children.push(Expression.parse(expressionString, this._lookupFunction));
                             break;
-                        case ep.ExpressionAntlrParser.TEXT_CONTENT:
-                            children.push(new Constant(node.text));
-                            break;
                         case ep.ExpressionAntlrParser.ESCAPE_CHARACTER:
                             children.push(new Constant(this.evalEscape(node.text).replace(/\\`/g, '`').replace(/\\\$/g, '$')));
                             break;
