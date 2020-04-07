@@ -1360,7 +1360,9 @@ export class BotFrameworkAdapter extends BotAdapter implements ExtendedUserToken
         const serviceUrl = claims.getClaimValue(AuthenticationConstants.ServiceUrlClaim);
         AppCredentials.trustServiceUrl(serviceUrl);
 
-        if (!claims.isAuthenticated) { throw new Error('Unauthorized Access. Request is not authorized'); }
+        if (!claims.isAuthenticated) { 
+            throw new AuthenticationError('Unauthorized Access. Request is not authorized', StatusCodes.UNAUTHORIZED); 
+        }
     }
 
     /**
