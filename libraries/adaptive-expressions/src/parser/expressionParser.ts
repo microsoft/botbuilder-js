@@ -166,9 +166,6 @@ export class ExpressionParser implements ExpressionParserInterface {
                         case ep.ExpressionAntlrParser.ESCAPE_CHARACTER:
                             children.push(new Constant(this.evalEscape(node.text).replace(/\\`/g, '`').replace(/\\\$/g, '$')));
                             break;
-                        case ep.ExpressionAntlrParser.OBJECT_DEFINITION:
-                            children.push(new Constant(node.text));
-                            break;
                         default:
                             break;
                     }
