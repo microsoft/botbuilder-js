@@ -264,7 +264,7 @@ export class OAuthPrompt extends Dialog {
     private async sendOAuthCardAsync(context: TurnContext, prompt?: string|Partial<Activity>): Promise<void> {
         // Validate adapter type
         if (!('getUserToken' in context.adapter)) {
-            throw new Error(`OAuthPrompt.prompt(): not supported for the current adapter.`);
+            throw new Error(`OAuthPrompt.sendOAuthCardAsync(): not supported for the current adapter.`);
         }
 
         // Initialize outgoing message
@@ -365,7 +365,7 @@ export class OAuthPrompt extends Dialog {
                 await context.sendActivity(this.getTokenExchangeInvokeResponse(
                     StatusCodes.BAD_GATEWAY, 
                     'The bot\'s BotAdapter does not support token exchange operations. Ensure the bot\'s Adapter supports the ITokenExchangeProvider interface.'));
-                throw new Error('OAuthPrompt.recognize(): not supported by the current adapter');
+                throw new Error('OAuthPrompt.recognizeToken(): not supported by the current adapter');
             } else {
                 // No errors. Proceed with token exchange
                 const extendedUserTokenProvider : ExtendedUserTokenProvider = context.adapter as ExtendedUserTokenProvider;
