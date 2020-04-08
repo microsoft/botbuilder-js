@@ -21,14 +21,14 @@ const fetch = getFetch();
  * This class is helper class for all the http request operations.
  */
 export class HttpRequestUtils {
-	
+
     /**
      * Execute Http request.
-     * 
+     *
      * @param requestUrl Http request url.
      * @param payloadBody Http request body.
      * @param endpoint QnA Maker endpoint details.
-     * @param timeout (Optional)Timeout for http call 
+     * @param timeout (Optional)Timeout for http call
      */
     public async executeHttpRequest(requestUrl: string, payloadBody: string, endpoint: QnAMakerEndpoint, timeout?: number) {
         if (!requestUrl) {
@@ -51,7 +51,7 @@ export class HttpRequestUtils {
             timeout: timeout,
             body: payloadBody
         });
-        
+
         return await qnaResult.json();
     }
 
@@ -67,14 +67,9 @@ export class HttpRequestUtils {
      */
     private getHeaders(endpoint: QnAMakerEndpoint): any {
         const headers: any = {};
-        const isLegacyProtocol: boolean = endpoint.host.endsWith('v2.0') || endpoint.host.endsWith('v3.0');
 
-        if (isLegacyProtocol) {
-            headers['Ocp-Apim-Subscription-Key'] = endpoint.endpointKey;
-        } else {
-            headers.Authorization = `EndpointKey ${ endpoint.endpointKey }`;
-        }
-
+        headers['Ocp-Apim-Subscription-Key'] = endpoint.endpointKey;
+        headers.Authorization = `EndpointKey ${ endpoint.endpointKey }`;
         headers['User-Agent'] = this.getUserAgent();
         headers['Content-Type'] = 'application/json';
 
