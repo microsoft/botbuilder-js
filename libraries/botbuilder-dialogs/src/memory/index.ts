@@ -8,3 +8,5 @@
 export * from './pathResolvers';
 export * from './scopes';
 export * from './dialogStateManager';
+export * from './turnPath';
+export * from './dialogPath';
