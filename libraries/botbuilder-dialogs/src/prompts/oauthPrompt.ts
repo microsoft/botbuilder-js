@@ -364,7 +364,7 @@ export class OAuthPrompt extends Dialog {
                 // Token Exchange not supported in the adapter
                 await context.sendActivity(this.getTokenExchangeInvokeResponse(
                     StatusCodes.BAD_GATEWAY, 
-                    'The bot\'s BotAdapter does not support token exchange operations. Ensure the bot\'s Adapter supports the ITokenExchangeProvider interface.'));
+                    'The bot\'s BotAdapter does not support token exchange operations. Ensure the bot\'s Adapter supports the ExtendedUserTokenProvider interface.'));
                 throw new Error('OAuthPrompt.recognizeToken(): not supported by the current adapter');
             } else {
                 // No errors. Proceed with token exchange
