@@ -91,12 +91,23 @@ export class QnAMakerDialog extends WaterfallDialog {
      * @param strictFilters (Optional) QnAMakerMetadata collection used to filter / boost queries to the knowledgebase.
      * @param dialogId (Optional) Id of the created dialog. Default is 'QnAMakerDialog'.
      */
-    constructor(knowledgeBaseId: string, endpointKey: string, hostName: string, noAnswer?: Activity, threshold: number = 0.3, activeLearningCardTitle: string = 'Did you mean:', cardNoMatchText: string = 'None of the above.', top: number = 3, cardNoMatchResponse?: Activity, strictFilters?: QnAMakerMetadata[], dialogId: string = 'QnAMakerDialog') {
+    public constructor(knowledgeBaseId: string, endpointKey: string, hostName: string, noAnswer?: Activity, threshold: number = 0.3, activeLearningCardTitle: string = 'Did you mean:', cardNoMatchText: string = 'None of the above.', top: number = 3, cardNoMatchResponse?: Activity, strictFilters?: QnAMakerMetadata[], dialogId: string = 'QnAMakerDialog') {
         super(dialogId);
+        if (!knowledgeBaseId) {
+            throw new TypeError('QnAMakerDialog: missing knowledgeBaseId parameter');
+        }
+
+        if (!endpointKey) {
+            throw new TypeError('QnAMakerDialog: missing endpointKey parameter');
+        }
+
+        if (!hostName) {
+            throw new TypeError('QnAMakerDialog: missing hostName parameter');
+        }
 
         this.knowledgeBaseId = knowledgeBaseId;
-        this.hostName = hostName;
         this.endpointKey = endpointKey;
+        this.hostName = hostName;
         this.threshold = threshold;
         this.top = top;
         this.activeLearningCardTitle = activeLearningCardTitle;
@@ -352,8 +363,22 @@ export class QnAMakerDialog extends WaterfallDialog {
         const endpoint = {
             knowledgeBaseId: this.knowledgeBaseId,
             endpointKey: this.endpointKey,
-            host: this.hostName
+            host: this.constructHttpsHostName(this.hostName)
         };
         return new QnAMaker(endpoint);
+    }
+
+    /**
+     * Retain backward compatibility for QnAMakerDialog.hostName.
+     * @remarks
+     * QnAMakerDialog shipped with the following:
+     * this.hostName = `https://${this.hostName}.azurewebsites.net/qnamaker`
+     * For parity reasons, this was removed
+     * @param hostName Either complete or incomplete
+     */
+    private constructHttpsHostName(hostName: string): string {
+        const hostNamePattern = /^(http[s]?\:).*(\.\w{1,})(\/qnamaker)/;
+
+        return hostName.match(hostNamePattern) ? hostName : `https://${ this.hostName }.azurewebsites.net/qnamaker`;
     }
 }
