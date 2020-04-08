@@ -79,7 +79,7 @@ export class DialogSet {
      * ```
      * @param dialogState (Optional) state property used to persist the sets dialog stack.
      */
-    constructor(dialogState?: StatePropertyAccessor<DialogState>) {
+    public constructor(dialogState?: StatePropertyAccessor<DialogState>) {
         this.dialogState = dialogState;
     }
 
@@ -87,7 +87,10 @@ export class DialogSet {
      * Adds a new dialog or prompt to the set.
      *
      * @remarks
-     * The `Dialog.id` of all dialogs or prompts added to the set need to be unique within the set.
+     * If the `Dialog.id` being added already exists in the set, the dialogs id will be updated to 
+     * include a suffix which makes it unique. So adding 2 dialogs named "duplicate" to the set 
+     * would result in the first one having an id of "duplicate" and the second one having an id
+     * of "duplicate2".
      * @param dialog The dialog or prompt to add.
      * If a telemetryClient is present on the dialog set, it will be added to each dialog.
      */
@@ -99,7 +102,7 @@ export class DialogSet {
             let nextSuffix = 2;
             while (true) {
                 const suffixId = dialog.id + nextSuffix.toString();
-                if (!this.hasOwnProperty(suffixId)) {
+                if (!this.dialogs.hasOwnProperty(suffixId)) {
                     dialog.id = suffixId;
                     break;
                 } else {
@@ -118,7 +121,9 @@ export class DialogSet {
 
         // Automatically add any child dependencies the dialog might have
         if (typeof ((dialog as any) as DialogDependencies).getDependencies == 'function') {
-            ((dialog as any) as DialogDependencies).getDependencies().forEach((child) => this.add(child));
+            ((dialog as any) as DialogDependencies).getDependencies().forEach((child: Dialog): void => {
+                this.add(child);
+            });
         }
 
         return this;
