@@ -197,12 +197,24 @@ export abstract class Dialog<O extends object = {}> extends Configurable {
     protected onComputeId(): string;
     // (undocumented)
     onDialogEvent(dc: DialogContext, e: DialogEvent): Promise<boolean>;
-    protected onPostBubbleEventAsync(dc: DialogContext, e: DialogEvent): Promise<boolean>;
-    protected onPreBubbleEventAsync(dc: DialogContext, e: DialogEvent): Promise<boolean>;
+    protected onPostBubbleEvent(dc: DialogContext, e: DialogEvent): Promise<boolean>;
+    protected onPreBubbleEvent(dc: DialogContext, e: DialogEvent): Promise<boolean>;
     repromptDialog(context: TurnContext, instance: DialogInstance): Promise<void>;
     resumeDialog(dc: DialogContext, reason: DialogReason, result?: any): Promise<DialogTurnResult>;
     telemetryClient: BotTelemetryClient;
     protected _telemetryClient: BotTelemetryClient;
+}
+
+// @public (undocumented)
+export interface DialogConfiguration {
+    id?: string;
+    telemetryClient?: BotTelemetryClient;
+}
+
+// @public (undocumented)
+export interface DialogConfiguration {
+    id?: string;
+    telemetryClient?: BotTelemetryClient;
 }
 
 // @public (undocumented)
@@ -220,15 +232,16 @@ export abstract class DialogContainer<O extends object = {}> extends Dialog<O> {
 
 // @public
 export class DialogContext {
-    constructor(dialogs: DialogSet, context: TurnContext, state: DialogState);
+    constructor(dialogContext: DialogContext);
+    constructor(dialogs: DialogSet, contextOrDC: TurnContext, state: DialogState);
+    constructor(dialogs: DialogSet, contextOrDC: DialogContext, state: DialogState);
     readonly activeDialog: DialogInstance | undefined;
     beginDialog(dialogId: string, options?: object): Promise<DialogTurnResult>;
     cancelAllDialogs(cancelParents?: boolean, eventName?: string, eventValue?: any): Promise<DialogTurnResult>;
     readonly child: DialogContext | undefined;
-    readonly context: TurnContext;
+    context: TurnContext;
     continueDialog(): Promise<DialogTurnResult>;
-    readonly dialogs: DialogSet;
-    // (undocumented)
+    dialogs: DialogSet;
     emitEvent(name: string, value?: any, bubble?: boolean, fromLeaf?: boolean): Promise<boolean>;
     endDialog(result?: any): Promise<DialogTurnResult>;
     findDialog(dialogId: string): Dialog | undefined;
@@ -238,14 +251,28 @@ export class DialogContext {
     prompt(dialogId: string, promptOrOptions: string | Partial<Activity> | PromptOptions, choices: (string | Choice)[]): Promise<DialogTurnResult>;
     replaceDialog(dialogId: string, options?: object): Promise<DialogTurnResult>;
     repromptDialog(): Promise<void>;
-    readonly stack: DialogInstance[];
+    stack: DialogInstance[];
     // (undocumented)
-    readonly state: DialogStateManager;
+    state: DialogStateManager;
 }
 
 // @public (undocumented)
 export interface DialogDependencies {
     getDependencies(): Dialog[];
+}
+
+// @public (undocumented)
+export interface DialogEvent {
+    bubble: boolean;
+    name: string;
+    value?: any;
+}
+
+// @public (undocumented)
+export interface DialogEvent {
+    bubble: boolean;
+    name: string;
+    value?: any;
 }
 
 // @public (undocumented)
@@ -275,6 +302,35 @@ export interface DialogInstance<T = any> {
     state: T;
 }
 
+// @public (undocumented)
+export class DialogManager extends Configurable {
+    constructor(config?: DialogManagerConfiguration);
+    // (undocumented)
+    configure(config: Partial<DialogManagerConfiguration>): this;
+    conversationState: ConversationState;
+    expireAfter?: number;
+    // (undocumented)
+    onTurn(context: TurnContext): Promise<DialogManagerResult>;
+    rootDialog: Dialog;
+    stateConfiguration?: DialogStateManagerConfiguration;
+    userState?: UserState;
+}
+
+// @public (undocumented)
+export interface DialogManagerConfiguration {
+    conversationState: BotState;
+    expireAfter?: number;
+    rootDialog: Dialog;
+    stateConfiguration?: DialogStateManagerConfiguration;
+    userState?: UserState;
+}
+
+// @public (undocumented)
+export interface DialogManagerResult {
+    // (undocumented)
+    turnResult: DialogTurnResult;
+}
+
 // @public
 export class DialogMemoryScope extends MemoryScope {
     constructor();
@@ -282,6 +338,24 @@ export class DialogMemoryScope extends MemoryScope {
     getMemory(dc: DialogContext): object;
     // (undocumented)
     setMemory(dc: DialogContext, memory: object): void;
+}
+
+// @public
+export class DialogPath {
+    // (undocumented)
+    static readonly eventCounter = "dialog.eventCounter";
+    // (undocumented)
+    static readonly expectedProperties = "dialog.expectedProperties";
+    // (undocumented)
+    static readonly lastEvent = "dialog.lastEvent";
+    // (undocumented)
+    static readonly lastIntent = "dialog.lastIntent";
+    // (undocumented)
+    static readonly lastTriggerEvent = "dialog.lastTriggerEvent";
+    // (undocumented)
+    static readonly requiredProperties = "dialog.requiredProperties";
+    // (undocumented)
+    static readonly retries = "dialog.retries";
 }
 
 // @public
@@ -311,6 +385,7 @@ export interface DialogState {
 // @public
 export class DialogStateManager {
     constructor(dc: DialogContext);
+    anyPathChanged(counter: number, paths: string[]): boolean;
     configuration: DialogStateManagerConfiguration;
     // (undocumented)
     static createStandardConfiguration(conversationState?: ConversationState, userState?: UserState): DialogStateManagerConfiguration;
@@ -319,10 +394,13 @@ export class DialogStateManager {
     getMemorySnapshot(): object;
     getValue<T = any>(pathExpression: string, defaultValue?: T | (() => T)): T;
     loadAllScopes(): Promise<void>;
-    parsePath(pathExpression: string): (string | number)[];
+    parsePath(pathExpression: string, allowNestedPaths?: boolean): (string | number)[];
     saveAllChanges(): Promise<void>;
     setValue(pathExpression: string, value: any): void;
+    trackPaths(paths: string[]): string[];
     transformPath(pathExpression: string): string;
+    // (undocumented)
+    version(): string;
 }
 
 // @public (undocumented)
@@ -333,6 +411,7 @@ export interface DialogStateManagerConfiguration {
 
 // @public
 export interface DialogTurnResult<T = any> {
+    parentEnded?: boolean;
     result?: T;
     status: DialogTurnStatus;
 }
@@ -341,6 +420,7 @@ export interface DialogTurnResult<T = any> {
 export enum DialogTurnStatus {
     cancelled = "cancelled",
     complete = "complete",
+    completeAndWait = "completeAndWait",
     empty = "empty",
     waiting = "waiting"
 }
@@ -483,6 +563,8 @@ export abstract class Prompt<T> extends Dialog {
     beginDialog(dc: DialogContext, options: PromptOptions): Promise<DialogTurnResult>;
     // (undocumented)
     continueDialog(dc: DialogContext): Promise<DialogTurnResult>;
+    // (undocumented)
+    protected onPreBubbleEvent(dc: DialogContext, event: DialogEvent): Promise<boolean>;
     protected abstract onPrompt(context: TurnContext, state: object, options: PromptOptions, isRetry: boolean): Promise<void>;
     protected abstract onRecognize(context: TurnContext, state: object, options: PromptOptions): Promise<PromptRecognizerResult<T>>;
     // (undocumented)
@@ -560,24 +642,6 @@ export function recognizeChoices(utterance: string, choices: (string | Choice)[]
 export function runDialog(dialog: Dialog, context: TurnContext, accessor: StatePropertyAccessor<DialogState>): Promise<void>;
 
 // @public
-export class ScopePath {
-    // (undocumented)
-    static readonly CLASS = "class";
-    // (undocumented)
-    static readonly CONVERSATION = "conversation";
-    // (undocumented)
-    static readonly DIALOG = "dialog";
-    // (undocumented)
-    static readonly SETTINGS = "settings";
-    // (undocumented)
-    static readonly THIS = "this";
-    // (undocumented)
-    static readonly TURN = "turn";
-    // (undocumented)
-    static readonly USER = "user";
-}
-
-// @public
 export class SettingsMemoryScope extends MemoryScope {
     constructor();
     // (undocumented)
@@ -627,7 +691,9 @@ export function supportsSuggestedActions(channelId: string, buttonCnt?: number):
 
 // @public
 export class TextPrompt extends Prompt<string> {
-    constructor(dialogId: string, validator?: PromptValidator<string>);
+    constructor(dialogId?: string, validator?: PromptValidator<string>);
+    // (undocumented)
+    protected onPreBubbleEvent(dc: DialogContext, event: DialogEvent): Promise<boolean>;
     // (undocumented)
     protected onPrompt(context: TurnContext, state: any, options: PromptOptions, isRetry: boolean): Promise<void>;
     // (undocumented)
@@ -661,6 +727,34 @@ export class TurnMemoryScope extends MemoryScope {
     getMemory(dc: DialogContext): object;
     // (undocumented)
     setMemory(dc: DialogContext, memory: object): void;
+}
+
+// @public
+export class TurnPath {
+    // (undocumented)
+    static readonly activity = "turn.activity";
+    // (undocumented)
+    static readonly activityProcessed = "turn.activityProcessed";
+    // (undocumented)
+    static readonly dialogEvent = "turn.dialogEvent";
+    // (undocumented)
+    static readonly interrupted = "turn.interrupted";
+    // (undocumented)
+    static readonly lastResult = "turn.lastresult";
+    // (undocumented)
+    static readonly recognized = "turn.recognized";
+    // (undocumented)
+    static readonly recognizedEntities = "turn.recognizedEntities";
+    // (undocumented)
+    static readonly repeatedIds = "turn.repeatedIds";
+    // (undocumented)
+    static readonly text = "turn.recognized.text";
+    // (undocumented)
+    static readonly topIntent = "turn.recognized.intent";
+    // (undocumented)
+    static readonly topScore = "turn.recognized.score";
+    // (undocumented)
+    static readonly unrecognizedText = "turn.unrecognizedText";
 }
 
 // @public

@@ -272,6 +272,12 @@ export interface ExtendedUserTokenProvider extends IUserTokenProvider {
 }
 
 // @public (undocumented)
+export const getTopScoringIntent: (result: RecognizerResult) => {
+    intent: string;
+    score: number;
+};
+
+// @public (undocumented)
 export const INVOKE_RESPONSE_KEY: symbol;
 
 // @public
@@ -385,14 +391,14 @@ export interface PropertyManager {
 // @public
 export interface RecognizerResult {
     [propName: string]: any;
-    readonly alteredText?: string;
-    readonly entities?: any;
-    readonly intents: {
+    alteredText?: string;
+    entities?: any;
+    intents: {
         [name: string]: {
             score: number;
         };
     };
-    readonly text: string;
+    text: string;
 }
 
 // @public
@@ -720,6 +726,10 @@ export class TurnContext {
     onDeleteActivity(handler: DeleteActivityHandler): this;
     onSendActivities(handler: SendActivitiesHandler): this;
     onUpdateActivity(handler: UpdateActivityHandler): this;
+    // (undocumented)
+    popTurnState(key: any): void;
+    // (undocumented)
+    pushTurnState(key: any, value: any): void;
     static removeMentionText(activity: Partial<Activity>, id: string): string;
     static removeRecipientMention(activity: Partial<Activity>): string;
     responded: boolean;
