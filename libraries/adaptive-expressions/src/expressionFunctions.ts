@@ -290,8 +290,8 @@ export class ExpressionFunctions {
      */
     public static verifyContainer(value: any, expression: Expression, _: number): string {
         let error: string;
-        if (!(typeof value === 'string') && !Array.isArray(value) && !(value instanceof Map)) {
-            error = `${ expression } must be a string or list or map.`;
+        if (!(typeof value === 'string') && !Array.isArray(value) && !(value instanceof Map) && !(typeof value === 'object')) {
+            error = `${ expression } must be a string, list, map or object.`;
         }
 
         return error;
@@ -2019,10 +2019,10 @@ export class ExpressionFunctions {
                         let count: number;
                         if (typeof args[0] === 'string' || Array.isArray(args[0])) {
                             count = args[0].length;
-                        }
-
-                        if (args[0] instanceof Map) {
+                        } else if (args[0] instanceof Map) {
                             count = args[0].size;
+                        } else if (typeof args[0] == 'object') {
+                            count = Object.keys(args[0]).length;
                         }
 
                         return count;

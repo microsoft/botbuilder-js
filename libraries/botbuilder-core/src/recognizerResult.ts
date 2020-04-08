@@ -13,12 +13,12 @@ export interface RecognizerResult {
     /**
      * Utterance sent to recognizer
      */
-    readonly text: string;
+    text: string;
 
     /**
      * If original text is changed by things like spelling, the altered version.
      */
-    readonly alteredText?: string;
+    alteredText?: string;
 
     /**
      * Intents recognized for the utterance.
@@ -26,15 +26,36 @@ export interface RecognizerResult {
      * @remarks
      * A map of intent names to an object with score is returned.
      */
-    readonly intents: { [name: string]: {score: number} };
+    intents: { [name: string]: { score: number } };
 
     /**
      * (Optional) entities recognized.
      */
-    readonly entities?: any;
+    entities?: any;
 
     /**
      * (Optional) other properties
      */
     [propName: string]: any;
 }
+
+export const getTopScoringIntent = (result: RecognizerResult): { intent: string; score: number } => {
+    if (!result || !result.intents) {
+        throw new Error('result is empty');
+    }
+
+    let topIntent: string;
+    let topScore = -1;
+    for (const intent in result.intents) {
+        const score = result.intents[intent].score;
+        if (topIntent == undefined || score > topScore) {
+            topIntent = intent;
+            topScore = score;
+        }
+    }
+
+    return {
+        intent: topIntent,
+        score: topScore
+    };
+};

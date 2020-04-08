@@ -15,6 +15,7 @@ export * from './dialogContainer';
 export * from './dialogContext';
 export * from './dialogEvents';
 export { runDialog } from './dialogHelper';
+export * from './dialogManager';
 export * from './dialogSet';
 export * from './memory';
 export * from './prompts';

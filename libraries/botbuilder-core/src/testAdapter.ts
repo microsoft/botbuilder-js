@@ -11,8 +11,6 @@ import { Activity, ActivityTypes, ConversationReference, ResourceResponse, Token
 import { BotAdapter } from './botAdapter';
 import {ExtendedUserTokenProvider} from './extendedUserTokenProvider';
 import { TurnContext } from './turnContext';
-import { basename } from 'path';
-import { stringify } from 'querystring';
 
 /**
  * Signature for a function that can be used to inspect individual activities returned by a bot
