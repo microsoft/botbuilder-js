@@ -19,12 +19,7 @@ export abstract class Configurable {
             if (config.hasOwnProperty(key)) {
                 const setting = config[key];
                 if (Array.isArray(setting)) {
-                    if (Array.isArray(this[key])) {
-                        // Apply as an array update
-                        setting.forEach((item) => this[key].push(item));
-                    } else {
-                        this[key] = setting;
-                    }
+                    this[key] = setting;
                 } else if (typeof setting == 'object') {
                     if (typeof this[key] == 'object') {
                         // Apply as a map update
