@@ -11,6 +11,8 @@ import { ExpressionParser } from 'adaptive-expressions';
 import { TemplateInterface } from '../template';
 import { ValueExpression, StringExpression, BoolExpression, NumberExpression } from '../expressions';
 import { AdaptiveEvents } from '../adaptiveEvents';
+import { ActivityTemplate } from '../templates/activityTemplate';
+import { StaticActivityTemplate } from '../templates/staticActivityTemplate';
 
 export enum InputState {
     missing = 'missing',
@@ -83,6 +85,20 @@ export abstract class InputDialog extends Dialog {
      * An optional expression which if is true will disable this action.
      */
     public disabled?: BoolExpression;
+
+    public constructor(property?: string, prompt?: Partial<Activity> | string) {
+        super();
+        if (property) {
+            this.property = new StringExpression(property);
+        }
+        if (prompt) {
+            if (typeof prompt === 'string') { 
+                this.prompt = new ActivityTemplate(prompt); 
+            } else {
+                this.prompt = new StaticActivityTemplate(prompt); 
+            }
+        }
+    }
 
     public async beginDialog(dc: DialogContext, options?: any): Promise<DialogTurnResult> {
         if (this.disabled && this.disabled.getValue(dc.state)) {

@@ -17,7 +17,6 @@ export class SendActivity<O extends object = {}> extends Dialog<O> {
      * Creates a new `SendActivity` instance.
      * @param activity Activity or message text to send the user.
      */
-    public constructor();
     public constructor(activity?: Partial<Activity> | string) {
         super();
         if (activity) { 
