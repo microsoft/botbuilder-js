@@ -8,6 +8,7 @@
 import { Expression, ReturnType } from './expression';
 import { ExpressionEvaluator } from './expressionEvaluator';
 import { ExpressionType } from './expressionType';
+import { ExpressionFunctions } from './expressionFunctions';
 
 /**
  * Construct an expression constant.
@@ -28,7 +29,8 @@ export class Constant extends Expression {
             typeof theValue === 'string' ? ReturnType.String
                 : typeof theValue === 'boolean' ? ReturnType.Boolean
                     : typeof theValue === 'number' && !Number.isNaN(theValue) ? ReturnType.Number
-                        : ReturnType.Object;
+                        : Array.isArray(theValue) ? ReturnType.Array
+                            : ReturnType.Object;
 
         this._value = theValue;
     }

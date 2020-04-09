@@ -21,22 +21,27 @@ export enum ReturnType {
     /**
      * True or false boolean value.
      */
-    Boolean = 'boolean',
+    Boolean = 1,
 
     /**
      * Numerical value like int, float, double, ...
      */
-    Number = 'number',
+    Number = 2,
 
     /**
      * Any value is possible.
      */
-    Object = 'object',
+    Object = 4,
 
     /**
      * String value.
      */
-    String = 'string'
+    String = 8,
+
+    /**
+     * Array value.
+     */
+    Array = 16,
 }
 
 /**
