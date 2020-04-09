@@ -40,6 +40,7 @@ describe('QnAMakerDialog', function() {
         const KB_ID = 'kbId';
         const ENDPOINT_KEY = 'endpointKey';
         const HOSTNAME = 'https://myqnainstance.azurewebsites.net/qnamaker';
+        const NOT_AZURE_WEBSITE = 'https://myqnainstance.net/qnamaker';
         const NOT_HTTPS = 'http://myqnainstance.azurewebsites.net/qnamaker';
         const INCOMPLETE_HOSTNAME = 'myqnainstance';
 
@@ -51,6 +52,15 @@ describe('QnAMakerDialog', function() {
         strictEqual(client.endpoint.knowledgeBaseId,  KB_ID);
         strictEqual(client.endpoint.endpointKey, ENDPOINT_KEY);
         strictEqual(client.endpoint.host, HOSTNAME);
+
+        // Create QnAMakerDialog without "azurewebsites" 2nd domain.
+        const qnaNoAzureWebsites = new QnAMakerDialog(KB_ID, ENDPOINT_KEY, NOT_AZURE_WEBSITE);
+        const notAzureWebSitesClient = qnaNoAzureWebsites.getQnAClient();
+
+        ok(notAzureWebSitesClient instanceof QnAMaker);
+        strictEqual(notAzureWebSitesClient.endpoint.knowledgeBaseId,  KB_ID);
+        strictEqual(notAzureWebSitesClient.endpoint.endpointKey, ENDPOINT_KEY);
+        strictEqual(notAzureWebSitesClient.endpoint.host, NOT_AZURE_WEBSITE);
 
         // Create QnAMakerDialog with http hostName
         const qnaHttp = new QnAMakerDialog(KB_ID, ENDPOINT_KEY, NOT_HTTPS);
