@@ -40,6 +40,7 @@ describe('QnAMakerDialog', function() {
         const KB_ID = 'kbId';
         const ENDPOINT_KEY = 'endpointKey';
         const HOSTNAME = 'https://myqnainstance.azurewebsites.net/qnamaker';
+        const NOT_HTTPS = 'http://myqnainstance.azurewebsites.net/qnamaker';
         const INCOMPLETE_HOSTNAME = 'myqnainstance';
 
         // Create QnAMakerDialog
@@ -50,6 +51,15 @@ describe('QnAMakerDialog', function() {
         strictEqual(client.endpoint.knowledgeBaseId,  KB_ID);
         strictEqual(client.endpoint.endpointKey, ENDPOINT_KEY);
         strictEqual(client.endpoint.host, HOSTNAME);
+
+        // Create QnAMakerDialog with http hostName
+        const qnaHttp = new QnAMakerDialog(KB_ID, ENDPOINT_KEY, NOT_HTTPS);
+        const httpClient = qnaHttp.getQnAClient();
+
+        ok(httpClient instanceof QnAMaker);
+        strictEqual(httpClient.endpoint.knowledgeBaseId,  KB_ID);
+        strictEqual(httpClient.endpoint.endpointKey, ENDPOINT_KEY);
+        strictEqual(httpClient.endpoint.host, NOT_HTTPS);
 
         // Create QnAMakerDialog with incomplete hostname
         const qnaDialog = new QnAMakerDialog(KB_ID, ENDPOINT_KEY, INCOMPLETE_HOSTNAME);
