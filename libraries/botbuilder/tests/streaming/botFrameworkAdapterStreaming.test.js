@@ -123,8 +123,9 @@ describe('BotFrameworkAdapter Streaming tests', () => {
                     await bot.run(context);
                 });
             } catch (err) {
-                expect(err.message).to.equal('Unauthorized. No valid identity.');
-                // expect(err.message).to.equal('Unauthorized. Is not authenticated');
+                expect(err.statusCode).to.equal(401);
+                // expect(err.message).to.equal('Unauthorized. No valid identity.');
+                expect(err.message).to.equal('Unauthorized. Is not authenticated');
                 const socketResponse = MockNetSocket.createNonSuccessResponse(401, err.message);
                 expect(writeSpy.called).to.be.true;
                 expect(writeSpy.calledWithExactly(socketResponse)).to.be.true;
@@ -148,6 +149,7 @@ describe('BotFrameworkAdapter Streaming tests', () => {
                 });
             } catch (err) {
                 expect(err.message).to.equal("'authHeader' required.");
+                expect(err.statusCode).to.equal(400);
                 const socketResponse = MockNetSocket.createNonSuccessResponse(400, err.message);
                 expect(writeSpy.called).to.be.true;
                 expect(writeSpy.calledWithExactly(socketResponse)).to.be.true;
@@ -166,6 +168,7 @@ describe('BotFrameworkAdapter Streaming tests', () => {
             try {
                 await adapter.useWebSocket(request, socket, Buffer.from([]), uncallableLogic);    
             } catch (err) {
+                expect(err.statusCode).to.equal(undefined);
                 expect(err.message).to.equal('Streaming logic needs to be provided to `useWebSocket`');
                 expect(useWebSocketSpy.called).to.be.true;
             }
