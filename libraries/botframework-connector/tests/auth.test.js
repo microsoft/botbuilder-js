@@ -15,6 +15,7 @@ describe('Bot Framework Connector - Auth Tests', function() {
                     throw new Error('Expected validation to fail.');
                 } catch (err) {
                     assert(err.message === `'authHeader' required.`, `unexpected error thrown: "${ err.message }"`);
+                    assert.equal(err.statusCode, 400);
                 }
             });
         });
@@ -37,6 +38,7 @@ describe('Bot Framework Connector - Auth Tests', function() {
                     throw new Error('Expected validation to fail.');
                 } catch (err) {
                     assert(err.message.substring('Unauthorized. Invalid AppId passed on token:'), `unexpected error thrown: "${ err.message }"`);
+                    assert.strictEqual(err.statusCode, 401);;
                 }
             });
 
@@ -49,6 +51,7 @@ describe('Bot Framework Connector - Auth Tests', function() {
                     throw new Error('Expected validation to fail.');
                 } catch (err) {
                     assert(err.message.substring('Unauthorized. Invalid AppId passed on token:'), `unexpected error thrown: "${ err.message }"`);
+                    assert.strictEqual(err.statusCode, 401);;
                 }
             });
         });
@@ -147,6 +150,7 @@ describe('Bot Framework Connector - Auth Tests', function() {
                     throw new Error('Expected validation to fail.');
                 } catch (err) {
                     assert(err.message === 'Unauthorized. Is not authenticated', `unexpected error thrown: "${ err.message }"`);
+                    assert.strictEqual(err.statusCode, 401);;
                 }
             });
 
@@ -156,6 +160,7 @@ describe('Bot Framework Connector - Auth Tests', function() {
                     throw new Error('Expected validation to fail.');
                 } catch (err) {
                     assert(err.message === 'Unauthorized. Is not authenticated', `unexpected error thrown: "${ err.message }"`);
+                    assert.strictEqual(err.statusCode, 401);;
                 }
             });
 
@@ -166,6 +171,7 @@ describe('Bot Framework Connector - Auth Tests', function() {
                     throw new Error('Expected validation to fail.');
                 } catch (err) {
                     assert(err.message === 'Unauthorized. Issuer Claim MUST be present.', `unexpected error thrown: "${ err.message }"`);
+                    assert.strictEqual(err.statusCode, 401);;
                 }
             });
 
@@ -176,6 +182,7 @@ describe('Bot Framework Connector - Auth Tests', function() {
                     throw new Error('Expected validation to fail.');
                 } catch (err) {
                     assert(err.message === 'Unauthorized. Issuer Claim MUST be present.', `unexpected error thrown: "${ err.message }"`);
+                    assert.strictEqual(err.statusCode, 401);;
                 }
             });
 
@@ -186,6 +193,7 @@ describe('Bot Framework Connector - Auth Tests', function() {
                     throw new Error('Expected validation to fail.');
                 } catch (err) {
                     assert(err.message === 'Unauthorized. Invalid AppId passed on token: null', `unexpected error thrown: "${ err.message }"`);
+                    assert.strictEqual(err.statusCode, 401);;
                 }
             });
 
@@ -199,6 +207,7 @@ describe('Bot Framework Connector - Auth Tests', function() {
                     throw new Error('Expected validation to fail.');
                 } catch (err) {
                     assert(err.message === 'Unauthorized. Invalid AppId passed on token: peanut', `unexpected error thrown: "${ err.message }"`);
+                    assert.strictEqual(err.statusCode, 401);;
                 }
             });
 
@@ -218,6 +227,7 @@ describe('Bot Framework Connector - Auth Tests', function() {
                     throw new Error('Expected validation to fail.');
                 } catch (err) {
                     assert(err.message === 'Unauthorized. Is not authenticated', `unexpected error thrown: "${ err.message }"`);
+                    assert.strictEqual(err.statusCode, 401);;
                 }
             });
 
@@ -227,6 +237,7 @@ describe('Bot Framework Connector - Auth Tests', function() {
                     throw new Error('Expected validation to fail.');
                 } catch (err) {
                     assert(err.message === 'Unauthorized. Is not authenticated', `unexpected error thrown: "${ err.message }"`);
+                    assert.strictEqual(err.statusCode, 401);;
                 }
             });
 
@@ -237,6 +248,7 @@ describe('Bot Framework Connector - Auth Tests', function() {
                     throw new Error('Expected validation to fail.');
                 } catch (err) {
                     assert(err.message === 'Unauthorized. Issuer Claim MUST be present.', `unexpected error thrown: "${ err.message }"`);
+                    assert.strictEqual(err.statusCode, 401);;
                 }
             });
 
@@ -247,6 +259,7 @@ describe('Bot Framework Connector - Auth Tests', function() {
                     throw new Error('Expected validation to fail.');
                 } catch (err) {
                     assert(err.message === 'Unauthorized. Issuer Claim MUST be present.', `unexpected error thrown: "${ err.message }"`);
+                    assert.strictEqual(err.statusCode, 401);;
                 }
             });
 
@@ -257,6 +270,7 @@ describe('Bot Framework Connector - Auth Tests', function() {
                     throw new Error('Expected validation to fail.');
                 } catch (err) {
                     assert(err.message === 'Unauthorized. Invalid AppId passed on token: null', `unexpected error thrown: "${ err.message }"`);
+                    assert.strictEqual(err.statusCode, 401);;
                 }
             });
 
@@ -270,6 +284,7 @@ describe('Bot Framework Connector - Auth Tests', function() {
                     throw new Error('Expected validation to fail.');
                 } catch (err) {
                     assert(err.message === 'Unauthorized. Invalid AppId passed on token: peanut', `unexpected error thrown: "${ err.message }"`);
+                    assert.strictEqual(err.statusCode, 401);;
                 }
             });
 
@@ -293,6 +308,7 @@ describe('Bot Framework Connector - Auth Tests', function() {
                     throw new Error('Expected validation to fail.');
                 } catch (err) {
                     assert(err.message === 'Unauthorized. Is not authenticated', `unexpected error thrown: "${ err.message }"`);
+                    assert.strictEqual(err.statusCode, 401);;
                 }
             });
 
@@ -302,6 +318,7 @@ describe('Bot Framework Connector - Auth Tests', function() {
                     throw new Error('Expected validation to fail.');
                 } catch (err) {
                     assert(err.message === 'Unauthorized. No valid identity.', `unexpected error thrown: "${ err.message }"`);
+                    assert.strictEqual(err.statusCode, 401);;
                 }
             });
 
@@ -312,6 +329,7 @@ describe('Bot Framework Connector - Auth Tests', function() {
                     throw new Error('Expected validation to fail.');
                 } catch (err) {
                     assert(err.message === 'Unauthorized. Issuer Claim MUST be present.', `unexpected error thrown: "${ err.message }"`);
+                    assert.strictEqual(err.statusCode, 401);;
                 }
             });
 
@@ -322,6 +340,7 @@ describe('Bot Framework Connector - Auth Tests', function() {
                     throw new Error('Expected validation to fail.');
                 } catch (err) {
                     assert(err.message === 'Unauthorized. Issuer Claim MUST be present.', `unexpected error thrown: "${ err.message }"`);
+                    assert.strictEqual(err.statusCode, 401);;
                 }
             });
 
@@ -332,6 +351,7 @@ describe('Bot Framework Connector - Auth Tests', function() {
                     throw new Error('Expected validation to fail.');
                 } catch (err) {
                     assert(err.message === 'Unauthorized. Invalid AppId passed on token: null', `unexpected error thrown: "${ err.message }"`);
+                    assert.strictEqual(err.statusCode, 401);;
                 }
             });
 
@@ -345,6 +365,7 @@ describe('Bot Framework Connector - Auth Tests', function() {
                     throw new Error('Expected validation to fail.');
                 } catch (err) {
                     assert(err.message === 'Unauthorized. Invalid AppId passed on token: peanut', `unexpected error thrown: "${ err.message }"`);
+                    assert.strictEqual(err.statusCode, 401);
                 }
             });
 

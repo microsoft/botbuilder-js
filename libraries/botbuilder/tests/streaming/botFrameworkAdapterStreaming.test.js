@@ -168,7 +168,6 @@ describe('BotFrameworkAdapter Streaming tests', () => {
             try {
                 await adapter.useWebSocket(request, socket, Buffer.from([]), uncallableLogic);    
             } catch (err) {
-                expect(err.statusCode).to.equal(undefined);
                 expect(err.message).to.equal('Streaming logic needs to be provided to `useWebSocket`');
                 expect(useWebSocketSpy.called).to.be.true;
             }

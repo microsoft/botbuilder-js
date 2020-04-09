@@ -23,18 +23,17 @@ export class AuthenticationError extends Error implements IStatusCodeError {
      * @param err The error thrown, used to determine an appropriate status code.
      */
     public static determineStatusCodeAndBuildMessage(err: any): string {
-        let code: number;
-        let errMessage = (err && err.message) ? err.message : 'Internet Server Error';
+        let errMessage: string = (err && err.message) ? err.message : 'Internet Server Error';
+        let code: number = AuthenticationError.determineStatusCode(errMessage);
         const connectionHeader = `Connection: 'close'\r\n`;
         
-        let builtMessage = '';
-        code = AuthenticationError.determineStatusCode(errMessage);
+        let builtMessage: string = '';
         builtMessage = `HTTP/1.1 ${ code } ${ StatusCodes[code] }\r\n${ errMessage }\r\n${ connectionHeader }\r\n`;
         
         return builtMessage;
     }
     
-    private static determineStatusCode(message: string): StatusCodes {
+    private static determineStatusCode(message: string): StatusCode {
         if (typeof(message) === 'string') {
             if (message.toLowerCase().startsWith('unauthorized')) {
                 return 401;
