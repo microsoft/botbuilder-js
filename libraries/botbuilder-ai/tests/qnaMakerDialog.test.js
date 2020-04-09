@@ -60,4 +60,51 @@ describe('QnAMakerDialog', function() {
         strictEqual(fixedClient.endpoint.endpointKey, ENDPOINT_KEY);
         strictEqual(fixedClient.endpoint.host, HOSTNAME);
     });
+
+    it('should construct BAD hostnames', () => {
+        const KB_ID = 'kbId';
+        const ENDPOINT_KEY = 'endpointKey';
+        const createHostName = (hostName) => `https://${ hostName }.azurewebsites.net/qnamaker`;
+
+        const NO_AUTHORITY = 'myqnainstance.net/qnamaker';
+        const NO_TLD = 'https://myqnainstance/qnamaker';
+        const NO_QNAMAKER = 'https://myqnainstance.net/';
+        const ADDITIONAL_PATH = 'https://myqnainstance.net/my/path/qnamaker';
+
+        // Missing authority
+        const noAuthority = new QnAMakerDialog(KB_ID, ENDPOINT_KEY, NO_AUTHORITY);
+        const noAuthorityClient = noAuthority.getQnAClient();
+
+        ok(noAuthorityClient instanceof QnAMaker);
+        strictEqual(noAuthorityClient.endpoint.knowledgeBaseId,  KB_ID);
+        strictEqual(noAuthorityClient.endpoint.endpointKey, ENDPOINT_KEY);
+        strictEqual(noAuthorityClient.endpoint.host, createHostName(NO_AUTHORITY));
+
+        // Missing TLD
+        const noTLD = new QnAMakerDialog(KB_ID, ENDPOINT_KEY, NO_TLD);
+        const noTLDClient = noTLD.getQnAClient();
+
+        ok(noTLDClient instanceof QnAMaker);
+        strictEqual(noTLDClient.endpoint.knowledgeBaseId,  KB_ID);
+        strictEqual(noTLDClient.endpoint.endpointKey, ENDPOINT_KEY);
+        strictEqual(noTLDClient.endpoint.host, createHostName(NO_TLD));
+
+        // Missing path
+        const noPath = new QnAMakerDialog(KB_ID, ENDPOINT_KEY, NO_QNAMAKER);
+        const noPathClient = noPath.getQnAClient();
+
+        ok(noPathClient instanceof QnAMaker);
+        strictEqual(noPathClient.endpoint.knowledgeBaseId,  KB_ID);
+        strictEqual(noPathClient.endpoint.endpointKey, ENDPOINT_KEY);
+        strictEqual(noPathClient.endpoint.host, createHostName(NO_QNAMAKER));
+
+        // Additional path
+        const additionalPath = new QnAMakerDialog(KB_ID, ENDPOINT_KEY, ADDITIONAL_PATH);
+        const extraPathClient = additionalPath.getQnAClient();
+
+        ok(extraPathClient instanceof QnAMaker);
+        strictEqual(extraPathClient.endpoint.knowledgeBaseId,  KB_ID);
+        strictEqual(extraPathClient.endpoint.endpointKey, ENDPOINT_KEY);
+        strictEqual(extraPathClient.endpoint.host, createHostName(ADDITIONAL_PATH));
+    });
 });
