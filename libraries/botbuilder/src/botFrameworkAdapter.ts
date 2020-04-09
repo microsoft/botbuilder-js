@@ -1482,6 +1482,9 @@ function writeErrAndDestroySocket(socket: INodeSocket, err: any): void {
     socket.destroy();
 }
 
+/**
+ * @deprecated Use writeErrAndDestroySocket in favor of this method, to more efficiently handle errors thrown that already have status codes.
+ */
 function abortWebSocketUpgrade(socket: INodeSocket, code: number, message?: string): void {
     if (socket.writable) {
         const connectionHeader = `Connection: 'close'\r\n`;
