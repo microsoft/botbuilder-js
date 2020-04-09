@@ -1336,7 +1336,7 @@ export class BotFrameworkAdapter extends BotAdapter implements ExtendedUserToken
         try {
             await this.authenticateConnection(req, this.settings.channelService);
         } catch (err) {
-            writeErrAndDestroySocket(socket, err);
+            abortWebSocketUpgrade(socket, err);
             throw err;
         }
 
@@ -1468,7 +1468,7 @@ function delay(timeout: number): Promise<void> {
 * @param socket The raw socket connection between the bot (server) and channel/caller (client).
 * @param err The error. If the error includes a status code, it will be included in the message written to the socket.
 */
-function writeErrAndDestroySocket(socket: INodeSocket, err: any): void {
+function abortWebSocketUpgrade(socket: INodeSocket, err: any): void {
     if (socket.writable) {
         const connectionHeader = `Connection: 'close'\r\n`;
 
@@ -1479,18 +1479,5 @@ function writeErrAndDestroySocket(socket: INodeSocket, err: any): void {
         
         socket.write(message);
     }
-    socket.destroy();
-}
-
-/**
- * @deprecated Use writeErrAndDestroySocket in favor of this method, to more efficiently handle errors thrown that already have status codes.
- */
-function abortWebSocketUpgrade(socket: INodeSocket, code: number, message?: string): void {
-    if (socket.writable) {
-        const connectionHeader = `Connection: 'close'\r\n`;
-        const writeMessage = `HTTP/1.1 ${ code } ${ STATUS_CODES[code] }\r\n${ message }\r\n${ connectionHeader }\r\n`;
-        socket.write(writeMessage);
-    }
-
     socket.destroy();
 }
