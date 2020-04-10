@@ -223,7 +223,7 @@ export class Templates implements Iterable<Template> {
         this.checkErrors();
 
         // wrap inline string with "# name and -" to align the evaluation process
-        const fakeTemplateId = TemplateExtensions.newGuid();
+        const fakeTemplateId = '__temp__';
         const multiLineMark = '```';
 
         inlineStr = !(inlineStr.trim().startsWith(multiLineMark) && inlineStr.includes('\n'))
