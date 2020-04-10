@@ -31,7 +31,7 @@ describe('LG', function() {
         let templates = Templates.parseFile(GetExampleFilePath('3.lg'));
         console.log(templates.toArray()[0].body);
         console.log(templates.toArray()[1].body);
-        let evaled = templates.evaluate('welcome-user', undefined);
+        let evaled = templates.evaluate('welcome_user', undefined);
         const options = ['Hi', 'Hello', 'Hiya', 'Hi :)', 'Hello :)', 'Hiya :)'];
         assert.strictEqual(options.includes(evaled), true, `The result ${ evaled } is not in those options [${ options.join(',') }]`);
     });
@@ -39,7 +39,7 @@ describe('LG', function() {
     it('TestBasicTemplateRefAndEntityRef', function() {
         let templates = Templates.parseFile(GetExampleFilePath('4.lg'));
         let userName = 'DL';
-        let evaled = templates.evaluate('welcome-user', { userName: userName });
+        let evaled = templates.evaluate('welcome_user', { userName: userName });
         const options = ['Hi', 'Hello', 'Hiya ', 'Hi :)', 'Hello :)', 'Hiya :)'];
         assert.strictEqual(evaled.includes(userName), true, `The result ${ evaled } does not contiain ${ userName }`);
     });
@@ -47,10 +47,10 @@ describe('LG', function() {
     it('TestBasicConditionalTemplate', function() {
         let templates = Templates.parseFile(GetExampleFilePath('5.lg'));
 
-        let evaled = templates.evaluate('time-of-day-readout', { timeOfDay: 'morning' });
+        let evaled = templates.evaluate('time_of_day_readout', { timeOfDay: 'morning' });
         assert.strictEqual(evaled === 'Good morning' || evaled === 'Morning! ', true, `Evaled is ${ evaled }`);
 
-        evaled = templates.evaluate('time-of-day-readout', { timeOfDay: 'evening' });
+        evaled = templates.evaluate('time_of_day_readout', { timeOfDay: 'evening' });
         assert.strictEqual(evaled === 'Good evening' || evaled === 'Evening! ', true, `Evaled is ${ evaled }`);
     });
 
@@ -72,13 +72,13 @@ describe('LG', function() {
     it('TestBasicConditionalTemplateWithoutDefault', function() {
         let templates = Templates.parseFile(GetExampleFilePath('5.lg'));
 
-        let evaled = templates.evaluate('time-of-day-readout-without-default', { timeOfDay: 'morning' });
+        let evaled = templates.evaluate('time_of_day_readout_without_default', { timeOfDay: 'morning' });
         assert.strictEqual(evaled === 'Good morning' || evaled === 'Morning! ', true, `Evaled is ${ evaled }`);
 
-        evaled = templates.evaluate('time-of-day-readout-without-default2', { timeOfDay: 'morning' });
+        evaled = templates.evaluate('time_of_day_readout_without_default2', { timeOfDay: 'morning' });
         assert.strictEqual(evaled === 'Good morning' || evaled === 'Morning! ', true, `Evaled is ${ evaled }`);
 
-        evaled = templates.evaluate('time-of-day-readout-without-default2', { timeOfDay: 'evening' });
+        evaled = templates.evaluate('time_of_day_readout_without_default2', { timeOfDay: 'evening' });
         assert.strictEqual(evaled, undefined, `Evaled is ${ evaled } which should be undefined.`);
     });
 
@@ -268,7 +268,7 @@ describe('LG', function() {
                 templateRefOptions: ['template2', 'template3', 'template4', 'template5', 'template6']
             },
             {
-                name: 'coffee-to-go-order',
+                name: 'coffee_to_go_order',
                 variableOptions: ['coffee', 'userName', 'size', 'price'],
                 templateRefOptions: ['wPhrase', 'LatteOrderConfirmation', 'MochaOrderConfirmation', 'CuppuccinoOrderConfirmation']
             },
