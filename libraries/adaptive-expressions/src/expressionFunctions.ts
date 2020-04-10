@@ -64,10 +64,10 @@ export class ExpressionFunctions {
      * @param expression Expression to validate.
      * @param minArity Minimum number of children.
      * @param maxArity Maximum number of children.
-     * @param types Allowed return types for children.
+     * @param returnType  Allowed return types for children.
      * If a child has a return type of Object then validation will happen at runtime.
      */
-    public static validateArityAndAnyType(expression: Expression, minArity: number, maxArity: number, ...types: ReturnType[]): void {
+    public static validateArityAndAnyType(expression: Expression, minArity: number, maxArity: number, returnType: ReturnType = ReturnType.Object): void {
         if (expression.children.length < minArity) {
             throw new Error(`${ expression } should have at least ${ minArity } children.`);
         }
@@ -75,26 +75,10 @@ export class ExpressionFunctions {
             throw new Error(`${ expression } can't have more than ${ maxArity } children.`);
         }
 
-        if (types.length > 0) {
+        if ((returnType & ReturnType.Object)  === 0) {
             for (const child of expression.children) {
-
-                if (child.returnType !== ReturnType.Object && !types.includes(child.returnType)) {
-                    if (types.length === 1) {
-                        throw new Error(`${ child } is not a ${ types[0] } expression in ${ expression.toString() }.`);
-                    } else {
-                        const builder = `${ child } in ${ expression.toString() } is not any of [`;
-                        let first = true;
-                        for (const type of types) {
-                            if (first) {
-                                first = false;
-                            } else {
-                                builder.concat('. ');
-                            }
-                            builder.concat(type.toString());
-                        }
-                        builder.concat('].');
-                        throw new Error(builder);
-                    }
+                if ((child.returnType & ReturnType.Object) === 0 && (returnType & child.returnType) === 0) {
+                    throw new Error(ExpressionFunctions.buildTypeValidatorError(returnType, child, expression));
                 }
             }
         }
@@ -119,8 +103,10 @@ export class ExpressionFunctions {
         for (let i = 0; i < types.length; i++) {
             const child: Expression = expression.children[i];
             const type: ReturnType = types[i];
-            if (type !== ReturnType.Object && child.returnType !== ReturnType.Object && child.returnType !== type) {
-                throw new Error(`${ child } in ${ expression } is not a ${ type }.`);
+            if ((type & ReturnType.Object) == 0
+                    && (child.returnType & ReturnType.Object) == 0
+                    && (type & child.returnType) == 0) {
+                throw new Error(ExpressionFunctions.buildTypeValidatorError(type, child, expression));
             }
         }
 
@@ -131,8 +117,10 @@ export class ExpressionFunctions {
             }
             const child: Expression = expression.children[ic];
             const type: ReturnType = optional[i];
-            if (type !== ReturnType.Object && child.returnType !== ReturnType.Object && child.returnType !== type) {
-                throw new Error(`${ child } in ${ expression } is not a ${ type }.`);
+            if ((type & ReturnType.Object) == 0
+                    && (child.returnType & ReturnType.Object) == 0
+                    && (type & child.returnType) == 0) {
+                throw new Error(ExpressionFunctions.buildTypeValidatorError(type, child, expression));
             }
         }
     }
@@ -192,7 +180,7 @@ export class ExpressionFunctions {
      * @param expression Expression to validate.
      */
     public static validateBinaryNumberOrString(expression: Expression): void {
-        ExpressionFunctions.validateArityAndAnyType(expression, 2, 2, ReturnType.Number, ReturnType.String);
+        ExpressionFunctions.validateArityAndAnyType(expression, 2, 2, ReturnType.Number | ReturnType.String);
     }
 
     /**
@@ -290,8 +278,8 @@ export class ExpressionFunctions {
      */
     public static verifyContainer(value: any, expression: Expression, _: number): string {
         let error: string;
-        if (!(typeof value === 'string') && !Array.isArray(value) && !(value instanceof Map)) {
-            error = `${ expression } must be a string or list or map.`;
+        if (!(typeof value === 'string') && !Array.isArray(value) && !(value instanceof Map) && !(typeof value === 'object')) {
+            error = `${ expression } must be a string, list, map or object.`;
         }
 
         return error;
@@ -692,7 +680,7 @@ export class ExpressionFunctions {
                 return { value: result, error };
             },
             ReturnType.String,
-            (expr: Expression): void => ExpressionFunctions.validateArityAndAnyType(expr, 2, 3, ReturnType.String, ReturnType.Number));
+            (expr: Expression): void => ExpressionFunctions.validateOrder(expr, [ReturnType.String], ReturnType.String, ReturnType.Number));
     }
 
     /**
@@ -810,6 +798,24 @@ export class ExpressionFunctions {
         }
     }
 
+    private static buildTypeValidatorError(returnType: ReturnType, childExpr: Expression, expr: Expression): string {
+        const names = Object.keys(ReturnType).filter((x): boolean => !(parseInt(x) >= 0));
+        let types = [];
+        for (const name of names) {
+            const value = ReturnType[name] as number;
+            if ((returnType & value) !== 0) {
+                types.push(name);
+            }
+        }
+
+        if (types.length === 1) {
+            return `${ childExpr } is not a ${ types[0] } expression in ${ expr }.`;
+        } else {
+            const typesStr = types.join(', ');
+            return `${ childExpr } in ${ expr } is not any of [${ typesStr }].`;
+        }
+    }
+
     private static addOrdinal(num: number): string {
         let hasResult = false;
         let ordinalResult: string = num.toString();
@@ -874,7 +880,7 @@ export class ExpressionFunctions {
         if (children.length > 2) {
             throw new Error(`${ expression } has more than 2 children.`);
         }
-        if (children.length === 2 && children[1].returnType !== ReturnType.Object) {
+        if (children.length === 2 && (children[1].returnType & ReturnType.Object) === 0) {
             throw new Error(`${ expression } must have an object as its second argument.`);
         }
     }
@@ -1980,7 +1986,7 @@ export class ExpressionFunctions {
                     (args: any []): number => args[0].reduce((x: number, y: number): number => x + y),
                     ExpressionFunctions.verifyNumericList),
                 ReturnType.Number,
-                ExpressionFunctions.validateUnary),
+                (expression: Expression): void =>  ExpressionFunctions.validateOrder(expression, [], ReturnType.Array)),
             new ExpressionEvaluator(
                 ExpressionType.Add,
                 ExpressionFunctions.applySequenceWithError(
@@ -2010,8 +2016,8 @@ export class ExpressionFunctions {
                         return {value, error};
                     },
                     ExpressionFunctions.verifyNumberOrStringOrNull),
-                ReturnType.Object,
-                (expression: Expression): void =>  ExpressionFunctions.validateArityAndAnyType(expression, 2, Number.MAX_SAFE_INTEGER)),
+                ReturnType.String | ReturnType.Number,
+                (expression: Expression): void =>  ExpressionFunctions.validateArityAndAnyType(expression, 2, Number.MAX_SAFE_INTEGER, ReturnType.String | ReturnType.Number)),
             new ExpressionEvaluator(
                 ExpressionType.Count,
                 ExpressionFunctions.apply(
@@ -2019,17 +2025,17 @@ export class ExpressionFunctions {
                         let count: number;
                         if (typeof args[0] === 'string' || Array.isArray(args[0])) {
                             count = args[0].length;
-                        }
-
-                        if (args[0] instanceof Map) {
+                        } else if (args[0] instanceof Map) {
                             count = args[0].size;
+                        } else if (typeof args[0] == 'object') {
+                            count = Object.keys(args[0]).length;
                         }
 
                         return count;
                     },
                     ExpressionFunctions.verifyContainer),
                 ReturnType.Number,
-                ExpressionFunctions.validateUnary),
+                (expression: Expression): void => ExpressionFunctions.validateOrder(expression, [], ReturnType.String | ReturnType.Array)),
             new ExpressionEvaluator(
                 ExpressionType.Range,
                 ExpressionFunctions.applyWithError(
@@ -2045,7 +2051,7 @@ export class ExpressionFunctions {
                     },
                     ExpressionFunctions.verifyInteger
                 ),
-                ReturnType.Object,
+                ReturnType.Array,
                 ExpressionFunctions.validateBinaryNumber
             ),
             new ExpressionEvaluator(
@@ -2060,8 +2066,8 @@ export class ExpressionFunctions {
                         return Array.from(new Set(result));
                     },
                     ExpressionFunctions.verifyList),
-                ReturnType.Object,
-                ExpressionFunctions.validateAtLeastOne
+                ReturnType.Array,
+                (expression: Expression): void => ExpressionFunctions.validateArityAndAnyType(expression, 1, Number.MAX_SAFE_INTEGER, ReturnType.Array)
             ),
             new ExpressionEvaluator(
                 ExpressionType.Intersection,
@@ -2075,38 +2081,38 @@ export class ExpressionFunctions {
                         return Array.from(new Set(result));
                     },
                     ExpressionFunctions.verifyList),
-                ReturnType.Object,
-                ExpressionFunctions.validateAtLeastOne
+                ReturnType.Array,
+                (expression: Expression): void => ExpressionFunctions.validateArityAndAnyType(expression, 1, Number.MAX_SAFE_INTEGER, ReturnType.Array)
             ),
             new ExpressionEvaluator(
                 ExpressionType.Skip,
                 ExpressionFunctions.skip,
-                ReturnType.Object,
-                (expression: Expression): void => ExpressionFunctions.validateOrder(expression, [], ReturnType.Object, ReturnType.Number)
+                ReturnType.Array,
+                (expression: Expression): void => ExpressionFunctions.validateOrder(expression, [], ReturnType.Array, ReturnType.Number)
             ),
             new ExpressionEvaluator(
                 ExpressionType.Take,
                 ExpressionFunctions.take,
-                ReturnType.Object,
-                (expression: Expression): void => ExpressionFunctions.validateOrder(expression, [], ReturnType.Object, ReturnType.Number)
+                ReturnType.Array,
+                (expression: Expression): void => ExpressionFunctions.validateOrder(expression, [], ReturnType.Array, ReturnType.Number)
             ),
             new ExpressionEvaluator(
                 ExpressionType.SubArray,
                 ExpressionFunctions.subArray,
-                ReturnType.Object,
-                (expression: Expression): void => ExpressionFunctions.validateOrder(expression, [ReturnType.Number], ReturnType.Object, ReturnType.Number)
+                ReturnType.Array,
+                (expression: Expression): void => ExpressionFunctions.validateOrder(expression, [ReturnType.Number], ReturnType.Array, ReturnType.Number)
             ),
             new ExpressionEvaluator(
                 ExpressionType.SortBy,
                 ExpressionFunctions.sortBy(false),
-                ReturnType.Object,
-                (expression: Expression): void => ExpressionFunctions.validateOrder(expression, [ReturnType.String], ReturnType.Object)
+                ReturnType.Array,
+                (expression: Expression): void => ExpressionFunctions.validateOrder(expression, [ReturnType.String], ReturnType.Array)
             ),
             new ExpressionEvaluator(
                 ExpressionType.SortByDescending,
                 ExpressionFunctions.sortBy(true),
-                ReturnType.Object,
-                (expression: Expression): void => ExpressionFunctions.validateOrder(expression, [ReturnType.String], ReturnType.Object)
+                ReturnType.Array,
+                (expression: Expression): void => ExpressionFunctions.validateOrder(expression, [ReturnType.String], ReturnType.Array)
             ),
             new ExpressionEvaluator(
                 ExpressionType.Flatten,
@@ -2116,18 +2122,18 @@ export class ExpressionFunctions {
                         let depth = args.length > 1 ? args[1] : 100;
                         return ExpressionFunctions.flatten(array, depth);
                     }),
-                ReturnType.Object,
-                (expression: Expression): void => ExpressionFunctions.validateOrder(expression, [ReturnType.Number], ReturnType.Object)
+                ReturnType.Array,
+                (expression: Expression): void => ExpressionFunctions.validateOrder(expression, [ReturnType.Number], ReturnType.Array)
             ),
             new ExpressionEvaluator(
                 ExpressionType.Unique,
                 ExpressionFunctions.apply((args: any []): any[] => [... new Set(args[0])]),
-                ReturnType.Object,
-                (expression: Expression): void => ExpressionFunctions.validateOrder(expression, [], ReturnType.Object)
+                ReturnType.Array,
+                (expression: Expression): void => ExpressionFunctions.validateOrder(expression, [], ReturnType.Array)
             ),
             new ExpressionEvaluator(ExpressionType.IndicesAndValues, 
                 (expression: Expression, state: any, options: Options): {value: any; error: string} => ExpressionFunctions.indicesAndValues(expression, state, options), 
-                ReturnType.Object, ExpressionFunctions.validateUnary),
+                ReturnType.Array, ExpressionFunctions.validateUnary),
             ExpressionFunctions.comparison(
                 ExpressionType.LessThan,
                 (args: any []): boolean => args[0] < args[1], ExpressionFunctions.validateBinaryNumberOrString, ExpressionFunctions.verifyNumberOrString),
@@ -2253,7 +2259,7 @@ export class ExpressionFunctions {
             new ExpressionEvaluator(
                 ExpressionType.Split,
                 ExpressionFunctions.apply((args: any []): string[] => ExpressionFunctions.parseStringOrNull(args[0]).split(ExpressionFunctions.parseStringOrNull(args[1] || '')), ExpressionFunctions.verifyStringOrNull),
-                ReturnType.Object,
+                ReturnType.Array,
                 (expression: Expression): void => ExpressionFunctions.validateArityAndAnyType(expression, 1, 2, ReturnType.String)),
             new ExpressionEvaluator(
                 ExpressionType.Substring,
@@ -2317,7 +2323,7 @@ export class ExpressionFunctions {
                     return { value, error };
                 },
                 ReturnType.Number,
-                (expression: Expression): void => ExpressionFunctions.validateArityAndAnyType(expression, 2, 2, ReturnType.String, ReturnType.Boolean, ReturnType.Number, ReturnType.Object)
+                (expression: Expression): void => ExpressionFunctions.validateOrder(expression, [], ReturnType.String | ReturnType.Array, ReturnType.Object)
             ),
             new ExpressionEvaluator(
                 ExpressionType.LastIndexOf,
@@ -2345,7 +2351,7 @@ export class ExpressionFunctions {
                     return { value, error };
                 },
                 ReturnType.Number,
-                (expression: Expression): void => ExpressionFunctions.validateArityAndAnyType(expression, 2, 2, ReturnType.String, ReturnType.Boolean, ReturnType.Number, ReturnType.Object)
+                (expression: Expression): void => ExpressionFunctions.validateOrder(expression, [], ReturnType.String | ReturnType.Array, ReturnType.Object)
             ),
             new ExpressionEvaluator(
                 ExpressionType.Join,
@@ -2374,7 +2380,7 @@ export class ExpressionFunctions {
                     return { value, error };
                 },
                 ReturnType.String,
-                (expression: Expression): void => ExpressionFunctions.validateOrder(expression, [ReturnType.String], ReturnType.Object, ReturnType.String)),
+                (expression: Expression): void => ExpressionFunctions.validateOrder(expression, [ReturnType.String], ReturnType.Array, ReturnType.String)),
             // datetime
             ExpressionFunctions.timeTransform(ExpressionType.AddDays, (ts: moment.Moment, num: any): any => ts.add(num, 'd')),
             ExpressionFunctions.timeTransform(ExpressionType.AddHours, (ts: moment.Moment, num: any): any => ts.add(num, 'h')),
@@ -2524,7 +2530,7 @@ export class ExpressionFunctions {
                     },
                     this.verifyString),
                 ReturnType.String,
-                (expression: Expression): void => ExpressionFunctions.validateOrder(expression, undefined, ReturnType.String)),
+                ExpressionFunctions.validateUnaryString),
             new ExpressionEvaluator(
                 ExpressionType.GetFutureTime,
                 (expr: Expression, state: any, options: Options): { value: any; error: string } => {
@@ -2907,7 +2913,7 @@ export class ExpressionFunctions {
                     ExpressionFunctions.verifyInteger),
                 ReturnType.Number,
                 ExpressionFunctions.validateBinaryNumber),
-            new ExpressionEvaluator(ExpressionType.CreateArray, ExpressionFunctions.apply((args: any []): any[] => Array.from(args)), ReturnType.Object),
+            new ExpressionEvaluator(ExpressionType.CreateArray, ExpressionFunctions.apply((args: any []): any[] => Array.from(args)), ReturnType.Array),
             new ExpressionEvaluator(
                 ExpressionType.Binary,
                 ExpressionFunctions.apply((args: any []): string => this.toBinary(args[0]), ExpressionFunctions.verifyString),
@@ -3037,9 +3043,9 @@ export class ExpressionFunctions {
                 this.setPathToValue,
                 ReturnType.Object,
                 this.validateBinary),
-            new ExpressionEvaluator(ExpressionType.Select, ExpressionFunctions.foreach, ReturnType.Object, ExpressionFunctions.validateForeach),
-            new ExpressionEvaluator(ExpressionType.Foreach, ExpressionFunctions.foreach, ReturnType.Object, ExpressionFunctions.validateForeach),
-            new ExpressionEvaluator(ExpressionType.Where, ExpressionFunctions.where, ReturnType.Object, ExpressionFunctions.validateWhere),
+            new ExpressionEvaluator(ExpressionType.Select, ExpressionFunctions.foreach, ReturnType.Array, ExpressionFunctions.validateForeach),
+            new ExpressionEvaluator(ExpressionType.Foreach, ExpressionFunctions.foreach, ReturnType.Array, ExpressionFunctions.validateForeach),
+            new ExpressionEvaluator(ExpressionType.Where, ExpressionFunctions.where, ReturnType.Array, ExpressionFunctions.validateWhere),
 
             //URI Parsing Functions
             new ExpressionEvaluator(ExpressionType.UriHost, ExpressionFunctions.applyWithError((args: Readonly<any>): any => this.uriHost(args[0]), ExpressionFunctions.verifyString),

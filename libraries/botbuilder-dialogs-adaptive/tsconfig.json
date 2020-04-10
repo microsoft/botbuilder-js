@@ -1,0 +1,15 @@
+{
+  "compilerOptions": {
+    "target": "ESNext",
+    "module": "commonjs",
+    "declaration": true,
+    "sourceMap": true,
+    "outDir": "./lib",
+    "rootDir": "./src",
+    "types" : ["node"],
+    "lib": ["es2020.string"]
+  },
+  "include": [
+    "src/**/*"
+  ]
+}

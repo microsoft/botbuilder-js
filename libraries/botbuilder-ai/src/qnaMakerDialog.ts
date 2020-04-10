@@ -352,7 +352,7 @@ export class QnAMakerDialog extends WaterfallDialog {
         const endpoint = {
             knowledgeBaseId: this.knowledgeBaseId,
             endpointKey: this.endpointKey,
-            host: `https://${this.hostName}.azurewebsites.net/qnamaker`
+            host: this.hostName
         };
         return new QnAMaker(endpoint);
     }
