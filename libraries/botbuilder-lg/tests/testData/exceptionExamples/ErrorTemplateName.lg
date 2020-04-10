@@ -18,3 +18,7 @@
 # t2($%^)
 - hi
 
+> Template name can not contain '-'
+# t2-t1
+- hi
+
