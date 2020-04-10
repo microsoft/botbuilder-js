@@ -5,13 +5,13 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { DialogContext } from "../../dialogContext";
+import { DialogContext } from '../../dialogContext';
 
 /**
  * Abstract base class for all memory scopes.
  */
 export abstract class MemoryScope {
-    constructor(name: string, includeInSnapshot = true)
+    public constructor(name: string, includeInSnapshot = true)
     {
         this.includeInSnapshot = includeInSnapshot;
         this.name = name;

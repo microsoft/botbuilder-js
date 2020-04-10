@@ -5,21 +5,20 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { MemoryScope } from "./memoryScope";
-import { ScopePath } from "./scopePath";
-import { DialogContext } from "../../dialogContext";
+import { MemoryScope } from './memoryScope';
+import { ScopePath } from '../scopePath';
+import { DialogContext } from '../../dialogContext';
 
 /**
  * ThisMemoryScope maps "this" -> dc.activeDialog.state
  */
 export class ThisMemoryScope extends MemoryScope {
-    constructor() {
-        super(ScopePath.THIS);
+    public constructor() {
+        super(ScopePath.this);
     }
 
     public getMemory(dc: DialogContext): object {
-        if (!dc.activeDialog) { throw new Error(`ThisMemoryScope.getMemory: no active dialog found.`) }
-        return dc.activeDialog.state;
+        return dc.activeDialog ? dc.activeDialog.state : undefined;
     }
 
     public setMemory(dc: DialogContext, memory: object): void {

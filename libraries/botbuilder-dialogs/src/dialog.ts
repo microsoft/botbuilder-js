@@ -130,7 +130,70 @@ export enum DialogTurnStatus {
     /**
      * All dialogs on the stack were cancelled and the stack is empty.
      */
-    cancelled = 'cancelled'
+    cancelled = 'cancelled',
+
+    /**
+     * Current dialog completed successfully, but turn should end.
+     */
+    completeAndWait = 'completeAndWait'
+}
+
+export interface DialogEvent {
+    /**
+     * Flag indicating whether the event will be bubbled to the parent `DialogContext`. 
+     */
+    bubble: boolean;
+
+    /**
+     * Name of the event being raised.
+     */
+    name: string;
+
+    /**
+     * Optional. Value associated with the event.
+     */
+    value?: any;
+}
+
+export interface DialogConfiguration {
+    /**
+     * Static id of the dialog.
+     */
+    id?: string;
+
+    /**
+     * Telemetry client the dialog should use. 
+     */
+    telemetryClient?: BotTelemetryClient;
+}
+
+export interface DialogEvent {
+    /**
+     * Flag indicating whether the event will be bubbled to the parent `DialogContext`. 
+     */
+    bubble: boolean;
+
+    /**
+     * Name of the event being raised.
+     */
+    name: string;
+
+    /**
+     * Optional. Value associated with the event.
+     */
+    value?: any;
+}
+
+export interface DialogConfiguration {
+    /**
+     * Static id of the dialog.
+     */
+    id?: string;
+
+    /**
+     * Telemetry client the dialog should use. 
+     */
+    telemetryClient?: BotTelemetryClient;
 }
 
 export interface DialogEvent {
@@ -206,6 +269,12 @@ export interface DialogTurnResult<T = any> {
      * and the last dialog returned a result to the dialog context.
      */
     result?: T;
+
+    /**
+     * If true, a `DialogCommand` has ended its parent container and the parent should not perform
+     * any further processing.
+     */
+    parentEnded?: boolean;
 }
 
 /**
@@ -227,7 +296,7 @@ export abstract class Dialog<O extends object = {}> extends Configurable {
      * The telemetry client for logging events.
      * Default this to the NullTelemetryClient, which does nothing.
      */
-    protected _telemetryClient: BotTelemetryClient =  new NullTelemetryClient();
+    protected _telemetryClient: BotTelemetryClient = new NullTelemetryClient();
 
     /**
      * Creates a new instance of the [Dialog](xref:botbuilder-dialogs.Dialog) class.
@@ -398,7 +467,7 @@ export abstract class Dialog<O extends object = {}> extends Configurable {
     /// <returns>True if the event is handled by the current dialog and bubbling should stop.</returns>
     public async onDialogEvent(dc: DialogContext, e: DialogEvent): Promise<boolean> {
         // Before bubble
-        let handled = await this.onPreBubbleEventAsync(dc, e);
+        let handled = await this.onPreBubbleEvent(dc, e);
 
         // Bubble as needed
         if (!handled && e.bubble && dc.parent != undefined) {
@@ -407,7 +476,7 @@ export abstract class Dialog<O extends object = {}> extends Configurable {
 
         // Post bubble
         if (!handled) {
-            handled = await this.onPostBubbleEventAsync(dc, e);
+            handled = await this.onPostBubbleEvent(dc, e);
         }
 
         return handled;
@@ -424,7 +493,7 @@ export abstract class Dialog<O extends object = {}> extends Configurable {
      * @param e The event being raised.
      * @returns Whether the event is handled by the current dialog and further processing should stop.
      */
-    protected async onPreBubbleEventAsync(dc: DialogContext, e: DialogEvent): Promise<boolean> {
+    protected async onPreBubbleEvent(dc: DialogContext, e: DialogEvent): Promise<boolean> {
         return false;
     }
 
@@ -438,29 +507,29 @@ export abstract class Dialog<O extends object = {}> extends Configurable {
      * @param e The event being raised.
      * @returns Whether the event is handled by the current dialog and further processing should stop.
      */
-    protected async onPostBubbleEventAsync(dc: DialogContext, e: DialogEvent): Promise<boolean> {
+    protected async onPostBubbleEvent(dc: DialogContext, e: DialogEvent): Promise<boolean> {
         return false;
     }
 
     /**
      * Called when a unique ID needs to be computed for a dialog.
-     * 
+     *
      * @remarks
-     * SHOULD be overridden to provide a more contextually relevant ID. The preferred pattern for 
+     * SHOULD be overridden to provide a more contextually relevant ID. The preferred pattern for
      * ID's is `<dialog type>(this.hashedLabel('<dialog args>'))`.
-     */    
+     */
     protected onComputeId(): string {
         throw new Error(`Dialog.onComputeId(): not implemented.`)
     }
 
     /**
      * Aids with computing a unique ID for a dialog by computing a 32 bit hash for a string.
-     * 
+     *
      * @remarks
      * The source for this function was derived from the following article:
-     * 
+     *
      * https://werxltd.com/wp/2010/05/13/javascript-implementation-of-javas-string-hashcode-method/
-     * 
+     *
      * @param label String to generate a hash for.
      * @returns A string that is 15 characters or less in length.
      */
@@ -478,5 +547,5 @@ export abstract class Dialog<O extends object = {}> extends Configurable {
         }
 
         return label;
-    }    
+    }
 }
