@@ -383,31 +383,31 @@ describe('LG', function() {
         assert.strictEqual(evaled, 'Hi');
     });
 
-    it('TestExpandTemplate', function () {
+    it('TestExpandTemplate', function() {
         var templates = Templates.parseFile(GetExampleFilePath('Expand.lg'));
-
+        
         // without scope
         var evaled = templates.expandTemplate('FinalGreeting');
-        assert.strictEqual(evaled.length, 4, `Evaled is ${evaled}`);
+        assert.strictEqual(evaled.length, 4, `Evaled is ${ evaled }`);
         let expectedResults = ['Hi Morning', 'Hi Evening', 'Hello Morning', 'Hello Evening'];
         expectedResults.forEach(x => assert(evaled.includes(x)));
 
         // with scope
-        evaled = templates.expandTemplate('TimeOfDayWithCondition', {time: 'evening'});
-        assert.strictEqual(evaled.length, 2, `Evaled is ${evaled}`);
+        evaled = templates.expandTemplate('TimeOfDayWithCondition', { time: 'evening'});
+        assert.strictEqual(evaled.length, 2, `Evaled is ${ evaled }`);
         expectedResults = ['Hi Evening', 'Hello Evening'];
         expectedResults.forEach(x => assert(evaled.includes(x)));
 
         // with scope
         evaled = templates.expandTemplate('greetInAWeek', {day:'Sunday'});
-        assert.strictEqual(evaled.length, 2, `Evaled is ${evaled}`);
+        assert.strictEqual(evaled.length, 2, `Evaled is ${ evaled }`);
         expectedResults = ['Nice Sunday!', 'Happy Sunday!'];
         expectedResults.forEach(x => assert(evaled.includes(x)));
     });
 
-    it('TestExpandTemplateWithRef', function () {
+    it('TestExpandTemplateWithRef', function() {
         var templates = Templates.parseFile(GetExampleFilePath('Expand.lg'));
-
+        
         const alarms = [
             {
                 time: '7 am',
@@ -418,16 +418,16 @@ describe('LG', function() {
                 date: 'tomorrow'
             }
         ];
-
-        var evaled = templates.expandTemplate('ShowAlarmsWithLgTemplate', { alarms });
-        assert.strictEqual(evaled.length, 2, `Evaled is ${evaled}`);
-        assert.strictEqual(evaled[0], 'You have 2 alarms, they are 8 pm at tomorrow', `Evaled is ${evaled}`);
-        assert.strictEqual(evaled[1], 'You have 2 alarms, they are 8 pm of tomorrow', `Evaled is ${evaled}`);
+        
+        var evaled = templates.expandTemplate('ShowAlarmsWithLgTemplate', {alarms});
+        assert.strictEqual(evaled.length, 2, `Evaled is ${ evaled }`);
+        assert.strictEqual(evaled[0], 'You have 2 alarms, they are 8 pm at tomorrow', `Evaled is ${ evaled }`);
+        assert.strictEqual(evaled[1], 'You have 2 alarms, they are 8 pm of tomorrow', `Evaled is ${ evaled }`);
     });
 
-    it('TestExpandTemplateWithRefInMultiLine', function () {
+    it('TestExpandTemplateWithRefInMultiLine', function() {
         var templates = Templates.parseFile(GetExampleFilePath('Expand.lg'));
-
+        
         const alarms = [
             {
                 time: '7 am',
@@ -438,18 +438,18 @@ describe('LG', function() {
                 date: 'tomorrow'
             }
         ];
-
-        var evaled = templates.expandTemplate('ShowAlarmsWithMultiLine', { alarms });
-        assert.strictEqual(evaled.length, 2, `Evaled is ${evaled}`);
+        
+        var evaled = templates.expandTemplate('ShowAlarmsWithMultiLine', {alarms});
+        assert.strictEqual(evaled.length, 2, `Evaled is ${ evaled }`);
         const eval1Options = ['\r\nYou have 2 alarms.\r\nThey are 8 pm at tomorrow\r\n', '\nYou have 2 alarms.\nThey are 8 pm at tomorrow\n'];
         const eval2Options = ['\r\nYou have 2 alarms.\r\nThey are 8 pm of tomorrow\r\n', '\nYou have 2 alarms.\nThey are 8 pm of tomorrow\n'];
         assert(eval1Options.includes(evaled[0]));
         assert(eval2Options.includes(evaled[1]));
     });
 
-    it('TestExpandTemplateWithFunction', function () {
+    it('TestExpandTemplateWithFunction', function() {
         var templates = Templates.parseFile(GetExampleFilePath('Expand.lg'));
-
+        
         const alarms = [
             {
                 time: '7 am',
@@ -460,9 +460,9 @@ describe('LG', function() {
                 date: 'tomorrow'
             }
         ];
-
-        var evaled = templates.expandTemplate('ShowAlarmsWithForeach', { alarms });
-        assert.strictEqual(evaled.length, 1, `Evaled is ${evaled}`);
+        
+        var evaled = templates.expandTemplate('ShowAlarmsWithForeach', {alarms});
+        assert.strictEqual(evaled.length, 1, `Evaled is ${ evaled }`);
         const evalOptions = [
             'You have 2 alarms, 7 am at tomorrow and 8 pm at tomorrow',
             'You have 2 alarms, 7 am at tomorrow and 8 pm of tomorrow',
@@ -473,42 +473,42 @@ describe('LG', function() {
         assert(evalOptions.includes(evaled[0]));
 
         evaled = templates.expandTemplate('T2');
-        assert.strictEqual(evaled.length, 1, `Evaled is ${evaled}`);
+        assert.strictEqual(evaled.length, 1, `Evaled is ${ evaled }`);
         assert(evaled[0] === '3' || evaled[0] === '5');
 
         evaled = templates.expandTemplate('T3');
-        assert.strictEqual(evaled.length, 1, `Evaled is ${evaled}`);
+        assert.strictEqual(evaled.length, 1, `Evaled is ${ evaled }`);
         assert(evaled[0] === '3' || evaled[0] === '5');
 
         evaled = templates.expandTemplate('T4');
-        assert.strictEqual(evaled.length, 1, `Evaled is ${evaled}`);
+        assert.strictEqual(evaled.length, 1, `Evaled is ${ evaled }`);
         assert(evaled[0] === 'ey' || evaled[0] === 'el');
     });
 
-    it('TestExpandTemplateWithIsTemplateFunction', function () {
+    it('TestExpandTemplateWithIsTemplateFunction', function() {
         const templates = Templates.parseFile(GetExampleFilePath('Expand.lg'));
 
-        let evaled = templates.expandTemplate('template2', { templateName: 'Greeting' });
+        let evaled = templates.expandTemplate('template2', {templateName: 'Greeting'});
         assert.strictEqual(evaled.length, 2);
         assert.strictEqual(evaled[0], 'Hi');
         assert.strictEqual(evaled[1], 'Hello');
 
-        evaled = templates.expandTemplate('template2', { templateName: 'xxx' });
+        evaled = templates.expandTemplate('template2', {templateName: 'xxx'});
         assert.strictEqual(evaled.length, 2);
         assert.strictEqual(evaled[0], 'Morning');
         assert.strictEqual(evaled[1], 'Evening');
     });
 
-    it('TestExpandTemplateWithTemplateFunction', function () {
+    it('TestExpandTemplateWithTemplateFunction', function() {
         const templates = Templates.parseFile(GetExampleFilePath('Expand.lg'));
 
-        let evaled = templates.expandTemplate('template3', { templateName: 'Greeting' });
+        let evaled = templates.expandTemplate('template3', {templateName: 'Greeting'});
         assert.strictEqual(evaled.length, 2);
         assert.strictEqual(evaled[0], 'Hi');
         assert.strictEqual(evaled[1], 'Hello');
     });
 
-    it('TestExpandTemplateWithDoubleQuotation', function () {
+    it('TestExpandTemplateWithDoubleQuotation', function() {
         const templates = Templates.parseFile(GetExampleFilePath('Expand.lg'));
 
         let evaled = templates.expandTemplate('ExpanderT1');
@@ -523,7 +523,7 @@ describe('LG', function() {
         });
     });
 
-    it('TestExpandTemplateWithEscapeCharacter', function () {
+    it('TestExpandTemplateWithEscapeCharacter', function() {
         const templates = Templates.parseFile(GetExampleFilePath('EscapeCharacter.lg'));
         var evaled = templates.expandTemplate('wPhrase');
         assert.strictEqual(evaled[0], 'Hi \r\n\t\\');
@@ -553,7 +553,7 @@ describe('LG', function() {
         assert.strictEqual(evaled[0], 'Hi hello\n');
 
         var todos = ['A', 'B', 'C'];
-        evaled = templates.expandTemplate('showTodo', { todos });
+        evaled = templates.expandTemplate('showTodo', {todos});
         assert.strictEqual(evaled[0].toString().replace(/\r\n/g, '\n'), '\n    Your most recent 3 tasks are\n    * A\n* B\n* C\n    ');
 
         evaled = templates.expandTemplate('showTodo');
