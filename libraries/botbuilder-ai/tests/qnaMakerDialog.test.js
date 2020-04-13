@@ -2,6 +2,9 @@ const { QnAMakerDialog, QnAMaker } = require('../lib');
 const { DialogSet } = require('botbuilder-dialogs');
 const { ok, strictEqual } = require('assert');
 
+const KB_ID = 'kbId';
+const ENDPOINT_KEY = 'endpointKey';
+
 describe('QnAMakerDialog', function() {
     this.timeout(3000);
 
@@ -36,95 +39,46 @@ describe('QnAMakerDialog', function() {
         dialogs.add(qna);
     });
 
-    it('getQnAClient() should construct https hostname', () => {
-        const KB_ID = 'kbId';
-        const ENDPOINT_KEY = 'endpointKey';
-        const HOSTNAME = 'https://myqnainstance.azurewebsites.net/qnamaker';
-        const NOT_AZURE_WEBSITE = 'https://myqnainstance.net/qnamaker';
-        const NOT_HTTPS = 'http://myqnainstance.azurewebsites.net/qnamaker';
-        const INCOMPLETE_HOSTNAME = 'myqnainstance';
-
-        // Create QnAMakerDialog
-        const qna = new QnAMakerDialog(KB_ID, ENDPOINT_KEY, HOSTNAME);
-        const client = qna.getQnAClient();
-
-        ok(client instanceof QnAMaker);
-        strictEqual(client.endpoint.knowledgeBaseId,  KB_ID);
-        strictEqual(client.endpoint.endpointKey, ENDPOINT_KEY);
-        strictEqual(client.endpoint.host, HOSTNAME);
-
-        // Create QnAMakerDialog without "azurewebsites" 2nd domain.
-        const qnaNoAzureWebsites = new QnAMakerDialog(KB_ID, ENDPOINT_KEY, NOT_AZURE_WEBSITE);
-        const notAzureWebSitesClient = qnaNoAzureWebsites.getQnAClient();
-
-        ok(notAzureWebSitesClient instanceof QnAMaker);
-        strictEqual(notAzureWebSitesClient.endpoint.knowledgeBaseId,  KB_ID);
-        strictEqual(notAzureWebSitesClient.endpoint.endpointKey, ENDPOINT_KEY);
-        strictEqual(notAzureWebSitesClient.endpoint.host, NOT_AZURE_WEBSITE);
-
-        // Create QnAMakerDialog with http hostName
-        const qnaHttp = new QnAMakerDialog(KB_ID, ENDPOINT_KEY, NOT_HTTPS);
-        const httpClient = qnaHttp.getQnAClient();
-
-        ok(httpClient instanceof QnAMaker);
-        strictEqual(httpClient.endpoint.knowledgeBaseId,  KB_ID);
-        strictEqual(httpClient.endpoint.endpointKey, ENDPOINT_KEY);
-        strictEqual(httpClient.endpoint.host, NOT_HTTPS);
-
-        // Create QnAMakerDialog with incomplete hostname
-        const qnaDialog = new QnAMakerDialog(KB_ID, ENDPOINT_KEY, INCOMPLETE_HOSTNAME);
-        const fixedClient = qnaDialog.getQnAClient();
-
-        ok(fixedClient instanceof QnAMaker);
-        strictEqual(fixedClient.endpoint.knowledgeBaseId, KB_ID);
-        strictEqual(fixedClient.endpoint.endpointKey, ENDPOINT_KEY);
-        strictEqual(fixedClient.endpoint.host, HOSTNAME);
-    });
-
-    it('should construct BAD hostnames', () => {
-        const KB_ID = 'kbId';
-        const ENDPOINT_KEY = 'endpointKey';
-        const createHostName = (hostName) => `https://${ hostName }.azurewebsites.net/qnamaker`;
-
-        const NO_AUTHORITY = 'myqnainstance.net/qnamaker';
-        const NO_TLD = 'https://myqnainstance/qnamaker';
-        const NO_QNAMAKER = 'https://myqnainstance.net/';
-        const ADDITIONAL_PATH = 'https://myqnainstance.net/my/path/qnamaker';
-
-        // Missing authority
-        const noAuthority = new QnAMakerDialog(KB_ID, ENDPOINT_KEY, NO_AUTHORITY);
-        const noAuthorityClient = noAuthority.getQnAClient();
-
-        ok(noAuthorityClient instanceof QnAMaker);
-        strictEqual(noAuthorityClient.endpoint.knowledgeBaseId,  KB_ID);
-        strictEqual(noAuthorityClient.endpoint.endpointKey, ENDPOINT_KEY);
-        strictEqual(noAuthorityClient.endpoint.host, createHostName(NO_AUTHORITY));
-
-        // Missing TLD
-        const noTLD = new QnAMakerDialog(KB_ID, ENDPOINT_KEY, NO_TLD);
-        const noTLDClient = noTLD.getQnAClient();
-
-        ok(noTLDClient instanceof QnAMaker);
-        strictEqual(noTLDClient.endpoint.knowledgeBaseId,  KB_ID);
-        strictEqual(noTLDClient.endpoint.endpointKey, ENDPOINT_KEY);
-        strictEqual(noTLDClient.endpoint.host, createHostName(NO_TLD));
-
-        // Missing path
-        const noPath = new QnAMakerDialog(KB_ID, ENDPOINT_KEY, NO_QNAMAKER);
-        const noPathClient = noPath.getQnAClient();
-
-        ok(noPathClient instanceof QnAMaker);
-        strictEqual(noPathClient.endpoint.knowledgeBaseId,  KB_ID);
-        strictEqual(noPathClient.endpoint.endpointKey, ENDPOINT_KEY);
-        strictEqual(noPathClient.endpoint.host, createHostName(NO_QNAMAKER));
-
-        // Additional path
-        const additionalPath = new QnAMakerDialog(KB_ID, ENDPOINT_KEY, ADDITIONAL_PATH);
-        const extraPathClient = additionalPath.getQnAClient();
-
-        ok(extraPathClient instanceof QnAMaker);
-        strictEqual(extraPathClient.endpoint.knowledgeBaseId,  KB_ID);
-        strictEqual(extraPathClient.endpoint.endpointKey, ENDPOINT_KEY);
-        strictEqual(extraPathClient.endpoint.host, createHostName(ADDITIONAL_PATH));
+    describe('getQnAClient()', () => {
+        it('should return unmodified v5 hostName value', () => {
+            const V5_HOSTNAME = 'https://qnamaker-acom.azure.com/qnamaker/v5.0';
+    
+            // Create QnAMakerDialog
+            const qna = new QnAMakerDialog(KB_ID, ENDPOINT_KEY, V5_HOSTNAME);
+            const client = qna.getQnAClient();
+    
+            ok(client instanceof QnAMaker);
+            strictEqual(client.endpoint.knowledgeBaseId,  KB_ID);
+            strictEqual(client.endpoint.endpointKey, ENDPOINT_KEY);
+            strictEqual(client.endpoint.host, V5_HOSTNAME);
+        });
+    
+        it('should construct v4 API endpoint', () => {
+            const INCOMPLETE_HOSTNAME = 'myqnainstance';
+            const HOSTNAME = 'https://myqnainstance.azurewebsites.net/qnamaker';
+    
+            // Create QnAMakerDialog with incomplete hostname
+            const qnaDialog = new QnAMakerDialog(KB_ID, ENDPOINT_KEY, INCOMPLETE_HOSTNAME);
+            const fixedClient = qnaDialog.getQnAClient();
+    
+            ok(fixedClient instanceof QnAMaker);
+            strictEqual(fixedClient.endpoint.knowledgeBaseId, KB_ID);
+            strictEqual(fixedClient.endpoint.endpointKey, ENDPOINT_KEY);
+            strictEqual(fixedClient.endpoint.host, HOSTNAME);
+        });
+    
+        it('should construct BAD v4 hostnames', () => {
+            const createHostName = (hostName) => `https://${ hostName }.azurewebsites.net/qnamaker`;
+            const NOT_V5_HOSTNAME = 'myqnainstance.net/qnamaker';
+    
+            // Missing authority
+            const noAuthority = new QnAMakerDialog(KB_ID, ENDPOINT_KEY, NOT_V5_HOSTNAME);
+            const noAuthorityClient = noAuthority.getQnAClient();
+    
+            ok(noAuthorityClient instanceof QnAMaker);
+            strictEqual(noAuthorityClient.endpoint.knowledgeBaseId,  KB_ID);
+            strictEqual(noAuthorityClient.endpoint.endpointKey, ENDPOINT_KEY);
+            strictEqual(noAuthorityClient.endpoint.host, createHostName(NOT_V5_HOSTNAME));
+        });
     });
 });

@@ -363,22 +363,22 @@ export class QnAMakerDialog extends WaterfallDialog {
         const endpoint = {
             knowledgeBaseId: this.knowledgeBaseId,
             endpointKey: this.endpointKey,
-            host: this.constructHttpsHostName(this.hostName)
+            host: this.getHost()
         };
         return new QnAMaker(endpoint);
     }
 
     /**
-     * Retain backward compatibility for QnAMakerDialog.hostName.
+     * Gets unmodified v5 API hostName or constructs v4 API hostName
      * @remarks
-     * QnAMakerDialog shipped with the following:
-     * this.hostName = `https://${this.hostName}.azurewebsites.net/qnamaker`
-     * For parity reasons, this was removed
-     * @param hostName Either complete or incomplete
+     * Example of a complete v5 API endpoint: "https://qnamaker-acom.azure.com/qnamaker/v5.0"
+     * Template literal to construct v4 API endpoint: `https://${ this.hostName }.azurewebsites.net/qnamaker`
      */
-    private constructHttpsHostName(hostName: string): string {
-        const hostNamePattern = /^(http[s]?\:).*(\.\w{1,})(\/qnamaker)/;
-
-        return hostName.match(hostNamePattern) ? hostName : `https://${ this.hostName }.azurewebsites.net/qnamaker`;
+    private getHost(): string {
+        // If hostName includes 'qnamaker/v5', return the v5 API hostName.
+        // Otherwise use v4 API template literal behavior.
+        return this.hostName.includes('qnamaker/v5')
+            ? this.hostName
+            : `https://${ this.hostName }.azurewebsites.net/qnamaker`;
     }
 }
