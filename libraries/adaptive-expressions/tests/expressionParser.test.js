@@ -340,14 +340,18 @@ const dataSource = [
     ['createArray()', []],
     ['[]', []],
     ['createArray(1, bool(0), string(bool(1)), float(\'10\'))', [1, true, 'true', 10.0]],
-    ['binary(hello)', '0110100001100101011011000110110001101111'],
+    ['binary(hello)', new Uint8Array([104, 101, 108, 108, 111 ])],
     ['dataUri(hello)', 'data:text/plain;charset=utf-8;base64,aGVsbG8='],
-    ['dataUriToBinary(dataUri(hello))', '011001000110000101110100011000010011101001110100011001010111100001110100001011110111000001101100011000010110100101101110001110110110001101101000011000010111001001110011011001010111010000111101011101010111010001100110001011010011100000111011011000100110000101110011011001010011011000110100001011000110000101000111010101100111001101100010010001110011100000111101'],
+    ['count(binary(hello)', 5],
+    ['dataUriToBinary(dataUri(hello))', new Uint8Array([ 100, 97, 116, 97, 58, 116, 101, 120, 116, 47, 112, 108, 97, 105, 110, 59, 99, 104, 97, 114, 115, 101, 116, 61, 117, 116, 102, 45, 56, 59, 98, 97, 115, 101, 54, 52, 44, 97, 71, 86, 115, 98, 71, 56, 61 ])],
     ['dataUriToString(dataUri(hello))', 'hello'],
     ['uriComponentToString(\'http%3A%2F%2Fcontoso.com\')', 'http://contoso.com'],
     ['base64(hello)', 'aGVsbG8='],
-    ['base64ToBinary(base64(hello))', '0110000101000111010101100111001101100010010001110011100000111101'],
+    ['base64(byteArr)', 'AwUBDA=='],
+    ['base64ToBinary(base64(byteArr))', new Uint8Array([3, 5, 1, 12])],
+    ['base64(base64ToBinary(\"AwUBDA==\"))', 'AwUBDA=='],
     ['base64ToString(base64(hello))', 'hello'],
+    ['dataUriToBinary(base64(hello))', new Uint8Array([ 97, 71, 86, 115, 98, 71, 56, 61 ])],
     ['uriComponent(\'http://contoso.com\')', 'http%3A%2F%2Fcontoso.com'],
 
     // Math functions tests
@@ -636,6 +640,7 @@ const scope = {
     nullObj: undefined,
     jsonStr: '{"automobiles" : [{ "maker" : "Nissan", "model" : "Teana", "year" : 2011 },{ "maker" : "Honda", "model" : "Jazz", "year" : 2010 },{ "maker" : "Honda", "model" : "Civic", "year" : 2007 },{ "maker" : "Toyota", "model" : "Yaris", "year" : 2008 },{"maker" : "Honda", "model" : "Accord", "year" : 2011 }],"motorcycles" : [{ "maker" : "Honda", "model" : "ST1300", "year" : 2012 }]}',
     pathStr: `.automobiles{.maker === "Honda" && .year > 2009}.model`,
+    byteArr: new Uint8Array([3, 5, 1, 12]),
     bag:
   {
       three: 3.0,
@@ -837,7 +842,14 @@ var assertObjectEquals = (actual, expected) => {
         for(let i = 0; i< actual.length; i++) {
             assertObjectEquals(actual[i], expected[i], `actual is: ${ actual[i] }, expected is ${ expected[i] }`);
         }
-    } else {
+    } else if (actual instanceof Uint8Array && expected instanceof Uint8Array) {
+        assert.equal(actual.length, expected.length);
+        for(let i = 0; i< actual.length; i++) {
+            assertObjectEquals(actual[i], expected[i], `actual is: ${ actual[i] }, expected is ${ expected[i] }`);
+        }
+    }
+    
+    else {
         assert.equal(actual, expected, `actual is: ${ actual }, expected is ${ expected }`);
     }
 };
