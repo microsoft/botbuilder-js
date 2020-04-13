@@ -14,7 +14,10 @@ if(previewVersion === 'adaptive-expressions') {
 }
 var previewPackages = {
     'botbuilder-lg': true,
-    'adaptive-expressions': true
+    'adaptive-expressions': true,
+    'botbuilder-dialogs-adaptive': true,
+    'botbuilder-dialogs-adaptive-tests': true,
+    'botbuilder-dialogs-declarative': true
 }
 var dependencies = myArgs.slice(previewVersion ? 3 : 2);
 console.log('newVersion =', newVersion);
