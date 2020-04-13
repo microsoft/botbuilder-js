@@ -342,7 +342,7 @@ const dataSource = [
     ['createArray(1, bool(0), string(bool(1)), float(\'10\'))', [1, true, 'true', 10.0]],
     ['binary(hello)', new Uint8Array([104, 101, 108, 108, 111 ])],
     ['dataUri(hello)', 'data:text/plain;charset=utf-8;base64,aGVsbG8='],
-    ['count(binary(hello)', 5],
+    ['count(binary(hello))', 5],
     ['dataUriToBinary(dataUri(hello))', new Uint8Array([ 100, 97, 116, 97, 58, 116, 101, 120, 116, 47, 112, 108, 97, 105, 110, 59, 99, 104, 97, 114, 115, 101, 116, 61, 117, 116, 102, 45, 56, 59, 98, 97, 115, 101, 54, 52, 44, 97, 71, 86, 115, 98, 71, 56, 61 ])],
     ['dataUriToString(dataUri(hello))', 'hello'],
     ['uriComponentToString(\'http%3A%2F%2Fcontoso.com\')', 'http://contoso.com'],
