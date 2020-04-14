@@ -3,7 +3,9 @@
   "version": "1.0.0",
   "description": "",
   "scripts": {
-    "test": "tsc && mocha lib/*.test.js"
+    "test": "tsc && mocha tests/*.test.js",
+    "build": "tsc",
+    "set-version": "npm version --allow-same-version ${Version}"
   },
   "dependencies": {
     "botbuilder-core": "4.1.6",
