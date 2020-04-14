@@ -6,6 +6,7 @@
  * Licensed under the MIT License.
  */
 
+export * from './rankerTypes';
 export * from './qnamakerEndpoint';
 export * from './qnamakerMetadata';
 export * from './qnamakerOptions';
