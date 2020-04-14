@@ -8,8 +8,10 @@ import { Activity, Attachment, ConversationAccount, ConversationReference, Trans
 import * as moment from 'moment-timezone';
 import { HandoffEventNames } from './handoffEventNames';
 
+/**
+ * Contains utility methods for creating various event types.
+ */
 export class EventFactory {
-
     /**
      * Create handoff initiation event.
      * @param context The context object for the turn.
@@ -56,11 +58,7 @@ export class EventFactory {
             throw new TypeError('EventFactory.createHandoffStatus(): missing state.');
         }
         
-        let value: any = { state };
-
-        if (typeof message === 'string' && message.length > 0) {
-            value.message = message;
-        }
+        const value: any = { state, message };
 
         const handoffEvent = this.createHandoffEvent(HandoffEventNames.HandoffStatus, value, conversation);
 
