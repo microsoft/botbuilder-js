@@ -41,6 +41,12 @@ const dataSource = [
 
     // Operators tests
 
+    ['user.income-user.outcome', -10.0],
+    ['user.income - user.outcome', -10.0],
+    ['user.income!=user.outcome', true],
+    ['user.income != user.outcome', true],
+    ['user.income==user.outcome', false],
+    ['user.income == user.outcome', false],
     ['1 + 2', 3],
     ['1 +\n 2', 3],
     ['1 \n+ 2', 3],
@@ -654,6 +660,8 @@ const scope = {
     unixTimestamp: 1521118800,
     user: 
   {
+      income: 110.0,
+      outcome: 120.0,
       nickname:'John',
       lists:
     {

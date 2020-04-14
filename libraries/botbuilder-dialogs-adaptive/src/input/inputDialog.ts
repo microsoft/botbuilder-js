@@ -199,24 +199,30 @@ export abstract class InputDialog extends Dialog {
     }
 
     protected async onRenderPrompt(dc: DialogContext, state: InputState): Promise<Partial<Activity>> {
+        let msg: Partial<Activity>;
         switch (state) {
             case InputState.unrecognized:
                 if (this.unrecognizedPrompt) {
-                    return await this.unrecognizedPrompt.bindToData(dc.context, dc.state);
+                    msg = await this.unrecognizedPrompt.bindToData(dc.context, dc.state);
                 } else if (this.invalidPrompt) {
-                    return await this.invalidPrompt.bindToData(dc.context, dc.state);
+                    msg = await this.invalidPrompt.bindToData(dc.context, dc.state);
                 }
                 break;
             case InputState.invalid:
                 if (this.invalidPrompt) {
-                    return await this.invalidPrompt.bindToData(dc.context, dc.state);
+                    msg = await this.invalidPrompt.bindToData(dc.context, dc.state);
                 } else if (this.unrecognizedPrompt) {
-                    return await this.unrecognizedPrompt.bindToData(dc.context, dc.state);
+                    msg = await this.unrecognizedPrompt.bindToData(dc.context, dc.state);
                 }
                 break;
         }
 
-        return await this.prompt.bindToData(dc.context, dc.state);
+        if (!msg) {
+            msg = await this.prompt.bindToData(dc.context, dc.state);
+        }
+
+        msg.inputHint = InputHints.ExpectingInput;
+        return msg; 
     }
 
     protected getDefaultInput(dc: DialogContext): any {
