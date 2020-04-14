@@ -20,6 +20,7 @@ import { TimeZoneConverter } from './timeZoneConverter';
 import { convertCSharpDateTimeToMomentJS } from './datetimeFormatConverter';
 import { MemoryInterface, SimpleObjectMemory, StackedMemory } from './memory';
 import { Options } from './options';
+import atob = require('atob');
 
 /**
  * Verify the result of an expression is of the appropriate type and return a string if not.
@@ -1525,14 +1526,14 @@ export class ExpressionFunctions {
         return {value: result, error};
     } 
 
-    private static toBinary(stringToConvert: string): string {
-        let result = '';
-        for (const element of stringToConvert) {
-            const binaryElement: string = element.charCodeAt(0).toString(2);
-            result += new Array(9 - binaryElement.length).join('0').concat(binaryElement);
+    private static toBinary(stringToConvert: string): Uint8Array {
+        let result = new ArrayBuffer(stringToConvert.length);
+        let bufferView = new Uint8Array(result);
+        for(let i=0; i < stringToConvert.length; i++) {
+            bufferView[i] = stringToConvert.charCodeAt(i);
         }
 
-        return result;
+        return bufferView;
     }
 
     // DateTime Functions
@@ -2916,8 +2917,8 @@ export class ExpressionFunctions {
             new ExpressionEvaluator(ExpressionType.CreateArray, ExpressionFunctions.apply((args: any []): any[] => Array.from(args)), ReturnType.Array),
             new ExpressionEvaluator(
                 ExpressionType.Binary,
-                ExpressionFunctions.apply((args: any []): string => this.toBinary(args[0]), ExpressionFunctions.verifyString),
-                ReturnType.String,
+                ExpressionFunctions.apply((args: any []): Uint8Array => this.toBinary(args[0]), ExpressionFunctions.verifyString),
+                ReturnType.Object,
                 ExpressionFunctions.validateUnary),
             new ExpressionEvaluator(
                 ExpressionType.DataUri,
@@ -2927,8 +2928,8 @@ export class ExpressionFunctions {
                 ExpressionFunctions.validateUnary),
             new ExpressionEvaluator(
                 ExpressionType.DataUriToBinary,
-                ExpressionFunctions.apply((args: Readonly<any>): string => this.toBinary(args[0]), ExpressionFunctions.verifyString),
-                ReturnType.String,
+                ExpressionFunctions.apply((args: Readonly<any>): Uint8Array => this.toBinary(args[0]), ExpressionFunctions.verifyString),
+                ReturnType.Object,
                 ExpressionFunctions.validateUnary),
             new ExpressionEvaluator(
                 ExpressionType.DataUriToString,
@@ -2942,13 +2943,29 @@ export class ExpressionFunctions {
                 ExpressionFunctions.validateUnary),
             new ExpressionEvaluator(
                 ExpressionType.Base64,
-                ExpressionFunctions.apply((args: Readonly<any>): string => Buffer.from(args[0]).toString('base64'), ExpressionFunctions.verifyString),
+                ExpressionFunctions.apply(
+                    (args: Readonly<any>): string | Uint8Array => {
+                        let result: string;
+                        if (typeof args[0] === 'string') {
+                            result = Buffer.from(args[0]).toString('base64');
+                        }
+                        
+                        if (args[0] instanceof Uint8Array) {
+                            result = Buffer.from(args[0]).toString('base64');
+                        }
+                        return result;
+                    }),
                 ReturnType.String,
                 ExpressionFunctions.validateUnary),
             new ExpressionEvaluator(
                 ExpressionType.Base64ToBinary,
-                ExpressionFunctions.apply((args: Readonly<any>): string => this.toBinary(args[0]), ExpressionFunctions.verifyString),
-                ReturnType.String,
+                ExpressionFunctions.apply(
+                    (args: Readonly<any>): Uint8Array => 
+                    {
+                        const raw = atob(args[0].toString());
+                        return this.toBinary(raw);
+                    }, ExpressionFunctions.verifyString),
+                ReturnType.Object,
                 ExpressionFunctions.validateUnary),
             new ExpressionEvaluator(
                 ExpressionType.Base64ToString,
