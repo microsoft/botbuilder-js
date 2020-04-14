@@ -10,7 +10,6 @@ import {
     Activity, RecognizerResult, getTopScoringIntent
 } from 'botbuilder-core';
 import { Dialog, DialogInstance, DialogReason, DialogTurnResult, DialogTurnStatus, DialogEvent, DialogContext, DialogContainer, DialogDependencies, TurnPath, DialogPath, DialogState } from 'botbuilder-dialogs';
-import { Extensions } from 'adaptive-expressions';
 import { OnCondition } from './conditions';
 import { Recognizer } from './recognizers';
 import { TriggerSelector } from './triggerSelector';
@@ -22,6 +21,7 @@ import { EntityEvents } from './entityEvents';
 import { AdaptiveEvents } from './adaptiveEvents';
 import { AdaptiveDialogState } from './adaptiveDialogState';
 import { EntityInfo } from './entityInfo';
+import { IntExpression } from './expressions';
 
 export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
     public static conditionTracker = 'dialog._tracker.conditions';
@@ -115,7 +115,7 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
             }
 
             if (!trigger.priority) {
-                trigger.priority = id.toString();
+                trigger.priority = new IntExpression(id);
             }
 
             if (!trigger.id) {

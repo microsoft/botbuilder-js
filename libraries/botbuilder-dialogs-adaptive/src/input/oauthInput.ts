@@ -8,7 +8,7 @@
 import { DialogContext, Dialog, DialogTurnResult, PromptOptions, PromptRecognizerResult } from 'botbuilder-dialogs';
 import { Attachment, InputHints, TokenResponse, IUserTokenProvider, TurnContext, ActivityTypes, Activity, MessageFactory, CardFactory, OAuthLoginTimeoutKey } from 'botbuilder-core';
 import { InputDialog, InputState } from './inputDialog';
-import { StringExpression, NumberExpression } from '../expressions';
+import { StringExpression, IntExpression } from '../expressions';
 
 export const channels: any = {
     console: 'console',
@@ -50,14 +50,14 @@ export class OAuthInput extends InputDialog {
      * (Optional) number of milliseconds the prompt will wait for the user to authenticate.
      * Defaults to a value `900,000` (15 minutes.)
      */
-    public timeout?: NumberExpression = new NumberExpression(900000);
+    public timeout?: IntExpression = new IntExpression(900000);
 
     public constructor(connectionName?: string, title?: string, text?: string, timeout?: number) {
         super();
         this.connectionName = new StringExpression(connectionName);
         this.title = new StringExpression(title);
         this.text = new StringExpression(text);
-        if (timeout) { this.timeout = new NumberExpression(timeout); }
+        if (timeout) { this.timeout = new IntExpression(timeout); }
     }
 
     public async beginDialog(dc: DialogContext, options?: PromptOptions): Promise<DialogTurnResult> {
