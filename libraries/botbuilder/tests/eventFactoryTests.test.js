@@ -34,9 +34,12 @@ describe('EventFactory', function() {
             equal(transcript.activities[0].serviceUrl, undefined);
             equal(transcript.activities[0].conversation, undefined);
 
-            const handoffEvent = EventFactory.createHandoffInitiation(context, { skill: 'any' }, transcript);
+            const skillValue = 'any';
+            const handoffEvent = EventFactory.createHandoffInitiation(context, { skill: skillValue }, transcript);
 
             strictEqual(handoffEvent.name, HandoffEventNames.InitiateHandoff);
+            const skill = handoffEvent.value && handoffEvent.value.skill;
+            strictEqual(skill, skillValue);
             strictEqual(handoffEvent.from.id, fromId);
         });
 
@@ -56,11 +59,29 @@ describe('EventFactory', function() {
             const handoffEvent = EventFactory.createHandoffStatus({}, state, message);
 
             strictEqual(handoffEvent.name, HandoffEventNames.HandoffStatus);
+
+            const stateFormEvent = handoffEvent.value && handoffEvent.value.state;
+            strictEqual(stateFormEvent, state);
+
+            const messageFormEvent = handoffEvent.value && handoffEvent.value.message;
+            strictEqual(messageFormEvent, message);
+
             const status = JSON.stringify(handoffEvent.value);
             strictEqual(status, `{\"state\":\"${ state }\",\"message\":\"${ message }\"}`);
             assert(handoffEvent.attachments, 'handoffEvent.attachments should not be undefined.');
             assert(handoffEvent.id, 'handoffEvent.id should not be undefined.');
             strictEqual(handoffEvent.localTimezone, moment.tz.guess());
+        });
+
+        it('should succeed with no message', () => {
+            const state = 'failed';
+            const handoffEvent = EventFactory.createHandoffStatus({}, state);
+
+            const stateFormEvent = handoffEvent.value && handoffEvent.value.state;
+            strictEqual(state, stateFormEvent);
+
+            const messageFormEvent = handoffEvent.value && handoffEvent.value.message;
+            strictEqual(undefined, messageFormEvent);
         });
 
         it('should throw if conversation is falsy', () => {
