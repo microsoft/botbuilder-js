@@ -11,7 +11,6 @@ import * as jsPath from 'jspath';
 import * as lodash from 'lodash';
 import * as moment from 'moment';
 import * as timezone from 'moment-timezone';
-import { atob } from 'atob';
 import { CommonRegex } from './commonRegex';
 import { Constant } from './constant';
 import { Expression, ReturnType } from './expression';
@@ -21,6 +20,7 @@ import { TimeZoneConverter } from './timeZoneConverter';
 import { convertCSharpDateTimeToMomentJS } from './datetimeFormatConverter';
 import { MemoryInterface, SimpleObjectMemory, StackedMemory } from './memory';
 import { Options } from './options';
+import atob = require('atob');
 
 /**
  * Verify the result of an expression is of the appropriate type and return a string if not.

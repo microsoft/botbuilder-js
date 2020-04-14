@@ -20,6 +20,7 @@
   "typings": "./lib/index.d.ts",
   "dependencies": {
     "@microsoft/recognizers-text-data-types-timex-expression": "^1.1.4",
+    "@types/atob": "^2.1.2",
     "@types/lru-cache": "^5.1.0",
     "@types/moment-timezone": "^0.5.12",
     "@types/xmldom": "^0.1.29",
