@@ -822,6 +822,14 @@ export class BotFrameworkAdapter extends BotAdapter implements ExtendedUserToken
             const authHeader: string = req.headers.authorization || req.headers.Authorization || '';
 
             const identity = await this.authenticateRequestInternal(request, authHeader);
+
+            // Discard any received callerId properties
+            request.callerId = undefined;
+            // Set the generated callerId when auth is enabled.
+            const isAuthEnabled = !(await this.credentialsProvider.isAuthenticationDisabled());
+            if (isAuthEnabled) {
+                request.callerId = this.generateCallerId(identity);
+            }
             
             // Process received activity
             status = 500;
@@ -1145,8 +1153,16 @@ export class BotFrameworkAdapter extends BotAdapter implements ExtendedUserToken
     * @param authHeader Received authentication header.
     */
     protected async authenticateRequest(request: Partial<Activity>, authHeader: string): Promise<void> {
-        const claims = await this.authenticateRequestInternal(request, authHeader);
-        if (!claims.isAuthenticated) { throw new Error('Unauthorized Access. Request is not authorized'); }
+        const identity = await this.authenticateRequestInternal(request, authHeader);
+        if (!identity.isAuthenticated) { throw new Error('Unauthorized Access. Request is not authorized'); }
+
+        // Discard any received callerId properties
+        request.callerId = undefined;
+        // Set the generated callerId when auth is enabled.
+        const isAuthEnabled = !(await this.credentialsProvider.isAuthenticationDisabled());
+        if (isAuthEnabled) {
+            request.callerId = this.generateCallerId(identity);
+        }
     }
 
     /**
@@ -1166,6 +1182,27 @@ export class BotFrameworkAdapter extends BotAdapter implements ExtendedUserToken
             this.settings.channelService,
             this.authConfiguration
         );
+    }
+
+    private generateCallerId(identity: ClaimsIdentity): string {
+        if (!identity) {
+            throw new TypeError('BotFrameworkAdapter.generateCallerId(): Missing identity parameter.');
+        }
+        
+        // Is the activity from another bot?
+        if (SkillValidation.isSkillClaim(identity.claims)) {
+            const skillCallerIdPrefix = 'urn:botframework:aadappid:';
+            const callerId = JwtTokenValidation.getAppIdFromClaims(identity.claims);
+            return `${ skillCallerIdPrefix }${ callerId }`;
+        }
+
+        // Is the activity from Gov Cloud?
+        if (JwtTokenValidation.isGovernment(this.settings.channelService)) {
+            return 'urn:botframework:azureusgov';
+        }
+        
+        // Not a Skill or Government Caller
+        return 'urn:botframework:azure';
     }
 
     /**
