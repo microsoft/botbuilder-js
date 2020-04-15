@@ -40,6 +40,11 @@ export interface DialogInstance<T = any> {
      * The state information for this instance of this dialog.
      */
     state: T;
+
+    /**
+     * Hash code used to detect that a dialog has changed since the curent instance was started.
+     */
+    changeHash?: string;
 }
 
 /**
@@ -520,32 +525,5 @@ export abstract class Dialog<O extends object = {}> extends Configurable {
      */
     protected onComputeId(): string {
         throw new Error(`Dialog.onComputeId(): not implemented.`)
-    }
-
-    /**
-     * Aids with computing a unique ID for a dialog by computing a 32 bit hash for a string.
-     *
-     * @remarks
-     * The source for this function was derived from the following article:
-     *
-     * https://werxltd.com/wp/2010/05/13/javascript-implementation-of-javas-string-hashcode-method/
-     *
-     * @param label String to generate a hash for.
-     * @returns A string that is 15 characters or less in length.
-     */
-    protected hashedLabel(label: string): string {
-        const l = label.length;
-        if (label.length > 15)
-        {
-            let hash = 0;
-            for (let i = 0; i < l; i++) {
-                const chr = label.charCodeAt(i);
-                hash  = ((hash << 5) - hash) + chr;
-                hash |= 0; // Convert to 32 bit integer
-            }
-            label = `${label.substr(0, 5)}${hash.toString()}`;
-        }
-
-        return label;
     }
 }

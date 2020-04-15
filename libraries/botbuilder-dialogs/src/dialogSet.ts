@@ -66,6 +66,8 @@ export class DialogSet {
     private readonly dialogs: { [id: string]: Dialog } = {};
     private readonly dialogState: StatePropertyAccessor<DialogState>;
     private _telemetryClient: BotTelemetryClient;
+    private _changeHash: string;
+
     /**
      * Creates a new DialogSet instance.
      *
@@ -84,6 +86,24 @@ export class DialogSet {
     }
 
     /**
+     * Returns a 32-bit hash of the all the dialog ID's in the set.
+     * 
+     * @remarks
+     * This hash is persisted to state storage and used to detect changes to a dialog set.
+     */
+    public get changeHash(): string {
+        if (!this._changeHash) {
+            let ids = '';
+            for (const id in this.dialogs) {
+                ids += `|${id}`;
+            }
+            this._changeHash = computeHash(ids);
+        }
+
+        return this._changeHash;
+    }
+
+    /**
      * Adds a new dialog or prompt to the set.
      *
      * @remarks
@@ -97,7 +117,10 @@ export class DialogSet {
     public add<T extends Dialog>(dialog: T): this {
         if (!(dialog instanceof Dialog)) { throw new Error(`DialogSet.add(): Invalid dialog being added.`); }
 
-        // ENsure dialogs ID is unique.
+        // Ensure new hash is computed
+        this._changeHash = undefined;
+
+        // Ensure dialogs ID is unique.
         if (this.dialogs.hasOwnProperty(dialog.id)) {
             let nextSuffix = 2;
             while (true) {
@@ -174,4 +197,26 @@ export class DialogSet {
             this.dialogs[key].telemetryClient = this._telemetryClient;
         }
     }
+}
+
+/**
+ * Generates a 32 bit hash for a string.
+ *
+ * @remarks
+ * The source for this function was derived from the following article:
+ *
+ * https://werxltd.com/wp/2010/05/13/javascript-implementation-of-javas-string-hashcode-method/
+ *
+ * @param text String to generate a hash for.
+ * @returns A string that is 15 characters or less in length.
+ */
+function computeHash(text: string): string {
+    const l = text.length;
+    let hash = 0;
+    for (let i = 0; i < l; i++) {
+        const chr = text.charCodeAt(i);
+        hash  = ((hash << 5) - hash) + chr;
+        hash |= 0; // Convert to 32 bit integer
+    }
+    return hash.toString();
 }

@@ -41,7 +41,7 @@ describe('DialogSet', function () {
         }
     });
 
-    it('should add add fluent dialogs to the dialog set.', function (done) {
+    it('should add fluent dialogs to the dialog set.', function (done) {
         // Create new ConversationState with MemoryStorage and instantiate DialogSet with PropertyAccessor.
         const convoState = new ConversationState(new MemoryStorage());
 
@@ -129,5 +129,38 @@ describe('DialogSet', function () {
             .send(continueMessage)
             .assertReply('Good bye!')
             .then(() => done());
+    });
+
+    it('should generate a hash of added dialogs.', function (done) {
+        // Create new ConversationState with MemoryStorage and instantiate DialogSet with PropertyAccessor.
+        const convoState = new ConversationState(new MemoryStorage());
+
+        const dialogState = convoState.createProperty('dialogState');
+        const dialogs = new DialogSet(dialogState);
+        dialogs
+            .add(new WaterfallDialog('A'))
+            .add(new WaterfallDialog('B'));
+        const hash = dialogs.changeHash;
+        assert(hash && hash.length > 0, `no hash generated.`);
+
+        done();
+    });
+
+    it('Generated hash should change when dialog set changes.', function (done) {
+        // Create new ConversationState with MemoryStorage and instantiate DialogSet with PropertyAccessor.
+        const convoState = new ConversationState(new MemoryStorage());
+
+        const dialogState = convoState.createProperty('dialogState');
+        const dialogs = new DialogSet(dialogState);
+        dialogs
+            .add(new WaterfallDialog('A'))
+            .add(new WaterfallDialog('B'));
+        const hash = dialogs.changeHash;
+        assert(hash && hash.length > 0, `no hash generated.`);
+
+        dialogs.add(new WaterfallDialog('C'));
+        assert(hash != dialogs.changeHash, `hash not updated.`);
+
+        done();
     });
 });
