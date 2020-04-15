@@ -6,12 +6,11 @@
  * Licensed under the MIT License.
  */
 
-import { RankerTypes, QnAMakerMetadata, QnAMaker, QnAMakerEndpoint, QnAMakerOptions, QnAMakerResult } from 'botbuilder-ai';
-import { Recognizer } from '../recognizers/recognizer';
-import { StringExpression, IntExpression, NumberExpression, BoolExpression, ArrayExpression, ObjectExpression } from '../expressions';
-import { QnARequestContext } from 'botbuilder-ai/lib/qnamaker-interfaces/qnaRequestContext';
 import { DialogContext } from 'botbuilder-dialogs';
 import { RecognizerResult, Activity } from 'botbuilder-core';
+import { RankerTypes, QnAMakerMetadata, QnAMaker, QnAMakerEndpoint, QnAMakerOptions, QnAMakerResult, QnARequestContext } from 'botbuilder-ai';
+import { Recognizer } from '../recognizers/recognizer';
+import { StringExpression, IntExpression, NumberExpression, BoolExpression, ArrayExpression, ObjectExpression } from '../expressions';
 
 const intentPrefix = 'intent=';
 
