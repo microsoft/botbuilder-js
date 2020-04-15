@@ -319,7 +319,7 @@ describe('OAuthPrompt', function() {
                 try {
                     await prompt.sendOAuthCardAsync(context);
                 } catch (e) {
-                    assert.strictEqual(e.message, `OAuthPrompt.prompt(): not supported for the current adapter.`);
+                    assert.strictEqual(e.message, `OAuthPrompt.sendOAuthCardAsync(): not supported for the current adapter.`);
                 }
             });
 
