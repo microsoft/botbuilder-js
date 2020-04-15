@@ -16,6 +16,7 @@
   },
   "devDependencies": {
     "@types/mocha": "^2.2.47",
+    "nock": "^10.0.3",
     "mocha": "^5.2.0"
   },
   "author": "Microsoft",
