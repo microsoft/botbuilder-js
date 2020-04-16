@@ -14,6 +14,10 @@ describe('ActionTests', function() {
         await testRunner.runTestScript('Action_BeginDialogWithActivity');
     });
 
+    it('CancelAllDialogs', async () => {
+        await testRunner.runTestScript('Action_CancelAllDialogs');
+    });
+
     it('ChoiceInput', async () => {
         await testRunner.runTestScript('Action_ChoiceInput');
     });
