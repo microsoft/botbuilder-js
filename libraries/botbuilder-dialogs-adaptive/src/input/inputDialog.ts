@@ -312,6 +312,11 @@ export abstract class InputDialog extends Dialog {
                 input = dc.context.activity.attachments;
             } else {
                 input = dc.context.activity.text;
+
+                // if there is no visible text AND we have a value object, then fallback to that.
+                if (!input && dc.context.activity.value != undefined) {
+                    input = dc.context.activity.value;
+                }
             }
         }
 
