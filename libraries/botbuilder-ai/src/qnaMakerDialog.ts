@@ -6,12 +6,14 @@
  * Licensed under the MIT License.
  */
 import { Activity, ActivityTypes } from 'botbuilder-core';
-import { WaterfallDialog, Dialog, DialogTurnResult, DialogContext, WaterfallStepContext, DialogTurnStatus, DialogReason } from 'botbuilder-dialogs';
+import { WaterfallDialog, Dialog, DialogTurnResult, DialogContext, WaterfallStepContext, DialogReason } from 'botbuilder-dialogs';
 import { QnAMakerOptions } from './qnamaker-interfaces/qnamakerOptions';
 import { RankerTypes } from './qnamaker-interfaces/rankerTypes';
 import { QnAMaker, QnAMakerResult } from './';
 import { FeedbackRecord, FeedbackRecords, QnAMakerMetadata } from './qnamaker-interfaces';
 import { QnACardBuilder } from './qnaCardBuilder';
+
+const V4_API_REGEX = /^https:\/\/.*\.azurewebsites\.net\/qnamaker\/?/i;
 
 /**
  * QnAMakerDialog response options.
@@ -375,10 +377,36 @@ export class QnAMakerDialog extends WaterfallDialog {
      * Template literal to construct v4 API endpoint: `https://${ this.hostName }.azurewebsites.net/qnamaker`
      */
     private getHost(): string {
+        let host: string = this.hostName;
         // If hostName includes 'qnamaker/v5', return the v5 API hostName.
-        // Otherwise use v4 API template literal behavior.
-        return this.hostName.includes('qnamaker/v5')
-            ? this.hostName
-            : `https://${ this.hostName }.azurewebsites.net/qnamaker`;
+        if (host.includes('qnamaker/v5')) {
+            return host;
+        }
+        
+        // V4 API logic
+        // If the hostname contains all the necessary information, return it
+        if (/^https:\/\/.*\.azurewebsites\.net\/qnamaker\/?/i.test(host)) {
+            return host;
+        }
+
+        // Otherwise add required components
+        if (!(/https?:\/\//i.test(host))) {
+            host = 'https://' + host;
+        }
+
+        // Web App Bots provisioned through the QnAMaker portal have "xxx.azurewebsites.net" in their
+        // environment variables
+        if (host.endsWith('.azurewebsites.net')) {
+            // Add the remaining required path
+            return host + '/qnamaker';
+        }
+
+        // If this.hostName is just the azurewebsite subdomain, finish the remaining V4 API behavior shipped in 4.8.0
+        // e.g. `https://${ this.hostName }.azurewebsites.net/qnamaker`
+        if (!host.endsWith('.azurewebsites.net/qnamaker')) {
+            host = host + '.azurewebsites.net/qnamaker';
+        }
+
+        return host;
     }
 }
