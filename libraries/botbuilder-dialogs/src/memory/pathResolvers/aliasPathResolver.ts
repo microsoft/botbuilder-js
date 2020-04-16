@@ -23,11 +23,8 @@ export class AliasPathResolver implements PathResolver {
 
     public transformPath(path: string): string {
         const start = path.indexOf(this.alias);
-        if (start >= 0) {
-            if (start > 1 && path[start - 1] == '.') {
-                // don't match on x.$foo
-                return path;
-            }
+        if (start == 0) {
+            // here we only deals with trailing alias, alias in middle be handled in further breakdown
             // $xxx -> path.xxx
             path = `${this.prefix}${path.substr(start + this.alias.length)}${this.postfix}`;
             if (path.endsWith('.')) {
