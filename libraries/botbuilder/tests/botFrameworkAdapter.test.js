@@ -266,12 +266,12 @@ describe(`BotFrameworkAdapter`, function () {
             const authReqStub = stub(JwtTokenValidation, 'authenticateRequest');
             adapter.credentialsProvider.isAuthenticationDisabled = async () => false;
             authReqStub.returns(new ClaimsIdentity([], true));
-            const generateCallerIdSpy = spy(adapter, 'generateCallerId');
+            const getCallerIdSpy = spy(adapter, 'getCallerId');
 
             await adapter.authenticateRequest(incoming, 'authHeader');
             try {
                 assert(authReqStub.called, 'JwtTokenValidation.authenticateRequest() not called');
-                assert(generateCallerIdSpy.called, 'generateCallerId was not called');
+                assert(getCallerIdSpy.called, 'getCallerId was not called');
                 assert.strictEqual(incoming.callerId, 'urn:botframework:azure');
             } finally {
                 authReqStub.restore();
@@ -473,11 +473,11 @@ describe(`BotFrameworkAdapter`, function () {
                 done(err);
             };
 
-            const generateCallerIdSpy = spy(adapter, 'generateCallerId');
+            const getCallerIdSpy = spy(adapter, 'getCallerId');
 
             adapter.processActivity(req, res, async (context) => {
                 assert(authReqStub.called, 'JwtTokenValidation.authenticateRequest() not called');
-                assert(generateCallerIdSpy.called, 'generateCallerId was not called');
+                assert(getCallerIdSpy.called, 'getCallerId was not called');
                 assert.strictEqual(context.activity.callerId, 'urn:botframework:azure');
                 authReqStub.restore();
                 done();
@@ -507,11 +507,11 @@ describe(`BotFrameworkAdapter`, function () {
                 done(err);
             };
     
-            const generateCallerIdSpy = spy(adapter, 'generateCallerId');
+            const getCallerIdSpy = spy(adapter, 'getCallerId');
 
             adapter.processActivity(req, res, async (context) => {
                 assert(authReqStub.called, 'JwtTokenValidation.authenticateRequest() not called');
-                assert(generateCallerIdSpy.called, 'generateCallerId was not called');
+                assert(getCallerIdSpy.called, 'getCallerId was not called');
                 assert.strictEqual(context.activity.callerId, `urn:botframework:aadappid:${ skillConsumerAppId }`);
                 authReqStub.restore();
                 done();

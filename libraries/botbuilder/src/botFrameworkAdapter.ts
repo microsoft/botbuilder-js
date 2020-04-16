@@ -823,13 +823,8 @@ export class BotFrameworkAdapter extends BotAdapter implements ExtendedUserToken
 
             const identity = await this.authenticateRequestInternal(request, authHeader);
 
-            // Discard any received callerId properties
-            request.callerId = undefined;
-            // Set the generated callerId when auth is enabled.
-            const isAuthEnabled = !(await this.credentialsProvider.isAuthenticationDisabled());
-            if (isAuthEnabled) {
-                request.callerId = this.generateCallerId(identity);
-            }
+            // Set the correct callerId value and discard values received over the wire
+            request.callerId = await this.getCallerId(identity);
             
             // Process received activity
             status = 500;
@@ -1156,13 +1151,8 @@ export class BotFrameworkAdapter extends BotAdapter implements ExtendedUserToken
         const identity = await this.authenticateRequestInternal(request, authHeader);
         if (!identity.isAuthenticated) { throw new Error('Unauthorized Access. Request is not authorized'); }
 
-        // Discard any received callerId properties
-        request.callerId = undefined;
-        // Set the generated callerId when auth is enabled.
-        const isAuthEnabled = !(await this.credentialsProvider.isAuthenticationDisabled());
-        if (isAuthEnabled) {
-            request.callerId = this.generateCallerId(identity);
-        }
+        // Set the correct callerId value and discard values received over the wire
+        request.callerId = await this.getCallerId(identity);
     }
 
     /**
@@ -1184,9 +1174,16 @@ export class BotFrameworkAdapter extends BotAdapter implements ExtendedUserToken
         );
     }
 
-    private generateCallerId(identity: ClaimsIdentity): string {
+    private async getCallerId(identity: ClaimsIdentity): Promise<string> {
         if (!identity) {
-            throw new TypeError('BotFrameworkAdapter.generateCallerId(): Missing identity parameter.');
+            throw new TypeError('BotFrameworkAdapter.getCallerId(): Missing identity parameter.');
+        }
+
+        // Is the bot accepting all incoming messages?
+        const isAuthDisabled = await this.credentialsProvider.isAuthenticationDisabled();
+        if (isAuthDisabled) {
+            // Return undefined so that the callerId is cleared.
+            return;
         }
         
         // Is the activity from another bot?
@@ -1196,13 +1193,22 @@ export class BotFrameworkAdapter extends BotAdapter implements ExtendedUserToken
             return `${ skillCallerIdPrefix }${ callerId }`;
         }
 
-        // Is the activity from Gov Cloud?
+        // Is the activity from Public Azure?
+        if (!this.settings.channelService || this.settings.channelService.length === 0) {
+            return 'urn:botframework:azure';
+        }
+
+        // Is the activity from Azure Gov?
         if (JwtTokenValidation.isGovernment(this.settings.channelService)) {
             return 'urn:botframework:azureusgov';
         }
-        
-        // Not a Skill or Government Caller
-        return 'urn:botframework:azure';
+
+        // Enterprise Channels?
+        if (this.settings.channelService) {
+
+        }
+
+        // Return undefined so that the callerId is cleared.
     }
 
     /**
