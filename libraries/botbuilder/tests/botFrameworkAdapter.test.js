@@ -1,5 +1,5 @@
 const assert = require('assert');
-const { ActivityTypes, TurnContext } = require('botbuilder-core');
+const { ActivityTypes, CallerIdConstants, TurnContext } = require('botbuilder-core');
 const connector = require('botframework-connector');
 const {
     AuthenticationConstants,
@@ -272,7 +272,7 @@ describe(`BotFrameworkAdapter`, function () {
             try {
                 assert(authReqStub.called, 'JwtTokenValidation.authenticateRequest() not called');
                 assert(getCallerIdSpy.called, 'getCallerId was not called');
-                assert.strictEqual(incoming.callerId, 'urn:botframework:azure');
+                assert.strictEqual(incoming.callerId, CallerIdConstants.PublicAzureChannel);
             } finally {
                 authReqStub.restore();
             }
@@ -478,7 +478,7 @@ describe(`BotFrameworkAdapter`, function () {
             adapter.processActivity(req, res, async (context) => {
                 assert(authReqStub.called, 'JwtTokenValidation.authenticateRequest() not called');
                 assert(getCallerIdSpy.called, 'getCallerId was not called');
-                assert.strictEqual(context.activity.callerId, 'urn:botframework:azure');
+                assert.strictEqual(context.activity.callerId, CallerIdConstants.PublicAzureChannel);
                 authReqStub.restore();
                 done();
             }).catch(e => {
@@ -512,7 +512,7 @@ describe(`BotFrameworkAdapter`, function () {
             adapter.processActivity(req, res, async (context) => {
                 assert(authReqStub.called, 'JwtTokenValidation.authenticateRequest() not called');
                 assert(getCallerIdSpy.called, 'getCallerId was not called');
-                assert.strictEqual(context.activity.callerId, `urn:botframework:aadappid:${ skillConsumerAppId }`);
+                assert.strictEqual(context.activity.callerId, `${ CallerIdConstants.BotToBotPrefix }${ skillConsumerAppId }`);
                 authReqStub.restore();
                 done();
             }).catch(e => {
@@ -535,6 +535,38 @@ describe(`BotFrameworkAdapter`, function () {
             };
             adapter.processActivity(req, res, async (context) => {
                 assert.strictEqual(context.activity.callerId, undefined);
+                authReqStub.restore();
+                done();
+            }).catch(e => {
+                authReqStub.restore();
+                done(e);
+            });
+        });
+
+        it(`should generate a US Gov cloud callerId property on the activity in processActivity()`, (done) => {
+            const skillAppId = '00000000-0000-0000-0000-000000000000';
+            const incoming = TurnContext.applyConversationReference({ type: 'message', text: 'foo' }, reference, true);
+            incoming.channelId = 'directline';
+            const req = new MockBodyRequest(incoming);
+            const res = new MockResponse();
+            const adapter = new BotFrameworkAdapter({ channelService: GovernmentConstants.ChannelService });
+            const authReqStub = stub(JwtTokenValidation, 'authenticateRequest');
+            adapter.credentialsProvider.isAuthenticationDisabled = async () => false;
+            authReqStub.returns(new ClaimsIdentity([
+                { type: AuthenticationConstants.AudienceClaim, value: skillAppId },
+                { type: AuthenticationConstants.VersionClaim, value: '1.0' },
+            ], true));
+            adapter.onTurnError = async (_, err) => {
+                authReqStub.restore();
+                done(err);
+            };
+    
+            const getCallerIdSpy = spy(adapter, 'getCallerId');
+
+            adapter.processActivity(req, res, async (context) => {
+                assert(authReqStub.called, 'JwtTokenValidation.authenticateRequest() not called');
+                assert(getCallerIdSpy.called, 'getCallerId was not called');
+                assert.strictEqual(context.activity.callerId, CallerIdConstants.USGovChannel);
                 authReqStub.restore();
                 done();
             }).catch(e => {
