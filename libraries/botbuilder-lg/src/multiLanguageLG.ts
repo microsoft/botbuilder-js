@@ -1,5 +1,3 @@
-import { Templates } from './templates';
-
 /**
  * @module botbuilder-lg
  */
@@ -8,6 +6,12 @@ import { Templates } from './templates';
  * Licensed under the MIT License.
  */
 
+import { Templates } from './templates';
+
+/**
+ * Multi locale Template Manager for language generation. This template manager will enumerate multi-locale LG files and will select
+ * the appropriate template using the current culture to perform template evaluation.
+ */
 export class MultiLanguageLG {
     public languagePolicy: Map<string, string[]>;
     public lgPerLocale: Map<string, Templates>;
@@ -75,6 +79,12 @@ export class MultiLanguageLG {
         'xh','xh-za','xog','xog-ug','yav','yav-cm','yi','yi-001','yo','yo-bj','yo-ng','zgh','zgh-tfng','zgh-tfng-ma',
         'zh','zh-cn','zh-hans','zh-hans-hk','zh-hans-mo','zh-hant','zh-hk','zh-mo','zh-sg','zh-tw','zu','zu-za'];
 
+    /**
+     * Initializes a new instance of the MultiLanguageLG class.
+     * @param templatesPerLocale A map of LG file templates per locale.
+     * @param filePerLocale A map of locale and LG file.
+     * @param defaultLanguage Default language.
+     */
     public constructor(templatesPerLocale: Map<string, Templates> | undefined, filePerLocale: Map<string, string> | undefined, defaultLanguage?: string) {
         if (templatesPerLocale !== undefined) {
             this.lgPerLocale = templatesPerLocale;
@@ -82,8 +92,8 @@ export class MultiLanguageLG {
             throw new Error(`input is empty`);
         } else {
             this.lgPerLocale = new Map<string, Templates>();
-            for (const filesPerLocale of filePerLocale.entries()) {
-                this.lgPerLocale.set(filesPerLocale[0], Templates.parseFile(filesPerLocale[1]));
+            for (const item of filePerLocale.entries()) {
+                this.lgPerLocale.set(item[0], Templates.parseFile(item[1]));
             }
         }
 
@@ -91,6 +101,12 @@ export class MultiLanguageLG {
         this.languagePolicy = this.getDefaultPolicy(defaultLanguageArray);
     }
 
+    /**
+     * Generate template evaluate result.
+     * @param template Template name.
+     * @param data Scope data.
+     * @param locale Locale info.
+     */
     public generate(template: string, data?: object, locale?: string): any {
         if (!template) {
             throw new Error('template is empty');
