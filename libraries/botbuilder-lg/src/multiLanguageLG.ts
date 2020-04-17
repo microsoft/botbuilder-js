@@ -9,7 +9,7 @@ import { Templates } from './templates';
  */
 
 export class MultiLanguageLG {
-    public languageFallbackPolicy: {};
+    public languagePolicy: Map<string, string[]>;
     public lgPerLocale: Map<string, Templates>;
 
     private readonly locales = [
@@ -75,17 +75,20 @@ export class MultiLanguageLG {
         'xh','xh-za','xog','xog-ug','yav','yav-cm','yi','yi-001','yo','yo-bj','yo-ng','zgh','zgh-tfng','zgh-tfng-ma',
         'zh','zh-cn','zh-hans','zh-hans-hk','zh-hans-mo','zh-hant','zh-hk','zh-mo','zh-sg','zh-tw','zu','zu-za'];
 
-    public constructor(localeLGFiles: Map<string, string>) {
-        this.lgPerLocale = new Map<string, Templates>();
-        this.languageFallbackPolicy = this.getDefaultPolicy();
-
-        if (!localeLGFiles) {
+    public constructor(templatesPerLocale: Map<string, Templates> | undefined, filePerLocale: Map<string, string> | undefined, defaultLanguage?: string) {
+        if (templatesPerLocale !== undefined) {
+            this.lgPerLocale = templatesPerLocale;
+        } else if (filePerLocale === undefined){
             throw new Error(`input is empty`);
+        } else {
+            this.lgPerLocale = new Map<string, Templates>();
+            for (const filesPerLocale of filePerLocale.entries()) {
+                this.lgPerLocale.set(filesPerLocale[0], Templates.parseFile(filesPerLocale[1]));
+            }
         }
 
-        for (const filesPerLocale of localeLGFiles.entries()) {
-            this.lgPerLocale.set(filesPerLocale[0], Templates.parseFile(filesPerLocale[1]));
-        }
+        let defaultLanguageArray = defaultLanguage === undefined ? [''] : [defaultLanguage];
+        this.languagePolicy = this.getDefaultPolicy(defaultLanguageArray);
     }
 
     public generate(template: string, data?: object, locale?: string): any {
@@ -98,30 +101,40 @@ export class MultiLanguageLG {
         }
 
         if (this.lgPerLocale.has(locale)) {
-            return this.lgPerLocale.get(locale).evaluateText(template, data);
-        } else {
-            let locales: string[] = [''];
-            if (!(locale in this.languageFallbackPolicy)) {
-                if (!('' in this.languageFallbackPolicy)) {
-                    throw Error(`No supported language found for ${ locale }`);
-                }
-            } else {
-                locales = this.languageFallbackPolicy[locale];
-            }
+            return this.lgPerLocale.get(locale).evaluate(template, data);
+        }
 
-            for (const fallBackLocale of locales) {
-                if (this.lgPerLocale.has(fallBackLocale)) {
-                    return this.lgPerLocale.get(fallBackLocale).evaluateText(template, data);
-                }
+        let fallbackLocales: string[] = [];
+
+        if (this.languagePolicy.has(locale)) {
+            fallbackLocales.push(...this.languagePolicy.get(locale));
+        }
+
+        if (locale !== '' && this.languagePolicy.has('')) {
+            fallbackLocales.push(...this.languagePolicy.get(''));
+        }
+
+        if (fallbackLocales.length === 0) {
+            throw new Error(`No supported language found for ${ locale }`);
+        }
+
+
+
+        for (const fallBackLocale of fallbackLocales) {
+            if (this.lgPerLocale.has(fallBackLocale)) {
+                return this.lgPerLocale.get(fallBackLocale).evaluate(template, data);
             }
         }
 
         throw new Error(`No LG responses found for locale: ${ locale }`);
-        
     }
 
-    private  getDefaultPolicy(): any {
-        var result = {};
+    private  getDefaultPolicy(defaultLanguages: string[]): Map<string, string[]> {
+        if (defaultLanguages === undefined) {
+            defaultLanguages = [''];
+        }
+
+        var result = new Map<string, string[]>();
         for (const locale of this.locales) {
             let lang = locale.toLowerCase();
             const fallback: string[] = [];
@@ -134,9 +147,12 @@ export class MultiLanguageLG {
                     break;
                 }
             }
-    
-            fallback.push('');
-            result[locale] = fallback;
+
+            if (locale === '') {
+                // here we set the default
+                fallback.push(...defaultLanguages);
+            }
+            result.set(locale, fallback);
         }
     
         return result;
