@@ -824,7 +824,7 @@ export class BotFrameworkAdapter extends BotAdapter implements ExtendedUserToken
             const identity = await this.authenticateRequestInternal(request, authHeader);
 
             // Set the correct callerId value and discard values received over the wire
-            request.callerId = await this.getCallerId(identity);
+            request.callerId = await this.generateCallerId(identity);
             
             // Process received activity
             status = 500;
@@ -1152,7 +1152,7 @@ export class BotFrameworkAdapter extends BotAdapter implements ExtendedUserToken
         if (!identity.isAuthenticated) { throw new Error('Unauthorized Access. Request is not authorized'); }
 
         // Set the correct callerId value and discard values received over the wire
-        request.callerId = await this.getCallerId(identity);
+        request.callerId = await this.generateCallerId(identity);
     }
 
     /**
@@ -1174,9 +1174,14 @@ export class BotFrameworkAdapter extends BotAdapter implements ExtendedUserToken
         );
     }
 
-    private async getCallerId(identity: ClaimsIdentity): Promise<string> {
+    /**
+     * Generates the CallerId property for the activity based on
+     * https://github.com/microsoft/botframework-obi/blob/master/protocols/botframework-activity/botframework-activity.md#appendix-v---caller-id-values.
+     * @param identity 
+     */
+    private async generateCallerId(identity: ClaimsIdentity): Promise<string> {
         if (!identity) {
-            throw new TypeError('BotFrameworkAdapter.getCallerId(): Missing identity parameter.');
+            throw new TypeError('BotFrameworkAdapter.generateCallerId(): Missing identity parameter.');
         }
 
         // Is the bot accepting all incoming messages?

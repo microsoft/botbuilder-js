@@ -1,7 +1,12 @@
 const { ok: assert, strictEqual } = require('assert');
-const { ActivityHandler, ActivityTypes } = require('botbuilder-core');
-const { AppCredentials, AuthenticationConfiguration, ClaimsIdentity, SimpleCredentialProvider } = require('botframework-connector');
-const { BotFrameworkAdapter, SkillConversationIdFactoryBase, SkillHandler } = require('../../');
+const { ActivityHandler, ActivityTypes, CallerIdConstants } = require('botbuilder-core');
+const {
+    AppCredentials,
+    AuthenticationConfiguration,
+    AuthenticationConstants,
+    ClaimsIdentity,
+    SimpleCredentialProvider } = require('botframework-connector');
+const { BotFrameworkAdapter, SkillHandler } = require('../../');
 const { ConversationIdFactory } = require('./conversationIdFactory');
 
 describe('SkillHandler', function() {
@@ -195,6 +200,9 @@ describe('SkillHandler', function() {
             });
 
             it('should call bot logic for EndOfConversation activities from a skill and modify context.activity', async () => {
+                const skillConsumerAppId = '00000000-0000-0000-0000-000000000001';
+                const skillAppId = '00000000-0000-0000-0000-000000000000';
+
                 const adapter = new BotFrameworkAdapter({});
                 const bot = new ActivityHandler();
                 const factory = new ConversationIdFactory();
@@ -219,6 +227,11 @@ describe('SkillHandler', function() {
                     localTimestamp, timestamp,
                     value, channelData, serviceUrl
                 };
+                const identity = new ClaimsIdentity([
+                    { type: AuthenticationConstants.AudienceClaim, value: skillConsumerAppId },
+                    { type: AuthenticationConstants.AppIdClaim, value: skillAppId },
+                    { type: AuthenticationConstants.VersionClaim, value: '1.0' },
+                ], true);
                 bot.run = async (context) => {
                     assert(context);
                     strictEqual(context.turnState.get(context.adapter.BotIdentityKey), identity);
@@ -233,8 +246,10 @@ describe('SkillHandler', function() {
                     strictEqual(a.timestamp, timestamp);
                     strictEqual(a.channelData, channelData);
                     strictEqual(a.replyToId, replyToId);
+                    strictEqual(a.callerId, `${ CallerIdConstants.BotToBotPrefix }${ skillAppId }`);
                 };
                 await handler.processActivity(identity, 'convId', 'replyId', skillActivity);
+                strictEqual(skillActivity.callerId, undefined);
             });
 
             it('should forward activity from Skill for other ActivityTypes', async () => {
@@ -260,8 +275,40 @@ describe('SkillHandler', function() {
                     strictEqual(activities.length, 1);
                     strictEqual(activities[0].type, ActivityTypes.Message);
                     strictEqual(activities[0].text, text);
+                    strictEqual(skillActivity.callerId, undefined);
                 };
                 await handler.processActivity(identity, 'convId', 'replyId', skillActivity);
+            });
+
+            it(`should use the skill's appId to set the callback's activity.callerId`, async () => {
+                const skillAppId = '00000000-0000-0000-0000-000000000000';
+                const skillConsumerAppId = '00000000-0000-0000-0000-000000000001';
+                
+                const adapter = new BotFrameworkAdapter({});
+                adapter.credentialsProvider.isAuthenticationDisabled = async () => false;
+                const identity = new ClaimsIdentity([
+                    { type: AuthenticationConstants.AudienceClaim, value: skillConsumerAppId },
+                    { type: AuthenticationConstants.AppIdClaim, value: skillAppId },
+                    { type: AuthenticationConstants.VersionClaim, value: '1.0' },
+                ], true);
+                const bot = new ActivityHandler();
+                const factory = new ConversationIdFactory();
+                factory.disableCreateWithOptions = true;
+                factory.disableGetSkillConversationReference = true;
+                const creds = new SimpleCredentialProvider(skillConsumerAppId, '');
+                const authConfig = new AuthenticationConfiguration();
+                const handler = new SkillHandler(adapter, bot, factory, creds, authConfig);
+                const serviceUrl = 'http://localhost/api/messages';
+                factory.refs['convId'] = { serviceUrl, conversation: { id: 'conversationId' } };
+                const skillActivity = {
+                    type: ActivityTypes.Event,
+                    serviceUrl,
+                };
+                bot.run = async (context) => {
+                    strictEqual(context.activity.callerId, `${ CallerIdConstants.BotToBotPrefix }${ skillAppId }`);
+                };
+                await handler.processActivity(identity, 'convId', 'replyId', skillActivity);
+                strictEqual(skillActivity.callerId, undefined);
             });
         });
     });

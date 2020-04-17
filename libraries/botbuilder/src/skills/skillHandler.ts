@@ -11,6 +11,7 @@ import {
     ActivityHandlerBase,
     ActivityTypes,
     BotAdapter,
+    CallerIdConstants,
     ResourceResponse,
     SkillConversationIdFactoryBase,
     TurnContext,
@@ -188,6 +189,7 @@ export class SkillHandler extends ChannelServiceHandler {
             context.turnState.set(adapter.ConnectorClientKey, client);
 
             context.activity.id = replyToActivityId;
+            context.activity.callerId = `${ CallerIdConstants.BotToBotPrefix }${ JwtTokenValidation.getAppIdFromClaims(claimsIdentity.claims) }`;
             switch (activity.type) {
                 case ActivityTypes.EndOfConversation:
                     await this.conversationIdFactory.deleteConversationReference(conversationId);
