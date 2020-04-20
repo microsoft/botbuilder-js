@@ -98,6 +98,12 @@ export class BotFrameworkHttpClient implements BotFrameworkClient {
             activity.conversation.id = conversationId;
             activity.serviceUrl = serviceUrl;
             activity.callerId = `urn:botframework:aadappid:${ fromBotId }`;
+
+            // Fixes: https://github.com/microsoft/botframework-sdk/issues/5785
+            if (!activity.recipient) {
+                activity.recipient = {} as any;
+            }
+
             const config = {
                 headers: {
                     Accept: 'application/json',
