@@ -14,8 +14,9 @@ import { Position } from './position';
 export class Range {
     public start: Position;
     public end: Position;
-
-    public constructor(start: Position, end: Position) {
+    public static readonly DefaultRange: Range = new Range(1, 0, 1, 0);
+    public constructor(start: Position, end: Position)
+    public constructor(startLine: number, startChar: number, endLine: number, endChar: number) {
         this.start = start;
         this.end = end;
     }

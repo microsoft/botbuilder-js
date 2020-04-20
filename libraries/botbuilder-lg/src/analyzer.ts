@@ -20,7 +20,7 @@ import {TemplateErrors} from './templateErrors';
 /**
  * Analyzer engine. To to get the static analyzer results.
  */
-export class Analyzer extends AbstractParseTreeVisitor<AnalyzerResult> implements LGFileParserVisitor<AnalyzerResult> {
+export class Analyzer extends AbstractParseTreeVisitor<AnalyzerResult> implements LGTemplateParserVisitor<AnalyzerResult> {
     /**
      * Templates.
      */
