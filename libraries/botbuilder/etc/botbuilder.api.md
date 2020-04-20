@@ -5,6 +5,7 @@
 ```ts
 
 import { Activity } from 'botbuilder-core';
+import { Activity as Activity_2 } from 'botframework-schema';
 import { ActivityHandler } from 'botbuilder-core';
 import { ActivityHandlerBase } from 'botbuilder-core';
 import { AppBasedLinkQuery } from 'botbuilder-core';
@@ -19,6 +20,7 @@ import { ChannelAccount } from 'botbuilder-core';
 import { ChannelInfo } from 'botbuilder-core';
 import { ClaimsIdentity } from 'botframework-connector';
 import { ConnectorClient } from 'botframework-connector';
+import { ConversationAccount } from 'botframework-schema';
 import { ConversationParameters } from 'botbuilder-core';
 import { ConversationReference } from 'botbuilder-core';
 import { ConversationResourceResponse } from 'botbuilder-core';
@@ -65,6 +67,7 @@ import { TokenExchangeRequest } from 'botframework-connector';
 import { TokenResponse } from 'botbuilder-core';
 import { TokenStatus } from 'botframework-connector';
 import { Transcript } from 'botbuilder-core';
+import { Transcript as Transcript_2 } from 'botframework-schema';
 import { TranscriptInfo } from 'botbuilder-core';
 import { TranscriptStore } from 'botbuilder-core';
 import { TurnContext } from 'botbuilder-core';
@@ -210,6 +213,12 @@ export class ChannelServiceRoutes {
 }
 
 // @public
+export class EventFactory {
+    static createHandoffInitiation(context: TurnContext, handoffContext: any, transcript?: Transcript_2): Activity_2;
+    static createHandoffStatus(conversation: ConversationAccount, state: string, message?: string): Activity_2;
+}
+
+// @public
 export class FileTranscriptStore implements TranscriptStore {
     constructor(folder: string);
     deleteTranscript(channelId: string, conversationId: string): Promise<void>;
@@ -217,6 +226,14 @@ export class FileTranscriptStore implements TranscriptStore {
     listTranscripts(channelId: string, continuationToken?: string): Promise<PagedResult<TranscriptInfo>>;
     logActivity(activity: Activity): Promise<void>;
     }
+
+// @public
+export class HandoffEventNames {
+    // (undocumented)
+    static readonly HandoffStatus: string;
+    // (undocumented)
+    static readonly InitiateHandoff: string;
+}
 
 // Warning: (ae-forgotten-export) The symbol "InterceptionMiddleware" needs to be exported by the entry point index.d.ts
 //
