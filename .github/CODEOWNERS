@@ -1,0 +1,6 @@
+# For all public API changes
+/libraries/*/etc/* @benbrown @stevengum @stevenic
+
+# For maintenance of shipped packages dependencies and devDependencies
+# Codeowners should use tools such as https://bundlephobia.com/
+/libraries/*/package.json @benbrown @stevengum @stevenic
