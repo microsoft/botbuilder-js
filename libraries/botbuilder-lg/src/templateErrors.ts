@@ -12,11 +12,11 @@
 export class TemplateErrors {
     public static readonly noTemplate: string = `LG file must have at least one template definition.`;
  
-    public static readonly invalidTemplateName: string = `Invalid template name. Template name should start with letter/number/_ and can only contains letter/number/_/./-.`;
+    public static readonly invalidTemplateName: string = `Invalid template name. Template name should start with letter/number/_ and can only contains letter/number/./_.`;
  
     public static readonly invalidTemplateBody: string = `Invalid template body. Expecting '-' prefix.`;
  
-    public static readonly invalidStrucName: string = `Invalid structure name. name should start with letter/number/_ and can only contains letter/number/_/./-.`;
+    public static readonly invalidStrucName: string = `Invalid structure name. name should start with letter/number/_ and can only contains letter/number/./_.`;
  
     public static readonly missingStrucEnd: string = `Invalid structure body. Expecting ']' at the end of the body.`;
  

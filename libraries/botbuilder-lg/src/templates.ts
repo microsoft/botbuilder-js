@@ -191,7 +191,7 @@ export class Templates implements Iterable<Template> {
      * @param scope The state visible in the evaluation.
      * @returns Expand result.
      */
-    public expandTemplate(templateName: string, scope?: object): string[] {
+    public expandTemplate(templateName: string, scope?: object): any[] {
         this.checkErrors();
 
         const expander = new Expander(this.allTemplates, this.expressionParser, this.strictMode);
@@ -223,7 +223,7 @@ export class Templates implements Iterable<Template> {
         this.checkErrors();
 
         // wrap inline string with "# name and -" to align the evaluation process
-        const fakeTemplateId = TemplateExtensions.newGuid();
+        const fakeTemplateId = '__temp__';
         const multiLineMark = '```';
 
         inlineStr = !(inlineStr.trim().startsWith(multiLineMark) && inlineStr.includes('\n'))
