@@ -14,8 +14,9 @@ import {
     CallerIdConstants,
     ResourceResponse,
     SkillConversationIdFactoryBase,
-    TurnContext,
-    SkillConversationReference
+    SkillConversationReference,
+    SkillConversationReferenceKey,
+    TurnContext
 } from 'botbuilder-core';
 import { AuthenticationConfiguration, AppCredentials, ICredentialProvider, ClaimsIdentity, JwtTokenValidation, GovernmentConstants, AuthenticationConstants } from 'botframework-connector';
 
@@ -26,7 +27,12 @@ import { BotFrameworkAdapter } from '../botFrameworkAdapter';
  * A Bot Framework Handler for skills.
  */
 export class SkillHandler extends ChannelServiceHandler {
-    public readonly SkillConversationReferenceKey: Symbol = Symbol('SkillConversationReference');
+    /**
+     * Used to access the CovnersationReference sent from the Skill to the Parent.
+     * @remarks
+     * The value is the same as the SkillConversationReferenceKey exported from botbuilder-core.
+     */
+    public readonly SkillConversationReferenceKey: symbol = SkillConversationReferenceKey;
     private readonly adapter: BotAdapter;
     private readonly bot: ActivityHandlerBase;
     private readonly conversationIdFactory: SkillConversationIdFactoryBase;

@@ -1,4 +1,9 @@
-import { Activity, ActivityTypes, TurnContext, StatePropertyAccessor } from 'botbuilder-core';
+import { Activity,
+    ActivityTypes,
+    SkillConversationReferenceKey,
+    StatePropertyAccessor,
+    TurnContext
+} from 'botbuilder-core';
 import { DialogContext, DialogState } from './dialogContext';
 import { Dialog, DialogTurnStatus } from './dialog';
 import { DialogEvents } from './dialogEvents';
@@ -92,4 +97,13 @@ function isEocComingFromParent(context: TurnContext): boolean {
     // To determine the direction we check callerId property which is set to the parent bot
     // by the BotFrameworkHttpClient on outgoing requests.
     return !!context.activity.callerId;
+}
+
+function isFromParentToSkill(context: TurnContext): boolean {
+    if (context.turnState.get(SkillConversationReferenceKey)) {
+        return false;
+    }
+
+    const identity = context.turnState.get(context.adapter.BotIdentityKey);
+    return identity && isSkillClaim(identity.claims);
 }
