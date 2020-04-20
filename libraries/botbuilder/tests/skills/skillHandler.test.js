@@ -1,5 +1,5 @@
 const { ok: assert, strictEqual } = require('assert');
-const { ActivityHandler, ActivityTypes, CallerIdConstants } = require('botbuilder-core');
+const { ActivityHandler, ActivityTypes, CallerIdConstants, SkillConversationReferenceKey } = require('botbuilder-core');
 const {
     AppCredentials,
     AuthenticationConfiguration,
@@ -305,6 +305,11 @@ describe('SkillHandler', function() {
                     serviceUrl,
                 };
                 bot.run = async (context) => {
+                    const fromKey = context.turnState.get(SkillConversationReferenceKey);
+                    const fromHandlerKey = context.turnState.get(handler.SkillConversationReferenceKey);
+                    assert(fromKey, 'skillConversationReference was not cached in TurnState');
+                    assert(fromHandlerKey, 'the key on the SkillHandler did not return TurnState cached value');
+                    strictEqual(fromKey, fromHandlerKey, 'the keys should return the same cached values');
                     strictEqual(context.activity.callerId, `${ CallerIdConstants.BotToBotPrefix }${ skillAppId }`);
                 };
                 await handler.processActivity(identity, 'convId', 'replyId', skillActivity);
