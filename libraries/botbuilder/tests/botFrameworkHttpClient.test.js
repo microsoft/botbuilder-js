@@ -90,5 +90,19 @@ describe('BotFrameworkHttpClient', function() {
             const response = await client.postActivity(fromBotId, 'toBotId', 'http://skillUrl/api/good', 'serviceUrl', 'conversationId', { type: 'message', conversation: { } });
             strictEqual(response.status, 200);
         });
+
+        it(`should restore sent activity's relatesTo to original value`, async () => {
+            nock('http://skillUrl')
+                .post('/api/good')
+                .reply(200, { id: 'some-id' });
+        
+            const credentialProvider = new SimpleCredentialProvider('', '');
+            const client = new BotFrameworkHttpClient(credentialProvider, 'channels');
+            const fromBotId = null;
+            const originalRelatesTo = { serviceUrl: 'https://channel-service-url' };
+            const forwardedActivity = { type: 'message', conversation: { }, relatesTo: originalRelatesTo };
+            await client.postActivity(fromBotId, 'toBotId', 'http://skillUrl/api/good', 'serviceUrl', 'conversationId', forwardedActivity);
+            strictEqual(forwardedActivity.relatesTo, originalRelatesTo);
+        });
     });
 });

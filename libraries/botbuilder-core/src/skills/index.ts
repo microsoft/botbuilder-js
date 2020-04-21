@@ -8,6 +8,7 @@
 
 export { BotFrameworkClient } from './botFrameworkClient';
 export { BotFrameworkSkill } from './botFrameworkSkill';
+export { SkillConversationReferenceKey } from './constants';
 export { SkillConversationIdFactoryBase } from './skillConversationIdFactoryBase';
 export { SkillConversationReference } from './skillConversationReference';
 export { SkillConversationIdFactoryOptions } from './skillConversationIdFactoryOptions';

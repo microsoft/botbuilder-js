@@ -2206,7 +2206,13 @@ export class ExpressionFunctions {
                     let result = '';
                     for (const arg of args) {
                         if (arg !== undefined && arg !== null) {
-                            result += arg.toString();
+                            if(Array.isArray(arg)) {
+                                result += arg.toString();
+                            } else if(typeof arg === 'object') {
+                                result += JSON.stringify(arg);
+                            } else {
+                                result += arg.toString();
+                            }
                         }
                     }
 
