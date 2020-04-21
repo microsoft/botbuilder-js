@@ -17,7 +17,7 @@ import { DialogContext, DialogState } from './dialogContext';
 import { Dialog, DialogTurnStatus } from './dialog';
 import { DialogEvents } from './dialogEvents';
 import { DialogSet } from './dialogSet';
-import { isSkillClaim } from './prompts/skillsHelpers';
+import { AuthConstants, GovConstants, isSkillClaim } from './prompts/skillsHelpers';
 
 export async function runDialog(dialog: Dialog, context: TurnContext, accessor: StatePropertyAccessor<DialogState>): Promise<void> {
     if (!dialog) {
@@ -91,9 +91,6 @@ export async function runDialog(dialog: Dialog, context: TurnContext, accessor: 
     }
 }
 
-const publicAzureOAuthScope = 'https://api.botframework.com';
-const govAzureOAuthScope = 'https://api.botframework.us';
-
 /**
  * Helper to determine if we should send an EoC to the parent or not.
  * @param context 
@@ -107,7 +104,7 @@ function sendEoCToParent(context: TurnContext): boolean {
         const skillConversationReference: SkillConversationReference = context.turnState.get(SkillConversationReferenceKey);
         if (skillConversationReference) {
             // If the skillConversationReference.OAuthScope is for one of the supported channels, we are at the root and we should not send an EoC.
-            return skillConversationReference.oAuthScope !== publicAzureOAuthScope && skillConversationReference.oAuthScope !== govAzureOAuthScope;
+            return skillConversationReference.oAuthScope !== AuthConstants.ToBotFromChannelTokenIssuer && skillConversationReference.oAuthScope !== GovConstants.ToBotFromChannelTokenIssuer;
         }
 
         return true;
