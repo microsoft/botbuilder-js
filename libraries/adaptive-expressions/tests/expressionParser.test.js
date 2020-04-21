@@ -546,6 +546,8 @@ const dataSource = [
     
     //Object manipulation and construction functions tests
     ['{text:"hello"}.text', 'hello'],
+    ['{name: user.name}.name', undefined],
+    ['{name: user.nickname}.name', 'John'],
     ['string(addProperty(json(\'{"key1":"value1"}\'), \'key2\',\'value2\'))', '{"key1":"value1","key2":"value2"}'],
     ['foreach(items, x, addProperty({}, "a", x))[0].a', 'zero'],
     ['string(addProperty({"key1":"value1"}, \'key2\',\'value2\'))', '{"key1":"value1","key2":"value2"}'],
