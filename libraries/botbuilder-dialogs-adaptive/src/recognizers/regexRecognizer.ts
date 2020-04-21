@@ -27,25 +27,9 @@ export class RegexRecognizer implements Recognizer {
      */
     public entities: EntityRecognizer[] = [];
 
-    public async recognize(dialogContext: DialogContext): Promise<RecognizerResult>;
-    public async recognize(dialogContext: DialogContext, textOrActivity: Activity): Promise<RecognizerResult>;
-    public async recognize(dialogContext: DialogContext, textOrActivity?: string | Activity, locale?: string): Promise<RecognizerResult> {
-        let text = '';
-        if (!textOrActivity) {
-            const activity: Activity = dialogContext.context.activity;
-            if (activity && activity.type == ActivityTypes.Message) {
-                text = activity.text || '';
-                locale = activity.locale;
-            }
-        } else if (typeof (textOrActivity) == 'object') {
-            const activity: Activity = textOrActivity;
-            if (activity.type == ActivityTypes.Message) {
-                text = activity.text || '';
-                locale = activity.locale;
-            }
-        } else if (typeof (textOrActivity) == 'string') {
-            text = textOrActivity || '';
-        }
+    public async recognize(dialogContext: DialogContext, activity: Activity): Promise<RecognizerResult> {
+        const text = activity.text || '';
+        const locale = activity.locale || 'en-us';
 
         const recognizerResult: RecognizerResult = {
             text: text,

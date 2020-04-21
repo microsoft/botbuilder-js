@@ -22,7 +22,7 @@ export interface QnAMakerEndpoint {
     endpointKey: string;
 
     /**
-     * The host path. For example: `https://westus.api.cognitive.microsoft.com/qnamaker/v2.0`
+     * The host path. For example: `https://testqnamaker.azurewebsites.net/qnamaker`
      */
     host: string;
 }

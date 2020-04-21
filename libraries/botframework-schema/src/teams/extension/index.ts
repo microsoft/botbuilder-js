@@ -23,6 +23,7 @@
 
 import { Attachment } from '../../';
 import * as teams from '../';
+import { FileDownloadInfo, ContentType } from '../';
 
 /**
  * Defines values for Type.
@@ -99,7 +100,7 @@ export interface TeamsAttachment<ContentType> extends Attachment {
   content: ContentType;
 }
 
-export type FileDownloadInfoAttachment = TeamsAttachment<teams.FileDownloadInfo>;
+export type FileDownloadInfoAttachment = TeamsAttachment<FileDownloadInfo>;
 
 /**
  * @interface
@@ -112,7 +113,7 @@ export interface MessageActionsPayloadBody {
    * @member {ContentType} [contentType] Type of the content. Possible values
    * include: 'html', 'text'
    */
-  contentType?: teams.ContentType;
+  contentType?: ContentType;
   /**
    * @member {string} [content] The content of the body.
    */
