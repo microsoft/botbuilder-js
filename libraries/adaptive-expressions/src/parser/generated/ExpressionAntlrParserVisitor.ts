@@ -4,8 +4,8 @@
 import { ParseTreeVisitor } from "antlr4ts/tree/ParseTreeVisitor";
 
 import { FuncInvokeExpContext } from "./ExpressionAntlrParser";
-import { ConstantAtomContext } from "./ExpressionAntlrParser";
 import { IdAtomContext } from "./ExpressionAntlrParser";
+import { JsonCreationExpContext } from "./ExpressionAntlrParser";
 import { StringAtomContext } from "./ExpressionAntlrParser";
 import { IndexAccessExpContext } from "./ExpressionAntlrParser";
 import { StringInterpolationAtomContext } from "./ExpressionAntlrParser";
@@ -22,6 +22,9 @@ import { PrimaryExpressionContext } from "./ExpressionAntlrParser";
 import { StringInterpolationContext } from "./ExpressionAntlrParser";
 import { TextContentContext } from "./ExpressionAntlrParser";
 import { ArgsListContext } from "./ExpressionAntlrParser";
+import { KeyValuePairListContext } from "./ExpressionAntlrParser";
+import { KeyValuePairContext } from "./ExpressionAntlrParser";
+import { KeyContext } from "./ExpressionAntlrParser";
 
 
 /**
@@ -41,20 +44,20 @@ export interface ExpressionAntlrParserVisitor<Result> extends ParseTreeVisitor<R
 	visitFuncInvokeExp?: (ctx: FuncInvokeExpContext) => Result;
 
 	/**
-	 * Visit a parse tree produced by the `constantAtom`
-	 * labeled alternative in `ExpressionAntlrParser.primaryExpression`.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	visitConstantAtom?: (ctx: ConstantAtomContext) => Result;
-
-	/**
 	 * Visit a parse tree produced by the `idAtom`
 	 * labeled alternative in `ExpressionAntlrParser.primaryExpression`.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
 	visitIdAtom?: (ctx: IdAtomContext) => Result;
+
+	/**
+	 * Visit a parse tree produced by the `jsonCreationExp`
+	 * labeled alternative in `ExpressionAntlrParser.primaryExpression`.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	visitJsonCreationExp?: (ctx: JsonCreationExpContext) => Result;
 
 	/**
 	 * Visit a parse tree produced by the `stringAtom`
@@ -177,5 +180,26 @@ export interface ExpressionAntlrParserVisitor<Result> extends ParseTreeVisitor<R
 	 * @return the visitor result
 	 */
 	visitArgsList?: (ctx: ArgsListContext) => Result;
+
+	/**
+	 * Visit a parse tree produced by `ExpressionAntlrParser.keyValuePairList`.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	visitKeyValuePairList?: (ctx: KeyValuePairListContext) => Result;
+
+	/**
+	 * Visit a parse tree produced by `ExpressionAntlrParser.keyValuePair`.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	visitKeyValuePair?: (ctx: KeyValuePairContext) => Result;
+
+	/**
+	 * Visit a parse tree produced by `ExpressionAntlrParser.key`.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	visitKey?: (ctx: KeyContext) => Result;
 }
 
