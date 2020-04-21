@@ -63,7 +63,7 @@ export class LGTemplateParser extends Parser {
 	public static readonly ESCAPE_CHARACTER_IN_STRUCTURE_BODY = 33;
 	public static readonly EXPRESSION_IN_STRUCTURE_BODY = 34;
 	public static readonly TEXT_IN_STRUCTURE_BODY = 35;
-	public static readonly RULE_context = 0;
+	public static readonly RULE_template = 0;
 	public static readonly RULE_body = 1;
 	public static readonly RULE_structuredTemplateBody = 2;
 	public static readonly RULE_structuredBodyNameLine = 3;
@@ -86,7 +86,7 @@ export class LGTemplateParser extends Parser {
 	public static readonly RULE_switchCaseStat = 20;
 	// tslint:disable:no-trailing-whitespace
 	public static readonly ruleNames: string[] = [
-		"context", "body", "structuredTemplateBody", "structuredBodyNameLine", 
+		"template", "body", "structuredTemplateBody", "structuredBodyNameLine", 
 		"errorStructuredName", "structuredBodyContentLine", "errorStructureLine", 
 		"keyValueStructureLine", "keyValueStructureValue", "objectStructureLine", 
 		"structuredBodyEndLine", "normalTemplateBody", "templateString", "normalTemplateString", 
@@ -134,9 +134,9 @@ export class LGTemplateParser extends Parser {
 		this._interp = new ParserATNSimulator(LGTemplateParser._ATN, this);
 	}
 	// @RuleVersion(0)
-	public context(): ContextContext {
-		let _localctx: ContextContext = new ContextContext(this._ctx, this.state);
-		this.enterRule(_localctx, 0, LGTemplateParser.RULE_context);
+	public template(): TemplateContext {
+		let _localctx: TemplateContext = new TemplateContext(this._ctx, this.state);
+		this.enterRule(_localctx, 0, LGTemplateParser.RULE_template);
 		try {
 			this.enterOuterAlt(_localctx, 1);
 			{
@@ -1183,7 +1183,7 @@ export class LGTemplateParser extends Parser {
 
 }
 
-export class ContextContext extends ParserRuleContext {
+export class TemplateContext extends ParserRuleContext {
 	public body(): BodyContext {
 		return this.getRuleContext(0, BodyContext);
 	}
@@ -1192,23 +1192,23 @@ export class ContextContext extends ParserRuleContext {
 		super(parent, invokingState);
 	}
 	// @Override
-	public get ruleIndex(): number { return LGTemplateParser.RULE_context; }
+	public get ruleIndex(): number { return LGTemplateParser.RULE_template; }
 	// @Override
 	public enterRule(listener: LGTemplateParserListener): void {
-		if (listener.enterContext) {
-			listener.enterContext(this);
+		if (listener.enterTemplate) {
+			listener.enterTemplate(this);
 		}
 	}
 	// @Override
 	public exitRule(listener: LGTemplateParserListener): void {
-		if (listener.exitContext) {
-			listener.exitContext(this);
+		if (listener.exitTemplate) {
+			listener.exitTemplate(this);
 		}
 	}
 	// @Override
 	public accept<Result>(visitor: LGTemplateParserVisitor<Result>): Result {
-		if (visitor.visitContext) {
-			return visitor.visitContext(this);
+		if (visitor.visitTemplate) {
+			return visitor.visitTemplate(this);
 		} else {
 			return visitor.visitChildren(this);
 		}

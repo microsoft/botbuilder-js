@@ -29,8 +29,6 @@ fragment NUMBER: '0'..'9';
 
 fragment WHITESPACE : ' '|'\t'|'\ufeff'|'\u00a0';
 
-fragment EMPTY_OBJECT: '{' WHITESPACE* '}';
-
 fragment STRING_LITERAL : ('\'' (('\\'('\''|'\\'))|(~'\''))*? '\'') | ('"' (('\\'('"'|'\\'))|(~'"'))*? '"');
 
 fragment STRING_INTERPOLATION : '`' (('\\'('`'|'\\'))|(~'`'))*? '`';
@@ -198,3 +196,4 @@ EXPRESSION_IN_STRUCTURE_BODY
 TEXT_IN_STRUCTURE_BODY
   : ~[\r\n]+?  { this.ignoreWS = false; this.beginOfStructureProperty = false;}
   ;
+

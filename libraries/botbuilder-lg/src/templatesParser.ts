@@ -40,9 +40,9 @@ export class TemplatesParser {
     /**
      * option regex.
      */
-    public static readonly optionRegex: RegExp = new RegExp(/^>\s*!#(.*)$/);
+    public static readonly optionRegex: RegExp = new RegExp(/>\s*!#(.*)$/);
 
-    public static readonly importRegex: RegExp = new RegExp(/[([^\]]*)\]\(([^\)]*)/);
+    public static readonly importRegex: RegExp = new RegExp(/\[([^\]]*)\]\(([^\)]*)\)/);
     
     /**
     * parse a file and return LG file.
@@ -249,7 +249,7 @@ class TemplatesTransformer extends AbstractParseTreeVisitor<any> implements LGTe
     public visitImportDefinition(context: lp.ImportDefinitionContext): any {
         const importStr = context.IMPORT().text;
         var groups = importStr.match(TemplatesParser.importRegex);
-        if (groups.length === 3) {
+        if (groups && groups.length === 3) {
             const description = groups[1].trim();
             const id = groups[2].trim();
             const sourceRange = new SourceRange(context, this.templates.id);
@@ -264,7 +264,7 @@ class TemplatesTransformer extends AbstractParseTreeVisitor<any> implements LGTe
         let result = '';
         if (optionStr != undefined && optionStr.trim() !== '') {
             var groups = optionStr.match(TemplatesParser.optionRegex);
-            if (groups.length === 2) {
+            if (groups && groups.length === 2) {
                 result = groups[1].trim();
             }
         }
@@ -318,7 +318,7 @@ class TemplatesTransformer extends AbstractParseTreeVisitor<any> implements LGTe
 
     private checkTemplateParameters(parameters: string[], context: ParserRuleContext): void {
         for (const parameter of parameters) {
-            if (this.identifierRegex.test(parameter)) {
+            if (!this.identifierRegex.test(parameter)) {
                 const diagnostic = this.buildTemplatesDiagnostic(TemplateErrors.invalidTemplateName, context);
                 this.templates.diagnostics.push(diagnostic);
             }
@@ -355,7 +355,7 @@ class TemplatesTransformer extends AbstractParseTreeVisitor<any> implements LGTe
         parser.addErrorListener(new ErrorListener(this.templates.id, startLine));
         parser.buildParseTree = true;
 
-        return parser.context().body();
+        return parser.template().body();
     }
 
     private removeTrailingNewline(templateBody: string): string {

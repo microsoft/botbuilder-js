@@ -293,10 +293,8 @@ export class Templates implements Iterable<Template> {
             return this;
         }
 
-        let startLine: number;
-        let stopLine: number;
-
-        ({ startLine, stopLine } = template.getTemplateRange());
+        let startLine = template.sourceRange.range.start.line - 1;
+        let stopLine = template.sourceRange.range.end.line - 1;
 
         const newContent: string = this.replaceRangeContent(this.content, startLine, stopLine, undefined);
         this.initialize(TemplatesParser.parseText(newContent, this.id, this.importResolver));

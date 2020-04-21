@@ -7,7 +7,7 @@ import { SwitchCaseBodyContext } from "./LGTemplateParser";
 import { NormalBodyContext } from "./LGTemplateParser";
 import { StructuredBodyContext } from "./LGTemplateParser";
 import { IfElseBodyContext } from "./LGTemplateParser";
-import { ContextContext } from "./LGTemplateParser";
+import { TemplateContext } from "./LGTemplateParser";
 import { BodyContext } from "./LGTemplateParser";
 import { StructuredTemplateBodyContext } from "./LGTemplateParser";
 import { StructuredBodyNameLineContext } from "./LGTemplateParser";
@@ -71,11 +71,11 @@ export interface LGTemplateParserVisitor<Result> extends ParseTreeVisitor<Result
 	visitIfElseBody?: (ctx: IfElseBodyContext) => Result;
 
 	/**
-	 * Visit a parse tree produced by `LGTemplateParser.context`.
+	 * Visit a parse tree produced by `LGTemplateParser.template`.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	visitContext?: (ctx: ContextContext) => Result;
+	visitTemplate?: (ctx: TemplateContext) => Result;
 
 	/**
 	 * Visit a parse tree produced by `LGTemplateParser.body`.

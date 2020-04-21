@@ -7,7 +7,7 @@ import { SwitchCaseBodyContext } from "./LGTemplateParser";
 import { NormalBodyContext } from "./LGTemplateParser";
 import { StructuredBodyContext } from "./LGTemplateParser";
 import { IfElseBodyContext } from "./LGTemplateParser";
-import { ContextContext } from "./LGTemplateParser";
+import { TemplateContext } from "./LGTemplateParser";
 import { BodyContext } from "./LGTemplateParser";
 import { StructuredTemplateBodyContext } from "./LGTemplateParser";
 import { StructuredBodyNameLineContext } from "./LGTemplateParser";
@@ -88,15 +88,15 @@ export interface LGTemplateParserListener extends ParseTreeListener {
 	exitIfElseBody?: (ctx: IfElseBodyContext) => void;
 
 	/**
-	 * Enter a parse tree produced by `LGTemplateParser.context`.
+	 * Enter a parse tree produced by `LGTemplateParser.template`.
 	 * @param ctx the parse tree
 	 */
-	enterContext?: (ctx: ContextContext) => void;
+	enterTemplate?: (ctx: TemplateContext) => void;
 	/**
-	 * Exit a parse tree produced by `LGTemplateParser.context`.
+	 * Exit a parse tree produced by `LGTemplateParser.template`.
 	 * @param ctx the parse tree
 	 */
-	exitContext?: (ctx: ContextContext) => void;
+	exitTemplate?: (ctx: TemplateContext) => void;
 
 	/**
 	 * Enter a parse tree produced by `LGTemplateParser.body`.

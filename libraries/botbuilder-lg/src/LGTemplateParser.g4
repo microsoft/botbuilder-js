@@ -2,7 +2,7 @@ parser grammar LGTemplateParser;
 
 options { tokenVocab=LGTemplateLexer; }
 
-context: body EOF;
+template: body EOF;
 
 body
     : normalTemplateBody                        #normalBody
