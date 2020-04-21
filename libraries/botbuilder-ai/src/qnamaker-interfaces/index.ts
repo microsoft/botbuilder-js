@@ -6,10 +6,12 @@
  * Licensed under the MIT License.
  */
 
+export * from './rankerTypes';
 export * from './qnamakerEndpoint';
 export * from './qnamakerMetadata';
 export * from './qnamakerOptions';
 export * from './qnamakerResult';
 export * from './qnamakerTraceInfo';
+export * from './qnaRequestContext';
 export * from './feedbackRecord';
 export * from './feedbackRecords';
