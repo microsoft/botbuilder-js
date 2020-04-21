@@ -35,8 +35,8 @@ describe('Memory - Path Resolvers', function() {
 
     it('AtPathResolver should transform @ aliases.', function (done) {
         const resolver = new AtPathResolver();
-        const path = resolver.transformPath('@test');
-        assert(path == 'turn.recognized.entities.test.first()', `path: ${path}`);
+        assert.equal(resolver.transformPath('@test'), 'turn.recognized.entities.test.first()');
+        assert.equal(resolver.transformPath('@test.bar'), 'turn.recognized.entities.test.first().bar');
         done();        
     });
 

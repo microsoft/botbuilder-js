@@ -28,6 +28,7 @@ export * from './onMessageActivity';
 export * from './onMessageDeleteActivity';
 export * from './onMessageReactionActivity';
 export * from './onMessageUpdateActivity';
+export * from './onQnAMatch';
 export * from './onRepromptDialog';
 export * from './onTypingActivity';
 export * from './onUnknownIntent';
