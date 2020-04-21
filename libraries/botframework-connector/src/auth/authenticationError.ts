@@ -8,7 +8,7 @@ export type StatusCode = number;
 
 export class AuthenticationError extends Error implements IStatusCodeError {
     constructor(
-        public readonly message: string,
+        message: string,
         public readonly statusCode: StatusCode
     ) {
         super(message);
