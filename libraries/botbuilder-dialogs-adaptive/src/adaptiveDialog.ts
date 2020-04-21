@@ -10,7 +10,6 @@ import {
     Activity, RecognizerResult, getTopScoringIntent
 } from 'botbuilder-core';
 import { Dialog, DialogInstance, DialogReason, DialogTurnResult, DialogTurnStatus, DialogEvent, DialogContext, DialogContainer, DialogDependencies, TurnPath, DialogPath, DialogState } from 'botbuilder-dialogs';
-import { Extensions } from 'adaptive-expressions';
 import { OnCondition } from './conditions';
 import { Recognizer } from './recognizers';
 import { TriggerSelector } from './triggerSelector';
@@ -22,6 +21,7 @@ import { EntityEvents } from './entityEvents';
 import { AdaptiveEvents } from './adaptiveEvents';
 import { AdaptiveDialogState } from './adaptiveDialogState';
 import { EntityInfo } from './entityInfo';
+import { IntExpression } from './expressions';
 
 export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
     public static conditionTracker = 'dialog._tracker.conditions';
@@ -115,7 +115,7 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
             }
 
             if (!trigger.priority) {
-                trigger.priority = id.toString();
+                trigger.priority = new IntExpression(id);
             }
 
             if (!trigger.id) {
@@ -399,7 +399,7 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
         return handled;
     }
 
-    protected async onRecognize(dc: DialogContext, activity: Partial<Activity>): Promise<RecognizerResult> {
+    protected async onRecognize(dc: DialogContext, activity: Activity): Promise<RecognizerResult> {
         const { text, value } = activity;
         const noneIntent: RecognizerResult = {
             text: text || '',
@@ -428,7 +428,7 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
             return recognized;
         } else if (this.recognizer) {
             // Call recognizer as normal and filter to top intent
-            const recognized = await this.recognizer.recognize(dc);
+            const recognized = await this.recognizer.recognize(dc, activity);
             const { intent } = getTopScoringIntent(recognized);
             for (const key in recognized.intents) {
                 if (key != intent) {
