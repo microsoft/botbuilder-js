@@ -141,41 +141,62 @@ describe('LGLanguageGenerator', function() {
         assert.equal(result10, 'default2');
     });
 
-    it('TestResourceMultiLangGenerator', async function() {
+    describe('TestResourceMultiLangGenerator', function() {
         const lg = new ResourceMultiLanguageGenerator('test.lg');
 
-        const result1 = await lg.generate(await getTurnContext('en-us', lg), '${test()}', undefined);
-        assert.equal(result1, 'english-us');
+        it('en-us, "${test()}", no data', async () => {
+            const result1 = await lg.generate(await getTurnContext('en-us', lg), '${test()}', undefined);
+            assert.equal(result1, 'english-us');
+        });
 
-        const result2 = await lg.generate(await getTurnContext('en-us', lg), '${test()}', { country: 'us' });
-        assert.equal(result2, 'english-us');
+        it('en-us, "${test()}", country data', async () => {
+            const result2 = await lg.generate(await getTurnContext('en-us', lg), '${test()}', { country: 'us' });
+            assert.equal(result2, 'english-us');
+        });
 
-        const result3 = await lg.generate(await getTurnContext('en-gb', lg), '${test()}', undefined);
-        assert.equal(result3, 'english-gb');
+        it('en-gb, "${test()}", no data', async () => {
+            const result3 = await lg.generate(await getTurnContext('en-gb', lg), '${test()}', undefined);
+            assert.equal(result3, 'english-gb');
+        });
 
-        const result4 = await lg.generate(await getTurnContext('en', lg), '${test()}', undefined);
-        assert.equal(result4, 'english');
+        it('en, "${test()}", no data', async () => {
+            const result4 = await lg.generate(await getTurnContext('en', lg), '${test()}', undefined);
+            assert.equal(result4, 'english');
+        });
 
-        const result5 = await lg.generate(await getTurnContext('', lg), '${test()}', undefined);
-        assert.equal(result5, 'default');
+        it('no locale, "${test()}", no data', async () => {
+            const result5 = await lg.generate(await getTurnContext('', lg), '${test()}', undefined);
+            assert.equal(result5, 'default');
+        });
 
-        const result6 = await lg.generate(await getTurnContext('foo', lg), '${test()}', undefined);
-        assert.equal(result6, 'default');
+        it('bad locale, "${test()}", no data', async () => {
+            const result6 = await lg.generate(await getTurnContext('foo', lg), '${test()}', undefined);
+            assert.equal(result6, 'default');
+        });
 
-        const result7 = await lg.generate(await getTurnContext('en-gb', lg), '${test2()}', undefined);
-        assert.equal(result7, 'default2');
+        it('en-gb, "${test2()}", no data', async () => {
+            const result7 = await lg.generate(await getTurnContext('en-gb', lg), '${test2()}', undefined);
+            assert.equal(result7, 'default2');
+        });
 
-        const result8 = await lg.generate(await getTurnContext('en', lg), '${test2()}', undefined);
-        assert.equal(result8, 'default2');
+        it('en, "${test2()}", no data', async () => {
+            const result8 = await lg.generate(await getTurnContext('en', lg), '${test2()}', undefined);
+            assert.equal(result8, 'default2');
+        });
 
-        const result9 = await lg.generate(await getTurnContext('', lg), '${test2()}', undefined);
-        assert.equal(result9, 'default2');
+        it('no locale, "${test2()}", no data', async () => {
+            const result9 = await lg.generate(await getTurnContext('', lg), '${test2()}', undefined);
+            assert.equal(result9, 'default2');
+        });
 
-        const result10 = await lg.generate(await getTurnContext('foo', lg), '${test2()}', undefined);
-        assert.equal(result10, 'default2');
+        it('bad locale, "${test2()}", no data', async () => {
+            const result10 = await lg.generate(await getTurnContext('foo', lg), '${test2()}', undefined);
+            assert.equal(result10, 'default2');
+        });
 
-        const result11 = await lg.generate(await getTurnContext('en-us', lg), '${test2()}', {country: 'US'});
-        assert.equal(result11, 'english-US');
-
+        it('en-us, "${test2()}", country data', async () => {
+            const result11 = await lg.generate(await getTurnContext('en-us', lg), '${test2()}', {country: 'US'});
+            assert.equal(result11, 'english-US');
+        });
     });
 });
