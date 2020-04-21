@@ -6,12 +6,14 @@
  * Licensed under the MIT License.
  */
 import { Activity, ActivityTypes } from 'botbuilder-core';
-import { WaterfallDialog, Dialog, DialogTurnResult, DialogContext, WaterfallStepContext, DialogTurnStatus, DialogReason } from 'botbuilder-dialogs';
+import { WaterfallDialog, Dialog, DialogTurnResult, DialogContext, WaterfallStepContext, DialogReason } from 'botbuilder-dialogs';
 import { QnAMakerOptions } from './qnamaker-interfaces/qnamakerOptions';
 import { RankerTypes } from './qnamaker-interfaces/rankerTypes';
 import { QnAMaker, QnAMakerResult } from './';
 import { FeedbackRecord, FeedbackRecords, QnAMakerMetadata } from './qnamaker-interfaces';
 import { QnACardBuilder } from './qnaCardBuilder';
+
+const V4_API_REGEX = /^https:\/\/.*\.azurewebsites\.net\/qnamaker\/?/i;
 
 /**
  * QnAMakerDialog response options.
@@ -91,12 +93,23 @@ export class QnAMakerDialog extends WaterfallDialog {
      * @param strictFilters (Optional) QnAMakerMetadata collection used to filter / boost queries to the knowledgebase.
      * @param dialogId (Optional) Id of the created dialog. Default is 'QnAMakerDialog'.
      */
-    constructor(knowledgeBaseId: string, endpointKey: string, hostName: string, noAnswer?: Activity, threshold: number = 0.3, activeLearningCardTitle: string = 'Did you mean:', cardNoMatchText: string = 'None of the above.', top: number = 3, cardNoMatchResponse?: Activity, strictFilters?: QnAMakerMetadata[], dialogId: string = 'QnAMakerDialog') {
+    public constructor(knowledgeBaseId: string, endpointKey: string, hostName: string, noAnswer?: Activity, threshold: number = 0.3, activeLearningCardTitle: string = 'Did you mean:', cardNoMatchText: string = 'None of the above.', top: number = 3, cardNoMatchResponse?: Activity, strictFilters?: QnAMakerMetadata[], dialogId: string = 'QnAMakerDialog') {
         super(dialogId);
+        if (!knowledgeBaseId) {
+            throw new TypeError('QnAMakerDialog: missing knowledgeBaseId parameter');
+        }
+
+        if (!endpointKey) {
+            throw new TypeError('QnAMakerDialog: missing endpointKey parameter');
+        }
+
+        if (!hostName) {
+            throw new TypeError('QnAMakerDialog: missing hostName parameter');
+        }
 
         this.knowledgeBaseId = knowledgeBaseId;
-        this.hostName = hostName;
         this.endpointKey = endpointKey;
+        this.hostName = hostName;
         this.threshold = threshold;
         this.top = top;
         this.activeLearningCardTitle = activeLearningCardTitle;
@@ -352,8 +365,48 @@ export class QnAMakerDialog extends WaterfallDialog {
         const endpoint = {
             knowledgeBaseId: this.knowledgeBaseId,
             endpointKey: this.endpointKey,
-            host: this.hostName
+            host: this.getHost()
         };
         return new QnAMaker(endpoint);
+    }
+
+    /**
+     * Gets unmodified v5 API hostName or constructs v4 API hostName
+     * @remarks
+     * Example of a complete v5 API endpoint: "https://qnamaker-acom.azure.com/qnamaker/v5.0"
+     * Template literal to construct v4 API endpoint: `https://${ this.hostName }.azurewebsites.net/qnamaker`
+     */
+    private getHost(): string {
+        let host: string = this.hostName;
+        // If hostName includes 'qnamaker/v5', return the v5 API hostName.
+        if (host.includes('qnamaker/v5')) {
+            return host;
+        }
+        
+        // V4 API logic
+        // If the hostname contains all the necessary information, return it
+        if (/^https:\/\/.*\.azurewebsites\.net\/qnamaker\/?/i.test(host)) {
+            return host;
+        }
+
+        // Otherwise add required components
+        if (!(/https?:\/\//i.test(host))) {
+            host = 'https://' + host;
+        }
+
+        // Web App Bots provisioned through the QnAMaker portal have "xxx.azurewebsites.net" in their
+        // environment variables
+        if (host.endsWith('.azurewebsites.net')) {
+            // Add the remaining required path
+            return host + '/qnamaker';
+        }
+
+        // If this.hostName is just the azurewebsite subdomain, finish the remaining V4 API behavior shipped in 4.8.0
+        // e.g. `https://${ this.hostName }.azurewebsites.net/qnamaker`
+        if (!host.endsWith('.azurewebsites.net/qnamaker')) {
+            host = host + '.azurewebsites.net/qnamaker';
+        }
+
+        return host;
     }
 }
