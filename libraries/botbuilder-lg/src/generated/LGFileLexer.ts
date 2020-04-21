@@ -80,7 +80,7 @@ export class LGFileLexer extends Lexer {
 	private TEMPLATE_NAME_LINE_action(_localctx: RuleContext, actionIndex: number): void {
 		switch (actionIndex) {
 		case 0:
-			 startTemplate = true; 
+			 this.startTemplate = true; 
 			break;
 		}
 	}
@@ -107,35 +107,35 @@ export class LGFileLexer extends Lexer {
 	private OPTION_sempred(_localctx: RuleContext, predIndex: number): boolean {
 		switch (predIndex) {
 		case 0:
-			return  !startTemplate ;
+			return  !this.startTemplate ;
 		}
 		return true;
 	}
 	private COMMENT_sempred(_localctx: RuleContext, predIndex: number): boolean {
 		switch (predIndex) {
 		case 1:
-			return  !startTemplate ;
+			return  !this.startTemplate ;
 		}
 		return true;
 	}
 	private IMPORT_sempred(_localctx: RuleContext, predIndex: number): boolean {
 		switch (predIndex) {
 		case 2:
-			return  !startTemplate ;
+			return  !this.startTemplate ;
 		}
 		return true;
 	}
 	private TEMPLATE_BODY_LINE_sempred(_localctx: RuleContext, predIndex: number): boolean {
 		switch (predIndex) {
 		case 3:
-			return  startTemplate ;
+			return  this.startTemplate ;
 		}
 		return true;
 	}
 	private INVALID_LINE_sempred(_localctx: RuleContext, predIndex: number): boolean {
 		switch (predIndex) {
 		case 4:
-			return  !startTemplate ;
+			return  !this.startTemplate ;
 		}
 		return true;
 	}

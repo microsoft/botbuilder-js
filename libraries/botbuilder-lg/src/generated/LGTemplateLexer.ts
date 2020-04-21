@@ -227,165 +227,165 @@ export class LGTemplateLexer extends Lexer {
 	private DASH_action(_localctx: RuleContext, actionIndex: number): void {
 		switch (actionIndex) {
 		case 0:
-			 beginOfTemplateLine = true; beginOfTemplateBody = false; 
+			 this.beginOfTemplateLine = true; this.beginOfTemplateBody = false; 
 			break;
 		}
 	}
 	private LEFT_SQUARE_BRACKET_action(_localctx: RuleContext, actionIndex: number): void {
 		switch (actionIndex) {
 		case 1:
-			beginOfTemplateBody = false;
+			this.beginOfTemplateBody = false;
 			break;
 		}
 	}
 	private INVALID_TOKEN_action(_localctx: RuleContext, actionIndex: number): void {
 		switch (actionIndex) {
 		case 2:
-			 beginOfTemplateBody = false; 
+			 this.beginOfTemplateBody = false; 
 			break;
 		}
 	}
 	private MULTILINE_PREFIX_action(_localctx: RuleContext, actionIndex: number): void {
 		switch (actionIndex) {
 		case 3:
-			 inMultiline = true; beginOfTemplateLine = false;
+			 this.inMultiline = true; this.beginOfTemplateLine = false;
 			break;
 		}
 	}
 	private NEWLINE_IN_BODY_action(_localctx: RuleContext, actionIndex: number): void {
 		switch (actionIndex) {
 		case 4:
-			 ignoreWS = true;
+			 this.ignoreWS = true;
 			break;
 		}
 	}
 	private IF_action(_localctx: RuleContext, actionIndex: number): void {
 		switch (actionIndex) {
 		case 5:
-			 ignoreWS = true; beginOfTemplateLine = false;
+			 this.ignoreWS = true; this.beginOfTemplateLine = false;
 			break;
 		}
 	}
 	private ELSEIF_action(_localctx: RuleContext, actionIndex: number): void {
 		switch (actionIndex) {
 		case 6:
-			 ignoreWS = true; beginOfTemplateLine = false;
+			 this.ignoreWS = true; this.beginOfTemplateLine = false;
 			break;
 		}
 	}
 	private ELSE_action(_localctx: RuleContext, actionIndex: number): void {
 		switch (actionIndex) {
 		case 7:
-			 ignoreWS = true; beginOfTemplateLine = false;
+			 this.ignoreWS = true; this.beginOfTemplateLine = false;
 			break;
 		}
 	}
 	private SWITCH_action(_localctx: RuleContext, actionIndex: number): void {
 		switch (actionIndex) {
 		case 8:
-			 ignoreWS = true; beginOfTemplateLine = false;
+			 this.ignoreWS = true; this.beginOfTemplateLine = false;
 			break;
 		}
 	}
 	private CASE_action(_localctx: RuleContext, actionIndex: number): void {
 		switch (actionIndex) {
 		case 9:
-			 ignoreWS = true; beginOfTemplateLine = false;
+			 this.ignoreWS = true; this.beginOfTemplateLine = false;
 			break;
 		}
 	}
 	private DEFAULT_action(_localctx: RuleContext, actionIndex: number): void {
 		switch (actionIndex) {
 		case 10:
-			 ignoreWS = true; beginOfTemplateLine = false;
+			 this.ignoreWS = true; this.beginOfTemplateLine = false;
 			break;
 		}
 	}
 	private ESCAPE_CHARACTER_action(_localctx: RuleContext, actionIndex: number): void {
 		switch (actionIndex) {
 		case 11:
-			 ignoreWS = false; beginOfTemplateLine = false;
+			 this.ignoreWS = false; this.beginOfTemplateLine = false;
 			break;
 		}
 	}
 	private EXPRESSION_action(_localctx: RuleContext, actionIndex: number): void {
 		switch (actionIndex) {
 		case 12:
-			 ignoreWS = false; beginOfTemplateLine = false;
+			 this.ignoreWS = false; this.beginOfTemplateLine = false;
 			break;
 		}
 	}
 	private TEXT_action(_localctx: RuleContext, actionIndex: number): void {
 		switch (actionIndex) {
 		case 13:
-			 ignoreWS = false; beginOfTemplateLine = false;
+			 this.ignoreWS = false; this.beginOfTemplateLine = false;
 			break;
 		}
 	}
 	private MULTILINE_SUFFIX_action(_localctx: RuleContext, actionIndex: number): void {
 		switch (actionIndex) {
 		case 14:
-			 inMultiline = false; 
+			 this.inMultiline = false; 
 			break;
 		}
 	}
 	private NEWLINE_IN_STRUCTURE_NAME_action(_localctx: RuleContext, actionIndex: number): void {
 		switch (actionIndex) {
 		case 15:
-			 ignoreWS = true;
+			 this.ignoreWS = true;
 			break;
 
 		case 16:
-			beginOfStructureProperty = true;
+			this.beginOfStructureProperty = true;
 			break;
 		}
 	}
 	private STRUCTURED_NEWLINE_action(_localctx: RuleContext, actionIndex: number): void {
 		switch (actionIndex) {
 		case 17:
-			 ignoreWS = true; inStructuredValue = false; beginOfStructureProperty = true;
+			 this.ignoreWS = true; this.inStructuredValue = false; this.beginOfStructureProperty = true;
 			break;
 		}
 	}
 	private STRUCTURE_IDENTIFIER_action(_localctx: RuleContext, actionIndex: number): void {
 		switch (actionIndex) {
 		case 18:
-			beginOfStructureProperty = false;
+			this.beginOfStructureProperty = false;
 			break;
 		}
 	}
 	private STRUCTURE_EQUALS_action(_localctx: RuleContext, actionIndex: number): void {
 		switch (actionIndex) {
 		case 19:
-			inStructuredValue = true;
+			this.inStructuredValue = true;
 			break;
 		}
 	}
 	private STRUCTURE_OR_MARK_action(_localctx: RuleContext, actionIndex: number): void {
 		switch (actionIndex) {
 		case 20:
-			 ignoreWS = true; 
+			 this.ignoreWS = true; 
 			break;
 		}
 	}
 	private ESCAPE_CHARACTER_IN_STRUCTURE_BODY_action(_localctx: RuleContext, actionIndex: number): void {
 		switch (actionIndex) {
 		case 21:
-			 ignoreWS = false; 
+			 this.ignoreWS = false; 
 			break;
 		}
 	}
 	private EXPRESSION_IN_STRUCTURE_BODY_action(_localctx: RuleContext, actionIndex: number): void {
 		switch (actionIndex) {
 		case 22:
-			 ignoreWS = false; 
+			 this.ignoreWS = false; 
 			break;
 		}
 	}
 	private TEXT_IN_STRUCTURE_BODY_action(_localctx: RuleContext, actionIndex: number): void {
 		switch (actionIndex) {
 		case 23:
-			 ignoreWS = false; beginOfStructureProperty = false;
+			 this.ignoreWS = false; this.beginOfStructureProperty = false;
 			break;
 		}
 	}
@@ -439,98 +439,98 @@ export class LGTemplateLexer extends Lexer {
 	private LEFT_SQUARE_BRACKET_sempred(_localctx: RuleContext, predIndex: number): boolean {
 		switch (predIndex) {
 		case 0:
-			return  beginOfTemplateBody ;
+			return  this.beginOfTemplateBody ;
 		}
 		return true;
 	}
 	private WS_IN_BODY_sempred(_localctx: RuleContext, predIndex: number): boolean {
 		switch (predIndex) {
 		case 1:
-			return ignoreWS;
+			return this.ignoreWS;
 		}
 		return true;
 	}
 	private MULTILINE_PREFIX_sempred(_localctx: RuleContext, predIndex: number): boolean {
 		switch (predIndex) {
 		case 2:
-			return  !inMultiline  && beginOfTemplateLine ;
+			return  !this.inMultiline  && this.beginOfTemplateLine ;
 		}
 		return true;
 	}
 	private IF_sempred(_localctx: RuleContext, predIndex: number): boolean {
 		switch (predIndex) {
 		case 3:
-			return beginOfTemplateLine;
+			return this.beginOfTemplateLine;
 		}
 		return true;
 	}
 	private ELSEIF_sempred(_localctx: RuleContext, predIndex: number): boolean {
 		switch (predIndex) {
 		case 4:
-			return beginOfTemplateLine;
+			return this.beginOfTemplateLine;
 		}
 		return true;
 	}
 	private ELSE_sempred(_localctx: RuleContext, predIndex: number): boolean {
 		switch (predIndex) {
 		case 5:
-			return beginOfTemplateLine;
+			return this.beginOfTemplateLine;
 		}
 		return true;
 	}
 	private SWITCH_sempred(_localctx: RuleContext, predIndex: number): boolean {
 		switch (predIndex) {
 		case 6:
-			return beginOfTemplateLine;
+			return this.beginOfTemplateLine;
 		}
 		return true;
 	}
 	private CASE_sempred(_localctx: RuleContext, predIndex: number): boolean {
 		switch (predIndex) {
 		case 7:
-			return beginOfTemplateLine;
+			return this.beginOfTemplateLine;
 		}
 		return true;
 	}
 	private DEFAULT_sempred(_localctx: RuleContext, predIndex: number): boolean {
 		switch (predIndex) {
 		case 8:
-			return beginOfTemplateLine;
+			return this.beginOfTemplateLine;
 		}
 		return true;
 	}
 	private STRUCTURED_COMMENTS_sempred(_localctx: RuleContext, predIndex: number): boolean {
 		switch (predIndex) {
 		case 9:
-			return  !inStructuredValue && beginOfStructureProperty;
+			return  !this.inStructuredValue && this.beginOfStructureProperty;
 		}
 		return true;
 	}
 	private WS_IN_STRUCTURE_BODY_sempred(_localctx: RuleContext, predIndex: number): boolean {
 		switch (predIndex) {
 		case 10:
-			return ignoreWS;
+			return this.ignoreWS;
 		}
 		return true;
 	}
 	private STRUCTURED_BODY_END_sempred(_localctx: RuleContext, predIndex: number): boolean {
 		switch (predIndex) {
 		case 11:
-			return !inStructuredValue;
+			return !this.inStructuredValue;
 		}
 		return true;
 	}
 	private STRUCTURE_IDENTIFIER_sempred(_localctx: RuleContext, predIndex: number): boolean {
 		switch (predIndex) {
 		case 12:
-			return  !inStructuredValue && beginOfStructureProperty;
+			return  !this.inStructuredValue && this.beginOfStructureProperty;
 		}
 		return true;
 	}
 	private STRUCTURE_EQUALS_sempred(_localctx: RuleContext, predIndex: number): boolean {
 		switch (predIndex) {
 		case 13:
-			return !inStructuredValue;
+			return !this.inStructuredValue;
 		}
 		return true;
 	}
