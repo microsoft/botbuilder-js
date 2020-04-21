@@ -357,7 +357,7 @@ describe('LG', function() {
         assert.strictEqual(options5.includes(evaled), true, `Evaled is ${ evaled }`);
 
         // Assert 6.lg of relative path is imported from text.
-        templates = Templates.parseText(`# basicTemplate\r\n- Hi\r\n- Hello\r\n[import](./6.lg)`, GetExampleFilePath('xx.lg'));
+        templates = Templates.parseText(`[import](./6.lg)\r\n# basicTemplate\r\n- Hi\r\n- Hello\r\n)`, GetExampleFilePath('xx.lg'));
 
         assert.strictEqual(templates.allTemplates.length, 8);
 
@@ -514,8 +514,8 @@ describe('LG', function() {
         let evaled = templates.expandTemplate('ExpanderT1');
         assert.strictEqual(evaled.length, 2);
         const expectedResults = [
-            "{\"lgType\":\"MyStruct\",\"text\":\"Hi \\\"quotes\\\" allowed\",\"speak\":\"how old are you?\"}",
-            "{\"lgType\":\"MyStruct\",\"text\":\"Hi \\\"quotes\\\" allowed\",\"speak\":\"what's your age?\"}"
+            '{"lgType":"MyStruct","text":"Hi \\"quotes\\" allowed","speak":"how old are you?"}',
+            '{"lgType":"MyStruct","text":"Hi \\"quotes\\" allowed","speak":"what\'s your age?"}'
         ];
 
         expectedResults.forEach((value, index) => {
@@ -538,7 +538,7 @@ describe('LG', function() {
         assert.strictEqual(evaled[0], 'Hi hello\\\\');
 
         evaled = templates.expandTemplate('escapeInExpression2');
-        assert.strictEqual(evaled[0], "Hi hello'");
+        assert.strictEqual(evaled[0], 'Hi hello\'');
 
         evaled = templates.expandTemplate('escapeInExpression3');
         assert.strictEqual(evaled[0], 'Hi hello\"');
@@ -557,16 +557,16 @@ describe('LG', function() {
         assert.strictEqual(evaled[0].toString().replace(/\r\n/g, '\n'), '\n    Your most recent 3 tasks are\n    * A\n* B\n* C\n    ');
 
         evaled = templates.expandTemplate('showTodo');
-        assert.strictEqual(evaled[0].toString().replace(/\r\n/g, '\n'), "\n    You don't have any \"t\\\\odo'\".\n    ");
+        assert.strictEqual(evaled[0].toString().replace(/\r\n/g, '\n'), '\n    You don\'t have any "t\\\\odo\'".\n    ');
 
         evaled = templates.expandTemplate('getUserName');
-        assert.strictEqual(evaled[0], "super \"x man\"");
+        assert.strictEqual(evaled[0], 'super "x man"');
 
         evaled = templates.expandTemplate('structure1');
-        assert.strictEqual(JSON.stringify(evaled[0]), "{\"lgType\":\"struct\",\"list\":[\"a\",\"b|c\"]}");
+        assert.strictEqual(JSON.stringify(evaled[0]), '{"lgType":"struct","list":["a","b|c"]}');
 
         evaled = templates.expandTemplate('dollarsymbol');
-        assert.strictEqual(evaled[0], "$ $ ${'hi'} hi");
+        assert.strictEqual(evaled[0], '$ $ ${\'hi\'} hi');
     });
 
     it('TestInlineEvaluate', function() {

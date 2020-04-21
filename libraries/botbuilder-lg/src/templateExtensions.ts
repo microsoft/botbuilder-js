@@ -7,7 +7,7 @@
  */
 
 import * as path from 'path';
-import * as lp from './generated/LGFileParser';
+import * as lp from './generated/LGTemplateParser';
 import { TerminalNode } from 'antlr4ts/tree';
 import { ParserRuleContext } from 'antlr4ts';
 import { Range } from './range';
@@ -114,9 +114,9 @@ export class TemplateExtensions {
         let hasExpr = false;
         for (const node of ctx.children) {
             switch ((node as TerminalNode).symbol.type) {
-                case (lp.LGFileParser.ESCAPE_CHARACTER_IN_STRUCTURE_BODY):
+                case (lp.LGTemplateParser.ESCAPE_CHARACTER_IN_STRUCTURE_BODY):
                     return {hasExpr, expression};
-                case (lp.LGFileParser.EXPRESSION_IN_STRUCTURE_BODY):
+                case (lp.LGTemplateParser.EXPRESSION_IN_STRUCTURE_BODY):
                     if (hasExpr) {
                         return {hasExpr: false, expression: expression};
                     }
