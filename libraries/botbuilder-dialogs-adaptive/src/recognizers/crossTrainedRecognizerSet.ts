@@ -18,32 +18,16 @@ export class CrossTrainedRecognizerSet implements Recognizer {
 
     public recognizers: Recognizer[] = [];
 
-    public async recognize(dialogContext: DialogContext): Promise<RecognizerResult>;
-    public async recognize(dialogContext: DialogContext, textOrActivity: Activity): Promise<RecognizerResult>;
-    public async recognize(dialogContext: DialogContext, textOrActivity?: string | Activity, locale?: string): Promise<RecognizerResult> {
+    public async recognize(dialogContext: DialogContext, activity: Activity): Promise<RecognizerResult> {
         for (let i = 0; i < this.recognizers.length; i++) {
             if (!this.recognizers[i].id) {
                 throw new Error('This recognizer requires that each recognizer in the set have an id.');
             }
         }
 
-        let promises: Promise<RecognizerResult>[] = [];
-        if (!textOrActivity) {
-            promises = this.recognizers.map((recognizer: Recognizer): Promise<RecognizerResult> => {
-                return recognizer.recognize(dialogContext);
-            });
-        } else if (typeof (textOrActivity) == 'object') {
-            const activity: Activity = textOrActivity;
-            promises = this.recognizers.map((recognizer: Recognizer): Promise<RecognizerResult> => {
-                return recognizer.recognize(dialogContext, activity);
-            });
-        } else if (typeof (textOrActivity) == 'string') {
-            const text = textOrActivity;
-            promises = this.recognizers.map((recognizer: Recognizer): Promise<RecognizerResult> => {
-                return recognizer.recognize(dialogContext, text, locale);
-            });
-        }
-        const results = await Promise.all(promises);
+        const results = await Promise.all(this.recognizers.map((recognizer: Recognizer): Promise<RecognizerResult> => {
+            return recognizer.recognize(dialogContext, activity);
+        }));
 
         const recognizerResults = {};
         const intents = {};
