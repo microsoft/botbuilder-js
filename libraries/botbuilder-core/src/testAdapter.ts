@@ -613,6 +613,40 @@ export class TestFlow {
     }
 
     /**
+     * Generates an assertion that the turn processing logic did not generate a reply from the bot, as expected.
+     * @param description (Optional) Description of the test case. If not provided one will be generated.
+     * @param timeout (Optional) number of milliseconds to wait for a response from bot. Defaults to a value of `3000`.
+     */
+    public assertNoReply(description?: string, timeout?: number): TestFlow {
+        return new TestFlow(
+            this.previous.then(() => {
+                // tslint:disable-next-line:promise-must-complete
+                return new Promise<void>((resolve: any, reject: any): void => {
+                    if (!timeout) { timeout = 3000; }
+                    const start: number = new Date().getTime();
+                    const adapter: TestAdapter = this.adapter;
+
+                    function waitForActivity(): void {
+                        const current: number = new Date().getTime();
+                        if ((current - start) > <number>timeout) {
+                            // Operation timed out and received no reply
+                            resolve();
+                        } else if (adapter.activityBuffer.length > 0) {
+                            // Activity received
+                            const reply: Partial<Activity> = adapter.activityBuffer.shift() as Activity;
+                            assert.strictEqual(reply, undefined, `${ JSON.stringify(reply) } is responded when waiting for no reply: '${ description }'`);
+                            resolve();
+                        } else {
+                            setTimeout(waitForActivity, 5);
+                        }
+                    }
+                    waitForActivity();
+                });
+            }),
+            this.adapter);
+    }
+
+    /**
      * Generates an assertion if the bots response is not one of the candidate strings.
      * @param candidates List of candidate responses.
      * @param description (Optional) Description of the test case. If not provided one will be generated.

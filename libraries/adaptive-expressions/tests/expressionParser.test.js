@@ -27,20 +27,31 @@ const dataSource = [
     ['`hi ${string(\'jack`\')}`', 'hi jack`'],
     ['`\\${world}`', '${world}'],
     ['length(`hello ${world}`)', 'hello world'.length],
-    ['json(`{"foo": "${hello}","item": "${world}"}`).foo', 'hello'],
-    ['`hello ${world}` == \'hello world\'', true],
-    ['`hello ${world}` != \'hello hello\'', true],
-    ['`hello ${user.nickname}` == \'hello John\'', true],
-    ['`hello ${user.nickname}` != \'hello Dong\'', true],
+    ['json(`{"foo":"${hello}","item":"${world}"}`).foo', 'hello'],
+    ['`{expr: hello all}`', '{expr: hello all}'],
+    ['json(`{"foo":${{text:"hello"}},"item": "${world}"}`).foo.text', 'hello'],
+    ['json(`{"foo":${{text:"hello", cool: "hot", obj:{new: 123}}},"item": "${world}"}`).foo.text', 'hello'],
     ['`hi\\`[1,2,3]`', 'hi`[1,2,3]'],
     ['`hi ${[\'jack`\', \'queen\', \'king\']}`', 'hi jack`,queen,king'],
     ['`abc ${concat("[", "]")}`', 'abc []'],
     ['`[] ${concat("[]")}`', '[] []'],
     ['`hi ${count(["a", "b", "c"])}`', `hi 3`],
+    ['`hello ${world}` == \'hello world\'', true],
+    ['`hello ${world}` != \'hello hello\'', true],
+    ['`hello ${user.nickname}` == \'hello John\'', true],
+    ['`hello ${user.nickname}` != \'hello Dong\'', true],
+    ['`hello ${string({obj:  1})}`', 'hello {"obj":1}'],
+    ['`hello ${string({obj:  "${not expr}"})}`', 'hello {"obj":"${not expr}"}'],
+    ['`hello ${string({obj:  {a: 1}})}`', 'hello {"obj":{"a":1}}'],
 
+    //Operators tests
 
-    // Operators tests
-
+    ['user.income-user.outcome', -10.0],
+    ['user.income - user.outcome', -10.0],
+    ['user.income!=user.outcome', true],
+    ['user.income != user.outcome', true],
+    ['user.income==user.outcome', false],
+    ['user.income == user.outcome', false],
     ['1 + 2', 3],
     ['1 +\n 2', 3],
     ['1 \n+ 2', 3],
@@ -334,15 +345,20 @@ const dataSource = [
     ['createArray()', []],
     ['[]', []],
     ['createArray(1, bool(0), string(bool(1)), float(\'10\'))', [1, true, 'true', 10.0]],
-    ['binary(hello)', '0110100001100101011011000110110001101111'],
+    ['binary(hello)', new Uint8Array([104, 101, 108, 108, 111 ])],
     ['dataUri(hello)', 'data:text/plain;charset=utf-8;base64,aGVsbG8='],
-    ['dataUriToBinary(dataUri(hello))', '011001000110000101110100011000010011101001110100011001010111100001110100001011110111000001101100011000010110100101101110001110110110001101101000011000010111001001110011011001010111010000111101011101010111010001100110001011010011100000111011011000100110000101110011011001010011011000110100001011000110000101000111010101100111001101100010010001110011100000111101'],
+    ['count(binary(hello))', 5],
+    ['dataUriToBinary(dataUri(hello))', new Uint8Array([ 100, 97, 116, 97, 58, 116, 101, 120, 116, 47, 112, 108, 97, 105, 110, 59, 99, 104, 97, 114, 115, 101, 116, 61, 117, 116, 102, 45, 56, 59, 98, 97, 115, 101, 54, 52, 44, 97, 71, 86, 115, 98, 71, 56, 61 ])],
     ['dataUriToString(dataUri(hello))', 'hello'],
     ['uriComponentToString(\'http%3A%2F%2Fcontoso.com\')', 'http://contoso.com'],
     ['base64(hello)', 'aGVsbG8='],
-    ['base64ToBinary(base64(hello))', '0110000101000111010101100111001101100010010001110011100000111101'],
+    ['base64(byteArr)', 'AwUBDA=='],
+    ['base64ToBinary(base64(byteArr))', new Uint8Array([3, 5, 1, 12])],
+    ['base64(base64ToBinary(\"AwUBDA==\"))', 'AwUBDA=='],
     ['base64ToString(base64(hello))', 'hello'],
+    ['dataUriToBinary(base64(hello))', new Uint8Array([ 97, 71, 86, 115, 98, 71, 56, 61 ])],
     ['uriComponent(\'http://contoso.com\')', 'http%3A%2F%2Fcontoso.com'],
+    ['{a: 1, b: newExpr}.b', 'new land'],
 
     // Math functions tests
     ['add(1, 2, 3)', 6],
@@ -527,9 +543,21 @@ const dataSource = [
     ['flatten(createArray(1,createArray(2),createArray(createArray(3, 4), createArray(5,6))))', [1, 2, 3, 4, 5, 6]],
     ['flatten(createArray(1,createArray(2),createArray(createArray(3, 4), createArray(5,6))), 1)', [1, 2, [3,4], [5,6]]],
     ['unique(createArray(1, 5, 1))', [1, 5]],
-    // Object manipulation and construction functions tests
+    
+    //Object manipulation and construction functions tests
+    ['{text:"hello"}.text', 'hello'],
+    ['{name: user.name}.name', undefined],
+    ['{name: user.nickname}.name', 'John'],
     ['string(addProperty(json(\'{"key1":"value1"}\'), \'key2\',\'value2\'))', '{"key1":"value1","key2":"value2"}'],
+    ['foreach(items, x, addProperty({}, "a", x))[0].a', 'zero'],
+    ['string(addProperty({"key1":"value1"}, \'key2\',\'value2\'))', '{"key1":"value1","key2":"value2"}'],
     ['string(setProperty(json(\'{"key1":"value1"}\'), \'key1\',\'value2\'))', '{"key1":"value2"}'],
+    ['string(setProperty({"key1":"value1"}, \'key1\',\'value2\'))', '{"key1":"value2"}'],
+    ['string(setProperty({}, \'key1\',\'value2\'))', '{"key1":"value2"}'],
+    ['string(setProperty({}, \'key1\',\'value2{}\'))', '{"key1":"value2{}"}'],
+    ['string([{a: 1}, {b: 2}, {c: 3}][0])', '{"a":1}'],
+    ['string({obj: {"name": "adams"}})', '{"obj":{"name":"adams"}}'],
+    ['string({obj: {"name": "adams"}, txt: {utter: "hello"}})', '{"obj":{"name":"adams"},"txt":{"utter":"hello"}}'],
     ['string(removeProperty(json(\'{"key1":"value1","key2":"value2"}\'), \'key2\'))', '{"key1":"value1"}'],
     ['coalesce(nullObj,\'hello\',nullObj)', 'hello'],
     ['jPath(jsonStr, pathStr )', ['Jazz', 'Accord']],
@@ -624,12 +652,14 @@ const scope = {
     two: 2.0,
     hello: 'hello',
     world: 'world',
+    newExpr: 'new land',
     cit: 'cit',
     y: 'y',
     istrue: true,
     nullObj: undefined,
     jsonStr: '{"automobiles" : [{ "maker" : "Nissan", "model" : "Teana", "year" : 2011 },{ "maker" : "Honda", "model" : "Jazz", "year" : 2010 },{ "maker" : "Honda", "model" : "Civic", "year" : 2007 },{ "maker" : "Toyota", "model" : "Yaris", "year" : 2008 },{"maker" : "Honda", "model" : "Accord", "year" : 2011 }],"motorcycles" : [{ "maker" : "Honda", "model" : "ST1300", "year" : 2012 }]}',
     pathStr: `.automobiles{.maker === "Honda" && .year > 2009}.model`,
+    byteArr: new Uint8Array([3, 5, 1, 12]),
     bag:
   {
       three: 3.0,
@@ -654,6 +684,8 @@ const scope = {
     unixTimestamp: 1521118800,
     user: 
   {
+      income: 110.0,
+      outcome: 120.0,
       nickname:'John',
       lists:
     {
@@ -714,7 +746,6 @@ describe('expression parser functional test', () => {
             assert(error === undefined, `input: ${ input }, Has error: ${ error }`);
 
             const expected = data[1];
-
             assertObjectEquals(actual, expected);
 
             //Assert ExpectedRefs
@@ -820,8 +851,10 @@ describe('expression parser functional test', () => {
 });
 
 var assertObjectEquals = (actual, expected) => {
-    if (actual === undefined || expected === undefined) {
+    if (actual === undefined && expected === undefined) {
         return;
+    } else if(actual === undefined || expected === undefined) {
+        assert.fail();
     } else if (typeof actual === 'number' && typeof expected === 'number') {
         assert.equal(parseFloat(actual), parseFloat(expected), `actual is: ${ actual }, expected is ${ expected }`);
     } else if (Array.isArray(actual) && Array.isArray(expected)) {
@@ -829,7 +862,14 @@ var assertObjectEquals = (actual, expected) => {
         for(let i = 0; i< actual.length; i++) {
             assertObjectEquals(actual[i], expected[i], `actual is: ${ actual[i] }, expected is ${ expected[i] }`);
         }
-    } else {
+    } else if (actual instanceof Uint8Array && expected instanceof Uint8Array) {
+        assert.equal(actual.length, expected.length);
+        for(let i = 0; i< actual.length; i++) {
+            assertObjectEquals(actual[i], expected[i], `actual is: ${ actual[i] }, expected is ${ expected[i] }`);
+        }
+    }
+    
+    else {
         assert.equal(actual, expected, `actual is: ${ actual }, expected is ${ expected }`);
     }
 };

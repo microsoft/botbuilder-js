@@ -7,7 +7,7 @@
  */
 import { DialogTurnResult, Dialog, DialogContext } from 'botbuilder-dialogs';
 import { ActionScope, ActionScopeResult } from './actionScope';
-import { StringExpression, BoolExpression, NumberExpression } from '../expressions';
+import { StringExpression, BoolExpression, IntExpression } from '../expressions';
 
 const FOREACHPAGE = 'dialog.foreach.page';
 const FOREACHPAGEINDEX = 'dialog.foreach.pageindex';
@@ -26,7 +26,7 @@ export class ForEachPage<O extends object = {}> extends ActionScope<O> {
     public constructor(itemsProperty?: string, pageSize: number = 10) {
         super();
         if (itemsProperty) { this.itemsProperty = new StringExpression(itemsProperty); }
-        this.pageSize = new NumberExpression(pageSize);
+        this.pageSize = new IntExpression(pageSize);
     }
 
     /**
@@ -37,7 +37,7 @@ export class ForEachPage<O extends object = {}> extends ActionScope<O> {
     /**
      * Page size, default to 10.
      */
-    public pageSize: NumberExpression = new NumberExpression(10) ;
+    public pageSize: IntExpression = new IntExpression(10) ;
 
     /**
      * An optional expression which if is true will disable this action.

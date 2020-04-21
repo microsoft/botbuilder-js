@@ -31,7 +31,7 @@ describe('LG', function() {
         let templates = Templates.parseFile(GetExampleFilePath('3.lg'));
         console.log(templates.toArray()[0].body);
         console.log(templates.toArray()[1].body);
-        let evaled = templates.evaluate('welcome-user', undefined);
+        let evaled = templates.evaluate('welcome_user', undefined);
         const options = ['Hi', 'Hello', 'Hiya', 'Hi :)', 'Hello :)', 'Hiya :)'];
         assert.strictEqual(options.includes(evaled), true, `The result ${ evaled } is not in those options [${ options.join(',') }]`);
     });
@@ -39,7 +39,7 @@ describe('LG', function() {
     it('TestBasicTemplateRefAndEntityRef', function() {
         let templates = Templates.parseFile(GetExampleFilePath('4.lg'));
         let userName = 'DL';
-        let evaled = templates.evaluate('welcome-user', { userName: userName });
+        let evaled = templates.evaluate('welcome_user', { userName: userName });
         const options = ['Hi', 'Hello', 'Hiya ', 'Hi :)', 'Hello :)', 'Hiya :)'];
         assert.strictEqual(evaled.includes(userName), true, `The result ${ evaled } does not contiain ${ userName }`);
     });
@@ -47,10 +47,10 @@ describe('LG', function() {
     it('TestBasicConditionalTemplate', function() {
         let templates = Templates.parseFile(GetExampleFilePath('5.lg'));
 
-        let evaled = templates.evaluate('time-of-day-readout', { timeOfDay: 'morning' });
+        let evaled = templates.evaluate('time_of_day_readout', { timeOfDay: 'morning' });
         assert.strictEqual(evaled === 'Good morning' || evaled === 'Morning! ', true, `Evaled is ${ evaled }`);
 
-        evaled = templates.evaluate('time-of-day-readout', { timeOfDay: 'evening' });
+        evaled = templates.evaluate('time_of_day_readout', { timeOfDay: 'evening' });
         assert.strictEqual(evaled === 'Good evening' || evaled === 'Evening! ', true, `Evaled is ${ evaled }`);
     });
 
@@ -72,13 +72,13 @@ describe('LG', function() {
     it('TestBasicConditionalTemplateWithoutDefault', function() {
         let templates = Templates.parseFile(GetExampleFilePath('5.lg'));
 
-        let evaled = templates.evaluate('time-of-day-readout-without-default', { timeOfDay: 'morning' });
+        let evaled = templates.evaluate('time_of_day_readout_without_default', { timeOfDay: 'morning' });
         assert.strictEqual(evaled === 'Good morning' || evaled === 'Morning! ', true, `Evaled is ${ evaled }`);
 
-        evaled = templates.evaluate('time-of-day-readout-without-default2', { timeOfDay: 'morning' });
+        evaled = templates.evaluate('time_of_day_readout_without_default2', { timeOfDay: 'morning' });
         assert.strictEqual(evaled === 'Good morning' || evaled === 'Morning! ', true, `Evaled is ${ evaled }`);
 
-        evaled = templates.evaluate('time-of-day-readout-without-default2', { timeOfDay: 'evening' });
+        evaled = templates.evaluate('time_of_day_readout_without_default2', { timeOfDay: 'evening' });
         assert.strictEqual(evaled, undefined, `Evaled is ${ evaled } which should be undefined.`);
     });
 
@@ -268,7 +268,7 @@ describe('LG', function() {
                 templateRefOptions: ['template2', 'template3', 'template4', 'template5', 'template6']
             },
             {
-                name: 'coffee-to-go-order',
+                name: 'coffee_to_go_order',
                 variableOptions: ['coffee', 'userName', 'size', 'price'],
                 templateRefOptions: ['wPhrase', 'LatteOrderConfirmation', 'MochaOrderConfirmation', 'CuppuccinoOrderConfirmation']
             },
@@ -485,6 +485,90 @@ describe('LG', function() {
         assert(evaled[0] === 'ey' || evaled[0] === 'el');
     });
 
+    it('TestExpandTemplateWithIsTemplateFunction', function() {
+        const templates = Templates.parseFile(GetExampleFilePath('Expand.lg'));
+
+        let evaled = templates.expandTemplate('template2', {templateName: 'Greeting'});
+        assert.strictEqual(evaled.length, 2);
+        assert.strictEqual(evaled[0], 'Hi');
+        assert.strictEqual(evaled[1], 'Hello');
+
+        evaled = templates.expandTemplate('template2', {templateName: 'xxx'});
+        assert.strictEqual(evaled.length, 2);
+        assert.strictEqual(evaled[0], 'Morning');
+        assert.strictEqual(evaled[1], 'Evening');
+    });
+
+    it('TestExpandTemplateWithTemplateFunction', function() {
+        const templates = Templates.parseFile(GetExampleFilePath('Expand.lg'));
+
+        let evaled = templates.expandTemplate('template3', {templateName: 'Greeting'});
+        assert.strictEqual(evaled.length, 2);
+        assert.strictEqual(evaled[0], 'Hi');
+        assert.strictEqual(evaled[1], 'Hello');
+    });
+
+    it('TestExpandTemplateWithDoubleQuotation', function() {
+        const templates = Templates.parseFile(GetExampleFilePath('Expand.lg'));
+
+        let evaled = templates.expandTemplate('ExpanderT1');
+        assert.strictEqual(evaled.length, 2);
+        const expectedResults = [
+            "{\"lgType\":\"MyStruct\",\"text\":\"Hi \\\"quotes\\\" allowed\",\"speak\":\"how old are you?\"}",
+            "{\"lgType\":\"MyStruct\",\"text\":\"Hi \\\"quotes\\\" allowed\",\"speak\":\"what's your age?\"}"
+        ];
+
+        expectedResults.forEach((value, index) => {
+            assert.strictEqual(JSON.stringify(evaled[index]), JSON.stringify(JSON.parse(value)));
+        });
+    });
+
+    it('TestExpandTemplateWithEscapeCharacter', function() {
+        const templates = Templates.parseFile(GetExampleFilePath('EscapeCharacter.lg'));
+        var evaled = templates.expandTemplate('wPhrase');
+        assert.strictEqual(evaled[0], 'Hi \r\n\t\\');
+
+        evaled = templates.expandTemplate('AtEscapeChar');
+        assert.strictEqual(evaled[0], 'Hi{1+1}[wPhrase]{wPhrase()}${wPhrase()}2${1+1}');
+
+        evaled = templates.expandTemplate('otherEscape');
+        assert.strictEqual(evaled[0], 'Hi \\y \\');
+
+        evaled = templates.expandTemplate('escapeInExpression');
+        assert.strictEqual(evaled[0], 'Hi hello\\\\');
+
+        evaled = templates.expandTemplate('escapeInExpression2');
+        assert.strictEqual(evaled[0], "Hi hello'");
+
+        evaled = templates.expandTemplate('escapeInExpression3');
+        assert.strictEqual(evaled[0], 'Hi hello\"');
+
+        evaled = templates.expandTemplate('escapeInExpression4');
+        assert.strictEqual(evaled[0], 'Hi hello\"');
+
+        evaled = templates.expandTemplate('escapeInExpression5');
+        assert.strictEqual(evaled[0], 'Hi hello\n');
+
+        evaled = templates.expandTemplate('escapeInExpression6');
+        assert.strictEqual(evaled[0], 'Hi hello\n');
+
+        var todos = ['A', 'B', 'C'];
+        evaled = templates.expandTemplate('showTodo', {todos});
+        assert.strictEqual(evaled[0].toString().replace(/\r\n/g, '\n'), '\n    Your most recent 3 tasks are\n    * A\n* B\n* C\n    ');
+
+        evaled = templates.expandTemplate('showTodo');
+        assert.strictEqual(evaled[0].toString().replace(/\r\n/g, '\n'), "\n    You don't have any \"t\\\\odo'\".\n    ");
+
+        evaled = templates.expandTemplate('getUserName');
+        assert.strictEqual(evaled[0], "super \"x man\"");
+
+        evaled = templates.expandTemplate('structure1');
+        assert.strictEqual(JSON.stringify(evaled[0]), "{\"lgType\":\"struct\",\"list\":[\"a\",\"b|c\"]}");
+
+        evaled = templates.expandTemplate('dollarsymbol');
+        assert.strictEqual(evaled[0], "$ $ ${'hi'} hi");
+    });
+
     it('TestInlineEvaluate', function() {
         var templates = Templates.parseFile(GetExampleFilePath('2.lg'));
         var evaled = templates.evaluateText('hello');
@@ -527,6 +611,21 @@ describe('LG', function() {
 
         evaled = templates.evaluate('template6', {userName});
         assert.strictEqual(evaled, 'goodmorning', `Evaled is ${ evaled }`);
+
+        evaled = templates.evaluate('template7');
+        assert.strictEqual(evaled, '{"a":"hello"}', `Evaled is ${ evaled }`);
+
+        evaled = templates.evaluate('template8');
+        assert.strictEqual(evaled, '{"user":{"name":"Allen"}}', `Evaled is ${ evaled }`);
+
+        evaled = templates.evaluate('template9', {value: {count: 13}});
+        assert.strictEqual(evaled, '{"ctx":{"count":13}}', `Evaled is ${ evaled }`);
+
+        evaled = templates.evaluate('template10');
+        assert.strictEqual(evaled, 13, `Evaled is ${ evaled }`);
+
+        evaled = templates.evaluate('template11');
+        assert.strictEqual(evaled, 18, `Evaled is ${ evaled }`);
     });
 
 
@@ -676,18 +775,24 @@ describe('LG', function() {
             '{"lgType":"Activity","text":"what\'s your age?","speak":"how old are you?"}',
             '{"lgType":"Activity","text":"what\'s your age?","speak":"what\'s your age?"}'
         ];
-        expectedResults.forEach( u => assert(evaled.includes(u)));
+
+        expectedResults.forEach((value, index) => {
+            assert.strictEqual(JSON.stringify(evaled[index]), JSON.stringify(JSON.parse(value)));
+        });
 
         evaled = templates.expandTemplate('ExpanderT1');
         assert.strictEqual(evaled.length, 4, `Evaled is ${ evaled }`);
     
         expectedResults = [
             '{"lgType":"MyStruct","text":"Hi","speak":"how old are you?"}',
-            '{"lgType":"MyStruct","text":"Hi","speak":"what\'s your age?"}',
             '{"lgType":"MyStruct","text":"Hello","speak":"how old are you?"}',
+            '{"lgType":"MyStruct","text":"Hi","speak":"what\'s your age?"}',
             '{"lgType":"MyStruct","text":"Hello","speak":"what\'s your age?"}'
         ];
-        expectedResults.forEach( u => assert(evaled.includes(u)));
+
+        expectedResults.forEach((value, index) => {
+            assert.strictEqual(JSON.stringify(evaled[index]), JSON.stringify(JSON.parse(value)));
+        });
     });
 
     it('TestExpressionextract', function() {

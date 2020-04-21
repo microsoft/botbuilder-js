@@ -7,6 +7,8 @@ lexer grammar ExpressionAntlrLexer;
 fragment LETTER : [a-zA-Z];
 fragment DIGIT : [0-9];
 
+fragment OBJECT_DEFINITION: '{' ((WHITESPACE) | ((IDENTIFIER | STRING) ':' ( STRING | ~[{}\r\n'"`] | OBJECT_DEFINITION)+))* '}';
+
 STRING_INTERPOLATION_START : '`' { this.ignoreWS = false;} -> pushMode(STRING_INTERPOLATION_MODE);
 
 // operators
@@ -52,20 +54,25 @@ OPEN_SQUARE_BRACKET: '[';
 
 CLOSE_SQUARE_BRACKET: ']';
 
+OPEN_CURLY_BRACKET: '{';
+
+CLOSE_CURLY_BRACKET: '}';
+
 COMMA: ',';
 
+COLON: ':';
+
+DOLLAR: '$';
 
 NUMBER : DIGIT + ( '.' DIGIT +)? ;
 
 WHITESPACE : (' '|'\t'|'\ufeff'|'\u00a0') {this.ignoreWS}? -> skip;
 
-IDENTIFIER : (LETTER | '_' | '#' | '@' | '@@' | '$' | '%') (LETTER | DIGIT | '-' | '_')*;
+IDENTIFIER : (LETTER | '_' | '#' | '@' | '@@' | '$' | '%') (LETTER | DIGIT | '_')*;
 
 NEWLINE : '\r'? '\n' -> skip;
 
 STRING : ('\'' (('\\'('\''|'\\'))|(~'\''))*? '\'') | ('"' (('\\'('"'|'\\'))|(~'"'))*? '"');
-
-CONSTANT : ('{' WHITESPACE* '}');
 
 INVALID_TOKEN_DEFAULT_MODE : . ;
 
@@ -73,10 +80,8 @@ mode STRING_INTERPOLATION_MODE;
 
 STRING_INTERPOLATION_END : '`' {this.ignoreWS = true;} -> type(STRING_INTERPOLATION_START), popMode;
 
-TEMPLATE : '$' '{' (STRING | ~[\r\n{}'"])*? '}';
+TEMPLATE : '$' '{' (STRING | OBJECT_DEFINITION | ~[\r\n{}'"`])+ '}';
 
 ESCAPE_CHARACTER : '\\' ~[\r\n]?;
 
 TEXT_CONTENT :  ~[\r\n];
-
-
