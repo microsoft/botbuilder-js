@@ -14,12 +14,7 @@ export class ValueRecognizer implements Recognizer {
 
     public id: string;
 
-    public async recognize(dialogContext: DialogContext): Promise<RecognizerResult>;
-    public async recognize(dialogContext: DialogContext, activity?: Activity): Promise<RecognizerResult> {
-        if (!activity) {
-            activity = dialogContext.context.activity;
-        }
-
+    public async recognize(dialogContext: DialogContext, activity: Activity): Promise<RecognizerResult> {
         const recognizerResult: RecognizerResult = {
             text: activity.text,
             intents: {},
