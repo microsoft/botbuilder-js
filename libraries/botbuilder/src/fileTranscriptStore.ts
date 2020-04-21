@@ -5,11 +5,12 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import * as fs from 'fs-extra';
+import { join, parse } from 'path';
+import { mkdirp, pathExists, readdir, readFile, remove, writeFile } from 'fs-extra';
 import { Activity, PagedResult, TranscriptInfo, TranscriptStore } from 'botbuilder-core';
-import * as filenamify from 'filenamify';
-import * as path from 'path';
 
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const filenamify = require('filenamify');
 
 /**
  * @private
@@ -147,13 +148,13 @@ export class FileTranscriptStore implements TranscriptStore {
         const pagedResult: PagedResult<Activity> = { items: [], continuationToken: undefined };
         const transcriptFolder: string = this.getTranscriptFolder(channelId, conversationId);
 
-        const exists = await fs.pathExists(transcriptFolder);
+        const exists = await pathExists(transcriptFolder);
         if (!exists) {
         	return pagedResult;
         }
 
-        let transcriptFolderContents = await fs.readdir(transcriptFolder);
-        const include = includeWhen(fileName => !continuationToken || path.parse(fileName).name === continuationToken);
+        let transcriptFolderContents = await readdir(transcriptFolder);
+        const include = includeWhen(fileName => !continuationToken || parse(fileName).name === continuationToken);
         const items = transcriptFolderContents.filter(transcript =>
             transcript.endsWith('.json') &&
 			withDateFilter(startDate, transcript) &&
@@ -163,13 +164,13 @@ export class FileTranscriptStore implements TranscriptStore {
             .slice(0, FileTranscriptStore.PageSize)
             .sort()
             .map(async activityFilename => {
-                const json = await fs.readFile(path.join(transcriptFolder, activityFilename), 'utf8');
+                const json = await readFile(join(transcriptFolder, activityFilename), 'utf8');
                 return parseActivity(json);
             })
         );
         const {length} = pagedResult.items;
         if (length === FileTranscriptStore.PageSize && items[length]) {
-            pagedResult.continuationToken = path.parse(items[length]).name;
+            pagedResult.continuationToken = parse(items[length]).name;
         }
         return pagedResult;
     }
@@ -185,11 +186,11 @@ export class FileTranscriptStore implements TranscriptStore {
         const pagedResult: PagedResult<TranscriptInfo> = { items: [], continuationToken: undefined };
         const channelFolder: string = this.getChannelFolder(channelId);
 
-        const exists = await fs.pathExists(channelFolder);
+        const exists = await pathExists(channelFolder);
         if (!exists) {
         	return pagedResult;
         }
-        const channels = await fs.readdir(channelFolder);
+        const channels = await readdir(channelFolder);
         const items = channels.filter(includeWhen(di => !continuationToken || di === continuationToken));
         pagedResult.items = items
             .slice(0, FileTranscriptStore.PageSize)
@@ -214,17 +215,17 @@ export class FileTranscriptStore implements TranscriptStore {
 
         const transcriptFolder: string = this.getTranscriptFolder(channelId, conversationId);
 
-        return fs.remove(transcriptFolder);
+        return remove(transcriptFolder);
     }
 
     private async saveActivity(activity: Activity, transcriptPath: string, activityFilename: string): Promise<void> {
         const json: string = JSON.stringify(activity, null, '\t');
 
-        const exists = await fs.pathExists(transcriptPath);
+        const exists = await pathExists(transcriptPath);
         if (!exists) {
-        	await fs.mkdirp(transcriptPath);
+        	await mkdirp(transcriptPath);
         }
-        return fs.writeFile(path.join(transcriptPath, activityFilename), json, 'utf8');
+        return writeFile(join(transcriptPath, activityFilename), json, 'utf8');
     }
 
     private getActivityFilename(activity: Activity): string {
@@ -232,11 +233,11 @@ export class FileTranscriptStore implements TranscriptStore {
     }
 
     private getChannelFolder(channelId: string): string {
-        return path.join(this.rootFolder, this.sanitizeKey(channelId));
+        return join(this.rootFolder, this.sanitizeKey(channelId));
     }
 
     private getTranscriptFolder(channelId: string, conversationId: string): string {
-        return path.join(this.rootFolder, this.sanitizeKey(channelId), this.sanitizeKey(conversationId));
+        return join(this.rootFolder, this.sanitizeKey(channelId), this.sanitizeKey(conversationId));
     }
 
     private sanitizeKey(key: string): string {
