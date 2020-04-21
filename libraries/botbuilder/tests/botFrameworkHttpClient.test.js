@@ -87,8 +87,10 @@ describe('BotFrameworkHttpClient', function() {
             const credentialProvider = new SimpleCredentialProvider('this-is-not-the-app-id-your-looking-for', '1');
             const client = new TestBotFrameworkHttpClient(credentialProvider, 'channels');
             const fromBotId = 'this-is-not-the-app-id-your-looking-for';
-            const response = await client.postActivity(fromBotId, 'toBotId', 'http://skillUrl/api/good', 'serviceUrl', 'conversationId', { type: 'message', conversation: { } });
+            const activity = { type: 'message', conversation: { } };
+            const response = await client.postActivity(fromBotId, 'toBotId', 'http://skillUrl/api/good', 'serviceUrl', 'conversationId', activity);
             strictEqual(response.status, 200);
+            strictEqual(activity.recipient, undefined);
         });
 
         it(`should restore sent activity's relatesTo to original value`, async () => {
