@@ -8,7 +8,7 @@
 import { Dialog, DialogDependencies, DialogStateManager } from 'botbuilder-dialogs';
 import { Expression, ExpressionParserInterface, Constant, ExpressionParser, ExpressionEvaluator, ReturnType, ExpressionFunctions } from 'adaptive-expressions';
 import { ActionScope } from '../actions/actionScope';
-import { BoolExpression } from '../expressions';
+import { BoolExpression, IntExpression } from '../expressions';
 import { AdaptiveDialog } from '../adaptiveDialog';
 import { ActionContext } from '../actionContext';
 import { ActionChangeList } from '../actionChangeList';
@@ -27,8 +27,6 @@ export class OnCondition implements DialogDependencies {
     private _actionScope: ActionScope;
     private _extraConstraints: Expression[] = [];
     private _fullConstraint: Expression;
-    private _priorityString: string;
-    private _priorityExpression: Expression;
 
     /**
      * Gets or sets the condition which needs to be met for the actions to be executed (OPTIONAL).
@@ -41,19 +39,9 @@ export class OnCondition implements DialogDependencies {
     public actions: Dialog[] = [];
 
     /**
-     * Get the rule priority expression where 0 is the highest and less than 0 is ignored.
+     * Get or sets the rule priority expression where 0 is the highest and less than 0 is ignored.
      */
-    public get priority(): string {
-        return this._priorityString;
-    }
-
-    /**
-     * Set the rule priority expression where 0 is the highest and less than 0 is ignored.
-     */
-    public set priority(value: string) {
-        this._priorityExpression = undefined;
-        this._priorityString = value;
-    }
+    public priority: IntExpression;
 
     /**
      * A value indicating whether rule should only run once per unique set of memory paths.
@@ -135,11 +123,11 @@ export class OnCondition implements DialogDependencies {
      * @returns Computed priority.
      */
     public currentPriority(actionContext: ActionContext): number {
-        const { value, error } = this._priorityExpression.tryEvaluate(actionContext.state);
-        if (error || isNaN(value)) {
-            return -1;
+        if (this.priority) {
+            const priority = this.priority.getValue(actionContext.state);
+            return priority || -1;
         }
-        return value;
+        return -1;
     }
 
     /**

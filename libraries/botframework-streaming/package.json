@@ -28,6 +28,7 @@
     "ws": "^7.1.2"
   },
   "devDependencies": {
+    "@microsoft/api-extractor": "^7.7.12",
     "@types/chai": "^4.1.7",
     "@types/node": "^10.12.18",
     "@typescript-eslint/eslint-plugin": "^1.10.2",
@@ -43,11 +44,13 @@
   },
   "scripts": {
     "build": "tsc -p tsconfig.json && tsc -p tsconfig-browser.json",
+    "build:rollup": "npm run clean && npm run build && api-extractor run --verbose --local",
     "clean": "erase /q /s .\\lib .\\browser",
     "eslint": "eslint  ./src/*.ts ./src/**/*.ts",
     "eslint-fix": "eslint  ./src/*.ts ./src/**/*.ts --fix",
     "set-version": "npm version --allow-same-version ${Version}",
-    "test": "npm run build && nyc mocha tests/"
+    "test": "npm run build && nyc mocha tests/",
+    "test:compat": "api-extractor run --verbose"
   },
   "files": [
     "/lib",

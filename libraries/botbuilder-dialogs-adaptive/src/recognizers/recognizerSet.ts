@@ -16,33 +16,17 @@ export class RecognizerSet implements Recognizer {
 
     public recognizers: Recognizer[] = [];
 
-    public async recognize(dialogContext: DialogContext): Promise<RecognizerResult>;
-    public async recognize(dialogContext: DialogContext, textOrActivity: Activity): Promise<RecognizerResult>;
-    public async recognize(dialogContext: DialogContext, textOrActivity?: string | Activity, locale?: string): Promise<RecognizerResult> {
-        let promises: Promise<RecognizerResult>[] = [];
-        if (!textOrActivity) {
-            promises = this.recognizers.map((recognizer: Recognizer): Promise<RecognizerResult> => {
-                return recognizer.recognize(dialogContext);
-            });
-        } else if (typeof (textOrActivity) == 'object') {
-            const activity: Activity = textOrActivity;
-            promises = this.recognizers.map((recognizer: Recognizer): Promise<RecognizerResult> => {
-                return recognizer.recognize(dialogContext, activity);
-            });
-        } else if (typeof (textOrActivity) == 'string') {
-            const text = textOrActivity;
-            promises = this.recognizers.map((recognizer: Recognizer): Promise<RecognizerResult> => {
-                return recognizer.recognize(dialogContext, text, locale);
-            });
-        }
-
+    public async recognize(dialogContext: DialogContext, activity: Activity): Promise<RecognizerResult> {
         let text: string;
         let alteredText: string;
         const intents = {};
         const entities = {};
         entities['$instance'] = {};
 
-        const results = await Promise.all(promises);
+        const results = await Promise.all(this.recognizers.map((recognizer: Recognizer): Promise<RecognizerResult> => {
+            return recognizer.recognize(dialogContext, activity);
+        }));
+
         for (let i = 0; i < results.length; i++) {
             const result = results[i];
             const { intent } = getTopScoringIntent(result);
