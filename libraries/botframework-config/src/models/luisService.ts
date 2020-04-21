@@ -38,6 +38,12 @@ export class LuisService extends ConnectedService implements ILuisService {
     public region: string ;
 
     /**
+     * URL for a custom endpoint. This should only be used when the LUIS deployed via a container.
+     * If a value is set, then the GetEndpoint() method will return the value for Custom Endpoint.
+     */
+    public customEndpoint: string ;
+
+    /**
      * Creates a new LuisService instance.
      * @param source (Optional) JSON based service definition.
      * @param type (Optional) type of service being defined.
@@ -46,8 +52,18 @@ export class LuisService extends ConnectedService implements ILuisService {
         super(source, serviceType || ServiceTypes.Luis);
     }
 
-    // get endpoint for the luis service
+    /** 
+     * Get endpoint for the luis service. If a customEndpoint is set then this is returned
+     * otherwise the endpoint is automatically generated based on the region set.
+     */
     public getEndpoint(): string {
+        // If a custom endpoint has been supplied, then we should return this instead of
+        // generating an endpoint based on the region.
+        if(this.customEndpoint)
+        {
+            return this.customEndpoint;
+        }
+
         let reg  = this.region.toLowerCase(); 
 
         // usgovvirginia is that actual azure region name, but the cognitive service team called their endpoint 'virginia' instead of 'usgovvirginia'
