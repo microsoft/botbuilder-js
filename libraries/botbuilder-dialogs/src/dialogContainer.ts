@@ -39,19 +39,19 @@ export abstract class DialogContainer<O extends object = {}> extends Dialog<O> {
      * This should be called at the start of `beginDialog()`, `continueDialog()`, and `resumeDialog()`.
      * @param dc Current dialog context.
      */
-    protected async checkForChanges(dc: DialogContext): Promise<void> {
-        const current = dc.activeDialog.changeHash;
-        dc.activeDialog.changeHash = this.dialogs.changeHash;
+    protected async checkForVersionChange(dc: DialogContext): Promise<void> {
+        const current = dc.activeDialog.version;
+        dc.activeDialog.version = this.dialogs.version;
 
         // Check for change of previously stored hash
-        if (current && current != dc.activeDialog.changeHash) {
-            // Give bot an opportunit to handle the change.
+        if (current && current != dc.activeDialog.version) {
+            // Give bot an opportunity to handle the change.
             // - If bot handles it the changeHash will have been updated as to avoid triggering the 
             //   change again.
-            const handled = await dc.emitEvent(DialogEvents.dialogChanged, this.id, true, false);
+            const handled = await dc.emitEvent(DialogEvents.versionChanged, this.id, true, false);
             if (!handled) {
                 // Throw an error for bot to catch
-                throw new Error(`Change detected for '${this.id}' dialog.`);
+                throw new Error(`Version change detected for '${this.id}' dialog.`);
             }
         }
     }

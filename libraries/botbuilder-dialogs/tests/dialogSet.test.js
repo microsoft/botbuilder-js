@@ -131,7 +131,7 @@ describe('DialogSet', function () {
             .then(() => done());
     });
 
-    it('should generate a hash of added dialogs.', function (done) {
+    it('should generate a version hash of added dialogs.', function (done) {
         // Create new ConversationState with MemoryStorage and instantiate DialogSet with PropertyAccessor.
         const convoState = new ConversationState(new MemoryStorage());
 
@@ -140,13 +140,13 @@ describe('DialogSet', function () {
         dialogs
             .add(new WaterfallDialog('A'))
             .add(new WaterfallDialog('B'));
-        const hash = dialogs.changeHash;
+        const hash = dialogs.version;
         assert(hash && hash.length > 0, `no hash generated.`);
 
         done();
     });
 
-    it('Generated hash should change when dialog set changes.', function (done) {
+    it('Generated version hash should change when dialog set changes.', function (done) {
         // Create new ConversationState with MemoryStorage and instantiate DialogSet with PropertyAccessor.
         const convoState = new ConversationState(new MemoryStorage());
 
@@ -155,11 +155,11 @@ describe('DialogSet', function () {
         dialogs
             .add(new WaterfallDialog('A'))
             .add(new WaterfallDialog('B'));
-        const hash = dialogs.changeHash;
+        const hash = dialogs.version;
         assert(hash && hash.length > 0, `no hash generated.`);
 
         dialogs.add(new WaterfallDialog('C'));
-        assert(hash != dialogs.changeHash, `hash not updated.`);
+        assert(hash != dialogs.version, `hash not updated.`);
 
         done();
     });

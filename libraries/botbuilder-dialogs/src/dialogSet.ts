@@ -66,7 +66,7 @@ export class DialogSet {
     private readonly dialogs: { [id: string]: Dialog } = {};
     private readonly dialogState: StatePropertyAccessor<DialogState>;
     private _telemetryClient: BotTelemetryClient;
-    private _changeHash: string;
+    private _version: string;
 
     /**
      * Creates a new DialogSet instance.
@@ -86,21 +86,24 @@ export class DialogSet {
     }
 
     /**
-     * Returns a 32-bit hash of the all the dialog ID's in the set.
+     * Returns a 32-bit hash of the all the `Dialog.version` values in the set.
      * 
      * @remarks
      * This hash is persisted to state storage and used to detect changes to a dialog set.
      */
-    public get changeHash(): string {
-        if (!this._changeHash) {
-            let ids = '';
+    public get version(): string {
+        if (!this._version) {
+            let versions = '';
             for (const id in this.dialogs) {
-                ids += `|${id}`;
+                const v = this.dialogs[id].version;
+                if (v) {
+                    versions += `|${v}`;
+                }
             }
-            this._changeHash = computeHash(ids);
+            this._version = computeHash(versions);
         }
 
-        return this._changeHash;
+        return this._version;
     }
 
     /**
@@ -117,8 +120,8 @@ export class DialogSet {
     public add<T extends Dialog>(dialog: T): this {
         if (!(dialog instanceof Dialog)) { throw new Error(`DialogSet.add(): Invalid dialog being added.`); }
 
-        // Ensure new hash is computed
-        this._changeHash = undefined;
+        // Ensure new version hash is computed
+        this._version = undefined;
 
         // Ensure dialogs ID is unique.
         if (this.dialogs.hasOwnProperty(dialog.id)) {

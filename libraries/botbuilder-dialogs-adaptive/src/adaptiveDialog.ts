@@ -143,7 +143,7 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
     public async beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {
         this.onPushScopedServices(dc.context);
         try {
-            await this.checkForChanges(dc);
+            await this.checkForVersionChange(dc);
 
             // Install dependencies on first access
             this.ensureDependenciesInstalled();
@@ -194,7 +194,7 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
     public async continueDialog(dc: DialogContext): Promise<DialogTurnResult> {
         this.onPushScopedServices(dc.context);
         try {
-            await this.checkForChanges(dc);
+            await this.checkForVersionChange(dc);
 
             this.ensureDependenciesInstalled();
 
@@ -220,7 +220,7 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
     }
 
     public async resumeDialog(dc: DialogContext, reason: DialogReason, result?: any): Promise<DialogTurnResult> {
-        await this.checkForChanges(dc);
+        await this.checkForVersionChange(dc);
 
         // Containers are typically leaf nodes on the stack but the dev is free to push other dialogs
         // on top of the stack which will result in the container receiving an unexpected call to

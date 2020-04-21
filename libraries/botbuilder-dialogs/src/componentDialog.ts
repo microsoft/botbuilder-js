@@ -79,7 +79,7 @@ export class ComponentDialog<O extends object = {}> extends DialogContainer<O> {
     protected initialDialogId: string;
 
     public async beginDialog(outerDC: DialogContext, options?: O): Promise<DialogTurnResult> {
-        await this.checkForChanges(outerDC);
+        await this.checkForVersionChange(outerDC);
 
         // Start the inner dialog.
         const innerDC: DialogContext = this.createChildContext(outerDC)
@@ -100,7 +100,7 @@ export class ComponentDialog<O extends object = {}> extends DialogContainer<O> {
     }
 
     public async continueDialog(outerDC: DialogContext): Promise<DialogTurnResult> {
-        await this.checkForChanges(outerDC);
+        await this.checkForVersionChange(outerDC);
 
         // Continue execution of inner dialog.
         const innerDC: DialogContext = this.createChildContext(outerDC)
@@ -117,7 +117,7 @@ export class ComponentDialog<O extends object = {}> extends DialogContainer<O> {
     }
 
     public async resumeDialog(outerDC: DialogContext, reason: DialogReason, result?: any): Promise<DialogTurnResult> {
-        await this.checkForChanges(outerDC);
+        await this.checkForVersionChange(outerDC);
 
         // Containers are typically leaf nodes on the stack but the dev is free to push other dialogs
         // on top of the stack which will result in the container receiving an unexpected call to
