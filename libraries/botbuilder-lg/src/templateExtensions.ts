@@ -18,9 +18,9 @@ import { Position } from './position';
 export class TemplateExtensions {
 
     /**
-     * trim expression. ${abc} => abc,  ${a == {}} => a == {}.
-     * @param expression input expression string.
-     * @returns pure expression string.
+     * Trim expression. ${abc} => abc,  ${a == {}} => a == {}.
+     * @param expression Input expression string.
+     * @returns Pure expression string.
      */
     public static trimExpression(expression: string): string {
         let result = expression.trim();
@@ -42,8 +42,8 @@ export class TemplateExtensions {
      * path is from authored content which doesn't know what OS it is running on.
      * This method treats / and \ both as seperators regardless of OS, for windows that means / -> \ and for linux/mac \ -> /.
      * This allows author to use ../foo.lg or ..\foo.lg as equivelents for importing.
-     * @param ambiguousPath authoredPath.
-     * @returns path expressed as OS path.
+     * @param ambiguousPath AuthoredPath.
+     * @returns Path expressed as OS path.
      */
     public static normalizePath(ambiguousPath: string): string {
         if (process.platform === 'win32') {
@@ -57,8 +57,8 @@ export class TemplateExtensions {
 
     /**
      * Get prefix error message from normal template sting context.
-     * @param context normal template sting context.
-     * @returns prefix error message.
+     * @param context Normal template sting context.
+     * @returns Prefix error message.
      */
     public static getPrefixErrorMessage(context: lp.NormalTemplateStringContext): string
     {
@@ -169,7 +169,7 @@ export class TemplateExtensions {
 
     /**
      * read line from text.
-     * @param input text content.
+     * @param input Text content.
      */
     public static readLine(input: string): string[] {
         if (!input) {

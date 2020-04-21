@@ -46,7 +46,7 @@ export class StaticChecker extends AbstractParseTreeVisitor<Diagnostic[]> implem
 
     /**
      * Return error messages list.
-     * @returns report result.
+     * @returns Report result.
      */
     public check(): Diagnostic[] {
         var result: Diagnostic[] = [];

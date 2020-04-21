@@ -47,9 +47,9 @@ export class TemplatesParser {
     /**
     * parse a file and return LG file.
     * @param filePath LG absolute file path..
-    * @param importResolver resolver to resolve LG import id to template text.
+    * @param importResolver Resolver to resolve LG import id to template text.
     * @param expressionParser Expression parser for evaluating expressions.
-    * @returns new lg file.
+    * @returns New lg file.
     */
     public static parseFile(filePath: string, importResolver?: ImportResolverDelegate, expressionParser?: ExpressionParser): Templates {
         const fullPath = TemplateExtensions.normalizePath(filePath);
@@ -60,11 +60,11 @@ export class TemplatesParser {
 
     /**
      * Parser to turn lg content into a Templates.
-     * @param content text content contains lg templates.
-     * @param id id is the identifier of content. If importResolver is undefined, id must be a full path string. 
-     * @param importResolver resolver to resolve LG import id to template text.
+     * @param content Text content contains lg templates.
+     * @param id Id is the identifier of content. If importResolver is undefined, id must be a full path string. 
+     * @param importResolver Resolver to resolve LG import id to template text.
      * @param expressionParser Expression parser for evaluating expressions.
-     * @returns entity.
+     * @returns Entity.
      */
     public static parseText(content: string, id: string = '', importResolver?: ImportResolverDelegate, expressionParser?: ExpressionParser): Templates {
         return TemplatesParser.innerParseText(content, id, importResolver, expressionParser);
@@ -73,7 +73,7 @@ export class TemplatesParser {
     /**
      * Parser to turn lg content into a Templates based on the original Templates.
      * @param content Text content contains lg templates.
-     * @param originalTemplates original templates
+     * @param originalTemplates Original templates
      */
     public static parseTextWithRef(content: string, originalTemplates: Templates): Templates {
         if (!originalTemplates) {
@@ -124,12 +124,12 @@ export class TemplatesParser {
 
     /**
      * Parser to turn lg content into a Templates.
-     * @param content text content contains lg templates.
-     * @param id id is the identifier of content. If importResolver is undefined, id must be a full path string. 
-     * @param importResolver resolver to resolve LG import id to template text.
+     * @param content Text content contains lg templates.
+     * @param id Id is the identifier of content. If importResolver is undefined, id must be a full path string. 
+     * @param importResolver Resolver to resolve LG import id to template text.
      * @param expressionParser Expression parser for evaluating expressions.
-     * @param cachedTemplates give the file path and templates to avoid parsing and to improve performance.
-     * @returns entity.
+     * @param cachedTemplates Give the file path and templates to avoid parsing and to improve performance.
+     * @returns Entity.
      */
     public static innerParseText(content: string,
         id: string = '',

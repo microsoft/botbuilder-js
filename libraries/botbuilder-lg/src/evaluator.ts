@@ -67,8 +67,8 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGTempla
 
     /**
      * Evaluate a template with given name and scope.
-     * @param inputTemplateName template name.
-     * @param scope scope.
+     * @param inputTemplateName Template name.
+     * @param scope Scope.
      * @returns Evaluate result.
      */
     public evaluateTemplate(inputTemplateName: string, scope: any): any {

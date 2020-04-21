@@ -41,9 +41,9 @@ export class Analyzer extends AbstractParseTreeVisitor<AnalyzerResult> implement
     }
 
     /**
-     * Analyzer a template to get the static analyzer results.
+     * Analyze a template to get the static analyzer results.
      * @param templateName Template name.
-     * @returns analyze result including variables and template references.
+     * @returns Analyze result including variables and template references.
      */
     public analyzeTemplate(templateName: string): AnalyzerResult {
         if (!(templateName in this.templateMap)) {
