@@ -9,7 +9,7 @@
 import { STATUS_CODES } from 'http';
 import { arch, release, type } from 'os';
 
-import { Activity, ActivityTypes, CoreAppCredentials, BotAdapter, BotCallbackHandlerKey, ChannelAccount, ConversationAccount, ConversationParameters, ConversationReference, ConversationsResult, DeliveryModes, ExpectedReplies, InvokeResponse, ExtendedUserTokenProvider, ResourceResponse, StatusCodes, TokenResponse, TurnContext, INVOKE_RESPONSE_KEY } from 'botbuilder-core';
+import { Activity, ActivityTypes, CoreAppCredentials, BotAdapter, BotCallbackHandlerKey, CallerIdConstants, ChannelAccount, ConversationAccount, ConversationParameters, ConversationReference, ConversationsResult, DeliveryModes, ExpectedReplies, InvokeResponse, ExtendedUserTokenProvider, ResourceResponse, StatusCodes, TokenResponse, TurnContext, INVOKE_RESPONSE_KEY } from 'botbuilder-core';
 import { AuthenticationConfiguration, AuthenticationConstants, ChannelValidation, Claim, ClaimsIdentity, ConnectorClient, EmulatorApiClient, GovernmentConstants, GovernmentChannelValidation, JwtTokenValidation, MicrosoftAppCredentials, AppCredentials, CertificateAppCredentials, SimpleCredentialProvider, TokenApiClient, TokenStatus, TokenApiModels, SignInUrlResponse, SkillValidation, TokenExchangeRequest } from 'botframework-connector';
 
 import { INodeBuffer, INodeSocket, IReceiveRequest, ISocket, IStreamingTransportServer, NamedPipeServer, NodeWebSocketFactory, NodeWebSocketFactoryBase, RequestHandler, StreamingResponse, WebSocketServer } from 'botframework-streaming';
@@ -822,6 +822,9 @@ export class BotFrameworkAdapter extends BotAdapter implements ExtendedUserToken
             const authHeader: string = req.headers.authorization || req.headers.Authorization || '';
 
             const identity = await this.authenticateRequestInternal(request, authHeader);
+
+            // Set the correct callerId value and discard values received over the wire
+            request.callerId = await this.generateCallerId(identity);
             
             // Process received activity
             status = 500;
@@ -1145,8 +1148,11 @@ export class BotFrameworkAdapter extends BotAdapter implements ExtendedUserToken
     * @param authHeader Received authentication header.
     */
     protected async authenticateRequest(request: Partial<Activity>, authHeader: string): Promise<void> {
-        const claims = await this.authenticateRequestInternal(request, authHeader);
-        if (!claims.isAuthenticated) { throw new Error('Unauthorized Access. Request is not authorized'); }
+        const identity = await this.authenticateRequestInternal(request, authHeader);
+        if (!identity.isAuthenticated) { throw new Error('Unauthorized Access. Request is not authorized'); }
+
+        // Set the correct callerId value and discard values received over the wire
+        request.callerId = await this.generateCallerId(identity);
     }
 
     /**
@@ -1166,6 +1172,42 @@ export class BotFrameworkAdapter extends BotAdapter implements ExtendedUserToken
             this.settings.channelService,
             this.authConfiguration
         );
+    }
+
+    /**
+     * Generates the CallerId property for the activity based on
+     * https://github.com/microsoft/botframework-obi/blob/master/protocols/botframework-activity/botframework-activity.md#appendix-v---caller-id-values.
+     * @param identity 
+     */
+    private async generateCallerId(identity: ClaimsIdentity): Promise<string> {
+        if (!identity) {
+            throw new TypeError('BotFrameworkAdapter.generateCallerId(): Missing identity parameter.');
+        }
+
+        // Is the bot accepting all incoming messages?
+        const isAuthDisabled = await this.credentialsProvider.isAuthenticationDisabled();
+        if (isAuthDisabled) {
+            // Return undefined so that the callerId is cleared.
+            return;
+        }
+        
+        // Is the activity from another bot?
+        if (SkillValidation.isSkillClaim(identity.claims)) {
+            const callerId = JwtTokenValidation.getAppIdFromClaims(identity.claims);
+            return `${ CallerIdConstants.BotToBotPrefix }${ callerId }`;
+        }
+
+        // Is the activity from Public Azure?
+        if (!this.settings.channelService || this.settings.channelService.length === 0) {
+            return CallerIdConstants.PublicAzureChannel;
+        }
+
+        // Is the activity from Azure Gov?
+        if (JwtTokenValidation.isGovernment(this.settings.channelService)) {
+            return CallerIdConstants.USGovChannel;
+        }
+
+        // Return undefined so that the callerId is cleared.
     }
 
     /**
