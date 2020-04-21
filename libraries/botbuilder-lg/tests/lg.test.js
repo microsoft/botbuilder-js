@@ -855,7 +855,7 @@ describe('LG', function() {
         assert.strictEqual(evaled, 'list and obj are both not empty.');        
     });
 
-    it.only('TestLGOptions', function() {
+    it('TestLGOptions', function() {
         //LGOptionTest has no import files.
         var templates = Templates.parseFile(GetExampleFilePath('./EvaluationOptions/LGOptionsTest.lg'));
 
