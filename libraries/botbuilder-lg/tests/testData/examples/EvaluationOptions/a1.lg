@@ -1,0 +1,15 @@
+> !# @strict = false
+> !# @replaceNull = ${path} is undefined  
+> !# @lineBreakStyle = default
+
+#SayHello
+- hi ${user.name}
+
+#testInlineString
+-```m
+s
+f
+t
+```
+
+[import](b1.lg) 

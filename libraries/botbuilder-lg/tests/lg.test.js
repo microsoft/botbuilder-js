@@ -1,4 +1,4 @@
-const { Templates } = require('../');
+const { Templates, LGLineBreakStyle, EvaluationOptions } = require('../');
 const { SimpleObjectMemory, ExpressionParser, ExpressionFunctions, Expression } = require('adaptive-expressions');
 const assert = require('assert');
 const fs = require('fs');
@@ -853,6 +853,80 @@ describe('LG', function() {
 
         evaled = templates.evaluate('template', {list:[{}], obj : {a : 'a'}});
         assert.strictEqual(evaled, 'list and obj are both not empty.');        
+    });
+
+    it.only('TestLGOptions', function() {
+        //LGOptionTest has no import files.
+        var templates = Templates.parseFile(GetExampleFilePath('./EvaluationOptions/LGOptionsTest.lg'));
+
+        var evaled = templates.evaluate('SayHello');
+        assert.strictEqual('hi The user.name is undefined', evaled);
+
+        evaled = templates.evaluate('testInlineString');
+        assert.strictEqual(evaled.replace(/\r\n/g, '\n'), 'm\n\ns\n\nf\n\nt\n\n');
+
+        //a1.lg imports b1.lg. 
+        //a1's option is strictMode is false, replaceNull = ${path} is undefined, and defalut lineBreakStyle.
+        //b1's option is strictMode is true, replaceNull = The ${path} is undefined, and markdown lineBreakStyle.
+        var templates2 = Templates.parseFile(GetExampleFilePath('./EvaluationOptions/a1.lg'));
+
+        var evaled2 = templates2.evaluate('SayHello');
+
+        assert.strictEqual('hi user.name is undefined', evaled2);
+        assert.strictEqual(templates2.lgOptions.LineBreakStyle, LGLineBreakStyle.Default);
+
+        //a2.lg imports b2.lg and c2.lg. 
+        //a2.lg: replaceNull = The ${path} is undefined  
+        //b2.lg: strict = true, replaceNull = ${path} is evaluated to null, please check!
+        //c2: lineBreakStyle = markdown
+        var templates3 = Templates.parseFile(GetExampleFilePath('./EvaluationOptions/a2.lg'));
+
+        var evaled3 = templates3.evaluate('SayHello');
+
+        assert.strictEqual('hi The user.name is undefined', evaled3);
+
+        assert.strictEqual(templates3.lgOptions.LineBreakStyle, undefined);
+
+        //a3.lg imports b3.lg and c3.lg in sequence. 
+        //b3.lg imports d3.lg 
+        //a3.lg: lineBreakStyle = markdown, replaceNull = the ${path} is undefined a3!
+        //b3.lg: lineBreakStyle = default
+        //d3: replaceNull = ${path} is evaluated to null in d3!
+        //c3: replaceNull = ${path} is evaluated to null in c3!
+        var templates4 = Templates.parseFile(GetExampleFilePath('./EvaluationOptions/a3.lg'));
+
+        var evaled4 = templates4.evaluate('SayHello');
+
+        assert.strictEqual('hi the user.name is undefined a3!', evaled4);
+
+        assert.strictEqual(templates4.lgOptions.LineBreakStyle, LGLineBreakStyle.Markdown);
+
+        //Test use an defined option in Evaluate method, which will override all options in LG files.
+        var optionStrList = [ '@strictMode = false', '@replaceNull = ${ path } is undefined', '@lineBreakStyle = defalut' ];
+        var newOpt = new EvaluationOptions(optionStrList);
+        evaled4 = templates4.evaluate('SayHello', undefined, newOpt);
+
+        assert.strictEqual('hi user.name is undefined', evaled4);
+
+        evaled4 = templates4.evaluate('testInlineString', undefined, newOpt);
+
+        assert.strictEqual(evaled4.replace(/\r\n/g, '\n'), 'm\ns\nf\nt\n');
+
+        //a4.lg imports b4.lg and c4.lg in sequence. 
+        //b4.lg imports d3.lg, c4.lg imports f4.lg.
+        //a4.lg: replaceNull = the ${path} is undefined a4!.
+        //b4.lg, c4.lg: nothing but import statement.
+        //d4: only have template definition.
+        //f4: only options, strictMode = true, replaceNull = The ${path} is undefined, lineBreaStyle = markdown.
+        var templates5 = Templates.parseFile(GetExampleFilePath('./EvaluationOptions/a4.lg'));
+
+        var evaled5 = templates5.evaluate('SayHello');
+
+        assert.strictEqual('hi the user.name is undefined a4!', evaled5);
+
+        assert.strictEqual(templates5.lgOptions.StrictMode, undefined);
+
+        assert.strictEqual(templates5.lgOptions.LineBreakStyle, undefined);
     });
 
     it('TestNullTolerant', function() {

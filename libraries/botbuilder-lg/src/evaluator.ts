@@ -7,7 +7,7 @@
  */
 import { AbstractParseTreeVisitor, TerminalNode } from 'antlr4ts/tree';
 import { ParserRuleContext } from 'antlr4ts/ParserRuleContext';
-import { ExpressionFunctions, Constant, EvaluatorLookup, Expression, ExpressionParser, ExpressionEvaluator, ExpressionType, ReturnType, SimpleObjectMemory} from 'adaptive-expressions';
+import { ExpressionFunctions, Constant, EvaluatorLookup, Expression, ExpressionParser, ExpressionEvaluator, ExpressionType, ReturnType, SimpleObjectMemory, Options} from 'adaptive-expressions';
 import { keyBy } from 'lodash';
 import { CustomizedMemory } from './customizedMemory';
 import { EvaluationTarget } from './evaluationTarget';
@@ -18,6 +18,7 @@ import * as path from 'path';
 import * as fs from 'fs';
 import { TemplateExtensions } from './templateExtensions';
 import { TemplateErrors } from './templateErrors';
+import { EvaluationOptions, LGLineBreakStyle } from './evaluationOptions';
 /**
  * Evaluation runtime engine
  */
@@ -38,12 +39,12 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGFilePa
      */
     public readonly templateMap: { [name: string]: Template };
     private readonly evaluationTargetStack: EvaluationTarget[] = [];
-    private readonly strictMode: boolean;
+    private readonly lgOptions: EvaluationOptions;
 
     // to support broswer, use look-ahead replace look-behind
     // PCRE: (?<!\\)\${(('(\\('|\\)|[^'])*?')|("(\\("|\\)|[^"])*?")|(`(\\(`|\\)|[^`])*?`)|([^\r\n{}'"`])|({\s*}))+}?
     public static readonly expressionRecognizeReverseRegex: RegExp = new RegExp(/\}?(('((('|\\)\\)|[^'])*?')|("(\\("|\\)|[^"])*?")|(`(\\(`|\\)|[^`])*?`)|([^\r\n{}'"`])|({\s*}))+{\$(?!\\)/gm);
-
+    public readonly newLineRegex = /(\r?\n)/g;
     public static readonly LGType = 'lgType';
     public static readonly activityAttachmentFunctionName = 'ActivityAttachment';
     public static readonly fromFileFunctionName = 'fromFile';
@@ -51,11 +52,11 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGFilePa
     public static readonly isTemplateFunctionName = 'isTemplate';
     public static readonly ReExecuteSuffix = '!';
 
-    public constructor(templates: Template[], expressionParser: ExpressionParser, strictMode: boolean = false) {
+    public constructor(templates: Template[], expressionParser: ExpressionParser, opt: EvaluationOptions = undefined) {
         super();
         this.templates = templates;
         this.templateMap = keyBy(templates, (t: Template): string => t.name);
-        this.strictMode = strictMode;
+        this.lgOptions = opt;
 
         // generate a new customzied expression parser by injecting the templates as functions
         this.expressionParser = new ExpressionParser(this.customizedEvaluatorLookup(expressionParser.EvaluatorLookup));
@@ -104,13 +105,17 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGFilePa
 
         // Using a stack to track the evalution trace
         this.evaluationTargetStack.push(templateTarget);
-        const result: string = this.visit(this.templateMap[templateName].parseTree);
+        let result: string = this.visit(this.templateMap[templateName].parseTree);
 
         if (previousEvaluateTarget) {
             previousEvaluateTarget.evaluatedChildren.set(currentEvulateId, result);
         }
 
         this.evaluationTargetStack.pop();
+
+        if (this.lgOptions.LineBreakStyle === LGLineBreakStyle.Markdown && typeof result === 'string') {
+            result = result.replace(this.newLineRegex, '$1$1');
+        }
 
         return result;
     }
@@ -371,7 +376,7 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGFilePa
         let error: string;
         ({value: result, error: error} = this.evalByAdaptiveExpression(exp, this.currentTarget().scope));
 
-        if (this.strictMode && (error || !result))
+        if (this.lgOptions.strictMode && (error || !result))
         {
             const templateName = this.currentTarget().templateName;
 
@@ -396,7 +401,7 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGFilePa
         let error: string;
         ({value: result, error: error} = this.evalByAdaptiveExpression(exp, this.currentTarget().scope));
 
-        if (error || (result === undefined && this.strictMode))
+        if (error || (result === undefined && this.lgOptions.strictMode))
         {
             const templateName = this.currentTarget().templateName;
 
@@ -407,7 +412,7 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGFilePa
 
             Evaluator.checkExpressionResult(exp, error, result, templateName, context, errorPrefix);
         }
-        else if (result === undefined && !this.strictMode)
+        else if (result === undefined && !this.lgOptions.strictMode)
         {
             result = `null`;
         }
@@ -417,8 +422,10 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGFilePa
 
     private evalByAdaptiveExpression(exp: string, scope: any): { value: any; error: string } {
         const parse: Expression = this.expressionParser.parse(exp);
+        const opt = new Options();
+        opt.nullSubstitution = this.lgOptions.nullSubstitution;
 
-        return parse.tryEvaluate(scope);
+        return parse.tryEvaluate(scope, opt);
     }
 
     // Genearte a new lookup function based on one lookup function

@@ -19,7 +19,7 @@ import { Template } from './template';
 import { TemplateExtensions } from './templateExtensions';
 import { CustomizedMemory } from './customizedMemory';
 import { TemplateErrors } from './templateErrors';
-
+import { EvaluationOptions } from './evaluationOptions';
 /**
  * LG template expander.
  */
@@ -44,13 +44,13 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGFi
      */
     public readonly templateMap: {[name: string]: Template};
     private readonly evaluationTargetStack: EvaluationTarget[] = [];
-    private readonly strictMode: boolean;
+    private readonly lgOptions: EvaluationOptions;
 
-    public constructor(templates: Template[], expressionParser: ExpressionParser, strictMode: boolean = false) {
+    public constructor(templates: Template[], expressionParser: ExpressionParser, opt: EvaluationOptions = undefined) {
         super();
         this.templates = templates;
         this.templateMap = keyBy(templates, (t: Template): string => t.name);
-        this.strictMode = strictMode;
+        this.lgOptions = opt;
 
         // generate a new customzied expression parser by injecting the template as functions
         this.expanderExpressionParser = new ExpressionParser(this.customizedEvaluatorLookup(expressionParser.EvaluatorLookup, true));
@@ -325,7 +325,7 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGFi
         let error: string;
         ({value: result, error: error} = this.evalByAdaptiveExpression(exp, this.currentTarget().scope));
 
-        if (this.strictMode && (error || !result))
+        if (this.lgOptions.strictMode && (error || !result))
         {
             const templateName = this.currentTarget().templateName;
 
@@ -349,7 +349,7 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGFi
         let error: string;
         ({value: result, error: error} = this.evalByAdaptiveExpression(exp, this.currentTarget().scope));
 
-        if (error || (result ===  undefined && this.strictMode))
+        if (error || (result ===  undefined && this.lgOptions.strictMode))
         {
             const templateName = this.currentTarget().templateName;
 
@@ -359,7 +359,7 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGFi
             }
 
             Evaluator.checkExpressionResult(exp, error, result, templateName, context, errorPrefix);
-        } else if (result === undefined && !this.strictMode)
+        } else if (result === undefined && !this.lgOptions.strictMode)
         {
             result = `null`;
         }
