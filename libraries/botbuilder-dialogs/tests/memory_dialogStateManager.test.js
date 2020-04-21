@@ -307,6 +307,20 @@ describe('Memory - Dialog State Manager', function() {
         dc.state.setValue('@@bar', [['bar']]);
         assert(dc.state.getValue('@foo') == 'foo', `Simple entities not returning.`);
         assert(dc.state.getValue('@bar') == 'bar', `Nested entities not returning.`);
+
+        dc.state.setValue('turn.recognized.entities.single', ['test1', 'test2', 'test3']);
+        dc.state.setValue('turn.recognized.entities.double', [['testx', 'testy', 'testz'], ['test1', 'test2', 'test3']]);
+        assert.equal(dc.state.getValue('@single'), 'test1');
+        assert.equal(dc.state.getValue('@double'), 'testx');
+        assert.equal(dc.state.getValue('turn.recognized.entities.single.first()'), 'test1');
+        assert.equal(dc.state.getValue('turn.recognized.entities.double.first()'), 'testx');
+
+        dc.state.setValue('turn.recognized.entities.single', [{name: 'test1'}, {name: 'test2'}, {name: 'test3'}]);
+        dc.state.setValue('turn.recognized.entities.double', [[{name: 'testx'}, {name: 'testy'}, {name: 'testz'}], [{name: 'test1'}, {name: 'test2'}, {name: 'test3'}]]);
+        assert.equal(dc.state.getValue('@single.name'), 'test1');
+        assert.equal(dc.state.getValue('@double.name'), 'testx');
+        assert.equal(dc.state.getValue('turn.recognized.entities.single.first().name'), 'test1');
+        assert.equal(dc.state.getValue('turn.recognized.entities.double.first().name'), 'testx');
     });
 
     it('Should write a entity using @ alias.', async function () {

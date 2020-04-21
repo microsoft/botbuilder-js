@@ -1,10 +1,11 @@
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
 import 'mocha';
+import * as path from 'path';
 import { TestRunner } from './testing';
 
 describe('CrossTrainedRecognizerSetTests', function() {
     this.timeout(5000);
-    const testRunner = new TestRunner('resources/CrossTrainedRecognizerSetTests');
+    const testRunner = new TestRunner(path.join(__dirname,  '../resources/CrossTrainedRecognizerSetTests'));
 
     it('AllNone', async () => {
         await testRunner.runTestScript('CrossTrainedRecognizerSetTests_AllNone');

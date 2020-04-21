@@ -1,10 +1,11 @@
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
 import 'mocha';
+import * as path from 'path';
 import { TestRunner } from './testing';
 
 describe('ActionTests', function() {
     this.timeout(10000);
-    const testRunner = new TestRunner('resources/ActionTests');
+    const testRunner = new TestRunner(path.join(__dirname,  '../resources/ActionTests'));
 
     it('BeginDialog', async () => {
         await testRunner.runTestScript('Action_BeginDialog');
