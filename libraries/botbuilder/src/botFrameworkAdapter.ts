@@ -7,7 +7,7 @@
  */
 
 import { STATUS_CODES } from 'http';
-import * as os from 'os';
+import { arch, release, type } from 'os';
 
 import { Activity, ActivityTypes, CoreAppCredentials, BotAdapter, BotCallbackHandlerKey, ChannelAccount, ConversationAccount, ConversationParameters, ConversationReference, ConversationsResult, DeliveryModes, ExpectedReplies, InvokeResponse, ExtendedUserTokenProvider, ResourceResponse, StatusCodes, TokenResponse, TurnContext, INVOKE_RESPONSE_KEY } from 'botbuilder-core';
 import { AuthenticationConfiguration, AuthenticationConstants, ChannelValidation, Claim, ClaimsIdentity, ConnectorClient, EmulatorApiClient, GovernmentConstants, GovernmentChannelValidation, JwtTokenValidation, MicrosoftAppCredentials, AppCredentials, CertificateAppCredentials, SimpleCredentialProvider, TokenApiClient, TokenStatus, TokenApiModels, SignInUrlResponse, SkillValidation, TokenExchangeRequest } from 'botframework-connector';
@@ -75,9 +75,9 @@ export interface BotFrameworkAdapterSettings {
 }
 
 // Retrieve additional information, i.e., host operating system, host OS release, architecture, Node.js version
-const ARCHITECTURE: any = os.arch();
-const TYPE: any = os.type();
-const RELEASE: any = os.release();
+const ARCHITECTURE: any = arch();
+const TYPE: any = type();
+const RELEASE: any = release();
 const NODE_VERSION: any = process.version;
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires

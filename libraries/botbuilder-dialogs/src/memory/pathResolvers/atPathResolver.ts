@@ -12,15 +12,30 @@ import { AliasPathResolver } from './aliasPathResolver';
  */
 export class AtPathResolver extends AliasPathResolver {
 
-    constructor() {
-        super('@', 'turn.recognized.entities.', '.first()');
+    private readonly _prefix = 'turn.recognized.entities.';
+    private readonly _delims = ['.', '['];
+
+    public constructor() {
+        super('@', '');
     }
 
     public transformPath(path: string): string {
-        // override to make sure it doesn't match @@
         path = path.trim();
-        if (path.startsWith('@') && !path.startsWith('@@')) {
-            return super.transformPath(path);
+        if (path.startsWith('@') && path.length > 1 && !path.startsWith('@@')) {
+            let end = -1;
+            for (let i = 0; i < this._delims.length; i++) {
+                const indexOfDelim = path.indexOf(this._delims[i]);
+                if (indexOfDelim >= 0) {
+                    end = indexOfDelim;
+                    break;
+                }
+            }
+            if (end == -1) {
+                end = path.length;
+            }
+            const property = path.substr(1, end - 1);
+            const suffix = path.substr(end);
+            path = `${ this._prefix }${ property }.first()${ suffix }`;
         }
 
         return path;

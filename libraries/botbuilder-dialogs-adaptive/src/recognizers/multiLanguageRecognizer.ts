@@ -19,27 +19,8 @@ export class MultiLanguageRecognizer implements Recognizer {
 
     public recognizers: { [locale: string]: Recognizer };
 
-    public async recognize(dialogContext: DialogContext): Promise<RecognizerResult>;
-    public async recognize(dialogContext: DialogContext, textOrActivity: Activity): Promise<RecognizerResult>;
-    public async recognize(dialogContext: DialogContext, textOrActivity?: string | Activity, locale?: string): Promise<RecognizerResult> {
-        let text = '';
-        if (!textOrActivity) {
-            const activity: Activity = dialogContext.context.activity;
-            if (activity && activity.type == ActivityTypes.Message) {
-                text = activity.text || '';
-                locale = activity.locale;
-            }
-        } else if (typeof (textOrActivity) == 'object') {
-            const activity: Activity = textOrActivity;
-            if (activity.type == ActivityTypes.Message) {
-                text = activity.text || '';
-                locale = activity.locale;
-            }
-        } else if (typeof (textOrActivity) == 'string') {
-            text = textOrActivity || '';
-        }
-
-        locale = locale ? locale : '';
+    public async recognize(dialogContext: DialogContext, activity: Activity): Promise<RecognizerResult> {
+        const locale = activity.locale || '';
         let policy: string[];
         if (this.languagePolicy.hasOwnProperty(locale)) {
             policy = this.languagePolicy[locale];
@@ -49,14 +30,14 @@ export class MultiLanguageRecognizer implements Recognizer {
 
         for (let i = 0; i < policy.length; i++) {
             const option = policy[i];
-            if (this.recognizers.hasOwnProperty(option)){
+            if (this.recognizers.hasOwnProperty(option)) {
                 const recognizer = this.recognizers[option];
-                return await recognizer.recognize(dialogContext, text, locale);
+                return await recognizer.recognize(dialogContext, activity);
             }
         }
 
         const recognizerResult: RecognizerResult = {
-            text: text,
+            text: activity.text || '',
             intents: {},
             entities: {}
         };

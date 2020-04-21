@@ -9,7 +9,7 @@ import { Dialog, DialogContext, DialogTurnResult, DialogEvent, DialogReason, Cho
 import { ActivityTypes, Activity, InputHints, MessageFactory } from 'botbuilder-core';
 import { ExpressionParser } from 'adaptive-expressions';
 import { TemplateInterface } from '../template';
-import { ValueExpression, StringExpression, BoolExpression, NumberExpression } from '../expressions';
+import { ValueExpression, StringExpression, BoolExpression, IntExpression } from '../expressions';
 import { AdaptiveEvents } from '../adaptiveEvents';
 import { ActivityTemplate } from '../templates/activityTemplate';
 import { StaticActivityTemplate } from '../templates/staticActivityTemplate';
@@ -74,7 +74,7 @@ export abstract class InputDialog extends Dialog {
     /**
      * Maximum number of times to ask the user for this value before the dialog gives up.
      */
-    public maxTurnCount?: NumberExpression;
+    public maxTurnCount?: IntExpression;
 
     /**
      * The default value for the input dialog when maxTurnCount is exceeded.
