@@ -26,6 +26,7 @@
     "uuid": "^3.3.3"
   },
   "devDependencies": {
+    "@microsoft/api-extractor": "^7.7.12",
     "@types/mocha": "^5.2.5",
     "@types/node": "^10.12.18",
     "mocha": "^5.2.0",
@@ -34,11 +35,11 @@
     "typescript": "3.5.3"
   },
   "scripts": {
-    "test": "tsc && mocha tests/ --timeout 60000",
     "build": "tsc",
     "build-docs": "typedoc --theme markdown --entryPoint botbuilder-lg --excludePrivate --includeDeclarations --ignoreCompilerErrors --module amd --out ..\\..\\doc\\botbuilder-lg .\\lib\\index.d.ts --hideGenerator --name \"Bot Builder SDK - LG\" --readme none",
     "clean": "erase /q /s .\\lib",
-    "set-version": "npm version --allow-same-version ${Version}"
+    "set-version": "npm version --allow-same-version ${Version}",
+    "test": "tsc && mocha tests/ --timeout 60000"
   },
   "files": [
     "/lib",

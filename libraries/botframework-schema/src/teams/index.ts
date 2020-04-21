@@ -4,9 +4,9 @@
  * regenerated.
  */
 
- // The Teams schemas was manually added to botframework-schema. This file has been updated import from the botframework-schema and the extension folder.
- // The ChannelCount and MemberCount fields were manually added to the TeamDetails definition.
-import * as teams from './extension';
+// The Teams schemas was manually added to botframework-schema. This file has been updated import from the botframework-schema and the extension folder.
+// The ChannelCount and MemberCount fields were manually added to the TeamDetails definition.
+import { MessageActionsPayloadBody, O365ConnectorCardActionBase, O365ConnectorCardInputBase } from './extension';
 import { Activity, Attachment, CardAction, ChannelAccount } from '../';
 export * from './extension';
 
@@ -274,7 +274,7 @@ export interface O365ConnectorCardSection {
    * @member {O365ConnectorCardActionBase[]} [potentialAction] Set of actions
    * for the current section
    */
-  potentialAction?: teams.O365ConnectorCardActionBase[];
+  potentialAction?: O365ConnectorCardActionBase[];
 }
 
 /**
@@ -309,7 +309,7 @@ export interface O365ConnectorCard {
    * @member {O365ConnectorCardActionBase[]} [potentialAction] Set of actions
    * for the current card
    */
-  potentialAction?: teams.O365ConnectorCardActionBase[];
+  potentialAction?: O365ConnectorCardActionBase[];
 }
 
 /**
@@ -317,9 +317,9 @@ export interface O365ConnectorCard {
  * An interface representing O365ConnectorCardViewAction.
  * O365 connector card ViewAction action
  *
- * @extends teams.O365ConnectorCardActionBase
+ * @extends O365ConnectorCardActionBase
  */
-export interface O365ConnectorCardViewAction extends teams.O365ConnectorCardActionBase {
+export interface O365ConnectorCardViewAction extends O365ConnectorCardActionBase {
   /**
    * @member {string[]} [target] Target urls, only the first url effective for
    * card button
@@ -350,9 +350,9 @@ export interface O365ConnectorCardOpenUriTarget {
  * An interface representing O365ConnectorCardOpenUri.
  * O365 connector card OpenUri action
  *
- * @extends teams.O365ConnectorCardActionBase
+ * @extends O365ConnectorCardActionBase
  */
-export interface O365ConnectorCardOpenUri extends teams.O365ConnectorCardActionBase {
+export interface O365ConnectorCardOpenUri extends O365ConnectorCardActionBase {
   /**
    * @member {O365ConnectorCardOpenUriTarget[]} [targets] Target os / urls
    */
@@ -364,9 +364,9 @@ export interface O365ConnectorCardOpenUri extends teams.O365ConnectorCardActionB
  * An interface representing O365ConnectorCardHttpPOST.
  * O365 connector card HttpPOST action
  *
- * @extends teams.O365ConnectorCardActionBase
+ * @extends O365ConnectorCardActionBase
  */
-export interface O365ConnectorCardHttpPOST extends teams.O365ConnectorCardActionBase {
+export interface O365ConnectorCardHttpPOST extends O365ConnectorCardActionBase {
   /**
    * @member {string} [body] Content to be posted back to bots via invoke
    */
@@ -378,22 +378,22 @@ export interface O365ConnectorCardHttpPOST extends teams.O365ConnectorCardAction
  * An interface representing O365ConnectorCardActionCard.
  * O365 connector card ActionCard action
  *
- * @extends teams.O365ConnectorCardActionBase
+ * @extends O365ConnectorCardActionBase
  */
-export interface O365ConnectorCardActionCard extends teams.O365ConnectorCardActionBase {
+export interface O365ConnectorCardActionCard extends O365ConnectorCardActionBase {
   /**
    * @member {O365ConnectorCardInputBase[]} [inputs] Set of inputs contained in
    * this ActionCard whose each item can be in any subtype of
-   * teams.O365ConnectorCardInputBase
+   * O365ConnectorCardInputBase
    */
-  inputs?: teams.O365ConnectorCardInputBase[];
+  inputs?: O365ConnectorCardInputBase[];
   /**
    * @member {O365ConnectorCardActionBase[]} [actions] Set of actions contained
    * in this ActionCard whose each item can be in any subtype of
-   * teams.O365ConnectorCardActionBase except O365ConnectorCardActionCard, as nested
+   * O365ConnectorCardActionBase except O365ConnectorCardActionCard, as nested
    * ActionCard is forbidden.
    */
-  actions?: teams.O365ConnectorCardActionBase[];
+  actions?: O365ConnectorCardActionBase[];
 }
 
 /**
@@ -401,9 +401,9 @@ export interface O365ConnectorCardActionCard extends teams.O365ConnectorCardActi
  * An interface representing O365ConnectorCardTextInput.
  * O365 connector card text input
  *
- * @extends teams.O365ConnectorCardInputBase
+ * @extends O365ConnectorCardInputBase
  */
-export interface O365ConnectorCardTextInput extends teams.O365ConnectorCardInputBase {
+export interface O365ConnectorCardTextInput extends O365ConnectorCardInputBase {
   /**
    * @member {boolean} [isMultiline] Define if text input is allowed for
    * multiple lines. Default value is false.
@@ -421,9 +421,9 @@ export interface O365ConnectorCardTextInput extends teams.O365ConnectorCardInput
  * An interface representing O365ConnectorCardDateInput.
  * O365 connector card date input
  *
- * @extends teams.O365ConnectorCardInputBase
+ * @extends O365ConnectorCardInputBase
  */
-export interface O365ConnectorCardDateInput extends teams.O365ConnectorCardInputBase {
+export interface O365ConnectorCardDateInput extends O365ConnectorCardInputBase {
   /**
    * @member {boolean} [includeTime] Include time input field. Default value
    * is false (date only).
@@ -453,9 +453,9 @@ export interface O365ConnectorCardMultichoiceInputChoice {
  * An interface representing O365ConnectorCardMultichoiceInput.
  * O365 connector card multiple choice input
  *
- * @extends teams.O365ConnectorCardInputBase
+ * @extends O365ConnectorCardInputBase
  */
-export interface O365ConnectorCardMultichoiceInput extends teams.O365ConnectorCardInputBase {
+export interface O365ConnectorCardMultichoiceInput extends O365ConnectorCardInputBase {
   /**
    * @member {O365ConnectorCardMultichoiceInputChoice[]} [choices] Set of
    * choices whose each item can be in any subtype of
@@ -488,7 +488,7 @@ export interface O365ConnectorCardActionQuery {
   body?: string;
   /**
    * @member {string} [actionId] Action Id associated with the HttpPOST action
-   * button triggered, defined in teams.O365ConnectorCardActionBase.
+   * button triggered, defined in O365ConnectorCardActionBase.
    */
   actionId?: string;
 }
@@ -810,7 +810,7 @@ export interface MessageActionsPayload {
    * @member {MessageActionsPayloadBody} [body] Plaintext/HTML representation
    * of the content of the message.
    */
-  body?: teams.MessageActionsPayloadBody;
+  body?: MessageActionsPayloadBody;
   /**
    * @member {string} [attachmentLayout] How the attachment(s) are displayed in
    * the message.

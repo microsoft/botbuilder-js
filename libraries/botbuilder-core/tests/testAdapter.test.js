@@ -214,6 +214,44 @@ describe(`TestAdapter`, function () {
             .catch((err) => done());
     });
 
+    it(`should timeout waiting for assertNoReply() when an Activity is not expected.`, function (done) {
+        const start = new Date().getTime();
+        const adapter = new TestAdapter((context) => {
+            return new Promise((resolve, reject) => {
+                setTimeout(() => resolve(), 600);
+            });
+        });
+        adapter
+            .send('test')
+            .assertNoReply('no message received', 500)
+            .then(() => done());
+    });
+    
+    it(`should validate using assertNoReply() that no reply was received, when reply Activity not expected.`, function (done) {
+        const start = new Date().getTime();
+        const adapter = new TestAdapter((context) => {
+            return context.sendActivity(receivedMessage);
+        });
+        adapter
+            .send('test')
+            .assertReply({ text: 'received' })
+            .assertNoReply('should be no additional replies')
+            .then(() => done());
+    });
+
+    it(`should throw an error with assertNoReply() when no reply is expected, but reply Activity was received.`, function (done) {
+        const start = new Date().getTime();
+        const adapter = new TestAdapter((context) => {
+            const activities = [receivedMessage, receivedMessage];
+            context.sendActivity(activities);
+        });
+        adapter
+            .send('test')
+            .assertReply({ text: 'received' })
+            .assertNoReply('should be no additional replies')
+            .catch((err) => done());
+    });
+
     it(`should support calling assertReplyOneOf().`, function (done) {
         const start = new Date().getTime();
         const adapter = new TestAdapter((context) => {

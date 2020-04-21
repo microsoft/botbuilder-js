@@ -124,7 +124,6 @@ const badExpressions =
       'uriComponentToString(false)', // param should be string
       'base64()', // should have 1 param
       'base64(hello, world)', // should have 1 param
-      'base64(false)', // param should be string
       'base64ToBinary()', // should have 1 param
       'base64ToBinary(hello, world)', // should have 1 param
       'base64ToBinary(false)', // param should be string
