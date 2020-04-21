@@ -11,7 +11,7 @@ import { keyBy } from 'lodash';
 import { EvaluationTarget } from './evaluationTarget';
 import { Evaluator } from './evaluator';
 import * as lp from './generated/LGFileParser';
-import { LGFileParserVisitor } from './generated/LGFileParserVisitor';
+import { LGTemplateParserVisitor } from './generated/LGTemplateParserVisitor';
 import { Template } from './template';
 import { TemplateExtensions } from './templateExtensions';
 import { AnalyzerResult } from './analyzerResult';
