@@ -309,7 +309,7 @@ export abstract class InputDialog extends Dialog {
         const activityProcessed = dc.state.getValue(TurnPath.activityProcessed);
         if (!activityProcessed && !input && turnCount > 0) {
             if ((this.constructor.name) == 'AttachmentInput') {
-                input = dc.context.activity.attachments;
+                input = dc.context.activity.attachments || [];
             } else {
                 input = dc.context.activity.text;
 
