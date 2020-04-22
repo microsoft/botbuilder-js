@@ -10,21 +10,21 @@ import { AbstractParseTreeVisitor, TerminalNode } from 'antlr4ts/tree';
 import { ExpressionParser, ExpressionParserInterface } from 'adaptive-expressions';
 import { Diagnostic, DiagnosticSeverity } from './diagnostic';
 import { Evaluator } from './evaluator';
-import * as lp from './generated/LGFileParser';
-import { LGFileParserVisitor } from './generated/LGFileParserVisitor';
+import * as lp from './generated/LGTemplateParser';
+import { LGTemplateParserVisitor } from './generated/LGTemplateParserVisitor';
 import { Templates } from './templates';
 import { TemplateErrors } from './templateErrors';
-import { Position } from './position';
 import { Range } from './range';
 import { TemplateExtensions } from './templateExtensions';
+import { Template } from './template';
 
 /**
  * LG managed code checker.
  */
-export class StaticChecker extends AbstractParseTreeVisitor<Diagnostic[]> implements LGFileParserVisitor<Diagnostic[]> {
+export class StaticChecker extends AbstractParseTreeVisitor<Diagnostic[]> implements LGTemplateParserVisitor<Diagnostic[]> {
     private readonly baseExpressionParser: ExpressionParser;
     private readonly templates: Templates;
-    private visitedTemplateNames: string[];
+    private currentTemplate: Template;
     private _expressionParser: ExpressionParserInterface;
 
     public constructor(templates: Templates) {
@@ -46,52 +46,37 @@ export class StaticChecker extends AbstractParseTreeVisitor<Diagnostic[]> implem
 
     /**
      * Return error messages list.
-     * @returns report result.
+     * @returns Report result.
      */
     public check(): Diagnostic[] {
-        this.visitedTemplateNames = [];
-        var result = [];
+        var result: Diagnostic[] = [];
 
         if (this.templates.allTemplates.length === 0)
         {
-            result.push(this.buildLGDiagnostic(TemplateErrors.noTemplate, DiagnosticSeverity.Warning, undefined, false));
-
+            const diagnostic = new Diagnostic(Range.DefaultRange, TemplateErrors.noTemplate, DiagnosticSeverity.Warning, this.templates.id);
+            result.push(diagnostic);
             return result;
         }
 
-        this.templates.toArray().forEach((t): Diagnostic[] => result = result.concat(this.visit(t.parseTree)));
-        return result;
-    }
+        for (const template of this.templates) {
+            this.currentTemplate = template;
+            let templateDiagnostics: Diagnostic[] = [];
 
-    public visitTemplateDefinition(context: lp.TemplateDefinitionContext): Diagnostic[]
-    {
-        var result = [];
-        var templateNameLine = context.templateNameLine();
-        var errorTemplateName = templateNameLine.errorTemplateName();
-        if (errorTemplateName) {
-            result.push(this.buildLGDiagnostic(TemplateErrors.invalidTemplateName, undefined, errorTemplateName, false));
-        } else {
-            var templateName = context.templateNameLine().templateName().text;
-
-            if (this.visitedTemplateNames.includes(templateName)) {
-                result.push(this.buildLGDiagnostic(TemplateErrors.duplicatedTemplateInSameTemplate(templateName),undefined, templateNameLine));
-            } else {
-                this.visitedTemplateNames.push(templateName);
-                for (const reference of this.templates.references) {
-                    var sameTemplates = reference.toArray().filter((u): boolean => u.name === templateName);
-                    for(const sameTemplate of sameTemplates) {
-                        result.push(this.buildLGDiagnostic( TemplateErrors.duplicatedTemplateInDiffTemplate(sameTemplate.name, sameTemplate.source), undefined, templateNameLine));
-                    }
-                }
-
-                if (result.length > 0) {
-                    return result;
-                } else if (!context.templateBody()) {
-                    result.push(this.buildLGDiagnostic(TemplateErrors.noTemplateBody(templateName), DiagnosticSeverity.Warning, context.templateNameLine()));
-                } else {
-                    result = result.concat(this.visit(context.templateBody()));
+            for (const reference of this.templates.references) {
+                var sameTemplates = reference.toArray().filter((u): boolean => u.name === template.name);
+                for(const sameTemplate of sameTemplates) {
+                    const startLine = template.sourceRange.range.start.line;
+                    const range = new Range(startLine, 0, startLine, template.name.length + 1);
+                    const diagnostic = new Diagnostic(range, TemplateErrors.duplicatedTemplateInDiffTemplate(sameTemplate.name, sameTemplate.sourceRange.source), DiagnosticSeverity.Error, this.templates.id);
+                    templateDiagnostics.push(diagnostic);
                 }
             }
+
+            if (templateDiagnostics.length === 0 && template.templateBodyParseTree !== undefined) {
+                templateDiagnostics.push(...this.visit(template.templateBodyParseTree));
+            }
+
+            result.push(...templateDiagnostics);
         }
 
         return result;
@@ -319,13 +304,10 @@ export class StaticChecker extends AbstractParseTreeVisitor<Diagnostic[]> implem
         return result;
     }
 
-    private buildLGDiagnostic( message: string, severity: DiagnosticSeverity = undefined, context: ParserRuleContext = undefined, includeTemplateNameInfo: boolean = true): Diagnostic {
-        const startPosition = context === undefined ? new Position(0, 0) : new Position(context.start.line, context.start.charPositionInLine);
-        const stopPosition = context === undefined ? new Position(0, 0) : new Position(context.stop.line, context.stop.charPositionInLine + context.stop.text.length);
-        severity = severity? severity : DiagnosticSeverity.Error;
-        const range = new Range(startPosition, stopPosition);
-        message = (this.visitedTemplateNames.length > 0 && includeTemplateNameInfo)? `[${ this.visitedTemplateNames[this.visitedTemplateNames.length - 1] }]`+ message : message;
-        
+    private buildLGDiagnostic( message: string, severity: DiagnosticSeverity = undefined, context: ParserRuleContext = undefined): Diagnostic {
+        const lineOffset = this.currentTemplate !== undefined ? this.currentTemplate.sourceRange.range.start.line : 0;
+        message = this.currentTemplate !== undefined ? `[${ this.currentTemplate.name }]` + message : message;
+        const range = context === undefined ? new Range(lineOffset + 1, 0, lineOffset + 1, 0) : TemplateExtensions.convertToRange(context, lineOffset);
         return new Diagnostic(range, message, severity, this.templates.id);
     }
 }

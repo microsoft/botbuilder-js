@@ -262,8 +262,19 @@ it(`TestMultiLineExpressionInLG`, function() {
     diagnostics = Templates.parseText('#Demo4\r\n- ${createArray(1,\r\n2,3)\r\n> this is a comment').diagnostics;
     assert.strictEqual(diagnostics.length, 1);
     assert.strictEqual(diagnostics[0].message.includes(`Close } is missing in Expression`), true);
+});
 
-    diagnostics = Templates.parseText('#Demo4\r\n- ${createArray(1,\r\n2,3)\r\n#AnotherTemplate').diagnostics;
-    assert.strictEqual(diagnostics.length, 1);
-    assert.strictEqual(diagnostics[0].message.includes(`Close } is missing in Expression`), true);
+it(`TestErrorLine`, function() {
+    var diagnostics = GetDiagnostics(`ErrorLine.lg`);
+    assert.strictEqual(diagnostics.length, 4);
+    
+
+    assert.strictEqual(DiagnosticSeverity.Error, diagnostics[0].severity);
+    assert.strictEqual(diagnostics[0].message.includes(TemplateErrors.syntaxError), true);
+    assert.strictEqual(DiagnosticSeverity.Error, diagnostics[1].severity);
+    assert.strictEqual(diagnostics[1].message.includes(TemplateErrors.invalidStrucName), true);
+    assert.strictEqual(DiagnosticSeverity.Error, diagnostics[2].severity);
+    assert.strictEqual(diagnostics[2].message.includes(TemplateErrors.missingStrucEnd), true);
+    assert.strictEqual(DiagnosticSeverity.Error, diagnostics[3].severity);
+    assert.strictEqual(diagnostics[3].message.includes(TemplateErrors.invalidStrucBody), true);
 });
