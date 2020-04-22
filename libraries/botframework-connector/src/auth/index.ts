@@ -19,4 +19,5 @@ export * from './endorsementsValidator';
 export * from './claimsIdentity';
 export * from './authenticationConfiguration';
 export * from './authenticationConstants';
+export * from './authenticationError';
 export * from './skillValidation';

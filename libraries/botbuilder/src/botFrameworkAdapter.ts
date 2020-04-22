@@ -7,10 +7,10 @@
  */
 
 import { STATUS_CODES } from 'http';
-import * as os from 'os';
+import { arch, release, type } from 'os';
 
-import { Activity, ActivityTypes, CoreAppCredentials, BotAdapter, BotCallbackHandlerKey, ChannelAccount, ConversationAccount, ConversationParameters, ConversationReference, ConversationsResult, DeliveryModes, ExpectedReplies, InvokeResponse, ExtendedUserTokenProvider, ResourceResponse, StatusCodes, TokenResponse, TurnContext, INVOKE_RESPONSE_KEY } from 'botbuilder-core';
-import { AuthenticationConfiguration, AuthenticationConstants, ChannelValidation, Claim, ClaimsIdentity, ConnectorClient, EmulatorApiClient, GovernmentConstants, GovernmentChannelValidation, JwtTokenValidation, MicrosoftAppCredentials, AppCredentials, CertificateAppCredentials, SimpleCredentialProvider, TokenApiClient, TokenStatus, TokenApiModels, SignInUrlResponse, SkillValidation, TokenExchangeRequest } from 'botframework-connector';
+import { Activity, ActivityTypes, CallerIdConstants, CoreAppCredentials, BotAdapter, BotCallbackHandlerKey, ChannelAccount, ConversationAccount, ConversationParameters, ConversationReference, ConversationsResult, DeliveryModes, ExpectedReplies, ExtendedUserTokenProvider, InvokeResponse, INVOKE_RESPONSE_KEY, IStatusCodeError, ResourceResponse, StatusCodes, TokenResponse, TurnContext } from 'botbuilder-core';
+import { AuthenticationConfiguration, AuthenticationConstants, ChannelValidation, Claim, ClaimsIdentity, ConnectorClient, ConnectorClientOptions, EmulatorApiClient, GovernmentConstants, GovernmentChannelValidation, JwtTokenValidation, MicrosoftAppCredentials, AppCredentials, CertificateAppCredentials, SimpleCredentialProvider, TokenApiClient, TokenStatus, TokenApiModels, SignInUrlResponse, SkillValidation, TokenExchangeRequest, AuthenticationError } from 'botframework-connector';
 
 import { INodeBuffer, INodeSocket, IReceiveRequest, ISocket, IStreamingTransportServer, NamedPipeServer, NodeWebSocketFactory, NodeWebSocketFactoryBase, RequestHandler, StreamingResponse, WebSocketServer } from 'botframework-streaming';
 
@@ -72,12 +72,17 @@ export interface BotFrameworkAdapterSettings {
      * Optional. Used to require specific endorsements and verify claims. Recommended for Skills.
      */
     authConfig?: AuthenticationConfiguration;
+
+    /**
+     * Optional. Used when creating new ConnectorClients.
+     */
+    clientOptions?: ConnectorClientOptions;
 }
 
 // Retrieve additional information, i.e., host operating system, host OS release, architecture, Node.js version
-const ARCHITECTURE: any = os.arch();
-const TYPE: any = os.type();
-const RELEASE: any = os.release();
+const ARCHITECTURE: any = arch();
+const TYPE: any = type();
+const RELEASE: any = release();
 const NODE_VERSION: any = process.version;
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
@@ -822,6 +827,9 @@ export class BotFrameworkAdapter extends BotAdapter implements ExtendedUserToken
             const authHeader: string = req.headers.authorization || req.headers.Authorization || '';
 
             const identity = await this.authenticateRequestInternal(request, authHeader);
+
+            // Set the correct callerId value and discard values received over the wire
+            request.callerId = await this.generateCallerId(identity);
             
             // Process received activity
             status = 500;
@@ -1058,16 +1066,27 @@ export class BotFrameworkAdapter extends BotAdapter implements ExtendedUserToken
                 throw new Error(`Cannot create streaming connector client for serviceUrl ${ serviceUrl } without a streaming connection. Call 'useWebSocket' or 'useNamedPipe' to start a streaming connection.`);
             }
 
-            return new ConnectorClient(
-                credentials,
-                {
-                    baseUri: serviceUrl,
-                    userAgent: USER_AGENT,
-                    httpClient: new StreamingHttpClient(this.streamingServer)
-                });
+            const clientOptions = this.getClientOptions(serviceUrl, new StreamingHttpClient(this.streamingServer));
+            return new ConnectorClient(credentials, clientOptions);
         }
 
-        return new ConnectorClient(credentials, { baseUri: serviceUrl, userAgent: USER_AGENT });
+        const clientOptions = this.getClientOptions(serviceUrl);
+        return new ConnectorClient(credentials, clientOptions);
+    }
+
+    /**
+     * @private
+     * @param serviceUrl The service URL to use for the new ConnectorClientOptions.
+     * @param httpClient Optional. The @azure/ms-rest-js.HttpClient to use for the new ConnectorClientOptions.
+     */
+    private getClientOptions(serviceUrl: string, httpClient?: any): ConnectorClientOptions {
+        const options = Object.assign({ baseUri: serviceUrl } as ConnectorClientOptions, this.settings.clientOptions);
+        if(httpClient) {
+            options.httpClient = httpClient;
+        }
+
+        options.userAgent = `${ USER_AGENT }${ options.userAgent || '' }`;
+        return options;
     }
 
     /**
@@ -1145,8 +1164,11 @@ export class BotFrameworkAdapter extends BotAdapter implements ExtendedUserToken
     * @param authHeader Received authentication header.
     */
     protected async authenticateRequest(request: Partial<Activity>, authHeader: string): Promise<void> {
-        const claims = await this.authenticateRequestInternal(request, authHeader);
-        if (!claims.isAuthenticated) { throw new Error('Unauthorized Access. Request is not authorized'); }
+        const identity = await this.authenticateRequestInternal(request, authHeader);
+        if (!identity.isAuthenticated) { throw new Error('Unauthorized Access. Request is not authorized'); }
+
+        // Set the correct callerId value and discard values received over the wire
+        request.callerId = await this.generateCallerId(identity);
     }
 
     /**
@@ -1166,6 +1188,42 @@ export class BotFrameworkAdapter extends BotAdapter implements ExtendedUserToken
             this.settings.channelService,
             this.authConfiguration
         );
+    }
+
+    /**
+     * Generates the CallerId property for the activity based on
+     * https://github.com/microsoft/botframework-obi/blob/master/protocols/botframework-activity/botframework-activity.md#appendix-v---caller-id-values.
+     * @param identity 
+     */
+    private async generateCallerId(identity: ClaimsIdentity): Promise<string> {
+        if (!identity) {
+            throw new TypeError('BotFrameworkAdapter.generateCallerId(): Missing identity parameter.');
+        }
+
+        // Is the bot accepting all incoming messages?
+        const isAuthDisabled = await this.credentialsProvider.isAuthenticationDisabled();
+        if (isAuthDisabled) {
+            // Return undefined so that the callerId is cleared.
+            return;
+        }
+        
+        // Is the activity from another bot?
+        if (SkillValidation.isSkillClaim(identity.claims)) {
+            const callerId = JwtTokenValidation.getAppIdFromClaims(identity.claims);
+            return `${ CallerIdConstants.BotToBotPrefix }${ callerId }`;
+        }
+
+        // Is the activity from Public Azure?
+        if (!this.settings.channelService || this.settings.channelService.length === 0) {
+            return CallerIdConstants.PublicAzureChannel;
+        }
+
+        // Is the activity from Azure Gov?
+        if (JwtTokenValidation.isGovernment(this.settings.channelService)) {
+            return CallerIdConstants.USGovChannel;
+        }
+
+        // Return undefined so that the callerId is cleared.
     }
 
     /**
@@ -1336,21 +1394,7 @@ export class BotFrameworkAdapter extends BotAdapter implements ExtendedUserToken
         try {
             await this.authenticateConnection(req, this.settings.channelService);
         } catch (err) {
-            // If the authenticateConnection call fails, send back the correct error code and close
-            // the connection.
-            if (typeof(err.message) === 'string') {
-                if (err.message.toLowerCase().startsWith('unauthorized')) {
-                    abortWebSocketUpgrade(socket, 401, err.message);
-                } else if (err.message.toLowerCase().startsWith(`'authheader'`)) {
-                    abortWebSocketUpgrade(socket, 400, err.message);
-                } else {
-                    abortWebSocketUpgrade(socket, 500, err.message);
-                }
-            } else {
-                abortWebSocketUpgrade(socket, 500);
-            }
-
-            // Re-throw the error so the developer will know what occurred.
+            abortWebSocketUpgrade(socket, err);
             throw err;
         }
 
@@ -1374,7 +1418,9 @@ export class BotFrameworkAdapter extends BotAdapter implements ExtendedUserToken
         const serviceUrl = claims.getClaimValue(AuthenticationConstants.ServiceUrlClaim);
         AppCredentials.trustServiceUrl(serviceUrl);
 
-        if (!claims.isAuthenticated) { throw new Error('Unauthorized Access. Request is not authorized'); }
+        if (!claims.isAuthenticated) { 
+            throw new AuthenticationError('Unauthorized Access. Request is not authorized', StatusCodes.UNAUTHORIZED); 
+        }
     }
 
     /**
@@ -1474,11 +1520,22 @@ function delay(timeout: number): Promise<void> {
     });
 }
 
-function abortWebSocketUpgrade(socket: INodeSocket, code: number, message?: string): void {
+/**
+* Creates an error message with status code to write to socket, then closes the connection.
+* 
+* @param socket The raw socket connection between the bot (server) and channel/caller (client).
+* @param err The error. If the error includes a status code, it will be included in the message written to the socket.
+*/
+function abortWebSocketUpgrade(socket: INodeSocket, err: any): void {
     if (socket.writable) {
         const connectionHeader = `Connection: 'close'\r\n`;
-        socket.write(`HTTP/1.1 ${ code } ${ STATUS_CODES[code] }\r\n${ message }\r\n${ connectionHeader }\r\n`);
-    }
 
+        let message = '';
+        AuthenticationError.isStatusCodeError(err) ? 
+            message = `HTTP/1.1 ${ err.statusCode } ${ StatusCodes[err.statusCode] }\r\n${ err.message }\r\n${ connectionHeader }\r\n`
+            : message = AuthenticationError.determineStatusCodeAndBuildMessage(err);
+        
+        socket.write(message);
+    }
     socket.destroy();
 }

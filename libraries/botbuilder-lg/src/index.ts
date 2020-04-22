@@ -27,3 +27,4 @@ export * from './errorListener';
 export * from './customizedMemory';
 export * from './expander';
 export * from './multiLanguageLG';
+export * from './evaluationOptions';

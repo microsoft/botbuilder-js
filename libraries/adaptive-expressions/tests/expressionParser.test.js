@@ -27,19 +27,24 @@ const dataSource = [
     ['`hi ${string(\'jack`\')}`', 'hi jack`'],
     ['`\\${world}`', '${world}'],
     ['length(`hello ${world}`)', 'hello world'.length],
-    ['json(`{"foo": "${hello}","item": "${world}"}`).foo', 'hello'],
-    ['`hello ${world}` == \'hello world\'', true],
-    ['`hello ${world}` != \'hello hello\'', true],
-    ['`hello ${user.nickname}` == \'hello John\'', true],
-    ['`hello ${user.nickname}` != \'hello Dong\'', true],
+    ['json(`{"foo":"${hello}","item":"${world}"}`).foo', 'hello'],
+    ['`{expr: hello all}`', '{expr: hello all}'],
+    ['json(`{"foo":${{text:"hello"}},"item": "${world}"}`).foo.text', 'hello'],
+    ['json(`{"foo":${{text:"hello", cool: "hot", obj:{new: 123}}},"item": "${world}"}`).foo.text', 'hello'],
     ['`hi\\`[1,2,3]`', 'hi`[1,2,3]'],
     ['`hi ${[\'jack`\', \'queen\', \'king\']}`', 'hi jack`,queen,king'],
     ['`abc ${concat("[", "]")}`', 'abc []'],
     ['`[] ${concat("[]")}`', '[] []'],
     ['`hi ${count(["a", "b", "c"])}`', `hi 3`],
+    ['`hello ${world}` == \'hello world\'', true],
+    ['`hello ${world}` != \'hello hello\'', true],
+    ['`hello ${user.nickname}` == \'hello John\'', true],
+    ['`hello ${user.nickname}` != \'hello Dong\'', true],
+    ['`hello ${string({obj:  1})}`', 'hello {"obj":1}'],
+    ['`hello ${string({obj:  "${not expr}"})}`', 'hello {"obj":"${not expr}"}'],
+    ['`hello ${string({obj:  {a: 1}})}`', 'hello {"obj":{"a":1}}'],
 
-
-    // Operators tests
+    //Operators tests
 
     ['user.income-user.outcome', -10.0],
     ['user.income - user.outcome', -10.0],
@@ -353,6 +358,7 @@ const dataSource = [
     ['base64ToString(base64(hello))', 'hello'],
     ['dataUriToBinary(base64(hello))', new Uint8Array([ 97, 71, 86, 115, 98, 71, 56, 61 ])],
     ['uriComponent(\'http://contoso.com\')', 'http%3A%2F%2Fcontoso.com'],
+    ['{a: 1, b: newExpr}.b', 'new land'],
 
     // Math functions tests
     ['add(1, 2, 3)', 6],
@@ -537,9 +543,21 @@ const dataSource = [
     ['flatten(createArray(1,createArray(2),createArray(createArray(3, 4), createArray(5,6))))', [1, 2, 3, 4, 5, 6]],
     ['flatten(createArray(1,createArray(2),createArray(createArray(3, 4), createArray(5,6))), 1)', [1, 2, [3,4], [5,6]]],
     ['unique(createArray(1, 5, 1))', [1, 5]],
-    // Object manipulation and construction functions tests
+    
+    //Object manipulation and construction functions tests
+    ['{text:"hello"}.text', 'hello'],
+    ['{name: user.name}.name', undefined],
+    ['{name: user.nickname}.name', 'John'],
     ['string(addProperty(json(\'{"key1":"value1"}\'), \'key2\',\'value2\'))', '{"key1":"value1","key2":"value2"}'],
+    ['foreach(items, x, addProperty({}, "a", x))[0].a', 'zero'],
+    ['string(addProperty({"key1":"value1"}, \'key2\',\'value2\'))', '{"key1":"value1","key2":"value2"}'],
     ['string(setProperty(json(\'{"key1":"value1"}\'), \'key1\',\'value2\'))', '{"key1":"value2"}'],
+    ['string(setProperty({"key1":"value1"}, \'key1\',\'value2\'))', '{"key1":"value2"}'],
+    ['string(setProperty({}, \'key1\',\'value2\'))', '{"key1":"value2"}'],
+    ['string(setProperty({}, \'key1\',\'value2{}\'))', '{"key1":"value2{}"}'],
+    ['string([{a: 1}, {b: 2}, {c: 3}][0])', '{"a":1}'],
+    ['string({obj: {"name": "adams"}})', '{"obj":{"name":"adams"}}'],
+    ['string({obj: {"name": "adams"}, txt: {utter: "hello"}})', '{"obj":{"name":"adams"},"txt":{"utter":"hello"}}'],
     ['string(removeProperty(json(\'{"key1":"value1","key2":"value2"}\'), \'key2\'))', '{"key1":"value1"}'],
     ['coalesce(nullObj,\'hello\',nullObj)', 'hello'],
     ['jPath(jsonStr, pathStr )', ['Jazz', 'Accord']],
@@ -634,6 +652,7 @@ const scope = {
     two: 2.0,
     hello: 'hello',
     world: 'world',
+    newExpr: 'new land',
     cit: 'cit',
     y: 'y',
     istrue: true,
@@ -727,7 +746,6 @@ describe('expression parser functional test', () => {
             assert(error === undefined, `input: ${ input }, Has error: ${ error }`);
 
             const expected = data[1];
-
             assertObjectEquals(actual, expected);
 
             //Assert ExpectedRefs
@@ -833,8 +851,10 @@ describe('expression parser functional test', () => {
 });
 
 var assertObjectEquals = (actual, expected) => {
-    if (actual === undefined || expected === undefined) {
+    if (actual === undefined && expected === undefined) {
         return;
+    } else if(actual === undefined || expected === undefined) {
+        assert.fail();
     } else if (typeof actual === 'number' && typeof expected === 'number') {
         assert.equal(parseFloat(actual), parseFloat(expected), `actual is: ${ actual }, expected is ${ expected }`);
     } else if (Array.isArray(actual) && Array.isArray(expected)) {

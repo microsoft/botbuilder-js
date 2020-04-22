@@ -5,7 +5,7 @@ const {
     LanguageGeneratorMiddleWare,
     LanguageGeneratorManager,
     ResourceMultiLanguageGenerator } = require('../');
-const { ResourceExplorer } = require('../../botbuilder-dialogs-declarative');
+const { ResourceExplorer } = require('botbuilder-dialogs-declarative');
 const assert = require('assert');
 const { TestAdapter, TurnContext } = require('botbuilder-core');
 
@@ -37,7 +37,7 @@ async function getTurnContext(locale, generator) {
 }
 
 describe('LGLanguageGenerator', function() {
-    this.timeout(20000);
+    this.timeout(3000);
 
     it('TestNotFoundTemplate', async function() {
         const context = getTurnContext('');
@@ -79,103 +79,145 @@ describe('LGLanguageGenerator', function() {
 
     });
 
-    it('TestMultiLangGenerator', async function() {
+    describe('TestMultiLangGenerator', () => {
         const lg = new MultiLanguageGenerator();
-        const multiLanguageResources = await LanguageResourceLoader.groupByLocale(resourceExplorer);
 
-        let resource = await resourceExplorer.getResource('test.lg');
-        let text = await resource.readText();
-
-        lg.languageGenerators.set('', new TemplateEngineLanguageGenerator(text, 'test.lg', multiLanguageResources));
-
-        resource = await resourceExplorer.getResource('test.de.lg');
-        text = await resource.readText();
-        lg.languageGenerators.set('de', new TemplateEngineLanguageGenerator(text, 'test.de.lg', multiLanguageResources));
-
-        resource = await resourceExplorer.getResource('test.en.lg');
-        text = await resource.readText();
-        lg.languageGenerators.set('en', new TemplateEngineLanguageGenerator(text, 'test.en.lg', multiLanguageResources));
-
-        resource = await resourceExplorer.getResource('test.en-US.lg');
-        text = await resource.readText();
-        lg.languageGenerators.set('en-us', new TemplateEngineLanguageGenerator(text, 'test.en-US.lg', multiLanguageResources));
-
-
-        resource = await resourceExplorer.getResource('test.en-GB.lg');
-        text = await resource.readText();
-        lg.languageGenerators.set('en-gb', new TemplateEngineLanguageGenerator(text, 'test.en-GB.lg', multiLanguageResources));
-
-
-        resource = await resourceExplorer.getResource('test.fr.lg');
-        text = await resource.readText();
-        lg.languageGenerators.set('fr', new TemplateEngineLanguageGenerator(text, 'test.fr.lg', multiLanguageResources));
+        this.beforeAll(async function() {
+            const multiLanguageResources = await LanguageResourceLoader.groupByLocale(resourceExplorer);
         
-        const result1 = await lg.generate(await getTurnContext('en-US'), '${test()}', undefined);
-        assert.equal(result1, 'english-us');
+            let resource = await resourceExplorer.getResource('test.lg');
+            let text = await resource.readText();
+        
+            lg.languageGenerators.set('', new TemplateEngineLanguageGenerator(text, 'test.lg', multiLanguageResources));
+        
+            resource = await resourceExplorer.getResource('test.de.lg');
+            text = await resource.readText();
+            lg.languageGenerators.set('de', new TemplateEngineLanguageGenerator(text, 'test.de.lg', multiLanguageResources));
+        
+            resource = await resourceExplorer.getResource('test.en.lg');
+            text = await resource.readText();
+            lg.languageGenerators.set('en', new TemplateEngineLanguageGenerator(text, 'test.en.lg', multiLanguageResources));
+        
+            resource = await resourceExplorer.getResource('test.en-US.lg');
+            text = await resource.readText();
+            lg.languageGenerators.set('en-us', new TemplateEngineLanguageGenerator(text, 'test.en-US.lg', multiLanguageResources));
+        
+            resource = await resourceExplorer.getResource('test.en-GB.lg');
+            text = await resource.readText();
+            lg.languageGenerators.set('en-gb', new TemplateEngineLanguageGenerator(text, 'test.en-GB.lg', multiLanguageResources));
+        
+            resource = await resourceExplorer.getResource('test.fr.lg');
+            text = await resource.readText();
+            lg.languageGenerators.set('fr', new TemplateEngineLanguageGenerator(text, 'test.fr.lg', multiLanguageResources));
+        });
 
-        const result2 = await lg.generate(await getTurnContext('en-GB'), '${test()}', undefined);
-        assert.equal(result2, 'english-gb');
+        it('en-US, "${test()}", no data', async () => {
+            const result1 = await lg.generate(await getTurnContext('en-US'), '${test()}', undefined);
+            assert.equal(result1, 'english-us');
+        });
 
-        const result3 = await lg.generate(await getTurnContext('en'), '${test()}', undefined);
-        assert.equal(result3, 'english');
+        it('en-GB, "${test()}", no data', async () => {
+            const result2 = await lg.generate(await getTurnContext('en-GB'), '${test()}', undefined);
+            assert.equal(result2, 'english-gb');
+        });
 
-        const result4 = await lg.generate(await getTurnContext(''), '${test()}', undefined);
-        assert.equal(result4, 'default');
+        it('en, "${test()}", no data', async () => {
+            const result3 = await lg.generate(await getTurnContext('en'), '${test()}', undefined);
+            assert.equal(result3, 'english');
+        });
 
-        const result5 = await lg.generate(await getTurnContext('foo'), '${test()}', undefined);
-        assert.equal(result5, 'default');
+        it('no locale, "${test()}", no data', async () => {
+            const result4 = await lg.generate(await getTurnContext(''), '${test()}', undefined);
+            assert.equal(result4, 'default');
+        });
 
-        const result6 = await lg.generate(await getTurnContext('en-US'), '${test2()}', {country: 'US'});
-        assert.equal(result6, 'english-US');
+        it('bad locale, "${test()}", no data', async () => {
+            const result5 = await lg.generate(await getTurnContext('foo'), '${test()}', undefined);
+            assert.equal(result5, 'default');
+        });
 
-        const result7 = await lg.generate(await getTurnContext('en-GB'), '${test2()}', undefined);
-        assert.equal(result7, 'default2');
+        it('en-US, "${test2()}", country data', async () => {
+            const result6 = await lg.generate(await getTurnContext('en-US'), '${test2()}', {country: 'US'});
+            assert.equal(result6, 'english-US');
+        });
 
-        const result8 = await lg.generate(await getTurnContext('en'), '${test2()}', undefined);
-        assert.equal(result8, 'default2');
+        it('en-GB, "${test2()}", no data', async () => {
+            const result7 = await lg.generate(await getTurnContext('en-GB'), '${test2()}', undefined);
+            assert.equal(result7, 'default2');
+        });
 
-        const result9 = await lg.generate(await getTurnContext(''), '${test2()}', undefined);
-        assert.equal(result9, 'default2');
+        it('en, "${test2()}", no data', async () => {
+            const result8 = await lg.generate(await getTurnContext('en'), '${test2()}', undefined);
+            assert.equal(result8, 'default2');
+        });
 
-        const result10 = await lg.generate(await getTurnContext('foo'), '${test2()}', undefined);
-        assert.equal(result10, 'default2');
+        it('no locale, "${test2()}", no data', async () => {
+            const result9 = await lg.generate(await getTurnContext(''), '${test2()}', undefined);
+            assert.equal(result9, 'default2');
+        });
+
+        it('bad locale, "${test2()}", no data', async () => {
+            const result10 = await lg.generate(await getTurnContext('foo'), '${test2()}', undefined);
+            assert.equal(result10, 'default2');
+        });
     });
 
-    it('TestResourceMultiLangGenerator', async function() {
+    describe('TestResourceMultiLangGenerator', () => {
         const lg = new ResourceMultiLanguageGenerator('test.lg');
 
-        const result1 = await lg.generate(await getTurnContext('en-us', lg), '${test()}', undefined);
-        assert.equal(result1, 'english-us');
+        it('en-us, "${test()}", no data', async () => {
+            const result1 = await lg.generate(await getTurnContext('en-us', lg), '${test()}', undefined);
+            assert.equal(result1, 'english-us');
+        });
 
-        const result2 = await lg.generate(await getTurnContext('en-us', lg), '${test()}', { country: 'us' });
-        assert.equal(result2, 'english-us');
+        it('en-us, "${test()}", country data', async () => {
+            const result2 = await lg.generate(await getTurnContext('en-us', lg), '${test()}', { country: 'us' });
+            assert.equal(result2, 'english-us');
+        });
 
-        const result3 = await lg.generate(await getTurnContext('en-gb', lg), '${test()}', undefined);
-        assert.equal(result3, 'english-gb');
+        it('en-gb, "${test()}", no data', async () => {
+            const result3 = await lg.generate(await getTurnContext('en-gb', lg), '${test()}', undefined);
+            assert.equal(result3, 'english-gb');
+        });
 
-        const result4 = await lg.generate(await getTurnContext('en', lg), '${test()}', undefined);
-        assert.equal(result4, 'english');
+        it('en, "${test()}", no data', async () => {
+            const result4 = await lg.generate(await getTurnContext('en', lg), '${test()}', undefined);
+            assert.equal(result4, 'english');
+        });
 
-        const result5 = await lg.generate(await getTurnContext('', lg), '${test()}', undefined);
-        assert.equal(result5, 'default');
+        it('no locale, "${test()}", no data', async () => {
+            const result5 = await lg.generate(await getTurnContext('', lg), '${test()}', undefined);
+            assert.equal(result5, 'default');
+        });
 
-        const result6 = await lg.generate(await getTurnContext('foo', lg), '${test()}', undefined);
-        assert.equal(result6, 'default');
+        it('bad locale, "${test()}", no data', async () => {
+            const result6 = await lg.generate(await getTurnContext('foo', lg), '${test()}', undefined);
+            assert.equal(result6, 'default');
+        });
 
-        const result7 = await lg.generate(await getTurnContext('en-gb', lg), '${test2()}', undefined);
-        assert.equal(result7, 'default2');
+        it('en-gb, "${test2()}", no data', async () => {
+            const result7 = await lg.generate(await getTurnContext('en-gb', lg), '${test2()}', undefined);
+            assert.equal(result7, 'default2');
+        });
 
-        const result8 = await lg.generate(await getTurnContext('en', lg), '${test2()}', undefined);
-        assert.equal(result8, 'default2');
+        it('en, "${test2()}", no data', async () => {
+            const result8 = await lg.generate(await getTurnContext('en', lg), '${test2()}', undefined);
+            assert.equal(result8, 'default2');
+        });
 
-        const result9 = await lg.generate(await getTurnContext('', lg), '${test2()}', undefined);
-        assert.equal(result9, 'default2');
+        it('no locale, "${test2()}", no data', async () => {
+            const result9 = await lg.generate(await getTurnContext('', lg), '${test2()}', undefined);
+            assert.equal(result9, 'default2');
+        });
 
-        const result10 = await lg.generate(await getTurnContext('foo', lg), '${test2()}', undefined);
-        assert.equal(result10, 'default2');
+        it('bad locale, "${test2()}", no data', async () => {
+            const result10 = await lg.generate(await getTurnContext('foo', lg), '${test2()}', undefined);
+            assert.equal(result10, 'default2');
+        });
 
-        const result11 = await lg.generate(await getTurnContext('en-us', lg), '${test2()}', {country: 'US'});
-        assert.equal(result11, 'english-US');
-
+        it('en-us, "${test2()}", country data', async () => {
+            const result11 = await lg.generate(await getTurnContext('en-us', lg), '${test2()}', {country: 'US'});
+            assert.equal(result11, 'english-US');
+        });
     });
 });

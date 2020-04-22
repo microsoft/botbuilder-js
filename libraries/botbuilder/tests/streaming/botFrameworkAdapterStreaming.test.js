@@ -123,8 +123,9 @@ describe('BotFrameworkAdapter Streaming tests', () => {
                     await bot.run(context);
                 });
             } catch (err) {
+                expect(err.statusCode).to.equal(StatusCodes.UNAUTHORIZED);
                 expect(err.message).to.equal('Unauthorized. No valid identity.');
-                const socketResponse = MockNetSocket.createNonSuccessResponse(401, err.message);
+                const socketResponse = MockNetSocket.createNonSuccessResponse(StatusCodes.UNAUTHORIZED, err.message);
                 expect(writeSpy.called).to.be.true;
                 expect(writeSpy.calledWithExactly(socketResponse)).to.be.true;
                 expect(destroySpy.calledOnceWithExactly()).to.be.true;
@@ -147,18 +148,13 @@ describe('BotFrameworkAdapter Streaming tests', () => {
                 });
             } catch (err) {
                 expect(err.message).to.equal("'authHeader' required.");
-                const socketResponse = MockNetSocket.createNonSuccessResponse(400, err.message);
+                expect(err.statusCode).to.equal(StatusCodes.BAD_REQUEST);
+                const socketResponse = MockNetSocket.createNonSuccessResponse(StatusCodes.BAD_REQUEST, err.message);
                 expect(writeSpy.called).to.be.true;
                 expect(writeSpy.calledWithExactly(socketResponse)).to.be.true;
                 expect(destroySpy.calledOnceWithExactly()).to.be.true;
             };
         });
-
-        try {
-            
-        } catch (error) {
-            
-        }
 
         it('returns status code 500 when request logic is not callable', async () => {
             const adapter = new BotFrameworkAdapter(new TestAdapterSettings());
@@ -185,7 +181,7 @@ describe('BotFrameworkAdapter Streaming tests', () => {
             });
 
             const response = await adapter.processRequest(request);
-            expect(response.statusCode).to.equal(400);
+            expect(response.statusCode).to.equal(StatusCodes.BAD_REQUEST);
         });
 
         it('returns a 400 when the request is missing path', async () => {
@@ -195,7 +191,7 @@ describe('BotFrameworkAdapter Streaming tests', () => {
             });
 
             const response = await adapter.processRequest(request);
-            expect(response.statusCode).to.equal(400);
+            expect(response.statusCode).to.equal(StatusCodes.BAD_REQUEST);
         });
 
         it('returns a 400 when the request body is missing', async () => {
@@ -205,7 +201,7 @@ describe('BotFrameworkAdapter Streaming tests', () => {
             });
 
             const response = await adapter.processRequest(request);
-            expect(response.statusCode).to.equal(400);
+            expect(response.statusCode).to.equal(StatusCodes.BAD_REQUEST);
         });
 
         it('returns user agent information when a GET hits the version endpoint', async () => {
@@ -216,7 +212,7 @@ describe('BotFrameworkAdapter Streaming tests', () => {
             });
 
             const response = await adapter.processRequest(request);
-            expect(response.statusCode).to.equal(200);
+            expect(response.statusCode).to.equal(StatusCodes.OK);
             expect(response.streams[0].content).to.not.be.undefined;
         });
 
@@ -228,11 +224,11 @@ describe('BotFrameworkAdapter Streaming tests', () => {
             });
 
             const response = await adapter.processRequest(request);
-            expect(response.statusCode).to.equal(200);
+            expect(response.statusCode).to.equal(StatusCodes.OK);
             expect(response.streams[0].content).to.not.be.undefined;
 
             const response2 = await adapter.processRequest(request);
-            expect(response2.statusCode).to.equal(200);
+            expect(response2.statusCode).to.equal(StatusCodes.OK);
             expect(response2.streams[0].content).to.not.be.undefined;
         });
 
@@ -244,7 +240,7 @@ describe('BotFrameworkAdapter Streaming tests', () => {
             });
 
             const response = await adapter.processRequest(request);
-            expect(response.statusCode).to.equal(405);
+            expect(response.statusCode).to.equal(StatusCodes.METHOD_NOT_ALLOWED);
         });
 
         it('should return 404 for unsupported paths with valid methods', async () => {
@@ -254,7 +250,7 @@ describe('BotFrameworkAdapter Streaming tests', () => {
             });
 
             const response = await adapter.processRequest(request);
-            expect(response.statusCode).to.equal(404);
+            expect(response.statusCode).to.equal(StatusCodes.NOT_FOUND);
         });
 
         it('processes a well formed request when there is no middleware with a non-Invoke activity type', async () => {
@@ -270,7 +266,7 @@ describe('BotFrameworkAdapter Streaming tests', () => {
             };
 
             const response = await adapter.processRequest(request);
-            expect(response.statusCode).to.equal(200);
+            expect(response.statusCode).to.equal(StatusCodes.OK);
         });
 
         it('returns a 501 when activity type is invoke, but the activity is invalid', async () => {
@@ -283,7 +279,7 @@ describe('BotFrameworkAdapter Streaming tests', () => {
             };
 
             const response = await adapter.processRequest(request);
-            expect(response.statusCode).to.equal(501);
+            expect(response.statusCode).to.equal(StatusCodes.NOT_IMPLEMENTED);
         });
 
         it('returns a 500 when BotFrameworkAdapter.logic is not callable', async () => {
@@ -291,7 +287,7 @@ describe('BotFrameworkAdapter Streaming tests', () => {
             const request = new MockStreamingRequest();
 
             const response = await adapter.processRequest(request);
-            expect(response.statusCode).to.equal(500);
+            expect(response.statusCode).to.equal(StatusCodes.INTERNAL_SERVER_ERROR);
         });
 
         it('returns a 500 and calls middleware when BotFrameworkAdapter.logic is not callable', async () => {
@@ -308,7 +304,7 @@ describe('BotFrameworkAdapter Streaming tests', () => {
             const request = new MockStreamingRequest();
 
             const response = await adapter.processRequest(request);
-            expect(response.statusCode).to.equal(500);
+            expect(response.statusCode).to.equal(StatusCodes.INTERNAL_SERVER_ERROR);
             expect(middlewareCalled).to.be.true;
         });
 
@@ -334,7 +330,7 @@ describe('BotFrameworkAdapter Streaming tests', () => {
             };
 
             const response = await adapter.processRequest(request);
-            expect(response.statusCode).to.equal(501);
+            expect(response.statusCode).to.equal(StatusCodes.NOT_IMPLEMENTED);
             expect(runSpy.called).to.be.true;
             expect(middlewareCalled).to.be.true;
         });

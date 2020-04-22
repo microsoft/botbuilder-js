@@ -15,4 +15,5 @@ export class TelemetryConstants {
     public readonly textProperty: string = 'text';
     public readonly speakProperty: string = 'speak';
     public readonly userIdProperty: string = 'userId';
+    public readonly attachmentsProperty: string = 'attachments';
 }
