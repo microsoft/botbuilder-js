@@ -17,6 +17,7 @@ export * from './dialogEvents';
 export { runDialog } from './dialogHelper';
 export * from './dialogManager';
 export * from './dialogSet';
+export * from './dialogTurnStateConstants';
 export * from './memory';
 export * from './prompts';
 export * from './skillDialog';

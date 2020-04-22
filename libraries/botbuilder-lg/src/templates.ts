@@ -18,6 +18,7 @@ import { TemplatesParser } from './templatesParser';
 import { AnalyzerResult } from './analyzerResult';
 import { TemplateErrors } from './templateErrors';
 import { TemplateExtensions } from './templateExtensions';
+import { EvaluationOptions } from './evaluationOptions';
 
 /**
  * LG entrance, including properties that LG file has, and evaluate functions.
@@ -121,12 +122,10 @@ export class Templates implements Iterable<Template> {
     }
 
     /**
-     * A value indicating whether lG parser/checker/evaluate strict mode.
-     * If strict mode is on, expression would throw exception instead of return
-     * null or make the condition failed.
+     * A value indicating whether the options when evaluation LG templates.
      */
-    public get strictMode(): boolean {
-        return this.getStrictModeFromOptions(this.options);
+    public get lgOptions(): EvaluationOptions {
+        return new EvaluationOptions(this.options);
     }
 
     /**
@@ -151,9 +150,9 @@ export class Templates implements Iterable<Template> {
     /**
     * parse a file and return LG file.
     * @param filePath LG absolute file path..
-    * @param importResolver resolver to resolve LG import id to template text.
+    * @param importResolver Resolver to resolve LG import id to template text.
     * @param expressionParser Expression parser for evaluating expressions.
-    * @returns new lg file.
+    * @returns New lg file.
     */
     public static parseFile(filePath: string, importResolver?: ImportResolverDelegate, expressionParser?: ExpressionParser): Templates {
         return TemplatesParser.parseFile(filePath, importResolver, expressionParser);
@@ -161,11 +160,11 @@ export class Templates implements Iterable<Template> {
 
     /**
      * Parser to turn lg content into a Templates.
-     * @param content text content contains lg templates.
-     * @param id id is the identifier of content. If importResolver is undefined, id must be a full path string. 
-     * @param importResolver resolver to resolve LG import id to template text.
+     * @param content Text content contains lg templates.
+     * @param id Id is the identifier of content. If importResolver is undefined, id must be a full path string. 
+     * @param importResolver Resolver to resolve LG import id to template text.
      * @param expressionParser Expression parser for evaluating expressions.
-     * @returns entity.
+     * @returns Entity.
      */
     public static parseText(content: string, id: string = '', importResolver?: ImportResolverDelegate, expressionParser?: ExpressionParser): Templates {
         return TemplatesParser.parseText(content, id, importResolver, expressionParser);
@@ -177,10 +176,11 @@ export class Templates implements Iterable<Template> {
      * @param scope The state visible in the evaluation.
      * @returns Evaluate result.
      */
-    public evaluate(templateName: string, scope?: object): any {
+    public evaluate(templateName: string, scope?: object, opt: EvaluationOptions = undefined): any {
         this.checkErrors();
 
-        const evaluator = new Evaluator(this.allTemplates, this.expressionParser, this.strictMode);
+        var evalOpt = opt !== undefined ? opt.merge(this.lgOptions) : this.lgOptions;
+        const evaluator = new Evaluator(this.allTemplates, this.expressionParser, evalOpt);
         return evaluator.evaluateTemplate(templateName, scope);
     }
 
@@ -191,17 +191,18 @@ export class Templates implements Iterable<Template> {
      * @param scope The state visible in the evaluation.
      * @returns Expand result.
      */
-    public expandTemplate(templateName: string, scope?: object): any[] {
+    public expandTemplate(templateName: string, scope?: object, opt: EvaluationOptions = undefined): any[] {
         this.checkErrors();
 
-        const expander = new Expander(this.allTemplates, this.expressionParser, this.strictMode);
+        var evalOpt = opt !== undefined ? opt.merge(this.lgOptions) : this.lgOptions;
+        const expander = new Expander(this.allTemplates, this.expressionParser, evalOpt);
         return expander.expandTemplate(templateName, scope);
     }
 
     /**
-     * Analyzer a template to get the static analyzer results including variables and template references.
+     * Analyze a template to get the static analyzer results including variables and template references.
      * @param templateName Template name to be evaluated.
-     * @returns analyzer result.
+     * @returns Analyzer result.
      */
     public analyzeTemplate(templateName: string): AnalyzerResult {
         this.checkErrors();
@@ -212,10 +213,10 @@ export class Templates implements Iterable<Template> {
 
     /**
      * Use to evaluate an inline template str.
-     * @param inlineStr inline string which will be evaluated.
-     * @param scope scope object or JToken.
+     * @param inlineStr Inline string which will be evaluated.
+     * @param scope Scope object or JToken.
      */
-    public evaluateText(inlineStr: string, scope?: object): any {
+    public evaluateText(inlineStr: string, scope?: object,  opt: EvaluationOptions = undefined): any {
         if (inlineStr === undefined) {
             throw Error('inline string is empty');
         }
@@ -232,15 +233,17 @@ export class Templates implements Iterable<Template> {
         const newContent = `#${ fakeTemplateId } ${ this.newLine } - ${ inlineStr }`;
 
         const newTemplates = TemplatesParser.parseTextWithRef(newContent, this);
-        return newTemplates.evaluate(fakeTemplateId, scope);
+        var evalOpt = opt !== undefined ? opt.merge(this.lgOptions) : this.lgOptions;
+        return newTemplates.evaluate(fakeTemplateId, scope, evalOpt);
     }
 
     /**
     * Update a template and return LG file.
-    * @param templateName new template name.
-    * @param parameters new params.
-    * @param templateBody new  template body.
-    * @returns new lg file.
+    * @param templateName Orignial template name.
+    * @param newTemplateName New template name.
+    * @param parameters New params.
+    * @param templateBody New template body.
+    * @returns New lg file.
     */
     public updateTemplate(templateName: string, newTemplateName: string, parameters: string[], templateBody: string): Templates {
         const template: Template = this.items.find((u: Template): boolean => u.name === templateName);
@@ -252,10 +255,9 @@ export class Templates implements Iterable<Template> {
         const newTemplateBody: string = this.convertTemplateBody(templateBody);
         const content = `${ templateNameLine }${ this.newLine }${ newTemplateBody }`;
 
-        let startLine: number;
-        let stopLine: number;
+        let startLine = template.sourceRange.range.start.line - 1;
+        let stopLine = template.sourceRange.range.end.line - 1;
 
-        ({ startLine, stopLine } = template.getTemplateRange());
         const newContent: string = this.replaceRangeContent(this.content, startLine, stopLine, content);
         this.initialize(TemplatesParser.parseText(newContent, this.id, this.importResolver));
 
@@ -264,10 +266,10 @@ export class Templates implements Iterable<Template> {
 
     /**
     * Add a new template and return LG file.
-    * @param templateName new template name.
-    * @param parameters new params.
-    * @param templateBody new  template body.
-    * @returns new lg file.
+    * @param templateName New template name.
+    * @param parameters New params.
+    * @param templateBody New  template body.
+    * @returns New lg file.
     */
     public addTemplate(templateName: string, parameters: string[], templateBody: string): Templates {
         const template: Template = this.items.find((u: Template): boolean => u.name === templateName);
@@ -285,8 +287,8 @@ export class Templates implements Iterable<Template> {
 
     /**
     * Delete an exist template.
-    * @param templateName which template should delete.
-    * @returns return the new lg file.
+    * @param templateName Which template should delete.
+    * @returns Return the new lg file.
     */
     public deleteTemplate(templateName: string): Templates {
         const template: Template = this.items.find((u: Template): boolean => u.name === templateName);
@@ -294,10 +296,8 @@ export class Templates implements Iterable<Template> {
             return this;
         }
 
-        let startLine: number;
-        let stopLine: number;
-
-        ({ startLine, stopLine } = template.getTemplateRange());
+        let startLine = template.sourceRange.range.start.line - 1;
+        let stopLine = template.sourceRange.range.end.line - 1;
 
         const newContent: string = this.replaceRangeContent(this.content, startLine, stopLine, undefined);
         this.initialize(TemplatesParser.parseText(newContent, this.id, this.importResolver));
@@ -364,31 +364,5 @@ export class Templates implements Iterable<Template> {
                 throw Error(errors.join(this.newLine));
             }
         }
-    }
-
-    private getStrictModeFromOptions(options: string[]): boolean {
-        let result = false;
-        if (!options) {
-            return result;
-        }
-
-        const strictModeKey = '@strict';
-        for (const option of options) {
-            if (option && option.includes('=')) {
-                const index = option.indexOf('=');
-                const key = option.substring(0, index).trim();
-                const value = option.substring(index + 1).trim().toLowerCase();
-                if (key === strictModeKey) {
-                    if (value === 'true') {
-                        result = true;
-                    }
-                    else if (value == 'false') {
-                        result = false;
-                    }
-                }
-            }
-        }
-
-        return result;
     }
 }
