@@ -33,12 +33,12 @@ export class AuthenticationError extends Error implements IStatusCodeError {
     private static determineStatusCode(message: string): StatusCode {
         if (typeof message === 'string') {
             if (message.toLowerCase().startsWith('unauthorized')) {
-                return 401;
+                return StatusCodes.UNAUTHORIZED;
             } else if (message.toLowerCase().startsWith(`'authheader'`)) {
-                return 400;
+                return StatusCodes.BAD_REQUEST;
             } 
         }
-        return 500;
+        return StatusCodes.INTERNAL_SERVER_ERROR;
     }
 
 }
