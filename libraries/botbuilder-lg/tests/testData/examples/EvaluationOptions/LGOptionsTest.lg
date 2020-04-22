@@ -6,7 +6,7 @@
 - hi ${user.name}
 
 #testInlineString
--```m
+- ```m
 s
 f
 t

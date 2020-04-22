@@ -105,7 +105,7 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGTempla
 
         // Using a stack to track the evalution trace
         this.evaluationTargetStack.push(templateTarget);
-        const result: string = this.visit(this.templateMap[templateName].templateBodyParseTree);
+        let result: string = this.visit(this.templateMap[templateName].templateBodyParseTree);
 
         if (previousEvaluateTarget) {
             previousEvaluateTarget.evaluatedChildren.set(currentEvulateId, result);
