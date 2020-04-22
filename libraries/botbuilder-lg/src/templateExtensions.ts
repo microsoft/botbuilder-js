@@ -193,8 +193,8 @@ export class TemplateExtensions {
             return Range.DefaultRange;
         }
 
-        const startPosition = new Position(context.start.line, context.start.charPositionInLine);
-        const stopPosition = new Position(context.stop.line, context.stop.charPositionInLine + context.stop.text.length);
+        const startPosition = new Position(lineOffset + context.start.line, context.start.charPositionInLine);
+        const stopPosition = new Position(lineOffset + context.stop.line, context.stop.charPositionInLine + context.stop.text.length);
 
         return new Range(startPosition, stopPosition);
     }
