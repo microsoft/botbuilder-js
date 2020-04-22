@@ -3,6 +3,7 @@
  * Changes may cause incorrect behavior and will be lost if the code is regenerated.
  */
 export * from './activityInterfaces';
+export * from './callerIdConstants';
 
 // The Teams schemas was manually added to this library. This file has been updated to export those schemas.
 export * from './teams';

@@ -10,7 +10,7 @@ import { DialogContext } from 'botbuilder-dialogs';
 
 export interface Recognizer {
     id: string;
-    recognize(dialogContext: DialogContext, textOrActivity?: string | Activity, locale?: string): Promise<RecognizerResult>;
+    recognize(dialogContext: DialogContext, activity: Activity): Promise<RecognizerResult>;
 }
 
 export interface IntentMap {

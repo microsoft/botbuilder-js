@@ -77,7 +77,8 @@ export class BotFrameworkHttpClient implements BotFrameworkClient {
         // TODO: DO we need to set the activity ID? (events that are created manually don't have it).
         const originalConversationId = activity.conversation.id;
         const originalServiceUrl = activity.serviceUrl;
-        const originalCallerId = activity.callerId;
+        const originalRelatesTo = activity.relatesTo;
+        const originalRecipient = activity.recipient;
         try {
             activity.relatesTo = {
                 serviceUrl: activity.serviceUrl,
@@ -97,7 +98,12 @@ export class BotFrameworkHttpClient implements BotFrameworkClient {
             };
             activity.conversation.id = conversationId;
             activity.serviceUrl = serviceUrl;
-            activity.callerId = `urn:botframework:aadappid:${ fromBotId }`;
+
+            // Fixes: https://github.com/microsoft/botframework-sdk/issues/5785
+            if (!activity.recipient) {
+                activity.recipient = {} as any;
+            }
+
             const config = {
                 headers: {
                     Accept: 'application/json',
@@ -119,7 +125,8 @@ export class BotFrameworkHttpClient implements BotFrameworkClient {
             // Restore activity properties.
             activity.conversation.id = originalConversationId;
             activity.serviceUrl = originalServiceUrl;
-            activity.callerId = originalCallerId;
+            activity.relatesTo = originalRelatesTo;
+            activity.recipient = originalRecipient;
         }
     }
 

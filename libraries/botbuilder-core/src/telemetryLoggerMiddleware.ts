@@ -247,6 +247,10 @@ export class TelemetryLoggerMiddleware implements Middleware {
             if (activity.speak && activity.speak.trim()) {
                 properties[this.telemetryConstants.speakProperty] = activity.speak;
             }
+
+            if (activity.attachments && activity.attachments.length > 0) {
+                properties[this.telemetryConstants.attachmentsProperty] = JSON.stringify(activity.attachments);
+            }
         }
 
         // Additional Properties can override "stock" properties.

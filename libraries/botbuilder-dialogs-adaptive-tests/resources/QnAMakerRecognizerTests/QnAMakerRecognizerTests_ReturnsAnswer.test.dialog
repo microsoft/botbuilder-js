@@ -1,0 +1,74 @@
+{
+    "$schema": "../../../../schemas/sdk.schema",
+    "$kind": "Microsoft.Test.Script",
+    "dialog": {
+        "$kind": "Microsoft.AdaptiveDialog",
+        "id": "planningTest",
+        "recognizer": {
+            "$kind": "Microsoft.QnAMakerRecognizer",
+            "knowldgeBaseId": "dummy-id",
+            "hostname": "https://dummy-hostname.azurewebsites.net",
+            "endpointKey": "dummy-key"
+        },
+        "triggers": [
+            {
+                "$kind": "Microsoft.OnQnAMatch",
+                "actions": [
+                    {
+                        "$kind": "Microsoft.SendActivity",
+                        "activity": "${@answer}"
+                    },
+                    {
+                        "$kind": "Microsoft.Test.AssertCondition",
+                        "condition": "count(turn.recognized.entities.answer) == 1",
+                        "description": "If there is a match there should only be 1 answer"
+                    },
+                    {
+                        "$kind": "Microsoft.Test.AssertCondition",
+                        "condition": "turn.recognized.answers[0].answer != null",
+                        "description": "There should be answers object"
+                    },
+                    {
+                        "$kind": "Microsoft.SendActivity",
+                        "activity": "done"
+                    }
+                ]
+            },
+            {
+                "$kind": "Microsoft.OnIntent",
+                "intent": "DeferToRecognizer_xxx",
+                "actions": [
+                    {
+                        "$kind": "Microsoft.SendActivity",
+                        "activity": "DeferToRecognizer_xxx"
+                    }
+                ]
+            },
+            {
+                "$kind": "Microsoft.OnUnknownIntent",
+                "actions": [
+                    {
+                        "$kind": "Microsoft.SendActivity",
+                        "activity": "Wha?"
+                    }
+                ]
+            }
+        ],
+        "autoEndDialog": false,
+        "defaultResultProperty": "dialog.result"
+    },
+    "script": [
+        {
+            "$kind": "Microsoft.Test.UserSays",
+            "text": "how do I clean the stove?"
+        },
+        {
+            "$kind": "Microsoft.Test.AssertReply",
+            "text": "BaseCamp: You can use a damp rag to clean around the Power Pack"
+        },
+        {
+            "$kind": "Microsoft.Test.AssertReply",
+            "text": "done"
+        }
+    ]
+}

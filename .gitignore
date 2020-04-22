@@ -12,6 +12,10 @@
 libraries/functional-tests/**/lib
 libraries/functional-tests/**/*.vscode/launch.json
 
+# @microsoft/api-extractor
+libraries/*/temp
+libraries/*/dist 
+
 # User-specific files
 *.suo
 *.user
