@@ -511,7 +511,7 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGTempla
         const children0: Expression = expression.children[0];
 
         // Validate return type
-        if (children0.returnType !== ReturnType.Object && children0.returnType !== ReturnType.String) {
+        if ((children0.returnType & ReturnType.Object) === 0 && (children0.returnType & ReturnType.String) === 0) {
             throw new Error(TemplateErrors.invalidTemplateName);
         }
 

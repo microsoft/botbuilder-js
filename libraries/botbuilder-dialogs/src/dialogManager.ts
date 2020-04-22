@@ -5,13 +5,15 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { TurnContext, BotState, ConversationState, UserState, ActivityTypes, BotStateSet } from 'botbuilder-core';
+
+import { TurnContext, BotState, ConversationState, UserState, ActivityTypes, BotStateSet, TurnContextStateCollection } from 'botbuilder-core';
 import { DialogContext, DialogState } from './dialogContext';
 import { DialogTurnResult, Dialog, DialogTurnStatus } from './dialog';
 import { Configurable } from './configurable';
 import { DialogSet } from './dialogSet';
 import { DialogStateManagerConfiguration, DialogStateManager } from './memory';
 import { DialogEvents } from './dialogEvents';
+import { DialogTurnStateConstants } from './dialogTurnStateConstants';
 
 const LAST_ACCESS = '_lastAccess';
 const CONVERSATION_STATE = 'ConversationState';
@@ -52,11 +54,20 @@ export class DialogManager extends Configurable {
     private dialogSet: DialogSet = new DialogSet();
     private rootDialogId: string;
     private dialogStateProperty: string;
+    private readonly _initialTurnState: TurnContextStateCollection = new TurnContextStateCollection();
 
     public constructor(rootDialog?: Dialog, dialogStateProperty?: string) {
         super();
         if (rootDialog) { this.rootDialog = rootDialog; }
         this.dialogStateProperty = dialogStateProperty || 'DialogStateProperty';
+        this._initialTurnState.set(DialogTurnStateConstants.dialogManager, this);
+    }
+
+    /**
+     * Values that will be copied to the `TurnContext.turnState` at the beginning of each turn.
+     */
+    public get initialTurnState(): TurnContextStateCollection {
+        return this._initialTurnState;
     }
 
     /**
@@ -65,7 +76,7 @@ export class DialogManager extends Configurable {
     public conversationState: ConversationState;
 
     /**
-     * Root dialog to start from [onTurn()](#onturn) or [run()](#run) method.
+     * Root dialog to start from [onTurn()](#onturn) method.
      */
     public set rootDialog(dialog: Dialog) {
         this.dialogSet.add(dialog);
@@ -99,8 +110,10 @@ export class DialogManager extends Configurable {
         // Ensure properly configured
         if (!this.rootDialogId) { throw new Error(`DialogManager.onTurn: the bot's 'rootDialog' has not been configured.`); }
 
-        // Log start of turn
-        // console.log('------------:');
+        // Copy initial turn state to context
+        for (const key in this.initialTurnState.keys()) {
+            context.turnState.set(key, this.initialTurnState.get(key));
+        }
 
         const botStateSet = new BotStateSet();
 

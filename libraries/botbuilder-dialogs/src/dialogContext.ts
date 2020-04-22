@@ -10,6 +10,8 @@ import { PromptOptions } from './prompts';
 import { DialogStateManager, TurnPath } from './memory';
 import { DialogContainer } from './dialogContainer';
 import { DialogEvents } from './dialogEvents';
+import { DialogManager } from './dialogManager';
+import { DialogTurnStateConstants } from './dialogTurnStateConstants';
 
 /**
  * @private
@@ -136,6 +138,13 @@ export class DialogContext {
         }
 
         return undefined;
+    }
+
+    /**
+     * Returns the current dialog manager instance.
+     */
+    public get dialogManager(): DialogManager {
+        return this.context.turnState.get(DialogTurnStateConstants.dialogManager);
     }
 
     /**
