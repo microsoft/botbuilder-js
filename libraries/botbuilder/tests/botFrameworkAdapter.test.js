@@ -1,8 +1,20 @@
 const assert = require('assert');
-const { ActivityTypes, TurnContext } = require('botbuilder-core');
+const { ActivityTypes, CallerIdConstants, TurnContext } = require('botbuilder-core');
 const connector = require('botframework-connector');
-const { AuthenticationConstants, CertificateAppCredentials, ConnectorClient, GovernmentConstants, MicrosoftAppCredentials } = require('botframework-connector');
+const {
+    AuthenticationConstants,
+    CertificateAppCredentials,
+    ClaimsIdentity,
+    ConnectorClient,
+    GovernmentConstants,
+    JwtTokenValidation,
+    MicrosoftAppCredentials } = require('botframework-connector');
+const { spy, stub } = require('sinon');
 const { BotFrameworkAdapter } = require('../');
+const nock = require('nock');
+const { userAgentPolicy, HttpHeaders } = require('@azure/ms-rest-js');
+const os = require('os');
+const pjson = require('../package.json');
 
 const reference = {
     activityId: '1234',
@@ -228,7 +240,48 @@ describe(`BotFrameworkAdapter`, function () {
             const adapter = new AdapterUnderTest();
             await adapter.testAuthenticateRequest(req, '');
         });
+
+        it('should work if no appId or appPassword and discard callerId', async () => {
+            // Create activity with callerId
+            const incoming = TurnContext.applyConversationReference({ type: 'message', text: 'foo', callerId: 'foo' }, reference, true);
+            incoming.channelId = 'msteams';
     
+            // Create Adapter, stub and spy for indirectly called methods
+            const adapter = new BotFrameworkAdapter();
+            const authReqStub = stub(JwtTokenValidation, 'authenticateRequest');
+            authReqStub.returns(new ClaimsIdentity([], true));
+
+            await adapter.authenticateRequest(incoming, 'authHeader');
+            try {
+                assert(authReqStub.called, 'JwtTokenValidation.authenticateRequest() not called');
+                assert.strictEqual(incoming.callerId, undefined);
+            } finally {
+                authReqStub.restore();
+            }
+        });
+
+        it('should stamp over received callerId', async () => {
+            // Create activity with callerId
+            const incoming = TurnContext.applyConversationReference({ type: 'message', text: 'foo', callerId: 'foo' }, reference, true);
+            incoming.channelId = 'msteams';
+    
+            // Create Adapter, stub and spy for indirectly called methods
+            const adapter = new BotFrameworkAdapter();
+            const authReqStub = stub(JwtTokenValidation, 'authenticateRequest');
+            adapter.credentialsProvider.isAuthenticationDisabled = async () => false;
+            authReqStub.returns(new ClaimsIdentity([], true));
+            const generateCallerIdSpy = spy(adapter, 'generateCallerId');
+
+            await adapter.authenticateRequest(incoming, 'authHeader');
+            try {
+                assert(authReqStub.called, 'JwtTokenValidation.authenticateRequest() not called');
+                assert(generateCallerIdSpy.called, 'generateCallerId was not called');
+                assert.strictEqual(incoming.callerId, CallerIdConstants.PublicAzureChannel);
+            } finally {
+                authReqStub.restore();
+            }
+        });
+
         it(`should fail if appId+appPassword and no headers.`, async () => {
             const req = new MockRequest(incomingMessage);
             const adapter = new AdapterUnderTest({ appId: 'bogusApp', appPassword: 'bogusPassword' });
@@ -279,6 +332,57 @@ describe(`BotFrameworkAdapter`, function () {
 
             const client = adapter.getOrCreateConnectorClient(context, 'https://botframework.com', adapter.credentials);
             assert.notEqual(client.baseUri, cc.baseUri);
+        });
+
+        
+        it('ConnectorClient should add userAgent header from clientOptions', async () => {
+            const userAgent = 'test user agent';
+            nock(reference.serviceUrl)
+                .matchHeader('user-agent', val => val.endsWith(userAgent))
+                .post('/v3/conversations/convo1/activities/1234')
+                .reply(200, {id:'abc123id'});
+            
+            const adapter = new BotFrameworkAdapter( {clientOptions: { userAgent: userAgent } });
+                
+            await adapter.continueConversation(reference, async turnContext => {
+                await turnContext.sendActivity(outgoingMessage);
+            });
+        });
+
+        it('ConnectorClient should use httpClient from clientOptions', async () => {
+            let sendRequestCalled = false;
+            class MockHttpClient {
+                async sendRequest(httpRequest) {
+                    assert.deepEqual(outgoingMessage, JSON.parse(httpRequest.body), 'sentActivity should flow through custom httpClient.sendRequest');
+                    sendRequestCalled = true;
+                    return {
+                        request: httpRequest,
+                        status: 200,
+                        headers: new HttpHeaders(),
+                        readableStreamBody: undefined,
+                        bodyAsText: ''
+                    };
+                }
+            };
+            
+            const customHttpClient = new MockHttpClient();
+            const adapter = new BotFrameworkAdapter( {clientOptions: {  httpClient: customHttpClient } });
+                
+            await adapter.continueConversation(reference, async turnContext => {
+                await turnContext.sendActivity(outgoingMessage);
+            });
+
+            assert(sendRequestCalled, 'sendRequest on HttpClient provided to BotFrameworkAdapter.clientOptions was not called when sending an activity');
+        });
+
+        it('ConnectorClient should use requestPolicyFactories from clientOptions', async () => {
+            const factories = [ userAgentPolicy({ value: 'test' }) ];
+            const adapter = new BotFrameworkAdapter( {clientOptions: { requestPolicyFactories: factories } });
+                
+            await adapter.continueConversation(reference, async turnContext => {
+                const connectorClient = turnContext.turnState.get(turnContext.adapter.ConnectorClientKey);
+                assert.equal(connectorClient._requestPolicyFactories.length, factories.length,  'requestPolicyFactories from clientOptions parameter is not used.')
+            });
         });
     });
 
@@ -409,15 +513,121 @@ describe(`BotFrameworkAdapter`, function () {
         });
     });
 
-    it(`receive a callerId property on the activity in processActivity().`, function (done) {
-        const incoming = TurnContext.applyConversationReference({ type: 'message', text: 'foo', callerId: 'foo' }, reference, true);
-        incoming.channelId = 'msteams';
-        const req = new MockBodyRequest(incoming);
-        const res = new MockResponse();
-        const adapter = new AdapterUnderTest();
-        adapter.processActivity(req, res, (context) => {
-            assert(context.activity.callerId === 'foo');
-            done();
+    describe('callerId generation', function() {    
+        it(`should ignore received and generate callerId on parsed activity in processActivity()`, (done) => {
+            const incoming = TurnContext.applyConversationReference({ type: 'message', text: 'foo', callerId: 'foo' }, reference, true);
+            incoming.channelId = 'msteams';
+            const req = new MockBodyRequest(incoming);
+            const res = new MockResponse();
+            const adapter = new BotFrameworkAdapter({});
+            const authReqStub = stub(JwtTokenValidation, 'authenticateRequest');
+            adapter.credentialsProvider.isAuthenticationDisabled = async () => false;
+            authReqStub.returns(new ClaimsIdentity([], true));
+            adapter.onTurnError = async (_, err) => {
+                authReqStub.restore();
+                done(err);
+            };
+
+            const generateCallerIdSpy = spy(adapter, 'generateCallerId');
+
+            adapter.processActivity(req, res, async (context) => {
+                assert(authReqStub.called, 'JwtTokenValidation.authenticateRequest() not called');
+                assert(generateCallerIdSpy.called, 'generateCallerId was not called');
+                assert.strictEqual(context.activity.callerId, CallerIdConstants.PublicAzureChannel);
+                authReqStub.restore();
+                done();
+            }).catch(e => {
+                authReqStub.restore();
+                done(e);
+            });
+        });
+    
+        it(`should generate a skill callerId property on the activity in processActivity()`, (done) => {
+            const skillAppId = '00000000-0000-0000-0000-000000000000';
+            const skillConsumerAppId = '00000000-0000-0000-0000-000000000001';
+            const incoming = TurnContext.applyConversationReference({ type: 'message', text: 'foo' }, reference, true);
+            incoming.channelId = 'msteams';
+            const req = new MockBodyRequest(incoming);
+            const res = new MockResponse();
+            const adapter = new BotFrameworkAdapter();
+            const authReqStub = stub(JwtTokenValidation, 'authenticateRequest');
+            adapter.credentialsProvider.isAuthenticationDisabled = async () => false;
+            authReqStub.returns(new ClaimsIdentity([
+                { type: AuthenticationConstants.AudienceClaim, value: skillAppId },
+                { type: AuthenticationConstants.AppIdClaim, value: skillConsumerAppId },
+                { type: AuthenticationConstants.VersionClaim, value: '1.0' },
+            ], true));
+            adapter.onTurnError = async (_, err) => {
+                authReqStub.restore();
+                done(err);
+            };
+    
+            const generateCallerIdSpy = spy(adapter, 'generateCallerId');
+
+            adapter.processActivity(req, res, async (context) => {
+                assert(authReqStub.called, 'JwtTokenValidation.authenticateRequest() not called');
+                assert(generateCallerIdSpy.called, 'generateCallerId was not called');
+                assert.strictEqual(context.activity.callerId, `${ CallerIdConstants.BotToBotPrefix }${ skillConsumerAppId }`);
+                authReqStub.restore();
+                done();
+            }).catch(e => {
+                authReqStub.restore();
+                done(e);
+            });
+        });
+
+        it(`should discard & not generate callerId on the parsed activity with disabledAuth`, (done) => {
+            const incoming = TurnContext.applyConversationReference({ type: 'message', text: 'foo', callerId: 'foo' }, reference, true);
+            incoming.channelId = 'msteams';
+            const req = new MockBodyRequest(incoming);
+            const res = new MockResponse();
+            const adapter = new BotFrameworkAdapter();
+            const authReqStub = stub(JwtTokenValidation, 'authenticateRequest');
+            authReqStub.resolves(new ClaimsIdentity([], true));
+            adapter.onTurnError = async (_, err) => {
+                authReqStub.restore();
+                done(err);
+            };
+            adapter.processActivity(req, res, async (context) => {
+                assert.strictEqual(context.activity.callerId, undefined);
+                authReqStub.restore();
+                done();
+            }).catch(e => {
+                authReqStub.restore();
+                done(e);
+            });
+        });
+
+        it(`should generate a US Gov cloud callerId property on the activity in processActivity()`, (done) => {
+            const skillAppId = '00000000-0000-0000-0000-000000000000';
+            const incoming = TurnContext.applyConversationReference({ type: 'message', text: 'foo' }, reference, true);
+            incoming.channelId = 'directline';
+            const req = new MockBodyRequest(incoming);
+            const res = new MockResponse();
+            const adapter = new BotFrameworkAdapter({ channelService: GovernmentConstants.ChannelService });
+            const authReqStub = stub(JwtTokenValidation, 'authenticateRequest');
+            adapter.credentialsProvider.isAuthenticationDisabled = async () => false;
+            authReqStub.returns(new ClaimsIdentity([
+                { type: AuthenticationConstants.AudienceClaim, value: skillAppId },
+                { type: AuthenticationConstants.VersionClaim, value: '1.0' },
+            ], true));
+            adapter.onTurnError = async (_, err) => {
+                authReqStub.restore();
+                done(err);
+            };
+    
+            const generateCallerIdSpy = spy(adapter, 'generateCallerId');
+
+            adapter.processActivity(req, res, async (context) => {
+                assert(authReqStub.called, 'JwtTokenValidation.authenticateRequest() not called');
+                assert(generateCallerIdSpy.called, 'generateCallerId was not called');
+                assert.strictEqual(context.activity.callerId, CallerIdConstants.USGovChannel);
+                authReqStub.restore();
+                done();
+            }).catch(e => {
+                authReqStub.restore();
+                done(e);
+            });
         });
     });
 
@@ -752,15 +962,42 @@ describe(`BotFrameworkAdapter`, function () {
         });
     });
 
-    // This unit test doesn't work anymore because client.UserAgentInfo was removed, so we can't inspect the user agent string
-    xit(`should create a User-Agent header with the same info as the host machine.`, function (done) {
-        const adapter = new BotFrameworkAdapter();
-        const client = adapter.createConnectorClient('https://example.com');
-        //const userAgentHeader = client.userAgentInfo.value;
-        const pjson = require('../package.json');
+
+    it(`should create a User-Agent header with the same info as the host machine.`, async function () {
         const userAgent = 'Microsoft-BotFramework/3.1 BotBuilder/' + pjson.version + ' (Node.js,Version=' + process.version + '; ' + os.type() + ' ' + os.release() + '; ' + os.arch() + ')';
-        // assert(userAgentHeader.includes(userAgent), `ConnectorClient doesn't have user-agent header created by BotFrameworkAdapter or header is incorrect.`);
-        done();
+
+        nock(reference.serviceUrl)
+            .matchHeader('user-agent', val => val.endsWith(userAgent))
+            .post('/v3/conversations/convo1/activities/1234')
+            .reply(200, {id:'abc123id'});
+        
+        const adapter = new BotFrameworkAdapter();
+            
+        await adapter.continueConversation(reference, async turnContext => {
+            await turnContext.sendActivity(outgoingMessage);
+        });
+    });
+
+    // TODO: update BotFrameworkAdapter.getClientOptions to ensure requestPolicyFactories includes userAgent of BB, regardless of requestPolicyFactories
+    xit(`should still add Botbuilder User-Agent header when custom requestPolicyFactories are provided.`, async function () {
+        //ms-rest-js currently adds:
+        //botframework-connector/4.0.0 ms-rest-js/0.1.0 Node/v12.14.1 OS/(x64-Windows_NT-10.0.18363)
+        //BotBuilder adds BotFrameworkAdapter.USER_AGENT:
+        //Microsoft-BotFramework/3.1 BotBuilder/4.1.6 (Node.js,Version=v12.14.1; Windows_NT 10.0.18363; x64)"
+
+        const userAgent = 'Microsoft-BotFramework/3.1 BotBuilder/' + pjson.version + ' (Node.js,Version=' + process.version + '; ' + os.type() + ' ' + os.release() + '; ' + os.arch() + ')';
+
+        nock(reference.serviceUrl)
+            .matchHeader('user-agent', val => val.endsWith(userAgent))
+            .post('/v3/conversations/convo1/activities/1234')
+            .reply(200, {id:'abc123id'});
+        
+        const factories = [ userAgentPolicy({ value: 'test' }) ];
+        const adapter = new BotFrameworkAdapter({clientOptions: { requestPolicyFactories: factories } });
+            
+        await adapter.continueConversation(reference, async turnContext => {
+            await turnContext.sendActivity(outgoingMessage);
+        });
     });
 
     it(`should set openIdMetadata property on ChannelValidation`, function (done) {

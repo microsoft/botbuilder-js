@@ -8,14 +8,14 @@
  */
 import { AbstractParseTreeVisitor, TerminalNode } from 'antlr4ts/tree';
 import { keyBy } from 'lodash';
-import * as lp from './generated/LGFileParser';
-import { LGFileParserVisitor } from './generated/LGFileParserVisitor';
+import * as lp from './generated/LGTemplateParser';
+import { LGTemplateParserVisitor } from './generated/LGTemplateParserVisitor';
 import { Template } from './template';
 
 /**
  * Lg template extracter.
  */
-export class Extractor extends AbstractParseTreeVisitor<Map<string, any>> implements LGFileParserVisitor<Map<string, any>> {
+export class Extractor extends AbstractParseTreeVisitor<Map<string, any>> implements LGTemplateParserVisitor<Map<string, any>> {
     public readonly templates: Template[];
     public readonly templateMap: {[name: string]: Template};
     public constructor(templates: Template[]) {
@@ -27,28 +27,24 @@ export class Extractor extends AbstractParseTreeVisitor<Map<string, any>> implem
     public extract(): Map<string, any>[] {
         const result: Map<string, any>[] = [];
         this.templates.forEach((template: Template): any => {
-            result.push(this.visit(template.parseTree));
-        });
+            const templateResult: Map<string, any> = new Map<string, any>();
+            const templateName: string = template.name;
+            const templateBodies = this.visit(template.templateBodyParseTree);
+            let isNormalTemplate = true;
+            templateBodies.forEach((templateBody: Map<string, any>): any => isNormalTemplate = isNormalTemplate && (templateBody === undefined));
 
-        return result;
-    }
-
-    public visitTemplateDefinition(context: lp.TemplateDefinitionContext): Map<string, any> {
-        const result: Map<string, any> = new Map<string, any>();
-        const templateName: string = context.templateNameLine().templateName().text;
-        const templateBodies: Map<string, any> = this.visit(context.templateBody());
-        let isNormalTemplate = true;
-        templateBodies.forEach((templateBody: Map<string, any>): any => isNormalTemplate = isNormalTemplate && (templateBody === undefined));
-
-        if (isNormalTemplate) {
-            const templates: string[] = [];
-            for (const templateBody of templateBodies) {
-                templates.push(templateBody[0]);
+            if (isNormalTemplate) {
+                const templates: string[] = [];
+                for (const templateBody of templateBodies) {
+                    templates.push(templateBody[0]);
+                }
+                templateResult.set(templateName, templates);
+            } else {
+                templateResult.set(templateName, templateBodies);
             }
-            result.set(templateName, templates);
-        } else {
-            result.set(templateName, templateBodies);
-        }
+
+            result.push(templateResult);
+        });
 
         return result;
     }

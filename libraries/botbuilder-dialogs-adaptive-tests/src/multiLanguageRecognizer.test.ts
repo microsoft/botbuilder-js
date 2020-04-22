@@ -1,10 +1,11 @@
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
 import 'mocha';
+import * as path from 'path';
 import { TestRunner } from './testing';
 
 describe('MultiLanguageRecognizerTests', function() {
     this.timeout(5000);
-    const testRunner = new TestRunner('resources/MultiLanguageRecognizerTests');
+    const testRunner = new TestRunner(path.join(__dirname,  '../resources/MultiLanguageRecognizerTests'));
 
     it('DefaultFallback', async () => {
         await testRunner.runTestScript('MultiLanguageRecognizerTest_DefaultFallback');

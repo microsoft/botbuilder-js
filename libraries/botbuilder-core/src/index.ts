@@ -36,6 +36,7 @@ export {
     BotFrameworkClient,
     SkillConversationIdFactoryBase,
     SkillConversationReference,
+    SkillConversationReferenceKey,
     SkillConversationIdFactoryOptions } from './skills';
 export * from './skypeMentionNormalizeMiddleware';
 export * from './statusCodes';

@@ -39,6 +39,11 @@ export namespace AuthenticationConstants {
     export const ToBotFromChannelTokenIssuer = 'https://api.botframework.com';
 
     /**
+     * OAuth Url used to get a token from OAuthApiClient.
+     */
+    export const OAuthUrl = 'https://api.botframework.com';
+
+    /**
      * Application Setting Key for the OpenIdMetadataUrl value.
      */
     export const BotOpenIdMetadataKey = 'BotOpenIdMetadata';
