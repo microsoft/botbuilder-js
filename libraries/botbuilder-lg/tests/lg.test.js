@@ -318,6 +318,9 @@ describe('LG', function() {
 
         evaled = templates.evaluate('dupNameWithTemplate');
         assert.strictEqual(evaled, 2, `Evaled is ${ evaled }`);
+
+        evaled = templates.evaluate('foo', {property: 'Show'});
+        assert.strictEqual(evaled, `you made it!`);
     });
 
     it('TestAnalyzelgTemplateFunction', function() {
