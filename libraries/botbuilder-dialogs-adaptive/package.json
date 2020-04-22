@@ -20,7 +20,6 @@
   "main": "./lib/index.js",
   "typings": "./lib/index.d.ts",
   "dependencies": {
-    "@azure/ms-rest-js": "1.2.6",
     "@microsoft/recognizers-text-suite": "1.2.7",
     "@types/jsonpath": "^0.2.0",
     "@types/node": "^10.12.18",

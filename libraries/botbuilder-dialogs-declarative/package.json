@@ -20,7 +20,6 @@
   "main": "./lib/index.js",
   "typings": "./lib/index.d.ts",
   "dependencies": {
-    "@azure/ms-rest-js": "1.2.6",
     "@microsoft/recognizers-text-choice": "1.1.2",
     "@microsoft/recognizers-text-date-time": "1.1.2",
     "@microsoft/recognizers-text-number": "1.1.2",
