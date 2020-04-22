@@ -16,7 +16,7 @@ describe('Bot Framework Connector - Auth Tests', function() {
                     throw new Error('Expected validation to fail.');
                 } catch (err) {
                     assert(err.message === `'authHeader' required.`, `unexpected error thrown: "${ err.message }"`);
-                    assert.equal(err.statusCode, 400);
+                    assert.equal(err.statusCode, StatusCodes.BAD_REQUEST);
                 }
             });
         });

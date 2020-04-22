@@ -55,11 +55,11 @@ export class OpenIdMetadata {
                 this.lastUpdated = new Date().getTime();
                 this.keys = (await getKeyResponse.json()).keys as IKey[];
             } else {
-                throw new AuthenticationError(`Failed to load Keys: ${ getKeyResponse.status }`, StatusCodes.BAD_REQUEST);
+                throw new AuthenticationError(`Failed to load Keys: ${ getKeyResponse.status }`, StatusCodes.INTERNAL_SERVER_ERROR);
             }
 
         } else {
-            throw new AuthenticationError(`Failed to load openID config: ${ res.status }`, StatusCodes.NOT_FOUND);
+            throw new AuthenticationError(`Failed to load openID config: ${ res.status }`, StatusCodes.INTERNAL_SERVER_ERROR);
         }
     }
 

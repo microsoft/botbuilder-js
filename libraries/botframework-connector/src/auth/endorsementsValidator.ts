@@ -28,7 +28,7 @@ export class EndorsementsValidator {
         }
 
         if (endorsements === null) {
-            throw new AuthenticationError('endorsements required', StatusCodes.BAD_REQUEST);
+            throw new AuthenticationError('endorsements required', StatusCodes.UNAUTHORIZED);
         }
 
         // The Call path to get here is:

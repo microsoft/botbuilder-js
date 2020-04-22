@@ -96,7 +96,7 @@ export class JwtTokenExtractor {
         const keyId: string = decodedToken.header.kid;
         const metadata: any = await this.openIdMetadata.getKey(keyId);
         if (!metadata) {
-            throw new AuthenticationError('Signing Key could not be retrieved.', StatusCodes.NOT_FOUND);
+            throw new AuthenticationError('Signing Key could not be retrieved.', StatusCodes.UNAUTHORIZED);
         }
 
         try {
@@ -110,7 +110,7 @@ export class JwtTokenExtractor {
                 if (!isEndorsed) {
                     throw new AuthenticationError(
                         `Could not validate endorsement for key: ${ keyId } with endorsements: ${ endorsements.join(',') }`,
-                        StatusCodes.BAD_REQUEST
+                        StatusCodes.UNAUTHORIZED
                     );
                 }
 
@@ -120,7 +120,7 @@ export class JwtTokenExtractor {
                 if (!additionalEndorsementsSatisfied) {
                     throw new AuthenticationError(
                         `Could not validate additional endorsement for key: ${keyId} with endorsements: ${requiredEndorsements.join(',')}. Expected endorsements: ${requiredEndorsements.join(',')}`,
-                        StatusCodes.BAD_REQUEST
+                        StatusCodes.UNAUTHORIZED
                     );
                 }
             }
@@ -129,7 +129,7 @@ export class JwtTokenExtractor {
                 if (this.tokenValidationParameters.algorithms.indexOf(decodedToken.header.alg) === -1) {
                     throw new AuthenticationError(
                         `"Token signing algorithm '${ decodedToken.header.alg }' not in allowed list`,
-                        StatusCodes.BAD_REQUEST
+                        StatusCodes.UNAUTHORIZED
                     );
                 }
             }
