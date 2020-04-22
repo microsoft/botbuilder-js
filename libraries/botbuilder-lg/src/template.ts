@@ -5,9 +5,8 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { TerminalNode } from 'antlr4ts/tree';
-import { ParametersContext, TemplateDefinitionContext, TemplateNameContext, FileContext} from './generated/LGFileParser';
-import { TemplateExtensions } from './templateExtensions';
+import { SourceRange } from './sourceRange';
+import * as lp from './generated/LGTemplateParser';
 
 /**
  * Here is a data model that can easily understanded and used as the context or all kinds of visitors
@@ -23,89 +22,21 @@ export class Template {
      */
     public parameters: string[];
     /**
-     * Source of this template, source file path if it's from a certain file
-     */
-    public source: string;
-    /**
      * Text format of Body of this template. All content except Name and Parameters.
      */
     public body: string;
     /**
-     * The parse tree of this template
+     * Source of this template
      */
-    public parseTree: TemplateDefinitionContext;
+    public sourceRange: SourceRange;
 
-    public constructor(parseTree: TemplateDefinitionContext, lgfileContent: string, source: string = '') {
-        this.parseTree = parseTree;
-        this.source = source;
+    public templateBodyParseTree: lp.BodyContext;
 
-        this.name = this.extractName();
-        this.parameters = this.extractParameters();
-        this.body = this.extractBody(lgfileContent);
-    }
-
-    public getTemplateRange(): {startLine: number; stopLine: number} {
-        const startLine: number = this.parseTree.start.line - 1;
-        let  stopLine: number = this.parseTree.stop.line - 1;
-        if(this.parseTree.parent && this.parseTree.parent.parent && this.parseTree.parent.parent instanceof FileContext) {
-            const fileContext = this.parseTree.parent.parent as FileContext;
-            const templateDefinitions = fileContext.paragraph()
-                .map((u): TemplateDefinitionContext => u.templateDefinition())
-                .filter((u): boolean => u !== undefined);
-            
-            const currentIndex = templateDefinitions.indexOf(this.parseTree);
-            if (currentIndex >= 0 && currentIndex < templateDefinitions.length - 1) {
-                // in the middle of templates
-                stopLine = templateDefinitions[currentIndex + 1].start.line - 2;
-            } else {
-                // last item
-                stopLine = fileContext.stop.line - 1;
-            }
-
-            if (stopLine <= startLine)
-            {
-                stopLine = startLine;
-            }
-        }
-
-        return {startLine, stopLine};
-    }
-    private readonly extractName = (): string => {
-        const nameContext: TemplateNameContext = this.parseTree.templateNameLine().templateName();
-        if (!nameContext || !nameContext.text) {
-            return '';
-        }
-
-        return  nameContext.text;
-    }
-
-    private readonly extractParameters = (): string[] => {
-        const parameters: ParametersContext = this.parseTree.templateNameLine().parameters();
-        if (parameters !== undefined) {
-            return parameters.IDENTIFIER().map((x: TerminalNode): string => x.text);
-        }
-
-        return [];
-    }
-
-    private readonly extractBody = (lgfileContent: string): string => {
-        let startLine: number;
-        let stopLine: number;
-
-        ({startLine, stopLine} = this.getTemplateRange());
-
-        return startLine >= stopLine ? '' : this.getRangeContent(lgfileContent, startLine + 1, stopLine);
-    }
-
-    private getRangeContent(originString: string, startLine: number, stopLine: number): string {
-        const originList: string[] = TemplateExtensions.readLine(originString);
-        if (startLine < 0 || startLine > stopLine || stopLine >= originList.length) {
-            throw new Error(`index out of range.`);
-        }
-
-        const destList: string[] = originList.slice(startLine, stopLine + 1);
-
-        return destList.join('\r\n');
+    public constructor(templatename: string, parameters: string[], templatebody: string, sourceRange: SourceRange) {
+        this.name = templatename || '';
+        this.parameters = parameters || [];
+        this.sourceRange = sourceRange;
+        this.body = templatebody || '';
     }
 
     public toString(): string {

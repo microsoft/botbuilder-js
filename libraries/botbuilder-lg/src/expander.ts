@@ -13,8 +13,8 @@ import { EvaluationTarget } from './evaluationTarget';
 import { Evaluator } from './evaluator';
 import * as path from 'path';
 import * as fs from 'fs';
-import * as lp from './generated/LGFileParser';
-import { LGFileParserVisitor } from './generated/LGFileParserVisitor';
+import * as lp from './generated/LGTemplateParser';
+import { LGTemplateParserVisitor } from './generated/LGTemplateParserVisitor';
 import { Template } from './template';
 import { TemplateExtensions } from './templateExtensions';
 import { CustomizedMemory } from './customizedMemory';
@@ -23,7 +23,7 @@ import { EvaluationOptions } from './evaluationOptions';
 /**
  * LG template expander.
  */
-export class Expander extends AbstractParseTreeVisitor<string[]> implements LGFileParserVisitor<any[]> {
+export class Expander extends AbstractParseTreeVisitor<string[]> implements LGTemplateParserVisitor<any[]> {
     /**
      * Templates.
      */
@@ -80,19 +80,10 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGFi
         
         // Using a stack to track the evalution trace
         this.evaluationTargetStack.push(new EvaluationTarget(templateName, scope));
-        const result: any[] = this.visit(this.templateMap[templateName].parseTree);
+        const result: any[] = this.visit(this.templateMap[templateName].templateBodyParseTree);
         this.evaluationTargetStack.pop();
 
         return result;
-    }
-
-    public visitTemplateDefinition(ctx: lp.TemplateDefinitionContext): any[] {
-        const templateNameContext: lp.TemplateNameLineContext = ctx.templateNameLine();
-        if (templateNameContext.templateName().text === this.currentTarget().templateName) {
-            return this.visit(ctx.templateBody());
-        }
-
-        return undefined;
     }
 
     public visitNormalBody(ctx: lp.NormalBodyContext): any[] {
@@ -200,10 +191,10 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGFi
                 let itemStringResult = [''];
                 for (const node of item.children) {
                     switch ((node as TerminalNode).symbol.type) {
-                        case (lp.LGFileParser.ESCAPE_CHARACTER_IN_STRUCTURE_BODY):
+                        case (lp.LGTemplateParser.ESCAPE_CHARACTER_IN_STRUCTURE_BODY):
                             itemStringResult = this.stringArrayConcat(itemStringResult, [TemplateExtensions.evalEscape(node.text.replace(/\\\|/g, '|'))]);
                             break;
-                        case (lp.LGFileParser.EXPRESSION_IN_STRUCTURE_BODY):
+                        case (lp.LGTemplateParser.EXPRESSION_IN_STRUCTURE_BODY):
                             const errorPrefix = `Property '${ ctx.STRUCTURE_IDENTIFIER().text }':`;
                             itemStringResult =this.stringArrayConcat(itemStringResult, this.evalExpression(node.text, ctx, errorPrefix));
                             break;
@@ -263,14 +254,14 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGFi
         for (const node of ctx.children) {
             const innerNode: TerminalNode =  node as TerminalNode;
             switch (innerNode.symbol.type) {
-                case lp.LGFileParser.MULTILINE_PREFIX:
-                case lp.LGFileParser.MULTILINE_SUFFIX:
-                case lp.LGFileParser.DASH:
+                case lp.LGTemplateParser.MULTILINE_PREFIX:
+                case lp.LGTemplateParser.MULTILINE_SUFFIX:
+                case lp.LGTemplateParser.DASH:
                     break;
-                case lp.LGFileParser.ESCAPE_CHARACTER:
+                case lp.LGTemplateParser.ESCAPE_CHARACTER:
                     result = this.stringArrayConcat(result, [TemplateExtensions.evalEscape(innerNode.text)]);
                     break;
-                case lp.LGFileParser.EXPRESSION: {
+                case lp.LGTemplateParser.EXPRESSION: {
                     result = this.stringArrayConcat(result, this.evalExpression(innerNode.text, ctx, prefixErrorMsg));
                     break;
                 }
@@ -492,7 +483,7 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGFi
                 throw new Error('relative path is not support in browser.');
             }
             const template: Template = this.templateMap[this.currentTarget().templateName];
-            const sourcePath: string = TemplateExtensions.normalizePath(template.source);
+            const sourcePath: string = TemplateExtensions.normalizePath(template.sourceRange.source);
             let baseFolder: string = __dirname;
             if (path.isAbsolute(sourcePath)) {
                 baseFolder = path.dirname(sourcePath);
@@ -527,8 +518,8 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGFi
         const children0: Expression = expression.children[0];
 
         // Validate return type
-        if (children0.returnType !== ReturnType.Object && children0.returnType !== ReturnType.String) {
-            throw new Error(TemplateErrors.errorTemplateNameformat(children0.toString()));
+        if ((children0.returnType & ReturnType.Object) === 0 && (children0.returnType & ReturnType.String) === 0) {
+            throw new Error(TemplateErrors.invalidTemplateName);
         }
 
         // Validate more if the name is string constant

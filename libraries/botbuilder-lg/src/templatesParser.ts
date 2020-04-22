@@ -9,7 +9,7 @@ import { ANTLRInputStream } from 'antlr4ts/ANTLRInputStream';
 import { CommonTokenStream } from 'antlr4ts/CommonTokenStream';
 import { ErrorListener } from './errorListener';
 import { LGFileLexer } from './generated/LGFileLexer';
-import { FileContext, ImportDefinitionContext, LGFileParser, ParagraphContext, TemplateDefinitionContext, OptionsDefinitionContext } from './generated/LGFileParser';
+import { FileContext, LGFileParser} from './generated/LGFileParser';
 import { TemplateImport } from './templateImport';
 import { Template } from './template';
 import { Templates } from './templates';
@@ -19,12 +19,18 @@ import { TemplateException } from './templateException';
 import * as path from 'path';
 import * as fs from 'fs';
 import { Diagnostic, DiagnosticSeverity } from './diagnostic';
-import { Position } from './position';
 import { ParserRuleContext } from 'antlr4ts';
-import { Range } from './range';
 import { ExpressionParser } from 'adaptive-expressions';
+import { AbstractParseTreeVisitor, ParseTree } from 'antlr4ts/tree';
+import { LGTemplateParserVisitor } from './generated/LGTemplateParserVisitor';
+import * as lp from './generated/LGFileParser';
+import { TemplateErrors } from './templateErrors';
+import { SourceRange } from './sourceRange';
+import { LGTemplateLexer } from './generated/LGTemplateLexer';
+import { LGTemplateParser, BodyContext } from './generated/LGTemplateParser';
 
 export declare type ImportResolverDelegate = (source: string, resourceId: string) => { content: string; id: string };
+
 
 /**
  * LG Parser
@@ -34,14 +40,16 @@ export class TemplatesParser {
     /**
      * option regex.
      */
-    private static readonly optionRegex: RegExp = new RegExp(/^> *!#(.*)$/);
+    public static readonly optionRegex: RegExp = new RegExp(/>\s*!#(.*)$/);
 
+    public static readonly importRegex: RegExp = new RegExp(/\[([^\]]*)\]\(([^\)]*)\)/);
+    
     /**
     * parse a file and return LG file.
     * @param filePath LG absolute file path..
-    * @param importResolver resolver to resolve LG import id to template text.
+    * @param importResolver Resolver to resolve LG import id to template text.
     * @param expressionParser Expression parser for evaluating expressions.
-    * @returns new lg file.
+    * @returns New lg file.
     */
     public static parseFile(filePath: string, importResolver?: ImportResolverDelegate, expressionParser?: ExpressionParser): Templates {
         const fullPath = TemplateExtensions.normalizePath(filePath);
@@ -52,11 +60,11 @@ export class TemplatesParser {
 
     /**
      * Parser to turn lg content into a Templates.
-     * @param content text content contains lg templates.
-     * @param id id is the identifier of content. If importResolver is undefined, id must be a full path string. 
-     * @param importResolver resolver to resolve LG import id to template text.
+     * @param content Text content contains lg templates.
+     * @param id Id is the identifier of content. If importResolver is undefined, id must be a full path string. 
+     * @param importResolver Resolver to resolve LG import id to template text.
      * @param expressionParser Expression parser for evaluating expressions.
-     * @returns entity.
+     * @returns Entity.
      */
     public static parseText(content: string, id: string = '', importResolver?: ImportResolverDelegate, expressionParser?: ExpressionParser): Templates {
         return TemplatesParser.innerParseText(content, id, importResolver, expressionParser);
@@ -65,7 +73,7 @@ export class TemplatesParser {
     /**
      * Parser to turn lg content into a Templates based on the original Templates.
      * @param content Text content contains lg templates.
-     * @param originalTemplates original templates
+     * @param originalTemplates Original templates
      */
     public static parseTextWithRef(content: string, originalTemplates: Templates): Templates {
         if (!originalTemplates) {
@@ -77,34 +85,25 @@ export class TemplatesParser {
         newTemplates.content = content;
         newTemplates.id = id;
         newTemplates.importResolver = originalTemplates.importResolver;
-        let diagnostics: Diagnostic[] = [];
-        try {
-            const antlrResult = this.antlrParse(content, id);
-            const templates = antlrResult.templates;
-            const imports = antlrResult.imports;
-            const invalidTemplateErrors = antlrResult.invalidTemplateErrors;
-            const options = antlrResult.options;
-            templates.forEach(t => newTemplates.push(t));
-            newTemplates.imports = imports;
-            newTemplates.options = options;
-            diagnostics = diagnostics.concat(invalidTemplateErrors);
+        newTemplates.options = originalTemplates.options;
 
+        try {
+            // eslint-disable-next-line @typescript-eslint/no-use-before-define
+            newTemplates = new TemplatesTransformer(newTemplates).transform(this.antlrParseTemplates(content, id));
             newTemplates.references = this.getReferences(newTemplates)
                 .concat(originalTemplates.references)
                 .concat([originalTemplates]);
 
             var semanticErrors = new StaticChecker(newTemplates).check();
-            diagnostics = diagnostics.concat(semanticErrors);
+            newTemplates.diagnostics.push(...semanticErrors);
         }
         catch (err) {
             if (err instanceof TemplateException) {
-                diagnostics = diagnostics.concat(err.getDiagnostic());
+                newTemplates.diagnostics.push(...err.getDiagnostic());
             } else {
-                diagnostics.push(this.buildDiagnostic(err.Message, undefined, id));
+                throw err;
             }
         }
-
-        newTemplates.diagnostics = diagnostics;
 
         return newTemplates;
     }
@@ -125,12 +124,12 @@ export class TemplatesParser {
 
     /**
      * Parser to turn lg content into a Templates.
-     * @param content text content contains lg templates.
-     * @param id id is the identifier of content. If importResolver is undefined, id must be a full path string. 
-     * @param importResolver resolver to resolve LG import id to template text.
+     * @param content Text content contains lg templates.
+     * @param id Id is the identifier of content. If importResolver is undefined, id must be a full path string. 
+     * @param importResolver Resolver to resolve LG import id to template text.
      * @param expressionParser Expression parser for evaluating expressions.
-     * @param cachedTemplates give the file path and templates to avoid parsing and to improve performance.
-     * @returns entity.
+     * @param cachedTemplates Give the file path and templates to avoid parsing and to improve performance.
+     * @returns Entity.
      */
     public static innerParseText(content: string,
         id: string = '',
@@ -151,37 +150,21 @@ export class TemplatesParser {
         if (expressionParser) {
             templates.expressionParser = expressionParser;
         }
-        let diagnostics: Diagnostic[] = [];
-        try {
-            const parsedResult = TemplatesParser.antlrParse(content, id);
-            parsedResult.templates.forEach(t => templates.push(t));
-            templates.imports = parsedResult.imports;
-            templates.options = parsedResult.options;
 
-            diagnostics = diagnostics.concat(parsedResult.invalidTemplateErrors);
+        try {
+            // eslint-disable-next-line @typescript-eslint/no-use-before-define
+            templates = new TemplatesTransformer(templates).transform(this.antlrParseTemplates(content, id));
             templates.references = this.getReferences(templates, cachedTemplates);
             const semanticErrors = new StaticChecker(templates).check();
-            diagnostics = diagnostics.concat(semanticErrors);
+            templates.diagnostics.push(...semanticErrors);
         } catch (err) {
             if (err instanceof TemplateException) {
-                diagnostics = diagnostics.concat(err.getDiagnostic());
+                templates.diagnostics.push(...err.getDiagnostic());
             } else {
-                diagnostics.push(this.buildDiagnostic(err.Message, undefined, id));
+                throw err;
             }
         }
-
-        templates.diagnostics = diagnostics;
-
         return templates;
-    }
-
-    private static antlrParse(text: string, id: string = ''): { templates: Template[]; imports: TemplateImport[]; invalidTemplateErrors: Diagnostic[]; options: string[]} {
-        const fileContext: FileContext = this.getFileContentContext(text, id);
-        const templates: Template[] = this.extractLGTemplates(fileContext, text, id);
-        const imports: TemplateImport[] = this.extractLGImports(fileContext, id);
-        const invalidTemplateErrors: Diagnostic[] = this.getInvalidTemplateErrors(fileContext, id);
-        const options: string[] = this.extractLGOptions(fileContext);
-        return { templates, imports, invalidTemplateErrors, options};
     }
 
     private static getReferences(file: Templates, cachedTemplates?: Map<string, Templates>): Templates[] {
@@ -193,90 +176,33 @@ export class TemplatesParser {
     }
 
     private static resolveImportResources(start: Templates, resourcesFound: Set<Templates>, cachedTemplates?: Map<string, Templates>): void {
-        var resourceIds = start.imports.map((lg: TemplateImport): string => lg.id);
         resourcesFound.add(start);
 
-        for (const id of resourceIds) {
+        for (const importItem of start.imports) {
+            let content: string;
+            let path: string;
             try {
-                const result = start.importResolver(start.id, id);
-                const content = result.content;
-                const path = result.id;
-                const notExist = Array.from(resourcesFound).filter((u): boolean => u.id === path).length === 0;
-                if (notExist) {
-                    let childResource: Templates;
-                    if (cachedTemplates.has(path)) {
-                        childResource = cachedTemplates.get(path);
-                    } else {
-                        childResource = TemplatesParser.innerParseText(content, path, start.importResolver, start.expressionParser, cachedTemplates);
-                        cachedTemplates.set(path, childResource);
-                    }
-
-                    this.resolveImportResources(childResource, resourcesFound, cachedTemplates);
-                }
+                ({content, id: path} = start.importResolver(start.id, importItem.id));
+            } catch (error) {
+                const diagnostic = new Diagnostic(TemplateExtensions.convertToRange(importItem.sourceRange.parseTree), error.message, DiagnosticSeverity.Error, start.id);
+                throw new TemplateException(error.message, [diagnostic]);
             }
-            catch (err) {
-                if (err instanceof TemplateException) {
-                    throw err;
+
+            if (Array.from(resourcesFound).every((u): boolean => u.id !== path)) {
+                let childResource: Templates;
+                if (cachedTemplates.has(path)) {
+                    childResource = cachedTemplates.get(path);
                 } else {
-                    throw new TemplateException(err.message, [this.buildDiagnostic(err.message, undefined, start.id)]);
+                    childResource = TemplatesParser.innerParseText(content, path, start.importResolver, start.expressionParser, cachedTemplates);
+                    cachedTemplates.set(path, childResource);
                 }
+
+                this.resolveImportResources(childResource, resourcesFound, cachedTemplates);
             }
         }
     }
 
-    private static buildDiagnostic(message: string, context?: ParserRuleContext, source?: string): Diagnostic {
-        message = message || '';
-        const startPosition: Position = context === undefined ? new Position(0, 0) : new Position(context.start.line, context.start.charPositionInLine);
-        const endPosition: Position = context === undefined ? new Position(0, 0) : new Position(context.stop.line, context.stop.charPositionInLine + context.stop.text.length);
-        return new Diagnostic(new Range(startPosition, endPosition), message, DiagnosticSeverity.Error, source);
-    }
-
-    /**
-    * Extract LG options from the parse tree of a file.
-    * @param file LG file context from ANTLR parser. 
-    * @returns a string list of options
-    */
-    private static extractLGOptions(file: FileContext): string[] {
-        return  !file ? [] :
-            file.paragraph()
-                .map((x): OptionsDefinitionContext => x.optionsDefinition())
-                .filter((x): boolean => x !== undefined)
-                .map((t): string => this.extractOption(t.text))
-                .filter((t): boolean => t !== undefined && t !== '');
-    }
-
-    private static extractOption(originalText: string): string
-    {
-        let result = '';
-        if (!originalText)
-        {
-            return result;
-        }
-
-        var matchResult = originalText.match(this.optionRegex);
-        if (matchResult && matchResult.length === 2)
-        {
-            result = matchResult[1];
-        }
-
-        return result;
-    }
-
-    private static getInvalidTemplateErrors(fileContext: FileContext, id: string): Diagnostic[] {
-        let errorTemplates = [];
-        if (fileContext !== undefined) {
-            for (const parag of fileContext.paragraph()) {
-                const errTem = parag.errorTemplate();
-                if (errTem) {
-                    errorTemplates = errorTemplates.concat(errTem);
-                }
-            }
-        }
-
-        return errorTemplates.map((u): Diagnostic => this.buildDiagnostic('error context.', u, id));
-    }
-
-    private static getFileContentContext(text: string, source: string): FileContext {
+    private static antlrParseTemplates(text: string, source: string): FileContext {
         if (!text) {
             return undefined;
         }
@@ -291,28 +217,178 @@ export class TemplatesParser {
 
         return parser.file();
     }
+}
 
-    private static extractLGTemplates(file: FileContext, lgfileContent: string, source: string = ''): Template[] {
-        if (!file) {
-            return [];
-        }
 
-        const templates: TemplateDefinitionContext[] = file.paragraph()
-            .map((x: ParagraphContext): TemplateDefinitionContext => x.templateDefinition())
-            .filter((x: TemplateDefinitionContext): boolean => x !== undefined);
+class TemplatesTransformer extends AbstractParseTreeVisitor<any> implements LGTemplateParserVisitor<any> {
+    private readonly identifierRegex: RegExp = new RegExp(/^[0-9a-zA-Z_]+$/);
+    private readonly templates: Templates;
 
-        return templates.map((x: TemplateDefinitionContext): Template => new Template(x, lgfileContent, source));
+    public constructor(templates: Templates) {
+        super();
+        this.templates = templates;
     }
 
-    private static extractLGImports(file: FileContext, source: string = ''): TemplateImport[] {
-        if (!file) {
-            return [];
+    public transform(parseTree: ParseTree): Templates {
+        this.visit(parseTree);
+        return this.templates;
+    }
+
+    protected defaultResult(): any {
+        return;
+    }
+
+    public visitErrorDefinition(context: lp.ErrorDefinitionContext): any {
+        const lineContent = context.INVALID_LINE().text;
+        if (lineContent === undefined || lineContent.trim() === '') {
+            this.templates.diagnostics.push(this.buildTemplatesDiagnostic(TemplateErrors.syntaxError, context));
+        }
+        return;
+    }
+
+    public visitImportDefinition(context: lp.ImportDefinitionContext): any {
+        const importStr = context.IMPORT().text;
+        var groups = importStr.match(TemplatesParser.importRegex);
+        if (groups && groups.length === 3) {
+            const description = groups[1].trim();
+            const id = groups[2].trim();
+            const sourceRange = new SourceRange(context, this.templates.id);
+            const templateImport = new TemplateImport(description, id, sourceRange);
+            this.templates.imports.push(templateImport);
+        }
+        return;
+    }
+
+    public visitOptionDefinition(context: lp.OptionDefinitionContext): any {
+        const optionStr = context.OPTION().text;
+        let result = '';
+        if (optionStr != undefined && optionStr.trim() !== '') {
+            var groups = optionStr.match(TemplatesParser.optionRegex);
+            if (groups && groups.length === 2) {
+                result = groups[1].trim();
+            }
         }
 
-        const imports: ImportDefinitionContext[] = file.paragraph()
-            .map((x: ParagraphContext): ImportDefinitionContext => x.importDefinition())
-            .filter((x: ImportDefinitionContext): boolean => x !== undefined);
+        if (result.trim() !== '') {
+            this.templates.options.push(result);
+        }
+        return;
+    }
 
-        return imports.map((x: ImportDefinitionContext): TemplateImport => new TemplateImport(x, source));
+    public visitTemplateDefinition(context: lp.TemplateDefinitionContext): any {
+        const startLine = context.start.line;
+
+        const templateNameLine = context.templateNameLine().TEMPLATE_NAME_LINE().text;
+        let templateName: string;
+        let parameters: string[];
+        ({templateName, parameters} = this.extractTemplateNameLine(templateNameLine));
+
+        if (this.templates.toArray().some((u): boolean => u.name === templateName)) {
+            const diagnostic = this.buildTemplatesDiagnostic(TemplateErrors.duplicatedTemplateInSameTemplate(templateName), context.templateNameLine());
+            this.templates.diagnostics.push(diagnostic);
+        } else {
+            let templateBody = context.templateBody().text;
+            const file = context.parent.parent as lp.FileContext;
+            const templateContextList = file.paragraph().map((u): lp.TemplateDefinitionContext => u.templateDefinition()).filter((u): boolean => u !== undefined);
+            const isLastTemplate = templateContextList[templateContextList.length - 1] === context;
+            if (!isLastTemplate) {
+                templateBody = this.removeTrailingNewline(templateBody);
+            }
+
+            const sourceRange = new SourceRange(context, this.templates.id);
+            const template = new Template(templateName, parameters, templateBody, sourceRange);
+
+            this.checkTemplateName(templateName, context.templateNameLine());
+            this.checkTemplateParameters(parameters, context.templateNameLine());
+            template.templateBodyParseTree = this.checkTemplateBody(templateName, templateBody, context.templateBody(), startLine);
+
+            this.templates.push(template);
+        }
+    }
+
+    private checkTemplateName(templateName: string, context: ParserRuleContext): void {
+        const functionNameSplitDot = templateName.split('.');
+        for(let id of functionNameSplitDot) {
+            if (!this.identifierRegex.test(id)) {
+                const diagnostic = this.buildTemplatesDiagnostic(TemplateErrors.invalidTemplateName, context);
+                this.templates.diagnostics.push(diagnostic);
+            }
+        }
+    }
+
+    private checkTemplateParameters(parameters: string[], context: ParserRuleContext): void {
+        for (const parameter of parameters) {
+            if (!this.identifierRegex.test(parameter)) {
+                const diagnostic = this.buildTemplatesDiagnostic(TemplateErrors.invalidTemplateName, context);
+                this.templates.diagnostics.push(diagnostic);
+            }
+        }
+    }
+
+    private checkTemplateBody(templateName: string, templateBody: string, context: lp.TemplateBodyContext, startLine: number): BodyContext {
+        if (templateBody === undefined || templateBody.trim() === '') {
+            const diagnostic = this.buildTemplatesDiagnostic(TemplateErrors.noTemplateBody(templateName), context, DiagnosticSeverity.Warning);
+            this.templates.diagnostics.push(diagnostic);
+        } else {
+            try {
+                return this.antlrParseTemplate(templateBody, startLine);
+            } catch (error) {
+                if (error instanceof TemplateException) {
+                    this.templates.diagnostics.push(...error.getDiagnostic());
+                } else {
+                    throw error;
+                }
+            }
+        }
+
+        return undefined;
+    }
+
+    private antlrParseTemplate(templateBody: string, startLine: number): BodyContext {
+        const input: ANTLRInputStream = new ANTLRInputStream(templateBody);
+        const lexer: LGTemplateLexer = new LGTemplateLexer(input);
+        lexer.removeErrorListeners();
+
+        const tokens: CommonTokenStream = new CommonTokenStream(lexer);
+        const parser: LGTemplateParser = new LGTemplateParser(tokens);
+        parser.removeErrorListeners();
+        parser.addErrorListener(new ErrorListener(this.templates.id, startLine));
+        parser.buildParseTree = true;
+
+        return parser.template().body();
+    }
+
+    private removeTrailingNewline(templateBody: string): string {
+        // remove the end newline of middle template.
+        let result = templateBody;
+        if (result.endsWith('\n')) {
+            result = result.substr(0, result.length - 1);
+            if (result.endsWith('\r')) {
+                result = result.substr(0, result.length - 1);
+            }
+        }
+
+        return result;
+    }
+
+    private extractTemplateNameLine(templateNameLine: string): { templateName: string; parameters: string[] } {
+        const hashIndex = templateNameLine.indexOf('#');
+        templateNameLine = templateNameLine.substr(hashIndex + 1).trim();
+        let templateName = templateNameLine;
+        let parameters: string[] = [];
+        const leftBracketIndex = templateNameLine.indexOf('(');
+        if (leftBracketIndex >= 0 && templateNameLine.endsWith(')')) {
+            templateName = templateNameLine.substr(0, leftBracketIndex).trim();
+            const paramStr = templateNameLine.substr(leftBracketIndex + 1, templateNameLine.length - leftBracketIndex - 2);
+            if (paramStr !== undefined && paramStr.trim() !== '') {
+                parameters = paramStr.split(',').map((u: string): string => u.trim());
+            }
+        }
+
+        return {templateName, parameters};
+    }
+
+    private buildTemplatesDiagnostic(errorMessage: string, context: ParserRuleContext, severity: DiagnosticSeverity = DiagnosticSeverity.Error): Diagnostic {
+        return new Diagnostic(TemplateExtensions.convertToRange(context), errorMessage, severity, this.templates.id);
     }
 }
