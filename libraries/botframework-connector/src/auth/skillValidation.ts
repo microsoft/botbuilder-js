@@ -14,6 +14,8 @@ import { ICredentialProvider } from './credentialProvider';
 import { GovernmentConstants } from './governmentConstants';
 import { JwtTokenExtractor } from './jwtTokenExtractor';
 import { JwtTokenValidation } from './jwtTokenValidation';
+import { StatusCodes } from 'botframework-schema';
+import { AuthenticationError } from './authenticationError';
 
 /**
  * Validates JWT tokens sent to and from a Skill.
@@ -123,7 +125,7 @@ export namespace SkillValidation {
         channelId: string,
         authConfig: AuthenticationConfiguration): Promise<ClaimsIdentity> {
         if (!authConfig) {
-            throw new Error('SkillValidation.authenticateChannelToken(): invalid authConfig parameter');
+            throw new AuthenticationError('SkillValidation.authenticateChannelToken(): invalid authConfig parameter', StatusCodes.INTERNAL_SERVER_ERROR);
         }
 
         const openIdMetadataUrl = JwtTokenValidation.isGovernment(channelService) ?
@@ -152,37 +154,37 @@ export namespace SkillValidation {
     export async function validateIdentity(identity: ClaimsIdentity, credentials: ICredentialProvider): Promise<void> {
         if (!identity) {
             // No valid identity. Not Authorized.
-            throw new Error('SkillValidation.validateIdentity(): Invalid identity');
+            throw new AuthenticationError('SkillValidation.validateIdentity(): Invalid identity', StatusCodes.UNAUTHORIZED);
         }
 
         if (!identity.isAuthenticated) {
             // The token is in some way invalid. Not Authorized.
-            throw new Error('SkillValidation.validateIdentity(): Token not authenticated');
+            throw new AuthenticationError('SkillValidation.validateIdentity(): Token not authenticated', StatusCodes.UNAUTHORIZED);
         }
 
         const versionClaim = identity.getClaimValue(AuthenticationConstants.VersionClaim);
         // const versionClaim = identity.claims.FirstOrDefault(c => c.Type == AuthenticationConstants.VersionClaim);
         if (!versionClaim) {
             // No version claim
-            throw new Error(`SkillValidation.validateIdentity(): '${AuthenticationConstants.VersionClaim}' claim is required on skill Tokens.`);
+            throw new AuthenticationError(`SkillValidation.validateIdentity(): '${AuthenticationConstants.VersionClaim}' claim is required on skill Tokens.`, StatusCodes.UNAUTHORIZED);
         }
 
         // Look for the "aud" claim, but only if issued from the Bot Framework
         const audienceClaim = identity.getClaimValue(AuthenticationConstants.AudienceClaim);
         if (!audienceClaim) {
             // Claim is not present or doesn't have a value. Not Authorized.
-            throw new Error(`SkillValidation.validateIdentity(): '${AuthenticationConstants.AudienceClaim}' claim is required on skill Tokens.`);
+            throw new AuthenticationError(`SkillValidation.validateIdentity(): '${AuthenticationConstants.AudienceClaim}' claim is required on skill Tokens.`, StatusCodes.UNAUTHORIZED);
         }
 
         if (!await credentials.isValidAppId(audienceClaim)) {
             // The AppId is not valid. Not Authorized.
-            throw new Error('SkillValidation.validateIdentity(): Invalid audience.');
+            throw new AuthenticationError('SkillValidation.validateIdentity(): Invalid audience.', StatusCodes.UNAUTHORIZED);
         }
         
         const appId = JwtTokenValidation.getAppIdFromClaims(identity.claims);
         if (!appId) {
             // Invalid appId
-            throw new Error('SkillValidation.validateIdentity(): Invalid appId.');
+            throw new AuthenticationError('SkillValidation.validateIdentity(): Invalid appId.', StatusCodes.UNAUTHORIZED);
         }
 
         // TODO: check the appId against the registered skill client IDs.

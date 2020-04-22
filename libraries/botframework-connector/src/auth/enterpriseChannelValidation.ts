@@ -12,6 +12,8 @@ import { ChannelValidation } from './channelValidation';
 import { ClaimsIdentity } from './claimsIdentity';
 import { ICredentialProvider } from './credentialProvider';
 import { JwtTokenExtractor } from './jwtTokenExtractor';
+import { AuthenticationError } from './authenticationError';
+import { StatusCodes } from 'botframework-schema';
 
 export namespace EnterpriseChannelValidation {
 
@@ -46,7 +48,7 @@ export namespace EnterpriseChannelValidation {
         const serviceUrlClaim: string = identity.getClaimValue(AuthenticationConstants.ServiceUrlClaim);
         if (serviceUrlClaim !== serviceUrl) {
             // Claim must match. Not Authorized.
-            throw new Error('Unauthorized. ServiceUrl claim do not match.');
+            throw new AuthenticationError('Unauthorized. ServiceUrl claim do not match.', StatusCodes.UNAUTHORIZED);
         }
 
         return identity;
@@ -92,12 +94,12 @@ export namespace EnterpriseChannelValidation {
 
         if (!identity) {
             // No valid identity. Not Authorized.
-            throw new Error('Unauthorized. No valid identity.');
+            throw new AuthenticationError('Unauthorized. No valid identity.', StatusCodes.UNAUTHORIZED);
         }
 
         if (!identity.isAuthenticated) {
             // The token is in some way invalid. Not Authorized.
-            throw new Error('Unauthorized. Is not authenticated');
+            throw new AuthenticationError('Unauthorized. Is not authenticated', StatusCodes.UNAUTHORIZED);
         }
 
         // Now check that the AppID in the claimset matches
@@ -108,7 +110,7 @@ export namespace EnterpriseChannelValidation {
         // Look for the "aud" claim, but only if issued from the Bot Framework
         if (identity.getClaimValue(AuthenticationConstants.IssuerClaim) !== AuthenticationConstants.ToBotFromChannelTokenIssuer) {
             // The relevant Audiance Claim MUST be present. Not Authorized.
-            throw new Error('Unauthorized. Issuer Claim MUST be present.');
+            throw new AuthenticationError('Unauthorized. Issuer Claim MUST be present.', StatusCodes.UNAUTHORIZED);
         }
 
         // The AppId from the claim in the token must match the AppId specified by the developer.
@@ -116,7 +118,7 @@ export namespace EnterpriseChannelValidation {
         const audClaim: string = identity.getClaimValue(AuthenticationConstants.AudienceClaim);
         if (!(await credentials.isValidAppId(audClaim || ''))) {
             // The AppId is not valid or not present. Not Authorized.
-            throw new Error(`Unauthorized. Invalid AppId passed on token: ${ audClaim }`);
+            throw new AuthenticationError(`Unauthorized. Invalid AppId passed on token: ${ audClaim }`, StatusCodes.UNAUTHORIZED);
         }
 
         return identity;
