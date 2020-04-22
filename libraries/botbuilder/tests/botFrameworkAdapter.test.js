@@ -11,6 +11,10 @@ const {
     MicrosoftAppCredentials } = require('botframework-connector');
 const { spy, stub } = require('sinon');
 const { BotFrameworkAdapter } = require('../');
+const nock = require('nock');
+const { userAgentPolicy, HttpHeaders } = require('@azure/ms-rest-js');
+const os = require('os');
+const pjson = require('../package.json');
 
 const reference = {
     activityId: '1234',
@@ -328,6 +332,57 @@ describe(`BotFrameworkAdapter`, function () {
 
             const client = adapter.getOrCreateConnectorClient(context, 'https://botframework.com', adapter.credentials);
             assert.notEqual(client.baseUri, cc.baseUri);
+        });
+
+        
+        it('ConnectorClient should add userAgent header from clientOptions', async () => {
+            const userAgent = 'test user agent';
+            nock(reference.serviceUrl)
+                .matchHeader('user-agent', val => val.endsWith(userAgent))
+                .post('/v3/conversations/convo1/activities/1234')
+                .reply(200, {id:'abc123id'});
+            
+            const adapter = new BotFrameworkAdapter( {clientOptions: { userAgent: userAgent } });
+                
+            await adapter.continueConversation(reference, async turnContext => {
+                await turnContext.sendActivity(outgoingMessage);
+            });
+        });
+
+        it('ConnectorClient should use httpClient from clientOptions', async () => {
+            let sendRequestCalled = false;
+            class MockHttpClient {
+                async sendRequest(httpRequest) {
+                    assert.deepEqual(outgoingMessage, JSON.parse(httpRequest.body), 'sentActivity should flow through custom httpClient.sendRequest');
+                    sendRequestCalled = true;
+                    return {
+                        request: httpRequest,
+                        status: 200,
+                        headers: new HttpHeaders(),
+                        readableStreamBody: undefined,
+                        bodyAsText: ''
+                    };
+                }
+            };
+            
+            const customHttpClient = new MockHttpClient();
+            const adapter = new BotFrameworkAdapter( {clientOptions: {  httpClient: customHttpClient } });
+                
+            await adapter.continueConversation(reference, async turnContext => {
+                await turnContext.sendActivity(outgoingMessage);
+            });
+
+            assert(sendRequestCalled, 'sendRequest on HttpClient provided to BotFrameworkAdapter.clientOptions was not called when sending an activity');
+        });
+
+        it('ConnectorClient should use requestPolicyFactories from clientOptions', async () => {
+            const factories = [ userAgentPolicy({ value: 'test' }) ];
+            const adapter = new BotFrameworkAdapter( {clientOptions: { requestPolicyFactories: factories } });
+                
+            await adapter.continueConversation(reference, async turnContext => {
+                const connectorClient = turnContext.turnState.get(turnContext.adapter.ConnectorClientKey);
+                assert.equal(connectorClient._requestPolicyFactories.length, factories.length,  'requestPolicyFactories from clientOptions parameter is not used.')
+            });
         });
     });
 
@@ -907,15 +962,42 @@ describe(`BotFrameworkAdapter`, function () {
         });
     });
 
-    // This unit test doesn't work anymore because client.UserAgentInfo was removed, so we can't inspect the user agent string
-    xit(`should create a User-Agent header with the same info as the host machine.`, function (done) {
-        const adapter = new BotFrameworkAdapter();
-        const client = adapter.createConnectorClient('https://example.com');
-        //const userAgentHeader = client.userAgentInfo.value;
-        const pjson = require('../package.json');
+
+    it(`should create a User-Agent header with the same info as the host machine.`, async function () {
         const userAgent = 'Microsoft-BotFramework/3.1 BotBuilder/' + pjson.version + ' (Node.js,Version=' + process.version + '; ' + os.type() + ' ' + os.release() + '; ' + os.arch() + ')';
-        // assert(userAgentHeader.includes(userAgent), `ConnectorClient doesn't have user-agent header created by BotFrameworkAdapter or header is incorrect.`);
-        done();
+
+        nock(reference.serviceUrl)
+            .matchHeader('user-agent', val => val.endsWith(userAgent))
+            .post('/v3/conversations/convo1/activities/1234')
+            .reply(200, {id:'abc123id'});
+        
+        const adapter = new BotFrameworkAdapter();
+            
+        await adapter.continueConversation(reference, async turnContext => {
+            await turnContext.sendActivity(outgoingMessage);
+        });
+    });
+
+    // TODO: update BotFrameworkAdapter.getClientOptions to ensure requestPolicyFactories includes userAgent of BB, regardless of requestPolicyFactories
+    xit(`should still add Botbuilder User-Agent header when custom requestPolicyFactories are provided.`, async function () {
+        //ms-rest-js currently adds:
+        //botframework-connector/4.0.0 ms-rest-js/0.1.0 Node/v12.14.1 OS/(x64-Windows_NT-10.0.18363)
+        //BotBuilder adds BotFrameworkAdapter.USER_AGENT:
+        //Microsoft-BotFramework/3.1 BotBuilder/4.1.6 (Node.js,Version=v12.14.1; Windows_NT 10.0.18363; x64)"
+
+        const userAgent = 'Microsoft-BotFramework/3.1 BotBuilder/' + pjson.version + ' (Node.js,Version=' + process.version + '; ' + os.type() + ' ' + os.release() + '; ' + os.arch() + ')';
+
+        nock(reference.serviceUrl)
+            .matchHeader('user-agent', val => val.endsWith(userAgent))
+            .post('/v3/conversations/convo1/activities/1234')
+            .reply(200, {id:'abc123id'});
+        
+        const factories = [ userAgentPolicy({ value: 'test' }) ];
+        const adapter = new BotFrameworkAdapter({clientOptions: { requestPolicyFactories: factories } });
+            
+        await adapter.continueConversation(reference, async turnContext => {
+            await turnContext.sendActivity(outgoingMessage);
+        });
     });
 
     it(`should set openIdMetadata property on ChannelValidation`, function (done) {

@@ -554,19 +554,13 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
 
     protected onPushScopedServices(context: TurnContext): void {
         if (this.generator) {
-            context.pushTurnState('LanguageGenerator', this.generator);
-        }
-        if (this.recognizer) {
-            context.pushTurnState('Recognizer', this.recognizer);
+            context.turnState.push('LanguageGenerator', this.generator);
         }
     }
 
     protected onPopScopedServices(context: TurnContext): void {
         if (this.generator) {
-            context.popTurnState('LanguageGenerator');
-        }
-        if (this.recognizer) {
-            context.popTurnState('Recognizer');
+            context.turnState.pop('LanguageGenerator');
         }
     }
 

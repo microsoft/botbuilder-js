@@ -44,6 +44,7 @@ export * from './telemetryLoggerMiddleware';
 export * from './testAdapter';
 export * from './transcriptLogger';
 export * from './turnContext';
+export * from './turnContextStateCollection';
 export * from './userState';
 export * from './userTokenProvider';
 export * from './userTokenSettings';

@@ -64,7 +64,7 @@ export class TemplateErrors {
  
     public static readonly loopDetected: string = `Loop detected:`;
  
-    public static readonly syntaxError: string = `Unexpected content. Expecting either a comment or a template definition or an import statement.`;
+    public static readonly syntaxError: string = `Unexpected content. Expecting a comment, template definition, import statement or option definition.`;
  
     public static readonly invalidMemory: string = `Scope is not a LG customized memory.`;
  
@@ -80,11 +80,9 @@ export class TemplateErrors {
  
     public static readonly errorExpression = (refFullText: string, templateName: string, prefixText: string): string => `[${ templateName }] ${ prefixText } Error occurred when evaluating '${ refFullText }'.`;
  
-    public static readonly nullExpression = (expression): string => `'${ expression }' evaluated to null.`;
+    public static readonly nullExpression = (expression: string): string => `'${ expression }' evaluated to null.`;
  
     public static readonly argumentMismatch = (templateName: string, expectedCount: number, actualCount: number): string => `arguments mismatch for template '` + `${ templateName }` + `'. Expecting '` + `${ expectedCount }` +`' arguments, actual '` + `${ actualCount }` +`'.`;
- 
-    public static readonly errorTemplateNameformat = (templateName: string): string => `'${ templateName }' cannot be used as a template name. Template names must be avalid .`;
  
     public static readonly templateExist = (templateName: string): string => `template '${ templateName }' already exists.`;
  
