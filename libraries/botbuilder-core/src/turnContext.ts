@@ -5,6 +5,7 @@
 import { Activity, ActivityTypes, ConversationReference, DeliveryModes, InputHints, ResourceResponse, Mention } from 'botframework-schema';
 import { BotAdapter } from './botAdapter';
 import { shallowCopy } from './internal';
+import { TurnContextStateCollection } from './turnContextStateCollection';
 
 /**
  * A handler that can participate in send activity events for the current turn.
@@ -108,8 +109,6 @@ export const BotCallbackHandlerKey = 'botCallbackHandler';
 // tslint:disable-next-line:no-empty-interface
 export interface TurnContext {}
 
-const TURN_STATE_SCOPE_CACHE = Symbol('turnStateScopeCache');
-
 /**
  * Provides context for a turn of a bot.
  *
@@ -121,7 +120,7 @@ export class TurnContext {
     private _adapter: BotAdapter | undefined;
     private _activity: Activity | undefined;
     private _respondedRef: { responded: boolean } = { responded: false };
-    private _turnState: Map<any, any> = new Map<any, any>();
+    private _turnState: TurnContextStateCollection = new TurnContextStateCollection();
     private _onSendActivities: SendActivitiesHandler[] = [];
     private _onUpdateActivity: UpdateActivityHandler[] = [];
     private _onDeleteActivity: DeleteActivityHandler[] = [];
@@ -739,37 +738,8 @@ export class TurnContext {
      * > When creating middleware or a third-party component, use a unique symbol for your cache key
      * > to avoid state naming collisions with the bot or other middleware or components.
      */
-    public get turnState(): Map<any, any> {
+    public get turnState(): TurnContextStateCollection {
         return this._turnState;
-    }
-
-    public pushTurnState(key: any, value: any): void {
-        // Get current value and add to scope cache
-        const current = this.turnState.get(key);
-        const cache: Map<any, any[]> = this.turnState.get(TURN_STATE_SCOPE_CACHE) || new Map<any, any[]>();
-        if (cache.has(key)) {
-            cache.get(key).push(current);
-        } else {
-            cache.set(key, [current]);
-        }
-
-        // Set new (or current) value and save cache
-        if (value == undefined) { value = current }
-        this.turnState.set(key, value);
-        this.turnState.set(TURN_STATE_SCOPE_CACHE, cache);
-    }
-
-    public popTurnState(key: any): void {
-        // Get previous value from scope cache
-        let previous: any;
-        const cache: Map<any, any[]> = this.turnState.get(TURN_STATE_SCOPE_CACHE) || new Map<any, any[]>();
-        if (cache.has(key)) {
-            previous = cache.get(key).pop();
-        }
-
-        // Restore previous value and save cache
-        this.turnState.set(key, previous);
-        this.turnState.set(TURN_STATE_SCOPE_CACHE, cache);
     }
 
     private emit<T>(

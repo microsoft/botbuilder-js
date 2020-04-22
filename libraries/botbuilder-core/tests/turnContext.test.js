@@ -126,7 +126,7 @@ describe(`TurnContext`, function () {
         }
     });
 
-    it(`should cache a value using services.set() and services.get().`, function (done) {
+    it(`should cache a value using turnState.set() and services.get().`, function (done) {
         const context = new TurnContext(new SimpleAdapter(), testMessage);
         assert(context.turnState.get('foo') === undefined, `invalid initial state.`);
         context.turnState.set('foo', 'bar');
@@ -152,6 +152,17 @@ describe(`TurnContext`, function () {
         assert(context.turnState.get(key) === 'bar', `invalid value of "${context.turnState.get(key)}" after set().`);
         context.turnState.set(key, undefined);
         assert(context.turnState.has(key), `invalid initial state for has() after set(undefined).`);
+        done();
+    });
+
+    it(`should push() and pop() a new turn state.`, function (done) {
+        const context = new TurnContext(new SimpleAdapter(), testMessage);
+        context.turnState.set('foo', 'a');
+        context.turnState.push('foo', 'b');
+        assert(context.turnState.get('foo') === 'b', `invalid value of "${context.turnState.get('foo')}" after push().`);
+        const old = context.turnState.pop('foo');
+        assert(old == 'b', `popped value not returned.`);
+        assert(context.turnState.get('foo') === 'a', `invalid value of "${context.turnState.get('foo')}" after pop().`);
         done();
     });
 
