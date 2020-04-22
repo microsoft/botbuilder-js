@@ -7,12 +7,20 @@ describe('ActionTests', function() {
     this.timeout(10000);
     const testRunner = new TestRunner(path.join(__dirname,  '../resources/ActionTests'));
 
+    it('AttachmentInput', async () => {
+        await testRunner.runTestScript('Action_AttachmentInput');
+    });
+
     it('BeginDialog', async () => {
         await testRunner.runTestScript('Action_BeginDialog');
     });
 
     it('BeginDialogWithActivity', async () => {
         await testRunner.runTestScript('Action_BeginDialogWithActivity');
+    });
+
+    it('CancelAllDialogs', async () => {
+        await testRunner.runTestScript('Action_CancelAllDialogs');
     });
 
     it('ChoiceInput', async () => {
