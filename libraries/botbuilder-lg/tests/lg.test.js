@@ -332,7 +332,7 @@ describe('LG', function() {
         options.forEach(e => assert.strictEqual(variableEvaled.includes(e), true));
     });
 
-    it('TestImporttemplatess', function() {
+    it('TestImporttemplates', function() {
         var templates = Templates.parseFile(GetExampleFilePath('importExamples/import.lg'));
 
         // Assert 6.lg is imported only once when there are several relative paths which point to the same file.
@@ -360,7 +360,7 @@ describe('LG', function() {
         assert.strictEqual(options5.includes(evaled), true, `Evaled is ${ evaled }`);
 
         // Assert 6.lg of relative path is imported from text.
-        templates = Templates.parseText(`# basicTemplate\r\n- Hi\r\n- Hello\r\n[import](./6.lg)`, GetExampleFilePath('xx.lg'));
+        templates = Templates.parseText(`[import](./6.lg)\r\n# basicTemplate\r\n- Hi\r\n- Hello\r\n`, GetExampleFilePath('xx.lg'));
 
         assert.strictEqual(templates.allTemplates.length, 8);
 
