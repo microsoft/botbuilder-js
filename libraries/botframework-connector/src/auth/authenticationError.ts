@@ -15,7 +15,7 @@ export class AuthenticationError extends Error implements IStatusCodeError {
     }
 
     public static isStatusCodeError(err: any): err is IStatusCodeError {
-        return !!(err && err.statusCode && typeof err.statusCode === "number");
+        return !!(err && typeof err.statusCode === "number");
     }
 
     /**
@@ -23,8 +23,8 @@ export class AuthenticationError extends Error implements IStatusCodeError {
      * @param err The error thrown, used to determine an appropriate status code.
      */
     public static determineStatusCodeAndBuildMessage(err: any): string {
-        let errMessage: string = (err && err.message) ? err.message : 'Internal Server Error';
-        let code: number = AuthenticationError.determineStatusCode(errMessage);
+        const errMessage: string = (err && err.message) ? err.message : 'Internal Server Error';
+        const code: number = AuthenticationError.determineStatusCode(errMessage);
         const connectionHeader = `Connection: 'close'\r\n`;
         
         return `HTTP/1.1 ${ code } ${ StatusCodes[code] }\r\n${ errMessage }\r\n${ connectionHeader }\r\n`;

@@ -125,7 +125,7 @@ export namespace SkillValidation {
         channelId: string,
         authConfig: AuthenticationConfiguration): Promise<ClaimsIdentity> {
         if (!authConfig) {
-            throw new AuthenticationError('SkillValidation.authenticateChannelToken(): invalid authConfig parameter', StatusCodes.BAD_REQUEST);
+            throw new AuthenticationError('SkillValidation.authenticateChannelToken(): invalid authConfig parameter', StatusCodes.INTERNAL_SERVER_ERROR);
         }
 
         const openIdMetadataUrl = JwtTokenValidation.isGovernment(channelService) ?
