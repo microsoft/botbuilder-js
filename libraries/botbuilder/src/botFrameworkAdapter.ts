@@ -8,7 +8,6 @@
 
 import { STATUS_CODES } from 'http';
 import { arch, release, type } from 'os';
-import { HttpClient } from '@azure/ms-rest-js';
 
 import { Activity, ActivityTypes, CoreAppCredentials, BotAdapter, BotCallbackHandlerKey, CallerIdConstants, ChannelAccount, ConversationAccount, ConversationParameters, ConversationReference, ConversationsResult, DeliveryModes, ExpectedReplies, InvokeResponse, ExtendedUserTokenProvider, ResourceResponse, StatusCodes, TokenResponse, TurnContext, INVOKE_RESPONSE_KEY } from 'botbuilder-core';
 import { AuthenticationConfiguration, AuthenticationConstants, ChannelValidation, Claim, ClaimsIdentity, ConnectorClient, ConnectorClientOptions, EmulatorApiClient, GovernmentConstants, GovernmentChannelValidation, JwtTokenValidation, MicrosoftAppCredentials, AppCredentials, CertificateAppCredentials, SimpleCredentialProvider, TokenApiClient, TokenStatus, TokenApiModels, SignInUrlResponse, SkillValidation, TokenExchangeRequest } from 'botframework-connector';
@@ -1078,9 +1077,9 @@ export class BotFrameworkAdapter extends BotAdapter implements ExtendedUserToken
     /**
      * @private
      * @param serviceUrl The service URL to use for the new ConnectorClientOptions.
-     * @param httpClient Optional. The HttpClient to use for the new ConnectorClientOptions.
+     * @param httpClient Optional. The @azure/ms-rest-js.HttpClient to use for the new ConnectorClientOptions.
      */
-    private getClientOptions(serviceUrl: string, httpClient?: HttpClient): ConnectorClientOptions {
+    private getClientOptions(serviceUrl: string, httpClient?: any): ConnectorClientOptions {
         const options = Object.assign({ baseUri: serviceUrl } as ConnectorClientOptions, this.settings.clientOptions);
         if(httpClient) {
             options.httpClient = httpClient;
