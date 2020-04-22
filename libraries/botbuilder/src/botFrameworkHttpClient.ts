@@ -78,6 +78,7 @@ export class BotFrameworkHttpClient implements BotFrameworkClient {
         const originalConversationId = activity.conversation.id;
         const originalServiceUrl = activity.serviceUrl;
         const originalRelatesTo = activity.relatesTo;
+        const originalRecipient = activity.recipient;
         try {
             activity.relatesTo = {
                 serviceUrl: activity.serviceUrl,
@@ -97,6 +98,12 @@ export class BotFrameworkHttpClient implements BotFrameworkClient {
             };
             activity.conversation.id = conversationId;
             activity.serviceUrl = serviceUrl;
+
+            // Fixes: https://github.com/microsoft/botframework-sdk/issues/5785
+            if (!activity.recipient) {
+                activity.recipient = {} as any;
+            }
+
             const config = {
                 headers: {
                     Accept: 'application/json',
@@ -119,6 +126,7 @@ export class BotFrameworkHttpClient implements BotFrameworkClient {
             activity.conversation.id = originalConversationId;
             activity.serviceUrl = originalServiceUrl;
             activity.relatesTo = originalRelatesTo;
+            activity.recipient = originalRecipient;
         }
     }
 

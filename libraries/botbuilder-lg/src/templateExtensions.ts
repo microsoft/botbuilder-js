@@ -7,17 +7,20 @@
  */
 
 import * as path from 'path';
-import * as lp from './generated/LGFileParser';
+import * as lp from './generated/LGTemplateParser';
 import { TerminalNode } from 'antlr4ts/tree';
+import { ParserRuleContext } from 'antlr4ts';
+import { Range } from './range';
+import { Position } from './position';
 /**
  * Extension methods for LG.
  */
 export class TemplateExtensions {
 
     /**
-     * trim expression. ${abc} => abc,  ${a == {}} => a == {}.
-     * @param expression input expression string.
-     * @returns pure expression string.
+     * Trim expression. ${abc} => abc,  ${a == {}} => a == {}.
+     * @param expression Input expression string.
+     * @returns Pure expression string.
      */
     public static trimExpression(expression: string): string {
         let result = expression.trim();
@@ -39,8 +42,8 @@ export class TemplateExtensions {
      * path is from authored content which doesn't know what OS it is running on.
      * This method treats / and \ both as seperators regardless of OS, for windows that means / -> \ and for linux/mac \ -> /.
      * This allows author to use ../foo.lg or ..\foo.lg as equivelents for importing.
-     * @param ambiguousPath authoredPath.
-     * @returns path expressed as OS path.
+     * @param ambiguousPath AuthoredPath.
+     * @returns Path expressed as OS path.
      */
     public static normalizePath(ambiguousPath: string): string {
         if (process.platform === 'win32') {
@@ -54,8 +57,8 @@ export class TemplateExtensions {
 
     /**
      * Get prefix error message from normal template sting context.
-     * @param context normal template sting context.
-     * @returns prefix error message.
+     * @param context Normal template sting context.
+     * @returns Prefix error message.
      */
     public static getPrefixErrorMessage(context: lp.NormalTemplateStringContext): string
     {
@@ -111,9 +114,9 @@ export class TemplateExtensions {
         let hasExpr = false;
         for (const node of ctx.children) {
             switch ((node as TerminalNode).symbol.type) {
-                case (lp.LGFileParser.ESCAPE_CHARACTER_IN_STRUCTURE_BODY):
+                case (lp.LGTemplateParser.ESCAPE_CHARACTER_IN_STRUCTURE_BODY):
                     return {hasExpr, expression};
-                case (lp.LGFileParser.EXPRESSION_IN_STRUCTURE_BODY):
+                case (lp.LGTemplateParser.EXPRESSION_IN_STRUCTURE_BODY):
                     if (hasExpr) {
                         return {hasExpr: false, expression: expression};
                     }
@@ -166,7 +169,7 @@ export class TemplateExtensions {
 
     /**
      * read line from text.
-     * @param input text content.
+     * @param input Text content.
      */
     public static readLine(input: string): string[] {
         if (!input) {
@@ -174,5 +177,25 @@ export class TemplateExtensions {
         }
 
         return input.replace(/\r\n/g, '\n').split('\n');
+    }
+
+    /**
+     * Convert antlr parser into Range.
+     * @param context Antlr parse context.
+     * @param [lineOffset] Line offset.
+     * @returns Range object.
+     */
+    public static convertToRange(context: ParserRuleContext, lineOffset?: number): Range {
+        if (!lineOffset) {
+            lineOffset = 0;
+        }
+        if (!context) {
+            return Range.DefaultRange;
+        }
+
+        const startPosition = new Position(lineOffset + context.start.line, context.start.charPositionInLine);
+        const stopPosition = new Position(lineOffset + context.stop.line, context.stop.charPositionInLine + context.stop.text.length);
+
+        return new Range(startPosition, stopPosition);
     }
 }

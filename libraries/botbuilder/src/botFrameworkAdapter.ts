@@ -10,7 +10,7 @@ import { STATUS_CODES } from 'http';
 import { arch, release, type } from 'os';
 
 import { Activity, ActivityTypes, CoreAppCredentials, BotAdapter, BotCallbackHandlerKey, CallerIdConstants, ChannelAccount, ConversationAccount, ConversationParameters, ConversationReference, ConversationsResult, DeliveryModes, ExpectedReplies, InvokeResponse, ExtendedUserTokenProvider, ResourceResponse, StatusCodes, TokenResponse, TurnContext, INVOKE_RESPONSE_KEY } from 'botbuilder-core';
-import { AuthenticationConfiguration, AuthenticationConstants, ChannelValidation, Claim, ClaimsIdentity, ConnectorClient, EmulatorApiClient, GovernmentConstants, GovernmentChannelValidation, JwtTokenValidation, MicrosoftAppCredentials, AppCredentials, CertificateAppCredentials, SimpleCredentialProvider, TokenApiClient, TokenStatus, TokenApiModels, SignInUrlResponse, SkillValidation, TokenExchangeRequest } from 'botframework-connector';
+import { AuthenticationConfiguration, AuthenticationConstants, ChannelValidation, Claim, ClaimsIdentity, ConnectorClient, ConnectorClientOptions, EmulatorApiClient, GovernmentConstants, GovernmentChannelValidation, JwtTokenValidation, MicrosoftAppCredentials, AppCredentials, CertificateAppCredentials, SimpleCredentialProvider, TokenApiClient, TokenStatus, TokenApiModels, SignInUrlResponse, SkillValidation, TokenExchangeRequest } from 'botframework-connector';
 
 import { INodeBuffer, INodeSocket, IReceiveRequest, ISocket, IStreamingTransportServer, NamedPipeServer, NodeWebSocketFactory, NodeWebSocketFactoryBase, RequestHandler, StreamingResponse, WebSocketServer } from 'botframework-streaming';
 
@@ -72,6 +72,11 @@ export interface BotFrameworkAdapterSettings {
      * Optional. Used to require specific endorsements and verify claims. Recommended for Skills.
      */
     authConfig?: AuthenticationConfiguration;
+
+    /**
+     * Optional. Used when creating new ConnectorClients.
+     */
+    clientOptions?: ConnectorClientOptions;
 }
 
 // Retrieve additional information, i.e., host operating system, host OS release, architecture, Node.js version
@@ -1061,16 +1066,27 @@ export class BotFrameworkAdapter extends BotAdapter implements ExtendedUserToken
                 throw new Error(`Cannot create streaming connector client for serviceUrl ${ serviceUrl } without a streaming connection. Call 'useWebSocket' or 'useNamedPipe' to start a streaming connection.`);
             }
 
-            return new ConnectorClient(
-                credentials,
-                {
-                    baseUri: serviceUrl,
-                    userAgent: USER_AGENT,
-                    httpClient: new StreamingHttpClient(this.streamingServer)
-                });
+            const clientOptions = this.getClientOptions(serviceUrl, new StreamingHttpClient(this.streamingServer));
+            return new ConnectorClient(credentials, clientOptions);
         }
 
-        return new ConnectorClient(credentials, { baseUri: serviceUrl, userAgent: USER_AGENT });
+        const clientOptions = this.getClientOptions(serviceUrl);
+        return new ConnectorClient(credentials, clientOptions);
+    }
+
+    /**
+     * @private
+     * @param serviceUrl The service URL to use for the new ConnectorClientOptions.
+     * @param httpClient Optional. The @azure/ms-rest-js.HttpClient to use for the new ConnectorClientOptions.
+     */
+    private getClientOptions(serviceUrl: string, httpClient?: any): ConnectorClientOptions {
+        const options = Object.assign({ baseUri: serviceUrl } as ConnectorClientOptions, this.settings.clientOptions);
+        if(httpClient) {
+            options.httpClient = httpClient;
+        }
+
+        options.userAgent = `${ USER_AGENT }${ options.userAgent || '' }`;
+        return options;
     }
 
     /**

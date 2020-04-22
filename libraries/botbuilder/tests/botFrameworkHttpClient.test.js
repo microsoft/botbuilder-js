@@ -79,6 +79,20 @@ describe('BotFrameworkHttpClient', function() {
             strictEqual(response.status, 200);
         });
 
+        it('should add empty recipient if missing from activity', async () => {
+            nock('http://skillUrl')
+                .post('/api/good', (body) => body.recipient)
+                .reply(200, { id: 'some-id' });
+        
+            const credentialProvider = new SimpleCredentialProvider('this-is-not-the-app-id-your-looking-for', '1');
+            const client = new TestBotFrameworkHttpClient(credentialProvider, 'channels');
+            const fromBotId = 'this-is-not-the-app-id-your-looking-for';
+            const activity = { type: 'message', conversation: { } };
+            const response = await client.postActivity(fromBotId, 'toBotId', 'http://skillUrl/api/good', 'serviceUrl', 'conversationId', activity);
+            strictEqual(response.status, 200);
+            strictEqual(activity.recipient, undefined);
+        });
+
         it(`should restore sent activity's relatesTo to original value`, async () => {
             nock('http://skillUrl')
                 .post('/api/good')
