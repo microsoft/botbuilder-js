@@ -35,15 +35,15 @@ export class CancelAllDialogs<O extends object = {}> extends Dialog<O> {
         }
 
         if (!dc.parent) {
-            return await dc.cancelAllDialogs(true, this.eventName.getValue(dc.state), this.eventValue.getValue(dc.state));
+            return await dc.cancelAllDialogs(true, this.eventName && this.eventName.getValue(dc.state), this.eventValue && this.eventValue.getValue(dc.state));
         } else {
-            const turnResult = await dc.cancelAllDialogs(true, this.eventName.getValue(dc.state), this.eventValue.getValue(dc.state));
+            const turnResult = await dc.cancelAllDialogs(true, this.eventName && this.eventName.getValue(dc.state), this.eventValue && this.eventValue.getValue(dc.state));
             turnResult.parentEnded = true;
             return turnResult;
         }
     }
 
     protected onComputeId(): string {
-        return `CancelAllDialogs[${ this.eventName.toString() || '' }]`;
+        return `CancelAllDialogs[${ this.eventName ? this.eventName.toString() : '' }]`;
     }
 }
