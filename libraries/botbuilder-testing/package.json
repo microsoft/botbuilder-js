@@ -25,6 +25,7 @@
     "mocha-logger": "^1.0.6"
   },
   "devDependencies": {
+    "@microsoft/api-extractor": "^7.7.12",
     "@types/mocha": "^2.2.47",
     "assert": "^1.4.1",
     "chatdown": "^1.0.2",
@@ -39,11 +40,13 @@
     "uuid": "^3.3.2"
   },
   "scripts": {
-    "test": "tsc && nyc mocha tests/",
     "build": "tsc",
     "build-docs": "typedoc --theme markdown --entryPoint botbuilder --excludePrivate --includeDeclarations --ignoreCompilerErrors --module amd --out ..\\..\\doc\\botbuilder .\\lib\\index.d.ts ..\\botbuilder-core\\lib\\index.d.ts ..\\botframework-schema\\lib\\index.d.ts --hideGenerator --name \"Bot Builder SDK\" --readme none",
+    "build:rollup": "npm run clean && npm run build && api-extractor run --verbose --local",
     "clean": "erase /q /s .\\lib",
-    "set-version": "npm version --allow-same-version ${Version}"
+    "set-version": "npm version --allow-same-version ${Version}",
+    "test": "tsc && nyc mocha tests/",
+    "test:compat": "api-extractor run --verbose"
   },
   "files": [
     "/lib",
