@@ -17,8 +17,13 @@ import { TemplateErrors } from './templateErrors';
  */
 export class ErrorListener implements ANTLRErrorListener<any> {
     private readonly source: string;
-    public constructor(errorSource: string) {
+    private lineOffset: number;
+    public constructor(errorSource: string, lineOffset?: number) {
         this.source = errorSource;
+        if (lineOffset === undefined) {
+            lineOffset = 0;
+        }
+        this.lineOffset = lineOffset;
     }
 
     public syntaxError<T>(
@@ -30,8 +35,8 @@ export class ErrorListener implements ANTLRErrorListener<any> {
         msg: string,
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         e: RecognitionException | undefined): void {
-        const startPosition: Position = new Position(line, charPositionInLine);
-        const stopPosition: Position = new Position(line, charPositionInLine + offendingSymbol.stopIndex - offendingSymbol.startIndex + 1);
+        const startPosition: Position = new Position(this.lineOffset + line, charPositionInLine);
+        const stopPosition: Position = new Position(this.lineOffset + line, charPositionInLine + offendingSymbol.stopIndex - offendingSymbol.startIndex + 1);
         const range: Range = new Range(startPosition, stopPosition);
         const diagnostic: Diagnostic = new Diagnostic(range, TemplateErrors.syntaxError, DiagnosticSeverity.Error, this.source);
 

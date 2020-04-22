@@ -33,8 +33,8 @@ export class CustomizedMemory implements MemoryInterface {
     /**
      *  Try to get the value from a given path. Firstly, get result from global memory,
      *  if global memory does not contain, get from local memory.
-     * @param path memory path.
-     * @returns resolved value.
+     * @param path Memory path.
+     * @returns Resolved value.
      */
     public getValue(path: string): any {
         if (this.localMemory) {
