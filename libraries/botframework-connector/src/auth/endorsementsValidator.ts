@@ -1,6 +1,10 @@
 /**
  * @module botbuilder
  */
+
+import { AuthenticationError } from "./authenticationError";
+import { StatusCodes } from "botframework-schema";
+
 /**
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
@@ -24,7 +28,7 @@ export class EndorsementsValidator {
         }
 
         if (endorsements === null) {
-            throw new Error('endorsements required');
+            throw new AuthenticationError('endorsements required', StatusCodes.UNAUTHORIZED);
         }
 
         // The Call path to get here is:

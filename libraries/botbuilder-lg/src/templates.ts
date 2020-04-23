@@ -18,6 +18,7 @@ import { TemplatesParser } from './templatesParser';
 import { AnalyzerResult } from './analyzerResult';
 import { TemplateErrors } from './templateErrors';
 import { TemplateExtensions } from './templateExtensions';
+import { EvaluationOptions } from './evaluationOptions';
 
 /**
  * LG entrance, including properties that LG file has, and evaluate functions.
@@ -121,12 +122,10 @@ export class Templates implements Iterable<Template> {
     }
 
     /**
-     * A value indicating whether lG parser/checker/evaluate strict mode.
-     * If strict mode is on, expression would throw exception instead of return
-     * null or make the condition failed.
+     * A value indicating whether the options when evaluation LG templates.
      */
-    public get strictMode(): boolean {
-        return this.getStrictModeFromOptions(this.options);
+    public get lgOptions(): EvaluationOptions {
+        return new EvaluationOptions(this.options);
     }
 
     /**
@@ -177,10 +176,11 @@ export class Templates implements Iterable<Template> {
      * @param scope The state visible in the evaluation.
      * @returns Evaluate result.
      */
-    public evaluate(templateName: string, scope?: object): any {
+    public evaluate(templateName: string, scope?: object, opt: EvaluationOptions = undefined): any {
         this.checkErrors();
 
-        const evaluator = new Evaluator(this.allTemplates, this.expressionParser, this.strictMode);
+        var evalOpt = opt !== undefined ? opt.merge(this.lgOptions) : this.lgOptions;
+        const evaluator = new Evaluator(this.allTemplates, this.expressionParser, evalOpt);
         return evaluator.evaluateTemplate(templateName, scope);
     }
 
@@ -191,10 +191,11 @@ export class Templates implements Iterable<Template> {
      * @param scope The state visible in the evaluation.
      * @returns Expand result.
      */
-    public expandTemplate(templateName: string, scope?: object): any[] {
+    public expandTemplate(templateName: string, scope?: object, opt: EvaluationOptions = undefined): any[] {
         this.checkErrors();
 
-        const expander = new Expander(this.allTemplates, this.expressionParser, this.strictMode);
+        var evalOpt = opt !== undefined ? opt.merge(this.lgOptions) : this.lgOptions;
+        const expander = new Expander(this.allTemplates, this.expressionParser, evalOpt);
         return expander.expandTemplate(templateName, scope);
     }
 
@@ -215,7 +216,7 @@ export class Templates implements Iterable<Template> {
      * @param inlineStr Inline string which will be evaluated.
      * @param scope Scope object or JToken.
      */
-    public evaluateText(inlineStr: string, scope?: object): any {
+    public evaluateText(inlineStr: string, scope?: object,  opt: EvaluationOptions = undefined): any {
         if (inlineStr === undefined) {
             throw Error('inline string is empty');
         }
@@ -232,7 +233,8 @@ export class Templates implements Iterable<Template> {
         const newContent = `#${ fakeTemplateId } ${ this.newLine } - ${ inlineStr }`;
 
         const newTemplates = TemplatesParser.parseTextWithRef(newContent, this);
-        return newTemplates.evaluate(fakeTemplateId, scope);
+        var evalOpt = opt !== undefined ? opt.merge(this.lgOptions) : this.lgOptions;
+        return newTemplates.evaluate(fakeTemplateId, scope, evalOpt);
     }
 
     /**
@@ -362,31 +364,5 @@ export class Templates implements Iterable<Template> {
                 throw Error(errors.join(this.newLine));
             }
         }
-    }
-
-    private getStrictModeFromOptions(options: string[]): boolean {
-        let result = false;
-        if (!options) {
-            return result;
-        }
-
-        const strictModeKey = '@strict';
-        for (const option of options) {
-            if (option && option.includes('=')) {
-                const index = option.indexOf('=');
-                const key = option.substring(0, index).trim();
-                const value = option.substring(index + 1).trim().toLowerCase();
-                if (key === strictModeKey) {
-                    if (value === 'true') {
-                        result = true;
-                    }
-                    else if (value == 'false') {
-                        result = false;
-                    }
-                }
-            }
-        }
-
-        return result;
     }
 }

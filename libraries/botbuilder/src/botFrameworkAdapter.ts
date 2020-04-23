@@ -9,8 +9,8 @@
 import { STATUS_CODES } from 'http';
 import { arch, release, type } from 'os';
 
-import { Activity, ActivityTypes, CoreAppCredentials, BotAdapter, BotCallbackHandlerKey, CallerIdConstants, ChannelAccount, ConversationAccount, ConversationParameters, ConversationReference, ConversationsResult, DeliveryModes, ExpectedReplies, InvokeResponse, ExtendedUserTokenProvider, ResourceResponse, StatusCodes, TokenResponse, TurnContext, INVOKE_RESPONSE_KEY } from 'botbuilder-core';
-import { AuthenticationConfiguration, AuthenticationConstants, ChannelValidation, Claim, ClaimsIdentity, ConnectorClient, ConnectorClientOptions, EmulatorApiClient, GovernmentConstants, GovernmentChannelValidation, JwtTokenValidation, MicrosoftAppCredentials, AppCredentials, CertificateAppCredentials, SimpleCredentialProvider, TokenApiClient, TokenStatus, TokenApiModels, SignInUrlResponse, SkillValidation, TokenExchangeRequest } from 'botframework-connector';
+import { Activity, ActivityTypes, CallerIdConstants, CoreAppCredentials, BotAdapter, BotCallbackHandlerKey, ChannelAccount, ConversationAccount, ConversationParameters, ConversationReference, ConversationsResult, DeliveryModes, ExpectedReplies, ExtendedUserTokenProvider, InvokeResponse, INVOKE_RESPONSE_KEY, IStatusCodeError, ResourceResponse, StatusCodes, TokenResponse, TurnContext } from 'botbuilder-core';
+import { AuthenticationConfiguration, AuthenticationConstants, ChannelValidation, Claim, ClaimsIdentity, ConnectorClient, ConnectorClientOptions, EmulatorApiClient, GovernmentConstants, GovernmentChannelValidation, JwtTokenValidation, MicrosoftAppCredentials, AppCredentials, CertificateAppCredentials, SimpleCredentialProvider, TokenApiClient, TokenStatus, TokenApiModels, SignInUrlResponse, SkillValidation, TokenExchangeRequest, AuthenticationError } from 'botframework-connector';
 
 import { INodeBuffer, INodeSocket, IReceiveRequest, ISocket, IStreamingTransportServer, NamedPipeServer, NodeWebSocketFactory, NodeWebSocketFactoryBase, RequestHandler, StreamingResponse, WebSocketServer } from 'botframework-streaming';
 
@@ -1394,21 +1394,7 @@ export class BotFrameworkAdapter extends BotAdapter implements ExtendedUserToken
         try {
             await this.authenticateConnection(req, this.settings.channelService);
         } catch (err) {
-            // If the authenticateConnection call fails, send back the correct error code and close
-            // the connection.
-            if (typeof(err.message) === 'string') {
-                if (err.message.toLowerCase().startsWith('unauthorized')) {
-                    abortWebSocketUpgrade(socket, 401, err.message);
-                } else if (err.message.toLowerCase().startsWith(`'authheader'`)) {
-                    abortWebSocketUpgrade(socket, 400, err.message);
-                } else {
-                    abortWebSocketUpgrade(socket, 500, err.message);
-                }
-            } else {
-                abortWebSocketUpgrade(socket, 500);
-            }
-
-            // Re-throw the error so the developer will know what occurred.
+            abortWebSocketUpgrade(socket, err);
             throw err;
         }
 
@@ -1432,7 +1418,9 @@ export class BotFrameworkAdapter extends BotAdapter implements ExtendedUserToken
         const serviceUrl = claims.getClaimValue(AuthenticationConstants.ServiceUrlClaim);
         AppCredentials.trustServiceUrl(serviceUrl);
 
-        if (!claims.isAuthenticated) { throw new Error('Unauthorized Access. Request is not authorized'); }
+        if (!claims.isAuthenticated) { 
+            throw new AuthenticationError('Unauthorized Access. Request is not authorized', StatusCodes.UNAUTHORIZED); 
+        }
     }
 
     /**
@@ -1532,11 +1520,22 @@ function delay(timeout: number): Promise<void> {
     });
 }
 
-function abortWebSocketUpgrade(socket: INodeSocket, code: number, message?: string): void {
+/**
+* Creates an error message with status code to write to socket, then closes the connection.
+* 
+* @param socket The raw socket connection between the bot (server) and channel/caller (client).
+* @param err The error. If the error includes a status code, it will be included in the message written to the socket.
+*/
+function abortWebSocketUpgrade(socket: INodeSocket, err: any): void {
     if (socket.writable) {
         const connectionHeader = `Connection: 'close'\r\n`;
-        socket.write(`HTTP/1.1 ${ code } ${ STATUS_CODES[code] }\r\n${ message }\r\n${ connectionHeader }\r\n`);
-    }
 
+        let message = '';
+        AuthenticationError.isStatusCodeError(err) ? 
+            message = `HTTP/1.1 ${ err.statusCode } ${ StatusCodes[err.statusCode] }\r\n${ err.message }\r\n${ connectionHeader }\r\n`
+            : message = AuthenticationError.determineStatusCodeAndBuildMessage(err);
+        
+        socket.write(message);
+    }
     socket.destroy();
 }
