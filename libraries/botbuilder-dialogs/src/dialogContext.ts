@@ -112,6 +112,7 @@ export class DialogContext {
             this.dialogs = dialogsOrDC;
             this.stack = state.dialogStack;
             this.state = new DialogStateManager(this);
+            this.state.setValue(TurnPath.activity, this.context.activity);
         }
     }
 
