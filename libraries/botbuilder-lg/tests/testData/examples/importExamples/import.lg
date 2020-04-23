@@ -1,13 +1,13 @@
-# basicTemplate
-- Hi
-- Hello
-- ${wPhrase()}
-
 [import](../6.lg)
 [import](.\..\6.lg)
 [import](1.lg)
 [import](import.lg)
 [import](import/import3.lg)
+
+# basicTemplate
+- Hi
+- Hello
+- ${wPhrase()}
 
 # basicTemplate2
 - Hi 2

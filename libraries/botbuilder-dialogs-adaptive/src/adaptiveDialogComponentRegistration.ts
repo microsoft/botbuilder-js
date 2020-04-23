@@ -12,12 +12,13 @@ import { AdaptiveTypeBuilder } from './adaptiveTypeBuilder';
 import { AdaptiveDialog } from './adaptiveDialog';
 import { BeginDialog, BreakLoop, CancelAllDialogs, ContinueLoop, DeleteActivity, DeleteProperties, DeleteProperty, EditActions, EditArray, EmitEvent, EndDialog, EndTurn, ForEach, ForEachPage, GetActivityMembers, GetConversationMembers, GotoAction, IfCondition, LogAction, RepeatDialog, ReplaceDialog, SendActivity, SetProperties, SetProperty, SignOutUser, SwitchCondition, TraceActivity, UpdateActivity, ArrayChangeType, PropertyAssignmentConverter } from './actions';
 import { AttachmentInput, ChoiceInput, ConfirmInput, DateTimeInput, NumberInput, OAuthInput, TextInput, AttachmentOutputFormat, ChoiceOutputFormat } from './input';
-import { OnActivity, OnAssignEntity, OnBeginDialog, OnCancelDialog, OnChooseEntity, OnChooseIntent, OnChooseProperty, OnClearProperty, OnCondition, OnConversationUpdateActivity, OnCustomEvent, OnDialogEvent, OnEndOfActions, OnEndOfConversationActivity, OnError, OnEventActivity, OnHandoffActivity, OnIntent, OnInvokeActivity, OnMessageActivity, OnMessageDeleteActivity, OnMessageReactionActivity, OnMessageUpdateActivity, OnRepromptDialog, OnTypingActivity, OnUnknownIntent } from './conditions';
+import { OnActivity, OnAssignEntity, OnBeginDialog, OnCancelDialog, OnChooseEntity, OnChooseIntent, OnChooseProperty, OnClearProperty, OnCondition, OnConversationUpdateActivity, OnCustomEvent, OnDialogEvent, OnEndOfActions, OnEndOfConversationActivity, OnError, OnEventActivity, OnHandoffActivity, OnIntent, OnInvokeActivity, OnMessageActivity, OnMessageDeleteActivity, OnMessageReactionActivity, OnMessageUpdateActivity, OnQnAMatch, OnRepromptDialog, OnTypingActivity, OnUnknownIntent } from './conditions';
 import { CrossTrainedRecognizerSet, MultiLanguageRecognizer, RecognizerSet, ValueRecognizer, RegexRecognizer, IntentPatternConverter } from './recognizers';
 import { AgeEntityRecognizer, ConfirmationEntityRecognizer, CurrencyEntityRecognizer, DateTimeEntityRecognizer, DimensionEntityRecognizer, EmailEntityRecognizer, GuidEntityRecognizer, HashtagEntityRecognizer, IpEntityRecognizer, MentionEntityRecognizer, NumberEntityRecognizer, OrdinalEntityRecognizer, PercentageEntityRecognizer, PhoneNumberEntityRecognizer, RegexEntityRecognizer, TemperatureEntityRecognizer, UrlEntityRecognizer } from './recognizers/entityRecognizers';
-import { ObjectExpressionConverter, DialogExpressionConverter, BoolExpressionConverter, StringExpressionConverter, EnumExpressionConverter, ValueExpressionConverter, NumberExpressionConverter, TextTemplateConverter, ActivityTemplateConverter, ExpressionConverter, ArrayExpressionConverter, LanguageGeneratorConverter } from './converters';
+import { ObjectExpressionConverter, DialogExpressionConverter, BoolExpressionConverter, StringExpressionConverter, EnumExpressionConverter, ValueExpressionConverter, NumberExpressionConverter, TextTemplateConverter, ActivityTemplateConverter, ExpressionConverter, ArrayExpressionConverter, LanguageGeneratorConverter, IntExpressionConverter } from './converters';
 import { ActionChangeType } from './actionChangeType';
 import { CaseConverter } from './actions/case';
+import { QnAMakerRecognizer } from './qnaMaker';
 
 export class AdaptiveDialogComponentRegistration implements ComponentRegistration {
     private _resourceExplorer: ResourceExplorer;
@@ -109,7 +110,7 @@ export class AdaptiveDialogComponentRegistration implements ComponentRegistratio
         }));
         this.registerBuilder('Microsoft.ForeachPage', new AdaptiveTypeBuilder(ForEachPage, this._resourceExplorer, {
             'itemsProperty': new StringExpressionConverter(),
-            'pageSize': new NumberExpressionConverter(),
+            'pageSize': new IntExpressionConverter(),
             'disabled': new BoolExpressionConverter()
         }));
         this.registerBuilder('Microsoft.GetActivityMembers', new AdaptiveTypeBuilder(GetActivityMembers, this._resourceExplorer, {
@@ -182,7 +183,8 @@ export class AdaptiveDialogComponentRegistration implements ComponentRegistratio
 
     private registerConditions(): void {
         const OnConditionConverters = {
-            'condition': new BoolExpressionConverter()
+            'condition': new BoolExpressionConverter(),
+            'priority': new IntExpressionConverter()
         };
         this.registerBuilder('Microsoft.OnActivity', new AdaptiveTypeBuilder(OnActivity, this._resourceExplorer, OnConditionConverters));
         this.registerBuilder('Microsoft.OnAssignEntity', new AdaptiveTypeBuilder(OnAssignEntity, this._resourceExplorer, OnConditionConverters));
@@ -207,6 +209,7 @@ export class AdaptiveDialogComponentRegistration implements ComponentRegistratio
         this.registerBuilder('Microsoft.OnMessageDeleteActivity', new AdaptiveTypeBuilder(OnMessageDeleteActivity, this._resourceExplorer, OnConditionConverters));
         this.registerBuilder('Microsoft.OnMessageReactionActivity', new AdaptiveTypeBuilder(OnMessageReactionActivity, this._resourceExplorer, OnConditionConverters));
         this.registerBuilder('Microsoft.OnMessageUpdateActivity', new AdaptiveTypeBuilder(OnMessageUpdateActivity, this._resourceExplorer, OnConditionConverters));
+        this.registerBuilder('Microsoft.OnQnAMatch', new AdaptiveTypeBuilder(OnQnAMatch, this._resourceExplorer, OnConditionConverters));
         this.registerBuilder('Microsoft.OnRepromptDialog', new AdaptiveTypeBuilder(OnRepromptDialog, this._resourceExplorer, OnConditionConverters));
         this.registerBuilder('Microsoft.OnTypingActivity', new AdaptiveTypeBuilder(OnTypingActivity, this._resourceExplorer, OnConditionConverters));
         this.registerBuilder('Microsoft.OnUnknownIntent', new AdaptiveTypeBuilder(OnUnknownIntent, this._resourceExplorer, OnConditionConverters));
@@ -222,7 +225,7 @@ export class AdaptiveDialogComponentRegistration implements ComponentRegistratio
             'property': new StringExpressionConverter(),
             'value': new ValueExpressionConverter(),
             'defaultValue': new ValueExpressionConverter(),
-            'maxTurnCount': new NumberExpressionConverter(),
+            'maxTurnCount': new IntExpressionConverter(),
             'disabled': new BoolExpressionConverter()
         };
         this.registerBuilder('Microsoft.AttachmentInput', new AdaptiveTypeBuilder(AttachmentInput, this._resourceExplorer,
@@ -260,7 +263,7 @@ export class AdaptiveDialogComponentRegistration implements ComponentRegistratio
                 'connectionName': new StringExpressionConverter(),
                 'title': new StringExpressionConverter(),
                 'text': new StringExpressionConverter(),
-                'timeout': new NumberExpressionConverter()
+                'timeout': new IntExpressionConverter()
             })));
         this.registerBuilder('Microsoft.TextInput', new AdaptiveTypeBuilder(TextInput, this._resourceExplorer,
             Object.assign(inputDialogConverters, {
@@ -293,5 +296,17 @@ export class AdaptiveDialogComponentRegistration implements ComponentRegistratio
         this.registerBuilder('Microsoft.RegexEntityRecognizer', new AdaptiveTypeBuilder(RegexEntityRecognizer, this._resourceExplorer, {}));
         this.registerBuilder('Microsoft.TemperatureEntityRecognizer', new AdaptiveTypeBuilder(TemperatureEntityRecognizer, this._resourceExplorer, {}));
         this.registerBuilder('Microsoft.UrlEntityRecognizer', new AdaptiveTypeBuilder(UrlEntityRecognizer, this._resourceExplorer, {}));
+        this.registerBuilder('Microsoft.QnAMakerRecognizer', new AdaptiveTypeBuilder(QnAMakerRecognizer, this._resourceExplorer, {
+            'knowledgeBaseId': new StringExpressionConverter(),
+            'hostname': new StringExpressionConverter(),
+            'endpointKey': new StringExpressionConverter(),
+            'top': new IntExpressionConverter(),
+            'threshold': new NumberExpressionConverter(),
+            'rankerType': new StringExpressionConverter(),
+            'includeDialogNameInMetadata': new BoolExpressionConverter(),
+            'metadata': new ArrayExpressionConverter(),
+            'context': new ObjectExpressionConverter(),
+            'qnaId': new IntExpressionConverter()
+        }));
     }
 }

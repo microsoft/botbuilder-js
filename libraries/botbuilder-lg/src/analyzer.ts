@@ -6,12 +6,12 @@
  * Licensed under the MIT License.
  */
 import { AbstractParseTreeVisitor, TerminalNode } from 'antlr4ts/tree';
-import { Expression, ExpressionParserInterface, Extensions, ExpressionParser } from 'adaptive-expressions';
+import { Expression, ExpressionParserInterface, ExpressionParser } from 'adaptive-expressions';
 import { keyBy } from 'lodash';
 import { EvaluationTarget } from './evaluationTarget';
 import { Evaluator } from './evaluator';
-import * as lp from './generated/LGFileParser';
-import { LGFileParserVisitor } from './generated/LGFileParserVisitor';
+import * as lp from './generated/LGTemplateParser';
+import { LGTemplateParserVisitor } from './generated/LGTemplateParserVisitor';
 import { Template } from './template';
 import { TemplateExtensions } from './templateExtensions';
 import { AnalyzerResult } from './analyzerResult';
@@ -20,7 +20,7 @@ import {TemplateErrors} from './templateErrors';
 /**
  * Analyzer engine. To to get the static analyzer results.
  */
-export class Analyzer extends AbstractParseTreeVisitor<AnalyzerResult> implements LGFileParserVisitor<AnalyzerResult> {
+export class Analyzer extends AbstractParseTreeVisitor<AnalyzerResult> implements LGTemplateParserVisitor<AnalyzerResult> {
     /**
      * Templates.
      */
@@ -41,9 +41,9 @@ export class Analyzer extends AbstractParseTreeVisitor<AnalyzerResult> implement
     }
 
     /**
-     * Analyzer a template to get the static analyzer results.
+     * Analyze a template to get the static analyzer results.
      * @param templateName Template name.
-     * @returns analyze result including variables and template references.
+     * @returns Analyze result including variables and template references.
      */
     public analyzeTemplate(templateName: string): AnalyzerResult {
         if (!(templateName in this.templateMap)) {
@@ -63,21 +63,10 @@ export class Analyzer extends AbstractParseTreeVisitor<AnalyzerResult> implement
         // because given we don't track down for templates have parameters
         // the only scenario that we are still analyzing an parameterized template is
         // this template is root template to anaylze, in this we also don't have exclude parameters
-        const dependencies: AnalyzerResult = this.visit(this.templateMap[templateName].parseTree);
+        const dependencies: AnalyzerResult = this.visit(this.templateMap[templateName].templateBodyParseTree);
         this.evalutationTargetStack.pop();
 
         return dependencies;
-    }
-
-    public visitTemplateDefinition(ctx: lp.TemplateDefinitionContext): AnalyzerResult {
-        const templateNameContext: lp.TemplateNameLineContext = ctx.templateNameLine();
-        if (templateNameContext.templateName().text === this.currentTarget().templateName) {
-            if (ctx.templateBody() !== undefined) {
-                return this.visit(ctx.templateBody());
-            }
-        }
-
-        return new AnalyzerResult();
     }
 
     public visitNormalBody(ctx: lp.NormalBodyContext): AnalyzerResult {

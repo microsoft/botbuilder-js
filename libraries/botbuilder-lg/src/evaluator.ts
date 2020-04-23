@@ -7,21 +7,22 @@
  */
 import { AbstractParseTreeVisitor, TerminalNode } from 'antlr4ts/tree';
 import { ParserRuleContext } from 'antlr4ts/ParserRuleContext';
-import { ExpressionFunctions, Constant, EvaluatorLookup, Expression, ExpressionParser, ExpressionEvaluator, ExpressionType, ReturnType, SimpleObjectMemory} from 'adaptive-expressions';
+import { ExpressionFunctions, Constant, EvaluatorLookup, Expression, ExpressionParser, ExpressionEvaluator, ExpressionType, ReturnType, SimpleObjectMemory, Options} from 'adaptive-expressions';
 import { keyBy } from 'lodash';
 import { CustomizedMemory } from './customizedMemory';
 import { EvaluationTarget } from './evaluationTarget';
-import * as lp from './generated/LGFileParser';
-import { LGFileParserVisitor } from './generated/LGFileParserVisitor';
+import * as lp from './generated/LGTemplateParser';
+import { LGTemplateParserVisitor } from './generated/LGTemplateParserVisitor';
 import { Template } from './template';
 import * as path from 'path';
 import * as fs from 'fs';
 import { TemplateExtensions } from './templateExtensions';
 import { TemplateErrors } from './templateErrors';
+import { EvaluationOptions, LGLineBreakStyle } from './evaluationOptions';
 /**
  * Evaluation runtime engine
  */
-export class Evaluator extends AbstractParseTreeVisitor<any> implements LGFileParserVisitor<any> {
+export class Evaluator extends AbstractParseTreeVisitor<any> implements LGTemplateParserVisitor<any> {
 
     /**
      * Templates.
@@ -38,12 +39,12 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGFilePa
      */
     public readonly templateMap: { [name: string]: Template };
     private readonly evaluationTargetStack: EvaluationTarget[] = [];
-    private readonly strictMode: boolean;
+    private readonly lgOptions: EvaluationOptions;
 
     // to support broswer, use look-ahead replace look-behind
     // PCRE: (?<!\\)\${(('(\\('|\\)|[^'])*?')|("(\\("|\\)|[^"])*?")|(`(\\(`|\\)|[^`])*?`)|([^\r\n{}'"`])|({\s*}))+}?
     public static readonly expressionRecognizeReverseRegex: RegExp = new RegExp(/\}?(('((('|\\)\\)|[^'])*?')|("(\\("|\\)|[^"])*?")|(`(\\(`|\\)|[^`])*?`)|([^\r\n{}'"`])|({\s*}))+{\$(?!\\)/gm);
-
+    public readonly newLineRegex = /(\r?\n)/g;
     public static readonly LGType = 'lgType';
     public static readonly activityAttachmentFunctionName = 'ActivityAttachment';
     public static readonly fromFileFunctionName = 'fromFile';
@@ -51,11 +52,11 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGFilePa
     public static readonly isTemplateFunctionName = 'isTemplate';
     public static readonly ReExecuteSuffix = '!';
 
-    public constructor(templates: Template[], expressionParser: ExpressionParser, strictMode: boolean = false) {
+    public constructor(templates: Template[], expressionParser: ExpressionParser, opt: EvaluationOptions = undefined) {
         super();
         this.templates = templates;
         this.templateMap = keyBy(templates, (t: Template): string => t.name);
-        this.strictMode = strictMode;
+        this.lgOptions = opt;
 
         // generate a new customzied expression parser by injecting the templates as functions
         this.expressionParser = new ExpressionParser(this.customizedEvaluatorLookup(expressionParser.EvaluatorLookup));
@@ -67,8 +68,8 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGFilePa
 
     /**
      * Evaluate a template with given name and scope.
-     * @param inputTemplateName template name.
-     * @param scope scope.
+     * @param inputTemplateName Template name.
+     * @param scope Scope.
      * @returns Evaluate result.
      */
     public evaluateTemplate(inputTemplateName: string, scope: any): any {
@@ -104,13 +105,17 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGFilePa
 
         // Using a stack to track the evalution trace
         this.evaluationTargetStack.push(templateTarget);
-        const result: string = this.visit(this.templateMap[templateName].parseTree);
+        let result: string = this.visit(this.templateMap[templateName].templateBodyParseTree);
 
         if (previousEvaluateTarget) {
             previousEvaluateTarget.evaluatedChildren.set(currentEvulateId, result);
         }
 
         this.evaluationTargetStack.pop();
+
+        if (this.lgOptions.LineBreakStyle === LGLineBreakStyle.Markdown && typeof result === 'string') {
+            result = result.replace(this.newLineRegex, '$1$1');
+        }
 
         return result;
     }
@@ -154,11 +159,11 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGFilePa
                 let itemStringResult = '';
                 for(const node of item.children) {
                     switch ((node as TerminalNode).symbol.type) {
-                        case (lp.LGFileParser.ESCAPE_CHARACTER_IN_STRUCTURE_BODY): 
+                        case (lp.LGTemplateParser.ESCAPE_CHARACTER_IN_STRUCTURE_BODY): 
                             itemStringResult += TemplateExtensions.evalEscape(node.text.replace(/\\\|/g, '|'));
                             break;
                         
-                        case (lp.LGFileParser.EXPRESSION_IN_STRUCTURE_BODY):
+                        case (lp.LGTemplateParser.EXPRESSION_IN_STRUCTURE_BODY):
                             const errorPrefix = `Property '` + ctx.STRUCTURE_IDENTIFIER().text + `':`;
                             itemStringResult += this.evalExpression(node.text, ctx, errorPrefix);
                             break;
@@ -174,15 +179,6 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGFilePa
         }
 
         return result.length === 1? result[0] : result;
-    }
-
-    public visitTemplateDefinition(ctx: lp.TemplateDefinitionContext): any {
-        const templateNameContext: lp.TemplateNameLineContext = ctx.templateNameLine();
-        if (templateNameContext.templateName().text === this.currentTarget().templateName) {
-            return this.visit(ctx.templateBody());
-        }
-
-        return undefined;
     }
 
     public visitNormalBody(ctx: lp.NormalBodyContext): any {
@@ -213,14 +209,14 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGFilePa
         for (const node of ctx.children) {
             const innerNode: TerminalNode = node as TerminalNode;
             switch (innerNode.symbol.type) {
-                case lp.LGFileParser.MULTILINE_SUFFIX:
-                case lp.LGFileParser.MULTILINE_PREFIX:
-                case lp.LGFileParser.DASH:
+                case lp.LGTemplateParser.MULTILINE_SUFFIX:
+                case lp.LGTemplateParser.MULTILINE_PREFIX:
+                case lp.LGTemplateParser.DASH:
                     break;
-                case lp.LGFileParser.ESCAPE_CHARACTER:
+                case lp.LGTemplateParser.ESCAPE_CHARACTER:
                     result.push(TemplateExtensions.evalEscape(innerNode.text));
                     break;
-                case lp.LGFileParser.EXPRESSION:
+                case lp.LGTemplateParser.EXPRESSION:
                     result.push(this.evalExpression(innerNode.text, ctx, prefixErrorMsg));
                     break;
                 default: {
@@ -371,7 +367,7 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGFilePa
         let error: string;
         ({value: result, error: error} = this.evalByAdaptiveExpression(exp, this.currentTarget().scope));
 
-        if (this.strictMode && (error || !result))
+        if (this.lgOptions.strictMode && (error || !result))
         {
             const templateName = this.currentTarget().templateName;
 
@@ -396,7 +392,7 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGFilePa
         let error: string;
         ({value: result, error: error} = this.evalByAdaptiveExpression(exp, this.currentTarget().scope));
 
-        if (error || (result === undefined && this.strictMode))
+        if (error || (result === undefined && this.lgOptions.strictMode))
         {
             const templateName = this.currentTarget().templateName;
 
@@ -407,7 +403,7 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGFilePa
 
             Evaluator.checkExpressionResult(exp, error, result, templateName, context, errorPrefix);
         }
-        else if (result === undefined && !this.strictMode)
+        else if (result === undefined && !this.lgOptions.strictMode)
         {
             result = `null`;
         }
@@ -417,8 +413,10 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGFilePa
 
     private evalByAdaptiveExpression(exp: string, scope: any): { value: any; error: string } {
         const parse: Expression = this.expressionParser.parse(exp);
+        const opt = new Options();
+        opt.nullSubstitution = this.lgOptions.nullSubstitution;
 
-        return parse.tryEvaluate(scope);
+        return parse.tryEvaluate(scope, opt);
     }
 
     // Genearte a new lookup function based on one lookup function
@@ -486,7 +484,7 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGFilePa
                 throw new Error('relative path is not support in browser.');
             }
             const template: Template = this.templateMap[this.currentTarget().templateName];
-            const sourcePath: string = TemplateExtensions.normalizePath(template.source);
+            const sourcePath: string = TemplateExtensions.normalizePath(template.sourceRange.source);
             let baseFolder: string = __dirname;
             if (path.isAbsolute(sourcePath)) {
                 baseFolder = path.dirname(sourcePath);
@@ -520,8 +518,8 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGFilePa
         const children0: Expression = expression.children[0];
 
         // Validate return type
-        if (children0.returnType !== ReturnType.Object && children0.returnType !== ReturnType.String) {
-            throw new Error(TemplateErrors.errorTemplateNameformat(children0.toString()));
+        if ((children0.returnType & ReturnType.Object) === 0 && (children0.returnType & ReturnType.String) === 0) {
+            throw new Error(TemplateErrors.invalidTemplateName);
         }
 
         // Validate more if the name is string constant

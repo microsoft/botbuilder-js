@@ -27,12 +27,17 @@ export namespace GovernmentConstants {
     export const ToBotFromChannelTokenIssuer = 'https://api.botframework.us';
 
     /**
-     * TO BOT FROM CHANNEL: OpenID metadata document for tokens coming from MSA
+     * OAuth Url used to get a token from OAuthApiClient.
+     */
+    export const OAuthUrl = 'https://api.botframework.azure.us';
+
+    /**
+     * TO BOT FROM GOVERNMENT CHANNEL: OpenID metadata document for tokens coming from MSA
      */
     export const ToBotFromChannelOpenIdMetadataUrl = 'https://login.botframework.azure.us/v1/.well-known/openidconfiguration';
     
     /**
-     * TO BOT FROM GOV EMULATOR: OpenID metadata document for tokens coming from MSA
+     * TO BOT FROM GOVERNMENT EMULATOR: OpenID metadata document for tokens coming from MSA
      */
     export const ToBotFromEmulatorOpenIdMetadataUrl =
         'https://login.microsoftonline.us/cab8a31a-1906-4287-a0d8-4eef66b95f6e/v2.0/.well-known/openid-configuration';

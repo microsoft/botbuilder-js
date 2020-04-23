@@ -31,11 +31,12 @@
     "rsa-pem-from-mod-exp": "^0.8.4"
   },
   "devDependencies": {
+    "@microsoft/api-extractor": "^7.7.12",
     "@types/mocha": "^2.2.47",
     "codelyzer": "^4.1.0",
     "dotenv": "^5.0.1",
     "mocha": "^5.2.0",
-    "nock": "^10.0.3",
+    "nock": "^11.9.1",
     "nyc": "^15.0.0",
     "should": "^13.2.3",
     "source-map-support": "^0.5.3",
@@ -44,9 +45,9 @@
   },
   "scripts": {
     "build": "tsc",
-    "test": "tsc && nyc mocha tests/ --timeout 60000 --inspect",
     "clean": "erase /q /s .\\lib",
-    "set-version": "npm version --allow-same-version ${Version}"
+    "set-version": "npm version --allow-same-version ${Version}",
+    "test": "tsc && nyc mocha tests/ --timeout 60000 --inspect"
   },
   "files": [
     "/lib",

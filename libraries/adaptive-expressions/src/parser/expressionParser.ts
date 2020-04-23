@@ -15,7 +15,6 @@ import { ExpressionType } from '../expressionType';
 import {  ExpressionAntlrLexer, ExpressionAntlrParser, ExpressionAntlrParserVisitor } from './generated';
 import * as ep from './generated/ExpressionAntlrParser';
 import { ParseErrorListener } from './parseErrorListener';
-import { Util } from './util';
 
 /**
  * Parser to turn strings into Expression
@@ -130,6 +129,27 @@ export class ExpressionParser implements ExpressionParserInterface {
             return new Constant(this.evalEscape(text));
         }
 
+        public visitJsonCreationExp(context: ep.JsonCreationExpContext): Expression {
+            let expr: Expression = this.makeExpression(ExpressionType.Json, new Constant('{}'));
+            if (context.keyValuePairList()) {
+                for (const kvPair of context.keyValuePairList().keyValuePair()) {
+                    let key = '';
+                    const keyNode = kvPair.key().children[0];
+                    if (keyNode instanceof TerminalNode) {
+                        if (keyNode.symbol.type === ep.ExpressionAntlrParser.IDENTIFIER) {
+                            key = keyNode.text;
+                        } else {
+                            key = keyNode.text.substring(1, keyNode.text.length - 1);
+                        }
+                    }
+
+                    expr = this.makeExpression(ExpressionType.SetProperty, expr, new Constant(key), this.visit(kvPair.expression()));
+                }
+            }
+
+            return expr;
+        }
+
         public visitStringInterpolationAtom(context: ep.StringInterpolationAtomContext): Expression {
             let children: Expression[] = [];
 
@@ -139,9 +159,6 @@ export class ExpressionParser implements ExpressionParserInterface {
                         case ep.ExpressionAntlrParser.TEMPLATE:
                             const expressionString = this.trimExpression(node.text);
                             children.push(Expression.parse(expressionString, this._lookupFunction));
-                            break;
-                        case ep.ExpressionAntlrParser.TEXT_CONTENT:
-                            children.push(new Constant(node.text));
                             break;
                         case ep.ExpressionAntlrParser.ESCAPE_CHARACTER:
                             children.push(new Constant(this.evalEscape(node.text).replace(/\\`/g, '`').replace(/\\\$/g, '$')));
@@ -159,26 +176,6 @@ export class ExpressionParser implements ExpressionParserInterface {
             return this.makeExpression(ExpressionType.Concat, ...children);
 
         }
-
-        public visitConstantAtom(context: ep.ConstantAtomContext): Expression {
-            let text: string = context.text;
-            if (text.startsWith('[') && text.endsWith(']')) {
-                text = text.substr(1, text.length - 2).trim();
-                if (text === '') {
-                    return new Constant([]);
-                }
-            }
-
-            if (text.startsWith('{') && text.endsWith('}')) {
-                text = text.substr(1, text.length - 2).trim();
-                if (text === '') {
-                    return new Constant({});
-                }
-            }
-
-            throw new Error(`Unrecognized constant: ${ text }`);
-        }
-
         protected defaultResult = (): Expression => new Constant('');
 
         private readonly makeExpression = (functionType: string, ...children: Expression[]): Expression => {

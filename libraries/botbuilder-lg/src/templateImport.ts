@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 
-import { ImportDefinitionContext } from './generated/LGFileParser';
+import { SourceRange } from './sourceRange';
 
 /**
  * Here is a data model that can help users understand and use the LG import definition in LG files easily. 
@@ -26,21 +26,13 @@ export class TemplateImport {
     /**
      * origin root source of the import.
      */
-    public source: string;
+    public sourceRange: SourceRange;
 
-    /**
-     * The parse tree of this lg file.
-     */
-    public parseTree: ImportDefinitionContext;
-
-    public constructor(parseTree: ImportDefinitionContext, source: string = '') {
-        this.parseTree = parseTree;
-        this.source = source;
-        this.description = this.extractDescription(parseTree);
-        this.id = this.extractId(parseTree);
+    public constructor(description: string, id: string, sourceRange: SourceRange) {
+        this.description = description;
+        this.sourceRange = sourceRange;
+        this.id = id;
     }
 
-    private readonly extractDescription = (parseTree: ImportDefinitionContext): string => parseTree.text.substr(1, parseTree.text.lastIndexOf(']') - 1);
-
-    private readonly extractId = (parseTree: ImportDefinitionContext): string => parseTree.text.substr(parseTree.text.lastIndexOf('(') + 1, parseTree.text.length - parseTree.text.lastIndexOf('(') -2);
+    public toString = (): string => `[${ this.description }](${ this.id })`
 }

@@ -1,3 +1,11 @@
 # .gitattributes in project root
 package.json text eol=lf
 package-lock.json text eol=lf
+
+# Rush's JSON config files use JavaScript-style code comments.  The rule below prevents pedantic
+# syntax highlighters such as GitHub's from highlighting these comments as errors.  Your text editor
+# may also require a special configuration to allow comments in JSON.
+#
+# For more information, see this issue: https://github.com/microsoft/rushstack/issues/1088
+#
+*.json  linguist-language=JSON-with-Comments

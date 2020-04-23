@@ -7,9 +7,7 @@
  * Licensed under the MIT License.
  */
 import { CustomizedMemory } from './customizedMemory';
-/**
- * Runtime template context store
- */
+
 
 /**
  * Runtime template state.
@@ -17,7 +15,7 @@ import { CustomizedMemory } from './customizedMemory';
 export class EvaluationTarget {
 
     /**
-     * template name.
+     * Template name.
      */
     public templateName: string;
 
@@ -39,7 +37,7 @@ export class EvaluationTarget {
     /**
      * Get current instance id. If two target has the same Id,
      * we can say they have the same template evaluation result.
-     * @returns id.
+     * @returns Id.
      */
     public getId(): string {
         const memory = this.scope as CustomizedMemory;
