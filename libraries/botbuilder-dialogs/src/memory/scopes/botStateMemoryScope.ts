@@ -13,49 +13,57 @@ import { DialogContext } from '../../dialogContext';
  * Base class for memory scopes based on BotState.
  */
 export class BotStateMemoryScope extends MemoryScope {
-    private readonly _state: BotState;
-    private readonly _propertyName: string;
+    protected stateKey: string;
 
-    public constructor(name: string, botState: BotState, propertyName?: string) {
+    /**
+     * Initializes a new instance of the `BotStateMemoryScope` class.
+     * @param name name of the property.
+     */
+    public constructor(name: string) {
         super(name, true);
-
-        // Create property accessor
-        this._state = botState;
-        this._propertyName = propertyName || name;
     }
 
+    /**
+     * Get the backing memory for this scope.
+     * @param dc current dialog context
+     */
     public getMemory(dc: DialogContext): object {
-        // Get state
-        const state = this._state.get(dc.context);
-        if (state == undefined) { throw new Error(`BotStateMemory.getMemory: load() should be called before retrieving memory.`) }
-
-        // Ensure memory initialized
-        let memory = state[this._propertyName];
-        if (typeof memory !== 'object') {
-            state[this._propertyName] = memory = {};
+        const botState: BotState = dc.context.turnState.get(this.stateKey);
+        if (botState) {
+            return botState.get(dc.context);
         }
 
-        // Return memory
-        return memory;
+        return undefined;
     }
 
+    /**
+     * Changes the backing object for the memory scope.
+     * @param dc current dialog context
+     * @param memory memory
+     */
     public setMemory(dc: DialogContext, memory: object): void {
-        this._state.get(dc.context)[this._propertyName] = memory;
+        const botState = dc.context.turnState.get(this.stateKey);
+        if (!botState) {
+            throw new Error(`${ this.stateKey } is not available.`);
+        }
+        throw new Error(`You cannot replace the root BotState object.`);
     }
 
-    public async load(dc: DialogContext): Promise<void> {
-        await this._state.load(dc.context);
+    public async load(dc: DialogContext, force = false): Promise<void> {
+        const botState: BotState = dc.context.turnState.get(this.stateKey);
+        if (botState) {
+            await botState.load(dc.context, force);
+        }
     }
 
-    public async saveChanges(dc: DialogContext): Promise<void> {
-        await this._state.saveChanges(dc.context);
+    public async saveChanges(dc: DialogContext, force = false): Promise<void> {
+        const botState: BotState = dc.context.turnState.get(this.stateKey);
+        if (botState) {
+            await botState.saveChanges(dc.context, force);
+        }
     }
 
     public async delete(dc: DialogContext): Promise<void> {
-        await this._state.delete(dc.context);
-
-        // The state cache is cleared after deletion so we should re-load to
-        // avoid potential errors from the bot touching memory after a delete.
-        await this._state.load(dc.context);
+        return Promise.resolve();
     }
 }

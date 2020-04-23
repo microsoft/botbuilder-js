@@ -5,17 +5,19 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { TurnContext, BotState, ConversationState, UserState, ActivityTypes, TurnContextStateCollection } from 'botbuilder-core';
+
+import { TurnContext, BotState, ConversationState, UserState, ActivityTypes, BotStateSet, TurnContextStateCollection } from 'botbuilder-core';
 import { DialogContext, DialogState } from './dialogContext';
 import { DialogTurnResult, Dialog, DialogTurnStatus } from './dialog';
 import { Configurable } from './configurable';
 import { DialogSet } from './dialogSet';
-import { DialogStateManagerConfiguration, DialogStateManager, TurnPath } from './memory';
+import { DialogStateManagerConfiguration, DialogStateManager } from './memory';
 import { DialogEvents } from './dialogEvents';
 import { DialogTurnStateConstants } from './dialogTurnStateConstants';
 
-const LAST_ACCESS: string = '_lastAccess';
-const DIALOGS: string = '_dialogs';
+const LAST_ACCESS = '_lastAccess';
+const CONVERSATION_STATE = 'ConversationState';
+const USER_STATE = 'UserState';
 
 export interface DialogManagerResult {
     turnResult: DialogTurnResult;
@@ -51,11 +53,13 @@ export interface DialogManagerConfiguration {
 export class DialogManager extends Configurable {
     private dialogSet: DialogSet = new DialogSet();
     private rootDialogId: string;
+    private dialogStateProperty: string;
     private readonly _initialTurnState: TurnContextStateCollection = new TurnContextStateCollection();
 
-    constructor(config?: DialogManagerConfiguration) {
+    public constructor(rootDialog?: Dialog, dialogStateProperty?: string) {
         super();
-        if (config) { this.configure(config) }
+        if (rootDialog) { this.rootDialog = rootDialog; }
+        this.dialogStateProperty = dialogStateProperty || 'DialogStateProperty';
         this._initialTurnState.set(DialogTurnStateConstants.dialogManager, this);
     }
 
@@ -104,12 +108,34 @@ export class DialogManager extends Configurable {
 
     public async onTurn(context: TurnContext): Promise<DialogManagerResult> {
         // Ensure properly configured
-        if (!this.rootDialogId) { throw new Error(`DialogManager.onTurn: the bots 'rootDialog' has not been configured.`) }
-        if (!this.conversationState) { throw new Error(`DialogManager.onTurn: the bots 'conversationState' has not been configured.`) }
+        if (!this.rootDialogId) { throw new Error(`DialogManager.onTurn: the bot's 'rootDialog' has not been configured.`); }
 
         // Copy initial turn state to context
         for (const key in this.initialTurnState.keys()) {
             context.turnState.set(key, this.initialTurnState.get(key));
+        }
+
+        const botStateSet = new BotStateSet();
+
+        if (!this.conversationState) {
+            this.conversationState = context.turnState.get(CONVERSATION_STATE);
+        } else {
+            context.turnState.set(CONVERSATION_STATE, this.conversationState);
+        }
+
+        if (!this.conversationState) {
+            throw new Error(`DialogManager.onTurn: the bot's 'conversationState' has not been configured.`);
+        }
+        botStateSet.add(this.conversationState);
+
+        if (!this.userState) {
+            this.userState = context.turnState.get(USER_STATE);
+        } else {
+            context.turnState.set(USER_STATE, this.userState);
+        }
+
+        if (this.userState) {
+            botStateSet.add(this.userState);
         }
 
         // Get last access
@@ -127,17 +153,15 @@ export class DialogManager extends Configurable {
         await lastAccessProperty.set(context, lastAccess.toISOString());
 
         // get dialog stack 
-        const dialogsProperty = this.conversationState.createProperty(DIALOGS);
+        const dialogsProperty = this.conversationState.createProperty(this.dialogStateProperty);
         const dialogState: DialogState = await dialogsProperty.get(context, {});
 
         // Create DialogContext
         const dc = new DialogContext(this.dialogSet, context, dialogState);
-        dc.state.setValue(TurnPath.activity, context.activity);
 
         // Configure dialog state manager and load scopes
-        const config = this.stateConfiguration ? this.stateConfiguration : DialogStateManager.createStandardConfiguration(this.conversationState, this.userState);
-        dc.state.configuration = config;
-        await dc.state.loadAllScopes();
+        const dialogStateManager = new DialogStateManager(dc, this.stateConfiguration);
+        await dialogStateManager.loadAllScopes();
 
         let turnResult: DialogTurnResult;
         while (true) {
@@ -163,7 +187,10 @@ export class DialogManager extends Configurable {
         }
 
         // Save any memory changes
-        await dc.state.saveAllChanges();
+        await dialogStateManager.saveAllChanges();
+
+        // Save BotState changes
+        await botStateSet.saveAllChanges(dc.context, false);
 
         // Send trace of memory to emulator
         const snapshot: object = dc.state.getMemorySnapshot();

@@ -6,14 +6,14 @@
  * Licensed under the MIT License.
  */
 import { BotStateMemoryScope } from './botStateMemoryScope';
-import { ConversationState } from 'botbuilder-core';
 import { ScopePath } from '../scopePath';
 
 /**
  * Memory that's scoped to the current conversation.
  */
 export class ConversationMemoryScope extends BotStateMemoryScope {
-    public constructor(conversationState: ConversationState, propertyName?: string) {
-        super(ScopePath.conversation, conversationState, propertyName);
+    protected stateKey = 'ConversationState';
+    public constructor() {
+        super(ScopePath.conversation);
     }
 }
