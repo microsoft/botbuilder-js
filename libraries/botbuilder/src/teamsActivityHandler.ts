@@ -390,8 +390,6 @@ export class TeamsActivityHandler extends ActivityHandler {
     protected async onTeamsMembersAdded(context: TurnContext): Promise<void> {
         if ('TeamsMembersAdded' in this.handlers && this.handlers['TeamsMembersAdded'].length > 0) {
 
-            let teamsChannelAccountLookup = null;
-
             for (let i=0; i<context.activity.membersAdded.length; i++) {
                 const channelAccount = context.activity.membersAdded[i];
 
@@ -401,21 +399,27 @@ export class TeamsActivityHandler extends ActivityHandler {
                     'email' in channelAccount ||
                     'userPrincipalName' in channelAccount) {
 
-                    // we must have a TeamsChannelAccount so skip to teh next one
+                    // we must have a TeamsChannelAccount so skip to the next one
                     continue;
                 }
 
-                // (lazily) build a lookup table of TeamsChannelAccounts
-                if (teamsChannelAccountLookup === null) {
-                    const teamsChannelAccounts = await TeamsInfo.getMembers(context);
-                    teamsChannelAccountLookup = {};
-                    teamsChannelAccounts.forEach((teamChannelAccount) => teamsChannelAccountLookup[teamChannelAccount.id] = teamChannelAccount);
-                }
-
-                // if we have the TeamsChannelAccount in our lookup table then overwrite the ChannelAccount with it
-                const teamsChannelAccount = teamsChannelAccountLookup[channelAccount.id];
-                if (teamsChannelAccount !== undefined) {
-                    context.activity.membersAdded[i] = teamsChannelAccount;
+                try {
+                    const teamsChannelAccount = await TeamsInfo.getMember(context, channelAccount.id);
+                    context.activity.membersAdded[i] = teamsChannelAccount;    
+                } catch (err) {
+                    if (err.body && err.body.error && err.body.error.code === 'ConversationNotFound') {
+                        // unable to find the member added in ConversationUpdate Activity in the response from the getMember call
+                        const teamsChannelAccount: TeamsChannelAccount = { 
+                            id: channelAccount.id,
+                            name: channelAccount.name,
+                            aadObjectId: channelAccount.aadObjectId,
+                            role: channelAccount.role,
+                        };
+    
+                        context.activity.membersAdded[i] = teamsChannelAccount;    
+                    } else {
+                        throw err;
+                    }
                 }
             }
 
