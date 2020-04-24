@@ -15,10 +15,11 @@ import { AttachmentInput, ChoiceInput, ConfirmInput, DateTimeInput, NumberInput,
 import { OnActivity, OnAssignEntity, OnBeginDialog, OnCancelDialog, OnChooseEntity, OnChooseIntent, OnChooseProperty, OnClearProperty, OnCondition, OnConversationUpdateActivity, OnCustomEvent, OnDialogEvent, OnEndOfActions, OnEndOfConversationActivity, OnError, OnEventActivity, OnHandoffActivity, OnIntent, OnInvokeActivity, OnMessageActivity, OnMessageDeleteActivity, OnMessageReactionActivity, OnMessageUpdateActivity, OnQnAMatch, OnRepromptDialog, OnTypingActivity, OnUnknownIntent } from './conditions';
 import { CrossTrainedRecognizerSet, MultiLanguageRecognizer, RecognizerSet, ValueRecognizer, RegexRecognizer, IntentPatternConverter } from './recognizers';
 import { AgeEntityRecognizer, ConfirmationEntityRecognizer, CurrencyEntityRecognizer, DateTimeEntityRecognizer, DimensionEntityRecognizer, EmailEntityRecognizer, GuidEntityRecognizer, HashtagEntityRecognizer, IpEntityRecognizer, MentionEntityRecognizer, NumberEntityRecognizer, OrdinalEntityRecognizer, PercentageEntityRecognizer, PhoneNumberEntityRecognizer, RegexEntityRecognizer, TemperatureEntityRecognizer, UrlEntityRecognizer } from './recognizers/entityRecognizers';
-import { ObjectExpressionConverter, DialogExpressionConverter, BoolExpressionConverter, StringExpressionConverter, EnumExpressionConverter, ValueExpressionConverter, NumberExpressionConverter, TextTemplateConverter, ActivityTemplateConverter, ExpressionConverter, ArrayExpressionConverter, LanguageGeneratorConverter, IntExpressionConverter } from './converters';
+import { ObjectExpressionConverter, DialogExpressionConverter, BoolExpressionConverter, StringExpressionConverter, EnumExpressionConverter, ValueExpressionConverter, NumberExpressionConverter, TextTemplateConverter, ActivityTemplateConverter, ExpressionConverter, ArrayExpressionConverter, IntExpressionConverter } from './converters';
 import { ActionChangeType } from './actionChangeType';
 import { CaseConverter } from './actions/case';
 import { QnAMakerRecognizer } from './qnaMaker';
+import { TemplateEngineLanguageGenerator, ResourceMultiLanguageGenerator } from './generators';
 
 export class AdaptiveDialogComponentRegistration implements ComponentRegistration {
     private _resourceExplorer: ResourceExplorer;
@@ -27,13 +28,12 @@ export class AdaptiveDialogComponentRegistration implements ComponentRegistratio
     public constructor(resourceExplorer: ResourceExplorer) {
         this._resourceExplorer = resourceExplorer;
 
-        this.registerBuilder('Microsoft.AdaptiveDialog', new AdaptiveTypeBuilder(AdaptiveDialog, this._resourceExplorer, {
-            'generator': new LanguageGeneratorConverter()
-        }));
+        this.registerBuilder('Microsoft.AdaptiveDialog', new AdaptiveTypeBuilder(AdaptiveDialog, this._resourceExplorer, {}));
         this.registerActions();
         this.registerConditions();
         this.registerInputs();
         this.registerRecognizers();
+        this.registerGenerators();
     }
 
     public getTypeBuilders(): BuilderRegistration[] {
@@ -219,13 +219,14 @@ export class AdaptiveDialogComponentRegistration implements ComponentRegistratio
         const inputDialogConverters = {
             'alwaysPrompt': new BoolExpressionConverter(),
             'allowInterruptions': new BoolExpressionConverter(),
+            'property': new StringExpressionConverter(),
+            'value': new ValueExpressionConverter(),
             'prompt': new ActivityTemplateConverter(),
             'unrecognizedPrompt': new ActivityTemplateConverter(),
             'invalidPrompt': new ActivityTemplateConverter(),
-            'property': new StringExpressionConverter(),
-            'value': new ValueExpressionConverter(),
-            'defaultValue': new ValueExpressionConverter(),
+            'defaultValueResponse': new ActivityTemplateConverter(),
             'maxTurnCount': new IntExpressionConverter(),
+            'defaultValue': new ValueExpressionConverter(),
             'disabled': new BoolExpressionConverter()
         };
         this.registerBuilder('Microsoft.AttachmentInput', new AdaptiveTypeBuilder(AttachmentInput, this._resourceExplorer,
@@ -308,5 +309,10 @@ export class AdaptiveDialogComponentRegistration implements ComponentRegistratio
             'context': new ObjectExpressionConverter(),
             'qnaId': new IntExpressionConverter()
         }));
+    }
+
+    private registerGenerators(): void {
+        this.registerBuilder('Microsoft.TemplateEngineLanguageGenerator', new AdaptiveTypeBuilder(TemplateEngineLanguageGenerator, this._resourceExplorer, {}));
+        this.registerBuilder('Microsoft.ResourceMultiLanguageGenerator', new AdaptiveTypeBuilder(ResourceMultiLanguageGenerator, this._resourceExplorer, {}));
     }
 }
