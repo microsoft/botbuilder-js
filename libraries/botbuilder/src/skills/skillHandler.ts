@@ -177,8 +177,6 @@ export class SkillHandler extends ChannelServiceHandler {
             throw new Error('conversationReference not found.');
         }
 
-        const activityConversationReference = TurnContext.getConversationReference(activity);
-
         /**
          * Callback passed to the BotFrameworkAdapter.createConversation() call.
          * This function does the following:
@@ -191,7 +189,7 @@ export class SkillHandler extends ChannelServiceHandler {
             const adapter: BotFrameworkAdapter = (context.adapter as BotFrameworkAdapter);
             // Cache the ClaimsIdentity and ConnectorClient on the context so that it's available inside of the bot's logic.
             context.turnState.set(adapter.BotIdentityKey, claimsIdentity);
-            context.turnState.set(this.SkillConversationReferenceKey, activityConversationReference);
+            context.turnState.set(this.SkillConversationReferenceKey, skillConversationReference);
             activity = TurnContext.applyConversationReference(activity, skillConversationReference.conversationReference) as Activity;
             const client = adapter.createConnectorClient(activity.serviceUrl);
             context.turnState.set(adapter.ConnectorClientKey, client);
