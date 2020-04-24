@@ -387,7 +387,7 @@ describe('ComponentDialog', function () {
         adapter.send('Hi')
             .assertReply('First step.')
             .send('Hi again')
-            .assertReply('Dialog Changed.')
+            .assertReply('Version Changed.')
             .assertReply('Second step.')
             .assertReply('Done.')
     });
@@ -454,8 +454,8 @@ class ChangedDialog extends ComponentDialog {
     }
 
     async onPreBubbleEvent(dc, event) {
-        if (event.name == 'dialogChanged' && this.handle) {
-            await dc.context.sendActivity('Dialog Changed.');
+        if (event.name == 'versionChanged' && this.handle) {
+            await dc.context.sendActivity('Version Changed.');
             return true;
         }
         return false;

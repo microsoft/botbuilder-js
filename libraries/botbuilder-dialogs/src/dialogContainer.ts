@@ -41,7 +41,7 @@ export abstract class DialogContainer<O extends object = {}> extends Dialog<O> {
      */
     protected async checkForVersionChange(dc: DialogContext): Promise<void> {
         const current = dc.activeDialog.version;
-        dc.activeDialog.version = this.dialogs.version;
+        dc.activeDialog.version = this.dialogs.getVersion();
 
         // Check for change of previously stored hash
         if (current && current != dc.activeDialog.version) {

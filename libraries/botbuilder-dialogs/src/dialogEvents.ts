@@ -11,6 +11,6 @@ export class DialogEvents {
     static readonly repromptDialog = "repromptDialog";
     static readonly cancelDialog = "cancelDialog";
     static readonly activityReceived = "activityReceived";
-    static readonly versionChanged = "dialogChanged";
+    static readonly versionChanged = "versionChanged";
     static readonly error = "error";
 }

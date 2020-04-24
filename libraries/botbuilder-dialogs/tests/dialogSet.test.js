@@ -140,7 +140,7 @@ describe('DialogSet', function () {
         dialogs
             .add(new WaterfallDialog('A'))
             .add(new WaterfallDialog('B'));
-        const hash = dialogs.version;
+        const hash = dialogs.getVersion();
         assert(hash && hash.length > 0, `no hash generated.`);
 
         done();
@@ -155,11 +155,11 @@ describe('DialogSet', function () {
         dialogs
             .add(new WaterfallDialog('A'))
             .add(new WaterfallDialog('B'));
-        const hash = dialogs.version;
+        const hash = dialogs.getVersion();
         assert(hash && hash.length > 0, `no hash generated.`);
 
         dialogs.add(new WaterfallDialog('C'));
-        assert(hash != dialogs.version, `hash not updated.`);
+        assert(hash != dialogs.getVersion(), `hash not updated.`);
 
         done();
     });

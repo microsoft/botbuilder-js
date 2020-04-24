@@ -88,7 +88,7 @@ export class WaterfallDialog<O extends object = {}> extends Dialog<O> {
         }
     }
 
-    public get version(): string {
+    public getVersion(): string {
         // Simply return the id + number of steps to help detect when new steps have
         // been added to a given waterfall.
         return `${this.id}:${this.steps.length}`;

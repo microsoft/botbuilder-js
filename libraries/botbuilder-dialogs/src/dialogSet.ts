@@ -91,11 +91,11 @@ export class DialogSet {
      * @remarks
      * This hash is persisted to state storage and used to detect changes to a dialog set.
      */
-    public get version(): string {
+    public getVersion(): string {
         if (!this._version) {
             let versions = '';
             for (const id in this.dialogs) {
-                const v = this.dialogs[id].version;
+                const v = this.dialogs[id].getVersion();
                 if (v) {
                     versions += `|${v}`;
                 }

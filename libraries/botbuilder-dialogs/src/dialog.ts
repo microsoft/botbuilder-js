@@ -330,20 +330,6 @@ export abstract class Dialog<O extends object = {}> extends Configurable {
         this._id = value;
     }
 
-    /**
-     * An encoded string used to aid in the detection of bot changes on re-deployment.
-     * 
-     * @remarks
-     * This defaults to returning the dialogs [id](#id) but can be overridden to provide more 
-     * precise change detection logic. Any dialog on the stack that has its version change will 
-     * result in a `versionChanged` event will be raised. If this event is not handled by the bot,
-     * an error will be thrown resulting in the bots error handler logic being run.
-     * 
-     * Returning an empty string will disable version tracking for the component all together. 
-     */
-    public get version(): string {
-        return this.id;
-    }
 
     /** 
      * Gets the telemetry client for this dialog.
@@ -359,6 +345,22 @@ export abstract class Dialog<O extends object = {}> extends Configurable {
         this._telemetryClient = client ? client : new NullTelemetryClient();
     }
 
+
+    /**
+     * An encoded string used to aid in the detection of bot changes on re-deployment.
+     * 
+     * @remarks
+     * This defaults to returning the dialogs [id](#id) but can be overridden to provide more 
+     * precise change detection logic. Any dialog on the stack that has its version change will 
+     * result in a `versionChanged` event will be raised. If this event is not handled by the bot,
+     * an error will be thrown resulting in the bots error handler logic being run.
+     * 
+     * Returning an empty string will disable version tracking for the component all together. 
+     */
+    public getVersion(): string {
+        return this.id;
+    }
+        
     /**
      * When overridden in a derived class, starts the dialog.
      *
