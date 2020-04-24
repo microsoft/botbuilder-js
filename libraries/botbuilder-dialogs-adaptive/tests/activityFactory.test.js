@@ -1,11 +1,11 @@
 // this test would be migrated to adaptive dialog package
-/*
-const { Templates } = require('../lib');
-const {ActivityFactory} = require('botbuilder-core')
+
+const { Templates } = require('botbuilder-lg');
+const {ActivityFactory} = require('botbuilder-core');
 const assert = require('assert');
 
 function getTemplates(){
-    const filePath =  `${ __dirname }/testData/examples/NormalStructuredLG.lg`;
+    const filePath =  `${ __dirname }/lg/NormalStructuredLG.lg`;
     return Templates.parseFile(filePath);
 }
 
@@ -16,7 +16,7 @@ function getActivity(templateName, data){
 }
 
 function getDiagnostics(templateName, data){
-    const filePath =  `${ __dirname }/testData/examples/DiagnosticStructuredLG.lg`;
+    const filePath =  `${ __dirname }/lg/DiagnosticStructuredLG.lg`;
     const templates =  Templates.parseFile(filePath);
     const lgResult = templates.evaluate(templateName, data);
     return ActivityFactory.checkLGResult(lgResult) ;
@@ -626,4 +626,3 @@ function assertReceiptCardActivity(activity) {
     
 }
 
-*/
