@@ -125,6 +125,7 @@ export class SkillHandler extends ChannelServiceHandler {
         turnContext.activity.replyToId = endOfConversationActivity.replyToId;
         turnContext.activity.value = endOfConversationActivity.value;
         turnContext.activity.entities = endOfConversationActivity.entities;
+        turnContext.activity.locale = endOfConversationActivity.locale;
         turnContext.activity.localTimestamp = endOfConversationActivity.localTimestamp;
         turnContext.activity.timestamp = endOfConversationActivity.timestamp;
         turnContext.activity.channelData = endOfConversationActivity.channelData;
@@ -140,6 +141,7 @@ export class SkillHandler extends ChannelServiceHandler {
         turnContext.activity.replyToId = eventActivity.replyToId;
         turnContext.activity.value = eventActivity.value;
         turnContext.activity.entities = eventActivity.entities;
+        turnContext.activity.locale = eventActivity.locale;
         turnContext.activity.localTimestamp = eventActivity.localTimestamp;
         turnContext.activity.timestamp = eventActivity.timestamp;
         turnContext.activity.channelData = eventActivity.channelData;
