@@ -3019,7 +3019,7 @@ export class ExpressionFunctions {
                 ExpressionFunctions.validateUnary),
             new ExpressionEvaluator(
                 ExpressionType.Json,
-                ExpressionFunctions.apply((args: any []): any => JSON.parse(args[0])),
+                ExpressionFunctions.apply((args: any []): any => JSON.parse(args[0].trim())),
                 ReturnType.Object,
                 (expression: Expression): void => ExpressionFunctions.validateOrder(expression, undefined, ReturnType.String)),
             new ExpressionEvaluator(
