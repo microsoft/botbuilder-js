@@ -8,7 +8,7 @@
 import { DialogContext, Choice, ListStyle, ChoiceFactoryOptions, FindChoicesOptions, ChoiceFactory, recognizeChoices, ModelResult, FoundChoice } from 'botbuilder-dialogs';
 import { Activity } from 'botbuilder-core';
 import { InputDialog, InputState } from './inputDialog';
-import { ObjectExpression, StringExpression, ArrayExpression, EnumExpression } from '../expressions';
+import { ObjectExpression, StringExpression, ArrayExpression, EnumExpression } from 'adaptive-expressions';
 
 export enum ChoiceOutputFormat {
     value = 'value',

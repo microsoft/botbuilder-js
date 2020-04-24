@@ -8,7 +8,7 @@
 import { DialogContext, Dialog, DialogTurnResult, PromptOptions, PromptRecognizerResult } from 'botbuilder-dialogs';
 import { Attachment, InputHints, TokenResponse, IUserTokenProvider, TurnContext, ActivityTypes, Activity, MessageFactory, CardFactory, OAuthLoginTimeoutKey } from 'botbuilder-core';
 import { InputDialog, InputState } from './inputDialog';
-import { StringExpression, IntExpression } from '../expressions';
+import { StringExpression, IntExpression } from 'adaptive-expressions';
 
 export const channels: any = {
     console: 'console',

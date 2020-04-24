@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 import { DialogTurnResult, DialogContext, Dialog } from 'botbuilder-dialogs';
-import { ValueExpression, StringExpression, BoolExpression } from '../expressions';
+import { ValueExpression, StringExpression, BoolExpression } from 'adaptive-expressions';
 
 export class EmitEvent<O extends object = {}> extends Dialog<O> {
     public constructor();

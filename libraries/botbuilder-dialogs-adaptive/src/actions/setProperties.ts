@@ -1,6 +1,6 @@
 import { Dialog, DialogContext, DialogTurnResult } from 'botbuilder-dialogs';
 import { Converter } from 'botbuilder-dialogs-declarative';
-import { ValueExpression, StringExpression, BoolExpression } from '../expressions';
+import { ValueExpression, StringExpression, BoolExpression } from 'adaptive-expressions';
 
 export interface PropertyAssignment {
     property: StringExpression;

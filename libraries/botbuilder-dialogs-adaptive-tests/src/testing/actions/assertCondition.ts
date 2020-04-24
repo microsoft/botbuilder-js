@@ -6,8 +6,7 @@
  * Licensed under the MIT License.
  */
 import { Dialog, DialogContext, DialogTurnResult } from 'botbuilder-dialogs';
-import { StringExpression } from 'botbuilder-dialogs-adaptive';
-import { Expression } from 'adaptive-expressions';
+import { Expression, StringExpression } from 'adaptive-expressions';
 
 export class AssertCondition<O extends object = {}> extends Dialog<O> {
     /**

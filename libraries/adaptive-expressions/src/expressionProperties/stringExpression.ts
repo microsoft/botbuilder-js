@@ -1,13 +1,12 @@
 /**
- * @module botbuilder-dialogs-adaptive
+ * @module adaptive-expressions
  */
 /**
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
 import { ExpressionProperty } from './expressionProperty';
-import { Expression } from 'adaptive-expressions';
-import { Templates } from 'botbuilder-lg';
+import { Expression } from '../expression';
 
 /**
  * Represents a property which is either a string value or a string expression.
@@ -23,25 +22,9 @@ import { Templates } from 'botbuilder-lg';
  *     prop = "\=user" => "=user".
  */
 export class StringExpression extends ExpressionProperty<string> {
-    private readonly engine = new Templates();
 
     public constructor(value?: string | Expression) {
         super(value);
-    }
-
-    public tryGetValue(data: object): { value: string; error: Error } {
-        if (typeof this.value == 'string') {
-            let v: string, e: Error;
-            try {
-                v = this.engine.evaluateText(this.value, data);
-            } catch (err) {
-                e = err;
-            }
-
-            return { value: v, error: e };
-        }
-
-        return super.tryGetValue(data);
     }
 
     public setValue(value: string | Expression): void {

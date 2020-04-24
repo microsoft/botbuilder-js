@@ -21,7 +21,7 @@ import { EntityEvents } from './entityEvents';
 import { AdaptiveEvents } from './adaptiveEvents';
 import { AdaptiveDialogState } from './adaptiveDialogState';
 import { EntityInfo } from './entityInfo';
-import { IntExpression } from './expressions';
+import { IntExpression } from 'adaptive-expressions';
 
 export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
     public static conditionTracker = 'dialog._tracker.conditions';

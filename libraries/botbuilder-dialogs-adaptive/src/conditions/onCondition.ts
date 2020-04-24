@@ -8,7 +8,7 @@
 import { Dialog, DialogDependencies, DialogStateManager } from 'botbuilder-dialogs';
 import { Expression, ExpressionParserInterface, Constant, ExpressionParser, ExpressionEvaluator, ReturnType, ExpressionFunctions } from 'adaptive-expressions';
 import { ActionScope } from '../actions/actionScope';
-import { BoolExpression, IntExpression } from '../expressions';
+import { BoolExpression, IntExpression } from 'adaptive-expressions';
 import { AdaptiveDialog } from '../adaptiveDialog';
 import { ActionContext } from '../actionContext';
 import { ActionChangeList } from '../actionChangeList';
