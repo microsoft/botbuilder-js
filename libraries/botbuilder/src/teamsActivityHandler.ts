@@ -406,7 +406,8 @@ export class TeamsActivityHandler extends ActivityHandler {
                 try {
                     context.activity.membersAdded[i] = await TeamsInfo.getMember(context, channelAccount.id);
                 } catch (err) {
-                    if (err.body && err.body.error && err.body.error.code === 'ConversationNotFound') {
+                    const errCode: string = err.body && err.body.error && err.body.error.code;
+                    if (errCode === 'ConversationNotFound') {
                         // unable to find the member added in ConversationUpdate Activity in the response from the getMember call
                         const teamsChannelAccount: TeamsChannelAccount = { 
                             id: channelAccount.id,

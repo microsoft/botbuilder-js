@@ -408,7 +408,7 @@ describe('TeamsInfo', () => {
         });
 
         it('should work with a Team', async () => {
-            const members =
+            const member =
                 {
                     "id": "29:User-One-Id",
                     "name": "User One",
@@ -422,12 +422,12 @@ describe('TeamsInfo', () => {
 
             const fetchExpectation = nock('https://smba.trafficmanager.net/amer')
                 .get('/v3/conversations/19%3AgeneralChannelIdgeneralChannelId%40thread.skype/members/29%3AUser-One-Id')
-                .reply(200, members);
+                .reply(200, member);
 
             const context = new TestContext(teamActivity);
-            const fetchedMembers = await TeamsInfo.getMember(context, teamActivity.from.id);
+            const fetchedMember = await TeamsInfo.getMember(context, teamActivity.from.id);
             assert(fetchExpectation.isDone());
-            assertMemberInfo(fetchedMembers, members);
+            assertMemberInfo(fetchedMember, member);
         });
 
     });
