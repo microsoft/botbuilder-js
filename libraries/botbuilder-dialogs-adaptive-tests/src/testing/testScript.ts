@@ -5,11 +5,11 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { MemoryStorage, ConversationState, UserState } from 'botbuilder-core';
+import { MemoryStorage, UserState, ConversationState } from 'botbuilder-core';
 import { DialogManager } from 'botbuilder-dialogs';
+import { DialogExpression } from 'botbuilder-dialogs-adaptive';
 import { TestAction } from './testAction';
 import { AdaptiveTestAdapter } from './adaptiveTestAdapter';
-import { DialogExpression } from 'botbuilder-dialogs-adaptive';
 
 export class TestScript {
 
@@ -51,8 +51,7 @@ export class TestScript {
         testAdapter.enableTrace = this.enableTrace;
         testAdapter.locale = this.locale;
 
-        const bot = new DialogManager();
-        bot.rootDialog = this.dialog.value;
+        const bot = new DialogManager(this.dialog.value);
         bot.conversationState = new ConversationState(new MemoryStorage());
         bot.userState = new UserState(new MemoryStorage());
 

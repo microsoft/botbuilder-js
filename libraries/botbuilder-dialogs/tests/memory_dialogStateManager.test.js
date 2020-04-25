@@ -69,31 +69,33 @@ class TestContainer extends DialogContainer {
 }
 
 async function createConfiguredTestDc(storage) {
-    if (!storage) { storage = new MemoryStorage() }
-    const convoState = new ConversationState(storage);
-    const userState = new UserState(storage);
-    const config = DialogStateManager.createStandardConfiguration(convoState, userState);
-    const dc = await createTestDc(convoState);
-    dc.state.configuration = config;
+    if (!storage) { storage = new MemoryStorage(); }
+    const dc = await createTestDc(storage);
+    dc.state.configuration = DialogStateManager.createStandardConfiguration();
     await dc.state.loadAllScopes();
 
     return dc;
 }
 
-async function createTestDc(convoState) {
-        // Create a DialogState property, DialogSet and register the dialogs.
-        const dialogState = convoState.createProperty('dialogs');
-        const dialogs = new DialogSet(dialogState);
-        const container = new TestContainer('container', new TestDialog('child', 'test message'));
-        dialogs.add(container);
+async function createTestDc(storage) {
+    if (!storage) { storage = new MemoryStorage(); }
+    const convoState = new ConversationState(storage);
+    const userState = new UserState(storage);
+    // Create a DialogState property, DialogSet and register the dialogs.
+    const dialogState = convoState.createProperty('dialogs');
+    const dialogs = new DialogSet(dialogState);
+    const container = new TestContainer('container', new TestDialog('child', 'test message'));
+    dialogs.add(container);
 
-        // Create test context
-        const context= new TurnContext(new TestAdapter(), beginMessage);
-        const dc = await dialogs.createContext(context);
+    // Create test context
+    const context= new TurnContext(new TestAdapter(), beginMessage);
+    context.turnState.set('ConversationState', convoState);
+    context.turnState.set('UserState', userState);
+    const dc = await dialogs.createContext(context);
 
-        // Start container dialog
-        await dc.beginDialog('container');
-        return dc;
+    // Start container dialog
+    await dc.beginDialog('container');
+    return dc;
 }
 
 describe('Memory - Dialog State Manager', function() {
@@ -144,51 +146,13 @@ describe('Memory - Dialog State Manager', function() {
 
     it('Should create a standard configuration by default.', async function () {
         // Create test dc
-        const convoState = new ConversationState(new MemoryStorage());
-        const dc = await createTestDc(convoState);
+        const dc = await createTestDc();
 
         // Run test
         const config = dc.state.configuration;
         assert(config, `No config returned`);
         assert(config.pathResolvers.length > 0, `No path resolvers`);
         assert(config.memoryScopes.length > 0, `No memory scopes`);
-    });
-
-    it('Should support customized configurations.', async function () {
-        // Create test dc
-        const storage = new MemoryStorage();
-        const convoState = new ConversationState(storage);
-        const userState = new UserState(storage);
-        const dc = await createTestDc(convoState);
-
-        // Run test
-        let convoScopeFound = false;
-        let userScopeFound = false;
-        dc.state.configuration = DialogStateManager.createStandardConfiguration(convoState, userState);
-        const config = dc.state.configuration;
-        config.memoryScopes.forEach(scope => {
-            if (scope instanceof ConversationMemoryScope) { convoScopeFound = true }
-            if (scope instanceof UserMemoryScope) { userScopeFound = true }
-        });
-        assert(convoScopeFound, `no conversation scope added`);
-        assert(userScopeFound, `no user scope added`);
-    });
-
-    it('Should raise an error when a child DC is configured.', async function () {
-        // Create test dc
-        const storage = new MemoryStorage();
-        const convoState = new ConversationState(storage);
-        const userState = new UserState(storage);
-        const dc = await createTestDc(convoState);
-
-        // Run test
-        let error = false;
-        try {
-            dc.child.state.configuration = DialogStateManager.createStandardConfiguration(convoState, userState);
-        } catch (err) {
-            error = true;
-        }
-        assert(error);
     });
 
     it('Should read & write values to TURN memory scope.', async function () {
@@ -366,29 +330,6 @@ describe('Memory - Dialog State Manager', function() {
         dc = await createConfiguredTestDc(storage);
         assert(dc.state.getValue('user.name') == 'test user', `user state not saved`);
         assert(dc.state.getValue('conversation.foo') == 'bar', `conversation state not saved`);
-    });
-
-    it('Should delete backing conversation & user state.', async function () {
-        // Create test dc
-        const storage = new MemoryStorage();
-        let dc = await createConfiguredTestDc(storage);
-
-        // Initialize state and save
-        dc.state.setValue('user.name', 'test user');
-        dc.state.setValue('conversation.foo', 'bar');
-        await dc.state.saveAllChanges();
-
-        // Create new dc and delete backing state
-        dc = await createConfiguredTestDc(storage);
-        await dc.state.deleteScopesMemory('user');
-        await dc.state.deleteScopesMemory('conversation');
-        assert(dc.state.getValue('user.name') == undefined, `user state not delete`);
-        assert(dc.state.getValue('conversation.foo') == undefined, `conversation state not deleted`);
-
-        // Double check
-        dc = await createConfiguredTestDc(storage);
-        assert(dc.state.getValue('user.name') == undefined, `user state deletion not persisted`);
-        assert(dc.state.getValue('conversation.foo') == undefined, `conversation state deletion not persisted`);
     });
 
     it('Should return default value when getValue() called with empty path.', async function () {

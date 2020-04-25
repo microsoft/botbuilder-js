@@ -6,12 +6,8 @@
  * Licensed under the MIT License.
  */
 import { PathResolver, DollarPathResolver, HashPathResolver, AtAtPathResolver, AtPathResolver, PercentPathResolver } from './pathResolvers';
-import { MemoryScope, SettingsMemoryScope, DialogMemoryScope, ClassMemoryScope, ThisMemoryScope } from './scopes';
+import { MemoryScope, SettingsMemoryScope, DialogMemoryScope, ClassMemoryScope, ThisMemoryScope, TurnMemoryScope, ConversationMemoryScope, UserMemoryScope } from './scopes';
 import { DialogContext } from '../dialogContext';
-import { ConversationState, UserState } from 'botbuilder-core';
-import { ConversationMemoryScope } from './scopes/conversationMemoryScope';
-import { TurnMemoryScope } from './scopes/turnMemoryScope';
-import { UserMemoryScope } from './scopes/userMemoryScope';
 import { DialogPath } from './dialogPath';
 
 export interface DialogStateManagerConfiguration {
@@ -28,6 +24,8 @@ export interface DialogStateManagerConfiguration {
 
 const PATH_TRACKER = 'dialog._tracker.paths';
 
+const DIALOG_STATE_MANAGER_CONFIGURATION = 'DialogStateManagerConfiguration';
+
 /**
  * The DialogStateManager manages memory scopes and path resolvers.
  * 
@@ -38,10 +36,15 @@ const PATH_TRACKER = 'dialog._tracker.paths';
  */
 export class DialogStateManager {
     private readonly dialogContext: DialogContext;
-    private _config: DialogStateManagerConfiguration;
 
-    constructor(dc: DialogContext) {
+    public constructor(dc: DialogContext, configuration?: DialogStateManagerConfiguration) {
         this.dialogContext = dc;
+        this.configuration = configuration ? configuration : dc.context.turnState.get(DIALOG_STATE_MANAGER_CONFIGURATION);
+        if (!this.configuration) {
+            this.configuration = DialogStateManager.createStandardConfiguration();
+            // cache for any other new dialogStateManager instances in this turn
+            dc.context.turnState.set(DIALOG_STATE_MANAGER_CONFIGURATION, this.configuration);
+        }
     }
 
     /**
@@ -52,25 +55,7 @@ export class DialogStateManager {
      * Assigning a new configuration to any DialogStateManager within the chain will update the
      * configuration for the entire chain.
      */
-    public get configuration(): DialogStateManagerConfiguration {
-        if (this.dialogContext.parent) {
-            return this.dialogContext.parent.state.configuration;
-        } else {
-            if (this._config == undefined) {
-                this._config = DialogStateManager.createStandardConfiguration();
-            }
-
-            return this._config;
-        }
-    }
-
-    public set configuration(value: DialogStateManagerConfiguration) {
-        if (this.dialogContext.parent) {
-            throw new Error(`DialogStateManager.configuration: configuration should only be assigned to root dialog context.`);
-        } else {
-            this._config = value;
-        }
-    }
+    public configuration: DialogStateManagerConfiguration;
 
     /**
      * Get the value from memory using path expression.
@@ -539,7 +524,7 @@ export class DialogStateManager {
         return undefined;
     }
 
-    static createStandardConfiguration(conversationState?: ConversationState, userState?: UserState): DialogStateManagerConfiguration {
+    public static createStandardConfiguration(): DialogStateManagerConfiguration {
         const config: DialogStateManagerConfiguration = {
             pathResolvers: [
                 new DollarPathResolver(),
@@ -553,17 +538,11 @@ export class DialogStateManager {
                 new SettingsMemoryScope(),
                 new DialogMemoryScope(),
                 new ClassMemoryScope(),
-                new ThisMemoryScope()
+                new ThisMemoryScope(),
+                new ConversationMemoryScope(),
+                new UserMemoryScope()
             ]
         };
-
-        // Add optional scopes
-        if (conversationState) {
-            config.memoryScopes.push(new ConversationMemoryScope(conversationState));
-        }
-        if (userState) {
-            config.memoryScopes.push(new UserMemoryScope(userState));
-        }
 
         return config;
     }

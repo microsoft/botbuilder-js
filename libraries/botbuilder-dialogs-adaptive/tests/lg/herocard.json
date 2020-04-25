@@ -1,12 +1,12 @@
 ﻿{
   "title": "titleContent",
   "text": "textContent",
-  "Buttons": [
+  "buttons": [
     {
       "type": "imBack",
-      "Title": "titleContent",
-      "Value": "textContent",
-      "Text": "textContent"
+      "title": "titleContent",
+      "value": "textContent",
+      "text": "textContent"
     }
   ],
   "tap": {
