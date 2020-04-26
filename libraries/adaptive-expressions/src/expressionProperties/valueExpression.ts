@@ -45,4 +45,17 @@ export class ValueExpression extends ExpressionProperty<any> {
 
         super.setValue(value);
     }
+
+    public tryGetValue(data: object): { value: string; error: Error } {
+        if (typeof this.value == 'string') {
+            let v: any, e: string;
+            const expressionStr = '`' + this.value + '`';
+            ({value: v, error: e} = Expression.parse(expressionStr).tryEvaluate(data));
+
+            return { value: v as string, error: new Error(e) };
+        }
+
+        return super.tryGetValue(data);
+    }
+
 }
