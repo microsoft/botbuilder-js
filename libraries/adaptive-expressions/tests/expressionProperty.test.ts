@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
 import * as assert from 'assert';
-import { ArrayExpression, BoolExpression, EnumExpression, NumberExpression, ObjectExpression, StringExpression, ValueExpression } from '../';
+import { ArrayExpression, BoolExpression, EnumExpression, NumberExpression, ObjectExpression, StringExpression, ValueExpression } from '../lib';
 
 describe('expressionProperty tests', () => {
     it('ArrayExpression string', () => {

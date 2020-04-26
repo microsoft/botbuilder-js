@@ -27,6 +27,18 @@ export class StringExpression extends ExpressionProperty<string> {
         super(value);
     }
 
+    public tryGetValue(data: object): { value: string; error: Error } {
+        if (typeof this.value == 'string') {
+            let v: any, e: string;
+            const expressionStr = '`' + this.value + '`';
+            ({value: v, error: e} = Expression.parse(expressionStr).tryEvaluate(data));
+
+            return e == undefined ? { value: v as string, error: undefined } : { value: v as string, error: new Error(e) };
+        }
+
+        return super.tryGetValue(data);
+    }
+    
     public setValue(value: string | Expression): void {
         this.value = undefined;
         this.expression = undefined;
@@ -45,17 +57,4 @@ export class StringExpression extends ExpressionProperty<string> {
 
         super.setValue(value);
     }
-
-    public tryGetValue(data: object): { value: string; error: Error } {
-        if (typeof this.value == 'string') {
-            let v: any, e: string;
-            const expressionStr = '`' + this.value + '`';
-            ({value: v, error: e} = Expression.parse(expressionStr).tryEvaluate(data));
-
-            return { value: v as string, error: new Error(e) };
-        }
-
-        return super.tryGetValue(data);
-    }
-
 }
