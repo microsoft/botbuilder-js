@@ -13,7 +13,6 @@ export * from './dialogExpressionConverter';
 export * from './enumExpressionConverter';
 export * from './expressionConverter';
 export * from './intExpressionConverter';
-export * from './languageGeneratorConverter';
 export * from './numberExpressionConverter';
 export * from './objectExpressionConverter';
 export * from './stringExpressionConveter';
