@@ -75,6 +75,6 @@ export class TraceActivity<O extends object = {}> extends Dialog<O> {
     }
 
     protected onComputeId(): string {
-        return `TraceActivity[${ this.name.toString() }]`;
+        return `TraceActivity[${ this.name ? this.name.toString() : '' }]`;
     }
 }

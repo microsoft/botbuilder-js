@@ -20,6 +20,8 @@ import {DialogExpressionConverter, TextTemplateConverter, ActivityTemplateConver
 import { ActionChangeType } from './actionChangeType';
 import { CaseConverter } from './actions/case';
 import { QnAMakerRecognizer } from './qnaMaker';
+import { TemplateEngineLanguageGenerator, ResourceMultiLanguageGenerator } from './generators';
+import { ConditionalSelector, FirstSelector, RandomSelector, TrueSelector } from './selectors';
 
 export class AdaptiveDialogComponentRegistration implements ComponentRegistration {
     private _resourceExplorer: ResourceExplorer;
@@ -28,13 +30,13 @@ export class AdaptiveDialogComponentRegistration implements ComponentRegistratio
     public constructor(resourceExplorer: ResourceExplorer) {
         this._resourceExplorer = resourceExplorer;
 
-        this.registerBuilder('Microsoft.AdaptiveDialog', new AdaptiveTypeBuilder(AdaptiveDialog, this._resourceExplorer, {
-            'generator': new LanguageGeneratorConverter()
-        }));
+        this.registerBuilder('Microsoft.AdaptiveDialog', new AdaptiveTypeBuilder(AdaptiveDialog, this._resourceExplorer, {}));
         this.registerActions();
         this.registerConditions();
         this.registerInputs();
         this.registerRecognizers();
+        this.registerGenerators();
+        this.registerSelectors();
     }
 
     public getTypeBuilders(): BuilderRegistration[] {
@@ -220,13 +222,14 @@ export class AdaptiveDialogComponentRegistration implements ComponentRegistratio
         const inputDialogConverters = {
             'alwaysPrompt': new BoolExpressionConverter(),
             'allowInterruptions': new BoolExpressionConverter(),
+            'property': new StringExpressionConverter(),
+            'value': new ValueExpressionConverter(),
             'prompt': new ActivityTemplateConverter(),
             'unrecognizedPrompt': new ActivityTemplateConverter(),
             'invalidPrompt': new ActivityTemplateConverter(),
-            'property': new StringExpressionConverter(),
-            'value': new ValueExpressionConverter(),
-            'defaultValue': new ValueExpressionConverter(),
+            'defaultValueResponse': new ActivityTemplateConverter(),
             'maxTurnCount': new IntExpressionConverter(),
+            'defaultValue': new ValueExpressionConverter(),
             'disabled': new BoolExpressionConverter()
         };
         this.registerBuilder('Microsoft.AttachmentInput', new AdaptiveTypeBuilder(AttachmentInput, this._resourceExplorer,
@@ -309,5 +312,19 @@ export class AdaptiveDialogComponentRegistration implements ComponentRegistratio
             'context': new ObjectExpressionConverter(),
             'qnaId': new IntExpressionConverter()
         }));
+    }
+
+    private registerGenerators(): void {
+        this.registerBuilder('Microsoft.TemplateEngineLanguageGenerator', new AdaptiveTypeBuilder(TemplateEngineLanguageGenerator, this._resourceExplorer, {}));
+        this.registerBuilder('Microsoft.ResourceMultiLanguageGenerator', new AdaptiveTypeBuilder(ResourceMultiLanguageGenerator, this._resourceExplorer, {}));
+    }
+
+    private registerSelectors(): void {
+        this.registerBuilder('Microsoft.ConditionalSelector', new AdaptiveTypeBuilder(ConditionalSelector, this._resourceExplorer, {
+            'condition': new BoolExpressionConverter()
+        }));
+        this.registerBuilder('Microsoft.FirstSelector', new AdaptiveTypeBuilder(FirstSelector, this._resourceExplorer, {}));
+        this.registerBuilder('Microsoft.RandomSelector', new AdaptiveTypeBuilder(RandomSelector, this._resourceExplorer, {}));
+        this.registerBuilder('Microsoft.TrueSelector', new AdaptiveTypeBuilder(TrueSelector, this._resourceExplorer, {}));
     }
 }

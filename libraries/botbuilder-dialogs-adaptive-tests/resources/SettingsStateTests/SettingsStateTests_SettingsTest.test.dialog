@@ -1,0 +1,46 @@
+{
+    "$schema": "../../../tests.schema",
+    "$kind": "Microsoft.Test.Script",
+    "dialog": {
+        "$kind": "Microsoft.AdaptiveDialog",
+        "triggers": [
+            {
+                "$kind": "Microsoft.OnUnknownIntent",
+                "actions": [
+                    {
+                        "$kind": "Microsoft.SendActivity",
+                        "activity": "${settings.MicrosoftAppId}"
+                    },
+                    {
+                        "$kind": "Microsoft.SendActivity",
+                        "activity": "${settings.MicrosoftAppPassword}"
+                    },
+                    {
+                        "$kind": "Microsoft.SendActivity",
+                        "activity": "${settings.ApplicationInsightsInstrumentationKey}"
+                    }
+                ]
+            }
+        ],
+        "defaultResultProperty": "dialog.result"
+    },
+    "locale": "en-us",
+    "script": [
+        {
+            "$kind": "Microsoft.Test.UserSays",
+            "text": "howdy"
+        },
+        {
+            "$kind": "Microsoft.Test.AssertReply",
+            "text": "MICROSOFT_APP_ID"
+        },
+        {
+            "$kind": "Microsoft.Test.AssertReply",
+            "text": "MICROSOFT_APP_PASSWORD"
+        },
+        {
+            "$kind": "Microsoft.Test.AssertReply",
+            "text": "00000000-0000-0000-0000-000000000000"
+        }
+    ]
+}

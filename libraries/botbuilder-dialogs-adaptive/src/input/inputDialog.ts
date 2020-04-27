@@ -175,7 +175,7 @@ export abstract class InputDialog extends Dialog {
     protected async onPreBubbleEvent(dc: DialogContext, event: DialogEvent): Promise<boolean> {
         if (event.name === DialogEvents.activityReceived && dc.context.activity.type === ActivityTypes.Message) {
             if (dc.parent) {
-                dc.parent.emitEvent(AdaptiveEvents.recognizeUtterance, dc.context.activity, false);
+                await dc.parent.emitEvent(AdaptiveEvents.recognizeUtterance, dc.context.activity, false);
             }
 
             // should we allow interruptions

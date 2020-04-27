@@ -18,8 +18,6 @@ import { normalize, basename } from 'path';
  * LanguageGenerator implementation which uses LGFile. 
  */
 export class TemplateEngineLanguageGenerator implements LanguageGenerator{
-    public static declarative: string = 'Microsoft.TemplateEngMineLanguageGenerator';
-    
     private readonly DEFAULTLABEL: string  = 'Unknown';
 
     private lg: Templates;
