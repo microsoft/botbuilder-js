@@ -351,9 +351,11 @@ describe(`BotFrameworkAdapter`, function () {
 
         it('ConnectorClient should use httpClient from clientOptions', async () => {
             let sendRequestCalled = false;
+            const outgoingMessageLocale = JSON.parse(JSON.stringify(outgoingMessage));
+            outgoingMessageLocale.locale = 'en-uS'; // Intentionally oddly-cased to check that it isn't defaulted somewhere, but tests stay in English
             class MockHttpClient {
                 async sendRequest(httpRequest) {
-                    assert.deepEqual(outgoingMessage, JSON.parse(httpRequest.body), 'sentActivity should flow through custom httpClient.sendRequest');
+                    assert.deepEqual(outgoingMessageLocale, JSON.parse(httpRequest.body), 'sentActivity should flow through custom httpClient.sendRequest');
                     sendRequestCalled = true;
                     return {
                         request: httpRequest,
@@ -368,7 +370,9 @@ describe(`BotFrameworkAdapter`, function () {
             const customHttpClient = new MockHttpClient();
             const adapter = new BotFrameworkAdapter( {clientOptions: {  httpClient: customHttpClient } });
                 
-            await adapter.continueConversation(reference, async turnContext => {
+            const referenceWithLocale = JSON.parse(JSON.stringify(reference));
+            referenceWithLocale.locale = 'en-uS'; // Intentionally oddly-cased to check that it isn't defaulted somewhere, but tests stay in English
+            await adapter.continueConversation(referenceWithLocale, async turnContext => {
                 await turnContext.sendActivity(outgoingMessage);
             });
 
