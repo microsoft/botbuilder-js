@@ -369,6 +369,69 @@ describe('TeamsInfo', () => {
         });
     });
 
+    describe('getMember()', () => {
+        function assertMemberInfo(result, mockedData) {
+            assert(result, `unexpected type for result arg: "${ typeof results }"`);
+            assert(mockedData, `unexpected type for mockedData arg: "${ typeof mockedData }"`);
+
+            assert.strictEqual(result.id, mockedData.id);
+            assert.strictEqual(result.name, mockedData.name);
+            assert.strictEqual(result.aadObjectId, mockedData.aadObjectId);
+            assert.strictEqual(result.givenName, mockedData.givenName);
+            assert.strictEqual(result.surname, mockedData.surname);
+            assert.strictEqual(result.email, mockedData.email);
+            assert.strictEqual(result.userPrincipalName, mockedData.userPrincipalName);
+            assert.strictEqual(result.tenantId, mockedData.tenantId);
+        }
+
+        it('should work without a Team', async () => {
+            const member =
+                {
+                    "id": "29:User-One-Id",
+                    "name": "User One",
+                    "aadObjectId": "User-One-Object-Id",
+                    "givenName": "User",
+                    "surname": "One",
+                    "email": "User.One@microsoft.com",
+                    "userPrincipalName": "user1@microsoft.com",
+                    "tenantId": "tenantId-Guid"
+                };
+
+            const fetchExpectation = nock('https://smba.trafficmanager.net/amer')
+                .get('/v3/conversations/a%3AoneOnOneConversationId/members/29%3AUser-One-Id')
+                .reply(200, member);
+
+            const context = new TestContext(oneOnOneActivity);
+            const fetchedMember = await TeamsInfo.getMember(context, oneOnOneActivity.from.id );
+            assert(fetchExpectation.isDone());
+            assertMemberInfo(fetchedMember, member);
+        });
+
+        it('should work with a Team', async () => {
+            const member =
+                {
+                    "id": "29:User-One-Id",
+                    "name": "User One",
+                    "objectId": "User-One-Object-Id",
+                    "givenName": "User",
+                    "surname": "One",
+                    "email": "User.One@microsoft.com",
+                    "userPrincipalName": "user1@microsoft.com",
+                    "tenantId": "tenantId-Guid"
+                }
+
+            const fetchExpectation = nock('https://smba.trafficmanager.net/amer')
+                .get('/v3/conversations/19%3AgeneralChannelIdgeneralChannelId%40thread.skype/members/29%3AUser-One-Id')
+                .reply(200, member);
+
+            const context = new TestContext(teamActivity);
+            const fetchedMember = await TeamsInfo.getMember(context, teamActivity.from.id);
+            assert(fetchExpectation.isDone());
+            assertMemberInfo(fetchedMember, member);
+        });
+
+    });
+
     describe('getTeamMembers()', () => {
         function assertMemberInfo(results, mockedData) {
             assert(results && Array.isArray(results), `unexpected type for results arg: "${ typeof results }"`);
