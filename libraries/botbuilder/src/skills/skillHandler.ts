@@ -125,6 +125,7 @@ export class SkillHandler extends ChannelServiceHandler {
         turnContext.activity.replyToId = endOfConversationActivity.replyToId;
         turnContext.activity.value = endOfConversationActivity.value;
         turnContext.activity.entities = endOfConversationActivity.entities;
+        turnContext.activity.locale = endOfConversationActivity.locale;
         turnContext.activity.localTimestamp = endOfConversationActivity.localTimestamp;
         turnContext.activity.timestamp = endOfConversationActivity.timestamp;
         turnContext.activity.channelData = endOfConversationActivity.channelData;
@@ -140,6 +141,7 @@ export class SkillHandler extends ChannelServiceHandler {
         turnContext.activity.replyToId = eventActivity.replyToId;
         turnContext.activity.value = eventActivity.value;
         turnContext.activity.entities = eventActivity.entities;
+        turnContext.activity.locale = eventActivity.locale;
         turnContext.activity.localTimestamp = eventActivity.localTimestamp;
         turnContext.activity.timestamp = eventActivity.timestamp;
         turnContext.activity.channelData = eventActivity.channelData;
@@ -175,8 +177,6 @@ export class SkillHandler extends ChannelServiceHandler {
             throw new Error('conversationReference not found.');
         }
 
-        const activityConversationReference = TurnContext.getConversationReference(activity);
-
         /**
          * Callback passed to the BotFrameworkAdapter.createConversation() call.
          * This function does the following:
@@ -189,7 +189,7 @@ export class SkillHandler extends ChannelServiceHandler {
             const adapter: BotFrameworkAdapter = (context.adapter as BotFrameworkAdapter);
             // Cache the ClaimsIdentity and ConnectorClient on the context so that it's available inside of the bot's logic.
             context.turnState.set(adapter.BotIdentityKey, claimsIdentity);
-            context.turnState.set(this.SkillConversationReferenceKey, activityConversationReference);
+            context.turnState.set(this.SkillConversationReferenceKey, skillConversationReference);
             activity = TurnContext.applyConversationReference(activity, skillConversationReference.conversationReference) as Activity;
             const client = adapter.createConnectorClient(activity.serviceUrl);
             context.turnState.set(adapter.ConnectorClientKey, client);

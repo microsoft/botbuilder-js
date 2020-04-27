@@ -269,6 +269,7 @@ export class TurnContext {
             bot: shallowCopy(activity.recipient),
             conversation: shallowCopy(activity.conversation),
             channelId: activity.channelId,
+            locale: activity.locale,
             serviceUrl: activity.serviceUrl
         };
     }
@@ -293,6 +294,7 @@ export class TurnContext {
         isIncoming: boolean = false
     ): Partial<Activity> {
         activity.channelId = reference.channelId;
+        activity.locale = reference.locale;
         activity.serviceUrl = reference.serviceUrl;
         activity.conversation = reference.conversation;
         if (isIncoming) {

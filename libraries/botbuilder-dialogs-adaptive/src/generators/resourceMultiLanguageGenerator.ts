@@ -15,8 +15,6 @@ import { LanguageGeneratorManager } from './languageGeneratorManager';
  * Initializes a new instance of the ResourceMultiLanguageGenerator class.
  */
 export class ResourceMultiLanguageGenerator extends MultiLanguageGeneratorBase {
-    public static declarative: string = 'Microsoft.ResourceMultiLanguageGenerator';
-
     public resourceId: string;
 
     public constructor(resourceId: string = undefined) {
