@@ -113,7 +113,7 @@ describe('QnAMaker', function () {
             assert.throws(() => createQnaWithOutOfRangeThreshold(), error);
         });
 
-        it('should not throw error if QnAMakerOptions.scoreThreshold 1.', function () {
+        it('should not throw error if QnAMakerOptions.scoreThreshold is 1.', function () {
             const context = new TestContext({ text: 'do woodpeckers get concussions?' });
             const options = { scoreThreshold: 1 };
 
