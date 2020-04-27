@@ -113,6 +113,17 @@ describe('QnAMaker', function () {
             assert.throws(() => createQnaWithOutOfRangeThreshold(), error);
         });
 
+        it('should not throw error if QnAMakerOptions.scoreThreshold 1.', function () {
+            const context = new TestContext({ text: 'do woodpeckers get concussions?' });
+            const options = { scoreThreshold: 1 };
+
+            function createQnAWithScoreThresholdOf1() {
+                new QnAMaker(context, options);
+            }
+
+            assert.doesNotThrow(() => createQnAWithScoreThresholdOf1());
+        });
+
         it('should throw RangeError if QnAMakerOptions.top is not an integer during instantiation', function() {
             const context = new TestContext({ text: 'what if ostriches could fly?' });
             const decimalNumberTopOptions = { top: 2.5 };
