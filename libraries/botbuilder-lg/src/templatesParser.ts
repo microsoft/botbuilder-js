@@ -203,7 +203,7 @@ export class TemplatesParser {
     }
 
     private static antlrParseTemplates(text: string, source: string): FileContext {
-        if (!text) {
+        if (!text || text.trim() === '') {
             return undefined;
         }
 
@@ -230,7 +230,10 @@ class TemplatesTransformer extends AbstractParseTreeVisitor<any> implements LGTe
     }
 
     public transform(parseTree: ParseTree): Templates {
-        this.visit(parseTree);
+        if (parseTree) {
+            this.visit(parseTree);
+        }
+
         return this.templates;
     }
 
