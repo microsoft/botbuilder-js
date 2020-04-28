@@ -8,5 +8,4 @@
 
 export * from './activityTemplateConverter';
 export * from './dialogExpressionConverter';
-export * from './languageGeneratorConverter';
 export * from './textTemplateConverter';
