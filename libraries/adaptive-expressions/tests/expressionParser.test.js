@@ -317,7 +317,18 @@ const dataSource = [
     ['emptyList == {  }', false],
     ['emptyObject == {  }', true],
     ['emptyObject == [  ]', false],
-    
+    ['{} == undefined', false],
+    ['{} != undefined', true],
+    ['[] == undefined', false],
+    ['{} != undefined', true],
+    ['{} == null', false],
+    ['{} != null', true],
+    ['[] == null', false],
+    ['{} != null', true],
+    ['{} == {}', true],
+    ['[] == []', true],
+    ['{} != []', true],
+    ['[] == {}', false],
 
     // Conversion functions tests
     ['float(\'10.333\')', 10.333],
@@ -632,7 +643,7 @@ const dataSource = [
 ];
 
 const scope = {
-    "$index": "index",
+    '$index': 'index',
     alist: [
         {
             Name: 'item1'

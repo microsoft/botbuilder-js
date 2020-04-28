@@ -1838,8 +1838,8 @@ export class ExpressionFunctions {
             return false;
         }
 
-        if (args[0] === undefined || args[0] === null) {
-            return args[1] === undefined || args[1] === null;
+        if (args[0] === undefined || args[0] === null || args[1] === undefined || args[1] === null) {
+            return (args[0] === undefined || args[0] === null) && (args[1] === undefined || args[1] === null);
         }
 
         if (Array.isArray(args[0]) && args[0].length === 0 && Array.isArray(args[1]) && args[1].length === 0) {
