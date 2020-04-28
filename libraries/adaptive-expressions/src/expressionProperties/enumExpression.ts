@@ -1,12 +1,12 @@
 /**
- * @module botbuilder-dialogs-adaptive
+ * @module adaptive-expressions
  */
 /**
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
 
-import { Expression } from 'adaptive-expressions';
+import { Expression } from '../expression';
 import { ExpressionProperty } from './expressionProperty';
 
 /**

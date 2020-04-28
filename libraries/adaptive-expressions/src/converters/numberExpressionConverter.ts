@@ -1,15 +1,14 @@
 /**
- * @module botbuilder-dialogs-adaptive
+ * @module adaptive-expressions
  */
 /**
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
 
-import { Converter } from 'botbuilder-dialogs-declarative';
-import { NumberExpression } from '../expressions';
+import { NumberExpression } from '../expressionProperties';
 
-export class NumberExpressionConverter implements Converter {
+export class NumberExpressionConverter {
     public convert(value: string | number): NumberExpression {
         return new NumberExpression(value);
     }

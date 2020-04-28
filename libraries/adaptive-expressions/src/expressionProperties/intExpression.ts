@@ -1,12 +1,12 @@
 /**
- * @module botbuilder-dialogs-adaptive
+ * @module adaptive-expressions
  */
 /**
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
 import { ExpressionProperty } from './expressionProperty';
-import { Expression } from 'adaptive-expressions';
+import { Expression } from '../expression';
 
 /**
  * Represents a property which is either a int or a string expression which resolves to a int.
@@ -18,7 +18,7 @@ export class IntExpression extends ExpressionProperty<number> {
         super(value, 0);
     }
 
-    public tryGetValue(data: object): { value: number, error: Error } {
+    public tryGetValue(data: object): { value: number; error: Error } {
         const result = super.tryGetValue(data);
         if (typeof result.value == 'number') {
             // Ensure returned value is an int.

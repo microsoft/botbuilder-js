@@ -9,7 +9,7 @@ import { Dialog, DialogContext, DialogTurnResult, DialogEvent, DialogReason, Cho
 import { ActivityTypes, Activity, InputHints, MessageFactory } from 'botbuilder-core';
 import { ExpressionParser } from 'adaptive-expressions';
 import { TemplateInterface } from '../template';
-import { ValueExpression, StringExpression, BoolExpression, IntExpression } from '../expressions';
+import { ValueExpression, StringExpression, BoolExpression, IntExpression } from 'adaptive-expressions';
 import { AdaptiveEvents } from '../adaptiveEvents';
 import { ActivityTemplate } from '../templates/activityTemplate';
 import { StaticActivityTemplate } from '../templates/staticActivityTemplate';

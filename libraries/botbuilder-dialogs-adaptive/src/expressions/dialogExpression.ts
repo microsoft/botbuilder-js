@@ -5,8 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { ExpressionProperty } from './expressionProperty';
-import { Expression } from 'adaptive-expressions';
+import { Expression, ExpressionProperty } from 'adaptive-expressions';
 import { Dialog } from 'botbuilder-dialogs';
 
 /**

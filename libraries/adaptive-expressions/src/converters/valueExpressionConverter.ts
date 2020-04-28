@@ -1,15 +1,14 @@
 /**
- * @module botbuilder-dialogs-adaptive
+ * @module adaptive-expressions
  */
 /**
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
 
-import { Converter } from 'botbuilder-dialogs-declarative';
-import { ValueExpression } from '../expressions';
+import { ValueExpression } from '../expressionProperties';
 
-export class ValueExpressionConverter implements Converter {
+export class ValueExpressionConverter {
     public convert(value: any): ValueExpression {
         return new ValueExpression(value);
     }

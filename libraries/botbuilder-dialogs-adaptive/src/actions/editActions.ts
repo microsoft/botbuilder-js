@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 import { DialogTurnResult, Dialog, DialogDependencies, DialogContext } from 'botbuilder-dialogs';
-import { BoolExpression, EnumExpression } from '../expressions';
+import { BoolExpression, EnumExpression } from 'adaptive-expressions';
 import { ActionContext } from '../actionContext';
 import { ActionChangeType } from '../actionChangeType';
 import { ActionState } from '../actionState';

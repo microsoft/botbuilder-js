@@ -1,15 +1,14 @@
 /**
- * @module botbuilder-dialogs-adaptive
+ * @module adaptive-expressions
  */
 /**
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
 
-import { Converter } from 'botbuilder-dialogs-declarative';
-import { EnumExpression } from '../expressions';
+import { EnumExpression } from '../expressionProperties';
 
-export class EnumExpressionConverter implements Converter {
+export class EnumExpressionConverter {
     private _enumValue: object;
 
     public constructor(enumValue: object) {

@@ -1,12 +1,12 @@
 /**
- * @module botbuilder-dialogs-adaptive
+ * @module adaptive-expressions
  */
 /**
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
 import { ExpressionProperty } from './expressionProperty';
-import { Expression } from 'adaptive-expressions';
+import { Expression } from '../expression';
 
 /**
  * Represents a property which is either a boolean or a string expression which resolves to a boolean.

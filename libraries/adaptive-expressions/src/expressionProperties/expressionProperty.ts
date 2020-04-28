@@ -1,13 +1,12 @@
 /**
- * @module botbuilder-dialogs-adaptive
+ * @module adaptive-expressions
  */
 /**
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { Expression, ExpressionParser } from 'adaptive-expressions';
+import { Expression } from '../expression';
 
-let engine: ExpressionParser = undefined;
 
 /**
  * Base class which defines a Expression or value for a property.
@@ -34,17 +33,16 @@ export class ExpressionProperty<T> {
         }
 
         // Generate expression
-        const engine = ExpressionProperty.engine;
         switch (typeof this.value) {
             case 'string':
             case 'number':
             case 'boolean':
-                return engine.parse(this.value.toString());
+                return Expression.parse(this.value.toString());
             default:
                 if (this.value == undefined || this.value == null) {
-                    return engine.parse('null');
+                    return Expression.parse('null');
                 } else {
-                    return engine.parse(`json(${ JSON.stringify(this.value) })`);
+                    return Expression.parse(`json(${ JSON.stringify(this.value) })`);
                 }
         }
     }
@@ -82,24 +80,12 @@ export class ExpressionProperty<T> {
 
         if (typeof value == 'string') {
             if (value.startsWith('=')) { value = value.substr(1); }
-            this.expression = ExpressionProperty.engine.parse(value);
+            this.expression = Expression.parse(value);
         } else if (value instanceof Expression) {
             this.expression = value;
         } else if (value !== undefined) {
             this.value = value;
         }
-    }
-
-    public static get engine(): ExpressionParser {
-        if (engine == undefined) {
-            engine = new ExpressionParser();
-        }
-
-        return engine;
-    }
-
-    public static set engine(value: ExpressionParser) {
-        engine = value;
     }
 }
 

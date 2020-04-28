@@ -6,7 +6,9 @@
  * Licensed under the MIT License.
  */
 import { Dialog, DialogDependencies, DialogContext, DialogTurnResult } from 'botbuilder-dialogs';
-import { ValueExpression, DialogExpression, ObjectExpression, BoolExpression } from '../expressions';
+import { ValueExpression, ObjectExpression, BoolExpression } from 'adaptive-expressions';
+import { DialogExpression } from '../expressions';
+
 
 export class BaseInvokeDialog<O extends object = {}> extends Dialog<O> implements DialogDependencies {
     public constructor(dialogIdToCall?: string, bindingOptions?: O) {

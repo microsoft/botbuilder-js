@@ -1,16 +1,15 @@
 /**
- * @module botbuilder-dialogs-adaptive
+ * @module adaptive-expressions
  */
 /**
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
 import { ExpressionProperty } from './expressionProperty';
-import { Expression } from 'adaptive-expressions';
-import { Templates } from 'botbuilder-lg';
+import { Expression } from '../expression';
 
 /**
- * Represents a property which is an object of any kind or a string expression.
+ * Represents a property which is either a string value or a string expression.
  * @remarks
  * If the value is 
  * - a string with '=' prefix then the string is treated as an expression to resolve to a string. 
@@ -22,29 +21,25 @@ import { Templates } from 'botbuilder-lg';
  *     prop = "=user.name" => "Joe"
  *     prop = "\=user" => "=user".
  */
-export class ValueExpression extends ExpressionProperty<any> {
-    private readonly engine = new Templates();
+export class StringExpression extends ExpressionProperty<string> {
 
-    public constructor(value?: any | string | Expression) {
+    public constructor(value?: string | Expression) {
         super(value);
     }
 
     public tryGetValue(data: object): { value: string; error: Error } {
         if (typeof this.value == 'string') {
-            let v: string, e: Error;
-            try {
-                v = this.engine.evaluateText(this.value, data);
-            } catch (err) {
-                e = err;
-            }
+            let v: any, e: string;
+            const expressionStr = '`' + this.value + '`';
+            ({value: v, error: e} = Expression.parse(expressionStr).tryEvaluate(data));
 
-            return { value: v, error: e };
+            return e == undefined ? { value: v as string, error: undefined } : { value: v as string, error: new Error(e) };
         }
 
         return super.tryGetValue(data);
     }
-
-    public setValue(value: any | string | Expression): void {
+    
+    public setValue(value: string | Expression): void {
         this.value = undefined;
         this.expression = undefined;
 
