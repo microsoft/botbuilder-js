@@ -459,7 +459,7 @@ export class ActivityHandler extends ActivityHandlerBase {
     */
     protected async onHealthCheck(context: TurnContext): Promise<HealthCheckResponse> {
         const  adapter = <any>context.adapter;
-        if (adapter.healthCheck && typeof adapter.healthCheck === 'function') {
+        if (typeof adapter.healthCheck === 'function') {
             return await adapter.healthCheck(context);
         } else {
             return { healthResults: { success: true, messages: [ 'Health check succeeded.' ] } };
