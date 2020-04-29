@@ -46,6 +46,7 @@ describe('LGLanguageGenerator', function() {
     });
 
     it('TestMultiLangImport', async function() {
+        this.timeout(5000);
         const lgResourceGroup = await LanguageResourceLoader.groupByLocale(resourceExplorer);
 
         let resource = await resourceExplorer.getResource('a.en-US.lg');
