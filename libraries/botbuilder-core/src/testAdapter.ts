@@ -91,6 +91,8 @@ export class TestAdapter extends BotAdapter implements ExtendedUserTokenProvider
     private sendTraceActivities: boolean = false;
     private nextId: number = 0;
 
+    private readonly ExceptionExpected: string = 'ExceptionExpected';
+
     /**
      * Creates a new TestAdapter instance.
      * @param logic The bots logic that's under test.
@@ -426,6 +428,10 @@ export class TestAdapter extends BotAdapter implements ExtendedUserTokenProvider
         key.UserId = userId;
 
         const tokenExchangeResponse = this.exchangeableTokens[key.toKey()];
+        if (tokenExchangeResponse && tokenExchangeResponse.Token === this.ExceptionExpected) {
+            throw new Error('Exception occurred during exchanging tokens');
+        }
+
         return tokenExchangeResponse ? 
             {
                 channelId: key.ChannelId,
@@ -434,6 +440,25 @@ export class TestAdapter extends BotAdapter implements ExtendedUserTokenProvider
                 expiration: null
             } :
             null;
+    }
+
+    /**
+     * Adds an instruction to throw an exception during exchange requests.
+     * @param connectionName The connection name.
+     * @param channelId The channel id.
+     * @param userId The user id.
+     * @param exchangeableItem The exchangeable token or resource URI.
+     */
+    public throwOnExchangeRequest(connectionName: string, channelId: string, userId: string, exchangeableItem: string): void {
+        const token: ExchangeableToken = new ExchangeableToken();
+        token.ChannelId = channelId;
+        token.ConnectionName = connectionName;
+        token.UserId = userId;
+        token.exchangeableItem = exchangeableItem;
+        const key = token.toKey();
+
+        token.Token = this.ExceptionExpected;
+        this.exchangeableTokens[key] = token;
     }
 
     /**
