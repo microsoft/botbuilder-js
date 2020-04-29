@@ -4,6 +4,7 @@
  */
 export * from './activityInterfaces';
 export * from './callerIdConstants';
+export * from './healthCheck';
 
 // The Teams schemas was manually added to this library. This file has been updated to export those schemas.
 export * from './teams';
