@@ -1363,8 +1363,9 @@ export class BotFrameworkAdapter extends BotAdapter implements ExtendedUserToken
             "user-agent": USER_AGENT,
             messages: [ 'Health check succeeded.' ]
         };
-        if (this.credentials.appId) {
-            const token = await this.credentials.getToken();
+        if (!(await this.credentialsProvider.isAuthenticationDisabled())) {
+            const credentials = context.turnState.get(this.ConnectorClientKey).credentials ||  this.credentials;
+            const token = await credentials.getToken();
             healthResults.authorization = `Bearer ${ token }`;
         }
         return { healthResults: healthResults };
