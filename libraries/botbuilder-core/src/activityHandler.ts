@@ -421,7 +421,7 @@ export class ActivityHandler extends ActivityHandlerBase {
                     return { status: StatusCodes.OK };
                 }
                 case "healthCheck":
-                    return await ActivityHandler.createInvokeResponse(await this.onHealthCheckAsync(context));
+                    return await ActivityHandler.createInvokeResponse(await this.onHealthCheck(context));
                 default:
                     throw new Error('NotImplemented');
             }
@@ -457,10 +457,10 @@ export class ActivityHandler extends ActivityHandlerBase {
      * @remarks
      * Overwrite this method to customize or extended the built in healthCheck behavior.
     */
-    protected async onHealthCheckAsync(context: TurnContext): Promise<HealthCheckResponse> {
-        var adapter = <any>context.adapter;
-        if (adapter.hasOwnProperty('healthCheck') && typeof adapter.healthCheck === 'function') {
-            return adapter.healthCheck(context);
+    protected async onHealthCheck(context: TurnContext): Promise<HealthCheckResponse> {
+        const  adapter = <any>context.adapter;
+        if (adapter.healthCheck && typeof adapter.healthCheck === 'function') {
+            return await adapter.healthCheck(context);
         } else {
             return { healthResults: { success: true, messages: [ 'Health check succeeded.' ] } };
         }
