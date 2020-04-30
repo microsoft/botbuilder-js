@@ -1,6 +1,20 @@
-const { equal, ok: assert, strictEqual } = require('assert');
-const { ActivityTypes, TestAdapter, SkillConversationIdFactoryBase, TurnContext } = require('botbuilder-core');
-const { Dialog, DialogContext, SkillDialog } = require('../');
+const { ok, strictEqual } = require('assert');
+const { createHash } = require('crypto');
+const {
+    ActivityTypes,
+    CardFactory,
+    Channels,
+    ConversationState,
+    DeliveryModes,
+    MemoryStorage,
+    MessageFactory,
+    TestAdapter,
+    SkillConversationIdFactoryBase,
+    TurnContext,
+    AutoSaveStateMiddleware,
+} = require('botbuilder-core');
+const { spy, stub } = require('sinon');
+const { Dialog, SkillDialog } = require('../');
 
 const DEFAULT_OAUTHSCOPE = 'https://api.botframework.com';
 const DEFAULT_GOV_OAUTHSCOPE = 'https://api.botframework.us';
@@ -14,7 +28,7 @@ const defaultSkillDialogOptions = {
 };
 
 function typeErrorValidator(e, expectedMessage) {
-    assert(e instanceof TypeError);
+    ok(e instanceof TypeError);
     strictEqual(e.message, expectedMessage);
 }
 
@@ -33,7 +47,7 @@ describe('SkillDialog', function() {
         };
         
         await dialog.repromptDialog(context, {});
-        assert(sendToSkillCalled, 'sendToSkill not called');
+        ok(sendToSkillCalled, 'sendToSkill not called');
     });
 
     it('resumeDialog() should call repromptDialog()', async () => {
@@ -48,7 +62,7 @@ describe('SkillDialog', function() {
         };
         
         const result = await dialog.resumeDialog(context, {});
-        assert(repromptDialogCalled, 'sendToSkill not called');
+        ok(repromptDialogCalled, 'sendToSkill not called');
         strictEqual(result, Dialog.EndOfTurn);
     });
 
@@ -131,24 +145,207 @@ describe('SkillDialog', function() {
                 }
             } , 'SkillDialog');
             
-            dialog.sendToSkill(context, {}).then((a) => assert(typeof a === 'undefined'), (e) => done(e));
+            dialog.sendToSkill(context, {}).then((a) => ok(typeof a === 'undefined'), (e) => done(e));
         });
+    });
+
+    describe('intercepting OAuthCards', () => {
+        let BOTBUILDER = null;
+        let BOTBUILDER_TESTING = null;
+        // Use botbuilder for tests
+        try {
+            BOTBUILDER = require('../../botbuilder');
+            BOTBUILDER_TESTING = require('../../botbuilder-testing');
+        } catch (err) {
+            console.warn('=====\nUnable to load botbuilder module. "intercepting OAuthCards" tests will not be run.\n')
+        }
+
+        if (BOTBUILDER !== null && BOTBUILDER_TESTING !== null) {
+            const { BotFrameworkHttpClient } = BOTBUILDER;
+            const { DialogTestClient } = BOTBUILDER_TESTING;
+
+            it('should intercept OAuthCards for SSO', async () => {
+                const connectionName = 'connectionName';
+                const firstResponse = { activities: [ createOAuthCardAttachmentActivity('https://test')] };
+                const skillClient = new BotFrameworkHttpClient({});
+                const postActivityStub = stub(skillClient, 'postActivity');
+                postActivityStub.onFirstCall().returns({ status: 200, body: firstResponse });
+                postActivityStub.onSecondCall().returns({ status: 200 });
+
+                const conversationState = new ConversationState(new MemoryStorage());
+                const dialogOptions = createSkillDialogOptions(conversationState, skillClient);
+
+                const dialogUnderTest = new SkillDialog(dialogOptions, 'skillDialog');
+                const sendTokenExchangeSpy = spy(dialogUnderTest, 'sendTokenExchangeInvokeToSkill');
+                const activityToSend = createSendActivity();
+                const beginSkillDialogOptions = { activity: activityToSend, connectionName };
+
+                const client = new DialogTestClient(Channels.Test, dialogUnderTest, beginSkillDialogOptions, [new AutoSaveStateMiddleware(conversationState)], conversationState);
+                client._testAdapter.addExchangeableToken(connectionName, Channels.Test, 'user1', 'https://test', 'https://test1');
+
+                const finalActivity = await client.sendActivity('irrelevant');
+                ok(sendTokenExchangeSpy.called);
+                strictEqual(finalActivity, undefined);
+            });
+
+            it('should not intercept OAuthCards for empty ConnectionName', async () => {
+                const connectionName = 'connectionName';
+                const firstResponse = { activities: [ createOAuthCardAttachmentActivity('https://test')] };
+                const skillClient = new BotFrameworkHttpClient({});
+                const postActivityStub = stub(skillClient, 'postActivity');
+                postActivityStub.onFirstCall().returns({ status: 200, body: firstResponse });
+
+                const conversationState = new ConversationState(new MemoryStorage());
+                const dialogOptions = createSkillDialogOptions(conversationState, skillClient);
+
+                const dialogUnderTest = new SkillDialog(dialogOptions, 'skillDialog');
+                const sendTokenExchangeSpy = spy(dialogUnderTest, 'sendTokenExchangeInvokeToSkill');
+                const activityToSend = createSendActivity();
+                const beginSkillDialogOptions = { activity: activityToSend };
+
+                const client = new DialogTestClient(Channels.Test, dialogUnderTest, beginSkillDialogOptions, [new AutoSaveStateMiddleware(conversationState)], conversationState);
+                client._testAdapter.addExchangeableToken(connectionName, Channels.Test, 'user1', 'https://test', 'https://test1');
+
+                const finalActivity = await client.sendActivity('irrelevant');
+                ok(sendTokenExchangeSpy.notCalled);
+                ok(finalActivity !== undefined);
+                strictEqual(finalActivity.attachments.length, 1);
+            });
+
+           it('should not intercept OAuthCards for EmptyToken', async () => {
+                const firstResponse = { activities: [ createOAuthCardAttachmentActivity('https://test')] };
+                const skillClient = new BotFrameworkHttpClient({});
+                const postActivityStub = stub(skillClient, 'postActivity');
+                postActivityStub.onFirstCall().returns({ status: 200, body: firstResponse });
+
+                const conversationState = new ConversationState(new MemoryStorage());
+                const dialogOptions = createSkillDialogOptions(conversationState, skillClient);
+
+                const dialogUnderTest = new SkillDialog(dialogOptions, 'skillDialog');
+                const sendTokenExchangeSpy = spy(dialogUnderTest, 'sendTokenExchangeInvokeToSkill');
+                const activityToSend = createSendActivity();
+                const beginSkillDialogOptions = { activity: activityToSend };
+    
+    
+                const client = new DialogTestClient(Channels.Test, dialogUnderTest, beginSkillDialogOptions, [new AutoSaveStateMiddleware(conversationState)], conversationState);
+                // dont add exchangeable token to test adapter
+                const finalActivity = await client.sendActivity('irrelevant');
+
+                ok(sendTokenExchangeSpy.notCalled);
+                ok(finalActivity !== undefined);
+                strictEqual(finalActivity.attachments.length, 1);
+            });
+
+            it('should not intercept OAuthCards for TokenException', async () => {
+                const connectionName = 'connectionName';
+                const firstResponse = { activities: [ createOAuthCardAttachmentActivity('https://test')] };
+                const skillClient = new BotFrameworkHttpClient({});
+                const postActivityStub = stub(skillClient, 'postActivity');
+                postActivityStub.onFirstCall().returns({ status: 200, body: firstResponse });
+
+                const conversationState = new ConversationState(new MemoryStorage());
+                const dialogOptions = createSkillDialogOptions(conversationState, skillClient);
+
+                const dialogUnderTest = new SkillDialog(dialogOptions, 'skillDialog');
+                const sendTokenExchangeSpy = spy(dialogUnderTest, 'sendTokenExchangeInvokeToSkill');
+                const activityToSend = createSendActivity();
+                const beginSkillDialogOptions = { activity: activityToSend, connectionName };
+
+                const client = new DialogTestClient(Channels.Test, dialogUnderTest, beginSkillDialogOptions, [new AutoSaveStateMiddleware(conversationState)], conversationState);
+                client._testAdapter.addExchangeableToken(connectionName, Channels.Test, 'user1', 'https://test');
+
+                const finalActivity = await client.sendActivity('irrelevant');
+                ok(sendTokenExchangeSpy.notCalled);
+                ok(finalActivity !== undefined);
+                strictEqual(finalActivity.attachments.length, 1);
+            });
+
+            it('should not intercept OAuthCards for BadRequest', async () => {
+                const connectionName = 'connectionName';
+                const firstResponse = { activities: [ createOAuthCardAttachmentActivity('https://test')] };
+                const skillClient = new BotFrameworkHttpClient({});
+                const postActivityStub = stub(skillClient, 'postActivity');
+                postActivityStub.onFirstCall().returns({ status: 200, body: firstResponse });
+                // Return a 4xx status code so the OAuthCard is not intercepted.
+                postActivityStub.onSecondCall().returns({ status: 409 });
+
+                const conversationState = new ConversationState(new MemoryStorage());
+                const dialogOptions = createSkillDialogOptions(conversationState, skillClient);
+
+                const dialogUnderTest = new SkillDialog(dialogOptions, 'skillDialog');
+                const sendTokenExchangeSpy = spy(dialogUnderTest, 'sendTokenExchangeInvokeToSkill');
+                const activityToSend = createSendActivity();
+                const beginSkillDialogOptions = { activity: activityToSend, connectionName };
+
+                const client = new DialogTestClient(Channels.Test, dialogUnderTest, beginSkillDialogOptions, [new AutoSaveStateMiddleware(conversationState)], conversationState);
+                client._testAdapter.addExchangeableToken(connectionName, Channels.Test, 'user1', 'https://test', 'https://test1');
+
+                const finalActivity = await client.sendActivity('irrelevant');
+                ok(sendTokenExchangeSpy.called);
+                ok(finalActivity !== undefined);
+                strictEqual(finalActivity.attachments.length, 1);
+            });
+        }
     });
 });
 
 /**
- * @param {string} fromBotOAuthScope 
- * @param {string} fromBotId 
- * @param {object} activity 
- * @param {object} botFrameworkSkill { id, appId, skillEndpoint }
+ * 
+ * @param {string} uri 
  */
-function createFactoryOptions(fromBotOAuthScope, fromBotId, activity, botFrameworkSkill) {
-    return { fromBotOAuthScope, fromBotId, activity, botFrameworkSkill };
+function createOAuthCardAttachmentActivity(uri) {
+    const oauthCard = {
+        tokenExchangeResource: { uri }
+    };
+
+    const attachment = {
+        contentType: CardFactory.contentTypes.oauthCard,
+        content: oauthCard
+    };
+
+    const attachmentActivity = MessageFactory.attachment(attachment);
+    attachmentActivity.conversation = { id: uuid() };
+    attachmentActivity.from = { id: 'blah', name: 'name' };
+
+    return attachmentActivity;
 }
 
-class SkillConversationIdFactory extends SkillConversationIdFactoryBase {
+/**
+ * @param {*} conversationState 
+ * @param {*} mockSkillClient
+ * @returns A Skill Dialog Options object.
+ */
+function createSkillDialogOptions(conversationState, mockSkillClient) {
+    const dialogOptions = {
+        botId: uuid(),
+        skillHostEndpoint: 'http://test.contoso.com/skill/messages',
+        conversationIdFactory: new SimpleConversationIdFactory(),
+        conversationState: conversationState,
+        skillClient: mockSkillClient,
+        skill: {
+            appId: uuid(),
+            skillEndpoint: 'http://testskill.contoso.com/api/messages'
+        }
+    };
+
+    return dialogOptions;
+}
+
+function createSendActivity() {
+    const activityToSend = {
+        type: ActivityTypes.Message,
+        attachments: [],
+        entities: []
+    };
+    activityToSend.deliveryMode = DeliveryModes.ExpectReplies;
+    activityToSend.text = uuid();
+    return activityToSend;
+}
+
+class SimpleConversationIdFactory extends SkillConversationIdFactoryBase {
     constructor(config = { disableCreateWithOpts: false, disableGetSkillRef: false }) {
         super();
+        this._conversationRefs = new Map();
         this.disableCreateWithOpts = config.disableCreateWithOpts;
         this.disableGetSkillRef = config.disableGetSkillRef;
     }
@@ -159,22 +356,36 @@ class SkillConversationIdFactory extends SkillConversationIdFactoryBase {
         }
     }
 
-    async createSkillConversationId() {
+    async createSkillConversationId(options) {
+        const key = createHash('md5').update(options.activity.conversation.id + options.activity.serviceUrl).digest('hex');
 
+        const ref = this._conversationRefs.has(key);
+        if (!ref) {
+            this._conversationRefs.set(key, {
+                conversationReference: TurnContext.getConversationReference(options.activity),
+                oAuthScope: options.fromBotOAuthScope
+            });
+        }
+        return key;
     }
 
     async getConversationReference() {
 
     }
 
-    async getSkillConversationReference() {
-        if (this.disableGetSkillRef) {
-            return super.getSkillConversationReference();
-        }
+    async getSkillConversationReference(skillConversationId) {
+        return this._conversationRefs.get(skillConversationId);
     }
 
     deleteConversationReference() {
 
     }
 
+}
+
+function uuid() {
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+        var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+        return v.toString(16);
+    });
 }

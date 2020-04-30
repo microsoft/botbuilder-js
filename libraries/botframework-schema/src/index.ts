@@ -4,7 +4,8 @@
  */
 export * from './activityInterfaces';
 export * from './callerIdConstants';
-export * from './healthCheck';
+export { HealthCheckResponse, HealthResults } from './healthCheck';
+export { TokenExchangeInvokeRequest } from './tokenExchangeInvokeRequest';
 
 // The Teams schemas was manually added to this library. This file has been updated to export those schemas.
 export * from './teams';
