@@ -1,5 +1,5 @@
 const assert = require('assert');
-const { ActivityTypes, CallerIdConstants, TurnContext } = require('botbuilder-core');
+const { ActivityTypes, CallerIdConstants, TurnContext, ActivityHandler } = require('botbuilder-core');
 const connector = require('botframework-connector');
 const {
     AuthenticationConstants,
@@ -1504,6 +1504,26 @@ describe(`BotFrameworkAdapter`, function () {
                 called = true;
             });
             assert(called, `bot logic not called.`);
+        });
+    });
+
+    describe('healthCheck', function () {
+        it ('should run healthCheck on invoke activity with name healthCheck', async () => {
+            const adapter = new BotFrameworkAdapter();
+            const bot = new ActivityHandler();
+
+            const activity = Object.assign({ name: 'healthCheck' }, incomingInvoke);
+
+            const req = new MockRequest(activity);
+            const res = new MockResponse();
+    
+            await adapter.processActivity(req, res, async (context) => {
+                await bot.run(context)
+                    .catch((e) => { console.log('error ' + e.msg); });
+            });
+
+            assertResponse(res, 200, true);
+            assert(true, res.body.healthResults.success);
         });
     });
 });

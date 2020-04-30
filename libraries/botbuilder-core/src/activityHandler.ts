@@ -3,7 +3,7 @@
  * Licensed under the MIT License.
  */
 
-import { MessageReaction } from 'botframework-schema';
+import { MessageReaction, HealthCheckResponse } from 'botframework-schema';
 import { ActivityHandlerBase } from './activityHandlerBase';
 import { InvokeResponse } from './invokeResponse';
 import { verifyStateOperationName, tokenExchangeOperationName, tokenResponseEventName } from './signInConstants';
@@ -414,11 +414,17 @@ export class ActivityHandler extends ActivityHandlerBase {
     */
     protected async onInvokeActivity(context: TurnContext): Promise<InvokeResponse> {
         try {
-            if (context.activity.name && (context.activity.name === verifyStateOperationName || context.activity.name === tokenExchangeOperationName)) {
-                await this.onSignInInvoke(context);
-                return { status: StatusCodes.OK };
+            switch (context.activity.name) {
+                case verifyStateOperationName:
+                case tokenExchangeOperationName: {
+                    await this.onSignInInvoke(context);
+                    return { status: StatusCodes.OK };
+                }
+                case "healthCheck":
+                    return await ActivityHandler.createInvokeResponse(await this.onHealthCheck(context));
+                default:
+                    throw new Error('NotImplemented');
             }
-            throw new Error('NotImplemented');
         }
         catch (err) {
             if (err.message === 'NotImplemented') {
@@ -441,6 +447,23 @@ export class ActivityHandler extends ActivityHandlerBase {
     */
     protected async onSignInInvoke(context: TurnContext): Promise<void> {
         throw new Error('NotImplemented');
+    }
+
+    /*
+     * Handle _healthCheck invoke activity type_.
+     * 
+     * @param context The context object for the current turn.
+     * 
+     * @remarks
+     * Overwrite this method to customize or extended the built in healthCheck behavior.
+    */
+    protected async onHealthCheck(context: TurnContext): Promise<HealthCheckResponse> {
+        const  adapter = <any>context.adapter;
+        if (typeof adapter.healthCheck === 'function') {
+            return await adapter.healthCheck(context);
+        } else {
+            return { healthResults: { success: true, messages: [ 'Health check succeeded.' ] } };
+        }
     }
 
     /**
@@ -724,5 +747,9 @@ export class ActivityHandler extends ActivityHandlerBase {
         await runHandler(0);
 
         return returnValue;
+    }
+
+    protected static createInvokeResponse(body?: any): InvokeResponse {
+        return { status: 200, body };
     }
 }
