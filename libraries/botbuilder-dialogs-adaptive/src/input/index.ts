@@ -13,3 +13,4 @@ export * from './numberInput';
 export * from './textInput';
 export * from './dateTimeInput';
 export * from './oauthInput';
+export * from './choiceSet'
