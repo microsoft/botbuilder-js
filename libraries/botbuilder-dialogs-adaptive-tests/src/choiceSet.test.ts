@@ -1,11 +1,9 @@
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
 import 'mocha';
-import * as path from 'path';
-import { TestRunner, AssertReply } from './testing';
-import { Choice } from 'botbuilder-dialogs';
-import { ObjectExpression } from 'botbuilder-dialogs-adaptive';
-import { ChoiceSet } from 'botbuilder-dialogs-adaptive/lib/input/choiceSet';
+import {ObjectExpression} from 'adaptive-expressions';
 import * as assert from 'assert';
+import { Choice } from 'botbuilder-dialogs';
+import { ChoiceSet } from 'botbuilder-dialogs-adaptive/lib/input/choiceSet';
 
 interface Bar {
     choices: ChoiceSet;
