@@ -4,6 +4,8 @@
  */
 export * from './activityInterfaces';
 export * from './callerIdConstants';
+export { HealthCheckResponse, HealthResults } from './healthCheck';
+export { TokenExchangeInvokeRequest } from './tokenExchangeInvokeRequest';
 
 // The Teams schemas was manually added to this library. This file has been updated to export those schemas.
 export * from './teams';
@@ -256,6 +258,14 @@ export interface ConversationReference {
    * (Optional) User participating in this conversation
    */
   user?: ChannelAccount;
+  /**
+   * A locale name for the contents of the text field.
+   * The locale name is a combination of an ISO 639 two- or three-letter
+   * culture code associated with a language and an ISO 3166 two-letter
+   * subculture code associated with a country or region.
+   * The locale name can also correspond to a valid BCP-47 language tag.
+   */
+  locale?: string;
   /**
    * Bot participating in this conversation
    */

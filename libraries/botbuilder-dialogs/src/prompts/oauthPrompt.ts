@@ -5,20 +5,11 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { Activity, ActivityTypes, Attachment, CoreAppCredentials, BotAdapter, CardFactory, Channels, InputHints, MessageFactory, OAuthLoginTimeoutKey, TokenResponse, TurnContext, OAuthCard, ActionTypes, ExtendedUserTokenProvider, verifyStateOperationName, StatusCodes, tokenExchangeOperationName, tokenResponseEventName } from 'botbuilder-core';
+import { Activity, ActivityTypes, Attachment, CoreAppCredentials, BotAdapter, CardFactory, Channels, InputHints, MessageFactory, OAuthLoginTimeoutKey, TokenResponse, TurnContext, OAuthCard, ActionTypes, ExtendedUserTokenProvider, verifyStateOperationName, StatusCodes, TokenExchangeInvokeRequest, tokenExchangeOperationName, tokenResponseEventName } from 'botbuilder-core';
 import { Dialog, DialogTurnResult } from '../dialog';
 import { DialogContext } from '../dialogContext';
 import { PromptOptions, PromptRecognizerResult,  PromptValidator } from './prompt';
 import { isSkillClaim } from './skillsHelpers';
-
-/**
- * Request body accepted for a token exchange invoke activity.
- */
-interface TokenExchangeInvokeRequest {
-    id: string;
-    connectionName: string;
-    token: string;
-}
 
 /**
  * Response body returned for a token exchange invoke activity.
@@ -367,9 +358,19 @@ export class OAuthPrompt extends Dialog {
                     'The bot\'s BotAdapter does not support token exchange operations. Ensure the bot\'s Adapter supports the ExtendedUserTokenProvider interface.'));
                 throw new Error('OAuthPrompt.recognizeToken(): not supported by the current adapter');
             } else {
-                // No errors. Proceed with token exchange
-                const extendedUserTokenProvider : ExtendedUserTokenProvider = context.adapter as ExtendedUserTokenProvider;
-                const tokenExchangeResponse = await extendedUserTokenProvider.exchangeToken(context, this.settings.connectionName, context.activity.from.id, {token: context.activity.value.token});
+                const extendedUserTokenProvider: ExtendedUserTokenProvider = context.adapter as ExtendedUserTokenProvider;
+                let tokenExchangeResponse: TokenResponse;
+                try {
+                    tokenExchangeResponse = await extendedUserTokenProvider.exchangeToken(
+                        context,
+                        this.settings.connectionName,
+                        context.activity.from.id,
+                        { token: context.activity.value.token });
+                } catch (err) {
+                    // Ignore errors.
+                    // If the token exchange failed for any reason, the tokenExchangeResponse stays undefined
+                    // and we send back a failure invoke response to the caller.
+                }
 
                 if(!tokenExchangeResponse || !tokenExchangeResponse.token) {
                     await context.sendActivity(this.getTokenExchangeInvokeResponse(

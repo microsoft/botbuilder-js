@@ -7,7 +7,7 @@
  */
 import { DialogTurnResult, Dialog, DialogContext } from 'botbuilder-dialogs';
 import { ActionScopeResult, ActionScopeCommands } from './actionScope';
-import { BoolExpression } from '../expressions';
+import { BoolExpression } from 'adaptive-expressions';
 
 export class BreakLoop<O extends object = {}> extends Dialog<O> {
     /**

@@ -21,7 +21,7 @@ import { EntityEvents } from './entityEvents';
 import { AdaptiveEvents } from './adaptiveEvents';
 import { AdaptiveDialogState } from './adaptiveDialogState';
 import { EntityInfo } from './entityInfo';
-import { IntExpression } from './expressions';
+import { IntExpression, ExpressionParser } from 'adaptive-expressions';
 
 export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
     public static conditionTracker = 'dialog._tracker.conditions';
@@ -33,6 +33,7 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
     private installedDependencies = false;
     private needsTracker = false;
     private dialogSchema: SchemaHelper;
+    private _internalVersion: string;
 
     /**
      * Creates a new `AdaptiveDialog` instance.
@@ -136,6 +137,28 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
     // Base Dialog Overrides
     //---------------------------------------------------------------------------------------------
 
+    protected getInternalVersion(): string {
+        if (!this._internalVersion) {
+            // change the container version if any dialogs are added or removed.
+            let version = this.dialogs.getVersion();
+
+            // change version if the schema has changed.
+            if (this.schema) {
+                version += JSON.stringify(this.schema);
+            }
+
+            // change if triggers type/constraint change
+            const parser = new ExpressionParser();
+            this.triggers.forEach((trigger) => {
+                version += trigger.getExpression(parser).toString();
+            });
+
+            this._internalVersion = computeHash(version);
+        }
+
+        return this._internalVersion;
+    }
+    
     protected onComputeId(): string {
         return `AdaptiveDialog[]`;
     }
@@ -143,6 +166,8 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
     public async beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {
         this.onPushScopedServices(dc.context);
         try {
+            await this.checkForVersionChange(dc);
+
             // Install dependencies on first access
             this.ensureDependenciesInstalled();
 
@@ -192,6 +217,8 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
     public async continueDialog(dc: DialogContext): Promise<DialogTurnResult> {
         this.onPushScopedServices(dc.context);
         try {
+            await this.checkForVersionChange(dc);
+
             this.ensureDependenciesInstalled();
 
             // Continue action execution
@@ -216,6 +243,8 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
     }
 
     public async resumeDialog(dc: DialogContext, reason: DialogReason, result?: any): Promise<DialogTurnResult> {
+        await this.checkForVersionChange(dc);
+
         // Containers are typically leaf nodes on the stack but the dev is free to push other dialogs
         // on top of the stack which will result in the container receiving an unexpected call to
         // resumeDialog() when the pushed on dialog ends.
@@ -727,4 +756,26 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
 
         return unrecognized;
     }
+}
+
+/**
+ * Generates a 32 bit hash for a string.
+ *
+ * @remarks
+ * The source for this function was derived from the following article:
+ *
+ * https://werxltd.com/wp/2010/05/13/javascript-implementation-of-javas-string-hashcode-method/
+ *
+ * @param text String to generate a hash for.
+ * @returns A string that is 15 characters or less in length.
+ */
+function computeHash(text: string): string {
+    const l = text.length;
+    let hash = 0;
+    for (let i = 0; i < l; i++) {
+        const chr = text.charCodeAt(i);
+        hash  = ((hash << 5) - hash) + chr;
+        hash |= 0; // Convert to 32 bit integer
+    }
+    return hash.toString();
 }

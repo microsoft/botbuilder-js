@@ -6,7 +6,9 @@
  * Licensed under the MIT License.
  */
 import { Dialog, DialogDependencies, DialogContext, DialogTurnResult } from 'botbuilder-dialogs';
-import { ValueExpression, DialogExpression, ObjectExpression, BoolExpression } from '../expressions';
+import { ValueExpression, ObjectExpression, BoolExpression } from 'adaptive-expressions';
+import { DialogExpression } from '../expressions';
+
 
 export class BaseInvokeDialog<O extends object = {}> extends Dialog<O> implements DialogDependencies {
     public constructor(dialogIdToCall?: string, bindingOptions?: O) {
@@ -69,8 +71,8 @@ export class BaseInvokeDialog<O extends object = {}> extends Dialog<O> implement
         const boundOptions = {};
 
         for (const key in bindingOptions) {
-            const binding = bindingOptions[key];
-            const value = new ValueExpression(binding.value).getValue(dc.state);
+            const bindingValue = bindingOptions[key];
+            const value = new ValueExpression(bindingValue).getValue(dc.state);
             boundOptions[key] = value;
         }
 

@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 import { Dialog, DialogContext, DialogTurnResult } from 'botbuilder-dialogs';
-import { StringExpression, BoolExpression } from '../expressions';
+import { StringExpression, BoolExpression } from 'adaptive-expressions';
 
 export class GetActivityMembers<O extends object = {}> extends Dialog {
     public constructor();

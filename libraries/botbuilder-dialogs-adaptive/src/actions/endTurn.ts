@@ -7,7 +7,7 @@
  */
 import { DialogTurnResult, Dialog, DialogContext } from 'botbuilder-dialogs';
 import { ActivityTypes } from 'botbuilder-core';
-import { BoolExpression } from '../expressions';
+import { BoolExpression } from 'adaptive-expressions';
 
 export class EndTurn<O extends object = {}> extends Dialog<O> {
     /**

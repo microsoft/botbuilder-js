@@ -19,7 +19,7 @@
   "main": "./lib/index.js",
   "typings": "./lib/index.d.ts",
   "dependencies": {
-    "@microsoft/recognizers-text-data-types-timex-expression": "^1.1.4",
+    "@microsoft/recognizers-text-data-types-timex-expression": "1.1.4",
     "@types/atob": "^2.1.2",
     "@types/lru-cache": "^5.1.0",
     "@types/moment-timezone": "^0.5.12",
@@ -47,7 +47,7 @@
     "build-docs": "typedoc --theme markdown --entryPoint adaptive-expressions --excludePrivate --includeDeclarations --ignoreCompilerErrors --module amd --out ..\\..\\doc\\adaptive-expressions .\\lib\\index.d.ts --hideGenerator --name \"Bot Builder SDK - Expression\" --readme none",
     "clean": "erase /q /s .\\lib",
     "set-version": "npm version --allow-same-version ${Version}",
-    "test": "tsc && mocha tests/ --timeout 60000"
+    "test": "tsc && tsc tests/*.ts && mocha tests/ --timeout 60000"
   },
   "files": [
     "/lib",

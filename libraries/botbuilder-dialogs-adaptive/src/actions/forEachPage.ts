@@ -7,7 +7,7 @@
  */
 import { DialogTurnResult, Dialog, DialogContext } from 'botbuilder-dialogs';
 import { ActionScope, ActionScopeResult } from './actionScope';
-import { StringExpression, BoolExpression, IntExpression } from '../expressions';
+import { StringExpression, BoolExpression, IntExpression } from 'adaptive-expressions';
 
 const FOREACHPAGE = 'dialog.foreach.page';
 const FOREACHPAGEINDEX = 'dialog.foreach.pageindex';

@@ -483,6 +483,48 @@ describe('ActivityHandler', function() {
             assertTrueFlag(onReactionsRemovedCalled, 'onReactionsRemoved');
             done();
         });
-    });
 
+        it('call the default onHealthCheck when called with Activity Type "Invoke" with name "healthCheck"', (done) => {
+            const activity = { type: ActivityTypes.Invoke, name: 'healthCheck' };
+            const testAdapter = new TestAdapter();
+            const context = new TurnContext(testAdapter, activity);
+            const bot = new ActivityHandler();
+            bot.run(context)
+                .then(() => {
+                    const invokeResponseActivity = testAdapter.activityBuffer.find((a) => a.type == 'invokeResponse');
+                    const healthCheckResponse = invokeResponseActivity.value.body;
+                    assert(true, healthCheckResponse.healthResults.success);
+                    assert('Health check succeeded.', healthCheckResponse.healthResults.messages[0]);
+                    done();
+                })
+                .catch(error => done(error));
+        });
+
+        it('call the default onHealthCheck when called with Activity Type "Invoke" with name "healthCheck" with results from the adapter', (done) => {
+            const activity = { type: ActivityTypes.Invoke, name: 'healthCheck' };
+            const testAdapter = new TestAdapter();
+
+            testAdapter.healthCheck = async (context) => {
+                return { healthResults: {
+                    success: true,
+                    "user-agent": 'user-agent-header-value',
+                    authorization: 'authorization-header-value',
+                    messages: [ 'Health results from adapter.' ] } } 
+            };
+
+            const context = new TurnContext(testAdapter, activity);
+            const bot = new ActivityHandler();
+            bot.run(context)
+                .then(() => {
+                    const invokeResponseActivity = testAdapter.activityBuffer.find((a) => a.type == 'invokeResponse');
+                    const healthCheckResponse = invokeResponseActivity.value.body;
+                    assert(true, healthCheckResponse.healthResults.success);
+                    assert('user-agent-header-value', healthCheckResponse.healthResults["user-agent"]);
+                    assert('authorization-header-value', healthCheckResponse.healthResults.authorization);
+                    assert('Health results from adapter.', healthCheckResponse.healthResults.messages[0]);
+                    done();
+                })
+                .catch(error => done(error));
+        });
+    });
 });

@@ -8,7 +8,7 @@
 import { ExpressionParser, ExpressionParserInterface } from 'adaptive-expressions';
 import { OnCondition } from '../conditions/onCondition';
 import { TriggerSelector } from '../triggerSelector';
-import { BoolExpression } from '../expressions';
+import { BoolExpression } from 'adaptive-expressions';
 import { ActionContext } from '../actionContext';
 
 /**
