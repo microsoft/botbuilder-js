@@ -1,5 +1,7 @@
 const assert = require('assert');
-const { ActionTypes, ActivityTypes, CardFactory, Channels, ConversationState, InputHints, MemoryStorage, TestAdapter, TurnContext } = require('botbuilder-core');
+const { ActionTypes, ActivityTypes, CardFactory, Channels, ConversationState, InputHints, MemoryStorage, TestAdapter, tokenResponseEventName, TurnContext } = require('botbuilder-core');
+const { spy } = require('sinon');
+const { ok, strictEqual } = require('assert');
 const { OAuthPrompt, DialogSet, DialogTurnStatus, ListStyle } = require('../');
 const { AuthConstants } = require('../lib/prompts/skillsHelpers');
 
@@ -486,6 +488,42 @@ describe('OAuthPrompt', function() {
 
                 const prompt = new OAuthPrompt('OAuthPrompt', { connectionName, title, text });
                 await prompt.sendOAuthCardAsync(context, { value: 1 });
+            });
+        });
+
+        describe('recognizeToken()', () => {
+            it('should throw an error during a Token Response Event and adapter is missing "createConnectorClientWithIdentity"', async () => {
+                const oAuthPrompt = new OAuthPrompt('OAuthPrompt');
+                // Create spy for private instance method called during recognizeToken
+                const isTokenResponseEventSpy = spy(oAuthPrompt, 'isTokenResponseEvent');
+                isTokenResponseEventSpy.returnValues = [ true ];
+                
+                const adapter = new TestAdapter(async (context) => { /* no-op */ });
+                const conversationState = new ConversationState(new MemoryStorage());
+                const dialogState = conversationState.createProperty('DialogState');
+                const dialogSet = new DialogSet(dialogState);
+                const dc = await dialogSet.createContext(new TurnContext(adapter, { type: ActivityTypes.Event, name: tokenResponseEventName, conversation: { id: 'conversationId' }, channelId: Channels.Test }));
+                function setActiveDialog(dc, dialog) {
+                    // Create stack if not already there.
+                    dc.stack = dc.stack || [];
+                    dc.stack.unshift({ id: dialog.id, state: {
+                        state: {},
+                        [dialog.PersistedCaller]: { callerServiceUrl: 'https://test1', scope: 'parent-appId' },
+                        options: { prompt: 'Login time' },
+                        expires: new Date().getTime() + 900000 }});
+                }
+
+                setActiveDialog(dc, oAuthPrompt);
+
+                try {
+                    await oAuthPrompt.recognizeToken(dc);
+                    throw new Error('recognizeToken call should have failed');
+                } catch (err) {
+                    ok(isTokenResponseEventSpy.calledOnce, 'isTokenResponseEventSpy called more than once');
+                    ok(err instanceof TypeError, `unexpected error: ${ err.toString() }`);
+                    strictEqual(err.message, 'OAuthPrompt: ConnectorClientBuilder interface not implemented by the current adapter');
+                }
+
             });
         });
     });

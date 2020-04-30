@@ -6,15 +6,14 @@
  * Licensed under the MIT License.
  */
 
-import { STATUS_CODES } from 'http';
 import { arch, release, type } from 'os';
 
-import { Activity, ActivityTypes, CallerIdConstants, CoreAppCredentials, BotAdapter, BotCallbackHandlerKey, ChannelAccount, ConversationAccount, ConversationParameters, ConversationReference, ConversationsResult, DeliveryModes, ExpectedReplies, ExtendedUserTokenProvider, InvokeResponse, INVOKE_RESPONSE_KEY, IStatusCodeError, ResourceResponse, StatusCodes, TokenResponse, TurnContext, HealthCheckResponse, HealthResults } from 'botbuilder-core';
+import { Activity, ActivityTypes, CallerIdConstants, CoreAppCredentials, BotAdapter, BotCallbackHandlerKey, ChannelAccount, ConversationAccount, ConversationParameters, ConversationReference, ConversationsResult, DeliveryModes, ExpectedReplies, ExtendedUserTokenProvider, InvokeResponse, INVOKE_RESPONSE_KEY, ResourceResponse, StatusCodes, TokenResponse, TurnContext, HealthCheckResponse, HealthResults } from 'botbuilder-core';
 import { AuthenticationConfiguration, AuthenticationConstants, ChannelValidation, Claim, ClaimsIdentity, ConnectorClient, ConnectorClientOptions, EmulatorApiClient, GovernmentConstants, GovernmentChannelValidation, JwtTokenValidation, MicrosoftAppCredentials, AppCredentials, CertificateAppCredentials, SimpleCredentialProvider, TokenApiClient, TokenStatus, TokenApiModels, SignInUrlResponse, SkillValidation, TokenExchangeRequest, AuthenticationError } from 'botframework-connector';
 
 import { INodeBuffer, INodeSocket, IReceiveRequest, ISocket, IStreamingTransportServer, NamedPipeServer, NodeWebSocketFactory, NodeWebSocketFactoryBase, RequestHandler, StreamingResponse, WebSocketServer } from 'botframework-streaming';
 
-import { WebRequest, WebResponse } from './interfaces';
+import { ConnectorClientBuilder, WebRequest, WebResponse } from './interfaces';
 import { defaultPipeName, GET, POST, MESSAGES_PATH, StreamingHttpClient, TokenResolver, VERSION_PATH } from './streaming';
 
 import { validateAndFixActivity } from './activityValidator';
@@ -126,7 +125,7 @@ const US_GOV_OAUTH_ENDPOINT = 'https://api.botframework.azure.us';
  * };
  * ```
  */
-export class BotFrameworkAdapter extends BotAdapter implements ExtendedUserTokenProvider, RequestHandler {
+export class BotFrameworkAdapter extends BotAdapter implements ConnectorClientBuilder, ExtendedUserTokenProvider, RequestHandler {
     // These keys are public to permit access to the keys from the adapter when it's a being
     // from library that does not have access to static properties off of BotFrameworkAdapter.
     // E.g. botbuilder-dialogs
@@ -1035,18 +1034,31 @@ export class BotFrameworkAdapter extends BotAdapter implements ExtendedUserToken
      * Create a ConnectorClient with a ClaimsIdentity.
      * @remarks
      * If the ClaimsIdentity contains the claims for a Skills request, create a ConnectorClient for use with Skills.
+     * Derives the correct audience from the ClaimsIdentity, or the instance's credentials property.
      * @param serviceUrl 
      * @param identity ClaimsIdentity
      */
-    public async createConnectorClientWithIdentity(serviceUrl: string, identity: ClaimsIdentity): Promise<ConnectorClient> {
+    public async createConnectorClientWithIdentity(serviceUrl: string, identity: ClaimsIdentity): Promise<ConnectorClient>
+    /**
+     * Create a ConnectorClient with a ClaimsIdentity and an explicit audience.
+     * @remarks
+     * If the trimmed audience is not a non-zero length string, the audience will be derived from the ClaimsIdentity or
+     * the instance's credentials property.
+     * @param serviceUrl 
+     * @param identity ClaimsIdentity
+     * @param audience The recipient of the ConnectorClient's messages. Normally the Bot Framework Channel Service or the AppId of another bot.
+     */
+    public async createConnectorClientWithIdentity(serviceUrl: string, identity: ClaimsIdentity, audience: string): Promise<ConnectorClient>
+    public async createConnectorClientWithIdentity(serviceUrl: string, identity: ClaimsIdentity, audience?: string): Promise<ConnectorClient> {
         if (!identity) {
             throw new Error('BotFrameworkAdapter.createConnectorClientWithScope(): invalid identity parameter.');
         }
 
         const botAppId = identity.getClaimValue(AuthenticationConstants.AudienceClaim) ||
             identity.getClaimValue(AuthenticationConstants.AppIdClaim);
-
-        const oAuthScope = await this.getOAuthScope(botAppId, identity.claims);
+        // Check if the audience is a string and when trimmed doesn't have a length of 0.
+        const validAudience = typeof audience === 'string' && audience.trim().length > 0;
+        const oAuthScope = validAudience ? audience : await this.getOAuthScope(botAppId, identity.claims);
         const credentials = await this.buildCredentials(botAppId, oAuthScope);
 
         const client: ConnectorClient = this.createConnectorClientInternal(serviceUrl, credentials);
