@@ -6,5 +6,6 @@
  * Licensed under the MIT License.
  */
 
-export * from './webRequest';
-export * from './webResponse';
+export { ConnectorClientBuilder } from './connectorClientBuilder';
+export { WebRequest } from './webRequest';
+export { WebResponse } from './webResponse';
