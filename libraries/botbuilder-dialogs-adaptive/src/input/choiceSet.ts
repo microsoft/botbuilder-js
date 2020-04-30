@@ -19,7 +19,7 @@ export class ChoiceSet extends Array<Choice>
                     } as Choice)
                 }
                 else if (typeof o === 'object') {
-                    this.push(JSON.parse(o))
+                    this.push(o as Choice)
                 }
             })
         }
