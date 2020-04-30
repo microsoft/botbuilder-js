@@ -10,6 +10,7 @@ import { Activity } from 'botbuilder-core';
 import { DialogContext, Choice, ListStyle, ChoiceFactoryOptions, ChoiceFactory, recognizeChoices } from 'botbuilder-dialogs';
 import { InputDialog, InputState } from './inputDialog';
 import { StringExpression, ObjectExpression, ArrayExpression, EnumExpression } from '../expressions';
+import { ChoiceSet } from './choiceSet';
 
 export class ConfirmInput extends InputDialog {
     /**
@@ -48,7 +49,7 @@ export class ConfirmInput extends InputDialog {
     /**
      * Custom list of choices to send for the prompt.
      */
-    public confirmChoices?: ArrayExpression<Choice>;
+    public confirmChoices?: ObjectExpression<ChoiceSet>;
 
     /**
      * The expression of output format.

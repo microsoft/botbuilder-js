@@ -9,6 +9,7 @@ import { DialogContext, Choice, ListStyle, ChoiceFactoryOptions, FindChoicesOpti
 import { Activity } from 'botbuilder-core';
 import { InputDialog, InputState } from './inputDialog';
 import { ObjectExpression, StringExpression, ArrayExpression, EnumExpression } from '../expressions';
+import { ChoiceSet } from './choiceSet';
 
 export enum ChoiceOutputFormat {
     value = 'value',
@@ -37,7 +38,7 @@ export class ChoiceInput extends InputDialog {
     /**
      * List of choices to present to user.
      */
-    public choices: ArrayExpression<Choice>;
+    public choices: ObjectExpression<ChoiceSet>;
 
     /**
      * Style of the "yes" and "no" choices rendered to the user when prompting.
