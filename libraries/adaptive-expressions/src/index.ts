@@ -22,3 +22,5 @@ export * from './regexErrorListener';
 export * from './componentExpressionFunctions';
 export * from './datetimeFormatConverter';
 export * from './functionTable';
+export * from './converters';
+export * from './expressionProperties';

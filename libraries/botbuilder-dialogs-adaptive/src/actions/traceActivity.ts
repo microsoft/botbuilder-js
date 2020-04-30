@@ -7,7 +7,7 @@
  */
 import { DialogTurnResult, DialogContext, Dialog } from 'botbuilder-dialogs';
 import { Activity, ActivityTypes } from 'botbuilder-core';
-import { ValueExpression, StringExpression, BoolExpression } from '../expressions';
+import { ValueExpression, StringExpression, BoolExpression } from 'adaptive-expressions';
 
 export class TraceActivity<O extends object = {}> extends Dialog<O> {
     public constructor();
@@ -75,6 +75,6 @@ export class TraceActivity<O extends object = {}> extends Dialog<O> {
     }
 
     protected onComputeId(): string {
-        return `TraceActivity[${ this.name.toString() }]`;
+        return `TraceActivity[${ this.name ? this.name.toString() : '' }]`;
     }
 }

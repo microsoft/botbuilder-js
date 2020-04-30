@@ -1,5 +1,6 @@
 import { ComponentRegistration, BuilderRegistration, ResourceExplorer, TypeBuilder } from 'botbuilder-dialogs-declarative';
-import { AdaptiveTypeBuilder, ExpressionConverter, StringExpressionConverter, DialogExpressionConverter } from 'botbuilder-dialogs-adaptive';
+import { AdaptiveTypeBuilder, DialogExpressionConverter } from 'botbuilder-dialogs-adaptive';
+import {ExpressionConverter, StringExpressionConverter} from 'adaptive-expressions';
 import { AssertCondition, AssertReply, AssertReplyActivity, AssertReplyOneOf, UserActivity, UserConversationUpdate, UserDelay, UserSays, UserTyping, TestScript } from './testing';
 
 export class AdaptiveDialogTestComponentRegistration implements ComponentRegistration {

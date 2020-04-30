@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 import { DialogTurnResult, DialogContext, Dialog } from 'botbuilder-dialogs';
-import { ValueExpression, StringExpression, BoolExpression, EnumExpression } from '../expressions';
+import { ValueExpression, StringExpression, BoolExpression, EnumExpression } from 'adaptive-expressions';
 
 export enum ArrayChangeType {
     push = 'push',

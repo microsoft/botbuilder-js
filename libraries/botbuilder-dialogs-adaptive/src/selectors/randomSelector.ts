@@ -45,7 +45,7 @@ export class RandomSelector implements TriggerSelector {
         const result = [];
         if (candidates.length > 0) {
             const selection = Math.floor(Math.random() * candidates.length);
-            result.push(selection);
+            result.push(candidates[selection]);
         }
 
         return Promise.resolve(result);

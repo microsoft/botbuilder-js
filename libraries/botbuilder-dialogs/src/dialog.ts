@@ -40,6 +40,11 @@ export interface DialogInstance<T = any> {
      * The state information for this instance of this dialog.
      */
     state: T;
+
+    /**
+     * Hash code used to detect that a dialog has changed since the curent instance was started.
+     */
+    version?: string;
 }
 
 /**
@@ -325,6 +330,7 @@ export abstract class Dialog<O extends object = {}> extends Configurable {
         this._id = value;
     }
 
+
     /** 
      * Gets the telemetry client for this dialog.
      */
@@ -339,6 +345,22 @@ export abstract class Dialog<O extends object = {}> extends Configurable {
         this._telemetryClient = client ? client : new NullTelemetryClient();
     }
 
+
+    /**
+     * An encoded string used to aid in the detection of bot changes on re-deployment.
+     * 
+     * @remarks
+     * This defaults to returning the dialogs [id](#id) but can be overridden to provide more 
+     * precise change detection logic. Any dialog on the stack that has its version change will 
+     * result in a `versionChanged` event will be raised. If this event is not handled by the bot,
+     * an error will be thrown resulting in the bots error handler logic being run.
+     * 
+     * Returning an empty string will disable version tracking for the component all together. 
+     */
+    public getVersion(): string {
+        return this.id;
+    }
+        
     /**
      * When overridden in a derived class, starts the dialog.
      *
@@ -520,32 +542,5 @@ export abstract class Dialog<O extends object = {}> extends Configurable {
      */
     protected onComputeId(): string {
         throw new Error(`Dialog.onComputeId(): not implemented.`)
-    }
-
-    /**
-     * Aids with computing a unique ID for a dialog by computing a 32 bit hash for a string.
-     *
-     * @remarks
-     * The source for this function was derived from the following article:
-     *
-     * https://werxltd.com/wp/2010/05/13/javascript-implementation-of-javas-string-hashcode-method/
-     *
-     * @param label String to generate a hash for.
-     * @returns A string that is 15 characters or less in length.
-     */
-    protected hashedLabel(label: string): string {
-        const l = label.length;
-        if (label.length > 15)
-        {
-            let hash = 0;
-            for (let i = 0; i < l; i++) {
-                const chr = label.charCodeAt(i);
-                hash  = ((hash << 5) - hash) + chr;
-                hash |= 0; // Convert to 32 bit integer
-            }
-            label = `${label.substr(0, 5)}${hash.toString()}`;
-        }
-
-        return label;
     }
 }

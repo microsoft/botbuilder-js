@@ -1,5 +1,5 @@
 const assert = require('assert');
-const { ActivityTypes, CallerIdConstants, TurnContext } = require('botbuilder-core');
+const { ActivityTypes, CallerIdConstants, TurnContext, ActivityHandler } = require('botbuilder-core');
 const connector = require('botframework-connector');
 const {
     AuthenticationConstants,
@@ -351,9 +351,11 @@ describe(`BotFrameworkAdapter`, function () {
 
         it('ConnectorClient should use httpClient from clientOptions', async () => {
             let sendRequestCalled = false;
+            const outgoingMessageLocale = JSON.parse(JSON.stringify(outgoingMessage));
+            outgoingMessageLocale.locale = 'en-uS'; // Intentionally oddly-cased to check that it isn't defaulted somewhere, but tests stay in English
             class MockHttpClient {
                 async sendRequest(httpRequest) {
-                    assert.deepEqual(outgoingMessage, JSON.parse(httpRequest.body), 'sentActivity should flow through custom httpClient.sendRequest');
+                    assert.deepEqual(outgoingMessageLocale, JSON.parse(httpRequest.body), 'sentActivity should flow through custom httpClient.sendRequest');
                     sendRequestCalled = true;
                     return {
                         request: httpRequest,
@@ -368,7 +370,9 @@ describe(`BotFrameworkAdapter`, function () {
             const customHttpClient = new MockHttpClient();
             const adapter = new BotFrameworkAdapter( {clientOptions: {  httpClient: customHttpClient } });
                 
-            await adapter.continueConversation(reference, async turnContext => {
+            const referenceWithLocale = JSON.parse(JSON.stringify(reference));
+            referenceWithLocale.locale = 'en-uS'; // Intentionally oddly-cased to check that it isn't defaulted somewhere, but tests stay in English
+            await adapter.continueConversation(referenceWithLocale, async turnContext => {
                 await turnContext.sendActivity(outgoingMessage);
             });
 
@@ -1500,6 +1504,26 @@ describe(`BotFrameworkAdapter`, function () {
                 called = true;
             });
             assert(called, `bot logic not called.`);
+        });
+    });
+
+    describe('healthCheck', function () {
+        it ('should run healthCheck on invoke activity with name healthCheck', async () => {
+            const adapter = new BotFrameworkAdapter();
+            const bot = new ActivityHandler();
+
+            const activity = Object.assign({ name: 'healthCheck' }, incomingInvoke);
+
+            const req = new MockRequest(activity);
+            const res = new MockResponse();
+    
+            await adapter.processActivity(req, res, async (context) => {
+                await bot.run(context)
+                    .catch((e) => { console.log('error ' + e.msg); });
+            });
+
+            assertResponse(res, 200, true);
+            assert(true, res.body.healthResults.success);
         });
     });
 });

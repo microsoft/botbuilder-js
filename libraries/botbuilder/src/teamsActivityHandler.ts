@@ -44,43 +44,43 @@ export class TeamsActivityHandler extends ActivityHandler {
             } else {
                 switch (context.activity.name) {
                     case 'fileConsent/invoke':
-                        return TeamsActivityHandler.createInvokeResponse(await this.handleTeamsFileConsent(context, context.activity.value));
+                        return ActivityHandler.createInvokeResponse(await this.handleTeamsFileConsent(context, context.activity.value));
 
                     case 'actionableMessage/executeAction':
                         await this.handleTeamsO365ConnectorCardAction(context, context.activity.value);
-                        return TeamsActivityHandler.createInvokeResponse();
+                        return ActivityHandler.createInvokeResponse();
 
                     case 'composeExtension/queryLink':
-                        return TeamsActivityHandler.createInvokeResponse(await this.handleTeamsAppBasedLinkQuery(context, context.activity.value));
+                        return ActivityHandler.createInvokeResponse(await this.handleTeamsAppBasedLinkQuery(context, context.activity.value));
 
                     case 'composeExtension/query':
-                        return TeamsActivityHandler.createInvokeResponse(await this.handleTeamsMessagingExtensionQuery(context, context.activity.value));
+                        return ActivityHandler.createInvokeResponse(await this.handleTeamsMessagingExtensionQuery(context, context.activity.value));
 
                     case 'composeExtension/selectItem':
-                        return TeamsActivityHandler.createInvokeResponse(await this.handleTeamsMessagingExtensionSelectItem(context, context.activity.value));
+                        return ActivityHandler.createInvokeResponse(await this.handleTeamsMessagingExtensionSelectItem(context, context.activity.value));
 
                     case 'composeExtension/submitAction':
-                        return TeamsActivityHandler.createInvokeResponse(await this.handleTeamsMessagingExtensionSubmitActionDispatch(context, context.activity.value));
+                        return ActivityHandler.createInvokeResponse(await this.handleTeamsMessagingExtensionSubmitActionDispatch(context, context.activity.value));
 
                     case 'composeExtension/fetchTask':
-                        return TeamsActivityHandler.createInvokeResponse(await this.handleTeamsMessagingExtensionFetchTask(context, context.activity.value));
+                        return ActivityHandler.createInvokeResponse(await this.handleTeamsMessagingExtensionFetchTask(context, context.activity.value));
 
                     case 'composeExtension/querySettingUrl':
-                        return TeamsActivityHandler.createInvokeResponse(await this.handleTeamsMessagingExtensionConfigurationQuerySettingUrl(context, context.activity.value));
+                        return ActivityHandler.createInvokeResponse(await this.handleTeamsMessagingExtensionConfigurationQuerySettingUrl(context, context.activity.value));
 
                     case 'composeExtension/setting':
                         await this.handleTeamsMessagingExtensionConfigurationSetting(context, context.activity.value);
-                        return TeamsActivityHandler.createInvokeResponse();
+                        return ActivityHandler.createInvokeResponse();
 
                     case 'composeExtension/onCardButtonClicked':
                         await this.handleTeamsMessagingExtensionCardButtonClicked(context, context.activity.value);
-                        return TeamsActivityHandler.createInvokeResponse();
+                        return ActivityHandler.createInvokeResponse();
 
                     case 'task/fetch':
-                        return TeamsActivityHandler.createInvokeResponse(await this.handleTeamsTaskModuleFetch(context, context.activity.value));
+                        return ActivityHandler.createInvokeResponse(await this.handleTeamsTaskModuleFetch(context, context.activity.value));
 
                     case 'task/submit':
-                        return TeamsActivityHandler.createInvokeResponse(await this.handleTeamsTaskModuleSubmit(context, context.activity.value));
+                        return ActivityHandler.createInvokeResponse(await this.handleTeamsTaskModuleSubmit(context, context.activity.value));
 
                     default:
                         runEvents = false;
@@ -539,9 +539,5 @@ export class TeamsActivityHandler extends ActivityHandler {
             const teamsChannelData = context.activity.channelData as TeamsChannelData;
             await handler(teamsChannelData.team, context, next);
         });
-    }
-
-    private static createInvokeResponse(body?: any): InvokeResponse {
-        return { status: 200, body };
     }
 }

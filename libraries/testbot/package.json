@@ -10,7 +10,7 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
-    "@microsoft/recognizers-text-data-types-timex-expression": "^1.1.4",
+    "@microsoft/recognizers-text-data-types-timex-expression": "1.1.4",
     "botbuilder": "4.1.6",
     "botbuilder-ai": "4.1.6",
     "botbuilder-dialogs": "4.1.6",

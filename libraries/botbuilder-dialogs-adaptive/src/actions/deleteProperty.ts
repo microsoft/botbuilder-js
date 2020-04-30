@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 import { DialogTurnResult, DialogContext, Dialog } from 'botbuilder-dialogs';
-import { BoolExpression, StringExpression } from '../expressions';
+import { BoolExpression, StringExpression } from 'adaptive-expressions';
 
 export class DeleteProperty<O extends object = {}> extends Dialog<O> {
     /**

@@ -10,7 +10,7 @@ import { Activity } from 'botbuilder-core';
 import { TemplateInterface } from '../template';
 import { ActivityTemplate } from '../templates/activityTemplate';
 import { StaticActivityTemplate } from '../templates/staticActivityTemplate';
-import { BoolExpression } from '../expressions';
+import { BoolExpression } from 'adaptive-expressions';
 
 export class SendActivity<O extends object = {}> extends Dialog<O> {
     /**

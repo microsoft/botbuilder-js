@@ -155,7 +155,7 @@ export class GenerateAnswerUtils {
     }
 
     private validateScoreThreshold(scoreThreshold: number): void {
-        if (typeof scoreThreshold !== 'number' || !(scoreThreshold > 0 && scoreThreshold < 1)) {
+        if (typeof scoreThreshold !== 'number' || !(scoreThreshold > 0 && scoreThreshold <= 1)) {
             throw new TypeError(
                 `"${ scoreThreshold }" is an invalid scoreThreshold. QnAMakerOptions.scoreThreshold must have a value between 0 and 1.`
             );
