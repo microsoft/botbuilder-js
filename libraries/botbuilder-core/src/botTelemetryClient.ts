@@ -27,6 +27,10 @@ export interface BotTelemetryClient {
     flush();
 }
 
+export interface BotPageViewTelemetryClient {
+    trackPageView(telemetry: TelemetryPageView);
+}
+
 export interface TelemetryDependency {
     dependencyTypeName: string;
     target: string;
@@ -57,9 +61,19 @@ export interface TelemetryTrace {
     severityLevel?: Severity;
 }
 
-export class NullTelemetryClient implements BotTelemetryClient {
+export interface TelemetryPageView {
+    name: string;
+    properties?: {[key: string]: string};
+    metrics?: {[key: string]: number };
+}
+
+export class NullTelemetryClient implements BotTelemetryClient, BotPageViewTelemetryClient {
 
     constructor(settings?: any) {
+        // noop
+    }
+    
+    trackPageView(telemetry: TelemetryPageView) {
         // noop
     }
 
@@ -74,6 +88,7 @@ export class NullTelemetryClient implements BotTelemetryClient {
     trackException(telemetry: TelemetryException)  {
         // noop
     }
+
     trackTrace(telemetry: TelemetryTrace) {
         // noop
     }
