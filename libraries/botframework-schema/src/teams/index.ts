@@ -169,9 +169,17 @@ export interface TeamsChannelAccount extends ChannelAccount {
    */
   email?: string;
   /**
-   * @member {string} [userPrincipalName] Unique user principal name
+   * @member {string} [userPrincipalName] Unique user principal name.
    */
   userPrincipalName?: string;
+  /**
+   * @member {string} [tenantId] Tenant Id of the user.
+   */
+  tenantId?: string;
+  /**
+   * @member {string} [userRole] User Role of the user.
+   */
+  userRole?: string;
 }
 
 export interface TeamsPagedMembersResult {
