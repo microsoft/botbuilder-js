@@ -59,8 +59,11 @@ export class LuisAdaptiveRecognizer extends Configurable implements Recognizer {
 
     public async recognize(dialogContext: DialogContext, activity: Activity) {
         // Validate passed in activity matches turn activity 
-        const context = dialogContext.context
-        if (activity && (!context.activity == null || context.activity.type != ActivityTypes.Message || context.activity.text != activity.text)) {
+        const context = dialogContext.context;
+        const utteranceMatches: boolean = !activity || 
+            (context.activity.type === activity.type &&  context.activity.text === activity.text);
+        
+        if (!utteranceMatches) {
             throw new Error(`TurnContext is different than text`);
         }
 
