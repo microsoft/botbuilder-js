@@ -36,7 +36,6 @@
     "@microsoft/api-extractor": "^7.7.12",
     "@types/jspath": "^0.4.0",
     "@types/mocha": "^5.2.5",
-    "@types/moment": "^2.13.0",
     "@types/node": "^10.12.18",
     "mocha": "^5.2.0",
     "nyc": "^15.0.0",

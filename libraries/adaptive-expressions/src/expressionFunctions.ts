@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 /**
  * @module adaptive-expressions
  */
@@ -9,8 +8,8 @@
 import { TimexProperty } from '@microsoft/recognizers-text-data-types-timex-expression';
 import * as jsPath from 'jspath';
 import * as lodash from 'lodash';
-import * as moment from 'moment';
-import * as timezone from 'moment-timezone';
+import { default as moment } from 'moment';
+import { default as timezone } from 'moment-timezone';
 import { CommonRegex } from './commonRegex';
 import { Constant } from './constant';
 import { Expression, ReturnType } from './expression';
