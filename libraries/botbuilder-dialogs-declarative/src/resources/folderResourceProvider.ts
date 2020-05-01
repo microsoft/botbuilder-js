@@ -39,7 +39,14 @@ export class FolderResourceProvider implements IResourceProvider {
         this.includeSubFolders = includeSubFolders;
         folder = normalize(folder);
         this.directory = folder;
-        const files: string[] = PathUtil.getAllFiles(folder);
+        let files: string[];
+        if (includeSubFolders) {
+            files = PathUtil.getAllFiles(folder);
+        }
+        else {
+            files = PathUtil.getFiles(folder);
+        }
+
         const filteredFiles: string[] = files.filter((f): boolean => this.extensions.has(extname(f)));
 
         for (let i = 0; i < filteredFiles.length; i++) {
@@ -49,7 +56,7 @@ export class FolderResourceProvider implements IResourceProvider {
         }
 
         if (monitorChanges) {
-            watch(folder, { recursive: true }, (type, filename): void => {
+            watch(folder, { recursive: true, delay: 0}, (type, filename): void => {
                 this._emitter.emit('changed', new FileResource(filename));
             });
         }
@@ -60,7 +67,7 @@ export class FolderResourceProvider implements IResourceProvider {
     }
 
     public getResources(extension: string): IResource[] {
-        extension = extension.startsWith('.') ? extension.toLowerCase() : `.${ extension.toLowerCase() }`;
+        extension = extension.startsWith('.') ? extension.toLowerCase() : `.${extension.toLowerCase()}`;
 
         let resources: IResource[] = [];
 

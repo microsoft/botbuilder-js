@@ -32,7 +32,7 @@ describe('ResourceProvider', function() {
 
         let dialogResources = await resourceProvider.getResources('dialog');
 
-        assert.equal(dialogResources.length, 23);
+        assert.equal(dialogResources.length, 24);
     });
 
     it('FolderResourceProvider load specific folder with dialog extension', async () => {

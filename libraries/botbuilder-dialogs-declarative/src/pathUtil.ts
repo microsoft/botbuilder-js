@@ -29,4 +29,8 @@ export class PathUtil {
         });
         return results;
     }
+
+    public static getFiles(dir: string): string[] {
+        return readdirSync(dir);
+    }
 }
