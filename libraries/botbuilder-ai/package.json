@@ -26,7 +26,7 @@
     "@types/node": "^10.12.18",
     "botbuilder-core": "4.1.6",
     "botbuilder-dialogs": "4.1.6",
-    "moment": "^2.20.1",
+    "moment": "^2.25.1",
     "node-fetch": "^2.3.0",
     "url-parse": "^1.4.4"
   },
