@@ -34,7 +34,7 @@ export class LanguageGeneratorManager {
         const resources = await this._resourceExporer.getResources('lg');
         for (const resource of resources) {
             const generator = await this.getTemplateEngineLanguageGenerator(resource);
-            this.languageGenerator.set(resource.id().toLocaleLowerCase(), generator);
+            this.languageGenerator.set(resource.id(), generator);
         }
     }
     
