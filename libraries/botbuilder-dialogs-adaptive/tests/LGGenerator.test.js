@@ -37,7 +37,7 @@ async function getTurnContext(locale, generator) {
 }
 
 describe('LGLanguageGenerator', function() {
-    this.timeout(3000);
+    this.timeout(5000);
 
     it('TestNotFoundTemplate', async function() {
         const context = getTurnContext('');
