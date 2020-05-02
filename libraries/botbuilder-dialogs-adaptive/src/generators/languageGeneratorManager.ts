@@ -34,7 +34,7 @@ export class LanguageGeneratorManager {
         const resources = await this._resourceExporer.getResources('lg');
         for (const resource of resources) {
             const generator = await this.getTemplateEngineLanguageGenerator(resource);
-            this.languageGenerator.set(resource.id().toLocaleLowerCase(), generator);
+            this.languageGenerator.set(resource.id(), generator);
         }
     }
     
@@ -42,12 +42,12 @@ export class LanguageGeneratorManager {
 
     public static resourceExplorerResolver(locale: string, resourceMapping: Map<string, IResource[]>): ImportResolverDelegate {
         return  (source: string, id: string): {content: string; id: string} => {
-            const fallbaclLocale = LanguageResourceLoader.fallbackLocale(locale, Array.from(resourceMapping.keys()));
-            const resources: IResource[] = resourceMapping.get(fallbaclLocale.toLowerCase());
+            const fallbackLocale = LanguageResourceLoader.fallbackLocale(locale, Array.from(resourceMapping.keys()));
+            const resources: IResource[] = resourceMapping.get(fallbackLocale.toLowerCase());
 
             const resourceName = basename(normalize(id));
             const resource = resources.find(u => 
-                LanguageResourceLoader.parseLGFileName(u.id()).prefix.toLowerCase() === LanguageResourceLoader.parseLGFileName(resourceName).prefix.toLowerCase());
+                LanguageResourceLoader.parseLGFileName(u.id()).prefix === LanguageResourceLoader.parseLGFileName(resourceName).prefix);
 
             if (resource === undefined) {
                 throw Error(`There is no matching LG resource for ${ resourceName }`);
