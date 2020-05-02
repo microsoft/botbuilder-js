@@ -7,7 +7,7 @@
  */
 import { ANTLRInputStream, CommonTokenStream } from 'antlr4ts';
 import { ParseTree } from 'antlr4ts/tree/ParseTree';
-import * as LRUCache from 'lru-cache';
+import { default as LRUCache } from 'lru-cache';
 import { CommonRegexLexer, CommonRegexParser } from './generated';
 import { RegexErrorListener } from './regexErrorListener';
 

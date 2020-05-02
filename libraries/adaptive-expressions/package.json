@@ -29,8 +29,8 @@
     "jspath": "^0.4.0",
     "lodash": "^4.17.15",
     "lru-cache": "^5.1.1",
-    "moment": "2.24.0",
-    "moment-timezone": "^0.5.25"
+    "moment": "^2.25.1",
+    "moment-timezone": "^0.5.28"
   },
   "devDependencies": {
     "@microsoft/api-extractor": "^7.7.12",

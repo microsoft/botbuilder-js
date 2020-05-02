@@ -23,6 +23,7 @@ import { QnAMakerRecognizer } from './qnaMaker';
 import { TemplateEngineLanguageGenerator, ResourceMultiLanguageGenerator } from './generators';
 import { ConditionalSelector, FirstSelector, RandomSelector, TrueSelector } from './selectors';
 import { LanguageGeneratorConverter } from './converters/languageGeneratorConverter';
+import { LuisAdaptiveRecognizer } from './luis';
 
 export class AdaptiveDialogComponentRegistration implements ComponentRegistration {
     private _resourceExplorer: ResourceExplorer;
@@ -279,6 +280,7 @@ export class AdaptiveDialogComponentRegistration implements ComponentRegistratio
     }
 
     private registerRecognizers(): void {
+        this.registerBuilder('Microsoft.Microsoft.LuisRecognizer', new AdaptiveTypeBuilder(LuisAdaptiveRecognizer, this._resourceExplorer, {}));
         this.registerBuilder('Microsoft.CrossTrainedRecognizerSet', new AdaptiveTypeBuilder(CrossTrainedRecognizerSet, this._resourceExplorer, {}));
         this.registerBuilder('Microsoft.MultiLanguageRecognizer', new AdaptiveTypeBuilder(MultiLanguageRecognizer, this._resourceExplorer, {}));
         this.registerBuilder('Microsoft.RecognizerSet', new AdaptiveTypeBuilder(RecognizerSet, this._resourceExplorer, {}));
