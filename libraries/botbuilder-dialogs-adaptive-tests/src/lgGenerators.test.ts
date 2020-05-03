@@ -17,4 +17,8 @@ describe('ActionScopeTests', function() {
     it('LGScopeAccess', async () => {
         await testRunner.runTestScript('LGScopeAccess');
     });
+
+    it('No Language Generator', async () => {
+        await testRunner.runTestScript('NoLanguageGeneration');
+    });
 });
