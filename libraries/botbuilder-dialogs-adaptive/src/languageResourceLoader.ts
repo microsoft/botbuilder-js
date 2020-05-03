@@ -24,7 +24,7 @@ export class LanguageResourceLoader {
             for (const index in suffixs) {
                 const suffix = suffixs[index];
                 if (!locale || suffix ) {
-                    const resourcesWithSuffix = allResouces.filter((u): boolean => this.parseLGFileName(u.id()).language === suffix);
+                    const resourcesWithSuffix = allResouces.filter((u): boolean => this.parseLGFileName(u.id()).language.toLocaleLowerCase() === suffix.toLocaleLowerCase());
                     resourcesWithSuffix.forEach((u): void => {
                         const resourceName = u.id();
                         const length = (!suffix)? 3 : 4;

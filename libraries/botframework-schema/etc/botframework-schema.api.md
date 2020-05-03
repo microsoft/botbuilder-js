@@ -1249,6 +1249,8 @@ export interface TeamsChannelAccount extends ChannelAccount {
     givenName?: string;
     surname?: string;
     userPrincipalName?: string;
+    tenantId?: string;
+    userRole?: string;
 }
 
 // @public

@@ -33,6 +33,7 @@
   "devDependencies": {
     "@microsoft/api-extractor": "^7.7.12",
     "@types/mocha": "^2.2.47",
+    "@types/moment-timezone": "^0.5.13",
     "assert": "^1.4.1",
     "chatdown": "^1.0.2",
     "mocha": "^5.2.0",
