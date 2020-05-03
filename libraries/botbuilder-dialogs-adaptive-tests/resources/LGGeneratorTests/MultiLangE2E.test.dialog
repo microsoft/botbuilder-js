@@ -6,13 +6,7 @@
         "id": "LGMultiLanguageE2ETest",
         "generator": {
         "$kind": "Microsoft.ResourceMultiLanguageGenerator",
-        "resourceId": "a.lg",
-        "languagePolicy": {
-            "en-us": [
-                "en-us",
-                ""
-            ]
-            }
+        "resourceId": "a.lg"
         }
     },
     "script": [
