@@ -44,7 +44,8 @@ export class AdaptiveDialogComponentRegistration implements ComponentRegistratio
             'skillHostEndpoint': new StringExpressionConverter(),
             'skillAppId': new StringExpressionConverter(),
             'skillEndpoint': new StringExpressionConverter(),
-            'activity': new ActivityTemplateConverter()
+            'activity': new ActivityTemplateConverter(),
+            'connectionName': new StringExpressionConverter()
         }));
         this.registerActions();
         this.registerConditions();

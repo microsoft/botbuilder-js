@@ -62,7 +62,12 @@ export class AdaptiveSkillDialog extends SkillDialog {
     /**
      * Template for the activity.
      */
-    public activity: TemplateInterface<Partial<Activity>>
+    public activity: TemplateInterface<Partial<Activity>>;
+
+    /**
+     * Optional. The OAuth Connection Name for the Parent Bot.
+     */
+    public connectionName: StringExpression;
 
     /**
      * Creates a new `AdaptiveSkillDialog instance.
@@ -101,6 +106,11 @@ export class AdaptiveSkillDialog extends SkillDialog {
         } else {
             // Send the turn context activity to the skill (pass through).
             options.activity = dc.context.activity;
+        }
+
+        // Get connection name to use
+        if (this.connectionName) {
+            options.connectionName = this.connectionName.getValue(dcState);
         }
 
         // Call the base to invoke the skill
