@@ -11,6 +11,6 @@ import { ResourceMultiLanguageGenerator } from '../generators';
 
 export class LanguageGeneratorConverter implements Converter {
     public convert(value: string|ResourceMultiLanguageGenerator): ResourceMultiLanguageGenerator {
-        return typeof value == 'string' ? new ResourceMultiLanguageGenerator(value) : value;
+        return typeof value === 'string' ? new ResourceMultiLanguageGenerator(value) : value;
     }
 }
