@@ -10,11 +10,12 @@ const {
     MessageFactory,
     TestAdapter,
     SkillConversationIdFactoryBase,
+    StatusCodes,
     TurnContext,
     AutoSaveStateMiddleware,
 } = require('botbuilder-core');
 const { spy, stub } = require('sinon');
-const { Dialog, SkillDialog } = require('../');
+const { Dialog, DialogTurnStatus, SkillDialog } = require('../');
 
 const DEFAULT_OAUTHSCOPE = 'https://api.botframework.com';
 const DEFAULT_GOV_OAUTHSCOPE = 'https://api.botframework.us';
@@ -34,6 +35,151 @@ function typeErrorValidator(e, expectedMessage) {
 
 describe('SkillDialog', function() {
     this.timeout(3000);
+
+    describe('beginDialog should call skill', () => {
+        let BOTBUILDER = null;
+        let BOTBUILDER_TESTING = null;
+        // Use botbuilder for tests
+        try {
+            BOTBUILDER = require('../../botbuilder');
+            BOTBUILDER_TESTING = require('../../botbuilder-testing');
+        } catch (err) {
+            console.warn('=====\nUnable to load botbuilder or botbuilder-testing module. "beginDialog should call skill" tests will not be run.\n');
+        }
+
+        if (BOTBUILDER !== null && BOTBUILDER_TESTING !== null) {
+            const { DialogTestClient } = BOTBUILDER_TESTING;
+
+            /**
+             * @remarks
+             * Port of BeginDialogShouldCallSkill from C#
+             * https://github.com/microsoft/botbuilder-dotnet/blob/41120728b22c709ec2d9247393505fdc778b2de1/tests/Microsoft.Bot.Builder.Dialogs.Tests/SkillDialogTests.cs#L47-L49
+             * @param {string} deliveryMode 
+             */
+            async function beginDialogShouldCallSkill(deliveryMode) {
+                let activitySent; // Activity
+                let fromBotIdSent; // string
+                let toBotIdSent; // string
+                let toUriSent; // string (URI)
+
+                // Callback to capture the parameters sent to the skill
+                const captureAction = (fromBotId, toBotId, toUri, serviceUrl, conversationId, activity) => {
+                    // Capture values sent to the skill so we can assert the right parameters were used.
+                    fromBotIdSent = fromBotId;
+                    toBotIdSent = toBotId;
+                    toUriSent = toUri;
+                    activitySent = activity;
+                }
+
+                // Create BotFrameworkHttpClient and postActivityStub
+                const [skillClient, postActivityStub] = createSkillClientAndStub(captureAction);
+
+                // Use Memory for conversation state
+                const conversationState = new ConversationState(new MemoryStorage());
+                const dialogOptions = createSkillDialogOptions(conversationState, skillClient);
+
+                // Create the SkillDialogInstance and the activity to send.
+                const dialog = new SkillDialog(dialogOptions, 'SkillDialog');
+                const activityToSend = { type: ActivityTypes.Message, attachments: [], entities: [] }; // Activity.CreateMessageActivity()
+                activityToSend.deliveryMode = deliveryMode;
+                const activityToSendText = 'activityToSendText';
+                activityToSend.text = activityToSendText;
+                const client = new DialogTestClient(Channels.Test, dialog, { activity: activityToSend }, undefined, conversationState);
+
+                // Send something to the dialog to start it
+                await client.sendActivity('irrelevant');
+
+                // Assert results and data sent to the SkillClient for first turn
+                strictEqual(fromBotIdSent, dialogOptions.botId);
+                strictEqual(toBotIdSent, dialogOptions.skill.appId);
+                strictEqual(toUriSent, dialogOptions.skill.skillEndpoint);
+                strictEqual(activitySent.text, activityToSendText);
+                strictEqual(client.dialogTurnResult.status, DialogTurnStatus.waiting);
+                ok(postActivityStub.calledOnce);
+
+                // Send a second message to continue the dialog
+                await client.sendActivity('Second message');
+
+                // Assert results for second turn
+                strictEqual(activitySent.text, 'Second message');
+                strictEqual(client.dialogTurnResult.status, DialogTurnStatus.waiting);
+                ok(postActivityStub.calledTwice);
+
+                // Send EndOfConversation to the dialog
+                await client.sendActivity({ type: ActivityTypes.EndOfConversation }); // Activity.CreateEndOfConversationActivity()
+
+                // Assert we are done.
+                strictEqual(client.dialogTurnResult.status, DialogTurnStatus.complete);
+                ok(postActivityStub.calledTwice);
+            };
+
+            // "Data Rows"
+            it('when deliveryMode is undefined', async () => {
+                await beginDialogShouldCallSkill();
+            });
+
+            it('when deliveryMode is DeliveryModes.ExpectReplies', async () => {
+                await beginDialogShouldCallSkill(DeliveryModes.ExpectReplies);
+            });
+
+            it('and handle Invoke activities', async () => {
+                let activitySent; // Activity
+                let fromBotIdSent; // string
+                let toBotIdSent; // string
+                let toUriSent; // string (URI)
+
+                // Callback to capture the parameters sent to the skill
+                function captureAction(fromBotId, toBotId, toUri, serviceUrl, conversationId, activity) {
+                    // Capture values sent to the skill so we can assert the right parameters were used.
+                    fromBotIdSent = fromBotId;
+                    toBotIdSent = toBotId;
+                    toUriSent = toUri;
+                    activitySent = activity;
+                }
+
+                // Create BotFrameworkHttpClient and postActivityStub
+                const [skillClient, postActivityStub] = createSkillClientAndStub(captureAction);
+
+                // Use Memory for conversation state
+                const conversationState = new ConversationState(new MemoryStorage());
+                const dialogOptions = createSkillDialogOptions(conversationState, skillClient);
+
+                // Create the SkillDialogInstance and the activity to send.
+                const dialog = new SkillDialog(dialogOptions, 'SkillDialog');
+                const activityToSend = { type: ActivityTypes.Invoke }; // Activity.CreateInvokeActivity()
+                const activityToSendName = 'activityToSendName';
+                activityToSend.name = activityToSendName;
+                const client = new DialogTestClient(Channels.Test, dialog, { activity: activityToSend }, undefined, conversationState);
+
+                // Send something to the dialog to start it
+                await client.sendActivity('irrelevant');
+
+                // Assert results and data sent to the SkillClient for first turn
+                strictEqual(fromBotIdSent, dialogOptions.botId);
+                strictEqual(toBotIdSent, dialogOptions.skill.appId);
+                strictEqual(toUriSent, dialogOptions.skill.skillEndpoint);
+                strictEqual(activitySent.name, activityToSendName);
+                strictEqual(activitySent.deliveryMode, DeliveryModes.ExpectReplies);
+                strictEqual(client.dialogTurnResult.status, DialogTurnStatus.waiting);
+                ok(postActivityStub.calledOnce);
+
+                // Send a second message to continue the dialog
+                await client.sendActivity('Second message');
+
+                // Assert results for second turn
+                strictEqual(activitySent.text, 'Second message');
+                strictEqual(client.dialogTurnResult.status, DialogTurnStatus.waiting);
+                ok(postActivityStub.calledTwice);
+
+                // Send EndOfConversation to the dialog
+                await client.sendActivity({ type: ActivityTypes.EndOfConversation }); // Activity.CreateEndOfConversationActivity()
+
+                // Assert we are done.
+                strictEqual(client.dialogTurnResult.status, DialogTurnStatus.complete);
+                ok(postActivityStub.calledTwice);
+            });
+        }
+    });
 
     it('repromptDialog() should call sendToSkill()', async () => {
         const adapter = new TestAdapter(/* logic param not required */);
@@ -72,7 +218,8 @@ describe('SkillDialog', function() {
                 type: ActivityTypes.Message,
                 text: 'Hello SkillDialog!'
             };
-            const validatedArgs = SkillDialog.validateBeginDialogArgs({ activity });
+            const dialog = new SkillDialog({}, 'SkillDialog');
+            const validatedArgs = dialog.validateBeginDialogArgs({ activity });
             const validatedActivity = validatedArgs.activity;
             strictEqual(validatedActivity.type, ActivityTypes.Message);
             strictEqual(validatedActivity.text, 'Hello SkillDialog!');
@@ -80,7 +227,8 @@ describe('SkillDialog', function() {
 
         it('should fail if options is falsy', () => {
             try {
-                SkillDialog.validateBeginDialogArgs();
+                const dialog = new SkillDialog({}, 'SkillDialog');
+                dialog.validateBeginDialogArgs();
             } catch (e) {
                 typeErrorValidator(e, 'Missing options parameter');
             }
@@ -88,7 +236,8 @@ describe('SkillDialog', function() {
 
         it('should fail if dialogArgs.activity is falsy', () => {
             try {
-                SkillDialog.validateBeginDialogArgs({});
+                const dialog = new SkillDialog({}, 'SkillDialog');
+                dialog.validateBeginDialogArgs({});
             } catch (e) {
                 typeErrorValidator(e, '"activity" is undefined or null in options.');
             }
@@ -97,7 +246,8 @@ describe('SkillDialog', function() {
         it('should fail if dialogArgs.activity.type is not "message" or "event"', () => {
             const type = ActivityTypes.EndOfConversation;
             try {
-                SkillDialog.validateBeginDialogArgs({ activity: { type } });
+                const dialog = new SkillDialog({}, 'SkillDialog');
+                dialog.validateBeginDialogArgs({ activity: { type } });
             } catch (e) {
                 typeErrorValidator(e, `Only "${ ActivityTypes.Message }" and "${ ActivityTypes.Event }" activities are supported. Received activity of type "${ type }" in options.`);
             }
@@ -169,8 +319,8 @@ describe('SkillDialog', function() {
                 const firstResponse = { activities: [ createOAuthCardAttachmentActivity('https://test')] };
                 const skillClient = new BotFrameworkHttpClient({});
                 const postActivityStub = stub(skillClient, 'postActivity');
-                postActivityStub.onFirstCall().returns({ status: 200, body: firstResponse });
-                postActivityStub.onSecondCall().returns({ status: 200 });
+                postActivityStub.onFirstCall().returns(Promise.resolve({ status: 200, body: firstResponse }));
+                postActivityStub.onSecondCall().returns(Promise.resolve({ status: 200 }));
 
                 const conversationState = new ConversationState(new MemoryStorage());
                 const dialogOptions = createSkillDialogOptions(conversationState, skillClient);
@@ -184,7 +334,7 @@ describe('SkillDialog', function() {
                 client._testAdapter.addExchangeableToken(connectionName, Channels.Test, 'user1', 'https://test', 'https://test1');
 
                 const finalActivity = await client.sendActivity('irrelevant');
-                ok(sendTokenExchangeSpy.called);
+                ok(sendTokenExchangeSpy.calledOnce);
                 strictEqual(finalActivity, undefined);
             });
 
@@ -212,7 +362,7 @@ describe('SkillDialog', function() {
                 strictEqual(finalActivity.attachments.length, 1);
             });
 
-           it('should not intercept OAuthCards for EmptyToken', async () => {
+            it('should not intercept OAuthCards for EmptyToken', async () => {
                 const firstResponse = { activities: [ createOAuthCardAttachmentActivity('https://test')] };
                 const skillClient = new BotFrameworkHttpClient({});
                 const postActivityStub = stub(skillClient, 'postActivity');
@@ -290,6 +440,45 @@ describe('SkillDialog', function() {
 });
 
 /**
+ * @remarks
+ * captureAction should match the below signature:
+ * `(fromBotId: string, toBotId: string, toUrl: string, serviceUrl: string, conversationId: string, activity: Activity) => void`
+ * @param {Function} captureAction 
+ * @param {StatusCodes} returnStatusCode Defaults to StatusCodes.OK
+ * @returns [BotFrameworkHttpClient, postActivityStub]
+ */
+function createSkillClientAndStub(captureAction, returnStatusCode = StatusCodes.OK) {
+    // This require should not fail as this method should only be called after verifying that botbuilder is resolvable.
+    const { BotFrameworkHttpClient } = require('../../botbuilder');
+
+    if (captureAction && typeof captureAction !== 'function') {
+        throw new TypeError(`Failed test arrangement - createSkillClientAndStub() received ${typeof captureAction} instead of undefined or a function.`);
+    }
+
+    // Create ExpectedReplies object for response body
+    const dummyActivity = { type: ActivityTypes.Message, attachments: [], entities: [] };
+    dummyActivity.text = 'dummy activity';
+    const activityList = { activities: [dummyActivity] };
+
+    // Create wrapper for captureAction
+    function wrapAction(...args) {
+        captureAction(...args);
+        return { status: returnStatusCode, body: activityList };
+    }
+    // Create client and stub
+    const skillClient = new BotFrameworkHttpClient({});
+    const postActivityStub = stub(skillClient, 'postActivity');
+
+    if (captureAction) {
+        postActivityStub.callsFake(wrapAction);
+    } else {
+        postActivityStub.returns({ status: returnStatusCode, body: activityList });
+    }
+
+    return [ skillClient, postActivityStub ];
+}
+
+/**
  * 
  * @param {string} uri 
  */
@@ -317,13 +506,13 @@ function createOAuthCardAttachmentActivity(uri) {
  */
 function createSkillDialogOptions(conversationState, mockSkillClient) {
     const dialogOptions = {
-        botId: uuid(),
+        botId: 'SkillCallerId',
         skillHostEndpoint: 'http://test.contoso.com/skill/messages',
         conversationIdFactory: new SimpleConversationIdFactory(),
         conversationState: conversationState,
         skillClient: mockSkillClient,
         skill: {
-            appId: uuid(),
+            appId: 'SkillId',
             skillEndpoint: 'http://testskill.contoso.com/api/messages'
         }
     };
@@ -331,13 +520,13 @@ function createSkillDialogOptions(conversationState, mockSkillClient) {
     return dialogOptions;
 }
 
-function createSendActivity() {
+function createSendActivity(deliveryMode = DeliveryModes.ExpectReplies) {
     const activityToSend = {
         type: ActivityTypes.Message,
         attachments: [],
-        entities: []
+        entities: [],
+        deliveryMode
     };
-    activityToSend.deliveryMode = DeliveryModes.ExpectReplies;
     activityToSend.text = uuid();
     return activityToSend;
 }
@@ -383,6 +572,12 @@ class SimpleConversationIdFactory extends SkillConversationIdFactoryBase {
 
 }
 
+/**
+ * Create an UUID
+ * @remarks
+ * Replace `Guid.NewGuid().ToString();` with this function call.
+ * @returns UUID string 
+ */
 function uuid() {
     return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
         var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);

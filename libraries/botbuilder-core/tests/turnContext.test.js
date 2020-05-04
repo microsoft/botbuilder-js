@@ -1,5 +1,5 @@
 const assert = require('assert');
-const { BotAdapter, MessageFactory, TurnContext, ActivityTypes } = require('../');
+const { ActivityTypes, BotAdapter, DeliveryModes, MessageFactory, TurnContext } = require('../');
 
 const activityId = `activity ID`;
 
@@ -460,4 +460,24 @@ describe(`TurnContext`, function () {
             done();
         });
     });
+
+    it('should add to bufferedReplyActivities if TurnContext.activity.deliveryMode === DeliveryModes.ExpectReplies', async () => {
+        const activity = JSON.parse(JSON.stringify(testMessage));
+        activity.deliveryMode = DeliveryModes.ExpectReplies;
+        const context = new TurnContext(new SimpleAdapter(), activity);
+
+        const activities = [ MessageFactory.text('test'), MessageFactory.text('second test') ];
+        const responses = await context.sendActivities(activities);
+
+        assert.strictEqual(responses.length, 2);
+        
+        // For expectReplies all ResourceResponses should have no id.
+        const ids = responses.filter(response => response.id === undefined);
+        assert.strictEqual(ids.length, 2);
+
+        const replies = context.bufferedReplyActivities;
+        assert.strictEqual(replies.length, 2);
+        assert.strictEqual(replies[0].text, 'test');
+        assert.strictEqual(replies[1].text, 'second test');
+    })
 });
