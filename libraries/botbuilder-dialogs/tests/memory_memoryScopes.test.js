@@ -17,6 +17,11 @@ class TestDialog extends Dialog {
     constructor(id, message) {
         super(id);
         this.message = message;
+        this.expression = {
+            tryGetValue: (state) => {
+                return { value: 'resolved value' };
+            }
+        }
     }
 
     async beginDialog(dc, options) {
@@ -95,6 +100,7 @@ describe('Memory - Memory Scopes', function() {
         const memory = scope.getMemory(dc);
         assert(typeof memory == 'object', `memory not returned`);
         assert(memory.message == 'test message');
+        assert(memory.expression == 'resolved value');
     });
 
     it('ClassMemoryScope should not allow setMemory() call.', async function() {
