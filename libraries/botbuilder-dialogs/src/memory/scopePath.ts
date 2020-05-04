@@ -7,12 +7,43 @@
  */
 
 export class ScopePath {
-    public static readonly user = 'user';
-    public static readonly conversation = 'conversation';
-    public static readonly dialog = 'dialog';
-    public static readonly dialogclass = 'dialogclass';
-    public static readonly this = 'this';
-    public static readonly class = 'class';
-    public static readonly settings = 'settings';
-    public static readonly turn = 'turn';
+    /**
+     * User memory scope root path.
+     */
+    static readonly user = 'user';
+
+    /**
+     * Conversation memory scope root path.
+     */
+    static readonly conversation = "conversation";
+
+    /**
+     * Dialog memory scope root path.
+     */
+    static readonly dialog = "dialog";
+
+    /**
+     * DialogClass memory scope root path.
+     */
+    static readonly dialogClass = 'dialogClass';
+
+    /**
+     * This memory scope root path.
+     */
+    static readonly this = "this";
+
+    /**
+     * Class memory scope root path.
+     */
+    static readonly class = "class";
+
+    /**
+     * Settings memory scope root path.
+     */
+    static readonly settings = "settings";
+
+    /**
+     * Turn memory scope root path.
+     */
+    static readonly turn = "turn";
 }
