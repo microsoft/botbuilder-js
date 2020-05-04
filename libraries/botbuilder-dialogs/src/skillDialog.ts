@@ -39,7 +39,6 @@ export class SkillDialog extends Dialog {
 
     // This key uses a simple namespace as Symbols are not serializable.
     private readonly DeliveryModeStateKey: string = 'SkillDialog.deliveryMode';
-    private readonly SsoConnectionNameKey: string = 'SkillDialog.SSOConnectionName';
 
     /**
      * A sample dialog that can wrap remote calls to a skill.
@@ -72,10 +71,9 @@ export class SkillDialog extends Dialog {
 
         // Store delivery mode and connection name in dialog state for later use.
         dc.activeDialog.state[this.DeliveryModeStateKey] = dialogArgs.activity.deliveryMode;
-        dc.activeDialog.state[this.SsoConnectionNameKey] = dialogArgs.connectionName;
 
         // Send the activity to the skill.
-        const eocActivity = await this.sendToSkill(dc.context, skillActivity, dialogArgs.connectionName);
+        const eocActivity = await this.sendToSkill(dc.context, skillActivity, this.dialogOptions.connectionName);
         if (eocActivity) {
             return await dc.endDialog(eocActivity.value);
         }
@@ -99,10 +97,9 @@ export class SkillDialog extends Dialog {
         const skillActivity: Activity = this.cloneActivity(dc.context.activity);
 
         skillActivity.deliveryMode = dc.activeDialog.state[this.DeliveryModeStateKey] as string;
-        const connectionName = dc.activeDialog.state[this.SsoConnectionNameKey] as string;
 
         // Just forward to the remote skill
-        const eocActivity = await this.sendToSkill(dc.context, skillActivity, connectionName);
+        const eocActivity = await this.sendToSkill(dc.context, skillActivity, this.dialogOptions.connectionName);
         if (eocActivity) {
             return await dc.endDialog(eocActivity.value);
         }

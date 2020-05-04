@@ -16,9 +16,4 @@ export interface BeginSkillDialogOptions {
      * The Activity to send to the skill.
      */
     activity: Partial<Activity>;
-
-    /**
-     * Optional. The OAuth Connection Name for the Parent Bot.
-     */
-    connectionName?: string;
 }

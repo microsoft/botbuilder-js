@@ -97,6 +97,7 @@ export class AdaptiveSkillDialog extends SkillDialog {
         if (skillHostEndpoint) { this.dialogOptions.skillHostEndpoint = skillHostEndpoint }
         if (this.skillAppId) { this.dialogOptions.skill.id = this.dialogOptions.skill.appId = this.skillAppId.getValue(dcState) }
         if (this.skillEndpoint) { this.dialogOptions.skill.skillEndpoint = this.skillEndpoint.getValue(dcState) }
+        if (this.connectionName) { this.dialogOptions.connectionName = this.connectionName.getValue(dcState) }
 
         // Get the activity to send to the skill.
         options = {}
@@ -106,11 +107,6 @@ export class AdaptiveSkillDialog extends SkillDialog {
         } else {
             // Send the turn context activity to the skill (pass through).
             options.activity = dc.context.activity;
-        }
-
-        // Get connection name to use
-        if (this.connectionName) {
-            options.connectionName = this.connectionName.getValue(dcState);
         }
 
         // Call the base to invoke the skill
