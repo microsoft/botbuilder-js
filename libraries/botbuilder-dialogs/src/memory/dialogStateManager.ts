@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 import { PathResolver, DollarPathResolver, HashPathResolver, AtAtPathResolver, AtPathResolver, PercentPathResolver } from './pathResolvers';
-import { MemoryScope, SettingsMemoryScope, DialogMemoryScope, ClassMemoryScope, ThisMemoryScope, TurnMemoryScope, ConversationMemoryScope, UserMemoryScope } from './scopes';
+import { MemoryScope, SettingsMemoryScope, DialogMemoryScope, ClassMemoryScope, ThisMemoryScope, TurnMemoryScope, ConversationMemoryScope, UserMemoryScope, DialogClassMemoryScope } from './scopes';
 import { DialogContext } from '../dialogContext';
 import { DialogPath } from './dialogPath';
 
@@ -537,6 +537,7 @@ export class DialogStateManager {
                 new TurnMemoryScope(),
                 new SettingsMemoryScope(),
                 new DialogMemoryScope(),
+                new DialogClassMemoryScope(),
                 new ClassMemoryScope(),
                 new ThisMemoryScope(),
                 new ConversationMemoryScope(),

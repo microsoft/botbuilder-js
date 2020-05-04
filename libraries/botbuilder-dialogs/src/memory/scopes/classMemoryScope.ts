@@ -8,25 +8,34 @@
 import { MemoryScope } from './memoryScope';
 import { ScopePath } from '../scopePath';
 import { DialogContext } from '../../dialogContext';
+import { Dialog } from '../../dialog';
 
 /**
  * ClassMemoryScope maps "class" -> dc.activeDialog.properties
  */
 export class ClassMemoryScope extends MemoryScope {
-    public constructor() {
-        super(ScopePath.class, false);
+    public constructor(name = ScopePath.class) {
+        super(name, false);
     }
 
     public getMemory(dc: DialogContext): object {
         // if active dialog is a container dialog then "dialog" binds to it
         if (dc.activeDialog) {
-            var dialog = dc.findDialog(dc.activeDialog.id);
+            var dialog = this.onFindDialog(dc);
             if (dialog != undefined) {
                 // Clone properties
                 const clone: object = {};
                 for (const key in dialog) {
-                    if (dialog.hasOwnProperty(key) && typeof dialog[key] != 'function') {
-                        clone[key] = dialog[key];
+                    const prop = dialog[key];
+                    if (dialog.hasOwnProperty(key) && typeof prop != 'function') {
+                        if (isExpression(prop)) {
+                            const { value, error } = prop.tryGetValue(dc.state);
+                            if (!error) {
+                                clone[key] = value;
+                            }
+                        } else {
+                            clone[key] = prop;
+                        }
                     }
                 }
 
@@ -36,4 +45,20 @@ export class ClassMemoryScope extends MemoryScope {
 
         return undefined;
     }
+
+    /**
+     * Override to find the dialog instance referenced by the scope.
+     * @param dc Current dialog context.
+     */
+    protected onFindDialog(dc: DialogContext): Dialog {
+        return dc.findDialog(dc.activeDialog.id);
+    }
+}
+
+function isExpression(prop: any): prop is ExpressionResolver {
+    return (typeof prop == 'object' && typeof prop['tryGetValue'] == 'function');
+}
+
+interface ExpressionResolver {
+    tryGetValue(data: object): { value: any; error: Error };
 }
