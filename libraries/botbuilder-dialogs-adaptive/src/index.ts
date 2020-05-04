@@ -15,6 +15,7 @@ export * from './converters';
 export * from './expressions';
 export * from './generators';
 export * from './input';
+export * from './luis';
 export * from './recognizers';
 export * from './selectors';
 export * from './templates';

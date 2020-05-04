@@ -5,9 +5,12 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
+export * from './actionScope';
+export * from './baseInvokeDialog';
 export * from './beginDialog';
 export * from './breakLoop';
 export * from './cancelAllDialogs';
+export * from './case';
 export * from './codeAction';
 export * from './continueLoop';
 export * from './deleteActivity';
@@ -28,10 +31,10 @@ export * from './ifCondition';
 export * from './logAction';
 export * from './repeatDialog';
 export * from './replaceDialog';
-export * from './signOutUser';
 export * from './sendActivity';
 export * from './setProperties';
 export * from './setProperty';
+export * from './signOutUser';
 export * from './switchCondition';
 export * from './traceActivity';
 export * from './updateActivity';
