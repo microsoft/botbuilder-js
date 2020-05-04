@@ -11,7 +11,7 @@ export * from './adaptiveDialog';
 export * from './adaptiveDialogComponentRegistration';
 export * from './adaptiveTypeBuilder';
 export * from './conditions';
-export * from './converters';
+export { DialogExpressionConverter } from './converters';
 export * from './expressions';
 export * from './generators';
 export * from './input';
