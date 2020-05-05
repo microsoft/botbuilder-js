@@ -15,12 +15,12 @@ const LUIS_TRACE_TYPE = 'https://www.luis.ai/schemas/trace';
 const LUIS_TRACE_NAME = 'LuisRecognizer';
 const LUIS_TRACE_LABEL = 'LuisV3 Trace';
 const _dateSubtypes = [ "date", "daterange", "datetime", "datetimerange", "duration", "set", "time", "timerange" ];    
-const _geographySubtypes = [ "poi", "city", "countryRegion", "continet", "state" ];
+const _geographySubtypes = [ "poi", "city", "countryRegion", "continent", "state" ];
 const MetadataKey = "$instance";
 
 
 export function isLuisRecognizerOptionsV3(options: any): options is LuisRecognizerOptionsV3 {
-    return (options.apiVersion && options.apiVersion === "v3");
+    return (options.apiVersion && options.apiVersion === "v3")
 }
 
 export class LuisRecognizerV3 extends LuisRecognizerInternal {
@@ -33,6 +33,7 @@ export class LuisRecognizerV3 extends LuisRecognizerInternal {
             includeInstanceData: true,
             log: true,
             preferExternalEntities: true,
+            datetimeReference: '',
             slot: 'production',
             telemetryClient: new NullTelemetryClient(), 
             logPersonalInformation: false, 
@@ -102,9 +103,13 @@ export class LuisRecognizerV3 extends LuisRecognizerInternal {
         const content = { 
             'query': utterance, 
             'options': { 
-                'overridePredictions': this.predictionOptions.preferExternalEntities  
+                'preferExternalEntities': this.predictionOptions.preferExternalEntities  
             }
         };
+
+        if (this.predictionOptions.datetimeReference){
+            content.options['datetimeReference'] = this.predictionOptions.datetimeReference
+        }
 
         if (this.predictionOptions.dynamicLists){
             content['dynamicLists'] = this.predictionOptions.dynamicLists
