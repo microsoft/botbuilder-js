@@ -77,7 +77,7 @@ export class AdaptiveSkillDialog extends SkillDialog {
         super(Object.assign({ skill: {} } as SkillDialogOptions, options));
     }
 
-    public async beginDialog(dc: DialogContext, options: Partial<BeginSkillDialogOptions>): Promise<DialogTurnResult> {
+    public async beginDialog(dc: DialogContext, options?: Partial<BeginSkillDialogOptions>): Promise<DialogTurnResult> {
         const dcState = dc.state;
         if (this.disabled && this.disabled.getValue(dcState)) {
             return await dc.endDialog();
