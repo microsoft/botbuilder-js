@@ -183,6 +183,11 @@ export interface LuisRecognizerOptionsV3 extends LuisRecognizerOptions {
     preferExternalEntities?: boolean;
 
     /**
+     * (Optional) Timezone applied to datetimeV2 entities.
+     */
+    datetimeReference?: string;
+
+    /**
      * (Optional) By default this uses the production slot.  You can find other standard slots in <see cref="LuisSlot"/>.
      *  If you specify a Version, then a private version of the application is used instead of a slot.
      */
