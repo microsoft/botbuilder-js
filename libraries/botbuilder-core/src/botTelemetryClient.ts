@@ -96,5 +96,17 @@ export class NullTelemetryClient implements BotTelemetryClient, BotPageViewTelem
     flush()  {
         // noop
     }
+}
 
+export function telemetryTrackDialogView(telemetryClient: BotTelemetryClient, dialogName: string, properties?: {[key: string]: any}, metrics?: {[key: string]: number }): void {
+    if (instanceOfBotPageViewTelemetryClient(telemetryClient)) {
+        telemetryClient.trackPageView({ name: dialogName, properties: properties, metrics: metrics });
+    }
+    else {
+        telemetryClient.trackTrace({ message: 'Dialog View: ' + dialogName, severityLevel: Severity.Information } );
+    }
+}
+
+function instanceOfBotPageViewTelemetryClient(object: any): object is BotPageViewTelemetryClient {
+    return 'trackPageView' in object;
 }
