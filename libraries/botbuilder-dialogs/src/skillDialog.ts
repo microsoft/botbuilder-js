@@ -73,7 +73,7 @@ export class SkillDialog extends Dialog<Partial<BeginSkillDialogOptions>> {
         dc.activeDialog.state[this.DeliveryModeStateKey] = dialogArgs.activity.deliveryMode;
 
         // Send the activity to the skill.
-        const eocActivity = await this.sendToSkill(dc.context, skillActivity, this.dialogOptions.connectionName);
+        const eocActivity = await this.sendToSkill(dc.context, skillActivity);
         if (eocActivity) {
             return await dc.endDialog(eocActivity.value);
         }
@@ -99,7 +99,7 @@ export class SkillDialog extends Dialog<Partial<BeginSkillDialogOptions>> {
         skillActivity.deliveryMode = dc.activeDialog.state[this.DeliveryModeStateKey] as string;
 
         // Just forward to the remote skill
-        const eocActivity = await this.sendToSkill(dc.context, skillActivity, this.dialogOptions.connectionName);
+        const eocActivity = await this.sendToSkill(dc.context, skillActivity);
         if (eocActivity) {
             return await dc.endDialog(eocActivity.value);
         }
@@ -118,7 +118,7 @@ export class SkillDialog extends Dialog<Partial<BeginSkillDialogOptions>> {
             activity.channelData = context.activity.channelData;
 
             // connectionName is not applicable during endDialog as we don't expect an OAuthCard in response.
-            await this.sendToSkill(context, activity as Activity, null);
+            await this.sendToSkill(context, activity as Activity);
         }
 
         await super.endDialog(context, instance, reason);
@@ -133,7 +133,7 @@ export class SkillDialog extends Dialog<Partial<BeginSkillDialogOptions>> {
         const activity: Activity = TurnContext.applyConversationReference(repromptEvent, reference, true) as Activity;
         
         // connectionName is not applicable for a reprompt as we don't expect an OAuthCard in response.
-        await this.sendToSkill(context, activity, null);
+        await this.sendToSkill(context, activity);
     }
 
     public async resumeDialog(dc: DialogContext, reason: DialogReason, result?: any): Promise<DialogTurnResult> {
@@ -175,7 +175,7 @@ export class SkillDialog extends Dialog<Partial<BeginSkillDialogOptions>> {
         return options;
     }
 
-    private async sendToSkill(context: TurnContext, activity: Activity, connectionName: string): Promise<Activity> {
+    private async sendToSkill(context: TurnContext, activity: Activity): Promise<Activity> {
         if (activity.type === ActivityTypes.Invoke) {
             // Force ExpectReplies for invoke activities so we can get the replies right away and send them back to the channel if needed.
             // This makes sure that the dialog will receive the Invoke response from the skill and any other activities sent, including EoC.
@@ -204,7 +204,7 @@ export class SkillDialog extends Dialog<Partial<BeginSkillDialogOptions>> {
                 if (activityFromSkill.type === ActivityTypes.EndOfConversation) {
                     // Capture the EndOfConversation activity if it was sent from skill
                     eocActivity = activityFromSkill;
-                } else if (await this.interceptOAuthCards(context, activityFromSkill, connectionName)) {
+                } else if (await this.interceptOAuthCards(context, activityFromSkill, this.dialogOptions.connectionName)) {
                     // Do nothing. The token exchange succeeded, so no OAuthCard needs to be shown to the user.
                 } else {
                     await context.sendActivity(activityFromSkill);
