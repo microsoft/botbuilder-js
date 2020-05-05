@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 import * as appInsights from 'applicationinsights';
-import { Activity, BotTelemetryClient, TelemetryDependency, TelemetryEvent, TelemetryException, TelemetryTrace } from 'botbuilder-core';
+import { Activity, BotTelemetryClient, BotPageViewTelemetryClient, TelemetryDependency, TelemetryEvent, TelemetryException, TelemetryTrace, TelemetryPageView } from 'botbuilder-core';
 import * as cls from 'cls-hooked';
 import * as crypto from 'crypto';
 const ns: any = cls.createNamespace('my.request');
@@ -61,7 +61,7 @@ export const ApplicationInsightsWebserverMiddleware: any = (req: any, res: any, 
  * myDialog.telemetryClient = appInsightsClient;
  * ```
  */
-export class ApplicationInsightsTelemetryClient implements BotTelemetryClient {
+export class ApplicationInsightsTelemetryClient implements BotTelemetryClient, BotPageViewTelemetryClient {
 
     private client: appInsights.TelemetryClient;
     private config: appInsights.Configuration;
@@ -115,6 +115,10 @@ export class ApplicationInsightsTelemetryClient implements BotTelemetryClient {
 
     public trackTrace(telemetry: TelemetryTrace): void {
         this.defaultClient.trackTrace(telemetry as appInsights.Contracts.TraceTelemetry);
+    }
+
+    public trackPageView(telemetry: TelemetryPageView): void {
+        this.defaultClient.trackPageView(telemetry as appInsights.Contracts.PageViewTelemetry);
     }
 
     public flush(): void {
