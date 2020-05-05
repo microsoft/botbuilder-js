@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 
-import axios from 'axios';
+import fetch from 'node-fetch';
 import { Activity, BotFrameworkClient, InvokeResponse } from 'botbuilder-core';
 import {
     AuthenticationConstants,
@@ -104,21 +104,20 @@ export class BotFrameworkHttpClient implements BotFrameworkClient {
                 activity.recipient = {} as any;
             }
 
-            const config = {
-                headers: {
-                    Accept: 'application/json',
-                    'Content-Type': 'application/json',
-                    'User-Agent': USER_AGENT
-                },
-                validateStatus: (): boolean => true
+            const headers = {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+                'User-Agent': USER_AGENT
             };
 
             if (token) {
-                config.headers['Authorization'] = `Bearer ${ token }`;
+                headers['Authorization'] = `Bearer ${ token }`;
             }
             
-            const response = await axios.post(toUrl, activity, config);
-            const invokeResponse: InvokeResponse<T> = { status: response.status, body: response.data };
+            const body = JSON.stringify(activity);
+            const response = await fetch(toUrl, { method: 'POST', headers, body });
+            const responseBody = await response.json();
+            const invokeResponse: InvokeResponse<T> = { status: response.status, body: responseBody };
 
             return invokeResponse;
         } finally {
