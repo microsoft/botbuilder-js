@@ -77,7 +77,7 @@ export class AdaptiveSkillDialog extends SkillDialog {
         super(Object.assign({ skill: {} } as SkillDialogOptions, options));
     }
 
-    public async beginDialog(dc: DialogContext, options?: Partial<BeginSkillDialogOptions>): Promise<DialogTurnResult> {
+    public async beginDialog(dc: DialogContext, options?: BeginSkillDialogOptions): Promise<DialogTurnResult> {
         const dcState = dc.state;
         if (this.disabled && this.disabled.getValue(dcState)) {
             return await dc.endDialog();
@@ -100,7 +100,7 @@ export class AdaptiveSkillDialog extends SkillDialog {
         if (this.connectionName) { this.dialogOptions.connectionName = this.connectionName.getValue(dcState) }
 
         // Get the activity to send to the skill.
-        options = {}
+        options = {} as BeginSkillDialogOptions;
         if (this.activityProcessed.getValue(dcState) && this.activity) {
             // The parent consumed the activity in context, use the Activity property to start the skill.
             options.activity = await this.activity.bindToData(dc.context, dcState);

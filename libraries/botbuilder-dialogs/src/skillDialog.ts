@@ -34,7 +34,7 @@ import { DialogContext } from './dialogContext';
 import { DialogEvents } from './dialogEvents';
 import { SkillDialogOptions } from './skillDialogOptions';
 
-export class SkillDialog extends Dialog {
+export class SkillDialog extends Dialog<Partial<BeginSkillDialogOptions>> {
     protected dialogOptions: SkillDialogOptions;
 
     // This key uses a simple namespace as Symbols are not serializable.
@@ -58,7 +58,7 @@ export class SkillDialog extends Dialog {
         this.dialogOptions = dialogOptions;
     }
 
-    public async beginDialog(dc: DialogContext, options?: any): Promise<DialogTurnResult> {
+    public async beginDialog(dc: DialogContext, options: BeginSkillDialogOptions): Promise<DialogTurnResult> {
         const dialogArgs = this.validateBeginDialogArgs(options);
 
         await dc.context.sendTraceActivity(`${ this.id }.beginDialog()`, undefined, undefined, `Using activity of type: ${ dialogArgs.activity.type }`);
@@ -163,18 +163,16 @@ export class SkillDialog extends Dialog {
         return JSON.parse(JSON.stringify(activity));
     }
 
-    private validateBeginDialogArgs(options: any): BeginSkillDialogOptions {
+    private validateBeginDialogArgs(options: BeginSkillDialogOptions): BeginSkillDialogOptions {
         if (!options) {
             throw new TypeError('Missing options parameter');
         }
 
-        const dialogArgs = options as BeginSkillDialogOptions;
-
-        if (!dialogArgs.activity) {
+        if (!options.activity) {
             throw new TypeError(`"activity" is undefined or null in options.`);
         }
 
-        return dialogArgs;
+        return options;
     }
 
     private async sendToSkill(context: TurnContext, activity: Activity, connectionName: string): Promise<Activity> {
