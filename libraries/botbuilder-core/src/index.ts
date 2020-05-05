@@ -31,7 +31,6 @@ export * from './propertyManager';
 export * from './recognizerResult';
 export * from './showTypingMiddleware';
 export * from './signInConstants';
-export * from './extensions';
 export {
     BotFrameworkSkill,
     BotFrameworkClient,

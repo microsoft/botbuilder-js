@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 import { ActivityTypes, Severity } from 'botbuilder-core';
-import { TurnContext, Extensions } from 'botbuilder-core';
+import { TurnContext, telemetryTrackDialogView } from 'botbuilder-core';
 import { DialogInstance } from './dialog';
 import { Dialog, DialogReason, DialogTurnResult } from './dialog';
 import { DialogContext } from './dialogContext';
@@ -151,7 +151,7 @@ export class WaterfallDialog<O extends object = {}> extends Dialog<O> {
             'InstanceId': state.values['instanceId']
         }});
 
-        Extensions.TelemetryTrackDialogView(this.telemetryClient, this.id);
+        telemetryTrackDialogView(this.telemetryClient, this.id);
 
         // Run the first step
         return await this.runStep(dc, 0, DialogReason.beginCalled);

@@ -99,6 +99,9 @@ export class NullTelemetryClient implements BotTelemetryClient, BotPageViewTelem
 }
 
 export function telemetryTrackDialogView(telemetryClient: BotTelemetryClient, dialogName: string, properties?: {[key: string]: any}, metrics?: {[key: string]: number }): void {
+    if (!clientSupportsTrackDialogView(telemetryClient)) {
+        throw new TypeError('"telemetryClient" parameter does not have methods trackPageView() or trackTrace()');
+    }
     if (instanceOfBotPageViewTelemetryClient(telemetryClient)) {
         telemetryClient.trackPageView({ name: dialogName, properties: properties, metrics: metrics });
     }
@@ -109,4 +112,12 @@ export function telemetryTrackDialogView(telemetryClient: BotTelemetryClient, di
 
 function instanceOfBotPageViewTelemetryClient(object: any): object is BotPageViewTelemetryClient {
     return 'trackPageView' in object;
+}
+
+function clientSupportsTrackDialogView(client: any): boolean {
+    if (!client) { return false; }
+    if (typeof client.trackPageView !== 'function' && typeof client.trackTrace !== 'function') {
+        return false;
+    }
+    return true;
 }

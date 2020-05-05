@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { TurnContext, BotTelemetryClient, NullTelemetryClient, Extensions } from 'botbuilder-core';
+import { BotTelemetryClient, NullTelemetryClient, telemetryTrackDialogView, TurnContext } from 'botbuilder-core';
 import { Dialog, DialogInstance, DialogReason, DialogTurnResult, DialogTurnStatus } from './dialog';
 import { DialogContext } from './dialogContext';
 import { DialogContainer } from './dialogContainer';
@@ -81,7 +81,7 @@ export class ComponentDialog<O extends object = {}> extends DialogContainer<O> {
     public async beginDialog(outerDC: DialogContext, options?: O): Promise<DialogTurnResult> {
         await this.checkForVersionChange(outerDC);
 
-        Extensions.TelemetryTrackDialogView(this.telemetryClient, this.id);
+        telemetryTrackDialogView(this.telemetryClient, this.id);
 
         // Start the inner dialog.
         const innerDC: DialogContext = this.createChildContext(outerDC)
