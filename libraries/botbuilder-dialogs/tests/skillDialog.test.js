@@ -323,12 +323,12 @@ describe('SkillDialog', function() {
                 postActivityStub.onSecondCall().returns(Promise.resolve({ status: 200 }));
 
                 const conversationState = new ConversationState(new MemoryStorage());
-                const dialogOptions = createSkillDialogOptions(conversationState, skillClient);
+                const dialogOptions = createSkillDialogOptions(conversationState, skillClient, connectionName);
 
                 const dialogUnderTest = new SkillDialog(dialogOptions, 'skillDialog');
                 const sendTokenExchangeSpy = spy(dialogUnderTest, 'sendTokenExchangeInvokeToSkill');
                 const activityToSend = createSendActivity();
-                const beginSkillDialogOptions = { activity: activityToSend, connectionName };
+                const beginSkillDialogOptions = { activity: activityToSend };
 
                 const client = new DialogTestClient(Channels.Test, dialogUnderTest, beginSkillDialogOptions, [new AutoSaveStateMiddleware(conversationState)], conversationState);
                 client._testAdapter.addExchangeableToken(connectionName, Channels.Test, 'user1', 'https://test', 'https://test1');
@@ -394,12 +394,12 @@ describe('SkillDialog', function() {
                 postActivityStub.onFirstCall().returns({ status: 200, body: firstResponse });
 
                 const conversationState = new ConversationState(new MemoryStorage());
-                const dialogOptions = createSkillDialogOptions(conversationState, skillClient);
+                const dialogOptions = createSkillDialogOptions(conversationState, skillClient, connectionName);
 
                 const dialogUnderTest = new SkillDialog(dialogOptions, 'skillDialog');
                 const sendTokenExchangeSpy = spy(dialogUnderTest, 'sendTokenExchangeInvokeToSkill');
                 const activityToSend = createSendActivity();
-                const beginSkillDialogOptions = { activity: activityToSend, connectionName };
+                const beginSkillDialogOptions = { activity: activityToSend };
 
                 const client = new DialogTestClient(Channels.Test, dialogUnderTest, beginSkillDialogOptions, [new AutoSaveStateMiddleware(conversationState)], conversationState);
                 client._testAdapter.addExchangeableToken(connectionName, Channels.Test, 'user1', 'https://test');
@@ -420,12 +420,12 @@ describe('SkillDialog', function() {
                 postActivityStub.onSecondCall().returns({ status: 409 });
 
                 const conversationState = new ConversationState(new MemoryStorage());
-                const dialogOptions = createSkillDialogOptions(conversationState, skillClient);
+                const dialogOptions = createSkillDialogOptions(conversationState, skillClient, connectionName);
 
                 const dialogUnderTest = new SkillDialog(dialogOptions, 'skillDialog');
                 const sendTokenExchangeSpy = spy(dialogUnderTest, 'sendTokenExchangeInvokeToSkill');
                 const activityToSend = createSendActivity();
-                const beginSkillDialogOptions = { activity: activityToSend, connectionName };
+                const beginSkillDialogOptions = { activity: activityToSend };
 
                 const client = new DialogTestClient(Channels.Test, dialogUnderTest, beginSkillDialogOptions, [new AutoSaveStateMiddleware(conversationState)], conversationState);
                 client._testAdapter.addExchangeableToken(connectionName, Channels.Test, 'user1', 'https://test', 'https://test1');
@@ -504,9 +504,10 @@ function createOAuthCardAttachmentActivity(uri) {
  * @param {*} mockSkillClient
  * @returns A Skill Dialog Options object.
  */
-function createSkillDialogOptions(conversationState, mockSkillClient) {
+function createSkillDialogOptions(conversationState, mockSkillClient, connectionName) {
     const dialogOptions = {
         botId: 'SkillCallerId',
+        connectionName: connectionName,
         skillHostEndpoint: 'http://test.contoso.com/skill/messages',
         conversationIdFactory: new SimpleConversationIdFactory(),
         conversationState: conversationState,

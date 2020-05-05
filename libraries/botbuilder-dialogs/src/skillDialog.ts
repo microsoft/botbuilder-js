@@ -34,12 +34,11 @@ import { DialogContext } from './dialogContext';
 import { DialogEvents } from './dialogEvents';
 import { SkillDialogOptions } from './skillDialogOptions';
 
-export class SkillDialog extends Dialog {
+export class SkillDialog extends Dialog<Partial<BeginSkillDialogOptions>> {
     protected dialogOptions: SkillDialogOptions;
 
     // This key uses a simple namespace as Symbols are not serializable.
     private readonly DeliveryModeStateKey: string = 'SkillDialog.deliveryMode';
-    private readonly SsoConnectionNameKey: string = 'SkillDialog.SSOConnectionName';
 
     /**
      * A sample dialog that can wrap remote calls to a skill.
@@ -59,7 +58,7 @@ export class SkillDialog extends Dialog {
         this.dialogOptions = dialogOptions;
     }
 
-    public async beginDialog(dc: DialogContext, options?: any): Promise<DialogTurnResult> {
+    public async beginDialog(dc: DialogContext, options: BeginSkillDialogOptions): Promise<DialogTurnResult> {
         const dialogArgs = this.validateBeginDialogArgs(options);
 
         await dc.context.sendTraceActivity(`${ this.id }.beginDialog()`, undefined, undefined, `Using activity of type: ${ dialogArgs.activity.type }`);
@@ -72,10 +71,9 @@ export class SkillDialog extends Dialog {
 
         // Store delivery mode and connection name in dialog state for later use.
         dc.activeDialog.state[this.DeliveryModeStateKey] = dialogArgs.activity.deliveryMode;
-        dc.activeDialog.state[this.SsoConnectionNameKey] = dialogArgs.connectionName;
 
         // Send the activity to the skill.
-        const eocActivity = await this.sendToSkill(dc.context, skillActivity, dialogArgs.connectionName);
+        const eocActivity = await this.sendToSkill(dc.context, skillActivity);
         if (eocActivity) {
             return await dc.endDialog(eocActivity.value);
         }
@@ -99,10 +97,9 @@ export class SkillDialog extends Dialog {
         const skillActivity: Activity = this.cloneActivity(dc.context.activity);
 
         skillActivity.deliveryMode = dc.activeDialog.state[this.DeliveryModeStateKey] as string;
-        const connectionName = dc.activeDialog.state[this.SsoConnectionNameKey] as string;
 
         // Just forward to the remote skill
-        const eocActivity = await this.sendToSkill(dc.context, skillActivity, connectionName);
+        const eocActivity = await this.sendToSkill(dc.context, skillActivity);
         if (eocActivity) {
             return await dc.endDialog(eocActivity.value);
         }
@@ -121,7 +118,7 @@ export class SkillDialog extends Dialog {
             activity.channelData = context.activity.channelData;
 
             // connectionName is not applicable during endDialog as we don't expect an OAuthCard in response.
-            await this.sendToSkill(context, activity as Activity, null);
+            await this.sendToSkill(context, activity as Activity);
         }
 
         await super.endDialog(context, instance, reason);
@@ -136,7 +133,7 @@ export class SkillDialog extends Dialog {
         const activity: Activity = TurnContext.applyConversationReference(repromptEvent, reference, true) as Activity;
         
         // connectionName is not applicable for a reprompt as we don't expect an OAuthCard in response.
-        await this.sendToSkill(context, activity, null);
+        await this.sendToSkill(context, activity);
     }
 
     public async resumeDialog(dc: DialogContext, reason: DialogReason, result?: any): Promise<DialogTurnResult> {
@@ -166,21 +163,19 @@ export class SkillDialog extends Dialog {
         return JSON.parse(JSON.stringify(activity));
     }
 
-    private validateBeginDialogArgs(options: any): BeginSkillDialogOptions {
+    private validateBeginDialogArgs(options: BeginSkillDialogOptions): BeginSkillDialogOptions {
         if (!options) {
             throw new TypeError('Missing options parameter');
         }
 
-        const dialogArgs = options as BeginSkillDialogOptions;
-
-        if (!dialogArgs.activity) {
+        if (!options.activity) {
             throw new TypeError(`"activity" is undefined or null in options.`);
         }
 
-        return dialogArgs;
+        return options;
     }
 
-    private async sendToSkill(context: TurnContext, activity: Activity, connectionName: string): Promise<Activity> {
+    private async sendToSkill(context: TurnContext, activity: Activity): Promise<Activity> {
         if (activity.type === ActivityTypes.Invoke) {
             // Force ExpectReplies for invoke activities so we can get the replies right away and send them back to the channel if needed.
             // This makes sure that the dialog will receive the Invoke response from the skill and any other activities sent, including EoC.
@@ -209,7 +204,7 @@ export class SkillDialog extends Dialog {
                 if (activityFromSkill.type === ActivityTypes.EndOfConversation) {
                     // Capture the EndOfConversation activity if it was sent from skill
                     eocActivity = activityFromSkill;
-                } else if (await this.interceptOAuthCards(context, activityFromSkill, connectionName)) {
+                } else if (await this.interceptOAuthCards(context, activityFromSkill, this.dialogOptions.connectionName)) {
                     // Do nothing. The token exchange succeeded, so no OAuthCard needs to be shown to the user.
                 } else {
                     await context.sendActivity(activityFromSkill);
