@@ -26,6 +26,7 @@
     "@types/lodash": "^4.14.134",
     "@typescript-eslint/eslint-plugin": "^1.10.2",
     "@typescript-eslint/parser": "^1.10.2",
+    "applicationinsights": "^1.7.5",
     "coveralls": "^3.0.4",
     "eslint": "^5.16.0",
     "eslint-plugin-only-warn": "^1.0.1",
