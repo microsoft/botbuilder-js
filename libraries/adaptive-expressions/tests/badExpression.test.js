@@ -167,6 +167,20 @@ const badExpressions =
       'range(one, 0)', // second param should be more than 0
 
       // Date and time function test
+      'isDefinite(12345)', // should hava a string or a TimexProperty parameter
+      'isDefinite(\'world\', 123445)', // should have only one parameter
+      'isTime(123445)', // should hava a string or a TimexProperty parameter
+      'isTime(\'world\', 123445)', // should have only one parameter
+      'isDuration(123445)', // should hava a string or a TimexProperty parameter
+      'isDuration(\'world\', 123445)', // should have only one parameter
+      'isDate(123445)', // should hava a string or a TimexProperty parameter
+      'isDate(\'world\', 123445)', // should have only one parameter
+      'isTimeRange(123445)', // should hava a string or a TimexProperty parameter
+      'isTimeRange(\'world\', 123445)', // should have only one parameter
+      'isDateRange(123445)', // should hava a string or a TimexProperty parameter
+      'isDateRange(\'world\', 123445)', // should have only one parameter
+      'isPresent(123445)', // should hava a string or a TimexProperty parameter
+      'isPresent(\'world\', 123445)', // should have only one parameter
       'addDays(\'errortime\', 1)',// error datetime format
       'addDays(timestamp, \'hi\')',// second param should be integer
       'addDays(timestamp)',// should have 2 or 3 params
