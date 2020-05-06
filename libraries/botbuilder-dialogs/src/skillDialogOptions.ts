@@ -20,6 +20,11 @@ export interface SkillDialogOptions {
     botId: string;
 
     /**
+     * Optional. The OAuth Connection Name for the Parent Bot.
+     */
+    connectionName?: string;
+
+    /**
      * The BotFrameworkSkill that the dialog will call.
      */
     conversationIdFactory: SkillConversationIdFactoryBase;
