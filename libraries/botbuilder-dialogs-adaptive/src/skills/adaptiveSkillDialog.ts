@@ -8,9 +8,10 @@
 import { SkillDialog, SkillDialogOptions, DialogContext, DialogTurnResult, DialogManager, BeginSkillDialogOptions } from 'botbuilder-dialogs';
 import { BoolExpression, StringExpression } from 'adaptive-expressions';
 import { TemplateInterface } from '../template';
-import { Activity, ActivityTypes } from 'botbuilder-core';
+import { Activity, ActivityTypes, BotFrameworkClient, SkillConversationIdFactoryBase } from 'botbuilder-core';
 
-const GLOBAL_SKILL_OPTIONS = Symbol('globalSkillOptions');
+const SKILL_CLIENT = Symbol('skillClient');
+const CONVERSATION_ID_FACTORY = Symbol('conversationIdFactory');
 
 export class AdaptiveSkillDialog extends SkillDialog {
 
@@ -83,13 +84,6 @@ export class AdaptiveSkillDialog extends SkillDialog {
             return await dc.endDialog();
         }
 
-        // Update options with global options
-        const globalOptions = dc.context.turnState.get(GLOBAL_SKILL_OPTIONS);
-        if (globalOptions) {
-               this.dialogOptions = Object.assign(globalOptions, this.dialogOptions);
-        }
-        if (!this.dialogOptions.conversationState) { dc.dialogManager.conversationState }
-
         // Setup the skill to call
         const botId = this.botId.getValue(dcState);
         const skillHostEndpoint = this.skillHostEndpoint.getValue(dcState);
@@ -98,6 +92,9 @@ export class AdaptiveSkillDialog extends SkillDialog {
         if (this.skillAppId) { this.dialogOptions.skill.id = this.dialogOptions.skill.appId = this.skillAppId.getValue(dcState) }
         if (this.skillEndpoint) { this.dialogOptions.skill.skillEndpoint = this.skillEndpoint.getValue(dcState) }
         if (this.connectionName) { this.dialogOptions.connectionName = this.connectionName.getValue(dcState) }
+        if (!this.dialogOptions.conversationState) { this.dialogOptions.conversationState = dc.dialogManager.conversationState }
+        if (!this.dialogOptions.skillClient) { this.dialogOptions.skillClient = dc.context.turnState.get(SKILL_CLIENT) }
+        if (!this.dialogOptions.conversationIdFactory) { this.dialogOptions.conversationIdFactory = dc.context.turnState.get(CONVERSATION_ID_FACTORY) }
 
         // Get the activity to send to the skill.
         options = {} as BeginSkillDialogOptions;
@@ -126,12 +123,20 @@ export class AdaptiveSkillDialog extends SkillDialog {
         return await super.continueDialog(dc);
     }
 
+    protected onComputeId(): string {
+        const appId = this.skillAppId ? this.skillAppId.toString() : '';
+        const activity = this.activity ? this.activity.toString() : '<activity>';
+        return `Skill[${appId}:${activity}]`;
+    }
+
     /**
-     * Configures the initial skill dialog options to use.
+     * Configures the skill client and conversation ID factory to use.
      * @param dm DialogManager to configure.
-     * @param options Skill dialog options to use.
+     * @param skillClient Skill client instance to use.
+     * @param conversationIdFactory Conversation ID factory to use.
      */
-    static setGlobalSkillOptions(dm: DialogManager, options: SkillDialogOptions): void {
-        dm.initialTurnState.set(GLOBAL_SKILL_OPTIONS, options);
+    static setSkillHostOptions(dm: DialogManager, skillClient: BotFrameworkClient, conversationIdFactory: SkillConversationIdFactoryBase): void {
+        dm.initialTurnState.set(SKILL_CLIENT, skillClient);
+        dm.initialTurnState.set(CONVERSATION_ID_FACTORY, conversationIdFactory);
     }
 }
