@@ -843,8 +843,18 @@ export class BotFrameworkAdapter extends BotAdapter implements ConnectorClientBu
             context.turnState.set(BotCallbackHandlerKey, logic);
             await this.runMiddleware(context, logic);
 
-            // Retrieve cached invoke response.
-            if (request.type === ActivityTypes.Invoke) {
+            // NOTE: The factoring of the code differs here when compared to C# as processActivity() returns Promise<void>.
+            //       This is due to the fact that the response to the incoming activity is sent from inside this implementation.
+            //       In C#, ProcessActivityAsync() returns Task<InvokeResponse> and ASP.NET handles sending of the response.
+            if (request.deliveryMode === DeliveryModes.ExpectReplies) {
+                // Handle "expectReplies" scenarios where all the activities have been buffered and sent back at once
+                // in an invoke response.
+                const expectedReplies: ExpectedReplies = { activities: context.bufferedReplyActivities as Activity[] };
+                body = expectedReplies;
+                status = StatusCodes.OK;
+            } else if (request.type === ActivityTypes.Invoke) {
+                // Retrieve a cached Invoke response to handle Invoke scenarios.
+                // These scenarios deviate from the request/request model as the Bot should return a specific body and status.
                 const invokeResponse: any = context.turnState.get(INVOKE_RESPONSE_KEY);
                 if (invokeResponse && invokeResponse.value) {
                     const value: InvokeResponse = invokeResponse.value;
@@ -853,10 +863,6 @@ export class BotFrameworkAdapter extends BotAdapter implements ConnectorClientBu
                 } else {
                     status = StatusCodes.NOT_IMPLEMENTED;
                 }
-            } else if (request.deliveryMode === DeliveryModes.ExpectReplies) {
-                const expectedReplies: ExpectedReplies = { activities: context.bufferedReplyActivities as Activity[]  };
-                body = expectedReplies;
-                status = StatusCodes.OK;
             } else {
                 status = StatusCodes.OK;
             }
@@ -1051,7 +1057,7 @@ export class BotFrameworkAdapter extends BotAdapter implements ConnectorClientBu
     public async createConnectorClientWithIdentity(serviceUrl: string, identity: ClaimsIdentity, audience: string): Promise<ConnectorClient>
     public async createConnectorClientWithIdentity(serviceUrl: string, identity: ClaimsIdentity, audience?: string): Promise<ConnectorClient> {
         if (!identity) {
-            throw new Error('BotFrameworkAdapter.createConnectorClientWithScope(): invalid identity parameter.');
+            throw new Error('BotFrameworkAdapter.createConnectorClientWithIdentity(): invalid identity parameter.');
         }
 
         const botAppId = identity.getClaimValue(AuthenticationConstants.AudienceClaim) ||
