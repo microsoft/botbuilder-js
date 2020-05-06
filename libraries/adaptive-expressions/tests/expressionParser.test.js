@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
 /* eslint-disable @typescript-eslint/no-var-requires */
 const { Expression, SimpleObjectMemory, ExpressionFunctions, Options } = require('../lib');
+var { TimexProperty } = require('@microsoft/recognizers-text-data-types-timex-expression');
 const assert = require('assert');
 const moment = require('moment');
 
@@ -405,6 +406,23 @@ const dataSource = [
     // Otherwise exceptions will be thrown out
     // All the output timestamp strings are in ISO format of YYYY-MM-DDTHH:mm:ss.sssZ
     // Init dateTime: 2018-03-15T13:00:00:111Z
+    ['isDefinite(\'helloworld\')', false],
+    ['isDefinite(\'2012-12-21\')', true],
+    ['isDefinite(\'xxxx-12-21\')', false],
+    ['isDefinite(validFullDateTimex)', true],
+    ['isDefinite(invalidFullDateTimex)', false],
+    ['isTime(validHourTimex)', true],
+    ['isTime(invalidHourTimex)', false],
+    ['isDuration(\'PT30M\')', true],
+    ['isDuration(\'2012-12-21T12:30\')', false],
+    ['isDate(\'PT30M\')', false],
+    ['isDate(\'2012-12-21T12:30\')', true],
+    ['isTimeRange(\'PT30M\')', false],
+    ['isTimeRange(validTimeRange)', true],
+    ['isDateRange(\'PT30M\')', false],
+    ['isDateRange(\'2012-02\')', true],
+    ['isPresent(\'PT30M\')', false],
+    ['isPresent(validNow)', true],
     ['addDays(timestamp, 1)', '2018-03-16T13:00:00.111Z'],
     ['addDays(timestamp, 1,\'MM-dd-yy\')', '03-16-18'],
     ['addHours(timestamp, 1)', '2018-03-15T14:00:00.111Z'],
@@ -691,6 +709,12 @@ const scope = {
     ],
     timestamp: '2018-03-15T13:00:00.111Z',
     notISOTimestamp: '2018-03-15T13:00:00Z',
+    validFullDateTimex: new TimexProperty('2020-02-20'),
+    invalidFullDateTimex: new TimexProperty('xxxx-02-20'),
+    validHourTimex: new TimexProperty('2020-02-20T07:30'),
+    validTimeRange: new TimexProperty({partOfDay: 'morning'}),
+    validNow: new TimexProperty({now: true}),
+    invalidHourTimex: new TimexProperty('2001-02-20'),
     timestampObj: new Date('2018-03-15T13:00:00.000Z'),
     unixTimestamp: 1521118800,
     user: 

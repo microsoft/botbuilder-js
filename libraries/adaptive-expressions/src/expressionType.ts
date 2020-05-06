@@ -85,6 +85,15 @@ export class ExpressionType {
     public static readonly StartOfMonth: string = 'startOfMonth';
     public static readonly Ticks: string = 'ticks';
 
+    // timex
+    public static readonly IsDefinite: string = 'isDefinite';
+    public static readonly IsTime: string = 'isTime';
+    public static readonly IsDuration: string = 'isDuration';
+    public static readonly IsDate: string = 'isDate';
+    public static readonly IsTimeRange: string = 'isTimeRange';
+    public static readonly IsDateRange: string = 'isDateRange';
+    public static readonly IsPresent: string = 'isPresent';
+
     // Conversions
     public static readonly Float: string = 'float';
     public static readonly Int: string = 'int';

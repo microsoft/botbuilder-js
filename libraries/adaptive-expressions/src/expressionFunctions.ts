@@ -816,6 +816,22 @@ export class ExpressionFunctions {
         }
     }
 
+    private static parseTimexProperty(timexExpr: any): {timexProperty: TimexProperty; error: string} {
+        let parsed: TimexProperty;
+        if (timexExpr instanceof TimexProperty) {
+            parsed = timexExpr;
+        } else if (typeof timexExpr === 'string'){
+            parsed = new TimexProperty(timexExpr);
+        } else {
+            parsed = new TimexProperty(timexExpr);
+            if (parsed == undefined || Object.keys(parsed).length === 0) {
+                return {timexProperty: parsed, error: `${ timexExpr } requires a TimexProperty or a string as a argument`};
+            }
+        }
+
+        return {timexProperty: parsed, error: undefined};
+    }
+
     private static addOrdinal(num: number): string {
         let hasResult = false;
         let ordinalResult: string = num.toString();
@@ -2736,6 +2752,156 @@ export class ExpressionFunctions {
                 },
                 ReturnType.Number,
                 ExpressionFunctions.validateUnary),
+            new ExpressionEvaluator(
+                ExpressionType.IsDefinite,
+                (expr: Expression, state: any, options: Options): { value: any; error: string } => {
+                    let parsed: TimexProperty;
+                    let value = false;
+                    let error: string;
+                    let args: any [];
+                    ({args, error} = ExpressionFunctions.evaluateChildren(expr, state, options));
+                    if (!error) {
+                        ({timexProperty: parsed, error: error} = ExpressionFunctions.parseTimexProperty(args[0]));
+                    }
+
+                    if (!error) {
+                        value = parsed != undefined && parsed.year !== undefined && parsed.month !== undefined && parsed.dayOfMonth !== undefined;
+                    }
+    
+                    return {value, error};
+                },
+                ReturnType.Boolean,
+                ExpressionFunctions.validateUnary),
+            new ExpressionEvaluator(
+                ExpressionType.IsTime,
+                (expr: Expression, state: any, options: Options): { value: any; error: string } => {
+                    let parsed: TimexProperty;
+                    let value = false;
+                    let error: string;
+                    let args: any [];
+                    ({args, error} = ExpressionFunctions.evaluateChildren(expr, state, options));
+                    if (!error) {
+                        ({timexProperty: parsed, error: error} = ExpressionFunctions.parseTimexProperty(args[0]));
+                    }
+    
+                    if (parsed && !error) {
+                        value = parsed.hour !== undefined && parsed.minute !== undefined && parsed.second !== undefined;
+                    }
+
+                    return {value, error};
+                },
+                ReturnType.Boolean,
+                ExpressionFunctions.validateUnary),
+            new ExpressionEvaluator(
+                ExpressionType.IsDuration,
+                (expr: Expression, state: any, options: Options): { value: any; error: string } => {
+                    let parsed: TimexProperty;
+                    let value = false;
+                    let error: string;
+                    let args: any [];
+                    ({args, error} = ExpressionFunctions.evaluateChildren(expr, state, options));
+                    if (!error) {
+                        ({timexProperty: parsed, error: error} = ExpressionFunctions.parseTimexProperty(args[0]));
+                    }
+
+                    if (parsed && !error) {
+                        value = parsed.years !== undefined
+                        || parsed.months !== undefined
+                        || parsed.weeks !== undefined
+                        || parsed.days !== undefined
+                        || parsed.hours !== undefined
+                        || parsed.minutes !== undefined
+                        || parsed.seconds !== undefined;
+                    }
+            
+                    return {value, error};
+                },
+                ReturnType.Boolean,
+                ExpressionFunctions.validateUnary),
+            new ExpressionEvaluator(
+                ExpressionType.IsDate,
+                (expr: Expression, state: any, options: Options): { value: any; error: string } => {
+                    let parsed: TimexProperty;
+                    let value = false;
+                    let error: string;
+                    let args: any [];
+                    ({args, error} = ExpressionFunctions.evaluateChildren(expr, state, options));
+                    if (!error) {
+                        ({timexProperty: parsed, error: error} = ExpressionFunctions.parseTimexProperty(args[0]));
+                    }
+
+                    if (parsed && !error) {
+                        value = (parsed.month !== undefined && parsed.dayOfMonth !== undefined) || parsed.DayOfWeek !== undefined;
+                    }
+                
+                    return {value, error};
+                },
+                ReturnType.Boolean,
+                ExpressionFunctions.validateUnary),
+            new ExpressionEvaluator(
+                ExpressionType.IsTimeRange,
+                (expr: Expression, state: any, options: Options): { value: any; error: string } => {
+                    let parsed: TimexProperty;
+                    let value = false;
+                    let error: string;
+                    let args: any [];
+                    ({args, error} = ExpressionFunctions.evaluateChildren(expr, state, options));
+                    if (!error) {
+                        ({timexProperty: parsed, error: error} = ExpressionFunctions.parseTimexProperty(args[0]));
+                    }
+    
+                    if (parsed && !error) {
+                        value = parsed.partOfDay !== undefined;
+                    }
+
+                    return {value, error};
+                },
+                ReturnType.Boolean,
+                ExpressionFunctions.validateUnary),
+            new ExpressionEvaluator(
+                ExpressionType.IsDateRange,
+                (expr: Expression, state: any, options: Options): { value: any; error: string } => {
+                    let parsed: TimexProperty;
+                    let value = false;
+                    let error: string;
+                    let args: any [];
+                    ({args, error} = ExpressionFunctions.evaluateChildren(expr, state, options));
+                    if (!error) {
+                        ({timexProperty: parsed, error: error} = ExpressionFunctions.parseTimexProperty(args[0]));
+                    }
+
+                    if (parsed && !error) {
+                        value = (parsed.year !== undefined && parsed.dayOfMonth === undefined) ||
+                                (parsed.year !== undefined && parsed.month !== undefined && parsed.dayOfMonth === undefined) ||
+                                (parsed.month !== undefined && parsed.dayOfMonth === undefined) ||
+                                parsed.season !== undefined || parsed.weekOfYear !== undefined || parsed.weekOfMonth !== undefined;
+                    }
+
+                    return {value, error};
+                },
+                ReturnType.Boolean,
+                ExpressionFunctions.validateUnary),
+            new ExpressionEvaluator(
+                ExpressionType.IsPresent,
+                (expr: Expression, state: any, options: Options): { value: any; error: string } => {
+                    let parsed: TimexProperty;
+                    let value = false;
+                    let error: string;
+                    let args: any [];
+                    ({args, error} = ExpressionFunctions.evaluateChildren(expr, state, options));
+                    if (!error) {
+                        ({timexProperty: parsed, error: error} = ExpressionFunctions.parseTimexProperty(args[0]));
+                    }
+
+                    if (parsed && !error) {
+                        value = parsed.now !== undefined;
+                    }
+        
+                    return {value, error};
+                },
+                ReturnType.Boolean,
+                ExpressionFunctions.validateUnary),
+
             new ExpressionEvaluator(
                 ExpressionType.UriHost,
                 (expr: Expression, state: any, options: Options): { value: any; error: string } => {
