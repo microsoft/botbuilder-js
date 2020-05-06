@@ -1053,7 +1053,7 @@ describe('LG', function() {
         assert.equal(evaled, 6.0);
     });
 
-    it.only('TestInjectLG', function() {
+    it('TestInjectLG', function() {
         var templates = Templates.parseFile(GetExampleFilePath('./injectionTest/inject.lg'));
 
         var {value: evaled, error} = Expression.parse('foo.bar()').tryEvaluate();
