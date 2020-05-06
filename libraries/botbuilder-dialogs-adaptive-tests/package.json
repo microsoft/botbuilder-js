@@ -5,7 +5,7 @@
   "scripts": {
     "test": "tsc && mocha tests/*.test.js",
     "build": "tsc",
-    "set-version": "npm version --allow-same-version ${PreviewPackageVersion}"
+    "set-version": "npm version --allow-same-version ${Version}"
   },
   "dependencies": {
     "botbuilder-core": "4.1.6",
