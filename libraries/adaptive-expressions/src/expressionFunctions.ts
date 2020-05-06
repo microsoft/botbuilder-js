@@ -824,7 +824,7 @@ export class ExpressionFunctions {
             parsed = new TimexProperty(timexExpr);
         } else {
             parsed = new TimexProperty(timexExpr);
-            if (parsed == undefined || Object.keys(parsed).length === 0) {
+            if (parsed === undefined || Object.keys(parsed).length === 0) {
                 return {timexProperty: parsed, error: `${ timexExpr } requires a TimexProperty or a string as a argument`};
             }
         }
