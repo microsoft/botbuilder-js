@@ -2831,7 +2831,7 @@ export class ExpressionFunctions {
                     }
 
                     if (parsed && !error) {
-                        value = (parsed.month !== undefined && parsed.dayOfMonth !== undefined) || parsed.DayOfWeek !== undefined;
+                        value = (parsed.month !== undefined && parsed.dayOfMonth !== undefined) || parsed.dayOfWeek !== undefined;
                     }
                 
                     return {value, error};
