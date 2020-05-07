@@ -190,6 +190,10 @@ export class OAuthInput extends InputDialog {
         return adapter.signOutUser(dc.context, this.connectionName.getValue(dc.state));
     }
 
+    protected onComputeId(): string {
+        return `OauthInput[${ this.prompt && this.prompt.toString() }]`;
+    }
+
     protected onRecognizeInput(dc: DialogContext): Promise<InputState> {
         throw new Error('Method not implemented.');
     }
