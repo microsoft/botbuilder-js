@@ -21,7 +21,7 @@
   "main": "./lib/index.js",
   "typings": "./lib/index.d.ts",
   "dependencies": {
-    "applicationinsights": "1.2.0",
+    "applicationinsights": "1.7.5",
     "botbuilder-core": "4.1.6",
     "cls-hooked": "^4.2.2"
   },
