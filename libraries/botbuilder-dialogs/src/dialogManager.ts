@@ -111,9 +111,9 @@ export class DialogManager extends Configurable {
         if (!this.rootDialogId) { throw new Error(`DialogManager.onTurn: the bot's 'rootDialog' has not been configured.`); }
 
         // Copy initial turn state to context
-        for (const key in this.initialTurnState.keys()) {
-            context.turnState.set(key, this.initialTurnState.get(key));
-        }
+        this.initialTurnState.forEach((value, key) => {
+            context.turnState.set(key, value);
+        });
 
         const botStateSet = new BotStateSet();
 
