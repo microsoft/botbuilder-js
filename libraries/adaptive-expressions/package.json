@@ -48,7 +48,7 @@
     "build-docs": "typedoc --theme markdown --entryPoint adaptive-expressions --excludePrivate --includeDeclarations --ignoreCompilerErrors --module amd --out ..\\..\\doc\\adaptive-expressions .\\lib\\index.d.ts --hideGenerator --name \"Bot Builder SDK - Expression\" --readme none",
     "clean": "erase /q /s .\\lib",
     "set-version": "npm version --allow-same-version ${Version}",
-    "test": "tsc && tsc ./tests/expressionProperty.test.ts  && mocha tests/ --timeout 60000"
+    "test": "tsc && tsc ./tests/expressionProperty.test.ts && mocha tests/ --timeout 60000"
   },
   "files": [
     "/lib",
