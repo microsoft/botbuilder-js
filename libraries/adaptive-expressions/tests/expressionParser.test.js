@@ -375,7 +375,7 @@ const dataSource = [
     ['formatNumber(12.123, 2)', '12.12'],
     ['formatNumber(1.555, 2)', '1.56'],
     ['formatNumber(12.123, 4)', '12.1230'],
-    
+
     // TODO: This should actually be the below, but toLocaleString does not work.
     // ['formatNumber(12000.3, 4, "fr-FR")', '12\u00a0000,3000'],
     ['formatNumber(12000.3, 4, "fr-FR")', '12,000.3000'],
@@ -468,6 +468,9 @@ const dataSource = [
     ['formatDateTime(\'2018-03-15T11:00:00.123\', \'tt\')', 'AM'],
     ['formatDateTime(\'2018-03-15\')', '2018-03-15T00:00:00.000Z'],
     ['formatDateTime(timestampObj)', '2018-03-15T13:00:00.000Z'],
+    ['formatEpoch(unixTimestamp)', '2018-03-15T13:00:00.000Z'],
+    ['formatEpoch(unixTimestampFraction)', '2018-03-15T13:00:00.500Z'],
+    ['formatTicks(ticks)', '2020-05-06T11:47:00.000Z'],
     ['subtractFromTime(timestamp, 1, \'Year\')', '2017-03-15T13:00:00.111Z'],
     ['subtractFromTime(timestamp, 1, \'Month\')', '2018-02-15T13:00:00.111Z'],
     ['subtractFromTime(timestamp, 1, \'Week\')', '2018-03-08T13:00:00.111Z'],
@@ -724,6 +727,8 @@ const scope = {
     invalidHourTimex: new TimexProperty('2001-02-20'),
     timestampObj: new Date('2018-03-15T13:00:00.000Z'),
     unixTimestamp: 1521118800,
+    unixTimestampFraction: 1521118800.5,
+    ticks: BigInt(637243624200000000),
     user:
     {
         income: 110.0,
@@ -799,7 +804,7 @@ describe('expression parser functional test', () => {
             //ToString re-parse
             const newExpr = Expression.parse(parsed.toString());
             const newActual = newExpr.tryEvaluate(scope).value;
-            assertObjectEquals(newActual, actual);
+            assertObjectEquals(actual, newActual);
         }
     }).timeout(5000);
 

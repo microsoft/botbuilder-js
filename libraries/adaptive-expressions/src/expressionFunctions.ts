@@ -52,7 +52,12 @@ export class ExpressionFunctions {
     /**
      * constant of converting unix timestamp to ticks
      */
-    public static readonly UnixMilliSecondToTicksConstant: number = 621355968000000000;
+    public static readonly UnixMilliSecondToTicksConstant: bigint = 621355968000000000n;
+
+    /**
+     * Constant to convert between ticks and ms.
+     */
+    public static readonly MillisecondToTick: bigint = 10000n;
 
     /**
      * Read only Dictionary of built in functions.
@@ -1688,12 +1693,12 @@ export class ExpressionFunctions {
 
     private static ticks(timeStamp: string): {value: any; error: string} {
         let parsed: any;
-        let result: number;
+        let result: BigInt;
         let error: string;
         ({value: parsed, error} = ExpressionFunctions.parseTimestamp(timeStamp));
         if (!error) {
             const unixMilliSec: number = parseInt(parsed.format('x'), 10);
-            result = this.UnixMilliSecondToTicksConstant + unixMilliSec * 10000;
+            result = this.UnixMilliSecondToTicksConstant + BigInt(unixMilliSec) * this.MillisecondToTick;
         }
 
         return {value: result, error};
@@ -2502,11 +2507,14 @@ export class ExpressionFunctions {
                     (args: any[]): any => {
                         let error: string;
                         let arg: any = args[0];
-                        if (typeof arg !== 'number') {
-                            error = `formatTicks first argument ${arg} is not a number`
+                        if (typeof arg === 'number') {
+                            arg = BigInt(arg)
+                        }
+                        if (typeof arg !== 'bigint') {
+                            error = `formatTicks first argument ${arg} is not a number`;
                         } else {
                             // Convert to ms
-                            arg = arg / 1000000.0;
+                            arg = Number((arg - this.UnixMilliSecondToTicksConstant) / this.MillisecondToTick);
                         }
 
                         let value: any;
