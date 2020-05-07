@@ -56,7 +56,7 @@ export class ConfirmInput extends InputDialog {
     public outputFormat: StringExpression;
 
     protected onComputeId(): string {
-        return `ConfirmInput[${ this.prompt.toString() }]`;
+        return `ConfirmInput[${ this.prompt && this.prompt.toString() }]`;
     }
 
     protected async onRecognizeInput(dc: DialogContext): Promise<InputState> {

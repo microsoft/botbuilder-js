@@ -131,7 +131,7 @@ export class ChoiceInput extends InputDialog {
     }
 
     protected onComputeId(): string {
-        return `ChoiceInput[${ this.prompt.toString() }]`;
+        return `ChoiceInput[${ this.prompt && this.prompt.toString() }]`;
     }
 
 }
