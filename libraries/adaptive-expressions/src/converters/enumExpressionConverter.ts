@@ -20,6 +20,9 @@ export class EnumExpressionConverter {
             if (this._enumValue.hasOwnProperty(value)) {
                 return new EnumExpression<any>(this._enumValue[value as string]);
             }
+            if (this._enumValue.hasOwnProperty(value.toLowerCase())) {
+                return new EnumExpression<any>(this._enumValue[value.toLowerCase()]);
+            }
             return new EnumExpression<any>(`=${ value }`);
         }
         return new EnumExpression<any>(value);
