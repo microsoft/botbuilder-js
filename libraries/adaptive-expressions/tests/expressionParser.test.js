@@ -4,6 +4,7 @@ const {Expression, SimpleObjectMemory, ExpressionFunctions, Options} = require('
 var {TimexProperty} = require('@microsoft/recognizers-text-data-types-timex-expression');
 const assert = require('assert');
 const moment = require('moment');
+const bigInt = require('big-integer')
 
 const one = ['one'];
 const oneTwo = ['one', 'two'];
@@ -506,7 +507,7 @@ const dataSource = [
     ['startOfDay(\'2018-03-15T13:30:30.000Z\')', '2018-03-15T00:00:00.000+00:00'],
     ['startOfHour(\'2018-03-15T13:30:30.000Z\')', '2018-03-15T13:00:00.000+00:00'],
     ['startOfMonth(\'2018-03-15T13:30:30.000Z\')', '2018-03-01T00:00:00.000+00:00'],
-    ['ticks(\'2018-01-01T08:00:00.000Z\')', 636503904000000000],
+    ['ticks(\'2018-01-01T08:00:00.000Z\')', bigInt('636503904000000000')],
 
     //URI parsing functions tests
     ['uriHost(\'https://www.localhost.com:8080\')', 'www.localhost.com'],
@@ -728,7 +729,7 @@ const scope = {
     timestampObj: new Date('2018-03-15T13:00:00.000Z'),
     unixTimestamp: 1521118800,
     unixTimestampFraction: 1521118800.5,
-    ticks: BigInt(637243624200000000),
+    ticks: bigInt('637243624200000000'),
     user:
     {
         income: 110.0,
@@ -914,8 +915,9 @@ var assertObjectEquals = (actual, expected) => {
         for (let i = 0; i < actual.length; i++) {
             assertObjectEquals(actual[i], expected[i], `actual is: ${actual[i]}, expected is ${expected[i]}`);
         }
+    } else if (bigInt.isInstance(actual) && bigInt.isInstance(expected)) {
+        assert(actual.equals(expected), `actual is: ${actual}, expected is ${expected}`);
     }
-
     else {
         assert.equal(actual, expected, `actual is: ${actual}, expected is ${expected}`);
     }
