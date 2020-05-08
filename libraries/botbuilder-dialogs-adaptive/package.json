@@ -45,7 +45,7 @@
     "ts-node": "^4.1.0"
   },
   "scripts": {
-    "test": "tsc && tsc tests/*.ts && nyc mocha tests/",
+    "test": "tsc && tsc ./tests/expressionProperty.test.ts && nyc mocha tests/",
     "build": "tsc",
     "build-docs": "typedoc --theme markdown --entryPoint botbuilder-dialogs-adaptive --excludePrivate --includeDeclarations --ignoreCompilerErrors --module amd --out ..\\..\\doc\\botbuilder-dialogs .\\lib\\index.d.ts --hideGenerator --name \"Bot Builder SDK - Dialogs\" --readme none",
     "clean": "erase /q /s .\\lib",
