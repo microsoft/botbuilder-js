@@ -229,6 +229,18 @@ export const TeamsChannelAccount: msRest.CompositeMapper = {
         type: {
           name: 'String'
         }
+      },
+      tenantId: {
+        serializedName: 'tenantId',
+        type: {
+          name: 'String'
+        }
+      },
+      userRole: {
+        serializedName: 'userRole',
+        type: {
+          name: 'String'
+        }
       }
     }
   }

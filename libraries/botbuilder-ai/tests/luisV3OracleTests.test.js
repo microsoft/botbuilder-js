@@ -142,6 +142,8 @@ describe('LuisRecognizer V3', function () {
 
     it('NoEntitiesInstanceTrue', done => TestJson("NoEntitiesInstanceTrue.json", res => throttle(done)));
 
+    it('DateTimeReference', done => TestJson("DateTimeReference.json", res => throttle(done)));
+
 })
 
 

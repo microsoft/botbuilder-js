@@ -26,11 +26,12 @@
     "@types/xmldom": "^0.1.29",
     "antlr4ts": "0.5.0-alpha.1",
     "atob": "^2.1.2",
+    "big-integer": "^1.6.48",
     "jspath": "^0.4.0",
     "lodash": "^4.17.15",
     "lru-cache": "^5.1.1",
-    "moment": "2.24.0",
-    "moment-timezone": "^0.5.25"
+    "moment": "^2.25.1",
+    "moment-timezone": "^0.5.28"
   },
   "devDependencies": {
     "@microsoft/api-extractor": "^7.7.12",
@@ -47,7 +48,7 @@
     "build-docs": "typedoc --theme markdown --entryPoint adaptive-expressions --excludePrivate --includeDeclarations --ignoreCompilerErrors --module amd --out ..\\..\\doc\\adaptive-expressions .\\lib\\index.d.ts --hideGenerator --name \"Bot Builder SDK - Expression\" --readme none",
     "clean": "erase /q /s .\\lib",
     "set-version": "npm version --allow-same-version ${Version}",
-    "test": "tsc && tsc tests/*.ts && mocha tests/ --timeout 60000"
+    "test": "tsc && tsc ./tests/expressionProperty.test.ts && mocha tests/ --timeout 60000"
   },
   "files": [
     "/lib",

@@ -12,9 +12,7 @@ var previewVersion = myArgs[2] || process.env.PreviewPackageVersion;
 if(previewVersion === 'adaptive-expressions') {
     previewVersion = undefined;
 }
-var previewPackages = {
-    'botbuilder-lg': true,
-    'adaptive-expressions': true,
+const previewPackages = {
     'botbuilder-dialogs-adaptive': true,
     'botbuilder-dialogs-adaptive-tests': true,
     'botbuilder-dialogs-declarative': true

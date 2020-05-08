@@ -207,10 +207,10 @@ export class QnAMakerDialog extends WaterfallDialog {
         
         step.values[this.qnAData] = response.answers;
         
-        if (isActiveLearningEnabled && qnaResponse.answers.length > 0 && qnaResponse.answers[0].score <= this.maximumScoreForLowScoreVariation) {
+        if ( qnaResponse.answers.length > 0 && qnaResponse.answers[0].score <= this.maximumScoreForLowScoreVariation) {
             qnaResponse.answers = qna.getLowScoreVariation(qnaResponse.answers);
             
-            if (qnaResponse.answers && qnaResponse.answers.length > 1) {
+            if (isActiveLearningEnabled && qnaResponse.answers && qnaResponse.answers.length > 1) {
                 var suggestedQuestions: string[] = [];
                 
                 qnaResponse.answers.forEach(answer => {

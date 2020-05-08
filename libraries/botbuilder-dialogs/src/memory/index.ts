@@ -7,6 +7,8 @@
  */
 export * from './pathResolvers';
 export * from './scopes';
-export * from './dialogStateManager';
-export * from './turnPath';
 export * from './dialogPath';
+export * from './dialogStateManager';
+export * from './scopePath';
+export * from './thisPath';
+export * from './turnPath';

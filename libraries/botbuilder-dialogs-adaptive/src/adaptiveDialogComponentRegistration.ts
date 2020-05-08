@@ -22,6 +22,9 @@ import { CaseConverter } from './actions/case';
 import { QnAMakerRecognizer } from './qnaMaker';
 import { TemplateEngineLanguageGenerator, ResourceMultiLanguageGenerator } from './generators';
 import { ConditionalSelector, FirstSelector, RandomSelector, TrueSelector } from './selectors';
+import { LanguageGeneratorConverter } from './converters/languageGeneratorConverter';
+import { LuisAdaptiveRecognizer } from './luis';
+import { AdaptiveSkillDialog } from './skills/adaptiveSkillDialog';
 
 export class AdaptiveDialogComponentRegistration implements ComponentRegistration {
     private _resourceExplorer: ResourceExplorer;
@@ -30,7 +33,20 @@ export class AdaptiveDialogComponentRegistration implements ComponentRegistratio
     public constructor(resourceExplorer: ResourceExplorer) {
         this._resourceExplorer = resourceExplorer;
 
-        this.registerBuilder('Microsoft.AdaptiveDialog', new AdaptiveTypeBuilder(AdaptiveDialog, this._resourceExplorer, {}));
+        this.registerBuilder('Microsoft.AdaptiveDialog', new AdaptiveTypeBuilder(AdaptiveDialog, this._resourceExplorer, {
+            'generator': new LanguageGeneratorConverter()
+        }));
+        this.registerBuilder('Microsoft.AdaptiveSkillDialog', new AdaptiveTypeBuilder(AdaptiveSkillDialog, this._resourceExplorer, {
+            'disabled': new BoolExpressionConverter(),
+            'activityProcessed': new BoolExpressionConverter(),
+            'resultProperty': new StringExpressionConverter(),
+            'botId': new StringExpressionConverter(),
+            'skillHostEndpoint': new StringExpressionConverter(),
+            'skillAppId': new StringExpressionConverter(),
+            'skillEndpoint': new StringExpressionConverter(),
+            'activity': new ActivityTemplateConverter(),
+            'connectionName': new StringExpressionConverter()
+        }));
         this.registerActions();
         this.registerConditions();
         this.registerInputs();
@@ -276,6 +292,7 @@ export class AdaptiveDialogComponentRegistration implements ComponentRegistratio
     }
 
     private registerRecognizers(): void {
+        this.registerBuilder('Microsoft.Microsoft.LuisRecognizer', new AdaptiveTypeBuilder(LuisAdaptiveRecognizer, this._resourceExplorer, {}));
         this.registerBuilder('Microsoft.CrossTrainedRecognizerSet', new AdaptiveTypeBuilder(CrossTrainedRecognizerSet, this._resourceExplorer, {}));
         this.registerBuilder('Microsoft.MultiLanguageRecognizer', new AdaptiveTypeBuilder(MultiLanguageRecognizer, this._resourceExplorer, {}));
         this.registerBuilder('Microsoft.RecognizerSet', new AdaptiveTypeBuilder(RecognizerSet, this._resourceExplorer, {}));
