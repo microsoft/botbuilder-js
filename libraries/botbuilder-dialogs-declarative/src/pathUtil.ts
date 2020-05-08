@@ -31,6 +31,15 @@ export class PathUtil {
     }
 
     public static getFiles(dir: string): string[] {
-        return readdirSync(dir);
+        let results: string[] = [];
+        let list: string[] = readdirSync(dir);
+        list.forEach(file => {
+            file = join(dir, file);
+            var stat: Stats = statSync(file);
+            if (stat && !stat.isDirectory()) {
+                results.push(file);
+            }
+        });
+        return results;
     }
 }
