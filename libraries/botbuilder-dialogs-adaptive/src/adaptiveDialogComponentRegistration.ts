@@ -35,7 +35,7 @@ export class AdaptiveDialogComponentRegistration implements ComponentRegistratio
         this.registerBuilder('Microsoft.AdaptiveDialog', new AdaptiveTypeBuilder(AdaptiveDialog, this._resourceExplorer, {
             'generator': new LanguageGeneratorConverter()
         }));
-        this.registerBuilder('Microsoft.BeginSkillDialog', new AdaptiveTypeBuilder(BeginSkill, this._resourceExplorer, {
+        this.registerBuilder('Microsoft.BeginSkill', new AdaptiveTypeBuilder(BeginSkill, this._resourceExplorer, {
             'disabled': new BoolExpressionConverter(),
             'activityProcessed': new BoolExpressionConverter(),
             'resultProperty': new StringExpressionConverter(),
