@@ -20,6 +20,7 @@ import {convertCSharpDateTimeToMomentJS} from './datetimeFormatConverter';
 import {MemoryInterface, SimpleObjectMemory, StackedMemory} from './memory';
 import {Options} from './options';
 import atob = require('atob');
+import bigInt = require('big-integer')
 
 /**
  * Verify the result of an expression is of the appropriate type and return a string if not.
@@ -52,12 +53,12 @@ export class ExpressionFunctions {
     /**
      * constant of converting unix timestamp to ticks
      */
-    public static readonly UnixMilliSecondToTicksConstant: bigint = 621355968000000000n;
+    public static readonly UnixMilliSecondToTicksConstant: bigInt.BigInteger = bigInt('621355968000000000');
 
     /**
      * Constant to convert between ticks and ms.
      */
-    public static readonly MillisecondToTick: bigint = 10000n;
+    public static readonly MillisecondToTickConstant: bigInt.BigInteger = bigInt('10000');
 
     /**
      * Read only Dictionary of built in functions.
@@ -1693,12 +1694,12 @@ export class ExpressionFunctions {
 
     private static ticks(timeStamp: string): {value: any; error: string} {
         let parsed: any;
-        let result: BigInt;
+        let result: any;
         let error: string;
         ({value: parsed, error} = ExpressionFunctions.parseTimestamp(timeStamp));
         if (!error) {
             const unixMilliSec: number = parseInt(parsed.format('x'), 10);
-            result = this.UnixMilliSecondToTicksConstant + BigInt(unixMilliSec) * this.MillisecondToTick;
+            result = this.UnixMilliSecondToTicksConstant.add(bigInt(unixMilliSec).times(this.MillisecondToTickConstant));
         }
 
         return {value: result, error};
@@ -2508,13 +2509,16 @@ export class ExpressionFunctions {
                         let error: string;
                         let arg: any = args[0];
                         if (typeof arg === 'number') {
-                            arg = BigInt(arg)
+                            arg = bigInt(arg);
                         }
-                        if (typeof arg !== 'bigint') {
-                            error = `formatTicks first argument ${arg} is not a number`;
+                        if (typeof arg === 'string') {
+                            arg = bigInt(arg);
+                        }
+                        if (!bigInt.isInstance(arg)) {
+                            error = `formatTicks first argument ${arg} is not a number, numeric string or bigInt`;
                         } else {
                             // Convert to ms
-                            arg = Number((arg - this.UnixMilliSecondToTicksConstant) / this.MillisecondToTick);
+                            arg = ((arg.subtract(this.UnixMilliSecondToTicksConstant)).divide(this.MillisecondToTickConstant)).toJSNumber();
                         }
 
                         let value: any;
