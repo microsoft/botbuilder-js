@@ -301,7 +301,12 @@ export class AdaptiveDialogComponentRegistration implements ComponentRegistratio
     }
 
     private registerRecognizers(): void {
-        this.registerBuilder('Microsoft.Microsoft.LuisRecognizer', new AdaptiveTypeBuilder(LuisAdaptiveRecognizer, this._resourceExplorer, {}));
+        this.registerBuilder('Microsoft.LuisRecognizer', new AdaptiveTypeBuilder(LuisAdaptiveRecognizer, this._resourceExplorer, {
+            'applicationId': new StringExpressionConverter(),
+            'dynamicLists': new ArrayExpressionConverter(),
+            'endpoint': new StringExpressionConverter(),
+            'endpointKey': new StringExpressionConverter()
+        }));
         this.registerBuilder('Microsoft.CrossTrainedRecognizerSet', new AdaptiveTypeBuilder(CrossTrainedRecognizerSet, this._resourceExplorer, {
             'recognizers': new RecognizerConverter(this._resourceExplorer)
         }));
