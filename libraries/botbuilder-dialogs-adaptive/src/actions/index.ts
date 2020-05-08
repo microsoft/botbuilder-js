@@ -8,6 +8,7 @@
 export * from './actionScope';
 export * from './baseInvokeDialog';
 export * from './beginDialog';
+export * from './beginSkillDialog';
 export * from './breakLoop';
 export * from './cancelAllDialogs';
 export * from './case';
