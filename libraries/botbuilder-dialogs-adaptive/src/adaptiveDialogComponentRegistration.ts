@@ -16,7 +16,7 @@ import { OnActivity, OnAssignEntity, OnBeginDialog, OnCancelDialog, OnChooseEnti
 import { CrossTrainedRecognizerSet, MultiLanguageRecognizer, RecognizerSet, ValueRecognizer, RegexRecognizer, IntentPatternConverter } from './recognizers';
 import { AgeEntityRecognizer, ConfirmationEntityRecognizer, CurrencyEntityRecognizer, DateTimeEntityRecognizer, DimensionEntityRecognizer, EmailEntityRecognizer, GuidEntityRecognizer, HashtagEntityRecognizer, IpEntityRecognizer, MentionEntityRecognizer, NumberEntityRecognizer, OrdinalEntityRecognizer, PercentageEntityRecognizer, PhoneNumberEntityRecognizer, RegexEntityRecognizer, TemperatureEntityRecognizer, UrlEntityRecognizer } from './recognizers/entityRecognizers';
 import { ObjectExpressionConverter, BoolExpressionConverter, StringExpressionConverter, EnumExpressionConverter, ValueExpressionConverter, NumberExpressionConverter, ExpressionConverter, ArrayExpressionConverter, IntExpressionConverter } from 'adaptive-expressions';
-import {DialogExpressionConverter, TextTemplateConverter, ActivityTemplateConverter } from './converters';
+import { DialogExpressionConverter, TextTemplateConverter, ActivityTemplateConverter, RecognizerConverter, MultiLanguageRecognizerConverter } from './converters';
 import { ActionChangeType } from './actionChangeType';
 import { CaseConverter } from './actions/case';
 import { QnAMakerRecognizer } from './qnaMaker';
@@ -33,7 +33,8 @@ export class AdaptiveDialogComponentRegistration implements ComponentRegistratio
         this._resourceExplorer = resourceExplorer;
 
         this.registerBuilder('Microsoft.AdaptiveDialog', new AdaptiveTypeBuilder(AdaptiveDialog, this._resourceExplorer, {
-            'generator': new LanguageGeneratorConverter()
+            'generator': new LanguageGeneratorConverter(),
+            'recognizer': new RecognizerConverter(this._resourceExplorer)
         }));
         this.registerBuilder('Microsoft.BeginSkill', new AdaptiveTypeBuilder(BeginSkill, this._resourceExplorer, {
             'disabled': new BoolExpressionConverter(),
@@ -301,9 +302,15 @@ export class AdaptiveDialogComponentRegistration implements ComponentRegistratio
 
     private registerRecognizers(): void {
         this.registerBuilder('Microsoft.Microsoft.LuisRecognizer', new AdaptiveTypeBuilder(LuisAdaptiveRecognizer, this._resourceExplorer, {}));
-        this.registerBuilder('Microsoft.CrossTrainedRecognizerSet', new AdaptiveTypeBuilder(CrossTrainedRecognizerSet, this._resourceExplorer, {}));
-        this.registerBuilder('Microsoft.MultiLanguageRecognizer', new AdaptiveTypeBuilder(MultiLanguageRecognizer, this._resourceExplorer, {}));
-        this.registerBuilder('Microsoft.RecognizerSet', new AdaptiveTypeBuilder(RecognizerSet, this._resourceExplorer, {}));
+        this.registerBuilder('Microsoft.CrossTrainedRecognizerSet', new AdaptiveTypeBuilder(CrossTrainedRecognizerSet, this._resourceExplorer, {
+            'recognizers': new RecognizerConverter(this._resourceExplorer)
+        }));
+        this.registerBuilder('Microsoft.MultiLanguageRecognizer', new AdaptiveTypeBuilder(MultiLanguageRecognizer, this._resourceExplorer, {
+            'recognizers': new MultiLanguageRecognizerConverter(this._resourceExplorer)
+        }));
+        this.registerBuilder('Microsoft.RecognizerSet', new AdaptiveTypeBuilder(RecognizerSet, this._resourceExplorer, {
+            'recognizers': new RecognizerConverter(this._resourceExplorer)
+        }));
         this.registerBuilder('Microsoft.ValueRecognizer', new AdaptiveTypeBuilder(ValueRecognizer, this._resourceExplorer, {}));
         this.registerBuilder('Microsoft.RegexRecognizer', new AdaptiveTypeBuilder(RegexRecognizer, this._resourceExplorer, {
             'intents': new IntentPatternConverter()

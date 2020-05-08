@@ -16,3 +16,5 @@ export * from './languageGeneratorConverter';
 
 // TODO: Status unknown as class doesn't exist in dotnet.
 export * from './textTemplateConverter';
+export * from './recognizerConverter';
+export * from './multiLanguageRecognizerConverter';
