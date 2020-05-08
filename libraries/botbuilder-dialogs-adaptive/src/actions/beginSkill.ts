@@ -13,7 +13,7 @@ import { Activity, ActivityTypes, BotFrameworkClient, SkillConversationIdFactory
 const SKILL_CLIENT = Symbol('skillClient');
 const CONVERSATION_ID_FACTORY = Symbol('conversationIdFactory');
 
-export class BeginSkillDialog extends SkillDialog {
+export class BeginSkill extends SkillDialog {
 
     /**
      * Optional expression which if is true will disable this action.
