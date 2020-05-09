@@ -191,7 +191,7 @@ export class OAuthInput extends InputDialog {
     }
 
     protected onComputeId(): string {
-        return `OauthInput[${ this.prompt && this.prompt.toString() }]`;
+        return `OAuthInput[${ this.prompt && this.prompt.toString() }]`;
     }
 
     protected onRecognizeInput(dc: DialogContext): Promise<InputState> {
