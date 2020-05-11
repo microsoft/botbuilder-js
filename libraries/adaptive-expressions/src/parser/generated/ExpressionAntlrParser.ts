@@ -1,4 +1,4 @@
-// Generated from ../ExpressionAntlrParser.g4 by ANTLR 4.6-SNAPSHOT
+// Generated from src/parser/ExpressionAntlrParser.g4 by ANTLR 4.7.3-SNAPSHOT
 
 
 import { ATN } from "antlr4ts/atn/ATN";
@@ -935,7 +935,7 @@ export class ExpressionAntlrParser extends Parser {
 	}
 
 	public static readonly _serializedATN: string =
-		"\x03\uAF6F\u8320\u479D\uB75C\u4880\u1605\u191C\uAB37\x03&\x8B\x04\x02" +
+		"\x03\uC91D\uCABA\u058D\uAFBA\u4F53\u0607\uEA8B\uC241\x03&\x8B\x04\x02" +
 		"\t\x02\x04\x03\t\x03\x04\x04\t\x04\x04\x05\t\x05\x04\x06\t\x06\x04\x07" +
 		"\t\x07\x04\b\t\b\x04\t\t\t\x04\n\t\n\x03\x02\x03\x02\x03\x02\x03\x03\x03" +
 		"\x03\x03\x03\x03\x03\x05\x03\x1C\n\x03\x03\x03\x03\x03\x03\x03\x03\x03" +
@@ -952,18 +952,18 @@ export class ExpressionAntlrParser extends Parser {
 		"\b\x03\b\x03\b\x07\b\x80\n\b\f\b\x0E\b\x83\v\b\x03\t\x03\t\x03\t\x03\t" +
 		"\x03\n\x03\n\x03\n\x02\x02\x04\x04\x06\v\x02\x02\x04\x02\x06\x02\b\x02" +
 		"\n\x02\f\x02\x0E\x02\x10\x02\x12\x02\x02\b\x03\x02\x04\x06\x03\x02\b\n" +
-		"\x03\x02\x04\x05\x03\x02\v\f\x03\x02\x10\x13\x04\x02  \"\"\x9D\x02\x14" +
-		"\x03\x02\x02\x02\x04\x1B\x03\x02\x02\x02\x06M\x03\x02\x02\x02\be\x03\x02" +
-		"\x02\x02\np\x03\x02\x02\x02\ft\x03\x02\x02\x02\x0E|\x03\x02\x02\x02\x10" +
-		"\x84\x03\x02\x02\x02\x12\x88\x03\x02\x02\x02\x14\x15\x05\x04\x03\x02\x15" +
-		"\x16\x07\x02\x02\x03\x16\x03\x03\x02\x02\x02\x17\x18\b\x03\x01\x02\x18" +
-		"\x19\t\x02\x02\x02\x19\x1C\x05\x04\x03\f\x1A\x1C\x05\x06\x04\x02\x1B\x17" +
-		"\x03\x02\x02\x02\x1B\x1A\x03\x02\x02\x02\x1C7\x03\x02\x02\x02\x1D\x1E" +
-		"\f\v\x02\x02\x1E\x1F\x07\x07\x02\x02\x1F6\x05\x04\x03\v !\f\n\x02\x02" +
-		"!\"\t\x03\x02\x02\"6\x05\x04\x03\v#$\f\t\x02\x02$%\t\x04\x02\x02%6\x05" +
-		"\x04\x03\n&\'\f\b\x02\x02\'(\t\x05\x02\x02(6\x05\x04\x03\t)*\f\x07\x02" +
-		"\x02*+\x07\r\x02\x02+6\x05\x04\x03\b,-\f\x06\x02\x02-.\t\x06\x02\x02." +
-		"6\x05\x04\x03\x07/0\f\x05\x02\x0201\x07\x0E\x02\x0216\x05\x04\x03\x06" +
+		"\x03\x02\x04\x05\x03\x02\v\f\x03\x02\x10\x13\x04\x02  \"\"\x02\x9D\x02" +
+		"\x14\x03\x02\x02\x02\x04\x1B\x03\x02\x02\x02\x06M\x03\x02\x02\x02\be\x03" +
+		"\x02\x02\x02\np\x03\x02\x02\x02\ft\x03\x02\x02\x02\x0E|\x03\x02\x02\x02" +
+		"\x10\x84\x03\x02\x02\x02\x12\x88\x03\x02\x02\x02\x14\x15\x05\x04\x03\x02" +
+		"\x15\x16\x07\x02\x02\x03\x16\x03\x03\x02\x02\x02\x17\x18\b\x03\x01\x02" +
+		"\x18\x19\t\x02\x02\x02\x19\x1C\x05\x04\x03\f\x1A\x1C\x05\x06\x04\x02\x1B" +
+		"\x17\x03\x02\x02\x02\x1B\x1A\x03\x02\x02\x02\x1C7\x03\x02\x02\x02\x1D" +
+		"\x1E\f\v\x02\x02\x1E\x1F\x07\x07\x02\x02\x1F6\x05\x04\x03\v !\f\n\x02" +
+		"\x02!\"\t\x03\x02\x02\"6\x05\x04\x03\v#$\f\t\x02\x02$%\t\x04\x02\x02%" +
+		"6\x05\x04\x03\n&\'\f\b\x02\x02\'(\t\x05\x02\x02(6\x05\x04\x03\t)*\f\x07" +
+		"\x02\x02*+\x07\r\x02\x02+6\x05\x04\x03\b,-\f\x06\x02\x02-.\t\x06\x02\x02" +
+		".6\x05\x04\x03\x07/0\f\x05\x02\x0201\x07\x0E\x02\x0216\x05\x04\x03\x06" +
 		"23\f\x04\x02\x0234\x07\x0F\x02\x0246\x05\x04\x03\x055\x1D\x03\x02\x02" +
 		"\x025 \x03\x02\x02\x025#\x03\x02\x02\x025&\x03\x02\x02\x025)\x03\x02\x02" +
 		"\x025,\x03\x02\x02\x025/\x03\x02\x02\x0252\x03\x02\x02\x0269\x03\x02\x02" +
@@ -1172,13 +1172,40 @@ export class PrimaryExpressionContext extends ParserRuleContext {
 		super.copyFrom(ctx);
 	}
 }
-export class FuncInvokeExpContext extends PrimaryExpressionContext {
-	public primaryExpression(): PrimaryExpressionContext {
-		return this.getRuleContext(0, PrimaryExpressionContext);
-	}
+export class ParenthesisExpContext extends PrimaryExpressionContext {
 	public OPEN_BRACKET(): TerminalNode { return this.getToken(ExpressionAntlrParser.OPEN_BRACKET, 0); }
+	public expression(): ExpressionContext {
+		return this.getRuleContext(0, ExpressionContext);
+	}
 	public CLOSE_BRACKET(): TerminalNode { return this.getToken(ExpressionAntlrParser.CLOSE_BRACKET, 0); }
-	public NON(): TerminalNode | undefined { return this.tryGetToken(ExpressionAntlrParser.NON, 0); }
+	constructor(ctx: PrimaryExpressionContext) {
+		super(ctx.parent, ctx.invokingState);
+		this.copyFrom(ctx);
+	}
+	// @Override
+	public enterRule(listener: ExpressionAntlrParserListener): void {
+		if (listener.enterParenthesisExp) {
+			listener.enterParenthesisExp(this);
+		}
+	}
+	// @Override
+	public exitRule(listener: ExpressionAntlrParserListener): void {
+		if (listener.exitParenthesisExp) {
+			listener.exitParenthesisExp(this);
+		}
+	}
+	// @Override
+	public accept<Result>(visitor: ExpressionAntlrParserVisitor<Result>): Result {
+		if (visitor.visitParenthesisExp) {
+			return visitor.visitParenthesisExp(this);
+		} else {
+			return visitor.visitChildren(this);
+		}
+	}
+}
+export class ArrayCreationExpContext extends PrimaryExpressionContext {
+	public OPEN_SQUARE_BRACKET(): TerminalNode { return this.getToken(ExpressionAntlrParser.OPEN_SQUARE_BRACKET, 0); }
+	public CLOSE_SQUARE_BRACKET(): TerminalNode { return this.getToken(ExpressionAntlrParser.CLOSE_SQUARE_BRACKET, 0); }
 	public argsList(): ArgsListContext | undefined {
 		return this.tryGetRuleContext(0, ArgsListContext);
 	}
@@ -1188,47 +1215,20 @@ export class FuncInvokeExpContext extends PrimaryExpressionContext {
 	}
 	// @Override
 	public enterRule(listener: ExpressionAntlrParserListener): void {
-		if (listener.enterFuncInvokeExp) {
-			listener.enterFuncInvokeExp(this);
+		if (listener.enterArrayCreationExp) {
+			listener.enterArrayCreationExp(this);
 		}
 	}
 	// @Override
 	public exitRule(listener: ExpressionAntlrParserListener): void {
-		if (listener.exitFuncInvokeExp) {
-			listener.exitFuncInvokeExp(this);
+		if (listener.exitArrayCreationExp) {
+			listener.exitArrayCreationExp(this);
 		}
 	}
 	// @Override
 	public accept<Result>(visitor: ExpressionAntlrParserVisitor<Result>): Result {
-		if (visitor.visitFuncInvokeExp) {
-			return visitor.visitFuncInvokeExp(this);
-		} else {
-			return visitor.visitChildren(this);
-		}
-	}
-}
-export class IdAtomContext extends PrimaryExpressionContext {
-	public IDENTIFIER(): TerminalNode { return this.getToken(ExpressionAntlrParser.IDENTIFIER, 0); }
-	constructor(ctx: PrimaryExpressionContext) {
-		super(ctx.parent, ctx.invokingState);
-		this.copyFrom(ctx);
-	}
-	// @Override
-	public enterRule(listener: ExpressionAntlrParserListener): void {
-		if (listener.enterIdAtom) {
-			listener.enterIdAtom(this);
-		}
-	}
-	// @Override
-	public exitRule(listener: ExpressionAntlrParserListener): void {
-		if (listener.exitIdAtom) {
-			listener.exitIdAtom(this);
-		}
-	}
-	// @Override
-	public accept<Result>(visitor: ExpressionAntlrParserVisitor<Result>): Result {
-		if (visitor.visitIdAtom) {
-			return visitor.visitIdAtom(this);
+		if (visitor.visitArrayCreationExp) {
+			return visitor.visitArrayCreationExp(this);
 		} else {
 			return visitor.visitChildren(this);
 		}
@@ -1265,6 +1265,33 @@ export class JsonCreationExpContext extends PrimaryExpressionContext {
 		}
 	}
 }
+export class NumericAtomContext extends PrimaryExpressionContext {
+	public NUMBER(): TerminalNode { return this.getToken(ExpressionAntlrParser.NUMBER, 0); }
+	constructor(ctx: PrimaryExpressionContext) {
+		super(ctx.parent, ctx.invokingState);
+		this.copyFrom(ctx);
+	}
+	// @Override
+	public enterRule(listener: ExpressionAntlrParserListener): void {
+		if (listener.enterNumericAtom) {
+			listener.enterNumericAtom(this);
+		}
+	}
+	// @Override
+	public exitRule(listener: ExpressionAntlrParserListener): void {
+		if (listener.exitNumericAtom) {
+			listener.exitNumericAtom(this);
+		}
+	}
+	// @Override
+	public accept<Result>(visitor: ExpressionAntlrParserVisitor<Result>): Result {
+		if (visitor.visitNumericAtom) {
+			return visitor.visitNumericAtom(this);
+		} else {
+			return visitor.visitChildren(this);
+		}
+	}
+}
 export class StringAtomContext extends PrimaryExpressionContext {
 	public STRING(): TerminalNode { return this.getToken(ExpressionAntlrParser.STRING, 0); }
 	constructor(ctx: PrimaryExpressionContext) {
@@ -1292,35 +1319,28 @@ export class StringAtomContext extends PrimaryExpressionContext {
 		}
 	}
 }
-export class IndexAccessExpContext extends PrimaryExpressionContext {
-	public primaryExpression(): PrimaryExpressionContext {
-		return this.getRuleContext(0, PrimaryExpressionContext);
-	}
-	public OPEN_SQUARE_BRACKET(): TerminalNode { return this.getToken(ExpressionAntlrParser.OPEN_SQUARE_BRACKET, 0); }
-	public expression(): ExpressionContext {
-		return this.getRuleContext(0, ExpressionContext);
-	}
-	public CLOSE_SQUARE_BRACKET(): TerminalNode { return this.getToken(ExpressionAntlrParser.CLOSE_SQUARE_BRACKET, 0); }
+export class IdAtomContext extends PrimaryExpressionContext {
+	public IDENTIFIER(): TerminalNode { return this.getToken(ExpressionAntlrParser.IDENTIFIER, 0); }
 	constructor(ctx: PrimaryExpressionContext) {
 		super(ctx.parent, ctx.invokingState);
 		this.copyFrom(ctx);
 	}
 	// @Override
 	public enterRule(listener: ExpressionAntlrParserListener): void {
-		if (listener.enterIndexAccessExp) {
-			listener.enterIndexAccessExp(this);
+		if (listener.enterIdAtom) {
+			listener.enterIdAtom(this);
 		}
 	}
 	// @Override
 	public exitRule(listener: ExpressionAntlrParserListener): void {
-		if (listener.exitIndexAccessExp) {
-			listener.exitIndexAccessExp(this);
+		if (listener.exitIdAtom) {
+			listener.exitIdAtom(this);
 		}
 	}
 	// @Override
 	public accept<Result>(visitor: ExpressionAntlrParserVisitor<Result>): Result {
-		if (visitor.visitIndexAccessExp) {
-			return visitor.visitIndexAccessExp(this);
+		if (visitor.visitIdAtom) {
+			return visitor.visitIdAtom(this);
 		} else {
 			return visitor.visitChildren(this);
 		}
@@ -1386,67 +1406,13 @@ export class MemberAccessExpContext extends PrimaryExpressionContext {
 		}
 	}
 }
-export class ParenthesisExpContext extends PrimaryExpressionContext {
+export class FuncInvokeExpContext extends PrimaryExpressionContext {
+	public primaryExpression(): PrimaryExpressionContext {
+		return this.getRuleContext(0, PrimaryExpressionContext);
+	}
 	public OPEN_BRACKET(): TerminalNode { return this.getToken(ExpressionAntlrParser.OPEN_BRACKET, 0); }
-	public expression(): ExpressionContext {
-		return this.getRuleContext(0, ExpressionContext);
-	}
 	public CLOSE_BRACKET(): TerminalNode { return this.getToken(ExpressionAntlrParser.CLOSE_BRACKET, 0); }
-	constructor(ctx: PrimaryExpressionContext) {
-		super(ctx.parent, ctx.invokingState);
-		this.copyFrom(ctx);
-	}
-	// @Override
-	public enterRule(listener: ExpressionAntlrParserListener): void {
-		if (listener.enterParenthesisExp) {
-			listener.enterParenthesisExp(this);
-		}
-	}
-	// @Override
-	public exitRule(listener: ExpressionAntlrParserListener): void {
-		if (listener.exitParenthesisExp) {
-			listener.exitParenthesisExp(this);
-		}
-	}
-	// @Override
-	public accept<Result>(visitor: ExpressionAntlrParserVisitor<Result>): Result {
-		if (visitor.visitParenthesisExp) {
-			return visitor.visitParenthesisExp(this);
-		} else {
-			return visitor.visitChildren(this);
-		}
-	}
-}
-export class NumericAtomContext extends PrimaryExpressionContext {
-	public NUMBER(): TerminalNode { return this.getToken(ExpressionAntlrParser.NUMBER, 0); }
-	constructor(ctx: PrimaryExpressionContext) {
-		super(ctx.parent, ctx.invokingState);
-		this.copyFrom(ctx);
-	}
-	// @Override
-	public enterRule(listener: ExpressionAntlrParserListener): void {
-		if (listener.enterNumericAtom) {
-			listener.enterNumericAtom(this);
-		}
-	}
-	// @Override
-	public exitRule(listener: ExpressionAntlrParserListener): void {
-		if (listener.exitNumericAtom) {
-			listener.exitNumericAtom(this);
-		}
-	}
-	// @Override
-	public accept<Result>(visitor: ExpressionAntlrParserVisitor<Result>): Result {
-		if (visitor.visitNumericAtom) {
-			return visitor.visitNumericAtom(this);
-		} else {
-			return visitor.visitChildren(this);
-		}
-	}
-}
-export class ArrayCreationExpContext extends PrimaryExpressionContext {
-	public OPEN_SQUARE_BRACKET(): TerminalNode { return this.getToken(ExpressionAntlrParser.OPEN_SQUARE_BRACKET, 0); }
-	public CLOSE_SQUARE_BRACKET(): TerminalNode { return this.getToken(ExpressionAntlrParser.CLOSE_SQUARE_BRACKET, 0); }
+	public NON(): TerminalNode | undefined { return this.tryGetToken(ExpressionAntlrParser.NON, 0); }
 	public argsList(): ArgsListContext | undefined {
 		return this.tryGetRuleContext(0, ArgsListContext);
 	}
@@ -1456,20 +1422,54 @@ export class ArrayCreationExpContext extends PrimaryExpressionContext {
 	}
 	// @Override
 	public enterRule(listener: ExpressionAntlrParserListener): void {
-		if (listener.enterArrayCreationExp) {
-			listener.enterArrayCreationExp(this);
+		if (listener.enterFuncInvokeExp) {
+			listener.enterFuncInvokeExp(this);
 		}
 	}
 	// @Override
 	public exitRule(listener: ExpressionAntlrParserListener): void {
-		if (listener.exitArrayCreationExp) {
-			listener.exitArrayCreationExp(this);
+		if (listener.exitFuncInvokeExp) {
+			listener.exitFuncInvokeExp(this);
 		}
 	}
 	// @Override
 	public accept<Result>(visitor: ExpressionAntlrParserVisitor<Result>): Result {
-		if (visitor.visitArrayCreationExp) {
-			return visitor.visitArrayCreationExp(this);
+		if (visitor.visitFuncInvokeExp) {
+			return visitor.visitFuncInvokeExp(this);
+		} else {
+			return visitor.visitChildren(this);
+		}
+	}
+}
+export class IndexAccessExpContext extends PrimaryExpressionContext {
+	public primaryExpression(): PrimaryExpressionContext {
+		return this.getRuleContext(0, PrimaryExpressionContext);
+	}
+	public OPEN_SQUARE_BRACKET(): TerminalNode { return this.getToken(ExpressionAntlrParser.OPEN_SQUARE_BRACKET, 0); }
+	public expression(): ExpressionContext {
+		return this.getRuleContext(0, ExpressionContext);
+	}
+	public CLOSE_SQUARE_BRACKET(): TerminalNode { return this.getToken(ExpressionAntlrParser.CLOSE_SQUARE_BRACKET, 0); }
+	constructor(ctx: PrimaryExpressionContext) {
+		super(ctx.parent, ctx.invokingState);
+		this.copyFrom(ctx);
+	}
+	// @Override
+	public enterRule(listener: ExpressionAntlrParserListener): void {
+		if (listener.enterIndexAccessExp) {
+			listener.enterIndexAccessExp(this);
+		}
+	}
+	// @Override
+	public exitRule(listener: ExpressionAntlrParserListener): void {
+		if (listener.exitIndexAccessExp) {
+			listener.exitIndexAccessExp(this);
+		}
+	}
+	// @Override
+	public accept<Result>(visitor: ExpressionAntlrParserVisitor<Result>): Result {
+		if (visitor.visitIndexAccessExp) {
+			return visitor.visitIndexAccessExp(this);
 		} else {
 			return visitor.visitChildren(this);
 		}

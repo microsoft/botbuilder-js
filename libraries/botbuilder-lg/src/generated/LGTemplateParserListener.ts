@@ -1,12 +1,12 @@
-// Generated from ../LGTemplateParser.g4 by ANTLR 4.6-SNAPSHOT
+// Generated from src/LGTemplateParser.g4 by ANTLR 4.7.3-SNAPSHOT
 
 
 import { ParseTreeListener } from "antlr4ts/tree/ParseTreeListener";
 
-import { SwitchCaseBodyContext } from "./LGTemplateParser";
 import { NormalBodyContext } from "./LGTemplateParser";
-import { StructuredBodyContext } from "./LGTemplateParser";
 import { IfElseBodyContext } from "./LGTemplateParser";
+import { SwitchCaseBodyContext } from "./LGTemplateParser";
+import { StructuredBodyContext } from "./LGTemplateParser";
 import { TemplateContext } from "./LGTemplateParser";
 import { BodyContext } from "./LGTemplateParser";
 import { StructuredTemplateBodyContext } from "./LGTemplateParser";
@@ -36,19 +36,6 @@ import { SwitchCaseStatContext } from "./LGTemplateParser";
  */
 export interface LGTemplateParserListener extends ParseTreeListener {
 	/**
-	 * Enter a parse tree produced by the `switchCaseBody`
-	 * labeled alternative in `LGTemplateParser.body`.
-	 * @param ctx the parse tree
-	 */
-	enterSwitchCaseBody?: (ctx: SwitchCaseBodyContext) => void;
-	/**
-	 * Exit a parse tree produced by the `switchCaseBody`
-	 * labeled alternative in `LGTemplateParser.body`.
-	 * @param ctx the parse tree
-	 */
-	exitSwitchCaseBody?: (ctx: SwitchCaseBodyContext) => void;
-
-	/**
 	 * Enter a parse tree produced by the `normalBody`
 	 * labeled alternative in `LGTemplateParser.body`.
 	 * @param ctx the parse tree
@@ -62,19 +49,6 @@ export interface LGTemplateParserListener extends ParseTreeListener {
 	exitNormalBody?: (ctx: NormalBodyContext) => void;
 
 	/**
-	 * Enter a parse tree produced by the `structuredBody`
-	 * labeled alternative in `LGTemplateParser.body`.
-	 * @param ctx the parse tree
-	 */
-	enterStructuredBody?: (ctx: StructuredBodyContext) => void;
-	/**
-	 * Exit a parse tree produced by the `structuredBody`
-	 * labeled alternative in `LGTemplateParser.body`.
-	 * @param ctx the parse tree
-	 */
-	exitStructuredBody?: (ctx: StructuredBodyContext) => void;
-
-	/**
 	 * Enter a parse tree produced by the `ifElseBody`
 	 * labeled alternative in `LGTemplateParser.body`.
 	 * @param ctx the parse tree
@@ -86,6 +60,32 @@ export interface LGTemplateParserListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	exitIfElseBody?: (ctx: IfElseBodyContext) => void;
+
+	/**
+	 * Enter a parse tree produced by the `switchCaseBody`
+	 * labeled alternative in `LGTemplateParser.body`.
+	 * @param ctx the parse tree
+	 */
+	enterSwitchCaseBody?: (ctx: SwitchCaseBodyContext) => void;
+	/**
+	 * Exit a parse tree produced by the `switchCaseBody`
+	 * labeled alternative in `LGTemplateParser.body`.
+	 * @param ctx the parse tree
+	 */
+	exitSwitchCaseBody?: (ctx: SwitchCaseBodyContext) => void;
+
+	/**
+	 * Enter a parse tree produced by the `structuredBody`
+	 * labeled alternative in `LGTemplateParser.body`.
+	 * @param ctx the parse tree
+	 */
+	enterStructuredBody?: (ctx: StructuredBodyContext) => void;
+	/**
+	 * Exit a parse tree produced by the `structuredBody`
+	 * labeled alternative in `LGTemplateParser.body`.
+	 * @param ctx the parse tree
+	 */
+	exitStructuredBody?: (ctx: StructuredBodyContext) => void;
 
 	/**
 	 * Enter a parse tree produced by `LGTemplateParser.template`.

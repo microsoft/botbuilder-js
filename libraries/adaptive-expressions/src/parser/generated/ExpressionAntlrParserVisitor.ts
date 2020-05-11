@@ -1,18 +1,18 @@
-// Generated from ../ExpressionAntlrParser.g4 by ANTLR 4.6-SNAPSHOT
+// Generated from src/parser/ExpressionAntlrParser.g4 by ANTLR 4.7.3-SNAPSHOT
 
 
 import { ParseTreeVisitor } from "antlr4ts/tree/ParseTreeVisitor";
 
-import { FuncInvokeExpContext } from "./ExpressionAntlrParser";
-import { IdAtomContext } from "./ExpressionAntlrParser";
+import { ParenthesisExpContext } from "./ExpressionAntlrParser";
+import { ArrayCreationExpContext } from "./ExpressionAntlrParser";
 import { JsonCreationExpContext } from "./ExpressionAntlrParser";
+import { NumericAtomContext } from "./ExpressionAntlrParser";
 import { StringAtomContext } from "./ExpressionAntlrParser";
-import { IndexAccessExpContext } from "./ExpressionAntlrParser";
+import { IdAtomContext } from "./ExpressionAntlrParser";
 import { StringInterpolationAtomContext } from "./ExpressionAntlrParser";
 import { MemberAccessExpContext } from "./ExpressionAntlrParser";
-import { ParenthesisExpContext } from "./ExpressionAntlrParser";
-import { NumericAtomContext } from "./ExpressionAntlrParser";
-import { ArrayCreationExpContext } from "./ExpressionAntlrParser";
+import { FuncInvokeExpContext } from "./ExpressionAntlrParser";
+import { IndexAccessExpContext } from "./ExpressionAntlrParser";
 import { UnaryOpExpContext } from "./ExpressionAntlrParser";
 import { BinaryOpExpContext } from "./ExpressionAntlrParser";
 import { PrimaryExpContext } from "./ExpressionAntlrParser";
@@ -36,20 +36,20 @@ import { KeyContext } from "./ExpressionAntlrParser";
  */
 export interface ExpressionAntlrParserVisitor<Result> extends ParseTreeVisitor<Result> {
 	/**
-	 * Visit a parse tree produced by the `funcInvokeExp`
+	 * Visit a parse tree produced by the `parenthesisExp`
 	 * labeled alternative in `ExpressionAntlrParser.primaryExpression`.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	visitFuncInvokeExp?: (ctx: FuncInvokeExpContext) => Result;
+	visitParenthesisExp?: (ctx: ParenthesisExpContext) => Result;
 
 	/**
-	 * Visit a parse tree produced by the `idAtom`
+	 * Visit a parse tree produced by the `arrayCreationExp`
 	 * labeled alternative in `ExpressionAntlrParser.primaryExpression`.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	visitIdAtom?: (ctx: IdAtomContext) => Result;
+	visitArrayCreationExp?: (ctx: ArrayCreationExpContext) => Result;
 
 	/**
 	 * Visit a parse tree produced by the `jsonCreationExp`
@@ -60,6 +60,14 @@ export interface ExpressionAntlrParserVisitor<Result> extends ParseTreeVisitor<R
 	visitJsonCreationExp?: (ctx: JsonCreationExpContext) => Result;
 
 	/**
+	 * Visit a parse tree produced by the `numericAtom`
+	 * labeled alternative in `ExpressionAntlrParser.primaryExpression`.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	visitNumericAtom?: (ctx: NumericAtomContext) => Result;
+
+	/**
 	 * Visit a parse tree produced by the `stringAtom`
 	 * labeled alternative in `ExpressionAntlrParser.primaryExpression`.
 	 * @param ctx the parse tree
@@ -68,12 +76,12 @@ export interface ExpressionAntlrParserVisitor<Result> extends ParseTreeVisitor<R
 	visitStringAtom?: (ctx: StringAtomContext) => Result;
 
 	/**
-	 * Visit a parse tree produced by the `indexAccessExp`
+	 * Visit a parse tree produced by the `idAtom`
 	 * labeled alternative in `ExpressionAntlrParser.primaryExpression`.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	visitIndexAccessExp?: (ctx: IndexAccessExpContext) => Result;
+	visitIdAtom?: (ctx: IdAtomContext) => Result;
 
 	/**
 	 * Visit a parse tree produced by the `stringInterpolationAtom`
@@ -92,28 +100,20 @@ export interface ExpressionAntlrParserVisitor<Result> extends ParseTreeVisitor<R
 	visitMemberAccessExp?: (ctx: MemberAccessExpContext) => Result;
 
 	/**
-	 * Visit a parse tree produced by the `parenthesisExp`
+	 * Visit a parse tree produced by the `funcInvokeExp`
 	 * labeled alternative in `ExpressionAntlrParser.primaryExpression`.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	visitParenthesisExp?: (ctx: ParenthesisExpContext) => Result;
+	visitFuncInvokeExp?: (ctx: FuncInvokeExpContext) => Result;
 
 	/**
-	 * Visit a parse tree produced by the `numericAtom`
+	 * Visit a parse tree produced by the `indexAccessExp`
 	 * labeled alternative in `ExpressionAntlrParser.primaryExpression`.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	visitNumericAtom?: (ctx: NumericAtomContext) => Result;
-
-	/**
-	 * Visit a parse tree produced by the `arrayCreationExp`
-	 * labeled alternative in `ExpressionAntlrParser.primaryExpression`.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	visitArrayCreationExp?: (ctx: ArrayCreationExpContext) => Result;
+	visitIndexAccessExp?: (ctx: IndexAccessExpContext) => Result;
 
 	/**
 	 * Visit a parse tree produced by the `unaryOpExp`

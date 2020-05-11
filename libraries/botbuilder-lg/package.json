@@ -20,7 +20,7 @@
   "typings": "./lib/index.d.ts",
   "dependencies": {
     "adaptive-expressions": "4.1.6",
-    "antlr4ts": "0.5.0-alpha.1",
+    "antlr4ts": "^0.5.0-alpha.3",
     "lodash": "^4.17.11",
     "path": "^0.12.7",
     "uuid": "^3.3.3"
@@ -32,14 +32,16 @@
     "mocha": "^5.2.0",
     "nyc": "^15.0.0",
     "ts-node": "^4.1.0",
-    "typescript": "3.5.3"
+    "typescript": "3.5.3",
+    "antlr4ts-cli": "^0.5.0-alpha.3"
   },
   "scripts": {
-    "build": "tsc",
+    "build": "npm run antlr-build && tsc",
     "build-docs": "typedoc --theme markdown --entryPoint botbuilder-lg --excludePrivate --includeDeclarations --ignoreCompilerErrors --module amd --out ..\\..\\doc\\botbuilder-lg .\\lib\\index.d.ts --hideGenerator --name \"Bot Builder SDK - LG\" --readme none",
     "clean": "erase /q /s .\\lib",
     "set-version": "npm version --allow-same-version ${Version}",
-    "test": "tsc && mocha tests/ --timeout 60000"
+    "test": "tsc && mocha tests/ --timeout 60000",
+    "antlr-build": "antlr4ts src/LGFileLexer.g4 -o src/generated && antlr4ts src/LGFileParser.g4 -visitor -o src/generated && antlr4ts src/LGTemplateLexer.g4 -o src/generated && antlr4ts src/LGTemplateParser.g4 -visitor -o src/generated"
   },
   "files": [
     "/lib",
