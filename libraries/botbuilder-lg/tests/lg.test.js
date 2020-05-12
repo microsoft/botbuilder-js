@@ -56,10 +56,15 @@ describe('LG', function() {
 
     it('TestMultiline', function() {
         let templates = Templates.parseFile(GetExampleFilePath('Multiline.lg'));
-        let evaled = templates.evaluate('template2').toString();
+        let evaled = templates.evaluate('template1').toString();
         let generatedTemplates = Templates.parseText(evaled);
-        let result = generatedTemplates.evaluate('template3');
-        assert.strictEqual('hi', result, `Evaled is ${ evaled }`);
+        let result = generatedTemplates.evaluate('generated1');
+        assert.strictEqual('hi', result, `Evaled is ${ result.trim() }`);
+
+        evaled = templates.evaluate('template2', {evaluateNow: 'please input'}).toString();
+        generatedTemplates = Templates.parseText(evaled);
+        result = generatedTemplates.evaluate('generated2', {name: 'jack'});
+        assert.strictEqual('please input jack', result.trim(), `Evaled is ${ result.trim() }`);
     });
 
     it('TestMultiLineExprLG', function() {
