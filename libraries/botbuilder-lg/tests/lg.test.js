@@ -54,6 +54,14 @@ describe('LG', function() {
         assert.strictEqual(evaled === 'Good evening' || evaled === 'Evening! ', true, `Evaled is ${ evaled }`);
     });
 
+    it('TestMultiline', function() {
+        let templates = Templates.parseFile(GetExampleFilePath('Multiline.lg'));
+        let evaled = templates.evaluate('template2').toString();
+        let generatedTemplates = Templates.parseText(evaled);
+        let result = generatedTemplates.evaluate('template3');
+        assert.strictEqual('hi', result, `Evaled is ${ evaled }`);
+    });
+
     it('TestMultiLineExprLG', function() {
         let templates = Templates.parseFile(GetExampleFilePath('MultiLineExpr.lg'));
 
