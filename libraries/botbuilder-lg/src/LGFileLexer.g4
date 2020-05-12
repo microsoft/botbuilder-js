@@ -17,7 +17,7 @@ IMPORT : WHITESPACE* '[' ~[\r\n[\]]*? ']' '(' ~[\r\n()]*? ')' WHITESPACE* { !thi
 
 TEMPLATE_NAME_LINE : WHITESPACE* '#' ~('\r'|'\n')* { this.startTemplate = true; };
 
-MULTILINE_PREFIX: WHITESPACE* '-' WHITESPACE* '```' { this.startTemplate && !this.inMultiline}? {this.inMultiline = true;} -> pushMode(MULTILINE_MODE);
+MULTILINE_PREFIX: WHITESPACE* '-' WHITESPACE* '```' ~('\r'|'\n')* { this.startTemplate && !this.inMultiline}? {this.inMultiline = true;} -> pushMode(MULTILINE_MODE);
 
 TEMPLATE_BODY_LINE : ~('\r'|'\n')+ { this.startTemplate }?;
 
