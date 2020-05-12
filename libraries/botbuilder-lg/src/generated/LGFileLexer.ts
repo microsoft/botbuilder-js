@@ -145,7 +145,7 @@ export class LGFileLexer extends Lexer {
 	private OPTION_sempred(_localctx: RuleContext, predIndex: number): boolean {
 		switch (predIndex) {
 		case 0:
-			return  !this.startTemplate;
+			return  !this.startTemplate ;
 		}
 		return true;
 	}

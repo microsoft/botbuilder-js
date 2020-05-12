@@ -9,7 +9,7 @@ fragment WHITESPACE : ' '|'\t'|'\ufeff'|'\u00a0';
 
 NEWLINE : '\r'? '\n' {this.startLine = true;};
 
-OPTION : WHITESPACE* '>' WHITESPACE* '!#' ~('\r'|'\n')+ { !this.startTemplate}?;
+OPTION : WHITESPACE* '>' WHITESPACE* '!#' ~('\r'|'\n')+ { !this.startTemplate }?;
 
 COMMENT : WHITESPACE* '>' ~('\r'|'\n')* { !this.startTemplate }?;
 
