@@ -40,12 +40,12 @@ describe('QnAMakerDialog', function() {
     });
 
     describe('getQnAClient()', () => {
-        it('should return unmodified v5 hostName value', () => {
+        it('should return unmodified v5 hostName value', async () => {
             const V5_HOSTNAME = 'https://qnamaker-acom.azure.com/qnamaker/v5.0';
     
             // Create QnAMakerDialog
             const qna = new QnAMakerDialog(KB_ID, ENDPOINT_KEY, V5_HOSTNAME);
-            const client = qna.getQnAClient();
+            const client = await qna.getQnAClient({});
     
             ok(client instanceof QnAMaker);
             strictEqual(client.endpoint.knowledgeBaseId,  KB_ID);
@@ -53,13 +53,13 @@ describe('QnAMakerDialog', function() {
             strictEqual(client.endpoint.host, V5_HOSTNAME);
         });
     
-        it('should construct v4 API endpoint', () => {
+        it('should construct v4 API endpoint', async () => {
             const INCOMPLETE_HOSTNAME = 'myqnainstance';
             const HOSTNAME = 'https://myqnainstance.azurewebsites.net/qnamaker';
     
             // Create QnAMakerDialog with incomplete hostname
             const qnaDialog = new QnAMakerDialog(KB_ID, ENDPOINT_KEY, INCOMPLETE_HOSTNAME);
-            const fixedClient = qnaDialog.getQnAClient();
+            const fixedClient = await qnaDialog.getQnAClient({});
     
             ok(fixedClient instanceof QnAMaker);
             strictEqual(fixedClient.endpoint.knowledgeBaseId, KB_ID);
@@ -67,13 +67,13 @@ describe('QnAMakerDialog', function() {
             strictEqual(fixedClient.endpoint.host, HOSTNAME);
         });
     
-        it('should construct BAD v4 hostnames', () => {
+        it('should construct BAD v4 hostnames', async () => {
             const createHostName = (hostName) => `https://${ hostName }.azurewebsites.net/qnamaker`;
             const NOT_V5_HOSTNAME = 'myqnainstance.net/qnamaker';
     
             // Missing authority
             const noAuthority = new QnAMakerDialog(KB_ID, ENDPOINT_KEY, NOT_V5_HOSTNAME);
-            const noAuthorityClient = noAuthority.getQnAClient();
+            const noAuthorityClient = await noAuthority.getQnAClient({});
     
             ok(noAuthorityClient instanceof QnAMaker);
             strictEqual(noAuthorityClient.endpoint.knowledgeBaseId,  KB_ID);
