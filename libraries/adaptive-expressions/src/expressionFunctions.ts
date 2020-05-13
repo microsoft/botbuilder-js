@@ -1564,7 +1564,7 @@ export class ExpressionFunctions {
         ({value: parsed, error} = ExpressionFunctions.parseTimestamp(timeStamp));
         if (!error) {
             let dt: any = moment(parsed).utc();
-            let addedTime: Moment = dt;
+            let addedTime = dt;
             let timeUnitMark: string;
             switch (timeUnit) {
                 case 'Second': {
@@ -1673,7 +1673,7 @@ export class ExpressionFunctions {
             error = this.verifyTimeStamp(timeStamp);
             if (!error) {
                 try {
-                    const sourceTime: Moment = tz(timeStamp, timeZone);
+                    const sourceTime = tz(timeStamp, timeZone);
                     formattedSourceTime = sourceTime.format();
                 } catch (e) {
                     error = `${timeStamp} with ${timeZone} is not a valid timestamp with specified timeZone:`;
@@ -1709,11 +1709,11 @@ export class ExpressionFunctions {
     private static startOfDay(timeStamp: string, format?: string): {value: any; error: string} {
         let result: string;
         let error: string;
-        let parsed: Moment;
+        let parsed: any;
         ({value: parsed, error} = ExpressionFunctions.parseTimestamp(timeStamp));
         if (!error) {
             const dt = moment(parsed).utc();
-            const startOfDay: Moment = dt.hours(0).minutes(0).second(0).millisecond(0);
+            const startOfDay = dt.hours(0).minutes(0).second(0).millisecond(0);
             ({value: result, error} = ExpressionFunctions.returnFormattedTimeStampStr(startOfDay, format));
         }
 
@@ -1723,11 +1723,11 @@ export class ExpressionFunctions {
     private static startOfHour(timeStamp: string, format?: string): {value: any; error: string} {
         let result: string;
         let error: string;
-        let parsed: Moment;
+        let parsed: any;
         ({value: parsed, error} = ExpressionFunctions.parseTimestamp(timeStamp));
         if (!error) {
             const dt = moment(parsed).utc();
-            const startofHour: Moment = dt.minutes(0).second(0).millisecond(0);
+            const startofHour = dt.minutes(0).second(0).millisecond(0);
             ({value: result, error} = ExpressionFunctions.returnFormattedTimeStampStr(startofHour, format));
         }
 
@@ -1737,11 +1737,11 @@ export class ExpressionFunctions {
     private static startOfMonth(timeStamp: string, format?: string): {value: any; error: string} {
         let result: string;
         let error: string;
-        let parsed: Moment;
+        let parsed: any;
         ({value: parsed, error} = ExpressionFunctions.parseTimestamp(timeStamp));
         if (!error) {
             const dt = moment(parsed).utc();
-            const startofMonth: Moment = dt.date(1).hours(0).minutes(0).second(0).millisecond(0);
+            const startofMonth = dt.date(1).hours(0).minutes(0).second(0).millisecond(0);
             ({value: result, error} = ExpressionFunctions.returnFormattedTimeStampStr(startofMonth, format));
         }
 
@@ -2410,50 +2410,10 @@ export class ExpressionFunctions {
                 ReturnType.String,
                 (expression: Expression): void => ExpressionFunctions.validateOrder(expression, [ReturnType.String], ReturnType.Array, ReturnType.String)),
             // datetime
-            ExpressionFunctions.timeTransform(ExpressionType.AddDays, (ts: string, num: any): any => {
-                let value: string; 
-                let error: string;
-                ({value, error} = ExpressionFunctions.parseTimestamp(ts));
-                if (!error) {
-                    const parsed: Moment = moment(value).utc();
-                    return parsed.add(num, 'd')
-                }
-
-                return undefined;
-                }),
-            ExpressionFunctions.timeTransform(ExpressionType.AddHours, (ts: string, num: any): any => {
-                let value: string; 
-                let error: string;
-                ({value, error} = ExpressionFunctions.parseTimestamp(ts));
-                if (!error) {
-                    const parsed: Moment = moment(value).utc();
-                    return parsed.add(num, 'h')
-                }
-
-                return undefined;
-                }),
-            ExpressionFunctions.timeTransform(ExpressionType.AddMinutes, (ts: string, num: any): any => {
-                let value: string; 
-                let error: string;
-                ({value, error} = ExpressionFunctions.parseTimestamp(ts));
-                if (!error) {
-                    const parsed: Moment = moment(value).utc();
-                    return parsed.add(num, 'minutes')
-                }
-
-                return undefined;
-                }),
-            ExpressionFunctions.timeTransform(ExpressionType.AddSeconds, (ts: string, num: any): any => {
-                let value: string; 
-                let error: string;
-                ({value, error} = ExpressionFunctions.parseTimestamp(ts));
-                if (!error) {
-                    const parsed: Moment = moment(value).utc();
-                    return parsed.add(num, 'seconds')
-                }
-
-                return undefined;
-                }),
+            ExpressionFunctions.timeTransform(ExpressionType.AddDays, (ts: string, num: any): any =>  moment(ts).utc().add(num, 'd')),
+            ExpressionFunctions.timeTransform(ExpressionType.AddHours, (ts: string, num: any): any => moment(ts).utc().add(num, 'h')),
+            ExpressionFunctions.timeTransform(ExpressionType.AddMinutes, (ts: string, num: any): any => moment(ts).utc().add(num, 'minutes')),
+            ExpressionFunctions.timeTransform(ExpressionType.AddSeconds, (ts: string, num: any): any => moment(ts).utc().add(num, 'seconds')),
             new ExpressionEvaluator(
                 ExpressionType.DayOfMonth,
                 ExpressionFunctions.applyWithError(
@@ -2461,9 +2421,8 @@ export class ExpressionFunctions {
                         let error: string;
                         let value: any;
                         let result: number;
-                        ({value, error} = ExpressionFunctions.parseTimestamp(timestamp));
                         if (!error) {
-                            const dt: Moment = moment(value).utc();
+                            const dt = moment(timestamp).utc();
                             result = dt.date();
                         }
 
@@ -2479,9 +2438,8 @@ export class ExpressionFunctions {
                         let error: string;
                         let value: any;
                         let result: number;
-                        ({value, error} = ExpressionFunctions.parseTimestamp(timestamp));
                         if (!error) {
-                            const dt: Moment = moment(value).utc();
+                            const dt = moment(timestamp).utc();
                             result = dt.day();
                         }
 
@@ -2497,9 +2455,8 @@ export class ExpressionFunctions {
                         let error: string;
                         let value: any;
                         let result: number;
-                        ({value, error} = ExpressionFunctions.parseTimestamp(timestamp));
                         if (!error) {
-                            const dt: Moment = moment(value).utc();
+                            const dt = moment(timestamp).utc();
                             result = dt.dayOfYear();
                         }
 
@@ -2515,9 +2472,8 @@ export class ExpressionFunctions {
                         let error: string;
                         let value: any;
                         let result: number;
-                        ({value, error} = ExpressionFunctions.parseTimestamp(timestamp));
                         if (!error) {
-                            const dt: Moment = moment(value).utc();
+                            const dt = moment(timestamp).utc();
                             result = dt.month() + 1;
                         }
 
@@ -2533,9 +2489,8 @@ export class ExpressionFunctions {
                         let error: string;
                         let value: any;
                         let result: string;
-                        ({value, error} = ExpressionFunctions.parseTimestamp(timestamp));
                         if (!error) {
-                            const dt: Moment = moment(value).utc();
+                            const dt = moment(timestamp).utc();
                             result = dt.format('M/DD/YYYY')
                         }
 
@@ -2551,9 +2506,8 @@ export class ExpressionFunctions {
                         let error: string;
                         let value: any;
                         let result: number;
-                        ({value, error} = ExpressionFunctions.parseTimestamp(timestamp));
                         if (!error) {
-                            const dt: Moment = moment(value).utc();
+                            const dt = moment(timestamp).utc();
                             result = dt.year();
                         }
 
