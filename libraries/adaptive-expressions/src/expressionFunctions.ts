@@ -8,7 +8,7 @@
 import {TimexProperty} from '@microsoft/recognizers-text-data-types-timex-expression';
 import * as jsPath from 'jspath';
 import * as lodash from 'lodash';
-import moment, {Moment, parseZone, parseTwoDigitYear} from 'moment';
+import moment, {Moment, parseZone} from 'moment';
 import {tz} from 'moment-timezone';
 import {CommonRegex} from './commonRegex';
 import {Constant} from './constant';
