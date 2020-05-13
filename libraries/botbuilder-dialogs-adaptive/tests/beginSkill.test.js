@@ -12,7 +12,7 @@ const {
 } = require('botbuilder-core');
 const { BoolExpression, StringExpression } = require('adaptive-expressions');
 const { DialogManager, DialogTurnStatus } = require('botbuilder-dialogs');
-const { AdaptiveSkillDialog } = require('../')
+const { BeginSkill } = require('../lib')
 
 
 class SimpleConversationIdFactory extends SkillConversationIdFactoryBase {
@@ -55,7 +55,7 @@ class SimpleConversationIdFactory extends SkillConversationIdFactoryBase {
     }
 }
 
-describe('SkillDialog', function() {
+describe('BeginSkill', function() {
     this.timeout(3000);
 
     let activitySent; // Activity
@@ -79,10 +79,10 @@ describe('SkillDialog', function() {
     const conversationState = new ConversationState(new MemoryStorage());
     const dm = new DialogManager();
     dm.conversationState = conversationState;
-    AdaptiveSkillDialog.setSkillHostOptions(dm, skillClient, new SimpleConversationIdFactory());
+    BeginSkill.setSkillHostOptions(dm, skillClient, new SimpleConversationIdFactory());
 
     // Setup skill dialog
-    const dialog = new AdaptiveSkillDialog();
+    const dialog = new BeginSkill();
     setSkillDialogOptions(dialog);
     dm.rootDialog = dialog;
 
@@ -122,7 +122,7 @@ function setSkillDialogOptions(dialog) {
  */
 function createSkillClientAndStub(captureAction, returnStatusCode = StatusCodes.OK) {
     // This require should not fail as this method should only be called after verifying that botbuilder is resolvable.
-    const { BotFrameworkHttpClient } = require('../../botbuilder');
+    const { BotFrameworkHttpClient } = require('../../botbuilder/lib');
 
     if (captureAction && typeof captureAction !== 'function') {
         throw new TypeError(`Failed test arrangement - createSkillClientAndStub() received ${typeof captureAction} instead of undefined or a function.`);

@@ -13,7 +13,7 @@ import { Activity, ActivityTypes, BotFrameworkClient, SkillConversationIdFactory
 const SKILL_CLIENT = Symbol('skillClient');
 const CONVERSATION_ID_FACTORY = Symbol('conversationIdFactory');
 
-export class AdaptiveSkillDialog extends SkillDialog {
+export class BeginSkill extends SkillDialog {
 
     /**
      * Optional expression which if is true will disable this action.
@@ -71,7 +71,7 @@ export class AdaptiveSkillDialog extends SkillDialog {
     public connectionName: StringExpression;
 
     /**
-     * Creates a new `AdaptiveSkillDialog instance.
+     * Creates a new `BeginSkillDialog instance.
      * @param options Optional options used to configure the skill dialog.
      */
     constructor(options?: SkillDialogOptions) {
