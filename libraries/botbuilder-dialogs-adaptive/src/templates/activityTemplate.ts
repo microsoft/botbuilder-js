@@ -1,5 +1,5 @@
 import { TurnContext, Activity, ActivityFactory, MessageFactory } from 'botbuilder-core';
-import { TemplateInterface } from '../template';
+import { TemplateInterface } from 'botbuilder-dialogs';
 import { LanguageGenerator } from '../languageGenerator';
 
 export class ActivityTemplate implements TemplateInterface<Partial<Activity>> {

@@ -1,4 +1,4 @@
-import { TemplateInterface } from '../template';
+import { TemplateInterface } from 'botbuilder-dialogs';
 import { TurnContext } from 'botbuilder-core';
 import { LanguageGenerator } from '../languageGenerator';
 

@@ -22,5 +22,6 @@ export * from './memory';
 export * from './prompts';
 export * from './skillDialog';
 export * from './skillDialogOptions';
+export * from './template';
 export * from './waterfallDialog';
 export * from './waterfallStepContext';

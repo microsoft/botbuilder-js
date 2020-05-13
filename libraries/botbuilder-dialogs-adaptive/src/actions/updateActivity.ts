@@ -5,9 +5,8 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { Dialog, DialogContext, DialogTurnResult } from 'botbuilder-dialogs';
+import { Dialog, DialogContext, DialogTurnResult, TemplateInterface } from 'botbuilder-dialogs';
 import { Activity } from 'botbuilder-core';
-import { TemplateInterface } from '../template';
 import { StringExpression, BoolExpression } from 'adaptive-expressions';
 import { ActivityTemplate, StaticActivityTemplate } from '../templates';
 

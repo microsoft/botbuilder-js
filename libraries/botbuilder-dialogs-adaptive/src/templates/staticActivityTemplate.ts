@@ -1,4 +1,4 @@
-import { TemplateInterface } from '../template';
+import { TemplateInterface } from 'botbuilder-dialogs';
 import { Activity, TurnContext } from 'botbuilder-core';
 
 export class StaticActivityTemplate implements TemplateInterface<Partial<Activity>> {

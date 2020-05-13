@@ -27,6 +27,5 @@ export * from './languageResourceLoader';
 export * from './qnaMaker';
 export * from './propertySchema';
 export * from './schemaHelper';
-export * from './template';
 export * from './triggerSelector';
 

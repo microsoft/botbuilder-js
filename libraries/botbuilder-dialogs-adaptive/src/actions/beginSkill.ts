@@ -5,9 +5,8 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { SkillDialog, SkillDialogOptions, DialogContext, DialogTurnResult, DialogManager, BeginSkillDialogOptions } from 'botbuilder-dialogs';
+import { SkillDialog, SkillDialogOptions, DialogContext, DialogTurnResult, DialogManager, BeginSkillDialogOptions, TemplateInterface } from 'botbuilder-dialogs';
 import { BoolExpression, StringExpression } from 'adaptive-expressions';
-import { TemplateInterface } from '../template';
 import { Activity, ActivityTypes, BotFrameworkClient, SkillConversationIdFactoryBase } from 'botbuilder-core';
 
 const SKILL_CLIENT = Symbol('skillClient');
