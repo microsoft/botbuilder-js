@@ -8,6 +8,7 @@
 
 import { ComponentRegistration, ResourceExplorer, TypeBuilder, BuilderRegistration } from 'botbuilder-dialogs-declarative';
 import { Choice, ListStyle, ChoiceFactoryOptions, FindChoicesOptions } from 'botbuilder-dialogs';
+import { QnAMakerDialog, QnAMakerDialogActivityConverter, RankerTypes } from 'botbuilder-ai';
 import { AdaptiveTypeBuilder } from './adaptiveTypeBuilder';
 import { AdaptiveDialog } from './adaptiveDialog';
 import { BeginDialog, BeginSkill, BreakLoop, CancelAllDialogs, ContinueLoop, DeleteActivity, DeleteProperties, DeleteProperty, EditActions, EditArray, EmitEvent, EndDialog, EndTurn, ForEach, ForEachPage, GetActivityMembers, GetConversationMembers, GotoAction, IfCondition, LogAction, RepeatDialog, ReplaceDialog, SendActivity, SetProperties, SetProperty, SignOutUser, SwitchCondition, TraceActivity, UpdateActivity, ArrayChangeType, PropertyAssignmentConverter } from './actions';
@@ -16,7 +17,7 @@ import { OnActivity, OnAssignEntity, OnBeginDialog, OnCancelDialog, OnChooseEnti
 import { CrossTrainedRecognizerSet, MultiLanguageRecognizer, RecognizerSet, ValueRecognizer, RegexRecognizer, IntentPatternConverter } from './recognizers';
 import { AgeEntityRecognizer, ConfirmationEntityRecognizer, CurrencyEntityRecognizer, DateTimeEntityRecognizer, DimensionEntityRecognizer, EmailEntityRecognizer, GuidEntityRecognizer, HashtagEntityRecognizer, IpEntityRecognizer, MentionEntityRecognizer, NumberEntityRecognizer, OrdinalEntityRecognizer, PercentageEntityRecognizer, PhoneNumberEntityRecognizer, RegexEntityRecognizer, TemperatureEntityRecognizer, UrlEntityRecognizer } from './recognizers/entityRecognizers';
 import { ObjectExpressionConverter, BoolExpressionConverter, StringExpressionConverter, EnumExpressionConverter, ValueExpressionConverter, NumberExpressionConverter, ExpressionConverter, ArrayExpressionConverter, IntExpressionConverter } from 'adaptive-expressions';
-import {DialogExpressionConverter, TextTemplateConverter, ActivityTemplateConverter } from './converters';
+import { DialogExpressionConverter, TextTemplateConverter, ActivityTemplateConverter } from './converters';
 import { ActionChangeType } from './actionChangeType';
 import { CaseConverter } from './actions/case';
 import { QnAMakerRecognizer } from './qnaMaker';
@@ -45,6 +46,20 @@ export class AdaptiveDialogComponentRegistration implements ComponentRegistratio
             'skillEndpoint': new StringExpressionConverter(),
             'activity': new ActivityTemplateConverter(),
             'connectionName': new StringExpressionConverter()
+        }));
+        this.registerBuilder('Microsoft.QnAMakerDialog', new AdaptiveTypeBuilder(QnAMakerDialog, this._resourceExplorer, {
+            'knowledgeBaseId': new StringExpressionConverter(),
+            'hostname': new StringExpressionConverter(),
+            'endpointKey': new StringExpressionConverter(),
+            'threshold': new NumberExpressionConverter(),
+            'top': new IntExpressionConverter(),
+            'noAnswer': new QnAMakerDialogActivityConverter(),
+            'activeLearningCardTitle': new StringExpressionConverter(),
+            'cardNoMatchText': new StringExpressionConverter(),
+            'cardNoMatchResponse': new QnAMakerDialogActivityConverter(),
+            'strictFilters': new ArrayExpressionConverter(),
+            'logPersonalInformation': new BoolExpressionConverter(),
+            'rankerType': new EnumExpressionConverter(RankerTypes)
         }));
         this.registerActions();
         this.registerConditions();

@@ -15,6 +15,12 @@ import { FeedbackRecord, FeedbackRecords, QnAMakerMetadata } from './qnamaker-in
 import { QnACardBuilder } from './qnaCardBuilder';
 import { BindToActivity } from './qnamaker-utils/bindToActivity';
 
+export class QnAMakerDialogActivityConverter {
+    public convert(value: string): TemplateInterface<Activity> {
+        return new BindToActivity(MessageFactory.text(value) as Activity);
+    }
+}
+
 /**
  * QnAMakerDialog response options.
  */
@@ -96,28 +102,17 @@ export class QnAMakerDialog extends WaterfallDialog {
      * @param strictFilters (Optional) QnAMakerMetadata collection used to filter / boost queries to the knowledgebase.
      * @param dialogId (Optional) Id of the created dialog. Default is 'QnAMakerDialog'.
      */
-    public constructor(knowledgeBaseId: string, endpointKey: string, hostname: string, noAnswer?: Activity, threshold: number = 0.3, activeLearningCardTitle: string = 'Did you mean:', cardNoMatchText: string = 'None of the above.', top: number = 3, cardNoMatchResponse?: Activity, strictFilters?: QnAMakerMetadata[], dialogId: string = 'QnAMakerDialog') {
+    public constructor();
+    public constructor(knowledgeBaseId?: string, endpointKey?: string, hostname?: string, noAnswer?: Activity, threshold: number = 0.3, activeLearningCardTitle: string = 'Did you mean:', cardNoMatchText: string = 'None of the above.', top: number = 3, cardNoMatchResponse?: Activity, strictFilters?: QnAMakerMetadata[], dialogId: string = 'QnAMakerDialog') {
         super(dialogId);
-        if (!knowledgeBaseId) {
-            throw new TypeError('QnAMakerDialog: missing knowledgeBaseId parameter');
-        }
-
-        if (!endpointKey) {
-            throw new TypeError('QnAMakerDialog: missing endpointKey parameter');
-        }
-
-        if (!hostname) {
-            throw new TypeError('QnAMakerDialog: missing hostName parameter');
-        }
-
-        this.knowledgeBaseId = new StringExpression(knowledgeBaseId);
-        this.endpointKey = new StringExpression(endpointKey);
-        this.hostname = new StringExpression(hostname);
-        this.threshold = new NumberExpression(threshold);
-        this.top = new IntExpression(top);
-        this.activeLearningCardTitle = new StringExpression(activeLearningCardTitle);
-        this.cardNoMatchText = new StringExpression(cardNoMatchText);
-        this.strictFilters = new ArrayExpression(strictFilters);
+        if (knowledgeBaseId) { this.knowledgeBaseId = new StringExpression(knowledgeBaseId); }
+        if (endpointKey) { this.endpointKey = new StringExpression(endpointKey); }
+        if (hostname) { this.hostname = new StringExpression(hostname); }
+        if (threshold) { this.threshold = new NumberExpression(threshold); }
+        if (top) { this.top = new IntExpression(top); }
+        if (activeLearningCardTitle) { this.activeLearningCardTitle = new StringExpression(activeLearningCardTitle); }
+        if (cardNoMatchText) { this.cardNoMatchText = new StringExpression(cardNoMatchText); }
+        if (strictFilters) { this.strictFilters = new ArrayExpression(strictFilters); }
         if (noAnswer) { this.noAnswer = new BindToActivity(noAnswer); }
         if (cardNoMatchResponse) { this.cardNoMatchResponse = new BindToActivity(cardNoMatchResponse); }
 
@@ -153,11 +148,11 @@ export class QnAMakerDialog extends WaterfallDialog {
     **/
     private getQnAMakerOptions(dc: DialogContext): QnAMakerOptions {
         return {
-            scoreThreshold: this.threshold.getValue(dc.state),
-            strictFilters: this.strictFilters.getValue(dc.state),
-            top: this.top.getValue(dc.state),
+            scoreThreshold: this.threshold && this.threshold.getValue(dc.state),
+            strictFilters: this.strictFilters && this.strictFilters.getValue(dc.state),
+            top: this.top && this.top.getValue(dc.state),
             qnaId: 0,
-            rankerType: this.rankerType.getValue(dc.state) as string,
+            rankerType: this.rankerType && this.rankerType.getValue(dc.state) as string,
             isTest: this.isTest
         };
     };
@@ -167,10 +162,10 @@ export class QnAMakerDialog extends WaterfallDialog {
     **/
     private async getQnAResponseOptions(dc: DialogContext): Promise<QnAMakerDialogResponseOptions> {
         return {
-            activeLearningCardTitle: this.activeLearningCardTitle.getValue(dc.state),
-            cardNoMatchResponse: await this.cardNoMatchResponse.bindToData(dc.context, dc.state),
-            cardNoMatchText: this.cardNoMatchText.getValue(dc.state),
-            noAnswer: await this.noAnswer.bindToData(dc.context, dc.state)
+            activeLearningCardTitle: this.activeLearningCardTitle && this.activeLearningCardTitle.getValue(dc.state),
+            cardNoMatchResponse: this.cardNoMatchResponse && await this.cardNoMatchResponse.bindToData(dc.context, dc.state),
+            cardNoMatchText: this.cardNoMatchText && this.cardNoMatchText.getValue(dc.state),
+            noAnswer: this.noAnswer && await this.noAnswer.bindToData(dc.context, dc.state)
         };
     }
 
