@@ -2461,7 +2461,7 @@ export class ExpressionFunctions {
                         let error: string;
                         let value: any;
                         let result: number;
-                        ({value, error} = this.parseTimestamp(timestamp));
+                        ({value, error} = ExpressionFunctions.parseTimestamp(timestamp));
                         if (!error) {
                             const dt: Moment = moment(value).utc();
                             result = dt.date();
@@ -2479,7 +2479,7 @@ export class ExpressionFunctions {
                         let error: string;
                         let value: any;
                         let result: number;
-                        ({value, error} = this.parseTimestamp(timestamp));
+                        ({value, error} = ExpressionFunctions.parseTimestamp(timestamp));
                         if (!error) {
                             const dt: Moment = moment(value).utc();
                             result = dt.day();
@@ -2497,7 +2497,7 @@ export class ExpressionFunctions {
                         let error: string;
                         let value: any;
                         let result: number;
-                        ({value, error} = this.parseTimestamp(timestamp));
+                        ({value, error} = ExpressionFunctions.parseTimestamp(timestamp));
                         if (!error) {
                             const dt: Moment = moment(value).utc();
                             result = dt.dayOfYear();
@@ -2515,7 +2515,7 @@ export class ExpressionFunctions {
                         let error: string;
                         let value: any;
                         let result: number;
-                        ({value, error} = this.parseTimestamp(timestamp));
+                        ({value, error} = ExpressionFunctions.parseTimestamp(timestamp));
                         if (!error) {
                             const dt: Moment = moment(value).utc();
                             result = dt.month() + 1;
@@ -2533,7 +2533,7 @@ export class ExpressionFunctions {
                         let error: string;
                         let value: any;
                         let result: string;
-                        ({value, error} = this.parseTimestamp(timestamp));
+                        ({value, error} = ExpressionFunctions.parseTimestamp(timestamp));
                         if (!error) {
                             const dt: Moment = moment(value).utc();
                             result = dt.format('M/DD/YYYY')
@@ -2551,7 +2551,7 @@ export class ExpressionFunctions {
                         let error: string;
                         let value: any;
                         let result: number;
-                        ({value, error} = this.parseTimestamp(timestamp));
+                        ({value, error} = ExpressionFunctions.parseTimestamp(timestamp));
                         if (!error) {
                             const dt: Moment = moment(value).utc();
                             result = dt.year();
