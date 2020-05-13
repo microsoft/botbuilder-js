@@ -665,17 +665,17 @@ export class ExpressionFunctions {
             (expression: Expression, state: MemoryInterface, options: Options): {value: any; error: string} => {
                 let result: any;
                 let error: string;
+                let value: any;
                 let args: any[];
-                let parsed: any;
                 ({args, error} = ExpressionFunctions.evaluateChildren(expression, state, options));
                 if (!error) {
                     if (typeof args[0] === 'string' && typeof args[1] === 'number') {
-                        ({value: parsed, error} = ExpressionFunctions.parseTimestamp(args[0]));
+                        ({value, error} = ExpressionFunctions.parseTimestamp(args[0]));
                         if (!error) {
                             if (args.length === 3 && typeof args[2] === 'string') {
-                                result = moment(func(parsed, args[1])).utc().format(ExpressionFunctions.timestampFormatter(args[2]));
+                                result = moment(func(value, args[1])).utc().format(ExpressionFunctions.timestampFormatter(args[2]));
                             } else {
-                                result = moment(func(parsed, args[1])).utc().toISOString();
+                                result = func(value, args[1]).toISOString();
                             }
                         }
                     } else {
@@ -773,8 +773,7 @@ export class ExpressionFunctions {
         let value: any;
         const error: string = this.verifyISOTimestamp(timeStamp);
         if (!error) {
-            const dt = new Date(timeStamp);
-            value = transform !== undefined ? transform(dt) : timeStamp;
+            value = transform !== undefined ? transform(new Date(timeStamp)) : timeStamp;
         }
 
         return {value, error};
@@ -1699,8 +1698,7 @@ export class ExpressionFunctions {
         let error: string;
         ({value: parsed, error} = ExpressionFunctions.parseTimestamp(timeStamp));
         if (!error) {
-            const dt = moment(parsed).utc();
-            const unixMilliSec: number = parseInt(dt.format('x'), 10);
+            const unixMilliSec: number = parseInt(moment(parsed).utc().format('x'), 10);
             result = this.UnixMilliSecondToTicksConstant.add(bigInt(unixMilliSec).times(this.MillisecondToTickConstant));
         }
 
@@ -1713,8 +1711,7 @@ export class ExpressionFunctions {
         let parsed: any;
         ({value: parsed, error} = ExpressionFunctions.parseTimestamp(timeStamp));
         if (!error) {
-            const dt = moment(parsed).utc();
-            const startOfDay = dt.hours(0).minutes(0).second(0).millisecond(0);
+            const startOfDay = moment(parsed).utc().hours(0).minutes(0).second(0).millisecond(0);
             ({value: result, error} = ExpressionFunctions.returnFormattedTimeStampStr(startOfDay, format));
         }
 
@@ -1727,8 +1724,7 @@ export class ExpressionFunctions {
         let parsed: any;
         ({value: parsed, error} = ExpressionFunctions.parseTimestamp(timeStamp));
         if (!error) {
-            const dt = moment(parsed).utc();
-            const startofHour = dt.minutes(0).second(0).millisecond(0);
+            const startofHour = moment(parsed).utc().minutes(0).second(0).millisecond(0);
             ({value: result, error} = ExpressionFunctions.returnFormattedTimeStampStr(startofHour, format));
         }
 
@@ -1741,8 +1737,7 @@ export class ExpressionFunctions {
         let parsed: any;
         ({value: parsed, error} = ExpressionFunctions.parseTimestamp(timeStamp));
         if (!error) {
-            const dt = moment(parsed).utc();
-            const startofMonth = dt.date(1).hours(0).minutes(0).second(0).millisecond(0);
+            const startofMonth = moment(parsed).utc().date(1).hours(0).minutes(0).second(0).millisecond(0);
             ({value: result, error} = ExpressionFunctions.returnFormattedTimeStampStr(startofMonth, format));
         }
 
@@ -2411,10 +2406,10 @@ export class ExpressionFunctions {
                 ReturnType.String,
                 (expression: Expression): void => ExpressionFunctions.validateOrder(expression, [ReturnType.String], ReturnType.Array, ReturnType.String)),
             // datetime
-            ExpressionFunctions.timeTransform(ExpressionType.AddDays, (ts: Date, num: any): any =>  moment(ts).utc().add(num, 'd').toDate()),
-            ExpressionFunctions.timeTransform(ExpressionType.AddHours, (ts: Date, num: any): any => moment(ts).utc().add(num, 'h').toDate()),
-            ExpressionFunctions.timeTransform(ExpressionType.AddMinutes, (ts: Date, num: any): any => moment(ts).utc().add(num, 'minutes').toDate()),
-            ExpressionFunctions.timeTransform(ExpressionType.AddSeconds, (ts: Date, num: any): any => moment(ts).utc().add(num, 'seconds').toDate()),
+            ExpressionFunctions.timeTransform(ExpressionType.AddDays, (ts: Date, num: any): Date =>  moment(ts).utc().add(num, 'd').toDate()),
+            ExpressionFunctions.timeTransform(ExpressionType.AddHours, (ts: Date, num: any): Date => moment(ts).utc().add(num, 'h').toDate()),
+            ExpressionFunctions.timeTransform(ExpressionType.AddMinutes, (ts: Date, num: any): Date => moment(ts).utc().add(num, 'minutes').toDate()),
+            ExpressionFunctions.timeTransform(ExpressionType.AddSeconds, (ts: Date, num: any): Date => moment(ts).utc().add(num, 'seconds').toDate()),
             new ExpressionEvaluator(
                 ExpressionType.DayOfMonth,
                 ExpressionFunctions.applyWithError(
@@ -2460,7 +2455,7 @@ export class ExpressionFunctions {
             new ExpressionEvaluator(
                 ExpressionType.UtcNow,
                 ExpressionFunctions.apply(
-                    (args: any[]): string => args.length === 1 ? moment(new Date().toISOString()).utc().format(args[0]) : new Date().toISOString(),
+                    (args: any[]): string => args.length === 1 ? moment(new Date()).utc().format(args[0]) : new Date().toISOString(),
                     ExpressionFunctions.verifyString),
                 ReturnType.String),
             new ExpressionEvaluator(
