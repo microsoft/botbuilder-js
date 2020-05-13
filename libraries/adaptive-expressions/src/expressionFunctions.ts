@@ -673,9 +673,9 @@ export class ExpressionFunctions {
                         ({value: parsed, error} = ExpressionFunctions.parseTimestamp(args[0]));
                         if (!error) {
                             if (args.length === 3 && typeof args[2] === 'string') {
-                                result = moment(func(parsed, args[1])).format(ExpressionFunctions.timestampFormatter(args[2]));
+                                result = moment(func(parsed, args[1])).utc().format(ExpressionFunctions.timestampFormatter(args[2]));
                             } else {
-                                result = moment(func(parsed, args[1])).toISOString();
+                                result = moment(func(parsed, args[1])).utc().toISOString();
                             }
                         }
                     } else {
@@ -2411,10 +2411,10 @@ export class ExpressionFunctions {
                 ReturnType.String,
                 (expression: Expression): void => ExpressionFunctions.validateOrder(expression, [ReturnType.String], ReturnType.Array, ReturnType.String)),
             // datetime
-            ExpressionFunctions.timeTransform(ExpressionType.AddDays, (ts: Date, num: any): any =>  moment(ts).utc().add(num, 'd')),
-            ExpressionFunctions.timeTransform(ExpressionType.AddHours, (ts: Date, num: any): any => moment(ts).utc().add(num, 'h')),
-            ExpressionFunctions.timeTransform(ExpressionType.AddMinutes, (ts: Date, num: any): any => moment(ts).utc().add(num, 'minutes')),
-            ExpressionFunctions.timeTransform(ExpressionType.AddSeconds, (ts: Date, num: any): any => moment(ts).utc().add(num, 'seconds')),
+            ExpressionFunctions.timeTransform(ExpressionType.AddDays, (ts: Date, num: any): any =>  moment(ts).utc().add(num, 'd').toDate()),
+            ExpressionFunctions.timeTransform(ExpressionType.AddHours, (ts: Date, num: any): any => moment(ts).utc().add(num, 'h').toDate()),
+            ExpressionFunctions.timeTransform(ExpressionType.AddMinutes, (ts: Date, num: any): any => moment(ts).utc().add(num, 'minutes').toDate()),
+            ExpressionFunctions.timeTransform(ExpressionType.AddSeconds, (ts: Date, num: any): any => moment(ts).utc().add(num, 'seconds').toDate()),
             new ExpressionEvaluator(
                 ExpressionType.DayOfMonth,
                 ExpressionFunctions.applyWithError(
