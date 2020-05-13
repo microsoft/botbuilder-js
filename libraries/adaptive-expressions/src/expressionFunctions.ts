@@ -668,9 +668,9 @@ export class ExpressionFunctions {
                 let args: any[];
                 let parsed: any;
                 ({args, error} = ExpressionFunctions.evaluateChildren(expression, state, options));
-                ({value: parsed, error} = ExpressionFunctions.parseTimestamp(args[0]));
                 if (!error) {
-                    if (typeof parsed === 'string' && typeof args[1] === 'number') {
+                    if (typeof args[0] === 'string' && typeof args[1] === 'number') {
+                        ({value: parsed, error} = ExpressionFunctions.parseTimestamp(args[0]));
                         if (!error) {
                             if (args.length === 3 && typeof args[2] === 'string') {
                                 result = func(parsed, args[1]).format(ExpressionFunctions.timestampFormatter(args[2]));
@@ -2417,102 +2417,42 @@ export class ExpressionFunctions {
             new ExpressionEvaluator(
                 ExpressionType.DayOfMonth,
                 ExpressionFunctions.applyWithError(
-                    (args: any[]): any => ExpressionFunctions.parseTimestamp(args[0], (timestamp: string): number => {
-                        let error: string;
-                        let value: any;
-                        let result: number;
-                        if (!error) {
-                            const dt = moment(timestamp).utc();
-                            result = dt.date();
-                        }
-
-                        return result;
-                    }),
+                    (args: any[]): any => ExpressionFunctions.parseTimestamp(args[0], (timestamp: string): number => moment(timestamp).utc().date()),
                     ExpressionFunctions.verifyString),
                 ReturnType.Number,
                 ExpressionFunctions.validateUnaryString),
             new ExpressionEvaluator(
                 ExpressionType.DayOfWeek,
                 ExpressionFunctions.applyWithError(
-                    (args: any[]): any => ExpressionFunctions.parseTimestamp(args[0], (timestamp: string): number => {
-                        let error: string;
-                        let value: any;
-                        let result: number;
-                        if (!error) {
-                            const dt = moment(timestamp).utc();
-                            result = dt.day();
-                        }
-
-                        return result;
-                    }),
+                    (args: any[]): any => ExpressionFunctions.parseTimestamp(args[0], (timestamp: string): number => moment(timestamp).utc().day()),
                     ExpressionFunctions.verifyString),
                 ReturnType.Number,
                 ExpressionFunctions.validateUnaryString),
             new ExpressionEvaluator(
                 ExpressionType.DayOfYear,
                 ExpressionFunctions.applyWithError(
-                    (args: any[]): any => ExpressionFunctions.parseTimestamp(args[0], (timestamp: string): number => {
-                        let error: string;
-                        let value: any;
-                        let result: number;
-                        if (!error) {
-                            const dt = moment(timestamp).utc();
-                            result = dt.dayOfYear();
-                        }
-
-                        return result;
-                    }),
+                    (args: any[]): any => ExpressionFunctions.parseTimestamp(args[0], (timestamp: string): number => moment(timestamp).utc().dayOfYear()),
                     ExpressionFunctions.verifyString),
                 ReturnType.Number,
                 ExpressionFunctions.validateUnaryString),
             new ExpressionEvaluator(
                 ExpressionType.Month,
                 ExpressionFunctions.applyWithError(
-                    (args: any[]): any => ExpressionFunctions.parseTimestamp(args[0], (timestamp: string): number => {
-                        let error: string;
-                        let value: any;
-                        let result: number;
-                        if (!error) {
-                            const dt = moment(timestamp).utc();
-                            result = dt.month() + 1;
-                        }
-
-                        return result;
-                    }),
+                    (args: any[]): any => ExpressionFunctions.parseTimestamp(args[0], (timestamp: string): number => moment(timestamp).utc().month() + 1),
                     ExpressionFunctions.verifyString),
                 ReturnType.Number,
                 ExpressionFunctions.validateUnaryString),
             new ExpressionEvaluator(
                 ExpressionType.Date,
                 ExpressionFunctions.applyWithError(
-                    (args: any[]): any => ExpressionFunctions.parseTimestamp(args[0], (timestamp: string): string => {
-                        let error: string;
-                        let value: any;
-                        let result: string;
-                        if (!error) {
-                            const dt = moment(timestamp).utc();
-                            result = dt.format('M/DD/YYYY')
-                        }
-
-                        return result;
-                    }),
+                    (args: any[]): any => ExpressionFunctions.parseTimestamp(args[0], (timestamp: string): string =>moment(timestamp).utc().format('M/DD/YYYY')),
                     ExpressionFunctions.verifyString),
                 ReturnType.String,
                 ExpressionFunctions.validateUnaryString),
             new ExpressionEvaluator(
                 ExpressionType.Year,
                 ExpressionFunctions.applyWithError(
-                    (args: any[]): any => ExpressionFunctions.parseTimestamp(args[0], (timestamp: string): number => {
-                        let error: string;
-                        let value: any;
-                        let result: number;
-                        if (!error) {
-                            const dt = moment(timestamp).utc();
-                            result = dt.year();
-                        }
-
-                        return result;
-                    }),
+                    (args: any[]): any => ExpressionFunctions.parseTimestamp(args[0], (timestamp: string): number => moment(timestamp).utc().year()),
                     ExpressionFunctions.verifyString),
                 ReturnType.Number,
                 ExpressionFunctions.validateUnaryString),
