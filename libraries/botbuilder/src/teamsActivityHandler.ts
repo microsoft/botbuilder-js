@@ -393,13 +393,14 @@ export class TeamsActivityHandler extends ActivityHandler {
             for (let i=0; i<context.activity.membersAdded.length; i++) {
                 const channelAccount = context.activity.membersAdded[i];
 
-                // check whether we have a TeamChannelAccount
+                // check whether we have a TeamChannelAccount, or the member is the bot
                 if ('givenName' in channelAccount ||
                     'surname' in channelAccount ||
                     'email' in channelAccount ||
-                    'userPrincipalName' in channelAccount) {
+                    'userPrincipalName' in channelAccount ||
+                    context.activity.recipient.id === channelAccount.id) {
 
-                    // we must have a TeamsChannelAccount so skip to the next one
+                    // we must have a TeamsChannelAccount, or a bot so skip to the next one
                     continue;
                 }
 
