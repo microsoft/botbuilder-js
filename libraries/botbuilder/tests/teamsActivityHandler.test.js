@@ -1,5 +1,5 @@
 const assert = require('assert');
-const { TeamsActivityHandler } = require('../');
+const { TeamsActivityHandler, TeamsInfo } = require('../');
 const { ActivityTypes, TestAdapter } = require('botbuilder-core');
 
 function createInvokeActivity(name, value = {}, channelData = {}) {
@@ -513,7 +513,8 @@ describe('TeamsActivityHandler', () => {
         function createConvUpdateActivity(channelData) {
             const activity = {
                 type: ActivityTypes.ConversationUpdate,
-                channelData
+                channelData,
+                channelId: 'msteams'
             };
             return activity;
         }
@@ -543,7 +544,8 @@ describe('TeamsActivityHandler', () => {
         it('onTeamsMembersAdded routed activity', () => {
             const bot = new TeamsActivityHandler();
             let onTeamsMemberAddedEvent = false;
-    
+            let getMemberCalledCount = 0;
+
             const membersAddedMock = [{ id: 'test'} , { id: 'id' }];
             const team = { id: 'team' };
             const activity = createConvUpdateActivity({ team, eventType: 'teamMemberAdded' });
@@ -578,11 +580,71 @@ describe('TeamsActivityHandler', () => {
                 await bot.run(context);
             });
     
+            TeamsInfo.getMember = function(context, userId) {
+                getMemberCalledCount ++;
+                return membersAddedMock.filter(obj=>obj.id === userId)[0];
+            };
+
             adapter.send(activity)
                 .then(() => {
                     assert(onTeamsMemberAddedEvent, 'onTeamsMemberAddedEvent handler not called');
                     assert(onConversationUpdateCalled, 'handleTeamsFileConsentAccept handler not called');
                     assert(onDialogCalled, 'onDialog handler not called');
+                    assert(getMemberCalledCount === 2, 'TeamsInfo.getMember not called twice');
+                });
+        });
+
+        it('onTeamsMembersAdded for bot routed activity does NOT call TeamsInfo.getMember', () => {
+            const bot = new TeamsActivityHandler();
+            let onTeamsMemberAddedEvent = false;
+            let getMemberCalled = false;
+
+            const membersAddedMock = [{ id: 'botid' }];
+            const team = { id: 'team' };
+            const activity = createConvUpdateActivity({ team, eventType: 'teamMemberAdded' });
+            activity.membersAdded = membersAddedMock;
+            activity.recipient = { id: membersAddedMock[0].id };
+            
+            bot.onConversationUpdate(async (context, next) => {
+                assert(context, 'context not found');
+                assert(next, 'next not found');
+                onConversationUpdateCalled = true;
+                await next();
+            });
+
+            bot.onTeamsMembersAddedEvent(async (membersAdded, teamInfo, context, next) => {
+                assert(membersAdded, 'membersAdded not found');
+                assert(teamInfo, 'teamsInfo not found');
+                assert(context, 'context not found');
+                assert(next, 'next not found');
+                assert.strictEqual(teamInfo, team);
+                assert.strictEqual(membersAdded, membersAddedMock);
+                onTeamsMemberAddedEvent = true;
+                await next();
+            });
+
+            bot.onDialog(async (context, next) => {
+                assert(context, 'context not found');
+                assert(next, 'next not found');
+                onDialogCalled = true;
+                await next();
+            });
+    
+            const adapter = new TestAdapter(async context => {
+                await bot.run(context);
+            });
+    
+            TeamsInfo.getMember = function(context, userId) {
+                getMemberCalled = true;
+                return membersAddedMock.filter(obj=>obj.id === userId)[0];
+            };
+
+            adapter.send(activity)
+                .then(() => {
+                    assert(onTeamsMemberAddedEvent, 'onTeamsMemberAddedEvent handler not called');
+                    assert(onConversationUpdateCalled, 'handleTeamsFileConsentAccept handler not called');
+                    assert(onDialogCalled, 'onDialog handler not called');
+                    assert(getMemberCalled === false, 'TeamsInfo.getMember was called, but should not have been');
                 });
         });
 
