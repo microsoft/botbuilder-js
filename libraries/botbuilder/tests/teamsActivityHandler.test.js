@@ -580,6 +580,7 @@ describe('TeamsActivityHandler', () => {
                 await bot.run(context);
             });
     
+            const wasGetMember = TeamsInfo.getMember;
             TeamsInfo.getMember = function(context, userId) {
                 getMemberCalledCount ++;
                 return membersAddedMock.filter(obj=>obj.id === userId)[0];
@@ -591,6 +592,7 @@ describe('TeamsActivityHandler', () => {
                     assert(onConversationUpdateCalled, 'handleTeamsFileConsentAccept handler not called');
                     assert(onDialogCalled, 'onDialog handler not called');
                     assert(getMemberCalledCount === 2, 'TeamsInfo.getMember not called twice');
+                    TeamsInfo.getMember = wasGetMember;
                 });
         });
 
@@ -634,6 +636,7 @@ describe('TeamsActivityHandler', () => {
                 await bot.run(context);
             });
     
+            const wasGetMember = TeamsInfo.getMember;
             TeamsInfo.getMember = function(context, userId) {
                 getMemberCalled = true;
                 return membersAddedMock.filter(obj=>obj.id === userId)[0];
@@ -645,6 +648,7 @@ describe('TeamsActivityHandler', () => {
                     assert(onConversationUpdateCalled, 'handleTeamsFileConsentAccept handler not called');
                     assert(onDialogCalled, 'onDialog handler not called');
                     assert(getMemberCalled === false, 'TeamsInfo.getMember was called, but should not have been');
+                    TeamsInfo.getMember = wasGetMember;
                 });
         });
 
