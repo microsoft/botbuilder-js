@@ -1,5 +1,12 @@
 // Generated from src/LGTemplateParser.g4 by ANTLR 4.7.3-SNAPSHOT
 
+/**
+ * @module botbuilder-lg
+ */
+/**
+ * Copyright (c) Microsoft Corporation. All rights reserved.
+ * Licensed under the MIT License.
+ */
 
 import { ParseTreeListener } from "antlr4ts/tree/ParseTreeListener";
 
