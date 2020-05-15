@@ -163,9 +163,9 @@ export class TeamsActivityHandler extends ActivityHandler {
     protected async onSignInInvoke(context: TurnContext): Promise<void> {
         switch (context.activity.name) {
             case verifyStateOperationName:
-                await this.handleTeamsSigninVerifyState(context, context.activity.value);
+                return await this.handleTeamsSigninVerifyState(context, context.activity.value);
             case tokenExchangeOperationName:
-                await this.handleTeamsSigninTokenExchange(context, context.activity.value);
+                return await this.handleTeamsSigninTokenExchange(context, context.activity.value);
         }
     }
 
