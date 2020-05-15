@@ -15,7 +15,7 @@ import {
 } from '../payloadTransport';
 import { NamedPipeTransport } from './namedPipeTransport';
 import { INodeServer, INodeSocket, IStreamingTransportServer, IReceiveResponse } from '../interfaces';
-import { createNodeServer } from '../utilities';
+import { createNodeServer } from '../utilities/createNodeServer';
 
 /**
 * Streaming transport server implementation that uses named pipes for inter-process communication.

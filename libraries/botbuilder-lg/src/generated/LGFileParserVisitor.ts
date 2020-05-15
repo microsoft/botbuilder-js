@@ -1,5 +1,12 @@
-// Generated from ../LGFileParser.g4 by ANTLR 4.6-SNAPSHOT
+// Generated from src/LGFileParser.g4 by ANTLR 4.7.3-SNAPSHOT
 
+/**
+ * @module botbuilder-lg
+ */
+/**
+ * Copyright (c) Microsoft Corporation. All rights reserved.
+ * Licensed under the MIT License.
+ */
 
 import { ParseTreeVisitor } from "antlr4ts/tree/ParseTreeVisitor";
 

@@ -9,7 +9,7 @@
 import { Template } from './template';
 import { TemplateImport } from './templateImport';
 import { Diagnostic, DiagnosticSeverity } from './diagnostic';
-import { ExpressionParser } from 'adaptive-expressions';
+import { ExpressionParser, Expression, ExpressionEvaluator, ExpressionFunctions, ReturnType } from 'adaptive-expressions';
 import { ImportResolverDelegate } from './templatesParser';
 import { Evaluator } from './evaluator';
 import { Expander } from './expander';
@@ -18,13 +18,17 @@ import { TemplatesParser } from './templatesParser';
 import { AnalyzerResult } from './analyzerResult';
 import { TemplateErrors } from './templateErrors';
 import { TemplateExtensions } from './templateExtensions';
-import { EvaluationOptions } from './evaluationOptions';
+import { EvaluationOptions, LGLineBreakStyle } from './evaluationOptions';
+import { isAbsolute, basename } from 'path';
 
 /**
  * LG entrance, including properties that LG file has, and evaluate functions.
  */
 export class Templates implements Iterable<Template> {
+    private readonly newLineRegex = /(\r?\n)/g;
     private readonly newLine: string = '\r\n';
+    private readonly namespaceKey = '@namespace';
+    private readonly exportsKey = '@exports';
     private items: Template[];
 
     /**
@@ -88,6 +92,7 @@ export class Templates implements Iterable<Template> {
         this.expressionParser = expressionParser || new ExpressionParser();
         this.importResolver = importResolverDelegate;
         this.options = options || [];
+        this.injectToExpressionFunction();
     }
 
     /**
@@ -129,6 +134,13 @@ export class Templates implements Iterable<Template> {
     }
 
     /**
+     * A string value represents the namespace to register for current LG file.
+     */
+    public get namespace(): string {
+        return this.extractNamespace(this.options);
+    }
+
+    /**
      * All templates from current lg file and reference lg files.
      */
     public get allTemplates(): Template[] {
@@ -155,7 +167,7 @@ export class Templates implements Iterable<Template> {
     * @returns New lg file.
     */
     public static parseFile(filePath: string, importResolver?: ImportResolverDelegate, expressionParser?: ExpressionParser): Templates {
-        return TemplatesParser.parseFile(filePath, importResolver, expressionParser);
+        return TemplatesParser.parseFile(filePath, importResolver, expressionParser).injectToExpressionFunction();
     }
 
     /**
@@ -167,7 +179,7 @@ export class Templates implements Iterable<Template> {
      * @returns Entity.
      */
     public static parseText(content: string, id: string = '', importResolver?: ImportResolverDelegate, expressionParser?: ExpressionParser): Templates {
-        return TemplatesParser.parseText(content, id, importResolver, expressionParser);
+        return TemplatesParser.parseText(content, id, importResolver, expressionParser).injectToExpressionFunction();
     }
 
     /**
@@ -181,7 +193,12 @@ export class Templates implements Iterable<Template> {
 
         var evalOpt = opt !== undefined ? opt.merge(this.lgOptions) : this.lgOptions;
         const evaluator = new Evaluator(this.allTemplates, this.expressionParser, evalOpt);
-        return evaluator.evaluateTemplate(templateName, scope);
+        let result =  evaluator.evaluateTemplate(templateName, scope);
+        if (evalOpt.LineBreakStyle === LGLineBreakStyle.Markdown && typeof result === 'string') {
+            result = result.replace(this.newLineRegex, '$1$1');
+        }
+
+        return result;
     }
 
     /**
@@ -364,5 +381,68 @@ export class Templates implements Iterable<Template> {
                 throw Error(errors.join(this.newLine));
             }
         }
+    }
+
+    private injectToExpressionFunction(): Templates {
+        const totalTemplates =  [ this as Templates].concat(this.references);
+        for (const curTemplates of totalTemplates) {
+            const globalFuncs = curTemplates.getGlobalFunctionTable(curTemplates.options);
+            for (const templateName of globalFuncs) {
+                if (curTemplates.items.find(u => u.name === templateName) !== undefined) {
+                    const newGlobalName = `${ curTemplates.namespace }.${ templateName }`;
+                    Expression.functions.add(newGlobalName, new ExpressionEvaluator(newGlobalName, ExpressionFunctions.apply(this.globalTemplateFunction(templateName)), ReturnType.Object));
+                }
+            }
+        }
+        return this;
+    }
+
+    private extractOptionByKey(nameOfKey: string, options: string[]): string {
+        let result: string = undefined;
+        for (const option of options) {
+            if (nameOfKey && option.includes('=')) {
+                const index = option.indexOf('=');
+                const key = option.substring(0, index).trim().toLowerCase();
+                const value = option.substring(index + 1).trim();
+                if (key === nameOfKey) {
+                    result = value;
+                }
+            }
+        }
+
+        return result;
+    }
+
+    private extractNamespace(options: string[]): string {
+        let result = this.extractOptionByKey(this.namespaceKey, options);
+        if(!result) {
+            if (isAbsolute(this.id)) {
+                result = basename(this.id).split('.')[0];
+            } else {
+                throw new Error('namespace is required or the id should be an absoulte path!"');
+            }
+        }
+
+        return result;
+    }
+
+    private getGlobalFunctionTable(options: string[]): string[] {
+        const result: string[] = [];
+        const value = this.extractOptionByKey(this.exportsKey, options);
+        if (value) {
+            const templateList = value.split(',');
+            templateList.forEach(u => {
+                result.push(u.trim());
+            });
+        }
+
+        return result;
+    }
+
+    private readonly globalTemplateFunction = (templateName: string) => (args: any[]): any => {
+        const evaluator = new Evaluator(this.allTemplates, this.expressionParser, this.lgOptions);
+        const newScope: any = evaluator.constructScope(templateName, args);
+
+        return evaluator.evaluateTemplate(templateName, newScope);
     }
 }
