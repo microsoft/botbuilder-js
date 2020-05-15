@@ -2,6 +2,14 @@ parser grammar LGFileParser;
 
 options { tokenVocab=LGFileLexer; }
 
+@header {/**
+ * @module botbuilder-lg
+ */
+/**
+ * Copyright (c) Microsoft Corporation. All rights reserved.
+ * Licensed under the MIT License.
+ */}
+
 file
     : paragraph+? EOF
     ;
