@@ -157,6 +157,7 @@ export interface AnimationCard {
 // @public
 export interface AppBasedLinkQuery {
     url?: string;
+    state?: string;
 }
 
 // @public
