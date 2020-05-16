@@ -9,6 +9,14 @@ lexer grammar LGTemplateLexer;
   beginOfStructureProperty = false; // weather we are at the begining of structure property
 }
 
+@header {/**
+ * @module botbuilder-lg
+ */
+/**
+ * Copyright (c) Microsoft Corporation. All rights reserved.
+ * Licensed under the MIT License.
+ */}
+
 // fragments
 fragment A: 'a' | 'A';
 fragment C: 'c' | 'C';

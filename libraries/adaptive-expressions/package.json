@@ -24,7 +24,7 @@
     "@types/lru-cache": "^5.1.0",
     "@types/moment-timezone": "^0.5.12",
     "@types/xmldom": "^0.1.29",
-    "antlr4ts": "0.5.0-alpha.1",
+    "antlr4ts": "0.5.0-alpha.3",
     "atob": "^2.1.2",
     "big-integer": "^1.6.48",
     "jspath": "^0.4.0",
@@ -41,14 +41,17 @@
     "mocha": "^5.2.0",
     "nyc": "^15.0.0",
     "ts-node": "^4.1.0",
-    "typescript": "3.5.3"
+    "typescript": "3.5.3",
+    "antlr4ts-cli": "0.5.0-alpha.3"
   },
   "scripts": {
-    "build": "tsc",
+    "build": "npm run antlr-build-expression && npm run antlr-build-commonregex && tsc",
     "build-docs": "typedoc --theme markdown --entryPoint adaptive-expressions --excludePrivate --includeDeclarations --ignoreCompilerErrors --module amd --out ..\\..\\doc\\adaptive-expressions .\\lib\\index.d.ts --hideGenerator --name \"Bot Builder SDK - Expression\" --readme none",
     "clean": "erase /q /s .\\lib",
     "set-version": "npm version --allow-same-version ${Version}",
-    "test": "tsc && tsc ./tests/expressionProperty.test.ts && mocha tests/ --timeout 60000"
+    "test": "npm run build && tsc ./tests/expressionProperty.test.ts && mocha tests/ --timeout 60000",
+    "antlr-build-expression": "antlr4ts src/parser/ExpressionAntlrLexer.g4 -o src/parser/generated && antlr4ts src/parser/ExpressionAntlrParser.g4 -visitor -o src/parser/generated",
+    "antlr-build-commonregex": "antlr4ts src/CommonRegex.g4 -o src/generated -visitor"
   },
   "files": [
     "/lib",
