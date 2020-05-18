@@ -4,6 +4,15 @@ lexer grammar ExpressionAntlrLexer;
   ignoreWS = true;      // usually we ignore whitespace, but inside stringInterpolation, whitespace is significant
 }
 
+
+@header {/**
+ * @module adaptive-expressions
+ */
+/**
+ * Copyright (c) Microsoft Corporation. All rights reserved.
+ * Licensed under the MIT License.
+ */}
+
 fragment LETTER : [a-zA-Z];
 fragment DIGIT : [0-9];
 

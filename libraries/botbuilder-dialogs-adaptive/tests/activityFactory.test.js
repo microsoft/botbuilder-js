@@ -9,8 +9,8 @@ function getTemplates(){
     return Templates.parseFile(filePath);
 }
 
+const templates = getTemplates();
 function getActivity(templateName, data){
-    const templates = getTemplates();
     const lgResult = templates.evaluate(templateName, data);
     return ActivityFactory.fromObject(lgResult);
 }
@@ -36,13 +36,7 @@ describe('ActivityFactoryTest', function() {
             text: 'textContent'
         };
 
-        let cnt = 0;
-        const tmpl = getTemplates();
-        for (let t of tmpl) {
-            cnt++;
-        }
-
-        const cardActionLgResult = tmpl.evaluateText('${HerocardWithCardAction()}', data);
+        const cardActionLgResult = templates.evaluateText('${HerocardWithCardAction()}', data);
         result = ActivityFactory.fromObject(cardActionLgResult);
         assertCardActionActivity(result);
 

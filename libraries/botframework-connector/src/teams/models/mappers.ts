@@ -1860,6 +1860,12 @@ export const AppBasedLinkQuery: msRest.CompositeMapper = {
         type: {
           name: 'String'
         }
+      },
+      state: {
+        serializedName: 'state',
+        type: {
+          name: 'String'
+        }
       }
     }
   }
