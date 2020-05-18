@@ -2,6 +2,14 @@ parser grammar ExpressionAntlrParser;
 
 options { tokenVocab=ExpressionAntlrLexer; }
 
+@header {/**
+ * @module adaptive-expressions
+ */
+/**
+ * Copyright (c) Microsoft Corporation. All rights reserved.
+ * Licensed under the MIT License.
+ */}
+
 file: expression EOF;
 
 expression
