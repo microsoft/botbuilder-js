@@ -54,6 +54,19 @@ describe('LG', function() {
         assert.strictEqual(evaled === 'Good evening' || evaled === 'Evening! ', true, `Evaled is ${ evaled }`);
     });
 
+    it('TestMultiline', function() {
+        let templates = Templates.parseFile(GetExampleFilePath('Multiline.lg'));
+        let evaled = templates.evaluate('template1').toString();
+        let generatedTemplates = Templates.parseText(evaled);
+        let result = generatedTemplates.evaluate('generated1');
+        assert.strictEqual('hi', result, `Evaled is ${ result.trim() }`);
+
+        evaled = templates.evaluate('template2', {evaluateNow: 'please input'}).toString();
+        generatedTemplates = Templates.parseText(evaled);
+        result = generatedTemplates.evaluate('generated2', {name: 'jack'});
+        assert.strictEqual('please input jack', result.trim(), `Evaled is ${ result.trim() }`);
+    });
+
     it('TestMultiLineExprLG', function() {
         let templates = Templates.parseFile(GetExampleFilePath('MultiLineExpr.lg'));
 
@@ -279,8 +292,9 @@ describe('LG', function() {
             
             }
         ];
+
+        var templates = Templates.parseFile(GetExampleFilePath('Analyzer.lg'));
         for (const testItem of testData) {
-            var templates = Templates.parseFile(GetExampleFilePath('Analyzer.lg'));
             var evaled1 = templates.analyzeTemplate(testItem.name);
             var variableEvaled = evaled1.Variables;
             var variableEvaledOptions = testItem.variableOptions;
