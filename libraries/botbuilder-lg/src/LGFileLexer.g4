@@ -5,6 +5,14 @@ lexer grammar LGFileLexer;
   startLine = true;
 }
 
+@header {/**
+ * @module botbuilder-lg
+ */
+/**
+ * Copyright (c) Microsoft Corporation. All rights reserved.
+ * Licensed under the MIT License.
+ */}
+
 fragment WHITESPACE : ' '|'\t'|'\ufeff'|'\u00a0';
 
 NEWLINE : '\r'? '\n' {this.startLine = true;};

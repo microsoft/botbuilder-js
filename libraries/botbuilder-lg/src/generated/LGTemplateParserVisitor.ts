@@ -1,12 +1,19 @@
-// Generated from ../LGTemplateParser.g4 by ANTLR 4.6-SNAPSHOT
+// Generated from src/LGTemplateParser.g4 by ANTLR 4.7.3-SNAPSHOT
 
+/**
+ * @module botbuilder-lg
+ */
+/**
+ * Copyright (c) Microsoft Corporation. All rights reserved.
+ * Licensed under the MIT License.
+ */
 
 import { ParseTreeVisitor } from "antlr4ts/tree/ParseTreeVisitor";
 
-import { SwitchCaseBodyContext } from "./LGTemplateParser";
 import { NormalBodyContext } from "./LGTemplateParser";
-import { StructuredBodyContext } from "./LGTemplateParser";
 import { IfElseBodyContext } from "./LGTemplateParser";
+import { SwitchCaseBodyContext } from "./LGTemplateParser";
+import { StructuredBodyContext } from "./LGTemplateParser";
 import { TemplateContext } from "./LGTemplateParser";
 import { BodyContext } from "./LGTemplateParser";
 import { StructuredTemplateBodyContext } from "./LGTemplateParser";
@@ -39,14 +46,6 @@ import { SwitchCaseStatContext } from "./LGTemplateParser";
  */
 export interface LGTemplateParserVisitor<Result> extends ParseTreeVisitor<Result> {
 	/**
-	 * Visit a parse tree produced by the `switchCaseBody`
-	 * labeled alternative in `LGTemplateParser.body`.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	visitSwitchCaseBody?: (ctx: SwitchCaseBodyContext) => Result;
-
-	/**
 	 * Visit a parse tree produced by the `normalBody`
 	 * labeled alternative in `LGTemplateParser.body`.
 	 * @param ctx the parse tree
@@ -55,20 +54,28 @@ export interface LGTemplateParserVisitor<Result> extends ParseTreeVisitor<Result
 	visitNormalBody?: (ctx: NormalBodyContext) => Result;
 
 	/**
-	 * Visit a parse tree produced by the `structuredBody`
-	 * labeled alternative in `LGTemplateParser.body`.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	visitStructuredBody?: (ctx: StructuredBodyContext) => Result;
-
-	/**
 	 * Visit a parse tree produced by the `ifElseBody`
 	 * labeled alternative in `LGTemplateParser.body`.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
 	visitIfElseBody?: (ctx: IfElseBodyContext) => Result;
+
+	/**
+	 * Visit a parse tree produced by the `switchCaseBody`
+	 * labeled alternative in `LGTemplateParser.body`.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	visitSwitchCaseBody?: (ctx: SwitchCaseBodyContext) => Result;
+
+	/**
+	 * Visit a parse tree produced by the `structuredBody`
+	 * labeled alternative in `LGTemplateParser.body`.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	visitStructuredBody?: (ctx: StructuredBodyContext) => Result;
 
 	/**
 	 * Visit a parse tree produced by `LGTemplateParser.template`.

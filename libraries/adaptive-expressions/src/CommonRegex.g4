@@ -1,5 +1,13 @@
 ﻿grammar CommonRegex;
 
+@header {/**
+ * @module adaptive-expressions
+ */
+/**
+ * Copyright (c) Microsoft Corporation. All rights reserved.
+ * Licensed under the MIT License.
+ */}
+ 
 parse
  : alternation EOF
  ;

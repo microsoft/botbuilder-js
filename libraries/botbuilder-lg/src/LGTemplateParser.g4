@@ -2,6 +2,14 @@ parser grammar LGTemplateParser;
 
 options { tokenVocab=LGTemplateLexer; }
 
+@header {/**
+ * @module botbuilder-lg
+ */
+/**
+ * Copyright (c) Microsoft Corporation. All rights reserved.
+ * Licensed under the MIT License.
+ */}
+ 
 template: body EOF;
 
 body
