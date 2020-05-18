@@ -600,6 +600,7 @@ const dataSource = [
     ['string({obj: {"name": "adams"}, txt: {utter: "hello"}})', '{"obj":{"name":"adams"},"txt":{"utter":"hello"}}'],
     ['string(removeProperty(json(\'{"key1":"value1","key2":"value2"}\'), \'key2\'))', '{"key1":"value1"}'],
     ['coalesce(nullObj,\'hello\',nullObj)', 'hello'],
+    ['coalesce(nullObj, false, \'hello\')', false],
     ['jPath(jsonStr, pathStr )', ['Jazz', 'Accord']],
     ['jPath(jsonStr, \'.automobiles[0].maker\' )', ['Nissan']],
 

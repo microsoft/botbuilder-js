@@ -998,7 +998,7 @@ export class ExpressionFunctions {
 
     private static coalesce(objetcList: object[]): any {
         for (const obj of objetcList) {
-            if (obj) {
+            if (obj !== null && obj !== undefined) {
                 return obj;
             }
         }
