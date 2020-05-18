@@ -106,6 +106,9 @@ export class ChoicePrompt extends Prompt<FoundChoice> {
         const result: PromptRecognizerResult<FoundChoice> = { succeeded: false };
         const activity: Activity = context.activity;
         const utterance: string = activity.text;
+        if (utterance == null) {
+            return result;
+        }
         const choices: any[] = (this.style === ListStyle.suggestedAction ? ChoiceFactory.toChoices(options.choices) : options.choices)|| [];
         const opt: FindChoicesOptions = this.recognizerOptions || {};
         opt.locale = this.determineCulture(activity, opt);
