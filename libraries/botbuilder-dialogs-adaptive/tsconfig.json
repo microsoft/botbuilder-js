@@ -1,13 +1,13 @@
 {
   "compilerOptions": {
-    "target": "ESNext",
+    "target": "es6",
+    "lib": ["es2015", "dom"],
     "module": "commonjs",
     "declaration": true,
     "sourceMap": true,
     "outDir": "./lib",
     "rootDir": "./src",
-    "types" : ["node"],
-    "lib": ["es2020.string"]
+    "types" : ["node"]
   },
   "include": [
     "src/**/*"

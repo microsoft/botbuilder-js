@@ -5,6 +5,7 @@
       "module": "commonjs",
       "declaration": true,
       "declarationMap": true,
+      "downlevelIteration": true,
       "sourceMap": true,
       "esModuleInterop": true,
       "outDir": "./lib",

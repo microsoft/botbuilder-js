@@ -44,7 +44,7 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGTempla
     // to support broswer, use look-ahead replace look-behind
     // PCRE: (?<!\\)\${(('(\\('|\\)|[^'])*?')|("(\\("|\\)|[^"])*?")|(`(\\(`|\\)|[^`])*?`)|([^\r\n{}'"`])|({\s*}))+}?
     public static readonly expressionRecognizeReverseRegex: RegExp = new RegExp(/\}?(('((('|\\)\\)|[^'])*?')|("(\\("|\\)|[^"])*?")|(`(\\(`|\\)|[^`])*?`)|([^\r\n{}'"`])|({\s*}))+{\$(?!\\)/gm);
-    public readonly newLineRegex = /(\r?\n)/g;
+    
     public static readonly LGType = 'lgType';
     public static readonly activityAttachmentFunctionName = 'ActivityAttachment';
     public static readonly fromFileFunctionName = 'fromFile';
@@ -112,10 +112,6 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGTempla
         }
 
         this.evaluationTargetStack.pop();
-
-        if (this.lgOptions.LineBreakStyle === LGLineBreakStyle.Markdown && typeof result === 'string') {
-            result = result.replace(this.newLineRegex, '$1$1');
-        }
 
         return result;
     }
@@ -247,7 +243,7 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGTempla
         }
 
         const parameters: string[] = this.templateMap[templateName].parameters;
-        const currentScope: any = this.currentTarget().scope;
+        const currentScope: any =  this.evaluationTargetStack.length > 0 ?  this.currentTarget().scope : new CustomizedMemory(undefined);
 
         if (args.length === 0) {
             // no args to construct, inherit from current scope

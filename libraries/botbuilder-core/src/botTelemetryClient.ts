@@ -27,6 +27,10 @@ export interface BotTelemetryClient {
     flush();
 }
 
+export interface BotPageViewTelemetryClient {
+    trackPageView(telemetry: TelemetryPageView);
+}
+
 export interface TelemetryDependency {
     dependencyTypeName: string;
     target: string;
@@ -57,9 +61,19 @@ export interface TelemetryTrace {
     severityLevel?: Severity;
 }
 
-export class NullTelemetryClient implements BotTelemetryClient {
+export interface TelemetryPageView {
+    name: string;
+    properties?: {[key: string]: string};
+    metrics?: {[key: string]: number };
+}
+
+export class NullTelemetryClient implements BotTelemetryClient, BotPageViewTelemetryClient {
 
     constructor(settings?: any) {
+        // noop
+    }
+    
+    trackPageView(telemetry: TelemetryPageView) {
         // noop
     }
 
@@ -74,6 +88,7 @@ export class NullTelemetryClient implements BotTelemetryClient {
     trackException(telemetry: TelemetryException)  {
         // noop
     }
+
     trackTrace(telemetry: TelemetryTrace) {
         // noop
     }
@@ -81,5 +96,28 @@ export class NullTelemetryClient implements BotTelemetryClient {
     flush()  {
         // noop
     }
+}
 
+export function telemetryTrackDialogView(telemetryClient: BotTelemetryClient, dialogName: string, properties?: {[key: string]: any}, metrics?: {[key: string]: number }): void {
+    if (!clientSupportsTrackDialogView(telemetryClient)) {
+        throw new TypeError('"telemetryClient" parameter does not have methods trackPageView() or trackTrace()');
+    }
+    if (instanceOfBotPageViewTelemetryClient(telemetryClient)) {
+        telemetryClient.trackPageView({ name: dialogName, properties: properties, metrics: metrics });
+    }
+    else {
+        telemetryClient.trackTrace({ message: 'Dialog View: ' + dialogName, severityLevel: Severity.Information } );
+    }
+}
+
+function instanceOfBotPageViewTelemetryClient(object: any): object is BotPageViewTelemetryClient {
+    return 'trackPageView' in object;
+}
+
+function clientSupportsTrackDialogView(client: any): boolean {
+    if (!client) { return false; }
+    if (typeof client.trackPageView !== 'function' && typeof client.trackTrace !== 'function') {
+        return false;
+    }
+    return true;
 }
