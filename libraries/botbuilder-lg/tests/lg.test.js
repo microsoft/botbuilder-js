@@ -292,8 +292,9 @@ describe('LG', function() {
             
             }
         ];
+
+        var templates = Templates.parseFile(GetExampleFilePath('Analyzer.lg'));
         for (const testItem of testData) {
-            var templates = Templates.parseFile(GetExampleFilePath('Analyzer.lg'));
             var evaled1 = templates.analyzeTemplate(testItem.name);
             var variableEvaled = evaled1.Variables;
             var variableEvaledOptions = testItem.variableOptions;
