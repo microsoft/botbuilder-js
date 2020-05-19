@@ -476,6 +476,12 @@ describe('Memory - Memory Scopes', function() {
                 assert(memory[key] == process.env[key]);
             }
         }
+
+        // override settings with process.env
+        assert.equal(dc.state.getValue('settings.to_be_overridden'), 'one');
+        process.env['to_be_overridden'] = 'two';
+        assert.equal(dc.state.getValue('settings.not_to_be_overridden'), 'one');
+        assert.equal(dc.state.getValue('settings.to_be_overridden'), 'two', 'settings should be overriden by environment variables');
     });
 
     it('ThisMemoryScope should return active dialogs state.', async function() {
