@@ -1,3 +1,5 @@
+// Generated from src/CommonRegex.g4 by ANTLR 4.7.3-SNAPSHOT
+
 /**
  * @module adaptive-expressions
  */
@@ -5,8 +7,6 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-// Generated from ../CommonRegex.g4 by ANTLR 4.6-SNAPSHOT
-
 
 import { ATN } from "antlr4ts/atn/ATN";
 import { ATNDeserializer } from "antlr4ts/atn/ATNDeserializer";
@@ -178,18 +178,17 @@ export class CommonRegexParser extends Parser {
 	];
 
 	private static readonly _LITERAL_NAMES: Array<string | undefined> = [
-		undefined, undefined, undefined, "'\\a'", "'\\c'", "'\\e'", "'\\f'", "'\\n'", 
-		"'\\r'", "'\\t'", "'\\'", undefined, "'.'", "'\\d'", "'\\D'", undefined, 
-		undefined, "'\\s'", "'\\S'", "'\\w'", "'\\W'", "'['", "']'", "'^'", "'-'", 
-		"'?'", "'+'", "'*'", "'{'", "'}'", "','", "'$'", "'|'", "'('", "')'", 
-		"'<'", "'>'", "'''", "'_'", "':'", "'#'", "'='", "'!'", "'&'", "'a'", 
-		"'b'", "'c'", "'d'", "'e'", "'f'", "'g'", "'h'", "'i'", "'j'", "'k'", 
-		"'l'", "'m'", "'n'", "'o'", "'p'", "'q'", "'r'", "'s'", "'t'", "'u'", 
-		"'v'", "'w'", "'x'", "'y'", "'z'", "'A'", "'B'", "'C'", "'D'", "'E'", 
-		"'F'", "'G'", "'H'", "'I'", "'J'", "'K'", "'L'", "'M'", "'N'", "'O'", 
-		"'P'", "'Q'", "'R'", "'S'", "'T'", "'U'", "'V'", "'W'", "'X'", "'Y'", 
-		"'Z'", "'1'", "'2'", "'3'", "'4'", "'5'", "'6'", "'7'", "'8'", "'9'", 
-		"'0'",
+		undefined, undefined, undefined, "'\\'", "'\\'", "'\\'", "'\\'", "'\\'", 
+		"'\\'", "'\\'", "'\\'", undefined, "'.'", "'\\'", "'\\'", undefined, undefined, 
+		"'\\'", "'\\'", "'\\'", "'\\'", "'['", "']'", "'^'", "'-'", "'?'", "'+'", 
+		"'*'", "'{'", "'}'", "','", "'$'", "'|'", "'('", "')'", "'<'", "'>'", 
+		"'''", "'_'", "':'", "'#'", "'='", "'!'", "'&'", "'a'", "'b'", "'c'", 
+		"'d'", "'e'", "'f'", "'g'", "'h'", "'i'", "'j'", "'k'", "'l'", "'m'", 
+		"'n'", "'o'", "'p'", "'q'", "'r'", "'s'", "'t'", "'u'", "'v'", "'w'", 
+		"'x'", "'y'", "'z'", "'A'", "'B'", "'C'", "'D'", "'E'", "'F'", "'G'", 
+		"'H'", "'I'", "'J'", "'K'", "'L'", "'M'", "'N'", "'O'", "'P'", "'Q'", 
+		"'R'", "'S'", "'T'", "'U'", "'V'", "'W'", "'X'", "'Y'", "'Z'", "'1'", 
+		"'2'", "'3'", "'4'", "'5'", "'6'", "'7'", "'8'", "'9'", "'0'",
 	];
 	private static readonly _SYMBOLIC_NAMES: Array<string | undefined> = [
 		undefined, "Quoted", "BlockQuoted", "BellChar", "ControlChar", "EscapeChar", 
@@ -2146,7 +2145,7 @@ export class CommonRegexParser extends Parser {
 	}
 
 	public static readonly _serializedATN: string =
-		"\x03\uAF6F\u8320\u479D\uB75C\u4880\u1605\u191C\uAB37\x03l\u010E\x04\x02" +
+		"\x03\uC91D\uCABA\u058D\uAFBA\u4F53\u0607\uEA8B\uC241\x03l\u010E\x04\x02" +
 		"\t\x02\x04\x03\t\x03\x04\x04\t\x04\x04\x05\t\x05\x04\x06\t\x06\x04\x07" +
 		"\t\x07\x04\b\t\b\x04\t\t\t\x04\n\t\n\x04\v\t\v\x04\f\t\f\x04\r\t\r\x04" +
 		"\x0E\t\x0E\x04\x0F\t\x0F\x04\x10\t\x10\x04\x11\t\x11\x04\x12\t\x12\x04" +
@@ -2178,8 +2177,8 @@ export class CommonRegexParser extends Parser {
 		"\x02\x04\x02\x06\x02\b\x02\n\x02\f\x02\x0E\x02\x10\x02\x12\x02\x14\x02" +
 		"\x16\x02\x18\x02\x1A\x02\x1C\x02\x1E\x02 \x02\"\x02$\x02&\x02(\x02*\x02" +
 		",\x02.\x020\x022\x024\x026\x02\x02\t\x05\x0266::@@\x04\x02\x06\x06\x0F" +
-		"\x16\x04\x02bdkk\x04\x02bhkk\x03\x02bk\x03\x02$$\x03\x02.a\u0136\x028" +
-		"\x03\x02\x02\x02\x04;\x03\x02\x02\x02\x06F\x03\x02\x02\x02\bI\x03\x02" +
+		"\x16\x04\x02bdkk\x04\x02bhkk\x03\x02bk\x03\x02$$\x03\x02.a\x02\u0136\x02" +
+		"8\x03\x02\x02\x02\x04;\x03\x02\x02\x02\x06F\x03\x02\x02\x02\bI\x03\x02" +
 		"\x02\x02\ne\x03\x02\x02\x02\fj\x03\x02\x02\x02\x0E}\x03\x02\x02\x02\x10" +
 		"\x8B\x03\x02\x02\x02\x12\x8D\x03\x02\x02\x02\x14\x93\x03\x02\x02\x02\x16" +
 		"\x9C\x03\x02\x02\x02\x18\xA7\x03\x02\x02\x02\x1A\xAF\x03\x02\x02\x02\x1C" +
@@ -2328,6 +2327,15 @@ export class AlternationContext extends ParserRuleContext {
 			return this.getRuleContext(i, ExprContext);
 		}
 	}
+	public Pipe(): TerminalNode[];
+	public Pipe(i: number): TerminalNode;
+	public Pipe(i?: number): TerminalNode | TerminalNode[] {
+		if (i === undefined) {
+			return this.getTokens(CommonRegexParser.Pipe);
+		} else {
+			return this.getToken(CommonRegexParser.Pipe, i);
+		}
+	}
 	constructor(parent: ParserRuleContext | undefined, invokingState: number) {
 		super(parent, invokingState);
 	}
@@ -2430,9 +2438,13 @@ export class ElementContext extends ParserRuleContext {
 
 
 export class QuantifierContext extends ParserRuleContext {
+	public QuestionMark(): TerminalNode | undefined { return this.tryGetToken(CommonRegexParser.QuestionMark, 0); }
 	public quantifier_type(): Quantifier_typeContext {
 		return this.getRuleContext(0, Quantifier_typeContext);
 	}
+	public Plus(): TerminalNode | undefined { return this.tryGetToken(CommonRegexParser.Plus, 0); }
+	public Star(): TerminalNode | undefined { return this.tryGetToken(CommonRegexParser.Star, 0); }
+	public OpenBrace(): TerminalNode | undefined { return this.tryGetToken(CommonRegexParser.OpenBrace, 0); }
 	public number(): NumberContext[];
 	public number(i: number): NumberContext;
 	public number(i?: number): NumberContext | NumberContext[] {
@@ -2442,6 +2454,8 @@ export class QuantifierContext extends ParserRuleContext {
 			return this.getRuleContext(i, NumberContext);
 		}
 	}
+	public CloseBrace(): TerminalNode | undefined { return this.tryGetToken(CommonRegexParser.CloseBrace, 0); }
+	public Comma(): TerminalNode | undefined { return this.tryGetToken(CommonRegexParser.Comma, 0); }
 	constructor(parent: ParserRuleContext | undefined, invokingState: number) {
 		super(parent, invokingState);
 	}
@@ -2471,6 +2485,8 @@ export class QuantifierContext extends ParserRuleContext {
 
 
 export class Quantifier_typeContext extends ParserRuleContext {
+	public Plus(): TerminalNode | undefined { return this.tryGetToken(CommonRegexParser.Plus, 0); }
+	public QuestionMark(): TerminalNode | undefined { return this.tryGetToken(CommonRegexParser.QuestionMark, 0); }
 	constructor(parent: ParserRuleContext | undefined, invokingState: number) {
 		super(parent, invokingState);
 	}
@@ -2500,6 +2516,9 @@ export class Quantifier_typeContext extends ParserRuleContext {
 
 
 export class Character_classContext extends ParserRuleContext {
+	public CharacterClassStart(): TerminalNode { return this.getToken(CommonRegexParser.CharacterClassStart, 0); }
+	public Caret(): TerminalNode | undefined { return this.tryGetToken(CommonRegexParser.Caret, 0); }
+	public CharacterClassEnd(): TerminalNode { return this.getToken(CommonRegexParser.CharacterClassEnd, 0); }
 	public cc_atom(): Cc_atomContext[];
 	public cc_atom(i: number): Cc_atomContext;
 	public cc_atom(i?: number): Cc_atomContext | Cc_atomContext[] {
@@ -2538,12 +2557,17 @@ export class Character_classContext extends ParserRuleContext {
 
 
 export class CaptureContext extends ParserRuleContext {
+	public OpenParen(): TerminalNode { return this.getToken(CommonRegexParser.OpenParen, 0); }
+	public QuestionMark(): TerminalNode | undefined { return this.tryGetToken(CommonRegexParser.QuestionMark, 0); }
+	public LessThan(): TerminalNode | undefined { return this.tryGetToken(CommonRegexParser.LessThan, 0); }
 	public name(): NameContext | undefined {
 		return this.tryGetRuleContext(0, NameContext);
 	}
+	public GreaterThan(): TerminalNode | undefined { return this.tryGetToken(CommonRegexParser.GreaterThan, 0); }
 	public alternation(): AlternationContext {
 		return this.getRuleContext(0, AlternationContext);
 	}
+	public CloseParen(): TerminalNode { return this.getToken(CommonRegexParser.CloseParen, 0); }
 	constructor(parent: ParserRuleContext | undefined, invokingState: number) {
 		super(parent, invokingState);
 	}
@@ -2573,9 +2597,13 @@ export class CaptureContext extends ParserRuleContext {
 
 
 export class Non_captureContext extends ParserRuleContext {
+	public OpenParen(): TerminalNode { return this.getToken(CommonRegexParser.OpenParen, 0); }
+	public QuestionMark(): TerminalNode { return this.getToken(CommonRegexParser.QuestionMark, 0); }
+	public Colon(): TerminalNode { return this.getToken(CommonRegexParser.Colon, 0); }
 	public alternation(): AlternationContext {
 		return this.getRuleContext(0, AlternationContext);
 	}
+	public CloseParen(): TerminalNode { return this.getToken(CommonRegexParser.CloseParen, 0); }
 	constructor(parent: ParserRuleContext | undefined, invokingState: number) {
 		super(parent, invokingState);
 	}
@@ -2605,6 +2633,9 @@ export class Non_captureContext extends ParserRuleContext {
 
 
 export class OptionContext extends ParserRuleContext {
+	public OpenParen(): TerminalNode { return this.getToken(CommonRegexParser.OpenParen, 0); }
+	public QuestionMark(): TerminalNode { return this.getToken(CommonRegexParser.QuestionMark, 0); }
+	public CloseParen(): TerminalNode { return this.getToken(CommonRegexParser.CloseParen, 0); }
 	public option_flag(): Option_flagContext[];
 	public option_flag(i: number): Option_flagContext;
 	public option_flag(i?: number): Option_flagContext | Option_flagContext[] {
@@ -2643,6 +2674,9 @@ export class OptionContext extends ParserRuleContext {
 
 
 export class Option_flagContext extends ParserRuleContext {
+	public ILC(): TerminalNode | undefined { return this.tryGetToken(CommonRegexParser.ILC, 0); }
+	public MLC(): TerminalNode | undefined { return this.tryGetToken(CommonRegexParser.MLC, 0); }
+	public SLC(): TerminalNode | undefined { return this.tryGetToken(CommonRegexParser.SLC, 0); }
 	constructor(parent: ParserRuleContext | undefined, invokingState: number) {
 		super(parent, invokingState);
 	}
