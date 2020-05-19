@@ -2,6 +2,14 @@ parser grammar LGFileParser;
 
 options { tokenVocab=LGFileLexer; }
 
+@header {/**
+ * @module botbuilder-lg
+ */
+/**
+ * Copyright (c) Microsoft Corporation. All rights reserved.
+ * Licensed under the MIT License.
+ */}
+
 file
     : paragraph+? EOF
     ;
@@ -45,5 +53,5 @@ templateBody
     ;
 
 templateBodyLine
-    : (TEMPLATE_BODY_LINE NEWLINE?) | NEWLINE
+    : ((TEMPLATE_BODY+ | (MULTILINE_PREFIX (MULTILINE_TEXT|ESCAPE_CHARACTER)+ MULTILINE_SUFFIX?)) NEWLINE?) | NEWLINE
     ;

@@ -1,3 +1,5 @@
+// Generated from src/CommonRegex.g4 by ANTLR 4.7.3-SNAPSHOT
+
 /**
  * @module adaptive-expressions
  */
@@ -5,8 +7,6 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-// Generated from ../CommonRegex.g4 by ANTLR 4.6-SNAPSHOT
-
 
 import { ATN } from "antlr4ts/atn/ATN";
 import { ATNDeserializer } from "antlr4ts/atn/ATNDeserializer";
@@ -129,6 +129,12 @@ export class CommonRegexLexer extends Lexer {
 	public static readonly D9 = 104;
 	public static readonly D0 = 105;
 	public static readonly OtherChar = 106;
+
+	// tslint:disable:no-trailing-whitespace
+	public static readonly channelNames: string[] = [
+		"DEFAULT_TOKEN_CHANNEL", "HIDDEN",
+	];
+
 	// tslint:disable:no-trailing-whitespace
 	public static readonly modeNames: string[] = [
 		"DEFAULT_MODE",
@@ -153,18 +159,17 @@ export class CommonRegexLexer extends Lexer {
 	];
 
 	private static readonly _LITERAL_NAMES: Array<string | undefined> = [
-		undefined, undefined, undefined, "'\\a'", "'\\c'", "'\\e'", "'\\f'", "'\\n'", 
-		"'\\r'", "'\\t'", "'\\'", undefined, "'.'", "'\\d'", "'\\D'", undefined, 
-		undefined, "'\\s'", "'\\S'", "'\\w'", "'\\W'", "'['", "']'", "'^'", "'-'", 
-		"'?'", "'+'", "'*'", "'{'", "'}'", "','", "'$'", "'|'", "'('", "')'", 
-		"'<'", "'>'", "'''", "'_'", "':'", "'#'", "'='", "'!'", "'&'", "'a'", 
-		"'b'", "'c'", "'d'", "'e'", "'f'", "'g'", "'h'", "'i'", "'j'", "'k'", 
-		"'l'", "'m'", "'n'", "'o'", "'p'", "'q'", "'r'", "'s'", "'t'", "'u'", 
-		"'v'", "'w'", "'x'", "'y'", "'z'", "'A'", "'B'", "'C'", "'D'", "'E'", 
-		"'F'", "'G'", "'H'", "'I'", "'J'", "'K'", "'L'", "'M'", "'N'", "'O'", 
-		"'P'", "'Q'", "'R'", "'S'", "'T'", "'U'", "'V'", "'W'", "'X'", "'Y'", 
-		"'Z'", "'1'", "'2'", "'3'", "'4'", "'5'", "'6'", "'7'", "'8'", "'9'", 
-		"'0'",
+		undefined, undefined, undefined, "'\\'", "'\\'", "'\\'", "'\\'", "'\\'", 
+		"'\\'", "'\\'", "'\\'", undefined, "'.'", "'\\'", "'\\'", undefined, undefined, 
+		"'\\'", "'\\'", "'\\'", "'\\'", "'['", "']'", "'^'", "'-'", "'?'", "'+'", 
+		"'*'", "'{'", "'}'", "','", "'$'", "'|'", "'('", "')'", "'<'", "'>'", 
+		"'''", "'_'", "':'", "'#'", "'='", "'!'", "'&'", "'a'", "'b'", "'c'", 
+		"'d'", "'e'", "'f'", "'g'", "'h'", "'i'", "'j'", "'k'", "'l'", "'m'", 
+		"'n'", "'o'", "'p'", "'q'", "'r'", "'s'", "'t'", "'u'", "'v'", "'w'", 
+		"'x'", "'y'", "'z'", "'A'", "'B'", "'C'", "'D'", "'E'", "'F'", "'G'", 
+		"'H'", "'I'", "'J'", "'K'", "'L'", "'M'", "'N'", "'O'", "'P'", "'Q'", 
+		"'R'", "'S'", "'T'", "'U'", "'V'", "'W'", "'X'", "'Y'", "'Z'", "'1'", 
+		"'2'", "'3'", "'4'", "'5'", "'6'", "'7'", "'8'", "'9'", "'0'",
 	];
 	private static readonly _SYMBOLIC_NAMES: Array<string | undefined> = [
 		undefined, "Quoted", "BlockQuoted", "BellChar", "ControlChar", "EscapeChar", 
@@ -207,10 +212,13 @@ export class CommonRegexLexer extends Lexer {
 	public get serializedATN(): string { return CommonRegexLexer._serializedATN; }
 
 	// @Override
+	public get channelNames(): string[] { return CommonRegexLexer.channelNames; }
+
+	// @Override
 	public get modeNames(): string[] { return CommonRegexLexer.modeNames; }
 
 	public static readonly _serializedATN: string =
-		"\x03\uAF6F\u8320\u479D\uB75C\u4880\u1605\u191C\uAB37\x02l\u01FC\b\x01" +
+		"\x03\uC91D\uCABA\u058D\uAFBA\u4F53\u0607\uEA8B\uC241\x02l\u01FC\b\x01" +
 		"\x04\x02\t\x02\x04\x03\t\x03\x04\x04\t\x04\x04\x05\t\x05\x04\x06\t\x06" +
 		"\x04\x07\t\x07\x04\b\t\b\x04\t\t\t\x04\n\t\n\x04\v\t\v\x04\f\t\f\x04\r" +
 		"\t\r\x04\x0E\t\x0E\x04\x0F\t\x0F\x04\x10\t\x10\x04\x11\t\x11\x04\x12\t" +
@@ -264,14 +272,14 @@ export class CommonRegexLexer extends Lexer {
 		"\x02^\xBB\x02_\xBD\x02`\xBF\x02a\xC1\x02b\xC3\x02c\xC5\x02d\xC7\x02e\xC9" +
 		"\x02f\xCB\x02g\xCD\x02h\xCF\x02i\xD1\x02j\xD3\x02k\xD5\x02l\xD7\x02\x02" +
 		"\xD9\x02\x02\xDB\x02\x02\xDD\x02\x02\xDF\x02\x02\xE1\x02\x02\x03\x02\x05" +
-		"\x05\x022;C\\c|\x05\x022;CHch\x03\x02\x02\x81\u01FB\x02\x03\x03\x02\x02" +
-		"\x02\x02\x05\x03\x02\x02\x02\x02\x07\x03\x02\x02\x02\x02\t\x03\x02\x02" +
-		"\x02\x02\v\x03\x02\x02\x02\x02\r\x03\x02\x02\x02\x02\x0F\x03\x02\x02\x02" +
-		"\x02\x11\x03\x02\x02\x02\x02\x13\x03\x02\x02\x02\x02\x15\x03\x02\x02\x02" +
-		"\x02\x17\x03\x02\x02\x02\x02\x19\x03\x02\x02\x02\x02\x1B\x03\x02\x02\x02" +
-		"\x02\x1D\x03\x02\x02\x02\x02\x1F\x03\x02\x02\x02\x02!\x03\x02\x02\x02" +
-		"\x02#\x03\x02\x02\x02\x02%\x03\x02\x02\x02\x02\'\x03\x02\x02\x02\x02)" +
-		"\x03\x02\x02\x02\x02+\x03\x02\x02\x02\x02-\x03\x02\x02\x02\x02/\x03\x02" +
+		"\x05\x022;C\\c|\x05\x022;CHch\x03\x02\x02\x81\x02\u01FB\x02\x03\x03\x02" +
+		"\x02\x02\x02\x05\x03\x02\x02\x02\x02\x07\x03\x02\x02\x02\x02\t\x03\x02" +
+		"\x02\x02\x02\v\x03\x02\x02\x02\x02\r\x03\x02\x02\x02\x02\x0F\x03\x02\x02" +
+		"\x02\x02\x11\x03\x02\x02\x02\x02\x13\x03\x02\x02\x02\x02\x15\x03\x02\x02" +
+		"\x02\x02\x17\x03\x02\x02\x02\x02\x19\x03\x02\x02\x02\x02\x1B\x03\x02\x02" +
+		"\x02\x02\x1D\x03\x02\x02\x02\x02\x1F\x03\x02\x02\x02\x02!\x03\x02\x02" +
+		"\x02\x02#\x03\x02\x02\x02\x02%\x03\x02\x02\x02\x02\'\x03\x02\x02\x02\x02" +
+		")\x03\x02\x02\x02\x02+\x03\x02\x02\x02\x02-\x03\x02\x02\x02\x02/\x03\x02" +
 		"\x02\x02\x021\x03\x02\x02\x02\x023\x03\x02\x02\x02\x025\x03\x02\x02\x02" +
 		"\x027\x03\x02\x02\x02\x029\x03\x02\x02\x02\x02;\x03\x02\x02\x02\x02=\x03" +
 		"\x02\x02\x02\x02?\x03\x02\x02\x02\x02A\x03\x02\x02\x02\x02C\x03\x02\x02" +
