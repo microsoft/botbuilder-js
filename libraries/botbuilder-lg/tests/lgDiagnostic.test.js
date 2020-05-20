@@ -115,7 +115,7 @@ describe(`LGExceptionTest`, function() {
     it(`TestErrorTemplateName`, function() {
         var diagnostics = GetDiagnostics(`ErrorTemplateName.lg`);
 
-        assert.strictEqual(6, diagnostics.length);
+        assert.strictEqual(7, diagnostics.length);
         for(const diagnostic of diagnostics)
         {
             assert.strictEqual(DiagnosticSeverity.Error, diagnostic.severity);
