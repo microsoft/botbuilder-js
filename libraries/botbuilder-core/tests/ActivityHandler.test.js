@@ -1,5 +1,5 @@
 const assert = require('assert');
-const { ActivityHandler, ActivityTypes, TurnContext, TestAdapter } = require('../lib');
+const { ActivityHandler, ActivityTypes, TestAdapter, tokenResponseEventName, TurnContext } = require('../lib');
 
 describe('ActivityHandler', function() {
 
@@ -525,6 +525,118 @@ describe('ActivityHandler', function() {
                     done();
                 })
                 .catch(error => done(error));
+        });
+
+        it('call "onTurn" handlers then dispatch by Activity Type "event"', (done) => {
+            const bot = new ActivityHandler();
+            bot.onTurn(async (context, next) => {
+                assertContextAndNext(context, next);
+                assertFalseFlag(onTurnCalled, 'onTurn');
+                onTurnCalled = true;
+                assertFalseFlag(onEventCalled, 'onEvent', 'onTurn');
+                await next();
+            });
+
+            bot.onEvent(async (context, next) => {
+                assertContextAndNext(context, next);
+                assertTrueFlag(onTurnCalled, 'onTurn');
+                assertFalseFlag(onEventCalled, 'onEvent', 'onTurn');
+                assert(!onEventCalled, 'onEvent should not be true before onTurn and onEvent handlers complete.');
+                onEventCalled = true;
+                await next();
+            });
+
+            processActivity({ type: ActivityTypes.Event }, bot, done);
+            assertTrueFlag(onTurnCalled, 'onTurn');
+            assertTrueFlag(onEventCalled, 'onEvent');
+            done();
+        });
+
+        it('call "onTurn" handlers then dispatch by Activity Type "event" with name "healthtokens/responseCheck', (done) => {
+            const bot = new ActivityHandler();
+            bot.onTurn(async (context, next) => {
+                assertContextAndNext(context, next);
+                assertFalseFlag(onTurnCalled, 'onTurn');
+                onTurnCalled = true;
+                assertFalseFlag(onEventCalled, 'onEvent', 'onTurn');
+                assertFalseFlag(onTokenResponseEventCalled, 'onTokenResponseEvent', 'onTurn', 'onEvent');
+                await next();
+            });
+
+            bot.onEvent(async (context, next) => {
+                assertContextAndNext(context, next);
+                assertTrueFlag(onTurnCalled, 'onTurn');
+                assertFalseFlag(onEventCalled, 'onEvent', 'onTurn');
+                onEventCalled = true;
+                assertFalseFlag(onTokenResponseEventCalled, 'onTokenResponseEvent', 'onTurn', 'onEvent');
+                await next();
+            });
+
+            bot.onTokenResponseEvent(async (context, next) => {
+                assertContextAndNext(context, next);
+                assertTrueFlag(onTurnCalled, 'onTurn');
+                assertTrueFlag(onEventCalled, 'onEvent');
+                assertFalseFlag(onTokenResponseEventCalled, 'onTokenResponseEvent', 'onTurn', 'onEvent');
+                assert(!onTokenResponseEventCalled, 'onEvent should not be true before onTurn and onEvent handlers complete.');
+                onTokenResponseEventCalled = true;
+                await next();
+            });
+
+            processActivity({ type: ActivityTypes.Event, name: tokenResponseEventName }, bot, done);
+            assertTrueFlag(onTurnCalled, 'onTurn');
+            assertTrueFlag(onEventCalled, 'onEvent');
+            assertTrueFlag(onTokenResponseEventCalled, 'onTokenResponseEvent');
+            done();
+        });
+
+        it('call "onTurn" handlers then dispatch for unrecognized ActivityTypes', (done) => {
+            const bot = new ActivityHandler();
+            bot.onTurn(async (context, next) => {
+                assertContextAndNext(context, next);
+                assertFalseFlag(onTurnCalled, 'onTurn');
+                onTurnCalled = true;
+                assertFalseFlag(onUnrecognizedActivityTypeCalled, 'onUnrecognizedActivityType', 'onTurn');
+                await next();
+            });
+
+            bot.onUnrecognizedActivityType(async (context, next) => {
+                assertContextAndNext(context, next);
+                assertTrueFlag(onTurnCalled, 'onTurn');
+                assertFalseFlag(onUnrecognizedActivityTypeCalled, 'onUnrecognizedActivityType', 'onTurn');
+                assert(!onUnrecognizedActivityTypeCalled, 'onUnrecognizedActivityType should not be true before onTurn and onUnrecognizedActivityType handlers complete.');
+                onUnrecognizedActivityTypeCalled = true;
+                await next();
+            });
+
+            processActivity({ type: 'not-a-real-type' }, bot, done);
+            assertTrueFlag(onTurnCalled, 'onTurn');
+            assertTrueFlag(onUnrecognizedActivityTypeCalled, 'onUnrecognizedActivityType');
+            done();
+        });
+
+        it('call "onTurn" handlers then by default dispatch to onDialog for all ActivityTypes', (done) => {
+            const bot = new ActivityHandler();
+            bot.onTurn(async (context, next) => {
+                assertContextAndNext(context, next);
+                assertFalseFlag(onTurnCalled, 'onTurn');
+                onTurnCalled = true;
+                assertFalseFlag(onDialogCalled, 'onDialog', 'onTurn');
+                await next();
+            });
+
+            bot.onDialog(async (context, next) => {
+                assertContextAndNext(context, next);
+                assertTrueFlag(onTurnCalled, 'onTurn');
+                assertFalseFlag(onDialogCalled, 'onDialog', 'onTurn');
+                assert(!onDialogCalled, 'onDialog should not be true before onTurn and onDialog handlers complete.');
+                onDialogCalled = true;
+                await next();
+            });
+
+            processActivity({ type: ActivityTypes.Event }, bot, done);
+            assertTrueFlag(onTurnCalled, 'onTurn');
+            assertTrueFlag(onDialogCalled, 'onDialog');
+            done();
         });
     });
 });
