@@ -222,6 +222,7 @@ export class TemplatesParser {
 
 class TemplatesTransformer extends AbstractParseTreeVisitor<any> implements LGTemplateParserVisitor<any> {
     private readonly identifierRegex: RegExp = new RegExp(/^[0-9a-zA-Z_]+$/);
+    private readonly templateNamePartRegex: RegExp = new RegExp(/^[a-zA-Z_][0-9a-zA-Z_]*$/);
     private readonly templates: Templates;
 
     public constructor(templates: Templates) {
@@ -312,7 +313,7 @@ class TemplatesTransformer extends AbstractParseTreeVisitor<any> implements LGTe
     private checkTemplateName(templateName: string, context: ParserRuleContext): void {
         const functionNameSplitDot = templateName.split('.');
         for(let id of functionNameSplitDot) {
-            if (!this.identifierRegex.test(id)) {
+            if (!this.templateNamePartRegex.test(id)) {
                 const diagnostic = this.buildTemplatesDiagnostic(TemplateErrors.invalidTemplateName, context);
                 this.templates.diagnostics.push(diagnostic);
             }

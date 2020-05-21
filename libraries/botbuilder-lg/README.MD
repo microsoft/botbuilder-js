@@ -109,9 +109,12 @@ If your template needs specific entity values to be passed for resolution/ expan
     await turnContext.sendActivity(templates.evaluate("WordGameReply", { GameName = "MarcoPolo" } ));
 ```
 
+## Develop notice
+If you changed the g4 file, please use `antlr-build-expression` and `antlr-build-commonregex` to generate latest lexer/parser. By the way, You will need to have a modern version of Java (>= JRE 1.6) to use it.
+
 [1]:https://github.com/Microsoft/BotBuilder/blob/master/specs/botframework-activity/botframework-activity.md
-[2]:https://github.com/microsoft/BotBuilder-Samples/blob/master/experimental/language-generation/docs/api-reference.md
-[3]:https://github.com/microsoft/BotBuilder-Samples/blob/master/experimental/language-generation/docs/lg-file-format.md
+[2]:https://docs.microsoft.com/en-us/azure/bot-service/language-generation/language-generation-api-reference?view=azure-bot-service-4.0
+[3]:https://docs.microsoft.com/en-us/azure/bot-service/file-format/bot-builder-lg-file-format?view=azure-bot-service-4.0
 [4]:https://github.com/microsoft/botbuilder-js/blob/master/libraries/botbuilder-lg/tests/testData/examples/StructuredTemplate.lg
 [5]:https://github.com/microsoft/botbuilder-js/blob/master/libraries/botbuilder-lg/tests/testData/examples/NormalStructuredLG.lg
 
