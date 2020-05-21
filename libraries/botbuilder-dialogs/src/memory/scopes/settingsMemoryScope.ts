@@ -10,7 +10,7 @@ import { ScopePath } from '../scopePath';
 import { DialogContext } from '../../dialogContext';
 
 /**
- * SettingsMemoryScope maps "settings" -> process.env
+ * SettingsMemoryScope maps "settings" -> dc.context.turnState['settings']
  */
 export class SettingsMemoryScope extends MemoryScope {
     public constructor() {
@@ -18,14 +18,15 @@ export class SettingsMemoryScope extends MemoryScope {
     }
 
     public getMemory(dc: DialogContext): object {
-        // Clone strings from env
-        const settings: object = {};
+        let settings: object = {};
+        if (dc.context.turnState.has(ScopePath.settings)) {
+            settings = dc.context.turnState.get(ScopePath.settings);
+        }
         for (const key in process.env) {
             if (typeof process.env[key] == 'string') {
                 settings[key] = process.env[key];
             }
         }
-
         return settings;
     }
 }
