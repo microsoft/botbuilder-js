@@ -4,8 +4,6 @@
  * regenerated.
  */
 
-import * as moment from 'moment';
-
 /**
  * @class
  * Initializes a new instance of the Entity class.
