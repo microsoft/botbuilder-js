@@ -3,7 +3,7 @@ import 'mocha';
 import {ObjectExpression} from 'adaptive-expressions';
 import * as assert from 'assert';
 import { Choice } from 'botbuilder-dialogs';
-import { ChoiceSet } from 'botbuilder-dialogs-adaptive/lib/input/choiceSet';
+import { ChoiceSet } from '../';
 
 interface Bar {
     choices: ChoiceSet;
