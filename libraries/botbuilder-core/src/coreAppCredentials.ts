@@ -7,7 +7,7 @@
  */
 
 /**
- * Internal interface representing the "WebResource" from @azure/ms-rest-js@1.2.6
+ * Internal interface representing the "WebResource" from @azure/ms-rest-js
  */
 interface CoreWebResource {
     url?: string;
@@ -20,7 +20,7 @@ interface CoreWebResource {
 /**
  * CoreAppCredentials
  * @remarks
- * Runtime-agnostic interface representing "ServiceClientCredentials" from @azure/ms-rest-js@1.2.6
+ * Runtime-agnostic interface representing "ServiceClientCredentials" from @azure/ms-rest-js
  */
 export interface CoreAppCredentials {
     /**
