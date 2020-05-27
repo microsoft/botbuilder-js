@@ -331,6 +331,10 @@ const dataSource = [
     ['[] == []', true],
     ['{} != []', true],
     ['[] == {}', false],
+    ['null < 1', false],
+    ['null >= 1', false],
+    ['undefined < 1', false],
+    ['undefined >= 1', false],
 
     // Conversion functions tests
     ['float(\'10.333\')', 10.333],
