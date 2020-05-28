@@ -1906,6 +1906,8 @@ export class ExpressionFunctions {
             let hasArrayItem = res.some((item): boolean => Array.isArray(item));
             if (hasArrayItem) {
                 res = reduceArr(res);
+            } else {
+                break;
             }
         }
         return res;
