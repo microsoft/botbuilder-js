@@ -19,8 +19,8 @@ import {TimeZoneConverter} from './timeZoneConverter';
 import {convertCSharpDateTimeToMomentJS} from './datetimeFormatConverter';
 import {MemoryInterface, SimpleObjectMemory, StackedMemory} from './memory';
 import {Options} from './options';
-import atob = require('atob');
-import bigInt = require('big-integer')
+import atob = require('atob-lite');
+import bigInt = require('big-integer');
 
 /**
  * Verify the result of an expression is of the appropriate type and return a string if not.
@@ -1906,6 +1906,8 @@ export class ExpressionFunctions {
             let hasArrayItem = res.some((item): boolean => Array.isArray(item));
             if (hasArrayItem) {
                 res = reduceArr(res);
+            } else {
+                break;
             }
         }
         return res;
