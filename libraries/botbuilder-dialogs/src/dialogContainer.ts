@@ -65,9 +65,7 @@ export abstract class DialogContainer<O extends object = {}> extends Dialog<O> {
             //   change again.
             const handled = await dc.emitEvent(DialogEvents.versionChanged, this.id, true, false);
             if (!handled) {
-                // Throw an error for bot to catch
-                throw new Error(`Version change detected for '${this.id}' dialog.`);
-            }
+                console.warn(`Version change detected for '${this.id}' dialog and wasn't handled. You should add event handler to restart dialogs when this happens.`);            }
         }
     }
 }
