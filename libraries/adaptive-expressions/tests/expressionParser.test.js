@@ -240,6 +240,12 @@ const dataSource = [
     ['lastIndexOf(json(\'["a", "b"]\'), \'c\')', -1],
     ['lastIndexOf(createArray(\'abc\', \'def\', \'ghi\', \'def\'), \'def\')', 3],
     ['lastIndexOf(createArray(\'abc\', \'def\', \'ghi\'), \'klm\')', -1],
+    ['sentenceCase(\'a\')', 'A'],
+    ['sentenceCase(\'abc\')', 'Abc'],
+    ['sentenceCase(\'aBC\')', 'Abc'],
+    ['titleCase(\'a\')', 'A'],
+    ['titleCase(\'abc dEF\')', 'Abc Def'],
+
 
     // Logical comparison functions tests
     ['and(1 == 1, 1 < 2, 1 > 2)', false],
@@ -331,6 +337,10 @@ const dataSource = [
     ['[] == []', true],
     ['{} != []', true],
     ['[] == {}', false],
+    ['null < 1', false],
+    ['null >= 1', false],
+    ['undefined < 1', false],
+    ['undefined >= 1', false],
 
     // Conversion functions tests
     ['float(\'10.333\')', 10.333],

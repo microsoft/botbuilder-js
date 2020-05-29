@@ -1906,6 +1906,8 @@ export class ExpressionFunctions {
             let hasArrayItem = res.some((item): boolean => Array.isArray(item));
             if (hasArrayItem) {
                 res = reduceArr(res);
+            } else {
+                break;
             }
         }
         return res;
@@ -2377,6 +2379,22 @@ export class ExpressionFunctions {
                 ReturnType.Number,
                 (expression: Expression): void => ExpressionFunctions.validateOrder(expression, [], ReturnType.String | ReturnType.Array, ReturnType.Object)
             ),
+            ExpressionFunctions.stringTransform(ExpressionType.SentenceCase, (args: any[]): string => {
+                const inputStr = String(ExpressionFunctions.parseStringOrNull(args[0])).toLowerCase();
+                if (inputStr === '') {
+                    return inputStr;
+                } else {
+                    return inputStr.charAt(0).toUpperCase() + inputStr.substr(1).toLowerCase();
+                }
+            }),
+            ExpressionFunctions.stringTransform(ExpressionType.TitleCase, (args: any[]): string => {
+                const inputStr = String(ExpressionFunctions.parseStringOrNull(args[0])).toLowerCase();
+                if (inputStr === '') {
+                    return inputStr;
+                } else {
+                    return inputStr.replace(/\w\S*/g, (txt): string => txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase());
+                }
+            }),
             new ExpressionEvaluator(
                 ExpressionType.Join,
                 (expression: Expression, state: any, options: Options): {value: any; error: string} => {
