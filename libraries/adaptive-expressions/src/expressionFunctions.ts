@@ -51,7 +51,7 @@ export class ExpressionFunctions {
     public static readonly DefaultDateTimeFormat: string = 'YYYY-MM-DDTHH:mm:ss.SSS[Z]';
 
     /**
-     * The default date time format string.
+     * The default date time format string of a none UTC timestamp.
      */
     public static readonly NoneUtcDefaultDateTimeFormat: string = 'YYYY-MM-DDTHH:mm:ss.SSSZ';
 
