@@ -48,7 +48,12 @@ export class ExpressionFunctions {
     /**
      * The default date time format string.
      */
-    public static readonly DefaultDateTimeFormat: string = 'YYYY-MM-DDTHH:mm:ss.sssZ';
+    public static readonly DefaultDateTimeFormat: string = 'YYYY-MM-DDTHH:mm:ss.SSS[Z]';
+
+    /**
+     * The default date time format string.
+     */
+    public static readonly NoneUtcDefaultDateTimeFormat: string = 'YYYY-MM-DDTHH:mm:ss.SSSZ';
 
     /**
      * constant of converting unix timestamp to ticks
@@ -2686,7 +2691,7 @@ export class ExpressionFunctions {
                     let args: any[];
                     ({args, error} = ExpressionFunctions.evaluateChildren(expr, state, options));
                     if (!error) {
-                        const format: string = (args.length === 3) ? ExpressionFunctions.timestampFormatter(args[2]) : this.DefaultDateTimeFormat;
+                        const format: string = (args.length === 3) ? ExpressionFunctions.timestampFormatter(args[2]) : this.NoneUtcDefaultDateTimeFormat;
                         if (typeof (args[0]) === 'string' && typeof (args[1]) === 'string') {
                             ({value, error} = ExpressionFunctions.convertFromUTC(args[0], args[1], format));
                         } else {
