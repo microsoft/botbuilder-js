@@ -7,13 +7,12 @@
  */
 import { DialogTurnResult, DialogContext, TurnPath } from 'botbuilder-dialogs';
 import { BaseInvokeDialog } from './baseInvokeDialog';
-import { ObjectExpression, BoolExpression } from 'adaptive-expressions';
+import { BoolExpression } from 'adaptive-expressions';
 
 export class RepeatDialog<O extends object = {}> extends BaseInvokeDialog<O> {
     public constructor();
     public constructor(options?: O) {
-        super();
-        if (options) { this.options = new ObjectExpression<object>(options); }
+        super(undefined, options);
     }
 
     /**
