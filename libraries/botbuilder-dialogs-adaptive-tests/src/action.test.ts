@@ -79,6 +79,10 @@ describe('ActionTests', function() {
         await testRunner.runTestScript('Action_Foreach');
     });
 
+    it('Foreach_Empty', async () => {
+        await testRunner.runTestScript('Action_Foreach_Empty');
+    });
+
     it('ForeachPage_Empty', async () => {
         await testRunner.runTestScript('Action_ForeachPage_Empty');
     });
