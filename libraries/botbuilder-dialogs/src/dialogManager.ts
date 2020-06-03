@@ -193,7 +193,11 @@ export class DialogManager extends Configurable {
         await botStateSet.saveAllChanges(dc.context, false);
 
         // Send trace of memory to emulator
-        const snapshot: object = dc.state.getMemorySnapshot();
+        let snapshotDc = dc;
+        while (snapshotDc.child) {
+            snapshotDc = snapshotDc.child;
+        }
+        const snapshot: object = snapshotDc.state.getMemorySnapshot();
         await dc.context.sendActivity({
             type: ActivityTypes.Trace,
             name: 'BotState',
