@@ -27,6 +27,16 @@ export class ForEach<O extends object = {}> extends ActionScope<O> {
     public itemsProperty: StringExpression;
 
     /**
+     * Property path expression to the item index.
+     */
+    public index: StringExpression = new StringExpression(INDEX);
+
+    /**
+     * Property path expression to the item value.
+     */
+    public value: StringExpression = new StringExpression(VALUE);
+
+    /**
      * An optional expression which if is true will disable this action.
      */
     public disabled?: BoolExpression;
@@ -39,7 +49,7 @@ export class ForEach<O extends object = {}> extends ActionScope<O> {
         if (this.disabled && this.disabled.getValue(dc.state)) {
             return await dc.endDialog();
         }
-        dc.state.setValue(INDEX, -1);
+        dc.state.setValue(this.index.getValue(dc.state), -1);
         return await this.nextItem(dc);
     }
 
@@ -58,11 +68,11 @@ export class ForEach<O extends object = {}> extends ActionScope<O> {
     protected async nextItem(dc: DialogContext): Promise<DialogTurnResult> {
         const itemsProperty = this.itemsProperty.getValue(dc.state);
         const items: any[] = dc.state.getValue(itemsProperty, []);
-        let index = dc.state.getValue(INDEX);
+        let index = dc.state.getValue(this.index.getValue(dc.state));
 
         if (++index < items.length) {
-            dc.state.setValue(VALUE, items[index]);
-            dc.state.setValue(INDEX, index);
+            dc.state.setValue(this.value.getValue(dc.state), items[index]);
+            dc.state.setValue(this.index.getValue(dc.state), index);
             return await this.beginAction(dc, 0);
         } else {
             return await dc.endDialog();

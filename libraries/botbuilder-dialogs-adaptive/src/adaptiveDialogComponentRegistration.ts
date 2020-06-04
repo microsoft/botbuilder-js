@@ -124,10 +124,14 @@ export class AdaptiveDialogComponentRegistration implements ComponentRegistratio
         }));
         this.registerBuilder('Microsoft.Foreach', new AdaptiveTypeBuilder(ForEach, this._resourceExplorer, {
             'itemsProperty': new StringExpressionConverter(),
+            'index': new StringExpressionConverter(),
+            'value': new StringExpressionConverter(),
             'disabled': new BoolExpressionConverter()
         }));
         this.registerBuilder('Microsoft.ForeachPage', new AdaptiveTypeBuilder(ForEachPage, this._resourceExplorer, {
             'itemsProperty': new StringExpressionConverter(),
+            'page': new StringExpressionConverter(),
+            'pageIndex': new StringExpressionConverter(),
             'pageSize': new IntExpressionConverter(),
             'disabled': new BoolExpressionConverter()
         }));

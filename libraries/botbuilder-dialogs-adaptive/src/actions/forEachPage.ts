@@ -35,6 +35,16 @@ export class ForEachPage<O extends object = {}> extends ActionScope<O> {
     public itemsProperty: StringExpression;
 
     /**
+     * Expression used to compute the list that should be enumerated.
+     */
+    public page: StringExpression = new StringExpression(FOREACHPAGE);
+
+    /**
+     * Expression used to compute the list that should be enumerated.
+     */
+    public pageIndex: StringExpression = new StringExpression(FOREACHPAGEINDEX);
+
+    /**
      * Page size, default to 10.
      */
     public pageSize: IntExpression = new IntExpression(10) ;
@@ -52,6 +62,8 @@ export class ForEachPage<O extends object = {}> extends ActionScope<O> {
         if (this.disabled && this.disabled.getValue(dc.state)) {
             return await dc.endDialog();
         }
+
+        dc.state.setValue(this.pageIndex.getValue(dc.state), 0);
         return await this.nextPage(dc);
     }
 
@@ -72,7 +84,7 @@ export class ForEachPage<O extends object = {}> extends ActionScope<O> {
     }
 
     private async nextPage(dc: DialogContext): Promise<DialogTurnResult> {
-        let pageIndex = dc.state.getValue(FOREACHPAGEINDEX, 0);
+        let pageIndex = dc.state.getValue(this.pageIndex.getValue(dc.state), 0);
         const pageSize = this.pageSize.getValue(dc.state);
         const itemOffset = pageSize * pageIndex;
 
@@ -81,8 +93,8 @@ export class ForEachPage<O extends object = {}> extends ActionScope<O> {
         if (items.length > 0) {
             const page = this.getPage(items, itemOffset, pageSize);
             if (page && page.length > 0) {
-                dc.state.setValue(FOREACHPAGE, page);
-                dc.state.setValue(FOREACHPAGEINDEX, ++pageIndex);
+                dc.state.setValue(this.page.getValue(dc.state), page);
+                dc.state.setValue(this.pageIndex.getValue(dc.state), ++pageIndex);
                 return await this.beginAction(dc, 0);
             }
         }
