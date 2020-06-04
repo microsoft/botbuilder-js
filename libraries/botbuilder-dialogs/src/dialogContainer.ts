@@ -63,11 +63,7 @@ export abstract class DialogContainer<O extends object = {}> extends Dialog<O> {
             // Give bot an opportunity to handle the change.
             // - If bot handles it the changeHash will have been updated as to avoid triggering the 
             //   change again.
-            const handled = await dc.emitEvent(DialogEvents.versionChanged, this.id, true, false);
-            if (!handled) {
-                // Throw an error for bot to catch
-                throw new Error(`Version change detected for '${this.id}' dialog.`);
-            }
+            await dc.emitEvent(DialogEvents.versionChanged, this.id, true, false);
         }
     }
 }
