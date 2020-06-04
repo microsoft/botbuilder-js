@@ -647,14 +647,14 @@ describe('LG', function() {
 
     it('TestRecursiveTemplate', function() {
         var templates = Templates.parseFile(GetExampleFilePath('RecursiveTemplate.lg'));
-        var evaled = templates.evaluate('RecursiveAccumulate', {number: 100});
-        assert.strictEqual(evaled, 5050);
+        var evaled = templates.evaluate('RecursiveAccumulate', {number: 10});
+        assert.strictEqual(evaled, 55);
 
         var evaled = templates.evaluate('RecursiveFactorial', {number: 5});
         assert.strictEqual(evaled, 1*2*3*4*5);
 
-        var evaled = templates.evaluate('RecursiveFibonacciSequence', {number: 10});
-        assert.strictEqual(evaled, 55);
+        var evaled = templates.evaluate('RecursiveFibonacciSequence', {number: 5});
+        assert.strictEqual(evaled, 5);
     });
 
     it('TestLGResource', function() {
