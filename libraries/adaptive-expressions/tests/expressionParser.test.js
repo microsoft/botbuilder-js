@@ -1,8 +1,10 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
 /* eslint-disable @typescript-eslint/no-var-requires */
-const { Expression, SimpleObjectMemory, ExpressionFunctions, Options } = require('../lib');
+const {Expression, SimpleObjectMemory, ExpressionFunctions, Options} = require('../lib');
+var {TimexProperty} = require('@microsoft/recognizers-text-data-types-timex-expression');
 const assert = require('assert');
 const moment = require('moment');
+const bigInt = require('big-integer')
 
 const one = ['one'];
 const oneTwo = ['one', 'two'];
@@ -238,6 +240,12 @@ const dataSource = [
     ['lastIndexOf(json(\'["a", "b"]\'), \'c\')', -1],
     ['lastIndexOf(createArray(\'abc\', \'def\', \'ghi\', \'def\'), \'def\')', 3],
     ['lastIndexOf(createArray(\'abc\', \'def\', \'ghi\'), \'klm\')', -1],
+    ['sentenceCase(\'a\')', 'A'],
+    ['sentenceCase(\'abc\')', 'Abc'],
+    ['sentenceCase(\'aBC\')', 'Abc'],
+    ['titleCase(\'a\')', 'A'],
+    ['titleCase(\'abc dEF\')', 'Abc Def'],
+
 
     // Logical comparison functions tests
     ['and(1 == 1, 1 < 2, 1 > 2)', false],
@@ -329,6 +337,10 @@ const dataSource = [
     ['[] == []', true],
     ['{} != []', true],
     ['[] == {}', false],
+    ['null < 1', false],
+    ['null >= 1', false],
+    ['undefined < 1', false],
+    ['undefined >= 1', false],
 
     // Conversion functions tests
     ['float(\'10.333\')', 10.333],
@@ -344,8 +356,8 @@ const dataSource = [
     ['bool(hello * 5)', false],
     ['bool(\'false\')', true], // we make it true, because it is not empty
     ['bool(\'hi\')', true],
-    ['[1,2,3]', [1,2,3]],
-    ['[1,2,3, [4,5]]', [1,2,3, [4,5]]],
+    ['[1,2,3]', [1, 2, 3]],
+    ['[1,2,3, [4,5]]', [1, 2, 3, [4, 5]]],
     ['\"[1,2,3]\"', '[1,2,3]'],
     ['[1, bool(0), string(bool(1)), float(\'10\')]', [1, true, 'true', 10.0]],
     ['[\'a\', \'b[]\', \'c[][][]\'][1]', 'b[]'],
@@ -356,10 +368,10 @@ const dataSource = [
     ['createArray()', []],
     ['[]', []],
     ['createArray(1, bool(0), string(bool(1)), float(\'10\'))', [1, true, 'true', 10.0]],
-    ['binary(hello)', new Uint8Array([104, 101, 108, 108, 111 ])],
+    ['binary(hello)', new Uint8Array([104, 101, 108, 108, 111])],
     ['dataUri(hello)', 'data:text/plain;charset=utf-8;base64,aGVsbG8='],
     ['count(binary(hello))', 5],
-    ['dataUriToBinary(dataUri(hello))', new Uint8Array([ 100, 97, 116, 97, 58, 116, 101, 120, 116, 47, 112, 108, 97, 105, 110, 59, 99, 104, 97, 114, 115, 101, 116, 61, 117, 116, 102, 45, 56, 59, 98, 97, 115, 101, 54, 52, 44, 97, 71, 86, 115, 98, 71, 56, 61 ])],
+    ['dataUriToBinary(dataUri(hello))', new Uint8Array([100, 97, 116, 97, 58, 116, 101, 120, 116, 47, 112, 108, 97, 105, 110, 59, 99, 104, 97, 114, 115, 101, 116, 61, 117, 116, 102, 45, 56, 59, 98, 97, 115, 101, 54, 52, 44, 97, 71, 86, 115, 98, 71, 56, 61])],
     ['dataUriToString(dataUri(hello))', 'hello'],
     ['uriComponentToString(\'http%3A%2F%2Fcontoso.com\')', 'http://contoso.com'],
     ['base64(hello)', 'aGVsbG8='],
@@ -367,9 +379,17 @@ const dataSource = [
     ['base64ToBinary(base64(byteArr))', new Uint8Array([3, 5, 1, 12])],
     ['base64(base64ToBinary(\"AwUBDA==\"))', 'AwUBDA=='],
     ['base64ToString(base64(hello))', 'hello'],
-    ['dataUriToBinary(base64(hello))', new Uint8Array([ 97, 71, 86, 115, 98, 71, 56, 61 ])],
+    ['dataUriToBinary(base64(hello))', new Uint8Array([97, 71, 86, 115, 98, 71, 56, 61])],
     ['uriComponent(\'http://contoso.com\')', 'http%3A%2F%2Fcontoso.com'],
     ['{a: 1, b: newExpr}.b', 'new land'],
+    ['formatNumber(20.0000, 2)', '20.00'],
+    ['formatNumber(12.123, 2)', '12.12'],
+    ['formatNumber(1.555, 2)', '1.56'],
+    ['formatNumber(12.123, 4)', '12.1230'],
+
+    // TODO: This should actually be the below, but toLocaleString does not work.
+    // ['formatNumber(12000.3, 4, "fr-FR")', '12\u00a0000,3000'],
+    ['formatNumber(12000.3, 4, "fr-FR")', '12,000.3000'],
 
     // Math functions tests
     ['add(1, 2, 3)', 6],
@@ -405,6 +425,23 @@ const dataSource = [
     // Otherwise exceptions will be thrown out
     // All the output timestamp strings are in ISO format of YYYY-MM-DDTHH:mm:ss.sssZ
     // Init dateTime: 2018-03-15T13:00:00:111Z
+    ['isDefinite(\'helloworld\')', false],
+    ['isDefinite(\'2012-12-21\')', true],
+    ['isDefinite(\'xxxx-12-21\')', false],
+    ['isDefinite(validFullDateTimex)', true],
+    ['isDefinite(invalidFullDateTimex)', false],
+    ['isTime(validHourTimex)', true],
+    ['isTime(invalidHourTimex)', false],
+    ['isDuration(\'PT30M\')', true],
+    ['isDuration(\'2012-12-21T12:30\')', false],
+    ['isDate(\'PT30M\')', false],
+    ['isDate(\'2012-12-21T12:30\')', true],
+    ['isTimeRange(\'PT30M\')', false],
+    ['isTimeRange(validTimeRange)', true],
+    ['isDateRange(\'PT30M\')', false],
+    ['isDateRange(\'2012-02\')', true],
+    ['isPresent(\'PT30M\')', false],
+    ['isPresent(validNow)', true],
     ['addDays(timestamp, 1)', '2018-03-16T13:00:00.111Z'],
     ['addDays(timestamp, 1,\'MM-dd-yy\')', '03-16-18'],
     ['addHours(timestamp, 1)', '2018-03-15T14:00:00.111Z'],
@@ -442,7 +479,9 @@ const dataSource = [
     ['formatDateTime(\'2018-03-15T11:00:00.123\', \'tt\')', 'AM'],
     ['formatDateTime(\'2018-03-15\')', '2018-03-15T00:00:00.000Z'],
     ['formatDateTime(timestampObj)', '2018-03-15T13:00:00.000Z'],
-    ['formatDateTime(unixTimestamp)', '2018-03-15T13:00:00.000Z'],
+    ['formatEpoch(unixTimestamp)', '2018-03-15T13:00:00.000Z'],
+    ['formatEpoch(unixTimestampFraction)', '2018-03-15T13:00:00.500Z'],
+    ['formatTicks(ticks)', '2020-05-06T11:47:00.000Z'],
     ['subtractFromTime(timestamp, 1, \'Year\')', '2017-03-15T13:00:00.111Z'],
     ['subtractFromTime(timestamp, 1, \'Month\')', '2018-02-15T13:00:00.111Z'],
     ['subtractFromTime(timestamp, 1, \'Week\')', '2018-03-08T13:00:00.111Z'],
@@ -460,25 +499,27 @@ const dataSource = [
     ['getTimeOfDay(\'2018-03-15T18:00:00.000Z\')', 'evening'],
     ['getTimeOfDay(\'2018-03-15T22:00:00.000Z\')', 'evening'],
     ['getTimeOfDay(\'2018-03-15T23:00:00.000Z\')', 'night'],
+    ['length(getPastTime(1, \'Year\'))', 24],
     ['getPastTime(1, \'Year\', \'MM-dd-yy\')', moment(new Date().toISOString()).utc().subtract(1, 'years').format('MM-DD-YY')],
     ['getPastTime(1, \'Month\', \'MM-dd-yy\')', moment(new Date().toISOString()).utc().subtract(1, 'months').format('MM-DD-YY')],
     ['getPastTime(1, \'Week\', \'MM-dd-yy\')', moment(new Date().toISOString()).utc().subtract(7, 'days').format('MM-DD-YY')],
     ['getPastTime(1, \'Day\', \'MM-dd-yy\')', moment(new Date().toISOString()).utc().subtract(1, 'days').format('MM-DD-YY')],
     ['getFutureTime(1, \'Year\', \'MM-dd-yy\')', moment(new Date().toISOString()).utc().add(1, 'years').format('MM-DD-YY')],
+    ['length(getFutureTime(1, \'Year\'))', 24],
     ['getFutureTime(1, \'Month\', \'MM-dd-yy\')', moment(new Date().toISOString()).utc().add(1, 'months').format('MM-DD-YY')],
     ['getFutureTime(1, \'Week\', \'MM-dd-yy\')', moment(new Date().toISOString()).utc().add(7, 'days').format('MM-DD-YY')],
     ['getFutureTime(1, \'Day\', \'MM-dd-yy\')', moment(new Date().toISOString()).utc().add(1, 'days').format('MM-DD-YY')],
-    ['addToTime(\'2018-01-01T08:00:00.000Z\', 1, \'Day\')', '2018-01-02T08:00:00.000+00:00'],
-    ['addToTime(\'2018-01-01T08:00:00.000Z\', sub(3,1), \'Week\')', '2018-01-15T08:00:00.000+00:00'],
+    ['addToTime(\'2018-01-01T08:00:00.000Z\', 1, \'Day\')', '2018-01-02T08:00:00.000Z'],
+    ['addToTime(\'2018-01-01T08:00:00.000Z\', sub(3,1), \'Week\')', '2018-01-15T08:00:00.000Z'],
     ['addToTime(\'2018-01-01T08:00:00.000Z\', 1, \'Month\', \'MM-DD-YY\')', '02-01-18'],
     ['convertFromUTC(\'2018-02-02T02:00:00.000Z\', \'Pacific Standard Time\')', '2018-02-01T18:00:00.000-08:00'],
     ['convertFromUTC(\'2018-02-02T02:00:00.000Z\', \'Pacific Standard Time\', \'MM-DD-YY\')', '02-01-18'],
-    ['convertToUTC(\'2018-01-01T18:00:00.000\', \'Pacific Standard Time\')', '2018-01-02T02:00:00.000+00:00'],
+    ['convertToUTC(\'2018-01-01T18:00:00.000\', \'Pacific Standard Time\')', '2018-01-02T02:00:00.000Z'],
     ['convertToUTC(\'2018-01-01T18:00:00.000\', \'Pacific Standard Time\', \'MM-DD-YY\')', '01-02-18'],
-    ['startOfDay(\'2018-03-15T13:30:30.000Z\')', '2018-03-15T00:00:00.000+00:00'],
-    ['startOfHour(\'2018-03-15T13:30:30.000Z\')', '2018-03-15T13:00:00.000+00:00'],
-    ['startOfMonth(\'2018-03-15T13:30:30.000Z\')', '2018-03-01T00:00:00.000+00:00'],
-    ['ticks(\'2018-01-01T08:00:00.000Z\')', 636503904000000000],
+    ['startOfDay(\'2018-03-15T13:30:30.000Z\')', '2018-03-15T00:00:00.000Z'],
+    ['startOfHour(\'2018-03-15T13:30:30.000Z\')', '2018-03-15T13:00:00.000Z'],
+    ['startOfMonth(\'2018-03-15T13:30:30.000Z\')', '2018-03-01T00:00:00.000Z'],
+    ['ticks(\'2018-01-01T08:00:00.000Z\')', bigInt('636503904000000000')],
 
     //URI parsing functions tests
     ['uriHost(\'https://www.localhost.com:8080\')', 'www.localhost.com'],
@@ -552,9 +593,9 @@ const dataSource = [
     ['sortByDescending(items)', ['zero', 'two', 'one']],
     ['sortByDescending(nestedItems, \'x\')[0].x', 3],
     ['flatten(createArray(1,createArray(2),createArray(createArray(3, 4), createArray(5,6))))', [1, 2, 3, 4, 5, 6]],
-    ['flatten(createArray(1,createArray(2),createArray(createArray(3, 4), createArray(5,6))), 1)', [1, 2, [3,4], [5,6]]],
+    ['flatten(createArray(1,createArray(2),createArray(createArray(3, 4), createArray(5,6))), 1)', [1, 2, [3, 4], [5, 6]]],
     ['unique(createArray(1, 5, 1))', [1, 5]],
-    
+
     //Object manipulation and construction functions tests
     ['{text:"hello"}.text', 'hello'],
     ['{name: user.name}.name', undefined],
@@ -571,6 +612,7 @@ const dataSource = [
     ['string({obj: {"name": "adams"}, txt: {utter: "hello"}})', '{"obj":{"name":"adams"},"txt":{"utter":"hello"}}'],
     ['string(removeProperty(json(\'{"key1":"value1","key2":"value2"}\'), \'key2\'))', '{"key1":"value1"}'],
     ['coalesce(nullObj,\'hello\',nullObj)', 'hello'],
+    ['coalesce(nullObj, false, \'hello\')', false],
     ['jPath(jsonStr, pathStr )', ['Jazz', 'Accord']],
     ['jPath(jsonStr, \'.automobiles[0].maker\' )', ['Nissan']],
 
@@ -652,7 +694,7 @@ const scope = {
             Name: 'item2'
         }
     ],
-    emptyList:[],
+    emptyList: [],
     emptyObject: new Map(),
     emptyJObject: {},
 
@@ -672,77 +714,85 @@ const scope = {
     pathStr: `.automobiles{.maker === "Honda" && .year > 2009}.model`,
     byteArr: new Uint8Array([3, 5, 1, 12]),
     bag:
-  {
-      three: 3.0,
-      set:
     {
-        four: 4.0,
+        three: 3.0,
+        set:
+        {
+            four: 4.0,
+        },
+        list: ['red', 'blue'],
+        index: 3,
+        name: 'mybag'
     },
-      list: ['red', 'blue'],
-      index: 3,
-      name: 'mybag'
-  },
     items: ['zero', 'one', 'two'],
     nestedItems:
-    [
-        { x: 1 },
-        { x: 2 },
-        { x: 3 },
-    ],
+        [
+            {x: 1},
+            {x: 2},
+            {x: 3},
+        ],
     timestamp: '2018-03-15T13:00:00.111Z',
     notISOTimestamp: '2018-03-15T13:00:00Z',
+    validFullDateTimex: new TimexProperty('2020-02-20'),
+    invalidFullDateTimex: new TimexProperty('xxxx-02-20'),
+    validHourTimex: new TimexProperty('2020-02-20T07:30'),
+    validTimeRange: new TimexProperty({partOfDay: 'morning'}),
+    validNow: new TimexProperty({now: true}),
+    invalidHourTimex: new TimexProperty('2001-02-20'),
     timestampObj: new Date('2018-03-15T13:00:00.000Z'),
     unixTimestamp: 1521118800,
-    user: 
-  {
-      income: 110.0,
-      outcome: 120.0,
-      nickname:'John',
-      lists:
+    unixTimestampFraction: 1521118800.5,
+    ticks: bigInt('637243624200000000'),
+    user:
     {
-        todo: ['todo1', 'todo2', 'todo3']
+        income: 110.0,
+        outcome: 120.0,
+        nickname: 'John',
+        lists:
+        {
+            todo: ['todo1', 'todo2', 'todo3']
+        },
+        listType: 'todo'
     },
-      listType: 'todo'
-  },
     turn:
-  {
-      recognized:
     {
-        entities:
-      {
-          city: 'Seattle',
-          ordinal: ['1', '2', '3'],
-          CompositeList1: [['firstItem']],
-          CompositeList2: [['firstItem', 'secondItem']]
-      },
-        intents:
-      {
-          BookFlight: 'BookFlight',
-          BookHotel :[
-              {
-                  Where: 'Bellevue',
-                  Time : 'Tomorrow',
-                  People : '2'
-              },
-              {
-                  Where: 'Kirkland',
-                  Time : 'Today',
-                  People : '4'
-              }
-          ]
-      }
-    }
-  },
+        recognized:
+        {
+            entities:
+            {
+                city: 'Seattle',
+                ordinal: ['1', '2', '3'],
+                CompositeList1: [['firstItem']],
+                CompositeList2: [['firstItem', 'secondItem']]
+            },
+            intents:
+            {
+                BookFlight: 'BookFlight',
+                BookHotel: [
+                    {
+                        Where: 'Bellevue',
+                        Time: 'Tomorrow',
+                        People: '2'
+                    },
+                    {
+                        Where: 'Kirkland',
+                        Time: 'Today',
+                        People: '4'
+                    }
+                ]
+            }
+        }
+    },
     dialog:
-  {
-      instance: { xxx: 'instance', yyy : {instanceY :'instanceY'} },
-      options: { xxx: 'options',  yyy : ['optionY1', 'optionY2' ] },
-      title: 'Dialog Title',
-      subTitle: 'Dialog Sub Title'
-  },
+    {
+        instance: {xxx: 'instance', yyy: {instanceY: 'instanceY'}},
+        options: {xxx: 'options', yyy: ['optionY1', 'optionY2']},
+        title: 'Dialog Title',
+        subTitle: 'Dialog Sub Title'
+    },
     doubleNestedItems: [
-        [{ x: 1 }, { x: 2 }],
-        [{ x: 3 }],
+        [{x: 1}, {x: 2}],
+        [{x: 3}],
     ],
 };
 
@@ -753,8 +803,8 @@ describe('expression parser functional test', () => {
             console.log(input);
             var parsed = Expression.parse(input);
             assert(parsed !== undefined);
-            var { value: actual, error } = parsed.tryEvaluate(scope);
-            assert(error === undefined, `input: ${ input }, Has error: ${ error }`);
+            var {value: actual, error} = parsed.tryEvaluate(scope);
+            assert(error === undefined, `input: ${input}, Has error: ${error}`);
 
             const expected = data[1];
             assertObjectEquals(actual, expected);
@@ -768,7 +818,7 @@ describe('expression parser functional test', () => {
             //ToString re-parse
             const newExpr = Expression.parse(parsed.toString());
             const newActual = newExpr.tryEvaluate(scope).value;
-            assertObjectEquals(newActual, actual);
+            assertObjectEquals(actual, newActual);
         }
     }).timeout(5000);
 
@@ -782,7 +832,7 @@ describe('expression parser functional test', () => {
             n: 2
         };
         const memory = new SimpleObjectMemory(scope);
-        
+
         // normal case, note, we doesn't append a " yet
         let exp = Expression.parse('a[f].b[n].z');
         let path = undefined;
@@ -798,19 +848,19 @@ describe('expression parser functional test', () => {
         exp = Expression.parse('a.b[z.z]');
         ({path, left, error} = ExpressionFunctions.tryAccumulatePath(exp, memory, undefined));
         assert.strictEqual(path, 'a.b[\'zar\']');
-        
+
         // stop evaluate at middle
         exp = Expression.parse('json(x).b');
         ({path, left, error} = ExpressionFunctions.tryAccumulatePath(exp, memory, undefined));
         assert.strictEqual(path, 'b');
-        
+
     });
 
-    it('Test Evaluation Options', () => { 
+    it('Test Evaluation Options', () => {
         var mockMemory = {};
 
         var options = new Options();
-        options.nullSubstitution = (path) => `${ path } is undefined`;
+        options.nullSubstitution = (path) => `${path} is undefined`;
         let value = undefined;
         let error = undefined;
 
@@ -818,7 +868,7 @@ describe('expression parser functional test', () => {
         var exp = Expression.parse('foo');
         ({value, error} = exp.tryEvaluate(mockMemory, options));
         assert.strictEqual(value, 'foo is undefined');
-        
+
         // in boolean context, substitution is not allowed, use raw value instead
         exp = Expression.parse('if(foo, 1, 2)');
         ({value, error} = exp.tryEvaluate(mockMemory, options));
@@ -864,23 +914,24 @@ describe('expression parser functional test', () => {
 var assertObjectEquals = (actual, expected) => {
     if (actual === undefined && expected === undefined) {
         return;
-    } else if(actual === undefined || expected === undefined) {
+    } else if (actual === undefined || expected === undefined) {
         assert.fail();
     } else if (typeof actual === 'number' && typeof expected === 'number') {
-        assert.equal(parseFloat(actual), parseFloat(expected), `actual is: ${ actual }, expected is ${ expected }`);
+        assert.equal(parseFloat(actual), parseFloat(expected), `actual is: ${actual}, expected is ${expected}`);
     } else if (Array.isArray(actual) && Array.isArray(expected)) {
         assert.equal(actual.length, expected.length);
-        for(let i = 0; i< actual.length; i++) {
-            assertObjectEquals(actual[i], expected[i], `actual is: ${ actual[i] }, expected is ${ expected[i] }`);
+        for (let i = 0; i < actual.length; i++) {
+            assertObjectEquals(actual[i], expected[i], `actual is: ${actual[i]}, expected is ${expected[i]}`);
         }
     } else if (actual instanceof Uint8Array && expected instanceof Uint8Array) {
         assert.equal(actual.length, expected.length);
-        for(let i = 0; i< actual.length; i++) {
-            assertObjectEquals(actual[i], expected[i], `actual is: ${ actual[i] }, expected is ${ expected[i] }`);
+        for (let i = 0; i < actual.length; i++) {
+            assertObjectEquals(actual[i], expected[i], `actual is: ${actual[i]}, expected is ${expected[i]}`);
         }
+    } else if (bigInt.isInstance(actual) && bigInt.isInstance(expected)) {
+        assert(actual.equals(expected), `actual is: ${actual}, expected is ${expected}`);
     }
-    
     else {
-        assert.equal(actual, expected, `actual is: ${ actual }, expected is ${ expected }`);
+        assert.equal(actual, expected, `actual is: ${actual}, expected is ${expected}`);
     }
 };

@@ -111,9 +111,9 @@ export class DialogManager extends Configurable {
         if (!this.rootDialogId) { throw new Error(`DialogManager.onTurn: the bot's 'rootDialog' has not been configured.`); }
 
         // Copy initial turn state to context
-        for (const key in this.initialTurnState.keys()) {
-            context.turnState.set(key, this.initialTurnState.get(key));
-        }
+        this.initialTurnState.forEach((value, key) => {
+            context.turnState.set(key, value);
+        });
 
         const botStateSet = new BotStateSet();
 
@@ -193,7 +193,11 @@ export class DialogManager extends Configurable {
         await botStateSet.saveAllChanges(dc.context, false);
 
         // Send trace of memory to emulator
-        const snapshot: object = dc.state.getMemorySnapshot();
+        let snapshotDc = dc;
+        while (snapshotDc.child) {
+            snapshotDc = snapshotDc.child;
+        }
+        const snapshot: object = snapshotDc.state.getMemorySnapshot();
         await dc.context.sendActivity({
             type: ActivityTypes.Trace,
             name: 'BotState',

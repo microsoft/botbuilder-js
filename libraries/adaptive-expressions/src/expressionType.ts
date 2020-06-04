@@ -58,6 +58,8 @@ export class ExpressionType {
     public static readonly NewGuid: string = 'newGuid';
     public static readonly IndexOf: string = 'indexOf';
     public static readonly LastIndexOf: string = 'lastIndexOf';
+    public static readonly SentenceCase: string = 'sentenceCase';
+    public static readonly TitleCase: string = 'titleCase';
 
     // DateTime
     public static readonly AddDays: string = 'addDays';
@@ -72,6 +74,8 @@ export class ExpressionType {
     public static readonly Year: string = 'year';
     public static readonly UtcNow: string = 'utcNow';
     public static readonly FormatDateTime: string = 'formatDateTime';
+    public static readonly FormatEpoch: string = 'formatEpoch';
+    public static readonly FormatTicks: string = 'formatTicks';
     public static readonly SubtractFromTime: string = 'subtractFromTime';
     public static readonly DateReadBack: string = 'dateReadBack';
     public static readonly GetTimeOfDay: string = 'getTimeOfDay';
@@ -85,21 +89,31 @@ export class ExpressionType {
     public static readonly StartOfMonth: string = 'startOfMonth';
     public static readonly Ticks: string = 'ticks';
 
+    // timex
+    public static readonly IsDefinite: string = 'isDefinite';
+    public static readonly IsTime: string = 'isTime';
+    public static readonly IsDuration: string = 'isDuration';
+    public static readonly IsDate: string = 'isDate';
+    public static readonly IsTimeRange: string = 'isTimeRange';
+    public static readonly IsDateRange: string = 'isDateRange';
+    public static readonly IsPresent: string = 'isPresent';
+
     // Conversions
     public static readonly Float: string = 'float';
     public static readonly Int: string = 'int';
     public static readonly String: string = 'string';
     public static readonly Bool: string = 'bool';
     public static readonly Binary: string = 'binary';
-    public static readonly DataUri: string = 'dataUri';
-    public static readonly DataUriToBinary: string = 'dataUriToBinary';
-    public static readonly DataUriToString: string = 'dataUriToString';
-    public static readonly UriComponentToString: string = 'uriComponentToString';
     public static readonly Base64: string = 'base64';
     public static readonly Base64ToBinary: string = 'base64ToBinary';
     public static readonly Base64ToString: string = 'base64ToString';
+    public static readonly DataUri: string = 'dataUri';
+    public static readonly DataUriToBinary: string = 'dataUriToBinary';
+    public static readonly DataUriToString: string = 'dataUriToString';
     public static readonly UriComponent: string = 'uriComponent';
-
+    public static readonly UriComponentToString: string = 'uriComponentToString';
+    public static readonly FormatNumber: string = 'formatNumber';
+    
     // Memory
     public static readonly Accessor: string = 'Accessor';
     public static readonly Element: string = 'Element';
@@ -138,7 +152,7 @@ export class ExpressionType {
     public static readonly Coalesce: string = 'coalesce';
     public static readonly JPath: string = 'jPath';
     public static readonly SetPathToValue: string = 'setPathToValue';
-    
+
     // TODO
     // xPath
     // xml

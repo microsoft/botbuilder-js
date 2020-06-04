@@ -56,7 +56,7 @@ describe('SkillDialog', function() {
              * https://github.com/microsoft/botbuilder-dotnet/blob/41120728b22c709ec2d9247393505fdc778b2de1/tests/Microsoft.Bot.Builder.Dialogs.Tests/SkillDialogTests.cs#L47-L49
              * @param {string} deliveryMode 
              */
-            async function beginDialogShouldCallSkill(deliveryMode) {
+            async function beginDialogShouldCallSkill(deliveryMode, useCreateSkillConversationId = false) {
                 let activitySent; // Activity
                 let fromBotIdSent; // string
                 let toBotIdSent; // string
@@ -76,7 +76,12 @@ describe('SkillDialog', function() {
 
                 // Use Memory for conversation state
                 const conversationState = new ConversationState(new MemoryStorage());
-                const dialogOptions = createSkillDialogOptions(conversationState, skillClient);
+                const dialogOptions = createSkillDialogOptions(conversationState, skillClient, undefined, useCreateSkillConversationId);
+
+                let createSkillConversationIdSpy;
+                if (useCreateSkillConversationId) {
+                    createSkillConversationIdSpy = spy(dialogOptions.conversationIdFactory, 'createSkillConversationId');
+                }
 
                 // Create the SkillDialogInstance and the activity to send.
                 const dialog = new SkillDialog(dialogOptions, 'SkillDialog');
@@ -111,6 +116,12 @@ describe('SkillDialog', function() {
                 // Assert we are done.
                 strictEqual(client.dialogTurnResult.status, DialogTurnStatus.complete);
                 ok(postActivityStub.calledTwice);
+
+                if (useCreateSkillConversationId) {
+                    ok(createSkillConversationIdSpy.called);
+                }
+                strictEqual(await dialogOptions.conversationIdFactory.getSkillConversationReference('Convo1'), undefined, 'no test should use TestAdapter ConversationId as SkillConversationId.');
+                strictEqual(await dialogOptions.conversationIdFactory.getSkillConversationReference(undefined), undefined, 'no test should use TestAdapter ConversationId as SkillConversationId.');
             };
 
             // "Data Rows"
@@ -120,6 +131,10 @@ describe('SkillDialog', function() {
 
             it('when deliveryMode is DeliveryModes.ExpectReplies', async () => {
                 await beginDialogShouldCallSkill(DeliveryModes.ExpectReplies);
+            });
+
+            it('calls createSkillConversationId if createSkillConversationIdWithOptions is not implemented', async () => {
+                await beginDialogShouldCallSkill(DeliveryModes.ExpectReplies, true);
             });
 
             it('and handle Invoke activities', async () => {
@@ -404,7 +419,7 @@ describe('SkillDialog', function() {
                 const client = new DialogTestClient(Channels.Test, dialogUnderTest, beginSkillDialogOptions, [new AutoSaveStateMiddleware(conversationState)], conversationState);
                 client._testAdapter.addExchangeableToken(connectionName, Channels.Test, 'user1', 'https://test');
 
-                const finalActivity = await client.sendActivity('irrelevant');
+                const finalActivity = await client.sendActivity({ text: 'irrelevant'});
                 ok(sendTokenExchangeSpy.notCalled);
                 ok(finalActivity !== undefined);
                 strictEqual(finalActivity.attachments.length, 1);
@@ -504,12 +519,12 @@ function createOAuthCardAttachmentActivity(uri) {
  * @param {*} mockSkillClient
  * @returns A Skill Dialog Options object.
  */
-function createSkillDialogOptions(conversationState, mockSkillClient, connectionName) {
+function createSkillDialogOptions(conversationState, mockSkillClient, connectionName, useCreateSkillConversationId) {
     const dialogOptions = {
         botId: 'SkillCallerId',
         connectionName: connectionName,
         skillHostEndpoint: 'http://test.contoso.com/skill/messages',
-        conversationIdFactory: new SimpleConversationIdFactory(),
+        conversationIdFactory: new SimpleConversationIdFactory({ useCreateSkillConversationId }),
         conversationState: conversationState,
         skillClient: mockSkillClient,
         skill: {
@@ -533,20 +548,16 @@ function createSendActivity(deliveryMode = DeliveryModes.ExpectReplies) {
 }
 
 class SimpleConversationIdFactory extends SkillConversationIdFactoryBase {
-    constructor(config = { disableCreateWithOpts: false, disableGetSkillRef: false }) {
+    constructor({ useCreateSkillConversationId = false }) {
         super();
         this._conversationRefs = new Map();
-        this.disableCreateWithOpts = config.disableCreateWithOpts;
-        this.disableGetSkillRef = config.disableGetSkillRef;
+        this.useCreateSkillConversationId = useCreateSkillConversationId;
     }
 
-    async createSkillConversationIdWithOptions(opts) {
-        if (this.disableCreateWithOpts) {
+    async createSkillConversationIdWithOptions(options) {
+        if (this.useCreateSkillConversationId) {
             return super.createSkillConversationIdWithOptions();
         }
-    }
-
-    async createSkillConversationId(options) {
         const key = createHash('md5').update(options.activity.conversation.id + options.activity.serviceUrl).digest('hex');
 
         const ref = this._conversationRefs.has(key);
@@ -559,18 +570,23 @@ class SimpleConversationIdFactory extends SkillConversationIdFactoryBase {
         return key;
     }
 
-    async getConversationReference() {
+    async createSkillConversationId(convRef) {
+        const key = createHash('md5').update(convRef.conversation.id + convRef.serviceUrl).digest('hex');
 
+        const ref = this._conversationRefs.has(key);
+        if (!ref) {
+            this._conversationRefs.set(key, {
+                conversationReference: convRef
+            });
+        }
+        return key;
     }
 
-    async getSkillConversationReference(skillConversationId) {
-        return this._conversationRefs.get(skillConversationId);
-    }
+    async getConversationReference(skillConversationId) { return this._conversationRefs.get(skillConversationId) }
 
-    deleteConversationReference() {
+    async getSkillConversationReference(skillConversationId) { return this.getConversationReference(skillConversationId) }
 
-    }
-
+    async deleteConversationReference() { /* not used in SkillDialog */ }
 }
 
 /**

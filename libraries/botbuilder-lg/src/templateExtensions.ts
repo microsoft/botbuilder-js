@@ -149,7 +149,10 @@ export class TemplateExtensions {
                 return validCharactersDict[sub];
             } else if (sub === '\\$') {
                 return sub.substr(1);
-            }else {
+            } else if (sub === '\\`') {
+                return sub.substr(1);
+            }
+            else {
                 return sub;
             }
         });
