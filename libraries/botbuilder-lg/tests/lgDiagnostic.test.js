@@ -214,6 +214,8 @@ describe(`LGExceptionTest`, function() {
         assert.throws(() => templates.evaluate(`wPhrase`), Error(`Loop detected: welcome_user => wPhrase [wPhrase]  Error occurred when evaluating '-\${wPhrase()}'. [welcome_user]  Error occurred when evaluating '-\${welcome_user()}'.`));
         
         assert.throws(() => templates.analyzeTemplate(`wPhrase`), Error('Loop detected: welcome_user => wPhrase'),);
+
+        assert.throws(() => templates.analyzeTemplate(`shouldFail`), Error('Loop detected: shouldFail'),);
     });
 
     it(`AddTextWithWrongId`, function() {
