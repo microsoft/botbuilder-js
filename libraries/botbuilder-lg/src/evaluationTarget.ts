@@ -6,7 +6,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { CustomizedMemory } from './customizedMemory';
+import { MemoryInterface } from 'adaptive-expressions';
 
 
 /**
@@ -22,13 +22,13 @@ export class EvaluationTarget {
     /**
      * Scope.
      */
-    public scope: any;
+    public scope: MemoryInterface;
 
     /**
      * The children templates that this template has evaluated currently. 
      */
     public  evaluatedChildren: Map<string, any>;
-    public constructor(templateName: string, scope: any) {
+    public constructor(templateName: string, scope: MemoryInterface) {
         this.templateName = templateName;
         this.scope = scope;
         this.evaluatedChildren = new Map<string, any>();
@@ -40,24 +40,7 @@ export class EvaluationTarget {
      * @returns Id.
      */
     public getId(): string {
-        const memory = this.scope as CustomizedMemory;
-        let result = this.templateName;
-        if (memory) {
-            if (memory.globalMemory) {
-                const version = memory.globalMemory.version();
-                if (version) {
-                    result = result.concat(version);
-                }
-            }
-
-            if (memory.localMemory) {
-                const localMemoryString = memory.localMemory.toString();
-                if (localMemoryString) {
-                    result = result.concat(localMemoryString);
-                }
-            }
-        }
-
-        return result;
+        const scopeVersion = this.scope ? this.scope.version() : '';
+        return this.templateName + scopeVersion;
     }
 }

@@ -16,7 +16,6 @@ import { ExpressionFunctions } from '../expressionFunctions';
 export class SimpleObjectMemory implements MemoryInterface {
 
     private memory: any = undefined;
-    private versionNumber: number = 0;
 
     public constructor(memory: any) {
         this.memory = memory;
@@ -142,13 +141,13 @@ export class SimpleObjectMemory implements MemoryInterface {
             }
         }
 
-        this.versionNumber++;
         return;
     }
 
     public  version(): string {
-        return this.versionNumber.toString();
+        return this.toString();
     }
+
     public toString(): string {
         return JSON.stringify(this.memory, this.getCircularReplacer());
     }
