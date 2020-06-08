@@ -71,13 +71,15 @@ export class RegexRecognizer implements Recognizer {
                     if (match.groups) {
                         for (const name in match.groups) {
                             const text = match.groups[name];
-                            const entity: Entity = {
-                                type: name,
-                            };
-                            entity['text'] = text;
-                            entity['start'] = match.index;
-                            entity['end'] = match.index + text.length;
-                            entityPool.push(entity);
+                            if (text) {
+                                const entity: Entity = {
+                                    type: name,
+                                };
+                                entity['text'] = text;
+                                entity['start'] = match.index;
+                                entity['end'] = match.index + text.length;
+                                entityPool.push(entity);
+                            }
                         }
                     }
                 }
