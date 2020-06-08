@@ -9,6 +9,7 @@ export * from './actions';
 export * from './actionContext';
 export * from './adaptiveDialog';
 export * from './adaptiveDialogComponentRegistration';
+export * from './adaptiveEvents';
 export * from './adaptiveTypeBuilder';
 export * from './conditions';
 export { DialogExpressionConverter } from './converters';

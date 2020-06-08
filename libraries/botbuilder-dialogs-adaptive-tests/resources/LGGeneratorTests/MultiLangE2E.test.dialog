@@ -1,0 +1,18 @@
+{
+    "$schema": "../../../../schemas/sdk.schema",
+    "$kind": "Microsoft.Test.Script",
+    "dialog": {
+        "$kind": "Microsoft.AdaptiveDialog",
+        "id": "LGMultiLanguageE2ETest",
+        "generator": {
+        "$kind": "Microsoft.ResourceMultiLanguageGenerator",
+        "resourceId": "a.lg"
+        }
+    },
+    "script": [
+        {
+            "$kind": "Microsoft.Test.UserSays",
+            "text": "hello"
+        }
+    ]
+}
