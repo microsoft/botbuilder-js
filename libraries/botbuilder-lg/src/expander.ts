@@ -64,22 +64,22 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGTe
      * @returns All possiable results.
      */
     public expandTemplate(templateName: string, scope: any): any[] {
+        const memory = scope instanceof CustomizedMemory ? scope : new CustomizedMemory(scope);
         if (!(templateName in this.templateMap)) {
             throw new Error(TemplateErrors.templateNotExist(templateName));
         }
 
-        if (this.evaluationTargetStack.find((u: EvaluationTarget): boolean => u.templateName === templateName)) {
+        const templateTarget: EvaluationTarget = new EvaluationTarget(templateName, memory);
+        const currentEvulateId: string = templateTarget.getId();
+
+        if (this.evaluationTargetStack.find((u: EvaluationTarget): boolean => u.getId() === currentEvulateId)) {
             throw new Error(`${ TemplateErrors.loopDetected } ${ this.evaluationTargetStack.reverse()
                 .map((u: EvaluationTarget): string => u.templateName)
                 .join(' => ') }`);
         }
 
-        if (!(scope instanceof CustomizedMemory)) {
-            scope = new CustomizedMemory(SimpleObjectMemory.wrap(scope));
-        }
-        
         // Using a stack to track the evalution trace
-        this.evaluationTargetStack.push(new EvaluationTarget(templateName, scope));
+        this.evaluationTargetStack.push(templateTarget);
         const result: any[] = this.visit(this.templateMap[templateName].templateBodyParseTree);
         this.evaluationTargetStack.pop();
 

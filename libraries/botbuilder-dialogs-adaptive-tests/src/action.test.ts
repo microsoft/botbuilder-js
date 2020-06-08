@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
 import 'mocha';
 import * as path from 'path';
+import * as nock from 'nock';
 import { TestRunner } from './testing';
 
 describe('ActionTests', function() {
@@ -105,6 +106,12 @@ describe('ActionTests', function() {
 
     it('GotoAction', async () => {
         await testRunner.runTestScript('Action_GotoAction');
+    });
+
+    it('HttpRequest', async () => {
+        nock('http://petstore.swagger.io').post(/pet/).replyWithFile(200, path.join(__dirname, '../resources/ActionTests/HttpRequest_Response.json'));
+        nock('http://petstore.swagger.io').get(/pet/).replyWithFile(200, path.join(__dirname, '../resources/ActionTests/HttpRequest_Response.json'));
+        await testRunner.runTestScript('Action_HttpRequest');
     });
 
     it('IfCondition', async () => {

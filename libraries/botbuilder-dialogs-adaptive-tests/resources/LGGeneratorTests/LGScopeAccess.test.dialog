@@ -1,0 +1,92 @@
+{
+    "$schema": "../../../../schemas/sdk.schema",
+    "$kind": "Microsoft.Test.Script",
+    "dialog": {
+        "$kind": "Microsoft.AdaptiveDialog",
+        "id": "LGScopeAcess",
+        "generator": {
+        "$kind": "Microsoft.ResourceMultiLanguageGenerator",
+        "resourceId": "a.lg"
+        },
+        "triggers": [
+        {
+            "$kind": "Microsoft.OnBeginDialog",
+            "actions": [
+                {
+                    "$kind": "Microsoft.SendActivity",
+                    "activity": "BeginDialog test1:subDialog.lg"
+                },
+                {
+                    "$kind": "Microsoft.SendActivity",
+                    "activity": "ContinueDialog test1:subDialog.lg"
+                },
+                {
+                    "$kind": "Microsoft.AdaptiveDialog",
+                    "generator": "subDialog.lg",
+                    "triggers": [
+                        {
+                            "$kind": "Microsoft.OnBeginDialog",
+                            "actions": [
+                                {
+                                    "$kind": "Microsoft.SendActivity",
+                                    "activity": "BeginDialog test2:test.lg"
+                                },
+                                {
+                                    "$kind": "Microsoft.SendActivity",
+                                    "activity": "ContinueDialog test2:test.lg"
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "$kind": "Microsoft.SendActivity",
+                    "activity": "BeginDialog test3:subDialog.lg"
+                },
+                {
+                    "$kind": "Microsoft.SendActivity",
+                    "activity": "ContinueDialog test3:subDialog.lg"
+                },
+                {
+                    "$kind": "Microsoft.SendActivity",
+                    "activity": "Done"
+                }
+            ]
+        }
+    ],
+    "defaultResultProperty": "dialog.result"
+    },
+    "script": [
+        {
+            "$kind": "Microsoft.Test.UserConversationUpdate"
+        },
+        {
+            "$kind": "Microsoft.Test.AssertReply",
+            "text": "BeginDialog test1:subDialog.lg"
+        },
+        {
+            "$kind": "Microsoft.Test.AssertReply",
+            "text": "ContinueDialog test1:subDialog.lg"
+        },
+        {
+            "$kind": "Microsoft.Test.AssertReply",
+            "text": "BeginDialog test2:test.lg"
+        },
+        {
+            "$kind": "Microsoft.Test.AssertReply",
+            "text": "ContinueDialog test2:test.lg"
+        },
+        {
+            "$kind": "Microsoft.Test.AssertReply",
+            "text": "BeginDialog test3:subDialog.lg"
+        },
+        {
+            "$kind": "Microsoft.Test.AssertReply",
+            "text": "ContinueDialog test3:subDialog.lg"
+        },
+        {
+            "$kind": "Microsoft.Test.AssertReply",
+            "text": "Done"
+        }
+    ]
+}

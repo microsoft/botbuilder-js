@@ -57,6 +57,21 @@ export class CustomizedMemory implements MemoryInterface {
     }
 
     public  version(): string {
-        return '0';
+        let result = '';
+        if (this.globalMemory) {
+            const version = this.globalMemory.version();
+            if (version) {
+                result = result.concat(version);
+            }
+        }
+
+        if (this.localMemory) {
+            const localVersion = this.localMemory.version();
+            if (localVersion) {
+                result = result.concat(localVersion);
+            }
+        }
+
+        return result;
     }
 }

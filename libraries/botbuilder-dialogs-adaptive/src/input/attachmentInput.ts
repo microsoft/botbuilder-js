@@ -20,7 +20,7 @@ export class AttachmentInput extends InputDialog {
     public outputFormat: EnumExpression<AttachmentOutputFormat> = new EnumExpression<AttachmentOutputFormat>(AttachmentOutputFormat.first);
 
     protected onComputeId(): string {
-        return `AttachmentInput[${ this.prompt.toString() }]`;
+        return `AttachmentInput[${ this.prompt && this.prompt.toString() }]`;
     }
 
     protected getDefaultInput(dc: DialogContext): any {
