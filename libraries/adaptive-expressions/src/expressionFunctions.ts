@@ -19,8 +19,8 @@ import {TimeZoneConverter} from './timeZoneConverter';
 import {convertCSharpDateTimeToMomentJS} from './datetimeFormatConverter';
 import {MemoryInterface, SimpleObjectMemory, StackedMemory} from './memory';
 import {Options} from './options';
-import atob = require('atob');
-import bigInt = require('big-integer')
+import atob = require('atob-lite');
+import bigInt = require('big-integer');
 
 /**
  * Verify the result of an expression is of the appropriate type and return a string if not.
@@ -48,7 +48,12 @@ export class ExpressionFunctions {
     /**
      * The default date time format string.
      */
-    public static readonly DefaultDateTimeFormat: string = 'YYYY-MM-DDTHH:mm:ss.sssZ';
+    public static readonly DefaultDateTimeFormat: string = 'YYYY-MM-DDTHH:mm:ss.SSS[Z]';
+
+    /**
+     * The default date time format string of a none UTC timestamp.
+     */
+    public static readonly NoneUtcDefaultDateTimeFormat: string = 'YYYY-MM-DDTHH:mm:ss.SSSZ';
 
     /**
      * constant of converting unix timestamp to ticks
@@ -997,7 +1002,7 @@ export class ExpressionFunctions {
 
     private static coalesce(objetcList: object[]): any {
         for (const obj of objetcList) {
-            if (obj) {
+            if (obj !== null && obj !== undefined) {
                 return obj;
             }
         }
@@ -1906,6 +1911,8 @@ export class ExpressionFunctions {
             let hasArrayItem = res.some((item): boolean => Array.isArray(item));
             if (hasArrayItem) {
                 res = reduceArr(res);
+            } else {
+                break;
             }
         }
         return res;
@@ -2377,6 +2384,22 @@ export class ExpressionFunctions {
                 ReturnType.Number,
                 (expression: Expression): void => ExpressionFunctions.validateOrder(expression, [], ReturnType.String | ReturnType.Array, ReturnType.Object)
             ),
+            ExpressionFunctions.stringTransform(ExpressionType.SentenceCase, (args: any[]): string => {
+                const inputStr = String(ExpressionFunctions.parseStringOrNull(args[0])).toLowerCase();
+                if (inputStr === '') {
+                    return inputStr;
+                } else {
+                    return inputStr.charAt(0).toUpperCase() + inputStr.substr(1).toLowerCase();
+                }
+            }),
+            ExpressionFunctions.stringTransform(ExpressionType.TitleCase, (args: any[]): string => {
+                const inputStr = String(ExpressionFunctions.parseStringOrNull(args[0])).toLowerCase();
+                if (inputStr === '') {
+                    return inputStr;
+                } else {
+                    return inputStr.replace(/\w\S*/g, (txt): string => txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase());
+                }
+            }),
             new ExpressionEvaluator(
                 ExpressionType.Join,
                 (expression: Expression, state: any, options: Options): {value: any; error: string} => {
@@ -2671,7 +2694,7 @@ export class ExpressionFunctions {
                     let args: any[];
                     ({args, error} = ExpressionFunctions.evaluateChildren(expr, state, options));
                     if (!error) {
-                        const format: string = (args.length === 3) ? ExpressionFunctions.timestampFormatter(args[2]) : this.DefaultDateTimeFormat;
+                        const format: string = (args.length === 3) ? ExpressionFunctions.timestampFormatter(args[2]) : this.NoneUtcDefaultDateTimeFormat;
                         if (typeof (args[0]) === 'string' && typeof (args[1]) === 'string') {
                             ({value, error} = ExpressionFunctions.convertFromUTC(args[0], args[1], format));
                         } else {
