@@ -1,0 +1,30 @@
+{
+  "query": "a",
+  "topScoringIntent": {
+    "intent": "intent",
+    "score": 0.8640835
+  },
+  "intents": [
+    {
+      "intent": "intent",
+      "score": 0.8640835
+    },
+    {
+      "intent": "None",
+      "score": 0.122259058
+    }
+  ],
+  "entities": [
+    {
+      "entity": "a",
+      "type": "alphaEntity",
+      "startIndex": 0,
+      "endIndex": 1,
+      "resolution": {
+        "values": [
+          "a"
+        ]
+      }
+    }
+  ]
+}
