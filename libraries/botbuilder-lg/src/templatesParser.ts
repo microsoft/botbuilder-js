@@ -253,7 +253,7 @@ class TemplatesTransformer extends AbstractParseTreeVisitor<any> implements LGTe
     public visitErrorDefinition(context: lp.ErrorDefinitionContext): any {
         const lineContent = context.INVALID_LINE().text;
         if (lineContent === undefined || lineContent.trim() === '') {
-            this.templates.diagnostics.push(this.buildTemplatesDiagnostic(TemplateErrors.syntaxError, context));
+            this.templates.diagnostics.push(this.buildTemplatesDiagnostic(TemplateErrors.syntaxError(`Unexpected content: '${ lineContent }'`), context));
         }
         return;
     }
@@ -322,8 +322,9 @@ class TemplatesTransformer extends AbstractParseTreeVisitor<any> implements LGTe
         const functionNameSplitDot = templateName.split('.');
         for(let id of functionNameSplitDot) {
             if (!this.templateNamePartRegex.test(id)) {
-                const diagnostic = this.buildTemplatesDiagnostic(TemplateErrors.invalidTemplateName, context);
+                const diagnostic = this.buildTemplatesDiagnostic(TemplateErrors.invalidTemplateName(templateName), context);
                 this.templates.diagnostics.push(diagnostic);
+                break;
             }
         }
     }
@@ -331,7 +332,7 @@ class TemplatesTransformer extends AbstractParseTreeVisitor<any> implements LGTe
     private checkTemplateParameters(parameters: string[], context: ParserRuleContext): void {
         for (const parameter of parameters) {
             if (!this.identifierRegex.test(parameter)) {
-                const diagnostic = this.buildTemplatesDiagnostic(TemplateErrors.invalidTemplateName, context);
+                const diagnostic = this.buildTemplatesDiagnostic(TemplateErrors.invalidParameter(parameter), context);
                 this.templates.diagnostics.push(diagnostic);
             }
         }

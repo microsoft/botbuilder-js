@@ -309,9 +309,11 @@ export class StaticChecker extends AbstractParseTreeVisitor<Diagnostic[]> implem
         const lineOffset = this.currentTemplate !== undefined ? this.currentTemplate.sourceRange.range.start.line : 0;
 
         let templateNameInfo = '';
-        
-        message = this.currentTemplate !== undefined ? `[${ this.currentTemplate.name }]` + message : message;
+        if (this.currentTemplate !== undefined && this.currentTemplate.name !== Templates.inlineTemplateId) {
+            templateNameInfo = `[${ this.currentTemplate.name }]`;
+        }
+
         const range = context === undefined ? new Range(lineOffset + 1, 0, lineOffset + 1, 0) : TemplateExtensions.convertToRange(context, lineOffset);
-        return new Diagnostic(range, message, severity, this.templates.id);
+        return new Diagnostic(range, templateNameInfo + message, severity, this.templates.id);
     }
 }
