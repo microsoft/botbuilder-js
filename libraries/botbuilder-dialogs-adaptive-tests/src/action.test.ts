@@ -76,6 +76,10 @@ describe('ActionTests', function() {
         await testRunner.runTestScript('Action_EndDialog');
     });
 
+    it('Foreach_Nested', async () => {
+        await testRunner.runTestScript('Action_Foreach_Nested');
+    });
+
     it('Foreach', async () => {
         await testRunner.runTestScript('Action_Foreach');
     });
@@ -86,6 +90,10 @@ describe('ActionTests', function() {
 
     it('ForeachPage_Empty', async () => {
         await testRunner.runTestScript('Action_ForeachPage_Empty');
+    });
+
+    it('ForeachPage_Nested', async () => {
+        await testRunner.runTestScript('Action_ForeachPage_Nested');
     });
 
     it('ForeachPage_Partial', async () => {
