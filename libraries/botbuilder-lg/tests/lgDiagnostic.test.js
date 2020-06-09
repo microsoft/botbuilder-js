@@ -115,7 +115,7 @@ describe(`LGExceptionTest`, function() {
     it(`TestErrorTemplateName`, function() {
         var diagnostics = GetDiagnostics(`ErrorTemplateName.lg`);
 
-        assert.strictEqual(6, diagnostics.length);
+        assert.strictEqual(7, diagnostics.length);
         for(const diagnostic of diagnostics)
         {
             assert.strictEqual(DiagnosticSeverity.Error, diagnostic.severity);
@@ -214,6 +214,8 @@ describe(`LGExceptionTest`, function() {
         assert.throws(() => templates.evaluate(`wPhrase`), Error(`Loop detected: welcome_user => wPhrase [wPhrase]  Error occurred when evaluating '-\${wPhrase()}'. [welcome_user]  Error occurred when evaluating '-\${welcome_user()}'.`));
         
         assert.throws(() => templates.analyzeTemplate(`wPhrase`), Error('Loop detected: welcome_user => wPhrase'),);
+
+        assert.throws(() => templates.analyzeTemplate(`shouldFail`), Error('Loop detected: shouldFail'),);
     });
 
     it(`AddTextWithWrongId`, function() {

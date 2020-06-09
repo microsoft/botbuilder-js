@@ -16,43 +16,45 @@ const { BeginSkill } = require('../lib')
 
 
 class SimpleConversationIdFactory extends SkillConversationIdFactoryBase {
-    constructor(config = { disableCreateWithOpts: false, disableGetSkillRef: false }) {
+    constructor(opts = { useCreateSkillConversationId: false }) {
         super();
         this._conversationRefs = new Map();
-        this.disableCreateWithOpts = config.disableCreateWithOpts;
-        this.disableGetSkillRef = config.disableGetSkillRef;
+        this.useCreateSkillConversationId = opts.useCreateSkillConversationId;
     }
 
     async createSkillConversationIdWithOptions(opts) {
-        if (this.disableCreateWithOpts) {
+        if (this.useCreateSkillConversationId) {
             return super.createSkillConversationIdWithOptions();
         }
-    }
-
-    async createSkillConversationId(options) {
-        const key = createHash('md5').update(options.activity.conversation.id + options.activity.serviceUrl).digest('hex');
+        const key = createHash('md5').update(opts.activity.conversation.id + opts.activity.serviceUrl).digest('hex');
 
         const ref = this._conversationRefs.has(key);
         if (!ref) {
             this._conversationRefs.set(key, {
-                conversationReference: TurnContext.getConversationReference(options.activity),
-                oAuthScope: options.fromBotOAuthScope
+                conversationReference: TurnContext.getConversationReference(opts.activity),
+                oAuthScope: opts.fromBotOAuthScope
             });
         }
         return key;
     }
 
-    async getConversationReference() {
+    async createSkillConversationId(convRef) {
+        const key = createHash('md5').update(convRef.conversation.id + convRef.serviceUrl).digest('hex');
 
+        const ref = this._conversationRefs.has(key);
+        if (!ref) {
+            this._conversationRefs.set(key, {
+                conversationReference: convRef
+            });
+        }
+        return key;
     }
 
-    async getSkillConversationReference(skillConversationId) {
-        return this._conversationRefs.get(skillConversationId);
-    }
+    async getConversationReference(skillConversationId) { return this._conversationRefs.get(skillConversationId) }
 
-    deleteConversationReference() {
+    async getSkillConversationReference(skillConversationId) { return this.getConversationReference(skillConversationId) }
 
-    }
+    async deleteConversationReference() { /* not used in BeginSkill */ }
 }
 
 describe('BeginSkill', function() {

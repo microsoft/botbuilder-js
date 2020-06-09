@@ -81,6 +81,10 @@ const badExpressions =
         'lastIndexOf(hello, world, one)', // should have two parameters
         'lastIndexOf(hello, one)', // second parameter should be string
         'lastIndexOf(one, hello)', // first parameter should be list or string
+        'sentenceCase(hello, hello)', // should have one parameters
+        'sentenceCase(one)', // first parameter should be string
+        'titleCase(hello, hello)', // should have one parameters
+        'titleCase(one)', // first parameter should be string
 
         // Logical comparison functions test
         'greater(one, hello)', // string and integer are not comparable

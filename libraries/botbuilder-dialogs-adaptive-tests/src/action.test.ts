@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
 import 'mocha';
 import * as path from 'path';
+import * as nock from 'nock';
 import { TestRunner } from './testing';
 
 describe('ActionTests', function() {
@@ -75,12 +76,24 @@ describe('ActionTests', function() {
         await testRunner.runTestScript('Action_EndDialog');
     });
 
+    it('Foreach_Nested', async () => {
+        await testRunner.runTestScript('Action_Foreach_Nested');
+    });
+
     it('Foreach', async () => {
         await testRunner.runTestScript('Action_Foreach');
     });
 
+    it('Foreach_Empty', async () => {
+        await testRunner.runTestScript('Action_Foreach_Empty');
+    });
+
     it('ForeachPage_Empty', async () => {
         await testRunner.runTestScript('Action_ForeachPage_Empty');
+    });
+
+    it('ForeachPage_Nested', async () => {
+        await testRunner.runTestScript('Action_ForeachPage_Nested');
     });
 
     it('ForeachPage_Partial', async () => {
@@ -101,6 +114,12 @@ describe('ActionTests', function() {
 
     it('GotoAction', async () => {
         await testRunner.runTestScript('Action_GotoAction');
+    });
+
+    it('HttpRequest', async () => {
+        nock('http://petstore.swagger.io').post(/pet/).replyWithFile(200, path.join(__dirname, '../resources/ActionTests/HttpRequest_Response.json'));
+        nock('http://petstore.swagger.io').get(/pet/).replyWithFile(200, path.join(__dirname, '../resources/ActionTests/HttpRequest_Response.json'));
+        await testRunner.runTestScript('Action_HttpRequest');
     });
 
     it('IfCondition', async () => {

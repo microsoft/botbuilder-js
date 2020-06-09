@@ -1,0 +1,46 @@
+{
+    "$kind": "Microsoft.LuisRecognizer",
+    "applicationId": "DynamicLists",
+    "endpoint": "https://westus.api.cognitive.microsoft.com",
+    "endpointKey": "TEST_ENDPOINT_KEY",
+    "dynamicLists": [
+        {
+            "entity": "alphaEntity",
+            "list": [
+                {
+                    "canonicalForm": "a",
+                    "synonyms": [
+                        "a",
+                        "aa"
+                    ]
+                },
+                {
+                    "canonicalForm": "b",
+                    "synonyms": [
+                        "b",
+                        "bb"
+                    ]
+                }
+            ]
+        },
+        {
+            "entity": "numberEntity",
+            "list": [
+                {
+                    "canonicalForm": "1",
+                    "synonyms": [
+                        "1",
+                        "one"
+                    ]
+                },
+                {
+                    "canonicalForm": "2",
+                    "synonyms": [
+                        "2",
+                        "two"
+                    ]
+                }
+            ]
+        }
+    ]
+}

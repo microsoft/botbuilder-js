@@ -391,48 +391,6 @@ describe('ComponentDialog', function () {
             .assertReply('Second step.')
             .assertReply('Done.')
     });
-
-    it('should throw error if unhandled dialogChange event.', (done) => {
-        const conversationState = new ConversationState(new MemoryStorage());
-        const dialogState = conversationState.createProperty('dialog');
-
-        const childDialog = new WaterfallDialog('child', [
-            async step => {
-                component.addDialog(new WaterfallDialog('change'));
-                await step.context.sendActivity('First step.');
-                return Dialog.EndOfTurn;
-            },
-            async step => {
-                await step.context.sendActivity('Second step.');
-                return await step.endDialog();
-            }
-        ]);
-        const component = new ChangedDialog('test', false);
-        component.addDialog(childDialog);
-
-        const dialogs = new DialogSet(dialogState);
-        dialogs.add(component);
-
-        const adapter = new TestAdapter(async turnContext => {
-            try {
-                const dc = await dialogs.createContext(turnContext);
-                const results = await dc.continueDialog();
-
-                if (results.status === DialogTurnStatus.empty) {
-                    await dc.beginDialog('test');
-                }
-                await conversationState.saveChanges(turnContext);
-            } catch (err) {
-                await turnContext.sendActivity('Done.')
-                done();
-            }
-        });
-
-        adapter.send('Hi')
-            .assertReply('First step.')
-            .send('Hi again')
-            .assertReply('Done.')
-    });
 });
 
 
