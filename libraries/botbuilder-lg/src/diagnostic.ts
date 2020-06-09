@@ -45,9 +45,9 @@ export class Diagnostic {
     public toString(): string {
         // ignore error range if source is "inline content"
         if (this.source === TemplatesParser.inlineContentId) {
-            return `[${ DiagnosticSeverity[this.severity] }] ${this.source} ${ this.message.toString() }`;
+            return `[${ DiagnosticSeverity[this.severity] }] ${ this.source } ${ this.message.toString() }`;
         } else {
-            return `[${ DiagnosticSeverity[this.severity] }] ${this.source}${ this.range.toString() }: ${ this.message.toString() }`;
+            return `[${ DiagnosticSeverity[this.severity] }] ${ this.source } ${ this.range.toString() }: ${ this.message.toString() }`;
         }
     }
 }
