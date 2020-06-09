@@ -62,7 +62,7 @@ steps:
    sed -i '' 's/${Version}/$(version)/g' libraries/botbuilder-core/package.json
    sed -i '' 's/${Version}/$(version)/g' libraries/botbuilder-dialogs/package.json
    sed -i '' 's/${Version}/$(version)/g' libraries/botbuilder-dialogs-adaptive/package.json
-   sed -i '' 's/${Version}/$(version)/g' libraries/botbuilder-dialogs-adaptive-testing/package.json
+   sed -i '' 's/${Version}/$(version)/g' libraries/botbuilder-dialogs-adaptive-tests/package.json
    sed -i '' 's/${Version}/$(version)/g' libraries/botbuilder-dialogs-declarative/package.json
    sed -i '' 's/${Version}/$(version)/g' libraries/botbuilder-lg/package.json
    sed -i '' 's/${Version}/$(version)/g' libraries/botbuilder-testing/package.json
