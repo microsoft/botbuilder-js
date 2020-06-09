@@ -12,6 +12,7 @@ import { CardAction } from 'botframework-schema';
 import { CardImage } from 'botframework-schema';
 import { ChannelAccount } from 'botframework-schema';
 import { ConversationReference } from 'botframework-schema';
+import { HealthCheckResponse } from 'botframework-schema';
 import { HeroCard } from 'botframework-schema';
 import { InputHints } from 'botframework-schema';
 import { MediaUrl } from 'botframework-schema';
@@ -35,6 +36,8 @@ export class ActivityFactory {
 
 // @public
 export class ActivityHandler extends ActivityHandlerBase {
+    // (undocumented)
+    protected static createInvokeResponse(body?: any): InvokeResponse;
     protected defaultNextEvent(context: TurnContext): () => Promise<void>;
     protected dispatchConversationUpdateActivity(context: TurnContext): Promise<void>;
     protected dispatchEventActivity(context: TurnContext): Promise<void>;
@@ -52,6 +55,8 @@ export class ActivityHandler extends ActivityHandlerBase {
     protected onEndOfConversationActivity(context: TurnContext): Promise<void>;
     onEvent(handler: BotHandler): this;
     protected onEventActivity(context: TurnContext): Promise<void>;
+    // (undocumented)
+    protected onHealthCheck(context: TurnContext): Promise<HealthCheckResponse>;
     // (undocumented)
     protected onInvokeActivity(context: TurnContext): Promise<InvokeResponse>;
     onMembersAdded(handler: BotHandler): this;
@@ -137,6 +142,12 @@ export interface BotFrameworkSkill {
 
 // @public
 export type BotHandler = (context: TurnContext, next: () => Promise<void>) => Promise<any>;
+
+// @public (undocumented)
+export interface BotPageViewTelemetryClient {
+    // (undocumented)
+    trackPageView(telemetry: TelemetryPageView): any;
+}
 
 // @public
 export class BotState implements PropertyManager {
@@ -351,7 +362,7 @@ export class MiddlewareSet implements Middleware {
 }
 
 // @public (undocumented)
-export class NullTelemetryClient implements BotTelemetryClient {
+export class NullTelemetryClient implements BotTelemetryClient, BotPageViewTelemetryClient {
     constructor(settings?: any);
     // (undocumented)
     flush(): void;
@@ -361,6 +372,8 @@ export class NullTelemetryClient implements BotTelemetryClient {
     trackEvent(telemetry: TelemetryEvent): void;
     // (undocumented)
     trackException(telemetry: TelemetryException): void;
+    // (undocumented)
+    trackPageView(telemetry: TelemetryPageView): void;
     // (undocumented)
     trackTrace(telemetry: TelemetryTrace): void;
 }
@@ -452,6 +465,9 @@ export interface SkillConversationReference {
 }
 
 // @public
+export const SkillConversationReferenceKey: unique symbol;
+
+// @public
 export class SkypeMentionNormalizeMiddleware implements Middleware {
     // (undocumented)
     static normalizeSkypeMentionText(activity: Activity): void;
@@ -466,30 +482,6 @@ export interface StatePropertyAccessor<T = any> {
     // (undocumented)
     get(context: TurnContext, defaultValue: T): Promise<T>;
     set(context: TurnContext, value: T): Promise<void>;
-}
-
-// @public
-export enum StatusCodes {
-    // (undocumented)
-    BAD_GATEWAY = 502,
-    // (undocumented)
-    BAD_REQUEST = 400,
-    // (undocumented)
-    CONFLICT = 409,
-    // (undocumented)
-    INTERNAL_SERVER_ERROR = 500,
-    // (undocumented)
-    METHOD_NOT_ALLOWED = 405,
-    // (undocumented)
-    NOT_FOUND = 404,
-    // (undocumented)
-    NOT_IMPLEMENTED = 501,
-    // (undocumented)
-    OK = 200,
-    // (undocumented)
-    UNAUTHORIZED = 401,
-    // (undocumented)
-    UPGRADE_REQUIRED = 426
 }
 
 // @public
@@ -606,6 +598,20 @@ export class TelemetryLoggerMiddleware implements Middleware {
 }
 
 // @public (undocumented)
+export interface TelemetryPageView {
+    // (undocumented)
+    metrics?: {
+        [key: string]: number;
+    };
+    // (undocumented)
+    name: string;
+    // (undocumented)
+    properties?: {
+        [key: string]: string;
+    };
+}
+
+// @public (undocumented)
 export interface TelemetryTrace {
     // (undocumented)
     message: string;
@@ -616,6 +622,13 @@ export interface TelemetryTrace {
     // (undocumented)
     severityLevel?: Severity;
 }
+
+// @public (undocumented)
+export function telemetryTrackDialogView(telemetryClient: BotTelemetryClient, dialogName: string, properties?: {
+    [key: string]: any;
+}, metrics?: {
+    [key: string]: number;
+}): void;
 
 // @public
 export type TestActivityInspector = (activity: Partial<Activity>, description: string) => void;
@@ -647,6 +660,7 @@ export class TestAdapter extends BotAdapter implements ExtendedUserTokenProvider
     readonly template: Partial<Activity>;
     test(userSays: string | Partial<Activity>, expected: string | Partial<Activity> | ((activity: Partial<Activity>, description?: string) => void), description?: string, timeout?: number): TestFlow;
     testActivities(activities: Partial<Activity>[], description?: string, timeout?: number): TestFlow;
+    throwOnExchangeRequest(connectionName: string, channelId: string, userId: string, exchangeableItem: string): void;
     updateActivity(context: TurnContext, activity: Partial<Activity>): Promise<void>;
     readonly updatedActivities: Partial<Activity>[];
     }
@@ -654,6 +668,7 @@ export class TestAdapter extends BotAdapter implements ExtendedUserTokenProvider
 // @public
 export class TestFlow {
     constructor(previous: Promise<void>, adapter: TestAdapter);
+    assertNoReply(description?: string, timeout?: number): TestFlow;
     assertReply(expected: string | Partial<Activity> | TestActivityInspector, description?: string, timeout?: number): TestFlow;
     assertReplyOneOf(candidates: string[], description?: string, timeout?: number): TestFlow;
     catch(onRejected?: (reason: any) => void): TestFlow;
@@ -726,18 +741,20 @@ export class TurnContext {
     onDeleteActivity(handler: DeleteActivityHandler): this;
     onSendActivities(handler: SendActivitiesHandler): this;
     onUpdateActivity(handler: UpdateActivityHandler): this;
-    // (undocumented)
-    popTurnState(key: any): void;
-    // (undocumented)
-    pushTurnState(key: any, value: any): void;
     static removeMentionText(activity: Partial<Activity>, id: string): string;
     static removeRecipientMention(activity: Partial<Activity>): string;
     responded: boolean;
     sendActivities(activities: Partial<Activity>[]): Promise<ResourceResponse[]>;
     sendActivity(activityOrText: string | Partial<Activity>, speak?: string, inputHint?: string): Promise<ResourceResponse | undefined>;
     sendTraceActivity(name: string, value?: any, valueType?: string, label?: string): Promise<ResourceResponse | undefined>;
-    readonly turnState: Map<any, any>;
+    readonly turnState: TurnContextStateCollection;
     updateActivity(activity: Partial<Activity>): Promise<void>;
+}
+
+// @public
+export class TurnContextStateCollection extends Map<any, any> {
+    pop(key: any): any;
+    push(key: any, value: any): void;
 }
 
 // @public

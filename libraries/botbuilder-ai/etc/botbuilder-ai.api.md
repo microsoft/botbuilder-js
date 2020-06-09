@@ -143,6 +143,7 @@ export interface LuisRecognizerOptionsV2 extends LuisRecognizerOptions {
 // @public (undocumented)
 export interface LuisRecognizerOptionsV3 extends LuisRecognizerOptions {
     apiVersion: "v3";
+    datetimeReference?: string;
     dynamicLists?: Array<any>;
     externalEntities?: Array<any>;
     includeAllIntents?: boolean;
@@ -262,7 +263,6 @@ export interface QnAMakerMetadata {
 
 // @public
 export interface QnAMakerOptions {
-    // Warning: (ae-forgotten-export) The symbol "QnARequestContext" needs to be exported by the entry point index.d.ts
     context?: QnARequestContext;
     isTest?: boolean;
     metadataBoost?: QnAMakerMetadata[];
@@ -308,6 +308,19 @@ export interface QnAMakerTraceInfo {
     scoreThreshold: number;
     strictFilters: any[];
     top: number;
+}
+
+// @public
+export interface QnARequestContext {
+    previousQnAId: number;
+    previousUserQuery: string;
+}
+
+// @public
+export class RankerTypes {
+    static readonly autoSuggestQuestion: string;
+    static readonly default: string;
+    static readonly questionOnly: string;
 }
 
 
