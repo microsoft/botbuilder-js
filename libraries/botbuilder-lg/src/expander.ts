@@ -519,7 +519,7 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGTe
 
         // Validate return type
         if ((children0.returnType & ReturnType.Object) === 0 && (children0.returnType & ReturnType.String) === 0) {
-            throw new Error(TemplateErrors.invalidTemplateName);
+            throw new Error(TemplateErrors.invalidTemplateNameType);
         }
 
         // Validate more if the name is string constant

@@ -38,10 +38,18 @@ export declare type ImportResolverDelegate = (source: string, resourceId: string
 export class TemplatesParser {
 
     /**
+     * Inline text id.
+     */
+    public static readonly inlineContentId: string = 'inline content';
+
+    /**
      * option regex.
      */
     public static readonly optionRegex: RegExp = new RegExp(/>\s*!#(.*)$/);
 
+    /**
+     * Import regex.
+     */
     public static readonly importRegex: RegExp = new RegExp(/\[([^\]]*)\]\(([^\)]*)\)/);
     
     /**
@@ -80,7 +88,7 @@ export class TemplatesParser {
             throw Error(`templates is empty`);
         }
 
-        const id = 'inline content';
+        const id = TemplatesParser.inlineContentId;
         let newTemplates = new Templates();
         newTemplates.content = content;
         newTemplates.id = id;

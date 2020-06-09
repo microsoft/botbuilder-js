@@ -100,8 +100,9 @@ export class StaticChecker extends AbstractParseTreeVisitor<Diagnostic[]> implem
     public visitStructuredTemplateBody(context: lp.StructuredTemplateBodyContext): Diagnostic[] {
         let result: Diagnostic[] = [];
 
-        if (context.structuredBodyNameLine().errorStructuredName() !== undefined) {
-            result.push(this.buildLGDiagnostic(TemplateErrors.invalidStrucName, undefined, context.structuredBodyNameLine()));
+        const errorName = context.structuredBodyNameLine().errorStructuredName();
+        if (errorName !== undefined) {
+            result.push(this.buildLGDiagnostic(TemplateErrors.invalidStrucName(errorName.text), undefined, context.structuredBodyNameLine()));
         }
 
         if (context.structuredBodyEndLine() === undefined) {
@@ -111,7 +112,7 @@ export class StaticChecker extends AbstractParseTreeVisitor<Diagnostic[]> implem
         const errors = context.errorStructureLine();
         if (errors && errors.length > 0){
             for (const error of errors) {
-                result.push(this.buildLGDiagnostic(TemplateErrors.invalidStrucBody, undefined, error));
+                result.push(this.buildLGDiagnostic(TemplateErrors.invalidStrucBody(error.text), undefined, error));
             }
         } else {
             const bodys = context.structuredBodyContentLine();
@@ -306,6 +307,9 @@ export class StaticChecker extends AbstractParseTreeVisitor<Diagnostic[]> implem
 
     private buildLGDiagnostic( message: string, severity: DiagnosticSeverity = undefined, context: ParserRuleContext = undefined): Diagnostic {
         const lineOffset = this.currentTemplate !== undefined ? this.currentTemplate.sourceRange.range.start.line : 0;
+
+        let templateNameInfo = '';
+        
         message = this.currentTemplate !== undefined ? `[${ this.currentTemplate.name }]` + message : message;
         const range = context === undefined ? new Range(lineOffset + 1, 0, lineOffset + 1, 0) : TemplateExtensions.convertToRange(context, lineOffset);
         return new Diagnostic(range, message, severity, this.templates.id);
