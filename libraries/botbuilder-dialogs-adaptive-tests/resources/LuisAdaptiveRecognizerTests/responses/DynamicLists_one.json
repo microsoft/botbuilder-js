@@ -1,0 +1,30 @@
+{
+  "query": "one",
+  "topScoringIntent": {
+    "intent": "intent",
+    "score": 0.8640835
+  },
+  "intents": [
+    {
+      "intent": "intent",
+      "score": 0.8640835
+    },
+    {
+      "intent": "None",
+      "score": 0.122259058
+    }
+  ],
+  "entities": [
+    {
+      "entity": "one",
+      "type": "numberEntity",
+      "startIndex": 0,
+      "endIndex": 2,
+      "resolution": {
+        "values": [
+          "1"
+        ]
+      }
+    }
+  ]
+}

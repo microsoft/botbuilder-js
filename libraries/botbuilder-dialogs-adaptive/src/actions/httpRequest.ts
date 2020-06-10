@@ -6,21 +6,21 @@
  * Licensed under the MIT License.
  */
 import fetch from 'node-fetch';
-import { DialogTurnResult, DialogConfiguration, DialogContext, Dialog, Configurable } from 'botbuilder-dialogs';
+import { DialogTurnResult, DialogContext, Dialog, Configurable } from 'botbuilder-dialogs';
+import { Converter } from 'botbuilder-dialogs-declarative';
 import { Activity } from 'botbuilder-core';
 import { ExpressionParser } from 'adaptive-expressions';
 import { TextTemplate } from '../templates';
 import { ValueExpression, StringExpression, BoolExpression, EnumExpression } from 'adaptive-expressions';
 
-export interface HttpRequestConfiguration extends DialogConfiguration {
-    method?: HttpMethod;
-    contentType?: string;
-    url?: string;
-    headers?: { [key: string]: string };
-    body?: any;
-    responseType?: string | ResponsesTypes;
-    resultProperty?: string;
-    disabled?: string | boolean;
+export class HttpHeadersConverter implements Converter {
+    public convert(value: object): { [key: string]: StringExpression } {
+        const headers = {};
+        for (const key in value) {
+            headers[key] = new StringExpression(value[key]);
+        }
+        return headers;
+    }
 }
 
 export enum ResponsesTypes {
@@ -126,45 +126,6 @@ export class HttpRequest<O extends object = {}> extends Dialog<O> implements Con
      * An optional expression which if is true will disable this action.
      */
     public disabled?: BoolExpression;
-
-    public configure(config: HttpRequestConfiguration): this {
-        for (const key in config) {
-            if (config.hasOwnProperty(key)) {
-                const value = config[key];
-                switch (key) {
-                    case 'contentType':
-                        this.contentType = new StringExpression(value);
-                        break;
-                    case 'url':
-                        this.url = new StringExpression(value);
-                        break;
-                    case 'headers':
-                        this.headers = {};
-                        for (const key in value) {
-                            this.headers[key] = new StringExpression(value[key]);
-                        }
-                        break;
-                    case 'body':
-                        this.body = new ValueExpression(value);
-                        break;
-                    case 'responseType':
-                        this.responseType = new EnumExpression<ResponsesTypes>(value);
-                        break;
-                    case 'resultProperty':
-                        this.resultProperty = new StringExpression(value);
-                        break;
-                    case 'disabled':
-                        this.disabled = new BoolExpression(value);
-                        break;
-                    default:
-                        super.configure({ [key]: value });
-                        break;
-                }
-            }
-        }
-
-        return this;
-    }
 
     public async beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {
         if (this.disabled && this.disabled.getValue(dc.state)) {

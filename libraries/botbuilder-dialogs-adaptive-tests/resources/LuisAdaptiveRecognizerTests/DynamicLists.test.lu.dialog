@@ -1,0 +1,8 @@
+{
+    "$kind": "Microsoft.MultiLanguageRecognizer",
+    "recognizers": {
+        "en-us": "DynamicLists.test.en-us.lu",
+        "": "DynamicLists.test.en-us.lu"
+    },
+    "$schema": "../../../tests.schema"
+}

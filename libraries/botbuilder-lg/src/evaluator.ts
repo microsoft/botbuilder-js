@@ -73,6 +73,8 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGTempla
      * @returns Evaluate result.
      */
     public evaluateTemplate(inputTemplateName: string, scope: any): any {
+
+        const memory = scope instanceof CustomizedMemory ? scope : new CustomizedMemory(scope);
         let templateName: string;
         let reExecute: boolean;
         ({reExecute, pureTemplateName: templateName} = this.parseTemplateName(inputTemplateName));
@@ -81,18 +83,14 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGTempla
             throw new Error(TemplateErrors.templateNotExist(templateName));
         }
 
-        if (this.evaluationTargetStack.some((u: EvaluationTarget): boolean => u.templateName === templateName)) {
+        const templateTarget: EvaluationTarget = new EvaluationTarget(templateName, memory);
+        const currentEvulateId: string = templateTarget.getId();
+
+        if (this.evaluationTargetStack.some((u: EvaluationTarget): boolean => u.getId() === currentEvulateId)) {
             throw new Error(`${ TemplateErrors.loopDetected } ${ this.evaluationTargetStack.reverse()
                 .map((u: EvaluationTarget): string => u.templateName)
                 .join(' => ') }`);
         }
-
-        if (!(scope instanceof CustomizedMemory)) {
-            scope = new CustomizedMemory(SimpleObjectMemory.wrap(scope));
-        }
-
-        const templateTarget: EvaluationTarget = new EvaluationTarget(templateName, scope);
-        const currentEvulateId: string = templateTarget.getId();
 
         let previousEvaluateTarget: EvaluationTarget;
 
@@ -515,7 +513,7 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGTempla
 
         // Validate return type
         if ((children0.returnType & ReturnType.Object) === 0 && (children0.returnType & ReturnType.String) === 0) {
-            throw new Error(TemplateErrors.invalidTemplateName);
+            throw new Error(TemplateErrors.invalidTemplateNameType);
         }
 
         // Validate more if the name is string constant
