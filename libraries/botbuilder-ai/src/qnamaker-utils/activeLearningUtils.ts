@@ -69,11 +69,11 @@ export class ActiveLearningUtils {
     * @param maxLowScoreVariationMultiplier.
     */    
     public static List<QueryResult> GetLowScoreVariation(
-        List<QueryResult> qnaSearchResults,
-        double maximumScoreForLowScoreVariation = 95.0,
-        double minimumScoreForLowScoreVariation = 20.0,
-        double previousLowScoreVariationMultiplier = 0.7,
-        double maxLowScoreVariationMultiplier = 95.0){
+        qnaSearchResults: QueryResult[],
+        maximumScoreForLowScoreVariation = 95.0,
+        minimumScoreForLowScoreVariation = 20.0,
+        previousLowScoreVariationMultiplier = 0.7,
+        maxLowScoreVariationMultiplier = 95.0){
         
         if (qnaSearchResults == null || qnaSearchResults.length == 0){
             return [];
