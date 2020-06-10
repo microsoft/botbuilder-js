@@ -6,66 +6,107 @@
  * Licensed under the MIT License.
  */
 
-import { normalize, dirname, join } from 'path';
+import { normalize, join } from 'path';
 import { EventEmitter } from 'events';
-import { IResourceProvider } from './resourceProvider';
+import { ResourceProvider } from './resourceProvider';
 import { FolderResourceProvider } from './folderResourceProvider';
-import { IResource } from './resource';
+import { Resource } from './resource';
 import { PathUtil } from '../pathUtil';
 import { TypeFactory } from '../factory/typeFactory';
 import { ComponentRegistration } from '../componentRegistration';
 
 export class ResourceExplorer {
     private _factory: TypeFactory = new TypeFactory();
-    private _resourceProviders: IResourceProvider[] = [];
-    private _emitter: EventEmitter = new EventEmitter();
+    private _resourceProviders: ResourceProvider[] = [];
+    private _resourceTypes: Set<string> = new Set(['dialog', 'lu', 'lg', 'qna', 'schema', 'json']);
 
-    public get resourceProviders(): IResourceProvider[] {
+    /**
+     * Initializes a new instance of the `ResourceExplorer` class.
+     * @param providers Resource providers
+     */
+    public constructor(providers?: ResourceProvider[]) {
+        if (providers) { this._resourceProviders = providers; }
+    }
+
+    /**
+     * Event emitter which would fire an event when resources changed.
+     */
+    public changed: EventEmitter = new EventEmitter();
+
+    /**
+     * Gets resource providers.
+     */
+    public get resourceProviders(): ResourceProvider[] {
         return this._resourceProviders;
     }
 
-    public get emitter(): EventEmitter {
-        return this._emitter;
+    /**
+     * Gets resource type id extensions managed by resource explorer.
+     */
+    public get resourceTypes(): Set<string> {
+        return this._resourceTypes;
     }
 
-    public loadProject(projectFile: string, ignoreFolders: string[], monitorChanges: boolean = true): ResourceExplorer {
-        projectFile = normalize(projectFile);
-        ignoreFolders = ignoreFolders.map((f): string => normalize(f));
-        const projectFolder = dirname(projectFile);
-        if (ignoreFolders) {
-            this.addFolders(projectFolder, ignoreFolders, monitorChanges);
+    /**
+     * Add a resource type to resource type set.
+     * @param type resource type
+     */
+    public addResourceType(type: string): void {
+        type = type.toLowerCase().replace(/^\./, '');
+        if (!this._resourceTypes.has(type)) {
+            this._resourceTypes.add(type);
+            this.refresh();
         }
-        else {
-            this.addResourceProvider(new FolderResourceProvider(projectFolder, true, monitorChanges));
-        }
-
-        return this;
     }
 
-    public addResourceProvider(resourceProvider: IResourceProvider): ResourceExplorer {
-        if (this._resourceProviders.some((r): boolean => r.id() === resourceProvider.id())) {
-            throw Error(`${ resourceProvider.id() } has already been added as a resource`);
+    /**
+     * Reload any cached data.
+     */
+    public refresh(): void {
+        for (let i = 0; i < this._resourceProviders.length; i++) {
+            this._resourceProviders[i].refresh();
+        }
+    }
+
+    /**
+     * Add a resource provider to the resources managed by resource explorer.
+     * @param resourceProvider resource provider to be added.
+     */
+    public addResourceProvider(resourceProvider: ResourceProvider): ResourceExplorer {
+        if (this._resourceProviders.some((r): boolean => r.id === resourceProvider.id)) {
+            throw Error(`${ resourceProvider.id } has already been added as a resource`);
         }
 
+        resourceProvider.changed.addListener('changed', this.onResourceProviderChanged)
         this._resourceProviders.push(resourceProvider);
 
         return this;
     }
 
+    /**
+     * Add a folder resource
+     * @param folder folder to be included as a resource
+     * @param includeSubFolders whether to include subfolders
+     * @param monitorChanges whether to track changes
+     */
     public addFolder(folder: string, includeSubFolders: boolean = true, monitorChanges: boolean = true): ResourceExplorer {
-        let folderResourceProvider: FolderResourceProvider = new FolderResourceProvider(folder, includeSubFolders, monitorChanges);
-        folderResourceProvider.emitter = this._emitter;
-        this.addResourceProvider(folderResourceProvider);
+        this.addResourceProvider(new FolderResourceProvider(this, folder, includeSubFolders, monitorChanges));
 
         return this;
     }
 
+    /**
+     * Add folder resources
+     * @param folder collection of folders to be included as resources.
+     * @param ignoreFolders imediate subfolders to ignore
+     * @param monitorChanges whether to track changes
+     */
     public addFolders(folder: string, ignoreFolders?: string[], monitorChanges: boolean = true): ResourceExplorer {
         if (ignoreFolders) {
             folder = normalize(folder);
             this.addFolder(folder, false, monitorChanges);
             const ignoreFoldersSet = new Set<string>(ignoreFolders.map((p): string => join(folder, p)));
-            const subFolders = PathUtil.GetDirectories(folder);
+            const subFolders = PathUtil.getDirectories(folder);
             for (let i = 0; i < subFolders.length; i++) {
                 const subFolder = subFolders[i];
                 if (!ignoreFoldersSet.has(subFolder)) {
@@ -79,6 +120,10 @@ export class ResourceExplorer {
         return this;
     }
 
+    /**
+     * Add a ComponentRegistration to resource explorer for building types
+     * @param component component registration to be added
+     */
     public addComponent(component: ComponentRegistration): ResourceExplorer {
         const builders = component.getTypeBuilders();
         for (let i = 0; i < builders.length; i++) {
@@ -89,8 +134,12 @@ export class ResourceExplorer {
         return this;
     }
 
-    public getResources(fileExtension: string): IResource[] {
-        let resources: IResource[] = [];
+    /**
+     * Get resources of a given type extension.
+     * @param fileExtension file extension filter
+     */
+    public getResources(fileExtension: string): Resource[] {
+        let resources: Resource[] = [];
         for (const rp of this._resourceProviders) {
             for (const rpResources of rp.getResources(fileExtension)) {
                 resources.push(rpResources);
@@ -100,9 +149,13 @@ export class ResourceExplorer {
         return resources;
     }
 
-    public getResource(id: string): IResource {
+    /**
+     * Get resource by id.
+     * @param id resource id
+     */
+    public getResource(id: string): Resource {
         for (const rp of this._resourceProviders) {
-            const resource: IResource = rp.getResource(id);
+            const resource: Resource = rp.getResource(id);
             if (resource) {
                 return resource;
             }
@@ -111,6 +164,10 @@ export class ResourceExplorer {
         return undefined;
     }
 
+    /**
+     * Build types from object configuration
+     * @param config configuration to be parsed as a type
+     */
     public buildType(config: object): object {
         if (typeof config == 'object') {
             const kind = config['$kind'] || config['$type'];
@@ -126,12 +183,26 @@ export class ResourceExplorer {
         return config;
     }
 
-    public loadType(resource: string | IResource): object {
+    /**
+     * Load types from resource or resource id
+     * @param resource resource or resource id to be parsed as a type
+     */
+    public loadType(resource: string | Resource): object {
         if (typeof resource == 'string') {
             resource = this.getResource(resource);
         }
         const json = resource.readText();
         const result = JSON.parse(json);
         return this.buildType(result as object);
+    }
+
+    protected onChanged(resources: Resource[]): void {
+        this.changed.emit('changed', resources);
+    }
+
+    private onResourceProviderChanged(resources: Resource[]): void {
+        if (this.changed) {
+            this.onChanged(resources);
+        }
     }
 }
