@@ -7,26 +7,42 @@
  */
 
 import { join } from 'path';
-import { readdirSync, statSync, lstatSync, Stats } from 'fs';
+import { readdirSync, lstatSync } from 'fs';
 
 export class PathUtil {
-    public static IsDirectory = source => lstatSync(source).isDirectory()
-    public static GetDirectories = source => readdirSync(source).map(name => join(source, name)).filter(PathUtil.IsDirectory)
+    /**
+     * Check if a path is a directory
+     * @param path path of the diretory
+     */
+    public static isDirectory(path: string): boolean {
+        return lstatSync(path).isDirectory();
+    }
 
-    public static getAllFiles(dir: string): string[] {
-        let results: string[] = [];
-        let list: string[] = readdirSync(dir);
-        list.forEach(file => {
-            file = join(dir, file);
-            var stat: Stats = statSync(file);
-            if (stat && stat.isDirectory()) {
-                /* Recurse into a subdirectory */
-                results = results.concat(this.getAllFiles(file));
-            } else {
-                /* Is a file */
-                results.push(file);
-            }
-        });
-        return results;
+    /**
+     * Get sub folders in a directory
+     * @param path path of root directory
+     */
+    public static getDirectories(path: string): string[] {
+        return readdirSync(path)
+            .map((name: string): string => join(path, name))
+            .filter(PathUtil.isDirectory);
+    }
+
+    /**
+     * Get files in a directory
+     * @param path path of root directory
+     * @param includeSubFolders whether include its sub folders
+     */
+    public static getFiles(path: string, includeSubFolders = true): string[] {
+        return readdirSync(path)
+            .map((name: string): string => join(path, name))
+            .reduce((files: string[], file: string): string[] => {
+                if (includeSubFolders && PathUtil.isDirectory(file)) {
+                    files.push(...PathUtil.getFiles(file));
+                } else {
+                    files.push(file);
+                }
+                return files;
+            }, []);
     }
 }
