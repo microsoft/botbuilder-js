@@ -68,8 +68,8 @@ export class ActiveLearningUtils {
     * @param previousLowScoreVariationMultiplier.
     * @param maxLowScoreVariationMultiplier.
     */    
-    public static List<QueryResult> GetLowScoreVariation(
-        qnaSearchResults: QueryResult[],
+   public static getLowScoreVariation(
+        qnaSearchResults: QnAMakerResult[],
         maximumScoreForLowScoreVariation = 95.0,
         minimumScoreForLowScoreVariation = 20.0,
         previousLowScoreVariationMultiplier = 0.7,
