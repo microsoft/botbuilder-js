@@ -43,14 +43,26 @@ export class FolderResourceProvider extends ResourceProvider {
         }
     }
 
+    /**
+     * Gets attached file watcher.
+     */
     public get watcher(): FSWatcher {
         return this._watcher;
     }
 
+    /**
+     * Folder to enumerate.
+     */
     public directory: string;
 
+    /**
+     * A value indicating whether to include subfolders.
+     */
     public includeSubFolders: boolean = true;
 
+    /**
+     * Refresh any cached content and look for new content.
+     */
     public refresh(): void {
         this._resources.clear();
         const files: string[] = PathUtil.getFiles(this.directory, this.includeSubFolders);
@@ -62,10 +74,18 @@ export class FolderResourceProvider extends ResourceProvider {
         }
     }
 
+    /**
+     * Get resource by its id.
+     * @param id resource id
+     */
     public getResource(id: string): Resource {
         return this._resources.has(id) ? this._resources.get(id) : undefined;
     }
 
+    /**
+     * Get resources by extension.
+     * @param extension resource extension
+     */
     public getResources(extension: string): Resource[] {
         extension = extension.startsWith('.') ? extension.toLowerCase() : `.${extension.toLowerCase()}`;
 
