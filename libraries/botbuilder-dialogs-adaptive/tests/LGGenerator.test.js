@@ -9,12 +9,7 @@ const { ResourceExplorer } = require('botbuilder-dialogs-declarative');
 const assert = require('assert');
 const { TestAdapter, TurnContext } = require('botbuilder-core');
 
-function GetExampleFilePath() {
-    return `${__dirname}/tests/`;
-}
-
-const resourceExplorer = new ResourceExplorer().loadProject(GetExampleFilePath(), [], false);
-//resourceExplorer.getResource('test.lg').then(e => e.readText().then(f => console.log(f)));
+const resourceExplorer = new ResourceExplorer().addFolder(`${ __dirname }/lg`, true, false);
 
 class MockLanguageGegerator {
     generate(turnContex, template, data) {
