@@ -10,7 +10,7 @@
  * Class which manages cache of all LG resources from a ResourceExplorer. 
  * This class automatically updates the cache when resource change events occure.
  */
-import { IResource, ResourceExplorer, FileResource } from 'botbuilder-dialogs-declarative';
+import { Resource, ResourceExplorer, FileResource } from 'botbuilder-dialogs-declarative';
 import { LanguageResourceLoader } from '../languageResourceLoader';
 import { LanguageGenerator } from '../languageGenerator';
 import { TemplateEngineLanguageGenerator } from './templateEngineLanguageGenerator';
@@ -23,7 +23,7 @@ export class LanguageGeneratorManager {
     /// <summary>
     /// multi language lg resources. en -> [resourcelist].
     /// </summary>
-    private _multiLanguageResources: Map<string, IResource[]>;
+    private _multiLanguageResources: Map<string, Resource[]>;
 
     public constructor(resourceManager: ResourceExplorer) {
         this._resourceExporer = resourceManager;
@@ -34,26 +34,26 @@ export class LanguageGeneratorManager {
         const resources = await this._resourceExporer.getResources('lg');
         for (const resource of resources) {
             const generator = await this.getTemplateEngineLanguageGenerator(resource);
-            this.languageGenerator.set(resource.id(), generator);
+            this.languageGenerator.set(resource.id, generator);
         }
     }
     
     public languageGenerator: Map<string, LanguageGenerator> = new Map<string, LanguageGenerator>();
 
-    public static resourceExplorerResolver(locale: string, resourceMapping: Map<string, IResource[]>): ImportResolverDelegate {
+    public static resourceExplorerResolver(locale: string, resourceMapping: Map<string, Resource[]>): ImportResolverDelegate {
         return  (source: string, id: string): {content: string; id: string} => {
             const fallbackLocale = LanguageResourceLoader.fallbackLocale(locale, Array.from(resourceMapping.keys()));
-            const resources: IResource[] = resourceMapping.get(fallbackLocale.toLowerCase());
+            const resources: Resource[] = resourceMapping.get(fallbackLocale.toLowerCase());
 
             const resourceName = basename(normalize(id));
             const resource = resources.find(u => 
-                LanguageResourceLoader.parseLGFileName(u.id()).prefix === LanguageResourceLoader.parseLGFileName(resourceName).prefix);
+                LanguageResourceLoader.parseLGFileName(u.id).prefix === LanguageResourceLoader.parseLGFileName(resourceName).prefix);
 
             if (resource === undefined) {
                 throw Error(`There is no matching LG resource for ${ resourceName }`);
             } else {
                 const text = resource.readText();
-                return {content: text, id: resource.id()};
+                return {content: text, id: resource.id};
             }
         };
     }
@@ -63,7 +63,7 @@ export class LanguageGeneratorManager {
     //         this._languageGenerator[resource.id()] = this.getTemplateEngineLanguageGenerator(resource))
     // }
 
-    private async getTemplateEngineLanguageGenerator(resource: IResource): Promise<TemplateEngineLanguageGenerator> {
+    private async getTemplateEngineLanguageGenerator(resource: Resource): Promise<TemplateEngineLanguageGenerator> {
         this._multiLanguageResources = await LanguageResourceLoader.groupByLocale(this._resourceExporer);
         const fileResource = resource as FileResource;
         if (fileResource !== undefined) {
@@ -71,7 +71,7 @@ export class LanguageGeneratorManager {
             return Promise.resolve(templateEngineLanguageGenerator);
         } else {
             const text = await resource.readText();
-            const templateEngineLanguageGenerator = new TemplateEngineLanguageGenerator(text, resource.id(), this._multiLanguageResources);
+            const templateEngineLanguageGenerator = new TemplateEngineLanguageGenerator(text, resource.id, this._multiLanguageResources);
             return Promise.resolve(templateEngineLanguageGenerator);
         }
     }
