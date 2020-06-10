@@ -25,6 +25,11 @@ import { isAbsolute, basename } from 'path';
  * LG entrance, including properties that LG file has, and evaluate functions.
  */
 export class Templates implements Iterable<Template> {
+
+    /**
+     * Temp Template ID for inline content.
+     */
+    public static readonly inlineTemplateId: string = '__temp__';
     private readonly newLineRegex = /(\r?\n)/g;
     private readonly newLine: string = '\r\n';
     private readonly namespaceKey = '@namespace';
@@ -241,17 +246,16 @@ export class Templates implements Iterable<Template> {
         this.checkErrors();
 
         // wrap inline string with "# name and -" to align the evaluation process
-        const fakeTemplateId = '__temp__';
         const multiLineMark = '```';
 
         inlineStr = !(inlineStr.trim().startsWith(multiLineMark) && inlineStr.includes('\n'))
             ? `${ multiLineMark }${ inlineStr }${ multiLineMark }` : inlineStr;
 
-        const newContent = `#${ fakeTemplateId } ${ this.newLine } - ${ inlineStr }`;
+        const newContent = `#${ Templates.inlineTemplateId } ${ this.newLine } - ${ inlineStr }`;
 
         const newTemplates = TemplatesParser.parseTextWithRef(newContent, this);
         var evalOpt = opt !== undefined ? opt.merge(this.lgOptions) : this.lgOptions;
-        return newTemplates.evaluate(fakeTemplateId, scope, evalOpt);
+        return newTemplates.evaluate(Templates.inlineTemplateId, scope, evalOpt);
     }
 
     /**

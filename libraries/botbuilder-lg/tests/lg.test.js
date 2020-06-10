@@ -645,6 +645,17 @@ describe('LG', function() {
         assert.strictEqual(evaled, 18, `Evaled is ${ evaled }`);
     });
 
+    it('TestRecursiveTemplate', function() {
+        var templates = Templates.parseFile(GetExampleFilePath('RecursiveTemplate.lg'));
+        var evaled = templates.evaluate('RecursiveAccumulate', {number: 10});
+        assert.strictEqual(evaled, 55);
+
+        var evaled = templates.evaluate('RecursiveFactorial', {number: 5});
+        assert.strictEqual(evaled, 1*2*3*4*5);
+
+        var evaled = templates.evaluate('RecursiveFibonacciSequence', {number: 5});
+        assert.strictEqual(evaled, 5);
+    });
 
     it('TestLGResource', function() {
         var templates = Templates.parseText(fs.readFileSync(GetExampleFilePath('2.lg'), 'utf-8'));

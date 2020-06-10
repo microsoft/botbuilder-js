@@ -8,7 +8,9 @@
 import { DialogContext, Choice, ListStyle, ChoiceFactoryOptions, FindChoicesOptions, ChoiceFactory, recognizeChoices, ModelResult, FoundChoice } from 'botbuilder-dialogs';
 import { Activity } from 'botbuilder-core';
 import { InputDialog, InputState } from './inputDialog';
+import { ChoiceSet } from './choiceSet';
 import { ObjectExpression, StringExpression, ArrayExpression, EnumExpression } from 'adaptive-expressions';
+
 
 export enum ChoiceOutputFormat {
     value = 'value',
@@ -37,7 +39,7 @@ export class ChoiceInput extends InputDialog {
     /**
      * List of choices to present to user.
      */
-    public choices: ArrayExpression<Choice>;
+    public choices: ObjectExpression<ChoiceSet>;
 
     /**
      * Style of the "yes" and "no" choices rendered to the user when prompting.
@@ -131,7 +133,7 @@ export class ChoiceInput extends InputDialog {
     }
 
     protected onComputeId(): string {
-        return `ChoiceInput[${ this.prompt.toString() }]`;
+        return `ChoiceInput[${ this.prompt && this.prompt.toString() }]`;
     }
 
 }

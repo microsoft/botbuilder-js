@@ -19,7 +19,7 @@
   "main": "./lib/index.js",
   "typings": "./lib/index.d.ts",
   "dependencies": {
-    "@azure/ms-rest-js": "1.2.6",
+    "@azure/ms-rest-js": "1.8.15",
     "@types/jsonwebtoken": "7.2.8",
     "@types/node": "^10.12.18",
     "adal-node": "0.2.1",

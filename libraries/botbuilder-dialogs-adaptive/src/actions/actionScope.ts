@@ -132,6 +132,11 @@ export class ActionScope<O extends object = {}> extends Dialog<O> implements Dia
 
     protected async beginAction(dc: DialogContext, offset: number): Promise<DialogTurnResult> {
         dc.state.setValue(OFFSET_KEY, offset);
+
+        if (!this.actions || this.actions.length <= offset) {
+            return await dc.endDialog();
+        }
+
         const actionId = this.actions[offset].id;
 
         return await dc.beginDialog(actionId);
