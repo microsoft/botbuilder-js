@@ -43,6 +43,10 @@ export class FolderResourceProvider extends ResourceProvider {
         }
     }
 
+    public get watcher(): FSWatcher {
+        return this._watcher;
+    }
+
     public directory: string;
 
     public includeSubFolders: boolean = true;

@@ -67,7 +67,8 @@ describe('ResourecExplorer', function() {
         }
 
         const explorer = new ResourceExplorer();
-        explorer.addFolder(join(__dirname, 'resources'), true, true);
+        const resourceProvider = new FolderResourceProvider(explorer, join(__dirname, 'resources'), true, true);
+        explorer.addResourceProvider(resourceProvider);
         assertResourceNotFound(explorer, 'foobar.dialog');
 
         // write test file
@@ -93,5 +94,7 @@ describe('ResourecExplorer', function() {
         // wait 100ms for file changes
         await new Promise(resolve => setTimeout(resolve, 100));
         assertResourceNotFound(explorer, 'foorbar.dialog');
+
+        resourceProvider.watcher.close();
     });
 });
