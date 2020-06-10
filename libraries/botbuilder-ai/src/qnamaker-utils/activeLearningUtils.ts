@@ -59,6 +59,48 @@ export class ActiveLearningUtils {
 
         return filteredQnaSearchResult;
     }
+    
+    /**
+    * Returns list of qnaSearch results which have low score variation.
+    * @param {QnAMakerResult[]} qnaSearchResults A list of results returned from the QnA getAnswer call.
+    * @param maximumScoreForLowScoreVariation.
+    * @param minimumScoreForLowScoreVariation.
+    * @param previousLowScoreVariationMultiplier.
+    * @param maxLowScoreVariationMultiplier.
+    */    
+    public static List<QueryResult> GetLowScoreVariation(
+        List<QueryResult> qnaSearchResults,
+        double maximumScoreForLowScoreVariation = 95.0,
+        double minimumScoreForLowScoreVariation = 20.0,
+        double previousLowScoreVariationMultiplier = 0.7,
+        double maxLowScoreVariationMultiplier = 95.0){
+        
+        if (qnaSearchResults == null || qnaSearchResults.length == 0){
+            return [];
+        }
+
+        if(qnaSearchResults.length == 1){
+            return qnaSearchResults;
+        }
+
+        var filteredQnaSearchResult = [];
+        var topAnswerScore = qnaSearchResults[0].score * 100;
+        var prevScore = topAnswerScore;
+
+        if((topAnswerScore > minimumScoreForLowScoreVariation) && (topAnswerScore <= maximumScoreForLowScoreVariation)){
+            filteredQnaSearchResult.push(qnaSearchResults[0]);
+
+            for(var i = 1; i < qnaSearchResults.length; i++){
+                if (ActiveLearningUtils.includeForClustering(prevScore, qnaSearchResults[i].score * 100, previousLowScoreVariationMultiplier) && this.includeForClustering(topAnswerScore, qnaSearchResults[i].score * 100, maxLowScoreVariationMultiplier)){
+                    prevScore = qnaSearchResults[i].score * 100;
+                    filteredQnaSearchResult.push(qnaSearchResults[i]);
+                }
+            }
+        }
+
+        return filteredQnaSearchResult;
+    }
+
 
 
     private static includeForClustering(prevScore, currentScore, multiplier)
