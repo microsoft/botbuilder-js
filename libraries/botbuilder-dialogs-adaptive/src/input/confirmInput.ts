@@ -9,6 +9,7 @@ import * as Recognizers from '@microsoft/recognizers-text-choice';
 import { Activity } from 'botbuilder-core';
 import { DialogContext, Choice, ListStyle, ChoiceFactoryOptions, ChoiceFactory, recognizeChoices } from 'botbuilder-dialogs';
 import { InputDialog, InputState } from './inputDialog';
+import { ChoiceSet } from './choiceSet';
 import { StringExpression, ObjectExpression, ArrayExpression, EnumExpression } from 'adaptive-expressions';
 
 export class ConfirmInput extends InputDialog {
@@ -48,7 +49,7 @@ export class ConfirmInput extends InputDialog {
     /**
      * Custom list of choices to send for the prompt.
      */
-    public confirmChoices?: ArrayExpression<Choice>;
+    public confirmChoices?: ObjectExpression<ChoiceSet>;
 
     /**
      * The expression of output format.
