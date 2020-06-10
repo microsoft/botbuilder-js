@@ -38,10 +38,10 @@ export class ActiveLearningUtils {
     */    
    public static getLowScoreVariation(
         qnaSearchResults: QnAMakerResult[],
-        maximumScoreForLowScoreVariation = this.MaximumScoreForLowScoreVariation,
-        minimumScoreForLowScoreVariation = this.MinimumScoreForLowScoreVariation,
-        previousLowScoreVariationMultiplier = this.PreviousLowScoreVariationMultiplier,
-        maxLowScoreVariationMultiplier = this.MaxLowScoreVariationMultiplier){
+        maximumScoreForLowScoreVariation = MaximumScoreForLowScoreVariation,
+        minimumScoreForLowScoreVariation = MinimumScoreForLowScoreVariation,
+        previousLowScoreVariationMultiplier = PreviousLowScoreVariationMultiplier,
+        maxLowScoreVariationMultiplier = MaxLowScoreVariationMultiplier){
         
         if (qnaSearchResults == null || qnaSearchResults.length == 0){
             return [];
