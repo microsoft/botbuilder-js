@@ -63,6 +63,7 @@ describe('ResourecExplorer', function() {
         explorer.addFolders(join(__dirname, 'resources'), ['TestFolder'], false);
         assertResourceFound(explorer, 'foo.dialog');
         assertResourceNotFound(explorer, 'test.dialog');
+        assertResourceFound(explorer, 'test2.dialog');
         let resources = explorer.getResources('lu');
         assert.equal(resources.length, 0, 'should not list lu resources in filtered folders');
         resources = explorer.getResources('dialog');
@@ -71,7 +72,7 @@ describe('ResourecExplorer', function() {
 
     it('add new resource type', async () => {
         const explorer = new ResourceExplorer([]);
-        explorer.addFolder(join(__dirname, 'resources'), true, false);
+        explorer.addFolders(join(__dirname, 'resources'), [], false);
         let resources = explorer.getResources('txt');
         assert.equal(resources.length, 0, 'should not list txt resources');
         explorer.addResourceType('txt');
@@ -96,8 +97,7 @@ describe('ResourecExplorer', function() {
         }
 
         const explorer = new ResourceExplorer();
-        const resourceProvider = new FolderResourceProvider(explorer, join(__dirname, 'resources'), true, true);
-        explorer.addResourceProvider(resourceProvider);
+        explorer.addFolders(join(__dirname, 'resources'));
         assertResourceNotFound(explorer, 'foobar.dialog');
 
         // write test file
@@ -124,6 +124,7 @@ describe('ResourecExplorer', function() {
         await new Promise(resolve => setTimeout(resolve, 200));
         assertResourceNotFound(explorer, 'foobar.dialog');
 
+        const resourceProvider = explorer.resourceProviders[0];
         resourceProvider.watcher.close();
     });
 
