@@ -17,6 +17,7 @@ import { SkillConversationIdFactoryBase } from 'botbuilder-core';
 import { StatePropertyAccessor } from 'botbuilder-core';
 import { TokenResponse } from 'botbuilder-core';
 import { TurnContext } from 'botbuilder-core';
+import { TurnContextStateCollection } from 'botbuilder-core';
 import { UserState } from 'botbuilder-core';
 
 // @public
@@ -66,7 +67,22 @@ export class AttachmentPrompt extends Prompt<Attachment[]> {
 
 // @public
 export interface BeginSkillDialogOptions {
-    activity: Activity;
+    activity: Partial<Activity>;
+}
+
+// @public
+export class BotStateMemoryScope extends MemoryScope {
+    constructor(name: string);
+    // (undocumented)
+    delete(dc: DialogContext): Promise<void>;
+    getMemory(dc: DialogContext): object;
+    // (undocumented)
+    load(dc: DialogContext, force?: boolean): Promise<void>;
+    // (undocumented)
+    saveChanges(dc: DialogContext, force?: boolean): Promise<void>;
+    setMemory(dc: DialogContext, memory: object): void;
+    // (undocumented)
+    protected stateKey: string;
 }
 
 // @public
@@ -111,9 +127,10 @@ export class ChoicePrompt extends Prompt<FoundChoice> {
 
 // @public
 export class ClassMemoryScope extends MemoryScope {
-    constructor();
+    constructor(name?: string);
     // (undocumented)
     getMemory(dc: DialogContext): object;
+    protected onFindDialog(dc: DialogContext): Dialog;
 }
 
 // @public
@@ -135,7 +152,7 @@ export class ComponentDialog<O extends object = {}> extends DialogContainer<O> {
     // (undocumented)
     repromptDialog(context: TurnContext, instance: DialogInstance): Promise<void>;
     // (undocumented)
-    resumeDialog(dc: DialogContext, reason: DialogReason, result?: any): Promise<DialogTurnResult>;
+    resumeDialog(outerDC: DialogContext, reason: DialogReason, result?: any): Promise<DialogTurnResult>;
     telemetryClient: BotTelemetryClient;
 }
 
@@ -158,11 +175,11 @@ export class ConfirmPrompt extends Prompt<boolean> {
     style: ListStyle;
 }
 
-// Warning: (ae-forgotten-export) The symbol "BotStateMemoryScope" needs to be exported by the entry point index.d.ts
-//
 // @public
 export class ConversationMemoryScope extends BotStateMemoryScope {
-    constructor(conversationState: ConversationState, propertyName?: string);
+    constructor();
+    // (undocumented)
+    protected stateKey: string;
 }
 
 // @public
@@ -192,7 +209,7 @@ export abstract class Dialog<O extends object = {}> extends Configurable {
     continueDialog(dc: DialogContext): Promise<DialogTurnResult>;
     endDialog(context: TurnContext, instance: DialogInstance, reason: DialogReason): Promise<void>;
     static EndOfTurn: DialogTurnResult;
-    protected hashedLabel(label: string): string;
+    getVersion(): string;
     id: string;
     protected onComputeId(): string;
     // (undocumented)
@@ -203,6 +220,13 @@ export abstract class Dialog<O extends object = {}> extends Configurable {
     resumeDialog(dc: DialogContext, reason: DialogReason, result?: any): Promise<DialogTurnResult>;
     telemetryClient: BotTelemetryClient;
     protected _telemetryClient: BotTelemetryClient;
+}
+
+// @public
+export class DialogClassMemoryScope extends ClassMemoryScope {
+    constructor();
+    // (undocumented)
+    protected onFindDialog(dc: DialogContext): Dialog;
 }
 
 // @public (undocumented)
@@ -225,9 +249,11 @@ export interface DialogConfiguration {
 
 // @public (undocumented)
 export abstract class DialogContainer<O extends object = {}> extends Dialog<O> {
+    protected checkForVersionChange(dc: DialogContext): Promise<void>;
     abstract createChildContext(dc: DialogContext): DialogContext | undefined;
     readonly dialogs: DialogSet;
     findDialog(dialogId: string): Dialog | undefined;
+    protected getInternalVersion(): string;
 }
 
 // @public
@@ -241,6 +267,7 @@ export class DialogContext {
     readonly child: DialogContext | undefined;
     context: TurnContext;
     continueDialog(): Promise<DialogTurnResult>;
+    readonly dialogManager: DialogManager;
     dialogs: DialogSet;
     emitEvent(name: string, value?: any, bubble?: boolean, fromLeaf?: boolean): Promise<boolean>;
     endDialog(result?: any): Promise<DialogTurnResult>;
@@ -284,31 +311,29 @@ export interface DialogEvent {
 
 // @public
 export class DialogEvents {
-    // (undocumented)
     static readonly activityReceived = "activityReceived";
-    // (undocumented)
     static readonly beginDialog = "beginDialog";
-    // (undocumented)
     static readonly cancelDialog = "cancelDialog";
-    // (undocumented)
     static readonly error = "error";
-    // (undocumented)
     static readonly repromptDialog = "repromptDialog";
+    static readonly versionChanged = "versionChanged";
 }
 
 // @public
 export interface DialogInstance<T = any> {
     id: string;
     state: T;
+    version?: string;
 }
 
 // @public (undocumented)
 export class DialogManager extends Configurable {
-    constructor(config?: DialogManagerConfiguration);
+    constructor(rootDialog?: Dialog, dialogStateProperty?: string);
     // (undocumented)
     configure(config: Partial<DialogManagerConfiguration>): this;
     conversationState: ConversationState;
     expireAfter?: number;
+    readonly initialTurnState: TurnContextStateCollection;
     // (undocumented)
     onTurn(context: TurnContext): Promise<DialogManagerResult>;
     rootDialog: Dialog;
@@ -374,6 +399,7 @@ export class DialogSet {
     add<T extends Dialog>(dialog: T): this;
     createContext(context: TurnContext): Promise<DialogContext>;
     find(dialogId: string): Dialog | undefined;
+    getVersion(): string;
     telemetryClient: BotTelemetryClient;
     }
 
@@ -384,11 +410,11 @@ export interface DialogState {
 
 // @public
 export class DialogStateManager {
-    constructor(dc: DialogContext);
+    constructor(dc: DialogContext, configuration?: DialogStateManagerConfiguration);
     anyPathChanged(counter: number, paths: string[]): boolean;
     configuration: DialogStateManagerConfiguration;
     // (undocumented)
-    static createStandardConfiguration(conversationState?: ConversationState, userState?: UserState): DialogStateManagerConfiguration;
+    static createStandardConfiguration(): DialogStateManagerConfiguration;
     deleteScopesMemory(name: string): Promise<void>;
     deleteValue(pathExpression: string): void;
     getMemorySnapshot(): object;
@@ -414,6 +440,12 @@ export interface DialogTurnResult<T = any> {
     parentEnded?: boolean;
     result?: T;
     status: DialogTurnStatus;
+}
+
+// @public
+export class DialogTurnStateConstants {
+    // (undocumented)
+    static dialogManager: symbol;
 }
 
 // @public
@@ -642,6 +674,18 @@ export function recognizeChoices(utterance: string, choices: (string | Choice)[]
 export function runDialog(dialog: Dialog, context: TurnContext, accessor: StatePropertyAccessor<DialogState>): Promise<void>;
 
 // @public
+export class ScopePath {
+    static readonly class = "class";
+    static readonly conversation = "conversation";
+    static readonly dialog = "dialog";
+    static readonly dialogClass = "dialogClass";
+    static readonly settings = "settings";
+    static readonly this = "this";
+    static readonly turn = "turn";
+    static readonly user = "user";
+}
+
+// @public
 export class SettingsMemoryScope extends MemoryScope {
     constructor();
     // (undocumented)
@@ -649,16 +693,17 @@ export class SettingsMemoryScope extends MemoryScope {
 }
 
 // @public (undocumented)
-export class SkillDialog extends Dialog {
+export class SkillDialog extends Dialog<Partial<BeginSkillDialogOptions>> {
     constructor(dialogOptions: SkillDialogOptions, dialogId?: string);
     // (undocumented)
-    beginDialog(dc: DialogContext, options?: any): Promise<DialogTurnResult>;
+    beginDialog(dc: DialogContext, options: BeginSkillDialogOptions): Promise<DialogTurnResult>;
     // (undocumented)
     continueDialog(dc: DialogContext): Promise<DialogTurnResult>;
     // (undocumented)
     protected dialogOptions: SkillDialogOptions;
     // (undocumented)
     endDialog(context: TurnContext, instance: DialogInstance, reason: DialogReason): Promise<void>;
+    protected onValidateActivity(activity: Activity): boolean;
     // (undocumented)
     repromptDialog(context: TurnContext, instance: DialogInstance): Promise<void>;
     // (undocumented)
@@ -668,6 +713,7 @@ export class SkillDialog extends Dialog {
 // @public (undocumented)
 export interface SkillDialogOptions {
     botId: string;
+    connectionName?: string;
     conversationIdFactory: SkillConversationIdFactoryBase;
     conversationState: ConversationState;
     skill: BotFrameworkSkill;
@@ -707,6 +753,11 @@ export class ThisMemoryScope extends MemoryScope {
     getMemory(dc: DialogContext): object;
     // (undocumented)
     setMemory(dc: DialogContext, memory: object): void;
+}
+
+// @public
+export class ThisPath {
+    static readonly options = "this.options";
 }
 
 // @public
@@ -759,7 +810,9 @@ export class TurnPath {
 
 // @public
 export class UserMemoryScope extends BotStateMemoryScope {
-    constructor(userState: UserState, propertyName?: string);
+    constructor();
+    // (undocumented)
+    protected stateKey: string;
 }
 
 // @public
@@ -771,6 +824,8 @@ export class WaterfallDialog<O extends object = {}> extends Dialog<O> {
     // (undocumented)
     continueDialog(dc: DialogContext): Promise<DialogTurnResult>;
     endDialog(context: TurnContext, instance: DialogInstance, reason: DialogReason): Promise<void>;
+    // (undocumented)
+    getVersion(): string;
     protected onStep(step: WaterfallStepContext<O>): Promise<DialogTurnResult>;
     // (undocumented)
     resumeDialog(dc: DialogContext, reason: DialogReason, result?: any): Promise<DialogTurnResult>;
