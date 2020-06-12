@@ -10,7 +10,7 @@ import { watch, FSWatcher } from 'chokidar';
 import { normalize, extname } from 'path';
 import { FileResource } from './fileResource';
 import { Resource } from './resource';
-import { ResourceProvider } from './resourceProvider';
+import { ResourceProvider, ResourceChangeEvent } from './resourceProvider';
 import { ResourceExplorer } from './resourceExplorer';
 import { PathUtil } from '../pathUtil';
 
@@ -108,8 +108,10 @@ export class FolderResourceProvider extends ResourceProvider {
         const ext = extname(path.toLowerCase()).replace(/^\./, '');
         if (this.resourceExplorer.resourceTypes.has(ext)) {
             const fileResource = new FileResource(path);
-            this._resources.set(fileResource.id, fileResource);
-            this.onChanged([fileResource]);
+            if (!this._resources.has(fileResource.id)) {
+                this._resources.set(fileResource.id, fileResource);
+                this.onChanged(ResourceChangeEvent.added, [fileResource]);
+            }
         }
     }
 
@@ -118,7 +120,7 @@ export class FolderResourceProvider extends ResourceProvider {
         if (this.resourceExplorer.resourceTypes.has(ext)) {
             const fileResource = new FileResource(path);
             this._resources.set(fileResource.id, fileResource);
-            this.onChanged([fileResource]);
+            this.onChanged(ResourceChangeEvent.changed, [fileResource]);
         }
     }
 
@@ -126,8 +128,10 @@ export class FolderResourceProvider extends ResourceProvider {
         const ext = extname(path.toLowerCase()).replace(/^\./, '');
         if (this.resourceExplorer.resourceTypes.has(ext)) {
             const fileResource = new FileResource(path);
-            this._resources.delete(fileResource.id);
-            this.onChanged([fileResource]);
+            if (this._resources.has(fileResource.id)) {
+                this._resources.delete(fileResource.id);
+                this.onChanged(ResourceChangeEvent.removed, [fileResource]);
+            }
         }
     }
 }

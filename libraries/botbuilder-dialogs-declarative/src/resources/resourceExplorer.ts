@@ -7,13 +7,13 @@
  */
 
 import { normalize, join } from 'path';
-import { EventEmitter } from 'events';
 import { ResourceProvider } from './resourceProvider';
 import { FolderResourceProvider } from './folderResourceProvider';
 import { Resource } from './resource';
 import { PathUtil } from '../pathUtil';
 import { TypeFactory } from '../factory/typeFactory';
 import { ComponentRegistration } from '../componentRegistration';
+import { EventEmitter } from 'events';
 
 export class ResourceExplorer {
     private _factory: TypeFactory = new TypeFactory();
@@ -31,7 +31,7 @@ export class ResourceExplorer {
     /**
      * Event emitter which would fire an event when resources changed.
      */
-    public changed: EventEmitter = new EventEmitter();
+    public eventEmitter: EventEmitter = new EventEmitter();
 
     /**
      * Gets resource providers.
@@ -77,7 +77,7 @@ export class ResourceExplorer {
             throw Error(`${ resourceProvider.id } has already been added as a resource`);
         }
 
-        resourceProvider.changed.addListener('changed', this.onResourceProviderChanged)
+        resourceProvider.eventEmitter = this.eventEmitter;
         this._resourceProviders.push(resourceProvider);
 
         return this;
@@ -194,15 +194,5 @@ export class ResourceExplorer {
         const json = resource.readText();
         const result = JSON.parse(json);
         return this.buildType(result as object);
-    }
-
-    protected onChanged(resources: Resource[]): void {
-        this.changed.emit('changed', resources);
-    }
-
-    private onResourceProviderChanged(resources: Resource[]): void {
-        if (this.changed) {
-            this.onChanged(resources);
-        }
     }
 }
