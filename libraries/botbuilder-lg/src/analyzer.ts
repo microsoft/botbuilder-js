@@ -91,7 +91,7 @@ export class Analyzer extends AbstractParseTreeVisitor<AnalyzerResult> implement
             if (isKVPairBody) {
                 result.union(this.visitStructureValue(body.keyValueStructureLine()));
             } else {
-                result.union(this.analyzeExpression(body.objectStructureLine().text));
+                result.union(this.analyzeExpression(body.expressionInStructure().text));
             }
         }
 
@@ -102,11 +102,11 @@ export class Analyzer extends AbstractParseTreeVisitor<AnalyzerResult> implement
         const result: AnalyzerResult = new AnalyzerResult();
 
         const values = ctx.keyValueStructureValue();
-        for (const value of values) {
-            if (TemplateExtensions.isPureExpression(value).hasExpr) {
-                result.union(this.analyzeExpression(TemplateExtensions.isPureExpression(value).expression));
+        for (const item of values) {
+            if (TemplateExtensions.isPureExpression(item)) {
+                result.union(this.analyzeExpression(item.expressionInStructure(0).text));
             } else {
-                const exprs = value.EXPRESSION_IN_STRUCTURE_BODY();
+                const exprs = item.expressionInStructure();
                 for (const expr of exprs) {
                     result.union(this.analyzeExpression(expr.text));
                 }
@@ -121,7 +121,7 @@ export class Analyzer extends AbstractParseTreeVisitor<AnalyzerResult> implement
 
         const ifRules: lp.IfConditionRuleContext[] = ctx.ifElseTemplateBody().ifConditionRule();
         for (const ifRule of ifRules) {
-            const expressions: TerminalNode[] = ifRule.ifCondition().EXPRESSION();
+            const expressions = ifRule.ifCondition().expression();
             if (expressions !== undefined && expressions.length > 0) {
                 result.union(this.analyzeExpression(expressions[0].text));
             }
@@ -137,7 +137,7 @@ export class Analyzer extends AbstractParseTreeVisitor<AnalyzerResult> implement
         const result: AnalyzerResult = new AnalyzerResult();
         const switchCaseNodes: lp.SwitchCaseRuleContext[] = ctx.switchCaseTemplateBody().switchCaseRule();
         for (const iterNode of switchCaseNodes) {
-            const expressions: TerminalNode[] = iterNode.switchCaseStat().EXPRESSION();
+            const expressions = iterNode.switchCaseStat().expression();
             if (expressions.length > 0) {
                 result.union(this.analyzeExpression(expressions[0].text));
             }
@@ -152,7 +152,7 @@ export class Analyzer extends AbstractParseTreeVisitor<AnalyzerResult> implement
     public visitNormalTemplateString(ctx: lp.NormalTemplateStringContext): AnalyzerResult {
         const result: AnalyzerResult = new AnalyzerResult();
         
-        for (const expression of ctx.EXPRESSION()) {
+        for (const expression of ctx.expression()) {
             result.union(this.analyzeExpression(expression.text));
         }
 
@@ -195,9 +195,5 @@ export class Analyzer extends AbstractParseTreeVisitor<AnalyzerResult> implement
         result.union(this.analyzeExpressionDirectly(parsed));
 
         return  result;
-    }
-
-    private currentTarget(): EvaluationTarget {
-        return this.evalutationTargetStack[this.evalutationTargetStack.length - 1];
     }
 }
