@@ -26,7 +26,6 @@ export class LanguageGeneratorManager {
     private _multiLanguageResources: Map<string, Resource[]>;
 
     public constructor(resourceManager: ResourceExplorer) {
-        console.log(this);
         this._resourceExporer = resourceManager;
         this._resourceExporer.changed = this.resourceExplorerChanged.bind(this);
     }
