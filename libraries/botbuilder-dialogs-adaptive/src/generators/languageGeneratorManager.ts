@@ -10,11 +10,11 @@
  * Class which manages cache of all LG resources from a ResourceExplorer. 
  * This class automatically updates the cache when resource change events occure.
  */
-import { Resource, ResourceExplorer, FileResource } from 'botbuilder-dialogs-declarative';
+import { Resource, ResourceExplorer, FileResource, ResourceChangeEvent } from 'botbuilder-dialogs-declarative';
 import { LanguageResourceLoader } from '../languageResourceLoader';
 import { LanguageGenerator } from '../languageGenerator';
 import { TemplateEngineLanguageGenerator } from './templateEngineLanguageGenerator';
-import { normalize, basename} from 'path';
+import { normalize, basename, extname} from 'path';
 import { ImportResolverDelegate } from 'botbuilder-lg';
 
 export class LanguageGeneratorManager {
@@ -26,12 +26,14 @@ export class LanguageGeneratorManager {
     private _multiLanguageResources: Map<string, Resource[]>;
 
     public constructor(resourceManager: ResourceExplorer) {
+        console.log(this);
         this._resourceExporer = resourceManager;
-
+        this._resourceExporer.changed = this.resourceExplorerChanged.bind(this);
     }
+
     // load all LG resources
     public async loadResources(): Promise<void> {
-        const resources = await this._resourceExporer.getResources('lg');
+        const resources = this._resourceExporer.getResources('lg');
         for (const resource of resources) {
             const generator = await this.getTemplateEngineLanguageGenerator(resource);
             this.languageGenerator.set(resource.id, generator);
@@ -58,10 +60,18 @@ export class LanguageGeneratorManager {
         };
     }
 
-    // private  ResourceExplorer_Changed(resources: IResource[]): void {
-    //     resources.filter(u => extname(u.id()).toLowerCase() === '.lg').forEach(resource => 
-    //         this._languageGenerator[resource.id()] = this.getTemplateEngineLanguageGenerator(resource))
-    // }
+    private async resourceExplorerChanged(event: ResourceChangeEvent, resources: Resource[]): Promise<void> {
+        for (let i = 0; i < resources.length; i++) {
+            if (extname(resources[i].id).toLowerCase() === '.lg') {
+                if (event === ResourceChangeEvent.removed) {
+                    this.languageGenerator.delete(resources[i].id);
+                } else {
+                    const generator = await this.getTemplateEngineLanguageGenerator(resources[i]);
+                    this.languageGenerator.set(resources[i].id, generator);
+                }
+            }
+        }
+    }
 
     private async getTemplateEngineLanguageGenerator(resource: Resource): Promise<TemplateEngineLanguageGenerator> {
         this._multiLanguageResources = await LanguageResourceLoader.groupByLocale(this._resourceExporer);
