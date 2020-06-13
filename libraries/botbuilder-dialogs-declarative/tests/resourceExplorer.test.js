@@ -88,6 +88,103 @@ describe('ResourecExplorer', function() {
         }, 'should throw if adding duplicated resource folders');
     });
 
+    it('event fired when new file added', async () => {
+        const testPath = join(__dirname, 'resources/TestFolder/file_to_be_added.dialog');
+
+        // clean the test file
+        if (existsSync(testPath)) {
+            unlinkSync(testPath);
+        }
+
+        const explorer = new ResourceExplorer();
+        const resourceProvider = new FolderResourceProvider(explorer, join(__dirname, 'resources'), true, true);
+        explorer.addResourceProvider(resourceProvider);
+
+        let event, resource;
+        explorer.changed = (e, resources) => {
+            event = e;
+            resource = resources[0];
+        };
+
+        // write test file
+        writeFileSync(testPath, '{"test": 123}');
+        await new Promise(resolve => setTimeout(resolve, 200));
+        assert.equal(event, ResourceChangeEvent.added);
+        assert.equal(resource.id, 'file_to_be_added.dialog');
+        assert.equal(resource.toString(), 'file_to_be_added.dialog');
+
+        // clean up
+        unlinkSync(testPath);
+        resourceProvider.watcher.close();
+    });
+
+    it('event fired when file changed', async () => {
+        const testPath = join(__dirname, 'resources/TestFolder/file_to_be_changed.dialog');
+
+        // clean the test file
+        if (existsSync(testPath)) {
+            unlinkSync(testPath);
+        }
+
+        const explorer = new ResourceExplorer();
+        const resourceProvider = new FolderResourceProvider(explorer, join(__dirname, 'resources'), true, true);
+        explorer.addResourceProvider(resourceProvider);
+
+        // write test file
+        writeFileSync(testPath, '{"test": 123}');
+        await new Promise(resolve => setTimeout(resolve, 100));
+
+        let event, resource;
+        explorer.changed = (e, resources) => {
+            event = e;
+            resource = resources[0];
+        };
+
+        // change test file
+        writeFileSync(testPath, '{"test": 1234}');
+        await new Promise(resolve => setTimeout(resolve, 200));
+        assert.equal(event, ResourceChangeEvent.changed);
+        assert.equal(resource.id, 'file_to_be_changed.dialog');
+        assert.equal(resource.toString(), 'file_to_be_changed.dialog');
+
+        // clean up
+        unlinkSync(testPath);
+        resourceProvider.watcher.close();
+    });
+
+    it('event fired when file removed', async () => {
+        const testPath = join(__dirname, 'resources/TestFolder/file_to_be_removed.dialog');
+
+        // clean the test file
+        if (existsSync(testPath)) {
+            unlinkSync(testPath);
+        }
+
+        const explorer = new ResourceExplorer();
+        const resourceProvider = new FolderResourceProvider(explorer, join(__dirname, 'resources'), true, true);
+        explorer.addResourceProvider(resourceProvider);
+
+        // write test file
+        writeFileSync(testPath, '{"test": 123}');
+        await new Promise(resolve => setTimeout(resolve, 100));
+
+        let event, resource;
+        explorer.changed = (e, resources) => {
+            event = e;
+            resource = resources[0];
+        };
+
+        // remove test file
+        unlinkSync(testPath);
+        await new Promise(resolve => setTimeout(resolve, 200));
+        assert.equal(event, ResourceChangeEvent.removed);
+        assert.equal(resource.id, 'file_to_be_removed.dialog');
+        assert.equal(resource.toString(), 'file_to_be_removed.dialog');
+
+        // clean up
+        resourceProvider.watcher.close();
+    });
+
     it('watch file changes', async () => {
         const testPath = join(__dirname, 'resources/TestFolder/foobar.dialog');
 
@@ -125,103 +222,6 @@ describe('ResourecExplorer', function() {
         assertResourceNotFound(explorer, 'foobar.dialog');
 
         const resourceProvider = explorer.resourceProviders[0];
-        resourceProvider.watcher.close();
-    });
-
-    it('event fired when new file added', async () => {
-        const testPath = join(__dirname, 'resources/TestFolder/foobar.dialog');
-
-        // clean the test file
-        if (existsSync(testPath)) {
-            unlinkSync(testPath);
-        }
-
-        const explorer = new ResourceExplorer();
-        const resourceProvider = new FolderResourceProvider(explorer, join(__dirname, 'resources'), true, true);
-        explorer.addResourceProvider(resourceProvider);
-
-        let event, resource;
-        explorer.changed = (e, resources) => {
-            event = e;
-            resource = resources[0];
-        };
-
-        // write test file
-        writeFileSync(testPath, '{"test": 123}');
-        await new Promise(resolve => setTimeout(resolve, 200));
-        assert.equal(event, ResourceChangeEvent.added);
-        assert.equal(resource.id, 'foobar.dialog');
-        assert.equal(resource.toString(), 'foobar.dialog');
-
-        // clean up
-        unlinkSync(testPath);
-        resourceProvider.watcher.close();
-    });
-
-    it('event fired when file changed', async () => {
-        const testPath = join(__dirname, 'resources/TestFolder/foobar.dialog');
-
-        // clean the test file
-        if (existsSync(testPath)) {
-            unlinkSync(testPath);
-        }
-
-        const explorer = new ResourceExplorer();
-        const resourceProvider = new FolderResourceProvider(explorer, join(__dirname, 'resources'), true, true);
-        explorer.addResourceProvider(resourceProvider);
-
-        // write test file
-        writeFileSync(testPath, '{"test": 123}');
-        await new Promise(resolve => setTimeout(resolve, 100));
-
-        let event, resource;
-        explorer.changed = (e, resources) => {
-            event = e;
-            resource = resources[0];
-        };
-
-        // change test file
-        writeFileSync(testPath, '{"test": 1234}');
-        await new Promise(resolve => setTimeout(resolve, 200));
-        assert.equal(event, ResourceChangeEvent.changed);
-        assert.equal(resource.id, 'foobar.dialog');
-        assert.equal(resource.toString(), 'foobar.dialog');
-
-        // clean up
-        unlinkSync(testPath);
-        resourceProvider.watcher.close();
-    });
-
-    it('event fired when file removed', async () => {
-        const testPath = join(__dirname, 'resources/TestFolder/foobar.dialog');
-
-        // clean the test file
-        if (existsSync(testPath)) {
-            unlinkSync(testPath);
-        }
-
-        const explorer = new ResourceExplorer();
-        const resourceProvider = new FolderResourceProvider(explorer, join(__dirname, 'resources'), true, true);
-        explorer.addResourceProvider(resourceProvider);
-
-        // write test file
-        writeFileSync(testPath, '{"test": 123}');
-        await new Promise(resolve => setTimeout(resolve, 100));
-
-        let event, resource;
-        explorer.changed = (e, resources) => {
-            event = e;
-            resource = resources[0];
-        };
-
-        // remove test file
-        unlinkSync(testPath);
-        await new Promise(resolve => setTimeout(resolve, 200));
-        assert.equal(event, ResourceChangeEvent.removed);
-        assert.equal(resource.id, 'foobar.dialog');
-        assert.equal(resource.toString(), 'foobar.dialog');
-
-        // clean up
         resourceProvider.watcher.close();
     });
 });
