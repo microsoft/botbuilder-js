@@ -33,11 +33,11 @@ errorStructuredName
 
 structuredBodyContentLine
     : keyValueStructureLine
-    | objectStructureLine
+    | expressionInStructure
     ;
 
 errorStructureLine
-    : (STRUCTURE_IDENTIFIER|STRUCTURE_EQUALS|STRUCTURE_OR_MARK|TEXT_IN_STRUCTURE_BODY|EXPRESSION_IN_STRUCTURE_BODY|ESCAPE_CHARACTER_IN_STRUCTURE_BODY)+
+    : (STRUCTURE_IDENTIFIER|STRUCTURE_EQUALS|STRUCTURE_OR_MARK|TEXT_IN_STRUCTURE_BODY|expressionInStructure|ESCAPE_CHARACTER_IN_STRUCTURE_BODY)+
     ;
 
 keyValueStructureLine
@@ -45,11 +45,7 @@ keyValueStructureLine
     ;
 
 keyValueStructureValue
-    : (TEXT_IN_STRUCTURE_BODY|EXPRESSION_IN_STRUCTURE_BODY|ESCAPE_CHARACTER_IN_STRUCTURE_BODY)+
-    ;
-
-objectStructureLine
-    : EXPRESSION_IN_STRUCTURE_BODY
+    : (TEXT_IN_STRUCTURE_BODY|expressionInStructure|ESCAPE_CHARACTER_IN_STRUCTURE_BODY)+
     ;
 
 structuredBodyEndLine
@@ -66,7 +62,7 @@ templateString
     ;
 
 normalTemplateString
-    : DASH MULTILINE_PREFIX? (TEXT|EXPRESSION|ESCAPE_CHARACTER)* MULTILINE_SUFFIX?
+    : DASH MULTILINE_PREFIX? (TEXT|expression|ESCAPE_CHARACTER)* MULTILINE_SUFFIX?
     ;
 
 errorTemplateString
@@ -82,7 +78,7 @@ ifConditionRule
     ;
 
 ifCondition
-    : DASH (IF|ELSE|ELSEIF) (WS|TEXT|EXPRESSION)*
+    : DASH (IF|ELSE|ELSEIF) (WS|TEXT|expression)*
     ;
 
 switchCaseTemplateBody
@@ -94,5 +90,11 @@ switchCaseRule
     ;
 
 switchCaseStat
-    : DASH (SWITCH|CASE|DEFAULT) (WS|TEXT|EXPRESSION)*
+    : DASH (SWITCH|CASE|DEFAULT) (WS|TEXT|expression)*
     ;
+
+expression
+    : EXPRESSION;
+
+expressionInStructure
+    : EXPRESSION_IN_STRUCTURE_BODY;

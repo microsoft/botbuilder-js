@@ -7,7 +7,7 @@
  */
 import { AbstractParseTreeVisitor, TerminalNode } from 'antlr4ts/tree';
 import { ParserRuleContext } from 'antlr4ts/ParserRuleContext';
-import { ExpressionFunctions, EvaluatorLookup, Expression, ExpressionParser, ExpressionEvaluator, ReturnType, SimpleObjectMemory, ExpressionType, Constant } from 'adaptive-expressions';
+import { ExpressionFunctions, EvaluatorLookup, Expression, ExpressionParser, ExpressionEvaluator, ReturnType, ExpressionType, Constant } from 'adaptive-expressions';
 import { keyBy } from 'lodash';
 import { EvaluationTarget } from './evaluationTarget';
 import { Evaluator } from './evaluator';
@@ -103,7 +103,7 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGTe
     public visitIfElseBody(ctx: lp.IfElseBodyContext): any[] {
         const ifRules: lp.IfConditionRuleContext[] = ctx.ifElseTemplateBody().ifConditionRule();
         for (const ifRule of ifRules) {
-            if (this.evalCondition(ifRule.ifCondition())) {
+            if (this.evalCondition(ifRule.ifCondition()) && ifRule.normalTemplateBody() !== undefined) {
                 return this.visit(ifRule.normalTemplateBody());
             }
         }
@@ -140,7 +140,7 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGTe
                 }
             } else {
                 const propertyObjects: object[] = [];
-                this.evalExpression(body.objectStructureLine().text, body.objectStructureLine()).forEach((x): number => propertyObjects.push(x));
+                this.evalExpression(body.expressionInStructure().text, body.expressionInStructure(), body.text).forEach((x): number => propertyObjects.push(x));
                 const tempResult = [];
                 for (const res of expandedResult) {
                     for (const propertyObject of propertyObjects) {
@@ -185,22 +185,24 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGTe
 
         let result: any[] = [];
         for (const item of values) {
-            if (TemplateExtensions.isPureExpression(item).hasExpr) {
-                result.push(this.evalExpression(TemplateExtensions.isPureExpression(item).expression, ctx));
+            if (TemplateExtensions.isPureExpression(item)) {
+                result.push(this.evalExpression(item.expressionInStructure(0).text, item.expressionInStructure(0), ctx.text));
             } else {
                 let itemStringResult = [''];
-                for (const node of item.children) {
-                    switch ((node as TerminalNode).symbol.type) {
-                        case (lp.LGTemplateParser.ESCAPE_CHARACTER_IN_STRUCTURE_BODY):
-                            itemStringResult = this.stringArrayConcat(itemStringResult, [TemplateExtensions.evalEscape(node.text.replace(/\\\|/g, '|'))]);
-                            break;
-                        case (lp.LGTemplateParser.EXPRESSION_IN_STRUCTURE_BODY):
-                            const errorPrefix = `Property '${ ctx.STRUCTURE_IDENTIFIER().text }':`;
-                            itemStringResult =this.stringArrayConcat(itemStringResult, this.evalExpression(node.text, ctx, errorPrefix));
-                            break;
-                        default:
-                            itemStringResult = this.stringArrayConcat(itemStringResult, [node.text]);
-                            break;
+                for (const child of item.children) {
+                    if (child instanceof lp.ExpressionInStructureContext) {
+                        const errorPrefix = `Property '${ ctx.STRUCTURE_IDENTIFIER().text }':`;
+                        itemStringResult =this.stringArrayConcat(itemStringResult, this.evalExpression(child.text, child, ctx.text, errorPrefix));
+                    } else {
+                        const node = child as TerminalNode;
+                        switch (node.symbol.type) {
+                            case (lp.LGTemplateParser.ESCAPE_CHARACTER_IN_STRUCTURE_BODY):
+                                itemStringResult = this.stringArrayConcat(itemStringResult, [TemplateExtensions.evalEscape(node.text.replace(/\\\|/g, '|'))]);
+                                break;
+                            default:
+                                itemStringResult = this.stringArrayConcat(itemStringResult, [node.text]);
+                                break;
+                        }
                     }
                 }
 
@@ -215,9 +217,9 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGTe
         const switchcaseNodes: lp.SwitchCaseRuleContext[] = ctx.switchCaseTemplateBody().switchCaseRule();
         const length: number = switchcaseNodes.length;
         const switchNode: lp.SwitchCaseRuleContext = switchcaseNodes[0];
-        const switchExprs: TerminalNode[] = switchNode.switchCaseStat().EXPRESSION();
+        const switchExprs = switchNode.switchCaseStat().expression();
         const switchErrorPrefix = `Switch '${ switchExprs[0].text }': `;
-        const switchExprResult = this.evalExpression(switchExprs[0].text, switchcaseNodes[0].switchCaseStat(), switchErrorPrefix);
+        const switchExprResult = this.evalExpression(switchExprs[0].text, switchExprs[0], switchcaseNodes[0].switchCaseStat().text, switchErrorPrefix);
         let idx = 0;
         for (const caseNode of switchcaseNodes) {
             if (idx === 0) {
@@ -234,9 +236,9 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGTe
                 }
             }
 
-            const caseExprs: TerminalNode[] = caseNode.switchCaseStat().EXPRESSION();
+            const caseExprs = caseNode.switchCaseStat().expression();
             const caseErrorPrefix = `Case '${ caseExprs[0].text }': `;
-            var caseExprResult = this.evalExpression(caseExprs[0].text, caseNode.switchCaseStat(), caseErrorPrefix);
+            var caseExprResult = this.evalExpression(caseExprs[0].text, caseExprs[0], caseNode.switchCaseStat().text, caseErrorPrefix);
             //condition: check whether two string array have same elements
             if (switchExprResult.sort().toString() === caseExprResult.sort().toString()) {
                 return this.visit(caseNode.normalTemplateBody());
@@ -251,25 +253,26 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGTe
     public visitNormalTemplateString(ctx: lp.NormalTemplateStringContext): any[] {
         var prefixErrorMsg = TemplateExtensions.getPrefixErrorMessage(ctx);
         let result: string[] = [''];
-        for (const node of ctx.children) {
-            const innerNode: TerminalNode =  node as TerminalNode;
-            switch (innerNode.symbol.type) {
-                case lp.LGTemplateParser.MULTILINE_PREFIX:
-                case lp.LGTemplateParser.MULTILINE_SUFFIX:
-                case lp.LGTemplateParser.DASH:
-                    break;
-                case lp.LGTemplateParser.ESCAPE_CHARACTER:
-                    result = this.stringArrayConcat(result, [TemplateExtensions.evalEscape(innerNode.text)]);
-                    break;
-                case lp.LGTemplateParser.EXPRESSION: {
-                    result = this.stringArrayConcat(result, this.evalExpression(innerNode.text, ctx, prefixErrorMsg));
-                    break;
-                }
-                default: {
-                    result = this.stringArrayConcat(result, [innerNode.text]);
-                    break;
+        for (const child of ctx.children) {
+            if (child instanceof lp.ExpressionContext) {
+                result = this.stringArrayConcat(result, this.evalExpression(child.text, child, ctx.text, prefixErrorMsg));
+            } else {
+                const node =  child as TerminalNode;
+                switch (node.symbol.type) {
+                    case lp.LGTemplateParser.MULTILINE_PREFIX:
+                    case lp.LGTemplateParser.MULTILINE_SUFFIX:
+                    case lp.LGTemplateParser.DASH:
+                        break;
+                    case lp.LGTemplateParser.ESCAPE_CHARACTER:
+                        result = this.stringArrayConcat(result, [TemplateExtensions.evalEscape(node.text)]);
+                        break;
+                    default: {
+                        result = this.stringArrayConcat(result, [node.text]);
+                        break;
+                    }
                 }
             }
+            
         }
 
         return result;
@@ -298,20 +301,20 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGTe
     }
 
     private evalCondition(condition: lp.IfConditionContext): boolean {
-        const expression: TerminalNode = condition.EXPRESSION()[0];
+        const expression = condition.expression()[0];
         if (!expression) {
             return true;    // no expression means it's else
         }
 
-        if (this.evalExpressionInCondition(expression.text, condition, `Condition '` + expression.text + `':`)) {
+        if (this.evalExpressionInCondition(expression, condition.text, `Condition '` + expression.text + `':`)) {
             return true;
         }
 
         return false;
     }
 
-    private evalExpressionInCondition(exp: string, context?: ParserRuleContext, errorPrefix: string = ''): boolean {
-        exp = TemplateExtensions.trimExpression(exp);
+    private evalExpressionInCondition(expressionContext: ParserRuleContext, contentLine: string, errorPrefix: string = ''): boolean {
+        const exp = TemplateExtensions.trimExpression(expressionContext.text);
         let result: any;
         let error: string;
         ({value: result, error: error} = this.evalByAdaptiveExpression(exp, this.currentTarget().scope));
@@ -325,7 +328,7 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGTe
                 this.evaluationTargetStack.pop();
             }
 
-            Evaluator.checkExpressionResult(exp, error, result, templateName, context, errorPrefix);
+            Evaluator.checkExpressionResult(exp, error, result, templateName, contentLine, errorPrefix);
         } else if (error || !result)
         {
             return false;
@@ -334,7 +337,7 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGTe
         return true;
     }
 
-    private evalExpression(exp: string, context: ParserRuleContext, errorPrefix: string = ''): any[] {
+    private evalExpression(exp: string, context: ParserRuleContext, inlineContent: string = '', errorPrefix: string = ''): any[] {
         exp = TemplateExtensions.trimExpression(exp);
         let result: any;
         let error: string;
@@ -349,7 +352,7 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGTe
                 this.evaluationTargetStack.pop();
             }
 
-            Evaluator.checkExpressionResult(exp, error, result, templateName, context, errorPrefix);
+            Evaluator.checkExpressionResult(exp, error, result, templateName, inlineContent, errorPrefix);
         } else if (result === undefined && !this.lgOptions.strictMode)
         {
             result = `null`;
