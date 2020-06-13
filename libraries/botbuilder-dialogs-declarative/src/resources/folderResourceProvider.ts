@@ -87,7 +87,7 @@ export class FolderResourceProvider extends ResourceProvider {
      * @param extension resource extension
      */
     public getResources(extension: string): Resource[] {
-        extension = extension.startsWith('.') ? extension.toLowerCase() : `.${extension.toLowerCase()}`;
+        extension = extension.startsWith('.') ? extension.toLowerCase() : `.${ extension.toLowerCase() }`;
 
         let resources: Resource[] = [];
 

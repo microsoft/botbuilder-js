@@ -140,14 +140,16 @@ describe('ResourecExplorer', function() {
         const resourceProvider = new FolderResourceProvider(explorer, join(__dirname, 'resources'), true, true);
         explorer.addResourceProvider(resourceProvider);
 
-        let resource;
-        explorer.eventEmitter.addListener(ResourceChangeEvent.added, (resources) => {
+        let event, resource;
+        explorer.changed = (e, resources) => {
+            event = e;
             resource = resources[0];
-        });
+        };
 
         // write test file
         writeFileSync(testPath, '{"test": 123}');
         await new Promise(resolve => setTimeout(resolve, 200));
+        assert.equal(event, ResourceChangeEvent.added);
         assert.equal(resource.id, 'foobar.dialog');
         assert.equal(resource.toString(), 'foobar.dialog');
 
@@ -172,14 +174,16 @@ describe('ResourecExplorer', function() {
         writeFileSync(testPath, '{"test": 123}');
         await new Promise(resolve => setTimeout(resolve, 100));
 
-        let resource;
-        explorer.eventEmitter.addListener(ResourceChangeEvent.changed, (resources) => {
+        let event, resource;
+        explorer.changed = (e, resources) => {
+            event = e;
             resource = resources[0];
-        });
+        };
 
         // change test file
         writeFileSync(testPath, '{"test": 1234}');
         await new Promise(resolve => setTimeout(resolve, 200));
+        assert.equal(event, ResourceChangeEvent.changed);
         assert.equal(resource.id, 'foobar.dialog');
         assert.equal(resource.toString(), 'foobar.dialog');
 
@@ -204,14 +208,16 @@ describe('ResourecExplorer', function() {
         writeFileSync(testPath, '{"test": 123}');
         await new Promise(resolve => setTimeout(resolve, 100));
 
-        let resource;
-        explorer.eventEmitter.addListener(ResourceChangeEvent.removed, (resources) => {
+        let event, resource;
+        explorer.changed = (e, resources) => {
+            event = e;
             resource = resources[0];
-        });
+        };
 
         // remove test file
         unlinkSync(testPath);
         await new Promise(resolve => setTimeout(resolve, 200));
+        assert.equal(event, ResourceChangeEvent.removed);
         assert.equal(resource.id, 'foobar.dialog');
         assert.equal(resource.toString(), 'foobar.dialog');
 

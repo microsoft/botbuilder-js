@@ -7,18 +7,19 @@
  */
 
 import { normalize, join } from 'path';
-import { ResourceProvider } from './resourceProvider';
+import { EventEmitter } from 'events';
+import { ResourceProvider, ResourceChangeEvent } from './resourceProvider';
 import { FolderResourceProvider } from './folderResourceProvider';
 import { Resource } from './resource';
 import { PathUtil } from '../pathUtil';
 import { TypeFactory } from '../factory/typeFactory';
 import { ComponentRegistration } from '../componentRegistration';
-import { EventEmitter } from 'events';
 
 export class ResourceExplorer {
     private _factory: TypeFactory = new TypeFactory();
     private _resourceProviders: ResourceProvider[] = [];
     private _resourceTypes: Set<string> = new Set(['dialog', 'lu', 'lg', 'qna', 'schema', 'json']);
+    private _eventEmitter: EventEmitter = new EventEmitter();
 
     /**
      * Initializes a new instance of the `ResourceExplorer` class.
@@ -28,10 +29,21 @@ export class ResourceExplorer {
         if (providers) { this._resourceProviders = providers; }
     }
 
+
     /**
-     * Event emitter which would fire an event when resources changed.
+     * Event which fires when a resource is changed.
      */
-    public eventEmitter: EventEmitter = new EventEmitter();
+    public set changed(callback: (event: ResourceChangeEvent, resources: Resource[]) => void) {
+        this._eventEmitter.on(ResourceChangeEvent.added, (resources: Resource[]): void => {
+            callback(ResourceChangeEvent.added, resources);
+        });
+        this._eventEmitter.on(ResourceChangeEvent.changed, (resources: Resource[]): void => {
+            callback(ResourceChangeEvent.changed, resources);
+        });
+        this._eventEmitter.on(ResourceChangeEvent.removed, (resources: Resource[]): void => {
+            callback(ResourceChangeEvent.removed, resources);
+        });
+    }
 
     /**
      * Gets resource providers.
@@ -77,7 +89,7 @@ export class ResourceExplorer {
             throw Error(`${ resourceProvider.id } has already been added as a resource`);
         }
 
-        resourceProvider.eventEmitter = this.eventEmitter;
+        resourceProvider.changed = this.onChanged.bind(this);
         this._resourceProviders.push(resourceProvider);
 
         return this;
@@ -194,5 +206,11 @@ export class ResourceExplorer {
         const json = resource.readText();
         const result = JSON.parse(json);
         return this.buildType(result as object);
+    }
+
+    protected onChanged(event: ResourceChangeEvent, resources: Resource[]): void {
+        if (this._eventEmitter) {
+            this._eventEmitter.emit(event, resources);
+        }
     }
 }
