@@ -53,7 +53,6 @@ export interface DialogManagerConfiguration {
 }
 
 export class DialogManager extends Configurable {
-    private dialogSet: DialogSet = new DialogSet();
     private _rootDialogId: string;
     private readonly _dialogStateProperty: string;
     private readonly _initialTurnState: TurnContextStateCollection = new TurnContextStateCollection();
@@ -86,19 +85,24 @@ export class DialogManager extends Configurable {
      * Root dialog to start from [onTurn()](#onturn) method.
      */
     public set rootDialog(value: Dialog) {
-        this.dialogSet = new DialogSet();
+        this.dialogs = new DialogSet();
         if (value) {
             this._rootDialogId = value.id;
-            this.dialogSet.telemetryClient = value.telemetryClient;
-            this.dialogSet.add(value);
+            this.dialogs.telemetryClient = value.telemetryClient;
+            this.dialogs.add(value);
         } else {
             this._rootDialogId = undefined;
         }
     }
 
     public get rootDialog(): Dialog {
-        return this._rootDialogId ? this.dialogSet.find(this._rootDialogId) : undefined;
+        return this._rootDialogId ? this.dialogs.find(this._rootDialogId) : undefined;
     }
+
+    /**
+     * Global dialogs that you want to have be callable.
+     */
+    public dialogs: DialogSet = new DialogSet();
 
     /**
      * Optional. Path resolvers and memory scopes used for conversations with the bot.
@@ -165,7 +169,7 @@ export class DialogManager extends Configurable {
         const dialogState: DialogState = await dialogsProperty.get(context, {});
 
         // Create DialogContext
-        const dc = new DialogContext(this.dialogSet, context, dialogState);
+        const dc = new DialogContext(this.dialogs, context, dialogState);
 
         // Configure dialog state manager and load scopes
         const dialogStateManager = new DialogStateManager(dc, this.stateConfiguration);
