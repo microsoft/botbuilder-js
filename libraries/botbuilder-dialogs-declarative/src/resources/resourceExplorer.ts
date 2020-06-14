@@ -29,7 +29,6 @@ export class ResourceExplorer {
         if (providers) { this._resourceProviders = providers; }
     }
 
-
     /**
      * Event which fires when a resource is changed.
      */
