@@ -66,16 +66,21 @@ export class DialogManager extends Configurable {
     }
 
     /**
+     * Bots persisted conversation state.
+     */
+    public conversationState: ConversationState;
+
+    /**
+     * Optional. Bots persisted user state.
+     */
+    public userState?: UserState;
+
+    /**
      * Values that will be copied to the `TurnContext.turnState` at the beginning of each turn.
      */
     public get initialTurnState(): TurnContextStateCollection {
         return this._initialTurnState;
     }
-
-    /**
-     * Bots persisted conversation state.
-     */
-    public conversationState: ConversationState;
 
     /**
      * Root dialog to start from [onTurn()](#onturn) method.
@@ -96,19 +101,14 @@ export class DialogManager extends Configurable {
     }
 
     /**
-     * Optional. Bots persisted user state.
+     * Optional. Path resolvers and memory scopes used for conversations with the bot.
      */
-    public userState?: UserState;
+    public stateConfiguration?: DialogStateManagerConfiguration;
 
     /**
      * Optional. Number of milliseconds to expire the bots conversation state after.
      */
     public expireAfter?: number;
-
-    /**
-     * Optional. Path resolvers and memory scopes used for conversations with the bot.
-     */
-    public stateConfiguration?: DialogStateManagerConfiguration;
 
     public configure(config: Partial<DialogManagerConfiguration>): this {
         return super.configure(config);
