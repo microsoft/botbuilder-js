@@ -102,8 +102,8 @@ describe('ResourecExplorer', function() {
 
         let event, resource;
         explorer.changed = (e, resources) => {
-            event = e;
-            resource = resources[0];
+            if (!event) { event = e; }
+            if (!resource) { resource = resources[0]; }
         };
 
         // write test file
@@ -136,8 +136,8 @@ describe('ResourecExplorer', function() {
 
         let event, resource;
         explorer.changed = (e, resources) => {
-            event = e;
-            resource = resources[0];
+            if (!event) { event = e; }
+            if (!resource) { resource = resources[0]; }
         };
 
         // change test file
@@ -170,8 +170,8 @@ describe('ResourecExplorer', function() {
 
         let event, resource;
         explorer.changed = (e, resources) => {
-            event = e;
-            resource = resources[0];
+            if (!event) { event = e; }
+            if (!resource) { resource = resources[0]; }
         };
 
         // remove test file

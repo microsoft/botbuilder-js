@@ -120,12 +120,7 @@ export class FolderResourceProvider extends ResourceProvider {
         if (this.resourceExplorer.resourceTypes.has(ext)) {
             const fileResource = new FileResource(path);
             this._resources.set(fileResource.id, fileResource);
-            if (this._resources.has(fileResource.id)) {
-                this.onChanged(ResourceChangeEvent.changed, [fileResource]);
-            } else {
-                // sometimes adding a file will also trigger 'change' event
-                this.onChanged(ResourceChangeEvent.added, [fileResource]);
-            }
+            this.onChanged(ResourceChangeEvent.changed, [fileResource]);
         }
     }
 
