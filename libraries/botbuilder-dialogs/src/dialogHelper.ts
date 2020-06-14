@@ -14,7 +14,7 @@ import { Activity,
     TurnContext,
 } from 'botbuilder-core';
 import { DialogContext, DialogState } from './dialogContext';
-import { Dialog, DialogTurnStatus } from './dialog';
+import { Dialog, DialogTurnStatus, DialogTurnResult } from './dialog';
 import { DialogEvents } from './dialogEvents';
 import { DialogSet } from './dialogSet';
 import { AuthConstants, GovConstants, isSkillClaim } from './prompts/skillsHelpers';
@@ -80,7 +80,7 @@ export async function runDialog(dialog: Dialog, context: TurnContext, accessor: 
     }
 
     if (result.status === DialogTurnStatus.complete || result.status === DialogTurnStatus.cancelled) {
-        if (sendEoCToParent(context)) {
+        if (shouldSendEndOfConversationToParent(context, result)) {
             const endMessageText = `Dialog ${ dialog.id } has **completed**. Sending EndOfConversation.`;
             await context.sendTraceActivity(telemetryEventName, result.result, undefined, `${ endMessageText }`);
 
@@ -95,7 +95,12 @@ export async function runDialog(dialog: Dialog, context: TurnContext, accessor: 
  * Helper to determine if we should send an EoC to the parent or not.
  * @param context 
  */
-function sendEoCToParent(context: TurnContext): boolean {
+export function shouldSendEndOfConversationToParent(context: TurnContext, turnResult: DialogTurnResult): boolean {
+    if (!(turnResult.status == DialogTurnStatus.complete || turnResult.status == DialogTurnStatus.cancelled)) {
+        // The dialog is still going, don't return EoC.
+        return false;
+    }
+
     const claimIdentity = context.turnState.get(context.adapter.BotIdentityKey);
     // Inspect the cached ClaimsIdentity to determine if the bot was called from another bot.
     if (claimIdentity && isSkillClaim(claimIdentity.claims)) {
@@ -113,8 +118,21 @@ function sendEoCToParent(context: TurnContext): boolean {
     return false;
 }
 
+// Helper to send a trace activity with a memory snapshot of the active dialog DC.
+export async function sendStateSnapshotTrace(dc: DialogContext, traceLabel: string): Promise<void> {
+    // send trace of memory
+    const snapshot: object = getActiveDialogContext(dc).state.getMemorySnapshot();
+    await dc.context.sendActivity({
+        type: ActivityTypes.Trace,
+        name: 'BotState',
+        valueType: 'https://www.botframework.com/schemas/botState',
+        value: snapshot,
+        label: traceLabel 
+    });
+}
+
 // Recursively walk up the DC stack to find the active DC.
-function getActiveDialogContext(dialogContext: DialogContext): DialogContext {
+export function getActiveDialogContext(dialogContext: DialogContext): DialogContext {
     const child = dialogContext.child;
     if (!child) {
         return dialogContext;
@@ -123,7 +141,7 @@ function getActiveDialogContext(dialogContext: DialogContext): DialogContext {
     return getActiveDialogContext(child);
 }
 
-function isFromParentToSkill(context: TurnContext): boolean {
+export function isFromParentToSkill(context: TurnContext): boolean {
     // If a SkillConversationReference exists, it was likely set by the SkillHandler and the bot is acting as a parent.
     if (context.turnState.get(SkillConversationReferenceKey)) {
         return false;
