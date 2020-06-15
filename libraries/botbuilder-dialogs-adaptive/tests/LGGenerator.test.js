@@ -4,7 +4,8 @@ const {
     TemplateEngineLanguageGenerator,
     LanguageGeneratorMiddleWare,
     LanguageGeneratorManager,
-    ResourceMultiLanguageGenerator } = require('../');
+    ResourceMultiLanguageGenerator, 
+    LanguagePolicy} = require('../');
 const { ResourceExplorer } = require('botbuilder-dialogs-declarative');
 const assert = require('assert');
 const { TestAdapter, TurnContext } = require('botbuilder-core');
@@ -25,7 +26,7 @@ class MockLanguageGegerator {
 async function getTurnContext(locale, generator) {
     const context = await new TurnContext(
         await new TestAdapter().use(
-            await new LanguageGeneratorMiddleWare(resourceExplorer, generator ? generator : new MockLanguageGegerator())), { locale: locale, text: '' });
+            await new LanguageGeneratorMiddleWare(resourceExplorer, generator ? generator : new MockLanguageGegerator(), LanguagePolicy.defaultPolicy('fr-fr'))), { locale: locale, text: '' });
     const lgm = new LanguageGeneratorManager(resourceExplorer);
     await lgm.loadResources();
     context.turnState.set('LanguageGeneratorManager', lgm);

@@ -17,12 +17,15 @@ export class LanguageGeneratorMiddleWare implements Middleware {
     private readonly _defaultLg: string;
     private readonly languageGeneratorManagerKey = 'LanguageGeneratorManager';
     private readonly languageGeneratorKey = 'LanguageGenerator';
+    private readonly languagePolicyKey = 'languagePolicy';
     private _languageGeneratorManager: LanguageGeneratorManager;
     private _languageGenerator: LanguageGenerator;
+    private _languagePolicy: object;
 
-    public constructor(resourceExpolrer: ResourceExplorer = undefined, defaultLg: string = undefined) {
+    public constructor(resourceExpolrer: ResourceExplorer = undefined, defaultLg: string = undefined, defaultLanguagePolicy = undefined) {
         this._resourceExplorer = resourceExpolrer? resourceExpolrer : new ResourceExplorer();
         this._defaultLg = defaultLg? defaultLg : 'main.lg';
+        this._languagePolicy = defaultLanguagePolicy;
     }
 
     /**
@@ -58,6 +61,10 @@ export class LanguageGeneratorMiddleWare implements Middleware {
             throw new Error('no language generator defined');
         } else{
             context.turnState.set(this.languageGeneratorKey, this._languageGenerator);
+        }
+
+        if (this._languagePolicy !== undefined) {
+            context.turnState.set(this.languagePolicyKey, this._languagePolicy);
         }
         
         if (next) {

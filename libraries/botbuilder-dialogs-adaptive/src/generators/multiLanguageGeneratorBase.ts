@@ -14,7 +14,7 @@ import {LanguagePolicy} from '../languagePolicy';
  * This class automatically updates the cache when resource change events occure.
  */
 export abstract class MultiLanguageGeneratorBase implements LanguageGenerator{
-    public languagePolicy = LanguagePolicy.defaultPolicy;
+    public languagePolicy: any;
 
     public abstract tryGetGenerator(context: TurnContext, locale: string): {exist: boolean; result: LanguageGenerator};
 
@@ -22,17 +22,37 @@ export abstract class MultiLanguageGeneratorBase implements LanguageGenerator{
     
     public async generate(turnContext: TurnContext, template: string, data: object): Promise<string> {
         const targetLocale = turnContext.activity.locale? turnContext.activity.locale.toLocaleLowerCase() : '';
-        let locales: string[] = [''];
-        if (this.languagePolicy[targetLocale] === undefined) {
-            if (this.languagePolicy[''] === undefined) {
-                throw Error(`No supported language found for ${ targetLocale }`);
+
+        // priority
+        // 1. local policy
+        // 2. shared policy in turnContext
+        // 3. default policy
+        if (!this.languagePolicy) {
+            this.languagePolicy = turnContext.turnState.get('languagePolicy');
+            if (!this.languagePolicy) {
+                this.languagePolicy = LanguagePolicy.defaultPolicy;
             }
-        } else {
-            locales = this.languagePolicy[targetLocale];
+        }
+
+        // see if we have any locales that match
+
+
+        let fallbaslLocales = [];
+        if (targetLocale in this.languagePolicy) {
+            fallbaslLocales.push(this.languagePolicy[targetLocale]);
+        }
+
+        // append empty as fallback to end
+        if (targetLocale !== '' && '' in this.languagePolicy) {
+            fallbaslLocales.push(this.languagePolicy['']);
+        }
+
+        if (fallbaslLocales.length === 0) {
+            throw Error(`No supported language found for ${ targetLocale }`);
         }
         
         const generators: LanguageGenerator[] = [];
-        for (const locale of locales) {
+        for (const locale of fallbaslLocales) {
             if (this.tryGetGenerator(turnContext, locale).exist) {
                 generators.push(this.tryGetGenerator(turnContext, locale).result); 
             }
