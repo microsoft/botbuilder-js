@@ -5,6 +5,7 @@
 ```ts
 
 import * as appInsights from 'applicationinsights';
+import { BotPageViewTelemetryClient } from 'botbuilder-core';
 import { BotTelemetryClient } from 'botbuilder-core';
 import { CorrelationContext } from 'applicationinsights/out/AutoCollection/CorrelationContextManager';
 import { Middleware } from 'botbuilder-core';
@@ -12,11 +13,12 @@ import { TelemetryDependency } from 'botbuilder-core';
 import { TelemetryEvent } from 'botbuilder-core';
 import { TelemetryException } from 'botbuilder-core';
 import { TelemetryLoggerMiddleware } from 'botbuilder-core';
+import { TelemetryPageView } from 'botbuilder-core';
 import { TelemetryTrace } from 'botbuilder-core';
 import { TurnContext } from 'botbuilder-core';
 
 // @public (undocumented)
-export class ApplicationInsightsTelemetryClient implements BotTelemetryClient {
+export class ApplicationInsightsTelemetryClient implements BotTelemetryClient, BotPageViewTelemetryClient {
     constructor(instrumentationKey: string);
     // (undocumented)
     readonly configuration: appInsights.Configuration;
@@ -30,6 +32,8 @@ export class ApplicationInsightsTelemetryClient implements BotTelemetryClient {
     trackEvent(telemetry: TelemetryEvent): void;
     // (undocumented)
     trackException(telemetry: TelemetryException): void;
+    // (undocumented)
+    trackPageView(telemetry: TelemetryPageView): void;
     // (undocumented)
     trackTrace(telemetry: TelemetryTrace): void;
 }

@@ -1,6 +1,17 @@
+# global
+* @microsoft/botbuilder-js-maintainers
+
+# Adaptive/LG
+/libraries/adaptive-expressions/**/* @boydc2014 @chrimc62 @luhan2017 @stevengum @stevenic
+/libraries/botbuilder-lg/**/* @boydc2014 @chrimc62 @luhan2017 @stevengum @stevenic
+/libraries/botbuilder-dialogs-*/**/* @boydc2014 @carlosscastro @chrimc62 @luhan2017 @stevengum @stevenic
+
 # For all public API changes
-/libraries/*/etc/* @benbrown @stevengum @stevenic
+/libraries/*/etc/* @microsoft/botbuilder-js-maintainers
 
 # For maintenance of shipped packages dependencies and devDependencies
 # Codeowners should use tools such as https://bundlephobia.com/
-/libraries/*/package.json @benbrown @stevengum @stevenic
+/libraries/*/package.json @microsoft/botbuilder-js-maintainers
+
+# build pipelines
+/build/yaml/**/* @brucehaley @microsoft/botbuilder-js-maintainers
