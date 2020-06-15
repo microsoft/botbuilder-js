@@ -2,7 +2,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { Activity, TurnContext } from 'botbuilder-core';
+import { Activity, TurnContext, TurnContextStateCollection } from 'botbuilder-core';
 import { Choice } from './choices';
 import { Dialog, DialogInstance, DialogReason, DialogTurnResult, DialogTurnStatus, DialogEvent } from './dialog';
 import { DialogSet } from './dialogSet';
@@ -79,8 +79,14 @@ export class DialogContext {
             if (contextOrDC instanceof DialogContext) {
                 this.context = contextOrDC.context;
                 this.parent = contextOrDC;
+                if (this.parent.services) {
+                    this.parent.services.forEach((value, key): void => {
+                        this.services.set(key, value);
+                    });
+                }
             } else {
                 this.context = contextOrDC;
+                this.services = new TurnContextStateCollection();
             }
             this.dialogs = dialogsOrDC;
             this.stack = state.dialogStack;
@@ -142,6 +148,11 @@ export class DialogContext {
      * Gets the DialogStateManager which manages view of all memory scopes.
      */
     public state: DialogStateManager;
+
+    /**
+     * Gets the services collection which is contextual to this dialog context.
+     */
+    public services: TurnContextStateCollection;
 
     /**
      * Returns the current dialog manager instance.
