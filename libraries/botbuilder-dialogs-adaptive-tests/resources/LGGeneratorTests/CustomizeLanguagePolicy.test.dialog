@@ -1,15 +1,15 @@
 {
     "$schema": "../../../../schemas/sdk.schema",
     "$kind": "Microsoft.Test.Script",
-    "dialog":                 {
+    "dialog":
+    {
         "$kind": "Microsoft.AdaptiveDialog",
         "generator": {
             "$kind": "Microsoft.ResourceMultiLanguageGenerator",
             "resourceId": "test.lg",
             "languagePolicy":
             {
-                "en-us": ["zh-cn", "fr"],
-                "": ["fr"]
+                "en-us": ["xxx", "fr"]
             }
         },
         "triggers": [
