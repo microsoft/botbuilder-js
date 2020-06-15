@@ -1,18 +1,17 @@
 {
     "$schema": "../../../../schemas/sdk.schema",
     "$kind": "Microsoft.Test.Script",
-    "generator": {
-        "$kind": "Microsoft.ResourceMultiLanguageGenerator",
-        "resourceId": "test.lg",
-        "languagePolicy": {
-            "zh-cn": [
-                "zh-cn",
-                "fr"
-            ]
-        }
-    },
-    "dialog": {
+    "dialog":                 {
         "$kind": "Microsoft.AdaptiveDialog",
+        "generator": {
+            "$kind": "Microsoft.ResourceMultiLanguageGenerator",
+            "resourceId": "test.lg",
+            "languagePolicy":
+            {
+                "en-us": ["zh-cn", "fr"],
+                "": ["fr"]
+            }
+        },
         "triggers": [
             {
                 "$kind": "Microsoft.OnBeginDialog",

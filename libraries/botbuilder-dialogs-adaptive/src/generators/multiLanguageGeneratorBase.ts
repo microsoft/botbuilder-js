@@ -18,7 +18,9 @@ export abstract class MultiLanguageGeneratorBase implements LanguageGenerator{
 
     public abstract tryGetGenerator(context: TurnContext, locale: string): {exist: boolean; result: LanguageGenerator};
 
-    public constructor() {};
+    public constructor(languagePolicy: any = undefined) {
+        this.languagePolicy = languagePolicy;
+    };
     
     public async generate(turnContext: TurnContext, template: string, data: object): Promise<string> {
         const targetLocale = turnContext.activity.locale? turnContext.activity.locale.toLocaleLowerCase() : '';
@@ -35,16 +37,14 @@ export abstract class MultiLanguageGeneratorBase implements LanguageGenerator{
         }
 
         // see if we have any locales that match
-
-
         let fallbaslLocales = [];
         if (targetLocale in this.languagePolicy) {
-            fallbaslLocales.push(this.languagePolicy[targetLocale]);
+            this.languagePolicy[targetLocale].forEach((u: string): number => fallbaslLocales.push(u));
         }
 
         // append empty as fallback to end
         if (targetLocale !== '' && '' in this.languagePolicy) {
-            fallbaslLocales.push(this.languagePolicy['']);
+            this.languagePolicy[''].forEach((u: string): number => fallbaslLocales.push(u));
         }
 
         if (fallbaslLocales.length === 0) {
