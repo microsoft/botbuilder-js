@@ -21,7 +21,7 @@ export class MultiLanguageRecognizer implements Recognizer {
 
     public async recognize(dialogContext: DialogContext, activity: Activity): Promise<RecognizerResult> {
         const locale = activity.locale || '';
-        let policy: string[];
+        let policy: string[] = [];
         if (this.languagePolicy.hasOwnProperty(locale)) {
             this.languagePolicy[locale].forEach((u: string): number => policy.push(u));
         }

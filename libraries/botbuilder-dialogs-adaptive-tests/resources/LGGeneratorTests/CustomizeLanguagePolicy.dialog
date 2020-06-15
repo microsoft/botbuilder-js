@@ -1,0 +1,37 @@
+{
+    "$schema": "../../../../schemas/sdk.schema",
+    "$kind": "Microsoft.Test.Script",
+    "generator": {
+        "$kind": "Microsoft.ResourceMultiLanguageGenerator",
+        "resourceId": "test.lg",
+        "languagePolicy": {
+            "zh-cn": [
+                "zh-cn",
+                "fr"
+            ]
+        }
+    },
+    "dialog": {
+        "$kind": "Microsoft.AdaptiveDialog",
+        "triggers": [
+            {
+                "$kind": "Microsoft.OnBeginDialog",
+                "actions": [
+                    {
+                        "$kind": "Microsoft.SendActivity",
+                        "activity": "${test()}"
+                    }
+                ]
+            }
+        ]
+    },
+    "script": [
+        {
+            "$kind": "Microsoft.Test.UserConversationUpdate"
+        },
+        {
+            "$kind": "Microsoft.Test.AssertReply",
+            "text": "french"
+        }
+    ]
+}
