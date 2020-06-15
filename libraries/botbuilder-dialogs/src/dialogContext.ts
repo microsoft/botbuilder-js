@@ -55,33 +55,6 @@ export interface DialogState {
  */
 export class DialogContext {
     /**
-     * Gets the dialogs that can be called directly from this context.
-     */
-    public dialogs: DialogSet;
-
-    /**
-     * Gets the context object for the turn.
-     */
-    public context: TurnContext;
-
-    /**
-     * Gets the current dialog stack.
-     */
-    public stack: DialogInstance[];
-
-    public state: DialogStateManager;
-
-    /**
-     * The parent dialog context for this dialog context, or `undefined` if this context doesn't have a parent.
-     * 
-     * @remarks
-     * When it attempts to start a dialog, the dialog context searches for the [Dialog.id](xref:botbuilder-dialogs.Dialog.id)
-     * in its [dialogs](xref:botbuilder-dialogs.DialogContext.dialogs). If the dialog to start is not found
-     * in this dialog context, it searches in its parent dialog context, and so on.
-     */
-    public parent: DialogContext | undefined;
-
-    /**
       * Creates an new instance of the [DialogContext](xref:botbuilder-dialogs.DialogContext) class.
       * 
       * @remarks
@@ -117,12 +90,29 @@ export class DialogContext {
     }
 
     /**
-     * Returns the state information for the dialog on the top of the dialog stack, or `undefined` if
-     * the stack is empty.
+     * Gets the dialogs that can be called directly from this context.
      */
-    public get activeDialog(): DialogInstance | undefined {
-        return this.stack.length > 0 ? this.stack[this.stack.length - 1] : undefined;
-    }
+    public dialogs: DialogSet;
+
+    /**
+     * Gets the context object for the turn.
+     */
+    public context: TurnContext;
+
+    /**
+     * Gets the current dialog stack.
+     */
+    public stack: DialogInstance[];
+
+    /**
+     * The parent dialog context for this dialog context, or `undefined` if this context doesn't have a parent.
+     * 
+     * @remarks
+     * When it attempts to start a dialog, the dialog context searches for the [Dialog.id](xref:botbuilder-dialogs.Dialog.id)
+     * in its [dialogs](xref:botbuilder-dialogs.DialogContext.dialogs). If the dialog to start is not found
+     * in this dialog context, it searches in its parent dialog context, and so on.
+     */
+    public parent: DialogContext | undefined;
 
     /**
      * Returns dialog context for child if the active dialog is a container.
@@ -139,6 +129,19 @@ export class DialogContext {
 
         return undefined;
     }
+
+    /**
+     * Returns the state information for the dialog on the top of the dialog stack, or `undefined` if
+     * the stack is empty.
+     */
+    public get activeDialog(): DialogInstance | undefined {
+        return this.stack.length > 0 ? this.stack[this.stack.length - 1] : undefined;
+    }
+
+    /**
+     * Gets the DialogStateManager which manages view of all memory scopes.
+     */
+    public state: DialogStateManager;
 
     /**
      * Returns the current dialog manager instance.
