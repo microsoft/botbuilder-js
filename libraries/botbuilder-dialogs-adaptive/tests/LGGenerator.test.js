@@ -4,8 +4,7 @@ const {
     TemplateEngineLanguageGenerator,
     LanguageGeneratorMiddleWare,
     LanguageGeneratorManager,
-    ResourceMultiLanguageGenerator, 
-    LanguagePolicy} = require('../');
+    ResourceMultiLanguageGenerator } = require('../');
 const { ResourceExplorer } = require('botbuilder-dialogs-declarative');
 const assert = require('assert');
 const { TestAdapter, TurnContext } = require('botbuilder-core');

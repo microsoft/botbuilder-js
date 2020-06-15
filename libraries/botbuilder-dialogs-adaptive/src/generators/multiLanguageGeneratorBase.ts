@@ -37,22 +37,22 @@ export abstract class MultiLanguageGeneratorBase implements LanguageGenerator{
         }
 
         // see if we have any locales that match
-        let fallbaslLocales = [];
+        let fallbackLocales = [];
         if (targetLocale in this.languagePolicy) {
-            this.languagePolicy[targetLocale].forEach((u: string): number => fallbaslLocales.push(u));
+            this.languagePolicy[targetLocale].forEach((u: string): number => fallbackLocales.push(u));
         }
 
         // append empty as fallback to end
         if (targetLocale !== '' && '' in this.languagePolicy) {
-            this.languagePolicy[''].forEach((u: string): number => fallbaslLocales.push(u));
+            this.languagePolicy[''].forEach((u: string): number => fallbackLocales.push(u));
         }
 
-        if (fallbaslLocales.length === 0) {
+        if (fallbackLocales.length === 0) {
             throw Error(`No supported language found for ${ targetLocale }`);
         }
         
         const generators: LanguageGenerator[] = [];
-        for (const locale of fallbaslLocales) {
+        for (const locale of fallbackLocales) {
             if (this.tryGetGenerator(turnContext, locale).exist) {
                 generators.push(this.tryGetGenerator(turnContext, locale).result); 
             }
