@@ -5,10 +5,10 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { DialogContext, Dialog, DialogTurnResult, PromptOptions, PromptRecognizerResult } from 'botbuilder-dialogs';
+import { StringExpression, IntExpression } from 'adaptive-expressions';
+import { DialogContext, Dialog, DialogTurnResult, PromptOptions, PromptRecognizerResult, ThisPath } from 'botbuilder-dialogs';
 import { Attachment, InputHints, TokenResponse, IUserTokenProvider, TurnContext, ActivityTypes, Activity, MessageFactory, CardFactory, OAuthLoginTimeoutKey } from 'botbuilder-core';
 import { InputDialog, InputState } from './inputDialog';
-import { StringExpression, IntExpression } from 'adaptive-expressions';
 
 export const channels: any = {
     console: 'console',
@@ -29,6 +29,10 @@ export const channels: any = {
     webchat: 'webchat'
 };
 
+const persistedOptions = 'options';
+const persistedState = 'state';
+const persistedExpires = 'expires';
+const attemptCountKey = 'attemptCount';
 
 export class OAuthInput extends InputDialog {
     /**
@@ -74,12 +78,21 @@ export class OAuthInput extends InputDialog {
             o.retryPrompt.inputHint = InputHints.AcceptingInput;
         }
 
+        const op = this.onInitializeOptions(dc, options);
+        dc.state.setValue(ThisPath.options, op);
+        dc.state.setValue(InputDialog.TURN_COUNT_PROPERTY, 0);
+
+        // If alwaysPrompt is set to true, then clear property value for turn 0.
+        if (this.property && this.alwaysPrompt && this.alwaysPrompt.getValue(dc.state)) {
+            dc.state.deleteValue(this.property.getValue(dc.state));
+        }
+
         // Initialize prompt state
-        const timeout: number = this.timeout.getValue(dc.state) || 900000;
         const state: OAuthPromptState = dc.activeDialog.state as OAuthPromptState;
-        state.state = {};
-        state.options = o;
-        state.expires = new Date().getTime() + timeout;
+        state[persistedOptions] = o;
+        state[persistedState] = {};
+        state[persistedState][attemptCountKey] = 0;
+        state[persistedExpires] = new Date().getTime() + this.timeout.getValue(dc.state) || 900000;
 
         // Attempt to get the users token
         const output: TokenResponse = await this.getUserToken(dc);
@@ -92,6 +105,8 @@ export class OAuthInput extends InputDialog {
             // Return token
             return await dc.endDialog(output);
         } else {
+            dc.state.setValue(InputDialog.TURN_COUNT_PROPERTY, 1);
+
             // Prompt user to login
             await this.sendOAuthCardAsync(dc, state.options.prompt);
 
@@ -100,49 +115,77 @@ export class OAuthInput extends InputDialog {
     }
 
     public async continueDialog(dc: DialogContext): Promise<DialogTurnResult> {
+        if (!dc) { throw new Error('Missing DialogContext'); }
+
+        const turnCount = dc.state.getValue(InputDialog.TURN_COUNT_PROPERTY, 0);
+
         // Recognize token
         const recognized: PromptRecognizerResult<TokenResponse> = await this.recognizeToken(dc);
 
         // Check for timeout
         const state: OAuthPromptState = dc.activeDialog.state as OAuthPromptState;
+        const expires = state[persistedExpires];
         const isMessage: boolean = dc.context.activity.type === ActivityTypes.Message;
-        const hasTimedOut: boolean = isMessage && (new Date().getTime() > state.expires);
+        const hasTimedOut: boolean = isMessage && (new Date().getTime() > expires);
+
         if (hasTimedOut) {
-            // Set token into token property
             if (this.property) {
-                dc.state.setValue(this.property.getValue(dc.state), null);
+                dc.state.deleteValue(this.property.getValue(dc.state));
             }
 
             return await dc.endDialog(undefined);
         } else {
 
-            if (state.state['attemptCount'] === undefined) {
-                state.state['attemptCount'] = 1;
-            }
+            const promptState = state[persistedState];
+            const promptOptions = state[persistedOptions];
+
+            promptState[attemptCountKey] += 1;
 
             // Validate the return value
-            let isValid = false;
-
+            let inputState = InputState.invalid;
             if (recognized.succeeded) {
-                isValid = true;
+                inputState = InputState.valid;
             }
 
             // Return recognized value or re-prompt
-            if (isValid) {
+            if (inputState === InputState.valid) {
                 // Set token into token property
                 if (this.property) {
                     dc.state.setValue(this.property.getValue(dc.state), recognized.value);
                 }
 
                 return await dc.endDialog(recognized.value);
-            } else {
-                // Send retry prompt
-                if (!dc.context.responded && isMessage && state.options.retryPrompt) {
-                    await dc.context.sendActivity(state.options.retryPrompt);
-                }
+            } else if (!this.maxTurnCount || turnCount < this.maxTurnCount.getValue(dc.state)) {
+                // increase the turnCount as last step
+                dc.state.setValue(InputDialog.TURN_COUNT_PROPERTY, turnCount + 1);
+                const prompt = await this.onRenderPrompt(dc, inputState);
+                await dc.context.sendActivity(prompt);
+                await this.sendOAuthCardAsync(dc, promptOptions && promptOptions.prompt);
 
                 return Dialog.EndOfTurn;
+            } else {
+                if (this.defaultValue) {
+                    const { value } = this.defaultValue.tryGetValue(dc.state);
+                    if (this.defaultValueResponse) {
+                        const response = await this.defaultValueResponse.bindToData(dc.context, dc.state);
+                        const properties = {
+                            'template': JSON.stringify(this.defaultValueResponse),
+                            'result': response ? JSON.stringify(response): ''
+                        };
+                        this.telemetryClient.trackEvent({
+                            name: 'GeneratorResult',
+                            properties
+                        });
+                        await dc.context.sendActivity(response);
+                    }
+
+                    // set output property
+                    dc.state.setValue(this.property.getValue(dc.state), value);
+                    return await dc.endDialog(value);
+                }
             }
+
+            return await dc.endDialog();
         }
     }
 
