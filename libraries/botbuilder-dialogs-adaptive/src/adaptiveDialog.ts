@@ -149,7 +149,7 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
 
             // change if triggers type/constraint change
             const parser = new ExpressionParser();
-            this.triggers.forEach((trigger) => {
+            this.triggers.forEach((trigger): void => {
                 version += trigger.getExpression(parser).toString();
             });
 
@@ -158,74 +158,64 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
 
         return this._internalVersion;
     }
-    
+
     protected onComputeId(): string {
         return `AdaptiveDialog[]`;
     }
 
     public async beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {
-        this.onPushScopedServices(dc.context);
-        try {
-            await this.checkForVersionChange(dc);
+        await this.checkForVersionChange(dc);
 
-            // Install dependencies on first access
-            this.ensureDependenciesInstalled();
+        // Install dependencies on first access
+        this.ensureDependenciesInstalled();
 
-            // Initialize event counter
-            const dcState = dc.state;
-            if (dcState.getValue(DialogPath.eventCounter) == undefined) {
-                dcState.setValue(DialogPath.eventCounter, 0);
-            }
-
-            // Initialize list of required properties
-            if (this.dialogSchema && dcState.getValue(DialogPath.requiredProperties) == undefined) {
-                //  RequiredProperties control what properties must be filled in.
-                dcState.setValue(DialogPath.requiredProperties, this.dialogSchema.required);
-            }
-
-            // Initialize change tracker
-            if (this.needsTracker && dcState.getValue(AdaptiveDialog.conditionTracker) == undefined) {
-                this.triggers.forEach((trigger) => {
-                    if (trigger.runOnce && trigger.condition) {
-                        const references = trigger.condition.toExpression().references();
-                        var paths = dcState.trackPaths(references);
-                        var triggerPath = `${ AdaptiveDialog.conditionTracker }.${ trigger.id }.`;
-                        dcState.setValue(triggerPath + 'paths', paths);
-                        dcState.setValue(triggerPath + 'lastRun', 0);
-                    }
-                });
-            }
-
-            // Initialize dialog state
-            if (options) {
-                // Replace initial activeDialog.State with clone of options
-                dc.activeDialog.state = JSON.parse(JSON.stringify(options));
-            }
-            dc.activeDialog.state[this.adaptiveKey] = {};
-
-            // Evaluate events and queue up action changes
-            const event: DialogEvent = { name: AdaptiveEvents.beginDialog, value: options, bubble: false };
-            await this.onDialogEvent(dc, event);
-
-            // Continue action execution
-            return await this.continueActions(dc);
-        } finally {
-            this.onPopScopedServices(dc.context);
+        // Initialize event counter
+        const dcState = dc.state;
+        if (dcState.getValue(DialogPath.eventCounter) == undefined) {
+            dcState.setValue(DialogPath.eventCounter, 0);
         }
+
+        // Initialize list of required properties
+        if (this.dialogSchema && dcState.getValue(DialogPath.requiredProperties) == undefined) {
+            //  RequiredProperties control what properties must be filled in.
+            dcState.setValue(DialogPath.requiredProperties, this.dialogSchema.required);
+        }
+
+        // Initialize change tracker
+        if (this.needsTracker && dcState.getValue(AdaptiveDialog.conditionTracker) == undefined) {
+            this.triggers.forEach((trigger): void => {
+                if (trigger.runOnce && trigger.condition) {
+                    const references = trigger.condition.toExpression().references();
+                    var paths = dcState.trackPaths(references);
+                    var triggerPath = `${ AdaptiveDialog.conditionTracker }.${ trigger.id }.`;
+                    dcState.setValue(triggerPath + 'paths', paths);
+                    dcState.setValue(triggerPath + 'lastRun', 0);
+                }
+            });
+        }
+
+        // Initialize dialog state
+        if (options) {
+            // Replace initial activeDialog.State with clone of options
+            dc.activeDialog.state = JSON.parse(JSON.stringify(options));
+        }
+        dc.activeDialog.state[this.adaptiveKey] = {};
+
+        // Evaluate events and queue up action changes
+        const event: DialogEvent = { name: AdaptiveEvents.beginDialog, value: options, bubble: false };
+        await this.onDialogEvent(dc, event);
+
+        // Continue action execution
+        return await this.continueActions(dc);
     }
 
     public async continueDialog(dc: DialogContext): Promise<DialogTurnResult> {
-        this.onPushScopedServices(dc.context);
-        try {
-            await this.checkForVersionChange(dc);
+        await this.checkForVersionChange(dc);
 
-            this.ensureDependenciesInstalled();
+        this.ensureDependenciesInstalled();
 
-            // Continue action execution
-            return await this.continueActions(dc);
-        } finally {
-            this.onPopScopedServices(dc.context);
-        }
+        // Continue action execution
+        return await this.continueActions(dc);
     }
 
     protected async onPreBubbleEvent(dc: DialogContext, event: DialogEvent): Promise<boolean> {
@@ -255,18 +245,18 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
         return Dialog.EndOfTurn;
     }
 
-    public async repromptDialog(turnContext: TurnContext, instance: DialogInstance): Promise<void> {
-        try {
-            this.onPushScopedServices(turnContext);
+    public async repromptDialog(context: DialogContext | TurnContext, instance: DialogInstance): Promise<void> {
+        if (context instanceof DialogContext) {
             // Forward to current sequence action
             const state: AdaptiveDialogState = instance.state[this.adaptiveKey];
             if (state && state.actions && state.actions.length > 0) {
-                // We need to mockup a DialogContext so that we can call repromptDialog() for the active action
-                const actionDC: DialogContext = new DialogContext(this.dialogs, turnContext, state.actions[0]);
-                await actionDC.repromptDialog();
+                // we need to mockup a DialogContext so that we can call RepromptDialog
+                // for the active step
+                const childContext = this.createChildContext(context);
+                await childContext.repromptDialog();
             }
-        } finally {
-            this.onPopScopedServices(turnContext);
+        } else {
+            await super.repromptDialog(context, instance);
         }
     }
 
@@ -278,7 +268,9 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
         }
 
         if (state.actions && state.actions.length > 0) {
-            return new DialogContext(this.dialogs, dc, state.actions[0]);
+            const childContext = new DialogContext(this.dialogs, dc, state.actions[0]);
+            this.onSetScopedServices(childContext);
+            return childContext;
         }
         return undefined;
     }
@@ -384,6 +376,11 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
                         actionContext.state.setValue(TurnPath.recognized, recognized);
                         handled = true;
                     }
+                    break;
+                case AdaptiveEvents.repromptDialog:
+                    // AdaptiveDialogs handle new RepromptDialog as it gives access to the dialogContext.
+                    await this.repromptDialog(actionContext, actionContext.activeDialog);
+                    handled = true;
                     break;
             }
         } else {
@@ -498,62 +495,62 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
         //   from the stack and we want to detect this so we can stop processing actions.
         const instanceId = this.getUniqueInstanceId(actionContext);
 
-        try {
-            this.onPushScopedServices(dc.context);
+        // Create context for active action
+        let actionDC = this.createChildContext(actionContext);
+        while (actionDC) {
+            // Continue current action
+            let result = await actionDC.continueDialog();
 
-            // Create context for active action
-            let actionDC = this.createChildContext(actionContext);
-            while (actionDC) {
-                // Continue current action
-                let result = await actionDC.continueDialog();
-
-                // Start action if not continued
-                if (result.status == DialogTurnStatus.empty && this.getUniqueInstanceId(actionContext) == instanceId) {
-                    const nextAction = actionContext.actions[0];
-                    result = await actionDC.beginDialog(nextAction.dialogId, nextAction.options);
-                }
-
-                // Is the step waiting for input or were we cancelled?
-                if (result.status == DialogTurnStatus.waiting || this.getUniqueInstanceId(actionContext) != instanceId) {
-                    return result;
-                }
-
-                // End current step
-                await this.endCurrentAction(actionContext);
-
-                if (result.status == DialogTurnStatus.completeAndWait) {
-                    // Child dialog completed, but wants us to wait for a new activity
-                    result.status = DialogTurnStatus.waiting;
-                    return result;
-                }
-
-                let parentChanges = false;
-                let root = actionContext;
-                let parent = actionContext.parent;
-                while (parent) {
-                    const ac = parent as ActionContext;
-                    if (ac && ac.changes && ac.changes.length > 0) {
-                        parentChanges = true;
-                    }
-                    root = parent as ActionContext;
-                    parent = root.parent;
-                }
-
-                // Execute next step
-                if (parentChanges) {
-                    // Recursively call continueDialog() to apply parent changes and continue execution
-                    return await root.continueDialog();
-                }
-
-                // Apply any locale changes and fetch next action
-                await actionContext.applyChanges();
-                actionDC = this.createChildContext(actionContext);
+            // Start action if not continued
+            if (result.status == DialogTurnStatus.empty && this.getUniqueInstanceId(actionContext) == instanceId) {
+                const nextAction = actionContext.actions[0];
+                result = await actionDC.beginDialog(nextAction.dialogId, nextAction.options);
             }
-        } finally {
-            this.onPopScopedServices(dc.context);
+
+            // Is the step waiting for input or were we cancelled?
+            if (result.status == DialogTurnStatus.waiting || this.getUniqueInstanceId(actionContext) != instanceId) {
+                return result;
+            }
+
+            // End current step
+            await this.endCurrentAction(actionContext);
+
+            if (result.status == DialogTurnStatus.completeAndWait) {
+                // Child dialog completed, but wants us to wait for a new activity
+                result.status = DialogTurnStatus.waiting;
+                return result;
+            }
+
+            let parentChanges = false;
+            let root = actionContext;
+            let parent = actionContext.parent;
+            while (parent) {
+                const ac = parent as ActionContext;
+                if (ac && ac.changes && ac.changes.length > 0) {
+                    parentChanges = true;
+                }
+                root = parent as ActionContext;
+                parent = root.parent;
+            }
+
+            // Execute next step
+            if (parentChanges) {
+                // Recursively call continueDialog() to apply parent changes and continue execution
+                return await root.continueDialog();
+            }
+
+            // Apply any locale changes and fetch next action
+            await actionContext.applyChanges();
+            actionDC = this.createChildContext(actionContext);
         }
 
         return await this.onEndOfActions(actionContext);
+    }
+
+    protected onSetScopedServices(dialogContext: DialogContext): void {
+        if (this.generator) {
+            dialogContext.services.set('LanguageGenerator', this.generator);
+        }
     }
 
     protected async endCurrentAction(actionContext: ActionContext): Promise<boolean> {
@@ -579,18 +576,6 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
             return Dialog.EndOfTurn;
         }
         return { status: DialogTurnStatus.cancelled };
-    }
-
-    protected onPushScopedServices(context: TurnContext): void {
-        if (this.generator) {
-            context.turnState.push('LanguageGenerator', this.generator);
-        }
-    }
-
-    protected onPopScopedServices(context: TurnContext): void {
-        if (this.generator) {
-            context.turnState.pop('LanguageGenerator');
-        }
     }
 
     private getUniqueInstanceId(dc: DialogContext): string {
@@ -741,7 +726,7 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
     private splitUtterance(utterance: string, recognized: Partial<EntityInfo>[]): string[] {
         const unrecognized = [];
         var current = 0;
-        for (let i = 0; i < recognized.length; i++){
+        for (let i = 0; i < recognized.length; i++) {
             const entity = recognized[i];
             if (entity.start > current) {
                 unrecognized.push(utterance.substr(current, entity.start - current).trim());
@@ -774,7 +759,7 @@ function computeHash(text: string): string {
     let hash = 0;
     for (let i = 0; i < l; i++) {
         const chr = text.charCodeAt(i);
-        hash  = ((hash << 5) - hash) + chr;
+        hash = ((hash << 5) - hash) + chr;
         hash |= 0; // Convert to 32 bit integer
     }
     return hash.toString();
