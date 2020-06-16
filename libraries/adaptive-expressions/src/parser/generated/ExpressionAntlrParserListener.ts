@@ -29,6 +29,7 @@ import { PrimaryExpressionContext } from "./ExpressionAntlrParser";
 import { StringInterpolationContext } from "./ExpressionAntlrParser";
 import { TextContentContext } from "./ExpressionAntlrParser";
 import { ArgsListContext } from "./ExpressionAntlrParser";
+import { LambdaContext } from "./ExpressionAntlrParser";
 import { KeyValuePairListContext } from "./ExpressionAntlrParser";
 import { KeyValuePairContext } from "./ExpressionAntlrParser";
 import { KeyContext } from "./ExpressionAntlrParser";
@@ -273,6 +274,17 @@ export interface ExpressionAntlrParserListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	exitArgsList?: (ctx: ArgsListContext) => void;
+
+	/**
+	 * Enter a parse tree produced by `ExpressionAntlrParser.lambda`.
+	 * @param ctx the parse tree
+	 */
+	enterLambda?: (ctx: LambdaContext) => void;
+	/**
+	 * Exit a parse tree produced by `ExpressionAntlrParser.lambda`.
+	 * @param ctx the parse tree
+	 */
+	exitLambda?: (ctx: LambdaContext) => void;
 
 	/**
 	 * Enter a parse tree produced by `ExpressionAntlrParser.keyValuePairList`.
