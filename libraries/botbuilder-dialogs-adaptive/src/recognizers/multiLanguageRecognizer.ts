@@ -21,11 +21,14 @@ export class MultiLanguageRecognizer implements Recognizer {
 
     public async recognize(dialogContext: DialogContext, activity: Activity): Promise<RecognizerResult> {
         const locale = activity.locale || '';
-        let policy: string[];
+        let policy: string[] = [];
         if (this.languagePolicy.hasOwnProperty(locale)) {
-            policy = this.languagePolicy[locale];
-        } else {
-            policy = [''];
+            this.languagePolicy[locale].forEach((u: string): number => policy.push(u));
+        }
+
+        if (locale !== '' && this.languagePolicy.hasOwnProperty('')) {
+            // we now explictly add defaultPolicy instead of coding that into target's policy
+            this.languagePolicy[''].forEach((u: string): number => policy.push(u));
         }
 
         for (let i = 0; i < policy.length; i++) {
