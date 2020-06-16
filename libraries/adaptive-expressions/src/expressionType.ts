@@ -152,6 +152,8 @@ export class ExpressionType {
     public static readonly Coalesce: string = 'coalesce';
     public static readonly JPath: string = 'jPath';
     public static readonly SetPathToValue: string = 'setPathToValue';
+    public static readonly Merge: string = 'merge';
+
 
     // TODO
     // xPath

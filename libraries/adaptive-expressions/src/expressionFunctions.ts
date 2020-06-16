@@ -3355,7 +3355,22 @@ export class ExpressionFunctions {
                 ReturnType.Object, ExpressionFunctions.validateAtLeastOne),
             new ExpressionEvaluator(ExpressionType.JPath, ExpressionFunctions.applyWithError((args: any[][]): any => this.jPath(args[0], args[1].toString())),
                 ReturnType.Object, (expr: Expression): void => ExpressionFunctions.validateOrder(expr, undefined, ReturnType.Object, ReturnType.String)),
+            new ExpressionEvaluator(ExpressionType.Merge, 
+                ExpressionFunctions.applySequenceWithError(
+                    (args: any[]): any => {
+                        let value: object = undefined;
+                        let error: string = undefined;
+                        if (typeof(args[0]) === 'object' && typeof(args[1]) === 'object') {
+                            Object.assign(args[0], args[1]);
+                            value = args[0];
+                        } else {
+                            error = `The argumets ${ args[0] } and ${ args[1] } must be object.`;
+                        }
 
+                        return {value, error};
+                    }),
+                ReturnType.Object, 
+                (expression: Expression): void => ExpressionFunctions.validateArityAndAnyType(expression, 2, Number.MAX_SAFE_INTEGER)),
             // Regex expression functions
             new ExpressionEvaluator(
                 ExpressionType.IsMatch,

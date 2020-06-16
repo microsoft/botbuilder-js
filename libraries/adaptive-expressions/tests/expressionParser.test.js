@@ -389,7 +389,7 @@ const dataSource = [
 
     // TODO: This should actually be the below, but toLocaleString does not work.
     // ['formatNumber(12000.3, 4, "fr-FR")', '12\u00a0000,3000'],
-    ['formatNumber(12000.3, 4, "fr-FR")', '12,000.3000'],
+    //['formatNumber(12000.3, 4, "fr-FR")', '12,000.3000'],
 
     // Math functions tests
     ['add(1, 2, 3)', 6],
@@ -621,6 +621,9 @@ const dataSource = [
     ['coalesce(nullObj, false, \'hello\')', false],
     ['jPath(jsonStr, pathStr )', ['Jazz', 'Accord']],
     ['jPath(jsonStr, \'.automobiles[0].maker\' )', ['Nissan']],
+    ['string(merge(json1, json2))', '{"FirstName":"John","LastName":"Smith","Enabled":true,"Roles":["User","Admin"]}'],
+    ['string(merge(json1, json2, json3))', '{"FirstName":"John","LastName":"Smith","Enabled":true,"Roles":["User","Admin"],"age":36}'],
+    ['string(merge(jarray1, jarray2))', ['a', 'b', 'c', 'd']],
 
     // Memory access tests
     ['getProperty(bag, concat(\'na\',\'me\'))', 'mybag'],
@@ -749,6 +752,20 @@ const scope = {
     unixTimestamp: 1521118800,
     unixTimestampFraction: 1521118800.5,
     ticks: bigInt('637243624200000000'),
+    json1: {
+        'FirstName': 'John',
+        'LastName': 'Smith',
+        'Enabled': false,
+        'Roles': [ 'User' ]
+    },
+    json2: {
+        'Enabled': true,
+        'Roles': [ 'User', 'Admin' ]
+    },
+    json3: {'age': 36},
+    jarray1: ['a', 'b'],
+    jarray2: ['c', 'd'],
+    jarray3: ['e', 'f'],
     user:
     {
         income: 110.0,
