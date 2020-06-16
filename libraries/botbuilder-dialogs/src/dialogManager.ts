@@ -111,7 +111,7 @@ export class DialogManager extends Configurable {
         if (!this.rootDialogId) { throw new Error(`DialogManager.onTurn: the bot's 'rootDialog' has not been configured.`); }
 
         // Copy initial turn state to context
-        this.initialTurnState.forEach((value, key) => {
+        this.initialTurnState.forEach((value, key): void => {
             context.turnState.set(key, value);
         });
 
@@ -158,6 +158,11 @@ export class DialogManager extends Configurable {
 
         // Create DialogContext
         const dc = new DialogContext(this.dialogSet, context, dialogState);
+
+        // map TurnState into root dialog context.services
+        context.turnState.forEach((key, value): void => {
+            dc.services.set(key, value);
+        });
 
         // Configure dialog state manager and load scopes
         const dialogStateManager = new DialogStateManager(dc, this.stateConfiguration);
