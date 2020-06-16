@@ -128,15 +128,23 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGTe
                     const valueList = [];
                     for (const item of value) {
                         const id = TemplateExtensions.newGuid();
-                        valueList.push(id);
-                        templateRefValues.set(id, item);
+                        if (item.length > 0) {
+                            valueList.push(id);
+                            templateRefValues.set(id, item);
+                        } else {
+                            valueList.push([])
+                        }
                     }
 
-                    expandedResult.forEach((x): any[] => x[property] = valueList);
+                    expandedResult.forEach((x: any) => x[property] = valueList);
                 } else {
                     const id = TemplateExtensions.newGuid();
-                    expandedResult.forEach((x): string => x[property] = id);
-                    templateRefValues.set(id, value[0]);
+                    if (value[0].length > 0) {
+                        expandedResult.forEach((x: any) => x[property] = id);
+                        templateRefValues.set(id, value[0]);
+                    } else {
+                        expandedResult.forEach((x: any) => x[property] = []);
+                    }
                 }
             } else {
                 const propertyObjects: object[] = [];
