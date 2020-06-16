@@ -64,35 +64,25 @@ export class DialogContext {
       * @param state The state object to use to read and write dialog state to storage.
       * @param dialogContext The dialog context to clone.
       */
-    public constructor(dialogContext: DialogContext);
     public constructor(dialogs: DialogSet, contextOrDC: TurnContext, state: DialogState);
     public constructor(dialogs: DialogSet, contextOrDC: DialogContext, state: DialogState);
-    public constructor(dialogsOrDC: DialogSet | DialogContext, contextOrDC?: TurnContext | DialogContext, state?: DialogState) {
-        if (dialogsOrDC instanceof DialogContext) {
-            this.dialogs = dialogsOrDC.dialogs;
-            this.context = dialogsOrDC.context;
-            this.stack = dialogsOrDC.stack;
-            this.state = dialogsOrDC.state;
-            this.parent = dialogsOrDC.parent;
-        } else {
-            if (!Array.isArray(state.dialogStack)) { state.dialogStack = []; }
-            if (contextOrDC instanceof DialogContext) {
-                this.context = contextOrDC.context;
-                this.parent = contextOrDC;
-                if (this.parent.services) {
-                    this.parent.services.forEach((value, key): void => {
-                        this.services.set(key, value);
-                    });
-                }
-            } else {
-                this.context = contextOrDC;
-                this.services = new TurnContextStateCollection();
+    public constructor(dialogs: DialogSet, contextOrDC: TurnContext | DialogContext, state: DialogState) {
+        this.dialogs = dialogs;
+        if (contextOrDC instanceof DialogContext) {
+            this.context = contextOrDC.context;
+            this.parent = contextOrDC;
+            if (this.parent.services) {
+                this.parent.services.forEach((value, key): void => {
+                    this.services.set(key, value);
+                });
             }
-            this.dialogs = dialogsOrDC;
-            this.stack = state.dialogStack;
-            this.state = new DialogStateManager(this);
-            this.state.setValue(TurnPath.activity, this.context.activity);
+        } else {
+            this.context = contextOrDC;
         }
+        if (!Array.isArray(state.dialogStack)) { state.dialogStack = []; }
+        this.stack = state.dialogStack;
+        this.state = new DialogStateManager(this);
+        this.state.setValue(TurnPath.activity, this.context.activity);
     }
 
     /**
@@ -152,7 +142,7 @@ export class DialogContext {
     /**
      * Gets the services collection which is contextual to this dialog context.
      */
-    public services: TurnContextStateCollection;
+    public services: TurnContextStateCollection = new TurnContextStateCollection();
 
     /**
      * Returns the current dialog manager instance.
