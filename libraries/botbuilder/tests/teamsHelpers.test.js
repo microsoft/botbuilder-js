@@ -11,7 +11,8 @@ const {
     BotFrameworkAdapter,
     teamsGetChannelId,
     teamsGetTeamId,
-    teamsNotifyUser
+    teamsNotifyUser,
+    teamsGetTeamInfo
 } = require('../');
 
 
@@ -125,6 +126,41 @@ describe('TeamsActivityHelpers method', function() {
             }
         });
     });
+
+    describe('teamsGetTeamInfo()', () => {
+        it('should return team id', async function() {
+            const activity = createActivityTeamId();
+            const teamInfo = teamsGetTeamInfo(activity);
+            assert(teamInfo.id === 'myId');
+        });
+
+        it('should return undefined with no team id', async function() {
+            const activity = createActivityNoTeamId();
+            const teamInfo = teamsGetTeamInfo(activity);
+            assert(teamInfo.id === undefined);
+        });
+
+        it('should return null with no channelData', async function() {
+            const activity = createActivityNoChannelData();
+            const teamInfo = teamsGetTeamInfo(activity);
+            assert(teamInfo === null);
+        });
+
+        it('should return aadGroupId', async function() {
+            const activity = createActivityTeamId();
+            const teamInfo = teamsGetTeamInfo(activity);
+            assert(teamInfo.aadGroupId === 'myaadGroupId');
+        });
+
+        it('should throw an error if no activity is passed in', () => {
+            try {
+                teamsGetTeamInfo(undefined);
+            } catch (err) {
+                assert.strictEqual(err.message, 'Missing activity parameter');
+            }
+        });
+    });
+
 });
 
 function createActivityNoTeamId() {
@@ -163,7 +199,7 @@ function createActivityTeamId() {
 		text: "testMessage",
 		channelId: 'teams',
         from: { id: `User1` },
-        channelData: { team: { id: 'myId'}},
+        channelData: { team: { id: 'myId', aadGroupId: 'myaadGroupId'}},
 		conversation: { id: 'conversationId' },
 		recipient: { id: 'Bot1', name: '2' },
 		serviceUrl: 'http://foo.com/api/messages'

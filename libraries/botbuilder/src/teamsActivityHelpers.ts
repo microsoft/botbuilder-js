@@ -49,3 +49,13 @@ export function teamsNotifyUser(activity: Activity): void {
     const channelData: TeamsChannelData = activity.channelData as TeamsChannelData;
     channelData.notification = { alert: true } as NotificationInfo;
 }    
+
+export function teamsGetTeamInfo(activity: Activity): TeamInfo {
+    if (!activity) {
+        throw new Error('Missing activity parameter');
+    }
+
+    const channelData: TeamsChannelData = activity.channelData as TeamsChannelData;
+    const team: TeamInfo = channelData ? channelData.team : null;
+    return team;
+}
