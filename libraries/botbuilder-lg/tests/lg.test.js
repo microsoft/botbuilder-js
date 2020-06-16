@@ -586,6 +586,25 @@ describe('LG', function() {
         assert.strictEqual(evaled[0], '$ $ ${\'hi\'} hi');
     });
 
+    it('TestExpandTemplateWithEmptyListInStructuredLG', function() {
+        let templates = Templates.parseFile(GetExampleFilePath('Expand.lg'));
+        let data = {
+            Data: {
+                Name: "NAME",
+                Address: "ADDRESS"
+            }
+        };
+
+        let name = "PointOfInterestSuggestedActionName";
+        let evaled = templates.expandTemplate(name, data);
+
+        assert.strictEqual(evaled[0]["text"], "NAME at ADDRESS");
+        assert.strictEqual(evaled[0]["speak"], "NAME at ADDRESS");
+        assert.strictEqual(evaled[0]["attachments"].length, 0);
+        assert.strictEqual(evaled[0]["attachmentlayout"], "list");
+        assert.strictEqual(evaled[0]["inputhint"], "ignoringInput");
+    });
+
     it('TestInlineEvaluate', function() {
         var templates = Templates.parseFile(GetExampleFilePath('2.lg'));
         var evaled = templates.evaluateText('hello');
