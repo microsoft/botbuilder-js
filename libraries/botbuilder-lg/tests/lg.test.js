@@ -605,6 +605,24 @@ describe('LG', function() {
         assert.strictEqual(evaled[0]["inputhint"], "ignoringInput");
     });
 
+    it('TestExpandTemplateWithStrictMode', function() {
+        let templates = Templates.parseFile(GetExampleFilePath('./EvaluationOptions/StrictModeFalse.lg'));
+
+        let evaled = templates.expandTemplate('StrictFalse');
+        assert.strictEqual(evaled[0], 'null');
+
+        templates = Templates.parseFile(GetExampleFilePath('./EvaluationOptions/StrictModeTrue.lg'));
+
+        let errMessage = '';
+        try {
+            templates.expandTemplate('StrictTrue');
+        } catch (e) {
+            errMessage = e.toString();
+        }
+
+        assert.strictEqual(errMessage.includes("'variable_not_defined' evaluated to null. [StrictTrue]  Error occurred when evaluating '-${variable_not_defined}'"), true);
+    })
+
     it('TestInlineEvaluate', function() {
         var templates = Templates.parseFile(GetExampleFilePath('2.lg'));
         var evaled = templates.evaluateText('hello');
