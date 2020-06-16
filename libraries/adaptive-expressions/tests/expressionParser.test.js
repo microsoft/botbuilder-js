@@ -623,7 +623,6 @@ const dataSource = [
     ['jPath(jsonStr, \'.automobiles[0].maker\' )', ['Nissan']],
     ['string(merge(json1, json2))', '{"FirstName":"John","LastName":"Smith","Enabled":true,"Roles":["User","Admin"]}'],
     ['string(merge(json1, json2, json3))', '{"FirstName":"John","LastName":"Smith","Enabled":true,"Roles":["User","Admin"],"age":36}'],
-    ['string(merge(jarray1, jarray2))', ['a', 'b', 'c', 'd']],
 
     // Memory access tests
     ['getProperty(bag, concat(\'na\',\'me\'))', 'mybag'],
@@ -763,9 +762,6 @@ const scope = {
         'Roles': [ 'User', 'Admin' ]
     },
     json3: {'age': 36},
-    jarray1: ['a', 'b'],
-    jarray2: ['c', 'd'],
-    jarray3: ['e', 'f'],
     user:
     {
         income: 110.0,

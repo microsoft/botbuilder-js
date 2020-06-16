@@ -3360,11 +3360,11 @@ export class ExpressionFunctions {
                     (args: any[]): any => {
                         let value: object = undefined;
                         let error: string = undefined;
-                        if (typeof(args[0]) === 'object' && typeof(args[1]) === 'object') {
+                        if ((typeof(args[0]) === 'object' && !Array.isArray(args[0])) && (typeof(args[1]) === 'object' && !Array.isArray(args[1]))) {
                             Object.assign(args[0], args[1]);
                             value = args[0];
                         } else {
-                            error = `The argumets ${ args[0] } and ${ args[1] } must be object.`;
+                            error = `The argumets ${ args[0] } and ${ args[1] } must be JSON object.`;
                         }
 
                         return {value, error};
