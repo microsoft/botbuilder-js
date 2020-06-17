@@ -6,8 +6,8 @@
  * Licensed under the MIT License.
  */
 
+import { DialogContext } from 'botbuilder-dialogs';
 import { MultiLanguageGeneratorBase } from './multiLanguageGeneratorBase';
-import { TurnContext } from 'botbuilder-core';
 import { LanguageGenerator } from '../languageGenerator';
 import { LanguageGeneratorManager } from './languageGeneratorManager';
 
@@ -22,8 +22,8 @@ export class ResourceMultiLanguageGenerator extends MultiLanguageGeneratorBase {
         this.resourceId = resourceId;
     }
 
-    public tryGetGenerator(context: TurnContext, locale: string): {exist: boolean; result: LanguageGenerator} {
-        const lgm: LanguageGeneratorManager = context.turnState.get('LanguageGeneratorManager');
+    public tryGetGenerator(dialogContext: DialogContext, locale: string): {exist: boolean; result: LanguageGenerator} {
+        const lgm: LanguageGeneratorManager = dialogContext.context.turnState.get('LanguageGeneratorManager');
         const resourceId = (locale === undefined || locale === '')? this.resourceId : this.resourceId.replace('.lg', `.${ locale }.lg`);
         if (lgm.languageGenerator.has(resourceId)) {
             return {exist: true, result: lgm.languageGenerator.get(resourceId)};

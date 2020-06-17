@@ -6,22 +6,22 @@
  * Licensed under the MIT License.
  */
 
+import { DialogContext } from 'botbuilder-dialogs';
 import { LanguageGenerator } from '../languageGenerator';
-import { TurnContext } from 'botbuilder-core';
-import {LanguagePolicy} from '../languagePolicy';
+import { LanguagePolicy } from '../languagePolicy';
 /**
  * Class which manages cache of all LG resources from a ResourceExplorer. 
  * This class automatically updates the cache when resource change events occure.
  */
-export abstract class MultiLanguageGeneratorBase implements LanguageGenerator{
+export abstract class MultiLanguageGeneratorBase implements LanguageGenerator {
     public languagePolicy = LanguagePolicy.defaultPolicy;
 
-    public abstract tryGetGenerator(context: TurnContext, locale: string): {exist: boolean; result: LanguageGenerator};
+    public abstract tryGetGenerator(dialogContext: DialogContext, locale: string): { exist: boolean; result: LanguageGenerator };
 
-    public constructor() {};
-    
-    public async generate(turnContext: TurnContext, template: string, data: object): Promise<string> {
-        const targetLocale = turnContext.activity.locale? turnContext.activity.locale.toLocaleLowerCase() : '';
+    public constructor() { };
+
+    public async generate(dialogContext: DialogContext, template: string, data: object): Promise<string> {
+        const targetLocale = dialogContext.context.activity.locale ? dialogContext.context.activity.locale.toLocaleLowerCase() : '';
         let locales: string[] = [''];
         if (this.languagePolicy[targetLocale] === undefined) {
             if (this.languagePolicy[''] === undefined) {
@@ -30,11 +30,11 @@ export abstract class MultiLanguageGeneratorBase implements LanguageGenerator{
         } else {
             locales = this.languagePolicy[targetLocale];
         }
-        
+
         const generators: LanguageGenerator[] = [];
         for (const locale of locales) {
-            if (this.tryGetGenerator(turnContext, locale).exist) {
-                generators.push(this.tryGetGenerator(turnContext, locale).result); 
+            if (this.tryGetGenerator(dialogContext, locale).exist) {
+                generators.push(this.tryGetGenerator(dialogContext, locale).result);
             }
         }
 
@@ -44,9 +44,9 @@ export abstract class MultiLanguageGeneratorBase implements LanguageGenerator{
 
         const errors: string[] = [];
         for (const generator of generators) {
-            try{
-                return generator.generate(turnContext, template, data);
-            } catch(e) {
+            try {
+                return generator.generate(dialogContext, template, data);
+            } catch (e) {
                 errors.push(e);
             }
         }
