@@ -159,6 +159,11 @@ export class DialogManager extends Configurable {
         // Create DialogContext
         const dc = new DialogContext(this.dialogSet, context, dialogState);
 
+        // promote initial TurnState into dc.services for contextual services
+        this._initialTurnState.forEach((key, value): void => {
+            dc.services.set(key, value);
+        });
+
         // map TurnState into root dialog context.services
         context.turnState.forEach((key, value): void => {
             dc.services.set(key, value);
