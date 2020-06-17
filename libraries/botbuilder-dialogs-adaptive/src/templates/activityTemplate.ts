@@ -1,4 +1,13 @@
-import { TurnContext, Activity, ActivityFactory, MessageFactory } from 'botbuilder-core';
+/**
+ * @module botbuilder-dialogs-adaptive
+ */
+/**
+ * Copyright (c) Microsoft Corporation. All rights reserved.
+ * Licensed under the MIT License.
+ */
+
+import { DialogContext } from 'botbuilder-dialogs';
+import { Activity, ActivityFactory, MessageFactory } from 'botbuilder-core';
 import { TemplateInterface } from '../template';
 import { LanguageGenerator } from '../languageGenerator';
 
@@ -9,11 +18,11 @@ export class ActivityTemplate implements TemplateInterface<Partial<Activity>> {
         this.template = template;
     }
 
-    public async bindToData(context: TurnContext, data: object): Promise<Partial<Activity>> {
+    public async bind(dialogContext: DialogContext, data: object): Promise<Partial<Activity>> {
         if(this.template) {
-            const languageGenerator: LanguageGenerator = context.turnState.get('LanguageGenerator');
+            const languageGenerator: LanguageGenerator = dialogContext.context.turnState.get('LanguageGenerator');
             if (languageGenerator) {
-                const lgStringResult = await languageGenerator.generate(context, this.template, data);
+                const lgStringResult = await languageGenerator.generate(dialogContext, this.template, data);
                 const result = ActivityFactory.fromObject(lgStringResult);
                 return Promise.resolve(result);
             } else {

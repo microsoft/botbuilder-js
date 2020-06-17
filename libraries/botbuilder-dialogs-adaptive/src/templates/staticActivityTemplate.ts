@@ -1,5 +1,14 @@
+/**
+ * @module botbuilder-dialogs-adaptive
+ */
+/**
+ * Copyright (c) Microsoft Corporation. All rights reserved.
+ * Licensed under the MIT License.
+ */
+
+import { DialogContext } from 'botbuilder-dialogs';
+import { Activity } from 'botbuilder-core';
 import { TemplateInterface } from '../template';
-import { Activity, TurnContext } from 'botbuilder-core';
 
 export class StaticActivityTemplate implements TemplateInterface<Partial<Activity>> {
 
@@ -7,9 +16,9 @@ export class StaticActivityTemplate implements TemplateInterface<Partial<Activit
 
     public constructor(activity?: Partial<Activity>) {
         this.activity = activity;
-    };
+    }
 
-    public async bindToData(context: TurnContext, data: object): Promise<Partial<Activity>> {
+    public async bind(dialogContext: DialogContext, data: object): Promise<Partial<Activity>> {
         return Promise.resolve(this.activity);
     }
 

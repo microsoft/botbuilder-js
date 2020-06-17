@@ -1,5 +1,5 @@
+import { DialogContext } from 'botbuilder-dialogs';
 import { TemplateInterface } from '../template';
-import { TurnContext } from 'botbuilder-core';
 import { LanguageGenerator } from '../languageGenerator';
 
 export class TextTemplate implements TemplateInterface<string> {
@@ -10,14 +10,14 @@ export class TextTemplate implements TemplateInterface<string> {
         this.template = template;
     }
 
-    public async bindToData(context: TurnContext, data: object): Promise<string> {
+    public async bind(dialogContext: DialogContext, data: object): Promise<string> {
         if (!this.template) {
             throw new Error(`ArgumentNullException: ${ this.template }`);
         }
 
-        const languageGenerator: LanguageGenerator = context.turnState.get('LanguageGenerator');
+        const languageGenerator: LanguageGenerator = dialogContext.context.turnState.get('LanguageGenerator');
         if (languageGenerator !== undefined) {
-            const result = languageGenerator.generate(context, this.template, data);
+            const result = languageGenerator.generate(dialogContext, this.template, data);
             return Promise.resolve(result);
         }
         
