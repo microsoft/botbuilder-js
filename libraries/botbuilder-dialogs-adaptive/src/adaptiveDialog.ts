@@ -385,7 +385,7 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
                         const { intent, score } = getTopScoringIntent(recognizedResult);
                         actionContext.state.setValue(TurnPath.topIntent, intent);
                         actionContext.state.setValue(TurnPath.topScore, score);
-                        actionContext.state.setValue(DialogPath.lastEvent, intent);
+                        actionContext.state.setValue(DialogPath.lastIntent, intent);
                         handled = true;
                     }
                     break;
