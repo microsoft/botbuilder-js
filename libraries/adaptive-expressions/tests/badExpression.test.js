@@ -355,7 +355,6 @@ const badExpressions =
         'merge(json2, jarray1)', // should only have JSON object arguments
         'merge(jarray1, json2)', // should only have JSON object arguments
 
-
         // Memory access test
         'getProperty(bag, 1)',// second param should be string
         'Accessor(1)',// first param should be string

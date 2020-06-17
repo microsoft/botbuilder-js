@@ -3364,13 +3364,14 @@ export class ExpressionFunctions {
                             Object.assign(args[0], args[1]);
                             value = args[0];
                         } else {
-                            error = `The argumets ${ args[0] } and ${ args[1] } must be JSON object.`;
+                            error = `The argumets ${ args[0] } and ${ args[1] } must be JSON objects.`;
                         }
 
                         return {value, error};
                     }),
                 ReturnType.Object, 
                 (expression: Expression): void => ExpressionFunctions.validateArityAndAnyType(expression, 2, Number.MAX_SAFE_INTEGER)),
+
             // Regex expression functions
             new ExpressionEvaluator(
                 ExpressionType.IsMatch,

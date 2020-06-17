@@ -621,8 +621,8 @@ const dataSource = [
     ['coalesce(nullObj, false, \'hello\')', false],
     ['jPath(jsonStr, pathStr )', ['Jazz', 'Accord']],
     ['jPath(jsonStr, \'.automobiles[0].maker\' )', ['Nissan']],
-    ['string(merge(json1, json2))', '{"FirstName":"John","LastName":"Smith","Enabled":true,"Roles":["User","Admin"]}'],
-    ['string(merge(json1, json2, json3))', '{"FirstName":"John","LastName":"Smith","Enabled":true,"Roles":["User","Admin"],"age":36}'],
+    ['string(merge(json1, json2))', '{"FirstName":"John","LastName":"Smith","Enabled":true,"Roles":["Customer","Admin"]}'],
+    ['string(merge(json1, json2, json3))', '{"FirstName":"John","LastName":"Smith","Enabled":true,"Roles":["Customer","Admin"],"age":36}'],
 
     // Memory access tests
     ['getProperty(bag, concat(\'na\',\'me\'))', 'mybag'],
@@ -759,7 +759,7 @@ const scope = {
     },
     json2: {
         'Enabled': true,
-        'Roles': [ 'User', 'Admin' ]
+        'Roles': [ 'Customer', 'Admin' ]
     },
     json3: {'age': 36},
     user:
