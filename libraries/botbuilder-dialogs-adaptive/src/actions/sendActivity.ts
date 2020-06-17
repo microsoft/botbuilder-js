@@ -54,7 +54,7 @@ export class SendActivity<O extends object = {}> extends Dialog<O> {
             utterance: dc.context.activity.text || ''
         }, options);
         
-        const activityResult = await this.activity.bindToData(dc.context, data);
+        const activityResult = await this.activity.bind(dc, data);
         const result = await dc.context.sendActivity(activityResult);
         return await dc.endDialog(result);
     }
