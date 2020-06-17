@@ -7,6 +7,7 @@
  */
 
 import { Range } from './range';
+import { TemplatesParser } from './templatesParser';
 
 /**
  * DiagnosticSeverity enum
@@ -42,12 +43,11 @@ export class Diagnostic {
     }
 
     public toString(): string {
-
         // ignore error range if source is "inline content"
-        if (this.source === 'inline content') {
-            return `[${ DiagnosticSeverity[this.severity] }] ${ this.message.toString() }`;
+        if (this.source === TemplatesParser.inlineContentId) {
+            return `[${ DiagnosticSeverity[this.severity] }] ${ this.source } ${ this.message.toString() }`;
         } else {
-            return `[${ DiagnosticSeverity[this.severity] }] ${ this.range.toString() }: ${ this.message.toString() }`;
+            return `[${ DiagnosticSeverity[this.severity] }] ${ this.source } ${ this.range.toString() }: ${ this.message.toString() }`;
         }
     }
 }

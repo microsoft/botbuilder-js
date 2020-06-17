@@ -9,6 +9,7 @@ import * as Recognizers from '@microsoft/recognizers-text-choice';
 import { Activity } from 'botbuilder-core';
 import { DialogContext, Choice, ListStyle, ChoiceFactoryOptions, ChoiceFactory, recognizeChoices } from 'botbuilder-dialogs';
 import { InputDialog, InputState } from './inputDialog';
+import { ChoiceSet } from './choiceSet';
 import { StringExpression, ObjectExpression, ArrayExpression, EnumExpression } from 'adaptive-expressions';
 
 export class ConfirmInput extends InputDialog {
@@ -48,7 +49,7 @@ export class ConfirmInput extends InputDialog {
     /**
      * Custom list of choices to send for the prompt.
      */
-    public confirmChoices?: ArrayExpression<Choice>;
+    public confirmChoices?: ObjectExpression<ChoiceSet>;
 
     /**
      * The expression of output format.
@@ -56,7 +57,7 @@ export class ConfirmInput extends InputDialog {
     public outputFormat: StringExpression;
 
     protected onComputeId(): string {
-        return `ConfirmInput[${ this.prompt.toString() }]`;
+        return `ConfirmInput[${ this.prompt && this.prompt.toString() }]`;
     }
 
     protected async onRecognizeInput(dc: DialogContext): Promise<InputState> {
@@ -100,6 +101,7 @@ export class ConfirmInput extends InputDialog {
         if (!locale || !ConfirmInput.defaultChoiceOptions.hasOwnProperty(locale)) {
             locale = 'en-us';
         }
+        locale = locale.toLowerCase(); // to match format 'en-US'
 
         // Format choices
         const confirmChoices = (this.confirmChoices && this.confirmChoices.getValue(dc.state)) || ConfirmInput.defaultChoiceOptions[locale].choices;

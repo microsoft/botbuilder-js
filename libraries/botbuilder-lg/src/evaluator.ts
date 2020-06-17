@@ -18,7 +18,7 @@ import * as path from 'path';
 import * as fs from 'fs';
 import { TemplateExtensions } from './templateExtensions';
 import { TemplateErrors } from './templateErrors';
-import { EvaluationOptions, LGLineBreakStyle } from './evaluationOptions';
+import { EvaluationOptions } from './evaluationOptions';
 /**
  * Evaluation runtime engine
  */
@@ -73,6 +73,8 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGTempla
      * @returns Evaluate result.
      */
     public evaluateTemplate(inputTemplateName: string, scope: any): any {
+
+        const memory = scope instanceof CustomizedMemory ? scope : new CustomizedMemory(scope);
         let templateName: string;
         let reExecute: boolean;
         ({reExecute, pureTemplateName: templateName} = this.parseTemplateName(inputTemplateName));
@@ -81,18 +83,14 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGTempla
             throw new Error(TemplateErrors.templateNotExist(templateName));
         }
 
-        if (this.evaluationTargetStack.some((u: EvaluationTarget): boolean => u.templateName === templateName)) {
+        const templateTarget: EvaluationTarget = new EvaluationTarget(templateName, memory);
+        const currentEvulateId: string = templateTarget.getId();
+
+        if (this.evaluationTargetStack.some((u: EvaluationTarget): boolean => u.getId() === currentEvulateId)) {
             throw new Error(`${ TemplateErrors.loopDetected } ${ this.evaluationTargetStack.reverse()
                 .map((u: EvaluationTarget): string => u.templateName)
                 .join(' => ') }`);
         }
-
-        if (!(scope instanceof CustomizedMemory)) {
-            scope = new CustomizedMemory(SimpleObjectMemory.wrap(scope));
-        }
-
-        const templateTarget: EvaluationTarget = new EvaluationTarget(templateName, scope);
-        const currentEvulateId: string = templateTarget.getId();
 
         let previousEvaluateTarget: EvaluationTarget;
 
@@ -129,7 +127,7 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGTempla
                 const value = this.visitStructureValue(body.keyValueStructureLine());
                 result[property] = value;
             } else {
-                const propertyObject: any = this.evalExpression(body.objectStructureLine().text, body.objectStructureLine());
+                const propertyObject: any = this.evalExpression(body.expressionInStructure().text, body.expressionInStructure(), body.text);
                 // Full reference to another structured template is limited to the structured template with same type
                 if (typeof propertyObject === 'object' && Evaluator.LGType in propertyObject &&  propertyObject[Evaluator.LGType].toString() === typeName) {
                     for (const key of Object.keys(propertyObject)) {
@@ -149,25 +147,27 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGTempla
 
         const result = [];
         for(const item of values) {
-            if (TemplateExtensions.isPureExpression(item).hasExpr) {
-                result.push(this.evalExpression(TemplateExtensions.isPureExpression(item).expression, ctx));
+            if (TemplateExtensions.isPureExpression(item)) {
+                result.push(this.evalExpression(item.expressionInStructure(0).text, item.expressionInStructure(0), ctx.text));
             } else {
                 let itemStringResult = '';
-                for(const node of item.children) {
-                    switch ((node as TerminalNode).symbol.type) {
-                        case (lp.LGTemplateParser.ESCAPE_CHARACTER_IN_STRUCTURE_BODY): 
-                            itemStringResult += TemplateExtensions.evalEscape(node.text.replace(/\\\|/g, '|'));
-                            break;
-                        
-                        case (lp.LGTemplateParser.EXPRESSION_IN_STRUCTURE_BODY):
-                            const errorPrefix = `Property '` + ctx.STRUCTURE_IDENTIFIER().text + `':`;
-                            itemStringResult += this.evalExpression(node.text, ctx, errorPrefix);
-                            break;
-                        
-                        default:
-                            itemStringResult += node.text;
-                            break;
+                for(const child of item.children) {
+
+                    if (child instanceof lp.ExpressionInStructureContext) {
+                        const errorPrefix = `Property '` + ctx.STRUCTURE_IDENTIFIER().text + `':`;
+                        itemStringResult += this.evalExpression(child.text, child, ctx.text, errorPrefix);
+                    } else {
+                        const node = child as TerminalNode;
+                        switch ((node as TerminalNode).symbol.type) {
+                            case (lp.LGTemplateParser.ESCAPE_CHARACTER_IN_STRUCTURE_BODY): 
+                                itemStringResult += TemplateExtensions.evalEscape(node.text.replace(/\\\|/g, '|'));
+                                break;
+                            default:
+                                itemStringResult += node.text;
+                                break;
+                        }
                     }
+                    
                 }
 
                 result.push(itemStringResult.trim());
@@ -202,22 +202,23 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGTempla
     public visitNormalTemplateString(ctx: lp.NormalTemplateStringContext): string {
         const prefixErrorMsg = TemplateExtensions.getPrefixErrorMessage(ctx);
         const result: any[] = [];
-        for (const node of ctx.children) {
-            const innerNode: TerminalNode = node as TerminalNode;
-            switch (innerNode.symbol.type) {
-                case lp.LGTemplateParser.MULTILINE_SUFFIX:
-                case lp.LGTemplateParser.MULTILINE_PREFIX:
-                case lp.LGTemplateParser.DASH:
-                    break;
-                case lp.LGTemplateParser.ESCAPE_CHARACTER:
-                    result.push(TemplateExtensions.evalEscape(innerNode.text));
-                    break;
-                case lp.LGTemplateParser.EXPRESSION:
-                    result.push(this.evalExpression(innerNode.text, ctx, prefixErrorMsg));
-                    break;
-                default: {
-                    result.push(innerNode.text);
-                    break;
+        for (const child of ctx.children) {
+            if (child instanceof lp.ExpressionContext) {
+                result.push(this.evalExpression(child.text, child, ctx.text, prefixErrorMsg));
+            } else {
+                const node = child as TerminalNode;
+                switch (node.symbol.type) {
+                    case lp.LGTemplateParser.MULTILINE_SUFFIX:
+                    case lp.LGTemplateParser.MULTILINE_PREFIX:
+                    case lp.LGTemplateParser.DASH:
+                        break;
+                    case lp.LGTemplateParser.ESCAPE_CHARACTER:
+                        result.push(TemplateExtensions.evalEscape(node.text));
+                        break;
+                    default: {
+                        result.push(node.text);
+                        break;
+                    }
                 }
             }
         }
@@ -264,9 +265,9 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGTempla
         const switchcaseNodes: lp.SwitchCaseRuleContext[] = ctx.switchCaseTemplateBody().switchCaseRule();
         const length: number = switchcaseNodes.length;
         const switchNode: lp.SwitchCaseRuleContext = switchcaseNodes[0];
-        const switchExprs: TerminalNode[] = switchNode.switchCaseStat().EXPRESSION();
+        const switchExprs = switchNode.switchCaseStat().expression();
         const switchErrorPrefix = `Switch '` + switchExprs[0].text + `': `;
-        const switchExprResult = this.evalExpression(switchExprs[0].text, switchcaseNodes[0].switchCaseStat(), switchErrorPrefix).toString();
+        const switchExprResult = this.evalExpression(switchExprs[0].text, switchExprs[0], switchcaseNodes[0].switchCaseStat().text, switchErrorPrefix).toString();
         let idx = 0;
         for (const caseNode of switchcaseNodes) {
             if (idx === 0) {
@@ -282,9 +283,9 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGTempla
                 }
             }
 
-            const caseExprs: TerminalNode[] = caseNode.switchCaseStat().EXPRESSION();
+            const caseExprs = caseNode.switchCaseStat().expression();
             const caseErrorPrefix = `Case '` + caseExprs[0].text + `': `;
-            const caseExprResult = this.evalExpression(caseExprs[0].text, caseNode.switchCaseStat(), caseErrorPrefix).toString();
+            const caseExprResult = this.evalExpression(caseExprs[0].text, caseExprs[0], caseNode.switchCaseStat().text, caseErrorPrefix).toString();
             if (switchExprResult === caseExprResult) {
                 return this.visit(caseNode.normalTemplateBody());
             }
@@ -315,7 +316,7 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGTempla
         return errorMsg;
     }
 
-    public static checkExpressionResult(exp: string, error: string, result: any, templateName: string, context?: ParserRuleContext, errorPrefix: string = ''): void {
+    public static checkExpressionResult(exp: string, error: string, result: any, templateName: string, inlineContent: string = '', errorPrefix: string = ''): void {
         let errorMsg = '';
 
         let childErrorMsg = '';
@@ -328,9 +329,9 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGTempla
             childErrorMsg = Evaluator.concatErrorMsg(childErrorMsg, TemplateErrors.nullExpression(exp));
         }
 
-        if (context)
+        if (inlineContent && inlineContent.trim() !== '')
         {
-            errorMsg = Evaluator.concatErrorMsg(errorMsg, TemplateErrors.errorExpression(context.text, templateName, errorPrefix));
+            errorMsg = Evaluator.concatErrorMsg(errorMsg, TemplateErrors.errorExpression(inlineContent, templateName, errorPrefix));
         }
 
         throw new Error(Evaluator.concatErrorMsg(childErrorMsg, errorMsg));
@@ -342,7 +343,7 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGTempla
     }
 
     private evalCondition(condition: lp.IfConditionContext): boolean {
-        const expression: TerminalNode = condition.EXPRESSION()[0]; // Here ts is diff with C#, C# use condition.EXPRESSION(0) == null
+        const expression = condition.expression()[0]; // Here ts is diff with C#, C# use condition.EXPRESSION(0) == null
         // to judge ELSE condition. But in ts lib this action would throw
         // Error
 
@@ -350,15 +351,15 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGTempla
             return true;                                            // no expression means it's else
         }
 
-        if (this.evalExpressionInCondition(expression.text, condition, `Condition '` + expression.text + `':`)) {
+        if (this.evalExpressionInCondition(expression, condition.text, `Condition '` + expression.text + `':`)) {
             return true;
         }
 
         return false;
     }
 
-    private evalExpressionInCondition(exp: string, context?: ParserRuleContext, errorPrefix: string = ''): boolean {
-        exp = TemplateExtensions.trimExpression(exp);
+    private evalExpressionInCondition(expressionContext: ParserRuleContext, contentLine: string, errorPrefix: string = ''): boolean {
+        const exp = TemplateExtensions.trimExpression(expressionContext.text);
         let result: any;
         let error: string;
         ({value: result, error: error} = this.evalByAdaptiveExpression(exp, this.currentTarget().scope));
@@ -372,7 +373,7 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGTempla
                 this.evaluationTargetStack.pop();
             }
 
-            Evaluator.checkExpressionResult(exp, error, result, templateName, context, errorPrefix);
+            Evaluator.checkExpressionResult(exp, error, result, templateName, contentLine, errorPrefix);
         } else if (error || !result)
         {
             return false;
@@ -381,7 +382,7 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGTempla
         return true;
     }
 
-    private evalExpression(exp: string, context?: ParserRuleContext, errorPrefix: string = ''): any
+    private evalExpression(exp: string, expressionContext?: ParserRuleContext, inlineContent: string = '', errorPrefix: string = ''): any
     {
         exp = TemplateExtensions.trimExpression(exp);
         let result: any;
@@ -397,7 +398,7 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGTempla
                 this.evaluationTargetStack.pop();
             }
 
-            Evaluator.checkExpressionResult(exp, error, result, templateName, context, errorPrefix);
+            Evaluator.checkExpressionResult(exp, error, result, templateName, inlineContent, errorPrefix);
         }
         else if (result === undefined && !this.lgOptions.strictMode)
         {
@@ -515,7 +516,7 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGTempla
 
         // Validate return type
         if ((children0.returnType & ReturnType.Object) === 0 && (children0.returnType & ReturnType.String) === 0) {
-            throw new Error(TemplateErrors.invalidTemplateName);
+            throw new Error(TemplateErrors.invalidTemplateNameType);
         }
 
         // Validate more if the name is string constant
