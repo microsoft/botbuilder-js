@@ -23,7 +23,6 @@ import { StructuredBodyContentLineContext } from "./LGTemplateParser";
 import { ErrorStructureLineContext } from "./LGTemplateParser";
 import { KeyValueStructureLineContext } from "./LGTemplateParser";
 import { KeyValueStructureValueContext } from "./LGTemplateParser";
-import { ObjectStructureLineContext } from "./LGTemplateParser";
 import { StructuredBodyEndLineContext } from "./LGTemplateParser";
 import { NormalTemplateBodyContext } from "./LGTemplateParser";
 import { TemplateStringContext } from "./LGTemplateParser";
@@ -35,6 +34,8 @@ import { IfConditionContext } from "./LGTemplateParser";
 import { SwitchCaseTemplateBodyContext } from "./LGTemplateParser";
 import { SwitchCaseRuleContext } from "./LGTemplateParser";
 import { SwitchCaseStatContext } from "./LGTemplateParser";
+import { ExpressionContext } from "./LGTemplateParser";
+import { ExpressionInStructureContext } from "./LGTemplateParser";
 
 
 /**
@@ -141,13 +142,6 @@ export interface LGTemplateParserVisitor<Result> extends ParseTreeVisitor<Result
 	visitKeyValueStructureValue?: (ctx: KeyValueStructureValueContext) => Result;
 
 	/**
-	 * Visit a parse tree produced by `LGTemplateParser.objectStructureLine`.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	visitObjectStructureLine?: (ctx: ObjectStructureLineContext) => Result;
-
-	/**
 	 * Visit a parse tree produced by `LGTemplateParser.structuredBodyEndLine`.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -223,5 +217,19 @@ export interface LGTemplateParserVisitor<Result> extends ParseTreeVisitor<Result
 	 * @return the visitor result
 	 */
 	visitSwitchCaseStat?: (ctx: SwitchCaseStatContext) => Result;
+
+	/**
+	 * Visit a parse tree produced by `LGTemplateParser.expression`.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	visitExpression?: (ctx: ExpressionContext) => Result;
+
+	/**
+	 * Visit a parse tree produced by `LGTemplateParser.expressionInStructure`.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	visitExpressionInStructure?: (ctx: ExpressionInStructureContext) => Result;
 }
 

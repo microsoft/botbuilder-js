@@ -23,7 +23,6 @@ import { StructuredBodyContentLineContext } from "./LGTemplateParser";
 import { ErrorStructureLineContext } from "./LGTemplateParser";
 import { KeyValueStructureLineContext } from "./LGTemplateParser";
 import { KeyValueStructureValueContext } from "./LGTemplateParser";
-import { ObjectStructureLineContext } from "./LGTemplateParser";
 import { StructuredBodyEndLineContext } from "./LGTemplateParser";
 import { NormalTemplateBodyContext } from "./LGTemplateParser";
 import { TemplateStringContext } from "./LGTemplateParser";
@@ -35,6 +34,8 @@ import { IfConditionContext } from "./LGTemplateParser";
 import { SwitchCaseTemplateBodyContext } from "./LGTemplateParser";
 import { SwitchCaseRuleContext } from "./LGTemplateParser";
 import { SwitchCaseStatContext } from "./LGTemplateParser";
+import { ExpressionContext } from "./LGTemplateParser";
+import { ExpressionInStructureContext } from "./LGTemplateParser";
 
 
 /**
@@ -194,17 +195,6 @@ export interface LGTemplateParserListener extends ParseTreeListener {
 	exitKeyValueStructureValue?: (ctx: KeyValueStructureValueContext) => void;
 
 	/**
-	 * Enter a parse tree produced by `LGTemplateParser.objectStructureLine`.
-	 * @param ctx the parse tree
-	 */
-	enterObjectStructureLine?: (ctx: ObjectStructureLineContext) => void;
-	/**
-	 * Exit a parse tree produced by `LGTemplateParser.objectStructureLine`.
-	 * @param ctx the parse tree
-	 */
-	exitObjectStructureLine?: (ctx: ObjectStructureLineContext) => void;
-
-	/**
 	 * Enter a parse tree produced by `LGTemplateParser.structuredBodyEndLine`.
 	 * @param ctx the parse tree
 	 */
@@ -324,5 +314,27 @@ export interface LGTemplateParserListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	exitSwitchCaseStat?: (ctx: SwitchCaseStatContext) => void;
+
+	/**
+	 * Enter a parse tree produced by `LGTemplateParser.expression`.
+	 * @param ctx the parse tree
+	 */
+	enterExpression?: (ctx: ExpressionContext) => void;
+	/**
+	 * Exit a parse tree produced by `LGTemplateParser.expression`.
+	 * @param ctx the parse tree
+	 */
+	exitExpression?: (ctx: ExpressionContext) => void;
+
+	/**
+	 * Enter a parse tree produced by `LGTemplateParser.expressionInStructure`.
+	 * @param ctx the parse tree
+	 */
+	enterExpressionInStructure?: (ctx: ExpressionInStructureContext) => void;
+	/**
+	 * Exit a parse tree produced by `LGTemplateParser.expressionInStructure`.
+	 * @param ctx the parse tree
+	 */
+	exitExpressionInStructure?: (ctx: ExpressionInStructureContext) => void;
 }
 
