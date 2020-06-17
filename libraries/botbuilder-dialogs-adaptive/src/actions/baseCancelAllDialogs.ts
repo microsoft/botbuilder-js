@@ -12,7 +12,7 @@ import { StringExpression, BoolExpression, ValueExpression } from 'adaptive-expr
 export class BaseCancelAllDialogs<O extends object = {}> extends Dialog<O> {
     public constructor();
     public constructor(eventName: string, eventValue?: string, isCancelAll?: boolean);
-    public constructor(eventName?: string, eventValue?: string, isCancelAll = false) {
+    public constructor(eventName?: string, eventValue?: string, isCancelAll = true) {
         super();
         if (eventName) {
             this.eventName = new StringExpression(eventName);
@@ -36,8 +36,15 @@ export class BaseCancelAllDialogs<O extends object = {}> extends Dialog<O> {
 
     public disabled: BoolExpression;
 
-    public activityProcessed: BoolExpression;
+    /**
+     * A value indicating whether to have the new dialog should process the activity.
+     */
+    public activityProcessed: BoolExpression = new BoolExpression(true);
 
+
+    /**
+     * A value indicating whether to cancel all dialogs.
+     */
     public cancelAll: boolean;
 
     public async beginDialog(dc: DialogContext, options: O): Promise<DialogTurnResult> {

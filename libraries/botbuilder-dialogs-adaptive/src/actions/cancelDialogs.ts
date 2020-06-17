@@ -14,8 +14,4 @@ export class CancelDialogs<O extends object = {}> extends BaseCancelAllDialogs<O
     public constructor(eventName?: string, eventValue?: string) {
         super(eventName, eventValue, false);
     }
-
-    // protected onComputeId(): string {
-    //     return `CancelDialogs[${ this.eventName ? this.eventName.toString() : '' }]`;
-    // }
 }
