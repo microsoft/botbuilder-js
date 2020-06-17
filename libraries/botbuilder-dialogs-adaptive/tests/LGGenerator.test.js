@@ -8,6 +8,7 @@ const {
 const { ResourceExplorer } = require('botbuilder-dialogs-declarative');
 const assert = require('assert');
 const { TestAdapter, TurnContext } = require('botbuilder-core');
+const { DialogContext, DialogSet } = require('botbuilder-dialogs');
 
 function GetExampleFilePath() {
     return `${__dirname}/tests/`;
@@ -36,11 +37,16 @@ async function getTurnContext(locale, generator) {
     return context;
 }
 
+async function getDialogContext(locale, generator) {
+    const turnContext = await getTurnContext(locale, generator);
+    return new DialogContext(new DialogSet(), turnContext, { dialogStack: [] });
+}
+
 describe('LGLanguageGenerator', function() {
     this.timeout(10000);
 
     it('TestNotFoundTemplate', async function() {
-        const context = getTurnContext('');
+        const context = getDialogContext('');
         const lg = new TemplateEngineLanguageGenerator();
         assert.throws(() => {lg.generate(context, '${tesdfdfsst()}', undefined);}, Error);
     });
@@ -52,28 +58,30 @@ describe('LGLanguageGenerator', function() {
         });
         describe('Test MultiLang Import with specified locale', async function() {
             let generator;
+            let dialogContext;
             this.beforeAll(async function() {
                 const resource = await resourceExplorer.getResource('a.en-US.lg');
                 generator = new TemplateEngineLanguageGenerator(resource.fullName, lgResourceGroup);
+                dialogContext = await getDialogContext();
             });
 
             it('"${templatea()}", no data', async () => {
-                const result = await generator.generate(getTurnContext(), '${templatea()}', undefined);
+                const result = await generator.generate(dialogContext, '${templatea()}', undefined);
                 assert.strictEqual(result, 'from a.en-us.lg');
             });
 
             it('"${templateb()}", no data', async () => {
-                const result = await generator.generate(getTurnContext(), '${templateb()}', undefined);
+                const result = await generator.generate(dialogContext, '${templateb()}', undefined);
                 assert.strictEqual(result, 'from b.en-us.lg');
             });
 
             it('"${templatec()}", no data', async () => {
-                const result = await generator.generate(getTurnContext(), '${templatec()}', undefined);
+                const result = await generator.generate(dialogContext, '${templatec()}', undefined);
                 assert.strictEqual(result, 'from c.en.lg');
             });
 
             it('should throw for missing template: "${greeting()}", no data', async () => {
-                assert.throws(() => {generator.generate(getTurnContext(), '${greeting()}', undefined);}, Error);
+                assert.throws(() => {generator.generate(dialogContext, '${greeting()}', undefined);});
             });       
         });
         
@@ -85,22 +93,22 @@ describe('LGLanguageGenerator', function() {
             });
 
             it('"${templatea()}", no data', async () => {
-                const result = await generator.generate(getTurnContext(), '${templatea()}', undefined);
+                const result = await generator.generate(await getDialogContext(), '${templatea()}', undefined);
                 assert.strictEqual(result, 'from a.lg');
             });
 
             it('"${templateb()}", no data', async () => {
-                const result = await generator.generate(getTurnContext(), '${templateb()}', undefined);
+                const result = await generator.generate(await getDialogContext(), '${templateb()}', undefined);
                 assert.strictEqual(result, 'from b.lg');
             });
 
             it('"${templatec()}", no data', async () => {
-                const result = await generator.generate(getTurnContext(), '${templatec()}', undefined);
+                const result = await generator.generate(await getDialogContext(), '${templatec()}', undefined);
                 assert.strictEqual(result, 'from c.lg');
             });
 
             it('"${greeting()}", no data', async () => {
-                const result = await generator.generate(getTurnContext(), '${greeting()}', undefined);
+                const result = await generator.generate(await getDialogContext(), '${greeting()}', undefined);
                 assert.strictEqual(result, 'hi');
             });    
         });
@@ -139,52 +147,52 @@ describe('LGLanguageGenerator', function() {
         });
 
         it('en-US, "${test()}", no data', async () => {
-            const result1 = await lg.generate(await getTurnContext('en-US'), '${test()}', undefined);
+            const result1 = await lg.generate(await getDialogContext('en-US'), '${test()}', undefined);
             assert.equal(result1, 'english-us');
         });
 
         it('en-GB, "${test()}", no data', async () => {
-            const result2 = await lg.generate(await getTurnContext('en-GB'), '${test()}', undefined);
+            const result2 = await lg.generate(await getDialogContext('en-GB'), '${test()}', undefined);
             assert.equal(result2, 'english-gb');
         });
 
         it('en, "${test()}", no data', async () => {
-            const result3 = await lg.generate(await getTurnContext('en'), '${test()}', undefined);
+            const result3 = await lg.generate(await getDialogContext('en'), '${test()}', undefined);
             assert.equal(result3, 'english');
         });
 
         it('no locale, "${test()}", no data', async () => {
-            const result4 = await lg.generate(await getTurnContext(''), '${test()}', undefined);
+            const result4 = await lg.generate(await getDialogContext(''), '${test()}', undefined);
             assert.equal(result4, 'default');
         });
 
         it('bad locale, "${test()}", no data', async () => {
-            const result5 = await lg.generate(await getTurnContext('foo'), '${test()}', undefined);
+            const result5 = await lg.generate(await getDialogContext('foo'), '${test()}', undefined);
             assert.equal(result5, 'default');
         });
 
         it('en-US, "${test2()}", country data', async () => {
-            const result6 = await lg.generate(await getTurnContext('en-US'), '${test2()}', {country: 'US'});
+            const result6 = await lg.generate(await getDialogContext('en-US'), '${test2()}', {country: 'US'});
             assert.equal(result6, 'english-US');
         });
 
         it('en-GB, "${test2()}", no data', async () => {
-            const result7 = await lg.generate(await getTurnContext('en-GB'), '${test2()}', undefined);
+            const result7 = await lg.generate(await getDialogContext('en-GB'), '${test2()}', undefined);
             assert.equal(result7, 'default2');
         });
 
         it('en, "${test2()}", no data', async () => {
-            const result8 = await lg.generate(await getTurnContext('en'), '${test2()}', undefined);
+            const result8 = await lg.generate(await getDialogContext('en'), '${test2()}', undefined);
             assert.equal(result8, 'default2');
         });
 
         it('no locale, "${test2()}", no data', async () => {
-            const result9 = await lg.generate(await getTurnContext(''), '${test2()}', undefined);
+            const result9 = await lg.generate(await getDialogContext(''), '${test2()}', undefined);
             assert.equal(result9, 'default2');
         });
 
         it('bad locale, "${test2()}", no data', async () => {
-            const result10 = await lg.generate(await getTurnContext('foo'), '${test2()}', undefined);
+            const result10 = await lg.generate(await getDialogContext('foo'), '${test2()}', undefined);
             assert.equal(result10, 'default2');
         });
     });
@@ -208,37 +216,37 @@ describe('LGLanguageGenerator', function() {
         });
 */
         it('en, "${test()}", no data', async () => {
-            const result4 = await lg.generate(await getTurnContext('en', lg), '${test()}', undefined);
+            const result4 = await lg.generate(await getDialogContext('en', lg), '${test()}', undefined);
             assert.equal(result4, 'english');
         });
 
         it('no locale, "${test()}", no data', async () => {
-            const result5 = await lg.generate(await getTurnContext('', lg), '${test()}', undefined);
+            const result5 = await lg.generate(await getDialogContext('', lg), '${test()}', undefined);
             assert.equal(result5, 'default');
         });
 
         it('bad locale, "${test()}", no data', async () => {
-            const result6 = await lg.generate(await getTurnContext('foo', lg), '${test()}', undefined);
+            const result6 = await lg.generate(await getDialogContext('foo', lg), '${test()}', undefined);
             assert.equal(result6, 'default');
         });
 
         it('en-gb, "${test2()}", no data', async () => {
-            const result7 = await lg.generate(await getTurnContext('en-gb', lg), '${test2()}', undefined);
+            const result7 = await lg.generate(await getDialogContext('en-gb', lg), '${test2()}', undefined);
             assert.equal(result7, 'default2');
         });
 
         it('en, "${test2()}", no data', async () => {
-            const result8 = await lg.generate(await getTurnContext('en', lg), '${test2()}', undefined);
+            const result8 = await lg.generate(await getDialogContext('en', lg), '${test2()}', undefined);
             assert.equal(result8, 'default2');
         });
 
         it('no locale, "${test2()}", no data', async () => {
-            const result9 = await lg.generate(await getTurnContext('', lg), '${test2()}', undefined);
+            const result9 = await lg.generate(await getDialogContext('', lg), '${test2()}', undefined);
             assert.equal(result9, 'default2');
         });
 
         it('bad locale, "${test2()}", no data', async () => {
-            const result10 = await lg.generate(await getTurnContext('foo', lg), '${test2()}', undefined);
+            const result10 = await lg.generate(await getDialogContext('foo', lg), '${test2()}', undefined);
             assert.equal(result10, 'default2');
         });
 /*
