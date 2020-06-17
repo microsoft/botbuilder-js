@@ -154,9 +154,6 @@ export class ExpressionType {
     public static readonly SetPathToValue: string = 'setPathToValue';
     public static readonly Merge: string = 'merge';
 
-    // xPath
-    // xml
-
     // URI parsing functions
     public static readonly UriHost: string = 'uriHost';
     public static readonly UriPath: string = 'uriPath';
