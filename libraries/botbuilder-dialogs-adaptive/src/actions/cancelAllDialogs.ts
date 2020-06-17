@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-// import { StringExpression, BoolExpression } from 'adaptive-expressions';
+
 import { BaseCancelAllDialogs } from './baseCancelAllDialogs';
 
 export class CancelAllDialogs<O extends object = {}> extends BaseCancelAllDialogs<O> {

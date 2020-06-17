@@ -11,7 +11,7 @@ export * from './beginDialog';
 export * from './beginSkill';
 export * from './breakLoop';
 export * from './cancelAllDialogs';
-export * from './cancelDialogs';
+export * from './cancelDialog';
 export * from './case';
 export * from './codeAction';
 export * from './continueLoop';
