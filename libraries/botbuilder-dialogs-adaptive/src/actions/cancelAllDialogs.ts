@@ -6,9 +6,9 @@
  * Licensed under the MIT License.
  */
 
-import { BaseCancelAllDialogs } from './baseCancelAllDialogs';
+import { CancelAllDialogsBase } from './cancelAllDialogsBase';
 
-export class CancelAllDialogs<O extends object = {}> extends BaseCancelAllDialogs<O> {
+export class CancelAllDialogs<O extends object = {}> extends CancelAllDialogsBase<O> {
     public constructor();
     public constructor(eventName: string, eventValue?: string);
     public constructor(eventName?: string, eventValue?: string) {

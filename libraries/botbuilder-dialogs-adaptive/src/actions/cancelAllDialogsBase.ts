@@ -9,7 +9,7 @@ import { DialogTurnResult, DialogContext, Dialog, TurnPath, DialogEvents } from 
 import { StringExpression, BoolExpression, ValueExpression } from 'adaptive-expressions';
 
 
-export class BaseCancelAllDialogs<O extends object = {}> extends Dialog<O> {
+export class CancelAllDialogsBase<O extends object = {}> extends Dialog<O> {
     public constructor();
     public constructor(eventName: string, eventValue?: string, isCancelAll?: boolean);
     public constructor(eventName?: string, eventValue?: string, isCancelAll = true) {
@@ -18,7 +18,7 @@ export class BaseCancelAllDialogs<O extends object = {}> extends Dialog<O> {
             this.eventName = new StringExpression(eventName);
         }
         if (eventValue) {
-            this.eventValue = new StringExpression(eventValue);
+            this.eventValue = new ValueExpression(eventValue);
         }
         this.cancelAll = isCancelAll;
 
