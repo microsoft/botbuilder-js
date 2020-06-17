@@ -2903,25 +2903,6 @@ export class ExpressionFunctions {
                 ReturnType.Number,
                 ExpressionFunctions.validateUnary),
             new ExpressionEvaluator(
-                ExpressionType.Ticks,
-                (expr: Expression, state: any, options: Options): {value: any; error: string} => {
-                    let value: any;
-                    let error: string;
-                    let args: any[];
-                    ({args, error} = ExpressionFunctions.evaluateChildren(expr, state, options));
-                    if (!error) {
-                        if (typeof (args[0]) === 'string') {
-                            ({value, error} = ExpressionFunctions.ticks(args[0]));
-                        } else {
-                            error = `${expr} cannot evaluate`;
-                        }
-                    }
-
-                    return {value, error};
-                },
-                ReturnType.Number,
-                ExpressionFunctions.validateUnary),
-            new ExpressionEvaluator(
                 ExpressionType.TicksToDays,
                 (expr: Expression, state: any, options: Options): {value: any; error: string} => {
                     let value: any;
