@@ -61,6 +61,21 @@ export class ExpressionFunctions {
     public static readonly UnixMilliSecondToTicksConstant: bigInt.BigInteger = bigInt('621355968000000000');
 
     /**
+     * ticks of one day
+     */
+    public static readonly TicksPerDay: number = 24 * 60 * 60 * 10000000;
+
+    /**
+     * ticks of one hour
+     */
+    public static readonly TicksPerHour: number = 60 * 60 * 10000000;
+
+    /**
+     * ticks of one minute
+     */
+    public static readonly TicksPerMinute: number = 60 * 10000000;
+
+    /**
      * Constant to convert between ticks and ms.
      */
     public static readonly MillisecondToTickConstant: bigInt.BigInteger = bigInt('10000');
@@ -179,6 +194,15 @@ export class ExpressionFunctions {
     }
 
     /**
+     * Validate 1 or 2 numeric arguments.
+     * @param expression Expression to validate.
+     */
+    public static validateUnaryOrBinaryNumber(expression: Expression): void {
+        ExpressionFunctions.validateArityAndAnyType(expression, 1, 2, ReturnType.Number);
+    }
+
+
+    /**
      * Validate 2 or more than 2 numeric arguments.
      * @param expression Expression to validate.
      */
@@ -200,6 +224,14 @@ export class ExpressionFunctions {
      */
     public static validateUnary(expression: Expression): void {
         ExpressionFunctions.validateArityAndAnyType(expression, 1, 1);
+    }
+
+    /**
+     * Validate there is a single argument.
+     * @param expression Expression to validate.
+     */
+    public static validateUnaryNumber(expression: Expression): void {
+        ExpressionFunctions.validateArityAndAnyType(expression, 1, 1, ReturnType.Number);
     }
 
     /**
@@ -656,6 +688,16 @@ export class ExpressionFunctions {
     public static stringTransform(type: string, func: (arg0: any[]) => any): ExpressionEvaluator {
         return new ExpressionEvaluator(type, ExpressionFunctions.apply(func, ExpressionFunctions.verifyStringOrNull),
             ReturnType.String, ExpressionFunctions.validateUnaryString);
+    }
+
+    /**
+     * Transform a number into another number.
+     * @param type Expression type.
+     * @param func Function to apply.
+     */
+    public static numberTransform(type: string, func: (arg0: any[]) => any): ExpressionEvaluator {
+        return new ExpressionEvaluator(type, ExpressionFunctions.apply(func, ExpressionFunctions.verifyNumber),
+            ReturnType.Number, ExpressionFunctions.validateUnaryNumber);
     }
 
     /**
@@ -1562,6 +1604,8 @@ export class ExpressionFunctions {
         return bufferView;
     }
 
+    private static roundToPrecision = (num: number, digits: number) => Math.round(num * Math.pow(10, digits)) / Math.pow(10, digits);
+
     // DateTime Functions
     private static addToTime(timeStamp: string, interval: number, timeUnit: string, format?: string): {value: any; error: string} {
         let result: string;
@@ -2080,6 +2124,36 @@ export class ExpressionFunctions {
                 ),
                 ReturnType.Array,
                 ExpressionFunctions.validateBinaryNumber
+            ),
+            ExpressionFunctions.numberTransform(ExpressionType.Floor,
+                (args: any[]) => Math.floor(args[0])),
+            ExpressionFunctions.numberTransform(ExpressionType.Ceiling,
+                (args: any[]) => Math.ceil(args[0])),
+            new ExpressionEvaluator(
+                ExpressionType.Round,
+                ExpressionFunctions.applyWithError(
+                    (args: any[]): any => {
+                        let result: any;
+                        let error: string;
+                        if (args.length === 2 && !Number.isInteger(args[1])) {
+                            error = `The second parameter ${ args[1] } must be an integer.`;
+                        }
+
+                        if (!error) {
+                            const digits = args.length === 2 ? args[1] as number : 0;
+                            if (digits < 0 || digits > 15) {
+                                error = `The second parameter ${ args[1] } must be an integer between 0 and 15;`;
+                            } else {
+                                result = this.roundToPrecision(args[0], digits);
+                            }
+                        }
+
+                        return {value: result, error};
+                    },
+                    ExpressionFunctions.verifyNumber
+                ),
+                ReturnType.Number,
+                ExpressionFunctions.validateUnaryOrBinaryNumber
             ),
             new ExpressionEvaluator(
                 ExpressionType.Union,
@@ -2828,6 +2902,106 @@ export class ExpressionFunctions {
                 },
                 ReturnType.Number,
                 ExpressionFunctions.validateUnary),
+            new ExpressionEvaluator(
+                ExpressionType.Ticks,
+                (expr: Expression, state: any, options: Options): {value: any; error: string} => {
+                    let value: any;
+                    let error: string;
+                    let args: any[];
+                    ({args, error} = ExpressionFunctions.evaluateChildren(expr, state, options));
+                    if (!error) {
+                        if (typeof (args[0]) === 'string') {
+                            ({value, error} = ExpressionFunctions.ticks(args[0]));
+                        } else {
+                            error = `${expr} cannot evaluate`;
+                        }
+                    }
+
+                    return {value, error};
+                },
+                ReturnType.Number,
+                ExpressionFunctions.validateUnary),
+            new ExpressionEvaluator(
+                ExpressionType.TicksToDays,
+                (expr: Expression, state: any, options: Options): {value: any; error: string} => {
+                    let value: any;
+                    let error: string;
+                    let args: any[];
+                    ({args, error} = ExpressionFunctions.evaluateChildren(expr, state, options));
+                    if (!error) {
+                        if (Number.isInteger(args[0])) {
+                            value = args[0] / this.TicksPerDay;
+                        } else {
+                            error = `${expr} should contain an integer of ticks`;
+                        }
+                    }
+
+                    return {value, error};
+                },
+                ReturnType.Number,
+                ExpressionFunctions.validateUnaryNumber),
+            new ExpressionEvaluator(
+                ExpressionType.TicksToHours,
+                (expr: Expression, state: any, options: Options): {value: any; error: string} => {
+                    let value: any;
+                    let error: string;
+                    let args: any[];
+                    ({args, error} = ExpressionFunctions.evaluateChildren(expr, state, options));
+                    if (!error) {
+                        if (Number.isInteger(args[0])) {
+                            value = args[0] / this.TicksPerHour;
+                        } else {
+                            error = `${expr} should contain an integer of ticks`;
+                        }
+                    }
+
+                    return {value, error};
+                },
+                ReturnType.Number,
+                ExpressionFunctions.validateUnaryNumber),
+            new ExpressionEvaluator(
+                ExpressionType.TicksToMinutes,
+                (expr: Expression, state: any, options: Options): {value: any; error: string} => {
+                    let value: any;
+                    let error: string;
+                    let args: any[];
+                    ({args, error} = ExpressionFunctions.evaluateChildren(expr, state, options));
+                    if (!error) {
+                        if (Number.isInteger(args[0])) {
+                            value = args[0] / this.TicksPerMinute;
+                        } else {
+                            error = `${expr} should contain an integer of ticks`;
+                        }
+                    }
+
+                    return {value, error};
+                },
+                ReturnType.Number,
+                ExpressionFunctions.validateUnaryNumber),
+            new ExpressionEvaluator(
+                ExpressionType.DateTimeDiff,
+                (expr: Expression, state: any, options: Options): {value: any; error: string} => {
+                    let value: any;
+                    let dateTimeStart: any;
+                    let dateTimeEnd: any;
+                    let error: string;
+                    let args: any[];
+                    ({args, error} = ExpressionFunctions.evaluateChildren(expr, state, options));
+                    if (!error) {
+                        ({value: dateTimeStart, error: error} = this.ticks(args[0]));
+                        if (!error) {
+                            ({value: dateTimeEnd, error: error} = this.ticks(args[1]));
+                        }
+                    }
+
+                    if (!error) {
+                        value = dateTimeStart - dateTimeEnd
+                    }
+
+                    return {value, error};
+                },
+                ReturnType.Number,
+                expr => ExpressionFunctions.validateArityAndAnyType(expr, 2, 2, ReturnType.String)),
             new ExpressionEvaluator(
                 ExpressionType.IsDefinite,
                 (expr: Expression, state: any, options: Options): {value: any; error: string} => {
