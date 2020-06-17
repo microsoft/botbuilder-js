@@ -3358,8 +3358,8 @@ export class ExpressionFunctions {
             new ExpressionEvaluator(ExpressionType.Merge, 
                 ExpressionFunctions.applySequenceWithError(
                     (args: any[]): any => {
-                        let value: object = undefined;
-                        let error: string = undefined;
+                        let value: any;
+                        let error: string;
                         if ((typeof(args[0]) === 'object' && !Array.isArray(args[0])) && (typeof(args[1]) === 'object' && !Array.isArray(args[1]))) {
                             Object.assign(args[0], args[1]);
                             value = args[0];
