@@ -8,14 +8,14 @@
 // import { StringExpression, BoolExpression } from 'adaptive-expressions';
 import { BaseCancelAllDialogs } from './baseCancelAllDialogs';
 
-export class CancelAllDialogs<O extends object = {}> extends BaseCancelAllDialogs<O> {
+export class CancelDialogs<O extends object = {}> extends BaseCancelAllDialogs<O> {
     public constructor();
     public constructor(eventName: string, eventValue?: string);
     public constructor(eventName?: string, eventValue?: string) {
-        super(eventName, eventValue, true);
+        super(eventName, eventValue, false);
     }
 
     // protected onComputeId(): string {
-    //     return `CancelAllDialogs[${ this.eventName ? this.eventName.toString() : '' }]`;
+    //     return `CancelDialogs[${ this.eventName ? this.eventName.toString() : '' }]`;
     // }
 }

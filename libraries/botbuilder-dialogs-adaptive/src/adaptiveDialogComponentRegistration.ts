@@ -10,7 +10,7 @@ import { ComponentRegistration, ResourceExplorer, TypeBuilder, BuilderRegistrati
 import { Choice, ListStyle, ChoiceFactoryOptions, FindChoicesOptions } from 'botbuilder-dialogs';
 import { AdaptiveTypeBuilder } from './adaptiveTypeBuilder';
 import { AdaptiveDialog } from './adaptiveDialog';
-import { BeginDialog, BeginSkill, BreakLoop, CancelAllDialogs, ContinueLoop, DeleteActivity, DeleteProperties, DeleteProperty, EditActions, EditArray, EmitEvent, EndDialog, EndTurn, ForEach, ForEachPage, GetActivityMembers, GetConversationMembers, GotoAction, IfCondition, LogAction, RepeatDialog, ReplaceDialog, SendActivity, SetProperties, SetProperty, SignOutUser, SwitchCondition, TraceActivity, UpdateActivity, ArrayChangeType, PropertyAssignmentConverter, HttpRequest, HttpHeadersConverter, ResponsesTypes } from './actions';
+import { BeginDialog, BeginSkill, BreakLoop, CancelAllDialogs, CancelDialogs, ContinueLoop, DeleteActivity, DeleteProperties, DeleteProperty, EditActions, EditArray, EmitEvent, EndDialog, EndTurn, ForEach, ForEachPage, GetActivityMembers, GetConversationMembers, GotoAction, IfCondition, LogAction, RepeatDialog, ReplaceDialog, SendActivity, SetProperties, SetProperty, SignOutUser, SwitchCondition, TraceActivity, UpdateActivity, ArrayChangeType, PropertyAssignmentConverter, HttpRequest, HttpHeadersConverter, ResponsesTypes } from './actions';
 import { AttachmentInput, ChoiceInput, ConfirmInput, DateTimeInput, NumberInput, OAuthInput, TextInput, AttachmentOutputFormat, ChoiceOutputFormat } from './input';
 import { OnActivity, OnAssignEntity, OnBeginDialog, OnCancelDialog, OnChooseEntity, OnChooseIntent, OnChooseProperty, OnClearProperty, OnCondition, OnConversationUpdateActivity, OnCustomEvent, OnDialogEvent, OnEndOfActions, OnEndOfConversationActivity, OnError, OnEventActivity, OnHandoffActivity, OnIntent, OnInvokeActivity, OnMessageActivity, OnMessageDeleteActivity, OnMessageReactionActivity, OnMessageUpdateActivity, OnQnAMatch, OnRepromptDialog, OnTypingActivity, OnUnknownIntent } from './conditions';
 import { CrossTrainedRecognizerSet, MultiLanguageRecognizer, RecognizerSet, ValueRecognizer, RegexRecognizer, IntentPatternConverter } from './recognizers';
@@ -80,6 +80,11 @@ export class AdaptiveDialogComponentRegistration implements ComponentRegistratio
             'disabled': new BoolExpressionConverter()
         }));
         this.registerBuilder('Microsoft.CancelAllDialogs', new AdaptiveTypeBuilder(CancelAllDialogs, this._resourceExplorer, {
+            'eventName': new StringExpressionConverter(),
+            'eventValue': new StringExpressionConverter(),
+            'disabled': new BoolExpressionConverter()
+        }));
+        this.registerBuilder('Microsoft.CancelDialogs', new AdaptiveTypeBuilder(CancelDialogs, this._resourceExplorer, {
             'eventName': new StringExpressionConverter(),
             'eventValue': new StringExpressionConverter(),
             'disabled': new BoolExpressionConverter()
