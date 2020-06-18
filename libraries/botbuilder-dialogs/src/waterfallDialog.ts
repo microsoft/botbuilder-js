@@ -76,7 +76,7 @@ export class WaterfallDialog<O extends object = {}> extends Dialog<O> {
      * Creates a new waterfall dialog containing the given array of steps.
      *
      * @remarks
-     * See the [addStep()](#addstep) function for details on creating a valid step function.
+     * See the [addStep()](xref:botbuilder-dialogs.WaterfallDialog.addStep) function for details on creating a valid step function.
      * @param dialogId Unique ID of the dialog within the component or set its being added to.
      * @param steps (Optional) array of asynchronous waterfall step functions.
      */
@@ -191,13 +191,13 @@ export class WaterfallDialog<O extends object = {}> extends Dialog<O> {
      * @param step Context object for the waterfall step to execute.
      */
     protected async onStep(step: WaterfallStepContext<O>): Promise<DialogTurnResult> {
-        // Log Waterfall Step event. 
+        // Log Waterfall Step event.
         var stepName = this.waterfallStepName(step.index);
 
         const state: WaterfallDialogState = step.activeDialog.state as WaterfallDialogState;
 
-        var properties = 
-        { 
+        var properties =
+        {
             'DialogId': this.id,
             'InstanceId': state.values['instanceId'],
             'StepName': stepName,
@@ -276,7 +276,7 @@ export class WaterfallDialog<O extends object = {}> extends Dialog<O> {
                 }
             }
         }
-        return stepName;        
+        return stepName;
     }
 
 }
@@ -290,11 +290,11 @@ interface WaterfallDialogState {
     values: object;
 }
 
-/* 
- * This function generates a GUID-like random number that should be sufficient for our purposes of tracking 
+/*
+ * This function generates a GUID-like random number that should be sufficient for our purposes of tracking
  * instances of a given waterfall dialog.
  * Source: https://stackoverflow.com/questions/105034/create-guid-uuid-in-javascript
- */  
+ */
 function generate_guid(): string {
     function s4(): string {
         return Math.floor((1 + Math.random()) * 0x10000)

@@ -32,7 +32,7 @@ export interface DialogDependencies {
  * const dialogs = new DialogSet(dialogState);
  * ```
  *
- * The bot can add dialogs or prompts to the set using the [add()](#add) method:
+ * The bot can add dialogs or prompts to the set using the [add()](xref:botbuilder-dialogs.DialogSet.add) method:
  *
  * ```JavaScript
  * class GreetingDialog extends Dialog {
@@ -45,7 +45,7 @@ export interface DialogDependencies {
  * dialogs.add(new GreetingDialog('greeting'));
  * ```
  *
- * To interact with the sets dialogs you can call [createContext()](#createcontext) with the
+ * To interact with the sets dialogs you can call [createContext()](xref:botbuilder-dialogs.DialogSet.createContext) with the
  * current `TurnContext`. That will create a `DialogContext` that can be used to start or continue
  * execution of the sets dialogs:
  *
@@ -72,7 +72,7 @@ export class DialogSet {
      * Creates a new DialogSet instance.
      *
      * @remarks
-     * If the `dialogState` property is not passed in, calls to [createContext()](#createcontext)
+     * If the `dialogState` property is not passed in, calls to [createContext()](xref:botbuilder-dialogs.DialogSet.createContext)
      * will return an error.  You will need to create a `DialogContext` for the set manually and
      * pass in your own state object for persisting the sets dialog stack:
      *
@@ -87,7 +87,7 @@ export class DialogSet {
 
     /**
      * Returns a 32-bit hash of the all the `Dialog.version` values in the set.
-     * 
+     *
      * @remarks
      * This hash is persisted to state storage and used to detect changes to a dialog set.
      */
@@ -110,8 +110,8 @@ export class DialogSet {
      * Adds a new dialog or prompt to the set.
      *
      * @remarks
-     * If the `Dialog.id` being added already exists in the set, the dialogs id will be updated to 
-     * include a suffix which makes it unique. So adding 2 dialogs named "duplicate" to the set 
+     * If the `Dialog.id` being added already exists in the set, the dialogs id will be updated to
+     * include a suffix which makes it unique. So adding 2 dialogs named "duplicate" to the set
      * would result in the first one having an id of "duplicate" and the second one having an id
      * of "duplicate2".
      * @param dialog The dialog or prompt to add.
@@ -169,7 +169,7 @@ export class DialogSet {
     }
 
     /**
-     * Finds a dialog that was previously added to the set using [add()](#add).
+     * Finds a dialog that was previously added to the set using [add()](xref:botbuilder-dialogs.DialogSet.add).
      *
      * @remarks
      * This example finds a dialog named "greeting":
@@ -183,14 +183,14 @@ export class DialogSet {
         return this.dialogs.hasOwnProperty(dialogId) ? this.dialogs[dialogId] : undefined;
     }
 
-    /** 
+    /**
      * Set the telemetry client for this dialog set and apply it to all current dialogs.
      */
     public get telemetryClient(): BotTelemetryClient {
         return this._telemetryClient;
     }
 
-    /** 
+    /**
      * Set the telemetry client for this dialog set and apply it to all current dialogs.
      * Future dialogs added to the set will also inherit this client.
      */

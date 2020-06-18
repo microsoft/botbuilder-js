@@ -18,7 +18,7 @@ const NO_KEY: string = `ConversationState: overridden getStorageKey method did n
  * @remarks
  * Each conversation your bot has with a user or group will have its own isolated storage object
  * that can be used to persist conversation tracking information between turns of the conversation.
- * This state information can be reset at any point by calling [clear()](#clear).
+ * This state information can be reset at any point by calling [clear()](xref:botbuilder-core.ConversationState.clear).
  *
  * ```JavaScript
  * const { ConversationState, MemoryStorage } = require('botbuilder');
