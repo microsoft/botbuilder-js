@@ -372,9 +372,13 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
                 case AdaptiveEvents.recognizeUtterance:
                     if (activity.type == ActivityTypes.Message) {
                         // Recognize utterance
-                        const recognized = await this.onRecognize(actionContext, activity);
+                        const recognizedResult = await this.onRecognize(actionContext, activity);
                         // TODO figure out way to not use turn state to pass this value back to caller.
-                        actionContext.state.setValue(TurnPath.recognized, recognized);
+                        actionContext.state.setValue(TurnPath.recognized, recognizedResult);
+                        const { intent, score } = getTopScoringIntent(recognizedResult);
+                        actionContext.state.setValue(TurnPath.topIntent, intent);
+                        actionContext.state.setValue(TurnPath.topScore, score);
+                        actionContext.state.setValue(DialogPath.lastIntent, intent);
                         handled = true;
                     }
                     break;

@@ -22,4 +22,8 @@ describe('LGGeneratorTests', function() {
     it('No Language Generator', async () => {
         await testRunner.runTestScript('NoLanguageGeneration');
     });
+
+    it('Customize Language Policy', async () => {
+        await testRunner.runTestScript('CustomizeLanguagePolicy');
+    });
 });
