@@ -24,7 +24,6 @@ export * from './recognizers';
 export * from './selectors';
 export * from './templates';
 export * from './adaptiveDialog';
-export * from './languageGenerationMiddleware';
 export * from './languageGenerator';
 export * from './languagePolicy';
 export * from './languageResourceLoader';
