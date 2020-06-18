@@ -15,7 +15,6 @@ export * from './onChooseProperty';
 export * from './onClearProperty';
 export * from './onCondition';
 export * from './onConversationUpdateActivity';
-export * from './onCustomEvent';
 export * from './onDialogEvent';
 export * from './onEndOfActions';
 export * from './onEndOfConversationActivity';
