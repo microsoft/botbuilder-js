@@ -27,18 +27,16 @@ export class LanguageGeneratorManager {
 
     public constructor(resourceManager: ResourceExplorer) {
         this._resourceExporer = resourceManager;
+        this._multiLanguageResources = LanguageResourceLoader.groupByLocale(this._resourceExporer);
 
-    }
-    // load all LG resources
-    public async loadResources(): Promise<void> {
-        const resources = await this._resourceExporer.getResources('lg');
+        // load all LG resources
+        const resources = this._resourceExporer.getResources('lg');
         for (const resource of resources) {
-            const generator = await this.getTemplateEngineLanguageGenerator(resource);
-            this.languageGenerator.set(resource.id(), generator);
+            this.languageGenerators.set(resource.id(), this.getTemplateEngineLanguageGenerator(resource));
         }
     }
     
-    public languageGenerator: Map<string, LanguageGenerator> = new Map<string, LanguageGenerator>();
+    public languageGenerators: Map<string, LanguageGenerator> = new Map<string, LanguageGenerator>();
 
     public static resourceExplorerResolver(locale: string, resourceMapping: Map<string, IResource[]>): ImportResolverDelegate {
         return  (source: string, id: string): {content: string; id: string} => {
@@ -63,16 +61,13 @@ export class LanguageGeneratorManager {
     //         this._languageGenerator[resource.id()] = this.getTemplateEngineLanguageGenerator(resource))
     // }
 
-    private async getTemplateEngineLanguageGenerator(resource: IResource): Promise<TemplateEngineLanguageGenerator> {
-        this._multiLanguageResources = await LanguageResourceLoader.groupByLocale(this._resourceExporer);
+    private getTemplateEngineLanguageGenerator(resource: IResource): TemplateEngineLanguageGenerator {
         const fileResource = resource as FileResource;
         if (fileResource !== undefined) {
-            const templateEngineLanguageGenerator = new TemplateEngineLanguageGenerator(fileResource.fullName, this._multiLanguageResources);
-            return Promise.resolve(templateEngineLanguageGenerator);
+            return new TemplateEngineLanguageGenerator(fileResource.fullName, this._multiLanguageResources);
         } else {
-            const text = await resource.readText();
-            const templateEngineLanguageGenerator = new TemplateEngineLanguageGenerator(text, resource.id(), this._multiLanguageResources);
-            return Promise.resolve(templateEngineLanguageGenerator);
+            const text = resource.readText();
+            return new TemplateEngineLanguageGenerator(text, resource.id(), this._multiLanguageResources);
         }
     }
 }
