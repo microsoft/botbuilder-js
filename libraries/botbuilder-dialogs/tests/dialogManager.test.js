@@ -20,6 +20,7 @@ const {
     DialogEvents
 } = require('../');
 const { AuthConstants } = require('../lib/prompts/skillsHelpers');
+const { assert } = require('console');
 
 const FlowTestCase = {
     RootBotOnly: 'RootBotOnly',
@@ -224,5 +225,15 @@ describe('DialogManager', function() {
         await testFlow.send({ type: ActivityTypes.Event, name: DialogEvents.repromptDialog })
             .startTest();
         strictEqual(_dmTurnResult.turnResult.status, DialogTurnStatus.empty);
+    });
+
+    it('Gets or sets root dialog', () => {
+        const dm = new DialogManager();
+        const rootDialog = new SimpleComponentDialog();
+        dm.rootDialog = rootDialog;
+        assert(dm.dialogs.find(rootDialog.id));
+        strictEqual(dm.rootDialog.id, rootDialog.id);
+        dm.rootDialog = undefined;
+        strictEqual(dm.rootDialog, undefined);
     });
 });
