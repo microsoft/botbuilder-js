@@ -215,11 +215,10 @@ export class DialogManager extends Configurable {
 
     private async handleSkillOnTurn(dc: DialogContext): Promise<DialogTurnResult> {
         // The bot is running as a skill.
-        let turnContext = dc.context;
+        const turnContext = dc.context;
 
         // Process remote cancellation.
-        if (turnContext.activity.type == ActivityTypes.EndOfConversation && dc.activeDialog && isFromParentToSkill(turnContext))
-        {
+        if (turnContext.activity.type === ActivityTypes.EndOfConversation && dc.activeDialog && isFromParentToSkill(turnContext)) {
             // Handle remote cancellation request from parent.
             const activeDialogContext = getActiveDialogContext(dc);
 
@@ -232,26 +231,19 @@ export class DialogManager extends Configurable {
 
         // Handle reprompt
         // Process a reprompt event sent from the parent.
-        if (turnContext.activity.type == ActivityTypes.Event && turnContext.activity.name == DialogEvents.repromptDialog)
-        {
-            if (!dc.activeDialog)
-            {
-                return {
-                    status: DialogTurnStatus.empty
-                };
+        if (turnContext.activity.type === ActivityTypes.Event && turnContext.activity.name == DialogEvents.repromptDialog) {
+            if (!dc.activeDialog) {
+                return { status: DialogTurnStatus.empty };
             }
 
             await dc.repromptDialog();
-            return {
-                status: DialogTurnStatus.waiting
-            };
+            return { status: DialogTurnStatus.waiting };
         }
 
         // Continue execution
         // - This will apply any queued up interruptions and execute the current/next step(s).
         var turnResult = await dc.continueDialog();
-        if (turnResult.status == DialogTurnStatus.empty)
-        {
+        if (turnResult.status == DialogTurnStatus.empty) {
             // restart root dialog
             var startMessageText = `Starting ${ this._rootDialogId }.`;
             await turnContext.sendTraceActivity('DialogManager.onTurn()', undefined, undefined, startMessageText);
@@ -260,8 +252,7 @@ export class DialogManager extends Configurable {
 
         await sendStateSnapshotTrace(dc, 'Skill State');
 
-        if (shouldSendEndOfConversationToParent(turnContext, turnResult))
-        {
+        if (shouldSendEndOfConversationToParent(turnContext, turnResult)) {
             var endMessageText = `Dialog ${ this._rootDialogId } has **completed**. Sending EndOfConversation.`;
             await turnContext.sendTraceActivity('DialogManager.onTurn()', turnResult.result, undefined, endMessageText);
 
@@ -277,19 +268,15 @@ export class DialogManager extends Configurable {
         let turnResult: DialogTurnResult;
 
         // the bot is running as a root bot. 
-        if (!dc.activeDialog)
-        {
+        if (!dc.activeDialog) {
             // start root dialog
             turnResult = await dc.beginDialog(this._rootDialogId);
-        }
-        else
-        {
+        } else {
             // Continue execution
             // - This will apply any queued up interruptions and execute the current/next step(s).
             turnResult = await dc.continueDialog();
 
-            if (turnResult.status == DialogTurnStatus.empty)
-            {
+            if (turnResult.status == DialogTurnStatus.empty) {
                 // restart root dialog
                 turnResult = await dc.beginDialog(this._rootDialogId);
             }
