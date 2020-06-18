@@ -1,10 +1,11 @@
+/* eslint-disable @typescript-eslint/explicit-function-return-type */
 import 'mocha';
 import * as path from 'path';
 import { TestRunner } from './testing';
 
-describe('ActionScopeTests', function() {
+describe('LGGeneratorTests', function() {
     this.timeout(5000);
-    const testRunner = new TestRunner(path.join(__dirname,  '../resources/LGGeneratorTests'));
+    const testRunner = new TestRunner(path.join(__dirname, '../resources/LGGeneratorTests'));
 
     it('MultiLandE2E', async () => {
         await testRunner.runTestScript('MultiLangE2E');
