@@ -5,6 +5,9 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
+import './languageGeneratorExtensions';
+import './resourceExtensions';
+
 export * from './actions';
 export * from './actionContext';
 export * from './adaptiveDialog';
@@ -30,4 +33,3 @@ export * from './propertySchema';
 export * from './schemaHelper';
 export * from './template';
 export * from './triggerSelector';
-
