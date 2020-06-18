@@ -13,22 +13,37 @@ import { Expression } from '../expression';
  */
 export class ExpressionProperty<T> {
     private defaultValue: T;
+    private expression: Expression;
 
     public constructor(value?: T | string | Expression, defaultValue?: T) {
         this.defaultValue = defaultValue;
         this.setValue(value);
     }
 
+    /**
+     * Gets or sets the raw value of the expression property.
+     */
     public value: T;
 
-    public expression: Expression;
+    /**
+     * Getes or sets the expression text to evaluate to get the value.
+     */
+    public expressionText: string;
 
     public toString(): string {
-        return this.expression ? `=${ this.expression.toString() }` : (this.value ? this.value.toString() : '');
+        if (this.expressionText) {
+            return `=${ this.expressionText.replace(/^=/, '') }`;
+        }
+        return this.value ? this.value.toString() : '';
     }
 
     public toExpression(): Expression {
         if (this.expression) {
+            return this.expression;
+        }
+
+        if (this.expressionText) {
+            this.expression = Expression.parse(this.expressionText.replace(/^=/, ''));
             return this.expression;
         }
 
@@ -37,14 +52,17 @@ export class ExpressionProperty<T> {
             case 'string':
             case 'number':
             case 'boolean':
-                return Expression.parse(this.value.toString());
+                this.expression = Expression.parse(this.value.toString());
+                break;
             default:
                 if (this.value == undefined || this.value == null) {
-                    return Expression.parse('null');
+                    this.expression = Expression.parse('null');
                 } else {
-                    return Expression.parse(`json(${ JSON.stringify(this.value) })`);
+                    this.expression = Expression.parse(`json(${ JSON.stringify(this.value) })`);
                 }
+                break;
         }
+        return this.expression;
     }
 
     /**
@@ -67,6 +85,10 @@ export class ExpressionProperty<T> {
      * @returns the value or an error.
      */
     public tryGetValue(data: object): { value: T; error: Error } {
+        if (!this.expression && this.expressionText) {
+            this.expression = Expression.parse(this.expressionText.replace(/^=/, ''));
+        }
+
         if (this.expression) {
             return this.expression.tryEvaluate(data) as any;
         }
@@ -77,12 +99,13 @@ export class ExpressionProperty<T> {
     public setValue(value: T | string | Expression): void {
         this.value = this.defaultValue;
         this.expression = undefined;
+        this.expressionText = undefined;
 
         if (typeof value == 'string') {
-            if (value.startsWith('=')) { value = value.substr(1); }
-            this.expression = Expression.parse(value);
+            this.expressionText = value.replace(/^=/, '');
         } else if (value instanceof Expression) {
             this.expression = value;
+            this.expressionText = value.toString();
         } else if (value !== undefined) {
             this.value = value;
         }
