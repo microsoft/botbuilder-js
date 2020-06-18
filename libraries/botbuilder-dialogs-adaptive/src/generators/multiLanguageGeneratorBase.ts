@@ -9,6 +9,7 @@
 import { DialogContext } from 'botbuilder-dialogs';
 import { LanguageGenerator } from '../languageGenerator';
 import { LanguagePolicy } from '../languagePolicy';
+import { languagePolicyKey } from '../languageGeneratorExtensions';
 /**
  * Class which manages cache of all LG resources from a ResourceExplorer. 
  * This class automatically updates the cache when resource change events occure.
@@ -30,7 +31,7 @@ export abstract class MultiLanguageGeneratorBase implements LanguageGenerator{
         // 2. shared policy in turnContext
         // 3. default policy
         if (!this.languagePolicy) {
-            this.languagePolicy = dialogContext.context.turnState.get('languagePolicy');
+            this.languagePolicy = dialogContext.services.get(languagePolicyKey);
             if (!this.languagePolicy) {
                 this.languagePolicy = LanguagePolicy.defaultPolicy;
             }
