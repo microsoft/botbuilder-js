@@ -10,6 +10,7 @@ import { DialogContext } from 'botbuilder-dialogs';
 import { Activity, ActivityFactory, MessageFactory } from 'botbuilder-core';
 import { TemplateInterface } from '../template';
 import { LanguageGenerator } from '../languageGenerator';
+import { languageGeneratorKey } from '../languageGeneratorExtensions';
 
 export class ActivityTemplate implements TemplateInterface<Partial<Activity>> {
     public template: string;
@@ -20,7 +21,7 @@ export class ActivityTemplate implements TemplateInterface<Partial<Activity>> {
 
     public async bind(dialogContext: DialogContext, data: object): Promise<Partial<Activity>> {
         if(this.template) {
-            const languageGenerator: LanguageGenerator = dialogContext.context.turnState.get('LanguageGenerator');
+            const languageGenerator: LanguageGenerator = dialogContext.services.get(languageGeneratorKey);
             if (languageGenerator) {
                 const lgStringResult = await languageGenerator.generate(dialogContext, this.template, data);
                 const result = ActivityFactory.fromObject(lgStringResult);

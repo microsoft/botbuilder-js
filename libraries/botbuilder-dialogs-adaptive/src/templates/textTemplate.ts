@@ -1,6 +1,7 @@
 import { DialogContext } from 'botbuilder-dialogs';
 import { TemplateInterface } from '../template';
 import { LanguageGenerator } from '../languageGenerator';
+import { languageGeneratorKey } from '../languageGeneratorExtensions';
 
 export class TextTemplate implements TemplateInterface<string> {
 
@@ -15,7 +16,7 @@ export class TextTemplate implements TemplateInterface<string> {
             throw new Error(`ArgumentNullException: ${ this.template }`);
         }
 
-        const languageGenerator: LanguageGenerator = dialogContext.context.turnState.get('LanguageGenerator');
+        const languageGenerator: LanguageGenerator = dialogContext.services.get(languageGeneratorKey);
         if (languageGenerator !== undefined) {
             const result = languageGenerator.generate(dialogContext, this.template, data);
             return Promise.resolve(result);

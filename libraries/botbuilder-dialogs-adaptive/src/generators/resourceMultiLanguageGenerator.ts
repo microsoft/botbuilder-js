@@ -10,6 +10,7 @@ import { DialogContext } from 'botbuilder-dialogs';
 import { MultiLanguageGeneratorBase } from './multiLanguageGeneratorBase';
 import { LanguageGenerator } from '../languageGenerator';
 import { LanguageGeneratorManager } from './languageGeneratorManager';
+import { languageGeneratorManagerKey } from '../languageGeneratorExtensions';
 
 /**
  * Initializes a new instance of the ResourceMultiLanguageGenerator class.
@@ -23,7 +24,7 @@ export class ResourceMultiLanguageGenerator extends MultiLanguageGeneratorBase {
     }
 
     public tryGetGenerator(dialogContext: DialogContext, locale: string): {exist: boolean; result: LanguageGenerator} {
-        const lgm: LanguageGeneratorManager = dialogContext.context.turnState.get('LanguageGeneratorManager');
+        const lgm: LanguageGeneratorManager = dialogContext.services.get(languageGeneratorManagerKey);
         const resourceId = (locale === undefined || locale === '')? this.resourceId : this.resourceId.replace('.lg', `.${ locale }.lg`);
         if (lgm.languageGenerator.has(resourceId)) {
             return {exist: true, result: lgm.languageGenerator.get(resourceId)};
