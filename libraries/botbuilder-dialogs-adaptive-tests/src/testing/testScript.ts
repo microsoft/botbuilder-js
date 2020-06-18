@@ -55,8 +55,8 @@ export class TestScript {
         const bot = new DialogManager(this.dialog.value);
         bot.conversationState = new ConversationState(new MemoryStorage());
         bot.userState = new UserState(new MemoryStorage());
-        bot.useResourceExplorer(resourceExplorer);
-        await bot.useLanguageGeneration();
+        bot.useResourceExplorer(resourceExplorer)
+            .useLanguageGeneration();
 
         for (let i = 0; i < this.script.length; i++) {
             const testAction = this.script[i];
