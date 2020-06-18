@@ -8,6 +8,7 @@
 import { MemoryStorage, UserState, ConversationState } from 'botbuilder-core';
 import { DialogManager } from 'botbuilder-dialogs';
 import { DialogExpression } from 'botbuilder-dialogs-adaptive';
+import { ResourceExplorer } from 'botbuilder-dialogs-declarative';
 import { TestAction } from './testAction';
 import { AdaptiveTestAdapter } from './adaptiveTestAdapter';
 
@@ -43,7 +44,7 @@ export class TestScript {
      * @param testName Name of the test
      * @param testAdapter (Optional) Test adapter
      */
-    public async execute(testName?: string, testAdapter?: AdaptiveTestAdapter): Promise<void> {
+    public async execute(resourceExplorer: ResourceExplorer, testName?: string, testAdapter?: AdaptiveTestAdapter): Promise<void> {
         if (!testAdapter) {
             testAdapter = new AdaptiveTestAdapter(AdaptiveTestAdapter.createConversation(testName));
         }
@@ -54,6 +55,8 @@ export class TestScript {
         const bot = new DialogManager(this.dialog.value);
         bot.conversationState = new ConversationState(new MemoryStorage());
         bot.userState = new UserState(new MemoryStorage());
+        bot.useResourceExplorer(resourceExplorer);
+        await bot.useLanguageGeneration();
 
         for (let i = 0; i < this.script.length; i++) {
             const testAction = this.script[i];
