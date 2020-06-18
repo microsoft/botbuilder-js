@@ -12,14 +12,13 @@ const { DialogContext, DialogSet } = require('botbuilder-dialogs');
 const { languageGeneratorKey, languageGeneratorManagerKey } = require('../lib/languageGeneratorExtensions');
 
 const resourceExplorer = new ResourceExplorer().loadProject(path.join(__dirname, 'lg'), [], false);
+const languageGeneratorManager = new LanguageGeneratorManager(resourceExplorer);
 
-function getDialogContext(locale, lgm, generator) {
+function getDialogContext(locale, generator) {
     const testAdapter = new TestAdapter();
     const turnContext = new TurnContext(testAdapter, { locale: locale, text: '' });
     const dialogContext = new DialogContext(new DialogSet(), turnContext, { dialogStack: [] });
-    if (lgm) {
-        dialogContext.services.set(languageGeneratorManagerKey, lgm);
-    }
+    dialogContext.services.set(languageGeneratorManagerKey, languageGeneratorManager);
     if (generator) {
         dialogContext.services.set(languageGeneratorKey, generator);
     }
@@ -29,23 +28,15 @@ function getDialogContext(locale, lgm, generator) {
 describe('LGLanguageGenerator', function() {
     this.timeout(10000);
 
-    let lgm;
-    this.beforeAll(async function() {
-        lgm = new LanguageGeneratorManager(resourceExplorer);
-        await lgm.loadResources();
-    });
-
     it('TestNotFoundTemplate', async function() {
         const lg = new TemplateEngineLanguageGenerator();
-        assert.throws(() => {lg.generate(getDialogContext(undefined, lgm), '${tesdfdfsst()}', undefined);}, Error);
+        assert.throws(() => {lg.generate(getDialogContext(), '${tesdfdfsst()}', undefined);}, Error);
     });
 
     describe('TestMultiLangImport', () => {
         let lgResourceGroup;
-        let dialogContext;
         this.beforeAll(async function() {
             lgResourceGroup = await LanguageResourceLoader.groupByLocale(resourceExplorer);
-            dialogContext = getDialogContext(undefined, lgm);
         });
         describe('Test MultiLang Import with specified locale', async function() {
             let generator;
@@ -55,22 +46,22 @@ describe('LGLanguageGenerator', function() {
             });
 
             it('"${templatea()}", no data', async () => {
-                const result = await generator.generate(dialogContext, '${templatea()}', undefined);
+                const result = await generator.generate(getDialogContext(), '${templatea()}', undefined);
                 assert.strictEqual(result, 'from a.en-us.lg');
             });
 
             it('"${templateb()}", no data', async () => {
-                const result = await generator.generate(dialogContext, '${templateb()}', undefined);
+                const result = await generator.generate(getDialogContext(), '${templateb()}', undefined);
                 assert.strictEqual(result, 'from b.en-us.lg');
             });
 
             it('"${templatec()}", no data', async () => {
-                const result = await generator.generate(dialogContext, '${templatec()}', undefined);
+                const result = await generator.generate(getDialogContext(), '${templatec()}', undefined);
                 assert.strictEqual(result, 'from c.en.lg');
             });
 
             it('should throw for missing template: "${greeting()}", no data', async () => {
-                assert.throws(() => {generator.generate(dialogContext, '${greeting()}', undefined);});
+                assert.throws(() => {generator.generate(getDialogContext(), '${greeting()}', undefined);});
             });       
         });
         
@@ -82,22 +73,22 @@ describe('LGLanguageGenerator', function() {
             });
 
             it('"${templatea()}", no data', async () => {
-                const result = await generator.generate(dialogContext, '${templatea()}', undefined);
+                const result = await generator.generate(getDialogContext(), '${templatea()}', undefined);
                 assert.strictEqual(result, 'from a.lg');
             });
 
             it('"${templateb()}", no data', async () => {
-                const result = await generator.generate(dialogContext, '${templateb()}', undefined);
+                const result = await generator.generate(getDialogContext(), '${templateb()}', undefined);
                 assert.strictEqual(result, 'from b.lg');
             });
 
             it('"${templatec()}", no data', async () => {
-                const result = await generator.generate(dialogContext, '${templatec()}', undefined);
+                const result = await generator.generate(getDialogContext(), '${templatec()}', undefined);
                 assert.strictEqual(result, 'from c.lg');
             });
 
             it('"${greeting()}", no data', async () => {
-                const result = await generator.generate(dialogContext, '${greeting()}', undefined);
+                const result = await generator.generate(getDialogContext(), '${greeting()}', undefined);
                 assert.strictEqual(result, 'hi');
             });    
         });
@@ -136,52 +127,52 @@ describe('LGLanguageGenerator', function() {
         });
 
         it('en-US, "${test()}", no data', async () => {
-            const result1 = await lg.generate(getDialogContext('en-US', lgm), '${test()}', undefined);
+            const result1 = await lg.generate(getDialogContext('en-US'), '${test()}', undefined);
             assert.equal(result1, 'english-us');
         });
 
         it('en-GB, "${test()}", no data', async () => {
-            const result2 = await lg.generate(getDialogContext('en-GB', lgm), '${test()}', undefined);
+            const result2 = await lg.generate(getDialogContext('en-GB'), '${test()}', undefined);
             assert.equal(result2, 'english-gb');
         });
 
         it('en, "${test()}", no data', async () => {
-            const result3 = await lg.generate(getDialogContext('en', lgm), '${test()}', undefined);
+            const result3 = await lg.generate(getDialogContext('en'), '${test()}', undefined);
             assert.equal(result3, 'english');
         });
 
         it('no locale, "${test()}", no data', async () => {
-            const result4 = await lg.generate(getDialogContext('', lgm), '${test()}', undefined);
+            const result4 = await lg.generate(getDialogContext(''), '${test()}', undefined);
             assert.equal(result4, 'default');
         });
 
         it('bad locale, "${test()}", no data', async () => {
-            const result5 = await lg.generate(getDialogContext('foo', lgm), '${test()}', undefined);
+            const result5 = await lg.generate(getDialogContext('foo'), '${test()}', undefined);
             assert.equal(result5, 'default');
         });
 
         it('en-US, "${test2()}", country data', async () => {
-            const result6 = await lg.generate(getDialogContext('en-US', lgm), '${test2()}', {country: 'US'});
+            const result6 = await lg.generate(getDialogContext('en-US'), '${test2()}', {country: 'US'});
             assert.equal(result6, 'english-US');
         });
 
         it('en-GB, "${test2()}", no data', async () => {
-            const result7 = await lg.generate(getDialogContext('en-GB', lgm), '${test2()}', undefined);
+            const result7 = await lg.generate(getDialogContext('en-GB'), '${test2()}', undefined);
             assert.equal(result7, 'default2');
         });
 
         it('en, "${test2()}", no data', async () => {
-            const result8 = await lg.generate(getDialogContext('en', lgm), '${test2()}', undefined);
+            const result8 = await lg.generate(getDialogContext('en'), '${test2()}', undefined);
             assert.equal(result8, 'default2');
         });
 
         it('no locale, "${test2()}", no data', async () => {
-            const result9 = await lg.generate(getDialogContext('', lgm), '${test2()}', undefined);
+            const result9 = await lg.generate(getDialogContext(''), '${test2()}', undefined);
             assert.equal(result9, 'default2');
         });
 
         it('bad locale, "${test2()}", no data', async () => {
-            const result10 = await lg.generate(getDialogContext('foo', lgm), '${test2()}', undefined);
+            const result10 = await lg.generate(getDialogContext('foo'), '${test2()}', undefined);
             assert.equal(result10, 'default2');
         });
     });
@@ -205,37 +196,37 @@ describe('LGLanguageGenerator', function() {
         });
 */
         it('en, "${test()}", no data', async () => {
-            const result4 = await lg.generate(getDialogContext('en', lgm, lg), '${test()}', undefined);
+            const result4 = await lg.generate(getDialogContext('en', lg), '${test()}', undefined);
             assert.equal(result4, 'english');
         });
 
         it('no locale, "${test()}", no data', async () => {
-            const result5 = await lg.generate(getDialogContext('', lgm, lg), '${test()}', undefined);
+            const result5 = await lg.generate(getDialogContext('', lg), '${test()}', undefined);
             assert.equal(result5, 'default');
         });
 
         it('bad locale, "${test()}", no data', async () => {
-            const result6 = await lg.generate(getDialogContext('foo', lgm, lg), '${test()}', undefined);
+            const result6 = await lg.generate(getDialogContext('foo', lg), '${test()}', undefined);
             assert.equal(result6, 'default');
         });
 
         it('en-gb, "${test2()}", no data', async () => {
-            const result7 = await lg.generate(getDialogContext('en-gb', lgm, lg), '${test2()}', undefined);
+            const result7 = await lg.generate(getDialogContext('en-gb', lg), '${test2()}', undefined);
             assert.equal(result7, 'default2');
         });
 
         it('en, "${test2()}", no data', async () => {
-            const result8 = await lg.generate(getDialogContext('en', lgm, lg), '${test2()}', undefined);
+            const result8 = await lg.generate(getDialogContext('en', lg), '${test2()}', undefined);
             assert.equal(result8, 'default2');
         });
 
         it('no locale, "${test2()}", no data', async () => {
-            const result9 = await lg.generate(getDialogContext('', lgm, lg), '${test2()}', undefined);
+            const result9 = await lg.generate(getDialogContext('', lg), '${test2()}', undefined);
             assert.equal(result9, 'default2');
         });
 
         it('bad locale, "${test2()}", no data', async () => {
-            const result10 = await lg.generate(getDialogContext('foo', lgm, lg), '${test2()}', undefined);
+            const result10 = await lg.generate(getDialogContext('foo', lg), '${test2()}', undefined);
             assert.equal(result10, 'default2');
         });
 /*
