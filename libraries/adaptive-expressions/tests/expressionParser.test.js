@@ -419,6 +419,13 @@ const dataSource = [
     ['mod(5,2)', 1],
     ['rand(1, 2)', 1],
     ['rand(2, 3)', 2],
+    ['floor(3.51)', 3],
+    ['floor(4.00)', 4],
+    ['ceiling(3.51)', 4],
+    ['ceiling(4.00)', 4],
+    ['round(3.51)', 4],
+    ['round(3.55, 1)', 3.6],
+    ['round(3.12134, 3)', 3.121],
 
     // Date and time function tests
     // All the timestamp strings passed in must be in ISO format of YYYY-MM-DDTHH:mm:ss.sssZ
@@ -520,7 +527,11 @@ const dataSource = [
     ['startOfHour(\'2018-03-15T13:30:30.000Z\')', '2018-03-15T13:00:00.000Z'],
     ['startOfMonth(\'2018-03-15T13:30:30.000Z\')', '2018-03-01T00:00:00.000Z'],
     ['ticks(\'2018-01-01T08:00:00.000Z\')', bigInt('636503904000000000')],
-
+    ['dateTimeDiff("2019-01-01T08:00:00.000Z","2018-01-01T08:00:00.000Z")', 315360000000000],
+    ['dateTimeDiff("2017-01-01T08:00:00.000Z","2018-01-01T08:00:00.000Z")', -315360000000000],
+    ['ticksToDays(2193385800000000)', 2538.6409722222224],
+    ['ticksToHours(2193385800000000)', 60927.383333333331],
+    ['ticksToMinutes(2193385811100000)', 3655643.0185],
     //URI parsing functions tests
     ['uriHost(\'https://www.localhost.com:8080\')', 'www.localhost.com'],
     ['uriPath(\'http://www.contoso.com/catalog/shownew.htm?date=today\')', '/catalog/shownew.htm'],
