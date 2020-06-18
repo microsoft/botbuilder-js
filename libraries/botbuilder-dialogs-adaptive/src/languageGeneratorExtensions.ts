@@ -2,6 +2,7 @@ import { DialogManager } from 'botbuilder-dialogs';
 import { ResourceExplorer } from 'botbuilder-dialogs-declarative';
 import { LanguageGeneratorManager, ResourceMultiLanguageGenerator, TemplateEngineLanguageGenerator } from './generators';
 import { LanguageGenerator } from './languageGenerator';
+import { resourceExplorerKey } from './resourceExtensions';
 
 declare module 'botbuilder-dialogs/lib/dialogManager' {
     export interface DialogManager {
@@ -9,9 +10,12 @@ declare module 'botbuilder-dialogs/lib/dialogManager' {
     }
 }
 
+export const languageGeneratorKey = Symbol('LanguageGenerator');
+export const languageGeneratorManagerKey = Symbol('LanguageGeneratorManager');
+
 DialogManager.prototype.useLanguageGeneration = async function(lg?: string | LanguageGenerator): Promise<void> {
     const _self = this as DialogManager;
-    const resourceExplorer: ResourceExplorer = _self.initialTurnState.get('ResourceExplorer') || new ResourceExplorer();
+    const resourceExplorer: ResourceExplorer = _self.initialTurnState.get(resourceExplorerKey) || new ResourceExplorer();
     let defaultLg = 'main.lg';
     if (lg) {
         if (typeof lg === 'string') {
@@ -28,6 +32,6 @@ DialogManager.prototype.useLanguageGeneration = async function(lg?: string | Lan
     const languageGeneratorManager: LanguageGeneratorManager = new LanguageGeneratorManager(resourceExplorer);
     await languageGeneratorManager.loadResources();
 
-    _self.initialTurnState.set('LanguageGenerator', languageGenerator);
-    _self.initialTurnState.set('LanguageGeneratorManager', languageGeneratorManager);
+    _self.initialTurnState.set(languageGeneratorKey, languageGenerator);
+    _self.initialTurnState.set(languageGeneratorManagerKey, languageGeneratorManager);
 };

@@ -9,6 +9,7 @@ import {
     TurnContext, BotTelemetryClient, NullTelemetryClient, ActivityTypes,
     Activity, RecognizerResult, getTopScoringIntent
 } from 'botbuilder-core';
+import { IntExpression, ExpressionParser } from 'adaptive-expressions';
 import { Dialog, DialogInstance, DialogReason, DialogTurnResult, DialogTurnStatus, DialogEvent, DialogContext, DialogContainer, DialogDependencies, TurnPath, DialogPath, DialogState } from 'botbuilder-dialogs';
 import { OnCondition } from './conditions';
 import { Recognizer } from './recognizers';
@@ -21,7 +22,7 @@ import { EntityEvents } from './entityEvents';
 import { AdaptiveEvents } from './adaptiveEvents';
 import { AdaptiveDialogState } from './adaptiveDialogState';
 import { EntityInfo } from './entityInfo';
-import { IntExpression, ExpressionParser } from 'adaptive-expressions';
+import { languageGeneratorKey } from './languageGeneratorExtensions';
 
 export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
     public static conditionTracker = 'dialog._tracker.conditions';
@@ -549,7 +550,7 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
 
     protected onSetScopedServices(dialogContext: DialogContext): void {
         if (this.generator) {
-            dialogContext.services.set('LanguageGenerator', this.generator);
+            dialogContext.services.set(languageGeneratorKey, this.generator);
         }
     }
 

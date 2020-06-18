@@ -7,7 +7,9 @@ declare module 'botbuilder-dialogs/lib/dialogManager' {
     }
 }
 
+export const resourceExplorerKey = Symbol('ResourceExplorer');
+
 DialogManager.prototype.useResourceExplorer = function(resourceExplorer: ResourceExplorer): void {
     const _self = this as DialogManager;
-    _self.initialTurnState.set('ResourceExplorer', resourceExplorer);
+    _self.initialTurnState.set(resourceExplorerKey, resourceExplorer);
 };
