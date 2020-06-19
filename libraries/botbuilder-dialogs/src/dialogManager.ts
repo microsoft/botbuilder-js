@@ -15,7 +15,7 @@ import { DialogStateManagerConfiguration, DialogStateManager } from './memory';
 import { DialogEvents } from './dialogEvents';
 import { DialogTurnStateConstants } from './dialogTurnStateConstants';
 import { isSkillClaim } from './prompts/skillsHelpers';
-import { isFromParentToSkill, getActiveDialogContext, sendStateSnapshotTrace, shouldSendEndOfConversationToParent } from './dialogHelper';
+import { isFromParentToSkill, getActiveDialogContext, shouldSendEndOfConversationToParent } from './dialogHelper';
 
 const LAST_ACCESS = '_lastAccess';
 const CONVERSATION_STATE = 'ConversationState';
@@ -213,6 +213,19 @@ export class DialogManager extends Configurable {
         return { turnResult: turnResult };
     }
 
+    // Helper to send a trace activity with a memory snapshot of the active dialog DC.
+    private async sendStateSnapshotTrace(dc: DialogContext, traceLabel: string): Promise<void> {
+        // send trace of memory
+        const snapshot: object = getActiveDialogContext(dc).state.getMemorySnapshot();
+        await dc.context.sendActivity({
+            type: ActivityTypes.Trace,
+            name: 'BotState',
+            valueType: 'https://www.botframework.com/schemas/botState',
+            value: snapshot,
+            label: traceLabel
+        });
+    }
+
     private async handleSkillOnTurn(dc: DialogContext): Promise<DialogTurnResult> {
         // The bot is running as a skill.
         const turnContext = dc.context;
@@ -250,7 +263,7 @@ export class DialogManager extends Configurable {
             turnResult = await dc.beginDialog(this._rootDialogId);
         }
 
-        await sendStateSnapshotTrace(dc, 'Skill State');
+        await this.sendStateSnapshotTrace(dc, 'Skill State');
 
         if (shouldSendEndOfConversationToParent(turnContext, turnResult)) {
             var endMessageText = `Dialog ${ this._rootDialogId } has **completed**. Sending EndOfConversation.`;
@@ -282,7 +295,7 @@ export class DialogManager extends Configurable {
             }
         }
 
-        await sendStateSnapshotTrace(dc, 'Bot State');
+        await this.sendStateSnapshotTrace(dc, 'Bot State');
 
         return turnResult;
     }

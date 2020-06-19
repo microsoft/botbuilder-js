@@ -118,19 +118,6 @@ export function shouldSendEndOfConversationToParent(context: TurnContext, turnRe
     return false;
 }
 
-// Helper to send a trace activity with a memory snapshot of the active dialog DC.
-export async function sendStateSnapshotTrace(dc: DialogContext, traceLabel: string): Promise<void> {
-    // send trace of memory
-    const snapshot: object = getActiveDialogContext(dc).state.getMemorySnapshot();
-    await dc.context.sendActivity({
-        type: ActivityTypes.Trace,
-        name: 'BotState',
-        valueType: 'https://www.botframework.com/schemas/botState',
-        value: snapshot,
-        label: traceLabel 
-    });
-}
-
 // Recursively walk up the DC stack to find the active DC.
 export function getActiveDialogContext(dialogContext: DialogContext): DialogContext {
     const child = dialogContext.child;
