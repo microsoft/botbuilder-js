@@ -19,6 +19,7 @@ import * as fs from 'fs';
 import { TemplateExtensions } from './templateExtensions';
 import { TemplateErrors } from './templateErrors';
 import { EvaluationOptions } from './evaluationOptions';
+import { Templates } from './templates';
 /**
  * Evaluation runtime engine
  */
@@ -41,10 +42,6 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGTempla
     private readonly evaluationTargetStack: EvaluationTarget[] = [];
     private readonly lgOptions: EvaluationOptions;
 
-    // to support broswer, use look-ahead replace look-behind
-    // PCRE: (?<!\\)\${(('(\\('|\\)|[^'])*?')|("(\\("|\\)|[^"])*?")|(`(\\(`|\\)|[^`])*?`)|([^\r\n{}'"`])|({\s*}))+}?
-    public static readonly expressionRecognizeReverseRegex: RegExp = new RegExp(/\}?(('((('|\\)\\)|[^'])*?')|("(\\("|\\)|[^"])*?")|(`(\\(`|\\)|[^`])*?`)|([^\r\n{}'"`])|({\s*}))+{\$(?!\\)/gm);
-    
     public static readonly LGType = 'lgType';
     public static readonly activityAttachmentFunctionName = 'ActivityAttachment';
     public static readonly fromFileFunctionName = 'fromFile';
@@ -60,10 +57,6 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGTempla
 
         // generate a new customzied expression parser by injecting the templates as functions
         this.expressionParser = new ExpressionParser(this.customizedEvaluatorLookup(expressionParser.EvaluatorLookup));
-    }
-
-    public static wrappedRegExSplit(inputString: string, regex: RegExp): string[] {
-        return inputString.split('').reverse().join('').split(regex).map((e: string): string => e.split('').reverse().join('')).reverse();
     }
 
     /**
@@ -466,8 +459,9 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGTempla
         const resourcePath: string = this.getResourcePath(filePath);
         const stringContent = fs.readFileSync(resourcePath, 'utf-8');
 
-        const result = this.wrappedEvalTextContainsExpression(stringContent, Evaluator.expressionRecognizeReverseRegex);
-        return TemplateExtensions.evalEscape(result);
+        const newScope = this.currentTarget().scope;
+        const newTemplates = new Templates(this.templates, undefined, undefined, undefined, undefined, undefined, this.expressionParser);
+        return newTemplates.evaluateText(stringContent, newScope, this.lgOptions);
     }
 
     private getResourcePath(filePath: string): string {
