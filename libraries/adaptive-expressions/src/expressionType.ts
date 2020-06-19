@@ -23,6 +23,9 @@ export class ExpressionType {
     public static readonly Sum: string = 'sum';
     public static readonly Count: string = 'count';
     public static readonly Range: string = 'range';
+    public static readonly Floor: string = 'floor';
+    public static readonly Ceiling: string = 'ceiling';
+    public static readonly Round: string = 'round';
 
     // Comparisons
     public static readonly LessThan: string = '<';
@@ -88,6 +91,10 @@ export class ExpressionType {
     public static readonly StartOfHour: string = 'startOfHour';
     public static readonly StartOfMonth: string = 'startOfMonth';
     public static readonly Ticks: string = 'ticks';
+    public static readonly TicksToDays: string = 'ticksToDays';
+    public static readonly TicksToHours: string = 'ticksToHours';
+    public static readonly TicksToMinutes: string = 'ticksToMinutes';
+    public static readonly DateTimeDiff: string = 'dateTimeDiff';
 
     // timex
     public static readonly IsDefinite: string = 'isDefinite';
