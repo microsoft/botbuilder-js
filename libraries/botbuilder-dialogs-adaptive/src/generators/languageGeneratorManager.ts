@@ -62,8 +62,8 @@ export class LanguageGeneratorManager {
     // }
 
     private getTemplateEngineLanguageGenerator(resource: IResource): TemplateEngineLanguageGenerator {
-        const fileResource = resource as FileResource;
-        if (fileResource !== undefined) {
+        if (resource instanceof FileResource) {
+            const fileResource = resource as FileResource;
             return new TemplateEngineLanguageGenerator(fileResource.fullName, this._multiLanguageResources);
         } else {
             const text = resource.readText();
