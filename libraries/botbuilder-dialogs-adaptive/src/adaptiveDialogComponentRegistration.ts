@@ -82,12 +82,14 @@ export class AdaptiveDialogComponentRegistration implements ComponentRegistratio
         this.registerBuilder('Microsoft.CancelAllDialogs', new AdaptiveTypeBuilder(CancelAllDialogs, this._resourceExplorer, {
             'eventName': new StringExpressionConverter(),
             'eventValue': new ValueExpressionConverter(),
-            'disabled': new BoolExpressionConverter()
+            'disabled': new BoolExpressionConverter(),
+            'activityProcessed': new BoolExpressionConverter()
         }));
         this.registerBuilder('Microsoft.CancelDialog', new AdaptiveTypeBuilder(CancelDialog, this._resourceExplorer, {
             'eventName': new StringExpressionConverter(),
             'eventValue': new ValueExpressionConverter(),
-            'disabled': new BoolExpressionConverter()
+            'disabled': new BoolExpressionConverter(),
+            'activityProcessed': new BoolExpressionConverter()
         }));
         this.registerBuilder('Microsoft.ContinueLoop', new AdaptiveTypeBuilder(ContinueLoop, this._resourceExplorer, {
             'disabled': new BoolExpressionConverter()
