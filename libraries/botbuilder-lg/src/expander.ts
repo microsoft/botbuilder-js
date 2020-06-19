@@ -437,6 +437,10 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGTe
             return new ExpressionEvaluator(Evaluator.isTemplateFunctionName, ExpressionFunctions.apply(this.isTemplate()), ReturnType.Boolean, ExpressionFunctions.validateUnaryString);
         }
 
+        if (name === Evaluator.expandTextFunctionName) {
+            return new ExpressionEvaluator(Evaluator.expandTextFunctionName, ExpressionFunctions.apply(this.expandText()), ReturnType.Object, ExpressionFunctions.validateUnaryString);
+        }
+
         return undefined;
     }
 
@@ -481,7 +485,15 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGTe
         const resourcePath: string = this.getResourcePath(filePath);
         const stringContent = fs.readFileSync(resourcePath, 'utf-8');
 
-        const newScope = this.currentTarget().scope;
+        const newScope = this.evaluationTargetStack.length > 0 ? this.currentTarget().scope : undefined;
+        const newTemplates = new Templates(this.templates, undefined, undefined, undefined, undefined, undefined, this.expressionParser);
+        return newTemplates.evaluateText(stringContent, newScope, this.lgOptions);
+    }
+
+    private readonly expandText = (): any => (args: readonly any[]): any => {
+        const stringContent = args[0].ToString();
+
+        const newScope = this.evaluationTargetStack.length > 0 ? this.currentTarget().scope : undefined;
         const newTemplates = new Templates(this.templates, undefined, undefined, undefined, undefined, undefined, this.expressionParser);
         return newTemplates.evaluateText(stringContent, newScope, this.lgOptions);
     }

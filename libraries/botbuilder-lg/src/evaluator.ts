@@ -47,6 +47,7 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGTempla
     public static readonly fromFileFunctionName = 'fromFile';
     public static readonly templateFunctionName = 'template';
     public static readonly isTemplateFunctionName = 'isTemplate';
+    public static readonly expandTextFunctionName = 'expandText';
     public static readonly ReExecuteSuffix = '!';
 
     public constructor(templates: Template[], expressionParser: ExpressionParser, opt: EvaluationOptions = undefined) {
@@ -446,6 +447,10 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGTempla
             return new ExpressionEvaluator(Evaluator.isTemplateFunctionName, ExpressionFunctions.apply(this.isTemplate()), ReturnType.Boolean, ExpressionFunctions.validateUnaryString);
         }
 
+        if (name === Evaluator.expandTextFunctionName) {
+            return new ExpressionEvaluator(Evaluator.expandTextFunctionName, ExpressionFunctions.apply(this.expandText()), ReturnType.Object, ExpressionFunctions.validateUnaryString);
+        }
+
         return undefined;
     }
 
@@ -459,7 +464,15 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGTempla
         const resourcePath: string = this.getResourcePath(filePath);
         const stringContent = fs.readFileSync(resourcePath, 'utf-8');
 
-        const newScope = this.currentTarget().scope;
+        const newScope = this.evaluationTargetStack.length > 0 ? this.currentTarget().scope : undefined;
+        const newTemplates = new Templates(this.templates, undefined, undefined, undefined, undefined, undefined, this.expressionParser);
+        return newTemplates.evaluateText(stringContent, newScope, this.lgOptions);
+    }
+
+    private readonly expandText = (): any => (args: readonly any[]): any => {
+        const stringContent = args[0].toString();
+
+        const newScope = this.evaluationTargetStack.length > 0 ? this.currentTarget().scope : undefined;
         const newTemplates = new Templates(this.templates, undefined, undefined, undefined, undefined, undefined, this.expressionParser);
         return newTemplates.evaluateText(stringContent, newScope, this.lgOptions);
     }
