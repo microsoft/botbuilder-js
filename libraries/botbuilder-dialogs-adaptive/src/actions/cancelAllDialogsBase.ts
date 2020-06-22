@@ -34,6 +34,9 @@ export class CancelAllDialogsBase<O extends object = {}> extends Dialog<O> {
      */
     public eventValue: ValueExpression;
 
+    /**
+     * An optional expression which if is true will disable this action.
+     */
     public disabled: BoolExpression;
 
     /**
@@ -58,6 +61,8 @@ export class CancelAllDialogsBase<O extends object = {}> extends Dialog<O> {
         if (this.activityProcessed  && this.activityProcessed.getValue(dc.state) == false ) {
             // mark that this hasn't been recognized
             dc.state.setValue(TurnPath.activityProcessed, false);
+
+            // emit ActivityReceived, which will tell parent it's supposed to handle recognition.
             eventName = DialogEvents.activityReceived;
             eventValue = dc.context.activity;
 
