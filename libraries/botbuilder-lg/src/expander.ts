@@ -20,6 +20,7 @@ import { TemplateExtensions } from './templateExtensions';
 import { CustomizedMemory } from './customizedMemory';
 import { TemplateErrors } from './templateErrors';
 import { EvaluationOptions } from './evaluationOptions';
+import { Templates } from './templates';
 /**
  * LG template expander.
  */
@@ -39,6 +40,8 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGTe
      */
     private readonly evaluatorExpressionParser: ExpressionParser;
 
+    private readonly expressionParser: ExpressionParser;
+
     /**
      * TemplateMap.
      */
@@ -52,6 +55,7 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGTe
         this.templateMap = keyBy(templates, (t: Template): string => t.name);
         this.lgOptions = opt;
 
+        this.expressionParser = expressionParser;
         // generate a new customzied expression parser by injecting the template as functions
         this.expanderExpressionParser = new ExpressionParser(this.customizedEvaluatorLookup(expressionParser.EvaluatorLookup, true));
         this.evaluatorExpressionParser = new ExpressionParser(this.customizedEvaluatorLookup(expressionParser.EvaluatorLookup, false));
@@ -433,6 +437,10 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGTe
             return new ExpressionEvaluator(Evaluator.isTemplateFunctionName, ExpressionFunctions.apply(this.isTemplate()), ReturnType.Boolean, ExpressionFunctions.validateUnaryString);
         }
 
+        if (name === Evaluator.expandTextFunctionName) {
+            return new ExpressionEvaluator(Evaluator.expandTextFunctionName, ExpressionFunctions.apply(this.expandText()), ReturnType.Object, ExpressionFunctions.validateUnaryString);
+        }
+
         return undefined;
     }
 
@@ -477,10 +485,17 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGTe
         const resourcePath: string = this.getResourcePath(filePath);
         const stringContent = fs.readFileSync(resourcePath, 'utf-8');
 
-        // TODO
-        return stringContent;
-        //const result = this.wrappedEvalTextContainsExpression(stringContent, Evaluator.expressionRecognizeReverseRegex);
-        //return TemplateExtensions.evalEscape(result);
+        const newScope = this.evaluationTargetStack.length > 0 ? this.currentTarget().scope : undefined;
+        const newTemplates = new Templates(this.templates, undefined, undefined, undefined, undefined, undefined, this.expressionParser);
+        return newTemplates.evaluateText(stringContent, newScope, this.lgOptions);
+    }
+
+    private readonly expandText = (): any => (args: readonly any[]): any => {
+        const stringContent = args[0].ToString();
+
+        const newScope = this.evaluationTargetStack.length > 0 ? this.currentTarget().scope : undefined;
+        const newTemplates = new Templates(this.templates, undefined, undefined, undefined, undefined, undefined, this.expressionParser);
+        return newTemplates.evaluateText(stringContent, newScope, this.lgOptions);
     }
 
     private getResourcePath(filePath: string): string {
