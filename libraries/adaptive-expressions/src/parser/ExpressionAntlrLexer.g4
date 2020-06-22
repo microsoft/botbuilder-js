@@ -71,7 +71,7 @@ COMMA: ',';
 
 COLON: ':';
 
-DOLLAR: '$';
+ARROW: '=>';
 
 NUMBER : DIGIT + ( '.' DIGIT +)? ;
 

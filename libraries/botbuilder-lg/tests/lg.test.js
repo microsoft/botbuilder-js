@@ -95,6 +95,20 @@ describe('LG', function() {
         assert.strictEqual(evaled, undefined, `Evaled is ${ evaled } which should be undefined.`);
     });
 
+    it('TestExpandText', function() {
+        let templates = Templates.parseFile(GetExampleFilePath('ExpandText.lg'));
+
+        const scope = {
+            '@answer': 'hello ${user.name}',
+            user: {
+                name: 'vivian'
+            }
+        };
+
+        let evaled = templates.evaluate('template', scope);
+        assert.strictEqual(evaled, 'hello vivian'.length);
+    });
+
     it('TestBasicTemplateRefWithParameters', function() {
         let templates = Templates.parseFile(GetExampleFilePath('6.lg'));
 
@@ -585,6 +599,43 @@ describe('LG', function() {
         evaled = templates.expandTemplate('dollarsymbol');
         assert.strictEqual(evaled[0], '$ $ ${\'hi\'} hi');
     });
+
+    it('TestExpandTemplateWithEmptyListInStructuredLG', function() {
+        let templates = Templates.parseFile(GetExampleFilePath('Expand.lg'));
+        let data = {
+            Data: {
+                Name: "NAME",
+                Address: "ADDRESS"
+            }
+        };
+
+        let name = "PointOfInterestSuggestedActionName";
+        let evaled = templates.expandTemplate(name, data);
+
+        assert.strictEqual(evaled[0]["text"], "NAME at ADDRESS");
+        assert.strictEqual(evaled[0]["speak"], "NAME at ADDRESS");
+        assert.strictEqual(evaled[0]["attachments"].length, 0);
+        assert.strictEqual(evaled[0]["attachmentlayout"], "list");
+        assert.strictEqual(evaled[0]["inputhint"], "ignoringInput");
+    });
+
+    it('TestExpandTemplateWithStrictMode', function() {
+        let templates = Templates.parseFile(GetExampleFilePath('./EvaluationOptions/StrictModeFalse.lg'));
+
+        let evaled = templates.expandTemplate('StrictFalse');
+        assert.strictEqual(evaled[0], 'null');
+
+        templates = Templates.parseFile(GetExampleFilePath('./EvaluationOptions/StrictModeTrue.lg'));
+
+        let errMessage = '';
+        try {
+            templates.expandTemplate('StrictTrue');
+        } catch (e) {
+            errMessage = e.toString();
+        }
+
+        assert.strictEqual(errMessage.includes("'variable_not_defined' evaluated to null. [StrictTrue]  Error occurred when evaluating '-${variable_not_defined}'"), true);
+    })
 
     it('TestInlineEvaluate', function() {
         var templates = Templates.parseFile(GetExampleFilePath('2.lg'));
