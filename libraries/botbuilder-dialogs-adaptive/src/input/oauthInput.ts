@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 import { StringExpression, IntExpression } from 'adaptive-expressions';
-import { DialogContext, Dialog, DialogTurnResult, PromptOptions, PromptRecognizerResult, ThisPath } from 'botbuilder-dialogs';
+import { DialogContext, Dialog, DialogTurnResult, PromptOptions, PromptRecognizerResult, ThisPath, TurnPath } from 'botbuilder-dialogs';
 import { Attachment, InputHints, TokenResponse, IUserTokenProvider, TurnContext, ActivityTypes, Activity, MessageFactory, CardFactory, OAuthLoginTimeoutKey, StatusCodes, ActionTypes, ExtendedUserTokenProvider, OAuthCard, BotAdapter, Channels, TokenExchangeInvokeRequest } from 'botbuilder-core';
 import { SkillValidation } from 'botframework-connector';
 import { verifyStateOperationName, tokenExchangeOperationName, tokenResponseEventName } from 'botbuilder-core'
@@ -119,6 +119,7 @@ export class OAuthInput extends InputDialog {
     public async continueDialog(dc: DialogContext): Promise<DialogTurnResult> {
         if (!dc) { throw new Error('Missing DialogContext'); }
 
+        const interrupted = dc.state.getValue(TurnPath.interrupted, false);
         const turnCount = dc.state.getValue(InputDialog.TURN_COUNT_PROPERTY, 0);
 
         // Recognize token
@@ -158,12 +159,14 @@ export class OAuthInput extends InputDialog {
 
                 return await dc.endDialog(recognized.value);
             } else if (!this.maxTurnCount || turnCount < this.maxTurnCount.getValue(dc.state)) {
-                // increase the turnCount as last step
-                dc.state.setValue(InputDialog.TURN_COUNT_PROPERTY, turnCount + 1);
-                const prompt = await this.onRenderPrompt(dc, inputState);
-                await dc.context.sendActivity(prompt);
-                await this.sendOAuthCardAsync(dc, promptOptions && promptOptions.prompt);
+                if (!interrupted) {
+                    // increase the turnCount as last step
+                    dc.state.setValue(InputDialog.TURN_COUNT_PROPERTY, turnCount + 1);
+                    const prompt = await this.onRenderPrompt(dc, inputState);
+                    await dc.context.sendActivity(prompt);
+                }
 
+                await this.sendOAuthCardAsync(dc, promptOptions && promptOptions.prompt);
                 return Dialog.EndOfTurn;
             } else {
                 if (this.defaultValue) {
@@ -417,7 +420,7 @@ export class OAuthInput extends InputDialog {
     }
 
     private isTokenExchangeRequest(obj: unknown): obj is TokenExchangeInvokeRequest {
-        if(obj.hasOwnProperty('token')) {
+        if (obj.hasOwnProperty('token')) {
             return true;
         }
         return false;
