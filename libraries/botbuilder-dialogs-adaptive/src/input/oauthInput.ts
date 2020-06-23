@@ -7,7 +7,9 @@
  */
 import { StringExpression, IntExpression } from 'adaptive-expressions';
 import { DialogContext, Dialog, DialogTurnResult, PromptOptions, PromptRecognizerResult, ThisPath } from 'botbuilder-dialogs';
-import { Attachment, InputHints, TokenResponse, IUserTokenProvider, TurnContext, ActivityTypes, Activity, MessageFactory, CardFactory, OAuthLoginTimeoutKey } from 'botbuilder-core';
+import { Attachment, InputHints, TokenResponse, IUserTokenProvider, TurnContext, ActivityTypes, Activity, MessageFactory, CardFactory, OAuthLoginTimeoutKey, StatusCodes, ActionTypes, ExtendedUserTokenProvider, OAuthCard, BotAdapter, Channels, TokenExchangeInvokeRequest } from 'botbuilder-core';
+import { SkillValidation } from 'botframework-connector';
+import { verifyStateOperationName, tokenExchangeOperationName, tokenResponseEventName } from 'botbuilder-core'
 import { InputDialog, InputState } from './inputDialog';
 
 export const channels: any = {
@@ -170,7 +172,7 @@ export class OAuthInput extends InputDialog {
                         const response = await this.defaultValueResponse.bindToData(dc.context, dc.state);
                         const properties = {
                             'template': JSON.stringify(this.defaultValueResponse),
-                            'result': response ? JSON.stringify(response): ''
+                            'result': response ? JSON.stringify(response) : ''
                         };
                         this.telemetryClient.trackEvent({
                             name: 'GeneratorResult',
@@ -242,9 +244,11 @@ export class OAuthInput extends InputDialog {
     }
 
     private async sendOAuthCardAsync(dc: DialogContext, prompt?: string | Partial<Activity>): Promise<void> {
+        const turnContext = dc.context;
+
         // Validate adapter type
-        if (!('getUserToken' in dc.context.adapter)) {
-            throw new Error(`OAuthPrompt.prompt(): not supported for the current adapter.`);
+        if (!('getUserToken' in turnContext.adapter)) {
+            throw new Error(`OAuthPrompt.sendOAuthCardAsync(): not supported for the current adapter.`);
         }
 
         // Initialize outgoing message
@@ -253,62 +257,135 @@ export class OAuthInput extends InputDialog {
         if (!Array.isArray(msg.attachments)) { msg.attachments = []; }
 
         // Add login card as needed
-        if (this.channelSupportsOAuthCard(dc.context.activity.channelId)) {
+        if (this.channelSupportsOAuthCard(turnContext.activity.channelId)) {
             const cards: Attachment[] = msg.attachments.filter((a: Attachment) => a.contentType === CardFactory.contentTypes.oauthCard);
             if (cards.length === 0) {
-                let link: string = undefined;
-                if (this.isFromStreamingConnection(dc.context.activity)) {
-                    link = await (dc.context.adapter as any).getSignInLink(dc.context, this.connectionName.getValue(dc.state));
+                let cardActionType = ActionTypes.Signin;
+                const signInResource = await (turnContext.adapter as ExtendedUserTokenProvider).getSignInResource(turnContext, this.connectionName.getValue(dc.state), turnContext.activity.from.id);
+                let link = signInResource.signInLink;
+                const identity = turnContext.turnState.get((turnContext.adapter as BotAdapter).BotIdentityKey);
+
+                // use the SignInLink when 
+                //   in speech channel or
+                //   bot is a skill or
+                //   an extra OAuthAppCredentials is being passed in
+                if ((identity && SkillValidation.isSkillClaim(identity.claims)) || this.isFromStreamingConnection(turnContext.activity)) {
+                    if (turnContext.activity.channelId === Channels.Emulator) {
+                        cardActionType = ActionTypes.OpenUrl;
+                    }
+                } else {
+                    link = undefined;
                 }
+
                 // Append oauth card
-                msg.attachments.push(CardFactory.oauthCard(
+                const card = CardFactory.oauthCard(
                     this.connectionName.getValue(dc.state),
                     this.title.getValue(dc.state),
                     this.text.getValue(dc.state),
-                    link
-                ));
+                    link,
+                    signInResource.tokenExchangeResource
+                );
+
+                // Set the appropriate ActionType for the button.
+                (card.content as OAuthCard).buttons[0].type = cardActionType;
+                msg.attachments.push(card);
             }
         } else {
             const cards: Attachment[] = msg.attachments.filter((a: Attachment) => a.contentType === CardFactory.contentTypes.signinCard);
             if (cards.length === 0) {
                 // Append signin card
-                const link: any = await (dc.context.adapter as any).getSignInLink(dc.context, this.connectionName.getValue(dc.state));
+                const signInResource = await (turnContext.adapter as ExtendedUserTokenProvider).getSignInResource(turnContext, this.connectionName.getValue(dc.state), turnContext.activity.from.id);
                 msg.attachments.push(CardFactory.signinCard(
                     this.title.getValue(dc.state),
-                    link,
+                    signInResource.signInLink,
                     this.text.getValue(dc.state)
                 ));
             }
         }
 
         // Add the login timeout specified in OAuthPromptSettings to TurnState so it can be referenced if polling is needed
-        if (!dc.context.turnState.get(OAuthLoginTimeoutKey) && this.timeout) {
-            dc.context.turnState.set(OAuthLoginTimeoutKey, this.timeout.getValue(dc.state));
+        if (!turnContext.turnState.get(OAuthLoginTimeoutKey) && this.timeout) {
+            turnContext.turnState.set(OAuthLoginTimeoutKey, this.timeout.getValue(dc.state));
+        }
+
+        if (!msg.inputHint) {
+            msg.inputHint = InputHints.AcceptingInput;
         }
 
         // Send prompt
-        await dc.context.sendActivity(msg);
+        await turnContext.sendActivity(msg);
     }
 
     private async recognizeToken(dc: DialogContext): Promise<PromptRecognizerResult<TokenResponse>> {
+        const turnContext = dc.context;
+
         let token: TokenResponse | undefined;
-        if (this.isTokenResponseEvent(dc.context)) {
-            token = dc.context.activity.value as TokenResponse;
-        } else if (this.isTeamsVerificationInvoke(dc.context)) {
-            const code: any = dc.context.activity.value.state;
+        if (this.isTokenResponseEvent(turnContext)) {
+            token = turnContext.activity.value as TokenResponse;
+        } else if (this.isTeamsVerificationInvoke(turnContext)) {
+            const code: any = turnContext.activity.value.state;
             try {
                 token = await this.getUserToken(dc, code);
                 if (token !== undefined) {
-                    await dc.context.sendActivity({ type: 'invokeResponse', value: { status: 200 } });
+                    await this.sendInvokeResponse(turnContext, StatusCodes.OK);
                 } else {
-                    await dc.context.sendActivity({ type: 'invokeResponse', value: { status: 404 } });
+                    await this.sendInvokeResponse(turnContext, StatusCodes.NOT_FOUND);
                 }
             }
             catch (e) {
-                await dc.context.sendActivity({ type: 'invokeResponse', value: { status: 500 } });
+                await this.sendInvokeResponse(turnContext, StatusCodes.INTERNAL_SERVER_ERROR);
             }
-        } else if (dc.context.activity.type === ActivityTypes.Message) {
-            const matched: RegExpExecArray = /(\d{6})/.exec(dc.context.activity.text);
+        } else if (this.isTokenExchangeRequestInvoke(turnContext)) {
+            const connectionName = this.connectionName.getValue(dc.state);
+            const tokenExchangeRequest = turnContext.activity.value as TokenExchangeInvokeRequest;
+            // Received activity is not a token exchange request
+            if (!(tokenExchangeRequest && this.isTokenExchangeRequest(tokenExchangeRequest))) {
+                const failureDetail = 'The bot received an InvokeActivity that is missing a TokenExchangeInvokeRequest value. This is required to be sent with the InvokeActivity.';
+                await this.sendInvokeResponse(turnContext, StatusCodes.BAD_REQUEST, { connectionName, failureDetail });
+            } else if (tokenExchangeRequest.connectionName != connectionName) {
+                // Connection name on activity does not match that of setting
+                const id = tokenExchangeRequest.id;
+                const failureDetail = 'The bot received an InvokeActivity with a TokenExchangeInvokeRequest containing a ConnectionName that does not match the ConnectionName' +
+                    'expected by the bots active OAuthPrompt. Ensure these names match when sending the InvokeActivityInvalid ConnectionName in the TokenExchangeInvokeRequest';
+                await this.sendInvokeResponse(turnContext, StatusCodes.BAD_REQUEST, { id, connectionName, failureDetail });
+            }
+            else if (!('exchangeToken' in turnContext.adapter)) {
+                // Token Exchange not supported in the adapter
+                const id = tokenExchangeRequest.id;
+                const failureDetail = 'The bot\'s BotAdapter does not support token exchange operations. Ensure the bot\'s Adapter supports the ExtendedUserTokenProvider interface.';
+                await this.sendInvokeResponse(turnContext, StatusCodes.BAD_REQUEST, { id, connectionName, failureDetail });
+                throw new Error('OAuthPrompt.recognizeToken(): not supported by the current adapter');
+            } else {
+                const extendedUserTokenProvider: ExtendedUserTokenProvider = turnContext.adapter as ExtendedUserTokenProvider;
+                let tokenExchangeResponse: TokenResponse;
+                try {
+                    tokenExchangeResponse = await extendedUserTokenProvider.exchangeToken(
+                        turnContext,
+                        connectionName,
+                        turnContext.activity.from.id,
+                        { token: tokenExchangeRequest.token });
+                } catch (err) {
+                    // Ignore errors.
+                    // If the token exchange failed for any reason, the tokenExchangeResponse stays undefined
+                    // and we send back a failure invoke response to the caller.
+                }
+
+                const id = tokenExchangeRequest.id;
+                if (!tokenExchangeResponse || !tokenExchangeResponse.token) {
+                    const failureDetail = 'The bot is unable to exchange token. Proceed with regular login.';
+                    await this.sendInvokeResponse(turnContext, StatusCodes.CONFLICT, { id, connectionName, failureDetail });
+                } else {
+                    await this.sendInvokeResponse(turnContext, StatusCodes.OK, { id, connectionName });
+                    token = {
+                        channelId: tokenExchangeResponse.channelId,
+                        connectionName: tokenExchangeResponse.connectionName,
+                        token: tokenExchangeResponse.token,
+                        expiration: undefined
+                    };
+                }
+            }
+        } else if (turnContext.activity.type === ActivityTypes.Message) {
+            const matched: RegExpExecArray = /(\d{6})/.exec(turnContext.activity.text);
             if (matched && matched.length > 1) {
                 token = await this.getUserToken(dc, matched[1]);
             }
@@ -324,15 +401,26 @@ export class OAuthInput extends InputDialog {
     private isTokenResponseEvent(context: TurnContext): boolean {
         const activity: Activity = context.activity;
 
-        return activity.type === ActivityTypes.Event && activity.name === 'tokens/response';
+        return activity.type === ActivityTypes.Event && activity.name === tokenResponseEventName;
     }
-
-
 
     private isTeamsVerificationInvoke(context: TurnContext): boolean {
         const activity: Activity = context.activity;
 
-        return activity.type === ActivityTypes.Invoke && activity.name === 'signin/verifyState';
+        return activity.type === ActivityTypes.Invoke && activity.name === verifyStateOperationName;
+    }
+
+    private isTokenExchangeRequestInvoke(context: TurnContext): boolean {
+        const activity: Activity = context.activity;
+
+        return activity.type === ActivityTypes.Invoke && activity.name === tokenExchangeOperationName;
+    }
+
+    private isTokenExchangeRequest(obj: unknown): obj is TokenExchangeInvokeRequest {
+        if(obj.hasOwnProperty('token')) {
+            return true;
+        }
+        return false;
     }
 
     private channelSupportsOAuthCard(channelId: string): boolean {
@@ -348,8 +436,17 @@ export class OAuthInput extends InputDialog {
         return true;
     }
 
-
+    private async sendInvokeResponse(turnContext: TurnContext, status: StatusCodes, body?: object): Promise<void> {
+        await turnContext.sendActivity({
+            type: 'invokeResponse',
+            value: {
+                status,
+                body
+            }
+        });
+    }
 }
+
 /**
  * @private
  */
