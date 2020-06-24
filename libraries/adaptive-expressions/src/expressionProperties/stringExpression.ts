@@ -27,6 +27,10 @@ export class StringExpression extends ExpressionProperty<string> {
         super(value);
     }
 
+    /**
+     * Set a string value.
+     * @param value value to set.
+     */
     public setValue(value: string | Expression): void {
         // reset state to no value or expression
         super.setValue(undefined);

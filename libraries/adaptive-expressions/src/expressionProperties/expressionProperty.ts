@@ -30,6 +30,9 @@ export class ExpressionProperty<T> {
      */
     public expressionText: string;
 
+    /**
+     * Convert an expression property to string.
+     */
     public toString(): string {
         if (this.expressionText) {
             return `=${ this.expressionText.replace(/^=/, '') }`;
@@ -37,6 +40,9 @@ export class ExpressionProperty<T> {
         return this.value ? this.value.toString() : '';
     }
 
+    /**
+     * This will return the existing expression if the value is non-complex type.
+     */
     public toExpression(): Expression {
         if (this.expression) {
             return this.expression;
@@ -96,6 +102,10 @@ export class ExpressionProperty<T> {
         return { value: this.value, error: undefined };
     }
 
+    /**
+     * Set the value.
+     * @param value value to set.
+     */
     public setValue(value: T | string | Expression): void {
         this.value = this.defaultValue;
         this.expression = undefined;
