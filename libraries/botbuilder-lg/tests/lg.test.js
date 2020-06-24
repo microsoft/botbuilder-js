@@ -1,4 +1,4 @@
-const { Templates, LGLineBreakStyle, EvaluationOptions } = require('../');
+const { Templates, LGLineBreakStyle, EvaluationOptions, TemplateErrors } = require('../');
 const { SimpleObjectMemory, ExpressionParser, ExpressionFunctions, Expression } = require('adaptive-expressions');
 const assert = require('assert');
 const fs = require('fs');
@@ -717,7 +717,6 @@ describe('LG', function() {
         assert.strictEqual(templates.toArray()[0].name, 'template1');
         assert.strictEqual(templates.toArray()[0].sourceRange.range.start.line, 3);
         assert.strictEqual(templates.toArray()[0].sourceRange.range.end.line, 8);
-
         assert.strictEqual(templates.toArray()[1].name, 'template2');
         assert.strictEqual(templates.toArray()[1].sourceRange.range.start.line, 9);
         assert.strictEqual(templates.toArray()[1].sourceRange.range.end.line, 12);
@@ -728,7 +727,7 @@ describe('LG', function() {
         assert.strictEqual(templates.imports.length, 0);
         assert.strictEqual(templates.diagnostics.length, 0);
         let newTemplate = templates.toArray()[2];
-        assert.strictEqual(newTemplate.name, 'template2');
+        assert.strictEqual(newTemplate.name, 'newTemplate');
         assert.strictEqual(newTemplate.parameters.length, 2);
         assert.strictEqual(newTemplate.parameters[0], 'age');
         assert.strictEqual(newTemplate.parameters[1], 'name');
@@ -740,8 +739,9 @@ describe('LG', function() {
         templates.addTemplate('newTemplate', undefined, '- hi2 ');
         assert.strictEqual(templates.toArray().length, 4);
         assert.strictEqual(templates.diagnostics.length, 0);
-        let newTemplate = templates.toArray()[3];
+        newTemplate = templates.toArray()[3];
         assert.strictEqual(newTemplate.name, 'newtemplate2');
+        assert.strictEqual(newTemplate.parameters.length, 0);
         assert.strictEqual(newTemplate.body, '- hi2 ');
         assert.strictEqual(newTemplate.sourceRange.range.start.line, 16);
         assert.strictEqual(newTemplate.sourceRange.range.end.line, 17);
@@ -769,6 +769,7 @@ describe('LG', function() {
         assert.strictEqual(templates.diagnostics.length, 0);
         newTemplate = templates.toArray()[3];
         assert.strictEqual(newTemplate.name, 'newtemplateName2');
+        assert.strictEqual(newTemplate.parameters.length, 2);
         assert.strictEqual(newTemplate.body.replace(/\r\n/g, '\n'), '- new hi\n- #hi2\n');
         assert.strictEqual(newTemplate.sourceRange.range.start.line, 17);
         assert.strictEqual(newTemplate.sourceRange.range.end.line, 19);
@@ -799,7 +800,7 @@ describe('LG', function() {
         assert.strictEqual(templates.imports.length, 0);
         assert.strictEqual(templates.diagnostics.length, 0);
         let newTemplate = templates.toArray()[2];
-        assert.strictEqual(newTemplate.name, 'template2');
+        assert.strictEqual(newTemplate.name, 'newTemplate');
         assert.strictEqual(newTemplate.parameters.length, 2);
         assert.strictEqual(newTemplate.parameters[0], 'age');
         assert.strictEqual(newTemplate.parameters[1], 'name');
@@ -811,8 +812,9 @@ describe('LG', function() {
         templates.addTemplate('newTemplate', undefined, '- hi2 ');
         assert.strictEqual(templates.toArray().length, 4);
         assert.strictEqual(templates.diagnostics.length, 0);
-        let newTemplate = templates.toArray()[3];
+        newTemplate = templates.toArray()[3];
         assert.strictEqual(newTemplate.name, 'newtemplate2');
+        assert.strictEqual(newTemplate.parameters.length, 0);
         assert.strictEqual(newTemplate.body, '- hi2 ');
         assert.strictEqual(newTemplate.sourceRange.range.start.line, 16);
         assert.strictEqual(newTemplate.sourceRange.range.end.line, 17);

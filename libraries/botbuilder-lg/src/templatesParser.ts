@@ -208,7 +208,7 @@ export class TemplatesParser {
             try {
                 ({content, id: path} = start.importResolver(start.id, importItem.id));
             } catch (error) {
-                const diagnostic = new Diagnostic(TemplateExtensions.convertToRange(importItem.sourceRange.parseTree), error.message, DiagnosticSeverity.Error, start.id);
+                const diagnostic = new Diagnostic(importItem.sourceRange.range, error.message, DiagnosticSeverity.Error, start.id);
                 throw new TemplateException(error.message, [diagnostic]);
             }
 
