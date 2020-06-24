@@ -8,11 +8,11 @@
 
 
  /**
- * An individual answer returned by a call to the QnA Maker Service.
+ * A parameter in request to specify the choice of user for PreciseAnswer.
  */
 export interface AnswerSpanRequest {
     /**
-     * The precise answer text relevant to the user query.
+     * Configuration to be set for consuming PreciseAnswer.
      */
     enable: boolean;
     

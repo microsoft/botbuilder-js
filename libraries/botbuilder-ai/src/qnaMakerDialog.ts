@@ -99,6 +99,8 @@ export class QnAMakerDialog extends WaterfallDialog {
      * @param cardNoMatchResponse (Optional) Activity to be sent if the user selects the no match option on an active learning card.
      * @param strictFilters (Optional) QnAMakerMetadata collection used to filter / boost queries to the knowledgebase.
      * @param dialogId (Optional) Id of the created dialog. Default is 'QnAMakerDialog'.
+     * @param enablePreciseAnswer (Optional) Use PreciseAnser or not.
+     * @param displayPreciseAnswerOnly (Optional) Display choice for PreciseAnswer'.
      */
     public constructor(knowledgeBaseId: string, endpointKey: string, hostName: string, noAnswer?: Activity, threshold: number = 0.3, activeLearningCardTitle: string = 'Did you mean:', cardNoMatchText: string = 'None of the above.', top: number = 3, cardNoMatchResponse?: Activity, strictFilters?: QnAMakerMetadata[], dialogId: string = 'QnAMakerDialog',
         enablePreciseAnswer: boolean, displayPreciseAnswerOnly: boolean ) {
