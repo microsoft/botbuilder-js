@@ -53,26 +53,54 @@ export namespace ActivityEx {
         return { type: ActivityTypes.ConversationUpdate };
     }
 
+    /**
+   * Creates an Activity as an ITypingActivity object.
+   * @returns The new typing activity.
+   */
     export function createTyingActivity(): Partial<ITypingActivity> {
         return { type: ActivityTypes.Typing };
     }
 
+    /**
+   * Creates an Activity as an IHandoffActivity object.
+   * @returns The new handoff activity.
+   */
     export function CreateHandoffActivity(): Partial<IHandoffActivity> {
         return { type: ActivityTypes.Handoff };
     }
 
+    /**
+   * Creates an Activity as an IEndOfConversationActivity object.
+   * @returns The new end of conversation activity.
+   */
     export function CreateEndOfConversationActivity(): Partial<IEndOfConversationActivity> {
         return { type: ActivityTypes.EndOfConversation };
     }
 
+    /**
+   * Creates an Activity as an IEventActivity object.
+   * @returns The new event activity.
+   */
     export function createEventActivity(): Partial<IEventActivity> {
         return { type: ActivityTypes.Event };
     }
 
+    /**
+   * Creates an Activity as an IInvokeActivity object.
+   * @returns The new invoke activity.
+   */
     export function createInvokeActivity(): Partial<IInvokeActivity> {
         return { type: ActivityTypes.Invoke };
     }
 
+    /**
+   * Creates an Activity as an ITraceActivity object.
+   * @param name The name of the trace operation to create.
+   * @param valueType Optional, identifier for the format of the @param value .
+   * @param value Optional, the content for this trace operation.
+   * @param label Optional, a descriptive label for this trace operation.
+   * @returns The new trace activity.
+   */
     export function createTraceActivity(name: string, valueType?: string, value?: any, label?: string): Partial<ITraceActivity> {
         return { 
             type: ActivityTypes.Trace,
@@ -83,6 +111,13 @@ export namespace ActivityEx {
             };
     }
 
+    /**
+   * Creates a new message activity as a response to this activity.
+   * @param source The activity to respond.
+   * @param text The text of the reply.
+   * @param locale The language code for the @param text .
+   * @returns The new message activity.
+   */
     export function createReply(source: Activity, text?: string, locale?: string): Activity {
         const reply: string = text || '';
 
@@ -106,6 +141,15 @@ export namespace ActivityEx {
         };
     }
 
+    /**
+   * Creates a new trace activity based on the source activity.
+   * @param source The activity to base the trace.
+   * @param name The name of the trace operation to create.
+   * @param value Optional, the content for this trace operation.
+   * @param valueType Optional, identifier for the format of the @param value .
+   * @param label Optional, a descriptive label for this trace operation.
+   * @returns The new trace activity.
+   */
     export function createTrace(source: Activity, name: string, value?: any, valueType?: string, label?: string): ITraceActivity {
         return {
             type: ActivityTypes.Trace,
@@ -123,62 +167,137 @@ export namespace ActivityEx {
         };
     }
 
+    /**
+   * Returns the source activity as an IMessageActivity object; or null, if this is not that type of activity.
+   * @param source The source activity.
+   * @returns This activity as a message activity; or null.
+   */
     export function asMessageActivity(source: Partial<Activity>): Partial<IMessageActivity> {
-        return isActivity(source, ActivityTypes.Message) ? this : null;
+        return isActivity(source, ActivityTypes.Message) ? source : null;
     }
 
-    export function AsContactRelationUpdateActivity(source: Partial<Activity>): IContactRelationUpdateActivity {
-        return isActivity(source, ActivityTypes.ContactRelationUpdate) ? this : null;
+    /**
+   * Returns the source activity as an IContactRelationUpdateActivity object; or null, if this is not that type of activity.
+   * @param source The source activity.
+   * @returns This activity as a contact relation update activity; or null.
+   */
+    export function AsContactRelationUpdateActivity(source: Partial<Activity>): Partial<IContactRelationUpdateActivity> {
+        return isActivity(source, ActivityTypes.ContactRelationUpdate) ? source : null;
     }
 
-    export function AsInstallationUpdateActivity(source: Partial<Activity>): IInstallationUpdateActivity {
-        return isActivity(source, ActivityTypes.InstallationUpdate) ? this : null;
+    /**
+   * Returns the source activity as an IInstallationUpdateActivity object; or null, if this is not that type of activity.
+   * @param source The source activity.
+   * @returns This activity as an installation update activity; or null.
+   */
+    export function AsInstallationUpdateActivity(source: Partial<Activity>): Partial<IInstallationUpdateActivity> {
+        return isActivity(source, ActivityTypes.InstallationUpdate) ? source : null;
     }
 
-    export function AsConversationUpdateActivity(source: Partial<Activity>): IConversationUpdateActivity {
-        return isActivity(source, ActivityTypes.ConversationUpdate) ? this : null;
+    /**
+   * Returns the source activity as an IConversationUpdateActivity object; or null, if this is not that type of activity.
+   * @param source The source activity.
+   * @returns This activity as an conversation update activity; or null.
+   */
+    export function AsConversationUpdateActivity(source: Partial<Activity>): Partial<IConversationUpdateActivity> {
+        return isActivity(source, ActivityTypes.ConversationUpdate) ? source : null;
     }
 
-    export function AsTypingActivity(source: Partial<Activity>): ITypingActivity {
-        return isActivity(source, ActivityTypes.Typing) ? this : null;
+    /**
+   * Returns the source activity as an ITypingActivity object; or null, if this is not that type of activity.
+   * @param source The source activity.
+   * @returns This activity as a typing activity; or null.
+   */
+    export function AsTypingActivity(source: Partial<Activity>): Partial<ITypingActivity> {
+        return isActivity(source, ActivityTypes.Typing) ? source : null;
     }
 
-    export function AsEndOfConversationActivity(source: Partial<Activity>): IEndOfConversationActivity {
-        return isActivity(source, ActivityTypes.EndOfConversation) ? this : null;
+    /**
+   * Returns the source activity as an IEndOfConversationActivity object; or null, if this is not that type of activity.
+   * @param source The source activity.
+   * @returns This activity as an end of conversation activity; or null.
+   */
+    export function AsEndOfConversationActivity(source: Partial<Activity>): Partial<IEndOfConversationActivity> {
+        return isActivity(source, ActivityTypes.EndOfConversation) ? source : null;
     }
 
-    export function AsEventActivity(source: Partial<Activity>): IEventActivity {
-        return isActivity(source, ActivityTypes.Event) ? this : null;
+    /**
+   * Returns the source activity as an IEventActivity object; or null, if this is not that type of activity.
+   * @param source The source activity.
+   * @returns This activity as an event activity; or null.
+   */
+    export function AsEventActivity(source: Partial<Activity>): Partial<IEventActivity> {
+        return isActivity(source, ActivityTypes.Event) ? source : null;
     }
 
-    export function AsInvokeActivity(source: Partial<Activity>): IInvokeActivity {
-        return isActivity(source, ActivityTypes.Invoke) ? this : null;
+    /**
+   * Returns the source activity as an IInvokeActivity object; or null, if this is not that type of activity.
+   * @param source The source activity.
+   * @returns This activity as an invoke activity; or null.
+   */
+    export function AsInvokeActivity(source: Partial<Activity>): Partial<IInvokeActivity> {
+        return isActivity(source, ActivityTypes.Invoke) ? source : null;
     }
 
-    export function AsMessageUpdateActivity(source: Partial<Activity>): IMessageUpdateActivity {
-        return isActivity(source, ActivityTypes.MessageUpdate) ? this : null;
+    /**
+   * Returns the source activity as an IMessageUpdateActivity object; or null, if this is not that type of activity.
+   * @param source The source activity.
+   * @returns This activity as a message update request; or null.
+   */
+    export function AsMessageUpdateActivity(source: Partial<Activity>): Partial<IMessageUpdateActivity> {
+        return isActivity(source, ActivityTypes.MessageUpdate) ? source : null;
     }
 
-    export function AsMessageDeleteActivity(source: Partial<Activity>): IMessageDeleteActivity {
-        return isActivity(source, ActivityTypes.MessageDelete) ? this : null;
+    /**
+   * Returns the source activity as an IMessageDeleteActivity object; or null, if this is not that type of activity.
+   * @param source The source activity.
+   * @returns This activity as a message delete request; or null.
+   */
+    export function AsMessageDeleteActivity(source: Partial<Activity>): Partial<IMessageDeleteActivity> {
+        return isActivity(source, ActivityTypes.MessageDelete) ? source : null;
     }
 
-    export function AsMessageReactionActivity(source: Partial<Activity>): IMessageReactionActivity {
-        return isActivity(source, ActivityTypes.MessageReaction) ? this : null;
+    /**
+   * Returns the source activity as an IMessageReactionActivity object; or null, if this is not that type of activity.
+   * @param source The source activity.
+   * @returns This activity as a message reaction activity; or null.
+   */
+    export function AsMessageReactionActivity(source: Partial<Activity>): Partial<IMessageReactionActivity> {
+        return isActivity(source, ActivityTypes.MessageReaction) ? source : null;
     }
 
-    export function AsSuggestionActivity(source: Partial<Activity>): ISuggestionActivity {
-        return isActivity(source, ActivityTypes.Suggestion) ? this : null;
+    /**
+   * Returns the source activity as an ISuggestionActivity object; or null, if this is not that type of activity.
+   * @param source The source activity.
+   * @returns This activity as a suggestion activity; or null.
+   */
+    export function AsSuggestionActivity(source: Partial<Activity>): Partial<ISuggestionActivity> {
+        return isActivity(source, ActivityTypes.Suggestion) ? source : null;
     }
 
-    export function AsTraceActivity(source: Partial<Activity>): ITraceActivity {
-        return isActivity(source, ActivityTypes.Trace) ? this : null;
+    /**
+   * Returns the source activity as an ITraceActivity object; or null, if this is not that type of activity.
+   * @param source The source activity.
+   * @returns This activity as a trace activity; or null.
+   */
+    export function AsTraceActivity(source: Partial<Activity>): Partial<ITraceActivity> {
+        return isActivity(source, ActivityTypes.Trace) ? source : null;
     }
 
-    export function AsHandoffActivity(source: Partial<Activity>): IHandoffActivity {
-        return isActivity(source, ActivityTypes.Handoff) ? this : null;
+    /**
+   * Returns the source activity as an IHandoffActivity object; or null, if this is not that type of activity.
+   * @param source The source activity.
+   * @returns This activity as a handoff activity; or null.
+   */
+    export function AsHandoffActivity(source: Partial<Activity>): Partial<IHandoffActivity> {
+        return isActivity(source, ActivityTypes.Handoff) ? source : null;
     }
 
+    /**
+   * Indicates whether the source activity has content.
+   * @param source The source activity.
+   * @returns True, if this activity has any content to send; otherwise, false.
+   */
     export function HasContent(source: Partial<Activity>): boolean  {
         if(source.text) {
             return true;
@@ -199,11 +318,21 @@ export namespace ActivityEx {
         return false;
     }
 
+    /**
+   * Resolves the mentions from the entities of the source activity.
+   * @param source The source activity.
+   * @returns The array of mentions; or an empty array, if none are found.
+   */
     export function GetMentions(source: Partial<Activity>) : Mention[] {
         return source.entities.filter(x => x.type.toLowerCase() === 'mention')
         .map(e => e as Mention );
     }
 
+    /**
+   * Creates a ConversationReference based on the source activity.
+   * @param source The source activity.
+   * @returns A conversation reference for the conversation that contains the activity.
+   */
     export function GetConversationReference(source: Partial<Activity>) : Partial<ConversationReference> {
         return {
             activityId: source.id,
@@ -216,6 +345,12 @@ export namespace ActivityEx {
         } as ConversationReference;
     }
 
+    /**
+   * Creates a ConversationReference based on the Activity's Conversation info and the ResourceResponse from sending an activity.
+   * @param source The source activity.
+   * @param reply ResourceResponse returned from sendActivity.
+   * @returns A ConversationReference that can be stored and used later to delete or update the activity.
+   */
     export function GetReplyConversationReference(source: Partial<Activity>, reply: Partial<ResourceResponse>) : Partial<ConversationReference> {
         let reference = GetConversationReference(source);
         reference.activityId = reply.id;
@@ -223,6 +358,13 @@ export namespace ActivityEx {
         return reference;
     }
 
+    /**
+   * Updates the source activity with the delivery information from an existing Conversation Reference.
+   * @param source The source activity.
+   * @param isComming Optional, true to treat the activity as an incoming activity, where the bot is the recipient; otherwise, false.
+   * Default is false, and the activity will show the bot as the sender.
+   * @returns The activity, updated with the delivery information.
+   */
     export function applyConversationReference(source: Partial<Activity>, reference: Partial<ConversationReference>, isComming?: boolean): Partial<Activity> {
         if (reference.channelId !== undefined) {
             source.channelId = reference.channelId;
@@ -267,12 +409,22 @@ export namespace ActivityEx {
         return source;
     }
 
+    /**
+   * Determines if the Activity was sent via an Http/Https connection or Streaming by looking at the ServiceUrl property.
+   * @param source The source activity.
+   * @returns True if the Activity was originate from a streaming connection.
+   */
     export function IsFromStreamingConnection(source: Partial<Activity>) : boolean {
         let isHttp = source.serviceUrl.toLowerCase().startsWith("http");
 
         return isHttp? !isHttp : false;
     }
 
+    /**
+   * Gets the continuation event of the source activity.
+   * @param source The source activity.
+   * @returns The continue conversation event activity.
+   */
     export function getContinuationActivity(source: Partial<ConversationReference>): Partial<Activity> {
         if (source === undefined) {
             throw new Error('source needs to be defined');
@@ -290,6 +442,11 @@ export namespace ActivityEx {
         };
     }
 
+    /**
+   * Indicates whether the activity is an start of conversation activity.
+   * @param source The source activity.
+   * @returns True if the activity starts a conversation, otherwise, false.
+   */
     export function isStartActivity(activity: Activity): boolean {
         switch (activity.channelId) {
             case Channels.Skype: {
@@ -320,6 +477,12 @@ export namespace ActivityEx {
         }
     }
 
+    /**
+   * Indicates whether this activity is of a specified activity type.
+   * @param source The source activity.
+   * @param activityType The activity type to check for.
+   * @returns True if the activity is of the specified activity type; otherwise, false.
+   */
     export function isActivity(source:Partial<Activity>, activityType: string): boolean {
         let type = source.type;
 
