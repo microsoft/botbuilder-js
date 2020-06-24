@@ -95,6 +95,20 @@ describe('LG', function() {
         assert.strictEqual(evaled, undefined, `Evaled is ${ evaled } which should be undefined.`);
     });
 
+    it('TestExpandText', function() {
+        let templates = Templates.parseFile(GetExampleFilePath('ExpandText.lg'));
+
+        const scope = {
+            '@answer': 'hello ${user.name}',
+            user: {
+                name: 'vivian'
+            }
+        };
+
+        let evaled = templates.evaluate('template', scope);
+        assert.strictEqual(evaled, 'hello vivian'.length);
+    });
+
     it('TestBasicTemplateRefWithParameters', function() {
         let templates = Templates.parseFile(GetExampleFilePath('6.lg'));
 
