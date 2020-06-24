@@ -20,14 +20,26 @@
   "main": "./lib/index.js",
   "typings": "./lib/index.d.ts",
   "dependencies": {
-    "@azure/cognitiveservices-luis-runtime": "2.0.0",
-    "@azure/ms-rest-js": "1.8.15",
+    "@angular/compiler": "^7.2.16",
+    "@angular/core": "^7.2.16",
+    "@azure/cognitiveservices-luis-runtime": "^2.0.0",
     "@microsoft/recognizers-text-date-time": "1.1.4",
     "@types/node": "^10.12.18",
     "botbuilder-core": "4.1.6",
-    "botbuilder-dialogs": "4.1.6",
+    "botbuilder-dialogs": "^4.9.2",
+    "g": "^2.0.1",
+    "grunt-ts": "^6.0.0-beta.22",
+    "log-symbols": "^4.0.0",
     "node-fetch": "^2.3.0",
-    "url-parse": "^1.4.4"
+    "p-limit": "^3.0.1",
+    "pm2": "^4.4.0",
+    "rxjs": "^6.5.5",
+    "source-map": "^0.7.3",
+    "tests": "^0.4.2",
+    "tslint": "^5.20.1",
+    "typescript": "^2.8.4",
+    "url-parse": "^1.4.4",
+    "zone.js": "^0.8.29"
   },
   "devDependencies": {
     "@microsoft/api-extractor": "^7.7.12",
@@ -35,12 +47,11 @@
     "@types/node-fetch": "^2.3.2",
     "codelyzer": "^4.1.0",
     "fs-extra": "^7.0.1",
-    "mocha": "^5.2.0",
+    "mocha": "^8.0.1",
     "nock": "^11.9.1",
     "nyc": "^15.0.0",
     "source-map-support": "^0.5.3",
-    "ts-node": "^4.1.0",
-    "typescript": "3.5.3"
+    "ts-node": "^4.1.0"
   },
   "scripts": {
     "build": "tsc",

@@ -103,7 +103,7 @@ export class QnAMakerDialog extends WaterfallDialog {
      * @param displayPreciseAnswerOnly (Optional) Display choice for PreciseAnswer'.
      */
     public constructor(knowledgeBaseId: string, endpointKey: string, hostName: string, noAnswer?: Activity, threshold: number = 0.3, activeLearningCardTitle: string = 'Did you mean:', cardNoMatchText: string = 'None of the above.', top: number = 3, cardNoMatchResponse?: Activity, strictFilters?: QnAMakerMetadata[], dialogId: string = 'QnAMakerDialog',
-        enablePreciseAnswer: boolean, displayPreciseAnswerOnly: boolean ) {
+        enablePreciseAnswer: boolean = false, displayPreciseAnswerOnly: boolean = true) {
         super(dialogId);
         if (!knowledgeBaseId) {
             throw new TypeError('QnAMakerDialog: missing knowledgeBaseId parameter');

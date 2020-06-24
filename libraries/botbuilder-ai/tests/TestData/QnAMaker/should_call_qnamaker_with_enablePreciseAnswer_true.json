@@ -1,0 +1,14 @@
+{
+    "activeLearningEnabled": true,
+    "answers": [
+      {
+        "questions": [],
+        "answer": "Source Text. PreciseAnswer Text Value",
+        "score": 0,
+        "id": 1,
+        "source": "Editorial",
+        "metadata": [],
+        "answerspan": { "text" : "PreciseAnswer Text value"}
+      }
+    ]
+  }
