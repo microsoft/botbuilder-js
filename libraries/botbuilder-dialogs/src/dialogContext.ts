@@ -62,7 +62,6 @@ export class DialogContext {
       * @param dialogs The dialog set for which to create the dialog context.
       * @param context The context object for the current turn of the bot.
       * @param state The state object to use to read and write dialog state to storage.
-      * @param dialogContext The dialog context to clone.
       */
     public constructor(dialogs: DialogSet, contextOrDC: TurnContext, state: DialogState);
     public constructor(dialogs: DialogSet, contextOrDC: DialogContext, state: DialogState);
