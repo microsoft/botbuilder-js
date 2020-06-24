@@ -3,7 +3,6 @@
     "target": "es6",
     "lib": ["es2015"],
     "module": "commonjs",
-      "noStrictGenericChecks": false,
     "declaration": true,
     "declarationMap": true,
     "sourceMap": true,

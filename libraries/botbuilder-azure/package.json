@@ -21,9 +21,7 @@
   "main": "./lib/index.js",
   "typings": "./lib/index.d.ts",
   "dependencies": {
-    "@azure/cognitiveservices-luis-runtime": "^5.0.0",
     "@azure/cosmos": "^3.3.1",
-    "@azure/ms-rest-js": "^2.0.7",
     "@types/documentdb": "^1.10.5",
     "@types/node": "^10.12.18",
     "azure-storage": "2.10.2",
