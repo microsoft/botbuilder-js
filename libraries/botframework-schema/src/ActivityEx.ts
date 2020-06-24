@@ -299,19 +299,19 @@ export namespace ActivityEx {
    * @returns True, if this activity has any content to send; otherwise, false.
    */
     export function hasContent(source: Partial<Activity>): boolean  {
-        if(source.text) {
+        if(source.text !== undefined) {
             return true;
         }
 
-        if(source.summary) {
+        if(source.summary !== undefined) {
             return true;
         }
 
-        if(source.attachments) {
+        if(source.attachments !== undefined) {
             return true;
         }
 
-        if(source.channelData) {
+        if(source.channelData !== undefined) {
             return true;
         }
 
@@ -415,66 +415,11 @@ export namespace ActivityEx {
    * @returns True if the Activity was originate from a streaming connection.
    */
     export function isFromStreamingConnection(source: Partial<Activity>) : boolean {
-        const isHttp = source.serviceUrl.toLowerCase().startsWith("http");
-
-        return isHttp? !isHttp : false;
-    }
-
-    /**
-   * Gets the continuation event of the source activity.
-   * @param source The source activity.
-   * @returns The continue conversation event activity.
-   */
-    export function getContinuationActivity(source: Partial<ConversationReference>): Partial<Activity> {
-        if (source === undefined) {
-            throw new Error('source needs to be defined');
+        if (source.serviceUrl !== undefined) {
+            const isHttp = source.serviceUrl.toLowerCase().startsWith("http");
+            return !isHttp;
         }
-
-        return {
-            type: ActivityTypes.Event,
-            name: 'ContinueConversation',
-            channelId: source.channelId,
-            serviceUrl: source.serviceUrl,
-            conversation: source.conversation,
-            recipient: source.bot,
-            from: source.user,
-            relatesTo: source as ConversationReference
-        };
-    }
-
-    /**
-   * Indicates whether the activity is an start of conversation activity.
-   * @param source The source activity.
-   * @returns True if the activity starts a conversation, otherwise, false.
-   */
-    export function isStartActivity(activity: Activity): boolean {
-        switch (activity.channelId) {
-            case Channels.Skype: {
-                if (activity.type === ActivityTypes.ContactRelationUpdate && activity.action === 'add') {
-                    return true;
-                }
-
-                return false;
-            }
-            case Channels.Directline:
-            case Channels.Emulator:
-            case Channels.Webchat:
-            case Channels.Msteams:
-            case Channels.DirectlineSpeech:
-            case Channels.Test: {
-                if (activity.type === ActivityTypes.ConversationUpdate) {
-                    // When bot is added to the conversation (triggers start only once per conversation)
-                    if (activity.membersAdded !== undefined &&
-                        activity.membersAdded.some((m: ChannelAccount): boolean => m.id === activity.recipient.id)) {
-                        return true;
-                    }
-                }
-
-                return false;
-            }
-            default:
-                return false;
-        }
+        return false;
     }
 
     /**
@@ -486,7 +431,7 @@ export namespace ActivityEx {
     export function isActivity(source:Partial<Activity>, activityType: string): boolean {
         const type = source.type;
 
-        if (!type) {
+        if (type == undefined) {
             return false;
         }
 
