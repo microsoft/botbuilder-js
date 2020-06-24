@@ -5,8 +5,11 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { Activity, MessageFactory, CardAction, CardFactory } from 'botbuilder-core';
+import {Activity, MessageFactory, CardAction, CardFactory, ActivityFactory} from 'botbuilder-core';
 import { QnAMakerResult } from './';
+import {any} from "codelyzer/util/function";
+import {ActivityTypes} from "../../botframework-schema/lib";
+import {Attachments} from "../../botframework-connector/lib/connectorApi/operations";
 
 /**
  * Provides methods to create activities containing hero cards for showing active learning or multi-turn prompt options for the QnAMakerDialog.
@@ -52,9 +55,10 @@ export class QnACardBuilder {
      * Returns an activity with answer text and a hero card attachment, containing buttons for multi turn prompts.
      * @param result QnAMaker result containing the answer text and multi turn prompts to be displayed.
      */
-    public static getQnAPromptsCard(result: QnAMakerResult): Partial<Activity> {
+    public static getQnAAnswerCard(result: QnAMakerResult,  displayPreciseAnswerOnly): Partial<Activity> {
         if (!result) { throw new Error('Missing QnAMaker result'); }
 
+        let chatActivity: Partial<Activity> = {type: ActivityTypes.Message};
         var buttonList: CardAction[] = [];
 
         result.context.prompts.forEach(prompt => {
@@ -64,10 +68,29 @@ export class QnACardBuilder {
                 title: prompt.displayText
             });
         });
+        var answerText = result.answer;
+        var answerspantext = '';
 
-        const promptsCard = CardFactory.heroCard('', undefined, buttonList);
-        const message = MessageFactory.attachment(promptsCard, result.answer);
 
-        return message;
+        if(result.answerSpan != undefined && result.answerSpan.text != '')
+        {
+            answerspantext = result.answerSpan.text;
+            if (displayPreciseAnswerOnly)
+            {
+                answerText = answerspantext;
+                answerspantext = '';
+            }
+            console.log(result.answerSpan.text);
+        }
+        console.log(answerspantext);
+
+        if( answerText != '' || buttonList.length > 0) {
+            const promptsCard = CardFactory.heroCard('', answerText, undefined, buttonList);
+            var attachments = [promptsCard];
+            chatActivity.attachments = attachments;
+        }
+        chatActivity.text = answerspantext;
+
+        return chatActivity;
     }
 }

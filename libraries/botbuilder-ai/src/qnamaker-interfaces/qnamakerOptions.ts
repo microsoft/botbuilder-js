@@ -8,6 +8,7 @@
 
 import { QnAMakerMetadata } from './qnamakerMetadata';
 import { QnARequestContext } from './qnaRequestContext';
+import { AnswerSpanRequest } from './answerspanRequest';
 
 /**
  * Additional settings used to configure a `QnAMaker` instance.
@@ -64,4 +65,9 @@ export interface QnAMakerOptions {
      * Ranker types.
      */
     rankerType?: string;
+
+    /**
+     * A value indicating user's choice to receive PreciseAnswer or not. 
+     */
+    answerSpanRequest?: AnswerSpanRequest;
 }

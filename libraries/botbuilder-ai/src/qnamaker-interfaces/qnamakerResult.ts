@@ -7,6 +7,7 @@
  */
 
 import { QnAResponseContext } from './qnaResponseContext';
+import { AnswerSpanResponse } from './answerspanResponse';
 
  /**
  * An individual answer returned by a call to the QnA Maker Service.
@@ -45,5 +46,10 @@ export interface QnAMakerResult {
     /**
      * Context for multi-turn responses.
      */
-    context?: QnAResponseContext; 
+    context?: QnAResponseContext;
+
+    /**
+     * The PreciseAnswer related information in the Answer Text.
+     */
+    answerSpan?: AnswerSpanResponse;
 }
