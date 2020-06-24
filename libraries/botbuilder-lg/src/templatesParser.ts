@@ -38,10 +38,18 @@ export declare type ImportResolverDelegate = (source: string, resourceId: string
 export class TemplatesParser {
 
     /**
+     * Inline text id.
+     */
+    public static readonly inlineContentId: string = 'inline content';
+
+    /**
      * option regex.
      */
     public static readonly optionRegex: RegExp = new RegExp(/>\s*!#(.*)$/);
 
+    /**
+     * Import regex.
+     */
     public static readonly importRegex: RegExp = new RegExp(/\[([^\]]*)\]\(([^\)]*)\)/);
     
     /**
@@ -80,7 +88,7 @@ export class TemplatesParser {
             throw Error(`templates is empty`);
         }
 
-        const id = 'inline content';
+        const id = TemplatesParser.inlineContentId;
         let newTemplates = new Templates();
         newTemplates.content = content;
         newTemplates.id = id;
@@ -167,6 +175,22 @@ export class TemplatesParser {
         return templates;
     }
 
+    public static antlrParseTemplates(text: string, source: string): FileContext {
+        if (!text || text.trim() === '') {
+            return undefined;
+        }
+
+        const input: ANTLRInputStream = new ANTLRInputStream(text);
+        const lexer: LGFileLexer = new LGFileLexer(input);
+        const tokens: CommonTokenStream = new CommonTokenStream(lexer);
+        const parser: LGFileParser = new LGFileParser(tokens);
+        parser.removeErrorListeners();
+        parser.addErrorListener(new ErrorListener(source));
+        parser.buildParseTree = true;
+
+        return parser.file();
+    }
+
     private static getReferences(file: Templates, cachedTemplates?: Map<string, Templates>): Templates[] {
         var resourcesFound = new Set<Templates>();
         this.resolveImportResources(file, resourcesFound, cachedTemplates || new Map<string, Templates>());
@@ -201,26 +225,10 @@ export class TemplatesParser {
             }
         }
     }
-
-    private static antlrParseTemplates(text: string, source: string): FileContext {
-        if (!text || text.trim() === '') {
-            return undefined;
-        }
-
-        const input: ANTLRInputStream = new ANTLRInputStream(text);
-        const lexer: LGFileLexer = new LGFileLexer(input);
-        const tokens: CommonTokenStream = new CommonTokenStream(lexer);
-        const parser: LGFileParser = new LGFileParser(tokens);
-        parser.removeErrorListeners();
-        parser.addErrorListener(new ErrorListener(source));
-        parser.buildParseTree = true;
-
-        return parser.file();
-    }
 }
 
 
-class TemplatesTransformer extends AbstractParseTreeVisitor<any> implements LGTemplateParserVisitor<any> {
+export class TemplatesTransformer extends AbstractParseTreeVisitor<any> implements LGTemplateParserVisitor<any> {
     private readonly identifierRegex: RegExp = new RegExp(/^[0-9a-zA-Z_]+$/);
     private readonly templateNamePartRegex: RegExp = new RegExp(/^[a-zA-Z_][0-9a-zA-Z_]*$/);
     private readonly templates: Templates;
@@ -234,6 +242,14 @@ class TemplatesTransformer extends AbstractParseTreeVisitor<any> implements LGTe
         if (parseTree) {
             this.visit(parseTree);
         }
+        var templateCount = this.templates.toArray().length;
+        var currentIndex = 0;
+        for (const template of this.templates) {
+            currentIndex++;
+            if (currentIndex < templateCount) {
+                template.body = this.removeTrailingNewline(template.body);
+            }
+        }
 
         return this.templates;
     }
@@ -245,7 +261,7 @@ class TemplatesTransformer extends AbstractParseTreeVisitor<any> implements LGTe
     public visitErrorDefinition(context: lp.ErrorDefinitionContext): any {
         const lineContent = context.INVALID_LINE().text;
         if (lineContent === undefined || lineContent.trim() === '') {
-            this.templates.diagnostics.push(this.buildTemplatesDiagnostic(TemplateErrors.syntaxError, context));
+            this.templates.diagnostics.push(this.buildTemplatesDiagnostic(TemplateErrors.syntaxError(`Unexpected content: '${ lineContent }'`), context));
         }
         return;
     }
@@ -292,12 +308,6 @@ class TemplatesTransformer extends AbstractParseTreeVisitor<any> implements LGTe
             this.templates.diagnostics.push(diagnostic);
         } else {
             let templateBody = context.templateBody().text;
-            const file = context.parent.parent as lp.FileContext;
-            const templateContextList = file.paragraph().map((u): lp.TemplateDefinitionContext => u.templateDefinition()).filter((u): boolean => u !== undefined);
-            const isLastTemplate = templateContextList[templateContextList.length - 1] === context;
-            if (!isLastTemplate) {
-                templateBody = this.removeTrailingNewline(templateBody);
-            }
 
             const sourceRange = new SourceRange(context, this.templates.id);
             const template = new Template(templateName, parameters, templateBody, sourceRange);
@@ -314,8 +324,9 @@ class TemplatesTransformer extends AbstractParseTreeVisitor<any> implements LGTe
         const functionNameSplitDot = templateName.split('.');
         for(let id of functionNameSplitDot) {
             if (!this.templateNamePartRegex.test(id)) {
-                const diagnostic = this.buildTemplatesDiagnostic(TemplateErrors.invalidTemplateName, context);
+                const diagnostic = this.buildTemplatesDiagnostic(TemplateErrors.invalidTemplateName(templateName), context);
                 this.templates.diagnostics.push(diagnostic);
+                break;
             }
         }
     }
@@ -323,7 +334,7 @@ class TemplatesTransformer extends AbstractParseTreeVisitor<any> implements LGTe
     private checkTemplateParameters(parameters: string[], context: ParserRuleContext): void {
         for (const parameter of parameters) {
             if (!this.identifierRegex.test(parameter)) {
-                const diagnostic = this.buildTemplatesDiagnostic(TemplateErrors.invalidTemplateName, context);
+                const diagnostic = this.buildTemplatesDiagnostic(TemplateErrors.invalidParameter(parameter), context);
                 this.templates.diagnostics.push(diagnostic);
             }
         }

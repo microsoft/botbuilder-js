@@ -171,6 +171,16 @@ const badExpressions =
         'range(one, hello)', // params should be integer
         'range(hello, one)', // params should be integer
         'range(one, 0)', // second param should be more than 0
+        'floor(hello)', // should have a numeric parameter
+        'floor(1.2, 2)', // should have only 1 numeric parameter
+        'ceiling(hello)', // should have a numeric parameter
+        'ceiling(1.2, 2)', // should have only 1 numeric parameter
+        'round(hello)', // should have numeric parameters
+        'round(1.333, hello)', // should have numeric parameters
+        'ceiling(1.2, 2.1)', // the second parameter should be integer
+        'ceiling(1.2, -2)', // the second parameter should be integer not less than 0
+        'ceiling(1.2, 16)', // the second parameter should be integer not greater than 15
+        'ceiling(1.2, 12, 7)', // should have one or two numeric parameters
 
         // Date and time function test
         'isDefinite(12345)', // should hava a string or a TimexProperty parameter
@@ -269,8 +279,12 @@ const badExpressions =
         'startOfMonth(notValidTimeStamp)', // invalid timestamp
         'ticks(notValidTimeStamp)', // not valid timestamp
         'ticks()', // should have one parameters
-
-
+        'dateTimeDiff(notValidTimeStamp,"2018-01-01T08:00:00.000Z")', // the first parameter is not a valid timestamp
+        'dateTimeDiff("2017-01-01T08:00:00.000Z",notValidTimeStamp)', // the second parameter is not a valid timestamp
+        'dateTimeDiff("2017-01-01T08:00:00.000Z","2018-01-01T08:00:00.000Z", "years")', // should only have 2 parameters
+        'ticksToDays(12.12)', //should have an integer parameter
+        'ticksToHours(12.12)', //should have an integer parameter
+        'ticksToMinutes(12.12)', //should have an integer parameter
 
         // collection functions test
         'sum(items, \'hello\')',//should have 1 parameter
@@ -351,6 +365,9 @@ const badExpressions =
         'jPath(hello)',// should have two params
         'jPath(hello, \'.key\')', //bad json
         'jPath(json(\'{"key1":"value1","key2":"value2"}\'), \'getTotal\')', //bad path
+        'merge(json(\'{"key1":"value1","key2":"value2"}\'))', // should have at least 2 arguments
+        'merge(json2, jarray1)', // should only have JSON object arguments
+        'merge(jarray1, json2)', // should only have JSON object arguments
 
         // Memory access test
         'getProperty(bag, 1)',// second param should be string
@@ -411,6 +428,11 @@ const scope = {
     notValidTimestamp2: '1521118800',
     notValidTimestamp3: '20181115',
     relativeUri: '../catalog/shownew.htm?date=today',
+    json2: {
+        'Enabled': true,
+        'Roles': [ 'User', 'Admin' ]
+    },
+    jarray1: ['a', 'b'],
     turn:
     {
         recognized: {

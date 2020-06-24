@@ -1,0 +1,30 @@
+{
+  "query": "three",
+  "topScoringIntent": {
+    "intent": "intent",
+    "score": 0.968526
+  },
+  "intents": [
+    {
+      "intent": "intent",
+      "score": 0.968526
+    },
+    {
+      "intent": "None",
+      "score": 0.030059997
+    }
+  ],
+  "entities": [
+    {
+      "entity": "three",
+      "type": "numberEntity",
+      "startIndex": 0,
+      "endIndex": 4,
+      "resolution": {
+        "values": [
+          "3"
+        ]
+      }
+    }
+  ]
+}

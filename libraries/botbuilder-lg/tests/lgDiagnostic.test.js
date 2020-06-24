@@ -95,7 +95,7 @@ describe(`LGExceptionTest`, function() {
 
         assert.strictEqual(8, diagnostics.length);
         assert.strictEqual(DiagnosticSeverity.Error, diagnostics[0].severity);
-        assert.strictEqual(diagnostics[0].message.includes(TemplateErrors.invalidStrucBody), true);
+        assert.strictEqual(diagnostics[0].message.includes(TemplateErrors.invalidStrucBody('abc')), true);
         assert.strictEqual(DiagnosticSeverity.Error, diagnostics[1].severity);
         assert.strictEqual(diagnostics[1].message.includes(TemplateErrors.emptyStrucContent), true);
         assert.strictEqual(DiagnosticSeverity.Error, diagnostics[2].severity);
@@ -103,24 +103,33 @@ describe(`LGExceptionTest`, function() {
         assert.strictEqual(DiagnosticSeverity.Error, diagnostics[3].severity);
         assert.strictEqual(diagnostics[3].message.includes(`Error occurred when parsing expression 'NOTemplate()'. NOTemplate does not have an evaluator`), true);
         assert.strictEqual(DiagnosticSeverity.Error, diagnostics[4].severity);
-        assert.strictEqual(diagnostics[4].message.includes(TemplateErrors.invalidStrucName), true);
+        assert.strictEqual(diagnostics[4].message.includes(TemplateErrors.invalidStrucName('Activity%')), true);
         assert.strictEqual(DiagnosticSeverity.Error, diagnostics[5].severity);
-        assert.strictEqual(diagnostics[5].message.includes(TemplateErrors.invalidStrucName), true);
+        assert.strictEqual(diagnostics[5].message.includes(TemplateErrors.invalidStrucName('Activity]')), true);
         assert.strictEqual(DiagnosticSeverity.Error, diagnostics[6].severity);
         assert.strictEqual(diagnostics[6].message.includes(TemplateErrors.missingStrucEnd), true);
         assert.strictEqual(DiagnosticSeverity.Error, diagnostics[7].severity);
-        assert.strictEqual(diagnostics[7].message.includes(TemplateErrors.invalidStrucBody), true);
+        assert.strictEqual(diagnostics[7].message.includes(TemplateErrors.invalidStrucBody('- hi')), true);
     });
 
     it(`TestErrorTemplateName`, function() {
         var diagnostics = GetDiagnostics(`ErrorTemplateName.lg`);
 
         assert.strictEqual(7, diagnostics.length);
-        for(const diagnostic of diagnostics)
-        {
-            assert.strictEqual(DiagnosticSeverity.Error, diagnostic.severity);
-            assert.strictEqual(diagnostic.message.includes(TemplateErrors.invalidTemplateName), true);
-        }
+        assert.strictEqual(DiagnosticSeverity.Error, diagnostics[0].severity);
+        assert.strictEqual(diagnostics[0].message.includes(TemplateErrors.invalidParameter('param1; param2')), true);
+        assert.strictEqual(DiagnosticSeverity.Error, diagnostics[1].severity);
+        assert.strictEqual(diagnostics[1].message.includes(TemplateErrors.invalidParameter('param1 param2')), true);
+        assert.strictEqual(DiagnosticSeverity.Error, diagnostics[2].severity);
+        assert.strictEqual(diagnostics[2].message.includes(TemplateErrors.invalidTemplateName('template3(errorparams')), true);
+        assert.strictEqual(DiagnosticSeverity.Error, diagnostics[3].severity);
+        assert.strictEqual(diagnostics[3].message.includes(TemplateErrors.invalidParameter('a)test(param1')), true);
+        assert.strictEqual(DiagnosticSeverity.Error, diagnostics[4].severity);
+        assert.strictEqual(diagnostics[4].message.includes(TemplateErrors.invalidParameter('$%^')), true);
+        assert.strictEqual(DiagnosticSeverity.Error, diagnostics[5].severity);
+        assert.strictEqual(diagnostics[5].message.includes(TemplateErrors.invalidTemplateName('the-name-of-template')), true);
+        assert.strictEqual(DiagnosticSeverity.Error, diagnostics[6].severity);
+        assert.strictEqual(diagnostics[6].message.includes(TemplateErrors.invalidTemplateName('t1.1')), true);
     });
 
     it(`TestInvalidLGFileImportPath`, function() {
@@ -214,6 +223,8 @@ describe(`LGExceptionTest`, function() {
         assert.throws(() => templates.evaluate(`wPhrase`), Error(`Loop detected: welcome_user => wPhrase [wPhrase]  Error occurred when evaluating '-\${wPhrase()}'. [welcome_user]  Error occurred when evaluating '-\${welcome_user()}'.`));
         
         assert.throws(() => templates.analyzeTemplate(`wPhrase`), Error('Loop detected: welcome_user => wPhrase'),);
+
+        assert.throws(() => templates.analyzeTemplate(`shouldFail`), Error('Loop detected: shouldFail'),);
     });
 
     it(`AddTextWithWrongId`, function() {
@@ -278,11 +289,11 @@ it(`TestErrorLine`, function() {
     
 
     assert.strictEqual(DiagnosticSeverity.Error, diagnostics[0].severity);
-    assert.strictEqual(diagnostics[0].message.includes(TemplateErrors.syntaxError), true);
+    assert.strictEqual(diagnostics[0].message.includes(TemplateErrors.syntaxError('mismatched input \'-\' expecting <EOF>')), true);
     assert.strictEqual(DiagnosticSeverity.Error, diagnostics[1].severity);
-    assert.strictEqual(diagnostics[1].message.includes(TemplateErrors.invalidStrucName), true);
+    assert.strictEqual(diagnostics[1].message.includes(TemplateErrors.invalidStrucName(']')), true);
     assert.strictEqual(DiagnosticSeverity.Error, diagnostics[2].severity);
     assert.strictEqual(diagnostics[2].message.includes(TemplateErrors.missingStrucEnd), true);
     assert.strictEqual(DiagnosticSeverity.Error, diagnostics[3].severity);
-    assert.strictEqual(diagnostics[3].message.includes(TemplateErrors.invalidStrucBody), true);
+    assert.strictEqual(diagnostics[3].message.includes(TemplateErrors.invalidStrucBody('- hi')), true);
 });
