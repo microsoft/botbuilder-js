@@ -1471,11 +1471,41 @@ describe(`BotFrameworkAdapter`, function () {
     });
 
     describe('getTokenStatus()', () => {
-        xit(`should return the status of every connection the user has`, async () => {
+        it(`should return the status of every connection the user has`, async function () {
+            const mockedTokenStatusResponse = {
+                channelId: 'mockChannel',
+                connectionName: 'mockConnectionName',
+                hasToken: true,
+                serviceProviderDisplayName: 'mockDisplayName'
+            };
+            const argsPassedToMockClient = [];
+            class MockTokenApiClient {
+                constructor() {
+                    this.userToken = {
+                        getTokenStatus: async (...args) => {
+                            argsPassedToMockClient.push({getTokenStatus: args});
+                            return {
+                                _response: {status: 200, parsedBody: [mockedTokenStatusResponse] }
+                            };
+                        }
+                    };
+                    this.credentials = new MicrosoftAppCredentials('abc', 'abc');
+                }
+    
+            }
+
+            const {TokenApiClient} = connector;
+            connector.TokenApiClient = MockTokenApiClient;
             const adapter = new AdapterUnderTest();
             const context = new TurnContext(adapter, incomingMessage);
             const responses = await adapter.getTokenStatus(context);
             assert(responses.length > 0);
+            assert(responses[0].channelId == mockedTokenStatusResponse.channelId);
+            assert(responses[0].connectionName == mockedTokenStatusResponse.connectionName);
+            assert(responses[0].hasToken == true);
+            assert(responses[0].serviceProviderDisplayName == mockedTokenStatusResponse.serviceProviderDisplayName);
+
+            connector.TokenApiClient = TokenApiClient; // restore
         });
 
         it(`should throw error if missing from in getTokenStatus()`, async function () {
