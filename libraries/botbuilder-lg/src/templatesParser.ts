@@ -175,6 +175,22 @@ export class TemplatesParser {
         return templates;
     }
 
+    public static antlrParseTemplates(text: string, source: string): FileContext {
+        if (!text || text.trim() === '') {
+            return undefined;
+        }
+
+        const input: ANTLRInputStream = new ANTLRInputStream(text);
+        const lexer: LGFileLexer = new LGFileLexer(input);
+        const tokens: CommonTokenStream = new CommonTokenStream(lexer);
+        const parser: LGFileParser = new LGFileParser(tokens);
+        parser.removeErrorListeners();
+        parser.addErrorListener(new ErrorListener(source));
+        parser.buildParseTree = true;
+
+        return parser.file();
+    }
+
     private static getReferences(file: Templates, cachedTemplates?: Map<string, Templates>): Templates[] {
         var resourcesFound = new Set<Templates>();
         this.resolveImportResources(file, resourcesFound, cachedTemplates || new Map<string, Templates>());
@@ -209,26 +225,10 @@ export class TemplatesParser {
             }
         }
     }
-
-    private static antlrParseTemplates(text: string, source: string): FileContext {
-        if (!text || text.trim() === '') {
-            return undefined;
-        }
-
-        const input: ANTLRInputStream = new ANTLRInputStream(text);
-        const lexer: LGFileLexer = new LGFileLexer(input);
-        const tokens: CommonTokenStream = new CommonTokenStream(lexer);
-        const parser: LGFileParser = new LGFileParser(tokens);
-        parser.removeErrorListeners();
-        parser.addErrorListener(new ErrorListener(source));
-        parser.buildParseTree = true;
-
-        return parser.file();
-    }
 }
 
 
-class TemplatesTransformer extends AbstractParseTreeVisitor<any> implements LGTemplateParserVisitor<any> {
+export class TemplatesTransformer extends AbstractParseTreeVisitor<any> implements LGTemplateParserVisitor<any> {
     private readonly identifierRegex: RegExp = new RegExp(/^[0-9a-zA-Z_]+$/);
     private readonly templateNamePartRegex: RegExp = new RegExp(/^[a-zA-Z_][0-9a-zA-Z_]*$/);
     private readonly templates: Templates;
@@ -241,6 +241,14 @@ class TemplatesTransformer extends AbstractParseTreeVisitor<any> implements LGTe
     public transform(parseTree: ParseTree): Templates {
         if (parseTree) {
             this.visit(parseTree);
+        }
+        var templateCount = this.templates.toArray().length;
+        var currentIndex = 0;
+        for (const template of this.templates) {
+            currentIndex++;
+            if (currentIndex < templateCount) {
+                template.body = this.removeTrailingNewline(template.body);
+            }
         }
 
         return this.templates;
@@ -300,12 +308,6 @@ class TemplatesTransformer extends AbstractParseTreeVisitor<any> implements LGTe
             this.templates.diagnostics.push(diagnostic);
         } else {
             let templateBody = context.templateBody().text;
-            const file = context.parent.parent as lp.FileContext;
-            const templateContextList = file.paragraph().map((u): lp.TemplateDefinitionContext => u.templateDefinition()).filter((u): boolean => u !== undefined);
-            const isLastTemplate = templateContextList[templateContextList.length - 1] === context;
-            if (!isLastTemplate) {
-                templateBody = this.removeTrailingNewline(templateBody);
-            }
 
             const sourceRange = new SourceRange(context, this.templates.id);
             const template = new Template(templateName, parameters, templateBody, sourceRange);
