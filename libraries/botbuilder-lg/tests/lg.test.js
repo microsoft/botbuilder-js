@@ -848,7 +848,39 @@ describe('LG', function() {
         assert.strictEqual(templates.imports.length, 0);
         assert.strictEqual(templates.diagnostics.length, 1);
         assert.strictEqual(templates.diagnostics[0].severity, DiagnosticSeverity.Error);
-        assert.strictEqual(templates.diagnostics[0].message.includes(TemplateErrors.noTemplate), true);
+        assert.strictEqual(templates.diagnostics[0].message, TemplateErrors.noTemplate);
+    });
+
+    it('TemplateCRUD_Diagnostic', function() {
+        var templates = Templates.parseText(fs.readFileSync(GetExampleFilePath('CrudInit.lg'), 'utf-8'));
+
+        // add error template name (error in template)
+        templates.addTemplate('newtemplate#$%', ['age', 'name'], '- hi ');
+        assert.strictEqual(templates.diagnostics.length, 1);
+        let diagnostic = templates.diagnostics[0];
+        assert.strictEqual(diagnostic.message, TemplateErrors.invalidTemplateName('newtemplate#$%'));
+        assert.strictEqual(diagnostic.range.start.line, 14);
+        assert.strictEqual(diagnostic.range.end.line, 14);
+
+        // replace the error template with right template
+        templates.updateTemplate('newtemplate#$%', 'newtemplateName', undefined, '- new hi');
+        assert.strictEqual(templates.diagnostics.length, 0);
+
+        // reference the other exist template
+        templates.updateTemplate('newtemplateName', 'newtemplateName', undefined, '- ${template1()}');
+        assert.strictEqual(templates.diagnostics.length, 0);
+
+        // wrong reference, throw by static checker
+        templates.updateTemplate('newtemplateName', 'newtemplateName', undefined, '- ${NoTemplate()}');
+        assert.strictEqual(templates.diagnostics.length, 1);
+        diagnostic = templates.diagnostics[0];
+        assert(diagnostic.message.includes('it\'s not a built-in function or a custom function'));
+        assert.strictEqual(diagnostic.range.start.line, 15);
+        assert.strictEqual(diagnostic.range.end.line, 15);
+
+        // delete error message
+        templates.deleteTemplate('newtemplateName');
+        assert.strictEqual(templates.diagnostics.length, 0);
     });
 
     it('TestMemoryScope', function() {
