@@ -389,7 +389,7 @@ const dataSource = [
 
     // TODO: This should actually be the below, but toLocaleString does not work.
     // ['formatNumber(12000.3, 4, "fr-FR")', '12\u00a0000,3000'],
-    ['formatNumber(12000.3, 4, "fr-FR")', '12,000.3000'],
+    //['formatNumber(12000.3, 4, "fr-FR")', '12,000.3000'],
 
     // Math functions tests
     ['add(1, 2, 3)', 6],
@@ -419,6 +419,13 @@ const dataSource = [
     ['mod(5,2)', 1],
     ['rand(1, 2)', 1],
     ['rand(2, 3)', 2],
+    ['floor(3.51)', 3],
+    ['floor(4.00)', 4],
+    ['ceiling(3.51)', 4],
+    ['ceiling(4.00)', 4],
+    ['round(3.51)', 4],
+    ['round(3.55, 1)', 3.6],
+    ['round(3.12134, 3)', 3.121],
 
     // Date and time function tests
     // All the timestamp strings passed in must be in ISO format of YYYY-MM-DDTHH:mm:ss.sssZ
@@ -520,7 +527,11 @@ const dataSource = [
     ['startOfHour(\'2018-03-15T13:30:30.000Z\')', '2018-03-15T13:00:00.000Z'],
     ['startOfMonth(\'2018-03-15T13:30:30.000Z\')', '2018-03-01T00:00:00.000Z'],
     ['ticks(\'2018-01-01T08:00:00.000Z\')', bigInt('636503904000000000')],
-
+    ['dateTimeDiff("2019-01-01T08:00:00.000Z","2018-01-01T08:00:00.000Z")', 315360000000000],
+    ['dateTimeDiff("2017-01-01T08:00:00.000Z","2018-01-01T08:00:00.000Z")', -315360000000000],
+    ['ticksToDays(2193385800000000)', 2538.6409722222224],
+    ['ticksToHours(2193385800000000)', 60927.383333333331],
+    ['ticksToMinutes(2193385811100000)', 3655643.0185],
     //URI parsing functions tests
     ['uriHost(\'https://www.localhost.com:8080\')', 'www.localhost.com'],
     ['uriPath(\'http://www.contoso.com/catalog/shownew.htm?date=today\')', '/catalog/shownew.htm'],
@@ -541,6 +552,9 @@ const dataSource = [
     ['contains(items, \'hi\')', false],
     ['contains(bag, \'three\')', true],
     ['contains(bag, \'xxx\')', false],
+    ['concat(null, [1, 2], null)', [1, 2]],
+    ['concat(createArray(1, 2), createArray(3, 4))', [1, 2, 3, 4]],
+    ['concat([\'a\', \'b\'], [\'b\', \'c\'], [\'c\', \'d\'])', ['a', 'b', 'b', 'c', 'c', 'd']],
     ['count(split(hello,\'e\'))', 2],
     ['count(createArray(\'h\', \'e\', \'l\', \'l\', \'o\'))', 5],
     ['empty(\'\')', true],
@@ -621,6 +635,8 @@ const dataSource = [
     ['coalesce(nullObj, false, \'hello\')', false],
     ['jPath(jsonStr, pathStr )', ['Jazz', 'Accord']],
     ['jPath(jsonStr, \'.automobiles[0].maker\' )', ['Nissan']],
+    ['string(merge(json1, json2))', '{"FirstName":"John","LastName":"Smith","Enabled":true,"Roles":["Customer","Admin"]}'],
+    ['string(merge(json1, json2, json3))', '{"FirstName":"John","LastName":"Smith","Enabled":true,"Roles":["Customer","Admin"],"age":36}'],
 
     // Memory access tests
     ['getProperty(bag, concat(\'na\',\'me\'))', 'mybag'],
@@ -749,6 +765,17 @@ const scope = {
     unixTimestamp: 1521118800,
     unixTimestampFraction: 1521118800.5,
     ticks: bigInt('637243624200000000'),
+    json1: {
+        'FirstName': 'John',
+        'LastName': 'Smith',
+        'Enabled': false,
+        'Roles': [ 'User' ]
+    },
+    json2: {
+        'Enabled': true,
+        'Roles': [ 'Customer', 'Admin' ]
+    },
+    json3: {'age': 36},
     user:
     {
         income: 110.0,
