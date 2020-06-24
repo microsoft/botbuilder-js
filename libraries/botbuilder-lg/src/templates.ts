@@ -343,7 +343,7 @@ export class Templates implements Iterable<Template> {
     */
     public deleteTemplate(templateName: string): Templates {
         const templateIndex = this.items.findIndex((u: Template): boolean => u.name === templateName);
-        if (templateIndex > 0) {
+        if (templateIndex >= 0) {
             const template = this.items[templateIndex];
             this.clearDiagnostic();
 
@@ -381,7 +381,7 @@ export class Templates implements Iterable<Template> {
             if (hasFound) {
                 this.items[i].sourceRange.range.start.line += lineOffset;
                 this.items[i].sourceRange.range.end.line += lineOffset;
-            } else if (this.items[i].name == oldTemplate.name) {
+            } else if (this.items[i].name === oldTemplate.name) {
                 hasFound = true;
                 newTemplate.sourceRange.range.start.line = oldTemplate.sourceRange.range.start.line;
                 newTemplate.sourceRange.range.end.line = oldTemplate.sourceRange.range.end.line + lineOffset;
