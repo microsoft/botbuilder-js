@@ -2,6 +2,7 @@ const { QnAMakerDialog, QnAMaker } = require('../lib');
 const { DialogSet } = require('botbuilder-dialogs');
 const { ok, strictEqual } = require('assert');
 
+
 const KB_ID = 'kbId';
 const ENDPOINT_KEY = 'endpointKey';
 

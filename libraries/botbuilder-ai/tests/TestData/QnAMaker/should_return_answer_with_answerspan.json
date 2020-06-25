@@ -1,0 +1,20 @@
+{
+    "answers": [
+        {
+            "questions": [
+                "how do I clean the stove?"
+            ],
+            "answer": "BaseCamp: You can use a damp rag to clean around the Power Pack",
+            "score": 100,
+            "id": 5,
+            "source": "Editorial",
+            "metadata": [],
+            "answerSpan": {
+                "text": "some precise text",
+                "score": 0.22478714187291335,
+                "startIndex": 416,
+                "endIndex": 458
+            }
+        }
+    ]
+}
