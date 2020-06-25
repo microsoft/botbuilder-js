@@ -4,6 +4,7 @@
  */
 export * from './activityInterfaces';
 export * from './callerIdConstants';
+export * from './activityEx';
 export { HealthCheckResponse, HealthResults } from './healthCheck';
 export { TokenExchangeInvokeRequest } from './tokenExchangeInvokeRequest';
 
