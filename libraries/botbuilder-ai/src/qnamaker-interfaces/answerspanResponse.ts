@@ -8,7 +8,7 @@
 
 
  /**
- * An individual answer returned by a call to the QnA Maker Service.
+ * Precise Answer, which is part of Answer returned by GenerateAnswer call to the QnA Maker Service.
  */
 export interface AnswerSpanResponse {
     /**

@@ -5,11 +5,9 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import {Activity, MessageFactory, CardAction, CardFactory, ActivityFactory} from 'botbuilder-core';
+import { Activity, MessageFactory, CardAction, CardFactory, ActivityFactory} from 'botbuilder-core';
 import { QnAMakerResult } from './';
-import {any} from "codelyzer/util/function";
-import {ActivityTypes} from "../../botframework-schema/lib";
-import {Attachments} from "../../botframework-connector/lib/connectorApi/operations";
+import { ActivityTypes} from "../../botframework-schema/lib";
 
 /**
  * Provides methods to create activities containing hero cards for showing active learning or multi-turn prompt options for the QnAMakerDialog.
@@ -52,8 +50,9 @@ export class QnACardBuilder {
     }
 
     /**
-     * Returns an activity with answer text and a hero card attachment, containing buttons for multi turn prompts.
-     * @param result QnAMaker result containing the answer text and multi turn prompts to be displayed.
+     * Returns an activity with answer text, precise answer (optional) and a hero card attachment, containing buttons for multi turn prompts.
+     * @param result QnAMaker result containing the answer text, precise answer (optional) and multi turn prompts to be displayed.
+     * @param displayPreciseAnswerOnly Whether to display PreciseAnswer Only or along with source Answer text. .
      */
     public static getQnAAnswerCard(result: QnAMakerResult,  displayPreciseAnswerOnly): Partial<Activity> {
         if (!result) { throw new Error('Missing QnAMaker result'); }

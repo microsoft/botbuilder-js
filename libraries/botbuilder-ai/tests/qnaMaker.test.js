@@ -227,6 +227,16 @@ describe('QnAMaker', function () {
             assert.strictEqual(qnaResults[0].context.prompts.length > 0, true, 'One or more prompts should be present');
         });
 
+        it('should return answer with answerspan text', async function () {
+            const qna = new QnAMaker(endpoint);
+            const context = new TestContext({ text: "how do I clean the stove?" });
+            const options = { top: 2 };
+
+            const qnaResults = await qna.getAnswers(context, options);
+            
+            assert.strictEqual(qnaResults[0].answerspan.text, 'some precise text', 'One or more prompts should be present');
+        });
+
         it('should return answer with high score provided context', async function() {
             const qna = new QnAMaker(endpoint);
             const turnContext = new TestContext({ text: "where can I buy?" });

@@ -100,7 +100,7 @@ export class QnAMakerDialog extends WaterfallDialog {
      * @param strictFilters (Optional) QnAMakerMetadata collection used to filter / boost queries to the knowledgebase.
      * @param dialogId (Optional) Id of the created dialog. Default is 'QnAMakerDialog'.
      * @param enablePreciseAnswer (Optional) Use PreciseAnser or not.
-     * @param displayPreciseAnswerOnly (Optional) Display choice for PreciseAnswer'.
+     * @param displayPreciseAnswerOnly (Optional) Whether to display PreciseAnswer Only or along with source Answer text.'.
      */
     public constructor(knowledgeBaseId: string, endpointKey: string, hostName: string, noAnswer?: Activity, threshold: number = 0.3, activeLearningCardTitle: string = 'Did you mean:', cardNoMatchText: string = 'None of the above.', top: number = 3, cardNoMatchResponse?: Activity, strictFilters?: QnAMakerMetadata[], dialogId: string = 'QnAMakerDialog',
         enablePreciseAnswer: boolean = false, displayPreciseAnswerOnly: boolean = true) {
@@ -161,7 +161,7 @@ export class QnAMakerDialog extends WaterfallDialog {
     /**
      * Returns a new instance of QnAMakerOptions.
     **/
-    public getQnAMakerOptions(): QnAMakerOptions {
+    private getQnAMakerOptions(): QnAMakerOptions {
         return {
             scoreThreshold: this.threshold,
             strictFilters: this.strintFilters,
@@ -182,7 +182,7 @@ export class QnAMakerDialog extends WaterfallDialog {
     /**
      * Returns a new instance of QnAMakerResponseOptions.
     **/
-    public getQnAResponseOptions(): QnAMakerDialogResponseOptions {
+    private getQnAResponseOptions(): QnAMakerDialogResponseOptions {
         return {
             activeLearningCardTitle: this.activeLearningCardTitle,
             cardNoMatchResponse: this.cardNoMatchResponse,
@@ -228,7 +228,7 @@ export class QnAMakerDialog extends WaterfallDialog {
 
         step.values[this.qnAData] = response.answers;
 
-        if ( qnaResponse.answers.length > 0 && qnaResponse.answers[0].score <= this.maximumScoreForLowScoreVariation) {
+        if (qnaResponse.answers.length > 0 && qnaResponse.answers[0].score <= this.maximumScoreForLowScoreVariation) {
             qnaResponse.answers = qna.getLowScoreVariation(qnaResponse.answers);
 
             if (isActiveLearningEnabled && qnaResponse.answers && qnaResponse.answers.length > 1) {
