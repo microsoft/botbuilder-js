@@ -46,7 +46,7 @@ export interface QnAMakerResult {
     /**
      * Context for multi-turn responses.
      */
-    context?: QnAResponseContext;
+    context?: QnAResponseContext; 
 
     /**
      * The PreciseAnswer related information in the Answer Text.
