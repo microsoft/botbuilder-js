@@ -1292,6 +1292,7 @@ export interface TeamDetails {
 export interface TeamInfo {
     id?: string;
     name?: string;
+    aadGroupId?: string;
 }
 
 // @public (undocumented)
