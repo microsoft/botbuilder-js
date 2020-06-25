@@ -522,7 +522,7 @@ describe(`activityValidator`, function() {
     it('should Create Trace Allows Null Recipient', () => {
         const activity = CreateActivity();
         activity.recipient = null;
-        const trace = ActivityEx.createTrace(activity, 'test')
+        const trace = ActivityEx.createTrace(activity, 'test','a','a')
 
         // CreateTrace flips Recipient and From
         assert.strictEqual(trace.from, null);
@@ -544,6 +544,9 @@ describe(`activityValidator`, function() {
         ];
 
         var activity = CreateActivity();
+
+        activity.serviceUrl = undefined;
+        assert.strictEqual(ActivityEx.isFromStreamingConnection(activity), false);
 
         nonStreaming.forEach(s =>
         {
