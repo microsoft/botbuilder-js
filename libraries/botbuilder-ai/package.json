@@ -24,8 +24,8 @@
     "@azure/ms-rest-js": "1.8.15",
     "@microsoft/recognizers-text-date-time": "1.1.4",
     "@types/node": "^10.12.18",
-    "botbuilder-core": "^4.9.2",
-    "botbuilder-dialogs": "^4.1.6",
+    "botbuilder-core": "4.1.6",
+    "botbuilder-dialogs": "4.1.6",
     "node-fetch": "^2.3.0",
     "url-parse": "^1.4.4"
   },

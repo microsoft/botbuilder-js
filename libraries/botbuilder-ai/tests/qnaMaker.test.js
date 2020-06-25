@@ -1,5 +1,4 @@
 const QnATelemetryConstants = require('../lib/qnaTelemetryConstants');
-const { AnswerspanRequest } = require('../lib/qnamaker-interfaces');
 const assert = require('assert');
 const { TestAdapter, TurnContext, NullTelemetryClient } = require('botbuilder-core');
 const { QnAMaker } = require('../');
@@ -226,16 +225,6 @@ describe('QnAMaker', function () {
 
             assert.strictEqual(qnaResults.length, 1, 'one answer should be returned');
             assert.strictEqual(qnaResults[0].context.prompts.length > 0, true, 'One or more prompts should be present');
-        });
-
-        it('should return answer with answerspan', async function () {
-            const qna = new QnAMaker(endpoint);
-            const context = new TestContext({ text: "how do I clean the stove?" });
-            const options = { answerSpanRequest: { enable: true } };
-
-            const qnaResults = await qna.getAnswers(context, options);
-
-            assert.strictEqual(qnaResults[0].answerSpan.text, 'some precise text', 'answerspan should be present');
         });
 
         it('should return answer with high score provided context', async function() {
