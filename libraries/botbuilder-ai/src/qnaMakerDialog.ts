@@ -127,7 +127,6 @@ export class QnAMakerDialog extends WaterfallDialog {
         this.strintFilters = strictFilters;
         this.noAnswer = noAnswer;
         this.cardNoMatchResponse = cardNoMatchResponse;
-
         this.enablePreciseAnswer = enablePreciseAnswer;
         this.displayPreciseAnswerOnly = displayPreciseAnswerOnly;
 
@@ -140,9 +139,9 @@ export class QnAMakerDialog extends WaterfallDialog {
     public async beginDialog(dc: DialogContext, options?: object): Promise<DialogTurnResult> {
         if (!dc) { throw new Error('Missing DialogContext'); }
         
-        if (dc.context.activity.type != ActivityTypes.Message)
-        {
-            return dc.endDialog();
+        if (dc.context.activity.type != ActivityTypes.Message) 
+        { 
+            return dc.endDialog(); 
         }
 
         const dialogOptions: QnAMakerDialogOptions = {
@@ -207,7 +206,7 @@ export class QnAMakerDialog extends WaterfallDialog {
         
         if (previousQnAId > 0) {
             dialogOptions.qnaMakerOptions.context = { previousQnAId: previousQnAId, previousUserQuery: '' };
-
+            
             if (previousContextData[step.context.activity.text]) {
                 dialogOptions.qnaMakerOptions.qnaId = previousContextData[step.context.activity.text];
             }
@@ -228,12 +227,12 @@ export class QnAMakerDialog extends WaterfallDialog {
         
         step.values[this.qnAData] = response.answers;
         
-        if (qnaResponse.answers.length > 0 && qnaResponse.answers[0].score <= this.maximumScoreForLowScoreVariation) {
+        if ( qnaResponse.answers.length > 0 && qnaResponse.answers[0].score <= this.maximumScoreForLowScoreVariation) {
             qnaResponse.answers = qna.getLowScoreVariation(qnaResponse.answers);
             
             if (isActiveLearningEnabled && qnaResponse.answers && qnaResponse.answers.length > 1) {
                 var suggestedQuestions: string[] = [];
-
+                
                 qnaResponse.answers.forEach(answer => {
                     suggestedQuestions.push(answer.questions[0]);
                 });
