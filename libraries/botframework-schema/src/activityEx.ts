@@ -122,8 +122,8 @@ export namespace ActivityEx {
         return {
             type: ActivityTypes.Message,
             timestamp: new Date(),
-            from: { id: source.recipient.id || "", name: source.recipient.name || "" } as ChannelAccount,
-            recipient: { id: source.from.id || "", name: source.from.name || "" } as ChannelAccount,
+            from: { id: source.recipient? source.recipient.id : null, name: source.recipient? source.recipient.name : null } as ChannelAccount,
+            recipient: { id: source.from? source.from.id : null, name: source.from? source.from.name : null } as ChannelAccount,
             replyToId: source.id,
             serviceUrl: source.serviceUrl,
             channelId: source.channelId,
@@ -152,8 +152,8 @@ export namespace ActivityEx {
         return {
             type: ActivityTypes.Trace,
             timestamp: new Date(),
-            from: source.recipient,
-            recipient: source.from,
+            from: { id: source.recipient? source.recipient.id : null, name: source.recipient? source.recipient.name : null } as ChannelAccount,
+            recipient: { id: source.from? source.from.id : null, name: source.from? source.from.name : null } as ChannelAccount,
             replyToId: source.id,
             serviceUrl: source.serviceUrl,
             channelId: source.channelId,

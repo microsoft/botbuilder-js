@@ -561,7 +561,7 @@ describe(`activityValidator`, function() {
         const trace = ActivityEx.createTrace(activity, 'test');
 
         // CreateTrace flips Recipient and From
-        assert.strictEqual(trace.from, null);
+        assert.strictEqual(trace.from.id, null);
     });
 
     it('should Create Trace with all the arguments', () => {
