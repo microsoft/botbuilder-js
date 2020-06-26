@@ -23,7 +23,8 @@ import {
     ChannelAccount,
     ConversationReference, 
     Mention,
-    ResourceResponse} from './index';
+    ResourceResponse,
+    ConversationAccount} from './index';
 
 export namespace ActivityEx {
 
@@ -104,7 +105,7 @@ export namespace ActivityEx {
             type: ActivityTypes.Trace,
             name: name,
             label: label,
-            valueType: valueType? valueType : typeof(value).name,
+            valueType: valueType? valueType : typeof(value),
             value: value
             };
     }
@@ -121,12 +122,12 @@ export namespace ActivityEx {
         return {
             type: ActivityTypes.Message,
             timestamp: new Date(),
-            from: source.recipient,
-            recipient: source.from,
+            from: { id: source.recipient.id || "", name: source.recipient.name || "" } as ChannelAccount,
+            recipient: { id: source.from.id || "", name: source.from.name || "" } as ChannelAccount,
             replyToId: source.id,
             serviceUrl: source.serviceUrl,
             channelId: source.channelId,
-            conversation: source.conversation,
+            conversation: { isGroup: source.conversation.isGroup, id: source.conversation.id, name: source.conversation.name } as ConversationAccount,
             text: text || '',
             locale: locale || source.locale,
             label: source.label,
@@ -159,7 +160,7 @@ export namespace ActivityEx {
             conversation: source.conversation,
             name: name,
             label: label,
-            valueType: valueType? valueType : value.getType(),
+            valueType: valueType? valueType : typeof(value),
             value: value
         };
     }
