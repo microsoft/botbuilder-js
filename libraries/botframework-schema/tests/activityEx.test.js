@@ -495,7 +495,7 @@ describe(`activityValidator`, function() {
         assert.strictEqual(activity.serviceUrl, conversationReference.serviceUrl);
     });
 
-    it('should Apply Conversation Reference with IsIncomming true', () => {
+    it('should Apply Conversation Reference with IsIncoming true', () => {
         let activity = CreateActivity();
 
         const conversationReference = {

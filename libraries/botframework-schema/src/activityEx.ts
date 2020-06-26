@@ -364,14 +364,14 @@ export namespace ActivityEx {
   /**
    * Updates the source activity with the delivery information from an existing Conversation Reference.
    * @param source The source activity.
-   * @param isIncomming Optional, true to treat the activity as an incoming activity, where the bot is the recipient; otherwise, false.
+   * @param isIncoming Optional, true to treat the activity as an incoming activity, where the bot is the recipient; otherwise, false.
    * Default is false, and the activity will show the bot as the sender.
    * @remarks Call getConversationReference on an incoming activity to get a conversation reference that you can then use to update an
    * outgoing activity with the correct delivery information.
    * @returns The activity, updated with the delivery information.
    */
-    export function applyConversationReference(source: Partial<Activity>, reference: Partial<ConversationReference>, isIncomming?: boolean): Partial<Activity> {
-        var isIncomming = isIncomming || false; 
+    export function applyConversationReference(source: Partial<Activity>, reference: Partial<ConversationReference>, isIncoming?: boolean): Partial<Activity> {
+        var isIncoming = isIncoming || false; 
         
         if (reference.channelId !== undefined) {
             source.channelId = reference.channelId;
@@ -389,7 +389,7 @@ export namespace ActivityEx {
             source.locale = reference.locale;
         }
 
-        if(isIncomming) {
+        if(isIncoming) {
             if (reference.user !== undefined) {
                 source.from = reference.user;
             }
