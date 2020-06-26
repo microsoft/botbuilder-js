@@ -162,7 +162,7 @@ describe('ActivityPrompt', function () {
 
             const results = await dc.continueDialog();
             if (results.status === DialogTurnStatus.empty) {
-                await dc.prompt('prompt', 'Please send an activity.');
+                await dc.prompt('prompt', { prompt: 'Please send an activity.', retryPrompt: 'Activity not received.' });
             }
 
             const secondResults = await prompt.resumeDialog(dc, DialogReason.nextCalled);
