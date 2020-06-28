@@ -175,6 +175,12 @@ export class TemplatesParser {
         return templates;
     }
 
+    /**
+     * Parse LG content and achieve the AST.
+     * @param text LG content.
+     * @param source source id.
+     * @returns the abstract syntax tree of lg file.
+     */
     public static antlrParseTemplates(text: string, source: string): FileContext {
         if (!text || text.trim() === '') {
             return undefined;
@@ -227,7 +233,9 @@ export class TemplatesParser {
     }
 }
 
-
+/**
+ * Templates transfeormer. Fullfill more details and body context into the templates object.
+ */
 export class TemplatesTransformer extends AbstractParseTreeVisitor<any> implements LGTemplateParserVisitor<any> {
     private readonly identifierRegex: RegExp = new RegExp(/^[0-9a-zA-Z_]+$/);
     private readonly templateNamePartRegex: RegExp = new RegExp(/^[a-zA-Z_][0-9a-zA-Z_]*$/);
@@ -238,6 +246,11 @@ export class TemplatesTransformer extends AbstractParseTreeVisitor<any> implemen
         this.templates = templates;
     }
 
+    
+    /**
+     * transform the parse tree into templates.
+     * @param parseTree input abstract syntax tree.
+     */
     public transform(parseTree: ParseTree): Templates {
         if (parseTree) {
             this.visit(parseTree);

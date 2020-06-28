@@ -21,7 +21,6 @@ import { TemplateExtensions } from './templateExtensions';
 import { EvaluationOptions, LGLineBreakStyle } from './evaluationOptions';
 import { isAbsolute, basename } from 'path';
 import { StaticChecker } from './staticChecker';
-import { off } from 'process';
 
 /**
  * LG entrance, including properties that LG file has, and evaluate functions.
@@ -270,7 +269,7 @@ export class Templates implements Iterable<Template> {
     */
     public updateTemplate(templateName: string, newTemplateName: string, parameters: string[], templateBody: string): Templates {
         const template: Template = this.items.find((u: Template): boolean => u.name === templateName);
-        if (template !== undefined) {
+        if (template) {
             this.clearDiagnostic();
 
             const templateNameLine: string = this.buildTemplateNameLine(newTemplateName, parameters);
@@ -308,7 +307,7 @@ export class Templates implements Iterable<Template> {
     */
     public addTemplate(templateName: string, parameters: string[], templateBody: string): Templates {
         const template: Template = this.items.find((u: Template): boolean => u.name === templateName);
-        if (template !== undefined) {
+        if (template) {
             throw new Error(TemplateErrors.templateExist(templateName));
         }
 
@@ -373,8 +372,10 @@ export class Templates implements Iterable<Template> {
     }
 
     private adjustRangeForUpdateTemplate(oldTemplate: Template, newTemplate: Template): void {
-        const lineOffset = newTemplate.sourceRange.range.end.line - newTemplate.sourceRange.range.start.line
-        - (oldTemplate.sourceRange.range.end.line - oldTemplate.sourceRange.range.start.line);
+        const newRange = newTemplate.sourceRange.range.end.line - newTemplate.sourceRange.range.start.line;
+        const oldRange = oldTemplate.sourceRange.range.end.line - oldTemplate.sourceRange.range.start.line;
+
+        const lineOffset = newRange - oldRange;
 
         let hasFound = false;
         for (let i = 0; i < this.items.length; i++) {
