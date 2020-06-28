@@ -178,8 +178,8 @@ export class TemplatesParser {
     /**
      * Parse LG content and achieve the AST.
      * @param text LG content.
-     * @param source source id.
-     * @returns the abstract syntax tree of lg file.
+     * @param source Source id.
+     * @returns The abstract syntax tree of lg file.
      */
     public static antlrParseTemplates(text: string, source: string): FileContext {
         if (!text || text.trim() === '') {
@@ -248,8 +248,8 @@ export class TemplatesTransformer extends AbstractParseTreeVisitor<any> implemen
 
     
     /**
-     * transform the parse tree into templates.
-     * @param parseTree input abstract syntax tree.
+     * Transform the parse tree into templates.
+     * @param parseTree Input abstract syntax tree.
      */
     public transform(parseTree: ParseTree): Templates {
         if (parseTree) {
