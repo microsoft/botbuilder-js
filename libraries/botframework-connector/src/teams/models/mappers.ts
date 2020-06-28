@@ -96,6 +96,12 @@ export const TeamInfo: msRest.CompositeMapper = {
         type: {
           name: 'String'
         }
+      },
+      aadGroupId: {
+        serializedName: 'aadGroupId',
+        type: {
+          name: 'String'
+        }
       }
     }
   }

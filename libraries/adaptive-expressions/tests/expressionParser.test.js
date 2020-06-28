@@ -389,7 +389,7 @@ const dataSource = [
 
     // TODO: This should actually be the below, but toLocaleString does not work.
     // ['formatNumber(12000.3, 4, "fr-FR")', '12\u00a0000,3000'],
-    ['formatNumber(12000.3, 4, "fr-FR")', '12,000.3000'],
+    //['formatNumber(12000.3, 4, "fr-FR")', '12,000.3000'],
 
     // Math functions tests
     ['add(1, 2, 3)', 6],
@@ -552,6 +552,9 @@ const dataSource = [
     ['contains(items, \'hi\')', false],
     ['contains(bag, \'three\')', true],
     ['contains(bag, \'xxx\')', false],
+    ['concat(null, [1, 2], null)', [1, 2]],
+    ['concat(createArray(1, 2), createArray(3, 4))', [1, 2, 3, 4]],
+    ['concat([\'a\', \'b\'], [\'b\', \'c\'], [\'c\', \'d\'])', ['a', 'b', 'b', 'c', 'c', 'd']],
     ['count(split(hello,\'e\'))', 2],
     ['count(createArray(\'h\', \'e\', \'l\', \'l\', \'o\'))', 5],
     ['empty(\'\')', true],
@@ -632,6 +635,8 @@ const dataSource = [
     ['coalesce(nullObj, false, \'hello\')', false],
     ['jPath(jsonStr, pathStr )', ['Jazz', 'Accord']],
     ['jPath(jsonStr, \'.automobiles[0].maker\' )', ['Nissan']],
+    ['string(merge(json1, json2))', '{"FirstName":"John","LastName":"Smith","Enabled":true,"Roles":["Customer","Admin"]}'],
+    ['string(merge(json1, json2, json3))', '{"FirstName":"John","LastName":"Smith","Enabled":true,"Roles":["Customer","Admin"],"age":36}'],
 
     // Memory access tests
     ['getProperty(bag, concat(\'na\',\'me\'))', 'mybag'],
@@ -760,6 +765,17 @@ const scope = {
     unixTimestamp: 1521118800,
     unixTimestampFraction: 1521118800.5,
     ticks: bigInt('637243624200000000'),
+    json1: {
+        'FirstName': 'John',
+        'LastName': 'Smith',
+        'Enabled': false,
+        'Roles': [ 'User' ]
+    },
+    json2: {
+        'Enabled': true,
+        'Roles': [ 'Customer', 'Admin' ]
+    },
+    json3: {'age': 36},
     user:
     {
         income: 110.0,

@@ -120,7 +120,7 @@ export class ExpressionType {
     public static readonly UriComponent: string = 'uriComponent';
     public static readonly UriComponentToString: string = 'uriComponentToString';
     public static readonly FormatNumber: string = 'formatNumber';
-    
+
     // Memory
     public static readonly Accessor: string = 'Accessor';
     public static readonly Element: string = 'Element';
@@ -159,10 +159,7 @@ export class ExpressionType {
     public static readonly Coalesce: string = 'coalesce';
     public static readonly JPath: string = 'jPath';
     public static readonly SetPathToValue: string = 'setPathToValue';
-
-    // TODO
-    // xPath
-    // xml
+    public static readonly Merge: string = 'merge';
 
     // URI parsing functions
     public static readonly UriHost: string = 'uriHost';
