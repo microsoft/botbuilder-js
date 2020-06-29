@@ -1260,7 +1260,7 @@ export interface TaskModuleRequestContext {
 
 // @public
 export interface TaskModuleResponse {
-    task?: TaskModuleResponseBase;
+    task?: TaskModuleContinueResponse | TaskModuleMessageResponse;
 }
 
 // @public
