@@ -7,7 +7,7 @@ export * from "botframework-schema";
  * An interface representing ConnectorClientOptions.
  */
 export interface ConnectorClientOptions extends ServiceClientOptions {
-  baseUri: string;
+  baseUri?: string;
 }
 
 /**
