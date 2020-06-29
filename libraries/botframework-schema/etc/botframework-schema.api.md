@@ -717,6 +717,7 @@ export interface MessageActionsPayload {
     replyToId?: string;
     subject?: string;
     summary?: string;
+    linkToMessage?: string;
 }
 
 // @public

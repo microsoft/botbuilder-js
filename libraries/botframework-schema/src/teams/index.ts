@@ -86,6 +86,10 @@ export interface TeamInfo {
    * @member {string} [name] Name of team.
    */
   name?: string;
+    /**
+   * @member {string} [aadGroupId] The Azure AD Teams group ID.
+   */
+  aadGroupId?: string;
 }
 
 /**

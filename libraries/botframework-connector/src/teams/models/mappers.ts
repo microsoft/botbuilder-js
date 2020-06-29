@@ -1302,6 +1302,12 @@ export const MessageActionsPayload: msRest.CompositeMapper = {
             }
           }
         }
+      },
+      linkToMessage: {
+        serializedName: 'linkToMessage',
+        type: {
+          name: 'String'
+        }
       }
     }
   }
