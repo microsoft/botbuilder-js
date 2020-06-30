@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 
-import { INodeIncomingMessage, INodeBuffer, INodeSocket } from '../../interfaces';
+import { INodeIncomingMessage, INodeBuffer, INodeSocket } from '../../../interfaces';
 import { NodeWebSocket } from '../nodeWebSocket';
 import { NodeWebSocketFactoryBase } from './nodeWebSocketFactoryBase';
 

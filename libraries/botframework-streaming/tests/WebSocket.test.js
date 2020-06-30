@@ -1,4 +1,5 @@
 const ws = require('../lib');
+const { BrowserWebSocket } = require('../browser/index-browser');
 const protocol = require('../lib');
 const wst = require('../lib/webSocket/webSocketTransport');
 const  chai  = require('chai');
@@ -231,31 +232,31 @@ describe('Streaming Extensions WebSocket Library Tests', () => {
 
     describe('BrowserSocket Tests', () => {
         it('creates a new BrowserSocket', () => {
-            let bs = new ws.BrowserWebSocket( new FauxSock());
-            expect(bs).to.be.instanceOf(ws.BrowserWebSocket);
+            let bs = new BrowserWebSocket(new FauxSock());
+            expect(bs).to.be.instanceOf(BrowserWebSocket);
             expect(() => bs.close()).to.not.throw;
         });
 
         it('knows its connected', () => {
-            let bs = new ws.BrowserWebSocket( new FauxSock());
+            let bs = new BrowserWebSocket(new FauxSock());
             bs.connect('fakeUrl');
             expect(bs.isConnected).to.be.true;
         });
 
         it('writes to the socket', () => {
-            let bs = new ws.BrowserWebSocket( new FauxSock());
+            let bs = new BrowserWebSocket(new FauxSock());
             let buff = Buffer.from('hello');
             expect(bs.write(buff)).to.not.throw;
         });
 
         it('always thinks it connects', () => {
-            let bs = new ws.BrowserWebSocket( new FauxSock());
+            let bs = new BrowserWebSocket(new FauxSock());
             expect(bs.connect()).to.not.throw;
         });
 
         it('can set error handler on the socket', () => {
             let sock = new FauxSock();
-            let bs = new ws.BrowserWebSocket( sock);
+            let bs = new BrowserWebSocket(sock);
             expect(sock.onerror).to.be.undefined;
             expect(bs.setOnErrorHandler(() => {})).to.not.throw;
             expect(sock.onerror).to.not.be.undefined;
@@ -263,7 +264,7 @@ describe('Streaming Extensions WebSocket Library Tests', () => {
 
         it('can set end handler on the socket', () => {
             let sock = new FauxSock();
-            let bs = new ws.BrowserWebSocket( sock);
+            let bs = new BrowserWebSocket(sock);
             expect(sock.onclose).to.be.undefined;
             expect(bs.setOnCloseHandler(() => {})).to.not.throw;
             expect(sock.onclose).to.not.be.undefined;
@@ -271,7 +272,7 @@ describe('Streaming Extensions WebSocket Library Tests', () => {
 
         it('can set onerror on the socket', () => {
             let sock = new FauxSock();
-            let bs = new ws.BrowserWebSocket( sock);
+            let bs = new BrowserWebSocket(sock);
             bs.connect('nowhere');
             expect(sock.onerror).to.not.be.undefined;
             expect(sock.onopen).to.not.be.undefined;
@@ -279,7 +280,7 @@ describe('Streaming Extensions WebSocket Library Tests', () => {
 
         it('can set onopen on the socket', () => {
             let sock = new FauxSock();
-            let bs = new ws.BrowserWebSocket( sock);
+            let bs = new BrowserWebSocket(sock);
             bs.connect('nowhere');
             expect(sock.onerror).to.not.be.undefined;
             expect(sock.onopen).to.not.be.undefined;
@@ -287,7 +288,7 @@ describe('Streaming Extensions WebSocket Library Tests', () => {
 
         it('can close', () => {
             let sock = new FauxSock();
-            let bs = new ws.BrowserWebSocket( sock);
+            let bs = new BrowserWebSocket(sock);
             bs.connect('nowhere');
             expect(sock.onerror).to.not.be.undefined;
             expect(sock.onopen).to.not.be.undefined;

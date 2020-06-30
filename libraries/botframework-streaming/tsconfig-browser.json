@@ -16,7 +16,7 @@
     "node_modules",
     "./src/index.ts",
     "./src/webSocket/index.ts",
-    "./src/webSocket/nodeWebSocket.ts",
+    "./src/webSocket/node/**/*.ts",
     "src/namedPipe"
   ]
 }

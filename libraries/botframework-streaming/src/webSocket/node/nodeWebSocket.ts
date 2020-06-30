@@ -10,7 +10,7 @@ import * as crypto from 'crypto';
 import { IncomingMessage, request } from 'http';
 import * as WebSocket from 'ws';
 
-import { INodeIncomingMessage, INodeBuffer, INodeSocket, ISocket } from '../interfaces';
+import { INodeIncomingMessage, INodeBuffer, INodeSocket, ISocket } from '../../interfaces';
 const NONCE_LENGTH = 16;
 
 export class NodeWebSocket implements ISocket {
