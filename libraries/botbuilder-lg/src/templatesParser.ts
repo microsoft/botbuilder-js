@@ -176,7 +176,7 @@ export class TemplatesParser {
     }
 
     /**
-     * Parse LG content and achieve the AST.
+     * Parse LG content and return the AST.
      * @param text LG content.
      * @param source Source id.
      * @returns The abstract syntax tree of lg file.
@@ -234,7 +234,7 @@ export class TemplatesParser {
 }
 
 /**
- * Templates transfeormer. Fullfill more details and body context into the templates object.
+ * Templates transformer. Add more details and body context into the templates object.
  */
 export class TemplatesTransformer extends AbstractParseTreeVisitor<any> implements LGTemplateParserVisitor<any> {
     private readonly identifierRegex: RegExp = new RegExp(/^[0-9a-zA-Z_]+$/);
