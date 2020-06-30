@@ -56,6 +56,11 @@ export class UpdateActivity<O extends object = {}> extends Dialog<O> {
         }, dc.state, options);
         const activityResult = await this.activity.bindToData(dc.context, data);
 
+        this.telemetryClient.trackEvent({
+            name: 'GeneratorResult',
+            properties: {'template':this.activity,
+                'result': !activityResult ? '' : activityResult }});
+
         const value = this.activityId.getValue(dc.state);
         activityResult.id = value.toString();
 

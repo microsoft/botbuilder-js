@@ -221,7 +221,14 @@ export class HttpRequest<O extends object = {}> extends Dialog<O> implements Con
                 return value;
             }
             else {
-                return await new TextTemplate(text).bindToData(dc.context, dc.state);
+                const result = await new TextTemplate(text).bindToData(dc.context, dc.state);
+                
+                this.telemetryClient.trackEvent({
+                    name: 'GeneratorResult',
+                    properties: {'template':text,
+                        'result': !result ? '' : result }});
+
+                return result;
             }
         }
 

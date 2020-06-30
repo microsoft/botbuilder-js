@@ -100,7 +100,14 @@ export class BeginSkill extends SkillDialog {
         options = {} as BeginSkillDialogOptions;
         if (this.activityProcessed.getValue(dcState) && this.activity) {
             // The parent consumed the activity in context, use the Activity property to start the skill.
-            options.activity = await this.activity.bindToData(dc.context, dcState);
+            let activity = await this.activity.bindToData(dc.context, dcState);
+
+            this.telemetryClient.trackEvent({
+                name: 'GeneratorResult',
+                properties: {'template':this.activity,
+                    'result': !activity ? '' : activity }});
+
+            options.activity = activity;
         } else {
             // Send the turn context activity to the skill (pass through).
             options.activity = dc.context.activity;
