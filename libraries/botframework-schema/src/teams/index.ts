@@ -811,6 +811,10 @@ export interface MessageActionsPayload {
    */
   locale?: string;
   /**
+   * @member {string} [linkToMessage] Link back to the message.
+   */
+  linkToMessage?: string;
+  /**
    * @member {MessageActionsPayloadFrom} [from] Sender of the message.
    */
   from?: MessageActionsPayloadFrom;
