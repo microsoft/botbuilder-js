@@ -1027,16 +1027,26 @@ export class ExpressionFunctions {
     private static getProperty(expression: Expression, state: MemoryInterface, options: Options): {value: any; error: string} {
         let value: any;
         let error: string;
-        let instance: any;
+        let firstItem: any;
         let property: any;
 
         const children: Expression[] = expression.children;
-        ({value: instance, error} = children[0].tryEvaluate(state, options));
+        ({value: firstItem, error} = children[0].tryEvaluate(state, options));
         if (!error) {
-            ({value: property, error} = children[1].tryEvaluate(state, options));
+            if (children.length === 1) {
+                // get root value from memory
+                if (typeof firstItem === 'string') {
+                    value = ExpressionFunctions.wrapGetValue(state, firstItem, options);
+                } else {
+                    error = `"Single parameter ${ children[0] } is not a string."`;
+                }
+            } else {
+                // get the peoperty value from the instance
+                ({value: property, error} = children[1].tryEvaluate(state, options));
 
-            if (!error) {
-                value = ExpressionFunctions.wrapGetValue(new SimpleObjectMemory(instance), property.toString(), options);
+                if (!error) {
+                    value = ExpressionFunctions.wrapGetValue(new SimpleObjectMemory(firstItem), property.toString(), options);
+                }
             }
         }
 
@@ -3337,7 +3347,7 @@ export class ExpressionFunctions {
                 ExpressionType.GetProperty,
                 ExpressionFunctions.getProperty,
                 ReturnType.Object,
-                (expression: Expression): void => ExpressionFunctions.validateOrder(expression, undefined, ReturnType.Object, ReturnType.String)),
+                (expression: Expression): void => ExpressionFunctions.validateOrder(expression, [ReturnType.String], ReturnType.Object)),
             new ExpressionEvaluator(
                 ExpressionType.If,
                 (expression: Expression, state: MemoryInterface, options: Options): {value: any; error: string} => ExpressionFunctions._if(expression, state, options),
