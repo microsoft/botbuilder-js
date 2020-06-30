@@ -285,6 +285,12 @@ export const CardAction: msRest.CompositeMapper = {
         type: {
           name: "Object"
         }
+      },
+      imageAltText: {
+        serializedName: "imageAltText",
+        type: {
+          name: "String"
+        }
       }
     }
   }

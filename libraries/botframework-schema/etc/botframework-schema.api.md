@@ -252,6 +252,7 @@ export interface CardAction {
     title: string;
     type: ActionTypes | string;
     value: any;
+    imageAltText?: string;
 }
 
 // @public
