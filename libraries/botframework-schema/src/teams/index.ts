@@ -905,10 +905,10 @@ export interface MessagingExtensionAction extends TaskModuleRequest {
  */
 export interface TaskModuleResponseBase {
   /**
-   * @member {BotMessagePreviewActionType} [type] Choice of action options when responding to the
+   * @member {BotMessagePreviewType} [type] Choice of action options when responding to the
    * task/submit message. Possible values include: 'message', 'continue'
    */
-  type?: BotMessagePreviewActionType;
+  type?: BotMessagePreviewType;
 }
 
 /**
@@ -1382,7 +1382,7 @@ export type BotMessagePreviewType = 'message' | 'continue';
 /**
  * @deprecated Use BotMessagePreviewType
  */
-export type Type2 = BotMessagePreviewActionType
+export type Type2 = BotMessagePreviewType
 
 /**
  * Defines values for AttachmentLayout.
