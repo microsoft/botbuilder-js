@@ -94,5 +94,6 @@ steps:
   inputs:
     azureSubscription: '$(AzureSubscription)'
     scriptLocation: inlineScript
-    inlineScript: 'call az group delete -n BrowserBotTest --yes'
+    inlineScript: 'call az group delete -n $(TestResourceGroup) --yes'
+
   condition: succeededOrFailed()
