@@ -79,8 +79,12 @@ export class LanguagePolicy {
     //   "en" -> ""
     // So that when we get a locale such as en-gb, we can try to resolve to "en-gb" then "en" then ""
     // See commented section for full sample of output of this function
-    public static getDefaultPolicy(): any{
+    public static getDefaultPolicy(defaultLanguages?: string[]): any{
         var result = {};
+        if (defaultLanguages === undefined) {
+            defaultLanguages = [''];
+        }
+
         for (const locale of LanguagePolicy.locales) {
             let lang = locale.toLowerCase();
             const fallback: string[] = [];
@@ -93,8 +97,11 @@ export class LanguagePolicy {
                     break;
                 }
             }
-    
-            fallback.push('');
+            
+            if (locale === '') {
+                defaultLanguages.forEach((u): number => fallback.push(u));
+            }
+
             result[locale] = fallback;
         }
     

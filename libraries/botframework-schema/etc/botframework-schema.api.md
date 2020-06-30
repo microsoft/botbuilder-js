@@ -156,8 +156,8 @@ export interface AnimationCard {
 
 // @public
 export interface AppBasedLinkQuery {
-    url?: string;
     state?: string;
+    url?: string;
 }
 
 // @public
@@ -237,6 +237,13 @@ export type BotMessagePreviewActionType = 'edit' | 'send';
 export type BotMessagePreviewType = 'message' | 'continue';
 
 // @public
+export class CallerIdConstants {
+    static readonly BotToBotPrefix: string;
+    static readonly PublicAzureChannel: string;
+    static readonly USGovChannel: string;
+}
+
+// @public
 export interface CardAction {
     channelData?: any;
     displayText?: string;
@@ -245,6 +252,7 @@ export interface CardAction {
     title: string;
     type: ActionTypes | string;
     value: any;
+    imageAltText?: string;
 }
 
 // @public
@@ -367,6 +375,7 @@ export interface ConversationReference {
     bot: ChannelAccount;
     channelId: string;
     conversation: ConversationAccount;
+    locale?: string;
     serviceUrl: string;
     user?: ChannelAccount;
 }
@@ -489,6 +498,20 @@ export interface GeoCoordinates {
     longitude: number;
     name: string;
     type: string;
+}
+
+// @public
+export interface HealthCheckResponse {
+    healthResults: HealthResults;
+}
+
+// @public
+export interface HealthResults {
+    "user-agent"?: string;
+    authorization?: string;
+    diagnostics?: any;
+    messages?: string[];
+    success: boolean;
 }
 
 // @public
@@ -615,6 +638,14 @@ export enum InstallationUpdateActionTypes {
     Add = "add",
     // (undocumented)
     Remove = "remove"
+}
+
+// @public (undocumented)
+export interface IStatusCodeError {
+    // (undocumented)
+    message?: string;
+    // (undocumented)
+    statusCode: StatusCodes;
 }
 
 // @public (undocumented)
@@ -1173,6 +1204,32 @@ export interface SignInUrlResponse {
 }
 
 // @public
+export enum StatusCodes {
+    // (undocumented)
+    BAD_GATEWAY = 502,
+    // (undocumented)
+    BAD_REQUEST = 400,
+    // (undocumented)
+    CONFLICT = 409,
+    // (undocumented)
+    INTERNAL_SERVER_ERROR = 500,
+    // (undocumented)
+    METHOD_NOT_ALLOWED = 405,
+    // (undocumented)
+    MULTIPLE_CHOICES = 300,
+    // (undocumented)
+    NOT_FOUND = 404,
+    // (undocumented)
+    NOT_IMPLEMENTED = 501,
+    // (undocumented)
+    OK = 200,
+    // (undocumented)
+    UNAUTHORIZED = 401,
+    // (undocumented)
+    UPGRADE_REQUIRED = 426
+}
+
+// @public
 export type Style = 'compact' | 'expanded';
 
 // @public
@@ -1236,6 +1293,7 @@ export interface TeamDetails {
 export interface TeamInfo {
     id?: string;
     name?: string;
+    aadGroupId?: string;
 }
 
 // @public (undocumented)
@@ -1249,8 +1307,8 @@ export interface TeamsChannelAccount extends ChannelAccount {
     email?: string;
     givenName?: string;
     surname?: string;
-    userPrincipalName?: string;
     tenantId?: string;
+    userPrincipalName?: string;
     userRole?: string;
 }
 
@@ -1310,6 +1368,13 @@ export interface ThumbnailCard {
 export interface ThumbnailUrl {
     alt: string;
     url: string;
+}
+
+// @public
+export interface TokenExchangeInvokeRequest {
+    connectionName: string;
+    id: string;
+    token: string;
 }
 
 // @public

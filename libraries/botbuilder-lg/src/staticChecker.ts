@@ -100,8 +100,9 @@ export class StaticChecker extends AbstractParseTreeVisitor<Diagnostic[]> implem
     public visitStructuredTemplateBody(context: lp.StructuredTemplateBodyContext): Diagnostic[] {
         let result: Diagnostic[] = [];
 
-        if (context.structuredBodyNameLine().errorStructuredName() !== undefined) {
-            result.push(this.buildLGDiagnostic(TemplateErrors.invalidStrucName, undefined, context.structuredBodyNameLine()));
+        const errorName = context.structuredBodyNameLine().errorStructuredName();
+        if (errorName !== undefined) {
+            result.push(this.buildLGDiagnostic(TemplateErrors.invalidStrucName(errorName.text), undefined, context.structuredBodyNameLine()));
         }
 
         if (context.structuredBodyEndLine() === undefined) {
@@ -111,7 +112,7 @@ export class StaticChecker extends AbstractParseTreeVisitor<Diagnostic[]> implem
         const errors = context.errorStructureLine();
         if (errors && errors.length > 0){
             for (const error of errors) {
-                result.push(this.buildLGDiagnostic(TemplateErrors.invalidStrucBody, undefined, error));
+                result.push(this.buildLGDiagnostic(TemplateErrors.invalidStrucBody(error.text), undefined, error));
             }
         } else {
             const bodys = context.structuredBodyContentLine();
@@ -119,14 +120,14 @@ export class StaticChecker extends AbstractParseTreeVisitor<Diagnostic[]> implem
                 result.push(this.buildLGDiagnostic(TemplateErrors.emptyStrucContent, undefined, context));
             } else {
                 for (const body of bodys) {
-                    if (body.objectStructureLine() !== undefined) {
-                        result = result.concat(this.checkExpression(body.objectStructureLine().text, body.objectStructureLine()));
+                    if (body.expressionInStructure() !== undefined) {
+                        result = result.concat(this.checkExpression(body.expressionInStructure()));
                     } else {
                         const structureValues = body.keyValueStructureLine().keyValueStructureValue();
                         const errorPrefix = `Property  '` + body.keyValueStructureLine().text + `':`;
                         for (const structureValue of structureValues) {
-                            for (const expr of structureValue.EXPRESSION_IN_STRUCTURE_BODY()) {
-                                result = result.concat(this.checkExpression(expr.text, structureValue, errorPrefix));
+                            for (const expr of structureValue.expressionInStructure()) {
+                                result = result.concat(this.checkExpression(expr, errorPrefix));
                             }
                         }
                     }
@@ -174,14 +175,14 @@ export class StaticChecker extends AbstractParseTreeVisitor<Diagnostic[]> implem
             }
 
             if (!elseExpr) {
-                if (ifRule.ifCondition().EXPRESSION().length !== 1) {
+                if (ifRule.ifCondition().expression().length !== 1) {
                     result.push(this.buildLGDiagnostic(TemplateErrors.invalidExpressionInCondition,undefined, conditionNode));
                 } else {
-                    const errorPrefix =  `Condition '` + conditionNode.EXPRESSION(0).text + `': `;
-                    result = result.concat(this.checkExpression(ifRule.ifCondition().EXPRESSION(0).text, conditionNode, errorPrefix));
+                    const errorPrefix =  `Condition '` + conditionNode.expression(0).text + `': `;
+                    result = result.concat(this.checkExpression(conditionNode.expression(0), errorPrefix));
                 }
             } else {
-                if (ifRule.ifCondition().EXPRESSION().length !== 0) {
+                if (ifRule.ifCondition().expression().length !== 0) {
                     result.push(this.buildLGDiagnostic(TemplateErrors.extraExpressionInCondition, undefined, conditionNode));
                 }
             }
@@ -237,15 +238,15 @@ export class StaticChecker extends AbstractParseTreeVisitor<Diagnostic[]> implem
                 }
             }
             if (switchExpr || caseExpr) {
-                if (switchCaseStat.EXPRESSION().length !== 1) {
+                if (switchCaseStat.expression().length !== 1) {
                     result.push(this.buildLGDiagnostic(TemplateErrors.invalidExpressionInSwiathCase, undefined, switchCaseStat));
                 } else {
                     let errorPrefix = switchExpr ? 'Switch' : 'Case';
-                    errorPrefix += ` '${ switchCaseStat.EXPRESSION(0).text }': `;
-                    result = result.concat(this.checkExpression(switchCaseStat.EXPRESSION(0).text, switchCaseStat, errorPrefix));
+                    errorPrefix += ` '${ switchCaseStat.expression(0).text }': `;
+                    result = result.concat(this.checkExpression(switchCaseStat.expression(0), errorPrefix));
                 }
             } else {
-                if (switchCaseStat.EXPRESSION().length !== 0 || switchCaseStat.TEXT().length !== 0) {
+                if (switchCaseStat.expression().length !== 0 || switchCaseStat.TEXT().length !== 0) {
                     result.push(this.buildLGDiagnostic(TemplateErrors.extraExpressionInSwitchCase, undefined, switchCaseStat));
                 }
             }
@@ -266,8 +267,8 @@ export class StaticChecker extends AbstractParseTreeVisitor<Diagnostic[]> implem
         const prefixErrorMsg = TemplateExtensions.getPrefixErrorMessage(context);
         let result: Diagnostic[] = [];
 
-        for (const expression of context.EXPRESSION()) {
-            result = result.concat(this.checkExpression(expression.text, context, prefixErrorMsg));
+        for (const expression of context.expression()) {
+            result = result.concat(this.checkExpression(expression, prefixErrorMsg));
         }
 
         const multiLinePrefix = context.MULTILINE_PREFIX();
@@ -283,10 +284,11 @@ export class StaticChecker extends AbstractParseTreeVisitor<Diagnostic[]> implem
         return [];
     }
 
-    private checkExpression(exp: string, context: ParserRuleContext, prefix: string = ''): Diagnostic[] {
+    private checkExpression(expressionContext: ParserRuleContext, prefix: string = ''): Diagnostic[] {
         const result: Diagnostic[] = [];
+        let exp = expressionContext.text;
         if(!exp.endsWith('}')) {
-            result.push(this.buildLGDiagnostic(TemplateErrors.noCloseBracket, undefined, context));
+            result.push(this.buildLGDiagnostic(TemplateErrors.noCloseBracket, undefined, expressionContext));
         } else {
             exp = TemplateExtensions.trimExpression(exp);
 
@@ -295,7 +297,7 @@ export class StaticChecker extends AbstractParseTreeVisitor<Diagnostic[]> implem
             } catch (e) {
                 const suffixErrorMsg = Evaluator.concatErrorMsg(TemplateErrors.expressionParseError(exp), e.message);
                 const errorMsg = Evaluator.concatErrorMsg(prefix, suffixErrorMsg);
-                result.push(this.buildLGDiagnostic(errorMsg, undefined, context));
+                result.push(this.buildLGDiagnostic(errorMsg, undefined, expressionContext));
     
                 return result;
             }
@@ -306,8 +308,13 @@ export class StaticChecker extends AbstractParseTreeVisitor<Diagnostic[]> implem
 
     private buildLGDiagnostic( message: string, severity: DiagnosticSeverity = undefined, context: ParserRuleContext = undefined): Diagnostic {
         const lineOffset = this.currentTemplate !== undefined ? this.currentTemplate.sourceRange.range.start.line : 0;
-        message = this.currentTemplate !== undefined ? `[${ this.currentTemplate.name }]` + message : message;
+
+        let templateNameInfo = '';
+        if (this.currentTemplate !== undefined && this.currentTemplate.name !== Templates.inlineTemplateId) {
+            templateNameInfo = `[${ this.currentTemplate.name }]`;
+        }
+
         const range = context === undefined ? new Range(lineOffset + 1, 0, lineOffset + 1, 0) : TemplateExtensions.convertToRange(context, lineOffset);
-        return new Diagnostic(range, message, severity, this.templates.id);
+        return new Diagnostic(range, templateNameInfo + message, severity, this.templates.id);
     }
 }

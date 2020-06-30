@@ -314,11 +314,11 @@ export class LuisService extends ConnectedService implements ILuisService {
     constructor(source?: ILuisService, serviceType?: ServiceTypes);
     appId: string;
     authoringKey: string;
+    customEndpoint: string;
     // (undocumented)
     decrypt(secret: string, decryptString: (value: string, secret: string) => string): void;
     // (undocumented)
     encrypt(secret: string, encryptString: (value: string, secret: string) => string): void;
-    // (undocumented)
     getEndpoint(): string;
     region: string;
     subscriptionKey: string;
