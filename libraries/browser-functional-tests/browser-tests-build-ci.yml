@@ -12,9 +12,9 @@ pr:
     - master
 
 variables:
-  TestResourceGroup: 'BrowserBotTest'
-  TestAppServicePlan: 'BrowserBotServicePlan'
-  TestWebApp: 'BrowserBotWebApp'
+  TestResourceGroup: 'BrowserBotTest$(Build.BuildId)'
+  TestAppServicePlan: 'BrowserBotServicePlan$(Build.BuildId)'
+  TestWebApp: 'BrowserBotWebApp$(Build.BuildId)'
   TESTURI: 'https://$(TestWebApp).azurewebsites.net/'
 #  AzureSubscription: define this in Azure
 
@@ -94,5 +94,6 @@ steps:
   inputs:
     azureSubscription: '$(AzureSubscription)'
     scriptLocation: inlineScript
-    inlineScript: 'call az group delete -n BrowserBotTest --yes'
+    inlineScript: 'call az group delete -n $(TestResourceGroup) --yes'
+
   condition: succeededOrFailed()
