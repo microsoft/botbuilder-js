@@ -252,6 +252,7 @@ export interface CardAction {
     title: string;
     type: ActionTypes | string;
     value: any;
+    imageAltText?: string;
 }
 
 // @public
@@ -717,6 +718,7 @@ export interface MessageActionsPayload {
     replyToId?: string;
     subject?: string;
     summary?: string;
+    linkToMessage?: string;
 }
 
 // @public
