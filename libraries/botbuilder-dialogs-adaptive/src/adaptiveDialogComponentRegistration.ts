@@ -170,7 +170,8 @@ export class AdaptiveDialogComponentRegistration implements ComponentRegistratio
         }));
         this.registerBuilder('Microsoft.RepeatDialog', new AdaptiveTypeBuilder(RepeatDialog, this._resourceExplorer,
             Object.assign(baseInvokeDialogConverters, {
-                'disabled': new BoolExpressionConverter()
+                'disabled': new BoolExpressionConverter(),
+                'allowLoop': new BoolExpressionConverter()
             })));
         this.registerBuilder('Microsoft.ReplaceDialog', new AdaptiveTypeBuilder(ReplaceDialog, this._resourceExplorer,
             Object.assign(baseInvokeDialogConverters, {
