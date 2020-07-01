@@ -368,6 +368,9 @@ export class TeamsActivityHandler extends ActivityHandler {
         
                     case 'channelRenamed':
                         return await this.onTeamsChannelRenamed(context);
+
+                    case 'channelRestored':
+                        return await this.onTeamsChannelRestored(context);
         
                     case 'teamRenamed':
                         return await this.onTeamsTeamRenamed(context);
@@ -469,6 +472,15 @@ export class TeamsActivityHandler extends ActivityHandler {
     }
 
     /**
+     * Invoked when a Channel Restored event activity is received from the connector.
+     * Channel Restored correspond to the user restoring a previously deleted channel.
+     * @param context The context for this turn
+     */
+    protected async onTeamsChannelRestored(context): Promise<void> {
+        await this.handle(context, 'TeamsChannelRestored', this.defaultNextEvent(context));
+    }
+
+    /**
      * 
      * @param context 
      */
@@ -528,6 +540,17 @@ export class TeamsActivityHandler extends ActivityHandler {
         return this.on('TeamsChannelRenamed', async (context, next) => {
             const teamsChannelData = context.activity.channelData as TeamsChannelData;
             await handler(teamsChannelData.channel, teamsChannelData.team, context, next);
+        });
+    }
+    
+    /**
+     * Override this in a derived class to provide logic for when a channel is restored.
+     * @param handler 
+     */
+    public onTeamsChannelRestoredEvent(handler: (teamInfo: TeamInfo, context: TurnContext, next: () => Promise<void>) => Promise<void>): this {
+        return this.on('TeamsChannelRestored', async (context, next) => {
+            const teamsChannelData = context.activity.channelData as TeamsChannelData;
+            await handler(teamsChannelData.team, context, next);
         });
     }
 
