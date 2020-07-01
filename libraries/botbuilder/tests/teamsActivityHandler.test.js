@@ -836,6 +836,52 @@ describe('TeamsActivityHandler', () => {
                     assert(onDialogCalled, 'onDialog handler not called');
                 });
         });
+
+        it('onTeamsChannelRestored routed activity', () => {
+            const bot = new TeamsActivityHandler();
+    
+            let onTeamsChannelRestoredEventCalled = false;
+    
+            const team = { id: 'team' };
+            const channel = { id: 'channel', name: 'channelName' };
+            const activity = createConvUpdateActivity({ channel, team, eventType: 'channelRestored' });
+
+            bot.onConversationUpdate(async (context, next) => {
+                assert(context, 'context not found');
+                assert(next, 'next not found');
+                onConversationUpdateCalled = true;
+                await next();
+            });
+
+            bot.onTeamsChannelRestoredEvent(async (channelInfo, teamInfo, context, next) => {
+                assert(channelInfo, 'channelInfo not found');
+                assert(teamInfo, 'teamsInfo not found');
+                assert(context, 'context not found');
+                assert(next, 'next not found');
+                assert.strictEqual(teamInfo, team);
+                assert.strictEqual(channelInfo, channel);
+                onTeamsChannelRestoredEventCalled = true;
+                await next();
+            });
+
+            bot.onDialog(async (context, next) => {
+                assert(context, 'context not found');
+                assert(next, 'next not found');
+                onDialogCalled = true;
+                await next();
+            });
+    
+            const adapter = new TestAdapter(async context => {
+                await bot.run(context);
+            });
+    
+            adapter.send(activity)
+                .then(() => {
+                    assert(onTeamsChannelRestoredEventCalled, 'onTeamsChannelRestoredEvent handler not called');
+                    assert(onConversationUpdateCalled, 'onConversationUpdate handler not called');
+                    assert(onDialogCalled, 'onDialog handler not called');
+                });
+        });
         
         it('onTeamsTeamRenamed routed activity', () => {
             const bot = new TeamsActivityHandler();
