@@ -24,8 +24,8 @@ export class OpenIdMetadata {
     }
 
     public async getKey(keyId: string): Promise<IOpenIdMetadataKey | null> {
-        // If keys are more than 5 days old, refresh them
-        if (this.lastUpdated < (Date.now() - 1000 * 60 * 60 * 24 * 5)) {
+        // If keys are more than 24 hours old, refresh them
+        if (this.lastUpdated < (Date.now() - 1000 * 60 * 60 * 24)) {
             try {
                 await this.refreshCache();
                 
@@ -40,6 +40,11 @@ export class OpenIdMetadata {
         } else {
             // Otherwise read from cache
             const key: IOpenIdMetadataKey = this.findKey(keyId);
+            // Refresh the cache if a key is not found (max once per hour)
+            if (!key && this.lastUpdated < (Date.now() - 1000 * 60 * 60)) {
+                await this.refreshCache();
+                return this.findKey(keyId);
+            }
             return key;
         }
     }

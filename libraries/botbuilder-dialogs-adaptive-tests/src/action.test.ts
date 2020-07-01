@@ -154,6 +154,10 @@ describe('ActionTests', function() {
         await testRunner.runTestScript('Action_RepeatDialog');
     });
 
+    it('RepeatDialogLoop', async () => {
+        await testRunner.runTestScript('Action_RepeatDialogLoop');
+    });
+
     it('ReplaceDialog', async () => {
         await testRunner.runTestScript('Action_ReplaceDialog');
     });
