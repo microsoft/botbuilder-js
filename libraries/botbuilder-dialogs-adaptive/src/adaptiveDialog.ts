@@ -6,9 +6,7 @@
  * Licensed under the MIT License.
  */
 import {
-    TurnContext, BotTelemetryClient, NullTelemetryClient, ActivityTypes,
-    Activity, RecognizerResult, getTopScoringIntent
-} from 'botbuilder-core';
+    TurnContext, ActivityTypes, Activity, RecognizerResult, getTopScoringIntent } from 'botbuilder-core';
 import { Dialog, DialogInstance, DialogReason, DialogTurnResult, DialogTurnStatus, DialogEvent, DialogContext, DialogContainer, DialogDependencies, TurnPath, DialogPath, DialogState } from 'botbuilder-dialogs';
 import { OnCondition } from './conditions';
 import { Recognizer } from './recognizers';
@@ -88,11 +86,6 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
 
     public get schema(): object | undefined {
         return this.dialogSchema ? this.dialogSchema.schema : undefined;
-    }
-
-    public set telemetryClient(client: BotTelemetryClient) {
-        super.telemetryClient = client ? client : new NullTelemetryClient();
-        this.dialogs.telemetryClient = client;
     }
 
     protected ensureDependenciesInstalled(): void {
