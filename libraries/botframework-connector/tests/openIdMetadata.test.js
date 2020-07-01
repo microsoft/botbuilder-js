@@ -1,3 +1,8 @@
+/**
+ * Copyright (c) Microsoft Corporation. All rights reserved.
+ * Licensed under the MIT License.
+ */
+
 const assert = require('assert');
 const nock = require('nock');
 const { JwtTokenValidation } = require('../lib');
