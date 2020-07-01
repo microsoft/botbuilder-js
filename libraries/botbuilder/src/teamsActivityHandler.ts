@@ -487,6 +487,7 @@ export class TeamsActivityHandler extends ActivityHandler {
      * Invoked when a Team Archived event activity is received from the connector.
      * Team Archived correspond to the user archiving a team.
      * @param context The context for this turn.
+     * @returns A task that represents the work queued to execute.
      */
     protected async onTeamsTeamArchived(context): Promise<void> {
         await this.handle(context, 'TeamsTeamArchived', this.defaultNextEvent(context));
@@ -496,6 +497,7 @@ export class TeamsActivityHandler extends ActivityHandler {
      * Invoked when a Team Deleted event activity is received from the connector.
      * Team Deleted correspond to the user deleting a team.
      * @param context The context for this turn.
+     * @returns A task that represents the work queued to execute.
      */
     protected async onTeamsTeamDeleted(context): Promise<void> {
         await this.handle(context, 'TeamsTeamDeleted', this.defaultNextEvent(context));
@@ -505,6 +507,7 @@ export class TeamsActivityHandler extends ActivityHandler {
      * Invoked when a Team Hard Deleted event activity is received from the connector.
      * Team Hard Deleted correspond to the user hard-deleting a team.
      * @param context The context for this turn.
+     * @returns A task that represents the work queued to execute.
      */
     protected async onTeamsTeamHardDeleted(context): Promise<void> {
         await this.handle(context, 'TeamsTeamHardDeleted', this.defaultNextEvent(context));
@@ -522,6 +525,7 @@ export class TeamsActivityHandler extends ActivityHandler {
      * Invoked when a Team Restored event activity is received from the connector.
      * Team Restored correspond to the user restoring a team.
      * @param context The context for this turn.
+     * @returns A task that represents the work queued to execute.
      */
     protected async onTeamsTeamRestored(context): Promise<void> {
         await this.handle(context, 'TeamsTeamRestored', this.defaultNextEvent(context));
@@ -531,6 +535,7 @@ export class TeamsActivityHandler extends ActivityHandler {
      * Invoked when a Team Unarchived event activity is received from the connector.
      * Team Unarchived correspond to the user unarchiving a team.
      * @param context The context for this turn.
+     * @returns A task that represents the work queued to execute.
      */
     protected async onTeamsTeamUnarchived(context): Promise<void> {
         await this.handle(context, 'TeamsTeamUnarchived', this.defaultNextEvent(context));
@@ -594,6 +599,7 @@ export class TeamsActivityHandler extends ActivityHandler {
     /**
      * Override this in a derived class to provide logic for when a team is archived.
      * @param handler 
+     * @returns A task that represents the work queued to execute.
      */
     public onTeamsTeamArchivedEvent(handler: (teamInfo: TeamInfo, context: TurnContext, next: () => Promise<void>) => Promise<void>): this {
         return this.on('TeamsTeamArchived', async (context, next) => {
@@ -605,6 +611,7 @@ export class TeamsActivityHandler extends ActivityHandler {
     /**
      * Override this in a derived class to provide logic for when a team is deleted.
      * @param handler 
+     * @returns A task that represents the work queued to execute.
      */
     public onTeamsTeamDeletedEvent(handler: (teamInfo: TeamInfo, context: TurnContext, next: () => Promise<void>) => Promise<void>): this {
         return this.on('TeamsTeamDeleted', async (context, next) => {
@@ -616,6 +623,7 @@ export class TeamsActivityHandler extends ActivityHandler {
     /**
      * Override this in a derived class to provide logic for when a team is hard-deleted.
      * @param handler 
+     * @returns A task that represents the work queued to execute.
      */
     public onTeamsTeamHardDeletedEvent(handler: (teamInfo: TeamInfo, context: TurnContext, next: () => Promise<void>) => Promise<void>): this {
         return this.on('TeamsTeamHardDeleted', async (context, next) => {
@@ -638,6 +646,7 @@ export class TeamsActivityHandler extends ActivityHandler {
     /**
      * Override this in a derived class to provide logic for when a team is restored.
      * @param handler 
+     * @returns A task that represents the work queued to execute.
      */
     public onTeamsTeamRestoredEvent(handler: (teamInfo: TeamInfo, context: TurnContext, next: () => Promise<void>) => Promise<void>): this {
         return this.on('TeamsTeamRestored', async (context, next) => {
@@ -649,6 +658,7 @@ export class TeamsActivityHandler extends ActivityHandler {
     /**
      * Override this in a derived class to provide logic for when a team is unarchived.
      * @param handler 
+     * @returns A task that represents the work queued to execute.
      */
     public onTeamsTeamUnarchivedEvent(handler: (teamInfo: TeamInfo, context: TurnContext, next: () => Promise<void>) => Promise<void>): this {
         return this.on('TeamsTeamUnarchived', async (context, next) => {
