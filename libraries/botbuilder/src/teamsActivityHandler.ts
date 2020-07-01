@@ -368,10 +368,25 @@ export class TeamsActivityHandler extends ActivityHandler {
         
                     case 'channelRenamed':
                         return await this.onTeamsChannelRenamed(context);
-        
+
+                    case 'teamArchived':
+                        return await this.onTeamsTeamArchived(context);
+
+                    case 'teamDeleted':
+                        return await this.onTeamsTeamDeleted(context);
+
+                    case 'teamHardDeleted':
+                        return await this.onTeamsTeamHardDeleted(context);
+
                     case 'teamRenamed':
                         return await this.onTeamsTeamRenamed(context);
-        
+
+                    case 'teamRestored':
+                        return await this.onTeamsTeamRestored(context);
+
+                    case 'teamUnarchived':
+                        return await this.onTeamsTeamUnarchived(context);
+
                     default:
                         return await super.dispatchConversationUpdateActivity(context);
                 }
@@ -460,7 +475,7 @@ export class TeamsActivityHandler extends ActivityHandler {
         await this.handle(context, 'TeamsChannelDeleted', this.defaultNextEvent(context));
     }
 
-    /**
+        /**
      * 
      * @param context 
      */
@@ -469,11 +484,56 @@ export class TeamsActivityHandler extends ActivityHandler {
     }
 
     /**
+     * Invoked when a Team Archived event activity is received from the connector.
+     * Team Archived correspond to the user archiving a team.
+     * @param context The context for this turn.
+     */
+    protected async onTeamsTeamArchived(context): Promise<void> {
+        await this.handle(context, 'TeamsTeamArchived', this.defaultNextEvent(context));
+    }
+
+    /**
+     * Invoked when a Team Deleted event activity is received from the connector.
+     * Team Deleted correspond to the user deleting a team.
+     * @param context The context for this turn.
+     */
+    protected async onTeamsTeamDeleted(context): Promise<void> {
+        await this.handle(context, 'TeamsTeamDeleted', this.defaultNextEvent(context));
+    }
+
+    /**
+     * Invoked when a Team Hard Deleted event activity is received from the connector.
+     * Team Hard Deleted correspond to the user hard-deleting a team.
+     * @param context The context for this turn.
+     */
+    protected async onTeamsTeamHardDeleted(context): Promise<void> {
+        await this.handle(context, 'TeamsTeamHardDeleted', this.defaultNextEvent(context));
+    }    
+
+    /**
      * 
      * @param context 
      */
     protected async onTeamsTeamRenamed(context): Promise<void> {
         await this.handle(context, 'TeamsTeamRenamed', this.defaultNextEvent(context));
+    }
+
+    /**
+     * Invoked when a Team Restored event activity is received from the connector.
+     * Team Restored correspond to the user restoring a team.
+     * @param context The context for this turn.
+     */
+    protected async onTeamsTeamRestored(context): Promise<void> {
+        await this.handle(context, 'TeamsTeamRestored', this.defaultNextEvent(context));
+    }
+
+    /**
+     * Invoked when a Team Unarchived event activity is received from the connector.
+     * Team Unarchived correspond to the user unarchiving a team.
+     * @param context The context for this turn.
+     */
+    protected async onTeamsTeamUnarchived(context): Promise<void> {
+        await this.handle(context, 'TeamsTeamUnarchived', this.defaultNextEvent(context));
     }
 
     /**
@@ -530,6 +590,39 @@ export class TeamsActivityHandler extends ActivityHandler {
             await handler(teamsChannelData.channel, teamsChannelData.team, context, next);
         });
     }
+    
+    /**
+     * Override this in a derived class to provide logic for when a team is archived.
+     * @param handler 
+     */
+    public onTeamsTeamArchivedEvent(handler: (teamInfo: TeamInfo, context: TurnContext, next: () => Promise<void>) => Promise<void>): this {
+        return this.on('TeamsTeamArchived', async (context, next) => {
+            const teamsChannelData = context.activity.channelData as TeamsChannelData;
+            await handler(teamsChannelData.team, context, next);
+        });
+    }
+
+    /**
+     * Override this in a derived class to provide logic for when a team is deleted.
+     * @param handler 
+     */
+    public onTeamsTeamDeletedEvent(handler: (teamInfo: TeamInfo, context: TurnContext, next: () => Promise<void>) => Promise<void>): this {
+        return this.on('TeamsTeamDeleted', async (context, next) => {
+            const teamsChannelData = context.activity.channelData as TeamsChannelData;
+            await handler(teamsChannelData.team, context, next);
+        });
+    }
+
+    /**
+     * Override this in a derived class to provide logic for when a team is hard-deleted.
+     * @param handler 
+     */
+    public onTeamsTeamHardDeletedEvent(handler: (teamInfo: TeamInfo, context: TurnContext, next: () => Promise<void>) => Promise<void>): this {
+        return this.on('TeamsTeamHardDeleted', async (context, next) => {
+            const teamsChannelData = context.activity.channelData as TeamsChannelData;
+            await handler(teamsChannelData.team, context, next);
+        });
+    }
 
     /**
      * 
@@ -537,6 +630,28 @@ export class TeamsActivityHandler extends ActivityHandler {
      */
     public onTeamsTeamRenamedEvent(handler: (teamInfo: TeamInfo, context: TurnContext, next: () => Promise<void>) => Promise<void>): this {
         return this.on('TeamsTeamRenamed', async (context, next) => {
+            const teamsChannelData = context.activity.channelData as TeamsChannelData;
+            await handler(teamsChannelData.team, context, next);
+        });
+    }
+
+    /**
+     * Override this in a derived class to provide logic for when a team is restored.
+     * @param handler 
+     */
+    public onTeamsTeamRestoredEvent(handler: (teamInfo: TeamInfo, context: TurnContext, next: () => Promise<void>) => Promise<void>): this {
+        return this.on('TeamsTeamRestored', async (context, next) => {
+            const teamsChannelData = context.activity.channelData as TeamsChannelData;
+            await handler(teamsChannelData.team, context, next);
+        });
+    }
+
+    /**
+     * Override this in a derived class to provide logic for when a team is unarchived.
+     * @param handler 
+     */
+    public onTeamsTeamUnarchivedEvent(handler: (teamInfo: TeamInfo, context: TurnContext, next: () => Promise<void>) => Promise<void>): this {
+        return this.on('TeamsTeamUnarchived', async (context, next) => {
             const teamsChannelData = context.activity.channelData as TeamsChannelData;
             await handler(teamsChannelData.team, context, next);
         });
