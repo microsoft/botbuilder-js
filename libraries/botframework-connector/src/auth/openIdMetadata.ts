@@ -18,7 +18,7 @@ export class OpenIdMetadata {
     private url: string;
     private lastUpdated: number = 0;
     private keys: IKey[];
-    
+
     constructor(url: string) {
         this.url = url;
     }
