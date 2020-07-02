@@ -7,7 +7,7 @@
  */
 import { telemetryTrackDialogView, TurnContext } from 'botbuilder-core';
 import { Dialog, DialogInstance, DialogReason, DialogTurnResult, DialogTurnStatus } from './dialog';
-import { DialogContext } from './dialogContext';
+import { DialogContext, DialogState } from './dialogContext';
 import { DialogContainer } from './dialogContainer';
 
 const PERSISTED_DIALOG_STATE = 'dialogs';
@@ -171,10 +171,7 @@ export class ComponentDialog<O extends object = {}> extends DialogContainer<O> {
      * @param outerDC the outer dialog context
      */
     public createChildContext(outerDC: DialogContext) {
-        const innerDC = this.createInnerDC(outerDC.context, outerDC.activeDialog);
-        innerDC.parent = outerDC;
-
-        return innerDC;
+        return this.createInnerDC(outerDC, outerDC.activeDialog);
     }
 
     /**
@@ -243,10 +240,25 @@ export class ComponentDialog<O extends object = {}> extends DialogContainer<O> {
         return outerDC.endDialog(result);
     }
 
-    private createInnerDC(context: TurnContext, instance: DialogInstance) {
-        const dialogState = instance.state[PERSISTED_DIALOG_STATE] || { dialogStack: [] };
-        instance.state[PERSISTED_DIALOG_STATE] = dialogState
-        const innerDC: DialogContext = new DialogContext(this.dialogs, context, dialogState);
+    private createInnerDC(context: DialogContext, instance: DialogInstance);
+    private createInnerDC(context: TurnContext, instance: DialogInstance);
+    private createInnerDC(context: TurnContext | DialogContext, instance: DialogInstance) {
+
+        let dialogState = {} as DialogState;
+
+        if(!!instance){
+            dialogState = instance.state[PERSISTED_DIALOG_STATE] || { dialogStack: [] };
+            instance.state[PERSISTED_DIALOG_STATE] = dialogState
+        }
+        
+        let innerDC: DialogContext;
+        
+        if (context instanceof DialogContext) {
+            innerDC = new DialogContext(this.dialogs, context, dialogState);
+
+        }else {
+            innerDC = new DialogContext(this.dialogs, context, dialogState);
+        }
 
         return innerDC
     }
