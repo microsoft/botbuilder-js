@@ -81,7 +81,8 @@ describe('BeginSkill', function() {
     const conversationState = new ConversationState(new MemoryStorage());
     const dm = new DialogManager();
     dm.conversationState = conversationState;
-    BeginSkill.setSkillHostOptions(dm, skillClient, new SimpleConversationIdFactory());
+    dm.useSkillClient(skillClient);
+    dm.useSkillConverationIdFactory(new SimpleConversationIdFactory());
 
     // Setup skill dialog
     const dialog = new BeginSkill();
