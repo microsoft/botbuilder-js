@@ -73,10 +73,11 @@ export class Conversations {
    * example of how to do that would be:
    *
    * ```
-   * var resource = await connector.conversations.CreateConversation(new ConversationParameters(){
-   * Bot = bot, members = new ChannelAccount[] { new ChannelAccount("user1") } );
-   * await connect.Conversations.SendToConversationAsync(resource.Id, new Activity() ... ) ;
-   *
+   * var resource = await connector.conversations.createConversation({
+   *     bot,
+   *     members: [{ id: 'user1' }]
+   * });
+   * await connector.conversations.sendToConversation(resource.Id, ... );
    * ```
    * @summary CreateConversation
    * @param parameters Parameters to create the conversation from
