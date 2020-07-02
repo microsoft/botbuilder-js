@@ -54,7 +54,7 @@ const SKILL_BOT_ID = '00000000-0000-0000-0000-00000000000SKILL';
 let _eocSent;
 let _dmTurnResult;
 
-function createTestFlow(dialog, testCase = FlowTestCase.RootBotOnly) {
+function createTestFlow(dialog, testCase = FlowTestCase.RootBotOnly, enabledTrace = false) {
     const conversationId = 'testFlowConversationId';
     const storage = new MemoryStorage();
     const convoState = new ConversationState(storage);
@@ -68,7 +68,8 @@ function createTestFlow(dialog, testCase = FlowTestCase.RootBotOnly) {
         conversation: {
             isGroup: false,
             conversationType: conversationId,
-            id: conversationId },
+            id: conversationId
+        },
     };
 
     const dm = new DialogManager(dialog);
@@ -81,7 +82,7 @@ function createTestFlow(dialog, testCase = FlowTestCase.RootBotOnly) {
             const claimsIdentity = new ClaimsIdentity();
             claimsIdentity.addClaim({ type: 'ver', value: '2.0' }); // AuthenticationConstants.VersionClaim
             claimsIdentity.addClaim({ type: 'aud', value: SKILL_BOT_ID }); // AuthenticationConstants.AudienceClaim
-            claimsIdentity.addClaim({ type: 'azp', value:  PARENT_BOT_ID }); // AuthenticationConstants.AuthorizedParty
+            claimsIdentity.addClaim({ type: 'azp', value: PARENT_BOT_ID }); // AuthenticationConstants.AuthorizedParty
             context.turnState.set(context.adapter.BotIdentityKey, claimsIdentity);
 
             if (testCase === FlowTestCase.RootBotConsumingSkill) {
@@ -109,7 +110,7 @@ function createTestFlow(dialog, testCase = FlowTestCase.RootBotOnly) {
         });
 
         _dmTurnResult = await dm.onTurn(context);
-    }, convRef);
+    }, convRef, enabledTrace);
     adapter.use(new AutoSaveStateMiddleware(userState, convoState));
 
     return adapter;
@@ -170,7 +171,7 @@ describe('DialogManager', function() {
                 .assertReply('Hello SomeName, nice to meet you!')
                 .startTest();
             strictEqual(_dmTurnResult.turnResult.status, DialogTurnStatus.complete);
-            
+
             strictEqual(dialog.endReason, DialogReason.endCalled);
             if (shouldSendEoc) {
                 ok(_eocSent, 'Skills should send EndConversation to channel');
@@ -225,6 +226,50 @@ describe('DialogManager', function() {
         await testFlow.send({ type: ActivityTypes.Event, name: DialogEvents.repromptDialog })
             .startTest();
         strictEqual(_dmTurnResult.turnResult.status, DialogTurnStatus.empty);
+    });
+
+    it('Trace skill state', async () => {
+        const dialog = new SimpleComponentDialog();
+        const testFlow = createTestFlow(dialog, FlowTestCase.LeafSkill, true);
+        await testFlow.send('Hi')
+            .assertReply(reply => {
+                strictEqual(reply.type, ActivityTypes.Trace);
+            })
+            .assertReply('Hello, what is your name?')
+            .assertReply(reply => {
+                strictEqual(reply.type, ActivityTypes.Trace);
+                strictEqual(reply.label, 'Skill State');
+            })
+            .send('SomeName')
+            .assertReply('Hello SomeName, nice to meet you!')
+            .assertReply(reply => {
+                strictEqual(reply.type, ActivityTypes.Trace);
+                strictEqual(reply.label, 'Skill State');
+            })
+            .assertReply(reply => {
+                strictEqual(reply.type, ActivityTypes.Trace);
+            })
+            .startTest();
+        strictEqual(_dmTurnResult.turnResult.status, DialogTurnStatus.complete);
+    });
+
+    it('Trace bot state', async () => {
+        const dialog = new SimpleComponentDialog();
+        const testFlow = createTestFlow(dialog, FlowTestCase.RootBotOnly, true);
+        await testFlow.send('Hi')
+            .assertReply('Hello, what is your name?')
+            .assertReply(reply => {
+                strictEqual(reply.type, ActivityTypes.Trace);
+                strictEqual(reply.label, 'Bot State');
+            })
+            .send('SomeName')
+            .assertReply('Hello SomeName, nice to meet you!')
+            .assertReply(reply => {
+                strictEqual(reply.type, ActivityTypes.Trace);
+                strictEqual(reply.label, 'Bot State');
+            })
+            .startTest();
+        strictEqual(_dmTurnResult.turnResult.status, DialogTurnStatus.complete);
     });
 
     it('Gets or sets root dialog', () => {
