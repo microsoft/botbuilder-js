@@ -16,7 +16,7 @@ const intentPrefix = 'intent=';
 
 export class QnAMakerRecognizer implements Recognizer {
     public static readonly qnaMatchIntent = 'QnAMatch';
-    
+
     /**
      * Id of the recognizer.
      */
@@ -140,7 +140,7 @@ export class QnAMakerRecognizer implements Recognizer {
             }
 
             recognizerResult.entities['answer'] = [topAnswer.answer];
-            recognizerResult.entities['$instance'] = { answer: topAnswer };
+            recognizerResult.entities['$instance'] = { answer: [topAnswer] };
             recognizerResult['answers'] = answers;
         } else {
             recognizerResult.intents['None'] = { score: 1 };
