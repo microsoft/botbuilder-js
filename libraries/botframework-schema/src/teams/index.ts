@@ -86,6 +86,10 @@ export interface TeamInfo {
    * @member {string} [name] Name of team.
    */
   name?: string;
+    /**
+   * @member {string} [aadGroupId] The Azure AD Teams group ID.
+   */
+  aadGroupId?: string;
 }
 
 /**
@@ -905,10 +909,10 @@ export interface MessagingExtensionAction extends TaskModuleRequest {
  */
 export interface TaskModuleResponseBase {
   /**
-   * @member {BotMessagePreviewActionType} [type] Choice of action options when responding to the
+   * @member {BotMessagePreviewType} [type] Choice of action options when responding to the
    * task/submit message. Possible values include: 'message', 'continue'
    */
-  type?: BotMessagePreviewActionType;
+  type?: BotMessagePreviewType;
 }
 
 /**
@@ -983,10 +987,10 @@ export interface MessagingExtensionResult {
  */
 export interface MessagingExtensionActionResponse {
   /**
-   * @member {TaskModuleResponseBase} [task] The JSON for the Adaptive card to
+   * @member {TaskModuleContinueResponse | TaskModuleMessageResponse} [task] The JSON for the response to
    * appear in the task module.
    */
-  task?: TaskModuleResponseBase;
+  task?: TaskModuleContinueResponse | TaskModuleMessageResponse;
   /**
    * @member {MessagingExtensionResult} [composeExtension]
    */
@@ -1217,10 +1221,10 @@ export interface TaskModuleMessageResponse extends TaskModuleResponseBase {
  */
 export interface TaskModuleResponse {
   /**
-   * @member {TaskModuleResponseBase} [task] The JSON for the Adaptive card to
+   * @member {TaskModuleContinueResponse | TaskModuleMessageResponse} [task] The JSON for the response to
    * appear in the task module.
    */
-  task?: TaskModuleResponseBase;
+  task?: TaskModuleContinueResponse | TaskModuleMessageResponse;
 }
 
 /**
@@ -1382,7 +1386,7 @@ export type BotMessagePreviewType = 'message' | 'continue';
 /**
  * @deprecated Use BotMessagePreviewType
  */
-export type Type2 = BotMessagePreviewActionType
+export type Type2 = BotMessagePreviewType
 
 /**
  * Defines values for AttachmentLayout.
