@@ -1,6 +1,6 @@
 const assert = require('assert');
-const { supportsSuggestedActions, supportsCardActions, hasMessageFeed, getChannelId } = require('../lib');
 const { Channels } = require('botbuilder-core');
+const { supportsSuggestedActions, supportsCardActions, hasMessageFeed, getChannelId } = require('../lib');
 
 describe('channel methods', function() {
     this.timeout(5000);
