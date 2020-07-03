@@ -3,11 +3,11 @@ Bots, like any other application, require use of expressions to evaluate outcome
 
 Common expression language was put together to address this core need as well as to rationalize and snap to a common expression language that will be used across Bot Framework SDK and other conversational AI components that need an expression language.
 
-[More info](https://github.com/microsoft/BotBuilder-Samples/tree/master/experimental/common-expression-language)
+[More info](https://docs.microsoft.com/en-us/azure/bot-service/bot-builder-concept-adaptive-expressions?view=azure-bot-service-4.0)
 
-See [API reference for Expression](https://github.com/microsoft/BotBuilder-Samples/blob/master/experimental/common-expression-language/api-reference.md) for API reference.
+See [API reference for Expression](https://docs.microsoft.com/en-us/azure/bot-service/adaptive-expressions/adaptive-expressions-api-reference?view=azure-bot-service-4.0) for API reference.
 
-See [Here](https://github.com/microsoft/BotBuilder-Samples/blob/master/experimental/common-expression-language/prebuilt-functions.md) for a complete list of prebuilt functions supported by the common expression language library.
+See [Here](https://docs.microsoft.com/en-us/azure/bot-service/adaptive-expressions/adaptive-expressions-prebuilt-functions?view=azure-bot-service-4.0) for a complete list of prebuilt functions supported by the common expression language library.
 
 ### develop
 ```
@@ -15,3 +15,5 @@ See [Here](https://github.com/microsoft/BotBuilder-Samples/blob/master/experimen
     npm run build
     npm test
 ```
+
+If you changed the g4 file, please use `antlr-build-expression` and `antlr-build-commonregex` to generate latest lexer/parser. By the way, You will need to have a modern version of Java (>= JRE 1.6) to use it.

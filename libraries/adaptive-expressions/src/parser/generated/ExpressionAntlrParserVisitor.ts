@@ -29,6 +29,7 @@ import { PrimaryExpressionContext } from "./ExpressionAntlrParser";
 import { StringInterpolationContext } from "./ExpressionAntlrParser";
 import { TextContentContext } from "./ExpressionAntlrParser";
 import { ArgsListContext } from "./ExpressionAntlrParser";
+import { LambdaContext } from "./ExpressionAntlrParser";
 import { KeyValuePairListContext } from "./ExpressionAntlrParser";
 import { KeyValuePairContext } from "./ExpressionAntlrParser";
 import { KeyContext } from "./ExpressionAntlrParser";
@@ -187,6 +188,13 @@ export interface ExpressionAntlrParserVisitor<Result> extends ParseTreeVisitor<R
 	 * @return the visitor result
 	 */
 	visitArgsList?: (ctx: ArgsListContext) => Result;
+
+	/**
+	 * Visit a parse tree produced by `ExpressionAntlrParser.lambda`.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	visitLambda?: (ctx: LambdaContext) => Result;
 
 	/**
 	 * Visit a parse tree produced by `ExpressionAntlrParser.keyValuePairList`.

@@ -25,6 +25,8 @@ export class ExpressionParser implements ExpressionParserInterface {
      */
     public readonly EvaluatorLookup: EvaluatorLookup;
 
+    private static expressionDict: Map<string, ParseTree> = new Map<string, ParseTree>();
+
     private readonly ExpressionTransformer = class extends AbstractParseTreeVisitor<Expression> implements ExpressionAntlrParserVisitor<Expression> {
 
         private readonly escapeRegex: RegExp = new RegExp(/\\[^\r\n]?/g);
@@ -189,9 +191,18 @@ export class ExpressionParser implements ExpressionParserInterface {
 
         private processArgsList(context: ep.ArgsListContext): Expression[] {
             const result: Expression[] = [];
-            if (context !== undefined) {
-                for (const expression of context.expression()) {
-                    result.push(this.visit(expression));
+            if (!context) {
+                return result;
+            }
+
+            for (const child of context.children) {
+                if (child instanceof ep.LambdaContext) {
+                    const evalParam = this.makeExpression(ExpressionType.Accessor, new Constant(child.IDENTIFIER().text));
+                    const evalFun = this.visit(child.expression());
+                    result.push(evalParam);
+                    result.push(evalFun);
+                } else if (child instanceof ep.ExpressionContext){
+                    result.push(this.visit(child));
                 }
             }
 
@@ -236,6 +247,10 @@ export class ExpressionParser implements ExpressionParserInterface {
     }
 
     protected static antlrParse(expression: string): ParseTree {
+        if (ExpressionParser.expressionDict.has(expression)) {
+            return ExpressionParser.expressionDict.get(expression);
+        }
+
         const inputStream: ANTLRInputStream = new ANTLRInputStream(expression);
         const lexer: ExpressionAntlrLexer = new ExpressionAntlrLexer(inputStream);
         lexer.removeErrorListeners();
@@ -245,12 +260,14 @@ export class ExpressionParser implements ExpressionParserInterface {
         parser.addErrorListener(ParseErrorListener.Instance);
         parser.buildParseTree = true;
 
+        let expressionContext: ParseTree;
         const file: ep.FileContext = parser.file();
         if (file !== undefined) {
-            return file.expression();
+            expressionContext = file.expression();
         }
+        ExpressionParser.expressionDict.set(expression, expressionContext);
 
-        return undefined;
+        return expressionContext;
     }
 
     /**

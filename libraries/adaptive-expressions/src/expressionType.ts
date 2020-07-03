@@ -23,6 +23,9 @@ export class ExpressionType {
     public static readonly Sum: string = 'sum';
     public static readonly Count: string = 'count';
     public static readonly Range: string = 'range';
+    public static readonly Floor: string = 'floor';
+    public static readonly Ceiling: string = 'ceiling';
+    public static readonly Round: string = 'round';
 
     // Comparisons
     public static readonly LessThan: string = '<';
@@ -58,6 +61,8 @@ export class ExpressionType {
     public static readonly NewGuid: string = 'newGuid';
     public static readonly IndexOf: string = 'indexOf';
     public static readonly LastIndexOf: string = 'lastIndexOf';
+    public static readonly SentenceCase: string = 'sentenceCase';
+    public static readonly TitleCase: string = 'titleCase';
 
     // DateTime
     public static readonly AddDays: string = 'addDays';
@@ -86,6 +91,10 @@ export class ExpressionType {
     public static readonly StartOfHour: string = 'startOfHour';
     public static readonly StartOfMonth: string = 'startOfMonth';
     public static readonly Ticks: string = 'ticks';
+    public static readonly TicksToDays: string = 'ticksToDays';
+    public static readonly TicksToHours: string = 'ticksToHours';
+    public static readonly TicksToMinutes: string = 'ticksToMinutes';
+    public static readonly DateTimeDiff: string = 'dateTimeDiff';
 
     // timex
     public static readonly IsDefinite: string = 'isDefinite';
@@ -111,7 +120,7 @@ export class ExpressionType {
     public static readonly UriComponent: string = 'uriComponent';
     public static readonly UriComponentToString: string = 'uriComponentToString';
     public static readonly FormatNumber: string = 'formatNumber';
-    
+
     // Memory
     public static readonly Accessor: string = 'Accessor';
     public static readonly Element: string = 'Element';
@@ -150,10 +159,7 @@ export class ExpressionType {
     public static readonly Coalesce: string = 'coalesce';
     public static readonly JPath: string = 'jPath';
     public static readonly SetPathToValue: string = 'setPathToValue';
-
-    // TODO
-    // xPath
-    // xml
+    public static readonly Merge: string = 'merge';
 
     // URI parsing functions
     public static readonly UriHost: string = 'uriHost';

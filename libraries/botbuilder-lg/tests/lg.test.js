@@ -1,4 +1,4 @@
-const { Templates, LGLineBreakStyle, EvaluationOptions } = require('../');
+const { Templates, LGLineBreakStyle, EvaluationOptions, TemplateErrors, DiagnosticSeverity } = require('../');
 const { SimpleObjectMemory, ExpressionParser, ExpressionFunctions, Expression } = require('adaptive-expressions');
 const assert = require('assert');
 const fs = require('fs');
@@ -93,6 +93,20 @@ describe('LG', function() {
 
         evaled = templates.evaluate('time_of_day_readout_without_default2', { timeOfDay: 'evening' });
         assert.strictEqual(evaled, undefined, `Evaled is ${ evaled } which should be undefined.`);
+    });
+
+    it('TestExpandText', function() {
+        let templates = Templates.parseFile(GetExampleFilePath('ExpandText.lg'));
+
+        const scope = {
+            '@answer': 'hello ${user.name}',
+            user: {
+                name: 'vivian'
+            }
+        };
+
+        let evaled = templates.evaluate('template', scope);
+        assert.strictEqual(evaled, 'hello vivian'.length);
     });
 
     it('TestBasicTemplateRefWithParameters', function() {
@@ -586,6 +600,43 @@ describe('LG', function() {
         assert.strictEqual(evaled[0], '$ $ ${\'hi\'} hi');
     });
 
+    it('TestExpandTemplateWithEmptyListInStructuredLG', function() {
+        let templates = Templates.parseFile(GetExampleFilePath('Expand.lg'));
+        let data = {
+            Data: {
+                Name: "NAME",
+                Address: "ADDRESS"
+            }
+        };
+
+        let name = "PointOfInterestSuggestedActionName";
+        let evaled = templates.expandTemplate(name, data);
+
+        assert.strictEqual(evaled[0]["text"], "NAME at ADDRESS");
+        assert.strictEqual(evaled[0]["speak"], "NAME at ADDRESS");
+        assert.strictEqual(evaled[0]["attachments"].length, 0);
+        assert.strictEqual(evaled[0]["attachmentlayout"], "list");
+        assert.strictEqual(evaled[0]["inputhint"], "ignoringInput");
+    });
+
+    it('TestExpandTemplateWithStrictMode', function() {
+        let templates = Templates.parseFile(GetExampleFilePath('./EvaluationOptions/StrictModeFalse.lg'));
+
+        let evaled = templates.expandTemplate('StrictFalse');
+        assert.strictEqual(evaled[0], 'null');
+
+        templates = Templates.parseFile(GetExampleFilePath('./EvaluationOptions/StrictModeTrue.lg'));
+
+        let errMessage = '';
+        try {
+            templates.expandTemplate('StrictTrue');
+        } catch (e) {
+            errMessage = e.toString();
+        }
+
+        assert.strictEqual(errMessage.includes("'variable_not_defined' evaluated to null. [StrictTrue]  Error occurred when evaluating '-${variable_not_defined}'"), true);
+    })
+
     it('TestInlineEvaluate', function() {
         var templates = Templates.parseFile(GetExampleFilePath('2.lg'));
         var evaled = templates.evaluateText('hello');
@@ -645,49 +696,193 @@ describe('LG', function() {
         assert.strictEqual(evaled, 18, `Evaled is ${ evaled }`);
     });
 
+    it('TestRecursiveTemplate', function() {
+        var templates = Templates.parseFile(GetExampleFilePath('RecursiveTemplate.lg'));
+        var evaled = templates.evaluate('RecursiveAccumulate', {number: 10});
+        assert.strictEqual(evaled, 55);
 
-    it('TestLGResource', function() {
-        var templates = Templates.parseText(fs.readFileSync(GetExampleFilePath('2.lg'), 'utf-8'));
+        var evaled = templates.evaluate('RecursiveFactorial', {number: 5});
+        assert.strictEqual(evaled, 1*2*3*4*5);
 
-        assert.strictEqual(templates.toArray().length, 1);
-        assert.strictEqual(templates.imports.length, 0);
-        assert.strictEqual(templates.toArray()[0].name, 'wPhrase');
-        assert.strictEqual(templates.toArray()[0].body.replace(/\r\n/g, '\n'), '> this is an in-template comment\n- Hi\n- Hello\n- Hiya\n- Hi');
+        var evaled = templates.evaluate('RecursiveFibonacciSequence', {number: 5});
+        assert.strictEqual(evaled, 5);
+    });
 
-        templates = templates.addTemplate('newtemplate', ['age', 'name'], '- hi ');
+    it('TemplateCRUD_Normal', function() {
+        var templates = Templates.parseText(fs.readFileSync(GetExampleFilePath('CrudInit.lg'), 'utf-8'));
+
         assert.strictEqual(templates.toArray().length, 2);
         assert.strictEqual(templates.imports.length, 0);
-        assert.strictEqual(templates.toArray()[1].name, 'newtemplate');
-        assert.strictEqual(templates.toArray()[1].parameters.length, 2);
-        assert.strictEqual(templates.toArray()[1].parameters[0], 'age');
-        assert.strictEqual(templates.toArray()[1].parameters[1], 'name');
-        assert.strictEqual(templates.toArray()[1].body.replace(/\r\n/g, '\n'), '- hi ');
+        assert.strictEqual(templates.diagnostics.length, 0);
+        assert.strictEqual(templates.toArray()[0].name, 'template1');
+        assert.strictEqual(templates.toArray()[0].sourceRange.range.start.line, 3);
+        assert.strictEqual(templates.toArray()[0].sourceRange.range.end.line, 8);
+        assert.strictEqual(templates.toArray()[1].name, 'template2');
+        assert.strictEqual(templates.toArray()[1].sourceRange.range.start.line, 9);
+        assert.strictEqual(templates.toArray()[1].sourceRange.range.end.line, 12);
 
-        templates = templates.addTemplate('newtemplate2', undefined, '- hi2 ');
-        assert.strictEqual(templates.toArray().length, 3);
-        assert.strictEqual(templates.toArray()[2].name, 'newtemplate2');
-        assert.strictEqual(templates.toArray()[2].body.replace(/\r\n/g, '\n'), '- hi2 ');
-
-        templates = templates.updateTemplate('newtemplate', 'newtemplateName', ['newage', 'newname'], '- new hi\r\n#hi');
+        // Add template
+        templates.addTemplate('newtemplate', ['age', 'name'], '- hi ');
         assert.strictEqual(templates.toArray().length, 3);
         assert.strictEqual(templates.imports.length, 0);
-        assert.strictEqual(templates.toArray()[1].name, 'newtemplateName');
-        assert.strictEqual(templates.toArray()[1].parameters.length, 2);
-        assert.strictEqual(templates.toArray()[1].parameters[0], 'newage');
-        assert.strictEqual(templates.toArray()[1].parameters[1], 'newname');
-        assert.strictEqual(templates.toArray()[1].body.replace(/\r\n/g, '\n'), '- new hi\n- #hi');
+        assert.strictEqual(templates.diagnostics.length, 0);
+        let newTemplate = templates.toArray()[2];
+        assert.strictEqual(newTemplate.name, 'newtemplate');
+        assert.strictEqual(newTemplate.parameters.length, 2);
+        assert.strictEqual(newTemplate.parameters[0], 'age');
+        assert.strictEqual(newTemplate.parameters[1], 'name');
+        assert.strictEqual(newTemplate.body, '- hi ');
+        assert.strictEqual(newTemplate.sourceRange.range.start.line, 14);
+        assert.strictEqual(newTemplate.sourceRange.range.end.line, 15);
 
-        templates = templates.updateTemplate('newtemplate2', 'newtemplateName2', ['newage2', 'newname2'], '- new hi\r\n#hi2');
-        assert.strictEqual(templates.toArray().length, 3);
+        // Add another template
+        templates.addTemplate('newtemplate2', undefined, '- hi2 ');
+        assert.strictEqual(templates.toArray().length, 4);
+        assert.strictEqual(templates.diagnostics.length, 0);
+        newTemplate = templates.toArray()[3];
+        assert.strictEqual(newTemplate.name, 'newtemplate2');
+        assert.strictEqual(newTemplate.parameters.length, 0);
+        assert.strictEqual(newTemplate.body, '- hi2 ');
+        assert.strictEqual(newTemplate.sourceRange.range.start.line, 16);
+        assert.strictEqual(newTemplate.sourceRange.range.end.line, 17);
+
+        // update a middle template
+        templates.updateTemplate('newtemplate', 'newtemplateName', ['newage', 'newname'], '- new hi\r\n#hi');
+        assert.strictEqual(templates.toArray().length, 4);
         assert.strictEqual(templates.imports.length, 0);
-        assert.strictEqual(templates.toArray()[2].name, 'newtemplateName2');
-        assert.strictEqual(templates.toArray()[2].body.replace(/\r\n/g, '\n'), '- new hi\n- #hi2');
+        assert.strictEqual(templates.diagnostics.length, 0);
+        newTemplate = templates.toArray()[2];
+        assert.strictEqual(newTemplate.name, 'newtemplateName');
+        assert.strictEqual(newTemplate.parameters.length, 2);
+        assert.strictEqual(newTemplate.parameters[0], 'newage');
+        assert.strictEqual(newTemplate.parameters[1], 'newname');
+        assert.strictEqual(newTemplate.body.replace(/\r\n/g, '\n'), '- new hi\n- #hi');
+        assert.strictEqual(newTemplate.sourceRange.range.start.line, 14);
+        assert.strictEqual(newTemplate.sourceRange.range.end.line, 16);
+        assert.strictEqual(templates.toArray()[3].sourceRange.range.start.line, 17);
+        assert.strictEqual(templates.toArray()[3].sourceRange.range.end.line, 18);
 
-        templates = templates.deleteTemplate('newtemplateName');
+        // update the tailing template
+        templates.updateTemplate('newtemplate2', 'newtemplateName2', ['newtemplate2', 'newtemplateName2'], '- new hi\r\n#hi2\r\n');
+        assert.strictEqual(templates.toArray().length, 4);
+        assert.strictEqual(templates.imports.length, 0);
+        assert.strictEqual(templates.diagnostics.length, 0);
+        newTemplate = templates.toArray()[3];
+        assert.strictEqual(newTemplate.name, 'newtemplateName2');
+        assert.strictEqual(newTemplate.parameters.length, 2);
+        assert.strictEqual(newTemplate.body.replace(/\r\n/g, '\n'), '- new hi\n- #hi2\n');
+        assert.strictEqual(newTemplate.sourceRange.range.start.line, 17);
+        assert.strictEqual(newTemplate.sourceRange.range.end.line, 19);
+
+        // delete a middle template
+        templates.deleteTemplate('newtemplateName');
+        assert.strictEqual(templates.toArray().length, 3);
+        assert.strictEqual(templates.diagnostics.length, 0);
+        newTemplate = templates.toArray()[2];
+        assert.strictEqual(newTemplate.sourceRange.range.start.line, 14);
+        assert.strictEqual(newTemplate.sourceRange.range.end.line, 16);
+
+        // delete a tailing template
+        templates.deleteTemplate('newtemplateName2');
         assert.strictEqual(templates.toArray().length, 2);
+        assert.strictEqual(templates.diagnostics.length, 0);
+        newTemplate = templates.toArray()[1];
+        assert.strictEqual(newTemplate.sourceRange.range.start.line, 9);
+        assert.strictEqual(newTemplate.sourceRange.range.end.line, 12);
+    });
 
-        templates = templates.deleteTemplate('newtemplateName2');
+    it('TemplateCRUD_RepeatAdd', function() {
+        var templates = Templates.parseText(fs.readFileSync(GetExampleFilePath('CrudInit.lg'), 'utf-8'));
+
+        // Add template
+        templates.addTemplate('newtemplate', ['age', 'name'], '- hi ');
+        assert.strictEqual(templates.toArray().length, 3);
+        assert.strictEqual(templates.imports.length, 0);
+        assert.strictEqual(templates.diagnostics.length, 0);
+        let newTemplate = templates.toArray()[2];
+        assert.strictEqual(newTemplate.name, 'newtemplate');
+        assert.strictEqual(newTemplate.parameters.length, 2);
+        assert.strictEqual(newTemplate.parameters[0], 'age');
+        assert.strictEqual(newTemplate.parameters[1], 'name');
+        assert.strictEqual(newTemplate.body, '- hi ');
+        assert.strictEqual(newTemplate.sourceRange.range.start.line, 14);
+        assert.strictEqual(newTemplate.sourceRange.range.end.line, 15);
+
+        // Add another template
+        templates.addTemplate('newtemplate2', undefined, '- hi2 ');
+        assert.strictEqual(templates.toArray().length, 4);
+        assert.strictEqual(templates.diagnostics.length, 0);
+        newTemplate = templates.toArray()[3];
+        assert.strictEqual(newTemplate.name, 'newtemplate2');
+        assert.strictEqual(newTemplate.parameters.length, 0);
+        assert.strictEqual(newTemplate.body, '- hi2 ');
+        assert.strictEqual(newTemplate.sourceRange.range.start.line, 16);
+        assert.strictEqual(newTemplate.sourceRange.range.end.line, 17);
+
+        // add an exist template
+        assert.throws(() => templates.addTemplate('newtemplate', undefined, '- hi2 '), Error(TemplateErrors.templateExist('newtemplate')));
+    });
+
+    it('TemplateCRUD_RepeatDelete', function() {
+        var templates = Templates.parseText(fs.readFileSync(GetExampleFilePath('CrudInit.lg'), 'utf-8'));
+
+        // Delete template
+        templates.deleteTemplate('template1');
         assert.strictEqual(templates.toArray().length, 1);
+        assert.strictEqual(templates.imports.length, 0);
+        assert.strictEqual(templates.diagnostics.length, 0);
+        assert.strictEqual(templates.toArray()[0].name, 'template2');
+        assert.strictEqual(templates.toArray()[0].sourceRange.range.start.line, 3);
+        assert.strictEqual(templates.toArray()[0].sourceRange.range.end.line, 6);
+
+        // Delete a template that does not exist
+        templates.deleteTemplate('xxx');
+        assert.strictEqual(templates.toArray().length, 1);
+        assert.strictEqual(templates.imports.length, 0);
+        assert.strictEqual(templates.diagnostics.length, 0);
+        assert.strictEqual(templates.toArray()[0].name, 'template2');
+        assert.strictEqual(templates.toArray()[0].sourceRange.range.start.line, 3);
+        assert.strictEqual(templates.toArray()[0].sourceRange.range.end.line, 6);
+
+        // Delete all template
+        templates.deleteTemplate('template2');
+        assert.strictEqual(templates.toArray().length, 0);
+        assert.strictEqual(templates.imports.length, 0);
+        assert.strictEqual(templates.diagnostics.length, 1);
+        assert.strictEqual(templates.diagnostics[0].severity, DiagnosticSeverity.Warning);
+        assert.strictEqual(templates.diagnostics[0].message, TemplateErrors.noTemplate);
+    });
+
+    it('TemplateCRUD_Diagnostic', function() {
+        var templates = Templates.parseText(fs.readFileSync(GetExampleFilePath('CrudInit.lg'), 'utf-8'));
+
+        // add error template name (error in template)
+        templates.addTemplate('newtemplate#$%', ['age', 'name'], '- hi ');
+        assert.strictEqual(templates.diagnostics.length, 1);
+        let diagnostic = templates.diagnostics[0];
+        assert.strictEqual(diagnostic.message, TemplateErrors.invalidTemplateName('newtemplate#$%'));
+        assert.strictEqual(diagnostic.range.start.line, 14);
+        assert.strictEqual(diagnostic.range.end.line, 14);
+
+        // replace the error template with right template
+        templates.updateTemplate('newtemplate#$%', 'newtemplateName', undefined, '- new hi');
+        assert.strictEqual(templates.diagnostics.length, 0);
+
+        // reference the other exist template
+        templates.updateTemplate('newtemplateName', 'newtemplateName', undefined, '- ${template1()}');
+        assert.strictEqual(templates.diagnostics.length, 0);
+
+        // wrong reference, throw by static checker
+        templates.updateTemplate('newtemplateName', 'newtemplateName', undefined, '- ${NoTemplate()}');
+        assert.strictEqual(templates.diagnostics.length, 1);
+        diagnostic = templates.diagnostics[0];
+        assert(diagnostic.message.includes('it\'s not a built-in function or a custom function'));
+        assert.strictEqual(diagnostic.range.start.line, 15);
+        assert.strictEqual(diagnostic.range.end.line, 15);
+
+        // delete error message
+        templates.deleteTemplate('newtemplateName');
+        assert.strictEqual(templates.diagnostics.length, 0);
     });
 
     it('TestMemoryScope', function() {

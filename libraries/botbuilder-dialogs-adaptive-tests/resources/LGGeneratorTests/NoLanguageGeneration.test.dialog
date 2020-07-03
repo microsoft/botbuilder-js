@@ -1,0 +1,34 @@
+{
+    "$schema": "../../../../schemas/sdk.schema",
+    "$kind": "Microsoft.Test.Script",
+    "dialog": {
+        "$kind": "Microsoft.AdaptiveDialog",
+        "id": "No Language Generator",
+        "triggers": [
+        {
+            "$kind": "Microsoft.OnBeginDialog",
+            "actions": [
+                {
+                    "$kind": "Microsoft.SetProperty",
+                    "property": "user.name",
+                    "value": "Tom"
+                },
+                {
+                    "$kind": "Microsoft.SendActivity",
+                    "activity": "hi ${user.name}"
+                }
+            ]
+        }
+    ],
+    "defaultResultProperty": "dialog.result"
+    },
+    "script": [
+        {
+            "$kind": "Microsoft.Test.UserConversationUpdate"
+        },
+        {
+            "$kind": "Microsoft.Test.AssertReply",
+            "text": "hi Tom"
+        }
+    ]
+}

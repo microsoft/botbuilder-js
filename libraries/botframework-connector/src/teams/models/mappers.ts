@@ -96,6 +96,12 @@ export const TeamInfo: msRest.CompositeMapper = {
         type: {
           name: 'String'
         }
+      },
+      aadGroupId: {
+        serializedName: 'aadGroupId',
+        type: {
+          name: 'String'
+        }
       }
     }
   }
@@ -1295,6 +1301,12 @@ export const MessageActionsPayload: msRest.CompositeMapper = {
               className: 'MessageActionsPayloadReaction'
             }
           }
+        }
+      },
+      linkToMessage: {
+        serializedName: 'linkToMessage',
+        type: {
+          name: 'String'
         }
       }
     }

@@ -20,6 +20,7 @@ import { ChannelAccount } from 'botbuilder-core';
 import { ChannelInfo } from 'botbuilder-core';
 import { ClaimsIdentity } from 'botframework-connector';
 import { ConnectorClient } from 'botframework-connector';
+import { ConnectorClientOptions } from 'botframework-connector';
 import { ConversationAccount } from 'botframework-schema';
 import { ConversationParameters } from 'botbuilder-core';
 import { ConversationReference } from 'botbuilder-core';
@@ -29,6 +30,7 @@ import { ConversationState } from 'botbuilder-core';
 import { CoreAppCredentials } from 'botbuilder-core';
 import { ExtendedUserTokenProvider } from 'botbuilder-core';
 import { FileConsentCardResponse } from 'botbuilder-core';
+import { HealthCheckResponse } from 'botbuilder-core';
 import { HttpClient } from '@azure/ms-rest-js';
 import { HttpOperationResponse } from '@azure/ms-rest-js';
 import { ICredentialProvider } from 'botframework-connector';
@@ -74,8 +76,10 @@ import { TurnContext } from 'botbuilder-core';
 import { UserState } from 'botbuilder-core';
 import { WebResource } from '@azure/ms-rest-js';
 
+// Warning: (ae-forgotten-export) The symbol "ConnectorClientBuilder" needs to be exported by the entry point index.d.ts
+//
 // @public
-export class BotFrameworkAdapter extends BotAdapter implements ExtendedUserTokenProvider, RequestHandler {
+export class BotFrameworkAdapter extends BotAdapter implements ConnectorClientBuilder, ExtendedUserTokenProvider, RequestHandler {
     constructor(settings?: Partial<BotFrameworkAdapterSettings>);
     protected authenticateRequest(request: Partial<Activity>, authHeader: string): Promise<void>;
     // (undocumented)
@@ -88,6 +92,7 @@ export class BotFrameworkAdapter extends BotAdapter implements ExtendedUserToken
     continueConversation(reference: Partial<ConversationReference>, oAuthScope: string, logic: (context: TurnContext) => Promise<void>): Promise<void>;
     createConnectorClient(serviceUrl: string): ConnectorClient;
     createConnectorClientWithIdentity(serviceUrl: string, identity: ClaimsIdentity): Promise<ConnectorClient>;
+    createConnectorClientWithIdentity(serviceUrl: string, identity: ClaimsIdentity, audience: string): Promise<ConnectorClient>;
     protected createContext(request: Partial<Activity>): TurnContext;
     createConversation(reference: Partial<ConversationReference>, logic?: (context: TurnContext) => Promise<void>): Promise<void>;
     protected createTokenApiClient(serviceUrl: string, oAuthAppCredentials?: CoreAppCredentials): TokenApiClient;
@@ -119,6 +124,8 @@ export class BotFrameworkAdapter extends BotAdapter implements ExtendedUserToken
     getUserToken(context: TurnContext, connectionName: string, magicCode?: string): Promise<TokenResponse>;
     // (undocumented)
     getUserToken(context: TurnContext, connectionName: string, magicCode?: string, oAuthAppCredentials?: CoreAppCredentials): Promise<TokenResponse>;
+    // (undocumented)
+    healthCheck(context: TurnContext): Promise<HealthCheckResponse>;
     readonly isStreamingConnectionOpen: boolean;
     protected oauthApiUrl(contextOrServiceUrl: TurnContext | string): string;
     processActivity(req: WebRequest, res: WebResponse, logic: (context: TurnContext) => Promise<any>): Promise<void>;
@@ -146,6 +153,7 @@ export interface BotFrameworkAdapterSettings {
     certificateThumbprint?: string;
     channelAuthTenant?: string;
     channelService?: string;
+    clientOptions?: ConnectorClientOptions;
     oAuthEndpoint?: string;
     openIdMetadata?: string;
     webSocketFactory?: NodeWebSocketFactoryBase;
@@ -265,8 +273,7 @@ export class SkillHandler extends ChannelServiceHandler {
     constructor(adapter: BotAdapter, bot: ActivityHandlerBase, conversationIdFactory: SkillConversationIdFactoryBase, credentialProvider: ICredentialProvider, authConfig: AuthenticationConfiguration, channelService?: string);
     protected onReplyToActivity(claimsIdentity: ClaimsIdentity, conversationId: string, activityId: string, activity: Activity): Promise<ResourceResponse>;
     protected onSendToConversation(claimsIdentity: ClaimsIdentity, conversationId: string, activity: Activity): Promise<ResourceResponse>;
-    // (undocumented)
-    readonly SkillConversationReferenceKey: Symbol;
+    readonly SkillConversationReferenceKey: symbol;
 }
 
 // @public

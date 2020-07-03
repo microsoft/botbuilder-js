@@ -12,17 +12,11 @@
 export class TemplateErrors {
     public static readonly noTemplate: string = `LG file must have at least one template definition.`;
  
-    public static readonly invalidTemplateName: string = `Invalid template name. Template name should start with letter/number/_ and can only contains letter/number/./_.`;
- 
     public static readonly invalidTemplateBody: string = `Invalid template body. Expecting '-' prefix.`;
- 
-    public static readonly invalidStrucName: string = `Invalid structure name. name should start with letter/number/_ and can only contains letter/number/./_.`;
  
     public static readonly missingStrucEnd: string = `Invalid structure body. Expecting ']' at the end of the body.`;
  
     public static readonly emptyStrucContent: string = `Invalid structure body. Body cannot be empty.`;
- 
-    public static readonly invalidStrucBody: string = 'Invalid structure body. Body can include <PropertyName>: string = <Value> pairs or ${reference()} template reference.';
  
     public static readonly invalidWhitespaceInCondition: string = `Invalid condition: At most 1 whitespace allowed between 'IF/ELSEIF/ELSE' and ':'.`;
  
@@ -64,12 +58,22 @@ export class TemplateErrors {
  
     public static readonly loopDetected: string = `Loop detected:`;
  
-    public static readonly syntaxError: string = `Unexpected content. Expecting a comment, template definition, import statement or option definition.`;
- 
     public static readonly invalidMemory: string = `Scope is not a LG customized memory.`;
  
     public static readonly staticFailure: string = `Static failure with the following error.`;
  
+    public static readonly invalidTemplateNameType: string = "Expected string type for the parameter of template function.";
+
+    public static readonly invalidStrucBody = (invalidBody: string) => `Invalid structure body: '${invalidBody}'. Body can include <PropertyName> = <Value> pairs or \${reference()} template reference.`;
+
+    public static readonly invalidStrucName = (invalidName: string): string => `Invalid structure name: '${invalidName}'. name should start with letter/number/_ and can only contains letter/number/./_.`;
+
+    public static readonly syntaxError = (unexpectedContent: string) => `${unexpectedContent}. Expecting a comment, template definition, import statement or option definition.`;
+
+    public static readonly invalidTemplateName = (invalidTemplateName: string) => `Invalid template name: '${invalidTemplateName}'. Template names can only contain letter, underscore '_' or number. Any part of a template name (split by '.') cannot start with a number.`;
+
+    public static readonly invalidParameter = (invalidParameter: string) => `Invalid parameter name: '${invalidParameter}'. Parameter names can only contain letter, underscore '_' or number.`;
+
     public static readonly duplicatedTemplateInSameTemplate = (templateName: string): string => `Duplicated definitions found for template: '${ templateName }'.`;
  
     public static readonly duplicatedTemplateInDiffTemplate = (templateName: string, source: string): string => `Duplicated definitions found for template: '${ templateName }' in '${ source }'.`;

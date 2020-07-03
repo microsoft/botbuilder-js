@@ -2,7 +2,6 @@ lexer grammar LGFileLexer;
 
 @lexer::members {
   startTemplate = false;
-  startLine = true;
 }
 
 @header {/**
@@ -15,7 +14,7 @@ lexer grammar LGFileLexer;
 
 fragment WHITESPACE : ' '|'\t'|'\ufeff'|'\u00a0';
 
-NEWLINE : '\r'? '\n' {this.startLine = true;};
+NEWLINE : '\r'? '\n';
 
 OPTION : WHITESPACE* '>' WHITESPACE* '!#' ~('\r'|'\n')+ { !this.startTemplate }?;
 
@@ -23,11 +22,11 @@ COMMENT : WHITESPACE* '>' ~('\r'|'\n')* { !this.startTemplate }?;
 
 IMPORT : WHITESPACE* '[' ~[\r\n[\]]*? ']' '(' ~[\r\n()]*? ')' WHITESPACE* { !this.startTemplate }?;
 
-TEMPLATE_NAME_LINE : WHITESPACE* '#' ~('\r'|'\n')* { this.startLine }? { this.startTemplate = true; };
+TEMPLATE_NAME_LINE : WHITESPACE* '#' ~('\r'|'\n')* { this._tokenStartCharPositionInLine == 0 }? { this.startTemplate = true; };
 
-MULTILINE_PREFIX: WHITESPACE* '-' WHITESPACE* '```' { this.startTemplate && this.startLine }? -> pushMode(MULTILINE_MODE);
+MULTILINE_PREFIX: WHITESPACE* '-' WHITESPACE* '```' { this.startTemplate && this._tokenStartCharPositionInLine == 0 }? -> pushMode(MULTILINE_MODE);
 
-TEMPLATE_BODY : ~('\r'|'\n') { this.startTemplate }? { this.startLine = false; };
+TEMPLATE_BODY : ~('\r'|'\n')+ { this.startTemplate }?;
 
 INVALID_LINE :  ~('\r'|'\n')+ { !this.startTemplate }?;
 

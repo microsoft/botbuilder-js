@@ -1,0 +1,26 @@
+{
+  "query": "My name is Emad",
+  "topScoringIntent": {
+    "intent": "SpecifyName",
+    "score": 0.8930289
+  },
+  "entities": [
+    {
+      "entity": "emad",
+      "type": "Name",
+      "startIndex": 11,
+      "endIndex": 14,
+      "score": 0.9334999
+    },
+    {
+      "entity": "emad",
+      "type": "builtin.personName",
+      "startIndex": 11,
+      "endIndex": 14
+    }
+  ],
+  "sentimentAnalysis": {
+    "label": "positive",
+    "score": 0.8283453
+  }
+}

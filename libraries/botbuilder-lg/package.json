@@ -36,11 +36,11 @@
     "antlr4ts-cli": "0.5.0-alpha.3"
   },
   "scripts": {
-    "build": "npm run antlr-build && tsc",
+    "build": "tsc",
     "build-docs": "typedoc --theme markdown --entryPoint botbuilder-lg --excludePrivate --includeDeclarations --ignoreCompilerErrors --module amd --out ..\\..\\doc\\botbuilder-lg .\\lib\\index.d.ts --hideGenerator --name \"Bot Builder SDK - LG\" --readme none",
     "clean": "erase /q /s .\\lib",
     "set-version": "npm version --allow-same-version ${Version}",
-    "test": "npm run build && mocha tests/ --timeout 60000",
+    "test": "tsc && mocha tests/ --timeout 60000",
     "antlr-build": "antlr4ts src/LGFileLexer.g4 -o src/generated && antlr4ts src/LGFileParser.g4 -visitor -o src/generated && antlr4ts src/LGTemplateLexer.g4 -o src/generated && antlr4ts src/LGTemplateParser.g4 -visitor -o src/generated"
   },
   "files": [

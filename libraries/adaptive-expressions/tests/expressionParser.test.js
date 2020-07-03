@@ -240,6 +240,12 @@ const dataSource = [
     ['lastIndexOf(json(\'["a", "b"]\'), \'c\')', -1],
     ['lastIndexOf(createArray(\'abc\', \'def\', \'ghi\', \'def\'), \'def\')', 3],
     ['lastIndexOf(createArray(\'abc\', \'def\', \'ghi\'), \'klm\')', -1],
+    ['sentenceCase(\'a\')', 'A'],
+    ['sentenceCase(\'abc\')', 'Abc'],
+    ['sentenceCase(\'aBC\')', 'Abc'],
+    ['titleCase(\'a\')', 'A'],
+    ['titleCase(\'abc dEF\')', 'Abc Def'],
+
 
     // Logical comparison functions tests
     ['and(1 == 1, 1 < 2, 1 > 2)', false],
@@ -331,6 +337,10 @@ const dataSource = [
     ['[] == []', true],
     ['{} != []', true],
     ['[] == {}', false],
+    ['null < 1', false],
+    ['null >= 1', false],
+    ['undefined < 1', false],
+    ['undefined >= 1', false],
 
     // Conversion functions tests
     ['float(\'10.333\')', 10.333],
@@ -379,7 +389,7 @@ const dataSource = [
 
     // TODO: This should actually be the below, but toLocaleString does not work.
     // ['formatNumber(12000.3, 4, "fr-FR")', '12\u00a0000,3000'],
-    ['formatNumber(12000.3, 4, "fr-FR")', '12,000.3000'],
+    //['formatNumber(12000.3, 4, "fr-FR")', '12,000.3000'],
 
     // Math functions tests
     ['add(1, 2, 3)', 6],
@@ -409,6 +419,13 @@ const dataSource = [
     ['mod(5,2)', 1],
     ['rand(1, 2)', 1],
     ['rand(2, 3)', 2],
+    ['floor(3.51)', 3],
+    ['floor(4.00)', 4],
+    ['ceiling(3.51)', 4],
+    ['ceiling(4.00)', 4],
+    ['round(3.51)', 4],
+    ['round(3.55, 1)', 3.6],
+    ['round(3.12134, 3)', 3.121],
 
     // Date and time function tests
     // All the timestamp strings passed in must be in ISO format of YYYY-MM-DDTHH:mm:ss.sssZ
@@ -489,26 +506,32 @@ const dataSource = [
     ['getTimeOfDay(\'2018-03-15T18:00:00.000Z\')', 'evening'],
     ['getTimeOfDay(\'2018-03-15T22:00:00.000Z\')', 'evening'],
     ['getTimeOfDay(\'2018-03-15T23:00:00.000Z\')', 'night'],
+    ['length(getPastTime(1, \'Year\'))', 24],
     ['getPastTime(1, \'Year\', \'MM-dd-yy\')', moment(new Date().toISOString()).utc().subtract(1, 'years').format('MM-DD-YY')],
     ['getPastTime(1, \'Month\', \'MM-dd-yy\')', moment(new Date().toISOString()).utc().subtract(1, 'months').format('MM-DD-YY')],
     ['getPastTime(1, \'Week\', \'MM-dd-yy\')', moment(new Date().toISOString()).utc().subtract(7, 'days').format('MM-DD-YY')],
     ['getPastTime(1, \'Day\', \'MM-dd-yy\')', moment(new Date().toISOString()).utc().subtract(1, 'days').format('MM-DD-YY')],
     ['getFutureTime(1, \'Year\', \'MM-dd-yy\')', moment(new Date().toISOString()).utc().add(1, 'years').format('MM-DD-YY')],
+    ['length(getFutureTime(1, \'Year\'))', 24],
     ['getFutureTime(1, \'Month\', \'MM-dd-yy\')', moment(new Date().toISOString()).utc().add(1, 'months').format('MM-DD-YY')],
     ['getFutureTime(1, \'Week\', \'MM-dd-yy\')', moment(new Date().toISOString()).utc().add(7, 'days').format('MM-DD-YY')],
     ['getFutureTime(1, \'Day\', \'MM-dd-yy\')', moment(new Date().toISOString()).utc().add(1, 'days').format('MM-DD-YY')],
-    ['addToTime(\'2018-01-01T08:00:00.000Z\', 1, \'Day\')', '2018-01-02T08:00:00.000+00:00'],
-    ['addToTime(\'2018-01-01T08:00:00.000Z\', sub(3,1), \'Week\')', '2018-01-15T08:00:00.000+00:00'],
+    ['addToTime(\'2018-01-01T08:00:00.000Z\', 1, \'Day\')', '2018-01-02T08:00:00.000Z'],
+    ['addToTime(\'2018-01-01T08:00:00.000Z\', sub(3,1), \'Week\')', '2018-01-15T08:00:00.000Z'],
     ['addToTime(\'2018-01-01T08:00:00.000Z\', 1, \'Month\', \'MM-DD-YY\')', '02-01-18'],
     ['convertFromUTC(\'2018-02-02T02:00:00.000Z\', \'Pacific Standard Time\')', '2018-02-01T18:00:00.000-08:00'],
     ['convertFromUTC(\'2018-02-02T02:00:00.000Z\', \'Pacific Standard Time\', \'MM-DD-YY\')', '02-01-18'],
-    ['convertToUTC(\'2018-01-01T18:00:00.000\', \'Pacific Standard Time\')', '2018-01-02T02:00:00.000+00:00'],
+    ['convertToUTC(\'2018-01-01T18:00:00.000\', \'Pacific Standard Time\')', '2018-01-02T02:00:00.000Z'],
     ['convertToUTC(\'2018-01-01T18:00:00.000\', \'Pacific Standard Time\', \'MM-DD-YY\')', '01-02-18'],
-    ['startOfDay(\'2018-03-15T13:30:30.000Z\')', '2018-03-15T00:00:00.000+00:00'],
-    ['startOfHour(\'2018-03-15T13:30:30.000Z\')', '2018-03-15T13:00:00.000+00:00'],
-    ['startOfMonth(\'2018-03-15T13:30:30.000Z\')', '2018-03-01T00:00:00.000+00:00'],
+    ['startOfDay(\'2018-03-15T13:30:30.000Z\')', '2018-03-15T00:00:00.000Z'],
+    ['startOfHour(\'2018-03-15T13:30:30.000Z\')', '2018-03-15T13:00:00.000Z'],
+    ['startOfMonth(\'2018-03-15T13:30:30.000Z\')', '2018-03-01T00:00:00.000Z'],
     ['ticks(\'2018-01-01T08:00:00.000Z\')', bigInt('636503904000000000')],
-
+    ['dateTimeDiff("2019-01-01T08:00:00.000Z","2018-01-01T08:00:00.000Z")', 315360000000000],
+    ['dateTimeDiff("2017-01-01T08:00:00.000Z","2018-01-01T08:00:00.000Z")', -315360000000000],
+    ['ticksToDays(2193385800000000)', 2538.6409722222224],
+    ['ticksToHours(2193385800000000)', 60927.383333333331],
+    ['ticksToMinutes(2193385811100000)', 3655643.0185],
     //URI parsing functions tests
     ['uriHost(\'https://www.localhost.com:8080\')', 'www.localhost.com'],
     ['uriPath(\'http://www.contoso.com/catalog/shownew.htm?date=today\')', '/catalog/shownew.htm'],
@@ -529,6 +552,9 @@ const dataSource = [
     ['contains(items, \'hi\')', false],
     ['contains(bag, \'three\')', true],
     ['contains(bag, \'xxx\')', false],
+    ['concat(null, [1, 2], null)', [1, 2]],
+    ['concat(createArray(1, 2), createArray(3, 4))', [1, 2, 3, 4]],
+    ['concat([\'a\', \'b\'], [\'b\', \'c\'], [\'c\', \'d\'])', ['a', 'b', 'b', 'c', 'c', 'd']],
     ['count(split(hello,\'e\'))', 2],
     ['count(createArray(\'h\', \'e\', \'l\', \'l\', \'o\'))', 5],
     ['empty(\'\')', true],
@@ -551,14 +577,19 @@ const dataSource = [
     ['join(foreach(doubleNestedItems, items, join(foreach(items, item, item.x), ",")), ",")', '1,2,3'],
     ['join(foreach(doubleNestedItems, items, join(foreach(items, item, concat(y, string(item.x))), ",")), ",")', 'y1,y2,y3'],
     ['join(foreach(dialog, item, item.key), ",")', 'instance,options,title,subTitle'],
+    ['join(foreach(dialog, item => item.key), ",")', 'instance,options,title,subTitle'],
     ['foreach(dialog, item, item.value)[1].xxx', 'options'],
+    ['foreach(dialog, item=>item.value)[1].xxx', 'options'],
     ['join(foreach(indicesAndValues(items), item, item.value), ",")', 'zero,one,two'],
+    ['join(foreach(indicesAndValues(items), item=>item.value), ",")', 'zero,one,two'],
     ['count(where(doubleNestedItems, items, count(where(items, item, item.x == 1)) == 1))', 1],
     ['count(where(doubleNestedItems, items, count(where(items, item, count(items) == 1)) == 1))', 1],
     ['join(select(items, item, item), \',\')', 'zero,one,two'],
+    ['join(select(items, item=>item), \',\')', 'zero,one,two'],
     ['join(select(nestedItems, i, i.x + first(nestedItems).x), \',\')', '2,3,4', ['nestedItems']],
     ['join(select(items, item, concat(item, string(count(items)))), \',\')', 'zero3,one3,two3', ['items']],
     ['join(where(items, item, item == \'two\'), \',\')', 'two'],
+    ['join(where(items, item => item == \'two\'), \',\')', 'two'],
     ['join(foreach(where(nestedItems, item, item.x > 1), result, result.x), \',\')', '2,3', ['nestedItems']],
     ['string(where(dialog, item, item.value=="Dialog Title"))', '{\"title\":\"Dialog Title\"}'],
     ['last(items)', 'two'],
@@ -590,6 +621,7 @@ const dataSource = [
     ['{name: user.nickname}.name', 'John'],
     ['string(addProperty(json(\'{"key1":"value1"}\'), \'key2\',\'value2\'))', '{"key1":"value1","key2":"value2"}'],
     ['foreach(items, x, addProperty({}, "a", x))[0].a', 'zero'],
+    ['foreach(items, x => addProperty({}, "a", x))[0].a', 'zero'],
     ['string(addProperty({"key1":"value1"}, \'key2\',\'value2\'))', '{"key1":"value1","key2":"value2"}'],
     ['string(setProperty(json(\'{"key1":"value1"}\'), \'key1\',\'value2\'))', '{"key1":"value2"}'],
     ['string(setProperty({"key1":"value1"}, \'key1\',\'value2\'))', '{"key1":"value2"}'],
@@ -603,9 +635,14 @@ const dataSource = [
     ['coalesce(nullObj, false, \'hello\')', false],
     ['jPath(jsonStr, pathStr )', ['Jazz', 'Accord']],
     ['jPath(jsonStr, \'.automobiles[0].maker\' )', ['Nissan']],
+    ['string(merge(json1, json2))', '{"FirstName":"John","LastName":"Smith","Enabled":true,"Roles":["Customer","Admin"]}'],
+    ['string(merge(json1, json2, json3))', '{"FirstName":"John","LastName":"Smith","Enabled":true,"Roles":["Customer","Admin"],"age":36}'],
 
     // Memory access tests
     ['getProperty(bag, concat(\'na\',\'me\'))', 'mybag'],
+    ['getProperty(\'bag\').index', 3],
+    ['getProperty(\'a:b\')', 'stringa:b'],
+    ['getProperty(concat(\'he\', \'llo\'))', 'hello'],
     ['items[2]', 'two', ['items[2]']],
     ['bag.list[bag.index - 2]', 'blue', ['bag.list', 'bag.index']],
     ['items[nestedItems[1].x]', 'two', ['items', 'nestedItems[1].x']],
@@ -674,6 +711,7 @@ const dataSource = [
 
 const scope = {
     '$index': 'index',
+    'a:b' : 'stringa:b',
     alist: [
         {
             Name: 'item1'
@@ -731,6 +769,17 @@ const scope = {
     unixTimestamp: 1521118800,
     unixTimestampFraction: 1521118800.5,
     ticks: bigInt('637243624200000000'),
+    json1: {
+        'FirstName': 'John',
+        'LastName': 'Smith',
+        'Enabled': false,
+        'Roles': [ 'User' ]
+    },
+    json2: {
+        'Enabled': true,
+        'Roles': [ 'Customer', 'Admin' ]
+    },
+    json3: {'age': 36},
     user:
     {
         income: 110.0,

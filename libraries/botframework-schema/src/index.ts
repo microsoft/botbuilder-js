@@ -193,6 +193,10 @@ export interface CardAction {
    * Channel-specific data associated with this action
    */
   channelData?: any;
+  /**
+   * Alternate image text to be used in place of the `image` field
+   */
+  imageAltText?: string;
 }
 
 /**

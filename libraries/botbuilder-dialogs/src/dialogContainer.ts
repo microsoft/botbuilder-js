@@ -5,6 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
+import { BotTelemetryClient, NullTelemetryClient } from 'botbuilder-core';
 import { Dialog } from './dialog';
 import { DialogSet } from './dialogSet';
 import { DialogContext } from './dialogContext';
@@ -63,11 +64,23 @@ export abstract class DialogContainer<O extends object = {}> extends Dialog<O> {
             // Give bot an opportunity to handle the change.
             // - If bot handles it the changeHash will have been updated as to avoid triggering the 
             //   change again.
-            const handled = await dc.emitEvent(DialogEvents.versionChanged, this.id, true, false);
-            if (!handled) {
-                // Throw an error for bot to catch
-                throw new Error(`Version change detected for '${this.id}' dialog.`);
-            }
+            await dc.emitEvent(DialogEvents.versionChanged, this.id, true, false);
         }
+    }
+    
+    /**
+     * Set the telemetry client, and also apply it to all child dialogs.
+     * Future dialogs added to the component will also inherit this client.
+     */
+    public set telemetryClient(client: BotTelemetryClient) {
+        this._telemetryClient = client ? client : new NullTelemetryClient();
+        this.dialogs.telemetryClient = client;
+    }
+
+    /**
+     * Get the current telemetry client.
+     */
+    public get telemetryClient(): BotTelemetryClient {
+        return this._telemetryClient;
     }
 }

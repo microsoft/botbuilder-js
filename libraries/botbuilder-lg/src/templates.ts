@@ -10,7 +10,7 @@ import { Template } from './template';
 import { TemplateImport } from './templateImport';
 import { Diagnostic, DiagnosticSeverity } from './diagnostic';
 import { ExpressionParser, Expression, ExpressionEvaluator, ExpressionFunctions, ReturnType } from 'adaptive-expressions';
-import { ImportResolverDelegate } from './templatesParser';
+import { ImportResolverDelegate, TemplatesTransformer } from './templatesParser';
 import { Evaluator } from './evaluator';
 import { Expander } from './expander';
 import { Analyzer } from './analyzer';
@@ -20,11 +20,17 @@ import { TemplateErrors } from './templateErrors';
 import { TemplateExtensions } from './templateExtensions';
 import { EvaluationOptions, LGLineBreakStyle } from './evaluationOptions';
 import { isAbsolute, basename } from 'path';
+import { StaticChecker } from './staticChecker';
 
 /**
  * LG entrance, including properties that LG file has, and evaluate functions.
  */
 export class Templates implements Iterable<Template> {
+
+    /**
+     * Temp Template ID for inline content.
+     */
+    public static readonly inlineTemplateId: string = '__temp__';
     private readonly newLineRegex = /(\r?\n)/g;
     private readonly newLine: string = '\r\n';
     private readonly namespaceKey = '@namespace';
@@ -241,17 +247,16 @@ export class Templates implements Iterable<Template> {
         this.checkErrors();
 
         // wrap inline string with "# name and -" to align the evaluation process
-        const fakeTemplateId = '__temp__';
         const multiLineMark = '```';
 
         inlineStr = !(inlineStr.trim().startsWith(multiLineMark) && inlineStr.includes('\n'))
             ? `${ multiLineMark }${ inlineStr }${ multiLineMark }` : inlineStr;
 
-        const newContent = `#${ fakeTemplateId } ${ this.newLine } - ${ inlineStr }`;
+        const newContent = `#${ Templates.inlineTemplateId } ${ this.newLine } - ${ inlineStr }`;
 
         const newTemplates = TemplatesParser.parseTextWithRef(newContent, this);
         var evalOpt = opt !== undefined ? opt.merge(this.lgOptions) : this.lgOptions;
-        return newTemplates.evaluate(fakeTemplateId, scope, evalOpt);
+        return newTemplates.evaluate(Templates.inlineTemplateId, scope, evalOpt);
     }
 
     /**
@@ -264,19 +269,31 @@ export class Templates implements Iterable<Template> {
     */
     public updateTemplate(templateName: string, newTemplateName: string, parameters: string[], templateBody: string): Templates {
         const template: Template = this.items.find((u: Template): boolean => u.name === templateName);
-        if (template === undefined) {
-            return this;
+        if (template) {
+            this.clearDiagnostic();
+
+            const templateNameLine: string = this.buildTemplateNameLine(newTemplateName, parameters);
+            const newTemplateBody: string = this.convertTemplateBody(templateBody);
+            const content = `${ templateNameLine }${ this.newLine }${ newTemplateBody }`;
+
+            // update content
+            this.content = this.replaceRangeContent(this.content,
+                template.sourceRange.range.start.line - 1,
+                template.sourceRange.range.end.line - 1,
+                content);
+            
+            let updatedTemplates = new Templates([], [], [], [], '', this.id, this.expressionParser, this.importResolver);
+            updatedTemplates = new TemplatesTransformer(updatedTemplates).transform(TemplatesParser.antlrParseTemplates(content, this.id));
+
+            const originalStartLine = template.sourceRange.range.start.line - 1;
+            this.appendDiagnosticWithOffset(updatedTemplates.diagnostics, originalStartLine);
+
+            if (updatedTemplates.toArray().length > 0) {
+                const newTemplate = updatedTemplates.toArray()[0];
+                this.adjustRangeForUpdateTemplate(template, newTemplate);
+                new StaticChecker(this).check().forEach((u): number => this.diagnostics.push(u));
+            }
         }
-
-        const templateNameLine: string = this.buildTemplateNameLine(newTemplateName, parameters);
-        const newTemplateBody: string = this.convertTemplateBody(templateBody);
-        const content = `${ templateNameLine }${ this.newLine }${ newTemplateBody }`;
-
-        let startLine = template.sourceRange.range.start.line - 1;
-        let stopLine = template.sourceRange.range.end.line - 1;
-
-        const newContent: string = this.replaceRangeContent(this.content, startLine, stopLine, content);
-        this.initialize(TemplatesParser.parseText(newContent, this.id, this.importResolver));
 
         return this;
     }
@@ -290,14 +307,30 @@ export class Templates implements Iterable<Template> {
     */
     public addTemplate(templateName: string, parameters: string[], templateBody: string): Templates {
         const template: Template = this.items.find((u: Template): boolean => u.name === templateName);
-        if (template !== undefined) {
+        if (template) {
             throw new Error(TemplateErrors.templateExist(templateName));
         }
 
+        this.clearDiagnostic();
+
         const templateNameLine: string = this.buildTemplateNameLine(templateName, parameters);
         const newTemplateBody: string = this.convertTemplateBody(templateBody);
-        const newContent = `${ this.content }${ this.newLine }${ templateNameLine }${ this.newLine }${ newTemplateBody }`;
-        this.initialize(TemplatesParser.parseText(newContent, this.id, this.importResolver));
+        const content = `${ templateNameLine }${ this.newLine }${ newTemplateBody }`;
+        const originalStartLine = TemplateExtensions.readLine(this.content).length;
+
+        // update content
+        this.content = `${ this.content }${ this.newLine }${ templateNameLine }${ this.newLine }${ newTemplateBody }`;
+        let updatedTemplates = new Templates([], [], [], [], '', this.id, this.expressionParser, this.importResolver);
+        updatedTemplates = new TemplatesTransformer(updatedTemplates).transform(TemplatesParser.antlrParseTemplates(content, this.id));
+
+        this.appendDiagnosticWithOffset(updatedTemplates.diagnostics, originalStartLine);
+
+        if (updatedTemplates.toArray().length > 0) {
+            const newTemplate = updatedTemplates.toArray()[0];
+            this.adjustRangeForAddTemplate(newTemplate, originalStartLine);
+            this.items.push(newTemplate);
+            new StaticChecker(this).check().forEach((u): number => this.diagnostics.push(u));
+        }
 
         return this;
     }
@@ -308,22 +341,77 @@ export class Templates implements Iterable<Template> {
     * @returns Return the new lg file.
     */
     public deleteTemplate(templateName: string): Templates {
-        const template: Template = this.items.find((u: Template): boolean => u.name === templateName);
-        if (template === undefined) {
-            return this;
+        const templateIndex = this.items.findIndex((u: Template): boolean => u.name === templateName);
+        if (templateIndex >= 0) {
+            const template = this.items[templateIndex];
+            this.clearDiagnostic();
+
+            const startLine = template.sourceRange.range.start.line - 1;
+            const stopLine = template.sourceRange.range.end.line - 1;
+            this.content = this.replaceRangeContent(this.content, startLine, stopLine, undefined);
+            this.adjustRangeForDeleteTemplate(template);
+            this.items.splice(templateIndex, 1);
+            new StaticChecker(this).check().forEach((u): number => this.diagnostics.push(u));
         }
-
-        let startLine = template.sourceRange.range.start.line - 1;
-        let stopLine = template.sourceRange.range.end.line - 1;
-
-        const newContent: string = this.replaceRangeContent(this.content, startLine, stopLine, undefined);
-        this.initialize(TemplatesParser.parseText(newContent, this.id, this.importResolver));
 
         return this;
     }
 
     public toString(): string {
         return this.content;
+    }
+
+    private appendDiagnosticWithOffset(diagnostics: Diagnostic[], offset: number): void {
+        if (diagnostics) {
+            diagnostics.forEach((u): void => {
+                u.range.start.line += offset;
+                u.range.end.line += offset;
+                this.diagnostics.push(u);
+            });
+        }
+    }
+
+    private adjustRangeForUpdateTemplate(oldTemplate: Template, newTemplate: Template): void {
+        const newRange = newTemplate.sourceRange.range.end.line - newTemplate.sourceRange.range.start.line;
+        const oldRange = oldTemplate.sourceRange.range.end.line - oldTemplate.sourceRange.range.start.line;
+
+        const lineOffset = newRange - oldRange;
+
+        let hasFound = false;
+        for (let i = 0; i < this.items.length; i++) {
+            if (hasFound) {
+                this.items[i].sourceRange.range.start.line += lineOffset;
+                this.items[i].sourceRange.range.end.line += lineOffset;
+            } else if (this.items[i].name === oldTemplate.name) {
+                hasFound = true;
+                newTemplate.sourceRange.range.start.line = oldTemplate.sourceRange.range.start.line;
+                newTemplate.sourceRange.range.end.line = oldTemplate.sourceRange.range.end.line + lineOffset;
+                this.items[i] = newTemplate;
+            }
+        }
+    }
+
+    private adjustRangeForAddTemplate(newTemplate: Template, lineOffset: number): void {
+        const lineLength = newTemplate.sourceRange.range.end.line - newTemplate.sourceRange.range.start.line;
+        newTemplate.sourceRange.range.start.line  = lineOffset + 1;
+        newTemplate.sourceRange.range.end.line = lineOffset + lineLength + 1;
+    }
+
+    private adjustRangeForDeleteTemplate(oldTemplate: Template): void {
+        const lineOffset = oldTemplate.sourceRange.range.end.line - oldTemplate.sourceRange.range.start.line + 1;
+
+        let hasFound = false;
+        for (let i = 0; i < this.items.length; i++) {
+            if (hasFound) {
+                this.items[i].sourceRange.range.start.line -= lineOffset;
+                this.items[i].sourceRange.range.end.line -= lineOffset;
+            } else if (this.items[i].name == oldTemplate.name) {
+                hasFound = true;
+            }
+        }
+    }
+    private clearDiagnostic(): void {
+        this.diagnostics = [];
     }
 
     private replaceRangeContent(originString: string, startLine: number, stopLine: number, replaceString: string): string {
@@ -334,7 +422,10 @@ export class Templates implements Iterable<Template> {
 
         const destList: string[] = [];
         destList.push(...originList.slice(0, startLine));
-        destList.push(replaceString);
+        if (replaceString !== undefined && replaceString !== null) {
+            destList.push(replaceString);
+        }
+
         destList.push(...originList.slice(stopLine + 1));
 
         return destList.join(this.newLine);
@@ -360,18 +451,6 @@ export class Templates implements Iterable<Template> {
         } else {
             return `# ${ templateName }(${ parameters.join(', ') })`;
         }
-    }
-
-    private initialize(templates: Templates): void {
-        this.items = templates.items;
-        this.imports = templates.imports;
-        this.diagnostics = templates.diagnostics;
-        this.references = templates.references;
-        this.content = templates.content;
-        this.importResolver = templates.importResolver;
-        this.id = templates.id;
-        this.expressionParser = templates.expressionParser;
-        this.options = templates.options;
     }
 
     private checkErrors(): void {
