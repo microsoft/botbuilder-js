@@ -808,7 +808,7 @@ export interface MessagingExtensionAction extends TaskModuleRequest {
 // @public
 export interface MessagingExtensionActionResponse {
     composeExtension?: MessagingExtensionResult;
-    task?: TaskModuleResponseBase;
+    task?: TaskModuleContinueResponse | TaskModuleMessageResponse;
 }
 
 // @public
@@ -1262,7 +1262,7 @@ export interface TaskModuleRequestContext {
 
 // @public
 export interface TaskModuleResponse {
-    task?: TaskModuleResponseBase;
+    task?: TaskModuleContinueResponse | TaskModuleMessageResponse;
 }
 
 // @public
