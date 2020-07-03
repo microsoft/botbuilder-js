@@ -1,5 +1,6 @@
 const assert = require('assert');
 const { supportsSuggestedActions, supportsCardActions, hasMessageFeed, getChannelId } = require('../lib');
+const { Channels } = require('botbuilder-core');
 
 describe('channel methods', function() {
     this.timeout(5000);
@@ -97,5 +98,16 @@ describe('channel methods', function() {
     it(`should return an empty string if context.activity.channelId is falsey.`, function () {
         const channel = getChannelId({ activity: { } });
         assert(channel === '', `expected "", instead received ${ channel }`);
+    });
+
+    // "directlinespeech" tests
+    it(`should return true for supportsSuggestedActions() with directlinespeech and 100`, function () {
+        const validNumOfSuggestedActions = supportsSuggestedActions(Channels.DirectlineSpeech, 100);
+        assert(validNumOfSuggestedActions, `returned false.`);
+    });
+
+    it(`should return true for supportsCardActions() with directlinespeech and 100`, () => {
+        const validNumOfCardActions = supportsCardActions(Channels.DirectlineSpeech, 100);
+        assert(validNumOfCardActions, `returned false.`);
     });
 });
