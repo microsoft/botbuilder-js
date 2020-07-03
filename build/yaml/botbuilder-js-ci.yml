@@ -149,7 +149,7 @@ stages:
       continueOnError: true
       condition: and(succeeded(), ne(variables['System.PullRequest.IsFork'], 'True'))
 
-- stage: Analysis
+- stage: Analyze
   jobs:
   - job:
     steps:
