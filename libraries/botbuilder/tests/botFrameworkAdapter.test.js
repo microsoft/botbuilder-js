@@ -181,6 +181,38 @@ function assertResponse(res, statusCode, hasBody) {
     }
 }
 
+function CreateActivity() {
+    const account1 = {
+        id: "ChannelAccount_Id_1",
+        name: "ChannelAccount_Name_1",
+        role: "ChannelAccount_Role_1",
+    };
+
+    const account2 = {
+        id: "ChannelAccount_Id_2",
+        name: "ChannelAccount_Name_2",
+        role: "ChannelAccount_Role_2",
+    };
+
+    const conversationAccount = {
+        conversationType: "a",
+        id: "123",
+        isGroup: true,
+        name: "Name",
+        role: "ConversationAccount_Role",
+    };
+
+    return {
+        id: "123",
+        from: account1,
+        recipient: account2,
+        conversation: conversationAccount,
+        channelId: "ChannelId123",
+        locale: "en-uS", // Intentionally oddly-cased to check that it isn't defaulted somewhere, but tests stay in English
+        serviceUrl: "ServiceUrl123",
+    };
+}
+
 describe(`BotFrameworkAdapter`, function () {
     this.timeout(5000);
     describe('constructor()', () => {
@@ -1467,6 +1499,103 @@ describe(`BotFrameworkAdapter`, function () {
             assert(response, 'http://mockedurl.com');
 
             connector.TokenApiClient = TokenApiClient; // restore
+        });
+    });
+
+    describe('getSignInResource()', () => {
+        it(`should throw error if missing ConnectionName in getSignInResource`, async () => {
+            const adapter = new BotFrameworkAdapter();
+            const activity = CreateActivity();
+            const context = new TurnContext(adapter, activity);
+            try {
+                const response = await adapter.getSignInResource(context);
+            } catch (err) {
+                assert(err.message === `getUserToken() requires a connectionName but none was provided.`);
+                return;
+            }
+            assert(false, `should have thrown an error message`);
+        });
+
+        it(`should throw error if missing Activity.from in getSignInResource`, async () => {
+            const adapter = new BotFrameworkAdapter();
+            const activity = CreateActivity();
+            activity.from = undefined;
+            const context = new TurnContext(adapter, activity);
+            try {
+                const response = await adapter.getSignInResource(context, 'TestConnectionName');
+            } catch (err) {
+                assert(err.message === `BotFrameworkAdapter.getSignInResource(): missing from or from.id`);
+                return;
+            }
+            assert(false, `should have thrown an error message`);
+        });
+
+        it(`should throw error if missing Activity.from.id in getSignInResource`, async () => {
+            const adapter = new BotFrameworkAdapter();
+            const activity = CreateActivity();
+            activity.from.id = undefined;
+            const context = new TurnContext(adapter, activity);
+            try {
+                const response = await adapter.getSignInResource(context, 'TestConnectionName');
+            } catch (err) {
+                assert(err.message === `BotFrameworkAdapter.getSignInResource(): missing from or from.id`);
+                return;
+            }
+            assert(false, `should have thrown an error message`);
+        });
+
+        it(`should throw error if userId does not match Activity.from.id in getSignInResource`, async () => {
+            const adapter = new BotFrameworkAdapter();
+            const activity = CreateActivity();
+            const context = new TurnContext(adapter, activity);
+            try {
+                const response = await adapter.getSignInResource(context, 'TestConnectionName', 'OtherUserId');
+            } catch (err) {
+                assert(err.message === `BotFrameworkAdapter.getSiginInResource(): cannot get signin resource for a user that is different from the conversation`);
+                return;
+            }
+            assert(false, `should have thrown an error message`);
+        });
+    });
+
+    describe('exchangeToken()', () => {
+        it(`should throw error if missing ConnectionName in exchangeToken`, async () => {
+            const adapter = new BotFrameworkAdapter();
+            const activity = CreateActivity();
+            const context = new TurnContext(adapter, activity);
+            try {
+                const response = await adapter.exchangeToken(context);
+            } catch (err) {
+                assert(err.message === `exchangeToken() requires a connectionName but none was provided.`);
+                return;
+            }
+            assert(false, `should have thrown an error message`);
+        });
+
+        it(`should throw error if missing userId in exchangeToken`, async () => {
+            const adapter = new BotFrameworkAdapter();
+            const activity = CreateActivity();
+            const context = new TurnContext(adapter, activity);
+            try {
+                const response = await adapter.exchangeToken(context, 'TestConnectionName');
+            } catch (err) {
+                assert(err.message === `exchangeToken() requires an userId but none was provided.`);
+                return;
+            }
+            assert(false, `should have thrown an error message`);
+        });
+
+        it(`should throw error if missing Uri and Token properties of TokenExchangeRequest in exchangeToken`, async () => {
+            const adapter = new BotFrameworkAdapter();
+            const activity = CreateActivity();
+            const context = new TurnContext(adapter, activity);
+            try {
+                const response = await adapter.exchangeToken(context, 'TestConnectionName', 'TestUser', { });
+            } catch (err) {
+                assert(err.message === `BotFrameworkAdapter.exchangeToken(): Either a Token or Uri property is required on the TokenExchangeRequest`);
+                return;
+            }
+            assert(false, `should have thrown an error message`);
         });
     });
 
