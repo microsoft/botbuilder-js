@@ -73,7 +73,7 @@ export class Conversations {
    * example of how to do that would be:
    *
    * ```
-   * var resource = await connector.conversations.createConversation({
+   * const resource = await connector.conversations.createConversation({
    *     bot,
    *     members: [{ id: 'user1' }]
    * });
