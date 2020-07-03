@@ -81,12 +81,12 @@ describe("LoadAndSaveTests", () => {
 
         try {
             config.saveAsSync(null, secret);
-            assert.fail("SaveAsAsync with null should throw");
+            assert.fail("saveAsSync with null should throw");
         } catch (err) { }
 
         try {
             await config.saveAs(null, secret);
-            assert.fail("SaveAsAsync with null should throw");
+            assert.fail("saveAs with null should throw");
         } catch (err) { }
     });
 
