@@ -1,3 +1,10 @@
+#
+# This runs under BotBuilder-Js-CI-yaml. Replaces classic builds BotBuilder-JS-master-CI.
+#
+
+# "name" here defines the build number format. Build number is accessed via $(Build.BuildNumber)
+name: $(Build.BuildId)
+
 pool:
     vmImage: 'macOS-10.15'
 
@@ -5,9 +12,6 @@ variables:
   ApiCompatVersion: 4.6.3
 #  version: define this in Azure, settable at queue time
 #  JsCoverallsToken: define this in Azure
-
-the variable on the Variables tab, and then select the option to make it settable at queue time. See https://go.microsoft.com/fwlink/?linkid=865971
-#Your build pipeline references an undefined variable named ‘JsCoverallsToken’. Create or edit the build pipeline for this YAML file, define the variable on the Variables tab. See https://go.microsoft.com/fwlink/?linkid=865972
 
 steps:
 - task: colinsalmcorner.colinsalmcorner-buildtasks.tag-build-task.tagBuildOrRelease@0
