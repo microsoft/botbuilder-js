@@ -246,17 +246,19 @@ export class ComponentDialog<O extends object = {}> extends DialogContainer<O> {
 
         let dialogState = {} as DialogState;
 
-        if(!!instance){
-            dialogState = instance.state[PERSISTED_DIALOG_STATE] || { dialogStack: [] };
-            instance.state[PERSISTED_DIALOG_STATE] = dialogState
+        if (!instance) {
+            instance = { state: {} } as DialogInstance;
         }
-        
+
+        dialogState = instance.state[PERSISTED_DIALOG_STATE] || { dialogStack: [] };
+        instance.state[PERSISTED_DIALOG_STATE] = dialogState
+
         let innerDC: DialogContext;
-        
-        if (context instanceof DialogContext) {
+
+        if(context instanceof DialogContext){
             innerDC = new DialogContext(this.dialogs, context, dialogState);
 
-        }else {
+        }else{
             innerDC = new DialogContext(this.dialogs, context, dialogState);
         }
 
