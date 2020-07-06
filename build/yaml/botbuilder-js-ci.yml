@@ -31,7 +31,7 @@ stages:
   jobs:
   - job:
     steps:
-    -template: js-analysis-steps.yml
+    - template: js-analysis-steps.yml
 
     - powershell: |
         pushd ..
