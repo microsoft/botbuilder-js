@@ -110,7 +110,7 @@ export class SkillDialog extends Dialog<Partial<BeginSkillDialogOptions>> {
     public async endDialog(context: TurnContext, instance: DialogInstance, reason: DialogReason): Promise<void> {
         // Send of of conversation to the skill if the dialog has been cancelled. 
         if (reason == DialogReason.cancelCalled || reason == DialogReason.replaceCalled) {
-            await context.sendTraceActivity(`${ this.id }.EndDialogAsync()`, undefined, undefined, `ActivityType: ${ context.activity.type }`);
+            await context.sendTraceActivity(`${ this.id }.endDialog()`, undefined, undefined, `ActivityType: ${ context.activity.type }`);
 
             const reference = TurnContext.getConversationReference(context.activity);
             // Apply conversation reference and common properties from incoming activity before sending.
