@@ -8,7 +8,8 @@ name: $(Build.BuildId)
 pool:
     vmImage: 'macOS-10.15'
 
-# variables:
+variables:
+  NodeVersion: 10.x
 #  CI_PULL_REQUEST: define this in Azure
 #  COVERALLS_GIT_BRANCH: define this in Azure
 #  COVERALLS_GIT_COMMIT: define this in Azure
@@ -20,9 +21,6 @@ stages:
 - stage: Build
   jobs:
   - job:
-    variables:
-      NodeVersion: 10.x
-
     steps:
     - template: js-build-steps.yml
 
