@@ -1,5 +1,5 @@
 #
-# This runs under BotBuilder-Js-CI-yaml. Replaces classic build BotBuilder-JS-master-CI.
+# This runs under BotBuilder-Js-CI-yaml. Replaces classic build BotBuilder-JS-master-CI-node12.
 #
 
 # "name" here defines the build number format. Build number is accessed via $(Build.BuildNumber)
