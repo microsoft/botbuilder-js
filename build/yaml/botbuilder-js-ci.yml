@@ -154,6 +154,13 @@ jobs:
       customCommand: 'install eslint'
 
   - task: Npm@1
+    displayName: 'npm install @typescript-eslint/eslint-plugin'
+    inputs:
+      command: custom
+      verbose: false
+      customCommand: 'install @typescript-eslint/eslint-plugin'
+
+  - task: Npm@1
     displayName: 'npm run eslint'
     inputs:
       command: custom
