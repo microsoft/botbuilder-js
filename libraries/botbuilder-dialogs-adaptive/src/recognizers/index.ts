@@ -12,4 +12,3 @@ export * from './multiLanguageRecognizer';
 export * from './recognizer';
 export * from './recognizerSet';
 export * from './regexRecognizer';
-export * from './valueRecognizer';

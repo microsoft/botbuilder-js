@@ -365,9 +365,13 @@ const badExpressions =
         'jPath(hello)',// should have two params
         'jPath(hello, \'.key\')', //bad json
         'jPath(json(\'{"key1":"value1","key2":"value2"}\'), \'getTotal\')', //bad path
+        'merge(json(\'{"key1":"value1","key2":"value2"}\'))', // should have at least 2 arguments
+        'merge(json2, jarray1)', // should only have JSON object arguments
+        'merge(jarray1, json2)', // should only have JSON object arguments
 
         // Memory access test
         'getProperty(bag, 1)',// second param should be string
+        'getProperty(1)', // if getProperty contains only one parameter, the parameter should be string
         'Accessor(1)',// first param should be string
         'Accessor(bag, 1)', // second should be object
         'one[0]',  // one is not list
@@ -425,6 +429,11 @@ const scope = {
     notValidTimestamp2: '1521118800',
     notValidTimestamp3: '20181115',
     relativeUri: '../catalog/shownew.htm?date=today',
+    json2: {
+        'Enabled': true,
+        'Roles': [ 'User', 'Admin' ]
+    },
+    jarray1: ['a', 'b'],
     turn:
     {
         recognized: {

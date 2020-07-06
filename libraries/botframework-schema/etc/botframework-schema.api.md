@@ -252,6 +252,7 @@ export interface CardAction {
     title: string;
     type: ActionTypes | string;
     value: any;
+    imageAltText?: string;
 }
 
 // @public
@@ -717,6 +718,7 @@ export interface MessageActionsPayload {
     replyToId?: string;
     subject?: string;
     summary?: string;
+    linkToMessage?: string;
 }
 
 // @public
@@ -806,7 +808,7 @@ export interface MessagingExtensionAction extends TaskModuleRequest {
 // @public
 export interface MessagingExtensionActionResponse {
     composeExtension?: MessagingExtensionResult;
-    task?: TaskModuleResponseBase;
+    task?: TaskModuleContinueResponse | TaskModuleMessageResponse;
 }
 
 // @public
@@ -1260,7 +1262,7 @@ export interface TaskModuleRequestContext {
 
 // @public
 export interface TaskModuleResponse {
-    task?: TaskModuleResponseBase;
+    task?: TaskModuleContinueResponse | TaskModuleMessageResponse;
 }
 
 // @public
