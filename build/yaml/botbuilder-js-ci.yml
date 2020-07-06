@@ -17,9 +17,9 @@ pool:
 #  version: define this in Azure, settable at queue time
 
 stages:
-- stage:
+- stage: Build
   jobs:
-  - job: Build
+  - job:
     steps:
     - task: colinsalmcorner.colinsalmcorner-buildtasks.tag-build-task.tagBuildOrRelease@0
       displayName: 'Tag Build with version number. (Skip if a fork PR to avoid access denied error.)'
@@ -141,9 +141,10 @@ stages:
       continueOnError: true
       condition: and(succeeded(), ne(variables['System.PullRequest.IsFork'], 'True'))
 
-- stage:
+- stage: CodeAnalysis
+  dependsOn: [] # Run this stage in parallel
   jobs:
-  - job: CodeAnalysis
+  - job:
     steps:
     - task: NodeTool@0
       displayName: 'Use Node 10.x'
