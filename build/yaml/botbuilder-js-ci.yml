@@ -1,5 +1,5 @@
 #
-# This runs under BotBuilder-Js-CI-yaml. Replaces classic builds BotBuilder-JS-master-CI.
+# This runs under BotBuilder-Js-CI-yaml. Replaces classic build BotBuilder-JS-master-CI.
 #
 
 # "name" here defines the build number format. Build number is accessed via $(Build.BuildNumber)
@@ -110,10 +110,6 @@ stages:
         verbose: false
         customCommand: 'run build'
 
-- stage: Test
-  jobs:
-  - job: 
-    steps:
     - task: azure-cosmosdb.emulator-public-preview.run-cosmosdbemulatorcontainer.CosmosDbEmulator@2
       displayName: 'Run Azure Cosmos DB Emulator container'
       enabled: false
@@ -125,10 +121,6 @@ stages:
         verbose: false
         customCommand: 'run test-coverage'
 
-- stage: PushCoverage
-  jobs:
-  - job:
-    steps:
     - powershell: 'Get-ChildItem env:* | sort-object name'
       displayName: 'Log environment variables'
       continueOnError: true
