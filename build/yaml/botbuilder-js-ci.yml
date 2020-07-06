@@ -150,6 +150,7 @@ jobs:
     displayName: 'npm install'
     inputs:
       verbose: false
+    enabled: false
 
   - task: Npm@1
     displayName: 'npm run eslint'
