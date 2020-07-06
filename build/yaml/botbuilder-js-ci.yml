@@ -6,7 +6,7 @@
 name: $(Build.BuildId)
 
 pool:
-    vmImage: 'macOS-latest'
+    vmImage: 'macOS-10.14'
 
 # variables:
 #  CI_PULL_REQUEST: define this in Azure
