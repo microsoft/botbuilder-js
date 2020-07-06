@@ -21,7 +21,7 @@ stages:
   jobs:
   - job:
     variables:
-      NodeVersion: 10.x
+      NodeVersion: 12.x
 
     steps:
     - template: js-build-steps.yml
