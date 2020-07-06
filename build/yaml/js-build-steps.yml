@@ -4,7 +4,6 @@ steps:
   inputs:
     tags: |
       Version=$(version)
-     
   continueOnError: true
   condition: and(succeeded(), eq(variables['System.PullRequest.IsFork'], 'false'))
 
@@ -53,7 +52,6 @@ steps:
     sed -i '' 's/${Version}/$(version)/g' libraries/botframework-connector/package.json
     sed -i '' 's/${Version}/$(version)/g' libraries/botframework-schema/package.json
     sed -i '' 's/${Version}/$(version)/g' libraries/botframework-streaming/package.json
-   
   displayName: 'Replace version number in package.json files'
   continueOnError: true
   env:
