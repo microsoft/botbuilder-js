@@ -28,6 +28,21 @@ export class ActivityFactory {
         [ 'receiptcard', CardFactory.contentTypes.receiptCard ],
     ]);
 
+    private static readonly activityProperties: string[] = ['type','id','timestamp','localTimestamp','localTimezone','callerId',
+        'serviceUrl','channelId','from','conversation','recipient','textFormat','attachmentLayout','membersAdded',
+        'membersRemoved','reactionsAdded','reactionsRemoved','topicName','historyDisclosed','locale','text','speak',
+        'inputHint','summary','suggestedActions','attachments','entities','channelData','action','replyToId','label',
+        'valueType','value','name','typrelatesToe','code','expiration','importance','deliveryMode','listenFor',
+        'textHighlights','semanticAction'];
+
+    private static readonly cardActionProperties: string[] = ['type','title','image','text','displayText','value','channelData'];
+
+    private static readonly attachmentProperties: string[] = ['contentType', 'contentUrl', 'content', 'name', 'thumbnailUrl'];
+
+    private static readonly cardProperties: string[] = ['title', 'subtitle', 'text', 'images', 'image', 'buttons', 'tap', 'media',
+        'shareable', 'autoloop', 'autostart', 'aspect', 'duration', 'value', 'connectionName', 'tokenExchangeResource',
+        'facts', 'items', 'total', 'tax', 'vat'];
+
     /**
      * Generate the activity.
      * @param lgResult string result from languageGenerator.
@@ -98,7 +113,7 @@ export class ActivityFactory {
                     activity.suggestedActions = this.getSuggestions(value);
                     break;
                 default:
-                    activity[property.toLowerCase()] = value;
+                    activity[this.RealProperty(property, this.activityProperties)] = value;
                     break;
             }
         }
@@ -145,29 +160,13 @@ export class ActivityFactory {
                     if (property === this.lgType) {
                         continue;
                     }
-
-                    const value: any = action[key];
-
-                    switch (property.toLowerCase()) {
-                        case 'displaytext':
-                            cardAction.displayText = value;
-                            break;
-                        case 'channeldata':
-                            cardAction.channelData = value;
-                            break;
-                        default:
-                            cardAction[property.toLowerCase()] = value;
-                            break;
-                    }
+                    cardAction[this.RealProperty(property, this.cardActionProperties)] = action[key];
                 }
             }
         }
 
         return cardAction;
     }
-
-
-
 
     private static getAttachments(input: any): Attachment[] {
         const attachments: Attachment[] = [];
@@ -218,14 +217,8 @@ export class ActivityFactory {
                         attachment.contentType = type;
                     }
                     break;
-                case 'contenturl':
-                    attachment.contentUrl = value;
-                    break;
-                case 'thumbnailurl':
-                    attachment.thumbnailUrl = value;
-                    break;
                 default:
-                    attachment[property.toLowerCase()] = value;
+                    attachment[this.RealProperty(property, this.attachmentProperties)] = value;
                     break;
             }
         }
@@ -283,11 +276,8 @@ export class ActivityFactory {
                         card[property.toLowerCase()] = value;
                     }
                     break;
-                case 'connectionname':
-                    card['connectionName'] = value;
-                    break;
                 default:
-                    card[property.toLowerCase()] = value;
+                    card[this.RealProperty(property, this.cardProperties)] = value;
                     break;
             }
         }
@@ -298,6 +288,16 @@ export class ActivityFactory {
         };
 
         return attachment;
+    }
+
+    private static RealProperty(property: string, builtinProperties: string[]): string {
+        var properties = builtinProperties.map((u: string): string => u.toLowerCase());
+        if (properties.includes(property.toLowerCase()))
+        {
+            return builtinProperties[properties.indexOf(property.toLowerCase())];
+        } else {
+            return property;
+        }
     }
 
     private static normalizedToList(item: any): any[] {
