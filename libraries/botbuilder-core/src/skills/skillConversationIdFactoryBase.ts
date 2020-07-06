@@ -50,7 +50,7 @@ export abstract class SkillConversationIdFactoryBase {
 
     /**
      * Gets the SkillConversationReference created using createSkillConversationId() for a skillConversationId.
-     * @param skillConversationId Gets the SkillConversationReference used during CreateSkillConversationIdAsync for a skillConversationId.
+     * @param skillConversationId Gets the SkillConversationReference used during createSkillConversationId for a skillConversationId.
      */
     public getSkillConversationReference(skillConversationId: string): Promise<SkillConversationReference> {
         throw new Error('Not Implemented');
