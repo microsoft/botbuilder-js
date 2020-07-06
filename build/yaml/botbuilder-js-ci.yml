@@ -141,6 +141,16 @@ jobs:
 
 - job: CodeAnalysis
   steps:
+  - task: NodeTool@0
+    displayName: 'Use Node 10.x'
+    inputs:
+      versionSpec: 10.x
+
+  - task: Npm@1
+    displayName: 'npm install'
+    inputs:
+      verbose: false
+
   - task: Npm@1
     displayName: 'npm run eslint'
     inputs:
