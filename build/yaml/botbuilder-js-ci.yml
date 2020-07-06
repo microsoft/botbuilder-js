@@ -147,25 +147,11 @@ jobs:
       versionSpec: 10.x
 
   - task: Npm@1
-    displayName: 'npm install eslint'
+    displayName: 'npm install eslint typescript @typescript-eslint/parser @typescript-eslint/eslint-plugin eslint-plugin-only-warn'
     inputs:
       command: custom
       verbose: false
-      customCommand: 'install eslint'
-
-  - task: Npm@1
-    displayName: 'npm install typescript @typescript-eslint/parser'
-    inputs:
-      command: custom
-      verbose: false
-      customCommand: 'install typescript @typescript-eslint/parser'
-
-  - task: Npm@1
-    displayName: 'npm install @typescript-eslint/eslint-plugin'
-    inputs:
-      command: custom
-      verbose: false
-      customCommand: 'install @typescript-eslint/eslint-plugin'
+      customCommand: 'install eslint typescript @typescript-eslint/parser @typescript-eslint/eslint-plugin eslint-plugin-only-warn'
 
   - task: Npm@1
     displayName: 'npm run eslint'
