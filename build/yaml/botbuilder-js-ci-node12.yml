@@ -9,7 +9,7 @@ pool:
     vmImage: 'macOS-10.15'
 
 variables:
-  NodeVersion: 12.x
+  NodeVersion: 10.x
 #  CI_PULL_REQUEST: define this in Azure
 #  COVERALLS_GIT_BRANCH: define this in Azure
 #  COVERALLS_GIT_COMMIT: define this in Azure
