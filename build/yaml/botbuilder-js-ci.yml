@@ -16,145 +16,141 @@ pool:
 #  COVERALLS_SERVICE_NAME: define this in Azure
 #  version: define this in Azure, settable at queue time
 
-stages:
-- stage: Build
-  jobs:
-  - job: Debug_Windows_Configuration
-    steps:
-    - task: colinsalmcorner.colinsalmcorner-buildtasks.tag-build-task.tagBuildOrRelease@0
-      displayName: 'Tag Build with version number. (Skip if a fork PR to avoid access denied error.)'
-      inputs:
-        tags: |
-         Version=$(version)
+jobs:
+- job: Build
+  steps:
+  - task: colinsalmcorner.colinsalmcorner-buildtasks.tag-build-task.tagBuildOrRelease@0
+    displayName: 'Tag Build with version number. (Skip if a fork PR to avoid access denied error.)'
+    inputs:
+      tags: |
+        Version=$(version)
      
-      continueOnError: true
-      condition: and(succeeded(), eq(variables['System.PullRequest.IsFork'], 'false'))
+    continueOnError: true
+    condition: and(succeeded(), eq(variables['System.PullRequest.IsFork'], 'false'))
 
-    - task: NodeTool@0
-      displayName: 'Use Node 10.x'
-      inputs:
-        versionSpec: 10.x
+  - task: NodeTool@0
+    displayName: 'Use Node 10.x'
+    inputs:
+      versionSpec: 10.x
 
-    - task: Npm@1
-      displayName: 'npm install lerna ...'
-      inputs:
-        command: custom
-        verbose: false
-        customCommand: 'install --global lerna@3.2.1 nyc mocha'
+  - task: Npm@1
+    displayName: 'npm install lerna ...'
+    inputs:
+      command: custom
+      verbose: false
+      customCommand: 'install --global lerna@3.2.1 nyc mocha'
 
-    - task: Npm@1
-      displayName: '/tools npm install'
-      inputs:
-        workingDir: tools
-        verbose: false
+  - task: Npm@1
+    displayName: '/tools npm install'
+    inputs:
+      workingDir: tools
+      verbose: false
 
-    - task: Npm@1
-      displayName: 'npm install coveralls --save-dev'
-      inputs:
-        command: custom
-        workingDir: tools
-        verbose: false
-        customCommand: 'install coveralls --save-dev'
+  - task: Npm@1
+    displayName: 'npm install coveralls --save-dev'
+    inputs:
+      command: custom
+      workingDir: tools
+      verbose: false
+      customCommand: 'install coveralls --save-dev'
 
-    - bash: |
-       set -o xtrace
-       sed -i '' 's/${Version}/$(version)/g' package.json 
-       sed -i '' 's/${Version}/$(version)/g' libraries/adaptive-expressions/package.json
-       sed -i '' 's/${Version}/$(version)/g' libraries/botbuilder/package.json
-       sed -i '' 's/${Version}/$(version)/g' libraries/botbuilder-ai/package.json
-       sed -i '' 's/${Version}/$(version)/g' libraries/botbuilder-applicationinsights/package.json
-       sed -i '' 's/${Version}/$(version)/g' libraries/botbuilder-azure/package.json
-       sed -i '' 's/${Version}/$(version)/g' libraries/botbuilder-core/package.json
-       sed -i '' 's/${Version}/$(version)/g' libraries/botbuilder-dialogs/package.json
-       sed -i '' 's/${Version}/$(version)/g' libraries/botbuilder-dialogs-adaptive/package.json
-       sed -i '' 's/${Version}/$(version)/g' libraries/botbuilder-dialogs-adaptive-tests/package.json
-       sed -i '' 's/${Version}/$(version)/g' libraries/botbuilder-dialogs-declarative/package.json
-       sed -i '' 's/${Version}/$(version)/g' libraries/botbuilder-lg/package.json
-       sed -i '' 's/${Version}/$(version)/g' libraries/botbuilder-testing/package.json
-       sed -i '' 's/${Version}/$(version)/g' libraries/botframework-config/package.json
-       sed -i '' 's/${Version}/$(version)/g' libraries/botframework-connector/package.json
-       sed -i '' 's/${Version}/$(version)/g' libraries/botframework-schema/package.json
-       sed -i '' 's/${Version}/$(version)/g' libraries/botframework-streaming/package.json
+  - bash: |
+      set -o xtrace
+      sed -i '' 's/${Version}/$(version)/g' package.json 
+      sed -i '' 's/${Version}/$(version)/g' libraries/adaptive-expressions/package.json
+      sed -i '' 's/${Version}/$(version)/g' libraries/botbuilder/package.json
+      sed -i '' 's/${Version}/$(version)/g' libraries/botbuilder-ai/package.json
+      sed -i '' 's/${Version}/$(version)/g' libraries/botbuilder-applicationinsights/package.json
+      sed -i '' 's/${Version}/$(version)/g' libraries/botbuilder-azure/package.json
+      sed -i '' 's/${Version}/$(version)/g' libraries/botbuilder-core/package.json
+      sed -i '' 's/${Version}/$(version)/g' libraries/botbuilder-dialogs/package.json
+      sed -i '' 's/${Version}/$(version)/g' libraries/botbuilder-dialogs-adaptive/package.json
+      sed -i '' 's/${Version}/$(version)/g' libraries/botbuilder-dialogs-adaptive-tests/package.json
+      sed -i '' 's/${Version}/$(version)/g' libraries/botbuilder-dialogs-declarative/package.json
+      sed -i '' 's/${Version}/$(version)/g' libraries/botbuilder-lg/package.json
+      sed -i '' 's/${Version}/$(version)/g' libraries/botbuilder-testing/package.json
+      sed -i '' 's/${Version}/$(version)/g' libraries/botframework-config/package.json
+      sed -i '' 's/${Version}/$(version)/g' libraries/botframework-connector/package.json
+      sed -i '' 's/${Version}/$(version)/g' libraries/botframework-schema/package.json
+      sed -i '' 's/${Version}/$(version)/g' libraries/botframework-streaming/package.json
    
-      displayName: 'Replace version number in package.json files'
-      continueOnError: true
-      env:
-        version: $(version)
+    displayName: 'Replace version number in package.json files'
+    continueOnError: true
+    env:
+      version: $(version)
 
-    - task: Npm@1
-      displayName: 'npm update-versions'
-      inputs:
-        command: custom
-        verbose: false
-        customCommand: 'run update-versions'
+  - task: Npm@1
+    displayName: 'npm update-versions'
+    inputs:
+      command: custom
+      verbose: false
+      customCommand: 'run update-versions'
 
-    - powershell: |
-       $fileName = 'package-lock.json'
-       Get-ChildItem -Path ./tools -File | Where-Object {$_.Name -eq $fileName};
-       Write-Host "`nDeleting any files listed above";
-       Get-ChildItem -Path ./tools -File | Where-Object {$_.Name -eq $fileName} | Remove-Item -Force;
-      displayName: 'Delete tools/package-lock.json. Maybe avoids intermittent error in \"npm run postinstall\" ENOENT: no such file or directory, lchown ''/Users/runner/.npm/_locks/staging-7c222bec8116519f.lock'''
-      continueOnError: true
+  - powershell: |
+      $fileName = 'package-lock.json'
+      Get-ChildItem -Path ./tools -File | Where-Object {$_.Name -eq $fileName};
+      Write-Host "`nDeleting any files listed above";
+      Get-ChildItem -Path ./tools -File | Where-Object {$_.Name -eq $fileName} | Remove-Item -Force;
+    displayName: 'Delete tools/package-lock.json. Maybe avoids intermittent error in \"npm run postinstall\" ENOENT: no such file or directory, lchown ''/Users/runner/.npm/_locks/staging-7c222bec8116519f.lock'''
+    continueOnError: true
 
-    - task: Npm@1
-      displayName: 'npm run postinstall'
-      inputs:
-        command: custom
-        verbose: false
-        customCommand: 'run postinstall'
+  - task: Npm@1
+    displayName: 'npm run postinstall'
+    inputs:
+      command: custom
+      verbose: false
+      customCommand: 'run postinstall'
 
-    - task: Npm@1
-      displayName: 'npm run build'
-      inputs:
-        command: custom
-        verbose: false
-        customCommand: 'run build'
+  - task: Npm@1
+    displayName: 'npm run build'
+    inputs:
+      command: custom
+      verbose: false
+      customCommand: 'run build'
 
-    - task: azure-cosmosdb.emulator-public-preview.run-cosmosdbemulatorcontainer.CosmosDbEmulator@2
-      displayName: 'Run Azure Cosmos DB Emulator container'
-      enabled: false
+  - task: azure-cosmosdb.emulator-public-preview.run-cosmosdbemulatorcontainer.CosmosDbEmulator@2
+    displayName: 'Run Azure Cosmos DB Emulator container'
+    enabled: false
 
-    - task: Npm@1
-      displayName: 'npm run test-coverage'
-      inputs:
-        command: custom
-        verbose: false
-        customCommand: 'run test-coverage'
+  - task: Npm@1
+    displayName: 'npm run test-coverage'
+    inputs:
+      command: custom
+      verbose: false
+      customCommand: 'run test-coverage'
 
-    - powershell: 'Get-ChildItem env:* | sort-object name'
-      displayName: 'Log environment variables'
-      continueOnError: true
+  - powershell: 'Get-ChildItem env:* | sort-object name'
+    displayName: 'Log environment variables'
+    continueOnError: true
 
-    - powershell: |
-       Write-Host "Setting environment variable COVERALLS_REPO_TOKEN"
-       "##vso[task.setvariable variable=COVERALLS_REPO_TOKEN;]$(JsCoverallsToken)"
-      displayName: 'Set COVERALLS_REPO_TOKEN'
-      continueOnError: true
-      condition: and(succeeded(), ne(variables['System.PullRequest.IsFork'], 'True'))
+  - powershell: |
+      Write-Host "Setting environment variable COVERALLS_REPO_TOKEN"
+      "##vso[task.setvariable variable=COVERALLS_REPO_TOKEN;]$(JsCoverallsToken)"
+    displayName: 'Set COVERALLS_REPO_TOKEN'
+    continueOnError: true
+    condition: and(succeeded(), ne(variables['System.PullRequest.IsFork'], 'True'))
 
-    - task: Npm@1
-      displayName: 'Upload coverage report to Coveralls https://coveralls.io/github/microsoft/botbuilder-js'
-      inputs:
-        command: custom
-        verbose: false
-        customCommand: 'run upload-coverage'
-      continueOnError: true
-      condition: and(succeeded(), ne(variables['System.PullRequest.IsFork'], 'True'))
+  - task: Npm@1
+    displayName: 'Upload coverage report to Coveralls https://coveralls.io/github/microsoft/botbuilder-js'
+    inputs:
+      command: custom
+      verbose: false
+      customCommand: 'run upload-coverage'
+    continueOnError: true
+    condition: and(succeeded(), ne(variables['System.PullRequest.IsFork'], 'True'))
 
-- stage: CodeAnalysis
-  jobs:
-  - job:
-    steps:
-    - task: Npm@1
-      displayName: 'npm run eslint'
-      inputs:
-        command: custom
-        verbose: false
-        customCommand: 'run eslint'
+- job: CodeAnalysis
+  steps:
+  - task: Npm@1
+    displayName: 'npm run eslint'
+    inputs:
+      command: custom
+      verbose: false
+      customCommand: 'run eslint'
 
-    - powershell: |
-       pushd ..
-       Get-ChildItem -Recurse -Force | Where {$_.FullName -notlike "*node_modules*"}
-      displayName: 'Dir workspace except node-modules (takes 12 seconds)'
-      continueOnError: true
-      condition: succeededOrFailed()
+  - powershell: |
+      pushd ..
+      Get-ChildItem -Recurse -Force | Where {$_.FullName -notlike "*node_modules*"}
+    displayName: 'Dir workspace except node-modules (takes 12 seconds)'
+    continueOnError: true
+    condition: succeededOrFailed()
