@@ -145,12 +145,14 @@ jobs:
     displayName: 'Use Node 10.x'
     inputs:
       versionSpec: 10.x
+    enabled: false
 
   - task: Npm@1
-    displayName: 'npm install'
+    displayName: 'npm install eslint'
     inputs:
+      command: custom
       verbose: false
-    enabled: false
+      customCommand: 'install eslint'
 
   - task: Npm@1
     displayName: 'npm run eslint'
