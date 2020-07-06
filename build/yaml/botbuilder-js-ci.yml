@@ -145,7 +145,6 @@ jobs:
     displayName: 'Use Node 10.x'
     inputs:
       versionSpec: 10.x
-    enabled: false
 
   - task: Npm@1
     displayName: 'npm install eslint'
