@@ -261,7 +261,7 @@ export class IntegrationBot extends TeamsActivityHandler {
     } 
     
     protected async handleTeamsTaskModuleFetch(context: TurnContext, taskModuleRequest: TaskModuleRequest): Promise<TaskModuleResponse> {
-        var reply = MessageFactory.text("handleTeamsTaskModuleFetchAsync TaskModuleRequest" + JSON.stringify(taskModuleRequest));
+        var reply = MessageFactory.text("handleTeamsTaskModuleFetch TaskModuleRequest" + JSON.stringify(taskModuleRequest));
         await context.sendActivity(reply);
 
         return {
@@ -278,7 +278,7 @@ export class IntegrationBot extends TeamsActivityHandler {
     }
 
     protected async handleTeamsTaskModuleSubmit(context: TurnContext, taskModuleRequest: TaskModuleRequest): Promise<TaskModuleResponse> {
-        var reply = MessageFactory.text("handleTeamsTaskModuleFetchAsync Value: " + JSON.stringify(taskModuleRequest));
+        var reply = MessageFactory.text("handleTeamsTaskModuleSubmit Value: " + JSON.stringify(taskModuleRequest));
         await context.sendActivity(reply);
 
         return {
