@@ -100,7 +100,6 @@ describe('TeamsActivityHandler', () => {
             }
         }
 
-        // it('should return status code [501] when activity.name is not defined.', done => {
         it('activity.name is not defined. should return status code [501].', done => {
             const bot = new TeamsActivityHandler();
 
