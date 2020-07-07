@@ -12,7 +12,7 @@ const {
 } = require('botbuilder-core');
 const { BoolExpression, StringExpression } = require('adaptive-expressions');
 const { DialogManager, DialogTurnStatus } = require('botbuilder-dialogs');
-const { BeginSkill } = require('../lib')
+const { BeginSkill, SkillExtensions } = require('../lib')
 
 
 class SimpleConversationIdFactory extends SkillConversationIdFactoryBase {
@@ -81,8 +81,8 @@ describe('BeginSkill', function() {
     const conversationState = new ConversationState(new MemoryStorage());
     const dm = new DialogManager();
     dm.conversationState = conversationState;
-    dm.useSkillClient(skillClient);
-    dm.useSkillConverationIdFactory(new SimpleConversationIdFactory());
+    SkillExtensions.useSkillClient(dm, skillClient);
+    SkillExtensions.useSkillConverationIdFactory(dm, new SimpleConversationIdFactory());
 
     // Setup skill dialog
     const dialog = new BeginSkill();

@@ -5,8 +5,6 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import './skillExtensions';
-
 export * from './actions';
 export * from './actionContext';
 export * from './adaptiveDialog';
@@ -21,6 +19,7 @@ export * from './input';
 export * from './luis';
 export * from './recognizers';
 export * from './selectors';
+export * from './skillExtensions';
 export * from './templates';
 export * from './adaptiveDialog';
 export * from './languageGenerationMiddleware';
