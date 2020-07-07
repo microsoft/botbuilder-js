@@ -5,8 +5,6 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import {TimexProperty} from '@microsoft/recognizers-text-data-types-timex-expression';
-import moment, {Moment, parseZone} from 'moment';
 import {CommonRegex} from './commonRegex';
 import {Expression, ReturnType} from './expression';
 import {EvaluateExpressionDelegate, ExpressionEvaluator, ValidateExpressionDelegate} from './expressionEvaluator';
