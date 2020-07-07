@@ -310,6 +310,33 @@ export class TestAdapter extends BotAdapter implements ExtendedUserTokenProvider
         }
     }
 
+    public async getTokenStatus(context: TurnContext, userId: string, includeFilter?: string, oAuthAppCredentials?: any): Promise<any[]> {
+        const filter = (includeFilter ? includeFilter.split(',') : undefined);
+        const match = this._userTokens.filter(x => x.ChannelId === context.activity.channelId 
+                                            && x.UserId === context.activity.from.id 
+                                            && (!filter || filter.includes(x.ConnectionName)));
+
+        if (match && match.length > 0)
+        {
+            const tokenStatuses = [];
+            for (var i = 0; i < match.length; i++) {
+                tokenStatuses.push(
+                    { 
+                        ConnectionName: match[i].ConnectionName, 
+                        HasToken: true, 
+                        ServiceProviderDisplayName: match[i].ConnectionName 
+                    });
+            }
+
+            return tokenStatuses;
+        }
+        else
+        {
+            // not found
+            return undefined;
+        }
+    }
+
     /**
      * Retrieves the OAuth token for a user that is in a sign-in flow.
      * @param context Context for the current turn of conversation with the user.

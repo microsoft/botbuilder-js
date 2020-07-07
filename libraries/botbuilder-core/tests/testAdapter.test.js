@@ -496,4 +496,19 @@ describe(`TestAdapter`, function () {
         adapter.addUserToken('myConnection2', 'test', 'user', 'def456');
         adapter.send('hi');
     });
+
+    it(`should return statuses from getTokenStatus`, function (done) {
+        const adapter = new TestAdapter((context) => {
+            context.adapter.getTokenStatus(context, 'user').then(statuses => {
+                assert(statuses);
+                assert(statuses.length == 2);
+                assert(statuses.reduce((j, status) => (j||status.ConnectionName === "ABC"), false));
+                done();
+            });
+        });
+
+        adapter.addUserToken('ABC', 'test', 'user', '123abc');
+        adapter.addUserToken('DEF', 'test', 'user', 'def456');
+        adapter.send('hi');
+    });
 });
