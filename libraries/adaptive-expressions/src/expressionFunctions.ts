@@ -1962,6 +1962,20 @@ export class ExpressionFunctions {
         return res;
     }
 
+    private static commonStringify(input: any): string {
+        if (input === null || input === undefined) {
+            return '';
+        }
+    
+        if (Array.isArray(input)) {
+            return input.toString();
+        } else if (typeof input === 'object') {
+            return JSON.stringify(input);
+        } else {
+            return input.toString();
+        }
+    }
+    
     private static getStandardFunctions(): ReadonlyMap<string, ExpressionEvaluator> {
         const functions: ExpressionEvaluator[] = [
             //Math
@@ -2302,23 +2316,26 @@ export class ExpressionFunctions {
                 ExpressionFunctions.validateUnary),
             new ExpressionEvaluator(
                 ExpressionType.Concat,
-                ExpressionFunctions.apply((args: any[]): string => {
-                    let result = '';
-                    for (const arg of args) {
-                        if (arg !== undefined && arg !== null) {
-                            if (Array.isArray(arg)) {
-                                result += arg.toString();
-                            } else if (typeof arg === 'object') {
-                                result += JSON.stringify(arg);
-                            } else {
-                                result += arg.toString();
-                            }
-                        }
+                ExpressionFunctions.applySequence((args: any[]): string => {
+                    const firstItem = args[0];
+                    const secondItem = args[1];
+                    const isFirstList = Array.isArray(firstItem);
+                    const isSecondList = Array.isArray(secondItem);
+            
+                    if ((firstItem === null || firstItem === undefined)
+                        && (secondItem === null || secondItem === undefined)) {
+                        return undefined;
+                    } else if ((firstItem === null || firstItem === undefined) && isSecondList){
+                        return secondItem;
+                    } else if ((secondItem === null || secondItem === undefined) && isFirstList){
+                        return firstItem;
+                    } else if (isFirstList && isSecondList){
+                        return firstItem.concat(secondItem);
+                    } else {
+                        return ExpressionFunctions.commonStringify(firstItem) + ExpressionFunctions.commonStringify(secondItem);
                     }
-
-                    return result;
                 }),
-                ReturnType.String,
+                ReturnType.String | ReturnType.Array,
                 ExpressionFunctions.validateAtLeastOne),
             new ExpressionEvaluator(
                 ExpressionType.Length,
@@ -3510,6 +3527,22 @@ export class ExpressionFunctions {
                 ReturnType.Object, ExpressionFunctions.validateAtLeastOne),
             new ExpressionEvaluator(ExpressionType.JPath, ExpressionFunctions.applyWithError((args: any[][]): any => this.jPath(args[0], args[1].toString())),
                 ReturnType.Object, (expr: Expression): void => ExpressionFunctions.validateOrder(expr, undefined, ReturnType.Object, ReturnType.String)),
+            new ExpressionEvaluator(ExpressionType.Merge, 
+                ExpressionFunctions.applySequenceWithError(
+                    (args: any[]): any => {
+                        let value: any;
+                        let error: string;
+                        if ((typeof(args[0]) === 'object' && !Array.isArray(args[0])) && (typeof(args[1]) === 'object' && !Array.isArray(args[1]))) {
+                            Object.assign(args[0], args[1]);
+                            value = args[0];
+                        } else {
+                            error = `The argumets ${ args[0] } and ${ args[1] } must be JSON objects.`;
+                        }
+
+                        return {value, error};
+                    }),
+                ReturnType.Object, 
+                (expression: Expression): void => ExpressionFunctions.validateArityAndAnyType(expression, 2, Number.MAX_SAFE_INTEGER)),
 
             // Regex expression functions
             new ExpressionEvaluator(
