@@ -588,7 +588,7 @@ export class FunctionUtils {
         return new ExpressionEvaluator(type, FunctionUtils.applySequence(func, FunctionUtils.verifyNumber),
             ReturnType.Number, FunctionUtils.validateNumber);
     }
-    
+
     /**
      * Lookup a property in IDictionary, JObject or through reflection.
      * @param instance Instance with property.
@@ -1161,69 +1161,6 @@ export class FunctionUtils {
         }
 
         return bufferView;
-    }
-
-   
-
-    // DateTime Functions
-    private static addToTime(timeStamp: string, interval: number, timeUnit: string, format?: string): {value: any; error: string} {
-        let result: string;
-        let error: string;
-        let parsed: any;
-        ({value: parsed, error} = FunctionUtils.parseTimestamp(timeStamp));
-        if (!error) {
-            let dt: any = moment(parsed).utc();
-            let addedTime = dt;
-            let timeUnitMark: string;
-            switch (timeUnit) {
-                case 'Second': {
-                    timeUnitMark = 's';
-                    break;
-                }
-
-                case 'Minute': {
-                    timeUnitMark = 'm';
-                    break;
-                }
-
-                case 'Hour': {
-                    timeUnitMark = 'h';
-                    break;
-                }
-
-                case 'Day': {
-                    timeUnitMark = 'd';
-                    break;
-                }
-
-                case 'Week': {
-                    timeUnitMark = 'week';
-                    break;
-                }
-
-                case 'Month': {
-                    timeUnitMark = 'month';
-                    break;
-                }
-
-                case 'Year': {
-                    timeUnitMark = 'year';
-                    break;
-                }
-
-                default: {
-                    error = `${timeUnit} is not valid time unit`;
-                    break;
-                }
-            }
-
-            if (!error) {
-                addedTime = dt.add(interval, timeUnitMark);
-                ({value: result, error} = this.returnFormattedTimeStampStr(addedTime, format));
-            }
-        }
-
-        return {value: result, error};
     }
 
     public static returnFormattedTimeStampStr(timedata: Moment, format: string): {value: any; error: string} {
