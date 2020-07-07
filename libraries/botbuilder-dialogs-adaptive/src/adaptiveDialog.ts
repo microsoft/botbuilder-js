@@ -27,7 +27,6 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
     public static conditionTracker = 'dialog._tracker.conditions';
 
     private readonly adaptiveKey = '_adaptive';
-    private readonly generatorTurnKey = Symbol('generatorTurn');
     private readonly changeTurnKey = Symbol('changeTurn');
 
     private _recognizerSet = new RecognizerSet();
