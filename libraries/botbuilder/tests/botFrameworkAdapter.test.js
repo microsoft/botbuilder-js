@@ -15,6 +15,7 @@ const nock = require('nock');
 const { userAgentPolicy, HttpHeaders } = require('@azure/ms-rest-js');
 const os = require('os');
 const pjson = require('../package.json');
+const { Conversations } = require('botframework-connector/lib/connectorApi/operations');
 
 const reference = {
     activityId: '1234',
@@ -171,6 +172,13 @@ class MockResponse {
     }
 }
 
+class MockConnector extends ConnectorClient {
+    constructor(conv) {
+        super(new MicrosoftAppCredentials('', ''));
+        this.conversations = conv;
+    }
+}
+
 function assertResponse(res, statusCode, hasBody) {
     assert(res.ended, `response not ended.`);
     assert.strictEqual(res.statusCode, statusCode);
@@ -263,6 +271,11 @@ describe(`BotFrameworkAdapter`, function () {
             assert(adapter.settings.openIdMetadata === 'https://someEndpoint.com', `Adapter should have read process.env.ChannelService`);
             delete process.env.ChannelService;
             delete process.env.BotOpenIdMetadata;
+        });
+
+        it(`should read webSocketFactory from the settings if it exists`, function () {
+            const adapter = new AdapterUnderTest({ webSocketFactory: 'test-web-socket' });
+            assert.strictEqual(adapter.webSocketFactory, 'test-web-socket', `Adapter should have read settings.webSocketFactory`);
         });
     });
 
@@ -1102,7 +1115,6 @@ describe(`BotFrameworkAdapter`, function () {
         });
     });
 
-
     it(`should create a User-Agent header with the same info as the host machine.`, async function () {
         const userAgent = 'Microsoft-BotFramework/3.1 BotBuilder/' + pjson.version + ' (Node.js,Version=' + process.version + '; ' + os.type() + ' ' + os.release() + '; ' + os.arch() + ')';
 
@@ -1200,6 +1212,21 @@ describe(`BotFrameworkAdapter`, function () {
             return;
         }
         assert(false, `should have thrown an error message`);
+    });
+
+    it(`should call client.conversations deleteConversationMember()`, async function () {
+        const conversations = new Conversations({ id: 'convo1', id: 'convo2' });
+        const convStub = stub(conversations, 'deleteConversationMember');
+        convStub.returns({status: 'OK'});
+        const connector = new MockConnector(conversations);
+
+        const adapter = new BotFrameworkAdapter();
+        const connectorStub = stub(adapter, 'getOrCreateConnectorClient');
+        connectorStub.returns(connector);
+
+        await adapter.deleteConversationMember({ activity: { serviceUrl: 'https://test.com', conversation: { id: 'convo1' } } }, 'test-member');
+
+        assert.strictEqual(convStub.calledOnce, true, `should have called conversations.deleteConversationMember`);
     });
 
     it(`should throw error if missing serviceUrl in getActivityMembers()`, async function () {
@@ -1737,6 +1764,32 @@ describe(`BotFrameworkAdapter`, function () {
                 called = true;
             });
             assert(called, `bot logic not called.`);
+        });
+    });
+
+    describe('getConversations', function () {
+        it(`should throw error if missing serviceUrl parameter in getConversations()`, async function () {
+            try {
+                const adapter = new AdapterUnderTest();
+                await adapter.getConversations();
+            } catch (err) {
+                assert(err.message === 'createConnectorClient() not passed serviceUrl.',
+                    `expected "BotFrameworkAdapter.getConversations(): missing serviceUrl" Error message, not "${ err.message }"`);
+                return;
+            }
+            assert(false, `should have thrown an error message`);
+        });
+
+        it(`should throw error if missing Activity.serviceUrl in getConversations()`, async function () {
+            try {
+                const adapter = new AdapterUnderTest();
+                await adapter.getConversations({ activity:{} });
+            } catch (err) {
+                assert(err.message === 'createConnectorClient() not passed serviceUrl.',
+                    `expected "BotFrameworkAdapter.getConversations(): missing serviceUrl" Error message, not "${ err.message }"`);
+                return;
+            }
+            assert(false, `should have thrown an error message`);
         });
     });
 
