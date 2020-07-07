@@ -588,73 +588,7 @@ export class FunctionUtils {
         return new ExpressionEvaluator(type, FunctionUtils.applySequence(func, FunctionUtils.verifyNumber),
             ReturnType.Number, FunctionUtils.validateNumber);
     }
-
-    /**
-     * Numeric operators that can have 2 or more args.
-     * @param type Expression type.
-     * @param func Function to apply.
-     */
-    public static multivariateNumeric(type: string, func: (arg0: any[]) => any, verify?: VerifyExpression): ExpressionEvaluator {
-        return new ExpressionEvaluator(type, FunctionUtils.applySequence(func, verify || FunctionUtils.verifyNumber),
-            ReturnType.Number, FunctionUtils.validateTwoOrMoreThanTwoNumbers);
-    }
-
-    /**
-     * Transform a string into another string.
-     * @param type Expression type.
-     * @param func Function to apply.
-     */
-    public static stringTransform(type: string, func: (arg0: any[]) => any): ExpressionEvaluator {
-        return new ExpressionEvaluator(type, FunctionUtils.apply(func, FunctionUtils.verifyStringOrNull),
-            ReturnType.String, FunctionUtils.validateUnaryString);
-    }
-
-    /**
-     * Transform a number into another number.
-     * @param type Expression type.
-     * @param func Function to apply.
-     */
-    public static numberTransform(type: string, func: (arg0: any[]) => any): ExpressionEvaluator {
-        return new ExpressionEvaluator(type, FunctionUtils.apply(func, FunctionUtils.verifyNumber),
-            ReturnType.Number, FunctionUtils.validateUnaryNumber);
-    }
-
-    /**
-     * Transform a datetime into another datetime.
-     * @param type Expression type.
-     * @param func Transformer.
-     * @returns Delegate for evaluating expression.
-     */
-    public static timeTransform(type: string, func: (timestamp: Date, numOfTransformation: any) => Date): ExpressionEvaluator {
-        return new ExpressionEvaluator(
-            type,
-            (expression: Expression, state: MemoryInterface, options: Options): {value: any; error: string} => {
-                let result: any;
-                let error: string;
-                let value: any;
-                let args: any[];
-                ({args, error} = FunctionUtils.evaluateChildren(expression, state, options));
-                if (!error) {
-                    if (typeof args[0] === 'string' && typeof args[1] === 'number') {
-                        ({value, error} = FunctionUtils.parseTimestamp(args[0]));
-                        if (!error) {
-                            if (args.length === 3 && typeof args[2] === 'string') {
-                                result = moment(func(value, args[1])).utc().format(FunctionUtils.timestampFormatter(args[2]));
-                            } else {
-                                result = func(value, args[1]).toISOString();
-                            }
-                        }
-                    } else {
-                        error = `${expression} could not be evaluated`;
-                    }
-                }
-
-                return {value: result, error};
-            },
-            ReturnType.String,
-            (expr: Expression): void => FunctionUtils.validateOrder(expr, [ReturnType.String], ReturnType.String, ReturnType.Number));
-    }
-
+    
     /**
      * Lookup a property in IDictionary, JObject or through reflection.
      * @param instance Instance with property.
@@ -735,7 +669,7 @@ export class FunctionUtils {
         return {value, error};
     }
 
-    private static parseTimestamp(timeStamp: string, transform?: (arg0: Date) => any): {value: any; error: string} {
+    public static parseTimestamp(timeStamp: string, transform?: (arg0: Date) => any): {value: any; error: string} {
         let value: any;
         const error: string = this.verifyISOTimestamp(timeStamp);
         if (!error) {
@@ -801,42 +735,6 @@ export class FunctionUtils {
         }
 
         return {timexProperty: parsed, error: undefined};
-    }
-
-    public static addOrdinal(num: number): string {
-        let hasResult = false;
-        let ordinalResult: string = num.toString();
-        if (num > 0) {
-            switch (num % 100) {
-                case 11:
-                case 12:
-                case 13:
-                    ordinalResult += 'th';
-                    hasResult = true;
-                    break;
-                default:
-                    break;
-            }
-
-            if (!hasResult) {
-                switch (num % 10) {
-                    case 1:
-                        ordinalResult += 'st';
-                        break;
-                    case 2:
-                        ordinalResult += 'nd';
-                        break;
-                    case 3:
-                        ordinalResult += 'rd';
-                        break;
-                    default:
-                        ordinalResult += 'th';
-                        break;
-                }
-            }
-        }
-
-        return ordinalResult;
     }
 
     public static newGuid(): string {
@@ -1196,66 +1094,6 @@ export class FunctionUtils {
         return result;
     }
 
-    public static _and(expression: Expression, state: MemoryInterface, options: Options): {value: any; error: string} {
-        let result = true;
-        let error: string;
-        for (const child of expression.children) {
-            const newOptions = new Options(options);
-            newOptions.nullSubstitution = undefined;
-            ({value: result, error} = child.tryEvaluate(state, newOptions));
-            if (!error) {
-                if (this.isLogicTrue(result)) {
-                    result = true;
-                } else {
-                    result = false;
-                    break;
-                }
-            } else {
-                result = false;
-                error = undefined;
-                break;
-            }
-        }
-
-        return {value: result, error};
-    }
-
-    public static _or(expression: Expression, state: MemoryInterface, options: Options): {value: any; error: string} {
-        let result = false;
-        let error: string;
-        for (const child of expression.children) {
-            const newOptions = new Options(options);
-            newOptions.nullSubstitution = undefined;
-            ({value: result, error} = child.tryEvaluate(state, newOptions));
-            if (!error) {
-                if (this.isLogicTrue(result)) {
-                    result = true;
-                    break;
-                }
-            } else {
-                error = undefined;
-            }
-        }
-
-        return {value: result, error};
-    }
-
-    public static _not(expression: Expression, state: MemoryInterface, options: Options): {value: any; error: string} {
-        let result = false;
-        let error: string;
-        const newOptions = new Options(options);
-        newOptions.nullSubstitution = undefined;
-        ({value: result, error} = expression.children[0].tryEvaluate(state, newOptions));
-        if (!error) {
-            result = !this.isLogicTrue(result);
-        } else {
-            error = undefined;
-            result = true;
-        }
-
-        return {value: result, error};
-    }
-
     public static _if(expression: Expression, state: MemoryInterface, options: Options): {value: any; error: string} {
         let result: any;
         let error: string;
@@ -1271,50 +1109,7 @@ export class FunctionUtils {
         return {value: result, error};
     }
 
-    public static substring(expression: Expression, state: MemoryInterface, options: Options): {value: any; error: string} {
-        let result: any;
-        let error: any;
-        let str: string;
-        ({value: str, error} = expression.children[0].tryEvaluate(state, options));
 
-        if (!error) {
-            if (typeof str === 'string') {
-                let start: number;
-
-                const startExpr: Expression = expression.children[1];
-                ({value: start, error} = startExpr.tryEvaluate(state, options));
-                if (!error && !Number.isInteger(start)) {
-                    error = `${startExpr} is not an integer.`;
-                } else if (start < 0 || start >= str.length) {
-                    error = `${startExpr}=${start} which is out of range for ${str}`;
-                }
-                if (!error) {
-                    let length: number;
-                    if (expression.children.length === 2) {
-                        // Without length, compute to end
-                        length = str.length - start;
-                    } else {
-                        const lengthExpr: Expression = expression.children[2];
-                        ({value: length, error} = lengthExpr.tryEvaluate(state, options));
-                        if (!error && !Number.isInteger(length)) {
-                            error = `${lengthExpr} is not an integer`;
-                        } else if (length < 0 || Number(start) + Number(length) > str.length) {
-                            error = `${lengthExpr}=${length} which is out of range for ${str}`;
-                        }
-                    }
-                    if (!error) {
-                        result = str.substr(start, length);
-                    }
-                }
-            } else if (str === undefined) {
-                result = '';
-            } else {
-                error = `${expression.children[0]} is neither a string nor a null object.`;
-            }
-        }
-
-        return {value: result, error};
-    }
 
     
 

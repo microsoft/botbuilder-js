@@ -1,0 +1,31 @@
+import { ExpressionEvaluator, EvaluateExpressionDelegate } from '../expressionEvaluator';
+import { ReturnType, Expression } from '../expression';
+import { ExpressionType } from '../expressionType';
+import { FunctionUtils } from '../functionUtils';
+
+export class NewGuid extends ExpressionEvaluator {
+    public constructor(){
+        super(ExpressionType.NewGuid, NewGuid.evaluator(), ReturnType.String, NewGuid.validator);
+    }
+
+    private static evaluator(): EvaluateExpressionDelegate {
+        return FunctionUtils.applyWithError((
+            args: any[]): any => {
+            let error = undefined;
+            let result = undefined;
+            if (FunctionUtils.parseStringOrNull(args[1]).length === 0) {
+                error = `${args[1]} should be a string with length at least 1`;
+            }
+
+            if (!error) {
+                result = FunctionUtils.parseStringOrNull(args[0]).split(FunctionUtils.parseStringOrNull(args[1])).join(FunctionUtils.parseStringOrNull(args[2]));
+            }
+
+            return {value: result, error};
+        }, FunctionUtils.verifyStringOrNull);
+    }
+
+    private static validator(expression: Expression): void {
+        FunctionUtils.validateArityAndAnyType(expression, 3, 3, ReturnType.String);
+    }
+}
