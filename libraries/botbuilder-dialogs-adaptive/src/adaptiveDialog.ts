@@ -5,14 +5,13 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import {
-    TurnContext, BotTelemetryClient, NullTelemetryClient, ActivityTypes,
-    Activity, RecognizerResult, getTopScoringIntent
-} from 'botbuilder-core';
+
 import { IntExpression, ExpressionParser } from 'adaptive-expressions';
+import { TurnContext, ActivityTypes, Activity, RecognizerResult, getTopScoringIntent } from 'botbuilder-core';
 import { Dialog, DialogInstance, DialogReason, DialogTurnResult, DialogTurnStatus, DialogEvent, DialogContext, DialogContainer, DialogDependencies, TurnPath, DialogPath, DialogState } from 'botbuilder-dialogs';
 import { OnCondition } from './conditions';
-import { Recognizer } from './recognizers';
+import { Recognizer, RecognizerSet } from './recognizers';
+import { ValueRecognizer } from './recognizers/valueRecognizer';
 import { TriggerSelector } from './triggerSelector';
 import { FirstSelector } from './selectors';
 import { SchemaHelper } from './schemaHelper';
@@ -31,6 +30,7 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
     private readonly generatorTurnKey = Symbol('generatorTurn');
     private readonly changeTurnKey = Symbol('changeTurn');
 
+    private _recognizerSet = new RecognizerSet();
     private installedDependencies = false;
     private needsTracker = false;
     private dialogSchema: SchemaHelper;
@@ -89,11 +89,6 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
 
     public get schema(): object | undefined {
         return this.dialogSchema ? this.dialogSchema.schema : undefined;
-    }
-
-    public set telemetryClient(client: BotTelemetryClient) {
-        super.telemetryClient = client ? client : new NullTelemetryClient();
-        this.dialogs.telemetryClient = client;
     }
 
     protected ensureDependenciesInstalled(): void {
@@ -430,36 +425,20 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
         return handled;
     }
 
-    protected async onRecognize(dc: DialogContext, activity: Activity): Promise<RecognizerResult> {
-        const { text, value } = activity;
+    protected async onRecognize(actionContext: ActionContext, activity: Activity): Promise<RecognizerResult> {
+        const { text } = activity;
         const noneIntent: RecognizerResult = {
             text: text || '',
             intents: { 'None': { score: 0.0 } },
             entities: {}
         };
 
-        // Check for submission of an adaptive card
-        if (!text && typeof value == 'object' && typeof value['intent'] == 'string') {
-            // Map submitted values to a recognizer result
-            const recognized: RecognizerResult = {
-                text: '',
-                intents: {},
-                entities: {}
-            };
-            for (const key in value) {
-                if (value.hasOwnProperty(key)) {
-                    if (key == 'intent') {
-                        recognized.intents[value[key]] = { score: 1.0 };
-                    } else {
-                        recognized.entities[key] = [value[key]];
-                    }
-                }
+        if (this.recognizer) {
+            if (this._recognizerSet.recognizers.length == 0) {
+                this._recognizerSet.recognizers.push(this.recognizer);
+                this._recognizerSet.recognizers.push(new ValueRecognizer());
             }
-
-            return recognized;
-        } else if (this.recognizer) {
-            // Call recognizer as normal and filter to top intent
-            const recognized = await this.recognizer.recognize(dc, activity);
+            const recognized = await this._recognizerSet.recognize(actionContext, activity);
             const { intent } = getTopScoringIntent(recognized);
             for (const key in recognized.intents) {
                 if (key != intent) {

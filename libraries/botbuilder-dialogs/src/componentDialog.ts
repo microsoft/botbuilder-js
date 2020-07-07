@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { BotTelemetryClient, NullTelemetryClient, telemetryTrackDialogView, TurnContext } from 'botbuilder-core';
+import { telemetryTrackDialogView, TurnContext } from 'botbuilder-core';
 import { Dialog, DialogInstance, DialogReason, DialogTurnResult, DialogTurnStatus } from './dialog';
 import { DialogContext } from './dialogContext';
 import { DialogContainer } from './dialogContainer';
@@ -249,21 +249,5 @@ export class ComponentDialog<O extends object = {}> extends DialogContainer<O> {
         const innerDC: DialogContext = new DialogContext(this.dialogs, context, dialogState);
 
         return innerDC
-    }
-
-    /**
-     * Set the telemetry client, and also apply it to all child dialogs.
-     * Future dialogs added to the component will also inherit this client.
-     */
-    public set telemetryClient(client: BotTelemetryClient) {
-        this._telemetryClient = client ? client : new NullTelemetryClient();
-        this.dialogs.telemetryClient = client;
-    }
-
-    /**
-     * Get the current telemetry client.
-     */
-    public get telemetryClient(): BotTelemetryClient {
-        return this._telemetryClient;
     }
 }
