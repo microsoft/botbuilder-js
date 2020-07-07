@@ -97,10 +97,6 @@ steps:
     verbose: false
     customCommand: 'run test-coverage'
 
-- powershell: 'Get-ChildItem env:* | sort-object name'
-  displayName: 'Log environment variables'
-  continueOnError: true
-
 - powershell: |
     Write-Host "Setting environment variable COVERALLS_REPO_TOKEN"
     "##vso[task.setvariable variable=COVERALLS_REPO_TOKEN;]$(JsCoverallsToken)"
