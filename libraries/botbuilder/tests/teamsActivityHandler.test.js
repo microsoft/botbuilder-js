@@ -87,6 +87,10 @@ describe('TeamsActivityHandler', () => {
                 return { status: 501 };
             }
 
+            handleTeamsMessagingExtensionConfigurationQuerySettingUrl(context, action) {
+                return { status: 501 };
+            }
+
             handleTeamsMessagingExtensionConfigurationSetting(context, settings) {
                 return { status: 501 };
             }
@@ -190,6 +194,23 @@ describe('TeamsActivityHandler', () => {
             });
 
             const activity = createInvokeActivity('composeExtension/fetchTask');
+
+            adapter.send(activity)
+                .assertReply(activity => {
+                    assert.strictEqual(activity.value.status, 200, 'should be status code 200.')
+                    done();
+                })
+                .catch(err => done(err));
+        })
+
+        it('activity.name is "composeExtension/querySettingUrl". should return status code [200] when handleTeamsMessagingExtensionConfigurationQuerySettingUrl method is overridden.', done => {
+            const bot = new InvokeActivity();
+
+            const adapter = new TestAdapter(async context => {
+                await bot.run(context);
+            });
+
+            const activity = createInvokeActivity('composeExtension/querySettingUrl');
 
             adapter.send(activity)
                 .assertReply(activity => {
@@ -414,6 +435,22 @@ describe('TeamsActivityHandler', () => {
                 });
         });
 
+        it('handleTeamsSigninTokenExchange is not overridden', async () => {
+            const bot = new TeamsActivityHandler();
+
+            const adapter = new TestAdapter(async context => {
+                await bot.run(context);
+            });
+
+            const signinVerifyStateActivity = createInvokeActivity('signin/tokenExchange');
+            adapter.send(signinVerifyStateActivity)
+                .assertReply(activity => {
+                    assert.strictEqual(activity.type, 'invokeResponse');
+                    assert.strictEqual(activity.value.status, 501);
+                    assert.strictEqual(activity.value.body, undefined);
+                });
+        });
+
         it('handleTeamsMessagingExtensionCardButtonClicked is not overridden', async () => {
             const bot = new TeamsActivityHandler();
 
@@ -454,6 +491,118 @@ describe('TeamsActivityHandler', () => {
             });
 
             const taskSubmitActivity = createInvokeActivity('task/submit');
+            adapter.send(taskSubmitActivity)
+                .assertReply(activity => {
+                    assert.strictEqual(activity.type, 'invokeResponse');
+                    assert.strictEqual(activity.value.status, 501);
+                    assert.strictEqual(activity.value.body, undefined);
+                });
+        });
+
+        it('handleTeamsAppBasedLinkQuery is not overridden', async () => {
+            const bot = new TeamsActivityHandler();
+
+            const adapter = new TestAdapter(async context => {
+                await bot.run(context);
+            });
+
+            const taskSubmitActivity = createInvokeActivity('composeExtension/queryLink');
+            adapter.send(taskSubmitActivity)
+                .assertReply(activity => {
+                    assert.strictEqual(activity.type, 'invokeResponse');
+                    assert.strictEqual(activity.value.status, 501);
+                    assert.strictEqual(activity.value.body, undefined);
+                });
+        });
+
+        it('handleTeamsMessagingExtensionConfigurationQuerySettingUrl is not overridden', async () => {
+            const bot = new TeamsActivityHandler();
+
+            const adapter = new TestAdapter(async context => {
+                await bot.run(context);
+            });
+
+            const taskSubmitActivity = createInvokeActivity('composeExtension/querySettingUrl');
+            adapter.send(taskSubmitActivity)
+                .assertReply(activity => {
+                    assert.strictEqual(activity.type, 'invokeResponse');
+                    assert.strictEqual(activity.value.status, 501);
+                    assert.strictEqual(activity.value.body, undefined);
+                });
+        });
+
+        it('handleTeamsMessagingExtensionQuery is not overridden', async () => {
+            const bot = new TeamsActivityHandler();
+
+            const adapter = new TestAdapter(async context => {
+                await bot.run(context);
+            });
+
+            const taskSubmitActivity = createInvokeActivity('composeExtension/query');
+            adapter.send(taskSubmitActivity)
+                .assertReply(activity => {
+                    assert.strictEqual(activity.type, 'invokeResponse');
+                    assert.strictEqual(activity.value.status, 501);
+                    assert.strictEqual(activity.value.body, undefined);
+                });
+        });
+
+        it('handleTeamsMessagingExtensionSelectItem is not overridden', async () => {
+            const bot = new TeamsActivityHandler();
+
+            const adapter = new TestAdapter(async context => {
+                await bot.run(context);
+            });
+
+            const taskSubmitActivity = createInvokeActivity('composeExtension/selectItem');
+            adapter.send(taskSubmitActivity)
+                .assertReply(activity => {
+                    assert.strictEqual(activity.type, 'invokeResponse');
+                    assert.strictEqual(activity.value.status, 501);
+                    assert.strictEqual(activity.value.body, undefined);
+                });
+        });
+
+        it('handleTeamsMessagingExtensionFetchTask is not overridden', async () => {
+            const bot = new TeamsActivityHandler();
+
+            const adapter = new TestAdapter(async context => {
+                await bot.run(context);
+            });
+
+            const taskSubmitActivity = createInvokeActivity('composeExtension/fetchTask');
+            adapter.send(taskSubmitActivity)
+                .assertReply(activity => {
+                    assert.strictEqual(activity.type, 'invokeResponse');
+                    assert.strictEqual(activity.value.status, 501);
+                    assert.strictEqual(activity.value.body, undefined);
+                });
+        });
+
+        it('handleTeamsMessagingExtensionConfigurationQuerySettingUrl is not overridden', async () => {
+            const bot = new TeamsActivityHandler();
+
+            const adapter = new TestAdapter(async context => {
+                await bot.run(context);
+            });
+
+            const taskSubmitActivity = createInvokeActivity('composeExtension/querySettingUrl');
+            adapter.send(taskSubmitActivity)
+                .assertReply(activity => {
+                    assert.strictEqual(activity.type, 'invokeResponse');
+                    assert.strictEqual(activity.value.status, 501);
+                    assert.strictEqual(activity.value.body, undefined);
+                });
+        });
+
+        it('handleTeamsMessagingExtensionConfigurationSetting is not overridden', async () => {
+            const bot = new TeamsActivityHandler();
+
+            const adapter = new TestAdapter(async context => {
+                await bot.run(context);
+            });
+
+            const taskSubmitActivity = createInvokeActivity('composeExtension/setting');
             adapter.send(taskSubmitActivity)
                 .assertReply(activity => {
                     assert.strictEqual(activity.type, 'invokeResponse');
@@ -728,6 +877,15 @@ describe('TeamsActivityHandler', () => {
             return activity;
         }
 
+        function createSigninTokenExchange(channelData) {
+            const activity = {
+                type: ActivityTypes.Invoke,
+                name: 'signin/tokenExchange',
+                channelData
+            };
+            return activity;
+        }
+
         let onConversationUpdateCalled = false;
         let onDialogCalled = false;
 
@@ -739,6 +897,72 @@ describe('TeamsActivityHandler', () => {
         afterEach(() => {
             onConversationUpdateCalled = true;
             onDialogCalled = true;
+        });
+
+        it('No MS-Teams routed activity', done => {
+            const bot = new TeamsActivityHandler();
+
+            const activity = { type: ActivityTypes.ConversationUpdate, channelId: 'no-msteams' };
+
+            const adapter = new TestAdapter(async context => {
+                await bot.run(context);
+            });
+
+            bot.onDialog(async (context, next) => {
+                onDialogCalled = true;
+                await next();
+            });
+
+            adapter.send(activity)
+                .then(activity => {
+                    assert(onDialogCalled, 'onDialog handler not called');
+                    done();
+                })
+                .catch(err => done(err));
+        });
+
+        it('MS-Teams with non-existent channelData.eventType routed activity', done => {
+            const bot = new TeamsActivityHandler();
+
+            const activity = { type: ActivityTypes.ConversationUpdate, channelId: 'msteams', channelData: { eventType: 'non-existent' }};
+
+            const adapter = new TestAdapter(async context => {
+                await bot.run(context);
+            });
+
+            bot.onDialog(async (context, next) => {
+                onDialogCalled = true;
+                await next();
+            });
+
+            adapter.send(activity)
+                .then(activity => {
+                    assert(onDialogCalled, 'onDialog handler not called');
+                    done();
+                })
+                .catch(err => done(err));
+        });
+
+        it('MS-Teams with no channelData routed activity', done => {
+            const bot = new TeamsActivityHandler();
+
+            const activity = { type: ActivityTypes.ConversationUpdate, channelId: 'msteams' };
+
+            const adapter = new TestAdapter(async context => {
+                await bot.run(context);
+            });
+
+            bot.onDialog(async (context, next) => {
+                onDialogCalled = true;
+                await next();
+            });
+
+            adapter.send(activity)
+                .then(activity => {
+                    assert(onDialogCalled, 'onDialog handler not called');
+                    done();
+                })
+                .catch(err => done(err));
         });
 
         it('onTeamsMembersAdded routed activity', () => {
@@ -794,6 +1018,31 @@ describe('TeamsActivityHandler', () => {
                     assert(getMemberCalledCount === 2, 'TeamsInfo.getMember not called twice');
                     TeamsInfo.getMember = wasGetMember;
                 });
+        });
+
+        it('onTeamsMembersAdded routed activity with no TeamsMembersAddedEvent handler', done => {
+            const bot = new TeamsActivityHandler();
+
+            const membersAddedMock = [{ id: 'test'} , { id: 'id' }];
+            const team = { id: 'team' };
+            const activity = createConvUpdateActivity({ team, eventType: 'teamMemberAdded' });
+            activity.membersAdded = membersAddedMock;
+
+            bot.onDialog(async (context, next) => {
+                onDialogCalled = true;
+                await next();
+            });
+
+            const adapter = new TestAdapter(async context => {
+                await bot.run(context);
+            });
+
+            adapter.send(activity)
+                .then(() => {
+                    assert(onDialogCalled, 'onDialog handler not called');
+                    done();
+                })
+                .catch(err => done(err));
         });
 
         it('onTeamsMembersAdded for bot routed activity does NOT call TeamsInfo.getMember', () => {
@@ -852,6 +1101,127 @@ describe('TeamsActivityHandler', () => {
                 });
         });
 
+        it('onTeamsMembersAdded for bot routed activity should throw a ConversationNotFound Error on TeamsInfo.getMember', done => {
+            const bot = new TeamsActivityHandler();
+            let onTeamsMemberAddedEvent = false;
+            let getMemberCalled = false;
+
+            const membersAddedMock = [{ id: 'botid' }];
+            const team = { id: 'team' };
+            const activity = createConvUpdateActivity({ team, eventType: 'teamMemberAdded' });
+            activity.membersAdded = membersAddedMock;
+
+            bot.onConversationUpdate(async (context, next) => {
+                assert(context, 'context not found');
+                assert(next, 'next not found');
+                onConversationUpdateCalled = true;
+                await next();
+            });
+
+            bot.onTeamsMembersAddedEvent(async (membersAdded, teamInfo, context, next) => {
+                assert(membersAdded, 'membersAdded not found');
+                assert(teamInfo, 'teamsInfo not found');
+                assert(context, 'context not found');
+                assert(next, 'next not found');
+                assert.strictEqual(teamInfo, team);
+                assert.strictEqual(membersAdded, membersAddedMock);
+                onTeamsMemberAddedEvent = true;
+                await next();
+            });
+
+            bot.onDialog(async (context, next) => {
+                assert(context, 'context not found');
+                assert(next, 'next not found');
+                onDialogCalled = true;
+                await next();
+            });
+
+            const adapter = new TestAdapter(async context => {
+                await bot.run(context);
+            });
+
+            const wasGetMember = TeamsInfo.getMember;
+            TeamsInfo.getMember = function(context, userId) {
+                getMemberCalled = true;
+                throw { body: { error: { code: 'ConversationNotFound' }}};
+            };
+
+            adapter.send(activity)
+                .then(() => {
+                    assert(onTeamsMemberAddedEvent, 'onTeamsMemberAddedEvent handler not called');
+                    assert(onConversationUpdateCalled, 'handleTeamsFileConsentAccept handler not called');
+                    assert(onDialogCalled, 'onDialog handler not called');
+                    assert(getMemberCalled, 'TeamsInfo.getMember handler not called');
+                    TeamsInfo.getMember = wasGetMember;
+                    done();
+                })
+                .catch(err => done(err));
+        });
+
+        it('onTeamsMembersAdded for bot routed activity should throw an Error on TeamsInfo.getMember', done => {
+            const bot = new TeamsActivityHandler();
+            let onTeamsMemberAddedEvent = false;
+            let getMemberCalled = false;
+
+            const membersAddedMock = [{ id: 'botid' }];
+            const team = { id: 'team' };
+            const activity = createConvUpdateActivity({ team, eventType: 'teamMemberAdded' });
+            activity.membersAdded = membersAddedMock;
+
+            bot.onConversationUpdate(async (context, next) => {
+                assert(context, 'context not found');
+                assert(next, 'next not found');
+                onConversationUpdateCalled = true;
+                await next();
+            });
+
+            bot.onTeamsMembersAddedEvent(async (membersAdded, teamInfo, context, next) => {
+                assert(membersAdded, 'membersAdded not found');
+                assert(teamInfo, 'teamsInfo not found');
+                assert(context, 'context not found');
+                assert(next, 'next not found');
+                assert.strictEqual(teamInfo, team);
+                assert.strictEqual(membersAdded, membersAddedMock);
+                onTeamsMemberAddedEvent = true;
+                await next();
+            });
+
+            bot.onDialog(async (context, next) => {
+                assert(context, 'context not found');
+                assert(next, 'next not found');
+                onDialogCalled = true;
+                await next();
+            });
+
+            const adapter = new TestAdapter(async context => {
+                await bot.run(context);
+            });
+
+            const wasGetMember = TeamsInfo.getMember;
+            TeamsInfo.getMember = function(context, userId) {
+                getMemberCalled = true;
+                throw 'TeamsInfo.getMember Error';
+            };
+
+            adapter.send(activity)
+                .then(() => {
+                    assert(onTeamsMemberAddedEvent, 'onTeamsMemberAddedEvent handler not called');
+                    assert(onConversationUpdateCalled, 'handleTeamsFileConsentAccept handler not called');
+                    assert(onDialogCalled, 'onDialog handler not called');
+                    assert(getMemberCalled, 'TeamsInfo.getMember handler not called');
+                    TeamsInfo.getMember = wasGetMember;
+                    done();
+                })
+                .catch(err => {
+                    if(err === 'TeamsInfo.getMember Error'){
+                        TeamsInfo.getMember = wasGetMember;
+                        done();
+                    }else{
+                        done(err);
+                    }
+                });
+        });
+
         it('onTeamsMembersRemoved routed activity', () => {
             const bot = new TeamsActivityHandler();
 
@@ -897,6 +1267,31 @@ describe('TeamsActivityHandler', () => {
                     assert(onConversationUpdateCalled, 'handleTeamsFileConsentAccept handler not called');
                     assert(onDialogCalled, 'onDialog handler not called');
                 });
+        });
+
+        it('onTeamsMembersRemoved routed activity with no TeamsMembersRemovedEvent handler', done => {
+            const bot = new TeamsActivityHandler();
+
+            const membersRemovedMock = [{ id: 'test'} , { id: 'id' }];
+            const team = { id: 'team' };
+            const activity = createConvUpdateActivity({ team, eventType: 'teamMemberRemoved' });
+            activity.membersRemoved = membersRemovedMock;
+
+            bot.onDialog(async (context, next) => {
+                onDialogCalled = true;
+                await next();
+            });
+
+            const adapter = new TestAdapter(async context => {
+                await bot.run(context);
+            });
+
+            adapter.send(activity)
+                .then(() => {
+                    assert(onDialogCalled, 'onDialog handler not called');
+                    done();
+                })
+                .catch(err => done(err));
         });
 
         it('onTeamsChannelCreated routed activity', () => {
@@ -1112,6 +1507,40 @@ describe('TeamsActivityHandler', () => {
             await adapter.send(activity);
             assert(onDialogCalled, 'onDialog handler not called');
             assert(handleTeamsSigninVerifyStateCalled, 'handleTeamsSigninVerifyState handler not called');
+        });
+
+        it('signin/tokenExchange routed activity', async () => {
+            onDialogCalled = false;
+            handleTeamsSigninTokenExchangeCalled = false;
+
+            class InvokeHandler extends TeamsActivityHandler {
+                constructor() {
+                    super();
+
+                    this.onDialog(async (context, next) => {
+                        assert(context, 'context not found');
+                        onDialogCalled = true;
+                        await next();
+                    });
+                }
+
+                async handleTeamsSigninTokenExchange(context) {
+                    assert(context, 'context not found');
+                    handleTeamsSigninTokenExchangeCalled = true;
+                }
+            }
+
+            const bot = new InvokeHandler();
+            const team = { id: 'team' };
+            const activity = createSigninTokenExchange({ team, channelId: 'msteams' });
+
+            const adapter = new TestAdapter(async context => {
+                await bot.run(context);
+            });
+
+            await adapter.send(activity);
+            assert(onDialogCalled, 'onDialog handler not called');
+            assert(handleTeamsSigninTokenExchangeCalled, 'handleTeamsSigninTokenExchange handler not called');
         });
     });
 });
