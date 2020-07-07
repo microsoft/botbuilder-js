@@ -30,7 +30,7 @@ export class TaskModuleBot  extends TeamsActivityHandler {
     }
 
     protected async handleTeamsTaskModuleFetch(context: TurnContext, taskModuleRequest: TaskModuleRequest): Promise<TaskModuleResponse> {
-        var reply = MessageFactory.text("handleTeamsTaskModuleFetchAsync TaskModuleRequest" + JSON.stringify(taskModuleRequest));
+        var reply = MessageFactory.text("handleTeamsTaskModuleFetch TaskModuleRequest" + JSON.stringify(taskModuleRequest));
         await context.sendActivity(reply);
 
         return {
