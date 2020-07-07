@@ -5,8 +5,6 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import './languageGeneratorExtensions';
-import './resourceExtensions';
 
 export * from './actions';
 export * from './actionContext';
@@ -19,16 +17,17 @@ export { DialogExpressionConverter } from './converters';
 export * from './expressions';
 export * from './generators';
 export * from './input';
-export * from './luis';
-export * from './recognizers';
-export * from './selectors';
-export * from './templates';
-export * from './adaptiveDialog';
 export * from './languageGenerator';
+export * from './languageGeneratorExtensions';
 export * from './languagePolicy';
 export * from './languageResourceLoader';
-export * from './qnaMaker';
+export * from './luis';
 export * from './propertySchema';
+export * from './qnaMaker';
+export * from './recognizers';
+export * from './resourceExtensions';
 export * from './schemaHelper';
+export * from './selectors';
+export * from './templates';
 export * from './template';
 export * from './triggerSelector';

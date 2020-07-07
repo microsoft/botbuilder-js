@@ -9,19 +9,14 @@
 import { DialogManager } from 'botbuilder-dialogs';
 import { ResourceExplorer } from 'botbuilder-dialogs-declarative';
 
-declare module 'botbuilder-dialogs/lib/dialogManager' {
-    export interface DialogManager {
-        useResourceExplorer(resourceExplorer: ResourceExplorer): DialogManager;
-    }
-}
-
 export const resourceExplorerKey = Symbol('ResourceExplorer');
 
-/**
- * Register ResourceExplorer into DialogManager.
- */
-DialogManager.prototype.useResourceExplorer = function(resourceExplorer: ResourceExplorer): DialogManager {
-    const _self = this as DialogManager;
-    _self.initialTurnState.set(resourceExplorerKey, resourceExplorer);
-    return _self;
-};
+export class ResourceExtensions {
+    /**
+     * Register ResourceExplorer into DialogManager.
+     */
+    public static useResourceExplorer(dialogManager: DialogManager, resourceExplorer: ResourceExplorer): DialogManager {
+        dialogManager.initialTurnState.set(resourceExplorerKey, resourceExplorer);
+        return dialogManager;
+    }
+}
