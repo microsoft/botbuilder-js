@@ -187,31 +187,33 @@ export class TelemetryLoggerMiddleware implements Middleware {
     protected async fillReceiveEventProperties(activity: Activity, telemetryProperties?: {[key: string]:string}): Promise<{ [key: string]: string }> {
         const properties: { [key: string]: string } = {};
 
-        properties[TelemetryConstants.fromIdProperty] = activity.from ? activity.from.id : '';        
-        properties[TelemetryConstants.conversationNameProperty] = activity.conversation.name || '';        
-        properties[TelemetryConstants.localeProperty] = activity.locale || '';
-        properties[TelemetryConstants.recipientIdProperty] = (activity && activity.recipient && activity.recipient.id) ? activity.recipient.id : '';
-        properties[TelemetryConstants.recipientNameProperty] = (activity && activity.recipient && activity.recipient.name) ? activity.recipient.name : '';
+        if (!activity) {
+            properties[TelemetryConstants.fromIdProperty] = activity.from ? activity.from.id : '';        
+            properties[TelemetryConstants.conversationNameProperty] = activity.conversation.name || '';        
+            properties[TelemetryConstants.localeProperty] = activity.locale || '';
+            properties[TelemetryConstants.recipientIdProperty] = (activity && activity.recipient && activity.recipient.id) ? activity.recipient.id : '';
+            properties[TelemetryConstants.recipientNameProperty] = (activity && activity.recipient && activity.recipient.name) ? activity.recipient.name : '';
 
-        // Use the LogPersonalInformation flag to toggle logging PII data, text and user name are common examples
-        if (this.logPersonalInformation) {
-          if (activity.from && activity.from.name && activity.from.name.trim()) {
-            properties[TelemetryConstants.fromNameProperty] = activity.from ? activity.from.name : '';;
-          }
+            // Use the LogPersonalInformation flag to toggle logging PII data, text and user name are common examples
+            if (this.logPersonalInformation) {
+                if (activity.from && activity.from.name && activity.from.name.trim()) {
+                    properties[TelemetryConstants.fromNameProperty] = activity.from ? activity.from.name : '';;
+                }
 
-          if (activity.text && activity.text.trim()) {
-            properties[TelemetryConstants.textProperty] = activity.text;
-          }
+                if (activity.text && activity.text.trim()) {
+                    properties[TelemetryConstants.textProperty] = activity.text;
+                }
 
-          if (activity.speak && activity.speak.trim()) {
-            properties[TelemetryConstants.speakProperty] = activity.speak;
-          }
-        }
+                if (activity.speak && activity.speak.trim()) {
+                    properties[TelemetryConstants.speakProperty] = activity.speak;
+                }
+            }
 
-        // Additional Properties can override "stock" properties.
-        if (telemetryProperties)
-        {
-            return Object.assign({}, properties, telemetryProperties);
+            // Additional Properties can override "stock" properties.
+            if (telemetryProperties)
+            {
+                return Object.assign({}, properties, telemetryProperties);
+            }
         }
 
         return properties;
@@ -227,36 +229,39 @@ export class TelemetryLoggerMiddleware implements Middleware {
     protected async fillSendEventProperties(activity: Activity, telemetryProperties?: {[key: string]:string}): Promise<{ [key: string]: string }> {
         const properties: { [key: string]: string } = {};
 
-        properties[TelemetryConstants.replyActivityIdProperty] = activity.replyToId || '';
-        properties[TelemetryConstants.recipientIdProperty] = (activity && activity.recipient && activity.recipient.id) ? activity.recipient.id : '';
-        properties[TelemetryConstants.conversationNameProperty] = activity.conversation.name;
-        properties[TelemetryConstants.localeProperty] = activity.locale || '';
-
-        // Use the LogPersonalInformation flag to toggle logging PII data, text and user name are common examples
-        if (this.logPersonalInformation) {
-            if (activity.recipient && activity.recipient.name && activity.recipient.name.trim()) {
-                properties[TelemetryConstants.recipientNameProperty] = activity.recipient.name;
-            }
-
-            if (activity.text && activity.text.trim()) {
-                properties[TelemetryConstants.textProperty] = activity.text;
-            }
-
-            if (activity.speak && activity.speak.trim()) {
-                properties[TelemetryConstants.speakProperty] = activity.speak;
-            }
-
-            if (activity.attachments && activity.attachments.length > 0) {
-                properties[TelemetryConstants.attachmentsProperty] = JSON.stringify(activity.attachments);
-            }
-        }
-
-        // Additional Properties can override "stock" properties.
-        if (telemetryProperties)
+        if (!activity)
         {
-            return Object.assign({}, properties, telemetryProperties);
-        }
+            properties[TelemetryConstants.replyActivityIdProperty] = activity.replyToId || '';
+            properties[TelemetryConstants.recipientIdProperty] = (activity && activity.recipient && activity.recipient.id) ? activity.recipient.id : '';
+            properties[TelemetryConstants.conversationNameProperty] = activity.conversation.name;
+            properties[TelemetryConstants.localeProperty] = activity.locale || '';
 
+            // Use the LogPersonalInformation flag to toggle logging PII data, text and user name are common examples
+            if (this.logPersonalInformation) {
+                if (activity.recipient && activity.recipient.name && activity.recipient.name.trim()) {
+                    properties[TelemetryConstants.recipientNameProperty] = activity.recipient.name;
+                }
+
+                if (activity.text && activity.text.trim()) {
+                    properties[TelemetryConstants.textProperty] = activity.text;
+                }
+
+                if (activity.speak && activity.speak.trim()) {
+                    properties[TelemetryConstants.speakProperty] = activity.speak;
+                }
+
+                if (activity.attachments && activity.attachments.length > 0) {
+                    properties[TelemetryConstants.attachmentsProperty] = JSON.stringify(activity.attachments);
+                }
+            }
+
+            // Additional Properties can override "stock" properties.
+            if (telemetryProperties)
+            {
+                return Object.assign({}, properties, telemetryProperties);
+            }
+        }
+        
         return properties;
     }
 
