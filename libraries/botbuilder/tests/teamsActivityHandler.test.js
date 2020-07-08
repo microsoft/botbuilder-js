@@ -282,7 +282,7 @@ describe('TeamsActivityHandler', () => {
     });
 
     describe('should send a BadRequest status code if', () => {
-        it('a bad BotMessagePreview.action is received by the bot', async () => {
+        it('a bad BotMessagePreview.action is received by the bot', done => {
             const bot = new TeamsActivityHandler();
 
             const adapter = new TestAdapter(async context => {
@@ -296,10 +296,12 @@ describe('TeamsActivityHandler', () => {
                     assert(activity.value.status === 400, `incorrect status code "${ activity.value.status }", expected "400"`);
                     assert(!activity.value.body,
                         `expected empty body for invokeResponse from fileConsent flow.\nReceived: ${ JSON.stringify(activity.value.body) }`);
-                });
+                    done();
+                })
+                .catch(err => done(err));
         });
 
-        it('a bad FileConsentCardResponse.action is received by the bot', async () => {
+        it('a bad FileConsentCardResponse.action is received by the bot', done => {
             const bot = new TeamsActivityHandler();
 
             const adapter = new TestAdapter(async context => {
@@ -313,12 +315,14 @@ describe('TeamsActivityHandler', () => {
                     assert(activity.value.status === 400, `incorrect status code "${ activity.value.status }", expected "400"`);
                     assert(!activity.value.body,
                         `expected empty body for invokeResponse from fileConsent flow.\nReceived: ${ JSON.stringify(activity.value.body) }`);
-                });
+                    done();
+                })
+                .catch(err => done(err));
         });
     });
 
     describe('should send a NotImplemented status code if', () => {
-        it('handleTeamsMessagingExtensionSubmitAction is not overridden', async () => {
+        it('handleTeamsMessagingExtensionSubmitAction is not overridden', done => {
             const bot = new TeamsActivityHandler();
 
             const adapter = new TestAdapter(async context => {
@@ -332,10 +336,12 @@ describe('TeamsActivityHandler', () => {
                     assert(activity.value.status === 501, `incorrect status code "${ activity.value.status }", expected "501"`);
                     assert(!activity.value.body,
                         `expected empty body for invokeResponse from fileConsent flow.\nReceived: ${ JSON.stringify(activity.value.body) }`);
-                });
+                    done();
+                })
+                .catch(err => done(err));
         });
 
-        it('onTeamsBotMessagePreviewEdit is not overridden', async () => {
+        it('onTeamsBotMessagePreviewEdit is not overridden', done => {
             const bot = new TeamsActivityHandler();
 
             const adapter = new TestAdapter(async context => {
@@ -349,10 +355,12 @@ describe('TeamsActivityHandler', () => {
                     assert(activity.value.status === 501, `incorrect status code "${ activity.value.status }", expected "501"`);
                     assert(!activity.value.body,
                         `expected empty body for invokeResponse from fileConsent flow.\nReceived: ${ JSON.stringify(activity.value.body) }`);
-                });
+                    done();
+                })
+                .catch(err => done(err));
         });
 
-        it('onTeamsBotMessagePreviewSend is not overridden', async () => {
+        it('onTeamsBotMessagePreviewSend is not overridden', done => {
             const bot = new TeamsActivityHandler();
 
             const adapter = new TestAdapter(async context => {
@@ -366,10 +374,12 @@ describe('TeamsActivityHandler', () => {
                     assert(activity.value.status === 501, `incorrect status code "${ activity.value.status }", expected "501"`);
                     assert(!activity.value.body,
                         `expected empty body for invokeResponse from fileConsent flow.\nReceived: ${ JSON.stringify(activity.value.body) }`);
-                });
+                    done();
+                })
+                .catch(err => done(err));
         });
 
-        it('handleTeamsFileConsentAccept is not overridden', async () => {
+        it('handleTeamsFileConsentAccept is not overridden', done => {
             const bot = new TeamsActivityHandler();
 
             const adapter = new TestAdapter(async context => {
@@ -383,10 +393,12 @@ describe('TeamsActivityHandler', () => {
                     assert(activity.value.status === 501, `incorrect status code "${ activity.value.status }", expected "501"`);
                     assert(!activity.value.body,
                         `expected empty body for invokeResponse from fileConsent flow.\nReceived: ${ JSON.stringify(activity.value.body) }`);
-                });
+                    done();
+                })
+                .catch(err => done(err));
         });
 
-        it('handleTeamsFileConsentDecline is not overridden', async () => {
+        it('handleTeamsFileConsentDecline is not overridden', done => {
             const bot = new TeamsActivityHandler();
 
             const adapter = new TestAdapter(async context => {
@@ -399,10 +411,12 @@ describe('TeamsActivityHandler', () => {
                     assert.strictEqual(activity.type, 'invokeResponse');
                     assert.strictEqual(activity.value.status, 501);
                     assert.strictEqual(activity.value.body, undefined);
-                });
+                    done();
+                })
+                .catch(err => done(err));
         });
 
-        it('handleTeamsO365ConnectorCardAction is not overridden', async () => {
+        it('handleTeamsO365ConnectorCardAction is not overridden', done => {
             const bot = new TeamsActivityHandler();
 
             const adapter = new TestAdapter(async context => {
@@ -415,10 +429,12 @@ describe('TeamsActivityHandler', () => {
                     assert.strictEqual(activity.type, 'invokeResponse');
                     assert.strictEqual(activity.value.status, 501);
                     assert.strictEqual(activity.value.body, undefined);
-                });
+                    done();
+                })
+                .catch(err => done(err));
         });
 
-        it('handleTeamsSigninVerifyState is not overridden', async () => {
+        it('handleTeamsSigninVerifyState is not overridden', done => {
             const bot = new TeamsActivityHandler();
 
             const adapter = new TestAdapter(async context => {
@@ -431,10 +447,12 @@ describe('TeamsActivityHandler', () => {
                     assert.strictEqual(activity.type, 'invokeResponse');
                     assert.strictEqual(activity.value.status, 501);
                     assert.strictEqual(activity.value.body, undefined);
-                });
+                    done();
+                })
+                .catch(err => done(err));
         });
 
-        it('handleTeamsSigninTokenExchange is not overridden', async () => {
+        it('handleTeamsSigninTokenExchange is not overridden', done => {
             const bot = new TeamsActivityHandler();
 
             const adapter = new TestAdapter(async context => {
@@ -447,10 +465,12 @@ describe('TeamsActivityHandler', () => {
                     assert.strictEqual(activity.type, 'invokeResponse');
                     assert.strictEqual(activity.value.status, 501);
                     assert.strictEqual(activity.value.body, undefined);
-                });
+                    done();
+                })
+                .catch(err => done(err));
         });
 
-        it('handleTeamsMessagingExtensionCardButtonClicked is not overridden', async () => {
+        it('handleTeamsMessagingExtensionCardButtonClicked is not overridden', done => {
             const bot = new TeamsActivityHandler();
 
             const adapter = new TestAdapter(async context => {
@@ -463,10 +483,12 @@ describe('TeamsActivityHandler', () => {
                     assert.strictEqual(activity.type, 'invokeResponse');
                     assert.strictEqual(activity.value.status, 501);
                     assert.strictEqual(activity.value.body, undefined);
-                });
+                    done();
+                })
+                .catch(err => done(err));
         });
 
-        it('handleTeamsTaskModuleFetch is not overridden', async () => {
+        it('handleTeamsTaskModuleFetch is not overridden', done => {
             const bot = new TeamsActivityHandler();
 
             const adapter = new TestAdapter(async context => {
@@ -479,10 +501,12 @@ describe('TeamsActivityHandler', () => {
                     assert.strictEqual(activity.type, 'invokeResponse');
                     assert.strictEqual(activity.value.status, 501);
                     assert.strictEqual(activity.value.body, undefined);
-                });
+                    done();
+                })
+                .catch(err => done(err));
         });
 
-        it('handleTeamsTaskModuleSubmit is not overridden', async () => {
+        it('handleTeamsTaskModuleSubmit is not overridden', done => {
             const bot = new TeamsActivityHandler();
 
             const adapter = new TestAdapter(async context => {
@@ -495,10 +519,12 @@ describe('TeamsActivityHandler', () => {
                     assert.strictEqual(activity.type, 'invokeResponse');
                     assert.strictEqual(activity.value.status, 501);
                     assert.strictEqual(activity.value.body, undefined);
-                });
+                    done();
+                })
+                .catch(err => done(err));
         });
 
-        it('handleTeamsAppBasedLinkQuery is not overridden', async () => {
+        it('handleTeamsAppBasedLinkQuery is not overridden', done => {
             const bot = new TeamsActivityHandler();
 
             const adapter = new TestAdapter(async context => {
@@ -511,10 +537,12 @@ describe('TeamsActivityHandler', () => {
                     assert.strictEqual(activity.type, 'invokeResponse');
                     assert.strictEqual(activity.value.status, 501);
                     assert.strictEqual(activity.value.body, undefined);
-                });
+                    done();
+                })
+                .catch(err => done(err));
         });
 
-        it('handleTeamsMessagingExtensionConfigurationQuerySettingUrl is not overridden', async () => {
+        it('handleTeamsMessagingExtensionConfigurationQuerySettingUrl is not overridden', done => {
             const bot = new TeamsActivityHandler();
 
             const adapter = new TestAdapter(async context => {
@@ -527,10 +555,12 @@ describe('TeamsActivityHandler', () => {
                     assert.strictEqual(activity.type, 'invokeResponse');
                     assert.strictEqual(activity.value.status, 501);
                     assert.strictEqual(activity.value.body, undefined);
-                });
+                    done();
+                })
+                .catch(err => done(err));
         });
 
-        it('handleTeamsMessagingExtensionQuery is not overridden', async () => {
+        it('handleTeamsMessagingExtensionQuery is not overridden', done => {
             const bot = new TeamsActivityHandler();
 
             const adapter = new TestAdapter(async context => {
@@ -543,10 +573,12 @@ describe('TeamsActivityHandler', () => {
                     assert.strictEqual(activity.type, 'invokeResponse');
                     assert.strictEqual(activity.value.status, 501);
                     assert.strictEqual(activity.value.body, undefined);
-                });
+                    done();
+                })
+                .catch(err => done(err));
         });
 
-        it('handleTeamsMessagingExtensionSelectItem is not overridden', async () => {
+        it('handleTeamsMessagingExtensionSelectItem is not overridden', done => {
             const bot = new TeamsActivityHandler();
 
             const adapter = new TestAdapter(async context => {
@@ -559,10 +591,12 @@ describe('TeamsActivityHandler', () => {
                     assert.strictEqual(activity.type, 'invokeResponse');
                     assert.strictEqual(activity.value.status, 501);
                     assert.strictEqual(activity.value.body, undefined);
-                });
+                    done();
+                })
+                .catch(err => done(err));
         });
 
-        it('handleTeamsMessagingExtensionFetchTask is not overridden', async () => {
+        it('handleTeamsMessagingExtensionFetchTask is not overridden', done => {
             const bot = new TeamsActivityHandler();
 
             const adapter = new TestAdapter(async context => {
@@ -575,10 +609,12 @@ describe('TeamsActivityHandler', () => {
                     assert.strictEqual(activity.type, 'invokeResponse');
                     assert.strictEqual(activity.value.status, 501);
                     assert.strictEqual(activity.value.body, undefined);
-                });
+                    done();
+                })
+                .catch(err => done(err));
         });
 
-        it('handleTeamsMessagingExtensionConfigurationQuerySettingUrl is not overridden', async () => {
+        it('handleTeamsMessagingExtensionConfigurationQuerySettingUrl is not overridden', done => {
             const bot = new TeamsActivityHandler();
 
             const adapter = new TestAdapter(async context => {
@@ -591,10 +627,12 @@ describe('TeamsActivityHandler', () => {
                     assert.strictEqual(activity.type, 'invokeResponse');
                     assert.strictEqual(activity.value.status, 501);
                     assert.strictEqual(activity.value.body, undefined);
-                });
+                    done();
+                })
+                .catch(err => done(err));
         });
 
-        it('handleTeamsMessagingExtensionConfigurationSetting is not overridden', async () => {
+        it('handleTeamsMessagingExtensionConfigurationSetting is not overridden', done => {
             const bot = new TeamsActivityHandler();
 
             const adapter = new TestAdapter(async context => {
@@ -607,7 +645,9 @@ describe('TeamsActivityHandler', () => {
                     assert.strictEqual(activity.type, 'invokeResponse');
                     assert.strictEqual(activity.value.status, 501);
                     assert.strictEqual(activity.value.body, undefined);
-                });
+                    done();
+                })
+                .catch(err => done(err));
         });
     });
 
@@ -624,7 +664,7 @@ describe('TeamsActivityHandler', () => {
             }
         }
 
-        it('when a "fileConsent/invoke" activity is handled by handleTeamsFileConsentAccept', async () => {
+        it('when a "fileConsent/invoke" activity is handled by handleTeamsFileConsentAccept', done => {
             const bot = new OKFileConsent();
 
             const adapter = new TestAdapter(async context => {
@@ -638,10 +678,12 @@ describe('TeamsActivityHandler', () => {
                     assert(activity.value.status === 200, `incorrect status code "${activity.value.status}", expected "200"`);
                     assert(!activity.value.body,
                         `expected empty body for invokeResponse from fileConsent flow.\nReceived: ${JSON.stringify(activity.value.body)}`);
-                });
+                    done();
+                })
+                .catch(err => done(err));
         });
 
-        it('when a "fileConsent/invoke" activity is handled by handleTeamsFileConsentDecline', async () => {
+        it('when a "fileConsent/invoke" activity is handled by handleTeamsFileConsentDecline', done => {
             const bot = new OKFileConsent();
 
             const adapter = new TestAdapter(async context => {
@@ -655,10 +697,12 @@ describe('TeamsActivityHandler', () => {
                     assert(activity.value.status === 200, `incorrect status code "${activity.value.status}", expected "200"`);
                     assert(!activity.value.body,
                         `expected empty body for invokeResponse from fileConsent flow.\nReceived: ${JSON.stringify(activity.value.body)}`);
-                });
+                    done();
+                })
+                .catch(err => done(err));
         });
 
-        it('when a "fileConsent/invoke" activity handled by handleTeamsFileConsent', async () => {
+        it('when a "fileConsent/invoke" activity handled by handleTeamsFileConsent', done => {
             class FileConsent extends TeamsActivityHandler {
                 async handleTeamsFileConsent(context, fileConsentCardResponse) {
                     assert(context, 'context not found');
@@ -678,7 +722,9 @@ describe('TeamsActivityHandler', () => {
                     assert(activity.value.status === 200, `incorrect status code "${activity.value.status}", expected "200"`);
                     assert(!activity.value.body,
                         `expected empty body for invokeResponse from fileConsent flow.\nReceived: ${JSON.stringify(activity.value.body)}`);
-                });
+                    done();
+                })
+                .catch(err => done(err));
         });
 
 
@@ -745,7 +791,7 @@ describe('TeamsActivityHandler', () => {
     });
 
     describe('should send a BadRequest status code when', () => {
-        it('handleTeamsFileConsent() receives an unexpected action value', () => {
+        it('handleTeamsFileConsent() receives an unexpected action value', done => {
             const bot = new TeamsActivityHandler();
             const adapter = new TestAdapter(async context => {
                 await bot.run(context);
@@ -757,10 +803,12 @@ describe('TeamsActivityHandler', () => {
                     assert.strictEqual(activity.type, 'invokeResponse');
                     assert.strictEqual(activity.value.status, 400);
                     assert.strictEqual(activity.value.body, undefined);
-                });
+                    done();
+                })
+                .catch(err => done(err));
         });
 
-        it('handleTeamsMessagingExtensionSubmitActionDispatch() receives an unexpected botMessagePreviewAction value', () => {
+        it('handleTeamsMessagingExtensionSubmitActionDispatch() receives an unexpected botMessagePreviewAction value', done => {
             const bot = new TeamsActivityHandler();
             const adapter = new TestAdapter(async context => {
                 await bot.run(context);
@@ -772,7 +820,9 @@ describe('TeamsActivityHandler', () => {
                     assert.strictEqual(activity.type, 'invokeResponse');
                     assert.strictEqual(activity.value.status, 400);
                     assert.strictEqual(activity.value.body, undefined);
-                });
+                    done();
+                })
+                .catch(err => done(err));
         });
     });
 
@@ -816,7 +866,7 @@ describe('TeamsActivityHandler', () => {
             fileConsentCalled = false;
         });
 
-        it('handleTeamsFileConsent handler before an handleTeamsFileConsentAccept handler', async () => {
+        it('handleTeamsFileConsent handler before an handleTeamsFileConsentAccept handler', done => {
             const bot = new FileConsentBot();
             const adapter = new TestAdapter(async context => {
                 await bot.run(context);
@@ -832,10 +882,12 @@ describe('TeamsActivityHandler', () => {
                 }).then(() => {
                     assert(fileConsentCalled, 'handleTeamsFileConsent handler not called');
                     assert(fileConsentAcceptCalled, 'handleTeamsFileConsentAccept handler not called');
-                });
+                    done();
+                })
+                .catch(err => done(err));
         });
 
-        it('handleTeamsFileConsent handler before an handleTeamsFileConsentDecline handler', async () => {
+        it('handleTeamsFileConsent handler before an handleTeamsFileConsentDecline handler', done => {
             const bot = new FileConsentBot();
             const adapter = new TestAdapter(async context => {
                 await bot.run(context);
@@ -851,10 +903,12 @@ describe('TeamsActivityHandler', () => {
                 }).then(() => {
                     assert(fileConsentCalled, 'handleTeamsFileConsent handler not called');
                     assert(fileConsentDeclineCalled, 'handleTeamsFileConsentDecline handler not called');
-
-                });
+                    done();
+                })
+                .catch(err => done(err));
         });
     });
+
 
     describe('should call onDialog handlers after successfully handling an', () => {
 
@@ -964,7 +1018,7 @@ describe('TeamsActivityHandler', () => {
                 .catch(err => done(err));
         });
 
-        it('onTeamsMembersAdded routed activity', () => {
+        it('onTeamsMembersAdded routed activity', done => {
             const bot = new TeamsActivityHandler();
             let onTeamsMemberAddedEvent = false;
             let getMemberCalledCount = 0;
@@ -1016,7 +1070,9 @@ describe('TeamsActivityHandler', () => {
                     assert(onDialogCalled, 'onDialog handler not called');
                     assert(getMemberCalledCount === 2, 'TeamsInfo.getMember not called twice');
                     TeamsInfo.getMember = wasGetMember;
-                });
+                    done();
+                })
+                .catch(err => done(err));
         });
 
         it('onTeamsMembersAdded routed activity with no TeamsMembersAddedEvent handler', done => {
@@ -1042,62 +1098,6 @@ describe('TeamsActivityHandler', () => {
                     done();
                 })
                 .catch(err => done(err));
-        });
-
-        it('onTeamsMembersAdded for bot routed activity does NOT call TeamsInfo.getMember', () => {
-            const bot = new TeamsActivityHandler();
-            let onTeamsMemberAddedEvent = false;
-            let getMemberCalled = false;
-
-            const membersAddedMock = [{ id: 'botid' }];
-            const team = { id: 'team' };
-            const activity = createConvUpdateActivity({ team, eventType: 'teamMemberAdded' });
-            activity.membersAdded = membersAddedMock;
-            activity.recipient = { id: membersAddedMock[0].id };
-
-            bot.onConversationUpdate(async (context, next) => {
-                assert(context, 'context not found');
-                assert(next, 'next not found');
-                onConversationUpdateCalled = true;
-                await next();
-            });
-
-            bot.onTeamsMembersAddedEvent(async (membersAdded, teamInfo, context, next) => {
-                assert(membersAdded, 'membersAdded not found');
-                assert(teamInfo, 'teamsInfo not found');
-                assert(context, 'context not found');
-                assert(next, 'next not found');
-                assert.strictEqual(teamInfo, team);
-                assert.strictEqual(membersAdded, membersAddedMock);
-                onTeamsMemberAddedEvent = true;
-                await next();
-            });
-
-            bot.onDialog(async (context, next) => {
-                assert(context, 'context not found');
-                assert(next, 'next not found');
-                onDialogCalled = true;
-                await next();
-            });
-
-            const adapter = new TestAdapter(async context => {
-                await bot.run(context);
-            });
-
-            const wasGetMember = TeamsInfo.getMember;
-            TeamsInfo.getMember = function(context, userId) {
-                getMemberCalled = true;
-                return membersAddedMock.filter(obj=>obj.id === userId)[0];
-            };
-
-            adapter.send(activity)
-                .then(() => {
-                    assert(onTeamsMemberAddedEvent, 'onTeamsMemberAddedEvent handler not called');
-                    assert(onConversationUpdateCalled, 'handleTeamsFileConsentAccept handler not called');
-                    assert(onDialogCalled, 'onDialog handler not called');
-                    assert(getMemberCalled === false, 'TeamsInfo.getMember was called, but should not have been');
-                    TeamsInfo.getMember = wasGetMember;
-                });
         });
 
         it('onTeamsMembersAdded for bot routed activity should throw a ConversationNotFound Error on TeamsInfo.getMember', done => {
@@ -1221,10 +1221,68 @@ describe('TeamsActivityHandler', () => {
                 });
         });
 
-        it('onTeamsMembersRemoved routed activity', () => {
+        it('onTeamsMembersAdded for bot routed activity does NOT call TeamsInfo.getMember', done => {
+            const bot = new TeamsActivityHandler();
+            let onTeamsMemberAddedEvent = false;
+            let getMemberCalled = false;
+
+            const membersAddedMock = [{ id: 'botid' }];
+            const team = { id: 'team' };
+            const activity = createConvUpdateActivity({ team, eventType: 'teamMemberAdded' });
+            activity.membersAdded = membersAddedMock;
+            activity.recipient = { id: membersAddedMock[0].id };
+
+            bot.onConversationUpdate(async (context, next) => {
+                assert(context, 'context not found');
+                assert(next, 'next not found');
+                onConversationUpdateCalled = true;
+                await next();
+            });
+
+            bot.onTeamsMembersAddedEvent(async (membersAdded, teamInfo, context, next) => {
+                assert(membersAdded, 'membersAdded not found');
+                assert(teamInfo, 'teamsInfo not found');
+                assert(context, 'context not found');
+                assert(next, 'next not found');
+                assert.strictEqual(teamInfo, team);
+                assert.strictEqual(membersAdded, membersAddedMock);
+                onTeamsMemberAddedEvent = true;
+                await next();
+            });
+
+            bot.onDialog(async (context, next) => {
+                assert(context, 'context not found');
+                assert(next, 'next not found');
+                onDialogCalled = true;
+                await next();
+            });
+
+            const adapter = new TestAdapter(async context => {
+                await bot.run(context);
+            });
+
+            const wasGetMember = TeamsInfo.getMember;
+            TeamsInfo.getMember = function(context, userId) {
+                getMemberCalled = true;
+                return membersAddedMock.filter(obj=>obj.id === userId)[0];
+            };
+
+            adapter.send(activity)
+                .then(() => {
+                    assert(onTeamsMemberAddedEvent, 'onTeamsMemberAddedEvent handler not called');
+                    assert(onConversationUpdateCalled, 'handleTeamsFileConsentAccept handler not called');
+                    assert(onDialogCalled, 'onDialog handler not called');
+                    assert(getMemberCalled === false, 'TeamsInfo.getMember was called, but should not have been');
+                    TeamsInfo.getMember = wasGetMember;
+                    done();
+                })
+                .catch(err => done(err));
+        });
+
+        it('onTeamsMembersRemoved routed activity', done => {
             const bot = new TeamsActivityHandler();
 
-            let onTeamsMemberAddedEvent = false;
+            let onTeamsMemberRemovedEvent = false;
 
             const membersRemovedMock = [{ id: 'test'} , { id: 'id' }];
             const team = { id: 'team' };
@@ -1245,7 +1303,7 @@ describe('TeamsActivityHandler', () => {
                 assert(next, 'next not found');
                 assert.strictEqual(teamInfo, team);
                 assert.strictEqual(membersRemoved, membersRemovedMock);
-                onTeamsMemberAddedEvent = true;
+                onTeamsMemberRemovedEvent = true;
                 await next();
             });
 
@@ -1262,10 +1320,12 @@ describe('TeamsActivityHandler', () => {
 
             adapter.send(activity)
                 .then(() => {
-                    assert(onTeamsMemberAddedEvent, 'onTeamsMemberAddedEvent handler not called');
-                    assert(onConversationUpdateCalled, 'handleTeamsFileConsentAccept handler not called');
+                    assert(onTeamsMemberRemovedEvent, 'onTeamsMemberRemovedEvent handler not called');
+                    assert(onConversationUpdateCalled, 'onConversationUpdateCalled handler not called');
                     assert(onDialogCalled, 'onDialog handler not called');
-                });
+                    done();
+                })
+                .catch(err => done(err));
         });
 
         it('onTeamsMembersRemoved routed activity with no TeamsMembersRemovedEvent handler', done => {
@@ -1293,7 +1353,7 @@ describe('TeamsActivityHandler', () => {
                 .catch(err => done(err));
         });
 
-        it('onTeamsChannelCreated routed activity', () => {
+        it('onTeamsChannelCreated routed activity', done => {
             const bot = new TeamsActivityHandler();
 
             let onTeamsChannelCreatedEventCalled = false;
@@ -1336,10 +1396,12 @@ describe('TeamsActivityHandler', () => {
                     assert(onTeamsChannelCreatedEventCalled, 'onTeamsChannelCreated handler not called');
                     assert(onConversationUpdateCalled, 'onConversationUpdate handler not called');
                     assert(onDialogCalled, 'onDialog handler not called');
-                });
+                    done();
+                })
+                .catch(err => done(err));
         });
 
-        it('onTeamsChannelDeleted routed activity', () => {
+        it('onTeamsChannelDeleted routed activity', done => {
             const bot = new TeamsActivityHandler();
 
             let onTeamsChannelDeletedEventCalled = false;
@@ -1382,10 +1444,12 @@ describe('TeamsActivityHandler', () => {
                     assert(onTeamsChannelDeletedEventCalled, 'onTeamsChannelDeletedEvent handler not called');
                     assert(onConversationUpdateCalled, 'onConversationUpdate handler not called');
                     assert(onDialogCalled, 'onDialog handler not called');
-                });
+                    done();
+                })
+                .catch(err => done(err));
         });
 
-        it('onTeamsChannelRenamed routed activity', () => {
+        it('onTeamsChannelRenamed routed activity', done => {
             const bot = new TeamsActivityHandler();
 
             let onTeamsChannelRenamedEventCalled = false;
@@ -1428,10 +1492,12 @@ describe('TeamsActivityHandler', () => {
                     assert(onTeamsChannelRenamedEventCalled, 'onTeamsChannelRenamedEvent handler not called');
                     assert(onConversationUpdateCalled, 'onConversationUpdate handler not called');
                     assert(onDialogCalled, 'onDialog handler not called');
-                });
+                    done();
+                })
+                .catch(err => done(err));
         });
 
-        it('onTeamsTeamRenamed routed activity', () => {
+        it('onTeamsTeamRenamed routed activity', done => {
             const bot = new TeamsActivityHandler();
 
             let onTeamsTeamRenamedEventCalled = false;
@@ -1471,10 +1537,12 @@ describe('TeamsActivityHandler', () => {
                     assert(onTeamsTeamRenamedEventCalled, 'onTeamsTeamRenamedEvent handler not called');
                     assert(onConversationUpdateCalled, 'onConversationUpdate handler not called');
                     assert(onDialogCalled, 'onDialog handler not called');
-                });
+                    done();
+                })
+                .catch(err => done(err));
         });
 
-        it('signin/verifyState routed activity', async () => {
+        it('signin/verifyState routed activity', done => {
             onDialogCalled = false;
             handleTeamsSigninVerifyStateCalled = false;
 
@@ -1489,13 +1557,14 @@ describe('TeamsActivityHandler', () => {
                     });
                 }
 
-                async handleTeamsSigninVerifyState(context) {
+                handleTeamsSigninVerifyState(context) {
                     assert(context, 'context not found');
                     handleTeamsSigninVerifyStateCalled = true;
                 }
             }
 
             const bot = new InvokeHandler();
+
             const team = { id: 'team' };
             const activity = createSignInVerifyState({ team, channelId: 'msteams' });
 
@@ -1503,12 +1572,16 @@ describe('TeamsActivityHandler', () => {
                 await bot.run(context);
             });
 
-            await adapter.send(activity);
-            assert(onDialogCalled, 'onDialog handler not called');
-            assert(handleTeamsSigninVerifyStateCalled, 'handleTeamsSigninVerifyState handler not called');
+            adapter.send(activity)
+                .then(() => {
+                    assert(onDialogCalled, 'onDialog handler not called');
+                    assert(handleTeamsSigninVerifyStateCalled, 'handleTeamsSigninVerifyState handler not called');
+                    done();
+                })
+                .catch(err => done(err));
         });
 
-        it('signin/tokenExchange routed activity', async () => {
+        it('signin/tokenExchange routed activity', done => {
             onDialogCalled = false;
             handleTeamsSigninTokenExchangeCalled = false;
 
@@ -1530,6 +1603,7 @@ describe('TeamsActivityHandler', () => {
             }
 
             const bot = new InvokeHandler();
+
             const team = { id: 'team' };
             const activity = createSigninTokenExchange({ team, channelId: 'msteams' });
 
@@ -1537,9 +1611,13 @@ describe('TeamsActivityHandler', () => {
                 await bot.run(context);
             });
 
-            await adapter.send(activity);
-            assert(onDialogCalled, 'onDialog handler not called');
-            assert(handleTeamsSigninTokenExchangeCalled, 'handleTeamsSigninTokenExchange handler not called');
+            adapter.send(activity)
+                .then(() => {
+                    assert(onDialogCalled, 'onDialog handler not called');
+                    assert(handleTeamsSigninTokenExchangeCalled, 'handleTeamsSigninTokenExchange handler not called');
+                    done();
+                })
+                .catch(err => done(err));
         });
     });
 });
