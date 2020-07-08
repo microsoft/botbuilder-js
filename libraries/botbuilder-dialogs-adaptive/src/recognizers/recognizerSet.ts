@@ -17,11 +17,14 @@ export class RecognizerSet implements Recognizer {
     public recognizers: Recognizer[] = [];
 
     public async recognize(dialogContext: DialogContext, activity: Activity): Promise<RecognizerResult> {
-        let text: string;
-        let alteredText: string;
-        const intents = {};
-        const entities = {};
-        entities['$instance'] = {};
+        const recognizerResult: RecognizerResult = {
+            text: undefined,
+            alteredText: undefined,
+            intents: {},
+            entities: {
+                '$instance': {}
+            }
+        };
 
         const results = await Promise.all(this.recognizers.map((recognizer: Recognizer): Promise<RecognizerResult> => {
             return recognizer.recognize(dialogContext, activity);
@@ -32,21 +35,21 @@ export class RecognizerSet implements Recognizer {
             const { intent } = getTopScoringIntent(result);
             if (intent && intent != 'None') {
                 // merge text
-                if (!text) {
-                    text = result.text;
-                } else if (result.text != text) {
-                    alteredText = text;
+                if (!recognizerResult.text) {
+                    recognizerResult.text = result.text;
+                } else if (result.text != recognizerResult.text) {
+                    recognizerResult.alteredText = recognizerResult.text;
                 }
 
                 // merge intents
                 for (const intentName in result.intents) {
                     const intentScore = result.intents[intentName].score;
-                    if (intents.hasOwnProperty(intentName)) {
-                        if (intentScore < intents[intentName].score) {
+                    if (recognizerResult.intents.hasOwnProperty(intentName)) {
+                        if (intentScore < recognizerResult.intents[intentName].score) {
                             continue;
                         }
                     }
-                    intents[intentName] = { score: intentScore };
+                    recognizerResult.intents[intentName] = { score: intentScore };
                 }
             }
 
@@ -62,28 +65,34 @@ export class RecognizerSet implements Recognizer {
                 if (property == '$instance') {
                     const instanceData = result.entities['$instance'];
                     for (const entityName in instanceData) {
-                        if (!entities['$instance'].hasOwnProperty(entityName)) {
-                            entities['$instance'][entityName] = [];
+                        if (!recognizerResult.entities['$instance'].hasOwnProperty(entityName)) {
+                            recognizerResult.entities['$instance'][entityName] = [];
                         }
                         const entityValue = instanceData[entityName];
-                        entities['$instance'][entityName].push(...entityValue);
+                        recognizerResult.entities['$instance'][entityName].push(...entityValue);
                     }
                 } else {
-                    if (!entities.hasOwnProperty(property)) {
-                        entities[property] = [];
+                    if (!recognizerResult.entities.hasOwnProperty(property)) {
+                        recognizerResult.entities[property] = [];
                     }
                     const value = result.entities[property];
-                    entities[property].push(...value);
+                    recognizerResult.entities[property].push(...value);
+                }
+            }
+
+            for (const property in result) {
+                if (property != 'text' && property != 'alteredText' && property != 'intents' && property != 'entities') {
+                    // naive merge clobbers same key.
+                    recognizerResult[property] = result[property];
                 }
             }
 
         }
 
-        if (Object.entries(intents).length == 0) {
-            intents['None'] = { score: 1.0 };
+        if (Object.entries(recognizerResult.intents).length == 0) {
+            recognizerResult.intents['None'] = { score: 1.0 };
         }
 
-        const recognizerResult: RecognizerResult = { text, alteredText, intents, entities };
         return recognizerResult;
     }
 }

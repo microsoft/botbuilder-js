@@ -987,10 +987,10 @@ export interface MessagingExtensionResult {
  */
 export interface MessagingExtensionActionResponse {
   /**
-   * @member {TaskModuleResponseBase} [task] The JSON for the Adaptive card to
+   * @member {TaskModuleContinueResponse | TaskModuleMessageResponse} [task] The JSON for the response to
    * appear in the task module.
    */
-  task?: TaskModuleResponseBase;
+  task?: TaskModuleContinueResponse | TaskModuleMessageResponse;
   /**
    * @member {MessagingExtensionResult} [composeExtension]
    */
@@ -1221,10 +1221,10 @@ export interface TaskModuleMessageResponse extends TaskModuleResponseBase {
  */
 export interface TaskModuleResponse {
   /**
-   * @member {TaskModuleResponseBase} [task] The JSON for the Adaptive card to
+   * @member {TaskModuleContinueResponse | TaskModuleMessageResponse} [task] The JSON for the response to
    * appear in the task module.
    */
-  task?: TaskModuleResponseBase;
+  task?: TaskModuleContinueResponse | TaskModuleMessageResponse;
 }
 
 /**
