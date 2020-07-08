@@ -1,5 +1,5 @@
 import {TimexProperty} from '@microsoft/recognizers-text-data-types-timex-expression';
-import * as jsPath from 'jspath';
+
 import * as lodash from 'lodash';
 import moment, {Moment, parseZone} from 'moment';
 import {tz} from 'moment-timezone';
@@ -38,21 +38,6 @@ export class FunctionUtils {
      * constant of converting unix timestamp to ticks
      */
     public static readonly UnixMilliSecondToTicksConstant: bigInt.BigInteger = bigInt('621355968000000000');
-
-    /**
-     * ticks of one day
-     */
-    public static readonly TicksPerDay: number = 24 * 60 * 60 * 10000000;
-
-    /**
-     * ticks of one hour
-     */
-    public static readonly TicksPerHour: number = 60 * 60 * 10000000;
-
-    /**
-     * ticks of one minute
-     */
-    public static readonly TicksPerMinute: number = 60 * 10000000;
 
     /**
      * Constant to convert between ticks and ms.
@@ -853,45 +838,9 @@ export class FunctionUtils {
         return {value, error};
     }
 
-    public static coalesce(objetcList: object[]): any {
-        for (const obj of objetcList) {
-            if (obj !== null && obj !== undefined) {
-                return obj;
-            }
-        }
 
-        return undefined;
-    }
 
-    public static jPath(jsonEntity: object | string, path: string): {value: any; error: string} {
-        let result: any;
-        let error: string;
-        let evaled: any;
-        let json: object;
-        if (typeof jsonEntity === 'string') {
-            try {
-                json = JSON.parse(jsonEntity);
-            } catch (e) {
-                error = `${jsonEntity} is not a valid json string`;
-            }
-        } else if (typeof jsonEntity === 'object') {
-            json = jsonEntity;
-        } else {
-            error = 'the first parameter should be either an object or a string';
-        }
 
-        if (!error) {
-            try {
-                evaled = jsPath.apply(path, json);
-            } catch (e) {
-                error = `${path} is not a valid path + ${e}`;
-            }
-        }
-
-        result = evaled;
-
-        return {value: result, error};
-    }
 
     public static wrapGetValue(state: MemoryInterface, path: string, options: Options): any {
         let result = state.getValue(path);
@@ -906,29 +855,7 @@ export class FunctionUtils {
         return undefined;
     }
 
-    public static setPathToValue(expression: Expression, state: MemoryInterface, options: Options): {value: any; error: string} {
-        let path: string;
-        let left: Expression;
-        let error: string;
-        ({path, left, error} = FunctionUtils.tryAccumulatePath(expression.children[0], state, options));
-        if (error !== undefined) {
-            return {value: undefined, error};
-        }
-
-        if (left) {
-            // the expression can't be fully merged as a path
-            return {value: undefined, error: `${expression.children[0].toString()} is not a valid path to set value`};
-        }
-        let value: any;
-        let err: string;
-        ({value, error: err} = expression.children[1].tryEvaluate(state, options));
-        if (err) {
-            return {value: undefined, error: err};
-        }
-
-        state.setValue(path, value);
-        return {value, error: undefined};
-    }
+    
 
     public static foreach(expression: Expression, state: MemoryInterface, options: Options): {value: any; error: string} {
         let result: any[];
@@ -973,69 +900,7 @@ export class FunctionUtils {
         return {value: result, error};
     }
 
-    public static where(expression: Expression, state: MemoryInterface, options: Options): {value: any; error: string} {
-        let result: any;
-        let error: string;
-        let instance: any;
-
-        ({value: instance, error} = expression.children[0].tryEvaluate(state, options));
-
-        if (!error) {
-            const iteratorName = (expression.children[1].children[0] as Constant).value as string;
-            let arr: any[] = [];
-            let isInstanceArray = false;
-            if (Array.isArray(instance)) {
-                arr = instance;
-                isInstanceArray = true;
-            } else if (typeof instance === 'object') {
-                Object.keys(instance).forEach((u): number => arr.push({key: u, value: instance[u]}));
-            } else {
-                error = `${expression.children[0]} is not a collection or structure object to run foreach`;
-            }
-
-            if (!error) {
-                const stackedMemory = StackedMemory.wrap(state);
-                const arrResult = [];
-                for (const item of arr) {
-                    const local: Map<string, any> = new Map<string, any>([
-                        [iteratorName, item]
-                    ]);
-
-                    stackedMemory.push(SimpleObjectMemory.wrap(local));
-                    const newOptions = new Options(options);
-                    newOptions.nullSubstitution = undefined;
-                    const {value: r, error: e} = expression.children[2].tryEvaluate(stackedMemory, newOptions);
-                    stackedMemory.pop();
-                    if (e !== undefined) {
-                        return {value: undefined, error: e};
-                    }
-
-                    if ((Boolean(r))) {
-                        arrResult.push(local.get(iteratorName));
-                    }
-                }
-
-                //reconstruct object if instance is object, otherwise, return array result
-                if (!isInstanceArray) {
-                    let objResult = {};
-                    for (const item of arrResult) {
-                        objResult[item.key] = item.value;
-                    }
-
-                    result = objResult;
-                } else {
-                    result = arrResult;
-                }
-            }
-        }
-
-        return {value: result, error};
-    }
-
-    public static validateWhere(expression: Expression): void {
-        FunctionUtils.validateForeach(expression);
-    }
-
+    
     public static validateForeach(expression: Expression): void {
         if (expression.children.length !== 3) {
             throw new Error(`foreach expect 3 parameters, found ${expression.children.length}`);
@@ -1044,15 +909,6 @@ export class FunctionUtils {
         const second: Expression = expression.children[1];
         if (!(second.type === ExpressionType.Accessor && second.children.length === 1)) {
             throw new Error(`Second parameter of foreach is not an identifier : ${second}`);
-        }
-    }
-
-    public static validateIsMatch(expression: Expression): void {
-        FunctionUtils.validateArityAndAnyType(expression, 2, 2, ReturnType.String);
-
-        const second: Expression = expression.children[1];
-        if (second.returnType === ReturnType.String && second.type === ExpressionType.Constant) {
-            CommonRegex.CreateRegex((second as Constant).value.toString());
         }
     }
 
@@ -1093,25 +949,6 @@ export class FunctionUtils {
 
         return result;
     }
-
-    public static _if(expression: Expression, state: MemoryInterface, options: Options): {value: any; error: string} {
-        let result: any;
-        let error: string;
-        const newOptions = new Options(options);
-        newOptions.nullSubstitution = undefined;
-        ({value: result, error} = expression.children[0].tryEvaluate(state, newOptions));
-        if (!error && this.isLogicTrue(result)) {
-            ({value: result, error} = expression.children[1].tryEvaluate(state, options));
-        } else {
-            ({value: result, error} = expression.children[2].tryEvaluate(state, options));
-        }
-
-        return {value: result, error};
-    }
-
-
-
-    
 
     public static sortBy(isDescending: boolean): EvaluateExpressionDelegate {
         return (expression: Expression, state: any, options: Options): {value: any; error: string} => {
