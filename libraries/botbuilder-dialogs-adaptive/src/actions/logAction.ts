@@ -55,8 +55,11 @@ export class LogAction<O extends object = {}> extends Dialog<O> {
         const msg = await this.text.bindToData(dc.context, dc.state);
         this.telemetryClient.trackEvent({
             name: 'GeneratorResult',
-            properties: {'template':this.text,
-                'result': !msg ? '' : msg }});
+            properties: {
+                'template':this.text,
+                'result': msg || '' 
+            }
+        });
 
         // Log to console and send trace if needed
         console.log(msg);

@@ -156,8 +156,11 @@ export abstract class InputDialog extends Dialog {
                     const response = await this.defaultValueResponse.bindToData(dc.context, dc.state);
                     this.telemetryClient.trackEvent({
                         name: 'GeneratorResult',
-                        properties: {'template':this.defaultValueResponse,
-                            'result': !response ? '' : response }});
+                        properties: {
+                            'template':this.defaultValueResponse,
+                            'result': response || ''
+                        }
+                    });
 
                     await dc.context.sendActivity(response);
                 }
@@ -236,8 +239,11 @@ export abstract class InputDialog extends Dialog {
 
         this.telemetryClient.trackEvent({
             name: 'GeneratorResult',
-            properties: {'template':template,
-                'result': msg }});
+            properties: {
+                'template':template,
+                'result': msg
+            }
+        });
 
         return msg; 
     }

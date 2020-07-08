@@ -225,8 +225,11 @@ export class HttpRequest<O extends object = {}> extends Dialog<O> implements Con
                 
                 this.telemetryClient.trackEvent({
                     name: 'GeneratorResult',
-                    properties: {'template':text,
-                        'result': !result ? '' : result }});
+                    properties: {
+                        'template':text,
+                        'result': result || ''
+                    }
+                });
 
                 return result;
             }

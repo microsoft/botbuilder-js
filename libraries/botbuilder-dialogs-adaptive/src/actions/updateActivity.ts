@@ -58,8 +58,11 @@ export class UpdateActivity<O extends object = {}> extends Dialog<O> {
 
         this.telemetryClient.trackEvent({
             name: 'GeneratorResult',
-            properties: {'template':this.activity,
-                'result': !activityResult ? '' : activityResult }});
+            properties: {
+                'template':this.activity,
+                'result': activityResult || ''
+            }
+        });
 
         const value = this.activityId.getValue(dc.state);
         activityResult.id = value.toString();
