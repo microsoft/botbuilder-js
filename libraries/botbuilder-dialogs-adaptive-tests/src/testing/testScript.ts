@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { MemoryStorage, UserState, ConversationState } from 'botbuilder-core';
+import { MemoryStorage, UserState, ConversationState, AdapterExtensions } from 'botbuilder-core';
 import { DialogManager } from 'botbuilder-dialogs';
 import { DialogExpression } from 'botbuilder-dialogs-adaptive';
 import { TestAction } from './testAction';
@@ -51,9 +51,12 @@ export class TestScript {
         testAdapter.enableTrace = this.enableTrace;
         testAdapter.locale = this.locale;
 
+        const storage = new MemoryStorage();
+        const convoState = new ConversationState(storage);
+        const userState = new UserState(storage);
+        AdapterExtensions.useBotState(testAdapter, userState, convoState);
+
         const bot = new DialogManager(this.dialog.value);
-        bot.conversationState = new ConversationState(new MemoryStorage());
-        bot.userState = new UserState(new MemoryStorage());
 
         for (let i = 0; i < this.script.length; i++) {
             const testAction = this.script[i];
