@@ -277,22 +277,23 @@ export class TelemetryLoggerMiddleware implements Middleware {
     protected async fillUpdateEventProperties(activity: Activity, telemetryProperties?: {[key: string]:string} ): Promise<{ [key: string]: string }> {
         const properties: { [key: string]: string } = {};
 
-        properties[TelemetryConstants.recipientIdProperty] = (activity && activity.recipient && activity.recipient.id) ? activity.recipient.id : '';
-        properties[TelemetryConstants.conversationIdProperty] = (activity && activity.conversation && activity.conversation.id) ? activity.conversation.id : '';
-        properties[TelemetryConstants.conversationNameProperty] = (activity && activity.conversation && activity.conversation.name) ? activity.conversation.name : '';
-        properties[TelemetryConstants.localeProperty] = activity.locale || '';
+        if (!activity) {
+            properties[TelemetryConstants.recipientIdProperty] = (activity && activity.recipient && activity.recipient.id) ? activity.recipient.id : '';
+            properties[TelemetryConstants.conversationIdProperty] = (activity && activity.conversation && activity.conversation.id) ? activity.conversation.id : '';
+            properties[TelemetryConstants.conversationNameProperty] = (activity && activity.conversation && activity.conversation.name) ? activity.conversation.name : '';
+            properties[TelemetryConstants.localeProperty] = activity.locale || '';
 
-        // Use the LogPersonalInformation flag to toggle logging PII data, text is a common example
-        if (this.logPersonalInformation && activity.text && activity.text.trim()) {
-            properties[TelemetryConstants.textProperty] = activity.text;
+            // Use the LogPersonalInformation flag to toggle logging PII data, text is a common example
+            if (this.logPersonalInformation && activity.text && activity.text.trim()) {
+                properties[TelemetryConstants.textProperty] = activity.text;
+            }
+
+            // Additional Properties can override "stock" properties.
+            if (telemetryProperties)
+            {
+                return Object.assign({}, properties, telemetryProperties);
+            }
         }
-
-        // Additional Properties can override "stock" properties.
-        if (telemetryProperties)
-        {
-            return Object.assign({}, properties, telemetryProperties);
-        }
-
 
         return properties;
     }
@@ -307,15 +308,17 @@ export class TelemetryLoggerMiddleware implements Middleware {
     protected async fillDeleteEventProperties(activity: Activity, telemetryProperties?: {[key: string]:string}): Promise<{ [key: string]: string }> {
         const properties: { [key: string]: string } = {};
 
-        properties[TelemetryConstants.channelIdProperty] = activity.channelId || '';
-        properties[TelemetryConstants.recipientIdProperty] = (activity && activity.recipient && activity.recipient.id) ? activity.recipient.id : '';
-        properties[TelemetryConstants.conversationIdProperty] = (activity && activity.conversation && activity.conversation.id) ? activity.conversation.id : '';
-        properties[TelemetryConstants.conversationNameProperty] = (activity && activity.conversation && activity.conversation.name) ? activity.conversation.name : '';
+        if (!activity) {
+            properties[TelemetryConstants.channelIdProperty] = activity.channelId || '';
+            properties[TelemetryConstants.recipientIdProperty] = (activity && activity.recipient && activity.recipient.id) ? activity.recipient.id : '';
+            properties[TelemetryConstants.conversationIdProperty] = (activity && activity.conversation && activity.conversation.id) ? activity.conversation.id : '';
+            properties[TelemetryConstants.conversationNameProperty] = (activity && activity.conversation && activity.conversation.name) ? activity.conversation.name : '';
 
-        // Additional Properties can override "stock" properties.
-        if (telemetryProperties)
-        {
-            return Object.assign({}, properties, telemetryProperties);
+            // Additional Properties can override "stock" properties.
+            if (telemetryProperties)
+            {
+                return Object.assign({}, properties, telemetryProperties);
+            }
         }
 
         return properties;
