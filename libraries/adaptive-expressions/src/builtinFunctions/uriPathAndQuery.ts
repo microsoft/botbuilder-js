@@ -13,6 +13,9 @@ import { FunctionUtils } from '../functionUtils';
 import { MemoryInterface } from '../memory/memoryInterface';
 import { Options } from '../options';
 
+/**
+ * Return the path and query value of a unified resource identifier (URI).
+ */
 export class UriPathAndQuery extends ExpressionEvaluator {
     public constructor(){
         super(ExpressionType.UriPathAndQuery, UriPathAndQuery.evaluator, ReturnType.String, FunctionUtils.validateUnary);

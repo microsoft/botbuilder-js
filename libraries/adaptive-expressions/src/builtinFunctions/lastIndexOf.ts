@@ -13,6 +13,10 @@ import { FunctionUtils } from '../functionUtils';
 import { MemoryInterface } from '../memory/memoryInterface';
 import { Options } from '../options';
 
+/**
+ * Return the starting position or index value of the last occurrence of a substring.
+ * This function is case-insensitive, and indexes start with the number 0.
+ */
 export class LastIndexOf extends ExpressionEvaluator {
     public constructor(){
         super(ExpressionType.LastIndexOf, LastIndexOf.evaluator, ReturnType.Number, LastIndexOf.validator);

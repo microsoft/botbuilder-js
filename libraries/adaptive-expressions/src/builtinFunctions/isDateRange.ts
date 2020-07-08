@@ -14,6 +14,9 @@ import { MemoryInterface } from '../memory/memoryInterface';
 import { Options } from '../options';
 import {TimexProperty} from '@microsoft/recognizers-text-data-types-timex-expression';
 
+/**
+ * Return true if a given TimexProperty or Timex expression refers to a valid date range.
+ */
 export class IsDateRange extends ExpressionEvaluator {
     public constructor(){
         super(ExpressionType.IsDateRange, IsDateRange.evaluator, ReturnType.Boolean, FunctionUtils.validateUnary);

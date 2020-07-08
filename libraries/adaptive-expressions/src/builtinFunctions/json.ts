@@ -11,6 +11,9 @@ import { ReturnType, Expression } from '../expression';
 import { ExpressionType } from '../expressionType';
 import { FunctionUtils } from '../functionUtils';
 
+/**
+ * Return the JavaScript Object Notation (JSON) type value or object of a string or XML.
+ */
 export class Json extends ExpressionEvaluator {
     public constructor(){
         super(ExpressionType.Json, Json.evaluator(), ReturnType.Object, Json.validator);

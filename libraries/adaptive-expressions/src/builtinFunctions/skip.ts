@@ -12,6 +12,9 @@ import { ExpressionType } from '../expressionType';
 import { FunctionUtils } from '../functionUtils';
 import { Options } from '../options';
 
+/**
+ * Remove items from the front of a collection, and return all the other items.
+ */
 export class Skip extends ExpressionEvaluator {
     public constructor(){
         super(ExpressionType.Skip, Skip.evaluator, ReturnType.Array, Skip.validator);

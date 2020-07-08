@@ -14,6 +14,9 @@ import moment from 'moment';
 import { MemoryInterface } from '../memory/memoryInterface';
 import { Options } from '../options';
 
+/**
+ * Subtract a number of time units from a timestamp.
+ */
 export class SubtractFromTime extends ExpressionEvaluator {
     public constructor(){
         super(ExpressionType.SubtractFromTime, SubtractFromTime.evaluator, ReturnType.String, SubtractFromTime.validator);

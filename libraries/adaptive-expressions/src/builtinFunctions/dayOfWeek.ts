@@ -11,6 +11,9 @@ import { ReturnType } from '../expression';
 import { ExpressionType } from '../expressionType';
 import { FunctionUtils } from '../functionUtils';
 
+/**
+ * Return the day of the week from a timestamp.
+ */
 export class DayOfWeek extends ExpressionEvaluator {
     public constructor(){
         super(ExpressionType.DayOfWeek, DayOfWeek.evaluator(), ReturnType.Number, FunctionUtils.validateUnaryString);

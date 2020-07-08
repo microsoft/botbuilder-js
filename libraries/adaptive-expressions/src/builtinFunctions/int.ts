@@ -11,6 +11,9 @@ import { ReturnType } from '../expression';
 import { ExpressionType } from '../expressionType';
 import { FunctionUtils } from '../functionUtils';
 
+/**
+ * Return the integer version of a string.
+ */
 export class Int extends ExpressionEvaluator {
     public constructor(){
         super(ExpressionType.Int, Int.evaluator(), ReturnType.Number, FunctionUtils.validateUnary);

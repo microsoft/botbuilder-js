@@ -12,6 +12,9 @@ import { ExpressionType } from '../expressionType';
 import { FunctionUtils } from '../functionUtils';
 import {TimexProperty} from '@microsoft/recognizers-text-data-types-timex-expression';
 
+/**
+ * Uses the date-time library to provide a date readback.
+ */
 export class DateReadBack extends ExpressionEvaluator {
     public constructor(){
         super(ExpressionType.DateReadBack, DateReadBack.evaluator(), ReturnType.String, DateReadBack.validator);

@@ -10,6 +10,9 @@ import { ComparisonEvaluator } from './comparisonEvaluator';
 import { ExpressionType } from '../expressionType';
 import { FunctionUtils } from '../functionUtils';
 
+/**
+ * return true if the two items are not equal.
+ */
 export class NotEqual extends ComparisonEvaluator {
     public constructor() {
         super(ExpressionType.NotEqual, NotEqual.func, FunctionUtils.validateBinary);

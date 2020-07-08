@@ -12,6 +12,9 @@ import { ExpressionType } from '../expressionType';
 import { FunctionUtils } from '../functionUtils';
 import moment from 'moment';
 
+/**
+ * Return a timestamp in the specified format from UNIX time (also know as Epoch time, POSIX time, UNIX Epoch time).
+ */
 export class FormatEpoch extends ExpressionEvaluator {
     public constructor(){
         super(ExpressionType.FormatEpoch, FormatEpoch.evaluator(), ReturnType.String, FormatEpoch.validator);

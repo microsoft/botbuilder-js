@@ -9,6 +9,9 @@
 import { MultivariateNumericEvaluator } from './multivariateNumericEvaluator';
 import { ExpressionType } from '../expressionType';
 
+/**
+ * Return the product from multiplying two numbers.
+ */
 export class Multiply extends MultivariateNumericEvaluator {
     public constructor() {
         super(ExpressionType.Multiply, Multiply.func);

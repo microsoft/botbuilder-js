@@ -11,6 +11,10 @@ import { ReturnType, Expression } from '../expression';
 import { ExpressionType } from '../expressionType';
 import { FunctionUtils } from '../functionUtils';
 
+/**
+ * Replace a substring with the specified string, and return the result string.
+ * This function is case-sensitive.
+ */
 export class Replace extends ExpressionEvaluator {
     public constructor(){
         super(ExpressionType.Replace, Replace.evaluator(), ReturnType.String, Replace.validator);

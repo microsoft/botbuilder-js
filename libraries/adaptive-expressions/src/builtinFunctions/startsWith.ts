@@ -11,6 +11,10 @@ import { ReturnType, Expression } from '../expression';
 import { ExpressionType } from '../expressionType';
 import { FunctionUtils } from '../functionUtils';
 
+/**
+ * Check whether a string starts with a specific substring. Return true if the substring is found, or return false if not found.
+ * This function is case-insensitive.
+ */
 export class StartsWith extends ExpressionEvaluator {
     public constructor(){
         super(ExpressionType.StartsWith, StartsWith.evaluator(), ReturnType.Boolean, StartsWith.validator);

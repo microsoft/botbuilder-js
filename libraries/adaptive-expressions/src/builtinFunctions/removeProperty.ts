@@ -11,6 +11,9 @@ import { ReturnType, Expression } from '../expression';
 import { ExpressionType } from '../expressionType';
 import { FunctionUtils } from '../functionUtils';
 
+/**
+ * Remove a property from an object and return the updated object.
+ */
 export class RemoveProperty extends ExpressionEvaluator {
     public constructor(){
         super(ExpressionType.RemoveProperty, RemoveProperty.evaluator(), ReturnType.Object, RemoveProperty.validator);

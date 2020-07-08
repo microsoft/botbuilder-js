@@ -11,6 +11,10 @@ import { ReturnType, Expression } from '../expression';
 import { ExpressionType } from '../expressionType';
 import { FunctionUtils } from '../functionUtils';
 
+/**
+ * Replace a substring with the specified string, and return the result string.
+ * This function is case-insensitive.
+ */
 export class ReplaceIgnoreCase extends ExpressionEvaluator {
     public constructor(){
         super(ExpressionType.ReplaceIgnoreCase, ReplaceIgnoreCase.evaluator(), ReturnType.String, ReplaceIgnoreCase.validator);

@@ -13,6 +13,9 @@ import { FunctionUtils } from '../functionUtils';
 import { MemoryInterface } from '../memory/memoryInterface';
 import { Options } from '../options';
 
+/**
+ * Return characters from a string, starting from the specified position or index. Index values start with the number 0.
+ */
 export class Substring extends ExpressionEvaluator {
     public constructor(){
         super(ExpressionType.Substring, Substring.evaluator, ReturnType.String, Substring.validator);

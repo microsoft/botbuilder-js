@@ -11,6 +11,9 @@ import { ReturnType } from '../expression';
 import { ExpressionType } from '../expressionType';
 import { FunctionUtils } from '../functionUtils';
 
+/**
+ *  Return the highest value from a list or array. The list or arary is inclusive at both ends.
+ */
 export class Max extends ExpressionEvaluator {
     public constructor(){
         super(ExpressionType.Max, Max.evaluator(), ReturnType.Number, FunctionUtils.validateAtLeastOne);

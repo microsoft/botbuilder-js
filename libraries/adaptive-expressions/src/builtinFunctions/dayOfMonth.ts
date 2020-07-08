@@ -11,6 +11,9 @@ import { ReturnType } from '../expression';
 import { ExpressionType } from '../expressionType';
 import { FunctionUtils } from '../functionUtils';
 
+/**
+ * Return the day of the month from a timestamp.
+ */
 export class DayOfMonth extends ExpressionEvaluator {
     public constructor(){
         super(ExpressionType.DayOfMonth, DayOfMonth.evaluator(), ReturnType.Number, FunctionUtils.validateUnaryString);

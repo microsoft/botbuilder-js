@@ -13,6 +13,9 @@ import { FunctionUtils } from '../functionUtils';
 import { MemoryInterface } from '../memory/memoryInterface';
 import { Options } from '../options';
 
+/**
+ * Return the ticks property value of a specified timestamp. A tick is 100-nanosecond interval.
+ */
 export class Ticks extends ExpressionEvaluator {
     public constructor(){
         super(ExpressionType.Ticks, Ticks.evaluator, ReturnType.Number, FunctionUtils.validateUnary);

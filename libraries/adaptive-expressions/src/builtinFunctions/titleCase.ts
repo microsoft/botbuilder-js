@@ -10,6 +10,9 @@ import { StringTransformEvaluator } from './stringTransformEvaluator';
 import { FunctionUtils } from '../functionUtils';
 import { ExpressionType } from '../expressionType';
 
+/**
+ * Converts the specified string to title case.
+ */
 export class TitleCase extends StringTransformEvaluator {
     public constructor() {
         super(ExpressionType.TitleCase, TitleCase.evaluator);

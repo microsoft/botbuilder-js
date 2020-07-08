@@ -11,6 +11,9 @@ import { ReturnType, Expression } from '../expression';
 import { ExpressionType } from '../expressionType';
 import { FunctionUtils } from '../functionUtils';
 
+/**
+ * Return the number of items in a collection.
+ */
 export class Count extends ExpressionEvaluator {
     public constructor(){
         super(ExpressionType.Count, Count.evaluator(), ReturnType.Number, Count.validator);

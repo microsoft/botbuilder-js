@@ -11,6 +11,9 @@ import { ReturnType, Expression } from '../expression';
 import { ExpressionType } from '../expressionType';
 import { FunctionUtils } from '../functionUtils';
 
+/**
+ * Format number into required decimal numbers.
+ */
 export class FormatNumber extends ExpressionEvaluator {
     public constructor(){
         super(ExpressionType.FormatNumber, FormatNumber.evaluator(), ReturnType.String, FormatNumber.validator);

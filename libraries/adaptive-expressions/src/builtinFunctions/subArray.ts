@@ -12,6 +12,9 @@ import { ExpressionType } from '../expressionType';
 import { FunctionUtils } from '../functionUtils';
 import { Options } from '../options';
 
+/**
+ * Returns a subarray from specified start and end positions. Index values start with the number 0.
+ */
 export class SubArray extends ExpressionEvaluator {
     public constructor(){
         super(ExpressionType.SubArray, SubArray.evaluator, ReturnType.Array, SubArray.validator);

@@ -14,6 +14,9 @@ import { MemoryInterface } from '../memory/memoryInterface';
 import { Options } from '../options';
 import moment from 'moment';
 
+/**
+ * Add a number of time units to a timestamp.
+ */
 export class AddToTime extends ExpressionEvaluator {
     public constructor(){
         super(ExpressionType.AddToTime, AddToTime.evaluator, ReturnType.String, AddToTime.validator);

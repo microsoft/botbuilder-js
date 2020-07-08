@@ -13,6 +13,9 @@ import { FunctionUtils } from '../functionUtils';
 import moment from 'moment';
 import bigInt from 'big-integer';
 
+/**
+ * Return a timestamp in the specified format from ticks.
+ */
 export class FormatTicks extends ExpressionEvaluator {
     public constructor(){
         super(ExpressionType.FormatTicks, FormatTicks.evaluator(), ReturnType.String, FormatTicks.validator);

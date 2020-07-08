@@ -10,6 +10,9 @@ import { ExpressionEvaluator, EvaluateExpressionDelegate } from '../expressionEv
 import { VerifyExpression, FunctionUtils } from '../functionUtils';
 import { ReturnType } from '../expression';
 
+/**
+ * Numeric operators that can have 2 or more args.
+ */
 export class MultivariateNumericEvaluator extends ExpressionEvaluator {
     public constructor(type: string, func: (args: any[]) => number, verify?: VerifyExpression) {
         super(type, MultivariateNumericEvaluator.evaluator(func, verify), ReturnType.Number, FunctionUtils.validateTwoOrMoreThanTwoNumbers);

@@ -13,6 +13,10 @@ import { FunctionUtils } from '../functionUtils';
 import { MemoryInterface } from '../memory/memoryInterface';
 import { Options } from '../options';
 
+/**
+ * The indexing operator ([ ]) selects a single element from a sequence.
+ * Support number index for list or string index for object.
+ */
 export class Element extends ExpressionEvaluator {
     public constructor(){
         super(ExpressionType.Element, Element.evaluator, ReturnType.Object, FunctionUtils.validateBinary);

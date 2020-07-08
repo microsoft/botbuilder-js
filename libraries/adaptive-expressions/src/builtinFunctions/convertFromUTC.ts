@@ -15,6 +15,9 @@ import { Options } from '../options';
 import { TimeZoneConverter } from '../timeZoneConverter';
 import { tz } from 'moment-timezone';
 
+/**
+ * Convert a timestamp from Universal Time Coordinated (UTC) to a target time zone.
+ */
 export class ConvertFromUTC extends ExpressionEvaluator {
 
     private static readonly NoneUtcDefaultDateTimeFormat: string = 'YYYY-MM-DDTHH:mm:ss.SSSZ';

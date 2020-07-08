@@ -11,6 +11,10 @@ import { ReturnType } from '../expression';
 import { ExpressionType } from '../expressionType';
 import { FunctionUtils } from '../functionUtils';
 
+/**
+ * Return the first non-null value from one or more parameters.
+ * Empty strings, empty arrays, and empty objects are not null.
+ */
 export class Coalesce extends ExpressionEvaluator {
     public constructor(){
         super(ExpressionType.Coalesce, Coalesce.evaluator(), ReturnType.Object, FunctionUtils.validateAtLeastOne);

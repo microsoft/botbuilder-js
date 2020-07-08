@@ -13,6 +13,9 @@ import { FunctionUtils } from '../functionUtils';
 import { MemoryInterface } from '../memory/memoryInterface';
 import { Options } from '../options';
 
+/**
+ * Check whether an expression is true or false. Based on the result, return a specified value.
+ */
 export class If extends ExpressionEvaluator {
     public constructor(){
         super(ExpressionType.If, If.evaluator, ReturnType.Object, If.validator);

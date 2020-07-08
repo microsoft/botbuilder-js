@@ -12,6 +12,9 @@ import { ExpressionType } from '../expressionType';
 import { FunctionUtils } from '../functionUtils';
 import moment from 'moment';
 
+/**
+ * Return the day of the year from a timestamp.
+ */
 export class DayOfYear extends ExpressionEvaluator {
     public constructor(){
         super(ExpressionType.DayOfYear, DayOfYear.evaluator(), ReturnType.Number, FunctionUtils.validateUnaryString);

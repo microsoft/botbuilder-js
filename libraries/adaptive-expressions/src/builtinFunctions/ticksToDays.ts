@@ -13,6 +13,9 @@ import { FunctionUtils } from '../functionUtils';
 import { MemoryInterface } from '../memory/memoryInterface';
 import { Options } from '../options';
 
+/**
+ * Convert ticks to days number.
+ */
 export class TicksToDays extends ExpressionEvaluator {
 
     private static readonly TicksPerDay: number = 24 * 60 * 60 * 10000000;

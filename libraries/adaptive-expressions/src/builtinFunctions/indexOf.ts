@@ -13,6 +13,9 @@ import { FunctionUtils } from '../functionUtils';
 import { MemoryInterface } from '../memory/memoryInterface';
 import { Options } from '../options';
 
+/**
+ * Return the starting position or index value of a substring. This function is case-insensitive, and indexes start with the number 0.
+ */
 export class IndexOf extends ExpressionEvaluator {
     public constructor(){
         super(ExpressionType.IndexOf, IndexOf.evaluator, ReturnType.Number, IndexOf.validator);

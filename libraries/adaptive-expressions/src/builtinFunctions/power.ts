@@ -9,6 +9,9 @@
 import { MultivariateNumericEvaluator } from './multivariateNumericEvaluator';
 import { ExpressionType } from '../expressionType';
 
+/**
+ * Return exponentiation of one number to another.
+ */
 export class Power extends MultivariateNumericEvaluator {
     public constructor() {
         super(ExpressionType.Power, Power.func);

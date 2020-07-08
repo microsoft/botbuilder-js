@@ -11,6 +11,9 @@ import { ReturnType, Expression } from '../expression';
 import { ExpressionType } from '../expressionType';
 import { FunctionUtils } from '../functionUtils';
 
+/**
+ * Set the value of an object's property and return the updated object. 
+ */
 export class SetProperty extends ExpressionEvaluator {
     public constructor(){
         super(ExpressionType.SetProperty, SetProperty.evaluator(), ReturnType.Object, SetProperty.validator);

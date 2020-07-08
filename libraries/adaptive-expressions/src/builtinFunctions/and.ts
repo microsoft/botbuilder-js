@@ -13,6 +13,10 @@ import { FunctionUtils } from '../functionUtils';
 import { MemoryInterface } from '../memory/memoryInterface';
 import { Options } from '../options';
 
+/**
+ * Check whether all expressions are true. Return true if all expressions are true,
+ * or return false if at least one expression is false.
+ */
 export class And extends ExpressionEvaluator {
     public constructor(){
         super(ExpressionType.And, And.evaluator, ReturnType.Boolean, FunctionUtils.validateAtLeastOne);

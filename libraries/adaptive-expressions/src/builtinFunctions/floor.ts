@@ -9,6 +9,9 @@
 import { NumberTransformEvaluator } from './numberTransformEvaluator';
 import { ExpressionType } from '../expressionType';
 
+/**
+ * Returns the largest integer less than or equal to the specified number.
+ */
 export class Floor extends NumberTransformEvaluator {
     public constructor(){
         super(ExpressionType.Floor, Floor.func);

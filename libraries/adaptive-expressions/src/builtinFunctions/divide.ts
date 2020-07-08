@@ -11,6 +11,9 @@ import { ExpressionType } from '../expressionType';
 import { Expression } from '../expression';
 import { FunctionUtils } from '../functionUtils';
 
+/**
+ * Return the integer result from dividing two numbers. 
+ */
 export class Divide extends MultivariateNumericEvaluator {
     public constructor() {
         super(ExpressionType.Divide, Divide.func, Divide.verify);

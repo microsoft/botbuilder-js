@@ -11,6 +11,9 @@ import { ReturnType, Expression } from '../expression';
 import { ExpressionType } from '../expressionType';
 import { FunctionUtils } from '../functionUtils';
 
+/**
+ * Merge two object(json) into one object(json).
+ */
 export class Merge extends ExpressionEvaluator {
     public constructor(){
         super(ExpressionType.Merge, Merge.evaluator(), ReturnType.Object, Merge.validator);

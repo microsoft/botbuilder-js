@@ -11,6 +11,9 @@ import { ReturnType, Expression } from '../expression';
 import { ExpressionType } from '../expressionType';
 import { FunctionUtils } from '../functionUtils';
 
+/**
+ * Return the result from adding two or more numbers (pure number case) or concatting two or more strings (other case).
+ */
 export class Add extends ExpressionEvaluator {
     public constructor(){
         super(ExpressionType.Add, Add.evaluator(), ReturnType.String | ReturnType.Number, Add.validator);

@@ -11,6 +11,11 @@ import { ReturnType, Expression } from '../expression';
 import { ExpressionType } from '../expressionType';
 import { FunctionUtils } from '../functionUtils';
 
+/**
+ * Return a collection that has all the items from the specified collections.
+ * To appear in the result, an item can appear in any collection passed to this function.
+ * If one or more items have the same name, the last item with that name appears in the result.
+ */
 export class Union extends ExpressionEvaluator {
     public constructor(){
         super(ExpressionType.Union, Union.evaluator(), ReturnType.Array, Union.validator);

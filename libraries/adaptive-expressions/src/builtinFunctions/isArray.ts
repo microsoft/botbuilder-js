@@ -11,6 +11,9 @@ import { ReturnType } from '../expression';
 import { ExpressionType } from '../expressionType';
 import { FunctionUtils } from '../functionUtils';
 
+/**
+ * Return true if a given input is an array.
+ */
 export class IsArray extends ExpressionEvaluator {
     public constructor(){
         super(ExpressionType.IsArray, IsArray.evaluator(), ReturnType.Boolean, FunctionUtils.validateUnary);

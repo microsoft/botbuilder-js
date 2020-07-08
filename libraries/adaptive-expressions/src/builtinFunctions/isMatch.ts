@@ -13,6 +13,9 @@ import { FunctionUtils } from '../functionUtils';
 import { CommonRegex } from '../commonRegex';
 import { Constant } from '../constant';
 
+/**
+ * Return true if a given string is matches a specified regular expression pattern.
+ */
 export class IsMatch extends ExpressionEvaluator {
     public constructor(){
         super(ExpressionType.IsMatch, IsMatch.evaluator(), ReturnType.Boolean, IsMatch.validator);

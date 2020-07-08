@@ -13,6 +13,9 @@ import { FunctionUtils } from '../functionUtils';
 import { MemoryInterface } from '../memory/memoryInterface';
 import { Options } from '../options';
 
+/**
+ * Return the scheme value of a unified resource identifier (URI).
+ */
 export class UriScheme extends ExpressionEvaluator {
     public constructor(){
         super(ExpressionType.UriScheme, UriScheme.evaluator, ReturnType.String, FunctionUtils.validateUnary);

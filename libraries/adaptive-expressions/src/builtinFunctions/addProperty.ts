@@ -11,6 +11,10 @@ import { ReturnType, Expression } from '../expression';
 import { ExpressionType } from '../expressionType';
 import { FunctionUtils } from '../functionUtils';
 
+/**
+ * Add a property and its value, or name-value pair, to a JSON object, and return the updated object.
+ * If the object already exists at runtime the function throws an error.
+ */
 export class AddProperty extends ExpressionEvaluator {
     public constructor(){
         super(ExpressionType.AddProperty, AddProperty.evaluator(), ReturnType.Object, AddProperty.validator);

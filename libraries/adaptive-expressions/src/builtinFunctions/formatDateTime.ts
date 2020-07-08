@@ -12,6 +12,9 @@ import { ExpressionType } from '../expressionType';
 import { FunctionUtils } from '../functionUtils';
 import moment from 'moment';
 
+/**
+ * Return a timestamp in the specified format.
+ */
 export class FormatDateTime extends ExpressionEvaluator {
     public constructor(){
         super(ExpressionType.FormatDateTime, FormatDateTime.evaluator(), ReturnType.String, FormatDateTime.validator);

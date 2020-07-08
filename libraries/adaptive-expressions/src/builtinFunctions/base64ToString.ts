@@ -11,6 +11,9 @@ import { ReturnType } from '../expression';
 import { ExpressionType } from '../expressionType';
 import { FunctionUtils } from '../functionUtils';
 
+/**
+ * Return the string version of a base64-encoded string, effectively decoding the base64 string.
+ */
 export class Base64ToString extends ExpressionEvaluator {
     public constructor(){
         super(ExpressionType.Base64ToString, Base64ToString.evaluator(), ReturnType.String, FunctionUtils.validateUnary);

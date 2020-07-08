@@ -14,6 +14,9 @@ import { MemoryInterface } from '../memory/memoryInterface';
 import { Options } from '../options';
 import { SimpleObjectMemory } from '../memory/simpleObjectMemory';
 
+/**
+ * Retrieve the value of the specified property from the JSON object.
+ */
 export class GetProperty extends ExpressionEvaluator {
     public constructor(){
         super(ExpressionType.GetProperty, GetProperty.evaluator, ReturnType.Object, GetProperty.validator);

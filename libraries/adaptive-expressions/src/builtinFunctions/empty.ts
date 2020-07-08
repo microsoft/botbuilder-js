@@ -10,6 +10,13 @@ import { ComparisonEvaluator } from './comparisonEvaluator';
 import { ExpressionType } from '../expressionType';
 import { FunctionUtils } from '../functionUtils';
 
+/**
+ * Check whether an instance is empty. Return true if the input is empty. Empty means:
+ * 1.input is null or undefined
+ * 2.input is a null or empty string
+ * 3.input is zero size collection
+ * 4.input is an object with no property.
+ */
 export class Empty extends ComparisonEvaluator {
     public constructor() {
         super(ExpressionType.Empty, Empty.func, FunctionUtils.validateUnary, FunctionUtils.verifyContainer);

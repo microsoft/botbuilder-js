@@ -11,6 +11,12 @@ import { ReturnType, Expression } from '../expression';
 import { ExpressionType } from '../expressionType';
 import { FunctionUtils } from '../functionUtils';
 
+/**
+ * Return a collection that has only the common items across the specified collections.
+ * To appear in the result, an item must appear in all the collections passed to this function.
+ * If one or more items have the same name,
+ * the last item with that name appears in the result.
+ */
 export class Intersection extends ExpressionEvaluator {
     public constructor(){
         super(ExpressionType.Intersection, Intersection.evaluator(), ReturnType.Array, Intersection.validator);

@@ -12,6 +12,9 @@ import { ExpressionType } from '../expressionType';
 import { FunctionUtils } from '../functionUtils';
 import moment from 'moment';
 
+/**
+ * Return the date of a specified timestamp in m/dd/yyyy format.
+ */
 export class DateEva extends ExpressionEvaluator {
     public constructor(){
         super(ExpressionType.Date, DateEva.evaluator(), ReturnType.String, FunctionUtils.validateUnaryString);

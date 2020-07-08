@@ -11,6 +11,9 @@ import { ReturnType } from '../expression';
 import { ExpressionType } from '../expressionType';
 import { FunctionUtils } from '../functionUtils';
 
+/**
+ * Return the first item from a string or array.
+ */
 export class First extends ExpressionEvaluator {
     public constructor(){
         super(ExpressionType.First, First.evaluator(), ReturnType.Object, FunctionUtils.validateUnary);

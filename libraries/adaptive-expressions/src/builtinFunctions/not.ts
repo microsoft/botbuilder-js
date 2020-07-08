@@ -13,6 +13,10 @@ import { FunctionUtils } from '../functionUtils';
 import { MemoryInterface } from '../memory/memoryInterface';
 import { Options } from '../options';
 
+/**
+ * Check whether an expression is false.
+ * Return true if the expression is false, or return false if true.
+ */
 export class Not extends ExpressionEvaluator {
     public constructor(){
         super(ExpressionType.Not, Not.evaluator, ReturnType.Boolean, FunctionUtils.validateUnary);

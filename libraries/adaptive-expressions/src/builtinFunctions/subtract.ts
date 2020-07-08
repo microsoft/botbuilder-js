@@ -9,9 +9,12 @@
 import { MultivariateNumericEvaluator } from './multivariateNumericEvaluator';
 import { ExpressionType } from '../expressionType';
 
-export class Substract extends MultivariateNumericEvaluator {
+/**
+ * Return the result from subtracting the second number from the first number.
+ */
+export class Subtract extends MultivariateNumericEvaluator {
     public constructor() {
-        super(ExpressionType.Subtract, Substract.func);
+        super(ExpressionType.Subtract, Subtract.func);
     }
 
     private static func(args: any[]): number {

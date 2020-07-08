@@ -180,4 +180,7 @@ export class ExpressionType {
     public static readonly IsFloat: string = 'isFloat';
     public static readonly IsDateTime: string = 'isDateTime';
     public static readonly IsBoolean: string = 'isBoolean';
+
+    public static readonly Ignore: string = 'ignore';
+    public static readonly Optional: string = 'optional';
 }

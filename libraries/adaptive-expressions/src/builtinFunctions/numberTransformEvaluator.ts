@@ -10,6 +10,9 @@ import { ReturnType } from '../expression';
 import { FunctionUtils } from '../functionUtils';
 import { EvaluateExpressionDelegate, ExpressionEvaluator } from '../expressionEvaluator';
 
+/**
+ * Evaluator that transforms a number to another number.
+ */
 export class NumberTransformEvaluator extends ExpressionEvaluator {
     public constructor(type: string, func: (args: any[]) => number) {
         super(type, NumberTransformEvaluator.evaluator(func), ReturnType.Number, FunctionUtils.validateUnaryNumber);

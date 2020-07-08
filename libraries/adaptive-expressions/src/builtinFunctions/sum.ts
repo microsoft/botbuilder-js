@@ -11,6 +11,9 @@ import { ReturnType, Expression } from '../expression';
 import { ExpressionType } from '../expressionType';
 import { FunctionUtils } from '../functionUtils';
 
+/**
+ * Return the result from adding numbers in a list.
+ */
 export class Sum extends ExpressionEvaluator {
     public constructor(){
         super(ExpressionType.Sum, Sum.evaluator(), ReturnType.Number, Sum.validator);

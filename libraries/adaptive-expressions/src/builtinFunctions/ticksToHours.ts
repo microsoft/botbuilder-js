@@ -13,6 +13,9 @@ import { FunctionUtils } from '../functionUtils';
 import { MemoryInterface } from '../memory/memoryInterface';
 import { Options } from '../options';
 
+/**
+ * Convert ticks to hours number.
+ */
 export class TicksToHours extends ExpressionEvaluator {
 
     private static readonly TicksPerHour: number = 60 * 60 * 10000000;

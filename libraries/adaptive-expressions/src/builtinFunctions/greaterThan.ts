@@ -10,6 +10,10 @@ import { ComparisonEvaluator } from './comparisonEvaluator';
 import { ExpressionType } from '../expressionType';
 import { FunctionUtils } from '../functionUtils';
 
+/**
+ * Check whether the first value is greater than the second value.
+ * Return true if the first value is more, or return false if less.
+ */
 export class GreaterThan extends ComparisonEvaluator {
     public constructor() {
         super(ExpressionType.GreaterThan, GreaterThan.func, FunctionUtils.validateBinaryNumberOrString, FunctionUtils.verifyNumberOrString);

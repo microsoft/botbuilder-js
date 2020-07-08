@@ -11,6 +11,9 @@ import { ReturnType } from '../expression';
 import { ExpressionType } from '../expressionType';
 import { FunctionUtils } from '../functionUtils';
 
+/**
+ * Return an array from multiple inputs.
+ */
 export class CreateArray extends ExpressionEvaluator {
     public constructor(){
         super(ExpressionType.CreateArray, CreateArray.evaluator(), ReturnType.Array);

@@ -10,6 +10,9 @@ import { ReturnType } from '../expression';
 import { FunctionUtils } from '../functionUtils';
 import { EvaluateExpressionDelegate, ExpressionEvaluator } from '../expressionEvaluator';
 
+/**
+ * Numeric operators that can have 1 or more args.
+ */
 export class NumericEvaluator extends ExpressionEvaluator {
     public constructor(type: string, func: (args: any[]) => any) {
         super(type, NumericEvaluator.evaluator(func), ReturnType.Number, FunctionUtils.validateNumber);

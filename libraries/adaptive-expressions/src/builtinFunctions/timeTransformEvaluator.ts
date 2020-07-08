@@ -13,6 +13,9 @@ import { Expression, ReturnType } from '../expression';
 import { MemoryInterface } from '../memory/memoryInterface';
 import { Options } from '../options';
 
+/**
+ * Evaluator that transforms a date-time to another date-time.
+ */
 export class TimeTransformEvaluator extends ExpressionEvaluator {
     public constructor(type: string, func: (timestamp: Date, numOfTransformation: any) => Date) {
         super(type, TimeTransformEvaluator.evaluator(func), ReturnType.String, TimeTransformEvaluator.validator);

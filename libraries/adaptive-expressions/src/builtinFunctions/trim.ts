@@ -10,6 +10,9 @@ import { StringTransformEvaluator } from './stringTransformEvaluator';
 import { FunctionUtils } from '../functionUtils';
 import { ExpressionType } from '../expressionType';
 
+/**
+ * Remove leading and trailing whitespace from a string, and return the updated string.
+ */
 export class Trim extends StringTransformEvaluator {
     public constructor() {
         super(ExpressionType.Trim, Trim.evaluator);

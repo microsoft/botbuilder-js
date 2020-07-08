@@ -13,6 +13,10 @@ import { FunctionUtils } from '../functionUtils';
 import { MemoryInterface } from '../memory/memoryInterface';
 import { Options } from '../options';
 
+/**
+ * Check whether at least one expression is true.
+ * Return true if at least one expression is true, or return false if all are false.
+ */
 export class Or extends ExpressionEvaluator {
     public constructor(){
         super(ExpressionType.Or, Or.evaluator, ReturnType.Boolean, FunctionUtils.validateAtLeastOne);

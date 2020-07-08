@@ -12,6 +12,9 @@ import { ExpressionType } from '../expressionType';
 import { FunctionUtils } from '../functionUtils';
 import { parseZone } from 'moment';
 
+/**
+ * Returns time of day for a given timestamp.
+ */
 export class GetTimeOfDay extends ExpressionEvaluator {
     public constructor(){
         super(ExpressionType.GetTimeOfDay, GetTimeOfDay.evaluator(), ReturnType.String, FunctionUtils.validateUnaryString);

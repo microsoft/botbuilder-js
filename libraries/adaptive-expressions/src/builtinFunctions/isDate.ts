@@ -14,6 +14,10 @@ import { MemoryInterface } from '../memory/memoryInterface';
 import { Options } from '../options';
 import {TimexProperty} from '@microsoft/recognizers-text-data-types-timex-expression';
 
+/**
+ * Return true if a given TimexProperty or Timex expression refers to a valid date.
+ * Valid dates contain the month and dayOfMonth, or contain the dayOfWeek.
+ */
 export class IsDate extends ExpressionEvaluator {
     public constructor(){
         super(ExpressionType.IsDate, IsDate.evaluator, ReturnType.Boolean, FunctionUtils.validateUnary);

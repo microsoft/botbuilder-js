@@ -12,6 +12,9 @@ import { ExpressionType } from '../expressionType';
 import { FunctionUtils } from '../functionUtils';
 import * as jsPath from 'jspath';
 
+/**
+ * Check JSON or a JSON string for nodes or values that match a path expression, and return the matching nodes.
+ */
 export class JPath extends ExpressionEvaluator {
     public constructor(){
         super(ExpressionType.JPath, JPath.evaluator(), ReturnType.Object, JPath.validator);

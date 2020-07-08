@@ -14,6 +14,9 @@ import { MemoryInterface } from '../memory/memoryInterface';
 import { Options } from '../options';
 import moment from 'moment';
 
+/**
+ * Return the start of the day for a timestamp.
+ */
 export class StartOfDay extends ExpressionEvaluator {
     public constructor(){
         super(ExpressionType.StartOfDay, StartOfDay.evaluator, ReturnType.String, StartOfDay.validator);

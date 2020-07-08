@@ -12,15 +12,14 @@ import { ExpressionType } from '../expressionType';
 import { FunctionUtils } from '../functionUtils';
 
 /**
- * Return true if a given input is a Boolean.
+ * For the MostSpecificSelector, this is a short hand so that instead of having to do A &amp; B and A you can do A &amp; optional(B) to mean the same thing.
  */
-export class IsBoolean extends ExpressionEvaluator {
+export class Optional extends ExpressionEvaluator {
     public constructor(){
-        super(ExpressionType.IsBoolean, IsBoolean.evaluator(), ReturnType.Boolean, FunctionUtils.validateUnary);
+        super(ExpressionType.Optional, Optional.evaluator(), ReturnType.Boolean, FunctionUtils.validateUnaryBoolean);
     }
 
     private static evaluator(): EvaluateExpressionDelegate {
-        return FunctionUtils.apply(
-            (args: any[]): boolean => typeof args[0] === 'boolean');
+        throw new Error();
     }
 }

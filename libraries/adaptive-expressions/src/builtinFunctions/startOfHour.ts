@@ -14,6 +14,9 @@ import { MemoryInterface } from '../memory/memoryInterface';
 import { Options } from '../options';
 import moment from 'moment';
 
+/**
+ * Return the start of the hour for a timestamp.
+ */
 export class StartOfHour extends ExpressionEvaluator {
     public constructor(){
         super(ExpressionType.StartOfHour, StartOfHour.evaluator, ReturnType.String, StartOfHour.validator);

@@ -14,6 +14,10 @@ import { MemoryInterface } from '../memory/memoryInterface';
 import { Options } from '../options';
 import {TimexProperty} from '@microsoft/recognizers-text-data-types-timex-expression';
 
+/**
+ * Return true if a given TimexProperty or Timex expression refers to a valid time.
+ * Valid time contains hours, minutes and seconds.
+ */
 export class IsTime extends ExpressionEvaluator {
     public constructor(){
         super(ExpressionType.IsTime, IsTime.evaluator, ReturnType.Boolean, FunctionUtils.validateUnary);

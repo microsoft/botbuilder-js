@@ -16,6 +16,9 @@ import { Constant } from '../constant';
 import { StackedMemory } from '../memory/stackedMemory';
 import { SimpleObjectMemory } from '../memory/simpleObjectMemory';
 
+/**
+ * Filter on each element and return the new collection of filtered elements which match a specific condition.
+ */
 export class Where extends ExpressionEvaluator {
     public constructor(){
         super(ExpressionType.Where, Where.evaluator, ReturnType.Boolean, FunctionUtils.validateForeach);

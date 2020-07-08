@@ -11,6 +11,9 @@ import { ReturnType, Expression } from '../expression';
 import { ExpressionType } from '../expressionType';
 import { FunctionUtils } from '../functionUtils';
 
+/**
+ *  Flatten an array into non-array values. You can optionally set the maximum depth to flatten to.
+ */
 export class Flatten extends ExpressionEvaluator {
     public constructor(){
         super(ExpressionType.Flatten, Flatten.evaluator(), ReturnType.Array, Flatten.validator);

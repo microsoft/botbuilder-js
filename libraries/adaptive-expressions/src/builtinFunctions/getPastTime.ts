@@ -14,6 +14,9 @@ import moment from 'moment';
 import { MemoryInterface } from '../memory/memoryInterface';
 import { Options } from '../options';
 
+/**
+ * Return the current timestamp minus the specified time units.
+ */
 export class GetPastTime extends ExpressionEvaluator {
     public constructor(){
         super(ExpressionType.GetPastTime, GetPastTime.evaluator, ReturnType.String, GetPastTime.validator);

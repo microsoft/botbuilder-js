@@ -11,6 +11,10 @@ import { VerifyExpression, FunctionUtils } from '../functionUtils';
 import { ReturnType, Expression } from '../expression';
 import { MemoryInterface, Options } from '..';
 
+/**
+ * Comparison operators.
+ * A comparison operator returns false if the comparison is false, or there is an error.  This prevents errors from short-circuiting boolean expressions.
+ */
 export class ComparisonEvaluator extends ExpressionEvaluator {
     public constructor(type: string, func: (arg0: any[]) => boolean, validator: ValidateExpressionDelegate, verify?: VerifyExpression) {
         super(type, ComparisonEvaluator.evaluator(func, verify), ReturnType.Boolean, validator);

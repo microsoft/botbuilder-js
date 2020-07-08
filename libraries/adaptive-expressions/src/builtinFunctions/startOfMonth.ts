@@ -14,6 +14,9 @@ import { MemoryInterface } from '../memory/memoryInterface';
 import { Options } from '../options';
 import moment from 'moment';
 
+/**
+ * Return the start of the month for a timestamp.
+ */
 export class StartOfMonth extends ExpressionEvaluator {
     public constructor(){
         super(ExpressionType.StartOfMonth, StartOfMonth.evaluator, ReturnType.String, StartOfMonth.validator);

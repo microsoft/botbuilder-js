@@ -14,6 +14,9 @@ import moment from 'moment';
 import { MemoryInterface } from '../memory/memoryInterface';
 import { Options } from '../options';
 
+/**
+ * Return the current timestamp plus the specified time units.
+ */
 export class GetFutureTime extends ExpressionEvaluator {
     public constructor(){
         super(ExpressionType.GetFutureTime, GetFutureTime.evaluator, ReturnType.String, GetFutureTime.validator);

@@ -15,6 +15,9 @@ import { MemoryInterface } from '../memory/memoryInterface';
 import { Options } from '../options';
 import { Constant } from '../constant';
 
+/**
+ * Used to access the variable value corresponding to the path.
+ */
 export class Accessor extends ExpressionEvaluator {
     public constructor(){
         super(ExpressionType.Accessor, Accessor.evaluator, ReturnType.Object, Accessor.validator);

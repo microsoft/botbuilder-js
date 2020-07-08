@@ -11,6 +11,9 @@ import { ReturnType } from '../expression';
 import { ExpressionType } from '../expressionType';
 import { FunctionUtils } from '../functionUtils';
 
+/**
+ * Return true if a given input is a string.
+ */
 export class IsString extends ExpressionEvaluator {
     public constructor(){
         super(ExpressionType.IsString, IsString.evaluator(), ReturnType.Boolean, FunctionUtils.validateUnary);

@@ -14,6 +14,9 @@ import { MemoryInterface } from '../memory/memoryInterface';
 import { Options } from '../options';
 import {TimexProperty} from '@microsoft/recognizers-text-data-types-timex-expression';
 
+/**
+ * Return true if a given TimexProperty or Timex expression refers to a valid time range Valid time ranges contain partOfDay.
+ */
 export class IsTimeRange extends ExpressionEvaluator {
     public constructor(){
         super(ExpressionType.IsTimeRange, IsTimeRange.evaluator, ReturnType.Boolean, FunctionUtils.validateUnary);

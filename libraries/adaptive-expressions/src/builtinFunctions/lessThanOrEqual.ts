@@ -10,6 +10,10 @@ import { ComparisonEvaluator } from './comparisonEvaluator';
 import { ExpressionType } from '../expressionType';
 import { FunctionUtils } from '../functionUtils';
 
+/**
+ * Check whether the first value is less than or equal to the second value.
+ * Return true if the first value is less than or equal, or return false if the first value is more.
+ */
 export class LessThanOrEqual extends ComparisonEvaluator {
     public constructor() {
         super(ExpressionType.LessThanOrEqual, LessThanOrEqual.func, FunctionUtils.validateBinaryNumberOrString, FunctionUtils.verifyNumberOrString);

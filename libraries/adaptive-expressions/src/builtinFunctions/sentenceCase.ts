@@ -10,6 +10,9 @@ import { StringTransformEvaluator } from './stringTransformEvaluator';
 import { FunctionUtils } from '../functionUtils';
 import { ExpressionType } from '../expressionType';
 
+/**
+ * Converts the specified string to sentence case.
+ */
 export class SentenceCase extends StringTransformEvaluator {
     public constructor() {
         super(ExpressionType.SentenceCase, SentenceCase.evaluator);

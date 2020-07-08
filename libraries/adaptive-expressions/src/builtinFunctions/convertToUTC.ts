@@ -16,6 +16,9 @@ import moment from 'moment';
 import { TimeZoneConverter } from '../timeZoneConverter';
 import { tz } from 'moment-timezone';
 
+/**
+ * Convert a timestamp to Universal Time Coordinated (UTC) from the source time zone.
+ */
 export class ConvertToUTC extends ExpressionEvaluator {
     public constructor(){
         super(ExpressionType.ConvertToUTC, ConvertToUTC.evaluator, ReturnType.String, ConvertToUTC.validator);

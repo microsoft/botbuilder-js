@@ -11,6 +11,9 @@ import { ReturnType } from '../expression';
 import { ExpressionType } from '../expressionType';
 import { FunctionUtils } from '../functionUtils';
 
+/**
+ * Return the string version of a uniform resource identifier (URI) encoded string, effectively decoding the URI-encoded string.
+ */
 export class UriComponentToString extends ExpressionEvaluator {
     public constructor(){
         super(ExpressionType.UriComponentToString, UriComponentToString.evaluator(), ReturnType.String, FunctionUtils.validateUnary);

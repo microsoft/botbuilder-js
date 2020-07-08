@@ -12,6 +12,9 @@ import { ExpressionType } from '../expressionType';
 import { FunctionUtils } from '../functionUtils';
 import { Options } from '../options';
 
+/**
+ * Return items from the front of a collection.
+ */
 export class Take extends ExpressionEvaluator {
     public constructor(){
         super(ExpressionType.Take, Take.evaluator, ReturnType.Array, Take.validator);

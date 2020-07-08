@@ -12,6 +12,9 @@ import { ExpressionType } from '../expressionType';
 import { FunctionUtils } from '../functionUtils';
 import moment from 'moment';
 
+/**
+ * Return the current timestamp.
+ */
 export class UtcNow extends ExpressionEvaluator {
     public constructor(){
         super(ExpressionType.Date, UtcNow.evaluator(), ReturnType.String, UtcNow.validator);

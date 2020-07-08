@@ -11,6 +11,9 @@ import { ReturnType, Expression } from '../expression';
 import { ExpressionType } from '../expressionType';
 import { FunctionUtils } from '../functionUtils';
 
+/**
+ * Remove all duplicates from an array.
+ */
 export class Unique extends ExpressionEvaluator {
     public constructor(){
         super(ExpressionType.Unique, Unique.evaluator(), ReturnType.Array, Unique.validator);

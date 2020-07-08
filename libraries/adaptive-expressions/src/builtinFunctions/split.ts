@@ -11,6 +11,9 @@ import { ReturnType, Expression } from '../expression';
 import { ExpressionType } from '../expressionType';
 import { FunctionUtils } from '../functionUtils';
 
+/**
+ * Return an array that contains substrings, separated by commas, based on the specified delimiter character in the original string.
+ */
 export class Split extends ExpressionEvaluator {
     public constructor(){
         super(ExpressionType.Split, Split.evaluator(), ReturnType.Array, Split.validator);

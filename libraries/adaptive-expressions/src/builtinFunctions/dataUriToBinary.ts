@@ -11,6 +11,9 @@ import { ReturnType } from '../expression';
 import { ExpressionType } from '../expressionType';
 import { FunctionUtils } from '../functionUtils';
 
+/**
+ * Return the binary version of a data uniform resource identifier (URI).
+ */
 export class DataUriToBinary extends ExpressionEvaluator {
     public constructor(){
         super(ExpressionType.DataUriToBinary, DataUriToBinary.evaluator(), ReturnType.Object, FunctionUtils.validateUnary);

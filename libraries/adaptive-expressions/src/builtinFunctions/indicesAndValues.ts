@@ -12,6 +12,11 @@ import { ExpressionType } from '../expressionType';
 import { FunctionUtils } from '../functionUtils';
 import { Options } from '../options';
 
+/**
+ * Turn an array or object into an array of objects with index (current index) and value properties.
+ * For arrays, the index is the position in the array.
+ * For objects, it is the key for the value.
+ */
 export class IndicesAndValues extends ExpressionEvaluator {
     public constructor(){
         super(ExpressionType.IndicesAndValues, IndicesAndValues.evaluator, ReturnType.Array, FunctionUtils.validateUnary);

@@ -11,6 +11,9 @@ import { ReturnType, Expression } from '../expression';
 import { ExpressionType } from '../expressionType';
 import { FunctionUtils } from '../functionUtils';
 
+/**
+ * Sort elements in the collection in descending order, and return the sorted collection.
+ */
 export class SortByDescending extends ExpressionEvaluator {
     public constructor(){
         super(ExpressionType.NewGuid, FunctionUtils.sortBy(true), ReturnType.Array, SortByDescending.validator);

@@ -11,6 +11,10 @@ import { ReturnType, Expression } from '../expression';
 import { ExpressionType } from '../expressionType';
 import { FunctionUtils } from '../functionUtils';
 
+/**
+ * Check whether a string ends with a specific substring. Return true if the substring is found, or return false if not found.
+ * This function is case-insensitive.
+ */
 export class EndsWith extends ExpressionEvaluator {
     public constructor(){
         super(ExpressionType.EndsWith, EndsWith.evaluator(), ReturnType.Boolean, EndsWith.validator);

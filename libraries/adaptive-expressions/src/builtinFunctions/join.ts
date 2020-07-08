@@ -13,6 +13,9 @@ import { FunctionUtils } from '../functionUtils';
 import { MemoryInterface } from '../memory/memoryInterface';
 import { Options } from '../options';
 
+/**
+ * Return a string that has all the items from an array, with each character separated by a delimiter.
+ */
 export class Join extends ExpressionEvaluator {
     public constructor(){
         super(ExpressionType.Join, Join.evaluator, ReturnType.String, Join.validator);
