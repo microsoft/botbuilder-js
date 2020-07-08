@@ -8,7 +8,7 @@
 
 import { LanguageGenerator } from '../languageGenerator';
 import { TurnContext } from 'botbuilder-core';
-import { Templates } from 'botbuilder-lg';
+import { Templates, EvaluationOptions } from 'botbuilder-lg';
 import { IResource } from 'botbuilder-dialogs-declarative';
 import { LanguageResourceLoader } from '../languageResourceLoader';
 import { LanguageGeneratorManager } from './languageGeneratorManager';
@@ -52,7 +52,9 @@ export class TemplateEngineLanguageGenerator implements LanguageGenerator{
             // BUGBUG: I'm casting objects to <any> to work around a bug in the activity factory.
             //         The string version of of the serialized card isn't being parsed. We should
             //         fix that in R10. The cast is working for now.
-            const result = this.lg.evaluateText(template, data);
+            const lgOptions = new EvaluationOptions();
+            lgOptions.Locale = turnContext.locale;
+            const result = this.lg.evaluateText(template, data, lgOptions);
             return Promise.resolve(typeof result == 'object' ? result as any : result.toString());
         } catch(e) {
             if (this.id !== undefined && this.id === '') {

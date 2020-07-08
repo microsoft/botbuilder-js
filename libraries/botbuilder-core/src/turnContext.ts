@@ -722,6 +722,20 @@ export class TurnContext {
     }
 
     /**
+     * Gets the locale stored in the turnState.
+     */
+    public get locale(): string {
+        return this._turnState.get('turn.locale');
+    }
+
+    /**
+     * Sets the locale stored in the turnState.
+     */
+    public set locale(value: string) {
+        this._turnState.set('turn.locale', value);
+    }
+
+    /**
      * Gets the services registered on this context object.
      *
      * @remarks
