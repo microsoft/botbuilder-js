@@ -1,13 +1,21 @@
-import { ExpressionEvaluator, EvaluateExpressionDelegate } from '../expressionEvaluator';
+/**
+ * @module adaptive-expressions
+ */
+/**
+ * Copyright (c) Microsoft Corporation. All rights reserved.
+ * Licensed under the MIT License.
+ */
+
+import { ExpressionEvaluator } from '../expressionEvaluator';
 import { ReturnType, Expression } from '../expression';
 import { ExpressionType } from '../expressionType';
 import { FunctionUtils } from '../functionUtils';
 import { MemoryInterface } from '../memory/memoryInterface';
 import { Options } from '../options';
 
-export class Or extends ExpressionEvaluator {
+export class Not extends ExpressionEvaluator {
     public constructor(){
-        super(ExpressionType.Or, Or.evaluator, ReturnType.Boolean, FunctionUtils.validateUnary);
+        super(ExpressionType.Not, Not.evaluator, ReturnType.Boolean, FunctionUtils.validateUnary);
     }
 
     public static evaluator(expression: Expression, state: MemoryInterface, options: Options): {value: any; error: string} {

@@ -1,18 +1,14 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import {TimexProperty} from '@microsoft/recognizers-text-data-types-timex-expression';
-
 import * as lodash from 'lodash';
-import moment, {Moment, parseZone} from 'moment';
-import {tz} from 'moment-timezone';
-import {CommonRegex} from './commonRegex';
+import moment, {Moment} from 'moment';
 import {Constant} from './constant';
 import {Expression, ReturnType} from './expression';
-import {EvaluateExpressionDelegate, ExpressionEvaluator, ValidateExpressionDelegate} from './expressionEvaluator';
+import {EvaluateExpressionDelegate} from './expressionEvaluator';
 import {ExpressionType} from './expressionType';
-import {TimeZoneConverter} from './timeZoneConverter';
 import {convertCSharpDateTimeToMomentJS} from './datetimeFormatConverter';
 import {MemoryInterface, SimpleObjectMemory, StackedMemory} from './memory';
 import {Options} from './options';
-import atob = require('atob-lite');
 import bigInt = require('big-integer');
 
 /**
@@ -28,11 +24,6 @@ export class FunctionUtils {
      * The default date time format string.
      */
     public static readonly DefaultDateTimeFormat: string = 'YYYY-MM-DDTHH:mm:ss.SSS[Z]';
-
-    /**
-     * The default date time format string of a none UTC timestamp.
-     */
-    public static readonly NoneUtcDefaultDateTimeFormat: string = 'YYYY-MM-DDTHH:mm:ss.SSSZ';
 
     /**
      * constant of converting unix timestamp to ticks
@@ -565,16 +556,6 @@ export class FunctionUtils {
     }
 
     /**
-     * Numeric operators that can have 1 or more args.
-     * @param type Expression type.
-     * @param func Function to apply.
-     */
-    public static numeric(type: string, func: (arg0: any[]) => any): ExpressionEvaluator {
-        return new ExpressionEvaluator(type, FunctionUtils.applySequence(func, FunctionUtils.verifyNumber),
-            ReturnType.Number, FunctionUtils.validateNumber);
-    }
-
-    /**
      * Lookup a property in IDictionary, JObject or through reflection.
      * @param instance Instance with property.
      * @param property Property to lookup.
@@ -606,24 +587,6 @@ export class FunctionUtils {
         }
 
         return {value, error};
-    }
-
-    /**
-     * Set a property in Map or Object.
-     * @param instance Instance to set.
-     * @param property Property to set.
-     * @param value Value to set.
-     * @returns set value.
-     */
-    public static setProperty(instance: any, property: string, value: any): {value: any; error: string} {
-        const result: any = value;
-        if (instance instanceof Map) {
-            instance.set(property, value);
-        } else {
-            instance[property] = value;
-        }
-
-        return {value: result, error: undefined};
     }
 
     /**
@@ -688,24 +651,6 @@ export class FunctionUtils {
         }
     }
 
-    public static buildTypeValidatorError(returnType: ReturnType, childExpr: Expression, expr: Expression): string {
-        const names = Object.keys(ReturnType).filter((x): boolean => !(parseInt(x) >= 0));
-        let types = [];
-        for (const name of names) {
-            const value = ReturnType[name] as number;
-            if ((returnType & value) !== 0) {
-                types.push(name);
-            }
-        }
-
-        if (types.length === 1) {
-            return `${childExpr} is not a ${types[0]} expression in ${expr}.`;
-        } else {
-            const typesStr = types.join(', ');
-            return `${childExpr} in ${expr} is not any of [${typesStr}].`;
-        }
-    }
-
     public static parseTimexProperty(timexExpr: any): {timexProperty: TimexProperty; error: string} {
         let parsed: TimexProperty;
         if (timexExpr instanceof TimexProperty) {
@@ -720,15 +665,6 @@ export class FunctionUtils {
         }
 
         return {timexProperty: parsed, error: undefined};
-    }
-
-    public static newGuid(): string {
-        return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c: any): string => {
-            const r: number = Math.random() * 16 | 0;
-            const v: number = c === 'x' ? r : (r & 0x3 | 0x8);
-
-            return v.toString(16);
-        });
     }
 
     public static parseStringOrNull(input: string | undefined): string {
@@ -785,63 +721,6 @@ export class FunctionUtils {
         return {path, left, error: undefined};
     }
 
-    public static accessor(expression: Expression, state: MemoryInterface, options: Options): {value: any; error: string} {
-        let path: string;
-        let left: Expression;
-        let error: string;
-        ({path, left, error} = FunctionUtils.tryAccumulatePath(expression, state, options));
-        if (error) {
-            return {value: undefined, error};
-        }
-
-        if (left == undefined) {
-            // fully converted to path, so we just delegate to memory scope
-            return {value: FunctionUtils.wrapGetValue(state, path, options), error: undefined};
-        } else {
-            let newScope: any;
-            let err: string;
-            ({value: newScope, error: err} = left.tryEvaluate(state, options));
-            if (err) {
-                return {value: undefined, error: err};
-            }
-
-            return {value: FunctionUtils.wrapGetValue(new SimpleObjectMemory(newScope), path, options), error: undefined};
-        }
-    }
-
-    public static getProperty(expression: Expression, state: MemoryInterface, options: Options): {value: any; error: string} {
-        let value: any;
-        let error: string;
-        let firstItem: any;
-        let property: any;
-
-        const children: Expression[] = expression.children;
-        ({value: firstItem, error} = children[0].tryEvaluate(state, options));
-        if (!error) {
-            if (children.length === 1) {
-                // get root value from memory
-                if (typeof firstItem === 'string') {
-                    value = FunctionUtils.wrapGetValue(state, firstItem, options);
-                } else {
-                    error = `"Single parameter ${ children[0] } is not a string."`;
-                }
-            } else {
-                // get the peoperty value from the instance
-                ({value: property, error} = children[1].tryEvaluate(state, options));
-
-                if (!error) {
-                    value = FunctionUtils.wrapGetValue(new SimpleObjectMemory(firstItem), property.toString(), options);
-                }
-            }
-        }
-
-        return {value, error};
-    }
-
-
-
-
-
     public static wrapGetValue(state: MemoryInterface, path: string, options: Options): any {
         let result = state.getValue(path);
         if (result !== undefined && result !== null) {
@@ -854,8 +733,6 @@ export class FunctionUtils {
 
         return undefined;
     }
-
-    
 
     public static foreach(expression: Expression, state: MemoryInterface, options: Options): {value: any; error: string} {
         let result: any[];
@@ -916,23 +793,6 @@ export class FunctionUtils {
         return instance !== undefined && instance !== null && typeof instance === 'number' && !Number.isNaN(instance);
     }
 
-    public static isEmpty(instance: any): boolean {
-        let result: boolean;
-        if (instance === undefined) {
-            result = true;
-        } else if (typeof instance === 'string') {
-            result = instance === '';
-        } else if (Array.isArray(instance)) {
-            result = instance.length === 0;
-        } else if (instance instanceof Map) {
-            result = instance.size === 0;
-        } else {
-            result = Object.keys(instance).length === 0;
-        }
-
-        return result;
-    }
-
     /**
      * Test result to see if True in logical comparison functions.
      * @param instance Computed value.
@@ -988,8 +848,6 @@ export class FunctionUtils {
         };
     }
 
-    
-
     public static toBinary(stringToConvert: string): Uint8Array {
         let result = new ArrayBuffer(stringToConvert.length);
         let bufferView = new Uint8Array(result);
@@ -1012,69 +870,6 @@ export class FunctionUtils {
         return {value: result, error};
     }
 
-    public static convertFromUTC(timeStamp: string, destinationTimeZone: string, format?: string): {value: any; error: string} {
-        let result: string;
-        let error: string;
-        error = this.verifyISOTimestamp(timeStamp);
-        const timeZone: string = TimeZoneConverter.windowsToIana(destinationTimeZone);
-        if (!TimeZoneConverter.verifyTimeZoneStr(timeZone)) {
-            error = `${destinationTimeZone} is not a valid timezone`;
-        }
-
-        if (!error) {
-            try {
-                result = tz(timeStamp, timeZone).format(format);
-            } catch (e) {
-                error = `${format} is not a valid timestamp format`;
-            }
-        }
-
-        return {value: result, error};
-    }
-
-    public static verifyTimeStamp(timeStamp: string): string {
-        let parsed: any;
-        let error: string;
-        parsed = moment(timeStamp);
-        if (parsed.toString() === 'Invalid date') {
-            error = `${timeStamp} is a invalid datetime`;
-        }
-
-        return error;
-    }
-
-    public static convertToUTC(timeStamp: string, sourceTimezone: string, format?: string): {value: any; error: string} {
-        let result: string;
-        let error: string;
-        let formattedSourceTime: string;
-        const timeZone: string = TimeZoneConverter.windowsToIana(sourceTimezone);
-        if (!TimeZoneConverter.verifyTimeZoneStr(timeZone)) {
-            error = `${sourceTimezone} is not a valid timezone`;
-        }
-
-        if (!error) {
-            error = this.verifyTimeStamp(timeStamp);
-            if (!error) {
-                try {
-                    const sourceTime = tz(timeStamp, timeZone);
-                    formattedSourceTime = sourceTime.format();
-                } catch (e) {
-                    error = `${timeStamp} with ${timeZone} is not a valid timestamp with specified timeZone:`;
-                }
-
-                if (!error) {
-                    try {
-                        result = tz(formattedSourceTime, 'Etc/UTC').format(format);
-                    } catch (e) {
-                        error = `${format} is not a valid timestamp format`;
-                    }
-                }
-            }
-        }
-
-        return {value: result, error};
-    }
-
     public static ticks(timeStamp: string): {value: any; error: string} {
         let parsed: any;
         let result: any;
@@ -1088,46 +883,6 @@ export class FunctionUtils {
         return {value: result, error};
     }
 
-    public static startOfDay(timeStamp: string, format?: string): {value: any; error: string} {
-        let result: string;
-        let error: string;
-        let parsed: any;
-        ({value: parsed, error} = FunctionUtils.parseTimestamp(timeStamp));
-        if (!error) {
-            const startOfDay = moment(parsed).utc().hours(0).minutes(0).second(0).millisecond(0);
-            ({value: result, error} = FunctionUtils.returnFormattedTimeStampStr(startOfDay, format));
-        }
-
-        return {value: result, error};
-    }
-
-    public static startOfHour(timeStamp: string, format?: string): {value: any; error: string} {
-        let result: string;
-        let error: string;
-        let parsed: any;
-        ({value: parsed, error} = FunctionUtils.parseTimestamp(timeStamp));
-        if (!error) {
-            const startofHour = moment(parsed).utc().minutes(0).second(0).millisecond(0);
-            ({value: result, error} = FunctionUtils.returnFormattedTimeStampStr(startofHour, format));
-        }
-
-        return {value: result, error};
-    }
-
-    public static startOfMonth(timeStamp: string, format?: string): {value: any; error: string} {
-        let result: string;
-        let error: string;
-        let parsed: any;
-        ({value: parsed, error} = FunctionUtils.parseTimestamp(timeStamp));
-        if (!error) {
-            const startofMonth = moment(parsed).utc().date(1).hours(0).minutes(0).second(0).millisecond(0);
-            ({value: result, error} = FunctionUtils.returnFormattedTimeStampStr(startofMonth, format));
-        }
-
-        return {value: result, error};
-    }
-
-    // Uri Parsing Function
     public static parseUri(uri: string): {value: any; error: string} {
         let result: URL;
         let error: string;
@@ -1135,103 +890,6 @@ export class FunctionUtils {
             result = new URL(uri);
         } catch (e) {
             error = `Invalid URI: ${uri}`;
-        }
-
-        return {value: result, error};
-    }
-
-    public static uriHost(uri: string): {value: any; error: string} {
-        let result: string;
-        let error: string;
-        let parsed: URL;
-        ({value: parsed, error} = this.parseUri(uri));
-        if (!error) {
-            try {
-                result = parsed.hostname;
-            } catch (e) {
-                error = 'invalid operation, input uri should be an absolute URI';
-            }
-        }
-
-        return {value: result, error};
-    }
-
-    public static uriPath(uri: string): {value: any; error: string} {
-        let result: string;
-        let error: string;
-        let parsed: URL;
-        ({value: parsed, error} = this.parseUri(uri));
-        if (!error) {
-            try {
-                const uriObj: URL = new URL(uri);
-                result = uriObj.pathname;
-            } catch (e) {
-                error = 'invalid operation, input uri should be an absolute URI';
-            }
-        }
-
-        return {value: result, error};
-    }
-
-    public static uriPathAndQuery(uri: string): {value: any; error: string} {
-        let result: string;
-        let error: string;
-        let parsed: URL;
-        ({value: parsed, error} = this.parseUri(uri));
-        if (!error) {
-            try {
-                result = parsed.pathname + parsed.search;
-            } catch (e) {
-                error = 'invalid operation, input uri should be an absolute URI';
-            }
-        }
-
-        return {value: result, error};
-    }
-
-    public static uriPort(uri: string): {value: any; error: string} {
-        let result: string;
-        let error: string;
-        let parsed: URL;
-        ({value: parsed, error} = this.parseUri(uri));
-        if (!error) {
-            try {
-                result = parsed.port;
-            } catch (e) {
-                error = 'invalid operation, input uri should be an absolute URI';
-            }
-        }
-
-        return {value: result, error};
-    }
-
-    public static uriQuery(uri: string): {value: any; error: string} {
-        let result: string;
-        let error: string;
-        let parsed: URL;
-        ({value: parsed, error} = this.parseUri(uri));
-        if (!error) {
-            try {
-                result = parsed.search;
-            } catch (e) {
-                error = 'invalid operation, input uri should be an absolute URI';
-            }
-        }
-
-        return {value: result, error};
-    }
-
-    public static uriScheme(uri: string): {value: any; error: string} {
-        let result: string;
-        let error: string;
-        let parsed: URL;
-        ({value: parsed, error} = this.parseUri(uri));
-        if (!error) {
-            try {
-                result = parsed.protocol.replace(':', '');
-            } catch (e) {
-                error = 'invalid operation, input uri should be an absolute URI';
-            }
         }
 
         return {value: result, error};
@@ -1263,7 +921,7 @@ export class FunctionUtils {
         }
     }
 
-    public static getPropertyCount(obj: any): number {
+    private static getPropertyCount(obj: any): number {
         let count = -1;
         if (!Array.isArray(obj)) {
             if (obj instanceof Map) {
@@ -1276,19 +934,21 @@ export class FunctionUtils {
         return count;
     }
 
-
-
-    public static commonStringify(input: any): string {
-        if (input === null || input === undefined) {
-            return '';
+    private static buildTypeValidatorError(returnType: ReturnType, childExpr: Expression, expr: Expression): string {
+        const names = Object.keys(ReturnType).filter((x): boolean => !(parseInt(x) >= 0));
+        let types = [];
+        for (const name of names) {
+            const value = ReturnType[name] as number;
+            if ((returnType & value) !== 0) {
+                types.push(name);
+            }
         }
-    
-        if (Array.isArray(input)) {
-            return input.toString();
-        } else if (typeof input === 'object') {
-            return JSON.stringify(input);
+
+        if (types.length === 1) {
+            return `${childExpr} is not a ${types[0]} expression in ${expr}.`;
         } else {
-            return input.toString();
+            const typesStr = types.join(', ');
+            return `${childExpr} in ${expr} is not any of [${typesStr}].`;
         }
     }
 }

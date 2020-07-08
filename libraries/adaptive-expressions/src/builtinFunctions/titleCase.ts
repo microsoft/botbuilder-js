@@ -1,6 +1,14 @@
-import { StringTransformEvaluator } from "./stringTransformEvaluator";
-import { ExpressionType } from "..";
-import { FunctionUtils } from "../functionUtils";
+/**
+ * @module adaptive-expressions
+ */
+/**
+ * Copyright (c) Microsoft Corporation. All rights reserved.
+ * Licensed under the MIT License.
+ */
+
+import { StringTransformEvaluator } from './stringTransformEvaluator';
+import { FunctionUtils } from '../functionUtils';
+import { ExpressionType } from '../expressionType';
 
 export class TitleCase extends StringTransformEvaluator {
     public constructor() {

@@ -1,11 +1,19 @@
+/**
+ * @module adaptive-expressions
+ */
+/**
+ * Copyright (c) Microsoft Corporation. All rights reserved.
+ * Licensed under the MIT License.
+ */
+
 import { ExpressionEvaluator, EvaluateExpressionDelegate } from '../expressionEvaluator';
 import { ReturnType, Expression } from '../expression';
 import { ExpressionType } from '../expressionType';
 import { FunctionUtils } from '../functionUtils';
 
-export class StartsWith extends ExpressionEvaluator {
+export class EndsWith extends ExpressionEvaluator {
     public constructor(){
-        super(ExpressionType.StartsWith, StartsWith.evaluator(), ReturnType.Boolean, StartsWith.validator);
+        super(ExpressionType.EndsWith, EndsWith.evaluator(), ReturnType.Boolean, EndsWith.validator);
     }
 
     private static evaluator(): EvaluateExpressionDelegate {

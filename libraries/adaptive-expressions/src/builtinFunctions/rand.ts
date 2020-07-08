@@ -1,11 +1,19 @@
+/**
+ * @module adaptive-expressions
+ */
+/**
+ * Copyright (c) Microsoft Corporation. All rights reserved.
+ * Licensed under the MIT License.
+ */
+
 import { ExpressionEvaluator, EvaluateExpressionDelegate } from '../expressionEvaluator';
-import { ReturnType, Expression } from '../expression';
+import { ReturnType } from '../expression';
 import { ExpressionType } from '../expressionType';
 import { FunctionUtils } from '../functionUtils';
 
-export class String extends ExpressionEvaluator {
+export class Rand extends ExpressionEvaluator {
     public constructor(){
-        super(ExpressionType.String, String.evaluator(), ReturnType.Number, FunctionUtils.validateBinaryNumber);
+        super(ExpressionType.Rand, Rand.evaluator(), ReturnType.Number, FunctionUtils.validateBinaryNumber);
     }
 
     private static evaluator(): EvaluateExpressionDelegate {

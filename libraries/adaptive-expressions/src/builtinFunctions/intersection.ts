@@ -1,11 +1,19 @@
+/**
+ * @module adaptive-expressions
+ */
+/**
+ * Copyright (c) Microsoft Corporation. All rights reserved.
+ * Licensed under the MIT License.
+ */
+
 import { ExpressionEvaluator, EvaluateExpressionDelegate } from '../expressionEvaluator';
 import { ReturnType, Expression } from '../expression';
 import { ExpressionType } from '../expressionType';
 import { FunctionUtils } from '../functionUtils';
 
-export class NewGuid extends ExpressionEvaluator {
+export class Intersection extends ExpressionEvaluator {
     public constructor(){
-        super(ExpressionType.NewGuid, NewGuid.evaluator(), ReturnType.Array, NewGuid.validator);
+        super(ExpressionType.Intersection, Intersection.evaluator(), ReturnType.Array, Intersection.validator);
     }
 
     private static evaluator(): EvaluateExpressionDelegate {

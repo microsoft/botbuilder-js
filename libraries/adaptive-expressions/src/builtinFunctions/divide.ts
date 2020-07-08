@@ -1,7 +1,15 @@
-import { MultivariateNumericEvaluator } from "./multivariateNumericEvaluator";
-import { ExpressionType } from "../expressionType";
-import { Expression } from "../expression";
-import { FunctionUtils } from "../functionUtils";
+/**
+ * @module adaptive-expressions
+ */
+/**
+ * Copyright (c) Microsoft Corporation. All rights reserved.
+ * Licensed under the MIT License.
+ */
+
+import { MultivariateNumericEvaluator } from './multivariateNumericEvaluator';
+import { ExpressionType } from '../expressionType';
+import { Expression } from '../expression';
+import { FunctionUtils } from '../functionUtils';
 
 export class Divide extends MultivariateNumericEvaluator {
     public constructor() {

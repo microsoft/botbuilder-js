@@ -8,6 +8,7 @@
 
 import { ExpressionEvaluator } from './expressionEvaluator';
 import { ExpressionFunctions } from './expressionFunctions';
+import { FunctionUtils } from './functionUtils';
 
 type customFunction = (args: any[]) => any;
 
@@ -71,7 +72,7 @@ export class FunctionTable implements Map<string, ExpressionEvaluator> {
                 if (param2 instanceof ExpressionEvaluator){
                     this.set(param1, param2);
                 } else {
-                    this.set(param1, new ExpressionEvaluator(param1, ExpressionFunctions.apply(param2)));
+                    this.set(param1, new ExpressionEvaluator(param1, FunctionUtils.apply(param2)));
                 }
             } 
         }

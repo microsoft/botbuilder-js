@@ -1,12 +1,20 @@
+/**
+ * @module adaptive-expressions
+ */
+/**
+ * Copyright (c) Microsoft Corporation. All rights reserved.
+ * Licensed under the MIT License.
+ */
+
 import { ExpressionEvaluator, EvaluateExpressionDelegate } from '../expressionEvaluator';
-import { ReturnType, Expression } from '../expression';
+import { ReturnType } from '../expression';
 import { ExpressionType } from '../expressionType';
 import { FunctionUtils } from '../functionUtils';
 import moment from 'moment';
 
-export class DayOfMonth extends ExpressionEvaluator {
+export class DayOfYear extends ExpressionEvaluator {
     public constructor(){
-        super(ExpressionType.DayOfMonth, DayOfMonth.evaluator(), ReturnType.Number, FunctionUtils.validateUnaryString);
+        super(ExpressionType.DayOfYear, DayOfYear.evaluator(), ReturnType.Number, FunctionUtils.validateUnaryString);
     }
 
     private static evaluator(): EvaluateExpressionDelegate {

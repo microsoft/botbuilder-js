@@ -1,5 +1,13 @@
+/**
+ * @module adaptive-expressions
+ */
+/**
+ * Copyright (c) Microsoft Corporation. All rights reserved.
+ * Licensed under the MIT License.
+ */
+
 import { ExpressionEvaluator, EvaluateExpressionDelegate } from '../expressionEvaluator';
-import { ReturnType, Expression } from '../expression';
+import { ReturnType } from '../expression';
 import { ExpressionType } from '../expressionType';
 import { FunctionUtils } from '../functionUtils';
 
@@ -25,8 +33,23 @@ export class Concat extends ExpressionEvaluator {
             } else if (isFirstList && isSecondList){
                 return firstItem.concat(secondItem);
             } else {
-                return FunctionUtils.commonStringify(firstItem) + FunctionUtils.commonStringify(secondItem);
+                return Concat.commonStringify(firstItem) + Concat.commonStringify(secondItem);
             }
         });
+    }
+
+    
+    private static commonStringify(input: any): string {
+        if (input === null || input === undefined) {
+            return '';
+        }
+    
+        if (Array.isArray(input)) {
+            return input.toString();
+        } else if (typeof input === 'object') {
+            return JSON.stringify(input);
+        } else {
+            return input.toString();
+        }
     }
 }

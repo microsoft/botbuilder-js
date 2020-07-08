@@ -1,13 +1,38 @@
-import { ComparisonEvaluator } from "./comparisonEvaluator";
-import { ExpressionType } from "../expressionType";
-import { FunctionUtils } from "../functionUtils";
+/**
+ * @module adaptive-expressions
+ */
+/**
+ * Copyright (c) Microsoft Corporation. All rights reserved.
+ * Licensed under the MIT License.
+ */
 
-export class Exists extends ComparisonEvaluator {
+import { ComparisonEvaluator } from './comparisonEvaluator';
+import { ExpressionType } from '../expressionType';
+import { FunctionUtils } from '../functionUtils';
+
+export class Empty extends ComparisonEvaluator {
     public constructor() {
-        super(ExpressionType.Exists, Exists.func, FunctionUtils.validateUnary, FunctionUtils.verifyContainer);
+        super(ExpressionType.Empty, Empty.func, FunctionUtils.validateUnary, FunctionUtils.verifyContainer);
     }
 
     private static func(args: any[]): boolean {
-        return FunctionUtils.isEmpty(args[0]);
+        return Empty.isEmpty(args[0]);
+    }
+
+    private static isEmpty(instance: any): boolean {
+        let result: boolean;
+        if (instance === undefined) {
+            result = true;
+        } else if (typeof instance === 'string') {
+            result = instance === '';
+        } else if (Array.isArray(instance)) {
+            result = instance.length === 0;
+        } else if (instance instanceof Map) {
+            result = instance.size === 0;
+        } else {
+            result = Object.keys(instance).length === 0;
+        }
+
+        return result;
     }
 }

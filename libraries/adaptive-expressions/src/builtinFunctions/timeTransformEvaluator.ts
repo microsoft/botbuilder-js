@@ -1,9 +1,17 @@
-import { ExpressionEvaluator, EvaluateExpressionDelegate } from "../expressionEvaluator";
-import { FunctionUtils } from "../functionUtils";
-import moment from "moment";
-import { Expression, ReturnType } from "../expression";
-import { MemoryInterface } from "../memory/memoryInterface";
-import { Options } from "../options";
+/**
+ * @module adaptive-expressions
+ */
+/**
+ * Copyright (c) Microsoft Corporation. All rights reserved.
+ * Licensed under the MIT License.
+ */
+
+import { ExpressionEvaluator, EvaluateExpressionDelegate } from '../expressionEvaluator';
+import { FunctionUtils } from '../functionUtils';
+import moment from 'moment';
+import { Expression, ReturnType } from '../expression';
+import { MemoryInterface } from '../memory/memoryInterface';
+import { Options } from '../options';
 
 export class TimeTransformEvaluator extends ExpressionEvaluator {
     public constructor(type: string, func: (timestamp: Date, numOfTransformation: any) => Date) {

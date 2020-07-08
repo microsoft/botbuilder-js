@@ -1,3 +1,11 @@
+/**
+ * @module adaptive-expressions
+ */
+/**
+ * Copyright (c) Microsoft Corporation. All rights reserved.
+ * Licensed under the MIT License.
+ */
+
 import { ExpressionEvaluator, EvaluateExpressionDelegate, ValidateExpressionDelegate } from '../expressionEvaluator';
 import { VerifyExpression, FunctionUtils } from '../functionUtils';
 import { ReturnType, Expression } from '../expression';

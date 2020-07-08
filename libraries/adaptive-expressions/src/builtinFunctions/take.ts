@@ -1,12 +1,20 @@
-import { ExpressionEvaluator, EvaluateExpressionDelegate } from '../expressionEvaluator';
+/**
+ * @module adaptive-expressions
+ */
+/**
+ * Copyright (c) Microsoft Corporation. All rights reserved.
+ * Licensed under the MIT License.
+ */
+
+import { ExpressionEvaluator } from '../expressionEvaluator';
 import { ReturnType, Expression } from '../expression';
 import { ExpressionType } from '../expressionType';
 import { FunctionUtils } from '../functionUtils';
 import { Options } from '../options';
 
-export class Skip extends ExpressionEvaluator {
+export class Take extends ExpressionEvaluator {
     public constructor(){
-        super(ExpressionType.Skip, Skip.evaluator, ReturnType.Array, Skip.validator);
+        super(ExpressionType.Take, Take.evaluator, ReturnType.Array, Take.validator);
     }
 
     private static evaluator(expression: Expression, state: any, options: Options): {value: any; error: string} {
