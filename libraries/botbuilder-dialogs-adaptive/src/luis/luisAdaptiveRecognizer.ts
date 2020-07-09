@@ -8,15 +8,10 @@
 import { Recognizer } from '../recognizers';
 import { StringExpression, ArrayExpression, BoolExpression } from 'adaptive-expressions';
 import { LuisPredictionOptions, LuisRecognizerOptionsV3, LuisRecognizer, LuisApplication, LuisTelemetryConstants} from 'botbuilder-ai';
-import { Configurable, DialogContext } from 'botbuilder-dialogs';
-import { BotTelemetryClient, Activity, NullTelemetryClient, RecognizerResult } from 'botbuilder-core';
+import { DialogContext } from 'botbuilder-dialogs';
+import { Activity, RecognizerResult } from 'botbuilder-core';
 
-export class LuisAdaptiveRecognizer extends Configurable {
-    /**
-     * Recognizers unique ID.
-     */
-    public id: string;
-
+export class LuisAdaptiveRecognizer extends Recognizer {
     /**
      * LUIS application ID.
      */
@@ -55,12 +50,6 @@ export class LuisAdaptiveRecognizer extends Configurable {
      * LUIS prediction options.
      */
     public predictionOptions: LuisPredictionOptions;
-
-
-    /**
-     * Telemetry client.
-     */
-    public telemetryClient: BotTelemetryClient = new NullTelemetryClient();
 
     public async recognize(dialogContext: DialogContext, activity: Activity, telemetryProperties?: { [key: string]: string }, telemetryMetrics?: { [key: string]: number }) {
         // Validate passed in activity matches turn activity 
