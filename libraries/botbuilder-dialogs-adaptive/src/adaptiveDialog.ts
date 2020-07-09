@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 import {
-    TurnContext, BotTelemetryClient, NullTelemetryClient, ActivityTypes,
+    TurnContext, ActivityTypes, telemetryTrackDialogView,
     Activity, RecognizerResult, getTopScoringIntent
 } from 'botbuilder-core';
 import { Dialog, DialogInstance, DialogReason, DialogTurnResult, DialogTurnStatus, DialogEvent, DialogContext, DialogContainer, DialogDependencies, TurnPath, DialogPath, DialogState } from 'botbuilder-dialogs';
@@ -90,10 +90,6 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
         return this.dialogSchema ? this.dialogSchema.schema : undefined;
     }
 
-    public set telemetryClient(client: BotTelemetryClient) {
-        super.telemetryClient = client ? client : new NullTelemetryClient();
-        this.dialogs.telemetryClient = client;
-    }
 
     protected ensureDependenciesInstalled(): void {
         if (this.installedDependencies) {
@@ -203,6 +199,16 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
             }
             dc.activeDialog.state[this.adaptiveKey] = {};
 
+            var properties: { [key: string]: string; } = {
+                'DialogId' : this.id,  
+                'Kind' : 'Microsoft.AdaptiveDialog',
+            };
+            this.telemetryClient.trackEvent({
+                name: 'AdaptiveDialogStart',
+                properties: properties
+            });
+            telemetryTrackDialogView(this.telemetryClient, this.id);
+
             // Evaluate events and queue up action changes
             const event: DialogEvent = { name: AdaptiveEvents.beginDialog, value: options, bubble: false };
             await this.onDialogEvent(dc, event);
@@ -226,6 +232,25 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
         } finally {
             this.onPopScopedServices(dc.context);
         }
+    }
+
+    public async endDialog(turnContext: TurnContext, instance: DialogInstance, reason: DialogReason): Promise<void> {
+        var properties: { [key: string]: string; } = {
+            'DialogId' : this.id, 
+            'Kind' : 'Microsoft.AdaptiveDialog' 
+        };
+        if (reason == DialogReason.cancelCalled) {
+            this.telemetryClient.trackEvent({
+                name: 'AdaptiveDialogCancel', 
+                properties: properties
+            });
+        } else if (reason == DialogReason.endCalled){
+            this.telemetryClient.trackEvent({
+                name: 'AdaptiveDialogComplete',
+                properties: properties
+            });
+        }
+        await super.endDialog(turnContext, instance, reason);
     }
 
     protected async onPreBubbleEvent(dc: DialogContext, event: DialogEvent): Promise<boolean> {
@@ -478,6 +503,18 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
         const selection = await this.selector.select(actionContext);
         if (selection.length > 0) {
             const evt = this.triggers[selection[0]];
+            const parser = new ExpressionParser(); // to check
+            var properties: { [key: string]: string } = {
+                'DialogId': this.id, 
+                'Expression': evt.getExpression(parser).toString(), // to check
+                'Kind': `Microsoft.${ evt.constructor.name }`,
+                'ConditionId': evt.id
+            };
+            this.telemetryClient.trackEvent({
+                name: 'AdaptiveDialogTrigger',
+                properties: properties
+            });
+
             const changes = await evt.execute(actionContext);
             if (changes && changes.length > 0) {
                 actionContext.queueChanges(changes[0]);
