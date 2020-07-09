@@ -35,7 +35,8 @@ export class RepeatDialog<O extends object = {}> extends BaseInvokeDialog<O> {
 
         repeatedIds.push(targetDialogId);
         dc.state.setValue(TurnPath.repeatedIds, repeatedIds);
-
+        
+        // set the activity processed state (default is true)
         dc.state.setValue(TurnPath.activityProcessed, this.activityProcessed.getValue(dc.state));
 
         const turnResult = await dc.parent.replaceDialog(dc.parent.activeDialog.id, boundOptions);
