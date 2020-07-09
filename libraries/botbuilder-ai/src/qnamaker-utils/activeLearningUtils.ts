@@ -8,17 +8,11 @@
 
 import { QnAMakerResult } from '../qnamaker-interfaces/qnamakerResult';
 
-/** Minimum Score For Low Score Variation. */
-const MinimumScoreForLowScoreVariation = 20;
-
 /** Previous Low Score Variation Multiplier. */
 const PreviousLowScoreVariationMultiplier = 0.7;
 
 /** Max Low Score Variation Multiplier. */
 const MaxLowScoreVariationMultiplier = 1.0;
-
-/** Maximum Score For Low Score Variation. */
-const MaximumScoreForLowScoreVariation = 95.0;
 
 /**
  * Generate Answer api utils class.
@@ -26,7 +20,14 @@ const MaximumScoreForLowScoreVariation = 95.0;
  * @remarks
  * This class is helper class for generate answer api, which is used to make queries to a single QnA Maker knowledge base and return the result.
  */
-export class ActiveLearningUtils {	
+export class ActiveLearningUtils {
+
+    /** Minimum Score For Low Score Variation. */
+    static MinimumScoreForLowScoreVariation = 20;
+
+    /** Maximum Score For Low Score Variation. */
+    static MaximumScoreForLowScoreVariation = 95.0;
+
     /**
     * Returns list of qnaSearch results which have low score variation.
     * @param {QnAMakerResult[]} qnaSearchResults A list of results returned from the QnA getAnswer call.
@@ -44,14 +45,14 @@ export class ActiveLearningUtils {
         let filteredQnaSearchResult = [];
         let topAnswerScore = qnaSearchResults[0].score * 100;
 
-        if (topAnswerScore > MaximumScoreForLowScoreVariation) {
+        if (topAnswerScore > ActiveLearningUtils.MaximumScoreForLowScoreVariation) {
             filteredQnaSearchResult.push(qnaSearchResults[0]);
             return filteredQnaSearchResult;
         }
 
         let prevScore = topAnswerScore;
 
-        if (topAnswerScore > MinimumScoreForLowScoreVariation) {
+        if (topAnswerScore > ActiveLearningUtils.MinimumScoreForLowScoreVariation) {
             filteredQnaSearchResult.push(qnaSearchResults[0]);
 
             for (let i = 1; i < qnaSearchResults.length; i++) {
