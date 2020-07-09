@@ -6,9 +6,9 @@
  * Licensed under the MIT License.
  */
 
-import { RecognizerResult, Activity, getTopScoringIntent } from 'botbuilder-core';
+import { RecognizerResult, Activity, getTopScoringIntent, BotTelemetryClient, NullTelemetryClient } from 'botbuilder-core';
 import { DialogContext } from 'botbuilder-dialogs';
-import { Recognizer } from './recognizer';
+import { Recognizer, fillRecognizerResultTelemetryProperties } from './recognizer';
 
 export class RecognizerSet implements Recognizer {
 
@@ -16,7 +16,11 @@ export class RecognizerSet implements Recognizer {
 
     public recognizers: Recognizer[] = [];
 
-    public async recognize(dialogContext: DialogContext, activity: Activity): Promise<RecognizerResult> {
+    /**
+     * Telemetry client.
+     */
+    public telemetryClient: BotTelemetryClient = new NullTelemetryClient();
+    public async recognize(dialogContext: DialogContext, activity: Activity, telemetryProperties?: { [key: string]: string }, telemetryMetrics?: { [key: string]: number }): Promise<RecognizerResult> {
         let text: string;
         let alteredText: string;
         const intents = {};
@@ -24,7 +28,7 @@ export class RecognizerSet implements Recognizer {
         entities['$instance'] = {};
 
         const results = await Promise.all(this.recognizers.map((recognizer: Recognizer): Promise<RecognizerResult> => {
-            return recognizer.recognize(dialogContext, activity);
+            return recognizer.recognize(dialogContext, activity, telemetryProperties, telemetryMetrics);
         }));
 
         for (let i = 0; i < results.length; i++) {
@@ -84,6 +88,14 @@ export class RecognizerSet implements Recognizer {
         }
 
         const recognizerResult: RecognizerResult = { text, alteredText, intents, entities };
+
+        this.telemetryClient.trackEvent(
+            {
+                name: 'RecognizerSetResult',
+                properties: fillRecognizerResultTelemetryProperties(recognizerResult, telemetryProperties, dialogContext),
+                metrics: telemetryMetrics
+            });
+        
         return recognizerResult;
     }
 }

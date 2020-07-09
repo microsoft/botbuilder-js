@@ -6,9 +6,9 @@
  * Licensed under the MIT License.
  */
 
-import { RecognizerResult, Activity, getTopScoringIntent } from 'botbuilder-core';
+import { RecognizerResult, Activity, getTopScoringIntent, BotTelemetryClient, NullTelemetryClient } from 'botbuilder-core';
 import { DialogContext } from 'botbuilder-dialogs';
-import { Recognizer } from './recognizer';
+import { Recognizer, fillRecognizerResultTelemetryProperties } from './recognizer';
 
 const deferPrefix = 'DeferToRecognizer_';
 
@@ -18,7 +18,12 @@ export class CrossTrainedRecognizerSet implements Recognizer {
 
     public recognizers: Recognizer[] = [];
 
-    public async recognize(dialogContext: DialogContext, activity: Activity): Promise<RecognizerResult> {
+    /**
+     * Telemetry client.
+     */
+    public telemetryClient: BotTelemetryClient = new NullTelemetryClient();
+
+    public async recognize(dialogContext: DialogContext, activity: Activity, telemetryProperties?: { [key: string]: string }, telemetryMetrics?: { [key: string]: number }): Promise<RecognizerResult> {
         for (let i = 0; i < this.recognizers.length; i++) {
             if (!this.recognizers[i].id) {
                 throw new Error('This recognizer requires that each recognizer in the set have an id.');
@@ -26,9 +31,21 @@ export class CrossTrainedRecognizerSet implements Recognizer {
         }
 
         const results = await Promise.all(this.recognizers.map((recognizer: Recognizer): Promise<RecognizerResult> => {
-            return recognizer.recognize(dialogContext, activity);
+            return recognizer.recognize(dialogContext, activity, telemetryProperties, telemetryMetrics);
         }));
+        
+        var result = this.processResults(results);
+        this.telemetryClient.trackEvent(
+            {
+                name: 'CrossTrainedRecognizerSetResult',
+                properties: fillRecognizerResultTelemetryProperties(result, telemetryProperties, dialogContext),
+                metrics: telemetryMetrics
+            });
+        return result;
+        
+    }
 
+    private processResults(results: RecognizerResult[]): RecognizerResult{
         const recognizerResults = {};
         const intents = {};
         let text = '';

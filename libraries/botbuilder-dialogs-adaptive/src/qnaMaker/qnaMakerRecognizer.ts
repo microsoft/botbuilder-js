@@ -7,9 +7,9 @@
  */
 
 import { DialogContext } from 'botbuilder-dialogs';
-import { RecognizerResult, Activity } from 'botbuilder-core';
+import { RecognizerResult, Activity, BotTelemetryClient, NullTelemetryClient } from 'botbuilder-core';
 import { RankerTypes, QnAMakerMetadata, QnAMaker, QnAMakerEndpoint, QnAMakerOptions, QnAMakerResult, QnARequestContext } from 'botbuilder-ai';
-import { Recognizer } from '../recognizers/recognizer';
+import { Recognizer, fillRecognizerResultTelemetryProperties } from '../recognizers/recognizer';
 import { StringExpression, IntExpression, NumberExpression, BoolExpression, ArrayExpression, ObjectExpression } from 'adaptive-expressions';
 
 const intentPrefix = 'intent=';
@@ -21,6 +21,11 @@ export class QnAMakerRecognizer implements Recognizer {
      * Id of the recognizer.
      */
     public id: string;
+
+    /**
+     * Telemetry client.
+     */
+    public telemetryClient: BotTelemetryClient = new NullTelemetryClient();
 
     /**
      * Knowledgebase id of your QnA maker knowledgebase.
@@ -83,7 +88,7 @@ export class QnAMakerRecognizer implements Recognizer {
         if (endpointKey) { this.endpointKey = new StringExpression(endpointKey); }
     }
 
-    public async recognize(dc: DialogContext, activity: Activity): Promise<RecognizerResult> {
+    public async recognize(dc: DialogContext, activity: Activity, telemetryProperties?: { [key: string]: string }, telemetryMetrics?: { [key: string]: number }): Promise<RecognizerResult> {
         // identify matched intents
         const recognizerResult: RecognizerResult = {
             text: activity.text,
@@ -145,7 +150,12 @@ export class QnAMakerRecognizer implements Recognizer {
         } else {
             recognizerResult.intents['None'] = { score: 1 };
         }
-
+        this.telemetryClient.trackEvent(
+            {
+                name: "QnAMakerRecognizerResult",
+                properties: fillRecognizerResultTelemetryProperties(recognizerResult, telemetryProperties, dc),
+                metrics: telemetryMetrics
+            });
         return recognizerResult;
     }
 

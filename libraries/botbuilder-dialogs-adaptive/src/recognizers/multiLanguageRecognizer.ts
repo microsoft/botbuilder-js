@@ -6,9 +6,9 @@
  * Licensed under the MIT License.
  */
 
-import { RecognizerResult, Activity } from 'botbuilder-core';
+import { RecognizerResult, Activity, BotTelemetryClient, NullTelemetryClient } from 'botbuilder-core';
 import { DialogContext } from 'botbuilder-dialogs';
-import { Recognizer } from './recognizer';
+import { Recognizer, fillRecognizerResultTelemetryProperties } from './recognizer';
 import { LanguagePolicy } from '../languagePolicy';
 
 export class MultiLanguageRecognizer implements Recognizer {
@@ -18,8 +18,13 @@ export class MultiLanguageRecognizer implements Recognizer {
     public languagePolicy: any = LanguagePolicy.defaultPolicy;
 
     public recognizers: { [locale: string]: Recognizer };
+    
+    /**
+     * Telemetry client.
+     */
+    public telemetryClient: BotTelemetryClient = new NullTelemetryClient();
 
-    public async recognize(dialogContext: DialogContext, activity: Activity): Promise<RecognizerResult> {
+    public async recognize(dialogContext: DialogContext, activity: Activity, telemetryProperties?: { [key: string]: string }, telemetryMetrics?: { [key: string]: number }): Promise<RecognizerResult> {
         const locale = activity.locale || '';
         let policy: string[] = [];
         if (this.languagePolicy.hasOwnProperty(locale)) {
@@ -35,7 +40,15 @@ export class MultiLanguageRecognizer implements Recognizer {
             const option = policy[i];
             if (this.recognizers.hasOwnProperty(option)) {
                 const recognizer = this.recognizers[option];
-                return await recognizer.recognize(dialogContext, activity);
+                var result = await recognizer.recognize(dialogContext, activity, telemetryProperties, telemetryMetrics);
+                this.telemetryClient.trackEvent(
+                    {
+                        name: 'MultiLanguagesRecognizerResult',
+                        properties: fillRecognizerResultTelemetryProperties(result, telemetryProperties, dialogContext),
+                        metrics: telemetryMetrics
+                    });
+                return result;
+
             }
         }
 
@@ -44,6 +57,14 @@ export class MultiLanguageRecognizer implements Recognizer {
             intents: {},
             entities: {}
         };
+
+        this.telemetryClient.trackEvent(
+            {
+                name: 'MultiLanguagesRecognizerResult',
+                properties: fillRecognizerResultTelemetryProperties(recognizerResult, telemetryProperties, dialogContext),
+                metrics: telemetryMetrics
+            });
+
         return recognizerResult;
     }
 }
