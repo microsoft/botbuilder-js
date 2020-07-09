@@ -197,7 +197,7 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
             }
             dc.activeDialog.state[this.adaptiveKey] = {};
 
-            var properties: { [key: string]: string; } = {
+            var properties: { [key: string]: string } = {
                 'DialogId' : this.id,  
                 'Kind' : 'Microsoft.AdaptiveDialog',
             };
@@ -233,7 +233,7 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
     }
 
     public async endDialog(turnContext: TurnContext, instance: DialogInstance, reason: DialogReason): Promise<void> {
-        var properties: { [key: string]: string; } = {
+        var properties: { [key: string]: string } = {
             'DialogId' : this.id, 
             'Kind' : 'Microsoft.AdaptiveDialog' 
         };
