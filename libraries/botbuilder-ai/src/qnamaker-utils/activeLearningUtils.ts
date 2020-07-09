@@ -21,7 +21,6 @@ const MaxLowScoreVariationMultiplier = 1.0;
  * This class is helper class for generate answer api, which is used to make queries to a single QnA Maker knowledge base and return the result.
  */
 export class ActiveLearningUtils {
-
     /** Minimum Score For Low Score Variation. */
     static MinimumScoreForLowScoreVariation = 20;
 
