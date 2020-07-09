@@ -279,7 +279,7 @@ npm start
   - Works in personal, group chat and teams
   - On a Teams channel, group chat or personal chat with the bot installed, type "@IntegrationBottask module".  The "task module" is the command sent to the bot.
   - The bot should respond with Task Module Invocation Hero Card.
-  - Click on the Adaptive Card button.  A task module popup shows up, type some text and click on Submit button.  Bot should reply with 'Thanks' inside the popup and also with something like 'handleTeamsTaskModuleFetchAsync Value: {"data":{"usertext":"<<USER TEXT>>"},"context":{"theme":"dark"}}'.
+  - Click on the Adaptive Card button.  A task module popup shows up, type some text and click on Submit button.  Bot should reply with 'Thanks' inside the popup and also with something like 'handleTeamsTaskModuleFetch Value: {"data":{"usertext":"<<USER TEXT>>"},"context":{"theme":"dark"}}'.
 
 - Search Based Messaging Extension
   - Type @IntegrationBothello on the search box and hit enter.  There should be three hero cards displayed.
