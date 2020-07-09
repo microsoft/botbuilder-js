@@ -22,7 +22,7 @@ export class Or extends ExpressionEvaluator {
         super(ExpressionType.Or, Or.evaluator, ReturnType.Boolean, FunctionUtils.validateAtLeastOne);
     }
 
-    public static evaluator(expression: Expression, state: MemoryInterface, options: Options): {value: any; error: string} {
+    private static evaluator(expression: Expression, state: MemoryInterface, options: Options): {value: any; error: string} {
         let result = false;
         let error: string;
         for (const child of expression.children) {

@@ -37,7 +37,7 @@ export class UriHost extends ExpressionEvaluator {
         return {value, error};
     }
 
-    public static evalUriHost(uri: string): {value: any; error: string} {
+    private static evalUriHost(uri: string): {value: any; error: string} {
         let result: string;
         let error: string;
         let parsed: URL;

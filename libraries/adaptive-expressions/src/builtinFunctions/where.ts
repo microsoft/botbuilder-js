@@ -24,7 +24,7 @@ export class Where extends ExpressionEvaluator {
         super(ExpressionType.Where, Where.evaluator, ReturnType.Boolean, FunctionUtils.validateForeach);
     }
 
-    public static evaluator(expression: Expression, state: MemoryInterface, options: Options): {value: any; error: string} {
+    private static evaluator(expression: Expression, state: MemoryInterface, options: Options): {value: any; error: string} {
         let result: any;
         let error: string;
         let instance: any;

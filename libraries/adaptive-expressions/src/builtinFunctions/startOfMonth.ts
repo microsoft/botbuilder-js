@@ -39,7 +39,7 @@ export class StartOfMonth extends ExpressionEvaluator {
         return {value, error};
     }
 
-    public static evalStartOfMonth(timeStamp: string, format?: string): {value: any; error: string} {
+    private static evalStartOfMonth(timeStamp: string, format?: string): {value: any; error: string} {
         let result: string;
         let error: string;
         let parsed: any;

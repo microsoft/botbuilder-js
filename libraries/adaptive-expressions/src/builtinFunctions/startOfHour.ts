@@ -39,7 +39,7 @@ export class StartOfHour extends ExpressionEvaluator {
         return {value, error};
     }
 
-    public static evalStartOfHour(timeStamp: string, format?: string): {value: any; error: string} {
+    private static evalStartOfHour(timeStamp: string, format?: string): {value: any; error: string} {
         let result: string;
         let error: string;
         let parsed: any;

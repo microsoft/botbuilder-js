@@ -39,7 +39,7 @@ export class StartOfDay extends ExpressionEvaluator {
         return {value, error};
     }
 
-    public static evalStartOfDay(timeStamp: string, format?: string): {value: any; error: string} {
+    private static evalStartOfDay(timeStamp: string, format?: string): {value: any; error: string} {
         let result: string;
         let error: string;
         let parsed: any;

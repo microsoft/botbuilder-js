@@ -22,7 +22,7 @@ export class Element extends ExpressionEvaluator {
         super(ExpressionType.Element, Element.evaluator, ReturnType.Object, FunctionUtils.validateBinary);
     }
 
-    public static evaluator(expression: Expression, state: MemoryInterface, options: Options): {value: any; error: string} {
+    private static evaluator(expression: Expression, state: MemoryInterface, options: Options): {value: any; error: string} {
         let value: any;
         let error: string;
         const instance: Expression = expression.children[0];

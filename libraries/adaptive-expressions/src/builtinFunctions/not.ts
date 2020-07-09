@@ -22,7 +22,7 @@ export class Not extends ExpressionEvaluator {
         super(ExpressionType.Not, Not.evaluator, ReturnType.Boolean, FunctionUtils.validateUnary);
     }
 
-    public static evaluator(expression: Expression, state: MemoryInterface, options: Options): {value: any; error: string} {
+    private static evaluator(expression: Expression, state: MemoryInterface, options: Options): {value: any; error: string} {
         let result = false;
         let error: string;
         const newOptions = new Options(options);
