@@ -187,7 +187,7 @@ export class TelemetryLoggerMiddleware implements Middleware {
     protected async fillReceiveEventProperties(activity: Activity, telemetryProperties?: {[key: string]:string}): Promise<{ [key: string]: string }> {
         const properties: { [key: string]: string } = {};
 
-        if (!activity) {
+        if (activity) {
             properties[TelemetryConstants.fromIdProperty] = activity.from ? activity.from.id : '';        
             properties[TelemetryConstants.conversationNameProperty] = activity.conversation.name || '';        
             properties[TelemetryConstants.localeProperty] = activity.locale || '';
@@ -229,7 +229,7 @@ export class TelemetryLoggerMiddleware implements Middleware {
     protected async fillSendEventProperties(activity: Activity, telemetryProperties?: {[key: string]:string}): Promise<{ [key: string]: string }> {
         const properties: { [key: string]: string } = {};
 
-        if (!activity)
+        if (activity)
         {
             properties[TelemetryConstants.replyActivityIdProperty] = activity.replyToId || '';
             properties[TelemetryConstants.recipientIdProperty] = (activity && activity.recipient && activity.recipient.id) ? activity.recipient.id : '';
