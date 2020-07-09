@@ -3,7 +3,6 @@
 # 
 
 # "name" here defines the build number format. Build number is accessed via $(Build.BuildNumber)
-
 name: $(Build.BuildId)
 trigger: none
 pr: none
@@ -11,3 +10,40 @@ pr: none
 pool:
   name: Azure Pipelines
   demands: npm
+
+# TODO: variables
+# BotName: defined in Azure
+
+
+stages:
+  - stage: Get_Latest_BotBuilderJS_Daily_Version
+    jobs:
+      - job: Get_Latest_BotBuilderJS_Daily_Version
+        steps:
+          - powershell: |
+              $myGetPersonalAccessToken = "$(MyGetPersonalAccessToken)";
+              $myGetFeedName = "botbuilder-v4-js-daily";
+              $packageName = "botbuilder";
+              
+              $url = "https://botbuilder.myget.org/F/$myGetFeedName/auth/$myGetPersonalAccessToken/api/v2/feed-state";
+              
+              Write-Host "Get latest $packageName version number from MyGet $myGetFeedName";
+              $result = Invoke-RestMethod -Uri $url -Method Get -ContentType "application/json";
+              
+              $package = $result.packages | Where-Object {$_.id -eq $packageName};
+              [string]$latestVersion = $package.versions[-1];
+              
+              $package.id;
+              $latestVersion;
+              "##vso[task.setvariable variable=LatestVersion;]$latestVersion";
+            displayName: 'Get latest botbuilder package version from MyGet - https://botbuilder.myget.org/gallery/botbuilder-v4-js-daily'
+            
+  - stage: Tag
+    condition: succeededOrFailed()
+    jobs:
+      - job: Tag
+        steps:
+          - task: colinsalmcorner.colinsalmcorner-buildtasks.tag-build-task.tagBuildOrRelease@0
+            displayName: 'Tag Build with botbuilder version'
+            inputs:
+              tags: 'Using botbuilder version $(LatestVersion)'
