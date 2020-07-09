@@ -8,7 +8,7 @@
 
 import { ExpressionEvaluator } from '../expressionEvaluator';
 import { FunctionUtils } from '../functionUtils';
-import { ReturnType } from '../expression';
+import { ReturnType } from '../returnType';
 
 /**
  * Evaluator that transforms a string to another string.

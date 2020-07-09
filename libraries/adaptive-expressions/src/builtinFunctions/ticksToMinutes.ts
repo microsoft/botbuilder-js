@@ -7,7 +7,8 @@
  */
 
 import { ExpressionEvaluator } from '../expressionEvaluator';
-import { ReturnType, Expression } from '../expression';
+import { Expression } from '../expression';
+import { ReturnType } from '../returnType';
 import { ExpressionType } from '../expressionType';
 import { FunctionUtils } from '../functionUtils';
 import { MemoryInterface } from '../memory/memoryInterface';
@@ -31,7 +32,7 @@ export class TicksToMinutes extends ExpressionEvaluator {
         ({args, error} = FunctionUtils.evaluateChildren(expr, state, options));
         if (!error) {
             if (Number.isInteger(args[0])) {
-                value = args[0] / this.TicksPerMinute;
+                value = args[0] / TicksToMinutes.TicksPerMinute;
             } else {
                 error = `${expr} should contain an integer of ticks`;
             }

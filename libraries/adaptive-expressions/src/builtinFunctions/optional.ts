@@ -7,7 +7,7 @@
  */
 
 import { ExpressionEvaluator, EvaluateExpressionDelegate } from '../expressionEvaluator';
-import { ReturnType } from '../expression';
+import { ReturnType } from '../returnType';
 import { ExpressionType } from '../expressionType';
 import { FunctionUtils } from '../functionUtils';
 
@@ -20,6 +20,6 @@ export class Optional extends ExpressionEvaluator {
     }
 
     private static evaluator(): EvaluateExpressionDelegate {
-        throw new Error();
+        return undefined;
     }
 }

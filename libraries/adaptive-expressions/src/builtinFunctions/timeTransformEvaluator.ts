@@ -9,7 +9,8 @@
 import { ExpressionEvaluator, EvaluateExpressionDelegate } from '../expressionEvaluator';
 import { FunctionUtils } from '../functionUtils';
 import moment from 'moment';
-import { Expression, ReturnType } from '../expression';
+import { Expression } from '../expression';
+import { ReturnType } from '../returnType';
 import { MemoryInterface } from '../memory/memoryInterface';
 import { Options } from '../options';
 

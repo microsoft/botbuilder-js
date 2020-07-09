@@ -7,7 +7,8 @@
  */
 
 import { ExpressionEvaluator } from '../expressionEvaluator';
-import { ReturnType, Expression } from '../expression';
+import { Expression } from '../expression';
+import { ReturnType } from '../returnType';
 import { ExpressionType } from '../expressionType';
 import { FunctionUtils } from '../functionUtils';
 import { MemoryInterface } from '../memory/memoryInterface';
@@ -21,7 +22,7 @@ import { SimpleObjectMemory } from '../memory/simpleObjectMemory';
  */
 export class Where extends ExpressionEvaluator {
     public constructor(){
-        super(ExpressionType.Where, Where.evaluator, ReturnType.Boolean, FunctionUtils.validateForeach);
+        super(ExpressionType.Where, Where.evaluator, ReturnType.Array, FunctionUtils.validateForeach);
     }
 
     private static evaluator(expression: Expression, state: MemoryInterface, options: Options): {value: any; error: string} {

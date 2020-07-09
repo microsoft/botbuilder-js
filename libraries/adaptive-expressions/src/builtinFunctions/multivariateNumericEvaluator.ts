@@ -8,7 +8,7 @@
 
 import { ExpressionEvaluator, EvaluateExpressionDelegate } from '../expressionEvaluator';
 import { VerifyExpression, FunctionUtils } from '../functionUtils';
-import { ReturnType } from '../expression';
+import { ReturnType } from '../returnType';
 
 /**
  * Numeric operators that can have 2 or more args.

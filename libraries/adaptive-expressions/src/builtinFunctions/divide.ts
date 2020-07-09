@@ -20,7 +20,7 @@ export class Divide extends MultivariateNumericEvaluator {
     }
 
     private static func(args: any[]): number {
-        return Number(args[0]) / Number(args[1]);
+        return Math.floor(Number(args[0]) / Number(args[1]));
     }
 
     private static verify(val: any, expression: Expression, pos: number): string {

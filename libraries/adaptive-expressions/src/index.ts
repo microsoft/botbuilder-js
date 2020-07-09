@@ -25,3 +25,4 @@ export * from './converters';
 export * from './expressionProperties';
 export * from './builtinFunctions';
 export * from './functionUtils';
+export * from './returnType';

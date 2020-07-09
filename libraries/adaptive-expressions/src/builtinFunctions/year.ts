@@ -7,7 +7,7 @@
  */
 
 import { ExpressionEvaluator, EvaluateExpressionDelegate } from '../expressionEvaluator';
-import { ReturnType } from '../expression';
+import { ReturnType } from '../returnType';
 import { ExpressionType } from '../expressionType';
 import { FunctionUtils } from '../functionUtils';
 
@@ -16,7 +16,7 @@ import { FunctionUtils } from '../functionUtils';
  */
 export class Year extends ExpressionEvaluator {
     public constructor(){
-        super(ExpressionType.Date, Year.evaluator(), ReturnType.Number, FunctionUtils.validateUnaryString);
+        super(ExpressionType.Year, Year.evaluator(), ReturnType.Number, FunctionUtils.validateUnaryString);
     }
 
     private static evaluator(): EvaluateExpressionDelegate {

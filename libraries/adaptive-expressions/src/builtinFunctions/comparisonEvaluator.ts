@@ -8,7 +8,8 @@
 
 import { ExpressionEvaluator, EvaluateExpressionDelegate, ValidateExpressionDelegate } from '../expressionEvaluator';
 import { VerifyExpression, FunctionUtils } from '../functionUtils';
-import { ReturnType, Expression } from '../expression';
+import { Expression } from '../expression';
+import { ReturnType } from '../returnType';
 import { MemoryInterface, Options } from '..';
 
 /**

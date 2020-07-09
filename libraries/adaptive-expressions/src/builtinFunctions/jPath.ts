@@ -7,7 +7,8 @@
  */
 
 import { ExpressionEvaluator, EvaluateExpressionDelegate } from '../expressionEvaluator';
-import { ReturnType, Expression } from '../expression';
+import { Expression } from '../expression';
+import { ReturnType } from '../returnType';
 import { ExpressionType } from '../expressionType';
 import { FunctionUtils } from '../functionUtils';
 import * as jsPath from 'jspath';

@@ -7,13 +7,12 @@
  */
 
 import { ExpressionEvaluator } from '../expressionEvaluator';
-import { ReturnType, Expression } from '../expression';
+import { ReturnType } from '../returnType';
 import { ExpressionType } from '../expressionType';
 import { FunctionUtils } from '../functionUtils';
 import { SimpleObjectMemory } from '../memory/simpleObjectMemory';
 import { MemoryInterface } from '../memory/memoryInterface';
 import { Options } from '../options';
-import { Constant } from '../constant';
 
 /**
  * Used to access the variable value corresponding to the path.
@@ -23,9 +22,9 @@ export class Accessor extends ExpressionEvaluator {
         super(ExpressionType.Accessor, Accessor.evaluator, ReturnType.Object, Accessor.validator);
     }
 
-    private static evaluator(expression: Expression, state: MemoryInterface, options: Options): {value: any; error: string} {
+    private static evaluator(expression: any, state: MemoryInterface, options: Options): {value: any; error: string} {
         let path: string;
-        let left: Expression;
+        let left: any;
         let error: string;
         ({path, left, error} = FunctionUtils.tryAccumulatePath(expression, state, options));
         if (error) {
@@ -47,11 +46,11 @@ export class Accessor extends ExpressionEvaluator {
         }
     }
 
-    private static validator(expression: Expression): void {
-        const children: Expression[] = expression.children;
+    private static validator(expression: any): void {
+        const children: any[] = expression.children;
         if (children.length === 0
-            || !(children[0] instanceof Constant)
-            || (children[0] as Constant).returnType !== ReturnType.String) {
+            || children[0].type !== ExpressionType.Constant
+            || children[0].returnType !== ReturnType.String) {
             throw new Error(`${expression} must have a string as first argument.`);
         }
 

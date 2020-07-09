@@ -7,7 +7,8 @@
  */
 
 import { ExpressionEvaluator } from '../expressionEvaluator';
-import { ReturnType, Expression } from '../expression';
+import { Expression } from '../expression';
+import { ReturnType } from '../returnType';
 import { ExpressionType } from '../expressionType';
 import { FunctionUtils } from '../functionUtils';
 
@@ -16,7 +17,7 @@ import { FunctionUtils } from '../functionUtils';
  */
 export class SortByDescending extends ExpressionEvaluator {
     public constructor(){
-        super(ExpressionType.NewGuid, FunctionUtils.sortBy(true), ReturnType.Array, SortByDescending.validator);
+        super(ExpressionType.SortByDescending, FunctionUtils.sortBy(true), ReturnType.Array, SortByDescending.validator);
     }
 
     private static validator(expression: Expression): void {

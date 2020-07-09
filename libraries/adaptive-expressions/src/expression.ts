@@ -13,36 +13,7 @@ import { SimpleObjectMemory, MemoryInterface } from './memory';
 import { Extensions } from './extensions';
 import { ExpressionParser } from './parser';
 import { Options } from './options';
-
-/**
- * Type expected from evalating an expression.
- */
-export enum ReturnType {
-    /**
-     * True or false boolean value.
-     */
-    Boolean = 1,
-
-    /**
-     * Numerical value like int, float, double, ...
-     */
-    Number = 2,
-
-    /**
-     * Any value is possible.
-     */
-    Object = 4,
-
-    /**
-     * String value.
-     */
-    String = 8,
-
-    /**
-     * Array value.
-     */
-    Array = 16,
-}
+import { ReturnType } from './returnType';
 
 /**
  * An expression which can be analyzed or evaluated to produce a value.

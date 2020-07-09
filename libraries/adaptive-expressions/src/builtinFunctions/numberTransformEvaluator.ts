@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 
-import { ReturnType } from '../expression';
+import { ReturnType } from '../returnType';
 import { FunctionUtils } from '../functionUtils';
 import { EvaluateExpressionDelegate, ExpressionEvaluator } from '../expressionEvaluator';
 
