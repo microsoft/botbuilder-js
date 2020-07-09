@@ -81,6 +81,7 @@ export class DialogManager extends Configurable {
     public set rootDialog(dialog: Dialog) {
         this.dialogSet.add(dialog);
         this.rootDialogId = dialog.id;
+        this.dialogSet.telemetryClient = dialog.telemetryClient;
     }
 
     public get rootDialog(): Dialog {
