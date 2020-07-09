@@ -10,10 +10,10 @@ import { ComponentRegistration, ResourceExplorer, TypeBuilder, BuilderRegistrati
 import { Choice, ListStyle, ChoiceFactoryOptions, FindChoicesOptions } from 'botbuilder-dialogs';
 import { AdaptiveTypeBuilder } from './adaptiveTypeBuilder';
 import { AdaptiveDialog } from './adaptiveDialog';
-import { BeginDialog, BeginSkill, BreakLoop, CancelAllDialogs, ContinueLoop, DeleteActivity, DeleteProperties, DeleteProperty, EditActions, EditArray, EmitEvent, EndDialog, EndTurn, ForEach, ForEachPage, GetActivityMembers, GetConversationMembers, GotoAction, IfCondition, LogAction, RepeatDialog, ReplaceDialog, SendActivity, SetProperties, SetProperty, SignOutUser, SwitchCondition, TraceActivity, UpdateActivity, ArrayChangeType, PropertyAssignmentConverter, HttpRequest, HttpHeadersConverter, ResponsesTypes } from './actions';
+import { BeginDialog, BeginSkill, BreakLoop, CancelAllDialogs, CancelDialog, ContinueLoop, DeleteActivity, DeleteProperties, DeleteProperty, EditActions, EditArray, EmitEvent, EndDialog, EndTurn, ForEach, ForEachPage, GetActivityMembers, GetConversationMembers, GotoAction, IfCondition, LogAction, RepeatDialog, ReplaceDialog, SendActivity, SetProperties, SetProperty, SignOutUser, SwitchCondition, TraceActivity, UpdateActivity, ArrayChangeType, PropertyAssignmentConverter, HttpRequest, HttpHeadersConverter, ResponsesTypes } from './actions';
 import { AttachmentInput, ChoiceInput, ConfirmInput, DateTimeInput, NumberInput, OAuthInput, TextInput, AttachmentOutputFormat, ChoiceOutputFormat } from './input';
-import { OnActivity, OnAssignEntity, OnBeginDialog, OnCancelDialog, OnChooseEntity, OnChooseIntent, OnChooseProperty, OnClearProperty, OnCondition, OnConversationUpdateActivity, OnCustomEvent, OnDialogEvent, OnEndOfActions, OnEndOfConversationActivity, OnError, OnEventActivity, OnHandoffActivity, OnIntent, OnInvokeActivity, OnMessageActivity, OnMessageDeleteActivity, OnMessageReactionActivity, OnMessageUpdateActivity, OnQnAMatch, OnRepromptDialog, OnTypingActivity, OnUnknownIntent } from './conditions';
-import { CrossTrainedRecognizerSet, MultiLanguageRecognizer, RecognizerSet, ValueRecognizer, RegexRecognizer, IntentPatternConverter } from './recognizers';
+import { OnActivity, OnAssignEntity, OnBeginDialog, OnCancelDialog, OnChooseEntity, OnChooseIntent, OnChooseProperty, OnClearProperty, OnCondition, OnConversationUpdateActivity, OnDialogEvent, OnEndOfActions, OnEndOfConversationActivity, OnError, OnEventActivity, OnHandoffActivity, OnIntent, OnInvokeActivity, OnMessageActivity, OnMessageDeleteActivity, OnMessageReactionActivity, OnMessageUpdateActivity, OnQnAMatch, OnRepromptDialog, OnTypingActivity, OnUnknownIntent } from './conditions';
+import { CrossTrainedRecognizerSet, MultiLanguageRecognizer, RecognizerSet, RegexRecognizer, IntentPatternConverter } from './recognizers';
 import { AgeEntityRecognizer, ConfirmationEntityRecognizer, CurrencyEntityRecognizer, DateTimeEntityRecognizer, DimensionEntityRecognizer, EmailEntityRecognizer, GuidEntityRecognizer, HashtagEntityRecognizer, IpEntityRecognizer, MentionEntityRecognizer, NumberEntityRecognizer, OrdinalEntityRecognizer, PercentageEntityRecognizer, PhoneNumberEntityRecognizer, RegexEntityRecognizer, TemperatureEntityRecognizer, UrlEntityRecognizer } from './recognizers/entityRecognizers';
 import { ObjectExpressionConverter, BoolExpressionConverter, StringExpressionConverter, EnumExpressionConverter, ValueExpressionConverter, NumberExpressionConverter, ExpressionConverter, ArrayExpressionConverter, IntExpressionConverter } from 'adaptive-expressions';
 import { DialogExpressionConverter, TextTemplateConverter, ActivityTemplateConverter, RecognizerConverter, MultiLanguageRecognizerConverter } from './converters';
@@ -81,8 +81,15 @@ export class AdaptiveDialogComponentRegistration implements ComponentRegistratio
         }));
         this.registerBuilder('Microsoft.CancelAllDialogs', new AdaptiveTypeBuilder(CancelAllDialogs, this._resourceExplorer, {
             'eventName': new StringExpressionConverter(),
-            'eventValue': new StringExpressionConverter(),
-            'disabled': new BoolExpressionConverter()
+            'eventValue': new ValueExpressionConverter(),
+            'disabled': new BoolExpressionConverter(),
+            'activityProcessed': new BoolExpressionConverter()
+        }));
+        this.registerBuilder('Microsoft.CancelDialog', new AdaptiveTypeBuilder(CancelDialog, this._resourceExplorer, {
+            'eventName': new StringExpressionConverter(),
+            'eventValue': new ValueExpressionConverter(),
+            'disabled': new BoolExpressionConverter(),
+            'activityProcessed': new BoolExpressionConverter()
         }));
         this.registerBuilder('Microsoft.ContinueLoop', new AdaptiveTypeBuilder(ContinueLoop, this._resourceExplorer, {
             'disabled': new BoolExpressionConverter()
@@ -170,7 +177,8 @@ export class AdaptiveDialogComponentRegistration implements ComponentRegistratio
         }));
         this.registerBuilder('Microsoft.RepeatDialog', new AdaptiveTypeBuilder(RepeatDialog, this._resourceExplorer,
             Object.assign(baseInvokeDialogConverters, {
-                'disabled': new BoolExpressionConverter()
+                'disabled': new BoolExpressionConverter(),
+                'allowLoop': new BoolExpressionConverter()
             })));
         this.registerBuilder('Microsoft.ReplaceDialog', new AdaptiveTypeBuilder(ReplaceDialog, this._resourceExplorer,
             Object.assign(baseInvokeDialogConverters, {
@@ -228,7 +236,6 @@ export class AdaptiveDialogComponentRegistration implements ComponentRegistratio
         this.registerBuilder('Microsoft.OnClearProperty', new AdaptiveTypeBuilder(OnClearProperty, this._resourceExplorer, OnConditionConverters));
         this.registerBuilder('Microsoft.OnCondition', new AdaptiveTypeBuilder(OnCondition, this._resourceExplorer, OnConditionConverters));
         this.registerBuilder('Microsoft.OnConversationUpdateActivity', new AdaptiveTypeBuilder(OnConversationUpdateActivity, this._resourceExplorer, OnConditionConverters));
-        this.registerBuilder('Microsoft.OnCustomEvent', new AdaptiveTypeBuilder(OnCustomEvent, this._resourceExplorer, OnConditionConverters));
         this.registerBuilder('Microsoft.OnDialogEvent', new AdaptiveTypeBuilder(OnDialogEvent, this._resourceExplorer, OnConditionConverters));
         this.registerBuilder('Microsoft.OnEndOfActions', new AdaptiveTypeBuilder(OnEndOfActions, this._resourceExplorer, OnConditionConverters));
         this.registerBuilder('Microsoft.OnEndOfConversationActivity', new AdaptiveTypeBuilder(OnEndOfConversationActivity, this._resourceExplorer, OnConditionConverters));
@@ -320,7 +327,6 @@ export class AdaptiveDialogComponentRegistration implements ComponentRegistratio
         this.registerBuilder('Microsoft.RecognizerSet', new AdaptiveTypeBuilder(RecognizerSet, this._resourceExplorer, {
             'recognizers': new RecognizerConverter(this._resourceExplorer)
         }));
-        this.registerBuilder('Microsoft.ValueRecognizer', new AdaptiveTypeBuilder(ValueRecognizer, this._resourceExplorer, {}));
         this.registerBuilder('Microsoft.RegexRecognizer', new AdaptiveTypeBuilder(RegexRecognizer, this._resourceExplorer, {
             'intents': new IntentPatternConverter()
         }));

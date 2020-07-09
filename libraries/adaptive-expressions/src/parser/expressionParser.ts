@@ -191,9 +191,18 @@ export class ExpressionParser implements ExpressionParserInterface {
 
         private processArgsList(context: ep.ArgsListContext): Expression[] {
             const result: Expression[] = [];
-            if (context !== undefined) {
-                for (const expression of context.expression()) {
-                    result.push(this.visit(expression));
+            if (!context) {
+                return result;
+            }
+
+            for (const child of context.children) {
+                if (child instanceof ep.LambdaContext) {
+                    const evalParam = this.makeExpression(ExpressionType.Accessor, new Constant(child.IDENTIFIER().text));
+                    const evalFun = this.visit(child.expression());
+                    result.push(evalParam);
+                    result.push(evalFun);
+                } else if (child instanceof ep.ExpressionContext){
+                    result.push(this.visit(child));
                 }
             }
 

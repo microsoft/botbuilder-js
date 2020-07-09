@@ -24,11 +24,6 @@ export class SourceRange {
      */
     public source: string;
 
-    /**
-     * Content parse tree form LGFileParser.g4.
-     */
-    public parseTree: ParserRuleContext;
-
     public constructor(parseTree: ParserRuleContext, source?: string, offset?: number)
     public constructor(range: Range, source?: string)
     public constructor(x: Range|ParserRuleContext, source?: string, offset?: number) {
@@ -40,7 +35,6 @@ export class SourceRange {
                 offset = 0;
             }
 
-            this.parseTree = x;
             this.range = TemplateExtensions.convertToRange(x, offset);
         }
     }

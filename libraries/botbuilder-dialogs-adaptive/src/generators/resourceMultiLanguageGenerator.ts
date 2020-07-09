@@ -17,8 +17,8 @@ import { LanguageGeneratorManager } from './languageGeneratorManager';
 export class ResourceMultiLanguageGenerator extends MultiLanguageGeneratorBase {
     public resourceId: string;
 
-    public constructor(resourceId: string = undefined) {
-        super();
+    public constructor(resourceId: string = undefined, languagePolicy: any = undefined) {
+        super(languagePolicy);
         this.resourceId = resourceId;
     }
 
