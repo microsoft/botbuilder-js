@@ -8,14 +8,13 @@
 import { RecognizerResult, Activity, getTopScoringIntent, BotTelemetryClient, NullTelemetryClient } from 'botbuilder-core';
 import { DialogContext } from 'botbuilder-dialogs';
 
-export abstract class Recognizer {
+export class Recognizer {
 
     /**
      * Recognizers unique ID.
      */
     public id: string;
 
-    public constructor(){};
 
     /**
      * The telemetry client for logging events.
@@ -37,7 +36,17 @@ export abstract class Recognizer {
         this._telemetryClient = client ? client : new NullTelemetryClient();
     }
 
-    public abstract recognize(dialogContext: DialogContext, activity: Partial<Activity>, telemetryProperties?: { [key: string]: string }, telemetryMetrics?: { [key: string]: number }): Promise<RecognizerResult>;
+    /**
+     * To recognize intents and entities in a users utterance.
+     *
+     * @param dialogContext Dialog Context.
+     * @param activity Activity.
+     * @param telemetryProperties Additional properties to be logged to telemetry with event.
+     * @param telemetryMetrics Additional metrics to be logged to telemetry with event.
+     */
+    public recognize(dialogContext: DialogContext, activity: Partial<Activity>, telemetryProperties?: { [key: string]: string }, telemetryMetrics?: { [key: string]: number }): Promise<RecognizerResult>{
+        throw new Error('Please implement recognize function.');
+    }
 
     /**
      * Uses the RecognizerResult to create a list of propeties to be included when tracking the result in telemetry.
@@ -46,11 +55,11 @@ export abstract class Recognizer {
      * @param dialogContext Dialog Context.
      * @returns A dictionary that can be included when calling the TrackEvent method on the TelemetryClient.
      */
-    public fillRecognizerResultTelemetryProperties(recognizerResult: RecognizerResult, telemetryProperties: { [key: string]: string }, dialogContext?: DialogContext){
+    protected fillRecognizerResultTelemetryProperties(recognizerResult: RecognizerResult, telemetryProperties: { [key: string]: string }, dialogContext?: DialogContext): { [key: string]: string }{
         
         const {intent, score} = getTopScoringIntent(recognizerResult);
 
-        var properties: { [key: string]: string; } = {
+        var properties: { [key: string]: string } = {
             'Text': recognizerResult.text ,
             'AlteredText': recognizerResult.alteredText ,
             'TopIntent': Object.entries(recognizerResult.intents).length > 0 ? intent : undefined ,
@@ -68,7 +77,19 @@ export abstract class Recognizer {
         return properties;
     }
 
-    
+    // protected trackRecognizerResult(dialogContext: DialogContext, eventName: string, telemetryProperties?: { [key: string]: string }, telemetryMetrics?: { [key: string]: number }){
+    //     if (this.telemetryClient instanceof NullTelemetryClient) {
+    //         var turnStateTelemetryClient = dialogContext.context.turnState.get();  // todo
+    //         this.telemetryClient = turnStateTelemetryClient ? turnStateTelemetryClient: this.telemetryClient;
+    //     }
+    //     this.telemetryClient.trackEvent(
+    //         {
+    //             name: eventName,
+    //             properties: telemetryProperties,
+    //             metrics: telemetryMetrics
+    //         });
+        
+    // }
 }
 
 export interface IntentMap {
