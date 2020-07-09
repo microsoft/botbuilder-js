@@ -5,10 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import {
-    TurnContext, ActivityTypes, telemetryTrackDialogView,
-    Activity, RecognizerResult, getTopScoringIntent
-} from 'botbuilder-core';
+import { TurnContext, ActivityTypes, telemetryTrackDialogView, Activity, RecognizerResult, getTopScoringIntent } from 'botbuilder-core';
 import { Dialog, DialogInstance, DialogReason, DialogTurnResult, DialogTurnStatus, DialogEvent, DialogContext, DialogContainer, DialogDependencies, TurnPath, DialogPath, DialogState } from 'botbuilder-dialogs';
 import { OnCondition } from './conditions';
 import { Recognizer, RecognizerSet } from './recognizers';
@@ -488,10 +485,10 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
         const selection = await this.selector.select(actionContext);
         if (selection.length > 0) {
             const evt = this.triggers[selection[0]];
-            const parser = new ExpressionParser(); // to check
+            const parser = new ExpressionParser();
             var properties: { [key: string]: string } = {
                 'DialogId': this.id, 
-                'Expression': evt.getExpression(parser).toString(), // to check
+                'Expression': evt.getExpression(parser).toString(),
                 'Kind': `Microsoft.${ evt.constructor.name }`,
                 'ConditionId': evt.id
             };
