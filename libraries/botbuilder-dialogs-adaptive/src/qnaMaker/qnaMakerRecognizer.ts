@@ -7,25 +7,15 @@
  */
 
 import { DialogContext } from 'botbuilder-dialogs';
-import { RecognizerResult, Activity, BotTelemetryClient, NullTelemetryClient } from 'botbuilder-core';
+import { RecognizerResult, Activity } from 'botbuilder-core';
 import { RankerTypes, QnAMakerMetadata, QnAMaker, QnAMakerEndpoint, QnAMakerOptions, QnAMakerResult, QnARequestContext } from 'botbuilder-ai';
-import { Recognizer, fillRecognizerResultTelemetryProperties } from '../recognizers/recognizer';
+import { Recognizer } from '../recognizers/recognizer';
 import { StringExpression, IntExpression, NumberExpression, BoolExpression, ArrayExpression, ObjectExpression } from 'adaptive-expressions';
 
 const intentPrefix = 'intent=';
 
-export class QnAMakerRecognizer implements Recognizer {
+export class QnAMakerRecognizer extends Recognizer {
     public static readonly qnaMatchIntent = 'QnAMatch';
-
-    /**
-     * Id of the recognizer.
-     */
-    public id: string;
-
-    /**
-     * Telemetry client.
-     */
-    public telemetryClient: BotTelemetryClient = new NullTelemetryClient();
 
     /**
      * Knowledgebase id of your QnA maker knowledgebase.
@@ -83,6 +73,7 @@ export class QnAMakerRecognizer implements Recognizer {
     public qnaId: IntExpression = new IntExpression(0);
 
     public constructor(hostname?: string, knowledgeBaseId?: string, endpointKey?: string) {
+        super();
         if (hostname) { this.hostname = new StringExpression(hostname); }
         if (knowledgeBaseId) { this.knowledgeBaseId = new StringExpression(knowledgeBaseId); }
         if (endpointKey) { this.endpointKey = new StringExpression(endpointKey); }
@@ -152,8 +143,8 @@ export class QnAMakerRecognizer implements Recognizer {
         }
         this.telemetryClient.trackEvent(
             {
-                name: "QnAMakerRecognizerResult",
-                properties: fillRecognizerResultTelemetryProperties(recognizerResult, telemetryProperties, dc),
+                name: 'QnAMakerRecognizerResult',
+                properties: this.fillRecognizerResultTelemetryProperties(recognizerResult, telemetryProperties, dc),
                 metrics: telemetryMetrics
             });
         return recognizerResult;

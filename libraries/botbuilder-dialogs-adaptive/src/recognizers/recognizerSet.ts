@@ -6,20 +6,14 @@
  * Licensed under the MIT License.
  */
 
-import { RecognizerResult, Activity, getTopScoringIntent, BotTelemetryClient, NullTelemetryClient } from 'botbuilder-core';
+import { RecognizerResult, Activity, getTopScoringIntent } from 'botbuilder-core';
 import { DialogContext } from 'botbuilder-dialogs';
-import { Recognizer, fillRecognizerResultTelemetryProperties } from './recognizer';
+import { Recognizer } from './recognizer';
 
-export class RecognizerSet implements Recognizer {
-
-    public id: string;
+export class RecognizerSet extends Recognizer {
 
     public recognizers: Recognizer[] = [];
 
-    /**
-     * Telemetry client.
-     */
-    public telemetryClient: BotTelemetryClient = new NullTelemetryClient();
     public async recognize(dialogContext: DialogContext, activity: Activity, telemetryProperties?: { [key: string]: string }, telemetryMetrics?: { [key: string]: number }): Promise<RecognizerResult> {
         const recognizerResult: RecognizerResult = {
             text: undefined,
@@ -100,7 +94,7 @@ export class RecognizerSet implements Recognizer {
         this.telemetryClient.trackEvent(
             {
                 name: 'RecognizerSetResult',
-                properties: fillRecognizerResultTelemetryProperties(recognizerResult, telemetryProperties, dialogContext),
+                properties: this.fillRecognizerResultTelemetryProperties(recognizerResult, telemetryProperties, dialogContext),
                 metrics: telemetryMetrics
             });
         

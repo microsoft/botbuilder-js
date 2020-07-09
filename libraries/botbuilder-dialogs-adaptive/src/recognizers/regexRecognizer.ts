@@ -5,18 +5,13 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { RecognizerResult, Entity, Activity, BotTelemetryClient, NullTelemetryClient } from 'botbuilder-core';
+import { RecognizerResult, Entity, Activity } from 'botbuilder-core';
 import { DialogContext } from 'botbuilder-dialogs';
-import { Recognizer, fillRecognizerResultTelemetryProperties } from './recognizer';
+import { Recognizer } from './recognizer';
 import { IntentPattern } from './intentPattern';
 import { EntityRecognizer, TextEntity, EntityRecognizerSet } from './entityRecognizers';
 
-export class RegexRecognizer implements Recognizer {
-    /**
-     * Id of the recognizer.
-     */
-    public id: string;
-
+export class RegexRecognizer extends Recognizer {
     /**
      * Dictionary of patterns -> intent names.
      */
@@ -26,11 +21,6 @@ export class RegexRecognizer implements Recognizer {
      * The entity recognizers.
      */
     public entities: EntityRecognizer[] = [];
-
-    /**
-     * Telemetry client.
-     */
-    public telemetryClient: BotTelemetryClient = new NullTelemetryClient();
 
     public async recognize(dialogContext: DialogContext, activity: Activity, telemetryProperties?: { [key: string]: string }, telemetryMetrics?: { [key: string]: number }): Promise<RecognizerResult> {
         const text = activity.text || '';
@@ -146,7 +136,7 @@ export class RegexRecognizer implements Recognizer {
         this.telemetryClient.trackEvent(
             {
                 name: 'RegexRecognizerResult',
-                properties: fillRecognizerResultTelemetryProperties(recognizerResult, telemetryProperties, dialogContext),
+                properties: this.fillRecognizerResultTelemetryProperties(recognizerResult, telemetryProperties, dialogContext),
                 metrics: telemetryMetrics
             });
         return recognizerResult;

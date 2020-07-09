@@ -6,22 +6,15 @@
  * Licensed under the MIT License.
  */
 
-import { RecognizerResult, Activity, getTopScoringIntent, BotTelemetryClient, NullTelemetryClient } from 'botbuilder-core';
+import { RecognizerResult, Activity, getTopScoringIntent } from 'botbuilder-core';
 import { DialogContext } from 'botbuilder-dialogs';
-import { Recognizer, fillRecognizerResultTelemetryProperties } from './recognizer';
+import { Recognizer } from './recognizer';
 
 const deferPrefix = 'DeferToRecognizer_';
 
-export class CrossTrainedRecognizerSet implements Recognizer {
-
-    public id: string;
+export class CrossTrainedRecognizerSet extends Recognizer {
 
     public recognizers: Recognizer[] = [];
-
-    /**
-     * Telemetry client.
-     */
-    public telemetryClient: BotTelemetryClient = new NullTelemetryClient();
 
     public async recognize(dialogContext: DialogContext, activity: Activity, telemetryProperties?: { [key: string]: string }, telemetryMetrics?: { [key: string]: number }): Promise<RecognizerResult> {
         for (let i = 0; i < this.recognizers.length; i++) {
@@ -38,7 +31,7 @@ export class CrossTrainedRecognizerSet implements Recognizer {
         this.telemetryClient.trackEvent(
             {
                 name: 'CrossTrainedRecognizerSetResult',
-                properties: fillRecognizerResultTelemetryProperties(result, telemetryProperties, dialogContext),
+                properties: this.fillRecognizerResultTelemetryProperties(result, telemetryProperties, dialogContext),
                 metrics: telemetryMetrics
             });
         return result;

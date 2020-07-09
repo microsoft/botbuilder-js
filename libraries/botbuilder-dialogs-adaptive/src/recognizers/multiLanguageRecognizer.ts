@@ -6,23 +6,16 @@
  * Licensed under the MIT License.
  */
 
-import { RecognizerResult, Activity, BotTelemetryClient, NullTelemetryClient } from 'botbuilder-core';
+import { RecognizerResult, Activity } from 'botbuilder-core';
 import { DialogContext } from 'botbuilder-dialogs';
-import { Recognizer, fillRecognizerResultTelemetryProperties } from './recognizer';
+import { Recognizer } from './recognizer';
 import { LanguagePolicy } from '../languagePolicy';
 
-export class MultiLanguageRecognizer implements Recognizer {
-
-    public id: string;
+export class MultiLanguageRecognizer extends Recognizer {
 
     public languagePolicy: any = LanguagePolicy.defaultPolicy;
 
     public recognizers: { [locale: string]: Recognizer };
-    
-    /**
-     * Telemetry client.
-     */
-    public telemetryClient: BotTelemetryClient = new NullTelemetryClient();
 
     public async recognize(dialogContext: DialogContext, activity: Activity, telemetryProperties?: { [key: string]: string }, telemetryMetrics?: { [key: string]: number }): Promise<RecognizerResult> {
         const locale = activity.locale || '';
@@ -44,7 +37,7 @@ export class MultiLanguageRecognizer implements Recognizer {
                 this.telemetryClient.trackEvent(
                     {
                         name: 'MultiLanguagesRecognizerResult',
-                        properties: fillRecognizerResultTelemetryProperties(result, telemetryProperties, dialogContext),
+                        properties: this.fillRecognizerResultTelemetryProperties(result, telemetryProperties, dialogContext),
                         metrics: telemetryMetrics
                     });
                 return result;
@@ -61,7 +54,7 @@ export class MultiLanguageRecognizer implements Recognizer {
         this.telemetryClient.trackEvent(
             {
                 name: 'MultiLanguagesRecognizerResult',
-                properties: fillRecognizerResultTelemetryProperties(recognizerResult, telemetryProperties, dialogContext),
+                properties: this.fillRecognizerResultTelemetryProperties(recognizerResult, telemetryProperties, dialogContext),
                 metrics: telemetryMetrics
             });
 

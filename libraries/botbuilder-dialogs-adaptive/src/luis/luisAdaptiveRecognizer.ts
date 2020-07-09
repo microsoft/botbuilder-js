@@ -11,7 +11,7 @@ import { LuisPredictionOptions, LuisRecognizerOptionsV3, LuisRecognizer, LuisApp
 import { Configurable, DialogContext } from 'botbuilder-dialogs';
 import { BotTelemetryClient, Activity, NullTelemetryClient, RecognizerResult } from 'botbuilder-core';
 
-export class LuisAdaptiveRecognizer extends Configurable implements Recognizer {
+export class LuisAdaptiveRecognizer extends Configurable {
     /**
      * Recognizers unique ID.
      */
@@ -78,7 +78,7 @@ export class LuisAdaptiveRecognizer extends Configurable implements Recognizer {
             applicationId: this.applicationId.getValue(dcState),
             endpoint: this.endpoint.getValue(dcState),
             endpointKey: this.endpointKey.getValue(dcState)
-        }
+        };
 
         // Create and call wrapper
         const wrapper = new LuisRecognizer(application, this.recognizerOptions(dialogContext));
