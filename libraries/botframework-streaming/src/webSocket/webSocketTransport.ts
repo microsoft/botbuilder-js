@@ -82,7 +82,7 @@ export class WebSocketTransport implements ITransportSender, ITransportReceiver 
      */
     public async receive(count: number): Promise<INodeBuffer> {
         if (this._activeReceiveResolve) {
-            throw new Error('Cannot call receiveAsync more than once before it has returned.');
+            throw new Error('Cannot call receive more than once before it has returned.');
         }
 
         this._activeReceiveCount = count;

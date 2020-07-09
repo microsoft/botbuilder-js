@@ -640,6 +640,9 @@ const dataSource = [
 
     // Memory access tests
     ['getProperty(bag, concat(\'na\',\'me\'))', 'mybag'],
+    ['getProperty(\'bag\').index', 3],
+    ['getProperty(\'a:b\')', 'stringa:b'],
+    ['getProperty(concat(\'he\', \'llo\'))', 'hello'],
     ['items[2]', 'two', ['items[2]']],
     ['bag.list[bag.index - 2]', 'blue', ['bag.list', 'bag.index']],
     ['items[nestedItems[1].x]', 'two', ['items', 'nestedItems[1].x']],
@@ -708,6 +711,7 @@ const dataSource = [
 
 const scope = {
     '$index': 'index',
+    'a:b' : 'stringa:b',
     alist: [
         {
             Name: 'item1'

@@ -24,6 +24,14 @@ describe('ActionTests', function() {
         await testRunner.runTestScript('Action_CancelAllDialogs');
     });
 
+    it('CancelDialog', async () => {
+        await testRunner.runTestScript('Action_CancelDialog');
+    });
+
+    it('CancelDialogs_Processed', async () => {
+        await testRunner.runTestScript('Action_CancelDialog_Processed');
+    });
+
     it('ChoiceInput', async () => {
         await testRunner.runTestScript('Action_ChoiceInput');
     });
@@ -144,6 +152,10 @@ describe('ActionTests', function() {
 
     it('RepeatDialog', async () => {
         await testRunner.runTestScript('Action_RepeatDialog');
+    });
+
+    it('RepeatDialogLoop', async () => {
+        await testRunner.runTestScript('Action_RepeatDialogLoop');
     });
 
     it('ReplaceDialog', async () => {

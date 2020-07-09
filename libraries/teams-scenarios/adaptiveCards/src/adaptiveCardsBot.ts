@@ -68,7 +68,7 @@ export class AdaptiveCardsBot extends TeamsActivityHandler {
     }
 
     protected async handleTeamsTaskModuleFetch(context: TurnContext, taskModuleRequest: TaskModuleRequest): Promise<TaskModuleResponse> {
-        await context.sendActivity(MessageFactory.text(`handleTeamsTaskModuleFetchAsync TaskModuleRequest: ${JSON.stringify(taskModuleRequest)}`));
+        await context.sendActivity(MessageFactory.text(`handleTeamsTaskModuleFetch TaskModuleRequest: ${JSON.stringify(taskModuleRequest)}`));
 
         /**
          * The following line disables the lint rules for the Adaptive Card so that users can
