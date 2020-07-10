@@ -3,7 +3,8 @@ trigger: none
 pr: none
 
 pool:
-vmImage: 'windows-2019'
+  name: Azure Pipelines
+  demands: npm
 
 steps:
 - powershell: |
