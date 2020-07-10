@@ -58,7 +58,7 @@ stages:
               targetType: 'filePath'
               filePath: $(System.DefaultWorkingDirectory)\libraries\streaming-e2e-tests\set-dependency-version-in-packagejson.ps1
               arguments:
-                -LatestVersion $(LatestVersion)
+                -LatestVersion 6.0.0
           displayName: Set Dependency to Latest Version
         
   
