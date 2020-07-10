@@ -23,7 +23,7 @@ export class EvaluationOptions {
 
     public LineBreakStyle: LGLineBreakStyle | undefined;
 
-    public Locale: string;
+    public locale: string;
 
     public constructor(opt?: EvaluationOptions | string[]) {
         if (arguments.length === 0) {
@@ -35,7 +35,7 @@ export class EvaluationOptions {
                 this.strictMode = opt.strictMode;
                 this.nullSubstitution = opt.nullSubstitution;
                 this.LineBreakStyle = opt.LineBreakStyle;
-                this.Locale = opt.Locale;
+                this.locale = opt.locale;
             } else {
                 if(opt !== undefined && opt.length > 0) {
                     for (const optionStr of opt) {

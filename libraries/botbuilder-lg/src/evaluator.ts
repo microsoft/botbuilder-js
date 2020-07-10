@@ -406,6 +406,7 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGTempla
         const parse: Expression = this.expressionParser.parse(exp);
         const opt = new Options();
         opt.nullSubstitution = this.lgOptions.nullSubstitution;
+        opt.locale = this.lgOptions.locale;
 
         return parse.tryEvaluate(scope, opt);
     }

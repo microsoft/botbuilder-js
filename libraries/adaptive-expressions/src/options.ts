@@ -14,7 +14,10 @@
 export class Options {
     public nullSubstitution: (path: string) => any;
 
+    public locale: string;
+
     public constructor(opt?: Options) {
         this.nullSubstitution = opt? opt.nullSubstitution : undefined;
+        this.locale = opt? opt.locale : undefined;
     }
 }

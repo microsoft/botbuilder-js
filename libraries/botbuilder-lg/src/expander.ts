@@ -7,7 +7,7 @@
  */
 import { AbstractParseTreeVisitor, TerminalNode } from 'antlr4ts/tree';
 import { ParserRuleContext } from 'antlr4ts/ParserRuleContext';
-import { ExpressionFunctions, EvaluatorLookup, Expression, ExpressionParser, ExpressionEvaluator, ReturnType, ExpressionType, Constant } from 'adaptive-expressions';
+import { ExpressionFunctions, EvaluatorLookup, Expression, ExpressionParser, ExpressionEvaluator, ReturnType, ExpressionType, Constant, Options } from 'adaptive-expressions';
 import { keyBy } from 'lodash';
 import { EvaluationTarget } from './evaluationTarget';
 import { Evaluator } from './evaluator';
@@ -382,8 +382,11 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGTe
         const expanderExpression: Expression = this.expanderExpressionParser.parse(exp);
         const evaluatorExpression: Expression = this.evaluatorExpressionParser.parse(exp);
         const parse: Expression = this.reconstructExpression(expanderExpression, evaluatorExpression, false);
+        const opt = new Options();
+        opt.nullSubstitution = this.lgOptions.nullSubstitution;
+        opt.locale = this.lgOptions.locale;
 
-        return parse.tryEvaluate(scope);
+        return parse.tryEvaluate(scope, opt);
     }
 
     private stringArrayConcat(array1: string[], array2: string[]): string[] {

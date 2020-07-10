@@ -53,7 +53,7 @@ export class TemplateEngineLanguageGenerator implements LanguageGenerator{
             //         The string version of of the serialized card isn't being parsed. We should
             //         fix that in R10. The cast is working for now.
             const lgOptions = new EvaluationOptions();
-            lgOptions.Locale = turnContext.locale;
+            lgOptions.locale = turnContext.locale;
             const result = this.lg.evaluateText(template, data, lgOptions);
             return Promise.resolve(typeof result == 'object' ? result as any : result.toString());
         } catch(e) {
