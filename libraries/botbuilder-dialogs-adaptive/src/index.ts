@@ -28,6 +28,7 @@ export * from './recognizers';
 export * from './resourceExtensions';
 export * from './schemaHelper';
 export * from './selectors';
+export * from './skillExtensions';
 export * from './templates';
 export * from './template';
 export * from './triggerSelector';
