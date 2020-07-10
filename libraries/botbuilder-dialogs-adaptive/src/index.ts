@@ -19,6 +19,7 @@ export * from './input';
 export * from './luis';
 export * from './recognizers';
 export * from './selectors';
+export * from './skillExtensions';
 export * from './templates';
 export * from './adaptiveDialog';
 export * from './languageGenerationMiddleware';
