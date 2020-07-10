@@ -51,8 +51,6 @@ stages:
     jobs:
       - job: Set_Dependency_To_Latest_Version
         steps:
-        - powershell: |
-          # SetDependencyVersionInPackageJsonFile0.ps1
-          $path = "$(System.DefaultWorkingDirectory)/libraries/streaming-e2e-tests/bot/package.json";
+        - powershell: Write-Host "Hello there!!"
         
   
