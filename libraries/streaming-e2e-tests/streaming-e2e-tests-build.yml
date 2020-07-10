@@ -53,6 +53,6 @@ stages:
         steps:
         - powershell: |
           # SetDependencyVersionInPackageJsonFile0.ps1
-
+          $path = "$(System.DefaultWorkingDirectory)/libraries/streaming-e2e-tests/bot/package.json";
         
   
