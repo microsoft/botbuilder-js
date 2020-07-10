@@ -12,6 +12,8 @@ pool:
 
 # TODO: variables
 # BotName: defined in Azure
+variables:
+  runCodesignValidationInjection: false
 
 
 stages:
@@ -51,6 +53,12 @@ stages:
     jobs:
       - job: Set_Dependency_To_Latest_Version
         steps:
-        - powershell: Write-Host "Hello there!!"
+        - task: powershell
+          inputs:
+              targetType: 'filePath'
+              filePath: $(System.DefaultWorkingDirectory)\libraries\streaming-e2e-tests\set-dependency-version-in-packagejson.ps1
+              arguments:
+                -LatestVersion $(LatestVersion)
+          displayName: Set Dependency to Latest Version
         
   
