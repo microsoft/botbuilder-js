@@ -73,12 +73,7 @@ export class LuisAdaptiveRecognizer extends Recognizer {
         const wrapper = new LuisRecognizer(application, this.recognizerOptions(dialogContext));
 
         var result = await wrapper.recognize(context);
-        this.telemetryClient.trackEvent(
-            {
-                name: 'LuisResult',
-                properties: this.fillRecognizerResultTelemetryProperties(result, telemetryProperties, dialogContext),
-                metrics: telemetryMetrics
-            });
+        this.trackRecognizerResult(dialogContext, 'LuisResult', this.fillRecognizerResultTelemetryProperties(result, telemetryProperties, dialogContext), telemetryMetrics);
         return result;
     }
 

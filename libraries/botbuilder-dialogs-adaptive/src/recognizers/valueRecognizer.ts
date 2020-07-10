@@ -34,13 +34,7 @@ export class ValueRecognizer extends Recognizer {
                 }
             }
         }
-
-        this.telemetryClient.trackEvent(
-            {
-                name: 'ValueRecognizerResult',
-                properties: this.fillRecognizerResultTelemetryProperties(recognizerResult, telemetryProperties, dialogContext),
-                metrics: telemetryMetrics
-            });
+        this.trackRecognizerResult(dialogContext, 'ValueRecognizerResult', this.fillRecognizerResultTelemetryProperties(recognizerResult, telemetryProperties), telemetryMetrics);
 
         return recognizerResult;
     }

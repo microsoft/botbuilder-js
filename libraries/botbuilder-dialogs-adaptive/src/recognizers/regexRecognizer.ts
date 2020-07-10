@@ -132,13 +132,7 @@ export class RegexRecognizer extends Recognizer {
         }
 
         await dialogContext.context.sendTraceActivity('RegexRecognizer', recognizerResult, 'RecognizerResult', 'Regex RecognizerResult');
-
-        this.telemetryClient.trackEvent(
-            {
-                name: 'RegexRecognizerResult',
-                properties: this.fillRecognizerResultTelemetryProperties(recognizerResult, telemetryProperties, dialogContext),
-                metrics: telemetryMetrics
-            });
+        this.trackRecognizerResult(dialogContext, 'RegexRecognizerResult', this.fillRecognizerResultTelemetryProperties(recognizerResult, telemetryProperties), telemetryMetrics);
         return recognizerResult;
     }
 }

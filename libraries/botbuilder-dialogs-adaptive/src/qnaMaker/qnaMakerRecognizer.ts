@@ -141,12 +141,7 @@ export class QnAMakerRecognizer extends Recognizer {
         } else {
             recognizerResult.intents['None'] = { score: 1 };
         }
-        this.telemetryClient.trackEvent(
-            {
-                name: 'QnAMakerRecognizerResult',
-                properties: this.fillRecognizerResultTelemetryProperties(recognizerResult, telemetryProperties, dc),
-                metrics: telemetryMetrics
-            });
+        this.trackRecognizerResult(dc, 'QnAMakerRecognizerResult', this.fillRecognizerResultTelemetryProperties(recognizerResult, telemetryProperties), telemetryMetrics);
         return recognizerResult;
     }
 

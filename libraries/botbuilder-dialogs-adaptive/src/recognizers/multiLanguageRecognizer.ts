@@ -34,12 +34,7 @@ export class MultiLanguageRecognizer extends Recognizer {
             if (this.recognizers.hasOwnProperty(option)) {
                 const recognizer = this.recognizers[option];
                 var result = await recognizer.recognize(dialogContext, activity, telemetryProperties, telemetryMetrics);
-                this.telemetryClient.trackEvent(
-                    {
-                        name: 'MultiLanguagesRecognizerResult',
-                        properties: this.fillRecognizerResultTelemetryProperties(result, telemetryProperties, dialogContext),
-                        metrics: telemetryMetrics
-                    });
+                this.trackRecognizerResult(dialogContext, 'MultiLanguagesRecognizerResult', this.fillRecognizerResultTelemetryProperties(result, telemetryProperties), telemetryMetrics);
                 return result;
 
             }
@@ -50,13 +45,7 @@ export class MultiLanguageRecognizer extends Recognizer {
             intents: {},
             entities: {}
         };
-
-        this.telemetryClient.trackEvent(
-            {
-                name: 'MultiLanguagesRecognizerResult',
-                properties: this.fillRecognizerResultTelemetryProperties(recognizerResult, telemetryProperties, dialogContext),
-                metrics: telemetryMetrics
-            });
+        this.trackRecognizerResult(dialogContext, 'MultiLanguagesRecognizerResult', this.fillRecognizerResultTelemetryProperties(recognizerResult, telemetryProperties), telemetryMetrics);
 
         return recognizerResult;
     }

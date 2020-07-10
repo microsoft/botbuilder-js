@@ -90,13 +90,7 @@ export class RecognizerSet extends Recognizer {
             recognizerResult.intents['None'] = { score: 1.0 };
         }
 
-
-        this.telemetryClient.trackEvent(
-            {
-                name: 'RecognizerSetResult',
-                properties: this.fillRecognizerResultTelemetryProperties(recognizerResult, telemetryProperties, dialogContext),
-                metrics: telemetryMetrics
-            });
+        this.trackRecognizerResult(dialogContext, 'RecognizerSetResult', this.fillRecognizerResultTelemetryProperties(recognizerResult, telemetryProperties), telemetryMetrics);
         
         return recognizerResult;
     }

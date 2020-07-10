@@ -28,12 +28,7 @@ export class CrossTrainedRecognizerSet extends Recognizer {
         }));
         
         var result = this.processResults(results);
-        this.telemetryClient.trackEvent(
-            {
-                name: 'CrossTrainedRecognizerSetResult',
-                properties: this.fillRecognizerResultTelemetryProperties(result, telemetryProperties, dialogContext),
-                metrics: telemetryMetrics
-            });
+        this.trackRecognizerResult(dialogContext, 'CrossTrainedRecognizerSetResult', this.fillRecognizerResultTelemetryProperties(result, telemetryProperties),telemetryMetrics);
         return result;
         
     }
