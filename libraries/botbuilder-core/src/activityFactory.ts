@@ -273,11 +273,11 @@ export class ActivityFactory {
                     if (boolValue !== undefined) {
                         card[property] = boolValue;
                     } else {
-                        card[property.toLowerCase()] = value;
+                        card[property] = value;
                     }
                     break;
                 default:
-                    card[this.RealProperty(property, this.cardProperties)] = value;
+                    card[this.RealProperty(key.trim(), this.cardProperties)] = value;
                     break;
             }
         }
