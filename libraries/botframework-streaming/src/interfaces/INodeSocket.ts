@@ -28,6 +28,7 @@ export interface INodeSocket {
     readonly writableLength: number;
     readonly readableHighWaterMark: number;
     readonly readableLength: number;
+    readonly readableFlowing: boolean | null;
 
     address(): AddressInfo | string;
 
