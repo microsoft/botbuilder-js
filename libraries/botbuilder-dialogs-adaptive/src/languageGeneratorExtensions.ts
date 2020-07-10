@@ -23,11 +23,7 @@ export class LanguageGeneratorExtensions {
      */
     public static useLanguageGeneration(dialogManager: DialogManager, lg?: string | LanguageGenerator): DialogManager {
         const resourceExplorer: ResourceExplorer = dialogManager.initialTurnState.get(resourceExplorerKey) || new ResourceExplorer();
-        let defaultLg = 'main.lg';
-        if (lg) {
-            if (typeof lg === 'string') {
-                defaultLg = lg;
-            }
+        const defaultLg = lg && typeof lg === 'string' ? lg : 'main.lg';
         }
         const resource = resourceExplorer.getResource(defaultLg);
         let languageGenerator: LanguageGenerator;
