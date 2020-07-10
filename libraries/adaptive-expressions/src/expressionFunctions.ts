@@ -59,7 +59,7 @@ export class ExpressionFunctions {
             new BuiltinFunctions.DataUri(),
             new BuiltinFunctions.DataUriToBinary(),
             new BuiltinFunctions.DataUriToString(),
-            new BuiltinFunctions.DateEva(),
+            new BuiltinFunctions.DateFunc(),
             new BuiltinFunctions.DateReadBack(),
             new BuiltinFunctions.DateTimeDiff(),
             new BuiltinFunctions.DayOfMonth(),

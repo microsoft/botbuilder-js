@@ -21,6 +21,7 @@
             "asyncArrow": "always"
         }],
         "quotes": ["error", "single", {"allowTemplateLiterals": true}],
+        "template-curly-spacing": ["error", "always"],
         "@typescript-eslint/indent": ["error", 4],
         "@typescript-eslint/interface-name-prefix": 0,
         "@typescript-eslint/no-explicit-any": 0,

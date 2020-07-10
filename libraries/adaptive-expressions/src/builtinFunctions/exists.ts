@@ -15,10 +15,10 @@ import { FunctionUtils } from '../functionUtils';
  */
 export class Exists extends ComparisonEvaluator {
     public constructor() {
-        super(ExpressionType.Exists, Exists.func, FunctionUtils.validateUnary, FunctionUtils.verifyNumberOrString);
+        super(ExpressionType.Exists, Exists.func, FunctionUtils.validateUnary, FunctionUtils.verifyNotNull);
     }
 
     private static func(args: any[]): boolean {
-        return args[0] !== undefined;
+        return args[0] !== undefined && args[0] !== null;
     }
 }

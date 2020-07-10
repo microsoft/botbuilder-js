@@ -35,7 +35,7 @@ export * from './createArray';
 export * from './dataUri';
 export * from './dataUriToBinary';
 export * from './dataUriToString';
-export * from './dateEva';
+export * from './dataFunc';
 export * from './dateReadBack';
 export * from './dateTimeDiff';
 export * from './dayOfMonth';

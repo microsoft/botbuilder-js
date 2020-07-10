@@ -151,7 +151,6 @@ export class FunctionUtils {
         FunctionUtils.validateArityAndAnyType(expression, 1, 2, ReturnType.Number);
     }
 
-
     /**
      * Validate 2 or more than 2 numeric arguments.
      * @param expression Expression to validate.
@@ -273,6 +272,21 @@ export class FunctionUtils {
         let error: string;
         if (!(typeof value === 'string') && !Array.isArray(value) && !(value instanceof Map) && !(typeof value === 'object')) {
             error = `${expression} must be a string, list, map or object.`;
+        }
+
+        return error;
+    }
+
+    /**
+     * Verify value is not null.
+     * @param value alue to check.
+     * @param expression Expression that led to value.
+     * @returns Error or null if valid.
+     */
+    public static verifyNotNull(value: any, expression: any, _: number): string {
+        let error: string;
+        if (value === undefined || value === null) {
+            error = `${expression} is null.`;
         }
 
         return error;
@@ -617,6 +631,12 @@ export class FunctionUtils {
         return {value, error};
     }
 
+    /**
+     * transform a timestamp into another with customized function.
+     * @param timeStamp Original time stamp.
+     * @param transform Transform function.
+     * @returns new timestamp and error.
+     */
     public static parseTimestamp(timeStamp: string, transform?: (arg0: Date) => any): {value: any; error: string} {
         let value: any;
         const error: string = this.verifyISOTimestamp(timeStamp);
@@ -627,6 +647,10 @@ export class FunctionUtils {
         return {value, error};
     }
 
+    /**
+     * timestampFormatter, to convert C# datetime to moment js format.
+     * @param formatter C# datetime format
+     */
     public static timestampFormatter(formatter: string): string {
         let result = formatter;
         try {
@@ -638,6 +662,11 @@ export class FunctionUtils {
         return result;
     }
 
+    /**
+     * Transform C# duration and unit into js duration and unit
+     * @param duration C# duration
+     * @param cSharpStr C# unit.
+     */
     public static timeUnitTransformer(duration: number, cSharpStr: string): {duration: number; tsStr: string} {
         switch (cSharpStr) {
             case 'Day': return {duration, tsStr: 'days'};
@@ -651,6 +680,11 @@ export class FunctionUtils {
         }
     }
 
+    /**
+     * Parse timex funcition.
+     * @param timexExpr string or TimexProperty input.
+     * @returns TimeProperty and error.
+     */
     public static parseTimexProperty(timexExpr: any): {timexProperty: TimexProperty; error: string} {
         let parsed: TimexProperty;
         if (timexExpr instanceof TimexProperty) {
@@ -667,6 +701,10 @@ export class FunctionUtils {
         return {timexProperty: parsed, error: undefined};
     }
 
+    /**
+     * Wrap string or undefined into string. Default to empty string.
+     * @param input input string
+     */
     public static parseStringOrNull(input: string | undefined): string {
         if (typeof input === 'string') {
             return input;
@@ -721,6 +759,12 @@ export class FunctionUtils {
         return {path, left, error: undefined};
     }
 
+    /**
+     * Get the value of a path from a memory
+     * @param state memory.
+     * @param path path string.
+     * @param options options.
+     */
     public static wrapGetValue(state: MemoryInterface, path: string, options: Options): any {
         let result = state.getValue(path);
         if (result !== undefined && result !== null) {
@@ -734,6 +778,9 @@ export class FunctionUtils {
         return undefined;
     }
 
+    /**
+     * Evaluator for foreach and select function
+     */
     public static foreach(expression: any, state: MemoryInterface, options: Options): {value: any; error: string} {
         let result: any[];
         let error: string;
@@ -777,7 +824,10 @@ export class FunctionUtils {
         return {value: result, error};
     }
 
-    
+    /**
+     * Validator for foreach, select, and where function
+     * @param expression 
+     */
     public static validateForeach(expression: any): void {
         if (expression.children.length !== 3) {
             throw new Error(`foreach expect 3 parameters, found ${expression.children.length}`);
@@ -789,6 +839,11 @@ export class FunctionUtils {
         }
     }
 
+    /**
+     * Is number helper function.
+     * @param instance input.
+     * @returns ture is the input is a number.
+     */
     public static isNumber(instance: any): boolean {
         return instance !== undefined && instance !== null && typeof instance === 'number' && !Number.isNaN(instance);
     }
@@ -810,6 +865,10 @@ export class FunctionUtils {
         return result;
     }
 
+    /**
+     * Sort helper function.
+     * @param isDescending descending flag.
+     */
     public static sortBy(isDescending: boolean): EvaluateExpressionDelegate {
         return (expression: any, state: any, options: Options): {value: any; error: string} => {
             let result: any;
@@ -848,6 +907,10 @@ export class FunctionUtils {
         };
     }
 
+    /**
+     * Convert string into Uint8Array object.
+     * @param stringToConvert input string.
+     */
     public static toBinary(stringToConvert: string): Uint8Array {
         let result = new ArrayBuffer(stringToConvert.length);
         let bufferView = new Uint8Array(result);
@@ -858,6 +921,11 @@ export class FunctionUtils {
         return bufferView;
     }
 
+    /**
+     * Format datetime.
+     * @param timedata input date time.
+     * @param format format flag.
+     */
     public static returnFormattedTimeStampStr(timedata: Moment, format: string): {value: any; error: string} {
         let result: string;
         let error: string;
@@ -870,6 +938,10 @@ export class FunctionUtils {
         return {value: result, error};
     }
 
+    /**
+     * Convert a string input to ticks number.
+     * @param timeStamp 
+     */
     public static ticks(timeStamp: string): {value: any; error: string} {
         let parsed: any;
         let result: any;
@@ -883,6 +955,10 @@ export class FunctionUtils {
         return {value: result, error};
     }
 
+    /**
+     * Parse string into URL object.
+     * @param uri input string uri
+     */
     public static parseUri(uri: string): {value: any; error: string} {
         let result: URL;
         let error: string;
@@ -895,6 +971,9 @@ export class FunctionUtils {
         return {value: result, error};
     }
 
+    /**
+     * Equal helper function.
+     */
     public static isEqual(args: any[]): boolean {
         if (args.length === 0) {
             return false;

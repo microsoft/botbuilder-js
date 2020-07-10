@@ -8,13 +8,14 @@
 
 import { MultivariateNumericEvaluator } from './multivariateNumericEvaluator';
 import { ExpressionType } from '../expressionType';
+import { FunctionUtils } from '../functionUtils';
 
 /**
  * Return exponentiation of one number to another.
  */
 export class Power extends MultivariateNumericEvaluator {
     public constructor() {
-        super(ExpressionType.Power, Power.func);
+        super(ExpressionType.Power, Power.func, FunctionUtils.verifyNumberOrNumericList);
     }
 
     private static func(args: any[]): number {

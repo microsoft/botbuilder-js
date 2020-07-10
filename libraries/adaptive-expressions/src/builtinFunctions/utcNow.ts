@@ -18,12 +18,16 @@ import moment from 'moment';
  */
 export class UtcNow extends ExpressionEvaluator {
     public constructor(){
-        super(ExpressionType.UtcNow, UtcNow.evaluator(), ReturnType.String);
+        super(ExpressionType.UtcNow, UtcNow.evaluator(), ReturnType.String, UtcNow.validator);
     }
 
     private static evaluator(): EvaluateExpressionDelegate {
         return FunctionUtils.apply(
             (args: any[]): string => args.length === 1 ? moment(new Date()).utc().format(args[0]) : new Date().toISOString(),
             FunctionUtils.verifyString);
+    }
+
+    private static validator(expression: Expression): void {
+        FunctionUtils.validateOrder(expression, [ReturnType.String]);
     }
 }

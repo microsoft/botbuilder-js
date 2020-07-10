@@ -19,7 +19,7 @@ import { Options } from '../options';
  */
 export class Ticks extends ExpressionEvaluator {
     public constructor(){
-        super(ExpressionType.Ticks, Ticks.evaluator, ReturnType.Number, FunctionUtils.validateUnary);
+        super(ExpressionType.Ticks, Ticks.evaluator, ReturnType.Number, Ticks.validator);
     }
 
     private static evaluator(expr: Expression, state: MemoryInterface, options: Options): {value: any; error: string} {
@@ -36,5 +36,9 @@ export class Ticks extends ExpressionEvaluator {
         }
 
         return {value, error};
+    }
+
+    private static validator(expression: Expression): void {
+        FunctionUtils.validateArityAndAnyType(expression, 1, 1, ReturnType.String);
     }
 }
