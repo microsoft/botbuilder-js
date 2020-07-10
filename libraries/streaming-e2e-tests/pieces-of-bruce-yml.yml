@@ -36,7 +36,7 @@ steps:
 
 - powershell: |
    # SetDependencyVersionInPackageJsonFile0.ps1
-   $path = "$(System.DefaultWorkingDirectory)/samples/javascript_nodejs/02.echo-bot/package.json";
+   $path = "$(System.DefaultWorkingDirectory)/libraries/streaming-e2e-tests/bot/package.json";
    $package = 'botbuilder';
    $newVersion = "$(LatestVersion)";
    
