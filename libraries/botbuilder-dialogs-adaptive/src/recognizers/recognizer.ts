@@ -7,6 +7,7 @@
  */
 import { RecognizerResult, Activity, getTopScoringIntent, BotTelemetryClient, NullTelemetryClient } from 'botbuilder-core';
 import { DialogContext } from 'botbuilder-dialogs';
+import { telemetryClientKey } from '../telemetryExtensions';
 
 export class Recognizer {
 
@@ -77,19 +78,18 @@ export class Recognizer {
         return properties;
     }
 
-    // protected trackRecognizerResult(dialogContext: DialogContext, eventName: string, telemetryProperties?: { [key: string]: string }, telemetryMetrics?: { [key: string]: number }){
-    //     if (this.telemetryClient instanceof NullTelemetryClient) {
-    //         var turnStateTelemetryClient = dialogContext.context.turnState.get();  // todo
-    //         this.telemetryClient = turnStateTelemetryClient ? turnStateTelemetryClient: this.telemetryClient;
-    //     }
-    //     this.telemetryClient.trackEvent(
-    //         {
-    //             name: eventName,
-    //             properties: telemetryProperties,
-    //             metrics: telemetryMetrics
-    //         });
-        
-    // }
+    protected trackRecognizerResult(dialogContext: DialogContext, eventName: string, telemetryProperties?: { [key: string]: string }, telemetryMetrics?: { [key: string]: number }){
+        if (this.telemetryClient instanceof NullTelemetryClient) {
+            var turnStateTelemetryClient = dialogContext.context.turnState.get(telemetryClientKey); 
+            this.telemetryClient = turnStateTelemetryClient ? turnStateTelemetryClient: this.telemetryClient;
+        }
+        this.telemetryClient.trackEvent(
+            {
+                name: eventName,
+                properties: telemetryProperties,
+                metrics: telemetryMetrics
+            });
+    }
 }
 
 export interface IntentMap {

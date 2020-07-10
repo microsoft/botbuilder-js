@@ -5,6 +5,8 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
+import './telemetryExtensions';
+
 export * from './actions';
 export * from './actionContext';
 export * from './adaptiveDialog';
