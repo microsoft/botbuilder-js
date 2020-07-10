@@ -14,7 +14,7 @@ import { SendActivity } from '../actions/sendActivity';
  * Ask for an open-ended response.
  * This sends an activity and then terminates the turn with `DialogTurnStatus.completeAndWait`.
  * The next activity from the user will then be handled by the parent adaptive dialog.
- * It also builds in a modle of the properties that are expected in response through `DialogPath.expectedProperties`.
+ * It also builds in a model of the properties that are expected in response through `DialogPath.expectedProperties`.
  * `DialogPath.retries` is updated as the same question is asked multiple times.
  */
 export class Ask extends SendActivity {
