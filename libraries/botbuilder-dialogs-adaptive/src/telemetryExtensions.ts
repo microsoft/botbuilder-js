@@ -9,19 +9,22 @@
 import { DialogManager } from 'botbuilder-dialogs';
 import { BotTelemetryClient } from 'botbuilder-core';
 
-declare module 'botbuilder-dialogs/lib/dialogManager' {
-    export interface DialogManager {
-        useTelemetry(telemetryClient: BotTelemetryClient): DialogManager;
-    }
-}
 
 export const telemetryClientKey = Symbol('telemetryClient');
 
-/**
- * Configures the telemetry client to use.
- */
-DialogManager.prototype.useTelemetry = function(telemetryClient: BotTelemetryClient): DialogManager {
-    const _self = this as DialogManager;
-    _self.initialTurnState.set(telemetryClientKey, telemetryClient);
-    return _self;
-};
+export class TelemetryExtensions {
+    /**
+     * Configures the telemetry client to use.
+     */
+
+    /**
+     * @param dialogManager DialogManager to configure.
+     * @param telemetryClient BotTelemetryClient instance to use.
+     * @returns DialogManager.
+     */
+    public static useTelemetry(dialogManager: DialogManager, telemetryClient: BotTelemetryClient): DialogManager {
+        dialogManager.initialTurnState.set(telemetryClientKey, telemetryClient);
+        dialogManager.dialogSet.telemetryClient = telemetryClient;
+        return dialogManager;
+    }
+}

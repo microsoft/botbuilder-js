@@ -51,10 +51,11 @@ export interface DialogManagerConfiguration {
 }
 
 export class DialogManager extends Configurable {
-    private dialogSet: DialogSet = new DialogSet();
     private rootDialogId: string;
     private dialogStateProperty: string;
     private readonly _initialTurnState: TurnContextStateCollection = new TurnContextStateCollection();
+    public dialogSet: DialogSet = new DialogSet();
+
 
     public constructor(rootDialog?: Dialog, dialogStateProperty?: string) {
         super();
