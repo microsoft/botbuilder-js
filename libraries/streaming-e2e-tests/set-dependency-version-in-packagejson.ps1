@@ -1,7 +1,7 @@
 param($LatestVersion)
 $path = "$(System.DefaultWorkingDirectory)/samples/javascript_nodejs/02.echo-bot/package.json";
 $package = 'botbuilder';
-$newVersion = "$(LatestVersion)";
+$newVersion = "$LatestVersion";
 
 $find = "$package`": `"\S*`"";
 $replace = "$package`": `"$newVersion`"";
