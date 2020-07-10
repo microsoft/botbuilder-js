@@ -1,0 +1,32 @@
+pool:
+  name: Azure Pipelines
+  demands: npm
+
+#Your build pipeline references a secret variable named ‘MyGetPersonalAccessToken’. Create or edit the build pipeline for this YAML file, define the variable on the Variables tab, and then select the option to make it secret. See https://go.microsoft.com/fwlink/?linkid=865972
+#Your build pipeline references an undefined variable named ‘LatestVersion’. Create or edit the build pipeline for this YAML file, define the variable on the Variables tab. See https://go.microsoft.com/fwlink/?linkid=865972
+#Your build pipeline references an undefined variable named ‘LatestVersion’. Create or edit the build pipeline for this YAML file, define the variable on the Variables tab. See https://go.microsoft.com/fwlink/?linkid=865972
+#Your build pipeline references a secret variable named ‘AppSecret’. Create or edit the build pipeline for this YAML file, define the variable on the Variables tab, and then select the option to make it secret. See https://go.microsoft.com/fwlink/?linkid=865972
+variables:
+  BotGroup: '$(BotName)RG'
+  AppId: '073e8d25-9d3b-4673-9d9e-3ca6e144cfe1'
+  BotName: 'NightlySampleJsEchobotWinTestBot'
+
+steps:
+- powershell: |
+   $myGetPersonalAccessToken = "$(MyGetPersonalAccessToken)";
+   $myGetFeedName = "botbuilder-v4-js-daily";
+   $packageName = "botbuilder";
+   
+   $url = "https://botbuilder.myget.org/F/$myGetFeedName/auth/$myGetPersonalAccessToken/api/v2/feed-state";
+   
+   Write-Host "Get latest $packageName version number from MyGet $myGetFeedName";
+   $result = Invoke-RestMethod -Uri $url -Method Get -ContentType "application/json";
+   
+   $package = $result.packages | Where-Object {$_.id -eq $packageName};
+   [string]$latestVersion = $package.versions[-1];
+   
+   $package.id;
+   $latestVersion;
+   "##vso[task.setvariable variable=LatestVersion;]$latestVersion";
+  displayName: 'Get latest botbuilder package version from MyGet - https://botbuilder.myget.org/gallery/botbuilder-v4-js-daily'
+
