@@ -113,7 +113,7 @@ export class ActivityFactory {
                     activity.suggestedActions = this.getSuggestions(value);
                     break;
                 default:
-                    activity[this.RealProperty(property, this.activityProperties)] = value;
+                    activity[this.realProperty(property, this.activityProperties)] = value;
                     break;
             }
         }
@@ -160,7 +160,7 @@ export class ActivityFactory {
                     if (property === this.lgType) {
                         continue;
                     }
-                    cardAction[this.RealProperty(property, this.cardActionProperties)] = action[key];
+                    cardAction[this.realProperty(property, this.cardActionProperties)] = action[key];
                 }
             }
         }
@@ -218,7 +218,7 @@ export class ActivityFactory {
                     }
                     break;
                 default:
-                    attachment[this.RealProperty(property, this.attachmentProperties)] = value;
+                    attachment[this.realProperty(property, this.attachmentProperties)] = value;
                     break;
             }
         }
@@ -277,7 +277,7 @@ export class ActivityFactory {
                     }
                     break;
                 default:
-                    card[this.RealProperty(key.trim(), this.cardProperties)] = value;
+                    card[this.realProperty(key.trim(), this.cardProperties)] = value;
                     break;
             }
         }
@@ -290,8 +290,8 @@ export class ActivityFactory {
         return attachment;
     }
 
-    private static RealProperty(property: string, builtinProperties: string[]): string {
-        var properties = builtinProperties.map((u: string): string => u.toLowerCase());
+    private static realProperty(property: string, builtinProperties: string[]): string {
+        const properties = builtinProperties.map((u: string): string => u.toLowerCase());
         if (properties.includes(property.toLowerCase()))
         {
             return builtinProperties[properties.indexOf(property.toLowerCase())];
