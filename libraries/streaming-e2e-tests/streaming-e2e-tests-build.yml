@@ -53,7 +53,7 @@ stages:
     jobs:
       - job: Set_Dependency_To_Latest_Version
         steps:
-        - task: powershell
+        - task: PowerShell@2
           inputs:
               targetType: 'filePath'
               filePath: $(System.DefaultWorkingDirectory)\libraries\streaming-e2e-tests\set-dependency-version-in-packagejson.ps1
