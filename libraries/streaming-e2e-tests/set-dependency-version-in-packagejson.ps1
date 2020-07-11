@@ -1,4 +1,5 @@
 param($LatestVersion, $WorkingDirectory)
+
 $path = "$WorkingDirectory/libraries/streaming-e2e-tests/bot/package.json";
 $package = 'botbuilder';
 $newVersion = "$LatestVersion";
@@ -13,4 +14,3 @@ Get-ChildItem -Path "$path" | % {
     $content -Replace "$find", "$replace" | Set-Content $_.FullName;
     '-------------'; get-content $_.FullName; '==================='
 }
-displayName: 'Set dependency reference to latest version'
