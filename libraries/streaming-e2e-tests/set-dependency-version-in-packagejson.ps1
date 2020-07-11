@@ -1,5 +1,5 @@
-param($LatestVersion)
-$path = "$(System.DefaultWorkingDirectory)/samples/javascript_nodejs/02.echo-bot/package.json";
+param($LatestVersion, $WorkingDirectory)
+$path = "$WorkingDirectory/samples/javascript_nodejs/02.echo-bot/package.json";
 $package = 'botbuilder';
 $newVersion = "$LatestVersion";
 
