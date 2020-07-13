@@ -14,7 +14,7 @@
             "actions": [
                 {
                     "$kind": "Microsoft.SendActivity",
-                    "activity": "${string(1.123)}"
+                    "activity": "${formatEpoch(2114214124)}"
                 }
             ]
         }
@@ -25,11 +25,11 @@
         {
             "$kind": "Microsoft.Test.UserSays",
             "text": "hello world!",
-            "locale": "de-DE"
+            "locale": "de-de"
         },
         {
             "$kind": "Microsoft.Test.AssertReply",
-            "text": "1.123"
+            "text": "1,123"
         }
     ]
 }

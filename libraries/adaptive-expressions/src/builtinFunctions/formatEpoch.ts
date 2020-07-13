@@ -12,6 +12,7 @@ import { ReturnType } from '../returnType';
 import { ExpressionType } from '../expressionType';
 import { FunctionUtils } from '../functionUtils';
 import moment from 'moment';
+import { Options } from '../options';
 
 /**
  * Return a timestamp in the specified format from UNIX time (also know as Epoch time, POSIX time, UNIX Epoch time).
@@ -22,21 +23,25 @@ export class FormatEpoch extends ExpressionEvaluator {
     }
 
     private static evaluator(): EvaluateExpressionDelegate {
-        return FunctionUtils.applyWithError(
-            (args: any[]): any => {
+        return FunctionUtils.applyWithErrorAndOptions(
+            (args: any[], options: Options): any => {
                 let error: string;
                 let arg: any = args[0];
+                let locale = options.locale ? options.locale : 'en-us';
+                let format = FunctionUtils.DefaultDateTimeFormat;
+                ({format, locale} = FunctionUtils.determineFormatAndLocale(args, format, locale, 3));
+                
                 if (typeof arg !== 'number') {
-                    error = `formatEpoch first argument ${arg} must be a number`
+                    error = `formatEpoch first argument ${arg} must be a number.`;
                 } else {
                     // Convert to ms
-                    arg = arg * 1000
+                    arg = arg * 1000;
                 }
 
                 let value: any;
                 if (!error) {
-                    const dateString: string = new Date(arg).toISOString();
-                    value = args.length === 2 ? moment(dateString).format(FunctionUtils.timestampFormatter(args[1])) : dateString;
+                    const dateString: string = new Date(arg).toLocaleString(locale);
+                    value = args.length === 2 ? moment(dateString).format(format) : dateString;
                 }
 
                 return {value, error};

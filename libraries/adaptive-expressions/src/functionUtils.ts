@@ -515,12 +515,12 @@ export class FunctionUtils {
         };
     }
 
-        /**
-     * Generate an expression delegate that applies function after verifying all children.
-     * @param func Function to apply.
-     * @param verify Function to check each arg for validity.
-     * @returns Delegate for evaluating an expression.
-     */
+    /**
+    * Generate an expression delegate that applies function after verifying all children.
+    * @param func Function to apply.
+    * @param verify Function to check each arg for validity.
+    * @returns Delegate for evaluating an expression.
+    */
     public static applyWithErrorAndOptions(func: (arg0: any[], options: Options) => any, verify?: VerifyExpression): EvaluateExpressionDelegate {
         return (expression: any, state: MemoryInterface, options: Options): {value: any; error: string} => {
             let value: any;
@@ -704,9 +704,22 @@ export class FunctionUtils {
         }
     }
 
+    public static determineFormatAndLocale(args: any[], format: string, locale: string, maxArgsLength: number): {format: string; locale: string} {
+        if (maxArgsLength >= 2) {
+            if (args.length === maxArgsLength) {
+                format = FunctionUtils.timestampFormatter(args[maxArgsLength - 2] as string);
+                locale = args[maxArgsLength - 1] as string;
+            } else if (args.length === maxArgsLength - 1) {
+                format = FunctionUtils.timestampFormatter(args[maxArgsLength - 2]  as string);
+            }
+        }
+
+        return {format, locale};
+    }
+
 
     public static determineLocale(args: any[], locale: string, maxArgsLength: number): string {
-        if (args.length === maxArgsLength) {
+        if (maxArgsLength >= 2 && args.length === maxArgsLength) {
             locale = args[maxArgsLength - 1] as string;
         }
 
