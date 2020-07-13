@@ -59,9 +59,9 @@ stages:
         condition: succeeded()
         steps:
           - task: Npm@1
-            displayName: 'npm install streaming echo bot dependencies'
+            displayName: 'npm install streaming echo bot dependencies - $(System.DefaultWorkingDirectory)'
             inputs: 
-              workingDir: $(System.DefaultWorkingDirectory)\libraries\streaming-e2e-tests\bot'
+              workingDir: '$(System.DefaultWorkingDirectory)\libraries\streaming-e2e-tests\bot'
               verbose: false
 
         
