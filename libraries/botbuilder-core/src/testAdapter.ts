@@ -323,6 +323,15 @@ export class TestAdapter extends BotAdapter implements ExtendedUserTokenProvider
      * @returns The [TokenStatus](xref:botframework-connector.TokenStatus) objects retrieved.
      */
     public async getTokenStatus(context: TurnContext, userId: string, includeFilter?: string, oAuthAppCredentials?: any): Promise<any[]> {
+
+        if (!context || !context.activity) {
+            throw new Error('testAdapter.getTokenStatus(): context with activity is required');
+        }
+        
+        if (!userId && (!context.activity.from || !context.activity.from.id)) {
+            throw new Error(`testAdapter.getTokenStatus(): missing userId, from or from.id`);
+        }
+
         const filter = (includeFilter ? includeFilter.split(',') : undefined);
         if(!userId) {
             userId = context.activity.from.id;

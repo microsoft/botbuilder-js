@@ -498,16 +498,51 @@ describe(`TestAdapter`, function () {
     });
 
     it(`should return statuses from getTokenStatus`, function (done) {
-        const adapter = new TestAdapter((context) => {
-            context.adapter.getTokenStatus(context, 'user').then(statuses => {
+        const adapter = new TestAdapter(async (context) => {
+            try {
+                const statuses = await context.adapter.getTokenStatus(context, 'user');
                 assert(statuses);
                 assert(statuses.length == 2);
                 assert(statuses.reduce((j, status) => (j||status.ConnectionName === "ABC"), false));
+             
                 done();
-            });
+            } catch (err) {
+                done(err);
+            }
         });
 
         adapter.addUserToken('ABC', 'test', 'user', '123abc');
+        adapter.addUserToken('DEF', 'test', 'user', 'def456');
+        adapter.send('hi');
+    });
+
+    it(`should throw when context parameter is not sent`, function (done) {
+        const adapter = new TestAdapter(async (context) => {
+            try {
+                await context.adapter.getTokenStatus();
+            } catch (err) {
+                assert(err.message === 'testAdapter.getTokenStatus(): context with activity is required',
+                `expected "testAdapter.getTokenStatus(): context with activity is required" Error message, not "${ err.message }"`);
+                done();
+            }
+        });
+
+        adapter.addUserToken('DEF', 'test', 'user', 'def456');
+        adapter.send('hi');
+    });
+
+    it(`should throw when userId parameter is not sent and context.activity.from.id is not present`, function (done) {
+        const adapter = new TestAdapter(async (context) => {
+            try {
+                context.activity.from = undefined;
+                await context.adapter.getTokenStatus(context);
+            } catch (err) {
+                assert(err.message === 'testAdapter.getTokenStatus(): missing userId, from or from.id',
+                `expected "testAdapter.getTokenStatus(): missing userId, from or from.id" Error message, not "${ err.message }"`);
+                done();
+            }
+        });
+
         adapter.addUserToken('DEF', 'test', 'user', 'def456');
         adapter.send('hi');
     });
