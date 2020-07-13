@@ -20,6 +20,16 @@ export interface EntityInfo {
     value: any;
 
     /**
+     * Value of property if any.
+     */
+    property: string;
+
+    /**
+     * Operation to apply to entity.
+     */
+    operation: string;
+
+    /**
      * Position where entity starts in utterance.
      */
     start: number;
