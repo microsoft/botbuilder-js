@@ -61,7 +61,6 @@ stages:
           - task: Npm@1
             displayName: 'npm install streaming echo bot dependencies'
             inputs: $(System.DefaultWorkingDirectory)\libraries\streaming-e2e-tests\bot'
-            verbose: false
 
         
   
