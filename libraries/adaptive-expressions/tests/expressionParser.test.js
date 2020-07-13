@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
 /* eslint-disable @typescript-eslint/no-var-requires */
-const {Expression, SimpleObjectMemory, ExpressionFunctions, Options} = require('../lib');
+const {Expression, SimpleObjectMemory, FunctionUtils, Options } = require('../lib');
 var {TimexProperty} = require('@microsoft/recognizers-text-data-types-timex-expression');
 const assert = require('assert');
 const moment = require('moment');
@@ -464,7 +464,7 @@ const dataSource = [
     ['date(timestamp)', '3/15/2018'],//Default. TODO
     ['year(timestamp)', 2018],
     ['length(utcNow())', 24],
-    ['utcNow(\'MM-DD-YY HH\')', moment(new Date().toISOString()).utc().format('MM-DD-YY HH')],
+    ['utcNow(\'MM-DD-YY\')', moment(new Date().toISOString()).utc().format('MM-DD-YY')],
     ['formatDateTime(notISOTimestamp)', '2018-03-15T13:00:00.000Z'],
     ['formatDateTime(notISOTimestamp, \'MM-dd-yy\')', '03-15-18'],
     ['formatDateTime(notISOTimestamp, \'ddd\')', 'Thu'],
@@ -873,22 +873,22 @@ describe('expression parser functional test', () => {
         // normal case, note, we doesn't append a " yet
         let exp = Expression.parse('a[f].b[n].z');
         let path = undefined;
-        ({path, left, error} = ExpressionFunctions.tryAccumulatePath(exp, memory, undefined));
+        ({path, left, error} = FunctionUtils.tryAccumulatePath(exp, memory, undefined));
         assert.strictEqual(path, 'a[\'foo\'].b[2].z');
 
         // normal case
         exp = Expression.parse('a[z.z][z.z].y');
-        ({path, left, error} = ExpressionFunctions.tryAccumulatePath(exp, memory, undefined));
+        ({path, left, error} = FunctionUtils.tryAccumulatePath(exp, memory, undefined));
         assert.strictEqual(path, 'a[\'zar\'][\'zar\'].y');
 
         // normal case
         exp = Expression.parse('a.b[z.z]');
-        ({path, left, error} = ExpressionFunctions.tryAccumulatePath(exp, memory, undefined));
+        ({path, left, error} = FunctionUtils.tryAccumulatePath(exp, memory, undefined));
         assert.strictEqual(path, 'a.b[\'zar\']');
 
         // stop evaluate at middle
         exp = Expression.parse('json(x).b');
-        ({path, left, error} = ExpressionFunctions.tryAccumulatePath(exp, memory, undefined));
+        ({path, left, error} = FunctionUtils.tryAccumulatePath(exp, memory, undefined));
         assert.strictEqual(path, 'b');
 
     });

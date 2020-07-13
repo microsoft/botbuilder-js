@@ -7,7 +7,7 @@
  */
 import { AbstractParseTreeVisitor, TerminalNode } from 'antlr4ts/tree';
 import { ParserRuleContext } from 'antlr4ts/ParserRuleContext';
-import { ExpressionFunctions, Constant, EvaluatorLookup, Expression, ExpressionParser, ExpressionEvaluator, ExpressionType, ReturnType, SimpleObjectMemory, Options} from 'adaptive-expressions';
+import { Constant, EvaluatorLookup, Expression, ExpressionParser, ExpressionEvaluator, ExpressionType, ReturnType, SimpleObjectMemory, Options, FunctionUtils} from 'adaptive-expressions';
 import { keyBy } from 'lodash';
 import { CustomizedMemory } from './customizedMemory';
 import { EvaluationTarget } from './evaluationTarget';
@@ -425,31 +425,31 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGTempla
 
         var templateName = this.parseTemplateName(name).pureTemplateName;
         if (templateName in this.templateMap) {
-            return new ExpressionEvaluator(templateName, ExpressionFunctions.apply(this.templateEvaluator(name)), ReturnType.Object, this.validTemplateReference);
+            return new ExpressionEvaluator(templateName, FunctionUtils.apply(this.templateEvaluator(name)), ReturnType.Object, this.validTemplateReference);
         }
 
         if (name === Evaluator.templateFunctionName) {
-            return new ExpressionEvaluator(Evaluator.templateFunctionName, ExpressionFunctions.apply(this.templateFunction()), ReturnType.Object, this.validateTemplateFunction);
+            return new ExpressionEvaluator(Evaluator.templateFunctionName, FunctionUtils.apply(this.templateFunction()), ReturnType.Object, this.validateTemplateFunction);
         }
 
         if (name === Evaluator.fromFileFunctionName) {
-            return new ExpressionEvaluator(Evaluator.fromFileFunctionName, ExpressionFunctions.apply(this.fromFile()), ReturnType.Object, ExpressionFunctions.validateUnaryString);
+            return new ExpressionEvaluator(Evaluator.fromFileFunctionName, FunctionUtils.apply(this.fromFile()), ReturnType.Object, FunctionUtils.validateUnaryString);
         }
 
         if (name === Evaluator.activityAttachmentFunctionName) {
             return new ExpressionEvaluator(
                 Evaluator.activityAttachmentFunctionName, 
-                ExpressionFunctions.apply(this.activityAttachment()), 
+                FunctionUtils.apply(this.activityAttachment()), 
                 ReturnType.Object, 
-                (expr): void => ExpressionFunctions.validateOrder(expr, undefined, ReturnType.Object, ReturnType.String));
+                (expr): void => FunctionUtils.validateOrder(expr, undefined, ReturnType.Object, ReturnType.String));
         }
 
         if (name === Evaluator.isTemplateFunctionName) {
-            return new ExpressionEvaluator(Evaluator.isTemplateFunctionName, ExpressionFunctions.apply(this.isTemplate()), ReturnType.Boolean, ExpressionFunctions.validateUnaryString);
+            return new ExpressionEvaluator(Evaluator.isTemplateFunctionName, FunctionUtils.apply(this.isTemplate()), ReturnType.Boolean, FunctionUtils.validateUnaryString);
         }
 
         if (name === Evaluator.expandTextFunctionName) {
-            return new ExpressionEvaluator(Evaluator.expandTextFunctionName, ExpressionFunctions.apply(this.expandText()), ReturnType.Object, ExpressionFunctions.validateUnaryString);
+            return new ExpressionEvaluator(Evaluator.expandTextFunctionName, FunctionUtils.apply(this.expandText()), ReturnType.Object, FunctionUtils.validateUnaryString);
         }
 
         return undefined;
@@ -518,7 +518,7 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGTempla
 
     private readonly validateTemplateFunction = (expression: Expression): void => {
         
-        ExpressionFunctions.validateAtLeastOne(expression);
+        FunctionUtils.validateAtLeastOne(expression);
 
         const children0: Expression = expression.children[0];
 

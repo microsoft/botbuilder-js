@@ -1,6 +1,6 @@
 import { MemoryInterface } from './memoryInterface';
 import { Extensions } from '../extensions';
-import { ExpressionFunctions } from '../expressionFunctions';
+import { FunctionUtils } from '../functionUtils';
 
 /**
  * @module adaptive-expressions
@@ -55,9 +55,9 @@ export class SimpleObjectMemory implements MemoryInterface {
             let error: string;
             const idx = parseInt(part);
             if(!isNaN(idx) && Array.isArray(curScope)) {
-                ({value, error} = ExpressionFunctions.accessIndex(curScope, idx));
+                ({value, error} = FunctionUtils.accessIndex(curScope, idx));
             } else {
-                ({value, error} = ExpressionFunctions.accessProperty(curScope, part));
+                ({value, error} = FunctionUtils.accessProperty(curScope, part));
             }
 
             if (error) {
@@ -100,10 +100,10 @@ export class SimpleObjectMemory implements MemoryInterface {
             const idx = parseInt(parts[i]);
             if(!isNaN(idx) && Array.isArray(curScope)) {
                 curPath = `[${ parts[i] }]`;
-                ({value: curScope, error} = ExpressionFunctions.accessIndex(curScope, idx));
+                ({value: curScope, error} = FunctionUtils.accessIndex(curScope, idx));
             } else {
                 curPath = `.${ parts[i] }`;
-                ({value: curScope, error} = ExpressionFunctions.accessProperty(curScope, parts[i]));
+                ({value: curScope, error} = FunctionUtils.accessProperty(curScope, parts[i]));
             }
 
             if (error) {
@@ -135,7 +135,7 @@ export class SimpleObjectMemory implements MemoryInterface {
                 return;
             }
         } else {
-            error = ExpressionFunctions.setProperty(curScope,parts[parts.length - 1], input).error;
+            error = this.setProperty(curScope,parts[parts.length - 1], input).error;
             if (error) {
                 return;
             }
@@ -164,4 +164,15 @@ export class SimpleObjectMemory implements MemoryInterface {
             return value;
         };
     };
+
+    private setProperty(instance: any, property: string, value: any): {value: any; error: string} {
+        const result: any = value;
+        if (instance instanceof Map) {
+            instance.set(property, value);
+        } else {
+            instance[property] = value;
+        }
+
+        return {value: result, error: undefined};
+    }
 }
