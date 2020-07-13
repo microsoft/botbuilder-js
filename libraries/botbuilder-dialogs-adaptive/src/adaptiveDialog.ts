@@ -5,8 +5,10 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
+import { IntExpression, ExpressionParser } from 'adaptive-expressions';
 import {
-    TurnContext, ActivityTypes, Activity, RecognizerResult, getTopScoringIntent } from 'botbuilder-core';
+    TurnContext, ActivityTypes, Activity, RecognizerResult, getTopScoringIntent
+} from 'botbuilder-core';
 import { Dialog, DialogInstance, DialogReason, DialogTurnResult, DialogTurnStatus, DialogEvent, DialogContext, DialogContainer, DialogDependencies, TurnPath, DialogPath, DialogState } from 'botbuilder-dialogs';
 import { OnCondition } from './conditions';
 import { Recognizer, RecognizerSet } from './recognizers';
@@ -16,16 +18,23 @@ import { FirstSelector } from './selectors';
 import { SchemaHelper } from './schemaHelper';
 import { LanguageGenerator } from './languageGenerator';
 import { ActionContext } from './actionContext';
-import { EntityEvents } from './entityEvents';
 import { AdaptiveEvents } from './adaptiveEvents';
 import { AdaptiveDialogState } from './adaptiveDialogState';
-import { EntityInfo } from './entityInfo';
-import { IntExpression, ExpressionParser } from 'adaptive-expressions';
+import { EntityInfo, NormalizedEntityInfos } from './entityInfo';
+import { EntityAssignments } from './entityAssignments';
+import { EntityAssignment } from './entityAssignment';
 
 export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
     public static conditionTracker = 'dialog._tracker.conditions';
 
     private readonly adaptiveKey = '_adaptive';
+    private readonly defaultOperationKey = '$defaultOperation';
+    private readonly expectedOnlyKey = '$expectedOnly';
+    private readonly entitiesKey = '$entities';
+    private readonly operationsKey = '$operations';
+    private readonly propertyNameKey = 'PROPERTYName';
+    private readonly utteranceKey = 'utterance';
+
     private readonly generatorTurnKey = Symbol('generatorTurn');
     private readonly changeTurnKey = Symbol('changeTurn');
 
@@ -153,7 +162,7 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
 
         return this._internalVersion;
     }
-    
+
     protected onComputeId(): string {
         return `AdaptiveDialog[]`;
     }
@@ -550,10 +559,10 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
     protected async onEndOfActions(actionContext: ActionContext): Promise<DialogTurnResult> {
         // Is the current dialog still on the stack?
         if (actionContext.activeDialog) {
-            // Completed actions so continue processing entity queues
+            // Completed actions so continue processing entity assignments
             const handled = await this.processQueues(actionContext);
             if (handled) {
-                // Still processing queues
+                // Still processing assignments
                 return await this.continueActions(actionContext);
             } else if (this.shouldEnd(actionContext)) {
                 const result = actionContext.state.getValue(this.defaultResultProperty);
@@ -608,71 +617,52 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
     }
 
     /**
-     * This function goes through the ambiguity queues and emits events if present.
-     * In order ClearProperties, AssignEntity, ChooseProperties, ChooseEntity, EndOfActions.
+     * This function goes through the entity assignments and emits events if present.
      */
     private async processQueues(actionContext: ActionContext): Promise<boolean> {
         let evt: DialogEvent;
-        const queues = EntityEvents.read(actionContext);
-        let changed = false;
-        if (queues.clearProperties.length > 0) {
-            const val = queues.clearProperties.shift();
+        let handled = false;
+        const assignments = EntityAssignments.read(actionContext);
+        const nextAssignment = assignments.nextAssignment();
+        if (nextAssignment) {
             evt = {
-                name: AdaptiveEvents.clearProperty,
-                value: val,
+                name: nextAssignment.event,
+                value: nextAssignment.alternative ? nextAssignment.alternatives : nextAssignment,
                 bubble: false
             };
-            changed = true;
-        } else if (queues.assignEntities.length > 0) {
-            const val = queues.assignEntities.shift();
-            evt = {
-                name: AdaptiveEvents.assignEntity,
-                value: val,
-                bubble: false
-            };
-            // TODO: (from C#) For now, I'm going to dereference to a one-level array value.  There is a bug in the current code in the distinction between
-            // @ which is supposed to unwrap down to non-array and @@ which returns the whole thing. @ in the curent code works by doing [0] which
-            // is not enough.
-            let entity = val.entity.value;
-            if (!(Array.isArray(entity))) {
-                entity = [entity];
+
+            if (nextAssignment.event == AdaptiveEvents.assignEntity) {
+                // TODO: (from C#) For now, I'm going to dereference to a one-level array value.  There is a bug in the current code in the distinction between
+                // @ which is supposed to unwrap down to non-array and @@ which returns the whole thing. @ in the curent code works by doing [0] which
+                // is not enough.
+                let entity = nextAssignment.entity.value;
+                if (!Array.isArray(entity)) {
+                    entity = [entity];
+                }
+
+                actionContext.state.setValue(`${ TurnPath.recognized }.entities.${ nextAssignment.entity.name }`, entity);
+                assignments.dequeue(actionContext);
             }
 
-            actionContext.state.setValue(`${ TurnPath.recognized }.entities.${ val.entity.name }`, entity);
-            changed = true;
-        } else if (queues.chooseProperties.length > 0) {
-            const val = queues.chooseProperties.shift();
-            evt = {
-                name: AdaptiveEvents.chooseProperty,
-                value: val,
-                bubble: false
-            };
-        } else if (queues.chooseEntities.length > 0) {
-            const val = queues.chooseEntities.shift();
-            evt = {
-                name: AdaptiveEvents.chooseEntity,
-                value: val,
-                bubble: false
-            };
+            actionContext.state.setValue(DialogPath.lastEvent, evt.name);
+            handled = await this.processEvent(actionContext, evt, true);
+            if (!handled) {
+                // If event wasn't handled, remove it.
+                if (nextAssignment && nextAssignment.event !== AdaptiveEvents.assignEntity) {
+                    assignments.dequeue(actionContext);
+                }
+
+                // See if more assignments or end of actions.
+                handled = await this.processQueues(actionContext);
+            }
         } else {
+            // Emit end of actions
             evt = {
                 name: AdaptiveEvents.endOfActions,
                 bubble: false
             };
-        }
-
-        if (changed) {
-            EntityEvents.write(actionContext, queues);
-        }
-
-        actionContext.state.setValue(DialogPath.lastEvent, evt.name);
-        let handled = await this.processEvent(actionContext, evt, true);
-        if (!handled) {
-            // If event wasn't handled, remove it from queues and keep going if things changed
-            if (EntityEvents.dequeueEvent(queues, evt.name)) {
-                EntityEvents.write(actionContext, queues);
-                handled = await this.processQueues(actionContext);
-            }
+            actionContext.state.setValue(DialogPath.lastEvent, evt.name);
+            handled = await this.processEvent(actionContext, evt, true);
         }
 
         return handled;
@@ -692,39 +682,36 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
                 actionContext.state.deleteValue(DialogPath.lastEvent);
             }
 
-            const queues = EntityEvents.read(actionContext);
+            const assignments = EntityAssignments.read(actionContext);
             const entities = EntityInfo.normalizeEntities(actionContext);
             const utterance = activity.type == ActivityTypes.Message ? activity.text : '';
-            const expected: string[] = actionContext.state.getValue(DialogPath.expectedProperties, []);
 
             // Utterance is a special entity that corresponds to the full utterance
-            entities['utterance'] = [Object.assign(new EntityInfo(), {
+            entities[this.utteranceKey] = [Object.assign(new EntityInfo(), {
                 priority: Number.MAX_SAFE_INTEGER,
                 coverage: 1,
                 start: 0,
                 end: utterance.length,
-                name: 'utterance',
+                name: this.utteranceKey,
                 score: 0,
                 type: 'string',
                 value: utterance,
                 text: utterance
             })];
-            const recognized = EntityEvents.assignEntities(queues, actionContext, entities, expected, lastEvent, this.dialogSchema);
+            const recognized = this.assignEntities(actionContext, entities, assignments, lastEvent);
             const unrecognized = this.splitUtterance(utterance, recognized);
 
-            // TODO: Is this actually useful information?
+            // Utterance is a special entity that corresponds to the full utterance
             actionContext.state.setValue(TurnPath.unrecognizedText, unrecognized);
             actionContext.state.setValue(TurnPath.recognizedEntities, recognized);
-            const turn = actionContext.state.getValue(DialogPath.eventCounter);
-            EntityEvents.combineOldEntityToProperties(queues, turn, this.dialogSchema);
-            EntityEvents.write(actionContext, queues);
+            assignments.write(actionContext);
         }
     }
 
     private splitUtterance(utterance: string, recognized: Partial<EntityInfo>[]): string[] {
         const unrecognized = [];
         var current = 0;
-        for (let i = 0; i < recognized.length; i++){
+        for (let i = 0; i < recognized.length; i++) {
             const entity = recognized[i];
             if (entity.start > current) {
                 unrecognized.push(utterance.substr(current, entity.start - current).trim());
@@ -738,6 +725,360 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
         }
 
         return unrecognized;
+    }
+
+    private candidates(entities: NormalizedEntityInfos, expected: string[]): Partial<EntityAssignment>[] {
+        const candidates: Partial<EntityAssignment>[] = [];
+        const globalExpectedOnly: string[] = this.dialogSchema.schema[this.expectedOnlyKey] || [];
+        const usedEntityType = new Set<string>();
+        const usedEntity: Map<string, Partial<EntityInfo>> = new Map();
+
+        // Emit entities that already have a property
+        for (const entityName in entities) {
+            const alternatives = entities[entityName];
+            for (const alternative of alternatives) {
+                if (alternative.property) {
+                    usedEntity.set(alternative.name, alternative);
+                    candidates.push({
+                        entity: alternative,
+                        property: alternative.property,
+                        operation: alternative.operation,
+                        isExpected: expected.indexOf(alternative.property) >= 0
+                    });
+                }
+            }
+        }
+
+        // Find possible mappings to properties
+        for (const propSchema of this.dialogSchema.property.children) {
+            const isExpected = expected.indexOf(propSchema.path) >= 0;
+            const expectedOnly = propSchema.expectedOnly || globalExpectedOnly;
+            for (const entityName of propSchema.entities) {
+                const matches = entities[entityName];
+                if (matches && (isExpected || expectedOnly.indexOf(entityName) < 0)) {
+                    usedEntityType.add(entityName);
+                    for (const entity of matches) {
+                        if (!usedEntity.has(entity.name)) {
+                            candidates.push({
+                                entity: entity,
+                                property: propSchema.name,
+                                operation: entity.operation,
+                                isExpected: isExpected
+                            });
+                        }
+                    }
+                }
+            }
+        }
+
+        // Unassigned entities
+        const entityPreferences = this.entityPreferences(null);
+        for (const key in entities) {
+            if (!usedEntityType.has(key) && entityPreferences.indexOf(key) >= 0) {
+                for (const entity of entities[key]) {
+                    if (!usedEntity.has(entity.name)) {
+                        candidates.push({
+                            entity: entity,
+                            operation: entity.operation,
+                            property: entity.property
+                        });
+                    }
+                }
+            }
+        }
+
+        return candidates;
+    }
+
+    private addMapping(mapping: Partial<EntityAssignment>, assignments: EntityAssignments): void {
+        // Entities without a property or operation are available as entities only when found
+        if (mapping.property || mapping.operation) {
+            if (mapping.alternative) {
+                mapping.event = AdaptiveEvents.chooseProperty;
+            } else if (Array.isArray(mapping.entity.value)) {
+                const arr = mapping.entity.value;
+                if (arr.length > 1) {
+                    mapping.event = AdaptiveEvents.chooseEntity;
+                } else {
+                    mapping.event = AdaptiveEvents.assignEntity;
+                    mapping.entity.value = arr[0];
+                }
+            } else {
+                mapping.event = AdaptiveEvents.assignEntity;
+            }
+
+            assignments.assignments.push(mapping);
+        }
+    }
+
+    private entityPreferences(property: string): string[] {
+        if (!property) {
+            if (this.dialogSchema.schema && this.dialogSchema.schema.hasOwnProperty(this.entitiesKey)) {
+                return this.dialogSchema.schema[this.entitiesKey];
+            } else {
+                return [this.propertyNameKey];
+            }
+        } else {
+            return this.dialogSchema.pathToSchema(property).entities;
+        }
+    }
+
+    private defaultOperation(assignment: Partial<EntityAssignment>, askDefault: any, dialogDefault: any): string {
+        let operation: string;
+        if (askDefault) {
+            operation = askDefault[assignment.entity.name] || askDefault[''];
+        } else if (dialogDefault) {
+            const entities = dialogDefault[assignment.property] || dialogDefault[''];
+            if (entities) {
+                const dialogOp = entities[assignment.entity.name] || entities[''];
+                if (dialogOp) {
+                    operation = dialogOp;
+                }
+            }
+        }
+
+        return operation;
+    }
+
+    private removeOverlappingPerProperty(candidates: Partial<EntityAssignment>[]): Partial<EntityAssignment>[] {
+        // Group mappings by property
+        const perProperty = candidates.reduce<{ [path: string]: Partial<EntityAssignment>[] }>((accumulator, assignment): {} => {
+            if (accumulator.hasOwnProperty(assignment.property)) {
+                accumulator[assignment.property].push(assignment);
+            } else {
+                accumulator[assignment.property] = [assignment];
+            }
+            return accumulator;
+        }, {});
+
+        const output: Partial<EntityAssignment>[] = [];
+        for (const path in perProperty) {
+            const entityPreferences = this.entityPreferences(path);
+            let choices = perProperty[path];
+
+            // Assume preference by order listed in mappings
+            // Alternatives would be to look at coverage or other metrics
+            for (const entity of entityPreferences) {
+                let candidate: Partial<EntityAssignment>;
+                do {
+                    candidate = undefined;
+                    for (let i = 0; i < choices.length; i++) {
+                        const mapping = choices[i];
+                        if (mapping.entity.name == entity) {
+                            candidate = mapping;
+                            break;
+                        }
+                    }
+
+                    if (candidate) {
+                        // Remove any overlapping entities
+                        choices = choices.filter((choice): boolean => !EntityInfo.overlaps(choice.entity, candidate.entity));
+                        output.push(candidate);
+                    }
+
+                } while (candidate);
+            }
+        }
+
+        return output;
+    }
+
+    private assignEntities(actionContext: ActionContext, entities: NormalizedEntityInfos, existing: EntityAssignments, lastEvent: string): Partial<EntityInfo>[] {
+        const assignments = new EntityAssignments();
+        const expected: string[] = actionContext.state.getValue(DialogPath.expectedProperties, []);
+
+        // default operation from the last Ask action.
+        const askDefaultOp = actionContext.state.getValue(DialogPath.defaultOperation);
+
+        // default operation from the current adaptive dialog.
+        const defaultOp = this.dialogSchema.schema && this.dialogSchema.schema[this.defaultOperationKey];
+
+        const nextAssignment = existing.nextAssignment();
+        let candidates = this.removeOverlappingPerProperty(this.candidates(entities, expected))
+            .sort((a, b): number => (a.isExpected === b.isExpected) ? 0 : (a.isExpected ? -1 : 1));
+        const usedEntities: Map<string, Partial<EntityInfo>> = new Map();
+        const expectedChoices: string[] = [];
+        let choices: Partial<EntityAssignment>[] = [];
+        while (candidates.length > 0) {
+            let candidate = candidates[0];
+
+            // Find alternatives for current entity and remove from candidates pool.
+            let alternatives: Partial<EntityAssignment>[] = [];
+            const remaining: Partial<EntityAssignment>[] = [];
+            candidates.forEach((alt): void => {
+                if (EntityInfo.overlaps(candidate.entity, alt.entity)) {
+                    alternatives.push(alt);
+                } else {
+                    remaining.push(alt);
+                }
+            });
+            candidates = remaining;
+
+            // If expected binds entity, drop unexpected alternatives
+            if (candidate.isExpected && candidate.entity.name != this.utteranceKey) {
+                alternatives = alternatives.filter((a): boolean => a.isExpected);
+            }
+
+            // Find alternative that covers the largest amount of utterance
+            candidate = alternatives.sort((a, b): number => {
+                return (b.entity.name === this.utteranceKey ? 0 : b.entity.end - b.entity.start) -
+                    (a.entity.name === this.utteranceKey ? 0 : a.entity.end - a.entity.start);
+            })[0];
+
+            // Remove all alternatives that are fully contained in largest
+            alternatives = alternatives.filter((a): boolean => !EntityInfo.covers(candidate.entity, a.entity));
+
+            // Process any disambiguation task.
+            let mapped = false;
+            if (lastEvent == AdaptiveEvents.chooseEntity && candidate.property == nextAssignment.property) {
+                // Property has resolution so remove entity ambiguity
+                existing.dequeue(actionContext);
+                lastEvent = undefined;
+            } else if (lastEvent == AdaptiveEvents.chooseProperty && !candidate.operation && candidate.entity.name == this.propertyNameKey) {
+                // NOTE: This assumes the existence of an entity named PROPERTYName for resolving this ambiguity
+                // See if one of the choices corresponds to an alternative
+                choices = existing.nextAssignment().alternatives;
+                const property = Array.isArray(candidate.entity.value) ? candidate.entity.value[0] : candidate.entity.value.toString();
+                const choice = choices.find((p): boolean => p.property == property);
+                if (choice) {
+                    // Resolve choice, pretend it was expected and add to assignments
+                    choice.isExpected = true;
+                    choice.alternative = undefined;
+                    expectedChoices.push(choice.property);
+                    this.addMapping(choice, assignments);
+                    choices = choices.filter((c): boolean => !EntityInfo.overlaps(c, choice.entity));
+                    mapped = true;
+                }
+            }
+
+            for (const alternative of alternatives) {
+                if (!alternative.operation) {
+                    alternative.operation = this.defaultOperation(alternative, askDefaultOp, defaultOp);
+                }
+            }
+
+            candidate.addAlternatives(alternatives);
+
+            if (!mapped) {
+                this.addMapping(candidate, assignments);
+            }
+        }
+
+        if (expectedChoices.length > 0) {
+            // When choosing between property assignments, make the assignments be expected.
+            actionContext.state.setValue(DialogPath.expectedProperties, expectedChoices);
+
+            // Add back in any non-overlapping choices
+            while (choices.length > 0) {
+                const choice = choices[0];
+                const overlaps = choices.filter((alt): boolean => !EntityInfo.overlaps(choice.entity, alt.entity));
+                choice.addAlternatives(overlaps);
+                this.addMapping(choice, assignments);
+                choices = choices.filter((c): boolean => !EntityInfo.overlaps(c.entity, choice.entity));
+            }
+
+            existing.dequeue(actionContext);
+        }
+
+        this.mergeAssignments(assignments, existing);
+        return Object.values(usedEntities);
+    }
+
+    private replaces(a: Partial<EntityAssignment>, b: Partial<EntityAssignment>): number {
+        let replaces = 0;
+        for (const aAlt of a.alternatives) {
+            for (const bAlt of b.alternatives) {
+                if (aAlt.property == bAlt.property && aAlt.entity.name != this.propertyNameKey && bAlt.entity.name != this.propertyNameKey) {
+                    var prop = this.dialogSchema.pathToSchema(aAlt.property);
+                    if (Array.isArray(prop)) {
+                        if (aAlt.entity.whenRecognized > bAlt.entity.whenRecognized) {
+                            replaces = -1;
+                        } else if (aAlt.entity.whenRecognized < bAlt.entity.whenRecognized) {
+                            replaces = 1;
+                        } else {
+                            replaces = 0;
+                        }
+                        if (replaces == 0) {
+                            if (aAlt.entity.start > bAlt.entity.start) {
+                                replaces = -1;
+                            } else if (aAlt.entity.start > bAlt.entity.start) {
+                                replaces = 1;
+                            } else {
+                                replaces = 0;
+                            }
+                        }
+
+                        if (replaces != 0) {
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+
+        return replaces;
+    }
+
+    private mergeAssignments(newAssignments: EntityAssignments, old: EntityAssignments): void {
+        let list = old.assignments;
+        for (const assign of newAssignments.assignments) {
+            // Only one outstanding operation per singleton property
+            let add = true;
+            const newList: Partial<EntityAssignment>[] = [];
+            for (const oldAssign of list) {
+                let keep = true;
+                if (add) {
+                    switch (this.replaces(assign, oldAssign)) {
+                        case -1:
+                            keep = false;
+                            break;
+                        case 1:
+                            add = false;
+                            break;
+                    }
+                }
+
+                if (keep) {
+                    newList.push(oldAssign);
+                }
+            }
+
+            if (add) {
+                newList.push(assign);
+            }
+
+            list = newList;
+        }
+
+        old.assignments = list;
+
+        const operationPreference: string[] = this.dialogSchema.schema && this.dialogSchema.schema[this.operationsKey] || [];
+        const eventPreference: string[] = [AdaptiveEvents.assignEntity, AdaptiveEvents.chooseProperty, AdaptiveEvents.chooseEntity];
+        list.sort((a, b): number => {
+            // Order by event
+            let comparison = 0;
+
+            if (eventPreference.indexOf(a.event) != eventPreference.indexOf(b.event)) {
+                comparison = eventPreference.indexOf(a.event) > eventPreference.indexOf(b.event) ? 1 : -1;
+            } else {
+                // Unexpected before expected
+                if (a.isExpected != b.isExpected) {
+                    comparison = a.isExpected ? 1 : -1;
+                } else {
+                    // Order by history
+                    if (a.entity.whenRecognized != b.entity.whenRecognized) {
+                        comparison = a.entity.whenRecognized > b.entity.whenRecognized ? 1 : -1;
+                    } else {
+                        // Order by operations
+                        if (operationPreference.indexOf(a.operation) != operationPreference.indexOf(b.operation)) {
+                            comparison = operationPreference.indexOf(a.operation) > operationPreference.indexOf(b.operation) ? 1 : -1;
+                        }
+                    }
+                }
+            }
+
+            return comparison;
+        });
     }
 }
 
@@ -757,7 +1098,7 @@ function computeHash(text: string): string {
     let hash = 0;
     for (let i = 0; i < l; i++) {
         const chr = text.charCodeAt(i);
-        hash  = ((hash << 5) - hash) + chr;
+        hash = ((hash << 5) - hash) + chr;
         hash |= 0; // Convert to 32 bit integer
     }
     return hash.toString();
