@@ -222,7 +222,7 @@ describe('The FileTranscriptStore', () => {
 				activities.push(...createActivities(uuid(), startDate, 1));
 			}
 			storage = new FileTranscriptStore(workingFolder);
-			return await Promise.all(activities.map(activity => storage.logActivity(activity)));
+			return Promise.all(activities.map(activity => storage.logActivity(activity)));
 		});
 		after(() => fs.remove(workingFolder));
 
