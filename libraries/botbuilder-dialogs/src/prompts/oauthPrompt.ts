@@ -283,7 +283,7 @@ export class OAuthPrompt extends Dialog {
                         cardActionType = ActionTypes.OpenUrl;
                     }
                 }
-                else {
+                else if (!this.channelRequiresSignInLink(context.activity.channelId)){
                     link = undefined;
                 }
 
@@ -500,6 +500,16 @@ export class OAuthPrompt extends Dialog {
         }
 
         return true;
+    }
+    
+    private channelRequiresSignInLink(channelId: string): boolean {
+        switch (channelId) {
+            case Channels.Msteams:
+                return true;
+            default:
+        }
+
+        return false;
     }
 }
 
