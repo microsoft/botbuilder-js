@@ -310,10 +310,26 @@ export class TestAdapter extends BotAdapter implements ExtendedUserTokenProvider
         }
     }
 
+    /** 
+     * Asynchronously retrieves the token status for each configured connection for the given user.
+     * In testAdapter, retrieves tokens which were previously added via addUserToken.
+     * 
+     * @param context The context object for the turn.
+     * @param userId The ID of the user to retrieve the token status for.
+     * @param includeFilter Optional. A comma-separated list of connection's to include. If present,
+     *      the `includeFilter` parameter limits the tokens this method returns.
+     * @param oAuthAppCredentials AppCredentials for OAuth.
+     * 
+     * @returns The [TokenStatus](xref:botframework-connector.TokenStatus) objects retrieved.
+     */
     public async getTokenStatus(context: TurnContext, userId: string, includeFilter?: string, oAuthAppCredentials?: any): Promise<any[]> {
         const filter = (includeFilter ? includeFilter.split(',') : undefined);
+        if(!userId) {
+            userId = context.activity.from.id;
+        }
+
         const match = this._userTokens.filter(x => x.ChannelId === context.activity.channelId 
-                                            && x.UserId === context.activity.from.id 
+                                            && x.UserId === userId 
                                             && (!filter || filter.includes(x.ConnectionName)));
 
         if (match && match.length > 0)
