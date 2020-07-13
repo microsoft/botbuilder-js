@@ -30,27 +30,18 @@ stages:
                 -WorkingDirectory $(System.DefaultWorkingDirectory)
             displayName: 'Get latest botbuilder package version from MyGet - https://botbuilder.myget.org/gallery/botbuilder-v4-js-daily'
 
-  - stage: Tag
-    condition: succeededOrFailed()
-    jobs:
-      - job: Tag
-        steps:
           - task: colinsalmcorner.colinsalmcorner-buildtasks.tag-build-task.tagBuildOrRelease@0
             displayName: 'Tag Build with botbuilder version'
             inputs:
               tags: 'Using botbuilder version $(LatestVersion)'
-
-  - stage: Set_Dependency_To_Latest_Version
-    jobs:
-      - job: Set_Dependency_To_Latest_Version
-        steps:
-        - task: PowerShell@2
-          inputs:
-              targetType: 'filePath'
-              filePath: $(System.DefaultWorkingDirectory)\libraries\streaming-e2e-tests\set-dependency-version-in-packagejson.ps1
-              arguments:
-                -LatestVersion $(LatestVersion)
-                -WorkingDirectory $(System.DefaultWorkingDirectory)
-          displayName: Set Dependency to Latest Version
+              
+          - task: PowerShell@2
+            inputs:
+                targetType: 'filePath'
+                filePath: $(System.DefaultWorkingDirectory)\libraries\streaming-e2e-tests\set-dependency-version-in-packagejson.ps1
+                arguments:
+                  -LatestVersion $(LatestVersion)
+                  -WorkingDirectory $(System.DefaultWorkingDirectory)
+            displayName: Set Dependency to Latest Version
         
   
