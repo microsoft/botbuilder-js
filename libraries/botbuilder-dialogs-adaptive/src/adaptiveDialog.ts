@@ -31,6 +31,7 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
     private readonly defaultOperationKey = '$defaultOperation';
     private readonly expectedOnlyKey = '$expectedOnly';
     private readonly entitiesKey = '$entities';
+    private readonly instanceKey = '$instance';
     private readonly operationsKey = '$operations';
     private readonly propertyNameKey = 'PROPERTYName';
     private readonly utteranceKey = 'utterance';
@@ -683,7 +684,7 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
             }
 
             const assignments = EntityAssignments.read(actionContext);
-            const entities = EntityInfo.normalizeEntities(actionContext);
+            const entities = this.normalizeEntities(actionContext);
             const utterance = activity.type == ActivityTypes.Message ? activity.text : '';
 
             // Utterance is a special entity that corresponds to the full utterance
@@ -725,6 +726,149 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
         }
 
         return unrecognized;
+    }
+
+    private normalizeEntities(actionContext: ActionContext): NormalizedEntityInfos {
+        const entityToInfo: NormalizedEntityInfos = {};
+        const recognized = actionContext.state.getValue(TurnPath.recognized);
+        const text = recognized.text;
+        const entities: { [name: string]: any[] } = recognized.entities || {};
+        const turn = actionContext.state.getValue(DialogPath.eventCounter);
+        const operations: string[] = (this.dialogSchema.schema && this.dialogSchema.schema[this.operationsKey]) || [];
+        const metaData = entities[this.instanceKey] as object;
+        for (const name in entities) {
+            if (operations.indexOf(name) >= 0) {
+                const values = entities[name];
+                for (let i = 0; i < values.length; i++) {
+                    const composite = values[i];
+                    const childInstance = composite[this.instanceKey];
+                    let pname: Partial<EntityInfo>;
+                    if (Object.keys(composite).length > 1) {
+                        // Find PROPERTYName so we can apply it to other entities
+                        for (const key in composite) {
+                            if (key == this.propertyNameKey) {
+                                // Expand PROPERTYName and fold single match into siblings span
+                                // TODO: Would we ever need to handle multiple?
+                                const infos: NormalizedEntityInfos = {};
+                                const child = composite[key];
+                                this.expandEntity(child, childInstance, name, undefined, turn, text, infos);
+                                pname = infos[this.propertyNameKey][0];
+                                break;
+                            }
+                        }
+                    }
+
+                    for (const key in composite) {
+                        const child = composite[key];
+                        // Drop PROPERTYName if we are applying it to other entities
+                        if (!pname || key == this.propertyNameKey) {
+                            this.expandEntity(child, childInstance, name, pname, turn, text, entityToInfo);
+                        }
+                    }
+                }
+            } else {
+                this.expandEntity(entities[name], metaData, undefined, undefined, turn, text, entityToInfo);
+            }
+        }
+
+        // When there are multiple possible resolutions for the same entity that overlap, pick the 
+        // one that covers the most of the utterance.
+        for (const name in entityToInfo) {
+            const infos = entityToInfo[name];
+            infos.sort((entity1, entity2): number => {
+                let val = 0;
+                if (entity1.start == entity2.start) {
+                    if (entity1.end > entity2.end) {
+                        val = -1;
+                    } else if (entity1.end < entity2.end) {
+                        val = +1;
+                    }
+                } else if (entity1.start < entity2.start) {
+                    val = -1;
+                } else {
+                    val = +1;
+                }
+
+                return val;
+            });
+            for (let i = 0; i < infos.length; ++i) {
+                const current = infos[i];
+                for (let j = i + 1; j < infos.length;) {
+                    const alt = infos[j];
+                    if (EntityInfo.covers(current, alt)) {
+                        infos.splice(j, 1);
+                    } else {
+                        ++j;
+                    }
+                }
+            }
+        }
+
+        return entityToInfo;
+    }
+
+    private expandEntity(entry: any, metaData: any, op: string, propertyName: Partial<EntityInfo>, turn: number, text: string, entityToInfo: NormalizedEntityInfos): void {
+        const name: string = entry.name;
+        if (!name.startsWith('$')) {
+            const values = entry.value;
+            const instances = metaData && metaData[name];
+            for (let i = 0; i < values.length; ++i) {
+                const val = values[i];
+                const instance = instances && instances[i];
+                const infos = entityToInfo && entityToInfo[name] || [];
+                entityToInfo[name] = infos;
+
+                const info: Partial<EntityInfo> = {
+                    whenRecognized: turn,
+                    name: name,
+                    value: val,
+                    operation: op
+                };
+
+                if (instance) {
+                    info.start = instance.startIndex || 0;
+                    info.end = instance.endIndex || 0;
+                    info.text = instance.text || '';
+                    info.type = instance.type;
+                    info.role = instance.role;
+                    info.score = instance.score || 0.0;
+                }
+
+                // Eventually this could be passed in
+                info.priority = info.role ? 0 : 1;
+                info.coverage = (info.end - info.start) / text.length;
+                if (propertyName) {
+                    // Add property information to entities
+                    if (propertyName.start < info.start) {
+                        info.start = propertyName.start;
+                    }
+
+                    if (propertyName.end > info.end) {
+                        info.end = propertyName.end;
+                    }
+
+                    // Expand entity to include possible property names
+                    for (const property in propertyName.value) {
+                        const newInfo: Partial<EntityInfo> = Object.assign({}, info);
+                        newInfo.property = property;
+                        infos.push(newInfo);
+                    }
+                }
+                else {
+                    if (op && name == this.propertyNameKey) {
+                        for(const property in val)
+                        {
+                            const newInfo: Partial<EntityInfo> = Object.assign({}, info);
+                            newInfo.property = property;
+                            infos.push(newInfo);
+                        }
+                    }
+                    else {
+                        infos.push(info);
+                    }
+                }
+            }
+        }
     }
 
     private candidates(entities: NormalizedEntityInfos, expected: string[]): Partial<EntityAssignment>[] {
