@@ -52,12 +52,7 @@ stages:
               New-Item -Path . -Name ".npmrc" -ItemType "file" -Value "registry=https://botbuilder.myget.org/F/botbuilder-v4-js-daily/npm/"
             displayName: 'Create .npmrc for MyGet feed - https://botbuilder.myget.org/gallery/botbuilder-v4-js-daily'
       
-      - job: Install_Dependencies
-        steps:
-          - task: Npm@1
-            displayName: "npm install streaming echo bot dependencies"
-            inputs: '$(System.DefaultWorkingDirectory)\libraries\streaming-e2e-tests\bot'
-            verbose: false
+
 
         
   
