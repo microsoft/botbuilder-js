@@ -18,7 +18,7 @@ import { Dialog, DialogTurnStatus, DialogTurnResult } from './dialog';
 import { DialogEvents } from './dialogEvents';
 import { DialogSet } from './dialogSet';
 import { AuthConstants, GovConstants, isSkillClaim } from './prompts/skillsHelpers';
-import { EndOfConversationCodes } from '../../botframework-schema'
+import { EndOfConversationCodes } from '../../botbuilder-core'
 
 export async function runDialog(dialog: Dialog, context: TurnContext, accessor: StatePropertyAccessor<DialogState>): Promise<void> {
     if (!dialog) {

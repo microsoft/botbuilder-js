@@ -18,7 +18,7 @@ const {
     WaterfallDialog
 } = require('../');
 const { AuthConstants } = require('../lib/prompts/skillsHelpers');
-const { EndOfConversationCodes } = require('../../botframework-schema')
+const { EndOfConversationCodes } = require('../../botbuilder-core')
 
 const FlowTestCase = {
     RootBotOnly: 'RootBotOnly',
