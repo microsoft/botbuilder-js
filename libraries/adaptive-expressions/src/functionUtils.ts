@@ -515,6 +515,30 @@ export class FunctionUtils {
         };
     }
 
+        /**
+     * Generate an expression delegate that applies function after verifying all children.
+     * @param func Function to apply.
+     * @param verify Function to check each arg for validity.
+     * @returns Delegate for evaluating an expression.
+     */
+    public static applyWithErrorAndOptions(func: (arg0: any[], options: Options) => any, verify?: VerifyExpression): EvaluateExpressionDelegate {
+        return (expression: any, state: MemoryInterface, options: Options): {value: any; error: string} => {
+            let value: any;
+            let error: string;
+            let args: any[];
+            ({args, error} = FunctionUtils.evaluateChildren(expression, state, options, verify));
+            if (!error) {
+                try {
+                    ({value, error} = func(args, options));
+                } catch (e) {
+                    error = e.message;
+                }
+            }
+
+            return {value, error};
+        };
+    }
+
     /**
      * Generate an expression delegate that applies function on the accumulated value after verifying all children.
      * @param func Function to apply.
@@ -678,6 +702,15 @@ export class FunctionUtils {
             case 'Year': return {duration, tsStr: 'years'};
             default: return {duration, tsStr: undefined};
         }
+    }
+
+
+    public static determineLocale(args: any[], locale: string, maxArgsLength: number): string {
+        if (args.length === maxArgsLength) {
+            locale = args[maxArgsLength - 1] as string;
+        }
+
+        return locale;
     }
 
     /**

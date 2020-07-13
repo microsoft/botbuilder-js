@@ -11,6 +11,7 @@ import { Expression } from '../expression';
 import { ReturnType } from '../returnType';
 import { ExpressionType } from '../expressionType';
 import { FunctionUtils } from '../functionUtils';
+import { Options } from '../options';
 
 /**
  * Format number into required decimal numbers.
@@ -21,13 +22,14 @@ export class FormatNumber extends ExpressionEvaluator {
     }
 
     private static evaluator(): EvaluateExpressionDelegate {
-        return FunctionUtils.applyWithError(
-            (args: any[]): any => {
+        return FunctionUtils.applyWithErrorAndOptions(
+            (args: any[], options: Options): any => {
                 let value: any = null;
                 let error: string;
                 let number = args[0];
                 let precision = args[1];
-                let locale = args.length > 2 ? args[2] : 'en-us';
+                let locale = options.locale ? options.locale : 'en-us';
+                locale = FunctionUtils.determineLocale(args, locale, 3);
                 if (typeof number !== 'number') {
                     error = `formatNumber first argument ${number} must be a number`;
                 } else if (typeof precision !== 'number') {
