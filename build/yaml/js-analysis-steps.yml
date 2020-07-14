@@ -1,0 +1,19 @@
+steps:
+- task: NodeTool@0
+  displayName: 'Use Node $(NodeVersion)'
+  inputs:
+    versionSpec: $(NodeVersion)
+
+- task: Npm@1
+  displayName: 'npm install eslint typescript @typescript-eslint/parser @typescript-eslint/eslint-plugin eslint-plugin-only-warn'
+  inputs:
+    command: custom
+    verbose: false
+    customCommand: 'install eslint typescript @typescript-eslint/parser @typescript-eslint/eslint-plugin eslint-plugin-only-warn'
+
+- task: Npm@1
+  displayName: 'npm run eslint'
+  inputs:
+    command: custom
+    verbose: false
+    customCommand: 'run eslint'

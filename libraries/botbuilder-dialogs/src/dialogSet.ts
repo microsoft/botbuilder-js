@@ -161,7 +161,7 @@ export class DialogSet {
      */
     public async createContext(context: TurnContext): Promise<DialogContext> {
         if (!this.dialogState) {
-            throw new Error(`DialogSet.createContextAsync(): the dialog set was not bound to a stateProperty when constructed.`);
+            throw new Error(`DialogSet.createContext(): the dialog set was not bound to a stateProperty when constructed.`);
         }
         const state: DialogState = await this.dialogState.get(context, { dialogStack: [] } as DialogState);
 
