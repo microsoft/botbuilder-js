@@ -236,8 +236,7 @@ export class TelemetryLoggerMiddleware implements Middleware {
     protected async fillSendEventProperties(activity: Activity, telemetryProperties?: {[key: string]:string}): Promise<{ [key: string]: string }> {
         const properties: { [key: string]: string } = {};
 
-        if (activity)
-        {
+        if (activity) {
             properties[TelemetryConstants.replyActivityIdProperty] = activity.replyToId || '';
             properties[TelemetryConstants.recipientIdProperty] = (activity.recipient && activity.recipient.id) ? activity.recipient.id : '';
             properties[TelemetryConstants.conversationNameProperty] = (activity.conversation && activity.conversation.name) ? activity.conversation.name : '';
@@ -263,8 +262,7 @@ export class TelemetryLoggerMiddleware implements Middleware {
             }
 
             // Additional Properties can override "stock" properties.
-            if (telemetryProperties)
-            {
+            if (telemetryProperties) {
                 return Object.assign({}, properties, telemetryProperties);
             }
         }
@@ -296,8 +294,7 @@ export class TelemetryLoggerMiddleware implements Middleware {
             }
 
             // Additional Properties can override "stock" properties.
-            if (telemetryProperties)
-            {
+            if (telemetryProperties) {
                 return Object.assign({}, properties, telemetryProperties);
             }
         }
@@ -322,8 +319,7 @@ export class TelemetryLoggerMiddleware implements Middleware {
             properties[TelemetryConstants.conversationNameProperty] = (activity.conversation && activity.conversation.name) ? activity.conversation.name : '';
 
             // Additional Properties can override "stock" properties.
-            if (telemetryProperties)
-            {
+            if (telemetryProperties) {
                 return Object.assign({}, properties, telemetryProperties);
             }
         }
