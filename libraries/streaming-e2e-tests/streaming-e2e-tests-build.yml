@@ -12,12 +12,13 @@ pool:
 
 # TODO: variables
 # BotName: defined in Azure
+# AzureSubscription: defined in Azure
 variables:
   runCodesignValidationInjection: false
 
 
 stages:
-  - stage: Set_Dependency_To_Latest_BotBuilderJS_Daily_Version
+  - stage: Deploy_Bot
     jobs:
       - job: Set_Dependency_To_Latest_BotBuilderJS_Daily_Version
         steps:
@@ -59,10 +60,16 @@ stages:
         condition: succeeded()
         steps:
           - task: Npm@1
-            displayName: 'npm install streaming echo bot dependencies - $(System.DefaultWorkingDirectory)'
+            displayName: 'npm install streaming echo bot dependencies'
             inputs: 
               workingDir: '$(System.DefaultWorkingDirectory)\libraries\streaming-e2e-tests\bot'
               verbose: false
+      
+      - job: Deploy_Streaming_Bot
+        variables:
+          BotProjectDir: '$(System.DefaultWorkingDirectory)\libraries\streaming-e2e-tests\bot'
+          BotName: 'ash-streaming-js'
+        dependsOn: Install_Dependencies
+        steps:
+          - template: deploy-bot.yml
 
-        
-  
