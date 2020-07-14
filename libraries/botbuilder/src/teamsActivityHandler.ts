@@ -119,7 +119,7 @@ export class TeamsActivityHandler extends ActivityHandler {
      * the handler will call `onDialogs` handlers after delegating to `handleTeamsFileConsentAccept` or `handleTeamsFileConsentDecline`.
      * @param context A context object for this turn.
      * @param fileConsentCardResponse Represents the value of the invoke activity sent when the user acts on a file consent card.
-     * @returns A task that represents the work queued to execute.
+     * @returns A promise that represents the work queued.
      */
     protected async handleTeamsFileConsent(context: TurnContext, fileConsentCardResponse: FileConsentCardResponse): Promise<void> {
         switch (fileConsentCardResponse.action) {
@@ -138,7 +138,7 @@ export class TeamsActivityHandler extends ActivityHandler {
      * This type of invoke activity occur during the File Consent flow.
      * @param context A context object for this turn.
      * @param fileConsentCardResponse Represents the value of the invoke activity sent when the user acts on a file consent card.
-     * @returns A task that represents the work queued to execute.
+     * @returns A promise that represents the work queued.
      */
     protected async handleTeamsFileConsentAccept(context: TurnContext, fileConsentCardResponse: FileConsentCardResponse): Promise<void> {
         throw new Error('NotImplemented');
@@ -150,7 +150,7 @@ export class TeamsActivityHandler extends ActivityHandler {
      * This type of invoke activity occur during the File Consent flow.
      * @param context A context object for this turn.
      * @param fileConsentCardResponse Represents the value of the invoke activity sent when the user acts on a file consent card.
-     * @returns A task that represents the work queued to execute.
+     * @returns A promise that represents the work queued.
      */
     protected async handleTeamsFileConsentDecline(context: TurnContext, fileConsentCardResponse: FileConsentCardResponse): Promise<void> {
         throw new Error('NotImplemented');
@@ -160,7 +160,7 @@ export class TeamsActivityHandler extends ActivityHandler {
      * Receives invoke activities with Activity name of 'actionableMessage/executeAction'.
      * @param context A context object for this turn.
      * @param query The O365 connector card HttpPOST invoke query.
-     * @returns A task that represents the work queued to execute.
+     * @returnsa A promise that represents the work queued.
      */
     protected async handleTeamsO365ConnectorCardAction(context: TurnContext, query: O365ConnectorCardActionQuery): Promise<void> {
         throw new Error('NotImplemented');
@@ -169,7 +169,7 @@ export class TeamsActivityHandler extends ActivityHandler {
     /**
      * Invoked when a signIn invoke activity is received from the connector.
      * @param context A context object for this turn.
-     * @returns A task that represents the work queued to execute.
+     * @returns A promise that represents the work queued.
      */
     protected async onSignInInvoke(context: TurnContext): Promise<void> {
         switch (context.activity.name) {
@@ -184,7 +184,7 @@ export class TeamsActivityHandler extends ActivityHandler {
      * Receives invoke activities with Activity name of 'signin/verifyState'.
      * @param context A context object for this turn.
      * @param query Signin state (part of signin action auth flow) verification invoke query.
-     * @returns A task that represents the work queued to execute.
+     * @returns A promise that represents the work queued.
      */
     protected async handleTeamsSigninVerifyState(context: TurnContext, query: SigninStateVerificationQuery): Promise<void> {
         throw new Error('NotImplemented');
@@ -194,7 +194,7 @@ export class TeamsActivityHandler extends ActivityHandler {
      * Receives invoke activities with Activity name of 'signin/tokenExchange'
      * @param context A context object for this turn.
      * @param query Signin state (part of signin action auth flow) verification invoke query
-     * @returns A task that represents the work queued to execute.
+     * @returns A promise that represents the work queued.
      */
     protected async handleTeamsSigninTokenExchange(context: TurnContext, query: SigninStateVerificationQuery): Promise<void> {
         throw new Error('NotImplemented');
@@ -204,7 +204,7 @@ export class TeamsActivityHandler extends ActivityHandler {
      * Receives invoke activities with Activity name of 'composeExtension/onCardButtonClicked'
      * @param context A context object for this turn.
      * @param cardData Object representing the card data.
-     * @returns A task that represents the work queued to execute.
+     * @returns A promise that represents the work queued.
      */
     protected async handleTeamsMessagingExtensionCardButtonClicked(context: TurnContext, cardData: any): Promise<void> {
         throw new Error('NotImplemented');
@@ -347,7 +347,7 @@ export class TeamsActivityHandler extends ActivityHandler {
      * Receives invoke activities with the name 'composeExtension/setting' 
      * @param context A context object for this turn.
      * @param settings Object representing the configuration settings.
-     * @returns A task that represents the work queued to execute.
+     * @returns A promise that represents the work queued.
      */
     protected handleTeamsMessagingExtensionConfigurationSetting(context: TurnContext, settings: any): Promise<void> {
         throw new Error('NotImplemented');
@@ -356,7 +356,7 @@ export class TeamsActivityHandler extends ActivityHandler {
     /**
      * Override this method to change the dispatching of ConversationUpdate activities.
      * @param context A context object for this turn.
-     * @returns A task that represents the work queued to execute.
+     * @returns A promise that represents the work queued.
      */
     protected async dispatchConversationUpdateActivity(context: TurnContext): Promise<void> {
         await this.handle(context, 'ConversationUpdate', async () => {
@@ -408,7 +408,7 @@ export class TeamsActivityHandler extends ActivityHandler {
      * @remarks
      * If no handlers are registered for the `'TeamsMembersAdded'` event, the `'MembersAdded'` handlers will run instead.
      * @param context A context object for this turn.
-     * @returns A task that represents the work queued to execute.
+     * @returns A promise that represents the work queued.
      */
     protected async onTeamsMembersAdded(context: TurnContext): Promise<void> {
         if ('TeamsMembersAdded' in this.handlers && this.handlers['TeamsMembersAdded'].length > 0) {
@@ -458,7 +458,7 @@ export class TeamsActivityHandler extends ActivityHandler {
      * @remarks
      * If no handlers are registered for the `'TeamsMembersRemoved'` event, the `'MembersRemoved'` handlers will run instead.
      * @param context A context object for this turn.
-     * @returns A task that represents the work queued to execute.
+     * @returns A promise that represents the work queued.
      */
     protected async onTeamsMembersRemoved(context: TurnContext): Promise<void> {
         if ('TeamsMembersRemoved' in this.handlers && this.handlers['TeamsMembersRemoved'].length > 0) {
@@ -472,7 +472,7 @@ export class TeamsActivityHandler extends ActivityHandler {
      * Invoked when a Channel Created event activity is received from the connector.
      * Channel Created correspond to the user creating a new channel.
      * @param context A context object for this turn.
-     * @returns A task that represents the work queued to execute.
+     * @returns A promise that represents the work queued.
      */
     protected async onTeamsChannelCreated(context): Promise<void> {
         await this.handle(context, 'TeamsChannelCreated', this.defaultNextEvent(context));
@@ -482,7 +482,7 @@ export class TeamsActivityHandler extends ActivityHandler {
      * Invoked when a Channel Deleted event activity is received from the connector.
      * Channel Deleted correspond to the user deleting a channel.
      * @param context A context object for this turn.
-     * @returns A task that represents the work queued to execute. 
+     * @returns A promise that represents the work queued. 
      */
     protected async onTeamsChannelDeleted(context): Promise<void> {
         await this.handle(context, 'TeamsChannelDeleted', this.defaultNextEvent(context));
@@ -492,7 +492,7 @@ export class TeamsActivityHandler extends ActivityHandler {
      * Invoked when a Channel Renamed event activity is received from the connector.
      * Channel Renamed correspond to the user renaming a new channel.
      * @param context A context object for this turn.
-     * @returns A task that represents the work queued to execute.
+     * @returns A promise that represents the work queued.
      */
     protected async onTeamsChannelRenamed(context): Promise<void> {
         await this.handle(context, 'TeamsChannelRenamed', this.defaultNextEvent(context));
@@ -502,7 +502,7 @@ export class TeamsActivityHandler extends ActivityHandler {
      * Invoked when a Channel Restored event activity is received from the connector.
      * Channel Restored correspond to the user restoring a previously deleted channel.
      * @param context The context for this turn.
-     * @returns A task that represents the work queued to execute.
+     * @returns A promise that represents the work queued.
      */
     protected async onTeamsChannelRestored(context): Promise<void> {
         await this.handle(context, 'TeamsChannelRestored', this.defaultNextEvent(context));
@@ -512,7 +512,7 @@ export class TeamsActivityHandler extends ActivityHandler {
      * Invoked when a Team Renamed event activity is received from the connector.
      * Team Renamed correspond to the user renaming a team.
      * @param context The context for this turn.
-     * @returns A task that represents the work queued to execute.
+     * @returns A promise that represents the work queued.
      */
     protected async onTeamsTeamRenamed(context): Promise<void> {
         await this.handle(context, 'TeamsTeamRenamed', this.defaultNextEvent(context));
@@ -522,7 +522,7 @@ export class TeamsActivityHandler extends ActivityHandler {
      * Override this in a derived class to provide logic for when members other than the bot
      * join the channel, such as your bot's welcome logic.
      * @param handler 
-     * @returns A task that represents the work queued to execute.
+     * @returns A promise that represents the work queued.
      */
     public onTeamsMembersAddedEvent(handler: (membersAdded: TeamsChannelAccount[], teamInfo: TeamInfo, context: TurnContext, next: () => Promise<void>) => Promise<void>): this {
         return this.on('TeamsMembersAdded', async (context, next) => {
@@ -535,7 +535,7 @@ export class TeamsActivityHandler extends ActivityHandler {
      * Override this in a derived class to provide logic for when members other than the bot
      * leave the channel, such as your bot's good-bye logic.
      * @param handler 
-     * @returns A task that represents the work queued to execute.
+     * @returns A promise that represents the work queued.
      */
     public onTeamsMembersRemovedEvent(handler: (membersRemoved: TeamsChannelAccount[], teamInfo: TeamInfo, context: TurnContext, next: () => Promise<void>) => Promise<void>): this {
         return this.on('TeamsMembersRemoved', async (context, next) => {
@@ -547,7 +547,7 @@ export class TeamsActivityHandler extends ActivityHandler {
     /**
      * Override this in a derived class to provide logic for when a channel is created.
      * @param handler 
-     * @returns A task that represents the work queued to execute.
+     * @returns A promise that represents the work queued.
      */
     public onTeamsChannelCreatedEvent(handler: (channelInfo: ChannelInfo, teamInfo: TeamInfo, context: TurnContext, next: () => Promise<void>) => Promise<void>): this {
         return this.on('TeamsChannelCreated', async (context, next) => {
@@ -559,7 +559,7 @@ export class TeamsActivityHandler extends ActivityHandler {
     /**
      * Override this in a derived class to provide logic for when a channel is deleted.
      * @param handler 
-     * @returns A task that represents the work queued to execute. 
+     * @returns A promise that represents the work queued. 
      */
     public onTeamsChannelDeletedEvent(handler: (channelInfo: ChannelInfo, teamInfo: TeamInfo, context: TurnContext, next: () => Promise<void>) => Promise<void>): this {
         return this.on('TeamsChannelDeleted', async (context, next) => {
@@ -571,7 +571,7 @@ export class TeamsActivityHandler extends ActivityHandler {
     /**
      * Override this in a derived class to provide logic for when a channel is renamed.
      * @param handler 
-     * @returns A task that represents the work queued to execute.
+     * @returns A promise that represents the work queued.
      */
     public onTeamsChannelRenamedEvent(handler: (channelInfo: ChannelInfo, teamInfo: TeamInfo, context: TurnContext, next: () => Promise<void>) => Promise<void>): this {
         return this.on('TeamsChannelRenamed', async (context, next) => {
@@ -583,7 +583,7 @@ export class TeamsActivityHandler extends ActivityHandler {
     /**
      * Override this in a derived class to provide logic for when a channel is restored.
      * @param handler 
-     * @returns A task that represents the work queued to execute.
+     * @returns A promise that represents the work queued.
      */
     public onTeamsChannelRestoredEvent(handler: (teamInfo: TeamInfo, context: TurnContext, next: () => Promise<void>) => Promise<void>): this {
         return this.on('TeamsChannelRestored', async (context, next) => {
@@ -595,7 +595,7 @@ export class TeamsActivityHandler extends ActivityHandler {
     /**
      * Override this in a derived class to provide logic for when a team is renamed.
      * @param handler 
-     * @returns A task that represents the work queued to execute.
+     * @returns A promise that represents the work queued.
      */
     public onTeamsTeamRenamedEvent(handler: (teamInfo: TeamInfo, context: TurnContext, next: () => Promise<void>) => Promise<void>): this {
         return this.on('TeamsTeamRenamed', async (context, next) => {
