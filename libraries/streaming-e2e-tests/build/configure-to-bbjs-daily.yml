@@ -6,7 +6,7 @@ steps:
       filePath: $(System.DefaultWorkingDirectory)\libraries\streaming-e2e-tests\build\get-latest-bbjs-daily-version.ps1
       arguments:
         -AccessToken $(MyGetPersonalAccessToken)
-        -WorkingDirectory $(System.DefaultWorkingDirectory)
+        -PackageName "botbuilder"
 
   - task: colinsalmcorner.colinsalmcorner-buildtasks.tag-build-task.tagBuildOrRelease@0
     displayName: 'Tag Build with botbuilder version'

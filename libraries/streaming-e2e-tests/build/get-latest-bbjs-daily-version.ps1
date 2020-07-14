@@ -1,8 +1,8 @@
-param($AccessToken)
+param($AccessToken, $PackageName)
 
 $myGetPersonalAccessToken = $AccessToken;
 $myGetFeedName = "botbuilder-v4-js-daily";
-$packageName = "botbuilder";
+$packageName = $PackageName;
 
 $url = "https://botbuilder.myget.org/F/$myGetFeedName/auth/$myGetPersonalAccessToken/api/v2/feed-state";
 
