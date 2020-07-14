@@ -134,8 +134,9 @@ export class ConfirmPrompt extends Prompt<boolean> {
     private determineCulture(activity: Activity): string {
         let culture: string = PromptCultureModels.mapToNearestLanguage(activity.locale || this.defaultLocale);
         if (!culture || !this.choiceDefaults.hasOwnProperty(culture)) {
-            culture = 'en-us';
+            culture = PromptCultureModels.English.locale;
         }
+        
         return culture;
     }
 }

@@ -5,11 +5,11 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { DialogContext, Choice, ListStyle, ChoiceFactoryOptions, FindChoicesOptions, ChoiceFactory, recognizeChoices, ModelResult, FoundChoice } from 'botbuilder-dialogs';
+import { DialogContext, Choice, ListStyle, ChoiceFactoryOptions, FindChoicesOptions, ChoiceFactory, recognizeChoices, ModelResult, FoundChoice, PromptCultureModels } from 'botbuilder-dialogs';
 import { Activity } from 'botbuilder-core';
 import { InputDialog, InputState } from './inputDialog';
 import { ChoiceSet } from './choiceSet';
-import { ObjectExpression, StringExpression, ArrayExpression, EnumExpression } from 'adaptive-expressions';
+import { ObjectExpression, StringExpression, EnumExpression } from 'adaptive-expressions';
 
 
 export enum ChoiceOutputFormat {
@@ -90,9 +90,8 @@ export class ChoiceInput extends InputDialog {
         const choices = ChoiceFactory.toChoices(options.choices);
 
         // Initialize recognizer options
-        const activity: Activity = dc.context.activity;
         const opt: FindChoicesOptions = Object.assign({}, this.recognizerOptions.getValue(dc.state));
-        opt.locale = activity.locale || opt.locale || this.defaultLocale.getValue(dc.state) || 'en-us';
+        opt.locale = this.determineCulture(dc, opt);
 
         // Recognize input
         const results: ModelResult<FoundChoice>[] = recognizeChoices(input, choices, opt);
@@ -117,10 +116,7 @@ export class ChoiceInput extends InputDialog {
 
     protected async onRenderPrompt(dc: DialogContext, state: InputState): Promise<Partial<Activity>> {
         // Determine locale
-        let locale: string = dc.context.activity.locale || this.defaultLocale.getValue(dc.state);
-        if (!locale || !ChoiceInput.defaultChoiceOptions.hasOwnProperty(locale)) {
-            locale = 'en-us';
-        }
+        let locale: string = this.determineCulture(dc);
 
         const choices: Choice[] = this.choices.getValue(dc.state);
 
@@ -136,4 +132,16 @@ export class ChoiceInput extends InputDialog {
         return `ChoiceInput[${ this.prompt && this.prompt.toString() }]`;
     }
 
+    private determineCulture(dc: DialogContext, opt: FindChoicesOptions = null): string {
+        const optLocale: string = opt && opt.locale ? opt.locale : null;
+        let culture: string = PromptCultureModels.mapToNearestLanguage(
+            dc.context.activity.locale ||
+            optLocale ||
+            (this.defaultLocale && this.defaultLocale.getValue(dc.state)));
+        if (!culture || !ChoiceInput.defaultChoiceOptions.hasOwnProperty(culture)) {
+            culture = PromptCultureModels.English.locale;
+        }
+        
+        return culture;
+    }
 }

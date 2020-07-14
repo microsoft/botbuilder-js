@@ -137,7 +137,7 @@ export class PromptCultureModels {
      * @returns Normalized locale.
      */
     public static mapToNearestLanguage(cultureCode: string): string {
-        if (cultureCode !== undefined) {
+        if (cultureCode) {
             cultureCode = cultureCode.toLowerCase();
             let supportedCultureCodes = this.getSupportedCultureCodes();
     

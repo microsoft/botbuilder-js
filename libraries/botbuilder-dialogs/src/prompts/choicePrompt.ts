@@ -119,10 +119,9 @@ export class ChoicePrompt extends Prompt<FoundChoice> {
     }
 
     private determineCulture(activity: Activity, opt: FindChoicesOptions = null): string {
-        const optLocale = opt && opt.locale ? opt.locale : null;
-        let culture = PromptCultureModels.mapToNearestLanguage(activity.locale || optLocale || this.defaultLocale || PromptCultureModels.English.locale);
-        if (!culture || !this.choiceDefaults[culture])
-        {
+        const optLocale: string = opt && opt.locale ? opt.locale : null;
+        let culture: string = PromptCultureModels.mapToNearestLanguage(activity.locale || optLocale || this.defaultLocale);
+        if (!culture || !this.choiceDefaults.hasOwnProperty(culture)) {
             culture = PromptCultureModels.English.locale;
         }
 

@@ -7,10 +7,10 @@
  */
 import * as Recognizers from '@microsoft/recognizers-text-choice';
 import { Activity } from 'botbuilder-core';
-import { DialogContext, Choice, ListStyle, ChoiceFactoryOptions, ChoiceFactory, recognizeChoices } from 'botbuilder-dialogs';
+import { DialogContext, Choice, ListStyle, ChoiceFactoryOptions, ChoiceFactory, recognizeChoices, PromptCultureModels } from 'botbuilder-dialogs';
 import { InputDialog, InputState } from './inputDialog';
 import { ChoiceSet } from './choiceSet';
-import { StringExpression, ObjectExpression, ArrayExpression, EnumExpression } from 'adaptive-expressions';
+import { StringExpression, ObjectExpression, EnumExpression } from 'adaptive-expressions';
 
 export class ConfirmInput extends InputDialog {
     /**
@@ -65,8 +65,7 @@ export class ConfirmInput extends InputDialog {
         let input: any = dc.state.getValue(InputDialog.VALUE_PROPERTY);
         if (typeof input !== 'boolean') {
             // Find locale to use
-            const activity: Activity = dc.context.activity;
-            const locale = activity.locale || this.defaultLocale.getValue(dc.state) || 'en-us';
+            const locale = this.determineCulture(dc);
 
             // Recognize input
             const results: any = Recognizers.recognizeBoolean(input, locale);
@@ -97,11 +96,7 @@ export class ConfirmInput extends InputDialog {
 
     protected async onRenderPrompt(dc: DialogContext, state: InputState): Promise<Partial<Activity>> {
         // Determine locale
-        let locale: string = dc.context.activity.locale || this.defaultLocale.getValue(dc.state);
-        if (!locale || !ConfirmInput.defaultChoiceOptions.hasOwnProperty(locale)) {
-            locale = 'en-us';
-        }
-        locale = locale.toLowerCase(); // to match format 'en-US'
+        let locale: string = this.determineCulture(dc);
 
         // Format choices
         const confirmChoices = (this.confirmChoices && this.confirmChoices.getValue(dc.state)) || ConfirmInput.defaultChoiceOptions[locale].choices;
@@ -113,5 +108,14 @@ export class ConfirmInput extends InputDialog {
         const choiceOptions: ChoiceFactoryOptions = (this.choiceOptions && this.choiceOptions.getValue(dc.state)) || ConfirmInput.defaultChoiceOptions[locale].options;
         const style = this.style.getValue(dc.state)
         return Promise.resolve(this.appendChoices(prompt, channelId, choices, style, choiceOptions));
+    }
+    
+    private determineCulture(dc: DialogContext): string {
+        let culture: string = PromptCultureModels.mapToNearestLanguage(dc.context.activity.locale || (this.defaultLocale && this.defaultLocale.getValue(dc.state)));
+        if (!culture || !ConfirmInput.defaultChoiceOptions.hasOwnProperty(culture)) {
+            culture = PromptCultureModels.English.locale;
+        }
+        
+        return culture;
     }
 }
