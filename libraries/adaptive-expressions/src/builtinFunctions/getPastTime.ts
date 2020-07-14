@@ -27,17 +27,28 @@ export class GetPastTime extends ExpressionEvaluator {
         let value: any;
         let error: any;
         let args: any[];
+        let format = FunctionUtils.DefaultDateTimeFormat;
+        let locale = options.locale;
         ({args, error} = FunctionUtils.evaluateChildren(expression, state, options));
+
+        if (!error) {
+            ({format, locale} = FunctionUtils.determineFormatAndLocale(args, format, locale, 4));
+        }
+
         if (!error) {
             if (Number.isInteger(args[0]) && typeof args[1] === 'string') {
-                const format: string = (args.length === 3 ? FunctionUtils.timestampFormatter(args[2]) : FunctionUtils.DefaultDateTimeFormat);
                 const {duration, tsStr} = FunctionUtils.timeUnitTransformer(args[0], args[1]);
                 if (tsStr === undefined) {
                     error = `${args[2]} is not a valid time unit.`;
                 } else {
                     const dur: any = duration;
                     ({value, error} = FunctionUtils.parseTimestamp(new Date().toISOString(), (dt: Date): string => {
-                        return moment(dt).utc().subtract(dur, tsStr).format(format)}));
+                        if (format === '') {
+                            return moment(dt).utc().subtract(dur, tsStr).locale(locale).toString();
+                        } 
+
+                        return moment(dt).utc().subtract(dur, tsStr).format(format);
+                    }));
                 }
             } else {
                 error = `${expression} can't evaluate.`;
@@ -49,6 +60,6 @@ export class GetPastTime extends ExpressionEvaluator {
 
 
     private static validator(expression: Expression): void {
-        FunctionUtils.validateOrder(expression, [ReturnType.String], ReturnType.Number, ReturnType.String);
+        FunctionUtils.validateOrder(expression, [ReturnType.String, ReturnType.String], ReturnType.Number, ReturnType.String);
     }
 }

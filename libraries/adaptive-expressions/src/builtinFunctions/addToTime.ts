@@ -27,11 +27,18 @@ export class AddToTime extends ExpressionEvaluator {
         let value: any;
         let error: string;
         let args: any[];
+        let format = FunctionUtils.DefaultDateTimeFormat;
+        let locale = options.locale;
         ({args, error} = FunctionUtils.evaluateChildren(expression, state, options));
+
         if (!error) {
-            const format: string = (args.length === 4) ? FunctionUtils.timestampFormatter(args[3]) : FunctionUtils.DefaultDateTimeFormat;
+            ({format, locale} = FunctionUtils.determineFormatAndLocale(args, format, locale, 5));
+        }
+
+        if (!error) {
+
             if (typeof (args[0]) === 'string' && Number.isInteger(args[1]) && typeof (args[2]) === 'string') {
-                ({value, error} = AddToTime.evalAddToTime(args[0], args[1], args[2], format));
+                ({value, error} = AddToTime.evalAddToTime(args[0], args[1], args[2], format, locale));
             } else {
                 error = `${expression} cannot evaluate`;
             }
@@ -40,7 +47,7 @@ export class AddToTime extends ExpressionEvaluator {
         return {value, error};
     }
 
-    private static evalAddToTime(timeStamp: string, interval: number, timeUnit: string, format?: string): {value: any; error: string} {
+    private static evalAddToTime(timeStamp: string, interval: number, timeUnit: string, format?: string, locale?: string): {value: any; error: string} {
         let result: string;
         let error: string;
         let parsed: any;
@@ -93,7 +100,7 @@ export class AddToTime extends ExpressionEvaluator {
 
             if (!error) {
                 addedTime = dt.add(interval, timeUnitMark);
-                ({value: result, error} = FunctionUtils.returnFormattedTimeStampStr(addedTime, format));
+                ({value: result, error} = FunctionUtils.returnFormattedTimeStampStr(addedTime, format, locale));
             }
         }
 

@@ -28,13 +28,23 @@ export class TimeTransformEvaluator extends ExpressionEvaluator {
             let error: string;
             let value: any;
             let args: any[];
+            let format = FunctionUtils.DefaultDateTimeFormat;
+            let locale = options.locale;
             ({args, error} = FunctionUtils.evaluateChildren(expression, state, options));
+            
+            if (!error) {
+                ({format, locale} = FunctionUtils.determineFormatAndLocale(args, format, locale, 4));
+            }
+
             if (!error) {
                 if (typeof args[0] === 'string' && typeof args[1] === 'number') {
                     ({value, error} = FunctionUtils.parseTimestamp(args[0]));
                     if (!error) {
-                        if (args.length === 3 && typeof args[2] === 'string') {
-                            result = moment(func(value, args[1])).utc().format(FunctionUtils.timestampFormatter(args[2]));
+                        if (args.length === 4 && typeof args[3] === 'string') {
+                            result = moment(func(value, args[1])).utc().locale(locale).toString();
+                        }
+                        else if (args.length === 3 && typeof args[2] === 'string') {
+                            result = moment(func(value, args[1])).utc().format(format);
                         } else {
                             result = func(value, args[1]).toISOString();
                         }
@@ -49,6 +59,6 @@ export class TimeTransformEvaluator extends ExpressionEvaluator {
     }
 
     private static validator(expression: Expression): void {
-        FunctionUtils.validateOrder(expression, [ReturnType.String], ReturnType.String, ReturnType.Number);
+        FunctionUtils.validateOrder(expression, [ReturnType.String, ReturnType.String], ReturnType.String, ReturnType.Number);
     }
 }

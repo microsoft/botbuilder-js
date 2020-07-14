@@ -27,11 +27,18 @@ export class StartOfMonth extends ExpressionEvaluator {
         let value: any;
         let error: string;
         let args: any[];
+        let format = FunctionUtils.DefaultDateTimeFormat;
+        let locale = options.locale;
         ({args, error} = FunctionUtils.evaluateChildren(expr, state, options));
+
+        if (!error) {
+            ({format, locale} = FunctionUtils.determineFormatAndLocale(args, format, locale, 3));
+        }
+
         if (!error) {
             const format: string = (args.length === 2) ? FunctionUtils.timestampFormatter(args[1]) : FunctionUtils.DefaultDateTimeFormat;
             if (typeof (args[0]) === 'string') {
-                ({value, error} = StartOfMonth.evalStartOfMonth(args[0], format));
+                ({value, error} = StartOfMonth.evalStartOfMonth(args[0], format, locale));
             } else {
                 error = `${expr} cannot evaluate`;
             }
@@ -40,20 +47,20 @@ export class StartOfMonth extends ExpressionEvaluator {
         return {value, error};
     }
 
-    private static evalStartOfMonth(timeStamp: string, format?: string): {value: any; error: string} {
+    private static evalStartOfMonth(timeStamp: string, format?: string, locale?: string): {value: any; error: string} {
         let result: string;
         let error: string;
         let parsed: any;
         ({value: parsed, error} = FunctionUtils.parseTimestamp(timeStamp));
         if (!error) {
             const startofMonth = moment(parsed).utc().date(1).hours(0).minutes(0).second(0).millisecond(0);
-            ({value: result, error} = FunctionUtils.returnFormattedTimeStampStr(startofMonth, format));
+            ({value: result, error} = FunctionUtils.returnFormattedTimeStampStr(startofMonth, format, locale));
         }
 
         return {value: result, error};
     }
 
     private static validator(expr: Expression): void {
-        FunctionUtils.validateOrder(expr, [ReturnType.String], ReturnType.String);
+        FunctionUtils.validateOrder(expr, [ReturnType.String, ReturnType.String], ReturnType.String);
     }
 }

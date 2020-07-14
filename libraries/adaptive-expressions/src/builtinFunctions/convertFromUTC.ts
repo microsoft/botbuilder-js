@@ -31,11 +31,17 @@ export class ConvertFromUTC extends ExpressionEvaluator {
         let value: any;
         let error: string;
         let args: any[];
+        let format = FunctionUtils.DefaultDateTimeFormat;
+        let locale = options.locale;
         ({args, error} = FunctionUtils.evaluateChildren(expression, state, options));
+
         if (!error) {
-            const format: string = (args.length === 3) ? FunctionUtils.timestampFormatter(args[2]) : ConvertFromUTC.NoneUtcDefaultDateTimeFormat;
+            ({format, locale} = FunctionUtils.determineFormatAndLocale(args, format, locale, 3));
+        }
+
+        if (!error) {
             if (typeof (args[0]) === 'string' && typeof (args[1]) === 'string') {
-                ({value, error} = ConvertFromUTC.evalConvertFromUTC(args[0], args[1], format));
+                ({value, error} = ConvertFromUTC.evalConvertFromUTC(args[0], args[1], format, locale));
             } else {
                 error = `${expression} cannot evaluate`;
             }
@@ -44,7 +50,7 @@ export class ConvertFromUTC extends ExpressionEvaluator {
         return {value, error};
     }
 
-    private static evalConvertFromUTC(timeStamp: string, destinationTimeZone: string, format?: string): {value: any; error: string} {
+    private static evalConvertFromUTC(timeStamp: string, destinationTimeZone: string, format?: string, locale?: string): {value: any; error: string} {
         let result: string;
         let error: string;
         error = FunctionUtils.verifyISOTimestamp(timeStamp);
@@ -54,10 +60,14 @@ export class ConvertFromUTC extends ExpressionEvaluator {
         }
 
         if (!error) {
-            try {
-                result = tz(timeStamp, timeZone).format(format);
-            } catch (e) {
-                error = `${format} is not a valid timestamp format`;
+            if (format === '') {
+                result = tz(timeStamp, timeZone).locale(locale).toString();
+            } else {
+                try {
+                    result = tz(timeStamp, timeZone).format(format);
+                } catch (e) {
+                    error = `${format} is not a valid timestamp format`;
+                }
             }
         }
 
@@ -65,6 +75,6 @@ export class ConvertFromUTC extends ExpressionEvaluator {
     }
 
     private static validator(expression: Expression): void {
-        FunctionUtils.validateOrder(expression, [ReturnType.String], ReturnType.String, ReturnType.String);
+        FunctionUtils.validateOrder(expression, [ReturnType.String, ReturnType.String], ReturnType.String, ReturnType.String);
     }
 }

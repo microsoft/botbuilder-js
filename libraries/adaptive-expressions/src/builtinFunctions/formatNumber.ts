@@ -22,7 +22,7 @@ export class FormatNumber extends ExpressionEvaluator {
     }
 
     private static evaluator(): EvaluateExpressionDelegate {
-        return FunctionUtils.applyWithErrorAndOptions(
+        return FunctionUtils.applyWithOptionsAndError(
             (args: any[], options: Options): any => {
                 let value: any = null;
                 let error: string;

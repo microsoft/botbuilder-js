@@ -9,6 +9,7 @@
 import { StringTransformEvaluator } from './stringTransformEvaluator';
 import { FunctionUtils } from '../functionUtils';
 import { ExpressionType } from '../expressionType';
+import { Options } from '../options';
 
 /**
  * Return a string in lowercase format.
@@ -16,10 +17,12 @@ import { ExpressionType } from '../expressionType';
  */
 export class ToLower extends StringTransformEvaluator {
     public constructor() {
-        super(ExpressionType.ToLower, ToLower.evaluator);
+        super(ExpressionType.ToLower, ToLower.evaluator, FunctionUtils.validateUnaryOrBinaryNumber);
     }
 
-    private static evaluator(args: any[]): string {
-        return String(FunctionUtils.parseStringOrNull(args[0])).toLowerCase();
+    private static evaluator(args: any[], options: Options): string {
+        let locale = options.locale;
+        locale = FunctionUtils.determineLocale(args, locale, 2);
+        return String(FunctionUtils.parseStringOrNull(args[0])).toLocaleLowerCase(locale);
     }
 }

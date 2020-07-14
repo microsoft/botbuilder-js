@@ -6,16 +6,17 @@
  * Licensed under the MIT License.
  */
 
-import { ExpressionEvaluator } from '../expressionEvaluator';
+import { ExpressionEvaluator, ValidateExpressionDelegate } from '../expressionEvaluator';
 import { FunctionUtils } from '../functionUtils';
 import { ReturnType } from '../returnType';
+import { Options } from '../options';
 
 /**
  * Evaluator that transforms a string to another string.
  */
 export class StringTransformEvaluator extends ExpressionEvaluator {
-    public constructor(type: string, func: (arg0: any[]) => string) {
+    public constructor(type: string, func: (arg0: any[], options?: Options) => string, validator?: ValidateExpressionDelegate) {
         super(type, FunctionUtils.apply(func, FunctionUtils.verifyStringOrNull),
-            ReturnType.String, FunctionUtils.validateUnaryString);
+            ReturnType.String, validator ? validator : FunctionUtils.validateUnary);
     }
 }

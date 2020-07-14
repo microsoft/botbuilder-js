@@ -12,6 +12,7 @@ import { ReturnType } from '../returnType';
 import { ExpressionType } from '../expressionType';
 import { FunctionUtils } from '../functionUtils';
 import moment from 'moment';
+import { Options } from '../options';
 
 /**
  * Return the current timestamp.
@@ -22,8 +23,22 @@ export class UtcNow extends ExpressionEvaluator {
     }
 
     private static evaluator(): EvaluateExpressionDelegate {
-        return FunctionUtils.apply(
-            (args: any[]): string => args.length === 1 ? moment(new Date()).utc().format(args[0]) : new Date().toISOString(),
+        return FunctionUtils.applyWithOptionsAndError(
+            (args: any[], options: Options): {value: any; error: string} => 
+            {
+                let format = FunctionUtils.DefaultDateTimeFormat;
+                let locale = options.locale;
+                let value: string;
+                let error: string;
+                ({format, locale} = FunctionUtils.determineFormatAndLocale(args, format, locale, 2));
+                if (format === '') {
+                    value = moment(new Date()).utc().locale(locale).toString();
+                } else {
+                    value = moment(new Date()).utc().format(args[0]);
+                }
+
+                return {value, error};
+            },
             FunctionUtils.verifyString);
     }
 

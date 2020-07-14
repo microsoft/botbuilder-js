@@ -23,7 +23,7 @@ export class FormatEpoch extends ExpressionEvaluator {
     }
 
     private static evaluator(): EvaluateExpressionDelegate {
-        return FunctionUtils.applyWithErrorAndOptions(
+        return FunctionUtils.applyWithOptionsAndError(
             (args: any[], options: Options): any => {
                 let error: string;
                 let arg: any = args[0];
@@ -49,6 +49,6 @@ export class FormatEpoch extends ExpressionEvaluator {
     }
 
     private static validator(expression: Expression): void {
-        FunctionUtils.validateOrder(expression, [ReturnType.String], ReturnType.Number);
+        FunctionUtils.validateOrder(expression, [ReturnType.String, ReturnType.String], ReturnType.Number);
     }
 }

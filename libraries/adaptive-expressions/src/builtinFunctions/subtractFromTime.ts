@@ -27,18 +27,28 @@ export class SubtractFromTime extends ExpressionEvaluator {
         let value: any;
         let error: any;
         let args: any[];
+        let format = FunctionUtils.DefaultDateTimeFormat;
+        let locale = options.locale;
         ({args, error} = FunctionUtils.evaluateChildren(expression, state, options));
+
+        if (!error) {
+            ({format, locale} = FunctionUtils.determineFormatAndLocale(args, format, locale, 5));
+        }
+
         if (!error) {
             if (typeof args[0] === 'string' && Number.isInteger(args[1]) && typeof args[2] === 'string') {
-                const format: string = (args.length === 4 ? FunctionUtils.timestampFormatter(args[3]) : FunctionUtils.DefaultDateTimeFormat);
                 const {duration, tsStr} = FunctionUtils.timeUnitTransformer(args[1], args[2]);
                 if (tsStr === undefined) {
                     error = `${args[2]} is not a valid time unit.`;
                 } else {
                     const dur: any = duration;
                     ({value, error} = FunctionUtils.parseTimestamp(args[0], (dt: Date): string => {
-                        return args.length === 4 ?
-                            moment(dt).utc().subtract(dur, tsStr).format(format) : moment(dt).utc().subtract(dur, tsStr).toISOString()}));
+                        if (format === '') {
+                            return moment(dt).utc().subtract(dur, tsStr).locale(locale).toString();
+                        }
+
+                        return moment(dt).utc().subtract(dur, tsStr).format(format);
+                    }));
                 }
             } else {
                 error = `${expression} can't evaluate.`;
@@ -49,6 +59,6 @@ export class SubtractFromTime extends ExpressionEvaluator {
     }
 
     private static validator(expression: Expression): void {
-        FunctionUtils.validateOrder(expression, [ReturnType.String], ReturnType.String, ReturnType.Number, ReturnType.String);
+        FunctionUtils.validateOrder(expression, [ReturnType.String, ReturnType.String], ReturnType.String, ReturnType.Number, ReturnType.String);
     }
 }

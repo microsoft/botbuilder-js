@@ -192,6 +192,14 @@ export class FunctionUtils {
     }
 
     /**
+     * Validate there is a single or double string argument.
+     * @param expression Expression to validate.
+     */
+    public static validateUnaryOrBinaryString(expression: any): void {
+        FunctionUtils.validateArityAndAnyType(expression, 1, 2, ReturnType.String);
+    }
+
+    /**
      * Validate there is a single boolean argument.
      * @param expression Expression to validate.
      */
@@ -521,7 +529,7 @@ export class FunctionUtils {
     * @param verify Function to check each arg for validity.
     * @returns Delegate for evaluating an expression.
     */
-    public static applyWithErrorAndOptions(func: (arg0: any[], options: Options) => any, verify?: VerifyExpression): EvaluateExpressionDelegate {
+    public static applyWithOptionsAndError(func: (arg0: any[], options: Options) => any, verify?: VerifyExpression): EvaluateExpressionDelegate {
         return (expression: any, state: MemoryInterface, options: Options): {value: any; error: string} => {
             let value: any;
             let error: string;
@@ -972,13 +980,17 @@ export class FunctionUtils {
      * @param timedata input date time.
      * @param format format flag.
      */
-    public static returnFormattedTimeStampStr(timedata: Moment, format: string): {value: any; error: string} {
+    public static returnFormattedTimeStampStr(timedata: Moment, format: string, locale: string): {value: any; error: string} {
         let result: string;
         let error: string;
-        try {
-            result = timedata.format(format);
-        } catch (e) {
-            error = `${format} is not a valid timestamp format`;
+        if (format === '') {
+            result = timedata.locale(locale).toString() ;
+        } else {
+            try {
+                result = timedata.format(format);
+            } catch (e) {
+                error = `${format} is not a valid timestamp format`;
+            }
         }
 
         return {value: result, error};

@@ -14,7 +14,7 @@
             "actions": [
                 {
                     "$kind": "Microsoft.SendActivity",
-                    "activity": "${formatEpoch(2114214124)}"
+                    "activity": "${string(1.123)}"
                 }
             ]
         }

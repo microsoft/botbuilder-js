@@ -9,6 +9,7 @@
 import { StringTransformEvaluator } from './stringTransformEvaluator';
 import { FunctionUtils } from '../functionUtils';
 import { ExpressionType } from '../expressionType';
+import { Options } from '../options';
 
 /**
  * Return a string in uppercase format.
@@ -16,10 +17,12 @@ import { ExpressionType } from '../expressionType';
  */
 export class ToUpper extends StringTransformEvaluator {
     public constructor() {
-        super(ExpressionType.ToUpper, ToUpper.evaluator);
+        super(ExpressionType.ToUpper, ToUpper.evaluator, FunctionUtils.validateUnaryOrBinaryString);
     }
 
-    private static evaluator(args: any[]): string {
-        return String(FunctionUtils.parseStringOrNull(args[0])).toUpperCase();
+    private static evaluator(args: any[], options: Options): string {
+        let locale = options.locale;
+        locale = FunctionUtils.determineLocale(args, locale, 2);
+        return String(FunctionUtils.parseStringOrNull(args[0])).toLocaleUpperCase(locale);
     }
 }
