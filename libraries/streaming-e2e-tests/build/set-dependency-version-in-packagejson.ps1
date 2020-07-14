@@ -1,13 +1,9 @@
-param($LatestVersion, $WorkingDirectory)
+param($LatestVersion, $PathToPJson, $Package)
 
-$path = "$WorkingDirectory/libraries/streaming-e2e-tests/bot/package.json";
-$package = 'botbuilder';
-$newVersion = "$LatestVersion";
+$find = "$Package`": `"\S*`"";
+$replace = "$Package`": `"$LatestVersion`"";
 
-$find = "$package`": `"\S*`"";
-$replace = "$package`": `"$newVersion`"";
-
-Get-ChildItem -Path "$path" | % {
+Get-ChildItem -Path "$PathToPJson" | % {
     $_.FullName; 
     $content = Get-Content -Raw $_.FullName;
 

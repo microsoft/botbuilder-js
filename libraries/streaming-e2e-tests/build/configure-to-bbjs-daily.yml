@@ -11,17 +11,17 @@ steps:
   - task: colinsalmcorner.colinsalmcorner-buildtasks.tag-build-task.tagBuildOrRelease@0
     displayName: 'Tag Build with botbuilder version'
     inputs:
-      tags: 'Using botbuilder version $(LatestVersion)'
+      tags: 'Using botbuilder version $(LatestVersion_botbuilder)'
 
   - task: PowerShell@2
-    displayName: Set Dependency to Latest Version
+    displayName: Set Dependency to Latest BB Version
     inputs:
         targetType: 'filePath'
         filePath: $(System.DefaultWorkingDirectory)\libraries\streaming-e2e-tests\build\set-dependency-version-in-packagejson.ps1
         arguments:
-          -LatestVersion $(LatestVersion)
-          -WorkingDirectory $(System.DefaultWorkingDirectory)
-          -PConfig $(PackageConfig)
+          -LatestVersion $(LatestVersion_botbuilder)
+          -PathToPJson $(System.DefaultWorkingDirectory)/libraries/streaming-e2e-tests/bot/package.json
+          -Package "botbuilder";
 
   - powershell: |
       Set-Location -Path "$(System.DefaultWorkingDirectory)\libraries\streaming-e2e-tests\bot"
