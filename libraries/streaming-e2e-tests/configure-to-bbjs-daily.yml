@@ -1,0 +1,31 @@
+steps:
+  - task: PowerShell@2
+    displayName: 'Get latest botbuilder package version from MyGet - https://botbuilder.myget.org/gallery/botbuilder-v4-js-daily'
+    inputs:
+      targetType: 'filePath'
+      filePath: $(System.DefaultWorkingDirectory)\libraries\streaming-e2e-tests\get-latest-bbjs-daily-version.ps1
+      arguments:
+        -AccessToken $(MyGetPersonalAccessToken)
+        -WorkingDirectory $(System.DefaultWorkingDirectory)
+
+  - task: colinsalmcorner.colinsalmcorner-buildtasks.tag-build-task.tagBuildOrRelease@0
+    displayName: 'Tag Build with botbuilder version'
+    inputs:
+      tags: 'Using botbuilder version $(LatestVersion)'
+
+  - task: PowerShell@2
+    displayName: Set Dependency to Latest Version
+    inputs:
+        targetType: 'filePath'
+        filePath: $(System.DefaultWorkingDirectory)\libraries\streaming-e2e-tests\set-dependency-version-in-packagejson.ps1
+        arguments:
+          -LatestVersion $(LatestVersion)
+          -WorkingDirectory $(System.DefaultWorkingDirectory)
+
+  - powershell: |
+      Set-Location -Path "$(System.DefaultWorkingDirectory)\libraries\streaming-e2e-tests\bot"
+      
+      New-Item -Path . -Name ".npmrc" -ItemType "file" -Value "registry=https://botbuilder.myget.org/F/botbuilder-v4-js-daily/npm/"
+    displayName: 'Create .npmrc for MyGet feed - https://botbuilder.myget.org/gallery/botbuilder-v4-js-daily'
+  
+  
