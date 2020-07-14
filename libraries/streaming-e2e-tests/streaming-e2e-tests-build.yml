@@ -68,7 +68,7 @@ stages:
       - job: Deploy_Streaming_Bot
         variables:
           BotProjectDir: '$(System.DefaultWorkingDirectory)\libraries\streaming-e2e-tests\bot'
-          BotName: 'ash-streaming-js'
+          BotName: 'ash-streaming-bot'
         dependsOn: Install_Dependencies
         steps:
           - template: deploy-bot.yml
