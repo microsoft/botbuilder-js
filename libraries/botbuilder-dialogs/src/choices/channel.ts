@@ -21,7 +21,6 @@ export function supportsSuggestedActions(channelId: string, buttonCnt: number = 
             return (buttonCnt <= 13);
         case Channels.Kik:
             return (buttonCnt <= 20);
-        case Channels.Slack:
         case Channels.Telegram:
         case Channels.Emulator:
         case Channels.Directline:
