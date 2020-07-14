@@ -101,7 +101,6 @@ server.on('upgrade', (req, socket, head) => {
 
 // Token Server, to ensure DL secret is not visible to client
 server.post('/api/token/directlinease', async (req, res) => {
-    console.log('/api/token/directlinease');
     const { DIRECT_LINE_SECRET, WEBSITE_HOSTNAME } = process.env;
 
     try {
