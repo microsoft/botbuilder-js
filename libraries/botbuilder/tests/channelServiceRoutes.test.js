@@ -31,18 +31,18 @@ class MockResponse {
 
 describe('channelServiceRoutes', function() {
     describe('constructor()', () => {
-        it('should succed with correct parameters', () => {
-            let testHandler = sinon.mock(ChannelServiceHandler);
-            let channelServiceRoutes = new ChannelServiceRoutes(testHandler);
+        it('should succeed with correct parameters', () => {
+            const testHandler = sinon.mock(ChannelServiceHandler);
+            const channelServiceRoutes = new ChannelServiceRoutes(testHandler);
 
             assert.strictEqual(channelServiceRoutes.channelServiceHandler, testHandler);
         });
     });
 
     describe('register()', () => {
-        let testHandler = sinon.mock(ChannelServiceHandler);
-        let channel = new ChannelServiceRoutes(testHandler);
-        let server = {
+        const testHandler = sinon.mock(ChannelServiceHandler);
+        const channel = new ChannelServiceRoutes(testHandler);
+        const server = {
             post: sinon.spy(),
             get: sinon.spy(),
             put: sinon.spy(),
@@ -101,7 +101,7 @@ describe('channelServiceRoutes', function() {
         });
 
         describe('processSendToConversation()', () => {
-            it('should end successful', (done) => {
+            it('should end successfully', (done) => {
                 try {
                     const res = new MockResponse({
                         statusCode: 200,
@@ -167,7 +167,7 @@ describe('channelServiceRoutes', function() {
         });
 
         describe('processReplyToActivity()', () => {
-            it('should end successful', (done) => {
+            it('should end successfully', (done) => {
                 try {
                     const res = new MockResponse({
                         statusCode: 200,
@@ -234,7 +234,7 @@ describe('channelServiceRoutes', function() {
         });
 
         describe('processUpdateActivity()', () => {
-            it('should end successful', (done) => {
+            it('should end successfully', (done) => {
                 try {
                     const res = new MockResponse({
                         statusCode: 200,
@@ -301,7 +301,7 @@ describe('channelServiceRoutes', function() {
         });
 
         describe('processDeleteActivity()', () => {
-            it('should end successful', (done) => {
+            it('should end successfully', (done) => {
                 try {
                     const res = new MockResponse({
                         statusCode: 200,
@@ -343,7 +343,7 @@ describe('channelServiceRoutes', function() {
         });
 
         describe('processGetActivityMembers()', () => {
-            it('should end successful', (done) => {
+            it('should end successfully', (done) => {
                 try {
                     const res = new MockResponse({
                         statusCode: 200,
@@ -385,7 +385,7 @@ describe('channelServiceRoutes', function() {
         });
 
         describe('processCreateConversation()', () => {
-            it('should end successful', (done) => {
+            it('should end successfully', (done) => {
                 try {
                     const res = new MockResponse({
                         statusCode: 201,
@@ -427,7 +427,7 @@ describe('channelServiceRoutes', function() {
         });
 
         describe('processGetConversations()', () => {
-            it('should end successful', (done) => {
+            it('should end successfully', (done) => {
                 try {
                     const res = new MockResponse({
                         statusCode: 200,
@@ -469,7 +469,7 @@ describe('channelServiceRoutes', function() {
         });
 
         describe('processGetConversationMembers()', () => {
-            it('should end successful', (done) => {
+            it('should end successfully', (done) => {
                 try {
                     const res = new MockResponse({
                         statusCode: 200,
@@ -511,7 +511,7 @@ describe('channelServiceRoutes', function() {
         });
 
         describe('processGetConversationPagedMembers()', () => {
-            it('should end successful', (done) => {
+            it('should end successfully', (done) => {
                 try {
                     const res = new MockResponse({
                         statusCode: 200,
@@ -553,7 +553,7 @@ describe('channelServiceRoutes', function() {
         });
 
         describe('processDeleteConversationMember()', () => {
-            it('should end successful', (done) => {
+            it('should end successfully', (done) => {
                 try {
                     const res = new MockResponse({
                         statusCode: 200,
@@ -595,7 +595,7 @@ describe('channelServiceRoutes', function() {
         });
 
         describe('processSendConversationHistory()', () => {
-            it('should end successful', (done) => {
+            it('should end successfully', (done) => {
                 try {
                     const res = new MockResponse({
                         statusCode: 200,
@@ -662,17 +662,17 @@ describe('channelServiceRoutes', function() {
         });
 
         describe('processUploadAttachment()', () => {
-            it('should end successful', (done) => {
+            it('should end successfully', (done) => {
                 try {
-                    let res = new MockResponse({
+                    const res = new MockResponse({
                         statusCode: 200,
                         body: testResource
                     }, done);
 
-                    let service = sinon.createStubInstance(ChannelServiceHandler);
+                    const service = sinon.createStubInstance(ChannelServiceHandler);
                     service.handleUploadAttachment = sinon.stub().resolves(testResource);
 
-                    let channel = new ChannelServiceRoutes(service);
+                    const channel = new ChannelServiceRoutes(service);
                     channel.processUploadAttachment(req, res);
                 } catch (error) {
                     done(error);
