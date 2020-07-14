@@ -4,7 +4,7 @@
 import { BotTelemetryClient, NullTelemetryClient } from './botTelemetryClient';
 import { Middleware } from './middlewareSet';
 import { TurnContext } from './turnContext';
-import { Activity, ActivityTypes, ConversationReference, ResourceResponse } from 'botframework-schema';
+import { Activity, ActivityTypes, ConversationReference, ResourceResponse, TeamsChannelData } from 'botframework-schema';
 import { TelemetryConstants } from './telemetryConstants';
 
 /**
@@ -209,6 +209,8 @@ export class TelemetryLoggerMiddleware implements Middleware {
             }
         }
 
+        this.populateAdditionalChannelProperties(activity, properties);
+
         // Additional Properties can override "stock" properties.
         if (telemetryProperties)
         {
@@ -313,5 +315,27 @@ export class TelemetryLoggerMiddleware implements Middleware {
         }
 
         return properties;
+    }
+
+    private populateAdditionalChannelProperties(activity: Activity, properties?: {[key: string]: string}): void
+    {
+        if(activity)
+        {
+            switch (activity.channelId)
+            {
+                case 'msteams':
+                    const channelData = activity.channelData as TeamsChannelData;
+                        
+                    properties['TeamsTenantId'] = channelData.tenant ? channelData.tenant.id : '';
+                    properties['TeamsUserAadObjectId'] = activity.from ? activity.from.aadObjectId : '';
+
+                    if (channelData.team)
+                    {
+                        properties['TeamsTeamInfo'] = JSON.stringify(channelData.team);
+                    }
+
+                    break;
+            }
+        }
     }
 }
