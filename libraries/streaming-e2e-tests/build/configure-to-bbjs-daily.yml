@@ -15,12 +15,15 @@ steps:
 
   - task: PowerShell@2
     displayName: Set Dependency to Latest Version
+    variables:
+      PackageConfig: {'latestVersion': $(LatestVersion)}
     inputs:
         targetType: 'filePath'
         filePath: $(System.DefaultWorkingDirectory)\libraries\streaming-e2e-tests\build\set-dependency-version-in-packagejson.ps1
         arguments:
           -LatestVersion $(LatestVersion)
           -WorkingDirectory $(System.DefaultWorkingDirectory)
+          -PConfig $(PackageConfig)
 
   - powershell: |
       Set-Location -Path "$(System.DefaultWorkingDirectory)\libraries\streaming-e2e-tests\bot"
