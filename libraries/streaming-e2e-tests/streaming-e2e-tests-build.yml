@@ -20,27 +20,19 @@ variables:
 stages:
   - stage: Deploy_Bot
     jobs:
-      - job: Set_Dependency_To_Latest_BotBuilderJS_Daily_Version
-        steps:
-          - template: configure-to-bbjs-daily.yml
-      
-      - job: Install_Dependencies
-        dependsOn:
-          - Set_Dependency_To_Latest_BotBuilderJS_Daily_Version
-        condition: succeeded()
-        steps:
-          - task: Npm@1
-            displayName: 'npm install streaming echo bot dependencies'
-            inputs: 
-              workingDir: '$(System.DefaultWorkingDirectory)\libraries\streaming-e2e-tests\bot'
-              verbose: false
-      
-      - job: Deploy_Streaming_Bot
+      - job: Deploy_Bot
         variables:
           BotProjectDir: '$(System.DefaultWorkingDirectory)\libraries\streaming-e2e-tests\bot'
           ResourceGroup: 'ash-streaming-js'
           BotName: 'ash-streaming-bot'
-        dependsOn: Install_Dependencies
         steps:
-          - template: deploy-bot.yml
+          - template: configure-to-bbjs-daily.yml
 
+          - task: Npm@1
+            displayName: 'npm install - streaming echo bot dependencies'
+            inputs: 
+              workingDir: '$(System.DefaultWorkingDirectory)\libraries\streaming-e2e-tests\bot'
+              verbose: false
+              
+          - template: deploy-bot.yml
+      
