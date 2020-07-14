@@ -3,7 +3,7 @@ steps:
     displayName: 'Get latest botbuilder package version from MyGet - https://botbuilder.myget.org/gallery/botbuilder-v4-js-daily'
     inputs:
       targetType: 'filePath'
-      filePath: $(System.DefaultWorkingDirectory)\libraries\streaming-e2e-tests\get-latest-bbjs-daily-version.ps1
+      filePath: $(System.DefaultWorkingDirectory)\libraries\streaming-e2e-tests\build\get-latest-bbjs-daily-version.ps1
       arguments:
         -AccessToken $(MyGetPersonalAccessToken)
         -WorkingDirectory $(System.DefaultWorkingDirectory)
@@ -17,7 +17,7 @@ steps:
     displayName: Set Dependency to Latest Version
     inputs:
         targetType: 'filePath'
-        filePath: $(System.DefaultWorkingDirectory)\libraries\streaming-e2e-tests\set-dependency-version-in-packagejson.ps1
+        filePath: $(System.DefaultWorkingDirectory)\libraries\streaming-e2e-tests\build\set-dependency-version-in-packagejson.ps1
         arguments:
           -LatestVersion $(LatestVersion)
           -WorkingDirectory $(System.DefaultWorkingDirectory)
