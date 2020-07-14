@@ -535,9 +535,7 @@ describe(`TestAdapter`, function () {
                 context.activity.from = undefined;
                 await context.adapter.getTokenStatus(context);
             } catch (err) {
-                assert(err.message === 'testAdapter.getTokenStatus(): missing userId, from or from.id',
-                `expected "testAdapter.getTokenStatus(): missing userId, from or from.id" Error message, not "${ err.message }"`);
-                done();
+                done(assert.strictEqual(err.message, 'testAdapter.getTokenStatus(): missing userId, from or from.id'));
             }
         });
 
