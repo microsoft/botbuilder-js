@@ -21,7 +21,6 @@ afterEach(function(done){
 });
 
 describe('InspectionMiddleware', function() {
-
     it('should not change behavior when inspection middleware is added', async function() {
 
         var inspectionState = new InspectionState(new MemoryStorage());
@@ -39,7 +38,7 @@ describe('InspectionMiddleware', function() {
         assert(adapter.activityBuffer.length === 1, 'expected a single adapter response');
         assert(adapter.activityBuffer[0].type === 'message', 'expected a message activity');
         assert(adapter.activityBuffer[0].text === 'hi', `expected text saying 'hi'`);
-    });    
+    });
     it('should replicate activity data to listening emulator following open and attach', async function() {
 
         // set up our expectations in nock - each corresponds to a trace message we expect to receive in the emulator
@@ -55,7 +54,7 @@ describe('InspectionMiddleware', function() {
             .reply(200, { id: 'test' });
 
         const stateExpectation = nock('https://test.com')
-            .post('/v3/conversations/Convo1/activities', activity => activity.type === 'trace' 
+            .post('/v3/conversations/Convo1/activities', activity => activity.type === 'trace'
                 && activity.value.userState && activity.value.userState.x.property == 'hello'
                 && activity.value.conversationState && activity.value.conversationState.y.property == 'world')
             .reply(200, { id: 'test' });
@@ -92,7 +91,7 @@ describe('InspectionMiddleware', function() {
 
             (await x.get(turnContext, { property: '' })).property = 'hello';
             (await y.get(turnContext, { property: '' })).property = 'world';
-    
+
             await userState.saveChanges(turnContext);
             await conversationState.saveChanges(turnContext);
 
@@ -115,7 +114,7 @@ describe('InspectionMiddleware', function() {
         assert(inboundExpectation.isDone(), 'The expectation of a trace message for the inbound activity was not met');
         assert(outboundExpectation.isDone(), 'The expectation of a trace message for the outbound activity was not met');
         assert(stateExpectation.isDone(), 'The expectation of a trace message for the bot state was not met');
-    });    
+    });
     it('should replicate activity data to listening emulator following open and attach with at mention', async function() {
 
         // set up our expectations in nock - each corresponds to a trace message we expect to receive in the emulator
@@ -131,7 +130,7 @@ describe('InspectionMiddleware', function() {
             .reply(200, { id: 'test' });
 
         const stateExpectation = nock('https://test.com')
-            .post('/v3/conversations/Convo1/activities', activity => activity.type === 'trace' 
+            .post('/v3/conversations/Convo1/activities', activity => activity.type === 'trace'
                 && activity.value.userState && activity.value.userState.x.property == 'hello'
                 && activity.value.conversationState && activity.value.conversationState.y.property == 'world')
             .reply(200, { id: 'test' });
@@ -170,7 +169,7 @@ describe('InspectionMiddleware', function() {
 
             (await x.get(turnContext, { property: '' })).property = 'hello';
             (await y.get(turnContext, { property: '' })).property = 'world';
-    
+
             await userState.saveChanges(turnContext);
             await conversationState.saveChanges(turnContext);
 
@@ -225,7 +224,7 @@ describe('InspectionMiddleware', function() {
             .reply(200, { id: 'test' });
 
         const stateExpectation = nock('https://test.com')
-            .post('/v3/conversations/Convo1/activities', activity => activity.type === 'trace' 
+            .post('/v3/conversations/Convo1/activities', activity => activity.type === 'trace'
                 && activity.value.userState && activity.value.userState.x.property == 'hello'
                 && activity.value.conversationState && activity.value.conversationState.y.property == 'world')
             .reply(200, { id: 'test' });
@@ -262,7 +261,7 @@ describe('InspectionMiddleware', function() {
 
             (await x.get(turnContext, { property: '' })).property = 'hello';
             (await y.get(turnContext, { property: '' })).property = 'world';
-    
+
             await userState.saveChanges(turnContext);
             await conversationState.saveChanges(turnContext);
 
@@ -291,6 +290,272 @@ describe('InspectionMiddleware', function() {
         assert(inboundExpectation.isDone(), 'The expectation of a trace message for the inbound activity was not met');
         assert(outboundExpectation.isDone(), 'The expectation of a trace message for the outbound activity was not met');
         assert(stateExpectation.isDone(), 'The expectation of a trace message for the bot state was not met');
-    });    
-});
+    });
 
+    it('should update activity message to trigger turnContext.onUpdateActivity', async () => {
+        // set up our expectations in nock - each corresponds to a trace message we expect to receive in the emulator
+
+        nock('https://test.com')
+            .post('/v3/conversations/Convo1/activities', activity => activity.type === 'trace'
+                && activity.value.text == 'hi')
+            .reply(200, { id: 'test' });
+
+        nock('https://test.com')
+            .post('/v3/conversations/Convo1/activities', activity => activity.type === 'trace'
+                && activity.value.text == 'echo: hi')
+            .reply(200, { id: 'test' });
+
+        nock('https://test.com')
+            .post('/v3/conversations/Convo1/activities', activity => activity.type === 'trace'
+                && activity.value.userState && activity.value.userState.x.property == 'hello'
+                && activity.value.conversationState && activity.value.conversationState.y.property == 'world')
+            .reply(200, { id: 'test' });
+
+        // create the various storage and middleware objects we will be using
+
+        const storage = new MemoryStorage();
+        const inspectionState = new InspectionState(storage);
+        const userState = new UserState(storage);
+        const conversationState = new ConversationState(storage);
+        const inspectionMiddleware = new InspectionMiddleware(inspectionState, userState, conversationState);
+
+        // the emulator sends an /INSPECT open command - we can use another adapter here
+
+        const openActivity = MessageFactory.text('/INSPECT open');
+
+        const inspectionAdapter = new TestAdapter(async (turnContext) => {
+            await inspectionMiddleware.processCommand(turnContext);
+        }, null, true);
+
+        await inspectionAdapter.receiveActivity(openActivity);
+
+        const inspectionOpenResultActivity = inspectionAdapter.activityBuffer[0];
+        const attachCommand = inspectionOpenResultActivity.value;
+
+        // Updating the activity message to trigger turnContext.onUpdateActivity
+
+        const activity = MessageFactory.text('hi');
+
+        activity.id = '0';
+
+        const adapter = new TestAdapter(async (turnContext) => {
+            activity.text = 'new text';
+            await turnContext.updateActivity(activity);
+            await userState.saveChanges(turnContext);
+            await conversationState.saveChanges(turnContext);
+        }, null, true);
+
+        adapter.use(inspectionMiddleware);
+
+        await adapter.receiveActivity(MessageFactory.text(attachCommand));
+
+        await adapter.receiveActivity(activity);
+
+        assert(adapter.updatedActivities.length === 1, `no activities updated.`);
+        assert(adapter.updatedActivities[0].text === activity.text, `invalid update activity text.`);
+    });
+
+    it('should delete activity to trigger turnContext.onDeleteActivity', async () => {
+        // set up our expectations in nock - each corresponds to a trace message we expect to receive in the emulator
+
+        nock('https://test.com')
+            .post('/v3/conversations/Convo1/activities', activity => activity.type === 'trace'
+                && activity.value.text == 'hi')
+            .reply(200, { id: 'test' });
+
+        nock('https://test.com')
+            .post('/v3/conversations/Convo1/activities', activity => activity.type === 'trace'
+                && activity.value.text == 'echo: hi')
+            .reply(200, { id: 'test' });
+
+        nock('https://test.com')
+            .post('/v3/conversations/Convo1/activities', activity => activity.type === 'trace'
+                && activity.value.userState && activity.value.userState.x.property == 'hello'
+                && activity.value.conversationState && activity.value.conversationState.y.property == 'world')
+            .reply(200, { id: 'test' });
+
+        // create the various storage and middleware objects we will be using
+
+        const storage = new MemoryStorage();
+        const inspectionState = new InspectionState(storage);
+        const userState = new UserState(storage);
+        const conversationState = new ConversationState(storage);
+        const inspectionMiddleware = new InspectionMiddleware(inspectionState, userState, conversationState);
+
+        // the emulator sends an /INSPECT open command - we can use another adapter here
+
+        const openActivity = MessageFactory.text('/INSPECT open');
+
+        const inspectionAdapter = new TestAdapter(async (turnContext) => {
+            await inspectionMiddleware.processCommand(turnContext);
+        }, null, true);
+
+        await inspectionAdapter.receiveActivity(openActivity);
+
+        const inspectionOpenResultActivity = inspectionAdapter.activityBuffer[0];
+        const attachCommand = inspectionOpenResultActivity.value;
+
+        // Updating the activity message to trigger turnContext.onDeleteActivity
+
+        const activity = MessageFactory.text('hi');
+
+        activity.id = '0';
+
+        const adapter = new TestAdapter(async (turnContext) => {
+            await turnContext.deleteActivity(activity.id);
+            await userState.saveChanges(turnContext);
+            await conversationState.saveChanges(turnContext);
+        }, null, true);
+
+        adapter.use(inspectionMiddleware);
+
+        await adapter.receiveActivity(MessageFactory.text(attachCommand));
+
+        await adapter.receiveActivity(activity);
+
+        assert(adapter.deletedActivities.length === 1, `no activities deleted.`);
+        assert(adapter.deletedActivities[0].activityId === activity.id, `invalid delete activity.`);
+    });
+
+    it('should throw an error when onTurn next parameter is null', async () => {
+        // set up our expectations in nock - each corresponds to a trace message we expect to receive in the emulator
+
+        nock('https://test.com')
+            .post('/v3/conversations/Convo1/activities', activity => activity.type === 'trace'
+                && activity.value.text == 'hi')
+            .reply(200, { id: 'test' });
+
+        nock('https://test.com')
+            .post('/v3/conversations/Convo1/activities', activity => activity.type === 'trace'
+                && activity.value.text == 'echo: hi')
+            .reply(200, { id: 'test' });
+
+        nock('https://test.com')
+            .post('/v3/conversations/Convo1/activities', activity => activity.type === 'trace'
+                && activity.value.userState && activity.value.userState.x.property == 'hello'
+                && activity.value.conversationState && activity.value.conversationState.y.property == 'world')
+            .reply(200, { id: 'test' });
+
+        // create the various storage and middleware objects we will be using
+
+        const storage = new MemoryStorage();
+        const inspectionState = new InspectionState(storage);
+        const userState = new UserState(storage);
+        const conversationState = new ConversationState(storage);
+        const inspectionMiddleware = new InspectionMiddleware(inspectionState, userState, conversationState);
+
+        // the emulator sends an /INSPECT open command - we can use another adapter here
+
+        const openActivity = MessageFactory.text('/INSPECT open');
+
+        const inspectionAdapter = new TestAdapter(async (turnContext) => {
+            await inspectionMiddleware.processCommand(turnContext);
+        }, null, true);
+
+        await inspectionAdapter.receiveActivity(openActivity);
+
+        const inspectionOpenResultActivity = inspectionAdapter.activityBuffer[0];
+        const attachCommand = inspectionOpenResultActivity.value;
+
+        const adapter = new TestAdapter(async (turnContext) => {
+            try {
+                await inspectionMiddleware.onTurn(turnContext, null)
+                throw new Error('should have thrown an error.')
+            } catch (error) {
+                assert.strictEqual(error.message, 'next is not a function', 'next function should be null')
+            }
+        }, null, true);
+
+        adapter.use(inspectionMiddleware);
+
+        await adapter.receiveActivity(MessageFactory.text(attachCommand));
+
+        await adapter.receiveActivity();
+    });
+
+    it('should invokeInbound throw an error', async () => {
+        let warnExecuted = false;
+        const storage = new MemoryStorage();
+        const inspectionState = new InspectionState(storage);
+        const userState = new UserState(storage);
+        const conversationState = new ConversationState(storage);
+        const inspectionMiddleware = new InspectionMiddleware(inspectionState, userState, conversationState);
+
+        const warn = console.warn;
+
+        console.warn = (message) => {
+            const condition = message.startsWith('Exception in inbound interception')
+            assert(condition, 'should have throw an error')
+            warnExecuted = true;
+        }
+
+        await inspectionMiddleware.invokeInbound();
+
+        if(!warnExecuted) {
+            throw new Error('invokeInbound should have throw an error')
+        }
+
+        console.warn = warn
+    })
+
+    it('should invokeOutbound throw an error', async () => {
+        let warnExecuted = false;
+        const storage = new MemoryStorage();
+        const inspectionState = new InspectionState(storage);
+        const userState = new UserState(storage);
+        const conversationState = new ConversationState(storage);
+        const inspectionMiddleware = new InspectionMiddleware(inspectionState, userState, conversationState);
+
+        const warn = console.warn;
+
+        console.warn = (message) => {
+            const condition = message.startsWith('Exception in outbound interception')
+            assert(condition, 'should have throw an error')
+            warnExecuted = true;
+        }
+
+        await inspectionMiddleware.invokeOutbound();
+
+        if(!warnExecuted) {
+            throw new Error('invokeOutbound should have throw an error')
+        }
+
+        console.warn = warn
+    })
+
+    it('should invokeTraceState throw an error', async () => {
+        let warnExecuted = false;
+        const storage = new MemoryStorage();
+        const inspectionState = new InspectionState(storage);
+        const userState = new UserState(storage);
+        const conversationState = new ConversationState(storage);
+        const inspectionMiddleware = new InspectionMiddleware(inspectionState, userState, conversationState);
+
+        const warn = console.warn;
+
+        console.warn = (message) => {
+            const condition = message.startsWith('Exception in state interception')
+            assert(condition, 'should have throw an error')
+            warnExecuted = true;
+        }
+
+        await inspectionMiddleware.invokeTraceState();
+
+        if(!warnExecuted) {
+            throw new Error('invokeTraceState should have throw an error')
+        }
+
+        console.warn = warn
+    })
+
+    it('should attachCommand return false', async () => {
+        const storage = new MemoryStorage();
+        const inspectionState = new InspectionState(storage);
+        const userState = new UserState(storage);
+        const conversationState = new ConversationState(storage);
+        const inspectionMiddleware = new InspectionMiddleware(inspectionState, userState, conversationState);
+
+        const result = await inspectionMiddleware.attachCommand('', { openedSessions: { 'session-1': undefined }}, 'session-1');
+        assert.strictEqual(result, false, 'should be returning false')
+    })
+});
