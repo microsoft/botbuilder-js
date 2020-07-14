@@ -88,7 +88,7 @@ export class ComponentDialog<O extends object = {}> extends DialogContainer<O> {
         const turnResult: DialogTurnResult<any> = await this.onBeginDialog(innerDC, options);
 
         // Check for end of inner dialog
-        if (turnResult.status !== DialogTurnStatus.waiting) {
+        if (turnResult !== undefined && turnResult.status !== DialogTurnStatus.waiting) {
             if (turnResult.status === DialogTurnStatus.cancelled) {
                 await this.endComponent(outerDC, turnResult.result);
                 const cancelledTurnResult: DialogTurnResult = { status: DialogTurnStatus.cancelled, result: turnResult.result }
@@ -109,7 +109,7 @@ export class ComponentDialog<O extends object = {}> extends DialogContainer<O> {
         const turnResult: DialogTurnResult<any> = await this.onContinueDialog(innerDC);
 
         // Check for end of inner dialog
-        if (turnResult.status !== DialogTurnStatus.waiting) {
+        if (turnResult !== undefined && turnResult.status !== DialogTurnStatus.waiting) {
             // Return result to calling dialog
             return await this.endComponent(outerDC, turnResult.result);
         }
