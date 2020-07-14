@@ -27,12 +27,9 @@ stages:
           BotName: 'ash-streaming-bot'
         steps:
           - template: configure-to-bbjs-daily.yml
-
-          - task: Npm@1
-            displayName: 'npm install - streaming echo bot dependencies'
-            inputs: 
-              workingDir: '$(System.DefaultWorkingDirectory)\libraries\streaming-e2e-tests\bot'
-              verbose: false
-              
           - template: deploy-bot.yml
       
+  # - stage: Create_And_Deploy_React_App
+  #   jobs:
+  #     - job: Create_React_App
+  #     - 
