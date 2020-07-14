@@ -1,6 +1,6 @@
 steps:
   - task: PowerShell@2
-    displayName: 'Get latest botbuilder package version from MyGet - https://botbuilder.myget.org/gallery/botbuilder-v4-js-daily'
+    displayName: 'Get latest $(BotBuilderPkg) package version from MyGet - https://botbuilder.myget.org/gallery/botbuilder-v4-js-daily'
     inputs:
       targetType: 'filePath'
       filePath: $(System.DefaultWorkingDirectory)\libraries\streaming-e2e-tests\build\get-latest-bbjs-daily-version.ps1
@@ -9,18 +9,18 @@ steps:
         -PackageName $(BotBuilderPkg)
 
   - task: colinsalmcorner.colinsalmcorner-buildtasks.tag-build-task.tagBuildOrRelease@0
-    displayName: 'Tag Build with botbuilder version'
+    displayName: 'Tag Build with $(BotBuilderPkg) version'
     inputs:
       tags: 'Using $(BotBuilderPkg) version $(LatestVersion_botbuilder)'
 
   - task: PowerShell@2
-    displayName: Set Dependency to Latest BB Version
+    displayName: Set Dependency to Latest $(BotBuilderPkg) Version
     inputs:
         targetType: 'filePath'
         filePath: $(System.DefaultWorkingDirectory)\libraries\streaming-e2e-tests\build\set-dependency-version-in-packagejson.ps1
         arguments:
           -LatestVersion $(LatestVersion_botbuilder)
-          -PathToPJson $(System.DefaultWorkingDirectory)/libraries/streaming-e2e-tests/bot/package.json
+          -PathToPJson $(BotProjectDir)/package.json
           -Package $(BotBuilderPkg);
 
   - powershell: |
