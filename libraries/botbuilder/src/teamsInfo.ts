@@ -174,7 +174,7 @@ export class TeamsInfo {
         }
 
         if (!userId) {
-            throw new Error('The getMember operation needs a valid conversationId.');
+            throw new Error('The getMember operation needs a valid userId.');
         }
 
         const teamMember: ChannelAccount = await connectorClient.conversations.getConversationMember(conversationId, userId);
