@@ -34,4 +34,3 @@ steps:
       workingDir: '$(System.DefaultWorkingDirectory)\libraries\streaming-e2e-tests\bot'
       verbose: false
   
-  - test test test
