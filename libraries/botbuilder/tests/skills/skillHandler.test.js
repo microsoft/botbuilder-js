@@ -268,6 +268,8 @@ describe('SkillHandler', function() {
                     type: ActivityTypes.Message,
                     serviceUrl, text
                 };
+
+                const rid = 'rId';
                 // Override sendActivities to do nothing.
                 adapter.sendActivities = async (context, activities) => {
                     assert(context);
@@ -276,8 +278,11 @@ describe('SkillHandler', function() {
                     strictEqual(activities[0].type, ActivityTypes.Message);
                     strictEqual(activities[0].text, text);
                     strictEqual(skillActivity.callerId, undefined);
+                    return [{ id: rid }];
                 };
-                await handler.processActivity(identity, 'convId', 'replyId', skillActivity);
+
+                const resourceResponse = await handler.processActivity(identity, 'convId', 'replyId', skillActivity);
+                strictEqual(rid, resourceResponse.id);
             });
 
             it(`should use the skill's appId to set the callback's activity.callerId`, async () => {
