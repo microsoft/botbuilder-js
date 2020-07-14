@@ -521,9 +521,7 @@ describe(`TestAdapter`, function () {
             try {
                 await context.adapter.getTokenStatus();
             } catch (err) {
-                assert(err.message === 'testAdapter.getTokenStatus(): context with activity is required',
-                `expected "testAdapter.getTokenStatus(): context with activity is required" Error message, not "${ err.message }"`);
-                done();
+                done(assert.strictEqual(err.message, 'testAdapter.getTokenStatus(): context with activity is required'));
             }
         });
 
