@@ -15,8 +15,6 @@ steps:
 
   - task: PowerShell@2
     displayName: Set Dependency to Latest Version
-    variables:
-      PackageConfig: {'latestVersion': $(LatestVersion)}
     inputs:
         targetType: 'filePath'
         filePath: $(System.DefaultWorkingDirectory)\libraries\streaming-e2e-tests\build\set-dependency-version-in-packagejson.ps1

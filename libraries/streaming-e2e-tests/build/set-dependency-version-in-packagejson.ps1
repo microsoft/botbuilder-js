@@ -1,8 +1,8 @@
-param($LatestVersion, $WorkingDirectory, $PConfig)
+param($LatestVersion, $WorkingDirectory)
 
 $path = "$WorkingDirectory/libraries/streaming-e2e-tests/bot/package.json";
 $package = 'botbuilder';
-$newVersion = "$PConfig.latestVersion";
+$newVersion = "$LatestVersion";
 
 $find = "$package`": `"\S*`"";
 $replace = "$package`": `"$newVersion`"";
