@@ -6,12 +6,12 @@ steps:
       filePath: $(System.DefaultWorkingDirectory)\libraries\streaming-e2e-tests\build\get-latest-bbjs-daily-version.ps1
       arguments:
         -AccessToken $(MyGetPersonalAccessToken)
-        -PackageName "botbuilder"
+        -PackageName $(BotBuilderPkg)
 
   - task: colinsalmcorner.colinsalmcorner-buildtasks.tag-build-task.tagBuildOrRelease@0
     displayName: 'Tag Build with botbuilder version'
     inputs:
-      tags: 'Using botbuilder version $(LatestVersion_botbuilder)'
+      tags: 'Using $(BotBuilderPkg) version $(LatestVersion_botbuilder)'
 
   - task: PowerShell@2
     displayName: Set Dependency to Latest BB Version
@@ -21,7 +21,7 @@ steps:
         arguments:
           -LatestVersion $(LatestVersion_botbuilder)
           -PathToPJson $(System.DefaultWorkingDirectory)/libraries/streaming-e2e-tests/bot/package.json
-          -Package "botbuilder";
+          -Package $(BotBuilderPkg);
 
   - powershell: |
       Set-Location -Path "$(System.DefaultWorkingDirectory)\libraries\streaming-e2e-tests\bot"

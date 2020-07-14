@@ -25,6 +25,7 @@ stages:
           BotProjectDir: '$(System.DefaultWorkingDirectory)\libraries\streaming-e2e-tests\bot'
           ResourceGroup: 'ash-streaming-js'
           BotName: 'ash-streaming-bot'
+          BotBuilderPkg: 'botbuilder'
         steps:
           - template: configure-to-bbjs-daily.yml
           - template: deploy-bot.yml
