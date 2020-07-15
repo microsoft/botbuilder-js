@@ -983,14 +983,10 @@ export class FunctionUtils {
     public static returnFormattedTimeStampStr(timedata: Moment, format: string, locale: string): {value: any; error: string} {
         let result: string;
         let error: string;
-        if (format === '') {
-            result = timedata.locale(locale).toString() ;
-        } else {
-            try {
-                result = timedata.format(format);
-            } catch (e) {
-                error = `${format} is not a valid timestamp format`;
-            }
+        try {
+            result = timedata.locale(locale).utc().format(format);
+        } catch (e) {
+            error = `${format} is not a valid timestamp format`;
         }
 
         return {value: result, error};

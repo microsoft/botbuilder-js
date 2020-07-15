@@ -17,12 +17,10 @@ import { Options } from '../options';
  */
 export class ToLower extends StringTransformEvaluator {
     public constructor() {
-        super(ExpressionType.ToLower, ToLower.evaluator, FunctionUtils.validateUnaryOrBinaryNumber);
+        super(ExpressionType.ToLower, ToLower.evaluator);
     }
 
-    private static evaluator(args: any[], options: Options): string {
-        let locale = options.locale;
-        locale = FunctionUtils.determineLocale(args, locale, 2);
-        return String(FunctionUtils.parseStringOrNull(args[0])).toLocaleLowerCase(locale);
+    private static evaluator(args: any[]): string {
+        return String(FunctionUtils.parseStringOrNull(args[0])).toLowerCase();
     }
 }

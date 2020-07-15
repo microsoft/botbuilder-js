@@ -27,15 +27,11 @@ export class UtcNow extends ExpressionEvaluator {
             (args: any[], options: Options): {value: any; error: string} => 
             {
                 let format = FunctionUtils.DefaultDateTimeFormat;
-                let locale = options.locale;
+                let locale = options.locale ? options.locale : 'en-us';
                 let value: string;
                 let error: string;
                 ({format, locale} = FunctionUtils.determineFormatAndLocale(args, format, locale, 2));
-                if (format === '') {
-                    value = moment(new Date()).utc().locale(locale).toString();
-                } else {
-                    value = moment(new Date()).utc().format(args[0]);
-                }
+                value = moment(new Date()).utc().locale(locale).format(format);
 
                 return {value, error};
             },
@@ -43,6 +39,6 @@ export class UtcNow extends ExpressionEvaluator {
     }
 
     private static validator(expression: Expression): void {
-        FunctionUtils.validateOrder(expression, [ReturnType.String]);
+        FunctionUtils.validateOrder(expression, [ReturnType.String, ReturnType.String]);
     }
 }

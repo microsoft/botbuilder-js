@@ -24,7 +24,7 @@ export class String extends ExpressionEvaluator {
         return FunctionUtils.applyWithOptionsAndError((args: any[], options: Options): {value: string; error: string} => {
             let error: string;
             let value: string;
-            let locale = options.locale;
+            let locale = options.locale ? options.locale : 'en-us';
             if (args.length === 2 && typeof args[1] !== 'string') {
                 error = `the second argument ${args[1]} should be a locale string.`;
             } else {

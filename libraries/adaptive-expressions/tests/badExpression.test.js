@@ -199,23 +199,27 @@ const badExpressions =
         'isPresent(\'world\', 123445)', // should have only one parameter
         'addDays(\'errortime\', 1)',// error datetime format
         'addDays(timestamp, \'hi\')',// second param should be integer
-        'addDays(timestamp)',// should have 2 or 3 params
-        'addDays(timestamp, 1,\'yyyy\', 2)',// should have 2 or 3 params
+        'addDays(timestamp)',// should have 2 or 3 or 4 params
+        'addDays(timestamp, 1,\'yyyy\', "de", 2)',// should have 2 or 3 or 4 params
+        'addDays(timestamp, 1,\'yyyy\', 2)',//the fourth paramter should be a string
         'addDays(notISOTimestamp, 1)', // not ISO datetime format
         'addHours(\'errortime\', 1)',// error datetime format
         'addHours(timestamp, \'hi\')',// second param should be integer
-        'addHours(timestamp)',// should have 2 or 3 params
-        'addHours(timestamp, 1,\'yyyy\', 2)',// should have 2 or 3 params
+        'addHours(timestamp)',// should have 2 or 3 or 4 params
+        'addHours(timestamp, 1,\'yyyy\', "de", 2)',// should have 2 or 3 or 4 params
+        'addHours(timestamp, 1,\'yyyy\', 2)',//the fourth paramter should be a string
         'addHours(notISOTimestamp, 1)', // not ISO datetime format
         'addMinutes(\'errortime\', 1)',// error datetime format
         'addMinutes(timestamp, \'hi\')',// second param should be integer
-        'addMinutes(timestamp)',// should have 2 or 3 params
-        'addMinutes(timestamp, 1,\'yyyy\', 2)',// should have 2 or 3 params
+        'addMinutes(timestamp)',// should have 2 or 3 or 4 params
+        'addMinutes(timestamp, 1,\'yyyy\', "de", 4)',// should have 2 or 3 or 4 params
+        'addMinutess(timestamp, 1,\'yyyy\', 2)',//the fourth paramter should be a string
         'addMinutes(notISOTimestamp, 1)', // not ISO datetime format
         'addSeconds(\'errortime\', 1)',// error datetime format
         'addSeconds(timestamp, \'hi\')',// second param should be integer
-        'addSeconds(timestamp)',// should have 2 or 3 params
-        'addSeconds(timestamp, 1,\'yyyy\', 2)',// should have 2 or 3 params
+        'addSeconds(timestamp)',// should have 2 or 3 or 4 params
+        'addSeconds(timestamp, 1,\'yyyy\', "de", 4)',// should have 2 or 3 or 4 params
+        'addSeconds(timestamp, 1,\'yyyy\', 4)',// the fourth paramter should be a string
         'addSeconds(notISOTimestamp, 1)', // not ISO datetime format
         'dayOfMonth(\'errortime\')', // error datetime format
         'dayOfMonth(timestamp, 1)', //should have 1 param
@@ -236,22 +240,28 @@ const badExpressions =
         'year(timestamp, 1)', // should have 1 param
         'year(noISOTimestamp)', // not ISO datetime format
         'formatDateTime(\'errortime\')', // error datetime format
-        'formatDateTime(timestamp, \'yyyy\', 1)', // should have 2 or 3 params
+        'formatDateTime(timestamp, \'yyyy\', "de", 4)', // should have 1 or 2 or 3 params
         'formatDateTime(notValidTimestamp)', // not valid timestamp
         'formatDateTime(notValidTimestamp2)', // not valid timestamp
         'formatDateTime(notValidTimestamp3)', // not valid timestamp
         'formatDateTime({})', // error valid datetime
         'formatDateTime(timestamp, 1)', // invalid format string
+        'formatDateTime(timestamp, "LLLL", 32)', // locale should be a string
         'formatEpoch(\'time\')', // error string
-        'formatEpoch(timestamp, \'yyyy\', 1)', // should have 1 or 2 params
+        'formatEpoch(123231232, \'yyyy\', "de", "hello")', // should have 1 or 2 or 3 params
+        'formatEpoch(12312312312, \'yyyy\', 1)', // locale should be a string
         'formatTicks(\'string\')', // String is not valid
         'formatTicks({})', // object is not valid
+        'formatTicks(123231232, \'yyyy\', "de", "hello")', // should have 1 or 2 or 3 params
+        'formatTicks(12312312312, \'yyyy\', 1)', // locale should be a string
         'subtractFromTime(\'errortime\', 1, \'yyyy\')', // error datetime format
         'subtractFromTime(timestamp, 1, \'W\')', // error time unit
         'subtractFromTime(timestamp, timestamp, \'W\')', // error parameters format
         'subtractFromTime(timestamp, \'1\', \'yyyy\')', // second param should be integer
-        'subtractFromTime(timestamp, \'yyyy\')', // should have 3 or 4 params
-        'subtractFromTime(noISOTimestamp, 1, \'Year\')',
+        'subtractFromTime(timestamp, \'yyyy\')', // should have 3 or 4 or 5 params
+        'subtractFromTime(timestamp, 1, "day", "hh", "de", 19)', // should have 3 or 4 or 5 params
+        'subtractFromTime(noISOTimestamp, 1, \'Year\')', // not a valid timestamp
+        'subtractFromTime(timestamp, 1, \'Year\', "LLLL", 122)', // locale should be a string
         'dateReadBack(\'errortime\', \'errortime\')', // error datetime format
         'dateReadBack(timestamp)', // shold have two params
         'dateReadBack(timestamp, \'errortime\')', // second param is invalid timestamp format
@@ -262,14 +272,23 @@ const badExpressions =
         'getPastTime(1, \'W\')',// error time unit
         'getPastTime(timestamp, \'W\')',// error parameters format
         'getPastTime(\'yyyy\', \'1\')',// second param should be integer
-        'getPastTime(\'yyyy\')',// should have 2 or 3 params
+        'getPastTime(\'yyyy\')',// should have 2 or 3 or 4 params
+        'getPastTime(timestamp, 1, "week", "yy", "de", "good")',// should have 2 or 3 or 4 params
+        'getPastTime(timestamp, 1, "week", "yy", 123)',// locale should be a string
         'getFutureTime(1, \'W\')',// error time unit
         'getFutureTime(timestamp, \'W\')',// error parameters format
         'getFutureTime(\'yyyy\', \'1\')',// second param should be integer
-        'getFutureTime(\'yyyy\')',// should have 2 or 3 params
+        'getFutureTime(\'yyyy\')',// should have 2 or 3 or 4 params
+        'getFutureTime(timestamp, 1, "week", "yy", "de", "good")',// should have 2 or 3 or 4 params
+        'getFutureTime(timestamp, 1, "week", "yy", 123)',// locale should be a string
         'convertFromUTC(notValidTimestamp, \'Pacific Standard Time\')', // invalid timestamp
         'convertFromUTC(\'2018-02-02T02:00:00.000Z\', \'Pacific Time\')', // invalid timezone
+        'convertFromUTC(timestamp, \'Pacific Standard Time\', "D", "de", "eu)',  // should have 2 or 3 or 4 paramters
+        'convertFromUTC(timestamp, \'Pacific Standard Time\', "D", 12.12)',  // locale should be a string
         'convertToUTC(notValidTimestamp, \'Pacific Standard Time\')',  // invalid timestamp
+        'convertToUTC(timestamp)',  // should have 2 or 3 or 4 paramters
+        'convertToUTC(timestamp, \'Pacific Standard Time\', "D", "de", "eu)',  // should have 2 or 3 or 4 paramters
+        'convertToUTC(timestamp, \'Pacific Standard Time\', "D", 12.12)',  // locale should be a string
         'convertToUTC(\'2018-02-02T02:00:00.000\', \'Pacific Time\')', // invalid timezone
         //"startOfDay(timeStamp, 'A')", // invalid format, due to change of moment package, this will no longer throw exception
         'startOfDay(notValidTimeStamp)', // invalid timestamp

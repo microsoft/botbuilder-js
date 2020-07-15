@@ -17,12 +17,10 @@ import { Options } from '../options';
  */
 export class ToUpper extends StringTransformEvaluator {
     public constructor() {
-        super(ExpressionType.ToUpper, ToUpper.evaluator, FunctionUtils.validateUnaryOrBinaryString);
+        super(ExpressionType.ToUpper, ToUpper.evaluator);
     }
 
-    private static evaluator(args: any[], options: Options): string {
-        let locale = options.locale;
-        locale = FunctionUtils.determineLocale(args, locale, 2);
-        return String(FunctionUtils.parseStringOrNull(args[0])).toLocaleUpperCase(locale);
+    private static evaluator(args: any[]): string {
+        return String(FunctionUtils.parseStringOrNull(args[0])).toUpperCase();
     }
 }

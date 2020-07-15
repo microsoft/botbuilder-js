@@ -28,7 +28,7 @@ export class AddToTime extends ExpressionEvaluator {
         let error: string;
         let args: any[];
         let format = FunctionUtils.DefaultDateTimeFormat;
-        let locale = options.locale;
+        let locale = options.locale ? options.locale : 'en-us';
         ({args, error} = FunctionUtils.evaluateChildren(expression, state, options));
 
         if (!error) {
@@ -108,6 +108,6 @@ export class AddToTime extends ExpressionEvaluator {
     }
 
     private static validator(expression: Expression): void {
-        FunctionUtils.validateOrder(expression, [ReturnType.String], ReturnType.String, ReturnType.Number, ReturnType.String);
+        FunctionUtils.validateOrder(expression, [ReturnType.String, ReturnType.String], ReturnType.String, ReturnType.Number, ReturnType.String);
     }
 }

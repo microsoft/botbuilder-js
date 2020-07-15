@@ -40,8 +40,8 @@ export class FormatEpoch extends ExpressionEvaluator {
 
                 let value: any;
                 if (!error) {
-                    const dateString: string = new Date(arg).toLocaleString(locale);
-                    value = args.length === 2 ? moment(dateString).format(format) : dateString;
+                    const dateString: string = new Date(arg).toISOString();
+                    value = moment(dateString).utc().locale(locale).format(format);
                 }
 
                 return {value, error};

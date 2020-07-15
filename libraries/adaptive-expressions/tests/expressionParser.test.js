@@ -10,6 +10,25 @@ const one = ['one'];
 const oneTwo = ['one', 'two'];
 const dataSource = [
 
+    // tests of locale specified in API
+    ['addDays(timestamp, 1, "LLLL", "de")', 'Freitag, 16. März 2018 13:00'],
+    ['addHours(timestamp, 2, "LLLL", "fr")', 'jeudi 15 mars 2018 15:00'],
+    ['addMinutes(timestamp, 30, "LLLL", "de")', 'Donnerstag, 15. März 2018 13:30'],
+    ['addToTime("2018-01-01T00:00:00.000Z", 1, "Week", "LLLL", "es")', 'lunes, 8 de enero de 2018 0:00'],
+    ['startOfDay("2018-03-15T13:30:30.000Z", "LLLL", "fr")', 'jeudi 15 mars 2018 00:00'],
+    ['startOfHour("2018-03-15T13:30:30.000Z", "LLLL", "de")', 'Donnerstag, 15. März 2018 13:00'],
+    ['startOfMonth("2018-03-15T13:30:30.000Z", "LLLL", "tr")', 'Perşembe, 1 Mart 2018 00:00'],
+    ['convertToUTC(\'2018-01-01T18:00:00.000\', \'Pacific Standard Time\', "LLLL", "de")', 'Dienstag, 2. Januar 2018 02:00'],
+    ['convertFromUTC(\'2018-01-02T02:00:00.000Z\', \'Pacific Standard Time\', \'LLLL\', \'de\')', 'Montag, 1. Januar 2018 18:00'],
+    ['substring(utcNow("LLLL", "es"), 0, 10)', moment(new Date().toISOString()).locale('es').utc().format('LLLL').substring(0,10)],
+    ['substring(getPastTime(1,"Day", "LLLL", "de"), 0, 10)', moment(new Date().toISOString()).subtract(1, 'days').locale('de').utc().format('LLLL').substring(0,10)],
+    ['substring(getFutureTime(1,"Day", "LLLL", "en"), 0, 10)', moment(new Date().toISOString()).add(1, 'days').locale('en').utc().format('LLLL').substring(0,10)],
+    ['subtractFromTime(timestamp, 1, "Hour", "LLLL", "es")', 'jueves, 15 de marzo de 2018 12:00'],
+    ['formatEpoch(unixTimestamp, "LLLL", "de")', 'Donnerstag, 15. März 2018 13:00'],
+    ['formatTicks(ticks, "LLLL", "ru")', 'среда, 6 мая 2020 г., 11:47'],
+    ['formatDateTime("2018-03-15", "LLLL", "de")', 'Donnerstag, 15. März 2018 08:00'],
+    
+
     // accessProperty and accessIndex
     ['$index', 'index'],
     ['`hi\\``', 'hi`'], // `hi\`` -> hi`

@@ -16,17 +16,15 @@ import { Options } from '../options';
  */
 export class SentenceCase extends StringTransformEvaluator {
     public constructor() {
-        super(ExpressionType.SentenceCase, SentenceCase.evaluator, FunctionUtils.validateUnaryOrBinaryString);
+        super(ExpressionType.SentenceCase, SentenceCase.evaluator);
     }
 
-    private static evaluator(args: any[], options: Options): string {
-        let locale = options.locale;
-        locale = FunctionUtils.determineLocale(args, locale, 2);
-        const inputStr = String(FunctionUtils.parseStringOrNull(args[0])).toLocaleLowerCase(locale);
+    private static evaluator(args: any[]): string {
+        const inputStr = String(FunctionUtils.parseStringOrNull(args[0])).toLowerCase();
         if (inputStr === '') {
             return inputStr;
         } else {
-            return inputStr.charAt(0).toLocaleUpperCase(locale) + inputStr.substr(1).toLocaleLowerCase(locale);
+            return inputStr.charAt(0).toUpperCase() + inputStr.substr(1).toLowerCase();
         }
     }
 }

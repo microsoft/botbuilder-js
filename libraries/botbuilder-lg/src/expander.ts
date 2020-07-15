@@ -7,7 +7,7 @@
  */
 import { AbstractParseTreeVisitor, TerminalNode } from 'antlr4ts/tree';
 import { ParserRuleContext } from 'antlr4ts/ParserRuleContext';
-import { EvaluatorLookup, Expression, ExpressionParser, ExpressionEvaluator, ReturnType, ExpressionType, Constant, FunctionUtils } from 'adaptive-expressions';
+import { EvaluatorLookup, Expression, ExpressionParser, ExpressionEvaluator, ReturnType, ExpressionType, Constant, FunctionUtils, Options } from 'adaptive-expressions';
 import { keyBy } from 'lodash';
 import { EvaluationTarget } from './evaluationTarget';
 import { Evaluator } from './evaluator';

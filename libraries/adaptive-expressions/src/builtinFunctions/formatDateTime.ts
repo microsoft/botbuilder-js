@@ -28,7 +28,7 @@ export class FormatDateTime extends ExpressionEvaluator {
                 let error: string;
                 let arg: any = args[0];
                 let format = FunctionUtils.DefaultDateTimeFormat;
-                let locale = options.locale;
+                let locale = options.locale ? options.locale : 'en-us';
                 ({format, locale} = FunctionUtils.determineFormatAndLocale(args, format, locale, 3));
 
                 if (typeof arg === 'string') {
@@ -38,12 +38,8 @@ export class FormatDateTime extends ExpressionEvaluator {
                 }
                 let value: any;
                 if (!error) {
-                    if (format === '') {
-                        value = moment(new Date(arg)).locale(locale).toString();
-                    } else {
-                        value = moment(new Date(arg)).format(format);
-                    }
-                    
+                    const dateString: string = new Date(arg).toISOString();
+                    value = args.length >= 2 ? moment(dateString).locale(locale).format(format) : dateString;
                 }
 
                 return {value, error};
@@ -51,6 +47,6 @@ export class FormatDateTime extends ExpressionEvaluator {
     }
 
     private static validator(expression: Expression): void {
-        FunctionUtils.validateOrder(expression, [ReturnType.String], ReturnType.String);
+        FunctionUtils.validateOrder(expression, [ReturnType.String, ReturnType.String], ReturnType.String);
     }
 }

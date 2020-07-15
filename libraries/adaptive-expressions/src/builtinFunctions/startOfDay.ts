@@ -28,7 +28,7 @@ export class StartOfDay extends ExpressionEvaluator {
         let error: string;
         let args: any[];
         let format = FunctionUtils.DefaultDateTimeFormat;
-        let locale = options.locale;
+        let locale = options.locale ? options.locale : 'en-us';
         ({args, error} = FunctionUtils.evaluateChildren(expression, state, options));
 
         if (!error) {
@@ -36,7 +36,6 @@ export class StartOfDay extends ExpressionEvaluator {
         }
 
         if (!error) {
-            const format: string = (args.length === 2) ? FunctionUtils.timestampFormatter(args[1]) : FunctionUtils.DefaultDateTimeFormat;
             if (typeof (args[0]) === 'string') {
                 ({value, error} = StartOfDay.evalStartOfDay(args[0], format, locale));
             } else {

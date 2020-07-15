@@ -28,7 +28,7 @@ export class SubtractFromTime extends ExpressionEvaluator {
         let error: any;
         let args: any[];
         let format = FunctionUtils.DefaultDateTimeFormat;
-        let locale = options.locale;
+        let locale = options.locale ? options.locale : 'en-us';
         ({args, error} = FunctionUtils.evaluateChildren(expression, state, options));
 
         if (!error) {
@@ -43,11 +43,7 @@ export class SubtractFromTime extends ExpressionEvaluator {
                 } else {
                     const dur: any = duration;
                     ({value, error} = FunctionUtils.parseTimestamp(args[0], (dt: Date): string => {
-                        if (format === '') {
-                            return moment(dt).utc().subtract(dur, tsStr).locale(locale).toString();
-                        }
-
-                        return moment(dt).utc().subtract(dur, tsStr).format(format);
+                        return moment(dt).utc().subtract(dur, tsStr).locale(locale).format(format);
                     }));
                 }
             } else {

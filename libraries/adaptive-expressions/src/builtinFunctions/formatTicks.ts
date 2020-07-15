@@ -29,7 +29,7 @@ export class FormatTicks extends ExpressionEvaluator {
                 let error: string;
                 let arg: any = args[0];
                 let format = FunctionUtils.DefaultDateTimeFormat;
-                let locale = options.locale;
+                let locale = options.locale ?  options.locale : 'en-us';
 
                 ({format, locale} = FunctionUtils.determineFormatAndLocale(args, format, locale, 3));
 
@@ -48,11 +48,7 @@ export class FormatTicks extends ExpressionEvaluator {
 
                 let value: any;
                 if (!error) {
-                    if (format ===  '') {
-                        value = moment(new Date(arg)).locale(locale).toString();
-                    } else {
-                        value = moment(new Date(arg)).format(format);
-                    }
+                    value = moment(new Date(arg)).utc().locale(locale).format(format);
                 }
 
                 return {value, error};

@@ -29,7 +29,7 @@ export class TimeTransformEvaluator extends ExpressionEvaluator {
             let value: any;
             let args: any[];
             let format = FunctionUtils.DefaultDateTimeFormat;
-            let locale = options.locale;
+            let locale = options.locale ? options.locale : 'en-us';
             ({args, error} = FunctionUtils.evaluateChildren(expression, state, options));
             
             if (!error) {
@@ -40,14 +40,7 @@ export class TimeTransformEvaluator extends ExpressionEvaluator {
                 if (typeof args[0] === 'string' && typeof args[1] === 'number') {
                     ({value, error} = FunctionUtils.parseTimestamp(args[0]));
                     if (!error) {
-                        if (args.length === 4 && typeof args[3] === 'string') {
-                            result = moment(func(value, args[1])).utc().locale(locale).toString();
-                        }
-                        else if (args.length === 3 && typeof args[2] === 'string') {
-                            result = moment(func(value, args[1])).utc().format(format);
-                        } else {
-                            result = func(value, args[1]).toISOString();
-                        }
+                        result = moment(func(value, args[1])).locale(locale).utc().format(format);
                     }
                 } else {
                     error = `${expression} could not be evaluated`;

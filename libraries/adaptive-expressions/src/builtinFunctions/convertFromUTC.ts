@@ -31,12 +31,12 @@ export class ConvertFromUTC extends ExpressionEvaluator {
         let value: any;
         let error: string;
         let args: any[];
-        let format = FunctionUtils.DefaultDateTimeFormat;
-        let locale = options.locale;
+        let format = ConvertFromUTC.NoneUtcDefaultDateTimeFormat;
+        let locale = options.locale ? options.locale : 'en-us';
         ({args, error} = FunctionUtils.evaluateChildren(expression, state, options));
 
         if (!error) {
-            ({format, locale} = FunctionUtils.determineFormatAndLocale(args, format, locale, 3));
+            ({format, locale} = FunctionUtils.determineFormatAndLocale(args, format, locale, 4));
         }
 
         if (!error) {
@@ -60,14 +60,10 @@ export class ConvertFromUTC extends ExpressionEvaluator {
         }
 
         if (!error) {
-            if (format === '') {
-                result = tz(timeStamp, timeZone).locale(locale).toString();
-            } else {
-                try {
-                    result = tz(timeStamp, timeZone).format(format);
-                } catch (e) {
-                    error = `${format} is not a valid timestamp format`;
-                }
+            try {
+                result = tz(timeStamp, timeZone).locale(locale).format(format);
+            } catch (e) {
+                error = `${format} is not a valid timestamp format`;
             }
         }
 
