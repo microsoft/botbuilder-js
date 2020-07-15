@@ -13,6 +13,3 @@ Remove-Item src/App.js, src/index.js, public/index.html
 # Copy Custom files into react-app
 copy ..\custom-app-code\App.js, ..\custom-app-code\index.js .\src\
 copy ..\custom-app-code\index.html .\public
-
-
-
