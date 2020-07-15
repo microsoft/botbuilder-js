@@ -22,11 +22,11 @@ stages:
     jobs:
       - job: Deploy_Bot
         variables:
-          BotProjectDir: '$(System.DefaultWorkingDirectory)\libraries\streaming-e2e-tests\bot'
+          TargetProjectDir: '$(System.DefaultWorkingDirectory)\libraries\streaming-e2e-tests\bot'
+          PackageName: 'botbuilder'
+          LatestVersionKey: 'LatestVersion_botbuilder'
           ResourceGroup: 'ash-streaming-js'
           BotName: 'ash-streaming-bot'
-          BotBuilderPkg: 'botbuilder'
-          LatestVersionKey: 'LatestVersion_botbuilder'
         steps:
           - template: configure-to-bbjs-daily.yml
           - template: deploy-bot.yml

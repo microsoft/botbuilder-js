@@ -1,30 +1,30 @@
 steps:
   - task: PowerShell@2
-    displayName: 'Get latest $(BotBuilderPkg) package version from MyGet - https://botbuilder.myget.org/gallery/botbuilder-v4-js-daily'
+    displayName: 'Get latest $(PackageName) package version from MyGet - https://botbuilder.myget.org/gallery/botbuilder-v4-js-daily'
     inputs:
       targetType: 'filePath'
       filePath: $(System.DefaultWorkingDirectory)\libraries\streaming-e2e-tests\build\get-latest-bbjs-daily-version.ps1
       arguments:
         -AccessToken $(MyGetPersonalAccessToken)
-        -PackageName $(BotBuilderPkg)
+        -PackageName $(PackageName)
 
   - task: colinsalmcorner.colinsalmcorner-buildtasks.tag-build-task.tagBuildOrRelease@0
-    displayName: 'Tag Build with $(BotBuilderPkg) version'
+    displayName: 'Tag Build with $(PackageName) version'
     inputs:
-      tags: 'Using $(BotBuilderPkg) version $(LatestVersionKey)'
+      tags: 'Using $(PackageName) version $(LatestVersionKey)'
 
   - task: PowerShell@2
-    displayName: Set Dependency to Latest $(BotBuilderPkg) Version
+    displayName: Set Dependency to Latest $(PackageName) Version
     inputs:
         targetType: 'filePath'
         filePath: $(System.DefaultWorkingDirectory)\libraries\streaming-e2e-tests\build\set-dependency-version-in-packagejson.ps1
         arguments:
           -LatestVersion $(LatestVersionKey)
-          -PathToPJson $(BotProjectDir)/package.json
-          -Package $(BotBuilderPkg);
+          -PathToPJson $(TargetProjectDir)/package.json
+          -Package $(PackageName);
 
   - powershell: |
-      Set-Location -Path "$(BotProjectDir)"
+      Set-Location -Path "$(TargetProjectDir)"
       
       New-Item -Path . -Name ".npmrc" -ItemType "file" -Value "registry=https://botbuilder.myget.org/F/botbuilder-v4-js-daily/npm/"
     displayName: 'Create .npmrc for MyGet feed - https://botbuilder.myget.org/gallery/botbuilder-v4-js-daily'
@@ -32,6 +32,6 @@ steps:
   - task: Npm@1
     displayName: 'npm install - streaming echo bot dependencies'
     inputs: 
-      workingDir: '$(BotProjectDir)'
+      workingDir: '$(TargetProjectDir)'
       verbose: false
   
