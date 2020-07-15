@@ -20,15 +20,15 @@ variables:
 stages:
   - stage: Deploy_Projects
     jobs:
-      - job: Deploy_Bot
-        variables:
-          TargetProjectDir: '$(System.DefaultWorkingDirectory)\libraries\streaming-e2e-tests\bot'
-          PackageName: 'botbuilder'
-          ResourceGroup: 'ash-streaming-js'
-          BotName: 'ash-streaming-bot'
-        steps:
-          - template: configure-to-bbjs-daily.yml
-          - template: deploy-bot.yml
+      # - job: Deploy_Bot
+      #   variables:
+      #     TargetProjectDir: '$(System.DefaultWorkingDirectory)\libraries\streaming-e2e-tests\bot'
+      #     PackageName: 'botbuilder'
+      #     ResourceGroup: 'ash-streaming-js'
+      #     BotName: 'ash-streaming-bot'
+      #   steps:
+      #     - template: configure-to-bbjs-daily.yml
+      #     - template: deploy-bot.yml
 
       - job: Create_React_App_With_Custom_DLJS
         variables:
