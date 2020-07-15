@@ -7,7 +7,7 @@
  */
 
 import { Expression } from '../expression';
-import { ExpressionEvaluator } from '../expressionEvaluator';
+import { ExpressionEvaluator, ValueWithError } from '../expressionEvaluator';
 import { ExpressionType } from '../expressionType';
 import { FunctionUtils } from '../functionUtils';
 import { MemoryInterface } from '../memory/memoryInterface';
@@ -23,7 +23,7 @@ export class Or extends ExpressionEvaluator {
         super(ExpressionType.Or, Or.evaluator, ReturnType.Boolean, FunctionUtils.validateAtLeastOne);
     }
 
-    private static evaluator(expression: Expression, state: MemoryInterface, options: Options): { value: any; error: string } {
+    private static evaluator(expression: Expression, state: MemoryInterface, options: Options): ValueWithError {
         let result = false;
         let error: string;
         for (const child of expression.children) {

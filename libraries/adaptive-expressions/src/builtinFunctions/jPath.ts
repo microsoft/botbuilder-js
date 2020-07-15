@@ -9,7 +9,7 @@
 import * as jsPath from 'jspath';
 
 import { Expression } from '../expression';
-import { EvaluateExpressionDelegate, ExpressionEvaluator } from '../expressionEvaluator';
+import { EvaluateExpressionDelegate, ExpressionEvaluator, ValueWithError } from '../expressionEvaluator';
 import { ExpressionType } from '../expressionType';
 import { FunctionUtils } from '../functionUtils';
 import { ReturnType } from '../returnType';
@@ -26,7 +26,7 @@ export class JPath extends ExpressionEvaluator {
         return FunctionUtils.applyWithError((args: any[][]): any => JPath.evalJPath(args[0], args[1].toString()));
     }
 
-    private static evalJPath(jsonEntity: object | string, path: string): { value: any; error: string } {
+    private static evalJPath(jsonEntity: object | string, path: string): ValueWithError {
         let result: any;
         let error: string;
         let evaled: any;

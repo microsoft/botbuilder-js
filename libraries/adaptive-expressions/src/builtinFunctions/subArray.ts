@@ -7,7 +7,7 @@
  */
 
 import { Expression } from '../expression';
-import { ExpressionEvaluator } from '../expressionEvaluator';
+import { ExpressionEvaluator, ValueWithError } from '../expressionEvaluator';
 import { ExpressionType } from '../expressionType';
 import { FunctionUtils } from '../functionUtils';
 import { Options } from '../options';
@@ -21,7 +21,7 @@ export class SubArray extends ExpressionEvaluator {
         super(ExpressionType.SubArray, SubArray.evaluator, ReturnType.Array, SubArray.validator);
     }
 
-    private static evaluator(expression: Expression, state: any, options: Options): { value: any; error: string } {
+    private static evaluator(expression: Expression, state: any, options: Options): ValueWithError {
         let result: any;
         let error: any;
         let arr: any;

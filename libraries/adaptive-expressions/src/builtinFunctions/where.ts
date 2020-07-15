@@ -8,7 +8,7 @@
 
 import { Constant } from '../constant';
 import { Expression } from '../expression';
-import { ExpressionEvaluator } from '../expressionEvaluator';
+import { ExpressionEvaluator, ValueWithError } from '../expressionEvaluator';
 import { ExpressionType } from '../expressionType';
 import { FunctionUtils } from '../functionUtils';
 import { MemoryInterface } from '../memory/memoryInterface';
@@ -25,7 +25,7 @@ export class Where extends ExpressionEvaluator {
         super(ExpressionType.Where, Where.evaluator, ReturnType.Array, FunctionUtils.validateForeach);
     }
 
-    private static evaluator(expression: Expression, state: MemoryInterface, options: Options): { value: any; error: string } {
+    private static evaluator(expression: Expression, state: MemoryInterface, options: Options): ValueWithError {
         let result: any;
         let error: string;
         let instance: any;

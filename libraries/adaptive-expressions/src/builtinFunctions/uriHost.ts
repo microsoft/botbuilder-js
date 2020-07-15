@@ -7,7 +7,7 @@
  */
 
 import { Expression } from '../expression';
-import { ExpressionEvaluator } from '../expressionEvaluator';
+import { ExpressionEvaluator, ValueWithError } from '../expressionEvaluator';
 import { ExpressionType } from '../expressionType';
 import { FunctionUtils } from '../functionUtils';
 import { MemoryInterface } from '../memory/memoryInterface';
@@ -22,7 +22,7 @@ export class UriHost extends ExpressionEvaluator {
         super(ExpressionType.UriHost, UriHost.evaluator, ReturnType.String, FunctionUtils.validateUnary);
     }
 
-    private static evaluator(expr: Expression, state: MemoryInterface, options: Options): { value: any; error: string } {
+    private static evaluator(expr: Expression, state: MemoryInterface, options: Options): ValueWithError {
         let value: any;
         let error: string;
         let args: any[];
@@ -38,7 +38,7 @@ export class UriHost extends ExpressionEvaluator {
         return { value, error };
     }
 
-    private static evalUriHost(uri: string): { value: any; error: string } {
+    private static evalUriHost(uri: string): ValueWithError {
         let result: string;
         let error: string;
         let parsed: URL;

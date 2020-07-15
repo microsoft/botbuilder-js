@@ -9,7 +9,7 @@
 import moment from 'moment';
 
 import { Expression } from '../expression';
-import { EvaluateExpressionDelegate, ExpressionEvaluator } from '../expressionEvaluator';
+import { EvaluateExpressionDelegate, ExpressionEvaluator, ValueWithError } from '../expressionEvaluator';
 import { FunctionUtils } from '../functionUtils';
 import { MemoryInterface } from '../memory/memoryInterface';
 import { Options } from '../options';
@@ -24,7 +24,7 @@ export class TimeTransformEvaluator extends ExpressionEvaluator {
     }
 
     private static evaluator(func: (timestamp: Date, numOfTransformation: any) => Date): EvaluateExpressionDelegate {
-        return (expression: Expression, state: MemoryInterface, options: Options): { value: any; error: string } => {
+        return (expression: Expression, state: MemoryInterface, options: Options): ValueWithError => {
             let result: any;
             let error: string;
             let value: any;

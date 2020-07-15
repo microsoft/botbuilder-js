@@ -9,7 +9,7 @@
 import { TimexProperty } from '@microsoft/recognizers-text-data-types-timex-expression';
 
 import { Expression } from '../expression';
-import { ExpressionEvaluator } from '../expressionEvaluator';
+import { ExpressionEvaluator, ValueWithError } from '../expressionEvaluator';
 import { ExpressionType } from '../expressionType';
 import { FunctionUtils } from '../functionUtils';
 import { MemoryInterface } from '../memory/memoryInterface';
@@ -24,7 +24,7 @@ export class IsTimeRange extends ExpressionEvaluator {
         super(ExpressionType.IsTimeRange, IsTimeRange.evaluator, ReturnType.Boolean, FunctionUtils.validateUnary);
     }
 
-    private static evaluator(expr: Expression, state: MemoryInterface, options: Options): { value: any; error: string } {
+    private static evaluator(expr: Expression, state: MemoryInterface, options: Options): ValueWithError {
         let parsed: TimexProperty;
         let value = false;
         let error: string;

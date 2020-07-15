@@ -7,7 +7,7 @@
  */
 import { Expression } from './expression';
 import { ReturnType } from './returnType';
-import { ExpressionEvaluator } from './expressionEvaluator';
+import { ExpressionEvaluator, ValueWithError } from './expressionEvaluator';
 import { ExpressionType } from './expressionType';
 
 /**
@@ -38,7 +38,7 @@ export class Constant extends Expression {
     private _value: any;
     public constructor(value: any) {
         super(ExpressionType.Constant, new ExpressionEvaluator(ExpressionType.Constant,
-            (expression: Expression): { value: any; error: string } => {
+            (expression: Expression): ValueWithError => {
                 return { value: (expression as Constant).value, error: undefined };
             }
         ));

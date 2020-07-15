@@ -7,7 +7,7 @@
  */
 
 import { Expression } from '../expression';
-import { ExpressionEvaluator } from '../expressionEvaluator';
+import { ExpressionEvaluator, ValueWithError } from '../expressionEvaluator';
 import { ExpressionType } from '../expressionType';
 import { FunctionUtils } from '../functionUtils';
 import { MemoryInterface } from '../memory/memoryInterface';
@@ -23,7 +23,7 @@ export class GetProperty extends ExpressionEvaluator {
         super(ExpressionType.GetProperty, GetProperty.evaluator, ReturnType.Object, GetProperty.validator);
     }
 
-    private static evaluator(expression: Expression, state: MemoryInterface, options: Options): { value: any; error: string } {
+    private static evaluator(expression: Expression, state: MemoryInterface, options: Options): ValueWithError {
         let value: any;
         let error: string;
         let firstItem: any;

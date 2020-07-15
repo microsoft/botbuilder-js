@@ -7,7 +7,7 @@
  */
 
 import { Expression } from '../expression';
-import { ExpressionEvaluator } from '../expressionEvaluator';
+import { ExpressionEvaluator, ValueWithError } from '../expressionEvaluator';
 import { ExpressionType } from '../expressionType';
 import { FunctionUtils } from '../functionUtils';
 import { MemoryInterface } from '../memory/memoryInterface';
@@ -23,7 +23,7 @@ export class IndexOf extends ExpressionEvaluator {
         super(ExpressionType.IndexOf, IndexOf.evaluator, ReturnType.Number, IndexOf.validator);
     }
 
-    private static evaluator(expression: Expression, state: MemoryInterface, options: Options): { value: any; error: string } {
+    private static evaluator(expression: Expression, state: MemoryInterface, options: Options): ValueWithError {
         let value = -1;
         let error: string;
         let args: any[];

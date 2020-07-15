@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 import { Constant } from './constant';
-import { EvaluateExpressionDelegate, EvaluatorLookup, ExpressionEvaluator } from './expressionEvaluator';
+import { EvaluateExpressionDelegate, EvaluatorLookup, ExpressionEvaluator, ValueWithError } from './expressionEvaluator';
 import { ExpressionType } from './expressionType';
 import { Extensions } from './extensions';
 import { FunctionTable } from './functionTable';
@@ -253,7 +253,7 @@ export class Expression {
      */
     public static lambda(func: (arg0: any) => any): Expression {
         return new Expression(ExpressionType.Lambda, new ExpressionEvaluator(ExpressionType.Lambda,
-            (_expression: Expression, state: any, _: Options): { value: any; error: string } => {
+            (_expression: Expression, state: any, _: Options): ValueWithError => {
                 let value: any;
                 let error: string;
                 try {
@@ -348,7 +348,7 @@ export class Expression {
      * Global state to evaluate accessor expressions against.  Can Dictionary be otherwise reflection is used to access property and then indexer.
      * @param state
      */
-    public tryEvaluate(state: MemoryInterface | any, options: Options = undefined): { value: any; error: string } {
+    public tryEvaluate(state: MemoryInterface | any, options: Options = undefined): ValueWithError {
         if (!Extensions.isMemoryInterface(state)) {
             state = SimpleObjectMemory.wrap(state);
         }

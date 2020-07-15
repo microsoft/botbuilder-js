@@ -10,7 +10,7 @@ import moment from 'moment';
 import { tz } from 'moment-timezone';
 
 import { Expression } from '../expression';
-import { ExpressionEvaluator } from '../expressionEvaluator';
+import { ExpressionEvaluator, ValueWithError } from '../expressionEvaluator';
 import { ExpressionType } from '../expressionType';
 import { FunctionUtils } from '../functionUtils';
 import { MemoryInterface } from '../memory/memoryInterface';
@@ -26,7 +26,7 @@ export class ConvertToUTC extends ExpressionEvaluator {
         super(ExpressionType.ConvertToUTC, ConvertToUTC.evaluator, ReturnType.String, ConvertToUTC.validator);
     }
 
-    private static evaluator(expression: Expression, state: MemoryInterface, options: Options): { value: any; error: string } {
+    private static evaluator(expression: Expression, state: MemoryInterface, options: Options): ValueWithError {
         let value: any;
         let error: string;
         let args: any[];
@@ -54,7 +54,7 @@ export class ConvertToUTC extends ExpressionEvaluator {
         return error;
     }
 
-    private static evalConvertToUTC(timeStamp: string, sourceTimezone: string, format?: string): { value: any; error: string } {
+    private static evalConvertToUTC(timeStamp: string, sourceTimezone: string, format?: string): ValueWithError {
         let result: string;
         let error: string;
         let formattedSourceTime: string;

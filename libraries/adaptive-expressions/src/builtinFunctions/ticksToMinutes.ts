@@ -7,7 +7,7 @@
  */
 
 import { Expression } from '../expression';
-import { ExpressionEvaluator } from '../expressionEvaluator';
+import { ExpressionEvaluator, ValueWithError } from '../expressionEvaluator';
 import { ExpressionType } from '../expressionType';
 import { FunctionUtils } from '../functionUtils';
 import { MemoryInterface } from '../memory/memoryInterface';
@@ -25,7 +25,7 @@ export class TicksToMinutes extends ExpressionEvaluator {
         super(ExpressionType.TicksToMinutes, TicksToMinutes.evaluator, ReturnType.Number, FunctionUtils.validateUnaryNumber);
     }
 
-    private static evaluator(expr: Expression, state: MemoryInterface, options: Options): { value: any; error: string } {
+    private static evaluator(expr: Expression, state: MemoryInterface, options: Options): ValueWithError {
         let value: any;
         let error: string;
         let args: any[];

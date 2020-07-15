@@ -9,7 +9,7 @@
 import moment from 'moment';
 
 import { Expression } from '../expression';
-import { ExpressionEvaluator } from '../expressionEvaluator';
+import { ExpressionEvaluator, ValueWithError } from '../expressionEvaluator';
 import { ExpressionType } from '../expressionType';
 import { FunctionUtils } from '../functionUtils';
 import { MemoryInterface } from '../memory/memoryInterface';
@@ -24,7 +24,7 @@ export class StartOfMonth extends ExpressionEvaluator {
         super(ExpressionType.StartOfMonth, StartOfMonth.evaluator, ReturnType.String, StartOfMonth.validator);
     }
 
-    private static evaluator(expr: Expression, state: MemoryInterface, options: Options): { value: any; error: string } {
+    private static evaluator(expr: Expression, state: MemoryInterface, options: Options): ValueWithError {
         let value: any;
         let error: string;
         let args: any[];
@@ -41,7 +41,7 @@ export class StartOfMonth extends ExpressionEvaluator {
         return { value, error };
     }
 
-    private static evalStartOfMonth(timeStamp: string, format?: string): { value: any; error: string } {
+    private static evalStartOfMonth(timeStamp: string, format?: string): ValueWithError {
         let result: string;
         let error: string;
         let parsed: any;

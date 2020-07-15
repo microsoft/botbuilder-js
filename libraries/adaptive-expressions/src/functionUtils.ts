@@ -13,7 +13,7 @@ import { TimexProperty } from '@microsoft/recognizers-text-data-types-timex-expr
 import { Constant } from './constant';
 import { convertCSharpDateTimeToMomentJS } from './datetimeFormatConverter';
 import { Expression } from './expression';
-import { EvaluateExpressionDelegate } from './expressionEvaluator';
+import { EvaluateExpressionDelegate, ValueWithError } from './expressionEvaluator';
 import { ExpressionType } from './expressionType';
 import { MemoryInterface, SimpleObjectMemory, StackedMemory } from './memory';
 import { Options } from './options';
@@ -483,7 +483,7 @@ export class FunctionUtils {
      * @returns Delegate for evaluating an expression.
      */
     public static apply(func: (arg0: any[]) => any, verify?: VerifyExpression): EvaluateExpressionDelegate {
-        return (expression: Expression, state: MemoryInterface, options: Options): { value: any; error: string } => {
+        return (expression: Expression, state: MemoryInterface, options: Options): ValueWithError => {
             let value: any;
             let error: string;
             let args: any[];
@@ -507,7 +507,7 @@ export class FunctionUtils {
      * @returns Delegate for evaluating an expression.
      */
     public static applyWithError(func: (arg0: any[]) => any, verify?: VerifyExpression): EvaluateExpressionDelegate {
-        return (expression: Expression, state: MemoryInterface, options: Options): { value: any; error: string } => {
+        return (expression: Expression, state: MemoryInterface, options: Options): ValueWithError => {
             let value: any;
             let error: string;
             let args: any[];
@@ -584,8 +584,8 @@ export class FunctionUtils {
      * @param property Property to lookup.
      * @returns Value and error information if any.
      */
-    public static accessProperty(instance: any, property: string): { value: any; error: string } {
-        // NOTE: This returns null rather than an error if property is not present
+    public static accessProperty(instance: any, property: string): ValueWithError {
+        // NOTE: This returns undefined rather than an error if property is not present
         if (!instance) {
             return { value: undefined, error: undefined };
         }
@@ -617,7 +617,7 @@ export class FunctionUtils {
      * @param property Property to lookup.
      * @returns Value and error information if any.
      */
-    public static accessIndex(instance: any, index: number): { value: any; error: string } {
+    public static accessIndex(instance: any, index: number): ValueWithError {
         // NOTE: This returns undefined rather than an error if property is not present
         if (instance === null || instance === undefined) {
             return { value: undefined, error: undefined };
@@ -645,7 +645,7 @@ export class FunctionUtils {
      * @param transform Transform function.
      * @returns new timestamp and error.
      */
-    public static parseTimestamp(timeStamp: string, transform?: (arg0: Date) => any): { value: any; error: string } {
+    public static parseTimestamp(timeStamp: string, transform?: (arg0: Date) => any): ValueWithError {
         let value: any;
         const error: string = this.verifyISOTimestamp(timeStamp);
         if (!error) {
@@ -792,7 +792,7 @@ export class FunctionUtils {
      * @param state Memory scope.
      * @param options Options.
      */
-    public static foreach(expression: Expression, state: MemoryInterface, options: Options): { value: any; error: string } {
+    public static foreach(expression: Expression, state: MemoryInterface, options: Options): ValueWithError {
         let result: any[];
         let error: string;
         let instance: any;
@@ -881,7 +881,7 @@ export class FunctionUtils {
      * @param isDescending Descending flag.
      */
     public static sortBy(isDescending: boolean): EvaluateExpressionDelegate {
-        return (expression: Expression, state: any, options: Options): { value: any; error: string } => {
+        return (expression: Expression, state: any, options: Options): ValueWithError => {
             let result: any;
             let error: string;
             let oriArr: any;
@@ -937,7 +937,7 @@ export class FunctionUtils {
      * @param timedata Input date time.
      * @param format Format flag.
      */
-    public static returnFormattedTimeStampStr(timedata: Moment, format: string): { value: any; error: string } {
+    public static returnFormattedTimeStampStr(timedata: Moment, format: string): ValueWithError {
         let result: string;
         let error: string;
         try {
@@ -953,7 +953,7 @@ export class FunctionUtils {
      * Convert a string input to ticks number.
      * @param timeStamp String timestamp input.
      */
-    public static ticks(timeStamp: string): { value: any; error: string } {
+    public static ticks(timeStamp: string): ValueWithError {
         let parsed: any;
         let result: any;
         let error: string;
@@ -970,7 +970,7 @@ export class FunctionUtils {
      * Parse string into URL object.
      * @param uri Input string uri.
      */
-    public static parseUri(uri: string): { value: any; error: string } {
+    public static parseUri(uri: string): ValueWithError {
         let result: URL;
         let error: string;
         try {

@@ -9,7 +9,7 @@
 import { MemoryInterface, Options } from '../';
 import { Expression } from '../expression';
 import {
-    EvaluateExpressionDelegate, ExpressionEvaluator, ValidateExpressionDelegate
+    EvaluateExpressionDelegate, ExpressionEvaluator, ValidateExpressionDelegate, ValueWithError
 } from '../expressionEvaluator';
 import { FunctionUtils, VerifyExpression } from '../functionUtils';
 import { ReturnType } from '../returnType';
@@ -24,7 +24,7 @@ export class ComparisonEvaluator extends ExpressionEvaluator {
     }
 
     private static evaluator(func: (args: any[]) => boolean, verify?: VerifyExpression): EvaluateExpressionDelegate {
-        return (expression: Expression, state: MemoryInterface, options: Options): { value: any; error: string } => {
+        return (expression: Expression, state: MemoryInterface, options: Options): ValueWithError => {
             let result = false;
             let error: string;
             let args: any[];

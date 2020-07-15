@@ -9,7 +9,7 @@
 import moment from 'moment';
 
 import { Expression } from '../expression';
-import { ExpressionEvaluator } from '../expressionEvaluator';
+import { ExpressionEvaluator, ValueWithError } from '../expressionEvaluator';
 import { ExpressionType } from '../expressionType';
 import { FunctionUtils } from '../functionUtils';
 import { MemoryInterface } from '../memory/memoryInterface';
@@ -24,7 +24,7 @@ export class AddToTime extends ExpressionEvaluator {
         super(ExpressionType.AddToTime, AddToTime.evaluator, ReturnType.String, AddToTime.validator);
     }
 
-    private static evaluator(expression: Expression, state: MemoryInterface, options: Options): { value: any; error: string } {
+    private static evaluator(expression: Expression, state: MemoryInterface, options: Options): ValueWithError {
         let value: any;
         let error: string;
         let args: any[];
@@ -41,7 +41,7 @@ export class AddToTime extends ExpressionEvaluator {
         return { value, error };
     }
 
-    private static evalAddToTime(timeStamp: string, interval: number, timeUnit: string, format?: string): { value: any; error: string } {
+    private static evalAddToTime(timeStamp: string, interval: number, timeUnit: string, format?: string): ValueWithError {
         let result: string;
         let error: string;
         let parsed: any;
