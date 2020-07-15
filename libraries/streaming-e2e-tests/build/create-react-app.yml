@@ -1,0 +1,8 @@
+steps:
+  # - task: PowerShell@2
+  #   displayName: 'Creating React App using npx create-react-app'
+
+  - powershell: npx create-react-app react-app
+    displayName: npx create-react-app
+    name: create-react-app
+    workingDirectory: $(TargetProjectDir)
