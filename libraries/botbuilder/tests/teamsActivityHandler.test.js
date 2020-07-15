@@ -62,42 +62,26 @@ describe('TeamsActivityHandler', () => {
     });
 
     describe('onInvokeActivity()', () => {
-        class InvokeActivity extends TeamsActivityHandler{
-            constructor(){
+        class InvokeActivityEmptyHandlers extends TeamsActivityHandler {
+            constructor() {
                 super();
             }
 
-            handleTeamsO365ConnectorCardAction(context, query) {
-                return { status: 501 };
-            }
+            handleTeamsO365ConnectorCardAction() { }
 
-            handleTeamsAppBasedLinkQuery(context, query) {
-                return { status: 501 };
-            }
+            handleTeamsAppBasedLinkQuery() { }
 
-            handleTeamsMessagingExtensionQuery(context, query) {
-                return { status: 501 };
-            }
+            handleTeamsMessagingExtensionQuery() { }
 
-            handleTeamsMessagingExtensionSelectItem(context, query) {
-                return { status: 501 };
-            }
+            handleTeamsMessagingExtensionSelectItem() { }
 
-            handleTeamsMessagingExtensionFetchTask(context, action) {
-                return { status: 501 };
-            }
+            handleTeamsMessagingExtensionFetchTask() { }
 
-            handleTeamsMessagingExtensionConfigurationQuerySettingUrl(context, action) {
-                return { status: 501 };
-            }
+            handleTeamsMessagingExtensionConfigurationQuerySettingUrl() { }
 
-            handleTeamsMessagingExtensionConfigurationSetting(context, settings) {
-                return { status: 501 };
-            }
+            handleTeamsMessagingExtensionConfigurationSetting() { }
 
-            handleTeamsMessagingExtensionCardButtonClicked(context, cardData) {
-                return { status: 501 };
-            }
+            handleTeamsMessagingExtensionCardButtonClicked() { }
         }
 
         it('activity.name is not defined. should return status code [501].', done => {
@@ -111,14 +95,14 @@ describe('TeamsActivityHandler', () => {
 
             adapter.send(activity)
                 .assertReply(activity => {
-                    assert.strictEqual(activity.value.status, 501, 'should be a status code 501.')
+                    assert.strictEqual(activity.value.status, 501, 'should be a status code 501.');
                     done();
                 })
                 .catch(err => done(err));
-        })
+        });
 
         it('activity.name is "actionableMessage/executeAction". should return status code [200] when handleTeamsO365ConnectorCardAction method is overridden.', done => {
-            const bot = new InvokeActivity();
+            const bot = new InvokeActivityEmptyHandlers();
 
             const adapter = new TestAdapter(async context => {
                 await bot.run(context);
@@ -128,14 +112,14 @@ describe('TeamsActivityHandler', () => {
 
             adapter.send(activity)
                 .assertReply(activity => {
-                    assert.strictEqual(activity.value.status, 200, 'should be status code 200.')
+                    assert.strictEqual(activity.value.status, 200, 'should be status code 200.');
                     done();
                 })
                 .catch(err => done(err));
-        })
+        });
 
         it('activity.name is "composeExtension/queryLink". should return status code [200] when handleTeamsAppBasedLinkQuery method is overridden.', done => {
-            const bot = new InvokeActivity();
+            const bot = new InvokeActivityEmptyHandlers();
 
             const adapter = new TestAdapter(async context => {
                 await bot.run(context);
@@ -145,14 +129,14 @@ describe('TeamsActivityHandler', () => {
 
             adapter.send(activity)
                 .assertReply(activity => {
-                    assert.strictEqual(activity.value.status, 200, 'should be status code 200.')
+                    assert.strictEqual(activity.value.status, 200, 'should be status code 200.');
                     done();
                 })
                 .catch(err => done(err));
-        })
+        });
 
         it('activity.name is "composeExtension/query". should return status code [200] when handleTeamsMessagingExtensionQuery method is overridden.', done => {
-            const bot = new InvokeActivity();
+            const bot = new InvokeActivityEmptyHandlers();
 
             const adapter = new TestAdapter(async context => {
                 await bot.run(context);
@@ -162,14 +146,14 @@ describe('TeamsActivityHandler', () => {
 
             adapter.send(activity)
                 .assertReply(activity => {
-                    assert.strictEqual(activity.value.status, 200, 'should be status code 200.')
+                    assert.strictEqual(activity.value.status, 200, 'should be status code 200.');
                     done();
                 })
                 .catch(err => done(err));
-        })
+        });
 
         it('activity.name is "composeExtension/selectItem". should return status code [200] when handleTeamsMessagingExtensionSelectItem method is overridden.', done => {
-            const bot = new InvokeActivity();
+            const bot = new InvokeActivityEmptyHandlers();
 
             const adapter = new TestAdapter(async context => {
                 await bot.run(context);
@@ -179,14 +163,14 @@ describe('TeamsActivityHandler', () => {
 
             adapter.send(activity)
                 .assertReply(activity => {
-                    assert.strictEqual(activity.value.status, 200, 'should be status code 200.')
+                    assert.strictEqual(activity.value.status, 200, 'should be status code 200.');
                     done();
                 })
                 .catch(err => done(err));
-        })
+        });
 
         it('activity.name is "composeExtension/fetchTask". should return status code [200] when handleTeamsMessagingExtensionFetchTask method is overridden.', done => {
-            const bot = new InvokeActivity();
+            const bot = new InvokeActivityEmptyHandlers();
 
             const adapter = new TestAdapter(async context => {
                 await bot.run(context);
@@ -196,14 +180,14 @@ describe('TeamsActivityHandler', () => {
 
             adapter.send(activity)
                 .assertReply(activity => {
-                    assert.strictEqual(activity.value.status, 200, 'should be status code 200.')
+                    assert.strictEqual(activity.value.status, 200, 'should be status code 200.');
                     done();
                 })
                 .catch(err => done(err));
-        })
+        });
 
         it('activity.name is "composeExtension/querySettingUrl". should return status code [200] when handleTeamsMessagingExtensionConfigurationQuerySettingUrl method is overridden.', done => {
-            const bot = new InvokeActivity();
+            const bot = new InvokeActivityEmptyHandlers();
 
             const adapter = new TestAdapter(async context => {
                 await bot.run(context);
@@ -213,14 +197,14 @@ describe('TeamsActivityHandler', () => {
 
             adapter.send(activity)
                 .assertReply(activity => {
-                    assert.strictEqual(activity.value.status, 200, 'should be status code 200.')
+                    assert.strictEqual(activity.value.status, 200, 'should be status code 200.');
                     done();
                 })
                 .catch(err => done(err));
-        })
+        });
 
         it('activity.name is "composeExtension/setting". should return status code [200] when handleTeamsMessagingExtensionConfigurationSetting method is overridden.', done => {
-            const bot = new InvokeActivity();
+            const bot = new InvokeActivityEmptyHandlers();
 
             const adapter = new TestAdapter(async context => {
                 await bot.run(context);
@@ -230,14 +214,14 @@ describe('TeamsActivityHandler', () => {
 
             adapter.send(activity)
                 .assertReply(activity => {
-                    assert.strictEqual(activity.value.status, 200, 'should be status code 200.')
+                    assert.strictEqual(activity.value.status, 200, 'should be status code 200.');
                     done();
                 })
                 .catch(err => done(err));
-        })
+        });
 
         it('activity.name is "composeExtension/onCardButtonClicked". should return status code [200] when handleTeamsMessagingExtensionCardButtonClicked method is overridden.', done => {
-            const bot = new InvokeActivity();
+            const bot = new InvokeActivityEmptyHandlers();
 
             const adapter = new TestAdapter(async context => {
                 await bot.run(context);
@@ -247,24 +231,24 @@ describe('TeamsActivityHandler', () => {
 
             adapter.send(activity)
                 .assertReply(activity => {
-                    assert.strictEqual(activity.value.status, 200, 'should be status code 200.')
+                    assert.strictEqual(activity.value.status, 200, 'should be status code 200.');
                     done();
                 })
                 .catch(err => done(err));
-        })
+        });
 
         it('should throw an error when onInvokeActivity param context is null.', done => {
-            class InvokeActivity2 extends InvokeActivity{
-                async onInvokeActivity(context){
+            class InvokeActivityHandler extends TeamsActivityHandler {
+                async onInvokeActivity() {
                     try {
-                        await super.onInvokeActivity(null)
+                        await super.onInvokeActivity(null);
                     } catch (error) {
                         return error;
                     }
                 }
             }
 
-            const bot = new InvokeActivity2();
+            const bot = new InvokeActivityHandler();
 
             const adapter = new TestAdapter(async context => {
                 await bot.run(context);
@@ -274,11 +258,11 @@ describe('TeamsActivityHandler', () => {
 
             adapter.send(activity)
                 .assertReply(activity => {
-                    assert.strictEqual(activity.value.message, "Cannot read property 'activity' of null", 'should have thrown an error.')
+                    assert.strictEqual(activity.value.message, 'Cannot read property \'activity\' of null', 'should have thrown an error.');
                     done();
                 })
                 .catch(err => done(err));
-        })
+        });
     });
 
     describe('should send a BadRequest status code if', () => {
@@ -674,10 +658,10 @@ describe('TeamsActivityHandler', () => {
             const fileConsentActivity = createInvokeActivity('fileConsent/invoke', { action: 'accept' });
             adapter.send(fileConsentActivity)
                 .assertReply(activity => {
-                    assert(activity.type === 'invokeResponse', `incorrect activity type "${activity.type}", expected "invokeResponse"`);
-                    assert(activity.value.status === 200, `incorrect status code "${activity.value.status}", expected "200"`);
+                    assert(activity.type === 'invokeResponse', `incorrect activity type "${ activity.type }", expected "invokeResponse"`);
+                    assert(activity.value.status === 200, `incorrect status code "${ activity.value.status }", expected "200"`);
                     assert(!activity.value.body,
-                        `expected empty body for invokeResponse from fileConsent flow.\nReceived: ${JSON.stringify(activity.value.body)}`);
+                        `expected empty body for invokeResponse from fileConsent flow.\nReceived: ${ JSON.stringify(activity.value.body) }`);
                     done();
                 })
                 .catch(err => done(err));
@@ -693,10 +677,10 @@ describe('TeamsActivityHandler', () => {
             const fileConsentActivity = createInvokeActivity('fileConsent/invoke', { action: 'decline' });
             adapter.send(fileConsentActivity)
                 .assertReply(activity => {
-                    assert(activity.type === 'invokeResponse', `incorrect activity type "${activity.type}", expected "invokeResponse"`);
-                    assert(activity.value.status === 200, `incorrect status code "${activity.value.status}", expected "200"`);
+                    assert(activity.type === 'invokeResponse', `incorrect activity type "${ activity.type }", expected "invokeResponse"`);
+                    assert(activity.value.status === 200, `incorrect status code "${ activity.value.status }", expected "200"`);
                     assert(!activity.value.body,
-                        `expected empty body for invokeResponse from fileConsent flow.\nReceived: ${JSON.stringify(activity.value.body)}`);
+                        `expected empty body for invokeResponse from fileConsent flow.\nReceived: ${ JSON.stringify(activity.value.body) }`);
                     done();
                 })
                 .catch(err => done(err));
@@ -718,10 +702,10 @@ describe('TeamsActivityHandler', () => {
             const fileConsentActivity = createInvokeActivity('fileConsent/invoke', { action: 'accept' });
             adapter.send(fileConsentActivity)
                 .assertReply(activity => {
-                    assert(activity.type === 'invokeResponse', `incorrect activity type "${activity.type}", expected "invokeResponse"`);
-                    assert(activity.value.status === 200, `incorrect status code "${activity.value.status}", expected "200"`);
+                    assert(activity.type === 'invokeResponse', `incorrect activity type "${ activity.type }", expected "invokeResponse"`);
+                    assert(activity.value.status === 200, `incorrect status code "${ activity.value.status }", expected "200"`);
                     assert(!activity.value.body,
-                        `expected empty body for invokeResponse from fileConsent flow.\nReceived: ${JSON.stringify(activity.value.body)}`);
+                        `expected empty body for invokeResponse from fileConsent flow.\nReceived: ${ JSON.stringify(activity.value.body) }`);
                     done();
                 })
                 .catch(err => done(err));
@@ -875,10 +859,10 @@ describe('TeamsActivityHandler', () => {
             const fileConsentActivity = createInvokeActivity('fileConsent/invoke', { action: 'accept' });
             adapter.send(fileConsentActivity)
                 .assertReply(activity => {
-                    assert(activity.type === 'invokeResponse', `incorrect activity type "${activity.type}", expected "invokeResponse"`);
-                    assert(activity.value.status === 200, `incorrect status code "${activity.value.status}", expected "200"`);
+                    assert(activity.type === 'invokeResponse', `incorrect activity type "${ activity.type }", expected "invokeResponse"`);
+                    assert(activity.value.status === 200, `incorrect status code "${ activity.value.status }", expected "200"`);
                     assert(!activity.value.body,
-                        `expected empty body for invokeResponse from fileConsent flow.\nReceived: ${JSON.stringify(activity.value.body)}`);
+                        `expected empty body for invokeResponse from fileConsent flow.\nReceived: ${ JSON.stringify(activity.value.body) }`);
                 }).then(() => {
                     assert(fileConsentCalled, 'handleTeamsFileConsent handler not called');
                     assert(fileConsentAcceptCalled, 'handleTeamsFileConsentAccept handler not called');
@@ -896,10 +880,10 @@ describe('TeamsActivityHandler', () => {
             const fileConsentActivity = createInvokeActivity('fileConsent/invoke', { action: 'decline' });
             adapter.send(fileConsentActivity)
                 .assertReply(activity => {
-                    assert(activity.type === 'invokeResponse', `incorrect activity type "${activity.type}", expected "invokeResponse"`);
-                    assert(activity.value.status === 200, `incorrect status code "${activity.value.status}", expected "200"`);
+                    assert(activity.type === 'invokeResponse', `incorrect activity type "${ activity.type }", expected "invokeResponse"`);
+                    assert(activity.value.status === 200, `incorrect status code "${ activity.value.status }", expected "200"`);
                     assert(!activity.value.body,
-                        `expected empty body for invokeResponse from fileConsent flow.\nReceived: ${JSON.stringify(activity.value.body)}`);
+                        `expected empty body for invokeResponse from fileConsent flow.\nReceived: ${ JSON.stringify(activity.value.body) }`);
                 }).then(() => {
                     assert(fileConsentCalled, 'handleTeamsFileConsent handler not called');
                     assert(fileConsentDeclineCalled, 'handleTeamsFileConsentDecline handler not called');
@@ -967,7 +951,7 @@ describe('TeamsActivityHandler', () => {
             });
 
             adapter.send(activity)
-                .then(activity => {
+                .then(() => {
                     assert(onDialogCalled, 'onDialog handler not called');
                     done();
                 })
@@ -977,7 +961,7 @@ describe('TeamsActivityHandler', () => {
         it('MS-Teams with non-existent channelData.eventType routed activity', done => {
             const bot = new TeamsActivityHandler();
 
-            const activity = { type: ActivityTypes.ConversationUpdate, channelId: 'msteams', channelData: { eventType: 'non-existent' }};
+            const activity = { type: ActivityTypes.ConversationUpdate, channelId: 'msteams', channelData: { eventType: 'non-existent' } };
 
             const adapter = new TestAdapter(async context => {
                 await bot.run(context);
@@ -989,7 +973,7 @@ describe('TeamsActivityHandler', () => {
             });
 
             adapter.send(activity)
-                .then(activity => {
+                .then(() => {
                     assert(onDialogCalled, 'onDialog handler not called');
                     done();
                 })
@@ -1011,7 +995,7 @@ describe('TeamsActivityHandler', () => {
             });
 
             adapter.send(activity)
-                .then(activity => {
+                .then(() => {
                     assert(onDialogCalled, 'onDialog handler not called');
                     done();
                 })
@@ -1023,7 +1007,7 @@ describe('TeamsActivityHandler', () => {
             let onTeamsMemberAddedEvent = false;
             let getMemberCalledCount = 0;
 
-            const membersAddedMock = [{ id: 'test'} , { id: 'id' }];
+            const membersAddedMock = [{ id: 'test' }, { id: 'id' }];
             const team = { id: 'team' };
             const activity = createConvUpdateActivity({ team, eventType: 'teamMemberAdded' });
             activity.membersAdded = membersAddedMock;
@@ -1059,8 +1043,8 @@ describe('TeamsActivityHandler', () => {
 
             const wasGetMember = TeamsInfo.getMember;
             TeamsInfo.getMember = function(context, userId) {
-                getMemberCalledCount ++;
-                return membersAddedMock.filter(obj=>obj.id === userId)[0];
+                getMemberCalledCount++;
+                return membersAddedMock.filter(obj => obj.id === userId)[0];
             };
 
             adapter.send(activity)
@@ -1078,7 +1062,7 @@ describe('TeamsActivityHandler', () => {
         it('onTeamsMembersAdded routed activity with no TeamsMembersAddedEvent handler', done => {
             const bot = new TeamsActivityHandler();
 
-            const membersAddedMock = [{ id: 'test'} , { id: 'id' }];
+            const membersAddedMock = [{ id: 'test' }, { id: 'id' }];
             const team = { id: 'team' };
             const activity = createConvUpdateActivity({ team, eventType: 'teamMemberAdded' });
             activity.membersAdded = membersAddedMock;
@@ -1140,9 +1124,9 @@ describe('TeamsActivityHandler', () => {
             });
 
             const wasGetMember = TeamsInfo.getMember;
-            TeamsInfo.getMember = function(context, userId) {
+            TeamsInfo.getMember = function() {
                 getMemberCalled = true;
-                throw { body: { error: { code: 'ConversationNotFound' }}};
+                throw { body: { error: { code: 'ConversationNotFound' } } };
             };
 
             adapter.send(activity)
@@ -1197,7 +1181,7 @@ describe('TeamsActivityHandler', () => {
             });
 
             const wasGetMember = TeamsInfo.getMember;
-            TeamsInfo.getMember = function(context, userId) {
+            TeamsInfo.getMember = function() {
                 getMemberCalled = true;
                 throw 'TeamsInfo.getMember Error';
             };
@@ -1212,10 +1196,10 @@ describe('TeamsActivityHandler', () => {
                     done();
                 })
                 .catch(err => {
-                    if(err === 'TeamsInfo.getMember Error'){
+                    if (err === 'TeamsInfo.getMember Error') {
                         TeamsInfo.getMember = wasGetMember;
                         done();
-                    }else{
+                    } else {
                         done(err);
                     }
                 });
@@ -1264,7 +1248,7 @@ describe('TeamsActivityHandler', () => {
             const wasGetMember = TeamsInfo.getMember;
             TeamsInfo.getMember = function(context, userId) {
                 getMemberCalled = true;
-                return membersAddedMock.filter(obj=>obj.id === userId)[0];
+                return membersAddedMock.filter(obj => obj.id === userId)[0];
             };
 
             adapter.send(activity)
@@ -1284,7 +1268,7 @@ describe('TeamsActivityHandler', () => {
 
             let onTeamsMemberRemovedEvent = false;
 
-            const membersRemovedMock = [{ id: 'test'} , { id: 'id' }];
+            const membersRemovedMock = [{ id: 'test' }, { id: 'id' }];
             const team = { id: 'team' };
             const activity = createConvUpdateActivity({ team, eventType: 'teamMemberRemoved' });
             activity.membersRemoved = membersRemovedMock;
@@ -1331,7 +1315,7 @@ describe('TeamsActivityHandler', () => {
         it('onTeamsMembersRemoved routed activity with no TeamsMembersRemovedEvent handler', done => {
             const bot = new TeamsActivityHandler();
 
-            const membersRemovedMock = [{ id: 'test'} , { id: 'id' }];
+            const membersRemovedMock = [{ id: 'test' }, { id: 'id' }];
             const team = { id: 'team' };
             const activity = createConvUpdateActivity({ team, eventType: 'teamMemberRemoved' });
             activity.membersRemoved = membersRemovedMock;
