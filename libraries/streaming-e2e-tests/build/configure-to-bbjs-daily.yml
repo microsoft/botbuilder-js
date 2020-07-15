@@ -11,7 +11,7 @@ steps:
   - task: colinsalmcorner.colinsalmcorner-buildtasks.tag-build-task.tagBuildOrRelease@0
     displayName: 'Tag Build with $(BotBuilderPkg) version'
     inputs:
-      tags: 'Using $(BotBuilderPkg) version $(LatestVersion_botbuilder)'
+      tags: 'Using $(BotBuilderPkg) version $(LatestVersionKey)'
 
   - task: PowerShell@2
     displayName: Set Dependency to Latest $(BotBuilderPkg) Version
@@ -19,12 +19,12 @@ steps:
         targetType: 'filePath'
         filePath: $(System.DefaultWorkingDirectory)\libraries\streaming-e2e-tests\build\set-dependency-version-in-packagejson.ps1
         arguments:
-          -LatestVersion $(LatestVersion_botbuilder)
+          -LatestVersion $(LatestVersionKey)
           -PathToPJson $(BotProjectDir)/package.json
           -Package $(BotBuilderPkg);
 
   - powershell: |
-      Set-Location -Path "$(System.DefaultWorkingDirectory)\libraries\streaming-e2e-tests\bot"
+      Set-Location -Path "$(BotProjectDir)"
       
       New-Item -Path . -Name ".npmrc" -ItemType "file" -Value "registry=https://botbuilder.myget.org/F/botbuilder-v4-js-daily/npm/"
     displayName: 'Create .npmrc for MyGet feed - https://botbuilder.myget.org/gallery/botbuilder-v4-js-daily'
@@ -32,6 +32,6 @@ steps:
   - task: Npm@1
     displayName: 'npm install - streaming echo bot dependencies'
     inputs: 
-      workingDir: '$(System.DefaultWorkingDirectory)\libraries\streaming-e2e-tests\bot'
+      workingDir: '$(BotProjectDir)'
       verbose: false
   

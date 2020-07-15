@@ -26,6 +26,7 @@ stages:
           ResourceGroup: 'ash-streaming-js'
           BotName: 'ash-streaming-bot'
           BotBuilderPkg: 'botbuilder'
+          LatestVersionKey: 'LatestVersion_botbuilder'
         steps:
           - template: configure-to-bbjs-daily.yml
           - template: deploy-bot.yml
