@@ -1,6 +1,7 @@
 param($RootReactPiecesDir)
 
 # Create React App
+Set-Location -Path "$RootReactPiecesDir"
 npx create-react-app react-app
 
 # Install WebChat into react-app

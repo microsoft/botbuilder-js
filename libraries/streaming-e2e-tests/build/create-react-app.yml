@@ -3,6 +3,6 @@ steps:
     displayName: 'Creating React App using npx create-react-app'
     inputs:
       targetType: 'filePath'
-      filePath: $(TargetProjectDir)
+      filePath: $(System.DefaultWorkingDirectory)\libraries\streaming-e2e-tests\build\create-react-app-with-webchat.ps1
       arguments:
         -RootReactPiecesDir $(TargetProjectDir)
