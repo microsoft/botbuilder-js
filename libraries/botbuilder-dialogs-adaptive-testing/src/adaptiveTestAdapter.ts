@@ -350,6 +350,21 @@ export class AdaptiveTestAdapter extends BotAdapter implements IUserTokenProvide
         return undefined;
     }
 
+    /** 
+     * Asynchronously retrieves the token status for each configured connection for the given user.
+     * 
+     * @param context The context object for the turn.
+     * @param userId Optional. If present, the ID of the user to retrieve the token status for.
+     *      Otherwise, the ID of the user who sent the current activity is used.
+     * @param includeFilter Optional. A comma-separated list of connection's to include. If present,
+     *      the `includeFilter` parameter limits the tokens this method returns.
+     * @param oAuthAppCredentials AppCredentials for OAuth.
+     * 
+     * @returns The [TokenStatus](xref:botframework-connector.TokenStatus) objects retrieved.
+     */
+    public async getTokenStatus(context: TurnContext, userId: string, includeFilter?: string, oAuthAppCredentials?: any): Promise<[any]> {
+        return undefined;
+    }
 }
 
 /* 

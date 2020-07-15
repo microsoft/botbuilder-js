@@ -13,12 +13,14 @@ const {
 const {
     ComponentDialog,
     DialogReason,
-    runDialog,
     TextPrompt,
-    WaterfallDialog
+    WaterfallDialog,
+    DialogManager,
+    DialogTurnStatus,
+    DialogEvents
 } = require('../');
 const { AuthConstants } = require('../lib/prompts/skillsHelpers');
-const { EndOfConversationCodes } = require('../../botbuilder-core')
+const { assert } = require('console');
 
 const FlowTestCase = {
     RootBotOnly: 'RootBotOnly',
@@ -50,8 +52,9 @@ class ClaimsIdentity {
 const PARENT_BOT_ID = '00000000-0000-0000-0000-0000000000PARENT';
 const SKILL_BOT_ID = '00000000-0000-0000-0000-00000000000SKILL';
 let _eocSent;
+let _dmTurnResult;
 
-function createTestFlow(dialog, testCase) {
+function createTestFlow(dialog, testCase = FlowTestCase.RootBotOnly, enabledTrace = false) {
     const conversationId = 'testFlowConversationId';
     const storage = new MemoryStorage();
     const convoState = new ConversationState(storage);
@@ -65,8 +68,13 @@ function createTestFlow(dialog, testCase) {
         conversation: {
             isGroup: false,
             conversationType: conversationId,
-            id: conversationId },
+            id: conversationId
+        },
     };
+
+    const dm = new DialogManager(dialog);
+    dm.userState = userState;
+    dm.conversationState = convoState;
 
     const adapter = new TestAdapter(async (context) => {
         if (testCase !== FlowTestCase.RootBotOnly) {
@@ -74,7 +82,7 @@ function createTestFlow(dialog, testCase) {
             const claimsIdentity = new ClaimsIdentity();
             claimsIdentity.addClaim({ type: 'ver', value: '2.0' }); // AuthenticationConstants.VersionClaim
             claimsIdentity.addClaim({ type: 'aud', value: SKILL_BOT_ID }); // AuthenticationConstants.AudienceClaim
-            claimsIdentity.addClaim({ type: 'azp', value:  PARENT_BOT_ID }); // AuthenticationConstants.AuthorizedParty
+            claimsIdentity.addClaim({ type: 'azp', value: PARENT_BOT_ID }); // AuthenticationConstants.AuthorizedParty
             context.turnState.set(context.adapter.BotIdentityKey, claimsIdentity);
 
             if (testCase === FlowTestCase.RootBotConsumingSkill) {
@@ -101,17 +109,16 @@ function createTestFlow(dialog, testCase) {
             return await next();
         });
 
-        // Invoke runDialog on the dialog.
-        await runDialog(dialog, context, convoState.createProperty('DialogState'));
-    }, convRef);
+        _dmTurnResult = await dm.onTurn(context);
+    }, convRef, enabledTrace);
     adapter.use(new AutoSaveStateMiddleware(userState, convoState));
 
     return adapter;
 }
 
 class SimpleComponentDialog extends ComponentDialog {
-    constructor() {
-        super('SimpleComponentDialog');
+    constructor(id, property) {
+        super(id || 'SimpleComponentDialog');
         this.TextPrompt = 'TextPrompt';
         this.WaterfallDialog = 'WaterfallDialog';
         this.addDialog(new TextPrompt(this.TextPrompt));
@@ -142,45 +149,17 @@ class SimpleComponentDialog extends ComponentDialog {
 
 }
 
-describe('runDialog()', function() {
+describe('DialogManager', function() {
     this.timeout(300);
 
-    describe('parameter validation', () => {
-        it('should throw if missing dialog parameter', (done) => {
-            runDialog().then(
-                () => done(new Error('should have throw error')),
-                (err) => {
-                    done(strictEqual(err.message, 'runDialog(): missing dialog'));
-                });
-        });
-
-        it('should throw if missing context parameter', (done) => {
-            runDialog({}).then(
-                () => done(new Error('should have throw error')),
-                (err) => {
-                    done(strictEqual(err.message, 'runDialog(): missing context'));
-                });
-        });
-
-        it('should throw if missing context.activity', (done) => {
-            runDialog({}, {}).then(
-                () => done(new Error('should have throw error')),
-                (err) => {
-                    done(strictEqual(err.message, 'runDialog(): missing context.activity'));
-                });
-        });
-
-        it('should throw if missing accessor parameter', (done) => {
-            runDialog({}, { activity: {} }).then(
-                () => done(new Error('should have throw error')),
-                (err) => {
-                    done(strictEqual(err.message, 'runDialog(): missing accessor'));
-                });
-        });
+    this.beforeEach(() => {
+        _dmTurnResult = undefined;
     });
+
     describe('HandlesBotAndSkillsTestCases', () => {
         this.beforeEach(() => {
             _eocSent = undefined;
+            _dmTurnResult = undefined;
         });
 
         async function handlesBotAndSkillsTestCases(testCase, shouldSendEoc) {
@@ -191,13 +170,13 @@ describe('runDialog()', function() {
                 .send('SomeName')
                 .assertReply('Hello SomeName, nice to meet you!')
                 .startTest();
-            
+            strictEqual(_dmTurnResult.turnResult.status, DialogTurnStatus.complete);
+
             strictEqual(dialog.endReason, DialogReason.endCalled);
             if (shouldSendEoc) {
                 ok(_eocSent, 'Skills should send EndConversation to channel');
                 strictEqual(_eocSent.type, ActivityTypes.EndOfConversation);
                 strictEqual(_eocSent.value, 'SomeName');
-                strictEqual(_eocSent.code, EndOfConversationCodes.CompletedSuccessfully);
             } else {
                 strictEqual(undefined, _eocSent, 'Root bot should not send EndConversation to channel');
             }
@@ -218,5 +197,88 @@ describe('runDialog()', function() {
         it('leafSkill, sent EoC', async () => {
             await handlesBotAndSkillsTestCases(FlowTestCase.LeafSkill, true);
         });
+    });
+
+    it('SkillHandlesEoCFromParent', async () => {
+        const dialog = new SimpleComponentDialog();
+        const testFlow = createTestFlow(dialog, FlowTestCase.LeafSkill);
+        await testFlow.send('Hi')
+            .assertReply('Hello, what is your name?')
+            .send({ type: ActivityTypes.EndOfConversation })
+            .startTest();
+        strictEqual(_dmTurnResult.turnResult.status, DialogTurnStatus.cancelled);
+    });
+
+    it('SkillHandlesRepromptFromParent', async () => {
+        const dialog = new SimpleComponentDialog();
+        const testFlow = createTestFlow(dialog, FlowTestCase.LeafSkill);
+        await testFlow.send('Hi')
+            .assertReply('Hello, what is your name?')
+            .send({ type: ActivityTypes.Event, name: DialogEvents.repromptDialog })
+            .assertReply('Hello, what is your name?')
+            .startTest();
+        strictEqual(_dmTurnResult.turnResult.status, DialogTurnStatus.waiting);
+    });
+
+    it('SkillShouldReturnEmptyOnRepromptWithNoDialog', async () => {
+        const dialog = new SimpleComponentDialog();
+        const testFlow = createTestFlow(dialog, FlowTestCase.LeafSkill);
+        await testFlow.send({ type: ActivityTypes.Event, name: DialogEvents.repromptDialog })
+            .startTest();
+        strictEqual(_dmTurnResult.turnResult.status, DialogTurnStatus.empty);
+    });
+
+    it('Trace skill state', async () => {
+        const dialog = new SimpleComponentDialog();
+        const testFlow = createTestFlow(dialog, FlowTestCase.LeafSkill, true);
+        await testFlow.send('Hi')
+            .assertReply(reply => {
+                strictEqual(reply.type, ActivityTypes.Trace);
+            })
+            .assertReply('Hello, what is your name?')
+            .assertReply(reply => {
+                strictEqual(reply.type, ActivityTypes.Trace);
+                strictEqual(reply.label, 'Skill State');
+            })
+            .send('SomeName')
+            .assertReply('Hello SomeName, nice to meet you!')
+            .assertReply(reply => {
+                strictEqual(reply.type, ActivityTypes.Trace);
+                strictEqual(reply.label, 'Skill State');
+            })
+            .assertReply(reply => {
+                strictEqual(reply.type, ActivityTypes.Trace);
+            })
+            .startTest();
+        strictEqual(_dmTurnResult.turnResult.status, DialogTurnStatus.complete);
+    });
+
+    it('Trace bot state', async () => {
+        const dialog = new SimpleComponentDialog();
+        const testFlow = createTestFlow(dialog, FlowTestCase.RootBotOnly, true);
+        await testFlow.send('Hi')
+            .assertReply('Hello, what is your name?')
+            .assertReply(reply => {
+                strictEqual(reply.type, ActivityTypes.Trace);
+                strictEqual(reply.label, 'Bot State');
+            })
+            .send('SomeName')
+            .assertReply('Hello SomeName, nice to meet you!')
+            .assertReply(reply => {
+                strictEqual(reply.type, ActivityTypes.Trace);
+                strictEqual(reply.label, 'Bot State');
+            })
+            .startTest();
+        strictEqual(_dmTurnResult.turnResult.status, DialogTurnStatus.complete);
+    });
+
+    it('Gets or sets root dialog', () => {
+        const dm = new DialogManager();
+        const rootDialog = new SimpleComponentDialog();
+        dm.rootDialog = rootDialog;
+        assert(dm.dialogs.find(rootDialog.id));
+        strictEqual(dm.rootDialog.id, rootDialog.id);
+        dm.rootDialog = undefined;
+        strictEqual(dm.rootDialog, undefined);
     });
 });
