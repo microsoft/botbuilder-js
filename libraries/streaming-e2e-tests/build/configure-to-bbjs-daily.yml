@@ -7,18 +7,20 @@ steps:
       arguments:
         -AccessToken $(MyGetPersonalAccessToken)
         -PackageName $(PackageName)
-
+  
+  # Repeating tagging and setting dependency version steps, but varying on PackageName 
+  # due to DevOps YAML inability to handle nested variables for dynamic variable names
   - task: colinsalmcorner.colinsalmcorner-buildtasks.tag-build-task.tagBuildOrRelease@0
     displayName: 'Tag Build with $(PackageName) version'
     condition: eq(variables.PackageName, 'botbuilder')
     inputs:
-      tags: 'Using $(PackageName) version $(LatestVersion_botbuilder)'
+      tags: 'Using botbuilder version $(LatestVersion_botbuilder)'
 
   - task: colinsalmcorner.colinsalmcorner-buildtasks.tag-build-task.tagBuildOrRelease@0
     displayName: 'Tag Build with $(PackageName) version'
     condition: eq(variables.PackageName, 'botframework-streaming')
     inputs:
-      tags: 'Using $(PackageName) version $(LatestVersion_bfStreaming)'
+      tags: 'Using botframework-streaming version $(LatestVersion_bfStreaming)'
 
   - task: PowerShell@2
     displayName: Set Dependency to Latest $(PackageName) Version
