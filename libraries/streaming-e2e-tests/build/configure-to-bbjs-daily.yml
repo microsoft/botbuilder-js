@@ -19,7 +19,7 @@ steps:
         targetType: 'filePath'
         filePath: $(System.DefaultWorkingDirectory)\libraries\streaming-e2e-tests\build\set-dependency-version-in-packagejson.ps1
         arguments:
-          -LatestVersion $(LatestVersion_$(PackageName))
+          -LatestVersion $(LatestVersion_botbuilder)
           -PathToPJson $(TargetProjectDir)/package.json
           -Package $(PackageName);
 
