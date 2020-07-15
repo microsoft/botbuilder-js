@@ -874,7 +874,7 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
     private candidates(entities: NormalizedEntityInfos, expected: string[]): Partial<EntityAssignment>[] {
         const candidates: Partial<EntityAssignment>[] = [];
         const globalExpectedOnly: string[] = this.dialogSchema.schema[this.expectedOnlyKey] || [];
-        const usedEntityType = new Set<string>();
+        const usedEntityType = new Set<string>([this.utteranceKey]);
         const usedEntity: Map<string, Partial<EntityInfo>> = new Map();
 
         // Emit entities that already have a property
@@ -895,7 +895,7 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
 
         // Find possible mappings to properties
         for (const propSchema of this.dialogSchema.property.children) {
-            const isExpected = expected.indexOf(propSchema.path) >= 0;
+            const isExpected = expected.indexOf(propSchema.name) >= 0;
             const expectedOnly = propSchema.expectedOnly || globalExpectedOnly;
             for (const entityName of propSchema.entities) {
                 const matches = entities[entityName];
