@@ -10,19 +10,19 @@ steps:
 
   - task: colinsalmcorner.colinsalmcorner-buildtasks.tag-build-task.tagBuildOrRelease@0
     displayName: 'Tag Build with $(PackageName) version'
-    condition: eq($(PackageName), 'botbuilder')
+    condition: eq(variables.PackageName, 'botbuilder')
     inputs:
       tags: 'Using $(PackageName) version $(LatestVersion_botbuilder)'
 
   - task: colinsalmcorner.colinsalmcorner-buildtasks.tag-build-task.tagBuildOrRelease@0
     displayName: 'Tag Build with $(PackageName) version'
-    condition: eq($(PackageName), 'botframework-streaming')
+    condition: eq(variables.PackageName, 'botframework-streaming')
     inputs:
       tags: 'Using $(PackageName) version $(LatestVersion_bfStreaming)'
 
   - task: PowerShell@2
     displayName: Set Dependency to Latest $(PackageName) Version
-    condition: eq($(PackageName), 'botbuilder')
+    condition: eq(variables.PackageName, 'botbuilder')
     inputs:
         targetType: 'filePath'
         filePath: $(System.DefaultWorkingDirectory)\libraries\streaming-e2e-tests\build\set-dependency-version-in-packagejson.ps1
@@ -33,7 +33,7 @@ steps:
   
   - task: PowerShell@2
     displayName: Set Dependency to Latest $(PackageName) Version
-    condition: eq($(PackageName), 'botframework-streaming')
+    condition: eq(variables.PackageName, 'botframework-streaming')
     inputs:
         targetType: 'filePath'
         filePath: $(System.DefaultWorkingDirectory)\libraries\streaming-e2e-tests\build\set-dependency-version-in-packagejson.ps1

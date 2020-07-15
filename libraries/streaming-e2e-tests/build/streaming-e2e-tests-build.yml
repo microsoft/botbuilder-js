@@ -24,7 +24,6 @@ stages:
         variables:
           TargetProjectDir: '$(System.DefaultWorkingDirectory)\libraries\streaming-e2e-tests\bot'
           PackageName: 'botbuilder'
-          LatestVersionKey: 'LatestVersion_botbuilder'
           ResourceGroup: 'ash-streaming-js'
           BotName: 'ash-streaming-bot'
         steps:
