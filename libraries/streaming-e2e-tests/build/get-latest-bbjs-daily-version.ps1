@@ -13,4 +13,14 @@ $package = $result.packages | Where-Object {$_.id -eq $PackageName};
 $package.id;
 $latestVersion;
 
-"##vso[task.setvariable variable=LatestVersion_$PackageName;]$latestVersion";
+# Save latest version as build variable.
+# Creating variable name without '-' character to make it a legal yaml variable name
+if(($PackageName -match 'botframework-') -or ($PackageName -match 'botbuilder-')) {
+    $startOfSuffixIndex = $PackageName.indexOf('-') + 1;
+    $suffix = $PackageName.Substring($startOfSuffixIndex);
+    $yamlFriendlyPkgName = "LatestVersion_$suffix"
+    
+    "##vso[task.setvariable variable=LatestVersion_$yamlFriendlyPkgName;]$latestVersion";
+} else {
+    "##vso[task.setvariable variable=LatestVersion_$PackageName;]$latestVersion";    
+}
