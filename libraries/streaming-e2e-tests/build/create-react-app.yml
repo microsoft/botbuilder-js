@@ -4,5 +4,5 @@ steps:
 
   - powershell: npx create-react-app react-app
     displayName: npx create-react-app
-    name: create-react-app
+    name: Create_React_App
     workingDirectory: $(TargetProjectDir)
