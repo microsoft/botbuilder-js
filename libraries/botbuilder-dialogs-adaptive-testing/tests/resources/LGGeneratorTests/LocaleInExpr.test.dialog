@@ -1,0 +1,34 @@
+{
+    "$schema": "../../../../schemas/sdk.schema",
+    "$kind": "Microsoft.Test.Script",
+    "dialog":
+    {
+        "$kind": "Microsoft.AdaptiveDialog",
+        "generator": {
+            "$kind": "Microsoft.ResourceMultiLanguageGenerator",
+            "resourceId": "test.lg"
+        },
+        "triggers": [
+            {
+                "$kind": "Microsoft.OnBeginDialog",
+                "actions": [
+                    {
+                        "$kind": "Microsoft.SendActivity",
+                        "activity": "${startOfDay('2018-03-15T13:30:30.000Z', 'LLLL', 'fr')}"
+                    }
+                ]
+            }
+        ]
+    },
+    "script": [
+        {
+            "$kind": "Microsoft.Test.UserSays",
+            "text": "Aloha",
+            "locale": "de"
+        },
+        {
+            "$kind": "Microsoft.Test.AssertReply",
+            "text": "jeudi 15 mars 2018 00:00"
+        }
+    ]
+}

@@ -159,7 +159,6 @@ export abstract class BotAdapter {
         } = makeRevocable(context);
 
         if (context && context.activity && context.activity.locale) {
-            process.env.Locale = context.activity.locale;
             context.locale = context.activity.locale;
         }
 
