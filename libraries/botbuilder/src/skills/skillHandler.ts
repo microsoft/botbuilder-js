@@ -177,6 +177,9 @@ export class SkillHandler extends ChannelServiceHandler {
             throw new Error('conversationReference not found.');
         }
 
+        // If an activity is sent, return the ResourceResponse 
+        let resourceResponse: ResourceResponse;
+
         /**
          * Callback passed to the BotFrameworkAdapter.createConversation() call.
          * This function does the following:
@@ -207,7 +210,7 @@ export class SkillHandler extends ChannelServiceHandler {
                     await this.bot.run(context);
                     break;
                 default:
-                    await context.sendActivity(activity);
+                    resourceResponse = await context.sendActivity(activity);
                     break;
             }
         };
@@ -218,7 +221,11 @@ export class SkillHandler extends ChannelServiceHandler {
         AppCredentials.trustServiceUrl(skillConversationReference.conversationReference.serviceUrl);
 
         await (this.adapter as BotFrameworkAdapter).continueConversation(skillConversationReference.conversationReference, skillConversationReference.oAuthScope, callback);
-        return { id: uuid() };
+        
+        if (!resourceResponse) {
+            resourceResponse = { id: uuid() };
+        }
+        return resourceResponse;
     }
 }
 
