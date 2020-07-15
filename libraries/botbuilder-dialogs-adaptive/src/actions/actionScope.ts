@@ -5,6 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
+import { StringUtils } from 'botbuilder-core';
 import { Dialog, DialogDependencies, DialogContext, DialogTurnResult, DialogReason } from 'botbuilder-dialogs';
 import { ActionContext } from '../actionContext';
 
@@ -35,6 +36,11 @@ export class ActionScope<O extends object = {}> extends Dialog<O> implements Dia
      * The actions to execute.
      */
     public actions: Dialog[] = [];
+
+    public getVersion(): string {
+        const versions = this.actions.map((action): string => action.getVersion() || '').join('');
+        return StringUtils.hash(versions);
+    }
 
     public getDependencies(): Dialog[] {
         return this.actions;
