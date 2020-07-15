@@ -150,6 +150,6 @@ export class ActionScope<O extends object = {}> extends Dialog<O> implements Dia
 
     protected onComputeId(): string {
         const ids = this.actions.map((action: Dialog): string => action.id);
-        return `ActionScope[${ ids.join(',') }]`;
+        return `ActionScope[${ StringUtils.ellipsisHash(ids.join(','), 50) }]`;
     }
 }
