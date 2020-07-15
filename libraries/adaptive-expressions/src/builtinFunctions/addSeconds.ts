@@ -6,9 +6,10 @@
  * Licensed under the MIT License.
  */
 
-import { TimeTransformEvaluator } from './timeTransformEvaluator';
 import moment from 'moment';
+
 import { ExpressionType } from '../expressionType';
+import { TimeTransformEvaluator } from './timeTransformEvaluator';
 
 /**
  * Add a number of seconds to a timestamp.

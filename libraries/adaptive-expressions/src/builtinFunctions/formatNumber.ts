@@ -6,17 +6,17 @@
  * Licensed under the MIT License.
  */
 
-import { ExpressionEvaluator, EvaluateExpressionDelegate } from '../expressionEvaluator';
 import { Expression } from '../expression';
-import { ReturnType } from '../returnType';
+import { EvaluateExpressionDelegate, ExpressionEvaluator } from '../expressionEvaluator';
 import { ExpressionType } from '../expressionType';
 import { FunctionUtils } from '../functionUtils';
+import { ReturnType } from '../returnType';
 
 /**
  * Format number into required decimal numbers.
  */
 export class FormatNumber extends ExpressionEvaluator {
-    public constructor(){
+    public constructor() {
         super(ExpressionType.FormatNumber, FormatNumber.evaluator(), ReturnType.String, FormatNumber.validator);
     }
 
@@ -38,10 +38,10 @@ export class FormatNumber extends ExpressionEvaluator {
                     // NOTE: Nodes toLocaleString and Intl do not work to localize unless a special version of node is used.
                     // TODO: In R10 we should try another package.  Numeral and d3-format have the basics, but no locale specific.  
                     // Numbro has locales, but is optimized for the browser.
-                    value = number.toLocaleString(locale, {minimumFractionDigits: precision, maximumFractionDigits: precision});
+                    value = number.toLocaleString(locale, { minimumFractionDigits: precision, maximumFractionDigits: precision });
                 }
 
-                return {value, error};
+                return { value, error };
             });
     }
 

@@ -6,40 +6,41 @@
  * Licensed under the MIT License.
  */
 
-import { ExpressionEvaluator } from '../expressionEvaluator';
+import moment from 'moment';
+import { tz } from 'moment-timezone';
+
 import { Expression } from '../expression';
-import { ReturnType } from '../returnType';
+import { ExpressionEvaluator } from '../expressionEvaluator';
 import { ExpressionType } from '../expressionType';
 import { FunctionUtils } from '../functionUtils';
 import { MemoryInterface } from '../memory/memoryInterface';
 import { Options } from '../options';
-import moment from 'moment';
+import { ReturnType } from '../returnType';
 import { TimeZoneConverter } from '../timeZoneConverter';
-import { tz } from 'moment-timezone';
 
 /**
  * Convert a timestamp to Universal Time Coordinated (UTC) from the source time zone.
  */
 export class ConvertToUTC extends ExpressionEvaluator {
-    public constructor(){
+    public constructor() {
         super(ExpressionType.ConvertToUTC, ConvertToUTC.evaluator, ReturnType.String, ConvertToUTC.validator);
     }
 
-    private static evaluator(expression: Expression, state: MemoryInterface, options: Options): {value: any; error: string} {
+    private static evaluator(expression: Expression, state: MemoryInterface, options: Options): { value: any; error: string } {
         let value: any;
         let error: string;
         let args: any[];
-        ({args, error} = FunctionUtils.evaluateChildren(expression, state, options));
+        ({ args, error } = FunctionUtils.evaluateChildren(expression, state, options));
         if (!error) {
             const format: string = (args.length === 3) ? FunctionUtils.timestampFormatter(args[2]) : FunctionUtils.DefaultDateTimeFormat;
             if (typeof (args[0]) === 'string' && typeof (args[1]) === 'string') {
-                ({value, error} = ConvertToUTC.evalConvertToUTC(args[0], args[1], format));
+                ({ value, error } = ConvertToUTC.evalConvertToUTC(args[0], args[1], format));
             } else {
                 error = `${expression} cannot evaluate`;
             }
         }
 
-        return {value, error};
+        return { value, error };
     }
 
     private static verifyTimeStamp(timeStamp: string): string {
@@ -53,7 +54,7 @@ export class ConvertToUTC extends ExpressionEvaluator {
         return error;
     }
 
-    private static evalConvertToUTC(timeStamp: string, sourceTimezone: string, format?: string): {value: any; error: string} {
+    private static evalConvertToUTC(timeStamp: string, sourceTimezone: string, format?: string): { value: any; error: string } {
         let result: string;
         let error: string;
         let formattedSourceTime: string;
@@ -82,7 +83,7 @@ export class ConvertToUTC extends ExpressionEvaluator {
             }
         }
 
-        return {value: result, error};
+        return { value: result, error };
     }
 
 

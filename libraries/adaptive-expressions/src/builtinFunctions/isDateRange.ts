@@ -6,31 +6,32 @@
  * Licensed under the MIT License.
  */
 
-import { ExpressionEvaluator } from '../expressionEvaluator';
+import { TimexProperty } from '@microsoft/recognizers-text-data-types-timex-expression';
+
 import { Expression } from '../expression';
-import { ReturnType } from '../returnType';
+import { ExpressionEvaluator } from '../expressionEvaluator';
 import { ExpressionType } from '../expressionType';
 import { FunctionUtils } from '../functionUtils';
 import { MemoryInterface } from '../memory/memoryInterface';
 import { Options } from '../options';
-import {TimexProperty} from '@microsoft/recognizers-text-data-types-timex-expression';
+import { ReturnType } from '../returnType';
 
 /**
  * Return true if a given TimexProperty or Timex expression refers to a valid date range.
  */
 export class IsDateRange extends ExpressionEvaluator {
-    public constructor(){
+    public constructor() {
         super(ExpressionType.IsDateRange, IsDateRange.evaluator, ReturnType.Boolean, FunctionUtils.validateUnary);
     }
 
-    private static evaluator(expr: Expression, state: MemoryInterface, options: Options): {value: any; error: string} {
+    private static evaluator(expr: Expression, state: MemoryInterface, options: Options): { value: any; error: string } {
         let parsed: TimexProperty;
         let value = false;
         let error: string;
         let args: any[];
-        ({args, error} = FunctionUtils.evaluateChildren(expr, state, options));
+        ({ args, error } = FunctionUtils.evaluateChildren(expr, state, options));
         if (!error) {
-            ({timexProperty: parsed, error: error} = FunctionUtils.parseTimexProperty(args[0]));
+            ({ timexProperty: parsed, error: error } = FunctionUtils.parseTimexProperty(args[0]));
         }
 
         if (parsed && !error) {
@@ -40,6 +41,6 @@ export class IsDateRange extends ExpressionEvaluator {
                 parsed.season !== undefined || parsed.weekOfYear !== undefined || parsed.weekOfMonth !== undefined;
         }
 
-        return {value, error};
+        return { value, error };
     }
 }

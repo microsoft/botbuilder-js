@@ -6,17 +6,17 @@
  * Licensed under the MIT License.
  */
 
-import { ExpressionEvaluator, EvaluateExpressionDelegate } from '../expressionEvaluator';
 import { Expression } from '../expression';
-import { ReturnType } from '../returnType';
+import { EvaluateExpressionDelegate, ExpressionEvaluator } from '../expressionEvaluator';
 import { ExpressionType } from '../expressionType';
 import { FunctionUtils } from '../functionUtils';
+import { ReturnType } from '../returnType';
 
 /**
  * Return the result from adding two or more numbers (pure number case) or concatting two or more strings (other case).
  */
 export class Add extends ExpressionEvaluator {
-    public constructor(){
+    public constructor() {
         super(ExpressionType.Add, Add.evaluator(), ReturnType.String | ReturnType.Number, Add.validator);
     }
 
@@ -44,7 +44,7 @@ export class Add extends ExpressionEvaluator {
                     value = args[0] + args[1];
                 }
 
-                return {value, error};
+                return { value, error };
             }, FunctionUtils.verifyNumberOrStringOrNull);
     }
 

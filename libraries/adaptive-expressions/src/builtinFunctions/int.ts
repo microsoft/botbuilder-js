@@ -6,16 +6,16 @@
  * Licensed under the MIT License.
  */
 
-import { ExpressionEvaluator, EvaluateExpressionDelegate } from '../expressionEvaluator';
-import { ReturnType } from '../returnType';
+import { EvaluateExpressionDelegate, ExpressionEvaluator } from '../expressionEvaluator';
 import { ExpressionType } from '../expressionType';
 import { FunctionUtils } from '../functionUtils';
+import { ReturnType } from '../returnType';
 
 /**
  * Return the integer version of a string.
  */
 export class Int extends ExpressionEvaluator {
-    public constructor(){
+    public constructor() {
         super(ExpressionType.Int, Int.evaluator(), ReturnType.Number, FunctionUtils.validateUnary);
     }
 
@@ -28,7 +28,7 @@ export class Int extends ExpressionEvaluator {
                     error = `parameter ${args[0]} is not a valid number string.`;
                 }
 
-                return {value, error};
+                return { value, error };
             });
     }
 }

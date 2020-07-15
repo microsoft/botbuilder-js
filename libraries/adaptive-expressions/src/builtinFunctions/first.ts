@@ -6,16 +6,16 @@
  * Licensed under the MIT License.
  */
 
-import { ExpressionEvaluator, EvaluateExpressionDelegate } from '../expressionEvaluator';
-import { ReturnType } from '../returnType';
+import { EvaluateExpressionDelegate, ExpressionEvaluator } from '../expressionEvaluator';
 import { ExpressionType } from '../expressionType';
 import { FunctionUtils } from '../functionUtils';
+import { ReturnType } from '../returnType';
 
 /**
  * Return the first item from a string or array.
  */
 export class First extends ExpressionEvaluator {
-    public constructor(){
+    public constructor() {
         super(ExpressionType.First, First.evaluator(), ReturnType.Object, FunctionUtils.validateUnary);
     }
 

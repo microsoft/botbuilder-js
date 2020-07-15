@@ -6,9 +6,9 @@
  * Licensed under the MIT License.
  */
 
-import { ComparisonEvaluator } from './comparisonEvaluator';
 import { ExpressionType } from '../expressionType';
 import { FunctionUtils } from '../functionUtils';
+import { ComparisonEvaluator } from './comparisonEvaluator';
 
 /**
  * Return the Boolean version of a value.

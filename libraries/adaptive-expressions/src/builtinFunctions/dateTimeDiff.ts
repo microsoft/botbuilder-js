@@ -6,33 +6,33 @@
  * Licensed under the MIT License.
  */
 
-import { ExpressionEvaluator } from '../expressionEvaluator';
 import { Expression } from '../expression';
-import { ReturnType } from '../returnType';
+import { ExpressionEvaluator } from '../expressionEvaluator';
 import { ExpressionType } from '../expressionType';
 import { FunctionUtils } from '../functionUtils';
 import { MemoryInterface } from '../memory/memoryInterface';
 import { Options } from '../options';
+import { ReturnType } from '../returnType';
 
 /**
- * Return a number of ticks that the two timestamp differs.
+ * Return a number of ticks that the two timestamps differ.
  */
 export class DateTimeDiff extends ExpressionEvaluator {
-    public constructor(){
+    public constructor() {
         super(ExpressionType.DateTimeDiff, DateTimeDiff.evaluator, ReturnType.Number, DateTimeDiff.validator);
     }
 
-    private static evaluator(expr: Expression, state: MemoryInterface, options: Options): {value: any; error: string} {
+    private static evaluator(expr: Expression, state: MemoryInterface, options: Options): { value: any; error: string } {
         let value: any;
         let dateTimeStart: any;
         let dateTimeEnd: any;
         let error: string;
         let args: any[];
-        ({args, error} = FunctionUtils.evaluateChildren(expr, state, options));
+        ({ args, error } = FunctionUtils.evaluateChildren(expr, state, options));
         if (!error) {
-            ({value: dateTimeStart, error: error} = FunctionUtils.ticks(args[0]));
+            ({ value: dateTimeStart, error: error } = FunctionUtils.ticks(args[0]));
             if (!error) {
-                ({value: dateTimeEnd, error: error} = FunctionUtils.ticks(args[1]));
+                ({ value: dateTimeEnd, error: error } = FunctionUtils.ticks(args[1]));
             }
         }
 
@@ -40,7 +40,7 @@ export class DateTimeDiff extends ExpressionEvaluator {
             value = dateTimeStart - dateTimeEnd;
         }
 
-        return {value, error};
+        return { value, error };
     }
 
     private static validator(expression: Expression): void {

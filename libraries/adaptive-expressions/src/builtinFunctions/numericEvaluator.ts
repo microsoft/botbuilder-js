@@ -6,9 +6,9 @@
  * Licensed under the MIT License.
  */
 
-import { ReturnType } from '../returnType';
-import { FunctionUtils } from '../functionUtils';
 import { EvaluateExpressionDelegate, ExpressionEvaluator } from '../expressionEvaluator';
+import { FunctionUtils } from '../functionUtils';
+import { ReturnType } from '../returnType';
 
 /**
  * Numeric operators that can have 1 or more args.

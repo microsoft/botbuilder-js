@@ -6,28 +6,28 @@
  * Licensed under the MIT License.
  */
 
-import { ExpressionEvaluator } from '../expressionEvaluator';
 import { Expression } from '../expression';
-import { ReturnType } from '../returnType';
+import { ExpressionEvaluator } from '../expressionEvaluator';
 import { ExpressionType } from '../expressionType';
 import { FunctionUtils } from '../functionUtils';
 import { MemoryInterface } from '../memory/memoryInterface';
 import { Options } from '../options';
+import { ReturnType } from '../returnType';
 
 /**
  * Check whether a collection has a specific item. Return true if the item is found, or return false if not found.
  * This function is case-sensitive.
  */
 export class Contains extends ExpressionEvaluator {
-    public constructor(){
+    public constructor() {
         super(ExpressionType.Contains, Contains.evaluator, ReturnType.Boolean, FunctionUtils.validateBinary);
     }
 
-    private static evaluator(expression: Expression, state: MemoryInterface, options: Options): {value: any; error: string} {
+    private static evaluator(expression: Expression, state: MemoryInterface, options: Options): { value: any; error: string } {
         let found = false;
         let error: any;
         let args: any[];
-        ({args, error} = FunctionUtils.evaluateChildren(expression, state, options));
+        ({ args, error } = FunctionUtils.evaluateChildren(expression, state, options));
 
         if (!error) {
             if (typeof args[0] === 'string' && typeof args[1] === 'string' || Array.isArray(args[0])) {
@@ -36,11 +36,11 @@ export class Contains extends ExpressionEvaluator {
                 found = (args[0] as Map<string, any>).get(args[1]) !== undefined;
             } else if (typeof args[1] === 'string') {
                 let value: any;
-                ({value, error} = FunctionUtils.accessProperty(args[0], args[1]));
+                ({ value, error } = FunctionUtils.accessProperty(args[0], args[1]));
                 found = !error && value !== undefined;
             }
         }
 
-        return {value: found, error: undefined};
+        return { value: found, error: undefined };
     }
 }

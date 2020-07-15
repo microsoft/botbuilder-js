@@ -6,16 +6,16 @@
  * Licensed under the MIT License.
  */
 
-import { ExpressionEvaluator, EvaluateExpressionDelegate } from '../expressionEvaluator';
-import { ReturnType } from '../returnType';
+import { EvaluateExpressionDelegate, ExpressionEvaluator } from '../expressionEvaluator';
 import { ExpressionType } from '../expressionType';
 import { FunctionUtils } from '../functionUtils';
+import { ReturnType } from '../returnType';
 
 /**
  * Return the remainder from dividing two numbers. 
  */
 export class Mod extends ExpressionEvaluator {
-    public constructor(){
+    public constructor() {
         super(ExpressionType.Mod, Mod.evaluator(), ReturnType.Number, FunctionUtils.validateBinaryNumber);
     }
 
@@ -30,7 +30,7 @@ export class Mod extends ExpressionEvaluator {
                     value = args[0] % args[1];
                 }
 
-                return {value, error};
+                return { value, error };
             },
             FunctionUtils.verifyInteger);
     }

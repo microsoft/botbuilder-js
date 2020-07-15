@@ -6,18 +6,19 @@
  * Licensed under the MIT License.
  */
 
-import { ExpressionEvaluator, EvaluateExpressionDelegate } from '../expressionEvaluator';
+import { TimexProperty } from '@microsoft/recognizers-text-data-types-timex-expression';
+
 import { Expression } from '../expression';
-import { ReturnType } from '../returnType';
+import { EvaluateExpressionDelegate, ExpressionEvaluator } from '../expressionEvaluator';
 import { ExpressionType } from '../expressionType';
 import { FunctionUtils } from '../functionUtils';
-import {TimexProperty} from '@microsoft/recognizers-text-data-types-timex-expression';
+import { ReturnType } from '../returnType';
 
 /**
  * Uses the date-time library to provide a date readback.
  */
 export class DateReadBack extends ExpressionEvaluator {
-    public constructor(){
+    public constructor() {
         super(ExpressionType.DateReadBack, DateReadBack.evaluator(), ReturnType.String, DateReadBack.validator);
     }
 
@@ -27,14 +28,14 @@ export class DateReadBack extends ExpressionEvaluator {
                 let value: any;
                 let error: string;
                 const dateFormat = 'YYYY-MM-DD';
-                ({value, error} = FunctionUtils.parseTimestamp(args[0]));
+                ({ value, error } = FunctionUtils.parseTimestamp(args[0]));
                 if (!error) {
                     const timestamp1: Date = new Date(value.format(dateFormat));
-                    ({value, error} = FunctionUtils.parseTimestamp(args[1]));
+                    ({ value, error } = FunctionUtils.parseTimestamp(args[1]));
                     const timestamp2: string = value.format(dateFormat);
                     const timex: TimexProperty = new TimexProperty(timestamp2);
 
-                    return {value: timex.toNaturalLanguage(timestamp1), error};
+                    return { value: timex.toNaturalLanguage(timestamp1), error };
                 }
             },
             FunctionUtils.verifyString);

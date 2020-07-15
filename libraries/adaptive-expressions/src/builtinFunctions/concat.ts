@@ -6,16 +6,16 @@
  * Licensed under the MIT License.
  */
 
-import { ExpressionEvaluator, EvaluateExpressionDelegate } from '../expressionEvaluator';
-import { ReturnType } from '../returnType';
+import { EvaluateExpressionDelegate, ExpressionEvaluator } from '../expressionEvaluator';
 import { ExpressionType } from '../expressionType';
 import { FunctionUtils } from '../functionUtils';
+import { ReturnType } from '../returnType';
 
 /**
  * Combine two or more strings, and return the combined string.
  */
 export class Concat extends ExpressionEvaluator {
-    public constructor(){
+    public constructor() {
         super(ExpressionType.Concat, Concat.evaluator(), ReturnType.String | ReturnType.Array, FunctionUtils.validateAtLeastOne);
     }
 
@@ -25,15 +25,15 @@ export class Concat extends ExpressionEvaluator {
             const secondItem = args[1];
             const isFirstList = Array.isArray(firstItem);
             const isSecondList = Array.isArray(secondItem);
-    
+
             if ((firstItem === null || firstItem === undefined)
                 && (secondItem === null || secondItem === undefined)) {
                 return undefined;
-            } else if ((firstItem === null || firstItem === undefined) && isSecondList){
+            } else if ((firstItem === null || firstItem === undefined) && isSecondList) {
                 return secondItem;
-            } else if ((secondItem === null || secondItem === undefined) && isFirstList){
+            } else if ((secondItem === null || secondItem === undefined) && isFirstList) {
                 return firstItem;
-            } else if (isFirstList && isSecondList){
+            } else if (isFirstList && isSecondList) {
                 return firstItem.concat(secondItem);
             } else {
                 return Concat.commonStringify(firstItem) + Concat.commonStringify(secondItem);
@@ -41,12 +41,12 @@ export class Concat extends ExpressionEvaluator {
         });
     }
 
-    
+
     private static commonStringify(input: any): string {
         if (input === null || input === undefined) {
             return '';
         }
-    
+
         if (Array.isArray(input)) {
             return input.toString();
         } else if (typeof input === 'object') {

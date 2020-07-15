@@ -6,9 +6,9 @@
  * Licensed under the MIT License.
  */
 
-import { StringTransformEvaluator } from './stringTransformEvaluator';
-import { FunctionUtils } from '../functionUtils';
 import { ExpressionType } from '../expressionType';
+import { FunctionUtils } from '../functionUtils';
+import { StringTransformEvaluator } from './stringTransformEvaluator';
 
 /**
  * Return a string in lowercase format.
@@ -20,6 +20,6 @@ export class ToLower extends StringTransformEvaluator {
     }
 
     private static evaluator(args: any[]): string {
-        return String(FunctionUtils.parseStringOrNull(args[0])).toLowerCase();
+        return String(FunctionUtils.parseStringOrUndefined(args[0])).toLowerCase();
     }
 }

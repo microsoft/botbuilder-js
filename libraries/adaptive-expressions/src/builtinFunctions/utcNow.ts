@@ -6,18 +6,19 @@
  * Licensed under the MIT License.
  */
 
-import { ExpressionEvaluator, EvaluateExpressionDelegate } from '../expressionEvaluator';
+import moment from 'moment';
+
 import { Expression } from '../expression';
-import { ReturnType } from '../returnType';
+import { EvaluateExpressionDelegate, ExpressionEvaluator } from '../expressionEvaluator';
 import { ExpressionType } from '../expressionType';
 import { FunctionUtils } from '../functionUtils';
-import moment from 'moment';
+import { ReturnType } from '../returnType';
 
 /**
  * Return the current timestamp.
  */
 export class UtcNow extends ExpressionEvaluator {
-    public constructor(){
+    public constructor() {
         super(ExpressionType.UtcNow, UtcNow.evaluator(), ReturnType.String, UtcNow.validator);
     }
 

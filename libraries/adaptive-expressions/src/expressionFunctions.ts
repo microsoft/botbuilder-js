@@ -1,13 +1,14 @@
 /**
  * @module adaptive-expressions
  */
+
 /**
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import {ExpressionEvaluator} from './expressionEvaluator';
-import {ExpressionType} from './expressionType';
 import * as BuiltinFunctions from './builtinFunctions';
+import { ExpressionEvaluator } from './expressionEvaluator';
+import { ExpressionType } from './expressionType';
 
 /**
  *  <summary>

@@ -6,17 +6,18 @@
  * Licensed under the MIT License.
  */
 
-import { ExpressionEvaluator, EvaluateExpressionDelegate } from '../expressionEvaluator';
-import { ReturnType } from '../returnType';
+import { EvaluateExpressionDelegate, ExpressionEvaluator } from '../expressionEvaluator';
 import { ExpressionType } from '../expressionType';
 import { FunctionUtils } from '../functionUtils';
+import { ReturnType } from '../returnType';
+
 import atob = require('atob-lite');
 
 /**
  * Return the binary array of a base64-encoded string.
  */
 export class Base64ToBinary extends ExpressionEvaluator {
-    public constructor(){
+    public constructor() {
         super(ExpressionType.Base64ToBinary, Base64ToBinary.evaluator(), ReturnType.Object, FunctionUtils.validateUnary);
     }
 

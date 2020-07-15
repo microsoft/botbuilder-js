@@ -6,16 +6,17 @@
  * Licensed under the MIT License.
  */
 
-import { ExpressionEvaluator, EvaluateExpressionDelegate } from '../expressionEvaluator';
-import { FunctionUtils } from '../functionUtils';
 import moment from 'moment';
+
 import { Expression } from '../expression';
-import { ReturnType } from '../returnType';
+import { EvaluateExpressionDelegate, ExpressionEvaluator } from '../expressionEvaluator';
+import { FunctionUtils } from '../functionUtils';
 import { MemoryInterface } from '../memory/memoryInterface';
 import { Options } from '../options';
+import { ReturnType } from '../returnType';
 
 /**
- * Evaluator that transforms a date-time to another date-time.
+ * Evaluator that transforms a datetime to another datetime.
  */
 export class TimeTransformEvaluator extends ExpressionEvaluator {
     public constructor(type: string, func: (timestamp: Date, numOfTransformation: any) => Date) {
@@ -23,15 +24,15 @@ export class TimeTransformEvaluator extends ExpressionEvaluator {
     }
 
     private static evaluator(func: (timestamp: Date, numOfTransformation: any) => Date): EvaluateExpressionDelegate {
-        return (expression: Expression, state: MemoryInterface, options: Options): {value: any; error: string} => {
+        return (expression: Expression, state: MemoryInterface, options: Options): { value: any; error: string } => {
             let result: any;
             let error: string;
             let value: any;
             let args: any[];
-            ({args, error} = FunctionUtils.evaluateChildren(expression, state, options));
+            ({ args, error } = FunctionUtils.evaluateChildren(expression, state, options));
             if (!error) {
                 if (typeof args[0] === 'string' && typeof args[1] === 'number') {
-                    ({value, error} = FunctionUtils.parseTimestamp(args[0]));
+                    ({ value, error } = FunctionUtils.parseTimestamp(args[0]));
                     if (!error) {
                         if (args.length === 3 && typeof args[2] === 'string') {
                             result = moment(func(value, args[1])).utc().format(FunctionUtils.timestampFormatter(args[2]));
@@ -44,7 +45,7 @@ export class TimeTransformEvaluator extends ExpressionEvaluator {
                 }
             }
 
-            return {value: result, error};
+            return { value: result, error };
         };
     }
 

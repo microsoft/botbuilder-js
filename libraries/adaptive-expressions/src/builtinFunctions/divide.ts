@@ -6,10 +6,10 @@
  * Licensed under the MIT License.
  */
 
-import { MultivariateNumericEvaluator } from './multivariateNumericEvaluator';
-import { ExpressionType } from '../expressionType';
 import { Expression } from '../expression';
+import { ExpressionType } from '../expressionType';
 import { FunctionUtils } from '../functionUtils';
+import { MultivariateNumericEvaluator } from './multivariateNumericEvaluator';
 
 /**
  * Return the integer result from dividing two numbers. 

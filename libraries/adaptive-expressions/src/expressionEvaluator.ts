@@ -5,21 +5,22 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { ReturnType } from './returnType';
+import { Expression } from './expression';
 import { MemoryInterface } from './memory';
 import { Options } from './options';
+import { ReturnType } from './returnType';
 
 /**
  * Delegate for doing static validation on an expression.
  * Validators can and should throw exceptions if the expression is not valid.
  */
-export type ValidateExpressionDelegate = (expression: any) => any;
+export type ValidateExpressionDelegate = (expression: Expression) => any;
 
 /**
  * Delegate to evaluate an expression.
  * Evaluators should verify runtime arguments when appropriate and return an error rather than throw exceptions if possible.
  */
-export type EvaluateExpressionDelegate = (expression: any, state: MemoryInterface, options: Options) => { value: any; error: string };
+export type EvaluateExpressionDelegate = (expression: Expression, state: MemoryInterface, options: Options) => { value: any; error: string };
 
 /**
  * Delegate to lookup function information from the type.
@@ -58,7 +59,7 @@ export class ExpressionEvaluator {
         this._evaluator = evaluator;
         this.returnType = returnType;
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        this._validator = validator || ((expr: any): any => { });
+        this._validator = validator || ((expr: Expression): any => { });
     }
 
     /**
@@ -66,10 +67,10 @@ export class ExpressionEvaluator {
      * @param expression Expression to evaluate.
      * @param state Global state information.
      */
-    public tryEvaluate = (expression: any, state: MemoryInterface, options: Options): { value: any; error: string } => this._evaluator(expression, state, options);
+    public tryEvaluate = (expression: Expression, state: MemoryInterface, options: Options): { value: any; error: string } => this._evaluator(expression, state, options);
     /**
      * Validate an expression.
      * @param expression Expression to validate.
      */
-    public validateExpression = (expression: any): void => this._validator(expression);
+    public validateExpression = (expression: Expression): void => this._validator(expression);
 }

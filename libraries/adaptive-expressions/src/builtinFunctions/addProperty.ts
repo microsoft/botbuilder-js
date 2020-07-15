@@ -6,18 +6,18 @@
  * Licensed under the MIT License.
  */
 
-import { ExpressionEvaluator, EvaluateExpressionDelegate } from '../expressionEvaluator';
 import { Expression } from '../expression';
-import { ReturnType } from '../returnType';
+import { EvaluateExpressionDelegate, ExpressionEvaluator } from '../expressionEvaluator';
 import { ExpressionType } from '../expressionType';
 import { FunctionUtils } from '../functionUtils';
+import { ReturnType } from '../returnType';
 
 /**
  * Add a property and its value, or name-value pair, to a JSON object, and return the updated object.
  * If the object already exists at runtime the function throws an error.
  */
 export class AddProperty extends ExpressionEvaluator {
-    public constructor(){
+    public constructor() {
         super(ExpressionType.AddProperty, AddProperty.evaluator(), ReturnType.Object, AddProperty.validator);
     }
 
@@ -33,7 +33,7 @@ export class AddProperty extends ExpressionEvaluator {
                     temp[String(args[1])] = args[2];
                 }
 
-                return {value: temp, error};
+                return { value: temp, error };
             });
     }
 

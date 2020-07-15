@@ -6,16 +6,16 @@
  * Licensed under the MIT License.
  */
 
-import { ExpressionEvaluator, EvaluateExpressionDelegate } from '../expressionEvaluator';
-import { ReturnType } from '../returnType';
+import { EvaluateExpressionDelegate, ExpressionEvaluator } from '../expressionEvaluator';
 import { ExpressionType } from '../expressionType';
 import { FunctionUtils } from '../functionUtils';
+import { ReturnType } from '../returnType';
 
 /**
  * Return an array from multiple inputs.
  */
 export class CreateArray extends ExpressionEvaluator {
-    public constructor(){
+    public constructor() {
         super(ExpressionType.CreateArray, CreateArray.evaluator(), ReturnType.Array);
     }
 
