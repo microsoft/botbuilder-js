@@ -12,4 +12,6 @@ $package = $result.packages | Where-Object {$_.id -eq $PackageName};
 
 $package.id;
 $latestVersion;
-"##vso[task.setvariable variable=LatestVersion_$PackageName;]$latestVersion";
+$latestVersionKey = "LatestVersion_$PackageName";
+
+"##vso[task.setvariable variable=$latestVersionKey]$latestVersion";
