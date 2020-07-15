@@ -11,4 +11,4 @@ steps:
       ConnectedServiceNameARM: 'Team-Vendors(68a2ddd6-f962-4cd2-8170-211d720473a4)'
       scriptType: ps
       scriptLocation: inlineScript
-      inlineScript: call az webapp deployment source config-zip --resource-group "$(ResourceGroup)" --name "$(BotName)" --src "$(BotProjectDir)/bot.zip"
+      inlineScript: call az webapp deployment source config-zip --resource-group "$(ResourceGroup)" --name "$(BotName)" --src "$(TargetProjectDir)/bot.zip"
