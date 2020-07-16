@@ -32,7 +32,7 @@ stages:
       #     - template: deploy-bot.yml
 
       - job: Create_React_App_With_WebChat
-        variables:
+        # variables:
           # TargetProjectDir: '$(RootReactPiecesDir)'
         steps: 
           - template: create-react-app.yml
