@@ -38,7 +38,7 @@ stages:
 
       - job: Customize_DLJS
         variables:
-          TargetProjectDir: '$(System.DefaultWorkingDirectory)\libraries\streaming-e2e-tests\react-app\react-app'
+          TargetProjectDir: '$(System.DefaultWorkingDirectory)\libraries\streaming-e2e-tests\react-app\BotFramework-DirectLineJS'
           PackageName: 'botframework-streaming'
         steps:
           - powershell: git clone https://github.com/microsoft/BotFramework-DirectLineJS.git
