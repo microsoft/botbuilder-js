@@ -7,8 +7,16 @@ function GetExampleFilePath(fileName) {
 
 
 describe('ParseTreeTest', function() {
+    /**
+     * Disk I/O is slow and variable, causing issues in pipeline tests, so we
+     * preload all of the file reads here so that it doesn't count against individual test duration.
+     */
+    const preloaded = {
+        ParseTreeTest: Templates.parseFile(GetExampleFilePath('ParseTreeTest.lg'))
+    };
+
     it('ParseTreeTest', function() {
-        const templates = Templates.parseFile(GetExampleFilePath('ParseTreeTest.lg')).toArray();
+        const templates = preloaded.ParseTreeTest.toArray();
         assert.strictEqual(templates.length, 4);
 
         // Normal template body
