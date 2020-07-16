@@ -20,7 +20,7 @@ steps:
     workingDirectory: $(TargetProjectDir)/react-app
   
   - task: PublishPipelineArtifact@1
-    displayName: 'Publish Artifact: react-app'
+    displayName: 'Publish Artifact: ReactApp'
     inputs:
       targetPath: $(TargetProjectDir)/react-app
       artifactName: 'ReactApp'
