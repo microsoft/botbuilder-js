@@ -4,8 +4,12 @@ jobs:
       TargetProjectDir: '$(System.DefaultWorkingDirectory)\libraries\streaming-e2e-tests\react-app\BotFramework-DirectLineJS'
       PackageName: 'botframework-streaming'
     steps:
-      - powershell: git clone https://github.com/microsoft/BotFramework-DirectLineJS.git
+      - script: git clone https://github.com/microsoft/BotFramework-DirectLineJS.git
         displayName: 'Clone DLJS repo'
         workingDirectory: '$(System.DefaultWorkingDirectory)\libraries\streaming-e2e-tests\react-app'
 
       - template: configure-to-bbjs-daily.yml
+
+      - script: npm run build
+        displayName: Build DLJS
+        workingDirectory: $(TargetProjectDir)
