@@ -19,4 +19,12 @@ steps:
     displayName: "Copy custom files into react-app"
     workingDirectory: $(TargetProjectDir)/react-app
   
-  - powershell: Get-ChildItem -Path $(TargetProjectDir)
+  - task: CopyFiles@2
+    displayName: 'Copy react-app to: $(Build.ArtifactStagingDirectory)'
+    inputs:
+      SourceFolder: $(TargetProjectDir)/react-app
+      Contents: './**'
+      TargetFolder: '$(Build.ArtifactStagingDirectory)'
+
+  - publish: $(TargetProjectDir)/react-app
+    artifact: 'react-app'
