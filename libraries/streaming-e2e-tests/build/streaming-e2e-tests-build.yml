@@ -33,7 +33,7 @@ stages:
 
       - job: Create_React_App_With_WebChat
         variables:
-          TargetProjectDir: '$(RootReactPiecesDir)'
+          # TargetProjectDir: '$(RootReactPiecesDir)'
         steps: 
           - template: create-react-app.yml
 
@@ -44,13 +44,13 @@ stages:
         steps:
           - template: customize-dljs.yml
 
-      - job: Use_Custom_DLJS_In_React_App
+      - job: Deploy_React_App_With_Custom_DLJS
         dependsOn:
           - Create_React_App_With_WebChat
           - Customize_DLJS
         condition: succeeded()
         variables:
-          TargetProjectDir: '$(RootReactPiecesDir)\react-app'
+          ReactProjectDir: '$(RootReactPiecesDir)\react-app'
         steps:
           - template: use-custom-dljs-in-webchat.yml
           
