@@ -15,7 +15,7 @@ pool:
 # AzureSubscription: defined in Azure
 variables:
   runCodesignValidationInjection: false
-
+  RootReactPiecesDir: '$(System.DefaultWorkingDirectory)\libraries\streaming-e2e-tests\react-app'
 
 stages:
   - stage: Deploy_Projects
@@ -32,12 +32,22 @@ stages:
 
       # - job: Create_React_App_With_WebChat
       #   variables:
-      #     TargetProjectDir: '$(System.DefaultWorkingDirectory)\libraries\streaming-e2e-tests\react-app'
+      #     TargetProjectDir: '$(RootReactPiecesDir)'
       #   steps: 
       #     - template: create-react-app.yml
+      - job: Customize_DLJS
+        steps:
+          - template: customize-dljs.yml
 
-      - template: customize-dljs.yml
+      - job: Use_Custom_DLJS_In_React_App
+        dependsOn:
+          - Create_React_App_With_WebChat
+          - Customize_DLJS
+        condition: succeeded()
+        variables:
+          TargetProjectDir: '$(RootReactPiecesDir)\react-app'
+        steps:
+          - template: use-custom-dljs-in-webchat.yml
           
-          # - powershell: npm run build
           
           # - template: deploy_react_app.yml

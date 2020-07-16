@@ -1,3 +1,6 @@
+# Customize DLJS package to use latest daily version of botframework-streaming
+# Subsequently, pack customized DLJS into an installable .tgz
+
 jobs:
   - job: Customize_DLJS
     variables:

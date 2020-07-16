@@ -1,0 +1,6 @@
+steps:
+  - powershell: ren botframework-directlinejs botframework-directlinejs.old
+    displayName: Rename non-customized DLJS node_module
+    workingDirectory: $(TargetProjectDir)/node_modules
+  
+    

@@ -1,3 +1,5 @@
+# Create a React app that uses ReactWebChat
+
 steps:
   - powershell: npx create-react-app react-app
     displayName: 'create-react-app'
