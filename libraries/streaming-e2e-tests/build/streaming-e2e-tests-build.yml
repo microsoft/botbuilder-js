@@ -30,7 +30,7 @@ stages:
       #     - template: configure-to-bbjs-daily.yml
       #     - template: deploy-bot.yml
 
-      - job: Create_React_App_With_Custom_DLJS
+      - job: Create_React_App_With_WebChat
         variables:
           TargetProjectDir: '$(System.DefaultWorkingDirectory)\libraries\streaming-e2e-tests\react-app'
         steps: 
