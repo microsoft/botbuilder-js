@@ -70,6 +70,10 @@ describe('ActionTests', function() {
         await testRunner.runTestScript('Action_DoActions');
     });
 
+    it('DynamicBeginDialog', async () => {
+        await testRunner.runTestScript('Action_DynamicBeginDialog');
+    });
+
     it('EditActionReplaceSequence', async () => {
         await testRunner.runTestScript('Action_EditActionReplaceSequence');
     });
