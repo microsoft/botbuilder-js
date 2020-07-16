@@ -49,9 +49,10 @@ steps:
   #   inputs:
   #     ArtifactName: 'testReactApp'
 
-  - task: PublishPipelineArtifact@0
+
+  - task: PublishPipelineArtifact@1
     displayName: 'Publish Artifact: testReactApp'
     inputs:
-      artifactName: 'testReactApp'
       targetPath: $(TargetProjectDir)/testReactApp
+      artifactName: 'testReactApp'
     
