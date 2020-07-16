@@ -1,11 +1,11 @@
 steps:
-  - task: PowerShell@2
-    displayName: 'Creating React App using npx create-react-app'
-    inputs:
-      targetType: 'filePath'
-      filePath: $(System.DefaultWorkingDirectory)\libraries\streaming-e2e-tests\build\create-react-app-with-webchat.ps1
-      arguments:
-        -RootReactPiecesDir $(TargetProjectDir)
+  # - task: PowerShell@2
+  #   displayName: 'Creating React App using npx create-react-app'
+  #   inputs:
+  #     targetType: 'filePath'
+  #     filePath: $(System.DefaultWorkingDirectory)\libraries\streaming-e2e-tests\build\create-react-app-with-webchat.ps1
+  #     arguments:
+  #       -RootReactPiecesDir $(TargetProjectDir)
 
   - powershell: npx create-react-app react-app
     displayName: 'create-react-app'
