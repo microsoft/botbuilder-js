@@ -43,7 +43,7 @@ stages:
         steps:
           - powershell: git clone https://github.com/microsoft/BotFramework-DirectLineJS.git
             displayName: 'Clone DLJS repo'
-            workingDirectory: $(System.DefaultWorkingDirectory)\libraries\streaming-e2e-tests\react-app'
+            workingDirectory: '$(System.DefaultWorkingDirectory)\libraries\streaming-e2e-tests\react-app'
 
           - template: configure-to-bbjs-daily.yml
           
