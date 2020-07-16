@@ -2,10 +2,10 @@ steps:
   - task: DownloadPipelineArtifact@2
     inputs:
       artifact: testReactApp
-      patterns: 'testReactApp/**'
-      path: $(Build.ArtifactStagingDirectory)/testReactApp
+      path: $(TargetProjectDir)/testReactApp
 
+  # TODO: keep tgz in folder of something we won't deploy (like DLJS)
   - powershell: npm install botframework-directlinejs.tgz
     displayName: npm install botframework-directlinejs.tgz
-    workingDirectory: $(Build.ArtifactStagingDirectory)/testReactApp
+    workingDirectory: $(TargetProjectDir)/testReactApp
 
