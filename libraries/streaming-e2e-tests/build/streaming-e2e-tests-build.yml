@@ -36,19 +36,16 @@ stages:
       #   steps: 
       #     - template: create-react-app.yml
 
-
-      # get bf-streaming in DLJS -- add console.log maybe?
       - job: Customize_DLJS
+        variables:
+          TargetProjectDir: '$(System.DefaultWorkingDirectory)\libraries\streaming-e2e-tests\react-app\react-app'
+          PackageName: 'botframework-streaming'
         steps:
           - powershell: git clone https://github.com/microsoft/BotFramework-DirectLineJS.git
             displayName: 'Clone DLJS repo'
-            workingDirectory: '$(System.DefaultWorkingDirectory)\libraries\streaming-e2e-tests\react-app'
+            workingDirectory: $(System.DefaultWorkingDirectory)\libraries\streaming-e2e-tests\react-app'
 
-          # - template: configure-to-bbjs-daily.yml
-          
-          # - task: PowerShell@2
-          #   displayName: 'Pack and rename tgz'
-
+          - template: configure-to-bbjs-daily.yml
           
           
           # - template: deploy_react_app.yml

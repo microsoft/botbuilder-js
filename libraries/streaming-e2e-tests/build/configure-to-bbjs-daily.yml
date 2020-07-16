@@ -20,7 +20,7 @@ steps:
     displayName: 'Tag Build with $(PackageName) version'
     condition: eq(variables.PackageName, 'botframework-streaming')
     inputs:
-      tags: 'Using botframework-streaming version $(LatestVersion_bfStreaming)'
+      tags: 'Using botframework-streaming version $(LatestVersion_streaming)'
 
   - task: PowerShell@2
     displayName: Set Dependency to Latest $(PackageName) Version
