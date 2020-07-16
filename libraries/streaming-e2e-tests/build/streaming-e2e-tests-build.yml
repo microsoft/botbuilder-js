@@ -16,6 +16,7 @@ pool:
 variables:
   runCodesignValidationInjection: false
   RootReactPiecesDir: '$(System.DefaultWorkingDirectory)\libraries\streaming-e2e-tests\react-app'
+  DLJSDir: '$(System.DefaultWorkingDirectory)\libraries\streaming-e2e-tests\react-app\BotFramework-DirectLineJS'
 
 stages:
   - stage: Deploy_Projects
@@ -36,6 +37,8 @@ stages:
       #   steps: 
       #     - template: create-react-app.yml
       - job: Customize_DLJS
+        variables:
+          PackageName: 'botframework-streaming'
         steps:
           - template: customize-dljs.yml
 
