@@ -26,5 +26,7 @@ steps:
       Contents: './**'
       TargetFolder: '$(Build.ArtifactStagingDirectory)'
 
-  - publish: $(TargetProjectDir)/react-app
-    artifact: 'react-app'
+  - task: PublishBuildArtifacts@1
+    displayName: 'Publish Artifact: react-app'
+    inputs:
+      ArtifactName: 'react-app'
