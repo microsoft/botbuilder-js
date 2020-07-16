@@ -18,3 +18,5 @@ steps:
       copy ..\custom-app-code\index.html .\public
     displayName: "Copy custom files into react-app"
     workingDirectory: $(TargetProjectDir)/react-app
+  
+  - powershell: Get-ChildItem -Path $(TargetProjectDir)
