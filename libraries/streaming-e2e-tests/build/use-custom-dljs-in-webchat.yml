@@ -1,5 +1,11 @@
 steps:
+  # - task: DownloadPipelineArtifact@2
+  #   inputs:
+  #     artifact: testReactApp
+  #     patterns: 'testReactApp/**'
+  #     path: $(Build.SourcesDirectory)/bin
+
   - powershell: npm install botframework-directlinejs.tgz
     displayName: npm install botframework-directlinejs.tgz
-    workingDirectory: $(Build.ArtifactStagingDirectory)\react-app
+    workingDirectory: $(Build.ArtifactStagingDirectory)\testReactApp
 

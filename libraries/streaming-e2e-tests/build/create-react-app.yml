@@ -1,32 +1,48 @@
 # Create a React app that uses ReactWebChat
 
 steps:
-  - powershell: npx create-react-app react-app
-    displayName: 'create-react-app'
-    workingDirectory: $(TargetProjectDir)
+  # - powershell: npx create-react-app react-app
+  #   displayName: 'create-react-app'
+  #   workingDirectory: $(TargetProjectDir)
 
-  - powershell: npm install botframework-webchat
-    displayName: 'npm install botframework-webchat'
-    workingDirectory: $(TargetProjectDir)/react-app
+  # - powershell: npm install botframework-webchat
+  #   displayName: 'npm install botframework-webchat'
+  #   workingDirectory: $(TargetProjectDir)/react-app
 
-  - powershell: Remove-Item src/App.js, src/index.js, public/index.html
-    displayName: "Delete files we're replacing with custom code in react app"
-    workingDirectory: $(TargetProjectDir)/react-app
+  # - powershell: Remove-Item src/App.js, src/index.js, public/index.html
+  #   displayName: "Delete files we're replacing with custom code in react app"
+  #   workingDirectory: $(TargetProjectDir)/react-app
 
-  - powershell: |
-      copy ..\custom-app-code\App.js, ..\custom-app-code\index.js .\src\
-      copy ..\custom-app-code\index.html .\public
-    displayName: "Copy custom files into react-app"
-    workingDirectory: $(TargetProjectDir)/react-app
+  # - powershell: |
+  #     copy ..\custom-app-code\App.js, ..\custom-app-code\index.js .\src\
+  #     copy ..\custom-app-code\index.html .\public
+  #   displayName: "Copy custom files into react-app"
+  #   workingDirectory: $(TargetProjectDir)/react-app
   
+  # - task: CopyFiles@2
+  #   displayName: 'Copy react-app to: $(Build.ArtifactStagingDirectory)'
+  #   inputs:
+  #     SourceFolder: $(TargetProjectDir)/react-app
+  #     Contents: './**'
+  #     TargetFolder: '$(Build.ArtifactStagingDirectory)'
+
+  # - task: PublishBuildArtifacts@1
+  #   displayName: 'Publish Artifact: react-app'
+  #   inputs:
+  #     ArtifactName: 'react-app'
+
+
+  # TEMPORARY TEST REACT APP FOR FASTER BUILDING OF TESTS
+
   - task: CopyFiles@2
     displayName: 'Copy react-app to: $(Build.ArtifactStagingDirectory)'
     inputs:
-      SourceFolder: $(TargetProjectDir)/react-app
+      SourceFolder: $(TargetProjectDir)/testReactApp
       Contents: './**'
       TargetFolder: '$(Build.ArtifactStagingDirectory)'
 
   - task: PublishBuildArtifacts@1
-    displayName: 'Publish Artifact: react-app'
+    displayName: 'Publish Artifact: testReactApp'
     inputs:
-      ArtifactName: 'react-app'
+      ArtifactName: 'testReactApp'
+    
