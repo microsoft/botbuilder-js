@@ -13,7 +13,7 @@ import {
     MessagingExtensionResult,
     TeamsActivityHandler,
     TurnContext
-} from '../../../botbuilder';
+} from 'botbuilder';
 
 export class TeamsSearchExtensionBot extends TeamsActivityHandler {
 
