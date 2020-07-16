@@ -1,6 +1,5 @@
 steps:
-  - powershell: ren botframework-directlinejs botframework-directlinejs.old
-    displayName: Rename non-customized DLJS node_module
-    workingDirectory: $(TargetProjectDir)/node_modules
-  
-    
+  - powershell: npm install botframework-directlinejs.tgz
+    displayName: npm install botframework-directlinejs.tgz
+    workingDirectory: $(TargetProjectDir)
+
