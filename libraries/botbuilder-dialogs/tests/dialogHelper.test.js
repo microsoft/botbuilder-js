@@ -18,6 +18,7 @@ const {
     WaterfallDialog
 } = require('../');
 const { AuthConstants } = require('../lib/prompts/skillsHelpers');
+const { EndOfConversationCodes } = require('../../botbuilder-core')
 
 const FlowTestCase = {
     RootBotOnly: 'RootBotOnly',
@@ -196,6 +197,7 @@ describe('runDialog()', function() {
                 ok(_eocSent, 'Skills should send EndConversation to channel');
                 strictEqual(_eocSent.type, ActivityTypes.EndOfConversation);
                 strictEqual(_eocSent.value, 'SomeName');
+                strictEqual(_eocSent.code, EndOfConversationCodes.CompletedSuccessfully);
             } else {
                 strictEqual(undefined, _eocSent, 'Root bot should not send EndConversation to channel');
             }
