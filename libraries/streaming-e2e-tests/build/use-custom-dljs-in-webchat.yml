@@ -1,5 +1,5 @@
 steps:
   - powershell: npm install botframework-directlinejs.tgz
     displayName: npm install botframework-directlinejs.tgz
-    workingDirectory: $(TargetProjectDir)
+    workingDirectory: $(Build.ArtifactStagingDirectory)\react-app
 
