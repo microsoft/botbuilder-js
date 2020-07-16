@@ -13,3 +13,11 @@ jobs:
       - script: npm run build
         displayName: Build DLJS
         workingDirectory: $(TargetProjectDir)
+      
+      - script: npm pack .
+        displayName: Pack DLJS into .tgz
+        workingDirectory: $(TargetProjectDir)
+
+      - script: ren botframework-directlinejs-*.tgz botframework-directlinejs.tgz
+        displayName: Rename to DLJS tgz to predictable name
+        workingDirectory: $(TargetProjectDir)
