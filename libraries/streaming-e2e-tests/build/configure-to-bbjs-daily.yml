@@ -51,7 +51,7 @@ steps:
     displayName: 'Create .npmrc for MyGet feed - https://botbuilder.myget.org/gallery/botbuilder-v4-js-daily'
   
   - task: Npm@1
-    displayName: 'npm install - streaming echo bot dependencies'
+    displayName: 'npm install'
     inputs: 
       workingDir: '$(TargetProjectDir)'
       verbose: false
