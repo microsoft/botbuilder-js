@@ -35,8 +35,8 @@ stages:
           TargetProjectDir: '$(System.DefaultWorkingDirectory)\libraries\streaming-e2e-tests\react-app'
         steps: 
           - template: create-react-app.yml
+          - template: customize-dljs.yml
 
-      - template: customize-dljs.yml
           
           # - powershell: npm run build
           
