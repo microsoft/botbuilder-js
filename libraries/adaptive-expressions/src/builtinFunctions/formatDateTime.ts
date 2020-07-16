@@ -39,7 +39,7 @@ export class FormatDateTime extends ExpressionEvaluator {
                 let value: any;
                 if (!error) {
                     const dateString: string = new Date(arg).toISOString();
-                    value = args.length >= 2 ? moment(dateString).utc().locale(locale).format(format) : dateString;
+                    value = args.length >= 2 ? moment(dateString).locale(locale).format(format) : dateString;
                 }
 
                 return {value, error};

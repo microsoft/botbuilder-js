@@ -26,7 +26,7 @@ const dataSource = [
     ['subtractFromTime(timestamp, 1, "Hour", "LLLL", "es")', 'jueves, 15 de marzo de 2018 12:00'],
     ['formatEpoch(unixTimestamp, "LLLL", "de")', 'Donnerstag, 15. März 2018 13:00'],
     ['formatTicks(ticks, "LLLL", "ru")', 'среда, 6 мая 2020 г., 11:47'],
-    ['formatDateTime("2018-03-15T02:00:00.000Z", "LLLL", "de")', 'Donnerstag, 15. März 2018 02:00'],
+    ['formatDateTime("2018-03-15T02:00:00.000", "LLLL", "de")', 'Donnerstag, 15. März 2018 02:00'],
     
 
     // accessProperty and accessIndex
