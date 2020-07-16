@@ -34,12 +34,15 @@ steps:
 
   # TEMPORARY TEST REACT APP FOR FASTER BUILDING OF TESTS
 
-  - task: CopyFiles@2
-    displayName: 'Copy react-app to: $(Build.ArtifactStagingDirectory)'
-    inputs:
-      SourceFolder: $(TargetProjectDir)
-      Contents: 'testReactApp/**'
-      TargetFolder: '$(Build.ArtifactStagingDirectory)'
+  # - task: CopyFiles@2
+  #   displayName: 'Copy react-app to: $(Build.ArtifactStagingDirectory)'
+  #   inputs:
+  #     SourceFolder: $(TargetProjectDir)
+  #     Contents: 'testReactApp/**'
+  #     TargetFolder: '$(Build.ArtifactStagingDirectory)'
+  - powershell: copy ./testReactApp '$(Build.ArtifactStagingDirectory)'
+    displayName: 'Copy testReactApp to ArtifactStagingDirectory'
+    workingDirectory: '$(TargetProjectDir)'
 
   - task: PublishBuildArtifacts@1
     displayName: 'Publish Artifact: testReactApp'
