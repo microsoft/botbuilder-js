@@ -37,8 +37,8 @@ steps:
   - task: CopyFiles@2
     displayName: 'Copy react-app to: $(Build.ArtifactStagingDirectory)'
     inputs:
-      SourceFolder: $(TargetProjectDir)/testReactApp
-      Contents: './**'
+      SourceFolder: $(TargetProjectDir)
+      Contents: 'testReactApp/**'
       TargetFolder: '$(Build.ArtifactStagingDirectory)'
 
   - task: PublishBuildArtifacts@1
