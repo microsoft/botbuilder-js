@@ -47,5 +47,6 @@ stages:
 
           - template: configure-to-bbjs-daily.yml
           
+          # - powershell: npm run build
           
           # - template: deploy_react_app.yml
