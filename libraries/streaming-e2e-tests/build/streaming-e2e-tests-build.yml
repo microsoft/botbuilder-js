@@ -31,11 +31,12 @@ stages:
       #     - template: configure-to-bbjs-daily.yml
       #     - template: deploy-bot.yml
 
-      # - job: Create_React_App_With_WebChat
-      #   variables:
-      #     TargetProjectDir: '$(RootReactPiecesDir)'
-      #   steps: 
-      #     - template: create-react-app.yml
+      - job: Create_React_App_With_WebChat
+        variables:
+          TargetProjectDir: '$(RootReactPiecesDir)'
+        steps: 
+          - template: create-react-app.yml
+
       - job: Customize_DLJS
         variables:
           PackageName: 'botframework-streaming'
