@@ -20,7 +20,7 @@ if(($PackageName -match 'botframework-') -or ($PackageName -match 'botbuilder-')
     $suffix = $PackageName.Substring($startOfSuffixIndex);
     $yamlFriendlyName = "LatestVersion_$suffix"
     
-    "##vso[task.setvariable variable=LatestVersion_$yamlFriendlyName;]$latestVersion";
+    "##vso[task.setvariable variable=$yamlFriendlyName;]$latestVersion";
 } else {
     "##vso[task.setvariable variable=LatestVersion_$PackageName;]$latestVersion";    
 }
