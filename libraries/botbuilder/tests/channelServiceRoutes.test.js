@@ -762,14 +762,17 @@ describe('channelServiceRoutes', function() {
                     body: null
                 };
 
-                setTimeout(() => {
-                    request.executeHandler('data', JSON.stringify(source));
-                    request.executeHandler('end');
-                }, 100);
-
-                ChannelServiceRoutes.readBody(request).then((body) => {
-                    assert.deepStrictEqual(body, source, `expected: ${ JSON.stringify(source) }. received: ${ JSON.stringify(body) }`);
+                // readBody Promise wrapper to resolve after the readBody request.on('data') and request.on('end') are assigned.
+                await new Promise(async resolve => {
+                    ChannelServiceRoutes.readBody(request).then((body) => {
+                        assert.deepStrictEqual(body, source, `expected: ${ JSON.stringify(source) }. received: ${ JSON.stringify(body) }`);
+                    });
+                    resolve();
                 });
+
+                // After the Promise resolve, trigger the request on handlers.
+                request.executeHandler('data', JSON.stringify(source));
+                request.executeHandler('end');
             });
         });
     });
