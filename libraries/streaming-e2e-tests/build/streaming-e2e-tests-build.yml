@@ -51,6 +51,6 @@ stages:
       #     ReactProjectDir: '$(RootReactPiecesDir)\react-app'
         steps:
           # - template: use-custom-dljs-in-webchat.yml
-          - template: deploy_react_app.yml
+          - template: deploy-react-app.yml
           
           
