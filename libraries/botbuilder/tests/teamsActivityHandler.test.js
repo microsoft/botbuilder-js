@@ -1526,7 +1526,7 @@ describe('TeamsActivityHandler', () => {
                 .catch(err => done(err));
         });
 
-        it('onTeamsTeamArchived routed activity', () => {
+        it('onTeamsTeamArchived routed activity', done => {
             const bot = new TeamsActivityHandler();
 
             let onTeamsTeamArchivedEventCalled = false;
@@ -1566,10 +1566,12 @@ describe('TeamsActivityHandler', () => {
                     assert(onTeamsTeamArchivedEventCalled, 'onTeamsTeamArchivedEvent handler not called');
                     assert(onConversationUpdateCalled, 'onConversationUpdate handler not called');
                     assert(onDialogCalled, 'onDialog handler not called');
-                });
+                    done();
+                })
+                .catch(err => done(err));
         });
 
-        it('onTeamsTeamDeleted routed activity', () => {
+        it('onTeamsTeamDeleted routed activity', done => {
             const bot = new TeamsActivityHandler();
 
             let onTeamsTeamDeletedEventCalled = false;
@@ -1609,10 +1611,12 @@ describe('TeamsActivityHandler', () => {
                     assert(onTeamsTeamDeletedEventCalled, 'onTeamsTeamDeletedEvent handler not called');
                     assert(onConversationUpdateCalled, 'onConversationUpdate handler not called');
                     assert(onDialogCalled, 'onDialog handler not called');
-                });
+                    done();
+                })
+                .catch(err => done(err));
         });
 
-        it('onTeamsTeamHardDeleted routed activity', () => {
+        it('onTeamsTeamHardDeleted routed activity', done => {
             const bot = new TeamsActivityHandler();
 
             let onTeamsTeamHardDeletedEventCalled = false;
@@ -1652,10 +1656,12 @@ describe('TeamsActivityHandler', () => {
                     assert(onTeamsTeamHardDeletedEventCalled, 'onTeamsTeamHardDeletedEvent handler not called');
                     assert(onConversationUpdateCalled, 'onConversationUpdate handler not called');
                     assert(onDialogCalled, 'onDialog handler not called');
-                });
+                    done();
+                })
+                .catch(err => done(err));
         });
 
-        it('onTeamsTeamRestored routed activity', () => {
+        it('onTeamsTeamRestored routed activity', done => {
             const bot = new TeamsActivityHandler();
 
             let onTeamsTeamRestoredEventCalled = false;
@@ -1695,10 +1701,12 @@ describe('TeamsActivityHandler', () => {
                     assert(onTeamsTeamRestoredEventCalled, 'onTeamsTeamRestoredEvent handler not called');
                     assert(onConversationUpdateCalled, 'onConversationUpdate handler not called');
                     assert(onDialogCalled, 'onDialog handler not called');
-                });
+                    done();
+                })
+                .catch(err => done(err));
         });
 
-        it('onTeamsTeamUnarchived routed activity', () => {
+        it('onTeamsTeamUnarchived routed activity', done => {
             const bot = new TeamsActivityHandler();
 
             let onTeamsTeamUnarchivedEventCalled = false;
@@ -1738,7 +1746,9 @@ describe('TeamsActivityHandler', () => {
                     assert(onTeamsTeamUnarchivedEventCalled, 'onTeamsTeamUnarchivedEvent handler not called');
                     assert(onConversationUpdateCalled, 'onConversationUpdate handler not called');
                     assert(onDialogCalled, 'onDialog handler not called');
-                });
+                    done();
+                })
+                .catch(err => done(err));
         });
 
         it('signin/verifyState routed activity', done => {
