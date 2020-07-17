@@ -4,7 +4,7 @@ steps:
 
   - script: npm run build
     displayName: 'Build react-app'
-    workingDirectory: '(ReactProjectDir)'
+    workingDirectory: '$(ReactProjectDir)'
 
   - powershell: |
       Write-Host "Compressing projecting into react-app.zip"
