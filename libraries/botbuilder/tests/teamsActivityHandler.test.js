@@ -1481,7 +1481,7 @@ describe('TeamsActivityHandler', () => {
                 .catch(err => done(err));
         });
 
-        it('onTeamsChannelRestored routed activity', () => {
+        it('onTeamsChannelRestored routed activity', done => {
             const bot = new TeamsActivityHandler();
     
             let onTeamsChannelRestoredEventCalled = false;
@@ -1524,7 +1524,9 @@ describe('TeamsActivityHandler', () => {
                     assert(onTeamsChannelRestoredEventCalled, 'onTeamsChannelRestoredEvent handler not called');
                     assert(onConversationUpdateCalled, 'onConversationUpdate handler not called');
                     assert(onDialogCalled, 'onDialog handler not called');
-                });
+                    done();
+                })
+                .catch(err => done(err));
         });
         
         it('onTeamsTeamRenamed routed activity', done => {
