@@ -12,19 +12,19 @@ steps:
   # due to DevOps YAML inability to handle nested variables for dynamic variable names
   - task: colinsalmcorner.colinsalmcorner-buildtasks.tag-build-task.tagBuildOrRelease@0
     displayName: 'Tag Build with $(BotBuilder) version'
-    condition: eq(variables.PackageName, $(BotBuilder))
+    condition: eq(variables.PackageName, 'botbuilder')
     inputs:
       tags: 'Using $(PackageName) version $(LatestVersion_botbuilder)'
 
   - task: colinsalmcorner.colinsalmcorner-buildtasks.tag-build-task.tagBuildOrRelease@0
     displayName: 'Tag Build with $(BfStreaming) version'
-    condition: eq(variables.PackageName, $(BfStreaming))
+    condition: eq(variables.PackageName, 'botframework-streaming')
     inputs:
       tags: 'Using $(PackageName) version $(LatestVersion_streaming)'
 
   - task: PowerShell@2
     displayName: Set Dependency to Latest $(PackageName) Version
-    condition: eq(variables.PackageName, $(BotBuilder))
+    condition: eq(variables.PackageName, 'botbuilder')
     inputs:
         targetType: 'filePath'
         filePath: $(System.DefaultWorkingDirectory)/libraries/streaming-e2e-tests/build/set-dependency-version-in-packagejson.ps1
@@ -35,7 +35,7 @@ steps:
   
   - task: PowerShell@2
     displayName: Set Dependency to Latest $(PackageName) Version
-    condition: eq(variables.PackageName, $(BfStreaming))
+    condition: eq(variables.PackageName, 'botframework-streaming')
     inputs:
         targetType: 'filePath'
         filePath: $(System.DefaultWorkingDirectory)/libraries/streaming-e2e-tests/build/set-dependency-version-in-packagejson.ps1
