@@ -46,19 +46,14 @@ const getSettings = () => {
 var canConnectToEmulator = undefined;
 const checkEmulator = async () => {
     // We don't want to check for this multiple times, due to waiting on fetch() timeouts when connection fails
-    if (canConnectToEmulator !== undefined) {
-        if (!fs.existsSync(emulatorPath)) {
-            canConnectToEmulator = false;
-        }
+    if (canConnectToEmulator === undefined) {
         try {
             await fetch(emulatorEndpoint);
+            canConnectToEmulator = true;
         } catch (err) {
             canConnectToEmulator = false;
+            console.warn(`Unable to connect to Cosmos Emulator at ${ emulatorEndpoint }. Running tests against Nock recordings.`);
         }
-        canConnectToEmulator = true;
-    }
-    if (canConnectToEmulator === false) {
-        console.warn(`Unable to connect to Cosmos Emulator at ${ emulatorEndpoint }. Running tests against Nock recordings.`);
     }
     return canConnectToEmulator;
 };
