@@ -1,4 +1,7 @@
 steps:
+  - script: npm install
+    workingDirectory: '$(System.DefaultWorkingDirectory)\libraries\streaming-e2e-tests\react-app\testReactApp'
+
   - script: npm run build
     displayName: 'Build react-app'
     workingDirectory: '$(System.DefaultWorkingDirectory)\libraries\streaming-e2e-tests\react-app\testReactApp'
