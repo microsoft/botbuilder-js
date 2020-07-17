@@ -17,7 +17,7 @@ import { Options } from '../options';
 import { ReturnType } from '../returnType';
 
 /**
- * Return true if a given TimexProperty or timex string refers to a valid date.
+ * Return true if a given `TimexProperty` or timex string refers to a valid date.
  * Valid dates contain the month and dayOfMonth, or contain the dayOfWeek.
  */
 export class IsDate extends ExpressionEvaluator {

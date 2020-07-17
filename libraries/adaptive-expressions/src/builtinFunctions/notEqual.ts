@@ -11,7 +11,7 @@ import { FunctionUtils } from '../functionUtils';
 import { ComparisonEvaluator } from './comparisonEvaluator';
 
 /**
- * Teturn true if the two items are not equal.
+ * Return true if the two items are not equal.
  */
 export class NotEqual extends ComparisonEvaluator {
     public constructor() {

@@ -210,7 +210,7 @@ export class FunctionUtils {
 
     /**
      * Verify value is numeric.
-     * @param value value to check.
+     * @param value Value to check.
      * @param expression Expression that led to value.
      * @returns Error or undefined if invalid.
      */
@@ -225,7 +225,7 @@ export class FunctionUtils {
 
     /**
      * Verify value is numeric.
-     * @param value value to check.
+     * @param value Value to check.
      * @param expression Expression that led to value.
      * @returns Error or undefined if invalid.
      */
@@ -251,7 +251,7 @@ export class FunctionUtils {
 
     /**
      * Verify value is numeric list.
-     * @param value value to check.
+     * @param value Value to check.
      * @param expression Expression that led to value.
      * @returns Error or undefined if invalid.
      */
@@ -273,7 +273,7 @@ export class FunctionUtils {
 
     /**
      * Verify value contains elements.
-     * @param value value to check.
+     * @param value Value to check.
      * @param expression Expression that led to value.
      * @returns Error or undefined if invalid.
      */
@@ -288,7 +288,7 @@ export class FunctionUtils {
 
     /**
      * Verify value is not null or undefined.
-     * @param value value to check.
+     * @param value Value to check.
      * @param expression Expression that led to value.
      * @returns Error or undefined if valid.
      */
@@ -303,7 +303,7 @@ export class FunctionUtils {
 
     /**
      * Verify value is an integer.
-     * @param value value to check.
+     * @param value Value to check.
      * @param expression Expression that led to value.
      * @returns Error or undefined if invalid.
      */
@@ -318,7 +318,7 @@ export class FunctionUtils {
 
     /**
      * Verify value is an list.
-     * @param value value to check.
+     * @param value Value to check.
      * @param expression Expression that led to value.
      * @returns Error or undefined if invalid.
      */
@@ -333,7 +333,7 @@ export class FunctionUtils {
 
     /**
      * Verify value is a string.
-     * @param value value to check.
+     * @param value Value to check.
      * @param expression Expression that led to value.
      * @returns Error or undefined if invalid.
      */
@@ -348,7 +348,7 @@ export class FunctionUtils {
 
     /**
      * Verify an object is neither a string nor null.
-     * @param value value to check.
+     * @param value Value to check.
      * @param expression Expression that led to value.
      * @returns Error or undefined if invalid.
      */
@@ -363,7 +363,7 @@ export class FunctionUtils {
 
     /**
      * Verify value is a number or string or null.
-     * @param value value to check.
+     * @param value Value to check.
      * @param expression Expression that led to value.
      * @returns Error or undefined if invalid.
      */
@@ -378,7 +378,7 @@ export class FunctionUtils {
 
     /**
      * Verify value is a number or string.
-     * @param value value to check.
+     * @param value Value to check.
      * @param expression Expression that led to value.
      * @returns Error or undefined if invalid.
      */
@@ -393,7 +393,7 @@ export class FunctionUtils {
 
     /**
      * Verify value is boolean.
-     * @param value value to check.
+     * @param value Value to check.
      * @param expression Expression that led to value.
      * @returns Error or undefined if invalid.
      */
@@ -408,7 +408,7 @@ export class FunctionUtils {
 
     /**
      * Verify a timestamp string is valid timestamp format.
-     * @param value timestamp string to check.
+     * @param value Timestamp string to check.
      * @returns Error or undefined if invalid.
      */
     public static verifyTimestamp(value: any): string | undefined {
@@ -427,7 +427,7 @@ export class FunctionUtils {
 
     /**
      * Verify a timestamp string is valid ISO timestamp format.
-     * @param value timestamp string to check.
+     * @param value Timestamp string to check.
      * @returns Error or undefined if invalid.
      */
     public static verifyISOTimestamp(value: any): string | undefined {
@@ -612,7 +612,7 @@ export class FunctionUtils {
     }
 
     /**
-     * Lookup a string ot number index of an Object.
+     * Lookup a string or number index of an Object.
      * @param instance Instance with property.
      * @param property Property to lookup.
      * @returns Value and error information if any.
@@ -643,7 +643,7 @@ export class FunctionUtils {
      * Transform a timestamp into another with customized function.
      * @param timeStamp Original time stamp.
      * @param transform Transform function.
-     * @returns new timestamp and error.
+     * @returns New timestamp and error.
      */
     public static parseTimestamp(timeStamp: string, transform?: (arg0: Date) => any): ValueWithError {
         let value: any;
@@ -711,7 +711,7 @@ export class FunctionUtils {
 
     /**
      * Wrap string or undefined into string. Default to empty string.
-     * @param input input string
+     * @param input Input string
      */
     public static parseStringOrUndefined(input: string | undefined): string {
         if (typeof input === 'string') {
@@ -722,9 +722,9 @@ export class FunctionUtils {
     }
 
     /**
-     * Try to accumulate the path from an Accessor or Element, from right to left.
-     * @param expression expression.
-     * @param state scope.
+     * State object for resolving memory paths.
+     * @param expression Expression.
+     * @param state Scope.
      * @param options Options used in evaluation.
      * @returns Return the accumulated path and the expression left unable to accumulate.
      */
@@ -736,9 +736,7 @@ export class FunctionUtils {
                 path = (left.children[0] as Constant).value + '.' + path;
                 left = left.children.length === 2 ? left.children[1] : undefined;
             } else if (left.type === ExpressionType.Element) {
-                let value: any;
-                let error: string;
-                ({ value, error } = left.children[1].tryEvaluate(state, options));
+                let {value, error} = left.children[1].tryEvaluate(state, options);
 
                 if (error !== undefined) {
                     return { path: undefined, left: undefined, error };
@@ -853,7 +851,7 @@ export class FunctionUtils {
     /**
      * Is number helper function.
      * @param instance Input.
-     * @returns Ture if the input is a number.
+     * @returns True if the input is a number.
      */
     public static isNumber(instance: any): boolean {
         return instance !== undefined && instance !== null && typeof instance === 'number' && !Number.isNaN(instance);
@@ -920,7 +918,7 @@ export class FunctionUtils {
 
     /**
      * Convert string into Uint8Array object.
-     * @param stringToConvert input string.
+     * @param stringToConvert Input string.
      */
     public static toBinary(stringToConvert: string): Uint8Array {
         let result = new ArrayBuffer(stringToConvert.length);

@@ -17,7 +17,7 @@ import { Options } from '../options';
 import { ReturnType } from '../returnType';
 
 /**
- * Return true if a given TimexProperty or Timex expression refers to a valid time range Valid time ranges contain partOfDay.
+ * Return true if a given `TimexProperty` or Timex string refers to a valid time range Valid time ranges contain partOfDay.
  */
 export class IsTimeRange extends ExpressionEvaluator {
     public constructor() {
