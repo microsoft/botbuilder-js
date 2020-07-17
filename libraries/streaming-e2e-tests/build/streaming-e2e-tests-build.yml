@@ -15,44 +15,25 @@ pool:
 # AzureSubscription: defined in Azure
 # ResourceGroup - need to define in Azure
 variables:
-  runCodesignValidationInjection: false
   RootReactPiecesDir: '$(System.DefaultWorkingDirectory)\libraries\streaming-e2e-tests\react-app'
   DLJSDir: '$(System.DefaultWorkingDirectory)\libraries\streaming-e2e-tests\react-app\BotFramework-DirectLineJS'
-  ResourceGroup: 'ash-streaming-js'
-  ReactAppService: 'ash-react-app'
+  # ResourceGroup: 'ash-streaming-js'
+  # ReactAppService: 'ash-react-app'
+  runCodesignValidationInjection: false
+  
 
 stages:
   - stage: Deploy_Projects
     jobs:
-      # - job: Deploy_Bot
-      #   variables:
-      #     TargetProjectDir: '$(System.DefaultWorkingDirectory)\libraries\streaming-e2e-tests\bot'
-      #     PackageName: 'botbuilder'
-      #     BotName: 'ash-streaming-bot'
-      #   steps:
-      #     - template: configure-to-bbjs-daily.yml
-      #     - template: deploy-bot.yml
-
-      - job: Create_React_App_With_WebChat
-        steps: 
-          - template: create-react-app.yml
-
-      - job: Customize_DLJS
+      - job: Deploy_Bot
         variables:
-          PackageName: 'botframework-streaming'
-          TargetProjectDir: $(DLJSDir)
+          TargetProjectDir: '$(System.DefaultWorkingDirectory)\libraries\streaming-e2e-tests\bot'
+          PackageName: 'botbuilder'
+          BotName: 'ash-streaming-bot'
         steps:
-          - template: customize-dljs.yml
+          - template: configure-to-bbjs-daily.yml
+          - template: deploy-bot.yml
 
-      - job: Deploy_React_App_With_Custom_DLJS
-        dependsOn:
-          - Create_React_App_With_WebChat
-          - Customize_DLJS
-        condition: succeeded()
-        variables:
-          ReactProjectDir: '$(RootReactPiecesDir)\react-app'
-        steps:
-          - template: use-custom-dljs-in-webchat.yml
-          - template: deploy-react-app.yml
+      - template: create-and-deploy-streaming-react-app.yml
           
           
