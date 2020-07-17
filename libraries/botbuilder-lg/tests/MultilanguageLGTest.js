@@ -2,12 +2,39 @@ const { MultiLanguageLG, Templates} = require(`../`);
 const assert = require(`assert`);
 
 describe('MultilanguageLGTest', function() {
+    /**
+     * Disk I/O is slow and variable, causing issues in pipeline tests, so we
+     * preload all of the file reads here so that it doesn't count against individual test duration.
+     */
+    const preloaded = {
+        EmptyFallbackLocale: function() {
+            const localPerFile = new Map();
+            localPerFile.set('en', `${ __dirname }/testData/MultiLanguage/a.en.lg`);
+            localPerFile.set('', `${ __dirname }/testData/MultiLanguage/a.lg`);
+
+            return new MultiLanguageLG(undefined, localPerFile);
+        }(),
+        SpecificFallbackLocale: function() {
+            const localPerFile = new Map();
+            localPerFile.set('en', `${ __dirname }/testData/MultiLanguage/a.en.lg`);
+
+            return new MultiLanguageLG(undefined, localPerFile, 'en');
+        }(),
+        SpecificFallbackLocale2: function() {
+            const enTemplates = Templates.parseText('[import](1.lg)\r\n # template\r\n - hi', 'abc', defaultFileResolver);
+            const templatesDict = new Map();
+            templatesDict.set('en', enTemplates);
+
+            return new MultiLanguageLG(templatesDict, undefined, 'en');
+        }()
+    };
+
     it('EmptyFallbackLocale', function() {
         const localPerFile = new Map();
         localPerFile.set('en', `${ __dirname }/testData/MultiLanguage/a.en.lg`);
         localPerFile.set('', `${ __dirname }/testData/MultiLanguage/a.lg`);
 
-        const generator = new MultiLanguageLG(undefined, localPerFile);
+        const generator = preloaded.EmptyFallbackLocale;
         
         // fallback to "a.en.lg"
         let result = generator.generate('templatec', undefined, 'en-us');
@@ -27,10 +54,7 @@ describe('MultilanguageLGTest', function() {
     });
 
     it('SpecificFallbackLocale', function() {
-        const localPerFile = new Map();
-        localPerFile.set('en', `${ __dirname }/testData/MultiLanguage/a.en.lg`);
-
-        const generator = new MultiLanguageLG(undefined, localPerFile, 'en');
+        const generator = preloaded.SpecificFallbackLocale;
         
         // fallback to "a.en.lg"
         let result = generator.generate('templatec', undefined, 'en-us');
@@ -49,12 +73,8 @@ describe('MultilanguageLGTest', function() {
         assert.strictEqual(result, 'from a.en.lg');
     });
 
-    it('SpecificFallbackLocale', function() {
-        const enTemplates = Templates.parseText('[import](1.lg)\r\n # template\r\n - hi', 'abc', defaultFileResolver);
-        const templatesDict = new Map();
-        templatesDict.set('en', enTemplates);
-
-        const generator = new MultiLanguageLG(templatesDict, undefined, 'en');
+    it('SpecificFallbackLocale2', function() {
+        const generator = preloaded.SpecificFallbackLocale2;
         
         // fallback to "a.en.lg"
         let result = generator.generate('myTemplate', undefined, 'en-us');
