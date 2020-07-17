@@ -4,7 +4,7 @@
 import { BotTelemetryClient, NullTelemetryClient } from './botTelemetryClient';
 import { Middleware } from './middlewareSet';
 import { TurnContext } from './turnContext';
-import { Activity, ActivityTypes, ConversationReference, ResourceResponse } from 'botframework-schema';
+import { Activity, ActivityTypes, ConversationReference, ResourceResponse, TeamsChannelData } from 'botframework-schema';
 import { TelemetryConstants } from './telemetryConstants';
 
 /**
@@ -216,6 +216,13 @@ export class TelemetryLoggerMiddleware implements Middleware {
             }
         }
 
+        this.populateAdditionalChannelProperties(activity, properties);
+
+        // Additional Properties can override "stock" properties.
+        if (telemetryProperties) {
+            return Object.assign({}, properties, telemetryProperties);
+        }
+
         return properties;
     }
 
@@ -229,8 +236,7 @@ export class TelemetryLoggerMiddleware implements Middleware {
     protected async fillSendEventProperties(activity: Activity, telemetryProperties?: {[key: string]:string}): Promise<{ [key: string]: string }> {
         const properties: { [key: string]: string } = {};
 
-        if (activity)
-        {
+        if (activity) {
             properties[TelemetryConstants.replyActivityIdProperty] = activity.replyToId || '';
             properties[TelemetryConstants.recipientIdProperty] = (activity.recipient && activity.recipient.id) ? activity.recipient.id : '';
             properties[TelemetryConstants.conversationNameProperty] = (activity.conversation && activity.conversation.name) ? activity.conversation.name : '';
@@ -256,8 +262,7 @@ export class TelemetryLoggerMiddleware implements Middleware {
             }
 
             // Additional Properties can override "stock" properties.
-            if (telemetryProperties)
-            {
+            if (telemetryProperties) {
                 return Object.assign({}, properties, telemetryProperties);
             }
         }
@@ -289,8 +294,7 @@ export class TelemetryLoggerMiddleware implements Middleware {
             }
 
             // Additional Properties can override "stock" properties.
-            if (telemetryProperties)
-            {
+            if (telemetryProperties) {
                 return Object.assign({}, properties, telemetryProperties);
             }
         }
@@ -315,12 +319,31 @@ export class TelemetryLoggerMiddleware implements Middleware {
             properties[TelemetryConstants.conversationNameProperty] = (activity.conversation && activity.conversation.name) ? activity.conversation.name : '';
 
             // Additional Properties can override "stock" properties.
-            if (telemetryProperties)
-            {
+            if (telemetryProperties) {
                 return Object.assign({}, properties, telemetryProperties);
             }
         }
 
         return properties;
+    }
+
+    private populateAdditionalChannelProperties(activity: Activity, properties?: {[key: string]: string}): void {
+        if (activity) {
+            switch (activity.channelId) {
+                case 'msteams':
+                    const channelData = activity.channelData as TeamsChannelData;
+                        
+                    properties['TeamsTenantId'] = channelData.tenant ? channelData.tenant.id : '';
+                    properties['TeamsUserAadObjectId'] = activity.from ? activity.from.aadObjectId : '';
+
+                    if (channelData.team) {
+                        properties['TeamsTeamInfo'] = JSON.stringify(channelData.team);
+                    }
+
+                    break;
+                default:
+                    break;
+            }
+        }
     }
 }
