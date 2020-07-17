@@ -10,6 +10,9 @@ const one = ['one'];
 const oneTwo = ['one', 'two'];
 const dataSource = [
 
+    ['getNextViableDate(\'XXXX-02-29\')', '2024-02-29'],
+    ['getPreviousViableDate(\'XXXX-02-29\')', '2020-02-29'],
+
     // accessProperty and accessIndex
     ['$index', 'index'],
     ['`hi\\``', 'hi`'], // `hi\`` -> hi`
