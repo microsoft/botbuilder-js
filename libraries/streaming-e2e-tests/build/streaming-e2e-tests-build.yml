@@ -13,10 +13,13 @@ pool:
 # TODO: variables
 # BotName: defined in Azure
 # AzureSubscription: defined in Azure
+# ResourceGroup - need to define in Azure
 variables:
   runCodesignValidationInjection: false
   RootReactPiecesDir: '$(System.DefaultWorkingDirectory)\libraries\streaming-e2e-tests\react-app'
   DLJSDir: '$(System.DefaultWorkingDirectory)\libraries\streaming-e2e-tests\react-app\BotFramework-DirectLineJS'
+  ResourceGroup: 'ash-streaming-js'
+  ReactAppService: 'ash-react-app'
 
 stages:
   - stage: Deploy_Projects
@@ -25,7 +28,6 @@ stages:
       #   variables:
       #     TargetProjectDir: '$(System.DefaultWorkingDirectory)\libraries\streaming-e2e-tests\bot'
       #     PackageName: 'botbuilder'
-      #     ResourceGroup: 'ash-streaming-js'
       #     BotName: 'ash-streaming-bot'
       #   steps:
       #     - template: configure-to-bbjs-daily.yml

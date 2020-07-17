@@ -6,7 +6,12 @@ steps:
     displayName: 'Build react-app'
     workingDirectory: '$(System.DefaultWorkingDirectory)\libraries\streaming-e2e-tests\react-app\testReactApp'
 
-  - powershell: ls
-    workingDirectory: '$(System.DefaultWorkingDirectory)\libraries\streaming-e2e-tests\react-app\testReactApp'
-  
+  - powershell: |
+      Write-Host "Comprssing projecting into react-app.zip"
 
+      Compress-Archive "$(System.DefaultWorkingDirectory)\libraries\streaming-e2e-tests\react-app\testReactApp\build\*" "$(System.DefaultWorkingDirectory)\libraries\streaming-e2e-tests\react-app\testReactApp\react-app.zip" 
+    displayName:
+
+  - script: az webapp deployment source config-zip --resource-group "$(ResourceGroup)" --name "$(ReactAppService)" --src "$(System.DefaultWorkingDirectory)\libraries\streaming-e2e-tests\react-app\testReactApp\react-app.zip"
+    displayName: 'Deploy react-app'
+    workingDirectory: '$(System.DefaultWorkingDirectory)\libraries\streaming-e2e-tests\react-app\testReactApp'
