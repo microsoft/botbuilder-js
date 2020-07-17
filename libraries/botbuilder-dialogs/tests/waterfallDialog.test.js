@@ -29,10 +29,10 @@ class MyWaterfall extends WaterfallDialog {
     }
 }
 
-describe('WaterfallDialog', function () {
+describe('WaterfallDialog', function() {
     this.timeout(5000);
 
-    it('should execute a sequence of waterfall steps.', async function () {
+    it('should execute a sequence of waterfall steps.', async function() {
         // Initialize TestAdapter.
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);
@@ -57,12 +57,12 @@ describe('WaterfallDialog', function () {
         const dialogState = convoState.createProperty('dialogState');
         const dialogs = new DialogSet(dialogState);
         dialogs.add(new WaterfallDialog('a', [
-            async function (step) {
+            async function(step) {
                 assert(step, 'hey!');
                 await step.context.sendActivity('bot responding.');
                 return Dialog.EndOfTurn;
             },
-            async function (step) {
+            async function(step) {
                 assert(step);
                 return await step.endDialog('ending WaterfallDialog.');
             }
@@ -75,7 +75,7 @@ describe('WaterfallDialog', function () {
             .startTest();
     });
 
-    it('should execute a sequence of waterfall steps when using addStep().', async function () {
+    it('should execute a sequence of waterfall steps when using addStep().', async function() {
         // Initialize TestAdapter.
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);
@@ -100,13 +100,13 @@ describe('WaterfallDialog', function () {
         const dialogState = convoState.createProperty('dialogState');
         const dialogs = new DialogSet(dialogState);
         var waterfall = new WaterfallDialog('a')
-            .addStep(async function (step) {
+            .addStep(async function(step) {
                 assert(step, 'hey!');
                 await step.context.sendActivity('bot responding.');
                 return Dialog.EndOfTurn;
             })
             .addStep(
-                async function (step) {
+                async function(step) {
                     assert(step);
                     return await step.endDialog('ending WaterfallDialog.');
                 }
@@ -120,7 +120,7 @@ describe('WaterfallDialog', function () {
             .startTest();
     });
 
-    it('should execute a sequence of waterfall steps when using derived class.', async function () {
+    it('should execute a sequence of waterfall steps when using derived class.', async function() {
         // Initialize TestAdapter.
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);
@@ -158,7 +158,7 @@ describe('WaterfallDialog', function () {
     });
 
 
-    it('should support calling next() to move to next steps.', async function () {
+    it('should support calling next() to move to next steps.', async function() {
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);
 
@@ -172,12 +172,12 @@ describe('WaterfallDialog', function () {
         const dialogState = convoState.createProperty('dialogState');
         const dialogs = new DialogSet(dialogState);
         dialogs.add(new WaterfallDialog('a', [
-            async function (step) {
+            async function(step) {
                 assert(step.options && step.options.test === 'test', `step.options not found.`);
                 await step.context.sendActivity('bot responding.');
                 return await step.next(step.options.test);
             },
-            async function (step) {
+            async function(step) {
                 assert(step);
                 return await step.endDialog(step.result);
             }
@@ -189,7 +189,7 @@ describe('WaterfallDialog', function () {
             .startTest();
     });
 
-    it('should support receive options via `step.options`.', async function () {
+    it('should support receive options via `step.options`.', async function() {
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);
 
@@ -210,7 +210,7 @@ describe('WaterfallDialog', function () {
         const dialogState = convoState.createProperty('dialogState');
         const dialogs = new DialogSet(dialogState);
         dialogs.add(new WaterfallDialog('a', [
-            async function (step) {
+            async function(step) {
                 assert(step, `step not found.`);
                 assert(step.options, `step.options not found.`);
                 assert.strictEqual(step.options.test,
@@ -219,7 +219,7 @@ describe('WaterfallDialog', function () {
                 await step.context.sendActivity('bot responding.');
                 return Dialog.EndOfTurn;
             },
-            async function (step) {
+            async function(step) {
                 assert(step);
                 return await step.endDialog('ending WaterfallDialog.');
             }
@@ -232,7 +232,7 @@ describe('WaterfallDialog', function () {
             .startTest();
     });
 
-    it('should allow changing of `step.options` and persist changes across steps.', async function () {
+    it('should allow changing of `step.options` and persist changes across steps.', async function() {
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);
 
@@ -253,7 +253,7 @@ describe('WaterfallDialog', function () {
         const dialogState = convoState.createProperty('dialogState');
         const dialogs = new DialogSet(dialogState);
         dialogs.add(new WaterfallDialog('a', [
-            async function (step) {
+            async function(step) {
                 assert(step, `step not found.`);
                 assert(step.options, `step.options not found.`);
                 assert.strictEqual(step.options.test,
@@ -263,7 +263,7 @@ describe('WaterfallDialog', function () {
                 await step.context.sendActivity('bot responding.');
                 return Dialog.EndOfTurn;
             },
-            async function (step) {
+            async function(step) {
                 assert(step, `step not found.`);
                 assert(step.options, `step.options not found.`);
                 assert.strictEqual(step.options.test,
@@ -273,7 +273,7 @@ describe('WaterfallDialog', function () {
                 await step.context.sendActivity('bot responding again.');
                 return Dialog.EndOfTurn;
             },
-            async function (step) {
+            async function(step) {
                 assert(step, `step not found.`);
                 assert.strictEqual(step.options.test,
                     'test3',
@@ -291,7 +291,7 @@ describe('WaterfallDialog', function () {
             .startTest();
     });
 
-    it('should allow setting of step.values and persist values across steps.', async function () {
+    it('should allow setting of step.values and persist values across steps.', async function() {
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);
 
@@ -312,14 +312,14 @@ describe('WaterfallDialog', function () {
         const dialogState = convoState.createProperty('dialogState');
         const dialogs = new DialogSet(dialogState);
         dialogs.add(new WaterfallDialog('a', [
-            async function (step) {
+            async function(step) {
                 assert(step, `step not found.`);
                 assert.equal(typeof step.values, 'object', `initial step.values should be an object.`);
-                step.values.test = 'test1'
+                step.values.test = 'test1';
                 await step.context.sendActivity('bot responding.');
                 return Dialog.EndOfTurn;
             },
-            async function (step) {
+            async function(step) {
                 assert(step, `step not found.`);
                 assert(step.values, `step.values not found.`);
                 assert.strictEqual(step.values.test,
@@ -329,7 +329,7 @@ describe('WaterfallDialog', function () {
                 await step.context.sendActivity('bot responding again.');
                 return Dialog.EndOfTurn;
             },
-            async function (step) {
+            async function(step) {
                 assert(step, `step not found.`);
                 assert(step.values, `step.values not found.`);
                 assert.strictEqual(step.values.test,
@@ -372,14 +372,14 @@ describe('WaterfallDialog', function () {
         const dialogState = convoState.createProperty('dialogState');
         const dialogs = new DialogSet(dialogState);
         dialogs.add(new WaterfallDialog('a', [
-            async function (step) {
+            async function(step) {
                 assert(step, `step not found.`);
                 assert.equal(typeof step.values, 'object', `initial step.values should be an object.`);
                 step.values.test = 'test1';
                 await step.context.sendActivity('bot responding.');
                 return await step.beginDialog('b');
             },
-            async function (step) {
+            async function(step) {
                 assert(step, `step not found.`);
                 assert(step.values, `step.values not found.`);
                 assert.strictEqual(step.values.test,
@@ -393,7 +393,7 @@ describe('WaterfallDialog', function () {
         ]));
 
         dialogs.add(new WaterfallDialog('b', [
-            async function (step) {
+            async function(step) {
                 assert(step, `step not found.`);
                 assert.equal(typeof step.values, 'object', `new step.values for second WaterfallDialog should be an object.`);
                 assert(!step.values.hasOwnProperty('test'), `new WaterfallDialog's step.values shouldn't have values from parent dialog's step.values.`);
@@ -403,7 +403,7 @@ describe('WaterfallDialog', function () {
                 step.values.test_b = 'test_b';
                 return Dialog.EndOfTurn;
             },
-            async function (step) {
+            async function(step) {
                 assert(step, `step not found.`);
                 assert.equal(typeof step.values, 'object', `step.values for second WaterfallDialog should be an object.`);
                 assert(!step.values.hasOwnProperty('test'), `new WaterfallDialog's step.values shouldn't have values from parent dialog's step.values.`);
@@ -413,7 +413,7 @@ describe('WaterfallDialog', function () {
 
                 return await step.endDialog();
             }
-        ]))
+        ]));
 
         await adapter.send(beginMessage)
             .assertReply('bot responding.')
@@ -422,7 +422,7 @@ describe('WaterfallDialog', function () {
             .startTest();
     });
 
-    it('should not move step.options from one WaterfallDialog to another.', async function () {
+    it('should not move step.options from one WaterfallDialog to another.', async function() {
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);
 
@@ -443,7 +443,7 @@ describe('WaterfallDialog', function () {
         const dialogState = convoState.createProperty('dialogState');
         const dialogs = new DialogSet(dialogState);
         dialogs.add(new WaterfallDialog('a', [
-            async function (step) {
+            async function(step) {
                 assert(step, `step not found.`);
                 assert(step.options, `step.options not found.`);
                 assert.strictEqual(step.options.test_a,
@@ -452,7 +452,7 @@ describe('WaterfallDialog', function () {
                 await step.context.sendActivity('bot responding.');
                 return await step.beginDialog('b');
             },
-            async function (step) {
+            async function(step) {
                 assert(step, `step not found.`);
                 assert(step.options, `step.options not found.`);
                 assert.strictEqual(step.options.test_a,
@@ -463,7 +463,7 @@ describe('WaterfallDialog', function () {
         ]));
 
         dialogs.add(new WaterfallDialog('b', [
-            async function (step) {
+            async function(step) {
                 assert(step, `step not found.`);
                 assert(step.options, `step.options not found.`);
                 assert.strictEqual(step.options.test_a,
@@ -472,15 +472,15 @@ describe('WaterfallDialog', function () {
                 step.options.test_b = 'test_b';
                 return Dialog.EndOfTurn;
             },
-            async function (step) {
+            async function(step) {
                 assert(step, `step not found.`);
                 assert(step.options, `step.options not found.`);
                 assert.strictEqual(step.options.test_b,
                     'test_b',
-                    `step.options.test_b "${ step.options.test_b }", was not expected value of "test_b".`)
+                    `step.options.test_b "${ step.options.test_b }", was not expected value of "test_b".`);
                 return await step.endDialog();
             }
-        ]))
+        ]));
 
         await adapter.send(beginMessage)
             .assertReply('bot responding.')
@@ -510,12 +510,12 @@ describe('WaterfallDialog', function () {
         const dialogState = convoState.createProperty('dialogState');
         const dialogs = new DialogSet(dialogState);
         dialogs.add(new WaterfallDialog('a', [
-            async function (step) {
+            async function(step) {
                 assert(step, `step not found.`);
                 await step.context.sendActivity('bot responding.');
                 return Dialog.EndOfTurn;
             },
-            async function (step) {
+            async function(step) {
                 assert(step, `step not found.`);
                 return Dialog.EndOfTurn;
             }
@@ -550,7 +550,7 @@ describe('WaterfallDialog', function () {
         const dialogState = convoState.createProperty('dialogState');
         const dialogs = new DialogSet(dialogState);
         dialogs.add(new WaterfallDialog('a', [
-            async function (step) {
+            async function(step) {
                 assert(step, `step not found.`);
                 await step.context.sendActivity('bot responding.');
                 try {
@@ -561,10 +561,10 @@ describe('WaterfallDialog', function () {
                 }
                 return Dialog.EndOfTurn;
             },
-            async function (step) {
+            async function(step) {
                 assert(step, `step not found.`);
             },
-            async function (step) {
+            async function(step) {
                 assert(step, `step not found.`);
             }
         ]));
@@ -594,15 +594,15 @@ describe('WaterfallDialog', function () {
         const dialogState = convoState.createProperty('dialogState');
         const dialogs = new DialogSet(dialogState);
         dialogs.add(new WaterfallDialog('a', [
-            async function (step) {
+            async function(step) {
                 assert(step, `step not found.`);
                 await step.context.sendActivity('bot responding.');
                 return Dialog.EndOfTurn;
             },
-            async function (step) {
+            async function(step) {
                 assert(step, `step not found.`);
                 assert(step.context.activity.text === 'continue.', `expected "continue." not ${ step.context.activity.text }`);
-                return await step.endDialog('done.')
+                return await step.endDialog('done.');
             }
         ]));
 
@@ -621,7 +621,7 @@ describe('WaterfallDialog', function () {
         var trackEventCalled;
         dialog.telemetryClient = {
             trackEvent(telemetry) {
-                assert(telemetry.properties.StepName == dialog.steps[index].name, `telemetry contains incorrect step name: "${telemetry.properties.StepName}"`);
+                assert(telemetry.properties.StepName == dialog.steps[index].name, `telemetry contains incorrect step name: "${ telemetry.properties.StepName }"`);
                 trackEventCalled = true;
             }
         };
@@ -643,8 +643,8 @@ describe('WaterfallDialog', function () {
             step => ({ status: DialogTurnStatus.complete, result: step })
         ]);
 
-        const component = new ComponentDialog('composite')
-        component.addDialog(waterfall)
+        const component = new ComponentDialog('composite');
+        component.addDialog(waterfall);
 
         const dialogs = new DialogSet(dialogState);
         dialogs.add(component);
@@ -658,9 +658,10 @@ describe('WaterfallDialog', function () {
                 const waterfallParent = results.result.parent.parent;
 
                 assert.strictEqual(waterfallParent.dialogs.dialogs['composite'], component, 'WaterfallDialog "waterfall" parent should be equal to ComponentDialog "composite".');
+                done();
+            } else {
+                done(new Error('status results not completed'));
             }
-
-            done();
         });
 
         adapter.send('Hi');
@@ -683,9 +684,10 @@ describe('WaterfallDialog', function () {
 
             if (results.status === DialogTurnStatus.complete) {
                 assert.deepStrictEqual(results.result.parent, dc, 'waterfall parent should be equal to Dialog Context.');
+                done();
+            } else {
+                done(new Error('status results not completed'));
             }
-
-            done();
         });
 
         adapter.send('Hi');
