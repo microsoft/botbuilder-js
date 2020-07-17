@@ -5,7 +5,7 @@ steps:
   # - script: npm run build
   #   displayName: 'Build react-app'
   #   workingDirectory: '$(System.DefaultWorkingDirectory)\libraries\streaming-e2e-tests\react-app\testReactApp'
-  - powershell: Write-Host "$(System.DefaultWorkingDirectory)\libraries\streaming-e2e-tests\react-app\testReactApp"
+  - powershell: Get-ChildItem "$(System.DefaultWorkingDirectory)\libraries\streaming-e2e-tests\react-app\testReactApp"
 
   - powershell: |
       Write-Host "Comprssing projecting into react-app.zip"
