@@ -14,6 +14,12 @@ steps:
   #     artifact: testReactApp
   #     path: $(TargetProjectDir)/testReactApp
 
+  - powershell: |
+      Set-Location -Path "$(ReactProjectDir)"
+      
+      New-Item -Path . -Name ".npmrc" -ItemType "file" -Value "registry=https://botbuilder.myget.org/F/botbuilder-v4-js-daily/npm/"
+    displayName: 'Create .npmrc for MyGet feed - https://botbuilder.myget.org/gallery/botbuilder-v4-js-daily'
+
   # TODO: keep tgz in folder of something we won't deploy (like DLJS)
   - powershell: npm install $(RootReactPiecesDir)/botframework-directlinejs.tgz
     displayName: npm install botframework-directlinejs.tgz
