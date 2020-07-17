@@ -310,6 +310,58 @@ export class TestAdapter extends BotAdapter implements ExtendedUserTokenProvider
         }
     }
 
+    /** 
+     * Asynchronously retrieves the token status for each configured connection for the given user.
+     * In testAdapter, retrieves tokens which were previously added via addUserToken.
+     * 
+     * @param context The context object for the turn.
+     * @param userId The ID of the user to retrieve the token status for.
+     * @param includeFilter Optional. A comma-separated list of connection's to include. If present,
+     *      the `includeFilter` parameter limits the tokens this method returns.
+     * @param oAuthAppCredentials AppCredentials for OAuth.
+     * 
+     * @returns The [TokenStatus](xref:botframework-connector.TokenStatus) objects retrieved.
+     */
+    public async getTokenStatus(context: TurnContext, userId: string, includeFilter?: string, oAuthAppCredentials?: any): Promise<any[]> {
+
+        if (!context || !context.activity) {
+            throw new Error('testAdapter.getTokenStatus(): context with activity is required');
+        }
+        
+        if (!userId && (!context.activity.from || !context.activity.from.id)) {
+            throw new Error(`testAdapter.getTokenStatus(): missing userId, from or from.id`);
+        }
+
+        const filter = (includeFilter ? includeFilter.split(',') : undefined);
+        if(!userId) {
+            userId = context.activity.from.id;
+        }
+
+        const match = this._userTokens.filter(x => x.ChannelId === context.activity.channelId 
+                                            && x.UserId === userId 
+                                            && (!filter || filter.includes(x.ConnectionName)));
+
+        if (match && match.length > 0)
+        {
+            const tokenStatuses = [];
+            for (var i = 0; i < match.length; i++) {
+                tokenStatuses.push(
+                    { 
+                        ConnectionName: match[i].ConnectionName, 
+                        HasToken: true, 
+                        ServiceProviderDisplayName: match[i].ConnectionName 
+                    });
+            }
+
+            return tokenStatuses;
+        }
+        else
+        {
+            // not found
+            return undefined;
+        }
+    }
+
     /**
      * Retrieves the OAuth token for a user that is in a sign-in flow.
      * @param context Context for the current turn of conversation with the user.
