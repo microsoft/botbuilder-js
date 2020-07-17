@@ -13,24 +13,49 @@ import { LanguageGenerator } from './languageGenerator';
 import { resourceExplorerKey } from './resourceExtensions';
 import { LanguagePolicy } from './languagePolicy';
 
+/**
+ * The key to get or set language generator from turn state.
+ */
 export const languageGeneratorKey = Symbol('LanguageGenerator');
+
+/**
+ * The key to get or set language generator manager from turn state.
+ */
 export const languageGeneratorManagerKey = Symbol('LanguageGeneratorManager');
+
+/**
+ * The key to get or set language policy from turn state.
+ */
 export const languagePolicyKey = Symbol('LanguagePolicy');
 
+/**
+ * Extension methods for language generator.
+ */
 export class LanguageGeneratorExtensions {
     /**
      * Register default LG file or a language generator as default language generator.
+     * @param dialogManager The dialog manager to add language generator to.
+     * @param lg LG resource id (default: main.lg) or language generator to be added.
+     * @returns dialog manager with language generator.
      */
     public static useLanguageGeneration(dialogManager: DialogManager, lg?: string | LanguageGenerator): DialogManager {
         const resourceExplorer: ResourceExplorer = dialogManager.initialTurnState.get(resourceExplorerKey) || new ResourceExplorer();
-        const defaultLg = lg && typeof lg === 'string' ? lg : 'main.lg';
-        const resource = resourceExplorer.getResource(defaultLg);
+
         let languageGenerator: LanguageGenerator;
-        if (resource) {
-            languageGenerator = new ResourceMultiLanguageGenerator(defaultLg);
-        } else {
-            languageGenerator = new TemplateEngineLanguageGenerator();
+        if (!lg) {
+            lg = 'main.lg';
         }
+        if (typeof(lg) === 'string') {
+            const resource = resourceExplorer.getResource(lg);
+            if (resource) {
+                languageGenerator = new ResourceMultiLanguageGenerator(lg);
+            } else {
+                languageGenerator = new TemplateEngineLanguageGenerator();
+            }
+        } else {
+            languageGenerator = lg;
+        }
+
         const languageGeneratorManager: LanguageGeneratorManager = new LanguageGeneratorManager(resourceExplorer);
 
         dialogManager.initialTurnState.set(languageGeneratorKey, languageGenerator);
@@ -41,6 +66,9 @@ export class LanguageGeneratorExtensions {
 
     /**
      * Register language policy as default policy.
+     * @param dialogManager The dialog manager to add language policy to.
+     * @param policy Policy to use.
+     * @returns dialog manager with language policy.
      */
     public static useLanguagePolicy(dialogManager: DialogManager, policy: LanguagePolicy): DialogManager {
         dialogManager.initialTurnState.set(languagePolicyKey, policy);

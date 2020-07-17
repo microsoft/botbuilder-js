@@ -29,7 +29,7 @@ export class StringExpression extends ExpressionProperty<string> {
 
     /**
      * Set a string value.
-     * @param value value to set.
+     * @param value Value to set.
      */
     public setValue(value: string | Expression): void {
         // reset state to no value or expression

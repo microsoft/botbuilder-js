@@ -11,20 +11,29 @@ import { LanguageGenerator } from '../languageGenerator';
 import { LanguagePolicy } from '../languagePolicy';
 import { languagePolicyKey } from '../languageGeneratorExtensions';
 /**
- * Class which manages cache of all LG resources from a ResourceExplorer. 
- * This class automatically updates the cache when resource change events occure.
+ * Base class which applies language policy to tryGetGenerator.
  */
-export abstract class MultiLanguageGeneratorBase implements LanguageGenerator{
-    public languagePolicy: any;
+export abstract class MultiLanguageGeneratorBase implements LanguageGenerator {
+    /**
+     * Language policy required by language generator.
+     */
+    public languagePolicy: LanguagePolicy;
 
+    /**
+     * Abstract method to get a language generator by locale.
+     * @param dialogContext DialogContext.
+     * @param locale Locale to lookup.
+     */
     public abstract tryGetGenerator(dialogContext: DialogContext, locale: string): { exist: boolean; result: LanguageGenerator };
 
-    public constructor(languagePolicy: any = undefined) {
-        this.languagePolicy = languagePolicy;
-    };
-    
+    /**
+     * Find a language generator that matches the current context locale.
+     * @param dialogContext Context for the current turn of conversation.
+     * @param template Template to use.
+     * @param data Data to bind to.
+     */
     public async generate(dialogContext: DialogContext, template: string, data: object): Promise<string> {
-        const targetLocale = dialogContext.context.activity.locale? dialogContext.context.activity.locale.toLocaleLowerCase() : '';
+        const targetLocale = dialogContext.context.activity.locale ? dialogContext.context.activity.locale.toLocaleLowerCase() : '';
 
         // priority
         // 1. local policy
@@ -55,7 +64,7 @@ export abstract class MultiLanguageGeneratorBase implements LanguageGenerator{
         const generators: LanguageGenerator[] = [];
         for (const locale of fallbackLocales) {
             if (this.tryGetGenerator(dialogContext, locale).exist) {
-                generators.push(this.tryGetGenerator(dialogContext, locale).result); 
+                generators.push(this.tryGetGenerator(dialogContext, locale).result);
             }
         }
 

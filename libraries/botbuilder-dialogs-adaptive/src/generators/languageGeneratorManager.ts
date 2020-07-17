@@ -14,17 +14,24 @@ import { IResource, ResourceExplorer, FileResource } from 'botbuilder-dialogs-de
 import { LanguageResourceLoader } from '../languageResourceLoader';
 import { LanguageGenerator } from '../languageGenerator';
 import { TemplateEngineLanguageGenerator } from './templateEngineLanguageGenerator';
-import { normalize, basename} from 'path';
+import { normalize, basename } from 'path';
 import { ImportResolverDelegate } from 'botbuilder-lg';
 
 export class LanguageGeneratorManager {
+    /**
+     * Resource explorer to manager LG files used by language generator manager.
+     */
     private _resourceExporer: ResourceExplorer;
-    
-    /// <summary>
-    /// multi language lg resources. en -> [resourcelist].
-    /// </summary>
+
+    /**
+     * Multi language lg resources. en -> [resourcelist].
+     */
     private _multiLanguageResources: Map<string, IResource[]>;
 
+    /**
+     * Initialize a new instance of LanguageResourceManager class.
+     * @param resourceManager Resource explorer to manager LG files.
+     */
     public constructor(resourceManager: ResourceExplorer) {
         this._resourceExporer = resourceManager;
         this._multiLanguageResources = LanguageResourceLoader.groupByLocale(this._resourceExporer);
@@ -35,23 +42,26 @@ export class LanguageGeneratorManager {
             this.languageGenerators.set(resource.id(), this.getTemplateEngineLanguageGenerator(resource));
         }
     }
-    
+
+    /**
+     * Gets or sets language generators.
+     */
     public languageGenerators: Map<string, LanguageGenerator> = new Map<string, LanguageGenerator>();
 
     public static resourceExplorerResolver(locale: string, resourceMapping: Map<string, IResource[]>): ImportResolverDelegate {
-        return  (source: string, id: string): {content: string; id: string} => {
+        return (source: string, id: string): { content: string; id: string } => {
             const fallbackLocale = LanguageResourceLoader.fallbackLocale(locale, Array.from(resourceMapping.keys()));
             const resources: IResource[] = resourceMapping.get(fallbackLocale.toLowerCase());
 
             const resourceName = basename(normalize(id));
-            const resource = resources.find(u => 
+            const resource = resources.find(u =>
                 LanguageResourceLoader.parseLGFileName(u.id()).prefix === LanguageResourceLoader.parseLGFileName(resourceName).prefix);
 
             if (resource === undefined) {
                 throw Error(`There is no matching LG resource for ${ resourceName }`);
             } else {
                 const text = resource.readText();
-                return {content: text, id: resource.id()};
+                return { content: text, id: resource.id() };
             }
         };
     }

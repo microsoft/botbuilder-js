@@ -15,9 +15,9 @@ export interface TemplateInterface<T> {
 
     /**
      * Given the turn context bind to the data to create the object
-     * @param turnContext TurnContext.
-     * @param data data to bind to.
-     * @returns instance.
+     * @param dialogContext DialogContext.
+     * @param data Data to bind to.
+     * @returns Instance of T.
      */
     bind(dialogContext: DialogContext, data?: object): Promise<T>;
 }

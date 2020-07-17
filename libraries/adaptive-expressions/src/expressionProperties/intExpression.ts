@@ -19,9 +19,9 @@ export class IntExpression extends ExpressionProperty<number> {
     }
 
     /**
-     * try to get the value.
-     * @param data data to use for expression binding.
-     * @returns value of int number
+     * Try to get the value.
+     * @param data Data to use for expression binding.
+     * @returns Value of int number
      */
     public tryGetValue(data: object): { value: number; error: Error } {
         const result = super.tryGetValue(data);

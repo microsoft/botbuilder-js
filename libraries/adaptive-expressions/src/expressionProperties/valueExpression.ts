@@ -29,7 +29,7 @@ export class ValueExpression extends ExpressionProperty<any> {
 
     /**
      * Set value as value expression.
-     * @param value value to set.
+     * @param value Value to set.
      */
     public setValue(value: any | string | Expression): void {
         super.setValue(undefined);

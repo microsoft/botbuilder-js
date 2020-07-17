@@ -76,7 +76,7 @@ export class ExpressionProperty<T> {
      * @remarks
      * An error will be thrown if value is an invalid expression.
      * @param data Data to use for expression binding.
-     * @returns the value.
+     * @returns The value.
      */
     public getValue(data: object): T {
         const { value, error } = this.tryGetValue(data);
@@ -104,7 +104,7 @@ export class ExpressionProperty<T> {
 
     /**
      * Set the value.
-     * @param value value to set.
+     * @param value Value to set.
      */
     public setValue(value: T | string | Expression): void {
         this.value = this.defaultValue;

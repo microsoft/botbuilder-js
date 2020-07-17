@@ -6,14 +6,17 @@
  * Licensed under the MIT License.
  */
 
-/**
- * load all lg resource and split them into different language group.
- */
-
 import { IResource, ResourceExplorer } from 'botbuilder-dialogs-declarative';
 import { LanguagePolicy } from  './languagePolicy';
 
+/**
+ * Load all LG resource and split them into different language groups.
+ */
 export class LanguageResourceLoader {
+    /**
+     * Group LG resource by locale.
+     * @param resourceExplorer The resource explorer to use.
+     */
     public static groupByLocale(resourceExplorer: ResourceExplorer): Map<string, IResource[]> {
         const resourceMapping: Map<string, IResource[]> = new Map<string, IResource[]>();
         const allResouces: IResource[] =  resourceExplorer.getResources('lg');
@@ -57,6 +60,10 @@ export class LanguageResourceLoader {
         return this.fallbackMultiLangResource(resourceMapping);
     }
 
+    /**
+     * Parse LG file name into prefix and language.
+     * @param lgFileName LG input file name.
+     */
     public static parseLGFileName(lgFileName: string):  {prefix: string; language: string} {
         if (lgFileName === undefined || !lgFileName.endsWith('.lg')) {
             return {prefix: lgFileName, language: ''};
@@ -71,6 +78,11 @@ export class LanguageResourceLoader {
         }
     }
 
+    /**
+     * Get the fallback locale from optional locales.
+     * @param locale Current locale
+     * @param optionalLocales Optional locales.
+     */
     public static fallbackLocale(locale: string, optionalLocales: string[]): string {
         if (optionalLocales === undefined) {
             throw new TypeError('Invalid Arguments');
