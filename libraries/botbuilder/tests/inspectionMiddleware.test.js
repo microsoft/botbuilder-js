@@ -8,6 +8,7 @@ const nock = require('nock');
 const assert = require('assert');
 const { TestAdapter, MemoryStorage, MessageFactory, UserState, ConversationState } = require('botbuilder-core');
 const { InspectionMiddleware, InspectionState } = require('../');
+const sinon = require('sinon');
 
 beforeEach(function(done) {
     nock.cleanAll();
@@ -474,7 +475,6 @@ describe('InspectionMiddleware', function() {
     });
 
     it('should invokeInbound throw an error', async () => {
-        let warnExecuted = false;
         const storage = new MemoryStorage();
         const inspectionState = new InspectionState(storage);
         const userState = new UserState(storage);
@@ -482,22 +482,17 @@ describe('InspectionMiddleware', function() {
         const inspectionMiddleware = new InspectionMiddleware(inspectionState, userState, conversationState);
 
         // Override warn current behavior to intercept when it's called.
-        const warn = console.warn;
-
-        console.warn = () => {
-            warnExecuted = true;
-        };
+        const warn = sinon.stub(console, 'warn');
 
         await inspectionMiddleware.invokeInbound();
 
-        assert(warnExecuted, 'invokeInbound should have throw a warning');
+        assert(warn.called, 'invokeInbound should have throw a warning');
 
         // Revert warn to original behavior.
-        console.warn = warn;
+        warn.restore();
     });
 
     it('should invokeOutbound throw an error', async () => {
-        let warnExecuted = false;
         const storage = new MemoryStorage();
         const inspectionState = new InspectionState(storage);
         const userState = new UserState(storage);
@@ -505,22 +500,17 @@ describe('InspectionMiddleware', function() {
         const inspectionMiddleware = new InspectionMiddleware(inspectionState, userState, conversationState);
 
         // Override warn current behavior to intercept when it's called.
-        const warn = console.warn;
-
-        console.warn = () => {
-            warnExecuted = true;
-        };
+        const warn = sinon.stub(console, 'warn');
 
         await inspectionMiddleware.invokeOutbound();
 
-        assert(warnExecuted, 'invokeOutbound should have throw a warning');
+        assert(warn.called, 'invokeOutbound should have throw a warning');
 
         // Revert warn to original behavior.
-        console.warn = warn;
+        warn.restore();
     });
 
     it('should invokeTraceState throw an error', async () => {
-        let warnExecuted = false;
         const storage = new MemoryStorage();
         const inspectionState = new InspectionState(storage);
         const userState = new UserState(storage);
@@ -528,18 +518,14 @@ describe('InspectionMiddleware', function() {
         const inspectionMiddleware = new InspectionMiddleware(inspectionState, userState, conversationState);
 
         // Override warn current behavior to intercept when it's called.
-        const warn = console.warn;
-
-        console.warn = () => {
-            warnExecuted = true;
-        };
+        const warn = sinon.stub(console, 'warn');
 
         await inspectionMiddleware.invokeTraceState();
 
-        assert(warnExecuted, 'invokeTraceState should have throw a warning');
+        assert(warn.called, 'invokeTraceState should have throw a warning');
 
         // Revert warn to original behavior.
-        console.warn = warn;
+        warn.restore();
     });
 
     it('should attachCommand return false', async () => {
