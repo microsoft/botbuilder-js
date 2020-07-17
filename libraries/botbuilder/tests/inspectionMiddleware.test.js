@@ -9,13 +9,13 @@ const assert = require('assert');
 const { TestAdapter, MemoryStorage, MessageFactory, UserState, ConversationState } = require('botbuilder-core');
 const { InspectionMiddleware, InspectionState } = require('../');
 
-beforeEach(function(done){
+beforeEach(function(done) {
     nock.cleanAll();
 
     done();
 });
 
-afterEach(function(done){
+afterEach(function(done) {
     nock.cleanAll();
     done();
 });
@@ -459,10 +459,10 @@ describe('InspectionMiddleware', function() {
 
         const adapter = new TestAdapter(async (turnContext) => {
             try {
-                await inspectionMiddleware.onTurn(turnContext, null)
-                throw new Error('should have thrown an error.')
+                await inspectionMiddleware.onTurn(turnContext, null);
+                throw new Error('should have thrown an error.');
             } catch (error) {
-                assert.strictEqual(error.message, 'next is not a function', 'next function should be null')
+                assert.strictEqual(error.message, 'next is not a function', 'next function should be null');
             }
         }, null, true);
 
@@ -481,22 +481,20 @@ describe('InspectionMiddleware', function() {
         const conversationState = new ConversationState(storage);
         const inspectionMiddleware = new InspectionMiddleware(inspectionState, userState, conversationState);
 
+        // Override warn current behavior to intercept when it's called.
         const warn = console.warn;
 
-        console.warn = (message) => {
-            const condition = message.startsWith('Exception in inbound interception')
-            assert(condition, 'should have throw an error')
+        console.warn = () => {
             warnExecuted = true;
-        }
+        };
 
         await inspectionMiddleware.invokeInbound();
 
-        if(!warnExecuted) {
-            throw new Error('invokeInbound should have throw an error')
-        }
+        assert(warnExecuted, 'invokeInbound should have throw a warning');
 
-        console.warn = warn
-    })
+        // Revert warn to original behavior.
+        console.warn = warn;
+    });
 
     it('should invokeOutbound throw an error', async () => {
         let warnExecuted = false;
@@ -506,22 +504,20 @@ describe('InspectionMiddleware', function() {
         const conversationState = new ConversationState(storage);
         const inspectionMiddleware = new InspectionMiddleware(inspectionState, userState, conversationState);
 
+        // Override warn current behavior to intercept when it's called.
         const warn = console.warn;
 
-        console.warn = (message) => {
-            const condition = message.startsWith('Exception in outbound interception')
-            assert(condition, 'should have throw an error')
+        console.warn = () => {
             warnExecuted = true;
-        }
+        };
 
         await inspectionMiddleware.invokeOutbound();
 
-        if(!warnExecuted) {
-            throw new Error('invokeOutbound should have throw an error')
-        }
+        assert(warnExecuted, 'invokeOutbound should have throw a warning');
 
-        console.warn = warn
-    })
+        // Revert warn to original behavior.
+        console.warn = warn;
+    });
 
     it('should invokeTraceState throw an error', async () => {
         let warnExecuted = false;
@@ -531,22 +527,20 @@ describe('InspectionMiddleware', function() {
         const conversationState = new ConversationState(storage);
         const inspectionMiddleware = new InspectionMiddleware(inspectionState, userState, conversationState);
 
+        // Override warn current behavior to intercept when it's called.
         const warn = console.warn;
 
-        console.warn = (message) => {
-            const condition = message.startsWith('Exception in state interception')
-            assert(condition, 'should have throw an error')
+        console.warn = () => {
             warnExecuted = true;
-        }
+        };
 
         await inspectionMiddleware.invokeTraceState();
 
-        if(!warnExecuted) {
-            throw new Error('invokeTraceState should have throw an error')
-        }
+        assert(warnExecuted, 'invokeTraceState should have throw a warning');
 
-        console.warn = warn
-    })
+        // Revert warn to original behavior.
+        console.warn = warn;
+    });
 
     it('should attachCommand return false', async () => {
         const storage = new MemoryStorage();
@@ -555,7 +549,7 @@ describe('InspectionMiddleware', function() {
         const conversationState = new ConversationState(storage);
         const inspectionMiddleware = new InspectionMiddleware(inspectionState, userState, conversationState);
 
-        const result = await inspectionMiddleware.attachCommand('', { openedSessions: { 'session-1': undefined }}, 'session-1');
-        assert.strictEqual(result, false, 'should be returning false')
-    })
+        const result = await inspectionMiddleware.attachCommand('', { openedSessions: { 'session-1': undefined } }, 'session-1');
+        assert.strictEqual(result, false, 'should be returning false');
+    });
 });
