@@ -1,3 +1,5 @@
+# Provision and deploy a new React App that uses latest streaming bits in DLJS and ReactWebChat.
+
 jobs:
   - job: Create_React_App_With_WebChat
     steps: 
@@ -16,7 +18,7 @@ jobs:
       - Customize_DLJS
     condition: succeeded()
     variables:
-      ReactProjectDir: '$(RootReactPiecesDir)\react-app'
+      ReactProjectDir: '$(RootReactPiecesDir)/react-app'
     steps:
       - template: use-custom-dljs-in-webchat.yml
       - template: deploy-react-app.yml

@@ -1,8 +1,7 @@
-#
-# Ensure BotFramework-Streaming library works in the browser by running tests after deploying a streaming-enabled JS Echo Bot and a React App that uses DLJS and WebChat.
-# 
+# Ensure BotFramework-Streaming library works in the browser 
+# by running tests after deploying a streaming-enabled JS Echo Bot 
+# and a React App that uses latest streaming bits in DLJS and WebChat.
 
-# "name" here defines the build number format. Build number is accessed via $(Build.BuildNumber)
 name: $(Build.BuildId)
 trigger: none
 pr: none
@@ -10,16 +9,14 @@ pr: none
 pool:
   vmImage: 'windows-2019'
 
-# TODO: variables
-# BotName: defined in Azure
-# AzureSubscription: defined in Azure
-# ResourceGroup - need to define in Azure
 variables:
-  RootReactPiecesDir: '$(System.DefaultWorkingDirectory)\libraries\streaming-e2e-tests\react-app'
-  DLJSDir: '$(System.DefaultWorkingDirectory)\libraries\streaming-e2e-tests\react-app\BotFramework-DirectLineJS'
-  # ResourceGroup: 'ash-streaming-js'
-  # ReactAppService: 'ash-react-app'
+  RootReactPiecesDir: '$(System.DefaultWorkingDirectory)/libraries/streaming-e2e-tests/react-app'
+  DLJSDir: '$(System.DefaultWorkingDirectory)/libraries/streaming-e2e-tests/react-app/BotFramework-DirectLineJS'
   runCodesignValidationInjection: false
+  BotBuilder: 'botbuilder'
+  BfStreaming: 'botframework-streaming'
+  # Variables defined in Azure:
+  # ResourceGroup, ReactAppService, BotName
   
 
 stages:
@@ -27,13 +24,12 @@ stages:
     jobs:
       - job: Deploy_Bot
         variables:
-          TargetProjectDir: '$(System.DefaultWorkingDirectory)\libraries\streaming-e2e-tests\bot'
-          PackageName: 'botbuilder'
-          BotName: 'ash-streaming-bot'
+          TargetProjectDir: '$(System.DefaultWorkingDirectory)/libraries/streaming-e2e-tests/bot'
+          PackageName: $(BotBuilder)
+          BotName: $(BotName)
         steps:
           - template: configure-to-bbjs-daily.yml
           - template: deploy-bot.yml
 
       - template: create-and-deploy-streaming-react-app.yml
-          
           

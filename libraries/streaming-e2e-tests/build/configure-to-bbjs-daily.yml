@@ -3,7 +3,7 @@ steps:
     displayName: 'Get latest $(PackageName) package version from MyGet - https://botbuilder.myget.org/gallery/botbuilder-v4-js-daily'
     inputs:
       targetType: 'filePath'
-      filePath: $(System.DefaultWorkingDirectory)\libraries\streaming-e2e-tests\build\get-latest-bbjs-daily-version.ps1
+      filePath: $(System.DefaultWorkingDirectory)/libraries/streaming-e2e-tests/build/get-latest-bbjs-daily-version.ps1
       arguments:
         -AccessToken $(MyGetPersonalAccessToken)
         -PackageName $(PackageName)
@@ -11,23 +11,23 @@ steps:
   # Repeating tagging and setting dependency version steps, but varying on PackageName 
   # due to DevOps YAML inability to handle nested variables for dynamic variable names
   - task: colinsalmcorner.colinsalmcorner-buildtasks.tag-build-task.tagBuildOrRelease@0
-    displayName: 'Tag Build with $(PackageName) version'
-    condition: eq(variables.PackageName, 'botbuilder')
+    displayName: 'Tag Build with $(BotBuilder) version'
+    condition: eq(variables.PackageName, $(BotBuilder))
     inputs:
-      tags: 'Using botbuilder version $(LatestVersion_botbuilder)'
+      tags: 'Using $(PackageName) version $(LatestVersion_botbuilder)'
 
   - task: colinsalmcorner.colinsalmcorner-buildtasks.tag-build-task.tagBuildOrRelease@0
-    displayName: 'Tag Build with $(PackageName) version'
-    condition: eq(variables.PackageName, 'botframework-streaming')
+    displayName: 'Tag Build with $(BfStreaming) version'
+    condition: eq(variables.PackageName, $(BfStreaming))
     inputs:
-      tags: 'Using botframework-streaming version $(LatestVersion_streaming)'
+      tags: 'Using $(PackageName) version $(LatestVersion_streaming)'
 
   - task: PowerShell@2
     displayName: Set Dependency to Latest $(PackageName) Version
-    condition: eq(variables.PackageName, 'botbuilder')
+    condition: eq(variables.PackageName, $(BotBuilder))
     inputs:
         targetType: 'filePath'
-        filePath: $(System.DefaultWorkingDirectory)\libraries\streaming-e2e-tests\build\set-dependency-version-in-packagejson.ps1
+        filePath: $(System.DefaultWorkingDirectory)/libraries/streaming-e2e-tests/build/set-dependency-version-in-packagejson.ps1
         arguments:
           -LatestVersion $(LatestVersion_botbuilder)
           -PathToPJson $(TargetProjectDir)/package.json
@@ -35,10 +35,10 @@ steps:
   
   - task: PowerShell@2
     displayName: Set Dependency to Latest $(PackageName) Version
-    condition: eq(variables.PackageName, 'botframework-streaming')
+    condition: eq(variables.PackageName, $(BfStreaming))
     inputs:
         targetType: 'filePath'
-        filePath: $(System.DefaultWorkingDirectory)\libraries\streaming-e2e-tests\build\set-dependency-version-in-packagejson.ps1
+        filePath: $(System.DefaultWorkingDirectory)/libraries/streaming-e2e-tests/build/set-dependency-version-in-packagejson.ps1
         arguments:
           -LatestVersion $(LatestVersion_streaming)
           -PathToPJson $(TargetProjectDir)/package.json

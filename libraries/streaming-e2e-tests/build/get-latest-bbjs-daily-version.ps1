@@ -13,7 +13,7 @@ $package = $result.packages | Where-Object {$_.id -eq $PackageName};
 $package.id;
 $latestVersion;
 
-# Save latest version as build variable.
+# Save latest version as pipeline variable.
 # Creating variable name without '-' character to make it a legal yaml variable name
 if(($PackageName -match 'botframework-') -or ($PackageName -match 'botbuilder-')) {
     $startOfSuffixIndex = $PackageName.indexOf('-') + 1;
