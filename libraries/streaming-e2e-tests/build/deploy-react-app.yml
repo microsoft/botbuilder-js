@@ -1,10 +1,8 @@
 steps:
-  - task: Npm@1
+  - script: npm run build
     displayName: 'Build react-app'
-    inputs:
-        command: npm run build
-        workingDir: 'C:\Users\AshleyFinafrock\Work\streaming-js\botbuilder-js\libraries\streaming-e2e-tests\react-app\testReactApp'
-  
+    workingDirectory: 'C:\Users\AshleyFinafrock\Work\streaming-js\botbuilder-js\libraries\streaming-e2e-tests\react-app\testReactApp'
+
   - powershell: ls
     workingDirectory: 'C:\Users\AshleyFinafrock\Work\streaming-js\botbuilder-js\libraries\streaming-e2e-tests\react-app\testReactApp'
   
