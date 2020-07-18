@@ -585,10 +585,10 @@ export class TeamsActivityHandler extends ActivityHandler {
      * @param handler 
      * @returns A promise that represents the work queued.
      */
-    public onTeamsChannelRestoredEvent(handler: (teamInfo: TeamInfo, context: TurnContext, next: () => Promise<void>) => Promise<void>): this {
+    public onTeamsChannelRestoredEvent(handler: (channelInfo: ChannelInfo, teamInfo: TeamInfo, context: TurnContext, next: () => Promise<void>) => Promise<void>): this {
         return this.on('TeamsChannelRestored', async (context, next) => {
             const teamsChannelData = context.activity.channelData as TeamsChannelData;
-            await handler(teamsChannelData.team, context, next);
+            await handler(teamsChannelData.channel, teamsChannelData.team, context, next);
         });
     }
 
