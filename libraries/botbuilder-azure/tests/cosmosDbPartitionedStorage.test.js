@@ -109,8 +109,6 @@ const options = {
 };
 
 describe('CosmosDbPartitionedStorage - Constructor Tests', function() {
-    before('cleanup', cleanup); // Ensure we start from scratch
-
     it('throws when provided with null options', () => {
         assert.throws(() => new CosmosDbPartitionedStorage(null), ReferenceError('CosmosDbPartitionedStorageOptions is required.'));
     });
@@ -138,6 +136,12 @@ describe('CosmosDbPartitionedStorage - Constructor Tests', function() {
         noContainerId.containerId = null;
         assert.throws(() => new CosmosDbPartitionedStorage(noContainerId), ReferenceError('containerId for CosmosDB is required.'));
     });
+});
+
+describe('CosmosDbPartitionedStorage - Base Storage Tests', function() {
+    after('cleanup', cleanup); // Ensure we start from scratch
+    beforeEach('prep', prep);
+    afterEach('cleanup', cleanup);
 
     it('passes cosmosClientOptions to CosmosClient', async function() {
         const { nockDone } = await usingNock(this.test, mode, options);
@@ -160,11 +164,6 @@ describe('CosmosDbPartitionedStorage - Constructor Tests', function() {
 
         return nockDone();
     });
-});
-
-describe('CosmosDbPartitionedStorage - Base Storage Tests', function() {
-    beforeEach('prep', prep);
-    afterEach('cleanup', cleanup);
 
     it('return empty object when reading unknown key', async function() {
         const { nockDone } = await usingNock(this.test, mode, options);
