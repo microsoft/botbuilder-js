@@ -9,9 +9,14 @@
 import { DialogManager } from 'botbuilder-dialogs';
 import { BotTelemetryClient } from 'botbuilder-core';
 
-
+/**
+ * The key to get or set telemetry client from turn state.
+ */
 export const telemetryClientKey = Symbol('telemetryClient');
 
+/**
+ * Extension methods for telemetry.
+ */
 export class TelemetryExtensions {
     /**
      * Configures the telemetry client to use.
