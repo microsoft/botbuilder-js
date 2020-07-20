@@ -4,7 +4,6 @@ const { StorageBaseTests } = require('../../botbuilder-core/tests/storageBaseTes
 const { CosmosClient } = require('@azure/cosmos');
 const { MockMode, usingNock } = require('./mockHelper');
 const nock = require('nock');
-const fs = require('fs');
 const https = require('https');
 const fetch = require('node-fetch');
 
@@ -28,7 +27,7 @@ const mode = process.env.MOCK_MODE ? process.env.MOCK_MODE : MockMode.lockdown;
 
 // Endpoint and authKey for the CosmosDB Emulator running locally
 let containerIdSuffix = 0;
-const emulatorEndpoint = 'https://localhost:8081'
+const emulatorEndpoint = 'https://localhost:8081';
 const getSettings = () => {
     return {
         cosmosDbEndpoint: emulatorEndpoint,
