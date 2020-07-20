@@ -170,7 +170,7 @@ export class ComponentDialog<O extends object = {}> extends DialogContainer<O> {
      * Creates the inner dialog context
      * @param outerDC the outer dialog context
      */
-    public createChildContext(outerDC: DialogContext) {
+    public createChildContext(outerDC: DialogContext): DialogContext {
         return this.createInnerDC(outerDC, outerDC.activeDialog);
     }
 
@@ -240,19 +240,20 @@ export class ComponentDialog<O extends object = {}> extends DialogContainer<O> {
         return outerDC.endDialog(result);
     }
 
-    private createInnerDC(context: DialogContext, instance: DialogInstance);
-    private createInnerDC(context: TurnContext, instance: DialogInstance);
-    private createInnerDC(context: TurnContext | DialogContext, instance: DialogInstance) {
-        let dialogState = {} as DialogState;
+    private createInnerDC(context: DialogContext, instance: DialogInstance): DialogContext;
+    private createInnerDC(context: TurnContext, instance: DialogInstance): DialogContext;
+    private createInnerDC(context: TurnContext | DialogContext, instance: DialogInstance): DialogContext {
+        let dialogState = {};
         let turnContext = context as TurnContext;
 
         if (!instance) {
-            instance = { state: {} } as DialogInstance;
+            let dialogInstance = { state: {} };
+            instance = dialogInstance as DialogInstance;
         }
 
         dialogState = instance.state[PERSISTED_DIALOG_STATE] || { dialogStack: [] };
         instance.state[PERSISTED_DIALOG_STATE] = dialogState;
 
-        return new DialogContext(this.dialogs, turnContext, dialogState);
+        return new DialogContext(this.dialogs, turnContext, dialogState as DialogState);
     }
 }
