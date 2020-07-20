@@ -27,13 +27,13 @@ export class CrossTrainedRecognizerSet extends Recognizer {
             return recognizer.recognize(dialogContext, activity, telemetryProperties, telemetryMetrics);
         }));
         
-        var result = this.processResults(results);
+        const result = this.processResults(results);
         this.trackRecognizerResult(dialogContext, 'CrossTrainedRecognizerSetResult', this.fillRecognizerResultTelemetryProperties(result, telemetryProperties),telemetryMetrics);
         return result;
         
     }
 
-    private processResults(results: RecognizerResult[]): RecognizerResult{
+    private processResults(results: RecognizerResult[]): RecognizerResult {
         const recognizerResults = {};
         const intents = {};
         let text = '';

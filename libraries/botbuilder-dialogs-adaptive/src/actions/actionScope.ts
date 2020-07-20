@@ -140,7 +140,7 @@ export class ActionScope<O extends object = {}> extends Dialog<O> implements Dia
         var action = this.actions[offset];
         var actionName = action.constructor.name;
 
-        var properties: { [key: string]: string } = {
+        const properties: { [key: string]: string } = {
             'DialogId' : action.id,
             'Kind' : `Microsoft.${ actionName }`,
             'ActionId': `Microsoft.${ action.id }`

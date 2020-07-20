@@ -91,6 +91,7 @@ export class LuisAdaptiveRecognizer extends Recognizer {
         }
         return options;
     }
+
     /**
      * Fills the event properties for LuisResult event for telemetry.
      * These properties are logged when the recognizer is called.
@@ -100,21 +101,15 @@ export class LuisAdaptiveRecognizer extends Recognizer {
      * @returns A dictionary that is sent as properties to BotTelemetryClient.trackEvent method for the LuisResult event.
      */
     protected  fillRecognizerResultTelemetryProperties(recognizerResult: RecognizerResult, telemetryProperties: { [key: string]: string }, dialogContext: DialogContext): { [key: string]: string } {
-        var logPersonalInfoVnE = this.logPersonalInformation.tryGetValue(dialogContext.state);
-        var logPersonalInfo = logPersonalInfoVnE.value;
-        var error = logPersonalInfoVnE.error;
-
-        var applicationIdVnE = this.applicationId.tryGetValue(dialogContext.state);
-        var applicationId = applicationIdVnE.value;
-        var error2 = applicationIdVnE.error;
+        const logPersonalInfo = this.logPersonalInformation.tryGetValue(dialogContext.state);
+        const applicationId = this.applicationId.tryGetValue(dialogContext.state);
         
         const topLuisIntent: string = LuisRecognizer.topIntent(recognizerResult);
-        const intentScore: number = (recognizerResult.intents[topLuisIntent] && 'score' in recognizerResult.intents[topLuisIntent]) ?
-            recognizerResult.intents[topLuisIntent].score : 0;
+        const intentScore: number = (recognizerResult.intents[topLuisIntent] && recognizerResult.intents[topLuisIntent].score) || 0;
 
         // Add the intent score and conversation id properties
         const properties: { [key: string]: string } = {};
-        properties[LuisTelemetryConstants.applicationIdProperty] = applicationId;
+        properties[LuisTelemetryConstants.applicationIdProperty] = applicationId.value;
         properties[LuisTelemetryConstants.intentProperty] = topLuisIntent;
         properties[LuisTelemetryConstants.intentScoreProperty] = intentScore.toString();
         properties[LuisTelemetryConstants.fromIdProperty] = dialogContext.context.activity.from.id;
@@ -135,7 +130,7 @@ export class LuisAdaptiveRecognizer extends Recognizer {
         }
 
         // Use the logPersonalInfo flag to toggle logging PII data, text is a common example
-        if (logPersonalInfo && dialogContext.context.activity.text) {
+        if (logPersonalInfo.value && dialogContext.context.activity.text) {
             properties[LuisTelemetryConstants.questionProperty] = dialogContext.context.activity.text;
         }
 

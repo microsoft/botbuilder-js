@@ -33,7 +33,7 @@ export class MultiLanguageRecognizer extends Recognizer {
             const option = policy[i];
             if (this.recognizers.hasOwnProperty(option)) {
                 const recognizer = this.recognizers[option];
-                var result = await recognizer.recognize(dialogContext, activity, telemetryProperties, telemetryMetrics);
+                const result = await recognizer.recognize(dialogContext, activity, telemetryProperties, telemetryMetrics);
                 this.trackRecognizerResult(dialogContext, 'MultiLanguagesRecognizerResult', this.fillRecognizerResultTelemetryProperties(result, telemetryProperties), telemetryMetrics);
                 return result;
 
