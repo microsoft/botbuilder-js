@@ -42,19 +42,19 @@ export abstract class MultiLanguageGeneratorBase implements LanguageGenerator {
         if (!this.languagePolicy) {
             this.languagePolicy = dialogContext.services.get(languagePolicyKey);
             if (!this.languagePolicy) {
-                this.languagePolicy = LanguagePolicy.defaultPolicy;
+                this.languagePolicy = new LanguagePolicy();
             }
         }
 
         // see if we have any locales that match
         let fallbackLocales = [];
-        if (targetLocale in this.languagePolicy) {
-            this.languagePolicy[targetLocale].forEach((u: string): number => fallbackLocales.push(u));
+        if (this.languagePolicy.has(targetLocale)) {
+            this.languagePolicy.get(targetLocale).forEach((u: string): number => fallbackLocales.push(u));
         }
 
         // append empty as fallback to end
-        if (targetLocale !== '' && '' in this.languagePolicy) {
-            this.languagePolicy[''].forEach((u: string): number => fallbackLocales.push(u));
+        if (targetLocale !== '' && this.languagePolicy.has('')) {
+            this.languagePolicy.get('').forEach((u: string): number => fallbackLocales.push(u));
         }
 
         if (fallbackLocales.length === 0) {

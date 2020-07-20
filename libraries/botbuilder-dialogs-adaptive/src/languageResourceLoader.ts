@@ -20,9 +20,9 @@ export class LanguageResourceLoader {
     public static groupByLocale(resourceExplorer: ResourceExplorer): Map<string, IResource[]> {
         const resourceMapping: Map<string, IResource[]> = new Map<string, IResource[]>();
         const allResouces: IResource[] =  resourceExplorer.getResources('lg');
-        const languagePolicy = LanguagePolicy.defaultPolicy;
-        for (const locale in languagePolicy) {
-            let suffixs = languagePolicy[locale];
+        const languagePolicy = new LanguagePolicy();
+        for (const locale of languagePolicy.keys()) {
+            let suffixs = languagePolicy.get(locale);
             const existNames = new Set<string>();
             for (const index in suffixs) {
                 const suffix = suffixs[index];
@@ -92,9 +92,9 @@ export class LanguageResourceLoader {
             return locale;
         }
 
-        const languagePolicy = LanguagePolicy.defaultPolicy;
-        if (languagePolicy[locale] !== undefined) {
-            const fallbackLocales = languagePolicy[locale];
+        const languagePolicy = new LanguagePolicy();
+        if (languagePolicy.has(locale)) {
+            const fallbackLocales = languagePolicy.get(locale);
             for (const i in fallbackLocales) {
                 const fallbackLocale = fallbackLocales[i];
                 if (optionalLocales.includes(fallbackLocale)) {
@@ -129,13 +129,13 @@ export class LanguageResourceLoader {
 
 
     private static findCommonAncestorLocale(locale1: string, locale2: string): string {
-        const languagePolicy = LanguagePolicy.defaultPolicy;
-        if (languagePolicy[locale1] === undefined || languagePolicy[locale2] === undefined) {
+        const languagePolicy = new LanguagePolicy();
+        if (!languagePolicy.has(locale1) || !languagePolicy.has(locale2)) {
             return '';
         }
 
-        const key1Policy = languagePolicy[locale1];
-        const key2Policy = languagePolicy[locale2];
+        const key1Policy = languagePolicy.get(locale1);
+        const key2Policy = languagePolicy.get(locale2);
         for (const key1Language of key1Policy) {
             for (const key2Language of key2Policy) {
                 if (key1Language === key2Language) {
