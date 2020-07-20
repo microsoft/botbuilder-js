@@ -26,8 +26,6 @@ const fetch = require('node-fetch');
  */
 const mode = process.env.MOCK_MODE ? process.env.MOCK_MODE : MockMode.lockdown;
 
-const emulatorPath = 'C:/Program Files/Azure Cosmos DB Emulator/CosmosDB.Emulator.exe';
-
 // Endpoint and authKey for the CosmosDB Emulator running locally
 let containerIdSuffix = 0;
 const emulatorEndpoint = 'https://localhost:8081'
@@ -48,7 +46,10 @@ const checkEmulator = async () => {
     // We don't want to check for this multiple times, due to waiting on fetch() timeouts when connection fails
     if (canConnectToEmulator === undefined) {
         try {
-            await fetch(emulatorEndpoint);
+            const agent = new https.Agent({
+                rejectUnauthorized: false
+            });
+            await fetch(emulatorEndpoint, { agent });
             canConnectToEmulator = true;
         } catch (err) {
             canConnectToEmulator = false;
@@ -153,9 +154,6 @@ describe('CosmosDbPartitionedStorage - Base Storage Tests', function() {
             userAgentSuffix: 'test', 
         };
 
-        let client = new CosmosClient({ endpoint: settingsWithClientOptions.cosmosDbEndpoint, key: settingsWithClientOptions.authKey, agent: new https.Agent({ rejectUnauthorized: false }) });
-        await client.databases.create({ id: settingsWithClientOptions.databaseId });
-    
         client = new CosmosDbPartitionedStorage(settingsWithClientOptions);
         await client.initialize(); // Force client to go through initialization
 
