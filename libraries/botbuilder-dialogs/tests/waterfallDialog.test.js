@@ -643,8 +643,8 @@ describe('WaterfallDialog', function () {
             step => ({ status: DialogTurnStatus.complete, result: step })
         ]);
 
-        const component = new ComponentDialog('composite')
-        component.addDialog(waterfall)
+        const component = new ComponentDialog('composite');
+        component.addDialog(waterfall);
 
         const dialogs = new DialogSet(dialogState);
         dialogs.add(component);
@@ -658,9 +658,10 @@ describe('WaterfallDialog', function () {
                 const waterfallParent = results.result.parent.parent;
 
                 assert.strictEqual(waterfallParent.dialogs.dialogs['composite'], component, 'WaterfallDialog "waterfall" parent should be equal to ComponentDialog "composite".');
+                done();
+            } else {
+                done(new Error('status results not completed'));
             }
-
-            done();
         });
 
         adapter.send('Hi');
@@ -683,9 +684,10 @@ describe('WaterfallDialog', function () {
 
             if (results.status === DialogTurnStatus.complete) {
                 assert.deepStrictEqual(results.result.parent, dc, 'waterfall parent should be equal to Dialog Context.');
+                done();
+            } else {
+                done(new Error('status results not completed'));
             }
-
-            done();
         });
 
         adapter.send('Hi');
