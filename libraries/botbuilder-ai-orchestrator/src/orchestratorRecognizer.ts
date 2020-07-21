@@ -5,12 +5,14 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { Activity, RecognizerResult } from 'botbuilder-core';
-import { StringExpression, BoolExpression } from 'adaptive-expressions';
-import { EntityRecognizer, TextEntity, EntityRecognizerSet, Recognizer } from 'botbuilder-dialogs-adaptive';
-import { Configurable, DialogContext } from 'botbuilder-dialogs';
+
 import { exception } from 'console';
-import path from 'path';
+import { resolve } from 'path';
+
+import { StringExpression, BoolExpression } from 'adaptive-expressions';
+import { Activity, RecognizerResult } from 'botbuilder-core';
+import { Configurable, DialogContext } from 'botbuilder-dialogs';
+import { EntityRecognizer, TextEntity, EntityRecognizerSet, Recognizer } from 'botbuilder-dialogs-adaptive';
 
 const oc = require('oc_node_authoring/oc_node_authoring.node');
 const ReadText: any = require('read-text-file');
@@ -29,9 +31,9 @@ export class OrchestratorRecognizer extends Configurable implements Recognizer {
     /**
      * Intent name to use if detectAmbiguousIntent is true
      */
-    public chooseIntent: string = "";
-    private _candidatesCollection: string = "candidates";
-    private _noneIntent: string = "None";
+    public chooseIntent: string = '';
+    private _candidatesCollection: string = 'candidates';
+    private _noneIntent: string = 'None';
     private static _orchestrator: any = null;
     private static _modelPath: string = null;
     private _resolver: any = null;
@@ -39,14 +41,13 @@ export class OrchestratorRecognizer extends Configurable implements Recognizer {
     private _snapShotPath: string = null;
     private _useCompactEmbeddings: boolean = true;
 
-    public async recognize(dialogContext: DialogContext, activity: Activity): Promise<RecognizerResult> 
-    {
-        var text = activity.text || '';
-        var detectAmbiguity = this.detectAmbiguousIntents.getValue(dialogContext.state);
-        var result: any = null;
+    public async recognize(dialogContext: DialogContext, activity: Activity): Promise<RecognizerResult> {
+        const text = activity.text || '';
+        const detectAmbiguity = this.detectAmbiguousIntents.getValue(dialogContext.state);
+        let result: any = null;
 
         const recognizerResult: RecognizerResult = {
-            text: text,
+            text,
             intents: {},
             entities: {},
             properties: {}
@@ -58,7 +59,7 @@ export class OrchestratorRecognizer extends Configurable implements Recognizer {
         this._snapShotPath = this.snapshotPath.getValue(dialogContext.state);
         this._useCompactEmbeddings = this.useCompactEmbeddings.getValue(dialogContext.state);
 
-        await this.InitializeModel();
+        await this.initializeModel();
 
         if (this._resolver !== null) {
             // run entity recognizers
@@ -79,48 +80,41 @@ export class OrchestratorRecognizer extends Configurable implements Recognizer {
         return recognizerResult;
     }
     
-    public Score (text: string) : any {
+    public Score(text: string): any {
         return this._resolver.score(text);
     }
 
-    public static async createRecognizerAsync(modelPath: string, snapShotPath: string)
-    {
-        if (modelPath === null)
-        {
+    public static async createRecognizerAsync(modelPath: string, snapShotPath: string): Promise<OrchestratorRecognizer> {
+        if (modelPath === null) {
             throw new exception(`Missing "ModelPath" information.`);
         }
 
-        if (snapShotPath === null)
-        {
+        if (snapShotPath === null) {
             throw new exception(`Missing "SnapshotPath" information.`);
         }
 
-        var recognizer = new OrchestratorRecognizer();
+        const recognizer = new OrchestratorRecognizer();
 
         OrchestratorRecognizer._modelPath = modelPath;
 
         recognizer._snapShotPath = snapShotPath;
         
-        await recognizer.InitializeModel();
+        await recognizer.initializeModel();
 
         return recognizer;
     }
 
-    private async InitializeModel()
-    {
-        if (OrchestratorRecognizer._modelPath == null)
-        {
+    private async initializeModel(): Promise<void> {
+        if (OrchestratorRecognizer._modelPath == null) {
             throw new exception(`Missing "ModelPath" information.`);
         }
 
-        if (this._snapShotPath == null)
-        {
+        if (this._snapShotPath == null) {
             throw new exception(`Missing "ShapshotPath" information.`);
         }
 
-        if (OrchestratorRecognizer._orchestrator == null)
-        {
-            var fullModelPath = path.resolve(OrchestratorRecognizer._modelPath);
+        if (OrchestratorRecognizer._orchestrator == null) {
+            const fullModelPath = resolve(OrchestratorRecognizer._modelPath);
 
             // Create Orchestrator 
             
@@ -133,9 +127,8 @@ export class OrchestratorRecognizer extends Configurable implements Recognizer {
             }
         }
 
-        if (this._resolver == null)
-        {
-            var fullSnapShotPath = path.resolve(this._snapShotPath);
+        if (this._resolver == null) {
+            const fullSnapShotPath = resolve(this._snapShotPath);
 
             // Load the snapshot
             const encoder: TextEncoder = new TextEncoder();
@@ -147,17 +140,14 @@ export class OrchestratorRecognizer extends Configurable implements Recognizer {
         }
     }
 
-    private AddTopScoringIntent(result: any, recognizerResult: RecognizerResult)
-    {
-        var topScoringIntent = result[0].label.name;
-        if (!recognizerResult.Intents[topScoringIntent])
-        {
-            recognizerResult.Intents.topScoringIntent = {
-                Score : result[0].score
+    private AddTopScoringIntent(result: any, recognizerResult: RecognizerResult): RecognizerResult {
+        const topScoringIntent = result[0].label.name;
+        if (!recognizerResult.intents[topScoringIntent]) {
+            recognizerResult.intents.topScoringIntent = {
+                score: result[0].score
             };
         }
 
         return recognizerResult;
     }
-   
 };

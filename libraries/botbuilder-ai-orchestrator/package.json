@@ -19,12 +19,12 @@
   "main": "./lib/index.js",
   "typings": "./lib/index.d.ts",
   "dependencies": {
-    "oc_node_authoring": "0.1.9",
-    "botbuilder-core": "4.1.6",
     "adaptive-expressions": "4.1.6",
+    "botbuilder-core": "4.1.6",
+    "botbuilder-dialogs": "4.1.6",
     "botbuilder-dialogs-adaptive": "4.1.6",
-    "read-text-file": "1.1.0",
-    "botbuilder-dialogs": "4.1.6"
+    "oc_node_authoring": "0.1.9",
+    "read-text-file": "1.1.0"
   },
   "devDependencies": {
     "@microsoft/api-extractor": "^7.7.12",
@@ -47,6 +47,7 @@
   },
   "files": [
     "/lib",
+    "/schema",
     "/src"
   ]
 }
