@@ -61,13 +61,13 @@ export class Recognizer {
         const { intent, score } = getTopScoringIntent(recognizerResult);
 
         const properties: { [key: string]: string } = {
-            'Text': recognizerResult.text ,
-            'AlteredText': recognizerResult.alteredText ,
-            'TopIntent': Object.entries(recognizerResult.intents).length > 0 ? intent : undefined ,
-            'TopIntentScore': Object.entries(recognizerResult.intents).length > 0 ? score.toString() : undefined ,
-            'Intents': Object.entries(recognizerResult.intents).length > 0 ? JSON.stringify(recognizerResult.intents) : undefined , 
-            'Entities': recognizerResult.entities ? recognizerResult.entities.toString() : undefined
-            // 'AdditionalProperties': recognizerResult.properties ? (Object.entries(recognizerResult.properties).length > 0 ? JSON.stringify(recognizerResult.properties) : undefined ) : undefined
+            'Text': recognizerResult.text,
+            'AlteredText': recognizerResult.alteredText,
+            'TopIntent': Object.entries(recognizerResult.intents).length > 0 ? intent : undefined,
+            'TopIntentScore': Object.entries(recognizerResult.intents).length > 0 ? score.toString() : undefined,
+            'Intents': Object.entries(recognizerResult.intents).length > 0 ? JSON.stringify(recognizerResult.intents) : undefined,
+            'Entities': recognizerResult.entities ? recognizerResult.entities.toString() : undefined,
+            'AdditionalProperties': this.stringifyAdditionalPropertiesOfRecognizerResult(recognizerResult)
         };
 
 
@@ -76,6 +76,17 @@ export class Recognizer {
             return Object.assign({}, properties, telemetryProperties);
         }
         return properties;
+    }
+
+    private stringifyAdditionalPropertiesOfRecognizerResult(recognizerResult: RecognizerResult): string {
+        const generalProperties = ['Text', 'AlteredText', 'TopIntent', 'TopIntentScore', 'Intents', 'Entities'];
+        var additionalProperties: { [key: string]: string } = {};
+        for (const key of Object.keys(recognizerResult)) {
+            if (generalProperties.indexOf(key) === -1) {
+                additionalProperties[key] = recognizerResult[key];
+            }
+        }
+        return Object.keys(additionalProperties).length > 0 ? JSON.stringify(additionalProperties) : undefined;
     }
 
     protected trackRecognizerResult(dialogContext: DialogContext, eventName: string, telemetryProperties?: { [key: string]: string }, telemetryMetrics?: { [key: string]: number }) {
