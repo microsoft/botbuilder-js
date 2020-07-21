@@ -12,6 +12,7 @@ import { Activity } from 'botbuilder-core';
 import { ExpressionParser } from 'adaptive-expressions';
 import { TextTemplate } from '../templates';
 import { ValueExpression, StringExpression, BoolExpression, EnumExpression } from 'adaptive-expressions';
+import { JsonExtensions } from '../jsonExtensions';
 
 export class HttpHeadersConverter implements Converter {
     public convert(value: object): { [key: string]: StringExpression } {
@@ -148,7 +149,7 @@ export class HttpRequest<O extends object = {}> extends Dialog<O> implements Con
         }
 
         if (instanceBody) {
-            instanceBody = await this.replaceBodyRecursively(dc, instanceBody);
+            instanceBody = await JsonExtensions.replaceJsonRecursively(dc, instanceBody);
         }
 
         const parsedBody = JSON.stringify(instanceBody);
@@ -210,39 +211,6 @@ export class HttpRequest<O extends object = {}> extends Dialog<O> implements Con
 
     protected onComputeId(): string {
         return `HttpRequest[${ this.method } ${ this.url }]`;
-    }
-
-    private async replaceBodyRecursively(dc: DialogContext, unit: object): Promise<any> {
-        if (typeof unit === 'string') {
-            let text: string = unit as string;
-            if (text.startsWith('{') && text.endsWith('}')) {
-                text = text.slice(1, text.length - 1);
-                const { value } = new ExpressionParser().parse(text).tryEvaluate(dc.state);
-                return value;
-            }
-            else {
-                return await new TextTemplate(text).bindToData(dc.context, dc.state);
-            }
-        }
-
-        if (Array.isArray(unit)) {
-            let result = [];
-            for (const child of unit) {
-                result.push(await this.replaceBodyRecursively(dc, child));
-            }
-
-            return result;
-        }
-
-        if (typeof unit === 'object') {
-            let result = {};
-            for (let key in unit) {
-                result[key] = await this.replaceBodyRecursively(dc, unit[key]);
-            }
-            return result;
-        }
-
-        return unit;
     }
 }
 
