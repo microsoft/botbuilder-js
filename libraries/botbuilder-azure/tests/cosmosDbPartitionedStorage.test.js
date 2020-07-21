@@ -139,6 +139,7 @@ describe('CosmosDbPartitionedStorage - Constructor Tests', function() {
 });
 
 describe('CosmosDbPartitionedStorage - Base Storage Tests', function() {
+    this.timeout(5000)
     before('cleanup', cleanup); // Ensure we start from scratch
     beforeEach('prep', prep);
     afterEach('cleanup', cleanup);
