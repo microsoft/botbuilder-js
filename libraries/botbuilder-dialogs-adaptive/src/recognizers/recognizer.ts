@@ -80,7 +80,7 @@ export class Recognizer {
 
     private stringifyAdditionalPropertiesOfRecognizerResult(recognizerResult: RecognizerResult): string {
         const generalProperties = ['Text', 'AlteredText', 'TopIntent', 'TopIntentScore', 'Intents', 'Entities'];
-        var additionalProperties: { [key: string]: string } = {};
+        let additionalProperties: { [key: string]: string } = {};
         for (const key of Object.keys(recognizerResult)) {
             if (generalProperties.indexOf(key) === -1) {
                 additionalProperties[key] = recognizerResult[key];
