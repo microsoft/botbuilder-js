@@ -149,7 +149,7 @@ export class HttpRequest<O extends object = {}> extends Dialog<O> implements Con
         }
 
         if (instanceBody) {
-            instanceBody = await JsonExtensions.replaceJsonRecursively(dc, instanceBody);
+            instanceBody = JsonExtensions.replaceJsonRecursively(dc.state, instanceBody);
         }
 
         const parsedBody = JSON.stringify(instanceBody);

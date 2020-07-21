@@ -1,6 +1,7 @@
 import { Dialog, DialogContext, DialogTurnResult } from 'botbuilder-dialogs';
 import { Converter } from 'botbuilder-dialogs-declarative';
 import { ValueExpression, StringExpression, BoolExpression } from 'adaptive-expressions';
+import { JsonExtensions } from '../jsonExtensions';
 
 export interface PropertyAssignment {
     property: StringExpression;
@@ -41,7 +42,12 @@ export class SetProperties<O extends object = {}> extends Dialog<O> {
 
         for (let i = 0; i < this.assignments.length; i++) {
             const assignment = this.assignments[i];
-            const value = assignment.value.getValue(dc.state);
+            let value = assignment.value.getValue(dc.state);
+            
+            if (value) {
+                value = JsonExtensions.replaceJsonRecursively(dc.state, value);
+            }
+
             const property = assignment.property.getValue(dc.state);
             dc.state.setValue(property, value);
         }

@@ -2,9 +2,8 @@
  * @module botbuilder-dialogs-adaptive
  */
 
-import { DialogContext } from 'botbuilder-dialogs';
+import { DialogStateManager } from 'botbuilder-dialogs';
 import { ExpressionParser, ValueExpression } from 'adaptive-expressions';
-import { TextTemplate } from './templates';
 
 /**
  * Copyright (c) Microsoft Corporation. All rights reserved.
@@ -17,23 +16,23 @@ export class JsonExtensions {
      * @param unit Input object.
      * @returns Deep data binding result.
      */
-    public static replaceJsonRecursively(dc: DialogContext, unit: object): any {
+    public static replaceJsonRecursively(state: DialogStateManager, unit: object): any {
         if (typeof unit === 'string') {
             let text: string = unit as string;
             if (text.startsWith('{') && text.endsWith('}')) {
                 text = text.slice(1, text.length - 1);
-                const { value } = new ExpressionParser().parse(text).tryEvaluate(dc.state);
+                const { value } = new ExpressionParser().parse(text).tryEvaluate(state);
                 return value;
             }
             else {
-                return new ValueExpression(text).getValue(dc.state);
+                return new ValueExpression(text).getValue(state);
             }
         }
 
         if (Array.isArray(unit)) {
             let result = [];
             for (const child of unit) {
-                result.push(JsonExtensions.replaceJsonRecursively(dc, child));
+                result.push(JsonExtensions.replaceJsonRecursively(state, child));
             }
 
             return result;
@@ -42,7 +41,7 @@ export class JsonExtensions {
         if (typeof unit === 'object') {
             let result = {};
             for (let key in unit) {
-                result[key] = JsonExtensions.replaceJsonRecursively(dc, unit[key]);
+                result[key] = JsonExtensions.replaceJsonRecursively(state, unit[key]);
             }
             return result;
         }
