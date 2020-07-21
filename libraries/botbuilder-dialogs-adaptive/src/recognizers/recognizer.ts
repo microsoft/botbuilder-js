@@ -70,7 +70,6 @@ export class Recognizer {
             'AdditionalProperties': this.stringifyAdditionalPropertiesOfRecognizerResult(recognizerResult)
         };
 
-
         // Additional Properties can override "stock" properties.
         if (telemetryProperties) {
             return Object.assign({}, properties, telemetryProperties);
@@ -79,10 +78,10 @@ export class Recognizer {
     }
 
     private stringifyAdditionalPropertiesOfRecognizerResult(recognizerResult: RecognizerResult): string {
-        const generalProperties = ['Text', 'AlteredText', 'TopIntent', 'TopIntentScore', 'Intents', 'Entities'];
+        const generalProperties = new Set(['text', 'alteredText', 'intents', 'entities']);
         let additionalProperties: { [key: string]: string } = {};
-        for (const key of Object.keys(recognizerResult)) {
-            if (generalProperties.indexOf(key) === -1) {
+        for (const key in recognizerResult) {
+            if (generalProperties.has(key)) {
                 additionalProperties[key] = recognizerResult[key];
             }
         }
