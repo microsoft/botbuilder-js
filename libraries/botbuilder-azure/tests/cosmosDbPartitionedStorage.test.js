@@ -44,16 +44,21 @@ var canConnectToEmulator = undefined;
 const checkEmulator = async () => {
     // We don't want to check for this multiple times, due to waiting on fetch() timeouts when connection fails
     if (canConnectToEmulator === undefined) {
-        try {
-            const agent = new https.Agent({
-                rejectUnauthorized: false
-            });
-            await fetch(emulatorEndpoint, { agent });
-            canConnectToEmulator = true;
-        } catch (err) {
+        if (mode === MockMode.lockdown) {
             canConnectToEmulator = false;
-            console.warn(`Unable to connect to Cosmos Emulator at ${ emulatorEndpoint }. Running tests against Nock recordings.`);
+        } else {
+            try {
+                const agent = new https.Agent({
+                    rejectUnauthorized: false
+                });
+                await fetch(emulatorEndpoint, { agent });
+                canConnectToEmulator = true;
+            } catch (err) {
+                canConnectToEmulator = false;
+            }
         }
+        if (!canConnectToEmulator) console.warn(`Unable to connect to Cosmos Emulator at ${ emulatorEndpoint }. Running tests against Nock recordings.`);
+        
     }
     return canConnectToEmulator;
 };
