@@ -156,34 +156,46 @@ describe('ActivityPrompt', function () {
             .assertReply(`You sent a(n) ${ ActivityTypes.Event }`);
     });
 
-    it('should have resumeDialog() prompt user and return Dialog.EndOfTurn.', async function () {
-        const adapter = new TestAdapter(async turnContext => {
-            const dc = await dialogs.createContext(turnContext);
-
-            const results = await dc.continueDialog();
-            if (results.status === DialogTurnStatus.empty) {
-                await dc.prompt('prompt', { prompt: 'Please send an activity.', retryPrompt: 'Activity not received.' });
-            }
-
-            const secondResults = await prompt.resumeDialog(dc, DialogReason.nextCalled);
-            assert(secondResults.status === DialogTurnStatus.waiting, 'resumeDialog() did not return a correct Dialog.EndOfTurn.');
-            assert(secondResults.result === undefined, 'resumeDialog() did not return a correct Dialog.EndOfTurn.');
-            await convoState.saveChanges(turnContext);
-        });
+    it('should not have resumeDialog() use the retry prompt.', async function() {
         const convoState = new ConversationState(new MemoryStorage());
-
         const dialogState = convoState.createProperty('dialogState');
         const dialogs = new DialogSet(dialogState);
-        const prompt = new SimpleActivityPrompt('prompt', async prompt => {
-            assert(prompt, `validator missing PromptValidatorContext.`);
-            assert(typeof prompt.recognized.value === 'object', 'recognized.value was not an object.');
-            return false;
-        })
+        const prompt = new SimpleActivityPrompt('prompt', () => Promise.resolve(false));
+
         dialogs.add(prompt);
 
-        await adapter.send('Hello')
-            .assertReply('Please send an activity.')
-            .assertReply('Please send an activity.');
+        const adapter = new TestAdapter(async (turnContext) => {
+            const dc = await dialogs.createContext(turnContext);
 
+            switch (turnContext.activity.text) {
+                case 'begin':
+                    const options = {
+                        prompt: 'please send an event.',
+                        retryPrompt: 'Retrying - please send an event.'
+                    };
+
+                    await dc.prompt('prompt', options);
+                    break;
+
+                case 'continue':
+                    await prompt.continueDialog(dc);
+                    break;
+
+                case 'resume':
+                    await prompt.resumeDialog(dc, DialogReason.nextCalled);
+                    break;
+            }
+            
+            await convoState.saveChanges(turnContext);
+        });
+
+        await adapter.send('begin')
+            .assertReply('please send an event.')
+            .send('continue')
+            .assertReply('Retrying - please send an event.')
+            .send('resume')
+            // 'resumeDialog' of ActivityPrompt does NOT cause a retry
+            .assertReply('please send an event.')
+            .startTest();
     });
 });
