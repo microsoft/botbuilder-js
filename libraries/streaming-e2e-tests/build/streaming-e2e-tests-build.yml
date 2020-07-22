@@ -37,6 +37,4 @@ stages:
     # dependsOn: Deploy_Projects
     # condition: succeeded()
     jobs:
-      - job: Run_Tests
-        steps:
-          - template: run-tests.yml
+      - template: run-tests.yml
