@@ -12,23 +12,31 @@ pool:
 variables:
   RootReactPiecesDir: '$(System.DefaultWorkingDirectory)/libraries/streaming-e2e-tests/react-app'
   DLJSDir: '$(System.DefaultWorkingDirectory)/libraries/streaming-e2e-tests/react-app/BotFramework-DirectLineJS'
-  runCodesignValidationInjection: false
   BotBuilder: 'botbuilder'
   BfStreaming: 'botframework-streaming'
+  TestsDir: '$(System.DefaultWorkingDirectory)/libraries/streaming-e2e-tests/tests'
+  runCodesignValidationInjection: false
   # Variables defined in Azure:
-  # ResourceGroup, ReactAppService, BotName
+  # BotName, ReactAppService, ResourceGroup
   
 
 stages:
-  - stage: Deploy_Projects
-    jobs:
-      - job: Deploy_Bot
-        variables:
-          TargetProjectDir: '$(System.DefaultWorkingDirectory)/libraries/streaming-e2e-tests/bot'
-          PackageName: $(BotBuilder)
-        steps:
-          - template: configure-to-bbjs-daily.yml
-          - template: deploy-bot.yml
+  # - stage: Deploy_Projects
+  #   jobs:
+  #     - job: Deploy_Bot
+  #       variables:
+  #         TargetProjectDir: '$(System.DefaultWorkingDirectory)/libraries/streaming-e2e-tests/bot'
+  #         PackageName: $(BotBuilder)
+  #       steps:
+  #         - template: configure-to-bbjs-daily.yml
+  #         - template: deploy-bot.yml
 
-      - template: create-and-deploy-streaming-react-app.yml
-          
+  #     - template: create-and-deploy-streaming-react-app.yml
+
+  - stage: Run_Tests
+    # dependsOn: Deploy_Projects
+    # condition: succeeded()
+    jobs:
+      - job: Run_Tests
+        steps:
+          - template: run-tests.yml
