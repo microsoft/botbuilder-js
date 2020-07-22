@@ -21,16 +21,16 @@
   "dependencies": {
     "adaptive-expressions": "4.1.6",
     "antlr4ts": "0.5.0-alpha.3",
-    "lodash": "^4.17.11",
+    "lodash": "^4.17.19",
     "path": "^0.12.7",
-    "uuid": "^3.3.3"
+    "uuid": "^3.4.0"
   },
   "devDependencies": {
     "@microsoft/api-extractor": "^7.7.12",
-    "@types/mocha": "^5.2.5",
-    "@types/node": "^10.12.18",
-    "mocha": "^5.2.0",
-    "nyc": "^15.0.0",
+    "@types/mocha": "^5.2.7",
+    "@types/node": "^10.17.27",
+    "mocha": "^6.2.3",
+    "nyc": "^15.1.0",
     "ts-node": "^4.1.0",
     "typescript": "3.5.3",
     "antlr4ts-cli": "0.5.0-alpha.3"

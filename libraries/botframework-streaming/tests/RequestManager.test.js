@@ -13,7 +13,7 @@ describe('RequestManager', () => {
             .equal(0);
     });
 
-    it('RequestManager.getResponseAsync called twice throws', async () => {
+    it('RequestManager.getResponse called twice throws', async () => {
         let rm = new RequestManager.RequestManager();
         let requestId = '123';
         rm.getResponse(requestId, undefined);

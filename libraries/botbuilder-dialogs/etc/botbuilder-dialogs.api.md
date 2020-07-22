@@ -153,7 +153,6 @@ export class ComponentDialog<O extends object = {}> extends DialogContainer<O> {
     repromptDialog(context: TurnContext, instance: DialogInstance): Promise<void>;
     // (undocumented)
     resumeDialog(outerDC: DialogContext, reason: DialogReason, result?: any): Promise<DialogTurnResult>;
-    telemetryClient: BotTelemetryClient;
 }
 
 // @public
@@ -254,6 +253,7 @@ export abstract class DialogContainer<O extends object = {}> extends Dialog<O> {
     readonly dialogs: DialogSet;
     findDialog(dialogId: string): Dialog | undefined;
     protected getInternalVersion(): string;
+    telemetryClient: BotTelemetryClient;
 }
 
 // @public
