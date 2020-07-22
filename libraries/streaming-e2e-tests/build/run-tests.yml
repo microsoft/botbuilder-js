@@ -4,12 +4,12 @@ jobs:
     ChromeDriverDownloadUrl: 'https://chromedriver.storage.googleapis.com/84.0.4147.30/chromedriver_win32.zip'
   steps:
     - powershell: npm install
-      displayName: 'npm install in tests directory'
-      workingDirectory: $(TestsDir)
+    #   displayName: 'npm install in tests directory'
+    #   workingDirectory: $(TestsDir)
 
-    - template: install-chromedriver-bin.yml
+    # - template: install-chromedriver-bin.yml
 
-    - powershell: npm test
-      displayName: 'Run Tests: npm test'
-      workingDirectory: $(TestsDir)
+    # - powershell: npm test
+    #   displayName: 'Run Tests: npm test'
+    #   workingDirectory: $(TestsDir)
   

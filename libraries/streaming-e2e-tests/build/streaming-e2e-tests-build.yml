@@ -21,7 +21,7 @@ variables:
   
 
 stages:
-  # - stage: Deploy_Projects
+  # - stage: Create_And_Deploy_Projects
   #   jobs:
   #     - job: Deploy_Bot
   #       variables:
@@ -34,7 +34,7 @@ stages:
   #     - template: create-and-deploy-streaming-react-app.yml
 
   - stage: Run_Tests
-    # dependsOn: Deploy_Projects
+    # dependsOn: Create_And_Deploy_Projects
     # condition: succeeded()
     jobs:
       - template: run-tests.yml
