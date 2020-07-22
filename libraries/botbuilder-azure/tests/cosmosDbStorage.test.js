@@ -50,14 +50,13 @@ const options = {
 
 const storage = new CosmosDbStorage(getSettings(), policyConfigurator);
 const partitionKey = 'ARG';
-const partitionedStorage = new CosmosDbStorage(getSettings(partitionKey), policyConfigurator);
 
 // item to test the read and delete operations with partitionkey
 let changes = {};
 changes['001'] = {
     Location: partitionKey,
     MessageList: ['Hi', 'how are u']
-}
+};
 
 describe('CosmosDbStorage - Constructor Tests', function() {
     it('missing settings should throw', function() {
@@ -72,7 +71,7 @@ describe('CosmosDbStorage - Constructor Tests', function() {
             collectionId: 'testCollectionID'
         };
 
-        assert.throws(() => new CosmosDbStorage(testSettings), Error, 'constructor should have thrown error about missing service Endpoint.')
+        assert.throws(() => new CosmosDbStorage(testSettings), Error, 'constructor should have thrown error about missing service Endpoint.');
     });
 
     it('missing settings endpoint should be thrown - empty value', function() {
@@ -83,7 +82,7 @@ describe('CosmosDbStorage - Constructor Tests', function() {
             collectionId: 'testCollectionID'
         };
 
-        assert.throws(() => new CosmosDbStorage(testSettings), Error, 'constructor should have thrown error about missing service Endpoint.')
+        assert.throws(() => new CosmosDbStorage(testSettings), Error, 'constructor should have thrown error about missing service Endpoint.');
     });
 
     it('missing settings endpoint should be thrown - white spaces', function() {
@@ -94,7 +93,7 @@ describe('CosmosDbStorage - Constructor Tests', function() {
             collectionId: 'testCollectionID'
         };
 
-        assert.throws(() => new CosmosDbStorage(testSettings), Error, 'constructor should have thrown error about missing service Endpoint.')
+        assert.throws(() => new CosmosDbStorage(testSettings), Error, 'constructor should have thrown error about missing service Endpoint.');
     });
 
     it('missing settings authKey should be thrown - null value', function() {
@@ -105,7 +104,7 @@ describe('CosmosDbStorage - Constructor Tests', function() {
             collectionId: 'testCollectionID'
         };
 
-        assert.throws(() => new CosmosDbStorage(testSettings), Error, 'constructor should have thrown error about missing authKey.')
+        assert.throws(() => new CosmosDbStorage(testSettings), Error, 'constructor should have thrown error about missing authKey.');
     });
 
     it('missing settings authKey should be thrown - empty value', function() {
@@ -116,7 +115,7 @@ describe('CosmosDbStorage - Constructor Tests', function() {
             collectionId: 'testCollectionID'
         };
 
-        assert.throws(() => new CosmosDbStorage(testSettings), Error, 'constructor should have thrown error about missing authKey.')
+        assert.throws(() => new CosmosDbStorage(testSettings), Error, 'constructor should have thrown error about missing authKey.');
     });
 
     it('missing settings authKey should be thrown - white spaces', function() {
@@ -127,7 +126,7 @@ describe('CosmosDbStorage - Constructor Tests', function() {
             collectionId: 'testCollectionID'
         };
 
-        assert.throws(() => new CosmosDbStorage(testSettings), Error, 'constructor should have thrown error about missing authKey.')
+        assert.throws(() => new CosmosDbStorage(testSettings), Error, 'constructor should have thrown error about missing authKey.');
     });
 
     it('missing settings databaseId should be thrown - null value', function() {
@@ -138,7 +137,7 @@ describe('CosmosDbStorage - Constructor Tests', function() {
             collectionId: 'testCollectionID'
         };
 
-        assert.throws(() => new CosmosDbStorage(testSettings), Error, 'constructor should have thrown error about missing database ID.')
+        assert.throws(() => new CosmosDbStorage(testSettings), Error, 'constructor should have thrown error about missing database ID.');
     });
 
     it('missing settings databaseId should be thrown - empty value', function() {
@@ -149,7 +148,7 @@ describe('CosmosDbStorage - Constructor Tests', function() {
             collectionId: 'testCollectionID'
         };
 
-        assert.throws(() => new CosmosDbStorage(testSettings), Error, 'constructor should have thrown error about missing database ID.')
+        assert.throws(() => new CosmosDbStorage(testSettings), Error, 'constructor should have thrown error about missing database ID.');
     });
 
     it('missing settings databaseId should be thrown - white spaces', function() {
@@ -160,7 +159,7 @@ describe('CosmosDbStorage - Constructor Tests', function() {
             collectionId: 'testCollectionID'
         };
 
-        assert.throws(() => new CosmosDbStorage(testSettings), Error, 'constructor should have thrown error about missing database ID.')
+        assert.throws(() => new CosmosDbStorage(testSettings), Error, 'constructor should have thrown error about missing database ID.');
     });
 
     it('missing settings collectionId should be thrown - null value', function() {
@@ -171,7 +170,7 @@ describe('CosmosDbStorage - Constructor Tests', function() {
             collectionId: null
         };
 
-        assert.throws(() => new CosmosDbStorage(testSettings), Error, 'constructor should have thrown error about missing collection ID.')
+        assert.throws(() => new CosmosDbStorage(testSettings), Error, 'constructor should have thrown error about missing collection ID.');
     });
 
     it('missing settings collectionId should be thrown - empty value', function() {
@@ -182,7 +181,7 @@ describe('CosmosDbStorage - Constructor Tests', function() {
             collectionId: ''
         };
 
-        assert.throws(() => new CosmosDbStorage(testSettings), Error, 'constructor should have thrown error about missing collection ID.')
+        assert.throws(() => new CosmosDbStorage(testSettings), Error, 'constructor should have thrown error about missing collection ID.');
     });
 
     it('missing settings collectionId should be thrown - white spaces', function() {
@@ -193,7 +192,7 @@ describe('CosmosDbStorage - Constructor Tests', function() {
             collectionId: '    '
         };
 
-        assert.throws(() => new CosmosDbStorage(testSettings), Error, 'constructor should have thrown error about missing collection ID.')
+        assert.throws(() => new CosmosDbStorage(testSettings), Error, 'constructor should have thrown error about missing collection ID.');
     });
 });
 
