@@ -66,10 +66,9 @@ export class Recognizer {
             'TopIntent': Object.entries(recognizerResult.intents).length > 0 ? intent : undefined,
             'TopIntentScore': Object.entries(recognizerResult.intents).length > 0 ? score.toString() : undefined,
             'Intents': Object.entries(recognizerResult.intents).length > 0 ? JSON.stringify(recognizerResult.intents) : undefined,
-            'Entities': recognizerResult.entities ? recognizerResult.entities.toString() : undefined,
+            'Entities': recognizerResult.entities ? JSON.stringify(recognizerResult.entities) : undefined,
             'AdditionalProperties': this.stringifyAdditionalPropertiesOfRecognizerResult(recognizerResult)
         };
-
         // Additional Properties can override "stock" properties.
         if (telemetryProperties) {
             return Object.assign({}, properties, telemetryProperties);
@@ -81,7 +80,7 @@ export class Recognizer {
         const generalProperties = new Set(['text', 'alteredText', 'intents', 'entities']);
         let additionalProperties: { [key: string]: string } = {};
         for (const key in recognizerResult) {
-            if (generalProperties.has(key)) {
+            if (!generalProperties.has(key)) {
                 additionalProperties[key] = recognizerResult[key];
             }
         }
