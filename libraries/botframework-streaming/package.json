@@ -24,21 +24,21 @@
   "typings": "lib/index.d.ts",
   "dependencies": {
     "@types/ws": "^6.0.3",
-    "uuid": "^3.3.2",
+    "uuid": "^3.4.0",
     "ws": "^7.1.2"
   },
   "devDependencies": {
     "@microsoft/api-extractor": "^7.7.12",
     "@types/chai": "^4.1.7",
-    "@types/node": "^10.12.18",
+    "@types/node": "^10.17.27",
     "@typescript-eslint/eslint-plugin": "^1.10.2",
     "@typescript-eslint/parser": "^1.10.2",
     "chai": "^4.2.0",
     "eslint": "^5.16.0",
     "eslint-plugin-only-warn": "^1.0.1",
-    "mocha": "^6.2.0",
-    "nyc": "^15.0.0",
-    "sinon": "^7.4.1",
+    "mocha": "^6.2.3",
+    "nyc": "^15.1.0",
+    "sinon": "^7.5.0",
     "ts-node": "^4.1.0",
     "typescript": "3.5.3"
   },
