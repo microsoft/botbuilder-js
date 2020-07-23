@@ -15,9 +15,9 @@
     "adaptive-expressions": "4.1.6"
   },
   "devDependencies": {
-    "@types/mocha": "^2.2.47",
+    "@types/mocha": "^5.2.7",
     "nock": "^11.9.1",
-    "mocha": "^5.2.0"
+    "mocha": "^6.2.3"
   },
   "author": "Microsoft",
   "license": "MIT"
