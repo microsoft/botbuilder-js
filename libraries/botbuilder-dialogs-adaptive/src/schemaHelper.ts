@@ -7,6 +7,9 @@
  */
 import { PropertySchema } from './propertySchema';
 
+/**
+ * Helper class for dialog schema.
+ */
 export class SchemaHelper {
     /**
      * Creates a new `SchemaHelper` instance.

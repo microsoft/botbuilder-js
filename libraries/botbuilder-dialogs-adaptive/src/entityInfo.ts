@@ -5,9 +5,10 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { TurnPath, DialogPath } from 'botbuilder-dialogs';
-import { ActionContext } from './actionContext';
 
+/**
+ * Extended information about an entity including $instance data.
+ */
 export interface EntityInfo {
     /**
      * Name of entity.
