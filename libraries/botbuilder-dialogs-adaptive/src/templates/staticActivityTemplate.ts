@@ -6,8 +6,8 @@
  * Licensed under the MIT License.
  */
 
-import { DialogContext } from 'botbuilder-dialogs';
 import { Activity } from 'botbuilder-core';
+import { DialogContext } from 'botbuilder-dialogs';
 import { TemplateInterface } from '../template';
 
 /**

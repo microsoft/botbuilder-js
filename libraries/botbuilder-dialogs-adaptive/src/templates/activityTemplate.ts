@@ -6,11 +6,11 @@
  * Licensed under the MIT License.
  */
 
-import { DialogContext } from 'botbuilder-dialogs';
 import { Activity, ActivityFactory, MessageFactory } from 'botbuilder-core';
-import { TemplateInterface } from '../template';
+import { DialogContext } from 'botbuilder-dialogs';
 import { LanguageGenerator } from '../languageGenerator';
 import { languageGeneratorKey } from '../languageGeneratorExtensions';
+import { TemplateInterface } from '../template';
 
 /**
  * Defines an activity template where the template expression is local aka "inline"

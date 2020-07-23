@@ -7,21 +7,21 @@
  */
 
 import { IntExpression, ExpressionParser } from 'adaptive-expressions';
-import { TurnContext, ActivityTypes, Activity, RecognizerResult, getTopScoringIntent } from 'botbuilder-core';
-import { Dialog, DialogInstance, DialogReason, DialogTurnResult, DialogTurnStatus, DialogEvent, DialogContext, DialogContainer, DialogDependencies, TurnPath, DialogPath, DialogState } from 'botbuilder-dialogs';
+import { Activity, ActivityTypes, getTopScoringIntent, RecognizerResult, TurnContext } from 'botbuilder-core';
+import { Dialog, DialogContainer, DialogContext, DialogDependencies, DialogEvent, DialogInstance, DialogPath, DialogReason, DialogState, DialogTurnResult, DialogTurnStatus, TurnPath } from 'botbuilder-dialogs';
+import { ActionContext } from './actionContext';
+import { AdaptiveDialogState } from './adaptiveDialogState';
+import { AdaptiveEvents } from './adaptiveEvents';
 import { OnCondition } from './conditions';
+import { EntityEvents } from './entityEvents';
+import { EntityInfo } from './entityInfo';
+import { LanguageGenerator } from './languageGenerator';
+import { languageGeneratorKey } from './languageGeneratorExtensions';
 import { Recognizer, RecognizerSet } from './recognizers';
 import { ValueRecognizer } from './recognizers/valueRecognizer';
-import { TriggerSelector } from './triggerSelector';
-import { FirstSelector } from './selectors';
 import { SchemaHelper } from './schemaHelper';
-import { LanguageGenerator } from './languageGenerator';
-import { ActionContext } from './actionContext';
-import { EntityEvents } from './entityEvents';
-import { AdaptiveEvents } from './adaptiveEvents';
-import { AdaptiveDialogState } from './adaptiveDialogState';
-import { EntityInfo } from './entityInfo';
-import { languageGeneratorKey } from './languageGeneratorExtensions';
+import { FirstSelector } from './selectors';
+import { TriggerSelector } from './triggerSelector';
 
 export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
     public static conditionTracker = 'dialog._tracker.conditions';
