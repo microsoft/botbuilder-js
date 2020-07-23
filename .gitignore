@@ -320,3 +320,6 @@ package-lock.json
 
 consumer-test/**.js
 consumer-test/**.json
+
+# Transpiled botbuilder integration tests
+libraries/**/transpiled-tests/
