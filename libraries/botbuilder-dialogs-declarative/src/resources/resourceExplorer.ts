@@ -15,6 +15,9 @@ import { PathUtil } from '../pathUtil';
 import { TypeFactory } from '../factory/typeFactory';
 import { ComponentRegistration } from '../componentRegistration';
 
+/**
+ * Class which gives standard access to content resources.
+ */
 export class ResourceExplorer {
     private _factory: TypeFactory = new TypeFactory();
     private _resourceProviders: ResourceProvider[] = [];
@@ -23,7 +26,7 @@ export class ResourceExplorer {
 
     /**
      * Initializes a new instance of the `ResourceExplorer` class.
-     * @param providers Resource providers
+     * @param providers Resource providers.
      */
     public constructor(providers?: ResourceProvider[]) {
         if (providers) { this._resourceProviders = providers; }
@@ -60,7 +63,7 @@ export class ResourceExplorer {
 
     /**
      * Add a resource type to resource type set.
-     * @param type resource type
+     * @param type Resource type.
      */
     public addResourceType(type: string): void {
         type = type.toLowerCase().replace(/^\./, '');
@@ -81,7 +84,7 @@ export class ResourceExplorer {
 
     /**
      * Add a resource provider to the resources managed by resource explorer.
-     * @param resourceProvider resource provider to be added.
+     * @param resourceProvider Resource provider to be added.
      */
     public addResourceProvider(resourceProvider: ResourceProvider): ResourceExplorer {
         if (this._resourceProviders.some((r): boolean => r.id === resourceProvider.id)) {
@@ -95,10 +98,10 @@ export class ResourceExplorer {
     }
 
     /**
-     * Add a folder resource
-     * @param folder folder to be included as a resource
-     * @param includeSubFolders whether to include subfolders
-     * @param monitorChanges whether to track changes
+     * Add a folder resource.
+     * @param folder Folder to be included as a resource.
+     * @param includeSubFolders Whether to include subfolders.
+     * @param monitorChanges Whether to track changes.
      */
     public addFolder(folder: string, includeSubFolders: boolean = true, monitorChanges: boolean = true): ResourceExplorer {
         this.addResourceProvider(new FolderResourceProvider(this, folder, includeSubFolders, monitorChanges));
@@ -107,10 +110,10 @@ export class ResourceExplorer {
     }
 
     /**
-     * Add folder resources
-     * @param folder collection of folders to be included as resources.
-     * @param ignoreFolders imediate subfolders to ignore
-     * @param monitorChanges whether to track changes
+     * Add folder resources.
+     * @param folder Collection of folders to be included as resources.
+     * @param ignoreFolders Imediate subfolders to ignore.
+     * @param monitorChanges Whether to track changes.
      */
     public addFolders(folder: string, ignoreFolders?: string[], monitorChanges: boolean = true): ResourceExplorer {
         if (ignoreFolders) {
@@ -132,8 +135,8 @@ export class ResourceExplorer {
     }
 
     /**
-     * Add a ComponentRegistration to resource explorer for building types
-     * @param component component registration to be added
+     * Add a ComponentRegistration to resource explorer for building types.
+     * @param component Component registration to be added.
      */
     public addComponent(component: ComponentRegistration): ResourceExplorer {
         const builders = component.getTypeBuilders();
@@ -147,7 +150,7 @@ export class ResourceExplorer {
 
     /**
      * Get resources of a given type extension.
-     * @param fileExtension file extension filter
+     * @param fileExtension File extension filter.
      */
     public getResources(fileExtension: string): Resource[] {
         let resources: Resource[] = [];
@@ -161,8 +164,8 @@ export class ResourceExplorer {
     }
 
     /**
-     * Get resource by id.
-     * @param id resource id
+     * Gets resource by id.
+     * @param id Resource id.
      */
     public getResource(id: string): Resource {
         for (const rp of this._resourceProviders) {
@@ -176,8 +179,8 @@ export class ResourceExplorer {
     }
 
     /**
-     * Build types from object configuration
-     * @param config configuration to be parsed as a type
+     * Build types from object configuration.
+     * @param config Configuration to be parsed as a type.
      */
     public buildType(config: object): object {
         if (typeof config == 'object') {
@@ -195,8 +198,8 @@ export class ResourceExplorer {
     }
 
     /**
-     * Load types from resource or resource id
-     * @param resource resource or resource id to be parsed as a type
+     * Load types from resource or resource id.
+     * @param resource Resource or resource id to be parsed as a type.
      */
     public loadType(resource: string | Resource): object {
         if (typeof resource == 'string') {

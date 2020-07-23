@@ -10,24 +10,37 @@ import { EventEmitter } from 'events';
 import { Resource } from './resource';
 import { ResourceExplorer } from './resourceExplorer';
 
+/**
+ * Resource change event types.
+ * added - a new resource has been added.
+ * changed - an existing resource has been changed.
+ * removed - an existing resource has been removed.
+ */
 export enum ResourceChangeEvent {
     added = 'added',
     changed = 'changed',
     removed = 'removed'
 }
 
+/**
+ * Abstract class for looking up a resource by id.
+ */
 export abstract class ResourceProvider {
     private _resourceExplorer: ResourceExplorer;
     private _eventEmitter: EventEmitter = new EventEmitter();
     protected _id: string;
 
+    /**
+     * Initialize an instance of `ResourceProvider` class.
+     * @param resourceExplorer Resource explorer.
+     */
     public constructor(resourceExplorer: ResourceExplorer) {
         this._resourceExplorer = resourceExplorer;
     }
 
-
     /**
      * Event which is fired if any resource managed by the resource provider detects changes to the underlining resource.
+     * @param callback Callback function to be called when an event fired.
      */
     public set changed(callback: (event: ResourceChangeEvent, resources: Resource[]) => void) {
         this._eventEmitter.on(ResourceChangeEvent.added, (resources: Resource[]): void => {
@@ -42,33 +55,33 @@ export abstract class ResourceProvider {
     }
 
     /**
-     * Resource explorer
+     * Gets the resource explorer.
      */
     public get resourceExplorer(): ResourceExplorer {
         return this._resourceExplorer;
     }
 
     /**
-     * Id for the resource provider
+     * Gets the ID for this resource provider.
      */
     public get id(): string {
         return this._id;
     }
 
     /**
-     * Get resource by id
-     * @param id resource id
+     * Gets resource by id.
+     * @param id Resource id.
      */
     public abstract getResource(id: string): Resource;
 
     /**
-     * Enumerate resources
-     * @param extension extension filter
+     * Enumerate resources.
+     * @param extension Extension filter.
      */
     public abstract getResources(extension: string): Resource[];
 
     /**
-     * Refresh any cached resources
+     * Refresh any cached resources.
      */
     public abstract refresh(): void;
 

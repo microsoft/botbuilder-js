@@ -14,16 +14,19 @@ import { ResourceProvider, ResourceChangeEvent } from './resourceProvider';
 import { ResourceExplorer } from './resourceExplorer';
 import { PathUtil } from '../pathUtil';
 
+/**
+ * Class which gives resource explorer access to resources which are stored in file system.
+ */
 export class FolderResourceProvider extends ResourceProvider {
     private _watcher: FSWatcher;
     private _resources: Map<string, FileResource> = new Map<string, FileResource>();
 
     /**
-     * Initializes a new instance of the `FolderResourceProvider` class
-     * @param resourceExplorer Resource explorer
-     * @param folder Root folder
-     * @param includeSubFolders Whether include its sub folders
-     * @param monitorChanges Whether monitor changes
+     * Initializes a new instance of the `FolderResourceProvider` class.
+     * @param resourceExplorer Resource explorer.
+     * @param folder Root folder.
+     * @param includeSubFolders Whether include its sub folders.
+     * @param monitorChanges Whether monitor changes.
      */
     public constructor(resourceExplorer: ResourceExplorer, folder: string, includeSubFolders: boolean = true, monitorChanges: boolean = true) {
         super(resourceExplorer);
@@ -75,16 +78,16 @@ export class FolderResourceProvider extends ResourceProvider {
     }
 
     /**
-     * Get resource by its id.
-     * @param id resource id
+     * Gets resource by its id.
+     * @param id Resource id.
      */
     public getResource(id: string): Resource {
         return this._resources.has(id) ? this._resources.get(id) : undefined;
     }
 
     /**
-     * Get resources by extension.
-     * @param extension resource extension
+     * Gets resources by extension.
+     * @param extension Resource extension.
      */
     public getResources(extension: string): Resource[] {
         extension = extension.startsWith('.') ? extension.toLowerCase() : `.${ extension.toLowerCase() }`;
@@ -98,10 +101,6 @@ export class FolderResourceProvider extends ResourceProvider {
         }
 
         return resources;
-    }
-
-    public toString(): string {
-        return this._id;
     }
 
     private onResourceAdded(path: string): void {

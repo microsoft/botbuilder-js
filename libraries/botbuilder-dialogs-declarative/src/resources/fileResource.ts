@@ -9,13 +9,16 @@
 import fs = require('fs');
 import { Resource } from './resource';
 
+/**
+ * Class which represents a file as a resource.
+ */
 export class FileResource extends Resource {
 
     private _fullname: string;
 
     /**
      * Initialize a new instance of the `FileResouce` class.
-     * @param path path to file.
+     * @param path Path to file.
      */
     public constructor(path: string) {
         super();
@@ -31,13 +34,12 @@ export class FileResource extends Resource {
         return this._fullname;
     }
 
+    /**
+     * Read text content of a file resource.
+     */
     public readText(): string {
         const filePath = this._fullname;
         const text = fs.readFileSync(filePath, 'utf-8');
         return text;
-    }
-
-    public toString(): string {
-        return this._id;
     }
 }
