@@ -127,7 +127,7 @@ export class MessagingExtensionAuthBot extends TeamsActivityHandler {
         }
         else
         {
-            await context.sendActivity("handleTeamsTaskModuleFetchAsync called without 'state' in Activity.Value");
+            await context.sendActivity("handleTeamsTaskModuleFetch called without 'state' in Activity.Value");
             return null;
         }
     }

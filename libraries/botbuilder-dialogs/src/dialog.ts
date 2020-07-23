@@ -480,13 +480,13 @@ export abstract class Dialog<O extends object = {}> extends Configurable {
         // No-op by default
     }
 
-    /// <summary>
-    /// Called when an event has been raised, using `DialogContext.emitEvent()`, by either the current dialog or a dialog that the current dialog started.
-    /// </summary>
-    /// <param name="dc">The dialog context for the current turn of conversation.</param>
-    /// <param name="e">The event being raised.</param>
-    /// <param name="cancellationToken">The cancellation token.</param>
-    /// <returns>True if the event is handled by the current dialog and bubbling should stop.</returns>
+    /**
+     * Called when an event has been raised, using `DialogContext.emitEvent()`, by either the current dialog or a dialog that the current dialog started.
+     * 
+     * @param dc - The dialog context for the current turn of conversation.
+     * @param e - The event being raised.
+     * @returns True if the event is handled by the current dialog and bubbling should stop.
+     */
     public async onDialogEvent(dc: DialogContext, e: DialogEvent): Promise<boolean> {
         // Before bubble
         let handled = await this.onPreBubbleEvent(dc, e);

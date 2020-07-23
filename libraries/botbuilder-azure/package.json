@@ -23,7 +23,7 @@
   "dependencies": {
     "@azure/cosmos": "^3.3.1",
     "@types/documentdb": "^1.10.5",
-    "@types/node": "^10.12.18",
+    "@types/node": "^10.17.27",
     "azure-storage": "2.10.2",
     "botbuilder": "4.1.6",
     "documentdb": "1.14.5",
@@ -32,12 +32,12 @@
   },
   "devDependencies": {
     "@microsoft/api-extractor": "^7.7.12",
-    "@types/mocha": "^2.2.47",
+    "@types/mocha": "^5.2.7",
     "@types/semaphore": "^1.1.0",
     "codelyzer": "^4.1.0",
-    "mocha": "^5.2.0",
+    "mocha": "^6.2.3",
     "nock": "^11.9.1",
-    "nyc": "^15.0.0",
+    "nyc": "^15.1.0",
     "source-map-support": "^0.5.3",
     "ts-node": "^4.1.0",
     "typescript": "3.5.3"
