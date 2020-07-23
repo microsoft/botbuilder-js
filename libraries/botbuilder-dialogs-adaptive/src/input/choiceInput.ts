@@ -138,10 +138,11 @@ export class ChoiceInput extends InputDialog {
             dc.context.activity.locale ||
             optLocale ||
             (this.defaultLocale && this.defaultLocale.getValue(dc.state)));
+
         if (!culture || !ChoiceInput.defaultChoiceOptions.hasOwnProperty(culture)) {
             culture = PromptCultureModels.English.locale;
         }
-        
+
         return culture;
     }
 }
