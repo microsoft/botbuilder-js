@@ -41,19 +41,14 @@ export class LanguageGeneratorExtensions {
     public static useLanguageGeneration(dialogManager: DialogManager, lg?: string | LanguageGenerator): DialogManager {
         const resourceExplorer: ResourceExplorer = dialogManager.initialTurnState.get(resourceExplorerKey) || new ResourceExplorer();
 
-        let languageGenerator: LanguageGenerator;
-        if (!lg) {
-            lg = 'main.lg';
-        }
-        if (typeof(lg) === 'string') {
-            const resource = resourceExplorer.getResource(lg);
+        let languageGenerator = lg || 'main.lg';
+        if (typeof(languageGenerator) === 'string') {
+            const resource = resourceExplorer.getResource(languageGenerator);
             if (resource) {
-                languageGenerator = new ResourceMultiLanguageGenerator(lg);
+                languageGenerator = new ResourceMultiLanguageGenerator(languageGenerator);
             } else {
                 languageGenerator = new TemplateEngineLanguageGenerator();
             }
-        } else {
-            languageGenerator = lg;
         }
 
         const languageGeneratorManager: LanguageGeneratorManager = new LanguageGeneratorManager(resourceExplorer);
