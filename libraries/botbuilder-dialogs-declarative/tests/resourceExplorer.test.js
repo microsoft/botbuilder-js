@@ -111,7 +111,6 @@ describe('ResourecExplorer', function() {
         await new Promise(resolve => setTimeout(resolve, 200));
         assert.equal(event, ResourceChangeEvent.added);
         assert.equal(resource.id, 'file_to_be_added.dialog');
-        assert.equal(resource.toString(), 'file_to_be_added.dialog');
 
         // clean up
         unlinkSync(testPath);
@@ -145,7 +144,6 @@ describe('ResourecExplorer', function() {
         await new Promise(resolve => setTimeout(resolve, 200));
         assert.equal(event, ResourceChangeEvent.changed);
         assert.equal(resource.id, 'file_to_be_changed.dialog');
-        assert.equal(resource.toString(), 'file_to_be_changed.dialog');
 
         // clean up
         unlinkSync(testPath);
@@ -179,7 +177,6 @@ describe('ResourecExplorer', function() {
         await new Promise(resolve => setTimeout(resolve, 200));
         assert.equal(event, ResourceChangeEvent.removed);
         assert.equal(resource.id, 'file_to_be_removed.dialog');
-        assert.equal(resource.toString(), 'file_to_be_removed.dialog');
 
         // clean up
         resourceProvider.watcher.close();
@@ -200,7 +197,7 @@ describe('ResourecExplorer', function() {
         // write test file
         writeFileSync(testPath, '{"test": 123}');
 
-        // wait 100ms for file changes
+        // wait 200ms for file changes
         await new Promise(resolve => setTimeout(resolve, 200));
         assertResourceFound(explorer, 'foobar.dialog');
         assertResourceContents(explorer, 'foobar.dialog', '{"test": 123}');
@@ -209,7 +206,7 @@ describe('ResourecExplorer', function() {
         // modify the contents
         writeFileSync(testPath, '{"test": 1234}');
 
-        // wait 100ms for file changes
+        // wait 200ms for file changes
         await new Promise(resolve => setTimeout(resolve, 200));
         assertResourceFound(explorer, 'foobar.dialog');
         assertResourceContents(explorer, 'foobar.dialog', '{"test": 1234}');
@@ -217,7 +214,7 @@ describe('ResourecExplorer', function() {
         // remove test file
         unlinkSync(testPath);
     
-        // wait 100ms for file changes
+        // wait 200ms for file changes
         await new Promise(resolve => setTimeout(resolve, 200));
         assertResourceNotFound(explorer, 'foobar.dialog');
 
