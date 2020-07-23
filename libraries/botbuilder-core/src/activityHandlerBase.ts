@@ -79,6 +79,9 @@ export class ActivityHandlerBase {
             case ActivityTypes.Typing:
                 await this.onTypingActivity(context);
                 break;
+            case ActivityTypes.InstallationUpdate:
+                await this.onInstallationUpdateActivity(context);
+                break;
             default:
             // handler for unknown or unhandled types
                 await this.onUnrecognizedActivity(context);
@@ -197,6 +200,19 @@ export class ActivityHandlerBase {
      * emission process.
      */
     protected async onTypingActivity(context: TurnContext): Promise<void> {
+        return;
+    }
+
+    /**
+     * Provides a hook for emitting the _installationupdate_ event.
+     * 
+     * @param context The context object for the current turn.
+     * 
+     * @remarks
+     * Overwrite this method to run registered _installationupdate_ handlers and then continue the event
+     * emission process.
+     */
+    protected async onInstallationUpdateActivity(context: TurnContext): Promise<void> {
         return;
     }
 
