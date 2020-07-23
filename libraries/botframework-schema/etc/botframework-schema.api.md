@@ -46,7 +46,7 @@ export interface Activity {
     code?: EndOfConversationCodes | string;
     conversation: ConversationAccount;
     deliveryMode?: DeliveryModes | string;
-    entities?: Entity[];
+    entities?: Entity & {[key: string]: any})[];
     expiration?: Date;
     from: ChannelAccount;
     historyDisclosed?: boolean;
