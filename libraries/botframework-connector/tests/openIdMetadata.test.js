@@ -98,6 +98,8 @@ GOG4x32vEzakArLPxAKwGvkvu0jToAyvSQIDAQAB
         });
 
         function setupNockCalls(){
+            nock.restore();
+            nock.activate();
             return nock(mockUrl)
                 .get(mockMetadataUrl)
                 .reply(StatusCodes.OK, { jwks_uri: mockUrl + jwks_uriUrl })
