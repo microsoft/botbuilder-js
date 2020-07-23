@@ -288,6 +288,21 @@ export class ActivityHandler extends ActivityHandlerBase {
     }
 
     /**
+     * Registers an activity event handler for the _installationupdate_ activity.
+     * 
+     * @param handler The event handler.
+     * 
+     * @remarks
+     * Returns a reference to the [ActivityHandler](xref:botbuilder-core.ActivityHandler) object.
+     * 
+     * To handle a InstallationUpdate event, use the
+     * [onInstallationUpdate](xref:botbuilder-core.ActivityHandler.onInstallationUpdate) type-specific event handler.
+     */
+    public onInstallationUpdate(handler: BotHandler): this {
+        return this.on('InstallationUpdate', handler);
+    }
+
+    /**
      * Registers an activity event handler for the _tokens-response_ event, emitted for any incoming
      * `tokens/response` event activity. These are generated as part of the OAuth authentication flow.
      * 
@@ -496,6 +511,22 @@ export class ActivityHandler extends ActivityHandlerBase {
      */
     protected async onTypingActivity(context: TurnContext): Promise<void> {
         await this.handle(context, 'Typing', this.defaultNextEvent(context));
+    }
+
+    /**
+     * Runs all registered _instllationupdate_ handlers and then continues the event emission process.
+     * 
+     * @param context The context object for the current turn.
+     * 
+     * @remarks
+     * Overwrite this method to support channel-specific behavior across multiple channels.
+     * 
+     * The default logic is to call any handlers registered via
+     * [onInstallationUpdateActivity](xref:botbuilder-core.ActivityHandler.onInstallationUpdateActivity),
+     * and then continue by calling [defaultNextEvent](xref:botbuilder-core.ActivityHandler.defaultNextEvent).
+     */
+    protected async onInstallationUpdateActivity(context: TurnContext): Promise<void> {
+        await this.handle(context, 'InstallationUpdate', this.defaultNextEvent(context));
     }
 
     /**
