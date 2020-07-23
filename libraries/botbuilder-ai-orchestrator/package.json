@@ -23,7 +23,7 @@
     "botbuilder-core": "4.1.6",
     "botbuilder-dialogs": "4.1.6",
     "botbuilder-dialogs-adaptive": "4.1.6",
-    "oc_node_authoring": "0.1.9",
+    "@microsoft/orchestrator-core": "0.0.5-preview",
     "read-text-file": "1.1.0"
   },
   "devDependencies": {
