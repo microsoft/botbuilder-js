@@ -61,7 +61,7 @@ The following steps guide you through the configuration of a build pipeline base
 2. Select GitHub YAML for code source.
     ![GitHub YAML](./media/github-yaml.png)
 
-3. Configure the repository and branch. Use `botbuilder-js/libaries/streaming-e2e-tests/streaming-e2e-tests-build.yml` as the root YAML of this pipeline.
+3. Configure the repository and branch. Use [`botbuilder-js/libaries/streaming-e2e-tests/streaming-e2e-tests-build.yml`](https://github.com/microsoft/botbuilder-js/blob/Zerryth/streaming-e2e-tests/libraries/streaming-e2e-tests/build/streaming-e2e-tests-build.yml) as the root YAML of this pipeline.
     <details>
         <summary>Configuration Screen Shots</summary>
     
