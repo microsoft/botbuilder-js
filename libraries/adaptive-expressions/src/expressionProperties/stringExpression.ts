@@ -53,10 +53,5 @@ export class StringExpression extends ExpressionProperty<string> {
             this.expressionText = `=\`${ value }\``;
             return;
         }
-
-        if (value) {
-            // value is non-null/non-undefined that is neither an expression or a string, throw error.
-            throw new Error('Value should be a string or expression.');
-        }
     }
 }
