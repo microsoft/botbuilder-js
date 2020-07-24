@@ -24,6 +24,7 @@ import { TemplateEngineLanguageGenerator, ResourceMultiLanguageGenerator } from 
 import { ConditionalSelector, FirstSelector, RandomSelector, TrueSelector } from './selectors';
 import { LanguageGeneratorConverter } from './converters/languageGeneratorConverter';
 import { LuisAdaptiveRecognizer } from './luis';
+import { LanguagePolicyConverter } from './languagePolicy';
 
 export class AdaptiveDialogComponentRegistration implements ComponentRegistration {
     private _resourceExplorer: ResourceExplorer;
@@ -328,6 +329,7 @@ export class AdaptiveDialogComponentRegistration implements ComponentRegistratio
             'recognizers': new RecognizerConverter(this._resourceExplorer)
         }));
         this.registerBuilder('Microsoft.MultiLanguageRecognizer', new AdaptiveTypeBuilder(MultiLanguageRecognizer, this._resourceExplorer, {
+            'languagePolicy': new LanguagePolicyConverter(),
             'recognizers': new MultiLanguageRecognizerConverter(this._resourceExplorer)
         }));
         this.registerBuilder('Microsoft.RecognizerSet', new AdaptiveTypeBuilder(RecognizerSet, this._resourceExplorer, {
@@ -369,7 +371,9 @@ export class AdaptiveDialogComponentRegistration implements ComponentRegistratio
 
     private registerGenerators(): void {
         this.registerBuilder('Microsoft.TemplateEngineLanguageGenerator', new AdaptiveTypeBuilder(TemplateEngineLanguageGenerator, this._resourceExplorer, {}));
-        this.registerBuilder('Microsoft.ResourceMultiLanguageGenerator', new AdaptiveTypeBuilder(ResourceMultiLanguageGenerator, this._resourceExplorer, {}));
+        this.registerBuilder('Microsoft.ResourceMultiLanguageGenerator', new AdaptiveTypeBuilder(ResourceMultiLanguageGenerator, this._resourceExplorer, {
+            'languagePolicy': new LanguagePolicyConverter()
+        }));
     }
 
     private registerSelectors(): void {
