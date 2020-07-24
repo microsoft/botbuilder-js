@@ -5,6 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
+import { StringUtils } from 'botbuilder-core';
 import { DialogTurnResult, Dialog, DialogDependencies, DialogContext } from 'botbuilder-dialogs';
 import { BoolExpression, EnumExpression } from 'adaptive-expressions';
 import { ActionContext } from '../actionContext';
@@ -68,7 +69,7 @@ export class EditActions<O extends object = {}> extends Dialog<O> implements Dia
 
     protected onComputeId(): string {
         const idList = this.actions.map((action: Dialog): string => action.id);
-        return `EditActions[${ this.changeType.toString() }|${ idList.join(',') }]`;
+        return `EditActions[${ this.changeType.toString() }|${ StringUtils.ellipsis(idList.join(','), 50) }]`;
     }
 
 }

@@ -49,8 +49,8 @@ To create your test bot:
      "license": "MIT",
      "dependencies": {
        "botbuilder": "^4.1.6",
-       "restify": "^8.3.0",
-       "dotenv": "^6.1.0"
+       "restify": "^8.5.1",
+       "dotenv": "^6.2.0"
      }
    }
    ```

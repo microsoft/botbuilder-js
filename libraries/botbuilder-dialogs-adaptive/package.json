@@ -38,9 +38,9 @@
     "@types/node": "^10.12.18",
     "@types/node-fetch": "^2.5.3",
     "codelyzer": "^4.1.0",
-    "mocha": "^5.2.0",
+    "mocha": "^6.2.3",
     "nock": "^11.9.1",
-    "nyc": "^11.4.1",
+    "nyc": "^15.1.0",
     "source-map-support": "^0.5.3",
     "ts-node": "^4.1.0"
   },
