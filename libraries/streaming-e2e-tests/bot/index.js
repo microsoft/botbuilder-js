@@ -79,7 +79,7 @@ server.post('/api/messages', (req, res) => {
 adapter.useNamedPipe(async (context) => {
     await myBot.run(context);
     },
-    'ash-streaming-bot.directline'
+    process.env.APPSETTING_WEBSITE_NAME + '.directline'
 );
 
 // Listen for Upgrade requests for Streaming.

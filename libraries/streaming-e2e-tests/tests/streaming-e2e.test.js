@@ -7,7 +7,6 @@ const assert = require('assert');
 const { Builder, By, Condition, Key, until, css } = require('selenium-webdriver');
 const { Options } = require('selenium-webdriver/chrome');
 
-// TODO - EDIT PATH TO CHROMEDRIVER TO NOT BE MY LOCAL PATH
 const pathToChromeDriver = process.env.CHROME_DRIVER;
 
 describe('Chrome', function () {
@@ -46,7 +45,7 @@ function createDriver(browser, driverBinPath) {
 
 async function echoMessageInBrowser(driver) {
   try {
-    await driver.get('https://ash-react-app.azurewebsites.net/');
+    await driver.get(process.env.REACT_APP_ENDPOINT);
     await driver.sleep(2000);
 
     let wcSendBox = await driver.wait(until.elementLocated(By.className('webchat__send-box-text-box__input')), 10000);
