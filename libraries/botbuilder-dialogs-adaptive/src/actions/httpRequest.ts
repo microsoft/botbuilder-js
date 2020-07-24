@@ -221,7 +221,7 @@ export class HttpRequest<O extends object = {}> extends Dialog<O> implements Con
                 return value;
             }
             else {
-                const result = await new TextTemplate(text).bindToData(dc.context, dc.state);
+                const result = await new TextTemplate(text).bind(dc, dc.state);
                 
                 this.telemetryClient.trackEvent({
                     name: 'GeneratorResult',

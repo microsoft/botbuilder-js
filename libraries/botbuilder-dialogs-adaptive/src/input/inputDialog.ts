@@ -153,7 +153,7 @@ export abstract class InputDialog extends Dialog {
         } else {
             if (this.defaultValue) {
                 if (this.defaultValueResponse) {
-                    const response = await this.defaultValueResponse.bindToData(dc.context, dc.state);
+                    const response = await this.defaultValueResponse.bind(dc, dc.state);
                     this.telemetryClient.trackEvent({
                         name: 'GeneratorResult',
                         properties: {
@@ -213,26 +213,26 @@ export abstract class InputDialog extends Dialog {
             case InputState.unrecognized:
                 if (this.unrecognizedPrompt) {
                     template = this.unrecognizedPrompt;
-                    msg = await this.unrecognizedPrompt.bindToData(dc.context, dc.state);
+                    msg = await this.unrecognizedPrompt.bind(dc, dc.state);
                 } else if (this.invalidPrompt) {
                     template = this.invalidPrompt;
-                    msg = await this.invalidPrompt.bindToData(dc.context, dc.state);
+                    msg = await this.invalidPrompt.bind(dc, dc.state);
                 }
                 break;
             case InputState.invalid:
                 if (this.invalidPrompt) {
                     template = this.invalidPrompt;
-                    msg = await this.invalidPrompt.bindToData(dc.context, dc.state);
+                    msg = await this.invalidPrompt.bind(dc, dc.state);
                 } else if (this.unrecognizedPrompt) {
                     template = this.unrecognizedPrompt;
-                    msg = await this.unrecognizedPrompt.bindToData(dc.context, dc.state);
+                    msg = await this.unrecognizedPrompt.bind(dc, dc.state);
                 }
                 break;
         }
 
         if (!msg) {
             template = this.prompt;
-            msg = await this.prompt.bindToData(dc.context, dc.state);
+            msg = await this.prompt.bind(dc, dc.state);
         }
 
         msg.inputHint = InputHints.ExpectingInput;

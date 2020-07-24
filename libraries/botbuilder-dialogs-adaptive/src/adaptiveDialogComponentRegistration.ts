@@ -11,7 +11,7 @@ import { Choice, ListStyle, ChoiceFactoryOptions, FindChoicesOptions } from 'bot
 import { AdaptiveTypeBuilder } from './adaptiveTypeBuilder';
 import { AdaptiveDialog } from './adaptiveDialog';
 import { BeginDialog, BeginSkill, BreakLoop, CancelAllDialogs, CancelDialog, ContinueLoop, DeleteActivity, DeleteProperties, DeleteProperty, EditActions, EditArray, EmitEvent, EndDialog, EndTurn, ForEach, ForEachPage, GetActivityMembers, GetConversationMembers, GotoAction, IfCondition, LogAction, RepeatDialog, ReplaceDialog, SendActivity, SetProperties, SetProperty, SignOutUser, SwitchCondition, TraceActivity, UpdateActivity, ArrayChangeType, PropertyAssignmentConverter, HttpRequest, HttpHeadersConverter, ResponsesTypes } from './actions';
-import { AttachmentInput, ChoiceInput, ConfirmInput, DateTimeInput, NumberInput, OAuthInput, TextInput, AttachmentOutputFormat, ChoiceOutputFormat } from './input';
+import { Ask, AttachmentInput, ChoiceInput, ConfirmInput, DateTimeInput, NumberInput, OAuthInput, TextInput, AttachmentOutputFormat, ChoiceOutputFormat } from './input';
 import { OnActivity, OnAssignEntity, OnBeginDialog, OnCancelDialog, OnChooseEntity, OnChooseIntent, OnChooseProperty, OnClearProperty, OnCondition, OnConversationUpdateActivity, OnDialogEvent, OnEndOfActions, OnEndOfConversationActivity, OnError, OnEventActivity, OnHandoffActivity, OnIntent, OnInvokeActivity, OnMessageActivity, OnMessageDeleteActivity, OnMessageReactionActivity, OnMessageUpdateActivity, OnQnAMatch, OnRepromptDialog, OnTypingActivity, OnUnknownIntent } from './conditions';
 import { CrossTrainedRecognizerSet, MultiLanguageRecognizer, RecognizerSet, RegexRecognizer, IntentPatternConverter } from './recognizers';
 import { AgeEntityRecognizer, ConfirmationEntityRecognizer, CurrencyEntityRecognizer, DateTimeEntityRecognizer, DimensionEntityRecognizer, EmailEntityRecognizer, GuidEntityRecognizer, HashtagEntityRecognizer, IpEntityRecognizer, MentionEntityRecognizer, NumberEntityRecognizer, OrdinalEntityRecognizer, PercentageEntityRecognizer, PhoneNumberEntityRecognizer, RegexEntityRecognizer, TemperatureEntityRecognizer, UrlEntityRecognizer } from './recognizers/entityRecognizers';
@@ -24,6 +24,7 @@ import { TemplateEngineLanguageGenerator, ResourceMultiLanguageGenerator } from 
 import { ConditionalSelector, FirstSelector, RandomSelector, TrueSelector } from './selectors';
 import { LanguageGeneratorConverter } from './converters/languageGeneratorConverter';
 import { LuisAdaptiveRecognizer } from './luis';
+import { LanguagePolicyConverter } from './languagePolicy';
 
 export class AdaptiveDialogComponentRegistration implements ComponentRegistration {
     private _resourceExplorer: ResourceExplorer;
@@ -268,6 +269,12 @@ export class AdaptiveDialogComponentRegistration implements ComponentRegistratio
             'defaultValue': new ValueExpressionConverter(),
             'disabled': new BoolExpressionConverter()
         };
+        this.registerBuilder('Microsoft.Ask', new AdaptiveTypeBuilder(Ask, this._resourceExplorer, {
+            'expectedProperties': new ArrayExpressionConverter<string>(),
+            'defaultOperation': new StringExpressionConverter(),
+            'activity': new ActivityTemplateConverter(),
+            'disabled': new BoolExpressionConverter()
+        }));
         this.registerBuilder('Microsoft.AttachmentInput', new AdaptiveTypeBuilder(AttachmentInput, this._resourceExplorer,
             Object.assign(inputDialogConverters, {
                 'outputFormat': new EnumExpressionConverter(AttachmentOutputFormat)
@@ -322,6 +329,7 @@ export class AdaptiveDialogComponentRegistration implements ComponentRegistratio
             'recognizers': new RecognizerConverter(this._resourceExplorer)
         }));
         this.registerBuilder('Microsoft.MultiLanguageRecognizer', new AdaptiveTypeBuilder(MultiLanguageRecognizer, this._resourceExplorer, {
+            'languagePolicy': new LanguagePolicyConverter(),
             'recognizers': new MultiLanguageRecognizerConverter(this._resourceExplorer)
         }));
         this.registerBuilder('Microsoft.RecognizerSet', new AdaptiveTypeBuilder(RecognizerSet, this._resourceExplorer, {
@@ -363,7 +371,9 @@ export class AdaptiveDialogComponentRegistration implements ComponentRegistratio
 
     private registerGenerators(): void {
         this.registerBuilder('Microsoft.TemplateEngineLanguageGenerator', new AdaptiveTypeBuilder(TemplateEngineLanguageGenerator, this._resourceExplorer, {}));
-        this.registerBuilder('Microsoft.ResourceMultiLanguageGenerator', new AdaptiveTypeBuilder(ResourceMultiLanguageGenerator, this._resourceExplorer, {}));
+        this.registerBuilder('Microsoft.ResourceMultiLanguageGenerator', new AdaptiveTypeBuilder(ResourceMultiLanguageGenerator, this._resourceExplorer, {
+            'languagePolicy': new LanguagePolicyConverter()
+        }));
     }
 
     private registerSelectors(): void {

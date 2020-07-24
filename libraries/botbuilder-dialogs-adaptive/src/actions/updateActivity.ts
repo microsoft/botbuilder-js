@@ -54,7 +54,7 @@ export class UpdateActivity<O extends object = {}> extends Dialog<O> {
         const data = Object.assign({
             utterance: dc.context.activity.text || ''
         }, dc.state, options);
-        const activityResult = await this.activity.bindToData(dc.context, data);
+        const activityResult = await this.activity.bind(dc, data);
 
         this.telemetryClient.trackEvent({
             name: 'GeneratorResult',
