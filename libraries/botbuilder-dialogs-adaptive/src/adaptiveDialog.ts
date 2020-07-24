@@ -7,7 +7,7 @@
  */
 
 import { IntExpression, ExpressionParser } from 'adaptive-expressions';
-import { Activity, ActivityTypes, getTopScoringIntent, RecognizerResult, TurnContext } from 'botbuilder-core';
+import { Activity, ActivityTypes, getTopScoringIntent, RecognizerResult, StringUtils, TurnContext } from 'botbuilder-core';
 import { Dialog, DialogContainer, DialogContext, DialogDependencies, DialogEvent, DialogInstance, DialogPath, DialogReason, DialogState, DialogTurnResult, DialogTurnStatus, TurnPath } from 'botbuilder-dialogs';
 import { ActionContext } from './actionContext';
 import { AdaptiveDialogState } from './adaptiveDialogState';
@@ -148,7 +148,7 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
                 version += trigger.getExpression(parser).toString();
             });
 
-            this._internalVersion = computeHash(version);
+            this._internalVersion = StringUtils.hash(version);
         }
 
         return this._internalVersion;
@@ -724,26 +724,4 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
 
         return unrecognized;
     }
-}
-
-/**
- * Generates a 32 bit hash for a string.
- *
- * @remarks
- * The source for this function was derived from the following article:
- *
- * https://werxltd.com/wp/2010/05/13/javascript-implementation-of-javas-string-hashcode-method/
- *
- * @param text String to generate a hash for.
- * @returns A string that is 15 characters or less in length.
- */
-function computeHash(text: string): string {
-    const l = text.length;
-    let hash = 0;
-    for (let i = 0; i < l; i++) {
-        const chr = text.charCodeAt(i);
-        hash = ((hash << 5) - hash) + chr;
-        hash |= 0; // Convert to 32 bit integer
-    }
-    return hash.toString();
 }
