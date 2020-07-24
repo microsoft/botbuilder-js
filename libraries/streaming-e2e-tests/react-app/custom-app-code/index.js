@@ -1,15 +1,13 @@
-import { path } from 'path';
-import { dotenv } from 'dotenv';
-const ENV_FILE = path.join(__dirname, '.env');
-dotenv.config({ path: ENV_FILE });
-
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
-
 import { DirectLineStreaming } from 'botframework-directlinejs';
+import { path } from 'path';
+import { dotenv } from 'dotenv';
+const ENV_FILE = path.join(__dirname, '.env');
+dotenv.config({ path: ENV_FILE });
 
 (async function() {
   const botHostname = process.env.BOT_HOSTNAME;
