@@ -10,7 +10,7 @@ import { exception } from 'console';
 import { resolve } from 'path';
 import { TurnContext, RecognizerResult } from 'botbuilder-core';
 import { Configurable } from 'botbuilder-dialogs';
-const oc = require('@microsoft/orchestrator-core/orchestrator-core.node');
+const oc: any = require('@microsoft/orchestrator-core/orchestrator-core.node');
 const ReadText: any = require('read-text-file');
 
 export class OrchestratorRecognizer extends Configurable {
@@ -22,6 +22,23 @@ export class OrchestratorRecognizer extends Configurable {
     private modelPath : string = null;
     private snapshotPath : string = null;
     private resolver : any = null;
+
+    public static async createRecognizerAsync(modelPath: string, snapShotPath: string): Promise<OrchestratorRecognizer> {
+        if (modelPath === null) {
+            throw new exception(`Missing "ModelPath" information.`);
+        }
+
+        if (snapShotPath === null) {
+            throw new exception(`Missing "SnapshotPath" information.`);
+        }
+
+        const recognizer = new OrchestratorRecognizer();
+        recognizer.modelPath = modelPath;
+        recognizer.snapshotPath = snapShotPath;
+        
+        await recognizer.initializeModel();
+        return recognizer;
+    }
 
     public recognize(context: TurnContext): Promise<RecognizerResult> 
     {
@@ -55,23 +72,6 @@ export class OrchestratorRecognizer extends Configurable {
         return recognizerResult;
     }
 
-    public static async createRecognizerAsync(modelPath: string, snapShotPath: string): Promise<OrchestratorRecognizer> {
-        if (modelPath === null) {
-            throw new exception(`Missing "ModelPath" information.`);
-        }
-
-        if (snapShotPath === null) {
-            throw new exception(`Missing "SnapshotPath" information.`);
-        }
-
-        const recognizer = new OrchestratorRecognizer();
-        recognizer.modelPath = modelPath;
-        recognizer.snapshotPath = snapShotPath;
-        
-        await recognizer.initializeModel();
-        return recognizer;
-    }
-
     private async initializeModel(): Promise<void> {
         if (this.modelPath == null) {
             throw new exception(`Missing "ModelPath" information.`);
@@ -83,11 +83,9 @@ export class OrchestratorRecognizer extends Configurable {
 
         if (OrchestratorRecognizer.orchestrator == null) {
             const fullModelPath = resolve(this.modelPath);
-
-            // Create Orchestrator 
             
+            // Create orchestrator core
             OrchestratorRecognizer.orchestrator = new oc.Orchestrator();
-          
             if (fullModelPath) {
                 if (await OrchestratorRecognizer.orchestrator.load(fullModelPath) === false) {
                     throw new exception(`Model load failed.`);
