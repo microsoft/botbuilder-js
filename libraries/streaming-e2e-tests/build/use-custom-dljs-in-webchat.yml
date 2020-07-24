@@ -9,11 +9,6 @@ steps:
       artifact: DirectLineJsTgz
       path: $(RootReactPiecesDir)
 
-  # - task: DownloadPipelineArtifact@2
-  #   inputs:
-  #     artifact: testReactApp
-  #     path: $(TargetProjectDir)/testReactApp
-
   - powershell: |
       Set-Location -Path "$(ReactProjectDir)"
       
