@@ -24,8 +24,7 @@
     "libraries/botframework-streaming",
     "libraries/testskills/skillparent",
     "libraries/testskills/skillchild",
-    "transcripts",
-    "samples/dispatch"
+    "transcripts"
   ],
   "version": "independent",
   "command": {
