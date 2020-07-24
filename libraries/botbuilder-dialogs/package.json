@@ -24,16 +24,16 @@
     "@microsoft/recognizers-text-date-time": "1.1.4",
     "@microsoft/recognizers-text-number": "1.1.4",
     "@microsoft/recognizers-text-suite": "1.1.4",
-    "@types/node": "^10.12.18",
+    "@types/node": "^10.17.27",
     "botbuilder-core": "4.1.6",
     "globalize": "^1.4.2"
   },
   "devDependencies": {
     "@microsoft/api-extractor": "^7.7.12",
-    "@types/mocha": "^2.2.47",
+    "@types/mocha": "^5.2.7",
     "codelyzer": "^4.1.0",
-    "mocha": "^5.2.0",
-    "nyc": "^15.0.0",
+    "mocha": "^6.2.3",
+    "nyc": "^15.1.0",
     "source-map-support": "^0.5.3",
     "ts-node": "^4.1.0",
     "typescript": "3.5.3"
