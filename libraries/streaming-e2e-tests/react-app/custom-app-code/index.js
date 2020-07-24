@@ -1,3 +1,8 @@
+import { path } from 'path';
+import { dotenv } from 'dotenv';
+const ENV_FILE = path.join(__dirname, '.env');
+dotenv.config({ path: ENV_FILE });
+
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
@@ -7,14 +12,15 @@ import * as serviceWorker from './serviceWorker';
 import { DirectLineStreaming } from 'botframework-directlinejs';
 
 (async function() {
-  const res = await fetch('https://ash-streaming-bot.azurewebsites.net/api/token/directlinease', {
+  const botHostname = process.env.BOT_HOSTNAME;
+  const res = await fetch(`https://${botHostname}.azurewebsites.net/api/token/directlinease`, {
     method: 'POST'
   });
 
   const { token } = await res.json();
 
   const directLine = new DirectLineStreaming({
-    domain: 'https://ash-streaming-bot.azurewebsites.net/.bot/v3/directline',
+    domain: `https://${botHostname}.azurewebsites.net/.bot/v3/directline`,
     token
   });
 
