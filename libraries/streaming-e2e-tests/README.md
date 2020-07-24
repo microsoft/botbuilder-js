@@ -97,6 +97,8 @@ From here, you can see the pipeline running in Azure DevOps.
 ![Pipeline Running](./media/pipeline-running.png)
 
 As you push changes to the repo/branch that the pipeline is connected to, you may manually run pipeline to test your changes.
+
+Additionally, you could also visit your React app's website to chat with the streaming bot manually.
 ___
     
 
