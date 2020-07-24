@@ -1574,6 +1574,231 @@ describe('TeamsActivityHandler', () => {
                 .catch(err => done(err));
         });
 
+        it('onTeamsTeamArchived routed activity', done => {
+            const bot = new TeamsActivityHandler();
+
+            let onTeamsTeamArchivedEventCalled = false;
+
+            const team = { id: 'team' };
+            const activity = createConvUpdateActivity({ team, eventType: 'teamArchived' });
+
+            bot.onConversationUpdate(async (context, next) => {
+                assert(context, 'context not found');
+                assert(next, 'next not found');
+                onConversationUpdateCalled = true;
+                await next();
+            });
+
+            bot.onTeamsTeamArchivedEvent(async (teamInfo, context, next) => {
+                assert(teamInfo, 'teamsInfo not found');
+                assert(context, 'context not found');
+                assert(next, 'next not found');
+                assert.strictEqual(teamInfo, team);
+                onTeamsTeamArchivedEventCalled = true;
+                await next();
+            });
+
+            bot.onDialog(async (context, next) => {
+                assert(context, 'context not found');
+                assert(next, 'next not found');
+                onDialogCalled = true;
+                await next();
+            });
+
+            const adapter = new TestAdapter(async context => {
+                await bot.run(context);
+            });
+
+            adapter.send(activity)
+                .then(() => {
+                    assert(onTeamsTeamArchivedEventCalled, 'onTeamsTeamArchivedEvent handler not called');
+                    assert(onConversationUpdateCalled, 'onConversationUpdate handler not called');
+                    assert(onDialogCalled, 'onDialog handler not called');
+                    done();
+                })
+                .catch(err => done(err));
+        });
+
+        it('onTeamsTeamDeleted routed activity', done => {
+            const bot = new TeamsActivityHandler();
+
+            let onTeamsTeamDeletedEventCalled = false;
+
+            const team = { id: 'team' };
+            const activity = createConvUpdateActivity({ team, eventType: 'teamDeleted' });
+
+            bot.onConversationUpdate(async (context, next) => {
+                assert(context, 'context not found');
+                assert(next, 'next not found');
+                onConversationUpdateCalled = true;
+                await next();
+            });
+
+            bot.onTeamsTeamDeletedEvent(async (teamInfo, context, next) => {
+                assert(teamInfo, 'teamsInfo not found');
+                assert(context, 'context not found');
+                assert(next, 'next not found');
+                assert.strictEqual(teamInfo, team);
+                onTeamsTeamDeletedEventCalled = true;
+                await next();
+            });
+
+            bot.onDialog(async (context, next) => {
+                assert(context, 'context not found');
+                assert(next, 'next not found');
+                onDialogCalled = true;
+                await next();
+            });
+
+            const adapter = new TestAdapter(async context => {
+                await bot.run(context);
+            });
+
+            adapter.send(activity)
+                .then(() => {
+                    assert(onTeamsTeamDeletedEventCalled, 'onTeamsTeamDeletedEvent handler not called');
+                    assert(onConversationUpdateCalled, 'onConversationUpdate handler not called');
+                    assert(onDialogCalled, 'onDialog handler not called');
+                    done();
+                })
+                .catch(err => done(err));
+        });
+
+        it('onTeamsTeamHardDeleted routed activity', done => {
+            const bot = new TeamsActivityHandler();
+
+            let onTeamsTeamHardDeletedEventCalled = false;
+
+            const team = { id: 'team' };
+            const activity = createConvUpdateActivity({ team, eventType: 'teamHardDeleted' });
+
+            bot.onConversationUpdate(async (context, next) => {
+                assert(context, 'context not found');
+                assert(next, 'next not found');
+                onConversationUpdateCalled = true;
+                await next();
+            });
+
+            bot.onTeamsTeamHardDeletedEvent(async (teamInfo, context, next) => {
+                assert(teamInfo, 'teamsInfo not found');
+                assert(context, 'context not found');
+                assert(next, 'next not found');
+                assert.strictEqual(teamInfo, team);
+                onTeamsTeamHardDeletedEventCalled = true;
+                await next();
+            });
+
+            bot.onDialog(async (context, next) => {
+                assert(context, 'context not found');
+                assert(next, 'next not found');
+                onDialogCalled = true;
+                await next();
+            });
+
+            const adapter = new TestAdapter(async context => {
+                await bot.run(context);
+            });
+
+            adapter.send(activity)
+                .then(() => {
+                    assert(onTeamsTeamHardDeletedEventCalled, 'onTeamsTeamHardDeletedEvent handler not called');
+                    assert(onConversationUpdateCalled, 'onConversationUpdate handler not called');
+                    assert(onDialogCalled, 'onDialog handler not called');
+                    done();
+                })
+                .catch(err => done(err));
+        });
+
+        it('onTeamsTeamRestored routed activity', done => {
+            const bot = new TeamsActivityHandler();
+
+            let onTeamsTeamRestoredEventCalled = false;
+
+            const team = { id: 'team' };
+            const activity = createConvUpdateActivity({ team, eventType: 'teamRestored' });
+
+            bot.onConversationUpdate(async (context, next) => {
+                assert(context, 'context not found');
+                assert(next, 'next not found');
+                onConversationUpdateCalled = true;
+                await next();
+            });
+
+            bot.onTeamsTeamRestoredEvent(async (teamInfo, context, next) => {
+                assert(teamInfo, 'teamsInfo not found');
+                assert(context, 'context not found');
+                assert(next, 'next not found');
+                assert.strictEqual(teamInfo, team);
+                onTeamsTeamRestoredEventCalled = true;
+                await next();
+            });
+
+            bot.onDialog(async (context, next) => {
+                assert(context, 'context not found');
+                assert(next, 'next not found');
+                onDialogCalled = true;
+                await next();
+            });
+
+            const adapter = new TestAdapter(async context => {
+                await bot.run(context);
+            });
+
+            adapter.send(activity)
+                .then(() => {
+                    assert(onTeamsTeamRestoredEventCalled, 'onTeamsTeamRestoredEvent handler not called');
+                    assert(onConversationUpdateCalled, 'onConversationUpdate handler not called');
+                    assert(onDialogCalled, 'onDialog handler not called');
+                    done();
+                })
+                .catch(err => done(err));
+        });
+
+        it('onTeamsTeamUnarchived routed activity', done => {
+            const bot = new TeamsActivityHandler();
+
+            let onTeamsTeamUnarchivedEventCalled = false;
+
+            const team = { id: 'team' };
+            const activity = createConvUpdateActivity({ team, eventType: 'teamUnarchived' });
+
+            bot.onConversationUpdate(async (context, next) => {
+                assert(context, 'context not found');
+                assert(next, 'next not found');
+                onConversationUpdateCalled = true;
+                await next();
+            });
+
+            bot.onTeamsTeamUnarchivedEvent(async (teamInfo, context, next) => {
+                assert(teamInfo, 'teamsInfo not found');
+                assert(context, 'context not found');
+                assert(next, 'next not found');
+                assert.strictEqual(teamInfo, team);
+                onTeamsTeamUnarchivedEventCalled = true;
+                await next();
+            });
+
+            bot.onDialog(async (context, next) => {
+                assert(context, 'context not found');
+                assert(next, 'next not found');
+                onDialogCalled = true;
+                await next();
+            });
+
+            const adapter = new TestAdapter(async context => {
+                await bot.run(context);
+            });
+
+            adapter.send(activity)
+                .then(() => {
+                    assert(onTeamsTeamUnarchivedEventCalled, 'onTeamsTeamUnarchivedEvent handler not called');
+                    assert(onConversationUpdateCalled, 'onConversationUpdate handler not called');
+                    assert(onDialogCalled, 'onDialog handler not called');
+                    done();
+                })
+                .catch(err => done(err));
+        });
+
         it('signin/verifyState routed activity', done => {
             onDialogCalled = false;
             handleTeamsSigninVerifyStateCalled = false;
