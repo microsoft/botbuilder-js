@@ -10,12 +10,14 @@
   },
   "author": "Microsoft Corp.",
   "license": "MIT",
+  "dependencies": {
+    "botbuilder": "4.1.6",
+    "botframework-connector": "4.1.6"
+  },
   "devDependencies": {
     "@types/express": "^4.17.7",
     "@types/mocha": "^5.2.7",
     "@types/restify": "^8.4.2",
-    "botbuilder": "4.1.6",
-    "botframework-connector": "4.1.6",
     "express": "^4.17.1",
     "mocha": "^6.2.3",
     "nyc": "^15.1.0",
