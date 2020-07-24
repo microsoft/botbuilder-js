@@ -56,9 +56,11 @@ The following steps guide you through the configuration of a build pipeline base
 - Azure subscription. 
 
 1. Create a pipeline in Azure DevOps.
+    
     ![new pipeline](./media/new-pipeline.png)
 
 2. Select GitHub YAML for code source.
+    
     ![GitHub YAML](./media/github-yaml.png)
 
 3. Configure the repository and branch. Use [`botbuilder-js/libaries/streaming-e2e-tests/streaming-e2e-tests-build.yml`](https://github.com/microsoft/botbuilder-js/blob/Zerryth/streaming-e2e-tests/libraries/streaming-e2e-tests/build/streaming-e2e-tests-build.yml) as the root YAML of this pipeline.
