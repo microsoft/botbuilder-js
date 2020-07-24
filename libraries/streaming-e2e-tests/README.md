@@ -43,7 +43,7 @@ These tests were built so that the SDK team can routinely run these E2E tests au
 1. You can provision the resources by simply deploying an [echo-bot sample](https://github.com/microsoft/BotBuilder-Samples/tree/master/samples/javascript_nodejs/02.echo-bot) via [zip-deployment](https://docs.microsoft.com/en-us/azure/bot-service/bot-builder-deploy-az-cli?view=azure-bot-service-4.0&tabs=javascript) or you could create each bot-related resource manually in the Azure portal.
     - Then configure your resources to [enable DL ASE](https://docs.microsoft.com/en-us/azure/bot-service/bot-service-channel-directline-extension-node-bot?view=azure-bot-service-4.0).
     - App Service CORS configuration: in your bot's App Service, on the left-hand side under CORS, you'll need to add your React app's website under Allowed Origins to allow it to access your bot, or simply clear all origins and add `*` to allow all domains. ![CORS](./media/CORS.png)
-1. Additionally, you'll need an App Service for the React app.
+2. Additionally, you'll need an App Service for the React app.
     - ![Create an App Service for React App](./media/create-app-service.png).
 
 Provision these projects within the same resource group.
