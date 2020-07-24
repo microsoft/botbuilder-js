@@ -26,7 +26,7 @@ The project consists of two projects that get deployed (the [bot](#the-bot) and 
 
 ### Running the Pipeline
 Running the pipeline will:
-- Provision & Deploy Projects:
+- **Provision & Deploy Projects**:
     - **Bot**: point bot to use the daily build of botframework-streaming (latest preview version)
     - **React App**:
         - Provision a brand new react app via `npx create-react-app` command
@@ -41,7 +41,9 @@ Running the pipeline will:
 These tests were built so that the SDK team can routinely run these E2E tests automatically and ensure the compatibility of botframework-streaming and the browser. It does so by deploying the bot and React app to already-provisioned resources in the [Azure portal](https://ms.portal.azure.com/) that have been configured to enable DL ASE. If you wish to run these tests yourself, you must provision resources in your own Azure subscription first before you can run the automated pipeline built by the YAMLs included in the streaming-e2e-tests library.
 
 1. You can provision the resources by simply deploying an [echo-bot sample](https://github.com/microsoft/BotBuilder-Samples/tree/master/samples/javascript_nodejs/02.echo-bot) via [zip-deployment](https://docs.microsoft.com/en-us/azure/bot-service/bot-builder-deploy-az-cli?view=azure-bot-service-4.0&tabs=javascript) or you could create each bot-related resource manually in the Azure portal.
-2. Additionally, you'll need an App Service for the React app.
+    - Then configure your resources to [enable DL ASE](https://docs.microsoft.com/en-us/azure/bot-service/bot-service-channel-directline-extension-node-bot?view=azure-bot-service-4.0).
+    - App Service CORS configuration: in your bot's App Service, on the left-hand side under CORS, you'll need to add your React app's website under Allowed Origins to allow it to access your bot, or simply clear all origins and add `*` to allow all domains. ![CORS](./media/CORS.png)
+1. Additionally, you'll need an App Service for the React app.
     - ![Create an App Service for React App](./media/create-app-service.png).
 
 Provision these projects within the same resource group.
