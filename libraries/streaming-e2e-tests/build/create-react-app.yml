@@ -14,7 +14,7 @@ steps:
     workingDirectory: $(RootReactPiecesDir)/react-app
 
   - powershell: New-Item .env
-    displayName: 'create .env in React app'
+    displayName: 'Create .env in React app'
     workingDirectory: $(RootReactPiecesDir)/react-app
 
   - powershell: |
