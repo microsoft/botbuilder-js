@@ -20,3 +20,4 @@ steps:
       Get-Content -Path "./.env"
     displayName: "Write React app's endpoint to tests .env"
     workingDirectory: $(TestsDir)
+    
