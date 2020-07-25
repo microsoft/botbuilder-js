@@ -24,6 +24,7 @@
   "typings": "lib/index.d.ts",
   "dependencies": {
     "@types/ws": "^6.0.3",
+    "stream-browserify": "^3.0.0",
     "uuid": "^3.4.0",
     "ws": "^7.1.2"
   },
