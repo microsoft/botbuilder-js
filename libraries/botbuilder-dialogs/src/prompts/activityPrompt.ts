@@ -95,7 +95,7 @@ export class ActivityPrompt extends Dialog {
 
     public async repromptDialog(context: TurnContext, instance: DialogInstance): Promise<void> {
         const state: ActivityPromptState = instance.state as ActivityPromptState;
-        await this.onPrompt(context, state.state, state.options, true);
+        await this.onPrompt(context, state.state, state.options, false);
     }
 
     protected async onPrompt(context: TurnContext, state: object, options: PromptOptions, isRetry: boolean): Promise<void> {

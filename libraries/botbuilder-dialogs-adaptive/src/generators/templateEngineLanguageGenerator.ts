@@ -6,13 +6,13 @@
  * Licensed under the MIT License.
  */
 
-import { LanguageGenerator } from '../languageGenerator';
-import { TurnContext } from 'botbuilder-core';
-import { Templates } from 'botbuilder-lg';
+import { normalize, basename } from 'path';
+import { DialogContext } from 'botbuilder-dialogs';
 import { Resource } from 'botbuilder-dialogs-declarative';
+import { Templates } from 'botbuilder-lg';
+import { LanguageGenerator } from '../languageGenerator';
 import { LanguageResourceLoader } from '../languageResourceLoader';
 import { LanguageGeneratorManager } from './languageGeneratorManager';
-import { normalize, basename } from 'path';
 
 /**
  * LanguageGenerator implementation which uses LGFile. 
@@ -47,7 +47,7 @@ export class TemplateEngineLanguageGenerator implements LanguageGenerator{
         }
     }
     
-    public generate(turnContext: TurnContext, template: string, data: object): Promise<string> {
+    public generate(dialogContext: DialogContext, template: string, data: object): Promise<string> {
         try {
             // BUGBUG: I'm casting objects to <any> to work around a bug in the activity factory.
             //         The string version of of the serialized card isn't being parsed. We should
