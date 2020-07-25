@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 import { DialogTurnResult, DialogContext, Dialog } from 'botbuilder-dialogs';
-import { Activity } from 'botbuilder-core';
+import { Activity, StringUtils } from 'botbuilder-core';
 import { TemplateInterface } from '../template';
 import { ActivityTemplate } from '../templates/activityTemplate';
 import { StaticActivityTemplate } from '../templates/staticActivityTemplate';
@@ -69,6 +69,9 @@ export class SendActivity<O extends object = {}> extends Dialog<O> {
     }
 
     protected onComputeId(): string {
-        return `SendActivity[${ this.activity }]`;
+        if (this.activity instanceof ActivityTemplate) {
+            return `SendActivity[${ StringUtils.ellipsis(this.activity.template.trim(), 30) }]`;
+        }
+        return `SendActivity[${ StringUtils.ellipsis(this.activity && this.activity.toString().trim(), 30) }]`;
     }
 }
