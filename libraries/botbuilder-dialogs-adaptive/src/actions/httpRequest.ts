@@ -6,11 +6,10 @@
  * Licensed under the MIT License.
  */
 import fetch from 'node-fetch';
+import { Response, Headers } from 'node-fetch';
 import { DialogTurnResult, DialogContext, Dialog, Configurable } from 'botbuilder-dialogs';
 import { Converter } from 'botbuilder-dialogs-declarative';
 import { Activity } from 'botbuilder-core';
-import { ExpressionParser } from 'adaptive-expressions';
-import { TextTemplate } from '../templates';
 import { ValueExpression, StringExpression, BoolExpression, EnumExpression } from 'adaptive-expressions';
 import { JsonExtensions } from '../jsonExtensions';
 
@@ -43,7 +42,12 @@ export enum ResponsesTypes {
     /**
      * Json Array of activity objects to send to the user
      */
-    Activities
+    Activities,
+
+    /**
+     * Binary data parsing from http response content
+     */
+    Binary
 }
 
 export enum HttpMethod {
@@ -71,6 +75,43 @@ export enum HttpMethod {
      * Http DELETE
      */
     DELETE = 'DELETE'
+}
+
+/**
+ * Result data of HTTP operation.
+ */
+export class Result {
+    /**
+     * Initialize a new instance of Result class.
+     * @param headers Response headers.
+     */
+    public constructor(headers?: Headers) {
+        if (headers) {
+            headers.forEach((value: string, name: string): void => {
+                this.headers[name] = value;
+            });
+        }
+    }
+
+    /**
+     * The status code from the response to HTTP operation.
+     */
+    public statusCode?: number;
+
+    /**
+     * The reason phrase from the response to HTTP operation.
+     */
+    public reasonPhrase?: string;
+
+    /**
+     * The headers from the response to HTTP operation.
+     */
+    public headers?: { [key: string]: string } = {};
+
+    /**
+     * The content body from the response to HTTP operation.
+     */
+    public content?: any;
 }
 
 export class HttpRequest<O extends object = {}> extends Dialog<O> implements Configurable {
@@ -133,74 +174,96 @@ export class HttpRequest<O extends object = {}> extends Dialog<O> implements Con
             return await dc.endDialog();
         }
 
-        /**
-         * TODO: replace the key value pair in json recursively
-         */
-
         const instanceUrl = this.url.getValue(dc.state);
+        const instanceMethod = this.method.toString();
+
         const instanceHeaders = {};
-        for (const key in this.headers) {
+        for (let key in this.headers) {
+            if (key.toLowerCase() === 'Content-Type') {
+                key = 'Content-Type';
+            }
             instanceHeaders[key] = this.headers[key].getValue(dc.state);
         }
-
-        let instanceBody: any;
-        if (this.body) {
-            instanceBody = this.body.getValue(dc.state);
-        }
-
-        if (instanceBody) {
-            instanceBody = JsonExtensions.replaceJsonRecursively(dc.state, instanceBody);
-        }
-
-        const parsedBody = JSON.stringify(instanceBody);
         const contentType = this.contentType.getValue(dc.state) || 'application/json';
-        const parsedHeaders = Object.assign({ 'Content-Type': contentType }, instanceHeaders);
+        instanceHeaders['Content-Type'] = contentType;
 
-        let response: any;
+        let instanceBody: string;
+        if (this.body) {
+            let body = this.body.getValue(dc.state);
+                if (body) {
+                    if (typeof body === 'string') {
+                        instanceBody = body;
+                    } else {
+                        instanceBody = JSON.stringify(JsonExtensions.replaceJsonRecursively(dc.state, Object.assign({}, body)));
+                    }
+                }
+        }
+
+        const traceInfo = {
+            request: {
+                method: instanceMethod,
+                url: instanceUrl,
+                headers: instanceHeaders,
+                content: instanceBody
+            },
+            response: undefined
+        };
+
+        let response: Response;
 
         switch (this.method) {
             case HttpMethod.DELETE:
             case HttpMethod.GET:
                 response = await fetch(instanceUrl, {
-                    method: this.method.toString(),
-                    headers: parsedHeaders,
+                    method: instanceMethod,
+                    headers: instanceHeaders,
                 });
                 break;
             case HttpMethod.PUT:
             case HttpMethod.PATCH:
             case HttpMethod.POST:
                 response = await fetch(instanceUrl, {
-                    method: this.method.toString(),
-                    headers: parsedHeaders,
-                    body: parsedBody,
+                    method: instanceMethod,
+                    headers: instanceHeaders,
+                    body: instanceBody,
                 });
                 break;
         }
 
-        const jsonResult = await response.json();
-
-        let result: Result = {
-            headers: instanceHeaders,
-            statusCode: response.status,
-            reasonPhrase: response.statusText
-        };
+        const result = new Result(response.headers);
+        result.statusCode = response.status;
+        result.reasonPhrase = response.statusText;
 
         switch (this.responseType.getValue(dc.state)) {
             case ResponsesTypes.Activity:
-                result.content = jsonResult;
-                dc.context.sendActivity(jsonResult as Activity);
+                result.content = await response.json();
+                dc.context.sendActivity(result.content as Activity);
                 break;
             case ResponsesTypes.Activities:
-                result.content = jsonResult;
-                dc.context.sendActivities(jsonResult as Activity[]);
+                result.content = await response.json();
+                dc.context.sendActivities(result.content as Activity[]);
                 break;
             case ResponsesTypes.Json:
-                result.content = jsonResult;
+                const content = await response.text();
+                try {
+                    result.content = JSON.parse(content);
+                } catch {
+                    result.content = content;
+                }
+                break;
+            case ResponsesTypes.Binary:
+                const buffer = await response.arrayBuffer();
+                result.content = new Uint8Array(buffer);
                 break;
             case ResponsesTypes.None:
             default:
                 break;
         }
+
+        traceInfo.response = result;
+
+        // Write trace activity for http request and response values.
+        await dc.context.sendTraceActivity('HttpRequest', traceInfo, 'Microsoft.HttpRequest', this.id);
 
         if (this.resultProperty) {
             dc.state.setValue(this.resultProperty.getValue(dc.state), result);
@@ -212,14 +275,4 @@ export class HttpRequest<O extends object = {}> extends Dialog<O> implements Con
     protected onComputeId(): string {
         return `HttpRequest[${ this.method } ${ this.url }]`;
     }
-}
-
-export class Result {
-    public statusCode?: Number;
-
-    public reasonPhrase?: string;
-
-    public headers?: any;
-
-    public content?: object;
 }

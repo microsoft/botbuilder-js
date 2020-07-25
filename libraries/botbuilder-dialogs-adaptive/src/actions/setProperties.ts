@@ -1,3 +1,11 @@
+/**
+ * @module botbuilder-dialogs-adaptive
+ */
+/**
+ * Copyright (c) Microsoft Corporation. All rights reserved.
+ * Licensed under the MIT License.
+ */
+import { StringUtils } from 'botbuilder-core';
 import { Dialog, DialogContext, DialogTurnResult } from 'botbuilder-dialogs';
 import { Converter } from 'botbuilder-dialogs-declarative';
 import { ValueExpression, StringExpression, BoolExpression } from 'adaptive-expressions';
@@ -56,6 +64,6 @@ export class SetProperties<O extends object = {}> extends Dialog<O> {
     }
 
     protected onComputeId(): string {
-        return `SetProperties[${ this.assignments.map((item): string => item.property.toString()).join(',') }]`;
+        return `SetProperties[${ StringUtils.ellipsis(this.assignments.map((item): string => item.property.toString()).join(','), 50) }]`;
     }
 }

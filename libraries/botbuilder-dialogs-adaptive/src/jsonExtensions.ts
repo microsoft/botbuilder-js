@@ -13,39 +13,34 @@ export class JsonExtensions {
     /**
      * Replaces the binding paths in a JSON value with the evaluated results recursively. Returns the final JSON value.
      * @param dc A scope for looking up variables.
-     * @param token A JSON value which may have some binding paths.
+     * @param unit A JSON value which may have some binding paths.
      * @returns Deep data binding result.
      */
-    public static replaceJsonRecursively(state: DialogStateManager, token: object): any {
-        if (typeof token === 'string') {
-            let text: string = token as string;
-            if (text.startsWith('{') && text.endsWith('}')) {
-                text = text.slice(1, text.length - 1);
-                const { value } = new ExpressionParser().parse(text).tryEvaluate(state);
+    public static replaceJsonRecursively(state: DialogStateManager, unit: object): any {
+        if (typeof unit === 'string') {
+            const { value, error } = new ValueExpression(unit).tryGetValue(state);
+            if (!error) {
                 return value;
             }
-            else {
-                return new ValueExpression(text).getValue(state);
-            }
+            return unit;
         }
 
-        if (Array.isArray(token)) {
+        if (Array.isArray(unit)) {
             let result = [];
-            for (const child of token) {
+            for (const child of unit) {
                 result.push(JsonExtensions.replaceJsonRecursively(state, child));
             }
-
             return result;
         }
 
-        if (typeof token === 'object') {
+        if (typeof unit === 'object') {
             let result = {};
-            for (let key in token) {
-                result[key] = JsonExtensions.replaceJsonRecursively(state, token[key]);
+            for (let key in unit) {
+                result[key] = JsonExtensions.replaceJsonRecursively(state, unit[key]);
             }
             return result;
         }
 
-        return token;
+        return unit;
     }
 }
