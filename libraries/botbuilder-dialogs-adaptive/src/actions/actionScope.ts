@@ -143,8 +143,8 @@ export class ActionScope<O extends object = {}> extends Dialog<O> implements Dia
             return await dc.endDialog();
         }
 
-        var action = this.actions[offset];
-        var actionName = action.constructor.name;
+        const action = this.actions[offset];
+        const actionName = action.constructor.name;
 
         const properties: { [key: string]: string } = {
             'DialogId' : action.id,
