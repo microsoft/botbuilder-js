@@ -17,6 +17,9 @@ import { LanguageGenerator } from '../languageGenerator';
 import { LanguageResourceLoader } from '../languageResourceLoader';
 import { TemplateEngineLanguageGenerator } from './templateEngineLanguageGenerator';
 
+/**
+ * Class which manages cache of all LG resources from a ResourceExplorer.
+ */
 export class LanguageGeneratorManager {
     /**
      * Resource explorer to manager LG files used by language generator manager.
