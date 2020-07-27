@@ -22,7 +22,6 @@ const fetch = getFetch();
  * This class is helper class for all the http request operations.
  */
 export class HttpRequestUtils {
-
     /**
      * Execute Http request.
      * 
