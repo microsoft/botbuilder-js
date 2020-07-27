@@ -1,8 +1,22 @@
-const { ConversationState, MemoryStorage, NullTelemetryClient, TestAdapter } = require('botbuilder-core');
+const { BotTelemetryClient, ConversationState, MemoryStorage, NullTelemetryClient, TestAdapter } = require('botbuilder-core');
 const { ComponentDialog, DialogSet, WaterfallDialog } = require('../../botbuilder-dialogs/lib');
 const assert = require('assert');
 
 describe('TelemetryWaterfall', function() {
+
+    class TestClient {
+        trackEvent(t) {
+        } 
+
+        trackTrace(t) {
+        }
+
+        trackException(t) {
+        }
+
+        trackDependency(t) {
+        }
+    }
 
     it('should track a dialog start event on first turn of dialog', function (done) {
         // Initialize TestAdapter.
@@ -21,14 +35,17 @@ describe('TelemetryWaterfall', function() {
         const dialog = new WaterfallDialog('testDialog',[
             async (step) => { return step.next(); }
         ]);
-        dialog.telemetryClient = {
-            trackEvent: (telemetry) => {
-                assert(telemetry, 'telemetry is null');
-                if (telemetry.name === 'WaterfallStart') {
-                    done();
-                }
+
+        const client = new TestClient();
+        TestClient.prototype.trackEvent = (telemetry) => {
+            assert(telemetry, 'telemetry is null');
+            if (telemetry.name === 'WaterfallStart') {
+                done();
             }
-        }
+        };
+
+        dialog.telemetryClient = client;
+
         dialogs.add(dialog);
 
         adapter.send({text: 'hello'}).startTest();
@@ -58,20 +75,22 @@ describe('TelemetryWaterfall', function() {
 
         let count = 0;
 
-        dialog.telemetryClient = {
-            trackEvent: (telemetry) => {
-                assert(telemetry, 'telemetry is null');
-                if (telemetry.name === 'WaterfallStep') {
-                    assert(telemetry.properties.StepName==='Step' + (count + 1) + 'of' + dialog.steps.length,'waterfallstep step name is wrong');
-                    count++;
-                }
-                if (telemetry.name === 'WaterfallComplete') {
-                    assert(count === dialog.steps.length,'incorrect number of waterfall step events');
-                    done();
-                }
-
+        const client = new TestClient();
+        TestClient.prototype.trackEvent = (telemetry) => {
+            assert(telemetry, 'telemetry is null');
+            if (telemetry.name === 'WaterfallStep') {
+                assert(telemetry.properties.StepName==='Step' + (count + 1) + 'of' + dialog.steps.length,'waterfallstep step name is wrong');
+                count++;
             }
-        }
+            if (telemetry.name === 'WaterfallComplete') {
+                assert(count === dialog.steps.length,'incorrect number of waterfall step events');
+                done();
+            }
+
+        };
+
+        dialog.telemetryClient = client;
+
         dialogs.add(dialog);
 
         adapter.send({text: 'hello'}).startTest();
@@ -95,16 +114,16 @@ describe('TelemetryWaterfall', function() {
             async (step) => { return step.next(); },
         ]);
 
-        let count = 0;
-
-        dialog.telemetryClient = {
-            trackEvent: (telemetry) => {
-                assert(telemetry, 'telemetry is null');
-                if (telemetry.name === 'WaterfallComplete') {
-                    done();
-                }
+        const client = new TestClient();
+        TestClient.prototype.trackEvent = (telemetry) => {
+            assert(telemetry, 'telemetry is null');
+            if (telemetry.name === 'WaterfallComplete') {
+                done();
             }
-        }
+        };
+
+        dialog.telemetryClient = client;
+
         dialogs.add(dialog);
 
         adapter.send({text: 'hello'}).startTest();
@@ -128,16 +147,16 @@ describe('TelemetryWaterfall', function() {
             async (step) => { step.cancelAllDialogs(); },
         ]);
 
-        let count = 0;
-
-        dialog.telemetryClient = {
-            trackEvent: (telemetry) => {
-                assert(telemetry, 'telemetry is null');
-                if (telemetry.name === 'WaterfallCancel') {
-                    done();
-                }
+        const client = new TestClient();
+        TestClient.prototype.trackEvent = (telemetry) => {
+            assert(telemetry, 'telemetry is null');
+            if (telemetry.name === 'WaterfallCancel') {
+                done();
             }
-        }
+        };
+
+        dialog.telemetryClient = client;
+
         dialogs.add(dialog);
 
         adapter.send({text: 'hello'}).startTest();
@@ -168,25 +187,27 @@ describe('TelemetryWaterfall', function() {
         let count = 0;
         let instanceId = null;
 
-        dialog.telemetryClient = {
-            trackEvent: (telemetry) => {
-                if (!instanceId && telemetry.properties.InstanceId) {
-                    instanceId = telemetry.properties.InstanceId
-                }
-                assert(telemetry, 'telemetry is null');
-                assert(instanceId,'instanceid is not set on event');
-                assert(instanceId === telemetry.properties.InstanceId,'instance id does not match other events');
-
-                if (telemetry.name === 'WaterfallStep') {
-                    count++;
-                }
-
-                if (telemetry.name === 'WaterfallComplete') {
-                    assert(count === dialog.steps.length,'wrong number of waterfall step events');
-                    done();
-                }
+        const client = new TestClient();
+        TestClient.prototype.trackEvent = (telemetry) => {
+            if (!instanceId && telemetry.properties.InstanceId) {
+                instanceId = telemetry.properties.InstanceId
             }
-        }
+            assert(telemetry, 'telemetry is null');
+            assert(instanceId,'instanceid is not set on event');
+            assert(instanceId === telemetry.properties.InstanceId,'instance id does not match other events');
+
+            if (telemetry.name === 'WaterfallStep') {
+                count++;
+            }
+
+            if (telemetry.name === 'WaterfallComplete') {
+                assert(count === dialog.steps.length,'wrong number of waterfall step events');
+                done();
+            }
+        };
+
+        dialog.telemetryClient = client;
+
         dialogs.add(dialog);
 
         adapter.send({text: 'hello'}).startTest();
@@ -202,17 +223,6 @@ describe('TelemetryWaterfall', function() {
 
         assert(component.findDialog('secondary').telemetryClient instanceof NullTelemetryClient, 'should be nulltelemetryclient by default');
         assert(component.telemetryClient instanceof NullTelemetryClient,'child dialog should have same telemetry client');
-
-        class TestClient {
-            trackEvent(t) {
-            } 
-            trackTrace(t) {
-            }
-            trackEvent(t) {
-            }
-            trackException(t) {
-            }
-        }
 
         component.telemetryClient = new TestClient();
 
