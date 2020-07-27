@@ -814,6 +814,46 @@ describe('QnAMaker', function () {
 
         });
 
+        it('executeHttpRequest() should throw when payload to QnA Service is malformed', function() {
+            const { endpoint, trainApi, feedbackRecords, successfullyTrainedResult } = new TrainApiHelper();
+
+            async () => await executeHttpRequestToTrainApi();
+        
+            async function executeHttpRequestToTrainApi() {
+                const errResponse = {
+                    "error": {
+                        "code": 12,
+                        "message": "Parameter is null",
+                        "target": null,
+                        "details": null,
+                        "innerError": null
+                    }
+                };
+                
+                nock(endpoint.qnaHost)
+                    .post(trainApi)
+                    .reply(errResponse.code, errResponse);
+                
+                const malformedPayloadBody = JSON.stringify({
+                    feedbackRecords: { feedbackRecords }
+                });
+
+                try {
+                    const httpUtils = new HttpRequestUtils();
+                    
+                    assert.throws(await httpUtils.executeHttpRequest(
+                        endpoint.qnaHost + trainApi,
+                        malformedPayloadBody,
+                        endpoint
+                    ));
+
+                } catch (error) {
+                    throw error;
+                }
+            };
+
+        });
+
         it('callTrainAsync() should send correct payload body to Train API and return result', function() {
             const { endpoint, trainApi, feedbackRecords, successfullyTrainedResult } = new TrainApiHelper();
 

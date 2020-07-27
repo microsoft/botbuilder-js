@@ -22,7 +22,7 @@ const fetch = getFetch();
  * This class is helper class for all the http request operations.
  */
 export class HttpRequestUtils {
-	
+
     /**
      * Execute Http request.
      * 
@@ -46,16 +46,20 @@ export class HttpRequestUtils {
 
         const headers: any = this.getHeaders(endpoint);
 
-        const qnaResult: any = await fetch(requestUrl, {
-            method: 'POST',
-            headers: headers,
-            timeout: timeout,
-            body: payloadBody
-        });
-        
-        const jsonResult = qnaResult.status == 204 ? this.getSuccessfulTrainApiResult() : await qnaResult.json();
+        try {
+            const qnaResult = await fetch(requestUrl, {
+                method: 'POST',
+                headers: headers,
+                timeout: timeout,
+                body: payloadBody
+            });
+            const jsonResult = qnaResult.status == 204 ? this.getSuccessfulTrainApiResult() : await qnaResult.json();
 
-        return jsonResult;
+            return jsonResult;
+
+        } catch (error) {
+            throw error;
+        }
     }
 
     /**
@@ -72,7 +76,7 @@ export class HttpRequestUtils {
         const headers: any = {};
 
         headers['Ocp-Apim-Subscription-Key'] = endpoint.endpointKey;
-        headers.Authorization = `EndpointKey ${ endpoint.endpointKey }`;
+        headers.Authorization = `EndpointKey ${endpoint.endpointKey}`;
         headers['User-Agent'] = this.getUserAgent();
         headers['Content-Type'] = 'application/json';
 
@@ -80,14 +84,14 @@ export class HttpRequestUtils {
     }
 
     private getUserAgent(): string {
-        const packageUserAgent: string = `${ pjson.name }/${ pjson.version }`;
-        const platformUserAgent: string = `(${ os.arch() }-${ os.type() }-${ os.release() }; Node.js,Version=${ process.version })`;
+        const packageUserAgent: string = `${pjson.name}/${pjson.version}`;
+        const platformUserAgent: string = `(${os.arch()}-${os.type()}-${os.release()}; Node.js,Version=${process.version})`;
 
-        return `${ packageUserAgent } ${ platformUserAgent }`;
+        return `${packageUserAgent} ${platformUserAgent}`;
     }
 
     private getSuccessfulTrainApiResult(): QnAMakerResult {
-        return { 
+        return {
             questions: [],
             answer: "Successfully trained.",
             score: 100,

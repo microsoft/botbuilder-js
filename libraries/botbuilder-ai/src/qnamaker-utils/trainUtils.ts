@@ -50,10 +50,6 @@ export class TrainUtils {
             feedbackRecords: feedbackRecords.feedbackRecords
         });
         
-        try {
-            await this.httpRequestUtils.executeHttpRequest(url, payloadBody, this.endpoint);
-        } catch (error) {
-            throw error;
-        }
+        await this.httpRequestUtils.executeHttpRequest(url, payloadBody, this.endpoint);
     }
 }
