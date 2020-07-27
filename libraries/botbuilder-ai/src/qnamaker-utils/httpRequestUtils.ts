@@ -10,6 +10,7 @@ import * as os from 'os';
 const pjson: any = require('../../package.json');
 
 import { QnAMakerEndpoint } from '../qnamaker-interfaces/qnamakerEndpoint';
+import { QnAMakerResult } from '../qnamaker-interfaces/qnamakerResult';
 
 import { getFetch } from '../globals';
 const fetch = getFetch();
@@ -52,7 +53,9 @@ export class HttpRequestUtils {
             body: payloadBody
         });
         
-        return await qnaResult.json();
+        const jsonResult = qnaResult.status == 204 ? this.getSuccessfulTrainApiResult() : await qnaResult.json();
+
+        return jsonResult;
     }
 
     /**
@@ -81,5 +84,16 @@ export class HttpRequestUtils {
         const platformUserAgent: string = `(${ os.arch() }-${ os.type() }-${ os.release() }; Node.js,Version=${ process.version })`;
 
         return `${ packageUserAgent } ${ platformUserAgent }`;
+    }
+
+    private getSuccessfulTrainApiResult(): QnAMakerResult {
+        return { 
+            questions: [],
+            answer: "Successfully trained.",
+            score: 100,
+            id: -1,
+            source: null,
+            metadata: []
+        };
     }
 }
