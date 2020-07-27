@@ -184,4 +184,36 @@ describe('DatetimePrompt', function () {
             .send(answerMessage2)
             .assertReply('2012-09-02');
     });
+
+    it('should not recognize, then re-prompt without error for falsy input.', async function () {
+        // Initialize TestAdapter.
+        const adapter = new TestAdapter(async (turnContext) => {
+            const dc = await dialogs.createContext(turnContext);
+
+            const results = await dc.continueDialog();
+            if (results.status === DialogTurnStatus.empty) {
+                await dc.prompt('prompt', 'Enter a date.');
+            } else if (results.status === DialogTurnStatus.complete) {
+                const dates = results.result;
+                await turnContext.sendActivity(dates[0].timex);
+            }
+            await convoState.saveChanges(turnContext);
+        });
+        // Create new ConversationState with MemoryStorage and register the state as middleware.
+        const convoState = new ConversationState(new MemoryStorage());
+
+        // Create a DialogState property, DialogSet and DateTimePrompt.
+        const dialogState = convoState.createProperty('dialogState');
+        const dialogs = new DialogSet(dialogState);
+        dialogs.add(new DateTimePrompt('prompt'));
+
+        await adapter.send('Hello')
+            .assertReply('Enter a date.')
+            .send('')
+            .assertReply('Enter a date.')
+            .send({ type: 'message', text: null })
+            .assertReply('Enter a date.')
+            .send(answerMessage)
+            .assertReply('2018-01-01T09');
+    });
 });
