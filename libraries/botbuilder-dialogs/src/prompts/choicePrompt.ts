@@ -106,7 +106,7 @@ export class ChoicePrompt extends Prompt<FoundChoice> {
         const result: PromptRecognizerResult<FoundChoice> = { succeeded: false };
         const activity: Activity = context.activity;
         const utterance: string = activity.text;
-        if (utterance == null) {
+        if (!utterance) {
             return result;
         }
         const choices: any[] = (this.style === ListStyle.suggestedAction ? ChoiceFactory.toChoices(options.choices) : options.choices)|| [];
