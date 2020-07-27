@@ -1,10 +1,11 @@
 const path = require('path');
 const nock = require('nock');
 const { TestRunner } = require('../lib');
+const { MessageFactory } = require('botbuilder-core');
 
 describe('ActionTests', function() {
     this.timeout(10000);
-    const testRunner = new TestRunner(path.join(__dirname,  'resources/ActionTests'));
+    const testRunner = new TestRunner(path.join(__dirname, 'resources/ActionTests'));
 
     it('AttachmentInput', async () => {
         await testRunner.runTestScript('Action_AttachmentInput');
@@ -127,8 +128,13 @@ describe('ActionTests', function() {
     });
 
     it('HttpRequest', async () => {
-        nock('http://petstore.swagger.io').post(/pet/).replyWithFile(200, path.join(__dirname, 'resources/ActionTests/HttpRequest_Response.json'));
-        nock('http://petstore.swagger.io').get(/pet/).replyWithFile(200, path.join(__dirname, 'resources/ActionTests/HttpRequest_Response.json'));
+        nock('http://foo.com').post('/', 'Joe is 52').reply(200, 'string');
+        nock('http://foo.com').post('/', { text: 'Joe is 52', age: 52 }).reply(200, 'object');
+        nock('http://foo.com').post('/', [{ text: 'Joe is 52', age: 52 }, { text: 'text', age: 11 }]).reply(200, 'array');
+        nock('http://foo.com').get('/image').reply(200, 'TestImage');
+        nock('http://foo.com').get('/json').reply(200, { test: 'test' });
+        nock('http://foo.com').get('/activity').reply(200, MessageFactory.text('testtest'));
+        nock('http://foo.com').get('/activities').reply(200, [MessageFactory.text('test1'), MessageFactory.text('test2'), MessageFactory.text('test3')]);
         await testRunner.runTestScript('Action_HttpRequest');
     });
 
