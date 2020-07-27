@@ -30,6 +30,7 @@
     "coveralls": "^3.0.4",
     "eslint": "^5.16.0",
     "eslint-plugin-only-warn": "^1.0.1",
+    "eslint-plugin-jsdoc": "^29.2.0",
     "lerna": "^3.2.1",
     "mocha": "^6.2.3",
     "ms-rest-azure": "^2.6.0",
