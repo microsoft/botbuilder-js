@@ -4,8 +4,8 @@ const { StorageBaseTests } = require('../../botbuilder-core/tests/storageBaseTes
 const { CosmosClient } = require('@azure/cosmos');
 const { MockMode, usingNock } = require('./mockHelper');
 const nock = require('nock');
-const fs = require('fs');
 const https = require('https');
+const fetch = require('node-fetch');
 
 /**
  * READ THIS BEFORE EDITING THESE TESTS
@@ -25,13 +25,12 @@ const https = require('https');
  */
 const mode = process.env.MOCK_MODE ? process.env.MOCK_MODE : MockMode.lockdown;
 
-const emulatorPath = 'C:/Program Files/Azure Cosmos DB Emulator/CosmosDB.Emulator.exe';
-
 // Endpoint and authKey for the CosmosDB Emulator running locally
 let containerIdSuffix = 0;
+const emulatorEndpoint = 'https://localhost:8081';
 const getSettings = () => {
     return {
-        cosmosDbEndpoint: 'https://localhost:8081',
+        cosmosDbEndpoint: emulatorEndpoint,
         authKey: 'C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==',
         databaseId: 'CosmosPartitionedStorageTestDb',
         containerId: `CosmosPartitionedStorageTestContainer-${ containerIdSuffix++ }`,
@@ -41,11 +40,27 @@ const getSettings = () => {
     };
 };
 
-const checkEmulator = () => {
-    if (!fs.existsSync(emulatorPath)) {
-        console.warn('This test requires CosmosDB Emulator! go to https://aka.ms/documentdb-emulator-docs to download and install.');
+var canConnectToEmulator = undefined;
+const checkEmulator = async () => {
+    // We don't want to check for this multiple times, due to waiting on fetch() timeouts when connection fails
+    if (canConnectToEmulator === undefined) {
+        if (mode === MockMode.lockdown) {
+            canConnectToEmulator = false;
+        } else {
+            try {
+                const agent = new https.Agent({
+                    rejectUnauthorized: false
+                });
+                await fetch(emulatorEndpoint, { agent });
+                canConnectToEmulator = true;
+            } catch (err) {
+                canConnectToEmulator = false;
+            }
+        }
+        if (!canConnectToEmulator) console.warn(`Unable to connect to Cosmos Emulator at ${ emulatorEndpoint }. Running tests against Nock recordings.`);
+        
     }
-    return true;
+    return canConnectToEmulator;
 };
 
 var storage = new CosmosDbPartitionedStorage(getSettings());
@@ -54,28 +69,43 @@ var storage = new CosmosDbPartitionedStorage(getSettings());
 const cleanup = async () => {
     nock.cleanAll();
     nock.enableNetConnect();
-    let settings = getSettings();
-    let client = new CosmosClient({ endpoint: settings.cosmosDbEndpoint, key: settings.authKey, agent: new https.Agent({ rejectUnauthorized: false }) });
-    try {
-        await client.database(settings.databaseId).delete();
-    } catch (err) { }
+
+    await checkEmulator();
+
+    const settings = getSettings();
+
+    if (canConnectToEmulator)
+    {
+        let client = new CosmosClient({ endpoint: settings.cosmosDbEndpoint, key: settings.authKey, agent: new https.Agent({ rejectUnauthorized: false }) });
+        try {
+            await client.database(settings.databaseId).delete();
+        } catch (err) { }
+    }
 };
 
 // called before each test
 const prep = async () => {
     nock.cleanAll();
+    await checkEmulator();
+    
     let settings = getSettings();
+
     if (mode !== MockMode.lockdown) {
         nock.enableNetConnect();
     } else {
         nock.disableNetConnect();
     }
-    let client = new CosmosClient({ endpoint: settings.cosmosDbEndpoint, key: settings.authKey, agent: new https.Agent({ rejectUnauthorized: false }) });
-    // This throws if the db is already created. We want to always create it if it doesn't exist,
-    // so leaving this here should help prevent failures if the tests change in the future
-    try {
-        await client.databases.create({ id: settings.databaseId });
-    } catch (err) { }
+
+    if (canConnectToEmulator) {
+        let client = new CosmosClient({ endpoint: settings.cosmosDbEndpoint, key: settings.authKey, agent: new https.Agent({ rejectUnauthorized: false }) });
+    
+        // This throws if the db is already created. We want to always create it if it doesn't exist,
+        // so leaving this here should help prevent failures if the tests change in the future
+        try {
+            await client.databases.create({ id: settings.databaseId });
+        } catch (err) { }
+    }
+    
     storage = new CosmosDbPartitionedStorage(settings);
 };
 
@@ -84,8 +114,6 @@ const options = {
 };
 
 describe('CosmosDbPartitionedStorage - Constructor Tests', function() {
-    before('cleanup', cleanup); // Ensure we start from scratch
-
     it('throws when provided with null options', () => {
         assert.throws(() => new CosmosDbPartitionedStorage(null), ReferenceError('CosmosDbPartitionedStorageOptions is required.'));
     });
@@ -113,6 +141,13 @@ describe('CosmosDbPartitionedStorage - Constructor Tests', function() {
         noContainerId.containerId = null;
         assert.throws(() => new CosmosDbPartitionedStorage(noContainerId), ReferenceError('containerId for CosmosDB is required.'));
     });
+});
+
+describe('CosmosDbPartitionedStorage - Base Storage Tests', function() {
+    this.timeout(5000)
+    before('cleanup', cleanup); // Ensure we start from scratch
+    beforeEach('prep', prep);
+    afterEach('cleanup', cleanup);
 
     it('passes cosmosClientOptions to CosmosClient', async function() {
         const { nockDone } = await usingNock(this.test, mode, options);
@@ -124,9 +159,6 @@ describe('CosmosDbPartitionedStorage - Constructor Tests', function() {
             userAgentSuffix: 'test', 
         };
 
-        let client = new CosmosClient({ endpoint: settingsWithClientOptions.cosmosDbEndpoint, key: settingsWithClientOptions.authKey, agent: new https.Agent({ rejectUnauthorized: false }) });
-        await client.databases.create({ id: settingsWithClientOptions.databaseId });
-    
         client = new CosmosDbPartitionedStorage(settingsWithClientOptions);
         await client.initialize(); // Force client to go through initialization
 
@@ -135,14 +167,8 @@ describe('CosmosDbPartitionedStorage - Constructor Tests', function() {
 
         return nockDone();
     });
-});
-
-describe('CosmosDbPartitionedStorage - Base Storage Tests', function() {
-    beforeEach('prep', prep);
-    afterEach('cleanup', cleanup);
 
     it('return empty object when reading unknown key', async function() {
-        checkEmulator();
         const { nockDone } = await usingNock(this.test, mode, options);
 
         const testRan = await StorageBaseTests.returnEmptyObjectWhenReadingUnknownKey(storage);
@@ -153,7 +179,6 @@ describe('CosmosDbPartitionedStorage - Base Storage Tests', function() {
     });
 
     it('throws when reading null keys', async function() {
-        checkEmulator();
         const { nockDone } = await usingNock(this.test, mode, options);
 
         const testRan = await StorageBaseTests.handleNullKeysWhenReading(storage);
@@ -163,7 +188,6 @@ describe('CosmosDbPartitionedStorage - Base Storage Tests', function() {
     });
 
     it('throws when writing null keys', async function() {
-        checkEmulator();
         const { nockDone } = await usingNock(this.test, mode, options);
 
         const testRan = await StorageBaseTests.handleNullKeysWhenWriting(storage);
@@ -173,7 +197,6 @@ describe('CosmosDbPartitionedStorage - Base Storage Tests', function() {
     });
 
     it('does not throw when writing no items', async function() {
-        checkEmulator();
         const { nockDone } = await usingNock(this.test, mode, options);
 
         const testRan = await StorageBaseTests.doesNotThrowWhenWritingNoItems(storage);
@@ -183,7 +206,6 @@ describe('CosmosDbPartitionedStorage - Base Storage Tests', function() {
     });
 
     it('create an object', async function() {
-        checkEmulator();
         const { nockDone } = await usingNock(this.test, mode, options);
 
         const testRan = await StorageBaseTests.createObject(storage);
@@ -193,7 +215,6 @@ describe('CosmosDbPartitionedStorage - Base Storage Tests', function() {
     });
 
     it('handle crazy keys', async function() {
-        checkEmulator();
         const { nockDone } = await usingNock(this.test, mode, options);
 
         const testRan = await StorageBaseTests.handleCrazyKeys(storage);
@@ -203,7 +224,6 @@ describe('CosmosDbPartitionedStorage - Base Storage Tests', function() {
     });
 
     it('update an object', async function() {
-        checkEmulator();
         const { nockDone } = await usingNock(this.test, mode, options);
 
         const testRan = await StorageBaseTests.updateObject(storage);
@@ -213,7 +233,6 @@ describe('CosmosDbPartitionedStorage - Base Storage Tests', function() {
     });
 
     it('delete an object', async function() {
-        checkEmulator();
         const { nockDone } = await usingNock(this.test, mode, options);
 
         const testRan = await StorageBaseTests.deleteObject(storage);
@@ -223,7 +242,6 @@ describe('CosmosDbPartitionedStorage - Base Storage Tests', function() {
     });
 
     it('does not throw when deleting an unknown object', async function() {
-        checkEmulator();
         const { nockDone } = await usingNock(this.test, mode, options);
 
         const testRan = await StorageBaseTests.deleteUnknownObject(storage);
@@ -233,7 +251,6 @@ describe('CosmosDbPartitionedStorage - Base Storage Tests', function() {
     });
 
     it('performs batch operations', async function() {
-        checkEmulator();
         const { nockDone } = await usingNock(this.test, mode, options);
 
         const testRan = await StorageBaseTests.performBatchOperations(storage);
@@ -243,7 +260,6 @@ describe('CosmosDbPartitionedStorage - Base Storage Tests', function() {
     });
 
     it('proceeds through a waterfall dialog', async function() {
-        checkEmulator();
         const { nockDone } = await usingNock(this.test, mode, options);
 
         const testRan = await StorageBaseTests.proceedsThroughWaterfall(storage);
@@ -252,7 +268,6 @@ describe('CosmosDbPartitionedStorage - Base Storage Tests', function() {
         return nockDone();
     });
     it('support using multiple databases', async function() {
-        checkEmulator();
         const { nockDone } = await usingNock(this.test, mode, options);
 
         const newDb = 'new-db';
@@ -282,7 +297,6 @@ describe('CosmosDbPartitionedStorage - Base Storage Tests', function() {
         return nockDone();
     });
     it('support using multiple containers', async function() {
-        checkEmulator();
         const { nockDone } = await usingNock(this.test, mode, options);
 
         const newContainer = 'new-container';

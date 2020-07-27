@@ -76,6 +76,8 @@ export class ActivityHandler extends ActivityHandlerBase {
     protected onTurnActivity(context: TurnContext): Promise<void>;
     onTyping(handler: BotHandler): this;
     protected onTypingActivity(context: TurnContext): Promise<void>;
+    onInstallationUpdate(handler: BotHandler): this;
+    protected onInstallationUpdateActivity(context: TurnContext): Promise<void>;
     protected onUnrecognizedActivity(context: TurnContext): Promise<void>;
     onUnrecognizedActivityType(handler: BotHandler): this;
     run(context: TurnContext): Promise<void>;
@@ -95,6 +97,7 @@ export class ActivityHandlerBase {
     protected onReactionsRemovedActivity(reactionsRemoved: MessageReaction[], context: TurnContext): Promise<void>;
     protected onTurnActivity(context: TurnContext): Promise<void>;
     protected onTypingActivity(context: TurnContext): Promise<void>;
+    protected onInstallationUpdateActivity(context: TurnContext): Promise<void>;
     protected onUnrecognizedActivity(context: TurnContext): Promise<void>;
     run(context: TurnContext): Promise<void>;
 }

@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 
-import { TurnContext } from 'botbuilder-core';
+import { DialogContext } from 'botbuilder-dialogs';
 
 /**
  * Defines interface for a Language Generator system to bind to text.
@@ -14,10 +14,10 @@ import { TurnContext } from 'botbuilder-core';
 export interface LanguageGenerator {
     /**
      * Method to bind data to string.
-     * @param turnContext turnContext.
-     * @param template template.
-     * @param data data to bind to.
-     * @returns text.
+     * @param dialogContext DialogContext.
+     * @param template Template.
+     * @param data Data to bind to.
+     * @returns Result of rendering template using data.
      */
-    generate(turnContext: TurnContext, template: string, data: object): Promise<string>;
+    generate(dialogContext: DialogContext, template: string, data: object): Promise<string>;
 }

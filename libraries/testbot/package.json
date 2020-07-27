@@ -15,13 +15,13 @@
     "botbuilder-ai": "4.1.6",
     "botbuilder-dialogs": "4.1.6",
     "botbuilder-testing": "4.1.6",
-    "dotenv": "^6.1.0",
-    "restify": "^8.3.0"
+    "dotenv": "^6.2.0",
+    "restify": "^8.5.1"
   },
   "devDependencies": {
-    "@types/mocha": "^2.2.47",
+    "@types/mocha": "^5.2.7",
     "assert": "^1.4.1",
-    "mocha": "^5.2.0",
-    "nyc": "^15.0.0"
+    "mocha": "^6.2.3",
+    "nyc": "^15.1.0"
   }
 }
