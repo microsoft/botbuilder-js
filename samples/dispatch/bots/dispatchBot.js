@@ -3,17 +3,27 @@
 
 const { ActivityHandler } = require('botbuilder');
 const { LuisRecognizer, QnAMaker } = require('botbuilder-ai');
+const { OrchestratorRecognizer } = require('botbuilder-ai-orchestrator');
 
 class DispatchBot extends ActivityHandler {
     constructor() {
         super();
 
-        // If the includeApiResults parameter is set to true, as shown below, the full response
-        // from the LUIS api will be made available in the properties  of the RecognizerResult
-        const dispatchRecognizer = new LuisRecognizer({
-            applicationId: process.env.LuisAppId,
+        const dispatchRecognizer = new OrchestratorRecognizer(process.env.ModelPath, process.env.SnapShotPath);
+
+        const weatherLuisRecognizer = new LuisRecognizer({
+            applicationId: process.env.WeatherLuisAppId,
             endpointKey: process.env.LuisAPIKey,
-            endpoint: `https://${ process.env.LuisAPIHostName }.api.cognitive.microsoft.com`
+            endpoint: process.env.LuisAPIHostName
+        }, {
+            includeAllIntents: true,
+            includeInstanceData: true
+        }, true);
+
+        const homeAutomationLuisRecognizer = new LuisRecognizer({
+            applicationId: process.env.HomeAutomationLuisAppId,
+            endpointKey: process.env.LuisAPIKey,
+            endpoint: process.env.LuisAPIHostName
         }, {
             includeAllIntents: true,
             includeInstanceData: true
@@ -27,12 +37,14 @@ class DispatchBot extends ActivityHandler {
 
         this.dispatchRecognizer = dispatchRecognizer;
         this.qnaMaker = qnaMaker;
+        this.weatherLuisRecognizer = weatherLuisRecognizer;
+        this.homeAutomationLuisRecognizer = homeAutomationLuisRecognizer;
 
         this.onMessage(async (context, next) => {
             console.log('Processing Message Activity.');
 
             // First, we use the dispatch model to determine which cognitive service (LUIS or QnA) to use.
-            const recognizerResult = await dispatchRecognizer.recognize(context);
+            const recognizerResult = await dispatchRecognizer.recognizeAsync(context);
 
             // Top intent tell us which cognitive service to use.
             const intent = LuisRecognizer.topIntent(recognizerResult);
@@ -60,13 +72,13 @@ class DispatchBot extends ActivityHandler {
 
     async dispatchToTopIntentAsync(context, intent, recognizerResult) {
         switch (intent) {
-        case 'l_HomeAutomation':
-            await this.processHomeAutomation(context, recognizerResult.luisResult);
+        case 'HomeAutomation':
+            await this.processHomeAutomation(context);
             break;
-        case 'l_Weather':
-            await this.processWeather(context, recognizerResult.luisResult);
+        case 'Weather':
+            await this.processWeather(context);
             break;
-        case 'q_sample-qna':
+        case 'QnAMaker':
             await this.processSampleQnA(context);
             break;
         default:
@@ -76,34 +88,26 @@ class DispatchBot extends ActivityHandler {
         }
     }
 
-    async processHomeAutomation(context, luisResult) {
+    async processHomeAutomation(context) {
         console.log('processHomeAutomation');
 
         // Retrieve LUIS result for Process Automation.
-        const result = luisResult.connectedServiceResult;
-        const intent = result.topScoringIntent.intent;
+        const luisResult = await this.homeAutomationLuisRecognizer.recognize(context);
+        // Top intent tell us which cognitive service to use.
+        const topIntent = LuisRecognizer.topIntent(luisResult);
 
-        await context.sendActivity(`HomeAutomation top intent ${ intent }.`);
-        await context.sendActivity(`HomeAutomation intents detected:  ${ luisResult.intents.map((intentObj) => intentObj.intent).join('\n\n') }.`);
-
-        if (luisResult.entities.length > 0) {
-            await context.sendActivity(`HomeAutomation entities were found in the message: ${ luisResult.entities.map((entityObj) => entityObj.entity).join('\n\n') }.`);
-        }
+        await context.sendActivity(`HomeAutomation top intent ${ topIntent }.`);
     }
 
-    async processWeather(context, luisResult) {
+    async processWeather(context) {
         console.log('processWeather');
 
         // Retrieve LUIS results for Weather.
-        const result = luisResult.connectedServiceResult;
-        const topIntent = result.topScoringIntent.intent;
+        const luisResult = await this.weatherLuisRecognizer.recognize(context);
+        // Top intent tell us which cognitive service to use.
+        const topIntent = LuisRecognizer.topIntent(luisResult);
 
         await context.sendActivity(`ProcessWeather top intent ${ topIntent }.`);
-        await context.sendActivity(`ProcessWeather intents detected:  ${ luisResult.intents.map((intentObj) => intentObj.intent).join('\n\n') }.`);
-
-        if (luisResult.entities.length > 0) {
-            await context.sendActivity(`ProcessWeather entities were found in the message: ${ luisResult.entities.map((entityObj) => entityObj.entity).join('\n\n') }.`);
-        }
     }
 
     async processSampleQnA(context) {

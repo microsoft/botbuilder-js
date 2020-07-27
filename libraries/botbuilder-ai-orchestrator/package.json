@@ -19,7 +19,7 @@
   "main": "./lib/index.js",
   "typings": "./lib/index.d.ts",
   "dependencies": {
-    "@microsoft/orchestrator-core": "https://pkgs.dev.azure.com/ConversationalAI/BotFramework/_packaging/SDK/npm/registry/@microsoft/orchestrator-core/-/orchestrator-core-0.0.5-preview.tgz",
+    "@microsoft/orchestrator-core": "https://pkgs.dev.azure.com/ConversationalAI/BotFramework/_packaging/SDK/npm/registry/@microsoft/orchestrator-core/-/orchestrator-core-0.0.6-preview.tgz",
     "adaptive-expressions": "4.1.6",
     "botbuilder-core": "4.1.6",
     "botbuilder-dialogs": "4.1.6",

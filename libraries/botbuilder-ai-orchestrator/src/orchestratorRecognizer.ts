@@ -5,7 +5,6 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-
 import { exception } from 'console';
 import { resolve } from 'path';
 import { TurnContext, RecognizerResult } from 'botbuilder-core';
@@ -14,8 +13,11 @@ const oc: any = require('@microsoft/orchestrator-core/orchestrator-core.node');
 const ReadText: any = require('read-text-file');
 
 export class OrchestratorRecognizer extends Configurable {
+    /**
+     * Full recognition results are available under this property
+     */
+    public readonly resultProperty : string = "result";
     
-    public readonly resultProperty : string = "Result";
     private readonly unknownIntentFilterScore = 0.4;
     private readonly noneIntent : string = "None";
     private static orchestrator : any = null;
@@ -23,31 +25,50 @@ export class OrchestratorRecognizer extends Configurable {
     private snapshotPath : string = null;
     private resolver : any = null;
 
-    public static async createRecognizerAsync(modelPath: string, snapShotPath: string): Promise<OrchestratorRecognizer> {
+    /**
+     * Creates a new OrchestratorRecognizer instance.
+     * @param modelPath path to the model to load.
+     * @param snapshotPath path to the snapshot (.blu file) to load.
+     */
+    constructor(modelPath: string, snapshotPath: string) {
+        super()
         if (modelPath === null) {
             throw new exception(`Missing "ModelPath" information.`);
         }
 
-        if (snapShotPath === null) {
+        if (snapshotPath === null) {
             throw new exception(`Missing "SnapshotPath" information.`);
         }
 
-        const recognizer = new OrchestratorRecognizer();
-        recognizer.modelPath = modelPath;
-        recognizer.snapshotPath = snapShotPath;
+        this.modelPath = modelPath;
+        this.snapshotPath = snapshotPath;
         
-        await recognizer.initializeModel();
-        return recognizer;
+        this.initializeModel();
     }
 
-    public recognize(context: TurnContext): Promise<RecognizerResult> 
+    /**
+     * Returns recognition result. Also sends trace activity with recognition result.
+     * @param context Context for the current turn of conversation with the use.
+     */
+    public async recognizeAsync(context: TurnContext): Promise<RecognizerResult> 
     {
-        return Promise.resolve<RecognizerResult>(this.recongizeText(context.activity.text))
+        let result = await this.recongizeTextAsync(context.activity.text);
+        await context.sendTraceActivity('OrchestratorRecognizer', result, 'RecognizerResult', 'Orchestrator recognizer RecognizerResult');
+        return result;
     }
 
-    public async recongizeText(text : string) : Promise<RecognizerResult>
+    /**
+     * Returns recognition result. 
+     * @param text Text to recognize.
+     */
+    public async recongizeTextAsync(text : string) : Promise<RecognizerResult>
     {
-        var recognizerResult : RecognizerResult;
+        const recognizerResult: RecognizerResult = {
+            text: text,
+            intents: {},
+            entities: {}
+        };
+
         var text = text || '';
 
         if (text === '')
@@ -66,13 +87,13 @@ export class OrchestratorRecognizer extends Configurable {
         
         if (Object.entries(recognizerResult.intents).length === 0)
         {
-            recognizerResult.intents['None'] = { score: 1.0 };
+            recognizerResult.intents[this.noneIntent] = { score: 1.0 };
         }
 
-        return recognizerResult;
+        return Promise.resolve<RecognizerResult>(recognizerResult);
     }
 
-    private async initializeModel(): Promise<void> {
+    private initializeModel() {
         if (this.modelPath == null) {
             throw new exception(`Missing "ModelPath" information.`);
         }
@@ -81,13 +102,16 @@ export class OrchestratorRecognizer extends Configurable {
             throw new exception(`Missing "ShapshotPath" information.`);
         }
 
+        console.log(`Model path : ${resolve(this.modelPath)}`);
+        console.log(`Snapshot path : ${resolve(this.snapshotPath)}`);
+
         if (OrchestratorRecognizer.orchestrator == null) {
             const fullModelPath = resolve(this.modelPath);
             
             // Create orchestrator core
             OrchestratorRecognizer.orchestrator = new oc.Orchestrator();
             if (fullModelPath) {
-                if (await OrchestratorRecognizer.orchestrator.load(fullModelPath) === false) {
+                if (OrchestratorRecognizer.orchestrator.load(fullModelPath) === false) {
                     throw new exception(`Model load failed.`);
                 }
             }
@@ -116,8 +140,8 @@ export class OrchestratorRecognizer extends Configurable {
             recognizerResult.intents['None'] = { score: 1.0 };
         } else {
             if (!recognizerResult.intents[topScoringIntent]) {
-                recognizerResult.intents.topScoringIntent = {
-                    score: result[0].score
+                recognizerResult.intents[topScoringIntent] = {
+                    score: topScore
                 };
             }
         }
