@@ -298,7 +298,6 @@ describe('QnAMaker', function () {
             assert.strictEqual(qnaResults.length, expectedNumOfAns);
         });
  
-
         it('should convert legacy response property "qnaId" to "id"', async function() {
             const legacyEndpoint = {
                 knowledgeBaseId: 'testKbId',
@@ -829,7 +828,7 @@ describe('QnAMaker', function () {
                         "innerError": null
                     }
                 };
-                
+
                 nock(endpoint.qnaHost)
                     .post(trainApi)
                     .reply(errResponse.code, errResponse);
