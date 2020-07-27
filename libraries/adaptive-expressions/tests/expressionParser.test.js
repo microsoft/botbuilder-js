@@ -464,7 +464,7 @@ const dataSource = [
     ['date(timestamp)', '3/15/2018'],//Default. TODO
     ['year(timestamp)', 2018],
     ['length(utcNow())', 24],
-    ['utcNow(\'MM-DD-YY HH\')', moment(new Date().toISOString()).utc().format('MM-DD-YY HH')],
+    ['utcNow(\'MM-DD-YY HH\')', 'getNowTime'],
     ['formatDateTime(notISOTimestamp)', '2018-03-15T13:00:00.000Z'],
     ['formatDateTime(notISOTimestamp, \'MM-dd-yy\')', '03-15-18'],
     ['formatDateTime(notISOTimestamp, \'ddd\')', 'Thu'],
@@ -843,7 +843,14 @@ describe('expression parser functional test', () => {
             var {value: actual, error} = parsed.tryEvaluate(scope);
             assert(error === undefined, `input: ${input}, Has error: ${error}`);
 
-            const expected = data[1];
+            let expected = data[1];
+
+            // There's an issue when running this test near the end of an hour,
+            // where expected 'HH' doesn't always match up. This ensures it's synced with the current hour.
+            if (input === 'utcNow(\'MM-DD-YY HH\')' && expected === 'getNowTime') {
+                expected = moment(new Date().toISOString()).utc().format('MM-DD-YY HH');
+            }
+
             assertObjectEquals(actual, expected);
 
             //Assert ExpectedRefs
