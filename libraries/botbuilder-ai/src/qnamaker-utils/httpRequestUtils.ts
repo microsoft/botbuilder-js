@@ -75,7 +75,7 @@ export class HttpRequestUtils {
         const headers: any = {};
 
         headers['Ocp-Apim-Subscription-Key'] = endpoint.endpointKey;
-        headers.Authorization = `EndpointKey ${endpoint.endpointKey}`;
+        headers.Authorization = `EndpointKey ${ endpoint.endpointKey }`;
         headers['User-Agent'] = this.getUserAgent();
         headers['Content-Type'] = 'application/json';
 
@@ -83,10 +83,10 @@ export class HttpRequestUtils {
     }
 
     private getUserAgent(): string {
-        const packageUserAgent: string = `${pjson.name}/${pjson.version}`;
-        const platformUserAgent: string = `(${os.arch()}-${os.type()}-${os.release()}; Node.js,Version=${process.version})`;
+        const packageUserAgent: string = `${ pjson.name }/${ pjson.version }`;
+        const platformUserAgent: string = `(${ os.arch() }-${ os.type() }-${ os.release() }; Node.js,Version=${ process.version })`;
 
-        return `${packageUserAgent} ${platformUserAgent}`;
+        return `${ packageUserAgent } ${ platformUserAgent }`;
     }
 
     private getSuccessfulTrainApiResult(): QnAMakerResult {
