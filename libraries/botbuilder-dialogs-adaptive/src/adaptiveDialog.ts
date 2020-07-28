@@ -624,7 +624,7 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
         let evt: DialogEvent;
         let handled = false;
         const assignments = EntityAssignments.read(actionContext);
-        const nextAssignment = assignments.nextAssignment();
+        const nextAssignment = assignments.nextAssignment;
         if (nextAssignment) {
             evt = {
                 name: nextAssignment.event,
@@ -1037,7 +1037,7 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
         // default operation from the current adaptive dialog.
         const defaultOp = this.dialogSchema.schema && this.dialogSchema.schema[this.defaultOperationKey];
 
-        const nextAssignment = existing.nextAssignment();
+        const nextAssignment = existing.nextAssignment;
         let candidates = this.removeOverlappingPerProperty(this.candidates(entities, expected))
             .sort((a, b): number => (a.isExpected === b.isExpected) ? 0 : (a.isExpected ? -1 : 1));
         const usedEntities: Map<string, Partial<EntityInfo>> = new Map();
@@ -1081,7 +1081,7 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
             } else if (lastEvent == AdaptiveEvents.chooseProperty && !candidate.operation && candidate.entity.name == this.propertyNameKey) {
                 // NOTE: This assumes the existence of an entity named PROPERTYName for resolving this ambiguity
                 // See if one of the choices corresponds to an alternative
-                choices = existing.nextAssignment().alternatives;
+                choices = existing.nextAssignment.alternatives;
                 const property = Array.isArray(candidate.entity.value) ? candidate.entity.value[0] : candidate.entity.value.toString();
                 const choice = choices.find((p): boolean => p.property == property);
                 if (choice) {

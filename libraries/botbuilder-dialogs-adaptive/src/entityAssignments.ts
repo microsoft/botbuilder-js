@@ -41,7 +41,7 @@ export class EntityAssignments {
     /**
      * Returns the next entity event to surface.
      */
-    public nextAssignment(): Partial<EntityAssignment> {
+    public get nextAssignment(): Partial<EntityAssignment> {
         if (this.assignments.length > 0) {
             return this.assignments[0];
         }
