@@ -866,9 +866,8 @@ describe('expression parser functional test', () => {
     it('should appropriately evaluate time-related expressions', () => {
         // Freeze the system clock.
         // The expected date in MM-DD-YY HH is 01-01-20 00
-        const date = new Date(Date.UTC(2020, 0, 1));
         let clock = useFakeTimers({
-            now: date,
+            now: new Date(Date.UTC(2020, 0, 1)),
             shouldAdvanceTime: false,
         });
 
