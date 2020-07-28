@@ -5,6 +5,7 @@ var {TimexProperty} = require('@microsoft/recognizers-text-data-types-timex-expr
 const assert = require('assert');
 const moment = require('moment');
 const bigInt = require('big-integer');
+const { useFakeTimers } = require('sinon');
 
 const one = ['one'];
 const oneTwo = ['one', 'two'];
@@ -826,37 +827,43 @@ const scope = {
 
 describe('expression parser functional test', () => {
     it('should get right evaluate result', () => {
-        function iterateAndCheckData(source) {
-            for (const data of source) {
-                const input = data[0].toString();
-                console.log(input);
-                var parsed = Expression.parse(input);
-                assert(parsed !== undefined);
-                var {value: actual, error} = parsed.tryEvaluate(scope);
-                assert(error === undefined, `input: ${input}, Has error: ${error}`);
-    
-                let expected = data[1];
-    
-                assertObjectEquals(actual, expected);
-    
-                //Assert ExpectedRefs
-                if (data.length === 3) {
-                    const actualRefs = parsed.references();
-                    assertObjectEquals(actualRefs.sort(), data[2].sort());
-                }
-    
-                //ToString re-parse
-                const newExpr = Expression.parse(parsed.toString());
-                const newActual = newExpr.tryEvaluate(scope).value;
-                assertObjectEquals(actual, newActual);
-            }
-        }
+        for (const data of dataSource) {
+            const input = data[0].toString();
+            console.log(input);
+            var parsed = Expression.parse(input);
+            assert(parsed !== undefined);
+            var {value: actual, error} = parsed.tryEvaluate(scope);
+            assert(error === undefined, `input: ${input}, Has error: ${error}, with expression ${ input }`);
 
-        // Any tests related to getting the current time should be instantiated in the actual test.
-        // If `new Date()` is called near the end of a time change (end of an hour or end of a day),
-        // this can intermittently result in failures because the test may run at the start of an hour or day.
-        iterateAndCheckData(dataSource);
-        const timeSensitiveData = [
+            let expected = data[1];
+
+            assertObjectEquals(actual, expected, input);
+
+            //Assert ExpectedRefs
+            if (data.length === 3) {
+                const actualRefs = parsed.references();
+                assertObjectEquals(actualRefs.sort(), data[2].sort(), input);
+            }
+
+            //ToString re-parse
+            const newExpr = Expression.parse(parsed.toString());
+            const newActual = newExpr.tryEvaluate(scope).value;
+            assertObjectEquals(actual, newActual, input);
+        }
+    }).timeout(5000);
+
+    // Any test getting the system time with something like `new Date()` is prone to failure because
+    // actual and expected may differ just enough make the test fail.
+    // To evaluate expressions like "getPastTime", we need to freeze the system clock so that every call to
+    // `new Date()` done by both the test and by ExpressionEvaluator return the exact same time.
+    it('should appropriately evaluate time-related expressions', () => {
+        // Freeze the system clock
+        let clock = useFakeTimers({
+            now: new Date(2020, 1, 1, 0, 0),
+            shouldAdvanceTime: false
+        });
+
+        const timeDataSource = [
             ['utcNow(\'MM-DD-YY HH\')', moment(new Date().toISOString()).utc().format('MM-DD-YY HH')],
             ['getPastTime(1, \'Year\', \'MM-dd-yy\')', moment(new Date().toISOString()).utc().subtract(1, 'years').format('MM-DD-YY')],
             ['getPastTime(1, \'Month\', \'MM-dd-yy\')', moment(new Date().toISOString()).utc().subtract(1, 'months').format('MM-DD-YY')],
@@ -865,11 +872,35 @@ describe('expression parser functional test', () => {
             ['getFutureTime(1, \'Year\', \'MM-dd-yy\')', moment(new Date().toISOString()).utc().add(1, 'years').format('MM-DD-YY')],
             ['getFutureTime(1, \'Month\', \'MM-dd-yy\')', moment(new Date().toISOString()).utc().add(1, 'months').format('MM-DD-YY')],
             ['getFutureTime(1, \'Week\', \'MM-dd-yy\')', moment(new Date().toISOString()).utc().add(7, 'days').format('MM-DD-YY')],
-            ['getFutureTime(1, \'Day\', \'MM-dd-yy\')', moment(new Date().toISOString()).utc().add(1, 'days').format('MM-DD-YY')],
+            ['getFutureTime(1, \'Day\', \'MM-dd-yy\')', moment(new Date().toISOString()).utc().add(1, 'days').format('MM-DD-YY')]
         ];
-        iterateAndCheckData(timeSensitiveData);
-        
-    }).timeout(5000);
+        for (const data of timeDataSource) {
+            const input = data[0].toString();
+            console.log(input);
+            var parsed = Expression.parse(input);
+            assert(parsed !== undefined);
+            var {value: actual, error} = parsed.tryEvaluate(scope);
+            assert(error === undefined, `input: ${input}, Has error: ${error}, with expression ${ input }`);
+
+            let expected = data[1];
+
+            assertObjectEquals(actual, expected, input);
+
+            //Assert ExpectedRefs
+            if (data.length === 3) {
+                const actualRefs = parsed.references();
+                assertObjectEquals(actualRefs.sort(), data[2].sort(), input);
+            }
+
+            //ToString re-parse
+            const newExpr = Expression.parse(parsed.toString());
+            const newActual = newExpr.tryEvaluate(scope).value;
+            assertObjectEquals(actual, newActual, input);
+        }
+
+        // Un-freeze the system clock
+        clock.restore();
+    });
 
     it('Test AccumulatePath', () => {
         const scope = {
@@ -960,27 +991,27 @@ describe('expression parser functional test', () => {
     });
 });
 
-var assertObjectEquals = (actual, expected) => {
+var assertObjectEquals = (actual, expected, input) => {
+    const debugMessage = `actual is: ${ actual }, expected is ${ expected }, with expression ${ input }`;
     if (actual === undefined && expected === undefined) {
         return;
     } else if (actual === undefined || expected === undefined) {
-        assert.fail();
+        assert.fail(`actual or expected was undefined. ${ debugMessage }`);
     } else if (typeof actual === 'number' && typeof expected === 'number') {
-        assert.equal(parseFloat(actual), parseFloat(expected), `actual is: ${actual}, expected is ${expected}`);
+        assert.equal(parseFloat(actual), parseFloat(expected), `Numbers don't match. ${ debugMessage }`);
     } else if (Array.isArray(actual) && Array.isArray(expected)) {
         assert.equal(actual.length, expected.length);
         for (let i = 0; i < actual.length; i++) {
-            assertObjectEquals(actual[i], expected[i], `actual is: ${actual[i]}, expected is ${expected[i]}`);
+            assertObjectEquals(actual[i], expected[i], `Array doesn't match. ${ debugMessage }`);
         }
     } else if (actual instanceof Uint8Array && expected instanceof Uint8Array) {
         assert.equal(actual.length, expected.length);
         for (let i = 0; i < actual.length; i++) {
-            assertObjectEquals(actual[i], expected[i], `actual is: ${actual[i]}, expected is ${expected[i]}`);
+            assertObjectEquals(actual[i], expected[i], `Uint8Array doesn't match. ${ debugMessage }`);
         }
     } else if (bigInt.isInstance(actual) && bigInt.isInstance(expected)) {
-        assert(actual.equals(expected), `actual is: ${actual}, expected is ${expected}`);
-    }
-    else {
-        assert.equal(actual, expected, `actual is: ${actual}, expected is ${expected}`);
+        assert(actual.equals(expected), `bigInt is not equal. ${ debugMessage }`);
+    } else {
+        assert.equal(actual, expected, `Acutal and expected don't match. ${ debugMessage }`);
     }
 };
