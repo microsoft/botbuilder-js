@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
 /* eslint-disable @typescript-eslint/no-var-requires */
-const {Expression, SimpleObjectMemory, ExpressionFunctions, Options} = require('../lib');
+const {Expression, SimpleObjectMemory, FunctionUtils, Options } = require('../lib');
 var {TimexProperty} = require('@microsoft/recognizers-text-data-types-timex-expression');
 const assert = require('assert');
 const moment = require('moment');
@@ -10,6 +10,13 @@ const one = ['one'];
 const oneTwo = ['one', 'two'];
 const dataSource = [
 
+    // Time sensitive test
+    ['getPastTime(1, \'Year\', \'MM-dd-yy\')', moment(new Date().toISOString()).utc().subtract(1, 'years').format('MM-DD-YY')],
+    ['getPastTime(1, \'Month\', \'MM-dd-yy\')', moment(new Date().toISOString()).utc().subtract(1, 'months').format('MM-DD-YY')],
+    ['getPastTime(1, \'Week\', \'MM-dd-yy\')', moment(new Date().toISOString()).utc().subtract(7, 'days').format('MM-DD-YY')],
+    ['getPastTime(1, \'Day\', \'MM-dd-yy\')', moment(new Date().toISOString()).utc().subtract(1, 'days').format('MM-DD-YY')],
+    ['getFutureTime(1, \'Year\', \'MM-dd-yy\')', moment(new Date().toISOString()).utc().add(1, 'years').format('MM-DD-YY')],
+    
     // accessProperty and accessIndex
     ['$index', 'index'],
     ['`hi\\``', 'hi`'], // `hi\`` -> hi`
@@ -464,7 +471,7 @@ const dataSource = [
     ['date(timestamp)', '3/15/2018'],//Default. TODO
     ['year(timestamp)', 2018],
     ['length(utcNow())', 24],
-    ['utcNow(\'MM-DD-YY HH\')', moment(new Date().toISOString()).utc().format('MM-DD-YY HH')],
+    ['utcNow(\'MM-DD-YY HH\')', 'getNowTime'], // special case, will be dealt with later
     ['formatDateTime(notISOTimestamp)', '2018-03-15T13:00:00.000Z'],
     ['formatDateTime(notISOTimestamp, \'MM-dd-yy\')', '03-15-18'],
     ['formatDateTime(notISOTimestamp, \'ddd\')', 'Thu'],
@@ -507,11 +514,6 @@ const dataSource = [
     ['getTimeOfDay(\'2018-03-15T22:00:00.000Z\')', 'evening'],
     ['getTimeOfDay(\'2018-03-15T23:00:00.000Z\')', 'night'],
     ['length(getPastTime(1, \'Year\'))', 24],
-    ['getPastTime(1, \'Year\', \'MM-dd-yy\')', moment(new Date().toISOString()).utc().subtract(1, 'years').format('MM-DD-YY')],
-    ['getPastTime(1, \'Month\', \'MM-dd-yy\')', moment(new Date().toISOString()).utc().subtract(1, 'months').format('MM-DD-YY')],
-    ['getPastTime(1, \'Week\', \'MM-dd-yy\')', moment(new Date().toISOString()).utc().subtract(7, 'days').format('MM-DD-YY')],
-    ['getPastTime(1, \'Day\', \'MM-dd-yy\')', moment(new Date().toISOString()).utc().subtract(1, 'days').format('MM-DD-YY')],
-    ['getFutureTime(1, \'Year\', \'MM-dd-yy\')', moment(new Date().toISOString()).utc().add(1, 'years').format('MM-DD-YY')],
     ['length(getFutureTime(1, \'Year\'))', 24],
     ['getFutureTime(1, \'Month\', \'MM-dd-yy\')', moment(new Date().toISOString()).utc().add(1, 'months').format('MM-DD-YY')],
     ['getFutureTime(1, \'Week\', \'MM-dd-yy\')', moment(new Date().toISOString()).utc().add(7, 'days').format('MM-DD-YY')],
@@ -843,7 +845,14 @@ describe('expression parser functional test', () => {
             var {value: actual, error} = parsed.tryEvaluate(scope);
             assert(error === undefined, `input: ${input}, Has error: ${error}`);
 
-            const expected = data[1];
+            let expected = data[1];
+
+            // There's an issue when running this test near the end of an hour,
+            // where expected 'HH' doesn't always match up. This ensures it's synced with the current hour.
+            if (input === 'utcNow(\'MM-DD-YY HH\')' && expected === 'getNowTime') {
+                expected = moment(new Date().toISOString()).utc().format('MM-DD-YY HH');
+            }
+
             assertObjectEquals(actual, expected);
 
             //Assert ExpectedRefs
@@ -873,22 +882,22 @@ describe('expression parser functional test', () => {
         // normal case, note, we doesn't append a " yet
         let exp = Expression.parse('a[f].b[n].z');
         let path = undefined;
-        ({path, left, error} = ExpressionFunctions.tryAccumulatePath(exp, memory, undefined));
+        ({path, left, error} = FunctionUtils.tryAccumulatePath(exp, memory, undefined));
         assert.strictEqual(path, 'a[\'foo\'].b[2].z');
 
         // normal case
         exp = Expression.parse('a[z.z][z.z].y');
-        ({path, left, error} = ExpressionFunctions.tryAccumulatePath(exp, memory, undefined));
+        ({path, left, error} = FunctionUtils.tryAccumulatePath(exp, memory, undefined));
         assert.strictEqual(path, 'a[\'zar\'][\'zar\'].y');
 
         // normal case
         exp = Expression.parse('a.b[z.z]');
-        ({path, left, error} = ExpressionFunctions.tryAccumulatePath(exp, memory, undefined));
+        ({path, left, error} = FunctionUtils.tryAccumulatePath(exp, memory, undefined));
         assert.strictEqual(path, 'a.b[\'zar\']');
 
         // stop evaluate at middle
         exp = Expression.parse('json(x).b');
-        ({path, left, error} = ExpressionFunctions.tryAccumulatePath(exp, memory, undefined));
+        ({path, left, error} = FunctionUtils.tryAccumulatePath(exp, memory, undefined));
         assert.strictEqual(path, 'b');
 
     });
