@@ -18,6 +18,7 @@ export * from './continueLoop';
 export * from './deleteActivity';
 export * from './deleteProperties';
 export * from './deleteProperty';
+export * from './dynamicBeginDialog';
 export * from './editActions';
 export * from './editArray';
 export * from './emitEvent';

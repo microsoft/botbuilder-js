@@ -3,7 +3,7 @@
 
 const assert = require('assert');
 const { TestAdapter, TelemetryLoggerMiddleware, ActivityTypes } = require('../');
-
+const { TeamsChannelData } = require('../../botframework-schema/');
 
 describe(`TelemetryMiddleware`, function () {
     this.timeout(5000);
@@ -12,7 +12,7 @@ describe(`TelemetryMiddleware`, function () {
         var telemetryClient = {
             trackEvent: (telemetry) => {
                 assert(telemetry, 'telemetry is null');
-                switch(++callCount) {
+                switch (++callCount) {
                     case 1:
                         assert(telemetry.name === TelemetryLoggerMiddleware.botMsgReceiveEvent);
                         assert(telemetry.properties);
@@ -91,18 +91,18 @@ describe(`TelemetryMiddleware`, function () {
             var typingActivity = {
                 type: ActivityTypes.Typing,
                 relatesTo: context.activity.relatesTo
-                };
+            };
             await context.sendActivity(typingActivity);
             await context.sendActivity(`echo:${context.activity.text}`);
         }).use(myLogger);
 
         adapter
             .send('foo')
-                .assertReply(activity => assert.equal(activity.type, ActivityTypes.Typing))
-                .assertReply('echo:foo')
+            .assertReply(activity => assert.equal(activity.type, ActivityTypes.Typing))
+            .assertReply('echo:foo')
             .send('bar')
-                .assertReply(activity => assert.equal(activity.type, ActivityTypes.Typing))
-                .assertReply('echo:bar')
+            .assertReply(activity => assert.equal(activity.type, ActivityTypes.Typing))
+            .assertReply('echo:bar')
             .then(done);
     });
 
@@ -115,18 +115,18 @@ describe(`TelemetryMiddleware`, function () {
             var typingActivity = {
                 type: ActivityTypes.Typing,
                 relatesTo: context.activity.relatesTo
-                };
+            };
             await context.sendActivity(typingActivity);
             await context.sendActivity(`echo:${context.activity.text}`);
         }).use(myLogger);
 
         adapter
             .send('foo')
-                .assertReply(activity => assert.equal(activity.type, ActivityTypes.Typing))
-                .assertReply('echo:foo')
+            .assertReply(activity => assert.equal(activity.type, ActivityTypes.Typing))
+            .assertReply('echo:foo')
             .send('bar')
-                .assertReply(activity => assert.equal(activity.type, ActivityTypes.Typing))
-                .assertReply('echo:bar')
+            .assertReply(activity => assert.equal(activity.type, ActivityTypes.Typing))
+            .assertReply('echo:bar')
             .then(done);
     });
 
@@ -135,7 +135,7 @@ describe(`TelemetryMiddleware`, function () {
         var telemetryClient = {
             trackEvent: (telemetry) => {
                 assert(telemetry, 'telemetry is null');
-                switch(++callCount) {
+                switch (++callCount) {
                     case 1:
                         assert(telemetry.name === TelemetryLoggerMiddleware.botMsgReceiveEvent);
                         assert(telemetry.properties);
@@ -190,18 +190,18 @@ describe(`TelemetryMiddleware`, function () {
             var typingActivity = {
                 type: ActivityTypes.Typing,
                 relatesTo: context.activity.relatesTo
-                };
+            };
             await context.sendActivity(typingActivity);
             await context.sendActivity(`echo:${context.activity.text}`);
         }).use(myLogger);
 
         adapter
             .send('foo')
-                .assertReply(activity => assert.equal(activity.type, ActivityTypes.Typing))
-                .assertReply('echo:foo')
+            .assertReply(activity => assert.equal(activity.type, ActivityTypes.Typing))
+            .assertReply('echo:foo')
             .send('bar')
-                .assertReply(activity => assert.equal(activity.type, ActivityTypes.Typing))
-                .assertReply('echo:bar')
+            .assertReply(activity => assert.equal(activity.type, ActivityTypes.Typing))
+            .assertReply('echo:bar')
             .then(done());
     });
 
@@ -213,7 +213,7 @@ describe(`TelemetryMiddleware`, function () {
         var telemetryClient = {
             trackEvent: (telemetry) => {
                 assert(telemetry, 'telemetry is null');
-                switch(++callCount) {
+                switch (++callCount) {
                     case 4:
                         // console.log('Call number:' + callCount);
                         // console.log(telemetry);
@@ -221,7 +221,7 @@ describe(`TelemetryMiddleware`, function () {
                         assert(telemetry.properties);
                         assert('recipientId' in telemetry.properties);
                         assert('conversationName' in telemetry.properties);
-                        assert('conversationId' in telemetry.properties);                        
+                        assert('conversationId' in telemetry.properties);
                         assert('locale' in telemetry.properties);
                         assert('text' in telemetry.properties);
                         assert(telemetry.properties.text === "new response");
@@ -259,14 +259,14 @@ describe(`TelemetryMiddleware`, function () {
             .then(done());
     });
 
-    it(`telemetry should log delete activities`, function(done) {
-        var callCount = 0;        
+    it(`telemetry should log delete activities`, function (done) {
+        var callCount = 0;
         var conversationId = null;
         var activityId = null;
         var telemetryClient = {
             trackEvent: (telemetry) => {
                 assert(telemetry, 'telemetry is null');
-                switch(++callCount) {
+                switch (++callCount) {
                     case 4:
                         // console.log('Call number:' + callCount);
                         // console.log(telemetry);
@@ -274,7 +274,7 @@ describe(`TelemetryMiddleware`, function () {
                         assert(telemetry.properties);
                         assert('recipientId' in telemetry.properties);
                         assert('conversationName' in telemetry.properties);
-                        assert('conversationId' in telemetry.properties);                        
+                        assert('conversationId' in telemetry.properties);
                         break;
                     default:
                         //Everything passes through
@@ -287,7 +287,7 @@ describe(`TelemetryMiddleware`, function () {
         let myLogger = new TelemetryLoggerMiddleware(telemetryClient, true);
         var adapter = new TestAdapter(async (context) => {
             conversationId = context.activity.conversation.id;
-            if(context.activity.text === 'deleteIt') {
+            if (context.activity.text === 'deleteIt') {
                 await context.deleteActivity(activityId);
             } else {
                 var activity = createReply(context.activity, 'response');
@@ -308,7 +308,7 @@ describe(`TelemetryMiddleware`, function () {
         var telemetryClient = {
             trackEvent: (telemetry) => {
                 assert(telemetry, 'telemetry is null');
-                switch(++callCount) {
+                switch (++callCount) {
                     case 1:
                         // console.log('Call number:' + callCount);
                         // console.log(telemetry);
@@ -370,18 +370,18 @@ describe(`TelemetryMiddleware`, function () {
             var typingActivity = {
                 type: ActivityTypes.Typing,
                 relatesTo: context.activity.relatesTo
-                };
+            };
             await context.sendActivity(typingActivity);
             await context.sendActivity(`echo:${context.activity.text}`);
         }).use(myLogger);
 
         adapter
             .send('foo')
-                .assertReply(activity => assert.equal(activity.type, ActivityTypes.Typing))
-                .assertReply('echo:foo')
+            .assertReply(activity => assert.equal(activity.type, ActivityTypes.Typing))
+            .assertReply('echo:foo')
             .send('bar')
-                .assertReply(activity => assert.equal(activity.type, ActivityTypes.Typing))
-                .assertReply('echo:bar')
+            .assertReply(activity => assert.equal(activity.type, ActivityTypes.Typing))
+            .assertReply('echo:bar')
             .then(done);
     });
 
@@ -390,7 +390,7 @@ describe(`TelemetryMiddleware`, function () {
         var telemetryClient = {
             trackEvent: (telemetry) => {
                 assert(telemetry, 'telemetry is null');
-                switch(++callCount) {
+                switch (++callCount) {
                     case 1:
                         // console.log('Call number:' + callCount);
                         // console.log(telemetry);
@@ -441,18 +441,18 @@ describe(`TelemetryMiddleware`, function () {
             var typingActivity = {
                 type: ActivityTypes.Typing,
                 relatesTo: context.activity.relatesTo
-                };
+            };
             await context.sendActivity(typingActivity);
             await context.sendActivity(`echo:${context.activity.text}`);
         }).use(myLogger);
 
         adapter
             .send('foo')
-                .assertReply(activity => assert.equal(activity.type, ActivityTypes.Typing))
-                .assertReply('echo:foo')
+            .assertReply(activity => assert.equal(activity.type, ActivityTypes.Typing))
+            .assertReply('echo:foo')
             .send('bar')
-                .assertReply(activity => assert.equal(activity.type, ActivityTypes.Typing))
-                .assertReply('echo:bar')
+            .assertReply(activity => assert.equal(activity.type, ActivityTypes.Typing))
+            .assertReply('echo:bar')
             .then(done);
     });
 
@@ -461,7 +461,7 @@ describe(`TelemetryMiddleware`, function () {
         var telemetryClient = {
             trackEvent: (telemetry) => {
                 assert(telemetry, 'telemetry is null');
-                switch(++callCount) {
+                switch (++callCount) {
                     case 4:
                         // console.log('Call number:' + callCount);
                         // console.log(telemetry);
@@ -500,63 +500,122 @@ describe(`TelemetryMiddleware`, function () {
                 var activity = createReply(context.activity, 'response');
                 const response = await context.sendActivity(activity);
                 activity.id = response.id;
-        
+
                 // clone the activity, so we can use it to do an update
                 activityToUpdate = JSON.parse(JSON.stringify(activity));
             }
-        
+
         }).use(myLogger);
-        
+
         adapter
             .send('foo')
             .delay(100)
             .send('update')
             .delay(100)
             .then(done());
-        });
+    });
 
+    it(`telemetry should log channel specific properties`, function (done) {
+        var callCount = 0;
+        var telemetryClient = {
+            trackEvent: (telemetry) => {
+                assert(telemetry, 'telemetry is null');
+                switch (++callCount) {
+                    case 1:
+                        assert(telemetry.name === TelemetryLoggerMiddleware.botMsgReceiveEvent);
+                        assert(telemetry.properties);
+                        assert('TeamsTeamInfo' in telemetry.properties);
+                        assert('TeamsTenantId' in telemetry.properties);
+                        assert('TeamsUserAadObjectId' in telemetry.properties);
+                        assert(telemetry.properties.TeamsTeamInfo === '{"id":"teamid"}');
+                        assert(telemetry.properties.TeamsTenantId === 'tenantid');
+                        assert(telemetry.properties.TeamsUserAadObjectId === 'aadObjectId'); 
+                        break;                    
+                    default:
+                        assert(false);
+                        break;
+                }
+            }
+        }
+        let myLogger = new TelemetryLoggerMiddleware(telemetryClient, true);
+        
+        var adapter = new TestAdapter(async (context) => { 
+            await context.sendActivity('foo');
+        }).use(myLogger);
+
+        var teamsChannelData = { 
+            teamsChannelId: 'teamsChannelId', 
+            teamsTeamId: 'teamid',
+            channel: { id: 'channelid' },
+            team: { id: 'teamid' },
+            tenant: { id: 'tenantid' }
+        }
+
+        var activity = {
+            type: ActivityTypes.Message,
+            channelId: 'msteams',
+            text: 'test',
+            channelData: teamsChannelData,
+            from: { id: 'fromId', name: 'fromName', aadObjectId: 'aadObjectId' },
+        };
+
+        adapter
+            .send(activity)
+            .then(done);
+    });
 
 });
 
-class overrideReceiveLogger extends TelemetryLoggerMiddleware
-{
+class overrideReceiveLogger extends TelemetryLoggerMiddleware {
     async onReceiveActivity(activity) {
         this.telemetryClient.trackEvent({
-                    name: TelemetryLoggerMiddleware.botMsgReceiveEvent,
-                    properties: {"foo":"bar",
-                                "ImportantProperty": "ImportantValue"  } });
+            name: TelemetryLoggerMiddleware.botMsgReceiveEvent,
+            properties: {
+                "foo": "bar",
+                "ImportantProperty": "ImportantValue"
+            }
+        });
         this.telemetryClient.trackEvent({
             name: "MyReceive",
-            properties: await this.fillReceiveEventProperties(activity, {"conversationName": "OVERRIDE"}) });
+            properties: await this.fillReceiveEventProperties(activity, { "conversationName": "OVERRIDE" })
+        });
     }
 }
 
-class overrideSendLogger extends TelemetryLoggerMiddleware
-{
+class overrideSendLogger extends TelemetryLoggerMiddleware {
     async onSendActivity(activity) {
         this.telemetryClient.trackEvent({
-                    name: TelemetryLoggerMiddleware.botMsgSendEvent,
-                    properties: {"foo":"bar",
-                                "ImportantProperty": "ImportantValue"  } });
+            name: TelemetryLoggerMiddleware.botMsgSendEvent,
+            properties: {
+                "foo": "bar",
+                "ImportantProperty": "ImportantValue"
+            }
+        });
         this.telemetryClient.trackEvent({
             name: "MySend",
-            properties: await this.fillSendEventProperties(activity) });
+            properties: await this.fillSendEventProperties(activity)
+        });
     }
 }
 
-class overrideUpdateDeleteLogger extends TelemetryLoggerMiddleware
-{
+class overrideUpdateDeleteLogger extends TelemetryLoggerMiddleware {
     async onUpdateActivity(activity) {
         this.telemetryClient.trackEvent({
-                    name: TelemetryLoggerMiddleware.botMsgUpdateEvent,
-                    properties: {"foo":"bar",
-                                "ImportantProperty": "ImportantValue"  } });
+            name: TelemetryLoggerMiddleware.botMsgUpdateEvent,
+            properties: {
+                "foo": "bar",
+                "ImportantProperty": "ImportantValue"
+            }
+        });
     }
     async onDeleteActivity(activity) {
         this.telemetryClient.trackEvent({
-                    name: TelemetryLoggerMiddleware.botMsgDeleteEvent,
-                    properties: {"foo":"bar",
-                                "ImportantProperty": "ImportantValue"  } });
+            name: TelemetryLoggerMiddleware.botMsgDeleteEvent,
+            properties: {
+                "foo": "bar",
+                "ImportantProperty": "ImportantValue"
+            }
+        });
     }
 }
 

@@ -16,7 +16,7 @@ import { ReturnType } from '../returnType';
 
 /**
  * Returns the index of the first occurrence of a value in an array.
- * The zero-based index position of value if that character is found, or -1 if it is not.
+ * The zero-based index position of value if that value is found, or -1 if it is not.
  */
 export class IndexOf extends ExpressionEvaluator {
     public constructor() {
