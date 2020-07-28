@@ -10,7 +10,6 @@ dotenv.config({ path: ENV_FILE });
 
 const restify = require('restify');
 const corsMiddleware = require('restify-cors-middleware');
-const bodyParser = require('body-parser');
 
 // Import required bot services.
 // See https://aka.ms/bot-services to learn more about the different parts of a bot.
