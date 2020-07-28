@@ -30,7 +30,7 @@ export class Templates implements Iterable<Template> {
     /**
      * Temp Template ID for inline content.
      */
-    public static readonly inlineTemplateId: string = '__temp__';
+    public static readonly inlineTemplateIdPrefix: string = '__temp__';
     private readonly newLineRegex = /(\r?\n)/g;
     private readonly newLine: string = '\r\n';
     private readonly namespaceKey = '@namespace';
@@ -246,17 +246,19 @@ export class Templates implements Iterable<Template> {
 
         this.checkErrors();
 
+        const inlineTemplateId = `${Templates.inlineTemplateIdPrefix}${this.getramdonTemplateId()}`;
+
         // wrap inline string with "# name and -" to align the evaluation process
         const multiLineMark = '```';
 
         inlineStr = !(inlineStr.trim().startsWith(multiLineMark) && inlineStr.includes('\n'))
             ? `${ multiLineMark }${ inlineStr }${ multiLineMark }` : inlineStr;
 
-        const newContent = `#${ Templates.inlineTemplateId } ${ this.newLine } - ${ inlineStr }`;
+        const newContent = `#${ inlineTemplateId } ${ this.newLine } - ${ inlineStr }`;
 
         const newTemplates = TemplatesParser.parseTextWithRef(newContent, this);
         var evalOpt = opt !== undefined ? opt.merge(this.lgOptions) : this.lgOptions;
-        return newTemplates.evaluate(Templates.inlineTemplateId, scope, evalOpt);
+        return newTemplates.evaluate(inlineTemplateId, scope, evalOpt);
     }
 
     /**
@@ -359,6 +361,15 @@ export class Templates implements Iterable<Template> {
 
     public toString(): string {
         return this.content;
+    }
+
+    private getramdonTemplateId(): string {
+        return 'xxxxxxxxxxxx4xxxyxxxxxxxxxxxxxxx'.replace(/[xy]/g, (c: any): string => {
+            const r: number = Math.random() * 16 | 0;
+            const v: number = c === 'x' ? r : (r & 0x3 | 0x8);
+
+            return v.toString(16);
+        });
     }
 
     private appendDiagnosticWithOffset(diagnostics: Diagnostic[], offset: number): void {
