@@ -66,4 +66,3 @@ describe('MemoryTranscriptStore', function() {
     this.timeout(10000);
     testStorage();
 });
-
