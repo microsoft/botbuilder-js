@@ -6,27 +6,16 @@
  * Licensed under the MIT License.
  */
 
-<<<<<<< HEAD
-import { ExpressionEvaluator, EvaluateExpressionDelegate } from '../expressionEvaluator';
-import { ReturnType } from '../returnType';
-import { ExpressionType } from '../expressionType';
-import { FunctionUtils } from '../functionUtils';
-=======
 import { EvaluateExpressionDelegate, ExpressionEvaluator } from '../expressionEvaluator';
 import { ExpressionType } from '../expressionType';
 import { FunctionUtils } from '../functionUtils';
 import { ReturnType } from '../returnType';
->>>>>>> master
 
 /**
  * Return the binary version of a uniform resource identifier (URI) component.
  */
 export class UriComponent extends ExpressionEvaluator {
-<<<<<<< HEAD
-    public constructor(){
-=======
     public constructor() {
->>>>>>> master
         super(ExpressionType.UriComponent, UriComponent.evaluator(), ReturnType.String, FunctionUtils.validateUnary);
     }
 

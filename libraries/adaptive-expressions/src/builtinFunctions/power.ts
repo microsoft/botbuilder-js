@@ -6,15 +6,9 @@
  * Licensed under the MIT License.
  */
 
-<<<<<<< HEAD
-import { MultivariateNumericEvaluator } from './multivariateNumericEvaluator';
-import { ExpressionType } from '../expressionType';
-import { FunctionUtils } from '../functionUtils';
-=======
 import { ExpressionType } from '../expressionType';
 import { FunctionUtils } from '../functionUtils';
 import { MultivariateNumericEvaluator } from './multivariateNumericEvaluator';
->>>>>>> master
 
 /**
  * Return exponentiation of one number to another.

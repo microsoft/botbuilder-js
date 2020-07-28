@@ -6,18 +6,6 @@
  * Licensed under the MIT License.
  */
 
-<<<<<<< HEAD
-import { ExpressionEvaluator, EvaluateExpressionDelegate } from '../expressionEvaluator';
-import { ReturnType } from '../returnType';
-import { ExpressionType } from '../expressionType';
-import { FunctionUtils } from '../functionUtils';
-
-/**
- *  Return the highest value from a list or array. The list or arary is inclusive at both ends.
- */
-export class Max extends ExpressionEvaluator {
-    public constructor(){
-=======
 import { EvaluateExpressionDelegate, ExpressionEvaluator } from '../expressionEvaluator';
 import { ExpressionType } from '../expressionType';
 import { FunctionUtils } from '../functionUtils';
@@ -28,7 +16,6 @@ import { ReturnType } from '../returnType';
  */
 export class Max extends ExpressionEvaluator {
     public constructor() {
->>>>>>> master
         super(ExpressionType.Max, Max.evaluator(), ReturnType.Number, FunctionUtils.validateAtLeastOne);
     }
 

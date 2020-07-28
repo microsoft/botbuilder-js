@@ -7,11 +7,7 @@
  */
 import { Expression } from './expression';
 import { ReturnType } from './returnType';
-<<<<<<< HEAD
-import { ExpressionEvaluator } from './expressionEvaluator';
-=======
 import { ExpressionEvaluator, ValueWithError } from './expressionEvaluator';
->>>>>>> master
 import { ExpressionType } from './expressionType';
 
 /**

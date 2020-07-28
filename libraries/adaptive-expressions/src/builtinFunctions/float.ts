@@ -6,18 +6,6 @@
  * Licensed under the MIT License.
  */
 
-<<<<<<< HEAD
-import { ExpressionEvaluator, EvaluateExpressionDelegate } from '../expressionEvaluator';
-import { ReturnType } from '../returnType';
-import { ExpressionType } from '../expressionType';
-import { FunctionUtils } from '../functionUtils';
-
-/**
- * Convert the string version of a floating-point number to a floating-point number. You can use this function only when passing custom parameters to an app, such as a logic app.
- */
-export class Float extends ExpressionEvaluator {
-    public constructor(){
-=======
 import { EvaluateExpressionDelegate, ExpressionEvaluator } from '../expressionEvaluator';
 import { ExpressionType } from '../expressionType';
 import { FunctionUtils } from '../functionUtils';
@@ -28,7 +16,6 @@ import { ReturnType } from '../returnType';
  */
 export class Float extends ExpressionEvaluator {
     public constructor() {
->>>>>>> master
         super(ExpressionType.Float, Float.evaluator(), ReturnType.Number, FunctionUtils.validateUnary);
     }
 
@@ -41,11 +28,7 @@ export class Float extends ExpressionEvaluator {
                     error = `parameter ${args[0]} is not a valid number string.`;
                 }
 
-<<<<<<< HEAD
-                return {value, error};
-=======
                 return { value, error };
->>>>>>> master
             });
     }
 }

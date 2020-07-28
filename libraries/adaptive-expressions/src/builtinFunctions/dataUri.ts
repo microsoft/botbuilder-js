@@ -6,27 +6,16 @@
  * Licensed under the MIT License.
  */
 
-<<<<<<< HEAD
-import { ExpressionEvaluator, EvaluateExpressionDelegate } from '../expressionEvaluator';
-import { ReturnType } from '../returnType';
-import { ExpressionType } from '../expressionType';
-import { FunctionUtils } from '../functionUtils';
-=======
 import { EvaluateExpressionDelegate, ExpressionEvaluator } from '../expressionEvaluator';
 import { ExpressionType } from '../expressionType';
 import { FunctionUtils } from '../functionUtils';
 import { ReturnType } from '../returnType';
->>>>>>> master
 
 /**
  * Return a data uniform resource identifier (URI) of a string.
  */
 export class DataUri extends ExpressionEvaluator {
-<<<<<<< HEAD
-    public constructor(){
-=======
     public constructor() {
->>>>>>> master
         super(ExpressionType.DataUri, DataUri.evaluator(), ReturnType.String, FunctionUtils.validateUnary);
     }
 

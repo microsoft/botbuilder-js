@@ -10,11 +10,6 @@ const one = ['one'];
 const oneTwo = ['one', 'two'];
 const dataSource = [
 
-<<<<<<< HEAD
-    ['getNextViableDate(\'XXXX-02-29\')', '2024-02-29'],
-    ['getPreviousViableDate(\'XXXX-02-29\')', '2020-02-29'],
-
-=======
     // Time sensitive test
     ['getPastTime(1, \'Year\', \'MM-dd-yy\')', moment(new Date().toISOString()).utc().subtract(1, 'years').format('MM-DD-YY')],
     ['getPastTime(1, \'Month\', \'MM-dd-yy\')', moment(new Date().toISOString()).utc().subtract(1, 'months').format('MM-DD-YY')],
@@ -22,7 +17,6 @@ const dataSource = [
     ['getPastTime(1, \'Day\', \'MM-dd-yy\')', moment(new Date().toISOString()).utc().subtract(1, 'days').format('MM-DD-YY')],
     ['getFutureTime(1, \'Year\', \'MM-dd-yy\')', moment(new Date().toISOString()).utc().add(1, 'years').format('MM-DD-YY')],
     
->>>>>>> master
     // accessProperty and accessIndex
     ['$index', 'index'],
     ['`hi\\``', 'hi`'], // `hi\`` -> hi`
@@ -477,11 +471,7 @@ const dataSource = [
     ['date(timestamp)', '3/15/2018'],//Default. TODO
     ['year(timestamp)', 2018],
     ['length(utcNow())', 24],
-<<<<<<< HEAD
-    ['utcNow(\'MM-DD-YY\')', moment(new Date().toISOString()).utc().format('MM-DD-YY')],
-=======
     ['utcNow(\'MM-DD-YY HH\')', 'getNowTime'], // special case, will be dealt with later
->>>>>>> master
     ['formatDateTime(notISOTimestamp)', '2018-03-15T13:00:00.000Z'],
     ['formatDateTime(notISOTimestamp, \'MM-dd-yy\')', '03-15-18'],
     ['formatDateTime(notISOTimestamp, \'ddd\')', 'Thu'],
@@ -544,6 +534,23 @@ const dataSource = [
     ['ticksToDays(2193385800000000)', 2538.6409722222224],
     ['ticksToHours(2193385800000000)', 60927.383333333331],
     ['ticksToMinutes(2193385811100000)', 3655643.0185],
+    ['isMatch(getPreviousViableDate(\'XXXX-07-10\'), \'20[0-9]{2}-07-10\')', true],
+    ['isMatch(getPreviousViableDate(\'XXXX-07-10\', \'Asia/Shanghai\'), \'20[0-9]{2}-07-10\')', true],
+    ['getPreviousViableDate(\'XXXX-02-29\')', '2020-02-29'],
+    ['getPreviousViableDate(\'XXXX-02-29\', \'Pacific Standard Time\')', '2020-02-29'],
+    ['isMatch(getNextViableDate(\'XXXX-07-10\'), \'202[0-9]-07-10\')', true],
+    ['isMatch(getNextViableDate(\'XXXX-07-10\', \'Europe/London\'), \'202[0-9]-07-10\')', true],
+    ['getNextViableDate(\'XXXX-02-29\')', '2024-02-29'],
+    ['getNextViableDate(\'XXXX-02-29\', \'America/Los_Angeles\')', '2024-02-29'],
+    ['isMatch(getNextViableTime(\'TXX:40:20\'), \'T[0-2][0-9]:40:20\')', true],
+    ['isMatch(getNextViableTime(\'TXX:40:20\', \'Asia/Tokyo\'), \'T[0-2][0-9]:40:20\')', true],
+    ['isMatch(getNextViableTime(\'TXX:05:10\'), \'T[0-2][0-9]:05:10\')', true],
+    ['isMatch(getNextViableTime(\'TXX:05:10\', \'Europe/Paris\'), \'T[0-2][0-9]:05:10\')', true],
+    ['isMatch(getPreviousViableTime(\'TXX:40:20\'), \'T[0-2][0-9]:40:20\')', true],
+    ['isMatch(getPreviousViableTime(\'TXX:40:20\', \'Eastern Standard Time\'), \'T[0-2][0-9]:40:20\')', true],
+    ['isMatch(getPreviousViableTime(\'TXX:05:10\'), \'T[0-2][0-9]:05:10\')', true],
+    ['isMatch(getPreviousViableTime(\'TXX:05:10\', \'Central Standard Time\'), \'T[0-2][0-9]:05:10\')', true],
+
     //URI parsing functions tests
     ['uriHost(\'https://www.localhost.com:8080\')', 'www.localhost.com'],
     ['uriPath(\'http://www.contoso.com/catalog/shownew.htm?date=today\')', '/catalog/shownew.htm'],

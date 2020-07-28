@@ -16,14 +16,13 @@ import { Options } from '../options';
 import { TimeZoneConverter } from '../timeZoneConverter';
 import { tz } from 'moment-timezone';
 import moment from 'moment';
-import {TimexProperty} from '@microsoft/recognizers-text-data-types-timex-expression';
-
+import {TimexProperty, Time} from '@microsoft/recognizers-text-data-types-timex-expression';
 /**
  * Return true if a given TimexProperty or Timex expression refers to the present.
  */
-export class GetNextViableDate extends ExpressionEvaluator {
+export class GetPreviousViableTime extends ExpressionEvaluator {
     public constructor(){
-        super(ExpressionType.GetNextViableDate, GetNextViableDate.evaluator, ReturnType.String, FunctionUtils.validateUnaryOrBinaryString);
+        super(ExpressionType.GetPreviousViableTime, GetPreviousViableTime.evaluator, ReturnType.String, FunctionUtils.validateUnaryOrBinaryString);
     }
 
     private static evaluator(expr: Expression, state: MemoryInterface, options: Options): {value: any; error: string} {
@@ -32,18 +31,15 @@ export class GetNextViableDate extends ExpressionEvaluator {
         let error: string;
         let args: any[];
         const currentTime = moment(new Date().toISOString());
-        let validYear = 0;
-        let validMonth = 0;
-        let validDay = 0;
+        let validHour = 0;
+        let validMinute = 0;
+        let validSecond = 0;
         let convertedDateTime: moment.Moment;
+        const formatRegex = /TXX:[0-5][0-9]:[0-5][0-9]/g;
         ({args, error} = FunctionUtils.evaluateChildren(expr, state, options));
-        if (!error) {
-            ({timexProperty: parsed, error: error} = FunctionUtils.parseTimexProperty(args[0]));
-        }
-
-        if (parsed && !error) {
-            if (parsed.year || !parsed.month || !parsed.dayOfMonth) {
-                error = `${args[0]} must be a timex string which only contains month and day-of-month, for example: 'XXXX-10-31'.`;
+        if(!error)  {
+            if (!formatRegex.test(args[0] as string)) {
+                error = `${args[0]}  must be a timex string which only contains minutes and seconds, for example: 'TXX:15:28'`
             }
         }
 
@@ -63,32 +59,25 @@ export class GetNextViableDate extends ExpressionEvaluator {
         }
 
         if (!error) {
-            const year = convertedDateTime.year();
-            const month = convertedDateTime.month() + 1;
-            const dayOfMonth = convertedDateTime.date();
-
-            if (parsed.month > month || (parsed.month === month && parsed.dayOfMonth >= dayOfMonth)) {
-                validYear = year;
-            } else {
-                validYear = year + 1;
-            }
-
-            validMonth = parsed.month;
-            validDay = parsed.dayOfMonth;
-
-            if (validMonth === 2 && validDay === 29) {
-                while (!GetNextViableDate.leapYear(validYear)) {
-                    validYear += 1;
-                }
-            }
+            ({timexProperty: parsed, error: error} = FunctionUtils.parseTimexProperty((args[0] as string).replace('XX', '00')));
         }
 
-        value = TimexProperty.fromDate(new Date(validYear, validMonth - 1, validDay)).timex;
-        return {value, error};
-    }
+        if (!error) {
+            const hour = convertedDateTime.hour();
+            const minute = convertedDateTime.minute();
+            const second = convertedDateTime.second();
 
-    private static leapYear(year: number): boolean
-    {
-        return ((year % 4 == 0) && (year % 100 != 0)) || (year % 400 == 0);
+            if (parsed.minute < minute || (parsed.minute === minute && parsed.second < second)) {
+                validHour = hour;
+            } else {
+                validHour = hour - 1;
+            }
+
+            validMinute = parsed.minute;
+            validSecond = parsed.second;
+        }
+
+        value = TimexProperty.fromTime(new Time(validHour, validMinute, validSecond)).timex;
+        return {value, error};
     }
 }

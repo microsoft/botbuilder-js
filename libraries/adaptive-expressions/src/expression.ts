@@ -12,10 +12,7 @@ import { Extensions } from './extensions';
 import { FunctionTable } from './functionTable';
 import { MemoryInterface, SimpleObjectMemory } from './memory';
 import { Options } from './options';
-<<<<<<< HEAD
-=======
 import { ExpressionParser } from './parser';
->>>>>>> master
 import { ReturnType } from './returnType';
 
 /**

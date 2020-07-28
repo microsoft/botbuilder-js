@@ -6,15 +6,6 @@
  * Licensed under the MIT License.
  */
 
-<<<<<<< HEAD
-import { ExpressionEvaluator } from '../expressionEvaluator';
-import { ReturnType } from '../returnType';
-import { ExpressionType } from '../expressionType';
-import { FunctionUtils } from '../functionUtils';
-import { SimpleObjectMemory } from '../memory/simpleObjectMemory';
-import { MemoryInterface } from '../memory/memoryInterface';
-import { Options } from '../options';
-=======
 import { Expression } from '../expression';
 import { ExpressionEvaluator, ValueWithError } from '../expressionEvaluator';
 import { ExpressionType } from '../expressionType';
@@ -23,25 +14,11 @@ import { MemoryInterface } from '../memory/memoryInterface';
 import { SimpleObjectMemory } from '../memory/simpleObjectMemory';
 import { Options } from '../options';
 import { ReturnType } from '../returnType';
->>>>>>> master
 
 /**
  * Used to access the variable value corresponding to the path.
  */
 export class Accessor extends ExpressionEvaluator {
-<<<<<<< HEAD
-    public constructor(){
-        super(ExpressionType.Accessor, Accessor.evaluator, ReturnType.Object, Accessor.validator);
-    }
-
-    private static evaluator(expression: any, state: MemoryInterface, options: Options): {value: any; error: string} {
-        let path: string;
-        let left: any;
-        let error: string;
-        ({path, left, error} = FunctionUtils.tryAccumulatePath(expression, state, options));
-        if (error) {
-            return {value: undefined, error};
-=======
     public constructor() {
         super(ExpressionType.Accessor, Accessor.evaluator, ReturnType.Object, Accessor.validator);
     }
@@ -53,27 +30,10 @@ export class Accessor extends ExpressionEvaluator {
         ({ path, left, error } = FunctionUtils.tryAccumulatePath(expression, state, options));
         if (error) {
             return { value: undefined, error };
->>>>>>> master
         }
 
         if (left == undefined) {
             // fully converted to path, so we just delegate to memory scope
-<<<<<<< HEAD
-            return {value: FunctionUtils.wrapGetValue(state, path, options), error: undefined};
-        } else {
-            let newScope: any;
-            let err: string;
-            ({value: newScope, error: err} = left.tryEvaluate(state, options));
-            if (err) {
-                return {value: undefined, error: err};
-            }
-
-            return {value: FunctionUtils.wrapGetValue(new SimpleObjectMemory(newScope), path, options), error: undefined};
-        }
-    }
-
-    private static validator(expression: any): void {
-=======
             return { value: FunctionUtils.wrapGetValue(state, path, options), error: undefined };
         } else {
             let newScope: any;
@@ -88,7 +48,6 @@ export class Accessor extends ExpressionEvaluator {
     }
 
     private static validator(expression: Expression): void {
->>>>>>> master
         const children: any[] = expression.children;
         if (children.length === 0
             || children[0].type !== ExpressionType.Constant

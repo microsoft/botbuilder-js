@@ -6,23 +6,14 @@
  * Licensed under the MIT License.
  */
 
-<<<<<<< HEAD
-import { NumberTransformEvaluator } from './numberTransformEvaluator';
-import { ExpressionType } from '../expressionType';
-=======
 import { ExpressionType } from '../expressionType';
 import { NumberTransformEvaluator } from './numberTransformEvaluator';
->>>>>>> master
 
 /**
  * Returns the smallest integral value that is greater than or equal to the specified number.
  */
 export class Ceiling extends NumberTransformEvaluator {
-<<<<<<< HEAD
-    public constructor(){
-=======
     public constructor() {
->>>>>>> master
         super(ExpressionType.Ceiling, Ceiling.func);
     }
 

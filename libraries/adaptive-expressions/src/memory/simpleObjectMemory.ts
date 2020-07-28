@@ -1,9 +1,6 @@
 import { Extensions } from '../extensions';
 import { FunctionUtils } from '../functionUtils';
-<<<<<<< HEAD
-=======
 import { MemoryInterface } from './memoryInterface';
->>>>>>> master
 
 /**
  * @module adaptive-expressions

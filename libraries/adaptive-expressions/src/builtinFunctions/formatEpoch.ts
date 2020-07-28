@@ -6,14 +6,6 @@
  * Licensed under the MIT License.
  */
 
-<<<<<<< HEAD
-import { ExpressionEvaluator, EvaluateExpressionDelegate } from '../expressionEvaluator';
-import { Expression } from '../expression';
-import { ReturnType } from '../returnType';
-import { ExpressionType } from '../expressionType';
-import { FunctionUtils } from '../functionUtils';
-import moment from 'moment';
-=======
 import moment from 'moment';
 
 import { Expression } from '../expression';
@@ -21,17 +13,12 @@ import { EvaluateExpressionDelegate, ExpressionEvaluator } from '../expressionEv
 import { ExpressionType } from '../expressionType';
 import { FunctionUtils } from '../functionUtils';
 import { ReturnType } from '../returnType';
->>>>>>> master
 
 /**
  * Return a timestamp in the specified format from UNIX time (also know as Epoch time, POSIX time, UNIX Epoch time).
  */
 export class FormatEpoch extends ExpressionEvaluator {
-<<<<<<< HEAD
-    public constructor(){
-=======
     public constructor() {
->>>>>>> master
         super(ExpressionType.FormatEpoch, FormatEpoch.evaluator(), ReturnType.String, FormatEpoch.validator);
     }
 
@@ -53,11 +40,7 @@ export class FormatEpoch extends ExpressionEvaluator {
                     value = args.length === 2 ? moment(dateString).format(FunctionUtils.timestampFormatter(args[1])) : dateString;
                 }
 
-<<<<<<< HEAD
-                return {value, error};
-=======
                 return { value, error };
->>>>>>> master
             });
     }
 

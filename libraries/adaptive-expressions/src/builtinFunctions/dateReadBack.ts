@@ -6,14 +6,6 @@
  * Licensed under the MIT License.
  */
 
-<<<<<<< HEAD
-import { ExpressionEvaluator, EvaluateExpressionDelegate } from '../expressionEvaluator';
-import { Expression } from '../expression';
-import { ReturnType } from '../returnType';
-import { ExpressionType } from '../expressionType';
-import { FunctionUtils } from '../functionUtils';
-import {TimexProperty} from '@microsoft/recognizers-text-data-types-timex-expression';
-=======
 import { TimexProperty } from '@microsoft/recognizers-text-data-types-timex-expression';
 
 import { Expression } from '../expression';
@@ -21,17 +13,12 @@ import { EvaluateExpressionDelegate, ExpressionEvaluator } from '../expressionEv
 import { ExpressionType } from '../expressionType';
 import { FunctionUtils } from '../functionUtils';
 import { ReturnType } from '../returnType';
->>>>>>> master
 
 /**
  * Uses the date-time library to provide a date readback.
  */
 export class DateReadBack extends ExpressionEvaluator {
-<<<<<<< HEAD
-    public constructor(){
-=======
     public constructor() {
->>>>>>> master
         super(ExpressionType.DateReadBack, DateReadBack.evaluator(), ReturnType.String, DateReadBack.validator);
     }
 
@@ -41,16 +28,6 @@ export class DateReadBack extends ExpressionEvaluator {
                 let value: any;
                 let error: string;
                 const dateFormat = 'YYYY-MM-DD';
-<<<<<<< HEAD
-                ({value, error} = FunctionUtils.parseTimestamp(args[0]));
-                if (!error) {
-                    const timestamp1: Date = new Date(value.format(dateFormat));
-                    ({value, error} = FunctionUtils.parseTimestamp(args[1]));
-                    const timestamp2: string = value.format(dateFormat);
-                    const timex: TimexProperty = new TimexProperty(timestamp2);
-
-                    return {value: timex.toNaturalLanguage(timestamp1), error};
-=======
                 ({ value, error } = FunctionUtils.parseTimestamp(args[0]));
                 if (!error) {
                     const timestamp1: Date = new Date(value.format(dateFormat));
@@ -59,7 +36,6 @@ export class DateReadBack extends ExpressionEvaluator {
                     const timex: TimexProperty = new TimexProperty(timestamp2);
 
                     return { value: timex.toNaturalLanguage(timestamp1), error };
->>>>>>> master
                 }
             },
             FunctionUtils.verifyString);

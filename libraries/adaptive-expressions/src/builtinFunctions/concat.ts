@@ -6,27 +6,16 @@
  * Licensed under the MIT License.
  */
 
-<<<<<<< HEAD
-import { ExpressionEvaluator, EvaluateExpressionDelegate } from '../expressionEvaluator';
-import { ReturnType } from '../returnType';
-import { ExpressionType } from '../expressionType';
-import { FunctionUtils } from '../functionUtils';
-=======
 import { EvaluateExpressionDelegate, ExpressionEvaluator } from '../expressionEvaluator';
 import { ExpressionType } from '../expressionType';
 import { FunctionUtils } from '../functionUtils';
 import { ReturnType } from '../returnType';
->>>>>>> master
 
 /**
  * Combine two or more strings, and return the combined string.
  */
 export class Concat extends ExpressionEvaluator {
-<<<<<<< HEAD
-    public constructor(){
-=======
     public constructor() {
->>>>>>> master
         super(ExpressionType.Concat, Concat.evaluator(), ReturnType.String | ReturnType.Array, FunctionUtils.validateAtLeastOne);
     }
 
@@ -36,17 +25,6 @@ export class Concat extends ExpressionEvaluator {
             const secondItem = args[1];
             const isFirstList = Array.isArray(firstItem);
             const isSecondList = Array.isArray(secondItem);
-<<<<<<< HEAD
-    
-            if ((firstItem === null || firstItem === undefined)
-                && (secondItem === null || secondItem === undefined)) {
-                return undefined;
-            } else if ((firstItem === null || firstItem === undefined) && isSecondList){
-                return secondItem;
-            } else if ((secondItem === null || secondItem === undefined) && isFirstList){
-                return firstItem;
-            } else if (isFirstList && isSecondList){
-=======
 
             if ((firstItem === null || firstItem === undefined)
                 && (secondItem === null || secondItem === undefined)) {
@@ -56,7 +34,6 @@ export class Concat extends ExpressionEvaluator {
             } else if ((secondItem === null || secondItem === undefined) && isFirstList) {
                 return firstItem;
             } else if (isFirstList && isSecondList) {
->>>>>>> master
                 return firstItem.concat(secondItem);
             } else {
                 return Concat.commonStringify(firstItem) + Concat.commonStringify(secondItem);
@@ -64,20 +41,10 @@ export class Concat extends ExpressionEvaluator {
         });
     }
 
-<<<<<<< HEAD
-    
-=======
-
->>>>>>> master
     private static commonStringify(input: any): string {
         if (input === null || input === undefined) {
             return '';
         }
-<<<<<<< HEAD
-    
-=======
-
->>>>>>> master
         if (Array.isArray(input)) {
             return input.toString();
         } else if (typeof input === 'object') {

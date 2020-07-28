@@ -6,15 +6,9 @@
  * Licensed under the MIT License.
  */
 
-<<<<<<< HEAD
-import { StringTransformEvaluator } from './stringTransformEvaluator';
-import { FunctionUtils } from '../functionUtils';
-import { ExpressionType } from '../expressionType';
-=======
 import { ExpressionType } from '../expressionType';
 import { FunctionUtils } from '../functionUtils';
 import { StringTransformEvaluator } from './stringTransformEvaluator';
->>>>>>> master
 
 /**
  * Converts the specified string to title case.
@@ -25,11 +19,7 @@ export class TitleCase extends StringTransformEvaluator {
     }
 
     private static evaluator(args: any[]): string {
-<<<<<<< HEAD
-        const inputStr = String(FunctionUtils.parseStringOrNull(args[0])).toLowerCase();
-=======
         const inputStr = String(FunctionUtils.parseStringOrUndefined(args[0])).toLowerCase();
->>>>>>> master
         if (inputStr === '') {
             return inputStr;
         } else {

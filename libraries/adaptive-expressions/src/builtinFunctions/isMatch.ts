@@ -6,21 +6,6 @@
  * Licensed under the MIT License.
  */
 
-<<<<<<< HEAD
-import { ExpressionEvaluator, EvaluateExpressionDelegate } from '../expressionEvaluator';
-import { Expression } from '../expression';
-import { ReturnType } from '../returnType';
-import { ExpressionType } from '../expressionType';
-import { FunctionUtils } from '../functionUtils';
-import { CommonRegex } from '../commonRegex';
-import { Constant } from '../constant';
-
-/**
- * Return true if a given string is matches a specified regular expression pattern.
- */
-export class IsMatch extends ExpressionEvaluator {
-    public constructor(){
-=======
 import { CommonRegex } from '../commonRegex';
 import { Constant } from '../constant';
 import { Expression } from '../expression';
@@ -34,7 +19,6 @@ import { ReturnType } from '../returnType';
  */
 export class IsMatch extends ExpressionEvaluator {
     public constructor() {
->>>>>>> master
         super(ExpressionType.IsMatch, IsMatch.evaluator(), ReturnType.Boolean, IsMatch.validator);
     }
 
@@ -51,11 +35,7 @@ export class IsMatch extends ExpressionEvaluator {
                     value = regex.test(args[0].toString());
                 }
 
-<<<<<<< HEAD
-                return {value, error};
-=======
                 return { value, error };
->>>>>>> master
             }, FunctionUtils.verifyStringOrNull);
     }
 

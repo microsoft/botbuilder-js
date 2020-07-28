@@ -6,14 +6,6 @@
  * Licensed under the MIT License.
  */
 
-<<<<<<< HEAD
-import { ExpressionEvaluator, EvaluateExpressionDelegate } from '../expressionEvaluator';
-import { Expression } from '../expression';
-import { ReturnType } from '../returnType';
-import { ExpressionType } from '../expressionType';
-import { FunctionUtils } from '../functionUtils';
-import * as jsPath from 'jspath';
-=======
 import * as jsPath from 'jspath';
 
 import { Expression } from '../expression';
@@ -21,17 +13,12 @@ import { EvaluateExpressionDelegate, ExpressionEvaluator, ValueWithError } from 
 import { ExpressionType } from '../expressionType';
 import { FunctionUtils } from '../functionUtils';
 import { ReturnType } from '../returnType';
->>>>>>> master
 
 /**
  * Check JSON or a JSON string for nodes or values that match a path expression, and return the matching nodes.
  */
 export class JPath extends ExpressionEvaluator {
-<<<<<<< HEAD
-    public constructor(){
-=======
     public constructor() {
->>>>>>> master
         super(ExpressionType.JPath, JPath.evaluator(), ReturnType.Object, JPath.validator);
     }
 
@@ -39,11 +26,7 @@ export class JPath extends ExpressionEvaluator {
         return FunctionUtils.applyWithError((args: any[][]): any => JPath.evalJPath(args[0], args[1].toString()));
     }
 
-<<<<<<< HEAD
-    private static evalJPath(jsonEntity: object | string, path: string): {value: any; error: string} {
-=======
     private static evalJPath(jsonEntity: object | string, path: string): ValueWithError {
->>>>>>> master
         let result: any;
         let error: string;
         let evaled: any;
@@ -70,11 +53,7 @@ export class JPath extends ExpressionEvaluator {
 
         result = evaled;
 
-<<<<<<< HEAD
-        return {value: result, error};
-=======
         return { value: result, error };
->>>>>>> master
     }
 
     private static validator(expr: Expression): void {

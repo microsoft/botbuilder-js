@@ -5,11 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-<<<<<<< HEAD
-import { ReturnType } from './returnType';
-=======
 import { Expression } from './expression';
->>>>>>> master
 import { MemoryInterface } from './memory';
 import { Options } from './options';
 import { ReturnType } from './returnType';
@@ -34,11 +30,7 @@ export type ValueWithError =
  * Delegate to evaluate an expression.
  * Evaluators should verify runtime arguments when appropriate and return an error rather than throw exceptions if possible.
  */
-<<<<<<< HEAD
-export type EvaluateExpressionDelegate = (expression: any, state: MemoryInterface, options: Options) => { value: any; error: string };
-=======
 export type EvaluateExpressionDelegate = (expression: Expression, state: MemoryInterface, options: Options) => ValueWithError;
->>>>>>> master
 
 /**
  * Delegate to lookup function information from the type.
@@ -85,11 +77,7 @@ export class ExpressionEvaluator {
      * @param expression Expression to evaluate.
      * @param state Global state information.
      */
-<<<<<<< HEAD
-    public tryEvaluate = (expression: any, state: MemoryInterface, options: Options): { value: any; error: string } => this._evaluator(expression, state, options);
-=======
     public tryEvaluate = (expression: Expression, state: MemoryInterface, options: Options): ValueWithError => this._evaluator(expression, state, options);
->>>>>>> master
     /**
      * Validate an expression.
      * @param expression Expression to validate.

@@ -6,18 +6,6 @@
  * Licensed under the MIT License.
  */
 
-<<<<<<< HEAD
-import { ExpressionEvaluator, EvaluateExpressionDelegate } from '../expressionEvaluator';
-import { ReturnType } from '../returnType';
-import { ExpressionType } from '../expressionType';
-import { FunctionUtils } from '../functionUtils';
-
-/**
- * Return the lowest value from a set of numbers or an array.
- */
-export class Min extends ExpressionEvaluator {
-    public constructor(){
-=======
 import { EvaluateExpressionDelegate, ExpressionEvaluator } from '../expressionEvaluator';
 import { ExpressionType } from '../expressionType';
 import { FunctionUtils } from '../functionUtils';
@@ -28,7 +16,6 @@ import { ReturnType } from '../returnType';
  */
 export class Min extends ExpressionEvaluator {
     public constructor() {
->>>>>>> master
         super(ExpressionType.Min, Min.evaluator(), ReturnType.Number, FunctionUtils.validateAtLeastOne);
     }
 

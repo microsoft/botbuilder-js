@@ -57,13 +57,12 @@ export * from './formatEpoch';
 export * from './formatNumber';
 export * from './formatTicks';
 export * from './getFutureTime';
-<<<<<<< HEAD
 export * from './getNextViableDate';
+export * from './getNextViableTime';
 export * from './getPastTime';
 export * from './getPreviousViableDate';
-=======
+export * from './getPreviousViableTime';
 export * from './getPastTime';
->>>>>>> master
 export * from './getProperty';
 export * from './getTimeOfDay';
 export * from './greaterThan';

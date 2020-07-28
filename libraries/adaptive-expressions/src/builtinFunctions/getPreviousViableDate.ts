@@ -58,7 +58,7 @@ export class GetPreviousViableDate extends ExpressionEvaluator {
                     convertedDateTime = tz(currentTime.utc(), timeZone);
                 }
             } else {
-                convertedDateTime = currentTime;
+                convertedDateTime = currentTime.utc();
             }
         }
 

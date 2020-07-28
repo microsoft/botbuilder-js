@@ -6,15 +6,9 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-<<<<<<< HEAD
-import {ExpressionEvaluator} from './expressionEvaluator';
-import {ExpressionType} from './expressionType';
-import * as BuiltinFunctions from './builtinFunctions';
-=======
 import * as BuiltinFunctions from './builtinFunctions';
 import { ExpressionEvaluator } from './expressionEvaluator';
 import { ExpressionType } from './expressionType';
->>>>>>> master
 
 /**
  *  <summary>
@@ -88,13 +82,12 @@ export class ExpressionFunctions {
             new BuiltinFunctions.FormatNumber(),
             new BuiltinFunctions.FormatTicks(),
             new BuiltinFunctions.GetFutureTime(),
-<<<<<<< HEAD
             new BuiltinFunctions.GetNextViableDate(),
+            new BuiltinFunctions.GetNextViableTime(),
             new BuiltinFunctions.GetPastTime(),
             new BuiltinFunctions.GetPreviousViableDate(),
-=======
+            new BuiltinFunctions.GetPreviousViableTime(),
             new BuiltinFunctions.GetPastTime(),
->>>>>>> master
             new BuiltinFunctions.GetProperty(),
             new BuiltinFunctions.GetTimeOfDay(),
             new BuiltinFunctions.GreaterThan(),

@@ -6,18 +6,6 @@
  * Licensed under the MIT License.
  */
 
-<<<<<<< HEAD
-import { ExpressionEvaluator, EvaluateExpressionDelegate } from '../expressionEvaluator';
-import { ReturnType } from '../returnType';
-import { ExpressionType } from '../expressionType';
-import { FunctionUtils } from '../functionUtils';
-
-/**
- * Return an integer array that starts from a specified integer.
- */
-export class Range extends ExpressionEvaluator {
-    public constructor(){
-=======
 import { EvaluateExpressionDelegate, ExpressionEvaluator } from '../expressionEvaluator';
 import { ExpressionType } from '../expressionType';
 import { FunctionUtils } from '../functionUtils';
@@ -28,7 +16,6 @@ import { ReturnType } from '../returnType';
  */
 export class Range extends ExpressionEvaluator {
     public constructor() {
->>>>>>> master
         super(ExpressionType.Range, Range.evaluator(), ReturnType.Array, FunctionUtils.validateBinaryNumber);
     }
 
@@ -42,11 +29,7 @@ export class Range extends ExpressionEvaluator {
 
                 const result: number[] = [...Array(args[1]).keys()].map((u: number): number => u + Number(args[0]));
 
-<<<<<<< HEAD
-                return {value: result, error};
-=======
                 return { value: result, error };
->>>>>>> master
             },
             FunctionUtils.verifyInteger
         );

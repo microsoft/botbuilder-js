@@ -6,20 +6,6 @@
  * Licensed under the MIT License.
  */
 
-<<<<<<< HEAD
-import { ExpressionEvaluator, EvaluateExpressionDelegate } from '../expressionEvaluator';
-import { Expression } from '../expression';
-import { ReturnType } from '../returnType';
-import { ExpressionType } from '../expressionType';
-import { FunctionUtils } from '../functionUtils';
-import moment from 'moment';
-
-/**
- * Return a timestamp in the specified format.
- */
-export class FormatDateTime extends ExpressionEvaluator {
-    public constructor(){
-=======
 import moment from 'moment';
 
 import { Expression } from '../expression';
@@ -34,7 +20,6 @@ import { ReturnType } from '../returnType';
  */
 export class FormatDateTime extends ExpressionEvaluator {
     public constructor() {
->>>>>>> master
         super(ExpressionType.FormatDateTime, FormatDateTime.evaluator(), ReturnType.String, FormatDateTime.validator);
     }
 
@@ -54,11 +39,7 @@ export class FormatDateTime extends ExpressionEvaluator {
                     value = args.length === 2 ? moment(dateString).format(FunctionUtils.timestampFormatter(args[1])) : dateString;
                 }
 
-<<<<<<< HEAD
-                return {value, error};
-=======
                 return { value, error };
->>>>>>> master
             });
     }
 

@@ -1,16 +1,3 @@
-<<<<<<< HEAD
-/* eslint-disable @typescript-eslint/no-unused-vars */
-import {TimexProperty} from '@microsoft/recognizers-text-data-types-timex-expression';
-import * as lodash from 'lodash';
-import moment, {Moment} from 'moment';
-import {Constant} from './constant';
-import { ReturnType } from './returnType';
-import {EvaluateExpressionDelegate} from './expressionEvaluator';
-import {ExpressionType} from './expressionType';
-import {convertCSharpDateTimeToMomentJS} from './datetimeFormatConverter';
-import {MemoryInterface, SimpleObjectMemory, StackedMemory} from './memory';
-import {Options} from './options';
-=======
 /**
  * @module adaptive-expressions
  */
@@ -31,7 +18,6 @@ import { ExpressionType } from './expressionType';
 import { MemoryInterface, SimpleObjectMemory, StackedMemory } from './memory';
 import { Options } from './options';
 import { ReturnType } from './returnType';
->>>>>>> master
 import bigInt = require('big-integer');
 
 /**
@@ -40,11 +26,7 @@ import bigInt = require('big-integer');
  * @param expression Expression that produced value.
  * @param child Index of child expression.
  */
-<<<<<<< HEAD
-export type VerifyExpression = (value: any, expression: any, child: number) => string | undefined;
-=======
 export type VerifyExpression = (value: any, expression: Expression, child: number) => string | undefined;
->>>>>>> master
 
 export class FunctionUtils {
     /**
@@ -53,11 +35,7 @@ export class FunctionUtils {
     public static readonly DefaultDateTimeFormat: string = 'YYYY-MM-DDTHH:mm:ss.SSS[Z]';
 
     /**
-<<<<<<< HEAD
-     * constant of converting unix timestamp to ticks
-=======
      * Constant for converting unix timestamp to ticks.
->>>>>>> master
      */
     public static readonly UnixMilliSecondToTicksConstant: bigInt.BigInteger = bigInt('621355968000000000');
 
@@ -71,17 +49,10 @@ export class FunctionUtils {
      * @param expression Expression to validate.
      * @param minArity Minimum number of children.
      * @param maxArity Maximum number of children.
-<<<<<<< HEAD
-     * @param returnType  Allowed return types for children.
-     * If a child has a return type of Object then validation will happen at runtime.
-     */
-    public static validateArityAndAnyType(expression: any, minArity: number, maxArity: number, returnType: ReturnType = ReturnType.Object): void {
-=======
      * @param returnType Allowed return types for children.
      * If a child has a return type of Object then validation will happen at runtime.
      */
     public static validateArityAndAnyType(expression: Expression, minArity: number, maxArity: number, returnType: ReturnType = ReturnType.Object): void {
->>>>>>> master
         if (expression.children.length < minArity) {
             throw new Error(`${expression} should have at least ${minArity} children.`);
         }
@@ -104,11 +75,7 @@ export class FunctionUtils {
      * @param optional Optional types in order.
      * @param types Expected types in order.
      */
-<<<<<<< HEAD
-    public static validateOrder(expression: any, optional: ReturnType[], ...types: ReturnType[]): void {
-=======
     public static validateOrder(expression: Expression, optional: ReturnType[], ...types: ReturnType[]): void {
->>>>>>> master
         if (optional === undefined) {
             optional = [];
         }
@@ -119,11 +86,7 @@ export class FunctionUtils {
         }
 
         for (let i = 0; i < types.length; i++) {
-<<<<<<< HEAD
-            const child: any = expression.children[i];
-=======
             const child: Expression = expression.children[i];
->>>>>>> master
             const type: ReturnType = types[i];
             if ((type & ReturnType.Object) == 0
                 && (child.returnType & ReturnType.Object) == 0
@@ -137,11 +100,7 @@ export class FunctionUtils {
             if (ic >= expression.children.length) {
                 break;
             }
-<<<<<<< HEAD
-            const child: any = expression.children[ic];
-=======
             const child: Expression = expression.children[ic];
->>>>>>> master
             const type: ReturnType = optional[i];
             if ((type & ReturnType.Object) == 0
                 && (child.returnType & ReturnType.Object) == 0
@@ -155,11 +114,7 @@ export class FunctionUtils {
      * Validate at least 1 argument of any type.
      * @param expression Expression to validate.
      */
-<<<<<<< HEAD
-    public static validateAtLeastOne(expression: any): void {
-=======
     public static validateAtLeastOne(expression: Expression): void {
->>>>>>> master
 
         FunctionUtils.validateArityAndAnyType(expression, 1, Number.MAX_SAFE_INTEGER);
     }
@@ -168,11 +123,7 @@ export class FunctionUtils {
      * Validate 1 or more numeric arguments.
      * @param expression Expression to validate.
      */
-<<<<<<< HEAD
-    public static validateNumber(expression: any): void {
-=======
     public static validateNumber(expression: Expression): void {
->>>>>>> master
 
         FunctionUtils.validateArityAndAnyType(expression, 1, Number.MAX_SAFE_INTEGER, ReturnType.Number);
     }
@@ -181,11 +132,7 @@ export class FunctionUtils {
      * Validate 1 or more string arguments.
      * @param expression Expression to validate.
      */
-<<<<<<< HEAD
-    public static validateString(expression: any): void {
-=======
     public static validateString(expression: Expression): void {
->>>>>>> master
         FunctionUtils.validateArityAndAnyType(expression, 1, Number.MAX_SAFE_INTEGER, ReturnType.String);
     }
 
@@ -193,11 +140,7 @@ export class FunctionUtils {
      * Validate there are two children.
      * @param expression Expression to validate.
      */
-<<<<<<< HEAD
-    public static validateBinary(expression: any): void {
-=======
     public static validateBinary(expression: Expression): void {
->>>>>>> master
         FunctionUtils.validateArityAndAnyType(expression, 2, 2);
     }
 
@@ -205,11 +148,7 @@ export class FunctionUtils {
      * Validate 2 numeric arguments.
      * @param expression Expression to validate.
      */
-<<<<<<< HEAD
-    public static validateBinaryNumber(expression: any): void {
-=======
     public static validateBinaryNumber(expression: Expression): void {
->>>>>>> master
         FunctionUtils.validateArityAndAnyType(expression, 2, 2, ReturnType.Number);
     }
 
@@ -217,11 +156,7 @@ export class FunctionUtils {
      * Validate 1 or 2 numeric arguments.
      * @param expression Expression to validate.
      */
-<<<<<<< HEAD
-    public static validateUnaryOrBinaryNumber(expression: any): void {
-=======
     public static validateUnaryOrBinaryNumber(expression: Expression): void {
->>>>>>> master
         FunctionUtils.validateArityAndAnyType(expression, 1, 2, ReturnType.Number);
     }
 
@@ -229,11 +164,7 @@ export class FunctionUtils {
      * Validate 2 or more than 2 numeric arguments.
      * @param expression Expression to validate.
      */
-<<<<<<< HEAD
-    public static validateTwoOrMoreThanTwoNumbers(expression: any): void {
-=======
     public static validateTwoOrMoreThanTwoNumbers(expression: Expression): void {
->>>>>>> master
         FunctionUtils.validateArityAndAnyType(expression, 2, Number.MAX_VALUE, ReturnType.Number);
     }
 
@@ -241,11 +172,7 @@ export class FunctionUtils {
      * Validate there are 2 numeric or string arguments.
      * @param expression Expression to validate.
      */
-<<<<<<< HEAD
-    public static validateBinaryNumberOrString(expression: any): void {
-=======
     public static validateBinaryNumberOrString(expression: Expression): void {
->>>>>>> master
         FunctionUtils.validateArityAndAnyType(expression, 2, 2, ReturnType.Number | ReturnType.String);
     }
 
@@ -253,11 +180,7 @@ export class FunctionUtils {
      * Validate there is a single argument.
      * @param expression Expression to validate.
      */
-<<<<<<< HEAD
-    public static validateUnary(expression: any): void {
-=======
     public static validateUnary(expression: Expression): void {
->>>>>>> master
         FunctionUtils.validateArityAndAnyType(expression, 1, 1);
     }
 
@@ -265,11 +188,7 @@ export class FunctionUtils {
      * Validate there is a single argument.
      * @param expression Expression to validate.
      */
-<<<<<<< HEAD
-    public static validateUnaryNumber(expression: any): void {
-=======
     public static validateUnaryNumber(expression: Expression): void {
->>>>>>> master
         FunctionUtils.validateArityAndAnyType(expression, 1, 1, ReturnType.Number);
     }
 
@@ -277,20 +196,15 @@ export class FunctionUtils {
      * Validate there is a single string argument.
      * @param expression Expression to validate.
      */
-<<<<<<< HEAD
-    public static validateUnaryString(expression: any): void {
-=======
     public static validateUnaryString(expression: Expression): void {
->>>>>>> master
         FunctionUtils.validateArityAndAnyType(expression, 1, 1, ReturnType.String);
     }
 
     /**
-<<<<<<< HEAD
-     * Validate there is a single or double string argument.
+     * Validate there is one or two string arguments.
      * @param expression Expression to validate.
      */
-    public static validateUnaryOrBinaryString(expression: any): void {
+    public static validateUnaryOrBinaryString(expression: Expression): void {
         FunctionUtils.validateArityAndAnyType(expression, 1, 2, ReturnType.String);
     }
 
@@ -298,31 +212,17 @@ export class FunctionUtils {
      * Validate there is a single boolean argument.
      * @param expression Expression to validate.
      */
-    public static validateUnaryBoolean(expression: any): void {
-=======
-     * Validate there is a single boolean argument.
-     * @param expression Expression to validate.
-     */
     public static validateUnaryBoolean(expression: Expression): void {
->>>>>>> master
         FunctionUtils.validateOrder(expression, undefined, ReturnType.Boolean);
     }
 
     /**
      * Verify value is numeric.
-<<<<<<< HEAD
-     * @param value alue to check.
-     * @param expression Expression that led to value.
-     * @returns Error or undefined if invalid.
-     */
-    public static verifyNumber(value: any, expression: any, _: number): string {
-=======
      * @param value Value to check.
      * @param expression Expression that led to value.
      * @returns Error or undefined if invalid.
      */
     public static verifyNumber(value: any, expression: Expression, _: number): string | undefined {
->>>>>>> master
         let error: string;
         if (!FunctionUtils.isNumber(value)) {
             error = `${expression} is not a number.`;
@@ -333,19 +233,11 @@ export class FunctionUtils {
 
     /**
      * Verify value is numeric.
-<<<<<<< HEAD
-     * @param value alue to check.
-     * @param expression Expression that led to value.
-     * @returns Error or undefined if invalid.
-     */
-    public static verifyNumberOrNumericList(value: any, expression: any, _: number): string {
-=======
      * @param value Value to check.
      * @param expression Expression that led to value.
      * @returns Error or undefined if invalid.
      */
     public static verifyNumberOrNumericList(value: any, expression: Expression, _: number): string | undefined {
->>>>>>> master
         let error: string;
         if (FunctionUtils.isNumber(value)) {
             return error;
@@ -367,19 +259,11 @@ export class FunctionUtils {
 
     /**
      * Verify value is numeric list.
-<<<<<<< HEAD
-     * @param value alue to check.
-     * @param expression Expression that led to value.
-     * @returns Error or undefined if invalid.
-     */
-    public static verifyNumericList(value: any, expression: any, _: number): string {
-=======
      * @param value Value to check.
      * @param expression Expression that led to value.
      * @returns Error or undefined if invalid.
      */
     public static verifyNumericList(value: any, expression: Expression, _: number): string | undefined {
->>>>>>> master
         let error: string;
         if (!Array.isArray(value)) {
             error = `${expression} is not a list.`;
@@ -397,19 +281,11 @@ export class FunctionUtils {
 
     /**
      * Verify value contains elements.
-<<<<<<< HEAD
-     * @param value alue to check.
-     * @param expression Expression that led to value.
-     * @returns Error or undefined if invalid.
-     */
-    public static verifyContainer(value: any, expression: any, _: number): string {
-=======
      * @param value Value to check.
      * @param expression Expression that led to value.
      * @returns Error or undefined if invalid.
      */
     public static verifyContainer(value: any, expression: Expression, _: number): string | undefined {
->>>>>>> master
         let error: string;
         if (!(typeof value === 'string') && !Array.isArray(value) && !(value instanceof Map) && !(typeof value === 'object')) {
             error = `${expression} must be a string, list, map or object.`;
@@ -419,21 +295,12 @@ export class FunctionUtils {
     }
 
     /**
-<<<<<<< HEAD
-     * Verify value is not null.
-     * @param value alue to check.
-     * @param expression Expression that led to value.
-     * @returns Error or null if valid.
-     */
-    public static verifyNotNull(value: any, expression: any, _: number): string {
-=======
      * Verify value is not null or undefined.
      * @param value Value to check.
      * @param expression Expression that led to value.
      * @returns Error or undefined if valid.
      */
     public static verifyNotNull(value: any, expression: Expression, _: number): string | undefined {
->>>>>>> master
         let error: string;
         if (value === undefined || value === null) {
             error = `${expression} is null.`;
@@ -444,19 +311,11 @@ export class FunctionUtils {
 
     /**
      * Verify value is an integer.
-<<<<<<< HEAD
-     * @param value alue to check.
-     * @param expression Expression that led to value.
-     * @returns Error or undefined if invalid.
-     */
-    public static verifyInteger(value: any, expression: any, _: number): string {
-=======
      * @param value Value to check.
      * @param expression Expression that led to value.
      * @returns Error or undefined if invalid.
      */
     public static verifyInteger(value: any, expression: Expression, _: number): string | undefined {
->>>>>>> master
         let error: string;
         if (!Number.isInteger(value)) {
             error = `${expression} is not a integer.`;
@@ -467,19 +326,11 @@ export class FunctionUtils {
 
     /**
      * Verify value is an list.
-<<<<<<< HEAD
-     * @param value alue to check.
-     * @param expression Expression that led to value.
-     * @returns Error or undefined if invalid.
-     */
-    public static verifyList(value: any, expression: any): string {
-=======
      * @param value Value to check.
      * @param expression Expression that led to value.
      * @returns Error or undefined if invalid.
      */
     public static verifyList(value: any, expression: Expression): string | undefined {
->>>>>>> master
         let error: string;
         if (!Array.isArray(value)) {
             error = `${expression} is not a list or array.`;
@@ -490,19 +341,11 @@ export class FunctionUtils {
 
     /**
      * Verify value is a string.
-<<<<<<< HEAD
-     * @param value value to check.
-     * @param expression Expression that led to value.
-     * @returns Error or undefined if invalid.
-     */
-    public static verifyString(value: any, expression: any, _: number): string {
-=======
      * @param value Value to check.
      * @param expression Expression that led to value.
      * @returns Error or undefined if invalid.
      */
     public static verifyString(value: any, expression: Expression, _: number): string | undefined {
->>>>>>> master
         let error: string;
         if (typeof value !== 'string') {
             error = `${expression} is not a string.`;
@@ -513,19 +356,11 @@ export class FunctionUtils {
 
     /**
      * Verify an object is neither a string nor null.
-<<<<<<< HEAD
-     * @param value value to check.
-     * @param expression Expression that led to value.
-     * @returns Error or undefined if invalid.
-     */
-    public static verifyStringOrNull(value: any, expression: any, _: number): string {
-=======
      * @param value Value to check.
      * @param expression Expression that led to value.
      * @returns Error or undefined if invalid.
      */
     public static verifyStringOrNull(value: any, expression: Expression, _: number): string | undefined {
->>>>>>> master
         let error: string;
         if (typeof value !== 'string' && value !== undefined) {
             error = `${expression} is neither a string nor a null object.`;
@@ -536,19 +371,11 @@ export class FunctionUtils {
 
     /**
      * Verify value is a number or string or null.
-<<<<<<< HEAD
-     * @param value value to check.
-     * @param expression Expression that led to value.
-     * @returns Error or undefined if invalid.
-     */
-    public static verifyNumberOrStringOrNull(value: any, expression: any, _: number): string {
-=======
      * @param value Value to check.
      * @param expression Expression that led to value.
      * @returns Error or undefined if invalid.
      */
     public static verifyNumberOrStringOrNull(value: any, expression: Expression, _: number): string | undefined {
->>>>>>> master
         let error: string;
         if (typeof value !== 'string' && value !== undefined && !FunctionUtils.isNumber(value)) {
             error = `${expression} is neither a number nor string`;
@@ -559,19 +386,11 @@ export class FunctionUtils {
 
     /**
      * Verify value is a number or string.
-<<<<<<< HEAD
-     * @param value alue to check.
-     * @param expression Expression that led to value.
-     * @returns Error or undefined if invalid.
-     */
-    public static verifyNumberOrString(value: any, expression: any, _: number): string {
-=======
      * @param value Value to check.
      * @param expression Expression that led to value.
      * @returns Error or undefined if invalid.
      */
     public static verifyNumberOrString(value: any, expression: Expression, _: number): string | undefined {
->>>>>>> master
         let error: string;
         if (value === undefined || (!FunctionUtils.isNumber(value) && typeof value !== 'string')) {
             error = `${expression} is not string or number.`;
@@ -582,19 +401,11 @@ export class FunctionUtils {
 
     /**
      * Verify value is boolean.
-<<<<<<< HEAD
-     * @param value alue to check.
-     * @param expression Expression that led to value.
-     * @returns Error or undefined if invalid.
-     */
-    public static verifyBoolean(value: any, expression: any, _: number): string {
-=======
      * @param value Value to check.
      * @param expression Expression that led to value.
      * @returns Error or undefined if invalid.
      */
     public static verifyBoolean(value: any, expression: Expression, _: number): string | undefined {
->>>>>>> master
         let error: string;
         if (typeof value !== 'boolean') {
             error = `${expression} is not a boolean.`;
@@ -605,17 +416,10 @@ export class FunctionUtils {
 
     /**
      * Verify a timestamp string is valid timestamp format.
-<<<<<<< HEAD
-     * @param value timestamp string to check.
-     * @returns Error or undefined if invalid.
-     */
-    public static verifyTimestamp(value: any): string {
-=======
      * @param value Timestamp string to check.
      * @returns Error or undefined if invalid.
      */
     public static verifyTimestamp(value: any): string | undefined {
->>>>>>> master
         let error: string;
         try {
             const parsedData: Date = new Date(value);
@@ -631,17 +435,10 @@ export class FunctionUtils {
 
     /**
      * Verify a timestamp string is valid ISO timestamp format.
-<<<<<<< HEAD
-     * @param value timestamp string to check.
-     * @returns Error or undefined if invalid.
-     */
-    public static verifyISOTimestamp(value: any): string {
-=======
      * @param value Timestamp string to check.
      * @returns Error or undefined if invalid.
      */
     public static verifyISOTimestamp(value: any): string | undefined {
->>>>>>> master
         let error: string;
         try {
             const parsedData: Date = new Date(value);
@@ -664,21 +461,13 @@ export class FunctionUtils {
      * @param verify Optional function to verify each child's result.
      * @returns List of child values or error message.
      */
-<<<<<<< HEAD
-    public static evaluateChildren(expression: any, state: MemoryInterface, options: Options, verify?: VerifyExpression): {args: any[]; error: string} {
-=======
     public static evaluateChildren(expression: Expression, state: MemoryInterface, options: Options, verify?: VerifyExpression): { args: any[]; error: string } {
->>>>>>> master
         const args: any[] = [];
         let value: any;
         let error: string;
         let pos = 0;
         for (const child of expression.children) {
-<<<<<<< HEAD
-            ({value, error} = child.tryEvaluate(state, options));
-=======
             ({ value, error } = child.tryEvaluate(state, options));
->>>>>>> master
             if (error) {
                 break;
             }
@@ -692,11 +481,7 @@ export class FunctionUtils {
             ++pos;
         }
 
-<<<<<<< HEAD
-        return {args, error};
-=======
         return { args, error };
->>>>>>> master
     }
 
     /**
@@ -706,19 +491,11 @@ export class FunctionUtils {
      * @returns Delegate for evaluating an expression.
      */
     public static apply(func: (arg0: any[]) => any, verify?: VerifyExpression): EvaluateExpressionDelegate {
-<<<<<<< HEAD
-        return (expression: any, state: MemoryInterface, options: Options): {value: any; error: string} => {
-            let value: any;
-            let error: string;
-            let args: any[];
-            ({args, error} = FunctionUtils.evaluateChildren(expression, state, options, verify));
-=======
         return (expression: Expression, state: MemoryInterface, options: Options): ValueWithError => {
             let value: any;
             let error: string;
             let args: any[];
             ({ args, error } = FunctionUtils.evaluateChildren(expression, state, options, verify));
->>>>>>> master
             if (!error) {
                 try {
                     value = func(args);
@@ -727,11 +504,7 @@ export class FunctionUtils {
                 }
             }
 
-<<<<<<< HEAD
-            return {value, error};
-=======
             return { value, error };
->>>>>>> master
         };
     }
 
@@ -742,16 +515,6 @@ export class FunctionUtils {
      * @returns Delegate for evaluating an expression.
      */
     public static applyWithError(func: (arg0: any[]) => any, verify?: VerifyExpression): EvaluateExpressionDelegate {
-<<<<<<< HEAD
-        return (expression: any, state: MemoryInterface, options: Options): {value: any; error: string} => {
-            let value: any;
-            let error: string;
-            let args: any[];
-            ({args, error} = FunctionUtils.evaluateChildren(expression, state, options, verify));
-            if (!error) {
-                try {
-                    ({value, error} = func(args));
-=======
         return (expression: Expression, state: MemoryInterface, options: Options): ValueWithError => {
             let value: any;
             let error: string;
@@ -760,17 +523,12 @@ export class FunctionUtils {
             if (!error) {
                 try {
                     ({ value, error } = func(args));
->>>>>>> master
                 } catch (e) {
                     error = e.message;
                 }
             }
 
-<<<<<<< HEAD
-            return {value, error};
-=======
             return { value, error };
->>>>>>> master
         };
     }
 
@@ -813,60 +571,35 @@ export class FunctionUtils {
                 for (let i = 1; i < args.length; i++) {
                     binaryArgs[0] = soFar;
                     binaryArgs[1] = args[i];
-<<<<<<< HEAD
-                    ({value, error} = func(binaryArgs));
-                    if (error) {
-                        return {value, error};
-=======
                     ({ value, error } = func(binaryArgs));
                     if (error) {
                         return { value, error };
->>>>>>> master
                     } else {
                         soFar = value;
                     }
 
                 }
 
-<<<<<<< HEAD
-                return {value: soFar, error: undefined};
-=======
                 return { value: soFar, error: undefined };
->>>>>>> master
             },
             verify
         );
     }
 
     /**
-<<<<<<< HEAD
-     * Lookup a property in IDictionary, JObject or through reflection.
-=======
      * Lookup a property in Map or Object.
->>>>>>> master
      * @param instance Instance with property.
      * @param property Property to lookup.
      * @returns Value and error information if any.
      */
-<<<<<<< HEAD
-    public static accessProperty(instance: any, property: string): {value: any; error: string} {
-        // NOTE: This returns null rather than an error if property is not present
-        if (!instance) {
-            return {value: undefined, error: undefined};
-=======
     public static accessProperty(instance: any, property: string): ValueWithError {
         // NOTE: This returns undefined rather than an error if property is not present
         if (!instance) {
             return { value: undefined, error: undefined };
->>>>>>> master
         }
 
         let value: any;
         let error: string;
-<<<<<<< HEAD
-        // todo, Is there a better way to access value, or any case is not listed below?
-=======
->>>>>>> master
         if (instance instanceof Map && instance as Map<string, any> !== undefined) {
             const instanceMap: Map<string, any> = instance as Map<string, any>;
             value = instanceMap.get(property);
@@ -883,34 +616,19 @@ export class FunctionUtils {
             }
         }
 
-<<<<<<< HEAD
-        return {value, error};
-    }
-
-    /**
-     * Lookup a property in IDictionary, JObject or through reflection.
-=======
         return { value, error };
     }
 
     /**
      * Lookup a string or number index of an Object.
->>>>>>> master
      * @param instance Instance with property.
      * @param property Property to lookup.
      * @returns Value and error information if any.
      */
-<<<<<<< HEAD
-    public static accessIndex(instance: any, index: number): {value: any; error: string} {
-        // NOTE: This returns null rather than an error if property is not present
-        if (instance === null || instance === undefined) {
-            return {value: undefined, error: undefined};
-=======
     public static accessIndex(instance: any, index: number): ValueWithError {
         // NOTE: This returns undefined rather than an error if property is not present
         if (instance === null || instance === undefined) {
             return { value: undefined, error: undefined };
->>>>>>> master
         }
 
         let value: any;
@@ -926,18 +644,6 @@ export class FunctionUtils {
             error = `${instance} is not a collection.`;
         }
 
-<<<<<<< HEAD
-        return {value, error};
-    }
-
-    /**
-     * transform a timestamp into another with customized function.
-     * @param timeStamp Original time stamp.
-     * @param transform Transform function.
-     * @returns new timestamp and error.
-     */
-    public static parseTimestamp(timeStamp: string, transform?: (arg0: Date) => any): {value: any; error: string} {
-=======
         return { value, error };
     }
 
@@ -948,26 +654,17 @@ export class FunctionUtils {
      * @returns New timestamp and error.
      */
     public static parseTimestamp(timeStamp: string, transform?: (arg0: Date) => any): ValueWithError {
->>>>>>> master
         let value: any;
         const error: string = this.verifyISOTimestamp(timeStamp);
         if (!error) {
             value = transform !== undefined ? transform(new Date(timeStamp)) : timeStamp;
         }
 
-<<<<<<< HEAD
-        return {value, error};
-    }
-
-    /**
-     * timestampFormatter, to convert C# datetime to moment js format.
-=======
         return { value, error };
     }
 
     /**
      * Timestamp formatter, convert C# datetime to moment js format.
->>>>>>> master
      * @param formatter C# datetime format
      */
     public static timestampFormatter(formatter: string): string {
@@ -982,22 +679,6 @@ export class FunctionUtils {
     }
 
     /**
-<<<<<<< HEAD
-     * Transform C# duration and unit into js duration and unit
-     * @param duration C# duration
-     * @param cSharpStr C# unit.
-     */
-    public static timeUnitTransformer(duration: number, cSharpStr: string): {duration: number; tsStr: string} {
-        switch (cSharpStr) {
-            case 'Day': return {duration, tsStr: 'days'};
-            case 'Week': return {duration: duration * 7, tsStr: 'days'};
-            case 'Second': return {duration, tsStr: 'seconds'};
-            case 'Minute': return {duration, tsStr: 'minutes'};
-            case 'Hour': return {duration, tsStr: 'hours'};
-            case 'Month': return {duration, tsStr: 'months'};
-            case 'Year': return {duration, tsStr: 'years'};
-            default: return {duration, tsStr: undefined};
-=======
      * Transform C# period and unit into js period and unit
      * @param duration C# duration
      * @param cSharpStr C# unit.
@@ -1012,23 +693,15 @@ export class FunctionUtils {
             case 'Month': return { duration, tsStr: 'months' };
             case 'Year': return { duration, tsStr: 'years' };
             default: return { duration, tsStr: undefined };
->>>>>>> master
         }
     }
 
     /**
      * Parse timex funcition.
-<<<<<<< HEAD
-     * @param timexExpr string or TimexProperty input.
-     * @returns TimeProperty and error.
-     */
-    public static parseTimexProperty(timexExpr: any): {timexProperty: TimexProperty; error: string} {
-=======
      * @param timexExpr String or TimexProperty input.
      * @returns TimexProperty and error.
      */
     public static parseTimexProperty(timexExpr: any): { timexProperty: TimexProperty; error: string } {
->>>>>>> master
         let parsed: TimexProperty;
         if (timexExpr instanceof TimexProperty) {
             parsed = timexExpr;
@@ -1037,32 +710,18 @@ export class FunctionUtils {
         } else {
             parsed = new TimexProperty(timexExpr);
             if (parsed === undefined || Object.keys(parsed).length === 0) {
-<<<<<<< HEAD
-                return {timexProperty: parsed, error: `${timexExpr} requires a TimexProperty or a string as a argument`};
-            }
-        }
-
-        return {timexProperty: parsed, error: undefined};
-=======
                 return { timexProperty: parsed, error: `${timexExpr} requires a TimexProperty or a string as a argument` };
             }
         }
 
         return { timexProperty: parsed, error: undefined };
->>>>>>> master
     }
 
     /**
      * Wrap string or undefined into string. Default to empty string.
-<<<<<<< HEAD
-     * @param input input string
-     */
-    public static parseStringOrNull(input: string | undefined): string {
-=======
      * @param input Input string
      */
     public static parseStringOrUndefined(input: string | undefined): string {
->>>>>>> master
         if (typeof input === 'string') {
             return input;
         } else {
@@ -1071,15 +730,6 @@ export class FunctionUtils {
     }
 
     /**
-<<<<<<< HEAD
-     * Try to accumulate the path from an Accessor or Element, from right to left
-     * return the accumulated path and the expression left unable to accumulate
-     * @param expression
-     * @param state scope
-     * @param options Options used in evaluation
-     */
-    public static tryAccumulatePath(expression: any, state: MemoryInterface, options: Options): {path: string; left: any; error: string} {
-=======
      * State object for resolving memory paths.
      * @param expression Expression.
      * @param state Scope.
@@ -1087,7 +737,6 @@ export class FunctionUtils {
      * @returns Return the accumulated path and the expression left unable to accumulate.
      */
     public static tryAccumulatePath(expression: Expression, state: MemoryInterface, options: Options): { path: string; left: any; error: string } {
->>>>>>> master
         let path = '';
         let left = expression;
         while (left !== undefined) {
@@ -1095,19 +744,10 @@ export class FunctionUtils {
                 path = (left.children[0] as Constant).value + '.' + path;
                 left = left.children.length === 2 ? left.children[1] : undefined;
             } else if (left.type === ExpressionType.Element) {
-<<<<<<< HEAD
-                let value: any;
-                let error: string;
-                ({value, error} = left.children[1].tryEvaluate(state, options));
-
-                if (error !== undefined) {
-                    return {path: undefined, left: undefined, error};
-=======
                 let {value, error} = left.children[1].tryEvaluate(state, options);
 
                 if (error !== undefined) {
                     return { path: undefined, left: undefined, error };
->>>>>>> master
                 }
 
                 if (FunctionUtils.isNumber(parseInt(value))) {
@@ -1115,11 +755,7 @@ export class FunctionUtils {
                 } else if (typeof value === 'string') {
                     path = `['${value}'].${path}`;
                 } else {
-<<<<<<< HEAD
-                    return {path: undefined, left: undefined, error: `${left.children[1].toString()} doesn't return an int or string`};
-=======
                     return { path: undefined, left: undefined, error: `${left.children[1].toString()} doesn't return an int or string` };
->>>>>>> master
                 }
 
                 left = left.children[0];
@@ -1134,24 +770,14 @@ export class FunctionUtils {
             path = undefined;
         }
 
-<<<<<<< HEAD
-        return {path, left, error: undefined};
-=======
         return { path, left, error: undefined };
->>>>>>> master
     }
 
     /**
      * Get the value of a path from a memory
-<<<<<<< HEAD
-     * @param state memory.
-     * @param path path string.
-     * @param options options.
-=======
      * @param state Memory.
      * @param path Path string.
      * @param options Options.
->>>>>>> master
      */
     public static wrapGetValue(state: MemoryInterface, path: string, options: Options): any {
         let result = state.getValue(path);
@@ -1167,27 +793,17 @@ export class FunctionUtils {
     }
 
     /**
-<<<<<<< HEAD
-     * Evaluator for foreach and select function
-     */
-    public static foreach(expression: any, state: MemoryInterface, options: Options): {value: any; error: string} {
-=======
      * Evaluator for foreach and select functions.
      * @param expression Expression.
      * @param state Memory scope.
      * @param options Options.
      */
     public static foreach(expression: Expression, state: MemoryInterface, options: Options): ValueWithError {
->>>>>>> master
         let result: any[];
         let error: string;
         let instance: any;
 
-<<<<<<< HEAD
-        ({value: instance, error} = expression.children[0].tryEvaluate(state, options));
-=======
         ({ value: instance, error } = expression.children[0].tryEvaluate(state, options));
->>>>>>> master
         if (!instance) {
             error = `'${expression.children[0]}' evaluated to null.`;
         }
@@ -1198,11 +814,7 @@ export class FunctionUtils {
             if (Array.isArray(instance)) {
                 arr = instance;
             } else if (typeof instance === 'object') {
-<<<<<<< HEAD
-                Object.keys(instance).forEach((u): number => arr.push({key: u, value: instance[u]}));
-=======
                 Object.keys(instance).forEach((u): number => arr.push({ key: u, value: instance[u] }));
->>>>>>> master
             } else {
                 error = `${expression.children[0]} is not a collection or structure object to run foreach`;
             }
@@ -1216,33 +828,16 @@ export class FunctionUtils {
                     ]);
 
                     stackedMemory.push(SimpleObjectMemory.wrap(local));
-<<<<<<< HEAD
-                    const {value: r, error: e} = expression.children[2].tryEvaluate(stackedMemory, options);
-                    stackedMemory.pop();
-                    if (e !== undefined) {
-                        return {value: undefined, error: e};
-=======
                     const { value: r, error: e } = expression.children[2].tryEvaluate(stackedMemory, options);
                     stackedMemory.pop();
                     if (e !== undefined) {
                         return { value: undefined, error: e };
->>>>>>> master
                     }
                     result.push(r);
                 }
             }
         }
 
-<<<<<<< HEAD
-        return {value: result, error};
-    }
-
-    /**
-     * Validator for foreach, select, and where function
-     * @param expression 
-     */
-    public static validateForeach(expression: any): void {
-=======
         return { value: result, error };
     }
 
@@ -1251,7 +846,6 @@ export class FunctionUtils {
      * @param expression 
      */
     public static validateForeach(expression: Expression): void {
->>>>>>> master
         if (expression.children.length !== 3) {
             throw new Error(`foreach expect 3 parameters, found ${expression.children.length}`);
         }
@@ -1264,13 +858,8 @@ export class FunctionUtils {
 
     /**
      * Is number helper function.
-<<<<<<< HEAD
-     * @param instance input.
-     * @returns ture is the input is a number.
-=======
      * @param instance Input.
      * @returns True if the input is a number.
->>>>>>> master
      */
     public static isNumber(instance: any): boolean {
         return instance !== undefined && instance !== null && typeof instance === 'number' && !Number.isNaN(instance);
@@ -1295,16 +884,6 @@ export class FunctionUtils {
 
     /**
      * Sort helper function.
-<<<<<<< HEAD
-     * @param isDescending descending flag.
-     */
-    public static sortBy(isDescending: boolean): EvaluateExpressionDelegate {
-        return (expression: any, state: any, options: Options): {value: any; error: string} => {
-            let result: any;
-            let error: string;
-            let oriArr: any;
-            ({value: oriArr, error} = expression.children[0].tryEvaluate(state, options));
-=======
      * @param isDescending Descending flag.
      */
     public static sortBy(isDescending: boolean): EvaluateExpressionDelegate {
@@ -1313,7 +892,6 @@ export class FunctionUtils {
             let error: string;
             let oriArr: any;
             ({ value: oriArr, error } = expression.children[0].tryEvaluate(state, options));
->>>>>>> master
             if (!error) {
                 if (Array.isArray(oriArr)) {
                     const arr: any = oriArr.slice(0);
@@ -1325,11 +903,7 @@ export class FunctionUtils {
                         }
                     } else {
                         let propertyName: string;
-<<<<<<< HEAD
-                        ({value: propertyName, error} = expression.children[1].tryEvaluate(state, options));
-=======
                         ({ value: propertyName, error } = expression.children[1].tryEvaluate(state, options));
->>>>>>> master
 
                         if (!error) {
                             propertyName = propertyName || '';
@@ -1341,30 +915,18 @@ export class FunctionUtils {
                         }
                     }
                 } else {
-<<<<<<< HEAD
-                    error = `${expression.children[0]} is not array`;
-=======
                     error = `${expression.children[0]} is not an array`;
->>>>>>> master
                 }
 
             }
 
-<<<<<<< HEAD
-            return {value: result, error};
-=======
             return { value: result, error };
->>>>>>> master
         };
     }
 
     /**
      * Convert string into Uint8Array object.
-<<<<<<< HEAD
-     * @param stringToConvert input string.
-=======
      * @param stringToConvert Input string.
->>>>>>> master
      */
     public static toBinary(stringToConvert: string): Uint8Array {
         let result = new ArrayBuffer(stringToConvert.length);
@@ -1378,17 +940,10 @@ export class FunctionUtils {
 
     /**
      * Format datetime.
-<<<<<<< HEAD
-     * @param timedata input date time.
-     * @param format format flag.
-     */
-    public static returnFormattedTimeStampStr(timedata: Moment, format: string): {value: any; error: string} {
-=======
      * @param timedata Input date time.
      * @param format Format flag.
      */
     public static returnFormattedTimeStampStr(timedata: Moment, format: string): ValueWithError {
->>>>>>> master
         let result: string;
         let error: string;
         try {
@@ -1397,24 +952,11 @@ export class FunctionUtils {
             error = `${format} is not a valid timestamp format`;
         }
 
-<<<<<<< HEAD
-        return {value: result, error};
-=======
         return { value: result, error };
->>>>>>> master
     }
 
     /**
      * Convert a string input to ticks number.
-<<<<<<< HEAD
-     * @param timeStamp 
-     */
-    public static ticks(timeStamp: string): {value: any; error: string} {
-        let parsed: any;
-        let result: any;
-        let error: string;
-        ({value: parsed, error} = FunctionUtils.parseTimestamp(timeStamp));
-=======
      * @param timeStamp String timestamp input.
      */
     public static ticks(timeStamp: string): ValueWithError {
@@ -1422,30 +964,19 @@ export class FunctionUtils {
         let result: any;
         let error: string;
         ({ value: parsed, error } = FunctionUtils.parseTimestamp(timeStamp));
->>>>>>> master
         if (!error) {
             const unixMilliSec: number = parseInt(moment(parsed).utc().format('x'), 10);
             result = this.UnixMilliSecondToTicksConstant.add(bigInt(unixMilliSec).times(this.MillisecondToTickConstant));
         }
 
-<<<<<<< HEAD
-        return {value: result, error};
-=======
         return { value: result, error };
->>>>>>> master
     }
 
     /**
      * Parse string into URL object.
-<<<<<<< HEAD
-     * @param uri input string uri
-     */
-    public static parseUri(uri: string): {value: any; error: string} {
-=======
      * @param uri Input string uri.
      */
     public static parseUri(uri: string): ValueWithError {
->>>>>>> master
         let result: URL;
         let error: string;
         try {
@@ -1454,19 +985,12 @@ export class FunctionUtils {
             error = `Invalid URI: ${uri}`;
         }
 
-<<<<<<< HEAD
-        return {value: result, error};
-=======
         return { value: result, error };
->>>>>>> master
     }
 
     /**
      * Equal helper function.
-<<<<<<< HEAD
-=======
      * @param args Input args. Compare the first param and second param.
->>>>>>> master
      */
     public static isEqual(args: any[]): boolean {
         if (args.length === 0) {
@@ -1507,11 +1031,7 @@ export class FunctionUtils {
         return count;
     }
 
-<<<<<<< HEAD
-    private static buildTypeValidatorError(returnType: ReturnType, childExpr: any, expr: any): string {
-=======
     private static buildTypeValidatorError(returnType: ReturnType, childExpr: Expression, expr: Expression): string {
->>>>>>> master
         const names = Object.keys(ReturnType).filter((x): boolean => !(parseInt(x) >= 0));
         let types = [];
         for (const name of names) {
