@@ -1714,34 +1714,25 @@ describe(`BotFrameworkAdapter`, function () {
                 hasToken: true,
                 serviceProviderDisplayName: 'mockDisplayName'
             };
-            const argsPassedToMockClient = [];
-            class MockTokenApiClient {
-                constructor() {
-                    this.userToken = {
-                        getTokenStatus: async (...args) => {
-                            argsPassedToMockClient.push({getTokenStatus: args});
-                            return {
-                                _response: {status: 200, parsedBody: [mockedTokenStatusResponse] }
-                            };
-                        }
-                    };
-                    this.credentials = new MicrosoftAppCredentials('abc', 'abc');
-                }
-    
+
+            const adapter = new BotFrameworkAdapter();
+            const userToken = new UserToken('token');
+
+            stub(adapter, 'createTokenApiClient').returns({ userToken: userToken });
+            const getTokenStatusStub = stub(userToken, 'getTokenStatus').returns({_response: {status: 200, parsedBody: [mockedTokenStatusResponse]}});
+            
+            const context = new TurnContext(adapter, CreateActivity());
+
+            try {
+                const responses = await adapter.getTokenStatus(context, 'userId');
+                assert(responses.length > 0);
+                assert(responses[0].channelId == mockedTokenStatusResponse.channelId);
+                assert(responses[0].connectionName == mockedTokenStatusResponse.connectionName);
+                assert(responses[0].hasToken == true);
+                assert(responses[0].serviceProviderDisplayName == mockedTokenStatusResponse.serviceProviderDisplayName);
+            } finally {
+                getTokenStatusStub.restore();
             }
-
-            const {TokenApiClient} = connector;
-            connector.TokenApiClient = MockTokenApiClient;
-            const adapter = new AdapterUnderTest();
-            const context = new TurnContext(adapter, incomingMessage);
-            const responses = await adapter.getTokenStatus(context);
-            assert(responses.length > 0);
-            assert(responses[0].channelId == mockedTokenStatusResponse.channelId);
-            assert(responses[0].connectionName == mockedTokenStatusResponse.connectionName);
-            assert(responses[0].hasToken == true);
-            assert(responses[0].serviceProviderDisplayName == mockedTokenStatusResponse.serviceProviderDisplayName);
-
-            connector.TokenApiClient = TokenApiClient; // restore
         });
 
         it(`should call client.userToken getTokenStatus()`, async function () {
