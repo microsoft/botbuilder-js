@@ -31,8 +31,7 @@
     "lodash": "^4.17.19",
     "lru-cache": "^5.1.1",
     "moment": "^2.25.1",
-    "moment-timezone": "^0.5.28",
-    "sinon": "^7.5.0"
+    "moment-timezone": "^0.5.28"
   },
   "devDependencies": {
     "@microsoft/api-extractor": "^7.7.12",
@@ -43,7 +42,8 @@
     "nyc": "^15.1.0",
     "ts-node": "^4.1.0",
     "typescript": "3.5.3",
-    "antlr4ts-cli": "0.5.0-alpha.3"
+    "antlr4ts-cli": "0.5.0-alpha.3",
+    "sinon": "^7.5.0"
   },
   "scripts": {
     "build": "tsc",
