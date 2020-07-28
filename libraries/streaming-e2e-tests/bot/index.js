@@ -9,7 +9,6 @@ const ENV_FILE = path.join(__dirname, '.env');
 dotenv.config({ path: ENV_FILE });
 
 const restify = require('restify');
-const corsMiddleware = require('restify-cors-middleware');
 
 // Import required bot services.
 // See https://aka.ms/bot-services to learn more about the different parts of a bot.
@@ -21,10 +20,6 @@ const renewDirectLineToken = require('./utils/renewDirectLineToken');
 // This bot's main dialog.
 const { EchoBot } = require('./bot');
 
-const cors = corsMiddleware({ 
-    origins: ['*'] 
-  }); 
-  
 
 // Create HTTP server
 const server = restify.createServer();
