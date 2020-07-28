@@ -9,7 +9,7 @@
 import { Template } from './template';
 import { TemplateImport } from './templateImport';
 import { Diagnostic, DiagnosticSeverity } from './diagnostic';
-import { ExpressionParser, Expression, ExpressionEvaluator, ExpressionFunctions, ReturnType } from 'adaptive-expressions';
+import { ExpressionParser, Expression, ExpressionEvaluator, ReturnType, FunctionUtils } from 'adaptive-expressions';
 import { ImportResolverDelegate, TemplatesTransformer } from './templatesParser';
 import { Evaluator } from './evaluator';
 import { Expander } from './expander';
@@ -480,7 +480,7 @@ export class Templates implements Iterable<Template> {
             for (const templateName of globalFuncs) {
                 if (curTemplates.items.find(u => u.name === templateName) !== undefined) {
                     const newGlobalName = `${ curTemplates.namespace }.${ templateName }`;
-                    Expression.functions.add(newGlobalName, new ExpressionEvaluator(newGlobalName, ExpressionFunctions.apply(this.globalTemplateFunction(templateName)), ReturnType.Object));
+                    Expression.functions.add(newGlobalName, new ExpressionEvaluator(newGlobalName, FunctionUtils.apply(this.globalTemplateFunction(templateName)), ReturnType.Object));
                 }
             }
         }

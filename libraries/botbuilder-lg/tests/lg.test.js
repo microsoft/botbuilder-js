@@ -1,5 +1,5 @@
 const { Templates, LGLineBreakStyle, EvaluationOptions, TemplateErrors, DiagnosticSeverity } = require('../');
-const { SimpleObjectMemory, ExpressionParser, ExpressionFunctions, Expression } = require('adaptive-expressions');
+const { SimpleObjectMemory, ExpressionParser, NumericEvaluator, Expression } = require('adaptive-expressions');
 const assert = require('assert');
 const fs = require('fs');
 
@@ -1288,7 +1288,7 @@ describe('LG', function() {
         this.timeout(5000); // We can't preload the template, so need increased timeout
         let parser = new ExpressionParser((func) => {
             if (func === 'custom') {
-                return ExpressionFunctions.numeric('custom', 
+                return new NumericEvaluator('custom', 
                     args => {
                         return args[0] + args[1];
                     });

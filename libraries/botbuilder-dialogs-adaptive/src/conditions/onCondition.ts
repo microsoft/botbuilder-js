@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 import { Dialog, DialogDependencies, DialogStateManager } from 'botbuilder-dialogs';
-import { Expression, ExpressionParserInterface, Constant, ExpressionParser, ExpressionEvaluator, ReturnType, ExpressionFunctions } from 'adaptive-expressions';
+import { Expression, ExpressionParserInterface, Constant, ExpressionParser, ExpressionEvaluator, ReturnType, FunctionUtils } from 'adaptive-expressions';
 import { ActionScope } from '../actions/actionScope';
 import { BoolExpression, IntExpression } from 'adaptive-expressions';
 import { AdaptiveDialog } from '../adaptiveDialog';
@@ -105,7 +105,7 @@ export class OnCondition implements DialogDependencies {
                     const paths: string[] = state.getValue(basePath + "paths");
                     var changed = state.anyPathChanged(lastRun, paths);
                     return { value: changed, error: undefined };
-                }, ReturnType.Boolean, ExpressionFunctions.validateUnary);
+                }, ReturnType.Boolean, FunctionUtils.validateUnary);
 
                 this._fullConstraint = Expression.andExpression(
                     this._fullConstraint,
