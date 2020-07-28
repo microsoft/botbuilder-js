@@ -17,7 +17,7 @@ steps:
   inputs:
     command: custom
     verbose: false
-    customCommand: 'install --global lerna@3.2.1 nyc mocha'
+    customCommand: 'install --global lerna@3.2.1 nyc mocha eslint-plugin-jsdoc'
 
 - task: Npm@1
   displayName: '/tools npm install'

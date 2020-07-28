@@ -1,5 +1,5 @@
 const { ActivityTypes, ConversationState, MemoryStorage, TestAdapter } = require('botbuilder-core');
-const { Dialog, DialogReason, DialogSet, DialogTurnStatus, WaterfallDialog } = require('../');
+const { Dialog, DialogReason, DialogSet, DialogTurnStatus, WaterfallDialog, ComponentDialog } = require('../');
 
 const assert = require('assert');
 
@@ -634,4 +634,63 @@ describe('WaterfallDialog', function () {
         }, DialogReason.cancelCalled);
         assert(trackEventCalled, 'trackEvent was never called.');
     });
+
+    it('should waterfall parent be equal to Component Dialog.', (done) => {
+        const conversationState = new ConversationState(new MemoryStorage());
+        const dialogState = conversationState.createProperty('dialog');
+
+        const waterfall = new WaterfallDialog('waterfall', [
+            step => ({ status: DialogTurnStatus.complete, result: step })
+        ]);
+
+        const component = new ComponentDialog('composite');
+        component.addDialog(waterfall);
+
+        const dialogs = new DialogSet(dialogState);
+        dialogs.add(component);
+
+        const adapter = new TestAdapter(async turnContext => {
+            const dc = await dialogs.createContext(turnContext);
+
+            const results = await dc.beginDialog('composite');
+
+            if (results.status === DialogTurnStatus.complete) {
+                const waterfallParent = results.result.parent.parent;
+
+                assert.strictEqual(waterfallParent.dialogs.dialogs['composite'], component, 'WaterfallDialog "waterfall" parent should be equal to ComponentDialog "composite".');
+                done();
+            } else {
+                done(new Error('status results not completed'));
+            }
+        });
+
+        adapter.send('Hi');
+    });
+
+    it('should waterfall parent be equal to Dialog Context.', (done) => {
+        const conversationState = new ConversationState(new MemoryStorage());
+        const dialogState = conversationState.createProperty('dialog');
+
+        const waterfall = new WaterfallDialog('waterfall', [
+            step => ({ status: DialogTurnStatus.complete, result: step })
+        ]);
+
+        const dialogs = new DialogSet(dialogState);
+        dialogs.add(waterfall);
+
+        const adapter = new TestAdapter(async turnContext => {
+            const dc = await dialogs.createContext(turnContext);
+            const results = await dc.beginDialog('waterfall');
+
+            if (results.status === DialogTurnStatus.complete) {
+                assert.deepStrictEqual(results.result.parent, dc, 'waterfall parent should be equal to Dialog Context.');
+                done();
+            } else {
+                done(new Error('status results not completed'));
+            }
+        });
+
+        adapter.send('Hi');
+    });
+
 });

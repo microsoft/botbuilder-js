@@ -5,6 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
+import { StringUtils } from 'botbuilder-core';
 import { DialogTurnResult, DialogContext, Dialog } from 'botbuilder-dialogs';
 import { BoolExpression } from 'adaptive-expressions';
 
@@ -21,7 +22,7 @@ export class CodeAction<O extends object = {}> extends Dialog<O> {
     }
 
     protected onComputeId(): string {
-        return `CodeAction[${ this.codeHandler.toString() }]`;
+        return `CodeAction[${ StringUtils.ellipsis(this.codeHandler.toString(), 50) }]`;
     }
 
     public async beginDialog(dc: DialogContext, options: O): Promise<DialogTurnResult> {

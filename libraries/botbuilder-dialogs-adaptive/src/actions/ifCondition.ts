@@ -5,6 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
+import { StringUtils } from 'botbuilder-core';
 import { DialogTurnResult, Dialog, DialogDependencies, DialogContext } from 'botbuilder-dialogs';
 import { ActionScope } from './actionScope';
 import { BoolExpression } from 'adaptive-expressions';
@@ -77,6 +78,7 @@ export class IfCondition<O extends object = {}> extends Dialog<O> implements Dia
 
     protected onComputeId(): string {
         const label = this.condition ? this.condition.toString() : '';
-        return `If[${ label }]`;
+        const idList = this.actions.map((action: Dialog): string => action.id);
+        return `If[${ label }|${ StringUtils.ellipsis(idList.join(','), 50) }]`;
     }
 }

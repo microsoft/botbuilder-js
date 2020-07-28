@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 import { Dialog, DialogContext, DialogTurnResult } from 'botbuilder-dialogs';
-import { Activity } from 'botbuilder-core';
+import { Activity, StringUtils } from 'botbuilder-core';
 import { TemplateInterface } from '../template';
 import { StringExpression, BoolExpression } from 'adaptive-expressions';
 import { ActivityTemplate, StaticActivityTemplate } from '../templates';
@@ -54,7 +54,7 @@ export class UpdateActivity<O extends object = {}> extends Dialog<O> {
         const data = Object.assign({
             utterance: dc.context.activity.text || ''
         }, dc.state, options);
-        const activityResult = await this.activity.bindToData(dc.context, data);
+        const activityResult = await this.activity.bind(dc, data);
 
         const value = this.activityId.getValue(dc.state);
         activityResult.id = value.toString();
@@ -64,6 +64,9 @@ export class UpdateActivity<O extends object = {}> extends Dialog<O> {
     }
 
     protected onComputeId(): string {
-        return `UpdateActivity[${ this.activity }]`;
+        if (this.activity instanceof ActivityTemplate) {
+            return `UpdateActivity[${ StringUtils.ellipsis(this.activity.template.trim(), 30) }]`;
+        }
+        return `UpdateActivity[${ StringUtils.ellipsis(this.activity && this.activity.toString().trim(), 30) }]`;
     }
 }
