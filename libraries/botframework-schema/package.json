@@ -21,6 +21,8 @@
   "typings": "./lib/index.d.ts",
   "devDependencies": {
     "@microsoft/api-extractor": "^7.7.12",
+    "mocha": "^6.2.3",
+    "nyc": "^15.1.0",
     "typescript": "3.5.3"
   },
   "scripts": {
@@ -28,6 +30,7 @@
     "build:rollup": "npm run clean && npm run build && api-extractor run --verbose --local",
     "clean": "erase /q /s .\\lib",
     "set-version": "npm version --allow-same-version ${Version}",
+    "test": "tsc && nyc mocha tests/",
     "test:compat": "api-extractor run --verbose"
   },
   "files": [
