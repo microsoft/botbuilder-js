@@ -25,7 +25,8 @@
     "libraries/testskills/skillparent",
     "libraries/testskills/skillchild",
     "transcripts",
-    "samples/dispatch"
+    "samples/dispatch",
+    "samples/06.todo-bot"
   ],
   "version": "independent",
   "command": {

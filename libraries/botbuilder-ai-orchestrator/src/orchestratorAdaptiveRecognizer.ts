@@ -9,10 +9,10 @@ import { OrchestratorRecognizer } from './orchestratorRecognizer';
 import { exception } from 'console';
 import { StringExpression, BoolExpression, NumberExpression } from 'adaptive-expressions';
 import { Entity, Activity, RecognizerResult } from 'botbuilder-core';
-import { DialogContext } from 'botbuilder-dialogs';
-import { EntityRecognizer, TextEntity, EntityRecognizerSet } from 'botbuilder-dialogs-adaptive';
+import { DialogContext, Configurable } from 'botbuilder-dialogs';
+import { EntityRecognizer, TextEntity, EntityRecognizerSet, Recognizer } from 'botbuilder-dialogs-adaptive';
 
-export class OrchestratorAdaptiveRecognizer {
+export class OrchestratorAdaptiveRecognizer extends Configurable implements Recognizer{
     /**
      * Recognizers unique ID.
      */
