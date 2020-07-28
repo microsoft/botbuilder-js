@@ -25,6 +25,8 @@ export const skillConversationIdFactoryKey = Symbol('SkillConversationIdFactory'
 export class SkillExtensions {
     /**
      * Configures the skill client to use.
+     * @param dialogManager The dialog manager to add skill client to.
+     * @param skillClient The skill client to be added.
      */
     public static useSkillClient(dialogManager: DialogManager, skillClient: BotFrameworkClient): DialogManager {
         dialogManager.initialTurnState.set(skillClientKey, skillClient);
@@ -33,6 +35,8 @@ export class SkillExtensions {
 
     /**
      * Configures the skill conversation id factory to use.
+     * @param dialogManager The dialog manager to add skill conversation id factory to.
+     * @param skillConversationIdFactory The skill conversation id factory to be added.
      */
     public static useSkillConversationIdFactory(dialogManager: DialogManager, skillConversationIdFactory: SkillConversationIdFactoryBase): DialogManager {
         dialogManager.initialTurnState.set(skillConversationIdFactoryKey, skillConversationIdFactory);
