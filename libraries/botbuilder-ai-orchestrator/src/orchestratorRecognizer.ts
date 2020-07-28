@@ -9,6 +9,7 @@ import { exception } from 'console';
 import { resolve } from 'path';
 import { TurnContext, RecognizerResult } from 'botbuilder-core';
 import { Configurable } from 'botbuilder-dialogs';
+import { existsSync } from 'fs';
 const oc: any = require('@microsoft/orchestrator-core/orchestrator-core.node');
 const ReadText: any = require('read-text-file');
 
@@ -102,27 +103,27 @@ export class OrchestratorRecognizer extends Configurable {
             throw new exception(`Missing "ShapshotPath" information.`);
         }
 
-        console.log(`Model path : ${resolve(this.modelPath)}`);
-        console.log(`Snapshot path : ${resolve(this.snapshotPath)}`);
+        const fullModelPath = resolve(this.modelPath);
+        const fullSnapshotPath = resolve(this.snapshotPath);
+        if (!existsSync(fullModelPath)) {
+            throw new exception(`Model folder does not exist at ${fullModelPath}.`);   
+        }
+        if (!existsSync(fullSnapshotPath)) {
+            throw new exception(`Snapshot file does not exist at ${fullSnapshotPath}.`);
+        }
 
         if (OrchestratorRecognizer.orchestrator == null) {
-            const fullModelPath = resolve(this.modelPath);
-            
             // Create orchestrator core
             OrchestratorRecognizer.orchestrator = new oc.Orchestrator();
-            if (fullModelPath) {
-                if (OrchestratorRecognizer.orchestrator.load(fullModelPath) === false) {
-                    throw new exception(`Model load failed.`);
-                }
+            if (OrchestratorRecognizer.orchestrator.load(fullModelPath) === false) {
+                throw new exception(`Model load failed.`);
             }
         }
 
         if (this.resolver == null) {
-            const fullSnapShotPath = resolve(this.snapshotPath);
-
             // Load the snapshot
             const encoder: TextEncoder = new TextEncoder();
-            const fileContent: string = ReadText.readSync(fullSnapShotPath)
+            const fileContent: string = ReadText.readSync(fullSnapshotPath)
             const snapshot: Uint8Array = encoder.encode(fileContent);
 
             // Load shapshot and create resolver

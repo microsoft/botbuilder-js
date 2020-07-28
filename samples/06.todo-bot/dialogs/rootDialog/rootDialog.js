@@ -2,9 +2,9 @@
 // Licensed under the MIT License.
 
 const { ComponentDialog } = require('botbuilder-dialogs');
-const { CancelAllDialogs, BeginDialog, OnIntent, LuisAdaptiveRecognizer, ForEach, OnConversationUpdateActivity, IfCondition, AdaptiveDialog, SendActivity, TemplateEngineLanguageGenerator } = require('botbuilder-dialogs-adaptive');
+const { NumberEntityRecognizer, CancelAllDialogs, BeginDialog, OnIntent, LuisAdaptiveRecognizer, ForEach, OnConversationUpdateActivity, IfCondition, AdaptiveDialog, SendActivity, TemplateEngineLanguageGenerator } = require('botbuilder-dialogs-adaptive');
 const { Templates } = require('botbuilder-lg');
-const { StringExpression, BoolExpression } = require('adaptive-expressions');
+const { StringExpression, BoolExpression, NumberExpression } = require('adaptive-expressions');
 const { OrchestratorAdaptiveRecognizer } = require('botbuilder-ai-orchestrator');
 const { AddToDoDialog } = require('../addToDoDialog/addToDoDialog');
 const { DeleteToDoDialog } = require('../deleteToDoDialog/deleteToDoDialog');
@@ -19,25 +19,25 @@ class RootDialog extends ComponentDialog {
         super(ROOT_DIALOG);
         const lgFile = Templates.parseFile(path.join(__dirname, 'rootDialog.lg'));
         const rootDialog = new AdaptiveDialog(ROOT_DIALOG).configure({
-            //generator: new TemplateEngineLanguageGenerator(lgFile),
-            //recognizer: this.createOrchestratorRecognizer(),
+            generator: new TemplateEngineLanguageGenerator(lgFile),
+            recognizer: this.createOrchestratorRecognizer(),
             triggers: [
                 new OnConversationUpdateActivity(this.welcomeUserSteps()),
-                // new OnIntent('Greeting', [], [new SendActivity('${HelpRootDialog()}')]),
-                // new OnIntent('AddItem', [], [new BeginDialog('ADD_TO_DO_DIALOG')], '#AddToDoDialog.Score >= 0.5'),
-                // new OnIntent('DeleteItem', [], [new BeginDialog('DELETE_TO_DO_DIALOG')], '#DeleteToDoDialog.Score >= 0.5'),
-                // new OnIntent('ViewItem', [], [new BeginDialog('VIEW_TO_DO_DIALOG')], '#ViewToDoDialog.Score >= 0.5'),
-                // // Come back with LG template based readback for global help
-                // new OnIntent('Help', [], [new SendActivity('${HelpRootDialog()}')], '#Help.Score >= 0.8'),
-                // new OnIntent('Cancel', [], [
-                //     // This is the global cancel in case a child dialog did not explicit handle cancel.
-                //     new SendActivity('Cancelling all dialogs..'),
-                //     // SendActivity supports full language generation resolution.
-                //     // See here to learn more about language generation
-                //     // https://aka.ms/language-generation
-                //     new SendActivity('${WelcomeActions()}'),
-                //     new CancelAllDialogs()
-                // ], '#Cancel.Score >= 0.8')
+                new OnIntent('Greeting', [], [new SendActivity('${HelpRootDialog()}')]),
+                new OnIntent('AddItem', [], [new BeginDialog('ADD_TO_DO_DIALOG')], '#AddItem.Score >= 0.5'),
+                new OnIntent('DeleteItem', [], [new BeginDialog('DELETE_TO_DO_DIALOG')], '#DeleteItem.Score >= 0.5'),
+                new OnIntent('ViewItem', [], [new BeginDialog('VIEW_TO_DO_DIALOG')], '#ViewItem.Score >= 0.5'),
+                // Come back with LG template based readback for global help
+                new OnIntent('Help', [], [new SendActivity('${HelpRootDialog()}')], '#Help.Score >= 0.8'),
+                new OnIntent('Cancel', [], [
+                    // This is the global cancel in case a child dialog did not explicit handle cancel.
+                    new SendActivity('Cancelling all dialogs..'),
+                    // SendActivity supports full language generation resolution.
+                    // See here to learn more about language generation
+                    // https://aka.ms/language-generation
+                    new SendActivity('${WelcomeActions()}'),
+                    new CancelAllDialogs()
+                ], '#Cancel.Score >= 0.8')
             ]
         });
 
@@ -60,8 +60,13 @@ class RootDialog extends ComponentDialog {
         }
         let recognizer = new OrchestratorAdaptiveRecognizer().configure(
             {
-                modelPath: process.env.ModelPath,
-                snapshotPath: process.env.RootDialogSnapshotPath
+                modelPath: new StringExpression(process.env.ModelPath),
+                snapshotPath: new StringExpression(process.env.RootDialogSnapshotPath),
+                detectAmbiguousIntents: new BoolExpression(true),
+                disambiguationScoreThreshold: new NumberExpression(0.01),
+                entityRecognizers: [
+                     new NumberEntityRecognizer()
+                ]
             });
         return recognizer;
     }

@@ -21,23 +21,23 @@ export class OrchestratorAdaptiveRecognizer extends Configurable implements Reco
     /**
      * Path to the model to load.
      */
-    public modelPath: StringExpression;
+    public modelPath: StringExpression = new StringExpression("");
 
     /**
      * Path to the snapshot (.blu file) to load.
      */
-    public snapshotPath: StringExpression;
+    public snapshotPath: StringExpression = new StringExpression("");
 
     /**
      * Threshold value to use for ambiguous intent detection. 
      * Any intents that are classified with a score that is within this value from the top scoring intent is determined to be ambiguous.
      */
-    public disambiguationScoreThreshold: NumberExpression;
+    public disambiguationScoreThreshold: NumberExpression = new NumberExpression(0.05);
 
     /**
      * Enable ambiguous intent detection.
      */
-    public detectAmbiguousIntents: BoolExpression;
+    public detectAmbiguousIntents: BoolExpression = new BoolExpression(false);
 
     /**
      * The entity recognizers.
@@ -49,11 +49,9 @@ export class OrchestratorAdaptiveRecognizer extends Configurable implements Reco
      */
     public chooseIntent: string = 'ChooseIntent';
 
-    private recognizer : OrchestratorRecognizer;
+    private recognizer : OrchestratorRecognizer = null;
     private _candidatesCollection: string = 'candidates';
     private _noneIntent: string = 'None';
-    private _modelPath: string = null;
-    private _snapShotPath: string = null;
 
     /**
      * Returns a new OrchestratorAdaptiveRecognizer instance.
@@ -61,44 +59,69 @@ export class OrchestratorAdaptiveRecognizer extends Configurable implements Reco
      * @param activity Current activity sent from user.
      */
     public async recognize(dialogContext: DialogContext, activity: Activity): Promise<RecognizerResult> {
+        if (this.modelPath === null) {
+            throw new exception(`Missing "ModelPath" information.`);
+        }
+
+        if (this.snapshotPath === null) {
+            throw new exception(`Missing "SnapshotPath" information.`);
+        }
         const text = activity.text || '';
-        this._modelPath = this.modelPath.getValue(dialogContext.state);
-        this._snapShotPath = this.snapshotPath.getValue(dialogContext.state);
+        const modelPath = this.modelPath.getValue(dialogContext.state);
+        const snapShotPath = this.snapshotPath.getValue(dialogContext.state);
         const detectAmbiguity = this.detectAmbiguousIntents.getValue(dialogContext.state);
         const disambiguationScoreThreshold = this.disambiguationScoreThreshold.getValue(dialogContext.state);
-        let recognizerResult;
 
-        if (text === '') return recognizerResult;
+        let recognizerResult : RecognizerResult;
 
-        await this.initializeModel();
-
-        if (this.recognizer !== null) {
-            // run entity recognizers
-
-            recognizerResult = await this.recognizer.recongizeTextAsync(text);
-
-            // run entity recognizers
-            await this.recognizeEntities(dialogContext, text, activity.locale || '', recognizerResult);
-
-            // disambiguate
-            if (detectAmbiguity)
-            {
-                const recoResults = recognizerResult[this.recognizer.resultProperty];
-                const topScoringIntent = recoResults[0].score;
-                const scoreDelta = topScoringIntent - disambiguationScoreThreshold;
-                const ambiguousIntents = recoResults.filter(x => x.score >= scoreDelta);
-                if (ambiguousIntents.length !== 0) {
-                    recognizerResult.intents[this._candidatesCollection] = { score: 1.0 };
-                    recognizerResult[this._candidatesCollection] = {};
-                    let ambiguousCollection = {};
-                    ambiguousIntents.forEach(item => {
-                        let candidate = {
-                            // TODO with debugging
-                        }
-                    })
-                }
+        if (text === '') {
+            return {
+                text: text,
+                intents: {},
+                entities: {}
             }
+        } 
 
+        if (this.recognizer === null) {
+            this.recognizer = new OrchestratorRecognizer(modelPath, snapShotPath);
+        }   
+
+        // recognize text
+        recognizerResult = await this.recognizer.recongizeTextAsync(text);
+
+        // run entity recognizers
+        await this.recognizeEntities(dialogContext, text, activity.locale || '', recognizerResult);
+
+        // disambiguate
+        if (detectAmbiguity)
+        {
+            const recoResults = recognizerResult[this.recognizer.resultProperty];
+            const topScoringIntent = recoResults[0].score;
+            const scoreDelta = topScoringIntent - disambiguationScoreThreshold;
+            const ambiguousIntents = recoResults.filter(x => x.score >= scoreDelta);
+            if (ambiguousIntents.length > 1) {
+                recognizerResult.intents = {};
+                recognizerResult.intents[this.chooseIntent] = { score: 1.0 };
+                recognizerResult[this.chooseIntent] = [];
+                ambiguousIntents.forEach(item => {
+                    let itemRecoResult = {
+                        text: text,
+                        intents: {},
+                        entities: {},
+                        score : item.score
+                    };
+                    itemRecoResult.intents[item.label] = {
+                        score: item.score
+                    };
+                    itemRecoResult.entities = recognizerResult.entities;
+                    recognizerResult[this.chooseIntent].push({
+                        intent : item.label.name,
+                        score : item.score,
+                        closestText: item.closest_text,
+                        result: itemRecoResult
+                    });
+                })
+            }
         }
 
         if (Object.entries(recognizerResult.intents).length == 0) {
@@ -159,19 +182,5 @@ export class OrchestratorAdaptiveRecognizer extends Configurable implements Reco
             };
             instanceData.push(instance);
         }
-    }
-
-    private async initializeModel() {
-        if (this._modelPath === null) {
-            throw new exception(`Missing "ModelPath" information.`);
-        }
-
-        if (this._snapShotPath === null) {
-            throw new exception(`Missing "SnapshotPath" information.`);
-        }
-
-        if (this.recognizer === null) {
-            this.recognizer = new OrchestratorRecognizer(this._modelPath, this._snapShotPath);
-        }   
     }
 };
