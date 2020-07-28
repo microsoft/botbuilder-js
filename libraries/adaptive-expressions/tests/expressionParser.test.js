@@ -4,7 +4,7 @@ const {Expression, SimpleObjectMemory, ExpressionFunctions, Options} = require('
 var {TimexProperty} = require('@microsoft/recognizers-text-data-types-timex-expression');
 const assert = require('assert');
 const moment = require('moment');
-const bigInt = require('big-integer')
+const bigInt = require('big-integer');
 
 const one = ['one'];
 const oneTwo = ['one', 'two'];
@@ -464,7 +464,6 @@ const dataSource = [
     ['date(timestamp)', '3/15/2018'],//Default. TODO
     ['year(timestamp)', 2018],
     ['length(utcNow())', 24],
-    ['utcNow(\'MM-DD-YY HH\')', 'getNowTime'],
     ['formatDateTime(notISOTimestamp)', '2018-03-15T13:00:00.000Z'],
     ['formatDateTime(notISOTimestamp, \'MM-dd-yy\')', '03-15-18'],
     ['formatDateTime(notISOTimestamp, \'ddd\')', 'Thu'],
@@ -507,15 +506,7 @@ const dataSource = [
     ['getTimeOfDay(\'2018-03-15T22:00:00.000Z\')', 'evening'],
     ['getTimeOfDay(\'2018-03-15T23:00:00.000Z\')', 'night'],
     ['length(getPastTime(1, \'Year\'))', 24],
-    ['getPastTime(1, \'Year\', \'MM-dd-yy\')', moment(new Date().toISOString()).utc().subtract(1, 'years').format('MM-DD-YY')],
-    ['getPastTime(1, \'Month\', \'MM-dd-yy\')', moment(new Date().toISOString()).utc().subtract(1, 'months').format('MM-DD-YY')],
-    ['getPastTime(1, \'Week\', \'MM-dd-yy\')', moment(new Date().toISOString()).utc().subtract(7, 'days').format('MM-DD-YY')],
-    ['getPastTime(1, \'Day\', \'MM-dd-yy\')', moment(new Date().toISOString()).utc().subtract(1, 'days').format('MM-DD-YY')],
-    ['getFutureTime(1, \'Year\', \'MM-dd-yy\')', moment(new Date().toISOString()).utc().add(1, 'years').format('MM-DD-YY')],
     ['length(getFutureTime(1, \'Year\'))', 24],
-    ['getFutureTime(1, \'Month\', \'MM-dd-yy\')', moment(new Date().toISOString()).utc().add(1, 'months').format('MM-DD-YY')],
-    ['getFutureTime(1, \'Week\', \'MM-dd-yy\')', moment(new Date().toISOString()).utc().add(7, 'days').format('MM-DD-YY')],
-    ['getFutureTime(1, \'Day\', \'MM-dd-yy\')', moment(new Date().toISOString()).utc().add(1, 'days').format('MM-DD-YY')],
     ['addToTime(\'2018-01-01T08:00:00.000Z\', 1, \'Day\')', '2018-01-02T08:00:00.000Z'],
     ['addToTime(\'2018-01-01T08:00:00.000Z\', sub(3,1), \'Week\')', '2018-01-15T08:00:00.000Z'],
     ['addToTime(\'2018-01-01T08:00:00.000Z\', 1, \'Month\', \'MM-DD-YY\')', '02-01-18'],
@@ -835,35 +826,49 @@ const scope = {
 
 describe('expression parser functional test', () => {
     it('should get right evaluate result', () => {
-        for (const data of dataSource) {
-            const input = data[0].toString();
-            console.log(input);
-            var parsed = Expression.parse(input);
-            assert(parsed !== undefined);
-            var {value: actual, error} = parsed.tryEvaluate(scope);
-            assert(error === undefined, `input: ${input}, Has error: ${error}`);
-
-            let expected = data[1];
-
-            // There's an issue when running this test near the end of an hour,
-            // where expected 'HH' doesn't always match up. This ensures it's synced with the current hour.
-            if (input === 'utcNow(\'MM-DD-YY HH\')' && expected === 'getNowTime') {
-                expected = moment(new Date().toISOString()).utc().format('MM-DD-YY HH');
+        function iterateAndCheckData(source) {
+            for (const data of source) {
+                const input = data[0].toString();
+                console.log(input);
+                var parsed = Expression.parse(input);
+                assert(parsed !== undefined);
+                var {value: actual, error} = parsed.tryEvaluate(scope);
+                assert(error === undefined, `input: ${input}, Has error: ${error}`);
+    
+                let expected = data[1];
+    
+                assertObjectEquals(actual, expected);
+    
+                //Assert ExpectedRefs
+                if (data.length === 3) {
+                    const actualRefs = parsed.references();
+                    assertObjectEquals(actualRefs.sort(), data[2].sort());
+                }
+    
+                //ToString re-parse
+                const newExpr = Expression.parse(parsed.toString());
+                const newActual = newExpr.tryEvaluate(scope).value;
+                assertObjectEquals(actual, newActual);
             }
-
-            assertObjectEquals(actual, expected);
-
-            //Assert ExpectedRefs
-            if (data.length === 3) {
-                const actualRefs = parsed.references();
-                assertObjectEquals(actualRefs.sort(), data[2].sort());
-            }
-
-            //ToString re-parse
-            const newExpr = Expression.parse(parsed.toString());
-            const newActual = newExpr.tryEvaluate(scope).value;
-            assertObjectEquals(actual, newActual);
         }
+
+        // Any tests related to getting the current time should be instantiated in the actual test.
+        // If `new Date()` is called near the end of a time change (end of an hour or end of a day),
+        // this can intermittently result in failures because the test may run at the start of an hour or day.
+        iterateAndCheckData(dataSource);
+        const timeSensitiveData = [
+            ['utcNow(\'MM-DD-YY HH\')', moment(new Date().toISOString()).utc().format('MM-DD-YY HH')],
+            ['getPastTime(1, \'Year\', \'MM-dd-yy\')', moment(new Date().toISOString()).utc().subtract(1, 'years').format('MM-DD-YY')],
+            ['getPastTime(1, \'Month\', \'MM-dd-yy\')', moment(new Date().toISOString()).utc().subtract(1, 'months').format('MM-DD-YY')],
+            ['getPastTime(1, \'Week\', \'MM-dd-yy\')', moment(new Date().toISOString()).utc().subtract(7, 'days').format('MM-DD-YY')],
+            ['getPastTime(1, \'Day\', \'MM-dd-yy\')', moment(new Date().toISOString()).utc().subtract(1, 'days').format('MM-DD-YY')],
+            ['getFutureTime(1, \'Year\', \'MM-dd-yy\')', moment(new Date().toISOString()).utc().add(1, 'years').format('MM-DD-YY')],
+            ['getFutureTime(1, \'Month\', \'MM-dd-yy\')', moment(new Date().toISOString()).utc().add(1, 'months').format('MM-DD-YY')],
+            ['getFutureTime(1, \'Week\', \'MM-dd-yy\')', moment(new Date().toISOString()).utc().add(7, 'days').format('MM-DD-YY')],
+            ['getFutureTime(1, \'Day\', \'MM-dd-yy\')', moment(new Date().toISOString()).utc().add(1, 'days').format('MM-DD-YY')],
+        ];
+        iterateAndCheckData(timeSensitiveData);
+        
     }).timeout(5000);
 
     it('Test AccumulatePath', () => {
