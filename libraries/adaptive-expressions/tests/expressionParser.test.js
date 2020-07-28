@@ -864,49 +864,53 @@ describe('expression parser functional test', () => {
     // To evaluate expressions like "getPastTime", we need to freeze the system clock so that every call to
     // `new Date()` done by both the test and by ExpressionEvaluator return the exact same time.
     it('should appropriately evaluate time-related expressions', () => {
-        // Freeze the system clock
+        // Freeze the system clock.
+        // The expected date in MM-DD-YY HH is 01-01-20 00
+        const date = new Date(Date.UTC(2020, 0, 1));
         let clock = useFakeTimers({
-            now: new Date(2020, 1, 1, 0, 0),
-            shouldAdvanceTime: false
+            now: date,
+            shouldAdvanceTime: false,
         });
 
         const timeDataSource = [
-            ['utcNow(\'MM-DD-YY HH\')', moment(new Date().toISOString()).utc().format('MM-DD-YY HH')],
-            ['getPastTime(1, \'Year\', \'MM-dd-yy\')', moment(new Date().toISOString()).utc().subtract(1, 'years').format('MM-DD-YY')],
-            ['getPastTime(1, \'Month\', \'MM-dd-yy\')', moment(new Date().toISOString()).utc().subtract(1, 'months').format('MM-DD-YY')],
-            ['getPastTime(1, \'Week\', \'MM-dd-yy\')', moment(new Date().toISOString()).utc().subtract(7, 'days').format('MM-DD-YY')],
-            ['getPastTime(1, \'Day\', \'MM-dd-yy\')', moment(new Date().toISOString()).utc().subtract(1, 'days').format('MM-DD-YY')],
-            ['getFutureTime(1, \'Year\', \'MM-dd-yy\')', moment(new Date().toISOString()).utc().add(1, 'years').format('MM-DD-YY')],
-            ['getFutureTime(1, \'Month\', \'MM-dd-yy\')', moment(new Date().toISOString()).utc().add(1, 'months').format('MM-DD-YY')],
-            ['getFutureTime(1, \'Week\', \'MM-dd-yy\')', moment(new Date().toISOString()).utc().add(7, 'days').format('MM-DD-YY')],
-            ['getFutureTime(1, \'Day\', \'MM-dd-yy\')', moment(new Date().toISOString()).utc().add(1, 'days').format('MM-DD-YY')]
+            ['utcNow(\'MM-DD-YY HH\')', '01-01-20 00'],
+            ['getPastTime(1, \'Year\', \'MM-dd-yy\')', '01-01-19'],
+            ['getPastTime(1, \'Month\', \'MM-dd-yy\')', '12-01-19'],
+            ['getPastTime(1, \'Week\', \'MM-dd-yy\')', '12-25-19'],
+            ['getPastTime(1, \'Day\', \'MM-dd-yy\')', '12-31-19'],
+            ['getFutureTime(1, \'Year\', \'MM-dd-yy\')', '01-01-21'],
+            ['getFutureTime(1, \'Month\', \'MM-dd-yy\')', '02-01-20'],
+            ['getFutureTime(1, \'Week\', \'MM-dd-yy\')', '01-08-20'],
+            ['getFutureTime(1, \'Day\', \'MM-dd-yy\')', '01-02-20']
         ];
-        for (const data of timeDataSource) {
-            const input = data[0].toString();
-            console.log(input);
-            var parsed = Expression.parse(input);
-            assert(parsed !== undefined);
-            var {value: actual, error} = parsed.tryEvaluate(scope);
-            assert(error === undefined, `input: ${input}, Has error: ${error}, with expression ${ input }`);
-
-            let expected = data[1];
-
-            assertObjectEquals(actual, expected, input);
-
-            //Assert ExpectedRefs
-            if (data.length === 3) {
-                const actualRefs = parsed.references();
-                assertObjectEquals(actualRefs.sort(), data[2].sort(), input);
+        try {
+            for (const data of timeDataSource) {
+                const input = data[0].toString();
+                console.log(input);
+                var parsed = Expression.parse(input);
+                assert(parsed !== undefined);
+                var {value: actual, error} = parsed.tryEvaluate(scope);
+                assert(error === undefined, `input: ${input}, Has error: ${error}, with expression ${ input }`);
+    
+                let expected = data[1];
+    
+                assertObjectEquals(actual, expected, input);
+    
+                //Assert ExpectedRefs
+                if (data.length === 3) {
+                    const actualRefs = parsed.references();
+                    assertObjectEquals(actualRefs.sort(), data[2].sort(), input);
+                }
+    
+                //ToString re-parse
+                const newExpr = Expression.parse(parsed.toString());
+                const newActual = newExpr.tryEvaluate(scope).value;
+                assertObjectEquals(actual, newActual, input);
             }
-
-            //ToString re-parse
-            const newExpr = Expression.parse(parsed.toString());
-            const newActual = newExpr.tryEvaluate(scope).value;
-            assertObjectEquals(actual, newActual, input);
+        } finally {
+            // Un-freeze the system clock
+            clock.restore();
         }
-
-        // Un-freeze the system clock
-        clock.restore();
     });
 
     it('Test AccumulatePath', () => {
