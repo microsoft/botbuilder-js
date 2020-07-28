@@ -9,7 +9,8 @@ module.exports = async function (
       -3
     )}" and user ID "${userId}"`
   );
-
+  
+  const WEBSITE_HOSTNAME = process.env.WEBSITE_HOSTNAME;
   const tokenRes = await fetch(`${domain}v3/directline/tokens/generate`, {
     body: JSON.stringify({
       user: { id: userId },
@@ -18,9 +19,7 @@ module.exports = async function (
         'https://microsoft.github.io/',
         'https://webchat-mockbot2.azurewebsites.net/',
         'http://localhost',
-        'http://localhost:3000',
-        'http://localhost:3978',
-        'https://ash-streaming-js.azurewebsites.net/'
+        `https://${WEBSITE_HOSTNAME}.azurewebsites.net/`
       ]
     }),
     headers: {
