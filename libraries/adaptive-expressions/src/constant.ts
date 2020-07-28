@@ -5,10 +5,10 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { Expression, ReturnType } from './expression';
-import { ExpressionEvaluator } from './expressionEvaluator';
+import { Expression } from './expression';
+import { ReturnType } from './returnType';
+import { ExpressionEvaluator, ValueWithError } from './expressionEvaluator';
 import { ExpressionType } from './expressionType';
-import { ExpressionFunctions } from './expressionFunctions';
 
 /**
  * Construct an expression constant.
@@ -38,7 +38,7 @@ export class Constant extends Expression {
     private _value: any;
     public constructor(value: any) {
         super(ExpressionType.Constant, new ExpressionEvaluator(ExpressionType.Constant,
-            (expression: Expression): { value: any; error: string } => {
+            (expression: Expression): ValueWithError => {
                 return { value: (expression as Constant).value, error: undefined };
             }
         ));
