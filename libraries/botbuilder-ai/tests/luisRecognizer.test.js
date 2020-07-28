@@ -142,6 +142,8 @@ function TestJson(file, done, includeAllIntents, includeInstance, telemetryClien
 describe('LuisRecognizer', function () {
     this.timeout(15000);
 
+    const recognizer = new LuisRecognizer({ applicationId: luisAppId, endpointKey: endpointKey }, { includeAllIntents: true }, true);
+
     if (!mockLuis && endpointKey === "MockedKey") {
         console.warn('WARNING: skipping LuisRecognizer test suite because the LUISAPPKEY environment variable is not defined');
         return;
@@ -364,7 +366,6 @@ describe('LuisRecognizer', function () {
 
     it('should emit trace info once per call to recognize', done => {
         var expected = GetExpected(ExpectedPath("SingleIntent_SimplyEntity.json"));
-        var recognizer = new LuisRecognizer({ applicationId: luisAppId, endpointKey: endpointKey }, { includeAllIntents: true }, true);
         var context = new TestContext({ text: expected.text });
         recognizer.recognize(context).then(res => {
             return recognizer.recognize(context);
@@ -393,7 +394,6 @@ describe('LuisRecognizer', function () {
     it('should call prepareErrorMessage when a non-200 status code is received.', done => {
         nock.cleanAll();
         ReturnErrorStatusCode(400);
-        const recognizer = new LuisRecognizer({ applicationId: luisAppId, endpointKey: endpointKey }, { includeAllIntents: true }, true);
         const context = new TestContext({ text: 'Hello world!' });
         recognizer.recognize(context).catch(error => {
             expectedError = `Response 400: The request's body or parameters are incorrect, meaning they are missing, malformed, or too large.`;
@@ -406,7 +406,6 @@ describe('LuisRecognizer', function () {
     it('should throw expected 401 error message.', done => {
         nock.cleanAll();
         ReturnErrorStatusCode(401);
-        const recognizer = new LuisRecognizer({ applicationId: luisAppId, endpointKey: endpointKey }, { includeAllIntents: true }, true);
         const context = new TestContext({ text: 'Hello world!' });
         recognizer.recognize(context).catch(error => {
             expectedError = `Response 401: The key used is invalid, malformed, empty, or doesn't match the region.`;
@@ -419,7 +418,6 @@ describe('LuisRecognizer', function () {
     it('should throw expected 403 error message.', done => {
         nock.cleanAll();
         ReturnErrorStatusCode(403);
-        const recognizer = new LuisRecognizer({ applicationId: luisAppId, endpointKey: endpointKey }, { includeAllIntents: true }, true);
         const context = new TestContext({ text: 'Hello world!' });
         recognizer.recognize(context).catch(error => {
             expectedError = `Response 403: Total monthly key quota limit exceeded.`;
@@ -432,7 +430,6 @@ describe('LuisRecognizer', function () {
     it('should throw expected 409 error message.', done => {
         nock.cleanAll();
         ReturnErrorStatusCode(409);
-        const recognizer = new LuisRecognizer({ applicationId: luisAppId, endpointKey: endpointKey }, { includeAllIntents: true }, true);
         const context = new TestContext({ text: 'Hello world!' });
         recognizer.recognize(context).catch(error => {
             expectedError = `Response 409: Application loading in progress, please try again.`;
@@ -445,7 +442,6 @@ describe('LuisRecognizer', function () {
     it('should throw expected 410 error message.', done => {
         nock.cleanAll();
         ReturnErrorStatusCode(410);
-        const recognizer = new LuisRecognizer({ applicationId: luisAppId, endpointKey: endpointKey }, { includeAllIntents: true }, true);
         const context = new TestContext({ text: 'Hello world!' });
         recognizer.recognize(context).catch(error => {
             expectedError = `Response 410: Please retrain and republish your application.`;
@@ -458,7 +454,6 @@ describe('LuisRecognizer', function () {
     it('should throw expected 414 error message.', done => {
         nock.cleanAll();
         ReturnErrorStatusCode(414);
-        const recognizer = new LuisRecognizer({ applicationId: luisAppId, endpointKey: endpointKey }, { includeAllIntents: true }, true);
         const context = new TestContext({ text: 'Hello world!' });
         recognizer.recognize(context).catch(error => {
             expectedError = `Response 414: The query is too long. Please reduce the query length to 500 or less characters.`;
@@ -471,7 +466,6 @@ describe('LuisRecognizer', function () {
     it('should throw expected 429 error message.', done => {
         nock.cleanAll();
         ReturnErrorStatusCode(429);
-        const recognizer = new LuisRecognizer({ applicationId: luisAppId, endpointKey: endpointKey }, { includeAllIntents: true }, true);
         const context = new TestContext({ text: 'Hello world!' });
         recognizer.recognize(context).catch(error => {
             expectedError = `Response 429: Too many requests.`;
@@ -485,7 +479,6 @@ describe('LuisRecognizer', function () {
         nock.cleanAll();
         const statusCode = 404;
         ReturnErrorStatusCode(statusCode);
-        const recognizer = new LuisRecognizer({ applicationId: luisAppId, endpointKey: endpointKey }, { includeAllIntents: true }, true);
         const context = new TestContext({ text: 'Hello world!' });
         recognizer.recognize(context).catch(error => {
             expectedError = `Response ${statusCode}: Unexpected status code received. Please verify that your LUIS application is properly setup.`;
@@ -512,7 +505,6 @@ describe('LuisRecognizer', function () {
             .matchHeader('User-Agent', /botbuilder-ai\/4.*/)
             .post(/apps/)
             .reply(200, { query: null, intents: [], entities: [] });
-        const recognizer = new LuisRecognizer({ applicationId: luisAppId, endpointKey: endpointKey }, { includeAllIntents: true }, true);
         const context = new TestContext({ text: 'Hello world!' });
         recognizer.recognize(context).then(res => {
             nock.cleanAll();
@@ -986,4 +978,3 @@ class overrideFillRecognizer extends LuisRecognizer {
         });
     }
 }
-
