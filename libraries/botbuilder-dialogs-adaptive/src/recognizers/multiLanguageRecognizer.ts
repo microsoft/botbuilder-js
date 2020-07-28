@@ -15,20 +15,20 @@ export class MultiLanguageRecognizer implements Recognizer {
 
     public id: string;
 
-    public languagePolicy: any = LanguagePolicy.defaultPolicy;
+    public languagePolicy: LanguagePolicy = new LanguagePolicy();
 
     public recognizers: { [locale: string]: Recognizer };
 
     public async recognize(dialogContext: DialogContext, activity: Activity): Promise<RecognizerResult> {
         const locale = activity.locale || '';
         let policy: string[] = [];
-        if (this.languagePolicy.hasOwnProperty(locale)) {
-            this.languagePolicy[locale].forEach((u: string): number => policy.push(u));
+        if (this.languagePolicy.has(locale)) {
+            this.languagePolicy.get(locale).forEach((u: string): number => policy.push(u));
         }
 
-        if (locale !== '' && this.languagePolicy.hasOwnProperty('')) {
+        if (locale !== '' && this.languagePolicy.has('')) {
             // we now explictly add defaultPolicy instead of coding that into target's policy
-            this.languagePolicy[''].forEach((u: string): number => policy.push(u));
+            this.languagePolicy.get('').forEach((u: string): number => policy.push(u));
         }
 
         for (let i = 0; i < policy.length; i++) {

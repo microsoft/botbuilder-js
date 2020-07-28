@@ -6,11 +6,19 @@
  * Licensed under the MIT License.
  */
 
+<<<<<<< HEAD
 import { MultivariateNumericEvaluator } from './multivariateNumericEvaluator';
 import { ExpressionType } from '../expressionType';
 
 /**
  * Return the result from subtracting the second number from the first number.
+=======
+import { ExpressionType } from '../expressionType';
+import { MultivariateNumericEvaluator } from './multivariateNumericEvaluator';
+
+/**
+ * Return the result from subtracting the next number from the previous number.
+>>>>>>> master
  */
 export class Subtract extends MultivariateNumericEvaluator {
     public constructor() {

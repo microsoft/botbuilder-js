@@ -6,13 +6,21 @@
  * Licensed under the MIT License.
  */
 
+<<<<<<< HEAD
 import { ExpressionEvaluator } from '../expressionEvaluator';
 import { Expression } from '../expression';
 import { ReturnType } from '../returnType';
+=======
+import { TimexProperty } from '@microsoft/recognizers-text-data-types-timex-expression';
+
+import { Expression } from '../expression';
+import { ExpressionEvaluator, ValueWithError } from '../expressionEvaluator';
+>>>>>>> master
 import { ExpressionType } from '../expressionType';
 import { FunctionUtils } from '../functionUtils';
 import { MemoryInterface } from '../memory/memoryInterface';
 import { Options } from '../options';
+<<<<<<< HEAD
 import {TimexProperty} from '@microsoft/recognizers-text-data-types-timex-expression';
 
 /**
@@ -25,19 +33,43 @@ export class IsDate extends ExpressionEvaluator {
     }
 
     private static evaluator(expr: Expression, state: MemoryInterface, options: Options): {value: any; error: string} {
+=======
+import { ReturnType } from '../returnType';
+
+/**
+ * Return true if a given `TimexProperty` or timex string refers to a valid date.
+ * Valid dates contain the month and dayOfMonth, or contain the dayOfWeek.
+ */
+export class IsDate extends ExpressionEvaluator {
+    public constructor() {
+        super(ExpressionType.IsDate, IsDate.evaluator, ReturnType.Boolean, FunctionUtils.validateUnary);
+    }
+
+    private static evaluator(expr: Expression, state: MemoryInterface, options: Options): ValueWithError {
+>>>>>>> master
         let parsed: TimexProperty;
         let value = false;
         let error: string;
         let args: any[];
+<<<<<<< HEAD
         ({args, error} = FunctionUtils.evaluateChildren(expr, state, options));
         if (!error) {
             ({timexProperty: parsed, error: error} = FunctionUtils.parseTimexProperty(args[0]));
+=======
+        ({ args, error } = FunctionUtils.evaluateChildren(expr, state, options));
+        if (!error) {
+            ({ timexProperty: parsed, error: error } = FunctionUtils.parseTimexProperty(args[0]));
+>>>>>>> master
         }
 
         if (parsed && !error) {
             value = (parsed.month !== undefined && parsed.dayOfMonth !== undefined) || parsed.dayOfWeek !== undefined;
         }
 
+<<<<<<< HEAD
         return {value, error};
+=======
+        return { value, error };
+>>>>>>> master
     }
 }

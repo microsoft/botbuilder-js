@@ -6,16 +6,27 @@
  * Licensed under the MIT License.
  */
 
+<<<<<<< HEAD
 import { ExpressionEvaluator, EvaluateExpressionDelegate } from '../expressionEvaluator';
 import { ReturnType } from '../returnType';
 import { ExpressionType } from '../expressionType';
 import { FunctionUtils } from '../functionUtils';
+=======
+import { EvaluateExpressionDelegate, ExpressionEvaluator } from '../expressionEvaluator';
+import { ExpressionType } from '../expressionType';
+import { FunctionUtils } from '../functionUtils';
+import { ReturnType } from '../returnType';
+>>>>>>> master
 
 /**
  * Return the binary version of a string.
  */
 export class Binary extends ExpressionEvaluator {
+<<<<<<< HEAD
     public constructor(){
+=======
+    public constructor() {
+>>>>>>> master
         super(ExpressionType.Binary, Binary.evaluator(), ReturnType.Object, FunctionUtils.validateUnary);
     }
 

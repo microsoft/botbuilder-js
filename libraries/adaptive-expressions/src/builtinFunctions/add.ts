@@ -6,17 +6,29 @@
  * Licensed under the MIT License.
  */
 
+<<<<<<< HEAD
 import { ExpressionEvaluator, EvaluateExpressionDelegate } from '../expressionEvaluator';
 import { Expression } from '../expression';
 import { ReturnType } from '../returnType';
 import { ExpressionType } from '../expressionType';
 import { FunctionUtils } from '../functionUtils';
+=======
+import { Expression } from '../expression';
+import { EvaluateExpressionDelegate, ExpressionEvaluator } from '../expressionEvaluator';
+import { ExpressionType } from '../expressionType';
+import { FunctionUtils } from '../functionUtils';
+import { ReturnType } from '../returnType';
+>>>>>>> master
 
 /**
  * Return the result from adding two or more numbers (pure number case) or concatting two or more strings (other case).
  */
 export class Add extends ExpressionEvaluator {
+<<<<<<< HEAD
     public constructor(){
+=======
+    public constructor() {
+>>>>>>> master
         super(ExpressionType.Add, Add.evaluator(), ReturnType.String | ReturnType.Number, Add.validator);
     }
 
@@ -44,7 +56,11 @@ export class Add extends ExpressionEvaluator {
                     value = args[0] + args[1];
                 }
 
+<<<<<<< HEAD
                 return {value, error};
+=======
+                return { value, error };
+>>>>>>> master
             }, FunctionUtils.verifyNumberOrStringOrNull);
     }
 

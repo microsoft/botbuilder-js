@@ -6,9 +6,15 @@
  * Licensed under the MIT License.
  */
 
+<<<<<<< HEAD
 import { ComparisonEvaluator } from './comparisonEvaluator';
 import { ExpressionType } from '../expressionType';
 import { FunctionUtils } from '../functionUtils';
+=======
+import { ExpressionType } from '../expressionType';
+import { FunctionUtils } from '../functionUtils';
+import { ComparisonEvaluator } from './comparisonEvaluator';
+>>>>>>> master
 
 /**
  * Check whether the first value is greater than the second value.

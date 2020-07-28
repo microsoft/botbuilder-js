@@ -172,7 +172,7 @@ export class OAuthInput extends InputDialog {
                 if (this.defaultValue) {
                     const { value } = this.defaultValue.tryGetValue(dc.state);
                     if (this.defaultValueResponse) {
-                        const response = await this.defaultValueResponse.bindToData(dc.context, dc.state);
+                        const response = await this.defaultValueResponse.bind(dc, dc.state);
                         const properties = {
                             'template': JSON.stringify(this.defaultValueResponse),
                             'result': response ? JSON.stringify(response) : ''

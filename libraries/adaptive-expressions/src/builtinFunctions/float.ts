@@ -6,6 +6,7 @@
  * Licensed under the MIT License.
  */
 
+<<<<<<< HEAD
 import { ExpressionEvaluator, EvaluateExpressionDelegate } from '../expressionEvaluator';
 import { ReturnType } from '../returnType';
 import { ExpressionType } from '../expressionType';
@@ -16,6 +17,18 @@ import { FunctionUtils } from '../functionUtils';
  */
 export class Float extends ExpressionEvaluator {
     public constructor(){
+=======
+import { EvaluateExpressionDelegate, ExpressionEvaluator } from '../expressionEvaluator';
+import { ExpressionType } from '../expressionType';
+import { FunctionUtils } from '../functionUtils';
+import { ReturnType } from '../returnType';
+
+/**
+ * Convert the string version of a floating-point number to a floating-point number.
+ */
+export class Float extends ExpressionEvaluator {
+    public constructor() {
+>>>>>>> master
         super(ExpressionType.Float, Float.evaluator(), ReturnType.Number, FunctionUtils.validateUnary);
     }
 
@@ -28,7 +41,11 @@ export class Float extends ExpressionEvaluator {
                     error = `parameter ${args[0]} is not a valid number string.`;
                 }
 
+<<<<<<< HEAD
                 return {value, error};
+=======
+                return { value, error };
+>>>>>>> master
             });
     }
 }

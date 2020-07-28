@@ -6,6 +6,7 @@
  * Licensed under the MIT License.
  */
 
+<<<<<<< HEAD
 import { ExpressionEvaluator, EvaluateExpressionDelegate } from '../expressionEvaluator';
 import { Expression } from '../expression';
 import { ReturnType } from '../returnType';
@@ -17,6 +18,19 @@ import { FunctionUtils } from '../functionUtils';
  */
 export class Merge extends ExpressionEvaluator {
     public constructor(){
+=======
+import { Expression } from '../expression';
+import { EvaluateExpressionDelegate, ExpressionEvaluator } from '../expressionEvaluator';
+import { ExpressionType } from '../expressionType';
+import { FunctionUtils } from '../functionUtils';
+import { ReturnType } from '../returnType';
+
+/**
+ * Merge two JSON objects into one JSON object.
+ */
+export class Merge extends ExpressionEvaluator {
+    public constructor() {
+>>>>>>> master
         super(ExpressionType.Merge, Merge.evaluator(), ReturnType.Object, Merge.validator);
     }
 
@@ -25,6 +39,7 @@ export class Merge extends ExpressionEvaluator {
             (args: any[]): any => {
                 let value: any;
                 let error: string;
+<<<<<<< HEAD
                 if ((typeof(args[0]) === 'object' && !Array.isArray(args[0])) && (typeof(args[1]) === 'object' && !Array.isArray(args[1]))) {
                     Object.assign(args[0], args[1]);
                     value = args[0];
@@ -33,6 +48,16 @@ export class Merge extends ExpressionEvaluator {
                 }
 
                 return {value, error};
+=======
+                if ((typeof (args[0]) === 'object' && !Array.isArray(args[0])) && (typeof (args[1]) === 'object' && !Array.isArray(args[1]))) {
+                    Object.assign(args[0], args[1]);
+                    value = args[0];
+                } else {
+                    error = `The argumets ${args[0]} and ${args[1]} must be JSON objects.`;
+                }
+
+                return { value, error };
+>>>>>>> master
             });
     }
 

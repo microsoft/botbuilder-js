@@ -6,16 +6,27 @@
  * Licensed under the MIT License.
  */
 
+<<<<<<< HEAD
 import { ExpressionEvaluator, EvaluateExpressionDelegate } from '../expressionEvaluator';
 import { ReturnType } from '../returnType';
 import { ExpressionType } from '../expressionType';
 import { FunctionUtils } from '../functionUtils';
+=======
+import { EvaluateExpressionDelegate, ExpressionEvaluator } from '../expressionEvaluator';
+import { ExpressionType } from '../expressionType';
+import { FunctionUtils } from '../functionUtils';
+import { ReturnType } from '../returnType';
+>>>>>>> master
 
 /**
  * Return a random integer from a specified range, which is inclusive only at the starting end.
  */
 export class Rand extends ExpressionEvaluator {
+<<<<<<< HEAD
     public constructor(){
+=======
+    public constructor() {
+>>>>>>> master
         super(ExpressionType.Rand, Rand.evaluator(), ReturnType.Number, FunctionUtils.validateBinaryNumber);
     }
 
@@ -29,7 +40,11 @@ export class Rand extends ExpressionEvaluator {
 
                 const value: any = Math.floor(Math.random() * (Number(args[1]) - Number(args[0])) + Number(args[0]));
 
+<<<<<<< HEAD
                 return {value, error};
+=======
+                return { value, error };
+>>>>>>> master
             },
             FunctionUtils.verifyInteger);
     }

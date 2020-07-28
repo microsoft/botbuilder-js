@@ -6,9 +6,15 @@
  * Licensed under the MIT License.
  */
 
+<<<<<<< HEAD
 import { ReturnType } from '../returnType';
 import { FunctionUtils } from '../functionUtils';
 import { EvaluateExpressionDelegate, ExpressionEvaluator } from '../expressionEvaluator';
+=======
+import { EvaluateExpressionDelegate, ExpressionEvaluator } from '../expressionEvaluator';
+import { FunctionUtils } from '../functionUtils';
+import { ReturnType } from '../returnType';
+>>>>>>> master
 
 /**
  * Evaluator that transforms a number to another number.

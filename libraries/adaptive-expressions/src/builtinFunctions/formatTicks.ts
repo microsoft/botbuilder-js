@@ -6,6 +6,7 @@
  * Licensed under the MIT License.
  */
 
+<<<<<<< HEAD
 import { ExpressionEvaluator, EvaluateExpressionDelegate } from '../expressionEvaluator';
 import { Expression } from '../expression';
 import { ReturnType } from '../returnType';
@@ -13,12 +14,26 @@ import { ExpressionType } from '../expressionType';
 import { FunctionUtils } from '../functionUtils';
 import moment from 'moment';
 import bigInt from 'big-integer';
+=======
+import bigInt from 'big-integer';
+import moment from 'moment';
+
+import { Expression } from '../expression';
+import { EvaluateExpressionDelegate, ExpressionEvaluator } from '../expressionEvaluator';
+import { ExpressionType } from '../expressionType';
+import { FunctionUtils } from '../functionUtils';
+import { ReturnType } from '../returnType';
+>>>>>>> master
 
 /**
  * Return a timestamp in the specified format from ticks.
  */
 export class FormatTicks extends ExpressionEvaluator {
+<<<<<<< HEAD
     public constructor(){
+=======
+    public constructor() {
+>>>>>>> master
         super(ExpressionType.FormatTicks, FormatTicks.evaluator(), ReturnType.String, FormatTicks.validator);
     }
 
@@ -46,7 +61,11 @@ export class FormatTicks extends ExpressionEvaluator {
                     value = args.length === 2 ? moment(dateString).format(FunctionUtils.timestampFormatter(args[1])) : dateString;
                 }
 
+<<<<<<< HEAD
                 return {value, error};
+=======
+                return { value, error };
+>>>>>>> master
             });
     }
 

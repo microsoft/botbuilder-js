@@ -6,9 +6,16 @@
  * Licensed under the MIT License.
  */
 
+<<<<<<< HEAD
 import { TimeTransformEvaluator } from './timeTransformEvaluator';
 import moment from 'moment';
 import { ExpressionType } from '../expressionType';
+=======
+import moment from 'moment';
+
+import { ExpressionType } from '../expressionType';
+import { TimeTransformEvaluator } from './timeTransformEvaluator';
+>>>>>>> master
 
 /**
  * Add a number of hours to a timestamp.

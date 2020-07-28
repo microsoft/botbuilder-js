@@ -6,6 +6,7 @@
  * Licensed under the MIT License.
  */
 
+<<<<<<< HEAD
 import { ComparisonEvaluator } from './comparisonEvaluator';
 import { ExpressionType } from '../expressionType';
 import { FunctionUtils } from '../functionUtils';
@@ -16,6 +17,18 @@ import { FunctionUtils } from '../functionUtils';
  * 2.input is a null or empty string
  * 3.input is zero size collection
  * 4.input is an object with no property.
+=======
+import { ExpressionType } from '../expressionType';
+import { FunctionUtils } from '../functionUtils';
+import { ComparisonEvaluator } from './comparisonEvaluator';
+
+/**
+ * Check whether an instance is empty. Return true if the input is empty. Empty means:
+ * 1.Input is null or undefined.
+ * 2.Input is a null or empty string.
+ * 3.Input is zero size collection.
+ * 4.Input is an object with no property.
+>>>>>>> master
  */
 export class Empty extends ComparisonEvaluator {
     public constructor() {

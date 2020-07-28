@@ -6,6 +6,7 @@
  * Licensed under the MIT License.
  */
 
+<<<<<<< HEAD
 import { ExpressionEvaluator, EvaluateExpressionDelegate } from '../expressionEvaluator';
 import { Expression } from '../expression';
 import { ReturnType } from '../returnType';
@@ -17,6 +18,19 @@ import { FunctionUtils } from '../functionUtils';
  */
 export class Sum extends ExpressionEvaluator {
     public constructor(){
+=======
+import { Expression } from '../expression';
+import { EvaluateExpressionDelegate, ExpressionEvaluator } from '../expressionEvaluator';
+import { ExpressionType } from '../expressionType';
+import { FunctionUtils } from '../functionUtils';
+import { ReturnType } from '../returnType';
+
+/**
+ * Return the result from adding numbers in an array.
+ */
+export class Sum extends ExpressionEvaluator {
+    public constructor() {
+>>>>>>> master
         super(ExpressionType.Sum, Sum.evaluator(), ReturnType.Number, Sum.validator);
     }
 

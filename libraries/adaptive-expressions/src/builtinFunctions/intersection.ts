@@ -6,11 +6,19 @@
  * Licensed under the MIT License.
  */
 
+<<<<<<< HEAD
 import { ExpressionEvaluator, EvaluateExpressionDelegate } from '../expressionEvaluator';
 import { Expression } from '../expression';
 import { ReturnType } from '../returnType';
 import { ExpressionType } from '../expressionType';
 import { FunctionUtils } from '../functionUtils';
+=======
+import { Expression } from '../expression';
+import { EvaluateExpressionDelegate, ExpressionEvaluator } from '../expressionEvaluator';
+import { ExpressionType } from '../expressionType';
+import { FunctionUtils } from '../functionUtils';
+import { ReturnType } from '../returnType';
+>>>>>>> master
 
 /**
  * Return a collection that has only the common items across the specified collections.
@@ -19,7 +27,11 @@ import { FunctionUtils } from '../functionUtils';
  * the last item with that name appears in the result.
  */
 export class Intersection extends ExpressionEvaluator {
+<<<<<<< HEAD
     public constructor(){
+=======
+    public constructor() {
+>>>>>>> master
         super(ExpressionType.Intersection, Intersection.evaluator(), ReturnType.Array, Intersection.validator);
     }
 

@@ -7,11 +7,66 @@ function GetExampleFilePath(fileName) {
     return `${ __dirname }/testData/examples/` + fileName;
 }
 
-
 describe('LG', function() {
+    /**
+     * Disk I/O is slow and variable, causing issues in pipeline tests, so we
+     * preload all of the file reads here so that it doesn't count against individual test duration.
+     * 
+     * Note that parseFile() calls injectToExpressionFunction(), so any test dependent on
+     * Expression.function.add() cannot be preloaded. In these cases, it would be a good idea to use
+     * this.timeout(5000) to increase test timeout for those individual tests.
+     */
+    const preloaded = {
+        two: Templates.parseFile(GetExampleFilePath('2.lg')),
+        three: Templates.parseFile(GetExampleFilePath('3.lg')),
+        four: Templates.parseFile(GetExampleFilePath('4.lg')),
+        five: Templates.parseFile(GetExampleFilePath('5.lg')),
+        Multiline: Templates.parseFile(GetExampleFilePath('Multiline.lg')),
+        MultiLineExpr: Templates.parseFile(GetExampleFilePath('MultiLineExpr.lg')),
+        ExpandText: Templates.parseFile(GetExampleFilePath('ExpandText.lg')),
+        six: Templates.parseFile(GetExampleFilePath('6.lg')),
+        switchcase: Templates.parseFile(GetExampleFilePath('switchcase.lg')),
+        BasicList: Templates.parseFile(GetExampleFilePath('BasicList.lg')),
+        CaseInsensitive: Templates.parseFile(GetExampleFilePath('CaseInsensitive.lg')),
+        eight: Templates.parseFile(GetExampleFilePath('8.lg')),
+        TemplateNameWithDot: Templates.parseFile(GetExampleFilePath('TemplateNameWithDot.lg')),
+        MultilineTextForAdaptiveCard: Templates.parseFile(GetExampleFilePath('MultilineTextForAdaptiveCard.lg')),
+        TemplateRef: Templates.parseFile(GetExampleFilePath('TemplateRef.lg')),
+        EscapeCharacter: Templates.parseFile(GetExampleFilePath('EscapeCharacter.lg')),
+        Analyzer: Templates.parseFile(GetExampleFilePath('Analyzer.lg')),
+        lgTemplate: Templates.parseFile(GetExampleFilePath('lgTemplate.lg')),
+        TemplateAsFunction: Templates.parseFile(GetExampleFilePath('TemplateAsFunction.lg')),
+        import: Templates.parseFile(GetExampleFilePath('importExamples/import.lg')),
+        Regex: Templates.parseFile(GetExampleFilePath('Regex.lg')),
+        Expand: Templates.parseFile(GetExampleFilePath('Expand.lg')),
+        EscapeCharacter: Templates.parseFile(GetExampleFilePath('EscapeCharacter.lg')),
+        StrictModeFalse: Templates.parseFile(GetExampleFilePath('./EvaluationOptions/StrictModeFalse.lg')),
+        EvalExpression: Templates.parseFile(GetExampleFilePath('EvalExpression.lg')),
+        RecursiveTemplate: Templates.parseFile(GetExampleFilePath('RecursiveTemplate.lg')),
+        MemoryScope: Templates.parseFile(GetExampleFilePath('MemoryScope.lg')),
+        StructuredTemplate: Templates.parseFile(GetExampleFilePath('StructuredTemplate.lg')),
+        EvaluateOnce: Templates.parseFile(GetExampleFilePath('EvaluateOnce.lg')),
+        ConditionExpression: Templates.parseFile(GetExampleFilePath('ConditionExpression.lg')),
+        StructuredTemplate: Templates.parseFile(GetExampleFilePath('StructuredTemplate.lg')),
+        ExpressionExtract: Templates.parseFile(GetExampleFilePath('ExpressionExtract.lg')),
+        EmptyArrayAndObject: Templates.parseFile(GetExampleFilePath('EmptyArrayAndObject.lg')),
+        LGOptionsTest: Templates.parseFile(GetExampleFilePath('./EvaluationOptions/LGOptionsTest.lg')),
+        NullTolerant: Templates.parseFile(GetExampleFilePath('NullTolerant.lg')),
+        IsTemplate: Templates.parseFile(GetExampleFilePath('IsTemplate.lg')),
+        StringInterpolation: Templates.parseFile(GetExampleFilePath('StringInterpolation.lg')),
+        MemoryAccess: Templates.parseFile(GetExampleFilePath('MemoryAccess.lg')),
+        ReExecute: Templates.parseFile(GetExampleFilePath('ReExecute.lg')),
+        inject: Templates.parseFile(GetExampleFilePath('./injectionTest/inject.lg')),
+        StrictModeTrue: Templates.parseFile(GetExampleFilePath('./EvaluationOptions/StrictModeTrue.lg')),
+        a1: Templates.parseFile(GetExampleFilePath('./EvaluationOptions/a1.lg')),
+        a2: Templates.parseFile(GetExampleFilePath('./EvaluationOptions/a2.lg')),
+        a3: Templates.parseFile(GetExampleFilePath('./EvaluationOptions/a3.lg')),
+        a4: Templates.parseFile(GetExampleFilePath('./EvaluationOptions/a4.lg'))
+    };
+
     it('TestEnumeration', function() {
         let cnt = 0;
-        let templates = Templates.parseFile(GetExampleFilePath('2.lg'));
+        let templates = preloaded.two;
         for (let t of templates) {
             assert.strictEqual(typeof t, 'object');
             assert.strictEqual(t.name, 'wPhrase');
@@ -21,14 +76,14 @@ describe('LG', function() {
     });
 
     it('TestBasic', function() {
-        let templates = Templates.parseFile(GetExampleFilePath('2.lg'));
+        let templates = preloaded.two;
         let evaled = templates.evaluate('wPhrase');
         const options = ['Hi', 'Hello', 'Hiya'];
         assert.strictEqual(options.includes(evaled), true, `The result ${ evaled } is not in those options [${ options.join(',') }]`);
     });
 
     it('TestBasicTemplateReference', function() {
-        let templates = Templates.parseFile(GetExampleFilePath('3.lg'));
+        let templates = preloaded.three;
         console.log(templates.toArray()[0].body);
         console.log(templates.toArray()[1].body);
         let evaled = templates.evaluate('welcome_user', undefined);
@@ -37,15 +92,14 @@ describe('LG', function() {
     });
 
     it('TestBasicTemplateRefAndEntityRef', function() {
-        let templates = Templates.parseFile(GetExampleFilePath('4.lg'));
+        let templates = preloaded.four;
         let userName = 'DL';
         let evaled = templates.evaluate('welcome_user', { userName: userName });
-        const options = ['Hi', 'Hello', 'Hiya ', 'Hi :)', 'Hello :)', 'Hiya :)'];
         assert.strictEqual(evaled.includes(userName), true, `The result ${ evaled } does not contiain ${ userName }`);
     });
 
     it('TestBasicConditionalTemplate', function() {
-        let templates = Templates.parseFile(GetExampleFilePath('5.lg'));
+        let templates = preloaded['five'];
 
         let evaled = templates.evaluate('time_of_day_readout', { timeOfDay: 'morning' });
         assert.strictEqual(evaled === 'Good morning' || evaled === 'Morning! ', true, `Evaled is ${ evaled }`);
@@ -55,7 +109,7 @@ describe('LG', function() {
     });
 
     it('TestMultiline', function() {
-        let templates = Templates.parseFile(GetExampleFilePath('Multiline.lg'));
+        let templates = preloaded.Multiline;
         let evaled = templates.evaluate('template1').toString();
         let generatedTemplates = Templates.parseText(evaled);
         let result = generatedTemplates.evaluate('generated1');
@@ -68,7 +122,7 @@ describe('LG', function() {
     });
 
     it('TestMultiLineExprLG', function() {
-        let templates = Templates.parseFile(GetExampleFilePath('MultiLineExpr.lg'));
+        let templates = preloaded.MultiLineExpr;
 
         let evaled = templates.evaluate('ExprInCondition', { userName: 'Henry', day: 'Monday' });
         assert.strictEqual(evaled === 'Not today', true, `Evaled is ${ evaled }`);
@@ -83,7 +137,7 @@ describe('LG', function() {
     });
 
     it('TestBasicConditionalTemplateWithoutDefault', function() {
-        let templates = Templates.parseFile(GetExampleFilePath('5.lg'));
+        let templates = preloaded.five;
 
         let evaled = templates.evaluate('time_of_day_readout_without_default', { timeOfDay: 'morning' });
         assert.strictEqual(evaled === 'Good morning' || evaled === 'Morning! ', true, `Evaled is ${ evaled }`);
@@ -96,7 +150,7 @@ describe('LG', function() {
     });
 
     it('TestExpandText', function() {
-        let templates = Templates.parseFile(GetExampleFilePath('ExpandText.lg'));
+        let templates = preloaded.ExpandText;
 
         const scope = {
             '@answer': 'hello ${user.name}',
@@ -107,10 +161,13 @@ describe('LG', function() {
 
         let evaled = templates.evaluate('template', scope);
         assert.strictEqual(evaled, 'hello vivian'.length);
+
+        evaled = templates.evaluateText('${length(expandText(@answer))}', scope);
+        assert.strictEqual(evaled, 'hello vivian'.length);
     });
 
     it('TestBasicTemplateRefWithParameters', function() {
-        let templates = Templates.parseFile(GetExampleFilePath('6.lg'));
+        let templates = preloaded.six;
 
         let evaled = templates.evaluate('welcome', undefined);
         const options1 = ['Hi DongLei :)', 'Hey DongLei :)', 'Hello DongLei :)'];
@@ -122,7 +179,7 @@ describe('LG', function() {
     });
 
     it('TestBasicSwitchCaseTemplate', function() {
-        let templates = Templates.parseFile(GetExampleFilePath('switchcase.lg'));
+        let templates = preloaded.switchcase;
         let evaled1 = templates.evaluate('greetInAWeek', { day: 'Saturday' });
         assert.strictEqual(evaled1 === 'Happy Saturday!', true, `Evaled is ${ evaled1 }`);
 
@@ -131,7 +188,7 @@ describe('LG', function() {
     });
 
     it('TestBasicListSupport', function() {
-        let templates = Templates.parseFile(GetExampleFilePath('BasicList.lg'));
+        let templates = preloaded.BasicList;
 
         let evaled = templates.evaluate('BasicJoin', { items: ['1'] });
         assert.strictEqual(evaled, '1', `Evaled is ${ evaled }`);
@@ -144,7 +201,7 @@ describe('LG', function() {
     });
 
     it('TestBasicExtendedFunctions', function() {
-        let templates = Templates.parseFile(GetExampleFilePath('6.lg'));
+        let templates = preloaded.six;
         const alarms = [
             {
                 time: '7 am',
@@ -167,7 +224,7 @@ describe('LG', function() {
     });
 
     it('TestCaseInsensitive', function() {
-        let templates = Templates.parseFile(GetExampleFilePath('CaseInsensitive.lg'));
+        let templates = preloaded.CaseInsensitive;
         const alarms = [
             {
                 time: '7 am',
@@ -187,13 +244,13 @@ describe('LG', function() {
     });
 
     it('TestListWithOnlyOneElement', function() {
-        var templates = Templates.parseFile(GetExampleFilePath('8.lg'));
+        var templates = preloaded.eight;
         var evaled = templates.evaluate('ShowTasks', { recentTasks: ['Task1'] });
         assert.strictEqual(evaled === 'Your most recent task is Task1. You can let me know if you want to add or complete a task.', true, `Evaled is ${ evaled }`);
     });
 
     it('TestTemplateNameWithDotIn', function() {
-        var templates = Templates.parseFile(GetExampleFilePath('TemplateNameWithDot.lg'));
+        var templates = preloaded.TemplateNameWithDot;
         var evaled1 = templates.evaluate('Hello.World', '');
         assert.strictEqual(evaled1 === 'Hello World', true, `Evaled is ${ evaled1 }`);
 
@@ -202,7 +259,7 @@ describe('LG', function() {
     });
 
     it('TestMultiLine', function() {
-        var templates = Templates.parseFile(GetExampleFilePath('MultilineTextForAdaptiveCard.lg'));
+        var templates = preloaded.MultilineTextForAdaptiveCard;
         var evaled1 = templates.evaluate('wPhrase', '');
         var options1 = ['\r\ncardContent\r\n', 'hello', '\ncardContent\n'];
         assert.strictEqual(options1.includes(evaled1), true, `1.Evaled is ${ evaled1 }`);
@@ -220,14 +277,14 @@ describe('LG', function() {
     });
 
     it('TestTemplateRef', function() {
-        var templates = Templates.parseFile(GetExampleFilePath('TemplateRef.lg'));
+        var templates = preloaded.TemplateRef;
         var scope = { time: 'morning', name: 'Dong Lei' };
         var evaled1 = templates.evaluate('Hello', scope);
         assert.strictEqual(evaled1, 'Good morning Dong Lei', `Evaled is ${ evaled1 }`);
     });
 
     it('TestEscapeCharacter', function() {
-        var templates = Templates.parseFile(GetExampleFilePath('EscapeCharacter.lg'));
+        var templates = preloaded.EscapeCharacter;
         var evaled = templates.evaluate('wPhrase', undefined);
         assert.strictEqual(evaled, 'Hi \r\n\t\\', 'Happy path failed.');
 
@@ -307,7 +364,7 @@ describe('LG', function() {
             }
         ];
 
-        var templates = Templates.parseFile(GetExampleFilePath('Analyzer.lg'));
+        var templates = preloaded.Analyzer;
         for (const testItem of testData) {
             var evaled1 = templates.analyzeTemplate(testItem.name);
             var variableEvaled = evaled1.Variables;
@@ -322,7 +379,7 @@ describe('LG', function() {
     });
 
     it('TestlgTemplateFunction', function() {
-        var templates = Templates.parseFile(GetExampleFilePath('lgTemplate.lg'));
+        var templates = preloaded.lgTemplate;
         var evaled = templates.evaluate('TemplateC', '');
         var options = ['Hi', 'Hello'];
         assert.strictEqual(options.includes(evaled), true);
@@ -333,7 +390,7 @@ describe('LG', function() {
     });
 
     it('TestTemplateAsFunction', function() {
-        var templates = Templates.parseFile(GetExampleFilePath('TemplateAsFunction.lg'));
+        var templates = preloaded.TemplateAsFunction;
 
         var evaled = templates.evaluate('Test2');
         assert.strictEqual(evaled, 'hello world', `Evaled is ${ evaled }`);
@@ -352,7 +409,7 @@ describe('LG', function() {
     });
 
     it('TestAnalyzelgTemplateFunction', function() {
-        var templates = Templates.parseFile(GetExampleFilePath('lgTemplate.lg'));
+        var templates = preloaded.lgTemplate;
         var evaled = templates.analyzeTemplate('TemplateD');
         var variableEvaled = evaled.Variables;
         var options = ['b'];
@@ -361,7 +418,7 @@ describe('LG', function() {
     });
 
     it('TestImporttemplates', function() {
-        var templates = Templates.parseFile(GetExampleFilePath('importExamples/import.lg'));
+        var templates = preloaded.import;
 
         // Assert 6.lg is imported only once when there are several relative paths which point to the same file.
         // Assert import cycle loop is handled well as expected when a file imports itself.
@@ -403,7 +460,7 @@ describe('LG', function() {
     });
 
     it('TestRegex', function() {
-        var templates = Templates.parseFile(GetExampleFilePath('Regex.lg'));
+        var templates = preloaded.Regex;
         var evaled = templates.evaluate('wPhrase');
         assert.strictEqual(evaled, 'Hi');
 
@@ -415,7 +472,7 @@ describe('LG', function() {
     });
 
     it('TestExpandTemplate', function() {
-        var templates = Templates.parseFile(GetExampleFilePath('Expand.lg'));
+        var templates = preloaded.Expand;
         
         // without scope
         var evaled = templates.expandTemplate('FinalGreeting');
@@ -437,7 +494,7 @@ describe('LG', function() {
     });
 
     it('TestExpandTemplateWithRef', function() {
-        var templates = Templates.parseFile(GetExampleFilePath('Expand.lg'));
+        var templates = preloaded.Expand;
         
         const alarms = [
             {
@@ -457,7 +514,7 @@ describe('LG', function() {
     });
 
     it('TestExpandTemplateWithRefInMultiLine', function() {
-        var templates = Templates.parseFile(GetExampleFilePath('Expand.lg'));
+        var templates = preloaded.Expand;
         
         const alarms = [
             {
@@ -479,7 +536,7 @@ describe('LG', function() {
     });
 
     it('TestExpandTemplateWithFunction', function() {
-        var templates = Templates.parseFile(GetExampleFilePath('Expand.lg'));
+        var templates = preloaded.Expand;
         
         const alarms = [
             {
@@ -517,7 +574,7 @@ describe('LG', function() {
     });
 
     it('TestExpandTemplateWithIsTemplateFunction', function() {
-        const templates = Templates.parseFile(GetExampleFilePath('Expand.lg'));
+        const templates = preloaded.Expand;
 
         let evaled = templates.expandTemplate('template2', {templateName: 'Greeting'});
         assert.strictEqual(evaled.length, 2);
@@ -531,7 +588,7 @@ describe('LG', function() {
     });
 
     it('TestExpandTemplateWithTemplateFunction', function() {
-        const templates = Templates.parseFile(GetExampleFilePath('Expand.lg'));
+        const templates = preloaded.Expand;
 
         let evaled = templates.expandTemplate('template3', {templateName: 'Greeting'});
         assert.strictEqual(evaled.length, 2);
@@ -540,7 +597,7 @@ describe('LG', function() {
     });
 
     it('TestExpandTemplateWithDoubleQuotation', function() {
-        const templates = Templates.parseFile(GetExampleFilePath('Expand.lg'));
+        const templates = preloaded.Expand;
 
         let evaled = templates.expandTemplate('ExpanderT1');
         assert.strictEqual(evaled.length, 2);
@@ -555,7 +612,7 @@ describe('LG', function() {
     });
 
     it('TestExpandTemplateWithEscapeCharacter', function() {
-        const templates = Templates.parseFile(GetExampleFilePath('EscapeCharacter.lg'));
+        const templates = preloaded.EscapeCharacter;
         var evaled = templates.expandTemplate('wPhrase');
         assert.strictEqual(evaled[0], 'Hi \r\n\t\\');
 
@@ -601,7 +658,7 @@ describe('LG', function() {
     });
 
     it('TestExpandTemplateWithEmptyListInStructuredLG', function() {
-        let templates = Templates.parseFile(GetExampleFilePath('Expand.lg'));
+        let templates = preloaded.Expand;
         let data = {
             Data: {
                 Name: "NAME",
@@ -620,12 +677,12 @@ describe('LG', function() {
     });
 
     it('TestExpandTemplateWithStrictMode', function() {
-        let templates = Templates.parseFile(GetExampleFilePath('./EvaluationOptions/StrictModeFalse.lg'));
+        let templates = preloaded.StrictModeFalse;
 
         let evaled = templates.expandTemplate('StrictFalse');
         assert.strictEqual(evaled[0], 'null');
 
-        templates = Templates.parseFile(GetExampleFilePath('./EvaluationOptions/StrictModeTrue.lg'));
+        templates = preloaded.StrictModeTrue;
 
         let errMessage = '';
         try {
@@ -635,10 +692,10 @@ describe('LG', function() {
         }
 
         assert.strictEqual(errMessage.includes("'variable_not_defined' evaluated to null. [StrictTrue]  Error occurred when evaluating '-${variable_not_defined}'"), true);
-    })
+    });
 
     it('TestInlineEvaluate', function() {
-        var templates = Templates.parseFile(GetExampleFilePath('2.lg'));
+        var templates = preloaded.two;
         var evaled = templates.evaluateText('hello');
         assert.strictEqual('hello', evaled);
 
@@ -658,7 +715,7 @@ describe('LG', function() {
     });
 
     it('TestEvalExpression', function() {
-        var templates = Templates.parseFile(GetExampleFilePath('EvalExpression.lg'));
+        var templates = preloaded.EvalExpression;
         const userName = 'MS';
         var evaled = templates.evaluate('template1', {userName});
         assert.strictEqual(evaled, 'Hi MS', `Evaled is ${ evaled }`);
@@ -697,7 +754,7 @@ describe('LG', function() {
     });
 
     it('TestRecursiveTemplate', function() {
-        var templates = Templates.parseFile(GetExampleFilePath('RecursiveTemplate.lg'));
+        var templates = preloaded.RecursiveTemplate;
         var evaled = templates.evaluate('RecursiveAccumulate', {number: 10});
         assert.strictEqual(evaled, 55);
 
@@ -886,7 +943,7 @@ describe('LG', function() {
     });
 
     it('TestMemoryScope', function() {
-        var templates = Templates.parseFile(GetExampleFilePath('MemoryScope.lg'));
+        var templates = preloaded.MemoryScope;
         var evaled = templates.evaluate('T1', { turn: { name: 'Dong', count: 3 } });
         assert.strictEqual(evaled, 'Hi Dong, welcome to Seattle, Seattle is a beautiful place, how many burgers do you want, 3?');
 
@@ -904,7 +961,7 @@ describe('LG', function() {
     });
 
     it('TestStructuredTemplate', function() {
-        var templates = Templates.parseFile(GetExampleFilePath('StructuredTemplate.lg'));
+        var templates = preloaded.StructuredTemplate;
 
         var evaled = templates.evaluate('AskForAge.prompt');
         assert.equal(evaled.text, evaled.speak);
@@ -945,7 +1002,7 @@ describe('LG', function() {
     });
 
     it('TestEvaluateOnce', function() {
-        var templates = Templates.parseFile(GetExampleFilePath('EvaluateOnce.lg'));
+        var templates = preloaded.EvaluateOnce;
 
         var evaled = templates.evaluate('templateWithSameParams', { param: 'ms' });
         assert.notEqual(evaled, undefined);
@@ -960,7 +1017,7 @@ describe('LG', function() {
     });
 
     it('TestConditionExpression', function() {
-        var templates = Templates.parseFile(GetExampleFilePath('ConditionExpression.lg'));
+        var templates = preloaded.ConditionExpression;
 
         var evaled = templates.evaluate('conditionTemplate', { num: 1 });
         assert.equal(evaled, 'Your input is one');
@@ -976,7 +1033,7 @@ describe('LG', function() {
     });
 
     it('TestExpandTemplateWithStructuredLG', function() {
-        var templates = Templates.parseFile(GetExampleFilePath('StructuredTemplate.lg'));
+        var templates = preloaded.StructuredTemplate;
 
         var evaled = templates.expandTemplate('AskForAge.prompt');
         assert.strictEqual(evaled.length, 4, `Evaled is ${ evaled }`);
@@ -1008,7 +1065,7 @@ describe('LG', function() {
     });
 
     it('TestExpressionextract', function() {
-        var templates = Templates.parseFile(GetExampleFilePath('ExpressionExtract.lg'));
+        var templates = preloaded.ExpressionExtract;
 
         var evaled1 = templates.evaluate('templateWithBrackets');
         var evaled2 = templates.evaluate('templateWithBrackets2');
@@ -1044,7 +1101,7 @@ describe('LG', function() {
     });
 
     it('TestEmptyArrayAndObject', function() {
-        var templates = Templates.parseFile(GetExampleFilePath('EmptyArrayAndObject.lg'));
+        var templates = preloaded.EmptyArrayAndObject;
 
         var evaled = templates.evaluate('template', {list:[], obj: {}});
         assert.strictEqual(evaled, 'list and obj are both empty');
@@ -1069,7 +1126,7 @@ describe('LG', function() {
 
     it('TestLGOptions', function() {
         //LGOptionTest has no import files.
-        var templates = Templates.parseFile(GetExampleFilePath('./EvaluationOptions/LGOptionsTest.lg'));
+        var templates = preloaded.LGOptionsTest;
 
         var evaled = templates.evaluate('SayHello');
         assert.strictEqual('hi The user.name is undefined', evaled);
@@ -1080,7 +1137,7 @@ describe('LG', function() {
         //a1.lg imports b1.lg. 
         //a1's option is strictMode is false, replaceNull = ${path} is undefined, and defalut lineBreakStyle.
         //b1's option is strictMode is true, replaceNull = The ${path} is undefined, and markdown lineBreakStyle.
-        var templates2 = Templates.parseFile(GetExampleFilePath('./EvaluationOptions/a1.lg'));
+        var templates2 = preloaded.a1;
 
         var evaled2 = templates2.evaluate('SayHello');
 
@@ -1091,7 +1148,7 @@ describe('LG', function() {
         //a2.lg: replaceNull = The ${path} is undefined  
         //b2.lg: strict = true, replaceNull = ${path} is evaluated to null, please check!
         //c2: lineBreakStyle = markdown
-        var templates3 = Templates.parseFile(GetExampleFilePath('./EvaluationOptions/a2.lg'));
+        var templates3 = preloaded.a2;
 
         var evaled3 = templates3.evaluate('SayHello');
 
@@ -1105,7 +1162,7 @@ describe('LG', function() {
         //b3.lg: lineBreakStyle = default
         //d3: replaceNull = ${path} is evaluated to null in d3!
         //c3: replaceNull = ${path} is evaluated to null in c3!
-        var templates4 = Templates.parseFile(GetExampleFilePath('./EvaluationOptions/a3.lg'));
+        var templates4 = preloaded.a3;
 
         var evaled4 = templates4.evaluate('SayHello');
 
@@ -1130,7 +1187,7 @@ describe('LG', function() {
         //b4.lg, c4.lg: nothing but import statement.
         //d4: only have template definition.
         //f4: only options, strictMode = true, replaceNull = The ${path} is undefined, lineBreaStyle = markdown.
-        var templates5 = Templates.parseFile(GetExampleFilePath('./EvaluationOptions/a4.lg'));
+        var templates5 = preloaded.a4;
 
         var evaled5 = templates5.evaluate('SayHello');
 
@@ -1142,7 +1199,7 @@ describe('LG', function() {
     });
 
     it('TestNullTolerant', function() {
-        var templates = Templates.parseFile(GetExampleFilePath('NullTolerant.lg'));
+        var templates = preloaded.NullTolerant;
 
         var evaled = templates.evaluate('template1');
         assert.strictEqual('null', evaled);
@@ -1157,7 +1214,7 @@ describe('LG', function() {
 
 
     it('TestIsTemplateFunction', function() {
-        var templates = Templates.parseFile(GetExampleFilePath('IsTemplate.lg'));
+        var templates = preloaded.IsTemplate;
 
         var evaled = templates.evaluate('template2', {templateName:'template1'});
         assert.strictEqual(evaled, 'template template1 exists');
@@ -1170,7 +1227,7 @@ describe('LG', function() {
     });
 
     it('TestStringInterpolation', function() {
-        var templates = Templates.parseFile(GetExampleFilePath('StringInterpolation.lg'));
+        var templates = preloaded.StringInterpolation;
 
         var evaled = templates.evaluate('simpleStringTemplate');
         assert.strictEqual(evaled, 'say hi');
@@ -1192,7 +1249,7 @@ describe('LG', function() {
     });
 
     it('TestMemoryAccessPath', function() {
-        var templates = Templates.parseFile(GetExampleFilePath('MemoryAccess.lg'));
+        var templates = preloaded.MemoryAccess;
 
         const scope = {
             myProperty: {
@@ -1221,13 +1278,14 @@ describe('LG', function() {
     });
 
     it('TestReExecute', function() {
-        var templates = Templates.parseFile(GetExampleFilePath('ReExecute.lg'));
+        var templates = preloaded.ReExecute;
 
         // may be has different values
         templates.evaluate('templateWithSameParams', {param1:'ms', param2:'newms'});
     });
 
     it('TestCustomFunction', function() {
+        this.timeout(5000); // We can't preload the template, so need increased timeout
         let parser = new ExpressionParser((func) => {
             if (func === 'custom') {
                 return new NumericEvaluator('custom', 
@@ -1247,6 +1305,7 @@ describe('LG', function() {
     });
 
     it('TestCustomFunction2', function() {
+        this.timeout(5000); // We can't preload the template, so need increased timeout
         Expression.functions.add('contoso.sqrt', (args) => {
             let result = null;
             if (args[0] !== undefined ) {
@@ -1263,8 +1322,6 @@ describe('LG', function() {
     });
 
     it('TestInjectLG', function() {
-        var templates = Templates.parseFile(GetExampleFilePath('./injectionTest/inject.lg'));
-
         var {value: evaled, error} = Expression.parse('foo.bar()').tryEvaluate();
         assert.strictEqual(3, evaled);
 
