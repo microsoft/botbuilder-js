@@ -1,10 +1,10 @@
-const { ConversationState, MemoryStorage, TestAdapter } = require('botbuilder-core');
+const { ActivityTypes, ConversationState, MemoryStorage, TestAdapter } = require('botbuilder-core');
 const { DateTimePrompt, DialogSet, DialogTurnStatus } = require('../');
 const assert = require('assert');
 
-const answerMessage = { text: `January 1st, 2018 at 9am`, type: 'message' };
-const answerMessage2 = { text: `September 2nd, 2012`, type: 'message' };
-const invalidMessage = { text: `I am not sure`, type: 'message' };
+const answerMessage = { text: `January 1st, 2018 at 9am`, type: ActivityTypes.Message };
+const answerMessage2 = { text: `September 2nd, 2012`, type: ActivityTypes.Message };
+const invalidMessage = { text: `I am not sure`, type: ActivityTypes.Message };
 
 describe('DatetimePrompt', function () {
     this.timeout(5000);
@@ -211,7 +211,7 @@ describe('DatetimePrompt', function () {
             .assertReply('Enter a date.')
             .send('')
             .assertReply('Enter a date.')
-            .send({ type: 'message', text: null })
+            .send({ type: ActivityTypes.Message, text: null })
             .assertReply('Enter a date.')
             .send(answerMessage)
             .assertReply('2018-01-01T09');
