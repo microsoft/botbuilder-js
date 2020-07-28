@@ -5,9 +5,10 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { Expression, ReturnType } from './expression';
+import { Expression } from './expression';
 import { MemoryInterface } from './memory';
 import { Options } from './options';
+import { ReturnType } from './returnType';
 
 /**
  * Delegate for doing static validation on an expression.
@@ -16,10 +17,20 @@ import { Options } from './options';
 export type ValidateExpressionDelegate = (expression: Expression) => any;
 
 /**
+ * Value result with error.
+ */
+// eslint-disable-next-line @typescript-eslint/prefer-interface
+export type ValueWithError = 
+{
+    value: any;
+    error: string;
+};
+
+/**
  * Delegate to evaluate an expression.
  * Evaluators should verify runtime arguments when appropriate and return an error rather than throw exceptions if possible.
  */
-export type EvaluateExpressionDelegate = (expression: Expression, state: MemoryInterface, options: Options) => { value: any; error: string };
+export type EvaluateExpressionDelegate = (expression: Expression, state: MemoryInterface, options: Options) => ValueWithError;
 
 /**
  * Delegate to lookup function information from the type.
@@ -66,7 +77,7 @@ export class ExpressionEvaluator {
      * @param expression Expression to evaluate.
      * @param state Global state information.
      */
-    public tryEvaluate = (expression: Expression, state: MemoryInterface, options: Options): { value: any; error: string } => this._evaluator(expression, state, options);
+    public tryEvaluate = (expression: Expression, state: MemoryInterface, options: Options): ValueWithError => this._evaluator(expression, state, options);
     /**
      * Validate an expression.
      * @param expression Expression to validate.
