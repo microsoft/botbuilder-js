@@ -2,13 +2,10 @@
 // Licensed under the MIT License.
 
 const path = require('path');
-
 const dotenv = require('dotenv');
 // Import required bot configuration.
 const ENV_FILE = path.join(__dirname, '.env');
 dotenv.config({ path: ENV_FILE });
-
-const restify = require('restify');
 
 // Import required bot services.
 // See https://aka.ms/bot-services to learn more about the different parts of a bot.
@@ -19,7 +16,7 @@ const renewDirectLineToken = require('./utils/renewDirectLineToken');
 
 // This bot's main dialog.
 const { EchoBot } = require('./bot');
-
+const restify = require('restify');
 
 // Create HTTP server
 const server = restify.createServer();
