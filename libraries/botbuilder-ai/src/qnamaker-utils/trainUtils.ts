@@ -41,7 +41,7 @@ export class TrainUtils {
             return;
         }
 
-        await this.queryTrainAsync(feedbackRecords);
+        await this.queryTrain(feedbackRecords);
     }
 
     private async queryTrain(feedbackRecords: FeedbackRecords) {
