@@ -255,7 +255,7 @@ export class QnAMaker implements QnAMakerTelemetryClient {
      * @param feedbackRecords Feedback records.
      */
     public async callTrainAsync(feedbackRecords: FeedbackRecords) {
-        return await this.trainUtils.callTrainAsync(feedbackRecords);
+        return await this.trainUtils.callTrain(feedbackRecords);
     }
 
     /**

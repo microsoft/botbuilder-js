@@ -46,7 +46,7 @@ export class OnAssignEntity extends OnDialogEvent {
             expressions.push(parser.parse(`${ TurnPath.dialogEvent }.value.entity.name == '${ this.entity }'`));
         }
         if (this.operation) {
-            expressions.push(parser.parse(`${ TurnPath.dialogEvent }.value.entity.operation == '${ this.operation }'`));
+            expressions.push(parser.parse(`${ TurnPath.dialogEvent }.value.operation == '${ this.operation }'`));
         }
 
         return Expression.andExpression.apply(Expression, expressions);
