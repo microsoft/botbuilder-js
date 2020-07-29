@@ -9,7 +9,7 @@ interface Bar {
     choices: ChoiceSet;
 }
 
-function testValues(value){
+function assertValues(value){
     assert.equal('test1', value[0].value);
     assert.equal('test2', value[1].value);
     assert.equal('test3', value[2].value);
@@ -28,14 +28,14 @@ describe('ChoiceSetTests', function() {
         };
         const ep = new ObjectExpression<ChoiceSet>('choices');
         const { value } = ep.tryGetValue(state);
-        testValues(value);
+        assertValues(value);
     });
 
     it('TestValue', async () => {
         const state = {};
         const ep = new ObjectExpression<ChoiceSet>(new ChoiceSet([{ value: 'test1' }, { value: 'test2' }, { value: 'test3' }]));
         const { value } = ep.tryGetValue(state);
-        testValues(value);
+        assertValues(value);
     });
 
     it('TestStringArrayAccess', async () => {
@@ -43,7 +43,7 @@ describe('ChoiceSetTests', function() {
         const stringArr = ['test1', 'test2', 'test3'];
         const ep = new ObjectExpression<ChoiceSet>(new ChoiceSet(stringArr));
         const { value } = ep.tryGetValue(state);
-        testValues(value);
+        assertValues(value);
     });
 
     it('TestConverterExpressionAccess', async () => {
@@ -61,7 +61,7 @@ describe('ChoiceSetTests', function() {
 
         const ep = new ObjectExpression<ChoiceSet>(sample.choices);
         const { value } = ep.tryGetValue(state);
-        testValues(value);
+        assertValues(value);
     });
 
     it('TestConvertObjectAccess', async () => {
@@ -81,7 +81,7 @@ describe('ChoiceSetTests', function() {
         // TS doesn't run 'new' automatically unlike C#
         const choicesBar = new ObjectExpression<ChoiceSet>(bar.choices);
         const { value } = choicesBar.tryGetValue(state);
-        testValues(value);
+        assertValues(value);
     });
 
     it('TestConvertStringAccess', async () => {
@@ -102,7 +102,7 @@ describe('ChoiceSetTests', function() {
         // TS doesn't run 'new' automatically unlike C#
         const choicesBar = new ObjectExpression<ChoiceSet>(bar.choices);
         const { value } = choicesBar.tryGetValue(state);
-        testValues(value);
+        assertValues(value);
     });
 
     it('TestConvertStringArray', async () => {
@@ -114,6 +114,6 @@ describe('ChoiceSetTests', function() {
         const json = JSON.stringify(sample);
         const value = new ChoiceSet(JSON.parse(json));
 
-        testValues(value);
+        assertValues(value);
     });
 });
