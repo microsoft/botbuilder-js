@@ -52,15 +52,7 @@ export class HttpRequestUtils {
             body: payloadBody
         });
 
-        let json;
-        if (this.isSuccessfulTrainApiResult(requestUrl, qnaResult.status)) {
-            json = this.getSuccessfulTrainApiResult();
-        } else {
-            json = await qnaResult.json();
-        }
-        
-        // return (this.isSuccessfulTrainApiResult(requestUrl, qnaResult.status)) ? this.getSuccessfulTrainApiResult() : await qnaResult.json();
-        return json;
+        return (qnaResult.status == 204) ? this.getSuccessful204Result() : await qnaResult.json();
     }
 
     /**
@@ -95,10 +87,16 @@ export class HttpRequestUtils {
         return url.includes('/train') && status == 204;
     }
 
-    private getSuccessfulTrainApiResult(): QnAMakerResult {
+    /**
+     * Creates a QnAMakerResult for successful responses from QnA Maker service that return status code 204 No-Content.
+     * 
+     * The [Train API](https://docs.microsoft.com/en-us/rest/api/cognitiveservices/qnamakerruntime/runtime/train) 
+     * is an example of one of QnA Maker's APIs that return a 204 status code.
+     */
+    private getSuccessful204Result(): QnAMakerResult {
         return {
             questions: [],
-            answer: "Successfully trained.",
+            answer: "204 No-Content",
             score: 100,
             id: -1,
             source: null,

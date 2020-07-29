@@ -797,7 +797,7 @@ describe('QnAMaker', function () {
 
         const successfullyTrainedResult = { 
             questions: [],
-            answer: "Successfully trained.",
+            answer: "204 No-Content",
             score: 100,
             id: -1,
             source: null,
