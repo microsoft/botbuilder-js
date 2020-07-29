@@ -41,7 +41,7 @@ export class TrainUtils {
             return;
         }
 
-        await this.queryTrainAsync(feedbackRecords);
+        return await this.queryTrainAsync(feedbackRecords);
     }
 
     private async queryTrainAsync(feedbackRecords: FeedbackRecords) {
@@ -50,6 +50,6 @@ export class TrainUtils {
             feedbackRecords: feedbackRecords.feedbackRecords
         });
         
-        await this.httpRequestUtils.executeHttpRequest(url, payloadBody, this.endpoint);
+        return await this.httpRequestUtils.executeHttpRequest(url, payloadBody, this.endpoint);
     }
 }

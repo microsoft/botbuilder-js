@@ -45,20 +45,22 @@ export class HttpRequestUtils {
 
         const headers: any = this.getHeaders(endpoint);
 
-        try {
-            const qnaResult = await fetch(requestUrl, {
-                method: 'POST',
-                headers: headers,
-                timeout: timeout,
-                body: payloadBody
-            });
-            const jsonResult = qnaResult.status == 204 ? this.getSuccessfulTrainApiResult() : await qnaResult.json();
+        const qnaResult = await fetch(requestUrl, {
+            method: 'POST',
+            headers: headers,
+            timeout: timeout,
+            body: payloadBody
+        });
 
-            return jsonResult;
-
-        } catch (error) {
-            throw error;
+        let json;
+        if (this.isSuccessfulTrainApiResult(requestUrl, qnaResult.status)) {
+            json = this.getSuccessfulTrainApiResult();
+        } else {
+            json = await qnaResult.json();
         }
+        
+        // return (this.isSuccessfulTrainApiResult(requestUrl, qnaResult.status)) ? this.getSuccessfulTrainApiResult() : await qnaResult.json();
+        return json;
     }
 
     /**
@@ -87,6 +89,10 @@ export class HttpRequestUtils {
         const platformUserAgent: string = `(${ os.arch() }-${ os.type() }-${ os.release() }; Node.js,Version=${ process.version })`;
 
         return `${ packageUserAgent } ${ platformUserAgent }`;
+    }
+
+    private isSuccessfulTrainApiResult(url, status) {
+        return url.includes('/train') && status == 204;
     }
 
     private getSuccessfulTrainApiResult(): QnAMakerResult {
