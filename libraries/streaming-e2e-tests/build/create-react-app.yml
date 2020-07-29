@@ -5,7 +5,7 @@ steps:
     displayName: 'create-react-app'
     workingDirectory: $(RootReactPiecesDir)
 
-  - powershell: npm install botframework-webchat
+  - powershell: npm install botframework-webchat@4.9.2
     displayName: 'npm install botframework-webchat'
     workingDirectory: $(RootReactPiecesDir)/react-app
 
