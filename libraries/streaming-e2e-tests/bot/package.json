@@ -16,12 +16,10 @@
         "url": "https://github.com"
     },
     "dependencies": {
-        "body-parser": "^1.19.0",
         "botbuilder": "~4.9.1",
         "dotenv": "^8.2.0",
         "math-random": "^1.0.4",
-        "restify": "~8.5.1",
-        "restify-cors-middleware": "^1.1.1"
+        "restify": "~8.5.1"
     },
     "devDependencies": {
         "eslint": "^7.0.0",

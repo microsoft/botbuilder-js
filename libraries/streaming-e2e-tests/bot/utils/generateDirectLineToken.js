@@ -2,7 +2,7 @@ const createUserId = require('./createUserId');
 
 module.exports = async function (
   directLineSecret = process.env.DIRECT_LINE_SECRET,
-  { domain = process.env.DIRECT_LINE_URL || 'https://directline.botframework.com/', userId = createUserId() } = {}
+  { domain = process.env.WEBSITE_HOSTNAME, userId = createUserId() } = {}
 ) {
   console.log(
     `Generating Direct Line token using secret "${directLineSecret.substr(0, 3)}...${directLineSecret.substr(
@@ -10,17 +10,10 @@ module.exports = async function (
     )}" and user ID "${userId}"`
   );
   
-  const WEBSITE_HOSTNAME = process.env.WEBSITE_HOSTNAME;
   const tokenRes = await fetch(`${domain}v3/directline/tokens/generate`, {
     body: JSON.stringify({
       user: { id: userId },
-      trustedOrigins: [
-        'https://compulim.github.io/',
-        'https://microsoft.github.io/',
-        'https://webchat-mockbot2.azurewebsites.net/',
-        'http://localhost',
-        `https://${WEBSITE_HOSTNAME}.azurewebsites.net/`
-      ]
+      trustedOrigins: [`${domain}/`]
     }),
     headers: {
       authorization: `Bearer ${directLineSecret}`,
