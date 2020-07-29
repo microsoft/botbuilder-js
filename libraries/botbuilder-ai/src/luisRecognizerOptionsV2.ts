@@ -51,7 +51,7 @@ export class LuisRecognizerV2 extends LuisRecognizerInternal {
 
     private luisClient: LuisClient;
 
-    async recognizeInternalAsync(context: TurnContext): Promise<RecognizerResult> {
+    async recognizeInternal(context: TurnContext): Promise<RecognizerResult> {
         const luisPredictionOptions = this.options;
         const utterance: string = context.activity.text || '';
 

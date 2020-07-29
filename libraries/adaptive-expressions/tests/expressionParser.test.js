@@ -1,15 +1,23 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
 /* eslint-disable @typescript-eslint/no-var-requires */
-const {Expression, SimpleObjectMemory, ExpressionFunctions, Options} = require('../lib');
+const {Expression, SimpleObjectMemory, FunctionUtils, Options } = require('../lib');
 var {TimexProperty} = require('@microsoft/recognizers-text-data-types-timex-expression');
 const assert = require('assert');
 const moment = require('moment');
-const bigInt = require('big-integer')
+const bigInt = require('big-integer');
+const { useFakeTimers } = require('sinon');
 
 const one = ['one'];
 const oneTwo = ['one', 'two'];
 const dataSource = [
 
+    // Time sensitive test
+    ['getPastTime(1, \'Year\', \'MM-dd-yy\')', moment(new Date().toISOString()).utc().subtract(1, 'years').format('MM-DD-YY')],
+    ['getPastTime(1, \'Month\', \'MM-dd-yy\')', moment(new Date().toISOString()).utc().subtract(1, 'months').format('MM-DD-YY')],
+    ['getPastTime(1, \'Week\', \'MM-dd-yy\')', moment(new Date().toISOString()).utc().subtract(7, 'days').format('MM-DD-YY')],
+    ['getPastTime(1, \'Day\', \'MM-dd-yy\')', moment(new Date().toISOString()).utc().subtract(1, 'days').format('MM-DD-YY')],
+    ['getFutureTime(1, \'Year\', \'MM-dd-yy\')', moment(new Date().toISOString()).utc().add(1, 'years').format('MM-DD-YY')],
+    
     // accessProperty and accessIndex
     ['$index', 'index'],
     ['`hi\\``', 'hi`'], // `hi\`` -> hi`
@@ -464,7 +472,6 @@ const dataSource = [
     ['date(timestamp)', '3/15/2018'],//Default. TODO
     ['year(timestamp)', 2018],
     ['length(utcNow())', 24],
-    ['utcNow(\'MM-DD-YY HH\')', 'getNowTime'],
     ['formatDateTime(notISOTimestamp)', '2018-03-15T13:00:00.000Z'],
     ['formatDateTime(notISOTimestamp, \'MM-dd-yy\')', '03-15-18'],
     ['formatDateTime(notISOTimestamp, \'ddd\')', 'Thu'],
@@ -507,15 +514,7 @@ const dataSource = [
     ['getTimeOfDay(\'2018-03-15T22:00:00.000Z\')', 'evening'],
     ['getTimeOfDay(\'2018-03-15T23:00:00.000Z\')', 'night'],
     ['length(getPastTime(1, \'Year\'))', 24],
-    ['getPastTime(1, \'Year\', \'MM-dd-yy\')', moment(new Date().toISOString()).utc().subtract(1, 'years').format('MM-DD-YY')],
-    ['getPastTime(1, \'Month\', \'MM-dd-yy\')', moment(new Date().toISOString()).utc().subtract(1, 'months').format('MM-DD-YY')],
-    ['getPastTime(1, \'Week\', \'MM-dd-yy\')', moment(new Date().toISOString()).utc().subtract(7, 'days').format('MM-DD-YY')],
-    ['getPastTime(1, \'Day\', \'MM-dd-yy\')', moment(new Date().toISOString()).utc().subtract(1, 'days').format('MM-DD-YY')],
-    ['getFutureTime(1, \'Year\', \'MM-dd-yy\')', moment(new Date().toISOString()).utc().add(1, 'years').format('MM-DD-YY')],
     ['length(getFutureTime(1, \'Year\'))', 24],
-    ['getFutureTime(1, \'Month\', \'MM-dd-yy\')', moment(new Date().toISOString()).utc().add(1, 'months').format('MM-DD-YY')],
-    ['getFutureTime(1, \'Week\', \'MM-dd-yy\')', moment(new Date().toISOString()).utc().add(7, 'days').format('MM-DD-YY')],
-    ['getFutureTime(1, \'Day\', \'MM-dd-yy\')', moment(new Date().toISOString()).utc().add(1, 'days').format('MM-DD-YY')],
     ['addToTime(\'2018-01-01T08:00:00.000Z\', 1, \'Day\')', '2018-01-02T08:00:00.000Z'],
     ['addToTime(\'2018-01-01T08:00:00.000Z\', sub(3,1), \'Week\')', '2018-01-15T08:00:00.000Z'],
     ['addToTime(\'2018-01-01T08:00:00.000Z\', 1, \'Month\', \'MM-DD-YY\')', '02-01-18'],
@@ -841,30 +840,77 @@ describe('expression parser functional test', () => {
             var parsed = Expression.parse(input);
             assert(parsed !== undefined);
             var {value: actual, error} = parsed.tryEvaluate(scope);
-            assert(error === undefined, `input: ${input}, Has error: ${error}`);
+            assert(error === undefined, `input: ${input}, Has error: ${error}, with expression ${ input }`);
 
             let expected = data[1];
 
-            // There's an issue when running this test near the end of an hour,
-            // where expected 'HH' doesn't always match up. This ensures it's synced with the current hour.
-            if (input === 'utcNow(\'MM-DD-YY HH\')' && expected === 'getNowTime') {
-                expected = moment(new Date().toISOString()).utc().format('MM-DD-YY HH');
-            }
-
-            assertObjectEquals(actual, expected);
+            assertObjectEquals(actual, expected, input);
 
             //Assert ExpectedRefs
             if (data.length === 3) {
                 const actualRefs = parsed.references();
-                assertObjectEquals(actualRefs.sort(), data[2].sort());
+                assertObjectEquals(actualRefs.sort(), data[2].sort(), input);
             }
 
             //ToString re-parse
             const newExpr = Expression.parse(parsed.toString());
             const newActual = newExpr.tryEvaluate(scope).value;
-            assertObjectEquals(actual, newActual);
+            assertObjectEquals(actual, newActual, input);
         }
     }).timeout(5000);
+
+    // Any test getting the system time with something like `new Date()` is prone to failure because
+    // actual and expected may differ just enough make the test fail.
+    // To evaluate expressions like "getPastTime", we need to freeze the system clock so that every call to
+    // `new Date()` done by both the test and by ExpressionEvaluator return the exact same time.
+    it('should appropriately evaluate time-related expressions', () => {
+        // Freeze the system clock.
+        // The expected date in MM-DD-YY HH is 01-01-20 00
+        let clock = useFakeTimers({
+            now: new Date(Date.UTC(2020, 0, 1)),
+            shouldAdvanceTime: false,
+        });
+
+        const timeDataSource = [
+            ['utcNow(\'MM-DD-YY HH\')', '01-01-20 00'],
+            ['getPastTime(1, \'Year\', \'MM-dd-yy\')', '01-01-19'],
+            ['getPastTime(1, \'Month\', \'MM-dd-yy\')', '12-01-19'],
+            ['getPastTime(1, \'Week\', \'MM-dd-yy\')', '12-25-19'],
+            ['getPastTime(1, \'Day\', \'MM-dd-yy\')', '12-31-19'],
+            ['getFutureTime(1, \'Year\', \'MM-dd-yy\')', '01-01-21'],
+            ['getFutureTime(1, \'Month\', \'MM-dd-yy\')', '02-01-20'],
+            ['getFutureTime(1, \'Week\', \'MM-dd-yy\')', '01-08-20'],
+            ['getFutureTime(1, \'Day\', \'MM-dd-yy\')', '01-02-20']
+        ];
+        try {
+            for (const data of timeDataSource) {
+                const input = data[0].toString();
+                console.log(input);
+                var parsed = Expression.parse(input);
+                assert(parsed !== undefined);
+                var {value: actual, error} = parsed.tryEvaluate(scope);
+                assert(error === undefined, `input: ${input}, Has error: ${error}, with expression ${ input }`);
+    
+                let expected = data[1];
+    
+                assertObjectEquals(actual, expected, input);
+    
+                //Assert ExpectedRefs
+                if (data.length === 3) {
+                    const actualRefs = parsed.references();
+                    assertObjectEquals(actualRefs.sort(), data[2].sort(), input);
+                }
+    
+                //ToString re-parse
+                const newExpr = Expression.parse(parsed.toString());
+                const newActual = newExpr.tryEvaluate(scope).value;
+                assertObjectEquals(actual, newActual, input);
+            }
+        } finally {
+            // Un-freeze the system clock
+            clock.restore();
+        }
+    });
 
     it('Test AccumulatePath', () => {
         const scope = {
@@ -880,22 +926,22 @@ describe('expression parser functional test', () => {
         // normal case, note, we doesn't append a " yet
         let exp = Expression.parse('a[f].b[n].z');
         let path = undefined;
-        ({path, left, error} = ExpressionFunctions.tryAccumulatePath(exp, memory, undefined));
+        ({path, left, error} = FunctionUtils.tryAccumulatePath(exp, memory, undefined));
         assert.strictEqual(path, 'a[\'foo\'].b[2].z');
 
         // normal case
         exp = Expression.parse('a[z.z][z.z].y');
-        ({path, left, error} = ExpressionFunctions.tryAccumulatePath(exp, memory, undefined));
+        ({path, left, error} = FunctionUtils.tryAccumulatePath(exp, memory, undefined));
         assert.strictEqual(path, 'a[\'zar\'][\'zar\'].y');
 
         // normal case
         exp = Expression.parse('a.b[z.z]');
-        ({path, left, error} = ExpressionFunctions.tryAccumulatePath(exp, memory, undefined));
+        ({path, left, error} = FunctionUtils.tryAccumulatePath(exp, memory, undefined));
         assert.strictEqual(path, 'a.b[\'zar\']');
 
         // stop evaluate at middle
         exp = Expression.parse('json(x).b');
-        ({path, left, error} = ExpressionFunctions.tryAccumulatePath(exp, memory, undefined));
+        ({path, left, error} = FunctionUtils.tryAccumulatePath(exp, memory, undefined));
         assert.strictEqual(path, 'b');
 
     });
@@ -955,27 +1001,27 @@ describe('expression parser functional test', () => {
     });
 });
 
-var assertObjectEquals = (actual, expected) => {
+var assertObjectEquals = (actual, expected, input) => {
+    const debugMessage = `actual is: ${ actual }, expected is ${ expected }, with expression ${ input }`;
     if (actual === undefined && expected === undefined) {
         return;
     } else if (actual === undefined || expected === undefined) {
-        assert.fail();
+        assert.fail(`actual or expected was undefined. ${ debugMessage }`);
     } else if (typeof actual === 'number' && typeof expected === 'number') {
-        assert.equal(parseFloat(actual), parseFloat(expected), `actual is: ${actual}, expected is ${expected}`);
+        assert.equal(parseFloat(actual), parseFloat(expected), `Numbers don't match. ${ debugMessage }`);
     } else if (Array.isArray(actual) && Array.isArray(expected)) {
         assert.equal(actual.length, expected.length);
         for (let i = 0; i < actual.length; i++) {
-            assertObjectEquals(actual[i], expected[i], `actual is: ${actual[i]}, expected is ${expected[i]}`);
+            assertObjectEquals(actual[i], expected[i], `Array doesn't match. ${ debugMessage }`);
         }
     } else if (actual instanceof Uint8Array && expected instanceof Uint8Array) {
         assert.equal(actual.length, expected.length);
         for (let i = 0; i < actual.length; i++) {
-            assertObjectEquals(actual[i], expected[i], `actual is: ${actual[i]}, expected is ${expected[i]}`);
+            assertObjectEquals(actual[i], expected[i], `Uint8Array doesn't match. ${ debugMessage }`);
         }
     } else if (bigInt.isInstance(actual) && bigInt.isInstance(expected)) {
-        assert(actual.equals(expected), `actual is: ${actual}, expected is ${expected}`);
-    }
-    else {
-        assert.equal(actual, expected, `actual is: ${actual}, expected is ${expected}`);
+        assert(actual.equals(expected), `bigInt is not equal. ${ debugMessage }`);
+    } else {
+        assert.equal(actual, expected, `Acutal and expected don't match. ${ debugMessage }`);
     }
 };
