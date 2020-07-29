@@ -46,7 +46,7 @@ describe('QnAMaker', function () {
         host: `https://${ hostname }.azurewebsites.net/qnamaker`
     }
 
-    beforeEach(this.test, function(done){
+    beforeEach(function(done){
         nock.cleanAll();
         if (mockQnA) {
             var fileName = replaceCharacters(this.currentTest.title);
