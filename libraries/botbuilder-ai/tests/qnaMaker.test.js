@@ -859,7 +859,7 @@ describe('QnAMaker', function () {
 
             const trainUtils = new TrainUtils(endpoint);
             
-            assert.doesNotReject(async () => await trainUtils.callTrainAsync(feedbackRecords));
+            assert.doesNotReject(async () => await trainUtils.callTrain(feedbackRecords));
         });
     });
 });
