@@ -1,6 +1,6 @@
 module.exports = async function (
     token,
-    { domain = process.env.DIRECT_LINE_URL || 'https://directline.botframework.com/' } = {}
+    { domain = process.env.WEBSITE_HOSTNAME } = {}
   ) {
     // TODO: We could use the "iss" in the token, as long as they are trusted.
     console.log(`Renewing Direct Line token using token "${token.substr(0, 3)}...${token.substr(-3)}"`);

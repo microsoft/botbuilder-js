@@ -10,7 +10,7 @@ module.exports = async function (
     )}" and user ID "${userId}"`
   );
   
-  const tokenRes = await fetch(`${domain}v3/directline/tokens/generate`, {
+  const tokenRes = await fetch(`${domain}/v3/directline/tokens/generate`, {
     body: JSON.stringify({
       user: { id: userId },
       trustedOrigins: [`${domain}/`]
