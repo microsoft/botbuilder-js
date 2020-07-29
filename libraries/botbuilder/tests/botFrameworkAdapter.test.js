@@ -1707,11 +1707,32 @@ describe(`BotFrameworkAdapter`, function () {
     });
 
     describe('getTokenStatus()', () => {
-        xit(`should return the status of every connection the user has`, async () => {
-            const adapter = new AdapterUnderTest();
-            const context = new TurnContext(adapter, incomingMessage);
-            const responses = await adapter.getTokenStatus(context);
-            assert(responses.length > 0);
+        it(`should return the status of every connection the user has`, async function () {
+            const mockedTokenStatusResponse = {
+                channelId: 'mockChannel',
+                connectionName: 'mockConnectionName',
+                hasToken: true,
+                serviceProviderDisplayName: 'mockDisplayName'
+            };
+
+            const adapter = new BotFrameworkAdapter();
+            const userToken = new UserToken('token');
+
+            stub(adapter, 'createTokenApiClient').returns({ userToken: userToken });
+            const getTokenStatusStub = stub(userToken, 'getTokenStatus').returns({_response: {status: 200, parsedBody: [mockedTokenStatusResponse]}});
+            
+            const context = new TurnContext(adapter, CreateActivity());
+
+            try {
+                const responses = await adapter.getTokenStatus(context, 'userId');
+                assert(responses.length > 0);
+                assert(responses[0].channelId == mockedTokenStatusResponse.channelId);
+                assert(responses[0].connectionName == mockedTokenStatusResponse.connectionName);
+                assert(responses[0].hasToken == true);
+                assert(responses[0].serviceProviderDisplayName == mockedTokenStatusResponse.serviceProviderDisplayName);
+            } finally {
+                getTokenStatusStub.restore();
+            }
         });
 
         it(`should call client.userToken getTokenStatus()`, async function () {
