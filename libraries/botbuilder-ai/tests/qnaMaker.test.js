@@ -848,7 +848,7 @@ describe('QnAMaker', function () {
             assert.rejects(async () => await httpUtils.executeHttpRequest(endpoint.host + trainApi, malformedPayloadBody, endpoint));
         });
 
-        it('callTrainAsync() should send correct payload body to Train API and return result', async function() {
+        it('callTrainAsync() should send correct payload body to Train API', async function() {
             nock(endpoint.host)
                 .post(trainApi)
                 .reply(204);
@@ -858,9 +858,8 @@ describe('QnAMaker', function () {
             }
 
             const trainUtils = new TrainUtils(endpoint);
-            const qnaResult = await trainUtils.callTrainAsync(feedbackRecordsObj);
             
-            assert.deepStrictEqual(qnaResult, successfullyTrainedResult);
+            assert.doesNotReject(async () => await trainUtils.callTrainAsync(feedbackRecords));
         });
     });
 });
