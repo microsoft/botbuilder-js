@@ -13,17 +13,13 @@ steps:
     displayName: "Delete files we're replacing with custom code in react app"
     workingDirectory: $(RootReactPiecesDir)/react-app
 
-  - powershell: New-Item .env
-    displayName: 'Create .env in React app'
-    workingDirectory: $(RootReactPiecesDir)/react-app
-
   - powershell: |
       copy ../custom-app-code/App.js, ../custom-app-code/index.js, ../custom-app-code/.gitignore ./src/
       copy ../custom-app-code/index.html ./public
     displayName: "Copy custom files into react-app"
     workingDirectory: $(RootReactPiecesDir)/react-app
 
-  - powershell: ##vso[task.setvariable variable=BOT_HOSTNAME]$(BotName)
+  - powershell: "##vso[task.setvariable variable=BOT_HOSTNAME]$(BotName)"
     displayName: "Write bot's website host name to pipeline variable"
     workingDirectory: $(RootReactPiecesDir)/react-app
 
