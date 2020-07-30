@@ -1,54 +1,54 @@
-steps:
-  - task: PowerShell@2
-    displayName: 'Get latest $(PackageName) package version from MyGet - https://botbuilder.myget.org/gallery/botbuilder-v4-js-daily'
-    inputs:
-      targetType: 'filePath'
-      filePath: $(System.DefaultWorkingDirectory)/libraries/streaming-e2e-tests/build/get-latest-bbjs-daily-version.ps1
-      arguments:
-        -AccessToken $(MyGetPersonalAccessToken)
-        -PackageName $(PackageName)
+# steps:
+#   - task: PowerShell@2
+#     displayName: 'Get latest $(PackageName) package version from MyGet - https://botbuilder.myget.org/gallery/botbuilder-v4-js-daily'
+#     inputs:
+#       targetType: 'filePath'
+#       filePath: $(System.DefaultWorkingDirectory)/libraries/streaming-e2e-tests/build/get-latest-bbjs-daily-version.ps1
+#       arguments:
+#         -AccessToken $(MyGetPersonalAccessToken)
+#         -PackageName $(PackageName)
   
-  # Repeating tagging and setting dependency version steps, but varying on PackageName 
-  # due to DevOps YAML inability to handle nested variables for dynamic variable names
-  - task: colinsalmcorner.colinsalmcorner-buildtasks.tag-build-task.tagBuildOrRelease@0
-    displayName: 'Tag Build with $(BotBuilder) version'
-    condition: eq(variables.PackageName, 'botbuilder')
-    inputs:
-      tags: 'Using $(PackageName) version $(LatestVersion_botbuilder)'
+#   # Repeating tagging and setting dependency version steps, but varying on PackageName 
+#   # due to DevOps YAML inability to handle nested variables for dynamic variable names
+#   - task: colinsalmcorner.colinsalmcorner-buildtasks.tag-build-task.tagBuildOrRelease@0
+#     displayName: 'Tag Build with $(BotBuilder) version'
+#     condition: eq(variables.PackageName, 'botbuilder')
+#     inputs:
+#       tags: 'Using $(PackageName) version $(LatestVersion_botbuilder)'
 
-  - task: colinsalmcorner.colinsalmcorner-buildtasks.tag-build-task.tagBuildOrRelease@0
-    displayName: 'Tag Build with $(BfStreaming) version'
-    condition: eq(variables.PackageName, 'botframework-streaming')
-    inputs:
-      tags: 'Using $(PackageName) version $(LatestVersion_streaming)'
+#   - task: colinsalmcorner.colinsalmcorner-buildtasks.tag-build-task.tagBuildOrRelease@0
+#     displayName: 'Tag Build with $(BfStreaming) version'
+#     condition: eq(variables.PackageName, 'botframework-streaming')
+#     inputs:
+#       tags: 'Using $(PackageName) version $(LatestVersion_streaming)'
 
-  - task: PowerShell@2
-    displayName: Set Dependency to Latest $(PackageName) Version
-    condition: eq(variables.PackageName, 'botbuilder')
-    inputs:
-        targetType: 'filePath'
-        filePath: $(System.DefaultWorkingDirectory)/libraries/streaming-e2e-tests/build/set-dependency-version-in-packagejson.ps1
-        arguments:
-          -LatestVersion $(LatestVersion_botbuilder)
-          -PathToPJson $(TargetProjectDir)/package.json
-          -Package $(PackageName);
+#   - task: PowerShell@2
+#     displayName: Set Dependency to Latest $(PackageName) Version
+#     condition: eq(variables.PackageName, 'botbuilder')
+#     inputs:
+#         targetType: 'filePath'
+#         filePath: $(System.DefaultWorkingDirectory)/libraries/streaming-e2e-tests/build/set-dependency-version-in-packagejson.ps1
+#         arguments:
+#           -LatestVersion $(LatestVersion_botbuilder)
+#           -PathToPJson $(TargetProjectDir)/package.json
+#           -Package $(PackageName);
   
-  - task: PowerShell@2
-    displayName: Set Dependency to Latest $(PackageName) Version
-    condition: eq(variables.PackageName, 'botframework-streaming')
-    inputs:
-        targetType: 'filePath'
-        filePath: $(System.DefaultWorkingDirectory)/libraries/streaming-e2e-tests/build/set-dependency-version-in-packagejson.ps1
-        arguments:
-          -LatestVersion $(LatestVersion_streaming)
-          -PathToPJson $(TargetProjectDir)/package.json
-          -Package $(PackageName);
+#   - task: PowerShell@2
+#     displayName: Set Dependency to Latest $(PackageName) Version
+#     condition: eq(variables.PackageName, 'botframework-streaming')
+#     inputs:
+#         targetType: 'filePath'
+#         filePath: $(System.DefaultWorkingDirectory)/libraries/streaming-e2e-tests/build/set-dependency-version-in-packagejson.ps1
+#         arguments:
+#           -LatestVersion $(LatestVersion_streaming)
+#           -PathToPJson $(TargetProjectDir)/package.json
+#           -Package $(PackageName);
 
-  - powershell: |
-      Set-Location -Path "$(TargetProjectDir)"
+#   - powershell: |
+#       Set-Location -Path "$(TargetProjectDir)"
       
-      New-Item -Path . -Name ".npmrc" -ItemType "file" -Value "registry=https://botbuilder.myget.org/F/botbuilder-v4-js-daily/npm/"
-    displayName: 'Create .npmrc for MyGet feed - https://botbuilder.myget.org/gallery/botbuilder-v4-js-daily'
+#       New-Item -Path . -Name ".npmrc" -ItemType "file" -Value "registry=https://botbuilder.myget.org/F/botbuilder-v4-js-daily/npm/"
+#     displayName: 'Create .npmrc for MyGet feed - https://botbuilder.myget.org/gallery/botbuilder-v4-js-daily'
   
   - task: Npm@1
     displayName: 'npm install'
