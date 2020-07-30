@@ -115,10 +115,10 @@ server.post('/api/token/directlinease', async (req, res) => {
         }
 
         if (token) {
-            console.log(`Refreshing Direct Line token`);
+            console.log(`Refreshing Direct Line ASE token`);
         } else {
             console.log(
-                `Requesting Direct Line token using secret "${DIRECT_LINE_SECRET.substr(
+                `Requesting Direct Line ASE token using secret "${DIRECT_LINE_SECRET.substr(
                 0,
                 3
                 )}...${DIRECT_LINE_SECRET.substr(-3)}"`
