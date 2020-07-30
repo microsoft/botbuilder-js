@@ -389,7 +389,7 @@ export class AdaptiveDialogComponentRegistration implements ComponentRegistratio
     private registerCustomDialogs(): void {
         const schemas = this._resourceExplorer.getResources('.schema');
         for (const schema of schemas) {
-            const resourceId = schema.id().replace(/.schema$/, '');
+            const resourceId = schema.id.replace(/.schema$/, '');
             if (resourceId.endsWith('.dialog')) {
                 this.registerBuilder(resourceId, new CustomDialogTypeBuilder(DynamicBeginDialog, this._resourceExplorer, {
                     'options': new ObjectExpressionConverter<object>(),
