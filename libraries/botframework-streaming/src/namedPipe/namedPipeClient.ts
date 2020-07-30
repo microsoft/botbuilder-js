@@ -5,17 +5,19 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
+
 import { connect } from 'net';
-import { ProtocolAdapter } from '../protocolAdapter';
-import { RequestHandler } from '../requestHandler';
-import { StreamingRequest } from '../streamingRequest';
-import { RequestManager } from '../payloads';
+
+import { IStreamingTransportClient, IReceiveResponse } from '../interfaces';
+import { NamedPipeTransport } from './namedPipeTransport';
 import {
     PayloadReceiver,
     PayloadSender
 } from '../payloadTransport';
-import { NamedPipeTransport } from './namedPipeTransport';
-import { IStreamingTransportClient, IReceiveResponse } from '../interfaces';
+import { ProtocolAdapter } from '../protocolAdapter';
+import { RequestHandler } from '../requestHandler';
+import { RequestManager } from '../payloads';
+import { StreamingRequest } from '../streamingRequest';
 
 /**
  * Streaming transport client implementation that uses named pipes for inter-process communication.
@@ -53,10 +55,10 @@ export class NamedPipeClient implements IStreamingTransportClient {
      * Establish a connection with no custom headers.
      */
     public async connect(): Promise<void> {
-        let outgoingPipeName: string = NamedPipeTransport.PipePath + this._baseName + NamedPipeTransport.ServerIncomingPath;
-        let outgoing = connect(outgoingPipeName);
-        let incomingPipeName: string = NamedPipeTransport.PipePath + this._baseName + NamedPipeTransport.ServerOutgoingPath;
-        let incoming = connect(incomingPipeName);
+        const outgoingPipeName: string = NamedPipeTransport.PipePath + this._baseName + NamedPipeTransport.ServerIncomingPath;
+        const outgoing = connect(outgoingPipeName);
+        const incomingPipeName: string = NamedPipeTransport.PipePath + this._baseName + NamedPipeTransport.ServerOutgoingPath;
+        const incoming = connect(incomingPipeName);
         // Cast Sockets as any to conform with original INodeSocket interface.
         this._sender.connect(new NamedPipeTransport(outgoing as any));
         this._receiver.connect(new NamedPipeTransport(incoming as any));
