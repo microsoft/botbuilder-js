@@ -98,10 +98,14 @@ async function createTestDc(storage) {
     return dc;
 }
 
-describe('Memory - Dialog State Manager', async function() {
+describe('Memory - Dialog State Manager', function() {
     this.timeout(5000);
 
-    const dc = await createConfiguredTestDc();
+    let dc;
+
+    before(async () => {
+        dc = await createConfiguredTestDc();
+    });
 
     it('Should create a standard configuration.', async function() {
         // Run test
