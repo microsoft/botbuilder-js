@@ -13,7 +13,7 @@ module.exports = async function (
   const tokenRes = await fetch(`${domain}/v3/directline/tokens/generate`, {
     body: JSON.stringify({
       user: { id: userId },
-      trustedOrigins: [`${domain}/`]
+      trustedOrigins: [`${domain}`]
     }),
     headers: {
       authorization: `Bearer ${directLineSecret}`,
