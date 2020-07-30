@@ -70,7 +70,7 @@ server.post('/api/messages', (req, res) => {
 adapter.useNamedPipe(async (context) => {
     await myBot.run(context);
     },
-    process.env.APPSETTING_WEBSITE_NAME + '.directline'
+    process.env.APPSETTING_WEBSITE_SITE_NAME + '.directline'
 );
 
 // Listen for Upgrade requests for Streaming.
