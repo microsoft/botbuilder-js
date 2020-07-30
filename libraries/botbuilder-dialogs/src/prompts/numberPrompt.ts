@@ -52,6 +52,9 @@ export class NumberPrompt extends Prompt<number> {
         const result: PromptRecognizerResult<number> = { succeeded: false };
         const activity: Activity = context.activity;
         const utterance: string = activity.text;
+        if (!utterance) {
+            return result;
+        }
         const locale: string = activity.locale || this.defaultLocale || 'en-us';
         const results: any = Recognizers.recognizeNumber(utterance, locale);
         if (results.length > 0 && results[0].resolution) {

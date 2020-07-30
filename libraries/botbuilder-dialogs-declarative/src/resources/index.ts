@@ -7,7 +7,6 @@
  */
 
 export * from './fileResource';
-export * from './fileResourceProvider';
 export * from './folderResourceProvider';
 export * from './resource';
 export * from './resourceExplorer';
