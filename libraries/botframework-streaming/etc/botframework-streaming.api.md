@@ -4,22 +4,9 @@
 
 ```ts
 
-import { Duplex } from 'stream';
-import { DuplexOptions } from 'stream';
+import { Duplex } from 'stream-browserify';
+import { DuplexOptions } from 'stream-browserify';
 import * as WebSocket from 'ws';
-
-// @public (undocumented)
-export class BrowserWebSocket implements ISocket {
-    // Warning: (ae-forgotten-export) The symbol "IBrowserWebSocket" needs to be exported by the entry point index.d.ts
-    constructor(socket?: IBrowserWebSocket);
-    close(): void;
-    connect(serverAddress: string): Promise<void>;
-    readonly isConnected: boolean;
-    setOnCloseHandler(handler: (x: any) => void): void;
-    setOnErrorHandler(handler: (x: any) => void): void;
-    setOnMessageHandler(handler: (x: any) => void): void;
-    write(buffer: INodeBuffer): void;
-}
 
 // @public (undocumented)
 export class ContentStream {
@@ -320,6 +307,8 @@ export interface INodeSocket {
     // (undocumented)
     readable: boolean;
     // (undocumented)
+    readonly readableFlowing: boolean | null;
+    // (undocumented)
     readonly readableHighWaterMark: number;
     // (undocumented)
     readonly readableLength: number;
@@ -516,7 +505,31 @@ export class StreamingResponse {
 }
 
 // @public (undocumented)
-export class SubscribableStream extends Duplex {
+export interface SubscribableStream {
+    // (undocumented)
+    end?(cb?: () => void): void;
+    // (undocumented)
+    end?(chunk: any, cb?: () => void): void;
+    // (undocumented)
+    end?(chunk: any, encoding?: string, cb?: () => void): void;
+    // (undocumented)
+    push?(chunk: any): boolean;
+    // (undocumented)
+    push?(chunk: any, encoding: string): boolean;
+    // (undocumented)
+    push?(chunk: any, encoding?: string): boolean;
+    // (undocumented)
+    read(size?: number): any;
+    // (undocumented)
+    write?(chunk: any): boolean;
+    // (undocumented)
+    write?(chunk: any, encoding: string): boolean;
+    // (undocumented)
+    write?(chunk: any, encoding: string, callback: (error?: Error | null) => void): boolean;
+}
+
+// @public (undocumented)
+export class SubscribableStream extends Duplex implements SubscribableStream {
     constructor(options?: DuplexOptions);
     // (undocumented)
     length: number;
