@@ -1,4 +1,4 @@
-# steps:
+steps:
 #   - task: PowerShell@2
 #     displayName: 'Get latest $(PackageName) package version from MyGet - https://botbuilder.myget.org/gallery/botbuilder-v4-js-daily'
 #     inputs:
