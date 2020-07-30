@@ -207,16 +207,6 @@ describe('Bot Framework Connector - Auth Tests', function() {
         });
 
         describe('GovernmentChannelValidator', function() {
-            it('validateIdentity should fail if unauthenticated', async () => {
-                try {
-                    await GovernmentChannelValidation.validateIdentity(new ClaimsIdentity([], false), undefined);
-                    throw new Error('Expected validation to fail.');
-                } catch (err) {
-                    assert(err.message === 'Unauthorized. Is not authenticated', `unexpected error thrown: "${ err.message }"`);
-                    assert.strictEqual(err.statusCode, StatusCodes.UNAUTHORIZED);;
-                }
-            });
-
             it('validateIdentity should fail if no identity', async () => {
                 try {
                     await GovernmentChannelValidation.validateIdentity(new ClaimsIdentity([], false), undefined);
