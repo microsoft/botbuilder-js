@@ -102,7 +102,7 @@ export class OrchestratorAdaptiveRecognizer extends Configurable implements Reco
             if (ambiguousIntents.length > 1) {
                 recognizerResult.intents = {};
                 recognizerResult.intents[this.chooseIntent] = { score: 1.0 };
-                recognizerResult[this.chooseIntent] = [];
+                recognizerResult[this._candidatesCollection] = [];
                 ambiguousIntents.forEach(item => {
                     let itemRecoResult = {
                         text: text,
@@ -114,7 +114,7 @@ export class OrchestratorAdaptiveRecognizer extends Configurable implements Reco
                         score: item.score
                     };
                     itemRecoResult.entities = recognizerResult.entities;
-                    recognizerResult[this.chooseIntent].push({
+                    recognizerResult[this._candidatesCollection].push({
                         intent : item.label.name,
                         score : item.score,
                         closestText: item.closest_text,
@@ -127,6 +127,8 @@ export class OrchestratorAdaptiveRecognizer extends Configurable implements Reco
         if (Object.entries(recognizerResult.intents).length == 0) {
             recognizerResult.intents[this._noneIntent] = { score: 1.0 };
         }
+
+        await dialogContext.context.sendTraceActivity('OrchestratorRecognizer', recognizerResult, 'RecognizerResult', 'Orchestrator recognizer RecognizerResult');
 
         return recognizerResult;
     }

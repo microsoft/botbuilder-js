@@ -77,7 +77,9 @@ export class OrchestratorRecognizer extends Configurable {
             return recognizerResult;    
         }
 
+        console.time("Orchestrator recognize");
         var result = this.resolver.score(text);
+        console.timeEnd("Orchestrator recognize");
 
         if (Object.entries(result).length !== 0) 
         {
@@ -91,6 +93,7 @@ export class OrchestratorRecognizer extends Configurable {
             recognizerResult.intents[this.noneIntent] = { score: 1.0 };
         }
 
+        
         return Promise.resolve<RecognizerResult>(recognizerResult);
     }
 
@@ -113,11 +116,13 @@ export class OrchestratorRecognizer extends Configurable {
         }
 
         if (OrchestratorRecognizer.orchestrator == null) {
+            console.time("Model load");
             // Create orchestrator core
             OrchestratorRecognizer.orchestrator = new oc.Orchestrator();
             if (OrchestratorRecognizer.orchestrator.load(fullModelPath) === false) {
                 throw new exception(`Model load failed.`);
             }
+            console.timeEnd("Model load");
         }
 
         if (this.resolver == null) {
