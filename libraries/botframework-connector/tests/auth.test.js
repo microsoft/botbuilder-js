@@ -224,16 +224,6 @@ describe('Bot Framework Connector - Auth Tests', function() {
                 }
             });
 
-            it('validateIdentity should fail if no issuer', async () => {
-                try {
-                    await GovernmentChannelValidation.validateIdentity(new ClaimsIdentity([{ type: 'peanut', value: 'peanut' }], true), genericCredentials);
-                    throw new Error('Expected validation to fail.');
-                } catch (err) {
-                    assert(err.message === 'Unauthorized. Issuer Claim MUST be present.', `unexpected error thrown: "${ err.message }"`);
-                    assert.strictEqual(err.statusCode, StatusCodes.UNAUTHORIZED);
-                }
-            });
-
             it('validateIdentity should fail if wrong issuer', async () => {
                 try {
                     await GovernmentChannelValidation.validateIdentity(new ClaimsIdentity([{ type: 'iss', value: 'peanut' }], true), genericCredentials);
