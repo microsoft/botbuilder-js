@@ -22,6 +22,11 @@ afterEach(function(done) {
 });
 
 describe('InspectionMiddleware', function() {
+    const storage = new MemoryStorage();
+    const inspectionState = new InspectionState(storage);
+    const userState = new UserState(storage);
+    const conversationState = new ConversationState(storage);
+
     it('should not change behavior when inspection middleware is added', async function() {
 
         var inspectionState = new InspectionState(new MemoryStorage());
@@ -313,15 +318,9 @@ describe('InspectionMiddleware', function() {
             .reply(200, { id: 'test' });
 
         // create the various storage and middleware objects we will be using
-
-        const storage = new MemoryStorage();
-        const inspectionState = new InspectionState(storage);
-        const userState = new UserState(storage);
-        const conversationState = new ConversationState(storage);
         const inspectionMiddleware = new InspectionMiddleware(inspectionState, userState, conversationState);
 
         // the emulator sends an /INSPECT open command - we can use another adapter here
-
         const openActivity = MessageFactory.text('/INSPECT open');
 
         const inspectionAdapter = new TestAdapter(async (turnContext) => {
@@ -376,11 +375,6 @@ describe('InspectionMiddleware', function() {
             .reply(200, { id: 'test' });
 
         // create the various storage and middleware objects we will be using
-
-        const storage = new MemoryStorage();
-        const inspectionState = new InspectionState(storage);
-        const userState = new UserState(storage);
-        const conversationState = new ConversationState(storage);
         const inspectionMiddleware = new InspectionMiddleware(inspectionState, userState, conversationState);
 
         // the emulator sends an /INSPECT open command - we can use another adapter here
@@ -438,15 +432,9 @@ describe('InspectionMiddleware', function() {
             .reply(200, { id: 'test' });
 
         // create the various storage and middleware objects we will be using
-
-        const storage = new MemoryStorage();
-        const inspectionState = new InspectionState(storage);
-        const userState = new UserState(storage);
-        const conversationState = new ConversationState(storage);
         const inspectionMiddleware = new InspectionMiddleware(inspectionState, userState, conversationState);
 
         // the emulator sends an /INSPECT open command - we can use another adapter here
-
         const openActivity = MessageFactory.text('/INSPECT open');
 
         const inspectionAdapter = new TestAdapter(async (turnContext) => {
@@ -475,10 +463,6 @@ describe('InspectionMiddleware', function() {
     });
 
     it('should invokeInbound throw an error', async () => {
-        const storage = new MemoryStorage();
-        const inspectionState = new InspectionState(storage);
-        const userState = new UserState(storage);
-        const conversationState = new ConversationState(storage);
         const inspectionMiddleware = new InspectionMiddleware(inspectionState, userState, conversationState);
 
         // Override warn current behavior to intercept when it's called.
@@ -493,10 +477,6 @@ describe('InspectionMiddleware', function() {
     });
 
     it('should invokeOutbound throw an error', async () => {
-        const storage = new MemoryStorage();
-        const inspectionState = new InspectionState(storage);
-        const userState = new UserState(storage);
-        const conversationState = new ConversationState(storage);
         const inspectionMiddleware = new InspectionMiddleware(inspectionState, userState, conversationState);
 
         // Override warn current behavior to intercept when it's called.
@@ -511,10 +491,6 @@ describe('InspectionMiddleware', function() {
     });
 
     it('should invokeTraceState throw an error', async () => {
-        const storage = new MemoryStorage();
-        const inspectionState = new InspectionState(storage);
-        const userState = new UserState(storage);
-        const conversationState = new ConversationState(storage);
         const inspectionMiddleware = new InspectionMiddleware(inspectionState, userState, conversationState);
 
         // Override warn current behavior to intercept when it's called.
@@ -529,10 +505,6 @@ describe('InspectionMiddleware', function() {
     });
 
     it('should attachCommand return false', async () => {
-        const storage = new MemoryStorage();
-        const inspectionState = new InspectionState(storage);
-        const userState = new UserState(storage);
-        const conversationState = new ConversationState(storage);
         const inspectionMiddleware = new InspectionMiddleware(inspectionState, userState, conversationState);
 
         const result = await inspectionMiddleware.attachCommand('', { openedSessions: { 'session-1': undefined } }, 'session-1');
