@@ -5,14 +5,16 @@ const { StatusCodes } = require('botframework-schema');
 
 describe('Bot Framework Connector - Auth Tests', function() {
 
-    describe('Connector Tokens', function() {
+    describe('Connector Tokens', async function() {
         this.timeout(20000);
+        const tokenGenerator = new MicrosoftAppCredentials('2cd87869-38a0-4182-9251-d056e8f0ac24', '2.30Vs3VQLKt974F');
+        const header = `Bearer ${ await tokenGenerator.getToken(true) }`;
 
         describe('EmptyHeader', function() {
             it('Bot with noCredentials should throw', async () => {
                 var credentials = new SimpleCredentialProvider('', '');
                 try {
-                    const claims = await JwtTokenValidation.validateAuthHeader('', credentials, undefined, '', '');
+                    await JwtTokenValidation.validateAuthHeader('', credentials, undefined, '', '');
                     throw new Error('Expected validation to fail.');
                 } catch (err) {
                     assert(err.message === `'authHeader' required.`, `unexpected error thrown: "${ err.message }"`);
@@ -23,19 +25,15 @@ describe('Bot Framework Connector - Auth Tests', function() {
 
         describe('Emulator', function() {
             it('MsaHeader correct AppId and ServiceUrl should validate', async () => {
-                const tokenGenerator = new MicrosoftAppCredentials('2cd87869-38a0-4182-9251-d056e8f0ac24', '2.30Vs3VQLKt974F');
-                const header = `Bearer ${ await tokenGenerator.getToken(true) }`;
                 const credentials = new SimpleCredentialProvider('2cd87869-38a0-4182-9251-d056e8f0ac24', '');
                 const claims = await JwtTokenValidation.validateAuthHeader(header, credentials, undefined, '', '');
                 assert(claims.isAuthenticated);
             });
 
             it('MsaHeader Bot AppId differs should not validate', async () => {
-                const tokenGenerator = new MicrosoftAppCredentials('2cd87869-38a0-4182-9251-d056e8f0ac24', '2.30Vs3VQLKt974F');
-                const header = `Bearer ${ await tokenGenerator.getToken(true) }`;
                 const credentials = new SimpleCredentialProvider('00000000-0000-0000-0000-000000000000', '');
                 try {
-                    const claims = await JwtTokenValidation.validateAuthHeader(header, credentials, undefined, '', '');
+                    await JwtTokenValidation.validateAuthHeader(header, credentials, undefined, '', '');
                     throw new Error('Expected validation to fail.');
                 } catch (err) {
                     assert(err.message.substring('Unauthorized. Invalid AppId passed on token:'), `unexpected error thrown: "${ err.message }"`);
@@ -44,11 +42,9 @@ describe('Bot Framework Connector - Auth Tests', function() {
             });
 
             it('MsaHeader Bot AppId missing should not validate', async () => {
-                const tokenGenerator = new MicrosoftAppCredentials('2cd87869-38a0-4182-9251-d056e8f0ac24', '2.30Vs3VQLKt974F');
-                const header = `Bearer ${ await tokenGenerator.getToken(true) }`;
                 const credentials = new SimpleCredentialProvider('', '');
                 try {
-                    const claims = await JwtTokenValidation.validateAuthHeader(header, credentials, undefined, '', '');
+                    await JwtTokenValidation.validateAuthHeader(header, credentials, undefined, '', '');
                     throw new Error('Expected validation to fail.');
                 } catch (err) {
                     assert(err.message.substring('Unauthorized. Invalid AppId passed on token:'), `unexpected error thrown: "${ err.message }"`);
@@ -59,10 +55,8 @@ describe('Bot Framework Connector - Auth Tests', function() {
 
         describe('Channel', function() {
             it('MsaHeader with valid ServiceUrl should be trusted', async () => {
-                const tokenGenerator = new MicrosoftAppCredentials('2cd87869-38a0-4182-9251-d056e8f0ac24', '2.30Vs3VQLKt974F');
-                const header = `Bearer ${ await tokenGenerator.getToken(true) }`;
                 const credentials = new SimpleCredentialProvider('2cd87869-38a0-4182-9251-d056e8f0ac24', '');
-                const claims = await JwtTokenValidation.authenticateRequest({ serviceUrl: 'https://smba.trafficmanager.net/amer-client-ss.msg/' }, header, credentials, undefined);
+                await JwtTokenValidation.authenticateRequest({ serviceUrl: 'https://smba.trafficmanager.net/amer-client-ss.msg/' }, header, credentials, undefined);
                 assert(MicrosoftAppCredentials.isTrustedServiceUrl('https://smba.trafficmanager.net/amer-client-ss.msg/'));
             });
 
@@ -75,11 +69,9 @@ describe('Bot Framework Connector - Auth Tests', function() {
             });
 
             it('MsaHeader with invalid ServiceUrl should not be trusted', async () => {
-                const tokenGenerator = new MicrosoftAppCredentials('2cd87869-38a0-4182-9251-d056e8f0ac24', '2.30Vs3VQLKt974F');
-                const header = `Bearer ${ await tokenGenerator.getToken(true) }`;
                 const credentials = new SimpleCredentialProvider('7f74513e-6f96-4dbc-be9d-9a81fea22b88', '');
                 try {
-                    const claims = await JwtTokenValidation.authenticateRequest({ serviceUrl: 'https://webchat.botframework.com/' }, header, credentials, undefined);
+                    await JwtTokenValidation.authenticateRequest({ serviceUrl: 'https://webchat.botframework.com/' }, header, credentials, undefined);
                     throw new Error('Expected validation to fail.');
                 } catch (err) {
                     assert(!MicrosoftAppCredentials.isTrustedServiceUrl('https://webchat.botframework.com/'));
@@ -147,7 +139,7 @@ describe('Bot Framework Connector - Auth Tests', function() {
         describe('ChannelValidator', function() {
             it('validateIdentity should fail if unauthenticated', async () => {
                 try {
-                    const claims = await ChannelValidation.validateIdentity(new ClaimsIdentity([], false), undefined);
+                    await ChannelValidation.validateIdentity(new ClaimsIdentity([], false), undefined);
                     throw new Error('Expected validation to fail.');
                 } catch (err) {
                     assert(err.message === 'Unauthorized. Is not authenticated', `unexpected error thrown: "${ err.message }"`);
@@ -157,7 +149,7 @@ describe('Bot Framework Connector - Auth Tests', function() {
 
             it('validateIdentity should fail if no identity', async () => {
                 try {
-                    const claims = await ChannelValidation.validateIdentity(undefined, undefined);
+                    await ChannelValidation.validateIdentity(undefined, undefined);
                     throw new Error('Expected validation to fail.');
                 } catch (err) {
                     assert(err.message === 'Unauthorized. Is not authenticated', `unexpected error thrown: "${ err.message }"`);
@@ -168,7 +160,7 @@ describe('Bot Framework Connector - Auth Tests', function() {
             it('validateIdentity should fail if no issuer', async () => {
                 const credentials = new SimpleCredentialProvider('2cd87869-38a0-4182-9251-d056e8f0ac24', '2.30Vs3VQLKt974F');
                 try {
-                    const claims = await ChannelValidation.validateIdentity(new ClaimsIdentity([{ type: 'peanut', value: 'peanut' }], true), credentials);
+                    await ChannelValidation.validateIdentity(new ClaimsIdentity([{ type: 'peanut', value: 'peanut' }], true), credentials);
                     throw new Error('Expected validation to fail.');
                 } catch (err) {
                     assert(err.message === 'Unauthorized. Issuer Claim MUST be present.', `unexpected error thrown: "${ err.message }"`);
@@ -179,7 +171,7 @@ describe('Bot Framework Connector - Auth Tests', function() {
             it('validateIdentity should fail if wrong issuer', async () => {
                 var credentials = new SimpleCredentialProvider('2cd87869-38a0-4182-9251-d056e8f0ac24', '2.30Vs3VQLKt974F');
                 try {
-                    const claims = await ChannelValidation.validateIdentity(new ClaimsIdentity([{ type: 'iss', value: 'peanut' }], true), credentials);
+                    await ChannelValidation.validateIdentity(new ClaimsIdentity([{ type: 'iss', value: 'peanut' }], true), credentials);
                     throw new Error('Expected validation to fail.');
                 } catch (err) {
                     assert(err.message === 'Unauthorized. Issuer Claim MUST be present.', `unexpected error thrown: "${ err.message }"`);
@@ -201,7 +193,7 @@ describe('Bot Framework Connector - Auth Tests', function() {
             it('validateIdentity should fail if wrong audience', async () => {
                 var credentials = new SimpleCredentialProvider('2cd87869-38a0-4182-9251-d056e8f0ac24', '2.30Vs3VQLKt974F');
                 try {
-                    const claims = await ChannelValidation.validateIdentity(new ClaimsIdentity([
+                    await ChannelValidation.validateIdentity(new ClaimsIdentity([
                         { type: 'iss', value: 'https://api.botframework.com' },
                         { type: 'aud', value: 'peanut' }
                     ], true), credentials);
@@ -214,7 +206,7 @@ describe('Bot Framework Connector - Auth Tests', function() {
 
             it('validateIdentity should work', async () => {
                 var credentials = new SimpleCredentialProvider('2cd87869-38a0-4182-9251-d056e8f0ac24', '2.30Vs3VQLKt974F');
-                const claims = await ChannelValidation.validateIdentity(new ClaimsIdentity([
+                await ChannelValidation.validateIdentity(new ClaimsIdentity([
                     { type: 'iss', value: 'https://api.botframework.com' },
                     { type: 'aud', value: credentials.appId }
                 ], true), credentials);
@@ -224,7 +216,7 @@ describe('Bot Framework Connector - Auth Tests', function() {
         describe('GovernmentChannelValidator', function() {
             it('validateIdentity should fail if unauthenticated', async () => {
                 try {
-                    const claims = await GovernmentChannelValidation.validateIdentity(new ClaimsIdentity([], false), undefined);
+                    await GovernmentChannelValidation.validateIdentity(new ClaimsIdentity([], false), undefined);
                     throw new Error('Expected validation to fail.');
                 } catch (err) {
                     assert(err.message === 'Unauthorized. Is not authenticated', `unexpected error thrown: "${ err.message }"`);
@@ -234,7 +226,7 @@ describe('Bot Framework Connector - Auth Tests', function() {
 
             it('validateIdentity should fail if no identity', async () => {
                 try {
-                    const claims = await GovernmentChannelValidation.validateIdentity(new ClaimsIdentity([], false), undefined);
+                    await GovernmentChannelValidation.validateIdentity(new ClaimsIdentity([], false), undefined);
                     throw new Error('Expected validation to fail.');
                 } catch (err) {
                     assert(err.message === 'Unauthorized. Is not authenticated', `unexpected error thrown: "${ err.message }"`);
@@ -245,7 +237,7 @@ describe('Bot Framework Connector - Auth Tests', function() {
             it('validateIdentity should fail if no issuer', async () => {
                 var credentials = new SimpleCredentialProvider('2cd87869-38a0-4182-9251-d056e8f0ac24', '2.30Vs3VQLKt974F');
                 try {
-                    const claims = await GovernmentChannelValidation.validateIdentity(new ClaimsIdentity([{ type: 'peanut', value: 'peanut' }], true), credentials);
+                    await GovernmentChannelValidation.validateIdentity(new ClaimsIdentity([{ type: 'peanut', value: 'peanut' }], true), credentials);
                     throw new Error('Expected validation to fail.');
                 } catch (err) {
                     assert(err.message === 'Unauthorized. Issuer Claim MUST be present.', `unexpected error thrown: "${ err.message }"`);
@@ -256,7 +248,7 @@ describe('Bot Framework Connector - Auth Tests', function() {
             it('validateIdentity should fail if wrong issuer', async () => {
                 var credentials = new SimpleCredentialProvider('2cd87869-38a0-4182-9251-d056e8f0ac24', '2.30Vs3VQLKt974F');
                 try {
-                    const claims = await GovernmentChannelValidation.validateIdentity(new ClaimsIdentity([{ type: 'iss', value: 'peanut' }], true), credentials);
+                    await GovernmentChannelValidation.validateIdentity(new ClaimsIdentity([{ type: 'iss', value: 'peanut' }], true), credentials);
                     throw new Error('Expected validation to fail.');
                 } catch (err) {
                     assert(err.message === 'Unauthorized. Issuer Claim MUST be present.', `unexpected error thrown: "${ err.message }"`);
@@ -267,7 +259,7 @@ describe('Bot Framework Connector - Auth Tests', function() {
             it('validateIdentity should fail if no audience', async () => {
                 var credentials = new SimpleCredentialProvider('2cd87869-38a0-4182-9251-d056e8f0ac24', '2.30Vs3VQLKt974F');
                 try {
-                    const claims = await GovernmentChannelValidation.validateIdentity(new ClaimsIdentity([{ type: 'iss', value: 'https://api.botframework.us' }], true), credentials);
+                    await GovernmentChannelValidation.validateIdentity(new ClaimsIdentity([{ type: 'iss', value: 'https://api.botframework.us' }], true), credentials);
                     throw new Error('Expected validation to fail.');
                 } catch (err) {
                     assert(err.message === 'Unauthorized. Invalid AppId passed on token: null', `unexpected error thrown: "${ err.message }"`);
@@ -278,7 +270,7 @@ describe('Bot Framework Connector - Auth Tests', function() {
             it('validateIdentity should fail if wrong audience', async () => {
                 var credentials = new SimpleCredentialProvider('2cd87869-38a0-4182-9251-d056e8f0ac24', '2.30Vs3VQLKt974F');
                 try {
-                    const claims = await GovernmentChannelValidation.validateIdentity(new ClaimsIdentity([
+                    await GovernmentChannelValidation.validateIdentity(new ClaimsIdentity([
                         { type: 'iss', value: 'https://api.botframework.us' },
                         { type: 'aud', value: 'peanut' }
                     ], true), credentials);
@@ -292,7 +284,7 @@ describe('Bot Framework Connector - Auth Tests', function() {
             it('validateIdentity should work', async () => {
                 var credentials = new SimpleCredentialProvider('2cd87869-38a0-4182-9251-d056e8f0ac24', '2.30Vs3VQLKt974F');
                 try {
-                    const claims = await GovernmentChannelValidation.validateIdentity(new ClaimsIdentity([
+                    await GovernmentChannelValidation.validateIdentity(new ClaimsIdentity([
                         { type: 'iss', value: 'https://api.botframework.us' },
                         { type: 'aud', value: credentials.appId }
                     ], true), credentials);
@@ -305,7 +297,7 @@ describe('Bot Framework Connector - Auth Tests', function() {
         describe('EnterpriseChannelValidator', function() {
             it('validateIdentity should fail if unauthenticated', async () => {
                 try {
-                    const claims = await EnterpriseChannelValidation.validateIdentity(new ClaimsIdentity([], false), undefined);
+                    await EnterpriseChannelValidation.validateIdentity(new ClaimsIdentity([], false), undefined);
                     throw new Error('Expected validation to fail.');
                 } catch (err) {
                     assert(err.message === 'Unauthorized. Is not authenticated', `unexpected error thrown: "${ err.message }"`);
@@ -315,7 +307,7 @@ describe('Bot Framework Connector - Auth Tests', function() {
 
             it('validateIdentity should fail if no identity', async () => {
                 try {
-                    const claims = await EnterpriseChannelValidation.validateIdentity(undefined, undefined);
+                    await EnterpriseChannelValidation.validateIdentity(undefined, undefined);
                     throw new Error('Expected validation to fail.');
                 } catch (err) {
                     assert(err.message === 'Unauthorized. No valid identity.', `unexpected error thrown: "${ err.message }"`);
@@ -326,7 +318,7 @@ describe('Bot Framework Connector - Auth Tests', function() {
             it('validateIdentity should fail if no issuer', async () => {
                 var credentials = new SimpleCredentialProvider('2cd87869-38a0-4182-9251-d056e8f0ac24', '2.30Vs3VQLKt974F');
                 try {
-                    const claims = await EnterpriseChannelValidation.validateIdentity(new ClaimsIdentity([{ type: 'peanut', value: 'peanut' }], true), credentials);
+                    await EnterpriseChannelValidation.validateIdentity(new ClaimsIdentity([{ type: 'peanut', value: 'peanut' }], true), credentials);
                     throw new Error('Expected validation to fail.');
                 } catch (err) {
                     assert(err.message === 'Unauthorized. Issuer Claim MUST be present.', `unexpected error thrown: "${ err.message }"`);
@@ -337,7 +329,7 @@ describe('Bot Framework Connector - Auth Tests', function() {
             it('validateIdentity should fail if wrong issuer', async () => {
                 var credentials = new SimpleCredentialProvider('2cd87869-38a0-4182-9251-d056e8f0ac24', '2.30Vs3VQLKt974F');
                 try {
-                    const claims = await EnterpriseChannelValidation.validateIdentity(new ClaimsIdentity([{ type: 'iss', value: 'peanut' }], true), credentials);
+                    await EnterpriseChannelValidation.validateIdentity(new ClaimsIdentity([{ type: 'iss', value: 'peanut' }], true), credentials);
                     throw new Error('Expected validation to fail.');
                 } catch (err) {
                     assert(err.message === 'Unauthorized. Issuer Claim MUST be present.', `unexpected error thrown: "${ err.message }"`);
@@ -348,7 +340,7 @@ describe('Bot Framework Connector - Auth Tests', function() {
             it('validateIdentity should fail if no audience', async () => {
                 var credentials = new SimpleCredentialProvider('2cd87869-38a0-4182-9251-d056e8f0ac24', '2.30Vs3VQLKt974F');
                 try {
-                    const claims = await EnterpriseChannelValidation.validateIdentity(new ClaimsIdentity([{ type: 'iss', value: 'https://api.botframework.com' }], true), credentials);
+                    await EnterpriseChannelValidation.validateIdentity(new ClaimsIdentity([{ type: 'iss', value: 'https://api.botframework.com' }], true), credentials);
                     throw new Error('Expected validation to fail.');
                 } catch (err) {
                     assert(err.message === 'Unauthorized. Invalid AppId passed on token: null', `unexpected error thrown: "${ err.message }"`);
@@ -359,7 +351,7 @@ describe('Bot Framework Connector - Auth Tests', function() {
             it('validateIdentity should fail if wrong audience', async () => {
                 var credentials = new SimpleCredentialProvider('2cd87869-38a0-4182-9251-d056e8f0ac24', '2.30Vs3VQLKt974F');
                 try {
-                    const claims = await EnterpriseChannelValidation.validateIdentity(new ClaimsIdentity([
+                    await EnterpriseChannelValidation.validateIdentity(new ClaimsIdentity([
                         { type: 'iss', value: 'https://api.botframework.com' },
                         { type: 'aud', value: 'peanut' }
                     ], true), credentials);
@@ -373,7 +365,7 @@ describe('Bot Framework Connector - Auth Tests', function() {
             it('validateIdentity should work', async () => {
                 var credentials = new SimpleCredentialProvider('2cd87869-38a0-4182-9251-d056e8f0ac24', '2.30Vs3VQLKt974F');
                 try {
-                    const claims = await EnterpriseChannelValidation.validateIdentity(new ClaimsIdentity([
+                    await EnterpriseChannelValidation.validateIdentity(new ClaimsIdentity([
                         { type: 'iss', value: 'https://api.botframework.com' },
                         { type: 'aud', value: credentials.appId }
                     ], true), credentials);
