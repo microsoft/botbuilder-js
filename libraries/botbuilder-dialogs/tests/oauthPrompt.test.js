@@ -655,7 +655,7 @@ describe('OAuthPrompt', function() {
                 .assertReply(a => {
                     assert.strictEqual('invokeResponse', a.type);
                     assert(a.value);
-                    assert.strictEqual(a.value.status, 409);
+                    assert.strictEqual(a.value.status, 412);
                     assert(a.value.body.failureDetail);
                 });
         });

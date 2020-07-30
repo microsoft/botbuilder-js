@@ -22,6 +22,6 @@ export abstract class LuisRecognizerInternal {
 
     application: LuisApplication;
 
-    abstract recognizeInternalAsync(context: TurnContext): Promise<RecognizerResult>;
+    abstract recognizeInternal(context: TurnContext): Promise<RecognizerResult>;
 
 }
