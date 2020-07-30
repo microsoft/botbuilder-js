@@ -31,7 +31,7 @@ stages:
           - template: configure-to-bbjs-daily.yml
           - template: deploy-bot.yml
 
-      - template: create-and-deploy-streaming-react-app.yml
+      # - template: create-and-deploy-streaming-react-app.yml
 
   # - stage: Run_Tests
   #   dependsOn: Create_And_Deploy_Projects
