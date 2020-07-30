@@ -57,7 +57,6 @@ export class DialogManager extends Configurable {
     private readonly _dialogStateProperty: string;
     private readonly _initialTurnState: TurnContextStateCollection = new TurnContextStateCollection();
 
-
     public constructor(rootDialog?: Dialog, dialogStateProperty?: string) {
         super();
         if (rootDialog) { this.rootDialog = rootDialog; }
