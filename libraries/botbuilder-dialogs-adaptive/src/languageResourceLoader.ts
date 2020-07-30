@@ -6,7 +6,11 @@
  * Licensed under the MIT License.
  */
 
-import { IResource, ResourceExplorer } from 'botbuilder-dialogs-declarative';
+/**
+ * load all lg resource and split them into different language group.
+ */
+
+import { Resource, ResourceExplorer } from 'botbuilder-dialogs-declarative';
 import { LanguagePolicy } from  './languagePolicy';
 
 /**
@@ -17,9 +21,9 @@ export class LanguageResourceLoader {
      * Group LG resource by locale.
      * @param resourceExplorer The resource explorer to use.
      */
-    public static groupByLocale(resourceExplorer: ResourceExplorer): Map<string, IResource[]> {
-        const resourceMapping: Map<string, IResource[]> = new Map<string, IResource[]>();
-        const allResouces: IResource[] =  resourceExplorer.getResources('lg');
+    public static groupByLocale(resourceExplorer: ResourceExplorer): Map<string, Resource[]> {
+        const resourceMapping: Map<string, Resource[]> = new Map<string, Resource[]>();
+        const allResouces: Resource[] =  resourceExplorer.getResources('lg');
         const languagePolicy = new LanguagePolicy();
         for (const locale of languagePolicy.keys()) {
             let suffixs = languagePolicy.get(locale);
@@ -27,9 +31,9 @@ export class LanguageResourceLoader {
             for (const index in suffixs) {
                 const suffix = suffixs[index];
                 if (!locale || suffix ) {
-                    const resourcesWithSuffix = allResouces.filter((u): boolean => this.parseLGFileName(u.id()).language.toLocaleLowerCase() === suffix.toLocaleLowerCase());
+                    const resourcesWithSuffix = allResouces.filter((u): boolean => this.parseLGFileName(u.id).language.toLocaleLowerCase() === suffix.toLocaleLowerCase());
                     resourcesWithSuffix.forEach((u): void => {
-                        const resourceName = u.id();
+                        const resourceName = u.id;
                         const length = (!suffix)? 3 : 4;
                         const prefixName = resourceName.substring(0, resourceName.length - suffix.length - length);
                         if (!existNames.has(prefixName)) {
@@ -43,9 +47,9 @@ export class LanguageResourceLoader {
                     });
                 } else {
                     if (resourceMapping.has(locale)) {
-                        const resourcesWithEmptySuffix = allResouces.filter((u): boolean => this.parseLGFileName(u.id()).language === '');
+                        const resourcesWithEmptySuffix = allResouces.filter((u): boolean => this.parseLGFileName(u.id).language === '');
                         resourcesWithEmptySuffix.forEach((u): void => {
-                            const resourceName = u.id();
+                            const resourceName = u.id;
                             const prefixName = resourceName.substring(0, resourceName.length - 3);
                             if (!existNames.has(prefixName)) {
                                 existNames.add(prefixName);
@@ -108,10 +112,10 @@ export class LanguageResourceLoader {
         throw new Error(`there is no locale fallback for ${ locale }`);
     }
 
-    private static fallbackMultiLangResource(resourceMapping: Map<string, IResource[]>): Map<string, IResource[]> {
-        const resourcePoolDict = new Map<string, IResource[]>();
+    private static fallbackMultiLangResource(resourceMapping: Map<string, Resource[]>): Map<string, Resource[]> {
+        const resourcePoolDict = new Map<string, Resource[]>();
         for (const currentLocale of resourceMapping.keys()) {
-            const currentResourcePool: IResource[] = resourceMapping.get(currentLocale);
+            const currentResourcePool: Resource[] = resourceMapping.get(currentLocale);
             const existLocale  = Array.from(resourcePoolDict.keys()).find(u => this.hasSameResourcePool(resourcePoolDict.get(u), currentResourcePool));
             if (existLocale === undefined) {
                 resourcePoolDict.set(currentLocale, currentResourcePool);
@@ -147,7 +151,7 @@ export class LanguageResourceLoader {
         return '';
     }
 
-    private static hasSameResourcePool(resourceMapping1: IResource[], resourceMapping2: IResource[]): boolean {
+    private static hasSameResourcePool(resourceMapping1: Resource[], resourceMapping2: Resource[]): boolean {
         if (resourceMapping1 === undefined && resourceMapping2 === undefined) {
             return true;
         }
@@ -161,7 +165,7 @@ export class LanguageResourceLoader {
         const sortedResourceMapping1 = Array.from(resourceMapping1.sort());
         const sortedResourceMapping2 = Array.from(resourceMapping2.sort());
         for (const i in resourceMapping1){
-            if (sortedResourceMapping1[i].id() != sortedResourceMapping2[i].id())
+            if (sortedResourceMapping1[i].id != sortedResourceMapping2[i].id)
             {
                 return false;
             }
