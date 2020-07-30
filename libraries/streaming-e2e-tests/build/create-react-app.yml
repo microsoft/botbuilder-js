@@ -19,7 +19,10 @@ steps:
     displayName: "Copy custom files into react-app"
     workingDirectory: $(RootReactPiecesDir)/react-app
 
-  - powershell: "##vso[task.setvariable variable=BOT_HOSTNAME]$(BotName)"
+  - powershell: | 
+      "##vso[task.setvariable variable=BOT_HOSTNAME]$(BotName)"
+
+      Write-Host "The BOT_HOSTNAME is: $(BOT_HOSTNAME)""
     displayName: "Write bot's website host name to pipeline variable"
     workingDirectory: $(RootReactPiecesDir)/react-app
 
