@@ -1,19 +1,16 @@
 const assert = require('assert');
 const { ActivityTypes, ShowTypingMiddleware, TestAdapter } = require('../lib');
 
-const receivedMessage = { text: 'received', type: 'message' };
-
 function sleep(ms) {
     return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-
-describe(`ShowTypingMiddleware`, function () {
+describe(`ShowTypingMiddleware`, function() {
     this.timeout(10000);
 
     var adapter = new TestAdapter(async (context) => {
         await sleep(600);
-        await context.sendActivity(`echo:${context.activity.text}`);
+        await context.sendActivity(`echo:${ context.activity.text }`);
     }).use(new ShowTypingMiddleware());
 
     it('should automatically send a typing indicator', function(done) {
@@ -28,7 +25,7 @@ describe(`ShowTypingMiddleware`, function () {
     });
 
     var adapter2 = new TestAdapter(async (context) => {
-        await context.sendActivity(`echo:${context.activity.text}`);
+        await context.sendActivity(`echo:${ context.activity.text }`);
     });
 
     it('should NOT automatically send a typing indicator if middleware not applied', function(done) {
@@ -51,6 +48,4 @@ describe(`ShowTypingMiddleware`, function () {
             .assertReply(activity => assert.equal(activity.type, ActivityTypes.Message))
             .then(done);
     });
-
-
 });

@@ -397,7 +397,7 @@ export class LuisRecognizer implements LuisRecognizerTelemetryClient {
                     entities: {},
                 });
             } else {
-                recognizerPromise = luisRecognizer.recognizeInternalAsync(context);
+                recognizerPromise = luisRecognizer.recognizeInternal(context);
             }
 
             return recognizerPromise
