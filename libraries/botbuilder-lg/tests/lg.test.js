@@ -161,6 +161,9 @@ describe('LG', function() {
 
         let evaled = templates.evaluate('template', scope);
         assert.strictEqual(evaled, 'hello vivian'.length);
+
+        evaled = templates.evaluateText('${length(expandText(@answer))}', scope);
+        assert.strictEqual(evaled, 'hello vivian'.length);
     });
 
     it('TestBasicTemplateRefWithParameters', function() {

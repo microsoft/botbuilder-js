@@ -82,7 +82,7 @@ describe('BeginSkill', function() {
     const dm = new DialogManager();
     dm.conversationState = conversationState;
     SkillExtensions.useSkillClient(dm, skillClient);
-    SkillExtensions.useSkillConverationIdFactory(dm, new SimpleConversationIdFactory());
+    SkillExtensions.useSkillConversationIdFactory(dm, new SimpleConversationIdFactory());
 
     // Setup skill dialog
     const dialog = new BeginSkill();

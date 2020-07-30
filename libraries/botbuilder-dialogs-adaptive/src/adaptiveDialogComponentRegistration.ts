@@ -13,7 +13,7 @@ import { CustomDialogTypeBuilder } from './customDialogTypeBuilder';
 import { AdaptiveDialog } from './adaptiveDialog';
 import { BeginDialog, BeginSkill, BreakLoop, CancelAllDialogs, CancelDialog, ContinueLoop, DeleteActivity, DeleteProperties, DeleteProperty, EditActions, EditArray, EmitEvent, EndDialog, EndTurn, ForEach, ForEachPage, GetActivityMembers, GetConversationMembers, GotoAction, IfCondition, LogAction, RepeatDialog, ReplaceDialog, SendActivity, SetProperties, SetProperty, SignOutUser, SwitchCondition, TraceActivity, UpdateActivity, ArrayChangeType, PropertyAssignmentConverter, HttpRequest, HttpHeadersConverter, ResponsesTypes, DynamicBeginDialog } from './actions';
 import { Ask, AttachmentInput, ChoiceInput, ConfirmInput, DateTimeInput, NumberInput, OAuthInput, TextInput, AttachmentOutputFormat, ChoiceOutputFormat } from './input';
-import { OnActivity, OnAssignEntity, OnBeginDialog, OnCancelDialog, OnChooseEntity, OnChooseIntent, OnChooseProperty, OnClearProperty, OnCondition, OnConversationUpdateActivity, OnDialogEvent, OnEndOfActions, OnEndOfConversationActivity, OnError, OnEventActivity, OnHandoffActivity, OnIntent, OnInvokeActivity, OnMessageActivity, OnMessageDeleteActivity, OnMessageReactionActivity, OnMessageUpdateActivity, OnQnAMatch, OnRepromptDialog, OnTypingActivity, OnUnknownIntent } from './conditions';
+import { OnActivity, OnAssignEntity, OnBeginDialog, OnCancelDialog, OnChooseEntity, OnChooseIntent, OnChooseProperty, OnCondition, OnConversationUpdateActivity, OnDialogEvent, OnEndOfActions, OnEndOfConversationActivity, OnError, OnEventActivity, OnHandoffActivity, OnIntent, OnInvokeActivity, OnMessageActivity, OnMessageDeleteActivity, OnMessageReactionActivity, OnMessageUpdateActivity, OnQnAMatch, OnRepromptDialog, OnTypingActivity, OnUnknownIntent } from './conditions';
 import { CrossTrainedRecognizerSet, MultiLanguageRecognizer, RecognizerSet, RegexRecognizer, IntentPatternConverter } from './recognizers';
 import { AgeEntityRecognizer, ConfirmationEntityRecognizer, CurrencyEntityRecognizer, DateTimeEntityRecognizer, DimensionEntityRecognizer, EmailEntityRecognizer, GuidEntityRecognizer, HashtagEntityRecognizer, IpEntityRecognizer, MentionEntityRecognizer, NumberEntityRecognizer, OrdinalEntityRecognizer, PercentageEntityRecognizer, PhoneNumberEntityRecognizer, RegexEntityRecognizer, TemperatureEntityRecognizer, UrlEntityRecognizer } from './recognizers/entityRecognizers';
 import { ObjectExpressionConverter, BoolExpressionConverter, StringExpressionConverter, EnumExpressionConverter, ValueExpressionConverter, NumberExpressionConverter, ExpressionConverter, ArrayExpressionConverter, IntExpressionConverter } from 'adaptive-expressions';
@@ -236,7 +236,6 @@ export class AdaptiveDialogComponentRegistration implements ComponentRegistratio
         this.registerBuilder('Microsoft.OnChooseEntity', new AdaptiveTypeBuilder(OnChooseEntity, this._resourceExplorer, OnConditionConverters));
         this.registerBuilder('Microsoft.OnChooseIntent', new AdaptiveTypeBuilder(OnChooseIntent, this._resourceExplorer, OnConditionConverters));
         this.registerBuilder('Microsoft.OnChooseProperty', new AdaptiveTypeBuilder(OnChooseProperty, this._resourceExplorer, OnConditionConverters));
-        this.registerBuilder('Microsoft.OnClearProperty', new AdaptiveTypeBuilder(OnClearProperty, this._resourceExplorer, OnConditionConverters));
         this.registerBuilder('Microsoft.OnCondition', new AdaptiveTypeBuilder(OnCondition, this._resourceExplorer, OnConditionConverters));
         this.registerBuilder('Microsoft.OnConversationUpdateActivity', new AdaptiveTypeBuilder(OnConversationUpdateActivity, this._resourceExplorer, OnConditionConverters));
         this.registerBuilder('Microsoft.OnDialogEvent', new AdaptiveTypeBuilder(OnDialogEvent, this._resourceExplorer, OnConditionConverters));
@@ -391,7 +390,7 @@ export class AdaptiveDialogComponentRegistration implements ComponentRegistratio
     private registerCustomDialogs(): void {
         const schemas = this._resourceExplorer.getResources('.schema');
         for (const schema of schemas) {
-            const resourceId = schema.id().replace(/.schema$/, '');
+            const resourceId = schema.id.replace(/.schema$/, '');
             if (resourceId.endsWith('.dialog')) {
                 this.registerBuilder(resourceId, new CustomDialogTypeBuilder(DynamicBeginDialog, this._resourceExplorer, {
                     'options': new ObjectExpressionConverter<object>(),

@@ -310,7 +310,7 @@ export class StaticChecker extends AbstractParseTreeVisitor<Diagnostic[]> implem
         const lineOffset = this.currentTemplate !== undefined ? this.currentTemplate.sourceRange.range.start.line : 0;
 
         let templateNameInfo = '';
-        if (this.currentTemplate !== undefined && this.currentTemplate.name !== Templates.inlineTemplateId) {
+        if (this.currentTemplate !== undefined && this.currentTemplate.name.startsWith(Templates.inlineTemplateIdPrefix)) {
             templateNameInfo = `[${ this.currentTemplate.name }]`;
         }
 
