@@ -24,3 +24,6 @@ if(($PackageName -match 'botframework-') -or ($PackageName -match 'botbuilder-')
 } else {
     "##vso[task.setvariable variable=LatestVersion_$PackageName;]$latestVersion";    
 }
+
+
+# ./set-dependency-version-in-packagejson.ps1 -LatestVersion $latestVersion
