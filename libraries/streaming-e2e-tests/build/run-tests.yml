@@ -3,11 +3,15 @@ jobs:
     variables:
       ChromeDriverDownloadUrl: 'https://chromedriver.storage.googleapis.com/84.0.4147.30/chromedriver_win32.zip'
     steps:
+      - powershell: |
+          (Get-Item "C:\Program Files (x86)\Google\Chrome\Application\chrome.exe").VersionInfo
+        displayName: 'We want to know the Chrome version installed on this machine'
+
       - powershell: npm install
         displayName: 'npm install in tests directory'
         workingDirectory: $(TestsDir)
 
-      # - template: install-chromedriver-bin.yml
+      - template: install-chromedriver-bin.yml
 
       - powershell: npm test
         displayName: 'Run Tests: npm test'
