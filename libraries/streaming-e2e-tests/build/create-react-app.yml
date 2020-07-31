@@ -20,7 +20,7 @@ steps:
     workingDirectory: $(RootReactPiecesDir)/react-app
   
   - powershell: |
-      Add-Content -Path "./.env" -Value BOT_HOSTNAME=$(BotName)
+      Add-Content -Path "./.env" -Value REACT_APP_BOT_HOSTNAME=$(BotName)
       Get-Content -Path "./.env"	
     displayName: "Write bot's website host name to React app's .env"
     workingDirectory: $(RootReactPiecesDir)/react-app

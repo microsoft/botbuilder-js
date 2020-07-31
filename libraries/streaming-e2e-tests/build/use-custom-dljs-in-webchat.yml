@@ -21,4 +21,5 @@ steps:
 
   - powershell: npm install dotenv
     displayName: 'npm install dotenv'
-    workingDirectory: $(RootReactPiecesDir)/react-app
+    workingDirectory: $(ReactProjectDir)
+    
