@@ -19,8 +19,10 @@ steps:
     displayName: npm install botframework-directlinejs.tgz
     workingDirectory: $(ReactProjectDir)
   
-  - powershell: npm install
-    displayName: npm install
+  - powershell: | 
+      npm install path
+      npm install dotenv
+    displayName: npm install path and dotenv
     workingDirectory: $(ReactProjectDir)
     
 
