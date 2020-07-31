@@ -11,7 +11,7 @@ const pathToChromeDriver = process.env.CHROME_DRIVER;
 
 describe('Chrome', function () {
   it('should receive an echo after sending a message', async function () {
-    console.length('describe - it');
+    console.log('describe - it');
     this.timeout(60000);
 
     const driver = createDriver('chrome');
