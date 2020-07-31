@@ -10,24 +10,22 @@ const { Options } = require('selenium-webdriver/chrome');
 const pathToChromeDriver = process.env.CHROME_DRIVER;
 
 describe('Chrome', function () {
-  it('should receive an echo after sending a message', function () {
-    (async () => {
-      const driver = createDriver('chrome', pathToChromeDriver);
-      
-      await echoMessageInBrowser(driver);
-      
-      const transcriptMessages = await getTranscriptMessages(driver, 3);
-      const expectedBotWelcomeMessage = 'Hello and welcome!';
-      const expectedUserMessage = 'Why hello there';
-      const expectedBotEcho = 'Streaming Echo: Why hello there.';
+  it('should receive an echo after sending a message', async function () {
+    this.timeout(15000);
+    const driver = createDriver('chrome');
+    await echoMessageInBrowser(driver);
+    const transcriptMessages = await getTranscriptMessages(driver, 3);
 
-      assert.strictEqual(transcriptMessages[0], expectedBotWelcomeMessage);
-      assert.strictEqual(transcriptMessages[1], expectedUserMessage);
-      assert.strictEqual(transcriptMessages[2], expectedBotEcho);
-      assert.strictEqual(transcriptMessages.length, 3);
+    const expectedBotWelcomeMessage = 'Hello and welcome!';
+    const expectedUserMessage = 'Why hello there';
+    const expectedBotEcho = 'Streaming Echo: Why hello there.';
 
-      driver.quit();
-    })();
+    assert.strictEqual(transcriptMessages[0], expectedBotWelcomeMessage);
+    assert.strictEqual(transcriptMessages[1], expectedUserMessage);
+    assert.strictEqual(transcriptMessages[2], expectedBotEcho);
+    assert.strictEqual(transcriptMessages.length, 3);
+
+    await driver.quit();
   });
 });
 
