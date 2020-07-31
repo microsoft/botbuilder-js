@@ -16,13 +16,9 @@ describe('Chrome', function () {
     await echoMessageInBrowser(driver);
     const transcriptMessages = await getTranscriptMessages(driver, 3);
 
-    const expectedBotWelcomeMessage = 'Hello and welcome!';
-    const expectedUserMessage = 'Why hello there';
-    const expectedBotEcho = 'Streaming Echo: Why hello there.';
-
-    assert.strictEqual(transcriptMessages[0], expectedBotWelcomeMessage);
-    assert.strictEqual(transcriptMessages[1], expectedUserMessage);
-    assert.strictEqual(transcriptMessages[2], expectedBotEcho);
+    assert.strictEqual(transcriptMessages[0], 'Hello and welcome!');
+    assert.strictEqual(transcriptMessages[1], 'Why hello there');
+    assert.strictEqual(transcriptMessages[2], 'Streaming Echo: Why hello there.');
     assert.strictEqual(transcriptMessages.length, 3);
 
     await driver.quit();
