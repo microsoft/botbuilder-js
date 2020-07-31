@@ -11,7 +11,7 @@ const pathToChromeDriver = process.env.CHROME_DRIVER;
 
 describe('Chrome', function () {
   it('should receive an echo after sending a message', async function () {
-    this.timeout(15000);
+    this.timeout(20000);
     const driver = createDriver('chrome');
     await echoMessageInBrowser(driver);
     const transcriptMessages = await getTranscriptMessages(driver, 3);
@@ -28,9 +28,9 @@ describe('Chrome', function () {
 function createDriver(browser, driverBinPath) {
     // For now, we are only using ChromeDriver
     // In future expansions on E2E streaming tests, we can expand to create options for multiple browsers
-    const options = new Options().setChromeBinaryPath(driverBinPath);
+    // const options = new Options().setChromeBinaryPath(driverBinPath);
     const builder = new Builder()
-        .setChromeOptions(options)
+        // .setChromeOptions(options)
         .forBrowser(browser)
         .build();
 
@@ -39,7 +39,8 @@ function createDriver(browser, driverBinPath) {
 
 async function echoMessageInBrowser(driver) {
   try {
-    await driver.get(process.env.REACT_APP_ENDPOINT);
+    await driver.get('https://ash-react-app.azurewebsites.net/');
+    // await driver.get(process.env.REACT_APP_ENDPOINT);
     await driver.sleep(2000);
 
     let wcSendBox = await driver.wait(until.elementLocated(By.className('webchat__send-box-text-box__input')), 10000);
