@@ -6,7 +6,6 @@
  * Licensed under the MIT License.
  */
 
-export * from './configurableTypeBuilder';
 export * from './customTypeBuilder';
 export * from './typeBuilder';
 export * from './typeFactory';
