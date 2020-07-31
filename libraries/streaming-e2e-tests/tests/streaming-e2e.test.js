@@ -7,31 +7,36 @@ const assert = require('assert');
 const { Builder, By, Condition, Key, until, css } = require('selenium-webdriver');
 const { Options } = require('selenium-webdriver/chrome');
 
-const pathToChromeDriver = process.env.CHROME_DRIVER;
+// const pathToChromeDriver = process.env.CHROME_DRIVER;
 
 describe('Chrome', function () {
   it('should receive an echo after sending a message', async function () {
-    console.log('describe - it');
     this.timeout(180000);
 
-    const driver = createDriver('chrome');
+    const driver = createDriver('chrome', pathToChromeDriver);
     await echoMessageInBrowser(driver);
     const transcriptMessages = await getTranscriptMessages(driver, 3);
 
-    assert.strictEqual(transcriptMessages[0], 'Hello and welcome!');
-    assert.strictEqual(transcriptMessages[1], 'Why hello there');
-    assert.strictEqual(transcriptMessages[2], 'Streaming Echo: Why hello there.');
-    assert.strictEqual(transcriptMessages.length, 3);
+    assert.strictEqual(transcriptMessages[0], 'Why hello there');
+    assert.strictEqual(transcriptMessages[1], 'Streaming Echo: Why hello there.');
+    assert.strictEqual(transcriptMessages.length, 2);
+    
+    // const transcriptMessages = await getTranscriptMessages(driver, 3);
+
+    // assert.strictEqual(transcriptMessages[0], 'Hello and welcome!');
+    // assert.strictEqual(transcriptMessages[1], 'Why hello there');
+    // assert.strictEqual(transcriptMessages[2], 'Streaming Echo: Why hello there.');
+    // assert.strictEqual(transcriptMessages.length, 3);
 
     await driver.quit();
   });
 });
 
-function createDriver(browser, driverBinPath) {
+function createDriver(browser) {
     // For now, we are only using ChromeDriver
     // In future expansions on E2E streaming tests, we can expand to create options for multiple browsers
     const options = new Options()
-        .setChromeBinaryPath(driverBinPath)
+        // .setChromeBinaryPath(driverBinPath)
         .headless();
     const builder = new Builder()
         .setChromeOptions(options)
