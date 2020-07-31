@@ -283,7 +283,7 @@ export class OAuthPrompt extends Dialog {
                         cardActionType = ActionTypes.OpenUrl;
                     }
                 }
-                else {
+                else if (!this.channelRequiresSignInLink(context.activity.channelId)){
                     link = undefined;
                 }
 
@@ -399,7 +399,7 @@ export class OAuthPrompt extends Dialog {
 
                 if(!tokenExchangeResponse || !tokenExchangeResponse.token) {
                     await context.sendActivity(this.getTokenExchangeInvokeResponse(
-                        StatusCodes.CONFLICT, 
+                        StatusCodes.PRECONDITION_FAILED, 
                         'The bot is unable to exchange token. Proceed with regular login.'));
                 } else {
                     await context.sendActivity(this.getTokenExchangeInvokeResponse(StatusCodes.OK, null, context.activity.value.id));
@@ -492,7 +492,6 @@ export class OAuthPrompt extends Dialog {
 
     private channelSupportsOAuthCard(channelId: string): boolean {
         switch (channelId) {
-            case Channels.Msteams:
             case Channels.Cortana:
             case Channels.Skype:
             case Channels.Skypeforbusiness:
@@ -501,6 +500,16 @@ export class OAuthPrompt extends Dialog {
         }
 
         return true;
+    }
+    
+    private channelRequiresSignInLink(channelId: string): boolean {
+        switch (channelId) {
+            case Channels.Msteams:
+                return true;
+            default:
+        }
+
+        return false;
     }
 }
 

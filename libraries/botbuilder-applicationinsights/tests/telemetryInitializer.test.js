@@ -13,11 +13,11 @@ class TestInitializerMiddleware extends TelemetryInitializerMiddleware {
     }
 }
 
-describe(`TelemetryInitializerMiddleware`, function() {
+describe(`TelemetryInitializerMiddleware`, function () {
     this.timeout(5000);
 
-    it(`telemetry initializer stores activity`, function(done) {      
-        
+    it(`telemetry initializer stores activity`, function (done) {
+
         var telemetryClient = {
             trackEvent: (telemetry) => {
             }
@@ -48,7 +48,7 @@ describe(`TelemetryInitializerMiddleware`, function() {
             .then(done);
     });
 
-    it(`calls logging middleware (when logActivityTelemetry is true)`, function(done) {      
+    it(`calls logging middleware (when logActivityTelemetry is true)`, function (done) {
 
         var callCount = 0;
 
@@ -83,7 +83,7 @@ describe(`TelemetryInitializerMiddleware`, function() {
             .then(done);
     });
 
-    it(`does not call logging middleware (when logActivityTelemetry is false)`, function(done) {      
+    it(`does not call logging middleware (when logActivityTelemetry is false)`, function (done) {
 
         var telemetryClient = {
             trackEvent: (telemetry) => {
@@ -93,41 +93,6 @@ describe(`TelemetryInitializerMiddleware`, function() {
 
         var telemetryLoggerMiddleware = new TelemetryLoggerMiddleware(telemetryClient, true);
         var initializerMiddleware = new TestInitializerMiddleware(telemetryLoggerMiddleware, false, []);
-        
-        var adapter = new TestAdapter(async (context) => {
-            conversationId = context.activity.conversation.id;
-            var typingActivity = {
-                type: ActivityTypes.Typing,
-                relatesTo: context.activity.relatesTo
-            };
-            await context.sendActivity(typingActivity);
-            await context.sendActivity(`echo:${ context.activity.text }`);
-        }).use(initializerMiddleware);
-
-        adapter
-            .send('foo')
-            .assertReply(activity => assert.equal(activity.type, ActivityTypes.Typing))
-            .assertReply('echo:foo')
-            .send('bar')
-            .assertReply(activity => assert.equal(activity.type, ActivityTypes.Typing))
-            .assertReply('echo:bar')
-            .then(done);
-    });
-
-    it(`correlation context is null (disabled) middleware does not fail`, function(done) {      
-
-        var callCount = 0;
-
-        var telemetryClient = {
-            trackEvent: (telemetry) => {
-                assert(telemetry, 'telemetry is null');
-                ++callCount;
-                assert(callCount < 7 && callCount > 0);
-            }
-        };
-
-        var telemetryLoggerMiddleware = new TelemetryLoggerMiddleware(telemetryClient, true);
-        var initializerMiddleware = new TestInitializerMiddleware(telemetryLoggerMiddleware, true, []);
         
         var adapter = new TestAdapter(async (context) => {
             conversationId = context.activity.conversation.id;
