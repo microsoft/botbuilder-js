@@ -7,7 +7,7 @@ jobs:
         displayName: 'npm install in tests directory'
         workingDirectory: $(TestsDir)
 
-      - template: install-chromedriver-bin.yml
+      # - template: install-chromedriver-bin.yml
 
       - powershell: npm test
         displayName: 'Run Tests: npm test'
