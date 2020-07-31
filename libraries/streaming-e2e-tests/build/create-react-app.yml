@@ -23,6 +23,9 @@ steps:
       $botname = "$(BotName)"
       $botname;
       "##vso[task.setvariable variable=BOT_HOSTNAME;]$botname";
+
+      # Temporary!!!
+      npm install
     displayName: "Write bot's website host name to pipeline variable"
     workingDirectory: $(RootReactPiecesDir)/react-app
 
