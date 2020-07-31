@@ -13,6 +13,9 @@ steps:
       Get-Content -Path "./.env"
     displayName: 'Write ChromeDriver Bin Path to tests .env'
     workingDirectory: $(TestsDir)
+  
+  # - powershell: echo "##vso[task.prependpath]$env:CHROMEWEBDRIVER"
+  #   displayName: 'Add ChromeWebDriver for Selenium to PATH'
 
   - powershell: |
       Add-Content -Path "./.env" -Value REACT_APP_ENDPOINT=https://$(ReactAppService).azurewebsites.net/
