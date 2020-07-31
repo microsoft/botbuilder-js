@@ -6,7 +6,7 @@ import * as serviceWorker from './serviceWorker';
 import { DirectLineStreaming } from 'botframework-directlinejs';
 
 (async function() {
-  const botHostname = process.env.BotName;
+  const botHostname = process.env.APPSETTING_WEBSITE_SITE_NAME;
   const res = await fetch(`https://${botHostname}.azurewebsites.net/api/token/directlinease`, {
     method: 'POST'
   });
