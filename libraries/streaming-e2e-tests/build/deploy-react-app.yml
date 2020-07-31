@@ -7,7 +7,7 @@ steps:
       Write-Host "Compressing projecting into react-app.zip"
 
       Compress-Archive "$(ReactProjectDir)/build/*" "$(ReactProjectDir)/react-app.zip" 
-    displayName:
+    displayName: 'Zip react-app'
 
   - task: AzureCLI@1
     displayName: 'Deploy react-app'
