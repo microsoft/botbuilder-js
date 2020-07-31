@@ -5,21 +5,21 @@ jobs:
     steps: 
       - template: create-react-app.yml
 
-  # - job: Customize_DLJS
-  #   variables:
-  #     PackageName: 'botframework-streaming'
-  #     TargetProjectDir: $(DLJSDir)
-  #   steps:
-  #     - template: customize-dljs.yml
+  - job: Customize_DLJS
+    variables:
+      PackageName: 'botframework-streaming'
+      TargetProjectDir: $(DLJSDir)
+    steps:
+      - template: customize-dljs.yml
 
-  # - job: Deploy_React_App_With_Custom_DLJS
-  #   dependsOn:
-  #     - Create_React_App_With_WebChat
-  #     - Customize_DLJS
-  #   condition: succeeded()
-  #   variables:
-  #     ReactProjectDir: '$(RootReactPiecesDir)/react-app'
-  #   steps:
-  #     - template: use-custom-dljs-in-webchat.yml
-  #     - template: deploy-react-app.yml
+  - job: Deploy_React_App_With_Custom_DLJS
+    dependsOn:
+      - Create_React_App_With_WebChat
+      - Customize_DLJS
+    condition: succeeded()
+    variables:
+      ReactProjectDir: '$(RootReactPiecesDir)/react-app'
+    steps:
+      - template: use-custom-dljs-in-webchat.yml
+      - template: deploy-react-app.yml
       

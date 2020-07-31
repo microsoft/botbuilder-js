@@ -1,42 +1,26 @@
 # Create a React app that uses ReactWebChat
 
 steps:
-  # - powershell: npx create-react-app react-app
-  #   displayName: 'create-react-app'
-  #   workingDirectory: $(RootReactPiecesDir)
+  - powershell: npx create-react-app react-app
+    displayName: 'create-react-app'
+    workingDirectory: $(RootReactPiecesDir)
 
-  # - powershell: npm install botframework-webchat@4.9.2
-  #   displayName: 'npm install botframework-webchat'
-  #   workingDirectory: $(RootReactPiecesDir)/react-app
+  - powershell: npm install botframework-webchat@4.9.2
+    displayName: 'npm install botframework-webchat'
+    workingDirectory: $(RootReactPiecesDir)/react-app
 
-  # - powershell: Remove-Item src/App.js, src/index.js, public/index.html
-  #   displayName: "Delete files we're replacing with custom code in react app"
-  #   workingDirectory: $(RootReactPiecesDir)/react-app
+  - powershell: Remove-Item src/App.js, src/index.js, public/index.html
+    displayName: "Delete files we're replacing with custom code in react app"
+    workingDirectory: $(RootReactPiecesDir)/react-app
 
-  # - powershell: |
-  #     copy ../custom-app-code/App.js, ../custom-app-code/index.js, ../custom-app-code/.gitignore ./src/
-  #     copy ../custom-app-code/index.html ./public
-  #   displayName: "Copy custom files into react-app"
-  #   workingDirectory: $(RootReactPiecesDir)/react-app
+  - powershell: |
+      copy ../custom-app-code/App.js, ../custom-app-code/index.js, ../custom-app-code/.gitignore ./src/
+      copy ../custom-app-code/index.html ./public
+    displayName: "Copy custom files into react-app"
+    workingDirectory: $(RootReactPiecesDir)/react-app
 
-    - powershell: | 
-        npm i
-        node test-env.js
-      displayName: "node test-env.js"
-      workingDirectory: $(RootReactPiecesDir)/dummy
-
-  # - powershell: | 
-  #     $botname = "$(BotName)"
-  #     Write-Host "Saving '$botname' as pipeline variable BOT_HOSTNAME";
-  #     "##vso[task.setvariable variable=BOT_HOSTNAME;]$botname";
-
-  #     # Temporary!!!
-  #     npm install
-  #   displayName: "Write bot's website host name to pipeline variable"
-  #   workingDirectory: $(RootReactPiecesDir)/react-app
-
-    # - task: PublishPipelineArtifact@1
-    #   displayName: 'Publish Artifact: ReactApp'
-    #   inputs:
-    #     targetPath: $(RootReactPiecesDir)/react-app
-    #     artifactName: 'ReactApp'
+  - task: PublishPipelineArtifact@1
+    displayName: 'Publish Artifact: ReactApp'
+    inputs:
+      targetPath: $(RootReactPiecesDir)/react-app
+      artifactName: 'ReactApp'
