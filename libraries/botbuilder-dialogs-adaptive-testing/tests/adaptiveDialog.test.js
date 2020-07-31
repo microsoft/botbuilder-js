@@ -77,10 +77,6 @@ describe('AdaptiveDialogTests', function() {
         await testRunner.runTestScript('AdaptiveDialog_EmitEventActivityReceived');
     });
 
-    it('EmitEventActivityReceived', async () => {
-        await testRunner.runTestScript('AdaptiveDialog_EmitEventActivityReceived');
-    });
-
     it('EndTurn', async () => {
         await testRunner.runTestScript('AdaptiveDialog_EndTurn');
     });
