@@ -12,7 +12,7 @@ const pathToChromeDriver = process.env.CHROME_DRIVER;
 describe('Chrome', function () {
   it('should receive an echo after sending a message', async function () {
     console.log('describe - it');
-    this.timeout(190000);
+    this.timeout(180000);
 
     const driver = createDriver('chrome');
     await echoMessageInBrowser(driver);
@@ -62,7 +62,7 @@ async function echoMessageInBrowser(driver) {
 async function getTranscriptMessages(driver, minNumMessages) {
   console.log('getTranscriptMessages')
   console.log('minNumActivitiesShown...')
-  await driver.wait(minNumActivitiesShown(minNumMessages), 180000);
+  await driver.wait(minNumActivitiesShown(minNumMessages), 70000);
 
   const transcript = await getTranscript(driver);
   const messageBubbles = await getBubbles(transcript);
