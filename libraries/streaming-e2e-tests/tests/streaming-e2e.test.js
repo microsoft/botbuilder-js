@@ -11,6 +11,7 @@ const pathToChromeDriver = process.env.CHROME_DRIVER;
 
 describe('Chrome', function () {
   it('should receive an echo after sending a message', async function () {
+    console.length('describe - it');
     this.timeout(60000);
 
     const driver = createDriver('chrome');
@@ -27,6 +28,7 @@ describe('Chrome', function () {
 });
 
 function createDriver(browser, driverBinPath) {
+    console.log('createDriver');
     // For now, we are only using ChromeDriver
     // In future expansions on E2E streaming tests, we can expand to create options for multiple browsers
     // const options = new Options().setChromeBinaryPath(driverBinPath);
@@ -40,14 +42,16 @@ function createDriver(browser, driverBinPath) {
 }
 
 async function echoMessageInBrowser(driver) {
+  console.log('echoMessageInBrowser');
   try {
     await driver.get('https://ash-react-app.azurewebsites.net/');
     // await driver.get(process.env.REACT_APP_ENDPOINT);
     await driver.sleep(2000);
 
     let wcSendBox = await driver.wait(until.elementLocated(By.className('webchat__send-box-text-box__input')), 15000);
+    console.log('get sendbox')
     await wcSendBox.sendKeys('Why hello there', Key.RETURN);
-
+    console.log('send message')
     return driver;
 
   } catch (error) {
@@ -56,6 +60,8 @@ async function echoMessageInBrowser(driver) {
 }
 
 async function getTranscriptMessages(driver, minNumMessages) {
+  console.log('getTranscriptMessages')
+  console.log('minNumActivitiesShown...')
   await driver.wait(minNumActivitiesShown(minNumMessages), 22000);
 
   const transcript = await getTranscript(driver);
@@ -91,9 +97,11 @@ function minNumActivitiesShown(numActivities) {
 }
 
 async function getTranscript(driver) {
+  console.log('getTranscript')
   return await driver.findElement(By.css('.webchat__basic-transcript'));
 }
 
 async function getBubbles(transcript) {
+  console.log('getBubbles')
   return await transcript.findElements(By.className('webchat__bubble__content'));
 }
