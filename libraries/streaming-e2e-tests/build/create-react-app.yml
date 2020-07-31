@@ -20,7 +20,9 @@ steps:
   #   workingDirectory: $(RootReactPiecesDir)/react-app
 
   - powershell: | 
-      "##vso[task.setvariable variable=BOT_HOSTNAME;]$(BotName)";
+      $botname = $(BotName)
+      $botname;
+      "##vso[task.setvariable variable=BOT_HOSTNAME;]$botname";
 
       Write-Host "The BOT_HOSTNAME is: ";
 
