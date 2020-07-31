@@ -11,7 +11,6 @@ dotenv.config({ path: ENV_FILE });
 
 (async function() {
   const botHostname = process.env.BotName;
-  console.log('**********************BOT_HOSTNAME: ', botHostname);
   const res = await fetch(`https://${botHostname}.azurewebsites.net/api/token/directlinease`, {
     method: 'POST'
   });
