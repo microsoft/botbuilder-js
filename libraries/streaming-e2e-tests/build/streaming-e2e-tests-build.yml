@@ -21,8 +21,8 @@ variables:
   
 
 stages:
-  - stage: Create_And_Deploy_Projects
-    jobs:
+  # - stage: Create_And_Deploy_Projects
+  #   jobs:
       # - job: Deploy_Bot
       #   variables:
       #     TargetProjectDir: '$(System.DefaultWorkingDirectory)/libraries/streaming-e2e-tests/bot'
