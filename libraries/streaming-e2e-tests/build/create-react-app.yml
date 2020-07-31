@@ -5,12 +5,14 @@ steps:
     displayName: 'create-react-app'
     workingDirectory: $(RootReactPiecesDir)
 
-  - powershell: |
-      npm install path
-      npm install dotenv
-    displayName: "Install path and dotenv into react-app"
+  - powershell: npm install path
+    displayName: 'npm install path'
     workingDirectory: $(RootReactPiecesDir)/react-app
 
+  - powershell: npm install dotenv
+    displayName: 'npm install dotenv'
+    workingDirectory: $(RootReactPiecesDir)/react-app
+    
   - powershell: npm install botframework-webchat@4.9.2
     displayName: 'npm install botframework-webchat'
     workingDirectory: $(RootReactPiecesDir)/react-app
