@@ -4,10 +4,6 @@ import './index.css';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
 import { DirectLineStreaming } from 'botframework-directlinejs';
-import { join } from 'path';
-import { dotenv } from 'dotenv';
-const ENV_FILE = join(__dirname, '.env');
-dotenv.config({ path: ENV_FILE });
 
 (async function() {
   const botHostname = process.env.BotName;
