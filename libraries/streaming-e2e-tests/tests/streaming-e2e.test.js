@@ -41,8 +41,8 @@ function createDriver(browser, driverBinPath) {
 
 async function echoMessageInBrowser(driver) {
   try {
-    await driver.get('https://ash-react-app.azurewebsites.net/');
-    // await driver.get(process.env.REACT_APP_ENDPOINT);
+    // await driver.get('https://ash-react-app.azurewebsites.net/');
+    await driver.get(process.env.REACT_APP_ENDPOINT);
     await driver.sleep(2000);
 
     let wcSendBox = await driver.wait(until.elementLocated(By.className('webchat__send-box-text-box__input')), 10000);
