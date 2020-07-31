@@ -62,7 +62,7 @@ async function echoMessageInBrowser(driver) {
 async function getTranscriptMessages(driver, minNumMessages) {
   console.log('getTranscriptMessages')
   console.log('minNumActivitiesShown...')
-  await driver.wait(minNumActivitiesShown(minNumMessages), 22000);
+  await driver.wait(minNumActivitiesShown(minNumMessages), 60000);
 
   const transcript = await getTranscript(driver);
   const messageBubbles = await getBubbles(transcript);
