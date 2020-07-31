@@ -6,4 +6,4 @@
  * Licensed under the MIT License.
  */
 export * from './index_common';
-export * from './builtinFunctions_node';
+export * from './builtinFunctions_browser';

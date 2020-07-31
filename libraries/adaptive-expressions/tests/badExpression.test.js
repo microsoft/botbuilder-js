@@ -73,6 +73,7 @@ const badExpressions =
         'addOrdinal(one + 0.5)',// should have Integer param
         'addOrdinal(one, two)',// should have one param
         'newGuid(one)',// should have no parameters
+        'EOL(one)',// should have no parameters
         'indexOf(hello)',// should have two parameters
         'indexOf(hello, world, one)', // should have two parameters
         'indexOf(hello, one)', // second parameter should be string

@@ -6,6 +6,7 @@ const assert = require('assert');
 const moment = require('moment');
 const bigInt = require('big-integer');
 const { useFakeTimers } = require('sinon');
+const os = require('os');
 
 const one = ['one'];
 const oneTwo = ['one', 'two'];
@@ -230,6 +231,7 @@ const dataSource = [
     ['count(newGuid())', 36],
     ['indexOf(newGuid(), \'-\')', 8],
     ['indexOf(newGuid(), \'-\')', 8],
+    ['EOL()', os.EOL],
     ['indexOf(hello, \'-\')', -1],
     ['indexOf(nullObj, \'-\')', -1],
     ['indexOf(hello, nullObj)', 0],

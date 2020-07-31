@@ -17,6 +17,7 @@
     "url": "https://github.com/Microsoft/botbuilder-js.git"
   },
   "main": "./lib/index.js",
+  "browser": "./lib/index_browser.js",
   "typings": "./lib/index.d.ts",
   "dependencies": {
     "@microsoft/recognizers-text-data-types-timex-expression": "1.1.4",
