@@ -9,29 +9,25 @@ steps:
   #   displayName: 'npm install botframework-webchat'
   #   workingDirectory: $(RootReactPiecesDir)/react-app
 
-  # - powershell: Remove-Item src/App.js, src/index.js, public/index.html
-  #   displayName: "Delete files we're replacing with custom code in react app"
-  #   workingDirectory: $(RootReactPiecesDir)/react-app
+  - powershell: Remove-Item src/App.js, src/index.js, public/index.html
+    displayName: "Delete files we're replacing with custom code in react app"
+    workingDirectory: $(RootReactPiecesDir)/react-app
 
-  # - powershell: |
-  #     copy ../custom-app-code/App.js, ../custom-app-code/index.js, ../custom-app-code/.gitignore ./src/
-  #     copy ../custom-app-code/index.html ./public
-  #   displayName: "Copy custom files into react-app"
-  #   workingDirectory: $(RootReactPiecesDir)/react-app
+  - powershell: |
+      copy ../custom-app-code/App.js, ../custom-app-code/index.js, ../custom-app-code/.gitignore ./src/
+      copy ../custom-app-code/index.html ./public
+    displayName: "Copy custom files into react-app"
+    workingDirectory: $(RootReactPiecesDir)/react-app
 
   - powershell: | 
       $botname = $(BotName)
       $botname;
       "##vso[task.setvariable variable=BOT_HOSTNAME;]$botname";
-
-      Write-Host "The BOT_HOSTNAME is: ";
-
-      $(BOT_HOSTNAME);
     displayName: "Write bot's website host name to pipeline variable"
     workingDirectory: $(RootReactPiecesDir)/react-app
 
-  # - task: PublishPipelineArtifact@1
-  #   displayName: 'Publish Artifact: ReactApp'
-  #   inputs:
-  #     targetPath: $(RootReactPiecesDir)/react-app
-  #     artifactName: 'ReactApp'
+  - task: PublishPipelineArtifact@1
+    displayName: 'Publish Artifact: ReactApp'
+    inputs:
+      targetPath: $(RootReactPiecesDir)/react-app
+      artifactName: 'ReactApp'
