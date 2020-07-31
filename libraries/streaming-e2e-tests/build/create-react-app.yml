@@ -5,6 +5,12 @@ steps:
     displayName: 'create-react-app'
     workingDirectory: $(RootReactPiecesDir)
 
+  - powershell: |
+      npm install path
+      npm install dotenv
+    displayName: "Install path and dotenv into react-app"
+    workingDirectory: $(RootReactPiecesDir)/react-app
+
   - powershell: npm install botframework-webchat@4.9.2
     displayName: 'npm install botframework-webchat'
     workingDirectory: $(RootReactPiecesDir)/react-app
@@ -18,6 +24,7 @@ steps:
       copy ../custom-app-code/index.html ./public
     displayName: "Copy custom files into react-app"
     workingDirectory: $(RootReactPiecesDir)/react-app
+  
 
   - task: PublishPipelineArtifact@1
     displayName: 'Publish Artifact: ReactApp'
