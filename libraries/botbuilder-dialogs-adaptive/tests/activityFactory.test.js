@@ -20,7 +20,6 @@ describe('ActivityFactoryTest', function() {
     it('inlineActivityFactory', function() {
         let result = ActivityFactory.fromObject('text');
         assert(result.text === 'text');
-        assert(result.text === 'text');
         assert(result.speak === 'text');
         assert(result.inputHint === undefined);
 
@@ -594,7 +593,6 @@ function assertAnimationCardActivity(activity) {
     assert.strictEqual(card.title, 'Animation Card');
     assert.strictEqual(card.subtitle, 'look at it animate');
     assert.strictEqual(card.autostart, true);
-    assert.strictEqual(card.autostart, true);
     assert.strictEqual(card.image.url, 'https://docs.microsoft.com/en-us/bot-framework/media/how-it-works/architecture-resize.png');
     assert.strictEqual(card.media[0].url, 'http://oi42.tinypic.com/1rchlx.jpg');
 }
@@ -635,6 +633,4 @@ function assertReceiptCardActivity(activity) {
     assert.strictEqual(items[1].image.url, 'https://github.com/amido/azure-vector-icons/raw/master/renders/cloud-service.png');
     assert.strictEqual(items[1].price, '$ 45.00');
     assert.strictEqual(items[1].quantity, '720');
-    
 }
-

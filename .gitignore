@@ -14,7 +14,7 @@ libraries/functional-tests/**/*.vscode/launch.json
 
 # @microsoft/api-extractor
 libraries/*/temp
-libraries/*/dist 
+libraries/*/dist
 
 # User-specific files
 *.suo
@@ -320,3 +320,6 @@ package-lock.json
 
 consumer-test/**.js
 consumer-test/**.json
+
+# Transpiled botbuilder integration tests
+libraries/**/transpiled-tests/
