@@ -5,9 +5,9 @@ steps:
   #   displayName: 'create-react-app'
   #   workingDirectory: $(RootReactPiecesDir)
 
-  # - powershell: npm install botframework-webchat@4.9.2
-  #   displayName: 'npm install botframework-webchat'
-  #   workingDirectory: $(RootReactPiecesDir)/react-app
+  - powershell: npm install botframework-webchat@4.9.2
+    displayName: 'npm install botframework-webchat'
+    workingDirectory: $(RootReactPiecesDir)/react-app
 
   # - powershell: Remove-Item src/App.js, src/index.js, public/index.html
   #   displayName: "Delete files we're replacing with custom code in react app"
