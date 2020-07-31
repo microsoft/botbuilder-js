@@ -5,7 +5,7 @@ const { StatusCodes } = require('botframework-schema');
 
 describe('Bot Framework Connector - Auth Tests', function() {
 
-    describe('Connector Tokens', async function() {
+    describe('Connector Tokens', function() {
         this.timeout(20000);
 
         let header;
@@ -17,7 +17,6 @@ describe('Bot Framework Connector - Auth Tests', function() {
             genericCredentials = new SimpleCredentialProvider('2cd87869-38a0-4182-9251-d056e8f0ac24', '2.30Vs3VQLKt974F');
             emptyCredentials = new SimpleCredentialProvider('', '');
         });
-        
 
         describe('EmptyHeader', function() {
             it('Bot with noCredentials should throw', async () => {
@@ -370,7 +369,7 @@ describe('Bot Framework Connector - Auth Tests', function() {
                 }
             });
         });
-   
+
         describe('isValidTokenFormat()', () => {
             it('should return false with a falsy authHeader', () => {
                 const isValid = JwtTokenValidation.isValidTokenFormat();
