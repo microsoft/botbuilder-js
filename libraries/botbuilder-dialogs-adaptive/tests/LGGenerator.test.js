@@ -11,7 +11,7 @@ const { TestAdapter, TurnContext } = require('botbuilder-core');
 const { DialogContext, DialogSet } = require('botbuilder-dialogs');
 const { languageGeneratorKey, languageGeneratorManagerKey } = require('../lib/languageGeneratorExtensions');
 
-const resourceExplorer = new ResourceExplorer().loadProject(path.join(__dirname, 'lg'), [], false);
+const resourceExplorer = new ResourceExplorer().addFolder(path.join(__dirname, 'lg'), true, false);
 const languageGeneratorManager = new LanguageGeneratorManager(resourceExplorer);
 
 function getDialogContext(locale, generator) {
