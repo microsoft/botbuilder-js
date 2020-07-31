@@ -5,9 +5,9 @@ steps:
   #   displayName: 'create-react-app'
   #   workingDirectory: $(RootReactPiecesDir)
 
-  # - powershell: npm install botframework-webchat@4.9.2
-  #   displayName: 'npm install botframework-webchat'
-  #   workingDirectory: $(RootReactPiecesDir)/react-app
+  - powershell: npm install botframework-webchat@4.9.2
+    displayName: 'npm install botframework-webchat'
+    workingDirectory: $(RootReactPiecesDir)/react-app
 
   - powershell: Remove-Item src/App.js, src/index.js, public/index.html
     displayName: "Delete files we're replacing with custom code in react app"
@@ -19,15 +19,15 @@ steps:
     displayName: "Copy custom files into react-app"
     workingDirectory: $(RootReactPiecesDir)/react-app
 
-  - powershell: | 
-      $botname = "$(BotName)"
-      $botname;
-      "##vso[task.setvariable variable=BOT_HOSTNAME;]$botname";
+  # - powershell: | 
+  #     $botname = "$(BotName)"
+  #     Write-Host "Saving '$botname' as pipeline variable BOT_HOSTNAME";
+  #     "##vso[task.setvariable variable=BOT_HOSTNAME;]$botname";
 
-      # Temporary!!!
-      npm install
-    displayName: "Write bot's website host name to pipeline variable"
-    workingDirectory: $(RootReactPiecesDir)/react-app
+  #     # Temporary!!!
+  #     npm install
+  #   displayName: "Write bot's website host name to pipeline variable"
+  #   workingDirectory: $(RootReactPiecesDir)/react-app
 
   - task: PublishPipelineArtifact@1
     displayName: 'Publish Artifact: ReactApp'
