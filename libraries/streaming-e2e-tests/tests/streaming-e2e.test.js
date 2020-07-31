@@ -31,8 +31,9 @@ function createDriver(browser, driverBinPath) {
     console.log('createDriver');
     // For now, we are only using ChromeDriver
     // In future expansions on E2E streaming tests, we can expand to create options for multiple browsers
-    // const options = new Options().setChromeBinaryPath(driverBinPath);
-    const options = new Options().headless();
+    const options = new Options()
+        .setChromeBinaryPath(driverBinPath)
+        .headless();
     const builder = new Builder()
         .setChromeOptions(options)
         .forBrowser(browser)
