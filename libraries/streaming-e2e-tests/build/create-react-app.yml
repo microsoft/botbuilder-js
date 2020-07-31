@@ -22,7 +22,7 @@ steps:
   - powershell: |
       Add-Content -Path "./.env" -Value REACT_APP_BOT_HOSTNAME=$(BotName)
       Get-Content -Path "./.env"	
-    displayName: "Write bot's website host name to React app's .env"
+    displayName: "Write react-consumable bot name to .env"
     workingDirectory: $(RootReactPiecesDir)/react-app
 
   - task: PublishPipelineArtifact@1

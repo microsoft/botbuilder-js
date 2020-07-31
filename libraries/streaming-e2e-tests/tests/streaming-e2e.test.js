@@ -12,6 +12,7 @@ const pathToChromeDriver = process.env.CHROME_DRIVER;
 describe('Chrome', function () {
   it('should receive an echo after sending a message', async function () {
     this.timeout(20000);
+    
     const driver = createDriver('chrome');
     await echoMessageInBrowser(driver);
     const transcriptMessages = await getTranscriptMessages(driver, 3);
