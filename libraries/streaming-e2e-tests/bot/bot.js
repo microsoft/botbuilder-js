@@ -13,18 +13,6 @@ class EchoBot extends ActivityHandler {
             // By calling next() you ensure that the next BotHandler is run.
             await next();
         });
-
-        // this.onMembersAdded(async (context, next) => {
-        //     const membersAdded = context.activity.membersAdded;
-        //     const welcomeText = 'Hello and welcome!';
-        //     for (let cnt = 0; cnt < membersAdded.length; ++cnt) {
-        //         if (membersAdded[cnt].id !== context.activity.recipient.id) {
-        //             await context.sendActivity(MessageFactory.text(welcomeText, welcomeText));
-        //         }
-        //     }
-        //     // By calling next() you ensure that the next BotHandler is run.
-        //     await next();
-        // });
     }
 }
 
