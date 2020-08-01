@@ -13,14 +13,14 @@ describe('Chrome', function () {
   it('should receive an echo after sending a message', async function () {
     this.timeout(180000);
 
-    const driver = createDriver('chrome', pathToChromeDriver);
+    const driver = createDriver('chrome');
     await echoMessageInBrowser(driver);
     const transcriptMessages = await getTranscriptMessages(driver, 3);
 
     assert.strictEqual(transcriptMessages[0], 'Why hello there');
     assert.strictEqual(transcriptMessages[1], 'Streaming Echo: Why hello there.');
     assert.strictEqual(transcriptMessages.length, 2);
-    
+
     // const transcriptMessages = await getTranscriptMessages(driver, 3);
 
     // assert.strictEqual(transcriptMessages[0], 'Hello and welcome!');
