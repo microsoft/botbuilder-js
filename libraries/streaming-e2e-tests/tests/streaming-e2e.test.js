@@ -18,7 +18,7 @@ describe('Chrome', function () {
     const transcriptMessages = await getTranscriptMessages(driver, 2);
 
     assert.strictEqual(transcriptMessages[0], userMessage);
-    assert.strictEqual(transcriptMessages[1], `Streaming Echo: ${userMessage}`);
+    assert.strictEqual(transcriptMessages[1], `Streaming Echo: ${userMessage}.`);
     assert.strictEqual(transcriptMessages.length, 2);
 
     await driver.quit();
@@ -39,7 +39,6 @@ function createDriver(browser) {
 
 async function echoMessageInBrowser(driver) {
   try {
-    // await driver.get('https://ash-react-app.azurewebsites.net/');
     await driver.get(process.env.REACT_APP_ENDPOINT);
     await driver.sleep(2000);
 
