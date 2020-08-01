@@ -1,5 +1,5 @@
 jobs:
-  - job: Install_Drivers_And_Run_Tests
+  - job: Run_Tests
     steps:
       - powershell: npm install
         displayName: 'npm install in tests directory'
