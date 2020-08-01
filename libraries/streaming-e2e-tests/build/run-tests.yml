@@ -1,17 +1,17 @@
 jobs:
   - job: Run_Tests
     steps:
-      # - powershell: npm install
-      #   displayName: 'npm install in tests directory'
-      #   workingDirectory: $(TestsDir)
+      - powershell: npm install
+        displayName: 'npm install in tests directory'
+        workingDirectory: $(TestsDir)
 
       - powershell: |
-          $reactAppEndpoint = "https://$(ReactAppService).azurewebsites.net/"
-          $reactAppEndpoint
-          Write-Host "##vso[task.setvariable variable=REACT_APP_ENDPOINT;]$reactAppEndpoint"
-        displayName: "Write React app's endpoint to pipeline variable for mocha tests"
-
-      # - powershell: npm test
-      #   displayName: 'Run Tests: npm test'
-      #   workingDirectory: $(TestsDir)
+          Add-Content -Path "./.env" -Value REACT_APP_ENDPOINT=https://$(ReactAppService).azurewebsites.net/
+          Get-Content -Path "./.env"	
+        displayName: "Write React app's endpoint to .env"
+        workingDirectory: $(TestsDir)
+      
+      - powershell: npm test
+        displayName: 'Run Tests: npm test'
+        workingDirectory: $(TestsDir)
   
