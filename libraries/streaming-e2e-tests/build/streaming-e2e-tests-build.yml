@@ -21,8 +21,8 @@ variables:
   
 
 stages:
-  # - stage: Create_And_Deploy_Projects
-  #   jobs:
+  - stage: Create_And_Deploy_Projects
+    jobs:
   #     - job: Deploy_Bot
   #       variables:
   #         TargetProjectDir: '$(System.DefaultWorkingDirectory)/libraries/streaming-e2e-tests/bot'
@@ -31,10 +31,10 @@ stages:
   #         - template: configure-to-bbjs-daily.yml
   #         - template: deploy-bot.yml
 
-  #     - template: create-and-deploy-streaming-react-app.yml
+      - template: create-and-deploy-streaming-react-app.yml
 
   - stage: Run_Tests
-    # dependsOn: Create_And_Deploy_Projects
+    dependsOn: Create_And_Deploy_Projects
     condition: succeeded()
     jobs:
       - template: run-tests.yml
