@@ -6,63 +6,93 @@
  * Licensed under the MIT License.
  */
 
-import watch from 'node-watch';
-import { EventEmitter } from 'events';
+import { watch, FSWatcher } from 'chokidar';
 import { normalize, extname } from 'path';
 import { FileResource } from './fileResource';
-import { IResource } from './resource';
-import { IResourceProvider } from './resourceProvider';
+import { Resource } from './resource';
+import { ResourceProvider, ResourceChangeEvent } from './resourceProvider';
+import { ResourceExplorer } from './resourceExplorer';
 import { PathUtil } from '../pathUtil';
 
-const extensionsToInclude: string[] = ['.lg', '.qna', '.lu', '.dialog', '.schema', '.md'];
-
-export class FolderResourceProvider implements IResourceProvider {
-    private _emitter: EventEmitter;
-
-    public set emitter(e: EventEmitter) {
-        this._emitter = e;
-    }
-
+/**
+ * Class which gives resource explorer access to resources which are stored in file system.
+ */
+export class FolderResourceProvider extends ResourceProvider {
+    private _watcher: FSWatcher;
     private _resources: Map<string, FileResource> = new Map<string, FileResource>();
 
-    public extensions: Set<string> = new Set<string>(extensionsToInclude);
+    /**
+     * Initializes a new instance of the `FolderResourceProvider` class.
+     * @param resourceExplorer Resource explorer.
+     * @param folder Root folder.
+     * @param includeSubFolders Whether include its sub folders.
+     * @param monitorChanges Whether monitor changes.
+     */
+    public constructor(resourceExplorer: ResourceExplorer, folder: string, includeSubFolders: boolean = true, monitorChanges: boolean = true) {
+        super(resourceExplorer);
 
-    public directory: string;
-
-    public includeSubFolders: boolean;
-
-    public id(): string {
-        return this.directory;
-    }
-
-    public constructor(folder: string, includeSubFolders: boolean = true, monitorChanges: boolean = true) {
         this.includeSubFolders = includeSubFolders;
         folder = normalize(folder);
         this.directory = folder;
-        const files: string[] = PathUtil.getAllFiles(folder);
-        const filteredFiles: string[] = files.filter((f): boolean => this.extensions.has(extname(f)));
+        this._id = this.directory;
+        this.refresh();
 
+        if (monitorChanges) {
+            this._watcher = watch(folder, { depth: includeSubFolders ? undefined : 1 });
+            this._watcher
+                .on('add', this.onResourceAdded.bind(this))
+                .on('change', this.onResourceChanged.bind(this))
+                .on('unlink', this.onResourceRemoved.bind(this));
+        }
+    }
+
+    /**
+     * Gets attached file watcher.
+     */
+    public get watcher(): FSWatcher {
+        return this._watcher;
+    }
+
+    /**
+     * Folder to enumerate.
+     */
+    public directory: string;
+
+    /**
+     * A value indicating whether to include subfolders.
+     */
+    public includeSubFolders: boolean = true;
+
+    /**
+     * Refresh any cached content and look for new content.
+     */
+    public refresh(): void {
+        this._resources.clear();
+        const files: string[] = PathUtil.getFiles(this.directory, this.includeSubFolders);
+        const filteredFiles: string[] = files.filter((filename): boolean => this.resourceExplorer.resourceTypes.has(extname(filename).toLowerCase().replace(/^\./, '')));
         for (let i = 0; i < filteredFiles.length; i++) {
             const filename = filteredFiles[i];
             const fileResource: FileResource = new FileResource(filename);
-            this._resources.set(fileResource.id(), fileResource);
-        }
-
-        if (monitorChanges) {
-            watch(folder, { recursive: true }, (type, filename): void => {
-                this._emitter.emit('changed', new FileResource(filename));
-            });
+            this._resources.set(fileResource.id, fileResource);
         }
     }
 
-    public getResource(id: string): IResource {
+    /**
+     * Gets resource by its id.
+     * @param id Resource id.
+     */
+    public getResource(id: string): Resource {
         return this._resources.has(id) ? this._resources.get(id) : undefined;
     }
 
-    public getResources(extension: string): IResource[] {
+    /**
+     * Gets resources by extension.
+     * @param extension Resource extension.
+     */
+    public getResources(extension: string): Resource[] {
         extension = extension.startsWith('.') ? extension.toLowerCase() : `.${ extension.toLowerCase() }`;
 
-        let resources: IResource[] = [];
+        let resources: Resource[] = [];
 
         for (let key of this._resources.keys()) {
             if (key.toLowerCase().endsWith(extension)) {
@@ -71,5 +101,36 @@ export class FolderResourceProvider implements IResourceProvider {
         }
 
         return resources;
+    }
+
+    private onResourceAdded(path: string): void {
+        const ext = extname(path.toLowerCase()).replace(/^\./, '');
+        if (this.resourceExplorer.resourceTypes.has(ext)) {
+            const fileResource = new FileResource(path);
+            if (!this._resources.has(fileResource.id)) {
+                this._resources.set(fileResource.id, fileResource);
+                this.onChanged(ResourceChangeEvent.added, [fileResource]);
+            }
+        }
+    }
+
+    private onResourceChanged(path: string): void {
+        const ext = extname(path.toLowerCase()).replace(/^\./, '');
+        if (this.resourceExplorer.resourceTypes.has(ext)) {
+            const fileResource = new FileResource(path);
+            this._resources.set(fileResource.id, fileResource);
+            this.onChanged(ResourceChangeEvent.changed, [fileResource]);
+        }
+    }
+
+    private onResourceRemoved(path: string): void {
+        const ext = extname(path.toLowerCase()).replace(/^\./, '');
+        if (this.resourceExplorer.resourceTypes.has(ext)) {
+            const fileResource = new FileResource(path);
+            if (this._resources.has(fileResource.id)) {
+                this._resources.delete(fileResource.id);
+                this.onChanged(ResourceChangeEvent.removed, [fileResource]);
+            }
+        }
     }
 }

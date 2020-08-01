@@ -71,6 +71,9 @@ export class DateTimePrompt extends Prompt<DateTimeResolution[]> {
         const result: PromptRecognizerResult<DateTimeResolution[]> = { succeeded: false };
         const activity: Activity = context.activity;
         const utterance: string = activity.text;
+        if (!utterance) {
+            return result;
+        }
         const locale: string =  activity.locale || this.defaultLocale || 'en-us';
         const results: any[] = Recognizers.recognizeDateTime(utterance, locale);
         if (results.length > 0 && results[0].resolution) {
