@@ -39,7 +39,7 @@ function createDriver(browser) {
 
 async function echoMessageInBrowser(driver) {
   try {
-    await driver.get(process.env.REACT_APP_ENDPOINT);
+    await driver.get(process.env.ReactAppEndpoint);
     await driver.sleep(2000);
 
     let wcSendBox = await driver.wait(until.elementLocated(By.className('webchat__send-box-text-box__input')), 15000);
