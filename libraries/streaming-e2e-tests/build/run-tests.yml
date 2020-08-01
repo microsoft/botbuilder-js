@@ -6,7 +6,7 @@ jobs:
         workingDirectory: $(TestsDir)
 
       - powershell: |
-          $reactAppEndpoint = https://$(ReactAppService).azurewebsites.net/
+          $reactAppEndpoint = "https://$(ReactAppService).azurewebsites.net/"
           $reactAppEndpoint
           "##vso[task.setvariable variable=REACT_APP_ENDPOINT;reactAppEndpoint]"
           Write-Host "REACT_APP_ENDPOINT: $env:REACT_APP_ENDPOINT"
