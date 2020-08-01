@@ -1,4 +1,4 @@
-param($AccessToken, $PackageName, $PathToPJson)
+param($AccessToken, $PackageName, $PathToPJson, $BuildDir)
 
 # Get latest version of package
 $myGetFeedName = "botbuilder-v4-js-daily";
@@ -14,6 +14,7 @@ $package.id;
 $latestVersion;
 
 # Set latest version of package in package.json
+Set-Location -Path "$BuildDir"
 ./set-dependency-version-in-packagejson.ps1 -Package "$PackageName" -LatestVersion "$latestVersion" -PathToPJson "$PathToPJson" 
 
 # Save latest version as pipeline variable.
