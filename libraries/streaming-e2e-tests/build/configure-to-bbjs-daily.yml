@@ -4,7 +4,7 @@ steps:
     displayName: 'Set $(PackageName) to latest version from MyGet - https://botbuilder.myget.org/gallery/botbuilder-v4-js-daily'
     inputs:
       targetType: 'filePath'
-      filePath: $(System.DefaultWorkingDirectory)/libraries/streaming-e2e-tests/build/configure-pkg-to-latest-daily.ps1
+      filePath: $(System.DefaultWorkingDirectory)/libraries/streaming-e2e-tests/build/set-to-latest-daily.ps1
       arguments:
         -AccessToken $(MyGetPersonalAccessToken)
         -PackageName $(PackageName)

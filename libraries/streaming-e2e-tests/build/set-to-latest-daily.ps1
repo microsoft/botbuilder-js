@@ -13,9 +13,11 @@ $package = $result.packages | Where-Object {$_.id -eq $PackageName};
 $package.id;
 $latestVersion;
 
+
 # Set latest version of package in package.json
 Set-Location -Path "$BuildDir"
 ./set-dependency-version-in-packagejson.ps1 -Package "$PackageName" -LatestVersion "$latestVersion" -PathToPJson "$PathToPJson" 
+
 
 # Save latest version as pipeline variable.
 # Creating variable name without '-' character to make it a legal yaml variable name
