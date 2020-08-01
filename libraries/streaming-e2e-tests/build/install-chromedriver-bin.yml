@@ -1,8 +1,14 @@
 steps:
   - powershell: |
-      Add-Content -Path "./.env" -Value REACT_APP_ENDPOINT=https://$(ReactAppService).azurewebsites.net/
+      "##vso[task.setvariable variable=REACT_APP_ENDPOINT;]https://$(ReactAppService).azurewebsites.net/";
 
-      Get-Content -Path "./.env"
-    displayName: "Write React app's endpoint to tests .env"
-    workingDirectory: $(TestsDir)
+      Write-Host "REACT_APP_ENDPOINT Pipeline Variable Set: $env:REACT_APP_ENDPOINT";
+    displayName: "Write React app's endpoint to pipeline variable for mocha tests"
+
+  # - powershell: |
+  #     Add-Content -Path "./.env" -Value REACT_APP_ENDPOINT=https://$(ReactAppService).azurewebsites.net/
+
+  #     Get-Content -Path "./.env"
+  #   displayName: "Write React app's endpoint to tests .env"
+  #   workingDirectory: $(TestsDir)
     
