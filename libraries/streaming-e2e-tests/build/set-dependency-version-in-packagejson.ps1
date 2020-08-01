@@ -1,4 +1,4 @@
-param($LatestVersion, $PathToPJson, $Package)
+param($Package, $LatestVersion, $PathToPJson)
 
 $find = "$Package`": `"\S*`"";
 $replace = "$Package`": `"$LatestVersion`"";

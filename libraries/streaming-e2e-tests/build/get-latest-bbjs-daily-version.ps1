@@ -1,7 +1,7 @@
-param($AccessToken, $PackageName)
+param($AccessToken, $PackageName, $PathToPJson)
 
+# Get latest version of package
 $myGetFeedName = "botbuilder-v4-js-daily";
-
 $url = "https://botbuilder.myget.org/F/$myGetFeedName/auth/$AccessToken/api/v2/feed-state";
 
 Write-Host "Get latest $PackageName version number from MyGet $myGetFeedName";
@@ -12,6 +12,9 @@ $package = $result.packages | Where-Object {$_.id -eq $PackageName};
 
 $package.id;
 $latestVersion;
+
+# Set latest version of package in package.json
+./set-dependency-version-in-packagejson.ps1 -Package "$PackageName" -LatestVersion "$latestVersion" -PathToPJson "$PathToPJson" 
 
 # Save latest version as pipeline variable.
 # Creating variable name without '-' character to make it a legal yaml variable name
@@ -24,6 +27,3 @@ if(($PackageName -match 'botframework-') -or ($PackageName -match 'botbuilder-')
 } else {
     "##vso[task.setvariable variable=LatestVersion_$PackageName;]$latestVersion";    
 }
-
-
-# ./set-dependency-version-in-packagejson.ps1 -LatestVersion $latestVersion
