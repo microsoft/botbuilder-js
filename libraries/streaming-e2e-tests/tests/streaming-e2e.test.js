@@ -28,6 +28,7 @@ describe('Chrome', function () {
 function createDriver(browser) {
     // For now, we are only using ChromeDriver
     // In future expansions on E2E streaming tests, we can expand to create options for multiple browsers
+    // const options = new Options().headless();
     const options = new Options().headless();
     const builder = new Builder()
         .setChromeOptions(options)
@@ -41,11 +42,12 @@ async function echoMessageInBrowser(driver) {
   console.log('echoMessageInBrowser')
   console.log('process.env.ReactAppEndpoint', process.env.ReactAppEndpoint)
   try {
-    // await driver.get(process.env.ReactAppEndpoint);
+    await driver.get(process.env.ReactAppEndpoint);
 
-    await driver.sleep(2000);
+    console.log('sleeping...')
+    await driver.sleep(7000);
     console.log('getting send box...')
-    let wcSendBox = await driver.wait(until.elementLocated(By.className('webchat__send-box-text-box__input')), 25000);
+    let wcSendBox = await driver.wait(until.elementLocated(By.className('webchat__send-box-text-box__input')), 17000);
     console.log('sending message...')
     await wcSendBox.sendKeys(userMessage, Key.RETURN);
 
