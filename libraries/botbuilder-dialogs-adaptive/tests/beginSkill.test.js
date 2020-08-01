@@ -1,6 +1,7 @@
 const { ok, strictEqual } = require('assert');
 const { createHash } = require('crypto');
 const { stub } = require('sinon');
+const { createTelemetryClientAndStub } = require('./lgTelemetryUtil');
 const {
     ActivityTypes,
     ConversationState,
@@ -9,7 +10,6 @@ const {
     SkillConversationIdFactoryBase,
     StatusCodes,
     TurnContext,
-    NullTelemetryClient,
     MessageFactory
 } = require('botbuilder-core');
 const { BoolExpression, StringExpression } = require('adaptive-expressions');
@@ -85,7 +85,7 @@ describe('BeginSkill', function () {
     };
 
     // Create telemetryClient and trackEventStub
-    const [telemetryClient, trackEventStub] = createtelemetryClientAndStub(captureTelemetryAction);
+    const [telemetryClient, trackEventStub] = createTelemetryClientAndStub(captureTelemetryAction);
 
     // Create BotFrameworkHttpClient and postActivityStub
     const [skillClient, postActivityStub] = createSkillClientAndStub(captureAction);
@@ -174,25 +174,4 @@ function createSkillClientAndStub(captureAction, returnStatusCode = StatusCodes.
     }
 
     return [skillClient, postActivityStub];
-}
-
-function createtelemetryClientAndStub(captureTelemetryAction) {
-    if (captureTelemetryAction && typeof captureTelemetryAction !== 'function') {
-        throw new TypeError(`Failed test arrangement - createtelemetryClientAndStub() received ${typeof captureTelemetryAction} instead of undefined or a function.`);
-    }
-
-    function wrapAction(...args) {
-        captureTelemetryAction(...args);
-    }
-    
-    const telemetryClient = new NullTelemetryClient();
-    const trackEventStub = stub(telemetryClient, 'trackEvent');
-
-    if (captureTelemetryAction) {
-        trackEventStub.callsFake(wrapAction);
-    } else {
-        trackEventStub.returns({});
-    }
-
-    return [telemetryClient, trackEventStub];
 }
