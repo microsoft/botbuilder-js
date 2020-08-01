@@ -19,13 +19,6 @@ describe('Chrome', function () {
     assert.strictEqual(transcriptMessages[1], 'Streaming Echo: Why hello there.');
     assert.strictEqual(transcriptMessages.length, 2);
 
-    // const transcriptMessages = await getTranscriptMessages(driver, 3);
-
-    // assert.strictEqual(transcriptMessages[0], 'Hello and welcome!');
-    // assert.strictEqual(transcriptMessages[1], 'Why hello there');
-    // assert.strictEqual(transcriptMessages[2], 'Streaming Echo: Why hello there.');
-    // assert.strictEqual(transcriptMessages.length, 3);
-
     await driver.quit();
   });
 });
@@ -33,8 +26,7 @@ describe('Chrome', function () {
 function createDriver(browser) {
     // For now, we are only using ChromeDriver
     // In future expansions on E2E streaming tests, we can expand to create options for multiple browsers
-    const options = new Options()
-        .headless();
+    const options = new Options().headless();
     const builder = new Builder()
         .setChromeOptions(options)
         .forBrowser(browser)
@@ -45,8 +37,8 @@ function createDriver(browser) {
 
 async function echoMessageInBrowser(driver) {
   try {
-    await driver.get('https://ash-react-app.azurewebsites.net/');
-    // await driver.get(process.env.REACT_APP_ENDPOINT);
+    // await driver.get('https://ash-react-app.azurewebsites.net/');
+    await driver.get(process.env.REACT_APP_ENDPOINT);
     await driver.sleep(2000);
 
     let wcSendBox = await driver.wait(until.elementLocated(By.className('webchat__send-box-text-box__input')), 15000);
