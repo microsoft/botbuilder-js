@@ -1,26 +1,4 @@
 steps:
-  # - powershell: Invoke-WebRequest -Uri $(ChromeDriverDownloadUrl) -OutFile './chromedriver.zip'
-  #   displayName: 'Download ChromeDriver binaries'
-  #   workingDirectory: $(TestsDir)
-  
-  # - powershell: Expand-Archive -Path .\chromedriver.zip
-  #   displayName: 'Unzip ChromeDriver binaries'
-  #   workingDirectory: $(TestsDir)
-  
-  # - powershell: move ./chromedriver/chromedriver.exe .
-  #   displayName: 'Move chromedriver.exe to Test Dir. root'
-  #   workingDirectory: $(TestsDir)
-  
-  # - powershell: |
-  #     Add-Content -Path "./.env" -Value CHROME_EXE=$(TestsDir)/chromedriver/chromedriver.exe
-
-  #     Get-Content -Path "./.env"
-  #   displayName: 'Write ChromeDriver Bin Path to tests .env'
-  #   workingDirectory: $(TestsDir)
-  
-  # - powershell: echo "##vso[task.prependpath]$env:CHROMEWEBDRIVER"
-  #   displayName: 'Add ChromeWebDriver for Selenium to PATH'
-
   - powershell: |
       Add-Content -Path "./.env" -Value REACT_APP_ENDPOINT=https://$(ReactAppService).azurewebsites.net/
 

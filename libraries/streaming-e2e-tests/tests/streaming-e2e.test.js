@@ -7,8 +7,6 @@ const assert = require('assert');
 const { Builder, By, Condition, Key, until, css } = require('selenium-webdriver');
 const { Options } = require('selenium-webdriver/chrome');
 
-// const pathToChromeDriver = process.env.CHROME_DRIVER;
-
 describe('Chrome', function () {
   it('should receive an echo after sending a message', async function () {
     this.timeout(180000);
@@ -36,7 +34,6 @@ function createDriver(browser) {
     // For now, we are only using ChromeDriver
     // In future expansions on E2E streaming tests, we can expand to create options for multiple browsers
     const options = new Options()
-        // .setChromeBinaryPath(driverBinPath)
         .headless();
     const builder = new Builder()
         .setChromeOptions(options)
