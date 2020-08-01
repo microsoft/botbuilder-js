@@ -45,7 +45,7 @@ async function echoMessageInBrowser(driver) {
 
     await driver.sleep(2000);
     console.log('getting send box...')
-    let wcSendBox = await driver.wait(until.elementLocated(By.className('webchat__send-box-text-box__input')), 15000);
+    let wcSendBox = await driver.wait(until.elementLocated(By.className('webchat__send-box-text-box__input')), 25000);
     console.log('sending message...')
     await wcSendBox.sendKeys(userMessage, Key.RETURN);
 
