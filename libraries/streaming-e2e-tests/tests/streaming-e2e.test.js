@@ -7,6 +7,8 @@ const assert = require('assert');
 const { Builder, By, Condition, Key, until, css } = require('selenium-webdriver');
 const { Options } = require('selenium-webdriver/chrome');
 
+const userMessage = 'Why hello there';
+
 describe('Chrome', function () {
   it('should receive an echo after sending a message', async function () {
     this.timeout(180000);
@@ -15,8 +17,8 @@ describe('Chrome', function () {
     await echoMessageInBrowser(driver);
     const transcriptMessages = await getTranscriptMessages(driver, 2);
 
-    assert.strictEqual(transcriptMessages[0], 'Why hello there');
-    assert.strictEqual(transcriptMessages[1], 'Streaming Echo: Why hello there.');
+    assert.strictEqual(transcriptMessages[0], userMessage);
+    assert.strictEqual(transcriptMessages[1], `Streaming Echo: ${userMessage}`);
     assert.strictEqual(transcriptMessages.length, 2);
 
     await driver.quit();
@@ -42,7 +44,7 @@ async function echoMessageInBrowser(driver) {
     await driver.sleep(2000);
 
     let wcSendBox = await driver.wait(until.elementLocated(By.className('webchat__send-box-text-box__input')), 15000);
-    await wcSendBox.sendKeys('Why hello there', Key.RETURN);
+    await wcSendBox.sendKeys(userMessage, Key.RETURN);
 
     return driver;
 
