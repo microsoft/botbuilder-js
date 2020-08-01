@@ -16,7 +16,7 @@ describe('Chrome', function () {
     const driver = createDriver('chrome');
     await echoMessageInBrowser(driver);
     const transcriptMessages = await getTranscriptMessages(driver, 2);
-
+    console.log('back in it test')
     assert.strictEqual(transcriptMessages[0], userMessage);
     assert.strictEqual(transcriptMessages[1], `Streaming Echo: ${userMessage}.`);
     assert.strictEqual(transcriptMessages.length, 2);
@@ -38,11 +38,15 @@ function createDriver(browser) {
 }
 
 async function echoMessageInBrowser(driver) {
+  console.log('echoMessageInBrowser')
+  console.log('process.env.ReactAppEndpoint', process.env.ReactAppEndpoint)
   try {
-    await driver.get(process.env.ReactAppEndpoint);
-    await driver.sleep(2000);
+    // await driver.get(process.env.ReactAppEndpoint);
 
+    await driver.sleep(2000);
+    console.log('getting send box...')
     let wcSendBox = await driver.wait(until.elementLocated(By.className('webchat__send-box-text-box__input')), 15000);
+    console.log('sending message...')
     await wcSendBox.sendKeys(userMessage, Key.RETURN);
 
     return driver;
@@ -53,8 +57,9 @@ async function echoMessageInBrowser(driver) {
 }
 
 async function getTranscriptMessages(driver, minNumMessages) {
+  console.log('waiting for 2 activities')
   await driver.wait(minNumActivitiesShown(minNumMessages), 240000);
-
+  console.log('got min 2 activities')
   const transcript = await getTranscript(driver);
   const messageBubbles = await getBubbles(transcript);
 
@@ -88,9 +93,11 @@ function minNumActivitiesShown(numActivities) {
 }
 
 async function getTranscript(driver) {
+  console.log('get transcript')
   return await driver.findElement(By.css('.webchat__basic-transcript'));
 }
 
 async function getBubbles(transcript) {
+  console.log('get bubbles')
   return await transcript.findElements(By.className('webchat__bubble__content'));
 }
