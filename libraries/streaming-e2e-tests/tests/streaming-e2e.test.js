@@ -15,7 +15,7 @@ describe('Chrome', function () {
 
     const driver = createDriver('chrome');
     await echoMessageInBrowser(driver);
-    const transcriptMessages = await getTranscriptMessages(driver, 3);
+    const transcriptMessages = await getTranscriptMessages(driver, 2);
 
     assert.strictEqual(transcriptMessages[0], 'Why hello there');
     assert.strictEqual(transcriptMessages[1], 'Streaming Echo: Why hello there.');
