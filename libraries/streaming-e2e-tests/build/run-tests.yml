@@ -8,7 +8,7 @@ jobs:
       - powershell: |
           $reactAppEndpoint = "https://$(ReactAppService).azurewebsites.net/"
           $reactAppEndpoint
-          Write-Host "##vso[task.setvariable variable=REACT_APP_ENDPOINT;]reactAppEndpoint"
+          Write-Host "##vso[task.setvariable variable=REACT_APP_ENDPOINT;]$reactAppEndpoint"
         displayName: "Write React app's endpoint to pipeline variable for mocha tests"
 
       # - powershell: npm test
