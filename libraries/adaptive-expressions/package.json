@@ -42,7 +42,8 @@
     "nyc": "^15.1.0",
     "ts-node": "^4.1.0",
     "typescript": "3.5.3",
-    "antlr4ts-cli": "0.5.0-alpha.3"
+    "antlr4ts-cli": "0.5.0-alpha.3",
+    "sinon": "^7.5.0"
   },
   "scripts": {
     "build": "tsc",

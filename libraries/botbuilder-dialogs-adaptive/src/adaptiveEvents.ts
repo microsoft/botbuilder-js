@@ -40,11 +40,6 @@ export class AdaptiveEvents extends DialogEvents {
     public static readonly chooseEntity = 'chooseEntity';
 
     /**
-     * Raised when a property should be cleared.
-     */
-    public static readonly clearProperty = 'clearProperty';
-
-    /**
      * Raised when an entity should be assigned to a property.
      */
     public static readonly assignEntity = 'assignEntity';
