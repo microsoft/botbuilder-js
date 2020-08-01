@@ -37,3 +37,5 @@ stages:
     condition: succeeded()
     jobs:
       - template: run-tests.yml
+        variables:
+          ReactAppEndpoint: 'https://$(ReactAppService).azurewebsites.net/'

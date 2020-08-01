@@ -5,12 +5,6 @@ jobs:
         displayName: 'npm install in tests directory'
         workingDirectory: $(TestsDir)
 
-      - powershell: |
-          Add-Content -Path "./.env" -Value REACT_APP_ENDPOINT=https://$(ReactAppService).azurewebsites.net/
-          Get-Content -Path "./.env"	
-        displayName: "Write React app's endpoint to .env"
-        workingDirectory: $(TestsDir)
-      
       - powershell: npm test
         displayName: 'Run Tests: npm test'
         workingDirectory: $(TestsDir)
