@@ -11,7 +11,7 @@ const userMessage = 'Why hello there';
 
 describe('Chrome', function () {
   it('should receive an echo after sending a message', async function () {
-    this.timeout(300000);
+    this.timeout(360000);
 
     const driver = createDriver('chrome');
     await echoMessageInBrowser(driver);
@@ -54,7 +54,7 @@ async function echoMessageInBrowser(driver) {
 }
 
 async function getTranscriptMessages(driver, minNumMessages) {
-  await driver.wait(minNumActivitiesShown(minNumMessages), 250000);
+  await driver.wait(minNumActivitiesShown(minNumMessages), 360000);
 
   const transcript = await getTranscript(driver);
   const messageBubbles = await getBubbles(transcript);
