@@ -11,7 +11,7 @@ const userMessage = 'Why hello there';
 
 describe('Chrome', function () {
   it('should receive an echo after sending a message', async function () {
-    this.timeout(360000);
+    this.timeout(400000);
 
     const driver = createDriver('chrome');
     await echoMessageInBrowser(driver);
@@ -39,6 +39,7 @@ function createDriver(browser) {
 
 async function echoMessageInBrowser(driver) {
   try {
+    console.log(`Navigating to "${process.env.ReactAppEndpoint}"...`);
     await driver.get(process.env.ReactAppEndpoint);
 
     await driver.sleep(7000);
