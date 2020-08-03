@@ -6,7 +6,7 @@ steps:
   - script: npm install botframework-webchat@4.9.2
     displayName: 'npm install botframework-webchat@4.9.2'
     workingDirectory: $(RootReactPiecesDir)/webchat-cache
-  
+
   - task: PublishPipelineArtifact@1
     displayName: 'Publish Artifact: WebChatNodeModulesCache'
     inputs:
