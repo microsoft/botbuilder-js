@@ -21,3 +21,4 @@ steps:
     displayName: 'Publish Artifact: WebChatNodeModulesCache'
     inputs:
       targetPath: $(RootReactPiecesDir)/webchat-cache/node_modules
+      artifactName: 'WebChatNodeModulesCache'

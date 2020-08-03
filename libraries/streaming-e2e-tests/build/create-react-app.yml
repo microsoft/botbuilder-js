@@ -8,7 +8,7 @@ steps:
   - task: DownloadPipelineArtifact@2
     displayName: 'Downloading cached botframework-webchat@4.9.2'
     inputs:
-      artifact: WebChatNodeModulesCache
+      artifact: WebChatNodeModsCache
       path: $(RootReactPiecesDir)/react-app/node_modules
       source: 'specific'
       project: $(WebChatCacheProjGuid)
