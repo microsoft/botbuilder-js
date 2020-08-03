@@ -8,11 +8,13 @@ steps:
   - task: DownloadPipelineArtifact@2
     displayName: 'Downloading cached botframework-webchat@4.9.2'
     inputs:
-      artifact: WebChatNodeModsCache
-      path: $(RootReactPiecesDir)/react-app/node_modules
-      source: 'specific'
+      buildType: 'specific'
       project: $(WebChatCacheProjGuid)
-      pipeline: $(WebChatCachePipelineId)
+      definition: 1060
+      buildVersionToDownload: 'latest'
+      tags: 'Using botframework-webchat@4.9.2 Cache'
+      artifactName: 'WebChatNodeModsCache'
+      targetPath: $(RootReactPiecesDir)/react-app/node_modules
 
   - powershell: Remove-Item src/App.js, src/index.js, public/index.html
     displayName: "Delete files we're replacing with custom code in react app"
