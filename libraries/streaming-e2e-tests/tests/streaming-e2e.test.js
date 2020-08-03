@@ -16,7 +16,8 @@ describe('Chrome', function () {
     const driver = createDriver('chrome');
     await echoMessageInBrowser(driver);
     const transcriptMessages = await getTranscriptMessages(driver, 2);
-    console.log('back in it test')
+    
+    console.log('Transcript received. Asserting...');
     assert.strictEqual(transcriptMessages[0], userMessage);
     assert.strictEqual(transcriptMessages[1], `Streaming Echo: ${userMessage}.`);
     assert.strictEqual(transcriptMessages.length, 2);
@@ -55,8 +56,10 @@ async function echoMessageInBrowser(driver) {
 }
 
 async function getTranscriptMessages(driver, minNumMessages) {
+  console.log('Waiting for activities to load...');
   await driver.wait(minNumActivitiesShown(minNumMessages), 420000);
 
+  console.log('Activities loaded. Getting transcript...');
   const transcript = await getTranscript(driver);
   const messageBubbles = await getBubbles(transcript);
 
