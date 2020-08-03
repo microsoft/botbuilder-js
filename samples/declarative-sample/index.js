@@ -9,6 +9,14 @@ const { AdaptiveDialogComponentRegistration, LanguageGeneratorExtensions, Resour
 const { OrchestratorComponentRegistration } = require('botbuilder-ai-orchestrator');
 const { DialogManager } = require('botbuilder-dialogs');
 const { MemoryStorage, UserState, ConversationState } = require('botbuilder');
+const settings = require('./generated/orchestrator.settings.json');
+
+Object.getOwnPropertyNames(settings.orchestrator).forEach(key => {
+    process.env[key] = settings[key];
+});
+
+console.log(`settings: ${settings.orchestrator.modelPath}`);
+console.log(`process: ${process.env.modelPath}`);
 
 // Import required bot services.
 // See https://aka.ms/bot-services to learn more about the different parts of a bot.
