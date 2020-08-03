@@ -1,9 +1,9 @@
 # Create a React app that uses ReactWebChat
 
 steps:
-  - powershell: npx create-react-app react-app
-    displayName: 'create-react-app'
-    workingDirectory: $(RootReactPiecesDir)
+  # - powershell: npx create-react-app react-app
+  #   displayName: 'create-react-app'
+  #   workingDirectory: $(RootReactPiecesDir)
 
   - task: DownloadPipelineArtifact@2
     displayName: 'Downloading cached botframework-webchat@4.9.2'
@@ -14,26 +14,27 @@ steps:
       buildVersionToDownload: 'latest'
       tags: 'Using botframework-webchat@4.9.2 Cache'
       artifactName: 'WebChatNodeModsCache'
-      targetPath: $(RootReactPiecesDir)/react-app/node_modules
+      # TEMPORARY -- should be $(RootReactPiecesDir)/react-app/node_modules
+      targetPath: $(RootReactPiecesDir)/test
 
-  - powershell: Remove-Item src/App.js, src/index.js, public/index.html
-    displayName: "Delete files we're replacing with custom code in react app"
-    workingDirectory: $(RootReactPiecesDir)/react-app
+  # - powershell: Remove-Item src/App.js, src/index.js, public/index.html
+  #   displayName: "Delete files we're replacing with custom code in react app"
+  #   workingDirectory: $(RootReactPiecesDir)/react-app
 
-  - powershell: |
-      copy ../custom-app-code/App.js, ../custom-app-code/index.js, ../custom-app-code/.gitignore ./src/
-      copy ../custom-app-code/index.html ./public
-    displayName: "Copy custom files into react-app"
-    workingDirectory: $(RootReactPiecesDir)/react-app
+  # - powershell: |
+  #     copy ../custom-app-code/App.js, ../custom-app-code/index.js, ../custom-app-code/.gitignore ./src/
+  #     copy ../custom-app-code/index.html ./public
+  #   displayName: "Copy custom files into react-app"
+  #   workingDirectory: $(RootReactPiecesDir)/react-app
   
-  - powershell: |
-      Add-Content -Path "./.env" -Value REACT_APP_BOT_HOSTNAME=$(BotName)
-      Get-Content -Path "./.env"	
-    displayName: "Write react-consumable bot name to .env"
-    workingDirectory: $(RootReactPiecesDir)/react-app
+  # - powershell: |
+  #     Add-Content -Path "./.env" -Value REACT_APP_BOT_HOSTNAME=$(BotName)
+  #     Get-Content -Path "./.env"	
+  #   displayName: "Write react-consumable bot name to .env"
+  #   workingDirectory: $(RootReactPiecesDir)/react-app
 
-  - task: PublishPipelineArtifact@1
-    displayName: 'Publish Artifact: ReactApp'
-    inputs:
-      targetPath: $(RootReactPiecesDir)/react-app
-      artifactName: 'ReactApp'
+  # - task: PublishPipelineArtifact@1
+  #   displayName: 'Publish Artifact: ReactApp'
+  #   inputs:
+  #     targetPath: $(RootReactPiecesDir)/react-app
+  #     artifactName: 'ReactApp'
