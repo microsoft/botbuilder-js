@@ -10,6 +10,9 @@ steps:
     inputs:
       artifact: WebChatNodeModulesCache
       path: $(RootReactPiecesDir)/react-app
+      source: 'specific'
+      project: $(WebChatCacheProjGuid)
+      pipeline: $(WebChatCachePipelineId)
 
   - powershell: Remove-Item src/App.js, src/index.js, public/index.html
     displayName: "Delete files we're replacing with custom code in react app"
