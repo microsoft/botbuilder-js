@@ -18,7 +18,7 @@ steps:
     workingDirectory: $(RootReactPiecesDir)/webchat-cache
   
   - task: PublishPipelineArtifact@1
-    displayName: 'Publish Artifact: WebChatNodeModulesCache'
+    displayName: 'Publish Artifact: WebChatNodeModsCache'
     inputs:
       targetPath: $(RootReactPiecesDir)/webchat-cache/node_modules
-      artifactName: 'WebChatNodeModulesCache'
+      artifactName: 'WebChatNodeModsCache'
