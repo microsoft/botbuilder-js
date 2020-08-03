@@ -1,0 +1,13 @@
+steps:
+  - script: npx create-react-app webchat-cache
+    displayName: "create-react-app"
+    workingDirectory: $(RootReactPiecesDir)
+  
+  - script: npm install botframework-webchat@4.9.2
+    displayName: 'npm install botframework-webchat@4.9.2'
+    workingDirectory: $(RootReactPiecesDir)/webchat-cache
+  
+  - task: PublishPipelineArtifact@1
+    displayName: 'Publish Artifact: WebChatNodeModulesCache'
+    inputs:
+      targetPath: $(RootReactPiecesDir)/webchat-cache/node_modules
