@@ -38,6 +38,14 @@ describe('LGLanguageGenerator', function() {
         this.beforeAll(async function() {
             lgResourceGroup = await LanguageResourceLoader.groupByLocale(resourceExplorer);
         });
+
+        describe('TestLGResourceGroup', async function() {
+            it('TestLGResourceGroup', async () => {
+                // TODO
+                
+            });
+        });
+
         describe('Test MultiLang Import with specified locale', async function() {
             let generator;
             this.beforeAll(async function() {

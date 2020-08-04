@@ -30,34 +30,32 @@ export class LanguageResourceLoader {
             const existNames = new Set<string>();
             for (const index in suffixs) {
                 const suffix = suffixs[index];
-                if (!locale || suffix ) {
-                    const resourcesWithSuffix = allResouces.filter((u): boolean => this.parseLGFileName(u.id).language.toLocaleLowerCase() === suffix.toLocaleLowerCase());
-                    resourcesWithSuffix.forEach((u): void => {
-                        const resourceName = u.id;
-                        const length = (!suffix)? 3 : 4;
-                        const prefixName = resourceName.substring(0, resourceName.length - suffix.length - length);
-                        if (!existNames.has(prefixName)) {
-                            existNames.add(prefixName);
-                            if (!resourceMapping.has(locale)) {
-                                resourceMapping.set(locale, [u]);
-                            } else {
-                                resourceMapping.get(locale).push(u);
-                            }
+                const resourcesWithSuffix = allResouces.filter((u): boolean => this.parseLGFileName(u.id).language.toLocaleLowerCase() === suffix.toLocaleLowerCase());
+                resourcesWithSuffix.forEach((u): void => {
+                    const resourceName = u.id;
+                    const length = (!suffix)? 3 : 4;
+                    const prefixName = resourceName.substring(0, resourceName.length - suffix.length - length);
+                    if (!existNames.has(prefixName)) {
+                        existNames.add(prefixName);
+                        if (!resourceMapping.has(locale)) {
+                            resourceMapping.set(locale, [u]);
+                        } else {
+                            resourceMapping.get(locale).push(u);
                         }
-                    });
-                } else {
-                    if (resourceMapping.has(locale)) {
-                        const resourcesWithEmptySuffix = allResouces.filter((u): boolean => this.parseLGFileName(u.id).language === '');
-                        resourcesWithEmptySuffix.forEach((u): void => {
-                            const resourceName = u.id;
-                            const prefixName = resourceName.substring(0, resourceName.length - 3);
-                            if (!existNames.has(prefixName)) {
-                                existNames.add(prefixName);
-                                resourceMapping.get(locale).push(u);
-                            }
-                        });
                     }
-                }
+                });
+            }
+
+            if (resourceMapping.has(locale)) {
+                const resourcesWithEmptySuffix = allResouces.filter((u): boolean => this.parseLGFileName(u.id).language === '');
+                resourcesWithEmptySuffix.forEach((u): void => {
+                    const resourceName = u.id;
+                    const prefixName = resourceName.substring(0, resourceName.length - 3);
+                    if (!existNames.has(prefixName)) {
+                        existNames.add(prefixName);
+                        resourceMapping.get(locale).push(u);
+                    }
+                });
             }
         }
 
