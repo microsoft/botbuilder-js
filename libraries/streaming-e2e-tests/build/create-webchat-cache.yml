@@ -17,8 +17,15 @@ steps:
     displayName: 'npm install botframework-webchat@4.9.2'
     workingDirectory: $(RootReactPiecesDir)/webchat-cache
   
-  - task: PublishPipelineArtifact@1
-    displayName: 'Publish Artifact: WebChatNodeModsCache'
+  # - task: PublishPipelineArtifact@1
+  #   displayName: 'Publish Artifact: WebChatNodeModsCache'
+  #   inputs:
+  #     targetPath: $(RootReactPiecesDir)/webchat-cache/node_modules
+  #     artifactName: 'WebChatNodeModsCache'
+
+  - task: PublishBuildArtifacts@1
     inputs:
-      targetPath: $(RootReactPiecesDir)/webchat-cache/node_modules
-      artifactName: 'WebChatNodeModsCache'
+      PathtoPublish: '$(System.DefaultWorkingDirectory)/libraries/streaming-e2e-tests/react-app/webchat-cache/node_modules'
+      ArtifactName: 'WebChatNodeModsCache'
+      publishLocation: 'Container'
+      
