@@ -5,47 +5,48 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { exception } from 'console';
-import { resolve } from 'path';
 import { TurnContext, RecognizerResult } from 'botbuilder-core';
-import { Configurable } from 'botbuilder-dialogs';
-import { existsSync } from 'fs';
-const oc: any = require('@microsoft/orchestrator-core/orchestrator-core.node');
-const ReadText: any = require('read-text-file');
+import { Configurable, DialogContext, DialogSet } from 'botbuilder-dialogs';
+import { EntityRecognizer } from 'botbuilder-dialogs-adaptive';
+import { OrchestratorAdaptiveRecognizer } from './orchestratorAdaptiveRecognizer';
+import { StringExpression, BoolExpression, NumberExpression } from 'adaptive-expressions';
 
 export class OrchestratorRecognizer extends Configurable {
     /**
      * Full recognition results are available under this property
      */
+
     public readonly resultProperty : string = "result";
-    
-    private readonly unknownIntentFilterScore = 0.4;
-    private readonly noneIntent : string = "None";
-    private static orchestrator : any = null;
-    private modelPath : string = null;
-    private snapshotPath : string = null;
-    private resolver : any = null;
+    /**
+     * Recognizers unique ID.
+     */
+    public id: string;
 
     /**
-     * Creates a new OrchestratorRecognizer instance.
-     * @param modelPath path to the model to load.
-     * @param snapshotPath path to the snapshot (.blu file) to load.
+     * Path to the model to load.
      */
-    constructor(modelPath: string, snapshotPath: string) {
-        super()
-        if (modelPath === null) {
-            throw new exception(`Missing "ModelPath" information.`);
-        }
+    public modelPath : string = null;
 
-        if (snapshotPath === null) {
-            throw new exception(`Missing "SnapshotPath" information.`);
-        }
+    /**
+     * Path to the snapshot (.blu file) to load.
+     */
+    public snapshotPath : string = null;
 
-        this.modelPath = modelPath;
-        this.snapshotPath = snapshotPath;
-        
-        this.initializeModel();
-    }
+    /**
+     * The entity recognizers.
+     */
+    public entityRecognizers: EntityRecognizer[] = [];
+
+    /**
+     * Threshold value to use for ambiguous intent detection. 
+     * Any intents that are classified with a score that is within this value from the top scoring intent is determined to be ambiguous.
+     */
+    public disambiguationScoreThreshold: number = 0.05;
+
+    /**
+     * Enable ambiguous intent detection.
+     */
+    public detectAmbiguousIntents: boolean = false;
 
     /**
      * Returns recognition result. Also sends trace activity with recognition result.
@@ -53,105 +54,16 @@ export class OrchestratorRecognizer extends Configurable {
      */
     public async recognizeAsync(context: TurnContext): Promise<RecognizerResult> 
     {
-        let result = await this.recongizeTextAsync(context.activity.text);
-        await context.sendTraceActivity('OrchestratorRecognizer', result, 'RecognizerResult', 'Orchestrator recognizer RecognizerResult');
-        return result;
-    }
+        let rec = new OrchestratorAdaptiveRecognizer().configure({
+            id : this.id,
+            modelPath: new StringExpression(this.modelPath),
+            snapshotPath: new StringExpression(this.snapshotPath),
+            entityRecognizers: this.entityRecognizers,
+            disambiguationScoreThreshold: new NumberExpression(this.disambiguationScoreThreshold),
+            detectAmbiguousIntents: new BoolExpression(this.detectAmbiguousIntents)
+        });
 
-    /**
-     * Returns recognition result. 
-     * @param text Text to recognize.
-     */
-    public async recongizeTextAsync(text : string) : Promise<RecognizerResult>
-    {
-        const recognizerResult: RecognizerResult = {
-            text: text,
-            intents: {},
-            entities: {}
-        };
-
-        var text = text || '';
-
-        if (text === '')
-        {
-            return recognizerResult;    
-        }
-
-        console.time("Orchestrator recognize");
-        var result = this.resolver.score(text);
-        console.timeEnd("Orchestrator recognize");
-
-        if (Object.entries(result).length !== 0) 
-        {
-            this.AddTopScoringIntent(result, recognizerResult);
-        }
-
-        recognizerResult[this.resultProperty] = result;
-        
-        if (Object.entries(recognizerResult.intents).length === 0)
-        {
-            recognizerResult.intents[this.noneIntent] = { score: 1.0 };
-        }
-
-        
-        return Promise.resolve<RecognizerResult>(recognizerResult);
-    }
-
-    private initializeModel() {
-        if (this.modelPath == null) {
-            throw new exception(`Missing "ModelPath" information.`);
-        }
-
-        if (this.snapshotPath == null) {
-            throw new exception(`Missing "ShapshotPath" information.`);
-        }
-
-        const fullModelPath = resolve(this.modelPath);
-        const fullSnapshotPath = resolve(this.snapshotPath);
-        if (!existsSync(fullModelPath)) {
-            throw new exception(`Model folder does not exist at ${fullModelPath}.`);   
-        }
-        if (!existsSync(fullSnapshotPath)) {
-            throw new exception(`Snapshot file does not exist at ${fullSnapshotPath}.`);
-        }
-
-        if (OrchestratorRecognizer.orchestrator == null) {
-            console.time("Model load");
-            // Create orchestrator core
-            OrchestratorRecognizer.orchestrator = new oc.Orchestrator();
-            if (OrchestratorRecognizer.orchestrator.load(fullModelPath) === false) {
-                throw new exception(`Model load failed.`);
-            }
-            console.timeEnd("Model load");
-        }
-
-        if (this.resolver == null) {
-            // Load the snapshot
-            const encoder: TextEncoder = new TextEncoder();
-            const fileContent: string = ReadText.readSync(fullSnapshotPath)
-            const snapshot: Uint8Array = encoder.encode(fileContent);
-
-            // Load shapshot and create resolver
-            this.resolver = OrchestratorRecognizer.orchestrator.createLabelResolver(snapshot);
-        }
-    }
-
-    private AddTopScoringIntent(result: any, recognizerResult: RecognizerResult): RecognizerResult {
-        const topScoringIntent = result[0].label.name;
-        const topScore = result[0].score;
-        
-        // if top scoring intent is less than threshold, return None
-        if (topScore < this.unknownIntentFilterScore)
-        {
-            recognizerResult.intents['None'] = { score: 1.0 };
-        } else {
-            if (!recognizerResult.intents[topScoringIntent]) {
-                recognizerResult.intents[topScoringIntent] = {
-                    score: topScore
-                };
-            }
-        }
-
-        return recognizerResult;
+        var dc = new DialogContext(new DialogSet(), context, {dialogStack:[]});
+        return await rec.recognize(dc, context.activity);
     }
 };

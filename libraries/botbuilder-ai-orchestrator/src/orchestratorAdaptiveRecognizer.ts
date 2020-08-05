@@ -5,12 +5,15 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { OrchestratorRecognizer } from './orchestratorRecognizer';
 import { exception } from 'console';
 import { StringExpression, BoolExpression, NumberExpression } from 'adaptive-expressions';
 import { Entity, Activity, RecognizerResult } from 'botbuilder-core';
 import { DialogContext, Configurable } from 'botbuilder-dialogs';
-import { EntityRecognizer, TextEntity, EntityRecognizerSet, Recognizer } from 'botbuilder-dialogs-adaptive';
+import { EntityRecognizer, TextEntity, EntityRecognizerSet, Recognizer, createRecognizerResult } from 'botbuilder-dialogs-adaptive';
+import { resolve } from 'path';
+import { existsSync } from 'fs';
+const oc: any = require('@microsoft/orchestrator-core/orchestrator-core.node');
+const ReadText: any = require('read-text-file');
 
 export class OrchestratorAdaptiveRecognizer extends Configurable implements Recognizer{
     /**
@@ -45,13 +48,30 @@ export class OrchestratorAdaptiveRecognizer extends Configurable implements Reco
     public entityRecognizers: EntityRecognizer[] = [];
 
     /**
-     * Intent name to use if detectAmbiguousIntent is true
+     * Intent name if ambiguous intents are detected.
      */
-    public chooseIntent: string = 'ChooseIntent';
+    public readonly chooseIntent: string = "ChooseIntent";
 
-    private recognizer : OrchestratorRecognizer = null;
-    private _candidatesCollection: string = 'candidates';
-    private _noneIntent: string = 'None';
+    /**
+     * Property under which ambiguous intents are returned.
+     */
+    public readonly candidatesCollection: string = "candidates";
+
+    /**
+     * Intent name when no intent matches.
+     */
+    public readonly noneIntent: string = "None";
+
+    /**
+     * Full recognition results are available under this property
+     */
+    public readonly resultProperty : string = "result";
+
+    private readonly unknownIntentFilterScore = 0.4;
+    private static orchestrator : any = null;
+    private resolver : any = null;
+    private _modelPath : string = null;
+    private _snapshotPath : string = null;
 
     /**
      * Returns a new OrchestratorAdaptiveRecognizer instance.
@@ -67,27 +87,28 @@ export class OrchestratorAdaptiveRecognizer extends Configurable implements Reco
             throw new exception(`Missing "SnapshotPath" information.`);
         }
         const text = activity.text || '';
-        const modelPath = this.modelPath.getValue(dialogContext.state);
-        const snapShotPath = this.snapshotPath.getValue(dialogContext.state);
+        this._modelPath = this.modelPath.getValue(dialogContext.state);
+        this._snapshotPath = this.snapshotPath.getValue(dialogContext.state);
         const detectAmbiguity = this.detectAmbiguousIntents.getValue(dialogContext.state);
         const disambiguationScoreThreshold = this.disambiguationScoreThreshold.getValue(dialogContext.state);
 
-        let recognizerResult : RecognizerResult;
+        let recognizerResult : RecognizerResult = createRecognizerResult(text, {}, {});
 
         if (text === '') {
-            return {
-                text: text,
-                intents: {},
-                entities: {}
-            }
+            return recognizerResult;
         } 
 
-        if (this.recognizer === null) {
-            this.recognizer = new OrchestratorRecognizer(modelPath, snapShotPath);
+        if (OrchestratorAdaptiveRecognizer.orchestrator === null || this.resolver === null) {
+            this.Initialize();
         }   
 
         // recognize text
-        recognizerResult = await this.recognizer.recongizeTextAsync(text);
+        let result = await this.resolver.score(text);
+
+        if (Object.entries(result).length !== 0) 
+        {
+            this.AddTopScoringIntent(result, recognizerResult);
+        }
 
         // run entity recognizers
         await this.recognizeEntities(dialogContext, text, activity.locale || '', recognizerResult);
@@ -95,14 +116,14 @@ export class OrchestratorAdaptiveRecognizer extends Configurable implements Reco
         // disambiguate
         if (detectAmbiguity)
         {
-            const recoResults = recognizerResult[this.recognizer.resultProperty];
+            const recoResults = recognizerResult[this.resultProperty];
             const topScoringIntent = recoResults[0].score;
             const scoreDelta = topScoringIntent - disambiguationScoreThreshold;
             const ambiguousIntents = recoResults.filter(x => x.score >= scoreDelta);
             if (ambiguousIntents.length > 1) {
                 recognizerResult.intents = {};
                 recognizerResult.intents[this.chooseIntent] = { score: 1.0 };
-                recognizerResult[this._candidatesCollection] = [];
+                recognizerResult[this.candidatesCollection] = [];
                 ambiguousIntents.forEach(item => {
                     let itemRecoResult = {
                         text: text,
@@ -114,7 +135,7 @@ export class OrchestratorAdaptiveRecognizer extends Configurable implements Reco
                         score: item.score
                     };
                     itemRecoResult.entities = recognizerResult.entities;
-                    recognizerResult[this._candidatesCollection].push({
+                    recognizerResult[this.candidatesCollection].push({
                         intent : item.label.name,
                         score : item.score,
                         closestText: item.closest_text,
@@ -125,12 +146,29 @@ export class OrchestratorAdaptiveRecognizer extends Configurable implements Reco
         }
 
         if (Object.entries(recognizerResult.intents).length == 0) {
-            recognizerResult.intents[this._noneIntent] = { score: 1.0 };
+            recognizerResult.intents[this.noneIntent] = { score: 1.0 };
         }
 
         await dialogContext.context.sendTraceActivity('OrchestratorRecognizer', recognizerResult, 'RecognizerResult', 'Orchestrator recognizer RecognizerResult');
 
         return recognizerResult;
+    }
+
+    private AddTopScoringIntent(result: any, recognizerResult: RecognizerResult): void {
+        const topScoringIntent = result[0].label.name;
+        const topScore = result[0].score;
+        
+        // if top scoring intent is less than threshold, return None
+        if (topScore < this.unknownIntentFilterScore)
+        {
+            recognizerResult.intents['None'] = { score: 1.0 };
+        } else {
+            if (!recognizerResult.intents[topScoringIntent]) {
+                recognizerResult.intents[topScoringIntent] = {
+                    score: topScore
+                };
+            }
+        }
     }
 
     private async recognizeEntities(dialogContext : DialogContext, text : string, locale : string, recognizerResult : RecognizerResult) {
@@ -183,6 +221,44 @@ export class OrchestratorAdaptiveRecognizer extends Configurable implements Reco
                 resolution: entityResult['resolution']
             };
             instanceData.push(instance);
+        }
+    }
+
+    private Initialize() {
+        if (this._modelPath == null) {
+            throw new exception(`Missing "ModelPath" information.`);
+        }
+
+        if (this._snapshotPath == null) {
+            throw new exception(`Missing "ShapshotPath" information.`);
+        }
+        const fullModelPath = resolve(this._modelPath);
+        const fullSnapshotPath = resolve(this._snapshotPath);
+        if (!existsSync(fullModelPath)) {
+            throw new exception(`Model folder does not exist at ${fullModelPath}.`);   
+        }
+        if (!existsSync(fullSnapshotPath)) {
+            throw new exception(`Snapshot file does not exist at ${fullSnapshotPath}.`);
+        }
+
+        if (OrchestratorAdaptiveRecognizer.orchestrator == null) {
+            console.time("Model load");
+            // Create orchestrator core
+            OrchestratorAdaptiveRecognizer.orchestrator = new oc.Orchestrator();
+            if (OrchestratorAdaptiveRecognizer.orchestrator.load(fullModelPath) === false) {
+                throw new exception(`Model load failed.`);
+            }
+            console.timeEnd("Model load");
+        }
+
+        if (this.resolver == null) {
+            // Load the snapshot
+            const encoder: TextEncoder = new TextEncoder();
+            const fileContent: string = ReadText.readSync(fullSnapshotPath)
+            const snapshot: Uint8Array = encoder.encode(fileContent);
+
+            // Load shapshot and create resolver
+            this.resolver = OrchestratorAdaptiveRecognizer.orchestrator.createLabelResolver(snapshot);
         }
     }
 };
