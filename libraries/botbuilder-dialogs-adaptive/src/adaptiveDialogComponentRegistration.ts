@@ -324,7 +324,8 @@ export class AdaptiveDialogComponentRegistration implements ComponentRegistratio
             'applicationId': new StringExpressionConverter(),
             'dynamicLists': new ArrayExpressionConverter(),
             'endpoint': new StringExpressionConverter(),
-            'endpointKey': new StringExpressionConverter()
+            'endpointKey': new StringExpressionConverter(),
+            'logPersonalInformation': new BoolExpressionConverter()
         }));
         this.registerBuilder('Microsoft.CrossTrainedRecognizerSet', new AdaptiveTypeBuilder(CrossTrainedRecognizerSet, this._resourceExplorer, {
             'recognizers': new RecognizerConverter(this._resourceExplorer)
