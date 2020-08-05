@@ -25,10 +25,7 @@
     "libraries/bot-integration-tests",
     "libraries/testskills/skillparent",
     "libraries/testskills/skillchild",
-    "transcripts",
-    "samples/dispatch",
-    "samples/06.todo-bot",
-    "samples/declarative-sample"
+    "transcripts"
   ],
   "version": "independent",
   "command": {
