@@ -1,0 +1,18 @@
+{
+    "compilerOptions": {
+      "target": "es6",
+      "lib": ["es2015", "dom"],
+      "module": "commonjs",
+      "declaration": true,
+      "declarationMap": true,
+      "downlevelIteration": true,
+      "sourceMap": true,
+      "esModuleInterop": true,
+      "outDir": "./lib",
+      "rootDir": "./src",
+      "types" : ["node"]
+      },
+    "include": [
+      "src/**/*"
+    ]
+  }

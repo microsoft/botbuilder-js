@@ -1,0 +1,38 @@
+{
+    "$schema": "../app.schema",
+    "$kind": "Microsoft.AdaptiveDialog",
+    "recognizer": "test.lu",
+    "autoEndDialog": false,
+    "triggers": [
+      {
+        "$kind": "Microsoft.OnBeginDialog",
+        "actions": [
+          {
+            "$kind": "Microsoft.SendActivity",
+            "activity": "I have ${settings.orchestrator.modelPath}"
+          }
+        ]
+      },
+      {
+        "$kind": "Microsoft.OnIntent",
+        "intent": "greeting",
+        "actions": [
+          {
+            "$kind": "Microsoft.SendActivity",
+            "activity": "I have ${turn.recognized.intent}"
+          }
+        ]
+      },
+      {
+        "$kind": "Microsoft.OnIntent",
+        "intent": "weather",
+        "actions": [
+          {
+            "$kind": "Microsoft.SendActivity",
+            "activity": "I have ${turn.recognized.intent}"
+          }
+        ]
+      }
+    ]
+  }
+  

@@ -1,0 +1,54 @@
+{
+  "name": "botbuilder-ai-orchestrator",
+  "author": "Microsoft Corp.",
+  "description": "Orchestrator recognizer",
+  "version": "4.1.6",
+  "license": "MIT",
+  "keywords": [
+    "botbuilder",
+    "botframework",
+    "orchestrator"
+  ],
+  "bugs": {
+    "url": "https://github.com/Microsoft/botbuilder-js/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Microsoft/botbuilder-js.git"
+  },
+  "main": "./lib/index.js",
+  "typings": "./lib/index.d.ts",
+  "dependencies": {
+    "@microsoft/orchestrator-core": "https://pkgs.dev.azure.com/ConversationalAI/BotFramework/_packaging/SDK/npm/registry/@microsoft/orchestrator-core/-/orchestrator-core-0.0.6-preview.tgz",
+    "adaptive-expressions": "4.1.6",
+    "botbuilder-core": "4.1.6",
+    "botbuilder-dialogs": "4.1.6",
+    "botbuilder-dialogs-adaptive": "4.1.6",
+    "botbuilder-dialogs-declarative": "4.1.6",
+    "read-text-file": "1.1.0"
+  },
+  "devDependencies": {
+    "@microsoft/api-extractor": "^7.7.12",
+    "@types/mocha": "^2.2.47",
+    "@types/node": "^12.6.9",
+    "mocha": "^5.2.0",
+    "nyc": "^15.0.0",
+    "source-map-support": "^0.5.3",
+    "ts-node": "^4.1.0",
+    "typescript": "3.5.3"
+  },
+  "scripts": {
+    "build": "tsc",
+    "build-docs": "typedoc --theme markdown --entryPoint botbuilder-ai-orchestrator --excludePrivate --includeDeclarations --ignoreCompilerErrors --module amd --out ..\\..\\doc\\botbuilder-ai-orchestrator .\\lib\\index.d.ts --hideGenerator --name \"Bot Builder SDK - Orchestrator\" --readme none",
+    "build:rollup": "npm run clean && npm run build && api-extractor run --verbose --local",
+    "clean": "erase /q /s .\\lib",
+    "set-version": "npm version --allow-same-version ${Version}",
+    "test": "tsc && nyc mocha tests/",
+    "test:compat": "api-extractor run --verbose"
+  },
+  "files": [
+    "/lib",
+    "/schema",
+    "/src"
+  ]
+}
