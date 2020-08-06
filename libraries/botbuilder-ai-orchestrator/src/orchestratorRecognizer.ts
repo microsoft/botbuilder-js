@@ -54,14 +54,13 @@ export class OrchestratorRecognizer extends Configurable {
      */
     public async recognizeAsync(context: TurnContext): Promise<RecognizerResult> 
     {
-        let rec = new OrchestratorAdaptiveRecognizer().configure({
-            id : this.id,
-            modelPath: new StringExpression(this.modelPath),
-            snapshotPath: new StringExpression(this.snapshotPath),
-            entityRecognizers: this.entityRecognizers,
-            disambiguationScoreThreshold: new NumberExpression(this.disambiguationScoreThreshold),
-            detectAmbiguousIntents: new BoolExpression(this.detectAmbiguousIntents)
-        });
+        let rec = new OrchestratorAdaptiveRecognizer();
+        rec.id = this.id;
+        rec.modelPath = new StringExpression(this.modelPath);
+        rec.snapshotPath = new StringExpression(this.snapshotPath);
+        rec.entityRecognizers = this.entityRecognizers;
+        rec.disambiguationScoreThreshold = new NumberExpression(this.disambiguationScoreThreshold);
+        rec.detectAmbiguousIntents = new BoolExpression(this.detectAmbiguousIntents);
 
         var dc = new DialogContext(new DialogSet(), context, {dialogStack:[]});
         return await rec.recognize(dc, context.activity);

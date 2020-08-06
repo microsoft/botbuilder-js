@@ -8,14 +8,14 @@
 import { exception } from 'console';
 import { StringExpression, BoolExpression, NumberExpression } from 'adaptive-expressions';
 import { Entity, Activity, RecognizerResult } from 'botbuilder-core';
-import { DialogContext, Configurable } from 'botbuilder-dialogs';
+import { DialogContext } from 'botbuilder-dialogs';
 import { EntityRecognizer, TextEntity, EntityRecognizerSet, Recognizer, createRecognizerResult } from 'botbuilder-dialogs-adaptive';
 import { resolve } from 'path';
 import { existsSync } from 'fs';
 const oc: any = require('@microsoft/orchestrator-core/orchestrator-core.node');
 const ReadText: any = require('read-text-file');
 
-export class OrchestratorAdaptiveRecognizer extends Configurable implements Recognizer{
+export class OrchestratorAdaptiveRecognizer extends Recognizer {
     /**
      * Recognizers unique ID.
      */
