@@ -19,7 +19,7 @@ import moment from 'moment';
 import {TimexProperty} from '@microsoft/recognizers-text-data-types-timex-expression';
 
 /**
- * Return true if a given TimexProperty or Timex expression refers to the present.
+ * Return the previous viable date of a timex expression based on the current date and user's timezone.
  */
 export class GetPreviousViableDate extends ExpressionEvaluator {
     public constructor(){

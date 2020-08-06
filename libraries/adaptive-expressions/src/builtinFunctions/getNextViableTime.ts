@@ -18,7 +18,7 @@ import { tz } from 'moment-timezone';
 import moment from 'moment';
 import {TimexProperty, Time} from '@microsoft/recognizers-text-data-types-timex-expression';
 /**
- * Return true if a given TimexProperty or Timex expression refers to the present.
+ * Return the next viable time of a timex expression based on the current time and user's timezone.
  */
 export class GetNextViableTime extends ExpressionEvaluator {
     public constructor(){
