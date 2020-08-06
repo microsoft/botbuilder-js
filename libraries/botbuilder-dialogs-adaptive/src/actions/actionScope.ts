@@ -143,9 +143,17 @@ export class ActionScope<O extends object = {}> extends Dialog<O> implements Dia
             return await dc.endDialog();
         }
 
-        const actionId = this.actions[offset].id;
+        const action = this.actions[offset];
+        const actionName = action.constructor.name;
 
-        return await dc.beginDialog(actionId);
+        const properties: { [key: string]: string } = {
+            'DialogId' : action.id,
+            'Kind' : `Microsoft.${ actionName }`,
+            'ActionId': `Microsoft.${ action.id }`
+        };
+        this.telemetryClient.trackEvent({name: 'AdaptiveDialogAction', properties: properties });
+
+        return await dc.beginDialog(action.id);
     }
 
     protected onComputeId(): string {

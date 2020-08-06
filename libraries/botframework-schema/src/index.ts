@@ -251,6 +251,10 @@ export interface Entity {
    * Type of this entity (RFC 3987 IRI)
    */
   type: string;
+  /**
+   * Additional properties.
+   */
+  [key: string]: any;
 }
 
 /**

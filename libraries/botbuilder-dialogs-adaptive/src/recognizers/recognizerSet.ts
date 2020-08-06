@@ -10,13 +10,11 @@ import { RecognizerResult, Activity, getTopScoringIntent } from 'botbuilder-core
 import { DialogContext } from 'botbuilder-dialogs';
 import { Recognizer } from './recognizer';
 
-export class RecognizerSet implements Recognizer {
-
-    public id: string;
+export class RecognizerSet extends Recognizer {
 
     public recognizers: Recognizer[] = [];
 
-    public async recognize(dialogContext: DialogContext, activity: Activity): Promise<RecognizerResult> {
+    public async recognize(dialogContext: DialogContext, activity: Activity, telemetryProperties?: { [key: string]: string }, telemetryMetrics?: { [key: string]: number }): Promise<RecognizerResult> {
         const recognizerResult: RecognizerResult = {
             text: undefined,
             alteredText: undefined,
@@ -25,9 +23,8 @@ export class RecognizerSet implements Recognizer {
                 '$instance': {}
             }
         };
-
         const results = await Promise.all(this.recognizers.map((recognizer: Recognizer): Promise<RecognizerResult> => {
-            return recognizer.recognize(dialogContext, activity);
+            return recognizer.recognize(dialogContext, activity, telemetryProperties, telemetryMetrics);
         }));
 
         for (let i = 0; i < results.length; i++) {
@@ -93,6 +90,8 @@ export class RecognizerSet implements Recognizer {
             recognizerResult.intents['None'] = { score: 1.0 };
         }
 
+        this.trackRecognizerResult(dialogContext, 'RecognizerSetResult', this.fillRecognizerResultTelemetryProperties(recognizerResult, telemetryProperties), telemetryMetrics);
+        
         return recognizerResult;
     }
 }

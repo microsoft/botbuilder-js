@@ -16,6 +16,8 @@ export type RouteHandler = (request: WebRequest, response: WebResponse) => void;
 
 import { validateAndFixActivity } from './activityValidator';
 
+import { RouteConstants } from './routeConstants';
+
 /**
  * Interface representing an Express Application or a Restify Server.
  */
@@ -39,24 +41,31 @@ export class ChannelServiceRoutes {
     }
 
     /**
-     * Registers all WebServer 
+     * Registers all Channel Service paths on the provided WebServer.
      * @param server WebServer
      * @param basePath Optional basePath which is appended before the service's REST API is configured on the WebServer.
      */
     public register(server: WebServer, basePath: string = ''): void {
-        server.post(basePath + '/v3/conversations/:conversationId/activities', this.processSendToConversation.bind(this));
-        server.post(basePath + '/v3/conversations/:conversationId/activities/:activityId', this.processReplyToActivity.bind(this));
-        server.put(basePath + '/v3/conversations/:conversationId/activities/:activityId', this.processUpdateActivity.bind(this));
-        server.get(basePath + '/v3/conversations/:conversationId/activities/:activityId/members', this.processGetActivityMembers.bind(this));
-        server.post(basePath + '/v3/conversations', this.processCreateConversation.bind(this));
-        server.get(basePath + '/v3/conversations', this.processGetConversations.bind(this));
-        server.get(basePath + '/v3/conversations/:conversationId/members', this.processGetConversationMembers.bind(this));
-        server.get(basePath + '/v3/conversations/:conversationId/pagedmembers', this.processGetConversationPagedMembers.bind(this));
-        server.post(basePath + '/v3/conversations/:conversationId/activities/history', this.processSendConversationHistory.bind(this));
-        server.post(basePath + '/v3/conversations/:conversationId/attachments', this.processUploadAttachment.bind(this));
+        server.post(basePath + RouteConstants.Activities, this.processSendToConversation.bind(this));
+        server.post(basePath + RouteConstants.Activity, this.processReplyToActivity.bind(this));
+        server.put(basePath + RouteConstants.Activity, this.processUpdateActivity.bind(this));
+        server.get(basePath + RouteConstants.ActivityMembers, this.processGetActivityMembers.bind(this));
+        server.post(basePath + RouteConstants.Conversations, this.processCreateConversation.bind(this));
+        server.get(basePath + RouteConstants.Conversations, this.processGetConversations.bind(this));
+        server.get(basePath + RouteConstants.ConversationMembers, this.processGetConversationMembers.bind(this));
+        server.get(basePath + RouteConstants.ConversationPagedMembers, this.processGetConversationPagedMembers.bind(this));
+        server.post(basePath + RouteConstants.ConversationHistory, this.processSendConversationHistory.bind(this));
+        server.post(basePath + RouteConstants.Attachments, this.processUploadAttachment.bind(this));
 
-        server.del(basePath + '/v3/conversations/:conversationId/members/:memberId', this.processDeleteConversationMember.bind(this));
-        server.del(basePath + '/v3/conversations/:conversationId/activities/:activityId', this.processDeleteActivity.bind(this));
+        // Express 4.x uses the delete() method to register handlers for the DELETE method.
+        // Restify 8.x uses the del() method.
+        if (typeof(server.delete) === 'function') {
+            server.delete(basePath + RouteConstants.ConversationMember, this.processDeleteConversationMember.bind(this));
+            server.delete(basePath + RouteConstants.Activity, this.processDeleteActivity.bind(this));
+        } else if (typeof(server.del) === 'function') {
+            server.del(basePath + RouteConstants.ConversationMember, this.processDeleteConversationMember.bind(this));
+            server.del(basePath + RouteConstants.Activity, this.processDeleteActivity.bind(this));
+        }
     }
 
     private processSendToConversation(req: WebRequest, res: WebResponse): void {
