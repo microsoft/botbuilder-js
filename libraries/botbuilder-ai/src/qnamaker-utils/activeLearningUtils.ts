@@ -22,10 +22,10 @@ const MaxLowScoreVariationMultiplier = 1.0;
  */
 export class ActiveLearningUtils {
     /** Minimum Score For Low Score Variation. */
-    static MinimumScoreForLowScoreVariation = 20;
+    public static MinimumScoreForLowScoreVariation : number  = 20;
 
     /** Maximum Score For Low Score Variation. */
-    static MaximumScoreForLowScoreVariation = 95.0;
+    public static MaximumScoreForLowScoreVariation : number = 95.0;
 
     /**
     * Returns list of qnaSearch results which have low score variation.
