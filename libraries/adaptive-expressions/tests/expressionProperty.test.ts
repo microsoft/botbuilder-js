@@ -163,14 +163,14 @@ describe('expressionProperty tests', () => {
         assert.equal(str.toExpression().toString(), 'test');
 
         // slashes are the chars
-        str = new StringExpression('c:\\test\\test\\test')
-        result = str.getValue(data)
-        assert.equal(result, 'c:\\test\\test\\test')
+        str = new StringExpression('c:\\test\\test\\test');
+        result = str.getValue(data);
+        assert.equal(result, 'c:\\test\\test\\test');
 
         // tabs are the chars
-        str = new StringExpression('c:\test\test\test')
-        result = str.getValue(data)
-        assert.equal(result, 'c:\test\test\test')
+        str = new StringExpression('c:\test\test\test');
+        result = str.getValue(data);
+        assert.equal(result, 'c:\test\test\test');
     });
 
     it('ValueExpression', () => {
@@ -207,13 +207,13 @@ describe('expressionProperty tests', () => {
         assert.equal(val.toExpression().toString(), 'null');
 
         // slashes are the chars
-        val = new ValueExpression('c:\\test\\test\\test')
-        result = val.getValue(data)
-        assert.equal(result, 'c:\\test\\test\\test')
+        val = new ValueExpression('c:\\test\\test\\test');
+        result = val.getValue(data);
+        assert.equal(result, 'c:\\test\\test\\test');
 
         // tabs are the chars
-        val = new ValueExpression('c:\test\test\test')
-        result = val.getValue(data)
-        assert.equal(result, 'c:\test\test\test')
+        val = new ValueExpression('c:\test\test\test');
+        result = val.getValue(data);
+        assert.equal(result, 'c:\test\test\test');
     });
 });
