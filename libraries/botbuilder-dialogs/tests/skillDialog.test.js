@@ -15,7 +15,7 @@ const {
     AutoSaveStateMiddleware,
 } = require('botbuilder-core');
 const { spy, stub } = require('sinon');
-const { Dialog, DialogTurnStatus, SkillDialog } = require('../');
+const { Dialog, DialogTurnStatus, SkillDialog, DialogSet } = require('../');
 
 const DEFAULT_OAUTHSCOPE = 'https://api.botframework.com';
 const DEFAULT_GOV_OAUTHSCOPE = 'https://api.botframework.us';
@@ -90,6 +90,8 @@ describe('SkillDialog', function() {
                 const activityToSendText = 'activityToSendText';
                 activityToSend.text = activityToSendText;
                 const client = new DialogTestClient(Channels.Test, dialog, { activity: activityToSend }, undefined, conversationState);
+
+                strictEqual(0, dialogOptions.conversationIdFactory.createCount);
 
                 // Send something to the dialog to start it
                 await client.sendActivity('irrelevant');
@@ -166,10 +168,13 @@ describe('SkillDialog', function() {
                 activityToSend.name = activityToSendName;
                 const client = new DialogTestClient(Channels.Test, dialog, { activity: activityToSend }, undefined, conversationState);
 
+                strictEqual(dialogOptions.conversationIdFactory.createCount, 0);
+
                 // Send something to the dialog to start it
                 await client.sendActivity('irrelevant');
 
                 // Assert results and data sent to the SkillClient for first turn
+                strictEqual(dialogOptions.conversationIdFactory.createCount, 1);
                 strictEqual(fromBotIdSent, dialogOptions.botId);
                 strictEqual(toBotIdSent, dialogOptions.skill.appId);
                 strictEqual(toUriSent, dialogOptions.skill.skillEndpoint);
@@ -180,6 +185,7 @@ describe('SkillDialog', function() {
 
                 // Send a second message to continue the dialog
                 await client.sendActivity('Second message');
+                strictEqual(dialogOptions.conversationIdFactory.createCount, 1);
 
                 // Assert results for second turn
                 strictEqual(activitySent.text, 'Second message');
@@ -272,7 +278,8 @@ describe('SkillDialog', function() {
     describe('(private) sendToSkill()', () => {
         it(`should rethrow the error if its message is not "Not Implemented" error`, async () => {
             const adapter = new TestAdapter(/* logic param not required */);
-            const context = new TurnContext(adapter, { type: ActivityTypes.Message });
+            const activity = { type: ActivityTypes.Message, channelId: Channels.Directline, conversation: { id: '1' } };
+            const context = new TurnContext(adapter, activity);
             context.turnState.set(adapter.OAuthScopeKey, DEFAULT_OAUTHSCOPE);
             const dialog = new SkillDialog({
                 botId: 'botId',
@@ -282,23 +289,31 @@ describe('SkillDialog', function() {
                 skill: {},
                 skillHostEndpoint: 'http://localhost:3980/api/messages'
             } , 'SkillDialog');
+            dialog.state = {};
             
+            const conversationState = new ConversationState(new MemoryStorage());
+            const dialogState = conversationState.createProperty('dialogState');
+            const dialogs = new DialogSet(dialogState);
+            dialogs.add(dialog);
+            const dc = await dialogs.createContext(context);
+            dc.stack = [dialog];
             try {
-                await dialog.sendToSkill(context, {});
+                await dialog.beginDialog(dc, { activity });
             } catch (e) {
                 strictEqual(e.message, 'Whoops');
             }
         });
 
-        it('should not rethrow if Error.message is "Not Implemented"', (done) => {
+        it('should not rethrow if Error.message is "Not Implemented"', async () => {
             const adapter = new TestAdapter(/* logic param not required */);
-            const context = new TurnContext(adapter, { activity: {} });
+            const activity = { type: ActivityTypes.Message, channelId: Channels.Directline, conversation: { id: '1' } };
+            const context = new TurnContext(adapter, activity);
             context.turnState.set(adapter.OAuthScopeKey, DEFAULT_OAUTHSCOPE);
             const dialog = new SkillDialog({
                 botId: 'botId',
                 conversationIdFactory: { 
                     createSkillConversationIdWithOptions: async () => { throw new Error('Not Implemented'); },
-                    createSkillConversationId: async () => done()
+                    createSkillConversationId: async () => {}
                 },
                 conversationState: {
                     saveChanges: () => null
@@ -309,8 +324,18 @@ describe('SkillDialog', function() {
                     postActivity: async () => { return { status: 200 }; }
                 }
             } , 'SkillDialog');
+
+            dialog.state = {};
             
-            dialog.sendToSkill(context, {}).then((a) => ok(typeof a === 'undefined'), (e) => done(e));
+            const conversationState = new ConversationState(new MemoryStorage());
+            const dialogState = conversationState.createProperty('dialogState');
+            const dialogs = new DialogSet(dialogState);
+            dialogs.add(dialog);
+            const dc = await dialogs.createContext(context);
+            dc.stack = [dialog];
+            
+            const result = await dialog.beginDialog(dc, { activity });
+            strictEqual(result.status, 'waiting');
         });
     });
 
@@ -552,9 +577,12 @@ class SimpleConversationIdFactory extends SkillConversationIdFactoryBase {
         super();
         this._conversationRefs = new Map();
         this.useCreateSkillConversationId = useCreateSkillConversationId;
+        this.createCount = 0;
     }
 
     async createSkillConversationIdWithOptions(options) {
+        this.createCount++;
+
         if (this.useCreateSkillConversationId) {
             return super.createSkillConversationIdWithOptions();
         }
@@ -571,6 +599,8 @@ class SimpleConversationIdFactory extends SkillConversationIdFactoryBase {
     }
 
     async createSkillConversationId(convRef) {
+        this.createCount++;
+
         const key = createHash('md5').update(convRef.conversation.id + convRef.serviceUrl).digest('hex');
 
         const ref = this._conversationRefs.has(key);
