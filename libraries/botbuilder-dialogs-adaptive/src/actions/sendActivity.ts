@@ -55,6 +55,15 @@ export class SendActivity<O extends object = {}> extends Dialog<O> {
         }, options);
         
         const activityResult = await this.activity.bind(dc, data);
+
+        this.telemetryClient.trackEvent({
+            name: 'GeneratorResult',
+            properties: {
+                'template':this.activity,
+                'result': activityResult || ''
+            }
+        });
+
         const result = await dc.context.sendActivity(activityResult);
         return await dc.endDialog(result);
     }

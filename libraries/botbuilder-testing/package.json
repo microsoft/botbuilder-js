@@ -21,8 +21,7 @@
   "typings": "./lib/index.d.ts",
   "dependencies": {
     "botbuilder-core": "4.1.6",
-    "botbuilder-dialogs": "4.1.6",
-    "mocha-logger": "^1.0.6"
+    "botbuilder-dialogs": "4.1.6"
   },
   "devDependencies": {
     "@microsoft/api-extractor": "^7.7.12",
