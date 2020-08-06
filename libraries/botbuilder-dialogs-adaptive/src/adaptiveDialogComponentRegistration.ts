@@ -324,7 +324,8 @@ export class AdaptiveDialogComponentRegistration implements ComponentRegistratio
             'applicationId': new StringExpressionConverter(),
             'dynamicLists': new ArrayExpressionConverter(),
             'endpoint': new StringExpressionConverter(),
-            'endpointKey': new StringExpressionConverter()
+            'endpointKey': new StringExpressionConverter(),
+            'logPersonalInformation': new BoolExpressionConverter()
         }));
         this.registerBuilder('Microsoft.CrossTrainedRecognizerSet', new AdaptiveTypeBuilder(CrossTrainedRecognizerSet, this._resourceExplorer, {
             'recognizers': new RecognizerConverter(this._resourceExplorer)
@@ -389,7 +390,7 @@ export class AdaptiveDialogComponentRegistration implements ComponentRegistratio
     private registerCustomDialogs(): void {
         const schemas = this._resourceExplorer.getResources('.schema');
         for (const schema of schemas) {
-            const resourceId = schema.id().replace(/.schema$/, '');
+            const resourceId = schema.id.replace(/.schema$/, '');
             if (resourceId.endsWith('.dialog')) {
                 this.registerBuilder(resourceId, new CustomDialogTypeBuilder(DynamicBeginDialog, this._resourceExplorer, {
                     'options': new ObjectExpressionConverter<object>(),
