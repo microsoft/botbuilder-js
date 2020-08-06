@@ -1,5 +1,5 @@
 const assert = require('assert');
-const { SchemaHelper} = require('../lib');
+const { SchemaHelper } = require('../lib');
 const fs = require('fs');
 
 const schemaDirPath = `${ __dirname }/schema/`;
