@@ -12,13 +12,11 @@ import { Recognizer } from './recognizer';
 
 const deferPrefix = 'DeferToRecognizer_';
 
-export class CrossTrainedRecognizerSet implements Recognizer {
-
-    public id: string;
+export class CrossTrainedRecognizerSet extends Recognizer {
 
     public recognizers: Recognizer[] = [];
 
-    public async recognize(dialogContext: DialogContext, activity: Activity): Promise<RecognizerResult> {
+    public async recognize(dialogContext: DialogContext, activity: Activity, telemetryProperties?: { [key: string]: string }, telemetryMetrics?: { [key: string]: number }): Promise<RecognizerResult> {
         for (let i = 0; i < this.recognizers.length; i++) {
             if (!this.recognizers[i].id) {
                 throw new Error('This recognizer requires that each recognizer in the set have an id.');
@@ -26,9 +24,16 @@ export class CrossTrainedRecognizerSet implements Recognizer {
         }
 
         const results = await Promise.all(this.recognizers.map((recognizer: Recognizer): Promise<RecognizerResult> => {
-            return recognizer.recognize(dialogContext, activity);
+            return recognizer.recognize(dialogContext, activity, telemetryProperties, telemetryMetrics);
         }));
+        
+        const result = this.processResults(results);
+        this.trackRecognizerResult(dialogContext, 'CrossTrainedRecognizerSetResult', this.fillRecognizerResultTelemetryProperties(result, telemetryProperties),telemetryMetrics);
+        return result;
+        
+    }
 
+    private processResults(results: RecognizerResult[]): RecognizerResult {
         const recognizerResults = {};
         const intents = {};
         let text = '';
