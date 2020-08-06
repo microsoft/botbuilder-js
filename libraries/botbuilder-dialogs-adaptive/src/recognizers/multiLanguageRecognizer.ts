@@ -11,15 +11,13 @@ import { DialogContext } from 'botbuilder-dialogs';
 import { Recognizer } from './recognizer';
 import { LanguagePolicy } from '../languagePolicy';
 
-export class MultiLanguageRecognizer implements Recognizer {
-
-    public id: string;
+export class MultiLanguageRecognizer extends Recognizer {
 
     public languagePolicy: LanguagePolicy = new LanguagePolicy();
 
     public recognizers: { [locale: string]: Recognizer };
 
-    public async recognize(dialogContext: DialogContext, activity: Activity): Promise<RecognizerResult> {
+    public async recognize(dialogContext: DialogContext, activity: Activity, telemetryProperties?: { [key: string]: string }, telemetryMetrics?: { [key: string]: number }): Promise<RecognizerResult> {
         const locale = activity.locale || '';
         let policy: string[] = [];
         if (this.languagePolicy.has(locale)) {
@@ -35,7 +33,10 @@ export class MultiLanguageRecognizer implements Recognizer {
             const option = policy[i];
             if (this.recognizers.hasOwnProperty(option)) {
                 const recognizer = this.recognizers[option];
-                return await recognizer.recognize(dialogContext, activity);
+                const result = await recognizer.recognize(dialogContext, activity, telemetryProperties, telemetryMetrics);
+                this.trackRecognizerResult(dialogContext, 'MultiLanguagesRecognizerResult', this.fillRecognizerResultTelemetryProperties(result, telemetryProperties), telemetryMetrics);
+                return result;
+
             }
         }
 
@@ -44,6 +45,8 @@ export class MultiLanguageRecognizer implements Recognizer {
             intents: {},
             entities: {}
         };
+        this.trackRecognizerResult(dialogContext, 'MultiLanguagesRecognizerResult', this.fillRecognizerResultTelemetryProperties(recognizerResult, telemetryProperties), telemetryMetrics);
+
         return recognizerResult;
     }
 }
