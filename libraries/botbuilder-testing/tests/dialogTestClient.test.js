@@ -37,31 +37,15 @@ describe('DialogTestClient', function() {
         assert(client.dialogTurnResult.status == DialogTurnStatus.complete, 'dialog did not end properly');
     });
 
-    it('should process a single turn waterfall dialog', async function() {
-
-        let dialog = new WaterfallDialog('waterfall', [
-            async(step) => {
-                await step.context.sendActivity('hello');
-                return step.endDialog();
-            }
-        ]);
-
-        let client = new DialogTestClient('test', dialog);
-        let reply = await client.sendActivity('hello');
-        assert(reply.text == 'hello', 'dialog responded with incorrect message');
-        assert(reply.channelId == 'test', 'test channel id didnt get set');
-        assert(client.dialogTurnResult.status == DialogTurnStatus.complete, 'dialog did not end properly');
-    });
-
     it('should process a 2 turn waterfall dialog', async function() {
 
         let dialog = new WaterfallDialog('waterfall', [
-            async(step) => {
+            async (step) => {
                 await step.context.sendActivity('hello');
                 await step.context.sendActivity({type: 'typing'});
                 return step.next();
             },
-            async(step) => {
+            async (step) => {
                 await step.context.sendActivity('hello 2');
                 return step.endDialog();
             },
@@ -85,10 +69,10 @@ describe('DialogTestClient', function() {
                 super(id);
 
                 let dialog = new WaterfallDialog('waterfall', [
-                    async(step) => {
+                    async (step) => {
                         return step.prompt('textPrompt', 'Tell me something');
                     },
-                    async(step) => {
+                    async (step) => {
                         await step.context.sendActivity('you said: ' + step.result);
                         return step.next();
                     },
