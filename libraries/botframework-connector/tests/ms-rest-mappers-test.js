@@ -9,7 +9,7 @@ describe("serialize", function () {
                       entities: entity
                         };
     it("should retain custom Entity properties", function (done) {
-      const serializedObject = Serializer.serialize(Mappers.Activity, activity, "Activity");
+      const serializedObject = Serializer.serialize(Mappers.Activity, activity);
       assert.deepEqual(serializedObject.entities, entity);
       done();
     });
