@@ -8,7 +8,7 @@
 import { Dialog, DialogDependencies, DialogContext, DialogTurnResult } from 'botbuilder-dialogs';
 import { ValueExpression, ObjectExpression, BoolExpression } from 'adaptive-expressions';
 import { DialogExpression } from '../expressions';
-import { JsonExtensions } from '../jsonExtensions';
+import { replaceJsonRecursively } from '../jsonExtensions';
 
 
 export class BaseInvokeDialog<O extends object = {}> extends Dialog<O> implements DialogDependencies {
@@ -76,7 +76,7 @@ export class BaseInvokeDialog<O extends object = {}> extends Dialog<O> implement
             let value = new ValueExpression(bindingValue).getValue(dc.state);
 
             if (value) {
-                value = JsonExtensions.replaceJsonRecursively(dc.state, value);
+                value = replaceJsonRecursively(dc.state, value);
             }
 
             boundOptions[key] = value;

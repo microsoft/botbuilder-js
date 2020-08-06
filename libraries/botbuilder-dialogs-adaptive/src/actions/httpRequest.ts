@@ -11,7 +11,7 @@ import { DialogTurnResult, DialogContext, Dialog, Configurable } from 'botbuilde
 import { Converter } from 'botbuilder-dialogs-declarative';
 import { Activity } from 'botbuilder-core';
 import { ValueExpression, StringExpression, BoolExpression, EnumExpression } from 'adaptive-expressions';
-import { JsonExtensions } from '../jsonExtensions';
+import { replaceJsonRecursively } from '../jsonExtensions';
 
 export class HttpHeadersConverter implements Converter {
     public convert(value: object): { [key: string]: StringExpression } {
@@ -194,7 +194,7 @@ export class HttpRequest<O extends object = {}> extends Dialog<O> implements Con
                 if (typeof body === 'string') {
                     instanceBody = body;
                 } else {
-                    instanceBody = JSON.stringify(JsonExtensions.replaceJsonRecursively(dc.state, Object.assign({}, body)));
+                    instanceBody = JSON.stringify(replaceJsonRecursively(dc.state, Object.assign({}, body)));
                 }
             }
         }

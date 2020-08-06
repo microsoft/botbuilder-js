@@ -7,7 +7,7 @@
  */
 import { DialogTurnResult, DialogContext, Dialog } from 'botbuilder-dialogs';
 import { ValueExpression, StringExpression, BoolExpression } from 'adaptive-expressions';
-import { JsonExtensions } from '../jsonExtensions';
+import { replaceJsonRecursively } from '../jsonExtensions';
 
 export class SetProperty<O extends object = {}> extends Dialog<O> {
     public constructor();
@@ -46,7 +46,7 @@ export class SetProperty<O extends object = {}> extends Dialog<O> {
         let value = this.value.getValue(dc.state);
 
         if (value) {
-            value = JsonExtensions.replaceJsonRecursively(dc.state, value);
+            value = replaceJsonRecursively(dc.state, value);
         }
 
         dc.state.setValue(property, value);
