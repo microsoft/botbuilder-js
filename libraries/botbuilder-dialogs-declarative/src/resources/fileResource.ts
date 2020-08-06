@@ -6,41 +6,40 @@
  * Licensed under the MIT License.
  */
 
-import { IResource } from './resource';
-
 import fs = require('fs');
+import { Resource } from './resource';
 
-export class FileResource implements IResource {
+/**
+ * Class which represents a file as a resource.
+ */
+export class FileResource extends Resource {
 
-    private resourceId: string;
-    private path: string;
+    private _fullname: string;
 
+    /**
+     * Initialize a new instance of the `FileResouce` class.
+     * @param path Path to file.
+     */
     public constructor(path: string) {
-        if (!path) {
-            throw new Error('path');
-        }
-
-        this.path = path;
-
+        super();
+        this._fullname = path;
         // The id will be the file name, without the path
-        this.resourceId = this.path.replace(/^.*[\\\/]/, '');
+        this._id = this._fullname.replace(/^.*[\\\/]/, '');
     }
 
+    /**
+     * The full path to the resource on disk
+     */
     public get fullName(): string {
-        return this.path;
+        return this._fullname;
     }
 
-    public id(): string {
-        return this.resourceId;
-    }
-
+    /**
+     * Read text content of a file resource.
+     */
     public readText(): string {
-        const filePath = this.path;
-        const temp = fs.readFileSync(filePath, 'utf-8');
-        return temp;
-    }
-
-    public toString(): string {
-        return this.id();
+        const filePath = this._fullname;
+        const text = fs.readFileSync(filePath, 'utf-8');
+        return text;
     }
 }

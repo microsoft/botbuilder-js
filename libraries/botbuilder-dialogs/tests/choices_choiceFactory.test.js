@@ -6,16 +6,16 @@ function assertActivity(received, expected) {
     assert(received, `Activity not returned.`);
     for (let key in expected) {
         const v = received[key];
-        assert(v !== undefined, `Activity.${key} missing.`);
+        assert(v !== undefined, `Activity.${ key } missing.`);
         const ev = expected[key];
-        assert(typeof v === typeof ev, `Activity.${key} has invalid type of '${typeof v}'.`);
+        assert(typeof v === typeof ev, `Activity.${ key } has invalid type of '${ typeof v }'.`);
         if (Array.isArray(ev)) {
-            assert(v.length === ev.length, `Activity.${key} has invalid length of '${v.length}'.`);
-            assert(JSON.stringify(v) === JSON.stringify(ev), `Activity.${key} has invalid contents: ` + JSON.stringify(v));
+            assert(v.length === ev.length, `Activity.${ key } has invalid length of '${ v.length }'.`);
+            assert(JSON.stringify(v) === JSON.stringify(ev), `Activity.${ key } has invalid contents: ` + JSON.stringify(v));
         } else if (typeof ev === 'object') {
-            assert(JSON.stringify(v) === JSON.stringify(ev), `Activity.${key} has invalid contents: ` + JSON.stringify(v));
+            assert(JSON.stringify(v) === JSON.stringify(ev), `Activity.${ key } has invalid contents: ` + JSON.stringify(v));
         } else {
-            assert(v === ev, `Activity.${key} has invalid value of '${v}'.`);
+            assert(v === ev, `Activity.${ key } has invalid value of '${ v }'.`);
         }
     }
 }
@@ -112,14 +112,14 @@ function assertChoices(choices, actionValues, actionType = 'imBack') {
     for (let i = 0; i < choices.length; i++) {
         const choice = choices[i];
         const val = actionValues[i];
-        assert(choice.action.type === actionType, `Expected action.type === ${actionType}, received ${choice.action.type}`);
-        assert(choice.action.value === val, `Expected action.value === ${val}, received ${choice.action.value}`);
-        assert(choice.action.title === val, `Expected action.title === ${val}, received ${choice.action.title}`);
+        assert(choice.action.type === actionType, `Expected action.type === ${ actionType }, received ${ choice.action.type }`);
+        assert(choice.action.value === val, `Expected action.value === ${ val }, received ${ choice.action.value }`);
+        assert(choice.action.title === val, `Expected action.title === ${ val }, received ${ choice.action.title }`);
 
     }
 }
 
-describe('The ChoiceFactory', function () {
+describe('The ChoiceFactory', function() {
     it('should render choices inline.', () => {
         const activity = ChoiceFactory.inline(colorChoices, 'select from:');
         assertActivity(activity, {
@@ -151,12 +151,11 @@ describe('The ChoiceFactory', function () {
     it('should suggest the same action when a suggested action is provided', () => {
         const activity = ChoiceFactory.suggestedAction([{ value: 'Signin', action: { type: ActionTypes.Signin } }]);
         assert.ok(activity.suggestedActions.actions[0].type === ActionTypes.Signin,
-            `Expected the suggestion action to be ${ActionTypes.Signin} but got: ${activity.suggestedActions.actions[0].type}`);
+            `Expected the suggestion action to be ${ ActionTypes.Signin } but got: ${ activity.suggestedActions.actions[0].type }`);
     });
 
     it('should use hero cards for channels that do not support choices (Teams, Cortana)', () => {
-        let activities = ChoiceFactory.forChannel('cortana', colorChoices, 'select from:');
-        assertActivity(activities, {
+        const expectedActivity = {
             'type': 'message',
             'attachmentLayout': 'list',
             'attachments': [
@@ -185,43 +184,20 @@ describe('The ChoiceFactory', function () {
                 }
             ],
             'inputHint': 'expectingInput'
-        });
+        };
+
+        let activities = ChoiceFactory.forChannel('cortana', colorChoices, 'select from:');
+
+
+        assertActivity(activities, expectedActivity);
+
         const choices = colorChoices.map(value => ({
             value,
             action: { type: ActionTypes.ImBack }
         }));
 
         activities = ChoiceFactory.forChannel('msteams', choices, 'select from:');
-        assertActivity(activities, {
-            'type': 'message',
-            'attachmentLayout': 'list',
-            'attachments': [
-                {
-                    'contentType': 'application/vnd.microsoft.card.hero',
-                    'content': {
-                        'text': 'select from:',
-                        'buttons': [
-                            {
-                                'title': 'red',
-                                'type': 'imBack',
-                                'value': 'red'
-                            },
-                            {
-                                'title': 'green',
-                                'type': 'imBack',
-                                'value': 'green'
-                            },
-                            {
-                                'title': 'blue',
-                                'type': 'imBack',
-                                'value': 'blue'
-                            }
-                        ]
-                    }
-                }
-            ],
-            'inputHint': 'expectingInput'
-        });
+        assertActivity(activities, expectedActivity);
     });
 
     it('should render an inline list based on title length, choice length and channel', () => {

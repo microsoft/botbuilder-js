@@ -1,0 +1,28 @@
+# Customize DLJS package to use latest daily version of botframework-streaming
+# Subsequently, pack customized DLJS into an installable .tgz
+
+steps:
+  - script: git clone https://github.com/microsoft/BotFramework-DirectLineJS.git
+    displayName: 'Clone DLJS repo'
+    workingDirectory: '$(System.DefaultWorkingDirectory)/libraries/streaming-e2e-tests/react-app'
+
+  - template: configure-to-bbjs-daily.yml
+
+  - script: npm run build
+    displayName: Build DLJS
+    workingDirectory: $(DLJSDir)
+  
+  - script: npm pack .
+    displayName: Pack DLJS into .tgz
+    workingDirectory: $(DLJSDir)
+
+  - script: ren botframework-directlinejs-*.tgz botframework-directlinejs.tgz
+    displayName: Rename to DLJS tgz to predictable name
+    workingDirectory: $(DLJSDir)
+  
+  - task: PublishPipelineArtifact@1
+    displayName: 'Publish Artifact: DirectLineJsTgz'
+    inputs:
+      targetPath: $(DLJSDir)/botframework-directlinejs.tgz
+      artifactName: 'DirectLineJsTgz'
+      

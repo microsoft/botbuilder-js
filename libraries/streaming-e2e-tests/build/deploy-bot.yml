@@ -1,0 +1,14 @@
+steps:
+  - powershell: |
+      Write-Host "Compressing project into bot.zip"
+
+      Compress-Archive "$(TargetProjectDir)/*" "$(TargetProjectDir)/bot.zip"
+    displayName: 'Zip Bot'
+
+  - task: AzureCLI@1
+    displayName: 'Deploy Bot'
+    inputs:
+      ConnectedServiceNameARM: $(ConnectedServiceNameARM)
+      scriptType: ps
+      scriptLocation: inlineScript
+      inlineScript: call az webapp deployment source config-zip --resource-group "$(ResourceGroup)" --name "$(BotName)" --src "$(TargetProjectDir)/bot.zip"
