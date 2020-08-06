@@ -83,10 +83,6 @@ export class HttpRequestUtils {
         return `${ packageUserAgent } ${ platformUserAgent }`;
     }
 
-    private isSuccessfulTrainApiResult(url, status) {
-        return url.includes('/train') && status == 204;
-    }
-
     /**
      * Creates a QnAMakerResult for successful responses from QnA Maker service that return status code 204 No-Content.
      * 
