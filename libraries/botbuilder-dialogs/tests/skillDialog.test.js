@@ -1,4 +1,4 @@
-const { ok, strictEqual } = require('assert');
+const { fail, ok, strictEqual } = require('assert');
 const { createHash } = require('crypto');
 const {
     ActivityTypes,
@@ -334,7 +334,12 @@ describe('SkillDialog', function() {
             const dc = await dialogs.createContext(context);
             dc.stack = [dialog];
             
-            const result = await dialog.beginDialog(dc, { activity });
+            let result;
+            try {
+                result = await dialog.beginDialog(dc, { activity });
+            } catch(err) {
+                fail(err);
+            }
             strictEqual(result.status, 'waiting');
         });
     });
