@@ -44,7 +44,7 @@ export class ValueExpression extends ExpressionProperty<any> {
             }
 
             // keep the string as quoted expression, which will be literal unless string interpolation is used.
-            this.expressionText = `=\`${ value }\``;
+            this.expressionText = `=\`${ value.replace(/\\/g, '\\\\') }\``;
             return;
         }
 
