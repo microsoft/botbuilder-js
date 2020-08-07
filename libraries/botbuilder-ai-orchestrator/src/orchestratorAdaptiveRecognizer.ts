@@ -15,7 +15,7 @@ import { Activity, Entity, RecognizerResult } from 'botbuilder-core';
 import { DialogContext } from 'botbuilder-dialogs';
 import { createRecognizerResult, EntityRecognizer, EntityRecognizerSet, Recognizer, TextEntity } from 'botbuilder-dialogs-adaptive';
 
-const oc: any = require('@microsoft/orchestrator-core');
+const oc: any = require('@microsoft/orchestrator-core/orchestrator-core.node');
 const ReadText: any = require('read-text-file');
 
 export class OrchestratorAdaptiveRecognizer extends Recognizer {
