@@ -69,7 +69,7 @@ export class ExpressionEvaluator {
         this._evaluator = evaluator;
         this.returnType = returnType;
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        this._validator = validator || ((expr: any): any => { });
+        this._validator = validator || ((expr: Expression): any => { });
     }
 
     /**
@@ -82,5 +82,5 @@ export class ExpressionEvaluator {
      * Validate an expression.
      * @param expression Expression to validate.
      */
-    public validateExpression = (expression: any): void => this._validator(expression);
+    public validateExpression = (expression: Expression): void => this._validator(expression);
 }
