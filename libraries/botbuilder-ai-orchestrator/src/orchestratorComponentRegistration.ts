@@ -6,16 +6,17 @@
  * Licensed under the MIT License.
  */
 
-import { ComponentRegistration, ResourceExplorer, BuilderRegistration } from "botbuilder-dialogs-declarative";
+import { BoolExpressionConverter, NumberExpressionConverter, StringExpressionConverter } from 'adaptive-expressions';
+import { AdaptiveTypeBuilder } from 'botbuilder-dialogs-adaptive';
+import { BuilderRegistration, ComponentRegistration, ResourceExplorer } from 'botbuilder-dialogs-declarative';
+
 import { OrchestratorAdaptiveRecognizer } from './orchestratorAdaptiveRecognizer';
-import { AdaptiveTypeBuilder } from "botbuilder-dialogs-adaptive";
-import { BoolExpressionConverter, StringExpressionConverter, NumberExpressionConverter } from 'adaptive-expressions';
 
 export class OrchestratorComponentRegistration implements ComponentRegistration {
-    private _builderRegistrations: BuilderRegistration[] = [];
+    private readonly _builderRegistrations: BuilderRegistration[] = [];
     private _resourceExplorer: ResourceExplorer;
 
-    getTypeBuilders(): BuilderRegistration[] {
+    public getTypeBuilders(): BuilderRegistration[] {
         return this._builderRegistrations;
     }
 
@@ -24,10 +25,10 @@ export class OrchestratorComponentRegistration implements ComponentRegistration 
 
         this._builderRegistrations.push(
             new BuilderRegistration('Microsoft.OrchestratorRecognizer', new AdaptiveTypeBuilder(OrchestratorAdaptiveRecognizer, this._resourceExplorer, {
-                'modelPath': new StringExpressionConverter(),
-                'snapshotPath': new StringExpressionConverter(),
-                'disambiguationScoreThreshold': new NumberExpressionConverter(),
-                'detectAmbiguousIntents': new BoolExpressionConverter(),
+                modelPath: new StringExpressionConverter(),
+                snapshotPath: new StringExpressionConverter(),
+                disambiguationScoreThreshold: new NumberExpressionConverter(),
+                detectAmbiguousIntents: new BoolExpressionConverter(),
             }))
         );    
     }
