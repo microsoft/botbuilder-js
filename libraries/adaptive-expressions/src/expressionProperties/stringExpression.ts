@@ -50,7 +50,7 @@ export class StringExpression extends ExpressionProperty<string> {
             }
 
             // Initialize value
-            this.expressionText = `=\`${ value }\``;
+            this.expressionText = `=\`${ value.replace(/\\/g, '\\\\') }\``;
             return;
         }
     }
