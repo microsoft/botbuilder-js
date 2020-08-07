@@ -91,7 +91,7 @@ describe('SkillDialog', function() {
                 activityToSend.text = activityToSendText;
                 const client = new DialogTestClient(Channels.Test, dialog, { activity: activityToSend }, undefined, conversationState);
 
-                strictEqual(0, dialogOptions.conversationIdFactory.createCount);
+                strictEqual(dialogOptions.conversationIdFactory.createCount, 0);
 
                 // Send something to the dialog to start it
                 await client.sendActivity('irrelevant');
