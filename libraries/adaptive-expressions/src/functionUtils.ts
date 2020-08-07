@@ -201,6 +201,14 @@ export class FunctionUtils {
     }
 
     /**
+     * Validate there is one or two string arguments.
+     * @param expression Expression to validate.
+     */
+    public static validateUnaryOrBinaryString(expression: Expression): void {
+        FunctionUtils.validateArityAndAnyType(expression, 1, 2, ReturnType.String);
+    }
+
+    /**
      * Validate there is a single boolean argument.
      * @param expression Expression to validate.
      */
