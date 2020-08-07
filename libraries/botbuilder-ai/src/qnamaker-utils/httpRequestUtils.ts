@@ -10,6 +10,7 @@ import * as os from 'os';
 const pjson: any = require('../../package.json');
 
 import { QnAMakerEndpoint } from '../qnamaker-interfaces/qnamakerEndpoint';
+import { QnAMakerResult } from '../qnamaker-interfaces/qnamakerResult';
 
 import { getFetch } from '../globals';
 const fetch = getFetch();
@@ -21,7 +22,6 @@ const fetch = getFetch();
  * This class is helper class for all the http request operations.
  */
 export class HttpRequestUtils {
-	
     /**
      * Execute Http request.
      * 
@@ -45,14 +45,14 @@ export class HttpRequestUtils {
 
         const headers: any = this.getHeaders(endpoint);
 
-        const qnaResult: any = await fetch(requestUrl, {
+        const qnaResult = await fetch(requestUrl, {
             method: 'POST',
             headers: headers,
             timeout: timeout,
             body: payloadBody
         });
-        
-        return await qnaResult.json();
+
+        return (qnaResult.status == 204) ? this.getSuccessful204Result() : await qnaResult.json();
     }
 
     /**
@@ -81,5 +81,22 @@ export class HttpRequestUtils {
         const platformUserAgent: string = `(${ os.arch() }-${ os.type() }-${ os.release() }; Node.js,Version=${ process.version })`;
 
         return `${ packageUserAgent } ${ platformUserAgent }`;
+    }
+
+    /**
+     * Creates a QnAMakerResult for successful responses from QnA Maker service that return status code 204 No-Content.
+     * 
+     * The [Train API](https://docs.microsoft.com/en-us/rest/api/cognitiveservices/qnamakerruntime/runtime/train) 
+     * is an example of one of QnA Maker's APIs that return a 204 status code.
+     */
+    private getSuccessful204Result(): QnAMakerResult {
+        return {
+            questions: [],
+            answer: "204 No-Content",
+            score: 100,
+            id: -1,
+            source: null,
+            metadata: []
+        };
     }
 }
