@@ -31,7 +31,7 @@ export class TrainUtils {
      * Train API to provide feedback.
      * @param feedbackRecords Feedback record list.
      */
-    public async callTrainAsync(feedbackRecords: FeedbackRecords) {
+    public async callTrain(feedbackRecords: FeedbackRecords) {
         if (!feedbackRecords) {
             throw new TypeError('Feedback records can not be null.');
         }
@@ -41,13 +41,13 @@ export class TrainUtils {
             return;
         }
 
-        await this.queryTrainAsync(feedbackRecords);
+        await this.queryTrain(feedbackRecords);
     }
 
-    private async queryTrainAsync(feedbackRecords: FeedbackRecords) {
+    private async queryTrain(feedbackRecords: FeedbackRecords) {
         const url: string = `${ this.endpoint.host }/knowledgebases/${ this.endpoint.knowledgeBaseId }/train`;
         var payloadBody = JSON.stringify({
-            feedbackRecords: feedbackRecords
+            feedbackRecords: feedbackRecords.feedbackRecords
         });
         
         await this.httpRequestUtils.executeHttpRequest(url, payloadBody, this.endpoint);

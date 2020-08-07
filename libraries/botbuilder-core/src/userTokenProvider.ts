@@ -30,6 +30,15 @@ export interface IUserTokenProvider {
     signOutUser(context: TurnContext, connectionName: string, userId?: string): Promise<void>;
 
     /**
+     * Retrieves the token status for each configured connection for the given user, using the bot's AppCredentials.
+     * @param context Context for the current turn of conversation with the user. 
+     * @param userId The user Id for which token status is retrieved. 
+     * @param includeFilter Comma separated list of connection's to include. Blank will return token status for all configured connections.
+     * @param oAuthAppCredentials The app credentials for OAuth.
+     */
+    getTokenStatus(context: TurnContext, userId: string, includeFilter?: string, oAuthAppCredentials?: any): Promise<any[]>;
+
+    /**
      * Gets a signin link from the token server that can be sent as part of a SigninCard.
      * @param context Context for the current turn of conversation with the user.
      * @param connectionName Name of the auth connection to use.

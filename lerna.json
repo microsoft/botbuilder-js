@@ -21,7 +21,7 @@
     "libraries/botbuilder-core",
     "libraries/botbuilder-dialogs",
     "libraries/botbuilder-dialogs-adaptive",
-    "libraries/botbuilder-dialogs-adaptive-tests",
+    "libraries/botbuilder-dialogs-adaptive-testing",
     "libraries/botbuilder-dialogs-declarative",
     "libraries/botbuilder-testing",
     "libraries/botbuilder-lg",
@@ -34,6 +34,7 @@
     "libraries/functional-tests/dialogToDialog/dialogSkillBot",
     "libraries/testbot",
     "libraries/botframework-streaming",
+    "libraries/bot-integration-tests",
     "libraries/testskills/skillparent",
     "libraries/testskills/skillchild",
     "transcripts"

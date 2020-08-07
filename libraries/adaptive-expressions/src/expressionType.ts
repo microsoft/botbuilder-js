@@ -104,6 +104,10 @@ export class ExpressionType {
     public static readonly IsTimeRange: string = 'isTimeRange';
     public static readonly IsDateRange: string = 'isDateRange';
     public static readonly IsPresent: string = 'isPresent';
+    public static readonly GetNextViableDate: string = 'getNextViableDate';
+    public static readonly GetPreviousViableDate: string = 'getPreviousViableDate';
+    public static readonly GetNextViableTime: string = 'getNextViableTime';
+    public static readonly GetPreviousViableTime: string = 'getPreviousViableTime';
 
     // Conversions
     public static readonly Float: string = 'float';
@@ -173,11 +177,14 @@ export class ExpressionType {
     public static readonly IsMatch: string = 'isMatch';
 
     //Type Checking 
-    public static readonly isString: string = 'isString';
-    public static readonly isInteger: string = 'isInteger';
-    public static readonly isArray: string = 'isArray';
-    public static readonly isObject: string = 'isObject';
-    public static readonly isFloat: string = 'isFloat';
-    public static readonly isDateTime: string = 'isDateTime';
-    public static readonly isBoolean: string = 'isBoolean';
+    public static readonly IsString: string = 'isString';
+    public static readonly IsInteger: string = 'isInteger';
+    public static readonly IsArray: string = 'isArray';
+    public static readonly IsObject: string = 'isObject';
+    public static readonly IsFloat: string = 'isFloat';
+    public static readonly IsDateTime: string = 'isDateTime';
+    public static readonly IsBoolean: string = 'isBoolean';
+
+    public static readonly Ignore: string = 'ignore';
+    public static readonly Optional: string = 'optional';
 }

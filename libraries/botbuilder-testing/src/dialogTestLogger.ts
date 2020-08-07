@@ -7,25 +7,22 @@
  */
 
 import { Middleware, TurnContext, ResourceResponse, ActivityTypes } from 'botbuilder-core';
-import * as mlog from 'mocha-logger';
 
 /**
  * Log a transcript of messages from a dialog to the console, along with additional diagnostic information.
  * For use with the `DialogTestClient` class.
- * 
+ *
  * Example:
  * ```javascript
  * let client = new DialogTestClient(DIALOG, OPTIONS, [new DialogTestLogger()]);
  * ```
  */
 export class DialogTestLogger implements Middleware {
-    private _logger = mlog;
+    private _logger;
     private _stopwatchStateKey = Symbol('stopwatch');
 
     public constructor(logger?: {log: (any) => void }) {
-        if (logger) {
-            this._logger = logger;
-        }
+        this._logger = logger ? logger : console;
     }
 
     public async onTurn(context: TurnContext, next: () => Promise<void>): Promise<void> {
