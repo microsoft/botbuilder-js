@@ -12,6 +12,7 @@ import { RankerTypes } from './qnamaker-interfaces/rankerTypes';
 import { QnAMaker, QnAMakerResult } from './';
 import { FeedbackRecord, FeedbackRecords, QnAMakerMetadata } from './qnamaker-interfaces';
 import { QnACardBuilder } from './qnaCardBuilder';
+import { ActiveLearningUtils } from './qnamaker-utils/activeLearningUtils';
 
 const V4_API_REGEX = /^https:\/\/.*\.azurewebsites\.net\/qnamaker\/?/i;
 
@@ -95,7 +96,6 @@ export class QnAMakerDialog extends WaterfallDialog {
     // Dialog options parameters
     private defaultCardNoMatchResponse: string = `Thanks for the feedback.`;
     private defaultNoAnswer: string = `No QnAMaker answers found.`;
-    private maximumScoreForLowScoreVariation: number = 0.95;
 
     private knowledgeBaseId: any;
     private hostName: any;
@@ -254,7 +254,7 @@ export class QnAMakerDialog extends WaterfallDialog {
         
         step.values[this.qnAData] = response.answers;
         
-        if (qnaResponse.answers.length > 0 && qnaResponse.answers[0].score <= this.maximumScoreForLowScoreVariation) {
+        if (qnaResponse.answers.length > 0 && qnaResponse.answers[0].score <= ActiveLearningUtils.MaximumScoreForLowScoreVariation / 100) {
             qnaResponse.answers = qna.getLowScoreVariation(qnaResponse.answers);
             
             if (isActiveLearningEnabled && qnaResponse.answers && qnaResponse.answers.length > 1) {
