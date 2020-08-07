@@ -7,7 +7,7 @@ steps:
   
   - task: Cache@2
     inputs:
-      key: 'npm | “$(Agent.OS)” | $(RootReactPiecesDir)/react-app | "WebChat.Cache"'
+      key: 'npm | “$(Agent.OS)” | $(RootReactPiecesDir)/react-app/yarn.lock'
       path: '$(RootReactPiecesDir)/react-app/node_modules'
       cacheHitVar: 'WcCacheRestored'
   
