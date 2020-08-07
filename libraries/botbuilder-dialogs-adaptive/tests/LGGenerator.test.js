@@ -44,21 +44,21 @@ describe('LGLanguageGenerator', function() {
                 assert(lgResourceGroup.has(''));
                 var resourceNames = lgResourceGroup.get('').map(u => u.id);
                 assert.equal(resourceNames.length, 7);
-                assert.deepStrictEqual(new Set(resourceNames), new Set(['a.lg', 'b.lg', 'c.lg', 'NormalStructureLG.lg','root.lg', 'subDialog.lg', 'test.lg']));
+                assert.deepStrictEqual(new Set(resourceNames), new Set(['a.lg', 'b.lg', 'c.lg', 'NormalStructuredLG.lg','root.lg', 'subDialog.lg', 'test.lg']));
             });
 
             it('assert en-us locale', async () => {
                 assert(lgResourceGroup.has('en-us'));
                 var resourceNames = lgResourceGroup.get('en-us').map(u => u.id);
                 assert.equal(resourceNames.length, 7);
-                assert.deepStrictEqual(new Set(resourceNames), new Set(['a.en-US.lg', 'b.en-us.lg', 'test.en-US.lg', 'c.en.lg', 'NormalStructureLG.lg','root.lg', 'subDialog.lg']));
+                assert.deepStrictEqual(new Set(resourceNames), new Set(['a.en-US.lg', 'b.en-us.lg', 'test.en-US.lg', 'c.en.lg', 'NormalStructuredLG.lg','root.lg', 'subDialog.lg']));
             });
 
             it('assert en locale', async () => {
                 assert(lgResourceGroup.has('en'));
                 var resourceNames = lgResourceGroup.get('en').map(u => u.id);
                 assert.equal(resourceNames.length, 7);
-                assert.deepStrictEqual(new Set(resourceNames), new Set(['c.en.lg', 'test.en.lg', 'a.en.lg', 'b.lg', 'NormalStructureLG.lg','root.lg', 'subDialog.lg']));
+                assert.deepStrictEqual(new Set(resourceNames), new Set(['c.en.lg', 'test.en.lg', 'a.lg', 'b.lg', 'NormalStructuredLG.lg','root.lg', 'subDialog.lg']));
             });
         });
 
