@@ -1,4 +1,4 @@
-const { ConversationState, MemoryStorage, TestAdapter } = require('botbuilder-core');
+const { ConversationState, MemoryStorage, TestAdapter, ActivityTypes, Severity } = require('botbuilder-core');
 const { Dialog, DialogReason, DialogSet, DialogTurnStatus, ComponentDialog, WaterfallDialog } = require('../');
 const assert = require('assert');
 
@@ -363,11 +363,19 @@ describe('ComponentDialog', function () {
                 return await step.endDialog();
             }
         ]);
-        const component = new ChangedDialog('test', true);
+        const component = new ComponentDialog('test');
         component.addDialog(childDialog);
 
         const dialogs = new DialogSet(dialogState);
         dialogs.add(component);
+        dialogs.telemetryClient = {
+            trackEvent: function(telemetry) {},
+            trackTrace: function(telemetry) {
+                if (telemetry.severityLevel === Severity.Warning) {
+                    assert.equal(telemetry.message, 'Unhandled dialog event: versionChanged. Active Dialog: test');
+                }
+            }
+        };
 
         const adapter = new TestAdapter(async turnContext => {
             const dc = await dialogs.createContext(turnContext);
@@ -387,9 +395,8 @@ describe('ComponentDialog', function () {
         adapter.send('Hi')
             .assertReply('First step.')
             .send('Hi again')
-            .assertReply('Version Changed.')
             .assertReply('Second step.')
-            .assertReply('Done.')
+            .assertReply('Done.');
     });
 });
 
@@ -402,20 +409,5 @@ class ContinueDialog extends ComponentDialog {
     async onContinueDialog(innerDC) {
         await innerDC.context.sendActivity('Called onContinueDialog.');
         return await innerDC.continueDialog();
-    }
-}
-
-class ChangedDialog extends ComponentDialog {
-    constructor(dialogId, handle) {
-        super(dialogId);
-        this.handle = handle;
-    }
-
-    async onPreBubbleEvent(dc, event) {
-        if (event.name == 'versionChanged' && this.handle) {
-            await dc.context.sendActivity('Version Changed.');
-            return true;
-        }
-        return false;
     }
 }
