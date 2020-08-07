@@ -14,13 +14,8 @@ import { StringExpression, IntExpression, NumberExpression, BoolExpression, Arra
 
 const intentPrefix = 'intent=';
 
-export class QnAMakerRecognizer implements Recognizer {
+export class QnAMakerRecognizer extends Recognizer {
     public static readonly qnaMatchIntent = 'QnAMatch';
-
-    /**
-     * Id of the recognizer.
-     */
-    public id: string;
 
     /**
      * Knowledgebase id of your QnA maker knowledgebase.
@@ -78,12 +73,13 @@ export class QnAMakerRecognizer implements Recognizer {
     public qnaId: IntExpression = new IntExpression(0);
 
     public constructor(hostname?: string, knowledgeBaseId?: string, endpointKey?: string) {
+        super();
         if (hostname) { this.hostname = new StringExpression(hostname); }
         if (knowledgeBaseId) { this.knowledgeBaseId = new StringExpression(knowledgeBaseId); }
         if (endpointKey) { this.endpointKey = new StringExpression(endpointKey); }
     }
 
-    public async recognize(dc: DialogContext, activity: Activity): Promise<RecognizerResult> {
+    public async recognize(dc: DialogContext, activity: Activity, telemetryProperties?: { [key: string]: string }, telemetryMetrics?: { [key: string]: number }): Promise<RecognizerResult> {
         // identify matched intents
         const recognizerResult: RecognizerResult = {
             text: activity.text,
@@ -145,7 +141,7 @@ export class QnAMakerRecognizer implements Recognizer {
         } else {
             recognizerResult.intents['None'] = { score: 1 };
         }
-
+        this.trackRecognizerResult(dc, 'QnAMakerRecognizerResult', this.fillRecognizerResultTelemetryProperties(recognizerResult, telemetryProperties), telemetryMetrics);
         return recognizerResult;
     }
 
