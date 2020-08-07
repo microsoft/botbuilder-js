@@ -851,9 +851,12 @@ const scope = {
 
 describe('expression parser functional test', () => {
     it('should get right evaluate result', () => {
+        const inputs = [];
+
         for (const data of dataSource) {
             const input = data[0].toString();
-            console.log(input);
+            inputs.push(input);
+
             var parsed = Expression.parse(input);
             assert(parsed !== undefined);
             var {value: actual, error} = parsed.tryEvaluate(scope);
@@ -874,6 +877,8 @@ describe('expression parser functional test', () => {
             const newActual = newExpr.tryEvaluate(scope).value;
             assertObjectEquals(actual, newActual, input);
         }
+
+        console.log(inputs.join('\n'));
     }).timeout(5000);
 
     // Any test getting the system time with something like `new Date()` is prone to failure because
