@@ -6,6 +6,6 @@
  * Licensed under the MIT License.
  */
 
-export { OrchestratorRecognizer } from './orchestratorRecognizer';
-export { OrchestratorComponentRegistration } from './orchestratorComponentRegistration';
 export { OrchestratorAdaptiveRecognizer } from './orchestratorAdaptiveRecognizer';
+export { OrchestratorComponentRegistration } from './orchestratorComponentRegistration';
+export { OrchestratorRecognizer } from './orchestratorRecognizer';
