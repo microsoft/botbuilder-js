@@ -10,6 +10,10 @@ steps:
   #     key: 'npm | “$(Agent.OS)” | $(RootReactPiecesDir)/react-app/yarn.lock'
   #     path: '$(RootReactPiecesDir)/react-app/node_modules'
   #     cacheHitVar: 'WcCacheRestored'
+  - powershell: npm install dotenv
+    displayName: 'npm install dotenv'
+    workingDirectory: $(ReactProjectDir)
+    
   - task: Cache@2
     displayName: Cache npm
     inputs:
