@@ -2,6 +2,8 @@
 
 jobs:
   - job: Create_React_App_With_WebChat
+    variables:
+      npm_config_cache: $(Pipeline.Workspace)/.npm
     steps: 
       - template: create-react-app.yml
 
