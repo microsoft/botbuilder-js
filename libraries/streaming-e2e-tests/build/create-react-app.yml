@@ -11,6 +11,11 @@ steps:
   #     path: '$(RootReactPiecesDir)/react-app/node_modules'
   #     cacheHitVar: 'WcCacheRestored'
 
+  - powershell: npm install botframework-webchat@4.9.2
+    displayName: 'npm install botframework-webchat'
+    workingDirectory: $(RootReactPiecesDir)/react-app
+    condition: ne(variables.WcCacheRestored, 'true')
+  
   - task: Cache@2
     displayName: Cache npm
     inputs:
@@ -19,11 +24,6 @@ steps:
         npm | "$(Agent.OS)"
       path: $(npm_config_cache)
       cacheHitVar: 'WcCacheRestored'
-
-  - powershell: npm install botframework-webchat@4.9.2
-    displayName: 'npm install botframework-webchat'
-    workingDirectory: $(RootReactPiecesDir)/react-app
-    condition: ne(variables.WcCacheRestored, 'true')
 
   - powershell: Remove-Item src/App.js, src/index.js, public/index.html
     displayName: "Delete files we're replacing with custom code in react app"
