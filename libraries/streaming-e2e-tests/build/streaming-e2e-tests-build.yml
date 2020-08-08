@@ -31,6 +31,8 @@ stages:
       #     - template: deploy-bot.yml
 
       - template: create-and-deploy-streaming-react-app.yml
+        variables: 
+          ReactProjectDir: '$(RootReactPiecesDir)/react-app'
 
   # - stage: Run_Tests
   #   dependsOn: Create_And_Deploy_Projects
