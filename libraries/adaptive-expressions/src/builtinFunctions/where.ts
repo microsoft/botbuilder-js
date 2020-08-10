@@ -6,31 +6,31 @@
  * Licensed under the MIT License.
  */
 
-import { ExpressionEvaluator } from '../expressionEvaluator';
+import { Constant } from '../constant';
 import { Expression } from '../expression';
-import { ReturnType } from '../returnType';
+import { ExpressionEvaluator, ValueWithError } from '../expressionEvaluator';
 import { ExpressionType } from '../expressionType';
 import { FunctionUtils } from '../functionUtils';
 import { MemoryInterface } from '../memory/memoryInterface';
-import { Options } from '../options';
-import { Constant } from '../constant';
-import { StackedMemory } from '../memory/stackedMemory';
 import { SimpleObjectMemory } from '../memory/simpleObjectMemory';
+import { StackedMemory } from '../memory/stackedMemory';
+import { Options } from '../options';
+import { ReturnType } from '../returnType';
 
 /**
  * Filter on each element and return the new collection of filtered elements which match a specific condition.
  */
 export class Where extends ExpressionEvaluator {
-    public constructor(){
+    public constructor() {
         super(ExpressionType.Where, Where.evaluator, ReturnType.Array, FunctionUtils.validateForeach);
     }
 
-    private static evaluator(expression: Expression, state: MemoryInterface, options: Options): {value: any; error: string} {
+    private static evaluator(expression: Expression, state: MemoryInterface, options: Options): ValueWithError {
         let result: any;
         let error: string;
         let instance: any;
 
-        ({value: instance, error} = expression.children[0].tryEvaluate(state, options));
+        ({ value: instance, error } = expression.children[0].tryEvaluate(state, options));
 
         if (!error) {
             const iteratorName = (expression.children[1].children[0] as Constant).value as string;
@@ -40,7 +40,7 @@ export class Where extends ExpressionEvaluator {
                 arr = instance;
                 isInstanceArray = true;
             } else if (typeof instance === 'object') {
-                Object.keys(instance).forEach((u): number => arr.push({key: u, value: instance[u]}));
+                Object.keys(instance).forEach((u): number => arr.push({ key: u, value: instance[u] }));
             } else {
                 error = `${expression.children[0]} is not a collection or structure object to run foreach`;
             }
@@ -56,10 +56,10 @@ export class Where extends ExpressionEvaluator {
                     stackedMemory.push(SimpleObjectMemory.wrap(local));
                     const newOptions = new Options(options);
                     newOptions.nullSubstitution = undefined;
-                    const {value: r, error: e} = expression.children[2].tryEvaluate(stackedMemory, newOptions);
+                    const { value: r, error: e } = expression.children[2].tryEvaluate(stackedMemory, newOptions);
                     stackedMemory.pop();
                     if (e !== undefined) {
-                        return {value: undefined, error: e};
+                        return { value: undefined, error: e };
                     }
 
                     if ((Boolean(r))) {
@@ -81,6 +81,6 @@ export class Where extends ExpressionEvaluator {
             }
         }
 
-        return {value: result, error};
+        return { value: result, error };
     }
 }

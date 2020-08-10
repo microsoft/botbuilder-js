@@ -6,17 +6,17 @@
  * Licensed under the MIT License.
  */
 
-import { ExpressionEvaluator } from '../expressionEvaluator';
 import { Expression } from '../expression';
-import { ReturnType } from '../returnType';
+import { ExpressionEvaluator } from '../expressionEvaluator';
 import { ExpressionType } from '../expressionType';
 import { FunctionUtils } from '../functionUtils';
+import { ReturnType } from '../returnType';
 
 /**
  * Sort elements in the collection in ascending order and return the sorted collection.
  */
 export class SortBy extends ExpressionEvaluator {
-    public constructor(){
+    public constructor() {
         super(ExpressionType.SortBy, FunctionUtils.sortBy(false), ReturnType.Array, SortBy.validator);
     }
 

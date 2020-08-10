@@ -6,17 +6,17 @@
  * Licensed under the MIT License.
  */
 
-import { ExpressionEvaluator, EvaluateExpressionDelegate } from '../expressionEvaluator';
 import { Expression } from '../expression';
-import { ReturnType } from '../returnType';
+import { EvaluateExpressionDelegate, ExpressionEvaluator } from '../expressionEvaluator';
 import { ExpressionType } from '../expressionType';
 import { FunctionUtils } from '../functionUtils';
+import { ReturnType } from '../returnType';
 
 /**
  * Return a new Guid string.
  */
 export class NewGuid extends ExpressionEvaluator {
-    public constructor(){
+    public constructor() {
         super(ExpressionType.NewGuid, NewGuid.evaluator(), ReturnType.String, NewGuid.validator);
     }
 

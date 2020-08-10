@@ -6,33 +6,28 @@
  * Licensed under the MIT License.
  */
 
-import { ExpressionEvaluator, EvaluateExpressionDelegate } from '../expressionEvaluator';
+import bigInt from 'big-integer';
+import moment from 'moment';
+
 import { Expression } from '../expression';
-import { ReturnType } from '../returnType';
+import { EvaluateExpressionDelegate, ExpressionEvaluator } from '../expressionEvaluator';
 import { ExpressionType } from '../expressionType';
 import { FunctionUtils } from '../functionUtils';
-import moment from 'moment';
-import bigInt from 'big-integer';
-import { Options } from '../options';
+import { ReturnType } from '../returnType';
 
 /**
  * Return a timestamp in the specified format from ticks.
  */
 export class FormatTicks extends ExpressionEvaluator {
-    public constructor(){
+    public constructor() {
         super(ExpressionType.FormatTicks, FormatTicks.evaluator(), ReturnType.String, FormatTicks.validator);
     }
 
     private static evaluator(): EvaluateExpressionDelegate {
-        return FunctionUtils.applyWithOptionsAndError(
-            (args: any[], options: Options): any => {
+        return FunctionUtils.applyWithError(
+            (args: any[]): any => {
                 let error: string;
                 let arg: any = args[0];
-                let format = FunctionUtils.DefaultDateTimeFormat;
-                let locale = options.locale ?  options.locale : 'en-us';
-
-                ({format, locale} = FunctionUtils.determineFormatAndLocale(args, format, locale, 3));
-
                 if (typeof arg === 'number') {
                     arg = bigInt(arg);
                 }
@@ -48,14 +43,15 @@ export class FormatTicks extends ExpressionEvaluator {
 
                 let value: any;
                 if (!error) {
-                    value = moment(new Date(arg)).utc().locale(locale).format(format);
+                    const dateString: string = new Date(arg).toISOString();
+                    value = args.length === 2 ? moment(dateString).format(FunctionUtils.timestampFormatter(args[1])) : dateString;
                 }
 
-                return {value, error};
+                return { value, error };
             });
     }
 
     private static validator(expression: Expression): void {
-        FunctionUtils.validateOrder(expression, [ReturnType.String, ReturnType.String], ReturnType.Number);
+        FunctionUtils.validateOrder(expression, [ReturnType.String], ReturnType.Number);
     }
 }

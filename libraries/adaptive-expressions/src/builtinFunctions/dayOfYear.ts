@@ -6,17 +6,18 @@
  * Licensed under the MIT License.
  */
 
-import { ExpressionEvaluator, EvaluateExpressionDelegate } from '../expressionEvaluator';
-import { ReturnType } from '../returnType';
+import moment from 'moment';
+
+import { EvaluateExpressionDelegate, ExpressionEvaluator } from '../expressionEvaluator';
 import { ExpressionType } from '../expressionType';
 import { FunctionUtils } from '../functionUtils';
-import moment from 'moment';
+import { ReturnType } from '../returnType';
 
 /**
  * Return the day of the year from a timestamp.
  */
 export class DayOfYear extends ExpressionEvaluator {
-    public constructor(){
+    public constructor() {
         super(ExpressionType.DayOfYear, DayOfYear.evaluator(), ReturnType.Number, FunctionUtils.validateUnaryString);
     }
 

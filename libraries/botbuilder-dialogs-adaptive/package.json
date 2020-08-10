@@ -21,9 +21,6 @@
   "typings": "./lib/index.d.ts",
   "dependencies": {
     "@microsoft/recognizers-text-suite": "1.1.4",
-    "@types/jsonpath": "^0.2.0",
-    "@types/node": "^10.12.18",
-    "@types/node-fetch": "^2.5.3",
     "botbuilder-ai": "4.1.6",
     "botbuilder-core": "4.1.6",
     "botbuilder-dialogs": "4.1.6",
@@ -36,11 +33,14 @@
     "node-fetch": "^2.6.0"
   },
   "devDependencies": {
+    "@types/jsonpath": "^0.2.0",
     "@types/mocha": "^2.2.47",
+    "@types/node": "^10.12.18",
+    "@types/node-fetch": "^2.5.3",
     "codelyzer": "^4.1.0",
-    "mocha": "^5.2.0",
+    "mocha": "^6.2.3",
     "nock": "^11.9.1",
-    "nyc": "^11.4.1",
+    "nyc": "^15.1.0",
     "source-map-support": "^0.5.3",
     "ts-node": "^4.1.0"
   },

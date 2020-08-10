@@ -6,11 +6,11 @@
  * Licensed under the MIT License.
  */
 
-import { ExpressionEvaluator, EvaluateExpressionDelegate } from '../expressionEvaluator';
 import { Expression } from '../expression';
-import { ReturnType } from '../returnType';
+import { EvaluateExpressionDelegate, ExpressionEvaluator } from '../expressionEvaluator';
 import { ExpressionType } from '../expressionType';
 import { FunctionUtils } from '../functionUtils';
+import { ReturnType } from '../returnType';
 
 /**
  * Return a collection that has all the items from the specified collections.
@@ -18,7 +18,7 @@ import { FunctionUtils } from '../functionUtils';
  * If one or more items have the same name, the last item with that name appears in the result.
  */
 export class Union extends ExpressionEvaluator {
-    public constructor(){
+    public constructor() {
         super(ExpressionType.Union, Union.evaluator(), ReturnType.Array, Union.validator);
     }
 

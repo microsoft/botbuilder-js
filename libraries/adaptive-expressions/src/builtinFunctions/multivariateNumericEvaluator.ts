@@ -6,8 +6,8 @@
  * Licensed under the MIT License.
  */
 
-import { ExpressionEvaluator, EvaluateExpressionDelegate } from '../expressionEvaluator';
-import { VerifyExpression, FunctionUtils } from '../functionUtils';
+import { EvaluateExpressionDelegate, ExpressionEvaluator } from '../expressionEvaluator';
+import { FunctionUtils, VerifyExpression } from '../functionUtils';
 import { ReturnType } from '../returnType';
 
 /**
@@ -18,7 +18,7 @@ export class MultivariateNumericEvaluator extends ExpressionEvaluator {
         super(type, MultivariateNumericEvaluator.evaluator(func, verify), ReturnType.Number, FunctionUtils.validateTwoOrMoreThanTwoNumbers);
     }
 
-    private static evaluator(func: (args: any[]) => number, verify?: VerifyExpression): EvaluateExpressionDelegate  {
+    private static evaluator(func: (args: any[]) => number, verify?: VerifyExpression): EvaluateExpressionDelegate {
         return FunctionUtils.applySequence(func, verify || FunctionUtils.verifyNumber);
     }
 }

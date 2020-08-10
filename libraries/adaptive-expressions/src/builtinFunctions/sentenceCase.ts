@@ -6,13 +6,12 @@
  * Licensed under the MIT License.
  */
 
-import { StringTransformEvaluator } from './stringTransformEvaluator';
-import { FunctionUtils } from '../functionUtils';
 import { ExpressionType } from '../expressionType';
-import { Options } from '../options';
+import { FunctionUtils } from '../functionUtils';
+import { StringTransformEvaluator } from './stringTransformEvaluator';
 
 /**
- * Converts the specified string to sentence case.
+ * Capitalizing only the first word and leave others lowercase.
  */
 export class SentenceCase extends StringTransformEvaluator {
     public constructor() {
@@ -20,7 +19,7 @@ export class SentenceCase extends StringTransformEvaluator {
     }
 
     private static evaluator(args: any[]): string {
-        const inputStr = String(FunctionUtils.parseStringOrNull(args[0])).toLowerCase();
+        const inputStr = String(FunctionUtils.parseStringOrUndefined(args[0])).toLowerCase();
         if (inputStr === '') {
             return inputStr;
         } else {

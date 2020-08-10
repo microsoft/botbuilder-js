@@ -6,18 +6,18 @@
  * Licensed under the MIT License.
  */
 
-import { ExpressionEvaluator, EvaluateExpressionDelegate } from '../expressionEvaluator';
 import { Expression } from '../expression';
-import { ReturnType } from '../returnType';
+import { EvaluateExpressionDelegate, ExpressionEvaluator } from '../expressionEvaluator';
 import { ExpressionType } from '../expressionType';
 import { FunctionUtils } from '../functionUtils';
+import { ReturnType } from '../returnType';
 
 /**
  * Replace a substring with the specified string, and return the result string.
  * This function is case-sensitive.
  */
 export class Replace extends ExpressionEvaluator {
-    public constructor(){
+    public constructor() {
         super(ExpressionType.Replace, Replace.evaluator(), ReturnType.String, Replace.validator);
     }
 
@@ -26,15 +26,15 @@ export class Replace extends ExpressionEvaluator {
             args: any[]): any => {
             let error = undefined;
             let result = undefined;
-            if (FunctionUtils.parseStringOrNull(args[1]).length === 0) {
+            if (FunctionUtils.parseStringOrUndefined(args[1]).length === 0) {
                 error = `${args[1]} should be a string with length at least 1`;
             }
 
             if (!error) {
-                result = FunctionUtils.parseStringOrNull(args[0]).split(FunctionUtils.parseStringOrNull(args[1])).join(FunctionUtils.parseStringOrNull(args[2]));
+                result = FunctionUtils.parseStringOrUndefined(args[0]).split(FunctionUtils.parseStringOrUndefined(args[1])).join(FunctionUtils.parseStringOrUndefined(args[2]));
             }
 
-            return {value: result, error};
+            return { value: result, error };
         }, FunctionUtils.verifyStringOrNull);
     }
 

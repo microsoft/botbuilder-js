@@ -6,11 +6,11 @@
  * Licensed under the MIT License.
  */
 
-import { MultivariateNumericEvaluator } from './multivariateNumericEvaluator';
 import { ExpressionType } from '../expressionType';
+import { MultivariateNumericEvaluator } from './multivariateNumericEvaluator';
 
 /**
- * Return the product from multiplying two numbers.
+ * Return the product from multiplying any number of numbers.
  */
 export class Multiply extends MultivariateNumericEvaluator {
     public constructor() {

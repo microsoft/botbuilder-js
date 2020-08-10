@@ -6,7 +6,21 @@
  * Licensed under the MIT License.
  */
 
-export interface IResource {
-    id(): string;
-    readText(): string;
+/**
+ * Abstract class for access the content of a resource.
+ */
+export abstract class Resource {
+    protected _id: string;
+
+    /**
+     * Resource id.
+     */
+    public get id(): string {
+        return this._id;
+    }
+
+    /**
+     * Get resource as text.
+     */
+    public abstract readText(): string;
 }

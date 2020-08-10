@@ -6,60 +6,55 @@
  * Licensed under the MIT License.
  */
 
-import { ExpressionEvaluator } from '../expressionEvaluator';
+import moment from 'moment';
+
 import { Expression } from '../expression';
-import { ReturnType } from '../returnType';
+import { ExpressionEvaluator, ValueWithError } from '../expressionEvaluator';
 import { ExpressionType } from '../expressionType';
 import { FunctionUtils } from '../functionUtils';
 import { MemoryInterface } from '../memory/memoryInterface';
 import { Options } from '../options';
-import moment from 'moment';
+import { ReturnType } from '../returnType';
 
 /**
  * Return the start of the day for a timestamp.
  */
 export class StartOfDay extends ExpressionEvaluator {
-    public constructor(){
+    public constructor() {
         super(ExpressionType.StartOfDay, StartOfDay.evaluator, ReturnType.String, StartOfDay.validator);
     }
 
-    private static evaluator(expression: Expression, state: MemoryInterface, options: Options): {value: any; error: string} {
+    private static evaluator(expression: Expression, state: MemoryInterface, options: Options): ValueWithError {
         let value: any;
         let error: string;
         let args: any[];
-        let format = FunctionUtils.DefaultDateTimeFormat;
-        let locale = options.locale ? options.locale : 'en-us';
-        ({args, error} = FunctionUtils.evaluateChildren(expression, state, options));
-
+        ({ args, error } = FunctionUtils.evaluateChildren(expression, state, options));
         if (!error) {
-            ({format, locale} = FunctionUtils.determineFormatAndLocale(args, format, locale, 3));
-        }
-
-        if (!error) {
+            const format: string = (args.length === 2) ? FunctionUtils.timestampFormatter(args[1]) : FunctionUtils.DefaultDateTimeFormat;
             if (typeof (args[0]) === 'string') {
-                ({value, error} = StartOfDay.evalStartOfDay(args[0], format, locale));
+                ({ value, error } = StartOfDay.evalStartOfDay(args[0], format));
             } else {
                 error = `${expression} cannot evaluate`;
             }
         }
 
-        return {value, error};
+        return { value, error };
     }
 
-    private static evalStartOfDay(timeStamp: string, format?: string, locale?: string): {value: any; error: string} {
+    private static evalStartOfDay(timeStamp: string, format?: string): ValueWithError {
         let result: string;
         let error: string;
         let parsed: any;
-        ({value: parsed, error} = FunctionUtils.parseTimestamp(timeStamp));
+        ({ value: parsed, error } = FunctionUtils.parseTimestamp(timeStamp));
         if (!error) {
             const startOfDay = moment(parsed).utc().hours(0).minutes(0).second(0).millisecond(0);
-            ({value: result, error} = FunctionUtils.returnFormattedTimeStampStr(startOfDay, format, locale));
+            ({ value: result, error } = FunctionUtils.returnFormattedTimeStampStr(startOfDay, format));
         }
 
-        return {value: result, error};
+        return { value: result, error };
     }
 
     private static validator(expression: Expression): void {
-        FunctionUtils.validateOrder(expression, [ReturnType.String, ReturnType.String], ReturnType.String);
+        FunctionUtils.validateOrder(expression, [ReturnType.String], ReturnType.String);
     }
 }

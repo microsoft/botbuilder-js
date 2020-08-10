@@ -6,16 +6,16 @@
  * Licensed under the MIT License.
  */
 
-import { ExpressionEvaluator, EvaluateExpressionDelegate } from '../expressionEvaluator';
-import { ReturnType } from '../returnType';
+import { EvaluateExpressionDelegate, ExpressionEvaluator } from '../expressionEvaluator';
 import { ExpressionType } from '../expressionType';
 import { FunctionUtils } from '../functionUtils';
+import { ReturnType } from '../returnType';
 
 /**
- * Return true if a given input is an integer number. Due to the alignment between C# and JavaScript, a number with an zero residue of its modulo 1 will be treated as an integer number.
+ * Return true if a given input is an integer number. Due to the alignment between C# and JavaScript, a number with a zero residue of its modulo 1 will be treated as an integer number.
  */
 export class IsInteger extends ExpressionEvaluator {
-    public constructor(){
+    public constructor() {
         super(ExpressionType.IsInteger, IsInteger.evaluator(), ReturnType.Boolean, FunctionUtils.validateUnary);
     }
 

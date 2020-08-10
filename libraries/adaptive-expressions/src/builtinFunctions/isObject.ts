@@ -6,18 +6,18 @@
  * Licensed under the MIT License.
  */
 
-import { ExpressionEvaluator, EvaluateExpressionDelegate } from '../expressionEvaluator';
-import { ReturnType } from '../returnType';
+import { EvaluateExpressionDelegate, ExpressionEvaluator } from '../expressionEvaluator';
 import { ExpressionType } from '../expressionType';
 import { FunctionUtils } from '../functionUtils';
+import { ReturnType } from '../returnType';
 
 /**
  * Return true if a given input is a complex object or return false if it is a primitive object.
  * Primitive objects include strings, numbers, and Booleans;
- * complex types, like classes, contain properties.
+ * complex types, contain properties.
  */
 export class IsObject extends ExpressionEvaluator {
-    public constructor(){
+    public constructor() {
         super(ExpressionType.IsObject, IsObject.evaluator(), ReturnType.Boolean, FunctionUtils.validateUnary);
     }
 

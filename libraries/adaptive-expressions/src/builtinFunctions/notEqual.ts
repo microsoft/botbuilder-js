@@ -6,12 +6,12 @@
  * Licensed under the MIT License.
  */
 
-import { ComparisonEvaluator } from './comparisonEvaluator';
 import { ExpressionType } from '../expressionType';
 import { FunctionUtils } from '../functionUtils';
+import { ComparisonEvaluator } from './comparisonEvaluator';
 
 /**
- * return true if the two items are not equal.
+ * Return true if the two items are not equal.
  */
 export class NotEqual extends ComparisonEvaluator {
     public constructor() {

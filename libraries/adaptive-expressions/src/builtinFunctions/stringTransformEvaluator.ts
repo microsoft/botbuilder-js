@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 
-import { ExpressionEvaluator, ValidateExpressionDelegate } from '../expressionEvaluator';
+import { ExpressionEvaluator } from '../expressionEvaluator';
 import { FunctionUtils } from '../functionUtils';
 import { ReturnType } from '../returnType';
 

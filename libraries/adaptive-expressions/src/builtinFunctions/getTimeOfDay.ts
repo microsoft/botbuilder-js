@@ -6,17 +6,18 @@
  * Licensed under the MIT License.
  */
 
-import { ExpressionEvaluator, EvaluateExpressionDelegate } from '../expressionEvaluator';
-import { ReturnType } from '../returnType';
+import { parseZone } from 'moment';
+
+import { EvaluateExpressionDelegate, ExpressionEvaluator } from '../expressionEvaluator';
 import { ExpressionType } from '../expressionType';
 import { FunctionUtils } from '../functionUtils';
-import { parseZone } from 'moment';
+import { ReturnType } from '../returnType';
 
 /**
  * Returns time of day for a given timestamp.
  */
 export class GetTimeOfDay extends ExpressionEvaluator {
-    public constructor(){
+    public constructor() {
         super(ExpressionType.GetTimeOfDay, GetTimeOfDay.evaluator(), ReturnType.String, FunctionUtils.validateUnaryString);
     }
 
@@ -42,7 +43,7 @@ export class GetTimeOfDay extends ExpressionEvaluator {
                     }
                 }
 
-                return {value, error};
+                return { value, error };
             },
             FunctionUtils.verifyString);
     }

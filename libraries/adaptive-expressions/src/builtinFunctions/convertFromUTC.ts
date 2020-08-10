@@ -6,15 +6,16 @@
  * Licensed under the MIT License.
  */
 
-import { ExpressionEvaluator } from '../expressionEvaluator';
+import { tz } from 'moment-timezone';
+
 import { Expression } from '../expression';
-import { ReturnType } from '../returnType';
+import { ExpressionEvaluator, ValueWithError } from '../expressionEvaluator';
 import { ExpressionType } from '../expressionType';
 import { FunctionUtils } from '../functionUtils';
 import { MemoryInterface } from '../memory/memoryInterface';
 import { Options } from '../options';
+import { ReturnType } from '../returnType';
 import { TimeZoneConverter } from '../timeZoneConverter';
-import { tz } from 'moment-timezone';
 
 /**
  * Convert a timestamp from Universal Time Coordinated (UTC) to a target time zone.
@@ -23,34 +24,28 @@ export class ConvertFromUTC extends ExpressionEvaluator {
 
     private static readonly NoneUtcDefaultDateTimeFormat: string = 'YYYY-MM-DDTHH:mm:ss.SSSZ';
 
-    public constructor(){
+    public constructor() {
         super(ExpressionType.ConvertFromUTC, ConvertFromUTC.evaluator, ReturnType.String, ConvertFromUTC.validator);
     }
 
-    private static evaluator(expression: Expression, state: MemoryInterface, options: Options): {value: any; error: string} {
+    private static evaluator(expression: Expression, state: MemoryInterface, options: Options): ValueWithError {
         let value: any;
         let error: string;
         let args: any[];
-        let format = ConvertFromUTC.NoneUtcDefaultDateTimeFormat;
-        let locale = options.locale ? options.locale : 'en-us';
-        ({args, error} = FunctionUtils.evaluateChildren(expression, state, options));
-
+        ({ args, error } = FunctionUtils.evaluateChildren(expression, state, options));
         if (!error) {
-            ({format, locale} = FunctionUtils.determineFormatAndLocale(args, format, locale, 4));
-        }
-
-        if (!error) {
+            const format: string = (args.length === 3) ? FunctionUtils.timestampFormatter(args[2]) : ConvertFromUTC.NoneUtcDefaultDateTimeFormat;
             if (typeof (args[0]) === 'string' && typeof (args[1]) === 'string') {
-                ({value, error} = ConvertFromUTC.evalConvertFromUTC(args[0], args[1], format, locale));
+                ({ value, error } = ConvertFromUTC.evalConvertFromUTC(args[0], args[1], format));
             } else {
                 error = `${expression} cannot evaluate`;
             }
         }
 
-        return {value, error};
+        return { value, error };
     }
 
-    private static evalConvertFromUTC(timeStamp: string, destinationTimeZone: string, format?: string, locale?: string): {value: any; error: string} {
+    private static evalConvertFromUTC(timeStamp: string, destinationTimeZone: string, format?: string): ValueWithError {
         let result: string;
         let error: string;
         error = FunctionUtils.verifyISOTimestamp(timeStamp);
@@ -61,16 +56,16 @@ export class ConvertFromUTC extends ExpressionEvaluator {
 
         if (!error) {
             try {
-                result = tz(timeStamp, timeZone).locale(locale).format(format);
+                result = tz(timeStamp, timeZone).format(format);
             } catch (e) {
                 error = `${format} is not a valid timestamp format`;
             }
         }
 
-        return {value: result, error};
+        return { value: result, error };
     }
 
     private static validator(expression: Expression): void {
-        FunctionUtils.validateOrder(expression, [ReturnType.String, ReturnType.String], ReturnType.String, ReturnType.String);
+        FunctionUtils.validateOrder(expression, [ReturnType.String], ReturnType.String, ReturnType.String);
     }
 }

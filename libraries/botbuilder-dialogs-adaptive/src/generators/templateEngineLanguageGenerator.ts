@@ -6,13 +6,13 @@
  * Licensed under the MIT License.
  */
 
+import { normalize, basename } from 'path';
+import { DialogContext } from 'botbuilder-dialogs';
+import { Resource } from 'botbuilder-dialogs-declarative';
+import { Templates } from 'botbuilder-lg';
 import { LanguageGenerator } from '../languageGenerator';
-import { TurnContext } from 'botbuilder-core';
-import { Templates, EvaluationOptions } from 'botbuilder-lg';
-import { IResource } from 'botbuilder-dialogs-declarative';
 import { LanguageResourceLoader } from '../languageResourceLoader';
 import { LanguageGeneratorManager } from './languageGeneratorManager';
-import { normalize, basename } from 'path';
 
 /**
  * LanguageGenerator implementation which uses LGFile. 
@@ -24,14 +24,14 @@ export class TemplateEngineLanguageGenerator implements LanguageGenerator{
 
     public id: string = '';
 
-    public constructor(arg1?: Templates | string, arg2?: string | Map<string,IResource[]>, arg3?: Map<string,IResource[]>) {
+    public constructor(arg1?: Templates | string, arg2?: string | Map<string,Resource[]>, arg3?: Map<string,Resource[]>) {
         if (arguments.length === 0) {
             this.lg = new Templates();
         } else if(arguments.length === 1 && arg1 instanceof Templates) {
             this.lg = arg1;
         } else if (arguments.length === 2 && typeof arg1 === 'string' && arg2 instanceof Map) {
             const filePath = normalize(arg1 as string);
-            const resourceMapping = arg2 as  Map<string,IResource[]>;
+            const resourceMapping = arg2 as  Map<string,Resource[]>;
             this.id = basename(filePath);
             const {prefix: _, language: locale} = LanguageResourceLoader.parseLGFileName(this.id);
             const importResolver = LanguageGeneratorManager.resourceExplorerResolver(locale, resourceMapping);
@@ -40,14 +40,14 @@ export class TemplateEngineLanguageGenerator implements LanguageGenerator{
             const id = arg2 as string;
             this.id = id !== undefined? id : this.DEFAULTLABEL;
             const {prefix: _, language: locale} = LanguageResourceLoader.parseLGFileName(arg2);
-            const resourceMapping = arg3 as  Map<string,IResource[]>;
+            const resourceMapping = arg3 as  Map<string,Resource[]>;
             const importResolver = LanguageGeneratorManager.resourceExplorerResolver(locale, resourceMapping);
             const lgText = arg1? arg1 : '';
             this.lg = Templates.parseText(lgText, id, importResolver);
         }
     }
     
-    public generate(turnContext: TurnContext, template: string, data: object): Promise<string> {
+    public generate(dialogContext: DialogContext, template: string, data: object): Promise<string> {
         try {
             // BUGBUG: I'm casting objects to <any> to work around a bug in the activity factory.
             //         The string version of of the serialized card isn't being parsed. We should

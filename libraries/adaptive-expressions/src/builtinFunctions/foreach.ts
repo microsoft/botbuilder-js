@@ -7,15 +7,15 @@
  */
 
 import { ExpressionEvaluator } from '../expressionEvaluator';
-import { ReturnType } from '../returnType';
 import { ExpressionType } from '../expressionType';
 import { FunctionUtils } from '../functionUtils';
+import { ReturnType } from '../returnType';
 
 /**
  * Operate on each element and return the new collection.
  */
 export class Foreach extends ExpressionEvaluator {
-    public constructor(){
+    public constructor() {
         super(ExpressionType.Foreach, FunctionUtils.foreach, ReturnType.Array, FunctionUtils.validateForeach);
     }
 }

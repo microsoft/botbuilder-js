@@ -1,5 +1,18 @@
 {
+  "command": {
+    "bootstrap": {
+      "forceLocal": true,
+      "hoist": true
+    },
+    "version": {
+      "commitHooks": false,
+      "exact": true,
+      "gitTagVersion": false,
+      "push": false
+    }
+  },
   "lerna": "3.2.1",
+  "npmClient": "npm",
   "packages": [
     "libraries/botbuilder",
     "libraries/botbuilder-ai",
@@ -21,14 +34,10 @@
     "libraries/functional-tests/dialogToDialog/dialogSkillBot",
     "libraries/testbot",
     "libraries/botframework-streaming",
+    "libraries/bot-integration-tests",
     "libraries/testskills/skillparent",
     "libraries/testskills/skillchild",
     "transcripts"
   ],
-  "version": "independent",
-  "command": {
-    "bootstrap": {
-      "hoist": true
-    }
-  }
+  "version": "independent"
 }

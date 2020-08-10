@@ -1,6 +1,6 @@
-import { MemoryInterface } from './memoryInterface';
 import { Extensions } from '../extensions';
 import { FunctionUtils } from '../functionUtils';
+import { MemoryInterface } from './memoryInterface';
 
 /**
  * @module adaptive-expressions

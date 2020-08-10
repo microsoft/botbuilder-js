@@ -6,13 +6,13 @@
  * Licensed under the MIT License.
  */
 
-import { ExpressionEvaluator } from '../expressionEvaluator';
 import { Expression } from '../expression';
-import { ReturnType } from '../returnType';
+import { ExpressionEvaluator, ValueWithError } from '../expressionEvaluator';
 import { ExpressionType } from '../expressionType';
 import { FunctionUtils } from '../functionUtils';
 import { MemoryInterface } from '../memory/memoryInterface';
 import { Options } from '../options';
+import { ReturnType } from '../returnType';
 
 /**
  * Mark a clause so that MostSpecificSelector will ignore it.
@@ -20,11 +20,11 @@ import { Options } from '../options';
  * 
  */
 export class Ignore extends ExpressionEvaluator {
-    public constructor(){
+    public constructor() {
         super(ExpressionType.Ignore, Ignore.evaluator, ReturnType.Boolean, FunctionUtils.validateUnaryBoolean);
     }
 
-    private static evaluator(expression: Expression, state: MemoryInterface, options: Options): {value: any; error: string} {
+    private static evaluator(expression: Expression, state: MemoryInterface, options: Options): ValueWithError {
         return expression.children[0].tryEvaluate(state, options);
     }
 }

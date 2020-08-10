@@ -7,9 +7,10 @@
  */
 import { SkillDialog, SkillDialogOptions, DialogContext, DialogTurnResult, BeginSkillDialogOptions } from 'botbuilder-dialogs';
 import { BoolExpression, StringExpression } from 'adaptive-expressions';
-import { Activity, ActivityTypes } from 'botbuilder-core';
+import { Activity, ActivityTypes, StringUtils } from 'botbuilder-core';
 import { TemplateInterface } from '../template';
 import { skillClientKey, skillConversationIdFactoryKey } from '../skillExtensions';
+import { ActivityTemplate } from '../templates';
 
 export class BeginSkill extends SkillDialog {
 
@@ -98,7 +99,17 @@ export class BeginSkill extends SkillDialog {
         options = {} as BeginSkillDialogOptions;
         if (this.activityProcessed.getValue(dcState) && this.activity) {
             // The parent consumed the activity in context, use the Activity property to start the skill.
-            options.activity = await this.activity.bindToData(dc.context, dcState);
+            const activity = await this.activity.bind(dc, dcState);
+
+            this.telemetryClient.trackEvent({
+                name: 'GeneratorResult',
+                properties: {
+                    'template':this.activity,
+                    'result': activity || '' 
+                }
+            });
+
+            options.activity = activity;
         } else {
             // Send the turn context activity to the skill (pass through).
             options.activity = dc.context.activity;
@@ -123,7 +134,9 @@ export class BeginSkill extends SkillDialog {
 
     protected onComputeId(): string {
         const appId = this.skillAppId ? this.skillAppId.toString() : '';
-        const activity = this.activity ? this.activity.toString() : '<activity>';
-        return `Skill[${ appId }:${ activity }]`;
+        if (this.activity instanceof ActivityTemplate) {
+            return `BeginSkill['${ appId }','${ StringUtils.ellipsis(this.activity.template.trim(), 30) }']`;
+        }
+        return `BeginSkill['${ appId }','${ StringUtils.ellipsis(this.activity && this.activity.toString().trim(), 30) }']`;
     }
 }

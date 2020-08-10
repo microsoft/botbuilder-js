@@ -6,14 +6,14 @@
  * Licensed under the MIT License.
  */
 
-import { NumberTransformEvaluator } from './numberTransformEvaluator';
 import { ExpressionType } from '../expressionType';
+import { NumberTransformEvaluator } from './numberTransformEvaluator';
 
 /**
  * Returns the largest integer less than or equal to the specified number.
  */
 export class Floor extends NumberTransformEvaluator {
-    public constructor(){
+    public constructor() {
         super(ExpressionType.Floor, Floor.func);
     }
 

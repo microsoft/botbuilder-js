@@ -6,16 +6,16 @@
  * Licensed under the MIT License.
  */
 
-import { ExpressionEvaluator, EvaluateExpressionDelegate } from '../expressionEvaluator';
-import { ReturnType } from '../returnType';
+import { EvaluateExpressionDelegate, ExpressionEvaluator } from '../expressionEvaluator';
 import { ExpressionType } from '../expressionType';
 import { FunctionUtils } from '../functionUtils';
+import { ReturnType } from '../returnType';
 
 /**
  * Return the string version of a base64-encoded string, effectively decoding the base64 string.
  */
 export class Base64ToString extends ExpressionEvaluator {
-    public constructor(){
+    public constructor() {
         super(ExpressionType.Base64ToString, Base64ToString.evaluator(), ReturnType.String, FunctionUtils.validateUnary);
     }
 

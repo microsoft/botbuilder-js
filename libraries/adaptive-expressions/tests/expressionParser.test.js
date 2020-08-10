@@ -4,31 +4,20 @@ const {Expression, SimpleObjectMemory, FunctionUtils, Options } = require('../li
 var {TimexProperty} = require('@microsoft/recognizers-text-data-types-timex-expression');
 const assert = require('assert');
 const moment = require('moment');
-const bigInt = require('big-integer')
+const bigInt = require('big-integer');
+const { useFakeTimers } = require('sinon');
 
 const one = ['one'];
 const oneTwo = ['one', 'two'];
 const dataSource = [
 
-    // tests of locale specified in API
-    ['addDays(timestamp, 1, "LLLL", "de")', 'Freitag, 16. März 2018 13:00'],
-    ['addHours(timestamp, 2, "LLLL", "fr")', 'jeudi 15 mars 2018 15:00'],
-    ['addMinutes(timestamp, 30, "LLLL", "de")', 'Donnerstag, 15. März 2018 13:30'],
-    ['addToTime("2018-01-01T00:00:00.000Z", 1, "Week", "LLLL", "es")', 'lunes, 8 de enero de 2018 0:00'],
-    ['startOfDay("2018-03-15T13:30:30.000Z", "LLLL", "fr")', 'jeudi 15 mars 2018 00:00'],
-    ['startOfHour("2018-03-15T13:30:30.000Z", "LLLL", "de")', 'Donnerstag, 15. März 2018 13:00'],
-    ['startOfMonth("2018-03-15T13:30:30.000Z", "LLLL", "tr")', 'Perşembe, 1 Mart 2018 00:00'],
-    ['convertToUTC(\'2018-01-01T18:00:00.000\', \'Pacific Standard Time\', "LLLL", "de")', 'Dienstag, 2. Januar 2018 02:00'],
-    ['convertFromUTC(\'2018-01-02T02:00:00.000Z\', \'Pacific Standard Time\', \'LLLL\', \'de\')', 'Montag, 1. Januar 2018 18:00'],
-    ['substring(utcNow("LLLL", "es"), 0, 10)', moment(new Date().toISOString()).locale('es').utc().format('LLLL').substring(0,10)],
-    ['substring(getPastTime(1,"Day", "LLLL", "de"), 0, 10)', moment(new Date().toISOString()).subtract(1, 'days').locale('de').utc().format('LLLL').substring(0,10)],
-    ['substring(getFutureTime(1,"Day", "LLLL", "en"), 0, 10)', moment(new Date().toISOString()).add(1, 'days').locale('en').utc().format('LLLL').substring(0,10)],
-    ['subtractFromTime(timestamp, 1, "Hour", "LLLL", "es")', 'jueves, 15 de marzo de 2018 12:00'],
-    ['formatEpoch(unixTimestamp, "LLLL", "de")', 'Donnerstag, 15. März 2018 13:00'],
-    ['formatTicks(ticks, "LLLL", "ru")', 'среда, 6 мая 2020 г., 11:47'],
-    ['formatDateTime("2018-03-15T02:00:00.000", "LLLL", "de")', 'Donnerstag, 15. März 2018 02:00'],
+    // Time sensitive test
+    ['getPastTime(1, \'Year\', \'MM-dd-yy\')', moment(new Date().toISOString()).utc().subtract(1, 'years').format('MM-DD-YY')],
+    ['getPastTime(1, \'Month\', \'MM-dd-yy\')', moment(new Date().toISOString()).utc().subtract(1, 'months').format('MM-DD-YY')],
+    ['getPastTime(1, \'Week\', \'MM-dd-yy\')', moment(new Date().toISOString()).utc().subtract(7, 'days').format('MM-DD-YY')],
+    ['getPastTime(1, \'Day\', \'MM-dd-yy\')', moment(new Date().toISOString()).utc().subtract(1, 'days').format('MM-DD-YY')],
+    ['getFutureTime(1, \'Year\', \'MM-dd-yy\')', moment(new Date().toISOString()).utc().add(1, 'years').format('MM-DD-YY')],
     
-
     // accessProperty and accessIndex
     ['$index', 'index'],
     ['`hi\\``', 'hi`'], // `hi\`` -> hi`
@@ -483,7 +472,6 @@ const dataSource = [
     ['date(timestamp)', '3/15/2018'],//Default. TODO
     ['year(timestamp)', 2018],
     ['length(utcNow())', 24],
-    ['utcNow(\'MM-DD-YY\')', moment(new Date().toISOString()).utc().format('MM-DD-YY')],
     ['formatDateTime(notISOTimestamp)', '2018-03-15T13:00:00.000Z'],
     ['formatDateTime(notISOTimestamp, \'MM-dd-yy\')', '03-15-18'],
     ['formatDateTime(notISOTimestamp, \'ddd\')', 'Thu'],
@@ -526,15 +514,7 @@ const dataSource = [
     ['getTimeOfDay(\'2018-03-15T22:00:00.000Z\')', 'evening'],
     ['getTimeOfDay(\'2018-03-15T23:00:00.000Z\')', 'night'],
     ['length(getPastTime(1, \'Year\'))', 24],
-    ['getPastTime(1, \'Year\', \'MM-dd-yy\')', moment(new Date().toISOString()).utc().subtract(1, 'years').format('MM-DD-YY')],
-    ['getPastTime(1, \'Month\', \'MM-dd-yy\')', moment(new Date().toISOString()).utc().subtract(1, 'months').format('MM-DD-YY')],
-    ['getPastTime(1, \'Week\', \'MM-dd-yy\')', moment(new Date().toISOString()).utc().subtract(7, 'days').format('MM-DD-YY')],
-    ['getPastTime(1, \'Day\', \'MM-dd-yy\')', moment(new Date().toISOString()).utc().subtract(1, 'days').format('MM-DD-YY')],
-    ['getFutureTime(1, \'Year\', \'MM-dd-yy\')', moment(new Date().toISOString()).utc().add(1, 'years').format('MM-DD-YY')],
     ['length(getFutureTime(1, \'Year\'))', 24],
-    ['getFutureTime(1, \'Month\', \'MM-dd-yy\')', moment(new Date().toISOString()).utc().add(1, 'months').format('MM-DD-YY')],
-    ['getFutureTime(1, \'Week\', \'MM-dd-yy\')', moment(new Date().toISOString()).utc().add(7, 'days').format('MM-DD-YY')],
-    ['getFutureTime(1, \'Day\', \'MM-dd-yy\')', moment(new Date().toISOString()).utc().add(1, 'days').format('MM-DD-YY')],
     ['addToTime(\'2018-01-01T08:00:00.000Z\', 1, \'Day\')', '2018-01-02T08:00:00.000Z'],
     ['addToTime(\'2018-01-01T08:00:00.000Z\', sub(3,1), \'Week\')', '2018-01-15T08:00:00.000Z'],
     ['addToTime(\'2018-01-01T08:00:00.000Z\', 1, \'Month\', \'MM-DD-YY\')', '02-01-18'],
@@ -551,6 +531,23 @@ const dataSource = [
     ['ticksToDays(2193385800000000)', 2538.6409722222224],
     ['ticksToHours(2193385800000000)', 60927.383333333331],
     ['ticksToMinutes(2193385811100000)', 3655643.0185],
+    ['isMatch(getPreviousViableDate(\'XXXX-07-10\'), \'20[0-9]{2}-07-10\')', true],
+    ['isMatch(getPreviousViableDate(\'XXXX-07-10\', \'Asia/Shanghai\'), \'20[0-9]{2}-07-10\')', true],
+    ['getPreviousViableDate(\'XXXX-02-29\')', '2020-02-29'],
+    ['getPreviousViableDate(\'XXXX-02-29\', \'Pacific Standard Time\')', '2020-02-29'],
+    ['isMatch(getNextViableDate(\'XXXX-07-10\'), \'202[0-9]-07-10\')', true],
+    ['isMatch(getNextViableDate(\'XXXX-07-10\', \'Europe/London\'), \'202[0-9]-07-10\')', true],
+    ['getNextViableDate(\'XXXX-02-29\')', '2024-02-29'],
+    ['getNextViableDate(\'XXXX-02-29\', \'America/Los_Angeles\')', '2024-02-29'],
+    ['isMatch(getNextViableTime(\'TXX:40:20\'), \'T[0-2][0-9]:40:20\')', true],
+    ['isMatch(getNextViableTime(\'TXX:40:20\', \'Asia/Tokyo\'), \'T[0-2][0-9]:40:20\')', true],
+    ['isMatch(getNextViableTime(\'TXX:05:10\'), \'T[0-2][0-9]:05:10\')', true],
+    ['isMatch(getNextViableTime(\'TXX:05:10\', \'Europe/Paris\'), \'T[0-2][0-9]:05:10\')', true],
+    ['isMatch(getPreviousViableTime(\'TXX:40:20\'), \'T[0-2][0-9]:40:20\')', true],
+    ['isMatch(getPreviousViableTime(\'TXX:40:20\', \'Eastern Standard Time\'), \'T[0-2][0-9]:40:20\')', true],
+    ['isMatch(getPreviousViableTime(\'TXX:05:10\'), \'T[0-2][0-9]:05:10\')', true],
+    ['isMatch(getPreviousViableTime(\'TXX:05:10\', \'Central Standard Time\'), \'T[0-2][0-9]:05:10\')', true],
+
     //URI parsing functions tests
     ['uriHost(\'https://www.localhost.com:8080\')', 'www.localhost.com'],
     ['uriPath(\'http://www.contoso.com/catalog/shownew.htm?date=today\')', '/catalog/shownew.htm'],
@@ -854,29 +851,88 @@ const scope = {
 
 describe('expression parser functional test', () => {
     it('should get right evaluate result', () => {
+        const inputs = [];
+
         for (const data of dataSource) {
             const input = data[0].toString();
-            console.log(input);
+            inputs.push(input);
+
             var parsed = Expression.parse(input);
             assert(parsed !== undefined);
             var {value: actual, error} = parsed.tryEvaluate(scope);
-            assert(error === undefined, `input: ${input}, Has error: ${error}`);
+            assert(error === undefined, `input: ${input}, Has error: ${error}, with expression ${ input }`);
 
-            const expected = data[1];
-            assertObjectEquals(actual, expected);
+            let expected = data[1];
+
+            assertObjectEquals(actual, expected, input);
 
             //Assert ExpectedRefs
             if (data.length === 3) {
                 const actualRefs = parsed.references();
-                assertObjectEquals(actualRefs.sort(), data[2].sort());
+                assertObjectEquals(actualRefs.sort(), data[2].sort(), input);
             }
 
             //ToString re-parse
             const newExpr = Expression.parse(parsed.toString());
             const newActual = newExpr.tryEvaluate(scope).value;
-            assertObjectEquals(actual, newActual);
+            assertObjectEquals(actual, newActual, input);
         }
+
+        console.log(inputs.join('\n'));
     }).timeout(5000);
+
+    // Any test getting the system time with something like `new Date()` is prone to failure because
+    // actual and expected may differ just enough make the test fail.
+    // To evaluate expressions like "getPastTime", we need to freeze the system clock so that every call to
+    // `new Date()` done by both the test and by ExpressionEvaluator return the exact same time.
+    it('should appropriately evaluate time-related expressions', () => {
+        // Freeze the system clock.
+        // The expected date in MM-DD-YY HH is 01-01-20 00
+        let clock = useFakeTimers({
+            now: new Date(Date.UTC(2020, 0, 1)),
+            shouldAdvanceTime: false,
+        });
+
+        const timeDataSource = [
+            ['utcNow(\'MM-DD-YY HH\')', '01-01-20 00'],
+            ['getPastTime(1, \'Year\', \'MM-dd-yy\')', '01-01-19'],
+            ['getPastTime(1, \'Month\', \'MM-dd-yy\')', '12-01-19'],
+            ['getPastTime(1, \'Week\', \'MM-dd-yy\')', '12-25-19'],
+            ['getPastTime(1, \'Day\', \'MM-dd-yy\')', '12-31-19'],
+            ['getFutureTime(1, \'Year\', \'MM-dd-yy\')', '01-01-21'],
+            ['getFutureTime(1, \'Month\', \'MM-dd-yy\')', '02-01-20'],
+            ['getFutureTime(1, \'Week\', \'MM-dd-yy\')', '01-08-20'],
+            ['getFutureTime(1, \'Day\', \'MM-dd-yy\')', '01-02-20']
+        ];
+        try {
+            for (const data of timeDataSource) {
+                const input = data[0].toString();
+                console.log(input);
+                var parsed = Expression.parse(input);
+                assert(parsed !== undefined);
+                var {value: actual, error} = parsed.tryEvaluate(scope);
+                assert(error === undefined, `input: ${input}, Has error: ${error}, with expression ${ input }`);
+    
+                let expected = data[1];
+    
+                assertObjectEquals(actual, expected, input);
+    
+                //Assert ExpectedRefs
+                if (data.length === 3) {
+                    const actualRefs = parsed.references();
+                    assertObjectEquals(actualRefs.sort(), data[2].sort(), input);
+                }
+    
+                //ToString re-parse
+                const newExpr = Expression.parse(parsed.toString());
+                const newActual = newExpr.tryEvaluate(scope).value;
+                assertObjectEquals(actual, newActual, input);
+            }
+        } finally {
+            // Un-freeze the system clock
+            clock.restore();
+        }
+    });
 
     it('Test AccumulatePath', () => {
         const scope = {
@@ -967,27 +1023,27 @@ describe('expression parser functional test', () => {
     });
 });
 
-var assertObjectEquals = (actual, expected) => {
+var assertObjectEquals = (actual, expected, input) => {
+    const debugMessage = `actual is: ${ actual }, expected is ${ expected }, with expression ${ input }`;
     if (actual === undefined && expected === undefined) {
         return;
     } else if (actual === undefined || expected === undefined) {
-        assert.fail();
+        assert.fail(`actual or expected was undefined. ${ debugMessage }`);
     } else if (typeof actual === 'number' && typeof expected === 'number') {
-        assert.equal(parseFloat(actual), parseFloat(expected), `actual is: ${actual}, expected is ${expected}`);
+        assert.equal(parseFloat(actual), parseFloat(expected), `Numbers don't match. ${ debugMessage }`);
     } else if (Array.isArray(actual) && Array.isArray(expected)) {
         assert.equal(actual.length, expected.length);
         for (let i = 0; i < actual.length; i++) {
-            assertObjectEquals(actual[i], expected[i], `actual is: ${actual[i]}, expected is ${expected[i]}`);
+            assertObjectEquals(actual[i], expected[i], `Array doesn't match. ${ debugMessage }`);
         }
     } else if (actual instanceof Uint8Array && expected instanceof Uint8Array) {
         assert.equal(actual.length, expected.length);
         for (let i = 0; i < actual.length; i++) {
-            assertObjectEquals(actual[i], expected[i], `actual is: ${actual[i]}, expected is ${expected[i]}`);
+            assertObjectEquals(actual[i], expected[i], `Uint8Array doesn't match. ${ debugMessage }`);
         }
     } else if (bigInt.isInstance(actual) && bigInt.isInstance(expected)) {
-        assert(actual.equals(expected), `actual is: ${actual}, expected is ${expected}`);
-    }
-    else {
-        assert.equal(actual, expected, `actual is: ${actual}, expected is ${expected}`);
+        assert(actual.equals(expected), `bigInt is not equal. ${ debugMessage }`);
+    } else {
+        assert.equal(actual, expected, `Acutal and expected don't match. ${ debugMessage }`);
     }
 };

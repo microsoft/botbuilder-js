@@ -5,14 +5,14 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { FunctionTable } from './functionTable';
 import { Constant } from './constant';
-import { ExpressionEvaluator, EvaluateExpressionDelegate, EvaluatorLookup } from './expressionEvaluator';
+import { EvaluateExpressionDelegate, EvaluatorLookup, ExpressionEvaluator, ValueWithError } from './expressionEvaluator';
 import { ExpressionType } from './expressionType';
-import { SimpleObjectMemory, MemoryInterface } from './memory';
 import { Extensions } from './extensions';
-import { ExpressionParser } from './parser';
+import { FunctionTable } from './functionTable';
+import { MemoryInterface, SimpleObjectMemory } from './memory';
 import { Options } from './options';
+import { ExpressionParser } from './parser';
 import { ReturnType } from './returnType';
 
 /**
@@ -57,12 +57,12 @@ export class Expression {
      * @param children Child expressions.
      */
     public constructor(type: string, evaluator: ExpressionEvaluator, ...children: Expression[]) {
-        if(evaluator) {
+        if (evaluator) {
             this.evaluator = evaluator;
             this.children = children;
-        } else if(type !== undefined) {
+        } else if (type !== undefined) {
             if (!Expression.functions.get(type)) {
-                throw Error(`${ type } does not have an evaluator, it's not a built-in function or a custom function.`);
+                throw Error(`${type} does not have an evaluator, it's not a built-in function or a custom function.`);
             }
 
             this.evaluator = Expression.functions.get(type);
@@ -83,7 +83,7 @@ export class Expression {
                 eq = this.children.length === other.children.length;
                 if (this.type === ExpressionType.And || this.type === ExpressionType.Or) {
                     // And/Or do not depand on order
-                    for(let i = 0; eq && i< this.children.length; i++) {
+                    for (let i = 0; eq && i < this.children.length; i++) {
                         const primary = this.children[0];
                         let found = false;
                         for (var j = 0; j < this.children.length; j++) {
@@ -96,7 +96,7 @@ export class Expression {
                         eq = found;
                     }
                 } else {
-                    for (let i = 0; eq && i< this.children.length; i++) {
+                    for (let i = 0; eq && i < this.children.length; i++) {
                         eq = this.children[i].deepEquals(other.children[i]);
                     }
                 }
@@ -113,7 +113,7 @@ export class Expression {
      * @returns List of the static reference paths.
      */
     public references(): string[] {
-        const {path, refs} = this.referenceWalk(this);
+        const { path, refs } = this.referenceWalk(this);
         if (path !== undefined) {
             refs.add(path);
         }
@@ -128,7 +128,7 @@ export class Expression {
      * @returns Accessor path of expression.
      */
     public referenceWalk(expression: Expression,
-        extension?: (arg0: Expression) => boolean): {path: string; refs: Set<string>} {
+        extension?: (arg0: Expression) => boolean): { path: string; refs: Set<string> } {
         let path: string;
         let refs = new Set<string>();
         if (extension === undefined || !extension(expression)) {
@@ -141,7 +141,7 @@ export class Expression {
                 }
 
                 if (children.length === 2) {
-                    ({path, refs} = this.referenceWalk(children[1], extension));
+                    ({ path, refs } = this.referenceWalk(children[1], extension));
                     if (path !== undefined) {
                         path = path.concat('.', prop);
                     }
@@ -149,14 +149,14 @@ export class Expression {
                     // because for example, first(items).x should not return x as refs
                 }
             } else if (expression.type === ExpressionType.Element) {
-                ({path, refs}  = this.referenceWalk(children[0], extension));
+                ({ path, refs } = this.referenceWalk(children[0], extension));
                 if (path !== undefined) {
                     if (children[1] instanceof Constant) {
                         const cnst: Constant = children[1] as Constant;
                         if (cnst.returnType === ReturnType.String) {
-                            path += `.${ cnst.value }`;
+                            path += `.${cnst.value}`;
                         } else {
-                            path += `[${ cnst.value }]`;
+                            path += `[${cnst.value}]`;
                         }
                     } else {
                         refs.add(path);
@@ -168,10 +168,10 @@ export class Expression {
                 refs = new Set([...refs, ...refs1]);
                 if (idxPath !== undefined) {
                     refs.add(idxPath);
-                } 
-            } else if (expression.type === ExpressionType.Foreach || 
-                    expression.type === ExpressionType.Where ||
-                    expression.type === ExpressionType.Select ) {
+                }
+            } else if (expression.type === ExpressionType.Foreach ||
+                expression.type === ExpressionType.Where ||
+                expression.type === ExpressionType.Select) {
                 let result = this.referenceWalk(children[0], extension);
                 const child0Path = result.path;
                 const refs0 = result.refs;
@@ -203,7 +203,7 @@ export class Expression {
             }
         }
 
-        return {path, refs};
+        return { path, refs };
     }
 
     public static parse(expression: string, lookup?: EvaluatorLookup): Expression {
@@ -250,10 +250,10 @@ export class Expression {
      * Exceptions will be caught and surfaced as an error string.
      * @param func ambda expression to evaluate.
      * @returns New expression.
-     */	
+     */
     public static lambda(func: (arg0: any) => any): Expression {
         return new Expression(ExpressionType.Lambda, new ExpressionEvaluator(ExpressionType.Lambda,
-            (_expression: Expression, state: any, _: Options): { value: any; error: string } => {
+            (_expression: Expression, state: any, _: Options): ValueWithError => {
                 let value: any;
                 let error: string;
                 try {
@@ -321,7 +321,7 @@ export class Expression {
      * Construct and validate an Not expression.
      * @param children Child clauses.
      * @returns New expression.
-     */	
+     */
     public static notExpression(child: Expression): Expression {
         return Expression.makeExpression(ExpressionType.Not, undefined, child);
     }
@@ -348,12 +348,12 @@ export class Expression {
      * Global state to evaluate accessor expressions against.  Can Dictionary be otherwise reflection is used to access property and then indexer.
      * @param state
      */
-    public tryEvaluate(state: MemoryInterface | any, options: Options = undefined): { value: any; error: string } {
-        if(!Extensions.isMemoryInterface(state)) {
+    public tryEvaluate(state: MemoryInterface | any, options: Options = undefined): ValueWithError {
+        if (!Extensions.isMemoryInterface(state)) {
             state = SimpleObjectMemory.wrap(state);
         }
 
-        options = options? options : new Options();
+        options = options ? options : new Options();
         return this.evaluator.tryEvaluate(this, state, options);
     }
 

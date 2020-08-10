@@ -6,17 +6,17 @@
  * Licensed under the MIT License.
  */
 
-import { ExpressionEvaluator, EvaluateExpressionDelegate } from '../expressionEvaluator';
-import { ReturnType } from '../returnType';
+import { EvaluateExpressionDelegate, ExpressionEvaluator } from '../expressionEvaluator';
 import { ExpressionType } from '../expressionType';
 import { FunctionUtils } from '../functionUtils';
+import { ReturnType } from '../returnType';
 
 /**
  * Return the first non-null value from one or more parameters.
  * Empty strings, empty arrays, and empty objects are not null.
  */
 export class Coalesce extends ExpressionEvaluator {
-    public constructor(){
+    public constructor() {
         super(ExpressionType.Coalesce, Coalesce.evaluator(), ReturnType.Object, FunctionUtils.validateAtLeastOne);
     }
 

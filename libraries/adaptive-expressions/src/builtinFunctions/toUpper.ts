@@ -6,10 +6,9 @@
  * Licensed under the MIT License.
  */
 
-import { StringTransformEvaluator } from './stringTransformEvaluator';
-import { FunctionUtils } from '../functionUtils';
 import { ExpressionType } from '../expressionType';
-import { Options } from '../options';
+import { FunctionUtils } from '../functionUtils';
+import { StringTransformEvaluator } from './stringTransformEvaluator';
 
 /**
  * Return a string in uppercase format.
@@ -21,6 +20,6 @@ export class ToUpper extends StringTransformEvaluator {
     }
 
     private static evaluator(args: any[]): string {
-        return String(FunctionUtils.parseStringOrNull(args[0])).toUpperCase();
+        return String(FunctionUtils.parseStringOrUndefined(args[0])).toUpperCase();
     }
 }

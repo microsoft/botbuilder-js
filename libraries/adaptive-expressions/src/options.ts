@@ -17,7 +17,6 @@ export class Options {
     public locale: string;
 
     public constructor(opt?: Options) {
-        this.nullSubstitution = opt? opt.nullSubstitution : undefined;
-        this.locale = opt? opt.locale : undefined;
+        this.nullSubstitution = opt ? opt.nullSubstitution : undefined;
     }
 }

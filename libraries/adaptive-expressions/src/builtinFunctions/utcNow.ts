@@ -6,39 +6,29 @@
  * Licensed under the MIT License.
  */
 
-import { ExpressionEvaluator, EvaluateExpressionDelegate } from '../expressionEvaluator';
+import moment from 'moment';
+
 import { Expression } from '../expression';
-import { ReturnType } from '../returnType';
+import { EvaluateExpressionDelegate, ExpressionEvaluator } from '../expressionEvaluator';
 import { ExpressionType } from '../expressionType';
 import { FunctionUtils } from '../functionUtils';
-import moment from 'moment';
-import { Options } from '../options';
+import { ReturnType } from '../returnType';
 
 /**
  * Return the current timestamp.
  */
 export class UtcNow extends ExpressionEvaluator {
-    public constructor(){
+    public constructor() {
         super(ExpressionType.UtcNow, UtcNow.evaluator(), ReturnType.String, UtcNow.validator);
     }
 
     private static evaluator(): EvaluateExpressionDelegate {
-        return FunctionUtils.applyWithOptionsAndError(
-            (args: any[], options: Options): {value: any; error: string} => 
-            {
-                let format = FunctionUtils.DefaultDateTimeFormat;
-                let locale = options.locale ? options.locale : 'en-us';
-                let value: string;
-                let error: string;
-                ({format, locale} = FunctionUtils.determineFormatAndLocale(args, format, locale, 2));
-                value = moment(new Date()).utc().locale(locale).format(format);
-
-                return {value, error};
-            },
+        return FunctionUtils.apply(
+            (args: any[]): string => args.length === 1 ? moment(new Date()).utc().format(args[0]) : new Date().toISOString(),
             FunctionUtils.verifyString);
     }
 
     private static validator(expression: Expression): void {
-        FunctionUtils.validateOrder(expression, [ReturnType.String, ReturnType.String]);
+        FunctionUtils.validateOrder(expression, [ReturnType.String]);
     }
 }
