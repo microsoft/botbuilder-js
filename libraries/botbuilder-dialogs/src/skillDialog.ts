@@ -39,6 +39,7 @@ export class SkillDialog extends Dialog<Partial<BeginSkillDialogOptions>> {
 
     // This key uses a simple namespace as Symbols are not serializable.
     private readonly DeliveryModeStateKey: string = 'SkillDialog.deliveryMode';
+    private readonly SkillConversationIdStateKey: string = 'SkillDialog.skillConversationId';
 
     /**
      * A sample dialog that can wrap remote calls to a skill.
@@ -72,8 +73,12 @@ export class SkillDialog extends Dialog<Partial<BeginSkillDialogOptions>> {
         // Store delivery mode and connection name in dialog state for later use.
         dc.activeDialog.state[this.DeliveryModeStateKey] = dialogArgs.activity.deliveryMode;
 
+        // Create the conversationId and store it in the dialog context state so we can use it later.
+        const skillConversationId = await this.createSkillConversationId(dc.context, dc.context.activity);
+        dc.activeDialog.state[this.SkillConversationIdStateKey] = skillConversationId;
+
         // Send the activity to the skill.
-        const eocActivity = await this.sendToSkill(dc.context, skillActivity);
+        const eocActivity = await this.sendToSkill(dc.context, skillActivity, skillConversationId);
         if (eocActivity) {
             return await dc.endDialog(eocActivity.value);
         }
@@ -98,8 +103,10 @@ export class SkillDialog extends Dialog<Partial<BeginSkillDialogOptions>> {
 
         skillActivity.deliveryMode = dc.activeDialog.state[this.DeliveryModeStateKey] as string;
 
+        const skillConversationId: string = dc.activeDialog.state[this.SkillConversationIdStateKey];
+
         // Just forward to the remote skill
-        const eocActivity = await this.sendToSkill(dc.context, skillActivity);
+        const eocActivity = await this.sendToSkill(dc.context, skillActivity, skillConversationId);
         if (eocActivity) {
             return await dc.endDialog(eocActivity.value);
         }
@@ -117,8 +124,10 @@ export class SkillDialog extends Dialog<Partial<BeginSkillDialogOptions>> {
             const activity = TurnContext.applyConversationReference({ type: ActivityTypes.EndOfConversation }, reference, true);
             activity.channelData = context.activity.channelData;
 
+            const skillConversationId: string = this.getSkillConversationIdFromInstance(instance);
+
             // connectionName is not applicable during endDialog as we don't expect an OAuthCard in response.
-            await this.sendToSkill(context, activity as Activity);
+            await this.sendToSkill(context, activity as Activity, skillConversationId);
         }
 
         await super.endDialog(context, instance, reason);
@@ -131,9 +140,11 @@ export class SkillDialog extends Dialog<Partial<BeginSkillDialogOptions>> {
         const reference = TurnContext.getConversationReference(context.activity);
         // Apply conversation reference and common properties from incoming activity before sending.
         const activity: Activity = TurnContext.applyConversationReference(repromptEvent, reference, true) as Activity;
+
+        const skillConversationId: string = this.getSkillConversationIdFromInstance(instance);
         
         // connectionName is not applicable for a reprompt as we don't expect an OAuthCard in response.
-        await this.sendToSkill(context, activity);
+        await this.sendToSkill(context, activity, skillConversationId);
     }
 
     public async resumeDialog(dc: DialogContext, reason: DialogReason, result?: any): Promise<DialogTurnResult> {
@@ -175,14 +186,12 @@ export class SkillDialog extends Dialog<Partial<BeginSkillDialogOptions>> {
         return options;
     }
 
-    private async sendToSkill(context: TurnContext, activity: Activity): Promise<Activity> {
+    private async sendToSkill(context: TurnContext, activity: Activity, skillConversationId: string): Promise<Activity> {
         if (activity.type === ActivityTypes.Invoke) {
             // Force ExpectReplies for invoke activities so we can get the replies right away and send them back to the channel if needed.
             // This makes sure that the dialog will receive the Invoke response from the skill and any other activities sent, including EoC.
             activity.deliveryMode = DeliveryModes.ExpectReplies;
         }
-
-        const skillConversationId = await this.createSkillConversationId(context, activity);
 
         // Always save state before forwarding
         // (the dialog stack won't get updated with the skillDialog and things won't work if you don't)
@@ -294,6 +303,14 @@ export class SkillDialog extends Dialog<Partial<BeginSkillDialogOptions>> {
             skillConversationId = await this.dialogOptions.conversationIdFactory.createSkillConversationId(TurnContext.getConversationReference(activity) as ConversationReference);
         }
         return skillConversationId;
+    }
+
+    private getSkillConversationIdFromInstance(instance: DialogInstance): string {
+        if (instance && instance.state) {
+            return instance.state[this.SkillConversationIdStateKey];
+        }
+
+        return null;
     }
 }
 
