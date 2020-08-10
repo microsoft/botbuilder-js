@@ -18,3 +18,7 @@ steps:
   - powershell: npm install $(RootReactPiecesDir)/botframework-directlinejs.tgz
     displayName: npm install botframework-directlinejs.tgz
     workingDirectory: $(ReactProjectDir)
+
+  - powershell: npm install dotenv
+    displayName: 'npm install dotenv'
+    workingDirectory: $(ReactProjectDir)

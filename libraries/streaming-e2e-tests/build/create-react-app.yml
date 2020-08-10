@@ -10,18 +10,15 @@ steps:
   #     key: 'npm | “$(Agent.OS)” | $(RootReactPiecesDir)/react-app/yarn.lock'
   #     path: '$(RootReactPiecesDir)/react-app/node_modules'
   #     cacheHitVar: 'WcCacheRestored'
-  - powershell: npm install dotenv
-    displayName: 'npm install dotenv'
-    workingDirectory: $(ReactProjectDir)
 
-  # - task: Cache@2
-  #   displayName: Cache npm
-  #   inputs:
-  #     key: 'directly-to-node-modules | npm | "$(Agent.OS)"'
-  #     # restoreKeys: |
-  #       # npm | "$(Agent.OS)"
-  #     path: $(ReactProjectDir)/node_modules
-  #     cacheHitVar: 'WcCacheRestored'
+  - task: Cache@2
+    displayName: Cache npm
+    inputs:
+      key: 'directly-to-node-modules2 | npm | "$(Agent.OS)"'
+      # restoreKeys: |
+        # npm | "$(Agent.OS)"
+      path: $(ReactProjectDir)/node_modules
+      cacheHitVar: 'WcCacheRestored'
 
   - powershell: npm install botframework-webchat@4.9.2
     displayName: 'npm install botframework-webchat'
