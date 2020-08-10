@@ -55,6 +55,16 @@ export interface OAuthPromptSettings {
      * Defaults to a value `900,000` (15 minutes.)
      */
     timeout?: number;
+
+    /**
+     * (Opitonal) value indicating whether the OAuthPrompt should end upon
+     * receiving an invalid message.  Generally the OAuthPrompt will ignore
+     * incoming messages from the user during the auth flow, if they are not related to the
+     * auth flow.  This flag enables ending the OAuthPrompt rather than
+     * ignoring the user's message.  Typically, this flag will be set to 'true', but is 'false'
+     * by default for backwards compatibility.
+     */
+    endOnInvalidMessage?: boolean;
 }
 
 /**
@@ -205,6 +215,8 @@ export class OAuthPrompt extends Dialog {
             // Return recognized value or re-prompt
             if (isValid) {
                 return await dc.endDialog(recognized.value);
+            } else if (isMessage && this.settings.endOnInvalidMessage) {
+                return await dc.endDialog(undefined);
             } else {
                 // Send retry prompt
                 if (!dc.context.responded && isMessage && state.options.retryPrompt) {

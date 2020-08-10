@@ -137,7 +137,6 @@ describe('OAuthPrompt', function() {
         await testTimeout(message);
     });
 
-
     it('should timeout OAuthPrompt with verifyStateOperation activity', async function() {
         const message = {
             activityId: '1234',
@@ -156,6 +155,67 @@ describe('OAuthPrompt', function() {
         };
 
         await testTimeout(message, false, 'Failed', 'Ended' );
+    });
+
+    it('should end OAuthPrompt on invalid message when endOnInvalidMessage', async function() {
+        const message = {
+            activityId: '1234',
+            type: ActivityTypes.Event,
+            name: 'custom_event_name',
+        };
+
+        var connectionName = 'myConnection';
+        var token = 'abc123';
+        var magicCode = '888999';
+        const exchangeToken = 'exch123';
+    
+        // Create new ConversationState with MemoryStorage
+        const convoState = new ConversationState(new MemoryStorage());
+    
+        // Create a DialogState property, DialogSet and OAuthPrompt
+        const dialogState = convoState.createProperty('dialogState');
+        const dialogs = new DialogSet(dialogState);
+        dialogs.add(new OAuthPrompt('prompt', {
+            connectionName,
+            title: 'Login',
+            endOnInvalidMessage: true,
+        }, async (prompt) => {
+            if (prompt.recognized.succeeded) {
+                assert(false, 'recognition succeeded but should have failed during test');
+                return true;
+            }
+            
+            return false;
+        }));
+    
+        // Initialize TestAdapter.
+        const adapter = new TestAdapter(async (turnContext) => {
+            const dc = await dialogs.createContext(turnContext);
+    
+            const results = await dc.continueDialog();
+            if (results.status === DialogTurnStatus.empty) {
+                await dc.prompt('prompt', { });
+            } else if (results.status === DialogTurnStatus.complete) {
+                if (results.result && results.result.token) {
+                    await turnContext.sendActivity('Failed');
+                }
+                else {
+                    await turnContext.sendActivity('Ended');
+                }
+            }
+            await convoState.saveChanges(turnContext);
+        });
+    
+        await adapter.send('Hello')
+            .assertReply(activity  => {
+                assert(activity.attachments.length === 1);
+                assert(activity.attachments[0].contentType === CardFactory.contentTypes.oauthCard);
+    
+                adapter.addUserToken(connectionName, activity.channelId, activity.recipient.id, token, magicCode);
+                adapter.addExchangeableToken(connectionName, activity.channelId, activity.recipient.id, exchangeToken, token);
+            })  
+            .send('invalid text message here')
+            .assertReply('Ended');
     });
 
     it('should see attemptCount increment', async function() {
