@@ -17,7 +17,7 @@ steps:
   - task: Cache@2
     displayName: Cache npm
     inputs:
-      key: 'version2 | npm | "$(Agent.OS)" | $(ReactProjectDir)/package-lock.json'
+      key: 'no-file-version | npm | "$(Agent.OS)"'
       restoreKeys: |
         npm | "$(Agent.OS)"
       path: $(npm_config_cache)
