@@ -167,16 +167,22 @@ export class OAuthPrompt extends Dialog {
     }
 
     public async continueDialog(dc: DialogContext): Promise<DialogTurnResult> {
-        // Recognize token
-        const recognized: PromptRecognizerResult<TokenResponse> = await this.recognizeToken(dc);
-
         // Check for timeout
         const state: OAuthPromptState = dc.activeDialog.state as OAuthPromptState;
         const isMessage: boolean = dc.context.activity.type === ActivityTypes.Message;
-        const hasTimedOut: boolean = isMessage && (new Date().getTime() > state.expires);
+        const isTimeoutActivityType: boolean = isMessage
+                                                || this.isTokenResponseEvent(dc.context)
+                                                || this.isTeamsVerificationInvoke(dc.context)
+                                                || this.isTokenExchangeRequestInvoke(dc.context);
+
+        // If the incoming Activity is a message, or an Activity Type normally handled by OAuthPrompt,
+        // check to see if this OAuthPrompt Expiration has elapsed, and end the dialog if so.
+        const hasTimedOut: boolean = isTimeoutActivityType && (new Date().getTime() > state.expires);
         if (hasTimedOut) {
             return await dc.endDialog(undefined);
         } else {
+            // Recognize token
+            const recognized: PromptRecognizerResult<TokenResponse> = await this.recognizeToken(dc);
 
             if (state.state['attemptCount'] === undefined) {
                 state.state['attemptCount'] = 0;
