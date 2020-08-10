@@ -17,9 +17,9 @@ steps:
   - task: Cache@2
     displayName: Cache npm
     inputs:
-      key: 'no-file-version | npm | "$(Agent.OS)"'
-      restoreKeys: |
-        npm | "$(Agent.OS)"
+      key: 'no-file-ver-2 | npm | "$(Agent.OS)"'
+      # restoreKeys: |
+        # npm | "$(Agent.OS)"
       path: $(npm_config_cache)
       cacheHitVar: 'WcCacheRestored'
 
