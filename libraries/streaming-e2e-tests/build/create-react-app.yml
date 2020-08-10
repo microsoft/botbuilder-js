@@ -23,7 +23,7 @@ steps:
   - powershell: npm install botframework-webchat@4.9.2
     displayName: 'npm install botframework-webchat'
     workingDirectory: $(ReactProjectDir)
-    # condition: ne(variables.WcCacheRestored, 'true')
+    condition: ne(variables.WcCacheRestored, 'true')
   
   - powershell: Remove-Item src/App.js, src/index.js, public/index.html
     displayName: "Delete files we're replacing with custom code in react app"
