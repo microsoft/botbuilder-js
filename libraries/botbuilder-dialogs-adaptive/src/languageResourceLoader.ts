@@ -37,7 +37,7 @@ export class LanguageResourceLoader {
                     const resourceName = u.id;
                     // a.en-us.lg -> a
                     // a.lg -> a
-                    const length = (!suffix)? this.lgSuffix.length + 1 : this.lgSuffix.length + 2;
+                    const length = (!suffix) ? this.lgSuffix.length + 1 : this.lgSuffix.length + 2;
                     const prefixName = resourceName.substring(0, resourceName.length - suffix.length - length);
                     if (!existNames.has(prefixName)) {
                         existNames.add(prefixName);
