@@ -57,7 +57,7 @@ export interface OAuthPromptSettings {
     timeout?: number;
 
     /**
-     * (Opitonal) value indicating whether the OAuthPrompt should end upon
+     * (Optional) value indicating whether the OAuthPrompt should end upon
      * receiving an invalid message.  Generally the OAuthPrompt will ignore
      * incoming messages from the user during the auth flow, if they are not related to the
      * auth flow.  This flag enables ending the OAuthPrompt rather than
