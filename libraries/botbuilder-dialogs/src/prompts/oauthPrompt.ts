@@ -215,16 +215,18 @@ export class OAuthPrompt extends Dialog {
             // Return recognized value or re-prompt
             if (isValid) {
                 return await dc.endDialog(recognized.value);
-            } else if (isMessage && this.settings.endOnInvalidMessage) {
-                return await dc.endDialog(undefined);
-            } else {
-                // Send retry prompt
-                if (!dc.context.responded && isMessage && state.options.retryPrompt) {
-                    await dc.context.sendActivity(state.options.retryPrompt);
-                }
-
-                return Dialog.EndOfTurn;
             }
+
+            if (isMessage && this.settings.endOnInvalidMessage) {
+                return await dc.endDialog(undefined);
+            }
+
+            // Send retry prompt
+            if (!dc.context.responded && isMessage && state.options.retryPrompt) {
+                await dc.context.sendActivity(state.options.retryPrompt);
+            }
+
+            return Dialog.EndOfTurn;
         }
     }
 
