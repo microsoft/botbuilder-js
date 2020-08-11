@@ -5,12 +5,8 @@ const { ok, strictEqual } = require('assert');
 const { OAuthPrompt, DialogSet, DialogTurnStatus, ListStyle } = require('../');
 const { AuthConstants } = require('../lib/prompts/skillsHelpers');
 
-const beginMessage = { text: `begin`, type: 'message' };
-const answerMessage = { text: `yes`, type: 'message' };
-const invalidMessage = { text: `what?`, type: 'message' };
-
 describe('OAuthPrompt', function() {
-    this.timeout(5000);
+    this.timeout(10000);
 
     it('should call OAuthPrompt', async function() {
         var connectionName = 'myConnection';
@@ -143,7 +139,8 @@ describe('OAuthPrompt', function() {
             type: ActivityTypes.Invoke,
             name: verifyStateOperationName,
         };
-        message.Value =  JSON.stringify({ state: "888999" });
+
+        // message.Value =  JSON.stringify({ state: "888999" });
 
         await testTimeout(message);
     });
