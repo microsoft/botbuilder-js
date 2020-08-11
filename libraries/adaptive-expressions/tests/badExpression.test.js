@@ -285,6 +285,18 @@ const badExpressions =
         'ticksToDays(12.12)', //should have an integer parameter
         'ticksToHours(12.12)', //should have an integer parameter
         'ticksToMinutes(12.12)', //should have an integer parameter
+        'getNextViableDate(hello)', // should have a "XXXX-MM-DD" format string
+        'getNextViableDate(one)', // should have a string parameter
+        'getNextViableDate(\'XXXX-10-10\', 20)', // should only have 1 parameter
+        'getPreviousViableDate(hello)', // should have a "XXXX-MM-DD" format string
+        'getPreviousViableDate(one)', // should have a string parameter
+        'getPreviousViableDate(\'XXXX-10-10\', 20)', // should only have 1 parameter
+        'getNextViableTime(hello)', // should have a "XX:mm:ss" format string
+        'getNextViableTime(one)', // should have a string parameter
+        'getNextViableTime(\'XX:12:12\', 20)', // should only have 1 parameter
+        'getPreviousViableTime(hello)', // should have a "XX:mm:ss" format string
+        'getPreviousViableTime(one)', // should have a string parameter
+        'getPreviousViableTime(\'XX:12:12\', 20)', // should only have 1 parameter
 
         // collection functions test
         'sum(items, \'hello\')',//should have 1 parameter
