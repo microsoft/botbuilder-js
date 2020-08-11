@@ -25,7 +25,7 @@ export class LanguageResourceLoader {
      */
     public static groupByLocale(resourceExplorer: ResourceExplorer): Map<string, Resource[]> {
         const resourceMapping: Map<string, Resource[]> = new Map<string, Resource[]>();
-        const allResouces: Resource[] =  resourceExplorer.getResources('lg');
+        const allResouces: Resource[] =  resourceExplorer.getResources(this.lgSuffix);
         const languagePolicy = new LanguagePolicy();
         for (const locale of languagePolicy.keys()) {
             let suffixs = languagePolicy.get(locale);
@@ -71,11 +71,11 @@ export class LanguageResourceLoader {
      * @param lgFileName LG input file name.
      */
     public static parseLGFileName(lgFileName: string):  {prefix: string; language: string} {
-        if (lgFileName === undefined || !lgFileName.endsWith('.lg')) {
+        if (lgFileName === undefined || !lgFileName.endsWith('.' + this.lgSuffix)) {
             return {prefix: lgFileName, language: ''};
         }
 
-        const fileName = lgFileName.substring(0, lgFileName.length - '.lg'.length);
+        const fileName = lgFileName.substring(0, lgFileName.length - this.lgSuffix.length - 1);
         const lastDot = fileName.lastIndexOf('.');
         if (lastDot > 0) {
             return {prefix: fileName.substring(0, lastDot), language: fileName.substring(lastDot + 1)};
