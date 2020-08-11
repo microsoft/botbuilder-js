@@ -54,7 +54,7 @@ export class LanguageResourceLoader {
                 const resourcesWithEmptySuffix = allResouces.filter((u): boolean => this.parseLGFileName(u.id).language === '');
                 resourcesWithEmptySuffix.forEach((u): void => {
                     const resourceName = u.id;
-                    const prefixName = resourceName.substring(0, resourceName.length - this.lgSuffix.length + 1);
+                    const prefixName = resourceName.substring(0, resourceName.length - this.lgSuffix.length - 1);
                     if (!existNames.has(prefixName)) {
                         existNames.add(prefixName);
                         resourceMapping.get(locale).push(u);
