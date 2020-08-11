@@ -17,6 +17,8 @@ import { LanguagePolicy } from  './languagePolicy';
  * Load all LG resource and split them into different language groups.
  */
 export class LanguageResourceLoader {
+    private static readonly lgSuffix: string = 'lg';
+
     /**
      * Group LG resource by locale.
      * @param resourceExplorer The resource explorer to use.
@@ -33,7 +35,9 @@ export class LanguageResourceLoader {
                 const resourcesWithSuffix = allResouces.filter((u): boolean => this.parseLGFileName(u.id).language.toLocaleLowerCase() === suffix.toLocaleLowerCase());
                 resourcesWithSuffix.forEach((u): void => {
                     const resourceName = u.id;
-                    const length = (!suffix)? 3 : 4;
+                    // a.en-us.lg -> a
+                    // a.lg -> a
+                    const length = (!suffix)? this.lgSuffix.length + 1 : this.lgSuffix.length + 2;
                     const prefixName = resourceName.substring(0, resourceName.length - suffix.length - length);
                     if (!existNames.has(prefixName)) {
                         existNames.add(prefixName);
@@ -50,7 +54,7 @@ export class LanguageResourceLoader {
                 const resourcesWithEmptySuffix = allResouces.filter((u): boolean => this.parseLGFileName(u.id).language === '');
                 resourcesWithEmptySuffix.forEach((u): void => {
                     const resourceName = u.id;
-                    const prefixName = resourceName.substring(0, resourceName.length - 3);
+                    const prefixName = resourceName.substring(0, resourceName.length - this.lgSuffix.length + 1);
                     if (!existNames.has(prefixName)) {
                         existNames.add(prefixName);
                         resourceMapping.get(locale).push(u);
