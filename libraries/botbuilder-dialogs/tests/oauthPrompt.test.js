@@ -140,8 +140,6 @@ describe('OAuthPrompt', function() {
             name: verifyStateOperationName,
         };
 
-        // message.Value =  JSON.stringify({ state: "888999" });
-
         await testTimeout(message);
     });
 
