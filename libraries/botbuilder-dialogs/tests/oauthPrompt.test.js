@@ -128,6 +128,7 @@ describe('OAuthPrompt', function() {
             activityId: '1234',
             type: ActivityTypes.Event,
             name: tokenResponseEventName,
+            channelId: Channels.Msteams,
         };
 
         await testTimeout(message);
