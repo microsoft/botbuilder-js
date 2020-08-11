@@ -10,17 +10,14 @@ import { Template } from './template';
 import { TemplateImport } from './templateImport';
 import { Diagnostic, DiagnosticSeverity } from './diagnostic';
 import { ExpressionParser, Expression, ExpressionEvaluator, ReturnType, FunctionUtils } from 'adaptive-expressions';
-import { ImportResolverDelegate, TemplatesTransformer } from './templatesParser';
+import { ImportResolverDelegate } from './templatesParser';
 import { Evaluator } from './evaluator';
 import { Expander } from './expander';
 import { Analyzer } from './analyzer';
 import { TemplatesParser } from './templatesParser';
 import { AnalyzerResult } from './analyzerResult';
-import { TemplateErrors } from './templateErrors';
-import { TemplateExtensions } from './templateExtensions';
 import { EvaluationOptions, LGLineBreakStyle } from './evaluationOptions';
 import { isAbsolute, basename } from 'path';
-import { StaticChecker } from './staticChecker';
 
 /**
  * LG entrance, including properties that LG file has, and evaluate functions.
@@ -261,108 +258,10 @@ export class Templates implements Iterable<Template> {
         return newTemplates.evaluate(inlineTemplateId, scope, evalOpt);
     }
 
-    /**
-    * Update a template and return LG file.
-    * @param templateName Orignial template name.
-    * @param newTemplateName New template name.
-    * @param parameters New params.
-    * @param templateBody New template body.
-    * @returns New lg file.
-    */
-    public updateTemplate(templateName: string, newTemplateName: string, parameters: string[], templateBody: string): Templates {
-        const template: Template = this.items.find((u: Template): boolean => u.name === templateName);
-        if (template) {
-            this.clearDiagnostic();
-
-            const templateNameLine: string = this.buildTemplateNameLine(newTemplateName, parameters);
-            const newTemplateBody: string = this.convertTemplateBody(templateBody);
-            const content = `${ templateNameLine }${ this.newLine }${ newTemplateBody }`;
-
-            // update content
-            this.content = this.replaceRangeContent(this.content,
-                template.sourceRange.range.start.line - 1,
-                template.sourceRange.range.end.line - 1,
-                content);
-            
-            let updatedTemplates = new Templates([], [], [], [], '', this.id, this.expressionParser, this.importResolver);
-            updatedTemplates = new TemplatesTransformer(updatedTemplates).transform(TemplatesParser.antlrParseTemplates(content, this.id));
-
-            const originalStartLine = template.sourceRange.range.start.line - 1;
-            this.appendDiagnosticWithOffset(updatedTemplates.diagnostics, originalStartLine);
-
-            if (updatedTemplates.toArray().length > 0) {
-                const newTemplate = updatedTemplates.toArray()[0];
-                this.adjustRangeForUpdateTemplate(template, newTemplate);
-                new StaticChecker(this).check().forEach((u): number => this.diagnostics.push(u));
-            }
-        }
-
-        return this;
-    }
-
-    /**
-    * Add a new template and return LG file.
-    * @param templateName New template name.
-    * @param parameters New params.
-    * @param templateBody New  template body.
-    * @returns New lg file.
-    */
-    public addTemplate(templateName: string, parameters: string[], templateBody: string): Templates {
-        const template: Template = this.items.find((u: Template): boolean => u.name === templateName);
-        if (template) {
-            throw new Error(TemplateErrors.templateExist(templateName));
-        }
-
-        this.clearDiagnostic();
-
-        const templateNameLine: string = this.buildTemplateNameLine(templateName, parameters);
-        const newTemplateBody: string = this.convertTemplateBody(templateBody);
-        const content = `${ templateNameLine }${ this.newLine }${ newTemplateBody }`;
-        const originalStartLine = TemplateExtensions.readLine(this.content).length;
-
-        // update content
-        this.content = `${ this.content }${ this.newLine }${ templateNameLine }${ this.newLine }${ newTemplateBody }`;
-        let updatedTemplates = new Templates([], [], [], [], '', this.id, this.expressionParser, this.importResolver);
-        updatedTemplates = new TemplatesTransformer(updatedTemplates).transform(TemplatesParser.antlrParseTemplates(content, this.id));
-
-        this.appendDiagnosticWithOffset(updatedTemplates.diagnostics, originalStartLine);
-
-        if (updatedTemplates.toArray().length > 0) {
-            const newTemplate = updatedTemplates.toArray()[0];
-            this.adjustRangeForAddTemplate(newTemplate, originalStartLine);
-            this.items.push(newTemplate);
-            new StaticChecker(this).check().forEach((u): number => this.diagnostics.push(u));
-        }
-
-        return this;
-    }
-
-    /**
-    * Delete an exist template.
-    * @param templateName Which template should delete.
-    * @returns Return the new lg file.
-    */
-    public deleteTemplate(templateName: string): Templates {
-        const templateIndex = this.items.findIndex((u: Template): boolean => u.name === templateName);
-        if (templateIndex >= 0) {
-            const template = this.items[templateIndex];
-            this.clearDiagnostic();
-
-            const startLine = template.sourceRange.range.start.line - 1;
-            const stopLine = template.sourceRange.range.end.line - 1;
-            this.content = this.replaceRangeContent(this.content, startLine, stopLine, undefined);
-            this.adjustRangeForDeleteTemplate(template);
-            this.items.splice(templateIndex, 1);
-            new StaticChecker(this).check().forEach((u): number => this.diagnostics.push(u));
-        }
-
-        return this;
-    }
-
     public toString(): string {
         return this.content;
     }
-
+    
     private getramdonTemplateId(): string {
         return 'xxxxxxxxxxxx4xxxyxxxxxxxxxxxxxxx'.replace(/[xy]/g, (c: any): string => {
             const r: number = Math.random() * 16 | 0;
@@ -370,98 +269,6 @@ export class Templates implements Iterable<Template> {
 
             return v.toString(16);
         });
-    }
-
-    private appendDiagnosticWithOffset(diagnostics: Diagnostic[], offset: number): void {
-        if (diagnostics) {
-            diagnostics.forEach((u): void => {
-                u.range.start.line += offset;
-                u.range.end.line += offset;
-                this.diagnostics.push(u);
-            });
-        }
-    }
-
-    private adjustRangeForUpdateTemplate(oldTemplate: Template, newTemplate: Template): void {
-        const newRange = newTemplate.sourceRange.range.end.line - newTemplate.sourceRange.range.start.line;
-        const oldRange = oldTemplate.sourceRange.range.end.line - oldTemplate.sourceRange.range.start.line;
-
-        const lineOffset = newRange - oldRange;
-
-        let hasFound = false;
-        for (let i = 0; i < this.items.length; i++) {
-            if (hasFound) {
-                this.items[i].sourceRange.range.start.line += lineOffset;
-                this.items[i].sourceRange.range.end.line += lineOffset;
-            } else if (this.items[i].name === oldTemplate.name) {
-                hasFound = true;
-                newTemplate.sourceRange.range.start.line = oldTemplate.sourceRange.range.start.line;
-                newTemplate.sourceRange.range.end.line = oldTemplate.sourceRange.range.end.line + lineOffset;
-                this.items[i] = newTemplate;
-            }
-        }
-    }
-
-    private adjustRangeForAddTemplate(newTemplate: Template, lineOffset: number): void {
-        const lineLength = newTemplate.sourceRange.range.end.line - newTemplate.sourceRange.range.start.line;
-        newTemplate.sourceRange.range.start.line  = lineOffset + 1;
-        newTemplate.sourceRange.range.end.line = lineOffset + lineLength + 1;
-    }
-
-    private adjustRangeForDeleteTemplate(oldTemplate: Template): void {
-        const lineOffset = oldTemplate.sourceRange.range.end.line - oldTemplate.sourceRange.range.start.line + 1;
-
-        let hasFound = false;
-        for (let i = 0; i < this.items.length; i++) {
-            if (hasFound) {
-                this.items[i].sourceRange.range.start.line -= lineOffset;
-                this.items[i].sourceRange.range.end.line -= lineOffset;
-            } else if (this.items[i].name == oldTemplate.name) {
-                hasFound = true;
-            }
-        }
-    }
-    private clearDiagnostic(): void {
-        this.diagnostics = [];
-    }
-
-    private replaceRangeContent(originString: string, startLine: number, stopLine: number, replaceString: string): string {
-        const originList: string[] = TemplateExtensions.readLine(originString);
-        if (startLine < 0 || startLine > stopLine || stopLine >= originList.length) {
-            throw new Error('index out of range.');
-        }
-
-        const destList: string[] = [];
-        destList.push(...originList.slice(0, startLine));
-        if (replaceString !== undefined && replaceString !== null) {
-            destList.push(replaceString);
-        }
-
-        destList.push(...originList.slice(stopLine + 1));
-
-        return destList.join(this.newLine);
-    }
-
-    private convertTemplateBody(templateBody: string): string {
-        if (!templateBody) {
-            return '';
-        }
-
-        const replaceList: string[] = TemplateExtensions.readLine(templateBody);
-        const destList: string[] = replaceList.map((u: string): string => {
-            return u.trimLeft().startsWith('#') ? `- ${ u.trimLeft() }` : u;
-        });
-
-        return destList.join(this.newLine);
-    }
-
-    private buildTemplateNameLine(templateName: string, parameters: string[]): string {
-        // if parameters is null or undefined, ignore ()
-        if (parameters === undefined || parameters === undefined) {
-            return `# ${ templateName }`;
-        } else {
-            return `# ${ templateName }(${ parameters.join(', ') })`;
-        }
     }
 
     private checkErrors(): void {
