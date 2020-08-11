@@ -6,7 +6,7 @@ const { OAuthPrompt, DialogSet, DialogTurnStatus, ListStyle } = require('../');
 const { AuthConstants } = require('../lib/prompts/skillsHelpers');
 
 describe('OAuthPrompt', function() {
-    this.timeout(10000);
+    this.timeout(60000);
 
     it('should call OAuthPrompt', async function() {
         var connectionName = 'myConnection';
