@@ -19,8 +19,8 @@ steps:
     displayName: Cache npm
     inputs:
       key: 'with-dotenv-lock-restore-wc-install | npm | "$(Agent.OS)" | $(ReactProjectDir)/package-lock.json'
-      restoreKeys: |
-        npm | "$(Agent.OS)"
+      # restoreKeys: |
+      #   npm | "$(Agent.OS)"
       path: $(ReactProjectDir)/node_modules
       cacheHitVar: 'WcCacheRestored'
   
