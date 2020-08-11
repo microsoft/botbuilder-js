@@ -847,7 +847,7 @@ function uuid() {
     });
 }
 
-async function testTimeout(oauthPromptActivity, shouldSucceed = true, tokenResponse = 'Failed', noTokenResonse = 'Ended') {
+async function testTimeout(oauthPromptActivity, shouldSucceed = true, tokenResponse = 'Failed', noTokenResponse = 'Ended') {
     var connectionName = 'myConnection';
     var token = 'abc123';
     var magicCode = '888999';
@@ -893,7 +893,7 @@ async function testTimeout(oauthPromptActivity, shouldSucceed = true, tokenRespo
                 await turnContext.sendActivity(tokenResponse);
             }
             else {
-                await turnContext.sendActivity(noTokenResonse);
+                await turnContext.sendActivity(noTokenResponse);
             }
         }
         await convoState.saveChanges(turnContext);
@@ -908,5 +908,5 @@ async function testTimeout(oauthPromptActivity, shouldSucceed = true, tokenRespo
             adapter.addExchangeableToken(connectionName, activity.channelId, activity.recipient.id, exchangeToken, token);
         })  
         .send(oauthPromptActivity)
-        .assertReply(noTokenResonse);
+        .assertReply(noTokenResponse);
 }
