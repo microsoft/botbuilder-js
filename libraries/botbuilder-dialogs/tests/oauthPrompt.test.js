@@ -143,6 +143,7 @@ describe('OAuthPrompt', function() {
             type: ActivityTypes.Invoke,
             name: verifyStateOperationName,
         };
+        message.Value =  JSON.stringify({ state: "888999" });
 
         await testTimeout(message);
     });
