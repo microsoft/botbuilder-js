@@ -128,7 +128,6 @@ describe('OAuthPrompt', function() {
             activityId: '1234',
             type: ActivityTypes.Event,
             name: tokenResponseEventName,
-            channelId: Channels.Msteams,
         };
 
         await testTimeout(message);
@@ -139,6 +138,7 @@ describe('OAuthPrompt', function() {
             activityId: '1234',
             type: ActivityTypes.Invoke,
             name: verifyStateOperationName,
+            channelId: Channels.Msteams,
         };
 
         await testTimeout(message);
@@ -862,8 +862,8 @@ async function testTimeout(oauthPromptActivity, shouldSucceed = true, tokenRespo
     dialogs.add(new OAuthPrompt('prompt', {
         connectionName,
         title: 'Login',
-        timeout: 0
-    }, async (prompt) => {
+        timeout: -1
+    }, (prompt) => {
         if (prompt.recognized.succeeded) {
             assert(shouldSucceed, 'recognition succeeded but should have failed during testTimeout');
             return true;
