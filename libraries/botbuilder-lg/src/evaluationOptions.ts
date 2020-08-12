@@ -23,6 +23,9 @@ export class EvaluationOptions {
 
     public LineBreakStyle: LGLineBreakStyle | undefined;
 
+    /**
+     * The locale info for evaluating LG.
+     */
     public locale: string;
 
     public constructor(opt?: EvaluationOptions | string[]) {
