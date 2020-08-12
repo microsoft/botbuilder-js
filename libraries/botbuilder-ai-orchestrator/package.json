@@ -19,7 +19,7 @@
   "main": "./lib/index.js",
   "typings": "./lib/index.d.ts",
   "dependencies": {
-    "orchestrator-core": "4.10.0-dev.20200811.3214fed",
+    "orchestrator-core": "beta",
     "adaptive-expressions": "4.1.6",
     "botbuilder-core": "4.1.6",
     "botbuilder-dialogs": "4.1.6",
