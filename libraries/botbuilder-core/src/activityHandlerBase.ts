@@ -213,6 +213,39 @@ export class ActivityHandlerBase {
      * emission process.
      */
     protected async onInstallationUpdateActivity(context: TurnContext): Promise<void> {
+        switch (context.activity.action) {
+            case 'add': 
+                await this.onInstallationUpdateAddActivity(context);
+                return;
+            case 'remove':
+                await this.onInstallationUpdateRemoveActivity(context);
+                return
+        }
+    }
+
+    /**
+     * Provides a hook for emitting the _installationupdateadd_ event.
+     * 
+     * @param context The context object for the current turn.
+     * 
+     * @remarks
+     * Overwrite this method to run registered _installationupdateadd_ handlers and then continue the event
+     * emission process.
+     */
+    protected async onInstallationUpdateAddActivity(context: TurnContext): Promise<void> {
+        return;
+    }
+
+    /**
+     * Provides a hook for emitting the _installationupdateremove_ event.
+     * 
+     * @param context The context object for the current turn.
+     * 
+     * @remarks
+     * Overwrite this method to run registered _installationupdateremove_ handlers and then continue the event
+     * emission process.
+     */
+    protected async onInstallationUpdateRemoveActivity(context: TurnContext): Promise<void> {
         return;
     }
 
