@@ -151,6 +151,20 @@ export class DialogContext {
     }
 
     /**
+     * Obtain the CultureInfo in DialogContext.
+     * @returns a locale string.
+     */
+    public getLocale(): string
+    {
+        let locale: string = undefined;
+        if (this.context.locale !== undefined && this.context.locale !== null) {
+            locale = this.context.locale;
+        }
+        
+        return locale;
+    }
+
+    /**
      * Starts a dialog instance and pushes it onto the dialog stack.
      * Creates a new instance of the dialog and pushes it onto the stack.
      *

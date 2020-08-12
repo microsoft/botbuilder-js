@@ -158,6 +158,10 @@ export abstract class BotAdapter {
             revoke(): void;
         } = makeRevocable(context);
 
+        if (context && context.activity && context.activity.locale) {
+            context.locale = context.activity.locale;
+        }
+
         return new Promise((resolve: any, reject: any): void => {
             this.middleware.run(pContext.proxy, () => {
                 // Call next with revocable context

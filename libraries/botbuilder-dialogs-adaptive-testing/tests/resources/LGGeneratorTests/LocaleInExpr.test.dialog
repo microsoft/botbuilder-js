@@ -1,0 +1,42 @@
+{
+    "$schema": "../../../../schemas/sdk.schema",
+    "$kind": "Microsoft.Test.Script",
+    "dialog":
+    {
+        "$kind": "Microsoft.AdaptiveDialog",
+        "generator": {
+            "$kind": "Microsoft.ResourceMultiLanguageGenerator",
+            "resourceId": "test.lg"
+        },
+        "triggers": [
+            {
+                "$kind": "Microsoft.OnBeginDialog",
+                "actions": [
+                    {
+                        "$kind": "Microsoft.SendActivity",
+                        "activity": "${formatNumber(123456.789, 1, 'fr-FR')}"
+                    },
+                    {
+                        "$kind": "Microsoft.SendActivity",
+                        "activity": "${formatNumber(123456.789, 1)}"
+                    }
+                ]
+            }
+        ]
+    },
+    "script": [
+        {
+            "$kind": "Microsoft.Test.UserSays",
+            "text": "Aloha",
+            "locale": "de-DE"
+        },
+        {
+            "$kind": "Microsoft.Test.AssertReply",
+            "text": "123\u00a0456,8"
+        },
+        {
+            "$kind": "Microsoft.Test.AssertReply",
+            "text": "123.456,8"
+        }
+    ]
+}

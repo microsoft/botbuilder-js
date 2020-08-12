@@ -24,4 +24,8 @@ describe('LGGeneratorTests', function() {
     it('Customize Language Policy', async () => {
         await testRunner.runTestScript('CustomizeLanguagePolicy');
     });
+
+    it('LocaleInExpr', async () => {
+        await testRunner.runTestScript('LocaleInExpr');
+    });
 });

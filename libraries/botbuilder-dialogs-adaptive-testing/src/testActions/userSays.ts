@@ -21,6 +21,11 @@ export class UserSays implements TestAction {
      */
     public user: string;
 
+    /**
+     * The locale of user.
+     */
+    public locale: string;
+
     public async execute(testAdapter: AdaptiveTestAdapter, callback: (context: TurnContext) => Promise<any>): Promise<any> {
         if (!this.text) {
             throw new Error('You must define the text property');
@@ -31,6 +36,10 @@ export class UserSays implements TestAction {
             activity.from = Object.assign({}, activity.from);
             activity.from.id = this.user;
             activity.from.name = this.user;
+        }
+
+        if (this.locale) {
+            activity.locale = this.locale;
         }
 
         await testAdapter.processActivity(activity, callback);
