@@ -38,9 +38,6 @@ export class FormatNumber extends ExpressionEvaluator {
                 } else if (locale && typeof locale !== 'string') {
                     error = `formatNubmer third argument ${locale} is not a valid locale`;
                 } else {
-                    // NOTE: Nodes toLocaleString and Intl do not work to localize unless a special version of node is used.
-                    // TODO: In R10 we should try another package.  Numeral and d3-format have the basics, but no locale specific.  
-                    // Numbro has locales, but is optimized for the browser.
                     const fixedNotation = `,.${precision}f`;
                     const roundedNumber = this.roundToPrecision(number, precision);
                     const formatLocale = FormatNumber.localeSets[locale];
