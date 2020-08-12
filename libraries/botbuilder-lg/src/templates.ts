@@ -21,6 +21,7 @@ import { TemplateExtensions } from './templateExtensions';
 import { EvaluationOptions, LGLineBreakStyle } from './evaluationOptions';
 import { isAbsolute, basename } from 'path';
 import { StaticChecker } from './staticChecker';
+import { LGResource } from './lgResource';
 
 /**
  * LG entrance, including properties that LG file has, and evaluate functions.
@@ -61,7 +62,7 @@ export class Templates implements Iterable<Template> {
     public content: string;
 
     /**
-     * id of this lg source. For file, is full path.
+     * Id of the lg resource.
      */
     public id: string;
 
@@ -69,6 +70,11 @@ export class Templates implements Iterable<Template> {
      * expression parser.
      */
     public expressionParser: ExpressionParser;
+
+    /**
+     * Source of the lg resource. Full path for lg file.
+     */
+    public source: string;
 
     /**
      * Delegate for resolving resource id of imported lg file.
@@ -88,7 +94,8 @@ export class Templates implements Iterable<Template> {
         id?: string,
         expressionParser?: ExpressionParser,
         importResolverDelegate?: ImportResolverDelegate,
-        options?: string[]) {
+        options?: string[],
+        source?: string) {
         this.items = items || [];
         this.imports = imports || [];
         this.diagnostics = diagnostics || [];
@@ -98,6 +105,7 @@ export class Templates implements Iterable<Template> {
         this.expressionParser = expressionParser || new ExpressionParser();
         this.importResolver = importResolverDelegate;
         this.options = options || [];
+        this.source = source;
         this.injectToExpressionFunction();
     }
 
@@ -178,6 +186,7 @@ export class Templates implements Iterable<Template> {
 
     /**
      * Parser to turn lg content into a Templates.
+     * @deprecated This method will soon be deprecated. Use ParseResource instead.
      * @param content Text content contains lg templates.
      * @param id Id is the identifier of content. If importResolver is undefined, id must be a full path string. 
      * @param importResolver Resolver to resolve LG import id to template text.
@@ -186,6 +195,17 @@ export class Templates implements Iterable<Template> {
      */
     public static parseText(content: string, id: string = '', importResolver?: ImportResolverDelegate, expressionParser?: ExpressionParser): Templates {
         return TemplatesParser.parseText(content, id, importResolver, expressionParser).injectToExpressionFunction();
+    }
+
+    /**
+     * Parser to turn lg content into a Templates.
+     * @param aresource LG resource.
+     * @param importResolver Resolver to resolve LG import id to template text.
+     * @param expressionParser Expression parser for evaluating expressions.
+     * @returns Entity.
+     */
+    public static parseResource(resource: LGResource, importResolver?: ImportResolverDelegate, expressionParser?: ExpressionParser): Templates {
+        return TemplatesParser.parseResource(resource, importResolver, expressionParser).injectToExpressionFunction();
     }
 
     /**
@@ -285,7 +305,8 @@ export class Templates implements Iterable<Template> {
                 content);
             
             let updatedTemplates = new Templates([], [], [], [], '', this.id, this.expressionParser, this.importResolver);
-            updatedTemplates = new TemplatesTransformer(updatedTemplates).transform(TemplatesParser.antlrParseTemplates(content, this.id));
+            const resource = new LGResource(this.id, this.id, content);
+            updatedTemplates = new TemplatesTransformer(updatedTemplates).transform(TemplatesParser.antlrParseTemplates(resource));
 
             const originalStartLine = template.sourceRange.range.start.line - 1;
             this.appendDiagnosticWithOffset(updatedTemplates.diagnostics, originalStartLine);
@@ -323,7 +344,8 @@ export class Templates implements Iterable<Template> {
         // update content
         this.content = `${ this.content }${ this.newLine }${ templateNameLine }${ this.newLine }${ newTemplateBody }`;
         let updatedTemplates = new Templates([], [], [], [], '', this.id, this.expressionParser, this.importResolver);
-        updatedTemplates = new TemplatesTransformer(updatedTemplates).transform(TemplatesParser.antlrParseTemplates(content, this.id));
+        const resource = new LGResource(this.id, this.id, content);
+        updatedTemplates = new TemplatesTransformer(updatedTemplates).transform(TemplatesParser.antlrParseTemplates(resource));
 
         this.appendDiagnosticWithOffset(updatedTemplates.diagnostics, originalStartLine);
 
@@ -506,8 +528,8 @@ export class Templates implements Iterable<Template> {
     private extractNamespace(options: string[]): string {
         let result = this.extractOptionByKey(this.namespaceKey, options);
         if(!result) {
-            if (isAbsolute(this.id)) {
-                result = basename(this.id).split('.')[0];
+            if (isAbsolute(this.source)) {
+                result = basename(this.source).split('.')[0];
             } else {
                 throw new Error('namespace is required or the id should be an absoulte path!"');
             }
