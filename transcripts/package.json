@@ -1,21 +1,22 @@
 {
-  "name": "transcript-tests",
-  "version": "1.0.0",
-  "description": "Bot Builder tests using transcripts.",
-  "scripts": {
-    "test": "mocha tests/*.test.js"
-  },
-  "author": "Microsoft",
-  "license": "MIT",
-  "dependencies": {
-    "@types/node": "^10.17.27",
-    "@types/restify": "^8.4.2",
-    "botbuilder": "4.1.6",
-    "botbuilder-ai": "4.1.6",
-    "botbuilder-dialogs": "4.1.6"
-  },
-  "devDependencies": {
-    "mocha": "^6.2.3",
-    "nyc": "^15.1.0"
-  }
+    "private": true,
+    "name": "transcript-tests",
+    "version": "1.0.0",
+    "description": "Bot Builder tests using transcripts.",
+    "scripts": {
+        "test": "mocha tests/*.test.js"
+    },
+    "author": "Microsoft Corp.",
+    "license": "MIT",
+    "dependencies": {
+        "@types/node": "^10.17.27",
+        "@types/restify": "^8.4.2",
+        "botbuilder": "4.1.6",
+        "botbuilder-ai": "4.1.6",
+        "botbuilder-dialogs": "4.1.6"
+    },
+    "devDependencies": {
+        "mocha": "^6.2.3",
+        "nyc": "^15.1.0"
+    }
 }

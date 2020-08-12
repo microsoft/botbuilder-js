@@ -531,6 +531,23 @@ const dataSource = [
     ['ticksToDays(2193385800000000)', 2538.6409722222224],
     ['ticksToHours(2193385800000000)', 60927.383333333331],
     ['ticksToMinutes(2193385811100000)', 3655643.0185],
+    ['isMatch(getPreviousViableDate(\'XXXX-07-10\'), \'20[0-9]{2}-07-10\')', true],
+    ['isMatch(getPreviousViableDate(\'XXXX-07-10\', \'Asia/Shanghai\'), \'20[0-9]{2}-07-10\')', true],
+    ['getPreviousViableDate(\'XXXX-02-29\')', '2020-02-29'],
+    ['getPreviousViableDate(\'XXXX-02-29\', \'Pacific Standard Time\')', '2020-02-29'],
+    ['isMatch(getNextViableDate(\'XXXX-07-10\'), \'202[0-9]-07-10\')', true],
+    ['isMatch(getNextViableDate(\'XXXX-07-10\', \'Europe/London\'), \'202[0-9]-07-10\')', true],
+    ['getNextViableDate(\'XXXX-02-29\')', '2024-02-29'],
+    ['getNextViableDate(\'XXXX-02-29\', \'America/Los_Angeles\')', '2024-02-29'],
+    ['isMatch(getNextViableTime(\'TXX:40:20\'), \'T[0-2][0-9]:40:20\')', true],
+    ['isMatch(getNextViableTime(\'TXX:40:20\', \'Asia/Tokyo\'), \'T[0-2][0-9]:40:20\')', true],
+    ['isMatch(getNextViableTime(\'TXX:05:10\'), \'T[0-2][0-9]:05:10\')', true],
+    ['isMatch(getNextViableTime(\'TXX:05:10\', \'Europe/Paris\'), \'T[0-2][0-9]:05:10\')', true],
+    ['isMatch(getPreviousViableTime(\'TXX:40:20\'), \'T[0-2][0-9]:40:20\')', true],
+    ['isMatch(getPreviousViableTime(\'TXX:40:20\', \'Eastern Standard Time\'), \'T[0-2][0-9]:40:20\')', true],
+    ['isMatch(getPreviousViableTime(\'TXX:05:10\'), \'T[0-2][0-9]:05:10\')', true],
+    ['isMatch(getPreviousViableTime(\'TXX:05:10\', \'Central Standard Time\'), \'T[0-2][0-9]:05:10\')', true],
+
     //URI parsing functions tests
     ['uriHost(\'https://www.localhost.com:8080\')', 'www.localhost.com'],
     ['uriPath(\'http://www.contoso.com/catalog/shownew.htm?date=today\')', '/catalog/shownew.htm'],
@@ -834,9 +851,12 @@ const scope = {
 
 describe('expression parser functional test', () => {
     it('should get right evaluate result', () => {
+        const inputs = [];
+
         for (const data of dataSource) {
             const input = data[0].toString();
-            console.log(input);
+            inputs.push(input);
+
             var parsed = Expression.parse(input);
             assert(parsed !== undefined);
             var {value: actual, error} = parsed.tryEvaluate(scope);
@@ -857,6 +877,8 @@ describe('expression parser functional test', () => {
             const newActual = newExpr.tryEvaluate(scope).value;
             assertObjectEquals(actual, newActual, input);
         }
+
+        console.log(inputs.join('\n'));
     }).timeout(5000);
 
     // Any test getting the system time with something like `new Date()` is prone to failure because
