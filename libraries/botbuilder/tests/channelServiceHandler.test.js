@@ -1,6 +1,6 @@
 const { fail, ok: assert, strictEqual } = require('assert');
 const { ActivityTypes, StatusCodes } = require('botbuilder-core');
-const { AuthenticationConfiguration, ClaimsIdentity, JwtTokenValidation, SimpleCredentialProvider } = require('botframework-connector');
+const { AuthenticationConfiguration, AuthenticationConstants, ClaimsIdentity, JwtTokenValidation, SimpleCredentialProvider } = require('botframework-connector');
 const { ChannelServiceHandler } = require('../');
 const { isEmpty } = require('lodash');
 const { stub } = require('sinon');
@@ -41,13 +41,13 @@ describe('ChannelServiceHandler', () => {
         });
     
         it('should use process.env.ChannelService if no channelService is provided', () => {
-            process.env.ChannelService = 'test';
+            process.env[AuthenticationConstants.ChannelService] = 'test';
             const handler = new NoAuthHandler(CREDENTIALS, AUTH_CONFIG);
     
             strictEqual(handler.authConfig, AUTH_CONFIG);
             strictEqual(handler.credentialProvider, CREDENTIALS);
             strictEqual(handler.channelService, 'test');
-            delete process.env.ChannelService;
+            delete process.env[AuthenticationConstants.ChannelService];
         });
     
         it('should fail with invalid credentialProvider or authConfig', () => {
