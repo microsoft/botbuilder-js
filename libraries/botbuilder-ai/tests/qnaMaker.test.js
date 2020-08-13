@@ -414,7 +414,7 @@ describe('QnAMaker', function () {
                 }
             }
     
-            const noOptionsQnA = new QnAMaker(endpoint, { top: 1 }, telemetryClient=telemetryClient, logPersonalInformation=true);
+            const noOptionsQnA = new QnAMaker(endpoint, { top: 1 }, telemetryClient, true);
             const noOptionsContext = new TestContext({ text: 'where are the unicorns?', from: { name: "testname"}  })
             const defaultNumberOfAnswers = 1;
 
@@ -457,7 +457,7 @@ describe('QnAMaker', function () {
                 }
             }
     
-            const noOptionsQnA = new QnAMaker(endpoint, { top: 1 }, telemetryClient=telemetryClient, logPersonalInformation=true);
+            const noOptionsQnA = new QnAMaker(endpoint, { top: 1 }, telemetryClient, true);
             const noOptionsContext = new TestContext({ text: 'where are the unicorns?', from: { name: "testname"}  })
             const defaultNumberOfAnswers = 0;
 
@@ -501,7 +501,7 @@ describe('QnAMaker', function () {
                 }
             }
     
-            const noOptionsQnA = new QnAMaker(endpoint, { top: 1 }, telemetryClient=telemetryClient, logPersonalInformation=false);
+            const noOptionsQnA = new QnAMaker(endpoint, { top: 1 }, telemetryClient, false);
             const noOptionsContext = new TestContext({ text: 'where are the unicorns?', from: { name: "testname"} })
             const defaultNumberOfAnswers = 1;
 
@@ -556,7 +556,7 @@ describe('QnAMaker', function () {
                 }
             }
     
-            const noOptionsQnA = new overrideTwoEventsWithOverrideLogger(endpoint, { top: 1 }, telemetryClient=telemetryClient, logPersonalInformation=true);
+            const noOptionsQnA = new overrideTwoEventsWithOverrideLogger(endpoint, { top: 1 }, telemetryClient, true);
             const noOptionsContext = new TestContext({ text: 'where are the unicorns?', from: { name: "testname"}  })
             const defaultNumberOfAnswers = 1;
 
@@ -604,7 +604,7 @@ describe('QnAMaker', function () {
                 }
             }
     
-            const noOptionsQnA = new QnAMaker(endpoint, { top: 1 }, telemetryClient=telemetryClient, logPersonalInformation=true);
+            const noOptionsQnA = new QnAMaker(endpoint, { top: 1 }, telemetryClient, true);
             const noOptionsContext = new TestContext({ text: 'where are the unicorns?', from: { name: "testname"}  })
             const defaultNumberOfAnswers = 1;
 
@@ -718,7 +718,7 @@ describe('QnAMaker', function () {
                     assert.strictEqual(found, true, `Found answer should have returned 'true'.`);
                     let qnaMakerTraceActivies = context.sent.filter(s => s.type === 'trace' && s.name === 'QnAMaker');
                     assert.strictEqual(qnaMakerTraceActivies.length, 1, 'Should have returned just one answer');
-                    traceActivity = qnaMakerTraceActivies[0];
+                    const traceActivity = qnaMakerTraceActivies[0];
                     assert.strictEqual(traceActivity.type, 'trace', `Should have returned 'trace'.`);
                     assert.strictEqual(traceActivity.name, 'QnAMaker', `Should have returned 'QnAMaker'.`);
                     assert.strictEqual(traceActivity.label, 'QnAMaker Trace', `Should have returned 'QnAMaker Trace'.`);

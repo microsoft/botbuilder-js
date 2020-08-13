@@ -948,22 +948,22 @@ describe('expression parser functional test', () => {
         // normal case, note, we doesn't append a " yet
         let exp = Expression.parse('a[f].b[n].z');
         let path = undefined;
-        ({path, left, error} = FunctionUtils.tryAccumulatePath(exp, memory, undefined));
+        ({path} = FunctionUtils.tryAccumulatePath(exp, memory, undefined));
         assert.strictEqual(path, 'a[\'foo\'].b[2].z');
 
         // normal case
         exp = Expression.parse('a[z.z][z.z].y');
-        ({path, left, error} = FunctionUtils.tryAccumulatePath(exp, memory, undefined));
+        ({path} = FunctionUtils.tryAccumulatePath(exp, memory, undefined));
         assert.strictEqual(path, 'a[\'zar\'][\'zar\'].y');
 
         // normal case
         exp = Expression.parse('a.b[z.z]');
-        ({path, left, error} = FunctionUtils.tryAccumulatePath(exp, memory, undefined));
+        ({path} = FunctionUtils.tryAccumulatePath(exp, memory, undefined));
         assert.strictEqual(path, 'a.b[\'zar\']');
 
         // stop evaluate at middle
         exp = Expression.parse('json(x).b');
-        ({path, left, error} = FunctionUtils.tryAccumulatePath(exp, memory, undefined));
+        ({path} = FunctionUtils.tryAccumulatePath(exp, memory, undefined));
         assert.strictEqual(path, 'b');
 
     });

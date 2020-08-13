@@ -8,7 +8,7 @@ describe('Internal Utilities', () => {
         try {
             expect(doesGlobalWebSocketExist()).to.be.true;
         } finally {
-            global.WebSocket = undefined;
+            delete global.WebSocket;
         }
     });
 
@@ -19,7 +19,7 @@ describe('Internal Utilities', () => {
         try {
             expect(doesGlobalWebSocketExist()).to.be.false;
         } finally {
-            global.WebSocket = undefined;
+            delete global.WebSocket;
         }
     });
 
@@ -28,7 +28,7 @@ describe('Internal Utilities', () => {
         try {
             expect(doesGlobalFileReaderExist()).to.be.true;
         } finally {
-            global.FileReader = undefined;
+            delete global.FileReader;
         }
     });
 
@@ -39,7 +39,7 @@ describe('Internal Utilities', () => {
         try {
             expect(doesGlobalFileReaderExist()).to.be.false;
         } finally {
-            global.FileReader = undefined;
+            delete global.FileReader;
         }
     });
 });

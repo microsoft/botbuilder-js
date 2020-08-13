@@ -3,7 +3,6 @@
 
 const assert = require('assert');
 const { TestAdapter, TelemetryLoggerMiddleware, ActivityTypes } = require('../');
-const { TeamsChannelData } = require('../../botframework-schema/');
 
 describe(`TelemetryMiddleware`, function () {
     this.timeout(5000);
@@ -85,9 +84,7 @@ describe(`TelemetryMiddleware`, function () {
             }
         }
         let myLogger = new TelemetryLoggerMiddleware(telemetryClient, true);
-        var conversationId = null;
         var adapter = new TestAdapter(async (context) => {
-            conversationId = context.activity.conversation.id;
             var typingActivity = {
                 type: ActivityTypes.Typing,
                 relatesTo: context.activity.relatesTo
@@ -107,11 +104,8 @@ describe(`TelemetryMiddleware`, function () {
     });
 
     it(`telemetry null telemetryClient`, function (done) {
-        var callCount = 0;
         let myLogger = new TelemetryLoggerMiddleware(null, true);
-        var conversationId = null;
         var adapter = new TestAdapter(async (context) => {
-            conversationId = context.activity.conversation.id;
             var typingActivity = {
                 type: ActivityTypes.Typing,
                 relatesTo: context.activity.relatesTo
@@ -184,9 +178,7 @@ describe(`TelemetryMiddleware`, function () {
             }
         }
         let myLogger = new TelemetryLoggerMiddleware(telemetryClient, false);
-        var conversationId = null;
         var adapter = new TestAdapter(async (context) => {
-            conversationId = context.activity.conversation.id;
             var typingActivity = {
                 type: ActivityTypes.Typing,
                 relatesTo: context.activity.relatesTo
@@ -209,7 +201,6 @@ describe(`TelemetryMiddleware`, function () {
 
     it(`telemetry should log update activities`, function (done) {
         var callCount = 0;
-        let activityToUpdate = null;
         var telemetryClient = {
             trackEvent: (telemetry) => {
                 assert(telemetry, 'telemetry is null');
@@ -233,10 +224,11 @@ describe(`TelemetryMiddleware`, function () {
                         break;
                 }
             }
-        }
+        };
+
         let myLogger = new TelemetryLoggerMiddleware(telemetryClient, true);
         var adapter = new TestAdapter(async (context) => {
-            conversationId = context.activity.conversation.id;
+            let activityToUpdate = context.activity;
             if (context.activity.text === 'update') {
                 activityToUpdate.text = 'new response';
                 await context.updateActivity(activityToUpdate);
@@ -261,7 +253,6 @@ describe(`TelemetryMiddleware`, function () {
 
     it(`telemetry should log delete activities`, function (done) {
         var callCount = 0;
-        var conversationId = null;
         var activityId = null;
         var telemetryClient = {
             trackEvent: (telemetry) => {
@@ -286,7 +277,6 @@ describe(`TelemetryMiddleware`, function () {
         }
         let myLogger = new TelemetryLoggerMiddleware(telemetryClient, true);
         var adapter = new TestAdapter(async (context) => {
-            conversationId = context.activity.conversation.id;
             if (context.activity.text === 'deleteIt') {
                 await context.deleteActivity(activityId);
             } else {
@@ -364,9 +354,7 @@ describe(`TelemetryMiddleware`, function () {
             }
         }
         let myLogger = new overrideReceiveLogger(telemetryClient, true);
-        var conversationId = null;
         var adapter = new TestAdapter(async (context) => {
-            conversationId = context.activity.conversation.id;
             var typingActivity = {
                 type: ActivityTypes.Typing,
                 relatesTo: context.activity.relatesTo
@@ -435,9 +423,7 @@ describe(`TelemetryMiddleware`, function () {
             }
         }
         let myLogger = new overrideSendLogger(telemetryClient, true);
-        var conversationId = null;
         var adapter = new TestAdapter(async (context) => {
-            conversationId = context.activity.conversation.id;
             var typingActivity = {
                 type: ActivityTypes.Typing,
                 relatesTo: context.activity.relatesTo
@@ -490,9 +476,8 @@ describe(`TelemetryMiddleware`, function () {
             }
         }
         let myLogger = new overrideUpdateDeleteLogger(telemetryClient, true);
-        var conversationId = null;
         var adapter = new TestAdapter(async (context) => {
-            conversationId = context.activity.conversation.id;
+            let activityToUpdate = context.activity;
             if (context.activity.text === 'update') {
                 activityToUpdate.text = 'new response';
                 await context.updateActivity(activityToUpdate);
