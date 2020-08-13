@@ -47,7 +47,7 @@ describe('ChannelServiceHandler', () => {
             strictEqual(handler.authConfig, AUTH_CONFIG);
             strictEqual(handler.credentialProvider, CREDENTIALS);
             strictEqual(handler.channelService, 'test');
-            process.env.ChannelService = undefined;
+            delete process.env.ChannelService;
         });
     
         it('should fail with invalid credentialProvider or authConfig', () => {
