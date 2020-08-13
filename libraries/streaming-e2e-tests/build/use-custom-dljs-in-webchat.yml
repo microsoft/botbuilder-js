@@ -26,11 +26,24 @@ steps:
   - task: Cache@2
     displayName: Cache npm
     inputs:
+    # TODO change key name, but keep it without a lock file to hash
       key: 'no-lock-cache-bfwc-dotenv-consecutive-in-same-job | npm | "$(Agent.OS)"'
       path: $(ReactProjectDir)/node_modules
-      cacheHitVar: 'WcCacheRestored'
+      cacheHitVar: 'CacheRestored'
 
   - powershell: npm install botframework-webchat@4.9.2
-    displayName: 'npm install botframework-webchat'
+    displayName: 'npm install botframework-webchat@4.9.2'
     workingDirectory: $(ReactProjectDir)
-    condition: ne(variables.WcCacheRestored, 'true')
+    condition: ne(variables.CacheRestored, 'true')
+  
+  - powershell: npm start
+    displayName: 'serve react-app (npm start)'
+    workingDirectory: $(ReactProjectDir)
+
+  - powershell: npm install
+    displayName: 'npm install in tests directory'
+    workingDirectory: $(TestsDir)
+
+  - powershell: npm test
+    displayName: 'Run Tests: npm test'
+    workingDirectory: $(TestsDir)
