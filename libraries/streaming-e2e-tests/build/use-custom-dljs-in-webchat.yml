@@ -40,10 +40,6 @@ steps:
     displayName: 'serve react-app (npm start)'
     workingDirectory: $(ReactProjectDir)
   
-  - task: Delay@1
-    inputs:
-      delayForMinutes: '2'
-
   - powershell: npm install
     displayName: 'npm install in tests directory'
     workingDirectory: $(TestsDir)
