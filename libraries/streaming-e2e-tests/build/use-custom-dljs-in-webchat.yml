@@ -15,13 +15,13 @@ steps:
       New-Item -Path . -Name ".npmrc" -ItemType "file" -Value "registry=https://botbuilder.myget.org/F/botbuilder-v4-js-daily/npm/"
     displayName: 'Create .npmrc for MyGet feed - https://botbuilder.myget.org/gallery/botbuilder-v4-js-daily'
 
-  - powershell: npm install $(RootReactPiecesDir)/botframework-directlinejs.tgz
-    displayName: npm install botframework-directlinejs.tgz
-    workingDirectory: $(ReactProjectDir)
+  # - powershell: npm install $(RootReactPiecesDir)/botframework-directlinejs.tgz
+  #   displayName: npm install botframework-directlinejs.tgz
+  #   workingDirectory: $(ReactProjectDir)
   
-  - powershell: npm install dotenv
-    displayName: 'npm install dotenv'
-    workingDirectory: $(ReactProjectDir)
+  # - powershell: npm install dotenv
+  #   displayName: 'npm install dotenv'
+  #   workingDirectory: $(ReactProjectDir)
 
   - task: Cache@2
     displayName: Cache npm
@@ -37,7 +37,7 @@ steps:
     condition: ne(variables.CacheRestored, 'true')
   
   - powershell: npm start
-    displayName: 'serve react-app (npm start)'
+    displayName: 'Serve react-app (npm start)'
     workingDirectory: $(ReactProjectDir)
   
   - powershell: npm install
