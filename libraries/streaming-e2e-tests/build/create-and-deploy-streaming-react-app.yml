@@ -21,4 +21,4 @@ jobs:
       ReactAppEndpoint: 'http://localhost:3000'
     steps:
       - template: use-custom-dljs-in-webchat.yml
-      
+      - template: deploy-react-app.yml

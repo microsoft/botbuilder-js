@@ -36,19 +36,19 @@ steps:
     workingDirectory: $(ReactProjectDir)
     condition: ne(variables.CacheRestored, 'true')
   
-  - powershell: npm start
-    displayName: 'Serve react-app (npm start)'
-    workingDirectory: $(ReactProjectDir)
+  # - powershell: npm start
+  #   displayName: 'Serve react-app (npm start)'
+  #   workingDirectory: $(ReactProjectDir)
   
-  - powershell: npm install
-    displayName: 'npm install in tests directory'
-    workingDirectory: $(TestsDir)
+  # - powershell: npm install
+  #   displayName: 'npm install in tests directory'
+  #   workingDirectory: $(TestsDir)
 
-  - powershell: |
-      Write-Host "Allowing time for React App to serve. Sleeping for 90 seconds..";
-      Start-Sleep -Seconds 90;
-    displayName: 'Sleep to allow React App to serve'
+  # - powershell: |
+  #     Write-Host "Allowing time for React App to serve. Sleeping for 90 seconds..";
+  #     Start-Sleep -Seconds 90;
+  #   displayName: 'Sleep to allow React App to serve'
 
-  - powershell: npm test
-    displayName: 'Run Tests: npm test'
-    workingDirectory: $(TestsDir)
+  # - powershell: npm test
+  #   displayName: 'Run Tests: npm test'
+  #   workingDirectory: $(TestsDir)
