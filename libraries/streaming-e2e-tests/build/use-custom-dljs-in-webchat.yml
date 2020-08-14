@@ -48,10 +48,10 @@ steps:
     displayName: 'npm install in tests directory'
     workingDirectory: $(TestsDir)
 
-  # Delay executing pipeline, to allow React app to serve and load page
-  - task: Delay@1
-    inputs:
-      delayForMinutes: '2'
+  - powershell: |
+      Write-Host "Allowing time for React App to serve. Sleeping for 90 seconds..";
+      Start-Sleep -Seconds 90;
+    displayName: 'Sleep to allow React App to serve'
 
   - powershell: npm test
     displayName: 'Run Tests: npm test'
