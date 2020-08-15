@@ -14,28 +14,24 @@ steps:
       
       New-Item -Path . -Name ".npmrc" -ItemType "file" -Value "registry=https://botbuilder.myget.org/F/botbuilder-v4-js-daily/npm/"
     displayName: 'Create .npmrc for MyGet feed - https://botbuilder.myget.org/gallery/botbuilder-v4-js-daily'
-
-  # - powershell: npm install $(RootReactPiecesDir)/botframework-directlinejs.tgz
-  #   displayName: npm install botframework-directlinejs.tgz
-  #   workingDirectory: $(ReactProjectDir)
   
-  # - powershell: npm install dotenv
-  #   displayName: 'npm install dotenv'
-  #   workingDirectory: $(ReactProjectDir)
-
-  - task: Cache@2
-    displayName: Cache npm
-    inputs:
-    # TODO change key name, but keep it without a lock file to hash
-      key: 'no-lock-cache-bfwc-dotenv-consecutive-in-same-job | npm | "$(Agent.OS)"'
-      path: $(ReactProjectDir)/node_modules
-      cacheHitVar: 'CacheRestored'
+  # - task: Cache@2
+  #   displayName: Cache npm
+  #   inputs:
+  #   # TODO change key name, but keep it without a lock file to hash
+  #     key: 'no-lock-cache-bfwc-consecutive-in-same-job | npm | "$(Agent.OS)"'
+  #     path: $(ReactProjectDir)/node_modules
+  #     cacheHitVar: 'CacheRestored'
 
   - powershell: npm install botframework-webchat@4.9.2
     displayName: 'npm install botframework-webchat@4.9.2'
     workingDirectory: $(ReactProjectDir)
     condition: ne(variables.CacheRestored, 'true')
-  
+
+  - powershell: npm install $(RootReactPiecesDir)/botframework-directlinejs.tgz
+    displayName: npm install botframework-directlinejs.tgz
+    workingDirectory: $(ReactProjectDir)
+
   - powershell: start powershell {npm start}
     displayName: 'Serve react-app (npm start), opening new console'
     workingDirectory: $(ReactProjectDir)
@@ -44,10 +40,8 @@ steps:
     displayName: 'npm install in tests directory'
     workingDirectory: $(TestsDir)
 
-  - powershell: |
-      Write-Host "Allowing React App time to serve. Sleeping for 30 seconds..";
-      Start-Sleep -Seconds 30;
-    displayName: 'Sleep to allow React App to serve'
+  - powershell: Start-Sleep -Seconds 25;
+    displayName: 'Allowing React App to serve. Sleeping 25 seconds'
 
   - powershell: npm test
     displayName: 'Run Tests: npm test'

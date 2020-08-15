@@ -18,7 +18,7 @@ jobs:
       - Customize_DLJS
     condition: succeeded()
     variables:
-      ReactAppEndpoint: 'http://localhost:3000'
+      REACT_APP_BOT_HOSTNAME: $(BotName)
     steps:
       - template: use-custom-dljs-in-webchat.yml
       # - template: deploy-react-app.yml

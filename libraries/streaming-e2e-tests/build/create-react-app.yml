@@ -6,7 +6,7 @@ steps:
     workingDirectory: $(RootReactPiecesDir)
   
   - powershell: Remove-Item src/App.js, src/index.js, public/index.html
-    displayName: "Delete files we're replacing with custom code in react app"
+    displayName: "Delete files we're replacing with custom code in react-app"
     workingDirectory: $(ReactProjectDir)
 
   - powershell: |
@@ -15,12 +15,6 @@ steps:
     displayName: "Copy custom files into react-app"
     workingDirectory: $(ReactProjectDir)
   
-  - powershell: |
-      Add-Content -Path "./.env" -Value REACT_APP_BOT_HOSTNAME=$(BotName)
-      Get-Content -Path "./.env"	
-    displayName: "Write react-consumable bot name to .env"
-    workingDirectory: $(ReactProjectDir)
-
   - task: PublishPipelineArtifact@1
     displayName: 'Publish Artifact: ReactApp'
     inputs:
