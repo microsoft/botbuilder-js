@@ -45,8 +45,8 @@ steps:
     workingDirectory: $(TestsDir)
 
   - powershell: |
-      Write-Host "Allowing time for React App to serve. Sleeping for 1 min..";
-      Start-Sleep -Seconds 60;
+      Write-Host "Allowing React App time to serve. Sleeping for 30 seconds..";
+      Start-Sleep -Seconds 30;
     displayName: 'Sleep to allow React App to serve'
 
   - powershell: npm test
