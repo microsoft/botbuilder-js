@@ -15,13 +15,13 @@ steps:
       New-Item -Path . -Name ".npmrc" -ItemType "file" -Value "registry=https://botbuilder.myget.org/F/botbuilder-v4-js-daily/npm/"
     displayName: 'Create .npmrc for MyGet feed - https://botbuilder.myget.org/gallery/botbuilder-v4-js-daily'
   
-  # - task: Cache@2
-  #   displayName: Cache npm
-  #   inputs:
-  #   # TODO change key name, but keep it without a lock file to hash
-  #     key: 'no-lock-cache-bfwc-consecutive-in-same-job | npm | "$(Agent.OS)"'
-  #     path: $(ReactProjectDir)/node_modules
-  #     cacheHitVar: 'CacheRestored'
+  - task: Cache@2
+    displayName: Cache npm
+    inputs:
+    # TODO change key name, but keep it without a lock file to hash
+      key: 'latest-streaming-in-dljs-no-lock-cache-bfwc-dljs | npm | "$(Agent.OS)"'
+      path: $(ReactProjectDir)/node_modules
+      cacheHitVar: 'CacheRestored'
 
   - powershell: npm install botframework-webchat@4.9.2
     displayName: 'npm install botframework-webchat@4.9.2'
@@ -32,17 +32,17 @@ steps:
     displayName: npm install botframework-directlinejs.tgz
     workingDirectory: $(ReactProjectDir)
 
-  - powershell: start powershell {npm start}
-    displayName: 'Serve react-app (npm start), opening new console'
-    workingDirectory: $(ReactProjectDir)
+  # - powershell: start powershell {npm start}
+  #   displayName: 'Serve react-app (npm start), opening new console'
+  #   workingDirectory: $(ReactProjectDir)
   
-  - powershell: npm install
-    displayName: 'npm install in tests directory'
-    workingDirectory: $(TestsDir)
+  # - powershell: npm install
+  #   displayName: 'npm install in tests directory'
+  #   workingDirectory: $(TestsDir)
 
-  - powershell: Start-Sleep -Seconds 25;
-    displayName: 'Allowing React App to serve. Sleeping 25 seconds'
+  # - powershell: Start-Sleep -Seconds 25;
+  #   displayName: 'Allowing React App to serve. Sleeping 25 seconds'
 
-  - powershell: npm test
-    displayName: 'Run Tests: npm test'
-    workingDirectory: $(TestsDir)
+  # - powershell: npm test
+  #   displayName: 'Run Tests: npm test'
+  #   workingDirectory: $(TestsDir)

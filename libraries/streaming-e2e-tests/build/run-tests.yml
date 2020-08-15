@@ -1,7 +1,7 @@
 jobs:
   - job: Run_Tests
-    variables:
-      ReactAppEndpoint: 'https://$(ReactAppService).azurewebsites.net/'
+    # variables:
+    #   ReactAppEndpoint: 'https://$(ReactAppService).azurewebsites.net/'
     steps:
       - powershell: npm install
         displayName: 'npm install in tests directory'
