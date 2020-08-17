@@ -136,7 +136,10 @@ export class QnAMakerRecognizer extends Recognizer {
             }
 
             recognizerResult.entities['answer'] = [topAnswer.answer];
-            recognizerResult.entities['$instance'] = { answer: [topAnswer] };
+            recognizerResult.entities['$instance'] = { answer: [Object.assign(topAnswer, {
+                startIndex: 0,
+                endIndex: activity.text.length
+            })] };
             recognizerResult['answers'] = answers;
         } else {
             recognizerResult.intents['None'] = { score: 1 };
