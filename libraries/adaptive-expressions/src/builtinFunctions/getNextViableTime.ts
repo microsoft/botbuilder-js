@@ -39,7 +39,7 @@ export class GetNextViableTime extends ExpressionEvaluator {
         ({args, error} = FunctionUtils.evaluateChildren(expr, state, options));
         if(!error)  {
             if (!formatRegex.test(args[0] as string)) {
-                error = `${args[0]}  must be a timex string which only contains minutes and seconds, for example: 'TXX:15:28'`
+                error = `${args[0]}  must be a timex string which only contains minutes and seconds, for example: 'TXX:15:28'`;
             }
         }
 

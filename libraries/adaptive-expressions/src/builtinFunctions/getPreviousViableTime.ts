@@ -39,7 +39,7 @@ export class GetPreviousViableTime extends ExpressionEvaluator {
         ({args, error} = FunctionUtils.evaluateChildren(expr, state, options));
         if(!error)  {
             if (!formatRegex.test(args[0] as string)) {
-                error = `${args[0]}  must be a timex string which only contains minutes and seconds, for example: 'TXX:15:28'`
+                error = `${args[0]}  must be a timex string which only contains minutes and seconds, for example: 'TXX:15:28'`;
             }
         }
 
@@ -71,6 +71,12 @@ export class GetPreviousViableTime extends ExpressionEvaluator {
                 validHour = hour;
             } else {
                 validHour = hour - 1;
+            }
+
+            if (validHour < 0) {
+                validHour = validHour + 24;
+            } else if (validHour >= 24) {
+                validHour = validHour - 24;
             }
 
             validMinute = parsed.minute;
