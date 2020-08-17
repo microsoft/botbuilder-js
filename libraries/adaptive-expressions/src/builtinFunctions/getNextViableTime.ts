@@ -73,6 +73,10 @@ export class GetNextViableTime extends ExpressionEvaluator {
                 validHour = hour + 1;
             }
 
+            if (validHour >= 24) {
+                validHour -= 24;
+            }
+
             validMinute = parsed.minute;
             validSecond = parsed.second;
         }

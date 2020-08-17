@@ -74,9 +74,9 @@ export class GetPreviousViableTime extends ExpressionEvaluator {
             }
 
             if (validHour < 0) {
-                validHour = validHour + 24;
+                validHour += 24;
             } else if (validHour >= 24) {
-                validHour = validHour - 24;
+                validHour -= 24;
             }
 
             validMinute = parsed.minute;
