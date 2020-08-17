@@ -21,6 +21,10 @@ describe('CrossTrainedRecognizerSetTests', function() {
         await testRunner.runTestScript('CrossTrainedRecognizerSetTests_DoubleIntent');
     });
 
+    it('Empty', async () => {
+        await testRunner.runTestScript('CrossTrainedRecognizerSetTests_Empty');
+    });
+
     it('NoneWithIntent', async () => {
         await testRunner.runTestScript('CrossTrainedRecognizerSetTests_NoneWithIntent');
     });
