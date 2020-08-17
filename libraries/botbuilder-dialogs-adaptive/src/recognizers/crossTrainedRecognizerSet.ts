@@ -17,6 +17,12 @@ export class CrossTrainedRecognizerSet extends Recognizer {
     public recognizers: Recognizer[] = [];
 
     public async recognize(dialogContext: DialogContext, activity: Activity, telemetryProperties?: { [key: string]: string }, telemetryMetrics?: { [key: string]: number }): Promise<RecognizerResult> {
+        if (!this.recognizers.length) {
+            return {
+                text: '',
+                intents: { 'None': { score: 1.0 } }
+            };
+        }
         for (let i = 0; i < this.recognizers.length; i++) {
             if (!this.recognizers[i].id) {
                 throw new Error('This recognizer requires that each recognizer in the set have an id.');
