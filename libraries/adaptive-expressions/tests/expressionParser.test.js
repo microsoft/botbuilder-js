@@ -869,7 +869,7 @@ describe('expression parser functional test', () => {
     // actual and expected may differ just enough make the test fail.
     // To evaluate expressions like "getPastTime", we need to freeze the system clock so that every call to
     // `new Date()` done by both the test and by ExpressionEvaluator return the exact same time.
-    it.only('should appropriately evaluate time-related expressions', () => {
+    it('should appropriately evaluate time-related expressions', () => {
         // Freeze the system clock.
         // The expected date in MM-DD-YY HH is 08-01-20 00
         let clock = useFakeTimers({
