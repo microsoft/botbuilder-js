@@ -10,13 +10,31 @@ import { RecognizerResult, Activity, getTopScoringIntent } from 'botbuilder-core
 import { DialogContext } from 'botbuilder-dialogs';
 import { Recognizer } from './recognizer';
 
+/**
+ * Standard cross trained intent name prefix.
+ */
 const deferPrefix = 'DeferToRecognizer_';
 
+/**
+ * Recognizer for selecting between cross trained recognizers.
+ */
 export class CrossTrainedRecognizerSet extends Recognizer {
 
+    /**
+     * Gets or sets the input recognizers.
+     */
     public recognizers: Recognizer[] = [];
 
+    /**
+     * To recognize intents and entities in a users utterance.
+     */
     public async recognize(dialogContext: DialogContext, activity: Activity, telemetryProperties?: { [key: string]: string }, telemetryMetrics?: { [key: string]: number }): Promise<RecognizerResult> {
+        if (!this.recognizers.length) {
+            return {
+                text: '',
+                intents: { 'None': { score: 1.0 } }
+            };
+        }
         for (let i = 0; i < this.recognizers.length; i++) {
             if (!this.recognizers[i].id) {
                 throw new Error('This recognizer requires that each recognizer in the set have an id.');
@@ -33,6 +51,13 @@ export class CrossTrainedRecognizerSet extends Recognizer {
         
     }
 
+    /**
+     * Process a list of raw results from recognizers.
+     * If there is consensus among the cross trained recognizers, the recognizerResult structure from
+     * the consensus recognizer is returned.
+     * 
+     * @param results A list of recognizer results to be processed.
+     */
     private processResults(results: RecognizerResult[]): RecognizerResult {
         const recognizerResults = {};
         const intents = {};
@@ -103,6 +128,10 @@ export class CrossTrainedRecognizerSet extends Recognizer {
         return recognizerResult;
     }
 
+    /**
+     * Creates choose intent result in the case that there is conflicting or ambigious signals from the recognizers.
+     * @param recognizerResults A group of recognizer results.
+     */
     private createChooseIntentResult(recognizerResults: { [name: string]: RecognizerResult }): RecognizerResult {
         let text: string;
         const candidates: object[] = [];
@@ -137,10 +166,18 @@ export class CrossTrainedRecognizerSet extends Recognizer {
         return recognizerResult;
     }
 
+    /**
+     * Check if an intent is triggering redirects.
+     * @param intent 
+     */
     private isRedirect(intent: string): boolean {
         return intent.startsWith(deferPrefix);
     }
 
+    /**
+     * Extracts the redirect id from an intent.
+     * @param intent Intent string contains redirect id.
+     */
     private getRedirectId(intent: string): string {
         return intent.substr(deferPrefix.length);
     }
