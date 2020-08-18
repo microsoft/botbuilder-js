@@ -16,11 +16,13 @@ describe('ApplicationInsightsTelemetryClient', function() {
         it('should throw if an instrumentation key is not passed in', function() {
             assert.throws(() => new ApplicationInsightsTelemetryClient());
         });
+
         it('should add the default appInsights client to the instance when constructed', function() {
             const client = new ApplicationInsightsTelemetryClient('fakeKey');
 
             assert.strictEqual(client.client, appInsights.defaultClient);
         });
+
         it('should add a telemetry processor to the instance when constructed', function() {
             const client = new ApplicationInsightsTelemetryClient('fakeKey');
 
@@ -41,12 +43,14 @@ describe('ApplicationInsightsTelemetryClient', function() {
 
             assert.strictEqual(config, client.config);
         });
+
         it('defaultClient() getter should return the client', function() {
             const client = new ApplicationInsightsTelemetryClient('fakeKey');
             const defaultClient = client.defaultClient;
 
             assert.strictEqual(defaultClient, client.client);
         });
+
         it('trackDependency() method should call the same method in default appInsights client', function() {
             const client = new ApplicationInsightsTelemetryClient('fakeKey');
             const spy = sinon.spy(appInsights.defaultClient, 'trackDependency');
@@ -56,6 +60,7 @@ describe('ApplicationInsightsTelemetryClient', function() {
 
             assert(spy.calledOnce);
         });
+
         it('trackEvent() method should call the same method in default appInsights client', function() {
             const client = new ApplicationInsightsTelemetryClient('fakeKey');
             const spy = sinon.spy(appInsights.defaultClient, 'trackEvent');
@@ -65,6 +70,7 @@ describe('ApplicationInsightsTelemetryClient', function() {
 
             assert(spy.calledOnce);
         });
+
         it('trackException() method should call the same method in default appInsights client', function() {
             const client = new ApplicationInsightsTelemetryClient('fakeKey');
             const spy = sinon.spy(appInsights.defaultClient, 'trackException');
@@ -74,6 +80,7 @@ describe('ApplicationInsightsTelemetryClient', function() {
 
             assert(spy.calledOnce);
         });
+
         it('trackTrace() method should call the same method in default appInsights client', function() {
             const client = new ApplicationInsightsTelemetryClient('fakeKey');
             const spy = sinon.spy(appInsights.defaultClient, 'trackTrace');
@@ -83,6 +90,7 @@ describe('ApplicationInsightsTelemetryClient', function() {
 
             assert(spy.calledOnce);
         });
+
         it('trackPageView() method should call the same method in default appInsights client', function() {
             const client = new ApplicationInsightsTelemetryClient('fakeKey');
             const spy = sinon.spy(appInsights.defaultClient, 'trackPageView');
@@ -92,6 +100,7 @@ describe('ApplicationInsightsTelemetryClient', function() {
 
             assert(spy.calledOnce);
         });
+
         it('flush() method should call the same method in default appInsights client', function() {
             const client = new ApplicationInsightsTelemetryClient('fakeKey');
             const spy = sinon.spy(appInsights.defaultClient, 'flush');
@@ -100,12 +109,13 @@ describe('ApplicationInsightsTelemetryClient', function() {
 
             assert(spy.calledOnce);
         });
+
         it('addBotIdentifiers() correctly sets App Insights values', function() {
             const client = new ApplicationInsightsTelemetryClient('fakeKey');
             const activity = {
                 from: { id: 'stub from id' },
                 channelId: 'stub channel id',
-                conversation: { id: 'stub conversation id'},
+                conversation: { id: 'stub conversation id' },
                 id: 'stub activity id',
                 type: 'stub activity type'
             };
@@ -133,6 +143,41 @@ describe('ApplicationInsightsTelemetryClient', function() {
             assert.strictEqual(envelope.data.baseData.properties.channelId, activity.channelId);
             assert.strictEqual(envelope.data.baseData.properties.conversationId, activity.conversation.id);
         });
+
+        it('addBotIdentifiers() correctly sets App Insights values, defaulting to empty strings', function() {
+            const client = new ApplicationInsightsTelemetryClient('fakeKey');
+            client.client.commonProperties = undefined;
+            const activity = {
+                from: undefined,
+                channelId: undefined,
+                conversation: undefined,
+                id: 'stub activity id',
+                type: 'stub activity type'
+            };
+            const operation = { 
+                id: 'stub operation id',
+                name: 'stub operation name',
+                parentId: 'stub parent id'
+            };
+            const stub = sinon.stub(CorrelationContextManager, 'getCurrentContext');
+            stub.returns({
+                activity,
+                operation 
+            });
+            const spy = sinon.spy(client.client.channel, 'send');
+
+            client.trackEvent({});
+
+            const envelope = spy.args[0][0];
+            assert.strictEqual(envelope.iKey, 'fakeKey');
+            assert.strictEqual(envelope.tags['ai.operation.id'], operation.id);
+            assert.strictEqual(envelope.tags['ai.operation.parentId'], operation.parentId);
+            assert.strictEqual(envelope.tags['ai.user.id'], '');
+            assert.strictEqual(envelope.data.baseData.properties.activityId, activity.id);
+            assert.strictEqual(envelope.data.baseData.properties.activityType, activity.type);
+            assert.strictEqual(envelope.data.baseData.properties.channelId, '');
+            assert.strictEqual(envelope.data.baseData.properties.conversationId, '');
+        });
     });
 
     describe('ApplicationInsightsWebserverMiddleware', function() {
@@ -157,12 +202,37 @@ describe('ApplicationInsightsTelemetryClient', function() {
                 activity: {},
                 operation 
             });
-            const emitter = new EventEmitter();
-            emitter.body = activity;
+            const requestEmitter = new EventEmitter();
+            const responseEmitter = new EventEmitter();
+            requestEmitter.body = activity;
 
-            ApplicationInsightsWebserverMiddleware(emitter, new EventEmitter(), () => { });
+            ApplicationInsightsWebserverMiddleware(requestEmitter, responseEmitter, () => { });
             
             assert.strictEqual(appInsights.getCorrelationContext().activity, activity);
+            
+            requestEmitter.removeAllListeners();
+            responseEmitter.removeAllListeners();
+        });
+
+        it('does not change context if no activity provided', function() {
+            const operation = { 
+                id: 'stub operation id',
+                name: 'stub operation name',
+                parentId: 'stub parent id'
+            };
+            const stub = sinon.stub(CorrelationContextManager, 'getCurrentContext');
+            stub.returns({
+                operation 
+            });
+            const requestEmitter = new EventEmitter();
+            const responseEmitter = new EventEmitter();
+
+            ApplicationInsightsWebserverMiddleware(requestEmitter, responseEmitter, () => { });
+            
+            assert.strictEqual(appInsights.getCorrelationContext().activity, undefined);
+            
+            requestEmitter.removeAllListeners();
+            responseEmitter.removeAllListeners();
         });
     });
 });
