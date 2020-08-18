@@ -21,4 +21,4 @@ jobs:
       REACT_APP_BOT_HOSTNAME: $(BotName)
     steps:
       - template: use-custom-dljs-in-webchat.yml
-      - template: deploy-react-app.yml
+      # - template: deploy-react-app.yml
