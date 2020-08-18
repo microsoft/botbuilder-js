@@ -37,20 +37,30 @@ steps:
     workingDirectory: $(ReactProjectDir)
 
   - powershell: type package.json
+    displayName: Show react-app package.json
+    workingDirectory: $(ReactProjectDir)
+
+  - powershell: type package.json
     displayName: Show DLJS package.json
     workingDirectory: $(ReactProjectDir)/node_modules/botframework-directlinejs
-
-  - powershell: start powershell {npm start}
-    displayName: 'Serve react-app (npm start), opening new console'
-    workingDirectory: $(ReactProjectDir)
   
-  - powershell: npm install
-    displayName: 'npm install in tests directory'
-    workingDirectory: $(TestsDir)
+  - task: PublishPipelineArtifact@1
+    displayName: 'Publish Artifact: CustomizedReactApp'
+    inputs:
+      targetPath: $(ReactProjectDir)
+      artifactName: 'CustomizedReactApp'
 
-  - powershell: Start-Sleep -Seconds 25;
-    displayName: 'Allowing React App to serve. Sleeping 25 seconds'
+  # - powershell: start powershell {npm start}
+  #   displayName: 'Serve react-app (npm start), opening new console'
+  #   workingDirectory: $(ReactProjectDir)
+  
+  # - powershell: npm install
+  #   displayName: 'npm install in tests directory'
+  #   workingDirectory: $(TestsDir)
 
-  - powershell: npm test
-    displayName: 'Run Tests: npm test'
-    workingDirectory: $(TestsDir)
+  # - powershell: Start-Sleep -Seconds 25;
+  #   displayName: 'Allowing React App to serve. Sleeping 25 seconds'
+
+  # - powershell: npm test
+  #   displayName: 'Run Tests: npm test'
+  #   workingDirectory: $(TestsDir)
