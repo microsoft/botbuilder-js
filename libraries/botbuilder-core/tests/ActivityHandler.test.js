@@ -223,6 +223,45 @@ describe('ActivityHandler', function() {
         processActivity({type: ActivityTypes.Typing}, bot, done);
     });
 
+    it(`should fire onInstallationUpdate`, async function(done) {
+
+        const bot = new ActivityHandler();
+
+        bot.onInstallationUpdate(async (context, next) => {
+            assert(true, 'onInstallationUpdate not called');
+            done();
+            await next();
+        });
+
+        processActivity({type: ActivityTypes.InstallationUpdate}, bot, done);
+    });
+
+    it(`should fire onInstallationUpdateAdd`, async function(done) {
+
+        const bot = new ActivityHandler();
+
+        bot.onInstallationUpdateAdd(async (context, next) => {
+            assert(true, 'onInstallationUpdateAdd not called');
+            done();
+            await next();
+        });
+
+        processActivity({type: ActivityTypes.InstallationUpdate, action: 'add'}, bot, done);
+    });
+
+    it(`should fire onInstallationUpdateRemove`, async function(done) {
+
+        const bot = new ActivityHandler();
+
+        bot.onInstallationUpdateRemove(async (context, next) => {
+            assert(true, 'onInstallationUpdateRemove not called');
+            done();
+            await next();
+        });
+
+        processActivity({type: ActivityTypes.InstallationUpdate, action: 'remove'}, bot, done);
+    });
+
     it(`should fire onUnrecognizedActivityType`, async function(done) {
 
         const bot = new ActivityHandler();

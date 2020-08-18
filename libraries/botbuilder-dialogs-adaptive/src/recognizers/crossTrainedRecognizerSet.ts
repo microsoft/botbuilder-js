@@ -10,15 +10,31 @@ import { RecognizerResult, Activity, getTopScoringIntent } from 'botbuilder-core
 import { DialogContext } from 'botbuilder-dialogs';
 import { Recognizer } from './recognizer';
 
+/**
+ * Standard cross trained intent name prefix.
+ */
 const deferPrefix = 'DeferToRecognizer_';
 
-export class CrossTrainedRecognizerSet implements Recognizer {
+/**
+ * Recognizer for selecting between cross trained recognizers.
+ */
+export class CrossTrainedRecognizerSet extends Recognizer {
 
-    public id: string;
-
+    /**
+     * Gets or sets the input recognizers.
+     */
     public recognizers: Recognizer[] = [];
 
-    public async recognize(dialogContext: DialogContext, activity: Activity): Promise<RecognizerResult> {
+    /**
+     * To recognize intents and entities in a users utterance.
+     */
+    public async recognize(dialogContext: DialogContext, activity: Activity, telemetryProperties?: { [key: string]: string }, telemetryMetrics?: { [key: string]: number }): Promise<RecognizerResult> {
+        if (!this.recognizers.length) {
+            return {
+                text: '',
+                intents: { 'None': { score: 1.0 } }
+            };
+        }
         for (let i = 0; i < this.recognizers.length; i++) {
             if (!this.recognizers[i].id) {
                 throw new Error('This recognizer requires that each recognizer in the set have an id.');
@@ -26,9 +42,23 @@ export class CrossTrainedRecognizerSet implements Recognizer {
         }
 
         const results = await Promise.all(this.recognizers.map((recognizer: Recognizer): Promise<RecognizerResult> => {
-            return recognizer.recognize(dialogContext, activity);
+            return recognizer.recognize(dialogContext, activity, telemetryProperties, telemetryMetrics);
         }));
+        
+        const result = this.processResults(results);
+        this.trackRecognizerResult(dialogContext, 'CrossTrainedRecognizerSetResult', this.fillRecognizerResultTelemetryProperties(result, telemetryProperties),telemetryMetrics);
+        return result;
+        
+    }
 
+    /**
+     * Process a list of raw results from recognizers.
+     * If there is consensus among the cross trained recognizers, the recognizerResult structure from
+     * the consensus recognizer is returned.
+     * 
+     * @param results A list of recognizer results to be processed.
+     */
+    private processResults(results: RecognizerResult[]): RecognizerResult {
         const recognizerResults = {};
         const intents = {};
         let text = '';
@@ -98,6 +128,10 @@ export class CrossTrainedRecognizerSet implements Recognizer {
         return recognizerResult;
     }
 
+    /**
+     * Creates choose intent result in the case that there is conflicting or ambigious signals from the recognizers.
+     * @param recognizerResults A group of recognizer results.
+     */
     private createChooseIntentResult(recognizerResults: { [name: string]: RecognizerResult }): RecognizerResult {
         let text: string;
         const candidates: object[] = [];
@@ -132,10 +166,18 @@ export class CrossTrainedRecognizerSet implements Recognizer {
         return recognizerResult;
     }
 
+    /**
+     * Check if an intent is triggering redirects.
+     * @param intent 
+     */
     private isRedirect(intent: string): boolean {
         return intent.startsWith(deferPrefix);
     }
 
+    /**
+     * Extracts the redirect id from an intent.
+     * @param intent Intent string contains redirect id.
+     */
     private getRedirectId(intent: string): string {
         return intent.substr(deferPrefix.length);
     }

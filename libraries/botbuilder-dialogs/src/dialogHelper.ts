@@ -8,6 +8,7 @@
 
 import { Activity,
     ActivityTypes,
+    EndOfConversationCodes,
     SkillConversationReference,
     SkillConversationReferenceKey,
     StatePropertyAccessor,
@@ -85,7 +86,8 @@ export async function runDialog(dialog: Dialog, context: TurnContext, accessor: 
             await context.sendTraceActivity(telemetryEventName, result.result, undefined, `${ endMessageText }`);
 
             // Send End of conversation at the end.
-            const activity: Partial<Activity> = { type: ActivityTypes.EndOfConversation, value: result.result, locale: context.activity.locale };
+            const code = result.status == DialogTurnStatus.complete ? EndOfConversationCodes.CompletedSuccessfully : EndOfConversationCodes.UserCancelled;
+            const activity: Partial<Activity> = { type: ActivityTypes.EndOfConversation, value: result.result, locale: context.activity.locale, code: code };
             await context.sendActivity(activity);
         }
     }

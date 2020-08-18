@@ -27,34 +27,31 @@ export class StringExpression extends ExpressionProperty<string> {
         super(value);
     }
 
-    public tryGetValue(data: object): { value: string; error: Error } {
-        if (typeof this.value == 'string') {
-            let v: any, e: string;
-            const expressionStr = '`' + this.value + '`';
-            ({value: v, error: e} = Expression.parse(expressionStr).tryEvaluate(data));
+    /**
+     * Set a string value.
+     * @param value Value to set.
+     */
+    public setValue(value: string | Expression): void {
+        // reset state to no value or expression
+        super.setValue(undefined);
 
-            return e == undefined ? { value: v as string, error: undefined } : { value: v as string, error: new Error(e) };
+        if (value instanceof Expression) {
+            super.setValue(value);
+            return;
         }
 
-        return super.tryGetValue(data);
-    }
-    
-    public setValue(value: string | Expression): void {
-        this.value = undefined;
-        this.expression = undefined;
-
-        if (typeof value == 'string' && !value.startsWith('=')) {
-            // Trim off the escape char for equals (\=foo) should simply be the string (=foo).
-            if (value.startsWith('\\=')) {
+        if (typeof value == 'string') {
+            if (value.startsWith('=')) {
+                this.expressionText = value;
+                return;
+            } else if (value.startsWith('\\=')) {
+                // Trim off the escape char for equals (\=foo) should simply be the string (=foo).
                 value = value.substr(1);
             }
 
             // Initialize value
-            this.value = value;
-            this.expression = undefined;
+            this.expressionText = `=\`${ value.replace(/\\/g, '\\\\') }\``;
             return;
         }
-
-        super.setValue(value);
     }
 }

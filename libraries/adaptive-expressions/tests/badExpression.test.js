@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
-const {ExpressionParser} = require('../');
+const { ExpressionParser } = require('../');
 const assert = require('assert');
 
 const invalidExpressions = [
@@ -285,6 +285,18 @@ const badExpressions =
         'ticksToDays(12.12)', //should have an integer parameter
         'ticksToHours(12.12)', //should have an integer parameter
         'ticksToMinutes(12.12)', //should have an integer parameter
+        'getNextViableDate(hello)', // should have a "XXXX-MM-DD" format string
+        'getNextViableDate(one)', // should have a string parameter
+        'getNextViableDate(\'XXXX-10-10\', 20)', // should only have 1 parameter
+        'getPreviousViableDate(hello)', // should have a "XXXX-MM-DD" format string
+        'getPreviousViableDate(one)', // should have a string parameter
+        'getPreviousViableDate(\'XXXX-10-10\', 20)', // should only have 1 parameter
+        'getNextViableTime(hello)', // should have a "XX:mm:ss" format string
+        'getNextViableTime(one)', // should have a string parameter
+        'getNextViableTime(\'XX:12:12\', 20)', // should only have 1 parameter
+        'getPreviousViableTime(hello)', // should have a "XX:mm:ss" format string
+        'getPreviousViableTime(one)', // should have a string parameter
+        'getPreviousViableTime(\'XX:12:12\', 20)', // should only have 1 parameter
 
         // collection functions test
         'sum(items, \'hello\')',//should have 1 parameter
@@ -459,36 +471,44 @@ const scope = {
 
 describe('expression functional test', () => {
     it('should get exception results for bad expressions', () => {
+        const errors = [];
+
         for (const expression of badExpressions) {
             let isFail = false;
             const input = expression;
             try {
                 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-                var {value: actual, error} = new ExpressionParser().parse(input).tryEvaluate(scope);
+                var { value: actual, error } = new ExpressionParser().parse(input).tryEvaluate(scope);
                 if (error === undefined) {
                     isFail = true;
                 } else {
-                    console.log(error);
+                    errors.push(error);
                 }
             } catch (e) {
-                console.log(e.message);
+                errors.push(e.message);
             }
 
             if (isFail) {
                 assert.fail(`Test method ${input} did not throw expected exception`);
             }
         }
+
+        console.log(errors.join('\n'));
     });
 
     it('should get exception results for invalid expressions', () => {
+        const errors = [];
+
         for (const expression of invalidExpressions) {
             const input = expression;
             try {
                 new ExpressionParser().parse(input);
                 assert.fail(`Test expression ${input} did not throw expected exception`);
             } catch (e) {
-                console.log(e.message);
+                errors.push(e.message);
             }
         }
+
+        console.log(errors.join('\n'));
     });
 });

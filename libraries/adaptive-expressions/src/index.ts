@@ -23,3 +23,6 @@ export * from './datetimeFormatConverter';
 export * from './functionTable';
 export * from './converters';
 export * from './expressionProperties';
+export { NumberTransformEvaluator, NumericEvaluator, StringTransformEvaluator, ComparisonEvaluator, MultivariateNumericEvaluator, TimeTransformEvaluator } from './builtinFunctions';
+export * from './functionUtils';
+export * from './returnType';

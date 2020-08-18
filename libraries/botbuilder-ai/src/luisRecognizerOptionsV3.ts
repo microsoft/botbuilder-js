@@ -44,7 +44,7 @@ export class LuisRecognizerV3 extends LuisRecognizerInternal {
 
     public predictionOptions: LuisRecognizerOptionsV3;
 
-    async recognizeInternalAsync(context: TurnContext): Promise<RecognizerResult> {
+    async recognizeInternal(context: TurnContext): Promise<RecognizerResult> {
         const utterance: string = context.activity.text || '';
         if (!utterance.trim()) {
             // Bypass LUIS if the activity's text is null or whitespace

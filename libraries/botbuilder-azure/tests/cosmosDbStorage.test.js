@@ -24,7 +24,7 @@ const getSettings = (partitionKey=undefined) => ({
 
 const checkEmulator = () => {
     if (!fs.existsSync(emulatorPath)) {
-        console.warn('This test requires CosmosDB Emulator! go to https://aka.ms/documentdb-emulator-docs to download and install.');
+        console.warn('These tests require CosmosDB Emulator! go to https://aka.ms/documentdb-emulator-docs to download and install.');
     }
     return true;
 };
@@ -198,23 +198,19 @@ describe('CosmosDbStorage - Constructor Tests', function() {
 
 describe('CosmosDbStorage - Base Storage Tests', function() {
     before('cleanup', reset);
+    before('check emulator', checkEmulator);
     after('cleanup', reset);
 
     it('return empty object when reading unknown key', async function() {
-        checkEmulator();
         const { nockDone } = await usingNock(this.test, mode, options);
-
         const testRan = await StorageBaseTests.returnEmptyObjectWhenReadingUnknownKey(storage);
         
         assert.strictEqual(testRan, true);
-
         return nockDone();
     });
 
     it('throws when reading null keys', async function() {
-        checkEmulator();
         const { nockDone } = await usingNock(this.test, mode, options);
-
         const testRan = await StorageBaseTests.handleNullKeysWhenReading(storage);
 
         assert.strictEqual(testRan, true);
@@ -222,9 +218,7 @@ describe('CosmosDbStorage - Base Storage Tests', function() {
     });
 
     it('throws when writing null keys', async function() {
-        checkEmulator();
         const { nockDone } = await usingNock(this.test, mode, options);
-
         const testRan = await StorageBaseTests.handleNullKeysWhenWriting(storage);
         
         assert.strictEqual(testRan, true);
@@ -232,9 +226,7 @@ describe('CosmosDbStorage - Base Storage Tests', function() {
     });
 
     it('does not throw when writing no items', async function() {
-        checkEmulator();
         const { nockDone } = await usingNock(this.test, mode, options);
-
         const testRan = await StorageBaseTests.doesNotThrowWhenWritingNoItems(storage);
         
         assert.strictEqual(testRan, true);
@@ -242,9 +234,7 @@ describe('CosmosDbStorage - Base Storage Tests', function() {
     });
 
     it('create an object', async function() {
-        checkEmulator();
         const { nockDone } = await usingNock(this.test, mode, options);
-
         const testRan = await StorageBaseTests.createObject(storage);
 
         assert.strictEqual(testRan, true);
@@ -252,9 +242,7 @@ describe('CosmosDbStorage - Base Storage Tests', function() {
     });
 
     it('handle crazy keys', async function() {
-        checkEmulator();
         const { nockDone } = await usingNock(this.test, mode, options);
-
         const testRan = await StorageBaseTests.handleCrazyKeys(storage);
 
         assert.strictEqual(testRan, true);
@@ -262,9 +250,7 @@ describe('CosmosDbStorage - Base Storage Tests', function() {
     });
 
     it('update an object', async function() {
-        checkEmulator();
         const { nockDone } = await usingNock(this.test, mode, options);
-
         const testRan = await StorageBaseTests.updateObject(storage);
 
         assert.strictEqual(testRan, true);
@@ -272,9 +258,7 @@ describe('CosmosDbStorage - Base Storage Tests', function() {
     });
 
     it('delete an object', async function() {
-        checkEmulator();
         const { nockDone } = await usingNock(this.test, mode, options);
-
         const testRan = await StorageBaseTests.deleteObject(storage);
 
         assert.strictEqual(testRan, true);
@@ -282,9 +266,7 @@ describe('CosmosDbStorage - Base Storage Tests', function() {
     });
 
     it('does not throw when deleting an unknown object', async function() {
-        checkEmulator();
         const { nockDone } = await usingNock(this.test, mode, options);
-
         const testRan = await StorageBaseTests.deleteUnknownObject(storage);
 
         assert.strictEqual(testRan, true);
@@ -292,9 +274,7 @@ describe('CosmosDbStorage - Base Storage Tests', function() {
     });
 
     it('performs batch operations', async function() {
-        checkEmulator();
         const { nockDone } = await usingNock(this.test, mode, options);
-
         const testRan = await StorageBaseTests.performBatchOperations(storage);
 
         assert.strictEqual(testRan, true);
@@ -302,9 +282,7 @@ describe('CosmosDbStorage - Base Storage Tests', function() {
     });
 
     it('proceeds through a waterfall dialog', async function() {
-        checkEmulator();
         const { nockDone } = await usingNock(this.test, mode, options);
-
         const testRan = await StorageBaseTests.proceedsThroughWaterfall(storage);
 
         assert.strictEqual(testRan, true);
@@ -322,10 +300,10 @@ describe('CosmosDbStorage - Base Storage Tests', function() {
 // PartitionKeys are deprecated. Tests are here to ensure backwards compatibility of changes
 describe('CosmosDbStorage - PartitionKey Tests', function() {
     before('cleanup', reset);
+    before('check emulator', checkEmulator);
     after('cleanup', reset);
 
     it('create and read an object with partitionKey', async function() {
-        checkEmulator();
         const { nockDone } = await usingNock(this.test, mode, options);
 
         await storage.write(changes);
@@ -336,7 +314,6 @@ describe('CosmosDbStorage - PartitionKey Tests', function() {
     });
 
     it('update an object with partitionKey', async function() {
-        checkEmulator();
         const { nockDone } = await usingNock(this.test, mode, options);
 
         await storage.write({ keyUpdate: { count: 1 }, Location: partitionKey });
@@ -355,7 +332,6 @@ describe('CosmosDbStorage - PartitionKey Tests', function() {
     });
 
     it('delete an object with partitionKey', async function() {
-        checkEmulator();
         const { nockDone } = await usingNock(this.test, mode, options);
 
         await storage.write(changes);

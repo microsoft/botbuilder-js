@@ -21,7 +21,7 @@
   "typings": "./lib/index.d.ts",
   "dependencies": {
     "@azure/ms-rest-js": "1.8.15",
-    "@types/node": "^10.12.18",
+    "@types/node": "^10.17.27",
     "axios": "^0.19.0",
     "botbuilder-core": "4.1.6",
     "botframework-connector": "4.1.6",
@@ -32,17 +32,17 @@
   },
   "devDependencies": {
     "@microsoft/api-extractor": "^7.7.12",
-    "@types/mocha": "^2.2.47",
+    "@types/mocha": "^5.2.7",
     "@types/moment-timezone": "^0.5.13",
     "assert": "^1.4.1",
     "chatdown": "^1.0.2",
-    "mocha": "^5.2.0",
+    "mocha": "^6.2.3",
     "nock": "^11.9.1",
-    "nyc": "^15.0.0",
+    "nyc": "^15.1.0",
     "source-map-support": "^0.5.3",
     "ts-node": "^4.1.0",
     "typescript": "3.5.3",
-    "uuid": "^3.3.2"
+    "uuid": "^3.4.0"
   },
   "scripts": {
     "test": "tsc && nyc mocha --recursive \"tests/**/*.test.js\"",

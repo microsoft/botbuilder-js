@@ -1,0 +1,158 @@
+{
+	"$schema": "../../../../schemas/sdk.schema",
+	"$kind": "Microsoft.Test.Script",
+	"dialog": {
+		"$kind": "Microsoft.AdaptiveDialog",
+		"id": "planningTest",
+		"triggers": [
+			{
+				"$kind": "Microsoft.OnBeginDialog",
+				"actions": [
+					{
+						"$kind": "Microsoft.SetProperties",
+						"assignments": [
+							{
+								"property": "dialog.name",
+								"value": "Joe"
+							},
+							{
+								"property": "dialog.age",
+								"value": 52
+							}
+						]
+					},
+					{
+						"$kind": "Microsoft.HttpRequest",
+						"method": "POST",
+						"url": "http://foo.com/",
+						"body": "${dialog.name} is ${dialog.age}",
+						"contentType": "plain/text"
+					},
+					{
+						"$kind": "Microsoft.SendActivity",
+						"activity": "${turn.lastresult.content}"
+					},
+					{
+						"$kind": "Microsoft.HttpRequest",
+						"method": "POST",
+						"url": "http://foo.com/",
+						"body": {
+							"text": "${dialog.name} is ${dialog.age}",
+							"age": "=dialog.age"
+						},
+						"contentType": "application/json"
+					},
+					{
+						"$kind": "Microsoft.SendActivity",
+						"activity": "${turn.lastresult.content}"
+					},
+					{
+						"$kind": "Microsoft.HttpRequest",
+						"method": "POST",
+						"url": "http://foo.com/",
+						"headers": {
+							"bound": "=dialog.age",
+							"unbound": "dialog.age"
+						},
+						"body": [
+							{
+								"text": "${dialog.name} is ${dialog.age}",
+								"age": "=dialog.age"
+							},
+							{
+								"text": "text",
+								"age": 11
+							}
+						],
+						"contentType": "application/json"
+					},
+					{
+						"$kind": "Microsoft.SendActivity",
+						"activity": "${turn.lastresult.content}"
+					},
+					{
+						"$kind": "Microsoft.HttpRequest",
+						"method": "GET",
+						"url": "http://foo.com/image",
+						"responseType": "Binary"
+					},
+					{
+						"$kind": "Microsoft.Test.AssertCondition",
+						"condition": "turn.lastresult.content != null",
+						"description": "binary response should not be empty"
+					},
+					{
+						"$kind": "Microsoft.HttpRequest",
+						"method": "GET",
+						"url": "http://foo.com/json",
+						"responseType": "Json"
+					},
+					{
+						"$kind": "Microsoft.SendActivity",
+						"activity": "${turn.lastresult.content.test}"
+					},
+					{
+						"$kind": "Microsoft.HttpRequest",
+						"method": "GET",
+						"url": "http://foo.com/activity",
+						"responseType": "Activity"
+					},
+					{
+						"$kind": "Microsoft.HttpRequest",
+						"method": "GET",
+						"url": "http://foo.com/activities",
+						"responseType": "Activities"
+					},
+					{
+						"$kind": "Microsoft.SendActivity",
+						"activity": "done"
+					}
+				]
+			}
+		],
+		"autoEndDialog": true,
+		"defaultResultProperty": "dialog.result"
+	},
+	"script": [
+		{
+			"$kind": "Microsoft.Test.UserSays",
+			"text": "hi"
+		},
+		{
+			"$kind": "Microsoft.Test.AssertReply",
+			"text": "string"
+		},
+		{
+			"$kind": "Microsoft.Test.AssertReply",
+			"text": "object"
+		},
+		{
+			"$kind": "Microsoft.Test.AssertReply",
+			"text": "array"
+		},
+		{
+			"$kind": "Microsoft.Test.AssertReply",
+			"text": "test"
+		},
+		{
+			"$kind": "Microsoft.Test.AssertReply",
+			"text": "testtest"
+		},
+		{
+			"$kind": "Microsoft.Test.AssertReply",
+			"text": "test1"
+		},
+		{
+			"$kind": "Microsoft.Test.AssertReply",
+			"text": "test2"
+		},
+		{
+			"$kind": "Microsoft.Test.AssertReply",
+			"text": "test3"
+		},
+		{
+			"$kind": "Microsoft.Test.AssertReply",
+			"text": "done"
+		}
+	]
+}

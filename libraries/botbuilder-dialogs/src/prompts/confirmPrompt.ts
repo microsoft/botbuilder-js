@@ -105,7 +105,7 @@ export class ConfirmPrompt extends Prompt<boolean> {
         const result: PromptRecognizerResult<boolean> = { succeeded: false };
         const activity: Activity = context.activity;
         const utterance: string = activity.text;
-        if (utterance == null) {
+        if (!utterance) {
             return result;
         }
         const culture: string = this.determineCulture(context.activity);
