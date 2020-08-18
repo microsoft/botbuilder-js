@@ -36,9 +36,9 @@ steps:
     displayName: npm install botframework-directlinejs.tgz
     workingDirectory: $(ReactProjectDir)
 
-  - powershell: ls bot*
-    displayName: show node modules that begin with 'bot' AFTER restoring cache/installing DLJS
-    workingDirectory: $(ReactProjectDir)/node_modules
+  - powershell: type package.json
+    displayName: Show DLJS package.json
+    workingDirectory: $(ReactProjectDir)/node_modules/botframework-directlinejs
 
   # - powershell: start powershell {npm start}
   #   displayName: 'Serve react-app (npm start), opening new console'
