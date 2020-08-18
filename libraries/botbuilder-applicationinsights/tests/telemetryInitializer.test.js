@@ -4,6 +4,8 @@
 const assert = require('assert');
 const { TestAdapter, ActivityTypes, TelemetryLoggerMiddleware } = require('botbuilder-core');
 const { TelemetryInitializerMiddleware } = require('../');
+const { TelemetryClient } = require('applicationinsights');
+const sinon = require('sinon').createSandbox();
 
 class TestInitializerMiddleware extends TelemetryInitializerMiddleware {
     constructor(botTelemetryClient, logActivities, mockCorrelationContext) {
@@ -15,6 +17,22 @@ class TestInitializerMiddleware extends TelemetryInitializerMiddleware {
 
 describe(`TelemetryInitializerMiddleware`, function () {
     this.timeout(5000);
+
+    afterEach(() => {
+        sinon.restore();
+    });
+
+    it('throws an error if onTurn context is null', function(done) {
+        const logger = new TelemetryLoggerMiddleware(new TelemetryClient('fakeKey'));
+        const client = new TelemetryInitializerMiddleware(logger);
+
+        client.onTurn(null, () => new Promise())
+            .then(() => done('should have thrown'))
+            .catch((err) => {
+                assert.strictEqual(err.message, 'context is null');
+                done();
+            });
+    });
 
     it(`telemetry initializer stores activity`, function (done) {
 
@@ -112,5 +130,27 @@ describe(`TelemetryInitializerMiddleware`, function () {
             .assertReply(activity => assert.equal(activity.type, ActivityTypes.Typing))
             .assertReply('echo:bar')
             .then(done);
+    });
+
+    it('logActivityTelemetry() getter calls logActivityTelemetry function passed into constructor', function() {
+        const logger = new TelemetryLoggerMiddleware(new TelemetryClient('fakeKey'));
+        let passedInFunctionWasCalled = false;
+        const middleware = new TelemetryInitializerMiddleware(logger, () => {
+            passedInFunctionWasCalled = true;
+            return true;
+        });
+
+        const result = middleware.logActivityTelemetry();
+        assert.strictEqual(result, true);
+        assert.strictEqual(passedInFunctionWasCalled, true);
+    });
+
+    it('telemetryClient() getter calls returns client passed into constructor', function() {
+        const fakeKey = 'fakeKey';
+        const logger = new TelemetryLoggerMiddleware(new TelemetryClient(fakeKey));
+        const middleware = new TelemetryInitializerMiddleware(logger);
+
+        const client = middleware.telemetryClient;
+        assert.strictEqual(client._telemetryClient.config.instrumentationKey, fakeKey);
     });
 });
