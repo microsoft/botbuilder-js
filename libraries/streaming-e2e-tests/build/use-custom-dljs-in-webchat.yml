@@ -19,7 +19,7 @@ steps:
     displayName: Cache npm
     inputs:
     # TODO change key name, but keep it without a lock file to hash
-      key: 'latest-streaming-in-dljs-no-lock-cache-bfwc-dljs | npm | "$(Agent.OS)"'
+      key: 'latest-streaming-in-dljs-no-lock-cache-bfwc-dljs2 | npm | "$(Agent.OS)"'
       path: $(ReactProjectDir)/node_modules
       cacheHitVar: 'CacheRestored'
 
@@ -27,10 +27,18 @@ steps:
     displayName: 'npm install botframework-webchat@4.9.2'
     workingDirectory: $(ReactProjectDir)
     condition: ne(variables.CacheRestored, 'true')
+  
+  - powershell: ls bot*
+    displayName: show node modules that begin with 'bot'
+    workingDirectory: $(ReactProjectDir)/node_modules
 
   - powershell: npm install $(RootReactPiecesDir)/botframework-directlinejs.tgz
     displayName: npm install botframework-directlinejs.tgz
     workingDirectory: $(ReactProjectDir)
+
+  - powershell: ls bot*
+    displayName: show node modules that begin with 'bot' AFTER restoring cache/installing DLJS
+    workingDirectory: $(ReactProjectDir)/node_modules
 
   # - powershell: start powershell {npm start}
   #   displayName: 'Serve react-app (npm start), opening new console'
