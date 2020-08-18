@@ -871,7 +871,7 @@ describe('expression parser functional test', () => {
     // `new Date()` done by both the test and by ExpressionEvaluator return the exact same time.
     it('should appropriately evaluate time-related expressions', () => {
         // Freeze the system clock.
-        // The expected date in MM-DD-YY HH is 08-01-20 00
+        // The expected date in the format, MM-dd-yy HH:mm:ss, is 08-01-20 00:12:20
         let clock = useFakeTimers({
             now: new Date(Date.UTC(2020, 7, 1, 0, 12, 20)),
             shouldAdvanceTime: false,
