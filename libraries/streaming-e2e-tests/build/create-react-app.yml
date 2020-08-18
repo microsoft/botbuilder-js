@@ -5,17 +5,7 @@ steps:
     displayName: 'create-react-app'
     workingDirectory: $(RootReactPiecesDir)
   
-  - powershell: | 
-      ls
-
-      Write-Host "Deleting App.js, index.js, index.html"
-      Remove-Item src/App.js, src/index.js, public/index.html
-
-      Write-Host "Deleting package.json"
-      Remove-Item ./package.json
-
-      Write-Host "Deleting yarn.lock"
-      Remove-Item ./yarn.lock
+  - powershell: Remove-Item src/App.js, src/index.js, public/index.html, ./package.json, ./yarn.lock
     displayName: "Delete files we're replacing with custom code in react-app"
     workingDirectory: $(ReactProjectDir)
 
@@ -26,8 +16,17 @@ steps:
     displayName: "Copy custom files into react-app"
     workingDirectory: $(ReactProjectDir)
   
-  - task: PublishPipelineArtifact@1
-    displayName: 'Publish Artifact: ReactApp'
-    inputs:
-      targetPath: $(ReactProjectDir)
-      artifactName: 'ReactApp'
+  # - task: PublishPipelineArtifact@1
+  #   displayName: 'Publish Artifact: ReactApp'
+  #   inputs:
+  #     targetPath: $(ReactProjectDir)
+  #     artifactName: 'ReactApp'
+
+  # Try putting React App Creation into 1 job
+
+  # Customize DLJS
+  - template: customize-dljs.yml
+
+  # Install dependencies into React App
+  - template: use-custom-dljs-in-webchat.yml
+

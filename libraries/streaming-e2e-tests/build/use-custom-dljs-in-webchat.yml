@@ -1,13 +1,13 @@
 steps:
-  - task: DownloadPipelineArtifact@2
-    inputs:
-      artifact: ReactApp
-      path: $(ReactProjectDir)
+  # - task: DownloadPipelineArtifact@2
+  #   inputs:
+  #     artifact: ReactApp
+  #     path: $(ReactProjectDir)
   
-  - task: DownloadPipelineArtifact@2
-    inputs:
-      artifact: DirectLineJsTgz
-      path: $(RootReactPiecesDir)
+  # - task: DownloadPipelineArtifact@2
+  #   inputs:
+  #     artifact: DirectLineJsTgz
+  #     path: $(RootReactPiecesDir)
 
   - powershell: |
       Set-Location -Path "$(ReactProjectDir)"
