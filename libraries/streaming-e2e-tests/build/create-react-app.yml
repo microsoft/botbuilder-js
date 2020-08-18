@@ -5,13 +5,14 @@ steps:
     displayName: 'create-react-app'
     workingDirectory: $(RootReactPiecesDir)
   
-  - powershell: Remove-Item src/App.js, src/index.js, public/index.html
+  - powershell: Remove-Item src/App.js, src/index.js, public/index.html ./package.json, ./yarn.lock
     displayName: "Delete files we're replacing with custom code in react-app"
     workingDirectory: $(ReactProjectDir)
 
   - powershell: |
       copy ../custom-app-code/App.js, ../custom-app-code/index.js, ../custom-app-code/.gitignore ./src/
       copy ../custom-app-code/index.html ./public
+      copy ../custom-app-code/package.json, ../custom-app-code/yarn.lock
     displayName: "Copy custom files into react-app"
     workingDirectory: $(ReactProjectDir)
   

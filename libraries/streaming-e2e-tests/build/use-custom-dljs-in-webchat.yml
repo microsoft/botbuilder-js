@@ -19,7 +19,7 @@ steps:
     displayName: Cache npm
     inputs:
     # TODO change key name, but keep it without a lock file to hash
-      key: 'latest-streaming-in-dljs-no-lock-cache-bfwc-dljs2 | npm | "$(Agent.OS)"'
+      key: 'latest-streaming-in-dljs-copied-yarnlock-cache-bfwc-dljs2 | npm | "$(Agent.OS)"'
       path: $(ReactProjectDir)/node_modules
       cacheHitVar: 'CacheRestored'
 
