@@ -65,11 +65,23 @@
         },
         {
             "$kind": "Microsoft.Test.AssertReply",
-            "text": "[{\"Topic\":\"car\"},{\"Id\":1,\"Topic\":\"washing\"},{\"Id\":2,\"Topic\":\"food\"},{\"Id\":3,\"Topic\":\"laundry\"}]"
+            "text": "[{\"Id\":0,\"Topic\":\"car\"},{\"Id\":1,\"Topic\":\"washing\"},{\"Id\":2,\"Topic\":\"food\"},{\"Id\":3,\"Topic\":\"laundry\"}]"
         },
         {
             "$kind": "Microsoft.Test.AssertReply",
             "text": "This is an injected message"
+        },
+        {
+          "$kind": "Microsoft.Test.AssertReply",
+            "text": "Hi Jonathan"
+        },
+        {
+          "$kind": "Microsoft.Test.AssertReply",
+            "text": "Jonathan : 2003-03-20"
+        },
+        {
+          "$kind": "Microsoft.Test.AssertReply",
+            "text": "Jonathan, your tasks: car, washing, food and laundry"
         }
     ]
 }

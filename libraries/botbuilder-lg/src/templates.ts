@@ -9,7 +9,7 @@
 import { Template } from './template';
 import { TemplateImport } from './templateImport';
 import { Diagnostic, DiagnosticSeverity } from './diagnostic';
-import { ExpressionParser, Expression, ExpressionEvaluator, ReturnType, FunctionUtils, SimpleObjectMemory } from 'adaptive-expressions';
+import { ExpressionParser, Expression, ExpressionEvaluator, ReturnType, FunctionUtils, SimpleObjectMemory, StackedMemory } from 'adaptive-expressions';
 import { ImportResolverDelegate, TemplatesTransformer } from './templatesParser';
 import { Evaluator } from './evaluator';
 import { Expander } from './expander';
@@ -491,7 +491,9 @@ export class Templates implements Iterable<Template> {
                             const parameters = evaluator.templateMap[templateName].parameters;
                             const newScope: any = {};
                             parameters.map((e: string, i: number): void => newScope[e] = args[i]);
-                            const scope = new CustomizedMemory(state, new SimpleObjectMemory(newScope));
+                            const scope = new StackedMemory();
+                            scope.push(new CustomizedMemory(state));
+                            scope.push(new SimpleObjectMemory(newScope));
                             try {
                                 value = evaluator.evaluateTemplate(templateName, scope);
                             } catch (e) {
