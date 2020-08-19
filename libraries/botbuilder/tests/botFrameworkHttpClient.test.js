@@ -28,7 +28,7 @@ describe('BotFrameworkHttpClient', function() {
                 const client = new BotFrameworkHttpClient(new SimpleCredentialProvider('', ''));
                 strictEqual(client.channelService, 'envChannelService');
             } finally {
-                process.env[AuthenticationConstants.ChannelService] = undefined;
+                delete process.env[AuthenticationConstants.ChannelService];
             }
         });
         
