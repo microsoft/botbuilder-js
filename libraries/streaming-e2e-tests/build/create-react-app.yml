@@ -10,7 +10,7 @@ steps:
     workingDirectory: $(ReactProjectDir)
 
   - powershell: |
-      copy ../custom-app-code/App.js, ../custom-app-code/index.js, ../custom-app-code/.gitignore ./src/
+      copy ../custom-app-code/App.js, ../custom-app-code/index.js ./src/
       copy ../custom-app-code/index.html ./public
       copy ../custom-app-code/package.json, ../custom-app-code/yarn.lock
     displayName: 'Copy custom files into react-app'
