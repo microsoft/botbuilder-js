@@ -9,6 +9,7 @@ import { Activity, ActivityTypes } from 'botbuilder-core';
 import { WaterfallDialog, Dialog, DialogTurnResult, DialogContext, WaterfallStepContext, DialogReason } from 'botbuilder-dialogs';
 import { QnAMakerOptions } from './qnamaker-interfaces/qnamakerOptions';
 import { RankerTypes } from './qnamaker-interfaces/rankerTypes';
+import { StrictFiltersCompoundOperationType } from './qnamaker-interfaces/StrictFiltersCompoundOperationType';
 import { QnAMaker, QnAMakerResult } from './';
 import { FeedbackRecord, FeedbackRecords, QnAMakerMetadata } from './qnamaker-interfaces';
 import { QnACardBuilder } from './qnaCardBuilder';
@@ -107,6 +108,7 @@ export class QnAMakerDialog extends WaterfallDialog {
     private cardNoMatchText: string;
     private strintFilters: any;
     private cardNoMatchResponse: Activity;
+    private strictFiltersCompoundOperationType: StrictFiltersCompoundOperationType;
 
     /**
      * Initializes a new instance of the [QnAMakerDialog](xref:QnAMakerDialog) class.
@@ -122,7 +124,7 @@ export class QnAMakerDialog extends WaterfallDialog {
      * @param strictFilters (Optional) QnA Maker metadata with which to filter or boost queries to the knowledge base; or null to apply none.
      * @param dialogId (Optional) Id of the created dialog. Default is 'QnAMakerDialog'.
      */
-    public constructor(knowledgeBaseId: string, endpointKey: string, hostName: string, noAnswer?: Activity, threshold: number = 0.3, activeLearningCardTitle: string = 'Did you mean:', cardNoMatchText: string = 'None of the above.', top: number = 3, cardNoMatchResponse?: Activity, strictFilters?: QnAMakerMetadata[], dialogId: string = 'QnAMakerDialog') {
+    public constructor(knowledgeBaseId: string, endpointKey: string, hostName: string, noAnswer?: Activity, threshold: number = 0.3, activeLearningCardTitle: string = 'Did you mean:', cardNoMatchText: string = 'None of the above.', top: number = 3, cardNoMatchResponse?: Activity, strictFilters?: QnAMakerMetadata[], dialogId: string = 'QnAMakerDialog', strictFiltersCompoundOperationType: StrictFiltersCompoundOperationType = StrictFiltersCompoundOperationType.AND ) {
         super(dialogId);
         if (!knowledgeBaseId) {
             throw new TypeError('QnAMakerDialog: missing knowledgeBaseId parameter');
@@ -146,7 +148,7 @@ export class QnAMakerDialog extends WaterfallDialog {
         this.strintFilters = strictFilters;
         this.noAnswer = noAnswer;
         this.cardNoMatchResponse = cardNoMatchResponse;
-
+        this.strictFiltersCompoundOperationType = strictFiltersCompoundOperationType;
         this.addStep(this.callGenerateAnswer.bind(this));
         this.addStep(this.callTrain.bind(this));
         this.addStep(this.checkForMultiTurnPrompt.bind(this));
@@ -200,7 +202,8 @@ export class QnAMakerDialog extends WaterfallDialog {
             top: this.top,
             qnaId: 0,
             rankerType: RankerTypes.default,
-            isTest: false
+            isTest: false,
+            strictFiltersCompoundOperationType: this.strictFiltersCompoundOperationType
         };
     };
     
