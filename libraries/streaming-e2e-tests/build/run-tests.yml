@@ -22,8 +22,8 @@ jobs:
         displayName: 'npm install in tests directory'
         workingDirectory: $(TestsDir)
 
-      - powershell: Start-Sleep -Seconds 90;
-        displayName: 'Allowing React App to serve. Sleeping 90 seconds'
+      - powershell: Start-Sleep -Seconds 100;
+        displayName: 'Allowing React App to serve. Sleeping 100 seconds'
 
       - powershell: npm test
         displayName: 'Run Tests: npm test'
