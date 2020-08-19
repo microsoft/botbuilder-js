@@ -1,16 +1,14 @@
-// const path = require('path');
-// const dotenv = require('dotenv');
-// const ENV_FILE = path.join(__dirname, '.env');
-// dotenv.config({ path: ENV_FILE });
+/**
+ * Copyright (c) Microsoft Corporation. All rights reserved.
+ * Licensed under the MIT License.
+ */
 
 const assert = require('assert');
 const { Builder, By, Condition, Key, until, css } = require('selenium-webdriver');
 const { Options } = require('selenium-webdriver/chrome');
 
 const userMessage = 'Why hello there';
-// const reactAppEndpoint = 'http://localhost:3000';
-// TEMPORARY - FOR TESTING
-const reactAppEndpoint = 'https://ash-react-app.azurewebsites.net/';
+const reactAppEndpoint = 'http://localhost:3000';
 
 describe('Chrome', function () {
   it('should receive an echo after sending a message', async function () {
