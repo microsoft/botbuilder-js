@@ -6,6 +6,7 @@
  * Licensed under the MIT License.
  */
 
+import { Dialog } from 'botbuilder-dialogs';
 import { normalize, join } from 'path';
 import { EventEmitter } from 'events';
 import { ResourceProvider, ResourceChangeEvent } from './resourceProvider';
@@ -206,8 +207,13 @@ export class ResourceExplorer {
             resource = this.getResource(resource);
         }
         const json = resource.readText();
-        const result = JSON.parse(json);
-        return this.buildType(result as object);
+        const obj = JSON.parse(json) as object;
+        const result = this.buildType(obj);
+        if (result instanceof Dialog && !obj['id']) {
+            // If there is no id for the dialog, then the resource id would be used as dialog id.
+            result.id = resource.id;
+        }
+        return result;
     }
 
     protected onChanged(event: ResourceChangeEvent, resources: Resource[]): void {
