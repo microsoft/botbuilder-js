@@ -23,13 +23,13 @@ variables:
 stages:
   - stage: Prepare_Bot_And_React_App
     jobs:
-      - job: Deploy_Bot
-        variables:
-          TargetProjectDir: '$(System.DefaultWorkingDirectory)/libraries/streaming-e2e-tests/bot'
-          PackageName: $(BotBuilder)
-        steps:
-          - template: configure-to-bbjs-daily.yml
-          - template: deploy-bot.yml
+      # - job: Deploy_Bot
+      #   variables:
+      #     TargetProjectDir: '$(System.DefaultWorkingDirectory)/libraries/streaming-e2e-tests/bot'
+      #     PackageName: $(BotBuilder)
+      #   steps:
+      #     - template: configure-to-bbjs-daily.yml
+      #     - template: deploy-bot.yml
 
       - job: Create_React_App_With_WebChat
         variables:

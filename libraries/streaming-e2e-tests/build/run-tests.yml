@@ -5,9 +5,17 @@ jobs:
         inputs:
           artifact: CustomizedReactApp
           path: $(ReactProjectDir)
+      
+      - powershell: ls $(ReactProjectDir)/node_modules/bot*
+        displayName: 'Show react-app node modules that start with bot'
+        workingDirectory: $(ReactProjectDir)
+      
+      - powershell: type $(ReactProjectDir)/package.json
+        displayName: type react-app/package.json
+        workingDirectory: $(ReactProjectDir)
 
-      - powershell: start powershell {npm start}
-        displayName: 'Serve react-app (npm start), opening new console'
+      - powershell: start powershell {yarn start}
+        displayName: 'Serve react-app (yarn start), opening new console'
         workingDirectory: $(ReactProjectDir)
       
       - powershell: npm install

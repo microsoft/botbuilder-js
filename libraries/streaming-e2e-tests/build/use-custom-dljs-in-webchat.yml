@@ -18,7 +18,7 @@ steps:
     condition: ne(variables.CacheRestored, 'true')
   
   - powershell: yarn add $(DLJSDir)/botframework-directlinejs.tgz
-    displayName: yarn add botframework-directlinejs.tgz
+    displayName: 'yarn add botframework-directlinejs.tgz'
     workingDirectory: $(ReactProjectDir)
 
   - task: PublishPipelineArtifact@1
