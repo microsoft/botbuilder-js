@@ -13,20 +13,10 @@ steps:
       copy ../custom-app-code/App.js, ../custom-app-code/index.js, ../custom-app-code/.gitignore ./src/
       copy ../custom-app-code/index.html ./public
       copy ../custom-app-code/package.json, ../custom-app-code/yarn.lock
-    displayName: "Copy custom files into react-app"
+    displayName: 'Copy custom files into react-app'
     workingDirectory: $(ReactProjectDir)
   
-  # - task: PublishPipelineArtifact@1
-  #   displayName: 'Publish Artifact: ReactApp'
-  #   inputs:
-  #     targetPath: $(ReactProjectDir)
-  #     artifactName: 'ReactApp'
-
-  # Try putting React App Creation into 1 job
-
-  # Customize DLJS
   - template: customize-dljs.yml
 
-  # Install dependencies into React App
   - template: use-custom-dljs-in-webchat.yml
 

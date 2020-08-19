@@ -1,14 +1,4 @@
 steps:
-  # - task: DownloadPipelineArtifact@2
-  #   inputs:
-  #     artifact: ReactApp
-  #     path: $(ReactProjectDir)
-  
-  # - task: DownloadPipelineArtifact@2
-  #   inputs:
-  #     artifact: DirectLineJsTgz
-  #     path: $(RootReactPiecesDir)
-
   - powershell: |
       Set-Location -Path "$(ReactProjectDir)"
       
@@ -28,39 +18,12 @@ steps:
     workingDirectory: $(ReactProjectDir)
     condition: ne(variables.CacheRestored, 'true')
   
-  - powershell: ls bot*
-    displayName: show node modules that begin with 'bot'
-    workingDirectory: $(ReactProjectDir)/node_modules
-
   - powershell: yarn add $(DLJSDir)/botframework-directlinejs.tgz
     displayName: yarn add botframework-directlinejs.tgz
     workingDirectory: $(ReactProjectDir)
 
-  - powershell: type package.json
-    displayName: Show react-app package.json
-    workingDirectory: $(ReactProjectDir)
-
-  - powershell: type package.json
-    displayName: Show DLJS package.json
-    workingDirectory: $(ReactProjectDir)/node_modules/botframework-directlinejs
-  
   - task: PublishPipelineArtifact@1
     displayName: 'Publish Artifact: CustomizedReactApp'
     inputs:
       targetPath: $(ReactProjectDir)
       artifactName: 'CustomizedReactApp'
-
-  # - powershell: start powershell {npm start}
-  #   displayName: 'Serve react-app (npm start), opening new console'
-  #   workingDirectory: $(ReactProjectDir)
-  
-  # - powershell: npm install
-  #   displayName: 'npm install in tests directory'
-  #   workingDirectory: $(TestsDir)
-
-  # - powershell: Start-Sleep -Seconds 25;
-  #   displayName: 'Allowing React App to serve. Sleeping 25 seconds'
-
-  # - powershell: npm test
-  #   displayName: 'Run Tests: npm test'
-  #   workingDirectory: $(TestsDir)

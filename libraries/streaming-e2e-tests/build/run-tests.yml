@@ -1,7 +1,5 @@
 jobs:
   - job: Run_Tests
-    # variables:
-    #   ReactAppEndpoint: 'https://$(ReactAppService).azurewebsites.net/'
     steps:
       - task: DownloadPipelineArtifact@2
         inputs:
@@ -16,8 +14,8 @@ jobs:
         displayName: 'npm install in tests directory'
         workingDirectory: $(TestsDir)
 
-      - powershell: Start-Sleep -Seconds 25;
-        displayName: 'Allowing React App to serve. Sleeping 25 seconds'
+      - powershell: Start-Sleep -Seconds 20;
+        displayName: 'Allowing React App to serve. Sleeping 20 seconds'
 
       - powershell: npm test
         displayName: 'Run Tests: npm test'

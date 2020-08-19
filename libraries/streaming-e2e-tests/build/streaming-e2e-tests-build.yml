@@ -21,7 +21,7 @@ variables:
   # BotName, ConnectedServiceNameARM, MyGetPersonalAccessToken, ReactAppService, ResourceGroup
 
 stages:
-  - stage: Create_And_Deploy_Projects
+  - stage: Prepare_Bot_And_React_App
     jobs:
       - job: Deploy_Bot
         variables:
@@ -31,10 +31,16 @@ stages:
           - template: configure-to-bbjs-daily.yml
           - template: deploy-bot.yml
 
-      - template: create-and-deploy-streaming-react-app.yml
+      - job: Create_React_App_With_WebChat
+        variables:
+          PackageName: 'botframework-streaming'
+          TargetProjectDir: $(DLJSDir)
+          REACT_APP_BOT_HOSTNAME: $(BotName)
+        steps: 
+          - template: create-react-app.yml
 
   - stage: Run_Tests
-    dependsOn: Create_And_Deploy_Projects
+    dependsOn: Prepare_Bot_And_React_App
     condition: succeeded()
     jobs:
       - template: run-tests.yml
