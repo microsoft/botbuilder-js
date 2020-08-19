@@ -41,12 +41,10 @@ export class Concat extends ExpressionEvaluator {
         });
     }
 
-
     private static commonStringify(input: any): string {
         if (input === null || input === undefined) {
             return '';
         }
-
         if (Array.isArray(input)) {
             return input.toString();
         } else if (typeof input === 'object') {

@@ -5,8 +5,8 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { BotTelemetryClient, NullTelemetryClient } from 'botbuilder-core';
-import { Dialog } from './dialog';
+import { BotTelemetryClient, NullTelemetryClient, Severity } from 'botbuilder-core';
+import { Dialog, DialogEvent } from './dialog';
 import { DialogSet } from './dialogSet';
 import { DialogContext } from './dialogContext';
 import { DialogEvents } from './dialogEvents';
@@ -30,6 +30,26 @@ export abstract class DialogContainer<O extends object = {}> extends Dialog<O> {
      */
     public findDialog(dialogId: string): Dialog | undefined {
         return this.dialogs.find(dialogId);
+    }
+
+    /**
+     * Called when an event has been raised, using `DialogContext.emitEvent()`,
+     * by either the current dialog or a dialog that the current dialog started.
+     * 
+     * @param dc The dialog context for the current turn of conversation.
+     * @param e The event being raised.
+     */
+    public async onDialogEvent(dc: DialogContext, e: DialogEvent): Promise<boolean> {
+        const handled = await super.onDialogEvent(dc, e);
+        if (!handled && e.name === DialogEvents.versionChanged) {
+            const traceMessage = `Unhandled dialog event: ${ e.name }. Active Dialog: ${ dc.activeDialog.id }`;
+            dc.dialogs.telemetryClient.trackTrace({
+                message: traceMessage,
+                severityLevel: Severity.Warning
+            });
+            await dc.context.sendTraceActivity(traceMessage);
+        }
+        return handled;
     }
 
     /**

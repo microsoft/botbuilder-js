@@ -303,6 +303,36 @@ export class ActivityHandler extends ActivityHandlerBase {
     }
 
     /**
+     * Registers an activity event handler for the _installationupdate add_ activity.
+     * 
+     * @param handler The event handler.
+     * 
+     * @remarks
+     * Returns a reference to the [ActivityHandler](xref:botbuilder-core.ActivityHandler) object.
+     * 
+     * To handle a InstallationUpdateAdd event, use the
+     * [onInstallationUpdateAdd](xref:botbuilder-core.ActivityHandler.onInstallationUpdateAdd) type-specific event handler.
+     */
+    public onInstallationUpdateAdd(handler: BotHandler): this {
+        return this.on('InstallationUpdateAdd', handler);
+    }
+
+    /**
+     * Registers an activity event handler for the _installationupdate remove_ activity.
+     * 
+     * @param handler The event handler.
+     * 
+     * @remarks
+     * Returns a reference to the [ActivityHandler](xref:botbuilder-core.ActivityHandler) object.
+     * 
+     * To handle a InstallationUpdateRemove event, use the
+     * [onInstallationUpdateRemove](xref:botbuilder-core.ActivityHandler.onInstallationUpdateRemove) type-specific event handler.
+     */
+    public onInstallationUpdateRemove(handler: BotHandler): this {
+        return this.on('InstallationUpdateRemove', handler);
+    }
+
+    /**
      * Registers an activity event handler for the _tokens-response_ event, emitted for any incoming
      * `tokens/response` event activity. These are generated as part of the OAuth authentication flow.
      * 
@@ -526,9 +556,65 @@ export class ActivityHandler extends ActivityHandlerBase {
      * and then continue by calling [defaultNextEvent](xref:botbuilder-core.ActivityHandler.defaultNextEvent).
      */
     protected async onInstallationUpdateActivity(context: TurnContext): Promise<void> {
-        await this.handle(context, 'InstallationUpdate', this.defaultNextEvent(context));
+        await this.handle(context, 'InstallationUpdate', async () => {
+            await this.dispatchInstallationUpdateActivity(context);
+        });
     }
 
+    /**
+     * Runs the _installation update_ sub-type handlers, as appropriate, and then continues the event emission process.
+     * 
+     * @param context The context object for the current turn.
+     * 
+     * @remarks
+     * Overwrite this method to support channel-specific behavior across multiple channels or to add
+     * custom conversation update sub-type events.
+     * 
+     * The default logic is:
+     * - If any members were added, call handlers registered via [onMembersAdded](xref:botbuilder-core.ActivityHandler.onMembersAdded).
+     * - If any members were removed, call handlers registered via [onMembersRemoved](xref:botbuilder-core.ActivityHandler.onMembersRemoved).
+     * - Continue by calling [defaultNextEvent](xref:botbuilder-core.ActivityHandler.defaultNextEvent).
+     */
+    protected async dispatchInstallationUpdateActivity(context: TurnContext): Promise<void> {
+        if (context.activity.action == 'add' || context.activity.action == 'remove') {
+            await super.onInstallationUpdateActivity(context);
+        } else {
+            await this.defaultNextEvent(context)();
+        }
+    }
+
+    /**
+     * Runs all registered _installation update add_ handlers and then continues the event emission process.
+     * 
+     * @param context The context object for the current turn.
+     * 
+     * @remarks
+     * Overwrite this method to support channel-specific behavior across multiple channels.
+     * 
+     * The default logic is to call any handlers registered via
+     * [onInstallationUpdateAdd](xref:botbuilder-core.ActivityHandler.onInstallationUpdateAdd),
+     * and then continue by calling [defaultNextEvent](xref:botbuilder-core.ActivityHandler.defaultNextEvent).
+     */
+    protected async onInstallationUpdateAddActivity(context: TurnContext): Promise<void> {
+        await this.handle(context, 'InstallationUpdateAdd', this.defaultNextEvent(context));
+    }
+
+    /**
+     * Runs all registered _installation update remove_ handlers and then continues the event emission process.
+     * 
+     * @param context The context object for the current turn.
+     * 
+     * @remarks
+     * Overwrite this method to support channel-specific behavior across multiple channels.
+     * 
+     * The default logic is to call any handlers registered via
+     * [onInstallationUpdateRemove](xref:botbuilder-core.ActivityHandler.onInstallationUpdateRemove),
+     * and then continue by calling [defaultNextEvent](xref:botbuilder-core.ActivityHandler.defaultNextEvent).
+     */
+    protected async onInstallationUpdateRemoveActivity(context: TurnContext): Promise<void> {
+        await this.handle(context, 'InstallationUpdateRemove', this.defaultNextEvent(context));
+    }
+    
     /**
      * Runs all registered _unrecognized activity type_ handlers and then continues the event emission process.
      * 
