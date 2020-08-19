@@ -491,9 +491,7 @@ export class Templates implements Iterable<Template> {
                             const parameters = evaluator.templateMap[templateName].parameters;
                             const newScope: any = {};
                             parameters.map((e: string, i: number): void => newScope[e] = args[i]);
-                            const scope = new StackedMemory();
-                            scope.push(new CustomizedMemory(state));
-                            scope.push(new SimpleObjectMemory(newScope));
+                            const scope = new CustomizedMemory(state, new SimpleObjectMemory(newScope));
                             try {
                                 value = evaluator.evaluateTemplate(templateName, scope);
                             } catch (e) {
