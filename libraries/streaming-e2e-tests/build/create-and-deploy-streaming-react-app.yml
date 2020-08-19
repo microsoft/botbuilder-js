@@ -2,6 +2,10 @@
 
 jobs:
   - job: Create_React_App_With_WebChat
+    variables:
+      PackageName: 'botframework-streaming'
+      TargetProjectDir: $(DLJSDir)
+      REACT_APP_BOT_HOSTNAME: $(BotName)
     steps: 
       - template: create-react-app.yml
 
