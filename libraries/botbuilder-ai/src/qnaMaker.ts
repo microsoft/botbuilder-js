@@ -5,8 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { TurnContext, BotTelemetryClient, NullTelemetryClient } from 'botbuilder-core';
-
+import { BotTelemetryClient, NullTelemetryClient, TurnContext } from 'botbuilder-core';
 import { QnATelemetryConstants } from './qnaTelemetryConstants';
 import { QnAMakerEndpoint } from './qnamaker-interfaces/qnamakerEndpoint';
 import { QnAMakerMetadata } from './qnamaker-interfaces/qnamakerMetadata';
@@ -19,6 +18,7 @@ import { ActiveLearningUtils } from './qnamaker-utils/activeLearningUtils';
 import { TrainUtils } from './qnamaker-utils/trainUtils';
 import { QnAMakerResults } from './qnamaker-interfaces/qnamakerResults';
 import { RankerTypes } from './qnamaker-interfaces/rankerTypes';
+import { StrictFiltersCompoundOperationType } from './qnamaker-interfaces/StrictFiltersCompoundOperationType';
 
 export const QNAMAKER_TRACE_TYPE = 'https://www.qnamaker.ai/schemas/trace';
 export const QNAMAKER_TRACE_NAME = 'QnAMaker';
@@ -87,7 +87,8 @@ export class QnAMaker implements QnAMakerTelemetryClient {
             strictFilters = [] as QnAMakerMetadata[],
             metadataBoost = [] as QnAMakerMetadata[],
             timeout = 100000,
-            rankerType = RankerTypes.default
+            rankerType = RankerTypes.default,
+            strictFiltersCompoundOperationType = StrictFiltersCompoundOperationType.AND
         } = options;
 
         this._options = {
@@ -96,7 +97,8 @@ export class QnAMaker implements QnAMakerTelemetryClient {
             strictFilters,
             metadataBoost,
             timeout,
-            rankerType
+            rankerType,
+            strictFiltersCompoundOperationType
         } as QnAMakerOptions;
 
         this.generateAnswerUtils = new GenerateAnswerUtils(this._options, this.endpoint);
@@ -159,7 +161,7 @@ export class QnAMaker implements QnAMakerTelemetryClient {
 
         if (question.length > 0) {
             result = await this.generateAnswerUtils.queryQnaServiceRaw(this.endpoint, question, queryOptions);
-            
+
             const sortedQnaAnswers: QnAMakerResult[] = GenerateAnswerUtils.sortAnswersWithinThreshold(result.answers, queryOptions);
             queryResult.push(...sortedQnaAnswers);
         }
@@ -278,14 +280,14 @@ export class QnAMaker implements QnAMakerTelemetryClient {
     protected async onQnaResults(qnaResults: QnAMakerResult[], turnContext: TurnContext, telemetryProperties?: {[key: string]:string}, telemetryMetrics?: {[key: string]:number}): Promise<void> {
         this.fillQnAEvent(qnaResults, turnContext, telemetryProperties, telemetryMetrics).then(data => {
             this.telemetryClient.trackEvent(
-                { 
+                {
                   name: QnATelemetryConstants.qnaMessageEvent,
                   properties: data[0],
                   metrics: data[1]
                 });
         });
         return;
-    } 
+    }
 
     /**
      * Fills the event properties for QnaMessage event for telemetry.
@@ -333,7 +335,7 @@ export class QnAMaker implements QnAMakerTelemetryClient {
             properties[QnATelemetryConstants.answerProperty] =  "No Qna Answer matched";
             properties[QnATelemetryConstants.articleFoundProperty] = "false";
         }
-        
+
         // Additional Properties can override "stock" properties.
         if (telemetryProperties != null)
         {
