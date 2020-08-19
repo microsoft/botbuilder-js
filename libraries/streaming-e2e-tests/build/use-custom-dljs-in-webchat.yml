@@ -21,8 +21,8 @@ steps:
     displayName: 'yarn add botframework-directlinejs.tgz'
     workingDirectory: $(ReactProjectDir)
 
-  - task: PublishPipelineArtifact@1
-    displayName: 'Publish Artifact: CustomizedReactApp'
-    inputs:
-      targetPath: $(ReactProjectDir)
-      artifactName: 'CustomizedReactApp'
+  # - task: PublishPipelineArtifact@1
+  #   displayName: 'Publish Artifact: CustomizedReactApp'
+  #   inputs:
+  #     targetPath: $(ReactProjectDir)
+  #     artifactName: 'CustomizedReactApp'

@@ -20,5 +20,5 @@ steps:
 
   - template: use-custom-dljs-in-webchat.yml
 
-  # - template: deploy-react-app.yml
+  - template: deploy-react-app.yml
 
