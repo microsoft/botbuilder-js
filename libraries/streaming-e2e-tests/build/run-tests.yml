@@ -20,3 +20,4 @@ jobs:
       - powershell: npm test
         displayName: 'Run Tests: npm test'
         workingDirectory: $(TestsDir)
+        
