@@ -1,0 +1,17 @@
+steps:
+  - script: npm run build
+    displayName: 'Build react-app'
+    workingDirectory: '$(ReactProjectDir)'
+
+  - powershell: |
+      Write-Host "Compressing projecting into react-app.zip"
+      Compress-Archive "$(ReactProjectDir)/build/*" "$(ReactProjectDir)/react-app.zip" 
+    displayName: 'Zip react-app'
+    
+  - task: AzureCLI@1
+    displayName: 'Deploy react-app'
+    inputs:
+      ConnectedServiceNameARM: $(ConnectedServiceNameARM)
+      scriptType: ps
+      scriptLocation: inlineScript
+      inlineScript: az webapp deployment source config-zip --resource-group "$(ResourceGroup)" --name "$(ReactAppService)" --src "$(ReactProjectDir)/react-app.zip"
