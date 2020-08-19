@@ -1,8 +1,22 @@
 {
+  "command": {
+    "bootstrap": {
+      "forceLocal": true,
+      "hoist": true
+    },
+    "version": {
+      "commitHooks": false,
+      "exact": true,
+      "gitTagVersion": false,
+      "push": false
+    }
+  },
   "lerna": "3.2.1",
+  "npmClient": "npm",
   "packages": [
     "libraries/botbuilder",
     "libraries/botbuilder-ai",
+    "libraries/botbuilder-ai-orchestrator",
     "libraries/botbuilder-applicationinsights",
     "libraries/botbuilder-azure",
     "libraries/botbuilder-core",
@@ -26,10 +40,5 @@
     "libraries/testskills/skillchild",
     "transcripts"
   ],
-  "version": "independent",
-  "command": {
-    "bootstrap": {
-      "hoist": true
-    }
-  }
+  "version": "independent"
 }

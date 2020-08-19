@@ -2,6 +2,8 @@ const QnATelemetryConstants = require('../lib/qnaTelemetryConstants');
 const assert = require('assert');
 const { TestAdapter, TurnContext, NullTelemetryClient } = require('botbuilder-core');
 const { QnAMaker } = require('../');
+const { HttpRequestUtils } = require('../lib/qnamaker-utils/httpRequestUtils');
+const { TrainUtils } = require('../lib/qnamaker-utils/trainUtils');
 const nock = require('nock');
 const fs = require('fs');
 const { getFetch } = require('../lib/globals');
@@ -295,7 +297,7 @@ describe('QnAMaker', function () {
             assert.strictEqual(qna._options.timeout, timeoutOption.timeout);
             assert.strictEqual(qnaResults.length, expectedNumOfAns);
         });
-        
+ 
         it('should convert legacy response property "qnaId" to "id"', async function() {
             const legacyEndpoint = {
                 knowledgeBaseId: 'testKbId',
@@ -776,6 +778,88 @@ describe('QnAMaker', function () {
 
             const fetch = getFetch();
             assert(typeof fetch === 'function');
+        });
+    });
+
+    describe('Active Learning', function() {
+        const testKbId = 'testKbId';
+        const testEndpointKey = 'testEndpointKey';
+        const qnaHost = 'https://dummyqna.azurewebsites.net/qnamaker';
+        
+        const endpoint = {
+            knowledgeBaseId: testKbId,
+            endpointKey: testEndpointKey,
+            host: qnaHost
+        }
+
+        const trainApi = `/knowledgebases/${ testKbId }/train`;
+        const feedbackRecords = [{userId: "user1", userQuestion: "wi-fi", qnaId: "17"}];
+
+        const successfullyTrainedResult = { 
+            questions: [],
+            answer: "204 No-Content",
+            score: 100,
+            id: -1,
+            source: null,
+            metadata: []
+        };
+
+        it('executeHttpRequest() should return JSON result from Train API response of 204 No-Content', async function() {
+            nock(endpoint.host)
+                .post(trainApi)
+                .reply(204);
+                
+            const payloadBody = JSON.stringify({
+                feedbackRecords: feedbackRecords
+            });
+
+            const httpUtils = new HttpRequestUtils();
+
+            const qnaResult = await httpUtils.executeHttpRequest(
+                endpoint.host + trainApi,
+                payloadBody,
+                endpoint
+            );
+            
+            assert.deepStrictEqual(qnaResult, successfullyTrainedResult);
+        });
+
+        it('executeHttpRequest() should throw when payload to QnA Service is malformed', async function() {
+            const errResponse = {
+                "error": {
+                    "code": 12,
+                    "message": "Parameter is null",
+                    "target": null,
+                    "details": null,
+                    "innerError": null
+                }
+            };
+
+            nock(endpoint.host)
+                .post(trainApi)
+                .replyWithError(errResponse);
+                
+            const malformedPayloadBody = JSON.stringify({
+                feedbackRecords: { feedbackRecords }
+            });
+
+            const httpUtils = new HttpRequestUtils();
+
+            assert.rejects(async () => await httpUtils.executeHttpRequest(endpoint.host + trainApi, malformedPayloadBody, endpoint));
+        });
+
+        it('callTrainAsync() should send correct payload body to Train API', async function() {
+            nock(endpoint.host)
+                .post(trainApi)
+                .reply(204);
+            
+            const feedbackRecordsObj = { 
+                feedbackRecords: feedbackRecords
+            }
+
+            const trainUtils = new TrainUtils(endpoint);
+            
+            assert.doesNotReject(async () => await trainUtils.callTrain(feedbackRecords));
         });
     });
 });

@@ -1,16 +1,12 @@
 const assert = require('assert');
-const { ActionTypes, ActivityTypes, CardFactory, Channels, ConversationState, InputHints, MemoryStorage, TestAdapter, tokenResponseEventName, TurnContext } = require('botbuilder-core');
+const { ActionTypes, ActivityTypes, CardFactory, Channels, ConversationState, InputHints, MemoryStorage, TestAdapter, tokenResponseEventName, TurnContext, verifyStateOperationName } = require('botbuilder-core');
 const { spy } = require('sinon');
 const { ok, strictEqual } = require('assert');
 const { OAuthPrompt, DialogSet, DialogTurnStatus, ListStyle } = require('../');
 const { AuthConstants } = require('../lib/prompts/skillsHelpers');
 
-const beginMessage = { text: `begin`, type: 'message' };
-const answerMessage = { text: `yes`, type: 'message' };
-const invalidMessage = { text: `what?`, type: 'message' };
-
 describe('OAuthPrompt', function() {
-    this.timeout(5000);
+    this.timeout(60000);
 
     it('should call OAuthPrompt', async function() {
         var connectionName = 'myConnection';
@@ -116,6 +112,107 @@ describe('OAuthPrompt', function() {
             })
             .send(magicCode)
             .assertReply('Logged in.');
+    });
+
+    it('should timeout OAuthPrompt with message activity', async function() {
+        const message = {
+            activityId: '1234',
+            type: ActivityTypes.message,
+        };
+
+        await testTimeout(message);
+    });
+
+    it('should timeout OAuthPrompt with tokenResponseEvent activity', async function() {
+        const message = {
+            activityId: '1234',
+            type: ActivityTypes.Event,
+            name: tokenResponseEventName,
+        };
+
+        await testTimeout(message);
+    });
+
+    it('should timeout OAuthPrompt with verifyStateOperation activity', async function() {
+        const message = {
+            activityId: '1234',
+            type: ActivityTypes.Invoke,
+            name: verifyStateOperationName,
+            channelId: Channels.Msteams,
+        };
+
+        await testTimeout(message);
+    });
+
+    it('should not timeout OAuthPrompt with custom event activity', async function() {
+        const message = {
+            activityId: '1234',
+            type: ActivityTypes.Event,
+            name: 'custom_event_name',
+        };
+
+        await testTimeout(message, false, 'Failed', 'Ended' );
+    });
+
+    it('should end OAuthPrompt on invalid message when endOnInvalidMessage', async function() {
+        const message = {
+            activityId: '1234',
+            type: ActivityTypes.Event,
+            name: 'custom_event_name',
+        };
+
+        var connectionName = 'myConnection';
+        var token = 'abc123';
+        var magicCode = '888999';
+        const exchangeToken = 'exch123';
+    
+        // Create new ConversationState with MemoryStorage
+        const convoState = new ConversationState(new MemoryStorage());
+    
+        // Create a DialogState property, DialogSet and OAuthPrompt
+        const dialogState = convoState.createProperty('dialogState');
+        const dialogs = new DialogSet(dialogState);
+        dialogs.add(new OAuthPrompt('prompt', {
+            connectionName,
+            title: 'Login',
+            endOnInvalidMessage: true,
+        }, async (prompt) => {
+            if (prompt.recognized.succeeded) {
+                assert(false, 'recognition succeeded but should have failed during test');
+                return true;
+            }
+            
+            return false;
+        }));
+    
+        // Initialize TestAdapter.
+        const adapter = new TestAdapter(async (turnContext) => {
+            const dc = await dialogs.createContext(turnContext);
+    
+            const results = await dc.continueDialog();
+            if (results.status === DialogTurnStatus.empty) {
+                await dc.prompt('prompt', { });
+            } else if (results.status === DialogTurnStatus.complete) {
+                if (results.result && results.result.token) {
+                    await turnContext.sendActivity('Failed');
+                }
+                else {
+                    await turnContext.sendActivity('Ended');
+                }
+            }
+            await convoState.saveChanges(turnContext);
+        });
+    
+        await adapter.send('Hello')
+            .assertReply(activity  => {
+                assert(activity.attachments.length === 1);
+                assert(activity.attachments[0].contentType === CardFactory.contentTypes.oauthCard);
+    
+                adapter.addUserToken(connectionName, activity.channelId, activity.recipient.id, token, magicCode);
+                adapter.addExchangeableToken(connectionName, activity.channelId, activity.recipient.id, exchangeToken, token);
+            })  
+            .send('invalid text message here')
+            .assertReply('Ended');
     });
 
     it('should see attemptCount increment', async function() {
@@ -748,4 +845,68 @@ function uuid() {
         const r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
         return v.toString(16);
     });
+}
+
+async function testTimeout(oauthPromptActivity, shouldSucceed = true, tokenResponse = 'Failed', noTokenResponse = 'Ended') {
+    var connectionName = 'myConnection';
+    var token = 'abc123';
+    var magicCode = '888999';
+    const exchangeToken = 'exch123';
+
+    // Create new ConversationState with MemoryStorage
+    const convoState = new ConversationState(new MemoryStorage());
+
+    // Create a DialogState property, DialogSet and OAuthPrompt
+    const dialogState = convoState.createProperty('dialogState');
+    const dialogs = new DialogSet(dialogState);
+    dialogs.add(new OAuthPrompt('prompt', {
+        connectionName,
+        title: 'Login',
+        timeout: -1
+    }, (prompt) => {
+        if (prompt.recognized.succeeded) {
+            assert(shouldSucceed, 'recognition succeeded but should have failed during testTimeout');
+            return true;
+        }
+        
+        assert(!shouldSucceed, 'recognition failed during testTimeout');
+        return false;
+    }));
+
+    // Initialize TestAdapter.
+    const adapter = new TestAdapter(async (turnContext) => {
+        const dc = await dialogs.createContext(turnContext);
+
+        if(!oauthPromptActivity.conversation) {
+            oauthPromptActivity.conversation = turnContext.activity.conversation;
+            oauthPromptActivity.recipient = turnContext.activity.recipient;
+            oauthPromptActivity.from = turnContext.activity.from;
+            oauthPromptActivity.serviceUrl = turnContext.activity.serviceUrl;
+            oauthPromptActivity.channelId = turnContext.activity.channelId;
+        }
+
+        const results = await dc.continueDialog();
+        if (results.status === DialogTurnStatus.empty) {
+            await dc.prompt('prompt', { });
+        } else if (results.status === DialogTurnStatus.complete || (results.status === DialogTurnStatus.waiting && !shouldSucceed)) {
+            if (results.result && results.result.token) {
+                await turnContext.sendActivity(tokenResponse);
+            }
+            else {
+                await turnContext.sendActivity(noTokenResponse);
+            }
+        }
+        await convoState.saveChanges(turnContext);
+    });
+
+    await adapter.send('Hello')
+        .assertReply(activity  => {
+            assert(activity.attachments.length === 1);
+            assert(activity.attachments[0].contentType === CardFactory.contentTypes.oauthCard);
+
+            adapter.addUserToken(connectionName, activity.channelId, activity.recipient.id, token, magicCode);
+            adapter.addExchangeableToken(connectionName, activity.channelId, activity.recipient.id, exchangeToken, token);
+        })  
+        .send(oauthPromptActivity)
+        .assertReply(noTokenResponse);
 }
