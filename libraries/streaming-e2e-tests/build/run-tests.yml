@@ -1,29 +1,29 @@
 jobs:
   - job: Run_Tests
     steps:
-      # - task: DownloadPipelineArtifact@2
-      #   inputs:
-      #     artifact: CustomizedReactApp
-      #     path: $(ReactProjectDir)
+      - task: DownloadPipelineArtifact@2
+        inputs:
+          artifact: CustomizedReactApp
+          path: $(ReactProjectDir)
       
-      # - powershell: ls $(ReactProjectDir)/node_modules/bot*
-      #   displayName: 'Show react-app node modules that start with bot'
-      #   workingDirectory: $(ReactProjectDir)
+      - powershell: ls $(ReactProjectDir)/node_modules/bot*
+        displayName: 'Show react-app node modules that start with bot'
+        workingDirectory: $(ReactProjectDir)
       
-      # - powershell: type $(ReactProjectDir)/package.json
-      #   displayName: type react-app/package.json
-      #   workingDirectory: $(ReactProjectDir)
+      - powershell: type $(ReactProjectDir)/package.json
+        displayName: type react-app/package.json
+        workingDirectory: $(ReactProjectDir)
 
-      # - powershell: start powershell {yarn start}
-      #   displayName: 'Serve react-app (yarn start), opening new console'
-      #   workingDirectory: $(ReactProjectDir)
+      - powershell: start powershell {yarn start}
+        displayName: 'Serve react-app (yarn start), opening new console'
+        workingDirectory: $(ReactProjectDir)
       
       - powershell: npm install
         displayName: 'npm install in tests directory'
         workingDirectory: $(TestsDir)
 
-      # - powershell: Start-Sleep -Seconds 100;
-      #   displayName: 'Allowing React App to serve. Sleeping 100 seconds'
+      - powershell: Start-Sleep -Seconds 100;
+        displayName: 'Allowing React App to serve. Sleeping 100 seconds'
 
       - powershell: npm test
         displayName: 'Run Tests: npm test'

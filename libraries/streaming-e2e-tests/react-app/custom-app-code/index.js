@@ -12,7 +12,7 @@ import { DirectLineStreaming } from 'botframework-directlinejs';
   });
 
   const { token } = await res.json();
-  console.log('****THIS IS A TEST STRING DELETE ME LATER');
+  console.log('*THIS IS A TEST STRING DELETE ME LATER');
 
   const directLine = new DirectLineStreaming({
     domain: `https://${botHostname}.azurewebsites.net/.bot/v3/directline`,
