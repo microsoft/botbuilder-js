@@ -39,12 +39,12 @@ stages:
         steps: 
           - template: create-react-app.yml
       
-      - job: Run_Tests
-      # TODO INCLUDE DEPLOY_BOT
-        dependsOn: Create_React_App
-        condition: succeeded()
-        steps:
-          - template: run-tests.yml
+      # - job: Run_Tests
+      # # TODO INCLUDE DEPLOY_BOT
+      #   dependsOn: Create_React_App
+      #   condition: succeeded()
+      #   steps:
+      #     - template: run-tests.yml
 
   # - stage: Run_Tests
   #   dependsOn: Prepare_Bot_And_React_App
