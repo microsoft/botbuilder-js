@@ -43,10 +43,10 @@ steps:
     workingDirectory: $(ReactProjectDir)
   
   - task: PublishPipelineArtifact@1
-    displayName: 'Publish Artifact: ReactApp'
+    displayName: 'Publish Artifact: ReactApp2'
     inputs:
       targetPath: $(ReactProjectDir)
-      artifactName: 'ReactApp'
+      artifactName: 'ReactApp2'
 
   - template: deploy-react-app.yml
 

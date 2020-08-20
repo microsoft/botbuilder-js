@@ -3,7 +3,7 @@
     steps:
       - task: DownloadPipelineArtifact@2
         inputs:
-          artifact: ReactApp
+          artifact: ReactApp2
           path: $(ReactProjectDir)
       
       - powershell: ls $(ReactProjectDir)/node_modules/bot*
@@ -18,7 +18,7 @@
         displayName: 'Serve react-app (npm start), opening new console'
         workingDirectory: $(ReactProjectDir)
       
-      - powershell: ps
+      - powershell: ps 
         displayName: get processes
       
       - powershell: npm install
