@@ -3,7 +3,7 @@
     steps:
       - task: DownloadPipelineArtifact@2
         inputs:
-          artifact: CustomizedReactApp
+          artifact: CustomizedReactApp2
           path: $(ReactProjectDir)
       
       - powershell: ls $(ReactProjectDir)/node_modules/bot*
