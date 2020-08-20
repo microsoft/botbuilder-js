@@ -48,7 +48,7 @@ steps:
       targetPath: $(ReactProjectDir)
       artifactName: 'ReactApp2'
 
-  - template: deploy-react-app.yml
+  # - template: deploy-react-app.yml
 
   # - powershell: start powershell {yarn start}
   #   displayName: 'Serve react-app (yarn start), opening new console'
