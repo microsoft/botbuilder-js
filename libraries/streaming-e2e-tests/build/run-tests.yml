@@ -23,7 +23,7 @@
         workingDirectory: $(TestsDir)
 
       - powershell: Start-Sleep -Seconds 100;
-        displayName: 'Allowing React App to serve. Sleeping 100 seconds'
+        displayName: 'Allowing react-app to serve. Sleeping 100 seconds'
 
       - powershell: npm test
         displayName: 'Run Tests: npm test'

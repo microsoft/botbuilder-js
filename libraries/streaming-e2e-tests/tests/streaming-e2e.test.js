@@ -13,7 +13,7 @@ const reactAppEndpoint = 'http://localhost:3000';
 
 describe('Chrome', function () {
   it('should receive an echo after sending a message', async function () {
-    this.timeout(60000);
+    this.timeout(120000);
 
     const driver = createDriver('chrome');
     await echoMessageInBrowser(driver);
@@ -45,7 +45,7 @@ async function echoMessageInBrowser(driver) {
     console.log(`Navigating to "${reactAppEndpoint}"...`);
     await driver.get(reactAppEndpoint);
 
-    console.log('Sleeping to allow website loading...');
+    console.log('Sleeping to allow website to load...');
     await driver.sleep(15000);
 
     console.log('Getting Web Chat sendbox...');
