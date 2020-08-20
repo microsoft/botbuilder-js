@@ -18,6 +18,9 @@
         displayName: 'Serve react-app (npm start), opening new console'
         workingDirectory: $(ReactProjectDir)
       
+      - powershell: ps
+        displayName: get processes
+      
       - powershell: npm install
         displayName: 'npm install in tests directory'
         workingDirectory: $(TestsDir)
