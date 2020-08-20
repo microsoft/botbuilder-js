@@ -42,26 +42,26 @@ steps:
     displayName: 'yarn add botframework-directlinejs.tgz'
     workingDirectory: $(ReactProjectDir)
   
-  # - task: PublishPipelineArtifact@1
-  #   displayName: 'Publish Artifact: CustomizedReactApp'
-  #   inputs:
-  #     targetPath: $(ReactProjectDir)
-  #     artifactName: 'ReactApp'
+  - task: PublishPipelineArtifact@1
+    displayName: 'Publish Artifact: ReactApp'
+    inputs:
+      targetPath: $(ReactProjectDir)
+      artifactName: 'ReactApp'
 
   # - template: deploy-react-app.yml
 
-  - powershell: start powershell {yarn start}
-    displayName: 'Serve react-app (yarn start), opening new console'
-    workingDirectory: $(ReactProjectDir)
+  # - powershell: start powershell {yarn start}
+  #   displayName: 'Serve react-app (yarn start), opening new console'
+  #   workingDirectory: $(ReactProjectDir)
   
-  - powershell: npm install
-    displayName: 'npm install in tests directory'
-    workingDirectory: $(TestsDir)
+  # - powershell: npm install
+  #   displayName: 'npm install in tests directory'
+  #   workingDirectory: $(TestsDir)
 
-  - powershell: Start-Sleep -Seconds 20;
-    displayName: 'Allowing react-app to serve. Sleeping 20 seconds'
+  # - powershell: Start-Sleep -Seconds 20;
+  #   displayName: 'Allowing react-app to serve. Sleeping 20 seconds'
 
-  - powershell: npm test
-    displayName: 'Run Tests: npm test'
-    workingDirectory: $(TestsDir)
+  # - powershell: npm test
+  #   displayName: 'Run Tests: npm test'
+  #   workingDirectory: $(TestsDir)
 
