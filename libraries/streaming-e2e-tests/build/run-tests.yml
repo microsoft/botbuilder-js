@@ -14,8 +14,8 @@
         displayName: type react-app/package.json
         workingDirectory: $(ReactProjectDir)
 
-      - powershell: start powershell {npm start}
-        displayName: 'Serve react-app (npm start), opening new console'
+      - powershell: start powershell {yarn start}
+        displayName: 'Serve react-app (yarn start), opening new console'
         workingDirectory: $(ReactProjectDir)
       
       - powershell: npm install
