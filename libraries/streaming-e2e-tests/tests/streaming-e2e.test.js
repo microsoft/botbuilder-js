@@ -45,11 +45,12 @@ async function echoMessageInBrowser(driver) {
     console.log(`Navigating to "${reactAppEndpoint}"...`);
     await driver.get(reactAppEndpoint);
 
-    console.log('Sleeping to allow loading...');
+    console.log('Sleeping to allow website loading...');
     await driver.sleep(15000);
 
     console.log('Getting Web Chat sendbox...');
-    let wcSendBox = await driver.wait(until.elementLocated(By.className('webchat__send-box-text-box__input')), 25000);
+    let wcSendBox = await driver.wait(until.elementLocated(By.className('webchat__send-box-text-box__input')), 30000);
+
     console.log('Sending user message...');
     await wcSendBox.sendKeys(userMessage, Key.RETURN);
 

@@ -31,7 +31,7 @@ stages:
       #     - template: configure-to-bbjs-daily.yml
       #     - template: deploy-bot.yml
 
-      - job: Create_React_App_With_WebChat
+      - job: Create_React_App
         variables:
           PackageName: 'botframework-streaming'
           TargetProjectDir: $(DLJSDir)
@@ -41,7 +41,7 @@ stages:
       
       - job: Run_Tests
       # TODO INCLUDE DEPLOY_BOT
-        dependsOn: Create_React_App_With_WebChat
+        dependsOn: Create_React_App
         condition: succeeded()
         steps:
           - template: run-tests.yml
