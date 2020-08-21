@@ -37,11 +37,11 @@
       
       - powershell: type $(ReactProjectDir)/package.json
         displayName: type react-app/package.json
-        workingDirectory: $(ReactProjectDir)
+        workingDirectory: $(RootReactPiecesDir)/dummy-app
 
       - powershell: start powershell {npm start}
         displayName: 'Serve react-app (npm start), opening new console'
-        workingDirectory: $(ReactProjectDir)
+        workingDirectory: $(RootReactPiecesDir)/dummy-app
       
       - powershell: ps -Name powershell
         displayName: get powershell processes after starting react app
