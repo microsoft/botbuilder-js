@@ -17,7 +17,7 @@
         displayName: type react-app/package.json
         workingDirectory: $(ReactProjectDir)
 
-      - powershell: start pwsh {npm start}
+      - powershell: start pwsh {npx react-scripts start}
         displayName: 'Serve react-app (npm start), opening new console'
         workingDirectory: $(ReactProjectDir)
       
