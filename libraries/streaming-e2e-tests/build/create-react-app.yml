@@ -47,6 +47,9 @@ steps:
     inputs:
       targetPath: $(ReactProjectDir)
       artifactName: 'ReactApp2'
+  
+  - powershell: ps
+    displayName: 'ps end of create-react-app.yml'
 
   # - template: deploy-react-app.yml
 
