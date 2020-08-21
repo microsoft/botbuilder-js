@@ -13,7 +13,7 @@ const reactAppEndpoint = 'http://localhost:3000';
 
 describe('Chrome', function () {
   it('should receive an echo after sending a message', async function () {
-    this.timeout(220000);
+    this.timeout(520000);
 
     const driver = createDriver('chrome');
     await echoMessageInBrowser(driver);
@@ -46,7 +46,8 @@ async function echoMessageInBrowser(driver) {
     await driver.get(reactAppEndpoint);
 
     console.log('Sleeping to allow website to load...');
-    await driver.sleep(20000);
+    // TODO LOWER SLEEP TIME
+    await driver.sleep(220000);
 
     console.log('Getting Web Chat sendbox...');
     let wcSendBox = await driver.wait(until.elementLocated(By.className('webchat__send-box-text-box__input')), 35000);
