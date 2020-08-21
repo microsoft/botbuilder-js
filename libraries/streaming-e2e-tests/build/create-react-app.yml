@@ -16,7 +16,8 @@ steps:
     displayName: 'Copy custom files into react-app'
     workingDirectory: $(ReactProjectDir)
   
-  - template: customize-dljs.yml
+  # TODO - TEMPORARILY COMMENTING OUT CUSTOM DLJS TO EXPEDITE TESTING
+  # - template: customize-dljs.yml
 
   # - template: use-custom-dljs-in-webchat.yml
 
@@ -38,7 +39,8 @@ steps:
     workingDirectory: $(ReactProjectDir)
     condition: ne(variables.CacheRestored, 'true')
   
-  - powershell: yarn add $(DLJSDir)/botframework-directlinejs.tgz
+  # - powershell: yarn add $(DLJSDir)/botframework-directlinejs.tgz
+  - powershell: yarn add botframework-directlinjs
     displayName: 'yarn add botframework-directlinejs.tgz'
     workingDirectory: $(ReactProjectDir)
   
