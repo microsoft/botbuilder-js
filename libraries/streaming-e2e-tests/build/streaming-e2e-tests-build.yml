@@ -41,18 +41,68 @@ stages:
             displayName: 'ps before create-react-app.yml'
           - template: create-react-app.yml
       
-      - job: Run_Tests
-      # TODO INCLUDE DEPLOY_BOT
-        dependsOn: Create_React_App
-        condition: succeeded()
-        variables:
-          PORT: 3000
-        steps:
-          - template: run-tests.yml
+      # - job: Run_Tests
+      # # TODO INCLUDE DEPLOY_BOT
+      #   dependsOn: Create_React_App
+      #   condition: succeeded()
+      #   variables:
+      #     PORT: 3000
+      #   steps:
+      #     - template: run-tests.yml
 
   # - stage: Run_Tests
   #   dependsOn: Prepare_Bot_And_React_App
   #   condition: succeeded()
   #   jobs:
   #     - template: run-tests.yml
+
+  #### UNCOMMENT ABOVE TO RESTORE
           
+      # - job: React_App
+      #   variables:
+      #     PackageName: 'botframework-streaming'
+      #     TargetProjectDir: $(DLJSDir)
+      #     REACT_APP_BOT_HOSTNAME: $(BotName)
+      #   steps: 
+      #     - powershell: ps
+      #       displayName: 'ps before create-react-app.yml'
+          
+      #     - powershell: npx create-react-app react-app
+      #       displayName: 'create-react-app'
+      #       workingDirectory: $(RootReactPiecesDir)
+          
+      #     - powershell: Remove-Item src/App.js, src/index.js, public/index.html, ./package.json, ./yarn.lock
+      #       displayName: "Delete files we're replacing with custom code in react-app"
+      #       workingDirectory: $(ReactProjectDir)
+
+      #     - powershell: |
+      #         copy ../custom-app-code/App.js, ../custom-app-code/index.js ./src/
+      #         copy ../custom-app-code/index.html ./public
+      #         copy ../custom-app-code/package.json, ../custom-app-code/yarn.lock
+      #       displayName: 'Copy custom files into react-app'
+      #       workingDirectory: $(ReactProjectDir)
+          
+      #     - task: Cache@2
+      #       displayName: Cache npm
+      #       inputs:
+      #         key: 'WebChatCache | npm | "$(Agent.OS)"'
+      #         path: $(ReactProjectDir)/node_modules
+      #         cacheHitVar: 'CacheRestored'
+
+      #     - powershell: yarn add botframework-webchat@4.9.2
+      #       displayName: 'yarn add botframework-webchat@4.9.2'
+      #       workingDirectory: $(ReactProjectDir)
+      #       condition: ne(variables.CacheRestored, 'true')
+          
+      #     - powershell: yarn add botframework-directlinejs
+      #       displayName: 'yarn add botframework-directlinejs.tgz'
+      #       workingDirectory: $(ReactProjectDir)
+          
+      #     - task: PublishPipelineArtifact@1
+      #       displayName: 'Publish Artifact: ReactApp2'
+      #       inputs:
+      #         targetPath: $(ReactProjectDir)
+      #         artifactName: 'ReactApp2'
+          
+      #     - powershell: ps
+      #       displayName: 'ps end of create-react-app.yml'
