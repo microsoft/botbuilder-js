@@ -32,22 +32,22 @@ steps:
   #     New-Item -Path . -Name ".npmrc" -ItemType "file" -Value "registry=https://botbuilder.myget.org/F/botbuilder-v4-js-daily/npm/"
   #   displayName: 'Create .npmrc for MyGet feed - https://botbuilder.myget.org/gallery/botbuilder-v4-js-daily'
   
-  - task: Cache@2
-    displayName: Cache npm
-    inputs:
-      key: 'WebChatCache | npm | "$(Agent.OS)"'
-      path: $(ReactProjectDir)/node_modules
-      cacheHitVar: 'CacheRestored'
+  # - task: Cache@2
+  #   displayName: Cache npm
+  #   inputs:
+  #     key: 'WebChatCache | npm | "$(Agent.OS)"'
+  #     path: $(ReactProjectDir)/node_modules
+  #     cacheHitVar: 'CacheRestored'
 
-  - powershell: yarn add botframework-webchat@4.9.2
-    displayName: 'yarn add botframework-webchat@4.9.2'
-    condition: ne(variables.CacheRestored, 'true')
-    workingDirectory: $(ReactProjectDir)
+  # - powershell: yarn add botframework-webchat@4.9.2
+  #   displayName: 'yarn add botframework-webchat@4.9.2'
+  #   condition: ne(variables.CacheRestored, 'true')
+  #   workingDirectory: $(ReactProjectDir)
   
-  # - powershell: yarn add $(DLJSDir)/botframework-directlinejs.tgz
-  - powershell: yarn add botframework-directlinejs
-    displayName: 'yarn add botframework-directlinejs.tgz'
-    workingDirectory: $(ReactProjectDir)
+  # # - powershell: yarn add $(DLJSDir)/botframework-directlinejs.tgz
+  # - powershell: yarn add botframework-directlinejs
+  #   displayName: 'yarn add botframework-directlinejs.tgz'
+  #   workingDirectory: $(ReactProjectDir)
   
   - task: PublishPipelineArtifact@1
     displayName: 'Publish Artifact: ReactApp2'
@@ -55,40 +55,25 @@ steps:
       targetPath: $(ReactProjectDir)
       artifactName: 'ReactApp2'
   
-  - powershell: md react-app2
-    workingDirectory: $(RootReactPiecesDir)
-  
-  - task: DownloadPipelineArtifact@2
-    inputs:
-      artifact: ReactApp2
-      path: $(RootReactPiecesDir)/react-app2
-  
-  - powershell: ls
-    displayName: 'Show react-app2'
-    workingDirectory: $(RootReactPiecesDir)/react-app2
-  
-  # - powershell: ps
-  #   displayName: 'ps end of create-react-app.yml'
-
   # - template: deploy-react-app.yml
 
   # IN SAME JOB RUN_TESTS STEPS
 
-  - powershell: start powershell {yarn start}
-    displayName: 'Serve react-app (yarn start), opening new console'
-    # workingDirectory: $(ReactProjectDir)
-    workingDirectory: $(RootReactPiecesDir)/react-app2
+  # - powershell: start powershell {npm start}
+  #   displayName: 'Serve react-app (npm start), opening new console'
+  #   # workingDirectory: $(ReactProjectDir)
+  #   workingDirectory: $(ReactProjectDir)
   
-  - powershell: ps -Name powershell
-    displayName: 'ps -Name powershell'
+  # - powershell: ps -Name powershell
+  #   displayName: 'ps -Name powershell'
   
-  - powershell: npm install
-    displayName: 'npm install in tests directory'
-    workingDirectory: $(TestsDir)
+  # - powershell: npm install
+  #   displayName: 'npm install in tests directory'
+  #   workingDirectory: $(TestsDir)
 
-  - powershell: Start-Sleep -Seconds 20;
-    displayName: 'Allowing react-app to serve. Sleeping 20 seconds'
+  # - powershell: Start-Sleep -Seconds 20;
+  #   displayName: 'Allowing react-app to serve. Sleeping 20 seconds'
 
-  - powershell: npm test
-    displayName: 'Run Tests: npm test'
-    workingDirectory: $(TestsDir)
+  # - powershell: npm test
+  #   displayName: 'Run Tests: npm test'
+  #   workingDirectory: $(TestsDir)
