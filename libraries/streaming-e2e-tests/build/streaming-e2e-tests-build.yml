@@ -36,6 +36,7 @@ stages:
           PackageName: 'botframework-streaming'
           TargetProjectDir: $(DLJSDir)
           REACT_APP_BOT_HOSTNAME: $(BotName)
+          PORT: 3000
         steps: 
           - powershell: ps
             displayName: 'ps before create-react-app.yml'
