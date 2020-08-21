@@ -49,11 +49,23 @@ steps:
     displayName: 'yarn add botframework-directlinejs.tgz'
     workingDirectory: $(ReactProjectDir)
   
-  # - task: PublishPipelineArtifact@1
-  #   displayName: 'Publish Artifact: ReactApp2'
-  #   inputs:
-  #     targetPath: $(ReactProjectDir)
-  #     artifactName: 'ReactApp2'
+  - task: PublishPipelineArtifact@1
+    displayName: 'Publish Artifact: ReactApp2'
+    inputs:
+      targetPath: $(ReactProjectDir)
+      artifactName: 'ReactApp2'
+  
+  - powershell: md react-app2
+    workingDirectory: $(RootReactPiecesDir)
+  
+  - task: DownloadPipelineArtifact@2
+    inputs:
+      artifact: ReactApp2
+      path: $(RootReactPiecesDir)/react-app2
+  
+  - powershell: ls
+    displayName: 'Show react-app2'
+    workingDirectory: $(RootReactPiecesDir)/react-app2
   
   # - powershell: ps
   #   displayName: 'ps end of create-react-app.yml'
@@ -62,17 +74,21 @@ steps:
 
   # IN SAME JOB RUN_TESTS STEPS
 
-  # - powershell: start powershell {yarn start}
-  #   displayName: 'Serve react-app (yarn start), opening new console'
-  #   workingDirectory: $(ReactProjectDir)
+  - powershell: start powershell {yarn start}
+    displayName: 'Serve react-app (yarn start), opening new console'
+    # workingDirectory: $(ReactProjectDir)
+    workingDirectory: $(RootReactPiecesDir)/react-app2
   
-  # - powershell: npm install
-  #   displayName: 'npm install in tests directory'
-  #   workingDirectory: $(TestsDir)
+  - powershell: ps -Name powershell
+    displayName: 'ps -Name powershell'
+  
+  - powershell: npm install
+    displayName: 'npm install in tests directory'
+    workingDirectory: $(TestsDir)
 
-  # - powershell: Start-Sleep -Seconds 20;
-  #   displayName: 'Allowing react-app to serve. Sleeping 20 seconds'
+  - powershell: Start-Sleep -Seconds 20;
+    displayName: 'Allowing react-app to serve. Sleeping 20 seconds'
 
-  # - powershell: npm test
-  #   displayName: 'Run Tests: npm test'
-  #   workingDirectory: $(TestsDir)
+  - powershell: npm test
+    displayName: 'Run Tests: npm test'
+    workingDirectory: $(TestsDir)
