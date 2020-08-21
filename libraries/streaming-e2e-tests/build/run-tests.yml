@@ -35,7 +35,7 @@
       #   displayName: 'Show react-app node modules that start with bot'
       #   workingDirectory: $(ReactProjectDir)
       
-      - powershell: type $(ReactProjectDir)/package.json
+      - powershell: type $(RootReactPiecesDir)/dummy-app/package.json
         displayName: type react-app/package.json
         workingDirectory: $(RootReactPiecesDir)/dummy-app
 
