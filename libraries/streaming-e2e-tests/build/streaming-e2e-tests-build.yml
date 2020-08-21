@@ -100,14 +100,16 @@ stages:
             displayName: 'yarn add botframework-directlinejs.tgz'
             workingDirectory: $(ReactProjectDir)
           
-          - task: PublishPipelineArtifact@1
-            displayName: 'Publish Artifact: CustomizedReactApp'
-            inputs:
-              targetPath: $(ReactProjectDir)
-              artifactName: 'CustomizedReactApp'
+          # - task: PublishPipelineArtifact@1
+          #   displayName: 'Publish Artifact: CustomizedReactApp'
+          #   inputs:
+          #     targetPath: $(ReactProjectDir)
+          #     artifactName: 'CustomizedReactApp'
           
-          - powershell: ps
-            displayName: 'ps end of create-react-app.yml'
+          # - powershell: ps
+          #   displayName: 'ps end of create-react-app.yml'
+
+          - template: deploy-react-app.yml
 
       - job: Run_Tests
         dependsOn: Prep_React_App
@@ -120,17 +122,17 @@ stages:
             condition: ne(variables.CacheRestored, 'true')
             workingDirectory: $(TestsDir)
           
-          - task: DownloadPipelineArtifact@2
-            inputs:
-              artifact: CustomizedReactApp
-              path: $(ReactProjectDir)
+          # - task: DownloadPipelineArtifact@2
+          #   inputs:
+          #     artifact: CustomizedReactApp
+          #     path: $(ReactProjectDir)
           
-          - powershell: start powershell {npx react-scripts start}
-            displayName: 'npm start React App'
-            workingDirectory: $(ReactProjectDir)
+          # - powershell: start powershell {npx react-scripts start}
+          #   displayName: 'npm start React App'
+          #   workingDirectory: $(ReactProjectDir)
           
-          - powershell: Start-Sleep -Seconds 60
-            displayName: 'Sleeping for 60 seconds to allow React App to serve...'
+          # - powershell: Start-Sleep -Seconds 60
+          #   displayName: 'Sleeping for 60 seconds to allow React App to serve...'
           
           - powershell: npm test
             displayName: 'npm test'
