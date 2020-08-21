@@ -28,8 +28,8 @@
         displayName: 'npm install in tests directory'
         workingDirectory: $(TestsDir)
 
-      - powershell: Start-Sleep -Seconds 300;
-        displayName: 'Allowing react-app to serve. Sleeping 300 seconds'
+      - powershell: Start-Sleep -Seconds 90;
+        displayName: 'Allowing react-app to serve. Sleeping 90 seconds'
 
       - powershell: npm test
         displayName: 'Run Tests: npm test'
