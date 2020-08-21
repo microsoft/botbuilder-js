@@ -17,35 +17,28 @@
         displayName: type react-app/package.json
         workingDirectory: $(ReactProjectDir)
 
-      # - powershell: | 
-      #     start powershell {npx react-scripts start}
+      - powershell: | 
+          Write-Host "Starting react app on $(ReactProjectDir)"
+          Set-Location -Path "$(ReactProjectDir)"
+          start powershell {npx react-scripts start}
 
-      #     Write-Host "Sleep on start"
-      #     Start-Sleep -Seconds 90
+          Write-Host "Sleep on start"
+          Start-Sleep -Seconds 90
 
-      #     Write-Host "Get processes"
-      #     ps -Name powershell
+          Write-Host "Get processes"
+          ps -Name powershell
           
-      #     Write-Host "Setting location to $(TestsDir)"
-      #     Set-Location -Path "$(TestsDir)"
+          Write-Host "Setting location to $(TestsDir)"
+          Set-Location -Path "$(TestsDir)"
 
-      #     Write-Host "npm install in tests directory"
-      #     npm install
+          Write-Host "npm install in tests directory"
+          npm install
 
-      #     Write-Host "npm test"
-      #     npm test
-      #   displayName: 'Serve react-app (npm start), opening new console'
-      # #   displayName: 'Serve React App and Run Tests'
-      #   workingDirectory: $(ReactProjectDir)
-      
-      - task: PowerShell@2
-        displayName: 'Serve React App and Run Tests'
-        inputs:
-          targetType: 'filePath'
-          filePath: $(System.DefaultWorkingDirectory)/libraries/streaming-e2e-tests/build/run-react-app-and-tests.ps1
-          arguments:
-            -ReactProjectDir $(ReactProjectDir)
-            -TestsDir $(TestsDir)
+          Write-Host "npm test"
+          npm test
+        displayName: 'Serve react-app (npm start), opening new console'
+      #   displayName: 'Serve React App and Run Tests'
+        # workingDirectory: $(ReactProjectDir)
       
       # - powershell: ps 
       #   displayName: get processes
@@ -60,3 +53,12 @@
       # - powershell: npm test
       #   displayName: 'Run Tests: npm test'
       #   workingDirectory: $(TestsDir)
+
+      # - task: PowerShell@2
+      #   displayName: 'Serve React App and Run Tests'
+      #   inputs:
+      #     targetType: 'filePath'
+      #     filePath: $(System.DefaultWorkingDirectory)/libraries/streaming-e2e-tests/build/run-react-app-and-tests.ps1
+      #     arguments:
+      #       -ReactProjectDir $(ReactProjectDir)
+      #       -TestsDir $(TestsDir)

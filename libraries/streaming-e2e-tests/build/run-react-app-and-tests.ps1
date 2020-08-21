@@ -9,6 +9,6 @@ Start-Sleep -Seconds 60
 
 $reactJob | Select-Object -Property *
 
-Write-Host "npm test"
+Write-Host "npm test in $TestsDir"
 Set-Location -Path "$TestsDir"
 npm test
