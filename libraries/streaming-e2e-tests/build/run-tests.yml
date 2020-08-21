@@ -18,7 +18,7 @@
         workingDirectory: $(ReactProjectDir)
 
       - powershell: | 
-          start pwsh {npx react-scripts start}
+          Start-Job powershell {npx react-scripts start}
 
           Write-Host "Sleep on start"
           Start-Sleep -Seconds 90
@@ -35,9 +35,8 @@
           Write-Host "npm test"
           npm test
         displayName: 'Serve react-app (npm start), opening new console'
-        
       #   displayName: 'Serve React App and Run Tests'
-      #   workingDirectory: $(ReactProjectDir)
+        workingDirectory: $(ReactProjectDir)
       
       # - powershell: ps 
       #   displayName: get processes
