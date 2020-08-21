@@ -4,6 +4,10 @@
       - powershell: ps
         displayName: 'ps top of run-tests.yml'
 
+      - powershell: npm install
+        displayName: 'npm install in tests directory'
+        workingDirectory: $(TestsDir)
+
       - task: DownloadPipelineArtifact@2
         inputs:
           artifact: ReactApp2
@@ -17,42 +21,23 @@
         displayName: type react-app/package.json
         workingDirectory: $(ReactProjectDir)
 
-      - powershell: | 
-          Write-Host "Starting react app on $(ReactProjectDir)"
-          Set-Location -Path "$(ReactProjectDir)"
-          start powershell {npx react-scripts start}
-
-          Write-Host "Sleep on start"
-          Start-Sleep -Seconds 90
-
-          Write-Host "Get processes"
-          ps -Name powershell
-          
-          Write-Host "Setting location to $(TestsDir)"
-          Set-Location -Path "$(TestsDir)"
-
-          Write-Host "npm install in tests directory"
-          npm install
-
-          Write-Host "npm test"
-          npm test
-        displayName: 'Serve react-app (npm start), opening new console'
-      #   displayName: 'Serve React App and Run Tests'
-        # workingDirectory: $(ReactProjectDir)
+      - powershell: start powershell {npx react-scripts start}
+        displayName: 'Serve react-app (npx react-scripts start), opening new console'
+        workingDirectory: $(ReactProjectDir)
       
-      # - powershell: ps 
-      #   displayName: get processes
+      - powershell: ps -Name powershell
+        displayName: get powershell processes after starting react app
       
       # - powershell: npm install
       #   displayName: 'npm install in tests directory'
       #   workingDirectory: $(TestsDir)
 
-      # - powershell: Start-Sleep -Seconds 90;
-      #   displayName: 'Allowing react-app to serve. Sleeping 90 seconds'
+      - powershell: Start-Sleep -Seconds 60;
+        displayName: 'Allowing react-app to serve. Sleeping 60 seconds'
 
-      # - powershell: npm test
-      #   displayName: 'Run Tests: npm test'
-      #   workingDirectory: $(TestsDir)
+      - powershell: npm test
+        displayName: 'Run Tests: npm test'
+        workingDirectory: $(TestsDir)
 
       # - task: PowerShell@2
       #   displayName: 'Serve React App and Run Tests'
@@ -62,3 +47,26 @@
       #     arguments:
       #       -ReactProjectDir $(ReactProjectDir)
       #       -TestsDir $(TestsDir)
+
+
+      # INLINE
+      # - powershell: | 
+      #     Write-Host "Starting react app on $(ReactProjectDir)"
+      #     Set-Location -Path "$(ReactProjectDir)"
+      #     start powershell {npx react-scripts start}
+
+      #     Write-Host "Sleep on start"
+      #     Start-Sleep -Seconds 90
+
+      #     Write-Host "Get processes"
+      #     ps -Name powershell
+          
+      #     Write-Host "Setting location to $(TestsDir)"
+      #     Set-Location -Path "$(TestsDir)"
+
+      #     Write-Host "npm install in tests directory"
+      #     npm install
+
+      #     Write-Host "npm test"
+      #     npm test
+      #   displayName: 'Serve react-app (npm start), opening new console'
