@@ -2,20 +2,20 @@
 
 steps:
   # Create React APp
-  - powershell: npx create-react-app react-app
-    displayName: 'create-react-app'
-    workingDirectory: $(RootReactPiecesDir)
+  # - powershell: npx create-react-app react-app
+  #   displayName: 'create-react-app'
+  #   workingDirectory: $(RootReactPiecesDir)
   
-  - powershell: Remove-Item src/App.js, src/index.js, public/index.html, ./package.json, ./yarn.lock
-    displayName: "Delete files we're replacing with custom code in react-app"
-    workingDirectory: $(ReactProjectDir)
+  # - powershell: Remove-Item src/App.js, src/index.js, public/index.html, ./package.json, ./yarn.lock
+  #   displayName: "Delete files we're replacing with custom code in react-app"
+  #   workingDirectory: $(ReactProjectDir)
 
-  - powershell: |
-      copy ../custom-app-code/App.js, ../custom-app-code/index.js ./src/
-      copy ../custom-app-code/index.html ./public
-      copy ../custom-app-code/package.json, ../custom-app-code/yarn.lock
-    displayName: 'Copy custom files into react-app'
-    workingDirectory: $(ReactProjectDir)
+  # - powershell: |
+  #     copy ../custom-app-code/App.js, ../custom-app-code/index.js ./src/
+  #     copy ../custom-app-code/index.html ./public
+  #     copy ../custom-app-code/package.json, ../custom-app-code/yarn.lock
+  #   displayName: 'Copy custom files into react-app'
+  #   workingDirectory: $(ReactProjectDir)
 
   
   # Install Dependencies
@@ -32,27 +32,31 @@ steps:
   #     New-Item -Path . -Name ".npmrc" -ItemType "file" -Value "registry=https://botbuilder.myget.org/F/botbuilder-v4-js-daily/npm/"
   #   displayName: 'Create .npmrc for MyGet feed - https://botbuilder.myget.org/gallery/botbuilder-v4-js-daily'
   
-  # - task: Cache@2
-  #   displayName: Cache npm
-  #   inputs:
-  #     key: 'WebChatCache | npm | "$(Agent.OS)"'
-  #     path: $(ReactProjectDir)/node_modules
-  #     cacheHitVar: 'CacheRestored'
+  - task: Cache@2
+    displayName: Cache npm
+    inputs:
+      key: 'WebChatCache | npm | "$(Agent.OS)"'
+      path: $(RootReactPiecesDir)/dummy-app/node_modules
+      # path: $(ReactProjectDir)/node_modules
+      cacheHitVar: 'CacheRestored'
 
-  # - powershell: yarn add botframework-webchat@4.9.2
-  #   displayName: 'yarn add botframework-webchat@4.9.2'
-  #   condition: ne(variables.CacheRestored, 'true')
-  #   workingDirectory: $(ReactProjectDir)
+  - powershell: yarn add botframework-webchat@4.9.2
+    displayName: 'yarn add botframework-webchat@4.9.2'
+    condition: ne(variables.CacheRestored, 'true')
+    # workingDirectory: $(ReactProjectDir)
+    workingDirectory: $(RootReactPiecesDir)/dummy-app
   
-  # # - powershell: yarn add $(DLJSDir)/botframework-directlinejs.tgz
-  # - powershell: yarn add botframework-directlinejs
-  #   displayName: 'yarn add botframework-directlinejs.tgz'
-  #   workingDirectory: $(ReactProjectDir)
+  # - powershell: yarn add $(DLJSDir)/botframework-directlinejs.tgz
+  - powershell: yarn add botframework-directlinejs
+    displayName: 'yarn add botframework-directlinejs.tgz'
+    # workingDirectory: $(ReactProjectDir)
+    workingDirectory: $(RootReactPiecesDir)/dummy-app
   
   - task: PublishPipelineArtifact@1
     displayName: 'Publish Artifact: ReactApp2'
     inputs:
-      targetPath: $(ReactProjectDir)
+      # targetPath: $(ReactProjectDir)
+      targetPath: $(RootReactPiecesDir)/dummy-app
       artifactName: 'ReactApp2'
   
   # - template: deploy-react-app.yml

@@ -11,28 +11,29 @@
       - task: DownloadPipelineArtifact@2
         inputs:
           artifact: ReactApp2
-          path: $(ReactProjectDir)
+          path: $(RootReactPiecesDir)/dummy-app
+          # path: $(ReactProjectDir)
       
-      - task: Cache@2
-        displayName: Cache npm
-        inputs:
-          key: 'WebChatCache | npm | "$(Agent.OS)"'
-          path: $(ReactProjectDir)/node_modules
-          cacheHitVar: 'CacheRestored'
+      # - task: Cache@2
+      #   displayName: Cache npm
+      #   inputs:
+      #     key: 'WebChatCache | npm | "$(Agent.OS)"'
+      #     path: $(ReactProjectDir)/node_modules
+      #     cacheHitVar: 'CacheRestored'
 
-      - powershell: yarn add botframework-webchat@4.9.2
-        displayName: 'yarn add botframework-webchat@4.9.2'
-        condition: ne(variables.CacheRestored, 'true')
-        workingDirectory: $(ReactProjectDir)
+      # - powershell: yarn add botframework-webchat@4.9.2
+      #   displayName: 'yarn add botframework-webchat@4.9.2'
+      #   condition: ne(variables.CacheRestored, 'true')
+      #   workingDirectory: $(ReactProjectDir)
       
-      # - powershell: yarn add $(DLJSDir)/botframework-directlinejs.tgz
-      - powershell: yarn add botframework-directlinejs
-        displayName: 'yarn add botframework-directlinejs.tgz'
-        workingDirectory: $(ReactProjectDir)
+      # # - powershell: yarn add $(DLJSDir)/botframework-directlinejs.tgz
+      # - powershell: yarn add botframework-directlinejs
+      #   displayName: 'yarn add botframework-directlinejs.tgz'
+      #   workingDirectory: $(ReactProjectDir)
       
-      - powershell: ls $(ReactProjectDir)/node_modules/bot*
-        displayName: 'Show react-app node modules that start with bot'
-        workingDirectory: $(ReactProjectDir)
+      # - powershell: ls $(ReactProjectDir)/node_modules/bot*
+      #   displayName: 'Show react-app node modules that start with bot'
+      #   workingDirectory: $(ReactProjectDir)
       
       - powershell: type $(ReactProjectDir)/package.json
         displayName: type react-app/package.json
