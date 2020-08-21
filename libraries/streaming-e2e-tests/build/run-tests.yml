@@ -18,7 +18,7 @@
         workingDirectory: $(ReactProjectDir)
 
       - powershell: | 
-          Start-Job powershell {npx react-scripts start}
+          start powershell {npx react-scripts start}
 
           Write-Host "Sleep on start"
           Start-Sleep -Seconds 90
