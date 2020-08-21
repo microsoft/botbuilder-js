@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { ExpressionParserInterface, ExpressionParser } from 'adaptive-expressions';
+import { ExpressionParserInterface, ExpressionParser, Extensions } from 'adaptive-expressions';
 import { TriggerSelector } from '../triggerSelector';
 import { OnCondition } from '../conditions';
 import { ActionContext } from '../actionContext';
@@ -44,7 +44,7 @@ export class RandomSelector implements TriggerSelector {
 
         const result = [];
         if (candidates.length > 0) {
-            const selection = Math.floor(Math.random() * candidates.length);
+            const selection = Extensions.randomNext(actionContext.state, 0, candidates.length);
             result.push(candidates[selection]);
         }
 

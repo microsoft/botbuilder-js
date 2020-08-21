@@ -40,4 +40,8 @@ describe('TestScriptTests', function() {
     it('UserTyping', async () => {
         await testRunner.runTestScript('TestScriptTests_UserTyping');
     });
+
+    it('CustomEvent', async () => {
+        await testRunner.runTestScript('TestScriptTests_CustomEvent');
+    });
 });

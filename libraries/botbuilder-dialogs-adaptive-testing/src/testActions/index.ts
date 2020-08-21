@@ -14,3 +14,4 @@ export * from './userTyping';
 export * from './assertReplyActivity';
 export * from './assertReply';
 export * from './assertReplyOneOf';
+export * from './customEvent';

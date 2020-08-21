@@ -9,7 +9,7 @@
 import { ComponentRegistration, BuilderRegistration, ResourceExplorer, TypeBuilder } from 'botbuilder-dialogs-declarative';
 import { AdaptiveTypeBuilder, DialogExpressionConverter } from 'botbuilder-dialogs-adaptive';
 import { ExpressionConverter, StringExpressionConverter } from 'adaptive-expressions';
-import { AssertReply, AssertReplyActivity, AssertReplyOneOf, UserActivity, UserConversationUpdate, UserDelay, UserSays, UserTyping } from './testActions';
+import { AssertReply, AssertReplyActivity, AssertReplyOneOf, UserActivity, UserConversationUpdate, UserDelay, UserSays, UserTyping, CustomEvent } from './testActions';
 import { AssertCondition } from './actions';
 import { TestScript } from './testScript';
 
@@ -30,6 +30,7 @@ export class AdaptiveDialogTestComponentRegistration implements ComponentRegistr
         this.registerBuilder('Microsoft.Test.UserConversationUpdate', new AdaptiveTypeBuilder(UserConversationUpdate, this._resourceExplorer, {}));
         this.registerBuilder('Microsoft.Test.UserDelay', new AdaptiveTypeBuilder(UserDelay, this._resourceExplorer, {}));
         this.registerBuilder('Microsoft.Test.UserSays', new AdaptiveTypeBuilder(UserSays, this._resourceExplorer, {}));
+        this.registerBuilder('Microsoft.Test.CustomEvent', new AdaptiveTypeBuilder(CustomEvent, this._resourceExplorer, {}));
         this.registerBuilder('Microsoft.Test.UserTyping', new AdaptiveTypeBuilder(UserTyping, this._resourceExplorer, {}));
         this.registerBuilder('Microsoft.Test.Script', new AdaptiveTypeBuilder(TestScript, this._resourceExplorer, {
             'dialog': new DialogExpressionConverter(resourceExplorer)

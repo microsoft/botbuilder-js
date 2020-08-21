@@ -7,7 +7,7 @@
  */
 import { AbstractParseTreeVisitor, TerminalNode } from 'antlr4ts/tree';
 import { ParserRuleContext } from 'antlr4ts/ParserRuleContext';
-import { EvaluatorLookup, Expression, ExpressionParser, ExpressionEvaluator, ReturnType, ExpressionType, Constant, FunctionUtils } from 'adaptive-expressions';
+import { EvaluatorLookup, Expression, ExpressionParser, ExpressionEvaluator, ReturnType, ExpressionType, Constant, FunctionUtils, Extensions } from 'adaptive-expressions';
 import { keyBy } from 'lodash';
 import { EvaluationTarget } from './evaluationTarget';
 import { Evaluator } from './evaluator';
@@ -448,7 +448,7 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGTe
         const newScope: any = this.constructScope(templateName, Array.from(args));
 
         const value: string[] = this.expandTemplate(templateName, newScope);
-        const randomNumber: number = Math.floor(Math.random() * value.length);
+        const randomNumber = Extensions.randomNext(this.currentTarget().scope, 0, value.length);
 
         return value[randomNumber];
     }

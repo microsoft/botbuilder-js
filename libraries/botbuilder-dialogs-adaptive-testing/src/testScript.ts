@@ -12,6 +12,7 @@ import { DialogExpression, LanguageGeneratorExtensions, ResourceExtensions } fro
 import { ResourceExplorer } from 'botbuilder-dialogs-declarative';
 import { TestAction } from './testAction';
 import { AdaptiveTestAdapter } from './adaptiveTestAdapter';
+import { SetTestOptionsMiddleware } from './setTestOptionsMiddleware';
 
 export class TestScript {
 
@@ -52,6 +53,7 @@ export class TestScript {
 
         testAdapter.enableTrace = this.enableTrace;
         testAdapter.locale = this.locale;
+        testAdapter.use(new SetTestOptionsMiddleware());
 
         const bot = new DialogManager(this.dialog.value);
         bot.conversationState = new ConversationState(new MemoryStorage());
