@@ -21,16 +21,13 @@ steps:
   # Install Dependencies
   
   # TODO - TEMPORARILY COMMENTING OUT CUSTOM DLJS TO EXPEDITE TESTING
-  # - template: customize-dljs.yml
-
-  # - template: use-custom-dljs-in-webchat.yml
-
-  # TODO - remember to comment back in
-  # - powershell: |
-  #     Set-Location -Path "$(ReactProjectDir)"
+  - template: customize-dljs.yml
+  - template: use-custom-dljs-in-webchat.yml
+  - powershell: |
+      Set-Location -Path "$(ReactProjectDir)"
       
-  #     New-Item -Path . -Name ".npmrc" -ItemType "file" -Value "registry=https://botbuilder.myget.org/F/botbuilder-v4-js-daily/npm/"
-  #   displayName: 'Create .npmrc for MyGet feed - https://botbuilder.myget.org/gallery/botbuilder-v4-js-daily'
+      New-Item -Path . -Name ".npmrc" -ItemType "file" -Value "registry=https://botbuilder.myget.org/F/botbuilder-v4-js-daily/npm/"
+    displayName: 'Create .npmrc for MyGet feed - https://botbuilder.myget.org/gallery/botbuilder-v4-js-daily'
   
   - task: Cache@2
     displayName: Cache npm
@@ -44,32 +41,32 @@ steps:
     condition: ne(variables.CacheRestored, 'true')
     workingDirectory: $(ReactProjectDir)
   
-  # - powershell: yarn add $(DLJSDir)/botframework-directlinejs.tgz
-  - powershell: yarn add botframework-directlinejs
+  - powershell: yarn add $(DLJSDir)/botframework-directlinejs.tgz
+  # - powershell: yarn add botframework-directlinejs
     displayName: 'yarn add botframework-directlinejs.tgz'
     workingDirectory: $(ReactProjectDir)
   
-  - task: PublishPipelineArtifact@1
-    displayName: 'Publish Artifact: ReactApp2'
-    inputs:
-      targetPath: $(ReactProjectDir)
-      artifactName: 'ReactApp2'
+  # - task: PublishPipelineArtifact@1
+  #   displayName: 'Publish Artifact: ReactApp2'
+  #   inputs:
+  #     targetPath: $(ReactProjectDir)
+  #     artifactName: 'ReactApp2'
   
   # - template: deploy-react-app.yml
 
   # IN SAME JOB RUN_TESTS STEPS
 
-  # - powershell: start powershell {npm start}
-  #   displayName: 'Serve react-app (npm start), opening new console'
-  #   workingDirectory: $(ReactProjectDir)
+  - powershell: start powershell {npm start}
+    displayName: 'Serve react-app (npm start), opening new console'
+    workingDirectory: $(ReactProjectDir)
   
-  # - powershell: npm install
-  #   displayName: 'npm install in tests directory'
-  #   workingDirectory: $(TestsDir)
+  - powershell: npm install
+    displayName: 'npm install in tests directory'
+    workingDirectory: $(TestsDir)
 
-  # - powershell: Start-Sleep -Seconds 20;
-  #   displayName: 'Allowing react-app to serve. Sleeping 20 seconds'
+  - powershell: Start-Sleep -Seconds 20;
+    displayName: 'Allowing react-app to serve. Sleeping 20 seconds'
 
-  # - powershell: npm test
-  #   displayName: 'Run Tests: npm test'
-  #   workingDirectory: $(TestsDir)
+  - powershell: npm test
+    displayName: 'Run Tests: npm test'
+    workingDirectory: $(TestsDir)
