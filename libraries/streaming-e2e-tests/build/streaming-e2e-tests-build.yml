@@ -12,6 +12,8 @@ pool:
 variables:
   RootReactPiecesDir: '$(System.DefaultWorkingDirectory)/libraries/streaming-e2e-tests/react-app'
   ReactProjectDir: '$(RootReactPiecesDir)/react-app'
+  # TODO - Delete Dummy
+  DummyReactAppDir: '$(RootReactPiecesDir)/dummy-app'
   DLJSDir: '$(System.DefaultWorkingDirectory)/libraries/streaming-e2e-tests/react-app/BotFramework-DirectLineJS'
   BotBuilder: 'botbuilder'
   BfStreaming: 'botframework-streaming'
@@ -30,42 +32,49 @@ stages:
           REACT_APP_BOT_HOSTNAME: $(BotName)
         steps:
           # Create React App
-          - powershell: npx create-react-app react-app
-            displayName: 'create-react-app'
-            workingDirectory: $(RootReactPiecesDir)
+          # - powershell: npx create-react-app react-app
+          #   displayName: 'create-react-app'
+          #   workingDirectory: $(RootReactPiecesDir)
           
-          - powershell: Remove-Item src/App.js, src/index.js, public/index.html, ./package.json, ./yarn.lock
-            displayName: "Delete files we're replacing with custom code in react-app"
-            workingDirectory: $(ReactProjectDir)
+          # - powershell: Remove-Item src/App.js, src/index.js, public/index.html, ./package.json, ./yarn.lock
+          #   displayName: "Delete files we're replacing with custom code in react-app"
+          #   workingDirectory: $(ReactProjectDir)
 
-          - powershell: |
-              copy ../custom-app-code/App.js, ../custom-app-code/index.js ./src/
-              copy ../custom-app-code/index.html ./public
-              copy ../custom-app-code/package.json, ../custom-app-code/yarn.lock
-            displayName: 'Copy custom files into react-app'
-            workingDirectory: $(ReactProjectDir)
+          # - powershell: |
+          #     copy ../custom-app-code/App.js, ../custom-app-code/index.js ./src/
+          #     copy ../custom-app-code/index.html ./public
+          #     copy ../custom-app-code/package.json, ../custom-app-code/yarn.lock
+          #   displayName: 'Copy custom files into react-app'
+          #   workingDirectory: $(ReactProjectDir)
           
           # Install Dependencies
           - task: Cache@2
             displayName: Cache npm
             inputs:
-              key: 'WebChatCache | npm | "$(Agent.OS)"'
-              path: $(ReactProjectDir)/node_modules
+              key: 'DummyReactAppCache | npm | "$(Agent.OS)"'
+              path: $(DummyReactAppDir)/node_modules
               cacheHitVar: 'CacheRestored'
+
+          # - task: Cache@2
+          #   displayName: Cache npm
+          #   inputs:
+          #     key: 'WebChatCache | npm | "$(Agent.OS)"'
+          #     path: $(ReactProjectDir)/node_modules
+          #     cacheHitVar: 'CacheRestored'
 
           - powershell: yarn add botframework-webchat@4.9.2
             displayName: 'yarn add botframework-webchat@4.9.2'
             condition: ne(variables.CacheRestored, 'true')
-            workingDirectory: $(ReactProjectDir)
+            workingDirectory: $(DummyReactAppDir)
           
           - powershell: yarn add botframework-directlinejs
             displayName: 'yarn add botframework-directlinejs'
-            workingDirectory: $(ReactProjectDir)
+            workingDirectory: $(DummyReactAppDir)
           
           - task: PublishPipelineArtifact@1
             displayName: 'Publish Artifact: CustomizedReactApp'
             inputs:
-              targetPath: $(ReactProjectDir)
+              targetPath: $(DummyReactAppDir)
               artifactName: 'CustomizedReactApp'
           
       - job: Run_Tests
@@ -82,11 +91,11 @@ stages:
           - task: DownloadPipelineArtifact@2
             inputs:
               artifact: CustomizedReactApp
-              path: $(ReactProjectDir)
+              path: $(DummyReactAppDir)
           
           - powershell: start powershell {npx react-scripts start}
             displayName: 'npm start React App'
-            workingDirectory: $(ReactProjectDir)
+            workingDirectory: $(DummyReactAppDir)
           
           - powershell: ps -Name powershell
             displayName: 'ps after start'
@@ -96,7 +105,7 @@ stages:
           
           - powershell: ps -Name powershell
             displayName: 'ps before tests'
-            
+
           - powershell: npm test
             displayName: 'npm test'
             workingDirectory: $(TestsDir)
