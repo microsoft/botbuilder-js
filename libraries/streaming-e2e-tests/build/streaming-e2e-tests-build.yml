@@ -37,7 +37,14 @@ stages:
           TargetProjectDir: $(DLJSDir)
         steps:
           - template: create-react-app.yml
-
-  - stage: Run_Tests
-    jobs:
-      - template: run-tests.yml
+  
+      - job: Run_Tests
+        dependsOn:
+          - Deploy_Bot 
+          - Create_React_App
+        condition: succeeded()
+        variables:
+          REACT_APP_BOT_HOSTNAME: $(BotName)
+          PORT: 3000
+        steps:
+          - template: run-tests.yml
