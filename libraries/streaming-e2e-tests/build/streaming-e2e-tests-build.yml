@@ -29,7 +29,7 @@ stages:
         variables:
           PackageName: 'botframework-streaming'
           TargetProjectDir: $(DLJSDir)
-          REACT_APP_BOT_HOSTNAME: $(BotName)
+          # REACT_APP_BOT_HOSTNAME: $(BotName)
         steps:
           # Create React App
           # - powershell: npx create-react-app react-app
@@ -48,12 +48,12 @@ stages:
           #   workingDirectory: $(ReactProjectDir)
           
           # Install Dependencies
-          - task: Cache@2
-            displayName: Cache npm
-            inputs:
-              key: 'DummyReactAppCache | npm | "$(Agent.OS)"'
-              path: $(DummyReactAppDir)/node_modules
-              cacheHitVar: 'CacheRestored'
+          # - task: Cache@2
+          #   displayName: Cache npm
+          #   inputs:
+          #     key: 'DummyReactAppCache | npm | "$(Agent.OS)"'
+          #     path: $(DummyReactAppDir)/node_modules
+          #     cacheHitVar: 'CacheRestored'
 
           # - powershell: yarn add botframework-webchat@4.9.2
           #   displayName: 'yarn add botframework-webchat@4.9.2'
@@ -77,6 +77,7 @@ stages:
         dependsOn: Prep_React_App
         condition: succeeded()
         variables:
+          REACT_APP_BOT_HOSTNAME: $(BotName)
           PORT: 3000
         steps:
           - powershell: npm install

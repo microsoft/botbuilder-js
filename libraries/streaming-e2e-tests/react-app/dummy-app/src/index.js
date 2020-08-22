@@ -7,6 +7,7 @@ import { DirectLineStreaming } from 'botframework-directlinejs';
 
 (async function() {
   const botHostname = process.env.REACT_APP_BOT_HOSTNAME;
+  // const botHostname = 'ash-streaming-bot';
   const res = await fetch(`https://${botHostname}.azurewebsites.net/api/token/directlinease`, {
     method: 'POST'
   });
