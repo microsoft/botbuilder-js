@@ -1,9 +1,6 @@
 # jobs:
 #   - job: Run_Tests
     steps:
-      - powershell: ps
-        displayName: 'ps top of run-tests.yml'
-
       - powershell: npm install
         displayName: 'npm install in tests directory'
         workingDirectory: $(TestsDir)
@@ -11,26 +8,18 @@
       - task: DownloadPipelineArtifact@2
         inputs:
           artifact: ReactApp2
-          path: $(RootReactPiecesDir)/dummy-app
-          # path: $(ReactProjectDir)
+          path: $(ReactProjectDir)
       
       - powershell: type package.json
         displayName: type react-app/package.json
-        workingDirectory: $(RootReactPiecesDir)/dummy-app
+        workingDirectory: $(ReactProjectDir)
 
       - powershell: start powershell {npm start}
         displayName: 'Serve react-app (npm start), opening new console'
-        workingDirectory: $(RootReactPiecesDir)/dummy-app
+        workingDirectory: $(ReactProjectDir)
       
-      - powershell: ps -Name powershell
-        displayName: get powershell processes after starting react app
-      
-      # - powershell: npm install
-      #   displayName: 'npm install in tests directory'
-      #   workingDirectory: $(TestsDir)
-
-      - powershell: Start-Sleep -Seconds 60;
-        displayName: 'Allowing react-app to serve. Sleeping 60 seconds'
+      - powershell: Start-Sleep -Seconds 20;
+        displayName: 'Allowing react-app to serve. Sleeping 20 seconds'
 
       - powershell: npm test
         displayName: 'Run Tests: npm test'
