@@ -3,9 +3,9 @@
 
 steps:
   - task: DownloadPipelineArtifact@2
-    displayName: Download CustomizedReactApp
+    displayName: Download ReactApp Artifact
     inputs:
-      artifact: CustomizedReactApp
+      artifact: ReactApp
       path: $(ReactProjectDir)
   
   - powershell: start powershell {yarn start}

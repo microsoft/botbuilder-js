@@ -12,15 +12,13 @@ pool:
 variables:
   RootReactPiecesDir: '$(System.DefaultWorkingDirectory)/libraries/streaming-e2e-tests/react-app'
   ReactProjectDir: '$(RootReactPiecesDir)/react-app'
-  # TODO - Delete Dummy
-  DummyReactAppDir: '$(RootReactPiecesDir)/dummy-app'
   DLJSDir: '$(System.DefaultWorkingDirectory)/libraries/streaming-e2e-tests/react-app/BotFramework-DirectLineJS'
   BotBuilder: 'botbuilder'
   BfStreaming: 'botframework-streaming'
   TestsDir: '$(System.DefaultWorkingDirectory)/libraries/streaming-e2e-tests/tests'
   runCodesignValidationInjection: false
   # Variables defined in Azure:
-  # BotName, ConnectedServiceNameARM, MyGetPersonalAccessToken, ReactAppService, ResourceGroup
+  # BotName, ConnectedServiceNameARM, MyGetPersonalAccessToken, ResourceGroup
 
 stages:
   - stage: Prepare_Bot_And_React_App
