@@ -3,9 +3,12 @@
 
 steps:
   - task: DownloadPipelineArtifact@2
+    displayName: Download CustomizedReactApp
     inputs:
       artifact: CustomizedReactApp
       path: $(ReactProjectDir)
+  
+  - template: use-custom-dljs-in-webchat.yml
   
   - powershell: start powershell {yarn start}
     displayName: 'yarn start React App'

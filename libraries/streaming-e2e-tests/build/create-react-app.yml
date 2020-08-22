@@ -18,7 +18,7 @@ steps:
   
   # Install Web Chat 4.9.2 for a predictable DOM
   - task: Cache@2
-    displayName: Cache npm
+    displayName: 'Cache WebChat 4.9.2'
     inputs:
       key: 'WebChatCache | npm | "$(Agent.OS)"'
       path: $(ReactProjectDir)/node_modules
