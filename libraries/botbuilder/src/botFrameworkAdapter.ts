@@ -8,7 +8,7 @@
 
 import { arch, release, type } from 'os';
 
-import { Activity, ActivityTypes, CallerIdConstants, CoreAppCredentials, BotAdapter, BotCallbackHandlerKey, ChannelAccount, ConversationAccount, ConversationParameters, ConversationReference, ConversationsResult, DeliveryModes, ExpectedReplies, ExtendedUserTokenProvider, InvokeResponse, INVOKE_RESPONSE_KEY, ResourceResponse, StatusCodes, TokenResponse, TurnContext, HealthCheckResponse, HealthResults } from 'botbuilder-core';
+import { Activity, ActivityTypes, BotAdapter, BotCallbackHandlerKey, CallerIdConstants, ChannelAccount, Channels, ConversationAccount, ConversationParameters, ConversationReference, ConversationsResult, CoreAppCredentials, DeliveryModes, ExpectedReplies, ExtendedUserTokenProvider, InvokeResponse, INVOKE_RESPONSE_KEY, ResourceResponse, StatusCodes, TokenResponse, TurnContext, HealthCheckResponse, HealthResults } from 'botbuilder-core';
 import { AuthenticationConfiguration, AuthenticationConstants, ChannelValidation, Claim, ClaimsIdentity, ConnectorClient, ConnectorClientOptions, EmulatorApiClient, GovernmentConstants, GovernmentChannelValidation, JwtTokenValidation, MicrosoftAppCredentials, AppCredentials, CertificateAppCredentials, SimpleCredentialProvider, TokenApiClient, TokenStatus, TokenApiModels, SignInUrlResponse, SkillValidation, TokenExchangeRequest, AuthenticationError } from 'botframework-connector';
 
 import { INodeBuffer, INodeSocket, IReceiveRequest, ISocket, IStreamingTransportServer, NamedPipeServer, NodeWebSocketFactory, NodeWebSocketFactoryBase, RequestHandler, StreamingResponse, WebSocketServer } from 'botframework-streaming';
@@ -976,7 +976,7 @@ export class BotFrameworkAdapter extends BotAdapter implements ConnectorClientBu
                         TokenResolver.checkForOAuthCards(this, context, activity as Activity);
                     }
                     const client = this.getOrCreateConnectorClient(context, activity.serviceUrl, this.credentials);
-                    if (activity.type === 'trace' && activity.channelId !== 'emulator') {
+                    if (activity.type === ActivityTypes.Trace && activity.channelId !== Channels.Emulator) {
                     // Just eat activity
                         responses.push({} as ResourceResponse);
                     } else if (activity.replyToId) {

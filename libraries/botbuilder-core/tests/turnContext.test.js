@@ -1,5 +1,5 @@
 const assert = require('assert');
-const { ActivityTypes, BotAdapter, DeliveryModes, MessageFactory, TurnContext } = require('../');
+const { ActivityTypes, BotAdapter, DeliveryModes, MessageFactory, TurnContext, Channels } = require('../');
 
 const activityId = `activity ID`;
 
@@ -466,18 +466,36 @@ describe(`TurnContext`, function () {
         activity.deliveryMode = DeliveryModes.ExpectReplies;
         const context = new TurnContext(new SimpleAdapter(), activity);
 
-        const activities = [ MessageFactory.text('test'), MessageFactory.text('second test') ];
+        const activities = [MessageFactory.text('test'), MessageFactory.text('second test')];
         const responses = await context.sendActivities(activities);
 
         assert.strictEqual(responses.length, 2);
-        
+
         // For expectReplies all ResourceResponses should have no id.
-        const ids = responses.filter(response => response.id === undefined);
-        assert.strictEqual(ids.length, 2);
+        assert(responses.every(response => response.id === undefined));
 
         const replies = context.bufferedReplyActivities;
         assert.strictEqual(replies.length, 2);
         assert.strictEqual(replies[0].text, 'test');
         assert.strictEqual(replies[1].text, 'second test');
-    })
+
+        // Do not buffer trace Activities unless the channelId is 'emulator'
+        await context.sendActivities([testTraceMessage]);
+
+        assert.strictEqual(replies.length, 2);
+        assert(replies.every(activity => activity.type !== ActivityTypes.Trace));
+    });
+
+    it('should add trace activities to bufferedReplyActivities if TurnContext.activity.channelId === Channels.Emulator', async () => {
+        const activity = JSON.parse(JSON.stringify(testMessage));
+        activity.deliveryMode = DeliveryModes.ExpectReplies;
+        activity.channelId = Channels.Emulator;
+        const context = new TurnContext(new SimpleAdapter(), activity);
+
+        await context.sendActivities([testTraceMessage]);
+
+        const replies = context.bufferedReplyActivities;
+        assert.strictEqual(replies.length, 1);
+        assert(replies.every(activity => activity.type === ActivityTypes.Trace));
+    });
 });

@@ -2,7 +2,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { Activity, ActivityTypes, ConversationReference, DeliveryModes, InputHints, ResourceResponse, Mention } from 'botframework-schema';
+import { Activity, ActivityTypes, Channels, ConversationReference, DeliveryModes, InputHints, ResourceResponse, Mention } from 'botframework-schema';
 import { BotAdapter } from './botAdapter';
 import { shallowCopy } from './internal';
 import { TurnContextStateCollection } from './turnContextStateCollection';
@@ -469,8 +469,13 @@ export class TurnContext {
                 // Append activities to buffer
                 const responses: ResourceResponse[] = [];
                 output.forEach((a) => {
-                    this.bufferedReplyActivities.push(a);
-                    responses.push({ id: undefined });
+                    if (a.type === ActivityTypes.Trace && a.channelId !== Channels.Emulator) {
+                        // Just eat activity
+                        responses.push({} as ResourceResponse);
+                    } else {
+                        this.bufferedReplyActivities.push(a);
+                        responses.push({ id: undefined });
+                    }
                 });
 
                 // Set responded flag
