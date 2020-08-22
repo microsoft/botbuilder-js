@@ -72,8 +72,6 @@ stages:
         steps:
           - template: customize-dljs.yml
 
-  - stage: Run_Tests
-    jobs:            
       - job: Run_Tests
         dependsOn: Prep_React_App
         condition: succeeded()
