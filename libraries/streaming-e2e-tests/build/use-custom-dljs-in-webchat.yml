@@ -11,9 +11,3 @@ steps:
   - powershell: yarn add $(RootReactPiecesDir)/botframework-directlinejs.tgz
     displayName: 'yarn add botframework-directlinejs.tgz'
     workingDirectory: $(ReactProjectDir)
-
-  - task: PublishPipelineArtifact@1
-    displayName: 'Publish Artifact: CustomizedReactApp'
-    inputs:
-      targetPath: $(ReactProjectDir)
-      artifactName: 'CustomizedReactApp2'
