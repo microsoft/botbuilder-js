@@ -55,20 +55,16 @@ stages:
               path: $(DummyReactAppDir)/node_modules
               cacheHitVar: 'CacheRestored'
 
-          # - task: Cache@2
-          #   displayName: Cache npm
-          #   inputs:
-          #     key: 'WebChatCache | npm | "$(Agent.OS)"'
-          #     path: $(ReactProjectDir)/node_modules
-          #     cacheHitVar: 'CacheRestored'
-
-          - powershell: yarn add botframework-webchat@4.9.2
-            displayName: 'yarn add botframework-webchat@4.9.2'
-            condition: ne(variables.CacheRestored, 'true')
-            workingDirectory: $(DummyReactAppDir)
+          # - powershell: yarn add botframework-webchat@4.9.2
+          #   displayName: 'yarn add botframework-webchat@4.9.2'
+          #   condition: ne(variables.CacheRestored, 'true')
+          #   workingDirectory: $(DummyReactAppDir)
           
-          - powershell: yarn add botframework-directlinejs
-            displayName: 'yarn add botframework-directlinejs'
+          # - powershell: yarn add botframework-directlinejs
+          #   displayName: 'yarn add botframework-directlinejs'
+          #   workingDirectory: $(DummyReactAppDir)
+          - powershell: yarn install
+            displayName: 'yarn install dummy-app'
             workingDirectory: $(DummyReactAppDir)
           
           - task: PublishPipelineArtifact@1
@@ -97,15 +93,9 @@ stages:
             displayName: 'npm start React App'
             workingDirectory: $(DummyReactAppDir)
           
-          - powershell: ps -Name powershell
-            displayName: 'ps after start'
-          
           - powershell: Start-Sleep -Seconds 60
             displayName: 'Sleeping for 60 seconds to allow React App to serve...'
           
-          - powershell: ps -Name powershell
-            displayName: 'ps before tests'
-
           - powershell: npm test
             displayName: 'npm test'
             workingDirectory: $(TestsDir)
