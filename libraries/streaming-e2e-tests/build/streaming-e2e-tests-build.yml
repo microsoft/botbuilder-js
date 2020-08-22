@@ -1,6 +1,6 @@
 # Ensure BotFramework-Streaming library works in the browser 
 # by running tests after deploying a streaming-enabled JS Echo Bot 
-# and a React App that uses latest streaming bits in DLJS and WebChat.
+# and hosting a React App that uses latest streaming bits in DLJS and WebChat 4.9.2.
 
 name: $(Build.BuildId)
 trigger: none
@@ -25,45 +25,20 @@ variables:
 stages:
   - stage: Prepare_Bot_And_React_App
     jobs:
+      - job: Deploy_Bot
+        variables:
+          TargetProjectDir: '$(System.DefaultWorkingDirectory)/libraries/streaming-e2e-tests/bot'
+          PackageName: $(BotBuilder)
+        steps:
+          - template: configure-to-bbjs-daily.yml
+          - template: deploy-bot.yml
+          
       - job: Prep_React_App
         variables:
           PackageName: 'botframework-streaming'
           TargetProjectDir: $(DLJSDir)
         steps:
-          # Create React App
-          - powershell: npx create-react-app react-app
-            displayName: 'create-react-app'
-            workingDirectory: $(RootReactPiecesDir)
-          
-          - powershell: Remove-Item src/App.js, src/index.js, public/index.html, ./package.json, ./yarn.lock
-            displayName: "Delete files we're replacing with custom code in react-app"
-            workingDirectory: $(ReactProjectDir)
-
-          - powershell: |
-              copy ../custom-app-code/App.js, ../custom-app-code/index.js ./src/
-              copy ../custom-app-code/index.html ./public
-              copy ../custom-app-code/package.json, ../custom-app-code/yarn.lock
-            displayName: 'Copy custom files into react-app'
-            workingDirectory: $(ReactProjectDir)
-          
-          # Install Web Chat 4.9.2 For Predictable DOM
-          - task: Cache@2
-            displayName: Cache npm
-            inputs:
-              key: 'WebChatCache | npm | "$(Agent.OS)"'
-              path: $(ReactProjectDir)/node_modules
-              cacheHitVar: 'CacheRestored'
-
-          - powershell: yarn add botframework-webchat@4.9.2
-            displayName: 'yarn add botframework-webchat@4.9.2'
-            condition: ne(variables.CacheRestored, 'true')
-            workingDirectory: $(ReactProjectDir)
-          
-          - task: PublishPipelineArtifact@1
-            displayName: 'Publish Artifact: CustomizedReactApp'
-            inputs:
-              targetPath: $(ReactProjectDir)
-              artifactName: 'CustomizedReactApp'
+          - template: create-react-app.yml
 
       - job: Customize_DLJS
         variables:
@@ -73,32 +48,13 @@ stages:
           - template: customize-dljs.yml
 
       - job: Run_Tests
-        dependsOn: Prep_React_App
+        dependsOn: 
+          - Prep_React_App
+          - Customize_DLJS
         condition: succeeded()
         variables:
           REACT_APP_BOT_HOSTNAME: $(BotName)
           PORT: 3000
         steps:
-          - task: DownloadPipelineArtifact@2
-            inputs:
-              artifact: CustomizedReactApp
-              path: $(ReactProjectDir)
-          
           - template: use-custom-dljs-in-webchat.yml
-          
-          - powershell: start powershell {npx react-scripts start}
-            displayName: 'npm start React App'
-            workingDirectory: $(ReactProjectDir)
-          
-          - powershell: npm install
-            displayName: 'npm install tests'
-            condition: ne(variables.CacheRestored, 'true')
-            workingDirectory: $(TestsDir)
-
-          - powershell: Start-Sleep -Seconds 60
-            displayName: 'Sleeping for 60 seconds to allow React App to serve...'
-          
-          - powershell: npm test
-            displayName: 'npm test'
-            workingDirectory: $(TestsDir)
-  
+          - template: run-tests.yml

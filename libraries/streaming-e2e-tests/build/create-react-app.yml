@@ -1,7 +1,6 @@
 # Create a React app that uses ReactWebChat
 
 steps:
-  # Create React APp
   - powershell: npx create-react-app react-app
     displayName: 'create-react-app'
     workingDirectory: $(RootReactPiecesDir)
@@ -16,18 +15,8 @@ steps:
       copy ../custom-app-code/package.json, ../custom-app-code/yarn.lock
     displayName: 'Copy custom files into react-app'
     workingDirectory: $(ReactProjectDir)
-
   
-  # Install Dependencies
-  
-  # TODO - TEMPORARILY COMMENTING OUT CUSTOM DLJS TO EXPEDITE TESTING
-  # - template: customize-dljs.yml
-  # - template: use-custom-dljs-in-webchat.yml
-
-  # - powershell: New-Item -Path . -Name ".npmrc" -ItemType "file" -Value "registry=https://botbuilder.myget.org/F/botbuilder-v4-js-daily/npm/"
-  #   displayName: 'Create .npmrc for MyGet feed - https://botbuilder.myget.org/gallery/botbuilder-v4-js-daily'
-  #   workingDirectory: $(ReactProjectDir)
-  
+  # Install Web Chat 4.9.2 for a predictable DOM
   - task: Cache@2
     displayName: Cache npm
     inputs:
@@ -40,32 +29,8 @@ steps:
     condition: ne(variables.CacheRestored, 'true')
     workingDirectory: $(ReactProjectDir)
   
-  - powershell: yarn add $(DLJSDir)/botframework-directlinejs.tgz
-  # - powershell: yarn add botframework-directlinejs
-    displayName: 'yarn add botframework-directlinejs.tgz'
-    workingDirectory: $(ReactProjectDir)
-  
-  # - task: PublishPipelineArtifact@1
-  #   displayName: 'Publish Artifact: ReactApp2'
-  #   inputs:
-  #     targetPath: $(ReactProjectDir)
-  #     artifactName: 'ReactApp2'
-  
-  # - template: deploy-react-app.yml
-
-  # IN SAME JOB RUN_TESTS STEPS
-
-  - powershell: start powershell {npm start}
-    displayName: 'Serve react-app (npm start), opening new console'
-    workingDirectory: $(ReactProjectDir)
-  
-  - powershell: npm install
-    displayName: 'npm install in tests directory'
-    workingDirectory: $(TestsDir)
-
-  - powershell: Start-Sleep -Seconds 20;
-    displayName: 'Allowing react-app to serve. Sleeping 20 seconds'
-
-  - powershell: npm test
-    displayName: 'Run Tests: npm test'
-    workingDirectory: $(TestsDir)
+  - task: PublishPipelineArtifact@1
+    displayName: 'Publish Artifact: CustomizedReactApp'
+    inputs:
+      targetPath: $(ReactProjectDir)
+      artifactName: 'CustomizedReactApp'
