@@ -41,14 +41,14 @@ stages:
             displayName: 'ps before create-react-app.yml'
           - template: create-react-app.yml
       
-      - job: Run_Tests
-      # TODO INCLUDE DEPLOY_BOT
-        dependsOn: Create_React_App
-        condition: succeeded()
-        variables:
-          PORT: 3000
-        steps:
-          - template: run-tests.yml
+      # - job: Run_Tests
+      # # TODO INCLUDE DEPLOY_BOT
+      #   dependsOn: Create_React_App
+      #   condition: succeeded()
+      #   variables:
+      #     PORT: 3000
+      #   steps:
+      #     - template: run-tests.yml
 
   # - stage: Run_Tests
   #   dependsOn: Prepare_Bot_And_React_App
