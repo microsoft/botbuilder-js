@@ -9,11 +9,10 @@ const { Options } = require('selenium-webdriver/chrome');
 
 const userMessage = 'Why hello there';
 const reactAppEndpoint = 'http://localhost:3000';
-// const reactAppEndpoint = 'https://ash-react-app.azurewebsites.net/';
 
 describe('Chrome', function () {
   it('should receive an echo after sending a message', async function () {
-    this.timeout(220000);
+    this.timeout(120000);
 
     const driver = createDriver('chrome');
     await echoMessageInBrowser(driver);
@@ -45,11 +44,11 @@ async function echoMessageInBrowser(driver) {
     console.log(`Navigating to "${reactAppEndpoint}"...`);
     await driver.get(reactAppEndpoint);
 
-    console.log('Sleeping to allow website to load...');
+    console.log('Sleeping to allow Web Chat to load...');
     await driver.sleep(7000);
 
     console.log('Getting Web Chat sendbox...');
-    let wcSendBox = await driver.wait(until.elementLocated(By.className('webchat__send-box-text-box__input')), 35000);
+    let wcSendBox = await driver.wait(until.elementLocated(By.className('webchat__send-box-text-box__input')), 17000);
 
     console.log('Sending user message...');
     await wcSendBox.sendKeys(userMessage, Key.RETURN);

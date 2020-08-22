@@ -1,4 +1,5 @@
-# Create a React app that uses ReactWebChat
+# Create a React app that uses ReactWebChat and a customized DirectLineJS
+# that uses that latest version of botframework-streaming
 
 steps:
   - powershell: npx create-react-app react-app
@@ -29,6 +30,7 @@ steps:
     condition: ne(variables.CacheRestored, 'true')
     workingDirectory: $(ReactProjectDir)
 
+  # Create Customized DLJS
   - powershell: New-Item -Path . -Name ".npmrc" -ItemType "file" -Value "registry=https://botbuilder.myget.org/F/botbuilder-v4-js-daily/npm/"
     displayName: 'Create .npmrc for MyGet feed - https://botbuilder.myget.org/gallery/botbuilder-v4-js-daily'
     workingDirectory: $(ReactProjectDir)
