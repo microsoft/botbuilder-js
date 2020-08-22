@@ -23,114 +23,81 @@ variables:
 stages:
   - stage: Prepare_Bot_And_React_App
     jobs:
-      - job: Deploy_Bot
-        variables:
-          TargetProjectDir: '$(System.DefaultWorkingDirectory)/libraries/streaming-e2e-tests/bot'
-          PackageName: $(BotBuilder)
-        steps:
-          - template: configure-to-bbjs-daily.yml
-          - template: deploy-bot.yml
-
-      - job: Create_React_App
+      - job: Prep_React_App
         variables:
           PackageName: 'botframework-streaming'
           TargetProjectDir: $(DLJSDir)
           REACT_APP_BOT_HOSTNAME: $(BotName)
-        steps: 
-          - template: create-react-app.yml
-      
-      # - job: Run_Tests
-      # # TODO INCLUDE DEPLOY_BOT
-      #   dependsOn: Create_React_App
-      #   condition: succeeded()
-      #   variables:
-      #     PORT: 3000
-      #   steps:
-      #     - template: run-tests.yml
+        steps:
+          # Create React App
+          - powershell: npx create-react-app react-app
+            displayName: 'create-react-app'
+            workingDirectory: $(RootReactPiecesDir)
+          
+          - powershell: Remove-Item src/App.js, src/index.js, public/index.html, ./package.json, ./yarn.lock
+            displayName: "Delete files we're replacing with custom code in react-app"
+            workingDirectory: $(ReactProjectDir)
 
-  # - stage: Run_Tests
-  #   dependsOn: Prepare_Bot_And_React_App
-  #   condition: succeeded()
-  #   jobs:
-  #     - template: run-tests.yml
+          - powershell: |
+              copy ../custom-app-code/App.js, ../custom-app-code/index.js ./src/
+              copy ../custom-app-code/index.html ./public
+              copy ../custom-app-code/package.json, ../custom-app-code/yarn.lock
+            displayName: 'Copy custom files into react-app'
+            workingDirectory: $(ReactProjectDir)
+          
+          # Install Dependencies
+          - task: Cache@2
+            displayName: Cache npm
+            inputs:
+              key: 'WebChatCache | npm | "$(Agent.OS)"'
+              path: $(ReactProjectDir)/node_modules
+              cacheHitVar: 'CacheRestored'
 
-  #### UNCOMMENT ABOVE TO RESTORE
+          - powershell: yarn add botframework-webchat@4.9.2
+            displayName: 'yarn add botframework-webchat@4.9.2'
+            condition: ne(variables.CacheRestored, 'true')
+            workingDirectory: $(ReactProjectDir)
           
-      # - job: Prep_React_App
-      #   variables:
-      #     PackageName: 'botframework-streaming'
-      #     TargetProjectDir: $(DLJSDir)
-      #     REACT_APP_BOT_HOSTNAME: $(BotName)
-      #   steps:
-      #     # Create React App
-      #     - powershell: ps
-      #       displayName: 'ps before create-react-app.yml'
+          - powershell: yarn add botframework-directlinejs
+            displayName: 'yarn add botframework-directlinejs'
+            workingDirectory: $(ReactProjectDir)
           
-      #     - powershell: npx create-react-app react-app
-      #       displayName: 'create-react-app'
-      #       workingDirectory: $(RootReactPiecesDir)
+          - task: PublishPipelineArtifact@1
+            displayName: 'Publish Artifact: CustomizedReactApp'
+            inputs:
+              targetPath: $(ReactProjectDir)
+              artifactName: 'CustomizedReactApp'
           
-      #     - powershell: Remove-Item src/App.js, src/index.js, public/index.html, ./package.json, ./yarn.lock
-      #       displayName: "Delete files we're replacing with custom code in react-app"
-      #       workingDirectory: $(ReactProjectDir)
-
-      #     - powershell: |
-      #         copy ../custom-app-code/App.js, ../custom-app-code/index.js ./src/
-      #         copy ../custom-app-code/index.html ./public
-      #         copy ../custom-app-code/package.json, ../custom-app-code/yarn.lock
-      #       displayName: 'Copy custom files into react-app'
-      #       workingDirectory: $(ReactProjectDir)
+      - job: Run_Tests
+        dependsOn: Prep_React_App
+        condition: succeeded()
+        variables:
+          PORT: 3000
+        steps:
+          - powershell: npm install
+            displayName: 'npm install tests'
+            condition: ne(variables.CacheRestored, 'true')
+            workingDirectory: $(TestsDir)
           
-      #     # Install Dependencies
-      #     - task: Cache@2
-      #       displayName: Cache npm
-      #       inputs:
-      #         key: 'WebChatCache | npm | "$(Agent.OS)"'
-      #         path: $(ReactProjectDir)/node_modules
-      #         cacheHitVar: 'CacheRestored'
-
-      #     - powershell: yarn add botframework-webchat@4.9.2
-      #       displayName: 'yarn add botframework-webchat@4.9.2'
-      #       condition: ne(variables.CacheRestored, 'true')
-      #       workingDirectory: $(ReactProjectDir)
+          - task: DownloadPipelineArtifact@2
+            inputs:
+              artifact: CustomizedReactApp
+              path: $(ReactProjectDir)
           
-      #     - powershell: yarn add botframework-directlinejs
-      #       displayName: 'yarn add botframework-directlinejs.tgz'
-      #       workingDirectory: $(ReactProjectDir)
+          - powershell: start powershell {npx react-scripts start}
+            displayName: 'npm start React App'
+            workingDirectory: $(ReactProjectDir)
           
-      #     - task: PublishPipelineArtifact@1
-      #       displayName: 'Publish Artifact: CustomizedReactApp'
-      #       inputs:
-      #         targetPath: $(ReactProjectDir)
-      #         artifactName: 'CustomizedReactApp'
+          - powershell: ps -Name powershell
+            displayName: 'ps after start'
           
-      #     - powershell: ps
-      #       displayName: 'ps end of create-react-app.yml'
-
-      # - job: Run_Tests
-      #   dependsOn: Prep_React_App
-      #   condition: succeeded()
-      #   variables:
-      #     PORT: 3000
-      #   steps:
-      #     - powershell: npm install
-      #       displayName: 'npm install tests'
-      #       condition: ne(variables.CacheRestored, 'true')
-      #       workingDirectory: $(TestsDir)
+          - powershell: Start-Sleep -Seconds 60
+            displayName: 'Sleeping for 60 seconds to allow React App to serve...'
           
-      #     - task: DownloadPipelineArtifact@2
-      #       inputs:
-      #         artifact: CustomizedReactApp
-      #         path: $(ReactProjectDir)
-          
-      #     - powershell: start powershell {npx react-scripts start}
-      #       displayName: 'npm start React App'
-      #       workingDirectory: $(ReactProjectDir)
-          
-      #     - powershell: Start-Sleep -Seconds 60
-      #       displayName: 'Sleeping for 60 seconds to allow React App to serve...'
-          
-      #     - powershell: npm test
-      #       displayName: 'npm test'
-      #       workingDirectory: $(TestsDir)
+          - powershell: ps -Name powershell
+            displayName: 'ps before tests'
+            
+          - powershell: npm test
+            displayName: 'npm test'
+            workingDirectory: $(TestsDir)
   

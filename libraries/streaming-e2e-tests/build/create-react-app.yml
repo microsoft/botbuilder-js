@@ -21,12 +21,12 @@ steps:
   # Install Dependencies
   
   # TODO - TEMPORARILY COMMENTING OUT CUSTOM DLJS TO EXPEDITE TESTING
-  - template: customize-dljs.yml
-  - template: use-custom-dljs-in-webchat.yml
-  
-  - powershell: New-Item -Path . -Name ".npmrc" -ItemType "file" -Value "registry=https://botbuilder.myget.org/F/botbuilder-v4-js-daily/npm/"
-    displayName: 'Create .npmrc for MyGet feed - https://botbuilder.myget.org/gallery/botbuilder-v4-js-daily'
-    workingDirectory: $(ReactProjectDir)
+  # - template: customize-dljs.yml
+  # - template: use-custom-dljs-in-webchat.yml
+
+  # - powershell: New-Item -Path . -Name ".npmrc" -ItemType "file" -Value "registry=https://botbuilder.myget.org/F/botbuilder-v4-js-daily/npm/"
+  #   displayName: 'Create .npmrc for MyGet feed - https://botbuilder.myget.org/gallery/botbuilder-v4-js-daily'
+  #   workingDirectory: $(ReactProjectDir)
   
   - task: Cache@2
     displayName: Cache npm
