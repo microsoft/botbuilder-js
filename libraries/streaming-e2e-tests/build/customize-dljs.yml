@@ -20,3 +20,9 @@ steps:
     displayName: Rename to DLJS tgz to predictable name
     workingDirectory: $(DLJSDir)
   
+  - task: PublishPipelineArtifact@1
+    displayName: 'Publish Artifact: DirectLineJsTgz'
+    inputs:
+      targetPath: $(DLJSDir)/botframework-directlinejs.tgz
+      artifactName: 'DirectLineJsTgz'
+  

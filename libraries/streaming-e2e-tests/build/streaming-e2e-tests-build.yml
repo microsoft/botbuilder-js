@@ -29,7 +29,6 @@ stages:
         variables:
           PackageName: 'botframework-streaming'
           TargetProjectDir: $(DLJSDir)
-          # REACT_APP_BOT_HOSTNAME: $(BotName)
         steps:
           # Create React App
           - powershell: npx create-react-app react-app
@@ -47,7 +46,7 @@ stages:
             displayName: 'Copy custom files into react-app'
             workingDirectory: $(ReactProjectDir)
           
-          # Install Dependencies
+          # Install Web Chat 4.9.2 For Predictable DOM
           - task: Cache@2
             displayName: Cache npm
             inputs:
@@ -60,16 +59,21 @@ stages:
             condition: ne(variables.CacheRestored, 'true')
             workingDirectory: $(ReactProjectDir)
           
-          - powershell: yarn add botframework-directlinejs
-            displayName: 'yarn add botframework-directlinejs'
-            workingDirectory: $(ReactProjectDir)
-
           - task: PublishPipelineArtifact@1
             displayName: 'Publish Artifact: CustomizedReactApp'
             inputs:
               targetPath: $(ReactProjectDir)
               artifactName: 'CustomizedReactApp'
-          
+
+      - job: Customize_DLJS
+        variables:
+          PackageName: 'botframework-streaming'
+          TargetProjectDir: $(DLJSDir)
+        steps:
+          - template: customize-dljs.yml
+
+  - stage: Run_Tests
+    jobs:            
       - job: Run_Tests
         dependsOn: Prep_React_App
         condition: succeeded()
@@ -77,20 +81,22 @@ stages:
           REACT_APP_BOT_HOSTNAME: $(BotName)
           PORT: 3000
         steps:
-          - powershell: npm install
-            displayName: 'npm install tests'
-            condition: ne(variables.CacheRestored, 'true')
-            workingDirectory: $(TestsDir)
-          
           - task: DownloadPipelineArtifact@2
             inputs:
               artifact: CustomizedReactApp
               path: $(ReactProjectDir)
           
+          - template: use-custom-dljs-in-webchat.yml
+          
           - powershell: start powershell {npx react-scripts start}
             displayName: 'npm start React App'
             workingDirectory: $(ReactProjectDir)
           
+          - powershell: npm install
+            displayName: 'npm install tests'
+            condition: ne(variables.CacheRestored, 'true')
+            workingDirectory: $(TestsDir)
+
           - powershell: Start-Sleep -Seconds 60
             displayName: 'Sleeping for 60 seconds to allow React App to serve...'
           

@@ -1,21 +1,12 @@
 steps:
-  - powershell: |
-      Set-Location -Path "$(ReactProjectDir)"
-      
-      New-Item -Path . -Name ".npmrc" -ItemType "file" -Value "registry=https://botbuilder.myget.org/F/botbuilder-v4-js-daily/npm/"
-    displayName: 'Create .npmrc for MyGet feed - https://botbuilder.myget.org/gallery/botbuilder-v4-js-daily'
-  
-  - task: Cache@2
-    displayName: Cache npm
+  - task: DownloadPipelineArtifact@2
     inputs:
-      key: 'WebChatCache | npm | "$(Agent.OS)"'
-      path: $(ReactProjectDir)/node_modules
-      cacheHitVar: 'CacheRestored'
+      artifact: DirectLineJsTgz
+      path: $(RootReactPiecesDir)
 
-  - powershell: yarn add botframework-webchat@4.9.2
-    displayName: 'yarn add botframework-webchat@4.9.2'
+  - powershell: New-Item -Path . -Name ".npmrc" -ItemType "file" -Value "registry=https://botbuilder.myget.org/F/botbuilder-v4-js-daily/npm/"
+    displayName: 'Create .npmrc for MyGet feed - https://botbuilder.myget.org/gallery/botbuilder-v4-js-daily'
     workingDirectory: $(ReactProjectDir)
-    condition: ne(variables.CacheRestored, 'true')
   
   - powershell: yarn add $(DLJSDir)/botframework-directlinejs.tgz
     displayName: 'yarn add botframework-directlinejs.tgz'
@@ -26,31 +17,3 @@ steps:
     inputs:
       targetPath: $(ReactProjectDir)
       artifactName: 'CustomizedReactApp2'
-
-  # - job: Run_Tests
-  #   # TODO INCLUDE DEPLOY_BOT
-  #   dependsOn: Create_React_App
-  #   condition: succeeded()
-  #   steps:
-  #   - powershell: ls $(ReactProjectDir)/node_modules/bot*
-  #     displayName: 'Show react-app node modules that start with bot'
-  #     workingDirectory: $(ReactProjectDir)
-    
-  #   - powershell: type $(ReactProjectDir)/package.json
-  #     displayName: type react-app/package.json
-  #     workingDirectory: $(ReactProjectDir)
-
-  #   - powershell: start powershell {yarn start}
-  #     displayName: 'Serve react-app (yarn start), opening new console'
-  #     workingDirectory: $(ReactProjectDir)
-    
-  #   - powershell: npm install
-  #     displayName: 'npm install in tests directory'
-  #     workingDirectory: $(TestsDir)
-
-  #   - powershell: Start-Sleep -Seconds 100;
-  #     displayName: 'Allowing React App to serve. Sleeping 100 seconds'
-
-  #   - powershell: npm test
-  #     displayName: 'Run Tests: npm test'
-  #     workingDirectory: $(TestsDir)
