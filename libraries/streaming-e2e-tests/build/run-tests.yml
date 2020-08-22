@@ -8,8 +8,6 @@ steps:
       artifact: CustomizedReactApp
       path: $(ReactProjectDir)
   
-  - template: use-custom-dljs-in-webchat.yml
-  
   - powershell: start powershell {yarn start}
     displayName: 'yarn start React App'
     workingDirectory: $(ReactProjectDir)
@@ -19,8 +17,8 @@ steps:
     condition: ne(variables.CacheRestored, 'true')
     workingDirectory: $(TestsDir)
 
-  - powershell: Start-Sleep -Seconds 60
-    displayName: 'Sleeping for 60 seconds to allow React App to serve...'
+  - powershell: Start-Sleep -Seconds 20
+    displayName: 'Sleeping for 20 seconds to allow React App to serve...'
   
   - powershell: npm test
     displayName: 'npm test'

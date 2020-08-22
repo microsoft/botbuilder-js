@@ -1,0 +1,26 @@
+jobs:
+  - job: Create_React_App
+    variables:
+      PackageName: 'botframework-streaming'
+      TargetProjectDir: $(DLJSDir)
+    steps:
+      - template: create-react-app.yml
+  
+  - job: Customize_DLJS
+    variables:
+      PackageName: 'botframework-streaming'
+      TargetProjectDir: $(DLJSDir)
+    steps:
+      - template: customize-dljs.yml
+  
+  - job: Install_DLJS_And_Publish_WC_Artifact
+    dependsOn:
+      - Create_React_App
+      - Customize_DLJS
+    steps:
+      - template: use-custom-dljs-in-webchat.yml
+      - task: PublishPipelineArtifact@1
+        displayName: 'Publish Artifact: CustomizedReactApp'
+        inputs:
+          targetPath: $(ReactProjectDir)
+          artifactName: 'CustomizedReactApp'
