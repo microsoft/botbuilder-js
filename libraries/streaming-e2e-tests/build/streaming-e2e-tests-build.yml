@@ -27,30 +27,23 @@ stages:
     jobs:
       - job: Deploy_Bot
         variables:
-          TargetProjectDir: '$(System.DefaultWorkingDirectory)/libraries/streaming-e2e-tests/bot'
           PackageName: $(BotBuilder)
+          TargetProjectDir: '$(System.DefaultWorkingDirectory)/libraries/streaming-e2e-tests/bot'
         steps:
           - template: configure-to-bbjs-daily.yml
           - template: deploy-bot.yml
           
-      - job: Prep_React_App
+      - job: Create_React_App
         variables:
           PackageName: 'botframework-streaming'
           TargetProjectDir: $(DLJSDir)
         steps:
           - template: create-react-app.yml
 
-      # - job: Customize_DLJS
-      #   variables:
-      #     PackageName: 'botframework-streaming'
-      #     TargetProjectDir: $(DLJSDir)
-      #   steps:
-      #     - template: customize-dljs.yml
-
       - job: Run_Tests
         dependsOn:
           - Deploy_Bot 
-          - Prep_React_App
+          - Create_React_App
         condition: succeeded()
         variables:
           REACT_APP_BOT_HOSTNAME: $(BotName)
