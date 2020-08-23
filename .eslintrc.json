@@ -1,10 +1,19 @@
 {
+    "extends": [
+        "plugin:@typescript-eslint/recommended",
+        "plugin:@typescript-eslint/eslint-recommended"
+    ],
+    "ignorePatterns": [
+        "libraries/adaptive-expressions/**/generated/**/*",
+        "libraries/botframework-connector/src/connectorApi/**/*",
+        "libraries/botframework-connector/src/tokenApi/**/*",
+        "libraries/botframework-schema/**/*"
+    ],
     "parser": "@typescript-eslint/parser",
     "plugins": [
         "@typescript-eslint",
         "only-warn"
     ],
-    "extends": ["plugin:@typescript-eslint/recommended"],
     "overrides": [
         {
             "files": ["libraries/adaptive-expressions/src/*.ts", "libraries/adaptive-expressions/src/**/*.ts"],
@@ -247,20 +256,20 @@
             }
         },
         {
-          "files": ["libraries/botframework-streaming/src/*.ts", "libraries/botframework-streaming/src/**/*.ts"],
-          "plugins": ["jsdoc"],
-          "rules": {
-            "jsdoc/require-jsdoc": ["warn", {
-                "require": {
-                    "FunctionDeclaration": true,
-                    "MethodDefinition": true,
-                    "ClassDeclaration": true,
-                    "ArrowFunctionExpression": false,
-                    "FunctionExpression": false
-                },
-                "publicOnly": true
-            }]
-          }
+            "files": ["libraries/botframework-streaming/src/*.ts", "libraries/botframework-streaming/src/**/*.ts"],
+            "plugins": ["jsdoc"],
+            "rules": {
+              "jsdoc/require-jsdoc": ["warn", {
+                  "require": {
+                      "FunctionDeclaration": true,
+                      "MethodDefinition": true,
+                      "ClassDeclaration": true,
+                      "ArrowFunctionExpression": false,
+                      "FunctionExpression": false
+                  },
+                  "publicOnly": true
+              }]
+            }
         }
     ],
     "parserOptions": {
@@ -283,8 +292,9 @@
         "@typescript-eslint/indent": ["error", 4],
         "@typescript-eslint/interface-name-prefix": 0,
         "@typescript-eslint/no-explicit-any": 0,
-        "@typescript-eslint/no-object-literal-type-assertion": ["error", {
-            "allowAsParameter": true
+        "@typescript-eslint/consistent-type-assertions": ["error", {
+            "assertionStyle": "as",
+            "objectLiteralTypeAssertions": "allow-as-parameter"
          }],
         "@typescript-eslint/no-use-before-define": ["error", { "functions": false, "classes": true }]
     }
