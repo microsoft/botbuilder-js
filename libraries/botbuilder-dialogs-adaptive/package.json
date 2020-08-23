@@ -34,8 +34,8 @@
   },
   "devDependencies": {
     "@types/jsonpath": "^0.2.0",
-    "@types/mocha": "^2.2.47",
-    "@types/node": "^10.12.18",
+    "@types/mocha": "^5.2.7",
+    "@types/node": "^10.17.27",
     "@types/node-fetch": "^2.5.3",
     "codelyzer": "^4.1.0",
     "mocha": "^6.2.3",
@@ -45,8 +45,8 @@
     "ts-node": "^4.1.0"
   },
   "scripts": {
-    "test": "tsc && tsc ./tests/*.test.ts && nyc mocha tests/",
-    "build": "tsc",
+    "test": "npm run build && nyc mocha tests/",
+    "build": "tsc && tsc -p tests/tsconfig.json",
     "build-docs": "typedoc --theme markdown --entryPoint botbuilder-dialogs-adaptive --excludePrivate --includeDeclarations --ignoreCompilerErrors --module amd --out ..\\..\\doc\\botbuilder-dialogs .\\lib\\index.d.ts --hideGenerator --name \"Bot Builder SDK - Dialogs\" --readme none",
     "clean": "erase /q /s .\\lib",
     "set-version": "npm version --allow-same-version ${Version}"

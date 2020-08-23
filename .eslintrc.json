@@ -7,7 +7,8 @@
         "libraries/adaptive-expressions/**/generated/**/*",
         "libraries/botframework-connector/src/connectorApi/**/*",
         "libraries/botframework-connector/src/tokenApi/**/*",
-        "libraries/botframework-schema/**/*"
+        "libraries/botframework-schema/**/*",
+        "libraries/streaming-e2e-tests/**"
     ],
     "parser": "@typescript-eslint/parser",
     "plugins": [
