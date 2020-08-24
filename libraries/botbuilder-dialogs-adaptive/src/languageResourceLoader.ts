@@ -17,47 +17,49 @@ import { LanguagePolicy } from  './languagePolicy';
  * Load all LG resource and split them into different language groups.
  */
 export class LanguageResourceLoader {
+    private static readonly lgSuffix: string = 'lg';
+
     /**
      * Group LG resource by locale.
      * @param resourceExplorer The resource explorer to use.
      */
     public static groupByLocale(resourceExplorer: ResourceExplorer): Map<string, Resource[]> {
         const resourceMapping: Map<string, Resource[]> = new Map<string, Resource[]>();
-        const allResouces: Resource[] =  resourceExplorer.getResources('lg');
+        const allResouces: Resource[] =  resourceExplorer.getResources(this.lgSuffix);
         const languagePolicy = new LanguagePolicy();
         for (const locale of languagePolicy.keys()) {
             let suffixs = languagePolicy.get(locale);
             const existNames = new Set<string>();
             for (const index in suffixs) {
                 const suffix = suffixs[index];
-                if (!locale || suffix ) {
-                    const resourcesWithSuffix = allResouces.filter((u): boolean => this.parseLGFileName(u.id).language.toLocaleLowerCase() === suffix.toLocaleLowerCase());
-                    resourcesWithSuffix.forEach((u): void => {
-                        const resourceName = u.id;
-                        const length = (!suffix)? 3 : 4;
-                        const prefixName = resourceName.substring(0, resourceName.length - suffix.length - length);
-                        if (!existNames.has(prefixName)) {
-                            existNames.add(prefixName);
-                            if (!resourceMapping.has(locale)) {
-                                resourceMapping.set(locale, [u]);
-                            } else {
-                                resourceMapping.get(locale).push(u);
-                            }
+                const resourcesWithSuffix = allResouces.filter((u): boolean => this.parseLGFileName(u.id).language.toLocaleLowerCase() === suffix.toLocaleLowerCase());
+                resourcesWithSuffix.forEach((u): void => {
+                    const resourceName = u.id;
+                    // a.en-us.lg -> a
+                    // a.lg -> a
+                    const length = (!suffix) ? this.lgSuffix.length + 1 : this.lgSuffix.length + 2;
+                    const prefixName = resourceName.substring(0, resourceName.length - suffix.length - length);
+                    if (!existNames.has(prefixName)) {
+                        existNames.add(prefixName);
+                        if (!resourceMapping.has(locale)) {
+                            resourceMapping.set(locale, [u]);
+                        } else {
+                            resourceMapping.get(locale).push(u);
                         }
-                    });
-                } else {
-                    if (resourceMapping.has(locale)) {
-                        const resourcesWithEmptySuffix = allResouces.filter((u): boolean => this.parseLGFileName(u.id).language === '');
-                        resourcesWithEmptySuffix.forEach((u): void => {
-                            const resourceName = u.id;
-                            const prefixName = resourceName.substring(0, resourceName.length - 3);
-                            if (!existNames.has(prefixName)) {
-                                existNames.add(prefixName);
-                                resourceMapping.get(locale).push(u);
-                            }
-                        });
                     }
-                }
+                });
+            }
+
+            if (resourceMapping.has(locale)) {
+                const resourcesWithEmptySuffix = allResouces.filter((u): boolean => this.parseLGFileName(u.id).language === '');
+                resourcesWithEmptySuffix.forEach((u): void => {
+                    const resourceName = u.id;
+                    const prefixName = resourceName.substring(0, resourceName.length - this.lgSuffix.length - 1);
+                    if (!existNames.has(prefixName)) {
+                        existNames.add(prefixName);
+                        resourceMapping.get(locale).push(u);
+                    }
+                });
             }
         }
 
@@ -69,11 +71,11 @@ export class LanguageResourceLoader {
      * @param lgFileName LG input file name.
      */
     public static parseLGFileName(lgFileName: string):  {prefix: string; language: string} {
-        if (lgFileName === undefined || !lgFileName.endsWith('.lg')) {
+        if (lgFileName === undefined || !lgFileName.endsWith('.' + this.lgSuffix)) {
             return {prefix: lgFileName, language: ''};
         }
 
-        const fileName = lgFileName.substring(0, lgFileName.length - '.lg'.length);
+        const fileName = lgFileName.substring(0, lgFileName.length - this.lgSuffix.length - 1);
         const lastDot = fileName.lastIndexOf('.');
         if (lastDot > 0) {
             return {prefix: fileName.substring(0, lastDot), language: fileName.substring(lastDot + 1)};
