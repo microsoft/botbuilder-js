@@ -52,8 +52,8 @@
 /libraries/botframework-streaming/**                                    @microsoft/bf-streaming
 
 # BotBuilder Dialogs
-/libraries/botbuilder-Dialogs/**                                        @microsoft/bf-dialogs
-/tests/botbuilder-Dialogs/**                                            @microsoft/bf-dialogs
+/libraries/botbuilder-dialogs/**                                        @microsoft/bf-dialogs
+/tests/botbuilder-dialogs/**                                            @microsoft/bf-dialogs
 
 # Swagger
 /libraries/swagger/**                                                   @axelsrz @EricDahlvang
