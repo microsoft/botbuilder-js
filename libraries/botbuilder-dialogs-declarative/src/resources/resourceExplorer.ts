@@ -21,7 +21,6 @@ import { ComponentRegistration } from '../componentRegistration';
  */
 export class ResourceExplorer {
     private _factory: TypeFactory = new TypeFactory();
-    private _resourceTypes: Set<string> = new Set(['dialog', 'lu', 'lg', 'qna', 'schema', 'json']);
     private _eventEmitter: EventEmitter = new EventEmitter();
 
     /**
@@ -36,6 +35,11 @@ export class ResourceExplorer {
      * Gets resource providers.
      */
     public readonly resourceProviders: ResourceProvider[];
+
+    /**
+     * Gets resource type id extensions managed by resource explorer.
+     */
+    public readonly resourceTypes: Set<string> = new Set(['dialog', 'lu', 'lg', 'qna', 'schema', 'json']);
 
     /**
      * Event which fires when a resource is changed.
@@ -53,20 +57,13 @@ export class ResourceExplorer {
     }
 
     /**
-     * Gets resource type id extensions managed by resource explorer.
-     */
-    public get resourceTypes(): Set<string> {
-        return this._resourceTypes;
-    }
-
-    /**
      * Add a resource type to resource type set.
      * @param type Resource type.
      */
     public addResourceType(type: string): void {
         type = type.toLowerCase().replace(/^\./, '');
-        if (!this._resourceTypes.has(type)) {
-            this._resourceTypes.add(type);
+        if (!this.resourceTypes.has(type)) {
+            this.resourceTypes.add(type);
             this.refresh();
         }
     }
