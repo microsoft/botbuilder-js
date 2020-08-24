@@ -16,11 +16,11 @@ export class MentionsBot  extends TeamsActivityHandler {
 
         // See https://aka.ms/about-bot-activity-message to learn more about the message and other activity types.
         this.onMessage(async (context, next) => {
-            var mention = { mentioned: context.activity.from, text:`<at>${context.activity.from.name}</at>` };
+            const mention = { mentioned: context.activity.from, text:`<at>${ context.activity.from.name }</at>` };
 
             // Against Teams having a Mention in the Entities but not including that
             // mention Text in the Activity Text will result in a BadRequest.
-            var replyActivity = MessageFactory.text(`Hello ${mention.text}.`);
+            const replyActivity = MessageFactory.text(`Hello ${ mention.text }.`);
             replyActivity.entities = [ <Mention> mention ];
 
             await context.sendActivity(replyActivity);

@@ -43,7 +43,7 @@ export class TelemetryLoggerMiddleware implements Middleware {
      * @param telemetryClient The BotTelemetryClient used for logging.
      * @param logPersonalInformation (Optional) Enable/Disable logging original message name within Application Insights.
      */
-    constructor(telemetryClient: BotTelemetryClient, logPersonalInformation: boolean = false) {
+    constructor(telemetryClient: BotTelemetryClient, logPersonalInformation = false) {
         this._telemetryClient = telemetryClient || new NullTelemetryClient() ;
         this._logPersonalInformation = logPersonalInformation;
     }
@@ -79,8 +79,8 @@ export class TelemetryLoggerMiddleware implements Middleware {
 
         // hook up onSend pipeline
         context.onSendActivities(async (ctx: TurnContext,
-                                        activities: Partial<Activity>[],
-                                        nextSend: () => Promise<ResourceResponse[]>): Promise<ResourceResponse[]> => {
+            activities: Partial<Activity>[],
+            nextSend: () => Promise<ResourceResponse[]>): Promise<ResourceResponse[]> => {
             // run full pipeline
             const responses: ResourceResponse[] = await nextSend();
             activities.forEach(async (act: Partial<Activity>) => { 
@@ -92,8 +92,8 @@ export class TelemetryLoggerMiddleware implements Middleware {
 
         // hook up update activity pipeline
         context.onUpdateActivity(async (ctx: TurnContext,
-                                        activity: Partial<Activity>,
-                                        nextUpdate: () => Promise<void>) => {
+            activity: Partial<Activity>,
+            nextUpdate: () => Promise<void>) => {
             // run full pipeline
             const response: void = await nextUpdate();
 
@@ -104,8 +104,8 @@ export class TelemetryLoggerMiddleware implements Middleware {
 
         // hook up delete activity pipeline
         context.onDeleteActivity(async (ctx: TurnContext,
-                                        reference: Partial<ConversationReference>,
-                                        nextDelete: () => Promise<void>) => {
+            reference: Partial<ConversationReference>,
+            nextDelete: () => Promise<void>) => {
             // run full pipeline
             await nextDelete();
 
@@ -131,10 +131,10 @@ export class TelemetryLoggerMiddleware implements Middleware {
      * @param activity Current activity sent from user.
      */
     protected async onReceiveActivity(activity: Activity): Promise<void> {
-            this.telemetryClient.trackEvent({
-                name: TelemetryLoggerMiddleware.botMsgReceiveEvent,
-                properties: await this.fillReceiveEventProperties(activity)
-                });
+        this.telemetryClient.trackEvent({
+            name: TelemetryLoggerMiddleware.botMsgReceiveEvent,
+            properties: await this.fillReceiveEventProperties(activity)
+        });
     }
 
     /**
@@ -197,7 +197,7 @@ export class TelemetryLoggerMiddleware implements Middleware {
             // Use the LogPersonalInformation flag to toggle logging PII data, text and user name are common examples
             if (this.logPersonalInformation) {
                 if (activity.from && activity.from.name && activity.from.name.trim()) {
-                    properties[TelemetryConstants.fromNameProperty] = activity.from ? activity.from.name : '';;
+                    properties[TelemetryConstants.fromNameProperty] = activity.from ? activity.from.name : '';
                 }
 
                 if (activity.text && activity.text.trim()) {

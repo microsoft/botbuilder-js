@@ -35,12 +35,12 @@ export class LastIndexOf extends ExpressionEvaluator {
                     const searchValue = FunctionUtils.parseStringOrUndefined(args[1]);
                     value = str.lastIndexOf(searchValue, str.length - 1);
                 } else {
-                    error = `Can only look for indexof string in ${expression}`;
+                    error = `Can only look for indexof string in ${ expression }`;
                 }
             } else if (Array.isArray(args[0])) {
                 value = args[0].lastIndexOf(args[1]);
             } else {
-                error = `${expression} works only on string or list.`;
+                error = `${ expression } works only on string or list.`;
             }
         }
 

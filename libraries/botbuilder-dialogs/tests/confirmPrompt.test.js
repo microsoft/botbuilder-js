@@ -6,10 +6,10 @@ const beginMessage = { text: `begin`, type: 'message' };
 const answerMessage = { text: `yes`, type: 'message' };
 const invalidMessage = { text: `what?`, type: 'message' };
 
-describe('ConfirmPrompt', function () {
+describe('ConfirmPrompt', function() {
     this.timeout(5000);
 
-    it('should call ConfirmPrompt using dc.prompt().', async function () {
+    it('should call ConfirmPrompt using dc.prompt().', async function() {
         // Initialize TestAdapter.
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);
@@ -37,7 +37,7 @@ describe('ConfirmPrompt', function () {
             .assertReply(`The result found is 'true'.`);
     });
 
-    it('should call ConfirmPrompt with custom validator.', async function () {
+    it('should call ConfirmPrompt with custom validator.', async function() {
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);
 
@@ -64,10 +64,10 @@ describe('ConfirmPrompt', function () {
         await adapter.send('Hello')
             .assertReply('Please confirm. Yes or No')
             .send('no')
-            .assertReply(`The result found is 'false'.`)
+            .assertReply(`The result found is 'false'.`);
     });
 
-    it('should send custom retryPrompt.', async function () {
+    it('should send custom retryPrompt.', async function() {
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);
 
@@ -97,10 +97,10 @@ describe('ConfirmPrompt', function () {
             .send('what?')
             .assertReply(`Please reply with 'Yes' or 'No'.`)
             .send('no')
-            .assertReply(`The result found is 'false'.`)
+            .assertReply(`The result found is 'false'.`);
     });
 
-    it('should send custom retryPrompt if validator does not reply.', async function () {
+    it('should send custom retryPrompt if validator does not reply.', async function() {
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);
 
@@ -132,10 +132,10 @@ describe('ConfirmPrompt', function () {
             .send('what?')
             .assertReply(`Please reply with 'Yes' or 'No'.`)
             .send('no')
-            .assertReply(`The result found is 'false'.`)
+            .assertReply(`The result found is 'false'.`);
     });
 
-    it('should ignore retryPrompt if validator replies.', async function () {
+    it('should ignore retryPrompt if validator replies.', async function() {
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);
 
@@ -158,7 +158,7 @@ describe('ConfirmPrompt', function () {
         const confirmPrompt = new ConfirmPrompt('prompt', async (prompt) => {
             assert(prompt, `PromptValidatorContext not found.`);
             if (!prompt.recognized.succeeded) {
-                await prompt.context.sendActivity('The correct response is either yes or no. Please choose one.')
+                await prompt.context.sendActivity('The correct response is either yes or no. Please choose one.');
             }
             return prompt.recognized.succeeded;
         });
@@ -171,10 +171,10 @@ describe('ConfirmPrompt', function () {
             .send('what?')
             .assertReply('The correct response is either yes or no. Please choose one.')
             .send('no')
-            .assertReply(`The result found is 'false'.`)
+            .assertReply(`The result found is 'false'.`);
     });
 
-    it('should not send any retryPrompt if no prompt is specified.', async function () {
+    it('should not send any retryPrompt if no prompt is specified.', async function() {
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);
 
@@ -201,10 +201,10 @@ describe('ConfirmPrompt', function () {
             .send('what?')
             .assertReply('')
             .send('no')
-            .assertReply(`The result found is 'false'.`)
+            .assertReply(`The result found is 'false'.`);
     });
 
-    it('should send retryPrompt if user sends attachment and no text.', async function () {
+    it('should send retryPrompt if user sends attachment and no text.', async function() {
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);
 
@@ -237,7 +237,7 @@ describe('ConfirmPrompt', function () {
             .assertReply(`The result found is 'false'.`);
     });
 
-    it('should not recognize, then re-prompt without error for falsy input.', async function () {
+    it('should not recognize, then re-prompt without error for falsy input.', async function() {
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);
 
@@ -272,7 +272,7 @@ describe('ConfirmPrompt', function () {
             .assertReply(`The result found is 'false'.`);
     });
 
-    it('should use defaultLocale when rendering choices', async function () {
+    it('should use defaultLocale when rendering choices', async function() {
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);
 
@@ -310,7 +310,7 @@ describe('ConfirmPrompt', function () {
             .assertReply('true');
     });
 
-    it('should use context.activity.locale when rendering choices', async function () {
+    it('should use context.activity.locale when rendering choices', async function() {
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);
 
@@ -346,7 +346,7 @@ describe('ConfirmPrompt', function () {
             .assertReply('false');
     });
 
-    it('should use context.activity.locale over defaultLocale when rendering choices', async function () {
+    it('should use context.activity.locale over defaultLocale when rendering choices', async function() {
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);
 
@@ -382,7 +382,7 @@ describe('ConfirmPrompt', function () {
             .assertReply('false');
     });
 
-    it('should recognize locale variations of correct locales', async function () {
+    it('should recognize locale variations of correct locales', async function() {
         const locales = [
             'es-es',
             'nl-nl',
@@ -529,7 +529,7 @@ describe('ConfirmPrompt', function () {
             .assertReply('true');
     });
 
-    it('should recognize yes with no PromptOptions.', async function () {
+    it('should recognize yes with no PromptOptions.', async function() {
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);
 
@@ -558,7 +558,7 @@ describe('ConfirmPrompt', function () {
             .assertReply(`The result found is 'true'.`);
     });
 
-    it('should recognize valid number when choiceOptions.includeNumbers is true.', async function () {
+    it('should recognize valid number when choiceOptions.includeNumbers is true.', async function() {
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);
 
@@ -590,7 +590,7 @@ describe('ConfirmPrompt', function () {
             .assertReply(`The result found is 'true'.`);
     });
 
-    it('should recognize valid number and default to en if locale is null.', async function () {
+    it('should recognize valid number and default to en if locale is null.', async function() {
         const adapter = new TestAdapter(async (turnContext) => {
 
             turnContext.activity.locale = null;
@@ -625,7 +625,7 @@ describe('ConfirmPrompt', function () {
             .assertReply(`The result found is 'true'.`);
     });
 
-    it('should recognize valid number and default to en if locale invalid string.', async function () {
+    it('should recognize valid number and default to en if locale invalid string.', async function() {
         const adapter = new TestAdapter(async (turnContext) => {
 
             turnContext.activity.locale = 'invalid-locale';
@@ -660,7 +660,7 @@ describe('ConfirmPrompt', function () {
             .assertReply(`The result found is 'true'.`);
     });
 
-    it('should recognize valid number and default to en if defaultLocale invalid string.', async function () {
+    it('should recognize valid number and default to en if defaultLocale invalid string.', async function() {
         const adapter = new TestAdapter(async (turnContext) => {
 
             const dc = await dialogs.createContext(turnContext);
@@ -693,7 +693,7 @@ describe('ConfirmPrompt', function () {
             .assertReply(`The result found is 'true'.`);
     });
     
-    it('should not recognize invalid number when choiceOptions.includeNumbers is true.', async function () {
+    it('should not recognize invalid number when choiceOptions.includeNumbers is true.', async function() {
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);
 
@@ -725,7 +725,7 @@ describe('ConfirmPrompt', function () {
             .assertReply(`The result found is 'true'.`);
     });
 
-    it('should not recognize valid number choice when choiceOptions.includeNumbers is false.', async function () {
+    it('should not recognize valid number choice when choiceOptions.includeNumbers is false.', async function() {
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);
 
@@ -757,7 +757,7 @@ describe('ConfirmPrompt', function () {
             .assertReply(`The result found is 'false'.`);
     });
 
-    it('should recognize valid number when choiceOptions.includeNumbers is undefined.', async function () {
+    it('should recognize valid number when choiceOptions.includeNumbers is undefined.', async function() {
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);
 

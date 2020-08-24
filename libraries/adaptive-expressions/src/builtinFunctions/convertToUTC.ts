@@ -36,7 +36,7 @@ export class ConvertToUTC extends ExpressionEvaluator {
             if (typeof (args[0]) === 'string' && typeof (args[1]) === 'string') {
                 ({ value, error } = ConvertToUTC.evalConvertToUTC(args[0], args[1], format));
             } else {
-                error = `${expression} cannot evaluate`;
+                error = `${ expression } cannot evaluate`;
             }
         }
 
@@ -48,7 +48,7 @@ export class ConvertToUTC extends ExpressionEvaluator {
         let error: string;
         parsed = moment(timeStamp);
         if (parsed.toString() === 'Invalid date') {
-            error = `${timeStamp} is a invalid datetime`;
+            error = `${ timeStamp } is a invalid datetime`;
         }
 
         return error;
@@ -60,7 +60,7 @@ export class ConvertToUTC extends ExpressionEvaluator {
         let formattedSourceTime: string;
         const timeZone: string = TimeZoneConverter.windowsToIana(sourceTimezone);
         if (!TimeZoneConverter.verifyTimeZoneStr(timeZone)) {
-            error = `${sourceTimezone} is not a valid timezone`;
+            error = `${ sourceTimezone } is not a valid timezone`;
         }
 
         if (!error) {
@@ -70,14 +70,14 @@ export class ConvertToUTC extends ExpressionEvaluator {
                     const sourceTime = tz(timeStamp, timeZone);
                     formattedSourceTime = sourceTime.format();
                 } catch (e) {
-                    error = `${timeStamp} with ${timeZone} is not a valid timestamp with specified timeZone:`;
+                    error = `${ timeStamp } with ${ timeZone } is not a valid timestamp with specified timeZone:`;
                 }
 
                 if (!error) {
                     try {
                         result = tz(formattedSourceTime, 'Etc/UTC').format(format);
                     } catch (e) {
-                        error = `${format} is not a valid timestamp format`;
+                        error = `${ format } is not a valid timestamp format`;
                     }
                 }
             }

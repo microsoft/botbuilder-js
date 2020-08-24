@@ -9,7 +9,7 @@ import { StringExpression, IntExpression } from 'adaptive-expressions';
 import { DialogContext, Dialog, DialogTurnResult, PromptOptions, PromptRecognizerResult, ThisPath, TurnPath } from 'botbuilder-dialogs';
 import { Attachment, InputHints, TokenResponse, IUserTokenProvider, TurnContext, ActivityTypes, Activity, MessageFactory, CardFactory, OAuthLoginTimeoutKey, StatusCodes, ActionTypes, ExtendedUserTokenProvider, OAuthCard, BotAdapter, Channels, TokenExchangeInvokeRequest } from 'botbuilder-core';
 import { SkillValidation } from 'botframework-connector';
-import { verifyStateOperationName, tokenExchangeOperationName, tokenResponseEventName } from 'botbuilder-core'
+import { verifyStateOperationName, tokenExchangeOperationName, tokenResponseEventName } from 'botbuilder-core';
 import { InputDialog, InputState } from './inputDialog';
 
 export const channels: any = {

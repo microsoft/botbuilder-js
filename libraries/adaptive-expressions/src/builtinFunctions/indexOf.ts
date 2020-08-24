@@ -33,12 +33,12 @@ export class IndexOf extends ExpressionEvaluator {
                 if (args[1] === undefined || typeof args[1] === 'string') {
                     value = FunctionUtils.parseStringOrUndefined(args[0]).indexOf(FunctionUtils.parseStringOrUndefined(args[1]));
                 } else {
-                    error = `Can only look for indexof string in ${expression}`;
+                    error = `Can only look for indexof string in ${ expression }`;
                 }
             } else if (Array.isArray(args[0])) {
                 value = args[0].indexOf(args[1]);
             } else {
-                error = `${expression} works only on string or list.`;
+                error = `${ expression } works only on string or list.`;
             }
         }
 

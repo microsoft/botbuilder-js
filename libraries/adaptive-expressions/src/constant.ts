@@ -51,7 +51,7 @@ export class Constant extends Expression {
         if (!other || other.type !== this.type) {
             eq = false; 
         } else {
-            let otherVal = (other as Constant).value;
+            const otherVal = (other as Constant).value;
             eq = this.value === otherVal;
         }
 

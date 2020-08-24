@@ -30,7 +30,7 @@ export class ActivityUpdateAndDeleteBot extends ActivityHandler {
 
                 this.activityIds = [];
             } else {
-                await this.sendMessageAndLogActivityId(context, `${context.activity.text}`);
+                await this.sendMessageAndLogActivityId(context, `${ context.activity.text }`);
 
                 const text = context.activity.text;
                 for (const id of this.activityIds) {

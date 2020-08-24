@@ -26,7 +26,7 @@ export class AliasPathResolver implements PathResolver {
         if (start == 0) {
             // here we only deals with trailing alias, alias in middle be handled in further breakdown
             // $xxx -> path.xxx
-            path = `${this.prefix}${path.substr(start + this.alias.length)}${this.postfix}`;
+            path = `${ this.prefix }${ path.substr(start + this.alias.length) }${ this.postfix }`;
             if (path.endsWith('.')) {
                 path = path.substr(0, path.length - 1);
             }

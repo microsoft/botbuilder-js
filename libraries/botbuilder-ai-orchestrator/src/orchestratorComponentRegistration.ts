@@ -32,4 +32,4 @@ export class OrchestratorComponentRegistration implements ComponentRegistration 
             }))
         );    
     }
-};
+}

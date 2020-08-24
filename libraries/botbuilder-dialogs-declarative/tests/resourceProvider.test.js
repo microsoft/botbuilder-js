@@ -1,7 +1,7 @@
 const { ResourceExplorer, FolderResourceProvider } = require('../lib');
 const assert = require('assert');
 
-describe('ResourceProvider', function () {
+describe('ResourceProvider', function() {
     this.timeout(5000);
 
     it('FolderResourceProvider load specific folder with dialog extension', async () => {

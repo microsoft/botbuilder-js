@@ -41,7 +41,7 @@ export class TimeTransformEvaluator extends ExpressionEvaluator {
                         }
                     }
                 } else {
-                    error = `${expression} could not be evaluated`;
+                    error = `${ expression } could not be evaluated`;
                 }
             }
 

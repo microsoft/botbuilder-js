@@ -55,7 +55,7 @@ export class BotStateSet {
      * @param context Context for current turn of conversation with the user.
      * @param force (Optional) If `true` the cache will be bypassed and the state will always be read in directly from storage. Defaults to `false`.
      */
-    public async loadAll(context: TurnContext, force: boolean = false): Promise<void> {
+    public async loadAll(context: TurnContext, force = false): Promise<void> {
         const promises: Promise<any>[] = this.botStates.map((botstate: BotState) => botstate.load(context, force));
 
         await Promise.all(promises);
@@ -75,7 +75,7 @@ export class BotStateSet {
      * @param context Context for current turn of conversation with the user.
      * @param force (Optional) if `true` the state will always be written out regardless of its change state. Defaults to `false`.
      */
-    public async saveAllChanges(context: TurnContext, force: boolean = false): Promise<void> {
+    public async saveAllChanges(context: TurnContext, force = false): Promise<void> {
         const promises: Promise<void>[] = this.botStates.map((botstate: BotState) => botstate.saveChanges(context, force));
 
         await Promise.all(promises);

@@ -51,7 +51,7 @@ export class DialogTestClient {
     public constructor(channelOrAdapter: string|TestAdapter, targetDialog: Dialog, initialDialogOptions?: any, middlewares?: Middleware[], conversationState?: ConversationState) {
         this.conversationState = conversationState || new ConversationState(new MemoryStorage());
 
-        let dialogState = this.conversationState.createProperty('DialogState');
+        const dialogState = this.conversationState.createProperty('DialogState');
 
         this._callback = this.getDefaultCallback(targetDialog, initialDialogOptions || null, dialogState);
 

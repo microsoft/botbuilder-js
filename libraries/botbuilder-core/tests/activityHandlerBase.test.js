@@ -185,7 +185,7 @@ describe('ActivityHandlerBase', function() {
                 }
                 assert(context, 'context not found');
                 assert(membersAdded, 'membersAdded not found');
-                assert(membersAdded.length === 1, `unexpected number of membersAdded: ${membersAdded.length}`);
+                assert(membersAdded.length === 1, `unexpected number of membersAdded: ${ membersAdded.length }`);
                 onMembersAddedActivityCalled = true;
             }
     
@@ -196,7 +196,7 @@ describe('ActivityHandlerBase', function() {
                 }
                 assert(context, 'context not found');
                 assert(membersRemoved, 'membersRemoved not found');
-                assert(membersRemoved.length === 1, `unexpected number of membersRemoved: ${membersRemoved.length}`);
+                assert(membersRemoved.length === 1, `unexpected number of membersRemoved: ${ membersRemoved.length }`);
                 onMembersRemovedActivityCalled = true;
             }
         }
@@ -278,14 +278,14 @@ describe('ActivityHandlerBase', function() {
             async onReactionsAddedActivity(reactionsAdded, context) {
                 assert(context, 'context not found');
                 assert(reactionsAdded, 'membersAdded not found');
-                assert(reactionsAdded.length === 1, `unexpected number of reactionsAdded: ${reactionsAdded.length}`);
+                assert(reactionsAdded.length === 1, `unexpected number of reactionsAdded: ${ reactionsAdded.length }`);
                 onReactionsAddedActivityCalled = true;
             }
     
             async onReactionsRemovedActivity(reactionsRemoved, context) {
                 assert(context, 'context not found');
                 assert(reactionsRemoved, 'reactionsRemoved not found');
-                assert(reactionsRemoved.length === 1, `unexpected number of reactionsRemoved: ${reactionsRemoved.length}`);
+                assert(reactionsRemoved.length === 1, `unexpected number of reactionsRemoved: ${ reactionsRemoved.length }`);
                 onReactionsRemovedActivityCalled = true;
             }
         }

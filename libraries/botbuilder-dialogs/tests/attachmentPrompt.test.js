@@ -8,7 +8,7 @@ const invalidMessage = { text: `what?`, type: 'message' };
 describe('AttachmentPrompt', function() {
     this.timeout(5000);
 
-    it('should call AttachmentPrompt using dc.prompt().', async function () {
+    it('should call AttachmentPrompt using dc.prompt().', async function() {
         // Initialize TestAdapter.
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);
@@ -19,7 +19,7 @@ describe('AttachmentPrompt', function() {
             } else if (results.status === DialogTurnStatus.complete) {
                 assert(Array.isArray(results.result) && results.result.length > 0);
                 const attachment = results.result[0];
-                await turnContext.sendActivity(`${attachment.content}`);
+                await turnContext.sendActivity(`${ attachment.content }`);
             }
             await convoState.saveChanges(turnContext);
         });
@@ -34,12 +34,12 @@ describe('AttachmentPrompt', function() {
         dialogs.add(new AttachmentPrompt('prompt'));
         
         await adapter.send('Hello')
-        .assertReply('Please send an attachment.')
-        .send(answerMessage)
-        .assertReply('test1');
+            .assertReply('Please send an attachment.')
+            .send(answerMessage)
+            .assertReply('test1');
     });
 
-    it('should call AttachmentPrompt with custom validator.', function (done) {
+    it('should call AttachmentPrompt with custom validator.', function(done) {
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);
 
@@ -49,7 +49,7 @@ describe('AttachmentPrompt', function() {
             } else if (results.status === DialogTurnStatus.complete) {
                 assert(Array.isArray(results.result) && results.result.length > 0);
                 const attachment = results.result[0];
-                await turnContext.sendActivity(`${attachment.content}`);
+                await turnContext.sendActivity(`${ attachment.content }`);
             }
             await convoState.saveChanges(turnContext);
         });
@@ -64,13 +64,13 @@ describe('AttachmentPrompt', function() {
         }));
         
         adapter.send('Hello')
-        .assertReply('Please send an attachment.')
-        .send(answerMessage)
-        .assertReply('test1');
+            .assertReply('Please send an attachment.')
+            .send(answerMessage)
+            .assertReply('test1');
         done();
     });
 
-    it('should send custom retryPrompt.', function (done) {
+    it('should send custom retryPrompt.', function(done) {
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);
 
@@ -80,7 +80,7 @@ describe('AttachmentPrompt', function() {
             } else if (results.status === DialogTurnStatus.complete) {
                 assert(Array.isArray(results.result) && results.result.length > 0);
                 const attachment = results.result[0];
-                await turnContext.sendActivity(`${attachment.content}`);
+                await turnContext.sendActivity(`${ attachment.content }`);
             }
             await convoState.saveChanges(turnContext);
         });
@@ -95,15 +95,15 @@ describe('AttachmentPrompt', function() {
         }));
         
         adapter.send('Hello')
-        .assertReply('Please send an attachment.')
-        .send(invalidMessage)
-        .assertReply('Please try again.')
-        .send(answerMessage)
-        .assertReply('test1')
+            .assertReply('Please send an attachment.')
+            .send(invalidMessage)
+            .assertReply('Please try again.')
+            .send(answerMessage)
+            .assertReply('test1');
         done();
     });
 
-    it('should send ignore retryPrompt if validator replies.', function (done) {
+    it('should send ignore retryPrompt if validator replies.', function(done) {
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);
 
@@ -113,7 +113,7 @@ describe('AttachmentPrompt', function() {
             } else if (results.status === DialogTurnStatus.complete) {
                 assert(Array.isArray(results.result) && results.result.length > 0);
                 const attachment = results.result[0];
-                await turnContext.sendActivity(`${attachment.content}`);
+                await turnContext.sendActivity(`${ attachment.content }`);
             }
             await convoState.saveChanges(turnContext);
         });
@@ -132,15 +132,15 @@ describe('AttachmentPrompt', function() {
         }));
         
         adapter.send('Hello')
-        .assertReply('Please send an attachment.')
-        .send(invalidMessage)
-        .assertReply('Bad input.')
-        .send(answerMessage)
-        .assertReply('test1')
+            .assertReply('Please send an attachment.')
+            .send(invalidMessage)
+            .assertReply('Bad input.')
+            .send(answerMessage)
+            .assertReply('test1');
         done();
     });
 
-    it('should not send any retryPrompt if no prompt is specified.', function (done) {
+    it('should not send any retryPrompt if no prompt is specified.', function(done) {
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);
 
@@ -150,7 +150,7 @@ describe('AttachmentPrompt', function() {
             } else if (results.status === DialogTurnStatus.complete) {
                 assert(Array.isArray(results.result) && results.result.length > 0);
                 const attachment = results.result[0];
-                await turnContext.sendActivity(`${attachment.content}`);
+                await turnContext.sendActivity(`${ attachment.content }`);
             }
             await convoState.saveChanges(turnContext);
         });
@@ -162,9 +162,9 @@ describe('AttachmentPrompt', function() {
         dialogs.add(new AttachmentPrompt('prompt'));
         
         adapter.send('Hello')
-        .send('what?')
-        .send(answerMessage)
-        .assertReply('test1')
+            .send('what?')
+            .send(answerMessage)
+            .assertReply('test1');
         done();
     });
 

@@ -27,7 +27,7 @@ module.exports = {
         botPage
             .setValue('@webchatMessageInput', 'Hello');
         botPage
-            .click('@webchatMessageInputSubmitButton', function (result) {
+            .click('@webchatMessageInputSubmitButton', function(result) {
                 // Assertion to check the button was clickable and got triggered
                 this.assert.strictEqual(result.status, 0, 'Message input working');
             });
@@ -58,8 +58,8 @@ async function assertMessageIsPresentInPage(pageInstance, textSearch, assertMess
         }
     }).then(function(){
         Promise.all(messagesListPromises)
-            .then(function (results) {
-                let messageExists = results.some(function (value) {
+            .then(function(results) {
+                let messageExists = results.some(function(value) {
                     return value;
                 });
                 // Check if any of the existing messages was equal to the needle.

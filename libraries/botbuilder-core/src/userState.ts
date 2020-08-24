@@ -10,7 +10,7 @@ import { BotState } from './botState';
 import { Storage } from './storage';
 import { TurnContext } from './turnContext';
 
-const NO_KEY: string = `UserState: overridden getStorageKey method did not return a key.`;
+const NO_KEY = `UserState: overridden getStorageKey method did not return a key.`;
 
 /**
  * Reads and writes user state for your bot to storage.

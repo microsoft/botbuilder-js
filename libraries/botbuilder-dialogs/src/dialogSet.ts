@@ -97,7 +97,7 @@ export class DialogSet {
             for (const id in this.dialogs) {
                 const v = this.dialogs[id].getVersion();
                 if (v) {
-                    versions += `|${v}`;
+                    versions += `|${ v }`;
                 }
             }
             this._version = StringUtils.hash(versions);
@@ -196,7 +196,7 @@ export class DialogSet {
      */
     public set telemetryClient(client: BotTelemetryClient) {
         this._telemetryClient = client;
-        for (let key in this.dialogs) {
+        for (const key in this.dialogs) {
             this.dialogs[key].telemetryClient = this._telemetryClient;
         }
     }

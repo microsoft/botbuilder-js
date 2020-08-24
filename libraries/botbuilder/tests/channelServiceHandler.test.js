@@ -8,7 +8,7 @@ const { stub } = require('sinon');
 const AUTH_HEADER = 'Bearer HelloWorld';
 const AUTH_CONFIG = new AuthenticationConfiguration();
 const CREDENTIALS = new SimpleCredentialProvider('', '');
-const ACTIVITY = { id: 'testId', type: ActivityTypes.Message }
+const ACTIVITY = { id: 'testId', type: ActivityTypes.Message };
 
 class NoAuthHandler extends ChannelServiceHandler {
     async handleSendToConversation(authHeader, conversationId, activity) {
@@ -174,11 +174,11 @@ describe('ChannelServiceHandler', () => {
         });
     });
         
-        describe('GetSendConversationHistory flow:', () => {
-            it('handleSendConversationHistory should call onSendConversationHistory', async () => {
-                const handler = new NoAuthHandler(CREDENTIALS, AUTH_CONFIG);
-                try {
-                    await handler.handleSendConversationHistory(AUTH_HEADER, 'convId', { ACTIVITY });
+    describe('GetSendConversationHistory flow:', () => {
+        it('handleSendConversationHistory should call onSendConversationHistory', async () => {
+            const handler = new NoAuthHandler(CREDENTIALS, AUTH_CONFIG);
+            try {
+                await handler.handleSendConversationHistory(AUTH_HEADER, 'convId', { ACTIVITY });
             } catch (e) {
                 strictEqual(e.message, createDefaultErrorMessage('onSendConversationHistory'));
             }
@@ -227,7 +227,7 @@ describe('ChannelServiceHandler', () => {
             try {
                 await handler.authenticate(AUTH_HEADER);
             } catch (e) {
-                strictEqual(e.statusCode, StatusCodes.UNAUTHORIZED)
+                strictEqual(e.statusCode, StatusCodes.UNAUTHORIZED);
             }
         });
     });

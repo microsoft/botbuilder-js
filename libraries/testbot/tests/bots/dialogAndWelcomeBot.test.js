@@ -16,7 +16,7 @@ class MockRootDialog extends Dialog {
     }
 
     async beginDialog(dc, options) {
-        await dc.context.sendActivity(`${this.id} mock invoked`);
+        await dc.context.sendActivity(`${ this.id } mock invoked`);
         return await dc.endDialog();
     }
 
@@ -40,7 +40,7 @@ describe('DialogAndWelcomeBot', () => {
         await bot.run(context);
     }
 
-    it("Shows welcome card on member added and starts main dialog", async () => {
+    it('Shows welcome card on member added and starts main dialog', async () => {
         const mockRootDialog = new MockRootDialog();
         const memoryStorage = new MemoryStorage();
         const sut = new DialogAndWelcomeBot(new ConversationState(memoryStorage), new UserState(memoryStorage), mockRootDialog, console);

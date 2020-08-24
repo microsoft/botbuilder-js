@@ -40,7 +40,7 @@ export abstract class MemoryScope {
      * @param memory memory to assign
      */
     public setMemory(dc: DialogContext, memory: object): void {
-        throw new Error(`MemoryScope.setMemory: The '${this.name}' memory scope is read-only.`);
+        throw new Error(`MemoryScope.setMemory: The '${ this.name }' memory scope is read-only.`);
     }
 
     /**
@@ -64,6 +64,6 @@ export abstract class MemoryScope {
      * @param dc Current dialog context.
      */
     public async delete(dc: DialogContext): Promise<void> {
-        throw new Error(`MemoryScope.delete: The '${this.name}' memory scope can't be deleted.`);
+        throw new Error(`MemoryScope.delete: The '${ this.name }' memory scope can't be deleted.`);
     }
 }

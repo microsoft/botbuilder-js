@@ -102,15 +102,15 @@ export class OnCondition implements DialogDependencies {
                 const runOnce = new ExpressionEvaluator(`runOnce${ this.id }`, (exp, state: DialogStateManager) => {
                     const basePath = `${ AdaptiveDialog.conditionTracker }.${ this.id }.`;
                     const lastRun: number = state.getValue(basePath + 'lastRun');
-                    const paths: string[] = state.getValue(basePath + "paths");
-                    var changed = state.anyPathChanged(lastRun, paths);
+                    const paths: string[] = state.getValue(basePath + 'paths');
+                    const changed = state.anyPathChanged(lastRun, paths);
                     return { value: changed, error: undefined };
                 }, ReturnType.Boolean, FunctionUtils.validateUnary);
 
                 this._fullConstraint = Expression.andExpression(
                     this._fullConstraint,
                     new Expression(runOnce.type, runOnce)
-                )
+                );
             }
         }
 

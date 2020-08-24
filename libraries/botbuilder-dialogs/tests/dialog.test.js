@@ -14,7 +14,7 @@ class TestDialog extends Dialog {
     async beginDialog(dc, options) {
         assert(dc);
         if (options) {
-            assert(options.test === 'test1', `received options and options.test ("${options.test}") was not "test1".`);
+            assert(options.test === 'test1', `received options and options.test ("${ options.test }") was not "test1".`);
         }
         await dc.context.sendActivity('begin called');
         return Dialog.EndOfTurn;
@@ -25,10 +25,10 @@ class TestDialog extends Dialog {
     }
 }
 
-describe('Dialog', function () {
+describe('Dialog', function() {
     this.timeout(5000);
 
-    it('should call dialog from a dialog set using dc.beginDialog().', async function () {
+    it('should call dialog from a dialog set using dc.beginDialog().', async function() {
         // Initialize TestAdapter.
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);
@@ -49,7 +49,7 @@ describe('Dialog', function () {
             .assertReply('begin called');
     });
 
-    it('should receive dialog options when beginning a dialog from a dialog set.', async function () {
+    it('should receive dialog options when beginning a dialog from a dialog set.', async function() {
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);
             await dc.beginDialog('testDialog', { test: 'test1' });
@@ -67,7 +67,7 @@ describe('Dialog', function () {
             .assertReply('begin called');
     });
 
-    it('should continue() a multi-turn dialog.', async function () {
+    it('should continue() a multi-turn dialog.', async function() {
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);
 

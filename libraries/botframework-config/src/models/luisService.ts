@@ -64,7 +64,7 @@ export class LuisService extends ConnectedService implements ILuisService {
             return this.customEndpoint;
         }
 
-        let reg  = this.region.toLowerCase(); 
+        const reg  = this.region.toLowerCase(); 
 
         // usgovvirginia is that actual azure region name, but the cognitive service team called their endpoint 'virginia' instead of 'usgovvirginia'
         // We handle both region names as an alias for virginia.api.cognitive.microsoft.us

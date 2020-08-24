@@ -28,10 +28,10 @@ export class FormatEpoch extends ExpressionEvaluator {
                 let error: string;
                 let arg: any = args[0];
                 if (typeof arg !== 'number') {
-                    error = `formatEpoch first argument ${arg} must be a number`
+                    error = `formatEpoch first argument ${ arg } must be a number`;
                 } else {
                     // Convert to ms
-                    arg = arg * 1000
+                    arg = arg * 1000;
                 }
 
                 let value: any;

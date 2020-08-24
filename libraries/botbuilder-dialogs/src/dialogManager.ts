@@ -265,10 +265,10 @@ export class DialogManager extends Configurable {
 
         // Continue execution
         // - This will apply any queued up interruptions and execute the current/next step(s).
-        var turnResult = await dc.continueDialog();
+        let turnResult = await dc.continueDialog();
         if (turnResult.status == DialogTurnStatus.empty) {
             // restart root dialog
-            var startMessageText = `Starting ${ this._rootDialogId }.`;
+            const startMessageText = `Starting ${ this._rootDialogId }.`;
             await turnContext.sendTraceActivity('DialogManager.onTurn()', undefined, undefined, startMessageText);
             turnResult = await dc.beginDialog(this._rootDialogId);
         }
@@ -276,7 +276,7 @@ export class DialogManager extends Configurable {
         await this.sendStateSnapshotTrace(dc, 'Skill State');
 
         if (shouldSendEndOfConversationToParent(turnContext, turnResult)) {
-            var endMessageText = `Dialog ${ this._rootDialogId } has **completed**. Sending EndOfConversation.`;
+            const endMessageText = `Dialog ${ this._rootDialogId } has **completed**. Sending EndOfConversation.`;
             await turnContext.sendTraceActivity('DialogManager.onTurn()', turnResult.result, undefined, endMessageText);
 
             // Send End of conversation at the end.

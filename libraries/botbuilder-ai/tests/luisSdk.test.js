@@ -2,11 +2,11 @@ const assert = require('assert');
 const fs = require('fs-extra');
 const nock = require('nock');
 const { LUISRuntimeClient, LUISRuntimeModels } = require('@azure/cognitiveservices-luis-runtime');
-const msRest = require("@azure/ms-rest-js");
+const msRest = require('@azure/ms-rest-js');
 
 const applicationId = '756de20e-f1e6-4dca-b80a-406a31d7054b';
 // This can be any endpoint key for calling LUIS
-const endpointKey = process.env.LUISAPPKEY || "77fe817cc79f48bd9323a0b4eafef9fa";
+const endpointKey = process.env.LUISAPPKEY || '77fe817cc79f48bd9323a0b4eafef9fa';
 
 // If this is true, then LUIS responses will come from oracle files.
 // If it is false, the LUIS service will be called and if there are changes you will get a new oracle file.
@@ -24,16 +24,16 @@ function GetExpected(oracle) {
     var expected = fs.readJSONSync(oracle);
 
     var query = 'verbose=(true|false)(&staging=false&spellCheck=false&log=true|)';
-    var path = `/luis/v2\\.0/apps/${applicationId}`;
-    var pattern = `${path}\\?${query}`;
+    var path = `/luis/v2\\.0/apps/${ applicationId }`;
+    var pattern = `${ path }\\?${ query }`;
     var uri = new RegExp(pattern);
-    var requestContent = expected.text != undefined ? `"${expected.text}"` : undefined;
+    var requestContent = expected.text != undefined ? `"${ expected.text }"` : undefined;
     var responseBody = expected;
 
     if (mockLuis) {
         nock('https://westus.api.cognitive.microsoft.com')
             .matchHeader('ocp-apim-subscription-key', endpointKey)
-            .matchHeader('authorization', `Bearer ${endpointKey}`)
+            .matchHeader('authorization', `Bearer ${ endpointKey }`)
             .post(uri, requestContent)
             .reply(200, responseBody);
     }
@@ -51,19 +51,19 @@ function WithinDelta(token1, token2, delta, compare) {
             within = WithinDelta(token1[i], token2[i], delta, compare);
         }
     }
-    else if (typeof token1 === "object" && typeof token2 === "object") {
+    else if (typeof token1 === 'object' && typeof token2 === 'object') {
         Object.keys(token2).forEach(k => token2[k] === undefined && delete token2[k]);
         within = Object.keys(token1).length === Object.keys(token2).length;
-        Object.keys(token1).forEach(function (key) {
+        Object.keys(token1).forEach(function(key) {
             if (!within) return;
-            within = WithinDelta(token1[key], token2[key], delta, compare || key === "score" || key === "intents");
+            within = WithinDelta(token1[key], token2[key], delta, compare || key === 'score' || key === 'intents');
         });
     }
     else if (token1 !== token2) {
         if (token1 !== undefined && token2 != undefined && token1.Type == token2.Type) {
             within = false;
             if (compare &&
-                typeof token1 === "number" && typeof token2 === "number") {
+                typeof token1 === 'number' && typeof token2 === 'number') {
                 within = Math.abs(token1 - token2) < delta;
             }
         }
@@ -86,7 +86,7 @@ function TestJson(file, done, includeAllIntents, includeInstance) {
     var expectedPath = ExpectedPath(file);
     var expected = GetExpected(expectedPath);
 
-    var newPath = expectedPath + ".new";
+    var newPath = expectedPath + '.new';
 
     var client = new LUISRuntimeClient(creds,baseUrl);
     client.prediction.resolve(
@@ -100,20 +100,20 @@ function TestJson(file, done, includeAllIntents, includeInstance) {
                 'User-Agent': 'botbuilder'
             }
         }).then(result => {
-            result.v2 = result.luisResult;
-            delete result.luisResult;
-            if (!WithinDelta(expected, result, 0.1, false)) {
-                fs.outputJSONSync(newPath, result, { spaces: 2 });
-                assert(false, "\nReturned JSON\n " + newPath + "\n!= expected JSON\n " + expectedPath);
-            } 
-            else if (fs.existsSync(newPath)) {
-                fs.unlinkSync(newPath);
-            }
-            done(result);
-        }).catch(function(err) {
+        result.v2 = result.luisResult;
+        delete result.luisResult;
+        if (!WithinDelta(expected, result, 0.1, false)) {
+            fs.outputJSONSync(newPath, result, { spaces: 2 });
+            assert(false, '\nReturned JSON\n ' + newPath + '\n!= expected JSON\n ' + expectedPath);
+        } 
+        else if (fs.existsSync(newPath)) {
+            fs.unlinkSync(newPath);
+        }
+        done(result);
+    }).catch(function(err) {
         console.error(err);
-        }); 
-    }
+    }); 
+}
 
 function findIntent(key, data) {
     var i, len = data.length;
@@ -154,19 +154,19 @@ function findCompositeByParentType(key, data) {
 }
     
 
-describe('LuisPredict', function () {
-  this.timeout(10000);
-    if (!mockLuis && endpointKey === "MockedKey") {
+describe('LuisPredict', function() {
+    this.timeout(10000);
+    if (!mockLuis && endpointKey === 'MockedKey') {
         console.warn('WARNING: skipping LuisRecognizer test suite because the LUISAPPKEY environment variable is not defined');
         return;
     }
-    it('test built-ins composite1', done => TestJson("Composite1.json", result => done()));
-    it('test built-ins composite2', done => TestJson("Composite2.json", result => done()));
-    it('test built-ins composite3', done => TestJson("Composite3.json", result => done()));
-    it('test built-ins prebuilt', done => TestJson("Prebuilt.json", result => done()));
-    it('test patterns', done => TestJson("Patterns.json", result => done()));
+    it('test built-ins composite1', done => TestJson('Composite1.json', result => done()));
+    it('test built-ins composite2', done => TestJson('Composite2.json', result => done()));
+    it('test built-ins composite3', done => TestJson('Composite3.json', result => done()));
+    it('test built-ins prebuilt', done => TestJson('Prebuilt.json', result => done()));
+    it('test patterns', done => TestJson('Patterns.json', result => done()));
     it('should return single intent and a simple entity', done => {
-        TestJson("SingleIntent_SimplyEntity.json", result => {
+        TestJson('SingleIntent_SimplyEntity.json', result => {
             assert(result);
             assert(result.query == 'My name is Emad');
             var specifyName = findIntent('SpecifyName', result.intents);
@@ -184,7 +184,7 @@ describe('LuisPredict', function () {
     });
 
     it('should return multiple intents and prebuilt entities with a single value', done => {
-        TestJson("MultipleIntents_PrebuiltEntity.json", result => {
+        TestJson('MultipleIntents_PrebuiltEntity.json', result => {
             assert(result);
             assert(result.query == 'Please deliver February 2nd 2001');
             assert(result.intents);
@@ -202,12 +202,12 @@ describe('LuisPredict', function () {
             assert(dateTime.startIndex == 15);
             assert(dateTime.endIndex == 31);
             done();
-        })
+        });
     });
 
     it('should return multiple intents and prebuilt entities with multiple values', done => {
 
-        TestJson("MultipleIntents_PrebuiltEntitiesWithMultiValues.json", result => {
+        TestJson('MultipleIntents_PrebuiltEntitiesWithMultiValues.json', result => {
             assert(result);
             assert(result.query == 'Please deliver February 2nd 2001 in room 201');
             assert(result.intents);
@@ -226,7 +226,7 @@ describe('LuisPredict', function () {
     });
 
     it('should return multiple intents and a list entity with a single value', done => {
-        TestJson("MultipleIntents_ListEntityWithSingleValue.json", result => {
+        TestJson('MultipleIntents_ListEntityWithSingleValue.json', result => {
             assert(result);
             assert(result.query == 'I want to travel on united');
             assert(result.intents);
@@ -246,7 +246,7 @@ describe('LuisPredict', function () {
     });
 
     it('should return multiple intents and a list entity with multiple values', done => {
-        TestJson("MultipleIntents_ListEntityWithMultiValues.json", result => {
+        TestJson('MultipleIntents_ListEntityWithMultiValues.json', result => {
             assert(result);
             assert(result.query == 'I want to travel on DL');
             assert(result.intents);
@@ -271,7 +271,7 @@ describe('LuisPredict', function () {
     });
 
     it('should return multiple intents and a single composite entity', done => {
-        TestJson("MultipleIntents_CompositeEntityModel.json", result => {
+        TestJson('MultipleIntents_CompositeEntityModel.json', result => {
             assert(result);
             assert(result.query == 'Please deliver it to 98033 WA');
             assert(result.intents);
@@ -285,7 +285,7 @@ describe('LuisPredict', function () {
             assert(stateEntity.endIndex == 28);
             assert(stateEntity);
             var addressEntity = findEntityByType('Address', result.entities);
-            assert(addressEntity)
+            assert(addressEntity);
             assert(addressEntity.entity === '98033 wa');
             assert(addressEntity.startIndex == 21);
             assert(addressEntity.endIndex == 28);
@@ -300,5 +300,5 @@ describe('LuisPredict', function () {
         });
     });
 
-  });
+});
 

@@ -10,7 +10,7 @@ import { BotState } from './botState';
 import { Storage } from './storage';
 import { TurnContext } from './turnContext';
 
-const NO_KEY: string = `PrivateConversationState: overridden getStorageKey method did not return a key.`;
+const NO_KEY = `PrivateConversationState: overridden getStorageKey method did not return a key.`;
 
 /**
  * Reads and writes PrivateConversation state for your bot to storage.

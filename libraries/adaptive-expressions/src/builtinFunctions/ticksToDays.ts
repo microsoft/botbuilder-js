@@ -34,7 +34,7 @@ export class TicksToDays extends ExpressionEvaluator {
             if (Number.isInteger(args[0])) {
                 value = args[0] / TicksToDays.TicksPerDay;
             } else {
-                error = `${expr} should contain an integer of ticks`;
+                error = `${ expr } should contain an integer of ticks`;
             }
         }
 

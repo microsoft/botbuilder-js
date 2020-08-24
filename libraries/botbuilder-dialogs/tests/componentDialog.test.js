@@ -7,7 +7,7 @@ function simpleStepContextCheck(step) {
     assert(typeof step === 'object', `step is not a WaterfallStepContext.`);
 }
 
-describe('ComponentDialog', function () {
+describe('ComponentDialog', function() {
     this.timeout(5000);
 
     it('should set initial dialog to be first dialog added via addDialog()', (done) => {
@@ -197,7 +197,7 @@ describe('ComponentDialog', function () {
             .assertReply('First step.')
             .send('Hi again')
             .assertReply('Called onContinueDialog.')
-            .assertReply('Done.')
+            .assertReply('Done.');
     });
 
     it('should cancel all Dialogs inside of ComponentDialog namespace.', () => {
@@ -231,7 +231,7 @@ describe('ComponentDialog', function () {
         component.addDialog(secondChildDialog);
 
         const dialogs = new DialogSet(dialogState);
-        dialogs.add(component)
+        dialogs.add(component);
 
         const adapter = new TestAdapter(async turnContext => {
             const dc = await dialogs.createContext(turnContext);
@@ -317,7 +317,7 @@ describe('ComponentDialog', function () {
         parentComponent.addDialog(new WaterfallDialog('parentDialog', [
             async step => {
                 assert(step.options.value);
-                await step.context.sendActivity(`Parent called with: ${step.options.value}`);
+                await step.context.sendActivity(`Parent called with: ${ step.options.value }`);
                 return await step.endDialog(step.options.value);
             }
         ]));

@@ -2,7 +2,7 @@ const assert = require('assert');
 const { ActivityTypes } = require('../');
 
 function uuid() {
-    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
         var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
         return v.toString(16);
     });
@@ -17,7 +17,7 @@ function createActivities(conversationId, ts, count = 5) {
             id: uuid(),
             text: i.toString(),
             channelId: 'test',
-            from: { id: `User${i}` },
+            from: { id: `User${ i }` },
             conversation: { id: conversationId },
             recipient: { id: 'Bot1', name: '2' },
             serviceUrl: 'http://foo.com/api/messages'
@@ -32,7 +32,7 @@ function createActivities(conversationId, ts, count = 5) {
             channelId: 'test',
             from: { id: 'Bot1', name: '2' },
             conversation: { id: conversationId },
-            recipient: { id: `User${i}` },
+            recipient: { id: `User${ i }` },
             serviceUrl: 'http://foo.com/api/messages'
         });
         ts = new Date(ts.getTime() + 60000);
@@ -75,8 +75,8 @@ function dateSorter(a, b) {
 
 exports._badArgs = function _badArgs(store) {
     var assertPromise = (promiseFunc, errMessage) => new Promise((resolve, reject) => {
-        try { promiseFunc().then(() => reject(errMessage)) }
-        catch (error) { resolve('expected error') }
+        try { promiseFunc().then(() => reject(errMessage)); }
+        catch (error) { resolve('expected error'); }
     });
 
     return Promise.all([
@@ -105,20 +105,20 @@ exports._badArgs = function _badArgs(store) {
             'deleteTranscript should have thrown error about missing conversationId'
         )
     ]);
-}
+};
 
 exports._logActivity = function _logActivity(store) {
-        var conversationId = '_logActivity';
-        var date = new Date();
-        var activity = createActivities(conversationId, date, 1).pop();
+    var conversationId = '_logActivity';
+    var date = new Date();
+    var activity = createActivities(conversationId, date, 1).pop();
 
-        return store.logActivity(activity)
-            .then(() => store.getTranscriptActivities('test', conversationId))
-            .then((result) => {
-                assert.equal(result.items.length, 1);
-                assert.equal(JSON.stringify(result.items[0]), JSON.stringify(activity));
-            });
-}
+    return store.logActivity(activity)
+        .then(() => store.getTranscriptActivities('test', conversationId))
+        .then((result) => {
+            assert.equal(result.items.length, 1);
+            assert.equal(JSON.stringify(result.items[0]), JSON.stringify(activity));
+        });
+};
 
 exports._logMultipleActivities = function _logMultipleActivities(store, useParallel = true) {
     var conversationId = '_logMultipleActivities';
@@ -163,7 +163,7 @@ exports._logMultipleActivities = function _logMultipleActivities(store, useParal
             })
         ]);
     });
-}
+};
 
 exports._deleteTranscript = function _deleteTranscript(store, useParallel = true) {
     var conversationId = '_deleteConversation';
@@ -193,8 +193,8 @@ exports._deleteTranscript = function _deleteTranscript(store, useParallel = true
                         store.getTranscriptActivities('test', conversationId2).then(pagedResult => {
                             assert.equal(pagedResult.items.length, activities2.length);
                         })
-                    ])
-                })
+                    ]);
+                });
             }),
             // test B
             store.getTranscriptActivities('test', conversationId2).then(pagedResult => {
@@ -202,7 +202,7 @@ exports._deleteTranscript = function _deleteTranscript(store, useParallel = true
             })
         ]);
     });
-}
+};
 
 exports._getTranscriptActivities = function _getTranscriptActivities(store, useParallel = true) {
     return new Promise((resolve, reject) => {
@@ -212,31 +212,31 @@ exports._getTranscriptActivities = function _getTranscriptActivities(store, useP
         // log in parallel batches of 10
         var groups = group(activities, 10);
         return promiseSeq(groups.map(group => () => resolvePromises(group.map(item => () => store.logActivity(item)), useParallel)))
-        .then(async () => {
-            var actualPageSize = 0;
-            var pagedResult = {};
-            var seen = [];
-            do {
-                pagedResult = await store.getTranscriptActivities('test', conversationId, pagedResult.continuationToken);
-                assert(pagedResult);
-                assert(pagedResult.items);
+            .then(async () => {
+                var actualPageSize = 0;
+                var pagedResult = {};
+                var seen = [];
+                do {
+                    pagedResult = await store.getTranscriptActivities('test', conversationId, pagedResult.continuationToken);
+                    assert(pagedResult);
+                    assert(pagedResult.items);
 
-                if (!actualPageSize) {
-                    actualPageSize = pagedResult.items.length;
-                } else if (actualPageSize === pagedResult.items.length) {
-                    assert(pagedResult.continuationToken)
-                }
-                pagedResult.items.forEach(item => {
-                    assert(!seen.includes(item.id));
-                    seen.push(item.id);
-                });
-            } while (pagedResult.continuationToken);
-            assert.equal(seen.length, activities.length);
-            activities.forEach(activity => assert(seen.includes(activity.id)));
-            resolve();
-        }).catch(error => reject(error));
+                    if (!actualPageSize) {
+                        actualPageSize = pagedResult.items.length;
+                    } else if (actualPageSize === pagedResult.items.length) {
+                        assert(pagedResult.continuationToken);
+                    }
+                    pagedResult.items.forEach(item => {
+                        assert(!seen.includes(item.id));
+                        seen.push(item.id);
+                    });
+                } while (pagedResult.continuationToken);
+                assert.equal(seen.length, activities.length);
+                activities.forEach(activity => assert(seen.includes(activity.id)));
+                resolve();
+            }).catch(error => reject(error));
     });
-}
+};
 
 exports._getTranscriptActivitiesStartDate = function _getTranscriptActivitiesStartDate(store, useParallel = true) {
     return new Promise((resolve, reject) => {
@@ -246,40 +246,40 @@ exports._getTranscriptActivitiesStartDate = function _getTranscriptActivitiesSta
         // log in parallel batches of 10
         var groups = group(activities, 10);
         return promiseSeq(groups.map(group => () => resolvePromises(group.map(item => () => store.logActivity(item)), useParallel)))
-        .then(async () => {
-            var actualPageSize = 0;
-            var pagedResult = {};
-            var seen = [];
-            var referenceDate = new Date(date.getTime() + (50 * 60 * 1000));
-            do {
-                pagedResult = await store.getTranscriptActivities('test', conversationId, pagedResult.continuationToken, referenceDate);
-                assert(pagedResult);
-                assert(pagedResult.items);
+            .then(async () => {
+                var actualPageSize = 0;
+                var pagedResult = {};
+                var seen = [];
+                var referenceDate = new Date(date.getTime() + (50 * 60 * 1000));
+                do {
+                    pagedResult = await store.getTranscriptActivities('test', conversationId, pagedResult.continuationToken, referenceDate);
+                    assert(pagedResult);
+                    assert(pagedResult.items);
 
-                if (!actualPageSize) {
-                    actualPageSize = pagedResult.items.length;
-                } else if (actualPageSize === pagedResult.items.length) {
-                    assert(pagedResult.continuationToken)
-                }
-                pagedResult.items.forEach(item => {
-                    assert(!seen.includes(item.id));
-                    seen.push(item.id);
-                });
-            } while (pagedResult.continuationToken);
-            assert.equal(seen.length, activities.length / 2);
-            activities.filter(a => a.timestamp.getTime() >= referenceDate.getTime()).forEach(activity => assert(seen.includes(activity.id)));
-            activities.filter(a => a.timestamp.getTime() < referenceDate.getTime()).forEach(activity => assert(!seen.includes(activity.id)));
-            resolve();
-        }).catch(error => reject(error));
+                    if (!actualPageSize) {
+                        actualPageSize = pagedResult.items.length;
+                    } else if (actualPageSize === pagedResult.items.length) {
+                        assert(pagedResult.continuationToken);
+                    }
+                    pagedResult.items.forEach(item => {
+                        assert(!seen.includes(item.id));
+                        seen.push(item.id);
+                    });
+                } while (pagedResult.continuationToken);
+                assert.equal(seen.length, activities.length / 2);
+                activities.filter(a => a.timestamp.getTime() >= referenceDate.getTime()).forEach(activity => assert(seen.includes(activity.id)));
+                activities.filter(a => a.timestamp.getTime() < referenceDate.getTime()).forEach(activity => assert(!seen.includes(activity.id)));
+                resolve();
+            }).catch(error => reject(error));
     });
-}
+};
 
 exports._listTranscripts = function _listTranscripts(store, useParallel = true) {
     return new Promise((resolve, reject) => {
         var conversationIds = [];
         var start = new Date();
         for (let i = 1; i <= 100; i++) {
-            conversationIds.push(`_ListConversations${i}`)
+            conversationIds.push(`_ListConversations${ i }`);
         }
 
         var activities = [].concat(...conversationIds.map(cId => createActivities(cId, start, 1)));
@@ -287,30 +287,30 @@ exports._listTranscripts = function _listTranscripts(store, useParallel = true) 
         // log in parallel batches of 10
         var groups = group(activities, 10);
         return promiseSeq(groups.map(group => () => resolvePromises(group.map(item => () => store.logActivity(item)), useParallel)))
-        .then(async () => {
-            var actualPageSize = 0;
-            var pagedResult = {};
-            var seen = [];
-            do {
-                pagedResult = await store.listTranscripts('test', pagedResult.continuationToken);
-                assert(pagedResult);
-                assert(pagedResult.items);
+            .then(async () => {
+                var actualPageSize = 0;
+                var pagedResult = {};
+                var seen = [];
+                do {
+                    pagedResult = await store.listTranscripts('test', pagedResult.continuationToken);
+                    assert(pagedResult);
+                    assert(pagedResult.items);
 
-                if (!actualPageSize) {
-                    actualPageSize = pagedResult.items.length;
-                } else if (actualPageSize === pagedResult.items.length) {
-                    assert(pagedResult.continuationToken)
-                }
-                pagedResult.items.forEach(item => {
-                    assert(!seen.includes(item.id));
-                    if (item.id.startsWith('_ListConversations')) {
-                        seen.push(item.id);
+                    if (!actualPageSize) {
+                        actualPageSize = pagedResult.items.length;
+                    } else if (actualPageSize === pagedResult.items.length) {
+                        assert(pagedResult.continuationToken);
                     }
-                });
-            } while (pagedResult.continuationToken);
-            assert.equal(seen.length, conversationIds.length);
-            conversationIds.forEach(cId => assert(seen.includes(cId)));
-            resolve();
-        }).catch(error => reject(error));
+                    pagedResult.items.forEach(item => {
+                        assert(!seen.includes(item.id));
+                        if (item.id.startsWith('_ListConversations')) {
+                            seen.push(item.id);
+                        }
+                    });
+                } while (pagedResult.continuationToken);
+                assert.equal(seen.length, conversationIds.length);
+                conversationIds.forEach(cId => assert(seen.includes(cId)));
+                resolve();
+            }).catch(error => reject(error));
     });
-}
+};

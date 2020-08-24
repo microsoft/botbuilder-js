@@ -21,7 +21,7 @@ class TestDialog extends Dialog {
             tryGetValue: (state) => {
                 return { value: 'resolved value' };
             }
-        }
+        };
     }
 
     async beginDialog(dc, options) {

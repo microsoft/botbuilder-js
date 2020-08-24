@@ -8,7 +8,7 @@ describe('NodeWebSocketFactory', () => {
         const factory = new NodeWebSocketFactory();
         const sock = new FauxSock();
         const request = new TestRequest();
-        request.method = 'GET' // TODO: Fix TestRequest class
+        request.method = 'GET'; // TODO: Fix TestRequest class
         request.setIsUpgradeRequest(true);
         request.headers = [];
         request.headers['upgrade'] = 'websocket';

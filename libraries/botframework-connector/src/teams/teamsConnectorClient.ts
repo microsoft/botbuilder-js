@@ -13,26 +13,26 @@ import * as operations from './operations';
 import { TeamsConnectorClientContext } from './teamsConnectorClientContext';
 
 class TeamsConnectorClient extends TeamsConnectorClientContext {
-  // Operation groups
-  teams: operations.Teams;
+    // Operation groups
+    teams: operations.Teams;
 
-  /**
+    /**
    * Initializes a new instance of the TeamsConnectorClient class.
    * @param credentials Subscription credentials which uniquely identify client subscription.
    * @param [options] The parameter options
    */
-  constructor(credentials: ServiceClientCredentials, options?: Models.TeamsConnectorClientOptions) {
-    super(credentials, options);
-    this.teams = new operations.Teams(this);
-  }
+    constructor(credentials: ServiceClientCredentials, options?: Models.TeamsConnectorClientOptions) {
+        super(credentials, options);
+        this.teams = new operations.Teams(this);
+    }
 }
 
 // Operation Specifications
 
 export {
-  TeamsConnectorClient,
-  TeamsConnectorClientContext,
-  Models as TeamsConnectorModels,
-  Mappers as TeamsConnectorMappers
+    TeamsConnectorClient,
+    TeamsConnectorClientContext,
+    Models as TeamsConnectorModels,
+    Mappers as TeamsConnectorMappers
 };
 export * from './operations';

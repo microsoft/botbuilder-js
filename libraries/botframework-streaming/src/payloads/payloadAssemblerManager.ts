@@ -30,7 +30,7 @@ export class PayloadAssemblerManager {
         if (header.payloadType === PayloadTypes.stream) {
             return this.streamManager.getPayloadStream(header);
         } else if (!this.activeAssemblers[header.id]) {
-            let assembler = this.createPayloadAssembler(header);
+            const assembler = this.createPayloadAssembler(header);
 
             if (assembler) {
                 this.activeAssemblers[header.id] = assembler;
@@ -44,7 +44,7 @@ export class PayloadAssemblerManager {
             this.streamManager.onReceive(header, contentStream, contentLength);
         } else {
             if (this.activeAssemblers && this.activeAssemblers[header.id]) {
-                let assembler = this.activeAssemblers[header.id];
+                const assembler = this.activeAssemblers[header.id];
                 assembler.onReceive(header, contentStream, contentLength);
             }
             if (header.end) {

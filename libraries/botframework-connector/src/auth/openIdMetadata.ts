@@ -6,8 +6,8 @@
  * Licensed under the MIT License.
  */
 
-import { AuthenticationError } from "./authenticationError";
-import { StatusCodes } from "botframework-schema";
+import { AuthenticationError } from './authenticationError';
+import { StatusCodes } from 'botframework-schema';
 
 // tslint:disable-next-line:no-var-requires no-require-imports
 const getPem: any = require('rsa-pem-from-mod-exp');
@@ -16,7 +16,7 @@ const base64url: any = require('base64url');
 
 export class OpenIdMetadata {
     private url: string;
-    private lastUpdated: number = 0;
+    private lastUpdated = 0;
     private keys: IKey[];
 
     constructor(url: string) {

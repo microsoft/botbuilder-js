@@ -103,7 +103,7 @@ export class ResourceExplorer {
      * @param includeSubFolders Whether to include subfolders.
      * @param monitorChanges Whether to track changes.
      */
-    public addFolder(folder: string, includeSubFolders: boolean = true, monitorChanges: boolean = true): ResourceExplorer {
+    public addFolder(folder: string, includeSubFolders = true, monitorChanges = true): ResourceExplorer {
         this.addResourceProvider(new FolderResourceProvider(this, folder, includeSubFolders, monitorChanges));
 
         return this;
@@ -115,7 +115,7 @@ export class ResourceExplorer {
      * @param ignoreFolders Imediate subfolders to ignore.
      * @param monitorChanges Whether to track changes.
      */
-    public addFolders(folder: string, ignoreFolders?: string[], monitorChanges: boolean = true): ResourceExplorer {
+    public addFolders(folder: string, ignoreFolders?: string[], monitorChanges = true): ResourceExplorer {
         if (ignoreFolders) {
             folder = normalize(folder);
             this.addFolder(folder, false, monitorChanges);
@@ -153,7 +153,7 @@ export class ResourceExplorer {
      * @param fileExtension File extension filter.
      */
     public getResources(fileExtension: string): Resource[] {
-        let resources: Resource[] = [];
+        const resources: Resource[] = [];
         for (const rp of this._resourceProviders) {
             for (const rpResources of rp.getResources(fileExtension)) {
                 resources.push(rpResources);

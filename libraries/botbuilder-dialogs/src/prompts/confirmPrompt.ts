@@ -12,7 +12,7 @@ import { ListStyle, Prompt, PromptOptions, PromptRecognizerResult, PromptValidat
 import { PromptCultureModels } from './promptCultureModels';
 
 // Need ChoiceDefaultsProperty so we can set choiceDefaults dynamically with lambda
-interface ChoiceDefaultsConfirmPrompt { [locale: string]: { choices: (string|Choice)[]; options: ChoiceFactoryOptions }};
+interface ChoiceDefaultsConfirmPrompt { [locale: string]: { choices: (string|Choice)[]; options: ChoiceFactoryOptions }}
 
 /**
  * Prompts a user to confirm something with a "yes" or "no" response.

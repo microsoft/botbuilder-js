@@ -45,14 +45,14 @@ export class DialogMemoryScope extends MemoryScope {
         }
 
         // If there's no active dialog then throw an error.
-        if (!parent.activeDialog) { throw new Error(`DialogMemoryScope.setMemory: no active dialog found.`) }
+        if (!parent.activeDialog) { throw new Error(`DialogMemoryScope.setMemory: no active dialog found.`); }
 
         parent.activeDialog.state = memory;
     }
 
     private isContainer(dc: DialogContext): boolean {
         if (dc != undefined && dc.activeDialog != undefined) {
-            var dialog = dc.findDialog(dc.activeDialog.id);
+            const dialog = dc.findDialog(dc.activeDialog.id);
             if (dialog instanceof DialogContainer) {
                 return true;
             }

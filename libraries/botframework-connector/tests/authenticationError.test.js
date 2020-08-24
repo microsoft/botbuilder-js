@@ -2,12 +2,12 @@ const assert = require('assert');
 const { AuthenticationError } = require('../lib');
 const { StatusCodes } = require('botframework-schema');
 
-describe('Bot Framework Connector - Authentication Error Tests', function () {
+describe('Bot Framework Connector - Authentication Error Tests', function() {
 
     describe('AuthenticationError', () => {
         it('should implement IStatusCodeError if it is an AuthenticationError', () => {
             const authError = new AuthenticationError('I am an error', 500);
-            const isStatusCodeErr = AuthenticationError.isStatusCodeError(authError) 
+            const isStatusCodeErr = AuthenticationError.isStatusCodeError(authError); 
 
             assert.strictEqual(authError.statusCode, StatusCodes.INTERNAL_SERVER_ERROR);
             assert.strictEqual(isStatusCodeErr, true);

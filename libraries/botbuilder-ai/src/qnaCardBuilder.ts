@@ -26,7 +26,7 @@ export class QnACardBuilder {
 
         if (!cardNoMatchText) { throw new Error('Missing cardNoMatchText'); }
 
-        var buttonList: CardAction[] = [];
+        const buttonList: CardAction[] = [];
 
         suggestionsList.forEach(suggestion => {
             buttonList.push({
@@ -55,7 +55,7 @@ export class QnACardBuilder {
     public static getQnAPromptsCard(result: QnAMakerResult): Partial<Activity> {
         if (!result) { throw new Error('Missing QnAMaker result'); }
 
-        var buttonList: CardAction[] = [];
+        const buttonList: CardAction[] = [];
 
         result.context.prompts.forEach(prompt => {
             buttonList.push({

@@ -10,12 +10,12 @@
 function setGlobals() {
     const env = (global || window) as any;
     
-    if (!env.hasOwnProperty("FormData")) { 
-        env.FormData = require("form-data");
+    if (!env.hasOwnProperty('FormData')) { 
+        env.FormData = require('form-data');
     }
 
-    if (!env.hasOwnProperty("fetch")) {
-        env.fetch = require("node-fetch");
+    if (!env.hasOwnProperty('fetch')) {
+        env.fetch = require('node-fetch');
     }
 }
 

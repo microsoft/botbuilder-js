@@ -69,7 +69,7 @@ interface DocumentStoreItem {
 /**
  * @private
  */
-const ContainerNameCheck: RegExp = new RegExp('^[a-z0-9](?!.*--)[a-z0-9-]{1,61}[a-z0-9]$');
+const ContainerNameCheck = new RegExp('^[a-z0-9](?!.*--)[a-z0-9-]{1,61}[a-z0-9]$');
 
 /**
  * @private

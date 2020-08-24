@@ -48,18 +48,18 @@ function assertOAuthActions(actions, title) {
     const button = actions[0];
     assert(button.value === undefined, `OAuthCard actions' value should be undefined.`);
     assert(button.title === title, `action's title [${ button.title }] is not expected "${ title }".`);
-    assert(button.type === 'signin', `action's type [${button.type}] is not expected "signin".`);
+    assert(button.type === 'signin', `action's type [${ button.type }] is not expected "signin".`);
 }
 
-describe(`CardFactory`, function () {
+describe(`CardFactory`, function() {
     this.timeout(5000);
 
-    it(`should map array of strings passed to actions() to CardAction objects.`, function () {
+    it(`should map array of strings passed to actions() to CardAction objects.`, function() {
         const actions = CardFactory.actions(['a', 'b', 'c']);
         assertActions(actions, 3, ['a', 'b', 'c']);
     });
 
-    it(`should support an array of CardAction options passed to actions().`, function () {
+    it(`should support an array of CardAction options passed to actions().`, function() {
         const actions = CardFactory.actions([{
             title: 'foo',
             type: 'postBack',
@@ -70,17 +70,17 @@ describe(`CardFactory`, function () {
         assert(actions[0].value === 'bar', `invalid action value.`);
     });
 
-    it(`should support a 'undefined' actions array passed to actions().`, function () {
+    it(`should support a 'undefined' actions array passed to actions().`, function() {
         const actions = CardFactory.actions(undefined);
         assertActions(actions, 0);
     });
 
-    it(`should map array of strings passed to images() to CardImage objects.`, function () {
+    it(`should map array of strings passed to images() to CardImage objects.`, function() {
         const images = CardFactory.images(['a', 'b', 'c']);
         assertImages(images, 3, ['a', 'b', 'c']);
     });
 
-    it(`should support an array of CardImage options passed to images().`, function () {
+    it(`should support an array of CardImage options passed to images().`, function() {
         const images = CardFactory.images([{
             url: 'foo',
             alt: 'bar',
@@ -91,17 +91,17 @@ describe(`CardFactory`, function () {
         assert(typeof images[0].tap === 'object', `invalid image.type property.`);
     });
 
-    it(`should support a 'undefined' images array passed to images().`, function () {
+    it(`should support a 'undefined' images array passed to images().`, function() {
         const images = CardFactory.images(undefined);
         assertImages(images, 0);
     });
 
-    it(`should map array of strings passed to media() to CardMedia objects.`, function () {
+    it(`should map array of strings passed to media() to CardMedia objects.`, function() {
         const media = CardFactory.media(['a', 'b', 'c']);
         assertMedia(media, 3, ['a', 'b', 'c']);
     });
 
-    it(`should support an array of CardMedia options passed to media().`, function () {
+    it(`should support an array of CardMedia options passed to media().`, function() {
         const media = CardFactory.media([{
             url: 'foo',
             profile: 'bar'
@@ -110,18 +110,18 @@ describe(`CardFactory`, function () {
         assert(media[0].profile === 'bar', `invalid media.profile property.`);
     });
 
-    it(`should support a 'undefined' media array passed to media().`, function () {
+    it(`should support a 'undefined' media array passed to media().`, function() {
         const media = CardFactory.media(undefined);
         assertMedia(media, 0);
     });
 
-    it(`should create an adaptiveCard().`, function () {
+    it(`should create an adaptiveCard().`, function() {
         const attachment = CardFactory.adaptiveCard({ type: 'AdaptiveCard' });
         assertAttachment(attachment, CardFactory.contentTypes.adaptiveCard);
         assert(attachment.content.type, `wrong content.`);
     });
 
-    it(`should create an animationCard().`, function () {
+    it(`should create an animationCard().`, function() {
         const links = ['https://example.org/media'];
         const attachment = CardFactory.animationCard('foo', links);
         assertAttachment(attachment, CardFactory.contentTypes.animationCard);
@@ -130,7 +130,7 @@ describe(`CardFactory`, function () {
         assertMedia(content.media, 1, links);
     });
 
-    it(`should create an animationCard() with buttons.`, function () {
+    it(`should create an animationCard() with buttons.`, function() {
         const links = ['https://example.org/media'];
         const attachment = CardFactory.animationCard('foo', links, ['a', 'b', 'c']);
         assertAttachment(attachment, CardFactory.contentTypes.animationCard);
@@ -140,7 +140,7 @@ describe(`CardFactory`, function () {
         assertActions(content.buttons, 3, ['a', 'b', 'c']);
     });
 
-    it(`should create an animationCard() with other fields.`, function () {
+    it(`should create an animationCard() with other fields.`, function() {
         const links = ['https://example.org/media'];
         const attachment = CardFactory.animationCard('foo', links, undefined, { text: 'bar' });
         assertAttachment(attachment, CardFactory.contentTypes.animationCard);
@@ -150,7 +150,7 @@ describe(`CardFactory`, function () {
         assertMedia(content.media, 1, links);
     });
 
-    it(`should create an animationCard() with no title.`, function () {
+    it(`should create an animationCard() with no title.`, function() {
         const links = ['https://example.org/media'];
         const attachment = CardFactory.animationCard(undefined, links);
         assertAttachment(attachment, CardFactory.contentTypes.animationCard);
@@ -159,7 +159,7 @@ describe(`CardFactory`, function () {
         assertMedia(content.media, 1, links);
     });
 
-    it(`should create an audioCard().`, function () {
+    it(`should create an audioCard().`, function() {
         const links = ['https://example.org/media'];
         const attachment = CardFactory.audioCard('foo', links);
         assertAttachment(attachment, CardFactory.contentTypes.audioCard);
@@ -168,7 +168,7 @@ describe(`CardFactory`, function () {
         assertMedia(content.media, 1, links);
     });
 
-    it(`should create an audioCard() with buttons.`, function () {
+    it(`should create an audioCard() with buttons.`, function() {
         const links = ['https://example.org/media'];
         const attachment = CardFactory.audioCard('foo', links, ['a', 'b', 'c']);
         assertAttachment(attachment, CardFactory.contentTypes.audioCard);
@@ -178,7 +178,7 @@ describe(`CardFactory`, function () {
         assertActions(content.buttons, 3, ['a', 'b', 'c']);
     });
 
-    it(`should create an audioCard() with other fields.`, function () {
+    it(`should create an audioCard() with other fields.`, function() {
         const links = ['https://example.org/media'];
         const attachment = CardFactory.audioCard('foo', links, undefined, { text: 'bar' });
         assertAttachment(attachment, CardFactory.contentTypes.audioCard);
@@ -188,7 +188,7 @@ describe(`CardFactory`, function () {
         assertMedia(content.media, 1, links);
     });
 
-    it(`should create an videoCard().`, function () {
+    it(`should create an videoCard().`, function() {
         const links = ['https://example.org/media'];
         const attachment = CardFactory.videoCard('foo', links);
         assertAttachment(attachment, CardFactory.contentTypes.videoCard);
@@ -197,7 +197,7 @@ describe(`CardFactory`, function () {
         assertMedia(content.media, 1, links);
     });
 
-    it(`should create an videoCard() with buttons.`, function () {
+    it(`should create an videoCard() with buttons.`, function() {
         const links = ['https://example.org/media'];
         const attachment = CardFactory.videoCard('foo', links, ['a', 'b', 'c']);
         assertAttachment(attachment, CardFactory.contentTypes.videoCard);
@@ -207,7 +207,7 @@ describe(`CardFactory`, function () {
         assertActions(content.buttons, 3, ['a', 'b', 'c']);
     });
 
-    it(`should create an videoCard() with other fields.`, function () {
+    it(`should create an videoCard() with other fields.`, function() {
         const links = ['https://example.org/media'];
         const attachment = CardFactory.videoCard('foo', links, undefined, { text: 'bar' });
         assertAttachment(attachment, CardFactory.contentTypes.videoCard);
@@ -217,21 +217,21 @@ describe(`CardFactory`, function () {
         assertMedia(content.media, 1, links);
     });
 
-    it(`should create a heroCard().`, function () {
+    it(`should create a heroCard().`, function() {
         const attachment = CardFactory.heroCard('foo');
         assertAttachment(attachment, CardFactory.contentTypes.heroCard);
         const content = attachment.content;
         assert(content.title === 'foo', `wrong title.`);
     });
 
-    it(`should create a thumbnailCard().`, function () {
+    it(`should create a thumbnailCard().`, function() {
         const attachment = CardFactory.thumbnailCard('foo');
         assertAttachment(attachment, CardFactory.contentTypes.thumbnailCard);
         const content = attachment.content;
         assert(content.title === 'foo', `wrong title.`);
     });
 
-    it(`should create a thumbnailCard() with images.`, function () {
+    it(`should create a thumbnailCard() with images.`, function() {
         const links = ['https://example.org/image'];
         const attachment = CardFactory.thumbnailCard('foo', links);
         assertAttachment(attachment, CardFactory.contentTypes.thumbnailCard);
@@ -240,7 +240,7 @@ describe(`CardFactory`, function () {
         assertImages(content.images, 1, links);
     });
 
-    it(`should create a thumbnailCard() with text.`, function () {
+    it(`should create a thumbnailCard() with text.`, function() {
         const attachment = CardFactory.thumbnailCard('foo', 'bar');
         assertAttachment(attachment, CardFactory.contentTypes.thumbnailCard);
         const content = attachment.content;
@@ -248,7 +248,7 @@ describe(`CardFactory`, function () {
         assert(content.text === 'bar', `wrong text.`);
     });
 
-    it(`should create a thumbnailCard() with text and images.`, function () {
+    it(`should create a thumbnailCard() with text and images.`, function() {
         const links = ['https://example.org/image'];
         const attachment = CardFactory.thumbnailCard('foo', 'bar', links);
         assertAttachment(attachment, CardFactory.contentTypes.thumbnailCard);
@@ -258,7 +258,7 @@ describe(`CardFactory`, function () {
         assertImages(content.images, 1, links);
     });
 
-    it(`should create a thumbnailCard() with buttons.`, function () {
+    it(`should create a thumbnailCard() with buttons.`, function() {
         const attachment = CardFactory.thumbnailCard('foo', undefined, ['a', 'b', 'c']);
         assertAttachment(attachment, CardFactory.contentTypes.thumbnailCard);
         const content = attachment.content;
@@ -266,7 +266,7 @@ describe(`CardFactory`, function () {
         assertActions(content.buttons, 3, ['a', 'b', 'c']);
     });
 
-    it(`should create a thumbnailCard() with buttons and no title.`, function () {
+    it(`should create a thumbnailCard() with buttons and no title.`, function() {
         const attachment = CardFactory.thumbnailCard(undefined, undefined, ['a', 'b', 'c']);
         assertAttachment(attachment, CardFactory.contentTypes.thumbnailCard);
         const content = attachment.content;
@@ -274,7 +274,7 @@ describe(`CardFactory`, function () {
         assertActions(content.buttons, 3, ['a', 'b', 'c']);
     });
 
-    it(`should create a thumbnailCard() with text and buttons.`, function () {
+    it(`should create a thumbnailCard() with text and buttons.`, function() {
         const attachment = CardFactory.thumbnailCard('foo', 'bar', undefined, ['a', 'b', 'c']);
         assertAttachment(attachment, CardFactory.contentTypes.thumbnailCard);
         const content = attachment.content;
@@ -283,7 +283,7 @@ describe(`CardFactory`, function () {
         assertActions(content.buttons, 3, ['a', 'b', 'c']);
     });
 
-    it(`should create a thumbnailCard() with other.`, function () {
+    it(`should create a thumbnailCard() with other.`, function() {
         const attachment = CardFactory.thumbnailCard('foo', undefined, undefined, { subtitle: 'sub' });
         assertAttachment(attachment, CardFactory.contentTypes.thumbnailCard);
         const content = attachment.content;
@@ -291,7 +291,7 @@ describe(`CardFactory`, function () {
         assert(content.subtitle === 'sub', `wrong subtitle.`);
     });
 
-    it(`should create a thumbnailCard() with text and other.`, function () {
+    it(`should create a thumbnailCard() with text and other.`, function() {
         const attachment = CardFactory.thumbnailCard('foo', 'bar', undefined, undefined, { subtitle: 'sub' });
         assertAttachment(attachment, CardFactory.contentTypes.thumbnailCard);
         const content = attachment.content;
@@ -300,14 +300,14 @@ describe(`CardFactory`, function () {
         assert(content.subtitle === 'sub', `wrong subtitle.`);
     });
 
-    it(`should create a receiptCard().`, function () {
+    it(`should create a receiptCard().`, function() {
         const attachment = CardFactory.receiptCard({ title: 'foo' });
         assertAttachment(attachment, CardFactory.contentTypes.receiptCard);
         const content = attachment.content;
         assert(content.title === 'foo', `wrong content.`);
     });
 
-    it(`should create a signinCard().`, function () {
+    it(`should create a signinCard().`, function() {
         const attachment = CardFactory.signinCard('foo', 'https://example.org/signin');
         assertAttachment(attachment, CardFactory.contentTypes.signinCard);
         const content = attachment.content;
@@ -316,7 +316,7 @@ describe(`CardFactory`, function () {
         assert(content.buttons[0].value === 'https://example.org/signin', `wrong action value.`);
     });
 
-    it(`should create a signinCard() with text.`, function () {
+    it(`should create a signinCard() with text.`, function() {
         const attachment = CardFactory.signinCard('foo', 'https://example.org/signin', 'bar');
         assertAttachment(attachment, CardFactory.contentTypes.signinCard);
         const content = attachment.content;
@@ -326,7 +326,7 @@ describe(`CardFactory`, function () {
         assert(content.text === 'bar', `wrong text.`);
     });
 
-    it(`should create an OAuthCard with text.`, function () {
+    it(`should create an OAuthCard with text.`, function() {
         const attachment = CardFactory.oauthCard('ConnectionName', 'Test', 'Test-text');
         assertAttachment(attachment, CardFactory.contentTypes.oauthCard);
         const content = attachment.content;
@@ -335,7 +335,7 @@ describe(`CardFactory`, function () {
         assert(content.connectionName === 'ConnectionName', `wrong connectionName.`);
     });
 
-    it(`should create an OAuthCard without text.`, function () {
+    it(`should create an OAuthCard without text.`, function() {
         const attachment = CardFactory.oauthCard('ConnectionName', 'Test');
         assertAttachment(attachment, CardFactory.contentTypes.oauthCard);
         const content = attachment.content;
@@ -344,19 +344,19 @@ describe(`CardFactory`, function () {
         assert(content.connectionName === 'ConnectionName', `wrong connectionName.`);
     });
 
-    it(`should create an o365ConnectorCard.`, function () {
+    it(`should create an o365ConnectorCard.`, function() {
         const attachment = CardFactory.o365ConnectorCard(
             {
-                "title": "card title",
-                "text": "card text",
-                "summary": "O365 card summary",
-                "themeColor": "#E67A9E",
-                "sections": [
+                'title': 'card title',
+                'text': 'card text',
+                'summary': 'O365 card summary',
+                'themeColor': '#E67A9E',
+                'sections': [
                     {
-                        "title": "**section title**",
-                        "text": "section text",
-                        "activityTitle": "activity title",
-                     }
+                        'title': '**section title**',
+                        'text': 'section text',
+                        'activityTitle': 'activity title',
+                    }
                 ]
             }
         );

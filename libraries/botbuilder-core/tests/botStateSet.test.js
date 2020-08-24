@@ -30,13 +30,13 @@ class BotStateMock {
     }
 }
 
-describe(`BotStateSet`, function () {
+describe(`BotStateSet`, function() {
     this.timeout(5000);
 
     const adapter = new TestAdapter();
     const turnContext = new TurnContext(adapter, receivedMessage);
 
-    it(`should use() and call readAll() on a single BotState plugin.`, async function () {
+    it(`should use() and call readAll() on a single BotState plugin.`, async function() {
         const memoryStorage = new MemoryStorage();
         const userState = new UserState(memoryStorage);
         const convState = new ConversationState(memoryStorage);
@@ -46,7 +46,7 @@ describe(`BotStateSet`, function () {
         assert.equal(botStateSet.botStates.length, 2);
     });
 
-    it(`BotStateSet_LoadSave`, async function () {
+    it(`BotStateSet_LoadSave`, async function() {
         const memoryStorage = new MemoryStorage();
 
         {
@@ -54,8 +54,8 @@ describe(`BotStateSet`, function () {
             const convState = new ConversationState(memoryStorage);
             let botStateSet = new BotStateSet(userState, convState);
 
-            let userProperty = userState.createProperty("userCount");
-            let convProperty = convState.createProperty("convCount");
+            let userProperty = userState.createProperty('userCount');
+            let convProperty = convState.createProperty('convCount');
 
             assert.equal(botStateSet.botStates.length, 2);
 
@@ -75,8 +75,8 @@ describe(`BotStateSet`, function () {
             const convState = new ConversationState(memoryStorage);
             let botStateSet = new BotStateSet(userState, convState);
 
-            let userProperty = userState.createProperty("userCount");
-            let convProperty = convState.createProperty("convCount");
+            let userProperty = userState.createProperty('userCount');
+            let convProperty = convState.createProperty('convCount');
 
             assert.equal(botStateSet.botStates.length, 2);
 

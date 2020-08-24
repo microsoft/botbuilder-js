@@ -79,7 +79,7 @@ export class SimpleObjectMemory implements MemoryInterface {
      */
     public setValue(path: string, input: any): void {
         if (this.memory === undefined) {
-            return;;
+            return;
         }
 
         const parts: string[] = path.split(/[.\[\]]+/)
@@ -163,7 +163,7 @@ export class SimpleObjectMemory implements MemoryInterface {
             }
             return value;
         };
-    };
+    }
 
     private setProperty(instance: any, property: string, value: any): {value: any; error: string} {
         const result: any = value;

@@ -35,7 +35,7 @@ export class FormatTicks extends ExpressionEvaluator {
                     arg = bigInt(arg);
                 }
                 if (!bigInt.isInstance(arg)) {
-                    error = `formatTicks first argument ${arg} is not a number, numeric string or bigInt`;
+                    error = `formatTicks first argument ${ arg } is not a number, numeric string or bigInt`;
                 } else {
                     // Convert to ms
                     arg = ((arg.subtract(FunctionUtils.UnixMilliSecondToTicksConstant)).divide(FunctionUtils.MillisecondToTickConstant)).toJSNumber();

@@ -34,9 +34,9 @@ export class SubArray extends ExpressionEvaluator {
                 const startExpr: Expression = expression.children[1];
                 ({ value: start, error } = startExpr.tryEvaluate(state, options));
                 if (!error && !Number.isInteger(start)) {
-                    error = `${startExpr} is not an integer.`;
+                    error = `${ startExpr } is not an integer.`;
                 } else if (start < 0 || start >= arr.length) {
-                    error = `${startExpr}=${start} which is out of range for ${arr}`;
+                    error = `${ startExpr }=${ start } which is out of range for ${ arr }`;
                 }
                 if (!error) {
                     let end: number;
@@ -46,9 +46,9 @@ export class SubArray extends ExpressionEvaluator {
                         const endExpr: Expression = expression.children[2];
                         ({ value: end, error } = endExpr.tryEvaluate(state, options));
                         if (!error && !Number.isInteger(end)) {
-                            error = `${endExpr} is not an integer`;
+                            error = `${ endExpr } is not an integer`;
                         } else if (end < 0 || end > arr.length) {
-                            error = `${endExpr}=${end} which is out of range for ${arr}`;
+                            error = `${ endExpr }=${ end } which is out of range for ${ arr }`;
                         }
                     }
                     if (!error) {
@@ -56,7 +56,7 @@ export class SubArray extends ExpressionEvaluator {
                     }
                 }
             } else {
-                error = `${expression.children[0]} is not array.`;
+                error = `${ expression.children[0] } is not array.`;
             }
         }
 

@@ -11,7 +11,7 @@ import { Activity, PagedResult, TranscriptInfo, TranscriptStore } from 'botbuild
 import { escape } from 'querystring';
 import { BlobStorageSettings } from './blobStorage';
 
-const ContainerNameCheck: RegExp = new RegExp('^[a-z0-9](?!.*--)[a-z0-9-]{1,61}[a-z0-9]$');
+const ContainerNameCheck = new RegExp('^[a-z0-9](?!.*--)[a-z0-9-]{1,61}[a-z0-9]$');
 
 /**
  * @private
@@ -36,7 +36,7 @@ export class AzureBlobTranscriptStore implements TranscriptStore {
     private static [checkedCollectionsKey]: { [key: string]: Promise<azure.BlobService.ContainerResult> } = {};
     private readonly settings: BlobStorageSettings;
     private client: BlobServiceAsync;
-    private pageSize: number = 20;
+    private pageSize = 20;
 
     /**
      * Creates a new AzureBlobTranscriptStore instance.
@@ -72,8 +72,8 @@ export class AzureBlobTranscriptStore implements TranscriptStore {
         const data: string = JSON.stringify(activity);
         const container = await this.ensureContainerExists();
 
-		const block = await this.client.createBlockBlobFromTextAsync(container.name, blobName, data, null);
-		const meta = this.client.setBlobMetadataAsync(
+        const block = await this.client.createBlockBlobFromTextAsync(container.name, blobName, data, null);
+        const meta = this.client.setBlobMetadataAsync(
             container.name,
             blobName,
             {
@@ -83,7 +83,7 @@ export class AzureBlobTranscriptStore implements TranscriptStore {
             }
         );
 
-		const props = this.client.setBlobPropertiesAsync(
+        const props = this.client.setBlobPropertiesAsync(
             container.name,
             blobName,
             {
@@ -337,7 +337,7 @@ export class AzureBlobTranscriptStore implements TranscriptStore {
         // The perfect use case for a Proxy
         return new Proxy(<BlobServiceAsync>{}, {
             get(target: azure.services.blob.blobservice.BlobService, p: PropertyKey): Promise<any> {
-				const prop = p.toString().endsWith('Async') ? p.toString().replace('Async', '') :p;
+                const prop = p.toString().endsWith('Async') ? p.toString().replace('Async', '') :p;
                 return target[p] || (target[p] = denodeify(blobService, blobService[prop]));
             }
         }) as BlobServiceAsync;

@@ -8,7 +8,7 @@
 import { Duplex, DuplexOptions } from 'stream';
 
 export class SubscribableStream extends Duplex {
-    public length: number = 0;
+    public length = 0;
 
     private readonly bufferList: Buffer[] = [];
     private _onData: (chunk: any) => void;
@@ -18,7 +18,7 @@ export class SubscribableStream extends Duplex {
     }
 
     public _write(chunk: any, encoding: string, callback: (error?: Error | null) => void): void {
-        let buffer = Buffer.from(chunk);
+        const buffer = Buffer.from(chunk);
         this.bufferList.push(buffer);
         this.length += chunk.length;
         if (this._onData) {
@@ -34,7 +34,7 @@ export class SubscribableStream extends Duplex {
         } else {
             let total = 0;
             while (total < size && this.bufferList.length > 0) {
-                let buffer = this.bufferList[0];
+                const buffer = this.bufferList[0];
                 this.push(buffer);
                 this.bufferList.splice(0, 1);
                 total += buffer.length;

@@ -184,7 +184,7 @@ export class Templates implements Iterable<Template> {
      * @param expressionParser Expression parser for evaluating expressions.
      * @returns Entity.
      */
-    public static parseText(content: string, id: string = '', importResolver?: ImportResolverDelegate, expressionParser?: ExpressionParser): Templates {
+    public static parseText(content: string, id = '', importResolver?: ImportResolverDelegate, expressionParser?: ExpressionParser): Templates {
         return TemplatesParser.parseText(content, id, importResolver, expressionParser).injectToExpressionFunction();
     }
 
@@ -197,7 +197,7 @@ export class Templates implements Iterable<Template> {
     public evaluate(templateName: string, scope?: object, opt: EvaluationOptions = undefined): any {
         this.checkErrors();
 
-        var evalOpt = opt !== undefined ? opt.merge(this.lgOptions) : this.lgOptions;
+        const evalOpt = opt !== undefined ? opt.merge(this.lgOptions) : this.lgOptions;
         const evaluator = new Evaluator(this.allTemplates, this.expressionParser, evalOpt);
         let result =  evaluator.evaluateTemplate(templateName, scope);
         if (evalOpt.LineBreakStyle === LGLineBreakStyle.Markdown && typeof result === 'string') {
@@ -217,7 +217,7 @@ export class Templates implements Iterable<Template> {
     public expandTemplate(templateName: string, scope?: object, opt: EvaluationOptions = undefined): any[] {
         this.checkErrors();
 
-        var evalOpt = opt !== undefined ? opt.merge(this.lgOptions) : this.lgOptions;
+        const evalOpt = opt !== undefined ? opt.merge(this.lgOptions) : this.lgOptions;
         const expander = new Expander(this.allTemplates, this.expressionParser, evalOpt);
         return expander.expandTemplate(templateName, scope);
     }
@@ -246,7 +246,7 @@ export class Templates implements Iterable<Template> {
 
         this.checkErrors();
 
-        const inlineTemplateId = `${Templates.inlineTemplateIdPrefix}${this.getramdonTemplateId()}`;
+        const inlineTemplateId = `${ Templates.inlineTemplateIdPrefix }${ this.getramdonTemplateId() }`;
 
         // wrap inline string with "# name and -" to align the evaluation process
         const multiLineMark = '```';
@@ -257,7 +257,7 @@ export class Templates implements Iterable<Template> {
         const newContent = `#${ inlineTemplateId } ${ this.newLine } - ${ inlineStr }`;
 
         const newTemplates = TemplatesParser.parseTextWithRef(newContent, this);
-        var evalOpt = opt !== undefined ? opt.merge(this.lgOptions) : this.lgOptions;
+        const evalOpt = opt !== undefined ? opt.merge(this.lgOptions) : this.lgOptions;
         return newTemplates.evaluate(inlineTemplateId, scope, evalOpt);
     }
 

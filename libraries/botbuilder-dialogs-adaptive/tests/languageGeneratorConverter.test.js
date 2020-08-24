@@ -2,7 +2,7 @@ const { ResourceMultiLanguageGenerator } = require('../');
 const { LanguageGeneratorConverter } = require('../lib/converters');
 const { ok, strictEqual } = require('assert');
 
-describe('LanguageGeneratorConverter', function () {
+describe('LanguageGeneratorConverter', function() {
     it('convert() should return new ResourceMultiLanguageGenerator with string param', () => {
         const converter = new LanguageGeneratorConverter();
         const newGenerator = converter.convert('');

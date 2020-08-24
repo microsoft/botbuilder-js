@@ -30,7 +30,7 @@ export class TeamsSearchExtensionBot extends TeamsActivityHandler {
 
         // See https://aka.ms/about-bot-activity-message to learn more about the message and other activity types.
         this.onMessage(async (context, next) => {
-            await context.sendActivity(`You said '${context.activity.text}'`);
+            await context.sendActivity(`You said '${ context.activity.text }'`);
             // By calling next() you ensure that the next BotHandler is run.
             await next();
         });
@@ -63,8 +63,8 @@ export class TeamsSearchExtensionBot extends TeamsActivityHandler {
 
     protected async handleTeamsMessagingExtensionSelectItem(context: TurnContext, query: any): Promise<MessagingExtensionResponse> {
         const searchQuery = query.query;
-        const bfLogo = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQtB3AwMUeNoq4gUBGe6Ocj8kyh3bXa9ZbV7u1fVKQoyKFHdkqU";
-        const card = CardFactory.heroCard('You selected a search result!', `You searched for "${searchQuery}"`, [bfLogo]);
+        const bfLogo = 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQtB3AwMUeNoq4gUBGe6Ocj8kyh3bXa9ZbV7u1fVKQoyKFHdkqU';
+        const card = CardFactory.heroCard('You selected a search result!', `You searched for "${ searchQuery }"`, [bfLogo]);
 
         return <MessagingExtensionResponse> {
             composeExtension: this.createMessagingExtensionResult([card])
@@ -73,24 +73,24 @@ export class TeamsSearchExtensionBot extends TeamsActivityHandler {
 
     private createMessagingExtensionResult(attachments: Attachment[]) : MessagingExtensionResult {
         return <MessagingExtensionResult> {
-            type: "result",
-            attachmentLayout: "list",
+            type: 'result',
+            attachmentLayout: 'list',
             attachments: attachments
         };
     }
 
     private createSearchResultAttachment(searchQuery: string) : MessagingExtensionAttachment {
-        const cardText = `You said \"${searchQuery}\"`;
-        const bfLogo = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQtB3AwMUeNoq4gUBGe6Ocj8kyh3bXa9ZbV7u1fVKQoyKFHdkqU";
+        const cardText = `You said \"${ searchQuery }\"`;
+        const bfLogo = 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQtB3AwMUeNoq4gUBGe6Ocj8kyh3bXa9ZbV7u1fVKQoyKFHdkqU';
 
         const button = <CardAction> {
-            type: "openUrl",
-            title: "Click for more Information",
-            value: "https://docs.microsoft.com/en-us/microsoftteams/platform/concepts/bots/bots-overview"
+            type: 'openUrl',
+            title: 'Click for more Information',
+            value: 'https://docs.microsoft.com/en-us/microsoftteams/platform/concepts/bots/bots-overview'
         };
 
-        const heroCard = CardFactory.heroCard("You searched for:", cardText, [bfLogo], [button]);
-        const preview = CardFactory.heroCard("You searched for:", cardText, [bfLogo]);
+        const heroCard = CardFactory.heroCard('You searched for:', cardText, [bfLogo], [button]);
+        const preview = CardFactory.heroCard('You searched for:', cardText, [bfLogo]);
         preview.content.tap = { type: 'invoke', value: { query: searchQuery } };
 
         return <MessagingExtensionAttachment> {
@@ -101,17 +101,17 @@ export class TeamsSearchExtensionBot extends TeamsActivityHandler {
     }
 
     private createDummySearchResultAttachment(searchQuery: string) : MessagingExtensionAttachment {
-        const cardText = "https://docs.microsoft.com/en-us/microsoftteams/platform/concepts/bots/bots-overview";
-        const bfLogo = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQtB3AwMUeNoq4gUBGe6Ocj8kyh3bXa9ZbV7u1fVKQoyKFHdkqU";
+        const cardText = 'https://docs.microsoft.com/en-us/microsoftteams/platform/concepts/bots/bots-overview';
+        const bfLogo = 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQtB3AwMUeNoq4gUBGe6Ocj8kyh3bXa9ZbV7u1fVKQoyKFHdkqU';
 
         const button = <CardAction> {
-            type: "openUrl",
-            title: "Click for more Information",
-            value: "https://docs.microsoft.com/en-us/microsoftteams/platform/concepts/bots/bots-overview"
+            type: 'openUrl',
+            title: 'Click for more Information',
+            value: 'https://docs.microsoft.com/en-us/microsoftteams/platform/concepts/bots/bots-overview'
         };
 
-        const heroCard = CardFactory.heroCard("Learn more about Teams:", cardText, [bfLogo], [button]);
-        const preview = CardFactory.heroCard("Learn more about Teams:", cardText, [bfLogo]);
+        const heroCard = CardFactory.heroCard('Learn more about Teams:', cardText, [bfLogo], [button]);
+        const preview = CardFactory.heroCard('Learn more about Teams:', cardText, [bfLogo]);
         preview.content.tap = { type: 'invoke', value: { query: searchQuery } };
 
         return <MessagingExtensionAttachment> {
@@ -123,11 +123,11 @@ export class TeamsSearchExtensionBot extends TeamsActivityHandler {
 
     private createSelectItemsResultAttachment(searchQuery: string): MessagingExtensionAttachment {
         const bfLogo = 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQtB3AwMUeNoq4gUBGe6Ocj8kyh3bXa9ZbV7u1fVKQoyKFHdkqU';
-        const cardText = `You said: "${searchQuery}"`;
+        const cardText = `You said: "${ searchQuery }"`;
         const heroCard = CardFactory.heroCard(cardText, cardText, [bfLogo]);
 
         const selectItemTap = <CardAction> {
-            type: "invoke",
+            type: 'invoke',
             value: { query: searchQuery }
         };
 

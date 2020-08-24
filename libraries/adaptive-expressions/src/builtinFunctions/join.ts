@@ -29,7 +29,7 @@ export class Join extends ExpressionEvaluator {
         ({ args, error } = FunctionUtils.evaluateChildren(expression, state, options));
         if (!error) {
             if (!Array.isArray(args[0])) {
-                error = `${expression.children[0]} evaluates to ${args[0]} which is not a list.`;
+                error = `${ expression.children[0] } evaluates to ${ args[0] } which is not a list.`;
             } else {
                 if (args.length === 2) {
                     value = args[0].join(args[1]);

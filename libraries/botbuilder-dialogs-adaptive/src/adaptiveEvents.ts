@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 
-import { DialogEvents } from 'botbuilder-dialogs'
+import { DialogEvents } from 'botbuilder-dialogs';
 
 export class AdaptiveEvents extends DialogEvents {
     /**

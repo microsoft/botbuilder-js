@@ -77,13 +77,13 @@ abstract class InterceptionMiddleware implements Middleware {
      */
     public async onTurn(turnContext: TurnContext, next: () => Promise<void>): Promise<void> {
 
-        var { shouldForwardToApplication, shouldIntercept } = await this.invokeInbound(turnContext, TraceActivity.fromActivity(turnContext.activity, 'ReceivedActivity', 'Received Activity'));
+        const { shouldForwardToApplication, shouldIntercept } = await this.invokeInbound(turnContext, TraceActivity.fromActivity(turnContext.activity, 'ReceivedActivity', 'Received Activity'));
 
         if (shouldIntercept) {
 
             turnContext.onSendActivities(async (ctx, activities, nextSend) => {
 
-                var traceActivities: Partial<Activity>[] = [];
+                const traceActivities: Partial<Activity>[] = [];
                 activities.forEach(activity => {
                     traceActivities.push(TraceActivity.fromActivity(activity, 'SentActivity', 'Sent Activity'));
                 });
@@ -92,13 +92,13 @@ abstract class InterceptionMiddleware implements Middleware {
             });
 
             turnContext.onUpdateActivity(async (ctx, activity, nextUpdate) => {
-                var traceActivity = TraceActivity.fromActivity(activity, 'MessageUpdate', 'Updated Message');
+                const traceActivity = TraceActivity.fromActivity(activity, 'MessageUpdate', 'Updated Message');
                 await this.invokeOutbound(ctx, [ traceActivity ]);
                 return await nextUpdate();
             });
 
             turnContext.onDeleteActivity(async (ctx, reference, nextDelete) => {
-                var traceActivity = TraceActivity.fromConversationReference(reference);
+                const traceActivity = TraceActivity.fromConversationReference(reference);
                 await this.invokeOutbound(ctx, [ traceActivity ]);
                 return await nextDelete();
             });
@@ -109,7 +109,7 @@ abstract class InterceptionMiddleware implements Middleware {
                 await next();
             }
             catch (err) {
-                var traceActivity = TraceActivity.fromError(err.toString());
+                const traceActivity = TraceActivity.fromError(err.toString());
                 await this.invokeOutbound(turnContext, [ traceActivity ]);
                 throw err;
             }
@@ -131,7 +131,7 @@ abstract class InterceptionMiddleware implements Middleware {
         try {
             return await this.inbound(turnContext, traceActivity);
         } catch (err) {
-            console.warn(`Exception in inbound interception ${err}`);
+            console.warn(`Exception in inbound interception ${ err }`);
             return { shouldForwardToApplication: true, shouldIntercept: false };
         }
     }
@@ -140,7 +140,7 @@ abstract class InterceptionMiddleware implements Middleware {
         try {
             await this.outbound(turnContext, traceActivities);
         } catch (err) {
-            console.warn(`Exception in outbound interception ${err}`);
+            console.warn(`Exception in outbound interception ${ err }`);
         }
     }
 
@@ -148,7 +148,7 @@ abstract class InterceptionMiddleware implements Middleware {
         try {
             await this.traceState(turnContext);
         } catch (err) {
-            console.warn(`Exception in state interception ${err}`);
+            console.warn(`Exception in state interception ${ err }`);
         }
     }
 }
@@ -162,7 +162,7 @@ abstract class InterceptionMiddleware implements Middleware {
  */
 export class InspectionMiddleware extends InterceptionMiddleware {
 
-    private static readonly command = "/INSPECT";
+    private static readonly command = '/INSPECT';
 
     private readonly inspectionState: InspectionState;
     private readonly inspectionStateAccessor: StatePropertyAccessor<InspectionSessionsByStatus>;
@@ -189,10 +189,10 @@ export class InspectionMiddleware extends InterceptionMiddleware {
 
         if (turnContext.activity.type == ActivityTypes.Message && turnContext.activity.text !== undefined) {
 
-            var originalText = turnContext.activity.text;
+            const originalText = turnContext.activity.text;
             TurnContext.removeRecipientMention(turnContext.activity);
 
-            var command = turnContext.activity.text.trim().split(' ');
+            const command = turnContext.activity.text.trim().split(' ');
             if (command.length > 1 && command[0] === InspectionMiddleware.command) {
 
                 if (command.length === 2 && command[1] === 'open') {
@@ -218,7 +218,7 @@ export class InspectionMiddleware extends InterceptionMiddleware {
             return { shouldForwardToApplication: false, shouldIntercept: false };
         }
 
-        var session = await this.findSession(turnContext);
+        const session = await this.findSession(turnContext);
         if (session !== undefined) {
             
             if (await this.invokeSend(turnContext, session, traceActivity)) {
@@ -233,10 +233,10 @@ export class InspectionMiddleware extends InterceptionMiddleware {
 
     protected async outbound(turnContext: TurnContext, traceActivities: Partial<Activity>[]): Promise<any> {
 
-        var session = await this.findSession(turnContext);
+        const session = await this.findSession(turnContext);
         if (session !== undefined) {
-            for (var i=0; i<traceActivities.length; i++) {
-                var traceActivity = traceActivities[i];
+            for (let i=0; i<traceActivities.length; i++) {
+                const traceActivity = traceActivities[i];
                 if (!await this.invokeSend(turnContext, session, traceActivity))
                 {
                     break;
@@ -247,7 +247,7 @@ export class InspectionMiddleware extends InterceptionMiddleware {
 
     protected async traceState(turnContext: TurnContext): Promise<any> {
 
-        var session = await this.findSession(turnContext);
+        const session = await this.findSession(turnContext);
         if (session !== undefined) {
             
             if (this.userState !== undefined) {
@@ -257,7 +257,7 @@ export class InspectionMiddleware extends InterceptionMiddleware {
                 await this.conversationState.load(turnContext, false);
             }
 
-            var botState: any = {};
+            const botState: any = {};
 
             if (this.userState !== undefined) {
                 botState.userState = this.userState.get(turnContext);
@@ -272,19 +272,19 @@ export class InspectionMiddleware extends InterceptionMiddleware {
     }
 
     private async processOpenCommand(turnContext: TurnContext): Promise<any> {
-        var sessions = await this.inspectionStateAccessor.get(turnContext, InspectionSessionsByStatus.DefaultValue);
-        var sessionId = this.openCommand(sessions, TurnContext.getConversationReference(turnContext.activity));
-        await turnContext.sendActivity(TraceActivity.makeCommandActivity(`${InspectionMiddleware.command} attach ${sessionId}`));
+        const sessions = await this.inspectionStateAccessor.get(turnContext, InspectionSessionsByStatus.DefaultValue);
+        const sessionId = this.openCommand(sessions, TurnContext.getConversationReference(turnContext.activity));
+        await turnContext.sendActivity(TraceActivity.makeCommandActivity(`${ InspectionMiddleware.command } attach ${ sessionId }`));
         await this.inspectionState.saveChanges(turnContext, false);
     }
 
     private async processAttachCommand(turnContext: TurnContext, sessionId: string): Promise<any> {
-        var sessions = await this.inspectionStateAccessor.get(turnContext, InspectionSessionsByStatus.DefaultValue);
+        const sessions = await this.inspectionStateAccessor.get(turnContext, InspectionSessionsByStatus.DefaultValue);
         if (this.attachCommand(this.getAttachId(turnContext.activity), sessions, sessionId)) {
             await turnContext.sendActivity('Attached to session, all traffic is being replicated for inspection.');
         }
         else {
-            await turnContext.sendActivity(`Open session with id ${sessionId} does not exist.`);
+            await turnContext.sendActivity(`Open session with id ${ sessionId } does not exist.`);
         }
 
         await this.inspectionState.saveChanges(turnContext, false);
@@ -301,13 +301,13 @@ export class InspectionMiddleware extends InterceptionMiddleware {
               s4() + '-' + s4() + s4() + s4();
         }
     
-        var sessionId = generate_guid();
+        const sessionId = generate_guid();
         sessions.openedSessions[sessionId] = conversationReference;
         return sessionId;
     }
 
     private attachCommand(attachId: string, sessions: InspectionSessionsByStatus, sessionId: string): boolean {
-        var inspectionSessionState = sessions.openedSessions[sessionId];
+        const inspectionSessionState = sessions.openedSessions[sessionId];
         if (inspectionSessionState !== undefined) {
             sessions.attachedSessions[attachId] = inspectionSessionState;
             delete sessions.openedSessions[sessionId];
@@ -317,9 +317,9 @@ export class InspectionMiddleware extends InterceptionMiddleware {
     }
 
     private async findSession(turnContext: TurnContext): Promise<any> {
-        var sessions = await this.inspectionStateAccessor.get(turnContext, InspectionSessionsByStatus.DefaultValue);
+        const sessions = await this.inspectionStateAccessor.get(turnContext, InspectionSessionsByStatus.DefaultValue);
 
-        var conversationReference = sessions.attachedSessions[this.getAttachId(turnContext.activity)];
+        const conversationReference = sessions.attachedSessions[this.getAttachId(turnContext.activity)];
         if (conversationReference !== undefined) {
             return new InspectionSession(conversationReference, this.credentials);
         }
@@ -338,7 +338,7 @@ export class InspectionMiddleware extends InterceptionMiddleware {
     }
 
     private async cleanUpSession(turnContext: TurnContext): Promise<any> {
-        var sessions = await this.inspectionStateAccessor.get(turnContext, InspectionSessionsByStatus.DefaultValue);
+        const sessions = await this.inspectionStateAccessor.get(turnContext, InspectionSessionsByStatus.DefaultValue);
 
         delete sessions.attachedSessions[this.getAttachId(turnContext.activity)];
         await this.inspectionState.saveChanges(turnContext, false);

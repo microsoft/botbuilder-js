@@ -32,7 +32,7 @@ export class UserConversationUpdate implements TestAction {
                     name: member,
                     role: RoleTypes.User
                 } as ChannelAccount;
-            })
+            });
         }
 
         if (this.membersRemoved) {

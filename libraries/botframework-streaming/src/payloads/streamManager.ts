@@ -23,7 +23,7 @@ export class StreamManager {
     public getPayloadAssembler(id: string): PayloadAssembler {
         if (!this.activeAssemblers[id]) {
             // A new id has come in, kick off the process of tracking it.
-            let assembler = new PayloadAssembler(this, {id: id});
+            const assembler = new PayloadAssembler(this, {id: id});
             this.activeAssemblers[id] = assembler;
 
             return assembler;
@@ -34,7 +34,7 @@ export class StreamManager {
     }
 
     public getPayloadStream(header: IHeader): SubscribableStream {
-        let assembler = this.getPayloadAssembler(header.id);
+        const assembler = this.getPayloadAssembler(header.id);
 
         return assembler.getPayloadStream();
     }
@@ -50,9 +50,9 @@ export class StreamManager {
         if (!this.activeAssemblers[id]) {
             return;
         } else {
-            let assembler: PayloadAssembler = this.activeAssemblers[id];
+            const assembler: PayloadAssembler = this.activeAssemblers[id];
             this.activeAssemblers.splice(this.activeAssemblers.indexOf(id), 1);
-            let targetStream = assembler.getPayloadStream();
+            const targetStream = assembler.getPayloadStream();
             if ((assembler.contentLength && targetStream.length < assembler.contentLength) || !assembler.end) {
                 this.onCancelStream(assembler);
             }

@@ -28,7 +28,7 @@ export class LanguageResourceLoader {
         const allResouces: Resource[] =  resourceExplorer.getResources(this.lgSuffix);
         const languagePolicy = new LanguagePolicy();
         for (const locale of languagePolicy.keys()) {
-            let suffixs = languagePolicy.get(locale);
+            const suffixs = languagePolicy.get(locale);
             const existNames = new Set<string>();
             for (const index in suffixs) {
                 const suffix = suffixs[index];

@@ -27,7 +27,7 @@ export class RequestManager {
     }
 
     public async signalResponse(requestId: string, response: IReceiveResponse): Promise<boolean> {
-        let pendingRequest = this._pendingRequests[requestId];
+        const pendingRequest = this._pendingRequests[requestId];
 
         if (pendingRequest) {
             pendingRequest.resolve(response);
@@ -49,7 +49,7 @@ export class RequestManager {
         pendingRequest = new PendingRequest();
         pendingRequest.requestId = requestId;
 
-        let promise = new Promise<IReceiveResponse>((resolve, reject): void => {
+        const promise = new Promise<IReceiveResponse>((resolve, reject): void => {
             pendingRequest.resolve = resolve;
             pendingRequest.reject = reject;
         });

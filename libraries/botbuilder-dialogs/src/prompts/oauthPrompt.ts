@@ -391,9 +391,9 @@ export class OAuthPrompt extends Dialog {
                     'The bot received an InvokeActivity that is missing a TokenExchangeInvokeRequest value. This is required to be sent with the InvokeActivity.'));
             } else if (context.activity.value.connectionName != this.settings.connectionName) {
             // Connection name on activity does not match that of setting
-            await context.sendActivity(this.getTokenExchangeInvokeResponse(
-                StatusCodes.BAD_REQUEST, 
-                'The bot received an InvokeActivity with a TokenExchangeInvokeRequest containing a ConnectionName that does not match the ConnectionName' +  
+                await context.sendActivity(this.getTokenExchangeInvokeResponse(
+                    StatusCodes.BAD_REQUEST, 
+                    'The bot received an InvokeActivity with a TokenExchangeInvokeRequest containing a ConnectionName that does not match the ConnectionName' +  
                 'expected by the bots active OAuthPrompt. Ensure these names match when sending the InvokeActivityInvalid ConnectionName in the TokenExchangeInvokeRequest'));            
             }
             else if (!('exchangeToken' in context.adapter)) {

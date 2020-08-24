@@ -9,7 +9,7 @@ const path = require('path');
 const url = require('url');
 const promisify = require('util').promisify;
 const readFileAsync = promisify(fs.readFile);
-const request = require("request");
+const request = require('request');
 const unzip = require('unzipper');
 const rimraf = require('rimraf');
 
@@ -51,7 +51,7 @@ function getActivitiesFromChat(chatFilePath) {
             }
 
             return activities;
-        })
+        });
 }
 
 /**
@@ -62,14 +62,14 @@ function getActivitiesFromChat(chatFilePath) {
  * @param {function} middlewareRegistrationFun (Optional) Function which accepts the testAdapter, conversationState and userState.
  */
 function assertBotLogicWithBotBuilderTranscript(relativeTranscriptPath, botLogicFactoryFun, middlewareRegistrationFun) {
-    return function (mochaDoneCallback) {
+    return function(mochaDoneCallback) {
 
         checkTranscriptResourcesExist()
             .then(transcriptsBasePath => {
                 var transcriptPath = path.join(transcriptsBasePath, relativeTranscriptPath);
-                assertBotLogicWithTranscript(transcriptPath, botLogicFactoryFun, middlewareRegistrationFun)(mochaDoneCallback)
+                assertBotLogicWithTranscript(transcriptPath, botLogicFactoryFun, middlewareRegistrationFun)(mochaDoneCallback);
             }).catch(mochaDoneCallback);
-    }
+    };
 }
 
 /**
@@ -85,7 +85,7 @@ function assertBotLogicWithTranscript(transcriptPath, botLogicFactoryFun, middle
         : getActivitiesFromTranscript;
 
     // return a Mocha Test Definition, which accepts the done callback to indicate success or error
-    return function (done) {
+    return function(done) {
         loadFun(transcriptPath).then(activities => {
 
             // State
@@ -95,7 +95,7 @@ function assertBotLogicWithTranscript(transcriptPath, botLogicFactoryFun, middle
             const state = new AutoSaveStateMiddleware(conversationState, userState);
 
             // Bot logic + adapter
-            var botLogic = botLogicFactoryFun(conversationState, userState)
+            var botLogic = botLogicFactoryFun(conversationState, userState);
             var adapter = new TestAdapter(botLogic);
             adapter.use(state);
 
@@ -110,7 +110,7 @@ function assertBotLogicWithTranscript(transcriptPath, botLogicFactoryFun, middle
                 .catch(done);
 
         }).catch(done);
-    }
+    };
 }
 
 
@@ -124,12 +124,12 @@ function checkTranscriptResourcesExist() {
 }
 
 const resourcePromises = {};
-const zipTranscriptsRelativePath = "/Common/Transcripts";
+const zipTranscriptsRelativePath = '/Common/Transcripts';
 function downloadAndExtractOnce(url) {
     if (!resourcePromises[url]) {
         resourcePromises[url] = new Promise((resolve, reject) => {
 
-            console.log(`\tDownloading BotBuilder Transcripts from ${url}`);
+            console.log(`\tDownloading BotBuilder Transcripts from ${ url }`);
             var outputPath = path.join(os.tmpdir(), 'botbuilder-transcripts');
 
             // remove previous unzipped transcripts
@@ -141,10 +141,10 @@ function downloadAndExtractOnce(url) {
 
                 // download
                 request.get(url)
-                    .on('end', function () {
+                    .on('end', function() {
                         // unzip
-                        console.log(`\tUnzipping ${zipPath} into ${outputPath}`);
-                        decompressZip(zipPath, outputPath, function (unzipErr) {
+                        console.log(`\tUnzipping ${ zipPath } into ${ outputPath }`);
+                        decompressZip(zipPath, outputPath, function(unzipErr) {
 
                             fs.unlinkSync(zipPath); // delete zip
                             if (unzipErr) {
@@ -161,7 +161,7 @@ function downloadAndExtractOnce(url) {
 
                             firstDirectory = path.join(firstDirectory, zipTranscriptsRelativePath);
 
-                            console.log(`\tTranscripts extracted at ${firstDirectory}`);
+                            console.log(`\tTranscripts extracted at ${ firstDirectory }`);
                             return resolve(firstDirectory);
                         });
                     })
@@ -181,7 +181,7 @@ const isUrl = (possibleUrl) => {
     } catch (e) {
         return false;
     }
-}
+};
 
 const decompressZip = (inputPath, outputPath, callback) => {
     // Extract only the files contained in the "zipTranscriptsRelativePath" path
@@ -190,20 +190,20 @@ const decompressZip = (inputPath, outputPath, callback) => {
         .on('entry', (entry) => {
             if (entry.type === 'File' && entry.path.includes(zipTranscriptsRelativePath)) {
                 var fileExtractPath = path.join(outputPath, entry.path);
-                ensureDirectoryExists(fileExtractPath)
+                ensureDirectoryExists(fileExtractPath);
                 entry.pipe(fs.createWriteStream(fileExtractPath))
-                    .on('error', console.log)
+                    .on('error', console.log);
             } else {
                 entry.autodrain();
             }
         })
         .on('close', callback)
         .on('error', callback);
-}
+};
 
 const isDirectory = source => fs.lstatSync(source).isDirectory();
 const getDirectories = source =>
-    fs.readdirSync(source).map(name => path.join(source, name)).filter(isDirectory)
+    fs.readdirSync(source).map(name => path.join(source, name)).filter(isDirectory);
 
 const ensureDirectoryExists = (filePath) => {
     var dirname = path.dirname(filePath);
@@ -211,4 +211,4 @@ const ensureDirectoryExists = (filePath) => {
 
     ensureDirectoryExists(dirname);
     fs.mkdirSync(dirname);
-}
+};

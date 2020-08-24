@@ -8,7 +8,7 @@ const continueMessage = { text: `continue`, type: 'message' };
 describe('DialogContext', function() {
     this.timeout(5000);
 
-    it('should beginDialog() a new dialog.', function (done) {
+    it('should beginDialog() a new dialog.', function(done) {
         // Initialize TestAdapter.
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);
@@ -28,7 +28,7 @@ describe('DialogContext', function() {
         const dialogState = convoState.createProperty('dialogState');
         const dialogs = new DialogSet(dialogState);
         dialogs.add(new WaterfallDialog('a', [
-            async function (step) {
+            async function(step) {
                 assert(step, `WaterfallStepContext not passed in to WaterfallStep.`);
                 return await step.endDialog(true);
             }
@@ -37,7 +37,7 @@ describe('DialogContext', function() {
         adapter.send(beginMessage);
     });
 
-    it('beginDialog() should pass in dialogOptions to a begun dialog.', function (done) {
+    it('beginDialog() should pass in dialogOptions to a begun dialog.', function(done) {
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);
         
@@ -54,7 +54,7 @@ describe('DialogContext', function() {
         const dialogState = convoState.createProperty('dialogState');
         const dialogs = new DialogSet(dialogState);
         dialogs.add(new WaterfallDialog('a', [
-            async function (step) {
+            async function(step) {
                 assert(step, `WaterfallStepContext not passed in to WaterfallStep.`);
                 assert(step.options.z === 'z', `Correct DialogOptions was not passed in to WaterfallDialog.`); 
                 return await step.endDialog(true);
@@ -64,7 +64,7 @@ describe('DialogContext', function() {
         adapter.send(beginMessage);
     });
 
-    it('should return error if beginDialog() called with invalid dialogId.', function (done) {
+    it('should return error if beginDialog() called with invalid dialogId.', function(done) {
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);
         
@@ -74,7 +74,7 @@ describe('DialogContext', function() {
             }
             catch (err) {
                 assert(err);
-                assert.strictEqual(err.message, `DialogContext.beginDialog(): A dialog with an id of 'b' wasn't found.`, `unexpected error message thrown: "${err.message}"`);
+                assert.strictEqual(err.message, `DialogContext.beginDialog(): A dialog with an id of 'b' wasn't found.`, `unexpected error message thrown: "${ err.message }"`);
                 return done();
             }
             throw new Error('Should have thrown an error.');
@@ -85,7 +85,7 @@ describe('DialogContext', function() {
         const dialogs = new DialogSet(dialogState);
 
         dialogs.add(new WaterfallDialog('a', [
-            async function (step) {
+            async function(step) {
                 return await step.endDialog();
             }
         ]));
@@ -93,7 +93,7 @@ describe('DialogContext', function() {
         adapter.send(beginMessage);
     });
 
-    it('should pass prompt() args to dialog.', function (done) {
+    it('should pass prompt() args to dialog.', function(done) {
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);
         
@@ -107,7 +107,7 @@ describe('DialogContext', function() {
 
         const dialogs = new DialogSet(dialogState);
         dialogs.add(new WaterfallDialog('a', [
-            async function (step) {
+            async function(step) {
                 assert(step, `WaterfallStepContext not passed in to WaterfallStep.`);
                 assert.strictEqual(step.options.prompt, 'test', `promptOrOptions arg was not correctly passed through.`);
                 return await step.endDialog();
@@ -117,7 +117,7 @@ describe('DialogContext', function() {
         adapter.send(beginMessage);
     });
 
-    it('should pass undefined prompt() to dialog.', function (done) {
+    it('should pass undefined prompt() to dialog.', function(done) {
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);
         
@@ -131,7 +131,7 @@ describe('DialogContext', function() {
 
         const dialogs = new DialogSet(dialogState);
         dialogs.add(new WaterfallDialog('a', [
-            async function (step) {
+            async function(step) {
                 assert(step, `WaterfallStepContext not passed in to WaterfallStep.`);
                 return await step.endDialog();
             }
@@ -140,7 +140,7 @@ describe('DialogContext', function() {
         adapter.send(beginMessage);
     });
 
-    it('should pass choice array to prompt() to dialog.', function (done) {
+    it('should pass choice array to prompt() to dialog.', function(done) {
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);
         
@@ -154,7 +154,7 @@ describe('DialogContext', function() {
 
         const dialogs = new DialogSet(dialogState);
         dialogs.add(new WaterfallDialog('a', [
-            async function (step) {
+            async function(step) {
                 assert(step, `WaterfallStepContext not passed in to WaterfallStep.`);
                 assert(Array.isArray(step.options.choices), `choices received in step is not an array.`); 
                 assert.strictEqual(step.options.choices.length, 3, `not all choices were passed in.`); 
@@ -165,7 +165,7 @@ describe('DialogContext', function() {
         adapter.send(beginMessage);
     });
 
-    it('should return a value to parent when endDialog() called with a value.', function (done) {
+    it('should return a value to parent when endDialog() called with a value.', function(done) {
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);
         
@@ -180,11 +180,11 @@ describe('DialogContext', function() {
 
         const dialogs = new DialogSet(dialogState);
         dialogs.add(new WaterfallDialog('a', [
-            async function (step) {
+            async function(step) {
                 assert(step, `WaterfallStepContext not passed in to WaterfallStep.`);
                 return await step.beginDialog('b');
             },
-            async function (step) {
+            async function(step) {
                 assert(step, `WaterfallStepContext not passed in to WaterfallStep.`);
                 assert.strictEqual(step.result, 120, `incorrect step.result value received from 'b' dialog.`);
                 return await step.endDialog(119);
@@ -192,7 +192,7 @@ describe('DialogContext', function() {
         ]));
 
         dialogs.add(new WaterfallDialog('b', [
-            async function (step) {
+            async function(step) {
                 assert(step, `WaterfallStepContext not passed in to WaterfallStep.`);
                 return await step.endDialog(120);
             }
@@ -201,7 +201,7 @@ describe('DialogContext', function() {
         adapter.send(beginMessage);
     });
 
-    it('should continue() execution of a dialog.', function (done) {
+    it('should continue() execution of a dialog.', function(done) {
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);
         
@@ -224,12 +224,12 @@ describe('DialogContext', function() {
 
         const dialogs = new DialogSet(dialogState);
         dialogs.add(new WaterfallDialog('a', [
-            async function (step) {
+            async function(step) {
                 assert(step, `WaterfallStepContext not passed in to WaterfallStep.`);
                 await step.context.sendActivity(`foo`);
                 return Dialog.EndOfTurn;
             },
-            async function (step) {
+            async function(step) {
                 assert(step, `WaterfallStepContext not passed in to WaterfallStep.`);
                 return await step.endDialog(true);
             }
@@ -239,7 +239,7 @@ describe('DialogContext', function() {
             .send(continueMessage);
     });
 
-    it('should return an error if dialog not found when continue() called.', function (done) {
+    it('should return an error if dialog not found when continue() called.', function(done) {
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);
 
@@ -249,7 +249,7 @@ describe('DialogContext', function() {
             }
             catch (err) {
                 assert(err, `Error not found.`);
-                assert.strictEqual(err.message, `DialogContext.continueDialog(): Can't continue dialog. A dialog with an id of 'b' wasn't found.`, `unexpected error message thrown: "${err.message}"`);
+                assert.strictEqual(err.message, `DialogContext.continueDialog(): Can't continue dialog. A dialog with an id of 'b' wasn't found.`, `unexpected error message thrown: "${ err.message }"`);
                 return done();
             }
             if (results.status === DialogTurnStatus.empty) {
@@ -263,13 +263,13 @@ describe('DialogContext', function() {
 
         const dialogs = new DialogSet(dialogState);
         dialogs.add(new WaterfallDialog('a', [
-            async function (step) {
+            async function(step) {
                 assert(step, `WaterfallStepContext not passed in to WaterfallStep.`);
                 assert.strictEqual(step.activeDialog.id, 'a', `incorrect value for step.activeDialog.id`);
                 step.activeDialog.id = 'b';
                 return Dialog.EndOfTurn;
             },
-            async function (step) {
+            async function(step) {
                 assert(false, `shouldn't continue`);
             }
         ]));
@@ -278,7 +278,7 @@ describe('DialogContext', function() {
             .send(continueMessage);
     });
 
-    it(`should return a DialogTurnResult if continue() is called without an activeDialog.`, function (done) {
+    it(`should return a DialogTurnResult if continue() is called without an activeDialog.`, function(done) {
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);
             const results = await dc.continueDialog();
@@ -296,7 +296,7 @@ describe('DialogContext', function() {
         adapter.send(beginMessage);
     });
 
-    it('should return to parent dialog when endDialog() called.', function (done) {
+    it('should return to parent dialog when endDialog() called.', function(done) {
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);
         
@@ -312,11 +312,11 @@ describe('DialogContext', function() {
 
         const dialogs = new DialogSet(dialogState);
         dialogs.add(new WaterfallDialog('a', [
-            async function (step) {
+            async function(step) {
                 assert(step, `WaterfallStepContext not passed in to WaterfallStep.`);
                 return await step.beginDialog('b');
             },
-            async function (step) {
+            async function(step) {
                 assert(step, `WaterfallStepContext not passed in to WaterfallStep.`);
                 assert(step.context.activity.text, 'begin', `unexpected message received.`);
                 assert(step.result, `ended dialog.`, `unexpected step.result received.`);
@@ -325,7 +325,7 @@ describe('DialogContext', function() {
         ]));
 
         dialogs.add(new WaterfallDialog('b', [
-            async function (step) {
+            async function(step) {
                 assert(step, `WaterfallStepContext not passed in to WaterfallStep.`);
                 return await step.endDialog('ended dialog.');
             }
@@ -334,7 +334,7 @@ describe('DialogContext', function() {
         adapter.send(beginMessage);
     });
 
-    it(`should accept calls to end when no activeDialogs or parent dialogs exist.`, function (done) {
+    it(`should accept calls to end when no activeDialogs or parent dialogs exist.`, function(done) {
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);
             
@@ -351,7 +351,7 @@ describe('DialogContext', function() {
 
         const dialogs = new DialogSet(dialogState);
         dialogs.add(new WaterfallDialog('a', [
-            async function (step) {
+            async function(step) {
                 assert(step, `WaterfallStepContext not passed in to WaterfallStep.`);
                 return await step.replaceDialog('b', { z: step.options.z });
             }
@@ -360,7 +360,7 @@ describe('DialogContext', function() {
         adapter.send(beginMessage);
     });
 
-    it(`should replace() dialog.`, function (done) {
+    it(`should replace() dialog.`, function(done) {
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);
         
@@ -376,14 +376,14 @@ describe('DialogContext', function() {
 
         const dialogs = new DialogSet(dialogState);
         dialogs.add(new WaterfallDialog('a', [
-            async function (step) {
+            async function(step) {
                 assert(step, `WaterfallStepContext not passed in to WaterfallStep.`);
                 return await step.replaceDialog('b', { z: step.options.z });
             }
         ]));
 
         dialogs.add(new WaterfallDialog('b', [
-            async function (step) {
+            async function(step) {
                 assert(step, `WaterfallStepContext not passed in to WaterfallStep.`);
                 assert.strictEqual(step.stack.length, 1, `current DialogContext.stack.length should be 1.`);
                 assert.strictEqual(step.options.z, 'z', `incorrect step.options received.`);
@@ -394,7 +394,7 @@ describe('DialogContext', function() {
         adapter.send(beginMessage);
     });
 
-    it(`should begin dialog if stack empty when replaceDialog() called with valid dialogId.`, function (done) {
+    it(`should begin dialog if stack empty when replaceDialog() called with valid dialogId.`, function(done) {
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);
 
@@ -408,7 +408,7 @@ describe('DialogContext', function() {
 
         const dialogs = new DialogSet(dialogState);
         dialogs.add(new WaterfallDialog('b', [
-            async function (step) {
+            async function(step) {
                 assert(step, `WaterfallStepContext not passed in to WaterfallStep.`);
                 return await step.endDialog();
             }

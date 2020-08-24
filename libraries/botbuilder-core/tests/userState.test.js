@@ -5,14 +5,14 @@ const receivedMessage = { text: 'received', type: 'message', channelId: 'test', 
 const missingChannelId = { text: 'received', type: 'message', from: { id: 'user' } };
 const missingFrom = { text: 'received', type: 'message', channelId: 'test' };
 
-describe(`UserState`, function () {
+describe(`UserState`, function() {
     this.timeout(5000);
 
     const storage = new MemoryStorage();
     const adapter = new TestAdapter();
     const context = new TurnContext(adapter, receivedMessage);
     const userState = new UserState(storage);
-    it(`should load and save state from storage.`, async function () {
+    it(`should load and save state from storage.`, async function() {
         let key;
     
         // Simulate a "Turn" in a conversation by loading the state,
@@ -31,29 +31,29 @@ describe(`UserState`, function () {
         assert(items[key].test === 'foo', `Missing test value in stored state.`);
     });
 
-    it(`should reject with error if channelId missing.`, async function () {
+    it(`should reject with error if channelId missing.`, async function() {
         const ctx = new TurnContext(adapter, missingChannelId);
         try {
             await userState.load(ctx);
             assert(false, `shouldn't have completed.`);
         } catch (err) {
             assert(err, `error object missing.`);
-            assert.equal(err.message, "missing activity.channelId");
+            assert.equal(err.message, 'missing activity.channelId');
         }
     });
 
-    it(`should reject with error if from missing.`, async function () {
+    it(`should reject with error if from missing.`, async function() {
         const ctx = new TurnContext(adapter, missingFrom);
         try {
             await userState.load(ctx);
             assert(false, `shouldn't have completed.`);
         } catch (err) {
             assert(err, `error object missing.`);
-            assert.equal(err.message, "missing activity.from.id");
+            assert.equal(err.message, 'missing activity.from.id');
         }
     });
 
-    it(`should throw install exception if get() called without a cached entry.`, function (done) {
+    it(`should throw install exception if get() called without a cached entry.`, function(done) {
         context.turnState.set('userState', undefined);
         try {
             UserState.get(context);
@@ -63,13 +63,13 @@ describe(`UserState`, function () {
         }
     });
 
-    it(`should throw NO_KEY error if getStorageKey() returns falsey value.`, async function () {
+    it(`should throw NO_KEY error if getStorageKey() returns falsey value.`, async function() {
         userState.getStorageKey = turnContext => undefined;
         try {
             await userState.load(context, true);
         } catch (err) {
             assert(err.message === 'UserState: overridden getStorageKey method did not return a key.',
-                `unexpected Error.message received: ${err.message}`);
+                `unexpected Error.message received: ${ err.message }`);
             return;
         }
         assert(false, `should have thrown an error.`);

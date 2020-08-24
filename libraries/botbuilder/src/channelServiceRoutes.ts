@@ -45,7 +45,7 @@ export class ChannelServiceRoutes {
      * @param server WebServer
      * @param basePath Optional basePath which is appended before the service's REST API is configured on the WebServer.
      */
-    public register(server: WebServer, basePath: string = ''): void {
+    public register(server: WebServer, basePath = ''): void {
         server.post(basePath + RouteConstants.Activities, this.processSendToConversation.bind(this));
         server.post(basePath + RouteConstants.Activity, this.processReplyToActivity.bind(this));
         server.put(basePath + RouteConstants.Activity, this.processUpdateActivity.bind(this));
@@ -80,7 +80,7 @@ export class ChannelServiceRoutes {
                         }
                         res.end();
                     })
-                    .catch(err => { ChannelServiceRoutes.handleError(err, res); })
+                    .catch(err => { ChannelServiceRoutes.handleError(err, res); });
             })
             .catch(err => { ChannelServiceRoutes.handleError(err, res); });
     }
@@ -97,7 +97,7 @@ export class ChannelServiceRoutes {
                         }
                         res.end();
                     })
-                    .catch(err => { ChannelServiceRoutes.handleError(err, res); })
+                    .catch(err => { ChannelServiceRoutes.handleError(err, res); });
             })
             .catch(err => { ChannelServiceRoutes.handleError(err, res); });
     }
@@ -114,7 +114,7 @@ export class ChannelServiceRoutes {
                         }
                         res.end();
                     })
-                    .catch(err => { ChannelServiceRoutes.handleError(err, res); })
+                    .catch(err => { ChannelServiceRoutes.handleError(err, res); });
             })
             .catch(err => { ChannelServiceRoutes.handleError(err, res); });
     }
@@ -154,7 +154,7 @@ export class ChannelServiceRoutes {
                         res.status(201);
                         res.end();
                     })
-                    .catch(err => { ChannelServiceRoutes.handleError(err, res); })
+                    .catch(err => { ChannelServiceRoutes.handleError(err, res); });
             });
     }
 
@@ -227,7 +227,7 @@ export class ChannelServiceRoutes {
                         res.status(200);
                         res.end();
                     })
-                    .catch(err => { ChannelServiceRoutes.handleError(err, res); })
+                    .catch(err => { ChannelServiceRoutes.handleError(err, res); });
             })
             .catch(err => { ChannelServiceRoutes.handleError(err, res); });
     }
@@ -244,7 +244,7 @@ export class ChannelServiceRoutes {
                         res.status(200);
                         res.end();
                     })
-                    .catch(err => { ChannelServiceRoutes.handleError(err, res); })
+                    .catch(err => { ChannelServiceRoutes.handleError(err, res); });
             })
             .catch(err => { ChannelServiceRoutes.handleError(err, res); });
     }

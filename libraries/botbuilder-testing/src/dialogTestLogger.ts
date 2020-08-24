@@ -33,9 +33,9 @@ export class DialogTestLogger implements Middleware {
             this._logger.log(`User: Activity = ${ context.activity.type }`);
             JSON.stringify(context.activity,null,2).split(/\n/).forEach((line) =>{ this._logger.log(line); });
         }
-        let now = new Date();
+        const now = new Date();
         context.turnState[this._stopwatchStateKey] = now;
-        let timestamp = `${ now.getHours() }:${ now.getMinutes() }:${ now.getSeconds() }`;
+        const timestamp = `${ now.getHours() }:${ now.getMinutes() }:${ now.getSeconds() }`;
         this._logger.log(`-> ts: ${ timestamp }`);
 
         context.onSendActivities(async (context, activities, next): Promise<ResourceResponse[]> => {
@@ -50,10 +50,10 @@ export class DialogTestLogger implements Middleware {
                     JSON.stringify(activity,null,2).split(/\n/).forEach((line) =>{ this._logger.log(line); });
                 }
             });
-            let now = new Date();
-            let stopwatch = context.turnState[this._stopwatchStateKey];
-            let mms = now.getTime() - stopwatch.getTime();
-            let timestamp = `${ now.getHours() }:${ now.getMinutes() }:${ now.getSeconds() }`;
+            const now = new Date();
+            const stopwatch = context.turnState[this._stopwatchStateKey];
+            const mms = now.getTime() - stopwatch.getTime();
+            const timestamp = `${ now.getHours() }:${ now.getMinutes() }:${ now.getSeconds() }`;
             this._logger.log(`-> ts: ${ timestamp } elapsed ${ mms } ms`);
 
             return next();

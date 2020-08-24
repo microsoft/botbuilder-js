@@ -38,7 +38,7 @@ export class ConvertFromUTC extends ExpressionEvaluator {
             if (typeof (args[0]) === 'string' && typeof (args[1]) === 'string') {
                 ({ value, error } = ConvertFromUTC.evalConvertFromUTC(args[0], args[1], format));
             } else {
-                error = `${expression} cannot evaluate`;
+                error = `${ expression } cannot evaluate`;
             }
         }
 
@@ -51,14 +51,14 @@ export class ConvertFromUTC extends ExpressionEvaluator {
         error = FunctionUtils.verifyISOTimestamp(timeStamp);
         const timeZone: string = TimeZoneConverter.windowsToIana(destinationTimeZone);
         if (!TimeZoneConverter.verifyTimeZoneStr(timeZone)) {
-            error = `${destinationTimeZone} is not a valid timezone`;
+            error = `${ destinationTimeZone } is not a valid timezone`;
         }
 
         if (!error) {
             try {
                 result = tz(timeStamp, timeZone).format(format);
             } catch (e) {
-                error = `${format} is not a valid timestamp format`;
+                error = `${ format } is not a valid timestamp format`;
             }
         }
 

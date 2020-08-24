@@ -234,9 +234,9 @@ export class TurnContext {
      * ```
      */
     public static getMentions(activity: Partial<Activity>): Mention[] {
-        var result: Mention[] = [];
+        const result: Mention[] = [];
         if (activity.entities !== undefined) {
-            for (var i=0; i<activity.entities.length; i++) {
+            for (let i=0; i<activity.entities.length; i++) {
                 if (activity.entities[i].type.toLowerCase() === 'mention') {
                     result.push(activity.entities[i] as Mention);
                 }
@@ -291,7 +291,7 @@ export class TurnContext {
     public static applyConversationReference(
         activity: Partial<Activity>,
         reference: Partial<ConversationReference>,
-        isIncoming: boolean = false
+        isIncoming = false
     ): Partial<Activity> {
         activity.channelId = reference.channelId;
         activity.locale = reference.locale;
@@ -378,7 +378,7 @@ export class TurnContext {
             valueType: valueType,
             label: label
         };
-        return this.sendActivity(traceActivity)
+        return this.sendActivity(traceActivity);
     }
 
     /**

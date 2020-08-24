@@ -12,7 +12,7 @@ import {
 
 import {
     ActionTypes,
-} from 'botframework-schema'
+} from 'botframework-schema';
 
 export class MessagingExtensionConfigBot  extends TeamsActivityHandler {
     constructor() {
@@ -20,7 +20,7 @@ export class MessagingExtensionConfigBot  extends TeamsActivityHandler {
 
         // See https://aka.ms/about-bot-activity-message to learn more about the message and other activity types.
         this.onMessage(async (context, next) => {
-            await context.sendActivity(`echo: '${context.activity.text}'`);
+            await context.sendActivity(`echo: '${ context.activity.text }'`);
             // By calling next() you ensure that the next BotHandler is run.
             await next();
         });
@@ -50,9 +50,9 @@ export class MessagingExtensionConfigBot  extends TeamsActivityHandler {
                             value: 'https://teamssettingspagescenario.azurewebsites.net',
                         },
                     ]
-                    }
+                }
             }
-        }
+        };
     }
 
     protected async handleTeamsMessagingExtensionConfigurationSetting(context: TurnContext, settings){

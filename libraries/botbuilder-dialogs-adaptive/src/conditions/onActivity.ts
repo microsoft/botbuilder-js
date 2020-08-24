@@ -26,7 +26,7 @@ export class OnActivity extends OnDialogEvent {
 
     public getExpression(parser: ExpressionParserInterface): Expression {
         // add constraints for activity type
-        const expression = parser.parse(`${ TurnPath.activity }.type == '${ this.type }'`)
+        const expression = parser.parse(`${ TurnPath.activity }.type == '${ this.type }'`);
         return Expression.makeExpression(ExpressionType.And, undefined, expression, super.getExpression(parser));
     }
 }

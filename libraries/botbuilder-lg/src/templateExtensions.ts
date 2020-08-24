@@ -76,7 +76,7 @@ export class TemplateExtensions {
                 if (context.parent.parent.parent instanceof lp.SwitchCaseRuleContext )
                 {
                     const switchCaseContext = context.parent.parent.parent;
-                    var state = switchCaseContext.switchCaseStat();
+                    const state = switchCaseContext.switchCaseStat();
                     if (state && state.DEFAULT())
                     {
                         errorPrefix = `Case 'Default':`;

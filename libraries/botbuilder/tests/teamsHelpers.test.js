@@ -168,7 +168,7 @@ function createActivityNoTeamId() {
         type: 'message',
         timestamp: Date.now,
         id: 1,
-        text: "testMessage",
+        text: 'testMessage',
         channelId: 'teams',
         from: { id: `User1` },
         channelData: { team: 'myTeams'},
@@ -178,30 +178,30 @@ function createActivityNoTeamId() {
     };
 }
 function createActivityNoChannelData() {
-	return {
-		type: 'message',
-		timestamp: Date.now,
-		id: 1,
-		text: "testMessage",
-		channelId: 'teams',
+    return {
+        type: 'message',
+        timestamp: Date.now,
+        id: 1,
+        text: 'testMessage',
+        channelId: 'teams',
         from: { id: `User1` },
-		conversation: { id: 'conversationId' },
-		recipient: { id: 'Bot1', name: '2' },
-		serviceUrl: 'http://foo.com/api/messages'
-	};
+        conversation: { id: 'conversationId' },
+        recipient: { id: 'Bot1', name: '2' },
+        serviceUrl: 'http://foo.com/api/messages'
+    };
 }
 
 function createActivityTeamId() {
-	return {
-		type: 'message',
-		timestamp: Date.now,
-		id: 1,
-		text: "testMessage",
-		channelId: 'teams',
+    return {
+        type: 'message',
+        timestamp: Date.now,
+        id: 1,
+        text: 'testMessage',
+        channelId: 'teams',
         from: { id: `User1` },
         channelData: { team: { id: 'myId', aadGroupId: 'myaadGroupId'}},
-		conversation: { id: 'conversationId' },
-		recipient: { id: 'Bot1', name: '2' },
-		serviceUrl: 'http://foo.com/api/messages'
-	};
+        conversation: { id: 'conversationId' },
+        recipient: { id: 'Bot1', name: '2' },
+        serviceUrl: 'http://foo.com/api/messages'
+    };
 }

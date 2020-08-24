@@ -4,7 +4,7 @@ const { StringUtils } = require('../');
 const test1 = 'asdlfkjasdflkjasdlfkjasldkfjasdf';
 const test2 = 'alskjdf lksjfd laksjdf lksjdfasdlfkjasdflkjasdlfkjasldkfjasdf';
 
-describe(`StringUtils`, function () {
+describe(`StringUtils`, function() {
     this.timeout(5000);
 
     it('test hash', () => {

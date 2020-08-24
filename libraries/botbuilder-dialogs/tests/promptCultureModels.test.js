@@ -1,5 +1,5 @@
 const assert = require('assert');
-const { PromptCultureModels } = require('../lib')
+const { PromptCultureModels } = require('../lib');
 
 describe('Prompt Culture Models Tests', function() {
     this.timeout(5000);

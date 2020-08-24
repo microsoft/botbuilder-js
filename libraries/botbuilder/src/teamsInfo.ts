@@ -37,15 +37,15 @@ export class TeamsInfo {
 
     public static async sendMessageToTeamsChannel(context: TurnContext, activity: Activity, teamsChannelId: string): Promise<[ConversationReference, string]> {
         if (!context) {
-            throw new Error("TurnContext cannot be null");
+            throw new Error('TurnContext cannot be null');
         }
 
         if (!activity) {
-            throw new Error("Activity cannot be null");
+            throw new Error('Activity cannot be null');
         }
 
         if (!teamsChannelId || !teamsChannelId) {
-            throw new Error("The teamsChannelId cannot be null or empty");
+            throw new Error('The teamsChannelId cannot be null or empty');
         }
 
         const convoParams = {
@@ -88,9 +88,9 @@ export class TeamsInfo {
     public static async getPagedMembers(context: TurnContext, pageSize?: number, continuationToken?: string): Promise<TeamsPagedMembersResult> {
         const teamId = this.getTeamId(context);
         const options: TeamsConnectorModels.ConversationsGetConversationPagedMembersOptionalParams = {
-            "continuationToken" : continuationToken,
-            "pageSize": pageSize
-        }
+            'continuationToken' : continuationToken,
+            'pageSize': pageSize
+        };
         if (teamId) {
             return await this.getPagedTeamMembers(context, teamId, pageSize, continuationToken);
         } else {
@@ -126,9 +126,9 @@ export class TeamsInfo {
         }
 
         const options: TeamsConnectorModels.ConversationsGetConversationPagedMembersOptionalParams = {
-            "continuationToken" : continuationToken,
-            "pageSize": pageSize
-        }
+            'continuationToken' : continuationToken,
+            'pageSize': pageSize
+        };
         return await this.getPagedMembersInternal(this.getConnectorClient(context), t, options);
     }
 
@@ -158,12 +158,12 @@ export class TeamsInfo {
             throw new Error('The getPagedMembers operation needs a valid conversationId.');
         }
 
-        const pagedMembersResult: PagedMembersResult = await connectorClient.conversations.getConversationPagedMembers(conversationId, options)
+        const pagedMembersResult: PagedMembersResult = await connectorClient.conversations.getConversationPagedMembers(conversationId, options);
 
         const teamsPagedMembersResult: TeamsPagedMembersResult = {
-            "continuationToken": pagedMembersResult.continuationToken,
-            "members": pagedMembersResult.members as TeamsChannelAccount[]
-        }
+            'continuationToken': pagedMembersResult.continuationToken,
+            'members': pagedMembersResult.members as TeamsChannelAccount[]
+        };
 
         return teamsPagedMembersResult;
     }

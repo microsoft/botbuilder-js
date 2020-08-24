@@ -9,7 +9,7 @@
 import { Entity } from 'botbuilder-core';
 
 export class TextEntity implements Entity {
-    public type: string = 'text';
+    public type = 'text';
 
     public text: string;
 

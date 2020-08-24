@@ -35,7 +35,7 @@ export class ComparisonEvaluator extends ExpressionEvaluator {
                 const isNumber: boolean = args && args.length > 0 && typeof args[0] === 'number';
                 for (const arg of args) {
                     if (arg && (typeof arg === 'number') !== isNumber) {
-                        error = `Arguments must either all be numbers or strings in ${expression}`;
+                        error = `Arguments must either all be numbers or strings in ${ expression }`;
                         break;
                     }
                 }

@@ -166,14 +166,14 @@ export namespace SkillValidation {
         // const versionClaim = identity.claims.FirstOrDefault(c => c.Type == AuthenticationConstants.VersionClaim);
         if (!versionClaim) {
             // No version claim
-            throw new AuthenticationError(`SkillValidation.validateIdentity(): '${AuthenticationConstants.VersionClaim}' claim is required on skill Tokens.`, StatusCodes.UNAUTHORIZED);
+            throw new AuthenticationError(`SkillValidation.validateIdentity(): '${ AuthenticationConstants.VersionClaim }' claim is required on skill Tokens.`, StatusCodes.UNAUTHORIZED);
         }
 
         // Look for the "aud" claim, but only if issued from the Bot Framework
         const audienceClaim = identity.getClaimValue(AuthenticationConstants.AudienceClaim);
         if (!audienceClaim) {
             // Claim is not present or doesn't have a value. Not Authorized.
-            throw new AuthenticationError(`SkillValidation.validateIdentity(): '${AuthenticationConstants.AudienceClaim}' claim is required on skill Tokens.`, StatusCodes.UNAUTHORIZED);
+            throw new AuthenticationError(`SkillValidation.validateIdentity(): '${ AuthenticationConstants.AudienceClaim }' claim is required on skill Tokens.`, StatusCodes.UNAUTHORIZED);
         }
 
         if (!await credentials.isValidAppId(audienceClaim)) {

@@ -21,7 +21,7 @@ config({ path: ENV_FILE });
 // Create HTTP server.
 const server = restify.createServer();
 server.listen(process.env.port || process.env.PORT || 3978, () => {
-    console.log(`\n${server.name} listening to ${server.url}`);
+    console.log(`\n${ server.name } listening to ${ server.url }`);
     console.log(`\nGet Bot Framework Emulator: https://aka.ms/botframework-emulator`);
     console.log(`\nTo test your bot, see: https://aka.ms/debug-with-emulator`);
 });
@@ -35,7 +35,7 @@ const adapter = new BotFrameworkAdapter({
 
 // Use the TeamsTenantFilteringMiddleware IF there is an AllowedTeamsTenantId
 if(process.env.AllowedTeamsTenantId){
-    let teamsTenantFilteringMiddleware = new TeamsTenantFilteringMiddleware(process.env.AllowedTeamsTenantId);
+    const teamsTenantFilteringMiddleware = new TeamsTenantFilteringMiddleware(process.env.AllowedTeamsTenantId);
     adapter.use(teamsTenantFilteringMiddleware);
 }
 
@@ -45,7 +45,7 @@ adapter.onTurnError = async (context, error) => {
     console.error('[onTurnError]:');
     console.error(error);
     // Send a message to the user
-    await context.sendActivity(`Oops. Something went wrong in the bot!\n  ${error.message}`);
+    await context.sendActivity(`Oops. Something went wrong in the bot!\n  ${ error.message }`);
 };
 
 // Create the main dialog.

@@ -23,7 +23,7 @@ export class TrainUtils {
      * Creates new instance for active learning train utils.
      * @param endpoint The endpoint of the knowledge base to query.
      */
-    constructor (private readonly endpoint: QnAMakerEndpoint) {
+    constructor(private readonly endpoint: QnAMakerEndpoint) {
         this.httpRequestUtils = new HttpRequestUtils();
     }
 
@@ -45,8 +45,8 @@ export class TrainUtils {
     }
 
     private async queryTrain(feedbackRecords: FeedbackRecords) {
-        const url: string = `${ this.endpoint.host }/knowledgebases/${ this.endpoint.knowledgeBaseId }/train`;
-        var payloadBody = JSON.stringify({
+        const url = `${ this.endpoint.host }/knowledgebases/${ this.endpoint.knowledgeBaseId }/train`;
+        const payloadBody = JSON.stringify({
             feedbackRecords: feedbackRecords.feedbackRecords
         });
         

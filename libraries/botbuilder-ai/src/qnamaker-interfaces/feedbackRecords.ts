@@ -8,7 +8,7 @@
 
 import { FeedbackRecord } from '../qnamaker-interfaces/feedbackRecord';
 
- /**
+/**
  * Defines array of active learning feedback records.
  */
 export interface FeedbackRecords {

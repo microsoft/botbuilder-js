@@ -39,7 +39,7 @@ export class NamedPipeServer implements IStreamingTransportServer {
      * @param requestHandler Optional [RequestHandler](xref:botframework-streaming.RequestHandler) to process incoming messages received by this client.
      * @param autoReconnect Optional setting to determine if the client sould attempt to reconnect automatically on disconnection events. Defaults to true.
      */
-    public constructor(baseName: string, requestHandler?: RequestHandler, autoReconnect: boolean = true) {
+    public constructor(baseName: string, requestHandler?: RequestHandler, autoReconnect = true) {
         if (!baseName) {
             throw new TypeError('NamedPipeServer: Missing baseName parameter');
         }
@@ -73,10 +73,10 @@ export class NamedPipeServer implements IStreamingTransportServer {
         }
 
         const incoming = new Promise(resolve => {
-                this._incomingServer =  createNodeServer((socket: INodeSocket): void => {
-                    this._receiver.connect(new NamedPipeTransport(socket));
-                    resolve();
-                });
+            this._incomingServer =  createNodeServer((socket: INodeSocket): void => {
+                this._receiver.connect(new NamedPipeTransport(socket));
+                resolve();
+            });
 
         });
 

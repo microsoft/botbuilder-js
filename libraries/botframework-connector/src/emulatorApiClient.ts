@@ -6,12 +6,12 @@
  * Licensed under the MIT License.
  */
 
-import { AppCredentials } from "./auth/appCredentials";
+import { AppCredentials } from './auth/appCredentials';
 
 export class EmulatorApiClient {
     public static async emulateOAuthCards(credentials: AppCredentials, emulatorUrl: string, emulate: boolean): Promise<boolean> {
-        let token = await credentials.getToken();
-        let requestUrl: string = emulatorUrl + (emulatorUrl.endsWith('/') ? '' : '/') + `api/usertoken/emulateOAuthCards?emulate=${ (!!emulate).toString() }`;
+        const token = await credentials.getToken();
+        const requestUrl: string = emulatorUrl + (emulatorUrl.endsWith('/') ? '' : '/') + `api/usertoken/emulateOAuthCards?emulate=${ (!!emulate).toString() }`;
 
         const res = await fetch(requestUrl, {
             method: 'POST',

@@ -129,7 +129,7 @@ export class BotConfiguration extends BotConfigurationBase {
     private static internalLoad(json: string, secret?: string): BotConfiguration {
         const bot: BotConfiguration = BotConfiguration.fromJSON(JSON.parse(json));
 
-        const hasSecret: boolean = !!bot.padlock;
+        const hasSecret = !!bot.padlock;
         if (hasSecret) {
             bot.decrypt(secret);
         }
@@ -151,7 +151,7 @@ export class BotConfiguration extends BotConfigurationBase {
 
         this.savePrep(secret);
 
-        const hasSecret: boolean = !!this.padlock;
+        const hasSecret = !!this.padlock;
 
         if (hasSecret) {
             this.encrypt(secret);
@@ -176,7 +176,7 @@ export class BotConfiguration extends BotConfigurationBase {
 
         this.savePrep(secret);
 
-        const hasSecret: boolean = !!this.padlock;
+        const hasSecret = !!this.padlock;
 
         if (hasSecret) {
             this.encrypt(secret);

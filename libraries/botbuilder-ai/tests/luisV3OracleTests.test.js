@@ -6,7 +6,7 @@ const nock = require('nock');
 const assert = require('assert');
 
 // This can be any endpoint key for calling LUIS
-const endpointKey = process.env.LUISAPPKEY || "MockedKey";
+const endpointKey = process.env.LUISAPPKEY || 'MockedKey';
 
 // If this is true, then LUIS responses will come from oracle files.
 // If it is false, the LUIS service will be called and if there are changes you will get a new oracle file.
@@ -32,23 +32,23 @@ function TestJson(file, done, includeAllIntents, includeInstance, telemetryClien
     let expectedPath = ExpectedPath(file);
     const oracle = GetExpected(expectedPath);
     const oldResponse = oracle[version];
-    const newPath = expectedPath + ".new";
+    const newPath = expectedPath + '.new';
     const query = oracle['text'];
     const context = new TestContext({ text: query });
     const response = oracle[version];
     const oracleOptions = response['options'];
     const options = oracleOptions ? oracleOptions : {apiVersion: 'v3'};
-    const luisRecognizer = GetLuisRecognizer({ applicationId: luisAppId, endpointKey: endpointKey }, options, true)
+    const luisRecognizer = GetLuisRecognizer({ applicationId: luisAppId, endpointKey: endpointKey }, options, true);
 
     luisRecognizer.recognize(context, telemetryProperties, telemetryMetrics).then(res => {
         res.v3 = {
             response: res.luisResult
-        }
+        };
         res.v3.options = options;
         delete res.luisResult;
         if (!WithinDelta(oracle, res, 0.1, false) && res.v3 !== oldResponse) {
             fs.outputJSONSync(newPath, res, { spaces: 2 });
-            assert(false, "\nReturned JSON\n  " + newPath + "\n!= expected JSON\n  " + expectedPath);
+            assert(false, '\nReturned JSON\n  ' + newPath + '\n!= expected JSON\n  ' + expectedPath);
         }
         else if (fs.existsSync(newPath)) {
             fs.unlinkSync(newPath);
@@ -60,27 +60,27 @@ function TestJson(file, done, includeAllIntents, includeInstance, telemetryClien
 
 function GetExpected(oracle) {
     let expected = fs.readJSONSync(oracle);
-    let uri = `/luis/prediction/v3.0/apps/${luisAppId}` ;
+    let uri = `/luis/prediction/v3.0/apps/${ luisAppId }` ;
 
     if (expected.v3.options.version) {
-        uri += `/versions/${expected.v3.options.version}/predict`
+        uri += `/versions/${ expected.v3.options.version }/predict`;
     } else {
-        uri += `/slots/${expected.v3.options.slot}/predict`
+        uri += `/slots/${ expected.v3.options.slot }/predict`;
     }
     
-    const params = `?verbose=${expected.v3.options.includeInstanceData}&log=${expected.v3.options.log}&show-all-intents=${expected.v3.options.includeAllIntents}`;
+    const params = `?verbose=${ expected.v3.options.includeInstanceData }&log=${ expected.v3.options.log }&show-all-intents=${ expected.v3.options.includeAllIntents }`;
     var responseBody = expected.v3.response;
 
     if (mockLuis) {
         nock('https://westus.api.cognitive.microsoft.com')
-        .post(uri + params)
-        .reply(200, responseBody);
+            .post(uri + params)
+            .reply(200, responseBody);
     }
     return expected;
 }
 
 function ExpectedPath(file) {
-    return __dirname + "/TestData/LuisRecognizerV3/" + file;
+    return __dirname + '/TestData/LuisRecognizerV3/' + file;
 }
 
 function GetLuisRecognizer(application, options, includeApiResults ) {
@@ -88,7 +88,7 @@ function GetLuisRecognizer(application, options, includeApiResults ) {
         apiVersion: 'v3',
         includeAPIResults: includeApiResults,
         ...options
-    }
+    };
 
     return new LuisRecognizer(application, optsV3);
 }
@@ -102,49 +102,49 @@ function throttle(callback) {
     }
 }
 
-describe('LuisRecognizer V3', function () {
+describe('LuisRecognizer V3', function() {
     this.timeout(15000);
 
-    if (!mockLuis && endpointKey === "MockedKey") {
+    if (!mockLuis && endpointKey === 'MockedKey') {
         console.warn('WARNING: skipping LuisRecognizer test suite because the LUISAPPKEY environment variable is not defined');
         return;
     }
 
-    it('Composite1', done => TestJson("Composite1.json", res => throttle(done)));
+    it('Composite1', done => TestJson('Composite1.json', res => throttle(done)));
 
-    it('Composite2', done => TestJson("Composite2.json", res => throttle(done)));
+    it('Composite2', done => TestJson('Composite2.json', res => throttle(done)));
 
-    it('Composite 3', done => TestJson("Composite3.json", res => throttle(done)));
+    it('Composite 3', done => TestJson('Composite3.json', res => throttle(done)));
 
-    it('DynamicLists', done => TestJson("DynamicListsAndList.json", res => throttle(done)));
+    it('DynamicLists', done => TestJson('DynamicListsAndList.json', res => throttle(done)));
 
-    it('ExternalEntitiesAndBuiltin', done => TestJson("ExternalEntitiesAndBuiltin.json", res => throttle(done)));
+    it('ExternalEntitiesAndBuiltin', done => TestJson('ExternalEntitiesAndBuiltin.json', res => throttle(done)));
 
-    it('ExternalEntitiesAndComposite', done => TestJson("ExternalEntitiesAndComposite.json", res => throttle(done)));
+    it('ExternalEntitiesAndComposite', done => TestJson('ExternalEntitiesAndComposite.json', res => throttle(done)));
 
-    it('ExternalEntitiesAndList', done => TestJson("ExternalEntitiesAndList.json", res => throttle(done)));
+    it('ExternalEntitiesAndList', done => TestJson('ExternalEntitiesAndList.json', res => throttle(done)));
 
-    it('ExternalEntitiesAndRegex', done => TestJson("ExternalEntitiesAndRegex.json", res => throttle(done)));
+    it('ExternalEntitiesAndRegex', done => TestJson('ExternalEntitiesAndRegex.json', res => throttle(done)));
 
-    it('ExternalEntitiesAndSimple', done => TestJson("ExternalEntitiesAndSimple.json", res => throttle(done)));
+    it('ExternalEntitiesAndSimple', done => TestJson('ExternalEntitiesAndSimple.json', res => throttle(done)));
 
-    it('ExternalEntitiesAndSimpleOverride', done => TestJson("ExternalEntitiesAndSimpleOverride.json", res => throttle(done)));
+    it('ExternalEntitiesAndSimpleOverride', done => TestJson('ExternalEntitiesAndSimpleOverride.json', res => throttle(done)));
 
-    it('GeoPeopleOrdinal', done => TestJson("GeoPeopleOrdinal.json", res => throttle(done)));
+    it('GeoPeopleOrdinal', done => TestJson('GeoPeopleOrdinal.json', res => throttle(done)));
 
-    it('Minimal', done => TestJson("Minimal.json", res => throttle(done)));
+    it('Minimal', done => TestJson('Minimal.json', res => throttle(done)));
 
-    it('Prebuilt', done => TestJson("Prebuilt.json", res => throttle(done)));
+    it('Prebuilt', done => TestJson('Prebuilt.json', res => throttle(done)));
 
-    it('Patterns', done => TestJson("Patterns.json", res => throttle(done)));
+    it('Patterns', done => TestJson('Patterns.json', res => throttle(done)));
 
-    it('roles', done => TestJson("roles.json", res => throttle(done)));
+    it('roles', done => TestJson('roles.json', res => throttle(done)));
 
-    it('NoEntitiesInstanceTrue', done => TestJson("NoEntitiesInstanceTrue.json", res => throttle(done)));
+    it('NoEntitiesInstanceTrue', done => TestJson('NoEntitiesInstanceTrue.json', res => throttle(done)));
 
-    it('DateTimeReference', done => TestJson("DateTimeReference.json", res => throttle(done)));
+    it('DateTimeReference', done => TestJson('DateTimeReference.json', res => throttle(done)));
 
-})
+});
 
 
 function WithinDelta(token1, token2, delta, compare) {
@@ -158,19 +158,19 @@ function WithinDelta(token1, token2, delta, compare) {
             within = WithinDelta(token1[i], token2[i], delta, compare);
         }
     }
-    else if (typeof token1 === "object" && typeof token2 === "object") {
+    else if (typeof token1 === 'object' && typeof token2 === 'object') {
         Object.keys(token2).forEach(k => token2[k] === undefined && delete token2[k]);
         within = Object.keys(token1).length === Object.keys(token2).length;
-        Object.keys(token1).forEach(function (key) {
+        Object.keys(token1).forEach(function(key) {
             if (!within) return;
-            within = WithinDelta(token1[key], token2[key], delta, compare || key === "score" || key === "intents");
+            within = WithinDelta(token1[key], token2[key], delta, compare || key === 'score' || key === 'intents');
         });
     }
     else if (token1 !== token2) {
         if (token1 !== undefined && token2 != undefined && token1.Type == token2.Type) {
             within = false;
             if (compare &&
-                typeof token1 === "number" && typeof token2 === "number") {
+                typeof token1 === 'number' && typeof token2 === 'number') {
                 within = Math.abs(token1 - token2) < delta;
             }
         }

@@ -3,7 +3,7 @@ const { BrowserLocalStorage, BrowserSessionStorage } = require('../');
 
 
 function testStorage(storage) {
-    it('read of unknown key', function () {
+    it('read of unknown key', function() {
         return storage.read(['unk'])
             .catch((reson) => assert(false, 'should not throw on read of unknown key'))
             .then((result) => {
@@ -12,7 +12,7 @@ function testStorage(storage) {
             });
     });
 
-    it('key creation', function () {
+    it('key creation', function() {
         return storage.write({ keyCreate: { count: 1 } })
             .then(() => storage.read(['keyCreate']))
             .then((result) => {
@@ -23,7 +23,7 @@ function testStorage(storage) {
             });
     });
 
-    it('key update', function () {
+    it('key update', function() {
         return storage.write({ keyUpdate: { count: 1 } })
             .then(() => storage.read(['keyUpdate']))
             .then((result) => {
@@ -34,10 +34,10 @@ function testStorage(storage) {
                         assert(updated.keyUpdate.count == 2, 'object should be updated');
                         assert(updated.keyUpdate.eTag != result.keyUpdate.eTag, 'Etag should be updated on write');
                     });
-            })
+            });
     });
 
-    it('invalid eTag', function () {
+    it('invalid eTag', function() {
         return storage.write({ keyUpdate2: { count: 1 } })
             .then(() => storage.read(['keyUpdate2']))
             .then((result) => {
@@ -51,7 +51,7 @@ function testStorage(storage) {
             });
     });
 
-    it('wildcard eTag', function () {
+    it('wildcard eTag', function() {
         return storage.write({ keyUpdate3: { count: 1 } })
             .then(() => storage.read(['keyUpdate3']))
             .then((result) => {
@@ -65,12 +65,12 @@ function testStorage(storage) {
             });
     });
 
-    it('delete unknown', function () {
+    it('delete unknown', function() {
         return storage.delete(['unknown'])
             .catch((reason) => assert(false, 'should not fail delete of unknown key'));
     });
 
-    it('delete known', function () {
+    it('delete known', function() {
         return storage.write({ delete1: { count: 1 } })
             .then(() => storage.delete(['delete1']))
             .then(() => storage.read(['delete1']))
@@ -81,7 +81,7 @@ function testStorage(storage) {
             });
     });
 
-    it('batch operations', function () {
+    it('batch operations', function() {
         return storage.write({
             batch1: { count: 10 },
             batch2: { count: 20 },
@@ -108,7 +108,7 @@ function testStorage(storage) {
             });
     });
 
-    it('crazy keys work', function () {
+    it('crazy keys work', function() {
         let obj = { };
         let crazyKey = '!@#$%^&*()_+??><":QASD~`';
         obj[crazyKey] = { count: 1};
@@ -125,11 +125,11 @@ function testStorage(storage) {
 }
 
 global.localStorage = {};
-describe('BrowserLocalStorage', function () {
+describe('BrowserLocalStorage', function() {
     testStorage(new BrowserLocalStorage());
 });
 
 global.sessionStorage = {};
-describe('BrowserSessionStorage', function () {
+describe('BrowserSessionStorage', function() {
     testStorage(new BrowserSessionStorage());
 });

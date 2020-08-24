@@ -8,7 +8,7 @@
 
 export type ValidBuffer = string | Uint8Array | INodeBuffer;
 
-export type BufferEncoding = "ascii" | "utf8" | "utf-8" | "utf16le" | "ucs2" | "ucs-2" | "base64" | "latin1" | "binary" | "hex";
+export type BufferEncoding = 'ascii' | 'utf8' | 'utf-8' | 'utf16le' | 'ucs2' | 'ucs-2' | 'base64' | 'latin1' | 'binary' | 'hex';
 
 /**
  * Represents a Buffer from the `net` module in Node.js.

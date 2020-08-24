@@ -74,7 +74,7 @@ export class TemplatesParser {
      * @param expressionParser Expression parser for evaluating expressions.
      * @returns Entity.
      */
-    public static parseText(content: string, id: string = '', importResolver?: ImportResolverDelegate, expressionParser?: ExpressionParser): Templates {
+    public static parseText(content: string, id = '', importResolver?: ImportResolverDelegate, expressionParser?: ExpressionParser): Templates {
         return TemplatesParser.innerParseText(content, id, importResolver, expressionParser);
     }
 
@@ -102,7 +102,7 @@ export class TemplatesParser {
                 .concat(originalTemplates.references)
                 .concat([originalTemplates]);
 
-            var semanticErrors = new StaticChecker(newTemplates).check();
+            const semanticErrors = new StaticChecker(newTemplates).check();
             newTemplates.diagnostics.push(...semanticErrors);
         }
         catch (err) {
@@ -140,7 +140,7 @@ export class TemplatesParser {
      * @returns Entity.
      */
     public static innerParseText(content: string,
-        id: string = '',
+        id = '',
         importResolver?: ImportResolverDelegate,
         expressionParser?: ExpressionParser,
         cachedTemplates?: Map<string, Templates>): Templates {
@@ -198,7 +198,7 @@ export class TemplatesParser {
     }
 
     private static getReferences(file: Templates, cachedTemplates?: Map<string, Templates>): Templates[] {
-        var resourcesFound = new Set<Templates>();
+        const resourcesFound = new Set<Templates>();
         this.resolveImportResources(file, resourcesFound, cachedTemplates || new Map<string, Templates>());
 
         resourcesFound.delete(file);
@@ -255,8 +255,8 @@ export class TemplatesTransformer extends AbstractParseTreeVisitor<any> implemen
         if (parseTree) {
             this.visit(parseTree);
         }
-        var templateCount = this.templates.toArray().length;
-        var currentIndex = 0;
+        const templateCount = this.templates.toArray().length;
+        let currentIndex = 0;
         for (const template of this.templates) {
             currentIndex++;
             if (currentIndex < templateCount) {
@@ -281,7 +281,7 @@ export class TemplatesTransformer extends AbstractParseTreeVisitor<any> implemen
 
     public visitImportDefinition(context: lp.ImportDefinitionContext): any {
         const importStr = context.IMPORT().text;
-        var groups = importStr.match(TemplatesParser.importRegex);
+        const groups = importStr.match(TemplatesParser.importRegex);
         if (groups && groups.length === 3) {
             const description = groups[1].trim();
             const id = groups[2].trim();
@@ -296,7 +296,7 @@ export class TemplatesTransformer extends AbstractParseTreeVisitor<any> implemen
         const optionStr = context.OPTION().text;
         let result = '';
         if (optionStr != undefined && optionStr.trim() !== '') {
-            var groups = optionStr.match(TemplatesParser.optionRegex);
+            const groups = optionStr.match(TemplatesParser.optionRegex);
             if (groups && groups.length === 2) {
                 result = groups[1].trim();
             }
@@ -320,7 +320,7 @@ export class TemplatesTransformer extends AbstractParseTreeVisitor<any> implemen
             const diagnostic = this.buildTemplatesDiagnostic(TemplateErrors.duplicatedTemplateInSameTemplate(templateName), context.templateNameLine());
             this.templates.diagnostics.push(diagnostic);
         } else {
-            let templateBody = context.templateBody().text;
+            const templateBody = context.templateBody().text;
 
             const sourceRange = new SourceRange(context, this.templates.id);
             const template = new Template(templateName, parameters, templateBody, sourceRange);
@@ -335,7 +335,7 @@ export class TemplatesTransformer extends AbstractParseTreeVisitor<any> implemen
 
     private checkTemplateName(templateName: string, context: ParserRuleContext): void {
         const functionNameSplitDot = templateName.split('.');
-        for(let id of functionNameSplitDot) {
+        for(const id of functionNameSplitDot) {
             if (!this.templateNamePartRegex.test(id)) {
                 const diagnostic = this.buildTemplatesDiagnostic(TemplateErrors.invalidTemplateName(templateName), context);
                 this.templates.diagnostics.push(diagnostic);

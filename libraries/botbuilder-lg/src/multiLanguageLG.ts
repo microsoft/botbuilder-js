@@ -97,7 +97,7 @@ export class MultiLanguageLG {
             }
         }
 
-        let defaultLanguageArray = defaultLanguage === undefined ? [''] : [defaultLanguage];
+        const defaultLanguageArray = defaultLanguage === undefined ? [''] : [defaultLanguage];
         this.languagePolicy = this.getDefaultPolicy(defaultLanguageArray);
     }
 
@@ -120,7 +120,7 @@ export class MultiLanguageLG {
             return this.lgPerLocale.get(locale).evaluate(template, data);
         }
 
-        let fallbackLocales: string[] = [];
+        const fallbackLocales: string[] = [];
 
         if (this.languagePolicy.has(locale)) {
             fallbackLocales.push(...this.languagePolicy.get(locale));
@@ -150,7 +150,7 @@ export class MultiLanguageLG {
             defaultLanguages = [''];
         }
 
-        var result = new Map<string, string[]>();
+        const result = new Map<string, string[]>();
         for (const locale of this.locales) {
             let lang = locale.toLowerCase();
             const fallback: string[] = [];

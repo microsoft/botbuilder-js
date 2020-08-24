@@ -8,10 +8,10 @@ const invalidMessage = { text: `purple`, type: 'message' };
 
 const stringChoices = ['red', 'green', 'blue'];
 
-describe('ChoicePrompt', function () {
+describe('ChoicePrompt', function() {
     this.timeout(5000);
 
-    it('should call ChoicePrompt using dc.prompt().', async function () {
+    it('should call ChoicePrompt using dc.prompt().', async function() {
         // Initialize TestAdapter.
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);
@@ -43,7 +43,7 @@ describe('ChoicePrompt', function () {
             .assertReply('red');
     });
 
-    it('should send a prompt and choices if they are passed in via PromptOptions.', async function () {
+    it('should send a prompt and choices if they are passed in via PromptOptions.', async function() {
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);
 
@@ -71,7 +71,7 @@ describe('ChoicePrompt', function () {
             .assertReply('red');
     });
 
-    it('should call ChoicePrompt with custom validator.', async function () {
+    it('should call ChoicePrompt with custom validator.', async function() {
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);
 
@@ -103,14 +103,14 @@ describe('ChoicePrompt', function () {
             .assertReply('red');
     });
 
-    it('should convert incomplete Choices with `action` when using ListStyle.suggestedAction styling.', async function () {
+    it('should convert incomplete Choices with `action` when using ListStyle.suggestedAction styling.', async function() {
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);
 
             const results = await dc.continueDialog();
             if (results.status === DialogTurnStatus.empty) {
                 await dc.prompt('prompt', 'Please choose a color.', stringChoices.map(choice => {
-                    return { value: choice, action: {} }
+                    return { value: choice, action: {} };
                 }));
             } else if (results.status === DialogTurnStatus.complete) {
                 const selectedChoice = results.result;
@@ -137,7 +137,7 @@ describe('ChoicePrompt', function () {
             .assertReply('red');
     });
 
-    it('should appropriately apply ListStyle.none when set via PromptOptions', async function () {
+    it('should appropriately apply ListStyle.none when set via PromptOptions', async function() {
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);
 
@@ -170,7 +170,7 @@ describe('ChoicePrompt', function () {
             .assertReply('red');
     });
 
-    it('should send custom retryPrompt.', async function () {
+    it('should send custom retryPrompt.', async function() {
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);
 
@@ -199,7 +199,7 @@ describe('ChoicePrompt', function () {
             .assertReply('red');
     });
 
-    it('should send ignore retryPrompt if validator replies.', async function () {
+    it('should send ignore retryPrompt if validator replies.', async function() {
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);
 
@@ -234,7 +234,7 @@ describe('ChoicePrompt', function () {
             .assertReply('red');
     });
 
-    it('should use defaultLocale when rendering choices', async function () {
+    it('should use defaultLocale when rendering choices', async function() {
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);
 
@@ -270,7 +270,7 @@ describe('ChoicePrompt', function () {
             .assertReply('red');
     });
 
-    it('should use context.activity.locale when rendering choices', async function () {
+    it('should use context.activity.locale when rendering choices', async function() {
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);
 
@@ -302,7 +302,7 @@ describe('ChoicePrompt', function () {
             .assertReply('red');
     });
 
-    it('should use context.activity.locale over defaultLocale when rendering choices', async function () {
+    it('should use context.activity.locale over defaultLocale when rendering choices', async function() {
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);
 
@@ -334,7 +334,7 @@ describe('ChoicePrompt', function () {
             .assertReply('red');
     });
 
-    it('should recognize locale variations of correct locales', async function () {
+    it('should recognize locale variations of correct locales', async function() {
         const locales = [
             'es-es',
             'nl-nl',
@@ -420,7 +420,7 @@ describe('ChoicePrompt', function () {
         }));      
     });
 
-    it('should default to english locale', async function () {
+    it('should default to english locale', async function() {
         const locales = [
             null,
             '',
@@ -519,7 +519,7 @@ describe('ChoicePrompt', function () {
             });
     });
 
-    it('should not render choices and not blow up if choices aren\'t passed in', async function () {
+    it('should not render choices and not blow up if choices aren\'t passed in', async function() {
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);
 
@@ -573,7 +573,7 @@ describe('ChoicePrompt', function () {
             .assertReply('red');
     });
 
-    it('should send a prompt and choices if they are passed in via third argument in dc.prompt().', async function () {
+    it('should send a prompt and choices if they are passed in via third argument in dc.prompt().', async function() {
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);
 
@@ -601,7 +601,7 @@ describe('ChoicePrompt', function () {
             .assertReply('red');
     });
 
-    it('should not recognize if choices are not passed in.', async function () {
+    it('should not recognize if choices are not passed in.', async function() {
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);
 
@@ -629,7 +629,7 @@ describe('ChoicePrompt', function () {
             .assertReply('Please choose a color.');
     });
 
-    it('should use a Partial Activity when calculating message text during appendChoices.', async function () {
+    it('should use a Partial Activity when calculating message text during appendChoices.', async function() {
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);
 
@@ -661,7 +661,7 @@ describe('ChoicePrompt', function () {
             .assertReply('red');
     });
 
-    it('should create prompt with inline choices when specified.', async function () {
+    it('should create prompt with inline choices when specified.', async function() {
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);
 
@@ -693,7 +693,7 @@ describe('ChoicePrompt', function () {
             .assertReply('red');
     });
 
-    it('should create prompt with list choices when specified.', async function () {
+    it('should create prompt with list choices when specified.', async function() {
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);
 
@@ -725,7 +725,7 @@ describe('ChoicePrompt', function () {
             .assertReply('red');
     });
 
-    it('should recognize valid number choice.', async function () {
+    it('should recognize valid number choice.', async function() {
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);
 
@@ -756,7 +756,7 @@ describe('ChoicePrompt', function () {
             .assertReply('red');
     });
 
-    it('should not recognize, then re-prompt without error for falsy input.', async function () {
+    it('should not recognize, then re-prompt without error for falsy input.', async function() {
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);
 
@@ -791,7 +791,7 @@ describe('ChoicePrompt', function () {
             .assertReply('red');
     });
 
-    it('should display choices on a hero card', async function () {
+    it('should display choices on a hero card', async function() {
         const sizeChoices = ['large', 'medium', 'small'];
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);
@@ -827,7 +827,7 @@ describe('ChoicePrompt', function () {
             .assertReply('large');
     });
     
-    it('should display choices on a hero card with an additional attachment', async function (done) {
+    it('should display choices on a hero card with an additional attachment', async function(done) {
         const sizeChoices = ['large', 'medium', 'small'];
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);
@@ -852,10 +852,10 @@ describe('ChoicePrompt', function () {
         choicePrompt.style = ListStyle.heroCard;
 
         const card = CardFactory.adaptiveCard({
-            "type": "AdaptiveCard",
-            "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
-            "version": "1.2",
-            "body": []
+            'type': 'AdaptiveCard',
+            '$schema': 'http://adaptivecards.io/schemas/adaptive-card.json',
+            'version': '1.2',
+            'body': []
         });
 
         const activity ={ attachments: [card], type: ActivityTypes.Message };

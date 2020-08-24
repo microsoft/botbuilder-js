@@ -153,7 +153,7 @@ export class ExpressionParser implements ExpressionParserInterface {
         }
 
         public visitStringInterpolationAtom(context: ep.StringInterpolationAtomContext): Expression {
-            let children: Expression[] = [];
+            const children: Expression[] = [];
 
             for (const node  of context.stringInterpolation().children) {
                 if (node instanceof TerminalNode){

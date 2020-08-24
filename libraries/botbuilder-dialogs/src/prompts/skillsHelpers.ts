@@ -97,5 +97,5 @@ export function getAppIdFromClaims(claims: { [key: string]: any }[]): string {
         appId = azpClaim && azpClaim.value;
     }
 
-        return appId;
+    return appId;
 }

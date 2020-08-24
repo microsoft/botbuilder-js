@@ -48,7 +48,7 @@ export class PayloadSender {
      * @param sentCalback The function to execute when the send has completed.
      */
     public sendPayload(header: IHeader, payload?: SubscribableStream, sentCallback?: () => Promise<void>): void {
-        var packet: ISendPacket = {header, payload, sentCallback};
+        const packet: ISendPacket = {header, payload, sentCallback};
         this.writePacket(packet);
     }
 
@@ -75,14 +75,14 @@ export class PayloadSender {
                 let leftOver = packet.header.payloadLength;
 
                 while (leftOver > 0) {                   
-                    let count = leftOver <= PayloadConstants.MaxPayloadLength ? leftOver : PayloadConstants.MaxPayloadLength;
-                    let chunk = packet.payload.read(count);
+                    const count = leftOver <= PayloadConstants.MaxPayloadLength ? leftOver : PayloadConstants.MaxPayloadLength;
+                    const chunk = packet.payload.read(count);
 
-                    var header = packet.header;
+                    const header = packet.header;
                     header.payloadLength = count;
                     header.end = leftOver <= PayloadConstants.MaxPayloadLength;
 
-                    let sendHeaderBuffer: Buffer = Buffer.alloc(PayloadConstants.MaxHeaderLength);
+                    const sendHeaderBuffer: Buffer = Buffer.alloc(PayloadConstants.MaxHeaderLength);
 
                     HeaderSerializer.serialize(header, sendHeaderBuffer);
 

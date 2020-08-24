@@ -96,7 +96,7 @@ export class ActivityFactory {
     }
 
     private static buildActivity(messageValue: any): Partial<Activity> {
-        let activity: Partial<Activity> = { type: ActivityTypes.Message };
+        const activity: Partial<Activity> = { type: ActivityTypes.Message };
         for (const key of Object.keys(messageValue)) {
             const property: string = key.trim();
             if (property === this.lgType) {

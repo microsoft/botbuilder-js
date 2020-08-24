@@ -3,21 +3,21 @@ const { CosmosDbKeyEscape } = require('../');
 
 describe('CosmosDbKeyEscape', function() {
     it('should fail with null key', function() {
-        assert.throws(() => new CosmosDbKeyEscape(), Error, 'constructor should have thrown error about missing key parameter.')
+        assert.throws(() => new CosmosDbKeyEscape(), Error, 'constructor should have thrown error about missing key parameter.');
     });
 
     it('should fail with empty key', function() {
-        assert.throws(() => new CosmosDbKeyEscape(''), Error, 'constructor should have thrown error about missing key parameter.')
+        assert.throws(() => new CosmosDbKeyEscape(''), Error, 'constructor should have thrown error about missing key parameter.');
     });
 
     it('should fail with white spaces key', function() {
-        assert.throws(() => new CosmosDbKeyEscape('   '), Error, 'constructor should have thrown error about missing key parameter.')
+        assert.throws(() => new CosmosDbKeyEscape('   '), Error, 'constructor should have thrown error about missing key parameter.');
     });
 
     it('should not change a valid key', function() {
         let validKey = 'Abc12345';
         let sanitizedKey = CosmosDbKeyEscape.escapeKey(validKey);
-        assert.equal(validKey, sanitizedKey, `${validKey} should be equal to ${sanitizedKey}`)
+        assert.equal(validKey, sanitizedKey, `${ validKey } should be equal to ${ sanitizedKey }`);
     });
 
     it('should escape illegal characters - case with \'?\'', function() {
@@ -36,13 +36,13 @@ describe('CosmosDbKeyEscape', function() {
         // Ascii code of "\" is "5c"
         let sanitizedKey = CosmosDbKeyEscape.escapeKey('\\test\\');
         assert.equal(sanitizedKey, '*5ctest*5c');
-    })
+    });
 
     it('should escape illegal characters - case with \'#\'', function() {
         // Ascii code of "#" is "23"
         let sanitizedKey = CosmosDbKeyEscape.escapeKey('#test#');
         assert.equal(sanitizedKey, '*23test*23');
-    })
+    });
 
     it('should escape illegal characters - case with \'*\'', function() {        
         // Ascii code of "*" is "2a".
@@ -63,7 +63,7 @@ describe('CosmosDbKeyEscape', function() {
         let escaped1 = CosmosDbKeyEscape.escapeKey(validKey1);
         let escaped2 = CosmosDbKeyEscape.escapeKey(validKey2);
         
-        assert.notEqual(escaped1, escaped2, `${escaped1} should be different that ${escaped2}`)
+        assert.notEqual(escaped1, escaped2, `${ escaped1 } should be different that ${ escaped2 }`);
     });
 
     it ('should truncate longer keys', function() {
@@ -75,7 +75,7 @@ describe('CosmosDbKeyEscape', function() {
         
         assert(fixed.length <= 255, 'long key was not properly truncated');
 
-    })
+    });
 
     it ('should not truncate short key', function() {
 
@@ -89,8 +89,8 @@ describe('CosmosDbKeyEscape', function() {
     it ('should create sufficiently different truncated keys of similar origin', function() {
 
         // create 2 very similar extra long key where the difference will definitely be trimmed off by truncate function
-        let longKey = new Array(300).join('x') + "1";
-        let longKey2 = new Array(300).join('x') + "2";
+        let longKey = new Array(300).join('x') + '1';
+        let longKey2 = new Array(300).join('x') + '2';
         
         let fixed = CosmosDbKeyEscape.escapeKey(longKey);
         let fixed2 = CosmosDbKeyEscape.escapeKey(longKey2);

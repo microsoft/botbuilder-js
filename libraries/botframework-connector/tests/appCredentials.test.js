@@ -45,17 +45,17 @@ describe('AppCredentials', () => {
 
         it('should set update the tokenCacheKey when oAuthScope is set after construction', () => {
             const tokenGenerator = new MicrosoftAppCredentials(APP_ID);
-            strictEqual(tokenGenerator.tokenCacheKey, `${APP_ID}${AuthenticationConstants.ToBotFromChannelTokenIssuer}-cache`);
+            strictEqual(tokenGenerator.tokenCacheKey, `${ APP_ID }${ AuthenticationConstants.ToBotFromChannelTokenIssuer }-cache`);
     
             const oAuthScope = 'oAuthScope';
             tokenGenerator.oAuthScope = oAuthScope;
-            strictEqual(tokenGenerator.tokenCacheKey, `${APP_ID}${oAuthScope}-cache`);
+            strictEqual(tokenGenerator.tokenCacheKey, `${ APP_ID }${ oAuthScope }-cache`);
 
             /* CertificateAppCredentials */
             const certCreds = new CertificateAppCredentials(APP_ID, CERT_THUMBPRINT, CERT_KEY);
-            strictEqual(certCreds.tokenCacheKey, `${APP_ID}${AuthenticationConstants.ToBotFromChannelTokenIssuer}-cache`);
+            strictEqual(certCreds.tokenCacheKey, `${ APP_ID }${ AuthenticationConstants.ToBotFromChannelTokenIssuer }-cache`);
             certCreds.oAuthScope = oAuthScope;
-            strictEqual(certCreds.tokenCacheKey, `${APP_ID}${oAuthScope}-cache`);
+            strictEqual(certCreds.tokenCacheKey, `${ APP_ID }${ oAuthScope }-cache`);
         });
 
         it('should fail to get a token with an appId and no appPassword', async () => {

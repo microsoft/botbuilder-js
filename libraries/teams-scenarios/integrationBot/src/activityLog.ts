@@ -7,7 +7,7 @@ import {
 
 import{
     Activity
-} from 'botframework-schema'
+} from 'botframework-schema';
 
 
 export class ActivityLog  {
@@ -20,15 +20,15 @@ export class ActivityLog  {
     public async append(activityId: string, activity: Partial<Activity>): Promise<void> {
         if (activityId == null)
         {
-            throw new TypeError("activityId is required for ActivityLog.append");
+            throw new TypeError('activityId is required for ActivityLog.append');
         }
 
         if (activity == null)
         {
-            throw new TypeError("activity is required for ActivityLog.append");
+            throw new TypeError('activity is required for ActivityLog.append');
         }
 
-        let obj = { };
+        const obj = { };
         obj[activityId] = { activity };
 
         await this._storage.write( obj );
@@ -40,10 +40,10 @@ export class ActivityLog  {
     {
         if (activityId == null)
         {
-            throw new TypeError("activityId is required for ActivityLog.find");
+            throw new TypeError('activityId is required for ActivityLog.find');
         }
 
-        var items = await this._storage.read( [ activityId ] );
+        const items = await this._storage.read( [ activityId ] );
         return (items && items[activityId]) ? items[activityId].activity : null;
     }
 }

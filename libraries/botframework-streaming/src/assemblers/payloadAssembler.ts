@@ -83,12 +83,12 @@ export class PayloadAssembler {
     }
 
     private async process(stream: SubscribableStream): Promise<void> {
-        let streamData: Buffer = stream.read(stream.length) as Buffer;
+        const streamData: Buffer = stream.read(stream.length) as Buffer;
         if (!streamData) {
             return;
         }
 
-        let streamDataAsString = streamData.toString(this._utf);
+        const streamDataAsString = streamData.toString(this._utf);
 
         if(this.payloadType === PayloadTypes.request){
             await this.processRequest(streamDataAsString);
@@ -99,16 +99,16 @@ export class PayloadAssembler {
 
     private async processResponse(streamDataAsString: string): Promise<void> {
 
-        let responsePayload: IResponsePayload = this.payloadFromJson(this.stripBOM(streamDataAsString));
-        let receiveResponse: IReceiveResponse = { streams: [], statusCode: responsePayload.statusCode };
+        const responsePayload: IResponsePayload = this.payloadFromJson(this.stripBOM(streamDataAsString));
+        const receiveResponse: IReceiveResponse = { streams: [], statusCode: responsePayload.statusCode };
 
         await this.processStreams(responsePayload, receiveResponse);
     }
 
     private async processRequest(streamDataAsString: string): Promise<void> {
 
-        let requestPayload: IRequestPayload = this.payloadFromJson(streamDataAsString);
-        let receiveRequest: IReceiveRequest = { streams: [], path: requestPayload.path, verb: requestPayload.verb };
+        const requestPayload: IRequestPayload = this.payloadFromJson(streamDataAsString);
+        const receiveRequest: IReceiveRequest = { streams: [], path: requestPayload.path, verb: requestPayload.verb };
 
         await this.processStreams(requestPayload, receiveRequest);
     }
@@ -116,7 +116,7 @@ export class PayloadAssembler {
     private async processStreams(responsePayload: any, receiveResponse: any) {
         if (responsePayload.streams) {
             responsePayload.streams.forEach((responseStream): void => {
-                let contentAssembler: PayloadAssembler = this._streamManager.getPayloadAssembler(responseStream.id);
+                const contentAssembler: PayloadAssembler = this._streamManager.getPayloadAssembler(responseStream.id);
                 contentAssembler.payloadType = responseStream.contentType;
                 contentAssembler.contentLength = responseStream.length;
                 receiveResponse.streams.push(new ContentStream(responseStream.id, contentAssembler));

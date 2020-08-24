@@ -24,12 +24,12 @@ export interface TokenPollingSettings {
 /**
  * TurnState key for the OAuth login timeout
  */
-export const OAuthLoginTimeoutKey: string = 'loginTimeout';
+export const OAuthLoginTimeoutKey = 'loginTimeout';
 
 /**
  * Name of the token polling settings key.
  */
-export const TokenPollingSettingsKey: string = 'tokenPollingSettings';
+export const TokenPollingSettingsKey = 'tokenPollingSettings';
  
 /**
  *  Default amount of time an OAuthCard will remain active (clickable and actively waiting for a token).
@@ -37,4 +37,4 @@ export const TokenPollingSettingsKey: string = 'tokenPollingSettings';
  *  (1) the OAuthCard will not allow the user to click on it.
  *  (2) any polling triggered by the OAuthCard will stop.
  */
- export const OAuthLoginTimeoutMsValue: number = 900000;
+export const OAuthLoginTimeoutMsValue = 900000;

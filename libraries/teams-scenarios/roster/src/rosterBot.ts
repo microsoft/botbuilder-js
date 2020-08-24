@@ -19,23 +19,23 @@ export class RosterBot extends TeamsActivityHandler {
 
         // See https://aka.ms/about-bot-activity-message to learn more about the message and other activity types.
         this.onMessage(async (context, next) => {
-            await context.sendActivity(MessageFactory.text(`Echo: ${context.activity.text}`));
+            await context.sendActivity(MessageFactory.text(`Echo: ${ context.activity.text }`));
             TurnContext.removeRecipientMention(context.activity);
             const text = context.activity.text ? context.activity.text.trim() : '';
             switch (text) {
-                case "show members":
+                case 'show members':
                     await this.showMembers(context);
                     break;
 
-                case "show channels":
+                case 'show channels':
                     await this.showChannels(context);
                     break;
 
-                case "show details":
+                case 'show details':
                     await this.showDetails(context);
                     break;
 
-                case "show member":
+                case 'show member':
                     await this.showMember(context);
                     break;
 
@@ -63,32 +63,32 @@ export class RosterBot extends TeamsActivityHandler {
     }
 
     private async showMembers(context: TurnContext): Promise<void> {
-        let options = {"continuationToken": null, "pageSize": 2};
-        let teamsChannelAccounts = await (await TeamsInfo.getPagedMembers(context, 5)).members;
-        await context.sendActivity(MessageFactory.text(`Total of ${teamsChannelAccounts.length} members are currently in team`));
-        let messages = teamsChannelAccounts.map(function(teamsChannelAccount) {
-            return `${teamsChannelAccount.aadObjectId} --> ${teamsChannelAccount.name} --> ${teamsChannelAccount.userPrincipalName}`;
+        const options = {'continuationToken': null, 'pageSize': 2};
+        const teamsChannelAccounts = await (await TeamsInfo.getPagedMembers(context, 5)).members;
+        await context.sendActivity(MessageFactory.text(`Total of ${ teamsChannelAccounts.length } members are currently in team`));
+        const messages = teamsChannelAccounts.map(function(teamsChannelAccount) {
+            return `${ teamsChannelAccount.aadObjectId } --> ${ teamsChannelAccount.name } --> ${ teamsChannelAccount.userPrincipalName }`;
         });
         await this.sendInBatches(context, messages);
     }
 
     private async showChannels(context: TurnContext): Promise<void> {
-        let channels = await TeamsInfo.getTeamChannels(context);
-        await context.sendActivity(MessageFactory.text(`Total of ${channels.length} channels are currently in team`));
-        let messages = channels.map(function(channel) {
-            return `${channel.id} --> ${channel.name ? channel.name : 'General'}`;
+        const channels = await TeamsInfo.getTeamChannels(context);
+        await context.sendActivity(MessageFactory.text(`Total of ${ channels.length } channels are currently in team`));
+        const messages = channels.map(function(channel) {
+            return `${ channel.id } --> ${ channel.name ? channel.name : 'General' }`;
         });
         await this.sendInBatches(context, messages);
     }
 
     private async showMember(context: TurnContext): Promise<void> {
-        let member = await TeamsInfo.getMember(context, context.activity.from.id);
-        await context.sendActivity(MessageFactory.text("You are: " + member.name));
+        const member = await TeamsInfo.getMember(context, context.activity.from.id);
+        await context.sendActivity(MessageFactory.text('You are: ' + member.name));
     }
 
     private async showDetails(context: TurnContext): Promise<void> {
-        let teamDetails = await TeamsInfo.getTeamDetails(context);
-        await context.sendActivity(MessageFactory.text(`The team name is ${teamDetails.name}. The team ID is ${teamDetails.id}. The AAD GroupID is ${teamDetails.aadGroupId}.`));
+        const teamDetails = await TeamsInfo.getTeamDetails(context);
+        await context.sendActivity(MessageFactory.text(`The team name is ${ teamDetails.name }. The team ID is ${ teamDetails.id }. The AAD GroupID is ${ teamDetails.aadGroupId }.`));
     }
 
     private async sendInBatches(context: TurnContext, messages: string[]): Promise<void> {

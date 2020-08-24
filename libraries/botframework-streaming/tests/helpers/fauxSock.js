@@ -30,7 +30,7 @@ class FauxSock {
             case 'error':
                 return;
             default:
-                console.error(`FauxSock.removeListener(): Reached default case: ${event}`);
+                console.error(`FauxSock.removeListener(): Reached default case: ${ event }`);
         }
     }
 
@@ -53,7 +53,7 @@ class FauxSock {
 
     send(buffer) {
         return buffer.length;
-    };
+    }
 
     receive(readLength) {
         if (this.contentString[this.position]) {
@@ -66,22 +66,22 @@ class FauxSock {
         if (this.receiver.isConnected)
             this.receiver.disconnect();
     }
-    close() { };
+    close() { }
     close() {
         this.connected = false;
-    };
+    }
     end() {
         this.exists = false;
         return true;
-    };
+    }
     destroyed() {
         return this.exists;
-    };
+    }
 
     /** WaterShed Socket Specific? */
     destroy() {
         return true;
-    };
+    }
 
     /** WaterShed Socket Specific? */
     removeAllListeners() {
@@ -117,7 +117,7 @@ class FauxSock {
         if (action === 'message') {
             this._messageHandler = handler;
         }
-    };
+    }
 
     setReceiver(receiver) {
         this.receiver = receiver;
@@ -125,13 +125,13 @@ class FauxSock {
 
     setOnMessageHandler(handler) {
         this.messageHandler = handler;
-    };
+    }
     setOnErrorHandler(handler) {
         this.errorHandler = handler;
-    };
+    }
     setOnCloseHandler(handler) {
         this.closeHandler = handler;
-    };
+    }
 }
 
 module.exports.FauxSock = FauxSock;

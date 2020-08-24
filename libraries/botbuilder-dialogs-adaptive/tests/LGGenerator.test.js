@@ -203,7 +203,7 @@ describe('LGLanguageGenerator', function() {
 
     describe('TestResourceMultiLangGenerator', () => {
         const lg = new ResourceMultiLanguageGenerator('test.lg');
-/*
+        /*
         it('en-us, "${test()}", no data', async () => {
             const result1 = await lg.generate(await getTurnContext('en-us', lg), '${test()}', undefined);
             assert.equal(result1, 'english-us');
@@ -253,7 +253,7 @@ describe('LGLanguageGenerator', function() {
             const result10 = await lg.generate(getDialogContext('foo', lg), '${test2()}', undefined);
             assert.equal(result10, 'default2');
         });
-/*
+        /*
         it('en-us, "${test2()}", country data', async () => {
             const result11 = await lg.generate(await getTurnContext('en-us', lg), '${test2()}', {country: 'US'});
             assert.equal(result11, 'english-US');

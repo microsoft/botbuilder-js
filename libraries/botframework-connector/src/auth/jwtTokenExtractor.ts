@@ -119,7 +119,7 @@ export class JwtTokenExtractor {
 
                 if (!additionalEndorsementsSatisfied) {
                     throw new AuthenticationError(
-                        `Could not validate additional endorsement for key: ${keyId} with endorsements: ${requiredEndorsements.join(',')}. Expected endorsements: ${requiredEndorsements.join(',')}`,
+                        `Could not validate additional endorsement for key: ${ keyId } with endorsements: ${ requiredEndorsements.join(',') }. Expected endorsements: ${ requiredEndorsements.join(',') }`,
                         StatusCodes.UNAUTHORIZED
                     );
                 }

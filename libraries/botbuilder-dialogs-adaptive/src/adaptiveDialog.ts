@@ -75,7 +75,7 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
      * If false, when there are no actions to execute, the current dialog will simply end the turn and still be active.
      * Defaults to a value of true.
      */
-    public autoEndDialog: boolean = true;
+    public autoEndDialog = true;
 
     /**
      * Optional. The selector for picking the possible events to execute.
@@ -87,7 +87,7 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
      * @remarks
      * Defaults to a value of `dialog.result`.
      */
-    public defaultResultProperty: string = 'dialog.result';
+    public defaultResultProperty = 'dialog.result';
 
     /**
      * JSON Schema for the dialog.
@@ -191,8 +191,8 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
             this.triggers.forEach((trigger): void => {
                 if (trigger.runOnce && trigger.condition) {
                     const references = trigger.condition.toExpression().references();
-                    var paths = dcState.trackPaths(references);
-                    var triggerPath = `${ AdaptiveDialog.conditionTracker }.${ trigger.id }.`;
+                    const paths = dcState.trackPaths(references);
+                    const triggerPath = `${ AdaptiveDialog.conditionTracker }.${ trigger.id }.`;
                     dcState.setValue(triggerPath + 'paths', paths);
                     dcState.setValue(triggerPath + 'lastRun', 0);
                 }
@@ -352,7 +352,7 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
         this.ensureDependenciesInstalled();
 
         // Count of events processed
-        var count = actionContext.state.getValue(DialogPath.eventCounter);
+        let count = actionContext.state.getValue(DialogPath.eventCounter);
         actionContext.state.setValue(DialogPath.eventCounter, ++count);
 
         // Look for triggered rule
@@ -737,7 +737,7 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
 
     private splitUtterance(utterance: string, recognized: Partial<EntityInfo>[]): string[] {
         const unrecognized = [];
-        var current = 0;
+        let current = 0;
         for (let i = 0; i < recognized.length; i++) {
             const entity = recognized[i];
             if (entity.start > current) {
@@ -1159,7 +1159,7 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
         for (const aAlt of a.alternatives) {
             for (const bAlt of b.alternatives) {
                 if (aAlt.property == bAlt.property && aAlt.entity.name != this.propertyNameKey && bAlt.entity.name != this.propertyNameKey) {
-                    var prop = this.dialogSchema.pathToSchema(aAlt.property);
+                    const prop = this.dialogSchema.pathToSchema(aAlt.property);
                     if (Array.isArray(prop)) {
                         if (aAlt.entity.whenRecognized > bAlt.entity.whenRecognized) {
                             replaces = -1;

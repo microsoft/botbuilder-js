@@ -37,7 +37,7 @@ export class StaticChecker extends AbstractParseTreeVisitor<Diagnostic[]> implem
     private get expressionParser(): ExpressionParserInterface {
         if (this._expressionParser === undefined) {
             // create an evaluator to leverage it's customized function look up for checking
-            var evaluator = new Evaluator(this.templates.allTemplates, this.baseExpressionParser);
+            const evaluator = new Evaluator(this.templates.allTemplates, this.baseExpressionParser);
             this._expressionParser = evaluator.expressionParser;
         }
 
@@ -49,7 +49,7 @@ export class StaticChecker extends AbstractParseTreeVisitor<Diagnostic[]> implem
      * @returns Report result.
      */
     public check(): Diagnostic[] {
-        var result: Diagnostic[] = [];
+        const result: Diagnostic[] = [];
 
         if (this.templates.allTemplates.length === 0)
         {
@@ -60,10 +60,10 @@ export class StaticChecker extends AbstractParseTreeVisitor<Diagnostic[]> implem
 
         for (const template of this.templates) {
             this.currentTemplate = template;
-            let templateDiagnostics: Diagnostic[] = [];
+            const templateDiagnostics: Diagnostic[] = [];
 
             for (const reference of this.templates.references) {
-                var sameTemplates = reference.toArray().filter((u): boolean => u.name === template.name);
+                const sameTemplates = reference.toArray().filter((u): boolean => u.name === template.name);
                 for(const sameTemplate of sameTemplates) {
                     const startLine = template.sourceRange.range.start.line;
                     const range = new Range(startLine, 0, startLine, template.name.length + 1);
@@ -284,7 +284,7 @@ export class StaticChecker extends AbstractParseTreeVisitor<Diagnostic[]> implem
         return [];
     }
 
-    private checkExpression(expressionContext: ParserRuleContext, prefix: string = ''): Diagnostic[] {
+    private checkExpression(expressionContext: ParserRuleContext, prefix = ''): Diagnostic[] {
         const result: Diagnostic[] = [];
         let exp = expressionContext.text;
         if(!exp.endsWith('}')) {

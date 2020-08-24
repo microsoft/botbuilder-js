@@ -136,7 +136,7 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGTe
                             valueList.push(id);
                             templateRefValues.set(id, item);
                         } else {
-                            valueList.push([])
+                            valueList.push([]);
                         }
                     }
 
@@ -195,7 +195,7 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGTe
     private visitStructureValue(ctx: lp.KeyValueStructureLineContext): any[] {
         const values = ctx.keyValueStructureValue();
 
-        let result: any[] = [];
+        const result: any[] = [];
         for (const item of values) {
             if (TemplateExtensions.isPureExpression(item)) {
                 result.push(this.evalExpression(item.expressionInStructure(0).text, item.expressionInStructure(0), ctx.text));
@@ -250,7 +250,7 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGTe
 
             const caseExprs = caseNode.switchCaseStat().expression();
             const caseErrorPrefix = `Case '${ caseExprs[0].text }': `;
-            var caseExprResult = this.evalExpression(caseExprs[0].text, caseExprs[0], caseNode.switchCaseStat().text, caseErrorPrefix);
+            const caseExprResult = this.evalExpression(caseExprs[0].text, caseExprs[0], caseNode.switchCaseStat().text, caseErrorPrefix);
             //condition: check whether two string array have same elements
             if (switchExprResult.sort().toString() === caseExprResult.sort().toString()) {
                 return this.visit(caseNode.normalTemplateBody());
@@ -263,7 +263,7 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGTe
     }
 
     public visitNormalTemplateString(ctx: lp.NormalTemplateStringContext): any[] {
-        var prefixErrorMsg = TemplateExtensions.getPrefixErrorMessage(ctx);
+        const prefixErrorMsg = TemplateExtensions.getPrefixErrorMessage(ctx);
         let result: string[] = [''];
         for (const child of ctx.children) {
             if (child instanceof lp.ExpressionContext) {
@@ -325,7 +325,7 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGTe
         return false;
     }
 
-    private evalExpressionInCondition(expressionContext: ParserRuleContext, contentLine: string, errorPrefix: string = ''): boolean {
+    private evalExpressionInCondition(expressionContext: ParserRuleContext, contentLine: string, errorPrefix = ''): boolean {
         const exp = TemplateExtensions.trimExpression(expressionContext.text);
         let result: any;
         let error: string;
@@ -349,7 +349,7 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGTe
         return true;
     }
 
-    private evalExpression(exp: string, context: ParserRuleContext, inlineContent: string = '', errorPrefix: string = ''): any[] {
+    private evalExpression(exp: string, context: ParserRuleContext, inlineContent = '', errorPrefix = ''): any[] {
         exp = TemplateExtensions.trimExpression(exp);
         let result: any;
         let error: string;
@@ -408,7 +408,7 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGTe
             name = name.substring(3);
         }
 
-        var templateName = this.parseTemplateName(name).pureTemplateName;
+        const templateName = this.parseTemplateName(name).pureTemplateName;
         if (templateName in this.templateMap) {
             if (isExpander) {
                 return new ExpressionEvaluator(templateName, FunctionUtils.apply(this.templateExpander(name)), ReturnType.Object, this.validTemplateReference);
@@ -561,8 +561,8 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGTe
             throw new Error(TemplateErrors.templateNotExist(templateName));
         }
 
-        var expectedArgsCount = this.templateMap[templateName].parameters.length;
-        var actualArgsCount = children.length;
+        const expectedArgsCount = this.templateMap[templateName].parameters.length;
+        const actualArgsCount = children.length;
 
         if (actualArgsCount !== 0 && expectedArgsCount !== actualArgsCount)
         {

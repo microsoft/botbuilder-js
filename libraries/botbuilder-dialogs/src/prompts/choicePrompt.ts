@@ -11,7 +11,7 @@ import { ListStyle, Prompt, PromptOptions, PromptRecognizerResult, PromptValidat
 import { PromptCultureModels } from './promptCultureModels';
 
 // Need ChoiceDefaultsProperty so we can set choiceDefaults dynamically with lambda
-interface ChoiceDefaultsChoicePrompt { [locale: string]: ChoiceFactoryOptions };
+interface ChoiceDefaultsChoicePrompt { [locale: string]: ChoiceFactoryOptions }
 
 /**
  * Prompts a user to select from a list of choices.

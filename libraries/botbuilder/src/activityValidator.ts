@@ -24,4 +24,4 @@ export function validateAndFixActivity(activity: Activity): Activity {
         activity.localTimestamp = new Date(activity.localTimestamp); 
     }
     return activity;
-};
+}

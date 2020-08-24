@@ -489,7 +489,7 @@ describe('expression functional test', () => {
             }
 
             if (isFail) {
-                assert.fail(`Test method ${input} did not throw expected exception`);
+                assert.fail(`Test method ${ input } did not throw expected exception`);
             }
         }
 
@@ -503,7 +503,7 @@ describe('expression functional test', () => {
             const input = expression;
             try {
                 new ExpressionParser().parse(input);
-                assert.fail(`Test expression ${input} did not throw expected exception`);
+                assert.fail(`Test expression ${ input } did not throw expected exception`);
             } catch (e) {
                 errors.push(e.message);
             }

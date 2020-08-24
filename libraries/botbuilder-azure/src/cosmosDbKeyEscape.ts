@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-var crypto = require('crypto');
+const crypto = require('crypto');
 
 export namespace CosmosDbKeyEscape {
     // Older libraries had a max key length of 255.
@@ -44,16 +44,16 @@ export namespace CosmosDbKeyEscape {
 
         // If there are no illegal characters return immediately and avoid any further processing/allocations
         if (firstIllegalCharIndex === -1) {
-            return truncateKey(`${key}${keySuffix || ''}`, compatibilityMode);
+            return truncateKey(`${ key }${ keySuffix || '' }`, compatibilityMode);
         }
 
-        let sanitizedKey = keySplitted.reduce(
+        const sanitizedKey = keySplitted.reduce(
             (result: string, c: string) =>
                 result + (illegalKeyCharacterReplacementMap.has(c) ? illegalKeyCharacterReplacementMap.get(c) : c),
             ''
         );
 
-        return truncateKey(`${sanitizedKey}${keySuffix || ''}`, compatibilityMode);
+        return truncateKey(`${ sanitizedKey }${ keySuffix || '' }`, compatibilityMode);
     }
 
     function truncateKey(key: string, truncateKeysForCompatibility?: boolean): string {
@@ -65,7 +65,7 @@ export namespace CosmosDbKeyEscape {
             const hash = crypto.createHash('sha256');
             hash.update(key);
             // combine truncated key with hash of self for extra uniqueness
-            var hex = hash.digest('hex');
+            const hex = hash.digest('hex');
             key = key.substr(0, maxKeyLength - hex.length) + hex;
         }
         return key;

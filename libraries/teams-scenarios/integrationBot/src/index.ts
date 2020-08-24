@@ -16,7 +16,7 @@ import { TeamsTenantFilteringMiddleware  } from './teamsTenantFilteringMiddlewar
 // Set up Nock
 import * as nockHelper from './../src/nock-helper/nock-helper';
 import { ActivityLog } from './activityLog';
-nockHelper.nockHttp('integrationBot')
+nockHelper.nockHttp('integrationBot');
 
 
 // Note: Ensure you have a .env file and include MicrosoftAppId and MicrosoftAppPassword.
@@ -32,7 +32,7 @@ const adapter = new BotFrameworkAdapter({
 
 // Use the TeamsTenantFilteringMiddleware IF there is an AllowedTeamsTenantId
 if(process.env.AllowedTeamsTenantId){
-    let teamsTenantFilteringMiddleware = new TeamsTenantFilteringMiddleware(process.env.AllowedTeamsTenantId);
+    const teamsTenantFilteringMiddleware = new TeamsTenantFilteringMiddleware(process.env.AllowedTeamsTenantId);
     adapter.use(teamsTenantFilteringMiddleware);
 }
 
@@ -42,7 +42,7 @@ adapter.onTurnError = async (context, error) => {
     console.error('[onTurnError]:');
     console.error(error);
     // Send a message to the user
-    await context.sendActivity(`Oops. Something went wrong in the bot!\n  ${error.message}`);
+    await context.sendActivity(`Oops. Something went wrong in the bot!\n  ${ error.message }`);
 };
 
 const activityIds: string[] = [];

@@ -5,7 +5,7 @@ import { ChannelServiceHandler, ChannelServiceRoutes } from 'botbuilder';
 import { AuthenticationConfiguration, SimpleCredentialProvider } from 'botframework-connector';
 import express from 'express';
 
-describe('ChannelServiceRoutes - Integration Tests', function () {
+describe('ChannelServiceRoutes - Integration Tests', function() {
     it('should successfully configure all routes on an Express Application', () => {
         const app = express();
         const handler = new ChannelServiceHandler(new SimpleCredentialProvider('', ''), new AuthenticationConfiguration());

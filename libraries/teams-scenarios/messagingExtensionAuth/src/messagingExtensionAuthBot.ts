@@ -46,12 +46,12 @@ export class MessagingExtensionAuthBot extends TeamsActivityHandler {
                 const adapter: IUserTokenProvider = context.adapter as BotFrameworkAdapter;
 
                 await adapter.signOutUser(context, this.connectionName);
-                await context.sendActivity(`Signed Out: ${context.activity.from.name}`);
+                await context.sendActivity(`Signed Out: ${ context.activity.from.name }`);
                 
                 return;
             }
 
-            await context.sendActivity(`You said '${context.activity.text}'`);
+            await context.sendActivity(`You said '${ context.activity.text }'`);
             // By calling next() you ensure that the next BotHandler is run.
             await next();
         });
@@ -92,7 +92,7 @@ export class MessagingExtensionAuthBot extends TeamsActivityHandler {
                 }
             };
             return response;
-        };
+        }
 
         // User is already signed in.
         const continueResponse : TaskModuleContinueResponse = {
@@ -108,7 +108,7 @@ export class MessagingExtensionAuthBot extends TeamsActivityHandler {
     }
 
     protected async handleTeamsTaskModuleFetch(context: TurnContext, taskModuleRequest: TaskModuleRequest): Promise<TaskModuleResponse> {
-        var data = context.activity.value;
+        const data = context.activity.value;
         if (data && data.state)
         {
             const adapter: IUserTokenProvider = context.adapter as BotFrameworkAdapter;
@@ -127,17 +127,17 @@ export class MessagingExtensionAuthBot extends TeamsActivityHandler {
         }
         else
         {
-            await context.sendActivity("handleTeamsTaskModuleFetch called without 'state' in Activity.Value");
+            await context.sendActivity('handleTeamsTaskModuleFetch called without \'state\' in Activity.Value');
             return null;
         }
     }
 
     protected async handleTeamsMessagingExtensionSubmitAction(context, action: MessagingExtensionAction): Promise<MessagingExtensionActionResponse> {
-        if (action.data != null && action.data.key && action.data.key == "signout")
+        if (action.data != null && action.data.key && action.data.key == 'signout')
         {
             // User clicked the Sign Out button from a Task Module
             await (context.adapter as IUserTokenProvider).signOutUser(context, this.connectionName);
-            await context.sendActivity(`Signed Out: ${context.activity.from.name}`);
+            await context.sendActivity(`Signed Out: ${ context.activity.from.name }`);
         }
 
         return null;

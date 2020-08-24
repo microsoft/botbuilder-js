@@ -7,10 +7,10 @@ const {
     MessageFactory,
 } = require('botbuilder-core');
 const { DialogSet } = require('botbuilder-dialogs');
-const { InputDialog, StaticActivityTemplate } = require('../lib')
+const { InputDialog, StaticActivityTemplate } = require('../lib');
 
 
-describe('InputDialog', function () {
+describe('InputDialog', function() {
     this.timeout(3000);
 
     let telemetryName;

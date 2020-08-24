@@ -74,11 +74,11 @@ export class DialogStateManager {
 
         // Get path segments
         const segments = this.parsePath(this.transformPath(pathExpression));
-        if (segments.length < 1) { return returnDefault() }
+        if (segments.length < 1) { return returnDefault(); }
 
         // Get memory scope to search over
         const scope = this.getMemoryScope(segments[0].toString());
-        if (scope == undefined) { throw new Error(`DialogStateManager.getValue: a scope of '${ segments[0] }' wasn't found.`) }
+        if (scope == undefined) { throw new Error(`DialogStateManager.getValue: a scope of '${ segments[0] }' wasn't found.`); }
 
         // Search over path
         const memory = this.resolveSegments(scope.getMemory(this.dialogContext), segments, false);
@@ -96,14 +96,14 @@ export class DialogStateManager {
         // Get path segments
         const tpath = this.transformPath(pathExpression);
         const segments = this.parsePath(tpath);
-        if (segments.length < 1) { throw new Error(`DialogStateManager.setValue: path wasn't specified.`) }
+        if (segments.length < 1) { throw new Error(`DialogStateManager.setValue: path wasn't specified.`); }
 
         // Track changes
         this.trackChange(tpath);
 
         // Get memory scope to update
         const scope = this.getMemoryScope(segments[0].toString());
-        if (scope == undefined) { throw new Error(`DialogStateManager.setValue: a scope of '${ segments[0] }' wasn't found.`) }
+        if (scope == undefined) { throw new Error(`DialogStateManager.setValue: a scope of '${ segments[0] }' wasn't found.`); }
 
         // Update memory
         if (segments.length > 1) {
@@ -114,10 +114,10 @@ export class DialogStateManager {
 
             // Update value
             let key = segments[segments.length - 1];
-            if (key === 'first()') { key = 0 };
+            if (key === 'first()') { key = 0; }
             if (typeof key == 'number' && Array.isArray(memory)) {
                 // Only allow positive indexes
-                if (key < 0) { throw new Error(`DialogStateManager.setValue: unable to update value for '${ pathExpression }'. Negative indexes aren't allowed.`) }
+                if (key < 0) { throw new Error(`DialogStateManager.setValue: unable to update value for '${ pathExpression }'. Negative indexes aren't allowed.`); }
 
                 // Expand array as needed and update array
                 const l = key + 1;
@@ -146,17 +146,17 @@ export class DialogStateManager {
         // Get path segments
         const tpath = this.transformPath(pathExpression);
         const segments = this.parsePath(tpath);
-        if (segments.length < 2) { throw new Error(`DialogStateManager.deleteValue: invalid path of '${ pathExpression }'.`) }
+        if (segments.length < 2) { throw new Error(`DialogStateManager.deleteValue: invalid path of '${ pathExpression }'.`); }
 
         // Track change
         this.trackChange(tpath);
 
         // Get memory scope to update
         const scope = this.getMemoryScope(segments[0].toString());
-        if (scope == undefined) { throw new Error(`DialogStateManager.deleteValue: a scope of '${ segments[0] }' wasn't found.`) }
+        if (scope == undefined) { throw new Error(`DialogStateManager.deleteValue: a scope of '${ segments[0] }' wasn't found.`); }
 
         // Find value up to last key
-        let key = segments.pop();
+        const key = segments.pop();
         const memory = this.resolveSegments(scope.getMemory(this.dialogContext), segments, false);
 
         // Update value
@@ -256,9 +256,9 @@ export class DialogStateManager {
                             break;
                         case ']':
                             depth--;
-                            if (depth > 0) { segment += c }
+                            if (depth > 0) { segment += c; }
                             break;
-                        case "'":
+                        case '\'':
                         case '"':
                             quote = c;
                             segment += c;
@@ -429,7 +429,7 @@ export class DialogStateManager {
         let value: any = memory;
         const l = assignment ? segments.length - 1 : segments.length;
         for (let i = 1; i < l && value != undefined; i++) {
-            let key = segments[i];
+            const key = segments[i];
             if (typeof key == 'number') {
                 // Key is an array index
                 if (Array.isArray(value)) {
@@ -575,7 +575,7 @@ function isIndex(segment: string): boolean {
  * @private
  */
 function isQuoted(segment: string): boolean {
-    return segment.length > 1 && (segment.startsWith("'") && segment.endsWith("'")) ||
+    return segment.length > 1 && (segment.startsWith('\'') && segment.endsWith('\'')) ||
         (segment.startsWith('"') && segment.endsWith('"'));
 }
 

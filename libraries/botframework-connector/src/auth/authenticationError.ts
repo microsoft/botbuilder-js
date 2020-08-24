@@ -15,7 +15,7 @@ export class AuthenticationError extends Error implements IStatusCodeError {
     }
 
     public static isStatusCodeError(err: any): err is IStatusCodeError {
-        return !!(err && typeof err.statusCode === "number");
+        return !!(err && typeof err.statusCode === 'number');
     }
 
     /**

@@ -8,10 +8,10 @@ const {
     MessageFactory,
 } = require('botbuilder-core');
 const { DialogSet } = require('botbuilder-dialogs');
-const { UpdateActivity } = require('../lib')
+const { UpdateActivity } = require('../lib');
 
 
-describe('UpdateActivity', function () {
+describe('UpdateActivity', function() {
     this.timeout(3000);
 
     let telemetryName;

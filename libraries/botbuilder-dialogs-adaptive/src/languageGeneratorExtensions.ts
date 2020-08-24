@@ -57,7 +57,7 @@ export class LanguageGeneratorExtensions {
         dialogManager.initialTurnState.set(languageGeneratorManagerKey, languageGeneratorManager);
 
         return dialogManager;
-    };
+    }
 
     /**
      * Register language policy as default policy.

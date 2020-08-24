@@ -88,8 +88,8 @@ export class TestAdapter extends BotAdapter implements ExtendedUserTokenProvider
      */
     public readonly deletedActivities: Partial<ConversationReference>[] = [];
 
-    private sendTraceActivities: boolean = false;
-    private nextId: number = 0;
+    private sendTraceActivities = false;
+    private nextId = 0;
 
     private readonly ExceptionExpected: string = 'ExceptionExpected';
 
@@ -192,7 +192,7 @@ export class TestAdapter extends BotAdapter implements ExtendedUserTokenProvider
         return this.runMiddleware(context, this.logic);
     }
 
-     /**
+    /**
      * Creates a turn context.
      *
      * @param request An incoming request body.
@@ -270,7 +270,7 @@ export class TestAdapter extends BotAdapter implements ExtendedUserTokenProvider
         return activities.reduce(
             (flow: TestFlow, activity: Partial<Activity>) => {
                 // tslint:disable-next-line:prefer-template
-                const assertDescription: string = `reply ${ (description ? ' from ' + description : '') }`;
+                const assertDescription = `reply ${ (description ? ' from ' + description : '') }`;
 
                 return this.isReply(activity)
                     ? flow.assertReply(activityInspector(activity, description), assertDescription, timeout)
@@ -344,7 +344,7 @@ export class TestAdapter extends BotAdapter implements ExtendedUserTokenProvider
         if (match && match.length > 0)
         {
             const tokenStatuses = [];
-            for (var i = 0; i < match.length; i++) {
+            for (let i = 0; i < match.length; i++) {
                 tokenStatuses.push(
                     { 
                         ConnectionName: match[i].ConnectionName, 
@@ -375,7 +375,7 @@ export class TestAdapter extends BotAdapter implements ExtendedUserTokenProvider
         key.UserId = context.activity.from.id;
 
         if (magicCode) {
-            var magicCodeRecord = this._magicCodes.filter(x => key.EqualsKey(x.Key));
+            const magicCodeRecord = this._magicCodes.filter(x => key.EqualsKey(x.Key));
             if (magicCodeRecord && magicCodeRecord.length > 0 && magicCodeRecord[0].MagicCode === magicCode) {
                 // move the token to long term dictionary
                 this.addUserToken(connectionName, key.ChannelId, key.UserId, magicCodeRecord[0].Key.Token);
@@ -386,7 +386,7 @@ export class TestAdapter extends BotAdapter implements ExtendedUserTokenProvider
             }
         }
 
-        var match = this._userTokens.filter(x => key.EqualsKey(x));
+        const match = this._userTokens.filter(x => key.EqualsKey(x));
 
         if (match && match.length > 0)
         {
@@ -409,12 +409,12 @@ export class TestAdapter extends BotAdapter implements ExtendedUserTokenProvider
      * @param connectionName Name of the auth connection to use.
      */
     public async signOutUser(context: TurnContext, connectionName: string): Promise<void> {
-        var channelId = context.activity.channelId;
-        var userId = context.activity.from.id;
+        const channelId = context.activity.channelId;
+        const userId = context.activity.from.id;
         
-        var newRecords: UserToken[] = [];
-        for (var i = 0; i < this._userTokens.length; i++) {
-            var t = this._userTokens[i];
+        const newRecords: UserToken[] = [];
+        for (let i = 0; i < this._userTokens.length; i++) {
+            const t = this._userTokens[i];
             if (t.ChannelId !== channelId ||
                 t.UserId !== userId || 
                 (connectionName && connectionName !== t.ConnectionName))
@@ -460,14 +460,14 @@ export class TestAdapter extends BotAdapter implements ExtendedUserTokenProvider
 
     public async getSignInResource(context: TurnContext, connectionName: string, userId?: string, finalRedirect?: string): Promise<SignInUrlResponse> {
         return {
-            signInLink: `https://botframeworktestadapter.com/oauthsignin/${connectionName}/${context.activity.channelId}/${userId}`,
+            signInLink: `https://botframeworktestadapter.com/oauthsignin/${ connectionName }/${ context.activity.channelId }/${ userId }`,
             tokenExchangeResource: {
                 id: String(Math.random()),
                 providerId: null,
-                uri: `api://${connectionName}/resource`
+                uri: `api://${ connectionName }/resource`
 
             }
-        }
+        };
     }
 
 

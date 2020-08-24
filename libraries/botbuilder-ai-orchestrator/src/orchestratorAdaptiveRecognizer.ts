@@ -84,7 +84,7 @@ export class OrchestratorAdaptiveRecognizer extends Recognizer {
      */
     constructor(modelPath?: string, snapshoPath?: string, resolver?: any)
     {
-        super()
+        super();
         this._modelPath = modelPath !== undefined ? modelPath : null;
         this._snapshotPath = snapshoPath !== undefined ? snapshoPath : null;
         this.resolver = resolver !== undefined ? resolver : null;
@@ -121,7 +121,7 @@ export class OrchestratorAdaptiveRecognizer extends Recognizer {
         }   
 
         // recognize text
-        let result = await this.resolver.score(text);
+        const result = await this.resolver.score(text);
 
         if (Object.entries(result).length !== 0) {
             this.AddTopScoringIntent(result, recognizerResult);
@@ -143,7 +143,7 @@ export class OrchestratorAdaptiveRecognizer extends Recognizer {
                 recognizerResult.intents[this.chooseIntent] = { score: 1.0 };
                 recognizerResult[this.candidatesCollection] = [];
                 ambiguousIntents.forEach(item => {
-                    let itemRecoResult = {
+                    const itemRecoResult = {
                         text: text,
                         intents: {},
                         entities: {},
@@ -159,7 +159,7 @@ export class OrchestratorAdaptiveRecognizer extends Recognizer {
                         closestText: item.closest_text,
                         result: itemRecoResult
                     });
-                })
+                });
             }
         }
 
@@ -252,26 +252,26 @@ export class OrchestratorAdaptiveRecognizer extends Recognizer {
             const fullModelPath = resolve(this._modelPath);
             const fullSnapshotPath = resolve(this._snapshotPath);
             if (!existsSync(fullModelPath)) {
-                throw new Error(`Model folder does not exist at ${fullModelPath}.`);   
+                throw new Error(`Model folder does not exist at ${ fullModelPath }.`);   
             }
             if (!existsSync(fullSnapshotPath)) {
-                throw new Error(`Snapshot file does not exist at ${fullSnapshotPath}.`);
+                throw new Error(`Snapshot file does not exist at ${ fullSnapshotPath }.`);
             }
     
             if (OrchestratorAdaptiveRecognizer.orchestrator == null) {
-                console.time("Model load");
+                console.time('Model load');
                 // Create orchestrator core
                 OrchestratorAdaptiveRecognizer.orchestrator = new oc.Orchestrator();
                 if (OrchestratorAdaptiveRecognizer.orchestrator.load(fullModelPath) === false) {
                     throw new Error(`Model load failed.`);
                 }
-                console.timeEnd("Model load");
+                console.timeEnd('Model load');
             }
     
             if (this.resolver == null) {
                 // Load the snapshot
                 const encoder: any = new TextEncoder();
-                const fileContent: string = ReadText.readSync(fullSnapshotPath)
+                const fileContent: string = ReadText.readSync(fullSnapshotPath);
                 const snapshot: Uint8Array = encoder.encode(fileContent);
     
                 // Load snapshot and create resolver
@@ -279,4 +279,4 @@ export class OrchestratorAdaptiveRecognizer extends Recognizer {
             }
         }
     }
-};
+}

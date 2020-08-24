@@ -55,8 +55,8 @@ export class CancelAllDialogsBase<O extends object = {}> extends Dialog<O> {
             return await dc.endDialog();
         }
 
-        var eventName = this.eventName && this.eventName.getValue(dc.state);
-        var eventValue = this.eventValue && this.eventValue.getValue(dc.state);
+        let eventName = this.eventName && this.eventName.getValue(dc.state);
+        let eventValue = this.eventValue && this.eventValue.getValue(dc.state);
 
         if (this.activityProcessed  && this.activityProcessed.getValue(dc.state) == false ) {
             // mark that this hasn't been recognized

@@ -43,7 +43,7 @@ export class GetPreviousViableDate extends ExpressionEvaluator {
 
         if (parsed && !error) {
             if (parsed.year || !parsed.month || !parsed.dayOfMonth) {
-                error = `${args[0]} must be a timex string which only contains month and day-of-month, for example: 'XXXX-10-31'.`;
+                error = `${ args[0] } must be a timex string which only contains month and day-of-month, for example: 'XXXX-10-31'.`;
             }
         }
 
@@ -51,7 +51,7 @@ export class GetPreviousViableDate extends ExpressionEvaluator {
             if (args.length === 2 && typeof args[1] === 'string') {
                 const timeZone: string = TimeZoneConverter .windowsToIana(args[1]);
                 if (!TimeZoneConverter.verifyTimeZoneStr(timeZone)) {
-                    error = `${args[1]} is not a valid timezone`;
+                    error = `${ args[1] } is not a valid timezone`;
                 }
 
                 if (!error) {

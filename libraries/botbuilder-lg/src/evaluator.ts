@@ -97,7 +97,7 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGTempla
 
         // Using a stack to track the evalution trace
         this.evaluationTargetStack.push(templateTarget);
-        let result: string = this.visit(this.templateMap[templateName].templateBodyParseTree);
+        const result: string = this.visit(this.templateMap[templateName].templateBodyParseTree);
 
         if (previousEvaluateTarget) {
             previousEvaluateTarget.evaluatedChildren.set(currentEvulateId, result);
@@ -231,7 +231,7 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGTempla
     }
 
     public constructScope(inputTemplateName: string, args: any[]): any {
-        var templateName = this.parseTemplateName(inputTemplateName).pureTemplateName;
+        const templateName = this.parseTemplateName(inputTemplateName).pureTemplateName;
 
         if (!(templateName in this.templateMap)) {
             throw new Error(TemplateErrors.templateNotExist(templateName));
@@ -310,7 +310,7 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGTempla
         return errorMsg;
     }
 
-    public static checkExpressionResult(exp: string, error: string, result: any, templateName: string, inlineContent: string = '', errorPrefix: string = ''): void {
+    public static checkExpressionResult(exp: string, error: string, result: any, templateName: string, inlineContent = '', errorPrefix = ''): void {
         let errorMsg = '';
 
         let childErrorMsg = '';
@@ -352,7 +352,7 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGTempla
         return false;
     }
 
-    private evalExpressionInCondition(expressionContext: ParserRuleContext, contentLine: string, errorPrefix: string = ''): boolean {
+    private evalExpressionInCondition(expressionContext: ParserRuleContext, contentLine: string, errorPrefix = ''): boolean {
         const exp = TemplateExtensions.trimExpression(expressionContext.text);
         let result: any;
         let error: string;
@@ -376,7 +376,7 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGTempla
         return true;
     }
 
-    private evalExpression(exp: string, expressionContext?: ParserRuleContext, inlineContent: string = '', errorPrefix: string = ''): any
+    private evalExpression(exp: string, expressionContext?: ParserRuleContext, inlineContent = '', errorPrefix = ''): any
     {
         exp = TemplateExtensions.trimExpression(exp);
         let result: any;
@@ -422,7 +422,7 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGTempla
             name = name.substring(3);
         }
 
-        var templateName = this.parseTemplateName(name).pureTemplateName;
+        const templateName = this.parseTemplateName(name).pureTemplateName;
         if (templateName in this.templateMap) {
             return new ExpressionEvaluator(templateName, FunctionUtils.apply(this.templateEvaluator(name)), ReturnType.Object, this.validTemplateReference);
         }
@@ -539,8 +539,8 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGTempla
             throw new Error(TemplateErrors.templateNotExist(templateName));
         }
 
-        var expectedArgsCount = this.templateMap[templateName].parameters.length;
-        var actualArgsCount = children.length;
+        const expectedArgsCount = this.templateMap[templateName].parameters.length;
+        const actualArgsCount = children.length;
 
         if (actualArgsCount !== 0 && expectedArgsCount !== actualArgsCount)
         {

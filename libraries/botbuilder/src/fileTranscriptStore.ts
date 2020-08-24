@@ -153,7 +153,7 @@ export class FileTranscriptStore implements TranscriptStore {
         	return pagedResult;
         }
 
-        let transcriptFolderContents = await readdir(transcriptFolder);
+        const transcriptFolderContents = await readdir(transcriptFolder);
         const include = includeWhen(fileName => !continuationToken || parse(fileName).name === continuationToken);
         const items = transcriptFolderContents.filter(transcript =>
             transcript.endsWith('.json') &&

@@ -6,12 +6,12 @@ const { MicrosoftAppCredentials, ConnectorClient } = require('botframework-conne
 const { Conversations } = require('botframework-connector/lib/connectorApi/operations');
 const { stub } = require('sinon');
 
-beforeEach(function (done) {
+beforeEach(function(done) {
     nock.cleanAll();
     done();
 });
 
-afterEach(function (done) {
+afterEach(function(done) {
     nock.cleanAll();
     done();
 });
@@ -30,12 +30,12 @@ class TestContext extends TurnContext {
 
 describe('TeamsInfo', () => {
     describe('sendMessageToTeamsChannel()', () => {
-        it('should work with correct information', async() => {
+        it('should work with correct information', async () => {
             const newConversation = [
                 {
-                    "activityid": "activityid123",
+                    'activityid': 'activityid123',
                 },
-                "resourceresponseid"
+                'resourceresponseid'
             ];
 
             const fetchNewConversation = nock('https://smba.trafficmanager.net/amer')
@@ -43,19 +43,19 @@ describe('TeamsInfo', () => {
                 .reply(200, { newConversation });
 
             const context = new TestContext(teamActivity);
-            const msg = MessageFactory.text("test message");
-            const teamChannelId = "19%3AgeneralChannelIdgeneralChannelId%40thread.skype";
+            const msg = MessageFactory.text('test message');
+            const teamChannelId = '19%3AgeneralChannelIdgeneralChannelId%40thread.skype';
 
             const response = await TeamsInfo.sendMessageToTeamsChannel(context,msg, teamChannelId);
             assert(fetchNewConversation.isDone());
             assert(Array.isArray(response));
-            assert(newConversation[0]["activityid"] == "activityid123");
-            assert(newConversation[1] == "resourceresponseid");
+            assert(newConversation[0]['activityid'] == 'activityid123');
+            assert(newConversation[1] == 'resourceresponseid');
         });
 
         it('should error if context is null', async () => {
             try {
-                await TeamsInfo.sendMessageToTeamsChannel(null, teamActivity, "teamID");
+                await TeamsInfo.sendMessageToTeamsChannel(null, teamActivity, 'teamID');
             } catch (err){
                 assert(err.message === 'TurnContext cannot be null');
             }
@@ -64,7 +64,7 @@ describe('TeamsInfo', () => {
         it('should error if activity is null', async () => {
             const context = new TestContext(teamActivity);
             try {
-                await TeamsInfo.sendMessageToTeamsChannel(context, null, "teamID");
+                await TeamsInfo.sendMessageToTeamsChannel(context, null, 'teamID');
             } catch (err){
                 assert(err.message === 'Activity cannot be null');
             }
@@ -73,7 +73,7 @@ describe('TeamsInfo', () => {
         it('should error if teamID is a blank string', async () => {
             const context = new TestContext(teamActivity);
             try {
-                await TeamsInfo.sendMessageToTeamsChannel(context, teamActivity, "");
+                await TeamsInfo.sendMessageToTeamsChannel(context, teamActivity, '');
             } catch (err){
                 assert(err.message === 'The teamsChannelId cannot be null or empty');
             }
@@ -95,7 +95,7 @@ describe('TeamsInfo', () => {
             try {
                 await TeamsInfo.getTeamChannels(context);
             } catch (err) {
-                assert(err.message === 'This method is only valid within the scope of a MS Teams Team.', `unexpected error.message received: ${err.message}`);
+                assert(err.message === 'This method is only valid within the scope of a MS Teams Team.', `unexpected error.message received: ${ err.message }`);
             }
         });
 
@@ -104,7 +104,7 @@ describe('TeamsInfo', () => {
             try {
                 await TeamsInfo.getTeamChannels(context);
             } catch (err) {
-                assert(err.message === 'This method is only valid within the scope of a MS Teams Team.', `unexpected error.message received: ${err.message}`);
+                assert(err.message === 'This method is only valid within the scope of a MS Teams Team.', `unexpected error.message received: ${ err.message }`);
             }
         });
 
@@ -112,15 +112,15 @@ describe('TeamsInfo', () => {
             // This is the property on the ConversationList that contains the information about the channels from Teams.
             const conversations = [
                 {
-                    "id": "19:generalChannelIdgeneralChannelId@thread.skype"
+                    'id': '19:generalChannelIdgeneralChannelId@thread.skype'
                 },
                 {
-                    "id": "19:somechannelId2e5ab3df9ae9b594bdb@thread.skype",
-                    "name": "Testing1"
+                    'id': '19:somechannelId2e5ab3df9ae9b594bdb@thread.skype',
+                    'name': 'Testing1'
                 },
                 {
-                    "id": "19:somechannelId388ade16aa4dd375e69@thread.skype",
-                    "name": "Testing2"
+                    'id': '19:somechannelId388ade16aa4dd375e69@thread.skype',
+                    'name': 'Testing2'
                 }
             ];
 
@@ -140,7 +140,7 @@ describe('TeamsInfo', () => {
                 if (channel.id === '19:generalChannelIdgeneralChannelId@thread.skype') {
                     generalChannelExists = true;
                 }
-            };
+            }
             assert(generalChannelExists, 'did not find general channel/team id in response');
         });
 
@@ -148,15 +148,15 @@ describe('TeamsInfo', () => {
             // This is the property on the ConversationList that contains the information about the channels from Teams.
             const conversations = [
                 {
-                    "id": "19:ChannelIdgeneralChannelId@thread.skype"
+                    'id': '19:ChannelIdgeneralChannelId@thread.skype'
                 },
                 {
-                    "id": "19:somechannelId2e5ab3df9ae9b594bdb@thread.skype",
-                    "name": "Testing1"
+                    'id': '19:somechannelId2e5ab3df9ae9b594bdb@thread.skype',
+                    'name': 'Testing1'
                 },
                 {
-                    "id": "19:somechannelId388ade16aa4dd375e69@thread.skype",
-                    "name": "Testing2"
+                    'id': '19:somechannelId388ade16aa4dd375e69@thread.skype',
+                    'name': 'Testing2'
                 }
             ];
 
@@ -176,7 +176,7 @@ describe('TeamsInfo', () => {
                 if (channel.id === '19:ChannelIdgeneralChannelId@thread.skype') {
                     generalChannelExists = true;
                 }
-            };
+            }
             assert(generalChannelExists, 'did not find general channel/team id in response');
         });
     });
@@ -187,7 +187,7 @@ describe('TeamsInfo', () => {
             try {
                 await TeamsInfo.getTeamDetails(context);
             } catch (err) {
-                assert(err.message === 'This method is only valid within the scope of a MS Teams Team.', `unexpected error.message received: ${err.message}`);
+                assert(err.message === 'This method is only valid within the scope of a MS Teams Team.', `unexpected error.message received: ${ err.message }`);
             }
         });
 
@@ -196,15 +196,15 @@ describe('TeamsInfo', () => {
             try {
                 await TeamsInfo.getTeamDetails(context);
             } catch (err) {
-                assert(err.message === 'This method is only valid within the scope of a MS Teams Team.', `unexpected error.message received: ${err.message}`);
+                assert(err.message === 'This method is only valid within the scope of a MS Teams Team.', `unexpected error.message received: ${ err.message }`);
             }
         });
 
         it('should work in a channel in a Team', async () => {
             const teamDetails = {
-                "id": "19:generalChannelIdgeneralChannelId@thread.skype",
-                "name": "TeamName",
-                "aadGroupId": "Team-aadGroupId"
+                'id': '19:generalChannelIdgeneralChannelId@thread.skype',
+                'name': 'TeamName',
+                'aadGroupId': 'Team-aadGroupId'
             };
             const fetchTeamDetailsExpectation = nock('https://smba.trafficmanager.net/amer')
                 .get('/v3/teams/19%3AgeneralChannelIdgeneralChannelId%40thread.skype')
@@ -221,9 +221,9 @@ describe('TeamsInfo', () => {
 
         it('should work with a teamId passed in', async () => {
             const teamDetails = {
-                "id": "19:ChannelIdgeneralChannelId@thread.skype",
-                "name": "TeamName",
-                "aadGroupId": "Team-aadGroupId"
+                'id': '19:ChannelIdgeneralChannelId@thread.skype',
+                'name': 'TeamName',
+                'aadGroupId': 'Team-aadGroupId'
             };
             const fetchTeamDetailsExpectation = nock('https://smba.trafficmanager.net/amer')
                 .get('/v3/teams/19%3AChannelIdgeneralChannelId%40thread.skype')
@@ -254,20 +254,20 @@ describe('TeamsInfo', () => {
                 assert.strictEqual(results[i].email, mockedData[i].email);
                 assert.strictEqual(results[i].userPrincipalName, mockedData[i].userPrincipalName);
                 assert.strictEqual(results[i].tenantId, mockedData[i].tenantId);
-            };
+            }
         }
 
         it('should work in 1-on-1 chat', async () => {
             const members = [
                 {
-                    "id": "29:User-One-Id",
-                    "name": "User One",
-                    "objectId": "User-One-Object-Id",
-                    "givenName": "User",
-                    "surname": "One",
-                    "email": "User.One@microsoft.com",
-                    "userPrincipalName": "user1@microsoft.com",
-                    "tenantId": "tenantId-Guid"
+                    'id': '29:User-One-Id',
+                    'name': 'User One',
+                    'objectId': 'User-One-Object-Id',
+                    'givenName': 'User',
+                    'surname': 'One',
+                    'email': 'User.One@microsoft.com',
+                    'userPrincipalName': 'user1@microsoft.com',
+                    'tenantId': 'tenantId-Guid'
                 }
             ];
 
@@ -284,34 +284,34 @@ describe('TeamsInfo', () => {
         it('should work in Group chat', async () => {
             const members = [
                 {
-                    "id": "29:User-One-Id",
-                    "name": "User One",
-                    "objectId": "User-One-Object-Id",
-                    "givenName": "User",
-                    "surname": "One",
-                    "email": "User.One@microsoft.com",
-                    "userPrincipalName": "user1@microsoft.com",
-                    "tenantId": "tenantId-Guid"
+                    'id': '29:User-One-Id',
+                    'name': 'User One',
+                    'objectId': 'User-One-Object-Id',
+                    'givenName': 'User',
+                    'surname': 'One',
+                    'email': 'User.One@microsoft.com',
+                    'userPrincipalName': 'user1@microsoft.com',
+                    'tenantId': 'tenantId-Guid'
                 },
                 {
-                    "id": "29:User-Two-Id",
-                    "name": "User Two",
-                    "objectId": "User-Two-Object-Id",
-                    "givenName": "User",
-                    "surname": "Two",
-                    "email": "User.Two@microsoft.com",
-                    "userPrincipalName": "user2@microsoft.com",
-                    "tenantId": "tenantId-Guid"
+                    'id': '29:User-Two-Id',
+                    'name': 'User Two',
+                    'objectId': 'User-Two-Object-Id',
+                    'givenName': 'User',
+                    'surname': 'Two',
+                    'email': 'User.Two@microsoft.com',
+                    'userPrincipalName': 'user2@microsoft.com',
+                    'tenantId': 'tenantId-Guid'
                 },
                 {
-                    "id": "29:User-Three-Id",
-                    "name": "User Three",
-                    "objectId": "User-Three-Object-Id",
-                    "givenName": "User",
-                    "surname": "Three",
-                    "email": "User.Three@microsoft.com",
-                    "userPrincipalName": "user3@microsoft.com",
-                    "tenantId": "tenantId-Guid"
+                    'id': '29:User-Three-Id',
+                    'name': 'User Three',
+                    'objectId': 'User-Three-Object-Id',
+                    'givenName': 'User',
+                    'surname': 'Three',
+                    'email': 'User.Three@microsoft.com',
+                    'userPrincipalName': 'user3@microsoft.com',
+                    'tenantId': 'tenantId-Guid'
                 }
             ];
 
@@ -328,24 +328,24 @@ describe('TeamsInfo', () => {
         it('should work in a channel in a Team', async () => {
             const members = [
                 {
-                    "id": "29:User-Two-Id",
-                    "name": "User Two",
-                    "objectId": "User-Two-Object-Id",
-                    "givenName": "User",
-                    "surname": "Two",
-                    "email": "User.Two@microsoft.com",
-                    "userPrincipalName": "user2@microsoft.com",
-                    "tenantId": "tenantId-Guid"
+                    'id': '29:User-Two-Id',
+                    'name': 'User Two',
+                    'objectId': 'User-Two-Object-Id',
+                    'givenName': 'User',
+                    'surname': 'Two',
+                    'email': 'User.Two@microsoft.com',
+                    'userPrincipalName': 'user2@microsoft.com',
+                    'tenantId': 'tenantId-Guid'
                 },
                 {
-                    "id": "29:User-One-Id",
-                    "name": "User One",
-                    "objectId": "User-One-Object-Id",
-                    "givenName": "User",
-                    "surname": "One",
-                    "email": "User.One@microsoft.com",
-                    "userPrincipalName": "user1@microsoft.com",
-                    "tenantId": "tenantId-Guid"
+                    'id': '29:User-One-Id',
+                    'name': 'User One',
+                    'objectId': 'User-One-Object-Id',
+                    'givenName': 'User',
+                    'surname': 'One',
+                    'email': 'User.One@microsoft.com',
+                    'userPrincipalName': 'user1@microsoft.com',
+                    'tenantId': 'tenantId-Guid'
                 }
             ];
 
@@ -390,14 +390,14 @@ describe('TeamsInfo', () => {
         it('should work without a Team', async () => {
             const member =
                 {
-                    "id": "29:User-One-Id",
-                    "name": "User One",
-                    "aadObjectId": "User-One-Object-Id",
-                    "givenName": "User",
-                    "surname": "One",
-                    "email": "User.One@microsoft.com",
-                    "userPrincipalName": "user1@microsoft.com",
-                    "tenantId": "tenantId-Guid"
+                    'id': '29:User-One-Id',
+                    'name': 'User One',
+                    'aadObjectId': 'User-One-Object-Id',
+                    'givenName': 'User',
+                    'surname': 'One',
+                    'email': 'User.One@microsoft.com',
+                    'userPrincipalName': 'user1@microsoft.com',
+                    'tenantId': 'tenantId-Guid'
                 };
 
             const fetchExpectation = nock('https://smba.trafficmanager.net/amer')
@@ -413,15 +413,15 @@ describe('TeamsInfo', () => {
         it('should work with a Team', async () => {
             const member =
                 {
-                    "id": "29:User-One-Id",
-                    "name": "User One",
-                    "objectId": "User-One-Object-Id",
-                    "givenName": "User",
-                    "surname": "One",
-                    "email": "User.One@microsoft.com",
-                    "userPrincipalName": "user1@microsoft.com",
-                    "tenantId": "tenantId-Guid"
-                }
+                    'id': '29:User-One-Id',
+                    'name': 'User One',
+                    'objectId': 'User-One-Object-Id',
+                    'givenName': 'User',
+                    'surname': 'One',
+                    'email': 'User.One@microsoft.com',
+                    'userPrincipalName': 'user1@microsoft.com',
+                    'tenantId': 'tenantId-Guid'
+                };
 
             const fetchExpectation = nock('https://smba.trafficmanager.net/amer')
                 .get('/v3/conversations/19%3AgeneralChannelIdgeneralChannelId%40thread.skype/members/29%3AUser-One-Id')
@@ -460,7 +460,7 @@ describe('TeamsInfo', () => {
                 assert.strictEqual(results[i].email, mockedData[i].email);
                 assert.strictEqual(results[i].userPrincipalName, mockedData[i].userPrincipalName);
                 assert.strictEqual(results[i].tenantId, mockedData[i].tenantId);
-            };
+            }
         }
 
         it('should error in 1-on-1 chat', async () => {
@@ -468,7 +468,7 @@ describe('TeamsInfo', () => {
             try {
                 await TeamsInfo.getTeamMembers(context);
             } catch (err) {
-                assert(err.message === 'This method is only valid within the scope of a MS Teams Team.', `unexpected error.message received: ${err.message}`);
+                assert(err.message === 'This method is only valid within the scope of a MS Teams Team.', `unexpected error.message received: ${ err.message }`);
             }
         });
 
@@ -477,31 +477,31 @@ describe('TeamsInfo', () => {
             try {
                 await TeamsInfo.getTeamMembers(context);
             } catch (err) {
-                assert(err.message === 'This method is only valid within the scope of a MS Teams Team.', `unexpected error.message received: ${err.message}`);
+                assert(err.message === 'This method is only valid within the scope of a MS Teams Team.', `unexpected error.message received: ${ err.message }`);
             }
         });
 
         it('should work in a channel in a Team', async () => {
             const members = [
                 {
-                    "id": "29:User-Two-Id",
-                    "name": "User Two",
-                    "objectId": "User-Two-Object-Id",
-                    "givenName": "User",
-                    "surname": "Two",
-                    "email": "User.Two@microsoft.com",
-                    "userPrincipalName": "user2@microsoft.com",
-                    "tenantId": "tenantId-Guid"
+                    'id': '29:User-Two-Id',
+                    'name': 'User Two',
+                    'objectId': 'User-Two-Object-Id',
+                    'givenName': 'User',
+                    'surname': 'Two',
+                    'email': 'User.Two@microsoft.com',
+                    'userPrincipalName': 'user2@microsoft.com',
+                    'tenantId': 'tenantId-Guid'
                 },
                 {
-                    "id": "29:User-One-Id",
-                    "name": "User One",
-                    "objectId": "User-One-Object-Id",
-                    "givenName": "User",
-                    "surname": "One",
-                    "email": "User.One@microsoft.com",
-                    "userPrincipalName": "user1@microsoft.com",
-                    "tenantId": "tenantId-Guid"
+                    'id': '29:User-One-Id',
+                    'name': 'User One',
+                    'objectId': 'User-One-Object-Id',
+                    'givenName': 'User',
+                    'surname': 'One',
+                    'email': 'User.One@microsoft.com',
+                    'userPrincipalName': 'user1@microsoft.com',
+                    'tenantId': 'tenantId-Guid'
                 }
             ];
 
@@ -518,24 +518,24 @@ describe('TeamsInfo', () => {
         it('should work with a teamId passed in', async () => {
             const members = [
                 {
-                    "id": "29:User-Two-Id",
-                    "name": "User Two",
-                    "objectId": "User-Two-Object-Id",
-                    "givenName": "User",
-                    "surname": "Two",
-                    "email": "User.Two@microsoft.com",
-                    "userPrincipalName": "user2@microsoft.com",
-                    "tenantId": "tenantId-Guid"
+                    'id': '29:User-Two-Id',
+                    'name': 'User Two',
+                    'objectId': 'User-Two-Object-Id',
+                    'givenName': 'User',
+                    'surname': 'Two',
+                    'email': 'User.Two@microsoft.com',
+                    'userPrincipalName': 'user2@microsoft.com',
+                    'tenantId': 'tenantId-Guid'
                 },
                 {
-                    "id": "29:User-One-Id",
-                    "name": "User One",
-                    "objectId": "User-One-Object-Id",
-                    "givenName": "User",
-                    "surname": "One",
-                    "email": "User.One@microsoft.com",
-                    "userPrincipalName": "user1@microsoft.com",
-                    "tenantId": "tenantId-Guid"
+                    'id': '29:User-One-Id',
+                    'name': 'User One',
+                    'objectId': 'User-One-Object-Id',
+                    'givenName': 'User',
+                    'surname': 'One',
+                    'email': 'User.One@microsoft.com',
+                    'userPrincipalName': 'user1@microsoft.com',
+                    'tenantId': 'tenantId-Guid'
                 }
             ];
 
@@ -574,7 +574,7 @@ describe('TeamsInfo', () => {
         it(`getMembersInternal() should error if an invalid conversationId is passed in.`, async () => {
             try {
                 const results = await TeamsInfo.getMembersInternal({}, undefined);
-                console.error(results)
+                console.error(results);
                 throw new Error('should have thrown an error');
             } catch (err) {
                 assert.strictEqual(err.message, 'The getMembers operation needs a valid conversationId.');
@@ -584,7 +584,7 @@ describe('TeamsInfo', () => {
         it(`getMemberInternal() should error if an invalid conversationId is passed in.`, async () => {
             try {
                 const results = await TeamsInfo.getMemberInternal({}, undefined);
-                console.error(results)
+                console.error(results);
                 throw new Error('should have thrown an error');
             } catch (err) {
                 assert.strictEqual(err.message, 'The getMember operation needs a valid conversationId.');
@@ -594,7 +594,7 @@ describe('TeamsInfo', () => {
         it(`getMemberInternal() should error if an invalid userId is passed in.`, async () => {
             try {
                 const results = await TeamsInfo.getMemberInternal({}, 'conversationId', undefined);
-                console.error(results)
+                console.error(results);
                 throw new Error('should have thrown an error');
             } catch (err) {
                 assert.strictEqual(err.message, 'The getMember operation needs a valid userId.');
@@ -604,34 +604,34 @@ describe('TeamsInfo', () => {
         it(`getPagedMembersInternal() should error if an invalid conversationId is passed in.`, async () => {
             try {
                 const results = await TeamsInfo.getPagedMembersInternal({}, undefined, 'options');
-                console.error(results)
+                console.error(results);
                 throw new Error('should have thrown an error');
             } catch (err) {
                 assert.strictEqual(err.message, 'The getPagedMembers operation needs a valid conversationId.');
             }
         });
 
-        it(`getPagedMembersInternal() should call connectorClient.conversations.getConversationPagedMembers()`, async function () {
+        it(`getPagedMembersInternal() should call connectorClient.conversations.getConversationPagedMembers()`, async function() {
             const members = [
                 {
-                    "id": "29:User-One-Id",
-                    "name": "User One",
-                    "objectId": "User-One-Object-Id",
-                    "givenName": "User",
-                    "surname": "One",
-                    "email": "User.One@microsoft.com",
-                    "userPrincipalName": "user1@microsoft.com",
-                    "tenantId": "tenantId-Guid"
+                    'id': '29:User-One-Id',
+                    'name': 'User One',
+                    'objectId': 'User-One-Object-Id',
+                    'givenName': 'User',
+                    'surname': 'One',
+                    'email': 'User.One@microsoft.com',
+                    'userPrincipalName': 'user1@microsoft.com',
+                    'tenantId': 'tenantId-Guid'
                 },
                 {
-                    "id": "29:User-Two-Id",
-                    "name": "User Two",
-                    "objectId": "User-Two-Object-Id",
-                    "givenName": "User",
-                    "surname": "Two",
-                    "email": "User.Two@microsoft.com",
-                    "userPrincipalName": "user2@microsoft.com",
-                    "tenantId": "tenantId-Guid"
+                    'id': '29:User-Two-Id',
+                    'name': 'User Two',
+                    'objectId': 'User-Two-Object-Id',
+                    'givenName': 'User',
+                    'surname': 'Two',
+                    'email': 'User.Two@microsoft.com',
+                    'userPrincipalName': 'user2@microsoft.com',
+                    'tenantId': 'tenantId-Guid'
                 }
             ];
             const conversations = new Conversations({ id: 'convo1', id: 'convo2' });
@@ -648,7 +648,7 @@ describe('TeamsInfo', () => {
         it(`getTeamId() should error if an invalid context is passed in.`, async () => {
             try {
                 const results = await TeamsInfo.getTeamId(undefined);
-                console.error(results)
+                console.error(results);
                 throw new Error('should have thrown an error');
             } catch (err) {
                 assert.strictEqual(err.message, 'Missing context parameter');
@@ -658,7 +658,7 @@ describe('TeamsInfo', () => {
         it(`getTeamId() should error if an invalid activity is passed in.`, async () => {
             try {
                 const results = await TeamsInfo.getTeamId({ activity: undefined });
-                console.error(results)
+                console.error(results);
                 throw new Error('should have thrown an error');
             } catch (err) {
                 assert.strictEqual(err.message, 'Missing activity on context');
@@ -695,97 +695,97 @@ const oneOnOneActivity = {
 };
 
 const groupChatActivity = {
-    "text": "<at>Teams Bot</at> test\n",
-    "attachments": [
+    'text': '<at>Teams Bot</at> test\n',
+    'attachments': [
         {
-            "contentType": "text/html",
-            "content": "<div><div><span itemscope=\"\" itemtype=\"http://schema.skype.com/Mention\" itemid=\"0\">Teams Bot</span>&nbsp;test</div>\n</div>"
+            'contentType': 'text/html',
+            'content': '<div><div><span itemscope="" itemtype="http://schema.skype.com/Mention" itemid="0">Teams Bot</span>&nbsp;test</div>\n</div>'
         }
     ],
-    "type": "message",
-    "id": "groupChatActivityId",
-    "channelId": "msteams",
-    "serviceUrl": "https://smba.trafficmanager.net/amer/",
-    "from": {
-        "id": "29:User-One-Id",
-        "name": "User One",
-        "aadObjectId": "User-aadObjectId"
+    'type': 'message',
+    'id': 'groupChatActivityId',
+    'channelId': 'msteams',
+    'serviceUrl': 'https://smba.trafficmanager.net/amer/',
+    'from': {
+        'id': '29:User-One-Id',
+        'name': 'User One',
+        'aadObjectId': 'User-aadObjectId'
     },
-    "conversation": {
-        "isGroup": true,
-        "conversationType": "groupChat",
-        "tenantId": "tenantId-Guid",
-        "id": "19:groupChatId@thread.v2"
+    'conversation': {
+        'isGroup': true,
+        'conversationType': 'groupChat',
+        'tenantId': 'tenantId-Guid',
+        'id': '19:groupChatId@thread.v2'
     },
-    "recipient": {
-        "id": "28:teamsbot-Guid",
-        "name": "Teams Bot"
+    'recipient': {
+        'id': '28:teamsbot-Guid',
+        'name': 'Teams Bot'
     },
-    "entities": [
+    'entities': [
         {
-            "mentioned": {
-                "id": "28:teamsbot-Guid",
-                "name": "Teams Bot"
+            'mentioned': {
+                'id': '28:teamsbot-Guid',
+                'name': 'Teams Bot'
             },
-            "text": "<at>Teams Bot</at>",
-            "type": "mention"
+            'text': '<at>Teams Bot</at>',
+            'type': 'mention'
         }
     ],
-    "channelData": {
-        "tenant": {
-            "id": "tenantId-Guid"
+    'channelData': {
+        'tenant': {
+            'id': 'tenantId-Guid'
         }
     }
 };
 
 const teamActivity = {
-    "text": "<at>Teams Bot</at> hi\n",
-    "attachments": [
+    'text': '<at>Teams Bot</at> hi\n',
+    'attachments': [
         {
-            "contentType": "text/html",
-            "content": "<div><div><span itemscope=\"\" itemtype=\"http://schema.skype.com/Mention\" itemid=\"0\">Teams Bot</span>&nbsp;hi</div>\n</div>"
+            'contentType': 'text/html',
+            'content': '<div><div><span itemscope="" itemtype="http://schema.skype.com/Mention" itemid="0">Teams Bot</span>&nbsp;hi</div>\n</div>'
         }
     ],
-    "type": "message",
-    "id": "teamActivityId",
-    "channelId": "msteams",
-    "serviceUrl": "https://smba.trafficmanager.net/amer/",
-    "from": {
-        "id": "29:User-One-Id",
-        "name": "User One",
-        "aadObjectId": "User-aadObjectId"
+    'type': 'message',
+    'id': 'teamActivityId',
+    'channelId': 'msteams',
+    'serviceUrl': 'https://smba.trafficmanager.net/amer/',
+    'from': {
+        'id': '29:User-One-Id',
+        'name': 'User One',
+        'aadObjectId': 'User-aadObjectId'
     },
-    "conversation": {
-        "isGroup": true,
-        "conversationType": "channel",
-        "tenantId": "tenantId-Guid",
-        "id": "19:generalChannelIdgeneralChannelId@thread.skype;messageid=teamActivityId"
+    'conversation': {
+        'isGroup': true,
+        'conversationType': 'channel',
+        'tenantId': 'tenantId-Guid',
+        'id': '19:generalChannelIdgeneralChannelId@thread.skype;messageid=teamActivityId'
     },
-    "recipient": {
-        "id": "28:teamsbot-Guid",
-        "name": "Teams Bot"
+    'recipient': {
+        'id': '28:teamsbot-Guid',
+        'name': 'Teams Bot'
     },
-    "entities": [
+    'entities': [
         {
-            "mentioned": {
-                "id": "28:teamsbot-Guid",
-                "name": "Teams Bot"
+            'mentioned': {
+                'id': '28:teamsbot-Guid',
+                'name': 'Teams Bot'
             },
-            "text": "<at>Teams Bot</at>",
-            "type": "mention"
+            'text': '<at>Teams Bot</at>',
+            'type': 'mention'
         }
     ],
-    "channelData": {
-        "teamsChannelId": "19:generalChannelIdgeneralChannelId@thread.skype",
-        "teamsTeamId": "19:generalChannelIdgeneralChannelId@thread.skype",
-        "channel": {
-            "id": "19:generalChannelIdgeneralChannelId@thread.skype"
+    'channelData': {
+        'teamsChannelId': '19:generalChannelIdgeneralChannelId@thread.skype',
+        'teamsTeamId': '19:generalChannelIdgeneralChannelId@thread.skype',
+        'channel': {
+            'id': '19:generalChannelIdgeneralChannelId@thread.skype'
         },
-        "team": {
-            "id": "19:generalChannelIdgeneralChannelId@thread.skype"
+        'team': {
+            'id': '19:generalChannelIdgeneralChannelId@thread.skype'
         },
-        "tenant": {
-            "id": "tenantId-Guid"
+        'tenant': {
+            'id': 'tenantId-Guid'
         }
     }
 };

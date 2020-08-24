@@ -19,9 +19,9 @@ export class CardResponseHelpers {
             task: {
                 height: 450,
                 title: 'Task Module Fetch Example',
-                    value: {
-                        card: cardAttachment
-                    } as TaskModuleTaskInfo,
+                value: {
+                    card: cardAttachment
+                } as TaskModuleTaskInfo,
                 width: 500
             } as TaskModuleContinueResponse
         } as MessagingExtensionActionResponse;

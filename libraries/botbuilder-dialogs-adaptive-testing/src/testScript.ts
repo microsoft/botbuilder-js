@@ -28,7 +28,7 @@ export class TestScript {
     /**
      * The locale (default: en-us).
      */
-    public locale: string = 'en-us';
+    public locale = 'en-us';
 
     /**
      * The sequence of test actions to perform to validate the dialog behavior.
@@ -38,7 +38,7 @@ export class TestScript {
     /**
      * If true then trace activities will be sent to the test script.
      */
-    public enableTrace: boolean = false;
+    public enableTrace = false;
 
     /**
      * Starts the execution of the test sequence.

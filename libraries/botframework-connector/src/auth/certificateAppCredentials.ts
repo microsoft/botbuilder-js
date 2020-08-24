@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 
-import * as adal from 'adal-node'
+import * as adal from 'adal-node';
 import { AppCredentials } from './appCredentials';
 
 /**
@@ -31,7 +31,7 @@ export class CertificateAppCredentials extends AppCredentials {
                     } else {
                         resolve(tokenResponse as adal.TokenResponse);
                     }
-                  });
+                });
 
             });
         }

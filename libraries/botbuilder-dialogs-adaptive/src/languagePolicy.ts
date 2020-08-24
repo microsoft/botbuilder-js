@@ -14,7 +14,7 @@ import { Converter } from 'botbuilder-dialogs-declarative';
 export class LanguagePolicy extends Map<string, string[]> {
     public constructor(...defaultLanguages: string[]) {
         super(LanguagePolicy.defaultPolicy(defaultLanguages));
-    };
+    }
 
     public static readonly locales = [
         '', 'aa', 'aa-dj', 'aa-er', 'aa-et', 'af', 'af-na', 'af-za', 'agq', 'agq-cm', 'ak', 'ak-gh', 'am', 'am-et', 'ar', 'ar-001',
@@ -86,7 +86,7 @@ export class LanguagePolicy extends Map<string, string[]> {
     // So that when we get a locale such as en-gb, we can try to resolve to "en-gb" then "en" then ""
     // See commented section for full sample of output of this function
     public static defaultPolicy(defaultLanguages: string[] = []): Map<string, string[]> {
-        var result = new Map<string, string[]> ();
+        const result = new Map<string, string[]> ();
 
         for (const locale of LanguagePolicy.locales) {
             let lang = locale.toLowerCase();

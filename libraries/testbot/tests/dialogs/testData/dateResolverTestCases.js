@@ -74,4 +74,4 @@ module.exports = [
         ],
         expectedResult: '2055-05-05',
     }
-]
+];

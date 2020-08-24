@@ -82,8 +82,8 @@ describe('BotFrameworkHttpClient', function() {
         it('should fail to make call with wrong credentials', async () => {
 
             nock('http://skillUrl')
-            .post('/api/good')
-            .reply(200, { id: 'some-id' });
+                .post('/api/good')
+                .reply(200, { id: 'some-id' });
 
             const credentialProvider = new SimpleCredentialProvider('test-app-id', 'test-app-Secret');
             const client = new TestBotFrameworkHttpClient(credentialProvider, 'channels');

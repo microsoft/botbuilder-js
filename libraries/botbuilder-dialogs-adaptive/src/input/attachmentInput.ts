@@ -30,7 +30,7 @@ export class AttachmentInput extends InputDialog {
 
     protected async onRecognizeInput(dc: DialogContext): Promise<InputState> {
         // Recognize input and filter out non-attachments
-        let input: Attachment | Attachment[] = dc.state.getValue(InputDialog.VALUE_PROPERTY);
+        const input: Attachment | Attachment[] = dc.state.getValue(InputDialog.VALUE_PROPERTY);
         const attachments = Array.isArray(input) ? input : [input];
         const first = attachments.length > 0 ? attachments[0] : undefined;
         if (typeof first != 'object' || (!first.contentUrl && !first.content)) {

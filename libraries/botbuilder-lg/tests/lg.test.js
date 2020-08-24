@@ -661,19 +661,19 @@ describe('LG', function() {
         let templates = preloaded.Expand;
         let data = {
             Data: {
-                Name: "NAME",
-                Address: "ADDRESS"
+                Name: 'NAME',
+                Address: 'ADDRESS'
             }
         };
 
-        let name = "PointOfInterestSuggestedActionName";
+        let name = 'PointOfInterestSuggestedActionName';
         let evaled = templates.expandTemplate(name, data);
 
-        assert.strictEqual(evaled[0]["text"], "NAME at ADDRESS");
-        assert.strictEqual(evaled[0]["speak"], "NAME at ADDRESS");
-        assert.strictEqual(evaled[0]["attachments"].length, 0);
-        assert.strictEqual(evaled[0]["attachmentlayout"], "list");
-        assert.strictEqual(evaled[0]["inputhint"], "ignoringInput");
+        assert.strictEqual(evaled[0]['text'], 'NAME at ADDRESS');
+        assert.strictEqual(evaled[0]['speak'], 'NAME at ADDRESS');
+        assert.strictEqual(evaled[0]['attachments'].length, 0);
+        assert.strictEqual(evaled[0]['attachmentlayout'], 'list');
+        assert.strictEqual(evaled[0]['inputhint'], 'ignoringInput');
     });
 
     it('TestExpandTemplateWithStrictMode', function() {
@@ -691,7 +691,7 @@ describe('LG', function() {
             errMessage = e.toString();
         }
 
-        assert.strictEqual(errMessage.includes("'variable_not_defined' evaluated to null. [StrictTrue]  Error occurred when evaluating '-${variable_not_defined}'"), true);
+        assert.strictEqual(errMessage.includes('\'variable_not_defined\' evaluated to null. [StrictTrue]  Error occurred when evaluating \'-${variable_not_defined}\''), true);
     });
 
     it('TestInlineEvaluate', function() {

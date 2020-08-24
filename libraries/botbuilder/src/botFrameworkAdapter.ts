@@ -129,8 +129,8 @@ export class BotFrameworkAdapter extends BotAdapter implements ConnectorClientBu
     // These keys are public to permit access to the keys from the adapter when it's a being
     // from library that does not have access to static properties off of BotFrameworkAdapter.
     // E.g. botbuilder-dialogs
-    public readonly ConnectorClientKey: Symbol = Symbol('ConnectorClient');
-    public readonly TokenApiClientCredentialsKey: Symbol = Symbol('TokenApiClientCredentials');
+    public readonly ConnectorClientKey: symbol = Symbol('ConnectorClient');
+    public readonly TokenApiClientCredentialsKey: symbol = Symbol('TokenApiClientCredentials');
 
     protected readonly credentials: AppCredentials;
     protected readonly credentialsProvider: SimpleCredentialProvider;
@@ -267,7 +267,7 @@ export class BotFrameworkAdapter extends BotAdapter implements ConnectorClientBu
     public async continueConversation(reference: Partial<ConversationReference>, oAuthScope: string, logic: (context: TurnContext) => Promise<void>): Promise<void>
     public async continueConversation(reference: Partial<ConversationReference>, oAuthScopeOrlogic: string | ((context: TurnContext) => Promise<void> ), logic?: (context: TurnContext) => Promise<void>): Promise<void> {
         let audience = oAuthScopeOrlogic as string;
-        let callback = typeof oAuthScopeOrlogic === 'function' ? oAuthScopeOrlogic : logic;
+        const callback = typeof oAuthScopeOrlogic === 'function' ? oAuthScopeOrlogic : logic;
 
         if (typeof oAuthScopeOrlogic === 'function') {
             // Because the OAuthScope parameter was not provided, get the correct value via the channelService.
@@ -1298,7 +1298,7 @@ export class BotFrameworkAdapter extends BotAdapter implements ConnectorClientBu
      * @returns A response created by the BotAdapter to be sent to the client that originated the request.
      */
     public async processRequest(request: IReceiveRequest): Promise<StreamingResponse> {
-        let response = new StreamingResponse();
+        const response = new StreamingResponse();
 
         if (!request) {
             response.statusCode = StatusCodes.BAD_REQUEST;
@@ -1345,11 +1345,11 @@ export class BotFrameworkAdapter extends BotAdapter implements ConnectorClientBu
         }
 
         try {
-            let context = new TurnContext(this, body);
+            const context = new TurnContext(this, body);
             await this.runMiddleware(context, this.logic);
 
             if (body.type === ActivityTypes.Invoke) {
-                let invokeResponse: any = context.turnState.get(INVOKE_RESPONSE_KEY);
+                const invokeResponse: any = context.turnState.get(INVOKE_RESPONSE_KEY);
                 if (invokeResponse && invokeResponse.value) {
                     const value: InvokeResponse = invokeResponse.value;
                     response.statusCode = value.status;
@@ -1378,7 +1378,7 @@ export class BotFrameworkAdapter extends BotAdapter implements ConnectorClientBu
     public async healthCheck(context: TurnContext) : Promise<HealthCheckResponse> {
         const healthResults = <HealthResults>{
             success: true,
-            "user-agent": USER_AGENT,
+            'user-agent': USER_AGENT,
             messages: [ 'Health check succeeded.' ]
         };
         if (!(await this.credentialsProvider.isAuthenticationDisabled())) {

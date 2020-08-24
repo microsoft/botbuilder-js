@@ -39,13 +39,13 @@ export class TypeFactory {
     public build(name: string, config: object): object {
 
         if (!name) {
-            throw new Error(`TypeFactory: type name must be provided.`)
+            throw new Error(`TypeFactory: type name must be provided.`);
         }
 
         const builder = this.registrations[name];
 
         if (!builder) {
-            throw new Error(`TypeFactory: type ${ name } not registered in factory.`)
+            throw new Error(`TypeFactory: type ${ name } not registered in factory.`);
         }
 
         return builder.build(config);

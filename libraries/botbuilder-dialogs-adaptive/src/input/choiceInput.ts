@@ -83,7 +83,7 @@ export class ChoiceInput extends InputDialog {
 
     protected async onRecognizeInput(dc: DialogContext): Promise<InputState> {
         // Get input and options
-        let input: string = dc.state.getValue(InputDialog.VALUE_PROPERTY).toString();
+        const input: string = dc.state.getValue(InputDialog.VALUE_PROPERTY).toString();
         const options: ChoiceInputOptions = dc.state.getValue(InputDialog.OPTIONS_PROPERTY);
 
         // Format choices

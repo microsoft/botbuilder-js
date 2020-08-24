@@ -34,7 +34,7 @@ export class StreamingRequest {
      * @returns On success returns a streaming request with appropriate status code and body.
      */
     public static create(method: string, path?: string, body?: HttpContent): StreamingRequest {
-        let request = new StreamingRequest();
+        const request = new StreamingRequest();
         request.verb = method;
         request.path = path;
         if (body) {
@@ -64,7 +64,7 @@ export class StreamingRequest {
      */
     public setBody(body: any): void {
         if (typeof body === 'string') {
-            let stream = new SubscribableStream();
+            const stream = new SubscribableStream();
             stream.write(body, 'utf8');
             this.addStream(new HttpContent({
                 type: 'application/json; charset=utf-8',

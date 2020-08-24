@@ -20,7 +20,7 @@ describe('BookingDialog', () => {
             for (let i = 0; i < testData.steps.length; i++) {
                 const reply = await client.sendActivity(testData.steps[i][0]);
                 assert.strictEqual((reply ? reply.text : null), testData.steps[i][1],`${ reply ? reply.text : null } != ${ testData.steps[i][1] }`);
-			}
+            }
 
             assert.strictEqual(client.dialogTurnResult.status, testData.expectedStatus, `${ testData.expectedStatus } != ${ client.dialogTurnResult.status }`);
 
@@ -31,9 +31,9 @@ describe('BookingDialog', () => {
                 assert.strictEqual(result.destination, testData.expectedResult.destination);
                 assert.strictEqual(result.origin, testData.expectedResult.origin);
                 assert.strictEqual(result.travelDate, testData.expectedResult.travelDate);
-			} else {
+            } else {
                 assert.strictEqual(client.dialogTurnResult.result, undefined);
             }
         });
-    })
+    });
 });

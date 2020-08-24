@@ -26,7 +26,7 @@ export class ThisMemoryScope extends MemoryScope {
             throw new Error(`ThisMemoryScope.setMemory: undefined memory object passed in.`);
         }
 
-        if (!dc.activeDialog) { throw new Error(`ThisMemoryScope.setMemory: no active dialog found.`) }
+        if (!dc.activeDialog) { throw new Error(`ThisMemoryScope.setMemory: no active dialog found.`); }
 
         dc.activeDialog.state = memory;
     }

@@ -86,7 +86,7 @@ export class IntegrationBot extends TeamsActivityHandler {
         super();
         this.activityIds = activityIds;
         this.cardTypes = [ HeroCard, ThumbnailCard, ReceiptCard, SigninCard, Carousel, List];
-        this._log = activityLog
+        this._log = activityLog;
         
         // See https://aka.ms/about-bot-activity-message to learn more about the message and other activity types.
         this.onMessage(async (context, next) => {
@@ -100,7 +100,7 @@ export class IntegrationBot extends TeamsActivityHandler {
                 await context.sendActivity('App sent a message with empty text');
                 const activityValue = context.activity.value;
                 if (activityValue) {
-                    await context.sendActivity(`but with value ${JSON.stringify(activityValue)}`);
+                    await context.sendActivity(`but with value ${ JSON.stringify(activityValue) }`);
                 }
             }
 
@@ -109,72 +109,72 @@ export class IntegrationBot extends TeamsActivityHandler {
         });
 
         this.onTeamsChannelRenamedEvent(async (channelInfo: ChannelInfo, teamInfo: TeamInfo, context: TurnContext, next: () => Promise<void>): Promise<void> => {
-            const card = CardFactory.heroCard('Channel Renamed', `${channelInfo.name} is the new Channel name`);
+            const card = CardFactory.heroCard('Channel Renamed', `${ channelInfo.name } is the new Channel name`);
             const message = MessageFactory.attachment(card);
             await context.sendActivity(message);
             await next();
         });
 
         this.onTeamsChannelCreatedEvent(async (channelInfo: ChannelInfo, teamInfo: TeamInfo, context: TurnContext, next: () => Promise<void>): Promise<void> => {
-            const card = CardFactory.heroCard('Channel Created', `${channelInfo.name} is the Channel created`);
+            const card = CardFactory.heroCard('Channel Created', `${ channelInfo.name } is the Channel created`);
             const message = MessageFactory.attachment(card);
             await context.sendActivity(message);
             await next();
         });
 
         this.onTeamsChannelDeletedEvent(async (channelInfo: ChannelInfo, teamInfo: TeamInfo, context: TurnContext, next: () => Promise<void>): Promise<void> => {
-            const card = CardFactory.heroCard('Channel Deleted', `${channelInfo.name} is the Channel deleted`);
+            const card = CardFactory.heroCard('Channel Deleted', `${ channelInfo.name } is the Channel deleted`);
             const message = MessageFactory.attachment(card);
             await context.sendActivity(message);
             await next();
         });
 
         this.onTeamsTeamRenamedEvent(async (teamInfo: TeamInfo, context: TurnContext, next: () => Promise<void>): Promise<void> => {
-            const card = CardFactory.heroCard('Team Renamed', `${teamInfo.name} is the new Team name`);
+            const card = CardFactory.heroCard('Team Renamed', `${ teamInfo.name } is the new Team name`);
             const message = MessageFactory.attachment(card);
             await context.sendActivity(message);
             await next();
         });
 
         this.onTeamsMembersAddedEvent(async (membersAdded: ChannelAccount[], teamInfo: TeamInfo, context: TurnContext, next: () => Promise<void>): Promise<void> => {
-            var newMembers: string = '';
+            const newMembers = '';
             membersAdded.forEach((account) => {
                 newMembers.concat(account.id,' ');
             });
-            const card = CardFactory.heroCard('Account Added', `${newMembers} joined ${teamInfo.name}.`);
+            const card = CardFactory.heroCard('Account Added', `${ newMembers } joined ${ teamInfo.name }.`);
             const message = MessageFactory.attachment(card);
             await context.sendActivity(message);
             await next();
         });
 
         this.onTeamsMembersRemovedEvent(async (membersRemoved: ChannelAccount[], teamInfo: TeamInfo, context: TurnContext, next: () => Promise<void>): Promise<void> => {
-            var removedMembers: string = '';
+            let removedMembers = '';
             membersRemoved.forEach((account) => {
                 removedMembers += account.id + ' ';
             });
-            const card = CardFactory.heroCard('Account Removed', `${removedMembers} removed from ${teamInfo.name}.`);
+            const card = CardFactory.heroCard('Account Removed', `${ removedMembers } removed from ${ teamInfo.name }.`);
             const message = MessageFactory.attachment(card);
             await context.sendActivity(message);
             await next();
         });
         
         this.onMembersAdded(async (context: TurnContext, next: () => Promise<void>): Promise<void> => {
-            var newMembers: string = '';
+            let newMembers = '';
             context.activity.membersAdded.forEach((account) => {
                 newMembers += account.id + ' ';
             });
-            const card = CardFactory.heroCard('Member Added', `${newMembers} joined ${context.activity.conversation.conversationType}.`);
+            const card = CardFactory.heroCard('Member Added', `${ newMembers } joined ${ context.activity.conversation.conversationType }.`);
             const message = MessageFactory.attachment(card);
             await context.sendActivity(message);
             await next();
         });
 
         this.onMembersRemoved(async (context: TurnContext, next: () => Promise<void>): Promise<void> => {
-            var removedMembers: string = '';
+            let removedMembers = '';
             context.activity.membersRemoved.forEach((account) => {
                 removedMembers += account.id + ' ';
             });
-            const card = CardFactory.heroCard('Member Removed', `${removedMembers} removed from ${context.activity.conversation.conversationType}.`);
+            const card = CardFactory.heroCard('Member Removed', `${ removedMembers } removed from ${ context.activity.conversation.conversationType }.`);
             const message = MessageFactory.attachment(card);
             await context.sendActivity(message);
             await next();
@@ -196,11 +196,11 @@ export class IntegrationBot extends TeamsActivityHandler {
     protected async handleTeamsMessagingExtensionBotMessagePreviewEdit(context: TurnContext, action: MessagingExtensionAction): Promise<MessagingExtensionActionResponse> {
         const submitData = AdaptiveCardHelper.toSubmitExampleData(action);
         const response = AdaptiveCardHelper.createTaskModuleAdaptiveCardResponse(
-                                                    submitData.Question,
-                                                    (submitData.MultiSelect.toLowerCase() === 'true'),
-                                                    submitData.Option1,
-                                                    submitData.Option2,
-                                                    submitData.Option3);
+            submitData.Question,
+            (submitData.MultiSelect.toLowerCase() === 'true'),
+            submitData.Option1,
+            submitData.Option2,
+            submitData.Option3);
         return response;
     }
 
@@ -223,12 +223,12 @@ export class IntegrationBot extends TeamsActivityHandler {
             const channelId = teamsGetChannelId(context.activity);
             const adapter = <BotFrameworkAdapter>context.adapter;    
             const connectorClient = adapter.createConnectorClient(context.activity.serviceUrl);
-            let results = await connectorClient.conversations.createConversation(
-            { 
-              isGroup: true, 
-              channelData: {channel: { id: channelId } as ChannelInfo } as TeamsChannelData,
-              activity: responseActivity
-            } as ConversationParameters);
+            const results = await connectorClient.conversations.createConversation(
+                { 
+                    isGroup: true, 
+                    channelData: {channel: { id: channelId } as ChannelInfo } as TeamsChannelData,
+                    activity: responseActivity
+                } as ConversationParameters);
         } catch(ex) {
             console.error('ERROR Sending to General channel:' + JSON.stringify(ex));
         }
@@ -254,79 +254,79 @@ export class IntegrationBot extends TeamsActivityHandler {
     }
 
     protected async handleTeamsFileConsentDecline(context: TurnContext, fileConsentCardResponse: FileConsentCardResponse): Promise<void> {
-        let reply =  this.createReply(context.activity);
-        reply.textFormat = "xml";
-        reply.text = `Declined. We won't upload file <b>${fileConsentCardResponse.context["filename"]}</b>.`;
+        const reply =  this.createReply(context.activity);
+        reply.textFormat = 'xml';
+        reply.text = `Declined. We won't upload file <b>${ fileConsentCardResponse.context['filename'] }</b>.`;
         await context.sendActivity(reply);
     } 
     
     protected async handleTeamsTaskModuleFetch(context: TurnContext, taskModuleRequest: TaskModuleRequest): Promise<TaskModuleResponse> {
-        var reply = MessageFactory.text("handleTeamsTaskModuleFetch TaskModuleRequest" + JSON.stringify(taskModuleRequest));
+        const reply = MessageFactory.text('handleTeamsTaskModuleFetch TaskModuleRequest' + JSON.stringify(taskModuleRequest));
         await context.sendActivity(reply);
 
         return {
             task: { 
-                type: "continue", 
+                type: 'continue', 
                 value: {
                     card: this.getTaskModuleAdaptiveCard(),
                     height: 200,
                     width: 400,
-                    title: "Adaptive Card: Inputs",
+                    title: 'Adaptive Card: Inputs',
                 } as TaskModuleTaskInfo, 
             } as TaskModuleContinueResponse
         } as TaskModuleResponse;
     }
 
     protected async handleTeamsTaskModuleSubmit(context: TurnContext, taskModuleRequest: TaskModuleRequest): Promise<TaskModuleResponse> {
-        var reply = MessageFactory.text("handleTeamsTaskModuleSubmit Value: " + JSON.stringify(taskModuleRequest));
+        const reply = MessageFactory.text('handleTeamsTaskModuleSubmit Value: ' + JSON.stringify(taskModuleRequest));
         await context.sendActivity(reply);
 
         return {
             task: { 
-                type: "message", 
-                value: "Thanks!", 
+                type: 'message', 
+                value: 'Thanks!', 
             } as TaskModuleMessageResponse
         } as TaskModuleResponse;
     }
 
     protected async handleTeamsCardActionInvoke(context: TurnContext): Promise<InvokeResponse> {
-        await context.sendActivity(MessageFactory.text(`handleTeamsCardActionInvoke value: ${JSON.stringify(context.activity.value)}`));
+        await context.sendActivity(MessageFactory.text(`handleTeamsCardActionInvoke value: ${ JSON.stringify(context.activity.value) }`));
         return { status: 200 } as InvokeResponse;
     }
 
     protected async onReactionsAddedActivity(reactionsAdded: MessageReaction[], context: TurnContext): Promise<void> {
-        for (var i = 0, len = reactionsAdded.length; i < len; i++) {
-            var activity = await this._log.find(context.activity.replyToId);
+        for (let i = 0, len = reactionsAdded.length; i < len; i++) {
+            const activity = await this._log.find(context.activity.replyToId);
             if (activity == null) {
                 // If we had sent the message from the error handler we wouldn't have recorded the Activity Id and so we shouldn't expect to see it in the log.
-                await this.sendMessageAndLogActivityId(context, `Activity ${context.activity.replyToId} not found in the log.`);
+                await this.sendMessageAndLogActivityId(context, `Activity ${ context.activity.replyToId } not found in the log.`);
             }
             else {
-                await this.sendMessageAndLogActivityId(context, `You added '${reactionsAdded[i].type}' regarding '${activity.text}'`);
+                await this.sendMessageAndLogActivityId(context, `You added '${ reactionsAdded[i].type }' regarding '${ activity.text }'`);
             }
-        };
+        }
 
         return;
     }
 
     protected async onReactionsRemovedActivity(reactionsAdded: MessageReaction[], context: TurnContext): Promise<void> {
-        for (var i = 0, len = reactionsAdded.length; i < len; i++) {
+        for (let i = 0, len = reactionsAdded.length; i < len; i++) {
             // The ReplyToId property of the inbound MessageReaction Activity will correspond to a Message Activity that was previously sent from this bot.
-            var activity = await this._log.find(context.activity.replyToId);
+            const activity = await this._log.find(context.activity.replyToId);
             if (activity == null) {
                 // If we had sent the message from the error handler we wouldn't have recorded the Activity Id and so we shouldn't expect to see it in the log.
-                await this.sendMessageAndLogActivityId(context, `Activity ${context.activity.replyToId} not found in the log.`);
+                await this.sendMessageAndLogActivityId(context, `Activity ${ context.activity.replyToId } not found in the log.`);
             }
             else {
-                await this.sendMessageAndLogActivityId(context, `You removed '${reactionsAdded[i].type}' regarding '${activity.text}'`);
+                await this.sendMessageAndLogActivityId(context, `You removed '${ reactionsAdded[i].type }' regarding '${ activity.text }'`);
             }
-        };
+        }
 
         return;
     }
 
     protected async handleTeamsO365ConnectorCardAction(context: TurnContext, query: O365ConnectorCardActionQuery): Promise<void> {
-        await context.sendActivity(MessageFactory.text(`O365ConnectorCardActionQuery event value: ${JSON.stringify(query)}`));
+        await context.sendActivity(MessageFactory.text(`O365ConnectorCardActionQuery event value: ${ JSON.stringify(query) }`));
     }
 
     
@@ -345,8 +345,8 @@ export class IntegrationBot extends TeamsActivityHandler {
 
     protected async handleTeamsMessagingExtensionSelectItem(context: TurnContext, query: any): Promise<MessagingExtensionResponse> {
         const searchQuery = query.query;
-        const bfLogo = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQtB3AwMUeNoq4gUBGe6Ocj8kyh3bXa9ZbV7u1fVKQoyKFHdkqU";
-        const card = CardFactory.heroCard('You selected a search result!', `You searched for "${searchQuery}"`, [bfLogo]);
+        const bfLogo = 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQtB3AwMUeNoq4gUBGe6Ocj8kyh3bXa9ZbV7u1fVKQoyKFHdkqU';
+        const card = CardFactory.heroCard('You selected a search result!', `You searched for "${ searchQuery }"`, [bfLogo]);
 
         return <MessagingExtensionResponse> {
             composeExtension: this.createMessagingExtensionResult([card])
@@ -354,17 +354,17 @@ export class IntegrationBot extends TeamsActivityHandler {
     }
     
     protected async handleTeamsAppBasedLinkQuery(context: TurnContext, query: AppBasedLinkQuery): Promise<MessagingExtensionResponse>{
-        console.log("HANDLETEAMSAPPBASEDLINKQUERY\nCONTEXT:\n" + JSON.stringify(context) + '\nQUERY:\n' + JSON.stringify(query));
+        console.log('HANDLETEAMSAPPBASEDLINKQUERY\nCONTEXT:\n' + JSON.stringify(context) + '\nQUERY:\n' + JSON.stringify(query));
         
         const accessor = this.userState.createProperty<{ useHeroCard: boolean }>(RICH_CARD_PROPERTY);
         const config = await accessor.get(context, { useHeroCard: true });
 
         const url = query.url;
-        const cardText = `You entered "${url}"`;
+        const cardText = `You entered "${ url }"`;
         let composeExtensionResponse: MessagingExtensionResponse;
 
         const bfLogo = 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQtB3AwMUeNoq4gUBGe6Ocj8kyh3bXa9ZbV7u1fVKQoyKFHdkqU';
-        const button = { type: 'openUrl', title: 'Click for more Information', value: "https://docs.microsoft.com/en-us/microsoftteams/platform/concepts/bots/bots-overview" };
+        const button = { type: 'openUrl', title: 'Click for more Information', value: 'https://docs.microsoft.com/en-us/microsoftteams/platform/concepts/bots/bots-overview' };
 
         if (config.useHeroCard) {
             const heroCard = CardFactory.heroCard('HeroCard for Link Unfurling:', cardText, [bfLogo], [button]);
@@ -378,7 +378,7 @@ export class IntegrationBot extends TeamsActivityHandler {
                         { ...heroCard, preview }
                     ]
                 }
-            }
+            };
         } else {
             const thumbnailCard = CardFactory.thumbnailCard('ThumbnailCard for Link Unfurling:', cardText, [bfLogo], [button]);
             const preview = CardFactory.thumbnailCard('ThumbnailCard for Link Unfurling:', cardText, [bfLogo]);
@@ -391,7 +391,7 @@ export class IntegrationBot extends TeamsActivityHandler {
                         { ...thumbnailCard, preview }
                     ]
                 }
-            }
+            };
         }
 
         return composeExtensionResponse;
@@ -413,7 +413,7 @@ export class IntegrationBot extends TeamsActivityHandler {
                     ]
                 }
             }
-        }
+        };
     }
 
     protected async handleTeamsMessagingExtensionConfigurationSetting(context: TurnContext, settings: MessagingExtensionQuery){
@@ -437,265 +437,265 @@ export class IntegrationBot extends TeamsActivityHandler {
 
     private async sendO365CardAttachment(context: TurnContext): Promise<void> {
         const card = CardFactory.o365ConnectorCard(<O365ConnectorCard>{
-            "title": "card title",
-            "text": "card text",
-            "summary": "O365 card summary",
-            "themeColor": "#E67A9E",
-            "sections": [
+            'title': 'card title',
+            'text': 'card text',
+            'summary': 'O365 card summary',
+            'themeColor': '#E67A9E',
+            'sections': [
                 {
-                    "title": "**section title**",
-                    "text": "section text",
-                    "activityTitle": "activity title",
-                    "activitySubtitle": "activity subtitle",
-                    "activityText": "activity text",
-                    "activityImage": "http://connectorsdemo.azurewebsites.net/images/MSC12_Oscar_002.jpg",
-                    "activityImageType": "avatar",
-                    "markdown": true,
-                    "facts": [
+                    'title': '**section title**',
+                    'text': 'section text',
+                    'activityTitle': 'activity title',
+                    'activitySubtitle': 'activity subtitle',
+                    'activityText': 'activity text',
+                    'activityImage': 'http://connectorsdemo.azurewebsites.net/images/MSC12_Oscar_002.jpg',
+                    'activityImageType': 'avatar',
+                    'markdown': true,
+                    'facts': [
                         {
-                            "name": "Fact name 1",
-                            "value": "Fact value 1"
+                            'name': 'Fact name 1',
+                            'value': 'Fact value 1'
                         },
                         {
-                            "name": "Fact name 2",
-                            "value": "Fact value 2"
+                            'name': 'Fact name 2',
+                            'value': 'Fact value 2'
                         }
                     ],
-                    "images": [
+                    'images': [
                         {
-                            "image": "http://connectorsdemo.azurewebsites.net/images/MicrosoftSurface_024_Cafe_OH-06315_VS_R1c.jpg",
-                            "title": "image 1"
+                            'image': 'http://connectorsdemo.azurewebsites.net/images/MicrosoftSurface_024_Cafe_OH-06315_VS_R1c.jpg',
+                            'title': 'image 1'
                         },
                         {
-                            "image": "http://connectorsdemo.azurewebsites.net/images/WIN12_Scene_01.jpg",
-                            "title": "image 2"
+                            'image': 'http://connectorsdemo.azurewebsites.net/images/WIN12_Scene_01.jpg',
+                            'title': 'image 2'
                         },
                         {
-                            "image": "http://connectorsdemo.azurewebsites.net/images/WIN12_Anthony_02.jpg",
-                            "title": "image 3"
+                            'image': 'http://connectorsdemo.azurewebsites.net/images/WIN12_Anthony_02.jpg',
+                            'title': 'image 3'
                         }
                     ],
-                    "potentialAction": null
+                    'potentialAction': null
                 }
             ],
-            "potentialAction": <O365ConnectorCardActionBase[]>[
+            'potentialAction': <O365ConnectorCardActionBase[]>[
                 <O365ConnectorCardActionCard>{
-                    "@type": "ActionCard",
-                    "inputs": [
+                    '@type': 'ActionCard',
+                    'inputs': [
                         {
-                            "@type": "multichoiceInput",
-                            "choices": [
+                            '@type': 'multichoiceInput',
+                            'choices': [
                                 {
-                                    "display": "Choice 1",
-                                    "value": "1"
+                                    'display': 'Choice 1',
+                                    'value': '1'
                                 },
                                 {
-                                    "display": "Choice 2",
-                                    "value": "2"
+                                    'display': 'Choice 2',
+                                    'value': '2'
                                 },
                                 {
-                                    "display": "Choice 3",
-                                    "value": "3"
+                                    'display': 'Choice 3',
+                                    'value': '3'
                                 }
                             ],
-                            "style": "expanded",
-                            "isMultiSelect": true,
-                            "id": "list-1",
-                            "isRequired": true,
-                            "title": "Pick multiple options",
-                            "value": null
+                            'style': 'expanded',
+                            'isMultiSelect': true,
+                            'id': 'list-1',
+                            'isRequired': true,
+                            'title': 'Pick multiple options',
+                            'value': null
                         },
                         {
-                            "@type": "multichoiceInput",
-                            "choices": [
+                            '@type': 'multichoiceInput',
+                            'choices': [
                                 {
-                                    "display": "Choice 4",
-                                    "value": "4"
+                                    'display': 'Choice 4',
+                                    'value': '4'
                                 },
                                 {
-                                    "display": "Choice 5",
-                                    "value": "5"
+                                    'display': 'Choice 5',
+                                    'value': '5'
                                 },
                                 {
-                                    "display": "Choice 6",
-                                    "value": "6"
+                                    'display': 'Choice 6',
+                                    'value': '6'
                                 }
                             ],
-                            "style": "compact",
-                            "isMultiSelect": true,
-                            "id": "list-2",
-                            "isRequired": true,
-                            "title": "Pick multiple options",
-                            "value": null
+                            'style': 'compact',
+                            'isMultiSelect': true,
+                            'id': 'list-2',
+                            'isRequired': true,
+                            'title': 'Pick multiple options',
+                            'value': null
                         },
                         <O365ConnectorCardMultichoiceInput>{
-                            "@type": "multichoiceInput",
-                            "choices": <O365ConnectorCardMultichoiceInputChoice[]>[
+                            '@type': 'multichoiceInput',
+                            'choices': <O365ConnectorCardMultichoiceInputChoice[]>[
                                 {
-                                    "display": "Choice a",
-                                    "value": "a"
+                                    'display': 'Choice a',
+                                    'value': 'a'
                                 },
                                 {
-                                    "display": "Choice b",
-                                    "value": "b"
+                                    'display': 'Choice b',
+                                    'value': 'b'
                                 },
                                 {
-                                    "display": "Choice c",
-                                    "value": "c"
+                                    'display': 'Choice c',
+                                    'value': 'c'
                                 }
                             ],
-                            "style": "expanded",
-                            "isMultiSelect": false,
-                            "id": "list-3",
-                            "isRequired": false,
-                            "title": "Pick an option",
-                            "value": null
+                            'style': 'expanded',
+                            'isMultiSelect': false,
+                            'id': 'list-3',
+                            'isRequired': false,
+                            'title': 'Pick an option',
+                            'value': null
                         },
                         {
-                            "@type": "multichoiceInput",
-                            "choices": [
+                            '@type': 'multichoiceInput',
+                            'choices': [
                                 {
-                                    "display": "Choice x",
-                                    "value": "x"
+                                    'display': 'Choice x',
+                                    'value': 'x'
                                 },
                                 {
-                                    "display": "Choice y",
-                                    "value": "y"
+                                    'display': 'Choice y',
+                                    'value': 'y'
                                 },
                                 {
-                                    "display": "Choice z",
-                                    "value": "z"
+                                    'display': 'Choice z',
+                                    'value': 'z'
                                 }
                             ],
-                            "style": "compact",
-                            "isMultiSelect": false,
-                            "id": "list-4",
-                            "isRequired": false,
-                            "title": "Pick an option",
-                            "value": null
+                            'style': 'compact',
+                            'isMultiSelect': false,
+                            'id': 'list-4',
+                            'isRequired': false,
+                            'title': 'Pick an option',
+                            'value': null
                         }
                     ],
-                    "actions": [
+                    'actions': [
                         <O365ConnectorCardHttpPOST>{
-                            "@type": "HttpPOST",
-                            "body": "{\"text1\":\"{{text-1.value}}\", \"text2\":\"{{text-2.value}}\", \"text3\":\"{{text-3.value}}\", \"text4\":\"{{text-4.value}}\"}",
-                            "name": "Send",
-                            "@id": "card-1-btn-1"
+                            '@type': 'HttpPOST',
+                            'body': '{"text1":"{{text-1.value}}", "text2":"{{text-2.value}}", "text3":"{{text-3.value}}", "text4":"{{text-4.value}}"}',
+                            'name': 'Send',
+                            '@id': 'card-1-btn-1'
                         }
                     ],
-                    "name": "Multiple Choice",
-                    "@id": "card-1"
+                    'name': 'Multiple Choice',
+                    '@id': 'card-1'
                 },
                 <O365ConnectorCardActionCard>{
-                    "@type": "ActionCard",
-                    "inputs": [
+                    '@type': 'ActionCard',
+                    'inputs': [
                         {
-                            "@type": "textInput",
-                            "isMultiline": true,
-                            "maxLength": null,
-                            "id": "text-1",
-                            "isRequired": false,
-                            "title": "multiline, no maxLength",
-                            "value": null
+                            '@type': 'textInput',
+                            'isMultiline': true,
+                            'maxLength': null,
+                            'id': 'text-1',
+                            'isRequired': false,
+                            'title': 'multiline, no maxLength',
+                            'value': null
                         },
                         {
-                            "@type": "textInput",
-                            "isMultiline": false,
-                            "maxLength": null,
-                            "id": "text-2",
-                            "isRequired": false,
-                            "title": "single line, no maxLength",
-                            "value": null
+                            '@type': 'textInput',
+                            'isMultiline': false,
+                            'maxLength': null,
+                            'id': 'text-2',
+                            'isRequired': false,
+                            'title': 'single line, no maxLength',
+                            'value': null
                         },
                         <O365ConnectorCardTextInput>{
-                            "@type": "textInput",
-                            "isMultiline": true,
-                            "maxLength": 10.0,
-                            "id": "text-3",
-                            "isRequired": true,
-                            "title": "multiline, max len = 10, isRequired",
-                            "value": null
+                            '@type': 'textInput',
+                            'isMultiline': true,
+                            'maxLength': 10.0,
+                            'id': 'text-3',
+                            'isRequired': true,
+                            'title': 'multiline, max len = 10, isRequired',
+                            'value': null
                         },
                         {
-                            "@type": "textInput",
-                            "isMultiline": false,
-                            "maxLength": 10.0,
-                            "id": "text-4",
-                            "isRequired": true,
-                            "title": "single line, max len = 10, isRequired",
-                            "value": null
+                            '@type': 'textInput',
+                            'isMultiline': false,
+                            'maxLength': 10.0,
+                            'id': 'text-4',
+                            'isRequired': true,
+                            'title': 'single line, max len = 10, isRequired',
+                            'value': null
                         }
                     ],
-                    "actions": [
+                    'actions': [
                         <O365ConnectorCardHttpPOST>{
-                            "@type": "HttpPOST",
-                            "body": "{\"text1\":\"{{text-1.value}}\", \"text2\":\"{{text-2.value}}\", \"text3\":\"{{text-3.value}}\", \"text4\":\"{{text-4.value}}\"}",
-                            "name": "Send",
-                            "@id": "card-2-btn-1"
+                            '@type': 'HttpPOST',
+                            'body': '{"text1":"{{text-1.value}}", "text2":"{{text-2.value}}", "text3":"{{text-3.value}}", "text4":"{{text-4.value}}"}',
+                            'name': 'Send',
+                            '@id': 'card-2-btn-1'
                         }
                     ],
-                    "name": "Text Input",
-                    "@id": "card-2"
+                    'name': 'Text Input',
+                    '@id': 'card-2'
                 },
                 <O365ConnectorCardActionCard>{
-                    "@type": "ActionCard",
-                    "inputs": [
+                    '@type': 'ActionCard',
+                    'inputs': [
                         {
-                            "@type": "dateInput",
-                            "includeTime": true,
-                            "id": "date-1",
-                            "isRequired": true,
-                            "title": "date with time",
-                            "value": null
+                            '@type': 'dateInput',
+                            'includeTime': true,
+                            'id': 'date-1',
+                            'isRequired': true,
+                            'title': 'date with time',
+                            'value': null
                         },
                         <O365ConnectorCardDateInput>{
-                            "@type": "dateInput",
-                            "includeTime": false,
-                            "id": "date-2",
-                            "isRequired": false,
-                            "title": "date only",
-                            "value": null
+                            '@type': 'dateInput',
+                            'includeTime': false,
+                            'id': 'date-2',
+                            'isRequired': false,
+                            'title': 'date only',
+                            'value': null
                         }
                     ],
-                    "actions": [
+                    'actions': [
                         <O365ConnectorCardHttpPOST>{
-                            "@type": "HttpPOST",
-                            "body": "{\"date1\":\"{{date-1.value}}\", \"date2\":\"{{date-2.value}}\"}",
-                            "name": "Send",
-                            "@id": "card-3-btn-1"
+                            '@type': 'HttpPOST',
+                            'body': '{"date1":"{{date-1.value}}", "date2":"{{date-2.value}}"}',
+                            'name': 'Send',
+                            '@id': 'card-3-btn-1'
                         }
                     ],
-                    "name": "Date Input",
-                    "@id": "card-3"
+                    'name': 'Date Input',
+                    '@id': 'card-3'
                 },
                 <O365ConnectorCardViewAction>{
-                    "@type": "ViewAction",
-                    "target": ["http://microsoft.com"],
-                    "name": "View Action",
-                    "@id": null
+                    '@type': 'ViewAction',
+                    'target': ['http://microsoft.com'],
+                    'name': 'View Action',
+                    '@id': null
                 },
                 <O365ConnectorCardOpenUri>{
-                    "@type": "OpenUri",
-                    "targets": [
+                    '@type': 'OpenUri',
+                    'targets': [
                         {
-                            "os": "default",
-                            "uri": "http://microsoft.com"
+                            'os': 'default',
+                            'uri': 'http://microsoft.com'
                         },
                         {
-                            "os": "iOS",
-                            "uri": "http://microsoft.com"
+                            'os': 'iOS',
+                            'uri': 'http://microsoft.com'
                         },
                         {
-                            "os": "android",
-                            "uri": "http://microsoft.com"
+                            'os': 'android',
+                            'uri': 'http://microsoft.com'
                         },
                         {
-                            "os": "windows",
-                            "uri": "http://microsoft.com"
+                            'os': 'windows',
+                            'uri': 'http://microsoft.com'
                         }
                     ],
-                    "name": "Open Uri",
-                    "@id": "open-uri"
+                    'name': 'Open Uri',
+                    '@id': 'open-uri'
                 }
             ]
         });
@@ -704,10 +704,10 @@ export class IntegrationBot extends TeamsActivityHandler {
 
     private async handleBotCommand(text, context, next) : Promise<void> {
         switch (text.toLowerCase()) {
-            case "delete":
+            case 'delete':
                 await this.handleDeleteActivities(context);
                 break;
-            case "update":
+            case 'update':
                 await this.handleUpdateActivities(context);
                 break;
 
@@ -743,22 +743,22 @@ export class IntegrationBot extends TeamsActivityHandler {
                 // NOTE: MessageFactory.Attachment with multiple attachments will default to AttachmentLayoutTypes.List
                 await context.sendActivity(MessageFactory.list([this.getHeroCard(), this.getHeroCard(), this.getHeroCard()]));
                 break;
-            case "o365":
+            case 'o365':
                 await this.sendO365CardAttachment(context);
                 break;
-            case "file":
+            case 'file':
                 await this.sendFileCard(context);
                 break;
-            case "show members":
+            case 'show members':
                 await this.showMembers(context);
                 break;
-            case "show channels":
+            case 'show channels':
                 await this.showChannels(context);
                 break;
-            case "show details":
+            case 'show details':
                 await this.showDetails(context);
                 break;
-            case "task module":
+            case 'task module':
                 await context.sendActivity(MessageFactory.attachment(this.getTaskModuleHeroCard()));
                 break;
             default:
@@ -768,11 +768,11 @@ export class IntegrationBot extends TeamsActivityHandler {
     }
 
     private getTaskModuleHeroCard() : Attachment {
-        return CardFactory.heroCard("Task Module Invocation from Hero Card", 
-            "This is a hero card with a Task Module Action button.  Click the button to show an Adaptive Card within a Task Module.",
+        return CardFactory.heroCard('Task Module Invocation from Hero Card', 
+            'This is a hero card with a Task Module Action button.  Click the button to show an Adaptive Card within a Task Module.',
             null, // No images
-            [{type: "invoke", title:"Adaptive Card", value: {type:"task/fetch", data:"adaptivecard"} }]
-            );
+            [{type: 'invoke', title:'Adaptive Card', value: {type:'task/fetch', data:'adaptivecard'} }]
+        );
     }
 
     private getTaskModuleAdaptiveCard(): Attachment {
@@ -801,28 +801,28 @@ export class IntegrationBot extends TeamsActivityHandler {
     }
     
     private async sendFile(fileConsentCardResponse: FileConsentCardResponse): Promise<void> {
-        const request = require("request");
+        const request = require('request');
         const fs = require('fs');     
-        let context = fileConsentCardResponse.context;
-        let path = require('path');
-        let filePath = path.join('files', context["filename"]);
-        let stats = fs.statSync(filePath);
-        let fileSizeInBytes = stats['size']; 
+        const context = fileConsentCardResponse.context;
+        const path = require('path');
+        const filePath = path.join('files', context['filename']);
+        const stats = fs.statSync(filePath);
+        const fileSizeInBytes = stats['size']; 
         fs.createReadStream(filePath).pipe(request.put(fileConsentCardResponse.uploadInfo.uploadUrl));
     }
 
     private async sendFileCard(context: TurnContext): Promise<void> {
-        let filename = "teams-logo.png";
-        let fs = require('fs'); 
-        let path = require('path');
-        let stats = fs.statSync(path.join('files', filename));
-        let fileSizeInBytes = stats['size'];    
+        const filename = 'teams-logo.png';
+        const fs = require('fs'); 
+        const path = require('path');
+        const stats = fs.statSync(path.join('files', filename));
+        const fileSizeInBytes = stats['size'];    
 
-        let fileContext = {
+        const fileContext = {
             filename: filename
         };
 
-        let attachment = {
+        const attachment = {
             content: <FileConsentCard>{
                 description: 'This is the file I want to send you',
                 fileSizeInBytes: fileSizeInBytes,
@@ -833,33 +833,33 @@ export class IntegrationBot extends TeamsActivityHandler {
             name: filename
         } as Attachment;
 
-        var replyActivity = this.createReply(context.activity);
+        const replyActivity = this.createReply(context.activity);
         replyActivity.attachments = [ attachment ];
         await context.sendActivity(replyActivity);
     }
 
     private async fileUploadCompleted(context: TurnContext, fileConsentCardResponse: FileConsentCardResponse): Promise<void> {
-        let fileUploadInfoName = fileConsentCardResponse.uploadInfo.name;
-        let downloadCard = <FileInfoCard>{
+        const fileUploadInfoName = fileConsentCardResponse.uploadInfo.name;
+        const downloadCard = <FileInfoCard>{
             uniqueId: fileConsentCardResponse.uploadInfo.uniqueId,
             fileType: fileConsentCardResponse.uploadInfo.fileType,
         };
 
-        let attachment = <Attachment>{
+        const attachment = <Attachment>{
             content: downloadCard,
             contentType: 'application/vnd.microsoft.teams.card.file.info',
             name: fileUploadInfoName,
             contentUrl: fileConsentCardResponse.uploadInfo.contentUrl,
         };
 
-        let reply = this.createReply(context.activity, `<b>File uploaded.</b> Your file <b>${fileUploadInfoName}</b> is ready to download`);
+        const reply = this.createReply(context.activity, `<b>File uploaded.</b> Your file <b>${ fileUploadInfoName }</b> is ready to download`);
         reply.textFormat = 'xml';
         reply.attachments = [attachment];
         await context.sendActivity(reply);
     }
 
     private async fileUploadFailed(context: TurnContext, error: string): Promise<void> {
-        let reply = this.createReply(context.activity, `<b>File upload failed.</b> Error: <pre>${error}</pre>`);
+        const reply = this.createReply(context.activity, `<b>File upload failed.</b> Error: <pre>${ error }</pre>`);
         reply.textFormat = 'xml';
         await context.sendActivity(reply);
     }
@@ -879,8 +879,8 @@ export class IntegrationBot extends TeamsActivityHandler {
     } 
 
     private async sendMessageAndLogActivityId(context: TurnContext, text: string): Promise<void> {
-        var replyActivity = MessageFactory.text(`You said '${text}'`);
-        var resourceResponse = await context.sendActivity(replyActivity);
+        const replyActivity = MessageFactory.text(`You said '${ text }'`);
+        const resourceResponse = await context.sendActivity(replyActivity);
         await this.activityIds.push(resourceResponse.id);
         await this._log.append(resourceResponse.id, replyActivity);
     }
@@ -888,59 +888,59 @@ export class IntegrationBot extends TeamsActivityHandler {
     private async sendAdaptiveCard1(context: TurnContext): Promise<void> {
         /* tslint:disable:quotemark object-literal-key-quotes */
         const card = CardFactory.adaptiveCard({
-            "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
-            "actions": [
+            '$schema': 'http://adaptivecards.io/schemas/adaptive-card.json',
+            'actions': [
                 {
-                    "data": {
-                        "msteams": {
-                            "type": "imBack",
-                            "value": "text"
+                    'data': {
+                        'msteams': {
+                            'type': 'imBack',
+                            'value': 'text'
                         }
                     },
-                    "title": "imBack",
-                    "type": "Action.Submit"
+                    'title': 'imBack',
+                    'type': 'Action.Submit'
                 },
                 {
-                    "data": {
-                        "msteams": {
-                            "type": "messageBack",
-                            "value": { "key": "value" }
+                    'data': {
+                        'msteams': {
+                            'type': 'messageBack',
+                            'value': { 'key': 'value' }
                         }
                     },
-                    "title": "message back",
-                    "type": "Action.Submit"
+                    'title': 'message back',
+                    'type': 'Action.Submit'
                 },
                 {
-                    "data": {
-                        "msteams": {
-                            "displayText": "display text message back",
-                            "text": "text received by bots",
-                            "type": "messageBack",
-                            "value": { "key": "value" }
+                    'data': {
+                        'msteams': {
+                            'displayText': 'display text message back',
+                            'text': 'text received by bots',
+                            'type': 'messageBack',
+                            'value': { 'key': 'value' }
                         }
                     },
-                    "title": "message back local echo",
-                    "type": "Action.Submit"
+                    'title': 'message back local echo',
+                    'type': 'Action.Submit'
                 },
                 {
-                    "data": {
-                        "msteams": {
-                            "type": "invoke",
-                            "value": { "key": "value" }
+                    'data': {
+                        'msteams': {
+                            'type': 'invoke',
+                            'value': { 'key': 'value' }
                         }
                     },
-                    "title": "invoke",
-                    "type": "Action.Submit"
+                    'title': 'invoke',
+                    'type': 'Action.Submit'
                 }
             ],
-            "body": [
+            'body': [
                 {
-                    "text": "Bot Builder actions",
-                    "type": "TextBlock"
+                    'text': 'Bot Builder actions',
+                    'type': 'TextBlock'
                 }
             ],
-            "type": "AdaptiveCard",
-            "version": "1.0"
+            'type': 'AdaptiveCard',
+            'version': '1.0'
         });
         /* tslint:enable:quotemark object-literal-key-quotes */
         await context.sendActivity(MessageFactory.attachment(card));
@@ -963,30 +963,30 @@ export class IntegrationBot extends TeamsActivityHandler {
     private async sendAdaptiveCard2(context: TurnContext): Promise<void> {
         /* tslint:disable:quotemark object-literal-key-quotes */
         const card = CardFactory.adaptiveCard({
-            "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
-            "actions": [
+            '$schema': 'http://adaptivecards.io/schemas/adaptive-card.json',
+            'actions': [
                 {
-                    "data": {
-                        "msteams": {
-                            "type": "invoke",
-                            "value": {
-                                "hiddenKey": "hidden value from task module launcher",
-                                "type": "task/fetch"
+                    'data': {
+                        'msteams': {
+                            'type': 'invoke',
+                            'value': {
+                                'hiddenKey': 'hidden value from task module launcher',
+                                'type': 'task/fetch'
                             }
                         }
                     },
-                    "title": "Launch Task Module",
-                    "type": "Action.Submit"
+                    'title': 'Launch Task Module',
+                    'type': 'Action.Submit'
                 }
             ],
-            "body": [
+            'body': [
                 {
-                    "text": "Task Module Adaptive Card",
-                    "type": "TextBlock"
+                    'text': 'Task Module Adaptive Card',
+                    'type': 'TextBlock'
                 }
             ],
-            "type": "AdaptiveCard",
-            "version": "1.0"
+            'type': 'AdaptiveCard',
+            'version': '1.0'
         });
         /* tslint:enable:quotemark object-literal-key-quotes */
         await context.sendActivity(MessageFactory.attachment(card));
@@ -995,28 +995,28 @@ export class IntegrationBot extends TeamsActivityHandler {
     private async sendAdaptiveCard3(context: TurnContext): Promise<void> {
         /* tslint:disable:quotemark object-literal-key-quotes */
         const card = CardFactory.adaptiveCard({
-            "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
-            "actions": [
+            '$schema': 'http://adaptivecards.io/schemas/adaptive-card.json',
+            'actions': [
                 {
-                    "data": {
-                        "key": "value"
+                    'data': {
+                        'key': 'value'
                     },
-                    "title": "Action.Submit",
-                    "type": "Action.Submit"
+                    'title': 'Action.Submit',
+                    'type': 'Action.Submit'
                 }
             ],
-            "body": [
+            'body': [
                 {
-                    "text": "Bot Builder actions",
-                    "type": "TextBlock"
+                    'text': 'Bot Builder actions',
+                    'type': 'TextBlock'
                 },
                 {
-                    "id": "x",
-                    "type": "Input.Text"
+                    'id': 'x',
+                    'type': 'Input.Text'
                 }
             ],
-            "type": "AdaptiveCard",
-            "version": "1.0"
+            'type': 'AdaptiveCard',
+            'version': '1.0'
         });
         /* tslint:enable:quotemark object-literal-key-quotes */
         await context.sendActivity(MessageFactory.attachment(card));
@@ -1090,26 +1090,26 @@ export class IntegrationBot extends TeamsActivityHandler {
     }
 
     private async showMembers(context: TurnContext): Promise<void> {
-        let teamsChannelAccounts = await TeamsInfo.getMembers(context);
-        await context.sendActivity(MessageFactory.text(`Total of ${teamsChannelAccounts.length} members are currently in team`));
-        let messages = teamsChannelAccounts.map(function(teamsChannelAccount) {
-            return `${teamsChannelAccount.aadObjectId} --> ${teamsChannelAccount.name} --> ${teamsChannelAccount.userPrincipalName}`;
+        const teamsChannelAccounts = await TeamsInfo.getMembers(context);
+        await context.sendActivity(MessageFactory.text(`Total of ${ teamsChannelAccounts.length } members are currently in team`));
+        const messages = teamsChannelAccounts.map(function(teamsChannelAccount) {
+            return `${ teamsChannelAccount.aadObjectId } --> ${ teamsChannelAccount.name } --> ${ teamsChannelAccount.userPrincipalName }`;
         });
         await this.sendInBatches(context, messages);
     }
     
     private async showChannels(context: TurnContext): Promise<void> { 
-        let channels = await TeamsInfo.getTeamChannels(context);
-        await context.sendActivity(MessageFactory.text(`Total of ${channels.length} channels are currently in team`));
-        let messages = channels.map(function(channel) {
-            return `${channel.id} --> ${channel.name ? channel.name : 'General'}`;
+        const channels = await TeamsInfo.getTeamChannels(context);
+        await context.sendActivity(MessageFactory.text(`Total of ${ channels.length } channels are currently in team`));
+        const messages = channels.map(function(channel) {
+            return `${ channel.id } --> ${ channel.name ? channel.name : 'General' }`;
         });
         await this.sendInBatches(context, messages);
     }
    
     private async showDetails(context: TurnContext): Promise<void> {
-        let teamDetails = await TeamsInfo.getTeamDetails(context);
-        await this.sendMessageAndLogActivityId(context, `The team name is ${teamDetails.name}. The team ID is ${teamDetails.id}. The AAD GroupID is ${teamDetails.aadGroupId}.`);
+        const teamDetails = await TeamsInfo.getTeamDetails(context);
+        await this.sendMessageAndLogActivityId(context, `The team name is ${ teamDetails.name }. The team ID is ${ teamDetails.id }. The AAD GroupID is ${ teamDetails.aadGroupId }.`);
     }
 
     private async sendInBatches(context: TurnContext, messages: string[]): Promise<void> {
@@ -1129,24 +1129,24 @@ export class IntegrationBot extends TeamsActivityHandler {
 
     private createMessagingExtensionResult(attachments: Attachment[]) : MessagingExtensionResult {   
         return <MessagingExtensionResult> {
-            type: "result",
-            attachmentLayout: "list",
+            type: 'result',
+            attachmentLayout: 'list',
             attachments: attachments
         };
     }
 
     private createSearchResultAttachment(searchQuery: string) : MessagingExtensionAttachment {
-        const cardText = `You said \"${searchQuery}\"`;
-        const bfLogo = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQtB3AwMUeNoq4gUBGe6Ocj8kyh3bXa9ZbV7u1fVKQoyKFHdkqU";
+        const cardText = `You said \"${ searchQuery }\"`;
+        const bfLogo = 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQtB3AwMUeNoq4gUBGe6Ocj8kyh3bXa9ZbV7u1fVKQoyKFHdkqU';
 
         const button = <CardAction> {
-            type: "openUrl",
-            title: "Click for more Information",
-            value: "https://docs.microsoft.com/en-us/microsoftteams/platform/concepts/bots/bots-overview"
+            type: 'openUrl',
+            title: 'Click for more Information',
+            value: 'https://docs.microsoft.com/en-us/microsoftteams/platform/concepts/bots/bots-overview'
         };
 
-        const heroCard = CardFactory.heroCard("You searched for:", cardText, [bfLogo], [button]);
-        const preview = CardFactory.heroCard("You searched for:", cardText, [bfLogo]);
+        const heroCard = CardFactory.heroCard('You searched for:', cardText, [bfLogo], [button]);
+        const preview = CardFactory.heroCard('You searched for:', cardText, [bfLogo]);
 
         return <MessagingExtensionAttachment> {
             contentType: CardFactory.contentTypes.heroCard,
@@ -1156,17 +1156,17 @@ export class IntegrationBot extends TeamsActivityHandler {
     }
 
     private createDummySearchResultAttachment() : MessagingExtensionAttachment {
-        const cardText = "https://docs.microsoft.com/en-us/microsoftteams/platform/concepts/bots/bots-overview";
-        const bfLogo = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQtB3AwMUeNoq4gUBGe6Ocj8kyh3bXa9ZbV7u1fVKQoyKFHdkqU";
+        const cardText = 'https://docs.microsoft.com/en-us/microsoftteams/platform/concepts/bots/bots-overview';
+        const bfLogo = 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQtB3AwMUeNoq4gUBGe6Ocj8kyh3bXa9ZbV7u1fVKQoyKFHdkqU';
 
         const button = <CardAction> {
-            type: "openUrl",
-            title: "Click for more Information",
-            value: "https://docs.microsoft.com/en-us/microsoftteams/platform/concepts/bots/bots-overview"
+            type: 'openUrl',
+            title: 'Click for more Information',
+            value: 'https://docs.microsoft.com/en-us/microsoftteams/platform/concepts/bots/bots-overview'
         };
 
-        const heroCard = CardFactory.heroCard("Learn more about Teams:", cardText, [bfLogo], [button]);
-        const preview = CardFactory.heroCard("Learn more about Teams:", cardText, [bfLogo]);
+        const heroCard = CardFactory.heroCard('Learn more about Teams:', cardText, [bfLogo], [button]);
+        const preview = CardFactory.heroCard('Learn more about Teams:', cardText, [bfLogo]);
 
         return <MessagingExtensionAttachment> {
             contentType: CardFactory.contentTypes.heroCard,
@@ -1177,11 +1177,11 @@ export class IntegrationBot extends TeamsActivityHandler {
 
     private createSelectItemsResultAttachment(searchQuery: string): MessagingExtensionAttachment {
         const bfLogo = 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQtB3AwMUeNoq4gUBGe6Ocj8kyh3bXa9ZbV7u1fVKQoyKFHdkqU';
-        const cardText = `You said: "${searchQuery}"`;
+        const cardText = `You said: "${ searchQuery }"`;
         const heroCard = CardFactory.heroCard(cardText, cardText, [bfLogo]);
 
         const selectItemTap = <CardAction> {
-            type: "invoke",
+            type: 'invoke',
             value: { query: searchQuery }
         };
 

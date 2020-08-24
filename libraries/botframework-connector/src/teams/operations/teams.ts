@@ -15,103 +15,103 @@ import { ConversationList, TeamDetails } from 'botframework-schema';
 
 /** Class representing a Teams. */
 export class Teams {
-  private readonly client: TeamsConnectorClientContext;
+    private readonly client: TeamsConnectorClientContext;
 
-  /**
+    /**
    * Create a Teams.
    * @param {TeamsConnectorClientContext} client Reference to the service client.
    */
-  constructor(client: TeamsConnectorClientContext) {
-    this.client = client;
-  }
+    constructor(client: TeamsConnectorClientContext) {
+        this.client = client;
+    }
 
-  /**
+    /**
    * Fetch the channel list.
    * @summary Fetches channel list for a given team
    * @param teamId Team Id
    * @param [options] The optional parameters
    * @returns Promise<Models.TeamsFetchChannelListResponse>
    */
-  fetchChannelList(teamId: string, options?: msRest.RequestOptionsBase): Promise<Models.TeamsFetchChannelListResponse>;
-  /**
+    fetchChannelList(teamId: string, options?: msRest.RequestOptionsBase): Promise<Models.TeamsFetchChannelListResponse>;
+    /**
    * @param teamId Team Id
    * @param callback The callback
    */
-  fetchChannelList(teamId: string, callback: msRest.ServiceCallback<ConversationList>): void;
-  /**
+    fetchChannelList(teamId: string, callback: msRest.ServiceCallback<ConversationList>): void;
+    /**
    * @param teamId Team Id
    * @param options The optional parameters
    * @param callback The callback
    */
-  fetchChannelList(teamId: string, options: msRest.RequestOptionsBase, callback: msRest.ServiceCallback<ConversationList>): void;
-  fetchChannelList(teamId: string, options?: msRest.RequestOptionsBase | msRest.ServiceCallback<ConversationList>, callback?: msRest.ServiceCallback<ConversationList>): Promise<Models.TeamsFetchChannelListResponse> {
-    return this.client.sendOperationRequest(
-      {
-        teamId,
-        options
-      },
-      fetchChannelListOperationSpec,
-      callback) as Promise<Models.TeamsFetchChannelListResponse>;
-  }
+    fetchChannelList(teamId: string, options: msRest.RequestOptionsBase, callback: msRest.ServiceCallback<ConversationList>): void;
+    fetchChannelList(teamId: string, options?: msRest.RequestOptionsBase | msRest.ServiceCallback<ConversationList>, callback?: msRest.ServiceCallback<ConversationList>): Promise<Models.TeamsFetchChannelListResponse> {
+        return this.client.sendOperationRequest(
+            {
+                teamId,
+                options
+            },
+            fetchChannelListOperationSpec,
+            callback) as Promise<Models.TeamsFetchChannelListResponse>;
+    }
 
-  /**
+    /**
    * Fetch details for a team
    * @summary Fetches details related to a team
    * @param teamId Team Id
    * @param [options] The optional parameters
    * @returns Promise<Models.TeamsFetchTeamDetailsResponse>
    */
-  fetchTeamDetails(teamId: string, options?: msRest.RequestOptionsBase): Promise<Models.TeamsFetchTeamDetailsResponse>;
-  /**
+    fetchTeamDetails(teamId: string, options?: msRest.RequestOptionsBase): Promise<Models.TeamsFetchTeamDetailsResponse>;
+    /**
    * @param teamId Team Id
    * @param callback The callback
    */
-  fetchTeamDetails(teamId: string, callback: msRest.ServiceCallback<TeamDetails>): void;
-  /**
+    fetchTeamDetails(teamId: string, callback: msRest.ServiceCallback<TeamDetails>): void;
+    /**
    * @param teamId Team Id
    * @param options The optional parameters
    * @param callback The callback
    */
-  fetchTeamDetails(teamId: string, options: msRest.RequestOptionsBase, callback: msRest.ServiceCallback<TeamDetails>): void;
-  fetchTeamDetails(teamId: string, options?: msRest.RequestOptionsBase | msRest.ServiceCallback<TeamDetails>, callback?: msRest.ServiceCallback<TeamDetails>): Promise<Models.TeamsFetchTeamDetailsResponse> {
-    return this.client.sendOperationRequest(
-      {
-        teamId,
-        options
-      },
-      fetchTeamDetailsOperationSpec,
-      callback) as Promise<Models.TeamsFetchTeamDetailsResponse>;
-  }
+    fetchTeamDetails(teamId: string, options: msRest.RequestOptionsBase, callback: msRest.ServiceCallback<TeamDetails>): void;
+    fetchTeamDetails(teamId: string, options?: msRest.RequestOptionsBase | msRest.ServiceCallback<TeamDetails>, callback?: msRest.ServiceCallback<TeamDetails>): Promise<Models.TeamsFetchTeamDetailsResponse> {
+        return this.client.sendOperationRequest(
+            {
+                teamId,
+                options
+            },
+            fetchTeamDetailsOperationSpec,
+            callback) as Promise<Models.TeamsFetchTeamDetailsResponse>;
+    }
 }
 
 // Operation Specifications
 const serializer = new msRest.Serializer(Mappers);
 const fetchChannelListOperationSpec: msRest.OperationSpec = {
-  httpMethod: 'GET',
-  path: 'v3/teams/{teamId}/conversations',
-  urlParameters: [
-    Parameters.teamId
-  ],
-  responses: {
-    200: {
-      bodyMapper: Mappers.ConversationList
+    httpMethod: 'GET',
+    path: 'v3/teams/{teamId}/conversations',
+    urlParameters: [
+        Parameters.teamId
+    ],
+    responses: {
+        200: {
+            bodyMapper: Mappers.ConversationList
+        },
+        default: {}
     },
-    default: {}
-  },
-  serializer
+    serializer
 };
 
 const fetchTeamDetailsOperationSpec: msRest.OperationSpec = {
-  httpMethod: 'GET',
-  path: 'v3/teams/{teamId}',
-  urlParameters: [
-    Parameters.teamId
-  ],
-  responses: {
-    200: {
-      bodyMapper: Mappers.TeamDetails
+    httpMethod: 'GET',
+    path: 'v3/teams/{teamId}',
+    urlParameters: [
+        Parameters.teamId
+    ],
+    responses: {
+        200: {
+            bodyMapper: Mappers.TeamDetails
+        },
+        default: {}
     },
-    default: {}
-  },
-  serializer
+    serializer
 };

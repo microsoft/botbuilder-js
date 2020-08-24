@@ -34,7 +34,7 @@ export class AddToTime extends ExpressionEvaluator {
             if (typeof (args[0]) === 'string' && Number.isInteger(args[1]) && typeof (args[2]) === 'string') {
                 ({ value, error } = AddToTime.evalAddToTime(args[0], args[1], args[2], format));
             } else {
-                error = `${expression} cannot evaluate`;
+                error = `${ expression } cannot evaluate`;
             }
         }
 
@@ -47,7 +47,7 @@ export class AddToTime extends ExpressionEvaluator {
         let parsed: any;
         ({ value: parsed, error } = FunctionUtils.parseTimestamp(timeStamp));
         if (!error) {
-            let dt: any = moment(parsed).utc();
+            const dt: any = moment(parsed).utc();
             let addedTime = dt;
             let timeUnitMark: string;
             switch (timeUnit) {
@@ -87,7 +87,7 @@ export class AddToTime extends ExpressionEvaluator {
                 }
 
                 default: {
-                    error = `${timeUnit} is not valid time unit`;
+                    error = `${ timeUnit } is not valid time unit`;
                     break;
                 }
             }

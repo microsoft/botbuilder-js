@@ -29,8 +29,8 @@ class SimpleAdapter extends BotAdapter {
         assert(Array.isArray(activities), `SimpleAdapter.sendActivities: activities not array.`);
         assert(activities.length > 0, `SimpleAdapter.sendActivities: empty activities array.`);
         activities.forEach((a, i) => {
-            assert(typeof a === 'object', `SimpleAdapter.sendActivities: activity[${i}] not an object.`);
-            assert(typeof a.type === 'string', `SimpleAdapter.sendActivities: activity[${i}].type missing or invalid.`);
+            assert(typeof a === 'object', `SimpleAdapter.sendActivities: activity[${ i }] not an object.`);
+            assert(typeof a.type === 'string', `SimpleAdapter.sendActivities: activity[${ i }].type missing or invalid.`);
             responses.push({ id: '5678' });
         });
         return Promise.resolve(responses);
@@ -45,7 +45,7 @@ class SimpleAdapter extends BotAdapter {
     deleteActivity(context, reference) {
         assert(context, `SimpleAdapter.deleteActivity: missing context.`);
         assert(reference, `SimpleAdapter.deleteActivity: missing reference.`);
-        assert(reference.activityId === '1234', `SimpleAdapter.deleteActivity: invalid activityId of "${reference.activityId}".`);
+        assert(reference.activityId === '1234', `SimpleAdapter.deleteActivity: invalid activityId of "${ reference.activityId }".`);
         return Promise.resolve();
     }
 }
@@ -72,24 +72,24 @@ class SendAdapter extends BotAdapter {
     }
 }
 
-describe(`TurnContext`, function () {
+describe(`TurnContext`, function() {
     this.timeout(5000);
 
-    it(`should have adapter.`, function (done) {
+    it(`should have adapter.`, function(done) {
         const context = new TurnContext(new SimpleAdapter(), testMessage);
         assert(context.adapter, `missing property.`);
         assert(context.adapter.deleteActivity, `invalid property.`);
         done();
     });
 
-    it(`should have activity.`, function (done) {
+    it(`should have activity.`, function(done) {
         const context = new TurnContext(new SimpleAdapter(), testMessage);
         assert(context.activity, `missing property.`);
         assert(context.activity.type === 'message', `invalid property.`);
         done();
     });
 
-    it(`should clone a passed in context.`, function (done) {
+    it(`should clone a passed in context.`, function(done) {
         const context = new TurnContext(new SimpleAdapter(), testMessage);
         const ctx = new TurnContext(context);
         assert(ctx._adapter === context._adapter, `_adapter not cloned.`);
@@ -102,20 +102,20 @@ describe(`TurnContext`, function () {
         done();
     });
 
-    it(`responded should start as 'false'.`, function (done) {
+    it(`responded should start as 'false'.`, function(done) {
         const context = new TurnContext(new SimpleAdapter(), testMessage);
         assert(context.responded === false, `invalid value.`);
         done();
     });
 
-    it(`should set responded.`, function (done) {
+    it(`should set responded.`, function(done) {
         const context = new TurnContext(new SimpleAdapter(), testMessage);
         context.responded = true;
         assert(context.responded === true, `responded not set.`);
         done();
     });
     
-    it(`should throw if you set responded to false.`, function (done) {
+    it(`should throw if you set responded to false.`, function(done) {
         try {
             const context = new TurnContext(new SimpleAdapter(), testMessage);
             context.responded = true;
@@ -126,15 +126,15 @@ describe(`TurnContext`, function () {
         }
     });
 
-    it(`should cache a value using turnState.set() and services.get().`, function (done) {
+    it(`should cache a value using turnState.set() and services.get().`, function(done) {
         const context = new TurnContext(new SimpleAdapter(), testMessage);
         assert(context.turnState.get('foo') === undefined, `invalid initial state.`);
         context.turnState.set('foo', 'bar');
-        assert(context.turnState.get('foo') === 'bar', `invalid value of "${context.turnState.get('foo')}" after set().`);
+        assert(context.turnState.get('foo') === 'bar', `invalid value of "${ context.turnState.get('foo') }" after set().`);
         done();
     });
 
-    it(`should inspect a value using has().`, function (done) {
+    it(`should inspect a value using has().`, function(done) {
         const context = new TurnContext(new SimpleAdapter(), testMessage);
         assert(!context.turnState.has('bar'), `invalid initial state for has().`);
         context.turnState.set('bar', 'foo');
@@ -144,48 +144,48 @@ describe(`TurnContext`, function () {
         done();
     });
 
-    it(`should be able to use a Symbol with set(), get(), and has().`, function (done) {
+    it(`should be able to use a Symbol with set(), get(), and has().`, function(done) {
         const key = Symbol('foo');
         const context = new TurnContext(new SimpleAdapter(), testMessage);
         assert(!context.turnState.has(key), `invalid initial state for has().`);
         context.turnState.set(key, 'bar');
-        assert(context.turnState.get(key) === 'bar', `invalid value of "${context.turnState.get(key)}" after set().`);
+        assert(context.turnState.get(key) === 'bar', `invalid value of "${ context.turnState.get(key) }" after set().`);
         context.turnState.set(key, undefined);
         assert(context.turnState.has(key), `invalid initial state for has() after set(undefined).`);
         done();
     });
 
-    it(`should push() and pop() a new turn state.`, function (done) {
+    it(`should push() and pop() a new turn state.`, function(done) {
         const context = new TurnContext(new SimpleAdapter(), testMessage);
         context.turnState.set('foo', 'a');
         context.turnState.push('foo', 'b');
-        assert(context.turnState.get('foo') === 'b', `invalid value of "${context.turnState.get('foo')}" after push().`);
+        assert(context.turnState.get('foo') === 'b', `invalid value of "${ context.turnState.get('foo') }" after push().`);
         const old = context.turnState.pop('foo');
         assert(old == 'b', `popped value not returned.`);
-        assert(context.turnState.get('foo') === 'a', `invalid value of "${context.turnState.get('foo')}" after pop().`);
+        assert(context.turnState.get('foo') === 'a', `invalid value of "${ context.turnState.get('foo') }" after pop().`);
         done();
     });
 
-    it(`should sendActivity() and set responded.`, function (done) {
+    it(`should sendActivity() and set responded.`, function(done) {
         const context = new TurnContext(new SimpleAdapter(), testMessage);
         context.sendActivity(testMessage).then((response) => {
             assert(response, `response is missing.`);
-            assert(response.id === '5678', `invalid response id of "${response.id}" sent back.`);
+            assert(response.id === '5678', `invalid response id of "${ response.id }" sent back.`);
             assert(context.responded === true, `context.responded not set after send.`);        
             done();
         });
     });
 
-    it(`should send a text message via sendActivity().`, function (done) {
+    it(`should send a text message via sendActivity().`, function(done) {
         const context = new TurnContext(new SimpleAdapter(), testMessage);
         context.sendActivity('test').then((response) => {
             assert(response, `response is missing.`);
-            assert(response.id === '5678', `invalid response id of "${response.id}" sent back.`);
+            assert(response.id === '5678', `invalid response id of "${ response.id }" sent back.`);
             done();
         });
     });
 
-    it(`should send a text message with speak and inputHint added.`, function (done) {
+    it(`should send a text message with speak and inputHint added.`, function(done) {
         const context = new TurnContext(new SimpleAdapter(), testMessage);
         context.onSendActivities((ctx, activities, next) => {
             assert(Array.isArray(activities), `activities not array.`);
@@ -198,7 +198,7 @@ describe(`TurnContext`, function () {
         context.sendActivity('test', 'say test', 'ignoringInput').then(() => done());
     });
 
-    it(`should send a trace activity.`, function (done) {
+    it(`should send a trace activity.`, function(done) {
         const context = new TurnContext(new SimpleAdapter(), testMessage);
         context.onSendActivities((ctx, activities, next) => {
             assert(Array.isArray(activities), `activities not array.`);
@@ -214,18 +214,18 @@ describe(`TurnContext`, function () {
     });
    
 
-    it(`should send multiple activities via sendActivities().`, function (done) {
+    it(`should send multiple activities via sendActivities().`, function(done) {
         const context = new TurnContext(new SimpleAdapter(), testMessage);
         context.sendActivities([testMessage, testMessage, testMessage]).then((responses) => {
             assert(Array.isArray(responses), `responses isn't an array.`);
             assert(responses.length > 0, `empty responses array returned.`);
-            assert(responses.length === 3, `invalid responses array length of "${responses.length}" returned.`);
-            assert(responses[0].id === '5678', `invalid response id of "${responses[0].id}" sent back.`);
+            assert(responses.length === 3, `invalid responses array length of "${ responses.length }" returned.`);
+            assert(responses[0].id === '5678', `invalid response id of "${ responses[0].id }" sent back.`);
             done();
         });
     });
     
-    it(`should call onSendActivity() hook before delivery.`, function (done) {
+    it(`should call onSendActivity() hook before delivery.`, function(done) {
         let count = 0;
         const context = new TurnContext(new SimpleAdapter(), testMessage);
         context.onSendActivities((ctx, activities, next) => {
@@ -240,7 +240,7 @@ describe(`TurnContext`, function () {
         });
     });
 
-    it(`should allow interception of delivery in onSendActivity() hook.`, function (done) {
+    it(`should allow interception of delivery in onSendActivity() hook.`, function(done) {
         const context = new TurnContext(new SimpleAdapter(), testMessage);
         context.onSendActivities((ctx, activities, next) => {
             return [];
@@ -251,7 +251,7 @@ describe(`TurnContext`, function () {
         });
     });
     
-    it(`should call onUpdateActivity() hook before update.`, function (done) {
+    it(`should call onUpdateActivity() hook before update.`, function(done) {
         let called = false;
         const context = new TurnContext(new SimpleAdapter(), testMessage);
         context.onUpdateActivity((ctx, activity, next) => {
@@ -266,7 +266,7 @@ describe(`TurnContext`, function () {
         });
     });
     
-    it(`should be able to update an activity with MessageFactory`, function (done) {
+    it(`should be able to update an activity with MessageFactory`, function(done) {
         let called = false;
         const context = new TurnContext(new SimpleAdapter(), testMessage);
         context.onUpdateActivity((ctx, activity, next) => {
@@ -286,7 +286,7 @@ describe(`TurnContext`, function () {
         });
     });
 
-    it(`should call onDeleteActivity() hook before delete by "id".`, function (done) {
+    it(`should call onDeleteActivity() hook before delete by "id".`, function(done) {
         let called = false;
         const context = new TurnContext(new SimpleAdapter(), testMessage);
         context.onDeleteActivity((ctx, reference, next) => {
@@ -302,7 +302,7 @@ describe(`TurnContext`, function () {
         });
     });
 
-    it(`should call onDeleteActivity() hook before delete by "reference".`, function (done) {
+    it(`should call onDeleteActivity() hook before delete by "reference".`, function(done) {
         let called = false;
         const context = new TurnContext(new SimpleAdapter(), testMessage);
         context.onDeleteActivity((ctx, reference, next) => {
@@ -317,7 +317,7 @@ describe(`TurnContext`, function () {
         });
     });
     
-    it(`should map an exception raised by a hook to a rejection.`, function (done) {
+    it(`should map an exception raised by a hook to a rejection.`, function(done) {
         let called = false;
         const context = new TurnContext(new SimpleAdapter(), testMessage);
         context.onDeleteActivity((ctx, reference, next) => {
@@ -333,7 +333,7 @@ describe(`TurnContext`, function () {
             });
     });
 
-    it(`should round trip a conversation reference using getConversationReference() and applyConversationRefernce().`, function (done) {
+    it(`should round trip a conversation reference using getConversationReference() and applyConversationRefernce().`, function(done) {
         // Convert to reference
         const testMessageWithLocale = JSON.parse(JSON.stringify((testMessage)));
         testMessageWithLocale.locale = 'en_uS'; // Intentionally oddly-cased to check that it isn't defaulted somewhere, but tests stay in English
@@ -386,7 +386,7 @@ describe(`TurnContext`, function () {
         done();
     });
 
-    it(`should not set TurnContext.responded to true if Trace activity is sent.`, function (done) {
+    it(`should not set TurnContext.responded to true if Trace activity is sent.`, function(done) {
         const context = new TurnContext(new SimpleAdapter(), testMessage);
         context.sendActivities([testTraceMessage]).then((responses) => {
             assert(context.responded === false, `responded was set to true.`);
@@ -394,7 +394,7 @@ describe(`TurnContext`, function () {
         });
     });
 
-    it(`should not set TurnContext.responded to true if multiple Trace activities are sent.`, function (done) {
+    it(`should not set TurnContext.responded to true if multiple Trace activities are sent.`, function(done) {
         const context = new TurnContext(new SimpleAdapter(), testMessage);
         context.sendActivities([testTraceMessage, testTraceMessage]).then((responses) => {
             assert(context.responded === false, `responded was set to true.`);
@@ -402,7 +402,7 @@ describe(`TurnContext`, function () {
         });
     });
 
-    it(`should set TurnContext.responded to true if Trace and message activities are sent.`, function (done) {
+    it(`should set TurnContext.responded to true if Trace and message activities are sent.`, function(done) {
         const context = new TurnContext(new SimpleAdapter(), testMessage);
         context.sendActivities([testTraceMessage, testTraceMessage]).then((responses) => {
             assert(context.responded === false, `responded was set to true.`);
@@ -452,11 +452,11 @@ describe(`TurnContext`, function () {
         assert(activity.text,' test activity');
     });
 
-    it(`should clear existing activity.id in context.sendActivity().`, function (done) {
+    it(`should clear existing activity.id in context.sendActivity().`, function(done) {
         const context = new TurnContext(new SendAdapter(), testMessage);
         context.sendActivity(testMessage).then((response) => {
             assert(response, `response is missing.`);
-            assert(response.id === undefined, `invalid response id of "${response.id}" sent back. Should be 'undefined'`);
+            assert(response.id === undefined, `invalid response id of "${ response.id }" sent back. Should be 'undefined'`);
             done();
         });
     });
@@ -479,5 +479,5 @@ describe(`TurnContext`, function () {
         assert.strictEqual(replies.length, 2);
         assert.strictEqual(replies[0].text, 'test');
         assert.strictEqual(replies[1].text, 'second test');
-    })
+    });
 });

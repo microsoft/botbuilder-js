@@ -41,7 +41,7 @@ export class QnaMakerService extends ConnectedService implements IQnAService {
         super(source, ServiceTypes.QnA);
         
         if (!source.hostname) {
-            throw TypeError('QnAMakerService requires source parameter to have a hostname.')
+            throw TypeError('QnAMakerService requires source parameter to have a hostname.');
         }
 
         if (!this.hostname.endsWith('/qnamaker')) {

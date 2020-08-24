@@ -21,5 +21,5 @@ export class AuthenticationConfiguration {
     constructor(
         public requiredEndorsements: string[] = [],
         public validateClaims?: ValidateClaims
-        ) { }
+    ) { }
 }

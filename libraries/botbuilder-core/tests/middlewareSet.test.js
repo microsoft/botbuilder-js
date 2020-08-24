@@ -5,15 +5,15 @@ const testMessage = { text: 'test', type: 'message' };
 
 class SimpleAdapter extends BotAdapter { }
 
-describe(`MiddlewareSet`, function () {
+describe(`MiddlewareSet`, function() {
     this.timeout(5000);
 
     let order = '';
     let calls = 0;
     function middleware(char) {
         return (context, next) => {
-            assert(context, `middleware[${calls}]: context object missing.`);
-            assert(next, `middleware[${calls}]: next() function missing.`);
+            assert(context, `middleware[${ calls }]: context object missing.`);
+            assert(next, `middleware[${ calls }]: next() function missing.`);
             calls++;
             order += char;
             return next();
@@ -21,38 +21,38 @@ describe(`MiddlewareSet`, function () {
     }
 
     const set = new MiddlewareSet();
-    it(`should use() middleware individually.`, function (done) {
+    it(`should use() middleware individually.`, function(done) {
         set.use(middleware('a')).use(middleware('b'));
         done();
     });
 
-    it(`should use() a list of middleware.`, function (done) {
+    it(`should use() a list of middleware.`, function(done) {
         set.use(middleware('c'), middleware('d'), middleware('e'));
         done();
     });
 
-    it(`should run all middleware in order.`, function (done) {
+    it(`should run all middleware in order.`, function(done) {
         calls = 0;
         order = '';
         const context = new TurnContext(new SimpleAdapter(), testMessage);
         set.run(context, () => {
-            assert(calls === 5, `only "${calls} of 5" middleware called.`);
-            assert(order === 'abcde', `middleware executed out of order "${order}".`)
+            assert(calls === 5, `only "${ calls } of 5" middleware called.`);
+            assert(order === 'abcde', `middleware executed out of order "${ order }".`);
         }).then(() => done());
     });
 
-    it(`should run a middleware set added to another middleware set.`, function (done) {
+    it(`should run a middleware set added to another middleware set.`, function(done) {
         calls = 0;
         order = '';
         const context = new TurnContext(new SimpleAdapter(), testMessage);
         const set2 = new MiddlewareSet(set);
         set2.run(context, () => {
-            assert(calls === 5, `only "${calls} of 5" middleware called.`);
-            assert(order === 'abcde', `middleware executed out of order "${order}".`)
+            assert(calls === 5, `only "${ calls } of 5" middleware called.`);
+            assert(order === 'abcde', `middleware executed out of order "${ order }".`);
         }).then(() => done());
     });
     
-    it(`should run middleware with a leading and trailing edge.`, function (done) {
+    it(`should run middleware with a leading and trailing edge.`, function(done) {
         let edge = '';
         const context = new TurnContext(new SimpleAdapter(), testMessage);
         new MiddlewareSet()
@@ -66,12 +66,12 @@ describe(`MiddlewareSet`, function () {
                 edge += 'b';
             })
             .then(() => {
-                assert(edge === 'abc', `edges out of order "${edge}".`);
+                assert(edge === 'abc', `edges out of order "${ edge }".`);
                 done();
             });
     });
 
-    it(`should support middleware added as an object.`, function (done) {
+    it(`should support middleware added as an object.`, function(done) {
         let called = false;
         const context = new TurnContext(new SimpleAdapter(), testMessage);
         new MiddlewareSet()
@@ -87,7 +87,7 @@ describe(`MiddlewareSet`, function () {
             });
     });
 
-    it(`not calling next() should intercept other middleware and bot logic.`, function (done) {
+    it(`not calling next() should intercept other middleware and bot logic.`, function(done) {
         let called = false;
         const context = new TurnContext(new SimpleAdapter(), testMessage);
         new MiddlewareSet()
@@ -107,7 +107,7 @@ describe(`MiddlewareSet`, function () {
             });
     });
 
-    it(`should map an exception within middleware to a rejection.`, function (done) {
+    it(`should map an exception within middleware to a rejection.`, function(done) {
         const context = new TurnContext(new SimpleAdapter(), testMessage);
         new MiddlewareSet()
             .use(() => {
@@ -125,7 +125,7 @@ describe(`MiddlewareSet`, function () {
             });
     });
     
-    it(`should throw an error if an invalid plugin type is added.`, function (done) {
+    it(`should throw an error if an invalid plugin type is added.`, function(done) {
         try {
             new MiddlewareSet().use('bogus');
         } catch (err) {
@@ -133,17 +133,17 @@ describe(`MiddlewareSet`, function () {
         }
     });
 
-    it(`should support passing middleware into the constructor of the set.`, function (done) {
+    it(`should support passing middleware into the constructor of the set.`, function(done) {
         let called = false;
         const context = new TurnContext(new SimpleAdapter(), testMessage);
         new MiddlewareSet((context, next) => {
             called = true;
             return next();
         })
-        .run(context, () => { })
-        .then(() => {
-            assert(called, `middleware not called.`);
-            done();
-        });
+            .run(context, () => { })
+            .then(() => {
+                assert(called, `middleware not called.`);
+                done();
+            });
     });
 });

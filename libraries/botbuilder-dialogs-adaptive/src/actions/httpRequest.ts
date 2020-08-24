@@ -188,7 +188,7 @@ export class HttpRequest<O extends object = {}> extends Dialog<O> implements Con
 
         let instanceBody: string;
         if (this.body) {
-            let body = this.body.getValue(dc.state);
+            const body = this.body.getValue(dc.state);
             if (body) {
                 if (typeof body === 'string') {
                     instanceBody = body;
@@ -285,7 +285,7 @@ export class HttpRequest<O extends object = {}> extends Dialog<O> implements Con
         }
 
         if (Array.isArray(unit)) {
-            let result = [];
+            const result = [];
             for (const child of unit) {
                 result.push(this.replaceBodyRecursively(dc, child));
             }
@@ -293,8 +293,8 @@ export class HttpRequest<O extends object = {}> extends Dialog<O> implements Con
         }
 
         if (typeof unit === 'object') {
-            let result = {};
-            for (let key in unit) {
+            const result = {};
+            for (const key in unit) {
                 result[key] = this.replaceBodyRecursively(dc, unit[key]);
             }
             return result;

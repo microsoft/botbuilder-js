@@ -91,7 +91,7 @@ export class WaterfallDialog<O extends object = {}> extends Dialog<O> {
     public getVersion(): string {
         // Simply return the id + number of steps to help detect when new steps have
         // been added to a given waterfall.
-        return `${this.id}:${this.steps.length}`;
+        return `${ this.id }:${ this.steps.length }`;
     }
 
     /**
@@ -192,11 +192,11 @@ export class WaterfallDialog<O extends object = {}> extends Dialog<O> {
      */
     protected async onStep(step: WaterfallStepContext<O>): Promise<DialogTurnResult> {
         // Log Waterfall Step event. 
-        var stepName = this.waterfallStepName(step.index);
+        const stepName = this.waterfallStepName(step.index);
 
         const state: WaterfallDialogState = step.activeDialog.state as WaterfallDialogState;
 
-        var properties = 
+        const properties = 
         { 
             'DialogId': this.id,
             'InstanceId': state.values['instanceId'],
@@ -253,8 +253,8 @@ export class WaterfallDialog<O extends object = {}> extends Dialog<O> {
                 'InstanceId': instanceId,
             }});
         } else if (reason === DialogReason.cancelCalled) {
-            var index = state.stepIndex;
-            var stepName = this.waterfallStepName(index);
+            const index = state.stepIndex;
+            const stepName = this.waterfallStepName(index);
             this.telemetryClient.trackEvent({name: 'WaterfallCancel', properties: {
                 'DialogId': this.id,
                 'StepName': stepName,
@@ -266,7 +266,7 @@ export class WaterfallDialog<O extends object = {}> extends Dialog<O> {
     private waterfallStepName(index: number): string {
         // Log Waterfall Step event. Each event has a distinct name to hook up
         // to the Application Insights funnel.
-        var stepName = '';
+        let stepName = '';
         if (this.steps[index]) {
             try {
                 stepName = this.steps[index].name;

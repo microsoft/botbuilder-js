@@ -218,7 +218,7 @@ export class SkillDialog extends Dialog<Partial<BeginSkillDialogOptions>> {
                 } else {
                     await context.sendActivity(activityFromSkill);
                 }
-            };
+            }
         }
 
         return eocActivity;

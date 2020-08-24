@@ -34,7 +34,7 @@ export class TranscriptLoggerMiddleware implements Middleware {
      * @param next Function to call at the end of the middleware chain.
      */
     public async onTurn(context: TurnContext, next: () => Promise<void>): Promise<void> {
-        let transcript: Activity[] = [];
+        const transcript: Activity[] = [];
 
         // log incoming activity at beginning of turn
         if (context.activity) {
@@ -61,11 +61,11 @@ export class TranscriptLoggerMiddleware implements Middleware {
                 // If there is no outgoing timestamp, the current time for the bot is used for the activity.id.
                 // See https://github.com/microsoft/botbuilder-js/issues/1122
                 if (!clonedActivity.id) {
-                    const prefix = `g_${Math.random().toString(36).slice(2,8)}`;
+                    const prefix = `g_${ Math.random().toString(36).slice(2,8) }`;
                     if (clonedActivity.timestamp) {
-                        clonedActivity.id = `${prefix}${new Date(clonedActivity.timestamp).getTime().toString()}`;
+                        clonedActivity.id = `${ prefix }${ new Date(clonedActivity.timestamp).getTime().toString() }`;
                     } else {
-                        clonedActivity.id = `${prefix}${new Date().getTime().toString()}`;
+                        clonedActivity.id = `${ prefix }${ new Date().getTime().toString() }`;
                     }
                 }
 
@@ -162,10 +162,10 @@ export class TranscriptLoggerMiddleware implements Middleware {
     private transcriptLoggerErrorHandler(err: Error | any): void {
         // tslint:disable:no-console
         if (err instanceof Error) {
-            console.error(`TranscriptLoggerMiddleware logActivity failed: "${err.message}"`);
+            console.error(`TranscriptLoggerMiddleware logActivity failed: "${ err.message }"`);
             console.error(err.stack);
         } else {
-            console.error(`TranscriptLoggerMiddleware logActivity failed: "${JSON.stringify(err)}"`);
+            console.error(`TranscriptLoggerMiddleware logActivity failed: "${ JSON.stringify(err) }"`);
         }
         // tslint:enable:no-console
     }

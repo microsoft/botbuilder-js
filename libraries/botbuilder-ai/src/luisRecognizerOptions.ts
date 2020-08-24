@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 
-import {LuisApplication, LuisRecognizerOptions}  from './luisRecognizer'
+import {LuisApplication, LuisRecognizerOptions}  from './luisRecognizer';
 import { RecognizerResult, TurnContext } from 'botbuilder-core';
 
 export abstract class LuisRecognizerInternal {

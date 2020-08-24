@@ -20,7 +20,7 @@ export class ActionBasedMessagingExtensionBot extends TeamsActivityHandler {
 
         // See https://aka.ms/about-bot-activity-message to learn more about the message and other activity types.
         this.onMessage(async (context, next) => {
-            await context.sendActivity(`You said '${context.activity.text}'`);
+            await context.sendActivity(`You said '${ context.activity.text }'`);
             // By calling next() you ensure that the next BotHandler is run.
             await next();
         });
@@ -44,10 +44,10 @@ export class ActionBasedMessagingExtensionBot extends TeamsActivityHandler {
         if (data && data.done) {
             // The commandContext check doesn't need to be used in this scenario as the manifest specifies the shareMessage command only works in the "message" context.
             const sharedMessage = (action.commandId === 'shareMessage' && action.commandContext === 'message')
-                ? `Shared message: <div style="background:#F0F0F0">${JSON.stringify(action.messagePayload)}</div><br/>`
+                ? `Shared message: <div style="background:#F0F0F0">${ JSON.stringify(action.messagePayload) }</div><br/>`
                 : '';
-            const preview = CardFactory.thumbnailCard('Created Card', `Your input: ${data.userText}`);
-            const heroCard = CardFactory.heroCard('Created Card', `${sharedMessage}Your input: <pre>${data.userText}</pre>`);
+            const preview = CardFactory.thumbnailCard('Created Card', `Your input: ${ data.userText }`);
+            const heroCard = CardFactory.heroCard('Created Card', `${ sharedMessage }Your input: <pre>${ data.userText }</pre>`);
             body = {
                 composeExtension: {
                     attachmentLayout: 'list',

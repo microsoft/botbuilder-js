@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 
- /**
+/**
  * Abstraction for a generic transport definition.
  */
 export interface ITransport {

@@ -19,7 +19,7 @@ export class MultiLanguageRecognizer extends Recognizer {
 
     public async recognize(dialogContext: DialogContext, activity: Activity, telemetryProperties?: { [key: string]: string }, telemetryMetrics?: { [key: string]: number }): Promise<RecognizerResult> {
         const locale = activity.locale || '';
-        let policy: string[] = [];
+        const policy: string[] = [];
         if (this.languagePolicy.has(locale)) {
             this.languagePolicy.get(locale).forEach((u: string): number => policy.push(u));
         }

@@ -26,7 +26,7 @@ export class ReplyToChannelBot extends TeamsActivityHandler {
         this.onMessage(async (context, next) => {
 
             const teamChannelId = teamsGetChannelId(context.activity);
-            const message = MessageFactory.text("good morning");
+            const message = MessageFactory.text('good morning');
             const newConversation = await this.teamsCreateConversation(context, teamChannelId, message);
 
             const adapter = context.adapter as BotFrameworkAdapter;
@@ -34,8 +34,8 @@ export class ReplyToChannelBot extends TeamsActivityHandler {
             await adapter.continueConversation(newConversation[0],
                 async (t) =>
                 {
-                    await t.sendActivity(MessageFactory.text("good afternoon"));
-                    await t.sendActivity(MessageFactory.text("good night"));
+                    await t.sendActivity(MessageFactory.text('good afternoon'));
+                    await t.sendActivity(MessageFactory.text('good night'));
                 });
 
             // By calling next() you ensure that the next BotHandler is run.

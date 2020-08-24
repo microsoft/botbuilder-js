@@ -4,10 +4,10 @@ const assert = require('assert');
 
 const invalidMessage = { type: ActivityTypes.Message, text: '' };
 
-describe('TextPrompt', function () {
+describe('TextPrompt', function() {
     this.timeout(5000);
 
-    it('should call TextPrompt using dc.prompt().', async function () {
+    it('should call TextPrompt using dc.prompt().', async function() {
         // Initialize TestAdapter.
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);
@@ -35,7 +35,7 @@ describe('TextPrompt', function () {
             .assertReply('test');
     });
 
-    it('should call TextPrompt with custom validator.', async function () {
+    it('should call TextPrompt with custom validator.', async function() {
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);
 
@@ -66,7 +66,7 @@ describe('TextPrompt', function () {
             .assertReply('test');
     });
 
-    it('should send custom retryPrompt.', async function () {
+    it('should send custom retryPrompt.', async function() {
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);
 
@@ -94,7 +94,7 @@ describe('TextPrompt', function () {
             .assertReply('test');
     });
 
-    it('should send ignore retryPrompt if validator replies.', async function () {
+    it('should send ignore retryPrompt if validator replies.', async function() {
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);
 
@@ -116,7 +116,7 @@ describe('TextPrompt', function () {
             assert(prompt);
             const valid = prompt.recognized.value.length >= 3;
             if (!valid) {
-                await prompt.context.sendActivity('too short')
+                await prompt.context.sendActivity('too short');
             }
             return valid;
         }));
@@ -129,7 +129,7 @@ describe('TextPrompt', function () {
             .assertReply('test');
     });
 
-    it('should not send any retryPrompt no prompt specified.', async function () {
+    it('should not send any retryPrompt no prompt specified.', async function() {
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);
 

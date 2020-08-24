@@ -33,7 +33,7 @@ export class ActionBasedMessagingExtensionFetchTaskBot extends TeamsActivityHand
 
         // See https://aka.ms/about-bot-activity-message to learn more about the message and other activity types.
         this.onMessage(async (context, next) => {
-            await context.sendActivity(`You said '${context.activity.text}'`);
+            await context.sendActivity(`You said '${ context.activity.text }'`);
             // By calling next() you ensure that the next BotHandler is run.
             await next();
         });
@@ -54,11 +54,11 @@ export class ActionBasedMessagingExtensionFetchTaskBot extends TeamsActivityHand
     protected async handleTeamsMessagingExtensionBotMessagePreviewEdit(context: TurnContext, action: MessagingExtensionAction): Promise<MessagingExtensionActionResponse> {
         const submitData = AdaptiveCardHelper.toSubmitExampleData(action);
         const response = AdaptiveCardHelper.createTaskModuleAdaptiveCardResponse(
-                                                    submitData.Question,
-                                                    (submitData.MultiSelect.toLowerCase() === 'true'),
-                                                    submitData.Option1,
-                                                    submitData.Option2,
-                                                    submitData.Option3);
+            submitData.Question,
+            (submitData.MultiSelect.toLowerCase() === 'true'),
+            submitData.Option1,
+            submitData.Option2,
+            submitData.Option3);
         return response;
     }
 

@@ -42,7 +42,7 @@ export class Where extends ExpressionEvaluator {
             } else if (typeof instance === 'object') {
                 Object.keys(instance).forEach((u): number => arr.push({ key: u, value: instance[u] }));
             } else {
-                error = `${expression.children[0]} is not a collection or structure object to run foreach`;
+                error = `${ expression.children[0] } is not a collection or structure object to run foreach`;
             }
 
             if (!error) {
@@ -69,7 +69,7 @@ export class Where extends ExpressionEvaluator {
 
                 //reconstruct object if instance is object, otherwise, return array result
                 if (!isInstanceArray) {
-                    let objResult = {};
+                    const objResult = {};
                     for (const item of arrResult) {
                         objResult[item.key] = item.value;
                     }

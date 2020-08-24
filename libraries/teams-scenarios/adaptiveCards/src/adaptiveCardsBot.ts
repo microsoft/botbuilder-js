@@ -42,13 +42,13 @@ export class AdaptiveCardsBot extends TeamsActivityHandler {
                         break;
 
                     default:
-                        await context.sendActivity(`You said: ${text}`);
+                        await context.sendActivity(`You said: ${ text }`);
                 }
             } else {
                 await context.sendActivity('App sent a message with empty text');
                 const activityValue = context.activity.value;
                 if (activityValue) {
-                    await context.sendActivity(`but with value ${JSON.stringify(activityValue)}`);
+                    await context.sendActivity(`but with value ${ JSON.stringify(activityValue) }`);
                 }
             }
             await next();
@@ -68,7 +68,7 @@ export class AdaptiveCardsBot extends TeamsActivityHandler {
     }
 
     protected async handleTeamsTaskModuleFetch(context: TurnContext, taskModuleRequest: TaskModuleRequest): Promise<TaskModuleResponse> {
-        await context.sendActivity(MessageFactory.text(`handleTeamsTaskModuleFetch TaskModuleRequest: ${JSON.stringify(taskModuleRequest)}`));
+        await context.sendActivity(MessageFactory.text(`handleTeamsTaskModuleFetch TaskModuleRequest: ${ JSON.stringify(taskModuleRequest) }`));
 
         /**
          * The following line disables the lint rules for the Adaptive Card so that users can
@@ -77,111 +77,111 @@ export class AdaptiveCardsBot extends TeamsActivityHandler {
          */
         /* tslint:disable:quotemark object-literal-key-quotes */
         const card = CardFactory.adaptiveCard({
-            "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
-            "actions": [
+            '$schema': 'http://adaptivecards.io/schemas/adaptive-card.json',
+            'actions': [
                 {
-                    "data": {
-                        "submitLocation": "taskModule"
+                    'data': {
+                        'submitLocation': 'taskModule'
                     },
-                    "title": "Action.Submit",
-                    "type": "Action.Submit"
+                    'title': 'Action.Submit',
+                    'type': 'Action.Submit'
                 }
             ],
-            "body": [
+            'body': [
                 {
-                    "text": "This is an Adaptive Card within a Task Module",
-                    "type": "TextBlock"
+                    'text': 'This is an Adaptive Card within a Task Module',
+                    'type': 'TextBlock'
                 }
             ],
-            "type": "AdaptiveCard",
-            "version": "1.0"
+            'type': 'AdaptiveCard',
+            'version': '1.0'
         });
         /* tslint:enable:quotemark object-literal-key-quotes */
         return { 
-                task: {
-                        type: 'continue',
-                        value: {
-                            card,
-                            height: 200,
-                            title: 'Task Module Example',
-                            width: 400
-                        } as TaskModuleTaskInfo
+            task: {
+                type: 'continue',
+                value: {
+                    card,
+                    height: 200,
+                    title: 'Task Module Example',
+                    width: 400
+                } as TaskModuleTaskInfo
             } as TaskModuleContinueResponse
         } as TaskModuleResponse;
     }
 
     protected async handleTeamsTaskModuleSubmit(context: TurnContext, taskModuleRequest: TaskModuleRequest): Promise<TaskModuleResponse> {
-        await context.sendActivity(MessageFactory.text(`handleTeamsTaskModuleSubmit value: ${JSON.stringify(taskModuleRequest)}`));
+        await context.sendActivity(MessageFactory.text(`handleTeamsTaskModuleSubmit value: ${ JSON.stringify(taskModuleRequest) }`));
 
         return { 
-                task: { 
-                    type: 'message', 
-                    value: 'Thanks!' 
-                } as TaskModuleMessageResponse
+            task: { 
+                type: 'message', 
+                value: 'Thanks!' 
+            } as TaskModuleMessageResponse
         } as TaskModuleResponse;
     }
 
     protected async handleTeamsCardActionInvoke(context: TurnContext): Promise<InvokeResponse> {
-        await context.sendActivity(MessageFactory.text(`handleTeamsCardActionInvoke value: ${JSON.stringify(context.activity.value)}`));
+        await context.sendActivity(MessageFactory.text(`handleTeamsCardActionInvoke value: ${ JSON.stringify(context.activity.value) }`));
         return { status: 200 } as InvokeResponse;
     }
 
     private async sendAdaptiveCard1(context: TurnContext): Promise<void> {
         /* tslint:disable:quotemark object-literal-key-quotes */
         const card = CardFactory.adaptiveCard({
-            "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
-            "actions": [
+            '$schema': 'http://adaptivecards.io/schemas/adaptive-card.json',
+            'actions': [
                 {
-                    "data": {
-                        "msteams": {
-                            "type": "imBack",
-                            "value": "text"
+                    'data': {
+                        'msteams': {
+                            'type': 'imBack',
+                            'value': 'text'
                         }
                     },
-                    "title": "imBack",
-                    "type": "Action.Submit"
+                    'title': 'imBack',
+                    'type': 'Action.Submit'
                 },
                 {
-                    "data": {
-                        "msteams": {
-                            "type": "messageBack",
-                            "value": { "key": "value" }
+                    'data': {
+                        'msteams': {
+                            'type': 'messageBack',
+                            'value': { 'key': 'value' }
                         }
                     },
-                    "title": "message back",
-                    "type": "Action.Submit"
+                    'title': 'message back',
+                    'type': 'Action.Submit'
                 },
                 {
-                    "data": {
-                        "msteams": {
-                            "displayText": "display text message back",
-                            "text": "text received by bots",
-                            "type": "messageBack",
-                            "value": { "key": "value" }
+                    'data': {
+                        'msteams': {
+                            'displayText': 'display text message back',
+                            'text': 'text received by bots',
+                            'type': 'messageBack',
+                            'value': { 'key': 'value' }
                         }
                     },
-                    "title": "message back local echo",
-                    "type": "Action.Submit"
+                    'title': 'message back local echo',
+                    'type': 'Action.Submit'
                 },
                 {
-                    "data": {
-                        "msteams": {
-                            "type": "invoke",
-                            "value": { "key": "value" }
+                    'data': {
+                        'msteams': {
+                            'type': 'invoke',
+                            'value': { 'key': 'value' }
                         }
                     },
-                    "title": "invoke",
-                    "type": "Action.Submit"
+                    'title': 'invoke',
+                    'type': 'Action.Submit'
                 }
             ],
-            "body": [
+            'body': [
                 {
-                    "text": "Bot Builder actions",
-                    "type": "TextBlock"
+                    'text': 'Bot Builder actions',
+                    'type': 'TextBlock'
                 }
             ],
-            "type": "AdaptiveCard",
-            "version": "1.0"
+            'type': 'AdaptiveCard',
+            'version': '1.0'
         });
         /* tslint:enable:quotemark object-literal-key-quotes */
         await context.sendActivity(MessageFactory.attachment(card));
@@ -190,30 +190,30 @@ export class AdaptiveCardsBot extends TeamsActivityHandler {
     private async sendAdaptiveCard2(context: TurnContext): Promise<void> {
         /* tslint:disable:quotemark object-literal-key-quotes */
         const card = CardFactory.adaptiveCard({
-            "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
-            "actions": [
+            '$schema': 'http://adaptivecards.io/schemas/adaptive-card.json',
+            'actions': [
                 {
-                    "data": {
-                        "msteams": {
-                            "type": "invoke",
-                            "value": {
-                                "hiddenKey": "hidden value from task module launcher",
-                                "type": "task/fetch"
+                    'data': {
+                        'msteams': {
+                            'type': 'invoke',
+                            'value': {
+                                'hiddenKey': 'hidden value from task module launcher',
+                                'type': 'task/fetch'
                             }
                         }
                     },
-                    "title": "Launch Task Module",
-                    "type": "Action.Submit"
+                    'title': 'Launch Task Module',
+                    'type': 'Action.Submit'
                 }
             ],
-            "body": [
+            'body': [
                 {
-                    "text": "Task Module Adaptive Card",
-                    "type": "TextBlock"
+                    'text': 'Task Module Adaptive Card',
+                    'type': 'TextBlock'
                 }
             ],
-            "type": "AdaptiveCard",
-            "version": "1.0"
+            'type': 'AdaptiveCard',
+            'version': '1.0'
         });
         /* tslint:enable:quotemark object-literal-key-quotes */
         await context.sendActivity(MessageFactory.attachment(card));
@@ -222,28 +222,28 @@ export class AdaptiveCardsBot extends TeamsActivityHandler {
     private async sendAdaptiveCard3(context: TurnContext): Promise<void> {
         /* tslint:disable:quotemark object-literal-key-quotes */
         const card = CardFactory.adaptiveCard({
-            "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
-            "actions": [
+            '$schema': 'http://adaptivecards.io/schemas/adaptive-card.json',
+            'actions': [
                 {
-                    "data": {
-                        "key": "value"
+                    'data': {
+                        'key': 'value'
                     },
-                    "title": "Action.Submit",
-                    "type": "Action.Submit"
+                    'title': 'Action.Submit',
+                    'type': 'Action.Submit'
                 }
             ],
-            "body": [
+            'body': [
                 {
-                    "text": "Bot Builder actions",
-                    "type": "TextBlock"
+                    'text': 'Bot Builder actions',
+                    'type': 'TextBlock'
                 },
                 {
-                    "id": "x",
-                    "type": "Input.Text"
+                    'id': 'x',
+                    'type': 'Input.Text'
                 }
             ],
-            "type": "AdaptiveCard",
-            "version": "1.0"
+            'type': 'AdaptiveCard',
+            'version': '1.0'
         });
         /* tslint:enable:quotemark object-literal-key-quotes */
         await context.sendActivity(MessageFactory.attachment(card));

@@ -28,7 +28,7 @@ export class AddProperty extends ExpressionEvaluator {
                 const temp: any = args[0];
                 const prop = String(args[1]);
                 if (prop in temp) {
-                    error = `${prop} already exists`;
+                    error = `${ prop } already exists`;
                 } else {
                     temp[String(args[1])] = args[2];
                 }

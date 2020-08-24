@@ -25,7 +25,7 @@ export class ResponseDisassembler extends PayloadDisassembler {
     }
 
     public async getStream(): Promise<IStreamWrapper> {
-        let payload: IResponsePayload = {statusCode: this.response.statusCode, streams: []};
+        const payload: IResponsePayload = {statusCode: this.response.statusCode, streams: []};
         if (this.response.streams) {
             this.response.streams.forEach(function(stream){
                 payload.streams.push(stream.description);

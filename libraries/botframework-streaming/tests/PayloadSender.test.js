@@ -17,7 +17,7 @@ class FauxSock{
     }
     send(buffer){
         return buffer.length;
-    };
+    }
 
     receive(readLength){
         if(this.contentString[this.position])
@@ -31,7 +31,7 @@ class FauxSock{
         if(this.receiver.isConnected)
             this.receiver.disconnect();
     }
-    close(){};
+    close(){}
 
     setReceiver(receiver){
         this.receiver = receiver;

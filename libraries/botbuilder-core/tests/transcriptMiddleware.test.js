@@ -26,10 +26,10 @@ class AsyncThrowerLogger {
 }
 
 
-describe(`TranscriptLoggerMiddleware`, function () {
+describe(`TranscriptLoggerMiddleware`, function() {
     this.timeout(5000);
 
-    it(`should log activities`, function (done) {
+    it(`should log activities`, function(done) {
         var conversationId = null;
         var transcriptStore = new MemoryTranscriptStore();
         var adapter = new TestAdapter(async (context) => {
@@ -40,7 +40,7 @@ describe(`TranscriptLoggerMiddleware`, function () {
             };
 
             await context.sendActivity(typingActivity);
-            await context.sendActivity(`echo:${context.activity.text}`);
+            await context.sendActivity(`echo:${ context.activity.text }`);
 
         }).use(new TranscriptLoggerMiddleware(transcriptStore));
 
@@ -62,13 +62,13 @@ describe(`TranscriptLoggerMiddleware`, function () {
                     assert.equal(pagedResult.items[5].text, 'echo:bar');
                     pagedResult.items.forEach(a => {
                         assert(a.timestamp);
-                    })
+                    });
                     done();
                 });
             });
     });
 
-    it(`should log update activities`, function (done) {
+    it(`should log update activities`, function(done) {
         var conversationId = null;
         let activityToUpdate = null;
         var transcriptStore = new MemoryTranscriptStore();
@@ -133,7 +133,7 @@ describe(`TranscriptLoggerMiddleware`, function () {
                     assert(pagedResult.items[3].type, ActivityTypes.MessageDelete);
                     done();
                 });
-            })
+            });
     });
 
     it(`should not error for sent activities if no ResourceResponses are received`, async () => {
@@ -158,7 +158,7 @@ describe(`TranscriptLoggerMiddleware`, function () {
             };
 
             await context.sendActivity(typingActivity);
-            await context.sendActivity(`echo:${context.activity.text}`);
+            await context.sendActivity(`echo:${ context.activity.text }`);
 
         }).use(new TranscriptLoggerMiddleware(transcriptStore));
 
@@ -207,7 +207,7 @@ describe(`TranscriptLoggerMiddleware`, function () {
             };
 
             await context.sendActivity(typingActivity);
-            await context.sendActivity(`echo:${context.activity.text}`);
+            await context.sendActivity(`echo:${ context.activity.text }`);
 
         });
 
@@ -256,7 +256,7 @@ describe(`TranscriptLoggerMiddleware`, function () {
         const transcriptStore = new MemoryTranscriptStore();
         const adapter = new TestAdapter(async (context) => {
             conversationId = context.activity.conversation.id;
-            await context.sendActivity(`echo:${context.activity.text}`);
+            await context.sendActivity(`echo:${ context.activity.text }`);
         });
 
         // Register both middleware
@@ -309,7 +309,7 @@ describe(`TranscriptLoggerMiddleware`, function () {
         const transcriptStore = new MemoryTranscriptStore();
         const adapter = new TestAdapter(async (context) => {
             conversationId = context.activity.conversation.id;
-            await context.sendActivity(`echo:${context.activity.text}`);
+            await context.sendActivity(`echo:${ context.activity.text }`);
         });
 
         adapter.use(new AssertionMiddleware());
@@ -329,16 +329,16 @@ describe(`TranscriptLoggerMiddleware`, function () {
         });
     });
 
-    describe('\'s error handling', function () {
+    describe('\'s error handling', function() {
         const originalConsoleError = console.error;
 
-        this.afterEach(function () {
+        this.afterEach(function() {
             console.error = originalConsoleError;
-        })
+        });
 
         function stubConsoleError(done, expectedErrorMessage, expectedErrors = 1) {
             let errorCounter = 0;      
-            console.error = function (error) {
+            console.error = function(error) {
                 // We only care about the error message on the first error.
                 if (errorCounter === 0) {
                     if (expectedErrorMessage) {
@@ -354,10 +354,10 @@ describe(`TranscriptLoggerMiddleware`, function () {
                 } if (errorCounter > expectedErrors) {
                     throw new Error(`console.error() called too many times.`);
                 }
-            }
+            };
         }
 
-        it(`should print to console errors from synchronous logActivity()`, function (done) {
+        it(`should print to console errors from synchronous logActivity()`, function(done) {
             stubConsoleError(done, undefined, 2);
             var adapter = new TestAdapter(async (context) => {
             }).use(new TranscriptLoggerMiddleware(new SyncErrorLogger()));
@@ -365,7 +365,7 @@ describe(`TranscriptLoggerMiddleware`, function () {
             adapter.send('test');
         });
 
-        it(`should print to console errors from asynchronous logActivity().`, function (done) {
+        it(`should print to console errors from asynchronous logActivity().`, function(done) {
             stubConsoleError(done, undefined, 2);
             var adapter = new TestAdapter(async (context) => {
             }).use(new TranscriptLoggerMiddleware(new AsyncErrorLogger()));
@@ -373,7 +373,7 @@ describe(`TranscriptLoggerMiddleware`, function () {
             adapter.send('test');
         });
 
-        it(`should print to console thrown info from synchronous logActivity()`, function (done) {
+        it(`should print to console thrown info from synchronous logActivity()`, function(done) {
             stubConsoleError(done, 'TranscriptLoggerMiddleware logActivity failed: "1"');
             var adapter = new TestAdapter(async (context) => {
             }).use(new TranscriptLoggerMiddleware(new SyncThrowerLogger()));
@@ -381,7 +381,7 @@ describe(`TranscriptLoggerMiddleware`, function () {
             adapter.send('test');
         });
 
-        it(`should print to console thrown info from asynchronous logActivity().`, function (done) {
+        it(`should print to console thrown info from asynchronous logActivity().`, function(done) {
             stubConsoleError(done, 'TranscriptLoggerMiddleware logActivity failed: "2"');
             var adapter = new TestAdapter(async (context) => {
             }).use(new TranscriptLoggerMiddleware(new AsyncThrowerLogger()));
@@ -390,13 +390,13 @@ describe(`TranscriptLoggerMiddleware`, function () {
         });
     });
 
-    it(`should add resource response id to activity when activity id is empty`, function (done) {
+    it(`should add resource response id to activity when activity id is empty`, function(done) {
         let conversationId = null;
         const transcriptStore = new MemoryTranscriptStore();
         const adapter = new TestAdapter(async (context) => {
             conversationId = context.activity.conversation.id;
 
-            await context.sendActivity(`echo:${context.activity.text}`);
+            await context.sendActivity(`echo:${ context.activity.text }`);
         }).use(new TranscriptLoggerMiddleware(transcriptStore));
 
         const fooActivity = {
@@ -431,7 +431,7 @@ describe(`TranscriptLoggerMiddleware`, function () {
                     pagedResult.items.forEach(a => {
                         assert(a.timestamp);
                         assert(a.id);
-                    })
+                    });
                     done();
                 });
             })

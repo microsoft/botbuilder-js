@@ -100,7 +100,7 @@ class DocumentStoreItem {
 
     // We can't make the partitionKey optional AND have it auto-get this.realId, so we'll use a constructor
     public constructor(storeItem: { id: string; realId: string; document: object; eTag?: string}) {
-        for (let prop in storeItem) {
+        for (const prop in storeItem) {
             this[prop] = storeItem[prop];
         }
     }
@@ -113,7 +113,7 @@ export class CosmosDbPartitionedStorage implements Storage {
     private container: Container;
     private readonly cosmosDbStorageOptions: CosmosDbPartitionedStorageOptions;
     private client: CosmosClient;
-    private compatabilityModePartitionKey: boolean = false;
+    private compatabilityModePartitionKey = false;
 
     /**
      * Initializes a new instance of the <see cref="CosmosDbPartitionedStorage"/> class.
@@ -129,7 +129,7 @@ export class CosmosDbPartitionedStorage implements Storage {
         if (!cosmosDbStorageOptions.containerId) { throw new ReferenceError('containerId for CosmosDB is required.'); }
         // In order to support collections previously restricted to max key length of 255, we default
         // compatabilityMode to 'true'.  No compatibilityMode is opt-in only.
-        if (typeof cosmosDbStorageOptions.compatibilityMode === "undefined") {
+        if (typeof cosmosDbStorageOptions.compatibilityMode === 'undefined') {
             cosmosDbStorageOptions.compatibilityMode = true;
         }
         if (cosmosDbStorageOptions.keySuffix) {
@@ -140,7 +140,7 @@ export class CosmosDbPartitionedStorage implements Storage {
             // If the keySuffix has invalid characters, the escaped key will not match
             const suffixEscaped = CosmosDbKeyEscape.escapeKey(cosmosDbStorageOptions.keySuffix);
             if (cosmosDbStorageOptions.keySuffix !== suffixEscaped) {
-                throw new ReferenceError(`Cannot use invalid Row Key characters: ${cosmosDbStorageOptions.keySuffix} in keySuffix`);
+                throw new ReferenceError(`Cannot use invalid Row Key characters: ${ cosmosDbStorageOptions.keySuffix } in keySuffix`);
             }
         }
 
@@ -255,8 +255,8 @@ export class CosmosDbPartitionedStorage implements Storage {
         if(this.cosmosDbStorageOptions.compatibilityMode) {
             try {
                 container = await this.client
-                                    .database(this.cosmosDbStorageOptions.databaseId)
-                                    .container(this.cosmosDbStorageOptions.containerId);
+                    .database(this.cosmosDbStorageOptions.databaseId)
+                    .container(this.cosmosDbStorageOptions.containerId);
                 const partitionKeyPath = await container.readPartitionKeyDefinition();
                 const paths = partitionKeyPath.resource.paths;
                 if(paths) {
@@ -266,7 +266,7 @@ export class CosmosDbPartitionedStorage implements Storage {
                     }
                     else if (paths.indexOf(DocumentStoreItem.partitionKeyPath) === -1) {
                         // We are not supporting custom Partition Key Paths.
-                        new Error(`Custom Partition Key Paths are not supported. ${this.cosmosDbStorageOptions.containerId} has a custom Partition Key Path of ${paths[0]}.`);
+                        new Error(`Custom Partition Key Paths are not supported. ${ this.cosmosDbStorageOptions.containerId } has a custom Partition Key Path of ${ paths[0] }.`);
                     }
                 } else {
                     this.compatabilityModePartitionKey = true;

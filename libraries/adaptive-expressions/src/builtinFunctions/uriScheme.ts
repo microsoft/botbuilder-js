@@ -31,7 +31,7 @@ export class UriScheme extends ExpressionEvaluator {
             if (typeof (args[0]) === 'string') {
                 ({ value, error } = UriScheme.evalUriScheme(args[0]));
             } else {
-                error = `${expr} cannot evaluate`;
+                error = `${ expr } cannot evaluate`;
             }
         }
 

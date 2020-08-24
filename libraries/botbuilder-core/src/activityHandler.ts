@@ -465,7 +465,7 @@ export class ActivityHandler extends ActivityHandlerBase {
                     await this.onSignInInvoke(context);
                     return { status: StatusCodes.OK };
                 }
-                case "healthCheck":
+                case 'healthCheck':
                     return await ActivityHandler.createInvokeResponse(await this.onHealthCheck(context));
                 default:
                     throw new Error('NotImplemented');

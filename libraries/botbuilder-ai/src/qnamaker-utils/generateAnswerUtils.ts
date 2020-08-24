@@ -33,7 +33,7 @@ export class GenerateAnswerUtils {
      * @param _options Settings used to configure the instance.
      * @param endpoint The endpoint of the knowledge base to query.
      */
-    constructor (public _options: QnAMakerOptions, private readonly endpoint: QnAMakerEndpoint) {
+    constructor(public _options: QnAMakerOptions, private readonly endpoint: QnAMakerEndpoint) {
         this.httpRequestUtils = new HttpRequestUtils();
 
         this.validateOptions(this._options);
@@ -46,7 +46,7 @@ export class GenerateAnswerUtils {
      * @param options (Optional) The options for the QnA Maker knowledge base. If null, constructor option is used for this instance.
      */
     public async queryQnaService(endpoint: QnAMakerEndpoint, question: string, options?: QnAMakerOptions): Promise<QnAMakerResult[]> {
-        var result = await this.queryQnaServiceRaw(endpoint, question, options);
+        const result = await this.queryQnaServiceRaw(endpoint, question, options);
         
         return result.answers;
     }
@@ -58,13 +58,13 @@ export class GenerateAnswerUtils {
      * @param options (Optional) The options for the QnA Maker knowledge base. If null, constructor option is used for this instance.
      */
     public async queryQnaServiceRaw(endpoint: QnAMakerEndpoint, question: string, options?: QnAMakerOptions): Promise<QnAMakerResults> {
-        const url: string = `${ endpoint.host }/knowledgebases/${ endpoint.knowledgeBaseId }/generateanswer`;
-        var queryOptions: QnAMakerOptions = { ...this._options, ...options } as QnAMakerOptions;
+        const url = `${ endpoint.host }/knowledgebases/${ endpoint.knowledgeBaseId }/generateanswer`;
+        const queryOptions: QnAMakerOptions = { ...this._options, ...options } as QnAMakerOptions;
         
         queryOptions.rankerType = !queryOptions.rankerType ? RankerTypes.default : queryOptions.rankerType;
         this.validateOptions(queryOptions);
 
-        var payloadBody = JSON.stringify({
+        const payloadBody = JSON.stringify({
             question: question,
             ...queryOptions
         });

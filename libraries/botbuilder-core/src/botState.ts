@@ -38,7 +38,7 @@ export interface CachedBotState {
  */
 export class BotState implements PropertyManager {
 
-    private stateKey: symbol = Symbol('state');
+    private stateKey = Symbol('state');
 
     /**
      * Creates a new BotState instance.
@@ -73,7 +73,7 @@ export class BotState implements PropertyManager {
      * @param context Context for current turn of conversation with the user.
      * @param force (Optional) If `true` the cache will be bypassed and the state will always be read in directly from storage. Defaults to `false`.
      */
-    public load(context: TurnContext, force: boolean = false): Promise<any> {
+    public load(context: TurnContext, force = false): Promise<any> {
         const cached: CachedBotState = context.turnState.get(this.stateKey);
         if (force || !cached || !cached.state) {
             return Promise.resolve(this.storageKey(context)).then((key: string) => {
@@ -104,7 +104,7 @@ export class BotState implements PropertyManager {
      * @param context Context for current turn of conversation with the user.
      * @param force (Optional) if `true` the state will always be written out regardless of its change state. Defaults to `false`.
      */
-    public saveChanges(context: TurnContext, force: boolean = false): Promise<void> {
+    public saveChanges(context: TurnContext, force = false): Promise<void> {
         let cached: CachedBotState = context.turnState.get(this.stateKey);
         if (force || (cached && cached.hash !== calculateChangeHash(cached.state))) {
             return Promise.resolve(this.storageKey(context)).then((key: string) => {

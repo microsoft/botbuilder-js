@@ -28,7 +28,7 @@ export class FolderResourceProvider extends ResourceProvider {
      * @param includeSubFolders Whether include its sub folders.
      * @param monitorChanges Whether monitor changes.
      */
-    public constructor(resourceExplorer: ResourceExplorer, folder: string, includeSubFolders: boolean = true, monitorChanges: boolean = true) {
+    public constructor(resourceExplorer: ResourceExplorer, folder: string, includeSubFolders = true, monitorChanges = true) {
         super(resourceExplorer);
 
         this.includeSubFolders = includeSubFolders;
@@ -61,7 +61,7 @@ export class FolderResourceProvider extends ResourceProvider {
     /**
      * A value indicating whether to include subfolders.
      */
-    public includeSubFolders: boolean = true;
+    public includeSubFolders = true;
 
     /**
      * Refresh any cached content and look for new content.
@@ -92,9 +92,9 @@ export class FolderResourceProvider extends ResourceProvider {
     public getResources(extension: string): Resource[] {
         extension = extension.startsWith('.') ? extension.toLowerCase() : `.${ extension.toLowerCase() }`;
 
-        let resources: Resource[] = [];
+        const resources: Resource[] = [];
 
-        for (let key of this._resources.keys()) {
+        for (const key of this._resources.keys()) {
             if (key.toLowerCase().endsWith(extension)) {
                 resources.push(this._resources.get(key));
             }

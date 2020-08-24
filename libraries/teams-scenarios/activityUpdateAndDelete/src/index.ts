@@ -27,7 +27,7 @@ adapter.onTurnError = async (context, error) => {
     console.error('[onTurnError]:');
     console.error(error);
     // Send a message to the user
-    await context.sendActivity(`Oops. Something went wrong in the bot!\n  ${error.message}`);
+    await context.sendActivity(`Oops. Something went wrong in the bot!\n  ${ error.message }`);
 };
 
 const activityIds: string[] = [];

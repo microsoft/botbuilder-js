@@ -23,7 +23,7 @@ const FOREACHPAGEINDEX = 'dialog.foreach.pageindex';
  */
 export class ForEachPage<O extends object = {}> extends ActionScope<O> {
     public constructor();
-    public constructor(itemsProperty?: string, pageSize: number = 10) {
+    public constructor(itemsProperty?: string, pageSize = 10) {
         super();
         if (itemsProperty) { this.itemsProperty = new StringExpression(itemsProperty); }
         this.pageSize = new IntExpression(pageSize);

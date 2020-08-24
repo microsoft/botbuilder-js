@@ -7,7 +7,7 @@
  */
 import * as msrest from '@azure/ms-rest-js';
 import * as url from 'url';
-import * as adal from 'adal-node'
+import * as adal from 'adal-node';
 import { AuthenticationConstants } from './authenticationConstants';
 
 /**
@@ -129,7 +129,7 @@ export abstract class AppCredentials implements msrest.ServiceClientCredentials 
         return webResource;
     }
 
-    public async getToken(forceRefresh: boolean = false): Promise<string> {
+    public async getToken(forceRefresh = false): Promise<string> {
         if (!forceRefresh) {
             // check the global cache for the token. If we have it, and it's valid, we're done.
             const oAuthToken: adal.TokenResponse = AppCredentials.cache.get(this.tokenCacheKey);

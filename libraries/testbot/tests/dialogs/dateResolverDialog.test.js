@@ -23,5 +23,5 @@ describe('DateResolverDialog', () => {
             console.log(`Dialog result: ${ client.dialogTurnResult.result }`);
             assert.strictEqual(client.dialogTurnResult.result, testData.expectedResult, `${ testData.expectedResult } != ${ client.dialogTurnResult.result }`);
         });
-    })
+    });
 });

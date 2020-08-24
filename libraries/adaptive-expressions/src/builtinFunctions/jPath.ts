@@ -35,7 +35,7 @@ export class JPath extends ExpressionEvaluator {
             try {
                 json = JSON.parse(jsonEntity);
             } catch (e) {
-                error = `${jsonEntity} is not a valid json string`;
+                error = `${ jsonEntity } is not a valid json string`;
             }
         } else if (typeof jsonEntity === 'object') {
             json = jsonEntity;
@@ -47,7 +47,7 @@ export class JPath extends ExpressionEvaluator {
             try {
                 evaled = jsPath.apply(path, json);
             } catch (e) {
-                error = `${path} is not a valid path + ${e}`;
+                error = `${ path } is not a valid path + ${ e }`;
             }
         }
 

@@ -7,12 +7,12 @@
 import * as msRest from '@azure/ms-rest-js';
 
 export const teamId: msRest.OperationURLParameter = {
-  parameterPath: 'teamId',
-  mapper: {
-    required: true,
-    serializedName: 'teamId',
-    type: {
-      name: 'String'
+    parameterPath: 'teamId',
+    mapper: {
+        required: true,
+        serializedName: 'teamId',
+        type: {
+            name: 'String'
+        }
     }
-  }
 };

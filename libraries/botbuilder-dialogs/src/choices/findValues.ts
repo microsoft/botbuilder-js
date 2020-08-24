@@ -103,8 +103,8 @@ export function findValues(utterance: string, values: SortedValue[], options?: F
         //   2 and the total deviation would be 1.
         let matched = 0;
         let totalDeviation = 0;
-        let start: number = -1;
-        let end: number = -1;
+        let start = -1;
+        let end = -1;
         vTokens.forEach((token: Token) => {
             // Find the position of the token in the utterance.
             const pos: number = indexOfToken(token, startPos);
@@ -198,7 +198,7 @@ export function findValues(utterance: string, values: SortedValue[], options?: F
     const usedTokens: { [index: number]: boolean } = {};
     matches.forEach((match: ModelResult<FoundValue>) => {
         // Apply filters
-        let add: boolean = !foundIndexes.hasOwnProperty(match.resolution.index);
+        let add = !foundIndexes.hasOwnProperty(match.resolution.index);
         for (let i: number = match.start; i <= match.end; i++) {
             if (usedTokens[i]) {
                 add = false;

@@ -6,10 +6,10 @@ const answerMessage = { text: `January 1st, 2018 at 9am`, type: ActivityTypes.Me
 const answerMessage2 = { text: `September 2nd, 2012`, type: ActivityTypes.Message };
 const invalidMessage = { text: `I am not sure`, type: ActivityTypes.Message };
 
-describe('DatetimePrompt', function () {
+describe('DatetimePrompt', function() {
     this.timeout(5000);
 
-    it('should call DateTimePrompt using dc.prompt().', async function () {
+    it('should call DateTimePrompt using dc.prompt().', async function() {
         // Initialize TestAdapter.
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);
@@ -37,7 +37,7 @@ describe('DatetimePrompt', function () {
             .assertReply('2018-01-01T09');
     });
 
-    it('should send a prompt if the prompt is passed in via PromptOptions.', async function () {
+    it('should send a prompt if the prompt is passed in via PromptOptions.', async function() {
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);
 
@@ -62,7 +62,7 @@ describe('DatetimePrompt', function () {
             .assertReply('2018-01-01T09');
     });
 
-    it('should call DateTimePrompt with custom validator.', async function () {
+    it('should call DateTimePrompt with custom validator.', async function() {
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);
 
@@ -91,7 +91,7 @@ describe('DatetimePrompt', function () {
             .assertReply('2018-01-01T09');
     });
 
-    it('should send custom retryPrompt.', async function () {
+    it('should send custom retryPrompt.', async function() {
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);
 
@@ -122,7 +122,7 @@ describe('DatetimePrompt', function () {
             .assertReply('2012-09-02');
     });
 
-    it('should send ignore retryPrompt if validator replies.', async function () {
+    it('should send ignore retryPrompt if validator replies.', async function() {
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);
 
@@ -156,7 +156,7 @@ describe('DatetimePrompt', function () {
             .assertReply('2012-09-02');
     });
 
-    it('should not send any retryPrompt no prompt specified.', async function () {
+    it('should not send any retryPrompt no prompt specified.', async function() {
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);
 
@@ -185,7 +185,7 @@ describe('DatetimePrompt', function () {
             .assertReply('2012-09-02');
     });
 
-    it('should not recognize, then re-prompt without error for falsy input.', async function () {
+    it('should not recognize, then re-prompt without error for falsy input.', async function() {
         // Initialize TestAdapter.
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);

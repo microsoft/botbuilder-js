@@ -15,12 +15,12 @@ export class ScopePath {
     /**
      * Conversation memory scope root path.
      */
-    static readonly conversation = "conversation";
+    static readonly conversation = 'conversation';
 
     /**
      * Dialog memory scope root path.
      */
-    static readonly dialog = "dialog";
+    static readonly dialog = 'dialog';
 
     /**
      * DialogClass memory scope root path.
@@ -30,20 +30,20 @@ export class ScopePath {
     /**
      * This memory scope root path.
      */
-    static readonly this = "this";
+    static readonly this = 'this';
 
     /**
      * Class memory scope root path.
      */
-    static readonly class = "class";
+    static readonly class = 'class';
 
     /**
      * Settings memory scope root path.
      */
-    static readonly settings = "settings";
+    static readonly settings = 'settings';
 
     /**
      * Turn memory scope root path.
      */
-    static readonly turn = "turn";
+    static readonly turn = 'turn';
 }

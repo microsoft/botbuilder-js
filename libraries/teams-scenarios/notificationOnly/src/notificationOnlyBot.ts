@@ -20,14 +20,14 @@ export class NotificationOnlyBot extends TeamsActivityHandler {
 
         // See https://aka.ms/about-bot-activity-message to learn more about the message and other activity types.
         this.onMessage(async (context, next) => {
-            await context.sendActivity(`You said '${context.activity.text}'`);
+            await context.sendActivity(`You said '${ context.activity.text }'`);
             // By calling next() you ensure that the next BotHandler is run.
             await next();
         });
 
         this.onTeamsMembersAddedEvent(async (membersAdded: ChannelAccount[], teamInfo: TeamInfo, context: TurnContext, next: () => Promise<void>): Promise<void> => {
             for (const member of membersAdded) {
-                var replyActivity = MessageFactory.text(`${member.id} was added to the team.`);
+                let replyActivity = MessageFactory.text(`${ member.id } was added to the team.`);
                 replyActivity = TurnContext.applyConversationReference(replyActivity, TurnContext.getConversationReference(context.activity));
                 await context.sendActivity(replyActivity);
             }
@@ -36,7 +36,7 @@ export class NotificationOnlyBot extends TeamsActivityHandler {
         });
         this.onTeamsMembersRemovedEvent(async (membersRemoved: ChannelAccount[], teamInfo: TeamInfo, context: TurnContext, next: () => Promise<void>): Promise<void> => {
             for (const member of membersRemoved) {
-                var replyActivity = MessageFactory.text(`${member.id} was removed from the team.`);
+                let replyActivity = MessageFactory.text(`${ member.id } was removed from the team.`);
                 replyActivity = TurnContext.applyConversationReference(replyActivity, TurnContext.getConversationReference(context.activity));
                 await context.sendActivity(replyActivity);
             }
@@ -45,7 +45,7 @@ export class NotificationOnlyBot extends TeamsActivityHandler {
         });
         this.onMembersAdded(async (context: TurnContext, next: () => Promise<void>): Promise<void> => {
             for (const member of context.activity.membersAdded) {
-                var replyActivity = MessageFactory.text(`${member.id} was added to the team.`);
+                let replyActivity = MessageFactory.text(`${ member.id } was added to the team.`);
                 
                 replyActivity = TurnContext.applyConversationReference(replyActivity, TurnContext.getConversationReference(context.activity));
                 const channelId = context.activity.conversation.id.split(';')[0];
@@ -57,7 +57,7 @@ export class NotificationOnlyBot extends TeamsActivityHandler {
         });
         this.onMembersRemoved(async (context: TurnContext, next: () => Promise<void>): Promise<void> => {
             for (const member of context.activity.membersRemoved) {
-                var replyActivity = MessageFactory.text(`${member.id} was removed from the team.`);
+                let replyActivity = MessageFactory.text(`${ member.id } was removed from the team.`);
                 
                 replyActivity = TurnContext.applyConversationReference(replyActivity, TurnContext.getConversationReference(context.activity));
                 const channelId = context.activity.conversation.id.split(';')[0];

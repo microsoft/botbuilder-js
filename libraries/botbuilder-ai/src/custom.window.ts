@@ -10,4 +10,4 @@ declare global {
     interface Window {}
 }
 
-export interface window extends Window {}
+export type window = Window

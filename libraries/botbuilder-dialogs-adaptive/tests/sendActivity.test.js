@@ -7,10 +7,10 @@ const {
     MessageFactory,
 } = require('botbuilder-core');
 const { DialogSet } = require('botbuilder-dialogs');
-const { SendActivity } = require('../lib')
+const { SendActivity } = require('../lib');
 
 
-describe('SendActivity', function () {
+describe('SendActivity', function() {
     this.timeout(3000);
 
     let telemetryName;

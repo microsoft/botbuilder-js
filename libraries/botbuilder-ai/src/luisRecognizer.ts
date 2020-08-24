@@ -150,7 +150,7 @@ export interface LuisRecognizerOptionsV3 extends LuisRecognizerOptions {
     /**
      * (Optional) Luis Api endpoint version.
      */
-    apiVersion: "v3";
+    apiVersion: 'v3';
 
     /**
      * (Optional) Determine if all intents come back or only the top one.
@@ -204,7 +204,7 @@ export interface LuisRecognizerOptionsV2 extends LuisRecognizerOptions {
     /**
      * Luis Api endpoint version.
      */
-    apiVersion: "v2";
+    apiVersion: 'v2';
 
     /**
      * (Optional) Bing Spell Check subscription key.
@@ -260,7 +260,7 @@ export class LuisRecognizer implements LuisRecognizerTelemetryClient {
     private includeApiResults: boolean;
 
     private luisClient: LuisClient;
-    private cacheKey: symbol = Symbol('results');
+    private cacheKey = Symbol('results');
     private luisRecognizerInternal: LuisRecognizerV2 | LuisRecognizerV3;
 
     /**
@@ -306,9 +306,9 @@ export class LuisRecognizer implements LuisRecognizerTelemetryClient {
 
             this.options = {
                 ...options,
-            }
+            };
     
-            let recOptions: LuisRecognizerOptionsV2 = {
+            const recOptions: LuisRecognizerOptionsV2 = {
                 includeAPIResults: !!includeApiResults,
                 ...options,
                 apiVersion: 'v2'
@@ -334,9 +334,9 @@ export class LuisRecognizer implements LuisRecognizerTelemetryClient {
      * @param defaultIntent (Optional) intent name to return should a top intent be found. Defaults to a value of `None`.
      * @param minScore (Optional) minimum score needed for an intent to be considered as a top intent. If all intents in the set are below this threshold then the `defaultIntent` will be returned.  Defaults to a value of `0.0`.
      */
-    public static topIntent(results: RecognizerResult | undefined, defaultIntent: string = 'None', minScore: number = 0): string {
+    public static topIntent(results: RecognizerResult | undefined, defaultIntent = 'None', minScore = 0): string {
         let topIntent: string;
-        let topScore: number = -1;
+        let topScore = -1;
         if (results && results.intents) {
             // for (const name in results.intents) {
             Object.keys(results.intents).forEach((name: string) => {
@@ -457,7 +457,7 @@ export class LuisRecognizer implements LuisRecognizerTelemetryClient {
         properties[LuisTelemetryConstants.intentProperty] = topLuisIntent;
         properties[LuisTelemetryConstants.intentScoreProperty] = intentScore.toString();
         if (turnContext.activity.from) {
-            properties[LuisTelemetryConstants.fromIdProperty] = turnContext.activity.from.id;;
+            properties[LuisTelemetryConstants.fromIdProperty] = turnContext.activity.from.id;
         }
 
         if (recognizerResult.sentiment) {
@@ -520,7 +520,7 @@ export class LuisRecognizer implements LuisRecognizerTelemetryClient {
                     break;
                 default:
                     error.message = [
-                        `Response ${(error as any).response.status}: Unexpected status code received.`,
+                        `Response ${ (error as any).response.status }: Unexpected status code received.`,
                         `Please verify that your LUIS application is properly setup.`
                     ].join(' ');
             }
@@ -541,10 +541,10 @@ export class LuisRecognizer implements LuisRecognizerTelemetryClient {
      */
     private validateLuisApplication(): void {
         if (!this.application.applicationId) {
-            throw new Error(`Invalid \`applicationId\` value detected: ${this.application.applicationId}\nPlease make sure your applicationId is a valid LUIS Application Id, e.g. "b31aeaf3-3511-495b-a07f-571fc873214b".`);
+            throw new Error(`Invalid \`applicationId\` value detected: ${ this.application.applicationId }\nPlease make sure your applicationId is a valid LUIS Application Id, e.g. "b31aeaf3-3511-495b-a07f-571fc873214b".`);
         }
         if (!this.application.endpointKey) {
-            throw new Error(`Invalid \`endpointKey\` value detected: ${this.application.endpointKey}\nPlease make sure your endpointKey is a valid LUIS Endpoint Key, e.g. "048ec46dc58e495482b0c447cfdbd291".`);
+            throw new Error(`Invalid \`endpointKey\` value detected: ${ this.application.endpointKey }\nPlease make sure your endpointKey is a valid LUIS Endpoint Key, e.g. "048ec46dc58e495482b0c447cfdbd291".`);
         }
     }
 
@@ -562,12 +562,12 @@ export class LuisRecognizer implements LuisRecognizerTelemetryClient {
             }
             const merge = Object.assign(this.options, userOptions);
     
-            let recOptions: LuisRecognizerOptionsV2 = {
+            const recOptions: LuisRecognizerOptionsV2 = {
                 ... merge,
                 apiVersion: 'v2'
             };
 
-           return new LuisRecognizerV2(this.application, recOptions);
+            return new LuisRecognizerV2(this.application, recOptions);
         }
     }
 }

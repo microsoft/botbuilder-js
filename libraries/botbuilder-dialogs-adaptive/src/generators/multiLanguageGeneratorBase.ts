@@ -47,7 +47,7 @@ export abstract class MultiLanguageGeneratorBase implements LanguageGenerator {
         }
 
         // see if we have any locales that match
-        let fallbackLocales = [];
+        const fallbackLocales = [];
         if (this.languagePolicy.has(targetLocale)) {
             this.languagePolicy.get(targetLocale).forEach((u: string): number => fallbackLocales.push(u));
         }

@@ -46,7 +46,7 @@ export class TokenResolver {
                     pollingTimeoutMs = OAuthLoginTimeoutMsValue;
                 }
 
-                let pollingTimeout: Date = new Date();
+                const pollingTimeout: Date = new Date();
                 pollingTimeout.setMilliseconds(pollingTimeout.getMilliseconds() + pollingTimeoutMs);
 
                 setTimeout(() => this.pollForToken(adapter, context, activity, oauthCard.connectionName, pollingTimeout, log), TokenResolver.PollingIntervalMs);
@@ -82,7 +82,7 @@ export class TokenResolver {
                         if (pollingSettings.interval > 0) {
                             // reset the polling interval
                             if (log)
-                                log.push(`Changing polling interval to ${pollingSettings.interval}`);
+                                log.push(`Changing polling interval to ${ pollingSettings.interval }`);
                             pollingIntervalMs = pollingSettings.interval;
                         }
                     }
@@ -95,7 +95,7 @@ export class TokenResolver {
     }
 
     private static createTokenResponseActivity(relatesTo: Partial<ConversationReference>, token: string, connectionName: string): Partial<Activity> {
-        let tokenResponse: Partial<Activity> = {
+        const tokenResponse: Partial<Activity> = {
             id: this.generate_guid(),
             timestamp: new Date(),
             type: ActivityTypes.Event,

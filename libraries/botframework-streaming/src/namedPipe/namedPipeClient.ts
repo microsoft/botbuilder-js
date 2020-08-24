@@ -37,7 +37,7 @@ export class NamedPipeClient implements IStreamingTransportClient {
      * @param requestHandler Optional [RequestHandler](xref:botframework-streaming.RequestHandler) to process incoming messages received by this client.
      * @param autoReconnect Optional setting to determine if the client sould attempt to reconnect automatically on disconnection events. Defaults to true.
      */
-    public constructor(baseName: string, requestHandler?: RequestHandler, autoReconnect: boolean = true) {
+    public constructor(baseName: string, requestHandler?: RequestHandler, autoReconnect = true) {
         this._baseName = baseName;
         this._requestHandler = requestHandler;
         this._autoReconnect = autoReconnect;
@@ -53,10 +53,10 @@ export class NamedPipeClient implements IStreamingTransportClient {
      * Establish a connection with no custom headers.
      */
     public async connect(): Promise<void> {
-        let outgoingPipeName: string = NamedPipeTransport.PipePath + this._baseName + NamedPipeTransport.ServerIncomingPath;
-        let outgoing = connect(outgoingPipeName);
-        let incomingPipeName: string = NamedPipeTransport.PipePath + this._baseName + NamedPipeTransport.ServerOutgoingPath;
-        let incoming = connect(incomingPipeName);
+        const outgoingPipeName: string = NamedPipeTransport.PipePath + this._baseName + NamedPipeTransport.ServerIncomingPath;
+        const outgoing = connect(outgoingPipeName);
+        const incomingPipeName: string = NamedPipeTransport.PipePath + this._baseName + NamedPipeTransport.ServerOutgoingPath;
+        const incoming = connect(incomingPipeName);
         this._sender.connect(new NamedPipeTransport(outgoing));
         this._receiver.connect(new NamedPipeTransport(incoming));
     }

@@ -7,10 +7,10 @@ const {
     MessageFactory,
 } = require('botbuilder-core');
 const { DialogSet } = require('botbuilder-dialogs');
-const { LogAction, StaticActivityTemplate } = require('../lib')
+const { LogAction, StaticActivityTemplate } = require('../lib');
 
 
-describe('LogAction', function () {
+describe('LogAction', function() {
     this.timeout(3000);
 
     let telemetryName;

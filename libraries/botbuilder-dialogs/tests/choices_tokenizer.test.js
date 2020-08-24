@@ -2,16 +2,16 @@ const assert = require('assert');
 const { defaultTokenizer } = require('../');
 
 function assertToken(token, start, end, text, normalized) {
-    assert(token.start === start, `Invalid token.start of '${token.start}' for '${text}' token.`);
-    assert(token.end === end, `Invalid token.end of '${token.end}' for '${text}' token.`);
-    assert(token.text === text, `Invalid token.text of '${token.text}' for '${text}' token.`);
-    assert(token.normalized === normalized || text, `Invalid token.normalized of '${token.normalized}' for '${text}' token.`);
+    assert(token.start === start, `Invalid token.start of '${ token.start }' for '${ text }' token.`);
+    assert(token.end === end, `Invalid token.end of '${ token.end }' for '${ text }' token.`);
+    assert(token.text === text, `Invalid token.text of '${ token.text }' for '${ text }' token.`);
+    assert(token.normalized === normalized || text, `Invalid token.normalized of '${ token.normalized }' for '${ text }' token.`);
 }
 
 describe('defaultTokenizer()', function() {
     this.timeout(5000);
    
-    it('should break on spaces.', function (done) {
+    it('should break on spaces.', function(done) {
         const tokens = defaultTokenizer(`how now brown cow`);
         assert(tokens.length === 4);
         assertToken(tokens[0], 0, 2, 'how');
@@ -21,7 +21,7 @@ describe('defaultTokenizer()', function() {
         done();
     });
 
-    it('should break on punctuation.', function (done) {
+    it('should break on punctuation.', function(done) {
         const tokens = defaultTokenizer(`how-now.brown:cow?`);
         assert(tokens.length === 4);
         assertToken(tokens[0], 0, 2, 'how');
@@ -31,7 +31,7 @@ describe('defaultTokenizer()', function() {
         done();
     });
 
-    it('should tokenize single character tokens.', function (done) {
+    it('should tokenize single character tokens.', function(done) {
         const tokens = defaultTokenizer(`a b c d`);
         assert(tokens.length === 4);
         assertToken(tokens[0], 0, 0, 'a');
@@ -41,27 +41,27 @@ describe('defaultTokenizer()', function() {
         done();
     });
 
-    it('should return a single token.', function (done) {
+    it('should return a single token.', function(done) {
         const tokens = defaultTokenizer(`food`);
         assert(tokens.length === 1);
         assertToken(tokens[0], 0, 3, 'food');
         done();
     });
 
-    it('should return no tokens.', function (done) {
+    it('should return no tokens.', function(done) {
         const tokens = defaultTokenizer(`.?;-()`);
         assert(tokens.length === 0);
         done();
     });
 
-    it('should return a the normalized and original text for a token.', function (done) {
+    it('should return a the normalized and original text for a token.', function(done) {
         const tokens = defaultTokenizer(`fOoD`);
         assert(tokens.length === 1);
         assertToken(tokens[0], 0, 3, 'fOoD', 'food');
         done();
     });
 
-    it('should break on emojis.', function (done) {
+    it('should break on emojis.', function(done) {
         const tokens = defaultTokenizer(`food 💥👍😀`);
         assert(tokens.length === 4);
         assertToken(tokens[0], 0, 3, 'food');

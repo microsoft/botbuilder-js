@@ -13,10 +13,10 @@ class TestInitializerMiddleware extends TelemetryInitializerMiddleware {
     }
 }
 
-describe(`TelemetryInitializerMiddleware`, function () {
+describe(`TelemetryInitializerMiddleware`, function() {
     this.timeout(5000);
 
-    it(`telemetry initializer stores activity`, function (done) {
+    it(`telemetry initializer stores activity`, function(done) {
 
         var telemetryClient = {
             trackEvent: (telemetry) => {
@@ -48,7 +48,7 @@ describe(`TelemetryInitializerMiddleware`, function () {
             .then(done);
     });
 
-    it(`calls logging middleware (when logActivityTelemetry is true)`, function (done) {
+    it(`calls logging middleware (when logActivityTelemetry is true)`, function(done) {
 
         var callCount = 0;
 
@@ -83,7 +83,7 @@ describe(`TelemetryInitializerMiddleware`, function () {
             .then(done);
     });
 
-    it(`does not call logging middleware (when logActivityTelemetry is false)`, function (done) {
+    it(`does not call logging middleware (when logActivityTelemetry is false)`, function(done) {
 
         var telemetryClient = {
             trackEvent: (telemetry) => {

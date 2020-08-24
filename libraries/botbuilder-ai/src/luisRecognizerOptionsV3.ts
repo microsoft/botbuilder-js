@@ -7,25 +7,25 @@
  */
 
 import { LUISRuntimeModels as LuisModels } from '@azure/cognitiveservices-luis-runtime';
-import { LuisRecognizerInternal } from './luisRecognizerOptions'
-import { LuisApplication , LuisRecognizerOptionsV3} from './luisRecognizer'
+import { LuisRecognizerInternal } from './luisRecognizerOptions';
+import { LuisApplication , LuisRecognizerOptionsV3} from './luisRecognizer';
 import { NullTelemetryClient, TurnContext , RecognizerResult} from 'botbuilder-core';
 const fetch = require('node-fetch');
 const LUIS_TRACE_TYPE = 'https://www.luis.ai/schemas/trace';
 const LUIS_TRACE_NAME = 'LuisRecognizer';
 const LUIS_TRACE_LABEL = 'LuisV3 Trace';
-const _dateSubtypes = [ "date", "daterange", "datetime", "datetimerange", "duration", "set", "time", "timerange" ];    
-const _geographySubtypes = [ "poi", "city", "countryRegion", "continent", "state" ];
-const MetadataKey = "$instance";
+const _dateSubtypes = [ 'date', 'daterange', 'datetime', 'datetimerange', 'duration', 'set', 'time', 'timerange' ];    
+const _geographySubtypes = [ 'poi', 'city', 'countryRegion', 'continent', 'state' ];
+const MetadataKey = '$instance';
 
 
 export function isLuisRecognizerOptionsV3(options: any): options is LuisRecognizerOptionsV3 {
-    return (options.apiVersion && options.apiVersion === "v3")
+    return (options.apiVersion && options.apiVersion === 'v3');
 }
 
 export class LuisRecognizerV3 extends LuisRecognizerInternal {
 
-    constructor (application: LuisApplication, options?: LuisRecognizerOptionsV3) { 
+    constructor(application: LuisApplication, options?: LuisRecognizerOptionsV3) { 
         super(application);
 
         this.predictionOptions = {
@@ -71,10 +71,10 @@ export class LuisRecognizerV3 extends LuisRecognizerInternal {
             entities : extractEntitiesAndMetadata(response.prediction),
             sentiment: getSentiment(response.prediction),
             luisResult: (this.predictionOptions.includeAPIResults ? response : null)
-        }
+        };
 
         if (this.predictionOptions.includeInstanceData) {
-            result.entities[MetadataKey] = result.entities[MetadataKey] ? result.entities[MetadataKey] : {}
+            result.entities[MetadataKey] = result.entities[MetadataKey] ? result.entities[MetadataKey] : {};
         }
 
         this.emitTraceInfo(context, response.prediction, result);
@@ -85,15 +85,15 @@ export class LuisRecognizerV3 extends LuisRecognizerInternal {
 
     private buildUrl() {
         const baseUri = this.application.endpoint || 'https://westus.api.cognitive.microsoft.com';
-        let uri =  `${baseUri}/luis/prediction/v3.0/apps/${this.application.applicationId}`;
+        let uri =  `${ baseUri }/luis/prediction/v3.0/apps/${ this.application.applicationId }`;
 
         if (this.predictionOptions.version) {
-            uri += `/versions/${this.predictionOptions.version}/predict`
+            uri += `/versions/${ this.predictionOptions.version }/predict`;
         } else {
-            uri += `/slots/${this.predictionOptions.slot}/predict`
+            uri += `/slots/${ this.predictionOptions.slot }/predict`;
         }
         
-        const params = `?verbose=${this.predictionOptions.includeInstanceData}&log=${this.predictionOptions.log}&show-all-intents=${this.predictionOptions.includeAllIntents}`;
+        const params = `?verbose=${ this.predictionOptions.includeInstanceData }&log=${ this.predictionOptions.log }&show-all-intents=${ this.predictionOptions.includeAllIntents }`;
 
         uri += params;
         return uri;
@@ -108,15 +108,15 @@ export class LuisRecognizerV3 extends LuisRecognizerInternal {
         };
 
         if (this.predictionOptions.datetimeReference){
-            content.options['datetimeReference'] = this.predictionOptions.datetimeReference
+            content.options['datetimeReference'] = this.predictionOptions.datetimeReference;
         }
 
         if (this.predictionOptions.dynamicLists){
-            content['dynamicLists'] = this.predictionOptions.dynamicLists
+            content['dynamicLists'] = this.predictionOptions.dynamicLists;
         }
 
         if (this.predictionOptions.externalEntities){
-            content['externalEntities'] = this.predictionOptions.externalEntities
+            content['externalEntities'] = this.predictionOptions.externalEntities;
         }
 
         return {
@@ -158,7 +158,7 @@ function  getIntents(luisResult) {
     // let intents: { [name: string]: { score: number } } = {};
     const intents = {};
     if (luisResult.intents) {
-        for (let intent in luisResult.intents) {
+        for (const intent in luisResult.intents) {
             intents[normalizeName(intent)] = { score: luisResult.intents[intent].score};
         }
     }
@@ -175,8 +175,8 @@ function normalizeEntity(entity) {
 function mapProperties(source, inInstance){
     let result = source;
     if (source instanceof Array) {
-        let narr = [];
-        for (let item of source) {
+        const narr = [];
+        for (const item of source) {
 
             // Check if element is geographyV2
             let isGeographyV2 = '';
@@ -186,8 +186,8 @@ function mapProperties(source, inInstance){
             }       
 
             if (!inInstance && isGeographyV2) {
-                let geoEntity: any = {};
-                for (let itemProps in item) {
+                const geoEntity: any = {};
+                for (const itemProps in item) {
                     if (itemProps === 'value')
                     {
                         geoEntity.location = item[itemProps];
@@ -202,24 +202,24 @@ function mapProperties(source, inInstance){
         result = narr;
 
     } else if (source instanceof Object && typeof source !== 'string') {
-        let nobj: any = {};
+        const nobj: any = {};
 
         // Fix datetime by reverting to simple timex
         if (!inInstance && source.type && typeof source.type === 'string' && _dateSubtypes.includes(source.type))
         {
-            let timexs = source.values;
-            let arr = [];
+            const timexs = source.values;
+            const arr = [];
             if (timexs)
             {
-                let unique = [];
-                for(let elt of timexs)
+                const unique = [];
+                for(const elt of timexs)
                 {
                     if (elt.timex && !unique.includes(elt.timex)) {
                         unique.push(elt.timex);
                     }
                 }
 
-                for (let timex of unique)
+                for (const timex of unique)
                 {
                     arr.push(timex);
                 }
@@ -232,30 +232,30 @@ function mapProperties(source, inInstance){
         else
         {
             // Map or remove properties
-            for (let property in source)
+            for (const property in source)
             {
-                let name = normalizeEntity(property);
-                let isArray = source[property] instanceof Array;
-                let isString = typeof source[property] === 'string';
-                let isInt = Number.isInteger(source[property]);
-                let val = mapProperties(source[property], inInstance || property == MetadataKey);
-                if (name == "datetime" && isArray)
+                const name = normalizeEntity(property);
+                const isArray = source[property] instanceof Array;
+                const isString = typeof source[property] === 'string';
+                const isInt = Number.isInteger(source[property]);
+                const val = mapProperties(source[property], inInstance || property == MetadataKey);
+                if (name == 'datetime' && isArray)
                 {
                     nobj.datetimeV1 = val;
                 }
-                else if (name == "datetimeV2" && isArray)
+                else if (name == 'datetimeV2' && isArray)
                 {
                     nobj.datetime = val;
                 }
                 else if (inInstance)
                 {
                     // Correct $instance issues
-                    if (name == "length" && isInt)
+                    if (name == 'length' && isInt)
                     {
                         nobj['endIndex'] = source[name] + source.startIndex;
                     }
-                    else if (!((isInt && name === "modelTypeId") ||
-                               (isString && name === "role")))
+                    else if (!((isInt && name === 'modelTypeId') ||
+                               (isString && name === 'role')))
                     {
                         nobj[name] = val;
                     }
@@ -263,7 +263,7 @@ function mapProperties(source, inInstance){
                 else
                 {
                     // Correct non-$instance values
-                    if (name == "unit" && isString)
+                    if (name == 'unit' && isString)
                     {
                         nobj.units = val;
                     }

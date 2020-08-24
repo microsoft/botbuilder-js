@@ -34,15 +34,15 @@ export class GetPastTime extends ExpressionEvaluator {
                 const format: string = (args.length === 3 ? FunctionUtils.timestampFormatter(args[2]) : FunctionUtils.DefaultDateTimeFormat);
                 const { duration, tsStr } = FunctionUtils.timeUnitTransformer(args[0], args[1]);
                 if (tsStr === undefined) {
-                    error = `${args[2]} is not a valid time unit.`;
+                    error = `${ args[2] } is not a valid time unit.`;
                 } else {
                     const dur: any = duration;
                     ({ value, error } = FunctionUtils.parseTimestamp(new Date().toISOString(), (dt: Date): string => {
-                        return moment(dt).utc().subtract(dur, tsStr).format(format)
+                        return moment(dt).utc().subtract(dur, tsStr).format(format);
                     }));
                 }
             } else {
-                error = `${expression} can't evaluate.`;
+                error = `${ expression } can't evaluate.`;
             }
         }
 

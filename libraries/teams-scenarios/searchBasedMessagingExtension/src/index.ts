@@ -18,7 +18,7 @@ config({ path: ENV_FILE });
 // Create HTTP server.
 const server = restify.createServer();
 server.listen(process.env.port || process.env.PORT || 3978, () => {
-    console.log(`\n${server.name} listening to ${server.url}`);
+    console.log(`\n${ server.name } listening to ${ server.url }`);
     console.log(`\nGet Bot Framework Emulator: https://aka.ms/botframework-emulator`);
     console.log(`\nTo test your bot, see: https://aka.ms/debug-with-emulator`);
 });
@@ -36,7 +36,7 @@ adapter.onTurnError = async (context, error) => {
     console.error('[onTurnError]:');
     console.error(error);
     // Send a message to the user
-    await context.sendActivity(`Oops. Something went wrong in the bot!\n  ${error.message}`);
+    await context.sendActivity(`Oops. Something went wrong in the bot!\n  ${ error.message }`);
 };
 
 // Define a state store for your bot. See https://aka.ms/about-bot-state to learn more about using MemoryStorage.

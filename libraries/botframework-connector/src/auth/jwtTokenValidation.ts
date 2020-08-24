@@ -63,7 +63,7 @@ export namespace JwtTokenValidation {
         credentials: ICredentialProvider,
         channelService: string,
         channelId: string,
-        serviceUrl: string = '',
+        serviceUrl = '',
         authConfig: AuthenticationConfiguration = new AuthenticationConfiguration()
     ): Promise<ClaimsIdentity> {
         if (!authHeader.trim()) { throw new AuthenticationError('\'authHeader\' required.', StatusCodes.BAD_REQUEST); }
@@ -78,49 +78,49 @@ export namespace JwtTokenValidation {
     async function authenticateToken(
         authHeader: string, credentials: ICredentialProvider, channelService: string, channelId: string, authConfig: AuthenticationConfiguration, serviceUrl: string): Promise<ClaimsIdentity> {
 
-            if (SkillValidation.isSkillToken(authHeader)) {
-                return await SkillValidation.authenticateChannelToken(authHeader, credentials, channelService, channelId, authConfig);
-            }
+        if (SkillValidation.isSkillToken(authHeader)) {
+            return await SkillValidation.authenticateChannelToken(authHeader, credentials, channelService, channelId, authConfig);
+        }
 
-            const usingEmulator: boolean = EmulatorValidation.isTokenFromEmulator(authHeader);
+        const usingEmulator: boolean = EmulatorValidation.isTokenFromEmulator(authHeader);
 
-            if (usingEmulator) {
-                return await EmulatorValidation.authenticateEmulatorToken(authHeader, credentials, channelService, channelId);
-            }
+        if (usingEmulator) {
+            return await EmulatorValidation.authenticateEmulatorToken(authHeader, credentials, channelService, channelId);
+        }
     
-            if (isPublicAzure(channelService)) {
-                if (serviceUrl.trim()) {
-                    return await ChannelValidation.authenticateChannelTokenWithServiceUrl(authHeader, credentials, serviceUrl, channelId);
-                }
-    
-                return await ChannelValidation.authenticateChannelToken(authHeader, credentials, channelId);
-            }
-    
-            if (isGovernment(channelService)) {
-                if (serviceUrl.trim()) {
-                    return await GovernmentChannelValidation.authenticateChannelTokenWithServiceUrl(
-                        authHeader,
-                        credentials,
-                        serviceUrl,
-                        channelId
-                    );
-                }
-    
-                return await GovernmentChannelValidation.authenticateChannelToken(authHeader, credentials, channelId);
-            }
-    
-            // Otherwise use Enterprise Channel Validation
+        if (isPublicAzure(channelService)) {
             if (serviceUrl.trim()) {
-                return await EnterpriseChannelValidation.authenticateChannelTokenWithServiceUrl(
+                return await ChannelValidation.authenticateChannelTokenWithServiceUrl(authHeader, credentials, serviceUrl, channelId);
+            }
+    
+            return await ChannelValidation.authenticateChannelToken(authHeader, credentials, channelId);
+        }
+    
+        if (isGovernment(channelService)) {
+            if (serviceUrl.trim()) {
+                return await GovernmentChannelValidation.authenticateChannelTokenWithServiceUrl(
                     authHeader,
                     credentials,
                     serviceUrl,
-                    channelId,
-                    channelService
+                    channelId
                 );
             }
     
-            return await EnterpriseChannelValidation.authenticateChannelToken(authHeader, credentials, channelId, channelService);
+            return await GovernmentChannelValidation.authenticateChannelToken(authHeader, credentials, channelId);
+        }
+    
+        // Otherwise use Enterprise Channel Validation
+        if (serviceUrl.trim()) {
+            return await EnterpriseChannelValidation.authenticateChannelTokenWithServiceUrl(
+                authHeader,
+                credentials,
+                serviceUrl,
+                channelId,
+                channelService
+            );
+        }
+    
+        return await EnterpriseChannelValidation.authenticateChannelToken(authHeader, credentials, channelId, channelService);
     }
 
     /**

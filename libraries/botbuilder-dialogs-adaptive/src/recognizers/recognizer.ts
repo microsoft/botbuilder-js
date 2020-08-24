@@ -78,7 +78,7 @@ export class Recognizer {
 
     private stringifyAdditionalPropertiesOfRecognizerResult(recognizerResult: RecognizerResult): string {
         const generalProperties = new Set(['text', 'alteredText', 'intents', 'entities']);
-        let additionalProperties: { [key: string]: string } = {};
+        const additionalProperties: { [key: string]: string } = {};
         for (const key in recognizerResult) {
             if (!generalProperties.has(key)) {
                 additionalProperties[key] = recognizerResult[key];
@@ -93,10 +93,10 @@ export class Recognizer {
             this.telemetryClient = turnStateTelemetryClient || this.telemetryClient;
         }
         this.telemetryClient.trackEvent({
-                name: eventName,
-                properties: telemetryProperties,
-                metrics: telemetryMetrics
-            });
+            name: eventName,
+            properties: telemetryProperties,
+            metrics: telemetryMetrics
+        });
     }
 }
 

@@ -9,7 +9,7 @@ import * as Recognizers from '@microsoft/recognizers-text-number';
 import { Activity, InputHints, TurnContext } from 'botbuilder-core';
 import { Prompt, PromptOptions, PromptRecognizerResult, PromptValidator } from './prompt';
 
-import { Chinese, Dutch, English, French, German, Japanese, LikelySubtags, NumberingSystem, Portuguese, Spanish } from "../i18n";
+import { Chinese, Dutch, English, French, German, Japanese, LikelySubtags, NumberingSystem, Portuguese, Spanish } from '../i18n';
 
 import * as Globalize from 'globalize';
 Globalize.load(
@@ -73,7 +73,7 @@ export class NumberPrompt extends Prompt<number> {
         // only need the first 2 letters for internationalization culture
         const formattedCulture = culture.replace(
             culture,
-            `${culture[0]}${culture[1]}`
+            `${ culture[0] }${ culture[1] }`
         );
         
         return formattedCulture.toLowerCase();

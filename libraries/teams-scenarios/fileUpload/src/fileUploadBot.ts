@@ -46,9 +46,9 @@ export class FileUploadBot extends TeamsActivityHandler {
     }
 
     protected async handleTeamsFileConsentDecline(context: TurnContext, fileConsentCardResponse: FileConsentCardResponse): Promise<void> {
-        let reply = this.createReply(context.activity);
-        reply.textFormat = "xml";
-        reply.text = `Declined. We won't upload file <b>${fileConsentCardResponse.context["filename"]}</b>.`;
+        const reply = this.createReply(context.activity);
+        reply.textFormat = 'xml';
+        reply.text = `Declined. We won't upload file <b>${ fileConsentCardResponse.context['filename'] }</b>.`;
         await context.sendActivity(reply);
     } 
     
@@ -67,28 +67,28 @@ export class FileUploadBot extends TeamsActivityHandler {
     }
 
     private async sendFile(fileConsentCardResponse: FileConsentCardResponse): Promise<void> {
-        const request = require("request");
+        const request = require('request');
         const fs = require('fs');     
-        let context = fileConsentCardResponse.context;
-        let path = require('path');
-        let filePath = path.join('files', context["filename"]);
-        let stats = fs.statSync(filePath);
-        let fileSizeInBytes = stats['size']; 
+        const context = fileConsentCardResponse.context;
+        const path = require('path');
+        const filePath = path.join('files', context['filename']);
+        const stats = fs.statSync(filePath);
+        const fileSizeInBytes = stats['size']; 
         fs.createReadStream(filePath).pipe(request.put(fileConsentCardResponse.uploadInfo.uploadUrl));
     }
 
     private async sendFileCard(context: TurnContext): Promise<void> {
-        let filename = "teams-logo.png";
-        let fs = require('fs'); 
-        let path = require('path');
-        let stats = fs.statSync(path.join('files', filename));
-        let fileSizeInBytes = stats['size'];    
+        const filename = 'teams-logo.png';
+        const fs = require('fs'); 
+        const path = require('path');
+        const stats = fs.statSync(path.join('files', filename));
+        const fileSizeInBytes = stats['size'];    
 
-        let fileContext = {
+        const fileContext = {
             filename: filename
         };
 
-        let attachment = {
+        const attachment = {
             content: <FileConsentCard>{
                 description: 'This is the file I want to send you',
                 fileSizeInBytes: fileSizeInBytes,
@@ -99,33 +99,33 @@ export class FileUploadBot extends TeamsActivityHandler {
             name: filename
         } as Attachment;
 
-        var replyActivity = this.createReply(context.activity);
+        const replyActivity = this.createReply(context.activity);
         replyActivity.attachments = [ attachment ];
         await context.sendActivity(replyActivity);
     }
 
     private async fileUploadCompleted(context: TurnContext, fileConsentCardResponse: FileConsentCardResponse): Promise<void> {
-        let fileUploadInfoName = fileConsentCardResponse.uploadInfo.name;
-        let downloadCard = <FileInfoCard>{
+        const fileUploadInfoName = fileConsentCardResponse.uploadInfo.name;
+        const downloadCard = <FileInfoCard>{
             uniqueId: fileConsentCardResponse.uploadInfo.uniqueId,
             fileType: fileConsentCardResponse.uploadInfo.fileType,
         };
 
-        let attachment = <Attachment>{
+        const attachment = <Attachment>{
             content: downloadCard,
             contentType: 'application/vnd.microsoft.teams.card.file.info',
             name: fileUploadInfoName,
             contentUrl: fileConsentCardResponse.uploadInfo.contentUrl,
         };
 
-        let reply = this.createReply(context.activity, `<b>File uploaded.</b> Your file <b>${fileUploadInfoName}</b> is ready to download`);
+        const reply = this.createReply(context.activity, `<b>File uploaded.</b> Your file <b>${ fileUploadInfoName }</b> is ready to download`);
         reply.textFormat = 'xml';
         reply.attachments = [attachment];
         await context.sendActivity(reply);
     }
 
     private async fileUploadFailed(context: TurnContext, error: string): Promise<void> {
-        let reply = this.createReply(context.activity, `<b>File upload failed.</b> Error: <pre>${error}</pre>`);
+        const reply = this.createReply(context.activity, `<b>File upload failed.</b> Error: <pre>${ error }</pre>`);
         reply.textFormat = 'xml';
         await context.sendActivity(reply);
     }

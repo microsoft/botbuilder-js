@@ -25,7 +25,7 @@ export class SendOperations {
     }
 
     public async sendRequest(id: string, request: StreamingRequest): Promise<void> {
-        let disassembler = new RequestDisassembler(this.payloadSender, id, request);
+        const disassembler = new RequestDisassembler(this.payloadSender, id, request);
 
         await disassembler.disassemble();
 
@@ -37,7 +37,7 @@ export class SendOperations {
     }
 
     public async sendResponse(id: string, response: StreamingResponse): Promise<void> {
-        let disassembler = new ResponseDisassembler(this.payloadSender, id, response);
+        const disassembler = new ResponseDisassembler(this.payloadSender, id, response);
 
         await disassembler.disassemble();
 
@@ -49,7 +49,7 @@ export class SendOperations {
     }
 
     public async sendCancelStream(id: string): Promise<void> {
-        let disassembler = new CancelDisassembler(this.payloadSender, id, PayloadTypes.cancelStream);
+        const disassembler = new CancelDisassembler(this.payloadSender, id, PayloadTypes.cancelStream);
         disassembler.disassemble();
     }
 }

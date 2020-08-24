@@ -27,7 +27,7 @@ export class ReplaceIgnoreCase extends ExpressionEvaluator {
             let error = undefined;
             let result = undefined;
             if (FunctionUtils.parseStringOrUndefined(args[1]).length === 0) {
-                error = `${args[1]} should be a string with length at least 1`;
+                error = `${ args[1] } should be a string with length at least 1`;
             }
 
             if (!error) {

@@ -541,6 +541,6 @@ export abstract class Dialog<O extends object = {}> extends Configurable {
      * ID's is `<dialog type>(this.hashedLabel('<dialog args>'))`.
      */
     protected onComputeId(): string {
-        throw new Error(`Dialog.onComputeId(): not implemented.`)
+        throw new Error(`Dialog.onComputeId(): not implemented.`);
     }
 }

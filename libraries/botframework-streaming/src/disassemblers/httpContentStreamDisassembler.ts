@@ -25,7 +25,7 @@ export class HttpContentStreamDisassembler extends PayloadDisassembler {
     }
 
     public async getStream(): Promise<IStreamWrapper> {
-        let stream: SubscribableStream = this.contentStream.content.getStream();
+        const stream: SubscribableStream = this.contentStream.content.getStream();
 
         return {stream, streamLength: stream.length};
     }

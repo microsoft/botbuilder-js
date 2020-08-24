@@ -4,7 +4,7 @@ import { ArrayExpression, BoolExpression, EnumExpression, NumberExpression, Obje
 
 describe('expressionProperty tests', () => {
     it('ArrayExpression string', () => {
-        class ArrFoo { public strings: string[] };
+        class ArrFoo { public strings: string[] }
         const test: ArrFoo = { strings: ['a', 'b', 'c'] };
         const data = { test };
 
@@ -22,8 +22,8 @@ describe('expressionProperty tests', () => {
     });
 
     it('ArrayExpression object', () => {
-        class Foo { public age: number; public name: string; };
-        class ArrFoo { public objects: Foo[] };
+        class Foo { public age: number; public name: string; }
+        class ArrFoo { public objects: Foo[] }
         const foo: Foo = { age: 13, name: 'joe' };
         const test: ArrFoo = { objects: [foo] };
         const data = { test };
@@ -72,7 +72,7 @@ describe('expressionProperty tests', () => {
     });
 
     it('EnumExpression', () => {
-        enum TestEnum { One, Two, Three };
+        enum TestEnum { One, Two, Three }
         const data = { test: TestEnum.Three };
 
         let val = new EnumExpression<TestEnum>('=test');
@@ -117,7 +117,7 @@ describe('expressionProperty tests', () => {
     });
 
     it('ObjectExpression', () => {
-        class Foo { public age: number; public name: string };
+        class Foo { public age: number; public name: string }
         const foo: Foo = { age: 13, name: 'joe' };
         const data = { test: foo };
 

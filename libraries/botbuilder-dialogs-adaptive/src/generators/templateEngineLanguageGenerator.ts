@@ -22,7 +22,7 @@ export class TemplateEngineLanguageGenerator implements LanguageGenerator{
 
     private lg: Templates;
 
-    public id: string = '';
+    public id = '';
 
     public constructor(arg1?: Templates | string, arg2?: string | Map<string,Resource[]>, arg3?: Map<string,Resource[]>) {
         if (arguments.length === 0) {

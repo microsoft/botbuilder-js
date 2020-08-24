@@ -84,14 +84,14 @@ export class ComponentDialog<O extends object = {}> extends DialogContainer<O> {
         telemetryTrackDialogView(this.telemetryClient, this.id);
 
         // Start the inner dialog.
-        const innerDC: DialogContext = this.createChildContext(outerDC)
+        const innerDC: DialogContext = this.createChildContext(outerDC);
         const turnResult: DialogTurnResult<any> = await this.onBeginDialog(innerDC, options);
 
         // Check for end of inner dialog
         if (turnResult.status !== DialogTurnStatus.waiting) {
             if (turnResult.status === DialogTurnStatus.cancelled) {
                 await this.endComponent(outerDC, turnResult.result);
-                const cancelledTurnResult: DialogTurnResult = { status: DialogTurnStatus.cancelled, result: turnResult.result }
+                const cancelledTurnResult: DialogTurnResult = { status: DialogTurnStatus.cancelled, result: turnResult.result };
                 return cancelledTurnResult;
             }
             // Return result to calling dialog
@@ -105,7 +105,7 @@ export class ComponentDialog<O extends object = {}> extends DialogContainer<O> {
         await this.checkForVersionChange(outerDC);
 
         // Continue execution of inner dialog.
-        const innerDC: DialogContext = this.createChildContext(outerDC)
+        const innerDC: DialogContext = this.createChildContext(outerDC);
         const turnResult: DialogTurnResult<any> = await this.onContinueDialog(innerDC);
 
         // Check for end of inner dialog

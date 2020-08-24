@@ -25,7 +25,7 @@ export class Int extends ExpressionEvaluator {
                 let error: string;
                 const value: number = parseInt(args[0], 10);
                 if (!FunctionUtils.isNumber(value)) {
-                    error = `parameter ${args[0]} is not a valid number string.`;
+                    error = `parameter ${ args[0] } is not a valid number string.`;
                 }
 
                 return { value, error };

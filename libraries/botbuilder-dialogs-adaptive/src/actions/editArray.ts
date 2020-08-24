@@ -125,6 +125,6 @@ export class EditArray<O extends object = {}> extends Dialog<O> {
     }
 
     private ensureValue(): void {
-        if (!this.value) { throw new Error(`EditArray: "${ this.changeType.toString() }" operation couldn't be performed for list "${ this.itemsProperty }" because a value wasn't specified.`) }
+        if (!this.value) { throw new Error(`EditArray: "${ this.changeType.toString() }" operation couldn't be performed for list "${ this.itemsProperty }" because a value wasn't specified.`); }
     }
 }

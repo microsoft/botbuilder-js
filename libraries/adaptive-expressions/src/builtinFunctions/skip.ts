@@ -34,15 +34,15 @@ export class Skip extends ExpressionEvaluator {
                 const startExpr: Expression = expression.children[1];
                 ({ value: start, error } = startExpr.tryEvaluate(state, options));
                 if (!error && !Number.isInteger(start)) {
-                    error = `${startExpr} is not an integer.`;
+                    error = `${ startExpr } is not an integer.`;
                 } else if (start < 0 || start >= arr.length) {
-                    error = `${startExpr}=${start} which is out of range for ${arr}`;
+                    error = `${ startExpr }=${ start } which is out of range for ${ arr }`;
                 }
                 if (!error) {
                     result = arr.slice(start);
                 }
             } else {
-                error = `${expression.children[0]} is not array.`;
+                error = `${ expression.children[0] } is not array.`;
             }
         }
 

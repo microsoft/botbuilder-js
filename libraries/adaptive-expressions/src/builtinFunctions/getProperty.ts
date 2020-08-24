@@ -37,7 +37,7 @@ export class GetProperty extends ExpressionEvaluator {
                 if (typeof firstItem === 'string') {
                     value = FunctionUtils.wrapGetValue(state, firstItem, options);
                 } else {
-                    error = `"Single parameter ${children[0]} is not a string."`;
+                    error = `"Single parameter ${ children[0] } is not a string."`;
                 }
             } else {
                 // get the peoperty value from the instance

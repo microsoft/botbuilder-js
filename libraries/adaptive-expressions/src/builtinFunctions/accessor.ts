@@ -52,14 +52,14 @@ export class Accessor extends ExpressionEvaluator {
         if (children.length === 0
             || children[0].type !== ExpressionType.Constant
             || children[0].returnType !== ReturnType.String) {
-            throw new Error(`${expression} must have a string as first argument.`);
+            throw new Error(`${ expression } must have a string as first argument.`);
         }
 
         if (children.length > 2) {
-            throw new Error(`${expression} has more than 2 children.`);
+            throw new Error(`${ expression } has more than 2 children.`);
         }
         if (children.length === 2 && (children[1].returnType & ReturnType.Object) === 0) {
-            throw new Error(`${expression} must have an object as its second argument.`);
+            throw new Error(`${ expression } must have an object as its second argument.`);
         }
     }
 }

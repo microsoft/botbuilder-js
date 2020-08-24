@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 
- import { INodeServer, INodeSocket} from '../interfaces';
+import { INodeServer, INodeSocket} from '../interfaces';
 
 export const createNodeServer = function(callback?: (socket: INodeSocket) => void): INodeServer {
     if (callback && typeof callback !== 'function') {
@@ -21,15 +21,15 @@ export const createNodeServer = function(callback?: (socket: INodeSocket) => voi
     } catch (error) {
         throw error;
     }
-}
+};
 
 export const getServerFactory = function(): Function {
     if (typeof require !== undefined) {
         return require('net').Server;
     }
 
-    throw TypeError(`require is undefined. Must be in a Node module to require 'net' dynamically in order to fetch Server factory.`)
-}
+    throw TypeError(`require is undefined. Must be in a Node module to require 'net' dynamically in order to fetch Server factory.`);
+};
 
 function isNetServer(o: any): o is INodeServer {
     return (hasCloseMethod && hasListenMethod) ? true : false;

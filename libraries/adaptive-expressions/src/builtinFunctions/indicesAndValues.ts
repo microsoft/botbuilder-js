@@ -38,13 +38,13 @@ export class IndicesAndValues extends ExpressionEvaluator {
                 result = tempList;
             } else if (typeof value === 'object') {
                 const tempList = [];
-                for (let [index, val] of Object.entries(value)) {
+                for (const [index, val] of Object.entries(value)) {
                     tempList.push({ index: index, value: val });
                 }
 
                 result = tempList;
             } else {
-                error = `${expression.children[0]} is not array or object.`;
+                error = `${ expression.children[0] } is not array or object.`;
             }
         }
 

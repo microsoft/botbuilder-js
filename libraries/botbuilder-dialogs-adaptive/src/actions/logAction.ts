@@ -50,7 +50,7 @@ export class LogAction<O extends object = {}> extends Dialog<O> {
             return await dc.endDialog();
         }
 
-        if (!this.text) { throw new Error(`${ this.id }: no 'message' specified.`) }
+        if (!this.text) { throw new Error(`${ this.id }: no 'message' specified.`); }
 
         const msg = await this.text.bind(dc, dc.state);
         this.telemetryClient.trackEvent({

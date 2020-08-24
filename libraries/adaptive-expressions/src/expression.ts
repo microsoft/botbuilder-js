@@ -62,7 +62,7 @@ export class Expression {
             this.children = children;
         } else if (type !== undefined) {
             if (!Expression.functions.get(type)) {
-                throw Error(`${type} does not have an evaluator, it's not a built-in function or a custom function.`);
+                throw Error(`${ type } does not have an evaluator, it's not a built-in function or a custom function.`);
             }
 
             this.evaluator = Expression.functions.get(type);
@@ -86,7 +86,7 @@ export class Expression {
                     for (let i = 0; eq && i < this.children.length; i++) {
                         const primary = this.children[0];
                         let found = false;
-                        for (var j = 0; j < this.children.length; j++) {
+                        for (let j = 0; j < this.children.length; j++) {
                             if (primary.deepEquals(other.children[j])) {
                                 found = true;
                                 break;
@@ -154,9 +154,9 @@ export class Expression {
                     if (children[1] instanceof Constant) {
                         const cnst: Constant = children[1] as Constant;
                         if (cnst.returnType === ReturnType.String) {
-                            path += `.${cnst.value}`;
+                            path += `.${ cnst.value }`;
                         } else {
-                            path += `[${cnst.value}]`;
+                            path += `[${ cnst.value }]`;
                         }
                     } else {
                         refs.add(path);
@@ -187,7 +187,7 @@ export class Expression {
                 }
 
                 const iteratorName = (children[1].children[0] as Constant).value as string;
-                var nonLocalRefs2 = Array.from(refs2).filter((x): boolean => !(x === iteratorName || x.startsWith(iteratorName + '.') || x.startsWith(iteratorName + '[')));
+                const nonLocalRefs2 = Array.from(refs2).filter((x): boolean => !(x === iteratorName || x.startsWith(iteratorName + '.') || x.startsWith(iteratorName + '[')));
                 refs = new Set([...refs, ...refs0, ...nonLocalRefs2]);
 
             } else {
@@ -222,7 +222,7 @@ export class Expression {
         }
 
         return exprEvaluator;
-    };
+    }
 
     /**
      * Make an expression and validate it.

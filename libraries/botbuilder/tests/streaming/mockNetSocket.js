@@ -13,7 +13,7 @@ class MockNetSocket {
 }
 
 MockNetSocket.createNonSuccessResponse = (code, message) => {
-    return `HTTP/1.1 ${code} ${StatusCodes[code]}\r\n${message}\r\nConnection: 'close'\r\n\r\n`;
+    return `HTTP/1.1 ${ code } ${ StatusCodes[code] }\r\n${ message }\r\nConnection: 'close'\r\n\r\n`;
 };
 
 

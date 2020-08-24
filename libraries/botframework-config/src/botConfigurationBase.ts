@@ -17,11 +17,11 @@ import { IAppInsightsService, IBlobStorageService, IBotConfiguration, IBotServic
  */
 export class BotConfigurationBase implements Partial<IBotConfiguration> {
 
-    public name: string = '';
-    public description: string = '';
+    public name = '';
+    public description = '';
     public services: IConnectedService[] = [];
-    public padlock: string = '';
-    public version: string = '2.0';
+    public padlock = '';
+    public version = '2.0';
 
     /**
      * Creates a new BotConfigurationBase instance.

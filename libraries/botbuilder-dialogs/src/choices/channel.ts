@@ -12,7 +12,7 @@ import { Channels, TurnContext } from 'botbuilder-core';
  * @param channelId the id of a channel
  * @param buttonCnt count of buttons allowed
  */
-export function supportsSuggestedActions(channelId: string, buttonCnt: number = 100): boolean {
+export function supportsSuggestedActions(channelId: string, buttonCnt = 100): boolean {
     switch (channelId) {
         case Channels.Facebook:
         case Channels.Skype:
@@ -37,7 +37,7 @@ export function supportsSuggestedActions(channelId: string, buttonCnt: number = 
  * @param channelId the id of a channel
  * @param buttonCnt count of buttons allowed
  */
-export function supportsCardActions(channelId: string, buttonCnt: number = 100): boolean {
+export function supportsCardActions(channelId: string, buttonCnt = 100): boolean {
     switch (channelId) {
         case Channels.Facebook:
         case Channels.Skype:

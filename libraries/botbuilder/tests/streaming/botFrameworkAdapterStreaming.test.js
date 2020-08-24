@@ -147,13 +147,13 @@ describe('BotFrameworkAdapter Streaming tests', () => {
                     await bot.run(context);
                 });
             } catch (err) {
-                expect(err.message).to.equal("'authHeader' required.");
+                expect(err.message).to.equal('\'authHeader\' required.');
                 expect(err.statusCode).to.equal(StatusCodes.BAD_REQUEST);
                 const socketResponse = MockNetSocket.createNonSuccessResponse(StatusCodes.BAD_REQUEST, err.message);
                 expect(writeSpy.called).to.be.true;
                 expect(writeSpy.calledWithExactly(socketResponse)).to.be.true;
                 expect(destroySpy.calledOnceWithExactly()).to.be.true;
-            };
+            }
         });
 
         it('returns status code 500 when request logic is not callable', async () => {
@@ -354,7 +354,7 @@ describe('BotFrameworkAdapter Streaming tests', () => {
     }).timeout(2000);
 
     describe('private methods', () => {
-        it('should identify streaming connections', function () {
+        it('should identify streaming connections', function() {
             const serviceUrls = [
                 'urn:botframework:WebSocket:wss://beep.com',
                 'URN:botframework:WebSocket:http://beep.com',
@@ -365,7 +365,7 @@ describe('BotFrameworkAdapter Streaming tests', () => {
             });
         });
 
-        it('should identify http connections', function () {
+        it('should identify http connections', function() {
             const serviceUrls = [
                 'http://yayay.com',
                 'HTTPS://yayay.com',

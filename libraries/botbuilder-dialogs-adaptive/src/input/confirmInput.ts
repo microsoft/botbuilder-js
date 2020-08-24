@@ -111,7 +111,7 @@ export class ConfirmInput extends InputDialog {
         const prompt = await super.onRenderPrompt(dc, state);
         const channelId: string = dc.context.activity.channelId;
         const choiceOptions: ChoiceFactoryOptions = (this.choiceOptions && this.choiceOptions.getValue(dc.state)) || ConfirmInput.defaultChoiceOptions[locale].options;
-        const style = this.style.getValue(dc.state)
+        const style = this.style.getValue(dc.state);
         return Promise.resolve(this.appendChoices(prompt, channelId, choices, style, choiceOptions));
     }
 }

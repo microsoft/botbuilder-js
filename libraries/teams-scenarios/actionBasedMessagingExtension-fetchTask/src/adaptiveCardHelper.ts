@@ -31,7 +31,7 @@ export class AdaptiveCardHelper {
 
     public static createTaskModuleAdaptiveCardResponse(
         userText: string = null,
-        isMultiSelect: boolean = true,
+        isMultiSelect = true,
         option1: string = null,
         option2: string = null,
         option3: string = null): MessagingExtensionActionResponse {
@@ -40,7 +40,7 @@ export class AdaptiveCardHelper {
             actions: [
                 {
                     data: {
-                         submitLocation: 'messagingExtensionFetchTask'
+                        submitLocation: 'messagingExtensionFetchTask'
                     },
                     title: 'Submit',
                     type: 'Action.Submit'

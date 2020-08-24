@@ -70,7 +70,7 @@ export class BeginSkill extends SkillDialog {
     public connectionName: StringExpression;
 
     // Used to cache DialogOptions for multi-turn calls across servers.
-    private _dialogOptionsStateKey: string = `${ this.constructor.name }.dialogOptionsData`;
+    private _dialogOptionsStateKey = `${ this.constructor.name }.dialogOptionsData`;
 
     /**
      * Creates a new `BeginSkillDialog instance.
@@ -171,12 +171,12 @@ export class BeginSkill extends SkillDialog {
         this.dialogOptions.conversationIdFactory = context.turnState.get(skillConversationIdFactoryKey);
         if (this.dialogOptions.conversationIdFactory == null) { 
             throw new ReferenceError('Unable to locate skillConversationIdFactoryBase in HostContext.');
-        };
+        }
         
         this.dialogOptions.skillClient = context.turnState.get(skillClientKey);
         if (this.dialogOptions.skillClient == null) { 
             throw new ReferenceError('Unable to get an instance of conversationState from turnState.');
-        };
+        }
 
         this.dialogOptions.connectionName = dialogOptions.connectionName;
 

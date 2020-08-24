@@ -73,7 +73,7 @@ export class BotRecipe {
     /**
      * Version of the recipe.
      */
-    public version: string = '1.0';
+    public version = '1.0';
 
     /**
      *

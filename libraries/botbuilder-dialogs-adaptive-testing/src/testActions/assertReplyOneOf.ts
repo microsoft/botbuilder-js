@@ -18,7 +18,7 @@ export class AssertReplyOneOf extends AssertReplyActivity {
     /**
      * A value indicating whether exact match policy should be used.
      */
-    public exact: boolean = true;
+    public exact = true;
 
     public getConditionDescription(): string {
         return this.text.join('\n');

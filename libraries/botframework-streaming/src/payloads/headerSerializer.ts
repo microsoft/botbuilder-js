@@ -53,8 +53,8 @@ export class HeaderSerializer {
      * @returns The deserialized header from the buffer.
      */
     public static deserialize(buffer: INodeBuffer): IHeader {
-        let jsonBuffer = buffer.toString(this.Encoding);
-        let headerArray = jsonBuffer.split(this.Delimiter);
+        const jsonBuffer = buffer.toString(this.Encoding);
+        const headerArray = jsonBuffer.split(this.Delimiter);
 
         if (headerArray.length !== 4) {
             throw Error(`Cannot parse header, header is malformed. Header: ${ jsonBuffer }`);
@@ -87,10 +87,10 @@ export class HeaderSerializer {
     }
 
     public static headerLengthPadder(lengthValue: number, totalLength: number, padChar: string): string {
-        let result = Array(totalLength + 1)
+        const result = Array(totalLength + 1)
             .join(padChar);
 
-        let lengthString = lengthValue.toString();
+        const lengthString = lengthValue.toString();
 
         return (result + lengthString).slice(lengthString.length);
     }

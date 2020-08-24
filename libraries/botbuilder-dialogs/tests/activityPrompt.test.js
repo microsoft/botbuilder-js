@@ -12,10 +12,10 @@ class SimpleActivityPrompt extends ActivityPrompt {
     }
 }
 
-describe('ActivityPrompt', function () {
+describe('ActivityPrompt', function() {
     this.timeout(5000);
 
-    it('should call ActivityPrompt using dc.prompt().', async function () {
+    it('should call ActivityPrompt using dc.prompt().', async function() {
         // Initialize TestAdapter.
         const adapter = new TestAdapter(async turnContext => {
             const dc = await dialogs.createContext(turnContext);
@@ -25,7 +25,7 @@ describe('ActivityPrompt', function () {
                 await dc.prompt('prompt', 'Please send an activity.');
             } else if (results.status === DialogTurnStatus.complete) {
                 const reply = results.result.text;
-                await turnContext.sendActivity(`You said ${reply}`);
+                await turnContext.sendActivity(`You said ${ reply }`);
             }
             await convoState.saveChanges(turnContext);
         });
@@ -47,7 +47,7 @@ describe('ActivityPrompt', function () {
             .assertReply('You said test');
     });
 
-    it('should re-prompt with original prompt if validator returned false.', async function () {
+    it('should re-prompt with original prompt if validator returned false.', async function() {
         const adapter = new TestAdapter(async turnContext => {
             const dc = await dialogs.createContext(turnContext);
 
@@ -56,7 +56,7 @@ describe('ActivityPrompt', function () {
                 await dc.prompt('prompt', 'Please send an activity.');
             } else if (results.status === DialogTurnStatus.complete) {
                 const reply = results.result.text;
-                await turnContext.sendActivity(`You said ${reply}`);
+                await turnContext.sendActivity(`You said ${ reply }`);
             }
             await convoState.saveChanges(turnContext);
         });
@@ -76,7 +76,7 @@ describe('ActivityPrompt', function () {
             .assertReply('Please send an activity.');
     });
 
-    it('should re-prompt with custom retryPrompt if validator returned false.', async function () {
+    it('should re-prompt with custom retryPrompt if validator returned false.', async function() {
         const adapter = new TestAdapter(async turnContext => {
             const dc = await dialogs.createContext(turnContext);
 
@@ -85,7 +85,7 @@ describe('ActivityPrompt', function () {
                 await dc.prompt('prompt', { prompt: 'Please send activity.', retryPrompt: 'Activity not received.' });
             } else if (results.status === DialogTurnStatus.complete) {
                 const reply = results.result.text;
-                await turnContext.sendActivity(`You said ${reply}`);
+                await turnContext.sendActivity(`You said ${ reply }`);
             }
             await convoState.saveChanges(turnContext);
         });

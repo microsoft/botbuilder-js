@@ -139,10 +139,10 @@ export class PromptCultureModels {
     public static mapToNearestLanguage(cultureCode: string): string {
         if (cultureCode !== undefined) {
             cultureCode = cultureCode.toLowerCase();
-            let supportedCultureCodes = this.getSupportedCultureCodes();
+            const supportedCultureCodes = this.getSupportedCultureCodes();
     
             if (supportedCultureCodes.indexOf(cultureCode) < 0) {
-                let culturePrefix = cultureCode.split('-')[0].trim();
+                const culturePrefix = cultureCode.split('-')[0].trim();
     
                 supportedCultureCodes.forEach(function(supportedCultureCode): void {
                     if (supportedCultureCode.startsWith(culturePrefix)) {

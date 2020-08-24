@@ -52,7 +52,7 @@ export class ProtocolAdapter {
     /// <param name="request">The outgoing request to send.</param>
     /// <param name="cancellationToken">Optional cancellation token.</param>
     public async sendRequest(request: StreamingRequest): Promise<IReceiveResponse> {
-        let requestId: string = generateGuid();
+        const requestId: string = generateGuid();
         await this.sendOperations.sendRequest(requestId, request);
 
         return this.requestManager.getResponse(requestId);
@@ -65,7 +65,7 @@ export class ProtocolAdapter {
     /// <param name="request">The incoming request to process.</param>
     public async onReceiveRequest(id: string, request: IReceiveRequest): Promise<void> {
         if (this.requestHandler) {
-            let response = await this.requestHandler.processRequest(request);
+            const response = await this.requestHandler.processRequest(request);
 
             if (response) {
                 await this.sendOperations.sendResponse(id, response);

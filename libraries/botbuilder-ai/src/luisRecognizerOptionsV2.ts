@@ -8,8 +8,8 @@
 
 import { LUISRuntimeClient as LuisClient, LUISRuntimeModels as LuisModels } from '@azure/cognitiveservices-luis-runtime';
 import * as msRest from '@azure/ms-rest-js';
-import { LuisRecognizerInternal } from './luisRecognizerOptions'
-import { LuisApplication, LuisRecognizerOptionsV2} from './luisRecognizer'
+import { LuisRecognizerInternal } from './luisRecognizerOptions';
+import { LuisApplication, LuisRecognizerOptionsV2} from './luisRecognizer';
 import { NullTelemetryClient, TurnContext, RecognizerResult } from 'botbuilder-core';
 import * as os from 'os';
 const pjson = require('../package.json');
@@ -20,11 +20,11 @@ const LUIS_TRACE_LABEL = 'Luis Trace';
 
 
 export function isLuisRecognizerOptionsV2(options: any): options is LuisRecognizerOptionsV2 {
-    return (options.apiVersion && options.apiVersion === "v2");
+    return (options.apiVersion && options.apiVersion === 'v2');
 }
 
 export class LuisRecognizerV2 extends LuisRecognizerInternal {  
-    constructor (application: LuisApplication, options?: LuisRecognizerOptionsV2) { 
+    constructor(application: LuisApplication, options?: LuisRecognizerOptionsV2) { 
         super(application);
         // Create client
         // - We have to cast "creds as any" to avoid a build break relating to different versions
@@ -73,7 +73,7 @@ export class LuisRecognizerV2 extends LuisRecognizerInternal {
                     'User-Agent': this.getUserAgent()
                 },
                 ...luisPredictionOptions
-            })
+            });
         // Map results
         const result = {
             text: luisResult.query,
@@ -137,7 +137,7 @@ export class LuisRecognizerV2 extends LuisRecognizerInternal {
                 return;
             }
 
-            let val = this.getEntityValue(entity);
+            const val = this.getEntityValue(entity);
             if (val != null) {
                 this.addProperty(entitiesAndMetadata, this.getNormalizedEntityName(entity), val);
                 if (verbose) {
@@ -227,7 +227,7 @@ export class LuisRecognizerV2 extends LuisRecognizerInternal {
             return {
                 'relativeTo': entity.resolution.relativeTo,
                 'offset': Number(entity.resolution.offset)
-            }
+            };
         }
 
         if (!entity.resolution) {
@@ -251,28 +251,28 @@ export class LuisRecognizerV2 extends LuisRecognizerInternal {
                 case 'builtin.number':
                 case 'builtin.ordinal': return Number(res.value);
                 case 'builtin.percentage':
-                    {
-                        let svalue: string = res.value;
-                        if (svalue.endsWith('%')) {
-                            svalue = svalue.substring(0, svalue.length - 1);
-                        }
-
-                        return Number(svalue);
+                {
+                    let svalue: string = res.value;
+                    if (svalue.endsWith('%')) {
+                        svalue = svalue.substring(0, svalue.length - 1);
                     }
+
+                    return Number(svalue);
+                }
                 case 'builtin.age':
                 case 'builtin.dimension':
                 case 'builtin.currency':
                 case 'builtin.temperature':
-                    {
-                        const val: any = res.value;
-                        const obj: any = {};
-                        if (val) {
-                            obj.number = Number(val);
-                        }
-                        obj.units = res.unit;
-
-                        return obj;
+                {
+                    const val: any = res.value;
+                    const obj: any = {};
+                    if (val) {
+                        obj.number = Number(val);
                     }
+                    obj.units = res.unit;
+
+                    return obj;
+                }
                 default:
                     // This will return null if there is no value/values which can happen when a new prebuilt is introduced
                     return entity.resolution.value ?
@@ -322,7 +322,7 @@ export class LuisRecognizerV2 extends LuisRecognizerInternal {
         return type.replace(/\.|\s/g, '_');
     }
 
-        /**
+    /**
      * If a property doesn't exist add it to a new array, otherwise append it to the existing array
      * @param obj Object on which the property is to be set
      * @param key Property Key
@@ -354,9 +354,9 @@ export class LuisRecognizerV2 extends LuisRecognizerInternal {
         // Note when the ms-rest dependency the LuisClient uses has been updated
         // this code should be modified to use the client's addUserAgentInfo() function.
 
-        const packageUserAgent = `${pjson.name}/${pjson.version}`;
-        const platformUserAgent = `(${os.arch()}-${os.type()}-${os.release()}; Node.js,Version=${process.version})`;
-        const userAgent = `${packageUserAgent} ${platformUserAgent}`;
+        const packageUserAgent = `${ pjson.name }/${ pjson.version }`;
+        const platformUserAgent = `(${ os.arch() }-${ os.type() }-${ os.release() }; Node.js,Version=${ process.version })`;
+        const userAgent = `${ packageUserAgent } ${ platformUserAgent }`;
 
         return userAgent;
     }

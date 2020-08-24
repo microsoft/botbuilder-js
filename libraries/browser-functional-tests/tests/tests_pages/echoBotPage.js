@@ -24,4 +24,4 @@ module.exports = {
             selector: 'div.main > div:nth-child(3) > button'
         }
     }
-}
+};

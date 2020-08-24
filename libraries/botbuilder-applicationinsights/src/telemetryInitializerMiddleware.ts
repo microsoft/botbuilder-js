@@ -24,7 +24,7 @@ export class TelemetryInitializerMiddleware implements Middleware {
      * @param telemetryLoggerMiddleware The TelemetryLoggerMiddleware used for logging activity telemetry.
      * * @param logActivityTelemetry (Optional) Enable/Disable logging of activity telemetry.
      */
-    constructor(telemetryLoggerMiddleware: TelemetryLoggerMiddleware, logActivityTelemetry: boolean = false) {
+    constructor(telemetryLoggerMiddleware: TelemetryLoggerMiddleware, logActivityTelemetry = false) {
         this._telemetryLoggerMiddleware = telemetryLoggerMiddleware;
         this._logActivityTelemetry = logActivityTelemetry;
     }

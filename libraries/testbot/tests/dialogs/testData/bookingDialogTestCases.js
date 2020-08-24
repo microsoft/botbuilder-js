@@ -149,4 +149,4 @@ module.exports = [
         expectedStatus: 'complete',
         expectedResult: undefined,
     }
-]
+];

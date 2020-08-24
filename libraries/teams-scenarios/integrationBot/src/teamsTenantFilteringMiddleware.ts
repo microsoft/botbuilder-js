@@ -24,9 +24,9 @@ export class TeamsTenantFilteringMiddleware implements Middleware {
      */
     constructor(allowedTenants: string | string[]) {
         if(Array.isArray(allowedTenants)){
-            for (let elem of allowedTenants) {
+            for (const elem of allowedTenants) {
                 this._tenantSet.add(elem);
-              }
+            }
         }
         else {
             this._tenantSet.add(allowedTenants);
@@ -57,11 +57,11 @@ export class TeamsTenantFilteringMiddleware implements Middleware {
         const tenantId = tenant && typeof(tenant.id) === 'string' ? tenant.id : undefined;
 
         if (!tenantId) {
-            throw new Error("Tenant Id is missing.");
+            throw new Error('Tenant Id is missing.');
         }
 
         if (!this._tenantSet.has(tenantId)) {
-            throw new Error(`Tenant Id '${tenantId}' is not allowed access.`);
+            throw new Error(`Tenant Id '${ tenantId }' is not allowed access.`);
         }
 
         if (next !== null) {

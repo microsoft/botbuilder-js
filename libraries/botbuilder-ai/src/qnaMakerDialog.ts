@@ -71,7 +71,7 @@ export class QnAMakerDialog extends WaterfallDialog {
      * It is stored within the current step's [WaterfallStepContext](xref:botbuilder-dialogs.WaterfallStepContext).
      * It supports QnA Maker's follow-up prompt and active learning features.
      */
-    private qnAContextData: string = 'previousContextData';
+    private qnAContextData = 'previousContextData';
     /**
      * The path for storing and retrieving the previous question ID.
      *   
@@ -80,7 +80,7 @@ export class QnAMakerDialog extends WaterfallDialog {
      * It is stored within the current step's [WaterfallStepContext](xref:botbuilder-dialogs.WaterfallStepContext).
      * It supports QnA Maker's follow-up prompt and active learning features.
      */
-    private previousQnAId: string = 'previousQnAId';
+    private previousQnAId = 'previousQnAId';
     /**
      * The path for storing and retrieving the options for this instance of the dialog.
      * 
@@ -89,13 +89,13 @@ export class QnAMakerDialog extends WaterfallDialog {
      * It is stored within the current step's [WaterfallStepContext](xref:botbuilder-dialogs.WaterfallStepContext).
      * It supports QnA Maker and the dialog system.
      */
-    private options: string = 'options';
-    private qnAData: string = 'qnaData';
-    private currentQuery: string = 'currentQuery';
+    private options = 'options';
+    private qnAData = 'qnaData';
+    private currentQuery = 'currentQuery';
 
     // Dialog options parameters
-    private defaultCardNoMatchResponse: string = `Thanks for the feedback.`;
-    private defaultNoAnswer: string = `No QnAMaker answers found.`;
+    private defaultCardNoMatchResponse = `Thanks for the feedback.`;
+    private defaultNoAnswer = `No QnAMaker answers found.`;
 
     private knowledgeBaseId: any;
     private hostName: any;
@@ -122,7 +122,7 @@ export class QnAMakerDialog extends WaterfallDialog {
      * @param strictFilters (Optional) QnA Maker metadata with which to filter or boost queries to the knowledge base; or null to apply none.
      * @param dialogId (Optional) Id of the created dialog. Default is 'QnAMakerDialog'.
      */
-    public constructor(knowledgeBaseId: string, endpointKey: string, hostName: string, noAnswer?: Activity, threshold: number = 0.3, activeLearningCardTitle: string = 'Did you mean:', cardNoMatchText: string = 'None of the above.', top: number = 3, cardNoMatchResponse?: Activity, strictFilters?: QnAMakerMetadata[], dialogId: string = 'QnAMakerDialog') {
+    public constructor(knowledgeBaseId: string, endpointKey: string, hostName: string, noAnswer?: Activity, threshold = 0.3, activeLearningCardTitle = 'Did you mean:', cardNoMatchText = 'None of the above.', top = 3, cardNoMatchResponse?: Activity, strictFilters?: QnAMakerMetadata[], dialogId = 'QnAMakerDialog') {
         super(dialogId);
         if (!knowledgeBaseId) {
             throw new TypeError('QnAMakerDialog: missing knowledgeBaseId parameter');
@@ -202,7 +202,7 @@ export class QnAMakerDialog extends WaterfallDialog {
             rankerType: RankerTypes.default,
             isTest: false
         };
-    };
+    }
     
     /**
      * Gets the options the dialog will use to display query results to the user.
@@ -229,7 +229,7 @@ export class QnAMakerDialog extends WaterfallDialog {
 
         step.values[this.currentQuery] = step.context.activity.text;
         const previousContextData: { [key: string]: number } = step.activeDialog.state[this.qnAContextData] || {};
-        var previousQnAId = step.activeDialog.state[this.previousQnAId] || 0;
+        let previousQnAId = step.activeDialog.state[this.previousQnAId] || 0;
         
         if (previousQnAId > 0) {
             dialogOptions.qnaMakerOptions.context = { previousQnAId: previousQnAId, previousUserQuery: '' };
@@ -258,13 +258,13 @@ export class QnAMakerDialog extends WaterfallDialog {
             qnaResponse.answers = qna.getLowScoreVariation(qnaResponse.answers);
             
             if (isActiveLearningEnabled && qnaResponse.answers && qnaResponse.answers.length > 1) {
-                var suggestedQuestions: string[] = [];
+                const suggestedQuestions: string[] = [];
                 
                 qnaResponse.answers.forEach(answer => {
                     suggestedQuestions.push(answer.questions[0]);
                 });
 
-                var message = QnACardBuilder.getSuggestionsCard(suggestedQuestions, dialogOptions.qnaDialogResponseOptions.activeLearningCardTitle, dialogOptions.qnaDialogResponseOptions.cardNoMatchText); 
+                const message = QnACardBuilder.getSuggestionsCard(suggestedQuestions, dialogOptions.qnaDialogResponseOptions.activeLearningCardTitle, dialogOptions.qnaDialogResponseOptions.cardNoMatchText); 
                 await step.context.sendActivity(message);
 
                 step.activeDialog.state[this.options] = dialogOptions;
@@ -302,18 +302,18 @@ export class QnAMakerDialog extends WaterfallDialog {
 
             if(qnaResult && qnaResult.length > 0)
             {
-                var results: QnAMakerResult[] = [];
+                const results: QnAMakerResult[] = [];
                 results.push(qnaResult[0]);
                 step.values[this.qnAData] = results;
 
-                var records: FeedbackRecord[] = [];
+                const records: FeedbackRecord[] = [];
                 records.push({
                     userId: step.context.activity.id,
                     userQuestion: currentQuery,
                     qnaId: qnaResult[0].id.toString()
                 });
 
-                var feedbackRecords: FeedbackRecords = { feedbackRecords: records };
+                const feedbackRecords: FeedbackRecords = { feedbackRecords: records };
 
                 await this.getQnAClient().callTrainAsync(feedbackRecords);
 
@@ -349,7 +349,7 @@ export class QnAMakerDialog extends WaterfallDialog {
 
             if(answer.context && answer.context.prompts.length > 0)
             {
-                var previousContextData: { [key: string]: number } = {};
+                const previousContextData: { [key: string]: number } = {};
 
                 answer.context.prompts.forEach(prompt => {
                     previousContextData[prompt.displayText] = prompt.qnaId;
@@ -359,7 +359,7 @@ export class QnAMakerDialog extends WaterfallDialog {
                 step.activeDialog.state[this.previousQnAId] = answer.id;
                 step.activeDialog.state[this.options] = dialogOptions;
 
-                var message = QnACardBuilder.getQnAPromptsCard(answer); 
+                const message = QnACardBuilder.getQnAPromptsCard(answer); 
                 await step.context.sendActivity(message);
 
                 return Dialog.EndOfTurn;

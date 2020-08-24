@@ -113,7 +113,7 @@ export class DialogContext {
      * Returns dialog context for child if the active dialog is a container.
      */
     public get child(): DialogContext | undefined {
-        var instance = this.activeDialog;
+        const instance = this.activeDialog;
         if (instance != undefined) {
             // Is active dialog a container?
             const dialog = this.findDialog(instance.id);

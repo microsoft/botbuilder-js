@@ -18,7 +18,7 @@ describe('TelemetryWaterfall', function() {
         }
     }
 
-    it('should track a dialog start event on first turn of dialog', function (done) {
+    it('should track a dialog start event on first turn of dialog', function(done) {
         // Initialize TestAdapter.
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);
@@ -51,7 +51,7 @@ describe('TelemetryWaterfall', function() {
         adapter.send({text: 'hello'}).startTest();
     });
 
-    it('should track an event for every step of a waterfall dialog', function (done) {
+    it('should track an event for every step of a waterfall dialog', function(done) {
         // Initialize TestAdapter.
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);
@@ -96,7 +96,7 @@ describe('TelemetryWaterfall', function() {
         adapter.send({text: 'hello'}).startTest();
     });
 
-    it('should track an event for at the end of the waterfall dialog', function (done) {
+    it('should track an event for at the end of the waterfall dialog', function(done) {
         // Initialize TestAdapter.
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);
@@ -129,7 +129,7 @@ describe('TelemetryWaterfall', function() {
         adapter.send({text: 'hello'}).startTest();
     });
 
-    it('should track an event for a waterfall cancel', function (done) {
+    it('should track an event for a waterfall cancel', function(done) {
         // Initialize TestAdapter.
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);
@@ -162,7 +162,7 @@ describe('TelemetryWaterfall', function() {
         adapter.send({text: 'hello'}).startTest();
     });
 
-    it('should have same instance id for all events', function (done) {
+    it('should have same instance id for all events', function(done) {
         // Initialize TestAdapter.
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);
@@ -190,7 +190,7 @@ describe('TelemetryWaterfall', function() {
         const client = new TestClient();
         TestClient.prototype.trackEvent = (telemetry) => {
             if (!instanceId && telemetry.properties.InstanceId) {
-                instanceId = telemetry.properties.InstanceId
+                instanceId = telemetry.properties.InstanceId;
             }
             assert(telemetry, 'telemetry is null');
             assert(instanceId,'instanceid is not set on event');

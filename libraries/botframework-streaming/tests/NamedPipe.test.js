@@ -22,7 +22,7 @@ class FauxSock {
 
     send(buffer) {
         return buffer.length;
-    };
+    }
 
     receive(readLength) {
         if (this.contentString[this.position]) {
@@ -35,13 +35,13 @@ class FauxSock {
         if (this.receiver.isConnected)
             this.receiver.disconnect();
     }
-    close() { };
+    close() { }
     end() {
         this.exists = false;
-    };
+    }
     destroyed() {
         return this.exists;
-    };
+    }
 
     setReceiver(receiver) {
         this.receiver = receiver;
@@ -58,7 +58,7 @@ class FauxSock {
             this.closeHandler = handler;
         }
 
-    };
+    }
 }
 class TestServer {
     constructor(baseName) {

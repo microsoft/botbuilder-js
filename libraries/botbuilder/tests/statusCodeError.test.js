@@ -14,8 +14,8 @@ describe(`StatusCodeError`, function() {
                 const message = 'This is an error message';
                 const error = new StatusCodeError(StatusCodes.NOT_FOUND, message);
 
-                assert.strictEqual(error.message, message, `message should be equal to "${message}".`)
-                assert.strictEqual(error.statusCode, StatusCodes.NOT_FOUND, `statusCode should be the code ${StatusCodes.NOT_FOUND}`)
+                assert.strictEqual(error.message, message, `message should be equal to "${ message }".`);
+                assert.strictEqual(error.statusCode, StatusCodes.NOT_FOUND, `statusCode should be the code ${ StatusCodes.NOT_FOUND }`);
                 done();
             } catch (error) {
                 done(error);
@@ -26,8 +26,8 @@ describe(`StatusCodeError`, function() {
             try {
                 const error = new StatusCodeError(StatusCodes.NOT_FOUND);
 
-                assert.strictEqual(error.message, '', 'message should be empty.')
-                assert.strictEqual(error.statusCode, StatusCodes.NOT_FOUND, `statusCode should be the code ${StatusCodes.NOT_FOUND}`)
+                assert.strictEqual(error.message, '', 'message should be empty.');
+                assert.strictEqual(error.statusCode, StatusCodes.NOT_FOUND, `statusCode should be the code ${ StatusCodes.NOT_FOUND }`);
                 done();
             } catch (error) {
                 done(error);
@@ -38,7 +38,7 @@ describe(`StatusCodeError`, function() {
             try {
                 const error = new StatusCodeError();
 
-                assert.strictEqual(error.statusCode, undefined, 'statusCode should be undefined.')
+                assert.strictEqual(error.statusCode, undefined, 'statusCode should be undefined.');
                 done();
             } catch (error) {
                 done(error);

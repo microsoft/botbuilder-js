@@ -20,7 +20,7 @@ export class AssertReplyActivity implements TestAction {
     /**
      * The milliseconds to wait for a reply.
      */
-    public timeout: number = 3000;
+    public timeout = 3000;
 
     /**
      * The expressions for assertions.
