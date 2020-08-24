@@ -9,7 +9,7 @@ steps:
   inputs:
     command: custom
     verbose: false
-    customCommand: 'install eslint typescript @typescript-eslint/parser @typescript-eslint/eslint-plugin eslint-plugin-only-warn eslint-plugin-jsdoc'
+    customCommand: 'install eslint@7 typescript@3.5.3 @typescript-eslint/parser@3 @typescript-eslint/eslint-plugin@3 eslint-plugin-only-warn@1 eslint-plugin-jsdoc@29.2.0'
 
 - task: Npm@1
   displayName: 'npm run eslint'
