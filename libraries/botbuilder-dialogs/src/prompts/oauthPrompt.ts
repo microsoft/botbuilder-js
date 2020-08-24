@@ -55,6 +55,16 @@ export interface OAuthPromptSettings {
      * Defaults to a value `900,000` (15 minutes.)
      */
     timeout?: number;
+
+    /**
+     * (Optional) value indicating whether the OAuthPrompt should end upon
+     * receiving an invalid message.  Generally the OAuthPrompt will ignore
+     * incoming messages from the user during the auth flow, if they are not related to the
+     * auth flow.  This flag enables ending the OAuthPrompt rather than
+     * ignoring the user's message.  Typically, this flag will be set to 'true', but is 'false'
+     * by default for backwards compatibility.
+     */
+    endOnInvalidMessage?: boolean;
 }
 
 /**
@@ -167,16 +177,22 @@ export class OAuthPrompt extends Dialog {
     }
 
     public async continueDialog(dc: DialogContext): Promise<DialogTurnResult> {
-        // Recognize token
-        const recognized: PromptRecognizerResult<TokenResponse> = await this.recognizeToken(dc);
-
         // Check for timeout
         const state: OAuthPromptState = dc.activeDialog.state as OAuthPromptState;
         const isMessage: boolean = dc.context.activity.type === ActivityTypes.Message;
-        const hasTimedOut: boolean = isMessage && (new Date().getTime() > state.expires);
+        const isTimeoutActivityType: boolean = isMessage
+                                                || this.isTokenResponseEvent(dc.context)
+                                                || this.isTeamsVerificationInvoke(dc.context)
+                                                || this.isTokenExchangeRequestInvoke(dc.context);
+
+        // If the incoming Activity is a message, or an Activity Type normally handled by OAuthPrompt,
+        // check to see if this OAuthPrompt Expiration has elapsed, and end the dialog if so.
+        const hasTimedOut: boolean = isTimeoutActivityType && (new Date().getTime() > state.expires);
         if (hasTimedOut) {
             return await dc.endDialog(undefined);
         } else {
+            // Recognize token
+            const recognized: PromptRecognizerResult<TokenResponse> = await this.recognizeToken(dc);
 
             if (state.state['attemptCount'] === undefined) {
                 state.state['attemptCount'] = 0;
@@ -199,14 +215,18 @@ export class OAuthPrompt extends Dialog {
             // Return recognized value or re-prompt
             if (isValid) {
                 return await dc.endDialog(recognized.value);
-            } else {
-                // Send retry prompt
-                if (!dc.context.responded && isMessage && state.options.retryPrompt) {
-                    await dc.context.sendActivity(state.options.retryPrompt);
-                }
-
-                return Dialog.EndOfTurn;
             }
+
+            if (isMessage && this.settings.endOnInvalidMessage) {
+                return await dc.endDialog(undefined);
+            }
+
+            // Send retry prompt
+            if (!dc.context.responded && isMessage && state.options.retryPrompt) {
+                await dc.context.sendActivity(state.options.retryPrompt);
+            }
+
+            return Dialog.EndOfTurn;
         }
     }
 
