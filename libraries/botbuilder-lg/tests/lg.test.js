@@ -942,6 +942,18 @@ describe('LG', function() {
         assert.strictEqual(templates.diagnostics.length, 0);
     });
 
+    it('TemplateCRUD_UpdateWithNonParse', function() {
+        var templates = Templates.parseText(fs.readFileSync(GetExampleFilePath('CrudInit.lg'), 'utf-8'));
+
+        // replace the error template with right template
+        templates = updateTemplate(templates, 'template1', 'newtemplateName', undefined, '- new hi', false);
+        assert.strictEqual(templates.toArray().length, 2);
+
+        const firstTemplate = templates.toArray()[0];
+        assert.strictEqual(firstTemplate.name, 'newtemplateName');
+        assert.strictEqual(firstTemplate.body, '- new hi');
+    });
+
     it('TestMemoryScope', function() {
         var templates = preloaded.MemoryScope;
         var evaled = templates.evaluate('T1', { turn: { name: 'Dong', count: 3 } });

@@ -5,6 +5,8 @@ import { StaticChecker } from './staticChecker';
 import { TemplateErrors } from './templateErrors';
 import { TemplateExtensions } from './templateExtensions';
 import { Diagnostic } from './diagnostic';
+import { SourceRange } from './sourceRange';
+import { Range } from './range';
 
 const newLine = '\r\n';
 
@@ -17,10 +19,11 @@ const newLine = '\r\n';
 * @param templateBody New template body.
 * @returns New lg file.
 */
-export function updateTemplate(templates: Templates, templateName: string, newTemplateName: string, parameters: string[], templateBody: string): Templates {
+export function updateTemplate(templates: Templates, templateName: string, newTemplateName: string, parameters: string[], templateBody: string, shouldParse: boolean = true): Templates {
     var newTemplates = new Templates([...templates.toArray()], [...templates.imports], [], [...templates.references], templates.content, templates.id, templates.expressionParser, templates.importResolver, templates.options);
-    const template: Template = templates.toArray().find((u: Template): boolean => u.name === templateName);
-    if (template) {
+    const templateIndex = templates.toArray().findIndex((u: Template): boolean => u.name === templateName);
+    if (templateIndex >= 0) {
+        const template: Template = templates.toArray()[templateIndex];
         const templateNameLine: string = buildTemplateNameLine(newTemplateName, parameters);
         const newTemplateBody: string = convertTemplateBody(templateBody);
         const content = `${ templateNameLine }${ newLine }${ newTemplateBody }`;
@@ -31,6 +34,14 @@ export function updateTemplate(templates: Templates, templateName: string, newTe
             template.sourceRange.range.end.line - 1,
             content);
         
+        if (!shouldParse) {
+            // just return the new template entity.
+            // If you want to achieve the whole parse result, please set shouldParse = true
+            const newShallowTemplate = new Template(newTemplateName, parameters, newTemplateBody, new SourceRange(template.sourceRange.range, templates.id));
+            newTemplates.toArray()[templateIndex] = newShallowTemplate;
+            return newTemplates;
+        }
+
         let updatedTemplates = new Templates([], [], [], [], '', templates.id, templates.expressionParser, templates.importResolver);
         updatedTemplates = new TemplatesTransformer(updatedTemplates).transform(TemplatesParser.antlrParseTemplates(content, templates.id));
 
