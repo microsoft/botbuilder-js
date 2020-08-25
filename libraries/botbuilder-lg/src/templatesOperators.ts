@@ -17,10 +17,10 @@ const newLine = '\r\n';
 * @param newTemplateName New template name.
 * @param parameters New params.
 * @param templateBody New template body.
-* @param shouldParse Should parse the additional template to get the parse tree and new diagnostic.
+* @param reParse Should parse the additional template to get the parse tree and new diagnostic.
 * @returns New lg file.
 */
-export function updateTemplate(templates: Templates, templateName: string, newTemplateName: string, parameters: string[], templateBody: string, shouldParse: boolean = true): Templates {
+export function updateTemplate(templates: Templates, templateName: string, newTemplateName: string, parameters: string[], templateBody: string, reParse: boolean = true): Templates {
     var newTemplates = new Templates([...templates.toArray()], [...templates.imports], [], [...templates.references], templates.content, templates.id, templates.expressionParser, templates.importResolver, templates.options);
     const templateIndex = templates.toArray().findIndex((u: Template): boolean => u.name === templateName);
     if (templateIndex >= 0) {
@@ -36,7 +36,7 @@ export function updateTemplate(templates: Templates, templateName: string, newTe
             content);
 
         let updatedTemplate: Template;
-        if (!shouldParse) {
+        if (!reParse) {
             const originList: string[] = TemplateExtensions.readLine(content);
             const range = new Range(1, 0, originList.length, originList[originList.length - 1].length);
             updatedTemplate = new Template(newTemplateName, parameters, newTemplateBody, new SourceRange(range, templates.id));
@@ -52,7 +52,7 @@ export function updateTemplate(templates: Templates, templateName: string, newTe
 
         if (updatedTemplate) {
             adjustRangeForUpdateTemplate(newTemplates, template, updatedTemplate);
-            if (shouldParse) {
+            if (reParse) {
                 new StaticChecker(newTemplates).check().forEach((u): number => newTemplates.diagnostics.push(u));
             }
         }
@@ -67,10 +67,10 @@ export function updateTemplate(templates: Templates, templateName: string, newTe
 * @param templateName New template name.
 * @param parameters New params.
 * @param templateBody New  template body.
-* @param shouldParse Should parse the additional template to get the parse tree and new diagnostic.
+* @param reParse Should parse the additional template to get the parse tree and new diagnostic.
 * @returns New lg file.
 */
-export function addTemplate(templates: Templates, templateName: string, parameters: string[], templateBody: string, shouldParse: boolean = true): Templates {
+export function addTemplate(templates: Templates, templateName: string, parameters: string[], templateBody: string, reParse: boolean = true): Templates {
     var newTemplates = new Templates([...templates.toArray()], [...templates.imports], [], [...templates.references], templates.content, templates.id, templates.expressionParser, templates.importResolver, templates.options);
     const template: Template = templates.toArray().find((u: Template): boolean => u.name === templateName);
     if (template) {
@@ -85,7 +85,7 @@ export function addTemplate(templates: Templates, templateName: string, paramete
     // update content
     newTemplates.content = `${ templates.content }${ newLine }${ templateNameLine }${ newLine }${ newTemplateBody }`;
     let newTemplate: Template;
-    if (!shouldParse) {
+    if (!reParse) {
         const originList: string[] = TemplateExtensions.readLine(content);
         const range = new Range(1, 0, originList.length, originList[originList.length - 1].length);
         newTemplate = new Template(templateName, parameters, newTemplateBody, new SourceRange(range, templates.id));
@@ -112,9 +112,10 @@ export function addTemplate(templates: Templates, templateName: string, paramete
 * Delete an exist template.
 * @param templates Orignial templates.
 * @param templateName Which template should delete.
+* @param reParse Should parse the additional template to get the parse tree and new diagnostic.
 * @returns Return the new lg file.
 */
-export function deleteTemplate(templates: Templates, templateName: string): Templates {
+export function deleteTemplate(templates: Templates, templateName: string, reParse: boolean = true): Templates {
     var newTemplates = new Templates([...templates.toArray()], [...templates.imports], [], [...templates.references], templates.content, templates.id, templates.expressionParser, templates.importResolver, templates.options);
     const templateIndex = templates.toArray().findIndex((u: Template): boolean => u.name === templateName);
     if (templateIndex >= 0) {
@@ -125,7 +126,9 @@ export function deleteTemplate(templates: Templates, templateName: string): Temp
         newTemplates.content = replaceRangeContent(templates.content, startLine, stopLine, undefined);
         adjustRangeForDeleteTemplate(newTemplates, template);
         newTemplates.toArray().splice(templateIndex, 1);
-        new StaticChecker(newTemplates).check().forEach((u): number => newTemplates.diagnostics.push(u));
+        if (reParse) {
+            new StaticChecker(newTemplates).check().forEach((u): number => newTemplates.diagnostics.push(u));
+        }
     }
 
     return newTemplates;
