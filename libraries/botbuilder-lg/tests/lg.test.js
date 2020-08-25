@@ -942,7 +942,7 @@ describe('LG', function() {
         assert.strictEqual(templates.diagnostics.length, 0);
     });
 
-    it('TemplateCRUD_UpdateWithNonParse', function() {
+    it('TemplateCRUD_NonParse', function() {
         var templates = Templates.parseText(fs.readFileSync(GetExampleFilePath('CrudInit.lg'), 'utf-8'));
 
         // replace the error template with right template
@@ -952,6 +952,20 @@ describe('LG', function() {
         const firstTemplate = templates.toArray()[0];
         assert.strictEqual(firstTemplate.name, 'newtemplateName');
         assert.strictEqual(firstTemplate.body, '- new hi');
+        assert.strictEqual(firstTemplate.sourceRange.range.start.line, 3);
+        assert.strictEqual(firstTemplate.sourceRange.range.end.line, 4);
+
+        templates = Templates.parseText(fs.readFileSync(GetExampleFilePath('CrudInit.lg'), 'utf-8'));
+
+        // replace the error template with right template
+        templates = addTemplate(templates, 'newtemplateName', undefined, '- new hi', false);
+        assert.strictEqual(templates.toArray().length, 3);
+
+        const newTemplate = templates.toArray()[2];
+        assert.strictEqual(newTemplate.name, 'newtemplateName');
+        assert.strictEqual(newTemplate.body, '- new hi');
+        assert.strictEqual(newTemplate.sourceRange.range.start.line, 14);
+        assert.strictEqual(newTemplate.sourceRange.range.end.line, 15);
     });
 
     it('TestMemoryScope', function() {

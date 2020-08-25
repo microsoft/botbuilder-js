@@ -17,6 +17,7 @@ const newLine = '\r\n';
 * @param newTemplateName New template name.
 * @param parameters New params.
 * @param templateBody New template body.
+* @param shouldParse Should parse the additional template to get the parse tree and new diagnostic.
 * @returns New lg file.
 */
 export function updateTemplate(templates: Templates, templateName: string, newTemplateName: string, parameters: string[], templateBody: string, shouldParse: boolean = true): Templates {
@@ -33,25 +34,27 @@ export function updateTemplate(templates: Templates, templateName: string, newTe
             template.sourceRange.range.start.line - 1,
             template.sourceRange.range.end.line - 1,
             content);
-        
+
+        let updatedTemplate: Template;
         if (!shouldParse) {
-            // just return the new template entity.
-            // If you want to achieve the whole parse result, please set shouldParse = true
-            const newShallowTemplate = new Template(newTemplateName, parameters, newTemplateBody, new SourceRange(template.sourceRange.range, templates.id));
-            newTemplates.toArray()[templateIndex] = newShallowTemplate;
-            return newTemplates;
+            const originList: string[] = TemplateExtensions.readLine(content);
+            const range = new Range(1, 0, originList.length, originList[originList.length - 1].length);
+            updatedTemplate = new Template(newTemplateName, parameters, newTemplateBody, new SourceRange(range, templates.id));
+        } else {
+            let updatedTemplates = new Templates([], [], [], [], '', templates.id, templates.expressionParser, templates.importResolver);
+            updatedTemplates = new TemplatesTransformer(updatedTemplates).transform(TemplatesParser.antlrParseTemplates(content, templates.id));
+            const originalStartLine = template.sourceRange.range.start.line - 1;
+            appendDiagnosticWithOffset(newTemplates.diagnostics, updatedTemplates.diagnostics, originalStartLine);
+            if (updatedTemplates.toArray().length > 0) {
+                updatedTemplate = updatedTemplates.toArray()[0];
+            }
         }
 
-        let updatedTemplates = new Templates([], [], [], [], '', templates.id, templates.expressionParser, templates.importResolver);
-        updatedTemplates = new TemplatesTransformer(updatedTemplates).transform(TemplatesParser.antlrParseTemplates(content, templates.id));
-
-        const originalStartLine = template.sourceRange.range.start.line - 1;
-        appendDiagnosticWithOffset(newTemplates.diagnostics, updatedTemplates.diagnostics, originalStartLine);
-
-        if (updatedTemplates.toArray().length > 0) {
-            const newTemplate = updatedTemplates.toArray()[0];
-            adjustRangeForUpdateTemplate(newTemplates, template, newTemplate);
-            new StaticChecker(newTemplates).check().forEach((u): number => newTemplates.diagnostics.push(u));
+        if (updatedTemplate) {
+            adjustRangeForUpdateTemplate(newTemplates, template, updatedTemplate);
+            if (shouldParse) {
+                new StaticChecker(newTemplates).check().forEach((u): number => newTemplates.diagnostics.push(u));
+            }
         }
     }
 
@@ -64,9 +67,10 @@ export function updateTemplate(templates: Templates, templateName: string, newTe
 * @param templateName New template name.
 * @param parameters New params.
 * @param templateBody New  template body.
+* @param shouldParse Should parse the additional template to get the parse tree and new diagnostic.
 * @returns New lg file.
 */
-export function addTemplate(templates: Templates, templateName: string, parameters: string[], templateBody: string): Templates {
+export function addTemplate(templates: Templates, templateName: string, parameters: string[], templateBody: string, shouldParse: boolean = true): Templates {
     var newTemplates = new Templates([...templates.toArray()], [...templates.imports], [], [...templates.references], templates.content, templates.id, templates.expressionParser, templates.importResolver, templates.options);
     const template: Template = templates.toArray().find((u: Template): boolean => u.name === templateName);
     if (template) {
@@ -80,16 +84,25 @@ export function addTemplate(templates: Templates, templateName: string, paramete
 
     // update content
     newTemplates.content = `${ templates.content }${ newLine }${ templateNameLine }${ newLine }${ newTemplateBody }`;
-    let updatedTemplates = new Templates([], [], [], [], '', templates.id, templates.expressionParser, templates.importResolver);
-    updatedTemplates = new TemplatesTransformer(updatedTemplates).transform(TemplatesParser.antlrParseTemplates(content, templates.id));
+    let newTemplate: Template;
+    if (!shouldParse) {
+        const originList: string[] = TemplateExtensions.readLine(content);
+        const range = new Range(1, 0, originList.length, originList[originList.length - 1].length);
+        newTemplate = new Template(templateName, parameters, newTemplateBody, new SourceRange(range, templates.id));
+    } else {
+        let updatedTemplates = new Templates([], [], [], [], '', templates.id, templates.expressionParser, templates.importResolver);
+        updatedTemplates = new TemplatesTransformer(updatedTemplates).transform(TemplatesParser.antlrParseTemplates(content, templates.id));
+    
+        appendDiagnosticWithOffset(newTemplates.diagnostics, updatedTemplates.diagnostics, originalStartLine);
+        if (updatedTemplates.toArray().length > 0) {
+            newTemplate = updatedTemplates.toArray()[0];
+            new StaticChecker(newTemplates).check().forEach((u): number => newTemplates.diagnostics.push(u));
+        }
+    }
 
-    appendDiagnosticWithOffset(newTemplates.diagnostics, updatedTemplates.diagnostics, originalStartLine);
-
-    if (updatedTemplates.toArray().length > 0) {
-        const newTemplate = updatedTemplates.toArray()[0];
+    if (newTemplate) {
         adjustRangeForAddTemplate(newTemplate, originalStartLine);
         newTemplates.toArray().push(newTemplate);
-        new StaticChecker(newTemplates).check().forEach((u): number => newTemplates.diagnostics.push(u));
     }
 
     return newTemplates;
