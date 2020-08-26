@@ -404,7 +404,7 @@ describe('LG', function() {
         evaled = templates.evaluate('dupNameWithTemplate');
         assert.strictEqual(evaled, 2, `Evaled is ${ evaled }`);
 
-        evaled = templates.evaluate('foo', {property: 'Show'});
+        evaled = templates.evaluate('compose', {property: 'Show'});
         assert.strictEqual(evaled, `you made it!`);
     });
 
@@ -977,13 +977,13 @@ describe('LG', function() {
         assert.deepStrictEqual(evaled, JSON.parse('{"lgType":"Activity","text":"${GetAge()}","suggestions":["10 | cards","20 | cards"]}'));
 
         evaled = templates.evaluate('T1');
-        assert.deepStrictEqual(evaled, JSON.parse('{"lgType":"Activity","text":"This is awesome","speak":"foo bar I can also speak!"}'));
+        assert.deepStrictEqual(evaled, JSON.parse('{"lgType":"Activity","text":"This is awesome","speak":"hello world I can also speak!"}'));
 
         evaled = templates.evaluate('ST1');
-        assert.deepStrictEqual(evaled, JSON.parse('{"lgType":"MyStruct","text":"foo","speak":"bar"}'));
+        assert.deepStrictEqual(evaled, JSON.parse('{"lgType":"MyStruct","text":"cool","speak":"beta"}'));
 
         evaled = templates.evaluate('AskForColor');
-        assert.deepStrictEqual(evaled, JSON.parse('{"lgType":"Activity","suggestedactions":[{"lgType":"MyStruct","speak":"bar","text":"zoo"},{"lgType":"Activity","speak":"I can also speak!"}]}'));
+        assert.deepStrictEqual(evaled, JSON.parse('{"lgType":"Activity","suggestedactions":[{"lgType":"MyStruct","speak":"beta","text":"food"},{"lgType":"Activity","speak":"I can also speak!"}]}'));
 
         evaled = templates.evaluate('MultiExpression');
         assert.equal(evaled, '{"lgType":"Activity","speak":"I can also speak!"} {"lgType":"MyStruct","text":"hi"}');
@@ -1322,10 +1322,10 @@ describe('LG', function() {
     });
 
     it('TestInjectLG', function() {
-        var {value: evaled, error} = Expression.parse('foo.bar()').tryEvaluate();
+        var {value: evaled, error} = Expression.parse('simple.sumNum()').tryEvaluate();
         assert.strictEqual(3, evaled);
 
-        var {value: evaled, error} = Expression.parse('foo.cool(2)').tryEvaluate();
+        var {value: evaled, error} = Expression.parse('simple.partialSum(2)').tryEvaluate();
         assert.strictEqual(3, evaled);
 
         var {value: evaled, error} = Expression.parse('common.looking()').tryEvaluate();

@@ -1,11 +1,11 @@
 > !# @strict = false
-> !# @Namespace = foo
-> !# @Exports = bar, cool
+> !# @Namespace = simple
+> !# @Exports = sumNum, partialSum
 
 [import](common.lg)
 
-#bar()
+#sumNum()
 - ${add(1,2)}
 
-#cool(a)
+#partialSum(a)
 - ${add(1,a)}
