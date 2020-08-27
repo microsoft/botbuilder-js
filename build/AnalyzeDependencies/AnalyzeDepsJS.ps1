@@ -120,7 +120,9 @@ Resolve-Path $PackagesPath
 Write-Host "Debug 3"
 
 foreach ($PkgFile in Resolve-Path $PackagesPath) {
+  Write-Host "Debug 4"
   $PackageJson = Get-PackageJson $PkgFile
+  Write-Host "Debug 5"
   $LibraryName = $PackageJson.name
   $LibraryVer = $PackageJson.version
 
@@ -129,7 +131,9 @@ foreach ($PkgFile in Resolve-Path $PackagesPath) {
   $Pkgs[$LibraryName] = @{ Ver = $LibraryVer; Src = $PkgFile; Deps = New-Object System.Collections.ArrayList }
   $PkgDeps = @{ }
   
+  Write-Host "Debug 6"
   $Dependencies = (&{If($PackageJson.dependencies) {($PackageJson.dependencies | Get-Member -MemberType NoteProperty | Select Definition)} Else {$null}})
+  Write-Host "Debug 7"
   
   foreach ($Dep in $Dependencies) {
     $Depid = $Dep.Definition.Split(' =')[1];
