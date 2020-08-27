@@ -13,11 +13,11 @@ Function Get-PackageJson($NupkgPath) {
     Remove-Item -Path ./tempdir -Recurse -Force -ErrorAction SilentlyContinue
     New-Item -Path ./tempdir -ItemType directory -Force | Out-Null;
 
-    #Expand-Tar $NupkgPath tempdir
-    pushd ./tempdir
-    tar -xvzf $NupkgPath >$null 2>&1;
-    $ZipFile = (Get-ChildItem package.json -Path . -Recurse ).FullName;
-    popd
+    Expand-Tar $NupkgPath ./tempdir
+    #pushd ./tempdir
+    #tar -xvzf $NupkgPath >$null 2>&1;
+    $ZipFile = (Get-ChildItem package.json -Path ./tempdir -Recurse ).FullName;
+    #popd
 
     Get-Content -Raw $ZipFile | ConvertFrom-Json;
   }
@@ -25,14 +25,15 @@ Function Get-PackageJson($NupkgPath) {
   }
 }
 
-#Function Expand-Tar($tarFile, $dest) {
-#
-#    if (-not (Get-Command Expand-7Zip -ErrorAction Ignore)) {
-#        Install-Package -Scope CurrentUser -Force 7Zip4PowerShell > $null
-#    }
-#
-#    Expand-7Zip $tarFile $dest
-#}
+Function Expand-Tar($tarFile, $dest) {
+    if (-not (Get-Command Expand-7Zip -ErrorAction Ignore)) {
+        Install-Package -Scope CurrentUser -Force 7Zip4PowerShell > $null
+    }
+    Expand-7Zip $tarFile $dest
+    # Expand the inner tar file
+    $tar = Get-ChildItem $dest/*.tar
+    if ($tar) { Expand-7Zip $tar $dest; }
+}
 
 Function Save-Dep($Deps, $TargetFramework, $DepName, $DepVersion, $DependentPackage) {
   if (-Not $Deps[$DepName]) {
@@ -112,29 +113,21 @@ Function Get-PackageExport($Pkgs, $Internal) {
 }
 
 # Analyze package dependencies
-Write-Host "Debug 1"
 $Pkgs = @{ }
 $Deps = @{ }
-Write-Host "Debug 2"
 Resolve-Path $PackagesPath
-Write-Host "Debug 3"
 
 foreach ($PkgFile in Resolve-Path $PackagesPath) {
-  Write-Host "Debug 4 $PkgFile"
   $PackageJson = Get-PackageJson $PkgFile
-  Write-Host "Debug 5 $PackageJson"
   $LibraryName = $PackageJson.name
   $LibraryVer = $PackageJson.version
 
-  Write-Host "Debug 6"
   Write-Host $LibraryName
 
   $Pkgs[$LibraryName] = @{ Ver = $LibraryVer; Src = $PkgFile; Deps = New-Object System.Collections.ArrayList }
   $PkgDeps = @{ }
   
-  Write-Host "Debug 7"
   $Dependencies = (&{If($PackageJson.dependencies) {($PackageJson.dependencies | Get-Member -MemberType NoteProperty | Select Definition)} Else {$null}})
-  Write-Host "Debug 8"
   
   foreach ($Dep in $Dependencies) {
     $Depid = $Dep.Definition.Split(' =')[1];
