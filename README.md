@@ -42,7 +42,7 @@ For more information jump to a section below.
 | botframework-schema                | [![BotBuilder Badge](https://img.shields.io/npm/dt/botframework-schema.svg?logo=npm&label=botframework-schema)](https://www.npmjs.com/package/botframework-schema/)                             |
 | botframework-streaming                | [![BotBuilder Badge](https://img.shields.io/npm/dt/botframework-streaming.svg?logo=npm&label=botframework-streaming)](https://www.npmjs.com/package/botframework-streaming/)                             |
 
-View package interdependencies here: [dependency graph](https://botbuildersdkblobstorage.blob.core.windows.net/sdk-js-dependency-reports/latest/InterdependencyGraph.html).
+View package interdependencies here: [dependency graph](https://botbuildersdkblobstorage.blob.core.windows.net/sdk-js-dependency-reports/latest/InterdependencyGraph.html)
 
 ## Getting Started
 To get started building bots using the SDK, see the [Azure Bot Service Documentation](https://docs.microsoft.com/en-us/azure/bot-service/?view=azure-bot-service-4.0).
