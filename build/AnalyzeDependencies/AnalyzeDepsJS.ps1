@@ -1,24 +1,3 @@
-#
-# Adapted from https://github.com/microsoft/botbuilder-dotnet/blob/main/build/AnalyzeDeps/AnalyzeDeps.ps1
-#
-
-<#
-  .SYNOPSIS
-  Generate a dependency report for a set of .tgz files
-
-  .PARAMETER PackagesPath
-  The path to the package(s) to analyze. Globs are supported.
-
-  .PARAMETER LockfilePath
-  NOT USED. The path to the lockfile to analyze.
-
-  .PARAMETER OutPath
-  The path to write the HTML-formatted report.
-
-  .PARAMETER DumpPath
-  The path to write the JSONP-formatted dependency data file.
-#>
-
 Param(
   [Parameter(Mandatory = $true)][string]$PackagesPath,
   [Parameter(Mandatory = $false)][string]$LockfilePath,
@@ -133,8 +112,13 @@ Function Get-PackageExport($Pkgs, $Internal) {
 }
 
 # Analyze package dependencies
+Write-Host "Debug 1"
 $Pkgs = @{ }
 $Deps = @{ }
+Write-Host "Debug 2"
+Resolve-Path $PackagesPath
+Write-Host "Debug 3"
+
 foreach ($PkgFile in Resolve-Path $PackagesPath) {
   $PackageJson = Get-PackageJson $PkgFile
   $LibraryName = $PackageJson.name
