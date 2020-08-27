@@ -9,7 +9,7 @@
   .PARAMETER PackagesPath
   The path to the package(s) to analyze. Globs are supported.
 
-#  .PARAMETER LockfilePath
+  .PARAMETER LockfilePath
   NOT USED. The path to the lockfile to analyze.
 
   .PARAMETER OutPath
