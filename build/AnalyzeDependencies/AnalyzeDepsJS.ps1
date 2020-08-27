@@ -21,7 +21,7 @@
 
 Param(
   [Parameter(Mandatory = $true)][string]$PackagesPath,
-#  [Parameter(Mandatory = $false)][string]$LockfilePath,
+  [Parameter(Mandatory = $false)][string]$LockfilePath,
   [Parameter(Mandatory = $false)][string]$OutPath,
   [Parameter(Mandatory = $false)][string]$DumpPath
 )
