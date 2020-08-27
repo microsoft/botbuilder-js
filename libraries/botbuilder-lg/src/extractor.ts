@@ -74,7 +74,7 @@ export class Extractor extends AbstractParseTreeVisitor<Map<string, any>> implem
         const result: Map<string, any> = new Map<string, any>();
         const ifRules: lp.IfConditionRuleContext[] = context.ifElseTemplateBody().ifConditionRule();
         for (const ifRule of ifRules) {
-            const expressions: TerminalNode[] = ifRule.ifCondition().EXPRESSION();
+            const expressions = ifRule.ifCondition().expression();
             const  conditionNode: lp.IfConditionContext = ifRule.ifCondition();
             const ifExpr: boolean = conditionNode.IF() !== undefined;
             const elseIfExpr: boolean = conditionNode.ELSEIF() !== undefined;
@@ -105,7 +105,7 @@ export class Extractor extends AbstractParseTreeVisitor<Map<string, any>> implem
         const result: Map<string, any> = new Map<string, any>();
         const switchCaseNodes: lp.SwitchCaseRuleContext[] = context.switchCaseTemplateBody().switchCaseRule();
         for (const iterNode of switchCaseNodes) {
-            const expressions: TerminalNode[] = iterNode.switchCaseStat().EXPRESSION();
+            const expressions = iterNode.switchCaseStat().expression();
             const switchCaseStat: lp.SwitchCaseStatContext = iterNode.switchCaseStat();
             const switchExpr: boolean = switchCaseStat.SWITCH() !== undefined;
             const caseExpr: boolean = switchCaseStat.CASE() !== undefined;

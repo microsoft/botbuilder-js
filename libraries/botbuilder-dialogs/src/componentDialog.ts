@@ -5,9 +5,9 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { BotTelemetryClient, NullTelemetryClient, telemetryTrackDialogView, TurnContext } from 'botbuilder-core';
+import { telemetryTrackDialogView, TurnContext } from 'botbuilder-core';
 import { Dialog, DialogInstance, DialogReason, DialogTurnResult, DialogTurnStatus } from './dialog';
-import { DialogContext } from './dialogContext';
+import { DialogContext, DialogState } from './dialogContext';
 import { DialogContainer } from './dialogContainer';
 
 const PERSISTED_DIALOG_STATE = 'dialogs';
@@ -170,11 +170,8 @@ export class ComponentDialog<O extends object = {}> extends DialogContainer<O> {
      * Creates the inner dialog context
      * @param outerDC the outer dialog context
      */
-    public createChildContext(outerDC: DialogContext) {
-        const innerDC = this.createInnerDC(outerDC.context, outerDC.activeDialog);
-        innerDC.parent = outerDC;
-
-        return innerDC;
+    public createChildContext(outerDC: DialogContext): DialogContext {
+        return this.createInnerDC(outerDC, outerDC.activeDialog);
     }
 
     /**
@@ -243,27 +240,17 @@ export class ComponentDialog<O extends object = {}> extends DialogContainer<O> {
         return outerDC.endDialog(result);
     }
 
-    private createInnerDC(context: TurnContext, instance: DialogInstance) {
+    private createInnerDC(context: DialogContext, instance: DialogInstance): DialogContext;
+    private createInnerDC(context: TurnContext, instance: DialogInstance): DialogContext;
+    private createInnerDC(context: TurnContext | DialogContext, instance: DialogInstance): DialogContext {
+        if (!instance) {
+            const dialogInstance = { state: {} };
+            instance = dialogInstance as DialogInstance;
+        }
+
         const dialogState = instance.state[PERSISTED_DIALOG_STATE] || { dialogStack: [] };
-        instance.state[PERSISTED_DIALOG_STATE] = dialogState
-        const innerDC: DialogContext = new DialogContext(this.dialogs, context, dialogState);
+        instance.state[PERSISTED_DIALOG_STATE] = dialogState;
 
-        return innerDC
-    }
-
-    /**
-     * Set the telemetry client, and also apply it to all child dialogs.
-     * Future dialogs added to the component will also inherit this client.
-     */
-    public set telemetryClient(client: BotTelemetryClient) {
-        this._telemetryClient = client ? client : new NullTelemetryClient();
-        this.dialogs.telemetryClient = client;
-    }
-
-    /**
-     * Get the current telemetry client.
-     */
-    public get telemetryClient(): BotTelemetryClient {
-        return this._telemetryClient;
+        return new DialogContext(this.dialogs, context as TurnContext, dialogState);
     }
 }

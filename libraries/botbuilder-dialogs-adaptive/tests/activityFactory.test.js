@@ -1,7 +1,7 @@
 // this test would be migrated to adaptive dialog package
 
 const { Templates } = require('botbuilder-lg');
-const {ActivityFactory} = require('botbuilder-core');
+const {ActivityFactory, ActivityTypes } = require('botbuilder-core');
 const assert = require('assert');
 
 function getTemplates(){
@@ -14,14 +14,6 @@ function getActivity(templateName, data){
     const lgResult = templates.evaluate(templateName, data);
     return ActivityFactory.fromObject(lgResult);
 }
-
-function getDiagnostics(templateName, data){
-    const filePath =  `${ __dirname }/lg/DiagnosticStructuredLG.lg`;
-    const templates =  Templates.parseFile(filePath);
-    const lgResult = templates.evaluate(templateName, data);
-    return ActivityFactory.checkLGResult(lgResult) ;
-}
-
 
 describe('ActivityFactoryTest', function() {
 
@@ -105,6 +97,11 @@ describe('ActivityFactoryTest', function() {
         assertEventActivity(result);
     });
 
+    it('customizedActivityType', function() {
+        let result = getActivity('customizedActivityType', undefined);
+        assertCustomizedActivityType(result);
+    });
+
     it('handoffActivity', function() {
         let data = {
             text: 'textContent'
@@ -183,6 +180,11 @@ describe('ActivityFactoryTest', function() {
         assertHeroCardActivity(result);
     });
 
+    it('CustomizedCardTemplate', function() {
+        let result = getActivity('customizedCardActionActivity', undefined);
+        assertCustomizedCardActivity(result);
+    });
+
     it('ThumbnailCardTemplate', function() {
         let data = {
             type: 'thumbnailcard'
@@ -226,6 +228,11 @@ describe('ActivityFactoryTest', function() {
         assertOAuthCardActivity(result);
     });
 
+    it('AnimationCardTemplate', function() {
+        let result = getActivity('AnimationCardTemplate', undefined);
+        assertAnimationCardActivity(result);
+    });
+
     it('ReceiptCardTemplate', function() {
         let data = {
             type: 'ReceiptCard',
@@ -259,35 +266,10 @@ describe('ActivityFactoryTest', function() {
         let result = getActivity('SuggestedActionsReference', data);
         assertSuggestedActionsReferenceActivity(result);
     });
-
-    it('CheckOutPutNotFromStructuredLG', function() {
-        let diagnostics = ActivityFactory.checkLGResult('Not a valid json');
-        assert(diagnostics.length === 1);
-        assert.strictEqual(diagnostics[0], '[WARNING]LG output is not a json object, and will fallback to string format.');
-    });
-
-    it('CheckStructuredLGDiagnostics', function() {
-        let diagnostics = getDiagnostics('ErrorStructuredType', undefined);
-        assert(diagnostics.length === 1);
-        assert.strictEqual(diagnostics[0], `[WARNING]Type 'mystruct' is not supported currently.`);
-
-        diagnostics = getDiagnostics('ErrorActivityType', undefined);
-        assert(diagnostics.length === 2);
-        assert.strictEqual(diagnostics[0], `[ERROR]'xxx' is not a valid activity type.`);
-        assert.strictEqual(diagnostics[1], `[WARNING]'invalidproperty' not support in Activity.`);
-
-        diagnostics = getDiagnostics('ErrorMessage', undefined);
-        assert(diagnostics.length === 5);
-        assert.strictEqual(diagnostics[0], `[WARNING]'attachment,suggestedaction' not support in Activity.`);
-        assert.strictEqual(diagnostics[1], `[WARNING]'mystruct' is not card action type.`);
-        assert.strictEqual(diagnostics[2], `[ERROR]'yyy' is not a valid card action type.`);
-        assert.strictEqual(diagnostics[3], `[ERROR]'notsure' is not a boolean value.`);
-        assert.strictEqual(diagnostics[4], `[WARNING]'mystruct' is not an attachment type.`);
-    });
 });
 
 function assertSuggestedActionsReferenceActivity(activity) {
-    assert.strictEqual(activity.type, 'message');
+    assert.strictEqual(activity.type, ActivityTypes.Message);
     assert.strictEqual(activity.text, 'textContent');
     assert.strictEqual(activity.suggestedActions.actions.length, 5);
     assert.strictEqual(activity.suggestedActions.actions[0].value, 'Add todo');
@@ -298,13 +280,13 @@ function assertSuggestedActionsReferenceActivity(activity) {
 }
 
 function assertOAuthCardActivity(activity) {
-    assert.strictEqual(activity.type, 'message');
+    assert.strictEqual(activity.type, ActivityTypes.Message);
     assert(activity.text === undefined);
     assert(activity.speak === undefined);
     assert.strictEqual(activity.attachments.length, 1);
     assert.strictEqual(activity.attachments[0].contentType, 'application/vnd.microsoft.card.oauth');
     const card = activity.attachments[0].content;
-    assert(card !== undefined);
+    assert(card);
     assert.strictEqual(card.text, 'This is some text describing the card, it\'s cool because it\'s cool');
     assert.strictEqual(card.connectionName, 'MyConnection');
     assert.strictEqual(card.buttons.length, 1);
@@ -314,13 +296,13 @@ function assertOAuthCardActivity(activity) {
 }
 
 function assertSigninCardActivity(activity) {
-    assert.strictEqual(activity.type, 'message');
+    assert.strictEqual(activity.type, ActivityTypes.Message);
     assert(activity.text === undefined);
     assert(activity.speak === undefined);
     assert.strictEqual(activity.attachments.length, 1);
     assert.strictEqual(activity.attachments[0].contentType, 'application/vnd.microsoft.card.signin');
     const card = activity.attachments[0].content;
-    assert(card !== undefined);
+    assert(card);
     assert.strictEqual(card.buttons.length, 1);
     assert.strictEqual(card.buttons[0].title, 'Sign in');
     assert.strictEqual(card.buttons[0].type, 'signin');
@@ -328,13 +310,13 @@ function assertSigninCardActivity(activity) {
 }
 
 function assertVideoCardActivity(activity) {
-    assert.strictEqual(activity.type, 'message');
+    assert.strictEqual(activity.type, ActivityTypes.Message);
     assert(activity.text === undefined);
     assert(activity.speak === undefined);
     assert.strictEqual(activity.attachments.length, 1);
     assert.strictEqual(activity.attachments[0].contentType, 'application/vnd.microsoft.card.video');
     const card = activity.attachments[0].content;
-    assert(card !== undefined);
+    assert(card);
     assert.strictEqual(card.title, 'Cheese gromit!');
     assert.strictEqual(card.subtitle, 'videocard');
     assert.strictEqual(card.text, 'This is some text describing the card, it\'s cool because it\'s cool');
@@ -352,13 +334,13 @@ function assertVideoCardActivity(activity) {
 }
 
 function assertAudioCardActivity(activity) {
-    assert.strictEqual(activity.type, 'message');
+    assert.strictEqual(activity.type, ActivityTypes.Message);
     assert(activity.text === undefined);
     assert(activity.speak === undefined);
     assert.strictEqual(activity.attachments.length, 1);
     assert.strictEqual(activity.attachments[0].contentType, 'application/vnd.microsoft.card.audio');
     const card = activity.attachments[0].content;
-    assert(card !== undefined);
+    assert(card);
     assert.strictEqual(card.title, 'Cheese gromit!');
     assert.strictEqual(card.subtitle, 'audiocard');
     assert.strictEqual(card.text, 'This is some text describing the card, it\'s cool because it\'s cool');
@@ -375,15 +357,28 @@ function assertAudioCardActivity(activity) {
     }
 }
 
+function assertCustomizedCardActivity(activity) {
+    assert.strictEqual(activity.type, ActivityTypes.Message);
+    assert(activity.text === undefined);
+    assert(activity.speak === undefined);
+    assert.strictEqual(activity.attachments.length, 1);
+    assert.strictEqual(activity.attachments[0].contentType, 'cardaction');
+    const card = activity.attachments[0].content;
+    assert(card);
+    assert.strictEqual(card.type, 'yyy');
+    assert.strictEqual(card.title, 'title');
+    assert.strictEqual(card.value, 'value');
+    assert.strictEqual(card.text, 'text');
+}
 
 function assertThumbnailCardActivity(activity) {
-    assert.strictEqual(activity.type, 'message');
+    assert.strictEqual(activity.type, ActivityTypes.Message);
     assert(activity.text === undefined);
     assert(activity.speak === undefined);
     assert.strictEqual(activity.attachments.length, 1);
     assert.strictEqual(activity.attachments[0].contentType, 'application/vnd.microsoft.card.thumbnail');
     const card = activity.attachments[0].content;
-    assert(card !== undefined);
+    assert(card);
     assert.strictEqual(card.title, 'Cheese gromit!');
     assert.strictEqual(card.subtitle, 'thumbnailcard');
     assert.strictEqual(card.text, 'This is some text describing the card, it\'s cool because it\'s cool');
@@ -397,13 +392,13 @@ function assertThumbnailCardActivity(activity) {
 }
 
 function assertHeroCardActivity(activity) {
-    assert.strictEqual(activity.type, 'message');
+    assert.strictEqual(activity.type, ActivityTypes.Message);
     assert(activity.text === undefined);
     assert(activity.speak === undefined);
     assert.strictEqual(activity.attachments.length, 1);
     assert.strictEqual(activity.attachments[0].contentType, 'application/vnd.microsoft.card.hero');
     const card = activity.attachments[0].content;
-    assert(card !== undefined);
+    assert(card);
     assert.strictEqual(card.title, 'Cheese gromit!');
     assert.strictEqual(card.subtitle, 'herocard');
     assert.strictEqual(card.text, 'This is some text describing the card, it\'s cool because it\'s cool');
@@ -417,7 +412,7 @@ function assertHeroCardActivity(activity) {
 }
 
 function assertActivityWithMultiStringSuggestionActions(activity) {
-    assert.strictEqual(activity.type, 'message');
+    assert.strictEqual(activity.type, ActivityTypes.Message);
     assert.strictEqual(activity.text, 'textContent');
     assert.strictEqual(activity.suggestedActions.actions.length, 3);
     assert.strictEqual(activity.suggestedActions.actions[0].title, 'first suggestion');
@@ -429,7 +424,7 @@ function assertActivityWithMultiStringSuggestionActions(activity) {
 }
 
 function assertActivityWithMultiStructuredSuggestionActions(activity) {
-    assert.strictEqual(activity.type, 'message');
+    assert.strictEqual(activity.type, ActivityTypes.Message);
     assert.strictEqual(activity.text, 'textContent');
     assert.strictEqual(activity.suggestedActions.actions.length, 3);
     assert.strictEqual(activity.suggestedActions.actions[0].title, 'first suggestion');
@@ -444,7 +439,7 @@ function assertActivityWithMultiStructuredSuggestionActions(activity) {
 }
 
 function assertMessageActivityAll(activity) {
-    assert.strictEqual(activity.type, 'message');
+    assert.strictEqual(activity.type, ActivityTypes.Message);
     assert.strictEqual(activity.text, 'textContent');
     assert.strictEqual(activity.speak, 'textContent');
     assert.strictEqual(activity.inputHint, 'accepting');
@@ -459,7 +454,7 @@ function assertMessageActivityAll(activity) {
     assert.strictEqual(activity.attachments.length, 1);
     assert.strictEqual(activity.attachments[0].contentType, 'application/vnd.microsoft.card.hero');
     const card = activity.attachments[0].content;
-    assert(card !== undefined);
+    assert(card);
 
     const tap = card.tap;
     assert.strictEqual(tap.title, 'taptitle');
@@ -480,7 +475,7 @@ function assertMessageActivityAll(activity) {
 }
 
 function assertActivityWithSuggestionActions(activity) {
-    assert.strictEqual(activity.type, 'message');
+    assert.strictEqual(activity.type, ActivityTypes.Message);
     assert.strictEqual(activity.text, 'textContent');
     assert.strictEqual(activity.suggestedActions.actions.length, 2);
     assert.strictEqual(activity.suggestedActions.actions[0].title, 'firstItem');
@@ -490,13 +485,13 @@ function assertActivityWithSuggestionActions(activity) {
 }
 
 function assertActivityWithMultiAttachments(activity) {
-    assert.strictEqual(activity.type, 'message');
+    assert.strictEqual(activity.type, ActivityTypes.Message);
     assert(activity.text === undefined);
     assert(activity.speak === undefined);
     assert.strictEqual(activity.attachments.length, 2);
     assert.strictEqual(activity.attachments[1].contentType, 'application/vnd.microsoft.card.thumbnail');
     const card = activity.attachments[1].content;
-    assert(card !== undefined);
+    assert(card);
     assert.strictEqual(card.title, 'Cheese gromit!');
     assert.strictEqual(card.subtitle, 'type');
     assert.strictEqual(card.text, 'This is some text describing the card, it\'s cool because it\'s cool');
@@ -510,13 +505,13 @@ function assertActivityWithMultiAttachments(activity) {
 }
 
 function assertActivityWithHeroCardAttachment(activity) {
-    assert.strictEqual(activity.type, 'message');
+    assert.strictEqual(activity.type, ActivityTypes.Message);
     assert(activity.text === undefined);
     assert(activity.speak === undefined);
     assert.strictEqual(activity.attachments.length, 1);
     assert.strictEqual(activity.attachments[0].contentType, 'application/vnd.microsoft.card.hero');
     const card = activity.attachments[0].content;
-    assert(card !== undefined);
+    assert(card);
 
     const tap = card.tap;
     assert.strictEqual(tap.title, 'taptitle');
@@ -532,20 +527,25 @@ function assertActivityWithHeroCardAttachment(activity) {
     assert.strictEqual(button.value, 'textContent');
 }
 
+function assertCustomizedActivityType(activity) {
+    assert.strictEqual(activity.type, 'xxx');
+    assert.strictEqual(activity.name, 'hi');
+}
+
 function assertHandoffActivity(activity) {
-    assert.strictEqual(activity.type, 'handoff');
+    assert.strictEqual(activity.type, ActivityTypes.Handoff);
     assert.strictEqual(activity.name, 'textContent');
     assert.strictEqual(activity.value, 'textContent');
 }
 
 function assertCardActionActivity(activity) {
-    assert.strictEqual(activity.type, 'message');
+    assert.strictEqual(activity.type, ActivityTypes.Message);
     assert(activity.text === undefined);
     assert(activity.speak === undefined);
     assert.strictEqual(activity.attachments.length, 1);
     assert.strictEqual(activity.attachments[0].contentType, 'application/vnd.microsoft.card.hero');
     const card = activity.attachments[0].content;
-    assert(card !== undefined);
+    assert(card);
     assert.strictEqual(card.title, 'titleContent');
     assert.strictEqual(card.text, 'textContent');
     assert.strictEqual(card.buttons.length, 1, 'should have one button');
@@ -556,7 +556,7 @@ function assertCardActionActivity(activity) {
 }
 
 function assertAdaptiveCardActivity(activity) {
-    assert.strictEqual(activity.type, 'message');
+    assert.strictEqual(activity.type, ActivityTypes.Message);
     assert(activity.text === undefined);
     assert(activity.speak === undefined);
     assert.strictEqual(activity.attachments.length, 1, 'should have one attachment');
@@ -565,7 +565,7 @@ function assertAdaptiveCardActivity(activity) {
 }
 
 function assertMultiAdaptiveCardActivity(activity) {
-    assert.strictEqual(activity.type, 'message');
+    assert.strictEqual(activity.type, ActivityTypes.Message);
     assert(activity.text === undefined);
     assert(activity.speak === undefined);
     assert.strictEqual(activity.attachments.length, 3);
@@ -576,17 +576,33 @@ function assertMultiAdaptiveCardActivity(activity) {
 }
 
 function assertEventActivity(activity) {
-    assert.strictEqual(activity.type, 'event');
+    assert.strictEqual(activity.type, ActivityTypes.Event);
     assert.strictEqual(activity.name, 'textContent');
     assert.strictEqual(activity.value, 'textContent');
 }
 
+function assertAnimationCardActivity(activity) {
+    assert.strictEqual(activity.type, ActivityTypes.Message);
+    assert(activity.text === undefined);
+    assert(activity.speak === undefined);
+    assert.strictEqual(activity.attachments.length, 1);
+    assert.strictEqual(activity.attachments[0].contentType, 'application/vnd.microsoft.card.animation');
+    const card = activity.attachments[0].content;
+    assert(card);
+
+    assert.strictEqual(card.title, 'Animation Card');
+    assert.strictEqual(card.subtitle, 'look at it animate');
+    assert.strictEqual(card.autostart, true);
+    assert.strictEqual(card.image.url, 'https://docs.microsoft.com/en-us/bot-framework/media/how-it-works/architecture-resize.png');
+    assert.strictEqual(card.media[0].url, 'http://oi42.tinypic.com/1rchlx.jpg');
+}
+
 function assertReceiptCardActivity(activity) {
-    assert.strictEqual(activity.type, 'message');
+    assert.strictEqual(activity.type, ActivityTypes.Message);
     assert.strictEqual(activity.attachments.length, 1);
     assert.strictEqual(activity.attachments[0].contentType, 'application/vnd.microsoft.card.receipt');
     const card = activity.attachments[0].content;
-    assert(card !== undefined);
+    assert(card);
 
     assert.strictEqual(card.title, 'John Doe');
     assert.strictEqual(card.tax, '$ 7.50');
@@ -617,6 +633,4 @@ function assertReceiptCardActivity(activity) {
     assert.strictEqual(items[1].image.url, 'https://github.com/amido/azure-vector-icons/raw/master/renders/cloud-service.png');
     assert.strictEqual(items[1].price, '$ 45.00');
     assert.strictEqual(items[1].quantity, '720');
-    
 }
-

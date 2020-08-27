@@ -68,8 +68,8 @@ export class TemplateExtensions {
             if (context.parent.parent.parent instanceof lp.IfConditionRuleContext) {
                 const conditionContext = context.parent.parent.parent;
                 let tempMsg = '';
-                if (conditionContext.ifCondition() && conditionContext.ifCondition().EXPRESSION().length > 0) {
-                    tempMsg = conditionContext.ifCondition().EXPRESSION(0).text;
+                if (conditionContext.ifCondition() && conditionContext.ifCondition().expression().length > 0) {
+                    tempMsg = conditionContext.ifCondition().expression(0).text;
                     errorPrefix = `Condition '` + tempMsg + `': `;
                 }
             } else {
@@ -84,16 +84,16 @@ export class TemplateExtensions {
                     else if (state && state.SWITCH())
                     {
                         let tempMsg = '';
-                        if (state.EXPRESSION(0)) {
-                            tempMsg = state.EXPRESSION(0).text;
+                        if (state.expression(0)) {
+                            tempMsg = state.expression(0).text;
                         }
                         errorPrefix = `Switch '${ tempMsg } ':`;
                     }
                     else if (state && state.CASE())
                     {
                         let tempMsg = '';
-                        if (state.EXPRESSION(0)) {
-                            tempMsg = state.EXPRESSION(0).text;
+                        if (state.expression(0)) {
+                            tempMsg = state.expression(0).text;
                         }
                         errorPrefix = `Case '${ tempMsg }':`;
                     }
@@ -109,31 +109,12 @@ export class TemplateExtensions {
      * If a value is pure Expression.
      * @param ctx Key value structure value context.
      */
-    public static isPureExpression(ctx: lp.KeyValueStructureValueContext):  {hasExpr: boolean; expression: string | undefined} {
-        let expression = ctx.text;
-        let hasExpr = false;
-        for (const node of ctx.children) {
-            switch ((node as TerminalNode).symbol.type) {
-                case (lp.LGTemplateParser.ESCAPE_CHARACTER_IN_STRUCTURE_BODY):
-                    return {hasExpr, expression};
-                case (lp.LGTemplateParser.EXPRESSION_IN_STRUCTURE_BODY):
-                    if (hasExpr) {
-                        return {hasExpr: false, expression: expression};
-                    }
-
-                    hasExpr = true;
-                    expression = node.text;
-                    break;
-                default:
-                    if (node !== undefined && node.text !== '' && node.text !== ' ') {
-                        return {hasExpr: false, expression: expression};
-                    }
-
-                    break;
-            }
+    public static isPureExpression(ctx: lp.KeyValueStructureValueContext):  boolean {
+        if (ctx.expressionInStructure() === undefined || ctx.expressionInStructure().length != 1) {
+            return false;
         }
 
-        return {hasExpr: hasExpr, expression: expression};
+        return ctx.expressionInStructure(0).text.trim() === ctx.text.trim();
     }
 
     public static evalEscape(exp: string): string {

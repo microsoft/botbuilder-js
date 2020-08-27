@@ -14,13 +14,11 @@ import { StringExpression, IntExpression, NumberExpression, BoolExpression, Arra
 
 const intentPrefix = 'intent=';
 
-export class QnAMakerRecognizer implements Recognizer {
+/**
+ * A recognizer which uses QnAMaker KB to recognize intents.
+ */
+export class QnAMakerRecognizer extends Recognizer {
     public static readonly qnaMatchIntent = 'QnAMatch';
-    
-    /**
-     * Id of the recognizer.
-     */
-    public id: string;
 
     /**
      * Knowledgebase id of your QnA maker knowledgebase.
@@ -77,13 +75,27 @@ export class QnAMakerRecognizer implements Recognizer {
      */
     public qnaId: IntExpression = new IntExpression(0);
 
+    /**
+     * Initializes a new instance of `QnAMakerRecognizer`.
+     * @param hostname Hostname of QnAMaker KB.
+     * @param knowledgeBaseId Id of QnAMaker KB.
+     * @param endpointKey Endpoint key of QnAMaker KB.
+     */
     public constructor(hostname?: string, knowledgeBaseId?: string, endpointKey?: string) {
+        super();
         if (hostname) { this.hostname = new StringExpression(hostname); }
         if (knowledgeBaseId) { this.knowledgeBaseId = new StringExpression(knowledgeBaseId); }
         if (endpointKey) { this.endpointKey = new StringExpression(endpointKey); }
     }
 
-    public async recognize(dc: DialogContext, activity: Activity): Promise<RecognizerResult> {
+    /**
+     * Gets results of the call to QnA maker KB.
+     * @param dc Context object containing information for a single turn of coversation with a user.
+     * @param activity The incoming activity received from the user. The text value is used as the query to QnA Maker.
+     * @param telemetryProperties Additional properties to be logged to telemetry.
+     * @param telemetryMetrics Additional metrics to be logged to telemetry.
+     */
+    public async recognize(dc: DialogContext, activity: Activity, telemetryProperties?: { [key: string]: string }, telemetryMetrics?: { [key: string]: number }): Promise<RecognizerResult> {
         // identify matched intents
         const recognizerResult: RecognizerResult = {
             text: activity.text,
@@ -140,15 +152,22 @@ export class QnAMakerRecognizer implements Recognizer {
             }
 
             recognizerResult.entities['answer'] = [topAnswer.answer];
-            recognizerResult.entities['$instance'] = { answer: topAnswer };
+            recognizerResult.entities['$instance'] = { answer: [Object.assign(topAnswer, {
+                startIndex: 0,
+                endIndex: activity.text.length
+            })] };
             recognizerResult['answers'] = answers;
         } else {
             recognizerResult.intents['None'] = { score: 1 };
         }
-
+        this.trackRecognizerResult(dc, 'QnAMakerRecognizerResult', this.fillRecognizerResultTelemetryProperties(recognizerResult, telemetryProperties), telemetryMetrics);
         return recognizerResult;
     }
 
+    /**
+     * Gets an instance of `QnAMaker`.
+     * @param dc The dialog context used to access state.
+     */
     protected getQnAMaker(dc: DialogContext): QnAMaker {
         const endpointKey = this.endpointKey && this.endpointKey.getValue(dc.state);
         const hostname = this.hostname && this.hostname.getValue(dc.state);

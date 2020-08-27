@@ -6,8 +6,8 @@
  * Licensed under the MIT License.
  */
 
-import { Activity, TurnContext } from 'botbuilder-core';
-import { TemplateInterface } from 'botbuilder-dialogs';
+import { Activity } from 'botbuilder-core';
+import { DialogContext, TemplateInterface } from 'botbuilder-dialogs';
 
 export class BindToActivity implements TemplateInterface<Activity> {
     private _activity: Activity;
@@ -15,7 +15,7 @@ export class BindToActivity implements TemplateInterface<Activity> {
     public constructor(activity: Activity) {
         this._activity = activity;
     }
-    public async bindToData(turnContext: TurnContext, data: object): Promise<Activity> {
+    public async bind(context: DialogContext, data: object): Promise<Activity> {
         return this._activity;
     }
 }

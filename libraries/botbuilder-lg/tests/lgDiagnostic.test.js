@@ -16,8 +16,35 @@ function GetDiagnostics(fileName) {
 }
 
 describe(`LGExceptionTest`, function() {
+    /**
+     * Disk I/O is slow and variable, causing issues in pipeline tests, so we
+     * preload all of the file reads here so that it doesn't count against individual test duration.
+     */
+    const preloaded = {
+        ConditionFormatError: GetDiagnostics(`ConditionFormatError.lg`),
+        DuplicatedTemplates: GetDiagnostics(`DuplicatedTemplates.lg`),
+        DuplicatedTemplatesLg: GetLGFile(`DuplicatedTemplates.lg`),
+        DuplicatedTemplatesInImportFiles: GetDiagnostics(`DuplicatedTemplatesInImportFiles.lg`),
+        EmptyTemplate: GetDiagnostics(`EmptyTemplate.lg`),
+        EmptyLGFile: GetDiagnostics(`EmptyLGFile.lg`),
+        ErrorStructuredTemplate: GetDiagnostics(`ErrorStructuredTemplate.lg`),
+        ErrorTemplateName: GetDiagnostics(`ErrorTemplateName.lg`),
+        InvalidLGFileImportPath: GetDiagnostics(`InvalidLGFileImportPath.lg`),
+        LgTemplateFunctionError: GetDiagnostics(`LgTemplateFunctionError.lg`),
+        MultiLineVariation: GetDiagnostics(`MultiLineVariation.lg`),
+        NoNormalTemplateBody: GetDiagnostics(`NoNormalTemplateBody.lg`),
+        NoTemplateRef: GetDiagnostics(`NoTemplateRef.lg`),
+        SwitchCaseFormatError: GetDiagnostics(`SwitchCaseFormatError.lg`),
+        LoopDetected: GetLGFile(`LoopDetected.lg`),
+        ErrorExpression: GetLGFile(`ErrorExpression.lg`),
+        RunTimeErrors: GetLGFile('RunTimeErrors.lg'),
+        ExpressionFormatError: GetDiagnostics(`ExpressionFormatError.lg`),
+        MultiLineExprError: GetDiagnostics(`MultiLineExprError.lg`),
+        ErrorLine: GetDiagnostics(`ErrorLine.lg`)
+    };
+
     it(`TestConditionFormatError`, function() {
-        var diagnostics = GetDiagnostics(`ConditionFormatError.lg`);
+        var diagnostics = preloaded.ConditionFormatError;
         assert.strictEqual(diagnostics.length, 10);
         assert.strictEqual(diagnostics[0].severity, DiagnosticSeverity.Warning);
         assert.strictEqual(diagnostics[0].message.includes(TemplateErrors.notEndWithElseInCondition), true);
@@ -42,7 +69,7 @@ describe(`LGExceptionTest`, function() {
     });
 
     it(`TestDuplicatedTemplates`, function() {
-        var diagnostics = GetDiagnostics(`DuplicatedTemplates.lg`);
+        var diagnostics = preloaded.DuplicatedTemplates;
 
         assert.strictEqual(2, diagnostics.length);
         assert.strictEqual(DiagnosticSeverity.Error, diagnostics[0].severity);
@@ -50,7 +77,7 @@ describe(`LGExceptionTest`, function() {
         assert.strictEqual(DiagnosticSeverity.Error, diagnostics[1].severity);
         assert.strictEqual(diagnostics[1].message.includes(TemplateErrors.duplicatedTemplateInSameTemplate('template1')), true);
 
-        var templates = GetLGFile(`DuplicatedTemplates.lg`);
+        var templates = preloaded.DuplicatedTemplatesLg;
         var allDiagnostics = templates.allDiagnostics;
 
         assert.strictEqual(4, allDiagnostics.length);
@@ -65,7 +92,7 @@ describe(`LGExceptionTest`, function() {
     });
 
     it(`TestDuplicatedTemplatesInImportFiles`, function() {
-        var diagnostics = GetDiagnostics(`DuplicatedTemplatesInImportFiles.lg`);
+        var diagnostics = preloaded.DuplicatedTemplatesInImportFiles;
 
         assert.strictEqual(2, diagnostics.length);
         assert.strictEqual(DiagnosticSeverity.Error, diagnostics[0].severity);
@@ -75,7 +102,7 @@ describe(`LGExceptionTest`, function() {
     });
 
     it(`TestEmptyTemplate`, function() {
-        var diagnostics = GetDiagnostics(`EmptyTemplate.lg`);
+        var diagnostics = preloaded.EmptyTemplate;
 
         assert.strictEqual(1, diagnostics.length);
         assert.strictEqual(DiagnosticSeverity.Warning, diagnostics[0].severity);
@@ -83,7 +110,7 @@ describe(`LGExceptionTest`, function() {
     });
 
     it(`TestEmptyLGFile`, function() {
-        var diagnostics = GetDiagnostics(`EmptyLGFile.lg`);
+        var diagnostics = preloaded.EmptyLGFile;
 
         assert.strictEqual(1, diagnostics.length);
         assert.strictEqual(DiagnosticSeverity.Warning, diagnostics[0].severity);
@@ -91,11 +118,11 @@ describe(`LGExceptionTest`, function() {
     });
 
     it(`TestErrorStructuredTemplate`, function() {
-        var diagnostics = GetDiagnostics(`ErrorStructuredTemplate.lg`);
+        var diagnostics = preloaded.ErrorStructuredTemplate;
 
         assert.strictEqual(8, diagnostics.length);
         assert.strictEqual(DiagnosticSeverity.Error, diagnostics[0].severity);
-        assert.strictEqual(diagnostics[0].message.includes(TemplateErrors.invalidStrucBody), true);
+        assert.strictEqual(diagnostics[0].message.includes(TemplateErrors.invalidStrucBody('abc')), true);
         assert.strictEqual(DiagnosticSeverity.Error, diagnostics[1].severity);
         assert.strictEqual(diagnostics[1].message.includes(TemplateErrors.emptyStrucContent), true);
         assert.strictEqual(DiagnosticSeverity.Error, diagnostics[2].severity);
@@ -103,28 +130,37 @@ describe(`LGExceptionTest`, function() {
         assert.strictEqual(DiagnosticSeverity.Error, diagnostics[3].severity);
         assert.strictEqual(diagnostics[3].message.includes(`Error occurred when parsing expression 'NOTemplate()'. NOTemplate does not have an evaluator`), true);
         assert.strictEqual(DiagnosticSeverity.Error, diagnostics[4].severity);
-        assert.strictEqual(diagnostics[4].message.includes(TemplateErrors.invalidStrucName), true);
+        assert.strictEqual(diagnostics[4].message.includes(TemplateErrors.invalidStrucName('Activity%')), true);
         assert.strictEqual(DiagnosticSeverity.Error, diagnostics[5].severity);
-        assert.strictEqual(diagnostics[5].message.includes(TemplateErrors.invalidStrucName), true);
+        assert.strictEqual(diagnostics[5].message.includes(TemplateErrors.invalidStrucName('Activity]')), true);
         assert.strictEqual(DiagnosticSeverity.Error, diagnostics[6].severity);
         assert.strictEqual(diagnostics[6].message.includes(TemplateErrors.missingStrucEnd), true);
         assert.strictEqual(DiagnosticSeverity.Error, diagnostics[7].severity);
-        assert.strictEqual(diagnostics[7].message.includes(TemplateErrors.invalidStrucBody), true);
+        assert.strictEqual(diagnostics[7].message.includes(TemplateErrors.invalidStrucBody('- hi')), true);
     });
 
     it(`TestErrorTemplateName`, function() {
-        var diagnostics = GetDiagnostics(`ErrorTemplateName.lg`);
+        var diagnostics = preloaded.ErrorTemplateName;
 
         assert.strictEqual(7, diagnostics.length);
-        for(const diagnostic of diagnostics)
-        {
-            assert.strictEqual(DiagnosticSeverity.Error, diagnostic.severity);
-            assert.strictEqual(diagnostic.message.includes(TemplateErrors.invalidTemplateName), true);
-        }
+        assert.strictEqual(DiagnosticSeverity.Error, diagnostics[0].severity);
+        assert.strictEqual(diagnostics[0].message.includes(TemplateErrors.invalidParameter('param1; param2')), true);
+        assert.strictEqual(DiagnosticSeverity.Error, diagnostics[1].severity);
+        assert.strictEqual(diagnostics[1].message.includes(TemplateErrors.invalidParameter('param1 param2')), true);
+        assert.strictEqual(DiagnosticSeverity.Error, diagnostics[2].severity);
+        assert.strictEqual(diagnostics[2].message.includes(TemplateErrors.invalidTemplateName('template3(errorparams')), true);
+        assert.strictEqual(DiagnosticSeverity.Error, diagnostics[3].severity);
+        assert.strictEqual(diagnostics[3].message.includes(TemplateErrors.invalidParameter('a)test(param1')), true);
+        assert.strictEqual(DiagnosticSeverity.Error, diagnostics[4].severity);
+        assert.strictEqual(diagnostics[4].message.includes(TemplateErrors.invalidParameter('$%^')), true);
+        assert.strictEqual(DiagnosticSeverity.Error, diagnostics[5].severity);
+        assert.strictEqual(diagnostics[5].message.includes(TemplateErrors.invalidTemplateName('the-name-of-template')), true);
+        assert.strictEqual(DiagnosticSeverity.Error, diagnostics[6].severity);
+        assert.strictEqual(diagnostics[6].message.includes(TemplateErrors.invalidTemplateName('t1.1')), true);
     });
 
     it(`TestInvalidLGFileImportPath`, function() {
-        var diagnostics = GetDiagnostics(`InvalidLGFileImportPath.lg`);
+        var diagnostics = preloaded.InvalidLGFileImportPath;
 
         assert.strictEqual(1, diagnostics.length);
         assert.strictEqual(DiagnosticSeverity.Error, diagnostics[0].severity);
@@ -132,7 +168,7 @@ describe(`LGExceptionTest`, function() {
     });
 
     it(`TestLgTemplateFunctionError`, function() {
-        var diagnostics = GetDiagnostics(`LgTemplateFunctionError.lg`);
+        var diagnostics = preloaded.LgTemplateFunctionError;
 
         assert.strictEqual(2, diagnostics.length);
         assert.strictEqual(DiagnosticSeverity.Error, diagnostics[0].severity);
@@ -142,7 +178,7 @@ describe(`LGExceptionTest`, function() {
     });
 
     it(`TestMultiLineVariation`, function() {
-        var diagnostics = GetDiagnostics(`MultiLineVariation.lg`);
+        var diagnostics = preloaded.MultiLineVariation;
 
         assert.strictEqual(1, diagnostics.length);
         assert.strictEqual(DiagnosticSeverity.Error, diagnostics[0].severity);
@@ -150,7 +186,7 @@ describe(`LGExceptionTest`, function() {
     });
 
     it(`TestNoNormalTemplateBody`, function() {
-        var diagnostics = GetDiagnostics(`NoNormalTemplateBody.lg`);
+        var diagnostics = preloaded.NoNormalTemplateBody;
 
         assert.strictEqual(3, diagnostics.length);
         assert.strictEqual(DiagnosticSeverity.Warning, diagnostics[0].severity);
@@ -162,7 +198,7 @@ describe(`LGExceptionTest`, function() {
     });
 
     it(`TestNoTemplateRef`, function() {
-        var diagnostics = GetDiagnostics(`NoTemplateRef.lg`);
+        var diagnostics = preloaded.NoTemplateRef;
 
         assert.strictEqual(3, diagnostics.length);
 
@@ -175,7 +211,7 @@ describe(`LGExceptionTest`, function() {
     });
 
     it(`TestSwitchCaseFormatError`, function() {
-        var diagnostics = GetDiagnostics(`SwitchCaseFormatError.lg`);
+        var diagnostics = preloaded.SwitchCaseFormatError;
 
         assert.strictEqual(14, diagnostics.length);
         assert.strictEqual(DiagnosticSeverity.Error, diagnostics[0].severity);
@@ -209,7 +245,7 @@ describe(`LGExceptionTest`, function() {
     });
 
     it(`TestLoopDetected`, function() {
-        var templates = GetLGFile(`LoopDetected.lg`);
+        var templates = preloaded.LoopDetected;
         
         assert.throws(() => templates.evaluate(`wPhrase`), Error(`Loop detected: welcome_user => wPhrase [wPhrase]  Error occurred when evaluating '-\${wPhrase()}'. [welcome_user]  Error occurred when evaluating '-\${welcome_user()}'.`));
         
@@ -225,12 +261,12 @@ describe(`LGExceptionTest`, function() {
     });
 
     it(`TestErrorExpression`, function() {
-        var templates = GetLGFile(`ErrorExpression.lg`);
+        var templates = preloaded.ErrorExpression;
         assert.throws(() => templates.evaluate(`template1`), Error(`first(createArray(1, 2)) is neither a string nor a null object. [template1]  Error occurred when evaluating '-\${length(first(createArray(1,2)))}'.`));
     });
 
     it('TestRunTimeErrors', function() {
-        var templates = GetLGFile('RunTimeErrors.lg');
+        var templates = preloaded.RunTimeErrors;
 
         assert.throws(() => templates.evaluate(`template1`), Error(`'dialog.abc' evaluated to null. [template1]  Error occurred when evaluating '-I want \${dialog.abc}'.`));
 
@@ -252,39 +288,39 @@ describe(`LGExceptionTest`, function() {
         
         assert.throws(() => templates.evaluate(`switchcase2`, { turn : { testValue : 0 } }), Error(`'dialog.abc' evaluated to null. [switchcase2] Case 'Default': Error occurred when evaluating '-I want \${dialog.abc}'.`));
     });
-});
 
-it(`TestExpressionFormatError`, function() {
-    var diagnostics = GetDiagnostics(`ExpressionFormatError.lg`);
-    assert.strictEqual(diagnostics.length, 1);
-    assert.strictEqual(diagnostics[0].message.includes(`Close } is missing in Expression`), true);
-});
-
-it(`TestMultiLineExpressionInLG`, function() {
-    var diagnostics = GetDiagnostics(`MultiLineExprError.lg`);
-    assert.strictEqual(diagnostics.length, 1);
-    assert.strictEqual(diagnostics[0].message.includes(`Close } is missing in Expression`), true);
-
-    diagnostics = Templates.parseText('#Demo2\r\n- ${createArray(1,\r\n, 2,3)').diagnostics;
-    assert.strictEqual(diagnostics.length, 1);
-    assert.strictEqual(diagnostics[0].message.includes(`Close } is missing in Expression`), true);
-
-    diagnostics = Templates.parseText('#Demo4\r\n- ${createArray(1,\r\n2,3)\r\n> this is a comment').diagnostics;
-    assert.strictEqual(diagnostics.length, 1);
-    assert.strictEqual(diagnostics[0].message.includes(`Close } is missing in Expression`), true);
-});
-
-it(`TestErrorLine`, function() {
-    var diagnostics = GetDiagnostics(`ErrorLine.lg`);
-    assert.strictEqual(diagnostics.length, 4);
+    it(`TestExpressionFormatError`, function() {
+        var diagnostics = preloaded.ExpressionFormatError;
+        assert.strictEqual(diagnostics.length, 1);
+        assert.strictEqual(diagnostics[0].message.includes(`Close } is missing in Expression`), true);
+    });
     
-
-    assert.strictEqual(DiagnosticSeverity.Error, diagnostics[0].severity);
-    assert.strictEqual(diagnostics[0].message.includes(TemplateErrors.syntaxError), true);
-    assert.strictEqual(DiagnosticSeverity.Error, diagnostics[1].severity);
-    assert.strictEqual(diagnostics[1].message.includes(TemplateErrors.invalidStrucName), true);
-    assert.strictEqual(DiagnosticSeverity.Error, diagnostics[2].severity);
-    assert.strictEqual(diagnostics[2].message.includes(TemplateErrors.missingStrucEnd), true);
-    assert.strictEqual(DiagnosticSeverity.Error, diagnostics[3].severity);
-    assert.strictEqual(diagnostics[3].message.includes(TemplateErrors.invalidStrucBody), true);
+    it(`TestMultiLineExpressionInLG`, function() {
+        var diagnostics = preloaded.MultiLineExprError;
+        assert.strictEqual(diagnostics.length, 1);
+        assert.strictEqual(diagnostics[0].message.includes(`Close } is missing in Expression`), true);
+    
+        diagnostics = Templates.parseText('#Demo2\r\n- ${createArray(1,\r\n, 2,3)').diagnostics;
+        assert.strictEqual(diagnostics.length, 1);
+        assert.strictEqual(diagnostics[0].message.includes(`Close } is missing in Expression`), true);
+    
+        diagnostics = Templates.parseText('#Demo4\r\n- ${createArray(1,\r\n2,3)\r\n> this is a comment').diagnostics;
+        assert.strictEqual(diagnostics.length, 1);
+        assert.strictEqual(diagnostics[0].message.includes(`Close } is missing in Expression`), true);
+    });
+    
+    it(`TestErrorLine`, function() {
+        var diagnostics = preloaded.ErrorLine;
+        assert.strictEqual(diagnostics.length, 4);
+        
+    
+        assert.strictEqual(DiagnosticSeverity.Error, diagnostics[0].severity);
+        assert.strictEqual(diagnostics[0].message.includes(TemplateErrors.syntaxError('mismatched input \'-\' expecting <EOF>')), true);
+        assert.strictEqual(DiagnosticSeverity.Error, diagnostics[1].severity);
+        assert.strictEqual(diagnostics[1].message.includes(TemplateErrors.invalidStrucName(']')), true);
+        assert.strictEqual(DiagnosticSeverity.Error, diagnostics[2].severity);
+        assert.strictEqual(diagnostics[2].message.includes(TemplateErrors.missingStrucEnd), true);
+        assert.strictEqual(DiagnosticSeverity.Error, diagnostics[3].severity);
+        assert.strictEqual(diagnostics[3].message.includes(TemplateErrors.invalidStrucBody('- hi')), true);
+    });
 });

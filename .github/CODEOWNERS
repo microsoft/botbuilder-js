@@ -1,6 +1,120 @@
+# Lines starting with '#' are comments.
+# Each line is a file pattern followed by one or more owners.
+
+# More details are here: https://help.github.com/articles/about-codeowners/
+
+# The '*' pattern is global owners.
+
+# Order is important. The last matching pattern has the most precedence.
+# The folders are ordered as follows:
+
+# In each subsection folders are ordered first by depth, then alphabetically.
+# This should make it easy to add new rules without breaking existing ones.
+
+# Global rule:
+* @microsoft/bb-js
+
+# CI/Engineering Systems
+/build/**                                                               @microsoft/bb-js
+
+# Application Insights/Telemetry
+/libraries/botbuilder-applicationinsights/**                            @garypretty @munozemilio
+
+# AI: LUIS + QnA Maker
+/libraries/botbuilder-ai/**                                             @microsoft/bf-cog-services
+
+# Azure (Storage)
+/libraries/botbuilder-azure/**                                          @EricDahlvang @stevengum
+
+# Adaptive Dialogs
+/libraries/botbuilder-dialogs-*/**                                      @microsoft/bf-adaptive
+
+# Adaptive/LG
+/libraries/adaptive-expressions/**                                      @microsoft/bf-adaptive
+/libraries/botbuilder-lg/**                                             @microsoft/bf-adaptive
+/libraries/botbuilder-dialogs-*/**                                      @microsoft/bf-adaptive
+
+# AdaptiveExpressions & LanguageGeneration libraries
+/libraries/botbuilder-dialogs-declarative/**                            @microsoft/bf-adaptive
+/libraries/botbuilder-lg/**                                             @microsoft/bf-adaptive
+/libraries/adaptive-expressions/**                                      @microsoft/bf-adaptive
+
+# BotBuilder Testing
+/libraries/botbuilder-testing/**                                        @gabog
+
+# Core BotBuilder libraries
+/libraries/botbuilder/**                                                @stevengum @stevenic @carlosscastro @johnataylor
+/libraries/botbuilder-core/**                                           @stevengum @stevenic @carlosscastro @johnataylor
+
+# Streaming library
+/libraries/botbuilder/src/streaming/**                                  @microsoft/bf-streaming
+/libraries/botbuilder/tests/streaming/**                                @microsoft/bf-streaming
+/libraries/botframework-streaming/**                                    @microsoft/bf-streaming
+
+# BotBuilder Dialogs
+/libraries/botbuilder-dialogs/**                                        @microsoft/bf-dialogs
+/tests/botbuilder-dialogs/**                                            @microsoft/bf-dialogs
+
+# Swagger
+/libraries/swagger/**                                                   @axelsrz @EricDahlvang
+
+# Bot Framework Schema
+/libraries/botframework-schema/**                                       @EricDahlvang @johnataylor
+
+# Bot Framework Connector
+/libraries/botframework-connector/**                                    @axelsrz @carlosscastro @johnataylor
+
+# Bot Framework Authentication
+/libraries/botbuilder-core/src/extendedUserTokenProvider.ts             @microsoft/bf-auth
+/libraries/botbuilder-core/src/coreAppCredentials.ts                    @microsoft/bf-auth
+/libraries/botframework-connector/src/auth/**                           @microsoft/bf-auth
+/libraries/botframework-connector/src/tokenApi/**                       @microsoft/bf-auth
+/libraries/botframework-connector/tests/recordings/*TokenApiClient*     @microsoft/bf-auth
+/libraries/botframework-connector/tests/appCredentials.test.js          @microsoft/bf-auth
+
+# Bot Configuration
+/libraries/botframework-config/**                                       @tomlm
+
+# Bot Framework Skills
+/libraries/botbuilder/src/**/botFrameworkHttpClient.ts                  @microsoft/bf-skills
+/libraries/botbuilder/src/**/channelService*.ts                         @microsoft/bf-skills
+/libraries/botbuilder/src/skills/**                                     @microsoft/bf-skills
+
+# Bot Framework Skills tests & test projects
+/libraries/botbuilder/tests/**/botFrameworkHttpClient*.js               @microsoft/bf-skills
+/libraries/botbuilder/tests/**/channelService*.js                       @microsoft/bf-skills
+/libraries/botbuilder/tests/skills/**                                   @microsoft/bf-skills
+/libraries/functional-tests/dialogToDialog/**                           @microsoft/bf-skills
+/libraries/testskills/**                                                @microsoft/bf-skills
+
+# Bot Framework & Microsoft Teams
+/libraries/botbuilder/src/teams*.ts                                     @microsoft/bf-teams
+/libraries/botframework-schema/src/teams/**                             @microsoft/bf-teams
+/libraries/botframework-connector/src/teams/**                          @microsoft/bf-teams
+/libraries/botbuilder/tests/**/teams*.js                                @microsoft/bf-teams
+/lbiraries/teams-scenarios/**                                           @microsoft/bf-teams
+
+# Ownership by specific files or file types
+# This section MUST stay at the bottom of the CODEOWNERS file. For more information, see
+# https://docs.github.com/en/github/creating-cloning-and-archiving-repositories/about-code-owners#example-of-a-codeowners-file
+
 # For all public API changes
-/libraries/*/etc/* @benbrown @stevengum @stevenic
+/libraries/*/etc/*                                                      @microsoft/bb-js
 
 # For maintenance of shipped packages dependencies and devDependencies
 # Codeowners should use tools such as https://bundlephobia.com/
-/libraries/*/package.json @benbrown @stevengum @stevenic
+/libraries/adaptive-expressions/package.json                            @microsoft/bb-js
+/libraries/bot*/package.json                                            @microsoft/bb-js
+
+# TypeScript Compiler config
+/**/*tsconfig.json                                                      @microsoft/bb-js
+
+# Critical monorepo files
+lerna.json                                                              @stevengum
+package.json                                                            @stevengum
+
+# CODEOWNERS
+/.github/CODEOWNERS                                                     @stevengum @cleemullins @mrivera-ms
+
+# .schema files
+/**/*.schema                                                            @chrimc62 @tomlm

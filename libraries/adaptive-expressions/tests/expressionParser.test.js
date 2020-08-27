@@ -1,15 +1,23 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
 /* eslint-disable @typescript-eslint/no-var-requires */
-const {Expression, SimpleObjectMemory, ExpressionFunctions, Options} = require('../lib');
+const {Expression, SimpleObjectMemory, FunctionUtils, Options } = require('../lib');
 var {TimexProperty} = require('@microsoft/recognizers-text-data-types-timex-expression');
 const assert = require('assert');
 const moment = require('moment');
-const bigInt = require('big-integer')
+const bigInt = require('big-integer');
+const { useFakeTimers } = require('sinon');
 
 const one = ['one'];
 const oneTwo = ['one', 'two'];
 const dataSource = [
 
+    // Time sensitive test
+    ['getPastTime(1, \'Year\', \'MM-dd-yy\')', moment(new Date().toISOString()).utc().subtract(1, 'years').format('MM-DD-YY')],
+    ['getPastTime(1, \'Month\', \'MM-dd-yy\')', moment(new Date().toISOString()).utc().subtract(1, 'months').format('MM-DD-YY')],
+    ['getPastTime(1, \'Week\', \'MM-dd-yy\')', moment(new Date().toISOString()).utc().subtract(7, 'days').format('MM-DD-YY')],
+    ['getPastTime(1, \'Day\', \'MM-dd-yy\')', moment(new Date().toISOString()).utc().subtract(1, 'days').format('MM-DD-YY')],
+    ['getFutureTime(1, \'Year\', \'MM-dd-yy\')', moment(new Date().toISOString()).utc().add(1, 'years').format('MM-DD-YY')],
+    
     // accessProperty and accessIndex
     ['$index', 'index'],
     ['`hi\\``', 'hi`'], // `hi\`` -> hi`
@@ -389,7 +397,7 @@ const dataSource = [
 
     // TODO: This should actually be the below, but toLocaleString does not work.
     // ['formatNumber(12000.3, 4, "fr-FR")', '12\u00a0000,3000'],
-    ['formatNumber(12000.3, 4, "fr-FR")', '12,000.3000'],
+    //['formatNumber(12000.3, 4, "fr-FR")', '12,000.3000'],
 
     // Math functions tests
     ['add(1, 2, 3)', 6],
@@ -419,6 +427,13 @@ const dataSource = [
     ['mod(5,2)', 1],
     ['rand(1, 2)', 1],
     ['rand(2, 3)', 2],
+    ['floor(3.51)', 3],
+    ['floor(4.00)', 4],
+    ['ceiling(3.51)', 4],
+    ['ceiling(4.00)', 4],
+    ['round(3.51)', 4],
+    ['round(3.55, 1)', 3.6],
+    ['round(3.12134, 3)', 3.121],
 
     // Date and time function tests
     // All the timestamp strings passed in must be in ISO format of YYYY-MM-DDTHH:mm:ss.sssZ
@@ -457,7 +472,6 @@ const dataSource = [
     ['date(timestamp)', '3/15/2018'],//Default. TODO
     ['year(timestamp)', 2018],
     ['length(utcNow())', 24],
-    ['utcNow(\'MM-DD-YY HH\')', moment(new Date().toISOString()).utc().format('MM-DD-YY HH')],
     ['formatDateTime(notISOTimestamp)', '2018-03-15T13:00:00.000Z'],
     ['formatDateTime(notISOTimestamp, \'MM-dd-yy\')', '03-15-18'],
     ['formatDateTime(notISOTimestamp, \'ddd\')', 'Thu'],
@@ -500,15 +514,7 @@ const dataSource = [
     ['getTimeOfDay(\'2018-03-15T22:00:00.000Z\')', 'evening'],
     ['getTimeOfDay(\'2018-03-15T23:00:00.000Z\')', 'night'],
     ['length(getPastTime(1, \'Year\'))', 24],
-    ['getPastTime(1, \'Year\', \'MM-dd-yy\')', moment(new Date().toISOString()).utc().subtract(1, 'years').format('MM-DD-YY')],
-    ['getPastTime(1, \'Month\', \'MM-dd-yy\')', moment(new Date().toISOString()).utc().subtract(1, 'months').format('MM-DD-YY')],
-    ['getPastTime(1, \'Week\', \'MM-dd-yy\')', moment(new Date().toISOString()).utc().subtract(7, 'days').format('MM-DD-YY')],
-    ['getPastTime(1, \'Day\', \'MM-dd-yy\')', moment(new Date().toISOString()).utc().subtract(1, 'days').format('MM-DD-YY')],
-    ['getFutureTime(1, \'Year\', \'MM-dd-yy\')', moment(new Date().toISOString()).utc().add(1, 'years').format('MM-DD-YY')],
     ['length(getFutureTime(1, \'Year\'))', 24],
-    ['getFutureTime(1, \'Month\', \'MM-dd-yy\')', moment(new Date().toISOString()).utc().add(1, 'months').format('MM-DD-YY')],
-    ['getFutureTime(1, \'Week\', \'MM-dd-yy\')', moment(new Date().toISOString()).utc().add(7, 'days').format('MM-DD-YY')],
-    ['getFutureTime(1, \'Day\', \'MM-dd-yy\')', moment(new Date().toISOString()).utc().add(1, 'days').format('MM-DD-YY')],
     ['addToTime(\'2018-01-01T08:00:00.000Z\', 1, \'Day\')', '2018-01-02T08:00:00.000Z'],
     ['addToTime(\'2018-01-01T08:00:00.000Z\', sub(3,1), \'Week\')', '2018-01-15T08:00:00.000Z'],
     ['addToTime(\'2018-01-01T08:00:00.000Z\', 1, \'Month\', \'MM-DD-YY\')', '02-01-18'],
@@ -520,6 +526,27 @@ const dataSource = [
     ['startOfHour(\'2018-03-15T13:30:30.000Z\')', '2018-03-15T13:00:00.000Z'],
     ['startOfMonth(\'2018-03-15T13:30:30.000Z\')', '2018-03-01T00:00:00.000Z'],
     ['ticks(\'2018-01-01T08:00:00.000Z\')', bigInt('636503904000000000')],
+    ['dateTimeDiff("2019-01-01T08:00:00.000Z","2018-01-01T08:00:00.000Z")', 315360000000000],
+    ['dateTimeDiff("2017-01-01T08:00:00.000Z","2018-01-01T08:00:00.000Z")', -315360000000000],
+    ['ticksToDays(2193385800000000)', 2538.6409722222224],
+    ['ticksToHours(2193385800000000)', 60927.383333333331],
+    ['ticksToMinutes(2193385811100000)', 3655643.0185],
+    ['isMatch(getPreviousViableDate(\'XXXX-07-10\'), \'20[0-9]{2}-07-10\')', true],
+    ['isMatch(getPreviousViableDate(\'XXXX-07-10\', \'Asia/Shanghai\'), \'20[0-9]{2}-07-10\')', true],
+    ['getPreviousViableDate(\'XXXX-02-29\')', '2020-02-29'],
+    ['getPreviousViableDate(\'XXXX-02-29\', \'Pacific Standard Time\')', '2020-02-29'],
+    ['isMatch(getNextViableDate(\'XXXX-07-10\'), \'202[0-9]-07-10\')', true],
+    ['isMatch(getNextViableDate(\'XXXX-07-10\', \'Europe/London\'), \'202[0-9]-07-10\')', true],
+    ['getNextViableDate(\'XXXX-02-29\')', '2024-02-29'],
+    ['getNextViableDate(\'XXXX-02-29\', \'America/Los_Angeles\')', '2024-02-29'],
+    ['isMatch(getNextViableTime(\'TXX:40:20\'), \'T[0-2][0-9]:40:20\')', true],
+    ['isMatch(getNextViableTime(\'TXX:40:20\', \'Asia/Tokyo\'), \'T[0-2][0-9]:40:20\')', true],
+    ['isMatch(getNextViableTime(\'TXX:05:10\'), \'T[0-2][0-9]:05:10\')', true],
+    ['isMatch(getNextViableTime(\'TXX:05:10\', \'Europe/Paris\'), \'T[0-2][0-9]:05:10\')', true],
+    ['isMatch(getPreviousViableTime(\'TXX:40:20\'), \'T[0-2][0-9]:40:20\')', true],
+    ['isMatch(getPreviousViableTime(\'TXX:40:20\', \'Eastern Standard Time\'), \'T[0-2][0-9]:40:20\')', true],
+    ['isMatch(getPreviousViableTime(\'TXX:05:10\'), \'T[0-2][0-9]:05:10\')', true],
+    ['isMatch(getPreviousViableTime(\'TXX:05:10\', \'Central Standard Time\'), \'T[0-2][0-9]:05:10\')', true],
 
     //URI parsing functions tests
     ['uriHost(\'https://www.localhost.com:8080\')', 'www.localhost.com'],
@@ -541,6 +568,9 @@ const dataSource = [
     ['contains(items, \'hi\')', false],
     ['contains(bag, \'three\')', true],
     ['contains(bag, \'xxx\')', false],
+    ['concat(null, [1, 2], null)', [1, 2]],
+    ['concat(createArray(1, 2), createArray(3, 4))', [1, 2, 3, 4]],
+    ['concat([\'a\', \'b\'], [\'b\', \'c\'], [\'c\', \'d\'])', ['a', 'b', 'b', 'c', 'c', 'd']],
     ['count(split(hello,\'e\'))', 2],
     ['count(createArray(\'h\', \'e\', \'l\', \'l\', \'o\'))', 5],
     ['empty(\'\')', true],
@@ -563,14 +593,19 @@ const dataSource = [
     ['join(foreach(doubleNestedItems, items, join(foreach(items, item, item.x), ",")), ",")', '1,2,3'],
     ['join(foreach(doubleNestedItems, items, join(foreach(items, item, concat(y, string(item.x))), ",")), ",")', 'y1,y2,y3'],
     ['join(foreach(dialog, item, item.key), ",")', 'instance,options,title,subTitle'],
+    ['join(foreach(dialog, item => item.key), ",")', 'instance,options,title,subTitle'],
     ['foreach(dialog, item, item.value)[1].xxx', 'options'],
+    ['foreach(dialog, item=>item.value)[1].xxx', 'options'],
     ['join(foreach(indicesAndValues(items), item, item.value), ",")', 'zero,one,two'],
+    ['join(foreach(indicesAndValues(items), item=>item.value), ",")', 'zero,one,two'],
     ['count(where(doubleNestedItems, items, count(where(items, item, item.x == 1)) == 1))', 1],
     ['count(where(doubleNestedItems, items, count(where(items, item, count(items) == 1)) == 1))', 1],
     ['join(select(items, item, item), \',\')', 'zero,one,two'],
+    ['join(select(items, item=>item), \',\')', 'zero,one,two'],
     ['join(select(nestedItems, i, i.x + first(nestedItems).x), \',\')', '2,3,4', ['nestedItems']],
     ['join(select(items, item, concat(item, string(count(items)))), \',\')', 'zero3,one3,two3', ['items']],
     ['join(where(items, item, item == \'two\'), \',\')', 'two'],
+    ['join(where(items, item => item == \'two\'), \',\')', 'two'],
     ['join(foreach(where(nestedItems, item, item.x > 1), result, result.x), \',\')', '2,3', ['nestedItems']],
     ['string(where(dialog, item, item.value=="Dialog Title"))', '{\"title\":\"Dialog Title\"}'],
     ['last(items)', 'two'],
@@ -602,6 +637,7 @@ const dataSource = [
     ['{name: user.nickname}.name', 'John'],
     ['string(addProperty(json(\'{"key1":"value1"}\'), \'key2\',\'value2\'))', '{"key1":"value1","key2":"value2"}'],
     ['foreach(items, x, addProperty({}, "a", x))[0].a', 'zero'],
+    ['foreach(items, x => addProperty({}, "a", x))[0].a', 'zero'],
     ['string(addProperty({"key1":"value1"}, \'key2\',\'value2\'))', '{"key1":"value1","key2":"value2"}'],
     ['string(setProperty(json(\'{"key1":"value1"}\'), \'key1\',\'value2\'))', '{"key1":"value2"}'],
     ['string(setProperty({"key1":"value1"}, \'key1\',\'value2\'))', '{"key1":"value2"}'],
@@ -615,9 +651,14 @@ const dataSource = [
     ['coalesce(nullObj, false, \'hello\')', false],
     ['jPath(jsonStr, pathStr )', ['Jazz', 'Accord']],
     ['jPath(jsonStr, \'.automobiles[0].maker\' )', ['Nissan']],
+    ['string(merge(json1, json2))', '{"FirstName":"John","LastName":"Smith","Enabled":true,"Roles":["Customer","Admin"]}'],
+    ['string(merge(json1, json2, json3))', '{"FirstName":"John","LastName":"Smith","Enabled":true,"Roles":["Customer","Admin"],"age":36}'],
 
     // Memory access tests
     ['getProperty(bag, concat(\'na\',\'me\'))', 'mybag'],
+    ['getProperty(\'bag\').index', 3],
+    ['getProperty(\'a:b\')', 'stringa:b'],
+    ['getProperty(concat(\'he\', \'llo\'))', 'hello'],
     ['items[2]', 'two', ['items[2]']],
     ['bag.list[bag.index - 2]', 'blue', ['bag.list', 'bag.index']],
     ['items[nestedItems[1].x]', 'two', ['items', 'nestedItems[1].x']],
@@ -686,6 +727,7 @@ const dataSource = [
 
 const scope = {
     '$index': 'index',
+    'a:b' : 'stringa:b',
     alist: [
         {
             Name: 'item1'
@@ -743,6 +785,17 @@ const scope = {
     unixTimestamp: 1521118800,
     unixTimestampFraction: 1521118800.5,
     ticks: bigInt('637243624200000000'),
+    json1: {
+        'FirstName': 'John',
+        'LastName': 'Smith',
+        'Enabled': false,
+        'Roles': [ 'User' ]
+    },
+    json2: {
+        'Enabled': true,
+        'Roles': [ 'Customer', 'Admin' ]
+    },
+    json3: {'age': 36},
     user:
     {
         income: 110.0,
@@ -798,29 +851,88 @@ const scope = {
 
 describe('expression parser functional test', () => {
     it('should get right evaluate result', () => {
+        const inputs = [];
+
         for (const data of dataSource) {
             const input = data[0].toString();
-            console.log(input);
+            inputs.push(input);
+
             var parsed = Expression.parse(input);
             assert(parsed !== undefined);
             var {value: actual, error} = parsed.tryEvaluate(scope);
-            assert(error === undefined, `input: ${input}, Has error: ${error}`);
+            assert(error === undefined, `input: ${input}, Has error: ${error}, with expression ${ input }`);
 
-            const expected = data[1];
-            assertObjectEquals(actual, expected);
+            let expected = data[1];
+
+            assertObjectEquals(actual, expected, input);
 
             //Assert ExpectedRefs
             if (data.length === 3) {
                 const actualRefs = parsed.references();
-                assertObjectEquals(actualRefs.sort(), data[2].sort());
+                assertObjectEquals(actualRefs.sort(), data[2].sort(), input);
             }
 
             //ToString re-parse
             const newExpr = Expression.parse(parsed.toString());
             const newActual = newExpr.tryEvaluate(scope).value;
-            assertObjectEquals(actual, newActual);
+            assertObjectEquals(actual, newActual, input);
         }
+
+        console.log(inputs.join('\n'));
     }).timeout(5000);
+
+    // Any test getting the system time with something like `new Date()` is prone to failure because
+    // actual and expected may differ just enough make the test fail.
+    // To evaluate expressions like "getPastTime", we need to freeze the system clock so that every call to
+    // `new Date()` done by both the test and by ExpressionEvaluator return the exact same time.
+    it('should appropriately evaluate time-related expressions', () => {
+        // Freeze the system clock.
+        // The expected date in MM-DD-YY HH is 01-01-20 00
+        let clock = useFakeTimers({
+            now: new Date(Date.UTC(2020, 0, 1)),
+            shouldAdvanceTime: false,
+        });
+
+        const timeDataSource = [
+            ['utcNow(\'MM-DD-YY HH\')', '01-01-20 00'],
+            ['getPastTime(1, \'Year\', \'MM-dd-yy\')', '01-01-19'],
+            ['getPastTime(1, \'Month\', \'MM-dd-yy\')', '12-01-19'],
+            ['getPastTime(1, \'Week\', \'MM-dd-yy\')', '12-25-19'],
+            ['getPastTime(1, \'Day\', \'MM-dd-yy\')', '12-31-19'],
+            ['getFutureTime(1, \'Year\', \'MM-dd-yy\')', '01-01-21'],
+            ['getFutureTime(1, \'Month\', \'MM-dd-yy\')', '02-01-20'],
+            ['getFutureTime(1, \'Week\', \'MM-dd-yy\')', '01-08-20'],
+            ['getFutureTime(1, \'Day\', \'MM-dd-yy\')', '01-02-20']
+        ];
+        try {
+            for (const data of timeDataSource) {
+                const input = data[0].toString();
+                console.log(input);
+                var parsed = Expression.parse(input);
+                assert(parsed !== undefined);
+                var {value: actual, error} = parsed.tryEvaluate(scope);
+                assert(error === undefined, `input: ${input}, Has error: ${error}, with expression ${ input }`);
+    
+                let expected = data[1];
+    
+                assertObjectEquals(actual, expected, input);
+    
+                //Assert ExpectedRefs
+                if (data.length === 3) {
+                    const actualRefs = parsed.references();
+                    assertObjectEquals(actualRefs.sort(), data[2].sort(), input);
+                }
+    
+                //ToString re-parse
+                const newExpr = Expression.parse(parsed.toString());
+                const newActual = newExpr.tryEvaluate(scope).value;
+                assertObjectEquals(actual, newActual, input);
+            }
+        } finally {
+            // Un-freeze the system clock
+            clock.restore();
+        }
+    });
 
     it('Test AccumulatePath', () => {
         const scope = {
@@ -836,22 +948,22 @@ describe('expression parser functional test', () => {
         // normal case, note, we doesn't append a " yet
         let exp = Expression.parse('a[f].b[n].z');
         let path = undefined;
-        ({path, left, error} = ExpressionFunctions.tryAccumulatePath(exp, memory, undefined));
+        ({path, left, error} = FunctionUtils.tryAccumulatePath(exp, memory, undefined));
         assert.strictEqual(path, 'a[\'foo\'].b[2].z');
 
         // normal case
         exp = Expression.parse('a[z.z][z.z].y');
-        ({path, left, error} = ExpressionFunctions.tryAccumulatePath(exp, memory, undefined));
+        ({path, left, error} = FunctionUtils.tryAccumulatePath(exp, memory, undefined));
         assert.strictEqual(path, 'a[\'zar\'][\'zar\'].y');
 
         // normal case
         exp = Expression.parse('a.b[z.z]');
-        ({path, left, error} = ExpressionFunctions.tryAccumulatePath(exp, memory, undefined));
+        ({path, left, error} = FunctionUtils.tryAccumulatePath(exp, memory, undefined));
         assert.strictEqual(path, 'a.b[\'zar\']');
 
         // stop evaluate at middle
         exp = Expression.parse('json(x).b');
-        ({path, left, error} = ExpressionFunctions.tryAccumulatePath(exp, memory, undefined));
+        ({path, left, error} = FunctionUtils.tryAccumulatePath(exp, memory, undefined));
         assert.strictEqual(path, 'b');
 
     });
@@ -911,27 +1023,27 @@ describe('expression parser functional test', () => {
     });
 });
 
-var assertObjectEquals = (actual, expected) => {
+var assertObjectEquals = (actual, expected, input) => {
+    const debugMessage = `actual is: ${ actual }, expected is ${ expected }, with expression ${ input }`;
     if (actual === undefined && expected === undefined) {
         return;
     } else if (actual === undefined || expected === undefined) {
-        assert.fail();
+        assert.fail(`actual or expected was undefined. ${ debugMessage }`);
     } else if (typeof actual === 'number' && typeof expected === 'number') {
-        assert.equal(parseFloat(actual), parseFloat(expected), `actual is: ${actual}, expected is ${expected}`);
+        assert.equal(parseFloat(actual), parseFloat(expected), `Numbers don't match. ${ debugMessage }`);
     } else if (Array.isArray(actual) && Array.isArray(expected)) {
         assert.equal(actual.length, expected.length);
         for (let i = 0; i < actual.length; i++) {
-            assertObjectEquals(actual[i], expected[i], `actual is: ${actual[i]}, expected is ${expected[i]}`);
+            assertObjectEquals(actual[i], expected[i], `Array doesn't match. ${ debugMessage }`);
         }
     } else if (actual instanceof Uint8Array && expected instanceof Uint8Array) {
         assert.equal(actual.length, expected.length);
         for (let i = 0; i < actual.length; i++) {
-            assertObjectEquals(actual[i], expected[i], `actual is: ${actual[i]}, expected is ${expected[i]}`);
+            assertObjectEquals(actual[i], expected[i], `Uint8Array doesn't match. ${ debugMessage }`);
         }
     } else if (bigInt.isInstance(actual) && bigInt.isInstance(expected)) {
-        assert(actual.equals(expected), `actual is: ${actual}, expected is ${expected}`);
-    }
-    else {
-        assert.equal(actual, expected, `actual is: ${actual}, expected is ${expected}`);
+        assert(actual.equals(expected), `bigInt is not equal. ${ debugMessage }`);
+    } else {
+        assert.equal(actual, expected, `Acutal and expected don't match. ${ debugMessage }`);
     }
 };

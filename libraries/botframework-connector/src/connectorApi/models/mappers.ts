@@ -285,6 +285,12 @@ export const CardAction: msRest.CompositeMapper = {
         type: {
           name: "Object"
         }
+      },
+      imageAltText: {
+        serializedName: "imageAltText",
+        type: {
+          name: "String"
+        }
       }
     }
   }
@@ -700,7 +706,12 @@ export const Activity: msRest.CompositeMapper = {
           element: {
             type: {
               name: "Composite",
-              className: "Entity"
+              className: "Entity",
+              additionalProperties: {
+                type: {
+                  name: "Object"
+                }
+              }
             }
           }
         }

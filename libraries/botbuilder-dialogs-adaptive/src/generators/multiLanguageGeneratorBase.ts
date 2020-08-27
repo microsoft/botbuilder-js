@@ -6,35 +6,65 @@
  * Licensed under the MIT License.
  */
 
+import { DialogContext } from 'botbuilder-dialogs';
 import { LanguageGenerator } from '../languageGenerator';
-import { TurnContext } from 'botbuilder-core';
-import {LanguagePolicy} from '../languagePolicy';
+import { LanguagePolicy } from '../languagePolicy';
+import { languagePolicyKey } from '../languageGeneratorExtensions';
 /**
- * Class which manages cache of all LG resources from a ResourceExplorer. 
- * This class automatically updates the cache when resource change events occure.
+ * Base class which applies language policy to tryGetGenerator.
  */
-export abstract class MultiLanguageGeneratorBase implements LanguageGenerator{
-    public languagePolicy = LanguagePolicy.defaultPolicy;
+export abstract class MultiLanguageGeneratorBase implements LanguageGenerator {
+    /**
+     * Language policy required by language generator.
+     */
+    public languagePolicy: LanguagePolicy;
 
-    public abstract tryGetGenerator(context: TurnContext, locale: string): {exist: boolean; result: LanguageGenerator};
+    /**
+     * Abstract method to get a language generator by locale.
+     * @param dialogContext DialogContext.
+     * @param locale Locale to lookup.
+     */
+    public abstract tryGetGenerator(dialogContext: DialogContext, locale: string): { exist: boolean; result: LanguageGenerator };
 
-    public constructor() {};
-    
-    public async generate(turnContext: TurnContext, template: string, data: object): Promise<string> {
-        const targetLocale = turnContext.activity.locale? turnContext.activity.locale.toLocaleLowerCase() : '';
-        let locales: string[] = [''];
-        if (this.languagePolicy[targetLocale] === undefined) {
-            if (this.languagePolicy[''] === undefined) {
-                throw Error(`No supported language found for ${ targetLocale }`);
+    /**
+     * Find a language generator that matches the current context locale.
+     * @param dialogContext Context for the current turn of conversation.
+     * @param template Template to use.
+     * @param data Data to bind to.
+     */
+    public async generate(dialogContext: DialogContext, template: string, data: object): Promise<string> {
+        const targetLocale = dialogContext.context.activity.locale ? dialogContext.context.activity.locale.toLocaleLowerCase() : '';
+
+        // priority
+        // 1. local policy
+        // 2. shared policy in turnContext
+        // 3. default policy
+        if (!this.languagePolicy) {
+            this.languagePolicy = dialogContext.services.get(languagePolicyKey);
+            if (!this.languagePolicy) {
+                this.languagePolicy = new LanguagePolicy();
             }
-        } else {
-            locales = this.languagePolicy[targetLocale];
         }
-        
+
+        // see if we have any locales that match
+        let fallbackLocales = [];
+        if (this.languagePolicy.has(targetLocale)) {
+            this.languagePolicy.get(targetLocale).forEach((u: string): number => fallbackLocales.push(u));
+        }
+
+        // append empty as fallback to end
+        if (targetLocale !== '' && this.languagePolicy.has('')) {
+            this.languagePolicy.get('').forEach((u: string): number => fallbackLocales.push(u));
+        }
+
+        if (fallbackLocales.length === 0) {
+            throw Error(`No supported language found for ${ targetLocale }`);
+        }
+
         const generators: LanguageGenerator[] = [];
-        for (const locale of locales) {
-            if (this.tryGetGenerator(turnContext, locale).exist) {
-                generators.push(this.tryGetGenerator(turnContext, locale).result); 
+        for (const locale of fallbackLocales) {
+            if (this.tryGetGenerator(dialogContext, locale).exist) {
+                generators.push(this.tryGetGenerator(dialogContext, locale).result);
             }
         }
 
@@ -44,9 +74,9 @@ export abstract class MultiLanguageGeneratorBase implements LanguageGenerator{
 
         const errors: string[] = [];
         for (const generator of generators) {
-            try{
-                return generator.generate(turnContext, template, data);
-            } catch(e) {
+            try {
+                return generator.generate(dialogContext, template, data);
+            } catch (e) {
                 errors.push(e);
             }
         }

@@ -2,7 +2,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { Activity, TurnContext } from 'botbuilder-core';
+import { Activity, TurnContext, TurnContextStateCollection } from 'botbuilder-core';
 import { Choice } from './choices';
 import { Dialog, DialogInstance, DialogReason, DialogTurnResult, DialogTurnStatus, DialogEvent } from './dialog';
 import { DialogSet } from './dialogSet';
@@ -55,6 +55,36 @@ export interface DialogState {
  */
 export class DialogContext {
     /**
+      * Creates an new instance of the [DialogContext](xref:botbuilder-dialogs.DialogContext) class.
+      * 
+      * @remarks
+      * Passing in a dialog context instance will clone the dialog context.
+      * @param dialogs The dialog set for which to create the dialog context.
+      * @param contextOrDC The context object for the current turn of the bot.
+      * @param state The state object to use to read and write dialog state to storage.
+      */
+    public constructor(dialogs: DialogSet, contextOrDC: TurnContext, state: DialogState);
+    public constructor(dialogs: DialogSet, contextOrDC: DialogContext, state: DialogState);
+    public constructor(dialogs: DialogSet, contextOrDC: TurnContext | DialogContext, state: DialogState) {
+        this.dialogs = dialogs;
+        if (contextOrDC instanceof DialogContext) {
+            this.context = contextOrDC.context;
+            this.parent = contextOrDC;
+            if (this.parent.services) {
+                this.parent.services.forEach((value, key): void => {
+                    this.services.set(key, value);
+                });
+            }
+        } else {
+            this.context = contextOrDC;
+        }
+        if (!Array.isArray(state.dialogStack)) { state.dialogStack = []; }
+        this.stack = state.dialogStack;
+        this.state = new DialogStateManager(this);
+        this.state.setValue(TurnPath.activity, this.context.activity);
+    }
+
+    /**
      * Gets the dialogs that can be called directly from this context.
      */
     public dialogs: DialogSet;
@@ -69,8 +99,6 @@ export class DialogContext {
      */
     public stack: DialogInstance[];
 
-    public state: DialogStateManager;
-
     /**
      * The parent dialog context for this dialog context, or `undefined` if this context doesn't have a parent.
      * 
@@ -80,49 +108,6 @@ export class DialogContext {
      * in this dialog context, it searches in its parent dialog context, and so on.
      */
     public parent: DialogContext | undefined;
-
-    /**
-      * Creates an new instance of the [DialogContext](xref:botbuilder-dialogs.DialogContext) class.
-      * 
-      * @remarks
-      * Passing in a dialog context instance will clone the dialog context.
-      * @param dialogs The dialog set for which to create the dialog context.
-      * @param context The context object for the current turn of the bot.
-      * @param state The state object to use to read and write dialog state to storage.
-      * @param dialogContext The dialog context to clone.
-      */
-    public constructor(dialogContext: DialogContext);
-    public constructor(dialogs: DialogSet, contextOrDC: TurnContext, state: DialogState);
-    public constructor(dialogs: DialogSet, contextOrDC: DialogContext, state: DialogState);
-    public constructor(dialogsOrDC: DialogSet | DialogContext, contextOrDC?: TurnContext | DialogContext, state?: DialogState) {
-        if (dialogsOrDC instanceof DialogContext) {
-            this.dialogs = dialogsOrDC.dialogs;
-            this.context = dialogsOrDC.context;
-            this.stack = dialogsOrDC.stack;
-            this.state = dialogsOrDC.state;
-            this.parent = dialogsOrDC.parent;
-        } else {
-            if (!Array.isArray(state.dialogStack)) { state.dialogStack = []; }
-            if (contextOrDC instanceof DialogContext) {
-                this.context = contextOrDC.context;
-                this.parent = contextOrDC;
-            } else {
-                this.context = contextOrDC;
-            }
-            this.dialogs = dialogsOrDC;
-            this.stack = state.dialogStack;
-            this.state = new DialogStateManager(this);
-            this.state.setValue(TurnPath.activity, this.context.activity);
-        }
-    }
-
-    /**
-     * Returns the state information for the dialog on the top of the dialog stack, or `undefined` if
-     * the stack is empty.
-     */
-    public get activeDialog(): DialogInstance | undefined {
-        return this.stack.length > 0 ? this.stack[this.stack.length - 1] : undefined;
-    }
 
     /**
      * Returns dialog context for child if the active dialog is a container.
@@ -139,6 +124,24 @@ export class DialogContext {
 
         return undefined;
     }
+
+    /**
+     * Returns the state information for the dialog on the top of the dialog stack, or `undefined` if
+     * the stack is empty.
+     */
+    public get activeDialog(): DialogInstance | undefined {
+        return this.stack.length > 0 ? this.stack[this.stack.length - 1] : undefined;
+    }
+
+    /**
+     * Gets the DialogStateManager which manages view of all memory scopes.
+     */
+    public state: DialogStateManager;
+
+    /**
+     * Gets the services collection which is contextual to this dialog context.
+     */
+    public services: TurnContextStateCollection = new TurnContextStateCollection();
 
     /**
      * Returns the current dialog manager instance.
@@ -460,7 +463,7 @@ export class DialogContext {
                 // Lookup dialog
                 const dialog: Dialog<{}> = this.findDialog(instance.id);
                 if (!dialog) {
-                    throw new Error(`DialogSet.reprompt(): Can't find A dialog with an id of '${ instance.id }'.`);
+                    throw new Error(`DialogContext.repromptDialog(): Can't find a dialog with an id of '${ instance.id }'.`);
                 }
 
                 // Ask dialog to re-prompt if supported

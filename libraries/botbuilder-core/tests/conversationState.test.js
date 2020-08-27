@@ -4,16 +4,15 @@ const { TurnContext, ActivityTypes, ConversationState, MemoryStorage, TestAdapte
 const receivedMessage = { text: 'received', type: 'message', channelId: 'test', conversation: { id: 'convo' } };
 const missingChannelId = { text: 'received', type: 'message', conversation: { id: 'convo' } };
 const missingConversation = { text: 'received', type: 'message', channelId: 'test' };
-const endOfConversation = { type: 'endOfConversation', channelId: 'test', conversation: { id: 'convo' } };
 
-describe(`ConversationState`, function () {
+describe(`ConversationState`, function() {
     this.timeout(5000);
 
     const storage = new MemoryStorage();
     const adapter = new TestAdapter();
     const context = new TurnContext(adapter, receivedMessage);
     const conversationState = new ConversationState(storage);
-    it(`should load and save state from storage.`, async function () {
+    it(`should load and save state from storage.`, async function() {
         let key;
 
         // Simulate a "Turn" in a conversation by loading the state,
@@ -32,7 +31,7 @@ describe(`ConversationState`, function () {
         assert(items[key].test === 'foo', `Missing test value in stored state.`);
     });
 
-    it(`should ignore any activities that aren't "endOfConversation".`, async function () {
+    it(`should ignore any activities that aren't "endOfConversation".`, async function() {
         let key;
         await conversationState.load(context);
         key = conversationState.getStorageKey(context);
@@ -43,29 +42,29 @@ describe(`ConversationState`, function () {
         assert(items[key].hasOwnProperty('test'), `state cleared and shouldn't have been.`);
     });
 
-    it(`should reject with error if channelId missing.`, async function () {
+    it(`should reject with error if channelId missing.`, async function() {
         const ctx = new TurnContext(adapter, missingChannelId);
         try {
             await conversationState.load(ctx);
             assert(false, `shouldn't have completed.`);
         } catch (err) {
             assert(err, `error object missing.`);
-            assert.equal(err.message, "missing activity.channelId");
+            assert.equal(err.message, 'missing activity.channelId');
         }
     });
 
-    it(`should reject with error if conversation missing.`, async function () {
+    it(`should reject with error if conversation missing.`, async function() {
         const ctx = new TurnContext(adapter, missingConversation);
         try {
             await conversationState.load(ctx);
             assert(false, `shouldn't have completed.`);
         } catch (err) {
             assert(err, `error object missing.`);
-            assert.equal(err.message, "missing activity.conversation.id");
+            assert.equal(err.message, 'missing activity.conversation.id');
         }
     });
 
-    it(`should throw install exception if get() called without a cached entry.`, function (done) {
+    it(`should throw install exception if get() called without a cached entry.`, function(done) {
         context.turnState.set('conversationState', undefined);
         try {
             conversationState.get(context);
@@ -75,13 +74,13 @@ describe(`ConversationState`, function () {
         }
     });
 
-    it(`should throw NO_KEY error if getStorageKey() returns falsey value.`, async function () {
+    it(`should throw NO_KEY error if getStorageKey() returns falsey value.`, async function() {
         conversationState.getStorageKey = turnContext => undefined;
         try {
             await conversationState.load(context, true);
         } catch (err) {
             assert(err.message === 'ConversationState: overridden getStorageKey method did not return a key.',
-                `unexpected Error.message received: ${err.message}`);
+                `unexpected Error.message received: ${ err.message }`);
             return;
         }
         assert(false, `should have thrown an error.`);

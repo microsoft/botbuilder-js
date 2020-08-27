@@ -138,7 +138,7 @@ describe('Bot Framework Connector SDK', function() {
                 var params = createConversation();
                 params.bot = { id: 'invalid-id' };
         
-                client.conversations.createConversation(params).then((result) => {
+                client.conversations.createConversation(params).then(() => {
                     assert.fail();
                 }, (error) => {
                     assert(!!error.code);
@@ -149,7 +149,7 @@ describe('Bot Framework Connector SDK', function() {
                 var params = createConversation();
                 params.members = [];
 				
-                client.conversations.createConversation(params).then((result) => {
+                client.conversations.createConversation(params).then(() => {
                     assert.fail();
                 }, (error) => {
                     assert(!!error.code);
@@ -160,7 +160,7 @@ describe('Bot Framework Connector SDK', function() {
                 var params = createConversation();
                 params.members = [ bot ];
 				
-                client.conversations.createConversation(params).then((result) => {
+                client.conversations.createConversation(params).then(() => {
                     assert.fail();
                 }, (error) => {
                     assert(!!error.code);
@@ -185,7 +185,7 @@ describe('Bot Framework Connector SDK', function() {
 				
                 client.conversations.createConversation(params)
                     .then((result) => client.conversations.getConversationMembers(result.id.concat('M')))
-                    .then((result) => {
+                    .then(() => {
                         assert.fail();
                     }, (error) => {
                         assert(!!error.code);
@@ -240,7 +240,7 @@ describe('Bot Framework Connector SDK', function() {
 				
                 client.conversations.createConversation(params)
                     .then((result) => client.conversations.sendToConversation(result.id.concat('M'), createActivity()))
-                    .then((result) => {
+                    .then(() => {
                         assert.fail();
                     }, (error) => {
                         assert(!!error.code);
@@ -291,7 +291,7 @@ describe('Bot Framework Connector SDK', function() {
 				
                 client.conversations.createConversation(params)
                     .then((result) => client.conversations.getActivityMembers(result.id.concat('M'), result.activityId))
-                    .then((result) => {
+                    .then(() => {
                         assert.fail();
                     }, (error) => {
                         assert(!!error.code);
@@ -324,7 +324,7 @@ describe('Bot Framework Connector SDK', function() {
                 client.conversations.createConversation(createConversation())
                     .then((result) => client.conversations.sendToConversation(result.id, createActivity()))
                     .then((result) => client.conversations.replyToActivity('invalid-id', result.id, createActivity()))
-                    .then((result) => {
+                    .then(() => {
                         assert.fail();
                     }, (error) => {
                         assert(!!error.code);
@@ -341,13 +341,13 @@ describe('Bot Framework Connector SDK', function() {
                 conversation.activity = createActivity();
                 client.conversations.createConversation(conversation)
                     .then((result) => client.conversations.deleteActivity(result.id, result.activityId))
-                    .then(ok => done(), done);
+                    .then(() => done(), done);
             });
             it('should fail with invalid conversationId', function(done) {
                 client.conversations.createConversation(createConversation())
                     .then((result) => client.conversations.sendToConversation(result.id, createActivity()))
                     .then((result) => client.conversations.deleteActivity('invalid-id', result.id))
-                    .then((result) => {
+                    .then(() => {
                         assert.fail();
                     }, (error) => {
                         assert(!!error.code);
@@ -382,7 +382,7 @@ describe('Bot Framework Connector SDK', function() {
                 client.conversations.createConversation(createConversation())
                     .then((result) => client.conversations.sendToConversation(result.id, createActivity()))
                     .then((result) => client.conversations.updateActivity('invalid-id', result.id, createActivity()))
-                    .then((result) => {
+                    .then(() => {
                         assert.fail();
                     }, (error) => {
                         assert(!!error.code);
@@ -457,7 +457,7 @@ describe('Bot Framework Connector SDK', function() {
             });
             it('should throw on null credentials', function(done) {
                 try {
-                    var client = new TokenApiClient(null, {
+                    new TokenApiClient(null, {
                         baseUri: 'http://localhost'
                     });
                     assert.fail();
@@ -492,7 +492,7 @@ describe('Bot Framework Connector SDK', function() {
             describe('getToken', function() {
                 it('should throw on null userId', function(done) {
                     tokenApiClient.userToken.getToken(null, 'mockConnection')
-                        .then((result) => {
+                        .then(() => {
                             assert.fail();
                         }, (error) => {
                             assert(!!error.message);
@@ -500,7 +500,7 @@ describe('Bot Framework Connector SDK', function() {
                 });
                 it('should throw on null connectionName', function(done) {
                     tokenApiClient.userToken.getToken(user.id, null)
-                        .then((result) => {
+                        .then(() => {
                             assert.fail();
                         }, (error) => {
                             assert(!!error.message);
@@ -527,7 +527,7 @@ describe('Bot Framework Connector SDK', function() {
             describe('getAadTokens', function() {
                 it('should throw on null userId', function(done) {
                     tokenApiClient.userToken.getAadTokens(null, 'mockConnection', { resourceUrls: ['http://localhost' ]})
-                        .then((result) => {
+                        .then(() => {
                             assert.fail();
                         }, (error) => {
                             assert(!!error.message);
@@ -535,7 +535,7 @@ describe('Bot Framework Connector SDK', function() {
                 });
                 it('should throw on null connectionName', function(done) {
                     tokenApiClient.userToken.getAadTokens(user.id, null, { resourceUrls: ['http://localhost' ]})
-                        .then((result) => {
+                        .then(() => {
                             assert.fail();
                         }, (error) => {
                             assert(!!error.message);
@@ -555,7 +555,7 @@ describe('Bot Framework Connector SDK', function() {
             describe('getTokenStatus', function() {
                 it('should throw on null userId', function(done) {
                     tokenApiClient.userToken.getTokenStatus(null)
-                        .then((result) => {
+                        .then(() => {
                             assert.fail();
                         }, (error) => {
                             assert(!!error.message);
@@ -575,7 +575,7 @@ describe('Bot Framework Connector SDK', function() {
             describe('signOut', function() {
                 it('should throw on null userId', function(done) {
                     tokenApiClient.userToken.signOut(null)
-                        .then((result) => {
+                        .then(() => {
                             assert.fail();
                         }, (error) => {
                             assert(!!error.message);

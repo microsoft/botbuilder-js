@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { BotTelemetryClient, StatePropertyAccessor, TurnContext } from 'botbuilder-core';
+import { BotTelemetryClient, StatePropertyAccessor, TurnContext, StringUtils } from 'botbuilder-core';
 import { Dialog } from './dialog';
 import { DialogContext, DialogState } from './dialogContext';
 
@@ -100,7 +100,7 @@ export class DialogSet {
                     versions += `|${v}`;
                 }
             }
-            this._version = computeHash(versions);
+            this._version = StringUtils.hash(versions);
         }
 
         return this._version;
@@ -161,7 +161,7 @@ export class DialogSet {
      */
     public async createContext(context: TurnContext): Promise<DialogContext> {
         if (!this.dialogState) {
-            throw new Error(`DialogSet.createContextAsync(): the dialog set was not bound to a stateProperty when constructed.`);
+            throw new Error(`DialogSet.createContext(): the dialog set was not bound to a stateProperty when constructed.`);
         }
         const state: DialogState = await this.dialogState.get(context, { dialogStack: [] } as DialogState);
 
@@ -200,26 +200,4 @@ export class DialogSet {
             this.dialogs[key].telemetryClient = this._telemetryClient;
         }
     }
-}
-
-/**
- * Generates a 32 bit hash for a string.
- *
- * @remarks
- * The source for this function was derived from the following article:
- *
- * https://werxltd.com/wp/2010/05/13/javascript-implementation-of-javas-string-hashcode-method/
- *
- * @param text String to generate a hash for.
- * @returns A string that is 15 characters or less in length.
- */
-function computeHash(text: string): string {
-    const l = text.length;
-    let hash = 0;
-    for (let i = 0; i < l; i++) {
-        const chr = text.charCodeAt(i);
-        hash  = ((hash << 5) - hash) + chr;
-        hash |= 0; // Convert to 32 bit integer
-    }
-    return hash.toString();
 }
