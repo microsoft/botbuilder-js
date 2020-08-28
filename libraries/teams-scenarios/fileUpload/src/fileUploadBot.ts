@@ -50,8 +50,8 @@ export class FileUploadBot extends TeamsActivityHandler {
         reply.textFormat = 'xml';
         reply.text = `Declined. We won't upload file <b>${ fileConsentCardResponse.context['filename'] }</b>.`;
         await context.sendActivity(reply);
-    } 
-    
+    }
+
     private createReply(activity, text = null, locale = null) : Activity {
         return {
             type: 'message',
@@ -68,21 +68,19 @@ export class FileUploadBot extends TeamsActivityHandler {
 
     private async sendFile(fileConsentCardResponse: FileConsentCardResponse): Promise<void> {
         const request = require('request');
-        const fs = require('fs');     
+        const fs = require('fs');
         const context = fileConsentCardResponse.context;
         const path = require('path');
         const filePath = path.join('files', context['filename']);
-        const stats = fs.statSync(filePath);
-        // const fileSizeInBytes = stats['size']; 
         fs.createReadStream(filePath).pipe(request.put(fileConsentCardResponse.uploadInfo.uploadUrl));
     }
 
     private async sendFileCard(context: TurnContext): Promise<void> {
         const filename = 'teams-logo.png';
-        const fs = require('fs'); 
+        const fs = require('fs');
         const path = require('path');
         const stats = fs.statSync(path.join('files', filename));
-        const fileSizeInBytes = stats['size'];    
+        const fileSizeInBytes = stats['size'];
 
         const fileContext = {
             filename: filename
