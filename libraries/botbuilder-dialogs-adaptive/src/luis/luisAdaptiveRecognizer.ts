@@ -5,10 +5,9 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { Recognizer } from '../recognizers';
 import { StringExpression, ArrayExpression, BoolExpression } from 'adaptive-expressions';
 import { LuisPredictionOptions, LuisRecognizerOptionsV3, LuisRecognizer, LuisApplication, LuisTelemetryConstants} from 'botbuilder-ai';
-import { DialogContext } from 'botbuilder-dialogs';
+import { DialogContext, Recognizer } from 'botbuilder-dialogs';
 import { Activity, RecognizerResult } from 'botbuilder-core';
 
 export class LuisAdaptiveRecognizer extends Recognizer {
