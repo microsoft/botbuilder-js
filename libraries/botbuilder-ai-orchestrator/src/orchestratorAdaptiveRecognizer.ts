@@ -12,8 +12,8 @@ import { TextEncoder } from 'util';
 
 import { BoolExpression, NumberExpression, StringExpression } from 'adaptive-expressions';
 import { Activity, Entity, RecognizerResult } from 'botbuilder-core';
-import { DialogContext } from 'botbuilder-dialogs';
-import { createRecognizerResult, EntityRecognizer, EntityRecognizerSet, Recognizer, TextEntity } from 'botbuilder-dialogs-adaptive';
+import { createRecognizerResult, DialogContext, Recognizer } from 'botbuilder-dialogs';
+import { EntityRecognizer, EntityRecognizerSet, TextEntity } from 'botbuilder-dialogs-adaptive';
 
 const oc: any = require('orchestrator-core/orchestrator-core.node');
 const ReadText: any = require('read-text-file');
