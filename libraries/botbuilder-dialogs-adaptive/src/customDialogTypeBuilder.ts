@@ -6,9 +6,9 @@
  * Licensed under the MIT License.
  */
 
-import { AdaptiveTypeBuilder } from './adaptiveTypeBuilder';
+import { DefaultTypeBuilder } from 'botbuilder-dialogs-declarative';
 
-export class CustomDialogTypeBuilder extends AdaptiveTypeBuilder {
+export class CustomDialogTypeBuilder extends DefaultTypeBuilder {
     public build(config: object): object {
         const kind = config['$kind'];
         if (!config['dialog']) {

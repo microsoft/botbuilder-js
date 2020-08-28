@@ -6,10 +6,8 @@
  * Licensed under the MIT License.
  */
 
-import { ComponentRegistration, ResourceExplorer, TypeBuilder, BuilderRegistration } from 'botbuilder-dialogs-declarative';
 import { Choice, ListStyle, ChoiceFactoryOptions, FindChoicesOptions } from 'botbuilder-dialogs';
-import { QnAMakerDialog, QnAMakerDialogActivityConverter, RankerTypes } from 'botbuilder-ai';
-import { AdaptiveTypeBuilder } from './adaptiveTypeBuilder';
+import { ComponentRegistration, ResourceExplorer, BuilderRegistration, DefaultTypeBuilder } from 'botbuilder-dialogs-declarative';
 import { CustomDialogTypeBuilder } from './customDialogTypeBuilder';
 import { AdaptiveDialog } from './adaptiveDialog';
 import { BeginDialog, BeginSkill, BreakLoop, CancelAllDialogs, CancelDialog, ContinueLoop, DeleteActivity, DeleteProperties, DeleteProperty, EditActions, EditArray, EmitEvent, EndDialog, EndTurn, ForEach, ForEachPage, GetActivityMembers, GetConversationMembers, GotoAction, IfCondition, LogAction, RepeatDialog, ReplaceDialog, SendActivity, SetProperties, SetProperty, SignOutUser, SwitchCondition, TraceActivity, UpdateActivity, ArrayChangeType, PropertyAssignmentConverter, HttpRequest, HttpHeadersConverter, ResponsesTypes, DynamicBeginDialog } from './actions';
@@ -18,260 +16,25 @@ import { OnActivity, OnAssignEntity, OnBeginDialog, OnCancelDialog, OnChooseEnti
 import { CrossTrainedRecognizerSet, MultiLanguageRecognizer, RecognizerSet, RegexRecognizer, IntentPatternConverter } from './recognizers';
 import { AgeEntityRecognizer, ConfirmationEntityRecognizer, CurrencyEntityRecognizer, DateTimeEntityRecognizer, DimensionEntityRecognizer, EmailEntityRecognizer, GuidEntityRecognizer, HashtagEntityRecognizer, IpEntityRecognizer, MentionEntityRecognizer, NumberEntityRecognizer, OrdinalEntityRecognizer, PercentageEntityRecognizer, PhoneNumberEntityRecognizer, RegexEntityRecognizer, TemperatureEntityRecognizer, UrlEntityRecognizer } from './recognizers/entityRecognizers';
 import { ObjectExpressionConverter, BoolExpressionConverter, StringExpressionConverter, EnumExpressionConverter, ValueExpressionConverter, NumberExpressionConverter, ExpressionConverter, ArrayExpressionConverter, IntExpressionConverter } from 'adaptive-expressions';
-import { DialogExpressionConverter, TextTemplateConverter, ActivityTemplateConverter, RecognizerConverter, MultiLanguageRecognizerConverter } from './converters';
+import { DialogExpressionConverter, TextTemplateConverter, ActivityTemplateConverter, RecognizerConverter, LanguageGeneratorConverter, MultiLanguageRecognizerConverter } from './converters';
 import { ActionChangeType } from './actionChangeType';
 import { CaseConverter } from './actions/case';
-import { QnAMakerRecognizer } from './qnaMaker';
 import { TemplateEngineLanguageGenerator, ResourceMultiLanguageGenerator } from './generators';
 import { ConditionalSelector, FirstSelector, RandomSelector, TrueSelector } from './selectors';
-import { LanguageGeneratorConverter } from './converters/languageGeneratorConverter';
 import { LuisAdaptiveRecognizer } from './luis';
 import { LanguagePolicyConverter } from './languagePolicy';
 
 export class AdaptiveDialogComponentRegistration implements ComponentRegistration {
-    private _resourceExplorer: ResourceExplorer;
-    private _builderRegistrations: BuilderRegistration[] = [];
-
-    public constructor(resourceExplorer: ResourceExplorer) {
-        this._resourceExplorer = resourceExplorer;
-
-        this.registerBuilder('Microsoft.AdaptiveDialog', new AdaptiveTypeBuilder(AdaptiveDialog, this._resourceExplorer, {
-            'generator': new LanguageGeneratorConverter(),
-            'recognizer': new RecognizerConverter(this._resourceExplorer)
-        }));
-        this.registerBuilder('Microsoft.BeginSkill', new AdaptiveTypeBuilder(BeginSkill, this._resourceExplorer, {
-            'disabled': new BoolExpressionConverter(),
-            'activityProcessed': new BoolExpressionConverter(),
-            'resultProperty': new StringExpressionConverter(),
-            'botId': new StringExpressionConverter(),
-            'skillHostEndpoint': new StringExpressionConverter(),
-            'skillAppId': new StringExpressionConverter(),
-            'skillEndpoint': new StringExpressionConverter(),
-            'activity': new ActivityTemplateConverter(),
-            'connectionName': new StringExpressionConverter()
-        }));
-        this.registerBuilder('Microsoft.QnAMakerDialog', new AdaptiveTypeBuilder(QnAMakerDialog, this._resourceExplorer, {
-            'knowledgeBaseId': new StringExpressionConverter(),
-            'hostname': new StringExpressionConverter(),
-            'endpointKey': new StringExpressionConverter(),
-            'threshold': new NumberExpressionConverter(),
-            'top': new IntExpressionConverter(),
-            'noAnswer': new QnAMakerDialogActivityConverter(),
-            'activeLearningCardTitle': new StringExpressionConverter(),
-            'cardNoMatchText': new StringExpressionConverter(),
-            'cardNoMatchResponse': new QnAMakerDialogActivityConverter(),
-            'strictFilters': new ArrayExpressionConverter(),
-            'logPersonalInformation': new BoolExpressionConverter(),
-            'rankerType': new EnumExpressionConverter(RankerTypes)
-        }));
-        this.registerActions();
-        this.registerConditions();
-        this.registerInputs();
-        this.registerRecognizers();
-        this.registerGenerators();
-        this.registerSelectors();
-        this.registerCustomDialogs();
-    }
-
-    public getTypeBuilders(): BuilderRegistration[] {
-        return this._builderRegistrations;
-    }
-
-    private registerBuilder(name: string, builder: TypeBuilder): void {
-        this._builderRegistrations.push(
-            new BuilderRegistration(name, builder)
-        );
-    }
-
-    private registerActions(): void {
+    public getBuilderRegistrations(resourceExplorer: ResourceExplorer): BuilderRegistration[] {
         const baseInvokeDialogConverters = {
             'options': new ObjectExpressionConverter<object>(),
-            'dialog': new DialogExpressionConverter(this._resourceExplorer),
+            'dialog': new DialogExpressionConverter(resourceExplorer),
             'activityProcessed': new BoolExpressionConverter()
         };
-        this.registerBuilder('Microsoft.BeginDialog', new AdaptiveTypeBuilder(BeginDialog, this._resourceExplorer,
-            Object.assign(baseInvokeDialogConverters, {
-                'resultProperty': new StringExpressionConverter(),
-                'disabled': new BoolExpressionConverter()
-            })));
-        this.registerBuilder('Microsoft.BreakLoop', new AdaptiveTypeBuilder(BreakLoop, this._resourceExplorer, {
-            'disabled': new BoolExpressionConverter()
-        }));
-        this.registerBuilder('Microsoft.CancelAllDialogs', new AdaptiveTypeBuilder(CancelAllDialogs, this._resourceExplorer, {
-            'eventName': new StringExpressionConverter(),
-            'eventValue': new ValueExpressionConverter(),
-            'disabled': new BoolExpressionConverter(),
-            'activityProcessed': new BoolExpressionConverter()
-        }));
-        this.registerBuilder('Microsoft.CancelDialog', new AdaptiveTypeBuilder(CancelDialog, this._resourceExplorer, {
-            'eventName': new StringExpressionConverter(),
-            'eventValue': new ValueExpressionConverter(),
-            'disabled': new BoolExpressionConverter(),
-            'activityProcessed': new BoolExpressionConverter()
-        }));
-        this.registerBuilder('Microsoft.ContinueLoop', new AdaptiveTypeBuilder(ContinueLoop, this._resourceExplorer, {
-            'disabled': new BoolExpressionConverter()
-        }));
-        this.registerBuilder('Microsoft.DeleteActivity', new AdaptiveTypeBuilder(DeleteActivity, this._resourceExplorer, {
-            'activityId': new StringExpressionConverter(),
-            'disabled': new BoolExpressionConverter()
-        }));
-        this.registerBuilder('Microsoft.DeleteProperties', new AdaptiveTypeBuilder(DeleteProperties, this._resourceExplorer, {
-            'properties': new StringExpressionConverter(),
-            'disabled': new BoolExpressionConverter()
-        }));
-        this.registerBuilder('Microsoft.DeleteProperty', new AdaptiveTypeBuilder(DeleteProperty, this._resourceExplorer, {
-            'property': new StringExpressionConverter(),
-            'disabled': new BoolExpressionConverter()
-        }));
-        this.registerBuilder('Microsoft.EditActions', new AdaptiveTypeBuilder(EditActions, this._resourceExplorer, {
-            'changeType': new EnumExpressionConverter(ActionChangeType),
-            'disabled': new BoolExpressionConverter()
-        }));
-        this.registerBuilder('Microsoft.EditArray', new AdaptiveTypeBuilder(EditArray, this._resourceExplorer, {
-            'changeType': new EnumExpressionConverter(ArrayChangeType),
-            'itemsProperty': new StringExpressionConverter(),
-            'resultProperty': new StringExpressionConverter(),
-            'value': new ValueExpressionConverter(),
-            'disabled': new BoolExpressionConverter()
-        }));
-        this.registerBuilder('Microsoft.EmitEvent', new AdaptiveTypeBuilder(EmitEvent, this._resourceExplorer, {
-            'eventName': new StringExpressionConverter(),
-            'eventValue': new ValueExpressionConverter(),
-            'bubbleEvent': new BoolExpressionConverter(),
-            'disabled': new BoolExpressionConverter()
-        }));
-        this.registerBuilder('Microsoft.EndDialog', new AdaptiveTypeBuilder(EndDialog, this._resourceExplorer, {
-            'value': new ValueExpressionConverter(),
-            'disabled': new BoolExpressionConverter()
-        }));
-        this.registerBuilder('Microsoft.EndTurn', new AdaptiveTypeBuilder(EndTurn, this._resourceExplorer, {
-            'disabled': new BoolExpressionConverter()
-        }));
-        this.registerBuilder('Microsoft.Foreach', new AdaptiveTypeBuilder(ForEach, this._resourceExplorer, {
-            'itemsProperty': new StringExpressionConverter(),
-            'index': new StringExpressionConverter(),
-            'value': new StringExpressionConverter(),
-            'disabled': new BoolExpressionConverter()
-        }));
-        this.registerBuilder('Microsoft.ForeachPage', new AdaptiveTypeBuilder(ForEachPage, this._resourceExplorer, {
-            'itemsProperty': new StringExpressionConverter(),
-            'page': new StringExpressionConverter(),
-            'pageIndex': new StringExpressionConverter(),
-            'pageSize': new IntExpressionConverter(),
-            'disabled': new BoolExpressionConverter()
-        }));
-        this.registerBuilder('Microsoft.GetActivityMembers', new AdaptiveTypeBuilder(GetActivityMembers, this._resourceExplorer, {
-            'activityId': new StringExpressionConverter(),
-            'property': new StringExpressionConverter(),
-            'disabled': new BoolExpressionConverter()
-        }));
-        this.registerBuilder('Microsoft.GetConversationMembers', new AdaptiveTypeBuilder(GetConversationMembers, this._resourceExplorer, {
-            'property': new StringExpressionConverter(),
-            'disabled': new BoolExpressionConverter()
-        }));
-        this.registerBuilder('Microsoft.GotoAction', new AdaptiveTypeBuilder(GotoAction, this._resourceExplorer, {
-            'actionId': new StringExpressionConverter(),
-            'disabled': new BoolExpressionConverter()
-        }));
-        this.registerBuilder('Microsoft.HttpRequest', new AdaptiveTypeBuilder(HttpRequest, this._resourceExplorer, {
-            'contentType': new StringExpressionConverter(),
-            'url': new StringExpressionConverter(),
-            'headers': new HttpHeadersConverter(),
-            'body': new ValueExpressionConverter(),
-            'responseType': new EnumExpressionConverter(ResponsesTypes),
-            'resultProperty': new StringExpressionConverter(),
-            'disabled': new BoolExpressionConverter()
-        }));
-        this.registerBuilder('Microsoft.IfCondition', new AdaptiveTypeBuilder(IfCondition, this._resourceExplorer, {
-            'condition': new BoolExpressionConverter(),
-            'disabled': new BoolExpressionConverter()
-        }));
-        this.registerBuilder('Microsoft.LogAction', new AdaptiveTypeBuilder(LogAction, this._resourceExplorer, {
-            'text': new TextTemplateConverter(),
-            'traceActivity': new BoolExpressionConverter(),
-            'label': new StringExpressionConverter(),
-            'disabled': new BoolExpressionConverter()
-        }));
-        this.registerBuilder('Microsoft.RepeatDialog', new AdaptiveTypeBuilder(RepeatDialog, this._resourceExplorer,
-            Object.assign(baseInvokeDialogConverters, {
-                'disabled': new BoolExpressionConverter(),
-                'allowLoop': new BoolExpressionConverter()
-            })));
-        this.registerBuilder('Microsoft.ReplaceDialog', new AdaptiveTypeBuilder(ReplaceDialog, this._resourceExplorer,
-            Object.assign(baseInvokeDialogConverters, {
-                'disabled': new BoolExpressionConverter()
-            })));
-        this.registerBuilder('Microsoft.SendActivity', new AdaptiveTypeBuilder(SendActivity, this._resourceExplorer, {
-            'activity': new ActivityTemplateConverter(),
-            'disabled': new BoolExpressionConverter()
-        }));
-        this.registerBuilder('Microsoft.SetProperties', new AdaptiveTypeBuilder(SetProperties, this._resourceExplorer, {
-            'assignments': new PropertyAssignmentConverter(),
-            'disabled': new BoolExpressionConverter()
-        }));
-        this.registerBuilder('Microsoft.SetProperty', new AdaptiveTypeBuilder(SetProperty, this._resourceExplorer, {
-            'property': new StringExpressionConverter(),
-            'value': new ValueExpressionConverter(),
-            'disabled': new BoolExpressionConverter()
-        }));
-        this.registerBuilder('Microsoft.SignOutUser', new AdaptiveTypeBuilder(SignOutUser, this._resourceExplorer, {
-            'userId': new StringExpressionConverter(),
-            'connectionName': new StringExpressionConverter(),
-            'disabled': new BoolExpressionConverter()
-        }));
-        this.registerBuilder('Microsoft.SwitchCondition', new AdaptiveTypeBuilder(SwitchCondition, this._resourceExplorer, {
-            'condition': new ExpressionConverter(),
-            'cases': new CaseConverter(this._resourceExplorer),
-            'disabled': new BoolExpressionConverter()
-        }));
-        this.registerBuilder('Microsoft.TraceActivity', new AdaptiveTypeBuilder(TraceActivity, this._resourceExplorer, {
-            'name': new StringExpressionConverter(),
-            'valueType': new StringExpressionConverter(),
-            'value': new ValueExpressionConverter(),
-            'label': new StringExpressionConverter(),
-            'disabled': new BoolExpressionConverter()
-        }));
-        this.registerBuilder('Microsoft.UpdateActivity', new AdaptiveTypeBuilder(UpdateActivity, this._resourceExplorer, {
-            'activity': new ActivityTemplateConverter(),
-            'activityId': new StringExpressionConverter(),
-            'disabled': new BoolExpressionConverter()
-        }));
-    }
-
-    private registerConditions(): void {
         const OnConditionConverters = {
             'condition': new BoolExpressionConverter(),
             'priority': new IntExpressionConverter()
         };
-        this.registerBuilder('Microsoft.OnActivity', new AdaptiveTypeBuilder(OnActivity, this._resourceExplorer, OnConditionConverters));
-        this.registerBuilder('Microsoft.OnAssignEntity', new AdaptiveTypeBuilder(OnAssignEntity, this._resourceExplorer, OnConditionConverters));
-        this.registerBuilder('Microsoft.OnBeginDialog', new AdaptiveTypeBuilder(OnBeginDialog, this._resourceExplorer, OnConditionConverters));
-        this.registerBuilder('Microsoft.OnCancelDialog', new AdaptiveTypeBuilder(OnCancelDialog, this._resourceExplorer, OnConditionConverters));
-        this.registerBuilder('Microsoft.OnChooseEntity', new AdaptiveTypeBuilder(OnChooseEntity, this._resourceExplorer, OnConditionConverters));
-        this.registerBuilder('Microsoft.OnChooseIntent', new AdaptiveTypeBuilder(OnChooseIntent, this._resourceExplorer, OnConditionConverters));
-        this.registerBuilder('Microsoft.OnChooseProperty', new AdaptiveTypeBuilder(OnChooseProperty, this._resourceExplorer, OnConditionConverters));
-        this.registerBuilder('Microsoft.OnCondition', new AdaptiveTypeBuilder(OnCondition, this._resourceExplorer, OnConditionConverters));
-        this.registerBuilder('Microsoft.OnConversationUpdateActivity', new AdaptiveTypeBuilder(OnConversationUpdateActivity, this._resourceExplorer, OnConditionConverters));
-        this.registerBuilder('Microsoft.OnDialogEvent', new AdaptiveTypeBuilder(OnDialogEvent, this._resourceExplorer, OnConditionConverters));
-        this.registerBuilder('Microsoft.OnEndOfActions', new AdaptiveTypeBuilder(OnEndOfActions, this._resourceExplorer, OnConditionConverters));
-        this.registerBuilder('Microsoft.OnEndOfConversationActivity', new AdaptiveTypeBuilder(OnEndOfConversationActivity, this._resourceExplorer, OnConditionConverters));
-        this.registerBuilder('Microsoft.OnError', new AdaptiveTypeBuilder(OnError, this._resourceExplorer, OnConditionConverters));
-        this.registerBuilder('Microsoft.OnEventActivity', new AdaptiveTypeBuilder(OnEventActivity, this._resourceExplorer, OnConditionConverters));
-        this.registerBuilder('Microsoft.OnHandoffActivity', new AdaptiveTypeBuilder(OnHandoffActivity, this._resourceExplorer, OnConditionConverters));
-        this.registerBuilder('Microsoft.OnIntent', new AdaptiveTypeBuilder(OnIntent, this._resourceExplorer, OnConditionConverters));
-        this.registerBuilder('Microsoft.OnInvokeActivity', new AdaptiveTypeBuilder(OnInvokeActivity, this._resourceExplorer, OnConditionConverters));
-        this.registerBuilder('Microsoft.OnMessageActivity', new AdaptiveTypeBuilder(OnMessageActivity, this._resourceExplorer, OnConditionConverters));
-        this.registerBuilder('Microsoft.OnMessageDeleteActivity', new AdaptiveTypeBuilder(OnMessageDeleteActivity, this._resourceExplorer, OnConditionConverters));
-        this.registerBuilder('Microsoft.OnMessageReactionActivity', new AdaptiveTypeBuilder(OnMessageReactionActivity, this._resourceExplorer, OnConditionConverters));
-        this.registerBuilder('Microsoft.OnMessageUpdateActivity', new AdaptiveTypeBuilder(OnMessageUpdateActivity, this._resourceExplorer, OnConditionConverters));
-        this.registerBuilder('Microsoft.OnQnAMatch', new AdaptiveTypeBuilder(OnQnAMatch, this._resourceExplorer, OnConditionConverters));
-        this.registerBuilder('Microsoft.OnRepromptDialog', new AdaptiveTypeBuilder(OnRepromptDialog, this._resourceExplorer, OnConditionConverters));
-        this.registerBuilder('Microsoft.OnTypingActivity', new AdaptiveTypeBuilder(OnTypingActivity, this._resourceExplorer, OnConditionConverters));
-        this.registerBuilder('Microsoft.OnUnknownIntent', new AdaptiveTypeBuilder(OnUnknownIntent, this._resourceExplorer, OnConditionConverters));
-    }
-
-    private registerInputs(): void {
         const inputDialogConverters = {
             'alwaysPrompt': new BoolExpressionConverter(),
             'allowInterruptions': new BoolExpressionConverter(),
@@ -285,136 +48,492 @@ export class AdaptiveDialogComponentRegistration implements ComponentRegistratio
             'defaultValue': new ValueExpressionConverter(),
             'disabled': new BoolExpressionConverter()
         };
-        this.registerBuilder('Microsoft.Ask', new AdaptiveTypeBuilder(Ask, this._resourceExplorer, {
-            'expectedProperties': new ArrayExpressionConverter<string>(),
-            'defaultOperation': new StringExpressionConverter(),
-            'activity': new ActivityTemplateConverter(),
-            'disabled': new BoolExpressionConverter()
-        }));
-        this.registerBuilder('Microsoft.AttachmentInput', new AdaptiveTypeBuilder(AttachmentInput, this._resourceExplorer,
-            Object.assign(inputDialogConverters, {
-                'outputFormat': new EnumExpressionConverter(AttachmentOutputFormat)
-            })));
-        this.registerBuilder('Microsoft.ChoiceInput', new AdaptiveTypeBuilder(ChoiceInput, this._resourceExplorer,
-            Object.assign(inputDialogConverters, {
-                'choices': new ArrayExpressionConverter<Choice>(),
-                'style': new EnumExpressionConverter(ListStyle),
-                'defaultLocale': new StringExpressionConverter(),
-                'outputFormat': new EnumExpressionConverter(ChoiceOutputFormat),
-                'choiceOptions': new ObjectExpressionConverter<ChoiceFactoryOptions>(),
-                'recognizerOptions': new ObjectExpressionConverter<FindChoicesOptions>()
-            })));
-        this.registerBuilder('Microsoft.ConfirmInput', new AdaptiveTypeBuilder(ConfirmInput, this._resourceExplorer,
-            Object.assign(inputDialogConverters, {
-                'defaultLocale': new StringExpressionConverter(),
-                'style': new EnumExpressionConverter(ListStyle),
-                'choiceOptions': new ObjectExpressionConverter<ChoiceFactoryOptions>(),
-                'outputFormat': new StringExpressionConverter()
-            })));
-        this.registerBuilder('Microsoft.DateTimeInput', new AdaptiveTypeBuilder(DateTimeInput, this._resourceExplorer,
-            Object.assign(inputDialogConverters, {
-                'defaultLocale': new StringExpressionConverter(),
-                'outputFormat': new StringExpressionConverter()
-            })));
-        this.registerBuilder('Microsoft.NumberInput', new AdaptiveTypeBuilder(NumberInput, this._resourceExplorer,
-            Object.assign(inputDialogConverters, {
-                'defaultLocale': new StringExpressionConverter(),
-                'outputFormat': new NumberExpressionConverter()
-            })));
-        this.registerBuilder('Microsoft.OAuthInput', new AdaptiveTypeBuilder(OAuthInput, this._resourceExplorer,
-            Object.assign(inputDialogConverters, {
+        const builderRegistrations: BuilderRegistration[] = [{
+            kind: 'Microsoft.AdaptiveDialog',
+            builder: new DefaultTypeBuilder(AdaptiveDialog, resourceExplorer, {
+                'generator': new LanguageGeneratorConverter(),
+                'recognizer': new RecognizerConverter(resourceExplorer)
+            })
+        }, {
+            kind: 'Microsoft.BeginSkill',
+            builder: new DefaultTypeBuilder(BeginSkill, resourceExplorer, {
+                'disabled': new BoolExpressionConverter(),
+                'activityProcessed': new BoolExpressionConverter(),
+                'resultProperty': new StringExpressionConverter(),
+                'botId': new StringExpressionConverter(),
+                'skillHostEndpoint': new StringExpressionConverter(),
+                'skillAppId': new StringExpressionConverter(),
+                'skillEndpoint': new StringExpressionConverter(),
+                'activity': new ActivityTemplateConverter(),
+                'connectionName': new StringExpressionConverter()
+            })
+        }, {
+            kind: 'Microsoft.BeginDialog',
+            builder: new DefaultTypeBuilder(BeginDialog, resourceExplorer,
+                Object.assign(baseInvokeDialogConverters, {
+                    'resultProperty': new StringExpressionConverter(),
+                    'disabled': new BoolExpressionConverter()
+                }))
+        }, {
+            kind: 'Microsoft.BreakLoop',
+            builder: new DefaultTypeBuilder(BreakLoop, resourceExplorer, {
+                'disabled': new BoolExpressionConverter()
+            })
+        }, {
+            kind: 'Microsoft.CancelAllDialogs',
+            builder: new DefaultTypeBuilder(CancelAllDialogs, resourceExplorer, {
+                'eventName': new StringExpressionConverter(),
+                'eventValue': new ValueExpressionConverter(),
+                'disabled': new BoolExpressionConverter(),
+                'activityProcessed': new BoolExpressionConverter()
+            })
+        }, {
+            kind: 'Microsoft.CancelDialog',
+            builder: new DefaultTypeBuilder(CancelDialog, resourceExplorer, {
+                'eventName': new StringExpressionConverter(),
+                'eventValue': new ValueExpressionConverter(),
+                'disabled': new BoolExpressionConverter(),
+                'activityProcessed': new BoolExpressionConverter()
+            })
+        }, {
+            kind: 'Microsoft.ContinueLoop',
+            builder: new DefaultTypeBuilder(ContinueLoop, resourceExplorer, {
+                'disabled': new BoolExpressionConverter()
+            })
+        }, {
+            kind: 'Microsoft.DeleteActivity',
+            builder: new DefaultTypeBuilder(DeleteActivity, resourceExplorer, {
+                'activityId': new StringExpressionConverter(),
+                'disabled': new BoolExpressionConverter()
+            })
+        }, {
+            kind: 'Microsoft.DeleteProperties',
+            builder: new DefaultTypeBuilder(DeleteProperties, resourceExplorer, {
+                'properties': new StringExpressionConverter(),
+                'disabled': new BoolExpressionConverter()
+            })
+        }, {
+            kind: 'Microsoft.DeleteProperty',
+            builder: new DefaultTypeBuilder(DeleteProperty, resourceExplorer, {
+                'property': new StringExpressionConverter(),
+                'disabled': new BoolExpressionConverter()
+            })
+        }, {
+            kind: 'Microsoft.EditActions',
+            builder: new DefaultTypeBuilder(EditActions, resourceExplorer, {
+                'changeType': new EnumExpressionConverter(ActionChangeType),
+                'disabled': new BoolExpressionConverter()
+            })
+        }, {
+            kind: 'Microsoft.EditArray',
+            builder: new DefaultTypeBuilder(EditArray, resourceExplorer, {
+                'changeType': new EnumExpressionConverter(ArrayChangeType),
+                'itemsProperty': new StringExpressionConverter(),
+                'resultProperty': new StringExpressionConverter(),
+                'value': new ValueExpressionConverter(),
+                'disabled': new BoolExpressionConverter()
+            })
+        }, {
+            kind: 'Microsoft.EmitEvent',
+            builder: new DefaultTypeBuilder(EmitEvent, resourceExplorer, {
+                'eventName': new StringExpressionConverter(),
+                'eventValue': new ValueExpressionConverter(),
+                'bubbleEvent': new BoolExpressionConverter(),
+                'disabled': new BoolExpressionConverter()
+            })
+        }, {
+            kind: 'Microsoft.EndDialog',
+            builder: new DefaultTypeBuilder(EndDialog, resourceExplorer, {
+                'value': new ValueExpressionConverter(),
+                'disabled': new BoolExpressionConverter()
+            })
+        }, {
+            kind: 'Microsoft.EndTurn',
+            builder: new DefaultTypeBuilder(EndTurn, resourceExplorer, {
+                'disabled': new BoolExpressionConverter()
+            })
+        }, {
+            kind: 'Microsoft.Foreach',
+            builder: new DefaultTypeBuilder(ForEach, resourceExplorer, {
+                'itemsProperty': new StringExpressionConverter(),
+                'index': new StringExpressionConverter(),
+                'value': new StringExpressionConverter(),
+                'disabled': new BoolExpressionConverter()
+            })
+        }, {
+            kind: 'Microsoft.ForeachPage',
+            builder: new DefaultTypeBuilder(ForEachPage, resourceExplorer, {
+                'itemsProperty': new StringExpressionConverter(),
+                'page': new StringExpressionConverter(),
+                'pageIndex': new StringExpressionConverter(),
+                'pageSize': new IntExpressionConverter(),
+                'disabled': new BoolExpressionConverter()
+            })
+        }, {
+            kind: 'Microsoft.GetActivityMembers',
+            builder: new DefaultTypeBuilder(GetActivityMembers, resourceExplorer, {
+                'activityId': new StringExpressionConverter(),
+                'property': new StringExpressionConverter(),
+                'disabled': new BoolExpressionConverter()
+            })
+        }, {
+            kind: 'Microsoft.GetConversationMembers',
+            builder: new DefaultTypeBuilder(GetConversationMembers, resourceExplorer, {
+                'property': new StringExpressionConverter(),
+                'disabled': new BoolExpressionConverter()
+            })
+        }, {
+            kind: 'Microsoft.GotoAction',
+            builder: new DefaultTypeBuilder(GotoAction, resourceExplorer, {
+                'actionId': new StringExpressionConverter(),
+                'disabled': new BoolExpressionConverter()
+            })
+        }, {
+            kind: 'Microsoft.HttpRequest',
+            builder: new DefaultTypeBuilder(HttpRequest, resourceExplorer, {
+                'contentType': new StringExpressionConverter(),
+                'url': new StringExpressionConverter(),
+                'headers': new HttpHeadersConverter(),
+                'body': new ValueExpressionConverter(),
+                'responseType': new EnumExpressionConverter(ResponsesTypes),
+                'resultProperty': new StringExpressionConverter(),
+                'disabled': new BoolExpressionConverter()
+            })
+        }, {
+            kind: 'Microsoft.IfCondition',
+            builder: new DefaultTypeBuilder(IfCondition, resourceExplorer, {
+                'condition': new BoolExpressionConverter(),
+                'disabled': new BoolExpressionConverter()
+            })
+        }, {
+            kind: 'Microsoft.LogAction',
+            builder: new DefaultTypeBuilder(LogAction, resourceExplorer, {
+                'text': new TextTemplateConverter(),
+                'traceActivity': new BoolExpressionConverter(),
+                'label': new StringExpressionConverter(),
+                'disabled': new BoolExpressionConverter()
+            })
+        }, {
+            kind: 'Microsoft.RepeatDialog',
+            builder: new DefaultTypeBuilder(RepeatDialog, resourceExplorer,
+                Object.assign(baseInvokeDialogConverters, {
+                    'disabled': new BoolExpressionConverter(),
+                    'allowLoop': new BoolExpressionConverter()
+                }))
+        }, {
+            kind: 'Microsoft.ReplaceDialog',
+            builder: new DefaultTypeBuilder(ReplaceDialog, resourceExplorer,
+                Object.assign(baseInvokeDialogConverters, {
+                    'disabled': new BoolExpressionConverter()
+                }))
+        }, {
+            kind: 'Microsoft.SendActivity',
+            builder: new DefaultTypeBuilder(SendActivity, resourceExplorer, {
+                'activity': new ActivityTemplateConverter(),
+                'disabled': new BoolExpressionConverter()
+            })
+        }, {
+            kind: 'Microsoft.SetProperties',
+            builder: new DefaultTypeBuilder(SetProperties, resourceExplorer, {
+                'assignments': new PropertyAssignmentConverter(),
+                'disabled': new BoolExpressionConverter()
+            })
+        }, {
+            kind: 'Microsoft.SetProperty',
+            builder: new DefaultTypeBuilder(SetProperty, resourceExplorer, {
+                'property': new StringExpressionConverter(),
+                'value': new ValueExpressionConverter(),
+                'disabled': new BoolExpressionConverter()
+            })
+        }, {
+            kind: 'Microsoft.SignOutUser',
+            builder: new DefaultTypeBuilder(SignOutUser, resourceExplorer, {
+                'userId': new StringExpressionConverter(),
                 'connectionName': new StringExpressionConverter(),
-                'title': new StringExpressionConverter(),
-                'text': new StringExpressionConverter(),
-                'timeout': new IntExpressionConverter()
-            })));
-        this.registerBuilder('Microsoft.TextInput', new AdaptiveTypeBuilder(TextInput, this._resourceExplorer,
-            Object.assign(inputDialogConverters, {
-                'outputFormat': new StringExpressionConverter()
-            })));
-    }
+                'disabled': new BoolExpressionConverter()
+            })
+        }, {
+            kind: 'Microsoft.SwitchCondition',
+            builder: new DefaultTypeBuilder(SwitchCondition, resourceExplorer, {
+                'condition': new ExpressionConverter(),
+                'cases': new CaseConverter(resourceExplorer),
+                'disabled': new BoolExpressionConverter()
+            })
+        }, {
+            kind: 'Microsoft.TraceActivity',
+            builder: new DefaultTypeBuilder(TraceActivity, resourceExplorer, {
+                'name': new StringExpressionConverter(),
+                'valueType': new StringExpressionConverter(),
+                'value': new ValueExpressionConverter(),
+                'label': new StringExpressionConverter(),
+                'disabled': new BoolExpressionConverter()
+            })
+        }, {
+            kind: 'Microsoft.UpdateActivity',
+            builder: new DefaultTypeBuilder(UpdateActivity, resourceExplorer, {
+                'activity': new ActivityTemplateConverter(),
+                'activityId': new StringExpressionConverter(),
+                'disabled': new BoolExpressionConverter()
+            })
+        }, {
+            kind: 'Microsoft.OnActivity',
+            builder: new DefaultTypeBuilder(OnActivity, resourceExplorer, OnConditionConverters)
+        }, {
+            kind: 'Microsoft.OnAssignEntity',
+            builder: new DefaultTypeBuilder(OnAssignEntity, resourceExplorer, OnConditionConverters)
+        }, {
+            kind: 'Microsoft.OnBeginDialog',
+            builder: new DefaultTypeBuilder(OnBeginDialog, resourceExplorer, OnConditionConverters)
+        }, {
+            kind: 'Microsoft.OnCancelDialog',
+            builder: new DefaultTypeBuilder(OnCancelDialog, resourceExplorer, OnConditionConverters)
+        }, {
+            kind: 'Microsoft.OnChooseEntity',
+            builder: new DefaultTypeBuilder(OnChooseEntity, resourceExplorer, OnConditionConverters)
+        }, {
+            kind: 'Microsoft.OnChooseIntent',
+            builder: new DefaultTypeBuilder(OnChooseIntent, resourceExplorer, OnConditionConverters)
+        }, {
+            kind: 'Microsoft.OnChooseProperty',
+            builder: new DefaultTypeBuilder(OnChooseProperty, resourceExplorer, OnConditionConverters)
+        }, {
+            kind: 'Microsoft.OnCondition',
+            builder: new DefaultTypeBuilder(OnCondition, resourceExplorer, OnConditionConverters)
+        }, {
+            kind: 'Microsoft.OnConversationUpdateActivity',
+            builder: new DefaultTypeBuilder(OnConversationUpdateActivity, resourceExplorer, OnConditionConverters)
+        }, {
+            kind: 'Microsoft.OnDialogEvent',
+            builder: new DefaultTypeBuilder(OnDialogEvent, resourceExplorer, OnConditionConverters)
+        }, {
+            kind: 'Microsoft.OnEndOfActions',
+            builder: new DefaultTypeBuilder(OnEndOfActions, resourceExplorer, OnConditionConverters)
+        }, {
+            kind: 'Microsoft.OnEndOfConversationActivity',
+            builder: new DefaultTypeBuilder(OnEndOfConversationActivity, resourceExplorer, OnConditionConverters)
+        }, {
+            kind: 'Microsoft.OnError',
+            builder: new DefaultTypeBuilder(OnError, resourceExplorer, OnConditionConverters)
+        }, {
+            kind: 'Microsoft.OnEventActivity',
+            builder: new DefaultTypeBuilder(OnEventActivity, resourceExplorer, OnConditionConverters)
+        }, {
+            kind: 'Microsoft.OnHandoffActivity',
+            builder: new DefaultTypeBuilder(OnHandoffActivity, resourceExplorer, OnConditionConverters)
+        }, {
+            kind: 'Microsoft.OnIntent',
+            builder: new DefaultTypeBuilder(OnIntent, resourceExplorer, OnConditionConverters)
+        }, {
+            kind: 'Microsoft.OnInvokeActivity',
+            builder: new DefaultTypeBuilder(OnInvokeActivity, resourceExplorer, OnConditionConverters)
+        }, {
+            kind: 'Microsoft.OnMessageActivity',
+            builder: new DefaultTypeBuilder(OnMessageActivity, resourceExplorer, OnConditionConverters)
+        }, {
+            kind: 'Microsoft.OnMessageDeleteActivity',
+            builder: new DefaultTypeBuilder(OnMessageDeleteActivity, resourceExplorer, OnConditionConverters)
+        }, {
+            kind: 'Microsoft.OnMessageReactionActivity',
+            builder: new DefaultTypeBuilder(OnMessageReactionActivity, resourceExplorer, OnConditionConverters)
+        }, {
+            kind: 'Microsoft.OnMessageUpdateActivity',
+            builder: new DefaultTypeBuilder(OnMessageUpdateActivity, resourceExplorer, OnConditionConverters)
+        }, {
+            kind: 'Microsoft.OnQnAMatch',
+            builder: new DefaultTypeBuilder(OnQnAMatch, resourceExplorer, OnConditionConverters)
+        }, {
+            kind: 'Microsoft.OnRepromptDialog',
+            builder: new DefaultTypeBuilder(OnRepromptDialog, resourceExplorer, OnConditionConverters)
+        }, {
+            kind: 'Microsoft.OnTypingActivity',
+            builder: new DefaultTypeBuilder(OnTypingActivity, resourceExplorer, OnConditionConverters)
+        }, {
+            kind: 'Microsoft.OnUnknownIntent',
+            builder: new DefaultTypeBuilder(OnUnknownIntent, resourceExplorer, OnConditionConverters)
+        }, {
+            kind: 'Microsoft.Ask',
+            builder: new DefaultTypeBuilder(Ask, resourceExplorer, {
+                'expectedProperties': new ArrayExpressionConverter<string>(),
+                'defaultOperation': new StringExpressionConverter(),
+                'activity': new ActivityTemplateConverter(),
+                'disabled': new BoolExpressionConverter()
+            })
+        }, {
+            kind: 'Microsoft.AttachmentInput',
+            builder: new DefaultTypeBuilder(AttachmentInput, resourceExplorer,
+                Object.assign(inputDialogConverters, {
+                    'outputFormat': new EnumExpressionConverter(AttachmentOutputFormat)
+                }))
+        }, {
+            kind: 'Microsoft.ChoiceInput',
+            builder: new DefaultTypeBuilder(ChoiceInput, resourceExplorer,
+                Object.assign(inputDialogConverters, {
+                    'choices': new ArrayExpressionConverter<Choice>(),
+                    'style': new EnumExpressionConverter(ListStyle),
+                    'defaultLocale': new StringExpressionConverter(),
+                    'outputFormat': new EnumExpressionConverter(ChoiceOutputFormat),
+                    'choiceOptions': new ObjectExpressionConverter<ChoiceFactoryOptions>(),
+                    'recognizerOptions': new ObjectExpressionConverter<FindChoicesOptions>()
+                }))
+        }, {
+            kind: 'Microsoft.ConfirmInput',
+            builder: new DefaultTypeBuilder(ConfirmInput, resourceExplorer,
+                Object.assign(inputDialogConverters, {
+                    'defaultLocale': new StringExpressionConverter(),
+                    'style': new EnumExpressionConverter(ListStyle),
+                    'choiceOptions': new ObjectExpressionConverter<ChoiceFactoryOptions>(),
+                    'outputFormat': new StringExpressionConverter()
+                }))
+        }, {
+            kind: 'Microsoft.DateTimeInput',
+            builder: new DefaultTypeBuilder(DateTimeInput, resourceExplorer,
+                Object.assign(inputDialogConverters, {
+                    'defaultLocale': new StringExpressionConverter(),
+                    'outputFormat': new StringExpressionConverter()
+                }))
+        }, {
+            kind: 'Microsoft.NumberInput',
+            builder: new DefaultTypeBuilder(NumberInput, resourceExplorer,
+                Object.assign(inputDialogConverters, {
+                    'defaultLocale': new StringExpressionConverter(),
+                    'outputFormat': new NumberExpressionConverter()
+                }))
+        }, {
+            kind: 'Microsoft.OAuthInput',
+            builder: new DefaultTypeBuilder(OAuthInput, resourceExplorer,
+                Object.assign(inputDialogConverters, {
+                    'connectionName': new StringExpressionConverter(),
+                    'title': new StringExpressionConverter(),
+                    'text': new StringExpressionConverter(),
+                    'timeout': new IntExpressionConverter()
+                }))
+        }, {
+            kind: 'Microsoft.TextInput',
+            builder: new DefaultTypeBuilder(TextInput, resourceExplorer,
+                Object.assign(inputDialogConverters, {
+                    'outputFormat': new StringExpressionConverter()
+                }))
+        }, {
+            kind: 'Microsoft.LuisRecognizer',
+            builder: new DefaultTypeBuilder(LuisAdaptiveRecognizer, resourceExplorer, {
+                'applicationId': new StringExpressionConverter(),
+                'dynamicLists': new ArrayExpressionConverter(),
+                'endpoint': new StringExpressionConverter(),
+                'endpointKey': new StringExpressionConverter(),
+                'logPersonalInformation': new BoolExpressionConverter()
+            })
+        }, {
+            kind: 'Microsoft.CrossTrainedRecognizerSet',
+            builder: new DefaultTypeBuilder(CrossTrainedRecognizerSet, resourceExplorer, {
+                'recognizers': new RecognizerConverter(resourceExplorer)
+            })
+        }, {
+            kind: 'Microsoft.MultiLanguageRecognizer',
+            builder: new DefaultTypeBuilder(MultiLanguageRecognizer, resourceExplorer, {
+                'languagePolicy': new LanguagePolicyConverter(),
+                'recognizers': new MultiLanguageRecognizerConverter(resourceExplorer)
+            })
+        }, {
+            kind: 'Microsoft.RecognizerSet',
+            builder: new DefaultTypeBuilder(RecognizerSet, resourceExplorer, {
+                'recognizers': new RecognizerConverter(resourceExplorer)
+            })
+        }, {
+            kind: 'Microsoft.RegexRecognizer',
+            builder: new DefaultTypeBuilder(RegexRecognizer, resourceExplorer, {
+                'intents': new IntentPatternConverter()
+            })
+        }, {
+            kind: 'Microsoft.AgeEntityRecognizer',
+            builder: new DefaultTypeBuilder(AgeEntityRecognizer, resourceExplorer, {})
+        }, {
+            kind: 'Microsoft.ConfirmationEntityRecognizer',
+            builder: new DefaultTypeBuilder(ConfirmationEntityRecognizer, resourceExplorer, {})
+        }, {
+            kind: 'Microsoft.CurrencyEntityRecognizer',
+            builder: new DefaultTypeBuilder(CurrencyEntityRecognizer, resourceExplorer, {})
+        }, {
+            kind: 'Microsoft.DateTimeEntityRecognizer',
+            builder: new DefaultTypeBuilder(DateTimeEntityRecognizer, resourceExplorer, {})
+        }, {
+            kind: 'Microsoft.DimensionEntityRecognizer',
+            builder: new DefaultTypeBuilder(DimensionEntityRecognizer, resourceExplorer, {})
+        }, {
+            kind: 'Microsoft.EmailEntityRecognizer',
+            builder: new DefaultTypeBuilder(EmailEntityRecognizer, resourceExplorer, {})
+        }, {
+            kind: 'Microsoft.GuidEntityRecognizer',
+            builder: new DefaultTypeBuilder(GuidEntityRecognizer, resourceExplorer, {})
+        }, {
+            kind: 'Microsoft.HashtagEntityRecognizer',
+            builder: new DefaultTypeBuilder(HashtagEntityRecognizer, resourceExplorer, {})
+        }, {
+            kind: 'Microsoft.IpEntityRecognizer',
+            builder: new DefaultTypeBuilder(IpEntityRecognizer, resourceExplorer, {})
+        }, {
+            kind: 'Microsoft.MentionEntityRecognizer',
+            builder: new DefaultTypeBuilder(MentionEntityRecognizer, resourceExplorer, {})
+        }, {
+            kind: 'Microsoft.NumberEntityRecognizer',
+            builder: new DefaultTypeBuilder(NumberEntityRecognizer, resourceExplorer, {})
+        }, {
+            kind: 'Microsoft.OrdinalEntityRecognizer',
+            builder: new DefaultTypeBuilder(OrdinalEntityRecognizer, resourceExplorer, {})
+        }, {
+            kind: 'Microsoft.PercentageEntityRecognizer',
+            builder: new DefaultTypeBuilder(PercentageEntityRecognizer, resourceExplorer, {})
+        }, {
+            kind: 'Microsoft.PhoneNumberEntityRecognizer',
+            builder: new DefaultTypeBuilder(PhoneNumberEntityRecognizer, resourceExplorer, {})
+        }, {
+            kind: 'Microsoft.RegexEntityRecognizer',
+            builder: new DefaultTypeBuilder(RegexEntityRecognizer, resourceExplorer, {})
+        }, {
+            kind: 'Microsoft.TemperatureEntityRecognizer',
+            builder: new DefaultTypeBuilder(TemperatureEntityRecognizer, resourceExplorer, {})
+        }, {
+            kind: 'Microsoft.UrlEntityRecognizer',
+            builder: new DefaultTypeBuilder(UrlEntityRecognizer, resourceExplorer, {})
+        }, {
+            kind: 'Microsoft.TemplateEngineLanguageGenerator',
+            builder: new DefaultTypeBuilder(TemplateEngineLanguageGenerator, resourceExplorer, {})
+        }, {
+            kind: 'Microsoft.ResourceMultiLanguageGenerator',
+            builder: new DefaultTypeBuilder(ResourceMultiLanguageGenerator, resourceExplorer, {
+                'languagePolicy': new LanguagePolicyConverter()
+            })
+        }, {
+            kind: 'Microsoft.ConditionalSelector',
+            builder: new DefaultTypeBuilder(ConditionalSelector, resourceExplorer, {
+                'condition': new BoolExpressionConverter()
+            })
+        }, {
+            kind: 'Microsoft.FirstSelector',
+            builder: new DefaultTypeBuilder(FirstSelector, resourceExplorer, {})
+        }, {
+            kind: 'Microsoft.RandomSelector',
+            builder: new DefaultTypeBuilder(RandomSelector, resourceExplorer, {})
+        }, {
+            kind: 'Microsoft.TrueSelector',
+            builder: new DefaultTypeBuilder(TrueSelector, resourceExplorer, {})
+        }];
 
-    private registerRecognizers(): void {
-        this.registerBuilder('Microsoft.LuisRecognizer', new AdaptiveTypeBuilder(LuisAdaptiveRecognizer, this._resourceExplorer, {
-            'applicationId': new StringExpressionConverter(),
-            'dynamicLists': new ArrayExpressionConverter(),
-            'endpoint': new StringExpressionConverter(),
-            'endpointKey': new StringExpressionConverter(),
-            'logPersonalInformation': new BoolExpressionConverter()
-        }));
-        this.registerBuilder('Microsoft.CrossTrainedRecognizerSet', new AdaptiveTypeBuilder(CrossTrainedRecognizerSet, this._resourceExplorer, {
-            'recognizers': new RecognizerConverter(this._resourceExplorer)
-        }));
-        this.registerBuilder('Microsoft.MultiLanguageRecognizer', new AdaptiveTypeBuilder(MultiLanguageRecognizer, this._resourceExplorer, {
-            'languagePolicy': new LanguagePolicyConverter(),
-            'recognizers': new MultiLanguageRecognizerConverter(this._resourceExplorer)
-        }));
-        this.registerBuilder('Microsoft.RecognizerSet', new AdaptiveTypeBuilder(RecognizerSet, this._resourceExplorer, {
-            'recognizers': new RecognizerConverter(this._resourceExplorer)
-        }));
-        this.registerBuilder('Microsoft.RegexRecognizer', new AdaptiveTypeBuilder(RegexRecognizer, this._resourceExplorer, {
-            'intents': new IntentPatternConverter()
-        }));
-        this.registerBuilder('Microsoft.AgeEntityRecognizer', new AdaptiveTypeBuilder(AgeEntityRecognizer, this._resourceExplorer, {}));
-        this.registerBuilder('Microsoft.ConfirmationEntityRecognizer', new AdaptiveTypeBuilder(ConfirmationEntityRecognizer, this._resourceExplorer, {}));
-        this.registerBuilder('Microsoft.CurrencyEntityRecognizer', new AdaptiveTypeBuilder(CurrencyEntityRecognizer, this._resourceExplorer, {}));
-        this.registerBuilder('Microsoft.DateTimeEntityRecognizer', new AdaptiveTypeBuilder(DateTimeEntityRecognizer, this._resourceExplorer, {}));
-        this.registerBuilder('Microsoft.DimensionEntityRecognizer', new AdaptiveTypeBuilder(DimensionEntityRecognizer, this._resourceExplorer, {}));
-        this.registerBuilder('Microsoft.EmailEntityRecognizer', new AdaptiveTypeBuilder(EmailEntityRecognizer, this._resourceExplorer, {}));
-        this.registerBuilder('Microsoft.GuidEntityRecognizer', new AdaptiveTypeBuilder(GuidEntityRecognizer, this._resourceExplorer, {}));
-        this.registerBuilder('Microsoft.HashtagEntityRecognizer', new AdaptiveTypeBuilder(HashtagEntityRecognizer, this._resourceExplorer, {}));
-        this.registerBuilder('Microsoft.IpEntityRecognizer', new AdaptiveTypeBuilder(IpEntityRecognizer, this._resourceExplorer, {}));
-        this.registerBuilder('Microsoft.MentionEntityRecognizer', new AdaptiveTypeBuilder(MentionEntityRecognizer, this._resourceExplorer, {}));
-        this.registerBuilder('Microsoft.NumberEntityRecognizer', new AdaptiveTypeBuilder(NumberEntityRecognizer, this._resourceExplorer, {}));
-        this.registerBuilder('Microsoft.OrdinalEntityRecognizer', new AdaptiveTypeBuilder(OrdinalEntityRecognizer, this._resourceExplorer, {}));
-        this.registerBuilder('Microsoft.PercentageEntityRecognizer', new AdaptiveTypeBuilder(PercentageEntityRecognizer, this._resourceExplorer, {}));
-        this.registerBuilder('Microsoft.PhoneNumberEntityRecognizer', new AdaptiveTypeBuilder(PhoneNumberEntityRecognizer, this._resourceExplorer, {}));
-        this.registerBuilder('Microsoft.RegexEntityRecognizer', new AdaptiveTypeBuilder(RegexEntityRecognizer, this._resourceExplorer, {}));
-        this.registerBuilder('Microsoft.TemperatureEntityRecognizer', new AdaptiveTypeBuilder(TemperatureEntityRecognizer, this._resourceExplorer, {}));
-        this.registerBuilder('Microsoft.UrlEntityRecognizer', new AdaptiveTypeBuilder(UrlEntityRecognizer, this._resourceExplorer, {}));
-        this.registerBuilder('Microsoft.QnAMakerRecognizer', new AdaptiveTypeBuilder(QnAMakerRecognizer, this._resourceExplorer, {
-            'knowledgeBaseId': new StringExpressionConverter(),
-            'hostname': new StringExpressionConverter(),
-            'endpointKey': new StringExpressionConverter(),
-            'top': new IntExpressionConverter(),
-            'threshold': new NumberExpressionConverter(),
-            'rankerType': new StringExpressionConverter(),
-            'includeDialogNameInMetadata': new BoolExpressionConverter(),
-            'metadata': new ArrayExpressionConverter(),
-            'context': new ObjectExpressionConverter(),
-            'qnaId': new IntExpressionConverter()
-        }));
-    }
-
-    private registerGenerators(): void {
-        this.registerBuilder('Microsoft.TemplateEngineLanguageGenerator', new AdaptiveTypeBuilder(TemplateEngineLanguageGenerator, this._resourceExplorer, {}));
-        this.registerBuilder('Microsoft.ResourceMultiLanguageGenerator', new AdaptiveTypeBuilder(ResourceMultiLanguageGenerator, this._resourceExplorer, {
-            'languagePolicy': new LanguagePolicyConverter()
-        }));
-    }
-
-    private registerSelectors(): void {
-        this.registerBuilder('Microsoft.ConditionalSelector', new AdaptiveTypeBuilder(ConditionalSelector, this._resourceExplorer, {
-            'condition': new BoolExpressionConverter()
-        }));
-        this.registerBuilder('Microsoft.FirstSelector', new AdaptiveTypeBuilder(FirstSelector, this._resourceExplorer, {}));
-        this.registerBuilder('Microsoft.RandomSelector', new AdaptiveTypeBuilder(RandomSelector, this._resourceExplorer, {}));
-        this.registerBuilder('Microsoft.TrueSelector', new AdaptiveTypeBuilder(TrueSelector, this._resourceExplorer, {}));
-    }
-
-    private registerCustomDialogs(): void {
-        const schemas = this._resourceExplorer.getResources('.schema');
+        const schemas = resourceExplorer.getResources('.schema');
         for (const schema of schemas) {
             const resourceId = schema.id.replace(/.schema$/, '');
             if (resourceId.endsWith('.dialog')) {
-                this.registerBuilder(resourceId, new CustomDialogTypeBuilder(DynamicBeginDialog, this._resourceExplorer, {
-                    'options': new ObjectExpressionConverter<object>(),
-                    'dialog': new DialogExpressionConverter(this._resourceExplorer),
-                    'activityProcessed': new BoolExpressionConverter(),
-                    'resultProperty': new StringExpressionConverter(),
-                    'disabled': new BoolExpressionConverter()
-                }));
+                builderRegistrations.push({
+                    kind: resourceId,
+                    builder: new CustomDialogTypeBuilder(DynamicBeginDialog, resourceExplorer, {
+                        'options': new ObjectExpressionConverter<object>(),
+                        'dialog': new DialogExpressionConverter(resourceExplorer),
+                        'activityProcessed': new BoolExpressionConverter(),
+                        'resultProperty': new StringExpressionConverter(),
+                        'disabled': new BoolExpressionConverter()
+                    })
+                });
             }
         }
+        return builderRegistrations;
     }
 }
