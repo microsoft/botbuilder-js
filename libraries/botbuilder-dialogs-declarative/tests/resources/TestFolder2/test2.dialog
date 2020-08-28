@@ -1,5 +1,6 @@
 {
     "$schema": "../../tests.schema",
     "$kind": "Microsoft.SendActivity",
-    "activity": "hello"
+    "activity": "hello",
+    "id": "1234567890"
 }
