@@ -6,6 +6,10 @@
  * Licensed under the MIT License.
  */
 
+/**
+ * The key to get or set telemetry client from turn state.
+ */
+export const telemetryClientKey = Symbol('telemetryClient');
     
 /**
  * Defines the level of severity for the event.
