@@ -699,7 +699,7 @@ describe('LG', function() {
         var evaled = templates.evaluateText('hello');
         assert.strictEqual('hello', evaled);
 
-        evaled = templates.evaluateText("${''}");
+        evaled = templates.evaluateText('');
         assert.strictEqual('', evaled);
 
         evaled = templates.evaluateText('${wPhrase()}');
