@@ -17,10 +17,10 @@ class TeamsConnectorClient extends TeamsConnectorClientContext {
     teams: operations.Teams;
 
     /**
-   * Initializes a new instance of the TeamsConnectorClient class.
-   * @param credentials Subscription credentials which uniquely identify client subscription.
-   * @param [options] The parameter options
-   */
+     * Initializes a new instance of the TeamsConnectorClient class.
+     * @param credentials Subscription credentials which uniquely identify client subscription.
+     * @param [options] The parameter options
+     */
     constructor(credentials: ServiceClientCredentials, options?: Models.TeamsConnectorClientOptions) {
         super(credentials, options);
         this.teams = new operations.Teams(this);

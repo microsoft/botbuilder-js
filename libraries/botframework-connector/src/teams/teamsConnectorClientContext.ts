@@ -16,10 +16,10 @@ export class TeamsConnectorClientContext extends ServiceClient {
     credentials: ServiceClientCredentials;
 
     /**
-   * Initializes a new instance of the TeamsConnectorClientContext class.
-   * @param credentials Subscription credentials which uniquely identify client subscription.
-   * @param [options] The parameter options
-   */
+     * Initializes a new instance of the TeamsConnectorClientContext class.
+     * @param credentials Subscription credentials which uniquely identify client subscription.
+     * @param [options] The parameter options
+     */
     constructor(credentials: ServiceClientCredentials, options?: TeamsConnectorClientOptions) {
 
         if (!options) {

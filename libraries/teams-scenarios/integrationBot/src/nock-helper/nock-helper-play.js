@@ -225,7 +225,7 @@ function prepareUrl(item, code) {
         case 'put':
             // /amer/v3/conversations/19%3A097e6717fd7245bdbeba6baa13840db8%40thread.skype%3Bmessageid%3D1571537152320/activities/1%3A1Zu8wK3u9-8LohH10diLSicoeHNSBwMtz2VNKrDCqPQc
             const levels = item.path.split('/');
-            var path = item.path;
+            // var path = item.path;
             if (levels.length == 7 && levels[5] == 'activities') {
                 //levels[4] = '*';
                 //path = RegExp('\/amer\/v3\/conversations\/.*\/activities\/.*$', 'g');

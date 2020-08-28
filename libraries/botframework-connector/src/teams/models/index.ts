@@ -18,8 +18,8 @@ import { ConversationList, TeamDetails } from 'botframework-schema';
  */
 export interface TeamsConnectorClientOptions extends ServiceClientOptions {
     /**
-   * @member {string} [baseUri]
-   */
+     * @member {string} [baseUri]
+     */
     baseUri?: string;
 }
 
@@ -28,16 +28,16 @@ export interface TeamsConnectorClientOptions extends ServiceClientOptions {
  */
 export type TeamsFetchChannelListResponse = ConversationList & {
     /**
-   * The underlying HTTP response.
-   */
+     * The underlying HTTP response.
+     */
     _response: HttpResponse & {
         /**
-       * The response body as text (string format)
-       */
+         * The response body as text (string format)
+         */
         bodyAsText: string;
         /**
-       * The response body as parsed JSON or XML
-       */
+         * The response body as parsed JSON or XML
+         */
         parsedBody: ConversationList;
     };
 };
@@ -47,16 +47,16 @@ export type TeamsFetchChannelListResponse = ConversationList & {
  */
 export type TeamsFetchTeamDetailsResponse = TeamDetails & {
     /**
-   * The underlying HTTP response.
-   */
+     * The underlying HTTP response.
+     */
     _response: HttpResponse & {
         /**
-       * The response body as text (string format)
-       */
+         * The response body as text (string format)
+         */
         bodyAsText: string;
         /**
-       * The response body as parsed JSON or XML
-       */
+         * The response body as parsed JSON or XML
+         */
         parsedBody: TeamDetails;
     };
 };

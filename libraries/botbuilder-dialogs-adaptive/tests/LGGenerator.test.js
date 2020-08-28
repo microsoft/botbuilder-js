@@ -203,22 +203,22 @@ describe('LGLanguageGenerator', function() {
 
     describe('TestResourceMultiLangGenerator', () => {
         const lg = new ResourceMultiLanguageGenerator('test.lg');
-        /*
-        it('en-us, "${test()}", no data', async () => {
-            const result1 = await lg.generate(await getTurnContext('en-us', lg), '${test()}', undefined);
-            assert.equal(result1, 'english-us');
-        });
+        
+        // it('en-us, "${test()}", no data', async () => {
+        //     const result1 = await lg.generate(await getTurnContext('en-us', lg), '${test()}', undefined);
+        //     assert.equal(result1, 'english-us');
+        // });
 
-        it('en-us, "${test()}", country data', async () => {
-            const result2 = await lg.generate(await getTurnContext('en-us', lg), '${test()}', { country: 'us' });
-            assert.equal(result2, 'english-us');
-        });
+        // it('en-us, "${test()}", country data', async () => {
+        //     const result2 = await lg.generate(await getTurnContext('en-us', lg), '${test()}', { country: 'us' });
+        //     assert.equal(result2, 'english-us');
+        // });
 
-        it('en-gb, "${test()}", no data', async () => {
-            const result3 = await lg.generate(await getTurnContext('en-gb', lg), '${test()}', undefined);
-            assert.equal(result3, 'english-gb');
-        });
-*/
+        // it('en-gb, "${test()}", no data', async () => {
+        //     const result3 = await lg.generate(await getTurnContext('en-gb', lg), '${test()}', undefined);
+        //     assert.equal(result3, 'english-gb');
+        // });
+
         it('en, "${test()}", no data', async () => {
             const result4 = await lg.generate(getDialogContext('en', lg), '${test()}', undefined);
             assert.equal(result4, 'english');
@@ -253,11 +253,10 @@ describe('LGLanguageGenerator', function() {
             const result10 = await lg.generate(getDialogContext('foo', lg), '${test2()}', undefined);
             assert.equal(result10, 'default2');
         });
-        /*
-        it('en-us, "${test2()}", country data', async () => {
-            const result11 = await lg.generate(await getTurnContext('en-us', lg), '${test2()}', {country: 'US'});
-            assert.equal(result11, 'english-US');
-        });
-*/
+
+        // it('en-us, "${test2()}", country data', async () => {
+        //     const result11 = await lg.generate(await getTurnContext('en-us', lg), '${test2()}', {country: 'US'});
+        //     assert.equal(result11, 'english-US');
+        // });
     });
 });

@@ -7,7 +7,7 @@ import * as restify from 'restify';
 
 // Import required bot services.
 // See https://aka.ms/bot-services to learn more about the different parts of a bot.
-import { BotFrameworkAdapter, MemoryStorage } from 'botbuilder';
+import { BotFrameworkAdapter } from 'botbuilder';
 
 // This bot's main dialog.
 import { ReplyToChannelBot  } from './replyToChannelBot';

@@ -14,7 +14,6 @@ import {
     teamsGetChannelId,
     TurnContext,
 } from 'botbuilder';
-import { basename } from 'path';
 
 export class ReplyToChannelBot extends TeamsActivityHandler {
     botId: string;

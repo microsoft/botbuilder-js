@@ -64,7 +64,6 @@ export class ConversationUpdateBot  extends TeamsActivityHandler {
             membersRemoved.forEach((account) => {
                 removedMembers += account.id + ' ';
             });
-            const name = !teamInfo ? 'not in team' : teamInfo.name;
             const card = CardFactory.heroCard('Account Removed', `${ removedMembers } removed from ${ teamInfo.name }.`);
             const message = MessageFactory.attachment(card);
             await context.sendActivity(message);

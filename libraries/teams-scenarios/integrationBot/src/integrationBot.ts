@@ -49,7 +49,6 @@ import {
     TeamsActivityHandler,
     TeamsChannelData,
     teamsGetChannelId,
-    TeamDetails,
     TeamInfo,
     TeamsInfo,
     TurnContext,
@@ -67,10 +66,10 @@ const ReceiptCard = 'Receipt';
 const SigninCard = 'Signin';
 const Carousel = 'Carousel';
 const List = 'List';
-    
+
 /**
  * We need to change the key for the user state because the bot might not be in the conversation, which means they get a 403 error.
- * @param userState 
+ * @param userState
  */
 export class IntegrationBot extends TeamsActivityHandler {
     protected activityIds: string[];
@@ -78,7 +77,7 @@ export class IntegrationBot extends TeamsActivityHandler {
     protected cardTypes: string[];
     protected _log: ActivityLog;
 
-    
+
     /*
      * See README.md on what this bot supports.
      */
@@ -87,7 +86,7 @@ export class IntegrationBot extends TeamsActivityHandler {
         this.activityIds = activityIds;
         this.cardTypes = [ HeroCard, ThumbnailCard, ReceiptCard, SigninCard, Carousel, List];
         this._log = activityLog;
-        
+
         // See https://aka.ms/about-bot-activity-message to learn more about the message and other activity types.
         this.onMessage(async (context, next) => {
             TurnContext.removeRecipientMention(context.activity);
@@ -157,7 +156,7 @@ export class IntegrationBot extends TeamsActivityHandler {
             await context.sendActivity(message);
             await next();
         });
-        
+
         this.onMembersAdded(async (context: TurnContext, next: () => Promise<void>): Promise<void> => {
             let newMembers = '';
             context.activity.membersAdded.forEach((account) => {
@@ -190,7 +189,7 @@ export class IntegrationBot extends TeamsActivityHandler {
         const submittedData = action.data as SubmitExampleData;
         const adaptiveCard = AdaptiveCardHelper.toAdaptiveCardAttachment(submittedData);
         const response = CardResponseHelpers.toMessagingExtensionBotMessagePreviewResponse(adaptiveCard);
-        return response;    
+        return response;
     }
 
     protected async handleTeamsMessagingExtensionBotMessagePreviewEdit(context: TurnContext, action: MessagingExtensionAction): Promise<MessagingExtensionActionResponse> {
@@ -221,11 +220,11 @@ export class IntegrationBot extends TeamsActivityHandler {
             // Send card to "General" channel.
             //const teamDetails: TeamDetails = await TeamsInfo.getTeamDetails(context);
             const channelId = teamsGetChannelId(context.activity);
-            const adapter = <BotFrameworkAdapter>context.adapter;    
+            const adapter = <BotFrameworkAdapter>context.adapter;
             const connectorClient = adapter.createConnectorClient(context.activity.serviceUrl);
             const results = await connectorClient.conversations.createConversation(
-                { 
-                    isGroup: true, 
+                {
+                    isGroup: true,
                     channelData: {channel: { id: channelId } as ChannelInfo } as TeamsChannelData,
                     activity: responseActivity
                 } as ConversationParameters);
@@ -258,21 +257,21 @@ export class IntegrationBot extends TeamsActivityHandler {
         reply.textFormat = 'xml';
         reply.text = `Declined. We won't upload file <b>${ fileConsentCardResponse.context['filename'] }</b>.`;
         await context.sendActivity(reply);
-    } 
-    
+    }
+
     protected async handleTeamsTaskModuleFetch(context: TurnContext, taskModuleRequest: TaskModuleRequest): Promise<TaskModuleResponse> {
         const reply = MessageFactory.text('handleTeamsTaskModuleFetch TaskModuleRequest' + JSON.stringify(taskModuleRequest));
         await context.sendActivity(reply);
 
         return {
-            task: { 
-                type: 'continue', 
+            task: {
+                type: 'continue',
                 value: {
                     card: this.getTaskModuleAdaptiveCard(),
                     height: 200,
                     width: 400,
                     title: 'Adaptive Card: Inputs',
-                } as TaskModuleTaskInfo, 
+                } as TaskModuleTaskInfo,
             } as TaskModuleContinueResponse
         } as TaskModuleResponse;
     }
@@ -282,9 +281,9 @@ export class IntegrationBot extends TeamsActivityHandler {
         await context.sendActivity(reply);
 
         return {
-            task: { 
-                type: 'message', 
-                value: 'Thanks!', 
+            task: {
+                type: 'message',
+                value: 'Thanks!',
             } as TaskModuleMessageResponse
         } as TaskModuleResponse;
     }
@@ -329,12 +328,12 @@ export class IntegrationBot extends TeamsActivityHandler {
         await context.sendActivity(MessageFactory.text(`O365ConnectorCardActionQuery event value: ${ JSON.stringify(query) }`));
     }
 
-    
+
     protected async handleTeamsMessagingExtensionQuery(context: TurnContext, query: MessagingExtensionQuery): Promise<MessagingExtensionResponse>{
         const searchQuery = query.parameters[0].value;
         const composeExtension = this.createMessagingExtensionResult([
-            this.createSearchResultAttachment(searchQuery), 
-            this.createDummySearchResultAttachment(), 
+            this.createSearchResultAttachment(searchQuery),
+            this.createDummySearchResultAttachment(),
             this.createSelectItemsResultAttachment(searchQuery)
         ]);
 
@@ -352,10 +351,10 @@ export class IntegrationBot extends TeamsActivityHandler {
             composeExtension: this.createMessagingExtensionResult([card])
         };
     }
-    
+
     protected async handleTeamsAppBasedLinkQuery(context: TurnContext, query: AppBasedLinkQuery): Promise<MessagingExtensionResponse>{
         console.log('HANDLETEAMSAPPBASEDLINKQUERY\nCONTEXT:\n' + JSON.stringify(context) + '\nQUERY:\n' + JSON.stringify(query));
-        
+
         const accessor = this.userState.createProperty<{ useHeroCard: boolean }>(RICH_CARD_PROPERTY);
         const config = await accessor.get(context, { useHeroCard: true });
 
@@ -398,12 +397,12 @@ export class IntegrationBot extends TeamsActivityHandler {
     }
 
     protected async handleTeamsMessagingExtensionConfigurationQuerySettingUrl(context: TurnContext, query: MessagingExtensionQuery){
-        
+
         return <MessagingExtensionActionResponse>
         {
             composeExtension: <MessagingExtensionResult> {
                 type: 'config',
-                suggestedActions: <MessagingExtensionSuggestedAction> { 
+                suggestedActions: <MessagingExtensionSuggestedAction> {
                     actions: [
                         {
                             type: ActionTypes.OpenUrl,
@@ -423,7 +422,7 @@ export class IntegrationBot extends TeamsActivityHandler {
 
         if (settings.state === 'hero') {
             config.useHeroCard = true;
-        } 
+        }
         else if (settings.state === 'thumbnail') {
             config.useHeroCard = false;
         }
@@ -768,7 +767,7 @@ export class IntegrationBot extends TeamsActivityHandler {
     }
 
     private getTaskModuleHeroCard() : Attachment {
-        return CardFactory.heroCard('Task Module Invocation from Hero Card', 
+        return CardFactory.heroCard('Task Module Invocation from Hero Card',
             'This is a hero card with a Task Module Action button.  Click the button to show an Adaptive Card within a Task Module.',
             null, // No images
             [{type: 'invoke', title:'Adaptive Card', value: {type:'task/fetch', data:'adaptivecard'} }]
@@ -799,24 +798,22 @@ export class IntegrationBot extends TeamsActivityHandler {
             ]
         });
     }
-    
+
     private async sendFile(fileConsentCardResponse: FileConsentCardResponse): Promise<void> {
         const request = require('request');
-        const fs = require('fs');     
+        const fs = require('fs');
         const context = fileConsentCardResponse.context;
         const path = require('path');
         const filePath = path.join('files', context['filename']);
-        const stats = fs.statSync(filePath);
-        const fileSizeInBytes = stats['size']; 
         fs.createReadStream(filePath).pipe(request.put(fileConsentCardResponse.uploadInfo.uploadUrl));
     }
 
     private async sendFileCard(context: TurnContext): Promise<void> {
         const filename = 'teams-logo.png';
-        const fs = require('fs'); 
+        const fs = require('fs');
         const path = require('path');
         const stats = fs.statSync(path.join('files', filename));
-        const fileSizeInBytes = stats['size'];    
+        const fileSizeInBytes = stats['size'];
 
         const fileContext = {
             filename: filename
@@ -876,7 +873,7 @@ export class IntegrationBot extends TeamsActivityHandler {
             text: text || '',
             locale: locale || activity.locale
         } as Activity;
-    } 
+    }
 
     private async sendMessageAndLogActivityId(context: TurnContext, text: string): Promise<void> {
         const replyActivity = MessageFactory.text(`You said '${ text }'`);
@@ -1097,8 +1094,8 @@ export class IntegrationBot extends TeamsActivityHandler {
         });
         await this.sendInBatches(context, messages);
     }
-    
-    private async showChannels(context: TurnContext): Promise<void> { 
+
+    private async showChannels(context: TurnContext): Promise<void> {
         const channels = await TeamsInfo.getTeamChannels(context);
         await context.sendActivity(MessageFactory.text(`Total of ${ channels.length } channels are currently in team`));
         const messages = channels.map(function(channel) {
@@ -1106,7 +1103,7 @@ export class IntegrationBot extends TeamsActivityHandler {
         });
         await this.sendInBatches(context, messages);
     }
-   
+
     private async showDetails(context: TurnContext): Promise<void> {
         const teamDetails = await TeamsInfo.getTeamDetails(context);
         await this.sendMessageAndLogActivityId(context, `The team name is ${ teamDetails.name }. The team ID is ${ teamDetails.id }. The AAD GroupID is ${ teamDetails.aadGroupId }.`);
@@ -1127,7 +1124,7 @@ export class IntegrationBot extends TeamsActivityHandler {
         }
     }
 
-    private createMessagingExtensionResult(attachments: Attachment[]) : MessagingExtensionResult {   
+    private createMessagingExtensionResult(attachments: Attachment[]) : MessagingExtensionResult {
         return <MessagingExtensionResult> {
             type: 'result',
             attachmentLayout: 'list',
@@ -1200,11 +1197,11 @@ export class IntegrationBot extends TeamsActivityHandler {
         if (!teamsChannelId) {
             throw new Error('Missing valid teamsChannelId argument');
         }
-    
+
         if (!message) {
             throw new Error('Missing valid message argument');
         }
-    
+
         const conversationParameters = <ConversationParameters>{
             isGroup: true,
             channelData: <TeamsChannelData>{
@@ -1212,14 +1209,14 @@ export class IntegrationBot extends TeamsActivityHandler {
                     id: teamsChannelId
                 }
             },
-    
+
             activity: message,
         };
 
-        const adapter = <BotFrameworkAdapter>context.adapter;    
+        const adapter = <BotFrameworkAdapter>context.adapter;
         const connectorClient = adapter.createConnectorClient(context.activity.serviceUrl);
 
-        // This call does NOT send the outbound Activity is not being sent through the middleware stack.    
+        // This call does NOT send the outbound Activity is not being sent through the middleware stack.
         const conversationResourceResponse: ConversationResourceResponse = await connectorClient.conversations.createConversation(conversationParameters);
         const conversationReference = <ConversationReference>TurnContext.getConversationReference(context.activity);
         conversationReference.conversation.id = conversationResourceResponse.id;

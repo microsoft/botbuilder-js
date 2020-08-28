@@ -73,7 +73,7 @@ export class FileUploadBot extends TeamsActivityHandler {
         const path = require('path');
         const filePath = path.join('files', context['filename']);
         const stats = fs.statSync(filePath);
-        const fileSizeInBytes = stats['size']; 
+        // const fileSizeInBytes = stats['size']; 
         fs.createReadStream(filePath).pipe(request.put(fileConsentCardResponse.uploadInfo.uploadUrl));
     }
 

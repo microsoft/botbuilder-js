@@ -2,7 +2,6 @@
 // Licensed under the MIT License.
 
 import {
-    Activity,
     MessageFactory,
     TeamsActivityHandler,
     TeamsInfo,
@@ -63,7 +62,6 @@ export class RosterBot extends TeamsActivityHandler {
     }
 
     private async showMembers(context: TurnContext): Promise<void> {
-        const options = {'continuationToken': null, 'pageSize': 2};
         const teamsChannelAccounts = await (await TeamsInfo.getPagedMembers(context, 5)).members;
         await context.sendActivity(MessageFactory.text(`Total of ${ teamsChannelAccounts.length } members are currently in team`));
         const messages = teamsChannelAccounts.map(function(teamsChannelAccount) {

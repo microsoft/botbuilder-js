@@ -7,8 +7,8 @@
  */
 
 /**
-  * Anchor for relative position in a sequence.
-  */
+ * Anchor for relative position in a sequence.
+ */
 export enum Anchor {
     Current = 'current',
     Start = 'start',
@@ -25,8 +25,8 @@ export interface OrdinalV2 {
     relativeTo: Anchor;
 
     /**
-       * Offset relative to position in sequence.
-       */
+     * Offset relative to position in sequence.
+     */
     offset: number;
 }
 
