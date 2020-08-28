@@ -5,9 +5,9 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
+import { QnAMakerRecognizer } from 'botbuilder-ai';
 import { Dialog } from 'botbuilder-dialogs';
 import { OnIntent } from './onIntent';
-import { QnAMakerRecognizer } from '../qnaMaker';
 
 /**
  * Actions triggered when a MessageUpdateActivity is received.

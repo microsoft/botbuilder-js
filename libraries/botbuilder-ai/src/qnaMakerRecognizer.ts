@@ -6,11 +6,10 @@
  * Licensed under the MIT License.
  */
 
-import { DialogContext } from 'botbuilder-dialogs';
+import { DialogContext, Recognizer } from 'botbuilder-dialogs';
 import { RecognizerResult, Activity } from 'botbuilder-core';
-import { RankerTypes, QnAMakerMetadata, QnAMaker, QnAMakerEndpoint, QnAMakerOptions, QnAMakerResult, QnARequestContext } from 'botbuilder-ai';
-import { Recognizer } from '../recognizers/recognizer';
 import { StringExpression, IntExpression, NumberExpression, BoolExpression, ArrayExpression, ObjectExpression } from 'adaptive-expressions';
+import { RankerTypes, QnAMakerMetadata, QnAMaker, QnAMakerEndpoint, QnAMakerOptions, QnAMakerResult, QnARequestContext } from './';
 
 const intentPrefix = 'intent=';
 
