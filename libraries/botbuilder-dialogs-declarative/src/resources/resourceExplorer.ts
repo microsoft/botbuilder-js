@@ -6,6 +6,7 @@
  * Licensed under the MIT License.
  */
 
+import { Dialog } from 'botbuilder-dialogs';
 import { normalize, join } from 'path';
 import { EventEmitter } from 'events';
 import { ResourceProvider, ResourceChangeEvent } from './resourceProvider';
@@ -20,17 +21,25 @@ import { ComponentRegistration } from '../componentRegistration';
  */
 export class ResourceExplorer {
     private _factory: TypeFactory = new TypeFactory();
-    private _resourceProviders: ResourceProvider[] = [];
-    private _resourceTypes: Set<string> = new Set(['dialog', 'lu', 'lg', 'qna', 'schema', 'json']);
     private _eventEmitter: EventEmitter = new EventEmitter();
 
     /**
      * Initializes a new instance of the `ResourceExplorer` class.
      * @param providers Resource providers.
      */
-    public constructor(providers?: ResourceProvider[]) {
-        if (providers) { this._resourceProviders = providers; }
+    public constructor(providers: ResourceProvider[] = []) {
+        this.resourceProviders = providers;
     }
+
+    /**
+     * Gets resource providers.
+     */
+    public readonly resourceProviders: ResourceProvider[];
+
+    /**
+     * Gets resource type id extensions managed by resource explorer.
+     */
+    public readonly resourceTypes: Set<string> = new Set(['dialog', 'lu', 'lg', 'qna', 'schema', 'json']);
 
     /**
      * Event which fires when a resource is changed.
@@ -48,27 +57,13 @@ export class ResourceExplorer {
     }
 
     /**
-     * Gets resource providers.
-     */
-    public get resourceProviders(): ResourceProvider[] {
-        return this._resourceProviders;
-    }
-
-    /**
-     * Gets resource type id extensions managed by resource explorer.
-     */
-    public get resourceTypes(): Set<string> {
-        return this._resourceTypes;
-    }
-
-    /**
      * Add a resource type to resource type set.
      * @param type Resource type.
      */
     public addResourceType(type: string): void {
         type = type.toLowerCase().replace(/^\./, '');
-        if (!this._resourceTypes.has(type)) {
-            this._resourceTypes.add(type);
+        if (!this.resourceTypes.has(type)) {
+            this.resourceTypes.add(type);
             this.refresh();
         }
     }
@@ -77,8 +72,8 @@ export class ResourceExplorer {
      * Reload any cached data.
      */
     public refresh(): void {
-        for (let i = 0; i < this._resourceProviders.length; i++) {
-            this._resourceProviders[i].refresh();
+        for (let i = 0; i < this.resourceProviders.length; i++) {
+            this.resourceProviders[i].refresh();
         }
     }
 
@@ -87,12 +82,12 @@ export class ResourceExplorer {
      * @param resourceProvider Resource provider to be added.
      */
     public addResourceProvider(resourceProvider: ResourceProvider): ResourceExplorer {
-        if (this._resourceProviders.some((r): boolean => r.id === resourceProvider.id)) {
+        if (this.resourceProviders.some((r): boolean => r.id === resourceProvider.id)) {
             throw Error(`${ resourceProvider.id } has already been added as a resource`);
         }
 
         resourceProvider.changed = this.onChanged.bind(this);
-        this._resourceProviders.push(resourceProvider);
+        this.resourceProviders.push(resourceProvider);
 
         return this;
     }
@@ -154,7 +149,7 @@ export class ResourceExplorer {
      */
     public getResources(fileExtension: string): Resource[] {
         let resources: Resource[] = [];
-        for (const rp of this._resourceProviders) {
+        for (const rp of this.resourceProviders) {
             for (const rpResources of rp.getResources(fileExtension)) {
                 resources.push(rpResources);
             }
@@ -168,7 +163,7 @@ export class ResourceExplorer {
      * @param id Resource id.
      */
     public getResource(id: string): Resource {
-        for (const rp of this._resourceProviders) {
+        for (const rp of this.resourceProviders) {
             const resource: Resource = rp.getResource(id);
             if (resource) {
                 return resource;
@@ -206,8 +201,13 @@ export class ResourceExplorer {
             resource = this.getResource(resource);
         }
         const json = resource.readText();
-        const result = JSON.parse(json);
-        return this.buildType(result as object);
+        const obj = JSON.parse(json) as object;
+        const result = this.buildType(obj);
+        if (result instanceof Dialog && !obj['id']) {
+            // If there is no id for the dialog, then the resource id would be used as dialog id.
+            result.id = resource.id;
+        }
+        return result;
     }
 
     protected onChanged(event: ResourceChangeEvent, resources: Resource[]): void {
