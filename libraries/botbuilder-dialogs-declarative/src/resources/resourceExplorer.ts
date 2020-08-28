@@ -134,10 +134,10 @@ export class ResourceExplorer {
      * @param component Component registration to be added.
      */
     public addComponent(component: ComponentRegistration): ResourceExplorer {
-        const builders = component.getTypeBuilders();
-        for (let i = 0; i < builders.length; i++) {
-            const type = builders[i];
-            this._factory.register(type.name, type.builder);
+        const builderRegistrations = component.getBuilderRegistrations(this);
+        for (let i = 0; i < builderRegistrations.length; i++) {
+            const builderRegistration = builderRegistrations[i];
+            this._factory.register(builderRegistration.kind, builderRegistration.builder);
         }
 
         return this;

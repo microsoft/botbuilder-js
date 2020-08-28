@@ -6,7 +6,8 @@
  * Licensed under the MIT License.
  */
 import { BuilderRegistration } from './builderRegistration';
+import { ResourceExplorer } from './resources';
 
 export interface ComponentRegistration {
-    getTypeBuilders(): BuilderRegistration[];
+    getBuilderRegistrations(resourceExplorer: ResourceExplorer): BuilderRegistration[];
 }
