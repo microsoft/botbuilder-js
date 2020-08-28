@@ -15,4 +15,6 @@ export * from './luisTelemetryConstants';
 export * from './numberWithUnits';
 export * from './ordinalV2';
 export * from './qnaMaker';
+export * from './qnaMakerComponentRegistration';
 export * from './qnaMakerDialog';
+export * from './qnaMakerRecognizer';

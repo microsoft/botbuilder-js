@@ -23,16 +23,17 @@
     "@azure/cognitiveservices-luis-runtime": "2.0.0",
     "@azure/ms-rest-js": "1.8.15",
     "@microsoft/recognizers-text-date-time": "1.1.4",
-    "@types/node": "^10.17.27",
     "adaptive-expressions": "4.1.6",
     "botbuilder-core": "4.1.6",
     "botbuilder-dialogs": "4.1.6",
+    "botbuilder-dialogs-declarative": "4.1.6",
     "node-fetch": "^2.6.0",
     "url-parse": "^1.4.4"
   },
   "devDependencies": {
     "@microsoft/api-extractor": "^7.7.12",
     "@types/mocha": "^5.2.7",
+    "@types/node": "^10.17.27",
     "@types/node-fetch": "^2.5.7",
     "codelyzer": "^4.1.0",
     "fs-extra": "^7.0.1",
