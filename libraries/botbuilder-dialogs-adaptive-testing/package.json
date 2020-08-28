@@ -8,6 +8,7 @@
     "set-version": "npm version --allow-same-version ${Version}"
   },
   "dependencies": {
+    "botbuilder-ai": "4.1.6",
     "botbuilder-core": "4.1.6",
     "botbuilder-dialogs": "4.1.6",
     "botbuilder-dialogs-adaptive": "4.1.6",
