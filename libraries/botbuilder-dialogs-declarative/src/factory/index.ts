@@ -7,5 +7,6 @@
  */
 
 export * from './customTypeBuilder';
+export * from './defaultTypeBuilder';
 export * from './typeBuilder';
 export * from './typeFactory';

@@ -7,13 +7,7 @@
  */
 import { TypeBuilder } from './factory/typeBuilder';
 
-export class BuilderRegistration {
-    public constructor(name: string, builder: TypeBuilder) {
-        this.name = name;
-        this.builder = builder;
-    }
-
-    public name: string;
-
-    public builder: TypeBuilder;
+export interface BuilderRegistration {
+    kind: string;
+    builder: TypeBuilder;
 }
