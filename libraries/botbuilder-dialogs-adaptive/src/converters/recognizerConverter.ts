@@ -7,7 +7,7 @@
  */
 
 import { Converter, ResourceExplorer } from 'botbuilder-dialogs-declarative';
-import { Recognizer } from '../recognizers';
+import { Recognizer } from 'botbuilder-dialogs';
 
 export class RecognizerConverter implements Converter {
     private _resourceExplorer: ResourceExplorer;

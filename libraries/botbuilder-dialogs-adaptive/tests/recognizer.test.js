@@ -1,14 +1,14 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 const assert = require('assert');
 const { TestAdapter, TurnContext } = require('botbuilder-core');
-const { DialogContext, DialogSet } = require('botbuilder-dialogs');
+const { DialogContext, DialogSet, Recognizer } = require('botbuilder-dialogs');
 const { RegexRecognizer, IntentPattern, EntityRecognizerSet, RegexEntityRecognizer,
     AgeEntityRecognizer, ConfirmationEntityRecognizer, CurrencyEntityRecognizer,
     DateTimeEntityRecognizer, DimensionEntityRecognizer, EmailEntityRecognizer,
     GuidEntityRecognizer, HashtagEntityRecognizer, IpEntityRecognizer,
     MentionEntityRecognizer, NumberEntityRecognizer, OrdinalEntityRecognizer,
     PercentageEntityRecognizer, PhoneNumberEntityRecognizer, TemperatureEntityRecognizer,
-    UrlEntityRecognizer, Recognizer
+    UrlEntityRecognizer
 } = require('../');
 
 const user = {

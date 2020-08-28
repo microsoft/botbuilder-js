@@ -20,6 +20,7 @@ export * from './dialogSet';
 export * from './dialogTurnStateConstants';
 export * from './memory';
 export * from './prompts';
+export * from './recognizer';
 export * from './skillDialog';
 export * from './skillDialogOptions';
 export * from './template';

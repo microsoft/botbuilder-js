@@ -7,8 +7,7 @@
  */
 
 import { RecognizerResult, Activity } from 'botbuilder-core';
-import { DialogContext } from 'botbuilder-dialogs';
-import { Recognizer } from './recognizer';
+import { DialogContext, Recognizer } from 'botbuilder-dialogs';
 import { LanguagePolicy } from '../languagePolicy';
 
 export class MultiLanguageRecognizer extends Recognizer {

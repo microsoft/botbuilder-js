@@ -8,7 +8,7 @@
 
 import { IntExpression, ExpressionParser } from 'adaptive-expressions';
 import { Activity, ActivityTypes, getTopScoringIntent, RecognizerResult, StringUtils, TurnContext, telemetryTrackDialogView } from 'botbuilder-core';
-import { Dialog, DialogContainer, DialogContext, DialogDependencies, DialogEvent, DialogInstance, DialogPath, DialogReason, DialogState, DialogTurnResult, DialogTurnStatus, TurnPath } from 'botbuilder-dialogs';
+import { Dialog, DialogContainer, DialogContext, DialogDependencies, DialogEvent, DialogInstance, DialogPath, DialogReason, DialogState, DialogTurnResult, DialogTurnStatus, Recognizer, TurnPath } from 'botbuilder-dialogs';
 import { ActionContext } from './actionContext';
 import { AdaptiveDialogState } from './adaptiveDialogState';
 import { AdaptiveEvents } from './adaptiveEvents';
@@ -18,7 +18,7 @@ import { EntityAssignments } from './entityAssignments';
 import { EntityInfo, NormalizedEntityInfos } from './entityInfo';
 import { LanguageGenerator } from './languageGenerator';
 import { languageGeneratorKey } from './languageGeneratorExtensions';
-import { Recognizer, RecognizerSet } from './recognizers';
+import { RecognizerSet } from './recognizers';
 import { ValueRecognizer } from './recognizers/valueRecognizer';
 import { SchemaHelper } from './schemaHelper';
 import { FirstSelector } from './selectors';

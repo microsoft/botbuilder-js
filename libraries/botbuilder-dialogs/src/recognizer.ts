@@ -5,9 +5,8 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { RecognizerResult, Activity, getTopScoringIntent, BotTelemetryClient, NullTelemetryClient } from 'botbuilder-core';
-import { DialogContext } from 'botbuilder-dialogs';
-import { telemetryClientKey } from '../telemetryExtensions';
+import { RecognizerResult, Activity, getTopScoringIntent, BotTelemetryClient, NullTelemetryClient, telemetryClientKey } from 'botbuilder-core';
+import { DialogContext } from './dialogContext';
 
 export class Recognizer {
 

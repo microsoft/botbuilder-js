@@ -6,8 +6,8 @@
  * Licensed under the MIT License.
  */
 
+import { Recognizer } from 'botbuilder-dialogs';
 import { Converter, ResourceExplorer } from 'botbuilder-dialogs-declarative';
-import { Recognizer } from '../recognizers';
 import { RecognizerConverter } from './recognizerConverter';
 
 export class MultiLanguageRecognizerConverter implements Converter {
