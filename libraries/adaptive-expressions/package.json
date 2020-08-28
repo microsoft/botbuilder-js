@@ -24,7 +24,7 @@
     "@types/lru-cache": "^5.1.0",
     "@types/moment-timezone": "^0.5.13",
     "@types/xmldom": "^0.1.29",
-    "antlr4ts": "^0.5.0-alpha.3",
+    "antlr4ts": "0.5.0-alpha.3",
     "atob-lite": "^2.0.0",
     "big-integer": "^1.6.48",
     "jspath": "^0.4.0",
