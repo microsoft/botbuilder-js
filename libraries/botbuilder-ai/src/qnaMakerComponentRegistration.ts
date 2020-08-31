@@ -1,15 +1,18 @@
 
 import { StringExpressionConverter, IntExpressionConverter, NumberExpressionConverter, BoolExpressionConverter, ArrayExpressionConverter, ObjectExpressionConverter, EnumExpressionConverter } from 'adaptive-expressions';
-import { ComponentRegistration, BuilderRegistration, DefaultTypeBuilder, ResourceExplorer } from 'botbuilder-dialogs-declarative';
 import { QnAMakerRecognizer } from './qnaMakerRecognizer';
 import { QnAMakerDialog, QnAMakerDialogActivityConverter } from './qnaMakerDialog';
 import { RankerTypes } from './qnamaker-interfaces/rankerTypes';
 
-export class QnAMakerComponentRegistration implements ComponentRegistration {
-    public getBuilderRegistrations(resourceExplorer: ResourceExplorer): BuilderRegistration[] {
+/**
+ * Declarative components in QnAMaker.
+ */
+export class QnAMakerComponentRegistration {
+    public getDeclarativeTypes(_resourceExplorer: any) {
         return [{
             kind: 'Microsoft.QnAMakerRecognizer',
-            builder: new DefaultTypeBuilder(QnAMakerRecognizer, resourceExplorer, {
+            factory: QnAMakerRecognizer,
+            converters: {
                 'knowledgeBaseId': new StringExpressionConverter(),
                 'hostname': new StringExpressionConverter(),
                 'endpointKey': new StringExpressionConverter(),
@@ -20,10 +23,11 @@ export class QnAMakerComponentRegistration implements ComponentRegistration {
                 'metadata': new ArrayExpressionConverter(),
                 'context': new ObjectExpressionConverter(),
                 'qnaId': new IntExpressionConverter()
-            })
+            }
         }, {
             kind: 'Microsoft.QnAMakerDialog',
-            builder: new DefaultTypeBuilder(QnAMakerDialog, resourceExplorer, {
+            factory: QnAMakerDialog,
+            converters: {
                 'knowledgeBaseId': new StringExpressionConverter(),
                 'hostname': new StringExpressionConverter(),
                 'endpointKey': new StringExpressionConverter(),
@@ -36,8 +40,7 @@ export class QnAMakerComponentRegistration implements ComponentRegistration {
                 'strictFilters': new ArrayExpressionConverter(),
                 'logPersonalInformation': new BoolExpressionConverter(),
                 'rankerType': new EnumExpressionConverter(RankerTypes)
-            })
-        }
-        ];
+            }
+        }];
     }
 }
