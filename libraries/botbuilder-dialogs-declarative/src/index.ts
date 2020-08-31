@@ -6,8 +6,9 @@
  * Licensed under the MIT License.
  */
 
-export * from './builderRegistration';
 export * from './componentRegistration';
 export * from './converter';
-export * from './factory';
+export * from './declarativeType';
+export * from './defaultLoader';
 export * from './resources';
+export * from './typeLoader';

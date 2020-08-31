@@ -6,27 +6,36 @@
  * Licensed under the MIT License.
  */
 
-import { Converter } from '../converter';
-import { ResourceExplorer } from '../resources/resourceExplorer';
-import { TypeBuilder } from './typeBuilder';
+import { TypeLoader } from './typeLoader';
+import { ResourceExplorer } from './resources/resourceExplorer';
 
-export class DefaultTypeBuilder implements TypeBuilder {
-    private _factory: new () => object;
-    private _converters: { [key: string]: Converter } = {};
+/**
+ * The default type loader to load declarative objects.
+ */
+export class DefaultLoader implements TypeLoader {
     private _resourceExplorer: ResourceExplorer;
 
-    public constructor(factory: new () => object, resourceExplorer: ResourceExplorer, converters: { [key: string]: Converter }) {
-        this._factory = factory;
+    /**
+     * Initialize a new `DefaultLoader`.
+     * @param resourceExplorer The resource explorer used to load declarative objects.
+     */
+    public constructor(resourceExplorer: ResourceExplorer) {
         this._resourceExplorer = resourceExplorer;
-        this._converters = converters;
     }
 
-    public build(config: object): object {
-        const obj = new this._factory();
+    /**
+     * Load and convert declarative objects.
+     * @param factory The factory to initialize new instances of declarative objects.
+     * @param config The JSON object to be loaded as configuration to declarative objects.
+     */
+    public load(factory: new () => object, config: object): object {
+        const obj = new factory();
+        const kind = config['$kind'] || config['$type'];
         for (const key in config) {
-            if (config.hasOwnProperty(key)) {
+            if (config.hasOwnProperty(key) && key != '$kind' && key != '$type') {
+
                 const value = config[key];
-                const converter = this._converters[key];
+                const converter = this._resourceExplorer.getConverter(kind, key);
                 if (converter) {
                     if (Array.isArray(value) && Array.isArray(obj[key])) {
                         obj[key] = value.map((item): any => converter.convert(this._resourceExplorer.buildType(item)));

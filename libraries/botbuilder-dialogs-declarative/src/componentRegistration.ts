@@ -5,9 +5,13 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { BuilderRegistration } from './builderRegistration';
+
+import { DeclarativeType } from './declarativeType';
 import { ResourceExplorer } from './resources';
 
+/**
+ * Defines a set of declarative components.
+ */
 export interface ComponentRegistration {
-    getBuilderRegistrations(resourceExplorer: ResourceExplorer): BuilderRegistration[];
+    getDeclarativeTypes(resourceExplorer: ResourceExplorer): DeclarativeType[];
 }

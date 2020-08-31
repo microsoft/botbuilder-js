@@ -13,15 +13,19 @@ import { ResourceProvider, ResourceChangeEvent } from './resourceProvider';
 import { FolderResourceProvider } from './folderResourceProvider';
 import { Resource } from './resource';
 import { PathUtil } from '../pathUtil';
-import { TypeFactory } from '../factory/typeFactory';
 import { ComponentRegistration } from '../componentRegistration';
+import { TypeLoader } from '../typeLoader';
+import { DefaultLoader } from '../defaultLoader';
+import { Converter } from '../converter';
 
 /**
  * Class which gives standard access to content resources.
  */
 export class ResourceExplorer {
-    private _factory: TypeFactory = new TypeFactory();
     private _eventEmitter: EventEmitter = new EventEmitter();
+    private _kindLoaders: { [kind: string]: TypeLoader } = {};
+    private _kindFactories: { [kind: string]: new () => object } = {};
+    private _kindConverters: { [kind: string]: { [key: string]: Converter } } = {};
 
     /**
      * Initializes a new instance of the `ResourceExplorer` class.
@@ -134,10 +138,13 @@ export class ResourceExplorer {
      * @param component Component registration to be added.
      */
     public addComponent(component: ComponentRegistration): ResourceExplorer {
-        const builderRegistrations = component.getBuilderRegistrations(this);
-        for (let i = 0; i < builderRegistrations.length; i++) {
-            const builderRegistration = builderRegistrations[i];
-            this._factory.register(builderRegistration.kind, builderRegistration.builder);
+        const typeRegistrations = component.getDeclarativeTypes(this);
+        for (let i = 0; i < typeRegistrations.length; i++) {
+            const typeRegistration = typeRegistrations[i];
+            const kind = typeRegistration.kind;
+            this._kindFactories[kind] = typeRegistration.factory;
+            this._kindLoaders[kind] = typeRegistration.loader || new DefaultLoader(this);
+            this._kindConverters[kind] = typeRegistration.converters || {};
         }
 
         return this;
@@ -181,7 +188,17 @@ export class ResourceExplorer {
         if (typeof config == 'object') {
             const kind = config['$kind'] || config['$type'];
             if (kind) {
-                const result = this._factory.build(kind, config);
+                const factory = this._kindFactories[kind];
+                if (!factory) {
+                    throw new Error(`Type ${ kind } not registered in factory.`);
+                }
+
+                const loader = this._kindLoaders[kind];
+                if (!loader) {
+                    throw new Error(`Type ${ kind } not registered in factory.`);
+                }
+
+                const result = loader.load(factory, config);
                 return result;
             } else {
                 for (const key in config) {
@@ -208,6 +225,15 @@ export class ResourceExplorer {
             result.id = resource.id;
         }
         return result;
+    }
+
+    /**
+     * Get converters for a key in a declarative component of kind.
+     * @param kind The kind of declarative component.
+     * @param key THe key of declarative component.
+     */
+    public getConverter(kind: string, key: string): Converter {
+        return kind && this._kindConverters[kind] && key && this._kindConverters[kind][key];
     }
 
     protected onChanged(event: ResourceChangeEvent, resources: Resource[]): void {
