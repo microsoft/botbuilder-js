@@ -7,20 +7,20 @@
  */
 
 import { BoolExpressionConverter, NumberExpressionConverter, StringExpressionConverter } from 'adaptive-expressions';
-import { BuilderRegistration, ComponentRegistration, DefaultTypeBuilder, ResourceExplorer } from 'botbuilder-dialogs-declarative';
 
 import { OrchestratorAdaptiveRecognizer } from './orchestratorAdaptiveRecognizer';
 
-export class OrchestratorComponentRegistration implements ComponentRegistration {
-    public getBuilderRegistrations(resourceExplorer: ResourceExplorer): BuilderRegistration[] {
+export class OrchestratorComponentRegistration {
+    public getDeclarativeTypes(_resourceExplorer: any) {
         return [{
             kind: 'Microsoft.OrchestratorRecognizer',
-            builder: new DefaultTypeBuilder(OrchestratorAdaptiveRecognizer, resourceExplorer, {
+            factory: OrchestratorAdaptiveRecognizer,
+            converters: {
                 modelPath: new StringExpressionConverter(),
                 snapshotPath: new StringExpressionConverter(),
                 disambiguationScoreThreshold: new NumberExpressionConverter(),
                 detectAmbiguousIntents: new BoolExpressionConverter(),
-            })
+            }
         }];
     }
 };
