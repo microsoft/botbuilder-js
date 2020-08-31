@@ -89,6 +89,8 @@ mode STRING_INTERPOLATION_MODE;
 
 STRING_INTERPOLATION_END : '`' {this.ignoreWS = true;} -> type(STRING_INTERPOLATION_START), popMode;
 
+EOL: '\r'? '\n';
+
 TEMPLATE : '$' '{' (STRING | OBJECT_DEFINITION | ~[\r\n{}'"`])+ '}';
 
 ESCAPE_CHARACTER : '\\' ~[\r\n]?;

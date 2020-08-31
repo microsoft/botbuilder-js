@@ -53,6 +53,8 @@ const dataSource = [
     ['`hello ${string({obj:  1})}`', 'hello {"obj":1}'],
     ['`hello ${string({obj:  "${not expr}"})}`', 'hello {"obj":"${not expr}"}'],
     ['`hello ${string({obj:  {a: 1}})}`', 'hello {"obj":{"a":1}}'],
+    ['`${hello} \n\n ${world}`', 'hello \n\n world'],
+    ['`${hello} \r\n ${world}`', 'hello \r\n world'],
 
     //Operators tests
 
