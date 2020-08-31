@@ -6,14 +6,17 @@
  * Licensed under the MIT License.
  */
 
-import { DefaultTypeBuilder } from 'botbuilder-dialogs-declarative';
+import { DefaultLoader } from 'botbuilder-dialogs-declarative';
 
-export class CustomDialogTypeBuilder extends DefaultTypeBuilder {
-    public build(config: object): object {
+/**
+ * The cutomized type loader to load cutom dialogs.
+ */
+export class CustomDialogLoader extends DefaultLoader {
+    public load(factory: new () => object, config: object): object {
         const kind = config['$kind'];
         if (!config['dialog']) {
             config['dialog'] = kind.replace(/\.dialog$/, '');
         }
-        return super.build(config);
+        return super.load(factory, config);
     }
 }

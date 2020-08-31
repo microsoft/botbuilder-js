@@ -7,8 +7,7 @@
  */
 
 import { Choice, ListStyle, ChoiceFactoryOptions, FindChoicesOptions } from 'botbuilder-dialogs';
-import { ComponentRegistration, ResourceExplorer, BuilderRegistration, DefaultTypeBuilder } from 'botbuilder-dialogs-declarative';
-import { CustomDialogTypeBuilder } from './customDialogTypeBuilder';
+import { ComponentRegistration, DeclarativeType, ResourceExplorer } from 'botbuilder-dialogs-declarative';
 import { AdaptiveDialog } from './adaptiveDialog';
 import { BeginDialog, BeginSkill, BreakLoop, CancelAllDialogs, CancelDialog, ContinueLoop, DeleteActivity, DeleteProperties, DeleteProperty, EditActions, EditArray, EmitEvent, EndDialog, EndTurn, ForEach, ForEachPage, GetActivityMembers, GetConversationMembers, GotoAction, IfCondition, LogAction, RepeatDialog, ReplaceDialog, SendActivity, SetProperties, SetProperty, SignOutUser, SwitchCondition, TraceActivity, UpdateActivity, ArrayChangeType, PropertyAssignmentConverter, HttpRequest, HttpHeadersConverter, ResponsesTypes, DynamicBeginDialog } from './actions';
 import { Ask, AttachmentInput, ChoiceInput, ConfirmInput, DateTimeInput, NumberInput, OAuthInput, TextInput, AttachmentOutputFormat, ChoiceOutputFormat } from './input';
@@ -23,9 +22,13 @@ import { TemplateEngineLanguageGenerator, ResourceMultiLanguageGenerator } from 
 import { ConditionalSelector, FirstSelector, RandomSelector, TrueSelector } from './selectors';
 import { LuisAdaptiveRecognizer } from './luis';
 import { LanguagePolicyConverter } from './languagePolicy';
+import { CustomDialogLoader } from './customDialogLoader';
 
+/**
+ * Declarative components in adaptive dialogs.
+ */
 export class AdaptiveDialogComponentRegistration implements ComponentRegistration {
-    public getBuilderRegistrations(resourceExplorer: ResourceExplorer): BuilderRegistration[] {
+    public getDeclarativeTypes(resourceExplorer: ResourceExplorer): DeclarativeType[] {
         const baseInvokeDialogConverters = {
             'options': new ObjectExpressionConverter<object>(),
             'dialog': new DialogExpressionConverter(resourceExplorer),
@@ -48,15 +51,17 @@ export class AdaptiveDialogComponentRegistration implements ComponentRegistratio
             'defaultValue': new ValueExpressionConverter(),
             'disabled': new BoolExpressionConverter()
         };
-        const builderRegistrations: BuilderRegistration[] = [{
+        const typeRegistrations: DeclarativeType[] = [{
             kind: 'Microsoft.AdaptiveDialog',
-            builder: new DefaultTypeBuilder(AdaptiveDialog, resourceExplorer, {
+            factory: AdaptiveDialog,
+            converters: {
                 'generator': new LanguageGeneratorConverter(),
                 'recognizer': new RecognizerConverter(resourceExplorer)
-            })
+            }
         }, {
             kind: 'Microsoft.BeginSkill',
-            builder: new DefaultTypeBuilder(BeginSkill, resourceExplorer, {
+            factory: BeginSkill,
+            converters: {
                 'disabled': new BoolExpressionConverter(),
                 'activityProcessed': new BoolExpressionConverter(),
                 'resultProperty': new StringExpressionConverter(),
@@ -66,131 +71,149 @@ export class AdaptiveDialogComponentRegistration implements ComponentRegistratio
                 'skillEndpoint': new StringExpressionConverter(),
                 'activity': new ActivityTemplateConverter(),
                 'connectionName': new StringExpressionConverter()
-            })
+            }
         }, {
             kind: 'Microsoft.BeginDialog',
-            builder: new DefaultTypeBuilder(BeginDialog, resourceExplorer,
-                Object.assign(baseInvokeDialogConverters, {
-                    'resultProperty': new StringExpressionConverter(),
-                    'disabled': new BoolExpressionConverter()
-                }))
+            factory: BeginDialog,
+            converters: Object.assign(baseInvokeDialogConverters, {
+                'resultProperty': new StringExpressionConverter(),
+                'disabled': new BoolExpressionConverter()
+            })
         }, {
             kind: 'Microsoft.BreakLoop',
-            builder: new DefaultTypeBuilder(BreakLoop, resourceExplorer, {
+            factory: BreakLoop,
+            converters: {
                 'disabled': new BoolExpressionConverter()
-            })
+            }
         }, {
             kind: 'Microsoft.CancelAllDialogs',
-            builder: new DefaultTypeBuilder(CancelAllDialogs, resourceExplorer, {
+            factory: CancelAllDialogs,
+            converters: {
                 'eventName': new StringExpressionConverter(),
                 'eventValue': new ValueExpressionConverter(),
                 'disabled': new BoolExpressionConverter(),
                 'activityProcessed': new BoolExpressionConverter()
-            })
+            }
         }, {
             kind: 'Microsoft.CancelDialog',
-            builder: new DefaultTypeBuilder(CancelDialog, resourceExplorer, {
+            factory: CancelDialog,
+            converters: {
                 'eventName': new StringExpressionConverter(),
                 'eventValue': new ValueExpressionConverter(),
                 'disabled': new BoolExpressionConverter(),
                 'activityProcessed': new BoolExpressionConverter()
-            })
+            }
         }, {
             kind: 'Microsoft.ContinueLoop',
-            builder: new DefaultTypeBuilder(ContinueLoop, resourceExplorer, {
+            factory: ContinueLoop,
+            converters: {
                 'disabled': new BoolExpressionConverter()
-            })
+            }
         }, {
             kind: 'Microsoft.DeleteActivity',
-            builder: new DefaultTypeBuilder(DeleteActivity, resourceExplorer, {
+            factory: DeleteActivity,
+            converters: {
                 'activityId': new StringExpressionConverter(),
                 'disabled': new BoolExpressionConverter()
-            })
+            }
         }, {
             kind: 'Microsoft.DeleteProperties',
-            builder: new DefaultTypeBuilder(DeleteProperties, resourceExplorer, {
+            factory: DeleteProperties,
+            converters: {
                 'properties': new StringExpressionConverter(),
                 'disabled': new BoolExpressionConverter()
-            })
+            }
         }, {
             kind: 'Microsoft.DeleteProperty',
-            builder: new DefaultTypeBuilder(DeleteProperty, resourceExplorer, {
+            factory: DeleteProperty,
+            converters: {
                 'property': new StringExpressionConverter(),
                 'disabled': new BoolExpressionConverter()
-            })
+            }
         }, {
             kind: 'Microsoft.EditActions',
-            builder: new DefaultTypeBuilder(EditActions, resourceExplorer, {
+            factory: EditActions,
+            converters: {
                 'changeType': new EnumExpressionConverter(ActionChangeType),
                 'disabled': new BoolExpressionConverter()
-            })
+            }
         }, {
             kind: 'Microsoft.EditArray',
-            builder: new DefaultTypeBuilder(EditArray, resourceExplorer, {
+            factory: EditArray,
+            converters: {
                 'changeType': new EnumExpressionConverter(ArrayChangeType),
                 'itemsProperty': new StringExpressionConverter(),
                 'resultProperty': new StringExpressionConverter(),
                 'value': new ValueExpressionConverter(),
                 'disabled': new BoolExpressionConverter()
-            })
+            }
         }, {
             kind: 'Microsoft.EmitEvent',
-            builder: new DefaultTypeBuilder(EmitEvent, resourceExplorer, {
+            factory: EmitEvent,
+            converters: {
                 'eventName': new StringExpressionConverter(),
                 'eventValue': new ValueExpressionConverter(),
                 'bubbleEvent': new BoolExpressionConverter(),
                 'disabled': new BoolExpressionConverter()
-            })
+            }
         }, {
             kind: 'Microsoft.EndDialog',
-            builder: new DefaultTypeBuilder(EndDialog, resourceExplorer, {
+            factory: EndDialog,
+            converters: {
                 'value': new ValueExpressionConverter(),
                 'disabled': new BoolExpressionConverter()
-            })
+            }
         }, {
             kind: 'Microsoft.EndTurn',
-            builder: new DefaultTypeBuilder(EndTurn, resourceExplorer, {
+            factory: EndTurn,
+            converters: {
                 'disabled': new BoolExpressionConverter()
-            })
+            }
         }, {
             kind: 'Microsoft.Foreach',
-            builder: new DefaultTypeBuilder(ForEach, resourceExplorer, {
+            factory: ForEach,
+            converters: {
                 'itemsProperty': new StringExpressionConverter(),
                 'index': new StringExpressionConverter(),
                 'value': new StringExpressionConverter(),
                 'disabled': new BoolExpressionConverter()
-            })
+            }
         }, {
             kind: 'Microsoft.ForeachPage',
-            builder: new DefaultTypeBuilder(ForEachPage, resourceExplorer, {
+            factory: ForEachPage,
+            converters: {
                 'itemsProperty': new StringExpressionConverter(),
                 'page': new StringExpressionConverter(),
                 'pageIndex': new StringExpressionConverter(),
                 'pageSize': new IntExpressionConverter(),
                 'disabled': new BoolExpressionConverter()
-            })
+            }
         }, {
             kind: 'Microsoft.GetActivityMembers',
-            builder: new DefaultTypeBuilder(GetActivityMembers, resourceExplorer, {
+            factory: GetActivityMembers,
+            converters: {
                 'activityId': new StringExpressionConverter(),
                 'property': new StringExpressionConverter(),
                 'disabled': new BoolExpressionConverter()
-            })
+            }
         }, {
             kind: 'Microsoft.GetConversationMembers',
-            builder: new DefaultTypeBuilder(GetConversationMembers, resourceExplorer, {
+            factory: GetConversationMembers,
+            converters: {
                 'property': new StringExpressionConverter(),
                 'disabled': new BoolExpressionConverter()
-            })
+            }
         }, {
             kind: 'Microsoft.GotoAction',
-            builder: new DefaultTypeBuilder(GotoAction, resourceExplorer, {
+            factory: GotoAction,
+            converters: {
                 'actionId': new StringExpressionConverter(),
                 'disabled': new BoolExpressionConverter()
-            })
+            }
         }, {
             kind: 'Microsoft.HttpRequest',
-            builder: new DefaultTypeBuilder(HttpRequest, resourceExplorer, {
+            factory: HttpRequest,
+            converters: {
                 'contentType': new StringExpressionConverter(),
                 'url': new StringExpressionConverter(),
                 'headers': new HttpHeadersConverter(),
@@ -198,342 +221,386 @@ export class AdaptiveDialogComponentRegistration implements ComponentRegistratio
                 'responseType': new EnumExpressionConverter(ResponsesTypes),
                 'resultProperty': new StringExpressionConverter(),
                 'disabled': new BoolExpressionConverter()
-            })
+            }
         }, {
             kind: 'Microsoft.IfCondition',
-            builder: new DefaultTypeBuilder(IfCondition, resourceExplorer, {
+            factory: IfCondition,
+            converters: {
                 'condition': new BoolExpressionConverter(),
                 'disabled': new BoolExpressionConverter()
-            })
+            }
         }, {
             kind: 'Microsoft.LogAction',
-            builder: new DefaultTypeBuilder(LogAction, resourceExplorer, {
+            factory: LogAction,
+            converters: {
                 'text': new TextTemplateConverter(),
                 'traceActivity': new BoolExpressionConverter(),
                 'label': new StringExpressionConverter(),
                 'disabled': new BoolExpressionConverter()
-            })
+            }
         }, {
             kind: 'Microsoft.RepeatDialog',
-            builder: new DefaultTypeBuilder(RepeatDialog, resourceExplorer,
-                Object.assign(baseInvokeDialogConverters, {
-                    'disabled': new BoolExpressionConverter(),
-                    'allowLoop': new BoolExpressionConverter()
-                }))
+            factory: RepeatDialog,
+            converters: Object.assign(baseInvokeDialogConverters, {
+                'disabled': new BoolExpressionConverter(),
+                'allowLoop': new BoolExpressionConverter()
+            })
         }, {
             kind: 'Microsoft.ReplaceDialog',
-            builder: new DefaultTypeBuilder(ReplaceDialog, resourceExplorer,
-                Object.assign(baseInvokeDialogConverters, {
-                    'disabled': new BoolExpressionConverter()
-                }))
+            factory: ReplaceDialog,
+            converters: Object.assign(baseInvokeDialogConverters, {
+                'disabled': new BoolExpressionConverter()
+            })
         }, {
             kind: 'Microsoft.SendActivity',
-            builder: new DefaultTypeBuilder(SendActivity, resourceExplorer, {
+            factory: SendActivity,
+            converters: {
                 'activity': new ActivityTemplateConverter(),
                 'disabled': new BoolExpressionConverter()
-            })
+            }
         }, {
             kind: 'Microsoft.SetProperties',
-            builder: new DefaultTypeBuilder(SetProperties, resourceExplorer, {
+            factory: SetProperties,
+            converters: {
                 'assignments': new PropertyAssignmentConverter(),
                 'disabled': new BoolExpressionConverter()
-            })
+            }
         }, {
             kind: 'Microsoft.SetProperty',
-            builder: new DefaultTypeBuilder(SetProperty, resourceExplorer, {
+            factory: SetProperty,
+            converters: {
                 'property': new StringExpressionConverter(),
                 'value': new ValueExpressionConverter(),
                 'disabled': new BoolExpressionConverter()
-            })
+            }
         }, {
             kind: 'Microsoft.SignOutUser',
-            builder: new DefaultTypeBuilder(SignOutUser, resourceExplorer, {
+            factory: SignOutUser,
+            converters: {
                 'userId': new StringExpressionConverter(),
                 'connectionName': new StringExpressionConverter(),
                 'disabled': new BoolExpressionConverter()
-            })
+            }
         }, {
             kind: 'Microsoft.SwitchCondition',
-            builder: new DefaultTypeBuilder(SwitchCondition, resourceExplorer, {
+            factory: SwitchCondition,
+            converters: {
                 'condition': new ExpressionConverter(),
                 'cases': new CaseConverter(resourceExplorer),
                 'disabled': new BoolExpressionConverter()
-            })
+            }
         }, {
             kind: 'Microsoft.TraceActivity',
-            builder: new DefaultTypeBuilder(TraceActivity, resourceExplorer, {
+            factory: TraceActivity,
+            converters: {
                 'name': new StringExpressionConverter(),
                 'valueType': new StringExpressionConverter(),
                 'value': new ValueExpressionConverter(),
                 'label': new StringExpressionConverter(),
                 'disabled': new BoolExpressionConverter()
-            })
+            }
         }, {
             kind: 'Microsoft.UpdateActivity',
-            builder: new DefaultTypeBuilder(UpdateActivity, resourceExplorer, {
+            factory: UpdateActivity,
+            converters: {
                 'activity': new ActivityTemplateConverter(),
                 'activityId': new StringExpressionConverter(),
                 'disabled': new BoolExpressionConverter()
-            })
+            }
         }, {
             kind: 'Microsoft.OnActivity',
-            builder: new DefaultTypeBuilder(OnActivity, resourceExplorer, OnConditionConverters)
+            factory: OnActivity,
+            converters: OnConditionConverters
         }, {
             kind: 'Microsoft.OnAssignEntity',
-            builder: new DefaultTypeBuilder(OnAssignEntity, resourceExplorer, OnConditionConverters)
+            factory: OnAssignEntity,
+            converters: OnConditionConverters
         }, {
             kind: 'Microsoft.OnBeginDialog',
-            builder: new DefaultTypeBuilder(OnBeginDialog, resourceExplorer, OnConditionConverters)
+            factory: OnBeginDialog,
+            converters: OnConditionConverters
         }, {
             kind: 'Microsoft.OnCancelDialog',
-            builder: new DefaultTypeBuilder(OnCancelDialog, resourceExplorer, OnConditionConverters)
+            factory: OnCancelDialog,
+            converters: OnConditionConverters
         }, {
             kind: 'Microsoft.OnChooseEntity',
-            builder: new DefaultTypeBuilder(OnChooseEntity, resourceExplorer, OnConditionConverters)
+            factory: OnChooseEntity,
+            converters: OnConditionConverters
         }, {
             kind: 'Microsoft.OnChooseIntent',
-            builder: new DefaultTypeBuilder(OnChooseIntent, resourceExplorer, OnConditionConverters)
+            factory: OnChooseIntent,
+            converters: OnConditionConverters
         }, {
             kind: 'Microsoft.OnChooseProperty',
-            builder: new DefaultTypeBuilder(OnChooseProperty, resourceExplorer, OnConditionConverters)
+            factory: OnChooseProperty,
+            converters: OnConditionConverters
         }, {
             kind: 'Microsoft.OnCondition',
-            builder: new DefaultTypeBuilder(OnCondition, resourceExplorer, OnConditionConverters)
+            factory: OnCondition,
+            converters: OnConditionConverters
         }, {
             kind: 'Microsoft.OnConversationUpdateActivity',
-            builder: new DefaultTypeBuilder(OnConversationUpdateActivity, resourceExplorer, OnConditionConverters)
+            factory: OnConversationUpdateActivity,
+            converters: OnConditionConverters
         }, {
             kind: 'Microsoft.OnDialogEvent',
-            builder: new DefaultTypeBuilder(OnDialogEvent, resourceExplorer, OnConditionConverters)
+            factory: OnDialogEvent,
+            converters: OnConditionConverters
         }, {
             kind: 'Microsoft.OnEndOfActions',
-            builder: new DefaultTypeBuilder(OnEndOfActions, resourceExplorer, OnConditionConverters)
+            factory: OnEndOfActions,
+            converters: OnConditionConverters
         }, {
             kind: 'Microsoft.OnEndOfConversationActivity',
-            builder: new DefaultTypeBuilder(OnEndOfConversationActivity, resourceExplorer, OnConditionConverters)
+            factory: OnEndOfConversationActivity,
+            converters: OnConditionConverters
         }, {
             kind: 'Microsoft.OnError',
-            builder: new DefaultTypeBuilder(OnError, resourceExplorer, OnConditionConverters)
+            factory: OnError,
+            converters: OnConditionConverters
         }, {
             kind: 'Microsoft.OnEventActivity',
-            builder: new DefaultTypeBuilder(OnEventActivity, resourceExplorer, OnConditionConverters)
+            factory: OnEventActivity,
+            converters: OnConditionConverters
         }, {
             kind: 'Microsoft.OnHandoffActivity',
-            builder: new DefaultTypeBuilder(OnHandoffActivity, resourceExplorer, OnConditionConverters)
+            factory: OnHandoffActivity,
+            converters: OnConditionConverters
         }, {
             kind: 'Microsoft.OnIntent',
-            builder: new DefaultTypeBuilder(OnIntent, resourceExplorer, OnConditionConverters)
+            factory: OnIntent,
+            converters: OnConditionConverters
         }, {
             kind: 'Microsoft.OnInvokeActivity',
-            builder: new DefaultTypeBuilder(OnInvokeActivity, resourceExplorer, OnConditionConverters)
+            factory: OnInvokeActivity,
+            converters: OnConditionConverters
         }, {
             kind: 'Microsoft.OnMessageActivity',
-            builder: new DefaultTypeBuilder(OnMessageActivity, resourceExplorer, OnConditionConverters)
+            factory: OnMessageActivity,
+            converters: OnConditionConverters
         }, {
             kind: 'Microsoft.OnMessageDeleteActivity',
-            builder: new DefaultTypeBuilder(OnMessageDeleteActivity, resourceExplorer, OnConditionConverters)
+            factory: OnMessageDeleteActivity,
+            converters: OnConditionConverters
         }, {
             kind: 'Microsoft.OnMessageReactionActivity',
-            builder: new DefaultTypeBuilder(OnMessageReactionActivity, resourceExplorer, OnConditionConverters)
+            factory: OnMessageReactionActivity,
+            converters: OnConditionConverters
         }, {
             kind: 'Microsoft.OnMessageUpdateActivity',
-            builder: new DefaultTypeBuilder(OnMessageUpdateActivity, resourceExplorer, OnConditionConverters)
+            factory: OnMessageUpdateActivity,
+            converters: OnConditionConverters
         }, {
             kind: 'Microsoft.OnQnAMatch',
-            builder: new DefaultTypeBuilder(OnQnAMatch, resourceExplorer, OnConditionConverters)
+            factory: OnQnAMatch,
+            converters: OnConditionConverters
         }, {
             kind: 'Microsoft.OnRepromptDialog',
-            builder: new DefaultTypeBuilder(OnRepromptDialog, resourceExplorer, OnConditionConverters)
+            factory: OnRepromptDialog,
+            converters: OnConditionConverters
         }, {
             kind: 'Microsoft.OnTypingActivity',
-            builder: new DefaultTypeBuilder(OnTypingActivity, resourceExplorer, OnConditionConverters)
+            factory: OnTypingActivity,
+            converters: OnConditionConverters
         }, {
             kind: 'Microsoft.OnUnknownIntent',
-            builder: new DefaultTypeBuilder(OnUnknownIntent, resourceExplorer, OnConditionConverters)
+            factory: OnUnknownIntent,
+            converters: OnConditionConverters
         }, {
             kind: 'Microsoft.Ask',
-            builder: new DefaultTypeBuilder(Ask, resourceExplorer, {
+            factory: Ask,
+            converters: {
                 'expectedProperties': new ArrayExpressionConverter<string>(),
                 'defaultOperation': new StringExpressionConverter(),
                 'activity': new ActivityTemplateConverter(),
                 'disabled': new BoolExpressionConverter()
-            })
+            }
         }, {
             kind: 'Microsoft.AttachmentInput',
-            builder: new DefaultTypeBuilder(AttachmentInput, resourceExplorer,
-                Object.assign(inputDialogConverters, {
-                    'outputFormat': new EnumExpressionConverter(AttachmentOutputFormat)
-                }))
+            factory: AttachmentInput,
+            converters: Object.assign(inputDialogConverters, {
+                'outputFormat': new EnumExpressionConverter(AttachmentOutputFormat)
+            })
         }, {
             kind: 'Microsoft.ChoiceInput',
-            builder: new DefaultTypeBuilder(ChoiceInput, resourceExplorer,
-                Object.assign(inputDialogConverters, {
-                    'choices': new ArrayExpressionConverter<Choice>(),
-                    'style': new EnumExpressionConverter(ListStyle),
-                    'defaultLocale': new StringExpressionConverter(),
-                    'outputFormat': new EnumExpressionConverter(ChoiceOutputFormat),
-                    'choiceOptions': new ObjectExpressionConverter<ChoiceFactoryOptions>(),
-                    'recognizerOptions': new ObjectExpressionConverter<FindChoicesOptions>()
-                }))
+            factory: ChoiceInput,
+            converters: Object.assign(inputDialogConverters, {
+                'choices': new ArrayExpressionConverter<Choice>(),
+                'style': new EnumExpressionConverter(ListStyle),
+                'defaultLocale': new StringExpressionConverter(),
+                'outputFormat': new EnumExpressionConverter(ChoiceOutputFormat),
+                'choiceOptions': new ObjectExpressionConverter<ChoiceFactoryOptions>(),
+                'recognizerOptions': new ObjectExpressionConverter<FindChoicesOptions>()
+            })
         }, {
             kind: 'Microsoft.ConfirmInput',
-            builder: new DefaultTypeBuilder(ConfirmInput, resourceExplorer,
-                Object.assign(inputDialogConverters, {
-                    'defaultLocale': new StringExpressionConverter(),
-                    'style': new EnumExpressionConverter(ListStyle),
-                    'choiceOptions': new ObjectExpressionConverter<ChoiceFactoryOptions>(),
-                    'outputFormat': new StringExpressionConverter()
-                }))
+            factory: ConfirmInput,
+            converters: Object.assign(inputDialogConverters, {
+                'defaultLocale': new StringExpressionConverter(),
+                'style': new EnumExpressionConverter(ListStyle),
+                'choiceOptions': new ObjectExpressionConverter<ChoiceFactoryOptions>(),
+                'outputFormat': new StringExpressionConverter()
+            })
         }, {
             kind: 'Microsoft.DateTimeInput',
-            builder: new DefaultTypeBuilder(DateTimeInput, resourceExplorer,
-                Object.assign(inputDialogConverters, {
-                    'defaultLocale': new StringExpressionConverter(),
-                    'outputFormat': new StringExpressionConverter()
-                }))
+            factory: DateTimeInput,
+            converters: Object.assign(inputDialogConverters, {
+                'defaultLocale': new StringExpressionConverter(),
+                'outputFormat': new StringExpressionConverter()
+            })
         }, {
             kind: 'Microsoft.NumberInput',
-            builder: new DefaultTypeBuilder(NumberInput, resourceExplorer,
-                Object.assign(inputDialogConverters, {
-                    'defaultLocale': new StringExpressionConverter(),
-                    'outputFormat': new NumberExpressionConverter()
-                }))
+            factory: NumberInput,
+            converters: Object.assign(inputDialogConverters, {
+                'defaultLocale': new StringExpressionConverter(),
+                'outputFormat': new NumberExpressionConverter()
+            })
         }, {
             kind: 'Microsoft.OAuthInput',
-            builder: new DefaultTypeBuilder(OAuthInput, resourceExplorer,
-                Object.assign(inputDialogConverters, {
-                    'connectionName': new StringExpressionConverter(),
-                    'title': new StringExpressionConverter(),
-                    'text': new StringExpressionConverter(),
-                    'timeout': new IntExpressionConverter()
-                }))
+            factory: OAuthInput,
+            converters: Object.assign(inputDialogConverters, {
+                'connectionName': new StringExpressionConverter(),
+                'title': new StringExpressionConverter(),
+                'text': new StringExpressionConverter(),
+                'timeout': new IntExpressionConverter()
+            })
         }, {
             kind: 'Microsoft.TextInput',
-            builder: new DefaultTypeBuilder(TextInput, resourceExplorer,
-                Object.assign(inputDialogConverters, {
-                    'outputFormat': new StringExpressionConverter()
-                }))
+            factory: TextInput,
+            converters: Object.assign(inputDialogConverters, {
+                'outputFormat': new StringExpressionConverter()
+            })
         }, {
             kind: 'Microsoft.LuisRecognizer',
-            builder: new DefaultTypeBuilder(LuisAdaptiveRecognizer, resourceExplorer, {
+            factory: LuisAdaptiveRecognizer,
+            converters: {
                 'applicationId': new StringExpressionConverter(),
                 'dynamicLists': new ArrayExpressionConverter(),
                 'endpoint': new StringExpressionConverter(),
                 'endpointKey': new StringExpressionConverter(),
                 'logPersonalInformation': new BoolExpressionConverter()
-            })
+            }
         }, {
             kind: 'Microsoft.CrossTrainedRecognizerSet',
-            builder: new DefaultTypeBuilder(CrossTrainedRecognizerSet, resourceExplorer, {
+            factory: CrossTrainedRecognizerSet,
+            converters: {
                 'recognizers': new RecognizerConverter(resourceExplorer)
-            })
+            }
         }, {
             kind: 'Microsoft.MultiLanguageRecognizer',
-            builder: new DefaultTypeBuilder(MultiLanguageRecognizer, resourceExplorer, {
+            factory: MultiLanguageRecognizer,
+            converters: {
                 'languagePolicy': new LanguagePolicyConverter(),
                 'recognizers': new MultiLanguageRecognizerConverter(resourceExplorer)
-            })
+            }
         }, {
             kind: 'Microsoft.RecognizerSet',
-            builder: new DefaultTypeBuilder(RecognizerSet, resourceExplorer, {
+            factory: RecognizerSet,
+            converters: {
                 'recognizers': new RecognizerConverter(resourceExplorer)
-            })
+            }
         }, {
             kind: 'Microsoft.RegexRecognizer',
-            builder: new DefaultTypeBuilder(RegexRecognizer, resourceExplorer, {
+            factory: RegexRecognizer,
+            converters: {
                 'intents': new IntentPatternConverter()
-            })
+            }
         }, {
             kind: 'Microsoft.AgeEntityRecognizer',
-            builder: new DefaultTypeBuilder(AgeEntityRecognizer, resourceExplorer, {})
+            factory: AgeEntityRecognizer
         }, {
             kind: 'Microsoft.ConfirmationEntityRecognizer',
-            builder: new DefaultTypeBuilder(ConfirmationEntityRecognizer, resourceExplorer, {})
+            factory: ConfirmationEntityRecognizer
         }, {
             kind: 'Microsoft.CurrencyEntityRecognizer',
-            builder: new DefaultTypeBuilder(CurrencyEntityRecognizer, resourceExplorer, {})
+            factory: CurrencyEntityRecognizer
         }, {
             kind: 'Microsoft.DateTimeEntityRecognizer',
-            builder: new DefaultTypeBuilder(DateTimeEntityRecognizer, resourceExplorer, {})
+            factory: DateTimeEntityRecognizer
         }, {
             kind: 'Microsoft.DimensionEntityRecognizer',
-            builder: new DefaultTypeBuilder(DimensionEntityRecognizer, resourceExplorer, {})
+            factory: DimensionEntityRecognizer
         }, {
             kind: 'Microsoft.EmailEntityRecognizer',
-            builder: new DefaultTypeBuilder(EmailEntityRecognizer, resourceExplorer, {})
+            factory: EmailEntityRecognizer
         }, {
             kind: 'Microsoft.GuidEntityRecognizer',
-            builder: new DefaultTypeBuilder(GuidEntityRecognizer, resourceExplorer, {})
+            factory: GuidEntityRecognizer
         }, {
             kind: 'Microsoft.HashtagEntityRecognizer',
-            builder: new DefaultTypeBuilder(HashtagEntityRecognizer, resourceExplorer, {})
+            factory: HashtagEntityRecognizer
         }, {
             kind: 'Microsoft.IpEntityRecognizer',
-            builder: new DefaultTypeBuilder(IpEntityRecognizer, resourceExplorer, {})
+            factory: IpEntityRecognizer
         }, {
             kind: 'Microsoft.MentionEntityRecognizer',
-            builder: new DefaultTypeBuilder(MentionEntityRecognizer, resourceExplorer, {})
+            factory: MentionEntityRecognizer
         }, {
             kind: 'Microsoft.NumberEntityRecognizer',
-            builder: new DefaultTypeBuilder(NumberEntityRecognizer, resourceExplorer, {})
+            factory: NumberEntityRecognizer
         }, {
             kind: 'Microsoft.OrdinalEntityRecognizer',
-            builder: new DefaultTypeBuilder(OrdinalEntityRecognizer, resourceExplorer, {})
+            factory: OrdinalEntityRecognizer
         }, {
             kind: 'Microsoft.PercentageEntityRecognizer',
-            builder: new DefaultTypeBuilder(PercentageEntityRecognizer, resourceExplorer, {})
+            factory: PercentageEntityRecognizer
         }, {
             kind: 'Microsoft.PhoneNumberEntityRecognizer',
-            builder: new DefaultTypeBuilder(PhoneNumberEntityRecognizer, resourceExplorer, {})
+            factory: PhoneNumberEntityRecognizer
         }, {
             kind: 'Microsoft.RegexEntityRecognizer',
-            builder: new DefaultTypeBuilder(RegexEntityRecognizer, resourceExplorer, {})
+            factory: RegexEntityRecognizer
         }, {
             kind: 'Microsoft.TemperatureEntityRecognizer',
-            builder: new DefaultTypeBuilder(TemperatureEntityRecognizer, resourceExplorer, {})
+            factory: TemperatureEntityRecognizer
         }, {
             kind: 'Microsoft.UrlEntityRecognizer',
-            builder: new DefaultTypeBuilder(UrlEntityRecognizer, resourceExplorer, {})
+            factory: UrlEntityRecognizer
         }, {
             kind: 'Microsoft.TemplateEngineLanguageGenerator',
-            builder: new DefaultTypeBuilder(TemplateEngineLanguageGenerator, resourceExplorer, {})
+            factory: TemplateEngineLanguageGenerator
         }, {
             kind: 'Microsoft.ResourceMultiLanguageGenerator',
-            builder: new DefaultTypeBuilder(ResourceMultiLanguageGenerator, resourceExplorer, {
+            factory: ResourceMultiLanguageGenerator,
+            converters: {
                 'languagePolicy': new LanguagePolicyConverter()
-            })
+            }
         }, {
             kind: 'Microsoft.ConditionalSelector',
-            builder: new DefaultTypeBuilder(ConditionalSelector, resourceExplorer, {
+            factory: ConditionalSelector,
+            converters: {
                 'condition': new BoolExpressionConverter()
-            })
+            }
         }, {
             kind: 'Microsoft.FirstSelector',
-            builder: new DefaultTypeBuilder(FirstSelector, resourceExplorer, {})
+            factory: FirstSelector
         }, {
             kind: 'Microsoft.RandomSelector',
-            builder: new DefaultTypeBuilder(RandomSelector, resourceExplorer, {})
+            factory: RandomSelector
         }, {
             kind: 'Microsoft.TrueSelector',
-            builder: new DefaultTypeBuilder(TrueSelector, resourceExplorer, {})
+            factory: TrueSelector
         }];
 
         const schemas = resourceExplorer.getResources('.schema');
         for (const schema of schemas) {
             const resourceId = schema.id.replace(/.schema$/, '');
             if (resourceId.endsWith('.dialog')) {
-                builderRegistrations.push({
+                typeRegistrations.push({
                     kind: resourceId,
-                    builder: new CustomDialogTypeBuilder(DynamicBeginDialog, resourceExplorer, {
+                    factory: DynamicBeginDialog,
+                    loader: new CustomDialogLoader(resourceExplorer),
+                    converters: {
                         'options': new ObjectExpressionConverter<object>(),
                         'dialog': new DialogExpressionConverter(resourceExplorer),
                         'activityProcessed': new BoolExpressionConverter(),
                         'resultProperty': new StringExpressionConverter(),
                         'disabled': new BoolExpressionConverter()
-                    })
+                    }
                 });
             }
         }
-        return builderRegistrations;
+        return typeRegistrations;
     }
 }
