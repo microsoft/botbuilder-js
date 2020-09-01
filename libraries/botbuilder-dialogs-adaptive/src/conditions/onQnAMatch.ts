@@ -5,9 +5,10 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { QnAMakerRecognizer } from 'botbuilder-ai';
 import { Dialog } from 'botbuilder-dialogs';
 import { OnIntent } from './onIntent';
+
+const qnaMatchIntent = 'QnAMatch';
 
 /**
  * Actions triggered when a MessageUpdateActivity is received.
@@ -15,6 +16,6 @@ import { OnIntent } from './onIntent';
 export class OnQnAMatch extends OnIntent {
 
     public constructor(actions: Dialog[] = [], condition?: string) {
-        super(QnAMakerRecognizer.qnaMatchIntent, [], actions, condition);
+        super(qnaMatchIntent, [], actions, condition);
     }
 }
