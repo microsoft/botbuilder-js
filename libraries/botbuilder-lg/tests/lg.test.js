@@ -708,6 +708,9 @@ describe('LG', function() {
         var evaled = templates.evaluateText('hello');
         assert.strictEqual('hello', evaled);
 
+        evaled = templates.evaluateText('');
+        assert.strictEqual('', evaled);
+
         evaled = templates.evaluateText('${wPhrase()}');
         var options =[ 'Hi', 'Hello', 'Hiya' ];
         assert.strictEqual(options.includes(evaled), true);
