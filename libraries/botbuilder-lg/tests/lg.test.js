@@ -133,6 +133,14 @@ describe('LG', function() {
         evaled = templates.evaluate('template');
         assert.strictEqual(evaled, 15);
 
+        evaled = templates.evaluate('crtObj');
+        assert.deepStrictEqual(evaled, {a: 1, c: 3, b: 2});
+
+        var evaledArray = templates.evaluate('crtArr');
+        assert.deepStrictEqual(evaledArray, [1, 2, 3, 4]);
+
+        var evaledMultilineResult = templates.evaluate('evalMultiLineObj');
+        assert.strictEqual(evaledMultilineResult, '{"a":1,"b":2,"c":{"d":4,"e":5}}');
 
     });
 
