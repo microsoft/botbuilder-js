@@ -10,6 +10,8 @@ export * from './dateTimeSpec';
 export * from './geographyV2';
 export * from './instanceData';
 export * from './intentData';
+export * from './luisAdaptiveRecognizer';
+export * from './luisComponentRegistration';
 export * from './luisRecognizer';
 export * from './luisTelemetryConstants';
 export * from './numberWithUnits';

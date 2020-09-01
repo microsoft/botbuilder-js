@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { QnAMakerComponentRegistration } from 'botbuilder-ai';
+import { QnAMakerComponentRegistration, LuisComponentRegistration } from 'botbuilder-ai';
 import { AdaptiveDialogComponentRegistration } from 'botbuilder-dialogs-adaptive';
 import { ResourceExplorer } from 'botbuilder-dialogs-declarative';
 import { AdaptiveDialogTestComponentRegistration } from './adaptiveDialogTestComponentRegistration';
@@ -21,6 +21,7 @@ export class TestRunner {
         this.resourceExplorer.addFolder(resourcePath, true, false);
         this.resourceExplorer.addComponent(new AdaptiveDialogComponentRegistration());
         this.resourceExplorer.addComponent(new QnAMakerComponentRegistration());
+        this.resourceExplorer.addComponent(new LuisComponentRegistration());
         this.resourceExplorer.addComponent(new AdaptiveDialogTestComponentRegistration());
 
         this.testAdapter = new AdaptiveTestAdapter(AdaptiveTestAdapter.createConversation('botbuilder-dialogs-adaptive-testing'));

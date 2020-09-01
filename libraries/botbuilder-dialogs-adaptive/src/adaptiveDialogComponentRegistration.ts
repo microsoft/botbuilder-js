@@ -20,7 +20,6 @@ import { ActionChangeType } from './actionChangeType';
 import { CaseConverter } from './actions/case';
 import { TemplateEngineLanguageGenerator, ResourceMultiLanguageGenerator } from './generators';
 import { ConditionalSelector, FirstSelector, RandomSelector, TrueSelector } from './selectors';
-import { LuisAdaptiveRecognizer } from './luis';
 import { LanguagePolicyConverter } from './languagePolicy';
 import { CustomDialogLoader } from './customDialogLoader';
 
@@ -471,16 +470,6 @@ export class AdaptiveDialogComponentRegistration implements ComponentRegistratio
             converters: Object.assign(inputDialogConverters, {
                 'outputFormat': new StringExpressionConverter()
             })
-        }, {
-            kind: 'Microsoft.LuisRecognizer',
-            factory: LuisAdaptiveRecognizer,
-            converters: {
-                'applicationId': new StringExpressionConverter(),
-                'dynamicLists': new ArrayExpressionConverter(),
-                'endpoint': new StringExpressionConverter(),
-                'endpointKey': new StringExpressionConverter(),
-                'logPersonalInformation': new BoolExpressionConverter()
-            }
         }, {
             kind: 'Microsoft.CrossTrainedRecognizerSet',
             factory: CrossTrainedRecognizerSet,
