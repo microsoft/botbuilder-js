@@ -1,19 +1,18 @@
 {
-    "name": "echobot",
+    "name": "streaming-e2e-tests-bot",
     "version": "1.0.0",
-    "description": "Bot Builder v4 echo bot sample",
-    "author": "Microsoft",
+    "description": "Echo bot for E2E streaming tests",
+    "author": "Microsoft Corp.",
     "license": "MIT",
     "main": "index.js",
     "scripts": {
         "start": "node ./index.js",
         "watch": "nodemon ./index.js",
-        "lint": "eslint .",
-        "test": "echo \"Error: no test specified\" && exit 1"
+        "lint": "eslint ."
     },
     "repository": {
         "type": "git",
-        "url": "https://github.com"
+        "url": "https://github.com/microsoft/botbuilder-js"
     },
     "dependencies": {
         "botbuilder": "~4.9.2",
