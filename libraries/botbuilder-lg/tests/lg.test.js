@@ -119,6 +119,15 @@ describe('LG', function() {
         generatedTemplates = Templates.parseText(evaled);
         result = generatedTemplates.evaluate('generated2', {name: 'jack'});
         assert.strictEqual('please input jack', result.trim(), `Evaled is ${ result.trim() }`);
+
+        evaled = templates.evaluate('template3').toString();
+        assert.strictEqual('markdown\n## Manage the knowledge base\n', evaled.replace(/\r\n/g, '\n'), `Evaled is ${ evaled }`);
+
+        evaled = templates.evaluate('template4').toString();
+        assert.strictEqual('## Manage the knowledge base', evaled, `Evaled is ${ evaled }`);
+
+        evaled = templates.evaluate('template5').toString();
+        assert.strictEqual('', evaled, `Evaled is ${ evaled }`);
     });
 
     it('TestMultiLineExprLG', function() {
@@ -698,6 +707,9 @@ describe('LG', function() {
         var templates = preloaded.two;
         var evaled = templates.evaluateText('hello');
         assert.strictEqual('hello', evaled);
+
+        evaled = templates.evaluateText('');
+        assert.strictEqual('', evaled);
 
         evaled = templates.evaluateText('${wPhrase()}');
         var options =[ 'Hi', 'Hello', 'Hiya' ];
