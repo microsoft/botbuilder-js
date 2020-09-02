@@ -5,8 +5,7 @@
   "description": "",
   "main": "lib/index.js",
   "scripts": {
-    "start": "tsc && node lib/index.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "tsc && node lib/index.js"
   },
   "keywords": [],
   "author": "Microsoft Corp.",
