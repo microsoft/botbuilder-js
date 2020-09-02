@@ -9,7 +9,7 @@
 import { Template } from './template';
 import { TemplateImport } from './templateImport';
 import { Diagnostic, DiagnosticSeverity } from './diagnostic';
-import { ExpressionParser, Expression, ExpressionEvaluator, ReturnType, FunctionUtils } from 'adaptive-expressions';
+import { ExpressionParser, Expression, ExpressionEvaluator, ReturnType, FunctionUtils, SimpleObjectMemory, StackedMemory } from 'adaptive-expressions';
 import { ImportResolverDelegate, TemplatesTransformer } from './templatesParser';
 import { Evaluator } from './evaluator';
 import { Expander } from './expander';
@@ -21,6 +21,7 @@ import { TemplateExtensions } from './templateExtensions';
 import { EvaluationOptions, LGLineBreakStyle } from './evaluationOptions';
 import { isAbsolute, basename } from 'path';
 import { StaticChecker } from './staticChecker';
+import { CustomizedMemory } from './customizedMemory';
 
 /**
  * LG entrance, including properties that LG file has, and evaluate functions.
@@ -480,7 +481,26 @@ export class Templates implements Iterable<Template> {
             for (const templateName of globalFuncs) {
                 if (curTemplates.items.find(u => u.name === templateName) !== undefined) {
                     const newGlobalName = `${ curTemplates.namespace }.${ templateName }`;
-                    Expression.functions.add(newGlobalName, new ExpressionEvaluator(newGlobalName, FunctionUtils.apply(this.globalTemplateFunction(templateName)), ReturnType.Object));
+                    Expression.functions.add(newGlobalName, new ExpressionEvaluator(newGlobalName, (expr, state, options): {value: any, error: string} => {
+                        let value: any;
+                        let error: string;
+                        let args: any[];
+                        const evaluator = new Evaluator(this.allTemplates, this.expressionParser, this.lgOptions);
+                        ({ args, error } = FunctionUtils.evaluateChildren(expr, state, options));
+                        if (!error) {
+                            const parameters = evaluator.templateMap[templateName].parameters;
+                            const newScope: any = {};
+                            parameters.map((e: string, i: number): void => newScope[e] = args[i]);
+                            const scope = new CustomizedMemory(state, new SimpleObjectMemory(newScope));
+                            try {
+                                value = evaluator.evaluateTemplate(templateName, scope);
+                            } catch (e) {
+                                error = e.message;
+                            }
+                        }
+                        
+                        return {value, error};
+                    }, ReturnType.Object));
                 }
             }
         }
@@ -527,12 +547,5 @@ export class Templates implements Iterable<Template> {
         }
 
         return result;
-    }
-
-    private readonly globalTemplateFunction = (templateName: string) => (args: any[]): any => {
-        const evaluator = new Evaluator(this.allTemplates, this.expressionParser, this.lgOptions);
-        const newScope: any = evaluator.constructScope(templateName, args);
-
-        return evaluator.evaluateTemplate(templateName, newScope);
     }
 }
