@@ -362,6 +362,7 @@ const dataSource = [
     ['float(\'10\')', 10.0],
     ['int(\'10\')', 10],
     ['string(\'str\')', 'str'],
+    ['string(\'str"\')', 'str"'],
     ['string(one)', '1'], //ts-->1, C#-->1.0
     ['string(bool(1))', 'true'],
     ['string(bag.set)', '{"four":4}'], // ts-->"{\"four\":4}", C# --> "{\"four\":4.0}"
