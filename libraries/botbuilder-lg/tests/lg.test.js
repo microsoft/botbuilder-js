@@ -1,5 +1,5 @@
-const { Templates, LGLineBreakStyle, EvaluationOptions, TemplateErrors, DiagnosticSeverity } = require('../');
-const { SimpleObjectMemory, ExpressionParser, NumericEvaluator, Expression } = require('adaptive-expressions');
+const { Templates, LGLineBreakStyle, EvaluationOptions, TemplateErrors, DiagnosticSeverity, CustomizedMemory } = require('../');
+const { SimpleObjectMemory, ExpressionParser, NumericEvaluator, Expression, StackedMemory } = require('adaptive-expressions');
 const assert = require('assert');
 const fs = require('fs');
 
@@ -142,6 +142,14 @@ describe('LG', function() {
         evaled = templates.evaluate('template');
         assert.strictEqual(evaled, 15);
 
+        evaled = templates.evaluate('crtObj');
+        assert.deepStrictEqual(evaled, {a: 1, c: 3, b: 2});
+
+        var evaledArray = templates.evaluate('crtArr');
+        assert.deepStrictEqual(evaledArray, [1, 2, 3, 4]);
+
+        var evaledMultilineResult = templates.evaluate('evalMultiLineObj');
+        assert.strictEqual(evaledMultilineResult, '{"a":1,"b":2,"c":{"d":4,"e":5}}');
 
     });
 
@@ -413,7 +421,7 @@ describe('LG', function() {
         evaled = templates.evaluate('dupNameWithTemplate');
         assert.strictEqual(evaled, 2, `Evaled is ${ evaled }`);
 
-        evaled = templates.evaluate('foo', {property: 'Show'});
+        evaled = templates.evaluate('compose', {property: 'Show'});
         assert.strictEqual(evaled, `you made it!`);
     });
 
@@ -989,13 +997,13 @@ describe('LG', function() {
         assert.deepStrictEqual(evaled, JSON.parse('{"lgType":"Activity","text":"${GetAge()}","suggestions":["10 | cards","20 | cards"]}'));
 
         evaled = templates.evaluate('T1');
-        assert.deepStrictEqual(evaled, JSON.parse('{"lgType":"Activity","text":"This is awesome","speak":"foo bar I can also speak!"}'));
+        assert.deepStrictEqual(evaled, JSON.parse('{"lgType":"Activity","text":"This is awesome","speak":"hello world I can also speak!"}'));
 
         evaled = templates.evaluate('ST1');
-        assert.deepStrictEqual(evaled, JSON.parse('{"lgType":"MyStruct","text":"foo","speak":"bar"}'));
+        assert.deepStrictEqual(evaled, JSON.parse('{"lgType":"MyStruct","text":"cool","speak":"beta"}'));
 
         evaled = templates.evaluate('AskForColor');
-        assert.deepStrictEqual(evaled, JSON.parse('{"lgType":"Activity","suggestedactions":[{"lgType":"MyStruct","speak":"bar","text":"zoo"},{"lgType":"Activity","speak":"I can also speak!"}]}'));
+        assert.deepStrictEqual(evaled, JSON.parse('{"lgType":"Activity","suggestedactions":[{"lgType":"MyStruct","speak":"beta","text":"food"},{"lgType":"Activity","speak":"I can also speak!"}]}'));
 
         evaled = templates.evaluate('MultiExpression');
         assert.equal(evaled, '{"lgType":"Activity","speak":"I can also speak!"} {"lgType":"MyStruct","text":"hi"}');
@@ -1334,10 +1342,31 @@ describe('LG', function() {
     });
 
     it('TestInjectLG', function() {
-        var {value: evaled, error} = Expression.parse('foo.bar()').tryEvaluate();
+        var {value: evaled, error} = Expression.parse('general.greeting()').tryEvaluate({name : 'Alice'});
+        assert.strictEqual('hi Alice', evaled.toString());
+
+        var memory1 = new StackedMemory();
+        memory1.push(new SimpleObjectMemory({ name: 'Alice' }));
+        memory1.push(new CustomizedMemory({ name: 'Bob' }));
+        var {value: evaled, error}  = Expression.parse('general.greeting()').tryEvaluate(memory1);
+        assert.strictEqual('hi Bob', evaled.toString());
+
+        var {value: evaled, error} = Expression.parse('general.yolo(8,7)').tryEvaluate({name: 'Alice'});
+        assert.strictEqual('Alice have 15 cookies!', evaled.toString());
+
+        var memory1 = new StackedMemory();
+        memory1.push(new SimpleObjectMemory({ name: 'Alice' }));
+        memory1.push(new CustomizedMemory({ name: 'Bob' }));
+        var {value: evaled, error}  = Expression.parse('general.yolo(12, 12)').tryEvaluate(memory1);
+        assert.strictEqual('Bob have 24 cookies!', evaled.toString());
+
+        var {value: evaled, error} = Expression.parse('general.addTwoNum(5,6)').tryEvaluate({a: 3, b: 1});
+        assert.strictEqual('11', evaled.toString());
+
+        var {value: evaled, error} = Expression.parse('general.sumAll()').tryEvaluate();
         assert.strictEqual(3, evaled);
 
-        var {value: evaled, error} = Expression.parse('foo.cool(2)').tryEvaluate();
+        var {value: evaled, error} = Expression.parse('general.cool(2)').tryEvaluate();
         assert.strictEqual(3, evaled);
 
         var {value: evaled, error} = Expression.parse('common.looking()').tryEvaluate();
