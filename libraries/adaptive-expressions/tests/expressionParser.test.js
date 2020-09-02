@@ -38,10 +38,10 @@ const dataSource = [
     ['`hi ${string(\'jack`\')}`', 'hi jack`'],
     ['`\\${world}`', '${world}'],
     ['length(`hello ${world}`)', 'hello world'.length],
-    ['json(`{"foo":"${hello}","item":"${world}"}`).foo', 'hello'],
+    ['json(`{"key":"${hello}","item":"${world}"}`).key', 'hello'],
     ['`{expr: hello all}`', '{expr: hello all}'],
-    ['json(`{"foo":${{text:"hello"}},"item": "${world}"}`).foo.text', 'hello'],
-    ['json(`{"foo":${{text:"hello", cool: "hot", obj:{new: 123}}},"item": "${world}"}`).foo.text', 'hello'],
+    ['json(`{"key":${{text:"hello"}},"item": "${world}"}`).key.text', 'hello'],
+    ['json(`{"key":${{text:"hello", cool: "hot", obj:{new: 123}}},"item": "${world}"}`).key.text', 'hello'],
     ['`hi\\`[1,2,3]`', 'hi`[1,2,3]'],
     ['`hi ${[\'jack`\', \'queen\', \'king\']}`', 'hi jack`,queen,king'],
     ['`abc ${concat("[", "]")}`', 'abc []'],
@@ -946,8 +946,8 @@ describe('expression parser functional test', () => {
 
     it('Test AccumulatePath', () => {
         const scope = {
-            f: 'foo',
-            b: 'bar',
+            f: 'food',
+            b: 'beta',
             z: {
                 z: 'zar'
             },
@@ -959,7 +959,7 @@ describe('expression parser functional test', () => {
         let exp = Expression.parse('a[f].b[n].z');
         let path = undefined;
         ({path, left, error} = FunctionUtils.tryAccumulatePath(exp, memory, undefined));
-        assert.strictEqual(path, 'a[\'foo\'].b[2].z');
+        assert.strictEqual(path, 'a[\'food\'].b[2].z');
 
         // normal case
         exp = Expression.parse('a[z.z][z.z].y');
@@ -987,42 +987,42 @@ describe('expression parser functional test', () => {
         let error = undefined;
 
         // normal case null value is substituted
-        var exp = Expression.parse('foo');
+        var exp = Expression.parse('food');
         ({value, error} = exp.tryEvaluate(mockMemory, options));
-        assert.strictEqual(value, 'foo is undefined');
+        assert.strictEqual(value, 'food is undefined');
 
         // in boolean context, substitution is not allowed, use raw value instead
-        exp = Expression.parse('if(foo, 1, 2)');
+        exp = Expression.parse('if(food, 1, 2)');
         ({value, error} = exp.tryEvaluate(mockMemory, options));
         assert.strictEqual(value, 2);
 
         // in boolean context, substitution is not allowed, use raw value instead
-        exp = Expression.parse('foo && true');
+        exp = Expression.parse('food && true');
         ({value, error} = exp.tryEvaluate(mockMemory, options));
         assert.strictEqual(value, false);
 
         // in boolean context, substitution is not allowed, use raw value instead
-        exp = Expression.parse('foo || true');
+        exp = Expression.parse('food || true');
         ({value, error} = exp.tryEvaluate(mockMemory, options));
         assert.strictEqual(value, true);
 
         // in boolean context, substitution is not allowed, use raw value instead
-        exp = Expression.parse('foo == "foo is undefined"');
+        exp = Expression.parse('food == "food is undefined"');
         ({value, error} = exp.tryEvaluate(mockMemory, options));
         assert.strictEqual(value, false);
 
         // in boolean context, substitution is not allowed, use raw value instead
-        exp = Expression.parse('not(foo)');
+        exp = Expression.parse('not(food)');
         ({value, error} = exp.tryEvaluate(mockMemory, options));
         assert.strictEqual(value, true);
 
         // in boolean context, substitution is not allowed, use raw value instead
-        exp = Expression.parse('bool(foo)');
+        exp = Expression.parse('bool(food)');
         ({value, error} = exp.tryEvaluate(mockMemory, options));
         assert.strictEqual(value, false);
 
         // concat is evaluated in boolean context also, use raw value
-        exp = Expression.parse('if(concat(foo, "bar"), 1, 2)');
+        exp = Expression.parse('if(concat(food, "beta"), 1, 2)');
         ({value, error} = exp.tryEvaluate(mockMemory, options));
         assert.strictEqual(value, 1);
 

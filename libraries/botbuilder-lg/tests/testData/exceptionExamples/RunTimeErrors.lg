@@ -41,7 +41,7 @@
 # structured1
 [Activity
     Text = I want ${dialog.abc}
-    SuggestedActions = foo | bar
+    SuggestedActions = left | right
 ]
 
 
@@ -51,7 +51,7 @@
 # structured2
 [Activity
     Text = I want ${template1()}
-    SuggestedActions = foo | bar
+    SuggestedActions = move | stay
 ]
 
 
