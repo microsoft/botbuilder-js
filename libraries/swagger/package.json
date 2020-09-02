@@ -4,7 +4,6 @@
   "description": "To regenerate the botframework-connector and botframework-schema libraries, install the dependencies for autorest via `npm i`, then run generateClient.cmd.",
   "main": "generateClient.cmd",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
