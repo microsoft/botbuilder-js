@@ -31,7 +31,7 @@ const dataSource = [
     ['alist[0].Name', 'item1'],
 
     // string interpolation test
-    ["``", ''],
+    ['``', ''],
     ['`hi`', 'hi'],
     ['`hi\\``', 'hi`'],
     ['`${world}`', 'world'],
