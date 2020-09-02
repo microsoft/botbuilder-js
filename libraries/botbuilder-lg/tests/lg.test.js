@@ -1,5 +1,5 @@
-const { Templates, LGLineBreakStyle, EvaluationOptions, TemplateErrors, DiagnosticSeverity } = require('../');
-const { SimpleObjectMemory, ExpressionParser, NumericEvaluator, Expression } = require('adaptive-expressions');
+const { Templates, LGLineBreakStyle, EvaluationOptions, TemplateErrors, DiagnosticSeverity, CustomizedMemory } = require('../');
+const { SimpleObjectMemory, ExpressionParser, NumericEvaluator, Expression, StackedMemory } = require('adaptive-expressions');
 const assert = require('assert');
 const fs = require('fs');
 
@@ -1334,10 +1334,31 @@ describe('LG', function() {
     });
 
     it('TestInjectLG', function() {
-        var {value: evaled, error} = Expression.parse('foo.bar()').tryEvaluate();
+        var {value: evaled, error} = Expression.parse('general.greeting()').tryEvaluate({name : 'Alice'});
+        assert.strictEqual('hi Alice', evaled.toString());
+
+        var memory1 = new StackedMemory();
+        memory1.push(new SimpleObjectMemory({ name: 'Alice' }));
+        memory1.push(new CustomizedMemory({ name: 'Bob' }));
+        var {value: evaled, error}  = Expression.parse('general.greeting()').tryEvaluate(memory1);
+        assert.strictEqual('hi Bob', evaled.toString());
+
+        var {value: evaled, error} = Expression.parse('general.yolo(8,7)').tryEvaluate({name: 'Alice'});
+        assert.strictEqual('Alice have 15 cookies!', evaled.toString());
+
+        var memory1 = new StackedMemory();
+        memory1.push(new SimpleObjectMemory({ name: 'Alice' }));
+        memory1.push(new CustomizedMemory({ name: 'Bob' }));
+        var {value: evaled, error}  = Expression.parse('general.yolo(12, 12)').tryEvaluate(memory1);
+        assert.strictEqual('Bob have 24 cookies!', evaled.toString());
+
+        var {value: evaled, error} = Expression.parse('general.addTwoNum(5,6)').tryEvaluate({a: 3, b: 1});
+        assert.strictEqual('11', evaled.toString());
+
+        var {value: evaled, error} = Expression.parse('general.sumAll()').tryEvaluate();
         assert.strictEqual(3, evaled);
 
-        var {value: evaled, error} = Expression.parse('foo.cool(2)').tryEvaluate();
+        var {value: evaled, error} = Expression.parse('general.cool(2)').tryEvaluate();
         assert.strictEqual(3, evaled);
 
         var {value: evaled, error} = Expression.parse('common.looking()').tryEvaluate();
