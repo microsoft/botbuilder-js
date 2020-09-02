@@ -1,11 +1,20 @@
 > !# @strict = false
-> !# @Namespace = simple
-> !# @Exports = sumNum, partialSum
+> !# @Namespace = general
+> !# @Exports = sumAll, cool, greeting, addTwoNum, yolo
 
 [import](common.lg)
 
-#sumNum()
+#sumAll()
 - ${add(1,2)}
 
-#partialSum(a)
+#cool(a)
 - ${add(1,a)}
+
+#greeting
+- hi ${name}
+
+#addTwoNum(a,b)
+- ${a + b}
+
+# yolo(a, b)
+- ${name} have ${a + b} cookies!

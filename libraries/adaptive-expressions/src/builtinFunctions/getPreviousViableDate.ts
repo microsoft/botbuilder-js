@@ -67,7 +67,7 @@ export class GetPreviousViableDate extends ExpressionEvaluator {
             const month = convertedDateTime.month() + 1;
             const dayOfMonth = convertedDateTime.date();
 
-            if (parsed.month <= month || (parsed.month === month && parsed.dayOfMonth < dayOfMonth)) {
+            if (parsed.month < month || (parsed.month === month && parsed.dayOfMonth < dayOfMonth)) {
                 validYear = year;
             } else {
                 validYear = year - 1;
