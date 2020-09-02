@@ -539,22 +539,6 @@ const dataSource = [
     ['ticksToDays(2193385800000000)', 2538.6409722222224],
     ['ticksToHours(2193385800000000)', 60927.383333333331],
     ['ticksToMinutes(2193385811100000)', 3655643.0185],
-    ['isMatch(getPreviousViableDate(\'XXXX-07-10\'), \'20[0-9]{2}-07-10\')', true],
-    ['isMatch(getPreviousViableDate(\'XXXX-07-10\', \'Asia/Shanghai\'), \'20[0-9]{2}-07-10\')', true],
-    ['getPreviousViableDate(\'XXXX-02-29\')', '2020-02-29'],
-    ['getPreviousViableDate(\'XXXX-02-29\', \'Pacific Standard Time\')', '2020-02-29'],
-    ['isMatch(getNextViableDate(\'XXXX-07-10\'), \'202[0-9]-07-10\')', true],
-    ['isMatch(getNextViableDate(\'XXXX-07-10\', \'Europe/London\'), \'202[0-9]-07-10\')', true],
-    ['getNextViableDate(\'XXXX-02-29\')', '2024-02-29'],
-    ['getNextViableDate(\'XXXX-02-29\', \'America/Los_Angeles\')', '2024-02-29'],
-    ['isMatch(getNextViableTime(\'TXX:40:20\'), \'T[0-2][0-9]:40:20\')', true],
-    ['isMatch(getNextViableTime(\'TXX:40:20\', \'Asia/Tokyo\'), \'T[0-2][0-9]:40:20\')', true],
-    ['isMatch(getNextViableTime(\'TXX:05:10\'), \'T[0-2][0-9]:05:10\')', true],
-    ['isMatch(getNextViableTime(\'TXX:05:10\', \'Europe/Paris\'), \'T[0-2][0-9]:05:10\')', true],
-    ['isMatch(getPreviousViableTime(\'TXX:40:20\'), \'T[0-2][0-9]:40:20\')', true],
-    ['isMatch(getPreviousViableTime(\'TXX:40:20\', \'Eastern Standard Time\'), \'T[0-2][0-9]:40:20\')', true],
-    ['isMatch(getPreviousViableTime(\'TXX:05:10\'), \'T[0-2][0-9]:05:10\')', true],
-    ['isMatch(getPreviousViableTime(\'TXX:05:10\', \'Central Standard Time\'), \'T[0-2][0-9]:05:10\')', true],
 
     //URI parsing functions tests
     ['uriHost(\'https://www.localhost.com:8080\')', 'www.localhost.com'],
@@ -895,22 +879,40 @@ describe('expression parser functional test', () => {
     // `new Date()` done by both the test and by ExpressionEvaluator return the exact same time.
     it('should appropriately evaluate time-related expressions', () => {
         // Freeze the system clock.
-        // The expected date in MM-DD-YY HH is 01-01-20 00
+        // The expected date in the format, MM-dd-yy HH:mm:ss, is 08-01-20 00:12:20
         let clock = useFakeTimers({
-            now: new Date(Date.UTC(2020, 0, 1)),
+            now: new Date(Date.UTC(2020, 7, 1, 0, 12, 20)),
             shouldAdvanceTime: false,
         });
 
         const timeDataSource = [
-            ['utcNow(\'MM-DD-YY HH\')', '01-01-20 00'],
-            ['getPastTime(1, \'Year\', \'MM-dd-yy\')', '01-01-19'],
-            ['getPastTime(1, \'Month\', \'MM-dd-yy\')', '12-01-19'],
-            ['getPastTime(1, \'Week\', \'MM-dd-yy\')', '12-25-19'],
-            ['getPastTime(1, \'Day\', \'MM-dd-yy\')', '12-31-19'],
-            ['getFutureTime(1, \'Year\', \'MM-dd-yy\')', '01-01-21'],
-            ['getFutureTime(1, \'Month\', \'MM-dd-yy\')', '02-01-20'],
-            ['getFutureTime(1, \'Week\', \'MM-dd-yy\')', '01-08-20'],
-            ['getFutureTime(1, \'Day\', \'MM-dd-yy\')', '01-02-20']
+            ['utcNow(\'MM-DD-YY HH\')', '08-01-20 00'],
+            ['getPastTime(1, \'Year\', \'MM-dd-yy\')', '08-01-19'],
+            ['getPastTime(1, \'Month\', \'MM-dd-yy\')', '07-01-20'],
+            ['getPastTime(1, \'Week\', \'MM-dd-yy\')', '07-25-20'],
+            ['getPastTime(1, \'Day\', \'MM-dd-yy\')', '07-31-20'],
+            ['getFutureTime(1, \'Year\', \'MM-dd-yy\')', '08-01-21'],
+            ['getFutureTime(1, \'Month\', \'MM-dd-yy\')', '09-01-20'],
+            ['getFutureTime(1, \'Week\', \'MM-dd-yy\')', '08-08-20'],
+            ['getFutureTime(1, \'Day\', \'MM-dd-yy\')', '08-02-20'],
+            ['getPreviousViableDate(\'XXXX-07-10\')', '2020-07-10'],
+            ['getPreviousViableDate(\'XXXX-08-10\')', '2019-08-10'],
+            ['getPreviousViableDate(\'XXXX-07-10\', \'Asia/Shanghai\')', '2020-07-10'],
+            ['getPreviousViableDate(\'XXXX-02-29\')', '2020-02-29'],
+            ['getPreviousViableDate(\'XXXX-02-29\', \'Pacific Standard Time\')', '2020-02-29'],
+            ['getNextViableDate(\'XXXX-07-10\')', '2021-07-10'],
+            ['getNextViableDate(\'XXXX-08-10\')', '2020-08-10'],
+            ['getNextViableDate(\'XXXX-07-10\', \'Europe/London\')', '2021-07-10'],
+            ['getNextViableDate(\'XXXX-02-29\')', '2024-02-29'],
+            ['getNextViableDate(\'XXXX-02-29\', \'America/Los_Angeles\')', '2024-02-29'],
+            ['getNextViableTime(\'TXX:40:20\')', 'T00:40:20'],
+            ['getNextViableTime(\'TXX:40:20\', \'Asia/Tokyo\')', 'T09:40:20'],
+            ['getNextViableTime(\'TXX:05:10\')', 'T01:05:10'],
+            ['getNextViableTime(\'TXX:05:10\', \'Europe/Paris\')', 'T03:05:10'],
+            ['getPreviousViableTime(\'TXX:40:20\')', 'T23:40:20'],
+            ['getPreviousViableTime(\'TXX:40:20\', \'Eastern Standard Time\')', 'T19:40:20'],
+            ['getPreviousViableTime(\'TXX:05:10\')', 'T00:05:10'],
+            ['getPreviousViableTime(\'TXX:05:10\', \'Central Standard Time\')', 'T19:05:10']
         ];
         try {
             for (const data of timeDataSource) {
