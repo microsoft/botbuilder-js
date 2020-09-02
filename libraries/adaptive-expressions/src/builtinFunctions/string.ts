@@ -21,6 +21,10 @@ export class String extends ExpressionEvaluator {
 
     private static evaluator(): EvaluateExpressionDelegate {
         return FunctionUtils.apply((args: any[]): string => {
+            if (typeof args[0] === 'string') {
+                return args[0];
+            }
+
             return JSON.stringify(args[0])
                 .replace(/(^\'*)/g, '')
                 .replace(/(\'*$)/g, '')
