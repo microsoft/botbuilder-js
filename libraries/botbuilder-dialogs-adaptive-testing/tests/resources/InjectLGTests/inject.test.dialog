@@ -11,6 +11,11 @@
       "actions": [
         {
           "$kind": "Microsoft.SetProperty",
+          "property": "user.obj",
+          "value": "=json('{\"SR\":{\"Q1\":\"\",\"Q2\":\"2\"}}')"
+        },
+        {
+          "$kind": "Microsoft.SetProperty",
           "property": "user.message",
           "value": "=foo.GetMessage()"
         },
@@ -53,6 +58,10 @@
         {
           "$kind": "Microsoft.SendActivity",
           "activity": "${foo.ShowTasks(foo.GetList(user.tasks))}"
+        },
+        {
+          "$kind": "Microsoft.SendActivity",
+          "activity": "${user.obj.SR.Q2}"
         }
       ]
     }
@@ -81,7 +90,11 @@
         },
         {
           "$kind": "Microsoft.Test.AssertReply",
-            "text": "Jonathan, your tasks: car, washing, food and laundry"
+          "text": "Jonathan, your tasks: car, washing, food and laundry"
+        },
+                {
+          "$kind": "Microsoft.Test.AssertReply",
+          "text": "2"
         }
     ]
 }
