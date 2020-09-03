@@ -5,11 +5,10 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
+import { BoolExpression, Constant, Expression, ExpressionParser, ValueExpression } from 'adaptive-expressions';
 import { DialogTurnResult, DialogDependencies, Dialog, DialogContext } from 'botbuilder-dialogs';
-import { Expression, ExpressionParser } from 'adaptive-expressions';
 import { ActionScope } from './actionScope';
 import { Case } from './case';
-import { BoolExpression } from 'adaptive-expressions';
 
 export class SwitchCondition<O extends object = {}> extends Dialog<O> implements DialogDependencies {
     public constructor();
@@ -41,7 +40,7 @@ export class SwitchCondition<O extends object = {}> extends Dialog<O> implements
      */
     public disabled?: BoolExpression;
 
-    private _caseExpresssions: any;
+    private _caseExpresssions: { [key: string]: Expression };
 
     private _defaultScope: ActionScope;
 
@@ -66,8 +65,44 @@ export class SwitchCondition<O extends object = {}> extends Dialog<O> implements
             this._caseExpresssions = {};
             for (let i = 0; i < this.cases.length; i++) {
                 const caseScope = this.cases[i];
-                const caseCondition = Expression.equalsExpression(this.condition, caseScope.createValueExpression());
-                this._caseExpresssions[caseScope.value] = caseCondition;
+                const intVal = parseInt(caseScope.value);
+                if (!isNaN(intVal)) {
+                    // you don't have to put quotes around numbers, "23" => 23 OR "23".
+                    this._caseExpresssions[caseScope.value] = Expression.orExpression(
+                        Expression.equalsExpression(this.condition, new Constant(intVal)),
+                        Expression.equalsExpression(this.condition, new Constant(caseScope.value))
+                    );
+                    continue;
+                }
+                const floatVal = parseFloat(caseScope.value);
+                if (!isNaN(floatVal)) {
+                    // you don't have to put quotes around numbers, "23" => 23 OR "23".
+                    this._caseExpresssions[caseScope.value] = Expression.orExpression(
+                        Expression.equalsExpression(this.condition, new Constant(floatVal)),
+                        Expression.equalsExpression(this.condition, new Constant(caseScope.value))
+                    );
+                    continue;
+                }
+                if (caseScope.value === 'true' || caseScope.value === 'True') {
+                    // you don't have to put quotes around bools, "true" => true OR "true".
+                    this._caseExpresssions[caseScope.value] = Expression.orExpression(
+                        Expression.equalsExpression(this.condition, new Constant(true)),
+                        Expression.equalsExpression(this.condition, new Constant(caseScope.value))
+                    );
+                    continue;
+                }
+                if (caseScope.value === 'false' || caseScope.value === 'False') {
+                    // you don't have to put quotes around bools, "false" => false OR "false".
+                    this._caseExpresssions[caseScope.value] = Expression.orExpression(
+                        Expression.equalsExpression(this.condition, new Constant(false)),
+                        Expression.equalsExpression(this.condition, new Constant(caseScope.value))
+                    );
+                    continue;
+                }
+                // if someone does "=23" that will be numeric comparison or "='23'" that will be string comparison,
+                // or it can be a real expression bound to memory.
+                const { value } = new ValueExpression(caseScope.value).tryGetValue(dc.state);
+                this._caseExpresssions[caseScope.value] = Expression.equalsExpression(this.condition, new Constant(value));
             }
         }
 
