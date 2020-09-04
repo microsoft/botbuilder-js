@@ -8,9 +8,13 @@ steps:
 
   - template: configure-to-bbjs-daily.yml
 
-  - script: npm run build
+  - script: npm run prepublishOnly
     displayName: Build DLJS
     workingDirectory: $(DLJSDir)
+
+  # - script: npm run build
+  #   displayName: Build DLJS
+  #   workingDirectory: $(DLJSDir)
   
   - script: npm pack .
     displayName: Pack DLJS into .tgz

@@ -8,10 +8,19 @@ steps:
       artifact: ReactApp
       path: $(ReactProjectDir)
   
-  # this will change to npx serve -p 3000 inside the react-app/build folder
-  - powershell: start powershell {yarn start}
-    displayName: 'yarn start React App'
+  - powershell: ls
+    displayName: ls react app
     workingDirectory: $(ReactProjectDir)
+  
+  - powershell: ls build
+    displayName: ls build dir
+    workingDirectory: $(ReactProjectDir)
+
+  # this will change to npx serve -p 3000 inside the react-app/build folder
+  # - powershell: start powershell {yarn start}
+  - powershell: start powershell {npx serve -p 3000}
+    displayName: 'yarn start React App'
+    workingDirectory: $(ReactProjectDir)/build
   
   - powershell: npm install
     displayName: 'npm install tests'

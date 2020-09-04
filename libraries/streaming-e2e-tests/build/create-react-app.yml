@@ -4,20 +4,20 @@
 steps:
 
 # Cut out ##########################################-START
-  - powershell: npx create-react-app react-app
-    displayName: 'create-react-app'
-    workingDirectory: $(RootReactPiecesDir)
+  # - powershell: npx create-react-app react-app
+  #   displayName: 'create-react-app'
+  #   workingDirectory: $(RootReactPiecesDir)
   
-  - powershell: Remove-Item src/App.js, src/index.js, public/index.html, ./package.json, ./yarn.lock
-    displayName: "Delete files we're replacing with custom code in react-app"
-    workingDirectory: $(ReactProjectDir)
+  # - powershell: Remove-Item src/App.js, src/index.js, public/index.html, ./package.json, ./yarn.lock
+  #   displayName: "Delete files we're replacing with custom code in react-app"
+  #   workingDirectory: $(ReactProjectDir)
 
-  - powershell: |
-      copy ../custom-app-code/App.js, ../custom-app-code/index.js ./src/
-      copy ../custom-app-code/index.html ./public
-      copy ../custom-app-code/package.json, ../custom-app-code/yarn.lock
-    displayName: 'Copy custom files into react-app'
-    workingDirectory: $(ReactProjectDir)
+  # - powershell: |
+  #     copy ../custom-app-code/App.js, ../custom-app-code/index.js ./src/
+  #     copy ../custom-app-code/index.html ./public
+  #     copy ../custom-app-code/package.json, ../custom-app-code/yarn.lock
+  #   displayName: 'Copy custom files into react-app'
+  #   workingDirectory: $(ReactProjectDir)
 # Cut out ##########################################-END
 #Instead have react-app created with the custom code already in 
   # index.js, App.js, and index.html (including CSP)
@@ -30,31 +30,46 @@ steps:
   - task: Cache@2
     displayName: 'Cache WebChat 4.9.2'
     inputs:
-      key: 'WebChatCache | npm | "$(Agent.OS)"'
+      key: 'WebChatCache2 | npm | "$(Agent.OS)"'
       path: $(ReactProjectDir)/node_modules
       cacheHitVar: 'CacheRestored'
 
 
-  - powershell: yarn add botframework-webchat@4.9.2
-    displayName: 'yarn add botframework-webchat@4.9.2'
+  - powershell: npm install botframework-webchat@4.9.2
+    displayName: 'npm install botframework-webchat@4.9.2'
     condition: ne(variables.CacheRestored, 'true')
     workingDirectory: $(ReactProjectDir)
 
 # After restoring cache, npm install react-scripts@latest
 
   # Create Customized DLJS
-  - powershell: New-Item -Path . -Name ".npmrc" -ItemType "file" -Value "registry=https://botbuilder.myget.org/F/botbuilder-v4-js-daily/npm/"
-    displayName: 'Create .npmrc for MyGet feed - https://botbuilder.myget.org/gallery/botbuilder-v4-js-daily'
-    workingDirectory: $(ReactProjectDir)
-  
   - template: customize-dljs.yml
   
-  - powershell: yarn add $(DLJSDir)/botframework-directlinejs.tgz
-    displayName: 'yarn add botframework-directlinejs.tgz'
+  - powershell: npm install $(DLJSDir)/botframework-directlinejs.tgz
+    displayName: 'npm install botframework-directlinejs.tgz'
+    workingDirectory: $(ReactProjectDir)
+  
+  - powershell: ls node_modules/botframework-streaming/lib/utilities
+    displayName: check streaming utils
+    workingDirectory: $(ReactProjectDir)
+
+  - powershell: ls node_modules/botframework-webchat/node_modules
+    displayName: check wc node_modules
     workingDirectory: $(ReactProjectDir)
   
   # In react-app/node_modules/botframework-webchat/node_modules rename:
     # bf-dljs and bf-streaming node modules to force it to use parent react-app's node_modules with customized dljs that points to latest streaming
+  - powershell: |
+      ls 
+      Rename-Item ./botframework-directlinejs botframework-directlinejs.old
+      Rename-Item ./botframework-streaming botframework-streaming.old
+      ls
+    displayName: Rename DLJS node module
+    workingDirectory: $(ReactProjectDir)/node_modules/botframework-webchat/node_modules
+  
+  - powershell: npm run build
+    displayName: Build React App
+    workingDirectory: $(ReactProjectDir)
   
   # build react-app
 
