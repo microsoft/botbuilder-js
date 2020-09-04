@@ -8,8 +8,8 @@ const { Builder, By, Condition, Key, until, logging } = require('selenium-webdri
 const { Options } = require('selenium-webdriver/chrome');
 
 const userMessage = 'Why hello there';
-// const reactAppEndpoint = 'http://localhost:3000';
-const reactAppEndpoint = 'https://ash-react-app.azurewebsites.net/';
+const reactAppEndpoint = 'http://localhost:3000';
+// const reactAppEndpoint = 'https://ash-react-app.azurewebsites.net/';
 
 describe('Chrome', function () {
   it('should receive an echo after sending a message', async function () {
@@ -70,8 +70,10 @@ async function echoMessageInBrowser(driver) {
 }
 
 async function ensureNoBrowserErrors(driver) {
+  console.log('Getting browser logs...');
   const browserConsoleErrors = await driver.manage().logs().get(logging.Type.BROWSER);
-  
+  console.log(`browserConsoleErrors: ${browserConsoleErrors}`);
+
   if (browserConsoleErrors.length == 0) {
     return;
   }
