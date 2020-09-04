@@ -34,6 +34,7 @@ jobs:
     variables:
       PackageName: 'botframework-streaming'
       TargetProjectDir: $(DLJSDir)
+      REACT_APP_BOT_HOSTNAME: $(BotName)
     steps:
       - template: create-react-app.yml
 
