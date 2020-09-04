@@ -131,6 +131,9 @@ export namespace JwtTokenValidation {
         if (authConfig.validateClaims) {
             // Call the validation method if defined (it should throw an exception if the validation fails)
             await authConfig.validateClaims(claims);
+        } else if (SkillValidation.isSkillClaim(claims)) {
+            // Skill claims must be validated using AuthenticationConfiguration validateClaims
+            throw new AuthenticationError('Unauthorized Access. Request is not authorized. Skill Claims require validation.', StatusCodes.UNAUTHORIZED); 
         }
     }
 
