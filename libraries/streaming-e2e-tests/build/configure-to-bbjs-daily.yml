@@ -29,10 +29,6 @@ steps:
     inputs:
       tags: 'Using $(PackageName) version $(LatestVersion_streaming)'
   
-  - powershell: type package.json
-    displayName: type package.json in $(TargetProjectDir)
-    workingDirectory: $(TargetProjectDir)
-
   - task: Npm@1
     displayName: 'npm install'
     inputs: 
