@@ -4,7 +4,7 @@
  */
 
 const assert = require('assert');
-const { Builder, By, Condition, Key, until, css } = require('selenium-webdriver');
+const { Builder, By, Condition, Key, until, logging } = require('selenium-webdriver');
 const { Options } = require('selenium-webdriver/chrome');
 
 const userMessage = 'Why hello there';
@@ -17,6 +17,8 @@ describe('Chrome', function () {
     const driver = createDriver('chrome');
     await echoMessageInBrowser(driver);
     const transcriptMessages = await getTranscriptMessages(driver, 2);
+
+    await ensureNoBrowserErrors(driver);
     
     console.log('Transcript received. Asserting...');
     assert.strictEqual(transcriptMessages[0], userMessage);
@@ -31,6 +33,10 @@ function createDriver(browser) {
     // For now, we are only using ChromeDriver
     // In future expansions on E2E streaming tests, we can expand to create options for multiple browsers
     const options = new Options().headless();
+    const preferences = new logging.Preferences();
+    preferences.setLevel(logging.Type.BROWSER, logging.Level.SEVERE);
+    options.setLoggingPrefs(preferences);
+
     const builder = new Builder()
         .setChromeOptions(options)
         .forBrowser(browser)
@@ -43,6 +49,8 @@ async function echoMessageInBrowser(driver) {
   try {
     console.log(`Navigating to "${reactAppEndpoint}"...`);
     await driver.get(reactAppEndpoint);
+
+    await ensureNoBrowserErrors(driver);
 
     console.log('Sleeping to allow Web Chat to load...');
     await driver.sleep(7000);
@@ -58,6 +66,17 @@ async function echoMessageInBrowser(driver) {
   } catch (error) {
     throw new Error(error.message);
   }
+}
+
+async function ensureNoBrowserErrors(driver) {
+  const browserConsoleErrors = await driver.manage().logs().get(logging.Type.BROWSER);
+  
+  if (browserConsoleErrors.length == 0) {
+    return;
+  }
+  browserConsoleErrors.forEach((error) => console.log(error.level.name, error.message));
+  
+  throw new Error('SEVERE-level error found in browser.');
 }
 
 async function getTranscriptMessages(driver, minNumMessages) {
