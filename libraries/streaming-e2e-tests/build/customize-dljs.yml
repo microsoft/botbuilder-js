@@ -9,7 +9,7 @@ steps:
   - template: configure-to-bbjs-daily.yml
 
   - script: npm run prepublishOnly
-    displayName: Build DLJS
+    displayName: Build DLJS (npm run prepublishOnly)
     workingDirectory: $(DLJSDir)
 
   # - script: npm run build
