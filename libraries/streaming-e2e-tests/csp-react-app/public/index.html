@@ -9,6 +9,15 @@
       name="description"
       content="Web site created using create-react-app"
     />
+    <meta http-equiv="Content-Security-Policy"
+        content="default-src 'none'; 
+            base-uri 'none'; 
+            connect-src wss://*.azurewebsites.net https://*.azurewebsites.net; 
+            img-src data: 'self';
+            script-src 'nonce-a1b2c3d' 'strict-dynamic'; 
+            style-src 'unsafe-inline' 'self';
+            manifest-src 'self'" 
+    />
     <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
     <!--
       Notice the use of %PUBLIC_URL% in the tags above.
