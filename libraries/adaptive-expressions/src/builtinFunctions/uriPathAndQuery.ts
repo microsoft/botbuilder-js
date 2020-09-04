@@ -31,7 +31,7 @@ export class UriPathAndQuery extends ExpressionEvaluator {
             if (typeof (args[0]) === 'string') {
                 ({ value, error } = UriPathAndQuery.evalUriPathAndQuery(args[0]));
             } else {
-                error = `${expr} cannot evaluate`;
+                error = `${expr} should contain a URI string.`;
             }
         }
 

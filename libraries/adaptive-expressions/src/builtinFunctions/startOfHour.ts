@@ -34,7 +34,7 @@ export class StartOfHour extends ExpressionEvaluator {
             if (typeof (args[0]) === 'string') {
                 ({ value, error } = StartOfHour.evalStartOfHour(args[0], format));
             } else {
-                error = `${expr} cannot evaluate`;
+                error = `${expr} should contain an ISO format timestamp and an optional output format string.`;
             }
         }
 
