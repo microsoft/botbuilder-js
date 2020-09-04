@@ -30,7 +30,7 @@ steps:
   - task: Cache@2
     displayName: 'Cache React App Base Dependencies + WebChat 4.9.2'
     inputs:
-      key: 'ReactWebChatCache | npm | "$(Agent.OS)"'
+      key: 'ReactWebChatCacheTEST | npm | "$(Agent.OS)"'
       path: $(ReactProjectDir)/node_modules
       cacheHitVar: 'CacheRestored'
   
