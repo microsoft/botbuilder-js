@@ -9,7 +9,6 @@ const { Options } = require('selenium-webdriver/chrome');
 
 const userMessage = 'Why hello there';
 const reactAppEndpoint = 'http://localhost:3000';
-// const reactAppEndpoint = 'https://ash-react-app.azurewebsites.net/';
 
 describe('Chrome', function () {
   it('should receive an echo after sending a message', async function () {
