@@ -72,7 +72,6 @@ async function echoMessageInBrowser(driver) {
 async function ensureNoBrowserErrors(driver) {
   console.log('Getting browser logs...');
   const browserConsoleErrors = await driver.manage().logs().get(logging.Type.BROWSER);
-  console.log(`browserConsoleErrors: ${browserConsoleErrors}`);
 
   if (browserConsoleErrors.length == 0) {
     return;

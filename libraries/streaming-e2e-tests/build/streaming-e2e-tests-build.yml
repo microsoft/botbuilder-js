@@ -42,8 +42,5 @@ jobs:
       - Deploy_Bot 
       - Create_React_App
     condition: succeeded()
-    variables:
-      REACT_APP_BOT_HOSTNAME: $(BotName)
-      PORT: 3000
     steps:
       - template: run-tests.yml

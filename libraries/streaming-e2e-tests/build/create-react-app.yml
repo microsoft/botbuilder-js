@@ -2,35 +2,10 @@
 # that uses that latest version of botframework-streaming
 
 steps:
-
-# Cut out ##########################################-START
-  # - powershell: npx create-react-app react-app
-  #   displayName: 'create-react-app'
-  #   workingDirectory: $(RootReactPiecesDir)
-  
-  # - powershell: Remove-Item src/App.js, src/index.js, public/index.html, ./package.json, ./yarn.lock
-  #   displayName: "Delete files we're replacing with custom code in react-app"
-  #   workingDirectory: $(ReactProjectDir)
-
-  # - powershell: |
-  #     copy ../custom-app-code/App.js, ../custom-app-code/index.js ./src/
-  #     copy ../custom-app-code/index.html ./public
-  #     copy ../custom-app-code/package.json, ../custom-app-code/yarn.lock
-  #   displayName: 'Copy custom files into react-app'
-  #   workingDirectory: $(ReactProjectDir)
-# Cut out ##########################################-END
-#Instead have react-app created with the custom code already in 
-  # index.js, App.js, and index.html (including CSP)
-  # Use package-lock.json
-  # have dependency on WebChat@4.9.2
-
-# ^ Cache this
-
-  # Install Web Chat 4.9.2 for a predictable DOM
   - task: Cache@2
-    displayName: 'Cache React App Base Dependencies + WebChat 4.9.2'
+    displayName: 'Cache create-react-app + WebChat Dependencies'
     inputs:
-      key: 'ReactWebChatCacheTEST | npm | "$(Agent.OS)"'
+      key: 'CraAndWebChatCache | npm | "$(Agent.OS)"'
       path: $(ReactProjectDir)/node_modules
       cacheHitVar: 'CacheRestored'
   
@@ -38,11 +13,6 @@ steps:
     displayName: npm install in React App
     condition: ne(variables.CacheRestored, 'true')
     workingDirectory: $(ReactProjectDir)
-
-  # - powershell: npm install botframework-webchat@4.9.2
-  #   displayName: 'npm install botframework-webchat@4.9.2'
-  #   condition: ne(variables.CacheRestored, 'true')
-  #   workingDirectory: $(ReactProjectDir)
 
 # After restoring cache, npm install react-scripts@latest
 
@@ -53,18 +23,7 @@ steps:
     displayName: 'npm install botframework-directlinejs.tgz'
     workingDirectory: $(ReactProjectDir)
   
-  - powershell: ls node_modules/botframework-streaming/lib/utilities
-    displayName: check streaming utils
-    workingDirectory: $(ReactProjectDir)
-
-  - powershell: ls node_modules/botframework-webchat/node_modules
-    displayName: check wc node_modules
-    workingDirectory: $(ReactProjectDir)
-  
-  # In react-app/node_modules/botframework-webchat/node_modules rename:
-    # bf-dljs and bf-streaming node modules to force it to use parent react-app's node_modules with customized dljs that points to latest streaming
   - powershell: |
-      ls 
       Rename-Item ./botframework-directlinejs botframework-directlinejs.old
       Rename-Item ./botframework-streaming botframework-streaming.old
       ls
@@ -85,10 +44,6 @@ steps:
   - powershell: npm run build
     displayName: Build React App
     workingDirectory: $(ReactProjectDir)
-  
-  # build react-app
-
-  # I think we only need to publish the build folder--hmm maybe not...should test
   
   - task: PublishPipelineArtifact@1
     displayName: 'Publish Artifact: ReactApp'
