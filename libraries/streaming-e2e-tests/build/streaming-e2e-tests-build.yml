@@ -10,8 +10,6 @@ pool:
   vmImage: 'windows-2019'
 
 variables:
-  # RootReactPiecesDir: '$(System.DefaultWorkingDirectory)/libraries/streaming-e2e-tests/react-app'
-  # ReactProjectDir: '$(RootReactPiecesDir)/react-app'
   ReactProjectDir: '$(System.DefaultWorkingDirectory)/libraries/streaming-e2e-tests/react-app'
   DLJSDir: '$(System.DefaultWorkingDirectory)/libraries/streaming-e2e-tests/react-app/BotFramework-DirectLineJS'
   BotBuilder: 'botbuilder'
