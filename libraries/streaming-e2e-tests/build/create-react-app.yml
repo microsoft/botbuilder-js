@@ -71,6 +71,17 @@ steps:
     displayName: Rename DLJS node module
     workingDirectory: $(ReactProjectDir)/node_modules/botframework-webchat/node_modules
   
+  # Make BOT_HOSTNAME available to deployed react app
+  - powershell: |
+      type .env
+      $envContent = Get-Content -Raw .env
+      $envContent -replace "REACT_APP_BOT_HOSTNAME=", "REACT_APP_BOT_HOSTNAME=$(BotName)" |
+        Set-Content -Path .env
+      
+      Get-Content .env
+    displayName: Add "REACT_APP_BOT_HOSTNAME=$(BotName) to .env"
+    workingDirectory: $(ReactProjectDir)
+
   - powershell: npm run build
     displayName: Build React App
     workingDirectory: $(ReactProjectDir)
