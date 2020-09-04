@@ -14,7 +14,6 @@ steps:
     condition: ne(variables.CacheRestored, 'true')
     workingDirectory: $(ReactProjectDir)
 
-# After restoring cache, npm install react-scripts@latest
   - powershell: npm install react-scripts@latest
     displayName: npm install react-scripts@latest
     workingDirectory: $(ReactProjectDir)
@@ -42,16 +41,3 @@ steps:
     inputs:
       targetPath: $(ReactProjectDir)/build
       artifactName: 'ReactApp'
-
-  # - powershell: |
-  #     Write-Host "Compressing projecting into react-app.zip"
-  #     Compress-Archive "$(ReactProjectDir)/build/*" "$(ReactProjectDir)/react-app.zip" 
-  #   displayName: 'Zip react-app'
-
-  # - task: AzureCLI@1
-  #   displayName: 'Deploy react-app'
-  #   inputs:
-  #     ConnectedServiceNameARM: $(ConnectedServiceNameARM)
-  #     scriptType: ps
-  #     scriptLocation: inlineScript
-  #     inlineScript: az webapp deployment source config-zip --resource-group "$(ResourceGroup)" --name "ash-react-app" --src "$(ReactProjectDir)/react-app.zip"
