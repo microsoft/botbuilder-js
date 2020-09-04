@@ -12,10 +12,6 @@ steps:
     displayName: Build DLJS (npm run prepublishOnly)
     workingDirectory: $(DLJSDir)
 
-  # - script: npm run build
-  #   displayName: Build DLJS
-  #   workingDirectory: $(DLJSDir)
-  
   - script: npm pack .
     displayName: Pack DLJS into .tgz
     workingDirectory: $(DLJSDir)
