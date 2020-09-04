@@ -6,15 +6,15 @@ steps:
     displayName: Download ReactApp Artifact
     inputs:
       artifact: ReactApp
-      path: $(ReactProjectDir)
+      path: $(ReactProjectDir)/build
   
-  - powershell: ls
-    displayName: ls react app
-    workingDirectory: $(ReactProjectDir)
+  # - powershell: ls
+  #   displayName: ls react app
+  #   workingDirectory: $(ReactProjectDir)
   
-  - powershell: ls build
-    displayName: ls build dir
-    workingDirectory: $(ReactProjectDir)
+  # - powershell: ls build
+  #   displayName: ls build dir
+  #   workingDirectory: $(ReactProjectDir)
 
   # this will change to npx serve -p 3000 inside the react-app/build folder
   # - powershell: start powershell {yarn start}

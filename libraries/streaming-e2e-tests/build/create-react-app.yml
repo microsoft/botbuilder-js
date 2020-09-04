@@ -93,7 +93,7 @@ steps:
   - task: PublishPipelineArtifact@1
     displayName: 'Publish Artifact: ReactApp'
     inputs:
-      targetPath: $(ReactProjectDir)
+      targetPath: $(ReactProjectDir)/build
       artifactName: 'ReactApp'
 
   # - powershell: |
