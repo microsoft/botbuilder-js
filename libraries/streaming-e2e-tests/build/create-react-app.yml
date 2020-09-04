@@ -2,6 +2,8 @@
 # that uses that latest version of botframework-streaming
 
 steps:
+
+# Cut out ##########################################-START
   - powershell: npx create-react-app react-app
     displayName: 'create-react-app'
     workingDirectory: $(RootReactPiecesDir)
@@ -16,7 +18,14 @@ steps:
       copy ../custom-app-code/package.json, ../custom-app-code/yarn.lock
     displayName: 'Copy custom files into react-app'
     workingDirectory: $(ReactProjectDir)
-  
+# Cut out ##########################################-END
+#Instead have react-app created with the custom code already in 
+  # index.js, App.js, and index.html (including CSP)
+  # Use package-lock.json
+  # have dependency on WebChat@4.9.2
+
+# ^ Cache this
+
   # Install Web Chat 4.9.2 for a predictable DOM
   - task: Cache@2
     displayName: 'Cache WebChat 4.9.2'
@@ -25,10 +34,13 @@ steps:
       path: $(ReactProjectDir)/node_modules
       cacheHitVar: 'CacheRestored'
 
+
   - powershell: yarn add botframework-webchat@4.9.2
     displayName: 'yarn add botframework-webchat@4.9.2'
     condition: ne(variables.CacheRestored, 'true')
     workingDirectory: $(ReactProjectDir)
+
+# After restoring cache, npm install react-scripts@latest
 
   # Create Customized DLJS
   - powershell: New-Item -Path . -Name ".npmrc" -ItemType "file" -Value "registry=https://botbuilder.myget.org/F/botbuilder-v4-js-daily/npm/"
@@ -40,6 +52,13 @@ steps:
   - powershell: yarn add $(DLJSDir)/botframework-directlinejs.tgz
     displayName: 'yarn add botframework-directlinejs.tgz'
     workingDirectory: $(ReactProjectDir)
+  
+  # In react-app/node_modules/botframework-webchat/node_modules rename:
+    # bf-dljs and bf-streaming node modules to force it to use parent react-app's node_modules with customized dljs that points to latest streaming
+  
+  # build react-app
+
+  # I think we only need to publish the build folder--hmm maybe not...should test
   
   - task: PublishPipelineArtifact@1
     displayName: 'Publish Artifact: ReactApp'
