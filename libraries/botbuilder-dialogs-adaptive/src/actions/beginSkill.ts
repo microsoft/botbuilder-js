@@ -5,12 +5,13 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { SkillDialog, SkillDialogOptions, DialogContext, DialogTurnResult, BeginSkillDialogOptions, DialogInstance, DialogReason } from 'botbuilder-dialogs';
+import { SkillDialog, SkillDialogOptions, DialogContext, DialogTurnResult, BeginSkillDialogOptions, DialogInstance, DialogReason, DialogEvent, DialogEvents } from 'botbuilder-dialogs';
 import { BoolExpression, StringExpression } from 'adaptive-expressions';
 import { Activity, ActivityTypes, StringUtils, TurnContext } from 'botbuilder-core';
 import { TemplateInterface } from '../template';
 import { skillClientKey, skillConversationIdFactoryKey } from '../skillExtensions';
 import { ActivityTemplate } from '../templates';
+import { AdaptiveEvents } from '../adaptiveEvents';
 
 export class BeginSkill extends SkillDialog {
 
@@ -63,6 +64,11 @@ export class BeginSkill extends SkillDialog {
      * Template for the activity.
      */
     public activity: TemplateInterface<Partial<Activity>>;
+
+    /**
+     * Interruption policy.
+     */
+    public allowInterruptions: BoolExpression;
 
     /**
      * Optional. The OAuth Connection Name for the Parent Bot.
@@ -160,6 +166,25 @@ export class BeginSkill extends SkillDialog {
             return `BeginSkill['${ appId }','${ StringUtils.ellipsis(this.activity.template.trim(), 30) }']`;
         }
         return `BeginSkill['${ appId }','${ StringUtils.ellipsis(this.activity && this.activity.toString().trim(), 30) }']`;
+    }
+
+    protected async onPreBubbleEvent(dc: DialogContext, e: DialogEvent): Promise<boolean> {
+        if (e.name === DialogEvents.activityReceived && dc.context.activity.type === ActivityTypes.Message) {
+            // Ask parent to perform recognition.
+            await dc.parent.emitEvent(AdaptiveEvents.recognizeUtterance, dc.context.activity, false);
+
+            // Should we allow interruptions.
+            let canInterrupt = true;
+            if (this.allowInterruptions) {
+                const { value: allowInterruptions, error } = this.allowInterruptions.tryGetValue(dc.state);
+                canInterrupt = !error && allowInterruptions;
+            }
+
+            // Stop bubbling if interruptions are NOT allowed.
+            return !canInterrupt;
+        }
+
+        return false;
     }
 
     private loadDialogOptions(context: TurnContext, instance: DialogInstance): void {
