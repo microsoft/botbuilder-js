@@ -1,17 +1,18 @@
-const path = require('path');
-const dotenv = require('dotenv');
-const ENV_FILE = path.join(__dirname, '.env');
-dotenv.config({ path: ENV_FILE });
+/**
+ * Copyright (c) Microsoft Corporation. All rights reserved.
+ * Licensed under the MIT License.
+ */
 
 const assert = require('assert');
 const { Builder, By, Condition, Key, until, css } = require('selenium-webdriver');
 const { Options } = require('selenium-webdriver/chrome');
 
 const userMessage = 'Why hello there';
+const reactAppEndpoint = 'http://localhost:3000';
 
 describe('Chrome', function () {
   it('should receive an echo after sending a message', async function () {
-    this.timeout(60000);
+    this.timeout(120000);
 
     const driver = createDriver('chrome');
     await echoMessageInBrowser(driver);
@@ -40,12 +41,16 @@ function createDriver(browser) {
 
 async function echoMessageInBrowser(driver) {
   try {
-    console.log(`Navigating to "${process.env.ReactAppEndpoint}"...`);
-    await driver.get(process.env.ReactAppEndpoint);
+    console.log(`Navigating to "${reactAppEndpoint}"...`);
+    await driver.get(reactAppEndpoint);
 
+    console.log('Sleeping to allow Web Chat to load...');
     await driver.sleep(7000);
 
+    console.log('Getting Web Chat sendbox...');
     let wcSendBox = await driver.wait(until.elementLocated(By.className('webchat__send-box-text-box__input')), 17000);
+
+    console.log('Sending user message...');
     await wcSendBox.sendKeys(userMessage, Key.RETURN);
 
     return driver;
