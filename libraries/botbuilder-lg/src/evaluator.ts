@@ -238,7 +238,7 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGTempla
         }
 
         const parameters: string[] = this.templateMap[templateName].parameters;
-        const currentScope: any =  this.evaluationTargetStack.length > 0 ?  this.currentTarget().scope : new CustomizedMemory(undefined);
+        const currentScope: any = this.currentTarget().scope;
 
         if (args.length === 0) {
             // no args to construct, inherit from current scope
