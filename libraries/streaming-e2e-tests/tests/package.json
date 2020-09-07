@@ -9,10 +9,7 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "dependencies": {
-    "dotenv": "^8.2.0",
-    "path": "^0.12.7"
-  },
+  "dependencies": {},
   "devDependencies": {
     "mocha": "^8.0.1",
     "selenium-webdriver": "^4.0.0-alpha.7"

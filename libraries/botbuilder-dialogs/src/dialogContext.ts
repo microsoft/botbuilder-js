@@ -463,7 +463,7 @@ export class DialogContext {
                 // Lookup dialog
                 const dialog: Dialog<{}> = this.findDialog(instance.id);
                 if (!dialog) {
-                    throw new Error(`DialogSet.reprompt(): Can't find A dialog with an id of '${ instance.id }'.`);
+                    throw new Error(`DialogContext.repromptDialog(): Can't find a dialog with an id of '${ instance.id }'.`);
                 }
 
                 // Ask dialog to re-prompt if supported

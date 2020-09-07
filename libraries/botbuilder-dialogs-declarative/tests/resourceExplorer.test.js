@@ -1,3 +1,4 @@
+const { AdaptiveDialogComponentRegistration } = require('../../botbuilder-dialogs-adaptive/lib');
 const { ResourceExplorer, FolderResourceProvider, ResourceChangeEvent } = require('../lib');
 const assert = require('assert');
 const { writeFileSync, existsSync, unlinkSync } = require('fs');
@@ -86,6 +87,18 @@ describe('ResourecExplorer', function() {
             explorer.addFolder(join(__dirname, 'resources'), true, false);
             explorer.addFolder(join(__dirname, 'resources'), true, false);
         }, 'should throw if adding duplicated resource folders');
+    });
+
+    it('dialog id assignment', async () => {
+        const explorer = new ResourceExplorer();
+        explorer.addFolders(join(__dirname, 'resources'), [], false);
+        explorer.addComponent(new AdaptiveDialogComponentRegistration(explorer));
+
+        const dialog = explorer.loadType('test.dialog');
+        assert.equal(dialog.id, 'test.dialog', 'resource id should be used as default dialog id if none assigned.');
+
+        const dialog2 = explorer.loadType('test2.dialog');
+        assert.equal(dialog2.id, '1234567890', 'id in the .dialog file should be honored.');
     });
 
     it('event fired when new file added', async () => {
