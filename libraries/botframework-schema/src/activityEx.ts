@@ -371,18 +371,15 @@ export namespace ActivityEx {
    */
     export function isActivity(source:Partial<Activity>, activityType: string): boolean {
        /*
-        * NOTE: While it is possible to come up with a fancy looking "one-liner" to solve
-        * this problem, this code is purposefully more verbose due to optimizations.
-        *
-        * This main goal of the optimizations was to make zero allocations because it is called
-        * by all of the .asXXXActivity methods which are used in a pattern heavily upstream to
-        * "pseudo-cast" the activity based on its type.
+        * NOTE: This code was migrated from .NET implementation applying optimizations to make
+        * it more verbose. The goal is to have zero allocations because it is called by all
+        * of the .asXXXActivity methods to "pseudo-cast" the activity based on its type.
         */
 
         const type = source.type;
 
         // If there's no type set then we can't tell if it's the type they're looking for
-        if (type == undefined) {
+        if (type == undefined || typeof (type) !== 'string') {
             return false;
         }
 
@@ -390,12 +387,12 @@ export namespace ActivityEx {
         let result: boolean = type.toUpperCase().startsWith(activityType.toUpperCase())
 
         // If the full type value starts with the type they're looking for, then we need to check if it's definitely the right type
-        if(result) {
+        if (result) {
             // If the lengths are equal, then it's the exact type they're looking for
             result = type.length === activityType.length;
         }
 
-        if(!result) {
+        if (!result) {
             // Finally, if the type is longer than the type they're looking for then we need to check if there's a / separator right after the type they're looking for
             result = (type.length > activityType.length) && (type[activityType.length] === '/');
         }

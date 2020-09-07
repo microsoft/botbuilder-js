@@ -3,58 +3,57 @@
  * Licensed under the MIT License.
  */
 
-const assert = require('assert');
-const { ActivityTypes } = require('../lib/index');
-const { ActivityEx } = require('../lib/ActivityEx');
+const { strictEqual } = require('assert');
+const { ActivityEx, ActivityTypes } = require('../');
 
 describe(`activityValidator`, function() {
 
     it('should create a Message Activity', () => {
         const activity = ActivityEx.createMessageActivity();
 
-        assert.strictEqual(activity.type, ActivityTypes.Message);
+        strictEqual(activity.type, ActivityTypes.Message);
     });
 
     it('should create a Contact Relation Update Activity', () => {
         const activity = ActivityEx.createContactRelationUpdateActivity();
 
-        assert.strictEqual(activity.type, ActivityTypes.ContactRelationUpdate);
+        strictEqual(activity.type, ActivityTypes.ContactRelationUpdate);
     });
 
     it('should create a Conversation Update Activity', () => {
         const activity = ActivityEx.createConversationUpdateActivity();
 
-        assert.strictEqual(activity.type, ActivityTypes.ConversationUpdate);
+        strictEqual(activity.type, ActivityTypes.ConversationUpdate);
     });
 
     it('should create a Typing Activity', () => {
         const activity = ActivityEx.createTypingActivity();
 
-        assert.strictEqual(activity.type, ActivityTypes.Typing);
+        strictEqual(activity.type, ActivityTypes.Typing);
     });
 
     it('should create a Handoff Activity', () => {
         const activity = ActivityEx.createHandoffActivity();
 
-        assert.strictEqual(activity.type, ActivityTypes.Handoff);
+        strictEqual(activity.type, ActivityTypes.Handoff);
     });
 
     it('should create an End of Conversation Activity', () => {
         const activity = ActivityEx.createEndOfConversationActivity();
 
-        assert.strictEqual(activity.type, ActivityTypes.EndOfConversation);
+        strictEqual(activity.type, ActivityTypes.EndOfConversation);
     });
 
     it('should create an Event Activity', () => {
         const activity = ActivityEx.createEventActivity();
 
-        assert.strictEqual(activity.type, ActivityTypes.Event);
+        strictEqual(activity.type, ActivityTypes.Event);
     });
 
     it('should create an Invoke Activity', () => {
         const activity = ActivityEx.createInvokeActivity();
 
-        assert.strictEqual(activity.type, ActivityTypes.Invoke);
+        strictEqual(activity.type, ActivityTypes.Invoke);
     });
 
     it('should create a Trace Activity', () => {
@@ -65,10 +64,10 @@ describe(`activityValidator`, function() {
 
         const activity = ActivityEx.createTraceActivity(name, valueType, value, label);
 
-        assert.strictEqual(activity.type, ActivityTypes.Trace);
-        assert.strictEqual(activity.valueType, valueType);
-        assert.strictEqual(activity.value, value);
-        assert.strictEqual(activity.label, label);
+        strictEqual(activity.type, ActivityTypes.Trace);
+        strictEqual(activity.valueType, valueType);
+        strictEqual(activity.value, value);
+        strictEqual(activity.label, label);
     });
 
     it('should create a Trace Activity without valueType', () => {
@@ -78,9 +77,9 @@ describe(`activityValidator`, function() {
 
         const activity = ActivityEx.createTraceActivity(name, undefined, value, label);
 
-        assert.strictEqual(activity.type, ActivityTypes.Trace);
-        assert.strictEqual(activity.valueType, typeof(value));
-        assert.strictEqual(activity.label, label);
+        strictEqual(activity.type, ActivityTypes.Trace);
+        strictEqual(activity.valueType, typeof(value));
+        strictEqual(activity.label, label);
     });
 
     it('should create a reply for the activity', () => {
@@ -91,9 +90,9 @@ describe(`activityValidator`, function() {
 
         const reply = ActivityEx.createReply(activity, text, locale);
 
-        assert.strictEqual(reply.type, ActivityTypes.Message);
-        assert.strictEqual(reply.text, text);
-        assert.strictEqual(reply.locale, locale);
+        strictEqual(reply.type, ActivityTypes.Message);
+        strictEqual(reply.text, text);
+        strictEqual(reply.locale, locale);
     });
 
     it('should create a reply without arguments for the activity', () => {
@@ -101,9 +100,9 @@ describe(`activityValidator`, function() {
 
         const reply = ActivityEx.createReply(activity);
 
-        assert.strictEqual(reply.type, ActivityTypes.Message);
-        assert.strictEqual(reply.text, "");
-        assert.strictEqual(reply.locale, activity.locale);
+        strictEqual(reply.type, ActivityTypes.Message);
+        strictEqual(reply.text, "");
+        strictEqual(reply.locale, activity.locale);
     });
 
     it('should return Activity as message activity', () => {
@@ -113,7 +112,7 @@ describe(`activityValidator`, function() {
 
         const result = ActivityEx.asMessageActivity(activity);
 
-        assert.strictEqual(result.type, ActivityTypes.Message);
+        strictEqual(result.type, ActivityTypes.Message);
     });
 
     it('should return null when Activity type is different than Message', () => {
@@ -123,18 +122,17 @@ describe(`activityValidator`, function() {
 
         const result = ActivityEx.asMessageActivity(activity);
 
-        assert.strictEqual(result, null);
+        strictEqual(result, null);
     });
 
     it('should return null when Activity type is null', () => {
         const activity = CreateActivity();
 
-        const activityType = 'message';
         activity.type = null;
 
         const result = ActivityEx.asMessageActivity(activity);
 
-        assert.strictEqual(result, null);
+        strictEqual(result, null);
     });
 
     it('should return Activity as Contact Relation Update activity', () => {
@@ -144,7 +142,7 @@ describe(`activityValidator`, function() {
 
         const result = ActivityEx.asContactRelationUpdateActivity(activity);
 
-        assert.strictEqual(result.type, ActivityTypes.ContactRelationUpdate);
+        strictEqual(result.type, ActivityTypes.ContactRelationUpdate);
     });
 
     it('should return null when Activity type is different than contactRelationUpdate', () => {
@@ -154,7 +152,7 @@ describe(`activityValidator`, function() {
 
         const result = ActivityEx.asContactRelationUpdateActivity(activity);
 
-        assert.strictEqual(result, null);
+        strictEqual(result, null);
     });
 
     it('should return Activity as Installation Update activity', () => {
@@ -164,7 +162,7 @@ describe(`activityValidator`, function() {
 
         const result = ActivityEx.asInstallationUpdateActivity(activity);
 
-        assert.strictEqual(result.type, ActivityTypes.InstallationUpdate);
+        strictEqual(result.type, ActivityTypes.InstallationUpdate);
     });
 
     it('should return null when Activity type is different than installationUpdate', () => {
@@ -174,7 +172,7 @@ describe(`activityValidator`, function() {
 
         const result = ActivityEx.asInstallationUpdateActivity(activity);
 
-        assert.strictEqual(result, null);
+        strictEqual(result, null);
     });
 
     it('should return Activity as Conversation Update activity', () => {
@@ -184,7 +182,7 @@ describe(`activityValidator`, function() {
 
         const result = ActivityEx.asConversationUpdateActivity(activity);
 
-        assert.strictEqual(result.type, ActivityTypes.ConversationUpdate);
+        strictEqual(result.type, ActivityTypes.ConversationUpdate);
     });
 
     it('should return null when Activity type is different than conversationUpdate', () => {
@@ -194,7 +192,7 @@ describe(`activityValidator`, function() {
 
         const result = ActivityEx.asConversationUpdateActivity(activity);
 
-        assert.strictEqual(result, null);
+        strictEqual(result, null);
     });
 
     it('should return Activity as Typing activity', () => {
@@ -204,7 +202,7 @@ describe(`activityValidator`, function() {
 
         const result = ActivityEx.asTypingActivity(activity);
 
-        assert.strictEqual(result.type, ActivityTypes.Typing);
+        strictEqual(result.type, ActivityTypes.Typing);
     });
 
     it('should return null when Activity type is different than typing', () => {
@@ -214,7 +212,7 @@ describe(`activityValidator`, function() {
 
         const result = ActivityEx.asTypingActivity(activity);
 
-        assert.strictEqual(result, null);
+        strictEqual(result, null);
     });
 
     it('should return Activity as End of Conversation activity', () => {
@@ -224,7 +222,7 @@ describe(`activityValidator`, function() {
 
         const result = ActivityEx.asEndOfConversationActivity(activity);
 
-        assert.strictEqual(result.type, ActivityTypes.EndOfConversation);
+        strictEqual(result.type, ActivityTypes.EndOfConversation);
     });
 
     it('should return null when Activity type is different than endOfConversation', () => {
@@ -234,7 +232,7 @@ describe(`activityValidator`, function() {
 
         const result = ActivityEx.asEndOfConversationActivity(activity);
 
-        assert.strictEqual(result, null);
+        strictEqual(result, null);
     });
 
     it('should return Activity as Event activity', () => {
@@ -244,7 +242,7 @@ describe(`activityValidator`, function() {
 
         const result = ActivityEx.asEventActivity(activity);
 
-        assert.strictEqual(result.type, ActivityTypes.Event);
+        strictEqual(result.type, ActivityTypes.Event);
     });
 
     it('should return null when Activity type is different than event', () => {
@@ -254,7 +252,7 @@ describe(`activityValidator`, function() {
 
         const result = ActivityEx.asEventActivity(activity);
 
-        assert.strictEqual(result, null);
+        strictEqual(result, null);
     });
 
     it('should return Activity as Invoke activity', () => {
@@ -264,7 +262,7 @@ describe(`activityValidator`, function() {
 
         const result = ActivityEx.asInvokeActivity(activity);
 
-        assert.strictEqual(result.type, ActivityTypes.Invoke);
+        strictEqual(result.type, ActivityTypes.Invoke);
     });
 
     it('should return null when Activity type is different than invoke', () => {
@@ -274,7 +272,7 @@ describe(`activityValidator`, function() {
 
         const result = ActivityEx.asInvokeActivity(activity);
 
-        assert.strictEqual(result, null);
+        strictEqual(result, null);
     });
 
     it('should return Activity as Message Update activity', () => {
@@ -284,7 +282,7 @@ describe(`activityValidator`, function() {
 
         const result = ActivityEx.asMessageUpdateActivity(activity);
 
-        assert.strictEqual(result.type, ActivityTypes.MessageUpdate);
+        strictEqual(result.type, ActivityTypes.MessageUpdate);
     });
 
     it('should return null when Activity type is different than messageUpdate', () => {
@@ -294,7 +292,7 @@ describe(`activityValidator`, function() {
 
         const result = ActivityEx.asMessageUpdateActivity(activity);
 
-        assert.strictEqual(result, null);
+        strictEqual(result, null);
     });
 
     it('should return Activity as Message Delete activity', () => {
@@ -304,7 +302,7 @@ describe(`activityValidator`, function() {
 
         const result = ActivityEx.asMessageDeleteActivity(activity);
 
-        assert.strictEqual(result.type, ActivityTypes.MessageDelete);
+        strictEqual(result.type, ActivityTypes.MessageDelete);
     });
 
     it('should return null when Activity type is different than messageDelete', () => {
@@ -314,7 +312,7 @@ describe(`activityValidator`, function() {
 
         const result = ActivityEx.asMessageDeleteActivity(activity);
 
-        assert.strictEqual(result, null);
+        strictEqual(result, null);
     });
 
     it('should return Activity as Message Reaction activity', () => {
@@ -324,7 +322,7 @@ describe(`activityValidator`, function() {
 
         const result = ActivityEx.asMessageReactionActivity(activity);
 
-        assert.strictEqual(result.type, ActivityTypes.MessageReaction);
+        strictEqual(result.type, ActivityTypes.MessageReaction);
     });
 
     it('should return null when Activity type is different than messageReaction', () => {
@@ -334,7 +332,7 @@ describe(`activityValidator`, function() {
 
         const result = ActivityEx.asMessageReactionActivity(activity);
 
-        assert.strictEqual(result, null);
+        strictEqual(result, null);
     });
 
     it('should return Activity as Suggestion activity', () => {
@@ -344,7 +342,7 @@ describe(`activityValidator`, function() {
 
         const result = ActivityEx.asSuggestionActivity(activity);
 
-        assert.strictEqual(result.type, ActivityTypes.Suggestion);
+        strictEqual(result.type, ActivityTypes.Suggestion);
     });
 
     it('should return null when Activity type is different than Suggestion', () => {
@@ -354,7 +352,7 @@ describe(`activityValidator`, function() {
 
         const result = ActivityEx.asSuggestionActivity(activity);
 
-        assert.strictEqual(result, null);
+        strictEqual(result, null);
     });
 
     it('should return Activity as Trace activity', () => {
@@ -364,7 +362,7 @@ describe(`activityValidator`, function() {
 
         const result = ActivityEx.asTraceActivity(activity);
 
-        assert.strictEqual(result.type, ActivityTypes.Trace);
+        strictEqual(result.type, ActivityTypes.Trace);
     });
 
     it('should return null when Activity type is different than trace', () => {
@@ -374,7 +372,7 @@ describe(`activityValidator`, function() {
 
         const result = ActivityEx.asTraceActivity(activity);
 
-        assert.strictEqual(result, null);
+        strictEqual(result, null);
     });
 
     it('should return Activity as Handoff activity', () => {
@@ -384,7 +382,7 @@ describe(`activityValidator`, function() {
 
         const result = ActivityEx.asHandoffActivity(activity);
 
-        assert.strictEqual(result.type, ActivityTypes.Handoff);
+        strictEqual(result.type, ActivityTypes.Handoff);
     });
 
     it('should return null when Activity type is different than Handoff', () => {
@@ -394,7 +392,7 @@ describe(`activityValidator`, function() {
 
         const result = ActivityEx.asHandoffActivity(activity);
 
-        assert.strictEqual(result, null);
+        strictEqual(result, null);
     });
 
     it('should return false when Activity has no content', () => {
@@ -402,7 +400,7 @@ describe(`activityValidator`, function() {
 
         const result = ActivityEx.hasContent(activity);
 
-        assert.strictEqual(result, false);
+        strictEqual(result, false);
     });
 
     it('should return true when Activity text has content', () => {
@@ -412,7 +410,7 @@ describe(`activityValidator`, function() {
 
         const result = ActivityEx.hasContent(activity);
 
-        assert.strictEqual(result, true);
+        strictEqual(result, true);
     });
 
     it('should return true when Activity summary has content', () => {
@@ -423,7 +421,7 @@ describe(`activityValidator`, function() {
 
         const result = ActivityEx.hasContent(activity);
 
-        assert.strictEqual(result, true);
+        strictEqual(result, true);
     });
 
     it('should return true when Activity attachments has content', () => {
@@ -435,7 +433,7 @@ describe(`activityValidator`, function() {
 
         const result = ActivityEx.hasContent(activity);
 
-        assert.strictEqual(result, true);
+        strictEqual(result, true);
     });
 
     it('should return true when Activity channelData has content', () => {
@@ -448,7 +446,7 @@ describe(`activityValidator`, function() {
 
         const result = ActivityEx.hasContent(activiy);
 
-        assert.strictEqual(result, true);
+        strictEqual(result, true);
     });
 
     it('should return Mentions array', () => {
@@ -459,8 +457,8 @@ describe(`activityValidator`, function() {
 
         const mentionsResult = ActivityEx.getMentions(activity);
 
-        assert.strictEqual(mentionsResult.length, 1);
-        assert.strictEqual(mentionsResult[0].type, "mention");
+        strictEqual(mentionsResult.length, 1);
+        strictEqual(mentionsResult[0].type, "mention");
     });
 
     it('should get Conversation Reference', () => {
@@ -468,13 +466,13 @@ describe(`activityValidator`, function() {
 
         const conversationReference = ActivityEx.getConversationReference(activity)
 
-        assert.strictEqual(activity.id, conversationReference.activityId);
-        assert.strictEqual(activity.from.id, conversationReference.user.id);
-        assert.strictEqual(activity.recipient.id, conversationReference.bot.id);
-        assert.strictEqual(activity.conversation.id, conversationReference.conversation.id);
-        assert.strictEqual(activity.channelId, conversationReference.channelId);
-        assert.strictEqual(activity.locale, conversationReference.locale);
-        assert.strictEqual(activity.serviceUrl, conversationReference.serviceUrl);
+        strictEqual(activity.id, conversationReference.activityId);
+        strictEqual(activity.from.id, conversationReference.user.id);
+        strictEqual(activity.recipient.id, conversationReference.bot.id);
+        strictEqual(activity.conversation.id, conversationReference.conversation.id);
+        strictEqual(activity.channelId, conversationReference.channelId);
+        strictEqual(activity.locale, conversationReference.locale);
+        strictEqual(activity.serviceUrl, conversationReference.serviceUrl);
     });
 
     it('should Create Trace Allows Null Recipient', () => {
@@ -483,7 +481,7 @@ describe(`activityValidator`, function() {
         const trace = ActivityEx.createTrace(activity, 'test');
 
         // CreateTrace flips Recipient and From
-        assert.strictEqual(trace.from.id, null);
+        strictEqual(trace.from.id, null);
     });
 
     it('should Create Trace with all the arguments', () => {
@@ -495,11 +493,11 @@ describe(`activityValidator`, function() {
 
         const trace = ActivityEx.createTrace(activity, name, value, valueType, label);
 
-        assert.strictEqual(trace.type, ActivityTypes.Trace);
-        assert.strictEqual(trace.name, name);
-        assert.strictEqual(trace.value, value);
-        assert.strictEqual(trace.valueType, valueType);
-        assert.strictEqual(trace.label, label);
+        strictEqual(trace.type, ActivityTypes.Trace);
+        strictEqual(trace.name, name);
+        strictEqual(trace.value, value);
+        strictEqual(trace.valueType, valueType);
+        strictEqual(trace.label, label);
     });
 
     it('should be Is From Streaming Connection', () => {
@@ -520,19 +518,59 @@ describe(`activityValidator`, function() {
         var activity = CreateActivity();
 
         activity.serviceUrl = undefined;
-        assert.strictEqual(ActivityEx.isFromStreamingConnection(activity), false);
+        strictEqual(ActivityEx.isFromStreamingConnection(activity), false);
 
         nonStreaming.forEach(s =>
         {
             activity.serviceUrl = s;
-            assert.strictEqual(ActivityEx.isFromStreamingConnection(activity), false);
+            strictEqual(ActivityEx.isFromStreamingConnection(activity), false);
         });
 
         streaming.forEach(s =>
         {
             activity.serviceUrl = s;
-            assert.strictEqual(ActivityEx.isFromStreamingConnection(activity), true);
+            strictEqual(ActivityEx.isFromStreamingConnection(activity), true);
         });
+    });
+
+    it('should return false when activity.type is undefined', () => {
+        const activity = CreateActivity();
+
+        activity.type = undefined;
+
+        strictEqual(ActivityEx.isActivity(activity, 'message'), false);
+    });
+
+    it('should return false when activity.type is not a string', () => {
+        const activity = CreateActivity();
+
+        activity.type = ['message'];
+
+        strictEqual(ActivityEx.isActivity(activity, 'message'), false);
+    });
+
+    it('should return false when activity.type does not match expected value', () => {
+        const activity = CreateActivity();
+
+        activity.type = 'message';
+
+        strictEqual(ActivityEx.isActivity(activity, 'trace'), false);
+    });
+
+    it('should return true when activity.type matches expected value', () => {
+        const activity = CreateActivity();
+
+        activity.type = 'message';
+
+        strictEqual(ActivityEx.isActivity(activity, 'message'), true);
+    });
+
+    it('should return true when activity.type matches with separator /', () => {
+        const activity = CreateActivity();
+
+        activity.type = 'message/';
+
+        strictEqual(ActivityEx.isActivity(activity, 'message'), true);
     });
 });
 
