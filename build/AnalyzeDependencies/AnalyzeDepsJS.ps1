@@ -79,18 +79,6 @@ Function Save-PkgDep($PkgDeps, $TargetFramework, $DepName, $DepVersion) {
   }
 }
 
-#Function Save-Locked($Locked, $DepName, $DepVersion, $Condition) {
-#  if (-Not $Locked[$DepName]) {
-#    $Locked[$DepName] = @{ }
-#  }
-#  if (-Not $Locked[$DepName][$DepVersion]) {
-#    $Locked[$DepName][$DepVersion] = New-Object System.Collections.ArrayList
-#  }
-#  if (-Not $Locked[$DepName][$DepVersion].Contains($Condition)) {
-#    $Locked[$DepName][$DepVersion].Add($Condition.Trim()) | Out-Null
-#  }
-#}
-
 Function Get-PackageExport($Pkgs, $Internal) {
   $DumpData = @{ }
   foreach ($PkgName in $Pkgs.Keys) {
@@ -128,6 +116,10 @@ Function Get-PackageExport($Pkgs, $Internal) {
 
   return $DumpData
 }
+
+#################
+# Main
+#################
 
 # Analyze package dependencies
 $Pkgs = @{ }
@@ -176,27 +168,6 @@ foreach ($PkgFile in Resolve-Path $PackagesPath) {
 
 Write-Host "Analyzing $($Pkgs.Count) packages..."
 
-## Analyze lockfile
-$Locked = @{ }
-#if ($LockfilePath) {
-#  [xml]$PackageProps = Get-Content $LockfilePath
-#  foreach ($ItemGroup in $PackageProps.Project.ItemGroup) {
-#    if ($ItemGroup.Condition) {
-#      $Condition = $ItemGroup.Condition
-#    } else {
-#      $Condition = ""
-#    }
-#    foreach ($Entry in $ItemGroup.PackageReference) {
-#      if ($Entry.Update) {
-#        Save-Locked $Locked $Entry.Update $Entry.Version $Condition
-#      }
-#    }
-#  }
-#  Write-Host "Discovered $($Locked.Count) versions pinned in the lockfile."
-#} else {
-#  Write-Warning "No lockfile was provided, or the lockfile was empty. Declared dependency versions were not able to be validated against the lockfile."
-#}
-
 # Precompute some derived data for the template
 $External = $Deps.Keys | Where-Object { -not ($Pkgs.ContainsKey($_)) }
 $Inconsistent = @{ }
@@ -233,17 +204,6 @@ if ($Inconsistent) {
 } else {
   Write-Host "All dependencies verified, no inconsistent dependency versions were discovered.')"
 }
-
-#if ($MismatchedVersions -or $Unlocked) {
-#  if ($MismatchedVersions) {
-#    Write-Warning "$($MismatchedVersions.Count) dependency version overrides are present, causing dependency versions to differ from the version in the lockfile."
-#  }
-#  if ($Unlocked) {
-#    Write-Warning "$($Unlocked.Count) dependencies are missing from the lockfile."
-#  }
-#} else {
-#  Write-Host "All declared dependency versions match those specified in the lockfile."
-#}
 
 if ($OutPath) {
   Write-Host "Generating HTML report..."
