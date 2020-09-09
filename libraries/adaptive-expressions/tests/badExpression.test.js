@@ -139,6 +139,7 @@ const badExpressions =
         'uriComponent()', // should have 1 param
         'uriComponent(hello, world)', // should have 1 param
         'uriComponent(false)', // param should be string
+        'jsonStringify(hello, 12)', // should have 1 param
 
         // Math functions test
         'max(hello, one)', // param should be number
