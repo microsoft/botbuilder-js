@@ -41,7 +41,7 @@ export class OnCondition implements DialogDependencies {
     /**
      * Get or sets the rule priority expression where 0 is the highest and less than 0 is ignored.
      */
-    public priority: IntExpression;
+    public priority: IntExpression = new IntExpression(0);
 
     /**
      * A value indicating whether rule should only run once per unique set of memory paths.
@@ -123,11 +123,11 @@ export class OnCondition implements DialogDependencies {
      * @returns Computed priority.
      */
     public currentPriority(actionContext: ActionContext): number {
-        if (this.priority) {
-            const priority = this.priority.getValue(actionContext.state);
-            return priority || -1;
+        const { value: priority, error } = this.priority.tryGetValue(actionContext.state);
+        if (error) {
+            return -1;
         }
-        return -1;
+        return priority;
     }
 
     /**
