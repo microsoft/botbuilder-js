@@ -24,4 +24,8 @@ describe('ConditionalsTests', function() {
     it('OnIntent with entities', async () => {
         await testRunner.runTestScript('ConditionalsTests_OnIntentWithEntities');
     });
+
+    it('OnRepromptDialog', async () => {
+        await testRunner.runTestScript('ConditionalsTests_OnRepromptDialog');
+    });
 });
