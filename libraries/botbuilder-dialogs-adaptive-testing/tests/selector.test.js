@@ -32,12 +32,9 @@ describe('SelectorTests', function() {
         await testRunner.runTestScript('SelectorTests_RandomSelector');
     });
 
-    // We don't have MostSpecificSelector yet
-    /*
     it('RunOnce', async () => {
         await testRunner.runTestScript('SelectorTests_RunOnce');
     });
-    */
 
     it('TrueSelector', async () => {
         await testRunner.runTestScript('SelectorTests_TrueSelector');

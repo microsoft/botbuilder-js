@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { Dialog, DialogDependencies, DialogStateManager } from 'botbuilder-dialogs';
+import { Dialog, DialogDependencies, DialogStateManager, DialogPath } from 'botbuilder-dialogs';
 import { Expression, ExpressionParserInterface, Constant, ExpressionParser, ExpressionEvaluator, ReturnType, FunctionUtils } from 'adaptive-expressions';
 import { ActionScope } from '../actions/actionScope';
 import { BoolExpression, IntExpression } from 'adaptive-expressions';
@@ -102,15 +102,15 @@ export class OnCondition implements DialogDependencies {
                 const runOnce = new ExpressionEvaluator(`runOnce${ this.id }`, (exp, state: DialogStateManager) => {
                     const basePath = `${ AdaptiveDialog.conditionTracker }.${ this.id }.`;
                     const lastRun: number = state.getValue(basePath + 'lastRun');
-                    const paths: string[] = state.getValue(basePath + "paths");
-                    var changed = state.anyPathChanged(lastRun, paths);
+                    const paths: string[] = state.getValue(basePath + 'paths');
+                    const changed = state.anyPathChanged(lastRun, paths);
                     return { value: changed, error: undefined };
                 }, ReturnType.Boolean, FunctionUtils.validateUnary);
 
                 this._fullConstraint = Expression.andExpression(
                     this._fullConstraint,
                     new Expression(runOnce.type, runOnce)
-                )
+                );
             }
         }
 
@@ -152,6 +152,10 @@ export class OnCondition implements DialogDependencies {
      * @returns A promise with plan change list.
      */
     public async execute(actionContext: ActionContext): Promise<ActionChangeList[]> {
+        if (this.runOnce) {
+            const count = actionContext.state.getValue(DialogPath.eventCounter);
+            actionContext.state.setValue(`${ AdaptiveDialog.conditionTracker }.${ this.id }.lastRun`, count);
+        }
         return [this.onCreateChangeList(actionContext)];
     }
 
