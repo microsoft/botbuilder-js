@@ -93,4 +93,4 @@ TEMPLATE : '$' '{' (STRING | OBJECT_DEFINITION | ~[\r\n{}'"`])+ '}';
 
 ESCAPE_CHARACTER : '\\' ~[\r\n]?;
 
-TEXT_CONTENT :  ~[\r\n];
+TEXT_CONTENT : . ;

@@ -1,6 +1,6 @@
 # Ensure BotFramework-Streaming library works in the browser 
 # by running tests after deploying a streaming-enabled JS Echo Bot 
-# and a React App that uses latest streaming bits in DLJS and WebChat.
+# and hosting a React App that uses latest streaming bits in DLJS and WebChat 4.9.2.
 
 name: $(Build.BuildId)
 trigger: none
@@ -11,30 +11,38 @@ pool:
 
 variables:
   RootReactPiecesDir: '$(System.DefaultWorkingDirectory)/libraries/streaming-e2e-tests/react-app'
+  ReactProjectDir: '$(RootReactPiecesDir)/react-app'
   DLJSDir: '$(System.DefaultWorkingDirectory)/libraries/streaming-e2e-tests/react-app/BotFramework-DirectLineJS'
   BotBuilder: 'botbuilder'
   BfStreaming: 'botframework-streaming'
   TestsDir: '$(System.DefaultWorkingDirectory)/libraries/streaming-e2e-tests/tests'
   runCodesignValidationInjection: false
   # Variables defined in Azure:
-  # BotName, ConnectedServiceNameARM, MyGetPersonalAccessToken, ReactAppService, ResourceGroup, WebChatCachePipelineId, WebChatCacheProjGuid
+  # BotName, ConnectedServiceNameARM, MyGetPersonalAccessToken, ResourceGroup
 
-stages:
-  - stage: Create_And_Deploy_Projects
-    jobs:
-      - job: Deploy_Bot
-        variables:
-          TargetProjectDir: '$(System.DefaultWorkingDirectory)/libraries/streaming-e2e-tests/bot'
-          PackageName: $(BotBuilder)
-        steps:
-          - template: configure-to-bbjs-daily.yml
-          - template: deploy-bot.yml
+jobs:
+  - job: Deploy_Bot
+    variables:
+      PackageName: $(BotBuilder)
+      TargetProjectDir: '$(System.DefaultWorkingDirectory)/libraries/streaming-e2e-tests/bot'
+    steps:
+      - template: configure-to-bbjs-daily.yml
+      - template: deploy-bot.yml
+      
+  - job: Create_React_App
+    variables:
+      PackageName: 'botframework-streaming'
+      TargetProjectDir: $(DLJSDir)
+    steps:
+      - template: create-react-app.yml
 
-      - template: create-and-deploy-streaming-react-app.yml
-
-  - stage: Run_Tests
-    dependsOn: Create_And_Deploy_Projects
+  - job: Run_Tests
+    dependsOn:
+      - Deploy_Bot 
+      - Create_React_App
     condition: succeeded()
-    jobs:
+    variables:
+      REACT_APP_BOT_HOSTNAME: $(BotName)
+      PORT: 3000
+    steps:
       - template: run-tests.yml
-          
