@@ -402,6 +402,11 @@ const dataSource = [
     ['formatNumber(12.123, 2)', '12.12'],
     ['formatNumber(1.555, 2)', '1.56'],
     ['formatNumber(12.123, 4)', '12.1230'],
+    ['jsonStringify(json(\'{\"a\":\"b\"}\'))', '{"a":"b"}'],
+    ['jsonStringify(\'a\')', '"a"'],
+    ['jsonStringify(null)', 'null'],
+    ['jsonStringify(undefined)', undefined],
+    ['jsonStringify({a:"b"})', '{"a":"b"}'],
 
     // TODO: This should actually be the below, but toLocaleString does not work.
     // ['formatNumber(12000.3, 4, "fr-FR")', '12\u00a0000,3000'],
@@ -714,7 +719,7 @@ const dataSource = [
     ['setPathToValue(path.simple, 5) + path.simple', 10],
     ['setPathToValue(path.array[0], 7) + path.array[0]', 14],
     ['setPathToValue(path.array[1], 9) + path.array[1]', 18],
-    ['setPathToValue(path.x, null)', undefined],
+    ['setPathToValue(path.x, null)', null],
 ];
 
 const scope = {
