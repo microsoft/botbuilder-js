@@ -91,6 +91,7 @@ export * from './isTimeRange';
 export * from './join';
 export * from './jPath';
 export * from './json';
+export * from './jsonStringify';
 export * from './last';
 export * from './lastIndexOf';
 export * from './length';
