@@ -9,6 +9,10 @@ describe('TestScriptTests', function() {
         await testRunner.runTestScript('TestScriptTests_AssertReply_Assertions');
     });
 
+    it('AssertReply_AssertCondition', async () => {
+        await testRunner.runTestScript('TestScriptTests_AssertCondition');
+    });
+
     it('AssertReply_Exact', async () => {
         await testRunner.runTestScript('TestScriptTests_AssertReply_Exact');
     });
