@@ -1,4 +1,4 @@
-const { Templates, LGLineBreakStyle, EvaluationOptions, TemplateErrors, DiagnosticSeverity, LGResource, CustomizedMemory } = require('../');
+const { Templates, LGLineBreakStyle, EvaluationOptions, TemplateErrors, DiagnosticSeverity, CustomizedMemory, LGCacheScope, LGResource } = require('../');
 const { SimpleObjectMemory, ExpressionParser, NumericEvaluator, Expression, StackedMemory } = require('adaptive-expressions');
 const assert = require('assert');
 const fs = require('fs');
@@ -45,7 +45,7 @@ describe('LG', function() {
         RecursiveTemplate: Templates.parseFile(GetExampleFilePath('RecursiveTemplate.lg')),
         MemoryScope: Templates.parseFile(GetExampleFilePath('MemoryScope.lg')),
         StructuredTemplate: Templates.parseFile(GetExampleFilePath('StructuredTemplate.lg')),
-        EvaluateOnce: Templates.parseFile(GetExampleFilePath('EvaluateOnce.lg')),
+        TemplateCache: Templates.parseFile(GetExampleFilePath('TemplateCache.lg')),
         ConditionExpression: Templates.parseFile(GetExampleFilePath('ConditionExpression.lg')),
         StructuredTemplate: Templates.parseFile(GetExampleFilePath('StructuredTemplate.lg')),
         ExpressionExtract: Templates.parseFile(GetExampleFilePath('ExpressionExtract.lg')),
@@ -1030,19 +1030,28 @@ describe('LG', function() {
         assert.deepStrictEqual(evaled, JSON.parse('{"lgType":"Activity","text":"Hello! welcome back. I have your name = Jack"}'));
     });
 
-    it('TestEvaluateOnce', function() {
-        var templates = preloaded.EvaluateOnce;
+    it('TestTemplateCache', function() {
+        var templates = preloaded.TemplateCache;
 
         var evaled = templates.evaluate('templateWithSameParams', { param: 'ms' });
         assert.notEqual(evaled, undefined);
         
-        const resultList = evaled.split(' ');
+        let resultList = evaled.split(' ');
         assert.equal(resultList.length, 2);
 
         assert.equal(resultList[0], resultList[1]);
 
         // maybe has different values
         evaled = templates.evaluate('templateWithDifferentParams', { param1: 'ms', param2: 'newms' });
+
+        // global cache test
+        const options = new EvaluationOptions();
+        options.cacheScope = LGCacheScope.Global;
+        evaled = templates.evaluate('globalCache', {param: 'ms'}, options);
+        resultList = evaled.split(' ');
+        assert.equal(resultList.length, 2);
+
+        assert.equal(resultList[0], resultList[1]);
     });
 
     it('TestConditionExpression', function() {
@@ -1310,7 +1319,13 @@ describe('LG', function() {
         var templates = preloaded.ReExecute;
 
         // may be has different values
-        templates.evaluate('templateWithSameParams', {param1:'ms', param2:'newms'});
+        let evaled = templates.evaluate('templateWithSameParams', {param1:'ms', param2:'newms'});
+
+        // the third one should be the same with the first one
+        let resultList = evaled.split(' ');
+        assert(resultList.length, 3);
+
+        assert(resultList[0], resultList[2]);
     });
 
     it('TestCustomFunction', function() {
