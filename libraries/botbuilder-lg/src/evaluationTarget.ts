@@ -27,11 +27,11 @@ export class EvaluationTarget {
     /**
      * The children templates that this template has evaluated currently. 
      */
-    public  evaluatedChildren: Map<string, any>;
+    public cachedEvaluatedChildren : Map<string, any>;
     public constructor(templateName: string, scope: MemoryInterface) {
         this.templateName = templateName;
         this.scope = scope;
-        this.evaluatedChildren = new Map<string, any>();
+        this.cachedEvaluatedChildren  = new Map<string, any>();
     }
 
     /**

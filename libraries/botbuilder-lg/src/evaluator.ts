@@ -41,6 +41,7 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGTempla
     public readonly templateMap: { [name: string]: Template };
     private readonly evaluationTargetStack: EvaluationTarget[] = [];
     private readonly lgOptions: EvaluationOptions;
+    private readonly cacheResult: Map<string, any> = new Map<string, any>();
 
     public static readonly LGType = 'lgType';
     public static readonly activityAttachmentFunctionName = 'ActivityAttachment';
@@ -90,8 +91,8 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGTempla
 
         if (this.evaluationTargetStack.length !== 0) {
             previousEvaluateTarget = this.evaluationTargetStack[this.evaluationTargetStack.length - 1];
-            if (!reExecute && previousEvaluateTarget.evaluatedChildren.has(currentEvulateId)) {
-                return previousEvaluateTarget.evaluatedChildren.get(currentEvulateId);
+            if (!reExecute && previousEvaluateTarget.cachedEvaluatedChildren.has(currentEvulateId)) {
+                return previousEvaluateTarget.cachedEvaluatedChildren.get(currentEvulateId);
             }
         }
 
@@ -100,7 +101,7 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGTempla
         let result: string = this.visit(this.templateMap[templateName].templateBodyParseTree);
 
         if (previousEvaluateTarget) {
-            previousEvaluateTarget.evaluatedChildren.set(currentEvulateId, result);
+            previousEvaluateTarget.cachedEvaluatedChildren .set(currentEvulateId, result);
         }
 
         this.evaluationTargetStack.pop();
