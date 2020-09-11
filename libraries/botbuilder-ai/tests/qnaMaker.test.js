@@ -7,7 +7,7 @@ const { TrainUtils } = require('../lib/qnamaker-utils/trainUtils');
 const nock = require('nock');
 const fs = require('fs');
 const { getFetch } = require('../lib/globals');
-const { StrictFiltersJoinOperator } = require('../lib/qnamaker-interfaces/JoinOperator');
+const { JoinOperator } = require('../lib/qnamaker-interfaces/JoinOperator');
 
 // Save test keys
 const knowledgeBaseId = process.env.QNAKNOWLEDGEBASEID;
@@ -792,7 +792,7 @@ describe('QnAMaker', function () {
               ];
 
 
-            const qnaResults1 = await qna.generateAnswer(question,  filters1, StrictFiltersCompoundOperationType.OR);
+            const qnaResults1 = await qna.generateAnswer(question,  filters1, JoinOperator.OR);
             assert.strictEqual(qnaResults1.length, 1, 'answer is returned for strictFiltersoperation OR');
          });
 
