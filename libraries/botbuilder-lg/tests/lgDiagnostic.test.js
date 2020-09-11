@@ -1,5 +1,6 @@
-const { Templates, DiagnosticSeverity, TemplateErrors } = require(`../`);
+const { Templates, DiagnosticSeverity, TemplateErrors, LGResource } = require(`../`);
 const assert = require(`assert`);
+const { LanguageResourceLoader } = require("../../botbuilder-dialogs-adaptive/lib");
 
 function GetExceptionExampleFilePath(fileName) {
     return `${ __dirname }/testData/exceptionExamples/` + fileName;
@@ -255,7 +256,7 @@ describe(`LGExceptionTest`, function() {
     });
 
     it(`AddTextWithWrongId`, function() {
-        var diagnostics = Templates.parseText(`[import](xx.lg) \r\n # t \n - hi`, `a.lg`).diagnostics;
+        var diagnostics = Templates.parseResource(new LGResource('a.lg', 'a.lg', `[import](xx.lg) \r\n # t \n - hi`)).diagnostics;
         assert.strictEqual(1, diagnostics.length);
         assert.strictEqual(diagnostics[0].message.includes(`Could not find file`), true);
     });
@@ -300,11 +301,11 @@ describe(`LGExceptionTest`, function() {
         assert.strictEqual(diagnostics.length, 1);
         assert.strictEqual(diagnostics[0].message.includes(`Close } is missing in Expression`), true);
     
-        diagnostics = Templates.parseText('#Demo2\r\n- ${createArray(1,\r\n, 2,3)').diagnostics;
+        diagnostics = Templates.parseResource(new LGResource('', '', '#Demo2\r\n- ${createArray(1,\r\n, 2,3)')).diagnostics;
         assert.strictEqual(diagnostics.length, 1);
         assert.strictEqual(diagnostics[0].message.includes(`Close } is missing in Expression`), true);
     
-        diagnostics = Templates.parseText('#Demo4\r\n- ${createArray(1,\r\n2,3)\r\n> this is a comment').diagnostics;
+        diagnostics = Templates.parseResource(new LGResource('', '', '#Demo4\r\n- ${createArray(1,\r\n2,3)\r\n> this is a comment')).diagnostics;
         assert.strictEqual(diagnostics.length, 1);
         assert.strictEqual(diagnostics[0].message.includes(`Close } is missing in Expression`), true);
     });

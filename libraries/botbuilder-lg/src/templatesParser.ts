@@ -9,7 +9,7 @@ import { ANTLRInputStream } from 'antlr4ts/ANTLRInputStream';
 import { CommonTokenStream } from 'antlr4ts/CommonTokenStream';
 import { ErrorListener } from './errorListener';
 import { LGFileLexer } from './generated/LGFileLexer';
-import { FileContext, LGFileParser} from './generated/LGFileParser';
+import { FileContext, LGFileParser } from './generated/LGFileParser';
 import { TemplateImport } from './templateImport';
 import { Template } from './template';
 import { Templates } from './templates';
@@ -28,8 +28,9 @@ import { TemplateErrors } from './templateErrors';
 import { SourceRange } from './sourceRange';
 import { LGTemplateLexer } from './generated/LGTemplateLexer';
 import { LGTemplateParser, BodyContext } from './generated/LGTemplateParser';
+import { LGResource } from './lgResource';
 
-export declare type ImportResolverDelegate = (source: string, resourceId: string) => { content: string; id: string };
+export declare type ImportResolverDelegate = (lgResource: LGResource, resourceId: string) => LGResource;
 
 
 /**
@@ -51,7 +52,7 @@ export class TemplatesParser {
      * Import regex.
      */
     public static readonly importRegex: RegExp = new RegExp(/\[([^\]]*)\]\(([^\)]*)\)/);
-    
+
     /**
     * parse a file and return LG file.
     * @param filePath LG absolute file path..
@@ -62,12 +63,13 @@ export class TemplatesParser {
     public static parseFile(filePath: string, importResolver?: ImportResolverDelegate, expressionParser?: ExpressionParser): Templates {
         const fullPath = TemplateExtensions.normalizePath(filePath);
         const content = fs.readFileSync(fullPath, 'utf-8');
-
-        return TemplatesParser.innerParseText(content, fullPath, importResolver, expressionParser);
+        const resource = new LGResource(fullPath, fullPath, content);
+        return TemplatesParser.parseResource(resource, importResolver, expressionParser);
     }
 
     /**
      * Parser to turn lg content into a Templates.
+     * @deprecated This method will soon be deprecated. Use ParseResource instead.
      * @param content Text content contains lg templates.
      * @param id Id is the identifier of content. If importResolver is undefined, id must be a full path string. 
      * @param importResolver Resolver to resolve LG import id to template text.
@@ -75,7 +77,8 @@ export class TemplatesParser {
      * @returns Entity.
      */
     public static parseText(content: string, id: string = '', importResolver?: ImportResolverDelegate, expressionParser?: ExpressionParser): Templates {
-        return TemplatesParser.innerParseText(content, id, importResolver, expressionParser);
+        const resource = new LGResource(id, id, content);
+        return TemplatesParser.parseResource(resource, importResolver, expressionParser);
     }
 
     /**
@@ -92,12 +95,14 @@ export class TemplatesParser {
         let newTemplates = new Templates();
         newTemplates.content = content;
         newTemplates.id = id;
+        newTemplates.source = id;
         newTemplates.importResolver = originalTemplates.importResolver;
         newTemplates.options = originalTemplates.options;
 
         try {
             // eslint-disable-next-line @typescript-eslint/no-use-before-define
-            newTemplates = new TemplatesTransformer(newTemplates).transform(this.antlrParseTemplates(content, id));
+            const resource = new LGResource(id, id, content);
+            newTemplates = new TemplatesTransformer(newTemplates).transform(this.antlrParseTemplates(resource));
             newTemplates.references = this.getReferences(newTemplates)
                 .concat(originalTemplates.references)
                 .concat([originalTemplates]);
@@ -115,45 +120,52 @@ export class TemplatesParser {
 
         return newTemplates;
     }
-
-    public static defaultFileResolver(sourceId: string, resourceId: string): { content: string; id: string } {
+    /**
+     * Default import resolver, using relative/absolute file path to access the file content.
+     * @param resource Original Resource.
+     * @param resourceId Import path.
+     */
+    public static defaultFileResolver(resource: LGResource, resourceId: string): LGResource {
         let importPath = TemplateExtensions.normalizePath(resourceId);
         if (!path.isAbsolute(importPath)) {
             // get full path for importPath relative to path which is doing the import.
-            importPath = TemplateExtensions.normalizePath(path.join(path.dirname(sourceId), importPath));
+            importPath = TemplateExtensions.normalizePath(path.join(path.dirname(resource.fullName), importPath));
         }
         if (!fs.existsSync(importPath) || !fs.statSync(importPath).isFile()) {
-            throw Error(`Could not find file: ${ importPath }`);
+            throw Error(`Could not find file: ${importPath}`);
         }
         const content: string = fs.readFileSync(importPath, 'utf-8');
 
-        return { content, id: importPath };
+        return new LGResource(importPath, importPath, content);
     }
 
     /**
      * Parser to turn lg content into a Templates.
-     * @param content Text content contains lg templates.
-     * @param id Id is the identifier of content. If importResolver is undefined, id must be a full path string. 
+     * @param resource LG resource.
      * @param importResolver Resolver to resolve LG import id to template text.
      * @param expressionParser Expression parser for evaluating expressions.
      * @param cachedTemplates Give the file path and templates to avoid parsing and to improve performance.
      * @returns Entity.
      */
-    public static innerParseText(content: string,
-        id: string = '',
+    public static parseResource(
+        resource: LGResource,
         importResolver?: ImportResolverDelegate,
         expressionParser?: ExpressionParser,
         cachedTemplates?: Map<string, Templates>): Templates {
+        if (!resource) {
+            throw new Error('lg resource is empty.');
+        }
         cachedTemplates = cachedTemplates || new Map<string, Templates>();
 
-        if (cachedTemplates.has(id)) {
-            return cachedTemplates.get(id);
+        if (cachedTemplates.has(resource.id)) {
+            return cachedTemplates.get(resource.id);
         }
 
         importResolver = importResolver || TemplatesParser.defaultFileResolver;
         let templates = new Templates();
-        templates.content = content;
-        templates.id = id;
+        templates.content = resource.content;
+        templates.id = resource.id;
+        templates.source = resource.fullName;
         templates.importResolver = importResolver;
         if (expressionParser) {
             templates.expressionParser = expressionParser;
@@ -161,7 +173,7 @@ export class TemplatesParser {
 
         try {
             // eslint-disable-next-line @typescript-eslint/no-use-before-define
-            templates = new TemplatesTransformer(templates).transform(this.antlrParseTemplates(content, id));
+            templates = new TemplatesTransformer(templates).transform(this.antlrParseTemplates(resource));
             templates.references = this.getReferences(templates, cachedTemplates);
             const semanticErrors = new StaticChecker(templates).check();
             templates.diagnostics.push(...semanticErrors);
@@ -177,21 +189,20 @@ export class TemplatesParser {
 
     /**
      * Parse LG content and return the AST.
-     * @param text LG content.
-     * @param source Source id.
+     * @param resource LG resource.
      * @returns The abstract syntax tree of lg file.
      */
-    public static antlrParseTemplates(text: string, source: string): FileContext {
-        if (!text || text.trim() === '') {
+    public static antlrParseTemplates(resource: LGResource): FileContext {
+        if (!resource.content || resource.content.trim() === '') {
             return undefined;
         }
 
-        const input: ANTLRInputStream = new ANTLRInputStream(text);
+        const input: ANTLRInputStream = new ANTLRInputStream(resource.content);
         const lexer: LGFileLexer = new LGFileLexer(input);
         const tokens: CommonTokenStream = new CommonTokenStream(lexer);
         const parser: LGFileParser = new LGFileParser(tokens);
         parser.removeErrorListeners();
-        parser.addErrorListener(new ErrorListener(source));
+        parser.addErrorListener(new ErrorListener(resource.fullName));
         parser.buildParseTree = true;
 
         return parser.file();
@@ -209,22 +220,22 @@ export class TemplatesParser {
         resourcesFound.add(start);
 
         for (const importItem of start.imports) {
-            let content: string;
-            let path: string;
+            let resource: LGResource;
             try {
-                ({content, id: path} = start.importResolver(start.id, importItem.id));
+                const originalResource = new LGResource(start.id, start.source, start.content);
+                resource = start.importResolver(originalResource, importItem.id);
             } catch (error) {
-                const diagnostic = new Diagnostic(importItem.sourceRange.range, error.message, DiagnosticSeverity.Error, start.id);
+                const diagnostic = new Diagnostic(importItem.sourceRange.range, error.message, DiagnosticSeverity.Error, start.source);
                 throw new TemplateException(error.message, [diagnostic]);
             }
 
-            if (Array.from(resourcesFound).every((u): boolean => u.id !== path)) {
+            if (Array.from(resourcesFound).every((u): boolean => u.id !== resource.id)) {
                 let childResource: Templates;
-                if (cachedTemplates.has(path)) {
-                    childResource = cachedTemplates.get(path);
+                if (cachedTemplates.has(resource.id)) {
+                    childResource = cachedTemplates.get(resource.id);
                 } else {
-                    childResource = TemplatesParser.innerParseText(content, path, start.importResolver, start.expressionParser, cachedTemplates);
-                    cachedTemplates.set(path, childResource);
+                    childResource = TemplatesParser.parseResource(resource, start.importResolver, start.expressionParser, cachedTemplates);
+                    cachedTemplates.set(resource.id, childResource);
                 }
 
                 this.resolveImportResources(childResource, resourcesFound, cachedTemplates);
@@ -246,7 +257,7 @@ export class TemplatesTransformer extends AbstractParseTreeVisitor<any> implemen
         this.templates = templates;
     }
 
-    
+
     /**
      * Transform the parse tree into templates.
      * @param parseTree Input abstract syntax tree.
@@ -274,7 +285,7 @@ export class TemplatesTransformer extends AbstractParseTreeVisitor<any> implemen
     public visitErrorDefinition(context: lp.ErrorDefinitionContext): any {
         const lineContent = context.INVALID_LINE().text;
         if (lineContent === undefined || lineContent.trim() === '') {
-            this.templates.diagnostics.push(this.buildTemplatesDiagnostic(TemplateErrors.syntaxError(`Unexpected content: '${ lineContent }'`), context));
+            this.templates.diagnostics.push(this.buildTemplatesDiagnostic(TemplateErrors.syntaxError(`Unexpected content: '${lineContent}'`), context));
         }
         return;
     }
@@ -285,7 +296,7 @@ export class TemplatesTransformer extends AbstractParseTreeVisitor<any> implemen
         if (groups && groups.length === 3) {
             const description = groups[1].trim();
             const id = groups[2].trim();
-            const sourceRange = new SourceRange(context, this.templates.id);
+            const sourceRange = new SourceRange(context, this.templates.source);
             const templateImport = new TemplateImport(description, id, sourceRange);
             this.templates.imports.push(templateImport);
         }
@@ -314,7 +325,7 @@ export class TemplatesTransformer extends AbstractParseTreeVisitor<any> implemen
         const templateNameLine = context.templateNameLine().TEMPLATE_NAME_LINE().text;
         let templateName: string;
         let parameters: string[];
-        ({templateName, parameters} = this.extractTemplateNameLine(templateNameLine));
+        ({ templateName, parameters } = this.extractTemplateNameLine(templateNameLine));
 
         if (this.templates.toArray().some((u): boolean => u.name === templateName)) {
             const diagnostic = this.buildTemplatesDiagnostic(TemplateErrors.duplicatedTemplateInSameTemplate(templateName), context.templateNameLine());
@@ -322,7 +333,7 @@ export class TemplatesTransformer extends AbstractParseTreeVisitor<any> implemen
         } else {
             let templateBody = context.templateBody().text;
 
-            const sourceRange = new SourceRange(context, this.templates.id);
+            const sourceRange = new SourceRange(context, this.templates.source);
             const template = new Template(templateName, parameters, templateBody, sourceRange);
 
             this.checkTemplateName(templateName, context.templateNameLine());
@@ -335,7 +346,7 @@ export class TemplatesTransformer extends AbstractParseTreeVisitor<any> implemen
 
     private checkTemplateName(templateName: string, context: ParserRuleContext): void {
         const functionNameSplitDot = templateName.split('.');
-        for(let id of functionNameSplitDot) {
+        for (let id of functionNameSplitDot) {
             if (!this.templateNamePartRegex.test(id)) {
                 const diagnostic = this.buildTemplatesDiagnostic(TemplateErrors.invalidTemplateName(templateName), context);
                 this.templates.diagnostics.push(diagnostic);
@@ -380,7 +391,7 @@ export class TemplatesTransformer extends AbstractParseTreeVisitor<any> implemen
         const tokens: CommonTokenStream = new CommonTokenStream(lexer);
         const parser: LGTemplateParser = new LGTemplateParser(tokens);
         parser.removeErrorListeners();
-        parser.addErrorListener(new ErrorListener(this.templates.id, startLine));
+        parser.addErrorListener(new ErrorListener(this.templates.source, startLine));
         parser.buildParseTree = true;
 
         return parser.template().body();
@@ -413,10 +424,10 @@ export class TemplatesTransformer extends AbstractParseTreeVisitor<any> implemen
             }
         }
 
-        return {templateName, parameters};
+        return { templateName, parameters };
     }
 
     private buildTemplatesDiagnostic(errorMessage: string, context: ParserRuleContext, severity: DiagnosticSeverity = DiagnosticSeverity.Error): Diagnostic {
-        return new Diagnostic(TemplateExtensions.convertToRange(context), errorMessage, severity, this.templates.id);
+        return new Diagnostic(TemplateExtensions.convertToRange(context), errorMessage, severity, this.templates.source);
     }
 }
