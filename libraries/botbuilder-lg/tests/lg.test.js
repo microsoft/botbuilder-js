@@ -1,4 +1,4 @@
-const { Templates, LGLineBreakStyle, EvaluationOptions, TemplateErrors, DiagnosticSeverity, CustomizedMemory } = require('../');
+const { Templates, LGLineBreakStyle, EvaluationOptions, TemplateErrors, DiagnosticSeverity, LGResource, CustomizedMemory } = require('../');
 const { SimpleObjectMemory, ExpressionParser, NumericEvaluator, Expression, StackedMemory } = require('adaptive-expressions');
 const assert = require('assert');
 const fs = require('fs');
@@ -111,12 +111,12 @@ describe('LG', function() {
     it('TestMultiline', function() {
         let templates = preloaded.Multiline;
         let evaled = templates.evaluate('template1').toString();
-        let generatedTemplates = Templates.parseText(evaled);
+        let generatedTemplates = Templates.parseResource(new LGResource('','',evaled));
         let result = generatedTemplates.evaluate('generated1');
         assert.strictEqual('hi', result, `Evaled is ${ result.trim() }`);
 
         evaled = templates.evaluate('template2', {evaluateNow: 'please input'}).toString();
-        generatedTemplates = Templates.parseText(evaled);
+        generatedTemplates = Templates.parseResource(new LGResource('','',evaled));
         result = generatedTemplates.evaluate('generated2', {name: 'jack'});
         assert.strictEqual('please input jack', result.trim(), `Evaled is ${ result.trim() }`);
 
@@ -462,7 +462,8 @@ describe('LG', function() {
         assert.strictEqual(options5.includes(evaled), true, `Evaled is ${ evaled }`);
 
         // Assert 6.lg of relative path is imported from text.
-        templates = Templates.parseText(`[import](./6.lg)\r\n# basicTemplate\r\n- Hi\r\n- Hello\r\n`, GetExampleFilePath('xx.lg'));
+        const resource = new LGResource(GetExampleFilePath('xx.lg'), GetExampleFilePath('xx.lg'), `[import](./6.lg)\r\n# basicTemplate\r\n- Hi\r\n- Hello\r\n`);
+        templates = Templates.parseResource(resource);
 
         assert.strictEqual(templates.allTemplates.length, 8);
 
@@ -786,7 +787,9 @@ describe('LG', function() {
     });
 
     it('TemplateCRUD_Normal', function() {
-        var templates = Templates.parseText(fs.readFileSync(GetExampleFilePath('CrudInit.lg'), 'utf-8'));
+        var filePath = GetExampleFilePath('CrudInit.lg');
+        const resource = new LGResource(filePath, filePath, fs.readFileSync(filePath, 'utf-8'));
+        var templates = Templates.parseResource(resource);
 
         assert.strictEqual(templates.toArray().length, 2);
         assert.strictEqual(templates.imports.length, 0);
@@ -869,7 +872,9 @@ describe('LG', function() {
     });
 
     it('TemplateCRUD_RepeatAdd', function() {
-        var templates = Templates.parseText(fs.readFileSync(GetExampleFilePath('CrudInit.lg'), 'utf-8'));
+        var filePath = GetExampleFilePath('CrudInit.lg');
+        const resource = new LGResource(filePath, filePath, fs.readFileSync(filePath, 'utf-8'));
+        var templates = Templates.parseResource(resource);
 
         // Add template
         templates.addTemplate('newtemplate', ['age', 'name'], '- hi ');
@@ -901,7 +906,9 @@ describe('LG', function() {
     });
 
     it('TemplateCRUD_RepeatDelete', function() {
-        var templates = Templates.parseText(fs.readFileSync(GetExampleFilePath('CrudInit.lg'), 'utf-8'));
+        var filePath = GetExampleFilePath('CrudInit.lg');
+        const resource = new LGResource(filePath, filePath, fs.readFileSync(filePath, 'utf-8'));
+        var templates = Templates.parseResource(resource);
 
         // Delete template
         templates.deleteTemplate('template1');
@@ -931,7 +938,9 @@ describe('LG', function() {
     });
 
     it('TemplateCRUD_Diagnostic', function() {
-        var templates = Templates.parseText(fs.readFileSync(GetExampleFilePath('CrudInit.lg'), 'utf-8'));
+        var filePath = GetExampleFilePath('CrudInit.lg');
+        const resource = new LGResource(filePath, filePath, fs.readFileSync(filePath, 'utf-8'));
+        var templates = Templates.parseResource(resource);
 
         // add error template name (error in template)
         templates.addTemplate('newtemplate#$%', ['age', 'name'], '- hi ');
