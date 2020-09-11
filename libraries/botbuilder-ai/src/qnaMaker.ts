@@ -19,7 +19,7 @@ import { ActiveLearningUtils } from './qnamaker-utils/activeLearningUtils';
 import { TrainUtils } from './qnamaker-utils/trainUtils';
 import { QnAMakerResults } from './qnamaker-interfaces/qnamakerResults';
 import { RankerTypes } from './qnamaker-interfaces/rankerTypes';
-import { StrictFiltersCompoundOperationType } from './qnamaker-interfaces/StrictFiltersCompoundOperationType';
+import { JoinOperator } from './qnamaker-interfaces/JoinOperator';
 
 export const QNAMAKER_TRACE_TYPE = 'https://www.qnamaker.ai/schemas/trace';
 export const QNAMAKER_TRACE_NAME = 'QnAMaker';
@@ -89,7 +89,7 @@ export class QnAMaker implements QnAMakerTelemetryClient {
             metadataBoost = [] as QnAMakerMetadata[],
             timeout = 100000,
             rankerType = RankerTypes.default,
-            strictFiltersCompoundOperationType = StrictFiltersCompoundOperationType.AND
+            strictFiltersJoinOperator = JoinOperator.AND
         } = options;
 
         this._options = {
@@ -99,7 +99,7 @@ export class QnAMaker implements QnAMakerTelemetryClient {
             metadataBoost,
             timeout,
             rankerType,
-            strictFiltersCompoundOperationType
+            strictFiltersJoinOperator
 
         } as QnAMakerOptions;
 

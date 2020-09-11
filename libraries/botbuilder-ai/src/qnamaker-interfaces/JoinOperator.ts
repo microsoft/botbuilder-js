@@ -7,17 +7,17 @@
  */
 
 /**
- * Enumeration of types of StrickFilters Operation Types.
+ * Join Operator for Strict Filters.
  */
-export class StrictFiltersCompoundOperationType {
+export class JoinOperator {
 
     /**
-     * Join Operation Type is 'AND'.
+     * Default Join Operator, AND.
      */
     public static readonly AND: string = 'AND';
 
     /**
-     * Join Operation Type is 'OR'.
+     * Join Operator, OR.
      */
     public static readonly OR: string = 'OR';
 
