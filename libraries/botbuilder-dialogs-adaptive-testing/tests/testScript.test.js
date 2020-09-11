@@ -1,9 +1,10 @@
 const path = require('path');
 const { TestRunner } = require('../lib');
+const assert = require('assert');
 
-describe('TestScriptTests', function() {
+describe('TestScriptTests', function () {
     this.timeout(5000);
-    const testRunner = new TestRunner(path.join(__dirname,  'resources/TestScriptTests'));
+    const testRunner = new TestRunner(path.join(__dirname, 'resources/TestScriptTests'));
 
     it('AssertReply_Assertions', async () => {
         await testRunner.runTestScript('TestScriptTests_AssertReply_Assertions');
@@ -15,6 +16,18 @@ describe('TestScriptTests', function() {
 
     it('AssertReply_Exact', async () => {
         await testRunner.runTestScript('TestScriptTests_AssertReply_Exact');
+    });
+
+    it('AssertReply_ExactInvalid', async () => {
+        assert.rejects(async () => {
+            await testRunner.runTestScript('TestScriptTests_AssertReply_ExactInvalid');
+        });
+    });
+
+    it('AssertReply_Invalid', async () => {
+        assert.rejects(async () => {
+            await testRunner.runTestScript('TestScriptTests_AssertReply_Invalid');
+        });
     });
 
     it('AssertReply_User', async () => {
