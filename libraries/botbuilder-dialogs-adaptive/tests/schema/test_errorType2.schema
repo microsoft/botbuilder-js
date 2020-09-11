@@ -1,0 +1,6 @@
+{
+    "title": "Test schema",
+    "description": "This file is to test SchemaHelper and PropertySchama.",
+    "type": "array",
+    "items": "errorString"
+}
