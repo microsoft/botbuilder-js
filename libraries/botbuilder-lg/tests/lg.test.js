@@ -1323,9 +1323,9 @@ describe('LG', function() {
 
         // the third one should be the same with the first one
         let resultList = evaled.split(' ');
-        assert.equal(resultList.length, 3);
+        assert(resultList.length, 3);
 
-        assert.equal(resultList[0], resultList[2]);
+        assert(resultList[0], resultList[2]);
     });
 
     it('TestCustomFunction', function() {
