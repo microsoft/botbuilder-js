@@ -203,7 +203,7 @@ export class QnAMakerDialog extends WaterfallDialog {
             qnaId: 0,
             rankerType: RankerTypes.default,
             isTest: false,
-            strictFiltersCompoundOperationType: this.strictFiltersCompoundOperationType
+            strictFiltersJoinOperator: this.strictFiltersJoinOperator
         };
     };
 
