@@ -66,7 +66,7 @@ export class GenerateAnswerUtils {
 
         var payloadBody = JSON.stringify({
             question: question,
-            strictFiltersJoinOpertionType: queryOptions.strictFiltersJoinOperator,
+             strictFiltersCompoundOperationType: queryOptions.strictFiltersJoinOperator,
             ...queryOptions
         });
 
