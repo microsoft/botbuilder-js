@@ -7,10 +7,14 @@
  */
 
 import { Converter } from 'botbuilder-dialogs-declarative';
-import { ActivityTemplate } from '../templates';
+import { ActivityTemplate, StaticActivityTemplate, TextTemplate } from '../templates';
 
 export class ActivityTemplateConverter implements Converter {
-    public convert(value: string): ActivityTemplate {
-        return new ActivityTemplate(value);
+    public convert(value: string): ActivityTemplate | StaticActivityTemplate | TextTemplate {
+        if (typeof value === 'string') { 
+            return new ActivityTemplate(value);
+        } else {
+            return new StaticActivityTemplate(value);
+        }
     }
 }

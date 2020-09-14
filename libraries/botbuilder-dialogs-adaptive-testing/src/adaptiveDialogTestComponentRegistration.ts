@@ -12,7 +12,6 @@ import { ExpressionConverter, StringExpressionConverter } from 'adaptive-express
 import { AssertReply, AssertReplyActivity, AssertReplyOneOf, UserActivity, UserConversationUpdate, UserDelay, UserSays, UserTyping } from './testActions';
 import { AssertCondition } from './actions';
 import { TestScript } from './testScript';
-import { UserTokenBasicMock, UserTokenMocksConverter } from './userTokenMocks';
 
 export class AdaptiveDialogTestComponentRegistration implements ComponentRegistration {
     private _resourceExplorer: ResourceExplorer;
@@ -33,10 +32,8 @@ export class AdaptiveDialogTestComponentRegistration implements ComponentRegistr
         this.registerBuilder('Microsoft.Test.UserSays', new AdaptiveTypeBuilder(UserSays, this._resourceExplorer, {}));
         this.registerBuilder('Microsoft.Test.UserTyping', new AdaptiveTypeBuilder(UserTyping, this._resourceExplorer, {}));
         this.registerBuilder('Microsoft.Test.Script', new AdaptiveTypeBuilder(TestScript, this._resourceExplorer, {
-            'dialog': new DialogExpressionConverter(resourceExplorer),
-            'userTokenMocks': new UserTokenMocksConverter(resourceExplorer)
+            'dialog': new DialogExpressionConverter(resourceExplorer)
         }));
-        this.registerBuilder('Microsoft.Test.UserTokenBasicMock', new AdaptiveTypeBuilder(UserTokenBasicMock, this._resourceExplorer, {}));
     }
 
     public getTypeBuilders(): BuilderRegistration[] {
