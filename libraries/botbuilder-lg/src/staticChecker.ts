@@ -53,7 +53,7 @@ export class StaticChecker extends AbstractParseTreeVisitor<Diagnostic[]> implem
 
         if (this.templates.allTemplates.length === 0)
         {
-            const diagnostic = new Diagnostic(Range.DefaultRange, TemplateErrors.noTemplate, DiagnosticSeverity.Warning, this.templates.id);
+            const diagnostic = new Diagnostic(Range.DefaultRange, TemplateErrors.noTemplate, DiagnosticSeverity.Warning, this.templates.source);
             result.push(diagnostic);
             return result;
         }
@@ -67,7 +67,7 @@ export class StaticChecker extends AbstractParseTreeVisitor<Diagnostic[]> implem
                 for(const sameTemplate of sameTemplates) {
                     const startLine = template.sourceRange.range.start.line;
                     const range = new Range(startLine, 0, startLine, template.name.length + 1);
-                    const diagnostic = new Diagnostic(range, TemplateErrors.duplicatedTemplateInDiffTemplate(sameTemplate.name, sameTemplate.sourceRange.source), DiagnosticSeverity.Error, this.templates.id);
+                    const diagnostic = new Diagnostic(range, TemplateErrors.duplicatedTemplateInDiffTemplate(sameTemplate.name, sameTemplate.sourceRange.source), DiagnosticSeverity.Error, this.templates.source);
                     templateDiagnostics.push(diagnostic);
                 }
             }
@@ -315,6 +315,6 @@ export class StaticChecker extends AbstractParseTreeVisitor<Diagnostic[]> implem
         }
 
         const range = context === undefined ? new Range(lineOffset + 1, 0, lineOffset + 1, 0) : TemplateExtensions.convertToRange(context, lineOffset);
-        return new Diagnostic(range, templateNameInfo + message, severity, this.templates.id);
+        return new Diagnostic(range, templateNameInfo + message, severity, this.templates.source);
     }
 }

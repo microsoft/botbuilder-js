@@ -124,6 +124,7 @@ export class ExpressionType {
     public static readonly UriComponent: string = 'uriComponent';
     public static readonly UriComponentToString: string = 'uriComponentToString';
     public static readonly FormatNumber: string = 'formatNumber';
+    public static readonly JsonStringify: string = 'jsonStringify';
 
     // Memory
     public static readonly Accessor: string = 'Accessor';
