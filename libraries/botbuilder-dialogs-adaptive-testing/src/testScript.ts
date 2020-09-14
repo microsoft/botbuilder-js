@@ -6,12 +6,11 @@
  * Licensed under the MIT License.
  */
 
-import { MemoryStorage, UserState, ConversationState } from 'botbuilder-core';
+import { MemoryStorage, UserState, ConversationState, TestAdapter } from 'botbuilder-core';
 import { DialogManager } from 'botbuilder-dialogs';
 import { DialogExpression, LanguageGeneratorExtensions, ResourceExtensions } from 'botbuilder-dialogs-adaptive';
 import { ResourceExplorer } from 'botbuilder-dialogs-declarative';
 import { TestAction } from './testAction';
-import { AdaptiveTestAdapter } from './adaptiveTestAdapter';
 
 export class TestScript {
 
@@ -29,7 +28,7 @@ export class TestScript {
      * The locale (default: en-us).
      */
     public locale: string = 'en-us';
-
+    
     /**
      * The sequence of test actions to perform to validate the dialog behavior.
      */
@@ -45,9 +44,9 @@ export class TestScript {
      * @param testName Name of the test
      * @param testAdapter (Optional) Test adapter
      */
-    public async execute(resourceExplorer: ResourceExplorer, testName?: string, testAdapter?: AdaptiveTestAdapter): Promise<void> {
+    public async execute(resourceExplorer: ResourceExplorer, testName?: string, testAdapter?: TestAdapter): Promise<void> {
         if (!testAdapter) {
-            testAdapter = new AdaptiveTestAdapter(AdaptiveTestAdapter.createConversation(testName));
+            testAdapter = new TestAdapter(TestAdapter.createConversation(testName));
         }
 
         testAdapter.enableTrace = this.enableTrace;
@@ -58,7 +57,7 @@ export class TestScript {
         bot.userState = new UserState(new MemoryStorage());
         ResourceExtensions.useResourceExplorer(bot, resourceExplorer);
         LanguageGeneratorExtensions.useLanguageGeneration(bot);
-
+        
         for (let i = 0; i < this.script.length; i++) {
             const testAction = this.script[i];
             await testAction.execute(testAdapter, bot.onTurn.bind(bot));

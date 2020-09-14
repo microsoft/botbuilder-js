@@ -6,9 +6,8 @@
  * Licensed under the MIT License.
  */
 
-import { TurnContext, ActivityTypes } from 'botbuilder-core';
+import { TurnContext, ActivityTypes, TestAdapter } from 'botbuilder-core';
 import { TestAction } from '../testAction';
-import { AdaptiveTestAdapter } from '../adaptiveTestAdapter';
 
 export class UserTyping implements TestAction {
     /**
@@ -16,7 +15,7 @@ export class UserTyping implements TestAction {
      */
     public user: string;
 
-    public async execute(testAdapter: AdaptiveTestAdapter, callback: (context: TurnContext) => Promise<any>): Promise<any> {
+    public async execute(testAdapter: TestAdapter, callback: (context: TurnContext) => Promise<any>): Promise<any> {
         const typing = testAdapter.makeActivity();
         typing.type = ActivityTypes.Typing;
 

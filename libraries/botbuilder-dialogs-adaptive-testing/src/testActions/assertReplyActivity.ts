@@ -6,10 +6,9 @@
  * Licensed under the MIT License.
  */
 
-import { Activity, TurnContext } from 'botbuilder-core';
+import { Activity, TurnContext, TestAdapter } from 'botbuilder-core';
 import { ExpressionParser } from 'adaptive-expressions';
 import { TestAction } from '../testAction';
-import { AdaptiveTestAdapter } from '../adaptiveTestAdapter';
 
 export class AssertReplyActivity implements TestAction {
     /**
@@ -44,7 +43,7 @@ export class AssertReplyActivity implements TestAction {
         }
     }
 
-    public async execute(testAdapter: AdaptiveTestAdapter, callback: (context: TurnContext) => Promise<any>): Promise<any> {
+    public async execute(testAdapter: TestAdapter, callback: (context: TurnContext) => Promise<any>): Promise<any> {
         const start = new Date();
         while (true) {
             const current = new Date();

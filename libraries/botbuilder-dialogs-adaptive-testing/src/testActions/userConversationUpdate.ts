@@ -6,9 +6,8 @@
  * Licensed under the MIT License.
  */
 
-import { TurnContext, ActivityTypes, ChannelAccount, RoleTypes } from 'botbuilder-core';
+import { TurnContext, ActivityTypes, ChannelAccount, RoleTypes, TestAdapter } from 'botbuilder-core';
 import { TestAction } from '../testAction';
-import { AdaptiveTestAdapter } from '../adaptiveTestAdapter';
 
 export class UserConversationUpdate implements TestAction {
     /**
@@ -21,7 +20,7 @@ export class UserConversationUpdate implements TestAction {
      */
     public membersRemoved: string[];
 
-    public async execute(testAdapter: AdaptiveTestAdapter, callback: (context: TurnContext) => Promise<any>): Promise<any> {
+    public async execute(testAdapter: TestAdapter, callback: (context: TurnContext) => Promise<any>): Promise<any> {
         const activity = testAdapter.makeActivity();
         activity.type = ActivityTypes.ConversationUpdate;
 
@@ -32,7 +31,7 @@ export class UserConversationUpdate implements TestAction {
                     name: member,
                     role: RoleTypes.User
                 } as ChannelAccount;
-            })
+            });
         }
 
         if (this.membersRemoved) {
