@@ -39,28 +39,28 @@ describe('InspectionMiddleware', function() {
 
         adapter.use(inspectionMiddleware);
 
-        await adapter.receiveActivity(MessageFactory.text('hello'));
+        await adapter.processActivity(MessageFactory.text('hello'));
 
-        assert(adapter.activityBuffer.length === 1, 'expected a single adapter response');
-        assert(adapter.activityBuffer[0].type === 'message', 'expected a message activity');
-        assert(adapter.activityBuffer[0].text === 'hi', `expected text saying 'hi'`);
+        assert(adapter.activeQueue.length === 1, 'expected a single adapter response');
+        assert(adapter.activeQueue[0].type === 'message', 'expected a message activity');
+        assert(adapter.activeQueue[0].text === 'hi', `expected text saying 'hi'`);
     });
     it('should replicate activity data to listening emulator following open and attach', async function() {
 
         // set up our expectations in nock - each corresponds to a trace message we expect to receive in the emulator
 
         const inboundExpectation = nock('https://test.com')
-            .post('/v3/conversations/Convo1/activities', activity => activity.type === 'trace'
+            .post('/v3/conversations/Conversation1/activities', activity => activity.type === 'trace'
                 && activity.value.text == 'hi')
             .reply(200, { id: 'test' });
 
         const outboundExpectation = nock('https://test.com')
-            .post('/v3/conversations/Convo1/activities', activity => activity.type === 'trace'
+            .post('/v3/conversations/Conversation1/activities', activity => activity.type === 'trace'
                 && activity.value.text == 'echo: hi')
             .reply(200, { id: 'test' });
 
         const stateExpectation = nock('https://test.com')
-            .post('/v3/conversations/Convo1/activities', activity => activity.type === 'trace'
+            .post('/v3/conversations/Conversation1/activities', activity => activity.type === 'trace'
                 && activity.value.userState && activity.value.userState.x.property == 'hello'
                 && activity.value.conversationState && activity.value.conversationState.y.property == 'world')
             .reply(200, { id: 'test' });
@@ -81,9 +81,9 @@ describe('InspectionMiddleware', function() {
             await inspectionMiddleware.processCommand(turnContext);
         }, null, true);
 
-        await inspectionAdapter.receiveActivity(openActivity);
+        await inspectionAdapter.processActivity(openActivity);
 
-        var inspectionOpenResultActivity = inspectionAdapter.activityBuffer[0];
+        var inspectionOpenResultActivity = inspectionAdapter.activeQueue[0];
         var attachCommand = inspectionOpenResultActivity.value;
 
         // the logic of teh bot including replying with a message and updating user and conversation state
@@ -107,11 +107,11 @@ describe('InspectionMiddleware', function() {
 
         applicationAdapter.use(inspectionMiddleware);
 
-        await applicationAdapter.receiveActivity(MessageFactory.text(attachCommand));
+        await applicationAdapter.processActivity(MessageFactory.text(attachCommand));
 
         // the attach command response is a informational message
 
-        await applicationAdapter.receiveActivity(MessageFactory.text('hi'));
+        await applicationAdapter.processActivity(MessageFactory.text('hi'));
 
         // trace activities should be sent to the emulator using the connector and the conversation reference
 
@@ -126,17 +126,17 @@ describe('InspectionMiddleware', function() {
         // set up our expectations in nock - each corresponds to a trace message we expect to receive in the emulator
 
         const inboundExpectation = nock('https://test.com')
-            .post('/v3/conversations/Convo1/activities', activity => activity.type === 'trace'
+            .post('/v3/conversations/Conversation1/activities', activity => activity.type === 'trace'
                 && activity.value.text == 'hi')
             .reply(200, { id: 'test' });
 
         const outboundExpectation = nock('https://test.com')
-            .post('/v3/conversations/Convo1/activities', activity => activity.type === 'trace'
+            .post('/v3/conversations/Conversation1/activities', activity => activity.type === 'trace'
                 && activity.value.text == 'echo: hi')
             .reply(200, { id: 'test' });
 
         const stateExpectation = nock('https://test.com')
-            .post('/v3/conversations/Convo1/activities', activity => activity.type === 'trace'
+            .post('/v3/conversations/Conversation1/activities', activity => activity.type === 'trace'
                 && activity.value.userState && activity.value.userState.x.property == 'hello'
                 && activity.value.conversationState && activity.value.conversationState.y.property == 'world')
             .reply(200, { id: 'test' });
@@ -157,9 +157,9 @@ describe('InspectionMiddleware', function() {
             await inspectionMiddleware.processCommand(turnContext);
         }, null, true);
 
-        await inspectionAdapter.receiveActivity(openActivity);
+        await inspectionAdapter.processActivity(openActivity);
 
-        var inspectionOpenResultActivity = inspectionAdapter.activityBuffer[0];
+        var inspectionOpenResultActivity = inspectionAdapter.activeQueue[0];
 
         var recipientId = 'bot';
         var attachCommand = `<at>${ recipientId }</at> ${ inspectionOpenResultActivity.value }`;
@@ -201,11 +201,11 @@ describe('InspectionMiddleware', function() {
             ]
         };
 
-        await applicationAdapter.receiveActivity(attachActivity);
+        await applicationAdapter.processActivity(attachActivity);
 
         // the attach command response is a informational message
 
-        await applicationAdapter.receiveActivity(MessageFactory.text('hi'));
+        await applicationAdapter.processActivity(MessageFactory.text('hi'));
 
         // trace activities should be sent to the emulator using the connector and the conversation reference
 
@@ -220,17 +220,17 @@ describe('InspectionMiddleware', function() {
         // set up our expectations in nock - each corresponds to a trace message we expect to receive in the emulator
 
         const inboundExpectation = nock('https://test.com')
-            .post('/v3/conversations/Convo1/activities', activity => activity.type === 'trace'
+            .post('/v3/conversations/Conversation1/activities', activity => activity.type === 'trace'
                 && activity.value.text == 'hi')
             .reply(200, { id: 'test' });
 
         const outboundExpectation = nock('https://test.com')
-            .post('/v3/conversations/Convo1/activities', activity => activity.type === 'trace'
+            .post('/v3/conversations/Conversation1/activities', activity => activity.type === 'trace'
                 && activity.value.text == 'echo: hi')
             .reply(200, { id: 'test' });
 
         const stateExpectation = nock('https://test.com')
-            .post('/v3/conversations/Convo1/activities', activity => activity.type === 'trace'
+            .post('/v3/conversations/Conversation1/activities', activity => activity.type === 'trace'
                 && activity.value.userState && activity.value.userState.x.property == 'hello'
                 && activity.value.conversationState && activity.value.conversationState.y.property == 'world')
             .reply(200, { id: 'test' });
@@ -251,9 +251,9 @@ describe('InspectionMiddleware', function() {
             await inspectionMiddleware.processCommand(turnContext);
         }, null, true);
 
-        await inspectionAdapter.receiveActivity(openActivity);
+        await inspectionAdapter.processActivity(openActivity);
 
-        var inspectionOpenResultActivity = inspectionAdapter.activityBuffer[0];
+        var inspectionOpenResultActivity = inspectionAdapter.activeQueue[0];
         var attachCommand = inspectionOpenResultActivity.value;
 
         // the logic of teh bot including replying with a message and updating user and conversation state
@@ -280,14 +280,14 @@ describe('InspectionMiddleware', function() {
         var attachActivity = MessageFactory.text(attachCommand);
         attachActivity.channelData = { team: { id: 'team-id' } };
 
-        await applicationAdapter.receiveActivity(attachActivity);
+        await applicationAdapter.processActivity(attachActivity);
 
         // the attach command response is a informational message
 
         var hiActivity = MessageFactory.text('hi');
         hiActivity.channelData = { team: { id: 'team-id' } };
 
-        await applicationAdapter.receiveActivity(hiActivity);
+        await applicationAdapter.processActivity(hiActivity);
 
         // trace activities should be sent to the emulator using the connector and the conversation reference
 
@@ -302,17 +302,17 @@ describe('InspectionMiddleware', function() {
         // set up our expectations in nock - each corresponds to a trace message we expect to receive in the emulator
 
         nock('https://test.com')
-            .post('/v3/conversations/Convo1/activities', activity => activity.type === 'trace'
+            .post('/v3/conversations/Conversation1/activities', activity => activity.type === 'trace'
                 && activity.value.text == 'hi')
             .reply(200, { id: 'test' });
 
         nock('https://test.com')
-            .post('/v3/conversations/Convo1/activities', activity => activity.type === 'trace'
+            .post('/v3/conversations/Conversation1/activities', activity => activity.type === 'trace'
                 && activity.value.text == 'echo: hi')
             .reply(200, { id: 'test' });
 
         nock('https://test.com')
-            .post('/v3/conversations/Convo1/activities', activity => activity.type === 'trace'
+            .post('/v3/conversations/Conversation1/activities', activity => activity.type === 'trace'
                 && activity.value.userState && activity.value.userState.x.property == 'hello'
                 && activity.value.conversationState && activity.value.conversationState.y.property == 'world')
             .reply(200, { id: 'test' });
@@ -327,9 +327,9 @@ describe('InspectionMiddleware', function() {
             await inspectionMiddleware.processCommand(turnContext);
         }, null, true);
 
-        await inspectionAdapter.receiveActivity(openActivity);
+        await inspectionAdapter.processActivity(openActivity);
 
-        const inspectionOpenResultActivity = inspectionAdapter.activityBuffer[0];
+        const inspectionOpenResultActivity = inspectionAdapter.activeQueue[0];
         const attachCommand = inspectionOpenResultActivity.value;
 
         // Updating the activity message to trigger turnContext.onUpdateActivity
@@ -347,29 +347,31 @@ describe('InspectionMiddleware', function() {
 
         adapter.use(inspectionMiddleware);
 
-        await adapter.receiveActivity(MessageFactory.text(attachCommand));
+        await adapter.processActivity(MessageFactory.text(attachCommand));
+        
+        adapter.activeQueue.push(activity);
+        assert.strictEqual(adapter.activeQueue.length, 2);
+        await adapter.processActivity(activity);
 
-        await adapter.receiveActivity(activity);
-
-        assert(adapter.updatedActivities.length === 1, `no activities updated.`);
-        assert(adapter.updatedActivities[0].text === activity.text, `invalid update activity text.`);
+        assert.strictEqual(adapter.activeQueue.length, 2, `no activities updated.`);
+        assert.strictEqual(adapter.activeQueue[1].text, activity.text, `invalid update activity text.`);
     });
 
     it('should delete activity to trigger turnContext.onDeleteActivity', async () => {
         // set up our expectations in nock - each corresponds to a trace message we expect to receive in the emulator
 
         nock('https://test.com')
-            .post('/v3/conversations/Convo1/activities', activity => activity.type === 'trace'
+            .post('/v3/conversations/Conversation1/activities', activity => activity.type === 'trace'
                 && activity.value.text == 'hi')
             .reply(200, { id: 'test' });
 
         nock('https://test.com')
-            .post('/v3/conversations/Convo1/activities', activity => activity.type === 'trace'
+            .post('/v3/conversations/Conversation1/activities', activity => activity.type === 'trace'
                 && activity.value.text == 'echo: hi')
             .reply(200, { id: 'test' });
 
         nock('https://test.com')
-            .post('/v3/conversations/Convo1/activities', activity => activity.type === 'trace'
+            .post('/v3/conversations/Conversation1/activities', activity => activity.type === 'trace'
                 && activity.value.userState && activity.value.userState.x.property == 'hello'
                 && activity.value.conversationState && activity.value.conversationState.y.property == 'world')
             .reply(200, { id: 'test' });
@@ -385,9 +387,9 @@ describe('InspectionMiddleware', function() {
             await inspectionMiddleware.processCommand(turnContext);
         }, null, true);
 
-        await inspectionAdapter.receiveActivity(openActivity);
+        await inspectionAdapter.processActivity(openActivity);
 
-        const inspectionOpenResultActivity = inspectionAdapter.activityBuffer[0];
+        const inspectionOpenResultActivity = inspectionAdapter.activeQueue[0];
         const attachCommand = inspectionOpenResultActivity.value;
 
         // Updating the activity message to trigger turnContext.onDeleteActivity
@@ -404,29 +406,30 @@ describe('InspectionMiddleware', function() {
 
         adapter.use(inspectionMiddleware);
 
-        await adapter.receiveActivity(MessageFactory.text(attachCommand));
+        await adapter.processActivity(MessageFactory.text(attachCommand));
 
-        await adapter.receiveActivity(activity);
+        adapter.activeQueue.push(activity);
+        assert.strictEqual(adapter.activeQueue.length, 2);
 
-        assert(adapter.deletedActivities.length === 1, `no activities deleted.`);
-        assert(adapter.deletedActivities[0].activityId === activity.id, `invalid delete activity.`);
+        await adapter.processActivity(activity);
+        assert.strictEqual(adapter.activeQueue.length, 1, `no activities deleted.`);
     });
 
     it('should throw an error when onTurn next parameter is null', async () => {
         // set up our expectations in nock - each corresponds to a trace message we expect to receive in the emulator
 
         nock('https://test.com')
-            .post('/v3/conversations/Convo1/activities', activity => activity.type === 'trace'
+            .post('/v3/conversations/Conversation1/activities', activity => activity.type === 'trace'
                 && activity.value.text == 'hi')
             .reply(200, { id: 'test' });
 
         nock('https://test.com')
-            .post('/v3/conversations/Convo1/activities', activity => activity.type === 'trace'
+            .post('/v3/conversations/Conversation1/activities', activity => activity.type === 'trace'
                 && activity.value.text == 'echo: hi')
             .reply(200, { id: 'test' });
 
         nock('https://test.com')
-            .post('/v3/conversations/Convo1/activities', activity => activity.type === 'trace'
+            .post('/v3/conversations/Conversation1/activities', activity => activity.type === 'trace'
                 && activity.value.userState && activity.value.userState.x.property == 'hello'
                 && activity.value.conversationState && activity.value.conversationState.y.property == 'world')
             .reply(200, { id: 'test' });
@@ -441,9 +444,9 @@ describe('InspectionMiddleware', function() {
             await inspectionMiddleware.processCommand(turnContext);
         }, null, true);
 
-        await inspectionAdapter.receiveActivity(openActivity);
+        await inspectionAdapter.processActivity(openActivity);
 
-        const inspectionOpenResultActivity = inspectionAdapter.activityBuffer[0];
+        const inspectionOpenResultActivity = inspectionAdapter.activeQueue[0];
         const attachCommand = inspectionOpenResultActivity.value;
 
         const adapter = new TestAdapter(async (turnContext) => {
@@ -457,9 +460,9 @@ describe('InspectionMiddleware', function() {
 
         adapter.use(inspectionMiddleware);
 
-        await adapter.receiveActivity(MessageFactory.text(attachCommand));
+        await adapter.processActivity(MessageFactory.text(attachCommand));
 
-        await adapter.receiveActivity();
+        await adapter.processActivity('');
     });
 
     it('should invokeInbound throw an error', async () => {
