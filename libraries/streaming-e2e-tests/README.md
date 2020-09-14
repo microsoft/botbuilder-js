@@ -40,13 +40,9 @@ Running the pipeline will:
 # How to Run the Tests
 These tests were built so that the SDK team can routinely run these E2E tests automatically and ensure the compatibility of botframework-streaming and the browser. It does so by deploying the bot and React app to already-provisioned resources in the [Azure portal](https://ms.portal.azure.com/) that have been configured to enable DL ASE. If you wish to run these tests yourself, you must provision resources in your own Azure subscription first before you can run the automated pipeline built by the YAMLs included in the streaming-e2e-tests library.
 
-1. You can provision the resources by simply deploying an [echo-bot sample](https://github.com/microsoft/BotBuilder-Samples/tree/master/samples/javascript_nodejs/02.echo-bot) via [zip-deployment](https://docs.microsoft.com/en-us/azure/bot-service/bot-builder-deploy-az-cli?view=azure-bot-service-4.0&tabs=javascript) or you could create each bot-related resource manually in the Azure portal.
+You can provision the resources by simply deploying an [echo-bot sample](https://github.com/microsoft/BotBuilder-Samples/tree/master/samples/javascript_nodejs/02.echo-bot) via [zip-deployment](https://docs.microsoft.com/en-us/azure/bot-service/bot-builder-deploy-az-cli?view=azure-bot-service-4.0&tabs=javascript) or you could create each bot-related resource manually in the Azure portal.
     - Then configure your resources to [enable DL ASE](https://docs.microsoft.com/en-us/azure/bot-service/bot-service-channel-directline-extension-node-bot?view=azure-bot-service-4.0).
     - App Service CORS configuration: in your bot's App Service, on the left-hand side under CORS, you'll need to add your React app's website under Allowed Origins to allow it to access your bot, or simply clear all origins and add `*` to allow all domains. ![CORS](./media/CORS.png)
-2. Additionally, you'll need an App Service for the React app.
-    - ![Create an App Service for React App](./media/create-app-service.png).
-
-Provision these projects within the same resource group.
 
 ## Azure DevOps Pipeline Configuration
 The following steps guide you through the configuration of a build pipeline based on YAML file.
@@ -84,7 +80,6 @@ The following steps guide you through the configuration of a build pipeline base
             - **BotName**: name of bot
             - [**ConnectedServiceNameARM**](https://docs.microsoft.com/en-us/azure/devops/pipelines/library/service-endpoints?view=azure-devops&tabs=yaml#create-a-service-connection)
             - [**MyGetPersonalAccessToken**](https://docs.github.com/en/github/authenticating-to-github/creating-a-personal-access-token)
-            - **ReactAppService**: this is the name of your App Service and your website's hostname for your React app. It is the portion that you often see before ".azurewebsites.net" -- https://<*WEBSITE_HOSTNAME*>.azurewebsites.net/
             - **ResourceGroup**: the resource group that contains both bot and React app in Azure portal
         </details>
 
@@ -99,9 +94,6 @@ From here, you can see the pipeline running in Azure DevOps.
 ![Pipeline Running](./media/pipeline-running.png)
 
 As you push changes to the repo/branch that the pipeline is connected to, you may manually run pipeline to test your changes.
-
-Additionally, you could also visit your React app's website to chat with the streaming bot manually.
 ___
-    
 
 *Note: ChromeDriver is the Driver specific to Chrome. For automated tests in other browsers, you will need to pair it to the appropriate Driver specific to that browser. Most Drivers are created by the browser vendors themselves. See Selenium [Driver requirements](https://www.selenium.dev/documentation/en/webdriver/driver_requirements/) for more details. 

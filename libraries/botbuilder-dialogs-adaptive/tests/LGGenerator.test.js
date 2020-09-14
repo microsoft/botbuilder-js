@@ -38,11 +38,35 @@ describe('LGLanguageGenerator', function() {
         this.beforeAll(async function() {
             lgResourceGroup = await LanguageResourceLoader.groupByLocale(resourceExplorer);
         });
+
+        describe('TestLGResourceGroup', async function() {
+            it('assert empty locale', async () => {
+                assert(lgResourceGroup.has(''));
+                var resourceNames = lgResourceGroup.get('').map(u => u.id);
+                assert.equal(resourceNames.length, 7);
+                assert.deepStrictEqual(new Set(resourceNames), new Set(['a.lg', 'b.lg', 'c.lg', 'NormalStructuredLG.lg','root.lg', 'subDialog.lg', 'test.lg']));
+            });
+
+            it('assert en-us locale', async () => {
+                assert(lgResourceGroup.has('en-us'));
+                var resourceNames = lgResourceGroup.get('en-us').map(u => u.id);
+                assert.equal(resourceNames.length, 7);
+                assert.deepStrictEqual(new Set(resourceNames), new Set(['a.en-US.lg', 'b.en-us.lg', 'test.en-US.lg', 'c.en.lg', 'NormalStructuredLG.lg','root.lg', 'subDialog.lg']));
+            });
+
+            it('assert en locale', async () => {
+                assert(lgResourceGroup.has('en'));
+                var resourceNames = lgResourceGroup.get('en').map(u => u.id);
+                assert.equal(resourceNames.length, 7);
+                assert.deepStrictEqual(new Set(resourceNames), new Set(['c.en.lg', 'test.en.lg', 'a.lg', 'b.lg', 'NormalStructuredLG.lg','root.lg', 'subDialog.lg']));
+            });
+        });
+
         describe('Test MultiLang Import with specified locale', async function() {
             let generator;
             this.beforeAll(async function() {
                 const resource = resourceExplorer.getResource('a.en-US.lg');
-                generator = new TemplateEngineLanguageGenerator(resource.fullName, lgResourceGroup);
+                generator = new TemplateEngineLanguageGenerator(resource, lgResourceGroup);
             });
 
             it('"${templatea()}", no data', async () => {
@@ -69,7 +93,7 @@ describe('LGLanguageGenerator', function() {
             let generator; 
             this.beforeAll(async function() {
                 const resource = resourceExplorer.getResource('a.lg');
-                generator = new TemplateEngineLanguageGenerator(resource.fullName, lgResourceGroup);
+                generator = new TemplateEngineLanguageGenerator(resource, lgResourceGroup);
             });
 
             it('"${templatea()}", no data', async () => {
@@ -101,29 +125,22 @@ describe('LGLanguageGenerator', function() {
             const multiLanguageResources = await LanguageResourceLoader.groupByLocale(resourceExplorer);
         
             let resource = resourceExplorer.getResource('test.lg');
-            let text = resource.readText();
-        
-            lg.languageGenerators.set('', new TemplateEngineLanguageGenerator(text, 'test.lg', multiLanguageResources));
+            lg.languageGenerators.set('', new TemplateEngineLanguageGenerator(resource, multiLanguageResources));
         
             resource = resourceExplorer.getResource('test.de.lg');
-            text = resource.readText();
-            lg.languageGenerators.set('de', new TemplateEngineLanguageGenerator(text, 'test.de.lg', multiLanguageResources));
+            lg.languageGenerators.set('de', new TemplateEngineLanguageGenerator(resource, multiLanguageResources));
         
             resource = resourceExplorer.getResource('test.en.lg');
-            text = resource.readText();
-            lg.languageGenerators.set('en', new TemplateEngineLanguageGenerator(text, 'test.en.lg', multiLanguageResources));
+            lg.languageGenerators.set('en', new TemplateEngineLanguageGenerator(resource, multiLanguageResources));
         
             resource = resourceExplorer.getResource('test.en-US.lg');
-            text = resource.readText();
-            lg.languageGenerators.set('en-us', new TemplateEngineLanguageGenerator(text, 'test.en-US.lg', multiLanguageResources));
+            lg.languageGenerators.set('en-us', new TemplateEngineLanguageGenerator(resource, multiLanguageResources));
         
             resource = resourceExplorer.getResource('test.en-GB.lg');
-            text = resource.readText();
-            lg.languageGenerators.set('en-gb', new TemplateEngineLanguageGenerator(text, 'test.en-GB.lg', multiLanguageResources));
+            lg.languageGenerators.set('en-gb', new TemplateEngineLanguageGenerator(resource, multiLanguageResources));
         
             resource = resourceExplorer.getResource('test.fr.lg');
-            text = resource.readText();
-            lg.languageGenerators.set('fr', new TemplateEngineLanguageGenerator(text, 'test.fr.lg', multiLanguageResources));
+            lg.languageGenerators.set('fr', new TemplateEngineLanguageGenerator(resource, multiLanguageResources));
         });
 
         it('en-US, "${test()}", no data', async () => {
