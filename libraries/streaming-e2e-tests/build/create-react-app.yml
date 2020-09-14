@@ -5,7 +5,7 @@ steps:
   - task: Cache@2
     displayName: 'Cache create-react-app + WebChat Dependencies'
     inputs:
-      key: 'CraAndWebChatCache | npm | "$(Agent.OS)"'
+      key: 'CRA-WebChat4.10.1-Cache-TEST | npm | "$(Agent.OS)"'
       path: $(ReactProjectDir)/node_modules
       cacheHitVar: 'CacheRestored'
 
@@ -18,7 +18,6 @@ steps:
     displayName: npm install react-scripts@latest
     workingDirectory: $(ReactProjectDir)
 
-  # Create Customized DLJS
   - template: customize-dljs.yml
   
   - powershell: npm install $(DLJSDir)/botframework-directlinejs.tgz
@@ -29,7 +28,7 @@ steps:
       Rename-Item ./botframework-directlinejs botframework-directlinejs.old
       Rename-Item ./botframework-streaming botframework-streaming.old
       ls
-    displayName: Rename DLJS node module
+    displayName: Rename DLJS node modules
     workingDirectory: $(ReactProjectDir)/node_modules/botframework-webchat/node_modules
   
   - powershell: npm run build
