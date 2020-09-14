@@ -10,7 +10,7 @@ $latestVersion = ($PkgJsonSerialized | ConvertFrom-Json).dependencies.$PackageNa
 
 $PackageName
 $latestVersion
-Get-Item ./package.json
+Get-Content ./package.json
 
 ##################################################### REMOVE (START)
 # $myGetFeedName = "botbuilder-v4-js-daily";
