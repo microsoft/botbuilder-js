@@ -530,7 +530,7 @@ describe('ActivityHandler', function() {
             const bot = new ActivityHandler();
             bot.run(context)
                 .then(() => {
-                    const invokeResponseActivity = testAdapter.activityBuffer.find((a) => a.type == 'invokeResponse');
+                    const invokeResponseActivity = testAdapter.activeQueue.find((a) => a.type == 'invokeResponse');
                     const healthCheckResponse = invokeResponseActivity.value.body;
                     assert(true, healthCheckResponse.healthResults.success);
                     assert('Health check succeeded.', healthCheckResponse.healthResults.messages[0]);
@@ -555,7 +555,7 @@ describe('ActivityHandler', function() {
             const bot = new ActivityHandler();
             bot.run(context)
                 .then(() => {
-                    const invokeResponseActivity = testAdapter.activityBuffer.find((a) => a.type == 'invokeResponse');
+                    const invokeResponseActivity = testAdapter.activeQueue.find((a) => a.type == 'invokeResponse');
                     const healthCheckResponse = invokeResponseActivity.value.body;
                     assert(true, healthCheckResponse.healthResults.success);
                     assert('user-agent-header-value', healthCheckResponse.healthResults["user-agent"]);

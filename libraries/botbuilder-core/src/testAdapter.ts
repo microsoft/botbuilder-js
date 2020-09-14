@@ -7,9 +7,9 @@
  */
 // tslint:disable-next-line:no-require-imports
 import assert from 'assert';
-import { Activity, ActivityTypes, ConversationReference, ResourceResponse, TokenResponse, TokenExchangeRequest, SignInUrlResponse } from 'botframework-schema';
+import { Activity, ActivityTypes, ConversationReference, ResourceResponse, TokenResponse, TokenExchangeRequest, SignInUrlResponse, ConversationAccount, ChannelAccount, Channels, RoleTypes } from 'botframework-schema';
 import { BotAdapter } from './botAdapter';
-import {ExtendedUserTokenProvider} from './extendedUserTokenProvider';
+import { ExtendedUserTokenProvider } from './extendedUserTokenProvider';
 import { TurnContext } from './turnContext';
 
 /**
@@ -44,117 +44,234 @@ export type TestActivityInspector = (activity: Partial<Activity>, description: s
  */
 export class TestAdapter extends BotAdapter implements ExtendedUserTokenProvider {
     /**
-     * @private
-     * INTERNAL: used to drive the promise chain forward when running tests.
+     * Creates a new TestAdapter instance.
+     * @param logicOrConversation The bots logic that's under test.
+     * @param template (Optional) activity containing default values to assign to all test messages received.
      */
-    public readonly activityBuffer: Partial<Activity>[] = [];
+    public constructor(logicOrConversation?: ((context: TurnContext) => Promise<void>) | ConversationReference, template?: Partial<Activity>, sendTraceActivity = false) {
+        super();
+        this._sendTraceActivity = sendTraceActivity;
+        this.template = template || {};
+        if (logicOrConversation) {
+            if (typeof (logicOrConversation) === 'function') {
+                this._logic = logicOrConversation;
+                this.conversation = TestAdapter.createConversation('Conversation1');
+            } else {
+                this.conversation = logicOrConversation;
+            }
+        } else {
+            this.conversation = TestAdapter.createConversation('Conversation1');
+        }
+
+        this.conversation.locale = this.conversation.locale || this.locale;
+        if (this.template.locale) { this.conversation.locale = this.template.locale; }
+        if (this.template.serviceUrl) { this.conversation.serviceUrl = this.template.serviceUrl; }
+        if (this.template.channelId) { this.conversation.channelId = this.template.channelId; }
+        if (this.template.recipient) { this.conversation.bot = this.template.recipient; }
+        if (this.template.from) { this.conversation.user = this.template.from; }
+    }
+
+    /**
+     * Gets a value indicating whether to send trace activities.
+     */
+    public get enableTrace(): boolean {
+        return this._sendTraceActivity;
+    }
+
+    /**
+     * Sets a value inidicating whether to send trace activities.
+     */
+    public set enableTrace(value: boolean) {
+        this._sendTraceActivity = value;
+    }
+
+    /**
+     * Gets or sets the locale for the conversation.
+     */
+    public locale = 'en-us';
+
+    /**
+     * Gets the queue of responses from the bot.
+     */
+    public readonly activeQueue: Partial<Activity>[] = [];
+
+    /**
+     * Gets or sets a reference to the current conversation.
+     */
+    public conversation: ConversationReference;
+
+    /**
+     * Create a ConversationReference.
+     * @param name name of the conversation (also id).
+     * @param user name of the user (also id) default: User1.
+     * @param bot name of the bot (also id) default: Bot.
+     */
+    public static createConversation(name: string, user = 'User1', bot = 'Bot'): ConversationReference {
+        const conversationReference: ConversationReference = {
+            channelId: Channels.Test,
+            serviceUrl: 'https://test.com',
+            conversation: { isGroup: false, id: name, name: name } as ConversationAccount,
+            user: { id: user.toLowerCase(), name: user } as ChannelAccount,
+            bot: { id: bot.toLowerCase(), name: bot } as ChannelAccount
+        };
+        return conversationReference;
+    }
+
+    /**
+     * Dequeues and returns the next bot response from the activeQueue
+     */
+    public getNextReply(): Partial<Activity> {
+        if (this.activeQueue.length > 0) {
+            return this.activeQueue.shift();
+        }
+        return undefined;
+    }
+
+    /**
+     * Creates a message activity from text and the current conversational context.
+     * @param text The message text.
+     */
+    public makeActivity(text?: string): Partial<Activity> {
+        const activity: Partial<Activity> = {
+            type: ActivityTypes.Message,
+            locale: this.locale,
+            from: this.conversation.user,
+            recipient: this.conversation.bot,
+            conversation: this.conversation.conversation,
+            serviceUrl: this.conversation.serviceUrl,
+            id: (this._nextId++).toString(),
+            text: text
+        };
+        return activity;
+    }
+
+    /**
+     * Processes a message activity from a user.
+     * @param userSays The text of the user's message.
+     * @param callback The bot logic to invoke.
+     */
+    public sendTextToBot(userSays: string, callback: (context: TurnContext) => Promise<any>): Promise<any> {
+        return this.processActivity(this.makeActivity(userSays), callback);
+    }
 
     /**
      * `Activity` template that will be merged with all activities sent to the logic under test.
      */
     public readonly template: Partial<Activity>;
 
-    /**
-     * List of updated activities passed to the adapter which can be inspected after the current
-     * turn completes.
-     *
-     * @remarks
-     * This example shows how to test that expected updates have been preformed:
-     *
-     * ```JavaScript
-     * adapter.test('update', '1 updated').then(() => {
-     *    assert(adapter.updatedActivities.length === 1);
-     *    assert(adapter.updatedActivities[0].id === '12345');
-     *    done();
-     * });
-     * ```
-     */
-    public readonly updatedActivities: Partial<Activity>[] = [];
-
-    /**
-     * List of deleted activities passed to the adapter which can be inspected after the current
-     * turn completes.
-     *
-     * @remarks
-     * This example shows how to test that expected deletes have been preformed:
-     *
-     * ```JavaScript
-     * adapter.test('delete', '1 deleted').then(() => {
-     *    assert(adapter.deletedActivities.length === 1);
-     *    assert(adapter.deletedActivities[0].activityId === '12345');
-     *    done();
-     * });
-     * ```
-     */
-    public readonly deletedActivities: Partial<ConversationReference>[] = [];
-
-    private sendTraceActivities: boolean = false;
-    private nextId: number = 0;
+    private _logic: (context: TurnContext) => Promise<void>;
+    private _sendTraceActivity = false;
+    private _nextId = 0;
 
     private readonly ExceptionExpected: string = 'ExceptionExpected';
 
     /**
-     * Creates a new TestAdapter instance.
-     * @param logic The bots logic that's under test.
-     * @param template (Optional) activity containing default values to assign to all test messages received.
+     * Receives an activity and runs it through the middleware pipeline.
+     * @param activity The activity to process.
+     * @param callback The bot logic to invoke.
      */
-    constructor(private logic: (context: TurnContext) => Promise<void>, template?: Partial<Activity>, sendTraceActivities?: boolean) {
-        super();
-        this.sendTraceActivities = sendTraceActivities || false;
-        this.template = {
-            channelId: 'test',
-            serviceUrl: 'https://test.com',
-            from: { id: 'user', name: 'User1' },
-            recipient: { id: 'bot', name: 'Bot' },
-            conversation: { id: 'Convo1' },
-            ...template
-        } as Partial<Activity>;
+    public async processActivity(activity: string | Partial<Activity>, callback?: (context: TurnContext) => Promise<any>): Promise<any> {
+        const request: Partial<Activity> = typeof activity === 'string' ? { type: ActivityTypes.Message, text: activity } : activity;
+        request.type = request.type || ActivityTypes.Message;
+        request.channelId = request.channelId || this.conversation.channelId;
+
+        if (!request.from || request.from.id === 'unknown' || request.from.role === RoleTypes.Bot) {
+            request.from = this.conversation.user;
+        }
+
+        request.recipient = request.recipient || this.conversation.bot;
+        request.conversation = request.conversation || this.conversation.conversation;
+        request.serviceUrl = request.serviceUrl || this.conversation.serviceUrl;
+        request.id = request.id || (this._nextId++).toString();
+        request.timestamp = request.timestamp || new Date();
+
+        Object.assign(request, this.template);
+        const context = new TurnContext(this, request);
+        if (callback) {
+            return await this.runMiddleware(context, callback);
+        } else if (this._logic) {
+            return await this.runMiddleware(context, this._logic);
+        }
     }
 
     /**
      * @private
-     * INTERNAL: called by the logic under test to send a set of activities. These will be buffered
-     * to the current `TestFlow` instance for comparison against the expected results.
+     * Sends activities to the conversation.
      * @param context Context object for the current turn of conversation with the user.
      * @param activities Set of activities sent by logic under test.
      */
-    public sendActivities(context: TurnContext, activities: Partial<Activity>[]): Promise<ResourceResponse[]> {
-        const responses: ResourceResponse[] = activities
-            .filter((a: Partial<Activity>) => this.sendTraceActivities || a.type !== 'trace')
-            .map((activity: Partial<Activity>) => {
-                this.activityBuffer.push(activity);
+    public async sendActivities(context: TurnContext, activities: Partial<Activity>[]): Promise<ResourceResponse[]> {
+        if (!context) {
+            throw new Error('TurnContext cannot be null.');
+        }
 
-                return { id: (this.nextId++).toString() };
-            });
+        if (!activities) {
+            throw new Error('Activities cannot be null.');
+        }
 
-        return Promise.resolve(responses);
+        if (activities.length == 0) {
+            throw new Error('Expecting one or more activities, but the array was empty.');
+        }
+
+        const responses: ResourceResponse[] = [];
+
+        for (let i = 0; i < activities.length; i++) {
+            const activity = activities[i];
+
+            if (!activity.id) {
+                activity.id = generate_guid();
+            }
+
+            if (!activity.timestamp) {
+                activity.timestamp = new Date();
+            }
+
+            if (activity.type === 'delay') {
+                const delayMs = parseInt(activity.value);
+                await new Promise(resolve => setTimeout(resolve, delayMs));
+            } else if (activity.type === ActivityTypes.Trace) {
+                if (this._sendTraceActivity) {
+                    this.activeQueue.push(activity);
+                }
+            } else {
+                this.activeQueue.push(activity);
+            }
+
+            responses.push({ id: activity.id } as ResourceResponse);
+        }
+
+        return responses;
     }
 
     /**
      * @private
-     * INTERNAL: called by the logic under test to replace an existing activity. These are simply
-     * pushed onto an [updatedActivities](#updatedactivities) array for inspection after the turn
-     * completes.
+     * Replaces an existing activity in the activeQueue.
      * @param context Context object for the current turn of conversation with the user.
      * @param activity Activity being updated.
      */
     public updateActivity(context: TurnContext, activity: Partial<Activity>): Promise<void> {
-        this.updatedActivities.push(activity);
-
+        for (let i = 0; i < this.activeQueue.length; i++) {
+            if (activity.id && activity.id === this.activeQueue[i].id) {
+                this.activeQueue[i] = activity;
+                break;
+            }
+        }
         return Promise.resolve();
     }
 
     /**
      * @private
-     * INTERNAL: called by the logic under test to delete an existing activity. These are simply
-     * pushed onto a [deletedActivities](#deletedactivities) array for inspection after the turn
-     * completes.
+     * Deletes an existing activity in the activeQueue.
      * @param context Context object for the current turn of conversation with the user.
      * @param reference `ConversationReference` for activity being deleted.
      */
     public deleteActivity(context: TurnContext, reference: Partial<ConversationReference>): Promise<void> {
-        this.deletedActivities.push(reference);
-
+        for (let i = 0; i < this.activeQueue.length; i++) {
+            if (reference.activityId && reference.activityId === this.activeQueue[i].id) {
+                this.activeQueue.splice(i, 1);
+                break;
+            }
+        }
         return Promise.resolve();
     }
 
@@ -170,36 +287,13 @@ export class TestAdapter extends BotAdapter implements ExtendedUserTokenProvider
     }
 
     /**
-     * @private
-     * INTERNAL: called by a `TestFlow` instance to simulate a user sending a message to the bot.
-     * This will cause the adapters middleware pipe to be run and it's logic to be called.
-     * @param activity Text or activity from user. The current conversation reference [template](#template) will be merged the passed in activity to properly address the activity. Fields specified in the activity override fields in the template.
-     */
-    public receiveActivity(activity: string | Partial<Activity>): Promise<void> {
-        // Initialize request
-        // tslint:disable-next-line:prefer-object-spread
-        const request: any = Object.assign(
-            {},
-            this.template,
-            typeof activity === 'string' ? { type: ActivityTypes.Message, text: activity } : activity
-        );
-        if (!request.type) { request.type = ActivityTypes.Message; }
-        if (!request.id) { request.id = (this.nextId++).toString(); }
-
-        // Create context object and run middleware
-        const context: TurnContext = this.createContext(request);
-
-        return this.runMiddleware(context, this.logic);
-    }
-
-     /**
-     * Creates a turn context.
-     *
-     * @param request An incoming request body.
-     *
-     * @remarks
-     * Override this in a derived class to modify how the adapter creates a turn context.
-     */
+    * Creates a turn context.
+    *
+    * @param request An incoming request body.
+    *
+    * @remarks
+    * Override this in a derived class to modify how the adapter creates a turn context.
+    */
     protected createContext(request: Partial<Activity>): TurnContext {
         return new TurnContext(this, request);
     }
@@ -218,7 +312,7 @@ export class TestAdapter extends BotAdapter implements ExtendedUserTokenProvider
      * @param userSays Text or activity simulating user input.
      */
     public send(userSays: string | Partial<Activity>): TestFlow {
-        return new TestFlow(this.receiveActivity(userSays), this);
+        return new TestFlow(this.processActivity(userSays), this);
     }
 
     /**
@@ -270,7 +364,7 @@ export class TestAdapter extends BotAdapter implements ExtendedUserTokenProvider
         return activities.reduce(
             (flow: TestFlow, activity: Partial<Activity>) => {
                 // tslint:disable-next-line:prefer-template
-                const assertDescription: string = `reply ${ (description ? ' from ' + description : '') }`;
+                const assertDescription = `reply ${ (description ? ' from ' + description : '') }`;
 
                 return this.isReply(activity)
                     ? flow.assertReply(activityInspector(activity, description), assertDescription, timeout)
@@ -290,19 +384,17 @@ export class TestAdapter extends BotAdapter implements ExtendedUserTokenProvider
      * @param token The token to store.
      * @param magicCode (Optional) The optional magic code to associate with this token.
      */
-    public addUserToken(connectionName: string, channelId: string, userId: string, token: string, magicCode: string = undefined) {
+    public addUserToken(connectionName: string, channelId: string, userId: string, token: string, magicCode?: string) {
         const key: UserToken = new UserToken();
         key.ChannelId = channelId;
         key.ConnectionName = connectionName;
         key.UserId = userId;
         key.Token = token;
 
-        if (!magicCode)
-        {
+        if (!magicCode) {
             this._userTokens.push(key);
         }
-        else
-        {
+        else {
             const mc = new TokenMagicCode();
             mc.Key = key;
             mc.MagicCode = magicCode;
@@ -327,36 +419,34 @@ export class TestAdapter extends BotAdapter implements ExtendedUserTokenProvider
         if (!context || !context.activity) {
             throw new Error('testAdapter.getTokenStatus(): context with activity is required');
         }
-        
+
         if (!userId && (!context.activity.from || !context.activity.from.id)) {
             throw new Error(`testAdapter.getTokenStatus(): missing userId, from or from.id`);
         }
 
         const filter = (includeFilter ? includeFilter.split(',') : undefined);
-        if(!userId) {
+        if (!userId) {
             userId = context.activity.from.id;
         }
 
-        const match = this._userTokens.filter(x => x.ChannelId === context.activity.channelId 
-                                            && x.UserId === userId 
-                                            && (!filter || filter.includes(x.ConnectionName)));
+        const match = this._userTokens.filter(x => x.ChannelId === context.activity.channelId
+            && x.UserId === userId
+            && (!filter || filter.includes(x.ConnectionName)));
 
-        if (match && match.length > 0)
-        {
+        if (match && match.length > 0) {
             const tokenStatuses = [];
             for (var i = 0; i < match.length; i++) {
                 tokenStatuses.push(
-                    { 
-                        ConnectionName: match[i].ConnectionName, 
-                        HasToken: true, 
-                        ServiceProviderDisplayName: match[i].ConnectionName 
+                    {
+                        ConnectionName: match[i].ConnectionName,
+                        HasToken: true,
+                        ServiceProviderDisplayName: match[i].ConnectionName
                     });
             }
 
             return tokenStatuses;
         }
-        else
-        {
+        else {
             // not found
             return undefined;
         }
@@ -375,7 +465,7 @@ export class TestAdapter extends BotAdapter implements ExtendedUserTokenProvider
         key.UserId = context.activity.from.id;
 
         if (magicCode) {
-            var magicCodeRecord = this._magicCodes.filter(x => key.EqualsKey(x.Key));
+            const magicCodeRecord = this._magicCodes.filter(x => key.EqualsKey(x.Key));
             if (magicCodeRecord && magicCodeRecord.length > 0 && magicCodeRecord[0].MagicCode === magicCode) {
                 // move the token to long term dictionary
                 this.addUserToken(connectionName, key.ChannelId, key.UserId, magicCodeRecord[0].Key.Token);
@@ -386,18 +476,15 @@ export class TestAdapter extends BotAdapter implements ExtendedUserTokenProvider
             }
         }
 
-        var match = this._userTokens.filter(x => key.EqualsKey(x));
+        const match = this._userTokens.filter(x => key.EqualsKey(x));
 
-        if (match && match.length > 0)
-        {
+        if (match && match.length > 0) {
             return {
                 connectionName: match[0].ConnectionName,
                 token: match[0].Token,
                 expiration: undefined
             };
-        }
-        else
-        {
+        } else {
             // not found
             return undefined;
         }
@@ -411,14 +498,13 @@ export class TestAdapter extends BotAdapter implements ExtendedUserTokenProvider
     public async signOutUser(context: TurnContext, connectionName: string): Promise<void> {
         var channelId = context.activity.channelId;
         var userId = context.activity.from.id;
-        
+
         var newRecords: UserToken[] = [];
         for (var i = 0; i < this._userTokens.length; i++) {
             var t = this._userTokens[i];
             if (t.ChannelId !== channelId ||
-                t.UserId !== userId || 
-                (connectionName && connectionName !== t.ConnectionName))
-            {
+                t.UserId !== userId ||
+                (connectionName && connectionName !== t.ConnectionName)) {
                 newRecords.push(t);
             }
         }
@@ -445,8 +531,8 @@ export class TestAdapter extends BotAdapter implements ExtendedUserTokenProvider
         return undefined;
     }
 
-    
-    private exchangeableTokens : {[key: string]: ExchangeableToken} = {};
+
+    private exchangeableTokens: { [key: string]: ExchangeableToken } = {};
 
     public addExchangeableToken(connectionName: string, channelId: string, userId: string, exchangeableItem: string, token: string) {
         const key: ExchangeableToken = new ExchangeableToken();
@@ -460,11 +546,11 @@ export class TestAdapter extends BotAdapter implements ExtendedUserTokenProvider
 
     public async getSignInResource(context: TurnContext, connectionName: string, userId?: string, finalRedirect?: string): Promise<SignInUrlResponse> {
         return {
-            signInLink: `https://botframeworktestadapter.com/oauthsignin/${connectionName}/${context.activity.channelId}/${userId}`,
+            signInLink: `https://botframeworktestadapter.com/oauthsignin/${ connectionName }/${ context.activity.channelId }/${ userId }`,
             tokenExchangeResource: {
                 id: String(Math.random()),
                 providerId: null,
-                uri: `api://${connectionName}/resource`
+                uri: `api://${ connectionName }/resource`
 
             }
         }
@@ -476,7 +562,7 @@ export class TestAdapter extends BotAdapter implements ExtendedUserTokenProvider
         const key = new ExchangeableToken();
         key.ChannelId = context.activity.channelId;
         key.ConnectionName = connectionName;
-        key.exchangeableItem =  exchangeableValue;
+        key.exchangeableItem = exchangeableValue;
         key.UserId = userId;
 
         const tokenExchangeResponse = this.exchangeableTokens[key.toKey()];
@@ -484,7 +570,7 @@ export class TestAdapter extends BotAdapter implements ExtendedUserTokenProvider
             throw new Error('Exception occurred during exchanging tokens');
         }
 
-        return tokenExchangeResponse ? 
+        return tokenExchangeResponse ?
             {
                 channelId: key.ChannelId,
                 connectionName: key.ConnectionName,
@@ -620,7 +706,7 @@ export class TestFlow {
      * @param userSays Text or activity simulating user input.
      */
     public send(userSays: string | Partial<Activity>): TestFlow {
-        return new TestFlow(this.previous.then(() => this.adapter.receiveActivity(userSays)), this.adapter);
+        return new TestFlow(this.previous.then(() => this.adapter.processActivity(userSays)), this.adapter);
     }
 
     /**
@@ -670,9 +756,9 @@ export class TestFlow {
                             reject(
                                 new Error(`TestAdapter.assertReply(${ expecting }): ${ description } Timed out after ${ current - start }ms.`)
                             );
-                        } else if (adapter.activityBuffer.length > 0) {
+                        } else if (adapter.activeQueue.length > 0) {
                             // Activity received
-                            const reply: Partial<Activity> = adapter.activityBuffer.shift() as Activity;
+                            const reply: Partial<Activity> = adapter.activeQueue.shift() as Activity;
                             try {
                                 inspector(reply, description as string);
                             } catch (err) {
@@ -708,9 +794,9 @@ export class TestFlow {
                         if ((current - start) > <number>timeout) {
                             // Operation timed out and received no reply
                             resolve();
-                        } else if (adapter.activityBuffer.length > 0) {
+                        } else if (adapter.activeQueue.length > 0) {
                             // Activity received
-                            const reply: Partial<Activity> = adapter.activityBuffer.shift() as Activity;
+                            const reply: Partial<Activity> = adapter.activeQueue.shift() as Activity;
                             assert.strictEqual(reply, undefined, `${ JSON.stringify(reply) } is responded when waiting for no reply: '${ description }'`);
                             resolve();
                         } else {
@@ -806,4 +892,19 @@ function validateTranscriptActivity(activity: Partial<Activity>, expected: Parti
     assert.equal(activity.text, expected.text, `failed "text" assert on ${ description }`);
     assert.equal(activity.speak, expected.speak, `failed "speak" assert on ${ description }`);
     assert.deepEqual(activity.suggestedActions, expected.suggestedActions, `failed "suggestedActions" assert on ${ description }`);
+}
+
+/* 
+ * This function generates a GUID-like random number that should be sufficient for our purposes of tracking 
+ * instances of a given waterfall dialog.
+ * Source: https://stackoverflow.com/questions/105034/create-guid-uuid-in-javascript
+ */
+function generate_guid() {
+    function s4() {
+        return Math.floor((1 + Math.random()) * 0x10000)
+            .toString(16)
+            .substring(1);
+    }
+    return s4() + s4() + '-' + s4() + '-' + s4() + '-' +
+        s4() + '-' + s4() + s4() + s4();
 }

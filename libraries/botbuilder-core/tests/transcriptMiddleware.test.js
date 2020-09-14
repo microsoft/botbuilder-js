@@ -393,7 +393,7 @@ describe(`TranscriptLoggerMiddleware`, function () {
     it(`should add resource response id to activity when activity id is empty`, function (done) {
         let conversationId = null;
         const transcriptStore = new MemoryTranscriptStore();
-        const adapter = new TestAdapter(async (context) => {
+        const adapter = createTestAdapterWithNoResourceResponseId(async (context) => {
             conversationId = context.activity.conversation.id;
 
             await context.sendActivity(`echo:${context.activity.text}`);
@@ -417,21 +417,15 @@ describe(`TranscriptLoggerMiddleware`, function () {
                     assert.equal(pagedResult.items[0].text, 'foo');
                     // Transcript activities should have the id present on the activity when received
                     assert.equal(pagedResult.items[0].id, 'testFooId');
+
                     assert.equal(pagedResult.items[1].text, 'echo:foo');
-                    // Sent Activities in the transcript store should have the Id returned from Resource Response 
-                    // (the test adapter increments a number and uses this for the id)
-                    assert.equal(pagedResult.items[1].id, '0');
-
                     assert.equal(pagedResult.items[2].text, 'bar');
-                    // Received activities also auto-add the incremental from the test adapter
-                    assert.equal(pagedResult.items[2].id, '1');
-
                     assert.equal(pagedResult.items[3].text, 'echo:bar');
-                    assert.equal(pagedResult.items[3].id, '2');
+
                     pagedResult.items.forEach(a => {
                         assert(a.timestamp);
                         assert(a.id);
-                    })
+                    });
                     done();
                 });
             })
@@ -542,7 +536,7 @@ function createTestAdapterWithNoResourceResponseId(logic) {
         const responses = activities
             .filter((a) => this.sendTraceActivities || a.type !== 'trace')
             .map((activity) => {
-                this.activityBuffer.push(activity);
+                this.activeQueue.push(activity);
                 return { };
             });
         
