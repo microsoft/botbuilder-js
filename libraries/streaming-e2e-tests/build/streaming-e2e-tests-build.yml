@@ -38,7 +38,7 @@ jobs:
 
   - job: Run_Tests
     dependsOn:
-      - Deploy_Bot 
+      # - Deploy_Bot 
       - Create_React_App
     condition: succeeded()
     steps:
