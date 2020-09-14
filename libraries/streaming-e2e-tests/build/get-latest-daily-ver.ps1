@@ -1,10 +1,16 @@
 # param($AccessToken, $PackageName, $PathToPJson, $BuildDir)
-param($PackageName)
+param($PackageName, $WorkingDir)
 
 # Get latest version of package
+Set-Location -Path "$WorkingDir"
+
 npm install "$PackageName@next"
 $PkgJsonSerialized = Get-Content -Raw ./package.json
 $latestVersion = ($PkgJsonSerialized | ConvertFrom-Json).dependencies.$PackageName
+
+$PackageName
+$latestVersion
+Get-Item ./package.json
 
 ##################################################### REMOVE (START)
 # $myGetFeedName = "botbuilder-v4-js-daily";

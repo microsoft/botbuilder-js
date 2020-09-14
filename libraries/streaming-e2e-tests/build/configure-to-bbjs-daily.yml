@@ -6,12 +6,13 @@ steps:
       workingDir: '$(TargetProjectDir)'
       
   - task: PowerShell@2
-    displayName: 'Set $(PackageName) to latest daily version'
+    displayName: 'Get latest daily version of $(PackageName)'
     inputs:
       targetType: 'filePath'
-      filePath: $(System.DefaultWorkingDirectory)/libraries/streaming-e2e-tests/build/set-to-latest-daily.ps1
+      filePath: $(System.DefaultWorkingDirectory)/libraries/streaming-e2e-tests/build/get-latest-daily-ver.ps1
       arguments:
         -PackageName $(PackageName)
+        -WorkingDir $(TargetProjectDir)
 
   # - task: PowerShell@2
   #   displayName: 'Set $(PackageName) to latest version from MyGet - https://botbuilder.myget.org/gallery/botbuilder-v4-js-daily'

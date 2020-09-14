@@ -11,7 +11,7 @@ pool:
 
 variables:
   ReactProjectDir: '$(System.DefaultWorkingDirectory)/libraries/streaming-e2e-tests/react-app'
-  DLJSDir: '$(System.DefaultWorkingDirectory)/libraries/streaming-e2e-tests/react-app/BotFramework-DirectLineJS'
+  DLJSDir: '$(System.DefaultWorkingDirectory)/libraries/streaming-e2e-tests/BotFramework-DirectLineJS'
   BotBuilder: 'botbuilder'
   BfStreaming: 'botframework-streaming'
   TestsDir: '$(System.DefaultWorkingDirectory)/libraries/streaming-e2e-tests/tests'

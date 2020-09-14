@@ -4,9 +4,13 @@
 steps:
   - script: git clone https://github.com/microsoft/BotFramework-DirectLineJS.git
     displayName: 'Clone DLJS repo'
-    workingDirectory: '$(System.DefaultWorkingDirectory)/libraries/streaming-e2e-tests/react-app'
+    workingDirectory: '$(System.DefaultWorkingDirectory)/libraries/streaming-e2e-tests'
 
   - template: configure-to-bbjs-daily.yml
+
+  - script: type ./package.json
+    displayName: 'Show DLJS package.json'
+    workingDirectory: $(DLJSDir)
 
   - script: npm run prepublishOnly
     displayName: Build DLJS (npm run prepublishOnly)

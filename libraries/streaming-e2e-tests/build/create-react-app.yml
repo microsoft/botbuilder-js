@@ -25,9 +25,6 @@ steps:
     workingDirectory: $(ReactProjectDir)
   
   - powershell: |
-      Write-Host react-app/node_mods
-      ls ../../node_modules/bot*
-      
       Write-Host folders in react-app/node_mods/bf-wc/node_mods:
       ls
 
