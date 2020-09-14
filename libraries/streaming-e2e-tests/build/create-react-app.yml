@@ -25,9 +25,16 @@ steps:
     workingDirectory: $(ReactProjectDir)
   
   - powershell: |
+      Write-Host react-app/node_mods
+      ls ../../node_modules/bot*
+      
+      Write-Host folders in react-app/node_mods/bf-wc/node_mods:
       ls
+
+      Write-Host renaming folders...
       Rename-Item ./botframework-directlinejs botframework-directlinejs.old
       Rename-Item ./botframework-streaming botframework-streaming.old
+
       ls
     displayName: Rename DLJS node modules
     workingDirectory: $(ReactProjectDir)/node_modules/botframework-webchat/node_modules
