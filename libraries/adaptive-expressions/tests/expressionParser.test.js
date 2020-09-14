@@ -964,7 +964,7 @@ describe('expression parser functional test', () => {
         let exp = Expression.parse('a[f].b[n].z');
         let path = undefined;
         ({path} = FunctionUtils.tryAccumulatePath(exp, memory, undefined));
-        assert.strictEqual(path, 'a[\'foo\'].b[2].z');
+        assert.strictEqual(path, 'a[\'food\'].b[2].z');
 
         // normal case
         exp = Expression.parse('a[z.z][z.z].y');
