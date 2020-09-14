@@ -20,13 +20,13 @@ variables:
   # BotName, ConnectedServiceNameARM, MyGetPersonalAccessToken, ResourceGroup
 
 jobs:
-  - job: Deploy_Bot
-    variables:
-      PackageName: $(BotBuilder)
-      TargetProjectDir: '$(System.DefaultWorkingDirectory)/libraries/streaming-e2e-tests/bot'
-    steps:
-      - template: configure-to-bbjs-daily.yml
-      - template: deploy-bot.yml
+  # - job: Deploy_Bot
+  #   variables:
+  #     PackageName: $(BotBuilder)
+  #     TargetProjectDir: '$(System.DefaultWorkingDirectory)/libraries/streaming-e2e-tests/bot'
+  #   steps:
+  #     - template: configure-to-bbjs-daily.yml
+  #     - template: deploy-bot.yml
       
   - job: Create_React_App
     variables:

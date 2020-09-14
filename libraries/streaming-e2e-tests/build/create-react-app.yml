@@ -25,6 +25,7 @@ steps:
     workingDirectory: $(ReactProjectDir)
   
   - powershell: |
+      type
       Rename-Item ./botframework-directlinejs botframework-directlinejs.old
       Rename-Item ./botframework-streaming botframework-streaming.old
       ls
