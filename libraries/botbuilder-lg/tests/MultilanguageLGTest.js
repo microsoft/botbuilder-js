@@ -1,5 +1,6 @@
-const { MultiLanguageLG, Templates} = require(`../`);
+const { MultiLanguageLG, Templates, LGResource} = require(`../`);
 const assert = require(`assert`);
+const { LanguageResourceLoader } = require("../../botbuilder-dialogs-adaptive/lib");
 
 describe('MultilanguageLGTest', function() {
     /**
@@ -21,7 +22,7 @@ describe('MultilanguageLGTest', function() {
             return new MultiLanguageLG(undefined, localPerFile, 'en');
         }(),
         SpecificFallbackLocale2: function() {
-            const enTemplates = Templates.parseText('[import](1.lg)\r\n # template\r\n - hi', 'abc', defaultFileResolver);
+            const enTemplates = Templates.parseResource(new LGResource('abc', 'abc', '[import](1.lg)\r\n # template\r\n - hi'), defaultFileResolver);
             const templatesDict = new Map();
             templatesDict.set('en', enTemplates);
 
@@ -93,7 +94,9 @@ describe('MultilanguageLGTest', function() {
         assert.strictEqual(result, 'content with id: 1.lg from source: abc');
     });
 
-    function defaultFileResolver(sourceId, resourceId) {
-        return { content: `# myTemplate\r\n - content with id: ${ resourceId } from source: ${ sourceId }`, id : sourceId + resourceId };
+    function defaultFileResolver(lgResource, resourceId) {
+        const id = lgResource.id + resourceId;
+        const content = `# myTemplate\r\n - content with id: ${ resourceId } from source: ${ lgResource.id }`;
+        return new LGResource(id, id, content);
     }
 });
