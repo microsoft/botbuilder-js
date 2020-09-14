@@ -11,11 +11,9 @@ steps:
         -PathToPJson $(TargetProjectDir)/package.json
         -BuildDir $(System.DefaultWorkingDirectory)/libraries/streaming-e2e-tests/build/
   
-  - powershell: |
-      Set-Location -Path "$(TargetProjectDir)"
-      
-      New-Item -Path . -Name ".npmrc" -ItemType "file" -Value "registry=https://botbuilder.myget.org/F/botbuilder-v4-js-daily/npm/"
+  - powershell: New-Item -Path . -Name ".npmrc" -ItemType "file" -Value "registry=https://botbuilder.myget.org/F/botbuilder-v4-js-daily/npm/"
     displayName: 'Create .npmrc for MyGet feed - https://botbuilder.myget.org/gallery/botbuilder-v4-js-daily'
+    workingDirectory: $(TargetProjectDir)
 
   # Repeating tagging step, but varying on PackageName due to DevOps
   # YAML inability to expand nested variables for dynamic variable names

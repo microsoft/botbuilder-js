@@ -31,17 +31,17 @@ const dataSource = [
     ['alist[0].Name', 'item1'],
 
     // string interpolation test
-    ["``", ''],
+    ['``', ''],
     ['`hi`', 'hi'],
     ['`hi\\``', 'hi`'],
     ['`${world}`', 'world'],
     ['`hi ${string(\'jack`\')}`', 'hi jack`'],
     ['`\\${world}`', '${world}'],
     ['length(`hello ${world}`)', 'hello world'.length],
-    ['json(`{"foo":"${hello}","item":"${world}"}`).foo', 'hello'],
+    ['json(`{"key":"${hello}","item":"${world}"}`).key', 'hello'],
     ['`{expr: hello all}`', '{expr: hello all}'],
-    ['json(`{"foo":${{text:"hello"}},"item": "${world}"}`).foo.text', 'hello'],
-    ['json(`{"foo":${{text:"hello", cool: "hot", obj:{new: 123}}},"item": "${world}"}`).foo.text', 'hello'],
+    ['json(`{"key":${{text:"hello"}},"item": "${world}"}`).key.text', 'hello'],
+    ['json(`{"key":${{text:"hello", cool: "hot", obj:{new: 123}}},"item": "${world}"}`).key.text', 'hello'],
     ['`hi\\`[1,2,3]`', 'hi`[1,2,3]'],
     ['`hi ${[\'jack`\', \'queen\', \'king\']}`', 'hi jack`,queen,king'],
     ['`abc ${concat("[", "]")}`', 'abc []'],
@@ -54,6 +54,12 @@ const dataSource = [
     ['`hello ${string({obj:  1})}`', 'hello {"obj":1}'],
     ['`hello ${string({obj:  "${not expr}"})}`', 'hello {"obj":"${not expr}"}'],
     ['`hello ${string({obj:  {a: 1}})}`', 'hello {"obj":{"a":1}}'],
+    ['`${hello} \n\n ${world}`', 'hello \n\n world'],
+    ['`${hello} \r\n ${world}`', 'hello \r\n world'],
+    ['`\n\n ${world}`', '\n\n world'],
+    ['`\r\n ${world}`', '\r\n world'],
+    ['`${hello} \n\n`', 'hello \n\n'],
+    ['`${hello} \r\n`', 'hello \r\n'],
 
     //Operators tests
 
@@ -356,6 +362,7 @@ const dataSource = [
     ['float(\'10\')', 10.0],
     ['int(\'10\')', 10],
     ['string(\'str\')', 'str'],
+    ['string(\'str"\')', 'str"'],
     ['string(one)', '1'], //ts-->1, C#-->1.0
     ['string(bool(1))', 'true'],
     ['string(bag.set)', '{"four":4}'], // ts-->"{\"four\":4}", C# --> "{\"four\":4.0}"
@@ -395,6 +402,11 @@ const dataSource = [
     ['formatNumber(12.123, 2)', '12.12'],
     ['formatNumber(1.555, 2)', '1.56'],
     ['formatNumber(12.123, 4)', '12.1230'],
+    ['jsonStringify(json(\'{\"a\":\"b\"}\'))', '{"a":"b"}'],
+    ['jsonStringify(\'a\')', '"a"'],
+    ['jsonStringify(null)', 'null'],
+    ['jsonStringify(undefined)', undefined],
+    ['jsonStringify({a:"b"})', '{"a":"b"}'],
 
     // TODO: This should actually be the below, but toLocaleString does not work.
     // ['formatNumber(12000.3, 4, "fr-FR")', '12\u00a0000,3000'],
@@ -532,22 +544,6 @@ const dataSource = [
     ['ticksToDays(2193385800000000)', 2538.6409722222224],
     ['ticksToHours(2193385800000000)', 60927.383333333331],
     ['ticksToMinutes(2193385811100000)', 3655643.0185],
-    ['isMatch(getPreviousViableDate(\'XXXX-07-10\'), \'20[0-9]{2}-07-10\')', true],
-    ['isMatch(getPreviousViableDate(\'XXXX-07-10\', \'Asia/Shanghai\'), \'20[0-9]{2}-07-10\')', true],
-    ['getPreviousViableDate(\'XXXX-02-29\')', '2020-02-29'],
-    ['getPreviousViableDate(\'XXXX-02-29\', \'Pacific Standard Time\')', '2020-02-29'],
-    ['isMatch(getNextViableDate(\'XXXX-07-10\'), \'202[0-9]-07-10\')', true],
-    ['isMatch(getNextViableDate(\'XXXX-07-10\', \'Europe/London\'), \'202[0-9]-07-10\')', true],
-    ['getNextViableDate(\'XXXX-02-29\')', '2024-02-29'],
-    ['getNextViableDate(\'XXXX-02-29\', \'America/Los_Angeles\')', '2024-02-29'],
-    ['isMatch(getNextViableTime(\'TXX:40:20\'), \'T[0-2][0-9]:40:20\')', true],
-    ['isMatch(getNextViableTime(\'TXX:40:20\', \'Asia/Tokyo\'), \'T[0-2][0-9]:40:20\')', true],
-    ['isMatch(getNextViableTime(\'TXX:05:10\'), \'T[0-2][0-9]:05:10\')', true],
-    ['isMatch(getNextViableTime(\'TXX:05:10\', \'Europe/Paris\'), \'T[0-2][0-9]:05:10\')', true],
-    ['isMatch(getPreviousViableTime(\'TXX:40:20\'), \'T[0-2][0-9]:40:20\')', true],
-    ['isMatch(getPreviousViableTime(\'TXX:40:20\', \'Eastern Standard Time\'), \'T[0-2][0-9]:40:20\')', true],
-    ['isMatch(getPreviousViableTime(\'TXX:05:10\'), \'T[0-2][0-9]:05:10\')', true],
-    ['isMatch(getPreviousViableTime(\'TXX:05:10\', \'Central Standard Time\'), \'T[0-2][0-9]:05:10\')', true],
 
     //URI parsing functions tests
     ['uriHost(\'https://www.localhost.com:8080\')', 'www.localhost.com'],
@@ -723,7 +719,7 @@ const dataSource = [
     ['setPathToValue(path.simple, 5) + path.simple', 10],
     ['setPathToValue(path.array[0], 7) + path.array[0]', 14],
     ['setPathToValue(path.array[1], 9) + path.array[1]', 18],
-    ['setPathToValue(path.x, null)', undefined],
+    ['setPathToValue(path.x, null)', null],
 ];
 
 const scope = {
@@ -888,22 +884,40 @@ describe('expression parser functional test', () => {
     // `new Date()` done by both the test and by ExpressionEvaluator return the exact same time.
     it('should appropriately evaluate time-related expressions', () => {
         // Freeze the system clock.
-        // The expected date in MM-DD-YY HH is 01-01-20 00
+        // The expected date in the format, MM-dd-yy HH:mm:ss, is 08-01-20 00:12:20
         let clock = useFakeTimers({
-            now: new Date(Date.UTC(2020, 0, 1)),
+            now: new Date(Date.UTC(2020, 7, 1, 0, 12, 20)),
             shouldAdvanceTime: false,
         });
 
         const timeDataSource = [
-            ['utcNow(\'MM-DD-YY HH\')', '01-01-20 00'],
-            ['getPastTime(1, \'Year\', \'MM-dd-yy\')', '01-01-19'],
-            ['getPastTime(1, \'Month\', \'MM-dd-yy\')', '12-01-19'],
-            ['getPastTime(1, \'Week\', \'MM-dd-yy\')', '12-25-19'],
-            ['getPastTime(1, \'Day\', \'MM-dd-yy\')', '12-31-19'],
-            ['getFutureTime(1, \'Year\', \'MM-dd-yy\')', '01-01-21'],
-            ['getFutureTime(1, \'Month\', \'MM-dd-yy\')', '02-01-20'],
-            ['getFutureTime(1, \'Week\', \'MM-dd-yy\')', '01-08-20'],
-            ['getFutureTime(1, \'Day\', \'MM-dd-yy\')', '01-02-20']
+            ['utcNow(\'MM-DD-YY HH\')', '08-01-20 00'],
+            ['getPastTime(1, \'Year\', \'MM-dd-yy\')', '08-01-19'],
+            ['getPastTime(1, \'Month\', \'MM-dd-yy\')', '07-01-20'],
+            ['getPastTime(1, \'Week\', \'MM-dd-yy\')', '07-25-20'],
+            ['getPastTime(1, \'Day\', \'MM-dd-yy\')', '07-31-20'],
+            ['getFutureTime(1, \'Year\', \'MM-dd-yy\')', '08-01-21'],
+            ['getFutureTime(1, \'Month\', \'MM-dd-yy\')', '09-01-20'],
+            ['getFutureTime(1, \'Week\', \'MM-dd-yy\')', '08-08-20'],
+            ['getFutureTime(1, \'Day\', \'MM-dd-yy\')', '08-02-20'],
+            ['getPreviousViableDate(\'XXXX-07-10\')', '2020-07-10'],
+            ['getPreviousViableDate(\'XXXX-08-10\')', '2019-08-10'],
+            ['getPreviousViableDate(\'XXXX-07-10\', \'Asia/Shanghai\')', '2020-07-10'],
+            ['getPreviousViableDate(\'XXXX-02-29\')', '2020-02-29'],
+            ['getPreviousViableDate(\'XXXX-02-29\', \'Pacific Standard Time\')', '2020-02-29'],
+            ['getNextViableDate(\'XXXX-07-10\')', '2021-07-10'],
+            ['getNextViableDate(\'XXXX-08-10\')', '2020-08-10'],
+            ['getNextViableDate(\'XXXX-07-10\', \'Europe/London\')', '2021-07-10'],
+            ['getNextViableDate(\'XXXX-02-29\')', '2024-02-29'],
+            ['getNextViableDate(\'XXXX-02-29\', \'America/Los_Angeles\')', '2024-02-29'],
+            ['getNextViableTime(\'TXX:40:20\')', 'T00:40:20'],
+            ['getNextViableTime(\'TXX:40:20\', \'Asia/Tokyo\')', 'T09:40:20'],
+            ['getNextViableTime(\'TXX:05:10\')', 'T01:05:10'],
+            ['getNextViableTime(\'TXX:05:10\', \'Europe/Paris\')', 'T03:05:10'],
+            ['getPreviousViableTime(\'TXX:40:20\')', 'T23:40:20'],
+            ['getPreviousViableTime(\'TXX:40:20\', \'Eastern Standard Time\')', 'T19:40:20'],
+            ['getPreviousViableTime(\'TXX:05:10\')', 'T00:05:10'],
+            ['getPreviousViableTime(\'TXX:05:10\', \'Central Standard Time\')', 'T19:05:10']
         ];
         try {
             for (const data of timeDataSource) {
@@ -937,8 +951,8 @@ describe('expression parser functional test', () => {
 
     it('Test AccumulatePath', () => {
         const scope = {
-            f: 'foo',
-            b: 'bar',
+            f: 'food',
+            b: 'beta',
             z: {
                 z: 'zar'
             },
@@ -978,42 +992,42 @@ describe('expression parser functional test', () => {
         let error = undefined;
 
         // normal case null value is substituted
-        var exp = Expression.parse('foo');
+        var exp = Expression.parse('food');
         ({value, error} = exp.tryEvaluate(mockMemory, options));
-        assert.strictEqual(value, 'foo is undefined');
+        assert.strictEqual(value, 'food is undefined');
 
         // in boolean context, substitution is not allowed, use raw value instead
-        exp = Expression.parse('if(foo, 1, 2)');
+        exp = Expression.parse('if(food, 1, 2)');
         ({value, error} = exp.tryEvaluate(mockMemory, options));
         assert.strictEqual(value, 2);
 
         // in boolean context, substitution is not allowed, use raw value instead
-        exp = Expression.parse('foo && true');
+        exp = Expression.parse('food && true');
         ({value, error} = exp.tryEvaluate(mockMemory, options));
         assert.strictEqual(value, false);
 
         // in boolean context, substitution is not allowed, use raw value instead
-        exp = Expression.parse('foo || true');
+        exp = Expression.parse('food || true');
         ({value, error} = exp.tryEvaluate(mockMemory, options));
         assert.strictEqual(value, true);
 
         // in boolean context, substitution is not allowed, use raw value instead
-        exp = Expression.parse('foo == "foo is undefined"');
+        exp = Expression.parse('food == "food is undefined"');
         ({value, error} = exp.tryEvaluate(mockMemory, options));
         assert.strictEqual(value, false);
 
         // in boolean context, substitution is not allowed, use raw value instead
-        exp = Expression.parse('not(foo)');
+        exp = Expression.parse('not(food)');
         ({value, error} = exp.tryEvaluate(mockMemory, options));
         assert.strictEqual(value, true);
 
         // in boolean context, substitution is not allowed, use raw value instead
-        exp = Expression.parse('bool(foo)');
+        exp = Expression.parse('bool(food)');
         ({value, error} = exp.tryEvaluate(mockMemory, options));
         assert.strictEqual(value, false);
 
         // concat is evaluated in boolean context also, use raw value
-        exp = Expression.parse('if(concat(foo, "bar"), 1, 2)');
+        exp = Expression.parse('if(concat(food, "beta"), 1, 2)');
         ({value, error} = exp.tryEvaluate(mockMemory, options));
         assert.strictEqual(value, 1);
 

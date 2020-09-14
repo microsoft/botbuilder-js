@@ -61,6 +61,8 @@ export class Constant extends Expression {
     public toString(): string {
         
         if (this.value === undefined) {
+            return 'undefined';
+        } else if (this.value === null) {
             return 'null';
         } else if (typeof this.value === 'string') {
             let result = this.value;
