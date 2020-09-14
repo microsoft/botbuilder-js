@@ -5,7 +5,7 @@ steps:
   - task: Cache@2
     displayName: 'Cache create-react-app + WebChat Dependencies'
     inputs:
-      key: 'CRA-WebChat4.10.1-Cache-TEST | npm | "$(Agent.OS)"'
+      key: '"CRA-WebChat4.10.1-Cache-TEST" | npm | "$(Agent.OS)"'
       path: $(ReactProjectDir)/node_modules
       cacheHitVar: 'CacheRestored'
 
