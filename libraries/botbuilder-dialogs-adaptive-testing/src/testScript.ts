@@ -11,6 +11,7 @@ import { DialogManager } from 'botbuilder-dialogs';
 import { DialogExpression, LanguageGeneratorExtensions, ResourceExtensions } from 'botbuilder-dialogs-adaptive';
 import { ResourceExplorer } from 'botbuilder-dialogs-declarative';
 import { TestAction } from './testAction';
+import { UserTokenMock } from './userTokenMocks';
 
 export class TestScript {
 
@@ -29,6 +30,11 @@ export class TestScript {
      */
     public locale: string = 'en-us';
     
+    /**
+     * The mock data for Microsoft.OAuthInput.
+     */
+    public userTokenMocks: UserTokenMock[] = [];
+
     /**
      * The sequence of test actions to perform to validate the dialog behavior.
      */
@@ -58,6 +64,10 @@ export class TestScript {
         ResourceExtensions.useResourceExplorer(bot, resourceExplorer);
         LanguageGeneratorExtensions.useLanguageGeneration(bot);
         
+        for (let i = 0; i < this.userTokenMocks.length; i++) {
+            this.userTokenMocks[i].setup(testAdapter);
+        }
+
         for (let i = 0; i < this.script.length; i++) {
             const testAction = this.script[i];
             await testAction.execute(testAdapter, bot.onTurn.bind(bot));
