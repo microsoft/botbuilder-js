@@ -386,18 +386,18 @@ export class TestAdapter extends BotAdapter implements ExtendedUserTokenProvider
      */
     public addUserToken(connectionName: string, channelId: string, userId: string, token: string, magicCode?: string) {
         const key: UserToken = new UserToken();
-        key.ChannelId = channelId;
-        key.ConnectionName = connectionName;
-        key.UserId = userId;
-        key.Token = token;
+        key.channelId = channelId;
+        key.connectionName = connectionName;
+        key.userId = userId;
+        key.token = token;
 
         if (!magicCode) {
             this._userTokens.push(key);
         }
         else {
             const mc = new TokenMagicCode();
-            mc.Key = key;
-            mc.MagicCode = magicCode;
+            mc.key = key;
+            mc.magicCode = magicCode;
             this._magicCodes.push(mc);
         }
     }
@@ -429,18 +429,18 @@ export class TestAdapter extends BotAdapter implements ExtendedUserTokenProvider
             userId = context.activity.from.id;
         }
 
-        const match = this._userTokens.filter(x => x.ChannelId === context.activity.channelId
-            && x.UserId === userId
-            && (!filter || filter.includes(x.ConnectionName)));
+        const match = this._userTokens.filter(x => x.channelId === context.activity.channelId
+            && x.userId === userId
+            && (!filter || filter.includes(x.connectionName)));
 
         if (match && match.length > 0) {
             const tokenStatuses = [];
             for (var i = 0; i < match.length; i++) {
                 tokenStatuses.push(
                     {
-                        ConnectionName: match[i].ConnectionName,
+                        ConnectionName: match[i].connectionName,
                         HasToken: true,
-                        ServiceProviderDisplayName: match[i].ConnectionName
+                        ServiceProviderDisplayName: match[i].connectionName
                     });
             }
 
@@ -460,15 +460,15 @@ export class TestAdapter extends BotAdapter implements ExtendedUserTokenProvider
      */
     public async getUserToken(context: TurnContext, connectionName: string, magicCode?: string): Promise<TokenResponse> {
         const key: UserToken = new UserToken();
-        key.ChannelId = context.activity.channelId;
-        key.ConnectionName = connectionName;
-        key.UserId = context.activity.from.id;
+        key.channelId = context.activity.channelId;
+        key.connectionName = connectionName;
+        key.userId = context.activity.from.id;
 
         if (magicCode) {
-            const magicCodeRecord = this._magicCodes.filter(x => key.EqualsKey(x.Key));
-            if (magicCodeRecord && magicCodeRecord.length > 0 && magicCodeRecord[0].MagicCode === magicCode) {
+            const magicCodeRecord = this._magicCodes.filter(x => key.equalsKey(x.key));
+            if (magicCodeRecord && magicCodeRecord.length > 0 && magicCodeRecord[0].magicCode === magicCode) {
                 // move the token to long term dictionary
-                this.addUserToken(connectionName, key.ChannelId, key.UserId, magicCodeRecord[0].Key.Token);
+                this.addUserToken(connectionName, key.channelId, key.userId, magicCodeRecord[0].key.token);
 
                 // remove from the magic code list
                 const idx = this._magicCodes.indexOf(magicCodeRecord[0]);
@@ -476,12 +476,12 @@ export class TestAdapter extends BotAdapter implements ExtendedUserTokenProvider
             }
         }
 
-        const match = this._userTokens.filter(x => key.EqualsKey(x));
+        const match = this._userTokens.filter(x => key.equalsKey(x));
 
         if (match && match.length > 0) {
             return {
-                connectionName: match[0].ConnectionName,
-                token: match[0].Token,
+                connectionName: match[0].connectionName,
+                token: match[0].token,
                 expiration: undefined
             };
         } else {
@@ -494,21 +494,17 @@ export class TestAdapter extends BotAdapter implements ExtendedUserTokenProvider
      * Signs the user out with the token server.
      * @param context Context for the current turn of conversation with the user.
      * @param connectionName Name of the auth connection to use.
+     * @param userId User ID to sign out.
      */
-    public async signOutUser(context: TurnContext, connectionName: string): Promise<void> {
-        var channelId = context.activity.channelId;
-        var userId = context.activity.from.id;
-
-        var newRecords: UserToken[] = [];
-        for (var i = 0; i < this._userTokens.length; i++) {
-            var t = this._userTokens[i];
-            if (t.ChannelId !== channelId ||
-                t.UserId !== userId ||
-                (connectionName && connectionName !== t.ConnectionName)) {
-                newRecords.push(t);
-            }
-        }
-        this._userTokens = newRecords;
+    public async signOutUser(context: TurnContext, connectionName?: string, userId?: string): Promise<void> {
+        const channelId = context.activity.channelId;
+        userId = userId || context.activity.from.id;
+        this._userTokens = this._userTokens.filter(token => {
+            return connectionName &&
+                (connectionName !== token.connectionName ||
+                    channelId !== token.channelId ||
+                    userId !== token.userId);
+        });
     }
 
     /**
@@ -536,11 +532,11 @@ export class TestAdapter extends BotAdapter implements ExtendedUserTokenProvider
 
     public addExchangeableToken(connectionName: string, channelId: string, userId: string, exchangeableItem: string, token: string) {
         const key: ExchangeableToken = new ExchangeableToken();
-        key.ChannelId = channelId;
-        key.ConnectionName = connectionName;
-        key.UserId = userId;
+        key.channelId = channelId;
+        key.connectionName = connectionName;
+        key.userId = userId;
         key.exchangeableItem = exchangeableItem;
-        key.Token = token;
+        key.token = token;
         this.exchangeableTokens[key.toKey()] = key;
     }
 
@@ -560,21 +556,21 @@ export class TestAdapter extends BotAdapter implements ExtendedUserTokenProvider
     public async exchangeToken(context: TurnContext, connectionName: string, userId: string, tokenExchangeRequest: TokenExchangeRequest): Promise<TokenResponse> {
         const exchangeableValue: string = tokenExchangeRequest.token ? tokenExchangeRequest.token : tokenExchangeRequest.uri;
         const key = new ExchangeableToken();
-        key.ChannelId = context.activity.channelId;
-        key.ConnectionName = connectionName;
+        key.channelId = context.activity.channelId;
+        key.connectionName = connectionName;
         key.exchangeableItem = exchangeableValue;
-        key.UserId = userId;
+        key.userId = userId;
 
         const tokenExchangeResponse = this.exchangeableTokens[key.toKey()];
-        if (tokenExchangeResponse && tokenExchangeResponse.Token === this.ExceptionExpected) {
+        if (tokenExchangeResponse && tokenExchangeResponse.token === this.ExceptionExpected) {
             throw new Error('Exception occurred during exchanging tokens');
         }
 
         return tokenExchangeResponse ?
             {
-                channelId: key.ChannelId,
-                connectionName: key.ConnectionName,
-                token: tokenExchangeResponse.Token,
+                channelId: key.channelId,
+                connectionName: key.connectionName,
+                token: tokenExchangeResponse.token,
                 expiration: null
             } :
             null;
@@ -589,13 +585,13 @@ export class TestAdapter extends BotAdapter implements ExtendedUserTokenProvider
      */
     public throwOnExchangeRequest(connectionName: string, channelId: string, userId: string, exchangeableItem: string): void {
         const token: ExchangeableToken = new ExchangeableToken();
-        token.ChannelId = channelId;
-        token.ConnectionName = connectionName;
-        token.UserId = userId;
+        token.channelId = channelId;
+        token.connectionName = connectionName;
+        token.userId = userId;
         token.exchangeableItem = exchangeableItem;
         const key = token.toKey();
 
-        token.Token = this.ExceptionExpected;
+        token.token = this.ExceptionExpected;
         this.exchangeableTokens[key] = token;
     }
 
@@ -617,31 +613,31 @@ export class TestAdapter extends BotAdapter implements ExtendedUserTokenProvider
 }
 
 class UserToken {
-    public ConnectionName: string;
-    public UserId: string;
-    public ChannelId: string;
-    public Token: string;
+    public connectionName: string;
+    public userId: string;
+    public channelId: string;
+    public token: string;
 
-    public EqualsKey(rhs: UserToken): boolean {
-        return rhs != null &&
-            this.ConnectionName === rhs.ConnectionName &&
-            this.UserId === rhs.UserId &&
-            this.ChannelId === rhs.ChannelId;
+    public equalsKey(rhs: UserToken): boolean {
+        return rhs &&
+            this.connectionName === rhs.connectionName &&
+            this.userId === rhs.userId &&
+            this.channelId === rhs.channelId;
     }
 }
 
 class TokenMagicCode {
-    public Key: UserToken;
-    public MagicCode: string;
+    public key: UserToken;
+    public magicCode: string;
 }
 
 class ExchangeableToken extends UserToken {
     public exchangeableItem: string;
 
-    public EqualsKey(rhs: ExchangeableToken): boolean {
+    public equalsKey(rhs: ExchangeableToken): boolean {
         return rhs != null &&
             this.exchangeableItem === rhs.exchangeableItem &&
-            super.EqualsKey(rhs);
+            super.equalsKey(rhs);
     }
 
     public toKey(): string {
