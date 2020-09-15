@@ -1,4 +1,3 @@
-# param($AccessToken, $PackageName, $PathToPJson, $BuildDir)
 param($PackageName, $WorkingDir)
 
 # Get latest version of package
@@ -8,28 +7,8 @@ npm install "$PackageName@next"
 $PkgJsonSerialized = Get-Content -Raw ./package.json
 $latestVersion = ($PkgJsonSerialized | ConvertFrom-Json).dependencies.$PackageName
 
-$PackageName
 $latestVersion
 Get-Content ./package.json
-
-##################################################### REMOVE (START)
-# $myGetFeedName = "botbuilder-v4-js-daily";
-# $url = "https://botbuilder.myget.org/F/$myGetFeedName/auth/$AccessToken/api/v2/feed-state";
-
-# Write-Host "Get latest $PackageName version number from MyGet $myGetFeedName";
-# $result = Invoke-RestMethod -Uri $url -Method Get -ContentType "application/json";
-
-# $package = $result.packages | Where-Object {$_.id -eq $PackageName};
-# [string]$latestVersion = $package.versions[-1];
-
-# $package.id;
-# $latestVersion;
-
-# Set latest version of package in package.json
-# Set-Location -Path "$BuildDir"
-# ./set-dependency-version-in-packagejson.ps1 -Package "$PackageName" -LatestVersion "$latestVersion" -PathToPJson "$PathToPJson" 
-##################################################### (END)
-
 
 # Save latest version as pipeline variable.
 # Creating variable name without '-' character to make it a legal yaml variable name
