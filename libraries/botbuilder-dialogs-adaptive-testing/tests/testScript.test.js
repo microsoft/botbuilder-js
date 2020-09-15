@@ -54,6 +54,10 @@ describe('TestScriptTests', function () {
         await testRunner.runTestScript('TestScriptTests_UserConversationUpdate');
     });
 
+    it('UserTokenMock', async () => {
+        await testRunner.runTestScript('TestScriptTests_UserTokenMock');
+    });
+
     it('UserTyping', async () => {
         await testRunner.runTestScript('TestScriptTests_UserTyping');
     });
