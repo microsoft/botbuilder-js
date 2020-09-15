@@ -8,10 +8,6 @@ steps:
 
   - template: configure-to-bbjs-daily.yml
 
-  - powershell: type ./package.json
-    displayName: 'Show DLJS package.json'
-    workingDirectory: $(DLJSDir)
-
   - script: npm run prepublishOnly
     displayName: Build DLJS (npm run prepublishOnly)
     workingDirectory: $(DLJSDir)
