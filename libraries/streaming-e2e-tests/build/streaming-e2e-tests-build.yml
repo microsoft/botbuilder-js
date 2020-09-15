@@ -30,7 +30,7 @@ jobs:
       
   - job: Create_React_App
     variables:
-      PackageName: 'botframework-streaming'
+      PackageName: $(BfStreaming)
       TargetProjectDir: $(DLJSDir)
       REACT_APP_BOT_HOSTNAME: $(BotName)
     steps:
