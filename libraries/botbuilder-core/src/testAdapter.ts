@@ -472,7 +472,7 @@ export class TestAdapter extends BotAdapter implements ExtendedUserTokenProvider
 
                 // remove from the magic code list
                 const idx = this._magicCodes.indexOf(magicCodeRecord[0]);
-                this._magicCodes = this._magicCodes.splice(idx, 1);
+                this._magicCodes.splice(idx, 1);
             }
         }
 
