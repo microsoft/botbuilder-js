@@ -55,12 +55,12 @@ export class TestAdapter extends BotAdapter implements ExtendedUserTokenProvider
         if (logicOrConversation) {
             if (typeof (logicOrConversation) === 'function') {
                 this._logic = logicOrConversation;
-                this.conversation = TestAdapter.createConversation('Conversation1');
+                this.conversation = TestAdapter.createConversation('Convo1');
             } else {
                 this.conversation = logicOrConversation;
             }
         } else {
-            this.conversation = TestAdapter.createConversation('Conversation1');
+            this.conversation = TestAdapter.createConversation('Convo1');
         }
 
         this.conversation.locale = this.conversation.locale || this.locale;

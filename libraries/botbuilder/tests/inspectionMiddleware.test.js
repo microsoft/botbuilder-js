@@ -50,17 +50,17 @@ describe('InspectionMiddleware', function() {
         // set up our expectations in nock - each corresponds to a trace message we expect to receive in the emulator
 
         const inboundExpectation = nock('https://test.com')
-            .post('/v3/conversations/Conversation1/activities', activity => activity.type === 'trace'
+            .post('/v3/conversations/Convo1/activities', activity => activity.type === 'trace'
                 && activity.value.text == 'hi')
             .reply(200, { id: 'test' });
 
         const outboundExpectation = nock('https://test.com')
-            .post('/v3/conversations/Conversation1/activities', activity => activity.type === 'trace'
+            .post('/v3/conversations/Convo1/activities', activity => activity.type === 'trace'
                 && activity.value.text == 'echo: hi')
             .reply(200, { id: 'test' });
 
         const stateExpectation = nock('https://test.com')
-            .post('/v3/conversations/Conversation1/activities', activity => activity.type === 'trace'
+            .post('/v3/conversations/Convo1/activities', activity => activity.type === 'trace'
                 && activity.value.userState && activity.value.userState.x.property == 'hello'
                 && activity.value.conversationState && activity.value.conversationState.y.property == 'world')
             .reply(200, { id: 'test' });
@@ -126,17 +126,17 @@ describe('InspectionMiddleware', function() {
         // set up our expectations in nock - each corresponds to a trace message we expect to receive in the emulator
 
         const inboundExpectation = nock('https://test.com')
-            .post('/v3/conversations/Conversation1/activities', activity => activity.type === 'trace'
+            .post('/v3/conversations/Convo1/activities', activity => activity.type === 'trace'
                 && activity.value.text == 'hi')
             .reply(200, { id: 'test' });
 
         const outboundExpectation = nock('https://test.com')
-            .post('/v3/conversations/Conversation1/activities', activity => activity.type === 'trace'
+            .post('/v3/conversations/Convo1/activities', activity => activity.type === 'trace'
                 && activity.value.text == 'echo: hi')
             .reply(200, { id: 'test' });
 
         const stateExpectation = nock('https://test.com')
-            .post('/v3/conversations/Conversation1/activities', activity => activity.type === 'trace'
+            .post('/v3/conversations/Convo1/activities', activity => activity.type === 'trace'
                 && activity.value.userState && activity.value.userState.x.property == 'hello'
                 && activity.value.conversationState && activity.value.conversationState.y.property == 'world')
             .reply(200, { id: 'test' });
@@ -220,17 +220,17 @@ describe('InspectionMiddleware', function() {
         // set up our expectations in nock - each corresponds to a trace message we expect to receive in the emulator
 
         const inboundExpectation = nock('https://test.com')
-            .post('/v3/conversations/Conversation1/activities', activity => activity.type === 'trace'
+            .post('/v3/conversations/Convo1/activities', activity => activity.type === 'trace'
                 && activity.value.text == 'hi')
             .reply(200, { id: 'test' });
 
         const outboundExpectation = nock('https://test.com')
-            .post('/v3/conversations/Conversation1/activities', activity => activity.type === 'trace'
+            .post('/v3/conversations/Convo1/activities', activity => activity.type === 'trace'
                 && activity.value.text == 'echo: hi')
             .reply(200, { id: 'test' });
 
         const stateExpectation = nock('https://test.com')
-            .post('/v3/conversations/Conversation1/activities', activity => activity.type === 'trace'
+            .post('/v3/conversations/Convo1/activities', activity => activity.type === 'trace'
                 && activity.value.userState && activity.value.userState.x.property == 'hello'
                 && activity.value.conversationState && activity.value.conversationState.y.property == 'world')
             .reply(200, { id: 'test' });
@@ -302,17 +302,17 @@ describe('InspectionMiddleware', function() {
         // set up our expectations in nock - each corresponds to a trace message we expect to receive in the emulator
 
         nock('https://test.com')
-            .post('/v3/conversations/Conversation1/activities', activity => activity.type === 'trace'
+            .post('/v3/conversations/Convo1/activities', activity => activity.type === 'trace'
                 && activity.value.text == 'hi')
             .reply(200, { id: 'test' });
 
         nock('https://test.com')
-            .post('/v3/conversations/Conversation1/activities', activity => activity.type === 'trace'
+            .post('/v3/conversations/Convo1/activities', activity => activity.type === 'trace'
                 && activity.value.text == 'echo: hi')
             .reply(200, { id: 'test' });
 
         nock('https://test.com')
-            .post('/v3/conversations/Conversation1/activities', activity => activity.type === 'trace'
+            .post('/v3/conversations/Convo1/activities', activity => activity.type === 'trace'
                 && activity.value.userState && activity.value.userState.x.property == 'hello'
                 && activity.value.conversationState && activity.value.conversationState.y.property == 'world')
             .reply(200, { id: 'test' });
@@ -361,17 +361,17 @@ describe('InspectionMiddleware', function() {
         // set up our expectations in nock - each corresponds to a trace message we expect to receive in the emulator
 
         nock('https://test.com')
-            .post('/v3/conversations/Conversation1/activities', activity => activity.type === 'trace'
+            .post('/v3/conversations/Convo1/activities', activity => activity.type === 'trace'
                 && activity.value.text == 'hi')
             .reply(200, { id: 'test' });
 
         nock('https://test.com')
-            .post('/v3/conversations/Conversation1/activities', activity => activity.type === 'trace'
+            .post('/v3/conversations/Convo1/activities', activity => activity.type === 'trace'
                 && activity.value.text == 'echo: hi')
             .reply(200, { id: 'test' });
 
         nock('https://test.com')
-            .post('/v3/conversations/Conversation1/activities', activity => activity.type === 'trace'
+            .post('/v3/conversations/Convo1/activities', activity => activity.type === 'trace'
                 && activity.value.userState && activity.value.userState.x.property == 'hello'
                 && activity.value.conversationState && activity.value.conversationState.y.property == 'world')
             .reply(200, { id: 'test' });
@@ -419,17 +419,17 @@ describe('InspectionMiddleware', function() {
         // set up our expectations in nock - each corresponds to a trace message we expect to receive in the emulator
 
         nock('https://test.com')
-            .post('/v3/conversations/Conversation1/activities', activity => activity.type === 'trace'
+            .post('/v3/conversations/Convo1/activities', activity => activity.type === 'trace'
                 && activity.value.text == 'hi')
             .reply(200, { id: 'test' });
 
         nock('https://test.com')
-            .post('/v3/conversations/Conversation1/activities', activity => activity.type === 'trace'
+            .post('/v3/conversations/Convo1/activities', activity => activity.type === 'trace'
                 && activity.value.text == 'echo: hi')
             .reply(200, { id: 'test' });
 
         nock('https://test.com')
-            .post('/v3/conversations/Conversation1/activities', activity => activity.type === 'trace'
+            .post('/v3/conversations/Convo1/activities', activity => activity.type === 'trace'
                 && activity.value.userState && activity.value.userState.x.property == 'hello'
                 && activity.value.conversationState && activity.value.conversationState.y.property == 'world')
             .reply(200, { id: 'test' });
