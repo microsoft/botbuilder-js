@@ -8,6 +8,7 @@
 
 import { QnAMakerMetadata } from './qnamakerMetadata';
 import { QnARequestContext } from './qnaRequestContext';
+import { JoinOperator} from './JoinOperator';
 
 /**
  * Additional settings used to configure a `QnAMaker` instance.
@@ -40,7 +41,7 @@ export interface QnAMakerOptions {
     metadataBoost?: QnAMakerMetadata[];
 
     /** (Optional) The time in milliseconds to wait before the request times out.
-     * 
+     *
      * @remarks Defaults to "100000" milliseconds.
     */
     timeout?: number;
@@ -56,7 +57,7 @@ export interface QnAMakerOptions {
     qnaId?: number;
 
     /**
-     * A value indicating whether to call test or prod environment of knowledgebase. 
+     * A value indicating whether to call test or prod environment of knowledgebase.
      */
     isTest?: boolean;
 
@@ -64,4 +65,9 @@ export interface QnAMakerOptions {
      * Ranker types.
      */
     rankerType?: string;
+
+    /**
+     * A value indicating choice  for Strict Filters Join Operation.
+     */
+    strictFiltersJoinOperator?: JoinOperator;
 }
