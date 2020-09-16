@@ -75,7 +75,7 @@ export class AdaptiveDialogComponentRegistration implements ComponentRegistratio
             'activityProcessed': new BoolExpressionConverter()
         };
         this.registerBuilder('Microsoft.BeginDialog', new AdaptiveTypeBuilder(BeginDialog, this._resourceExplorer,
-            Object.assign(baseInvokeDialogConverters, {
+            Object.assign({}, baseInvokeDialogConverters, {
                 'resultProperty': new StringExpressionConverter(),
                 'disabled': new BoolExpressionConverter()
             })));
@@ -179,12 +179,12 @@ export class AdaptiveDialogComponentRegistration implements ComponentRegistratio
             'disabled': new BoolExpressionConverter()
         }));
         this.registerBuilder('Microsoft.RepeatDialog', new AdaptiveTypeBuilder(RepeatDialog, this._resourceExplorer,
-            Object.assign(baseInvokeDialogConverters, {
+            Object.assign({}, baseInvokeDialogConverters, {
                 'disabled': new BoolExpressionConverter(),
                 'allowLoop': new BoolExpressionConverter()
             })));
         this.registerBuilder('Microsoft.ReplaceDialog', new AdaptiveTypeBuilder(ReplaceDialog, this._resourceExplorer,
-            Object.assign(baseInvokeDialogConverters, {
+            Object.assign({}, baseInvokeDialogConverters, {
                 'disabled': new BoolExpressionConverter()
             })));
         this.registerBuilder('Microsoft.SendActivity', new AdaptiveTypeBuilder(SendActivity, this._resourceExplorer, {
@@ -277,11 +277,11 @@ export class AdaptiveDialogComponentRegistration implements ComponentRegistratio
             'disabled': new BoolExpressionConverter()
         }));
         this.registerBuilder('Microsoft.AttachmentInput', new AdaptiveTypeBuilder(AttachmentInput, this._resourceExplorer,
-            Object.assign(inputDialogConverters, {
+            Object.assign({}, inputDialogConverters, {
                 'outputFormat': new EnumExpressionConverter(AttachmentOutputFormat)
             })));
         this.registerBuilder('Microsoft.ChoiceInput', new AdaptiveTypeBuilder(ChoiceInput, this._resourceExplorer,
-            Object.assign(inputDialogConverters, {
+            Object.assign({}, inputDialogConverters, {
                 'choices': new ObjectExpressionConverter<ChoiceSet>(),
                 'style': new EnumExpressionConverter(ListStyle),
                 'defaultLocale': new StringExpressionConverter(),
@@ -290,7 +290,7 @@ export class AdaptiveDialogComponentRegistration implements ComponentRegistratio
                 'recognizerOptions': new ObjectExpressionConverter<FindChoicesOptions>()
             })));
         this.registerBuilder('Microsoft.ConfirmInput', new AdaptiveTypeBuilder(ConfirmInput, this._resourceExplorer,
-            Object.assign(inputDialogConverters, {
+            Object.assign({}, inputDialogConverters, {
                 'defaultLocale': new StringExpressionConverter(),
                 'style': new EnumExpressionConverter(ListStyle),
                 'choiceOptions': new ObjectExpressionConverter<ChoiceFactoryOptions>(),
@@ -298,24 +298,24 @@ export class AdaptiveDialogComponentRegistration implements ComponentRegistratio
                 'outputFormat': new StringExpressionConverter()
             })));
         this.registerBuilder('Microsoft.DateTimeInput', new AdaptiveTypeBuilder(DateTimeInput, this._resourceExplorer,
-            Object.assign(inputDialogConverters, {
+            Object.assign({}, inputDialogConverters, {
                 'defaultLocale': new StringExpressionConverter(),
                 'outputFormat': new StringExpressionConverter()
             })));
         this.registerBuilder('Microsoft.NumberInput', new AdaptiveTypeBuilder(NumberInput, this._resourceExplorer,
-            Object.assign(inputDialogConverters, {
+            Object.assign({}, inputDialogConverters, {
                 'defaultLocale': new StringExpressionConverter(),
                 'outputFormat': new NumberExpressionConverter()
             })));
         this.registerBuilder('Microsoft.OAuthInput', new AdaptiveTypeBuilder(OAuthInput, this._resourceExplorer,
-            Object.assign(inputDialogConverters, {
+            Object.assign({}, inputDialogConverters, {
                 'connectionName': new StringExpressionConverter(),
                 'title': new StringExpressionConverter(),
                 'text': new StringExpressionConverter(),
                 'timeout': new IntExpressionConverter()
             })));
         this.registerBuilder('Microsoft.TextInput', new AdaptiveTypeBuilder(TextInput, this._resourceExplorer,
-            Object.assign(inputDialogConverters, {
+            Object.assign({}, inputDialogConverters, {
                 'outputFormat': new StringExpressionConverter()
             })));
     }
