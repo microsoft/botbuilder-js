@@ -39,7 +39,7 @@ export class ChoiceInput extends InputDialog {
     /**
      * List of choices to present to user.
      */
-    public choices: ObjectExpression<ChoiceSet>;
+    public choices: ObjectExpression<ChoiceSet> = new ObjectExpression();
 
     /**
      * Style of the "yes" and "no" choices rendered to the user when prompting.

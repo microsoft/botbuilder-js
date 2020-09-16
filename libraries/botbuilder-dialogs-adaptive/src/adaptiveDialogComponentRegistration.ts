@@ -282,7 +282,7 @@ export class AdaptiveDialogComponentRegistration implements ComponentRegistratio
             })));
         this.registerBuilder('Microsoft.ChoiceInput', new AdaptiveTypeBuilder(ChoiceInput, this._resourceExplorer,
             Object.assign(inputDialogConverters, {
-                'choices': new ArrayExpressionConverter<Choice>(),
+                'choices': new ObjectExpressionConverter<ChoiceSet>(),
                 'style': new EnumExpressionConverter(ListStyle),
                 'defaultLocale': new StringExpressionConverter(),
                 'outputFormat': new EnumExpressionConverter(ChoiceOutputFormat),
