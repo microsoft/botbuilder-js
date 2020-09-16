@@ -55,6 +55,26 @@
                     {
                         "$kind": "Microsoft.SendActivity",
                         "activity": "${user.confirmed}"
+                    },
+                    {
+                        "$kind": "Microsoft.ConfirmInput",
+                        "style": 1,
+                        "alwaysPrompt": true,
+                        "property": "user.confirmed",
+                        "prompt": "A or B",
+                        "unrecognizedPrompt": "I need a A or B.",
+                        "confirmChoices": [
+                            {
+                                "value": "A"
+                            },
+                            {
+                                "value": "B"
+                            }
+                        ]
+                    },
+                    {
+                        "$kind": "Microsoft.SendActivity",
+                        "activity": "confirmation: ${user.confirmed}"
                     }
                 ]
             }
@@ -109,6 +129,30 @@
         {
             "$kind": "Microsoft.Test.AssertReply",
             "text": "confirmation: false"
+        },
+        {
+            "$kind": "Microsoft.Test.AssertReply",
+            "text": "yes or no (1) Yes or (2) No"
+        },
+        {
+            "$kind": "Microsoft.Test.UserSays",
+            "text": "nope"
+        },
+        {
+            "$kind": "Microsoft.Test.AssertReply",
+            "text": "confirmation: false"
+        },
+        {
+            "$kind": "Microsoft.Test.AssertReply",
+            "text": "A or B (1) A or (2) B"
+        },
+        {
+            "$kind": "Microsoft.Test.UserSays",
+            "text": "A"
+        },
+        {
+            "$kind": "Microsoft.Test.AssertReply",
+            "text": "confirmation: true"
         }
     ]
 }

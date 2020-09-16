@@ -12,7 +12,7 @@ import { AdaptiveTypeBuilder } from './adaptiveTypeBuilder';
 import { CustomDialogTypeBuilder } from './customDialogTypeBuilder';
 import { AdaptiveDialog } from './adaptiveDialog';
 import { BeginDialog, BeginSkill, BreakLoop, CancelAllDialogs, CancelDialog, ContinueLoop, DeleteActivity, DeleteProperties, DeleteProperty, EditActions, EditArray, EmitEvent, EndDialog, EndTurn, ForEach, ForEachPage, GetActivityMembers, GetConversationMembers, GotoAction, IfCondition, LogAction, RepeatDialog, ReplaceDialog, SendActivity, SetProperties, SetProperty, SignOutUser, SwitchCondition, TraceActivity, UpdateActivity, ArrayChangeType, PropertyAssignmentConverter, HttpRequest, HttpHeadersConverter, ResponsesTypes, DynamicBeginDialog } from './actions';
-import { Ask, AttachmentInput, ChoiceInput, ConfirmInput, DateTimeInput, NumberInput, OAuthInput, TextInput, AttachmentOutputFormat, ChoiceOutputFormat } from './input';
+import { Ask, AttachmentInput, ChoiceInput, ConfirmInput, DateTimeInput, NumberInput, OAuthInput, TextInput, AttachmentOutputFormat, ChoiceOutputFormat, ChoiceSet } from './input';
 import { OnActivity, OnAssignEntity, OnBeginDialog, OnCancelDialog, OnChooseEntity, OnChooseIntent, OnChooseProperty, OnCondition, OnConversationUpdateActivity, OnDialogEvent, OnEndOfActions, OnEndOfConversationActivity, OnError, OnEventActivity, OnHandoffActivity, OnIntent, OnInvokeActivity, OnMessageActivity, OnMessageDeleteActivity, OnMessageReactionActivity, OnMessageUpdateActivity, OnQnAMatch, OnRepromptDialog, OnTypingActivity, OnUnknownIntent } from './conditions';
 import { CrossTrainedRecognizerSet, MultiLanguageRecognizer, RecognizerSet, RegexRecognizer, IntentPatternConverter } from './recognizers';
 import { AgeEntityRecognizer, ConfirmationEntityRecognizer, CurrencyEntityRecognizer, DateTimeEntityRecognizer, DimensionEntityRecognizer, EmailEntityRecognizer, GuidEntityRecognizer, HashtagEntityRecognizer, IpEntityRecognizer, MentionEntityRecognizer, NumberEntityRecognizer, OrdinalEntityRecognizer, PercentageEntityRecognizer, PhoneNumberEntityRecognizer, RegexEntityRecognizer, TemperatureEntityRecognizer, UrlEntityRecognizer } from './recognizers/entityRecognizers';
@@ -294,6 +294,7 @@ export class AdaptiveDialogComponentRegistration implements ComponentRegistratio
                 'defaultLocale': new StringExpressionConverter(),
                 'style': new EnumExpressionConverter(ListStyle),
                 'choiceOptions': new ObjectExpressionConverter<ChoiceFactoryOptions>(),
+                'confirmChoices': new ObjectExpressionConverter<ChoiceSet>(),
                 'outputFormat': new StringExpressionConverter()
             })));
         this.registerBuilder('Microsoft.DateTimeInput', new AdaptiveTypeBuilder(DateTimeInput, this._resourceExplorer,
