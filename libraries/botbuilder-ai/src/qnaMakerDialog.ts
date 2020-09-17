@@ -10,6 +10,7 @@ import { WaterfallDialog, Dialog, DialogTurnResult, DialogContext, WaterfallStep
 import { StringExpression, NumberExpression, IntExpression, ArrayExpression, BoolExpression, EnumExpression } from 'adaptive-expressions';
 import { QnAMakerOptions } from './qnamaker-interfaces/qnamakerOptions';
 import { RankerTypes } from './qnamaker-interfaces/rankerTypes';
+import { JoinOperator } from './qnamaker-interfaces/JoinOperator';
 import { QnAMaker, QnAMakerResult } from './';
 import { FeedbackRecord, FeedbackRecords, QnAMakerMetadata } from './qnamaker-interfaces';
 import { QnACardBuilder } from './qnaCardBuilder';
@@ -60,14 +61,14 @@ export interface QnAMakerDialogOptions {
 
 /**
  * A dialog that supports multi-step and adaptive-learning QnA Maker services.
- * 
+ *
  * @remarks
  * An instance of this class targets a specific QnA Maker knowledge base.
  * It supports knowledge bases that include follow-up prompt and active learning features.
  * The dialog will also present user with appropriate multi-turn prompt or active learning options.
  */
 export class QnAMakerDialog extends WaterfallDialog {
-    
+
     // state and step value key constants
     /**
      * The path for storing and retrieving QnA Maker context data.
@@ -80,7 +81,7 @@ export class QnAMakerDialog extends WaterfallDialog {
     private qnAContextData: string = 'previousContextData';
     /**
      * The path for storing and retrieving the previous question ID.
-     *   
+     *
      * @remarks
      * This represents the QnA question ID from the previous turn.
      * It is stored within the current step's [WaterfallStepContext](xref:botbuilder-dialogs.WaterfallStepContext).
@@ -89,7 +90,7 @@ export class QnAMakerDialog extends WaterfallDialog {
     private previousQnAId: string = 'previousQnAId';
     /**
      * The path for storing and retrieving the options for this instance of the dialog.
-     * 
+     *
      * @remarks
      * This includes the options with which the dialog was started and options expected by the QnA Maker service.
      * It is stored within the current step's [WaterfallStepContext](xref:botbuilder-dialogs.WaterfallStepContext).
@@ -116,6 +117,7 @@ export class QnAMakerDialog extends WaterfallDialog {
     public logPersonalInformation: BoolExpression = new BoolExpression('=settings.telemetry.logPersonalInformation');
     public isTest: boolean = false;
     public rankerType: EnumExpression<RankerTypes> = new EnumExpression(RankerTypes.default);
+    private strictFiltersJoinOperator: JoinOperator;
 
     /**
      * Initializes a new instance of the [QnAMakerDialog](xref:QnAMakerDialog) class.
@@ -132,7 +134,7 @@ export class QnAMakerDialog extends WaterfallDialog {
      * @param dialogId (Optional) Id of the created dialog. Default is 'QnAMakerDialog'.
      */
     public constructor();
-    public constructor(knowledgeBaseId?: string, endpointKey?: string, hostname?: string, noAnswer?: Activity, threshold: number = 0.3, activeLearningCardTitle: string = 'Did you mean:', cardNoMatchText: string = 'None of the above.', top: number = 3, cardNoMatchResponse?: Activity, strictFilters?: QnAMakerMetadata[], dialogId: string = 'QnAMakerDialog') {
+    public constructor(knowledgeBaseId?: string, endpointKey?: string, hostname?: string, noAnswer?: Activity, threshold: number = 0.3, activeLearningCardTitle: string = 'Did you mean:', cardNoMatchText: string = 'None of the above.', top: number = 3, cardNoMatchResponse?: Activity, strictFilters?: QnAMakerMetadata[], dialogId: string = 'QnAMakerDialog', strictFiltersJoinOperator: JoinOperator = JoinOperator.AND ) {
         super(dialogId);
         if (knowledgeBaseId) { this.knowledgeBaseId = new StringExpression(knowledgeBaseId); }
         if (endpointKey) { this.endpointKey = new StringExpression(endpointKey); }
@@ -145,6 +147,7 @@ export class QnAMakerDialog extends WaterfallDialog {
         if (noAnswer) { this.noAnswer = new BindToActivity(noAnswer); }
         if (cardNoMatchResponse) { this.cardNoMatchResponse = new BindToActivity(cardNoMatchResponse); }
 
+        this.strictFiltersJoinOperator = strictFiltersJoinOperator;
         this.addStep(this.callGenerateAnswer.bind(this));
         this.addStep(this.callTrain.bind(this));
         this.addStep(this.checkForMultiTurnPrompt.bind(this));
@@ -153,24 +156,24 @@ export class QnAMakerDialog extends WaterfallDialog {
 
     /**
      * Called when the dialog is started and pushed onto the dialog stack.
-     * 
+     *
      * @remarks
      * If the task is successful, the result indicates whether the dialog is still
      * active after the turn has been processed by the dialog.
-     * 
+     *
      * You can use the [options](#options) parameter to include the QnA Maker context data,
      * which represents context from the previous query. To do so, the value should include a
      * `context` property of type [QnAResponseContext](#QnAResponseContext).
-     * 
+     *
      * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
      * @param options (Optional) Initial information to pass to the dialog.
      */
     public async beginDialog(dc: DialogContext, options?: object): Promise<DialogTurnResult> {
         if (!dc) { throw new Error('Missing DialogContext'); }
-        
-        if (dc.context.activity.type != ActivityTypes.Message) 
-        { 
-            return dc.endDialog(); 
+
+        if (dc.context.activity.type != ActivityTypes.Message)
+        {
+            return dc.endDialog();
         }
 
         const dialogOptions: QnAMakerDialogOptions = {
@@ -199,10 +202,11 @@ export class QnAMakerDialog extends WaterfallDialog {
             top: this.top && this.top.getValue(dc.state),
             qnaId: 0,
             rankerType: this.rankerType && this.rankerType.getValue(dc.state) as string,
-            isTest: this.isTest
+            isTest: this.isTest,
+            strictFiltersJoinOperator: this.strictFiltersJoinOperator
         };
     };
-    
+
     /**
      * Gets the options the dialog will use to display query results to the user.
      * @param dc The dialog context for the current turn of conversation.
@@ -230,10 +234,10 @@ export class QnAMakerDialog extends WaterfallDialog {
         step.values[this.currentQuery] = step.context.activity.text;
         const previousContextData: { [key: string]: number } = step.activeDialog.state[this.qnAContextData] || {};
         var previousQnAId = step.activeDialog.state[this.previousQnAId] || 0;
-        
+
         if (previousQnAId > 0) {
             dialogOptions.qnaMakerOptions.context = { previousQnAId: previousQnAId, previousUserQuery: '' };
-            
+
             if (previousContextData[step.context.activity.text]) {
                 dialogOptions.qnaMakerOptions.qnaId = previousContextData[step.context.activity.text];
             }
@@ -242,7 +246,7 @@ export class QnAMakerDialog extends WaterfallDialog {
         const qna = await this.getQnAClient(step);
 
         const response = await qna.getAnswersRaw(step.context, dialogOptions.qnaMakerOptions);
-            
+
         const qnaResponse = {
             activeLearningEnabled: response.activeLearningEnabled,
             answers: response.answers
@@ -251,34 +255,34 @@ export class QnAMakerDialog extends WaterfallDialog {
         previousQnAId = -1;
         step.activeDialog.state[this.previousQnAId] = previousQnAId;
         const isActiveLearningEnabled = qnaResponse.activeLearningEnabled;
-        
+
         step.values[this.qnAData] = response.answers;
-        
+
         if (qnaResponse.answers.length > 0 && qnaResponse.answers[0].score <= ActiveLearningUtils.MaximumScoreForLowScoreVariation / 100) {
             qnaResponse.answers = qna.getLowScoreVariation(qnaResponse.answers);
-            
+
             if (isActiveLearningEnabled && qnaResponse.answers && qnaResponse.answers.length > 1) {
                 var suggestedQuestions: string[] = [];
-                
+
                 qnaResponse.answers.forEach(answer => {
                     suggestedQuestions.push(answer.questions[0]);
                 });
 
-                var message = QnACardBuilder.getSuggestionsCard(suggestedQuestions, dialogOptions.qnaDialogResponseOptions.activeLearningCardTitle, dialogOptions.qnaDialogResponseOptions.cardNoMatchText); 
+                var message = QnACardBuilder.getSuggestionsCard(suggestedQuestions, dialogOptions.qnaDialogResponseOptions.activeLearningCardTitle, dialogOptions.qnaDialogResponseOptions.cardNoMatchText);
                 await step.context.sendActivity(message);
 
                 step.activeDialog.state[this.options] = dialogOptions;
-            
+
                 return Dialog.EndOfTurn;
             }
         }
 
         const result: QnAMakerResult[] = [];
-        
+
         if (response.answers && response.answers.length > 0) {
             result.push(response.answers[0]);
         }
-        
+
         step.values[this.qnAData] = result;
         step.activeDialog.state[this.options] = dialogOptions;
         return await step.next(result);
@@ -319,7 +323,7 @@ export class QnAMakerDialog extends WaterfallDialog {
                 await qnaClient.callTrainAsync(feedbackRecords);
 
                 return await step.next(qnaResult);
-            } 
+            }
             else if(reply == dialogOptions.qnaDialogResponseOptions.cardNoMatchText)
             {
                 const activity = dialogOptions.qnaDialogResponseOptions.cardNoMatchResponse;
@@ -360,7 +364,7 @@ export class QnAMakerDialog extends WaterfallDialog {
                 step.activeDialog.state[this.previousQnAId] = answer.id;
                 step.activeDialog.state[this.options] = dialogOptions;
 
-                var message = QnACardBuilder.getQnAPromptsCard(answer); 
+                var message = QnACardBuilder.getQnAPromptsCard(answer);
                 await step.context.sendActivity(message);
 
                 return Dialog.EndOfTurn;
@@ -371,7 +375,7 @@ export class QnAMakerDialog extends WaterfallDialog {
     }
 
     /**
-     * Displays an appropriate response based on the incoming result to the user.If an answer has been identified it 
+     * Displays an appropriate response based on the incoming result to the user.If an answer has been identified it
      * is sent to the user. Alternatively, if no answer has been identified or the user has indicated 'no match' on an
      * active learning card, then an appropriate message is sent to the user.
     **/
@@ -432,7 +436,7 @@ export class QnAMakerDialog extends WaterfallDialog {
         if (host.includes('qnamaker/v5')) {
             return host;
         }
-        
+
         // V4 API logic
         // If the hostname contains all the necessary information, return it
         if (/^https:\/\/.*\.azurewebsites\.net\/qnamaker\/?/i.test(host)) {

@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 import { DialogTurnResult, DialogContext, Dialog, TemplateInterface } from 'botbuilder-dialogs';
-import { Activity, StringUtils } from 'botbuilder-core';
+import { Activity, ActivityTypes, ResourceResponse, StringUtils } from 'botbuilder-core';
 import { ActivityTemplate } from '../templates/activityTemplate';
 import { StaticActivityTemplate } from '../templates/staticActivityTemplate';
 import { BoolExpression } from 'adaptive-expressions';
@@ -63,7 +63,16 @@ export class SendActivity<O extends object = {}> extends Dialog<O> {
             }
         });
 
-        const result = await dc.context.sendActivity(activityResult);
+        let result: ResourceResponse;
+        if (activityResult.type !== ActivityTypes.Message
+             || activityResult.text
+             || activityResult.speak
+             || (activityResult.attachments && activityResult.attachments.length > 0)
+             || activityResult.suggestedActions
+             || activityResult.channelData) {
+                result = await dc.context.sendActivity(activityResult);
+        }
+
         return await dc.endDialog(result);
     }
 

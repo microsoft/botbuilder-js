@@ -27,7 +27,7 @@ import { RankerTypes } from '../qnamaker-interfaces/rankerTypes';
  */
 export class GenerateAnswerUtils {
     httpRequestUtils: HttpRequestUtils;
-    
+
     /**
      * Creates new Generate answer utils.
      * @param _options Settings used to configure the instance.
@@ -47,7 +47,7 @@ export class GenerateAnswerUtils {
      */
     public async queryQnaService(endpoint: QnAMakerEndpoint, question: string, options?: QnAMakerOptions): Promise<QnAMakerResult[]> {
         var result = await this.queryQnaServiceRaw(endpoint, question, options);
-        
+
         return result.answers;
     }
 
@@ -60,20 +60,21 @@ export class GenerateAnswerUtils {
     public async queryQnaServiceRaw(endpoint: QnAMakerEndpoint, question: string, options?: QnAMakerOptions): Promise<QnAMakerResults> {
         const url: string = `${ endpoint.host }/knowledgebases/${ endpoint.knowledgeBaseId }/generateanswer`;
         var queryOptions: QnAMakerOptions = { ...this._options, ...options } as QnAMakerOptions;
-        
+
         queryOptions.rankerType = !queryOptions.rankerType ? RankerTypes.default : queryOptions.rankerType;
         this.validateOptions(queryOptions);
 
         var payloadBody = JSON.stringify({
             question: question,
+             strictFiltersCompoundOperationType: queryOptions.strictFiltersJoinOperator,
             ...queryOptions
         });
 
         const qnaResultJson: any = await this.httpRequestUtils.executeHttpRequest(url, payloadBody, this.endpoint, queryOptions.timeout);
-        
+
         return this.formatQnaResult(qnaResultJson);
     }
-    
+
     /**
      * Emits a trace event detailing a QnA Maker call and its results.
      *
@@ -105,7 +106,7 @@ export class GenerateAnswerUtils {
             value: traceInfo
         });
     }
-    
+
     /**
      * Validate qna maker options
      *
@@ -122,11 +123,11 @@ export class GenerateAnswerUtils {
             this.validateTop(top);
         }
     }
-    
+
     /**
      * Sorts all QnAMakerResult from highest-to-lowest scoring.
      * Filters QnAMakerResults within threshold specified (default threshold: .001).
-     * 
+     *
      * @param answers Answers returned by QnA Maker.
      * @param options (Optional) The options for the QnA Maker knowledge base. If null, constructor option is used for this instance.
      */
@@ -136,7 +137,7 @@ export class GenerateAnswerUtils {
         return answers.filter((ans: QnAMakerResult) => ans.score >= minScore)
             .sort((a: QnAMakerResult, b: QnAMakerResult) => b.score - a.score);
     }
-    
+
     private formatQnaResult(qnaResult: any): QnAMakerResults {
         qnaResult.answers = qnaResult.answers.map((ans: any) => {
             ans.score = ans.score / 100;
