@@ -74,7 +74,7 @@ export class AdaptiveDialogComponentRegistration implements ComponentRegistratio
         }, {
             kind: 'Microsoft.BeginDialog',
             factory: BeginDialog,
-            converters: Object.assign(baseInvokeDialogConverters, {
+            converters: Object.assign({}, baseInvokeDialogConverters, {
                 'resultProperty': new StringExpressionConverter(),
                 'disabled': new BoolExpressionConverter()
             })
@@ -240,14 +240,14 @@ export class AdaptiveDialogComponentRegistration implements ComponentRegistratio
         }, {
             kind: 'Microsoft.RepeatDialog',
             factory: RepeatDialog,
-            converters: Object.assign(baseInvokeDialogConverters, {
+            converters: Object.assign({}, baseInvokeDialogConverters, {
                 'disabled': new BoolExpressionConverter(),
                 'allowLoop': new BoolExpressionConverter()
             })
         }, {
             kind: 'Microsoft.ReplaceDialog',
             factory: ReplaceDialog,
-            converters: Object.assign(baseInvokeDialogConverters, {
+            converters: Object.assign({}, baseInvokeDialogConverters, {
                 'disabled': new BoolExpressionConverter()
             })
         }, {
@@ -418,13 +418,13 @@ export class AdaptiveDialogComponentRegistration implements ComponentRegistratio
         }, {
             kind: 'Microsoft.AttachmentInput',
             factory: AttachmentInput,
-            converters: Object.assign(inputDialogConverters, {
+            converters: Object.assign({}, inputDialogConverters, {
                 'outputFormat': new EnumExpressionConverter(AttachmentOutputFormat)
             })
         }, {
             kind: 'Microsoft.ChoiceInput',
             factory: ChoiceInput,
-            converters: Object.assign(inputDialogConverters, {
+            converters: Object.assign({}, inputDialogConverters, {
                 'choices': new ArrayExpressionConverter<Choice>(),
                 'style': new EnumExpressionConverter(ListStyle),
                 'defaultLocale': new StringExpressionConverter(),
@@ -435,7 +435,7 @@ export class AdaptiveDialogComponentRegistration implements ComponentRegistratio
         }, {
             kind: 'Microsoft.ConfirmInput',
             factory: ConfirmInput,
-            converters: Object.assign(inputDialogConverters, {
+            converters: Object.assign({}, inputDialogConverters, {
                 'defaultLocale': new StringExpressionConverter(),
                 'style': new EnumExpressionConverter(ListStyle),
                 'choiceOptions': new ObjectExpressionConverter<ChoiceFactoryOptions>(),
@@ -444,21 +444,21 @@ export class AdaptiveDialogComponentRegistration implements ComponentRegistratio
         }, {
             kind: 'Microsoft.DateTimeInput',
             factory: DateTimeInput,
-            converters: Object.assign(inputDialogConverters, {
+            converters: Object.assign({}, inputDialogConverters, {
                 'defaultLocale': new StringExpressionConverter(),
                 'outputFormat': new StringExpressionConverter()
             })
         }, {
             kind: 'Microsoft.NumberInput',
             factory: NumberInput,
-            converters: Object.assign(inputDialogConverters, {
+            converters: Object.assign({}, inputDialogConverters, {
                 'defaultLocale': new StringExpressionConverter(),
                 'outputFormat': new NumberExpressionConverter()
             })
         }, {
             kind: 'Microsoft.OAuthInput',
             factory: OAuthInput,
-            converters: Object.assign(inputDialogConverters, {
+            converters: Object.assign({}, inputDialogConverters, {
                 'connectionName': new StringExpressionConverter(),
                 'title': new StringExpressionConverter(),
                 'text': new StringExpressionConverter(),
@@ -467,7 +467,7 @@ export class AdaptiveDialogComponentRegistration implements ComponentRegistratio
         }, {
             kind: 'Microsoft.TextInput',
             factory: TextInput,
-            converters: Object.assign(inputDialogConverters, {
+            converters: Object.assign({}, inputDialogConverters, {
                 'outputFormat': new StringExpressionConverter()
             })
         }, {
