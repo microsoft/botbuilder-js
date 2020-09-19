@@ -1,5 +1,5 @@
-const { ExpressionParser } = require('../lib');
-const assert = require('assert');
+import { ExpressionParser } from '../src';
+import assert from 'assert';
 
 const parser = new ExpressionParser();
 
@@ -528,7 +528,7 @@ describe('expression functional test', () => {
             describe(label, () => {
                 testCases.forEach(([expression, description]) => {
                     it(`${expression} ${description}`, () => {
-                        let errorResult;
+                        let errorResult: any;
 
                         try {
                             const { error } = parser.parse(expression).tryEvaluate(scope);

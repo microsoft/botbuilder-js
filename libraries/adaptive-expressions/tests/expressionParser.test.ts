@@ -1,8 +1,8 @@
-const assert = require('assert');
-const bigInt = require('big-integer');
-const { Expression, SimpleObjectMemory, FunctionUtils, Options } = require('../lib');
-const { TimexProperty } = require('@microsoft/recognizers-text-data-types-timex-expression');
-const { useFakeTimers } = require('sinon');
+import assert from 'assert';
+import bigInt from 'big-integer';
+import { Expression, SimpleObjectMemory, FunctionUtils, Options } from '../src';
+import { TimexProperty } from '@microsoft/recognizers-text-data-types-timex-expression';
+import { useFakeTimers } from 'sinon';
 
 const one = ['one'];
 const oneTwo = ['one', 'two'];
@@ -943,7 +943,7 @@ describe('expression parser functional test', () => {
     // To evaluate expressions like "getPastTime", we need to freeze the system clock so that every call to
     // `new Date()` done by both the test and by ExpressionEvaluator return the exact same time.
     describe('mocked time expressions', () => {
-        let clock;
+        let clock: any;
 
         beforeEach(() => {
             clock = useFakeTimers({
@@ -974,7 +974,7 @@ describe('expression parser functional test', () => {
 
         // normal case, note, we doesn't append a " yet
         let exp = Expression.parse('a[f].b[n].z');
-        let path;
+        let path: string;
         ({ path } = FunctionUtils.tryAccumulatePath(exp, memory, undefined));
         assert.strictEqual(path, 'a[\'food\'].b[2].z');
 
@@ -1001,8 +1001,8 @@ describe('expression parser functional test', () => {
         const options = new Options();
         options.nullSubstitution = (path) => `${path} is undefined`;
 
-        let value;
-        let error;
+        let value: any;
+        let error: string;
 
         // normal case null value is substituted
         var exp = Expression.parse('food');
