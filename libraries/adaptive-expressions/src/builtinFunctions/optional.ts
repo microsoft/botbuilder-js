@@ -17,6 +17,7 @@ import { ReturnType } from '../returnType';
 export class Optional extends ExpressionEvaluator {
     public constructor() {
         super(ExpressionType.Optional, Optional.evaluator(), ReturnType.Boolean, FunctionUtils.validateUnaryBoolean);
+        this.negation = this;
     }
 
     private static evaluator(): EvaluateExpressionDelegate {

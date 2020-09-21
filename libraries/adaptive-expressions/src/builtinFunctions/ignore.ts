@@ -22,6 +22,7 @@ import { ReturnType } from '../returnType';
 export class Ignore extends ExpressionEvaluator {
     public constructor() {
         super(ExpressionType.Ignore, Ignore.evaluator, ReturnType.Boolean, FunctionUtils.validateUnaryBoolean);
+        this.negation = this;
     }
 
     private static evaluator(expression: Expression, state: MemoryInterface, options: Options): ValueWithError {
