@@ -41,7 +41,7 @@ export class Expression {
      */
     public children: Expression[];
 
-    protected readonly evaluator: ExpressionEvaluator;
+    public readonly evaluator: ExpressionEvaluator;
 
     /**
      * Dictionary of function => ExpressionEvaluator.
@@ -77,7 +77,7 @@ export class Expression {
      */
     public deepEquals(other: Expression): boolean {
         let eq = false;
-        if (!other) {
+        if (other) {
             eq = this.type === other.type;
             if (eq) {
                 eq = this.children.length === other.children.length;
@@ -86,7 +86,7 @@ export class Expression {
                     for (let i = 0; eq && i < this.children.length; i++) {
                         const primary = this.children[0];
                         let found = false;
-                        for (var j = 0; j < this.children.length; j++) {
+                        for (let j = 0; j < this.children.length; j++) {
                             if (primary.deepEquals(other.children[j])) {
                                 found = true;
                                 break;
