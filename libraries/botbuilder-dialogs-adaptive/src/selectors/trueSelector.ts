@@ -13,7 +13,7 @@ import { ActionContext } from '../actionContext';
 /**
  * Select all rules which evaluate to true.
  */
-export class TrueSelector implements TriggerSelector {
+export class TrueSelector extends TriggerSelector {
     private _conditionals: OnCondition[];
     private _evaluate: boolean;
 
@@ -27,19 +27,19 @@ export class TrueSelector implements TriggerSelector {
         this._evaluate = evaluate;
     }
 
-    public select(actionContext: ActionContext): Promise<number[]> {
-        const candidates = [];
+    public select(actionContext: ActionContext): Promise<OnCondition[]> {
+        const candidates: OnCondition[] = [];
 
         for (let i = 0; i < this._conditionals.length; i++) {
+            const conditional = this._conditionals[i];
             if (this._evaluate) {
-                const conditional = this._conditionals[i];
                 const expression = conditional.getExpression(this.parser);
                 const { value, error } = expression.tryEvaluate(actionContext.state);
                 if (value && !error) {
-                    candidates.push(i);
+                    candidates.push(conditional);
                 }
             } else {
-                candidates.push(i);
+                candidates.push(conditional);
             }
         }
 

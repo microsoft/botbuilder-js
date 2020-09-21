@@ -13,7 +13,7 @@ import { ActionContext } from '../actionContext';
 /**
  * Select the first true rule implementation of TriggerSelector
  */
-export class FirstSelector implements TriggerSelector {
+export class FirstSelector extends TriggerSelector {
     private _conditionals: OnCondition[];
     private _evaluate: boolean;
 
@@ -27,26 +27,26 @@ export class FirstSelector implements TriggerSelector {
         this._evaluate = evaluate;
     }
 
-    public select(actionContext: ActionContext): Promise<number[]> {
-        let selection = -1;
+    public select(actionContext: ActionContext): Promise<OnCondition[]> {
+        let selection: OnCondition;
         if (this._evaluate) {
             for (let i = 0; i < this._conditionals.length; i++) {
                 const conditional = this._conditionals[i];
                 const expression = conditional.getExpression(this.parser);
                 const { value, error } = expression.tryEvaluate(actionContext.state);
                 if (value && !error) {
-                    selection = i;
+                    selection = conditional;
                     break;
                 }
             }
         } else {
             if (this._conditionals.length > 0) {
-                selection = 0;
+                selection = this._conditionals[0];
             }
         }
 
         const result = [];
-        if (selection != -1) {
+        if (selection) {
             result.push(selection);
         }
 

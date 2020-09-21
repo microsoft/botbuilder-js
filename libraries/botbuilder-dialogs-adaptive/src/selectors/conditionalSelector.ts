@@ -14,7 +14,7 @@ import { ActionContext } from '../actionContext';
 /**
  * Select between two rule selectors based on a condition.
  */
-export class ConditionalSelector implements TriggerSelector {
+export class ConditionalSelector extends TriggerSelector {
     private _conditionals: OnCondition[];
     private _evaluate: boolean;
 
@@ -43,7 +43,7 @@ export class ConditionalSelector implements TriggerSelector {
         this._evaluate = evaluate;
     }
 
-    public select(actionContext: ActionContext): Promise<number[]> {
+    public select(actionContext: ActionContext): Promise<OnCondition[]> {
         let selector: TriggerSelector;
         if (this.condition && this.condition.getValue(actionContext.state)) {
             selector = this.ifTrue;

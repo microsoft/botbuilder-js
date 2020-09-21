@@ -7,5 +7,6 @@
  */
 export * from './conditionalSelector';
 export * from './firstSelector';
+export * from './mostSpecificSelector';
 export * from './randomSelector';
 export * from './trueSelector';
