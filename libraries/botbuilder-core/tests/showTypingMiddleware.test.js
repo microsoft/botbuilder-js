@@ -1,5 +1,5 @@
 const assert = require('assert');
-const { ActivityTypes, ShowTypingMiddleware, TestAdapter } = require('../lib');
+const { ActivityTypes, ShowTypingMiddleware, TestAdapter, TestSkillAdapter } = require('../lib');
 
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
@@ -66,5 +66,17 @@ describe(`ShowTypingMiddleware`, function () {
         }
 
         adapter.send('foo').assertReply(activity => assert.strictEqual(activity.type, ActivityTypes.Message))
+    });
+
+    it('should NOT send a typing indicator when bot is running as a skill', function (done) {
+        const skillAdapter = new TestSkillAdapter(async context => {
+            await sleep(100);
+            await context.sendActivity(`echo:${context.activity.text}`);
+        }).use(new ShowTypingMiddleware(1, 1000));
+
+        skillAdapter
+            .send('foo')
+            .assertReply('echo:foo')
+            .then(done);
     });
 });
