@@ -5,8 +5,11 @@
   "scripts": {
     "test": "tsc && mocha tests/*.test.js",
     "build": "tsc",
-    "set-version": "npm version --allow-same-version ${Version}"
+    "set-version": "npm version --allow-same-version ${Version}",
+    "test:compat": "api-extractor run --verbose"
   },
+  "main": "./lib/index.js",
+  "typings": "./lib/index.d.ts",
   "dependencies": {
     "botbuilder-core": "4.1.6",
     "botbuilder-dialogs": "4.1.6",
@@ -15,9 +18,11 @@
     "adaptive-expressions": "4.1.6"
   },
   "devDependencies": {
+    "@microsoft/api-extractor": "^7.7.12",
     "@types/mocha": "^5.2.7",
     "nock": "^11.9.1",
-    "mocha": "^6.2.3"
+    "mocha": "^6.2.3",
+    "typescript": "3.5.3"
   },
   "author": "Microsoft",
   "license": "MIT"

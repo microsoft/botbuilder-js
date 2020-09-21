@@ -11,7 +11,7 @@
  * This class automatically updates the cache when resource change events occure.
  */
 import { Resource, ResourceExplorer, FileResource, ResourceChangeEvent } from 'botbuilder-dialogs-declarative';
-import { ImportResolverDelegate } from 'botbuilder-lg';
+import { ImportResolverDelegate, LGResource } from 'botbuilder-lg';
 import { normalize, basename, extname } from 'path';
 import { LanguageGenerator } from '../languageGenerator';
 import { LanguageResourceLoader } from '../languageResourceLoader';
@@ -65,7 +65,7 @@ export class LanguageGeneratorManager {
     public languageGenerators: Map<string, LanguageGenerator> = new Map<string, LanguageGenerator>();
 
     public static resourceExplorerResolver(locale: string, resourceMapping: Map<string, Resource[]>): ImportResolverDelegate {
-        return (source: string, id: string): { content: string; id: string } => {
+        return (lgResource: LGResource, id: string): LGResource => {
             const fallbackLocale = LanguageResourceLoader.fallbackLocale(locale, Array.from(resourceMapping.keys()));
             const resources: Resource[] = resourceMapping.get(fallbackLocale.toLowerCase());
 
@@ -76,19 +76,12 @@ export class LanguageGeneratorManager {
             if (resource === undefined) {
                 throw Error(`There is no matching LG resource for ${ resourceName }`);
             } else {
-                const text = resource.readText();
-                return { content: text, id: resource.id };
+                return new LGResource(resource.id, resource.fullName, resource.readText());
             }
         };
     }
 
     private getTemplateEngineLanguageGenerator(resource: Resource): TemplateEngineLanguageGenerator {
-        if (resource instanceof FileResource) {
-            const fileResource = resource as FileResource;
-            return new TemplateEngineLanguageGenerator(fileResource.fullName, this._multiLanguageResources);
-        } else {
-            const text = resource.readText();
-            return new TemplateEngineLanguageGenerator(text, resource.id, this._multiLanguageResources);
-        }
+        return new TemplateEngineLanguageGenerator(resource, this._multiLanguageResources);
     }
 }

@@ -9,7 +9,7 @@
 import { normalize, basename } from 'path';
 import { DialogContext } from 'botbuilder-dialogs';
 import { Resource } from 'botbuilder-dialogs-declarative';
-import { Templates } from 'botbuilder-lg';
+import { Templates, LGResource } from 'botbuilder-lg';
 import { LanguageGenerator } from '../languageGenerator';
 import { LanguageResourceLoader } from '../languageResourceLoader';
 import { LanguageGeneratorManager } from './languageGeneratorManager';
@@ -24,26 +24,18 @@ export class TemplateEngineLanguageGenerator implements LanguageGenerator{
 
     public id: string = '';
 
-    public constructor(arg1?: Templates | string, arg2?: string | Map<string,Resource[]>, arg3?: Map<string,Resource[]>) {
+    public constructor(arg1?: Templates | Resource, arg2?: Map<string,Resource[]>) {
         if (arguments.length === 0) {
             this.lg = new Templates();
         } else if(arguments.length === 1 && arg1 instanceof Templates) {
             this.lg = arg1;
-        } else if (arguments.length === 2 && typeof arg1 === 'string' && arg2 instanceof Map) {
-            const filePath = normalize(arg1 as string);
+        } else if (arguments.length === 2 && arg1 instanceof Resource && arg2 instanceof Map) {
             const resourceMapping = arg2 as  Map<string,Resource[]>;
-            this.id = basename(filePath);
+            this.id = arg1.id;
             const {prefix: _, language: locale} = LanguageResourceLoader.parseLGFileName(this.id);
             const importResolver = LanguageGeneratorManager.resourceExplorerResolver(locale, resourceMapping);
-            this.lg = Templates.parseFile(filePath, importResolver);
-        } else if (arguments.length === 3 && typeof arg1 === 'string' && typeof arg2 === 'string' && arg3 instanceof Map) {
-            const id = arg2 as string;
-            this.id = id !== undefined? id : this.DEFAULTLABEL;
-            const {prefix: _, language: locale} = LanguageResourceLoader.parseLGFileName(arg2);
-            const resourceMapping = arg3 as  Map<string,Resource[]>;
-            const importResolver = LanguageGeneratorManager.resourceExplorerResolver(locale, resourceMapping);
-            const lgText = arg1? arg1 : '';
-            this.lg = Templates.parseText(lgText, id, importResolver);
+            const lgResource = new LGResource(this.id, arg1.fullName, arg1.readText());
+            this.lg = Templates.parseResource(lgResource, importResolver);
         }
     }
     
