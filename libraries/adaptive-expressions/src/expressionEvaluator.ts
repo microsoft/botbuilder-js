@@ -52,6 +52,7 @@ export class ExpressionEvaluator {
     public returnType: ReturnType;
     private readonly _validator: ValidateExpressionDelegate;
     private readonly _evaluator: EvaluateExpressionDelegate;
+    private _negation: ExpressionEvaluator;
 
     /**
      * Initializes a new instance of the <see cref="ExpressionEvaluator"/> class.
@@ -70,6 +71,21 @@ export class ExpressionEvaluator {
         this.returnType = returnType;
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         this._validator = validator || ((expr: Expression): any => { });
+    }
+    
+    /**
+     * Gets the evaluator that is a negation of this one.
+     */
+    public get negation(): ExpressionEvaluator {
+        return this._negation;
+    }
+    
+    /**
+     * Sets the evaluator that is a negation of this one.
+     */
+    public set negation(value: ExpressionEvaluator) {
+        value._negation = this;
+        this._negation = value;
     }
 
     /**
