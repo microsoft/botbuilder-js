@@ -18,7 +18,7 @@ import * as path from 'path';
 import * as fs from 'fs';
 import { TemplateExtensions } from './templateExtensions';
 import { TemplateErrors } from './templateErrors';
-import { EvaluationOptions } from './evaluationOptions';
+import { EvaluationOptions, LGCacheScope } from './evaluationOptions';
 import { Templates } from './templates';
 /**
  * Evaluation runtime engine
@@ -41,6 +41,7 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGTempla
     public readonly templateMap: { [name: string]: Template };
     private readonly evaluationTargetStack: EvaluationTarget[] = [];
     private readonly lgOptions: EvaluationOptions;
+    private readonly cacheResult: Map<string, any> = new Map<string, any>();
 
     public static readonly LGType = 'lgType';
     public static readonly activityAttachmentFunctionName = 'ActivityAttachment';
@@ -86,24 +87,41 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGTempla
                 .join(' => ') }`);
         }
 
-        let previousEvaluateTarget: EvaluationTarget;
-
-        if (this.evaluationTargetStack.length !== 0) {
-            previousEvaluateTarget = this.evaluationTargetStack[this.evaluationTargetStack.length - 1];
-            if (!reExecute && previousEvaluateTarget.evaluatedChildren.has(currentEvulateId)) {
-                return previousEvaluateTarget.evaluatedChildren.get(currentEvulateId);
+        let result: any;
+        let hasResult = false;
+        if (!reExecute) {
+            if (this.lgOptions.cacheScope === LGCacheScope.Global) {
+                if (this.cacheResult.has(currentEvulateId)) {
+                    result = this.cacheResult.get(currentEvulateId);
+                    hasResult = true;
+                }
+            } else if (this.lgOptions.cacheScope === undefined || this.lgOptions.cacheScope === LGCacheScope.Local) {
+                let previousEvaluateTarget: EvaluationTarget;
+                if (this.evaluationTargetStack.length !== 0) {
+                    previousEvaluateTarget = this.evaluationTargetStack[this.evaluationTargetStack.length - 1];
+                    if (previousEvaluateTarget.cachedEvaluatedChildren.has(currentEvulateId)) {
+                        result = previousEvaluateTarget.cachedEvaluatedChildren.get(currentEvulateId);
+                        hasResult = true;
+                    }
+                }
             }
         }
 
-        // Using a stack to track the evalution trace
-        this.evaluationTargetStack.push(templateTarget);
-        let result: string = this.visit(this.templateMap[templateName].templateBodyParseTree);
+        if (!hasResult) {
+            this.evaluationTargetStack.push(templateTarget);
+            result = this.visit(this.templateMap[templateName].templateBodyParseTree);
+            this.evaluationTargetStack.pop();
 
-        if (previousEvaluateTarget) {
-            previousEvaluateTarget.evaluatedChildren.set(currentEvulateId, result);
+            if (!reExecute) {
+                if (this.lgOptions.cacheScope === LGCacheScope.Global) {
+                    this.cacheResult.set(currentEvulateId, result);
+                } else if (this.lgOptions.cacheScope === undefined || this.lgOptions.cacheScope === LGCacheScope.Local) {
+                    if (this.evaluationTargetStack.length !== 0) {
+                        this.evaluationTargetStack[this.evaluationTargetStack.length - 1].cachedEvaluatedChildren.set(currentEvulateId, result);
+                    }
+                }
+            }
         }
-
-        this.evaluationTargetStack.pop();
 
         return result;
     }
@@ -238,7 +256,7 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGTempla
         }
 
         const parameters: string[] = this.templateMap[templateName].parameters;
-        const currentScope: any =  this.evaluationTargetStack.length > 0 ?  this.currentTarget().scope : new CustomizedMemory(undefined);
+        const currentScope: any = this.currentTarget().scope;
 
         if (args.length === 0) {
             // no args to construct, inherit from current scope

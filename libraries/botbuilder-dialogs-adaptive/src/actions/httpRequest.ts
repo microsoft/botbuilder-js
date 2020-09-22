@@ -11,6 +11,7 @@ import { DialogTurnResult, DialogContext, Dialog, Configurable } from 'botbuilde
 import { Converter } from 'botbuilder-dialogs-declarative';
 import { Activity } from 'botbuilder-core';
 import { ValueExpression, StringExpression, BoolExpression, EnumExpression } from 'adaptive-expressions';
+import { replaceJsonRecursively } from '../jsonExtensions';
 
 export class HttpHeadersConverter implements Converter {
     public convert(value: object): { [key: string]: StringExpression } {
@@ -193,7 +194,7 @@ export class HttpRequest<O extends object = {}> extends Dialog<O> implements Con
                 if (typeof body === 'string') {
                     instanceBody = body;
                 } else {
-                    instanceBody = JSON.stringify(this.replaceBodyRecursively(dc, Object.assign({}, body)));
+                    instanceBody = JSON.stringify(replaceJsonRecursively(dc.state, Object.assign({}, body)));
                 }
             }
         }
@@ -273,33 +274,5 @@ export class HttpRequest<O extends object = {}> extends Dialog<O> implements Con
 
     protected onComputeId(): string {
         return `HttpRequest[${ this.method } ${ this.url }]`;
-    }
-
-    private replaceBodyRecursively(dc: DialogContext, unit: any): any {
-        if (typeof unit === 'string') {
-            const { value, error } = new ValueExpression(unit).tryGetValue(dc.state);
-            if (!error) {
-                return value;
-            }
-            return unit;
-        }
-
-        if (Array.isArray(unit)) {
-            let result = [];
-            for (const child of unit) {
-                result.push(this.replaceBodyRecursively(dc, child));
-            }
-            return result;
-        }
-
-        if (typeof unit === 'object') {
-            let result = {};
-            for (let key in unit) {
-                result[key] = this.replaceBodyRecursively(dc, unit[key]);
-            }
-            return result;
-        }
-
-        return unit;
     }
 }

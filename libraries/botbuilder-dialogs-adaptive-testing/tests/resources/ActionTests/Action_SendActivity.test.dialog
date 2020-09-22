@@ -26,6 +26,28 @@
                     {
                         "$kind": "Microsoft.SendActivity",
                         "activity": "done"
+                    },
+                    {
+                        "$kind": "Microsoft.SendActivity",
+                        "activity": {
+                            "type": "message",
+                            "channelData": {
+                                "attachment": {
+                                    "type": "template",
+                                    "payload": {
+                                        "template_type": "button",
+                                        "text": "What do you want to do next?",
+                                        "buttons": [
+                                            {
+                                                "type": "web_url",
+                                                "url": "https://www.messenger.com",
+                                                "title": "Visit Messenger"
+                                            }
+                                        ]
+                                    }
+                                }
+                            }
+                        }
                     }
                 ]
             }
@@ -42,6 +64,14 @@
         {
             "$kind": "Microsoft.Test.AssertReply",
             "text": "done"
+        },
+        {
+            "$kind": "Microsoft.Test.AssertReplyActivity",
+            "assertions": [
+                "type == 'message'",
+                "text == undefined",
+                "channelData != undefined"
+            ]
         }
     ]
 }
