@@ -174,6 +174,12 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
         // Install dependencies on first access
         this.ensureDependenciesInstalled();
 
+        // Initialize dialog state
+        if (options) {
+            // Replace initial activeDialog.State with clone of options
+            dc.activeDialog.state = JSON.parse(JSON.stringify(options));
+        }
+
         // Initialize event counter
         const dcState = dc.state;
         if (dcState.getValue(DialogPath.eventCounter) == undefined) {
@@ -199,11 +205,6 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
             });
         }
 
-        // Initialize dialog state
-        if (options) {
-            // Replace initial activeDialog.State with clone of options
-            dc.activeDialog.state = JSON.parse(JSON.stringify(options));
-        }
         dc.activeDialog.state[this.adaptiveKey] = {};
 
         const properties: { [key: string]: string } = {

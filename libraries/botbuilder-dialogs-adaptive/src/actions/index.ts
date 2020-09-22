@@ -39,5 +39,6 @@ export * from './setProperties';
 export * from './setProperty';
 export * from './signOutUser';
 export * from './switchCondition';
+export * from './telemetryTrackEventAction';
 export * from './traceActivity';
 export * from './updateActivity';

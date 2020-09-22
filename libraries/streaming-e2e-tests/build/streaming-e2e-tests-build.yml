@@ -10,9 +10,8 @@ pool:
   vmImage: 'windows-2019'
 
 variables:
-  RootReactPiecesDir: '$(System.DefaultWorkingDirectory)/libraries/streaming-e2e-tests/react-app'
-  ReactProjectDir: '$(RootReactPiecesDir)/react-app'
-  DLJSDir: '$(System.DefaultWorkingDirectory)/libraries/streaming-e2e-tests/react-app/BotFramework-DirectLineJS'
+  ReactProjectDir: '$(System.DefaultWorkingDirectory)/libraries/streaming-e2e-tests/react-app'
+  DLJSDir: '$(System.DefaultWorkingDirectory)/libraries/streaming-e2e-tests/BotFramework-DirectLineJS'
   BotBuilder: 'botbuilder'
   BfStreaming: 'botframework-streaming'
   TestsDir: '$(System.DefaultWorkingDirectory)/libraries/streaming-e2e-tests/tests'
@@ -31,8 +30,9 @@ jobs:
       
   - job: Create_React_App
     variables:
-      PackageName: 'botframework-streaming'
+      PackageName: $(BfStreaming)
       TargetProjectDir: $(DLJSDir)
+      REACT_APP_BOT_HOSTNAME: $(BotName)
     steps:
       - template: create-react-app.yml
 
@@ -41,8 +41,5 @@ jobs:
       - Deploy_Bot 
       - Create_React_App
     condition: succeeded()
-    variables:
-      REACT_APP_BOT_HOSTNAME: $(BotName)
-      PORT: 3000
     steps:
       - template: run-tests.yml
