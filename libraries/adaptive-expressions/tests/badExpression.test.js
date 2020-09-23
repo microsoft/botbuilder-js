@@ -81,9 +81,9 @@ const badExpressions = [
             ['func()', 'no such func'],
             ['length(func())', 'no such function in children'],
             ['a.func()', 'no such function'],
-            ['(1.foreach)()', 'error func'],
-            ['(\'str\'.foreach)()', 'error func'],
-            ['\'hello\'.length()', 'not support currently']
+            ['(1.foreach)()', 'error func missing'],
+            ['(\'str\'.foreach)()', 'error func missing'],
+            ['\'hello\'.length()', 'not supported currently']
         ]
     },
     {
