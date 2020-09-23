@@ -98,6 +98,27 @@ export class Trigger {
         return this._clauses;
     }
 
+    public toString(builder: string[] = [], indent = 0): string {
+        builder.push(' '.repeat(indent));
+        if (this._clauses.length > 0) {
+            let first = true;
+            for (const clause of this._clauses) {
+                if (first) {
+                    first = false;
+                } else {
+                    builder.push('\n');
+                    builder.push(' '.repeat(indent));
+                    builder.push('|| ');
+                }
+
+                builder.push(clause.toString());
+            }
+        } else {
+            builder.push('<Empty>');
+        }
+        return builder.join('');
+    }
+
     public relationship(other: Trigger, comparers: { [name: string]: PredicateComparer }): RelationshipType {
         let result: RelationshipType;
         const first = this._relationship(this, other, comparers);
@@ -142,10 +163,13 @@ export class Trigger {
                 // Check other for = or clause that is specialized
                 let clauseSoFar = RelationshipType.incomparable;
                 for (const second of other.clauses) {
-                    const reln = clause.relationship(second, comparers);
-                    if (reln === RelationshipType.equal || reln === RelationshipType.specializes) {
-                        clauseSoFar = reln;
-                        break;
+                    if (!second.subsumed) {
+                        const reln = clause.relationship(second, comparers);
+                        if (reln === RelationshipType.equal || reln === RelationshipType.specializes) {
+                            clauseSoFar = reln;
+                            break;
+                        }
+
                     }
                 }
 
@@ -358,11 +382,11 @@ export class Trigger {
                         changed = changed || predicateChanged;
                         children.push(newPredicate);
                     }
-                    
+
                     if (changed) {
                         newClause.anyBindings[quantifier.variable] = binding;
                     }
-                    
+
                     newClause.children = [...children];
                     results.push(newClause);
                     if (!changed) {
@@ -380,13 +404,13 @@ export class Trigger {
                         break;
                     }
                 }
-                
+
                 if (!changed) {
                     results.push(clause);
                 }
             }
         }
-        
+
         return results;
     }
 
@@ -408,17 +432,17 @@ export class Trigger {
                 children.push(childExpr);
                 changed = changed || childChanged;
             }
-            
+
             if (changed) {
                 newExpr = new Expression(undefined, expression.evaluator, ...children);
             }
         }
-        
+
         return { expression: newExpr, changed };
     }
-    
+
     private removeDuplicates(): void {
-        for(const clause of this._clauses) {
+        for (const clause of this._clauses) {
             // NOTE: This is quadratic in clause length but GetHashCode is not equal for expressions and we expect the number of clauses to be small.
             const predicates: Expression[] = [...clause.children];
             for (let i = 0; i < predicates.length; ++i) {
@@ -432,7 +456,7 @@ export class Trigger {
                     }
                 }
             }
-            
+
             clause.children = [...predicates];
         }
     }

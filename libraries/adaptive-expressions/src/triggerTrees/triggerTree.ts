@@ -65,6 +65,12 @@ export class TriggerTree {
         return this._verifyTree(this.root, new Set<Node>());
     }
     
+    public treeToString(indent = 0): string {
+        const builder: string[] = [];
+        this._treeToString(builder, this.root, indent);
+        return builder.join('');
+    }
+    
     private _verifyTree(node: Node, visited: Set<Node>): Node {
         let badNode: Node;
 
@@ -88,5 +94,14 @@ export class TriggerTree {
         }
         
         return badNode;
+    }
+    
+    private _treeToString(builder: string[], node: Node, indent: number): void {
+        node.toString(builder, indent);
+        builder.push(` [${ node.triggers.length }]`);
+        builder.push('\n');
+        for (const child of node.specializations) {
+            this._treeToString(builder, child, indent + 2);
+        }
     }
 }

@@ -49,8 +49,8 @@ export class Node {
 
     public tree: TriggerTree;
 
-    public toString(): string {
-        return this.clause.toString();
+    public toString(builder: string[] = [], indent = 0): string {
+        return this.clause.toString(builder, indent);
     }
 
     public relationship(other: Node): RelationshipType {
@@ -72,8 +72,8 @@ export class Node {
     }
 
     private _addNode(triggerNode: Node, ops: Map<Node, Operation>): Operation {
-        let op = ops.get(this);
-        if (!op) {
+        let op = Operation.none;
+        if (!ops.has(this)) {
             const trigger = triggerNode.triggers[0];
             const relationship = this.relationship(triggerNode);
             switch (relationship) {
@@ -81,7 +81,7 @@ export class Node {
                     // Ensure action is not already there
                     let found = false;
                     for (const existing of this._allTriggers) {
-                        if (trigger.action && trigger.action === existing.action) {
+                        if (trigger.action != undefined && trigger.action === existing.action) {
                             found = true;
                             break;
                         }
@@ -161,9 +161,9 @@ export class Node {
             ops.set(this, op);
         }
 
-        return op || Operation.none;
+        return op;
     }
-    
+
     private _matches(state: any, matches: Set<Trigger>, matched: Map<Node, boolean>): boolean {
         let found = matched.get(this);
         if (!found) {
@@ -173,7 +173,7 @@ export class Node {
                     found = true;
                 }
             }
-            
+
             // No child matched so we might
             if (!found) {
                 const { value: match, error } = this.clause.tryEvaluate(state);
@@ -186,16 +186,15 @@ export class Node {
                     }
                 }
             }
-            
+
             matched.set(this, found);
         }
-        
+
         return found;
     }
 
     private _removeTrigger(trigger: Trigger, visited: Set<Node>): boolean {
-        let removed = false;
-
+        let removed: boolean;
         if (!visited.has(this)) {
             visited.add(this);
 
@@ -231,7 +230,10 @@ export class Node {
             let removals: Node[];
             for (let i = 0; i < this._specializations.length; i++) {
                 const child = this._specializations[i];
-                removed = child._removeTrigger(trigger, visited);
+                const childRemoved = child._removeTrigger(trigger, visited);
+                if (childRemoved) {
+                    removed = true;
+                }
                 if (child.triggers.length === 0) {
                     if (!removals) {
                         removals = [];
@@ -243,9 +245,9 @@ export class Node {
             if (removals) {
                 // Remove children if no triggers left
                 for (const removal of removals) {
-                    const removed = this._specializations.findIndex((item) => item === removal);
-                    if (removed >= 0) {
-                        this._specializations.splice(removed, 1);
+                    const removedIndex = this._specializations.findIndex((item) => item === removal);
+                    if (removedIndex >= 0) {
+                        this._specializations.splice(removedIndex, 1);
                         for (const specialization of removal.specializations) {
                             let add = true;
                             for (const parent of this._specializations) {
@@ -263,9 +265,8 @@ export class Node {
                     }
                 }
             }
-
-            return removed;
         }
+        return removed;
     }
 
     private addSpecialization(specialization: Node): boolean {
@@ -289,24 +290,24 @@ export class Node {
                 skip = true;
                 break;
             }
+        }
 
-            if (!skip) {
-                if (removals) {
-                    for (const removal of removals) {
-                        // Don't need to add back because specialization already has them
-                        const removed = this._specializations.findIndex((item) => item === removal);
-                        if (removed >= 0) {
-                            specialization.addSpecialization(this._specializations[removed]);
-                            this._specializations.splice(removed, 1);
-                        }
+        if (!skip) {
+            if (removals) {
+                for (const removal of removals) {
+                    // Don't need to add back because specialization already has them
+                    const removed = this._specializations.findIndex((item) => item === removal);
+                    if (removed >= 0) {
+                        specialization.addSpecialization(this._specializations[removed]);
+                        this._specializations.splice(removed, 1);
                     }
                 }
-
-                this._specializations.push(specialization);
-                added = true;
             }
 
-            return added;
+            this._specializations.push(specialization);
+            added = true;
         }
+
+        return added;
     }
 }

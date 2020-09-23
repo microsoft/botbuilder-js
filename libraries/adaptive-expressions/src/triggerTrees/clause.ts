@@ -36,10 +36,40 @@ export class Clause extends Expression {
     public anyBindings: { [key: string]: string } = {};
 
     public subsumed = false;
+    
+    public toString(builder: string[] = [], indent = 0): string {
+        builder.push(' '.repeat(indent));
+        if (this.subsumed) {
+            builder.push('*');
+        }
+
+        builder.push('(');
+        let first = true;
+        for (const child of this.children) {
+            if (first) {
+                first = false;
+            } else {
+                builder.push(' && ');
+            }
+            builder.push(child.toString());
+        }
+        
+        builder.push(')');
+        if(this._ignored) {
+            builder.push(' ignored(');
+            builder.push(this._ignored.toString());
+            builder.push(')');
+        }
+        
+        for (const key in this.anyBindings) {
+            builder.push(` ${ key }->${ this.anyBindings[key] }`);
+        }
+        return builder.join('');
+    }
 
     public relationship(other: Clause, comparers: { [name: string]: PredicateComparer }): RelationshipType {
         let soFar: RelationshipType = RelationshipType.incomparable;
-        let shorter: Clause = this;
+        let shorter: Clause = this as Clause;
         let shorterCount: number = shorter.children.length;
         let longer: Clause = other;
         let longerCount: number = longer.children.length;
@@ -183,17 +213,18 @@ export class Clause extends Expression {
     }
     
     private swap(soFar: RelationshipType, swapped: boolean): RelationshipType {
+        let reln = soFar;
         if (swapped) {
             switch (soFar) {
                 case RelationshipType.specializes:
-                    soFar = RelationshipType.generalizes;
+                    reln = RelationshipType.generalizes;
                     break;
                 case RelationshipType.generalizes:
-                    soFar = RelationshipType.specializes;
+                    reln = RelationshipType.specializes;
                     break;
             }
         }
-        return soFar;
+        return reln;
     }
 
     private _relationship(expr: Expression, other: Expression, comparers: { [name: string]: PredicateComparer }): RelationshipType {
