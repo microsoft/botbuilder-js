@@ -49,7 +49,11 @@ export class ShowTypingMiddleware implements Middleware {
                     try {
                         await this.sendTypingActivity(context);
                     } catch (err) {
-                        await context.adapter.onTurnError(context, err);
+                        if (context.adapter && context.adapter.onTurnError) {
+                            await context.adapter.onTurnError(context, err);
+                        } else {
+                            throw err;
+                        }
                     }
 
                     scheduleIndicator(this.period);
