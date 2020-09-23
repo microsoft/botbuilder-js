@@ -9,6 +9,7 @@
 import { RecognizerResult, Activity, getTopScoringIntent } from 'botbuilder-core';
 import { DialogContext } from 'botbuilder-dialogs';
 import { Recognizer } from './recognizer';
+import * as lodash from 'lodash';
 
 /**
  * Standard cross trained intent name prefix.
@@ -120,10 +121,18 @@ export class CrossTrainedRecognizerSet extends Recognizer {
             return recognizerResults[consensusRecognizedId];
         }
 
+        //find if matched entities found when hits the none intent
+        let mergedEntities = {};
+        for (let i = 0; i < results.length; i++) {
+            const result = results[i];
+            mergedEntities = lodash.merge(mergedEntities, result.entities);
+        }
+
         // return none
         const recognizerResult: RecognizerResult = {
             text,
-            intents: { 'None': { score: 1.0 } }
+            intents: { 'None': { score: 1.0 } },
+            entities: mergedEntities
         };
         return recognizerResult;
     }

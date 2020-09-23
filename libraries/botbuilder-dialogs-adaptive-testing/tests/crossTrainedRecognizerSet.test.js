@@ -28,4 +28,8 @@ describe('CrossTrainedRecognizerSetTests', function() {
     it('NoneWithIntent', async () => {
         await testRunner.runTestScript('CrossTrainedRecognizerSetTests_NoneWithIntent');
     });
+
+    it('EntitiesWithNoneIntent', async () => {
+        await testRunner.runTestScript('CrossTrainedRecognizerSetTests_NoneIntentWithEntities');
+    });
 });
