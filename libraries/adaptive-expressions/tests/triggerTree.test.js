@@ -603,7 +603,6 @@ describe('TriggerTree', () => {
 
         verifyTree(tree);
 
-        // Test matches
         for (const predicate of predicates) {
             const memory = {};
             for (const key in predicate.bindings) {
@@ -613,7 +612,6 @@ describe('TriggerTree', () => {
             const matches = tree.matches(memory);
 
             // Clauses in every match must not generalize or specialize other matches
-            /*
             for (let i = 0; i < matches.length; ++i) {
                 const first = matches[i];
                 for (let j = i + 1; j < matches.length; ++j) {
@@ -642,16 +640,17 @@ describe('TriggerTree', () => {
                     assert(found);
                 }
             }
-            */
-            
-            // Delete triggers
-            assert.strictEqual(tree.totalTriggers, triggers.length);
-            for (const trigger of triggers) {
-                tree.removeTrigger(trigger);
-            }
-            
-            assert.strictEqual(tree.totalTriggers, 0);
-            verifyTree(tree);
+
         }
-    });
+
+        // Delete triggers
+        assert.strictEqual(tree.totalTriggers, triggers.length);
+
+        for (const trigger of triggers) {
+            tree.removeTrigger(trigger);
+        }
+
+        assert.strictEqual(tree.totalTriggers, 0);
+        verifyTree(tree);
+    }).timeout(5000);
 });
