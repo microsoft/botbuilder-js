@@ -39,7 +39,7 @@ describe('InspectionMiddleware', function() {
 
         adapter.use(inspectionMiddleware);
 
-        await adapter.processActivity(MessageFactory.text('hello'));
+        await adapter.receiveActivity(MessageFactory.text('hello'));
 
         assert(adapter.activityBuffer.length === 1, 'expected a single adapter response');
         assert(adapter.activityBuffer[0].type === 'message', 'expected a message activity');
@@ -81,7 +81,7 @@ describe('InspectionMiddleware', function() {
             await inspectionMiddleware.processCommand(turnContext);
         }, null, true);
 
-        await inspectionAdapter.processActivity(openActivity);
+        await inspectionAdapter.receiveActivity(openActivity);
 
         var inspectionOpenResultActivity = inspectionAdapter.activityBuffer[0];
         var attachCommand = inspectionOpenResultActivity.value;
@@ -107,11 +107,11 @@ describe('InspectionMiddleware', function() {
 
         applicationAdapter.use(inspectionMiddleware);
 
-        await applicationAdapter.processActivity(MessageFactory.text(attachCommand));
+        await applicationAdapter.receiveActivity(MessageFactory.text(attachCommand));
 
         // the attach command response is a informational message
 
-        await applicationAdapter.processActivity(MessageFactory.text('hi'));
+        await applicationAdapter.receiveActivity(MessageFactory.text('hi'));
 
         // trace activities should be sent to the emulator using the connector and the conversation reference
 
@@ -157,7 +157,7 @@ describe('InspectionMiddleware', function() {
             await inspectionMiddleware.processCommand(turnContext);
         }, null, true);
 
-        await inspectionAdapter.processActivity(openActivity);
+        await inspectionAdapter.receiveActivity(openActivity);
 
         var inspectionOpenResultActivity = inspectionAdapter.activityBuffer[0];
 
@@ -201,11 +201,11 @@ describe('InspectionMiddleware', function() {
             ]
         };
 
-        await applicationAdapter.processActivity(attachActivity);
+        await applicationAdapter.receiveActivity(attachActivity);
 
         // the attach command response is a informational message
 
-        await applicationAdapter.processActivity(MessageFactory.text('hi'));
+        await applicationAdapter.receiveActivity(MessageFactory.text('hi'));
 
         // trace activities should be sent to the emulator using the connector and the conversation reference
 
@@ -251,7 +251,7 @@ describe('InspectionMiddleware', function() {
             await inspectionMiddleware.processCommand(turnContext);
         }, null, true);
 
-        await inspectionAdapter.processActivity(openActivity);
+        await inspectionAdapter.receiveActivity(openActivity);
 
         var inspectionOpenResultActivity = inspectionAdapter.activityBuffer[0];
         var attachCommand = inspectionOpenResultActivity.value;
@@ -280,14 +280,14 @@ describe('InspectionMiddleware', function() {
         var attachActivity = MessageFactory.text(attachCommand);
         attachActivity.channelData = { team: { id: 'team-id' } };
 
-        await applicationAdapter.processActivity(attachActivity);
+        await applicationAdapter.receiveActivity(attachActivity);
 
         // the attach command response is a informational message
 
         var hiActivity = MessageFactory.text('hi');
         hiActivity.channelData = { team: { id: 'team-id' } };
 
-        await applicationAdapter.processActivity(hiActivity);
+        await applicationAdapter.receiveActivity(hiActivity);
 
         // trace activities should be sent to the emulator using the connector and the conversation reference
 
@@ -327,7 +327,7 @@ describe('InspectionMiddleware', function() {
             await inspectionMiddleware.processCommand(turnContext);
         }, null, true);
 
-        await inspectionAdapter.processActivity(openActivity);
+        await inspectionAdapter.receiveActivity(openActivity);
 
         const inspectionOpenResultActivity = inspectionAdapter.activityBuffer[0];
         const attachCommand = inspectionOpenResultActivity.value;
@@ -347,11 +347,11 @@ describe('InspectionMiddleware', function() {
 
         adapter.use(inspectionMiddleware);
 
-        await adapter.processActivity(MessageFactory.text(attachCommand));
+        await adapter.receiveActivity(MessageFactory.text(attachCommand));
         
         adapter.activityBuffer.push(activity);
         assert.strictEqual(adapter.activityBuffer.length, 2);
-        await adapter.processActivity(activity);
+        await adapter.receiveActivity(activity);
 
         assert.strictEqual(adapter.activityBuffer.length, 2, `no activities updated.`);
         assert.strictEqual(adapter.activityBuffer[1].text, activity.text, `invalid update activity text.`);
@@ -387,7 +387,7 @@ describe('InspectionMiddleware', function() {
             await inspectionMiddleware.processCommand(turnContext);
         }, null, true);
 
-        await inspectionAdapter.processActivity(openActivity);
+        await inspectionAdapter.receiveActivity(openActivity);
 
         const inspectionOpenResultActivity = inspectionAdapter.activityBuffer[0];
         const attachCommand = inspectionOpenResultActivity.value;
@@ -406,12 +406,12 @@ describe('InspectionMiddleware', function() {
 
         adapter.use(inspectionMiddleware);
 
-        await adapter.processActivity(MessageFactory.text(attachCommand));
+        await adapter.receiveActivity(MessageFactory.text(attachCommand));
 
         adapter.activityBuffer.push(activity);
         assert.strictEqual(adapter.activityBuffer.length, 2);
 
-        await adapter.processActivity(activity);
+        await adapter.receiveActivity(activity);
         assert.strictEqual(adapter.activityBuffer.length, 1, `no activities deleted.`);
     });
 
@@ -444,7 +444,7 @@ describe('InspectionMiddleware', function() {
             await inspectionMiddleware.processCommand(turnContext);
         }, null, true);
 
-        await inspectionAdapter.processActivity(openActivity);
+        await inspectionAdapter.receiveActivity(openActivity);
 
         const inspectionOpenResultActivity = inspectionAdapter.activityBuffer[0];
         const attachCommand = inspectionOpenResultActivity.value;
@@ -460,9 +460,9 @@ describe('InspectionMiddleware', function() {
 
         adapter.use(inspectionMiddleware);
 
-        await adapter.processActivity(MessageFactory.text(attachCommand));
+        await adapter.receiveActivity(MessageFactory.text(attachCommand));
 
-        await adapter.processActivity('');
+        await adapter.receiveActivity('');
     });
 
     it('should invokeInbound throw an error', async () => {

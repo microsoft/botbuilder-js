@@ -25,7 +25,7 @@ describe(`BotStatePropertyAccessor`, function () {
             await botState.saveChanges(context);
         });
 
-        tAdapter.processActivity(`Hello world!`)
+        tAdapter.receiveActivity(`Hello world!`)
             .then(() => done());
     });
 
@@ -39,7 +39,7 @@ describe(`BotStatePropertyAccessor`, function () {
             await botState.saveChanges(context);
         });
 
-        tAdapter.processActivity(`Hello world!`)
+        tAdapter.receiveActivity(`Hello world!`)
             .then(() => done());
 
     });
@@ -84,7 +84,7 @@ describe(`BotStatePropertyAccessor`, function () {
             done();
         });
 
-        tAdapter.processActivity(`Hello world!`);
+        tAdapter.receiveActivity(`Hello world!`);
     });
 
     it(`should not delete anything if property not found in current state.`, function (done) {
@@ -99,7 +99,7 @@ describe(`BotStatePropertyAccessor`, function () {
             done();
         });
 
-        tAdapter.processActivity(`Hello world!`);
+        tAdapter.receiveActivity(`Hello world!`);
     });
 
     it(`should successfully set default value if default value is an Array.`, function (done) {
@@ -115,7 +115,7 @@ describe(`BotStatePropertyAccessor`, function () {
             done();
         });
 
-        tAdapter.processActivity(`Hello world!`);
+        tAdapter.receiveActivity(`Hello world!`);
     });
 
     it(`should successfully set default value if default value is an Object.`, function (done) {
@@ -136,7 +136,7 @@ describe(`BotStatePropertyAccessor`, function () {
             done();
         });
 
-        tAdapter.processActivity(`Hello world!`);
+        tAdapter.receiveActivity(`Hello world!`);
     });
 
     it(`should get() initial default value when a second get() with a second default value is called.`,
@@ -157,6 +157,6 @@ describe(`BotStatePropertyAccessor`, function () {
                 done();
             });
 
-            tAdapter.processActivity(`Hello world!`);
+            tAdapter.receiveActivity(`Hello world!`);
         });
 });

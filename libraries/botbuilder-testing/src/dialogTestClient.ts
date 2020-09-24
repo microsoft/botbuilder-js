@@ -85,7 +85,7 @@ export class DialogTestClient {
      * ```
      */
     public async sendActivity(activity: Partial<Activity> | string): Promise<any> {
-        await this._testAdapter.processActivity(activity);
+        await this._testAdapter.receiveActivity(activity);
         return this._testAdapter.activityBuffer.shift();
     }
 

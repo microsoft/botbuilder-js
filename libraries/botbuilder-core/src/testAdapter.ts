@@ -282,6 +282,16 @@ export class TestAdapter extends BotAdapter implements ExtendedUserTokenProvider
         }
         return Promise.resolve();
     }
+    
+    /**
+     * @private
+     * INTERNAL: called by a `TestFlow` instance to simulate a user sending a message to the bot.
+     * This will cause the adapters middleware pipe to be run and it's logic to be called.
+     * @param activity Text or activity from user. The current conversation reference [template](#template) will be merged the passed in activity to properly address the activity. Fields specified in the activity override fields in the template.
+     */
+    public receiveActivity(activity: string | Partial<Activity>): Promise<void> {
+        return this.processActivity(activity);
+    }
 
     /**
      * The `TestAdapter` doesn't implement `continueConversation()` and will return an error if it's

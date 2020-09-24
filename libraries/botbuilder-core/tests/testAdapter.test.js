@@ -9,7 +9,7 @@ const deletedActivityId = '1234';
 describe(`TestAdapter`, function() {
     this.timeout(5000);
 
-    it(`should call bot logic when processActivity() is called.`, function(done) {
+    it(`should call bot logic when receiveActivity() is called.`, function(done) {
         const adapter = new TestAdapter((context) => {
             assert(context, `context not passed to bot logic.`);
             assert(context.activity, `activity not passed through.`);
@@ -23,35 +23,35 @@ describe(`TestAdapter`, function() {
             assert(context.activity.serviceUrl, `missing serviceUrl.`);
             done();
         });
-        adapter.processActivity('test');
+        adapter.receiveActivity('test');
     });
 
-    it(`should support processActivity() called with an Activity.`, function(done) {
+    it(`should support receiveActivity() called with an Activity.`, function(done) {
         const adapter = new TestAdapter((context) => {
             assert(context.activity.type === ActivityTypes.Message, `wrong type.`);
             assert(context.activity.text === 'test', `wrong text.`);
             done();
         });
-        adapter.processActivity({ text: 'test', type: ActivityTypes.Message });
+        adapter.receiveActivity({ text: 'test', type: ActivityTypes.Message });
     });
 
-    it(`should automatically set the type when processActivity() is called with an Activity.`, function(done) {
+    it(`should automatically set the type when receiveActivity() is called with an Activity.`, function(done) {
         const adapter = new TestAdapter((context) => {
             assert(context.activity.type === ActivityTypes.Message, `wrong type.`);
             assert(context.activity.text === 'test', `wrong text.`);
             done();
         });
-        adapter.processActivity({ text: 'test' });
+        adapter.receiveActivity({ text: 'test' });
     });
 
-    it(`should support passing your own Activity.Id to processActivity().`, function(done) {
+    it(`should support passing your own Activity.Id to receiveActivity().`, function(done) {
         const adapter = new TestAdapter((context) => {
             assert(context.activity.id === 'myId', `custom ID not passed through.`);
             assert(context.activity.type === ActivityTypes.Message, `wrong type.`);
             assert(context.activity.text === 'test', `wrong text.`);
             done();
         });
-        adapter.processActivity({ text: 'test', type: ActivityTypes.Message, id: 'myId' });
+        adapter.receiveActivity({ text: 'test', type: ActivityTypes.Message, id: 'myId' });
     });
 
 
