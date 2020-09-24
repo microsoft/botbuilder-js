@@ -19,11 +19,20 @@ enum Operation {
     inserted = 'inserted'
 }
 
+/**
+ * Node in a trigger tree.
+ */
 export class Node {
     private _allTriggers: Trigger[] = [];
     private _triggers: Trigger[] = [];
     private _specializations: Node[] = [];
 
+    /**
+     * Intializes a new instance of the `Node` class.
+     * @param clause The logical conjunction this node represents.
+     * @param tree The trigger tree this node is found in.
+     * @param trigger The trigger to initialize this node.
+     */
     public constructor(clause: Clause, tree: TriggerTree, trigger?: Trigger) {
         this.clause = new Clause(clause);
         this.tree = tree;
@@ -33,40 +42,80 @@ export class Node {
         }
     }
 
+    /**
+     * Gets all of the most specific triggers that contains the `Clause` in this node.
+     */
     public get triggers(): Trigger[] {
         return this._triggers;
     }
 
+    /**
+     * Gets all triggers that contain the `Clause` in this node.
+     */
     public get allTriggers(): Trigger[] {
         return this._allTriggers;
     }
 
+    /**
+     * Gets specialized children of this node.
+     */
     public get specializations(): Node[] {
         return this._specializations;
     }
 
+    /**
+     * Gets the logical conjunction this node represents.
+     */
     public clause: Clause;
 
+    /**
+     * Gets the tree this node is found in.
+     */
     public tree: TriggerTree;
 
+    /**
+     * Gets a string that represents the current node.
+     * @param builder An array of string to build the string of node.
+     * @param indent An integer representing the number of spaces at the start of a line.
+     */
     public toString(builder: string[] = [], indent = 0): string {
         return this.clause.toString(builder, indent);
     }
 
+    /**
+     * Identify the relationship between two nodes.
+     * @param other Node to compare against.
+     * @returns Relationship between this node an the other.
+     */
     public relationship(other: Node): RelationshipType {
         return this.clause.relationship(other.clause, this.tree.comparers);
     }
 
+    /**
+     * Gets the most specific matches below this node.
+     * @param state Frame to evaluate against.
+     * @returns List of the most specific matches found.
+     */
     public matches(state: any): Trigger[] {
         const matches = new Set<Trigger>();
         this._matches(state, matches, new Map<Node, boolean>());
         return Array.from(matches);
     }
 
+    /**
+     * Adds a child node.
+     * @param triggerNode The node to be added.
+     * @returns Whether adding node operation is successful.
+     */
     public addNode(triggerNode: Node): boolean {
         return this._addNode(triggerNode, new Map<Node, Operation>()) === Operation.added;
     }
 
+    /**
+     * Removes a trigger from node.
+     * @param trigger The trigger to be removed.
+     * @returns Whether removing trigger operation is successful.
+     */
     public removeTrigger(trigger: Trigger): boolean {
         return this._removeTrigger(trigger, new Set<Node>());
     }

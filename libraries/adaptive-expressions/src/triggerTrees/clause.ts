@@ -11,9 +11,16 @@ import { ExpressionType } from '../expressionType';
 import { PredicateComparer } from './optimizer';
 import { RelationshipType } from './relationshipType';
 
+/**
+ * A canonical normal form expression.
+ */
 export class Clause extends Expression {
     private _ignored: Expression;
 
+    /**
+     * Initializes a new instance of the `Clause` class.
+     * @param clauseOrExpression A clause, expression or an array of expressions to initialize a `Clause`.
+     */
     public constructor(clauseOrExpression?: Clause | Expression | Expression[]) {
         super(ExpressionType.And, undefined);
         if (clauseOrExpression) {
@@ -33,10 +40,21 @@ export class Clause extends Expression {
         }
     }
 
+    /**
+     * Gets or sets the anyBinding dictionary.
+     */
     public anyBindings: { [key: string]: string } = {};
 
+    /**
+     * Gets or sets whether the clause is subsumed.
+     */
     public subsumed = false;
-    
+
+    /**
+     * Gets a string that represents the current clause.
+     * @param builder An array of string to build the string of clause.
+     * @param indent An integer represents the number of spaces at the start of a line.
+     */
     public toString(builder: string[] = [], indent = 0): string {
         builder.push(' '.repeat(indent));
         if (this.subsumed) {
@@ -53,20 +71,26 @@ export class Clause extends Expression {
             }
             builder.push(child.toString());
         }
-        
+
         builder.push(')');
-        if(this._ignored) {
+        if (this._ignored) {
             builder.push(' ignored(');
             builder.push(this._ignored.toString());
             builder.push(')');
         }
-        
+
         for (const key in this.anyBindings) {
             builder.push(` ${ key }->${ this.anyBindings[key] }`);
         }
         return builder.join('');
     }
 
+    /**
+     * Compares the current `Clause` with another `Clause`.
+     * @param other The other `Clause` to compare.
+     * @param comparers A comparer, which is a dictionary of `PredicateComparer` with string keys.
+     * @returns A `RelationshipType` value between two `Clause` instances.
+     */
     public relationship(other: Clause, comparers: { [name: string]: PredicateComparer }): RelationshipType {
         let soFar: RelationshipType = RelationshipType.incomparable;
         let shorter: Clause = this as Clause;
@@ -142,7 +166,13 @@ export class Clause extends Expression {
 
         return this.swap(soFar, swapped);
     }
-    
+
+    /**
+     * Determines whether the current `Clause` matches with another `Clause`.
+     * @param clause The other `Clause` instance to compare with.
+     * @param memory The scope for looking up variables.
+     * @returns A boolean value indicating whether the two clauses are matches.
+     */
     public matches(clause: Clause, memory: any): boolean {
         let matched = false;
         if (clause.deepEquals(this)) {
@@ -152,10 +182,13 @@ export class Clause extends Expression {
                 matched = !error && match;
             }
         }
-        
+
         return matched;
     }
-    
+
+    /**
+     * Splits ignored child expressions.
+     */
     public splitIgnores(): void {
         const children: Expression[] = [];
         const ignores: Expression[] = [];
@@ -169,7 +202,7 @@ export class Clause extends Expression {
         }
 
         this.children = children;
-        
+
         if (ignores.length > 0) {
             this._ignored = Expression.andExpression(...ignores);
         }
@@ -185,7 +218,7 @@ export class Clause extends Expression {
                 longer = shorterClause.anyBindings;
                 swapped = true;
             }
-            
+
             for (const shortKey in shorter) {
                 let found = false;
                 const shortValue = shorter[shortKey];
@@ -196,22 +229,22 @@ export class Clause extends Expression {
                         break;
                     }
                 }
-                
+
                 if (!found) {
                     soFar = RelationshipType.incomparable;
                 }
             }
-            
+
             if (soFar === RelationshipType.equal && Object.entries(shorter).length < Object.entries(longer).length) {
                 soFar = RelationshipType.specializes;
             }
-            
+
             soFar = this.swap(soFar, swapped);
         }
-        
+
         return soFar;
     }
-    
+
     private swap(soFar: RelationshipType, swapped: boolean): RelationshipType {
         let reln = soFar;
         if (swapped) {

@@ -14,20 +14,51 @@ import { Quantifier } from './quantifier';
 import { RelationshipType } from './relationshipType';
 import { Trigger } from './trigger';
 
+/**
+ * A trigger tree organizes evaluators according to generalization/specialization in order to make it easier to use rules.
+ */
 export class TriggerTree {
-    public readonly optimizers: Optimizer[] = [];
-    public readonly comparers: { [key: string]: PredicateComparer } = {};
-    public root: Node;
-    public totalTriggers = 0;
-    
+    /**
+     * Intializes a new instance of the `TriggerTree` class.
+     */
     public constructor() {
         this.root = new Node(new Clause(), this);
     }
-    
+
+    /**
+     * A list of `Optimizer` for optimizing claues.
+     */
+    public readonly optimizers: Optimizer[] = [];
+
+    /**
+     * A dictionary of `PredicateComparer` values, with string keys.
+     */
+    public readonly comparers: { [key: string]: PredicateComparer } = {};
+
+    /**
+     * The root node instance.
+     */
+    public root: Node;
+
+    /**
+     * The total number of triggers.
+     */
+    public totalTriggers = 0;
+
+    /**
+     * Returns a string the represents the current object.
+     */
     public toString(): string {
         return `TriggerTree with ${ this.totalTriggers } triggers`;
     }
-    
+
+    /**
+     * Add a trigger expression to the tree.
+     * @param stringOrExpression Trigger to add.
+     * @param action Action when triggered.
+     * @param quantifiers Quantifiers to use when expanding expressions.
+     * @returns New trigger.
+     */
     public addTrigger(stringOrExpression: string | Expression, action: any, ...quantifiers: Quantifier[]): Trigger {
         const expression: Expression = (typeof stringOrExpression === 'string') ?
             Expression.parse(stringOrExpression) : stringOrExpression;
@@ -39,16 +70,21 @@ export class TriggerTree {
                 if (this.root.addNode(newNode)) {
                     added = true;
                 }
-            } 
+            }
         }
-        
+
         if (added) {
             ++this.totalTriggers;
         }
-        
+
         return trigger;
     }
-    
+
+    /**
+     * Remove trigger from tree.
+     * @param trigger Trigger to remove.
+     * @returns True if removed trigger.
+     */
     public removeTrigger(trigger: Trigger): boolean {
         const result = this.root.removeTrigger(trigger);
         if (result) {
@@ -56,21 +92,35 @@ export class TriggerTree {
         }
         return result;
     }
-    
-    public matches(state: any): Trigger[] {
-        return this.root.matches(state);
-    }
-    
-    public verifyTree(): Node {
-        return this._verifyTree(this.root, new Set<Node>());
-    }
-    
+
+    /**
+     * Generates a string describing the tree.
+     * @param indent Current indent level.
+     * @returns String describing the tree.
+     */
     public treeToString(indent = 0): string {
         const builder: string[] = [];
         this._treeToString(builder, this.root, indent);
         return builder.join('');
     }
-    
+
+    /**
+     * Return the possible matches given the current state.
+     * @param state State to evaluate against.
+     * @returns List of possible matches.
+     */
+    public matches(state: any): Trigger[] {
+        return this.root.matches(state);
+    }
+
+    /**
+     * Verify the tree meets specialization/generalization invariants.
+     * @returns Bad node if found.
+     */
+    public verifyTree(): Node {
+        return this._verifyTree(this.root, new Set<Node>());
+    }
+
     private _verifyTree(node: Node, visited: Set<Node>): Node {
         let badNode: Node;
 
@@ -92,10 +142,10 @@ export class TriggerTree {
                 }
             }
         }
-        
+
         return badNode;
     }
-    
+
     private _treeToString(builder: string[], node: Node, indent: number): void {
         node.toString(builder, indent);
         builder.push(` [${ node.triggers.length }]`);

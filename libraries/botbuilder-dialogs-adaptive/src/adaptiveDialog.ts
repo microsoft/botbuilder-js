@@ -131,7 +131,7 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
         }
 
         if (!this.selector) {
-            // Default to first selector
+            // Default to MostSpecificSelector
             const selector = new MostSpecificSelector();
             selector.selector = new FirstSelector();
             this.selector = selector;

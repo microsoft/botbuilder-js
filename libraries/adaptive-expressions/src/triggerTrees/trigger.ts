@@ -15,6 +15,9 @@ import { Quantifier, QuantifierType } from './quantifier';
 import { RelationshipType } from './relationshipType';
 import { TriggerTree } from './triggerTree';
 
+/**
+ * Rewrite the expression by pushing not down to the leaves.
+ */
 const pushDownNot = (expression: Expression, inNot = false): Expression => {
     let newExpr = expression;
     const negation = expression.evaluator.negation;
@@ -66,13 +69,20 @@ const pushDownNot = (expression: Expression, inNot = false): Expression => {
 };
 
 /**
- *
+ * A trigger is a combination of a trigger expression and the corresponding action.
  */
 export class Trigger {
     private readonly _quantifiers: Quantifier[];
     private readonly _tree: TriggerTree;
     private _clauses: Clause[];
 
+    /**
+     * Intializes a new instance of the `Trigger` class.
+     * @param tree Trigger tree that contains this trigger.
+     * @param expression Expression for when the trigger action is possible.
+     * @param action Action to take when a trigger matches.
+     * @param quantifiers Quantifiers to dynamically expand the expression.
+     */
     public constructor(tree: TriggerTree, expression: Expression, action: any, ...quantifiers: Quantifier[]) {
         this._tree = tree;
         this.action = action;
@@ -92,33 +102,30 @@ export class Trigger {
         }
     }
 
+    /**
+     * Original trigger expression.
+     */
     public readonly originalExpression: Expression;
+
+    /**
+     * Action to take when trigger is true.
+     */
     public readonly action: any;
+
+    /**
+     * Gets list of expressions converted into Disjunctive Normal Form where ! is pushed to the leaves and
+     * there is an implicit || between clauses and && within a clause.
+     */
     public get clauses(): Clause[] {
         return this._clauses;
     }
 
-    public toString(builder: string[] = [], indent = 0): string {
-        builder.push(' '.repeat(indent));
-        if (this._clauses.length > 0) {
-            let first = true;
-            for (const clause of this._clauses) {
-                if (first) {
-                    first = false;
-                } else {
-                    builder.push('\n');
-                    builder.push(' '.repeat(indent));
-                    builder.push('|| ');
-                }
-
-                builder.push(clause.toString());
-            }
-        } else {
-            builder.push('<Empty>');
-        }
-        return builder.join('');
-    }
-
+    /**
+     * Determines the relationship between current instance and another `Trigger` instance.
+     * @param other The other Trigger instance.
+     * @param comparers The comparer dictionary.
+     * @returns A `RelationshipType` value.
+     */
     public relationship(other: Trigger, comparers: { [name: string]: PredicateComparer }): RelationshipType {
         let result: RelationshipType;
         const first = this._relationship(this, other, comparers);
@@ -144,6 +151,12 @@ export class Trigger {
         return result;
     }
 
+    /**
+     * Determines whether there is a member in the current `Clause` that matches the nodeClause parameter.
+     * @param nodeClause The other Clause instance to match.
+     * @param state The scope for looking up variables.
+     * @returns A boolean value inidicating whether there is a member matches.
+     */
     public matches(nodeClause: Clause, state: any): boolean {
         let found = false;
         for (const clause of this.clauses) {
@@ -154,6 +167,32 @@ export class Trigger {
         }
 
         return found;
+    }
+
+    /**
+     * Gets a string that represents the current trigger.
+     * @param builder An array of string to build the string of trigger.
+     * @param indent An integer represents the number of spaces at the start of a line.
+     */
+    public toString(builder: string[] = [], indent = 0): string {
+        builder.push(' '.repeat(indent));
+        if (this._clauses.length > 0) {
+            let first = true;
+            for (const clause of this._clauses) {
+                if (first) {
+                    first = false;
+                } else {
+                    builder.push('\n');
+                    builder.push(' '.repeat(indent));
+                    builder.push('|| ');
+                }
+
+                builder.push(clause.toString());
+            }
+        } else {
+            builder.push('<Empty>');
+        }
+        return builder.join('');
     }
 
     private _relationship(trigger: Trigger, other: Trigger, comparers: { [name: string]: PredicateComparer }): RelationshipType {
