@@ -2,47 +2,41 @@
 # that uses that latest version of botframework-streaming
 
 steps:
-  - powershell: npx create-react-app react-app
-    displayName: 'create-react-app'
-    workingDirectory: $(RootReactPiecesDir)
-  
-  - powershell: Remove-Item src/App.js, src/index.js, public/index.html, ./package.json, ./yarn.lock
-    displayName: "Delete files we're replacing with custom code in react-app"
-    workingDirectory: $(ReactProjectDir)
-
-  - powershell: |
-      copy ../custom-app-code/App.js, ../custom-app-code/index.js ./src/
-      copy ../custom-app-code/index.html ./public
-      copy ../custom-app-code/package.json, ../custom-app-code/yarn.lock
-    displayName: 'Copy custom files into react-app'
-    workingDirectory: $(ReactProjectDir)
-  
-  # Install Web Chat 4.9.2 for a predictable DOM
   - task: Cache@2
-    displayName: 'Cache WebChat 4.9.2'
+    displayName: 'Cache create-react-app + WebChat Dependencies'
     inputs:
-      key: 'WebChatCache | npm | "$(Agent.OS)"'
+      key: '"CRA-WebChat4.10.1-Cache" | npm | "$(Agent.OS)"'
       path: $(ReactProjectDir)/node_modules
       cacheHitVar: 'CacheRestored'
 
-  - powershell: yarn add botframework-webchat@4.9.2
-    displayName: 'yarn add botframework-webchat@4.9.2'
+  - powershell: npm install
+    displayName: npm install in React App
     condition: ne(variables.CacheRestored, 'true')
     workingDirectory: $(ReactProjectDir)
 
-  # Create Customized DLJS
-  - powershell: New-Item -Path . -Name ".npmrc" -ItemType "file" -Value "registry=https://botbuilder.myget.org/F/botbuilder-v4-js-daily/npm/"
-    displayName: 'Create .npmrc for MyGet feed - https://botbuilder.myget.org/gallery/botbuilder-v4-js-daily'
+  - powershell: npm install react-scripts@latest
+    displayName: npm install react-scripts@latest
     workingDirectory: $(ReactProjectDir)
-  
+
   - template: customize-dljs.yml
   
-  - powershell: yarn add $(DLJSDir)/botframework-directlinejs.tgz
-    displayName: 'yarn add botframework-directlinejs.tgz'
+  - powershell: npm install $(DLJSDir)/botframework-directlinejs.tgz
+    displayName: 'npm install botframework-directlinejs.tgz'
+    workingDirectory: $(ReactProjectDir)
+  
+  - powershell: |
+      Rename-Item ./botframework-directlinejs botframework-directlinejs.old
+      Rename-Item ./botframework-streaming botframework-streaming.old
+      ls
+    displayName: Rename DLJS node modules
+    workingDirectory: $(ReactProjectDir)/node_modules/botframework-webchat/node_modules
+  
+  - powershell: npm run build
+    displayName: Build React App
     workingDirectory: $(ReactProjectDir)
   
   - task: PublishPipelineArtifact@1
     displayName: 'Publish Artifact: ReactApp'
     inputs:
-      targetPath: $(ReactProjectDir)
+      targetPath: $(ReactProjectDir)/build
       artifactName: 'ReactApp'

@@ -11,6 +11,26 @@ export enum LGLineBreakStyle {
     Markdown = 'markdown'
 }
 
+/**
+ * LG cache scope options.
+ */
+export enum LGCacheScope {
+    /**
+     * Global template cache scope.
+     */
+    Global = 'global',
+
+    /**
+     * Only cache result in the same layer of children in template.
+     */
+    Local = 'local',
+
+    /**
+     * Without cache.
+     */
+    None = 'none'
+}
+
 export class EvaluationOptions {
     private readonly nullKeyReplaceStrRegex = /\${\s*path\s*}/g;
     private readonly strictModeKey = '@strict';
@@ -23,16 +43,23 @@ export class EvaluationOptions {
 
     public LineBreakStyle: LGLineBreakStyle | undefined;
 
+    /**
+     * Cache scope of the evaluation result.
+     */
+    public cacheScope: LGCacheScope | undefined;
+
     public constructor(opt?: EvaluationOptions | string[]) {
         if (arguments.length === 0) {
             this.strictMode = undefined;
             this.nullSubstitution = undefined;
             this.LineBreakStyle = undefined;
+            this.cacheScope = undefined;
         } else {
             if (opt instanceof EvaluationOptions) {
                 this.strictMode = opt.strictMode;
                 this.nullSubstitution = opt.nullSubstitution;
                 this.LineBreakStyle = opt.LineBreakStyle;
+                this.cacheScope = opt.cacheScope;
             } else {
                 if(opt !== undefined && opt.length > 0) {
                     for (const optionStr of opt) {
