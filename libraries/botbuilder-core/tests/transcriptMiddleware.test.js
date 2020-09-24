@@ -536,7 +536,7 @@ function createTestAdapterWithNoResourceResponseId(logic) {
         const responses = activities
             .filter((a) => this.sendTraceActivities || a.type !== 'trace')
             .map((activity) => {
-                this.activeQueue.push(activity);
+                this.activityBuffer.push(activity);
                 return { };
             });
         

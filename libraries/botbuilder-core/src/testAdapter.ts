@@ -70,6 +70,14 @@ export class TestAdapter extends BotAdapter implements ExtendedUserTokenProvider
         if (this.template.recipient) { this.conversation.bot = this.template.recipient; }
         if (this.template.from) { this.conversation.user = this.template.from; }
     }
+    
+    /**
+     * @private
+     * INTERNAL: used to drive the promise chain forward when running tests.
+     */
+    public get activityBuffer(): Partial<Activity>[] {
+        return this.activeQueue;
+    }
 
     /**
      * Gets a value indicating whether to send trace activities.

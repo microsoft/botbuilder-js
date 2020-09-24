@@ -86,14 +86,14 @@ export class DialogTestClient {
      */
     public async sendActivity(activity: Partial<Activity> | string): Promise<any> {
         await this._testAdapter.processActivity(activity);
-        return this._testAdapter.activeQueue.shift();
+        return this._testAdapter.activityBuffer.shift();
     }
 
     /**
      * Get the next reply waiting to be delivered (if one exists)
      */
     public getNextReply(): Partial<Activity> {
-        return this._testAdapter.activeQueue.shift();
+        return this._testAdapter.activityBuffer.shift();
     }
 
     private getDefaultCallback(targetDialog: Dialog, initialDialogOptions: any, dialogState: any): (turnContext: TurnContext) => Promise<void> {

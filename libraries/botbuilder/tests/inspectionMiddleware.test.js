@@ -41,9 +41,9 @@ describe('InspectionMiddleware', function() {
 
         await adapter.processActivity(MessageFactory.text('hello'));
 
-        assert(adapter.activeQueue.length === 1, 'expected a single adapter response');
-        assert(adapter.activeQueue[0].type === 'message', 'expected a message activity');
-        assert(adapter.activeQueue[0].text === 'hi', `expected text saying 'hi'`);
+        assert(adapter.activityBuffer.length === 1, 'expected a single adapter response');
+        assert(adapter.activityBuffer[0].type === 'message', 'expected a message activity');
+        assert(adapter.activityBuffer[0].text === 'hi', `expected text saying 'hi'`);
     });
     it('should replicate activity data to listening emulator following open and attach', async function() {
 
@@ -83,7 +83,7 @@ describe('InspectionMiddleware', function() {
 
         await inspectionAdapter.processActivity(openActivity);
 
-        var inspectionOpenResultActivity = inspectionAdapter.activeQueue[0];
+        var inspectionOpenResultActivity = inspectionAdapter.activityBuffer[0];
         var attachCommand = inspectionOpenResultActivity.value;
 
         // the logic of teh bot including replying with a message and updating user and conversation state
@@ -159,7 +159,7 @@ describe('InspectionMiddleware', function() {
 
         await inspectionAdapter.processActivity(openActivity);
 
-        var inspectionOpenResultActivity = inspectionAdapter.activeQueue[0];
+        var inspectionOpenResultActivity = inspectionAdapter.activityBuffer[0];
 
         var recipientId = 'bot';
         var attachCommand = `<at>${ recipientId }</at> ${ inspectionOpenResultActivity.value }`;
@@ -253,7 +253,7 @@ describe('InspectionMiddleware', function() {
 
         await inspectionAdapter.processActivity(openActivity);
 
-        var inspectionOpenResultActivity = inspectionAdapter.activeQueue[0];
+        var inspectionOpenResultActivity = inspectionAdapter.activityBuffer[0];
         var attachCommand = inspectionOpenResultActivity.value;
 
         // the logic of teh bot including replying with a message and updating user and conversation state
@@ -329,7 +329,7 @@ describe('InspectionMiddleware', function() {
 
         await inspectionAdapter.processActivity(openActivity);
 
-        const inspectionOpenResultActivity = inspectionAdapter.activeQueue[0];
+        const inspectionOpenResultActivity = inspectionAdapter.activityBuffer[0];
         const attachCommand = inspectionOpenResultActivity.value;
 
         // Updating the activity message to trigger turnContext.onUpdateActivity
@@ -349,12 +349,12 @@ describe('InspectionMiddleware', function() {
 
         await adapter.processActivity(MessageFactory.text(attachCommand));
         
-        adapter.activeQueue.push(activity);
-        assert.strictEqual(adapter.activeQueue.length, 2);
+        adapter.activityBuffer.push(activity);
+        assert.strictEqual(adapter.activityBuffer.length, 2);
         await adapter.processActivity(activity);
 
-        assert.strictEqual(adapter.activeQueue.length, 2, `no activities updated.`);
-        assert.strictEqual(adapter.activeQueue[1].text, activity.text, `invalid update activity text.`);
+        assert.strictEqual(adapter.activityBuffer.length, 2, `no activities updated.`);
+        assert.strictEqual(adapter.activityBuffer[1].text, activity.text, `invalid update activity text.`);
     });
 
     it('should delete activity to trigger turnContext.onDeleteActivity', async () => {
@@ -389,7 +389,7 @@ describe('InspectionMiddleware', function() {
 
         await inspectionAdapter.processActivity(openActivity);
 
-        const inspectionOpenResultActivity = inspectionAdapter.activeQueue[0];
+        const inspectionOpenResultActivity = inspectionAdapter.activityBuffer[0];
         const attachCommand = inspectionOpenResultActivity.value;
 
         // Updating the activity message to trigger turnContext.onDeleteActivity
@@ -408,11 +408,11 @@ describe('InspectionMiddleware', function() {
 
         await adapter.processActivity(MessageFactory.text(attachCommand));
 
-        adapter.activeQueue.push(activity);
-        assert.strictEqual(adapter.activeQueue.length, 2);
+        adapter.activityBuffer.push(activity);
+        assert.strictEqual(adapter.activityBuffer.length, 2);
 
         await adapter.processActivity(activity);
-        assert.strictEqual(adapter.activeQueue.length, 1, `no activities deleted.`);
+        assert.strictEqual(adapter.activityBuffer.length, 1, `no activities deleted.`);
     });
 
     it('should throw an error when onTurn next parameter is null', async () => {
@@ -446,7 +446,7 @@ describe('InspectionMiddleware', function() {
 
         await inspectionAdapter.processActivity(openActivity);
 
-        const inspectionOpenResultActivity = inspectionAdapter.activeQueue[0];
+        const inspectionOpenResultActivity = inspectionAdapter.activityBuffer[0];
         const attachCommand = inspectionOpenResultActivity.value;
 
         const adapter = new TestAdapter(async (turnContext) => {
