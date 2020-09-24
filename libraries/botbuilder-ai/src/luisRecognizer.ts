@@ -57,7 +57,7 @@ export interface LuisApplication {
 }
 
 /**
- * 
+ *
  * Options per LUIS prediction.
  */
 export interface LuisPredictionOptions extends LuisModels.PredictionResolveOptionalParams {
@@ -194,7 +194,7 @@ export interface LuisRecognizerOptionsV3 extends LuisRecognizerOptions {
     slot?: 'production' | 'staging';
 
     /**
-     * (Optional) LUIS supports versions and this is the version to use instead of a slot. 
+     * (Optional) LUIS supports versions and this is the version to use instead of a slot.
      * If this is specified, then the <see cref="Slot"/> is ignored..
      */
     version?: string;
@@ -265,13 +265,30 @@ export class LuisRecognizer implements LuisRecognizerTelemetryClient {
 
     /**
      * Creates a new LuisRecognizer instance.
-     * @param application An object conforming to the [LuisApplication](#luisapplication) definition or a string representing a LUIS application endpoint, usually retrieved from https://luis.ai.
-     * @param options (Optional) options object used to control predictions. Should conform to the [LuisRecognizerOptions](#luisrecognizeroptions) definition.
-     * @param includeApiResults (Deprecated) flag that if set to `true` will force the inclusion of LUIS Api call in results returned by [recognize()](#recognize). Defaults to a value of `false`.
+     * @param application The LUIS application endpoint, usually retrieved from https://luis.ai.
+     * @param options (Optional) Options object used to control predictions. Should conform to the [LuisRecognizerOptions](#luisrecognizeroptions) definition.
+     * @param includeApiResults (Deprecated) Flag that if set to `true` will force the inclusion of LUIS Api call in results returned by [recognize()](#recognize). Defaults to a value of `false`.
      */
     constructor(application: string, options?: LuisPredictionOptions, includeApiResults?: boolean);
+    /**
+     * Creates a new LuisRecognizer instance.
+     * @param application An object conforming to the [LuisApplication](#luisapplication) definition.
+     * @param options (Optional) Options object used to control predictions. Should conform to the [LuisRecognizerOptions](#luisrecognizeroptions) definition.
+     * @param includeApiResults (Deprecated) Flag that if set to `true` will force the inclusion of LUIS Api call in results returned by [recognize()](#recognize). Defaults to a value of `false`.
+     */
     constructor(application: LuisApplication, options?: LuisPredictionOptions, includeApiResults?: boolean);
+    /**
+     * Creates a new LuisRecognizer instance.
+     * @param application An object conforming to the [LuisApplication](#luisapplication) definition or a string representing a LUIS application endpoint, usually retrieved from https://luis.ai.
+     * @param options (Optional) Options object used to control predictions. Should conform to the [LuisRecognizerOptionsV3](#luisrecognizeroptionsv3) or [LuisRecognizerOptionsV2](#luisrecognizeroptionsv2) definition.
+     */
     constructor(application: LuisApplication | string, options?: LuisRecognizerOptionsV3 | LuisRecognizerOptionsV2);
+    /**
+     * Creates a new LuisRecognizer instance.
+     * @param application The LUIS application endpoint, usually retrieved from https://luis.ai.
+     * @param options (Optional) Options object used to control predictions. Should conform to the [LuisRecognizerOptions](#luisrecognizeroptions), [LuisRecognizerOptionsV3](#luisrecognizeroptionsv3) or [LuisRecognizerOptionsV2](#luisrecognizeroptionsv2) definition.
+     * @param includeApiResults (Deprecated) Flag that if set to `true` will force the inclusion of LUIS Api call in results returned by [recognize()](#recognize). Defaults to a value of `false`.
+     */
     constructor(application: LuisApplication | string, options?: LuisRecognizerOptionsV3 | LuisRecognizerOptionsV2 | LuisPredictionOptions, includeApiResults?: boolean) {
         if (typeof application === 'string') {
             const parsedEndpoint: Url = Url(application);
@@ -307,7 +324,7 @@ export class LuisRecognizer implements LuisRecognizerTelemetryClient {
             this.options = {
                 ...options,
             }
-    
+
             let recOptions: LuisRecognizerOptionsV2 = {
                 includeAPIResults: !!includeApiResults,
                 ...options,
@@ -408,7 +425,7 @@ export class LuisRecognizer implements LuisRecognizerTelemetryClient {
                     // Log telemetry
                     this.onRecognizerResults(recognizerResult, context, telemetryProperties, telemetryMetrics);
 
-                    return recognizerResult;    
+                    return recognizerResult;
                 })
                 .catch((error: any) => {
                     this.prepareErrorMessage(error);
@@ -488,6 +505,9 @@ export class LuisRecognizer implements LuisRecognizerTelemetryClient {
         return properties;
     }
 
+    /**
+     * @private
+     */
     private prepareErrorMessage(error: Error): void {
         // If the `error` received is a azure-cognitiveservices-luis-runtime error,
         // it may have a `response` property and `response.statusCode`.
@@ -536,7 +556,7 @@ export class LuisRecognizer implements LuisRecognizerTelemetryClient {
 
     /**
      * Performs a series of valdiations on `LuisRecognizer.application`.
-     * 
+     *
      * Note: Neither the LUIS Application ID nor the Endpoint Key are actual LUIS components, they are representations of what two valid values would appear as.
      */
     private validateLuisApplication(): void {
@@ -561,7 +581,7 @@ export class LuisRecognizer implements LuisRecognizerTelemetryClient {
                 this.options = {};
             }
             const merge = Object.assign(this.options, userOptions);
-    
+
             let recOptions: LuisRecognizerOptionsV2 = {
                 ... merge,
                 apiVersion: 'v2'

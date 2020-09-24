@@ -44,12 +44,15 @@ export class TrainUtils {
         await this.queryTrain(feedbackRecords);
     }
 
+    /**
+     * @private
+     */
     private async queryTrain(feedbackRecords: FeedbackRecords) {
         const url: string = `${ this.endpoint.host }/knowledgebases/${ this.endpoint.knowledgeBaseId }/train`;
         var payloadBody = JSON.stringify({
             feedbackRecords: feedbackRecords.feedbackRecords
         });
-        
+
         await this.httpRequestUtils.executeHttpRequest(url, payloadBody, this.endpoint);
     }
 }

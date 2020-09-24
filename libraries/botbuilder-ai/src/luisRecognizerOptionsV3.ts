@@ -14,18 +14,28 @@ const fetch = require('node-fetch');
 const LUIS_TRACE_TYPE = 'https://www.luis.ai/schemas/trace';
 const LUIS_TRACE_NAME = 'LuisRecognizer';
 const LUIS_TRACE_LABEL = 'LuisV3 Trace';
-const _dateSubtypes = [ "date", "daterange", "datetime", "datetimerange", "duration", "set", "time", "timerange" ];    
+const _dateSubtypes = [ "date", "daterange", "datetime", "datetimerange", "duration", "set", "time", "timerange" ];
 const _geographySubtypes = [ "poi", "city", "countryRegion", "continent", "state" ];
 const MetadataKey = "$instance";
 
-
+/**
+ * Validates if the options provided are valid LuisRecognizerOptionsV3.
+ */
 export function isLuisRecognizerOptionsV3(options: any): options is LuisRecognizerOptionsV3 {
     return (options.apiVersion && options.apiVersion === "v3")
 }
 
+/**
+ * Recognize intents in a user utterance using a configured LUIS model.
+ */
 export class LuisRecognizerV3 extends LuisRecognizerInternal {
 
-    constructor (application: LuisApplication, options?: LuisRecognizerOptionsV3) { 
+    /**
+     * Creates a new LuisRecognizerV3 instance.
+     * @param application An object conforming to the [LuisApplication](#luisapplication) definition or a string representing a LUIS application endpoint, usually retrieved from https://luis.ai.
+     * @param options (Optional) Options object used to control predictions. Should conform to the [LuisRecognizerOptionsV3](#luisrecognizeroptionsv3) definition.
+     */
+    constructor (application: LuisApplication, options?: LuisRecognizerOptionsV3) {
         super(application);
 
         this.predictionOptions = {
@@ -35,8 +45,8 @@ export class LuisRecognizerV3 extends LuisRecognizerInternal {
             preferExternalEntities: true,
             datetimeReference: '',
             slot: 'production',
-            telemetryClient: new NullTelemetryClient(), 
-            logPersonalInformation: false, 
+            telemetryClient: new NullTelemetryClient(),
+            logPersonalInformation: false,
             includeAPIResults: true,
             ...options
         };
@@ -44,6 +54,10 @@ export class LuisRecognizerV3 extends LuisRecognizerInternal {
 
     public predictionOptions: LuisRecognizerOptionsV3;
 
+    /**
+     * Calls LUIS to recognize intents and entities in a users utterance.
+     * @param context Turn context.
+     */
     async recognizeInternal(context: TurnContext): Promise<RecognizerResult> {
         const utterance: string = context.activity.text || '';
         if (!utterance.trim()) {
@@ -80,9 +94,12 @@ export class LuisRecognizerV3 extends LuisRecognizerInternal {
         this.emitTraceInfo(context, response.prediction, result);
 
         return result;
- 
+
     }
 
+    /**
+     * @private
+     */
     private buildUrl() {
         const baseUri = this.application.endpoint || 'https://westus.api.cognitive.microsoft.com';
         let uri =  `${baseUri}/luis/prediction/v3.0/apps/${this.application.applicationId}`;
@@ -92,18 +109,21 @@ export class LuisRecognizerV3 extends LuisRecognizerInternal {
         } else {
             uri += `/slots/${this.predictionOptions.slot}/predict`
         }
-        
+
         const params = `?verbose=${this.predictionOptions.includeInstanceData}&log=${this.predictionOptions.log}&show-all-intents=${this.predictionOptions.includeAllIntents}`;
 
         uri += params;
         return uri;
     }
 
+    /**
+     * @private
+     */
     private buildRequestBody(utterance: string){
-        const content = { 
-            'query': utterance, 
-            'options': { 
-                'preferExternalEntities': this.predictionOptions.preferExternalEntities  
+        const content = {
+            'query': utterance,
+            'options': {
+                'preferExternalEntities': this.predictionOptions.preferExternalEntities
             }
         };
 
@@ -130,6 +150,9 @@ export class LuisRecognizerV3 extends LuisRecognizerInternal {
 
     }
 
+    /**
+     * @private
+     */
     private emitTraceInfo(context: TurnContext, luisResult: LuisModels.LuisResult, recognizerResult: RecognizerResult): Promise<any> {
         const traceInfo: any = {
             recognizerResult: recognizerResult,
@@ -139,7 +162,7 @@ export class LuisRecognizerV3 extends LuisRecognizerInternal {
                 ModelID: this.application.applicationId
             }
         };
-    
+
         return context.sendActivity({
             type: 'trace',
             valueType: LUIS_TRACE_TYPE,
@@ -168,7 +191,7 @@ function  getIntents(luisResult) {
 
 function normalizeEntity(entity) {
     const splitEntity = entity.split(':');
-    const entityName = splitEntity[splitEntity.length -1]; 
+    const entityName = splitEntity[splitEntity.length -1];
     return entityName.replace(/\.| /g, '_');
 }
 
@@ -183,7 +206,7 @@ function mapProperties(source, inInstance){
             if (item['type'] && _geographySubtypes.includes(item['type']))
             {
                 isGeographyV2 = item['type'];
-            }       
+            }
 
             if (!inInstance && isGeographyV2) {
                 let geoEntity: any = {};
@@ -273,7 +296,7 @@ function mapProperties(source, inInstance){
                     }
                 }
             }
-            
+
         }
         result = nobj;
     }

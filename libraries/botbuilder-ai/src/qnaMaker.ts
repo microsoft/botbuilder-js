@@ -148,6 +148,14 @@ export class QnAMaker implements QnAMakerTelemetryClient {
         return response.answers;
     }
 
+    /**
+     * Generates an answer from the knowledge base.
+     * @param context The Turn Context that contains the user question to be queried against your knowledge base.
+     * @param options (Optional) The options for the QnA Maker knowledge base. If null, constructor option is used for this instance.
+     * @param telemetryProperties (Optional) Additional properties to be logged to telemetry with the QnaMessage event.
+     * @param telemetryMetrics (Optional) Additional metrics to be logged to telemetry with the QnaMessage event.
+     * @returns A list of answers for the user query, sorted in decreasing order of ranking score.
+     */
     public async getAnswersRaw(context: TurnContext, options?: QnAMakerOptions, telemetryProperties?: {[key: string]:string}, telemetryMetrics?: {[key: string]:number} ): Promise<QnAMakerResults> {
         if (!context) {
             throw new TypeError('QnAMaker.getAnswers() requires a TurnContext.');

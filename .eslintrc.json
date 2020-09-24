@@ -52,7 +52,7 @@
             "files": ["libraries/botbuilder-ai/src/*.ts", "libraries/botbuilder-ai/src/**/*.ts"],
             "plugins": ["jsdoc"],
             "rules": {
-              "jsdoc/require-jsdoc": ["warn", {
+              "jsdoc/require-jsdoc": ["error", {
                   "require": {
                       "FunctionDeclaration": true,
                       "MethodDefinition": true,

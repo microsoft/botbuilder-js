@@ -24,11 +24,11 @@ const fetch = getFetch();
 export class HttpRequestUtils {
     /**
      * Execute Http request.
-     * 
+     *
      * @param requestUrl Http request url.
      * @param payloadBody Http request body.
      * @param endpoint QnA Maker endpoint details.
-     * @param timeout (Optional)Timeout for http call 
+     * @param timeout (Optional)Timeout for http call
      */
     public async executeHttpRequest(requestUrl: string, payloadBody: string, endpoint: QnAMakerEndpoint, timeout?: number) {
         if (!requestUrl) {
@@ -76,6 +76,9 @@ export class HttpRequestUtils {
         return headers;
     }
 
+    /**
+     * @private
+     */
     private getUserAgent(): string {
         const packageUserAgent: string = `${ pjson.name }/${ pjson.version }`;
         const platformUserAgent: string = `(${ os.arch() }-${ os.type() }-${ os.release() }; Node.js,Version=${ process.version })`;
@@ -85,8 +88,8 @@ export class HttpRequestUtils {
 
     /**
      * Creates a QnAMakerResult for successful responses from QnA Maker service that return status code 204 No-Content.
-     * 
-     * The [Train API](https://docs.microsoft.com/en-us/rest/api/cognitiveservices/qnamakerruntime/runtime/train) 
+     *
+     * The [Train API](https://docs.microsoft.com/en-us/rest/api/cognitiveservices/qnamakerruntime/runtime/train)
      * is an example of one of QnA Maker's APIs that return a 204 status code.
      */
     private getSuccessful204Result(): QnAMakerResult {

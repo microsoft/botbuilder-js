@@ -65,7 +65,9 @@ export class ActiveLearningUtils {
         return filteredQnaSearchResult;
     }
 
-
+    /**
+     * @orivate
+     */
     private static includeForClustering(prevScore, currentScore, multiplier): boolean {
         return (prevScore - currentScore) < (multiplier * Math.sqrt(prevScore));
     }
