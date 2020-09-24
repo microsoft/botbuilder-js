@@ -73,6 +73,10 @@ COLON: ':';
 
 ARROW: '=>';
 
+NULL_COALESCE: '??';
+
+QUESTION_MARK: '?';
+
 NUMBER : DIGIT + ( '.' DIGIT +)? ;
 
 WHITESPACE : (' '|'\t'|'\ufeff'|'\u00a0') {this.ignoreWS}? -> skip;

@@ -56,6 +56,14 @@ export class ExpressionParser implements ExpressionParserInterface {
             return this.makeExpression(binaryOperationName, left, right);
         }
 
+        public visitTripleOpExp(context: ep.TripleOpExpContext): Expression {
+            const conditionalExpression: Expression = this.visit(context.expression(0));
+            const left: Expression = this.visit(context.expression(1));
+            const right: Expression = this.visit(context.expression(2));
+
+            return this.makeExpression(ExpressionType.If, conditionalExpression, left, right);
+        }
+
         public visitFuncInvokeExp(context: ep.FuncInvokeExpContext): Expression {
             const parameters: Expression[] = this.processArgsList(context.argsList());
 
@@ -118,7 +126,7 @@ export class ExpressionParser implements ExpressionParserInterface {
         public visitArrayCreationExp(context: ep.ArrayCreationExpContext): Expression {
             const parameters: Expression[] = this.processArgsList(context.argsList());
             return this.makeExpression(ExpressionType.CreateArray, ...parameters);
-        } 
+        }
 
         public visitStringAtom(context: ep.StringAtomContext): Expression {
             let text: string = context.text;
@@ -174,7 +182,7 @@ export class ExpressionParser implements ExpressionParserInterface {
                     const text = this.evalEscape(node.text);
                     children.push(new Constant(text));
                 }
-                
+
             }
 
             return this.makeExpression(ExpressionType.Concat, ...children);
@@ -189,7 +197,7 @@ export class ExpressionParser implements ExpressionParserInterface {
 
             return Expression.makeExpression(functionType, this._lookupFunction(functionType), ...children);
         }
-           
+
 
         private processArgsList(context: ep.ArgsListContext): Expression[] {
             const result: Expression[] = [];
@@ -216,13 +224,13 @@ export class ExpressionParser implements ExpressionParserInterface {
             if (result.startsWith('$')) {
                 result = result.substr(1);
             }
-    
+
             result = result.trim();
-            
+
             if (result.startsWith('{') && result.endsWith('}')) {
                 result = result.substr(1, result.length - 2);
             }
-    
+
             return result.trim();
         }
 
@@ -233,8 +241,8 @@ export class ExpressionParser implements ExpressionParserInterface {
                 '\\t': '\t',
                 '\\\\': '\\'
             };
-    
-            return text.replace(this.escapeRegex, (sub: string): string => { 
+
+            return text.replace(this.escapeRegex, (sub: string): string => {
                 if (sub in validCharactersDict) {
                     return validCharactersDict[sub];
                 } else {

@@ -153,6 +153,17 @@ const testCases = [
             ['one > 0.5 || two < 1.5', true, oneTwo],
             ['one / 0 || two', true],
             ['0/3', 0],
+            ['3??2', 3],
+            ['null ?? two', 2],
+            ['undefined ?? two', 2],
+            ['bag.notExist ?? bag.n ?? bag.name', 'mybag'],
+            ['!exists(one)?"r1":"r2"', "r2"],
+            ['!!exists(one) ? "r1" : "r2"', 'r1'],
+            ['0?"r1":"r2"', 'r1'],
+            ['bool("true")? "r1": "r2"', 'r1'],
+            ['bag.name == null ? "hello": bag.name', 'mybag'],
+            ['one > 0? one : two', 1],
+            ['hello * 5?"r1":"r2"', 'r2'],
         ]
     },
     {

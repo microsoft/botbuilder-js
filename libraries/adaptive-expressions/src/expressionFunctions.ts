@@ -205,6 +205,7 @@ export class ExpressionFunctions {
         lookup.set('not', lookup.get(ExpressionType.Not));
         lookup.set('or', lookup.get(ExpressionType.Or));
         lookup.set('&', lookup.get(ExpressionType.Concat));
+        lookup.set('??', lookup.get(ExpressionType.Coalesce));
 
         return lookup as ReadonlyMap<string, ExpressionEvaluator>;
     }
