@@ -1247,6 +1247,9 @@ describe('LG', function() {
 
         evaled = templates.evaluate('template5');
         assert.strictEqual(evaled, 'hello');
+
+        evaled = templates.evaluate('template6');
+        assert.strictEqual(evaled, null);
     });
 
 

@@ -17,3 +17,6 @@
 
 # template5
 - hello${a.b}
+
+# template6
+- ${null}
