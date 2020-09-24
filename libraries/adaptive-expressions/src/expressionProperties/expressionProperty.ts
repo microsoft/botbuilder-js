@@ -61,7 +61,9 @@ export class ExpressionProperty<T> {
                 this.expression = Expression.parse(this.value.toString());
                 break;
             default:
-                if (this.value == undefined || this.value == null) {
+                if (this.value === undefined) {
+                    this.expression = Expression.parse('undefined');
+                } else if (this.value === null) {
                     this.expression = Expression.parse('null');
                 } else {
                     this.expression = Expression.parse(`json(${ JSON.stringify(this.value) })`);

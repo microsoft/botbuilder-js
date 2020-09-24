@@ -23,7 +23,7 @@ export class FormatNumber extends ExpressionEvaluator {
     private static evaluator(): EvaluateExpressionDelegate {
         return FunctionUtils.applyWithError(
             (args: any[]): any => {
-                let value: any = null;
+                let value: any;
                 let error: string;
                 let number = args[0];
                 let precision = args[1];
@@ -36,7 +36,7 @@ export class FormatNumber extends ExpressionEvaluator {
                     error = `formatNubmer third argument ${locale} is not a valid locale`;
                 } else {
                     // NOTE: Nodes toLocaleString and Intl do not work to localize unless a special version of node is used.
-                    // TODO: In R10 we should try another package.  Numeral and d3-format have the basics, but no locale specific.  
+                    // TODO: In R10 we should try another package.  Numeral and d3-format have the basics, but no locale specific.
                     // Numbro has locales, but is optimized for the browser.
                     value = number.toLocaleString(locale, { minimumFractionDigits: precision, maximumFractionDigits: precision });
                 }

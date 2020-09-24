@@ -695,7 +695,7 @@ describe('LG', function() {
         let templates = preloaded.StrictModeFalse;
 
         let evaled = templates.expandTemplate('StrictFalse');
-        assert.strictEqual(evaled[0], null);
+        assert.strictEqual(evaled[0], undefined);
 
         templates = preloaded.StrictModeTrue;
 

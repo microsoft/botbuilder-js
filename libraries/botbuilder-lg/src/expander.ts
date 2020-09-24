@@ -270,7 +270,7 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGTe
 
     public visitNormalTemplateString(ctx: lp.NormalTemplateStringContext): any[] {
         var prefixErrorMsg = TemplateExtensions.getPrefixErrorMessage(ctx);
-        let result: string[] = [null];
+        let result: string[] = [undefined];
         for (const child of ctx.children) {
             if (child instanceof lp.ExpressionContext) {
                 result = this.stringArrayConcat(result, this.evalExpression(child.text, child, ctx.text, prefixErrorMsg));
@@ -393,8 +393,8 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGTe
         const result: string[] = [];
         for (const item1 of array1) {
             for (const item2 of array2) {
-                if ((item1 === undefined || item1 === null) && (item2 === undefined || item2 === null)) {
-                    result.push(null);
+                if (item1 === undefined && item2 === undefined) {
+                    result.push(undefined);
                 } else {
                     result.push(this.stringConcat(item1, item2));
                 }
