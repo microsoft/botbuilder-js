@@ -141,7 +141,7 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGTempla
             } else {
                 const propertyObject: any = this.evalExpression(body.expressionInStructure().text, body.expressionInStructure(), body.text);
                 // Full reference to another structured template is limited to the structured template with same type
-                if (typeof propertyObject === 'object' && Evaluator.LGType in propertyObject &&  propertyObject[Evaluator.LGType].toString() === typeName) {
+                if (propertyObject && typeof propertyObject === 'object' && Evaluator.LGType in propertyObject &&  propertyObject[Evaluator.LGType].toString() === typeName) {
                     for (const key of Object.keys(propertyObject)) {
                         if (propertyObject.hasOwnProperty(key) && !(key in result)) {
                             result[key] = propertyObject[key];
@@ -171,7 +171,7 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGTempla
                     } else {
                         const node = child as TerminalNode;
                         switch ((node as TerminalNode).symbol.type) {
-                            case (lp.LGTemplateParser.ESCAPE_CHARACTER_IN_STRUCTURE_BODY): 
+                            case (lp.LGTemplateParser.ESCAPE_CHARACTER_IN_STRUCTURE_BODY):
                                 itemStringResult += TemplateExtensions.evalEscape(node.text.replace(/\\\|/g, '|'));
                                 break;
                             default:
@@ -179,7 +179,7 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGTempla
                                 break;
                         }
                     }
-                    
+
                 }
 
                 result.push(itemStringResult.trim());
@@ -279,7 +279,7 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGTempla
         const switchNode: lp.SwitchCaseRuleContext = switchcaseNodes[0];
         const switchExprs = switchNode.switchCaseStat().expression();
         const switchErrorPrefix = `Switch '` + switchExprs[0].text + `': `;
-        const switchExprResult = this.evalExpression(switchExprs[0].text, switchExprs[0], switchcaseNodes[0].switchCaseStat().text, switchErrorPrefix).toString();
+        const switchExprResult = this.evalExpression(switchExprs[0].text, switchExprs[0], switchcaseNodes[0].switchCaseStat().text, switchErrorPrefix);
         let idx = 0;
         for (const caseNode of switchcaseNodes) {
             if (idx === 0) {
@@ -297,7 +297,7 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGTempla
 
             const caseExprs = caseNode.switchCaseStat().expression();
             const caseErrorPrefix = `Case '` + caseExprs[0].text + `': `;
-            const caseExprResult = this.evalExpression(caseExprs[0].text, caseExprs[0], caseNode.switchCaseStat().text, caseErrorPrefix).toString();
+            const caseExprResult = this.evalExpression(caseExprs[0].text, caseExprs[0], caseNode.switchCaseStat().text, caseErrorPrefix);
             if (switchExprResult === caseExprResult) {
                 return this.visit(caseNode.normalTemplateBody());
             }
@@ -412,10 +412,6 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGTempla
 
             Evaluator.checkExpressionResult(exp, error, result, templateName, inlineContent, errorPrefix);
         }
-        else if (result === undefined && !this.lgOptions.strictMode)
-        {
-            result = `null`;
-        }
 
         return result;
     }
@@ -435,7 +431,7 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGTempla
         if (standardFunction !== undefined) {
             return standardFunction;
         }
-        
+
         if (name.startsWith('lg.')) {
             name = name.substring(3);
         }
@@ -455,9 +451,9 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGTempla
 
         if (name === Evaluator.activityAttachmentFunctionName) {
             return new ExpressionEvaluator(
-                Evaluator.activityAttachmentFunctionName, 
-                FunctionUtils.apply(this.activityAttachment()), 
-                ReturnType.Object, 
+                Evaluator.activityAttachmentFunctionName,
+                FunctionUtils.apply(this.activityAttachment()),
+                ReturnType.Object,
                 (expr): void => FunctionUtils.validateOrder(expr, undefined, ReturnType.Object, ReturnType.String));
         }
 
@@ -534,7 +530,7 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGTempla
     }
 
     private readonly validateTemplateFunction = (expression: Expression): void => {
-        
+
         FunctionUtils.validateAtLeastOne(expression);
 
         const children0: Expression = expression.children[0];

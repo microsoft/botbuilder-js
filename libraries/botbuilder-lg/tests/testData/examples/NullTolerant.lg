@@ -3,15 +3,17 @@
 
 # template2
 - switch: ${a.b}
-- CASE: ${'null'}
-- result is 'null'
+- CASE: ${undefined}
+- result is undefined
 
 # template3
 [MyStruct
     key1 = ${template4()}
 ]
 
-> return null
 # template4
 - IF:${false}
 - hello
+
+# template5
+- hello${a.b}

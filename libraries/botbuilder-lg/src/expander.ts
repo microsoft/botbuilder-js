@@ -128,31 +128,37 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGTe
             if (isKVPairBody) {
                 const property = body.keyValueStructureLine().STRUCTURE_IDENTIFIER().text.toLowerCase();
                 const value = this.visitStructureValue(body.keyValueStructureLine());
-                if (value.length > 1) {
-                    const valueList = [];
-                    for (const item of value) {
-                        const id = TemplateExtensions.newGuid();
-                        if (item.length > 0) {
-                            valueList.push(id);
-                            templateRefValues.set(id, item);
-                        } else {
-                            valueList.push([])
+                if (value && value.length > 0) {
+                    if (value.length > 1) {
+                        const valueList = [];
+                        for (const item of value) {
+                            const id = TemplateExtensions.newGuid();
+                            if (item.length > 0) {
+                                valueList.push(id);
+                                templateRefValues.set(id, item);
+                            } else {
+                                valueList.push([])
+                            }
                         }
-                    }
 
-                    expandedResult.forEach((x: any) => x[property] = valueList);
-                } else {
-                    const id = TemplateExtensions.newGuid();
-                    if (value[0].length > 0) {
-                        expandedResult.forEach((x: any) => x[property] = id);
-                        templateRefValues.set(id, value[0]);
+                        expandedResult.forEach((x: any) => x[property] = valueList);
                     } else {
-                        expandedResult.forEach((x: any) => x[property] = []);
+                        const id = TemplateExtensions.newGuid();
+                        if (value[0].length > 0) {
+                            expandedResult.forEach((x: any) => x[property] = id);
+                            templateRefValues.set(id, value[0]);
+                        } else {
+                            expandedResult.forEach((x: any) => x[property] = []);
+                        }
                     }
                 }
             } else {
                 const propertyObjects: object[] = [];
-                this.evalExpression(body.expressionInStructure().text, body.expressionInStructure(), body.text).forEach((x): number => propertyObjects.push(x));
+                this.evalExpression(body.expressionInStructure().text, body.expressionInStructure(), body.text).forEach((x): void => {
+                    if (x !== undefined && x !== null) {
+                        propertyObjects.push(x)
+                    }
+                });
                 const tempResult = [];
                 for (const res of expandedResult) {
                     for (const propertyObject of propertyObjects) {
@@ -166,7 +172,7 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGTe
                                 }
                             }
                         }
-                        
+
                         tempResult.push(tempRes);
                     }
                 }
@@ -264,7 +270,7 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGTe
 
     public visitNormalTemplateString(ctx: lp.NormalTemplateStringContext): any[] {
         var prefixErrorMsg = TemplateExtensions.getPrefixErrorMessage(ctx);
-        let result: string[] = [''];
+        let result: string[] = [null];
         for (const child of ctx.children) {
             if (child instanceof lp.ExpressionContext) {
                 result = this.stringArrayConcat(result, this.evalExpression(child.text, child, ctx.text, prefixErrorMsg));
@@ -284,7 +290,7 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGTe
                     }
                 }
             }
-            
+
         }
 
         return result;
@@ -365,9 +371,6 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGTe
             }
 
             Evaluator.checkExpressionResult(exp, error, result, templateName, inlineContent, errorPrefix);
-        } else if (result === undefined && !this.lgOptions.strictMode)
-        {
-            result = `null`;
         }
 
         if (Array.isArray(result))
@@ -375,7 +378,7 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGTe
             return result;
         }
 
-        return [ result.toString() ];
+        return [ result ];
     }
 
     private evalByAdaptiveExpression(exp: string, scope: any): any {
@@ -390,11 +393,27 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGTe
         const result: string[] = [];
         for (const item1 of array1) {
             for (const item2 of array2) {
-                result.push(item1.concat(item2));
+                if ((item1 === undefined || item1 === null) && (item2 === undefined || item2 === null)) {
+                    result.push(null);
+                } else {
+                    result.push(this.stringConcat(item1, item2));
+                }
             }
         }
 
         return result;
+    }
+
+    private stringConcat(str1: string, str2: string) {
+        if (!str1) {
+            str1 = '';
+        }
+
+        if (!str2) {
+            str2 = '';
+        }
+
+        return str1 + str2;
     }
 
     private readonly customizedEvaluatorLookup = (baseLookup: EvaluatorLookup, isExpander: boolean): any => (name: string): ExpressionEvaluator => {
@@ -403,7 +422,7 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGTe
         if (standardFunction !== undefined) {
             return standardFunction;
         }
-        
+
         if (name.startsWith('lg.')) {
             name = name.substring(3);
         }
@@ -427,9 +446,9 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGTe
 
         if (name === Evaluator.activityAttachmentFunctionName) {
             return new ExpressionEvaluator(
-                Evaluator.activityAttachmentFunctionName, 
-                FunctionUtils.apply(this.activityAttachment()), 
-                ReturnType.Object, 
+                Evaluator.activityAttachmentFunctionName,
+                FunctionUtils.apply(this.activityAttachment()),
+                ReturnType.Object,
                 (expr): void => FunctionUtils.validateOrder(expr, undefined, ReturnType.Object, ReturnType.String));
         }
 
@@ -538,7 +557,7 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGTe
     }
 
     private readonly validateTemplateFunction = (expression: Expression): void => {
-        
+
         FunctionUtils.validateAtLeastOne(expression);
 
         const children0: Expression = expression.children[0];
