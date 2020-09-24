@@ -34,7 +34,7 @@ export class StartOfDay extends ExpressionEvaluator {
             if (typeof (args[0]) === 'string') {
                 ({ value, error } = StartOfDay.evalStartOfDay(args[0], format));
             } else {
-                error = `${expression} cannot evaluate`;
+                error = `${expression} should contain an ISO format timestamp and an optional output format string.`;
             }
         }
 

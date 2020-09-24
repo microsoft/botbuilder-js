@@ -36,7 +36,7 @@ export class ConvertToUTC extends ExpressionEvaluator {
             if (typeof (args[0]) === 'string' && typeof (args[1]) === 'string') {
                 ({ value, error } = ConvertToUTC.evalConvertToUTC(args[0], args[1], format));
             } else {
-                error = `${expression} cannot evaluate`;
+                error = `${expression} should contain an ISO format timestamp, a destination time zone string and an optional output format string.`;
             }
         }
 

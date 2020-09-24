@@ -9,6 +9,16 @@
       name="description"
       content="Web site created using create-react-app"
     />
+    <!-- Content Security Policy added to test security concerns. See https://github.com/microsoft/botbuilder-js/issues/2762 -->
+    <meta http-equiv="Content-Security-Policy"
+        content="default-src 'none'; 
+            base-uri 'none'; 
+            connect-src wss://%REACT_APP_BOT_HOSTNAME%.azurewebsites.net https://%REACT_APP_BOT_HOSTNAME%.azurewebsites.net; 
+            img-src blob: 'self';
+            script-src 'nonce-a1b2c3d' 'strict-dynamic'; 
+            style-src 'nonce-a1b2c3d' 'self';
+            manifest-src 'self'" 
+    />
     <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
     <!--
       Notice the use of %PUBLIC_URL% in the tags above.

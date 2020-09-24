@@ -77,7 +77,9 @@ export class ExpressionParser implements ExpressionParserInterface {
                 result = new Constant(false);
             } else if (symbol === 'true') {
                 result = new Constant(true);
-            } else if (symbol === 'null' || symbol === 'undefined') {
+            } else if (symbol === 'null') {
+                result = new Constant(null);
+            } else if (symbol === 'undefined') {
                 result = new Constant(undefined);
             } else {
                 result = this.makeExpression(ExpressionType.Accessor, new Constant(symbol));
@@ -153,7 +155,7 @@ export class ExpressionParser implements ExpressionParserInterface {
         }
 
         public visitStringInterpolationAtom(context: ep.StringInterpolationAtomContext): Expression {
-            let children: Expression[] = [];
+            let children: Expression[] = [new Constant('')];
 
             for (const node  of context.stringInterpolation().children) {
                 if (node instanceof TerminalNode){

@@ -43,7 +43,7 @@ export class SubtractFromTime extends ExpressionEvaluator {
                     }));
                 }
             } else {
-                error = `${expression} can't evaluate.`;
+                error = `${expression} should contain an ISO format timestamp, a time interval integer, a string unit of time and an optional output format string.`;
             }
         }
 
