@@ -132,6 +132,7 @@ export class BlobStorage implements Storage {
     /**
      * Retrieve entities from the configured blob container.
      * @param keys An array of entity keys.
+     * @returns The read items.
      */
     public read(keys: string[]): Promise<StoreItems> {
         if (!keys) {
@@ -272,6 +273,7 @@ export class BlobStorage implements Storage {
     /**
      * Check if a container name is valid.
      * @param container String representing the container name to validate.
+     * @returns A boolean value that indicates whether or not the name is valid.
      */
     private checkContainerName(container: string): boolean {
         return ContainerNameCheck.test(container);
@@ -294,6 +296,7 @@ export class BlobStorage implements Storage {
      * @param storageAccountOrConnectionString Azure CloudStorageAccount instance or Connection String.
      * @param storageAccessKey Blob Service Access Key.
      * @param host Blob Service Host.
+     * @returns the blob services created.
      */
     private createBlobService(storageAccountOrConnectionString: string, storageAccessKey: string, host: any): BlobServiceAsync {
         if (!storageAccountOrConnectionString) {
