@@ -135,6 +135,15 @@ export class ChoiceFactory {
         }
     }
 
+
+    /**
+     * Creates a message activity that includes a list of choices that have been added as `HeroCard`'s.
+     * 
+     * @param choices The list of choices to add.
+     * @param text Optional, text of the message.
+     * @param speak Optional, SSML text to be spoken by the bot on a speech-enabled channel.
+     * @returns An activity with choices as HeroCard with buttons.
+     */
     public static heroCard(choices: (string | Choice)[] = [], text = '', speak = ''): Activity {
         const buttons: CardAction[] = ChoiceFactory.toChoices(choices).map(choice => ({
             title: choice.value,

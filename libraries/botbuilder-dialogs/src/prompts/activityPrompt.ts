@@ -29,6 +29,15 @@ export class ActivityPrompt extends Dialog {
         super(dialogId);
     }
 
+    /**
+     * Called when a prompt dialog is pushed onto the dialog stack and is being activated.
+     * @param dc The DialogContext for the current turn of the conversation.
+     * @param options Additional information to pass to the prompt being started.
+     * @returns A Promise representing the asynchronous operation.
+     * @remarks 
+     * If the task is successful, the result indicates whether the prompt is still
+     * active after the turn has been processed by the prompt.
+     */
     public async beginDialog(dc: DialogContext, options: PromptOptions): Promise<DialogTurnResult> {
         // Ensure prompts have input hint set
         const opt: Partial<PromptOptions> = {...options};
@@ -50,6 +59,16 @@ export class ActivityPrompt extends Dialog {
         return Dialog.EndOfTurn;
     }
 
+    /**
+     * Called when a prompt dialog is the active dialog and the user replied with a new activity.
+     * @param dc The DialogContext for the current turn of conversation.
+     * @returns A Promise representing the asynchronous operation.
+     * @remarks
+     * If the task is successful, the result indicates whether the dialog is still
+     * active after the turn has been processed by the dialog.
+     * The prompt generally continues to receive the user's replies until it accepts the
+     * user's reply as valid input for the prompt.
+     */
     public async continueDialog(dc: DialogContext): Promise<DialogTurnResult> {
         // Perform base recognition
         const state: any = dc.activeDialog.state as ActivityPromptState;
@@ -82,6 +101,15 @@ export class ActivityPrompt extends Dialog {
         }
     }
 
+    /**
+     * Called when a prompt dialog resumes being the active dialog on the dialog stack, such as
+     * when the previous active dialog on the stack completes.
+     * @param dc The DialogContext for the current turn of the conversation.
+     * @param reason An enum indicating why the dialog resumed.
+     * @param result Optional, value returned from the previous dialog on the stack.
+     * The type of the value returned is dependent on the previous dialog.
+     * @returns A Promise representing the asynchronous operation.
+     */
     public async resumeDialog(dc: DialogContext, reason: DialogReason, result?: any): Promise<DialogTurnResult> {
         // Prompts are typically leaf nodes on the stack but the dev is free to push other dialogs
         // on top of the stack which will result in the prompt receiving an unexpected call to
@@ -93,11 +121,26 @@ export class ActivityPrompt extends Dialog {
         return Dialog.EndOfTurn;
     }
 
+    /**
+     * Called when a prompt dialog has been requested to re-prompt the user for input.
+     * @param context Context for the current turn of conversation with the user.
+     * @param instance The instance of the dialog on the stack.
+     * @returns A Promise representing the asynchronous operation.
+     */
     public async repromptDialog(context: TurnContext, instance: DialogInstance): Promise<void> {
         const state: ActivityPromptState = instance.state as ActivityPromptState;
         await this.onPrompt(context, state.state, state.options, false);
     }
 
+    /**
+     * When overridden in a derived class, prompts the user for input.
+     * @param context Context for the current turn of conversation with the user.
+     * @param state Contains state for the current instance of the prompt on the dialog stack.
+     * @param options A prompt options object constructed from the options initially provided
+     * in the call to Prompt.
+     * @param isRetry A boolean representing if the prompt is a retry.
+     * @returns A Promise representing the asynchronous operation.
+     */
     protected async onPrompt(context: TurnContext, state: object, options: PromptOptions, isRetry: boolean): Promise<void> {
         if (isRetry && options.retryPrompt) {
             await context.sendActivity(options.retryPrompt, undefined, InputHints.ExpectingInput);
@@ -106,6 +149,13 @@ export class ActivityPrompt extends Dialog {
         }
     }
 
+    /**
+     * When overridden in a derived class, attempts to recognize the incoming activity.
+     * @param context Context for the current turn of conversation with the user.
+     * @param state Contains state for the current instance of the prompt on the dialog stack.
+     * @param options A prompt options object constructed from the options initially provided
+     * in the call to Prompt.
+     */
     protected async onRecognize(context: TurnContext, state: object, options: PromptOptions): Promise<PromptRecognizerResult<Activity>> {
         return { succeeded: true, value: context.activity };
     }
