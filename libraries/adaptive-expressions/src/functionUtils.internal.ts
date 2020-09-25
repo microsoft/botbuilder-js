@@ -111,7 +111,7 @@ export class InternalFunctionUtils {
         };
     }
 
-        /**
+    /**
      * Lookup a string or number index of an Object.
      * @param instance Instance with property.
      * @param property Property to lookup.
@@ -295,7 +295,7 @@ export class InternalFunctionUtils {
         return result;
     }
 
-        /**
+    /**
      * Evaluator for foreach and select functions.
      * @param expression Expression.
      * @param state Memory scope.
