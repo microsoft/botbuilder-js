@@ -6,6 +6,9 @@
  * Licensed under the MIT License.
  */
 
+/**
+ * Defines path for avaiable turns.
+ */
 export class TurnPath {
     /// The result from the last dialog that was called.
     public static readonly lastResult = 'turn.lastresult';
