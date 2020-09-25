@@ -20,6 +20,7 @@ const MetadataKey = "$instance";
 
 /**
  * Validates if the options provided are valid LuisRecognizerOptionsV3.
+ * @returns A boolean value that indicates param options is a LuisRecognizerOptionsV3.
  */
 export function isLuisRecognizerOptionsV3(options: any): options is LuisRecognizerOptionsV3 {
     return (options.apiVersion && options.apiVersion === "v3")

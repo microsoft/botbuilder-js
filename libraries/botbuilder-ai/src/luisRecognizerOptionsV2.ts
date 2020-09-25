@@ -20,6 +20,7 @@ const LUIS_TRACE_LABEL = 'Luis Trace';
 
 /**
  * Validates if the options provided are valid LuisRecognizerOptionsV2.
+ * @returns A boolean value that indicates param options is a LuisRecognizerOptionsV2.
  */
 export function isLuisRecognizerOptionsV2(options: any): options is LuisRecognizerOptionsV2 {
     return (options.apiVersion && options.apiVersion === "v2");
@@ -64,6 +65,7 @@ export class LuisRecognizerV2 extends LuisRecognizerInternal {
     /**
      * Calls LUIS to recognize intents and entities in a users utterance.
      * @param context Turn context.
+     * @returns Analysis of utterance.
      */
     async recognizeInternal(context: TurnContext): Promise<RecognizerResult> {
         const luisPredictionOptions = this.options;
@@ -109,6 +111,7 @@ export class LuisRecognizerV2 extends LuisRecognizerInternal {
     /**
      * Remove role and ensure that dot and space are not a part of entity names since we want to do JSON paths
      * @param name Value to be normalized.
+     * @returns Normalized string value.
      */
     private normalizeName(name: string): string {
         return name.replace(/\.| /g, '_');
@@ -117,6 +120,7 @@ export class LuisRecognizerV2 extends LuisRecognizerInternal {
     /**
      * Get Intents from a LuisResult object.
      * @param luisResult Prediction, based on the input query, containing intent(s) and entities.
+     * @returns LUIS Intents with a score number.
      */
     private getIntents(luisResult: LuisModels.LuisResult): any {
         const intents: { [name: string]: { score: number } } = {};
