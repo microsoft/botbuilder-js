@@ -150,15 +150,15 @@ export class FileTranscriptStore implements TranscriptStore {
 
         const exists = await pathExists(transcriptFolder);
         if (!exists) {
-        	return pagedResult;
+            return pagedResult;
         }
 
         let transcriptFolderContents = await readdir(transcriptFolder);
         const include = includeWhen(fileName => !continuationToken || parse(fileName).name === continuationToken);
         const items = transcriptFolderContents.filter(transcript =>
             transcript.endsWith('.json') &&
-			withDateFilter(startDate, transcript) &&
-			include(transcript));
+            withDateFilter(startDate, transcript) &&
+            include(transcript));
 
         pagedResult.items = await Promise.all(items
             .slice(0, FileTranscriptStore.PageSize)
@@ -168,7 +168,7 @@ export class FileTranscriptStore implements TranscriptStore {
                 return parseActivity(json);
             })
         );
-        const {length} = pagedResult.items;
+        const { length } = pagedResult.items;
         if (length === FileTranscriptStore.PageSize && items[length]) {
             pagedResult.continuationToken = parse(items[length]).name;
         }
@@ -188,14 +188,14 @@ export class FileTranscriptStore implements TranscriptStore {
 
         const exists = await pathExists(channelFolder);
         if (!exists) {
-        	return pagedResult;
+            return pagedResult;
         }
         const channels = await readdir(channelFolder);
         const items = channels.filter(includeWhen(di => !continuationToken || di === continuationToken));
         pagedResult.items = items
             .slice(0, FileTranscriptStore.PageSize)
-            .map(i => ({channelId: channelId,	id: i,	created: null}));
-        const {length} = pagedResult.items;
+            .map(i => ({ channelId: channelId, id: i, created: null }));
+        const { length } = pagedResult.items;
         if (length === FileTranscriptStore.PageSize && items[length]) {
             pagedResult.continuationToken = items[length];
         }
@@ -218,28 +218,46 @@ export class FileTranscriptStore implements TranscriptStore {
         return remove(transcriptFolder);
     }
 
+    /**
+     * Saves the activity as a JSON file.
+     * @param activity The activity to transcript.
+     * @param transcriptPath The path where the transcript will be saved.
+     * @param activityFilename The name for the file.
+     */
     private async saveActivity(activity: Activity, transcriptPath: string, activityFilename: string): Promise<void> {
         const json: string = JSON.stringify(activity, null, '\t');
 
         const exists = await pathExists(transcriptPath);
         if (!exists) {
-        	await mkdirp(transcriptPath);
+            await mkdirp(transcriptPath);
         }
         return writeFile(join(transcriptPath, activityFilename), json, 'utf8');
     }
 
+    /**
+     * @private
+     */
     private getActivityFilename(activity: Activity): string {
-        return `${ getTicks(activity.timestamp) }-${ this.sanitizeKey(activity.id) }.json`;
+        return `${getTicks(activity.timestamp)}-${this.sanitizeKey(activity.id)}.json`;
     }
 
+    /**
+     * @private
+     */
     private getChannelFolder(channelId: string): string {
         return join(this.rootFolder, this.sanitizeKey(channelId));
     }
 
+    /**
+     * @private
+     */
     private getTranscriptFolder(channelId: string, conversationId: string): string {
         return join(this.rootFolder, this.sanitizeKey(channelId), this.sanitizeKey(conversationId));
     }
 
+    /**
+     * @private
+     */
     private sanitizeKey(key: string): string {
         return filenamify(key);
     }

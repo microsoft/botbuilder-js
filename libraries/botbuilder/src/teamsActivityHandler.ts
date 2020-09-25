@@ -30,6 +30,10 @@ import {
 } from 'botbuilder-core';
 import { TeamsInfo } from './teamsInfo';
 
+/**
+ * The TeamsActivityHandler is derived from ActivityHandler. It adds support for 
+ * the Microsoft Teams specific events and interactions.
+ */
 export class TeamsActivityHandler extends ActivityHandler {
 
     /**

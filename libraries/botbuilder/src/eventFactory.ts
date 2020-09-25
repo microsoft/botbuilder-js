@@ -57,7 +57,7 @@ export class EventFactory {
         if (!state) {
             throw new TypeError('EventFactory.createHandoffStatus(): missing state.');
         }
-        
+
         const value: any = { state, message };
 
         const handoffEvent = this.createHandoffEvent(HandoffEventNames.HandoffStatus, value, conversation);
@@ -65,6 +65,9 @@ export class EventFactory {
         return handoffEvent;
     }
 
+    /**
+     * @private
+     */
     private static createHandoffEvent(name: string, value: any, conversation: ConversationAccount): Activity {
         const handoffEvent: Activity = {} as any;
 

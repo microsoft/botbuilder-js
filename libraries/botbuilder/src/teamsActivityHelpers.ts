@@ -27,6 +27,12 @@ export function teamsGetChannelId(activity: Activity): string {
     return channel && channel.id ? channel.id : null;
 }
 
+/**
+ * Gets the Team Id from the current activity.
+ * @param activity The current activity.
+ * 
+ * @returns The current activity's team's Id, or null.
+ */
 export function teamsGetTeamId(activity: Activity): string {
     if (!activity) {
         throw new Error('Missing activity parameter');
@@ -37,6 +43,10 @@ export function teamsGetTeamId(activity: Activity): string {
     return team && team.id ? team.id : null;
 }
 
+/**
+ * Configures the current activity to generate a notification within Teams.
+ * @param activity The current activity.
+ */
 export function teamsNotifyUser(activity: Activity): void {
     if (!activity) {
         throw new Error('Missing activity parameter');
@@ -48,8 +58,14 @@ export function teamsNotifyUser(activity: Activity): void {
 
     const channelData: TeamsChannelData = activity.channelData as TeamsChannelData;
     channelData.notification = { alert: true } as NotificationInfo;
-}    
+}
 
+/**
+ * Gets the TeamsInfo object from the current activity.
+ * @param activity The current activity.
+ * 
+ * @returns The current activity's team's info, or null.
+ */
 export function teamsGetTeamInfo(activity: Activity): TeamInfo {
     if (!activity) {
         throw new Error('Missing activity parameter');

@@ -185,6 +185,12 @@ export class InspectionMiddleware extends InterceptionMiddleware {
         this.credentials = new MicrosoftAppCredentials(credentials.appId, credentials.appPassword);
     }
 
+    /**
+     * Indentifies open and attach commands and calls the appropriate method.
+     * @param turnContext The context for this turn.
+     * 
+     * @returns True if the command is open or attached, otherwise false.
+     */
     public async processCommand(turnContext: TurnContext): Promise<any> {
 
         if (turnContext.activity.type == ActivityTypes.Message && turnContext.activity.text !== undefined) {
@@ -212,6 +218,11 @@ export class InspectionMiddleware extends InterceptionMiddleware {
         return false;
     }
 
+    /**
+     * Processes inbound activities.
+     * @param turnContext The context for this turn.
+     * @param traceActivity The trace activity.
+     */
     protected async inbound(turnContext: TurnContext, traceActivity: Partial<Activity>): Promise<any> {
 
         if (await this.processCommand(turnContext)) {
@@ -231,6 +242,11 @@ export class InspectionMiddleware extends InterceptionMiddleware {
         }
     }
 
+    /**
+     * Processes outbound activities.
+     * @param turnContext The context for this turn.
+     * @param traceActivities A collection of trace activities.
+     */
     protected async outbound(turnContext: TurnContext, traceActivities: Partial<Activity>[]): Promise<any> {
 
         var session = await this.findSession(turnContext);
@@ -245,6 +261,10 @@ export class InspectionMiddleware extends InterceptionMiddleware {
         }
     }
 
+    /**
+     * Processes the state management object.
+     * @param turnContext The context for this turn.
+     */
     protected async traceState(turnContext: TurnContext): Promise<any> {
 
         var session = await this.findSession(turnContext);
@@ -271,6 +291,9 @@ export class InspectionMiddleware extends InterceptionMiddleware {
         }
     }
 
+    /**
+     * @private
+     */
     private async processOpenCommand(turnContext: TurnContext): Promise<any> {
         var sessions = await this.inspectionStateAccessor.get(turnContext, InspectionSessionsByStatus.DefaultValue);
         var sessionId = this.openCommand(sessions, TurnContext.getConversationReference(turnContext.activity));
@@ -278,6 +301,9 @@ export class InspectionMiddleware extends InterceptionMiddleware {
         await this.inspectionState.saveChanges(turnContext, false);
     }
 
+    /**
+     * @private
+     */
     private async processAttachCommand(turnContext: TurnContext, sessionId: string): Promise<any> {
         var sessions = await this.inspectionStateAccessor.get(turnContext, InspectionSessionsByStatus.DefaultValue);
         if (this.attachCommand(this.getAttachId(turnContext.activity), sessions, sessionId)) {
@@ -290,6 +316,9 @@ export class InspectionMiddleware extends InterceptionMiddleware {
         await this.inspectionState.saveChanges(turnContext, false);
     }
 
+    /**
+     * @private
+     */
     private openCommand(sessions: InspectionSessionsByStatus, conversationReference: Partial<ConversationReference>): string {
         function generate_guid() {
             function s4() {
@@ -306,6 +335,9 @@ export class InspectionMiddleware extends InterceptionMiddleware {
         return sessionId;
     }
 
+    /**
+     * @private
+     */
     private attachCommand(attachId: string, sessions: InspectionSessionsByStatus, sessionId: string): boolean {
         var inspectionSessionState = sessions.openedSessions[sessionId];
         if (inspectionSessionState !== undefined) {
@@ -316,6 +348,9 @@ export class InspectionMiddleware extends InterceptionMiddleware {
         return false;
     }
 
+    /**
+     * @private
+     */
     private async findSession(turnContext: TurnContext): Promise<any> {
         var sessions = await this.inspectionStateAccessor.get(turnContext, InspectionSessionsByStatus.DefaultValue);
 
@@ -327,6 +362,9 @@ export class InspectionMiddleware extends InterceptionMiddleware {
         return undefined;
     }
 
+    /**
+     * @private
+     */
     private async invokeSend(turnContext: TurnContext, session: InspectionSession, activity: Partial<Activity>): Promise<any> {
 
         if (await session.send(activity)) {
@@ -337,6 +375,9 @@ export class InspectionMiddleware extends InterceptionMiddleware {
         }
     }
 
+    /**
+     * @private
+     */
     private async cleanUpSession(turnContext: TurnContext): Promise<any> {
         var sessions = await this.inspectionStateAccessor.get(turnContext, InspectionSessionsByStatus.DefaultValue);
 
@@ -344,6 +385,9 @@ export class InspectionMiddleware extends InterceptionMiddleware {
         await this.inspectionState.saveChanges(turnContext, false);
     }
 
+    /**
+     * @private
+     */
     private getAttachId(activity: Activity) : string {
         // If we are running in a Microsoft Teams Team the conversation Id will reflect a particular thread the bot is in.
         // So if we are in a Team then we will associate the "attach" with the Team Id rather than the more restrictive conversation Id.
@@ -396,12 +440,20 @@ class InspectionSessionsByStatus {
  */
 export class InspectionState extends BotState {
 
+    /**
+     * Creates a new instance of the InspectionState class.
+     * @param storage The storage layer this state management object will use to store and retrieve state.
+     */
     constructor(storage: Storage) {
         super(storage, (context: TurnContext) => {
             return Promise.resolve(this.getStorageKey(context));
         });
     }
-    
+
+    /**
+     * Gets the key to use when reading and writing state to and from storage.
+     * @param turnContext The context for this turn.
+     */
     protected getStorageKey(turnContext: TurnContext) {
         return 'InspectionState';
     }
