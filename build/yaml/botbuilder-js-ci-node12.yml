@@ -76,5 +76,5 @@ stages:
     displayName: 'Node 12.x Code Analysis'
     variables:
       NodeVersion: 12.x
-      steps:
+    steps:
       - template: js-analysis-steps.yml
