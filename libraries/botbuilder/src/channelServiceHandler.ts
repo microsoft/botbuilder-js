@@ -51,52 +51,107 @@ export class ChannelServiceHandler {
         if (!authConfig) {
             throw new Error('BotFrameworkHttpClient(): missing authConfig');
         }
-        
+
         this.credentialProvider = credentialProvider;
         this.authConfig = authConfig;
         this.channelService = channelService || process.env[AuthenticationConstants.ChannelService];
     }
 
+    /**
+     * Sends an activity to the end of a conversation.
+     * @param authHeader The authentication header.
+     * @param conversationId The conversation Id.
+     * @param activity The activity to send.
+     */
     public async handleSendToConversation(authHeader: string, conversationId: string, activity: Activity): Promise<ResourceResponse> {
         const claimsIdentity = await this.authenticate(authHeader);
         return await this.onSendToConversation(claimsIdentity, conversationId, activity);
     }
 
+    /**
+     * Sends a reply to an activity.
+     * @param authHeader The authentication header.
+     * @param conversationId The conversation Id.
+     * @param activityId The activity Id the reply is to.
+     * @param activity The activity to send.
+     */
     public async handleReplyToActivity(authHeader: string, conversationId: string, activityId: string, activity: Activity): Promise<ResourceResponse> {
         const claimsIdentity = await this.authenticate(authHeader);
         return await this.onReplyToActivity(claimsIdentity, conversationId, activityId, activity);
     }
 
+    /**
+     * Edits a previously sent existing activity.
+     * @param authHeader The authentication header.
+     * @param conversationId The conversation Id.
+     * @param activityId The activity Id to update.
+     * @param activity The replacement activity.
+     */
     public async handleUpdateActivity(authHeader: string, conversationId: string, activityId: string, activity: Activity): Promise<ResourceResponse> {
         const claimsIdentity = await this.authenticate(authHeader);
         return await this.onUpdateActivity(claimsIdentity, conversationId, activityId, activity);
     }
 
+    /**
+     * Deletes an existing activity.
+     * @param authHeader The authentication header.
+     * @param conversationId The conversation Id.
+     * @param activityId The activity Id to delete.
+     */
     public async handleDeleteActivity(authHeader: string, conversationId: string, activityId: string): Promise<void> {
         const claimsIdentity = await this.authenticate(authHeader);
         await this.onDeleteActivity(claimsIdentity, conversationId, activityId);
     }
 
+    /**
+     * Enumerates the members of an activity.
+     * @param authHeader The authentication header.
+     * @param conversationId The conversation Id.
+     * @param activityId The activity Id.
+     */
     public async handleGetActivityMembers(authHeader: string, conversationId: string, activityId: string): Promise<ChannelAccount[]> {
         const claimsIdentity = await this.authenticate(authHeader);
         return await this.onGetActivityMembers(claimsIdentity, conversationId, activityId);
     }
 
+    /**
+     * Creates a new Conversation.
+     * @param authHeader The authentication header.
+     * @param parameters Parameters to create the conversation from.
+     */
     public async handleCreateConversation(authHeader: string, parameters: ConversationParameters): Promise<ConversationResourceResponse> {
         const claimsIdentity = await this.authenticate(authHeader);
         return await this.onCreateConversation(claimsIdentity, parameters);
     }
 
+    /**
+     * Lists the Conversations in which the bot has participated.
+     * @param authHeader The authentication header.
+     * @param conversationId The conversation Id.
+     * @param continuationToken A skip or continuation token.
+     */
     public async handleGetConversations(authHeader: string, conversationId: string, continuationToken?: string /* some default */): Promise<ConversationsResult> {
         const claimsIdentity = await this.authenticate(authHeader);
         return await this.onGetConversations(claimsIdentity, conversationId, continuationToken);
     }
 
+    /**
+     * Enumerates the members of a conversation.
+     * @param authHeader The authentication header.
+     * @param conversationId The conversation Id.
+     */
     public async handleGetConversationMembers(authHeader: string, conversationId: string): Promise<ChannelAccount[]> {
         const claimsIdentity = await this.authenticate(authHeader);
         return await this.onGetConversationMembers(claimsIdentity, conversationId);
     }
 
+    /**
+     * Enumerates the members of a conversation one page at a time.
+     * @param authHeader The authentication header.
+     * @param conversationId The conversation Id.
+     * @param pageSize Suggested page size.
+     * @param continuationToken A continuation token.
+     */
     public async handleGetConversationPagedMembers(
         authHeader: string,
         conversationId: string,
@@ -106,16 +161,34 @@ export class ChannelServiceHandler {
         return await this.onGetConversationPagedMembers(claimsIdentity, conversationId, pageSize, continuationToken);
     }
 
+    /**
+     * Deletes a member from a conversation.
+     * @param authHeader The authentication header.
+     * @param conversationId The conversation Id.
+     * @param memberId Id of the member to delete from this conversation.
+     */
     public async handleDeleteConversationMember(authHeader: string, conversationId: string, memberId: string): Promise<void> {
         const claimsIdentity = await this.authenticate(authHeader);
         await this.onDeleteConversationMember(claimsIdentity, conversationId, memberId);
     }
 
+    /**
+     * Uploads the historic activities of the conversation.
+     * @param authHeader The authentication header.
+     * @param conversationId The conversation Id.
+     * @param transcript Transcript of activities.
+     */
     public async handleSendConversationHistory(authHeader: string, conversationId: string, transcript: Transcript): Promise<ResourceResponse> {
         const claimsIdentity = await this.authenticate(authHeader);
         return await this.onSendConversationHistory(claimsIdentity, conversationId, transcript);
     }
 
+    /**
+     * Stores data in a compliant store when dealing with enterprises.
+     * @param authHeader The authentication header.
+     * @param conversationId The conversation Id.
+     * @param attachmentUpload Attachment data.
+     */
     public async handleUploadAttachment(authHeader: string, conversationId: string, attachmentUpload: AttachmentData): Promise<ResourceResponse> {
         const claimsIdentity = await this.authenticate(authHeader);
         return await this.onUploadAttachment(claimsIdentity, conversationId, attachmentUpload);
@@ -360,15 +433,18 @@ export class ChannelServiceHandler {
         throw new StatusCodeError(StatusCodes.NOT_IMPLEMENTED, `ChannelServiceHandler.onUploadAttachment(): ${StatusCodes.NOT_IMPLEMENTED}: ${STATUS_CODES[StatusCodes.NOT_IMPLEMENTED]}`);
     }
 
+    /**
+     * @private
+     */
     private async authenticate(authHeader: string): Promise<ClaimsIdentity> {
         try {
             if (!authHeader) {
                 const isAuthDisable = this.credentialProvider.isAuthenticationDisabled()
                 if (isAuthDisable) {
-                        // In the scenario where Auth is disabled, we still want to have the
-                        // IsAuthenticated flag set in the ClaimsIdentity. To do this requires
-                        // adding in an empty claim.
-                        return new ClaimsIdentity([], false);
+                    // In the scenario where Auth is disabled, we still want to have the
+                    // IsAuthenticated flag set in the ClaimsIdentity. To do this requires
+                    // adding in an empty claim.
+                    return new ClaimsIdentity([], false);
                 }
             }
 
@@ -379,4 +455,3 @@ export class ChannelServiceHandler {
         }
     }
 }
-

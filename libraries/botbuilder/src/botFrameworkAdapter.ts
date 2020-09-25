@@ -66,7 +66,7 @@ export interface BotFrameworkAdapterSettings {
      * Optional. Certificate key to authenticate the appId against AAD.
      */
     certificatePrivateKey?: string;
-    
+
     /**
      * Optional. Used to require specific endorsements and verify claims. Recommended for Skills.
      */
@@ -86,8 +86,8 @@ const NODE_VERSION: any = process.version;
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const pjson: any = require('../package.json');
-export const USER_AGENT: string = `Microsoft-BotFramework/3.1 BotBuilder/${ pjson.version } ` +
-    `(Node.js,Version=${ NODE_VERSION }; ${ TYPE } ${ RELEASE }; ${ ARCHITECTURE })`;
+export const USER_AGENT: string = `Microsoft-BotFramework/3.1 BotBuilder/${pjson.version} ` +
+    `(Node.js,Version=${NODE_VERSION}; ${TYPE} ${RELEASE}; ${ARCHITECTURE})`;
 const OAUTH_ENDPOINT = 'https://api.botframework.com';
 const US_GOV_OAUTH_ENDPOINT = 'https://api.botframework.azure.us';
 
@@ -164,7 +164,7 @@ export class BotFrameworkAdapter extends BotAdapter implements ConnectorClientBu
     public constructor(settings?: Partial<BotFrameworkAdapterSettings>) {
         super();
         this.settings = { appId: '', appPassword: '', ...settings };
-        
+
         // If settings.certificateThumbprint & settings.certificatePrivateKey are provided,
         // use CertificateAppCredentials.
         if (this.settings.certificateThumbprint && this.settings.certificatePrivateKey) {
@@ -174,7 +174,7 @@ export class BotFrameworkAdapter extends BotAdapter implements ConnectorClientBu
             this.credentials = new MicrosoftAppCredentials(this.settings.appId, this.settings.appPassword || '', this.settings.channelAuthTenant);
             this.credentialsProvider = new SimpleCredentialProvider(this.credentials.appId, this.settings.appPassword || '');
         }
-        
+
         this.isEmulatingOAuthCards = false;
 
         // If no channelService or openIdMetadata values were passed in the settings, check the process' Environment Variables for values.
@@ -216,7 +216,7 @@ export class BotFrameworkAdapter extends BotAdapter implements ConnectorClientBu
     public get isStreamingConnectionOpen(): boolean {
         return this.streamingServer.isConnected;
     }
- 
+
     /**
      * Asynchronously resumes a conversation with a user, possibly after some time has gone by.
      *
@@ -265,7 +265,13 @@ export class BotFrameworkAdapter extends BotAdapter implements ConnectorClientBu
      */
     public async continueConversation(reference: Partial<ConversationReference>, logic: (context: TurnContext) => Promise<void>): Promise<void>
     public async continueConversation(reference: Partial<ConversationReference>, oAuthScope: string, logic: (context: TurnContext) => Promise<void>): Promise<void>
-    public async continueConversation(reference: Partial<ConversationReference>, oAuthScopeOrlogic: string | ((context: TurnContext) => Promise<void> ), logic?: (context: TurnContext) => Promise<void>): Promise<void> {
+    /**
+     * Asynchronously resumes a conversation with a user, possibly after some time has gone by.
+     * @param reference A reference to the conversation to continue.
+     * @param oAuthScopeOrlogic The intended recipient of any sent activities or the function to call to continue the conversation.
+     * @param logic (Optional) The asynchronous method to call after the adapter middleware runs.
+     */
+    public async continueConversation(reference: Partial<ConversationReference>, oAuthScopeOrlogic: string | ((context: TurnContext) => Promise<void>), logic?: (context: TurnContext) => Promise<void>): Promise<void> {
         let audience = oAuthScopeOrlogic as string;
         let callback = typeof oAuthScopeOrlogic === 'function' ? oAuthScopeOrlogic : logic;
 
@@ -544,6 +550,15 @@ export class BotFrameworkAdapter extends BotAdapter implements ConnectorClientBu
      */
     public async getUserToken(context: TurnContext, connectionName: string, magicCode?: string): Promise<TokenResponse>;
     public async getUserToken(context: TurnContext, connectionName: string, magicCode?: string, oAuthAppCredentials?: CoreAppCredentials): Promise<TokenResponse>;
+    /**
+     * Asynchronously attempts to retrieve the token for a user that's in a login flow.
+     * @param context The context object for the turn.
+     * @param connectionName The name of the auth connection to use.
+     * @param magicCode Optional. The validation code the user entered.
+     * @param oAuthAppCredentials Optional. AppCredentials for OAuth.
+     * 
+     * @returns A [TokenResponse](xref:botframework-schema.TokenResponse) object that contains the user token.
+     */
     public async getUserToken(context: TurnContext, connectionName: string, magicCode?: string, oAuthAppCredentials?: AppCredentials): Promise<TokenResponse> {
         if (!context.activity.from || !context.activity.from.id) {
             throw new Error(`BotFrameworkAdapter.getUserToken(): missing from or from.id`);
@@ -575,20 +590,28 @@ export class BotFrameworkAdapter extends BotAdapter implements ConnectorClientBu
      */
     public async signOutUser(context: TurnContext, connectionName?: string, userId?: string): Promise<void>;
     public async signOutUser(context: TurnContext, connectionName?: string, userId?: string, oAuthAppCredentials?: CoreAppCredentials): Promise<void>;
+    /**
+     * Asynchronously signs out the user from the token server.
+     * 
+     * @param context The context object for the turn.
+     * @param connectionName Optional. The name of the auth connection to use.
+     * @param userId Optional. The ID of the user to sign out.
+     * @param oAuthAppCredentials Optional. AppCredentials for OAuth. 
+     */
     public async signOutUser(context: TurnContext, connectionName?: string, userId?: string, oAuthAppCredentials?: AppCredentials): Promise<void> {
         if (!context.activity.from || !context.activity.from.id) {
             throw new Error(`BotFrameworkAdapter.signOutUser(): missing from or from.id`);
         }
-        if (!userId){
+        if (!userId) {
             userId = context.activity.from.id;
         }
-        
+
         this.checkEmulatingOAuthCards(context);
         const url: string = this.oauthApiUrl(context);
         const client: TokenApiClient = this.createTokenApiClient(url, oAuthAppCredentials);
         context.turnState.set(this.TokenApiClientCredentialsKey, client);
 
-        await client.userToken.signOut(userId, { connectionName: connectionName, channelId: context.activity.channelId } );
+        await client.userToken.signOut(userId, { connectionName: connectionName, channelId: context.activity.channelId });
     }
 
     /**
@@ -603,6 +626,16 @@ export class BotFrameworkAdapter extends BotAdapter implements ConnectorClientBu
      */
     public async getSignInLink(context: TurnContext, connectionName: string, oAuthAppCredentials?: AppCredentials, userId?: string, finalRedirect?: string): Promise<string>
     public async getSignInLink(context: TurnContext, connectionName: string, oAuthAppCredentials?: CoreAppCredentials, userId?: string, finalRedirect?: string): Promise<string>
+    /**
+     * Asynchronously gets a sign-in link from the token server that can be sent as part
+     * of a [SigninCard](xref:botframework-schema.SigninCard).
+     * 
+     * @param context The context object for the turn.
+     * @param connectionName The name of the auth connection to use.
+     * @param oAuthAppCredentials Optional. The AppCredentials for OAuth.
+     * @param userId Optional. The user id that will be associated with the token.
+     * @param finalRedirect Optional. The final URL that the OAuth flow will redirect to.
+     */
     public async getSignInLink(context: TurnContext, connectionName: string, oAuthAppCredentials?: AppCredentials, userId?: string, finalRedirect?: string): Promise<string> {
         if (userId && userId != context.activity.from.id) {
             throw new ReferenceError(`cannot retrieve OAuth signin link for a user that's different from the conversation`);
@@ -638,6 +671,18 @@ export class BotFrameworkAdapter extends BotAdapter implements ConnectorClientBu
      */
     public async getTokenStatus(context: TurnContext, userId?: string, includeFilter?: string): Promise<TokenStatus[]>;
     public async getTokenStatus(context: TurnContext, userId?: string, includeFilter?: string, oAuthAppCredentials?: CoreAppCredentials): Promise<TokenStatus[]>;
+    /** 
+     * Asynchronously retrieves the token status for each configured connection for the given user.
+     * 
+     * @param context The context object for the turn.
+     * @param userId Optional. If present, the ID of the user to retrieve the token status for.
+     *      Otherwise, the ID of the user who sent the current activity is used.
+     * @param includeFilter Optional. A comma-separated list of connection's to include. If present,
+     *      the `includeFilter` parameter limits the tokens this method returns.
+     * @param oAuthAppCredentials Optional. AppCredentials for OAuth.
+     * 
+     * @returns The [TokenStatus](xref:botframework-connector.TokenStatus) objects retrieved.
+     */
     public async getTokenStatus(context: TurnContext, userId?: string, includeFilter?: string, oAuthAppCredentials?: AppCredentials): Promise<TokenStatus[]> {
         if (!userId && (!context.activity.from || !context.activity.from.id)) {
             throw new Error(`BotFrameworkAdapter.getTokenStatus(): missing from or from.id`);
@@ -647,8 +692,8 @@ export class BotFrameworkAdapter extends BotAdapter implements ConnectorClientBu
         const url: string = this.oauthApiUrl(context);
         const client: TokenApiClient = this.createTokenApiClient(url, oAuthAppCredentials);
         context.turnState.set(this.TokenApiClientCredentialsKey, client);
-        
-        return (await client.userToken.getTokenStatus(userId, {channelId: context.activity.channelId, include: includeFilter}))._response.parsedBody;
+
+        return (await client.userToken.getTokenStatus(userId, { channelId: context.activity.channelId, include: includeFilter }))._response.parsedBody;
     }
 
     /**
@@ -661,9 +706,19 @@ export class BotFrameworkAdapter extends BotAdapter implements ConnectorClientBu
      * 
      * @returns A map of the [TokenResponse](xref:botframework-schema.TokenResponse) objects by resource URL.
      */
-    public async getAadTokens(context: TurnContext, connectionName: string, resourceUrls: string[]): Promise<{[propertyName: string]: TokenResponse}>;
-    public async getAadTokens(context: TurnContext, connectionName: string, resourceUrls: string[], oAuthAppCredentials?: CoreAppCredentials): Promise<{[propertyName: string]: TokenResponse}>;
-    public async getAadTokens(context: TurnContext, connectionName: string, resourceUrls: string[], oAuthAppCredentials?: AppCredentials): Promise<{[propertyName: string]: TokenResponse}> {
+    public async getAadTokens(context: TurnContext, connectionName: string, resourceUrls: string[]): Promise<{ [propertyName: string]: TokenResponse }>;
+    public async getAadTokens(context: TurnContext, connectionName: string, resourceUrls: string[], oAuthAppCredentials?: CoreAppCredentials): Promise<{ [propertyName: string]: TokenResponse }>;
+    /**
+     * Asynchronously signs out the user from the token server.
+     * 
+     * @param context The context object for the turn.
+     * @param connectionName The name of the auth connection to use.
+     * @param resourceUrls The list of resource URLs to retrieve tokens for.
+     * @param oAuthAppCredentials Optional. The AppCredentials for OAuth.
+     * 
+     * @returns A map of the [TokenResponse](xref:botframework-schema.TokenResponse) objects by resource URL.
+     */
+    public async getAadTokens(context: TurnContext, connectionName: string, resourceUrls: string[], oAuthAppCredentials?: AppCredentials): Promise<{ [propertyName: string]: TokenResponse }> {
         if (!context.activity.from || !context.activity.from.id) {
             throw new Error(`BotFrameworkAdapter.getAadTokens(): missing from or from.id`);
         }
@@ -673,7 +728,7 @@ export class BotFrameworkAdapter extends BotAdapter implements ConnectorClientBu
         const client: TokenApiClient = this.createTokenApiClient(url, oAuthAppCredentials);
         context.turnState.set(this.TokenApiClientCredentialsKey, client);
 
-        return (await client.userToken.getAadTokens(userId, connectionName, { resourceUrls: resourceUrls }, { channelId: context.activity.channelId }))._response.parsedBody as {[propertyName: string]: TokenResponse };
+        return (await client.userToken.getAadTokens(userId, connectionName, { resourceUrls: resourceUrls }, { channelId: context.activity.channelId }))._response.parsedBody as { [propertyName: string]: TokenResponse };
     }
 
     /**
@@ -712,8 +767,8 @@ export class BotFrameworkAdapter extends BotAdapter implements ConnectorClientBu
             MSAppId: (client.credentials as AppCredentials).appId
         };
         const finalState: string = Buffer.from(JSON.stringify(state)).toString('base64');
-        const options: TokenApiModels.BotSignInGetSignInResourceOptionalParams = {finalRedirect: finalRedirect};
-        
+        const options: TokenApiModels.BotSignInGetSignInResourceOptionalParams = { finalRedirect: finalRedirect };
+
         return await (client.botSignIn.getSignInResource(finalState, options));
     }
 
@@ -723,8 +778,17 @@ export class BotFrameworkAdapter extends BotAdapter implements ConnectorClientBu
      * @param connectionName Name of the auth connection to use.
      * @param userId The user id that will be associated with the token.
      * @param tokenExchangeRequest The exchange request details, either a token to exchange or a uri to exchange.
-     */ 
+     * @param appCredentials Optional. The CoreAppCredentials for OAuth.
+     */
     public async exchangeToken(context: TurnContext, connectionName: string, userId: string, tokenExchangeRequest: TokenExchangeRequest, appCredentials?: CoreAppCredentials): Promise<TokenResponse>
+    /**
+     * Asynchronously Performs a token exchange operation such as for single sign-on.
+     * @param context Context for the current turn of conversation with the user.
+     * @param connectionName Name of the auth connection to use.
+     * @param userId The user id that will be associated with the token.
+     * @param tokenExchangeRequest The exchange request details, either a token to exchange or a uri to exchange.
+     * @param appCredentials Optional. The AppCredentials for OAuth.
+     */
     public async exchangeToken(context: TurnContext, connectionName: string, userId: string, tokenExchangeRequest: TokenExchangeRequest, appCredentials?: AppCredentials): Promise<TokenResponse> {
         if (!connectionName) {
             throw new Error('exchangeToken() requires a connectionName but none was provided.');
@@ -733,8 +797,8 @@ export class BotFrameworkAdapter extends BotAdapter implements ConnectorClientBu
         if (!userId) {
             throw new Error('exchangeToken() requires an userId but none was provided.');
         }
-        
-        if(tokenExchangeRequest && !tokenExchangeRequest.token && !tokenExchangeRequest.uri) {
+
+        if (tokenExchangeRequest && !tokenExchangeRequest.token && !tokenExchangeRequest.uri) {
             throw new Error('BotFrameworkAdapter.exchangeToken(): Either a Token or Uri property is required on the TokenExchangeRequest');
         }
 
@@ -758,7 +822,7 @@ export class BotFrameworkAdapter extends BotAdapter implements ConnectorClientBu
     public async emulateOAuthCards(contextOrServiceUrl: TurnContext | string, emulate: boolean): Promise<void> {
         this.isEmulatingOAuthCards = emulate;
         const url: string = this.oauthApiUrl(contextOrServiceUrl);
-        await EmulatorApiClient.emulateOAuthCards(this.credentials,  url, emulate);
+        await EmulatorApiClient.emulateOAuthCards(this.credentials, url, emulate);
     }
 
     /**
@@ -812,7 +876,7 @@ export class BotFrameworkAdapter extends BotAdapter implements ConnectorClientBu
      * ```
      */
     public async processActivity(req: WebRequest, res: WebResponse, logic: (context: TurnContext) => Promise<any>): Promise<void> {
-        
+
         let body: any;
         let status: number;
         let processError: Error;
@@ -829,7 +893,7 @@ export class BotFrameworkAdapter extends BotAdapter implements ConnectorClientBu
 
             // Set the correct callerId value and discard values received over the wire
             request.callerId = await this.generateCallerId(identity);
-            
+
             // Process received activity
             status = 500;
             const context: TurnContext = this.createContext(request);
@@ -880,9 +944,9 @@ export class BotFrameworkAdapter extends BotAdapter implements ConnectorClientBu
         // Check for an error
         if (status >= 400) {
             if (processError && (processError as Error).stack) {
-                throw new Error(`BotFrameworkAdapter.processActivity(): ${ status } ERROR\n ${ processError.stack }`);
+                throw new Error(`BotFrameworkAdapter.processActivity(): ${status} ERROR\n ${processError.stack}`);
             } else {
-                throw new Error(`BotFrameworkAdapter.processActivity(): ${ status } ERROR`);
+                throw new Error(`BotFrameworkAdapter.processActivity(): ${status} ERROR`);
             }
         }
     }
@@ -914,7 +978,7 @@ export class BotFrameworkAdapter extends BotAdapter implements ConnectorClientBu
      */
     public async processActivityDirect(activity: Activity, logic: (context: TurnContext) => Promise<any>): Promise<void> {
         let processError: Error;
-        try {   
+        try {
             // Process activity
             const context: TurnContext = this.createContext(activity);
             context.turnState.set(BotCallbackHandlerKey, logic);
@@ -926,7 +990,7 @@ export class BotFrameworkAdapter extends BotAdapter implements ConnectorClientBu
 
         if (processError) {
             if (processError && (processError as Error).stack) {
-                throw new Error(`BotFrameworkAdapter.processActivityDirect(): ERROR\n ${ processError.stack }`);
+                throw new Error(`BotFrameworkAdapter.processActivityDirect(): ERROR\n ${processError.stack}`);
             } else {
                 throw new Error(`BotFrameworkAdapter.processActivityDirect(): ERROR`);
             }
@@ -977,7 +1041,7 @@ export class BotFrameworkAdapter extends BotAdapter implements ConnectorClientBu
                     }
                     const client = this.getOrCreateConnectorClient(context, activity.serviceUrl, this.credentials);
                     if (activity.type === 'trace' && activity.channelId !== 'emulator') {
-                    // Just eat activity
+                        // Just eat activity
                         responses.push({} as ResourceResponse);
                     } else if (activity.replyToId) {
                         responses.push(await client.conversations.replyToActivity(
@@ -1041,7 +1105,7 @@ export class BotFrameworkAdapter extends BotAdapter implements ConnectorClientBu
      * @remarks
      * If the ClaimsIdentity contains the claims for a Skills request, create a ConnectorClient for use with Skills.
      * Derives the correct audience from the ClaimsIdentity, or the instance's credentials property.
-     * @param serviceUrl 
+     * @param serviceUrl The client's service URL.
      * @param identity ClaimsIdentity
      */
     public async createConnectorClientWithIdentity(serviceUrl: string, identity: ClaimsIdentity): Promise<ConnectorClient>
@@ -1050,11 +1114,20 @@ export class BotFrameworkAdapter extends BotAdapter implements ConnectorClientBu
      * @remarks
      * If the trimmed audience is not a non-zero length string, the audience will be derived from the ClaimsIdentity or
      * the instance's credentials property.
-     * @param serviceUrl 
+     * @param serviceUrl The client's service URL.
      * @param identity ClaimsIdentity
      * @param audience The recipient of the ConnectorClient's messages. Normally the Bot Framework Channel Service or the AppId of another bot.
      */
     public async createConnectorClientWithIdentity(serviceUrl: string, identity: ClaimsIdentity, audience: string): Promise<ConnectorClient>
+    /**
+     * Create a ConnectorClient with a ClaimsIdentity.
+     * @remarks
+     * If the ClaimsIdentity contains the claims for a Skills request, create a ConnectorClient for use with Skills.
+     * Derives the correct audience from the ClaimsIdentity, or the instance's credentials property.
+     * @param serviceUrl The client's service URL.
+     * @param identity ClaimsIdentity.
+     * @param audience Optional. The recipient of the ConnectorClient's messages. Normally the Bot Framework Channel Service or the AppId of another bot.
+     */
     public async createConnectorClientWithIdentity(serviceUrl: string, identity: ClaimsIdentity, audience?: string): Promise<ConnectorClient> {
         if (!identity) {
             throw new Error('BotFrameworkAdapter.createConnectorClientWithIdentity(): invalid identity parameter.');
@@ -1081,7 +1154,7 @@ export class BotFrameworkAdapter extends BotAdapter implements ConnectorClientBu
             // Check if we have a streaming server. Otherwise, requesting a connector client
             // for a non-existent streaming connection results in an error
             if (!this.streamingServer) {
-                throw new Error(`Cannot create streaming connector client for serviceUrl ${ serviceUrl } without a streaming connection. Call 'useWebSocket' or 'useNamedPipe' to start a streaming connection.`);
+                throw new Error(`Cannot create streaming connector client for serviceUrl ${serviceUrl} without a streaming connection. Call 'useWebSocket' or 'useNamedPipe' to start a streaming connection.`);
             }
 
             const clientOptions = this.getClientOptions(serviceUrl, new StreamingHttpClient(this.streamingServer));
@@ -1099,11 +1172,11 @@ export class BotFrameworkAdapter extends BotAdapter implements ConnectorClientBu
      */
     private getClientOptions(serviceUrl: string, httpClient?: any): ConnectorClientOptions {
         const options = Object.assign({ baseUri: serviceUrl } as ConnectorClientOptions, this.settings.clientOptions);
-        if(httpClient) {
+        if (httpClient) {
             options.httpClient = httpClient;
         }
 
-        options.userAgent = `${ USER_AGENT }${ options.userAgent || '' }`;
+        options.userAgent = `${USER_AGENT}${options.userAgent || ''}`;
         return options;
     }
 
@@ -1128,6 +1201,13 @@ export class BotFrameworkAdapter extends BotAdapter implements ConnectorClientBu
         return client;
     }
 
+    /**
+     * Returns the correct OAuthScope for AppCredentials.
+     * @param botAppId The bot's AppId.
+     * @param claims The list of claims to check. 
+     * 
+     * @returns The current credentials' OAuthScope.
+     */
     private async getOAuthScope(botAppId: string, claims: Claim[]): Promise<string> {
         // If the Claims are for skills, we need to create an AppCredentials instance with
         // the correct scope for communication between the caller and the skill.
@@ -1169,6 +1249,15 @@ export class BotFrameworkAdapter extends BotAdapter implements ConnectorClientBu
      * Override this in a derived class to create a mock OAuth API client for unit testing.
      */
     protected createTokenApiClient(serviceUrl: string, oAuthAppCredentials?: CoreAppCredentials): TokenApiClient;
+    /**
+     * Creates an OAuth API client.
+     * 
+     * @param serviceUrl The client's service URL.
+     * @param oAuthAppCredentials Optional. The AppCredentials for OAuth.
+     * 
+     * @remarks
+     * Override this in a derived class to create a mock OAuth API client for unit testing.
+     */
     protected createTokenApiClient(serviceUrl: string, oAuthAppCredentials?: AppCredentials): TokenApiClient {
         const tokenApiClientCredentials = oAuthAppCredentials ? oAuthAppCredentials : this.credentials;
         const client = new TokenApiClient(tokenApiClientCredentials, { baseUri: serviceUrl, userAgent: USER_AGENT });
@@ -1224,11 +1313,11 @@ export class BotFrameworkAdapter extends BotAdapter implements ConnectorClientBu
             // Return undefined so that the callerId is cleared.
             return;
         }
-        
+
         // Is the activity from another bot?
         if (SkillValidation.isSkillClaim(identity.claims)) {
             const callerId = JwtTokenValidation.getAppIdFromClaims(identity.claims);
-            return `${ CallerIdConstants.BotToBotPrefix }${ callerId }`;
+            return `${CallerIdConstants.BotToBotPrefix}${callerId}`;
         }
 
         // Is the activity from Public Azure?
@@ -1258,7 +1347,7 @@ export class BotFrameworkAdapter extends BotAdapter implements ConnectorClientBu
     protected oauthApiUrl(contextOrServiceUrl: TurnContext | string): string {
         return this.isEmulatingOAuthCards ?
             (typeof contextOrServiceUrl === 'object' ? contextOrServiceUrl.activity.serviceUrl : contextOrServiceUrl) :
-            (this.settings.oAuthEndpoint ? this.settings.oAuthEndpoint : 
+            (this.settings.oAuthEndpoint ? this.settings.oAuthEndpoint :
                 JwtTokenValidation.isGovernment(this.settings.channelService) ?
                     US_GOV_OAUTH_ENDPOINT : OAUTH_ENDPOINT);
     }
@@ -1308,13 +1397,13 @@ export class BotFrameworkAdapter extends BotAdapter implements ConnectorClientBu
 
         if (!request.verb || !request.path) {
             response.statusCode = StatusCodes.BAD_REQUEST;
-            response.setBody(`Request missing verb and/or path. Verb: ${ request.verb }. Path: ${ request.path }`);
+            response.setBody(`Request missing verb and/or path. Verb: ${request.verb}. Path: ${request.path}`);
             return response;
         }
 
         if (request.verb.toLocaleUpperCase() !== POST && request.verb.toLocaleUpperCase() !== GET) {
             response.statusCode = StatusCodes.METHOD_NOT_ALLOWED;
-            response.setBody(`Invalid verb received. Only GET and POST are accepted. Verb: ${ request.verb }`);
+            response.setBody(`Invalid verb received. Only GET and POST are accepted. Verb: ${request.verb}`);
         }
 
         if (request.path.toLocaleLowerCase() === VERSION_PATH) {
@@ -1328,19 +1417,19 @@ export class BotFrameworkAdapter extends BotAdapter implements ConnectorClientBu
 
         } catch (error) {
             response.statusCode = StatusCodes.BAD_REQUEST;
-            response.setBody(`Request body missing or malformed: ${ error }`);
+            response.setBody(`Request body missing or malformed: ${error}`);
             return response;
         }
 
         if (request.path.toLocaleLowerCase() !== MESSAGES_PATH) {
             response.statusCode = StatusCodes.NOT_FOUND;
-            response.setBody(`Path ${ request.path.toLocaleLowerCase() } not not found. Expected ${ MESSAGES_PATH }}.`);
+            response.setBody(`Path ${request.path.toLocaleLowerCase()} not not found. Expected ${MESSAGES_PATH}}.`);
             return response;
         }
 
         if (request.verb.toLocaleUpperCase() !== POST) {
             response.statusCode = StatusCodes.METHOD_NOT_ALLOWED;
-            response.setBody(`Invalid verb received for ${ request.verb.toLocaleLowerCase() }. Only GET and POST are accepted. Verb: ${ request.verb }`);
+            response.setBody(`Invalid verb received for ${request.verb.toLocaleLowerCase()}. Only GET and POST are accepted. Verb: ${request.verb}`);
             return response;
         }
 
@@ -1353,14 +1442,14 @@ export class BotFrameworkAdapter extends BotAdapter implements ConnectorClientBu
                 if (invokeResponse && invokeResponse.value) {
                     const value: InvokeResponse = invokeResponse.value;
                     response.statusCode = value.status;
-                    if (value.body) {      
+                    if (value.body) {
                         response.setBody(value.body);
                     }
                 } else {
                     response.statusCode = StatusCodes.NOT_IMPLEMENTED;
                 }
             } else if (body.deliveryMode === DeliveryModes.ExpectReplies) {
-                const replies: ExpectedReplies = { activities : context.bufferedReplyActivities as Activity[] };
+                const replies: ExpectedReplies = { activities: context.bufferedReplyActivities as Activity[] };
                 response.setBody(replies);
                 response.statusCode = StatusCodes.OK;
             } else {
@@ -1375,16 +1464,22 @@ export class BotFrameworkAdapter extends BotAdapter implements ConnectorClientBu
         return response;
     }
 
-    public async healthCheck(context: TurnContext) : Promise<HealthCheckResponse> {
+    /**
+     * Invoked when the bot is sent a health check from the hosting infrastructure or, in the case of Skills the parent bot.
+     * @param context The context object for this turn.
+     * 
+     * @returns The result of the health check.
+     */
+    public async healthCheck(context: TurnContext): Promise<HealthCheckResponse> {
         const healthResults = <HealthResults>{
             success: true,
             "user-agent": USER_AGENT,
-            messages: [ 'Health check succeeded.' ]
+            messages: ['Health check succeeded.']
         };
         if (!(await this.credentialsProvider.isAuthenticationDisabled())) {
-            const credentials = context.turnState.get(this.ConnectorClientKey).credentials ||  this.credentials;
+            const credentials = context.turnState.get(this.ConnectorClientKey).credentials || this.credentials;
             const token = await credentials.getToken();
-            healthResults.authorization = `Bearer ${ token }`;
+            healthResults.authorization = `Bearer ${token}`;
         }
         return { healthResults: healthResults };
     }
@@ -1412,7 +1507,7 @@ export class BotFrameworkAdapter extends BotAdapter implements ConnectorClientBu
      * @param head The first packet of the upgraded stream.
      * @param logic The logic that handles incoming streaming requests for the lifetime of the WebSocket connection.
      */
-    public async useWebSocket(req: WebRequest, socket: INodeSocket, head: INodeBuffer, logic: (context: TurnContext) => Promise<any>): Promise<void> {   
+    public async useWebSocket(req: WebRequest, socket: INodeSocket, head: INodeBuffer, logic: (context: TurnContext) => Promise<any>): Promise<void> {
         // Use the provided NodeWebSocketFactoryBase on BotFrameworkAdapter construction,
         // otherwise create a new NodeWebSocketFactory.
         const webSocketFactory = this.webSocketFactory || new NodeWebSocketFactory();
@@ -1435,6 +1530,9 @@ export class BotFrameworkAdapter extends BotAdapter implements ConnectorClientBu
         await this.startWebSocket(nodeWebSocket);
     }
 
+    /**
+     * @private
+     */
     private async authenticateConnection(req: WebRequest, channelService?: string): Promise<void> {
         if (!this.credentials.appId) {
             // auth is disabled
@@ -1450,8 +1548,8 @@ export class BotFrameworkAdapter extends BotAdapter implements ConnectorClientBu
         const serviceUrl = claims.getClaimValue(AuthenticationConstants.ServiceUrlClaim);
         AppCredentials.trustServiceUrl(serviceUrl);
 
-        if (!claims.isAuthenticated) { 
-            throw new AuthenticationError('Unauthorized Access. Request is not authorized', StatusCodes.UNAUTHORIZED); 
+        if (!claims.isAuthenticated) {
+            throw new AuthenticationError('Unauthorized Access. Request is not authorized', StatusCodes.UNAUTHORIZED);
         }
     }
 
@@ -1459,16 +1557,22 @@ export class BotFrameworkAdapter extends BotAdapter implements ConnectorClientBu
      * Connects the handler to a WebSocket server and begins listening for incoming requests.
      * @param socket The socket to use when creating the server.
      */
-    private async startWebSocket(socket: ISocket): Promise<void>{
+    private async startWebSocket(socket: ISocket): Promise<void> {
         this.streamingServer = new WebSocketServer(socket, this);
         await this.streamingServer.start();
     }
 
+    /**
+     * @private
+     */
     private async readRequestBodyAsString(request: IReceiveRequest): Promise<Activity> {
         const contentStream = request.streams[0];
         return await contentStream.readAsJson<Activity>();
     }
 
+    /**
+     * @private
+     */
     private async handleVersionRequest(request: IReceiveRequest, response: StreamingResponse): Promise<StreamingResponse> {
         if (request.verb.toLocaleUpperCase() === GET) {
             response.statusCode = StatusCodes.OK;
@@ -1477,7 +1581,7 @@ export class BotFrameworkAdapter extends BotAdapter implements ConnectorClientBu
                 response.setBody({ UserAgent: USER_AGENT });
                 return response;
             }
-            
+
             let token = '';
             try {
                 token = await this.credentials.getToken();
@@ -1496,7 +1600,7 @@ export class BotFrameworkAdapter extends BotAdapter implements ConnectorClientBu
 
         } else {
             response.statusCode = StatusCodes.METHOD_NOT_ALLOWED;
-            response.setBody(`Invalid verb received for path: ${ request.path }. Only GET is accepted. Verb: ${ request.verb }`);
+            response.setBody(`Invalid verb received for path: ${request.path}. Only GET is accepted. Verb: ${request.verb}`);
         }
 
         return response;
@@ -1563,10 +1667,10 @@ function abortWebSocketUpgrade(socket: INodeSocket, err: any): void {
         const connectionHeader = `Connection: 'close'\r\n`;
 
         let message = '';
-        AuthenticationError.isStatusCodeError(err) ? 
-            message = `HTTP/1.1 ${ err.statusCode } ${ StatusCodes[err.statusCode] }\r\n${ err.message }\r\n${ connectionHeader }\r\n`
+        AuthenticationError.isStatusCodeError(err) ?
+            message = `HTTP/1.1 ${err.statusCode} ${StatusCodes[err.statusCode]}\r\n${err.message}\r\n${connectionHeader}\r\n`
             : message = AuthenticationError.determineStatusCodeAndBuildMessage(err);
-        
+
         socket.write(message);
     }
     socket.destroy();

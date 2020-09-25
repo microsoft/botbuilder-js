@@ -28,6 +28,13 @@ import {
 export class TokenResolver {
     private static readonly PollingIntervalMs: number = 1000;
 
+    /**
+     * Checks if we have token responses from OAuth cards.
+     * @param adapter The BotFramework adapter.
+     * @param context The context for this turn.
+     * @param activity The activity to be checked.
+     * @param log Optional. The log to write on.
+     */
     public static checkForOAuthCards(adapter: BotFrameworkAdapter, context: TurnContext, activity: Activity, log?: string[]) {
         if (!activity || !activity.attachments) {
             return;
@@ -54,6 +61,9 @@ export class TokenResolver {
         }
     }
 
+    /**
+     * @private
+     */
     private static pollForToken(adapter: BotFrameworkAdapter, context: TurnContext, activity: Activity, connectionName: string, pollingTimeout: Date, log?: string[]) {
         if (pollingTimeout > new Date()) {
             const tokenApiClientCredentials = context.turnState.get(adapter.TokenApiClientCredentialsKey);
@@ -94,6 +104,9 @@ export class TokenResolver {
         }
     }
 
+    /**
+     * @private
+     */
     private static createTokenResponseActivity(relatesTo: Partial<ConversationReference>, token: string, connectionName: string): Partial<Activity> {
         let tokenResponse: Partial<Activity> = {
             id: this.generate_guid(),
@@ -115,6 +128,9 @@ export class TokenResolver {
         return tokenResponse;
     }
 
+    /**
+     * @private
+     */
     private static generate_guid(): string {
         function s4() {
             return Math.floor((1 + Math.random()) * 0x10000)

@@ -33,6 +33,11 @@ export class BotFrameworkHttpClient implements BotFrameworkClient {
     private static readonly appCredentialMapCache: Map<string, AppCredentials> = new Map<string, AppCredentials>();
     private readonly credentialProvider: ICredentialProvider;
 
+    /**
+     * Creates a new instance of the [BotFrameworkHttpClient](xref:botbuilder.BotFrameworkHttpClient) class
+     * @param credentialProvider An instance of ICredentialProvider.
+     * @param channelService Optional. The channel service.
+     */
     public constructor(credentialProvider: ICredentialProvider, channelService?: string) {
         if (!credentialProvider) {
             throw new Error('BotFrameworkHttpClient(): missing credentialProvider');
@@ -43,7 +48,7 @@ export class BotFrameworkHttpClient implements BotFrameworkClient {
     }
 
     /**
-     * Forwards an activity to a another bot.
+     * Forwards an activity to another bot.
      * @remarks
      * 
      * @template T The type of body in the InvokeResponse. 
@@ -56,6 +61,18 @@ export class BotFrameworkHttpClient implements BotFrameworkClient {
      */
     public async postActivity<T>(fromBotId: string, toBotId: string, toUrl: string, serviceUrl: string, conversationId: string, activity: Activity): Promise<InvokeResponse<T>>
     public async postActivity(fromBotId: string, toBotId: string, toUrl: string, serviceUrl: string, conversationId: string, activity: Activity): Promise<InvokeResponse>
+    /**
+     * Forwards an activity to another bot.
+     * @remarks
+     * 
+     * @template T The type of body in the InvokeResponse. 
+     * @param fromBotId The MicrosoftAppId of the bot sending the activity.
+     * @param toBotId The MicrosoftAppId of the bot receiving the activity.
+     * @param toUrl The URL of the bot receiving the activity.
+     * @param serviceUrl The callback Url for the skill host.
+     * @param conversationId A conversation ID to use for the conversation with the skill.
+     * @param activity Activity to forward.
+     */
     public async postActivity<T = any>(fromBotId: string, toBotId: string, toUrl: string, serviceUrl: string, conversationId: string, activity: Activity): Promise<InvokeResponse<T>> {
         const appCredentials = await this.getAppCredentials(fromBotId, toBotId);
         if (!appCredentials) {
@@ -114,9 +131,9 @@ export class BotFrameworkHttpClient implements BotFrameworkClient {
             };
 
             if (token) {
-                config.headers['Authorization'] = `Bearer ${ token }`;
+                config.headers['Authorization'] = `Bearer ${token}`;
             }
-            
+
             const response = await axios.post(toUrl, activity, config);
             const invokeResponse: InvokeResponse<T> = { status: response.status, body: response.data };
 
@@ -130,9 +147,16 @@ export class BotFrameworkHttpClient implements BotFrameworkClient {
         }
     }
 
+    /**
+     * Logic to build an AppCredentials object to be used to acquire tokens for this HttpClient.
+     * @param appId The application id.
+     * @param oAuthScope Optional. The OAuth scope.
+     * 
+     * @returns The app credentials to be used to acquire tokens.
+     */
     protected async buildCredentials(appId: string, oAuthScope?: string): Promise<AppCredentials> {
         const appPassword = await this.credentialProvider.getAppPassword(appId);
-        let appCredentials;        
+        let appCredentials;
         if (JwtTokenValidation.isGovernment(this.channelService)) {
             appCredentials = new MicrosoftAppCredentials(appId, appPassword, undefined, oAuthScope);
             appCredentials.oAuthEndpoint = GovernmentConstants.ToChannelFromBotLoginUrl;
@@ -154,7 +178,7 @@ export class BotFrameworkHttpClient implements BotFrameworkClient {
             return new MicrosoftAppCredentials('', '');
         }
 
-        const cacheKey = `${ appId }${ oAuthScope }`;
+        const cacheKey = `${appId}${oAuthScope}`;
         let appCredentials = BotFrameworkHttpClient.appCredentialMapCache.get(cacheKey);
         if (appCredentials) {
             return appCredentials;

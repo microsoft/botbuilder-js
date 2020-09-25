@@ -15,6 +15,12 @@ import { BotFrameworkHttpClient } from '../botFrameworkHttpClient';
 export class SkillHttpClient extends BotFrameworkHttpClient {
     private readonly conversationIdFactory: SkillConversationIdFactoryBase;
 
+    /**
+     * Creates a new instance of the SkillHttpClient class.
+     * @param credentialProvider An instance of ICredentialProvider.
+     * @param conversationIdFactory An instance of a class derived from SkillConversationIdFactoryBase.
+     * @param channelService Optional. The channel service.
+     */
     public constructor(credentialProvider: ICredentialProvider, conversationIdFactory: SkillConversationIdFactoryBase, channelService?: string) {
         super(credentialProvider, channelService);
         if (!conversationIdFactory) {
@@ -43,6 +49,14 @@ export class SkillHttpClient extends BotFrameworkHttpClient {
      * @param activity The activity to send.
      */
     public async postToSkill(fromBotId: string, toSkill: BotFrameworkSkill, callbackUrl: string, activity: Activity): Promise<InvokeResponse>;
+    /**
+     * Uses the SkillConversationIdFactory to create or retrieve a Skill Conversation Id, and sends the activity.
+     * @param audienceOrFromBotId The OAuth audience scope, used during token retrieval or the AppId of the bot sending the activity.
+     * @param fromBotIdOrSkill The AppId of the bot sending the activity or the skill to create the Conversation Id for.
+     * @param toSkillOrCallbackUrl The skill to create the Conversation Id for or the callback Url for the skill host.
+     * @param callbackUrlOrActivity The callback Url for the skill host or the the activity to send.
+     * @param activityToForward Optional. The activity to forward.
+     */
     public async postToSkill<T = any>(audienceOrFromBotId: string, fromBotIdOrSkill: string | BotFrameworkSkill, toSkillOrCallbackUrl: BotFrameworkSkill | string, callbackUrlOrActivity: string | Activity, activityToForward?: Activity): Promise<InvokeResponse<T>> {
         let originatingAudience: string;
         let fromBotId: string;
@@ -60,7 +74,7 @@ export class SkillHttpClient extends BotFrameworkHttpClient {
         const toSkill = typeof toSkillOrCallbackUrl === 'object' ? toSkillOrCallbackUrl : fromBotIdOrSkill as BotFrameworkSkill;
         const callbackUrl = typeof callbackUrlOrActivity === 'string' ? callbackUrlOrActivity : toSkillOrCallbackUrl as string;
         const activity = typeof activityToForward === 'object' ? activityToForward : callbackUrlOrActivity as Activity;
-        
+
         let skillConversationId: string;
         try {
             const createIdOptions: SkillConversationIdFactoryOptions = {

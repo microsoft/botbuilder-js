@@ -90,7 +90,7 @@ export class SkillHandler extends ChannelServiceHandler {
     protected async onSendToConversation(claimsIdentity: ClaimsIdentity, conversationId: string, activity: Activity): Promise<ResourceResponse> {
         return await this.processActivity(claimsIdentity, conversationId, null, activity);
     }
-    
+
     /**
      * replyToActivity() API for Skill.
      * @remarks
@@ -116,7 +116,10 @@ export class SkillHandler extends ChannelServiceHandler {
         return await this.processActivity(claimsIdentity, conversationId, activityId, activity);
     }
 
-    private static applyEoCToTurnContextActivity(turnContext: TurnContext,endOfConversationActivity: Activity): void {
+    /**
+     * @private
+     */
+    private static applyEoCToTurnContextActivity(turnContext: TurnContext, endOfConversationActivity: Activity): void {
         // transform the turnContext.activity to be an EndOfConversation Activity.
         turnContext.activity.type = endOfConversationActivity.type;
         turnContext.activity.text = endOfConversationActivity.text;
@@ -131,6 +134,9 @@ export class SkillHandler extends ChannelServiceHandler {
         turnContext.activity.channelData = endOfConversationActivity.channelData;
     }
 
+    /**
+     * @private
+     */
     private static applyEventToTurnContextActivity(turnContext: TurnContext, eventActivity: Activity): void {
         // transform the turnContext.activity to be an Event Activity.
         turnContext.activity.type = eventActivity.type;
@@ -147,6 +153,9 @@ export class SkillHandler extends ChannelServiceHandler {
         turnContext.activity.channelData = eventActivity.channelData;
     }
 
+    /**
+     * @private
+     */
     private async processActivity(claimsIdentity: ClaimsIdentity, conversationId: string, replyToActivityId: string, activity: Activity): Promise<ResourceResponse> {
 
         let skillConversationReference: SkillConversationReference;
@@ -198,7 +207,7 @@ export class SkillHandler extends ChannelServiceHandler {
             context.turnState.set(adapter.ConnectorClientKey, client);
 
             context.activity.id = replyToActivityId;
-            context.activity.callerId = `${ CallerIdConstants.BotToBotPrefix }${ JwtTokenValidation.getAppIdFromClaims(claimsIdentity.claims) }`;
+            context.activity.callerId = `${CallerIdConstants.BotToBotPrefix}${JwtTokenValidation.getAppIdFromClaims(claimsIdentity.claims)}`;
             switch (activity.type) {
                 case ActivityTypes.EndOfConversation:
                     await this.conversationIdFactory.deleteConversationReference(conversationId);
@@ -221,7 +230,7 @@ export class SkillHandler extends ChannelServiceHandler {
         AppCredentials.trustServiceUrl(skillConversationReference.conversationReference.serviceUrl);
 
         await (this.adapter as BotFrameworkAdapter).continueConversation(skillConversationReference.conversationReference, skillConversationReference.oAuthScope, callback);
-        
+
         if (!resourceResponse) {
             resourceResponse = { id: uuid() };
         }
