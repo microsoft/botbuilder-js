@@ -1,5 +1,5 @@
 const { ok, strictEqual } = require('assert');
-const { createTelemetryClientAndStub } = require('./lgTelemetryUtil');
+const { createTelemetryClientAndStub } = require('./telemetryUtils');
 const {
     ConversationState,
     MemoryStorage,

@@ -9,7 +9,7 @@
 import { Choice, ListStyle, ChoiceFactoryOptions, FindChoicesOptions } from 'botbuilder-dialogs';
 import { ComponentRegistration, DeclarativeType, ResourceExplorer } from 'botbuilder-dialogs-declarative';
 import { AdaptiveDialog } from './adaptiveDialog';
-import { BeginDialog, BeginSkill, BreakLoop, CancelAllDialogs, CancelDialog, ContinueLoop, DeleteActivity, DeleteProperties, DeleteProperty, EditActions, EditArray, EmitEvent, EndDialog, EndTurn, ForEach, ForEachPage, GetActivityMembers, GetConversationMembers, GotoAction, IfCondition, LogAction, RepeatDialog, ReplaceDialog, SendActivity, SetProperties, SetProperty, SignOutUser, SwitchCondition, TraceActivity, UpdateActivity, ArrayChangeType, PropertyAssignmentConverter, HttpRequest, HttpHeadersConverter, ResponsesTypes, DynamicBeginDialog } from './actions';
+import { BeginDialog, BeginSkill, BreakLoop, CancelAllDialogs, CancelDialog, ContinueLoop, DeleteActivity, DeleteProperties, DeleteProperty, EditActions, EditArray, EmitEvent, EndDialog, EndTurn, ForEach, ForEachPage, GetActivityMembers, GetConversationMembers, GotoAction, IfCondition, LogAction, RepeatDialog, ReplaceDialog, SendActivity, SetProperties, SetProperty, SignOutUser, SwitchCondition, TraceActivity, UpdateActivity, ArrayChangeType, PropertyAssignmentConverter, HttpRequest, HttpHeadersConverter, ResponsesTypes, DynamicBeginDialog, TelemetryTrackEventAction, TelemetryPropertiesConverter } from './actions';
 import { Ask, AttachmentInput, ChoiceInput, ConfirmInput, DateTimeInput, NumberInput, OAuthInput, TextInput, AttachmentOutputFormat, ChoiceOutputFormat } from './input';
 import { OnActivity, OnAssignEntity, OnBeginDialog, OnCancelDialog, OnChooseEntity, OnChooseIntent, OnChooseProperty, OnCondition, OnConversationUpdateActivity, OnDialogEvent, OnEndOfActions, OnEndOfConversationActivity, OnError, OnEventActivity, OnHandoffActivity, OnIntent, OnInvokeActivity, OnMessageActivity, OnMessageDeleteActivity, OnMessageReactionActivity, OnMessageUpdateActivity, OnQnAMatch, OnRepromptDialog, OnTypingActivity, OnUnknownIntent } from './conditions';
 import { CrossTrainedRecognizerSet, MultiLanguageRecognizer, RecognizerSet, RegexRecognizer, IntentPatternConverter } from './recognizers';
@@ -55,7 +55,8 @@ export class AdaptiveDialogComponentRegistration implements ComponentRegistratio
             factory: AdaptiveDialog,
             converters: {
                 'generator': new LanguageGeneratorConverter(),
-                'recognizer': new RecognizerConverter(resourceExplorer)
+                'recognizer': new RecognizerConverter(resourceExplorer),
+                'autoEndDialog': new BoolExpressionConverter()
             }
         }, {
             kind: 'Microsoft.BeginSkill',
@@ -286,6 +287,14 @@ export class AdaptiveDialogComponentRegistration implements ComponentRegistratio
             converters: {
                 'condition': new ExpressionConverter(),
                 'cases': new CaseConverter(resourceExplorer),
+                'disabled': new BoolExpressionConverter()
+            }
+        }, {
+            kind: 'Microsoft.TelemetryTrackEventAction',
+            factory: TelemetryTrackEventAction,
+            converters: {
+                'eventname': new StringExpressionConverter(),
+                'properties': new TelemetryPropertiesConverter(),
                 'disabled': new BoolExpressionConverter()
             }
         }, {

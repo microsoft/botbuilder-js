@@ -15,10 +15,11 @@ The project consists of two projects that get deployed (the [bot](#the-bot) and 
 - As part of the E2E testing pipeline, the suite ensures that the bot uses the latest botframework-streaming preview version (the "daily") before deploying the bot and running the tests.
 
 ### The React App
-- To test the compatibility of using streaming in the browser with a [webpack](https://webpack.js.org/)ed project, the DevOps Pipeline provisions a brand new React app (`npx create-react-app`).
-- Subsequently the React App uses a customized DirectLineJS (DLJS)
-    - To test streaming in browsers, we customize DLJS to use the latest botframework-streaming version
-- To provide an interface that a user could actually manually go to themselves to test talking to a streaming bot manually, we use WebChat to as a channel in the React App
+- To test the compatibility of using streaming in the browser with a [webpack](https://webpack.js.org/)ed project, the DevOps Pipeline uses a React app (created through `npx create-react-app`) that uses a customized a DirectLineJS (DLJS).
+    - We customize DLJS to use the latest version botframework-streaming
+- Additionally, related to security-conscientious customers, the React App also contains Content Security Policy directives in `react-app/public/index.html`. 
+    - See [Web Chat docs on Content Security Policy](https://github.com/microsoft/BotFramework-WebChat/blob/v4.10.1/docs/CONTENT_SECURITY_POLICY.md) and [botbuilder-js issue: Add CSP to E2E DL ASE Streaming Tests #2762](https://github.com/microsoft/botbuilder-js/issues/2762) for more details.
+- The React App is then built and served on localhost:3000 in the pipeline
 
 ### Browser Tests Automation
 - To automate testing in browsers, the E2E tests use Selenium WebDriver.
@@ -29,13 +30,14 @@ Running the pipeline will:
 - **Provision & Deploy Projects**:
     - **Bot**: point bot to use the daily build of botframework-streaming (latest preview version)
     - **React App**:
-        - Provision a brand new react app via `npx create-react-app` command
-        - Set up the React app to use WebChat (`ReactWebChat`)
+        - Set-Up: a React app that uses Web Chat (`ReactWebChat` - version 4.10.1 or later to address Content Security Policy concerns).
         - Install a custom version of DirectLineJS (DLJS) into the app
             - Configures DLJS to use the latest botframework-streaming preview version
 - **Run Tests**
-    - Downloads the browser-appropriate Driver necessary for Selenium WebDriver to automate testing in a browser (Chrome)
+    - Uses the browser-appropriate Driver necessary for Selenium WebDriver to automate testing in a browser (Chrome)
     - Runs the tests that have React and bot talk to each other
+    
+**Note**: In order for Selenium WebDriver to automate testing in a browser, you would normally have to install the reciprocating, browser-appropriate Driver manually (i.e. ChromeDriver for Chrome), however Azure Pipelines can handle downloading the appropriate browsers and driver pairs automatically, which this pipeline takes advantage of, offloading the maintenance of having up-to-date drivers and browsers to Azure Pipelines.
 
 # How to Run the Tests
 These tests were built so that the SDK team can routinely run these E2E tests automatically and ensure the compatibility of botframework-streaming and the browser. It does so by deploying the bot and React app to already-provisioned resources in the [Azure portal](https://ms.portal.azure.com/) that have been configured to enable DL ASE. If you wish to run these tests yourself, you must provision resources in your own Azure subscription first before you can run the automated pipeline built by the YAMLs included in the streaming-e2e-tests library.
@@ -79,7 +81,6 @@ The following steps guide you through the configuration of a build pipeline base
 
             - **BotName**: name of bot
             - [**ConnectedServiceNameARM**](https://docs.microsoft.com/en-us/azure/devops/pipelines/library/service-endpoints?view=azure-devops&tabs=yaml#create-a-service-connection)
-            - [**MyGetPersonalAccessToken**](https://docs.github.com/en/github/authenticating-to-github/creating-a-personal-access-token)
             - **ResourceGroup**: the resource group that contains both bot and React app in Azure portal
         </details>
 

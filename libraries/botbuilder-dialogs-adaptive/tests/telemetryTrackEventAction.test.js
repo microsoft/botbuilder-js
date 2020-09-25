@@ -1,17 +1,15 @@
 const { ok, strictEqual } = require('assert');
-const { stub } = require('sinon');
 const { createTelemetryClientAndStub } = require('./telemetryUtils');
 const {
     ConversationState,
     MemoryStorage,
-    TestAdapter,
-    MessageFactory,
+    TestAdapter
 } = require('botbuilder-core');
 const { DialogSet } = require('botbuilder-dialogs');
-const { UpdateActivity } = require('../lib')
+const { TelemetryTrackEventAction } = require('../lib');
 
 
-describe('UpdateActivity', function () {
+describe('TelemetryTrackEventAction', function () {
     this.timeout(3000);
 
     let telemetryName;
@@ -30,22 +28,19 @@ describe('UpdateActivity', function () {
     const dialogState = conversationState.createProperty('dialog');
     const dialogs = new DialogSet(dialogState);
 
-    // Setup skill dialog
-    const dialog = new UpdateActivity('activityId', MessageFactory.text('test'));
+    // Setup sendActivity dialog
+    const dialog = new TelemetryTrackEventAction('testEvent', {'test': 'test123'});
     dialog._telemetryClient = telemetryClient;
 
     it('eval beginDialog()', async () => {
         // Send initial activity
         const adapter = new TestAdapter(async (context) => {
-            const updateActivitySub = stub(context, 'updateActivity');
-            updateActivitySub.callsFake(() => {});
             const dc = await dialogs.createContext(context);
             await dialog.beginDialog(dc);
 
             // assert telemetry result
-            strictEqual(telemetryName, 'GeneratorResult');
-            strictEqual(telemetryProperties.result.text, 'test');
-            strictEqual(telemetryProperties.template.activity.text, 'test');
+            strictEqual(telemetryName, 'testEvent');
+            strictEqual(telemetryProperties.test, 'test123');
 
             ok(trackEventStub.calledOnce);
         });
