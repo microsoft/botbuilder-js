@@ -8,6 +8,7 @@
 
 import { ExpressionType } from '../expressionType';
 import { FunctionUtils } from '../functionUtils';
+import { InternalFunctionUtils } from '../functionUtils.internal';
 import { ComparisonEvaluator } from './comparisonEvaluator';
 
 /**
@@ -16,6 +17,6 @@ import { ComparisonEvaluator } from './comparisonEvaluator';
  */
 export class Equal extends ComparisonEvaluator {
     public constructor() {
-        super(ExpressionType.Equal, FunctionUtils.isEqual, FunctionUtils.validateBinary);
+        super(ExpressionType.Equal, InternalFunctionUtils.isEqual, FunctionUtils.validateBinary);
     }
 }
