@@ -21,7 +21,7 @@ stages:
 - stage: Build
   jobs:
   - job: Node14UnitTests
-    displayName: "Node 14.x Unit Tests"
+    displayName: 'Node 14.x Unit Tests'
     variables:
       NodeVersion: 14.x
     steps:
@@ -35,7 +35,7 @@ stages:
       condition: succeededOrFailed()
 
   - job: Node12UnitTests
-    displayName: "Node 12.x Unit Tests"
+    displayName: 'Node 12.x Unit Tests'
     variables:
       NodeVersion: 12.x
     steps:
@@ -49,7 +49,7 @@ stages:
       condition: succeededOrFailed()
 
   - job: Node10UnitTests
-    displayName: "Node 10.x Unit Tests"
+    displayName: 'Node 10.x Unit Tests'
     variables:
       NodeVersion: 10.x
     steps:
@@ -67,14 +67,14 @@ stages:
   jobs:
 
   - job: Node14CodeAnalysis
-    displayName: "Node 14.x Code Analysis"
+    displayName: 'Node 14.x Code Analysis'
     variables:
       NodeVersion: 14.x
     steps:
     - template: js-analysis-steps.yml
 
   - job: Node12CodeAnalysis
-    displayName: "Node 12.x Code Analysis"
+    displayName: 'Node 12.x Code Analysis'
     variables:
       NodeVersion: 12.x
       steps:
