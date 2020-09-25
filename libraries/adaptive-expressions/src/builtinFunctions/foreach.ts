@@ -8,7 +8,7 @@
 
 import { ExpressionEvaluator } from '../expressionEvaluator';
 import { ExpressionType } from '../expressionType';
-import { FunctionUtils } from '../functionUtils';
+import { InternalFunctionUtils } from '../functionUtils.internal';
 import { ReturnType } from '../returnType';
 
 /**
@@ -16,6 +16,6 @@ import { ReturnType } from '../returnType';
  */
 export class Foreach extends ExpressionEvaluator {
     public constructor() {
-        super(ExpressionType.Foreach, FunctionUtils.foreach, ReturnType.Array, FunctionUtils.validateForeach);
+        super(ExpressionType.Foreach, InternalFunctionUtils.foreach, ReturnType.Array, InternalFunctionUtils.validateForeach);
     }
 }

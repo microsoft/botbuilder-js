@@ -10,6 +10,7 @@ import { Expression } from '../expression';
 import { ExpressionEvaluator, ValueWithError } from '../expressionEvaluator';
 import { ExpressionType } from '../expressionType';
 import { FunctionUtils } from '../functionUtils';
+import { InternalFunctionUtils } from '../functionUtils.internal';
 import { MemoryInterface } from '../memory/memoryInterface';
 import { Options } from '../options';
 import { ReturnType } from '../returnType';
@@ -42,7 +43,7 @@ export class UriScheme extends ExpressionEvaluator {
         let result: string;
         let error: string;
         let parsed: URL;
-        ({ value: parsed, error } = FunctionUtils.parseUri(uri));
+        ({ value: parsed, error } = InternalFunctionUtils.parseUri(uri));
         if (!error) {
             try {
                 result = parsed.protocol.replace(':', '');
