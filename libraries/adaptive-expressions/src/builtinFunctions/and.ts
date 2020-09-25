@@ -10,6 +10,7 @@ import { Expression } from '../expression';
 import { ExpressionEvaluator, ValueWithError } from '../expressionEvaluator';
 import { ExpressionType } from '../expressionType';
 import { FunctionUtils } from '../functionUtils';
+import { InternalFunctionUtils } from '../functionUtils.internal';
 import { MemoryInterface } from '../memory/memoryInterface';
 import { Options } from '../options';
 import { ReturnType } from '../returnType';
@@ -30,7 +31,7 @@ export class And extends ExpressionEvaluator {
             newOptions.nullSubstitution = undefined;
             ({ value: result, error } = child.tryEvaluate(state, newOptions));
             if (!error) {
-                if (FunctionUtils.isLogicTrue(result)) {
+                if (InternalFunctionUtils.isLogicTrue(result)) {
                     result = true;
                 } else {
                     result = false;
