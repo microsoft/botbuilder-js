@@ -9,18 +9,49 @@ pool:
     vmImage: 'macOS-10.15'
 
 variables:
-  NodeVersion: 12.x
 #  CI_PULL_REQUEST: define this in Azure
 #  COVERALLS_GIT_BRANCH: define this in Azure
 #  COVERALLS_GIT_COMMIT: define this in Azure
 #  COVERALLS_SERVICE_JOB_ID: define this in Azure
 #  COVERALLS_SERVICE_NAME: define this in Azure
 #  version: define this in Azure, settable at queue time
+#  NodeVersion: define this in Azure, settable at queue time
 
 stages:
 - stage: Build
   jobs:
-  - job:
+  - job: Node14UnitTests
+    displayName: "Node 14.x Unit Tests"
+    variables:
+      NodeVersion: 14.x
+    steps:
+    - template: js-build-steps.yml
+
+    - powershell: |
+        pushd ..
+        Get-ChildItem -Recurse -Force | Where {$_.FullName -notlike "*node_modules*"}
+      displayName: 'Dir workspace except node-modules (takes 5 seconds)'
+      continueOnError: true
+      condition: succeededOrFailed()
+
+  - job: Node12UnitTests
+    displayName: "Node 12.x Unit Tests"
+    variables:
+      NodeVersion: 12.x
+    steps:
+    - template: js-build-steps.yml
+
+    - powershell: |
+        pushd ..
+        Get-ChildItem -Recurse -Force | Where {$_.FullName -notlike "*node_modules*"}
+      displayName: 'Dir workspace except node-modules (takes 5 seconds)'
+      continueOnError: true
+      condition: succeededOrFailed()
+
+  - job: Node10UnitTests
+    displayName: "Node 10.x Unit Tests"
+    variables:
+      NodeVersion: 10.x
     steps:
     - template: js-build-steps.yml
 
@@ -34,6 +65,17 @@ stages:
 - stage: CodeAnalysis
   dependsOn: [] # Run this stage in parallel
   jobs:
-  - job:
+
+  - job: Node14CodeAnalysis
+    displayName: "Node 14.x Code Analysis"
+    variables:
+      NodeVersion: 14.x
     steps:
     - template: js-analysis-steps.yml
+
+  - job: Node12CodeAnalysis
+    displayName: "Node 12.x Code Analysis"
+    variables:
+      NodeVersion: 12.x
+      steps:
+      - template: js-analysis-steps.yml
