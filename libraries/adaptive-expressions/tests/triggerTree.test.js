@@ -652,5 +652,5 @@ describe('TriggerTree', () => {
 
         assert.strictEqual(tree.totalTriggers, 0);
         verifyTree(tree);
-    }).timeout(5000);
+    }).timeout(10000);
 });
