@@ -10,7 +10,14 @@ import { INodeIncomingMessage, INodeBuffer, INodeSocket } from '../../interfaces
 import { NodeWebSocket } from '../nodeWebSocket';
 import { NodeWebSocketFactoryBase } from './nodeWebSocketFactoryBase';
 
+/**
+ * Represents a NodeWebSocketFactory to create a WebSocket server.
+ */
 export class NodeWebSocketFactory extends NodeWebSocketFactoryBase {
+
+    /**
+     * Initializes a new instance of the `NodeWebSocketFactory` class.
+     */
     constructor() {
         super();
     }
@@ -26,7 +33,7 @@ export class NodeWebSocketFactory extends NodeWebSocketFactoryBase {
     public async createWebSocket(req: INodeIncomingMessage, socket: INodeSocket, head: INodeBuffer): Promise<NodeWebSocket> {
         const s = new NodeWebSocket();
         await s.create(req, socket, head);
-        
+
         return s;
     }
 }

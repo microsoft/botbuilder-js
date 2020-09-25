@@ -20,12 +20,23 @@ export class PayloadAssemblerManager {
     private readonly streamManager: StreamManager;
     private readonly activeAssemblers: { [id: string]: PayloadAssembler } = {};
 
+    /**
+     * Initializes a new instance of the `PayloadAssemblerManager` class.
+     * @param streamManager The `StreamManager` managing the stream being assembled.
+     * @param onReceiveResponse Function that executes when new bytes are received on a `response` stream.
+     * @param onReceiveRequest Function that executes when new bytes are received on a `request` stream.
+     */
     public constructor(streamManager: StreamManager, onReceiveResponse: Function, onReceiveRequest: Function) {
         this.streamManager = streamManager;
         this.onReceiveRequest = onReceiveRequest;
         this.onReceiveResponse = onReceiveResponse;
     }
 
+    /**
+     * Retrieves the assembler's payload as a stream.
+     * @param The Header of the Stream to retrieve.
+     * @returns >A `SubscribableStream` of the assembler's payload.
+     */
     public getPayloadStream(header: IHeader): SubscribableStream {
         if (header.payloadType === PayloadTypes.stream) {
             return this.streamManager.getPayloadStream(header);
@@ -39,6 +50,12 @@ export class PayloadAssemblerManager {
         }
     }
 
+    /**
+     * The action the assembler executes when new bytes are received on the incoming stream.
+     * @param header The stream's Header.
+     * @param contentStream The incoming stream being assembled.
+     * @param contentLength The length of the stream, if finite.
+     */
     public onReceive(header: IHeader, contentStream: SubscribableStream, contentLength: number): void {
         if (header.payloadType === PayloadTypes.stream) {
             this.streamManager.onReceive(header, contentStream, contentLength);
@@ -53,6 +70,9 @@ export class PayloadAssemblerManager {
         }
     }
 
+    /**
+     * @private
+     */
     private createPayloadAssembler(header: IHeader): PayloadAssembler {
         if (header.payloadType === PayloadTypes.request) {
             return new PayloadAssembler(this.streamManager, {header: header, onCompleted: this.onReceiveRequest});

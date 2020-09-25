@@ -64,7 +64,7 @@ export class HeaderSerializer {
 
         const end = headerEnd === '1\n';
         const payloadLength = Number(length);
-        
+
         const header: IHeader = { end, payloadLength, payloadType, id };
 
         if (!(header.payloadLength <= PayloadConstants.MaxPayloadLength && header.payloadLength >= PayloadConstants.MinLength)) {
@@ -86,6 +86,12 @@ export class HeaderSerializer {
         return header;
     }
 
+    /**
+     * Creates a padded string based on a length and character to be padded to.
+     * @param lengthValue The value to be assingned on the result.
+     * @param totalLength The length of the padded string result.
+     * @param padChar The character value to use as filling.
+     */
     public static headerLengthPadder(lengthValue: number, totalLength: number, padChar: string): string {
         let result = Array(totalLength + 1)
             .join(padChar);

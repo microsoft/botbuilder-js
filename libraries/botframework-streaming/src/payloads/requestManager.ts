@@ -22,10 +22,19 @@ class PendingRequest {
 export class RequestManager {
     private readonly _pendingRequests = {};
 
+    /**
+     * Gets the count of the pending requests.
+     * @returns Number with the pending requests count.
+     */
     public pendingRequestCount(): number {
         return Object.keys(this._pendingRequests).length;
     }
 
+    /**
+     * Signal fired when all response tasks have completed.
+     * @param requestId The ID of the StreamingRequest.
+     * @param response The ReceiveResponse in response to the request.
+     */
     public async signalResponse(requestId: string, response: IReceiveResponse): Promise<boolean> {
         let pendingRequest = this._pendingRequests[requestId];
 
@@ -39,6 +48,11 @@ export class RequestManager {
         return false;
     }
 
+    /**
+     * Constructs and returns a response for this request.
+     * @param requestId The ID of the StreamingRequest being responded to.
+     * @returns The response to the specified request.
+     */
     public getResponse(requestId: string): Promise<IReceiveResponse> {
         let pendingRequest = this._pendingRequests[requestId];
 

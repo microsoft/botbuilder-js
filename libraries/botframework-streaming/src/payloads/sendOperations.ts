@@ -20,10 +20,19 @@ import { PayloadTypes } from './payloadTypes';
 export class SendOperations {
     private readonly payloadSender: PayloadSender;
 
+    /**
+     * Initializes a new instance of the `SendOperations` class.
+     * @param payloadSender The `PayloadSender` that will send the disassembled data from all of this instance's send operations.
+     */
     public constructor(payloadSender: PayloadSender) {
         this.payloadSender = payloadSender;
     }
 
+    /**
+     * The send operation used to send a `StreamingRequest`.
+     * @param id The ID to assign to the `RequestDisassembler` used by this operation.
+     * @param request The request to send.
+     */
     public async sendRequest(id: string, request: StreamingRequest): Promise<void> {
         let disassembler = new RequestDisassembler(this.payloadSender, id, request);
 
@@ -36,6 +45,11 @@ export class SendOperations {
         }
     }
 
+    /**
+     * The send operation used to send a `PayloadTypes.response`.
+     * @param id The ID to assign to the `ResponseDisassembler` used by this operation.
+     * @param response The response to send.
+     */
     public async sendResponse(id: string, response: StreamingResponse): Promise<void> {
         let disassembler = new ResponseDisassembler(this.payloadSender, id, response);
 
@@ -48,6 +62,10 @@ export class SendOperations {
         }
     }
 
+    /**
+     * The send operation used to send a `PayloadTypes.cancelStream`.
+     * @param id The ID to assign to the `CancelDisassembler` used by this operation.
+     */
     public async sendCancelStream(id: string): Promise<void> {
         let disassembler = new CancelDisassembler(this.payloadSender, id, PayloadTypes.cancelStream);
         disassembler.disassemble();

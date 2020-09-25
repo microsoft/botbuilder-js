@@ -13,6 +13,9 @@ import * as WebSocket from 'ws';
 import { INodeIncomingMessage, INodeBuffer, INodeSocket, ISocket } from '../interfaces';
 const NONCE_LENGTH = 16;
 
+/**
+ * An implementation of `ISocket` to use with a `NodeWebSocketFactory` to create a WebSocket server.
+ */
 export class NodeWebSocket implements ISocket {
     private wsSocket: WebSocket;
     protected wsServer: WebSocket.Server;

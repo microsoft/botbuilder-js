@@ -7,6 +7,9 @@
  */
 import { IBrowserFileReader, IBrowserWebSocket, ISocket, INodeBuffer } from '../interfaces';
 
+/**
+ * Represents a WebSocket that implements `ISocket`.
+ */
 export class BrowserWebSocket implements ISocket {
     private webSocket: IBrowserWebSocket;
 
@@ -86,7 +89,7 @@ export class BrowserWebSocket implements ISocket {
                 const t = e.target as unknown as IBrowserFileReader;
                 queueEntry[bufferKey] = t.result;
                 if (packets[0] === queueEntry) {
-                    while(0 < packets.length && packets[0][bufferKey]) {
+                    while (0 < packets.length && packets[0][bufferKey]) {
                         handler(packets[0][bufferKey]);
                         packets.splice(0, 1);
                     }
@@ -102,7 +105,7 @@ export class BrowserWebSocket implements ISocket {
     public setOnErrorHandler(handler: (x: any) => void): void {
         this.webSocket.onerror = (error): void => { if (error) { handler(error); } };
     }
-    
+
     /**
      * Set the callback to call when encountering socket closures.
      */
