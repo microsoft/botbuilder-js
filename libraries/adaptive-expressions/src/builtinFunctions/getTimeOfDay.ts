@@ -11,6 +11,7 @@ import { parseZone } from 'moment';
 import { EvaluateExpressionDelegate, ExpressionEvaluator } from '../expressionEvaluator';
 import { ExpressionType } from '../expressionType';
 import { FunctionUtils } from '../functionUtils';
+import { InternalFunctionUtils } from '../functionUtils.internal';
 import { ReturnType } from '../returnType';
 
 /**
@@ -25,7 +26,7 @@ export class GetTimeOfDay extends ExpressionEvaluator {
         return FunctionUtils.applyWithError(
             (args: any[]): any => {
                 let value: any;
-                const error: string = FunctionUtils.verifyISOTimestamp(args[0]);
+                const error: string = InternalFunctionUtils.verifyISOTimestamp(args[0]);
                 if (!error) {
                     const thisTime: number = parseZone(args[0]).hour() * 100 + parseZone(args[0]).minute();
                     if (thisTime === 0) {
