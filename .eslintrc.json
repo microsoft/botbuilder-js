@@ -84,7 +84,7 @@
             "files": ["libraries/botbuilder-azure/src/*.ts", "libraries/botbuilder-azure/src/**/*.ts"],
             "plugins": ["jsdoc"],
             "rules": {
-              "jsdoc/require-jsdoc": ["warn", {
+              "jsdoc/require-jsdoc": ["error", {
                   "require": {
                       "FunctionDeclaration": true,
                       "MethodDefinition": true,
