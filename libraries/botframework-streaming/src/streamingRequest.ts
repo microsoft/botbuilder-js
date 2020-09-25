@@ -8,6 +8,9 @@
 import { HttpContent, HttpContentStream } from './httpContentStream';
 import { SubscribableStream } from './subscribableStream';
 
+/**
+ * The basic request type sent over Bot Framework Protocol 3 with Streaming Extensions transports, equivalent to HTTP request messages.
+ */
 export class StreamingRequest {
 
     /**

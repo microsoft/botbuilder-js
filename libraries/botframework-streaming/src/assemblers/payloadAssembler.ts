@@ -28,6 +28,11 @@ export class PayloadAssembler {
     private readonly _byteOrderMark = 0xFEFF;
     private readonly _utf: string = 'utf8';
 
+    /**
+     * Initializes a new instance of the `PayloadAssembler` class.
+     * @param streamManager The `StreamManager` managing the stream being assembled.
+     * @param params Parameters for a streaming assembler.
+     */
     public constructor(streamManager: StreamManager, params: IAssemblerParams) {
         if(params.header){
             this.id = params.header.id;
@@ -46,6 +51,10 @@ export class PayloadAssembler {
         this._onCompleted = params.onCompleted;
     }
 
+    /**
+     * Retrieves the assembler's payload as a stream.
+     * @returns >A `SubscribableStream` of the assembler's payload.
+     */
     public getPayloadStream(): SubscribableStream {
         if (!this.stream) {
             this.stream = this.createPayloadStream();
@@ -54,6 +63,12 @@ export class PayloadAssembler {
         return this.stream;
     }
 
+    /**
+     * The action the assembler executes when new bytes are received on the incoming stream.
+     * @param header The stream's Header.
+     * @param stream The incoming stream being assembled.
+     * @param contentLength The length of the stream, if finite.
+     */
     public onReceive(header: IHeader, stream: SubscribableStream, contentLength: number): void {
         this.end = header.end;
 
@@ -66,22 +81,38 @@ export class PayloadAssembler {
         }
     }
 
+    /**
+     * Closes the assembler.
+     */
     public close(): void {
         this._streamManager.closeStream(this.id);
     }
 
+    /**
+     * Creates a new `SubscribableStream` instance.
+     * @returns The new stream ready for consumption.
+     */
     private createPayloadStream(): SubscribableStream {
         return new SubscribableStream();
     }
 
+    /**
+     * @private
+     */
     private payloadFromJson<T>(json: string): T {
         return JSON.parse((json.charCodeAt(0) === this._byteOrderMark) ? json.slice(1) : json) as T;
     }
 
+    /**
+     * @private
+     */
     private stripBOM(input: string): string {
         return (input.charCodeAt(0) === this._byteOrderMark) ? input.slice(1) : input;
     }
 
+    /**
+     * @private
+     */
     private async process(stream: SubscribableStream): Promise<void> {
         let streamData: Buffer = stream.read(stream.length) as Buffer;
         if (!streamData) {
@@ -97,6 +128,9 @@ export class PayloadAssembler {
         }
     }
 
+    /**
+     * @private
+     */
     private async processResponse(streamDataAsString: string): Promise<void> {
 
         let responsePayload: IResponsePayload = this.payloadFromJson(this.stripBOM(streamDataAsString));
@@ -105,6 +139,9 @@ export class PayloadAssembler {
         await this.processStreams(responsePayload, receiveResponse);
     }
 
+    /**
+     * @private
+     */
     private async processRequest(streamDataAsString: string): Promise<void> {
 
         let requestPayload: IRequestPayload = this.payloadFromJson(streamDataAsString);
@@ -113,6 +150,9 @@ export class PayloadAssembler {
         await this.processStreams(requestPayload, receiveRequest);
     }
 
+    /**
+     * @private
+     */
     private async processStreams(responsePayload: any, receiveResponse: any) {
         if (responsePayload.streams) {
             responsePayload.streams.forEach((responseStream): void => {

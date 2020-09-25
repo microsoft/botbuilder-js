@@ -101,6 +101,9 @@ export class NamedPipeTransport implements ITransportSender, ITransportReceiver 
         return promise;
     }
 
+    /**
+     * @private
+     */
     private socketReceive(data: INodeBuffer): void {
         if (this._queue && data && data.length > 0) {
             this._queue.push(data);
@@ -108,6 +111,9 @@ export class NamedPipeTransport implements ITransportSender, ITransportReceiver 
         }
     }
 
+    /**
+     * @private
+     */
     private socketClose(): void {
         if (this._activeReceiveReject) {
             this._activeReceiveReject(new Error('Socket was closed.'));
@@ -121,6 +127,9 @@ export class NamedPipeTransport implements ITransportSender, ITransportReceiver 
         this._socket = null;
     }
 
+    /**
+     * @private
+     */
     private socketError(err: Error): void {
         if (this._activeReceiveReject) {
             this._activeReceiveReject(err);
@@ -128,6 +137,9 @@ export class NamedPipeTransport implements ITransportSender, ITransportReceiver 
         this.socketClose();
     }
 
+    /**
+     * @private
+     */
     private trySignalData(): void {
         if (this._activeReceiveResolve) {
             if (!this._active && this._queue.length > 0) {

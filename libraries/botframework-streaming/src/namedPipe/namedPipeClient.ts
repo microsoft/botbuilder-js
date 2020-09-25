@@ -29,7 +29,7 @@ export class NamedPipeClient implements IStreamingTransportClient {
     private readonly _protocolAdapter: ProtocolAdapter;
     private readonly _autoReconnect: boolean;
     private _isDisconnecting: boolean;
-    
+
     /**
      * Creates a new instance of the [NamedPipeClient](xref:botframework-streaming.NamedPipeClient) class.
      *
@@ -79,6 +79,9 @@ export class NamedPipeClient implements IStreamingTransportClient {
         return this._protocolAdapter.sendRequest(request);
     }
 
+    /**
+     * @private
+     */
     private onConnectionDisconnected(sender: object, args: any): void {
         if (!this._isDisconnecting) {
             this._isDisconnecting = true;

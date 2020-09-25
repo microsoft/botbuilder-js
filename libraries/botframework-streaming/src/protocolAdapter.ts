@@ -19,6 +19,9 @@ import { generateGuid } from './utilities/protocol-base';
 import { IReceiveResponse, IReceiveRequest } from './interfaces';
 import { IHeader } from './interfaces/IHeader';
 
+/**
+ * Creates a protocol adapter for Streaming.
+ */
 export class ProtocolAdapter {
     private readonly requestHandler: RequestHandler;
     private readonly payloadSender: PayloadSender;
@@ -28,13 +31,13 @@ export class ProtocolAdapter {
     private readonly streamManager: StreamManager;
     private readonly assemblerManager: PayloadAssemblerManager;
 
-    /// <summary>
-    /// Creates a new instance of the protocol adapter class.
-    /// </summary>
-    /// <param name="requestHandler">The handler that will process incoming requests.</param>
-    /// <param name="requestManager">The manager that will process outgoing requests.</param>
-    /// <param name="sender">The sender for use with outgoing requests.</param>
-    /// <param name="receiver">The receiver for use with incoming requests.</param>
+    /**
+     * Creates a new instance of the protocol adapter class.
+     * @param requestHandler The handler that will process incoming requests.
+     * @param requestManager The manager that will process outgoing requests.
+     * @param sender The sender for use with outgoing requests.
+     * @param receiver The receiver for use with incoming requests.
+     */
     public constructor(requestHandler: RequestHandler, requestManager: RequestManager, sender: PayloadSender, receiver: PayloadReceiver) {
         this.requestHandler = requestHandler;
         this.requestManager = requestManager;
@@ -47,10 +50,15 @@ export class ProtocolAdapter {
     }
 
     /// <summary>
-    /// Sends a request over the attached request manager.
+    ///
     /// </summary>
     /// <param name="request">The outgoing request to send.</param>
     /// <param name="cancellationToken">Optional cancellation token.</param>
+    /**
+     * Sends a request over the attached request manager.
+     * @param request The outgoing request to send.
+     * @returns The response to the specified request.
+     */
     public async sendRequest(request: StreamingRequest): Promise<IReceiveResponse> {
         let requestId: string = generateGuid();
         await this.sendOperations.sendRequest(requestId, request);
@@ -58,11 +66,11 @@ export class ProtocolAdapter {
         return this.requestManager.getResponse(requestId);
     }
 
-    /// <summary>
-    /// Executes the receive pipeline when a request comes in.
-    /// </summary>
-    /// <param name="id">The id the resources created for the response will be assigned.</param>
-    /// <param name="request">The incoming request to process.</param>
+    /**
+     * Executes the receive pipeline when a request comes in.
+     * @param id The id the resources created for the response will be assigned.
+     * @param request The incoming request to process.
+     */
     public async onReceiveRequest(id: string, request: IReceiveRequest): Promise<void> {
         if (this.requestHandler) {
             let response = await this.requestHandler.processRequest(request);
@@ -73,22 +81,19 @@ export class ProtocolAdapter {
         }
     }
 
-    /// <summary>
-    /// Executes the receive pipeline when a response comes in.
-    /// </summary>
-    /// <param name="id">The id the resources created for the response will be assigned.</param>
-    /// <param name="response">The incoming response to process.</param>
+    /**
+     * Executes the receive pipeline when a response comes in.
+     * @param id The id the resources created for the response will be assigned.
+     * @param response The incoming response to process.
+     */
     public async onReceiveResponse(id: string, response: IReceiveResponse): Promise<void> {
         await this.requestManager.signalResponse(id, response);
     }
 
-    /// <summary>
-    /// Executes the receive pipeline when a cancellation comes in.
-    /// </summary>
-    /// <param name="contentStreamAssembler">
-    /// The payload assembler processing the incoming data that this
-    /// cancellation request targets.
-    /// </param>
+    /**
+     * Executes the receive pipeline when a cancellation comes in.
+     * @param contentStreamAssembler The payload assembler processing the incoming data that this cancellation request targets.
+     */
     public onCancelStream(contentStreamAssembler: PayloadAssembler): void {
         this.sendOperations.sendCancelStream(contentStreamAssembler.id)
             .catch();

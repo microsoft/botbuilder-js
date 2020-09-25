@@ -120,7 +120,7 @@ export class NamedPipeServer implements IStreamingTransportServer {
             this._outgoingServer = null;
         }
     }
-    
+
     /**
      * Task used to send data over this client connection.
      *
@@ -131,6 +131,9 @@ export class NamedPipeServer implements IStreamingTransportServer {
         return this._protocolAdapter.sendRequest(request);
     }
 
+    /**
+     * @private
+     */
     private onConnectionDisconnected(): void {
         if (!this._isDisconnecting) {
             this._isDisconnecting = true;
