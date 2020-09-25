@@ -98,7 +98,7 @@ export class AzureBlobTranscriptStore implements TranscriptStore {
      * Get activities for a conversation (Aka the transcript)
      * @param channelId Channel Id.
      * @param conversationId Conversation Id.
-     * @param continuationToken Continuatuation token to page through results.
+     * @param continuationToken Continuation token to page through results.
      * @param startDate Earliest time to include.
      */
     public async getTranscriptActivities(
@@ -187,6 +187,10 @@ export class AzureBlobTranscriptStore implements TranscriptStore {
         await Promise.all(conversationBlobs.map(blob => this.client.deleteBlobIfExistsAsync(blob.container, blob.name)));
     }
 
+    /**
+     * Parse a BlobResult as an activity.
+     * @param blob BlobResult to parse as an activity.
+     */
     private async blobToActivity(blob: azure.BlobService.BlobResult): Promise<Activity> {
     	const content = await this.client.getBlobToTextAsync(blob.container, blob.name);
         const activity: Activity = JSON.parse(content as any) as Activity;
@@ -195,6 +199,9 @@ export class AzureBlobTranscriptStore implements TranscriptStore {
         return activity;
     }
 
+    /**
+     * @private 
+     */
     private async getActivityBlobs(
         blobs: azure.BlobService.BlobResult[],
         container: string,
@@ -228,6 +235,9 @@ export class AzureBlobTranscriptStore implements TranscriptStore {
         return blobs;
     }
 
+    /**
+     * @private
+     */
     private async getTranscriptsFolders(
         transcripts: TranscriptInfo[],
         container: string,
@@ -262,6 +272,9 @@ export class AzureBlobTranscriptStore implements TranscriptStore {
         return transcripts;
     }
 
+    /**
+     * @private
+     */
     private async getConversationsBlobs(
         blobs: azure.BlobService.BlobResult[],
         container: string,
@@ -280,10 +293,18 @@ export class AzureBlobTranscriptStore implements TranscriptStore {
         return blobs;
     }
 
+    /**
+     * Check if a container name is valid.
+     * @param container String representing the container name to validate.
+     */
     private checkContainerName(container: string): boolean {
         return ContainerNameCheck.test(container);
     }
 
+    /**
+     * Get the blob name based on the activity.
+     * @param activity Activity to get the blob name from.
+     */
     private getBlobName(activity: Activity): string {
         const channelId: string = this.sanitizeKey(activity.channelId);
         const conversationId: string = this.sanitizeKey(activity.conversation.id);
@@ -293,6 +314,11 @@ export class AzureBlobTranscriptStore implements TranscriptStore {
         return `${ channelId }/${ conversationId }/${ timestamp }-${ activityId }.json`;
     }
 
+    /**
+     * Get the directory name.
+     * @param channelId Channel Id.
+     * @param conversationId Id of the conversation to get the directory name from.
+     */
     private getDirName(channelId: string, conversationId?: string): string {
         if (!conversationId) {
             return this.sanitizeKey(channelId);
@@ -301,10 +327,17 @@ export class AzureBlobTranscriptStore implements TranscriptStore {
         return `${ this.sanitizeKey(channelId) }/${ this.sanitizeKey(conversationId) }`;
     }
 
+    /**
+     * Escape a given key to be compatible for use with BlobStorage.
+     * @param key Key to be sanitized(scaped).
+     */
     private sanitizeKey(key: string): string {
         return escape(key);
     }
 
+    /**
+     * @private
+     */
     private getTicks(timestamp: Date): string {
         const epochTicks = 621355968000000000; // the number of .net ticks at the unix epoch
         const ticksPerMillisecond = 10000; // there are 10000 .net ticks per millisecond
@@ -314,6 +347,9 @@ export class AzureBlobTranscriptStore implements TranscriptStore {
         return ticks.toString(16);
     }
 
+    /**
+     * Delay Container creation if it does not exist.
+     */
     private ensureContainerExists(): Promise<azure.BlobService.ContainerResult> {
         const key: string = this.settings.containerName;
         if (!AzureBlobTranscriptStore[checkedCollectionsKey][key]) {
@@ -323,6 +359,10 @@ export class AzureBlobTranscriptStore implements TranscriptStore {
         return AzureBlobTranscriptStore[checkedCollectionsKey][key];
     }
 
+    /**
+     * Create a Blob Service.
+     * @param param0 Settings required for configuring the Blob Service (storage account or connection string, access key and host).
+     */
     private createBlobService({storageAccountOrConnectionString, storageAccessKey, host}: BlobStorageSettings): BlobServiceAsync {
         if (!storageAccountOrConnectionString) {
             throw new Error('The storageAccountOrConnectionString parameter is required.');

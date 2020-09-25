@@ -129,6 +129,10 @@ export class BlobStorage implements Storage {
         this.useEmulator = settings.storageAccountOrConnectionString === 'UseDevelopmentStorage=true;';
     }
 
+    /**
+     * Retrieve entities from the configured blob container.
+     * @param keys An array of entity keys.
+     */
     public read(keys: string[]): Promise<StoreItems> {
         if (!keys) {
             throw new Error('Please provide at least one key to read from storage.');
@@ -169,6 +173,10 @@ export class BlobStorage implements Storage {
         }).catch((error: Error) => { throw error; });
     }
 
+    /**
+     * Store a new entity in the configured blob container.
+     * @param changes The changes to write to storage.
+     */
     public write(changes: StoreItems): Promise<void> {
         if (!changes) {
             throw new Error('Please provide a StoreItems with changes to persist.');
@@ -221,6 +229,10 @@ export class BlobStorage implements Storage {
         });
     }
 
+    /**
+     * Delete entity blobs from the configured container.
+     * @param keys An array of entity keys.
+     */
     public delete(keys: string[]): Promise<void> {
         if (!keys) {
             throw new Error('Please provide at least one key to delete from storage.');
@@ -241,7 +253,7 @@ export class BlobStorage implements Storage {
 
     /**
      * Get a blob name validated representation of an entity to be used as a key.
-     * @param key The key used to identify the entity
+     * @param key The key used to identify the entity.
      */
     private sanitizeKey(key: string): string {
         if (!key || key.length < 1) {
@@ -257,10 +269,17 @@ export class BlobStorage implements Storage {
         return escape(validKey).substr(0, 1024);
     }
 
+    /**
+     * Check if a container name is valid.
+     * @param container String representing the container name to validate.
+     */
     private checkContainerName(container: string): boolean {
         return ContainerNameCheck.test(container);
     }
 
+    /**
+     * Delay Container creation if it does not exist.
+     */
     private ensureContainerExists(): Promise<azure.BlobService.ContainerResult> {
         const key: string = this.settings.containerName;
         if (!checkedCollections[key]) {
@@ -270,6 +289,12 @@ export class BlobStorage implements Storage {
         return checkedCollections[key];
     }
 
+    /**
+     * Create a Blob Service.
+     * @param storageAccountOrConnectionString Azure CloudStorageAccount instance or Connection String.
+     * @param storageAccessKey Blob Service Access Key.
+     * @param host Blob Service Host.
+     */
     private createBlobService(storageAccountOrConnectionString: string, storageAccessKey: string, host: any): BlobServiceAsync {
         if (!storageAccountOrConnectionString) {
             throw new Error('The storageAccountOrConnectionString parameter is required.');
@@ -293,7 +318,10 @@ export class BlobStorage implements Storage {
         } as any;
     }
 
-    // turn a cb based azure method into a Promisified one
+    /**
+     * @private
+     * Turn a cb based azure method into a Promisified one.
+     */
     private denodeify<T>(thisArg: any, fn: Function): (...args: any[]) => Promise<T> {
         return (...args: any[]): Promise<T> => {
             return new Promise<T>((resolve: any, reject: any): void => {

@@ -133,7 +133,11 @@ export class CosmosDbStorage implements Storage {
         this.documentCollectionCreationRequestOption = settings.documentCollectionRequestOptions;
     }
 
-    public read(keys: string[]): Promise<StoreItems> {        
+    /**
+     * Read storage items from storage.
+     * @param keys Keys of the items to read from the store.
+     */
+    public read(keys: string[]): Promise<StoreItems> {
         if (!keys || keys.length === 0) {
             // No keys passed in, no result to return.
             return Promise.resolve({});
@@ -199,6 +203,10 @@ export class CosmosDbStorage implements Storage {
         });
     }
 
+    /**
+     * Write storage items to storage.
+     * @param changes Items to write to storage, indexed by key.
+     */
     public write(changes: StoreItems): Promise<void> {
         if (!changes || Object.keys(changes).length === 0) {
             return Promise.resolve();
@@ -244,6 +252,10 @@ export class CosmosDbStorage implements Storage {
         });
     }
 
+    /**
+     * Delete storage items from storage.
+     * @param keys Keys of the items to remove from the store.
+     */
     public delete(keys: string[]): Promise<void> {
         if (!keys || keys.length === 0) {
             return Promise.resolve();
