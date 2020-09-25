@@ -11,6 +11,9 @@ import { DialogSet } from './dialogSet';
 import { DialogContext } from './dialogContext';
 import { DialogEvents } from './dialogEvents';
 
+/**
+ * A container for a set of Dialogs.
+ */
 export abstract class DialogContainer<O extends object = {}> extends Dialog<O> {
     /**
      * The containers dialog set.

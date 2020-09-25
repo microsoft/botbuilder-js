@@ -20,6 +20,13 @@ import { DialogEvents } from './dialogEvents';
 import { DialogSet } from './dialogSet';
 import { AuthConstants, GovConstants, isSkillClaim } from './prompts/skillsHelpers';
 
+/**
+ * Runs a dialog from a given context and accesor.
+ * 
+ * @param dialog Context for the current turn of conversation with the user.
+ * @param context Context object for the current turn of conversation with the user.
+ * @param accessor Defined methods for accessing the state property created in a BotState object.
+ */
 export async function runDialog(dialog: Dialog, context: TurnContext, accessor: StatePropertyAccessor<DialogState>): Promise<void> {
     if (!dialog) {
         throw new Error('runDialog(): missing dialog');
@@ -120,7 +127,12 @@ export function shouldSendEndOfConversationToParent(context: TurnContext, turnRe
     return false;
 }
 
-// Recursively walk up the DC stack to find the active DC.
+/**
+ * Recursively walk up the DC stack to find the active DC.
+ * 
+ * @param dialogContext Context for the current turn of conversation with the user.
+ * @returns Active dialog context.
+ */
 export function getActiveDialogContext(dialogContext: DialogContext): DialogContext {
     const child = dialogContext.child;
     if (!child) {
@@ -130,6 +142,12 @@ export function getActiveDialogContext(dialogContext: DialogContext): DialogCont
     return getActiveDialogContext(child);
 }
 
+/**
+ * Determines if the skill is acting as a skill parent.
+ * 
+ * @param context Context object for the current turn of conversation with the user.
+ * @returns A boolean representing if the skill is acting as a skill parent.
+ */
 export function isFromParentToSkill(context: TurnContext): boolean {
     // If a SkillConversationReference exists, it was likely set by the SkillHandler and the bot is acting as a parent.
     if (context.turnState.get(SkillConversationReferenceKey)) {

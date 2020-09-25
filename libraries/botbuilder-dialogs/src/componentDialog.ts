@@ -78,6 +78,21 @@ export class ComponentDialog<O extends object = {}> extends DialogContainer<O> {
      */
     protected initialDialogId: string;
 
+    /**
+     * Called when the dialog is started and pushed onto the parent's dialog stack.
+     *
+     * @remarks
+     * If the task is successful, the result indicates whether the dialog is still 
+     * active after the turn has been processed by the dialog.
+     * 
+     * By default, this calls the
+     * Dialog.BeginDialogAsync(DialogContext, object, CancellationToken) method
+     * of the component dialog's initial dialog, as defined by InitialDialogId.
+     * Override this method in a derived class to implement interrupt logic.
+     * @param outerDC The parent DialogContext for the current turn of conversation.
+     * @param options Optional, initial information to pass to the dialog.
+     * @returns A Promise representing the asynchronous operation.
+     */
     public async beginDialog(outerDC: DialogContext, options?: O): Promise<DialogTurnResult> {
         await this.checkForVersionChange(outerDC);
 
@@ -101,6 +116,19 @@ export class ComponentDialog<O extends object = {}> extends DialogContainer<O> {
         return Dialog.EndOfTurn;
     }
 
+    /**
+     * Called when the dialog is _continued_, where it is the active dialog and the
+     * user replies with a new activity.
+     *
+     * @remarks
+     * If the task is successful, the result indicates whether the dialog is still
+     * active after the turn has been processed by the dialog. The result may also contain a
+     * return value.
+     *     
+     * If this method is *not* overridden, the dialog automatically ends when the user replies.
+     * @param outerDC The parent DialogContext for the current turn of conversation.
+     * @returns A Promise representing the asynchronous operation.
+     */
     public async continueDialog(outerDC: DialogContext): Promise<DialogTurnResult> {
         await this.checkForVersionChange(outerDC);
 
@@ -118,6 +146,29 @@ export class ComponentDialog<O extends object = {}> extends DialogContainer<O> {
         return Dialog.EndOfTurn;
     }
 
+    /**
+     * Called when a child dialog on the parent's dialog stack completed this turn, returning
+     * control to this dialog component.
+     * 
+     * @remarks
+     * If the task is successful, the result indicates whether this dialog is still
+     * active after this dialog turn has been processed.
+     *
+     * Generally, the child dialog was started with a call to
+     * BeginDialogAsync(DialogContext, object, CancellationToken) in the parent's
+     * context. However, if the
+     * DialogContext.ReplaceDialogAsync(string, object, CancellationToken) method
+     * is called, the logical child dialog may be different than the original.
+     *
+     * If this method is *not* overridden, the dialog automatically calls its
+     * RepromptDialogAsync(ITurnContext, DialogInstance, CancellationToken) when
+     * the user replies.
+     * @param outerDc The DialogContext for the current turn of conversation.
+     * @param reason Reason why the dialog resumed.
+     * @param result Optional, value returned from the dialog that was called. The type
+     * of the value returned is dependent on the child dialog.
+     * @returns A Promise representing the asynchronous operation.
+     */
     public async resumeDialog(outerDC: DialogContext, reason: DialogReason, result?: any): Promise<DialogTurnResult> {
         await this.checkForVersionChange(outerDC);
 
@@ -131,6 +182,13 @@ export class ComponentDialog<O extends object = {}> extends DialogContainer<O> {
         return Dialog.EndOfTurn;
     }
 
+    /**
+    * Called when the dialog should re-prompt the user for input.
+    * 
+    * @param context The context object for this turn.
+    * @param instance State information for this dialog.
+    * @returns A Promise representing the asynchronous operation.
+    */
     public async repromptDialog(context: TurnContext, instance: DialogInstance): Promise<void> {
         // Forward to inner dialogs
         const innerDC: DialogContext = this.createInnerDC(context, instance);
@@ -140,6 +198,18 @@ export class ComponentDialog<O extends object = {}> extends DialogContainer<O> {
         await this.onRepromptDialog(context, instance);
     }
 
+    /**
+    * Called when the dialog is ending.
+    * 
+    * @remarks 
+    * When this method is called from the parent dialog's context, the component dialog
+    * cancels all of the dialogs on its inner dialog stack before ending.
+    * @param context The context object for this turn.
+    * @param instance State information associated with the instance of this component
+    * dialog on its parent's dialog stack.
+    * @param reason Reason why the dialog ended.
+    * @returns A Promise representing the asynchronous operation.
+    */
     public async endDialog(context: TurnContext, instance: DialogInstance, reason: DialogReason): Promise<void> {
         // Forward cancel to inner dialogs
         if (reason === DialogReason.cancelCalled) {
@@ -242,6 +312,15 @@ export class ComponentDialog<O extends object = {}> extends DialogContainer<O> {
 
     private createInnerDC(context: DialogContext, instance: DialogInstance): DialogContext;
     private createInnerDC(context: TurnContext, instance: DialogInstance): DialogContext;
+
+    /**
+     * @private
+     * 
+     * @remarks 
+     * You should only call this if you don't have a dc to work with (such as OnResume())
+     * @param context Context for the current turn of conversation with the user.
+     * @param instance Current state information for this dialog.
+    */
     private createInnerDC(context: TurnContext | DialogContext, instance: DialogInstance): DialogContext {
         if (!instance) {
             const dialogInstance = { state: {} };

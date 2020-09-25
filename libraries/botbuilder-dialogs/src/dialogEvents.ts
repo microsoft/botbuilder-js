@@ -6,6 +6,9 @@
  * Licensed under the MIT License.
  */
 
+/**
+ * Represents the events related to the "lifecycle" of the dialog.
+ */
 export class DialogEvents {
     /**
      * Event fired by a dialog to indicate that its `beginDialog()` method has been called.

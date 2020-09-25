@@ -88,10 +88,15 @@ export class WaterfallDialog<O extends object = {}> extends Dialog<O> {
         }
     }
 
+    /**
+     * Gets the dialog version, composed of the ID and number of steps.
+     * 
+     * @returns Dialog version, composed of the ID and number of steps.
+     */
     public getVersion(): string {
         // Simply return the id + number of steps to help detect when new steps have
         // been added to a given waterfall.
-        return `${this.id}:${this.steps.length}`;
+        return `${ this.id }:${ this.steps.length }`;
     }
 
     /**
@@ -138,6 +143,16 @@ export class WaterfallDialog<O extends object = {}> extends Dialog<O> {
         return this;
     }
 
+    /**
+     * Called when the waterfall dialog is started and pushed onto the dialog stack.
+     * 
+     * @remarks 
+     * If the task is successful, the result indicates whether the dialog is still
+     * active after the turn has been processed by the dialog.
+     * @param dc The DialogContext for the current turn of conversation.
+     * @param options Optional, initial information to pass to the dialog.
+     * @returns A Promise representing the asynchronous operation.
+     */
     public async beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {
         // Initialize waterfall state
         const state: WaterfallDialogState = dc.activeDialog.state as WaterfallDialogState;
@@ -157,6 +172,17 @@ export class WaterfallDialog<O extends object = {}> extends Dialog<O> {
         return await this.runStep(dc, 0, DialogReason.beginCalled);
     }
 
+    /**
+     * Called when the waterfall dialog is _continued_, where it is the active dialog and the
+     * user replies with a new activity.
+     * 
+     * @remarks 
+     * If the task is successful, the result indicates whether the dialog is still
+     * active after the turn has been processed by the dialog. The result may also contain a
+        return value.
+     * @param dc The <see cref="DialogContext"/> for the current turn of conversation.
+     * @returns A Promise representing the asynchronous operation.
+     */
     public async continueDialog(dc: DialogContext): Promise<DialogTurnResult> {
         // Don't do anything for non-message activities
         if (dc.context.activity.type !== ActivityTypes.Message) {
@@ -167,6 +193,15 @@ export class WaterfallDialog<O extends object = {}> extends Dialog<O> {
         return await this.resumeDialog(dc, DialogReason.continueCalled, dc.context.activity.text);
     }
 
+    /**
+     * Called when a child waterfall dialog completed its turn, returning control to this dialog.
+     * 
+     * @param dc The dialog context for the current turn of the conversation.
+     * @param reason Reason why the dialog resumed.
+     * @param result Optional, value returned from the dialog that was called. The type
+     * of the value returned is dependent on the child dialog.
+     * @returns A Promise representing the asynchronous operation.
+     */
     public async resumeDialog(dc: DialogContext, reason: DialogReason, result?: any): Promise<DialogTurnResult> {
         // Increment step index and run step
         const state: WaterfallDialogState = dc.activeDialog.state as WaterfallDialogState;
@@ -206,6 +241,15 @@ export class WaterfallDialog<O extends object = {}> extends Dialog<O> {
         return await this.steps[step.index](step);
     }
 
+    /**
+     * Excutes a step of the waterfall dialog.
+     * 
+     * @param dc The DialogContext for the current turn of conversation.
+     * @param index The index of the current waterfall step to execute.
+     * @param reason The reason the waterfall step is being executed.
+     * @param result Optional, result returned by a dialog called in the previous waterfall step.
+     * @returns A Promise that represents the work queued to execute.
+     */
     protected async runStep(dc: DialogContext, index: number, reason: DialogReason, result?: any): Promise<DialogTurnResult> {
         if (index < this.steps.length) {
             // Update persisted step index
@@ -263,6 +307,11 @@ export class WaterfallDialog<O extends object = {}> extends Dialog<O> {
         }
     }
 
+    /**
+     * Identifies the step name by its position index.
+     * @param index 
+     * @returns A string that identifies the step name.
+     */
     private waterfallStepName(index: number): string {
         // Log Waterfall Step event. Each event has a distinct name to hook up
         // to the Application Insights funnel.

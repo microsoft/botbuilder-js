@@ -65,6 +65,16 @@ export class DialogContext {
       */
     public constructor(dialogs: DialogSet, contextOrDC: TurnContext, state: DialogState);
     public constructor(dialogs: DialogSet, contextOrDC: DialogContext, state: DialogState);
+
+    /**
+      * Creates an new instance of the [DialogContext](xref:botbuilder-dialogs.DialogContext) class.
+      * 
+      * @remarks
+      * Passing in a dialog context instance will clone the dialog context.
+      * @param dialogs The dialog set for which to create the dialog context.
+      * @param contextOrDC The turn context or dialog context for the current turn of the bot.
+      * @param state The state object to use to read and write dialog state to storage.
+      */
     public constructor(dialogs: DialogSet, contextOrDC: TurnContext | DialogContext, state: DialogState) {
         this.dialogs = dialogs;
         if (contextOrDC instanceof DialogContext) {
@@ -291,6 +301,24 @@ export class DialogContext {
      */
     public async prompt(dialogId: string, promptOrOptions: string | Partial<Activity> | PromptOptions): Promise<DialogTurnResult>;
     public async prompt(dialogId: string, promptOrOptions: string | Partial<Activity> | PromptOptions, choices: (string | Choice)[]): Promise<DialogTurnResult>;
+    
+    /**
+     * Helper function to simplify formatting the options for calling a prompt dialog.
+     * 
+     * @param dialogId ID of the prompt dialog to start.
+     * @param promptOrOptions The text of the initial prompt to send the user, or
+     *      the activity to send as the initial prompt.
+     * @param choices Optional. Array of choices for the user to choose from,
+     *      for use with a [ChoicePrompt](xref:botbuilder-dialogs.ChoicePrompt).
+     * 
+     * @remarks
+     * This helper method formats the object to use as the `options` parameter, and then calls
+     * [beginDialog](xref:botbuilder-dialogs.DialogContext.beginDialog) to start the specified prompt dialog.
+     *
+     * ```JavaScript
+     * return await dc.prompt('confirmPrompt', `Are you sure you'd like to quit?`);
+     * ```
+     */
     public async prompt(
         dialogId: string,
         promptOrOptions: string | Partial<Activity>,
@@ -516,6 +544,12 @@ export class DialogContext {
         return false;
     }
 
+    /**
+     * @private
+     * 
+     * @param reason 
+     * @param result 
+     */
     private async endActiveDialog(reason: DialogReason, result?: any): Promise<void> {
         const instance: DialogInstance<any> = this.activeDialog;
         if (instance) {

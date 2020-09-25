@@ -52,11 +52,20 @@ export interface DialogManagerConfiguration {
     stateConfiguration?: DialogStateManagerConfiguration;
 }
 
+/**
+ * Class which runs the dialog system.
+ */
 export class DialogManager extends Configurable {
     private _rootDialogId: string;
     private readonly _dialogStateProperty: string;
     private readonly _initialTurnState: TurnContextStateCollection = new TurnContextStateCollection();
 
+    /**
+     * Creates an instance of the DialogManager class.
+     * 
+     * @param rootDialog Optional, root dialog to use.
+     * @param dialogStateProperty Optional, alternate name for the dialogState property. (Default is "DialogStateProperty")
+     */
     public constructor(rootDialog?: Dialog, dialogStateProperty?: string) {
         super();
         if (rootDialog) { this.rootDialog = rootDialog; }
@@ -95,6 +104,11 @@ export class DialogManager extends Configurable {
         }
     }
 
+    /**
+     * Gets the root dialog ID.
+     * 
+     * @returns The root dialog ID.
+     */
     public get rootDialog(): Dialog {
         return this._rootDialogId ? this.dialogs.find(this._rootDialogId) : undefined;
     }
@@ -114,10 +128,22 @@ export class DialogManager extends Configurable {
      */
     public expireAfter?: number;
 
+    /**
+     * Set configuration settings.
+     * 
+     * @param config Configuration settings to apply.
+     * @returns The cofigured dialogManager context.
+     */
     public configure(config: Partial<DialogManagerConfiguration>): this {
         return super.configure(config);
     }
 
+    /**
+     * Runs dialog system in the context of an ITurnContext.
+     * 
+     * @param context Context for the current turn of conversation with the user.
+     * @returns Result of the running the logic against the activity.
+     */
     public async onTurn(context: TurnContext): Promise<DialogManagerResult> {
         // Ensure properly configured
         if (!this._rootDialogId) { throw new Error(`DialogManager.onTurn: the bot's 'rootDialog' has not been configured.`); }
@@ -223,7 +249,12 @@ export class DialogManager extends Configurable {
         return { turnResult: turnResult };
     }
 
-    // Helper to send a trace activity with a memory snapshot of the active dialog DC.
+    /**
+     * Helper to send a trace activity with a memory snapshot of the active dialog DC.
+     * 
+     * @param dc Context for the current turn of conversation with the user.
+     * @param traceLabel Trace label to set for the activity.
+     */
     private async sendStateSnapshotTrace(dc: DialogContext, traceLabel: string): Promise<void> {
         // send trace of memory
         const snapshot: object = getActiveDialogContext(dc).state.getMemorySnapshot();
@@ -236,6 +267,12 @@ export class DialogManager extends Configurable {
         });
     }
 
+    /**
+     * @private
+     * 
+     * @param dc Context for the current turn of conversation with the user.
+     * @returns A Promise representing the asynchronous operation.
+     */
     private async handleSkillOnTurn(dc: DialogContext): Promise<DialogTurnResult> {
         // The bot is running as a skill.
         const turnContext = dc.context;
@@ -287,6 +324,12 @@ export class DialogManager extends Configurable {
         return turnResult;
     }
 
+    /**
+     * @private
+     * 
+     * @param dc Context for the current turn of conversation with the user.
+     * @returns The DialogTurnResult.
+     */
     private async handleBotOnTurn(dc: DialogContext): Promise<DialogTurnResult> {
         let turnResult: DialogTurnResult;
 
