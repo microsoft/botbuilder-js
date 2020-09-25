@@ -8,14 +8,13 @@ name: $(Build.BuildId)
 pool:
     vmImage: 'macOS-10.15'
 
-variables:
+#  variables:
 #  CI_PULL_REQUEST: define this in Azure
 #  COVERALLS_GIT_BRANCH: define this in Azure
 #  COVERALLS_GIT_COMMIT: define this in Azure
 #  COVERALLS_SERVICE_JOB_ID: define this in Azure
 #  COVERALLS_SERVICE_NAME: define this in Azure
 #  version: define this in Azure, settable at queue time
-#  NodeVersion: define this in Azure, settable at queue time
 
 stages:
 - stage: Build
