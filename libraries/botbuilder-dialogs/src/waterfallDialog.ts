@@ -173,12 +173,12 @@ export class WaterfallDialog<O extends object = {}> extends Dialog<O> {
     /**
      * Called when the waterfall dialog is _continued_, where it is the active dialog and the
      * user replies with a new activity.
+     * @param dc The <see cref="DialogContext"/> for the current turn of conversation.
+     * @returns A Promise representing the asynchronous operation.
      * @remarks 
      * If the task is successful, the result indicates whether the dialog is still
      * active after the turn has been processed by the dialog. The result may also contain a
-        return value.
-     * @param dc The <see cref="DialogContext"/> for the current turn of conversation.
-     * @returns A Promise representing the asynchronous operation.
+     * return value.
      */
     public async continueDialog(dc: DialogContext): Promise<DialogTurnResult> {
         // Don't do anything for non-message activities

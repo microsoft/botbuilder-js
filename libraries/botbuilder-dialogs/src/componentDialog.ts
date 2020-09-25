@@ -80,10 +80,6 @@ export class ComponentDialog<O extends object = {}> extends DialogContainer<O> {
 
     /**
      * Called when the dialog is started and pushed onto the parent's dialog stack.
-     * @remarks
-     * If the task is successful, the result indicates whether the dialog is still 
-     * active after the turn has been processed by the dialog.
-     * 
      * By default, this calls the
      * Dialog.BeginDialogAsync(DialogContext, object, CancellationToken) method
      * of the component dialog's initial dialog, as defined by InitialDialogId.
@@ -91,6 +87,9 @@ export class ComponentDialog<O extends object = {}> extends DialogContainer<O> {
      * @param outerDC The parent DialogContext for the current turn of conversation.
      * @param options Optional, initial information to pass to the dialog.
      * @returns A Promise representing the asynchronous operation.
+     * @remarks
+     * If the task is successful, the result indicates whether the dialog is still 
+     * active after the turn has been processed by the dialog.
      */
     public async beginDialog(outerDC: DialogContext, options?: O): Promise<DialogTurnResult> {
         await this.checkForVersionChange(outerDC);
@@ -118,14 +117,13 @@ export class ComponentDialog<O extends object = {}> extends DialogContainer<O> {
     /**
      * Called when the dialog is _continued_, where it is the active dialog and the
      * user replies with a new activity.
+     * If this method is *not* overridden, the dialog automatically ends when the user replies.
+     * @param outerDC The parent DialogContext for the current turn of conversation.
+     * @returns A Promise representing the asynchronous operation.
      * @remarks
      * If the task is successful, the result indicates whether the dialog is still
      * active after the turn has been processed by the dialog. The result may also contain a
      * return value.
-     *     
-     * If this method is *not* overridden, the dialog automatically ends when the user replies.
-     * @param outerDC The parent DialogContext for the current turn of conversation.
-     * @returns A Promise representing the asynchronous operation.
      */
     public async continueDialog(outerDC: DialogContext): Promise<DialogTurnResult> {
         await this.checkForVersionChange(outerDC);
@@ -147,24 +145,22 @@ export class ComponentDialog<O extends object = {}> extends DialogContainer<O> {
     /**
      * Called when a child dialog on the parent's dialog stack completed this turn, returning
      * control to this dialog component.
-     * @remarks
-     * If the task is successful, the result indicates whether this dialog is still
-     * active after this dialog turn has been processed.
-     *
-     * Generally, the child dialog was started with a call to
-     * BeginDialogAsync(DialogContext, object, CancellationToken) in the parent's
-     * context. However, if the
-     * DialogContext.ReplaceDialogAsync(string, object, CancellationToken) method
-     * is called, the logical child dialog may be different than the original.
-     *
-     * If this method is *not* overridden, the dialog automatically calls its
-     * RepromptDialogAsync(ITurnContext, DialogInstance, CancellationToken) when
-     * the user replies.
      * @param outerDc The DialogContext for the current turn of conversation.
      * @param reason Reason why the dialog resumed.
      * @param result Optional, value returned from the dialog that was called. The type
      * of the value returned is dependent on the child dialog.
      * @returns A Promise representing the asynchronous operation.
+     * @remarks
+     * If the task is successful, the result indicates whether this dialog is still
+     * active after this dialog turn has been processed.
+     * Generally, the child dialog was started with a call to
+     * BeginDialogAsync(DialogContext, object, CancellationToken) in the parent's
+     * context. However, if the
+     * DialogContext.ReplaceDialogAsync(string, object, CancellationToken) method
+     * is called, the logical child dialog may be different than the original.
+     * If this method is *not* overridden, the dialog automatically calls its
+     * RepromptDialogAsync(ITurnContext, DialogInstance, CancellationToken) when
+     * the user replies.
      */
     public async resumeDialog(outerDC: DialogContext, reason: DialogReason, result?: any): Promise<DialogTurnResult> {
         await this.checkForVersionChange(outerDC);
@@ -218,11 +214,10 @@ export class ComponentDialog<O extends object = {}> extends DialogContainer<O> {
 
     /**
      * Adds a child dialog or prompt to the components internal `DialogSet`.
-     *
+     * @param dialog The child dialog or prompt to add.
      * @remarks
      * The `Dialog.id` of the first child added to the component will be assigned to the [initialDialogId](#initialdialogid)
      * property.
-     * @param dialog The child dialog or prompt to add.
      */
     public addDialog(dialog: Dialog): this {
         this.dialogs.add(dialog);
@@ -310,10 +305,10 @@ export class ComponentDialog<O extends object = {}> extends DialogContainer<O> {
 
     /**
      * @private
-     * @remarks 
-     * You should only call this if you don't have a dc to work with (such as OnResume())
      * @param context Context for the current turn of conversation with the user.
      * @param instance Current state information for this dialog.
+     * @remarks 
+     * You should only call this if you don't have a dc to work with (such as OnResume())
     */
     private createInnerDC(context: TurnContext | DialogContext, instance: DialogInstance): DialogContext {
         if (!instance) {

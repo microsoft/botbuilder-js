@@ -56,12 +56,11 @@ export interface DialogState {
 export class DialogContext {
     /**
       * Creates an new instance of the [DialogContext](xref:botbuilder-dialogs.DialogContext) class.
-      * 
-      * @remarks
-      * Passing in a dialog context instance will clone the dialog context.
       * @param dialogs The dialog set for which to create the dialog context.
       * @param contextOrDC The context object for the current turn of the bot.
       * @param state The state object to use to read and write dialog state to storage.
+      * @remarks
+      * Passing in a dialog context instance will clone the dialog context.
       */
     public constructor(dialogs: DialogSet, contextOrDC: TurnContext, state: DialogState);
     public constructor(dialogs: DialogSet, contextOrDC: DialogContext, state: DialogState);
@@ -308,7 +307,6 @@ export class DialogContext {
      *      the activity to send as the initial prompt.
      * @param choices Optional. Array of choices for the user to choose from,
      *      for use with a [ChoicePrompt](xref:botbuilder-dialogs.ChoicePrompt).
-     * 
      * @remarks
      * This helper method formats the object to use as the `options` parameter, and then calls
      * [beginDialog](xref:botbuilder-dialogs.DialogContext.beginDialog) to start the specified prompt dialog.

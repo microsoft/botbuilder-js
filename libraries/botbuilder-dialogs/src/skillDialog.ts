@@ -67,11 +67,11 @@ export class SkillDialog extends Dialog<Partial<BeginSkillDialogOptions>> {
 
     /**
      * Called when the skill dialog is started and pushed onto the dialog stack.
-     * @remarks
-     * If the task is successful, the result indicates whether the dialog is still active after the turn has been processed by the dialog.
      * @param dc The DialogContext for the current turn of conversation.
      * @param options Initial information to pass to the dialog.
      * @returns A Promise representing the asynchronous operation.
+     * @remarks
+     * If the task is successful, the result indicates whether the dialog is still active after the turn has been processed by the dialog.
      */
     public async beginDialog(dc: DialogContext, options: BeginSkillDialogOptions): Promise<DialogTurnResult> {
         const dialogArgs = this.validateBeginDialogArgs(options);
@@ -102,12 +102,12 @@ export class SkillDialog extends Dialog<Partial<BeginSkillDialogOptions>> {
     /**
      * Called when the skill dialog is _continued_, where it is the active dialog and the
      * user replies with a new activity.
+     * @param dc The DialogContext for the current turn of conversation.
+     * @returns A Promise representing the asynchronous operation.
      * @remarks 
      * If the task is successful, the result indicates whether the dialog is still
      * active after the turn has been processed by the dialog. The result may also contain a
      * return value.
-     * @param dc The DialogContext for the current turn of conversation.
-     * @returns A Promise representing the asynchronous operation.
      */
     public async continueDialog(dc: DialogContext): Promise<DialogTurnResult> {
         if (!this.onValidateActivity(dc.context.activity)) {
