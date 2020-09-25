@@ -11,6 +11,12 @@ import { DialogContext } from '../../dialogContext';
  * Abstract base class for all memory scopes.
  */
 export abstract class MemoryScope {
+    /**
+     * Initializes a new instance of the MemoryScope class.
+     * @param name Name of the scope.
+     * @param includeInSnapshot Boolean value indicating whether this memory 
+     * should be included in snapshot. Default value is true.
+     */
     public constructor(name: string, includeInSnapshot = true)
     {
         this.includeInSnapshot = includeInSnapshot;

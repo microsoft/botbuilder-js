@@ -14,10 +14,19 @@ import { Dialog } from '../../dialog';
  * ClassMemoryScope maps "class" -> dc.activeDialog.properties
  */
 export class ClassMemoryScope extends MemoryScope {
+    /**
+     * Initializes a new instance of the ClassMemoryScope class.
+     * @param name Name of the scope class.
+     */
     public constructor(name = ScopePath.class) {
         super(name, false);
     }
 
+    /**
+     * Gets the backing memory for this scope.
+     * @param dc The DialogContext object for this turn.
+     * @returns The memory for the scope.
+     */
     public getMemory(dc: DialogContext): object {
         // if active dialog is a container dialog then "dialog" binds to it
         if (dc.activeDialog) {

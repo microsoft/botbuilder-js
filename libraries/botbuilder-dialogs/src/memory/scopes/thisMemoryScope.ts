@@ -13,14 +13,27 @@ import { DialogContext } from '../../dialogContext';
  * ThisMemoryScope maps "this" -> dc.activeDialog.state
  */
 export class ThisMemoryScope extends MemoryScope {
+    /**
+     * Initializes a new instance of the ThisMemoryScope class.
+     */
     public constructor() {
         super(ScopePath.this);
     }
 
+    /**
+     * Gets the backing memory for this scope.
+     * @param dc The DialogContext object for this turn.
+     * @returns The memory for the scope.
+     */
     public getMemory(dc: DialogContext): object {
         return dc.activeDialog ? dc.activeDialog.state : undefined;
     }
 
+    /**
+     * Changes the backing object for the memory scope.
+     * @param dc The DialogContext object for this turn.
+     * @param memory Memory object to set for the scope.
+     */
     public setMemory(dc: DialogContext, memory: object): void {
         if (memory == undefined) {
             throw new Error(`ThisMemoryScope.setMemory: undefined memory object passed in.`);

@@ -15,10 +15,18 @@ import { DialogContainer } from '../../dialogContainer';
  * DialogClassMemoryScope maps "dialogClass" -> dc.parent.activeDialog.properties
  */
 export class DialogClassMemoryScope extends ClassMemoryScope {
+    /**
+     * Initializes a new instance of the DialogClassMemoryScope class.
+     */
     constructor() {
         super(ScopePath.dialogClass);
     }
 
+    /**
+     * @protected
+     * @param dc The DialogContext object for this turn.
+     * @retuns The current Dialog.
+     */
     protected onFindDialog(dc: DialogContext): Dialog {
         // Is the active dialog a container?
         let dialog = dc.findDialog(dc.activeDialog.id);

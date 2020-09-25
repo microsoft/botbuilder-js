@@ -14,10 +14,18 @@ import { DialogContainer } from '../../dialogContainer';
  * DialogMemoryScope maps "dialog" -> dc.parent.activeDialog.state || dc.activeDialog.state
  */
 export class DialogMemoryScope extends MemoryScope {
+    /**
+     * Initializes a new instance of the DialogMemoryScope class.
+     */
     public constructor() {
         super(ScopePath.dialog);
     }
 
+    /**
+     * Gets the backing memory for this scope
+     * @param dc The DialogContext object for this turn.
+     * @returns The memory for the scope.
+     */
     public getMemory(dc: DialogContext): object {
         // If active dialog is a container dialog then "dialog" binds to it.
         // Otherwise the "dialog" will bind to the dialogs parent assuming it 
@@ -31,6 +39,11 @@ export class DialogMemoryScope extends MemoryScope {
         return parent.activeDialog ? parent.activeDialog.state : undefined;
     }
 
+    /**
+     * Changes the backing object for the memory scope.
+     * @param dc The DialogContext object for this turn.
+     * @param memory Memory object to set for the scope.
+     */
     public setMemory(dc: DialogContext, memory: object): void {
         if (memory == undefined) {
             throw new Error(`DialogMemoryScope.setMemory: undefined memory object passed in.`);
@@ -50,6 +63,11 @@ export class DialogMemoryScope extends MemoryScope {
         parent.activeDialog.state = memory;
     }
 
+    /**
+     * @private
+     * @param dc The DialogContext object for this turn.
+     * @returns A boolean indicating whether is a cointainer or not.
+     */
     private isContainer(dc: DialogContext): boolean {
         if (dc != undefined && dc.activeDialog != undefined) {
             var dialog = dc.findDialog(dc.activeDialog.id);

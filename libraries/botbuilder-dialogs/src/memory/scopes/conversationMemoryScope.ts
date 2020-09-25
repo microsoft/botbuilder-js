@@ -13,6 +13,9 @@ import { ScopePath } from '../scopePath';
  */
 export class ConversationMemoryScope extends BotStateMemoryScope {
     protected stateKey = 'ConversationState';
+    /**
+     * Initializes a new instance of the ConversationMemoryScope class.
+     */
     public constructor() {
         super(ScopePath.conversation);
     }
