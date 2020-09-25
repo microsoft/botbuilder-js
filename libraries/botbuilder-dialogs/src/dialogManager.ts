@@ -62,7 +62,6 @@ export class DialogManager extends Configurable {
 
     /**
      * Creates an instance of the DialogManager class.
-     * 
      * @param rootDialog Optional, root dialog to use.
      * @param dialogStateProperty Optional, alternate name for the dialogState property. (Default is "DialogStateProperty")
      */
@@ -106,7 +105,6 @@ export class DialogManager extends Configurable {
 
     /**
      * Gets the root dialog ID.
-     * 
      * @returns The root dialog ID.
      */
     public get rootDialog(): Dialog {
@@ -130,7 +128,6 @@ export class DialogManager extends Configurable {
 
     /**
      * Set configuration settings.
-     * 
      * @param config Configuration settings to apply.
      * @returns The cofigured dialogManager context.
      */
@@ -140,7 +137,6 @@ export class DialogManager extends Configurable {
 
     /**
      * Runs dialog system in the context of an ITurnContext.
-     * 
      * @param context Context for the current turn of conversation with the user.
      * @returns Result of the running the logic against the activity.
      */
@@ -251,7 +247,6 @@ export class DialogManager extends Configurable {
 
     /**
      * Helper to send a trace activity with a memory snapshot of the active dialog DC.
-     * 
      * @param dc Context for the current turn of conversation with the user.
      * @param traceLabel Trace label to set for the activity.
      */
@@ -269,7 +264,6 @@ export class DialogManager extends Configurable {
 
     /**
      * @private
-     * 
      * @param dc Context for the current turn of conversation with the user.
      * @returns A Promise representing the asynchronous operation.
      */

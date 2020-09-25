@@ -68,7 +68,6 @@ export class DialogContext {
 
     /**
       * Creates an new instance of the [DialogContext](xref:botbuilder-dialogs.DialogContext) class.
-      * 
       * @remarks
       * Passing in a dialog context instance will clone the dialog context.
       * @param dialogs The dialog set for which to create the dialog context.
@@ -304,7 +303,6 @@ export class DialogContext {
     
     /**
      * Helper function to simplify formatting the options for calling a prompt dialog.
-     * 
      * @param dialogId ID of the prompt dialog to start.
      * @param promptOrOptions The text of the initial prompt to send the user, or
      *      the activity to send as the initial prompt.
@@ -546,7 +544,6 @@ export class DialogContext {
 
     /**
      * @private
-     * 
      * @param reason 
      * @param result 
      */

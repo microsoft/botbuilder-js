@@ -22,7 +22,6 @@ import { AuthConstants, GovConstants, isSkillClaim } from './prompts/skillsHelpe
 
 /**
  * Runs a dialog from a given context and accesor.
- * 
  * @param dialog Context for the current turn of conversation with the user.
  * @param context Context object for the current turn of conversation with the user.
  * @param accessor Defined methods for accessing the state property created in a BotState object.
@@ -129,7 +128,6 @@ export function shouldSendEndOfConversationToParent(context: TurnContext, turnRe
 
 /**
  * Recursively walk up the DC stack to find the active DC.
- * 
  * @param dialogContext Context for the current turn of conversation with the user.
  * @returns Active dialog context.
  */
@@ -144,7 +142,6 @@ export function getActiveDialogContext(dialogContext: DialogContext): DialogCont
 
 /**
  * Determines if the skill is acting as a skill parent.
- * 
  * @param context Context object for the current turn of conversation with the user.
  * @returns A boolean representing if the skill is acting as a skill parent.
  */

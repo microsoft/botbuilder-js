@@ -80,7 +80,6 @@ export class ComponentDialog<O extends object = {}> extends DialogContainer<O> {
 
     /**
      * Called when the dialog is started and pushed onto the parent's dialog stack.
-     *
      * @remarks
      * If the task is successful, the result indicates whether the dialog is still 
      * active after the turn has been processed by the dialog.
@@ -119,7 +118,6 @@ export class ComponentDialog<O extends object = {}> extends DialogContainer<O> {
     /**
      * Called when the dialog is _continued_, where it is the active dialog and the
      * user replies with a new activity.
-     *
      * @remarks
      * If the task is successful, the result indicates whether the dialog is still
      * active after the turn has been processed by the dialog. The result may also contain a
@@ -149,7 +147,6 @@ export class ComponentDialog<O extends object = {}> extends DialogContainer<O> {
     /**
      * Called when a child dialog on the parent's dialog stack completed this turn, returning
      * control to this dialog component.
-     * 
      * @remarks
      * If the task is successful, the result indicates whether this dialog is still
      * active after this dialog turn has been processed.
@@ -184,7 +181,6 @@ export class ComponentDialog<O extends object = {}> extends DialogContainer<O> {
 
     /**
     * Called when the dialog should re-prompt the user for input.
-    * 
     * @param context The context object for this turn.
     * @param instance State information for this dialog.
     * @returns A Promise representing the asynchronous operation.
@@ -200,7 +196,6 @@ export class ComponentDialog<O extends object = {}> extends DialogContainer<O> {
 
     /**
     * Called when the dialog is ending.
-    * 
     * @remarks 
     * When this method is called from the parent dialog's context, the component dialog
     * cancels all of the dialogs on its inner dialog stack before ending.
@@ -315,7 +310,6 @@ export class ComponentDialog<O extends object = {}> extends DialogContainer<O> {
 
     /**
      * @private
-     * 
      * @remarks 
      * You should only call this if you don't have a dc to work with (such as OnResume())
      * @param context Context for the current turn of conversation with the user.

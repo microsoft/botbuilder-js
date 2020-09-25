@@ -90,7 +90,6 @@ export class WaterfallDialog<O extends object = {}> extends Dialog<O> {
 
     /**
      * Gets the dialog version, composed of the ID and number of steps.
-     * 
      * @returns Dialog version, composed of the ID and number of steps.
      */
     public getVersion(): string {
@@ -145,7 +144,6 @@ export class WaterfallDialog<O extends object = {}> extends Dialog<O> {
 
     /**
      * Called when the waterfall dialog is started and pushed onto the dialog stack.
-     * 
      * @remarks 
      * If the task is successful, the result indicates whether the dialog is still
      * active after the turn has been processed by the dialog.
@@ -175,7 +173,6 @@ export class WaterfallDialog<O extends object = {}> extends Dialog<O> {
     /**
      * Called when the waterfall dialog is _continued_, where it is the active dialog and the
      * user replies with a new activity.
-     * 
      * @remarks 
      * If the task is successful, the result indicates whether the dialog is still
      * active after the turn has been processed by the dialog. The result may also contain a
@@ -195,7 +192,6 @@ export class WaterfallDialog<O extends object = {}> extends Dialog<O> {
 
     /**
      * Called when a child waterfall dialog completed its turn, returning control to this dialog.
-     * 
      * @param dc The dialog context for the current turn of the conversation.
      * @param reason Reason why the dialog resumed.
      * @param result Optional, value returned from the dialog that was called. The type
@@ -243,7 +239,6 @@ export class WaterfallDialog<O extends object = {}> extends Dialog<O> {
 
     /**
      * Excutes a step of the waterfall dialog.
-     * 
      * @param dc The DialogContext for the current turn of conversation.
      * @param index The index of the current waterfall step to execute.
      * @param reason The reason the waterfall step is being executed.
