@@ -12,6 +12,9 @@ import { AliasPathResolver } from './aliasPathResolver';
  */
 export class DollarPathResolver extends AliasPathResolver {
 
+    /**
+     * Initializes a new instance of the DollarPathResolver class.
+     */
     constructor() {
         super('$', 'dialog.');
     }

@@ -15,10 +15,18 @@ export class AtPathResolver extends AliasPathResolver {
     private readonly _prefix = 'turn.recognized.entities.';
     private readonly _delims = ['.', '['];
 
+    /**
+     * Initializes a new instance of the AtPathResolver class.
+     */
     public constructor() {
         super('@', '');
     }
 
+    /**
+     * Transforms the path.
+     * @param path Path to inspect.
+     * @returns The transformed path.
+     */
     public transformPath(path: string): string {
         path = path.trim();
         if (path.startsWith('@') && path.length > 1 && !path.startsWith('@@')) {

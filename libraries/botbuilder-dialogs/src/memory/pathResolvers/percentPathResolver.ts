@@ -12,6 +12,9 @@ import { AliasPathResolver } from './aliasPathResolver';
  */
 export class PercentPathResolver extends AliasPathResolver {
 
+    /**
+     * Initializes a new instance of the PercentPathResolver class.
+     */
     constructor() {
         super('%', 'class.');
     }

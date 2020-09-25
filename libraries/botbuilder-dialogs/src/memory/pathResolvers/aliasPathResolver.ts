@@ -15,12 +15,23 @@ export class AliasPathResolver implements PathResolver {
     private readonly prefix: string;
     private readonly postfix: string;
 
+    /**
+     * Initializes a new instance of the AliasPathResolver class.
+     * @param alias Alias name.
+     * @param prefix Prefix name.
+     * @param postfix Postfix name.
+     */
     constructor(alias: string, prefix: string, postfix?: string) {
         this.alias = alias.trim();
         this.prefix = prefix.trim();
         this.postfix = postfix ? postfix.trim() : '';
     }
 
+    /**
+     * Transforms the path.
+     * @param path Path to inspect.
+     * @returns The transformed path.
+     */
     public transformPath(path: string): string {
         const start = path.indexOf(this.alias);
         if (start == 0) {
