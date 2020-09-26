@@ -92,24 +92,22 @@ steps:
   enabled: false
 
 - task: Npm@1
-  displayName: 'npm run test-coverage'
+  displayName: 'npm run test:devops'
   inputs:
     command: custom
     verbose: false
-    customCommand: 'run test-coverage'
+    customCommand: 'run test:devops'
 
-- powershell: |
-    Write-Host "Setting environment variable COVERALLS_REPO_TOKEN"
-    "##vso[task.setvariable variable=COVERALLS_REPO_TOKEN;]$(JsCoverallsToken)"
-  displayName: 'Set COVERALLS_REPO_TOKEN'
-  continueOnError: true
-  condition: and(succeeded(), ne(variables['System.PullRequest.IsFork'], 'True'))
-
-- task: Npm@1
-  displayName: 'Upload coverage report to Coveralls https://coveralls.io/github/microsoft/botbuilder-js'
+# Publish test results to Azure Pipelines
+- task: PublishTestResults@2
   inputs:
-    command: custom
-    verbose: false
-    customCommand: 'run upload-coverage'
-  continueOnError: true
+    testResultsFormat: 'JUnit'
+    testResultsFiles: '**/test-results.xml' 
+    #searchFolder: '$(System.DefaultWorkingDirectory)' # Optional
+    mergeTestResults: true # Optional
+    #failTaskOnFailedTests: false # Optional
+    #testRunTitle: # Optional
+    #buildPlatform: # Optional
+    #buildConfiguration: # Optional
+    #publishRunAttachments: true # Optional
   condition: and(succeeded(), ne(variables['System.PullRequest.IsFork'], 'True'), eq(variables['PostToCoveralls'], true))

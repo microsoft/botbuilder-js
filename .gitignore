@@ -3,6 +3,9 @@
 ##
 ## Get latest from https://github.com/github/gitignore/blob/master/VisualStudio.gitignore
 
+/**/*.env
+/**/test-results.xml
+
 # Blanket ignore zip files
 # Related to Teams Scenarios work
 *.zip
