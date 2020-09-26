@@ -17,64 +17,64 @@ pool:
 #  version: define this in Azure, settable at queue time
 
 stages:
-- stage: Build
+- stage: Node10CI
+  dependsOn: [] # Run this stage in parallel
+  displayName: 'Node 10.x CI'
+  variables:
+    NodeVersion: 10.x
+  jobs:
+  - job: Node10UnitTests
+    displayName: 'Node 10.x Unit Tests'
+    steps:
+    - template: js-build-steps.yml
+    - powershell: |
+        pushd ..
+        Get-ChildItem -Recurse -Force | Where {$_.FullName -notlike "*node_modules*"}
+      displayName: 'Dir workspace except node-modules (takes 5 seconds)'
+      continueOnError: true
+      condition: succeededOrFailed()
+
+- stage: Node12CI
+  dependsOn: [] # Run this stage in parallel
+  displayName: 'Node 12.x CI'
+  variables:
+    NodeVersion: 12.x
+  jobs:
+  - job: Node12UnitTests
+    displayName: 'Node 12.x Unit Tests'
+    steps:
+    - template: js-build-steps.yml
+    - powershell: |
+        pushd ..
+        Get-ChildItem -Recurse -Force | Where {$_.FullName -notlike "*node_modules*"}
+      displayName: 'Dir workspace except node-modules (takes 5 seconds)'
+      continueOnError: true
+      condition: succeededOrFailed()
+  - job: Node12CodeAnalysis
+    dependsOn: [] # Run this job in parallel
+    displayName: 'Node 12.x Code Analysis'
+    steps:
+      - template: js-analysis-steps.yml
+
+- stage: Node14CI
+  dependsOn: [] # Run this stage in parallel
+  displayName: 'Node 14.x CI'
+  variables:
+    NodeVersion: 14.x
   jobs:
   - job: Node14UnitTests
     displayName: 'Node 14.x Unit Tests'
-    variables:
-      NodeVersion: 14.x
     steps:
     - template: js-build-steps.yml
-
     - powershell: |
         pushd ..
         Get-ChildItem -Recurse -Force | Where {$_.FullName -notlike "*node_modules*"}
       displayName: 'Dir workspace except node-modules (takes 5 seconds)'
       continueOnError: true
       condition: succeededOrFailed()
-
-  - job: Node12UnitTests
-    displayName: 'Node 12.x Unit Tests'
-    variables:
-      NodeVersion: 12.x
-    steps:
-    - template: js-build-steps.yml
-
-    - powershell: |
-        pushd ..
-        Get-ChildItem -Recurse -Force | Where {$_.FullName -notlike "*node_modules*"}
-      displayName: 'Dir workspace except node-modules (takes 5 seconds)'
-      continueOnError: true
-      condition: succeededOrFailed()
-
-  - job: Node10UnitTests
-    displayName: 'Node 10.x Unit Tests'
-    variables:
-      NodeVersion: 10.x
-    steps:
-    - template: js-build-steps.yml
-
-    - powershell: |
-        pushd ..
-        Get-ChildItem -Recurse -Force | Where {$_.FullName -notlike "*node_modules*"}
-      displayName: 'Dir workspace except node-modules (takes 5 seconds)'
-      continueOnError: true
-      condition: succeededOrFailed()
-
-- stage: CodeAnalysis
-  dependsOn: [] # Run this stage in parallel
-  jobs:
 
   - job: Node14CodeAnalysis
+    dependsOn: [] # Run this job in parallel
     displayName: 'Node 14.x Code Analysis'
-    variables:
-      NodeVersion: 14.x
     steps:
     - template: js-analysis-steps.yml
-
-  - job: Node12CodeAnalysis
-    displayName: 'Node 12.x Code Analysis'
-    variables:
-      NodeVersion: 12.x
-    steps:
-      - template: js-analysis-steps.yml
