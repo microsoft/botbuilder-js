@@ -117,4 +117,4 @@ package.json                                                            @steveng
 /.github/CODEOWNERS                                                     @stevengum @cleemullins @joshgummersall @mrivera-ms
 
 # .schema files
-/**/*.schema                                                            @chrimc62 @tomlm @stevengum @joshgummersall
+/**/*.schema                                                            @chrimc62 @joshgummersall @stevengum @tomlm
