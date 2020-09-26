@@ -73,7 +73,7 @@
 /libraries/botframework-connector/tests/appCredentials.test.js          @microsoft/bf-auth
 
 # Bot Configuration
-/libraries/botframework-config/**                                       @tomlm
+/libraries/botframework-config/**                                       @microsoft/bb-js @tomlm
 
 # Bot Framework Skills
 /libraries/botbuilder/src/**/botFrameworkHttpClient.ts                  @microsoft/bf-skills
@@ -92,7 +92,7 @@
 /libraries/botframework-schema/src/teams/**                             @microsoft/bf-teams
 /libraries/botframework-connector/src/teams/**                          @microsoft/bf-teams
 /libraries/botbuilder/tests/**/teams*.js                                @microsoft/bf-teams
-/lbiraries/teams-scenarios/**                                           @microsoft/bf-teams
+/libraries/teams-scenarios/**                                           @microsoft/bf-teams
 
 # Ownership by specific files or file types
 # This section MUST stay at the bottom of the CODEOWNERS file. For more information, see
@@ -110,11 +110,11 @@
 /**/*tsconfig.json                                                      @microsoft/bb-js
 
 # Critical monorepo files
-lerna.json                                                              @stevengum
-package.json                                                            @stevengum
+lerna.json                                                              @stevengum @joshgummersall
+package.json                                                            @stevengum @joshgummersall
 
 # CODEOWNERS
-/.github/CODEOWNERS                                                     @stevengum @cleemullins @mrivera-ms
+/.github/CODEOWNERS                                                     @stevengum @cleemullins @joshgummersall @mrivera-ms
 
 # .schema files
-/**/*.schema                                                            @chrimc62 @tomlm
+/**/*.schema                                                            @chrimc62 @tomlm @stevengum @joshgummersall
