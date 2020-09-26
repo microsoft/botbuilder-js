@@ -100,14 +100,23 @@ steps:
 
 # Publish test results to Azure Pipelines
 - task: PublishTestResults@2
+  displayName: 'Publish test results to Azure DevOps'
   inputs:
     testResultsFormat: 'JUnit'
     testResultsFiles: '**/test-results.xml' 
-    #searchFolder: '$(System.DefaultWorkingDirectory)' # Optional
-    mergeTestResults: true # Optional
-    #failTaskOnFailedTests: false # Optional
+    mergeTestResults: true 
+    failTaskOnFailedTests: false # All test results should be published. Default is false, never set to true.
     #testRunTitle: # Optional
     #buildPlatform: # Optional
-    #buildConfiguration: # Optional
+    #buildConfiguration: # Optional - Include Node runtime version?
     #publishRunAttachments: true # Optional
   condition: and(succeeded(), ne(variables['System.PullRequest.IsFork'], 'True'), eq(variables['PostToCoveralls'], true))
+
+- task: PublishCodeCoverageResults@1
+  inputs:
+    codeCoverageTool: 'cobertura'
+    summaryFileLocation: './coverage/cobertura-coverage.xml'
+    #pathToSources: # Optional
+    #reportDirectory: # Optional
+    #additionalCodeCoverageFiles: # Optional
+    failIfCoverageEmpty: true
