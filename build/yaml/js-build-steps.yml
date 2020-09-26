@@ -112,4 +112,4 @@ steps:
     verbose: false
     customCommand: 'run upload-coverage'
   continueOnError: true
-  condition: and(succeeded(), ne(variables['System.PullRequest.IsFork'], 'True'))
+  condition: and(succeeded(), ne(variables['System.PullRequest.IsFork'], 'True'), eq(variables['PostToCoveralls'], true))

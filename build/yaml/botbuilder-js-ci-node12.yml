@@ -42,6 +42,8 @@ stages:
   jobs:
   - job: Node12UnitTests
     displayName: 'Node 12.x Unit Tests'
+    variables:
+      PostToCoveralls: true # Post current Node LTS (12.x) Coveralls report
     steps:
     - template: js-build-steps.yml
     - powershell: |
