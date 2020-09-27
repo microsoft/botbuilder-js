@@ -10,7 +10,7 @@ import { Clause } from './clause';
 import { Constant } from '../constant';
 import { Expression } from '../expression';
 import { ExpressionType } from '../expressionType';
-import { PredicateComparer } from './optimizer';
+import { PredicateComparers } from './optimizer';
 import { Quantifier, QuantifierType } from './quantifier';
 import { RelationshipType } from './relationshipType';
 import { TriggerTree } from './triggerTree';
@@ -126,7 +126,7 @@ export class Trigger {
      * @param comparers The comparer dictionary.
      * @returns A `RelationshipType` value.
      */
-    public relationship(other: Trigger, comparers: { [name: string]: PredicateComparer }): RelationshipType {
+    public relationship(other: Trigger, comparers: PredicateComparers): RelationshipType {
         let result: RelationshipType;
         const first = this._relationship(this, other, comparers);
         const second = this._relationship(other, this, comparers);
@@ -195,7 +195,7 @@ export class Trigger {
         return builder.join('');
     }
 
-    private _relationship(trigger: Trigger, other: Trigger, comparers: { [name: string]: PredicateComparer }): RelationshipType {
+    private _relationship(trigger: Trigger, other: Trigger, comparers: PredicateComparers): RelationshipType {
         let soFar = RelationshipType.incomparable;
         for (const clause of trigger.clauses) {
             if (!clause.subsumed) {

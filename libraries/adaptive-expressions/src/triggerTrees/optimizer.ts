@@ -39,3 +39,7 @@ export interface PredicateComparer {
      */
     relationship(predicate: Expression, other: Expression): RelationshipType;
 }
+
+export type PredicateComparers = {
+    [name: string]: PredicateComparer
+}

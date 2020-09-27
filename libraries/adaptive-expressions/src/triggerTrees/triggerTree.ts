@@ -9,7 +9,7 @@
 import { Expression } from '../expression';
 import { Clause } from './clause';
 import { Node } from './node';
-import { Optimizer, PredicateComparer } from './optimizer';
+import { Optimizer, PredicateComparers } from './optimizer';
 import { Quantifier } from './quantifier';
 import { RelationshipType } from './relationshipType';
 import { Trigger } from './trigger';
@@ -33,7 +33,7 @@ export class TriggerTree {
     /**
      * A dictionary of `PredicateComparer` values, with string keys.
      */
-    public readonly comparers: { [key: string]: PredicateComparer } = {};
+    public readonly comparers: PredicateComparers = {};
 
     /**
      * The root node instance.

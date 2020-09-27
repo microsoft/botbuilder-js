@@ -8,7 +8,7 @@
 
 import { Expression } from '../expression';
 import { ExpressionType } from '../expressionType';
-import { PredicateComparer } from './optimizer';
+import { PredicateComparer, PredicateComparers } from './optimizer';
 import { RelationshipType } from './relationshipType';
 
 /**
@@ -91,7 +91,7 @@ export class Clause extends Expression {
      * @param comparers A comparer, which is a dictionary of `PredicateComparer` with string keys.
      * @returns A `RelationshipType` value between two `Clause` instances.
      */
-    public relationship(other: Clause, comparers: { [name: string]: PredicateComparer }): RelationshipType {
+    public relationship(other: Clause, comparers: PredicateComparers): RelationshipType {
         let soFar: RelationshipType = RelationshipType.incomparable;
         let shorter: Clause = this as Clause;
         let shorterCount: number = shorter.children.length;
@@ -260,7 +260,7 @@ export class Clause extends Expression {
         return reln;
     }
 
-    private _relationship(expr: Expression, other: Expression, comparers: { [name: string]: PredicateComparer }): RelationshipType {
+    private _relationship(expr: Expression, other: Expression, comparers: PredicateComparers): RelationshipType {
         let relationship = RelationshipType.incomparable;
         let root = expr;
         let rootOther = other;
