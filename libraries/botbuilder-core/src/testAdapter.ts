@@ -65,13 +65,13 @@ export class TestAdapter extends BotAdapter implements ExtendedUserTokenProvider
 
         Object.assign(this.conversation, {
             locale: this.template.locale || this.conversation.locale || this.locale,
-            serviceUrl: this.template.serviceUrl || this.conversation.locale,
+            serviceUrl: this.template.serviceUrl || this.conversation.serviceUrl,
             channelId: this.template.channelId || this.conversation.channelId,
             bot: this.template.recipient || this.conversation.bot,
             user: this.template.from || this.conversation.user
         });
     }
-    
+
     /**
      * @private
      * INTERNAL: used to drive the promise chain forward when running tests.
@@ -283,7 +283,7 @@ export class TestAdapter extends BotAdapter implements ExtendedUserTokenProvider
         }
         return Promise.resolve();
     }
-    
+
     /**
      * @private
      * INTERNAL: called by a `TestFlow` instance to simulate a user sending a message to the bot.
@@ -448,27 +448,14 @@ export class TestAdapter extends BotAdapter implements ExtendedUserTokenProvider
             userId = context.activity.from.id;
         }
 
-        const match = this._userTokens.filter(x => x.channelId === context.activity.channelId
+        return this._userTokens.filter(x => x.channelId === context.activity.channelId
             && x.userId === userId
-            && (!filter || filter.includes(x.connectionName)));
-
-        if (match && match.length > 0) {
-            const tokenStatuses = [];
-            for (var i = 0; i < match.length; i++) {
-                tokenStatuses.push(
-                    {
-                        ConnectionName: match[i].connectionName,
-                        HasToken: true,
-                        ServiceProviderDisplayName: match[i].connectionName
-                    });
-            }
-
-            return tokenStatuses;
-        }
-        else {
-            // not found
-            return undefined;
-        }
+            && (!filter || filter.includes(x.connectionName)))
+            .map(token => ({
+                ConnectionName: token.connectionName,
+                HasToken: true,
+                ServiceProviderDisplayName: token.connectionName
+            }));
     }
 
     /**
@@ -484,29 +471,19 @@ export class TestAdapter extends BotAdapter implements ExtendedUserTokenProvider
         key.userId = context.activity.from.id;
 
         if (magicCode) {
-            const magicCodeRecord = this._magicCodes.filter(x => key.equalsKey(x.key));
-            if (magicCodeRecord && magicCodeRecord.length > 0 && magicCodeRecord[0].magicCode === magicCode) {
+            const magicCodeRecord = this._magicCodes.find(item => key.equalsKey(item.key) && item.magicCode === magicCode);
+            if (magicCodeRecord) {
                 // move the token to long term dictionary
-                this.addUserToken(connectionName, key.channelId, key.userId, magicCodeRecord[0].key.token);
+                this.addUserToken(connectionName, key.channelId, key.userId, magicCodeRecord.key.token);
 
                 // remove from the magic code list
-                const idx = this._magicCodes.indexOf(magicCodeRecord[0]);
+                const idx = this._magicCodes.indexOf(magicCodeRecord);
                 this._magicCodes.splice(idx, 1);
             }
         }
 
-        const match = this._userTokens.filter(x => key.equalsKey(x));
-
-        if (match && match.length > 0) {
-            return {
-                connectionName: match[0].connectionName,
-                token: match[0].token,
-                expiration: undefined
-            };
-        } else {
-            // not found
-            return undefined;
-        }
+        const userToken = this._userTokens.find(token => key.equalsKey(token));
+        return userToken && Object.assign({ expiration: undefined }, userToken);
     }
 
     /**
@@ -518,12 +495,12 @@ export class TestAdapter extends BotAdapter implements ExtendedUserTokenProvider
     public async signOutUser(context: TurnContext, connectionName?: string, userId?: string): Promise<void> {
         const channelId = context.activity.channelId;
         userId = userId || context.activity.from.id;
-        this._userTokens = this._userTokens.filter(token => {
-            return connectionName &&
-                (connectionName !== token.connectionName ||
-                    channelId !== token.channelId ||
-                    userId !== token.userId);
-        });
+        this._userTokens = this._userTokens.filter(token =>
+            connectionName &&
+            (connectionName !== token.connectionName ||
+                channelId !== token.channelId ||
+                userId !== token.userId)
+        );
     }
 
     /**

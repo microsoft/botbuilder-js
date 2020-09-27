@@ -30,7 +30,7 @@ export class UserTokenMocksConverter implements Converter {
     }
 
     public convert(value: string | UserTokenMock): UserTokenMock {
-        if (typeof (value) === 'string') {
+        if (typeof value === 'string') {
             const userTokenMock = this._resourceExplorer.loadType(`${ value }.dialog`) as UserTokenMock;
             if (userTokenMock) {
                 return userTokenMock;

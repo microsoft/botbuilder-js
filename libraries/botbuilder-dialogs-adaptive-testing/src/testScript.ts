@@ -64,9 +64,9 @@ export class TestScript {
         ResourceExtensions.useResourceExplorer(bot, resourceExplorer);
         LanguageGeneratorExtensions.useLanguageGeneration(bot);
         
-        for (let i = 0; i < this.userTokenMocks.length; i++) {
-            this.userTokenMocks[i].setup(testAdapter);
-        }
+        this.userTokenMocks.forEach(userTokenMock => {
+            userTokenMock.setup(testAdapter);
+        });
 
         for (let i = 0; i < this.script.length; i++) {
             const testAction = this.script[i];
