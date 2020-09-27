@@ -274,13 +274,10 @@ export class Trigger {
             default:
                 // True becomes empty expression and false drops clause
                 if (expression instanceof Constant && typeof (expression.value) === 'boolean') {
-                    if (expression.value) {
-                        return [new Clause()];
-                    }
+                    return expression.value ? [new Clause()] : [];
                 } else {
                     return [new Clause(expression)];
                 }
-                return [];
         }
     }
 
