@@ -64,7 +64,7 @@ export class TriggerTree {
             Expression.parse(stringOrExpression) : stringOrExpression;
         const trigger = new Trigger(this, expression, action, ...quantifiers);
         let added = false;
-        if (trigger.clauses.length > 0) {
+        if (trigger.clauses.length) {
             for (const clause of trigger.clauses) {
                 const newNode = new Node(clause, this, trigger);
                 if (this.root.addNode(newNode)) {
