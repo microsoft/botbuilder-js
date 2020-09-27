@@ -9,6 +9,7 @@
 import { EvaluateExpressionDelegate, ExpressionEvaluator } from '../expressionEvaluator';
 import { ExpressionType } from '../expressionType';
 import { FunctionUtils } from '../functionUtils';
+import { InternalFunctionUtils } from '../functionUtils.internal';
 import { ReturnType } from '../returnType';
 
 /**
@@ -21,6 +22,6 @@ export class IsDateTime extends ExpressionEvaluator {
 
     private static evaluator(): EvaluateExpressionDelegate {
         return FunctionUtils.apply(
-            (args: any[]): boolean => typeof args[0] === 'string' && FunctionUtils.verifyISOTimestamp(args[0]) === undefined);
+            (args: any[]): boolean => typeof args[0] === 'string' && InternalFunctionUtils.verifyISOTimestamp(args[0]) === undefined);
     }
 }
