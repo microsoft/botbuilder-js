@@ -8,6 +8,7 @@
 
 import { ExpressionType } from '../expressionType';
 import { FunctionUtils } from '../functionUtils';
+import { InternalFunctionUtils } from '../functionUtils.internal';
 import { ComparisonEvaluator } from './comparisonEvaluator';
 
 /**
@@ -19,6 +20,6 @@ export class Bool extends ComparisonEvaluator {
     }
 
     private static func(args: any[]): boolean {
-        return FunctionUtils.isLogicTrue(args[0]);
+        return InternalFunctionUtils.isLogicTrue(args[0]);
     }
 }

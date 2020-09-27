@@ -12,6 +12,7 @@ import { Expression } from '../expression';
 import { EvaluateExpressionDelegate, ExpressionEvaluator } from '../expressionEvaluator';
 import { ExpressionType } from '../expressionType';
 import { FunctionUtils } from '../functionUtils';
+import { InternalFunctionUtils } from '../functionUtils.internal';
 import { ReturnType } from '../returnType';
 
 /**
@@ -28,10 +29,10 @@ export class DateReadBack extends ExpressionEvaluator {
                 let value: any;
                 let error: string;
                 const dateFormat = 'YYYY-MM-DD';
-                ({ value, error } = FunctionUtils.parseTimestamp(args[0]));
+                ({ value, error } = InternalFunctionUtils.parseTimestamp(args[0]));
                 if (!error) {
                     const timestamp1: Date = new Date(value.format(dateFormat));
-                    ({ value, error } = FunctionUtils.parseTimestamp(args[1]));
+                    ({ value, error } = InternalFunctionUtils.parseTimestamp(args[1]));
                     const timestamp2: string = value.format(dateFormat);
                     const timex: TimexProperty = new TimexProperty(timestamp2);
 
