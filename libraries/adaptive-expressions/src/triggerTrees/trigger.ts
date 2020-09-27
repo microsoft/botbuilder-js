@@ -83,7 +83,7 @@ export class Trigger {
      * @param action Action to take when a trigger matches.
      * @param quantifiers Quantifiers to dynamically expand the expression.
      */
-    public constructor(tree: TriggerTree, expression: Expression, action: any, ...quantifiers: Quantifier[]) {
+    public constructor(tree: TriggerTree, expression?: Expression, action?: any, ...quantifiers: Quantifier[]) {
         this._tree = tree;
         this.action = action;
         this.originalExpression = expression;
