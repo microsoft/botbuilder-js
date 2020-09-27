@@ -1,5 +1,6 @@
 import { Extensions } from '../extensions';
 import { FunctionUtils } from '../functionUtils';
+import { InternalFunctionUtils } from '../functionUtils.internal';
 import { MemoryInterface } from './memoryInterface';
 
 /**
@@ -55,9 +56,9 @@ export class SimpleObjectMemory implements MemoryInterface {
             let error: string;
             const idx = parseInt(part);
             if(!isNaN(idx) && Array.isArray(curScope)) {
-                ({value, error} = FunctionUtils.accessIndex(curScope, idx));
+                ({value, error} = InternalFunctionUtils.accessIndex(curScope, idx));
             } else {
-                ({value, error} = FunctionUtils.accessProperty(curScope, part));
+                ({value, error} = InternalFunctionUtils.accessProperty(curScope, part));
             }
 
             if (error) {
@@ -100,10 +101,10 @@ export class SimpleObjectMemory implements MemoryInterface {
             const idx = parseInt(parts[i]);
             if(!isNaN(idx) && Array.isArray(curScope)) {
                 curPath = `[${ parts[i] }]`;
-                ({value: curScope, error} = FunctionUtils.accessIndex(curScope, idx));
+                ({value: curScope, error} = InternalFunctionUtils.accessIndex(curScope, idx));
             } else {
                 curPath = `.${ parts[i] }`;
-                ({value: curScope, error} = FunctionUtils.accessProperty(curScope, parts[i]));
+                ({value: curScope, error} = InternalFunctionUtils.accessProperty(curScope, parts[i]));
             }
 
             if (error) {
