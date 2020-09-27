@@ -130,12 +130,12 @@ class Generator {
             const expression = this.randomChoice(predicates);
             const info = {
                 expression: expression.expression,
-                bindings: {},
+                bindings: new Map(),
                 quantifiers: []
             };
             const numQuants = 1 + Math.floor(Math.random() * (maxQuantifiers - 1));
             const chosen = new Set();
-            const bindingKeys = Object.keys(expression.bindings);
+            const bindingKeys = expression.bindings.keys();
             const maxBase = Math.min(bindingKeys.length, numQuants);
             for (let quant = 0; quant < maxBase; ++quant) {
                 let baseBinding;
@@ -143,7 +143,7 @@ class Generator {
                 do {
                     const randomIndex = Math.floor(Math.random() * bindingKeys.length);
                     const bindingKey = bindingKeys[randomIndex];
-                    const bindingValue = expression.bindings[bindingKey];
+                    const bindingValue = expression.bindings.get(bindingKey);
                     baseBinding = {
                         key: bindingKey,
                         value: bindingValue
@@ -166,15 +166,15 @@ class Generator {
                 const any = Math.random() < 0.5;
                 if (any) {
                     const mem = this.randomChoice(mappings);
-                    if (!info.bindings.hasOwnProperty(mem)) {
-                        info.bindings[mem] = baseBinding.value;
+                    if (!info.bindings.has(mem)) {
+                        info.bindings.set(mem, baseBinding.value);
                     }
 
                     info.quantifiers.push(new Quantifier(baseBinding.key, QuantifierType.any, mappings));
                 } else {
                     for (const mapping of mappings) {
-                        if (!info.bindings.hasOwnProperty(mapping)) {
-                            info.bindings[mapping] = baseBinding.value;
+                        if (!info.bindings.has(mapping)) {
+                            info.bindings.set(mapping, baseBinding.value);
                         }
                     }
 
@@ -192,11 +192,11 @@ class Generator {
         const result = [];
         for (let i = 0; i < numNots; ++i) {
             const expr = this.randomChoice(predicates);
-            const bindings = {};
-            for (const key in expr.bindings) {
-                const comparison = this.notValue(expr.bindings[key]);
+            const bindings = new Map();
+            for (const [key, value] of expr.bindings.entries()) {
+                const comparison = this.notValue(value);
                 if (comparison) {
-                    bindings[key] = comparison;
+                    bindings.set(key, comparison);
                 }
             }
 
@@ -235,13 +235,11 @@ class Generator {
                 );
                 break;
         }
-        const expressionInfo = {
+        return {
             expression,
-            bindings: {},
+            bindings: new Map().set(name, { type, value }),
             quantifiers: []
         };
-        expressionInfo.bindings[name] = { type, value };
-        return expressionInfo;
     }
 
     generateHasValueComparison(name) {
@@ -276,22 +274,21 @@ class Generator {
                 break;
         }
 
-        const expressionInfo = {
+        return {
             expression,
-            bindings: {},
+            bindings: new Map().set(name, {
+                value,
+                type: ExpressionType.Not
+            }),
             quantifiers: []
         };
-        expressionInfo.bindings[name] = {
-            value, type: ExpressionType.Not
-        };
-        return expressionInfo;
     }
 
     mergeBindings(expressions) {
-        const bindings = {};
+        const bindings = new Map();
         for (const info of expressions) {
-            for (const key in info.bindings) {
-                bindings[key] = info.bindings[key];
+            for (const [key, value] of info.bindings.entries()) {
+                bindings.set(key, value);
             }
         }
         return bindings;
@@ -440,14 +437,13 @@ class Generator {
     }
 
     variablesByType(bindings) {
-        const result = {};
-        for (const key in bindings) {
-            const value = bindings[key].value;
+        const result = new Map();
+        for (const [key, value] of bindings) {
             const type = typeof value;
-            if (!result.hasOwnProperty(type)) {
-                result[type] = [];
+            if (!result.has(type)) {
+                result.set(type, []);
             }
-            result[type].push(key);
+            result.get(type).push(key);
         }
 
         return result;
@@ -542,8 +538,8 @@ describe('TriggerTree', () => {
         const conjunctions = generator.generateConjunctions(predicates, numConjunctions, minClause, maxClause);
         for (const conjunction of conjunctions) {
             const memory = {};
-            for (const key in conjunction.bindings) {
-                memory[key] = conjunction.bindings[key].value;
+            for (const [key, value] of conjunction.bindings.entries()) {
+                memory[key] = value.value;
             }
 
             const trigger = tree.addTrigger(conjunction.expression, conjunction.bindings);
@@ -599,8 +595,8 @@ describe('TriggerTree', () => {
 
         for (const predicate of predicates) {
             const memory = {};
-            for (const key in predicate.bindings) {
-                memory[key] = predicate.bindings[key].value;
+            for (const [key, value] of predicate.bindings.entries()) {
+                memory[key] = value.value;
             }
 
             const matches = tree.matches(memory);
@@ -646,5 +642,5 @@ describe('TriggerTree', () => {
 
         assert.strictEqual(tree.totalTriggers, 0);
         verifyTree(tree);
-    }).timeout(10000);
+    }).timeout(5000);
 });

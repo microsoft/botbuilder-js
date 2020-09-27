@@ -31,8 +31,8 @@ export class Clause extends Expression {
             } else if (clauseOrExpression instanceof Clause) {
                 const fromClause: Clause = clauseOrExpression;
                 this.children = [...fromClause.children];
-                for (const key in fromClause.anyBindings) {
-                    this.anyBindings[key] = fromClause.anyBindings[key];
+                for (const [key, value] of fromClause.anyBindings.entries()) {
+                    this.anyBindings.set(key, value);
                 }
             } else if (clauseOrExpression instanceof Expression) {
                 const expression: Expression = clauseOrExpression;
@@ -44,7 +44,7 @@ export class Clause extends Expression {
     /**
      * Gets or sets the anyBinding dictionary.
      */
-    public anyBindings: { [key: string]: string } = {};
+    public anyBindings: Map<string, string> = new Map<string, string>();
 
     /**
      * Gets or sets whether the clause is subsumed.
@@ -80,7 +80,7 @@ export class Clause extends Expression {
             builder.push(')');
         }
 
-        Object.entries(this.anyBindings).forEach(([key, value]) => {
+        this.anyBindings.forEach((value: string, key: string) => {
             builder.push(` ${ key }->${ value }`);
         });
         return builder.join('');
@@ -214,18 +214,16 @@ export class Clause extends Expression {
             let swapped = false;
             let shorter = shorterClause.anyBindings;
             let longer = longerClause.anyBindings;
-            if (Object.entries(shorterClause.anyBindings).length > Object.entries(longerClause.anyBindings).length) {
+            if (shorterClause.anyBindings.size > longerClause.anyBindings.size) {
                 shorter = longerClause.anyBindings;
                 longer = shorterClause.anyBindings;
                 swapped = true;
             }
 
-            for (const shortKey in shorter) {
+            for (const [shorterKey, shorterValue] of shorter.entries()) {
                 let found = false;
-                const shortValue = shorter[shortKey];
-                for (const longKey in longer) {
-                    const longValue = longer[longKey];
-                    if (shortKey === longKey && shortValue === longValue) {
+                for (const [longerKey, longerValue] of longer.entries()) {
+                    if (shorterKey === longerKey && shorterValue === longerValue) {
                         found = true;
                         break;
                     }
@@ -236,7 +234,7 @@ export class Clause extends Expression {
                 }
             }
 
-            if (soFar === RelationshipType.equal && Object.entries(shorter).length < Object.entries(longer).length) {
+            if (soFar === RelationshipType.equal && shorter.size < longer.size) {
                 soFar = RelationshipType.specializes;
             }
 

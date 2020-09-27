@@ -411,7 +411,7 @@ export class Trigger {
                     }
 
                     if (changed) {
-                        newClause.anyBindings[quantifier.variable] = binding;
+                        newClause.anyBindings.set(quantifier.variable, binding);
                     }
 
                     newClause.children = [...children];
