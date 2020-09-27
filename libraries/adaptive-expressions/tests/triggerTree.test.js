@@ -17,15 +17,9 @@ class Generator {
         const expressions = [];
         for (let i = 0; i < n; ++i) {
             const name = `${ nameBase }${ i }`;
-            const selection = this.randomWeighted([1.0, 1.0]);
-            switch (selection) {
-                case 0:
-                    expressions.push(this.generateSimpleComparison(name));
-                    break;
-                case 1:
-                    expressions.push(this.generateHasValueComparison(name));
-                    break;
-            }
+            expressions.push(
+                this.randomWeighted([1.0, 1.0]) ? this.generateSimpleComparison(name) : this.generateHasValueComparison(name)
+            );
         }
         return expressions;
     }
