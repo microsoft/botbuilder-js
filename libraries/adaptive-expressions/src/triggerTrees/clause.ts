@@ -94,10 +94,10 @@ export class Clause extends Expression {
      */
     public relationship(other: Clause, comparers: PredicateComparers): RelationshipType {
         let soFar: RelationshipType = RelationshipType.incomparable;
-        let shorter: Clause = this as Clause;
-        let shorterCount: number = shorter.children.length;
+        let shorter = this as Clause;
+        let shorterCount = shorter.children.length;
         let longer: Clause = other;
-        let longerCount: number = longer.children.length;
+        let longerCount = longer.children.length;
         let swapped = false;
         if (longerCount < shorterCount) {
             longer = this;
