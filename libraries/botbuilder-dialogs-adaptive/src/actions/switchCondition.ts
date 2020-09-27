@@ -83,7 +83,8 @@ export class SwitchCondition<O extends object = {}> extends Dialog<O> implements
                     ));
                     continue;
                 }
-                if (caseScope.value.trim().toLowerCase() === 'true') {
+                const caseValue = caseScope.value.trim().toLowerCase();
+                if (caseValue === 'true') {
                     // you don't have to put quotes around bools, "true" => true OR "true".
                     this._caseExpresssions.set(caseScope.value, Expression.orExpression(
                         Expression.equalsExpression(this.condition, new Constant(true)),
@@ -91,7 +92,7 @@ export class SwitchCondition<O extends object = {}> extends Dialog<O> implements
                     ));
                     continue;
                 }
-                if (caseScope.value.trim().toLowerCase() === 'false') {
+                if (caseValue === 'false') {
                     // you don't have to put quotes around bools, "false" => false OR "false".
                     this._caseExpresssions.set(caseScope.value, Expression.orExpression(
                         Expression.equalsExpression(this.condition, new Constant(false)),
