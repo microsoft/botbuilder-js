@@ -80,9 +80,9 @@ export class Clause extends Expression {
             builder.push(')');
         }
 
-        for (const key in this.anyBindings) {
-            builder.push(` ${ key }->${ this.anyBindings[key] }`);
-        }
+        Object.entries(this.anyBindings).forEach(([key, value]) => {
+            builder.push(` ${ key }->${ value }`);
+        });
         return builder.join('');
     }
 
