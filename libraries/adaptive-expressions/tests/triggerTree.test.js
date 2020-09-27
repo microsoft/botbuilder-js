@@ -505,13 +505,13 @@ describe('TriggerTree', () => {
     });
 
     it('Test Tree', () => {
-        const numPredicates = 100;
-        const numSingletons = 50;
-        const numConjunctions = 100;
-        const numDisjunctions = 100;
-        const numOptionals = 100;
-        const numQuantifiers = 100;
-        const numNots = 100;
+        const numPredicates = 50;
+        const numSingletons = 25;
+        const numConjunctions = 50;
+        const numDisjunctions = 50;
+        const numOptionals = 50;
+        const numQuantifiers = 50;
+        const numNots = 50;
 
         const minClause = 2;
         const maxClause = 4;
