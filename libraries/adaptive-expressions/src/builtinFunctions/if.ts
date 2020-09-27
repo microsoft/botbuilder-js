@@ -10,6 +10,7 @@ import { Expression } from '../expression';
 import { ExpressionEvaluator, ValueWithError } from '../expressionEvaluator';
 import { ExpressionType } from '../expressionType';
 import { FunctionUtils } from '../functionUtils';
+import { InternalFunctionUtils } from '../functionUtils.internal';
 import { MemoryInterface } from '../memory/memoryInterface';
 import { Options } from '../options';
 import { ReturnType } from '../returnType';
@@ -28,7 +29,7 @@ export class If extends ExpressionEvaluator {
         const newOptions = new Options(options);
         newOptions.nullSubstitution = undefined;
         ({ value: result, error } = expression.children[0].tryEvaluate(state, newOptions));
-        if (!error && FunctionUtils.isLogicTrue(result)) {
+        if (!error && InternalFunctionUtils.isLogicTrue(result)) {
             ({ value: result, error } = expression.children[1].tryEvaluate(state, options));
         } else {
             ({ value: result, error } = expression.children[2].tryEvaluate(state, options));

@@ -7,7 +7,7 @@
  */
 
 import { ExpressionType } from '../expressionType';
-import { FunctionUtils } from '../functionUtils';
+import { InternalFunctionUtils } from '../functionUtils.internal';
 import { StringTransformEvaluator } from './stringTransformEvaluator';
 
 /**
@@ -20,6 +20,6 @@ export class ToUpper extends StringTransformEvaluator {
     }
 
     private static evaluator(args: any[]): string {
-        return String(FunctionUtils.parseStringOrUndefined(args[0])).toUpperCase();
+        return String(InternalFunctionUtils.parseStringOrUndefined(args[0])).toUpperCase();
     }
 }
