@@ -122,200 +122,205 @@ export class Node {
     }
 
     private _addNode(triggerNode: Node, ops: Map<Node, Operation>): Operation {
-        let op = Operation.none;
-        if (!ops.has(this)) {
-            const trigger = triggerNode.triggers[0];
-            const relationship = this.relationship(triggerNode);
-            switch (relationship) {
-                case RelationshipType.equal:
-                    // Ensure action is not already there
-                    let found = false;
-                    for (const existing of this._allTriggers) {
-                        if (trigger.action != undefined && trigger.action === existing.action) {
-                            found = true;
-                            break;
-                        }
-                    }
-
-                    op = Operation.found;
-                    if (!found) {
-                        this._allTriggers.push(trigger);
-                        let add = true;
-                        for (let i = 0; i < this._triggers.length;) {
-                            const existing = this._triggers[i];
-                            const reln = trigger.relationship(existing, this.tree.comparers);
-                            if (reln === RelationshipType.generalizes) {
-                                add = false;
-                                break;
-                            } else if (reln === RelationshipType.specializes) {
-                                this._triggers.splice(i, 1);
-                            } else {
-                                ++i;
-                            }
-                        }
-
-                        if (add) {
-                            this._triggers.push(trigger);
-                        }
-
-                        op = Operation.added;
-                    }
-                    break;
-                case RelationshipType.incomparable:
-                    for (const child of this._specializations) {
-                        child._addNode(triggerNode, ops);
-                    }
-                    break;
-                case RelationshipType.specializes:
-                    triggerNode.addSpecialization(this);
-                    op = Operation.inserted;
-                    break;
-                case RelationshipType.generalizes:
-                    let foundOne = false;
-                    let removals: Node[];
-                    for (let i = 0; i < this._specializations.length; i++) {
-                        const child = this._specializations[i];
-                        const childOp = child._addNode(triggerNode, ops);
-                        if (childOp != Operation.none) {
-                            foundOne = true;
-                            if (childOp === Operation.inserted) {
-                                if (!removals) {
-                                    removals = [];
-                                }
-                                removals.push(child);
-                                op = Operation.added;
-                            } else {
-                                op = childOp;
-                            }
-                        }
-                    }
-
-                    if (removals) {
-                        for (const removal of removals) {
-                            const removed = this._specializations.findIndex((item) => item === removal);
-                            if (removed >= 0) {
-                                this._specializations.splice(removed, 1);
-                            }
-                        }
-                        this._specializations.push(triggerNode);
-                    }
-
-                    if (!foundOne) {
-                        this._specializations.push(triggerNode);
-                        op = Operation.added;
-                    }
-                    break;
-            }
-
-            // Prevent visiting this node again
-            ops.set(this, op);
+        if (ops.has(this)) {
+            return Operation.none;
         }
 
+        let op = Operation.none;
+        const trigger = triggerNode.triggers[0];
+        const relationship = this.relationship(triggerNode);
+        switch (relationship) {
+            case RelationshipType.equal:
+                // Ensure action is not already there
+                let found = false;
+                for (const existing of this._allTriggers) {
+                    if (trigger.action != undefined && trigger.action === existing.action) {
+                        found = true;
+                        break;
+                    }
+                }
+
+                op = Operation.found;
+                if (!found) {
+                    this._allTriggers.push(trigger);
+                    let add = true;
+                    for (let i = 0; i < this._triggers.length;) {
+                        const existing = this._triggers[i];
+                        const reln = trigger.relationship(existing, this.tree.comparers);
+                        if (reln === RelationshipType.generalizes) {
+                            add = false;
+                            break;
+                        } else if (reln === RelationshipType.specializes) {
+                            this._triggers.splice(i, 1);
+                        } else {
+                            ++i;
+                        }
+                    }
+
+                    if (add) {
+                        this._triggers.push(trigger);
+                    }
+
+                    op = Operation.added;
+                }
+                break;
+            case RelationshipType.incomparable:
+                for (const child of this._specializations) {
+                    child._addNode(triggerNode, ops);
+                }
+                break;
+            case RelationshipType.specializes:
+                triggerNode.addSpecialization(this);
+                op = Operation.inserted;
+                break;
+            case RelationshipType.generalizes:
+                let foundOne = false;
+                let removals: Node[];
+                for (let i = 0; i < this._specializations.length; i++) {
+                    const child = this._specializations[i];
+                    const childOp = child._addNode(triggerNode, ops);
+                    if (childOp != Operation.none) {
+                        foundOne = true;
+                        if (childOp === Operation.inserted) {
+                            if (!removals) {
+                                removals = [];
+                            }
+                            removals.push(child);
+                            op = Operation.added;
+                        } else {
+                            op = childOp;
+                        }
+                    }
+                }
+
+                if (removals) {
+                    for (const removal of removals) {
+                        const removed = this._specializations.findIndex((item) => item === removal);
+                        if (removed >= 0) {
+                            this._specializations.splice(removed, 1);
+                        }
+                    }
+                    this._specializations.push(triggerNode);
+                }
+
+                if (!foundOne) {
+                    this._specializations.push(triggerNode);
+                    op = Operation.added;
+                }
+                break;
+        }
+
+        // Prevent visiting this node again
+        ops.set(this, op);
         return op;
     }
 
     private _matches(state: MemoryInterface | any, matches: Set<Trigger>, matched: Map<Node, boolean>): boolean {
         let found = matched.get(this);
-        if (!found) {
-            found = false;
-            for (const child of this._specializations) {
-                if (child._matches(state, matches, matched)) {
-                    found = true;
-                }
-            }
+        if (found) {
+            return true;
+        }
 
-            // No child matched so we might
-            if (!found) {
-                const { value: match, error } = this.clause.tryEvaluate(state);
-                if (!error && match) {
-                    for (const trigger of this.triggers) {
-                        if (trigger.matches(this.clause, state)) {
-                            matches.add(trigger);
-                            found = true;
-                        }
+        found = false;
+        for (const child of this._specializations) {
+            if (child._matches(state, matches, matched)) {
+                found = true;
+            }
+        }
+
+        // No child matched so we might
+        if (!found) {
+            const { value: match, error } = this.clause.tryEvaluate(state);
+            if (!error && match) {
+                for (const trigger of this.triggers) {
+                    if (trigger.matches(this.clause, state)) {
+                        matches.add(trigger);
+                        found = true;
                     }
                 }
             }
-
-            matched.set(this, found);
         }
 
+        matched.set(this, found);
         return found;
     }
 
     private _removeTrigger(trigger: Trigger, visited: Set<Node>): boolean {
-        let removed: boolean;
-        if (!visited.has(this)) {
-            visited.add(this);
+        if (visited.has(this)) {
+            return false;
+        }
 
-            // Remove from allTriggers and triggers
-            const allTriggerIndex = this._allTriggers.findIndex((item) => item === trigger);
-            if (allTriggerIndex >= 0) {
-                // We found the trigger somewhere in the tree
-                this._allTriggers.splice(allTriggerIndex, 1);
+        visited.add(this);
+        let removed = false;
+
+        // Remove from allTriggers and triggers
+        const allTriggerIndex = this._allTriggers.findIndex((item) => item === trigger);
+        if (allTriggerIndex >= 0) {
+            // We found the trigger somewhere in the tree
+            this._allTriggers.splice(allTriggerIndex, 1);
+            removed = true;
+
+            const triggerIndex = this._triggers.findIndex((item) => item === trigger);
+            if (triggerIndex >= 0) {
+                this._triggers.splice(triggerIndex, 1);
+
+                for (const candidate of this._allTriggers) {
+                    let add = true;
+                    for (const existing of this._triggers) {
+                        const reln = candidate.relationship(existing, this.tree.comparers);
+                        if (reln === RelationshipType.equal || reln === RelationshipType.generalizes) {
+                            add = false;
+                            break;
+                        }
+                    }
+
+                    if (add) {
+                        this._triggers.push(candidate);
+                    }
+                }
+            }
+        }
+
+        // Remove from any children
+        let removals: Node[];
+        for (let i = 0; i < this._specializations.length; i++) {
+            const child = this._specializations[i];
+            const childRemoved = child._removeTrigger(trigger, visited);
+            if (childRemoved) {
                 removed = true;
+            }
+            if (child.triggers.length === 0) {
+                if (!removals) {
+                    removals = [];
+                }
+                removals.push(child);
+            }
+        }
 
-                const triggerIndex = this._triggers.findIndex((item) => item === trigger);
-                if (triggerIndex >= 0) {
-                    this._triggers.splice(triggerIndex, 1);
-
-                    for (const candidate of this._allTriggers) {
+        if (removals) {
+            // Remove children if no triggers left
+            for (const removal of removals) {
+                const removedIndex = this._specializations.findIndex((item) => item === removal);
+                if (removedIndex >= 0) {
+                    this._specializations.splice(removedIndex, 1);
+                    for (const specialization of removal.specializations) {
                         let add = true;
-                        for (const existing of this._triggers) {
-                            const reln = candidate.relationship(existing, this.tree.comparers);
-                            if (reln === RelationshipType.equal || reln === RelationshipType.generalizes) {
+                        for (const parent of this._specializations) {
+                            const reln = parent.relationship(specialization);
+                            if (reln === RelationshipType.generalizes) {
                                 add = false;
                                 break;
                             }
                         }
 
                         if (add) {
-                            this._triggers.push(candidate);
-                        }
-                    }
-                }
-            }
-
-            // Remove from any children
-            let removals: Node[];
-            for (let i = 0; i < this._specializations.length; i++) {
-                const child = this._specializations[i];
-                const childRemoved = child._removeTrigger(trigger, visited);
-                if (childRemoved) {
-                    removed = true;
-                }
-                if (child.triggers.length === 0) {
-                    if (!removals) {
-                        removals = [];
-                    }
-                    removals.push(child);
-                }
-            }
-
-            if (removals) {
-                // Remove children if no triggers left
-                for (const removal of removals) {
-                    const removedIndex = this._specializations.findIndex((item) => item === removal);
-                    if (removedIndex >= 0) {
-                        this._specializations.splice(removedIndex, 1);
-                        for (const specialization of removal.specializations) {
-                            let add = true;
-                            for (const parent of this._specializations) {
-                                const reln = parent.relationship(specialization);
-                                if (reln === RelationshipType.generalizes) {
-                                    add = false;
-                                    break;
-                                }
-                            }
-
-                            if (add) {
-                                this._specializations.push(specialization);
-                            }
+                            this._specializations.push(specialization);
                         }
                     }
                 }
             }
         }
+
         return removed;
     }
 
