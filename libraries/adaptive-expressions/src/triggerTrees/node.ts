@@ -7,6 +7,7 @@
  */
 
 import { Clause } from './clause';
+import { MemoryInterface } from '../memory';
 import { RelationshipType } from './relationshipType';
 import { TriggerTree } from './triggerTree';
 import { Trigger } from './trigger';
@@ -96,7 +97,7 @@ export class Node {
      * @param state Frame to evaluate against.
      * @returns List of the most specific matches found.
      */
-    public matches(state: any): Trigger[] {
+    public matches(state: MemoryInterface | any): Trigger[] {
         const matches = new Set<Trigger>();
         this._matches(state, matches, new Map<Node, boolean>());
         return Array.from(matches);
@@ -213,7 +214,7 @@ export class Node {
         return op;
     }
 
-    private _matches(state: any, matches: Set<Trigger>, matched: Map<Node, boolean>): boolean {
+    private _matches(state: MemoryInterface | any, matches: Set<Trigger>, matched: Map<Node, boolean>): boolean {
         let found = matched.get(this);
         if (!found) {
             found = false;

@@ -8,6 +8,7 @@
 
 import { Expression } from '../expression';
 import { Clause } from './clause';
+import { MemoryInterface } from '../memory';
 import { Node } from './node';
 import { Optimizer, PredicateComparers } from './optimizer';
 import { Quantifier } from './quantifier';
@@ -109,7 +110,7 @@ export class TriggerTree {
      * @param state State to evaluate against.
      * @returns List of possible matches.
      */
-    public matches(state: any): Trigger[] {
+    public matches(state: MemoryInterface | any): Trigger[] {
         return this.root.matches(state);
     }
 

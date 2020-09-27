@@ -10,6 +10,7 @@ import { Clause } from './clause';
 import { Constant } from '../constant';
 import { Expression } from '../expression';
 import { ExpressionType } from '../expressionType';
+import { MemoryInterface } from '../memory';
 import { PredicateComparers } from './optimizer';
 import { Quantifier, QuantifierType } from './quantifier';
 import { RelationshipType } from './relationshipType';
@@ -157,7 +158,7 @@ export class Trigger {
      * @param state The scope for looking up variables.
      * @returns A boolean value inidicating whether there is a member matches.
      */
-    public matches(nodeClause: Clause, state: any): boolean {
+    public matches(nodeClause: Clause, state: MemoryInterface | any): boolean {
         let found = false;
         for (const clause of this.clauses) {
             if (clause.matches(nodeClause, state)) {
