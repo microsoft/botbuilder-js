@@ -63,12 +63,13 @@ export class TestAdapter extends BotAdapter implements ExtendedUserTokenProvider
             this.conversation = TestAdapter.createConversation('Convo1');
         }
 
-        this.conversation.locale = this.conversation.locale || this.locale;
-        if (this.template.locale) { this.conversation.locale = this.template.locale; }
-        if (this.template.serviceUrl) { this.conversation.serviceUrl = this.template.serviceUrl; }
-        if (this.template.channelId) { this.conversation.channelId = this.template.channelId; }
-        if (this.template.recipient) { this.conversation.bot = this.template.recipient; }
-        if (this.template.from) { this.conversation.user = this.template.from; }
+        Object.assign(this.conversation, {
+            locale: this.template.locale || this.conversation.locale || this.locale,
+            serviceUrl: this.template.serviceUrl || this.conversation.locale,
+            channelId: this.template.channelId || this.conversation.channelId,
+            bot: this.template.recipient || this.conversation.bot,
+            user: this.template.from || this.conversation.user
+        });
     }
     
     /**
