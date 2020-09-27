@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { ExpressionParser, ExpressionParserInterface, TriggerTree } from 'adaptive-expressions';
+import { ExpressionParser, ExpressionParserInterface, TriggerTree, Trigger } from 'adaptive-expressions';
 import { OnCondition } from '../conditions/onCondition';
 import { TriggerSelector } from '../triggerSelector';
 import { ActionContext } from '../actionContext';
@@ -28,10 +28,7 @@ export class MostSpecificSelector extends TriggerSelector {
 
     public async select(context: ActionContext): Promise<OnCondition[]> {
         const triggers = this._tree.matches(context.state);
-        const matches: OnCondition[] = [];
-        for (const trigger of triggers) {
-            matches.push(trigger.action);
-        }
+        const matches: OnCondition[] = triggers.map((trigger: Trigger) => trigger.action);
         
         let selections = matches;
         if (matches.length > 0 && this.selector) {
