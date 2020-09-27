@@ -295,9 +295,9 @@ class Generator {
     }
 
     randomString(length) {
+        const chars = 'abcdefghijklmnopqrstuvwxyz';
         let result = '';
         for (let i = 0; i < length; i++) {
-            const chars = 'abcdefghijklmnopqrstuvwxyz';
             const index = Math.floor(Math.random() * 26);
             result += chars[index];
         }
@@ -310,10 +310,7 @@ class Generator {
     }
 
     randomWeighted(weights) {
-        let totalWeight = 0;
-        for (const weight of weights) {
-            totalWeight += weight;
-        }
+        const totalWeight = weights.reduce((sum, weight) => sum + weight, 0);
 
         const selection = Math.random() * totalWeight;
         let soFar = 0;
@@ -335,8 +332,6 @@ class Generator {
         const epsilon = 1;
         switch (type) {
             case ExpressionType.LessThan:
-                result += epsilon;
-                break;
             case ExpressionType.NotEqual:
                 result += epsilon;
                 break;
@@ -351,8 +346,6 @@ class Generator {
         let result = value;
         switch (type) {
             case ExpressionType.LessThan:
-                result += doubleEpsilon;
-                break;
             case ExpressionType.NotEqual:
                 result += doubleEpsilon;
                 break;
@@ -438,7 +431,7 @@ class Generator {
 
     variablesByType(bindings) {
         const result = new Map();
-        for (const [key, value] of bindings) {
+        for (const [key, value] of bindings.entries()) {
             const type = typeof value;
             if (!result.has(type)) {
                 result.set(type, []);
