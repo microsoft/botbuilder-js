@@ -106,7 +106,7 @@ steps:
     testResultsFiles: '**/test-results.xml' 
     mergeTestResults: true 
     failTaskOnFailedTests: false # All test results should be published. Default is false, never set to true.
-    #testRunTitle: # Optional
+    testRunTitle: 'Unit Tests for $(Build.SourceVersion)'
     #buildPlatform: # Optional
     #buildConfiguration: # Optional - Include Node runtime version?
     #publishRunAttachments: true # Optional
