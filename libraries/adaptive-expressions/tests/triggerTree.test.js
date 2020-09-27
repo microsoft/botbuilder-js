@@ -156,7 +156,8 @@ class Generator {
                     if (i === 0) {
                         mappings.push(`${ baseBinding.key }`);
                     } else {
-                        const mapping = this.randomChoice(allTypes[typeof (baseBinding.value.value)]);
+                        const { value } = baseBinding.value;
+                        const mapping = this.randomChoice(allTypes.get(typeof value));
                         if (mappings.findIndex(item => item === mapping) === -1) {
                             mappings.push(mapping);
                         }
@@ -193,12 +194,12 @@ class Generator {
         for (let i = 0; i < numNots; ++i) {
             const expr = this.randomChoice(predicates);
             const bindings = new Map();
-            for (const [key, value] of expr.bindings.entries()) {
+            expr.bindings.forEach((value, key) => {
                 const comparison = this.notValue(value);
                 if (comparison) {
                     bindings.set(key, comparison);
                 }
-            }
+            });
 
             const expressionInfo = {
                 expression: Expression.notExpression(expr.expression),
@@ -286,11 +287,11 @@ class Generator {
 
     mergeBindings(expressions) {
         const bindings = new Map();
-        for (const info of expressions) {
-            for (const [key, value] of info.bindings.entries()) {
+        expressions.forEach(info => {
+            info.bindings.forEach((value, key) => {
                 bindings.set(key, value);
-            }
-        }
+            });
+        });
         return bindings;
     }
 
@@ -378,7 +379,7 @@ class Generator {
     }
 
     notValue(comparison) {
-        let value = comparison.value;
+        let { value } = comparison;
         const type = typeof value;
         let isNot = false;
 
@@ -431,13 +432,13 @@ class Generator {
 
     variablesByType(bindings) {
         const result = new Map();
-        for (const [key, value] of bindings.entries()) {
+        bindings.forEach((value, key) => {
             const type = typeof value;
             if (!result.has(type)) {
                 result.set(type, []);
             }
             result.get(type).push(key);
-        }
+        });
 
         return result;
     }
@@ -531,9 +532,10 @@ describe('TriggerTree', () => {
         const conjunctions = generator.generateConjunctions(predicates, numConjunctions, minClause, maxClause);
         for (const conjunction of conjunctions) {
             const memory = {};
-            for (const [key, value] of conjunction.bindings.entries()) {
-                memory[key] = value.value;
-            }
+            conjunction.bindings.forEach((binding, key) => {
+                const { value } = binding;
+                memory[key] = value;
+            });
 
             const trigger = tree.addTrigger(conjunction.expression, conjunction.bindings);
             const matches = tree.matches(memory);
@@ -588,10 +590,10 @@ describe('TriggerTree', () => {
 
         for (const predicate of predicates) {
             const memory = {};
-            for (const [key, value] of predicate.bindings.entries()) {
-                memory[key] = value.value;
-            }
-
+            predicate.bindings.forEach((binding, key) => {
+                const { value } = binding;
+                memory[key] = value;
+            });
             const matches = tree.matches(memory);
 
             // Clauses in every match must not generalize or specialize other matches
@@ -619,7 +621,7 @@ describe('TriggerTree', () => {
                             }
                         }
                     }
-                    
+
                     assert(found);
                 }
             }
