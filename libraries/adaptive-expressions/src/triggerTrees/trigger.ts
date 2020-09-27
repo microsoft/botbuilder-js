@@ -159,15 +159,7 @@ export class Trigger {
      * @returns A boolean value inidicating whether there is a member matches.
      */
     public matches(nodeClause: Clause, state: MemoryInterface | any): boolean {
-        let found = false;
-        for (const clause of this.clauses) {
-            if (clause.matches(nodeClause, state)) {
-                found = true;
-                break;
-            }
-        }
-
-        return found;
+        return this.clauses.find((clause: Clause) => clause.matches(nodeClause, state)) !== undefined;
     }
 
     /**
