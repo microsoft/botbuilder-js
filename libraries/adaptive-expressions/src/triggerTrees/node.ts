@@ -132,14 +132,7 @@ export class Node {
         switch (relationship) {
             case RelationshipType.equal:
                 // Ensure action is not already there
-                let found = false;
-                for (const existing of this._allTriggers) {
-                    if (trigger.action != undefined && trigger.action === existing.action) {
-                        found = true;
-                        break;
-                    }
-                }
-
+                const found = this._allTriggers.find(existing => trigger.action != undefined && trigger.action === existing.action) !== undefined;
                 op = Operation.found;
                 if (!found) {
                     this._allTriggers.push(trigger);
