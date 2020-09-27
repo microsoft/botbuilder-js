@@ -65,7 +65,7 @@ export class SwitchCondition<O extends object = {}> extends Dialog<O> implements
             this._caseExpresssions = new Map<string, Expression>();
             for (let i = 0; i < this.cases.length; i++) {
                 const caseScope = this.cases[i];
-                const intVal = parseInt(caseScope.value);
+                const intVal = parseInt(caseScope.value, 10);
                 if (!isNaN(intVal)) {
                     // you don't have to put quotes around numbers, "23" => 23 OR "23".
                     this._caseExpresssions.set(caseScope.value, Expression.orExpression(
