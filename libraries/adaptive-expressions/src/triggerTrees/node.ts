@@ -163,7 +163,7 @@ export class Node {
                 }
                 break;
             case RelationshipType.specializes:
-                triggerNode.addSpecialization(this);
+                triggerNode._addSpecialization(this);
                 op = Operation.inserted;
                 break;
             case RelationshipType.generalizes:
@@ -317,7 +317,7 @@ export class Node {
         return removed;
     }
 
-    private addSpecialization(specialization: Node): boolean {
+    private _addSpecialization(specialization: Node): boolean {
         let added = false;
         let removals: Node[];
         let skip = false;
@@ -346,7 +346,7 @@ export class Node {
                     // Don't need to add back because specialization already has them
                     const removed = this._specializations.findIndex((item) => item === removal);
                     if (removed >= 0) {
-                        specialization.addSpecialization(this._specializations[removed]);
+                        specialization._addSpecialization(this._specializations[removed]);
                         this._specializations.splice(removed, 1);
                     }
                 }

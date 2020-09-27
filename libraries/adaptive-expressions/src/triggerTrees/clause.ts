@@ -162,10 +162,10 @@ export class Clause extends Expression {
                 }
             }
 
-            soFar = this.bindingRelationship(soFar, shorter, longer);
+            soFar = this._bindingRelationship(soFar, shorter, longer);
         }
 
-        return this.swap(soFar, swapped);
+        return this._swap(soFar, swapped);
     }
 
     /**
@@ -209,7 +209,7 @@ export class Clause extends Expression {
         }
     }
 
-    private bindingRelationship(soFar: RelationshipType, shorterClause: Clause, longerClause: Clause): RelationshipType {
+    private _bindingRelationship(soFar: RelationshipType, shorterClause: Clause, longerClause: Clause): RelationshipType {
         if (soFar === RelationshipType.equal) {
             let swapped = false;
             let shorter = shorterClause.anyBindings;
@@ -238,13 +238,13 @@ export class Clause extends Expression {
                 soFar = RelationshipType.specializes;
             }
 
-            soFar = this.swap(soFar, swapped);
+            soFar = this._swap(soFar, swapped);
         }
 
         return soFar;
     }
 
-    private swap(soFar: RelationshipType, swapped: boolean): RelationshipType {
+    private _swap(soFar: RelationshipType, swapped: boolean): RelationshipType {
         let reln = soFar;
         if (swapped) {
             switch (soFar) {

@@ -91,13 +91,13 @@ export class Trigger {
         this._quantifiers = quantifiers;
         if (expression) {
             const normalForm = pushDownNot(expression);
-            this._clauses = this.generateClauses(normalForm);
-            this.removeDuplicatedPredicates();
-            this.optimizeClauses();
-            this.expandQuantifiers();
-            this.removeDuplicates();
-            this.markSubsumedClauses();
-            this.splitIgnores();
+            this._clauses = this._generateClauses(normalForm);
+            this._removeDuplicatedPredicates();
+            this._optimizeClauses();
+            this._expandQuantifiers();
+            this._removeDuplicates();
+            this._markSubsumedClauses();
+            this._splitIgnores();
         } else {
             this._clauses = [];
         }
@@ -227,7 +227,7 @@ export class Trigger {
         return soFar;
     }
 
-    private generateClauses(expression: Expression): Clause[] {
+    private _generateClauses(expression: Expression): Clause[] {
         switch (expression.type) {
             case ExpressionType.And:
                 // Need to combine every combination of clauses
@@ -235,7 +235,7 @@ export class Trigger {
                 let first = true;
                 for (let i = 0; i < expression.children.length; i++) {
                     const child = expression.children[i];
-                    const clauses = this.generateClauses(child);
+                    const clauses = this._generateClauses(child);
                     if (clauses.length === 0) {
                         // Encountered false
                         soFar = [];
@@ -263,13 +263,13 @@ export class Trigger {
                 const clauses: Clause[] = [];
                 for (let i = 0; i < expression.children.length; i++) {
                     const child = expression.children[i];
-                    clauses.push(...this.generateClauses(child));
+                    clauses.push(...this._generateClauses(child));
                 }
                 return clauses;
             case ExpressionType.Optional:
                 return [
                     new Clause(),
-                    ...this.generateClauses(expression.children[0])
+                    ...this._generateClauses(expression.children[0])
                 ];
             default:
                 // True becomes empty expression and false drops clause
@@ -285,7 +285,7 @@ export class Trigger {
      * Remove any duplicate predicates within a clause.
      * NOTE: This is annoying but expression hash codes of deepEquals expressions are different.
      */
-    private removeDuplicatedPredicates(): void {
+    private _removeDuplicatedPredicates(): void {
         // Rewrite clauses to remove duplicated tests
         for (let i = 0; i < this._clauses.length; ++i) {
             const clause = this._clauses[i];
@@ -312,7 +312,7 @@ export class Trigger {
     /**
      * Mark clauses that are more specific than another clause as subsumed and also remove any = clauses.
      */
-    private markSubsumedClauses(): void {
+    private _markSubsumedClauses(): void {
         for (let i = 0; i < this._clauses.length; ++i) {
             const clause = this._clauses[i];
             if (!clause.subsumed) {
@@ -339,13 +339,13 @@ export class Trigger {
         }
     }
 
-    private splitIgnores(): void {
+    private _splitIgnores(): void {
         for (let i = 0; i < this._clauses.length; i++) {
             this._clauses[i].splitIgnores();
         }
     }
 
-    private optimizeClauses(): void {
+    private _optimizeClauses(): void {
         this._clauses.forEach(clause => {
             this._tree.optimizers.forEach(optimizer => {
                 optimizer.optimize(clause);
@@ -353,14 +353,14 @@ export class Trigger {
         });
     }
 
-    private expandQuantifiers(): void {
+    private _expandQuantifiers(): void {
         if (this._quantifiers && this._quantifiers.length > 0) {
             for (let i = 0; i < this._quantifiers.length; i++) {
                 const quantifier = this._quantifiers[i];
                 const newClauses: Clause[] = [];
                 for (let j = 0; j < this._clauses.length; j++) {
                     const clause = this._clauses[j];
-                    newClauses.push(...this._expandQuantifiers(quantifier, clause));
+                    newClauses.push(...this._expandQuantifiersWithClause(quantifier, clause));
                 }
 
                 this._clauses = newClauses;
@@ -368,7 +368,7 @@ export class Trigger {
         }
     }
 
-    private _expandQuantifiers(quantifier: Quantifier, clause: Clause): Clause[] {
+    private _expandQuantifiersWithClause(quantifier: Quantifier, clause: Clause): Clause[] {
         const results: Clause[] = [];
         if (quantifier.type === QuantifierType.all) {
             const children: Expression[] = [];
@@ -377,7 +377,7 @@ export class Trigger {
                     const predicate = clause.children[i];
                     for (let j = 0; j < quantifier.bindings.length; j++) {
                         const binding = quantifier.bindings[j];
-                        const { expression: newPredicate, changed } = this.substituteVariable(quantifier.variable, binding, predicate);
+                        const { expression: newPredicate, changed } = this._substituteVariable(quantifier.variable, binding, predicate);
                         children.push(newPredicate);
                         if (!changed) {
                             // No change to first predicate, so can stop
@@ -389,7 +389,7 @@ export class Trigger {
                 // Empty quantifier is trivially true so remove any predicate that refers to quantifier
                 for (let i = 0; i < clause.children.length; i++) {
                     const predicate = clause.children[i];
-                    const { changed } = this.substituteVariable(quantifier.variable, '', predicate);
+                    const { changed } = this._substituteVariable(quantifier.variable, '', predicate);
                     if (!changed) {
                         children.push(predicate);
                     }
@@ -405,7 +405,7 @@ export class Trigger {
                     const children: Expression[] = [];
                     for (let j = 0; j < clause.children.length; j++) {
                         const predicate = clause.children[j];
-                        const { expression: newPredicate, changed: predicateChanged } = this.substituteVariable(quantifier.variable, binding, predicate);
+                        const { expression: newPredicate, changed: predicateChanged } = this._substituteVariable(quantifier.variable, binding, predicate);
                         changed = changed || predicateChanged;
                         children.push(newPredicate);
                     }
@@ -425,7 +425,7 @@ export class Trigger {
                 let changed = false;
                 for (let i = 0; i < clause.children.length; i++) {
                     const predicate = clause.children[i];
-                    const { changed: predicateChanged } = this.substituteVariable(quantifier.variable, '', predicate);
+                    const { changed: predicateChanged } = this._substituteVariable(quantifier.variable, '', predicate);
                     if (predicateChanged) {
                         changed = true;
                         break;
@@ -441,7 +441,7 @@ export class Trigger {
         return results;
     }
 
-    private substituteVariable(variable: string, binding: string, expression: Expression): { expression: Expression, changed: boolean } {
+    private _substituteVariable(variable: string, binding: string, expression: Expression): { expression: Expression, changed: boolean } {
         let newExpr = expression;
         let changed = false;
         if (expression.type === ExpressionType.Accessor
@@ -455,7 +455,7 @@ export class Trigger {
             const children: Expression[] = [];
             for (let i = 0; i < expression.children.length; i++) {
                 const child = expression.children[i];
-                const { expression: childExpr, changed: childChanged } = this.substituteVariable(variable, binding, child);
+                const { expression: childExpr, changed: childChanged } = this._substituteVariable(variable, binding, child);
                 children.push(childExpr);
                 changed = changed || childChanged;
             }
@@ -468,7 +468,7 @@ export class Trigger {
         return { expression: newExpr, changed };
     }
 
-    private removeDuplicates(): void {
+    private _removeDuplicates(): void {
         for (const clause of this._clauses) {
             // NOTE: This is quadratic in clause length but GetHashCode is not equal for expressions and we expect the number of clauses to be small.
             const predicates: Expression[] = [...clause.children];
