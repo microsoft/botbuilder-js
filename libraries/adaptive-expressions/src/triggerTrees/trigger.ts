@@ -346,13 +346,11 @@ export class Trigger {
     }
 
     private optimizeClauses(): void {
-        for (let i = 0; i < this._clauses.length; i++) {
-            const clause = this._clauses[i];
-            for (let j = 0; j < this._tree.optimizers.length; j++) {
-                const optimizer = this._tree.optimizers[j];
+        this._clauses.forEach(clause => {
+            this._tree.optimizers.forEach(optimizer => {
                 optimizer.optimize(clause);
-            }
-        }
+            });
+        });
     }
 
     private expandQuantifiers(): void {
