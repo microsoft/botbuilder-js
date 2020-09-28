@@ -5,6 +5,7 @@
     ],
     "ignorePatterns": [
         "libraries/adaptive-expressions/**/generated/**/*",
+        "libraries/botbuilder-lg/**/generated/**/*",
         "libraries/botframework-connector/src/connectorApi/**/*",
         "libraries/botframework-connector/src/tokenApi/**/*",
         "libraries/botframework-schema/**/*",
@@ -180,7 +181,7 @@
             "files": ["libraries/botbuilder-lg/src/*.ts", "libraries/botbuilder-lg/src/**/*.ts"],
             "plugins": ["jsdoc"],
             "rules": {
-              "jsdoc/require-jsdoc": ["warn", {
+              "jsdoc/require-jsdoc": ["error", {
                   "require": {
                       "FunctionDeclaration": true,
                       "MethodDefinition": true,
