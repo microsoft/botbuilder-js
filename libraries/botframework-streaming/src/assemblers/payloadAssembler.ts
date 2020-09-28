@@ -53,7 +53,7 @@ export class PayloadAssembler {
 
     /**
      * Retrieves the assembler's payload as a stream.
-     * @returns >A `SubscribableStream` of the assembler's payload.
+     * @returns A `SubscribableStream` of the assembler's payload.
      */
     public getPayloadStream(): SubscribableStream {
         if (!this.stream) {

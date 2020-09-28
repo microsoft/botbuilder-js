@@ -49,11 +49,6 @@ export class ProtocolAdapter {
         this.payloadReceiver.subscribe((header: IHeader): SubscribableStream => this.assemblerManager.getPayloadStream(header),(header: IHeader, contentStream: SubscribableStream, contentLength: number): void => this.assemblerManager.onReceive(header, contentStream, contentLength));
     }
 
-    /// <summary>
-    ///
-    /// </summary>
-    /// <param name="request">The outgoing request to send.</param>
-    /// <param name="cancellationToken">Optional cancellation token.</param>
     /**
      * Sends a request over the attached request manager.
      * @param request The outgoing request to send.
