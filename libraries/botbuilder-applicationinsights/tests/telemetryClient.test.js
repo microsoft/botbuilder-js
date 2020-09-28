@@ -148,9 +148,6 @@ describe('ApplicationInsightsTelemetryClient', function() {
             const client = new ApplicationInsightsTelemetryClient('fakeKey');
             client.client.commonProperties = undefined;
             const activity = {
-                from: undefined,
-                channelId: undefined,
-                conversation: undefined,
                 id: 'stub activity id',
                 type: 'stub activity type'
             };
