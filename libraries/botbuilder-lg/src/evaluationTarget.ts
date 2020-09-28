@@ -28,6 +28,12 @@ export class EvaluationTarget {
      * The children templates that this template has evaluated currently. 
      */
     public cachedEvaluatedChildren : Map<string, any>;
+    
+    /**
+     * Creates a new instance of the EvaluationTarget class.
+     * @param templateName Template name.
+     * @param scope Template scope.
+     */
     public constructor(templateName: string, scope: MemoryInterface) {
         this.templateName = templateName;
         this.scope = scope;

@@ -20,6 +20,11 @@ export class AnalyzerResult {
      */
     public TemplateReferences: string[];
 
+    /**
+     * Creates a new instance of the AnalyzerResult class.
+     * @param variables Init varibales.
+     * @param templateRefNames Init template references.
+     */
     public constructor(variables: string[] = [], templateRefNames: string[] = []) {
         this.Variables = Array.from(new Set(variables));
         this.TemplateReferences = Array.from(new Set(templateRefNames));

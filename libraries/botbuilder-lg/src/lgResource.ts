@@ -26,6 +26,12 @@ export class LGResource {
      * Source of this template
      */
 
+    /**
+     * Creates a new instance of the LGResource class.
+     * @param id Resource id.
+     * @param fullName The full path to the resource on disk.
+     * @param content Resource content.
+     */
     public constructor(id: string, fullName: string, content: string) {
         this.id = id || '';
         this.fullName = fullName || '';

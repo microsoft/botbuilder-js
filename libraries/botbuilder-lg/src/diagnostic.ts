@@ -29,6 +29,14 @@ export class Diagnostic {
     public source: string;
     public message: string;
 
+    /**
+     * Creates a new instance of the Diagnostic class.
+     * @param range Range where the error or warning occurred.
+     * @param message Error message of the error or warning.
+     * @param severity Severity of the error or warning.
+     * @param source Source of the error or warning occurred.
+     * @param code Code or identifier of the error or warning.
+     */
     public constructor(
         range: Range,
         message: string,
@@ -42,6 +50,10 @@ export class Diagnostic {
         this.code = code;
     }
 
+    /**
+     * Returns a string that represents the current Diagnostic object.
+     * @returns A string that represents the current Diagnostic.
+     */
     public toString(): string {
         // ignore error range if source is "inline content"
         if (this.source === TemplatesParser.inlineContentId) {

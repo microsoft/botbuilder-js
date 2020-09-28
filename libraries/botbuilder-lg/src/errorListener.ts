@@ -18,6 +18,12 @@ import { TemplateErrors } from './templateErrors';
 export class ErrorListener implements ANTLRErrorListener<any> {
     private readonly source: string;
     private lineOffset: number;
+    
+    /**
+     * Creates a new instance of the ErrorListener class.
+     * @param errorSource String value that represents the source of the error.
+     * @param lineOffset Offset of the line where the error occurred.
+     */
     public constructor(errorSource: string, lineOffset?: number) {
         this.source = errorSource;
         if (lineOffset === undefined) {
@@ -26,6 +32,15 @@ export class ErrorListener implements ANTLRErrorListener<any> {
         this.lineOffset = lineOffset;
     }
 
+    /**
+     * Notifies any interested parties upon a syntax error.
+     * @param recognizer What parser got the error. From this object, you can access the context as well as the input stream.
+     * @param offendingSymbol Offending token in the input token stream, unless recognizer is a lexer (then it's null).
+     * @param line Line number in the input where the error occurred.
+     * @param charPositionInLine Character position within the line where the error occurred.
+     * @param msg Message to emit.
+     * @param e Exception.
+     */
     public syntaxError<T>(
         recognizer: Recognizer<T, any>,
         offendingSymbol: any,

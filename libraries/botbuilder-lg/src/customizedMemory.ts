@@ -25,6 +25,11 @@ export class CustomizedMemory implements MemoryInterface {
      */
     public localMemory: MemoryInterface;
 
+    /**
+     * Creates a new instance of the CustomizedMemory class.
+     * @param scope Optional. Scope.
+     * @param localMemory Optional. Local memory.
+     */
     public constructor(scope?: any, localMemory?: MemoryInterface) {
         this.globalMemory = !scope ? undefined : SimpleObjectMemory.wrap(scope);
         this.localMemory = localMemory;
@@ -51,11 +56,21 @@ export class CustomizedMemory implements MemoryInterface {
         return undefined;
     }
 
+    /**
+     * Set value to a given path. This method is not implemented.
+     * @param _path Memory path.
+     * @param _value Value to set.
+     */
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     public setValue(_path: string, _value: any): void {
         return;
     }
 
+    /**
+     * Used to identify whether a particular memory instance has been updated or not.
+     * If version is not changed, the caller may choose to use the cached result instead of recomputing everything.
+     * @returns A string indicating the version.
+     */
     public  version(): string {
         let result = '';
         if (this.globalMemory) {

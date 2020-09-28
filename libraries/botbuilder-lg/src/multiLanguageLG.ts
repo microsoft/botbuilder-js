@@ -145,6 +145,9 @@ export class MultiLanguageLG {
         throw new Error(`No LG responses found for locale: ${ locale }`);
     }
 
+    /**
+     * @private
+     */
     private  getDefaultPolicy(defaultLanguages: string[]): Map<string, string[]> {
         if (defaultLanguages === undefined) {
             defaultLanguages = [''];

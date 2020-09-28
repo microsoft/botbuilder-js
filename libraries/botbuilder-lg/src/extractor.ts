@@ -18,12 +18,21 @@ import { Template } from './template';
 export class Extractor extends AbstractParseTreeVisitor<Map<string, any>> implements LGTemplateParserVisitor<Map<string, any>> {
     public readonly templates: Template[];
     public readonly templateMap: {[name: string]: Template};
+    
+    /**
+     * Creates a new instance of the Extractor class.
+     * @param templates Template list.
+     */
     public constructor(templates: Template[]) {
         super();
         this.templates = templates;
         this.templateMap = keyBy(templates, (t: Template): string => t.name);
     }
 
+    /**
+     * Extracts the templates and returns a map with their names and bodys.
+     * @returns Map object with template names and bodies.
+     */
     public extract(): Map<string, any>[] {
         const result: Map<string, any>[] = [];
         this.templates.forEach((template: Template): any => {
@@ -49,6 +58,10 @@ export class Extractor extends AbstractParseTreeVisitor<Map<string, any>> implem
         return result;
     }
 
+    /**
+     * Visit a parse tree produced by LGTemplateParser.normalTemplateBody.
+     * @param context The parse tree.
+     */
     public visitNormalTemplateBody(context: lp.NormalTemplateBodyContext): Map<string, any> {
         const result: Map<string, any> = new Map<string, any>();
         for (const templateStr of context.templateString()) {
@@ -58,6 +71,10 @@ export class Extractor extends AbstractParseTreeVisitor<Map<string, any>> implem
         return result;
     }
 
+    /**
+     * Visit a parse tree produced by the structuredBody labeled alternative in LGTemplateParser.body.
+     * @param context The parse tree.
+     */
     public visitStructuredBody(context: lp.StructuredBodyContext): Map<string, any> {
         const result: Map<string, any> = new Map<string, any>();
         const lineStart = '    ';
@@ -70,6 +87,10 @@ export class Extractor extends AbstractParseTreeVisitor<Map<string, any>> implem
         return result;
     }
 
+    /**
+     * Visit a parse tree produced by the ifElseBody labeled alternative in LGTemplateParser.body.
+     * @param context The parse tree.
+     */
     public visitIfElseBody(context: lp.IfElseBodyContext): Map<string, any> {
         const result: Map<string, any> = new Map<string, any>();
         const ifRules: lp.IfConditionRuleContext[] = context.ifElseTemplateBody().ifConditionRule();
@@ -101,6 +122,10 @@ export class Extractor extends AbstractParseTreeVisitor<Map<string, any>> implem
         return result;
     }
 
+    /**
+     * Visit a parse tree produced by the switchCaseBody labeled alternative in LGTemplateParser.body.
+     * @param context The parse tree.
+     */
     public visitSwitchCaseBody(context: lp.SwitchCaseBodyContext): Map<string, any> {
         const result: Map<string, any> = new Map<string, any>();
         const switchCaseNodes: lp.SwitchCaseRuleContext[] = context.switchCaseTemplateBody().switchCaseRule();
@@ -133,6 +158,10 @@ export class Extractor extends AbstractParseTreeVisitor<Map<string, any>> implem
         return result;
     }
 
+    /**
+     * Gets the default value returned by visitor methods.
+     * @returns Empty Map<string, any>.
+     */
     protected defaultResult(): Map<string, any> {
         return new Map<string, any>();
     }

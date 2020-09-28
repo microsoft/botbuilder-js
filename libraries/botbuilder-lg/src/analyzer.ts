@@ -18,7 +18,7 @@ import { AnalyzerResult } from './analyzerResult';
 import {TemplateErrors} from './templateErrors';
 
 /**
- * Analyzer engine. To to get the static analyzer results.
+ * Analyzer engine. To get the static analyzer results.
  */
 export class Analyzer extends AbstractParseTreeVisitor<AnalyzerResult> implements LGTemplateParserVisitor<AnalyzerResult> {
     /**
@@ -30,6 +30,11 @@ export class Analyzer extends AbstractParseTreeVisitor<AnalyzerResult> implement
     private readonly evalutationTargetStack: EvaluationTarget[] = [];
     private readonly _expressionParser: ExpressionParserInterface;
 
+    /**
+     * Creates a new instance of the Analyzer class.
+     * @param templates Template list.
+     * @param expressionParser Expression parser.
+     */
     public constructor(templates: Template[], expressionParser: ExpressionParser) {
         super();
         this.templates = templates;
@@ -69,10 +74,18 @@ export class Analyzer extends AbstractParseTreeVisitor<AnalyzerResult> implement
         return dependencies;
     }
 
+    /**
+     * Visit a parse tree produced by the normalBody labeled alternative in LGTemplateParser.body.
+     * @param ctx The parse tree.
+     */
     public visitNormalBody(ctx: lp.NormalBodyContext): AnalyzerResult {
         return this.visit(ctx.normalTemplateBody());
     }
 
+    /**
+     * Visit a parse tree produced by LGTemplateParser.normalTemplateBody.
+     * @param ctx The parse tree.
+     */
     public visitNormalTemplateBody(ctx: lp.NormalTemplateBodyContext): AnalyzerResult {
         const result: AnalyzerResult = new AnalyzerResult();
         for (const templateStr of ctx.templateString()) {
@@ -82,6 +95,10 @@ export class Analyzer extends AbstractParseTreeVisitor<AnalyzerResult> implement
         return result;
     }
 
+    /**
+     * Visit a parse tree produced by LGTemplateParser.structuredTemplateBody.
+     * @param ctx The parse tree.
+     */
     public visitStructuredTemplateBody(ctx: lp.StructuredTemplateBodyContext): AnalyzerResult {
         const result: AnalyzerResult = new AnalyzerResult();
 
@@ -98,6 +115,10 @@ export class Analyzer extends AbstractParseTreeVisitor<AnalyzerResult> implement
         return result;
     }
 
+    /**
+     * Visit a parse tree produced by LGTemplateParser.structuredValue.
+     * @param ctx The parse tree.
+     */
     public visitStructureValue(ctx: lp.KeyValueStructureLineContext): AnalyzerResult {
         const result: AnalyzerResult = new AnalyzerResult();
 
@@ -116,6 +137,10 @@ export class Analyzer extends AbstractParseTreeVisitor<AnalyzerResult> implement
         return result;
     }
 
+    /**
+     * Visit a parse tree produced by the ifElseBody labeled alternative in LGTemplateParser.body.
+     * @param ctx The parse tree.
+     */
     public visitIfElseBody(ctx: lp.IfElseBodyContext): AnalyzerResult {
         const result: AnalyzerResult = new AnalyzerResult();
 
@@ -133,6 +158,10 @@ export class Analyzer extends AbstractParseTreeVisitor<AnalyzerResult> implement
         return result;
     }
 
+    /**
+     * Visit a parse tree produced by the switchCaseBody labeled alternative in LGTemplateParser.body.
+     * @param ctx The parse tree.
+     */
     public visitSwitchCaseBody(ctx: lp.SwitchCaseBodyContext): AnalyzerResult {
         const result: AnalyzerResult = new AnalyzerResult();
         const switchCaseNodes: lp.SwitchCaseRuleContext[] = ctx.switchCaseTemplateBody().switchCaseRule();
@@ -149,6 +178,10 @@ export class Analyzer extends AbstractParseTreeVisitor<AnalyzerResult> implement
         return result;
     }
 
+    /**
+     * Visit a parse tree produced by LGTemplateParser.normalTemplateString.
+     * @param ctx The parse tree.
+     */
     public visitNormalTemplateString(ctx: lp.NormalTemplateStringContext): AnalyzerResult {
         const result: AnalyzerResult = new AnalyzerResult();
         
@@ -159,10 +192,17 @@ export class Analyzer extends AbstractParseTreeVisitor<AnalyzerResult> implement
         return result;
     }
 
+    /**
+     * Gets the default value returned by visitor methods.
+     * @returns An instance of the AnalyzerResult class.
+     */
     protected defaultResult(): AnalyzerResult {
         return new AnalyzerResult();
     }
 
+    /**
+     * @private
+     */
     private analyzeExpressionDirectly(exp: Expression): AnalyzerResult {
         const result: AnalyzerResult =  new AnalyzerResult();
 
@@ -185,6 +225,9 @@ export class Analyzer extends AbstractParseTreeVisitor<AnalyzerResult> implement
         return result;
     }
 
+    /**
+     * @private
+     */
     private analyzeExpression(exp: string): AnalyzerResult {
         const result: AnalyzerResult =  new AnalyzerResult();
         exp = TemplateExtensions.trimExpression(exp);
