@@ -52,7 +52,7 @@ export class BotStateMemoryScope extends MemoryScope {
     /**
      * Populates the state cache for this BotState from the storage layer.
      * @param dc The DialogContext object for this turn.
-     * @param force >Optional, `true` to overwrite any existing state cache;
+     * @param force Optional, `true` to overwrite any existing state cache;
      * or `false` to load state from storage only if the cache doesn't already exist.
      * @returns A Promise that represents the work queued to execute.
      */
