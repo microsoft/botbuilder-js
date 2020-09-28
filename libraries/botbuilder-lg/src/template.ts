@@ -32,6 +32,13 @@ export class Template {
 
     public templateBodyParseTree: lp.BodyContext;
 
+    /**
+     * Creates a new instance of the Template class.
+     * @param templatename Template name without parameters.
+     * @param parameters Parameter list.
+     * @param templatebody Template content.
+     * @param sourceRange Source range of template.
+     */
     public constructor(templatename: string, parameters: string[], templatebody: string, sourceRange: SourceRange) {
         this.name = templatename || '';
         this.parameters = parameters || [];
@@ -39,6 +46,10 @@ export class Template {
         this.body = templatebody || '';
     }
 
+    /**
+     * Returns a string representing the current Template object.
+     * @returns A string representing the Template.
+     */
     public toString(): string {
         return `[${ this.name }(${ this.parameters.join(', ') })]"${ this.body }"`;
     }

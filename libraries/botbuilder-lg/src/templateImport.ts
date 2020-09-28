@@ -28,6 +28,12 @@ export class TemplateImport {
      */
     public sourceRange: SourceRange;
 
+    /**
+     * Creates a new instance of the TemplateImport class.
+     * @param description Import description, which is in [].
+     * @param id Import id, which is a path, in ().
+     * @param sourceRange Source range of template.
+     */
     public constructor(description: string, id: string, sourceRange: SourceRange) {
         this.description = description;
         this.sourceRange = sourceRange;

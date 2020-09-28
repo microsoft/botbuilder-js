@@ -18,6 +18,13 @@ export class Range {
 
     public constructor(start: Position, end: Position)
     public constructor(startLine: number, startChar: number, endLine: number, endChar: number) 
+    /**
+     * Creates a new instance of the Range class.
+     * @param x Starting line number in a file.
+     * @param y Starting character number in a file.
+     * @param endLine Ending line number in a file.
+     * @param endChar Ending character number in the end line.
+     */
     public constructor(x: number|Position, y: number|Position, endLine?: number, endChar?: number){
         if (typeof x === 'number' && typeof y === 'number') {
             this.start = new Position(x, y);

@@ -117,6 +117,11 @@ export class TemplateExtensions {
         return ctx.expressionInStructure(0).text.trim() === ctx.text.trim();
     }
 
+    /**
+     * Escape \ from text.
+     * @param exp Input text.
+     * @returns Escaped text.
+     */
     public static evalEscape(exp: string): string {
         const validCharactersDict: any = {
             '\\r': '\r',

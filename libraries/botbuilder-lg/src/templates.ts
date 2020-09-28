@@ -87,6 +87,19 @@ export class Templates implements Iterable<Template> {
      */
     public options: string[];
 
+    /**
+     * Creates a new instance of the Templates class.
+     * @param items List of Template instances.
+     * @param imports List of TemplateImport instances.
+     * @param diagnostics List of Diagnostic instances.
+     * @param references List of Templates instances.
+     * @param content Content of the current Templates instance.
+     * @param id Id of the current Templates instance.
+     * @param expressionParser ExpressionParser to parse the expressions in the content.
+     * @param importResolverDelegate Resolver to resolve LG import id to template text.
+     * @param options List of strings representing the options during evaluation of the templates.
+     * @param source Templates source.
+     */
     public constructor(items?: Template[],
         imports?: TemplateImport[],
         diagnostics?: Diagnostic[],
@@ -382,10 +395,17 @@ export class Templates implements Iterable<Template> {
         return this;
     }
 
+    /**
+     * Returns a string representation of a Templates content.
+     * @returns A string representation of a Templates content.
+     */
     public toString(): string {
         return this.content;
     }
 
+    /**
+     * @private
+     */
     private getramdonTemplateId(): string {
         return 'xxxxxxxxxxxx4xxxyxxxxxxxxxxxxxxx'.replace(/[xy]/g, (c: any): string => {
             const r: number = Math.random() * 16 | 0;
@@ -395,6 +415,9 @@ export class Templates implements Iterable<Template> {
         });
     }
 
+    /**
+     * @private
+     */
     private appendDiagnosticWithOffset(diagnostics: Diagnostic[], offset: number): void {
         if (diagnostics) {
             diagnostics.forEach((u): void => {
@@ -405,6 +428,9 @@ export class Templates implements Iterable<Template> {
         }
     }
 
+    /**
+     * @private
+     */
     private adjustRangeForUpdateTemplate(oldTemplate: Template, newTemplate: Template): void {
         const newRange = newTemplate.sourceRange.range.end.line - newTemplate.sourceRange.range.start.line;
         const oldRange = oldTemplate.sourceRange.range.end.line - oldTemplate.sourceRange.range.start.line;
@@ -425,12 +451,18 @@ export class Templates implements Iterable<Template> {
         }
     }
 
+    /**
+     * @private
+     */
     private adjustRangeForAddTemplate(newTemplate: Template, lineOffset: number): void {
         const lineLength = newTemplate.sourceRange.range.end.line - newTemplate.sourceRange.range.start.line;
         newTemplate.sourceRange.range.start.line = lineOffset + 1;
         newTemplate.sourceRange.range.end.line = lineOffset + lineLength + 1;
     }
 
+    /**
+     * @private
+     */
     private adjustRangeForDeleteTemplate(oldTemplate: Template): void {
         const lineOffset = oldTemplate.sourceRange.range.end.line - oldTemplate.sourceRange.range.start.line + 1;
 
@@ -444,10 +476,17 @@ export class Templates implements Iterable<Template> {
             }
         }
     }
+
+    /**
+     * @private
+     */
     private clearDiagnostic(): void {
         this.diagnostics = [];
     }
 
+    /**
+     * @private
+     */
     private replaceRangeContent(originString: string, startLine: number, stopLine: number, replaceString: string): string {
         const originList: string[] = TemplateExtensions.readLine(originString);
         if (startLine < 0 || startLine > stopLine || stopLine >= originList.length) {
@@ -465,6 +504,9 @@ export class Templates implements Iterable<Template> {
         return destList.join(this.newLine);
     }
 
+    /**
+     * @private
+     */
     private convertTemplateBody(templateBody: string): string {
         if (!templateBody) {
             return '';
@@ -478,6 +520,9 @@ export class Templates implements Iterable<Template> {
         return destList.join(this.newLine);
     }
 
+    /**
+     * @private
+     */
     private buildTemplateNameLine(templateName: string, parameters: string[]): string {
         // if parameters is null or undefined, ignore ()
         if (parameters === undefined || parameters === undefined) {
@@ -487,6 +532,9 @@ export class Templates implements Iterable<Template> {
         }
     }
 
+    /**
+     * @private
+     */
     private checkErrors(): void {
         if (this.allDiagnostics) {
             const errors = this.allDiagnostics.filter((u): boolean => u.severity === DiagnosticSeverity.Error);
@@ -496,6 +544,9 @@ export class Templates implements Iterable<Template> {
         }
     }
 
+    /**
+     * @private
+     */
     private injectToExpressionFunction(): Templates {
         const totalTemplates = [this as Templates].concat(this.references);
         for (const curTemplates of totalTemplates) {
@@ -529,6 +580,9 @@ export class Templates implements Iterable<Template> {
         return this;
     }
 
+    /**
+     * @private
+     */
     private extractOptionByKey(nameOfKey: string, options: string[]): string {
         let result: string = undefined;
         for (const option of options) {
@@ -545,6 +599,9 @@ export class Templates implements Iterable<Template> {
         return result;
     }
 
+    /**
+     * @private
+     */
     private extractNamespace(options: string[]): string {
         let result = this.extractOptionByKey(this.namespaceKey, options);
         if (!result) {
@@ -558,6 +615,9 @@ export class Templates implements Iterable<Template> {
         return result;
     }
 
+    /**
+     * @private
+     */
     private getGlobalFunctionTable(options: string[]): string[] {
         const result: string[] = [];
         const value = this.extractOptionByKey(this.exportsKey, options);

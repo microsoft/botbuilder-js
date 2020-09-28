@@ -26,6 +26,12 @@ export class SourceRange {
 
     public constructor(parseTree: ParserRuleContext, source?: string, offset?: number)
     public constructor(range: Range, source?: string)
+    /**
+     * Creates a new instance of the SourceRange class.
+     * @param x Rule invocation record for parsing.
+     * @param source Optional. Source, used as the lg file path.
+     * @param offset Optional. Offset in the parse tree.
+     */
     public constructor(x: Range|ParserRuleContext, source?: string, offset?: number) {
         this.source = source || '';
         if (x instanceof Range) {
