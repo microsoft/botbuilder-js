@@ -1,4 +1,5 @@
 {
+  "private": true,
   "name": "generateclient-via-swagger",
   "version": "1.0.0",
   "description": "To regenerate the botframework-connector and botframework-schema libraries, install the dependencies for autorest via `npm i`, then run generateClient.cmd.",

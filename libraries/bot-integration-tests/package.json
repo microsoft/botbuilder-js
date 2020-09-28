@@ -1,4 +1,5 @@
 {
+  "private": true,
   "name": "bot-integration-tests",
   "version": "4.1.6",
   "description": "Integration tests for botbuilder",

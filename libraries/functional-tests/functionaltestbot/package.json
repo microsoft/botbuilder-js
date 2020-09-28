@@ -1,4 +1,5 @@
 {
+  "private": true,
   "name": "testbot",
   "version": "1.0.0",
   "description": "a test bot for working locally",
