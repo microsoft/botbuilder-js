@@ -264,7 +264,6 @@ export abstract class Prompt<T> extends Dialog {
     }
 
     /**
-     * @protected
      * Called before an event is bubbled to its parent.
      * @param dc The DialogContext for the current turn of conversation.
      * @param event The event being raised.
