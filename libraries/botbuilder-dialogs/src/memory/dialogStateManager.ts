@@ -412,7 +412,7 @@ export class DialogStateManager {
 
     /**
      * @private
-     * @param path track path to change.
+     * @param path Track path to change.
      */
     private trackChange(path: string): void {
         // Normalize path and scan for any matches or children that match.
@@ -533,7 +533,7 @@ export class DialogStateManager {
     /**
      * @private
      * Gets MemoryScope by name.
-     * @param name name of scope.
+     * @param name Name of scope.
      * @returns The MemoryScope.
      */
     private getMemoryScope(name: string): MemoryScope | undefined {
