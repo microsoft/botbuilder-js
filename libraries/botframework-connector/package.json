@@ -25,7 +25,6 @@
     "base64url": "^3.0.0",
     "botframework-schema": "4.1.6",
     "cross-fetch": "^3.0.5",
-    "form-data": "^2.3.3",
     "jsonwebtoken": "8.0.1",
     "rsa-pem-from-mod-exp": "^0.8.4"
   },
