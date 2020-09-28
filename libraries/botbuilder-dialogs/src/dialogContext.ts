@@ -66,11 +66,11 @@ export class DialogContext {
     public constructor(dialogs: DialogSet, contextOrDC: DialogContext, state: DialogState);
 
     /**
-      * Creates an new instance of the [DialogContext](xref:botbuilder-dialogs.DialogContext) class.
-    * @remarks Passing in a dialog context instance will clone the dialog context.
+      * Creates an new instance of the DialogContext class.
       * @param dialogs The dialog set for which to create the dialog context.
       * @param contextOrDC The turn context or dialog context for the current turn of the bot.
       * @param state The state object to use to read and write dialog state to storage.
+      * @remarks Passing in a dialog context instance will clone the dialog context.
       */
     public constructor(dialogs: DialogSet, contextOrDC: TurnContext | DialogContext, state: DialogState) {
         this.dialogs = dialogs;

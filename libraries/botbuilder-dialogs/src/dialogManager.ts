@@ -138,7 +138,7 @@ export class DialogManager extends Configurable {
     /**
      * Runs dialog system in the context of an ITurnContext.
      * @param context Context for the current turn of conversation with the user.
-     * @returns Result of the running the logic against the activity.
+     * @returns Result of running the logic against the activity.
      */
     public async onTurn(context: TurnContext): Promise<DialogManagerResult> {
         // Ensure properly configured

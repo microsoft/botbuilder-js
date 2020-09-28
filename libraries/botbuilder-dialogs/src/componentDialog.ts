@@ -154,13 +154,11 @@ export class ComponentDialog<O extends object = {}> extends DialogContainer<O> {
      * If the task is successful, the result indicates whether this dialog is still
      * active after this dialog turn has been processed.
      * Generally, the child dialog was started with a call to
-     * BeginDialogAsync(DialogContext, object, CancellationToken) in the parent's
-     * context. However, if the
-     * DialogContext.ReplaceDialogAsync(string, object, CancellationToken) method
+     * beginDialog(DialogContext, object) in the parent's
+     * context. However, if the DialogContext.replaceDialog(string, object) method
      * is called, the logical child dialog may be different than the original.
      * If this method is *not* overridden, the dialog automatically calls its
-     * RepromptDialogAsync(ITurnContext, DialogInstance, CancellationToken) when
-     * the user replies.
+     * RepromptDialog(ITurnContext, DialogInstance) when the user replies.
      */
     public async resumeDialog(outerDC: DialogContext, reason: DialogReason, result?: any): Promise<DialogTurnResult> {
         await this.checkForVersionChange(outerDC);

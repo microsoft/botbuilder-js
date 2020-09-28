@@ -173,7 +173,7 @@ export class WaterfallDialog<O extends object = {}> extends Dialog<O> {
     /**
      * Called when the waterfall dialog is _continued_, where it is the active dialog and the
      * user replies with a new activity.
-     * @param dc The <see cref="DialogContext"/> for the current turn of conversation.
+     * @param dc The DialogContext for the current turn of conversation.
      * @returns A Promise representing the asynchronous operation.
      * @remarks 
      * If the task is successful, the result indicates whether the dialog is still
@@ -238,7 +238,7 @@ export class WaterfallDialog<O extends object = {}> extends Dialog<O> {
     }
 
     /**
-     * Excutes a step of the waterfall dialog.
+     * Executes a step of the waterfall dialog.
      * @param dc The DialogContext for the current turn of conversation.
      * @param index The index of the current waterfall step to execute.
      * @param reason The reason the waterfall step is being executed.
@@ -304,7 +304,7 @@ export class WaterfallDialog<O extends object = {}> extends Dialog<O> {
 
     /**
      * Identifies the step name by its position index.
-     * @param index 
+     * @param index Step position
      * @returns A string that identifies the step name.
      */
     private waterfallStepName(index: number): string {

@@ -37,7 +37,7 @@ import { SkillDialogOptions } from './skillDialogOptions';
 /**
  * A specialized Dialog that can wrap remote calls to a skill.
  * @remarks
- * The options parameter in BeginDialogAsync must be a BeginSkillDialogOptions instance
+ * The options parameter in beginDialog must be a BeginSkillDialogOptions instance
  * with the initial parameters for the dialog.
  */
 export class SkillDialog extends Dialog<Partial<BeginSkillDialogOptions>> {
@@ -165,7 +165,7 @@ export class SkillDialog extends Dialog<Partial<BeginSkillDialogOptions>> {
     }
 
     /**
-     * Called when the skill dialog should re-prompt the user for input
+     * Called when the skill dialog should re-prompt the user for input.
      * @param context The context object for this turn.
      * @param instance State information for this dialog.
      * @returns A Promise representing the asynchronous operation.
@@ -367,9 +367,9 @@ export class SkillDialog extends Dialog<Partial<BeginSkillDialogOptions>> {
 
     /**
      * @private
-     * Gets the Skill Conversation ID from a given instance
-     * @param instance Instance from which to look for its ID
-     * @returns Instance conversation ID
+     * Gets the Skill Conversation ID from a given instance.
+     * @param instance Instance from which to look for its ID.
+     * @returns Instance conversation ID.
      */
     private getSkillConversationIdFromInstance(instance: DialogInstance): string {
         if (instance && instance.state) {

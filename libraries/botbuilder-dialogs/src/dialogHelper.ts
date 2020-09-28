@@ -22,7 +22,7 @@ import { AuthConstants, GovConstants, isSkillClaim } from './prompts/skillsHelpe
 
 /**
  * Runs a dialog from a given context and accesor.
- * @param dialog Context for the current turn of conversation with the user.
+ * @param dialog The Dialog to run.
  * @param context Context object for the current turn of conversation with the user.
  * @param accessor Defined methods for accessing the state property created in a BotState object.
  */
