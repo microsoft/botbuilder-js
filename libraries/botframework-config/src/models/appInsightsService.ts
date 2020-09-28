@@ -36,6 +36,11 @@ export class AppInsightsService extends AzureService implements IAppInsightsServ
         this.apiKeys = this.apiKeys || {};
     }
 
+    /**
+     * Encrypt properties on this service.
+     * @param secret Secret to use to encrypt.
+     * @param encryptString Function called to encrypt an individual value.
+     */
     public encrypt(secret: string, encryptString: (value: string, secret: string) => string): void {
         const that: AppInsightsService = this;
         if (this.instrumentationKey && this.instrumentationKey.length > 0) {
@@ -48,6 +53,11 @@ export class AppInsightsService extends AzureService implements IAppInsightsServ
         }
     }
 
+    /**
+     * Decrypt properties on this service.
+     * @param secret Secret to use to decrypt.
+     * @param decryptString Function called to decrypt an individual value.
+     */
     public decrypt(secret: string, decryptString: (value: string, secret: string) => string): void {
         const that: AppInsightsService = this;
         if (this.instrumentationKey && this.instrumentationKey.length > 0) {

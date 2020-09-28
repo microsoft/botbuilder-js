@@ -52,7 +52,7 @@ export class LuisService extends ConnectedService implements ILuisService {
         super(source, serviceType || ServiceTypes.Luis);
     }
 
-    /** 
+    /**
      * Get endpoint for the luis service. If a customEndpoint is set then this is returned
      * otherwise the endpoint is automatically generated based on the region set.
      */
@@ -64,24 +64,28 @@ export class LuisService extends ConnectedService implements ILuisService {
             return this.customEndpoint;
         }
 
-        let reg  = this.region.toLowerCase(); 
+        let reg  = this.region.toLowerCase();
 
         // usgovvirginia is that actual azure region name, but the cognitive service team called their endpoint 'virginia' instead of 'usgovvirginia'
         // We handle both region names as an alias for virginia.api.cognitive.microsoft.us
-        if (reg === 'virginia' || reg === 'usgovvirginia') 
-        { 
-            return `https://virginia.api.cognitive.microsoft.us`; 
-        } 
+        if (reg === 'virginia' || reg === 'usgovvirginia')
+        {
+            return `https://virginia.api.cognitive.microsoft.us`;
+        }
         // regardless, if it starts with usgov or usdod then it is us TLD (ex: api.cognitive.microsoft.us )
-        else if (reg.startsWith('usgov') || reg.startsWith('usdod')) 
-        { 
-            return `https://${ this.region }.api.cognitive.microsoft.us`; 
-        } 
- 
-        return `https://${ this.region }.api.cognitive.microsoft.com`;     
+        else if (reg.startsWith('usgov') || reg.startsWith('usdod'))
+        {
+            return `https://${ this.region }.api.cognitive.microsoft.us`;
+        }
+
+        return `https://${ this.region }.api.cognitive.microsoft.com`;
     }
 
-    // encrypt keys in service
+    /**
+     * Encrypt properties on this service.
+     * @param secret Secret to use to encrypt.
+     * @param encryptString Function called to encrypt an individual value.
+     */
     public encrypt(secret: string, encryptString: (value: string, secret: string) => string): void {
         if (this.authoringKey && this.authoringKey.length > 0) {
             this.authoringKey = encryptString(this.authoringKey, secret);
@@ -91,7 +95,11 @@ export class LuisService extends ConnectedService implements ILuisService {
         }
     }
 
-    // decrypt keys in service
+    /**
+     * Decrypt properties on this service.
+     * @param secret Secret to use to decrypt.
+     * @param decryptString Function called to decrypt an individual value.
+     */
     public decrypt(secret: string, decryptString: (value: string, secret: string) => string): void {
         if (this.authoringKey && this.authoringKey.length > 0) {
             this.authoringKey = decryptString(this.authoringKey, secret);

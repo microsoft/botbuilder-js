@@ -40,14 +40,22 @@ export class CosmosDbService extends AzureService implements ICosmosDBService {
         super(source, ServiceTypes.CosmosDB);
     }
 
-    // encrypt keys in service
+    /**
+     * Encrypt properties on this service.
+     * @param secret Secret to use to encrypt.
+     * @param encryptString Function called to encrypt an individual value.
+     */
     public encrypt(secret: string, encryptString: (value: string, secret: string) => string): void {
         if (this.key && this.key.length > 0) {
             this.key = encryptString(this.key, secret);
         }
     }
 
-    // decrypt keys in service
+    /**
+     * Decrypt properties on this service.
+     * @param secret Secret to use to decrypt.
+     * @param decryptString Function called to decrypt an individual value.
+     */
     public decrypt(secret: string, decryptString: (value: string, secret: string) => string): void {
         if (this.key && this.key.length > 0) {
             this.key = decryptString(this.key, secret);

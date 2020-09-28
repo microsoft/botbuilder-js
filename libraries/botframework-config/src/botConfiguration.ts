@@ -126,6 +126,9 @@ export class BotConfiguration extends BotConfigurationBase {
         return encrypt.generateKey();
     }
 
+    /**
+     * @private
+     */
     private static internalLoad(json: string, secret?: string): BotConfiguration {
         const bot: BotConfiguration = BotConfiguration.fromJSON(JSON.parse(json));
 
@@ -317,6 +320,9 @@ export class BotConfiguration extends BotConfigurationBase {
         }
     }
 
+    /**
+     * @private
+     */
     private savePrep(secret?: string): void {
         if (!!secret) {
             this.validateSecret(secret);
