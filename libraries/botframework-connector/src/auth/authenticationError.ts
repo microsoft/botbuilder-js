@@ -6,7 +6,15 @@ import { IStatusCodeError, StatusCodes } from 'botframework-schema';
 
 export type StatusCode = number;
 
+/**
+ * General `AuthenticationError` class to represent an Authentication error with a Code Status.
+ */
 export class AuthenticationError extends Error implements IStatusCodeError {
+    /**
+     * Initializes a new instance of the `AuthenticationError` class.
+     * @param message The Error message.
+     * @param statusCode The `StatusCode` to use.
+     */
     constructor(
         message: string,
         public readonly statusCode: StatusCode
@@ -14,6 +22,10 @@ export class AuthenticationError extends Error implements IStatusCodeError {
         super(message);
     }
 
+    /**
+     * Corroborates that the error is of type IStatusCodeError.
+     * @param err The error to validate.
+     */
     public static isStatusCodeError(err: any): err is IStatusCodeError {
         return !!(err && typeof err.statusCode === "number");
     }
@@ -26,17 +38,20 @@ export class AuthenticationError extends Error implements IStatusCodeError {
         const errMessage: string = (err && err.message) ? err.message : 'Internal Server Error';
         const code: number = AuthenticationError.determineStatusCode(errMessage);
         const connectionHeader = `Connection: 'close'\r\n`;
-        
+
         return `HTTP/1.1 ${ code } ${ StatusCodes[code] }\r\n${ errMessage }\r\n${ connectionHeader }\r\n`;
     }
-    
+
+    /**
+     * @private
+     */
     private static determineStatusCode(message: string): StatusCode {
         if (typeof message === 'string') {
             if (message.toLowerCase().startsWith('unauthorized')) {
                 return StatusCodes.UNAUTHORIZED;
             } else if (message.toLowerCase().startsWith(`'authheader'`)) {
                 return StatusCodes.BAD_REQUEST;
-            } 
+            }
         }
         return StatusCodes.INTERNAL_SERVER_ERROR;
     }

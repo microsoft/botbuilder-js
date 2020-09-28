@@ -48,11 +48,19 @@ export interface ICredentialProvider {
     isAuthenticationDisabled(): Promise<boolean>;
 }
 
+/**
+ * A simple implementation of the `ICredentialProvider` interface.
+ */
 export class SimpleCredentialProvider implements ICredentialProvider {
 
     private readonly appId: string;
     private readonly appPassword: string;
 
+    /**
+     * Initializes a new instance of the `SimpleCredentialProvider` class with the provided credentials.
+     * @param appId The app ID.
+     * @param appPassword The app password.
+     */
     constructor(appId: string, appPassword: string) {
         this.appId = appId;
         this.appPassword = appPassword;

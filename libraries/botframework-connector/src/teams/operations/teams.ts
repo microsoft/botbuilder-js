@@ -26,24 +26,32 @@ export class Teams {
   }
 
   /**
-   * Fetch the channel list.
-   * @summary Fetches channel list for a given team
-   * @param teamId Team Id
-   * @param [options] The optional parameters
-   * @returns Promise<Models.TeamsFetchChannelListResponse>
+   * Fetches channel list for a given team.
+   * @param teamId Team Id.
+   * @param options Optional. The options object to be used in every request.
+   * @returns Promise<Models.TeamsFetchChannelListResponse>.
    */
   fetchChannelList(teamId: string, options?: msRest.RequestOptionsBase): Promise<Models.TeamsFetchChannelListResponse>;
   /**
-   * @param teamId Team Id
-   * @param callback The callback
+   * Fetches channel list for a given team.
+   * @param teamId Team Id.
+   * @param callback The callback.
    */
   fetchChannelList(teamId: string, callback: msRest.ServiceCallback<ConversationList>): void;
   /**
-   * @param teamId Team Id
-   * @param options The optional parameters
-   * @param callback The callback
+   * Fetches channel list for a given team.
+   * @param teamId Team Id.
+   * @param options The options object to be used in every request.
+   * @param callback The callback.
    */
   fetchChannelList(teamId: string, options: msRest.RequestOptionsBase, callback: msRest.ServiceCallback<ConversationList>): void;
+  /**
+   * Fetches channel list for a given team.
+   * @param teamId Team Id.
+   * @param options Optional. The options object to be used in every request.
+   * @param callback The callback.
+   * @returns Promise<Models.TeamsFetchChannelListResponse>.
+   */
   fetchChannelList(teamId: string, options?: msRest.RequestOptionsBase | msRest.ServiceCallback<ConversationList>, callback?: msRest.ServiceCallback<ConversationList>): Promise<Models.TeamsFetchChannelListResponse> {
     return this.client.sendOperationRequest(
       {
@@ -55,24 +63,32 @@ export class Teams {
   }
 
   /**
-   * Fetch details for a team
-   * @summary Fetches details related to a team
-   * @param teamId Team Id
-   * @param [options] The optional parameters
-   * @returns Promise<Models.TeamsFetchTeamDetailsResponse>
+   * Fetches details related to a team.
+   * @param teamId Team Id.
+   * @param options Optional. The options object to be used in every request.
+   * @returns Promise<Models.TeamsFetchTeamDetailsResponse>.
    */
   fetchTeamDetails(teamId: string, options?: msRest.RequestOptionsBase): Promise<Models.TeamsFetchTeamDetailsResponse>;
   /**
-   * @param teamId Team Id
-   * @param callback The callback
+   * Fetches details related to a team.
+   * @param teamId Team Id.
+   * @param callback The callback.
    */
   fetchTeamDetails(teamId: string, callback: msRest.ServiceCallback<TeamDetails>): void;
   /**
-   * @param teamId Team Id
-   * @param options The optional parameters
-   * @param callback The callback
+   * Fetches details related to a team.
+   * @param teamId Team Id.
+   * @param options The options object to be used in every request.
+   * @param callback The callback.
    */
   fetchTeamDetails(teamId: string, options: msRest.RequestOptionsBase, callback: msRest.ServiceCallback<TeamDetails>): void;
+  /**
+   * Fetches details related to a team.
+   * @param teamId Team Id.
+   * @param options Optional. The options object to be used in every request.
+   * @param callback The callback.
+   * @returns Promise<Models.TeamsFetchTeamDetailsResponse>.
+   */
   fetchTeamDetails(teamId: string, options?: msRest.RequestOptionsBase | msRest.ServiceCallback<TeamDetails>, callback?: msRest.ServiceCallback<TeamDetails>): Promise<Models.TeamsFetchTeamDetailsResponse> {
     return this.client.sendOperationRequest(
       {

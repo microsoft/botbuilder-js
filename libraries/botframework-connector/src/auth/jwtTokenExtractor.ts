@@ -12,6 +12,9 @@ import { OpenIdMetadata } from './openIdMetadata';
 import { AuthenticationError } from './authenticationError';
 import { StatusCodes } from 'botframework-schema';
 
+/**
+ * A JWT token processing class that gets identity information and performs security token validation.
+ */
 export class JwtTokenExtractor {
 
     // Cache for OpenIdConnect configuration managers (one per metadata URL)
@@ -23,12 +26,21 @@ export class JwtTokenExtractor {
     // OpenIdMetadata for this instance
     public readonly openIdMetadata: OpenIdMetadata;
 
+    /**
+     * Initializes a new instance of the `JwtTokenExtractor` class. Extracts relevant data from JWT Tokens.
+     * @param tokenValidationParameters Token validation parameters.
+     * @param metadataUrl Metadata Url.
+     * @param allowedSigningAlgorithms Allowed signing algorithms.
+     */
     constructor(tokenValidationParameters: VerifyOptions, metadataUrl: string, allowedSigningAlgorithms: string[]) {
         this.tokenValidationParameters = { ...tokenValidationParameters };
         this.tokenValidationParameters.algorithms = allowedSigningAlgorithms;
         this.openIdMetadata = JwtTokenExtractor.getOrAddOpenIdMetadata(metadataUrl);
     }
 
+    /**
+     * @private
+     */
     private static getOrAddOpenIdMetadata(metadataUrl: string): OpenIdMetadata {
         let metadata: OpenIdMetadata = JwtTokenExtractor.openIdMetadataCache.get(metadataUrl);
         if (!metadata) {
@@ -39,6 +51,13 @@ export class JwtTokenExtractor {
         return metadata;
     }
 
+    /**
+     * Gets the claims identity associated with a request.
+     * @param authorizationHeader The raw HTTP header in the format: "Bearer [longString]".
+     * @param channelId The Id of the channel being validated in the original request.
+     * @param requiredEndorsements The required JWT endorsements.
+     * @returns A `Promise<ClaimsIdentity>` object.
+     */
     public async getIdentityFromAuthHeader(authorizationHeader: string, channelId: string, requiredEndorsements?: string[]): Promise<ClaimsIdentity | null> {
         if (!authorizationHeader) {
             return null;
@@ -52,6 +71,14 @@ export class JwtTokenExtractor {
         return null;
     }
 
+    /**
+     * Gets the claims identity associated with a request.
+     * @param scheme The associated scheme.
+     * @param parameter The token.
+     * @param channelId The Id of the channel being validated in the original request.
+     * @param requiredEndorsements The required JWT endorsements.
+     * @returns A `Promise<ClaimsIdentity>` object.
+     */
     public async getIdentity(scheme: string, parameter: string, channelId: string, requiredEndorsements: string[] = []): Promise<ClaimsIdentity | null> {
 
         // No header in correct scheme or no token
@@ -73,6 +100,9 @@ export class JwtTokenExtractor {
         }
     }
 
+    /**
+     * @private
+     */
     private hasAllowedIssuer(jwtToken: string): boolean {
         const decoded: any = decode(jwtToken, { complete: true });
         const issuer: string = decoded.payload.iss;
@@ -88,6 +118,9 @@ export class JwtTokenExtractor {
         return false;
     }
 
+    /**
+     * @private
+     */
     private async validateToken(jwtToken: string, channelId: string, requiredEndorsements: string[]): Promise<ClaimsIdentity> {
 
         const decodedToken: any = decode(jwtToken, { complete: true });

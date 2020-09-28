@@ -14,21 +14,32 @@ const getPem: any = require('rsa-pem-from-mod-exp');
 // tslint:disable-next-line:no-var-requires no-require-imports
 const base64url: any = require('base64url');
 
+/**
+ * Class in charge of manage OpenId metadata.
+ */
 export class OpenIdMetadata {
     private url: string;
     private lastUpdated: number = 0;
     private keys: IKey[];
 
+    /**
+     * Initializes a new instance of the `OpenIdMetadata` class.
+     * @param url Metadata Url.
+     */
     constructor(url: string) {
         this.url = url;
     }
 
+    /**
+     * Gets the Signing key.
+     * @param keyId The key ID to search for.
+     */
     public async getKey(keyId: string): Promise<IOpenIdMetadataKey | null> {
         // If keys are more than 24 hours old, refresh them
         if (this.lastUpdated < (Date.now() - 1000 * 60 * 60 * 24)) {
             try {
                 await this.refreshCache();
-                
+
                 // Search the cache even if we failed to refresh
                 const key: IOpenIdMetadataKey = this.findKey(keyId);
                 return key;
@@ -49,6 +60,9 @@ export class OpenIdMetadata {
         }
     }
 
+    /**
+     * @private
+     */
     private async refreshCache(): Promise<void> {
         const res = await fetch(this.url);
 
@@ -68,6 +82,9 @@ export class OpenIdMetadata {
         }
     }
 
+    /**
+     * @private
+     */
     private findKey(keyId: string): IOpenIdMetadataKey | null {
         if (!this.keys) {
             return null;

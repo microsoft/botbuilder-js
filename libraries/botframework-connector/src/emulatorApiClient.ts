@@ -8,7 +8,16 @@
 
 import { AppCredentials } from "./auth/appCredentials";
 
+/**
+ * The purpose of this class is to emulate an api client.
+ */
 export class EmulatorApiClient {
+    /**
+     *
+     * @param credentials AppCredentials for OAuth.
+     * @param emulatorUrl The URL of the emulator.
+     * @param emulate `true` to send an emulated OAuth card to the emulator; or `false` to not send the card.
+     */
     public static async emulateOAuthCards(credentials: AppCredentials, emulatorUrl: string, emulate: boolean): Promise<boolean> {
         let token = await credentials.getToken();
         let requestUrl: string = emulatorUrl + (emulatorUrl.endsWith('/') ? '' : '/') + `api/usertoken/emulateOAuthCards?emulate=${ (!!emulate).toString() }`;
