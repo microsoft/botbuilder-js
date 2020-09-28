@@ -320,7 +320,6 @@ export class DialogManager extends Configurable {
 
     /**
      * @private
-     * 
      * @param dc Context for the current turn of conversation with the user.
      * @returns The DialogTurnResult.
      */

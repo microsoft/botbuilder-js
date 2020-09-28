@@ -192,8 +192,7 @@ export class ComponentDialog<O extends object = {}> extends DialogContainer<O> {
 
     /**
     * Called when the dialog is ending.
-    * @remarks 
-    * When this method is called from the parent dialog's context, the component dialog
+    * @remarks When this method is called from the parent dialog's context, the component dialog
     * cancels all of the dialogs on its inner dialog stack before ending.
     * @param context The context object for this turn.
     * @param instance State information associated with the instance of this component

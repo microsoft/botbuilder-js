@@ -221,7 +221,6 @@ export class SkillDialog extends Dialog<Partial<BeginSkillDialogOptions>> {
 
     /**
      * @private
-     * @param options
      */
     private validateBeginDialogArgs(options: BeginSkillDialogOptions): BeginSkillDialogOptions {
         if (!options) {
@@ -237,10 +236,6 @@ export class SkillDialog extends Dialog<Partial<BeginSkillDialogOptions>> {
 
     /**
      * @private
-     * @param context 
-     * @param activity 
-     * @param skillConversationId 
-     * @returns A Promise representing the asynchronous operation.
      */
     private async sendToSkill(context: TurnContext, activity: Activity, skillConversationId: string): Promise<Activity> {
         if (activity.type === ActivityTypes.Invoke) {
@@ -326,11 +321,6 @@ export class SkillDialog extends Dialog<Partial<BeginSkillDialogOptions>> {
 
     /**
      * @private
-     * @param incomingActivity 
-     * @param id 
-     * @param connectionName 
-     * @param token 
-     * @returns A Promise representing the asynchronous operation.
      */
     private async sendTokenExchangeInvokeToSkill(incomingActivity: Activity, id: string, connectionName: string, token: string): Promise<boolean> {
         const ref: Partial<ConversationReference> = TurnContext.getConversationReference(incomingActivity);

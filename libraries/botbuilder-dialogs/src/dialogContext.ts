@@ -67,8 +67,7 @@ export class DialogContext {
 
     /**
       * Creates an new instance of the [DialogContext](xref:botbuilder-dialogs.DialogContext) class.
-      * @remarks
-      * Passing in a dialog context instance will clone the dialog context.
+    * @remarks Passing in a dialog context instance will clone the dialog context.
       * @param dialogs The dialog set for which to create the dialog context.
       * @param contextOrDC The turn context or dialog context for the current turn of the bot.
       * @param state The state object to use to read and write dialog state to storage.
@@ -303,13 +302,12 @@ export class DialogContext {
     /**
      * Helper function to simplify formatting the options for calling a prompt dialog.
      * @param dialogId ID of the prompt dialog to start.
-     * @param promptOrOptions The text of the initial prompt to send the user, or
-     *      the activity to send as the initial prompt.
-     * @param choices Optional. Array of choices for the user to choose from,
-     *      for use with a [ChoicePrompt](xref:botbuilder-dialogs.ChoicePrompt).
-     * @remarks
-     * This helper method formats the object to use as the `options` parameter, and then calls
-     * [beginDialog](xref:botbuilder-dialogs.DialogContext.beginDialog) to start the specified prompt dialog.
+     * @param promptOrOptions The text of the initial prompt to send the user, 
+     * or the activity to send as the initial prompt.
+     * @param choices Optional. Array of choices for the user to choose from, 
+     * for use with a [ChoicePrompt](xref:botbuilder-dialogs.ChoicePrompt).
+     * @remarks This helper method formats the object to use as the `options` parameter, and then calls
+     * beginDialog to start the specified prompt dialog.
      *
      * ```JavaScript
      * return await dc.prompt('confirmPrompt', `Are you sure you'd like to quit?`);
