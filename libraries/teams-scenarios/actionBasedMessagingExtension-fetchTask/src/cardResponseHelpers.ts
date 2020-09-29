@@ -13,7 +13,15 @@ import {
     TaskModuleTaskInfo
 } from 'botbuilder';
 
+/**
+ * Helper for an Attachment as CardResponse.
+ */
 export class CardResponseHelpers {
+    /**
+     * Assigns an Attachment to a new `MessagingExtensionActionResponse` object as a task.
+     * @param cardAttachment Attachment to be assigned.
+     * @returns A `MessagingExtensionActionResponse` object.
+     */
     public static toTaskModuleResponse(cardAttachment: Attachment): MessagingExtensionActionResponse {
         return {
             task: {
@@ -27,8 +35,12 @@ export class CardResponseHelpers {
         } as MessagingExtensionActionResponse;
     }
 
+    /**
+     * Assigns an Attachment to a new `MessagingExtensionActionResponse` object as a compose extension.
+     * @param cardAttachment Attachment to be assigned.
+     * @returns A `MessagingExtensionActionResponse` object.
+     */
     public static toComposeExtensionResultResponse(cardAttachment: Attachment): MessagingExtensionActionResponse {
-
         return {
             composeExtension: {
                 attachmentLayout: 'list',
@@ -39,6 +51,12 @@ export class CardResponseHelpers {
         } as MessagingExtensionActionResponse;
     }
 
+    /**
+     * Assigns an Attachment to a new `MessagingExtensionActionResponse` object
+     * as a compose extension with type of botMessagePreview.
+     * @param cardAttachment Attachment to be assigned.
+     * @returns A `MessagingExtensionActionResponse` object.
+     */
     public static toMessagingExtensionBotMessagePreviewResponse(cardAttachment: Attachment): MessagingExtensionActionResponse {
         return {
             composeExtension: {

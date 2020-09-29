@@ -271,6 +271,22 @@
                   "publicOnly": true
               }]
             }
+        },
+        {
+            "files": ["libraries/teams-scenarios/*/src/*.ts", "libraries/teams-scenarios/*/src/**/*.ts"],
+            "plugins": ["jsdoc"],
+            "rules": {
+              "jsdoc/require-jsdoc": ["error", {
+                  "require": {
+                      "FunctionDeclaration": true,
+                      "MethodDefinition": true,
+                      "ClassDeclaration": true,
+                      "ArrowFunctionExpression": false,
+                      "FunctionExpression": false
+                  },
+                  "publicOnly": true
+              }]
+            }
         }
     ],
     "parserOptions": {

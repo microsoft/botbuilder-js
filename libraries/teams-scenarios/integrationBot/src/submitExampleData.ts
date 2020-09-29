@@ -1,6 +1,9 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
+/**
+ * Example data class
+ */
 export class SubmitExampleData {
     public MultiSelect: string;
     public Option1: string;

@@ -19,6 +19,9 @@ import {
  * task module that contains an adpative card. "3" will return an adpative card that contains BF card actions.
  */
 export class AdaptiveCardsBot extends TeamsActivityHandler {
+    /**
+     * Initializes a new instance of the `AdaptiveCardsBot` class.
+     */
     constructor() {
         super();
 
@@ -67,6 +70,9 @@ export class AdaptiveCardsBot extends TeamsActivityHandler {
         });
     }
 
+    /**
+     * @protected
+     */
     protected async handleTeamsTaskModuleFetch(context: TurnContext, taskModuleRequest: TaskModuleRequest): Promise<TaskModuleResponse> {
         await context.sendActivity(MessageFactory.text(`handleTeamsTaskModuleFetch TaskModuleRequest: ${JSON.stringify(taskModuleRequest)}`));
 
@@ -97,7 +103,7 @@ export class AdaptiveCardsBot extends TeamsActivityHandler {
             "version": "1.0"
         });
         /* tslint:enable:quotemark object-literal-key-quotes */
-        return { 
+        return {
                 task: {
                         type: 'continue',
                         value: {
@@ -110,22 +116,31 @@ export class AdaptiveCardsBot extends TeamsActivityHandler {
         } as TaskModuleResponse;
     }
 
+    /**
+     * @protected
+     */
     protected async handleTeamsTaskModuleSubmit(context: TurnContext, taskModuleRequest: TaskModuleRequest): Promise<TaskModuleResponse> {
         await context.sendActivity(MessageFactory.text(`handleTeamsTaskModuleSubmit value: ${JSON.stringify(taskModuleRequest)}`));
 
-        return { 
-                task: { 
-                    type: 'message', 
-                    value: 'Thanks!' 
+        return {
+                task: {
+                    type: 'message',
+                    value: 'Thanks!'
                 } as TaskModuleMessageResponse
         } as TaskModuleResponse;
     }
 
+    /**
+     * @protected
+     */
     protected async handleTeamsCardActionInvoke(context: TurnContext): Promise<InvokeResponse> {
         await context.sendActivity(MessageFactory.text(`handleTeamsCardActionInvoke value: ${JSON.stringify(context.activity.value)}`));
         return { status: 200 } as InvokeResponse;
     }
 
+    /**
+     * @private
+     */
     private async sendAdaptiveCard1(context: TurnContext): Promise<void> {
         /* tslint:disable:quotemark object-literal-key-quotes */
         const card = CardFactory.adaptiveCard({
@@ -187,6 +202,9 @@ export class AdaptiveCardsBot extends TeamsActivityHandler {
         await context.sendActivity(MessageFactory.attachment(card));
     }
 
+    /**
+     * @private
+     */
     private async sendAdaptiveCard2(context: TurnContext): Promise<void> {
         /* tslint:disable:quotemark object-literal-key-quotes */
         const card = CardFactory.adaptiveCard({
@@ -219,6 +237,9 @@ export class AdaptiveCardsBot extends TeamsActivityHandler {
         await context.sendActivity(MessageFactory.attachment(card));
     }
 
+    /**
+     * @private
+     */
     private async sendAdaptiveCard3(context: TurnContext): Promise<void> {
         /* tslint:disable:quotemark object-literal-key-quotes */
         const card = CardFactory.adaptiveCard({

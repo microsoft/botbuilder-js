@@ -14,7 +14,14 @@ import {
     TurnContext
 } from 'botbuilder';
 
+/**
+ * After installing this bot you can click on the 3 dots to pull up the extension menu. You should be able to click on the search extension
+ * and the bot will start. Interact with the cards to execrcise the flows.
+ */
 export class ActionBasedMessagingExtensionBot extends TeamsActivityHandler {
+    /**
+     * Initializes a new instance of the `ActionBasedMessagingExtensionBot` class.
+     */
     constructor() {
         super();
 
@@ -38,6 +45,9 @@ export class ActionBasedMessagingExtensionBot extends TeamsActivityHandler {
         });
     }
 
+    /**
+     * @protected
+     */
     protected async handleTeamsMessagingExtensionSubmitAction(context, action: MessagingExtensionAction): Promise<MessagingExtensionActionResponse> {
         const data = action.data;
         let body: MessagingExtensionActionResponse;
@@ -80,14 +90,20 @@ export class ActionBasedMessagingExtensionBot extends TeamsActivityHandler {
         return body;
     }
 
-    // This method fires when an user uses an Action-based Messaging Extension from the Teams Client.
-    // It should send back the tab or task module for the user to interact with.
+    /**
+     * @protected
+     * This method fires when an user uses an Action-based Messaging Extension from the Teams Client.
+     * It should send back the tab or task module for the user to interact with.
+     */
     protected async handleTeamsMessagingExtensionFetchTask(context: TurnContext, action: MessagingExtensionAction): Promise<MessagingExtensionActionResponse> {
         return {
             task: this.taskModuleResponse(action, false)
         };
     }
 
+    /**
+     * @protected
+     */
     protected async handleTeamsMessagingExtensionBotMessagePreviewSend(context: TurnContext, action: MessagingExtensionAction): Promise<MessagingExtensionActionResponse> {
         let body: MessagingExtensionActionResponse;
         const card = this.getCardFromPreviewMessage(action);
@@ -106,6 +122,9 @@ export class ActionBasedMessagingExtensionBot extends TeamsActivityHandler {
         return body;
     }
 
+    /**
+     * @protected
+     */
     protected async handleTeamsMessagingExtensionBotMessagePreviewEdit(context, value: MessagingExtensionAction): Promise<MessagingExtensionActionResponse> {
         const card = this.getCardFromPreviewMessage(value);
         let body: MessagingExtensionActionResponse;
@@ -128,6 +147,9 @@ export class ActionBasedMessagingExtensionBot extends TeamsActivityHandler {
         return body;
     }
 
+    /**
+     * @private
+     */
     private getCardFromPreviewMessage(query: MessagingExtensionAction): Attachment {
         const userEditActivities = query.botActivityPreview;
         return userEditActivities
@@ -136,6 +158,9 @@ export class ActionBasedMessagingExtensionBot extends TeamsActivityHandler {
             && userEditActivities[0].attachments[0];
     }
 
+    /**
+     * @private
+     */
     private taskModuleResponse(query: any, done: boolean): TaskModuleResponseBase {
         if (done) {
             return {
@@ -153,6 +178,9 @@ export class ActionBasedMessagingExtensionBot extends TeamsActivityHandler {
         }
     }
 
+    /**
+     * @private
+     */
     private taskModuleResponseCard(data: any, textValue?: string) {
         return CardFactory.adaptiveCard({
             actions: [

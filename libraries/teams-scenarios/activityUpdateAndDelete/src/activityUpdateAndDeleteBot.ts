@@ -7,13 +7,17 @@ import {
     TurnContext
 } from 'botbuilder';
 
-/*
+/**
  * From the UI you can just @mention the bot from any channelwith any string EXCEPT for "delete". If you send the bot "delete" it will delete
  * all of the previous bot responses and empty it's internal storage.
  */
 export class ActivityUpdateAndDeleteBot extends ActivityHandler {
     protected activityIds: string[];
 
+    /**
+     * Initializes a new instance of the `ActivityUpdateAndDeleteBot` class.
+     * @param activityIds An array of activity ids.
+     */
     constructor(activityIds: string[]) {
         super();
 
@@ -43,6 +47,9 @@ export class ActivityUpdateAndDeleteBot extends ActivityHandler {
         });
     }
 
+    /**
+     * @private
+     */
     private async sendMessageAndLogActivityId(context: TurnContext, text: string): Promise<void> {
         const resourceResponse = await context.sendActivity({ text });
         await this.activityIds.push(resourceResponse.id);

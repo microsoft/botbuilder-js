@@ -11,9 +11,16 @@ import {
     TurnContext
 } from 'botbuilder';
 
+/**
+ * You can install this bot in any scope. From the UI just @mention the bot.
+ */
 export class CardsBot extends TeamsActivityHandler {
     // NOT SUPPORTED ON TEAMS: AnimationCard, AudioCard, VideoCard, OAuthCard
     protected cardTypes: string[];
+
+    /**
+     * Initializes a new instance of the `CardsBot` class.
+     */
     constructor() {
         super();
         /*
@@ -69,6 +76,9 @@ export class CardsBot extends TeamsActivityHandler {
         });
     }
 
+    /**
+     * @private
+     */
     private getHeroCard() {
         return CardFactory.heroCard('BotFramework Hero Card',
             'Build and connect intelligent bots to interact with your users naturally wherever they are,' +
@@ -77,6 +87,9 @@ export class CardsBot extends TeamsActivityHandler {
             [{ type: ActionTypes.OpenUrl, title: 'Get Started', value: 'https://docs.microsoft.com/bot-framework' }]);
     }
 
+    /**
+     * @private
+     */
     private getThumbnailCard() {
         return CardFactory.thumbnailCard('BotFramework Thumbnail Card',
             'Build and connect intelligent bots to interact with your users naturally wherever they are,' +
@@ -85,6 +98,9 @@ export class CardsBot extends TeamsActivityHandler {
             [{ type: ActionTypes.OpenUrl, title: 'Get Started', value: 'https://docs.microsoft.com/bot-framework' }]);
     }
 
+    /**
+     * @private
+     */
     private getReceiptCard() {
         return CardFactory.receiptCard({
             buttons: [
@@ -127,10 +143,16 @@ export class CardsBot extends TeamsActivityHandler {
         });
     }
 
+    /**
+     * @private
+     */
     private getSigninCard() {
         return CardFactory.signinCard('BotFramework Sign-in Card', 'https://login.microsoftonline.com/', 'Sign-in');
     }
 
+    /**
+     * @private
+     */
     private getChoices() {
         const actions = this.cardTypes.map((cardType) => ({ type: ActionTypes.MessageBack, title: cardType, text: cardType })) as CardAction[];
         return CardFactory.heroCard('Task Module Invocation from Hero Card', null, actions);
