@@ -550,7 +550,7 @@ export class DialogStateManager {
     }
 
     /**
-     * Gets the standard dialog state manager configuration.
+     * Creates a standard dialog state manager configuration.
      * @returns A DialogStateManagerConfiguration with the standard configuration.
      */
     public static createStandardConfiguration(): DialogStateManagerConfiguration {
