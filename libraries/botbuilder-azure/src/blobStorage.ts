@@ -296,7 +296,7 @@ export class BlobStorage implements Storage {
      * @param storageAccountOrConnectionString Azure CloudStorageAccount instance or Connection String.
      * @param storageAccessKey Blob Service Access Key.
      * @param host Blob Service Host.
-     * @returns the blob services created.
+     * @returns The blob services created.
      */
     private createBlobService(storageAccountOrConnectionString: string, storageAccessKey: string, host: any): BlobServiceAsync {
         if (!storageAccountOrConnectionString) {

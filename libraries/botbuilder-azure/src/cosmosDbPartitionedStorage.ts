@@ -150,7 +150,7 @@ export class CosmosDbPartitionedStorage implements Storage {
     /**
      * Read one or more items with matching keys from the Cosmos DB container.
      * @param keys A collection of Ids for each item to be retrieved.
-     * @returns the read items.
+     * @returns The read items.
      */
     public async read(keys: string[]): Promise<StoreItems> {
         if (!keys) { throw new ReferenceError(`Keys are required when reading.`); }

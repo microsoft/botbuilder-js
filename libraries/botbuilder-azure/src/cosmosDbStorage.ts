@@ -136,7 +136,7 @@ export class CosmosDbStorage implements Storage {
     /**
      * Read storage items from storage.
      * @param keys Keys of the items to read from the store.
-     * @returns the read items.
+     * @returns The read items.
      */
     public read(keys: string[]): Promise<StoreItems> {
         if (!keys || keys.length === 0) {
