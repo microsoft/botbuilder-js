@@ -100,7 +100,7 @@
             "files": ["libraries/botbuilder-core/src/*.ts", "libraries/botbuilder-core/src/**/*.ts"],
             "plugins": ["jsdoc"],
             "rules": {
-              "jsdoc/require-jsdoc": ["warn", {
+              "jsdoc/require-jsdoc": ["error", {
                   "require": {
                       "FunctionDeclaration": true,
                       "MethodDefinition": true,
