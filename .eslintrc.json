@@ -164,7 +164,7 @@
             "files": ["libraries/botbuilder-dialogs-declarative/src/*.ts", "libraries/botbuilder-dialogs-declarative/src/**/*.ts"],
             "plugins": ["jsdoc"],
             "rules": {
-              "jsdoc/require-jsdoc": ["warn", {
+              "jsdoc/require-jsdoc": ["error", {
                   "require": {
                       "FunctionDeclaration": true,
                       "MethodDefinition": true,
