@@ -136,7 +136,7 @@ describe('SkillDialog', function() {
                 // Create BotFrameworkHttpClient and postActivityStub
                 const expectedReply = { type: ActivityTypes.EndOfConversation, attachments: [], entities: [] };
                 const expectedReplies = { activities: [expectedReply] };
-                const [skillClient, postActivityStub] = createSkillClientAndStub(() => { return; }), undefined, expectedReplies );
+                const [skillClient, postActivityStub] = createSkillClientAndStub(() => { return; }, undefined, expectedReplies );
                 const conversationState = new ConversationState(new MemoryStorage());
                 const dialogOptions = createSkillDialogOptions(conversationState, skillClient, undefined, false);
 
