@@ -35,7 +35,7 @@ export class ActivityPrompt extends Dialog {
      * @param options Additional information to pass to the prompt being started.
      * @returns A Promise representing the asynchronous operation.
      * @remarks 
-     * If the task is successful, the result indicates whether the prompt is still
+     * If the promise is successful, the result indicates whether the prompt is still
      * active after the turn has been processed by the prompt.
      */
     public async beginDialog(dc: DialogContext, options: PromptOptions): Promise<DialogTurnResult> {
@@ -64,7 +64,7 @@ export class ActivityPrompt extends Dialog {
      * @param dc The DialogContext for the current turn of conversation.
      * @returns A Promise representing the asynchronous operation.
      * @remarks
-     * If the task is successful, the result indicates whether the dialog is still
+     * If the promise is successful, the result indicates whether the dialog is still
      * active after the turn has been processed by the dialog.
      * The prompt generally continues to receive the user's replies until it accepts the
      * user's reply as valid input for the prompt.
