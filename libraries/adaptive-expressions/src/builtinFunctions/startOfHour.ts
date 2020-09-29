@@ -12,6 +12,7 @@ import { Expression } from '../expression';
 import { ExpressionEvaluator, ValueWithError } from '../expressionEvaluator';
 import { ExpressionType } from '../expressionType';
 import { FunctionUtils } from '../functionUtils';
+import { InternalFunctionUtils } from '../functionUtils.internal';
 import { MemoryInterface } from '../memory/memoryInterface';
 import { Options } from '../options';
 import { ReturnType } from '../returnType';
@@ -34,7 +35,7 @@ export class StartOfHour extends ExpressionEvaluator {
             if (typeof (args[0]) === 'string') {
                 ({ value, error } = StartOfHour.evalStartOfHour(args[0], format));
             } else {
-                error = `${expr} cannot evaluate`;
+                error = `${expr} should contain an ISO format timestamp and an optional output format string.`;
             }
         }
 
@@ -45,10 +46,10 @@ export class StartOfHour extends ExpressionEvaluator {
         let result: string;
         let error: string;
         let parsed: any;
-        ({ value: parsed, error } = FunctionUtils.parseTimestamp(timeStamp));
+        ({ value: parsed, error } = InternalFunctionUtils.parseTimestamp(timeStamp));
         if (!error) {
             const startofHour = moment(parsed).utc().minutes(0).second(0).millisecond(0);
-            ({ value: result, error } = FunctionUtils.returnFormattedTimeStampStr(startofHour, format));
+            ({ value: result, error } = InternalFunctionUtils.returnFormattedTimeStampStr(startofHour, format));
         }
 
         return { value: result, error };

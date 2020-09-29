@@ -12,6 +12,7 @@ import { Expression } from '../expression';
 import { ExpressionEvaluator, ValueWithError } from '../expressionEvaluator';
 import { ExpressionType } from '../expressionType';
 import { FunctionUtils } from '../functionUtils';
+import { InternalFunctionUtils } from '../functionUtils.internal';
 import { MemoryInterface } from '../memory/memoryInterface';
 import { Options } from '../options';
 import { ReturnType } from '../returnType';
@@ -34,7 +35,7 @@ export class AddToTime extends ExpressionEvaluator {
             if (typeof (args[0]) === 'string' && Number.isInteger(args[1]) && typeof (args[2]) === 'string') {
                 ({ value, error } = AddToTime.evalAddToTime(args[0], args[1], args[2], format));
             } else {
-                error = `${expression} cannot evaluate`;
+                error = `${expression} should contain an ISO format timestamp, a time interval integer, a string unit of time and an optional output format string.`;
             }
         }
 
@@ -45,7 +46,7 @@ export class AddToTime extends ExpressionEvaluator {
         let result: string;
         let error: string;
         let parsed: any;
-        ({ value: parsed, error } = FunctionUtils.parseTimestamp(timeStamp));
+        ({ value: parsed, error } = InternalFunctionUtils.parseTimestamp(timeStamp));
         if (!error) {
             let dt: any = moment(parsed).utc();
             let addedTime = dt;
@@ -94,7 +95,7 @@ export class AddToTime extends ExpressionEvaluator {
 
             if (!error) {
                 addedTime = dt.add(interval, timeUnitMark);
-                ({ value: result, error } = FunctionUtils.returnFormattedTimeStampStr(addedTime, format));
+                ({ value: result, error } = InternalFunctionUtils.returnFormattedTimeStampStr(addedTime, format));
             }
         }
 

@@ -1,6 +1,6 @@
 const { ok, strictEqual } = require('assert');
 const { stub } = require('sinon');
-const { createTelemetryClientAndStub } = require('./lgTelemetryUtil');
+const { createTelemetryClientAndStub } = require('./telemetryUtils');
 const {
     ConversationState,
     MemoryStorage,
