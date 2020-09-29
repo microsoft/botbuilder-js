@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 
-import { QnAMakerResult } from '../qnamaker-interfaces/qnamakerResult';
+import { QnAMakerResult } from '../qnamaker-interfaces';
 
 /** Previous Low Score Variation Multiplier. */
 const PreviousLowScoreVariationMultiplier = 0.7;

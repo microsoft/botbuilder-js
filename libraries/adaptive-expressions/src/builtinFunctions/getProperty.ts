@@ -10,6 +10,7 @@ import { Expression } from '../expression';
 import { ExpressionEvaluator, ValueWithError } from '../expressionEvaluator';
 import { ExpressionType } from '../expressionType';
 import { FunctionUtils } from '../functionUtils';
+import { InternalFunctionUtils } from '../functionUtils.internal';
 import { MemoryInterface } from '../memory/memoryInterface';
 import { SimpleObjectMemory } from '../memory/simpleObjectMemory';
 import { Options } from '../options';
@@ -35,7 +36,7 @@ export class GetProperty extends ExpressionEvaluator {
             if (children.length === 1) {
                 // get root value from memory
                 if (typeof firstItem === 'string') {
-                    value = FunctionUtils.wrapGetValue(state, firstItem, options);
+                    value = InternalFunctionUtils.wrapGetValue(state, firstItem, options);
                 } else {
                     error = `"Single parameter ${children[0]} is not a string."`;
                 }
@@ -44,7 +45,7 @@ export class GetProperty extends ExpressionEvaluator {
                 ({ value: property, error } = children[1].tryEvaluate(state, options));
 
                 if (!error) {
-                    value = FunctionUtils.wrapGetValue(new SimpleObjectMemory(firstItem), property.toString(), options);
+                    value = InternalFunctionUtils.wrapGetValue(new SimpleObjectMemory(firstItem), property.toString(), options);
                 }
             }
         }

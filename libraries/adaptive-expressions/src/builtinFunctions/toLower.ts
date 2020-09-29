@@ -8,6 +8,7 @@
 
 import { ExpressionType } from '../expressionType';
 import { FunctionUtils } from '../functionUtils';
+import { InternalFunctionUtils } from '../functionUtils.internal';
 import { StringTransformEvaluator } from './stringTransformEvaluator';
 
 /**
@@ -20,6 +21,6 @@ export class ToLower extends StringTransformEvaluator {
     }
 
     private static evaluator(args: any[]): string {
-        return String(FunctionUtils.parseStringOrUndefined(args[0])).toLowerCase();
+        return String(InternalFunctionUtils.parseStringOrUndefined(args[0])).toLowerCase();
     }
 }
