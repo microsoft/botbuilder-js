@@ -49,7 +49,6 @@ export const ApplicationInsightsWebserverMiddleware: any = (req: any, res: any, 
 };
 
 /**
- * ApplicationInsightsTelemetryClient Class
  * This is a wrapper class around the Application Insights node client.
  * This is primarily designed to be used alongside the WaterfallDialog telemetry collection.
  * It provides a pre-configured App Insights client, and wrappers around
