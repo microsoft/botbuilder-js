@@ -9,6 +9,7 @@
 import { EvaluateExpressionDelegate, ExpressionEvaluator } from '../expressionEvaluator';
 import { ExpressionType } from '../expressionType';
 import { FunctionUtils } from '../functionUtils';
+import { InternalFunctionUtils } from '../functionUtils.internal';
 import { ReturnType } from '../returnType';
 
 /**
@@ -20,6 +21,6 @@ export class CountWord extends ExpressionEvaluator {
     }
 
     private static evaluator(): EvaluateExpressionDelegate {
-        return FunctionUtils.apply((args: any[]): number => FunctionUtils.parseStringOrUndefined(args[0]).trim().split(/\s+/).length, FunctionUtils.verifyStringOrNull);
+        return FunctionUtils.apply((args: any[]): number => InternalFunctionUtils.parseStringOrUndefined(args[0]).trim().split(/\s+/).length, FunctionUtils.verifyStringOrNull);
     }
 }
