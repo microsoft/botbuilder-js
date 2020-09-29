@@ -13,6 +13,9 @@ import { ResourceExplorer } from 'botbuilder-dialogs-declarative';
 import { TestAction } from './testAction';
 import { AdaptiveTestAdapter } from './adaptiveTestAdapter';
 
+/**
+ * A mock Test Script that can be used for unit testing bot's logic.
+ */
 export class TestScript {
 
     /**

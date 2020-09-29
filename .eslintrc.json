@@ -145,6 +145,22 @@
             }
         },
         {
+            "files": ["libraries/botbuilder-dialogs-adaptive-testing/src/*.ts", "libraries/botbuilder-dialogs-adaptive-testing/src/**/*.ts"],
+            "plugins": ["jsdoc"],
+            "rules": {
+              "jsdoc/require-jsdoc": ["error", {
+                  "require": {
+                      "FunctionDeclaration": true,
+                      "MethodDefinition": true,
+                      "ClassDeclaration": true,
+                      "ArrowFunctionExpression": false,
+                      "FunctionExpression": false
+                  },
+                  "publicOnly": true
+              }]
+            }
+        },
+        {
             "files": ["libraries/botbuilder-dialogs-adaptive-tests/src/*.ts", "libraries/botbuilder-dialogs-adaptive-tests/src/**/*.ts"],
             "plugins": ["jsdoc"],
             "rules": {
