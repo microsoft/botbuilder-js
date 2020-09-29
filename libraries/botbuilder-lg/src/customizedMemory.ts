@@ -39,7 +39,7 @@ export class CustomizedMemory implements MemoryInterface {
     public getValue(path: string): any {
         if (this.localMemory) {
             const value = this.localMemory.getValue(path);
-            if (value) {
+            if (value !== undefined) {
                 return value;
             }
         }
@@ -67,7 +67,7 @@ export class CustomizedMemory implements MemoryInterface {
 
         if (this.localMemory) {
             const localVersion = this.localMemory.version();
-            if (localVersion) {
+            if (localVersion !== undefined) {
                 result = result.concat(localVersion);
             }
         }

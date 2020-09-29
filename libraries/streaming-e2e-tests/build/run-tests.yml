@@ -1,13 +1,25 @@
-jobs:
-  - job: Run_Tests
-    variables:
-      ReactAppEndpoint: 'https://$(ReactAppService).azurewebsites.net/'
-    steps:
-      - powershell: npm install
-        displayName: 'npm install in tests directory'
-        workingDirectory: $(TestsDir)
+# Run Tests navigating to a React App that uses a customized DLJS
+# that has latest nightly version of `botframework-streaming`
 
-      - powershell: npm test
-        displayName: 'Run Tests: npm test'
-        workingDirectory: $(TestsDir)
+steps:
+  - task: DownloadPipelineArtifact@2
+    displayName: Download ReactApp Artifact
+    inputs:
+      artifact: ReactApp
+      path: $(ReactProjectDir)/build
   
+  - powershell: start powershell {npx serve -p 3000}
+    displayName: 'npx serve -p 3000'
+    workingDirectory: $(ReactProjectDir)/build
+  
+  - powershell: npm install
+    displayName: 'npm install tests'
+    condition: ne(variables.CacheRestored, 'true')
+    workingDirectory: $(TestsDir)
+
+  - powershell: Start-Sleep -Seconds 20
+    displayName: 'Sleeping for 20 seconds to allow React App to serve...'
+  
+  - powershell: npm test
+    displayName: 'npm test'
+    workingDirectory: $(TestsDir)

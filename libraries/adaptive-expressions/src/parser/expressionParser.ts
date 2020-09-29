@@ -77,7 +77,9 @@ export class ExpressionParser implements ExpressionParserInterface {
                 result = new Constant(false);
             } else if (symbol === 'true') {
                 result = new Constant(true);
-            } else if (symbol === 'null' || symbol === 'undefined') {
+            } else if (symbol === 'null') {
+                result = new Constant(null);
+            } else if (symbol === 'undefined') {
                 result = new Constant(undefined);
             } else {
                 result = this.makeExpression(ExpressionType.Accessor, new Constant(symbol));

@@ -20,7 +20,7 @@ For more information jump to a section below.
 
  | Branch | Description        | Build Status | Coverage Status | Windows Bot Test Status | Linux Bot Test Status |Browser Functional Tests
  |----|---------------|--------------|-----------------|--|--|--|
-|Master | 4.11.* Preview Builds |[![Build status](https://fuselabs.visualstudio.com/SDK_v4/_apis/build/status/JS/BotBuilder-JS-master-daily)](https://fuselabs.visualstudio.com/SDK_v4/_build/latest?definitionId=460)|[![Coverage Status](https://coveralls.io/repos/github/microsoft/botbuilder-js/badge.svg?branch=master)](https://coveralls.io/github/microsoft/botbuilder-js?branch=master)|[![Build Status](https://fuselabs.visualstudio.com/SDK_v4/_apis/build/status/JS/Run-JS-Functional-Tests-Windows?branchName=master)](https://fuselabs.visualstudio.com/SDK_v4/_build/latest?definitionId=548&branchName=master)|[![Build Status](https://fuselabs.visualstudio.com/SDK_v4/_apis/build/status/JS/Run-JS-Functional-Tests-Linux?branchName=master)](https://fuselabs.visualstudio.com/SDK_v4/_build/latest?definitionId=549&branchName=master)|[![Build Status](https://fuselabs.visualstudio.com/SDK_v4/_apis/build/status/SDK_v4-CI?branchName=master)](https://fuselabs.visualstudio.com/SDK_v4/_build/latest?definitionId=731&branchName=master)
+|Main | 4.11.* Preview Builds |[![Build status](https://fuselabs.visualstudio.com/SDK_v4/_apis/build/status/JS/BotBuilder-JS-master-daily)](https://fuselabs.visualstudio.com/SDK_v4/_build/latest?definitionId=460)|[![Coverage Status](https://coveralls.io/repos/github/microsoft/botbuilder-js/badge.svg?branch=main)](https://coveralls.io/github/microsoft/botbuilder-js?branch=main)|[![Build Status](https://fuselabs.visualstudio.com/SDK_v4/_apis/build/status/JS/Run-JS-Functional-Tests-Windows?branchName=main)](https://fuselabs.visualstudio.com/SDK_v4/_build/latest?definitionId=548&branchName=main)|[![Build Status](https://fuselabs.visualstudio.com/SDK_v4/_apis/build/status/JS/Run-JS-Functional-Tests-Linux?branchName=main)](https://fuselabs.visualstudio.com/SDK_v4/_build/latest?definitionId=549&branchName=main)|[![Build Status](https://fuselabs.visualstudio.com/SDK_v4/_apis/build/status/SDK_v4-CI?branchName=main)](https://fuselabs.visualstudio.com/SDK_v4/_build/latest?definitionId=731&branchName=main)
 
 ## Packages
 
@@ -41,6 +41,8 @@ For more information jump to a section below.
 | botframework-connector             | [![BotBuilder Badge](https://img.shields.io/npm/dt/botframework-connector.svg?logo=npm&label=botframework-connector)](https://www.npmjs.com/package/botframework-connector/)                     |
 | botframework-schema                | [![BotBuilder Badge](https://img.shields.io/npm/dt/botframework-schema.svg?logo=npm&label=botframework-schema)](https://www.npmjs.com/package/botframework-schema/)                             |
 | botframework-streaming                | [![BotBuilder Badge](https://img.shields.io/npm/dt/botframework-streaming.svg?logo=npm&label=botframework-streaming)](https://www.npmjs.com/package/botframework-streaming/)                             |
+
+To view package interdependencies, see the [dependency graph](https://botbuildersdkblobstorage.blob.core.windows.net/sdk-js-dependency-reports/latest/InterdependencyGraph.html).
 
 ## Getting Started
 To get started building bots using the SDK, see the [Azure Bot Service Documentation](https://docs.microsoft.com/en-us/azure/bot-service/?view=azure-bot-service-4.0).

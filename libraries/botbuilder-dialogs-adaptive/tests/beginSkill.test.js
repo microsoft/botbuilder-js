@@ -1,7 +1,7 @@
 const { ok, strictEqual } = require('assert');
 const { createHash } = require('crypto');
 const { stub } = require('sinon');
-const { createTelemetryClientAndStub } = require('./lgTelemetryUtil');
+const { createTelemetryClientAndStub } = require('./telemetryUtils');
 const {
     ActivityTypes,
     ConversationState,

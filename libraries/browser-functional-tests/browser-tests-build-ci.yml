@@ -6,10 +6,10 @@ pool:
   vmImage: 'vs2017-win2016'
 
 trigger:
-    - master
+    - main
 
 pr:
-    - master
+    - main
 
 variables:
   TestResourceGroup: 'BrowserBotTest$(Build.BuildId)'
@@ -73,13 +73,13 @@ steps:
     workingDir: 'libraries/browser-functional-tests'
     verbose: false
 
-- task: Npm@1
-  displayName: 'run chrome tests'
-  inputs:
-    command: custom
-    workingDir: ''
-    verbose: false
-    customCommand: 'run browser-functional-test chrome'
+#- task: Npm@1
+#  displayName: 'run chrome tests'
+#  inputs:
+#    command: custom
+#    workingDir: ''
+#    verbose: false
+#    customCommand: 'run browser-functional-test chrome'
 
 - task: Npm@1
   displayName: 'run firefox tests'

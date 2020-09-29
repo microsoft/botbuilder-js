@@ -11,6 +11,7 @@ import moment from 'moment';
 import { Expression } from '../expression';
 import { EvaluateExpressionDelegate, ExpressionEvaluator, ValueWithError } from '../expressionEvaluator';
 import { FunctionUtils } from '../functionUtils';
+import { InternalFunctionUtils } from '../functionUtils.internal';
 import { MemoryInterface } from '../memory/memoryInterface';
 import { Options } from '../options';
 import { ReturnType } from '../returnType';
@@ -32,7 +33,7 @@ export class TimeTransformEvaluator extends ExpressionEvaluator {
             ({ args, error } = FunctionUtils.evaluateChildren(expression, state, options));
             if (!error) {
                 if (typeof args[0] === 'string' && typeof args[1] === 'number') {
-                    ({ value, error } = FunctionUtils.parseTimestamp(args[0]));
+                    ({ value, error } = InternalFunctionUtils.parseTimestamp(args[0]));
                     if (!error) {
                         if (args.length === 3 && typeof args[2] === 'string') {
                             result = moment(func(value, args[1])).utc().format(FunctionUtils.timestampFormatter(args[2]));
@@ -41,7 +42,7 @@ export class TimeTransformEvaluator extends ExpressionEvaluator {
                         }
                     }
                 } else {
-                    error = `${expression} could not be evaluated`;
+                    error = `${expression} should contain an ISO format timestamp and a time interval integer.`;
                 }
             }
 

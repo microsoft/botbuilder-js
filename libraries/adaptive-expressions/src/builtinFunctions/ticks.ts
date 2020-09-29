@@ -10,6 +10,7 @@ import { Expression } from '../expression';
 import { ExpressionEvaluator, ValueWithError } from '../expressionEvaluator';
 import { ExpressionType } from '../expressionType';
 import { FunctionUtils } from '../functionUtils';
+import { InternalFunctionUtils } from '../functionUtils.internal';
 import { MemoryInterface } from '../memory/memoryInterface';
 import { Options } from '../options';
 import { ReturnType } from '../returnType';
@@ -29,9 +30,9 @@ export class Ticks extends ExpressionEvaluator {
         ({ args, error } = FunctionUtils.evaluateChildren(expr, state, options));
         if (!error) {
             if (typeof (args[0]) === 'string') {
-                ({ value, error } = FunctionUtils.ticks(args[0]));
+                ({ value, error } = InternalFunctionUtils.ticks(args[0]));
             } else {
-                error = `${expr} cannot evaluate`;
+                error = `${expr} should contain an ISO format timestamp.`;
             }
         }
 

@@ -1,9 +1,6 @@
 steps:
-  - powershell: |
-      Write-Host "Compressing project into bot.zip"
-
-      Compress-Archive "$(TargetProjectDir)/*" "$(TargetProjectDir)/bot.zip"
-    displayName: 'Zip Bot'
+  - powershell: Compress-Archive "$(TargetProjectDir)/*" "$(TargetProjectDir)/bot.zip"
+    displayName: 'Zipping Bot into bot.zip'
 
   - task: AzureCLI@1
     displayName: 'Deploy Bot'

@@ -1,5 +1,5 @@
-const { Templates, LGLineBreakStyle, EvaluationOptions, TemplateErrors, DiagnosticSeverity } = require('../');
-const { SimpleObjectMemory, ExpressionParser, NumericEvaluator, Expression } = require('adaptive-expressions');
+const { Templates, LGLineBreakStyle, EvaluationOptions, TemplateErrors, DiagnosticSeverity, CustomizedMemory, LGCacheScope, LGResource } = require('../');
+const { SimpleObjectMemory, ExpressionParser, NumericEvaluator, Expression, StackedMemory } = require('adaptive-expressions');
 const assert = require('assert');
 const fs = require('fs');
 
@@ -45,7 +45,7 @@ describe('LG', function() {
         RecursiveTemplate: Templates.parseFile(GetExampleFilePath('RecursiveTemplate.lg')),
         MemoryScope: Templates.parseFile(GetExampleFilePath('MemoryScope.lg')),
         StructuredTemplate: Templates.parseFile(GetExampleFilePath('StructuredTemplate.lg')),
-        EvaluateOnce: Templates.parseFile(GetExampleFilePath('EvaluateOnce.lg')),
+        TemplateCache: Templates.parseFile(GetExampleFilePath('TemplateCache.lg')),
         ConditionExpression: Templates.parseFile(GetExampleFilePath('ConditionExpression.lg')),
         StructuredTemplate: Templates.parseFile(GetExampleFilePath('StructuredTemplate.lg')),
         ExpressionExtract: Templates.parseFile(GetExampleFilePath('ExpressionExtract.lg')),
@@ -111,14 +111,23 @@ describe('LG', function() {
     it('TestMultiline', function() {
         let templates = preloaded.Multiline;
         let evaled = templates.evaluate('template1').toString();
-        let generatedTemplates = Templates.parseText(evaled);
+        let generatedTemplates = Templates.parseResource(new LGResource('','',evaled));
         let result = generatedTemplates.evaluate('generated1');
         assert.strictEqual('hi', result, `Evaled is ${ result.trim() }`);
 
         evaled = templates.evaluate('template2', {evaluateNow: 'please input'}).toString();
-        generatedTemplates = Templates.parseText(evaled);
+        generatedTemplates = Templates.parseResource(new LGResource('','',evaled));
         result = generatedTemplates.evaluate('generated2', {name: 'jack'});
         assert.strictEqual('please input jack', result.trim(), `Evaled is ${ result.trim() }`);
+
+        evaled = templates.evaluate('template3').toString();
+        assert.strictEqual('markdown\n## Manage the knowledge base\n', evaled.replace(/\r\n/g, '\n'), `Evaled is ${ evaled }`);
+
+        evaled = templates.evaluate('template4').toString();
+        assert.strictEqual('## Manage the knowledge base', evaled, `Evaled is ${ evaled }`);
+
+        evaled = templates.evaluate('template5').toString();
+        assert.strictEqual('', evaled, `Evaled is ${ evaled }`);
     });
 
     it('TestMultiLineExprLG', function() {
@@ -133,6 +142,14 @@ describe('LG', function() {
         evaled = templates.evaluate('template');
         assert.strictEqual(evaled, 15);
 
+        evaled = templates.evaluate('crtObj');
+        assert.deepStrictEqual(evaled, {a: 1, c: 3, b: 2});
+
+        var evaledArray = templates.evaluate('crtArr');
+        assert.deepStrictEqual(evaledArray, [1, 2, 3, 4]);
+
+        var evaledMultilineResult = templates.evaluate('evalMultiLineObj');
+        assert.strictEqual(evaledMultilineResult, '{"a":1,"b":2,"c":{"d":4,"e":5}}');
 
     });
 
@@ -404,7 +421,7 @@ describe('LG', function() {
         evaled = templates.evaluate('dupNameWithTemplate');
         assert.strictEqual(evaled, 2, `Evaled is ${ evaled }`);
 
-        evaled = templates.evaluate('foo', {property: 'Show'});
+        evaled = templates.evaluate('compose', {property: 'Show'});
         assert.strictEqual(evaled, `you made it!`);
     });
 
@@ -445,7 +462,8 @@ describe('LG', function() {
         assert.strictEqual(options5.includes(evaled), true, `Evaled is ${ evaled }`);
 
         // Assert 6.lg of relative path is imported from text.
-        templates = Templates.parseText(`[import](./6.lg)\r\n# basicTemplate\r\n- Hi\r\n- Hello\r\n`, GetExampleFilePath('xx.lg'));
+        const resource = new LGResource(GetExampleFilePath('xx.lg'), GetExampleFilePath('xx.lg'), `[import](./6.lg)\r\n# basicTemplate\r\n- Hi\r\n- Hello\r\n`);
+        templates = Templates.parseResource(resource);
 
         assert.strictEqual(templates.allTemplates.length, 8);
 
@@ -769,7 +787,9 @@ describe('LG', function() {
     });
 
     it('TemplateCRUD_Normal', function() {
-        var templates = Templates.parseText(fs.readFileSync(GetExampleFilePath('CrudInit.lg'), 'utf-8'));
+        var filePath = GetExampleFilePath('CrudInit.lg');
+        const resource = new LGResource(filePath, filePath, fs.readFileSync(filePath, 'utf-8'));
+        var templates = Templates.parseResource(resource);
 
         assert.strictEqual(templates.toArray().length, 2);
         assert.strictEqual(templates.imports.length, 0);
@@ -852,7 +872,9 @@ describe('LG', function() {
     });
 
     it('TemplateCRUD_RepeatAdd', function() {
-        var templates = Templates.parseText(fs.readFileSync(GetExampleFilePath('CrudInit.lg'), 'utf-8'));
+        var filePath = GetExampleFilePath('CrudInit.lg');
+        const resource = new LGResource(filePath, filePath, fs.readFileSync(filePath, 'utf-8'));
+        var templates = Templates.parseResource(resource);
 
         // Add template
         templates.addTemplate('newtemplate', ['age', 'name'], '- hi ');
@@ -884,7 +906,9 @@ describe('LG', function() {
     });
 
     it('TemplateCRUD_RepeatDelete', function() {
-        var templates = Templates.parseText(fs.readFileSync(GetExampleFilePath('CrudInit.lg'), 'utf-8'));
+        var filePath = GetExampleFilePath('CrudInit.lg');
+        const resource = new LGResource(filePath, filePath, fs.readFileSync(filePath, 'utf-8'));
+        var templates = Templates.parseResource(resource);
 
         // Delete template
         templates.deleteTemplate('template1');
@@ -914,7 +938,9 @@ describe('LG', function() {
     });
 
     it('TemplateCRUD_Diagnostic', function() {
-        var templates = Templates.parseText(fs.readFileSync(GetExampleFilePath('CrudInit.lg'), 'utf-8'));
+        var filePath = GetExampleFilePath('CrudInit.lg');
+        const resource = new LGResource(filePath, filePath, fs.readFileSync(filePath, 'utf-8'));
+        var templates = Templates.parseResource(resource);
 
         // add error template name (error in template)
         templates.addTemplate('newtemplate#$%', ['age', 'name'], '- hi ');
@@ -980,13 +1006,13 @@ describe('LG', function() {
         assert.deepStrictEqual(evaled, JSON.parse('{"lgType":"Activity","text":"${GetAge()}","suggestions":["10 | cards","20 | cards"]}'));
 
         evaled = templates.evaluate('T1');
-        assert.deepStrictEqual(evaled, JSON.parse('{"lgType":"Activity","text":"This is awesome","speak":"foo bar I can also speak!"}'));
+        assert.deepStrictEqual(evaled, JSON.parse('{"lgType":"Activity","text":"This is awesome","speak":"hello world I can also speak!"}'));
 
         evaled = templates.evaluate('ST1');
-        assert.deepStrictEqual(evaled, JSON.parse('{"lgType":"MyStruct","text":"foo","speak":"bar"}'));
+        assert.deepStrictEqual(evaled, JSON.parse('{"lgType":"MyStruct","text":"cool","speak":"beta"}'));
 
         evaled = templates.evaluate('AskForColor');
-        assert.deepStrictEqual(evaled, JSON.parse('{"lgType":"Activity","suggestedactions":[{"lgType":"MyStruct","speak":"bar","text":"zoo"},{"lgType":"Activity","speak":"I can also speak!"}]}'));
+        assert.deepStrictEqual(evaled, JSON.parse('{"lgType":"Activity","suggestedactions":[{"lgType":"MyStruct","speak":"beta","text":"food"},{"lgType":"Activity","speak":"I can also speak!"}]}'));
 
         evaled = templates.evaluate('MultiExpression');
         assert.equal(evaled, '{"lgType":"Activity","speak":"I can also speak!"} {"lgType":"MyStruct","text":"hi"}');
@@ -1004,19 +1030,28 @@ describe('LG', function() {
         assert.deepStrictEqual(evaled, JSON.parse('{"lgType":"Activity","text":"Hello! welcome back. I have your name = Jack"}'));
     });
 
-    it('TestEvaluateOnce', function() {
-        var templates = preloaded.EvaluateOnce;
+    it('TestTemplateCache', function() {
+        var templates = preloaded.TemplateCache;
 
         var evaled = templates.evaluate('templateWithSameParams', { param: 'ms' });
         assert.notEqual(evaled, undefined);
         
-        const resultList = evaled.split(' ');
+        let resultList = evaled.split(' ');
         assert.equal(resultList.length, 2);
 
         assert.equal(resultList[0], resultList[1]);
 
         // maybe has different values
         evaled = templates.evaluate('templateWithDifferentParams', { param1: 'ms', param2: 'newms' });
+
+        // global cache test
+        const options = new EvaluationOptions();
+        options.cacheScope = LGCacheScope.Global;
+        evaled = templates.evaluate('globalCache', {param: 'ms'}, options);
+        resultList = evaled.split(' ');
+        assert.equal(resultList.length, 2);
+
+        assert.equal(resultList[0], resultList[1]);
     });
 
     it('TestConditionExpression', function() {
@@ -1284,7 +1319,13 @@ describe('LG', function() {
         var templates = preloaded.ReExecute;
 
         // may be has different values
-        templates.evaluate('templateWithSameParams', {param1:'ms', param2:'newms'});
+        let evaled = templates.evaluate('templateWithSameParams', {param1:'ms', param2:'newms'});
+
+        // the third one should be the same with the first one
+        let resultList = evaled.split(' ');
+        assert(resultList.length, 3);
+
+        assert(resultList[0], resultList[2]);
     });
 
     it('TestCustomFunction', function() {
@@ -1325,10 +1366,31 @@ describe('LG', function() {
     });
 
     it('TestInjectLG', function() {
-        var {value: evaled, error} = Expression.parse('foo.bar()').tryEvaluate();
+        var {value: evaled, error} = Expression.parse('general.greeting()').tryEvaluate({name : 'Alice'});
+        assert.strictEqual('hi Alice', evaled.toString());
+
+        var memory1 = new StackedMemory();
+        memory1.push(new SimpleObjectMemory({ name: 'Alice' }));
+        memory1.push(new CustomizedMemory({ name: 'Bob' }));
+        var {value: evaled, error}  = Expression.parse('general.greeting()').tryEvaluate(memory1);
+        assert.strictEqual('hi Bob', evaled.toString());
+
+        var {value: evaled, error} = Expression.parse('general.yolo(8,7)').tryEvaluate({name: 'Alice'});
+        assert.strictEqual('Alice have 15 cookies!', evaled.toString());
+
+        var memory1 = new StackedMemory();
+        memory1.push(new SimpleObjectMemory({ name: 'Alice' }));
+        memory1.push(new CustomizedMemory({ name: 'Bob' }));
+        var {value: evaled, error}  = Expression.parse('general.yolo(12, 12)').tryEvaluate(memory1);
+        assert.strictEqual('Bob have 24 cookies!', evaled.toString());
+
+        var {value: evaled, error} = Expression.parse('general.addTwoNum(5,6)').tryEvaluate({a: 3, b: 1});
+        assert.strictEqual('11', evaled.toString());
+
+        var {value: evaled, error} = Expression.parse('general.sumAll()').tryEvaluate();
         assert.strictEqual(3, evaled);
 
-        var {value: evaled, error} = Expression.parse('foo.cool(2)').tryEvaluate();
+        var {value: evaled, error} = Expression.parse('general.cool(2)').tryEvaluate();
         assert.strictEqual(3, evaled);
 
         var {value: evaled, error} = Expression.parse('common.looking()').tryEvaluate();
