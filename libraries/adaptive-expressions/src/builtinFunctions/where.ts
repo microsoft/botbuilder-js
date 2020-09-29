@@ -11,6 +11,7 @@ import { Expression } from '../expression';
 import { ExpressionEvaluator, ValueWithError } from '../expressionEvaluator';
 import { ExpressionType } from '../expressionType';
 import { FunctionUtils } from '../functionUtils';
+import { InternalFunctionUtils } from '../functionUtils.internal';
 import { MemoryInterface } from '../memory/memoryInterface';
 import { SimpleObjectMemory } from '../memory/simpleObjectMemory';
 import { StackedMemory } from '../memory/stackedMemory';
@@ -22,7 +23,7 @@ import { ReturnType } from '../returnType';
  */
 export class Where extends ExpressionEvaluator {
     public constructor() {
-        super(ExpressionType.Where, Where.evaluator, ReturnType.Array, FunctionUtils.validateForeach);
+        super(ExpressionType.Where, Where.evaluator, ReturnType.Array, InternalFunctionUtils.validateForeach);
     }
 
     private static evaluator(expression: Expression, state: MemoryInterface, options: Options): ValueWithError {
