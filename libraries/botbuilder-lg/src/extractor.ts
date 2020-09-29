@@ -30,7 +30,7 @@ export class Extractor extends AbstractParseTreeVisitor<Map<string, any>> implem
     }
 
     /**
-     * Extracts the templates and returns a map with their names and bodys.
+     * Extracts the templates and returns a map with their names and bodies.
      * @returns Map object with template names and bodies.
      */
     public extract(): Map<string, any>[] {
