@@ -133,18 +133,10 @@ describe('SkillDialog', function() {
                 const context = new TurnContext(adapter, activity);
                 context.turnState.set(adapter.OAuthScopeKey, DEFAULT_OAUTHSCOPE);
 
-                const captureAction = (fromBotId, toBotId, toUri, serviceUrl, conversationId, activity) => {
-                    // Capture values sent to the skill so we can assert the right parameters were used.
-                    fromBotIdSent = fromBotId;
-                    toBotIdSent = toBotId;
-                    toUriSent = toUri;
-                    activitySent = activity;
-                }
-
                 // Create BotFrameworkHttpClient and postActivityStub
                 const expectedReply = { type: ActivityTypes.EndOfConversation, attachments: [], entities: [] };
                 const expectedReplies = { activities: [expectedReply] };
-                const [skillClient, postActivityStub] = createSkillClientAndStub(captureAction, undefined, expectedReplies );
+                const [skillClient, postActivityStub] = createSkillClientAndStub(() => { return; }), undefined, expectedReplies );
                 const conversationState = new ConversationState(new MemoryStorage());
                 const dialogOptions = createSkillDialogOptions(conversationState, skillClient, undefined, false);
 
