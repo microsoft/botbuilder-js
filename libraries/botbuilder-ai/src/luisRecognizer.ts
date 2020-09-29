@@ -266,28 +266,28 @@ export class LuisRecognizer implements LuisRecognizerTelemetryClient {
     /**
      * Creates a new LuisRecognizer instance.
      * @param application The LUIS application endpoint, usually retrieved from https://luis.ai.
-     * @param options (Optional) Options object used to control predictions. Should conform to the [LuisRecognizerOptions](#luisrecognizeroptions) definition.
-     * @param includeApiResults (Deprecated) Flag that if set to `true` will force the inclusion of LUIS Api call in results returned by [recognize()](#recognize). Defaults to a value of `false`.
+     * @param options (Optional) Options object used to control predictions. Should conform to the `LuisRecognizerOptions` definition.
+     * @param includeApiResults (Deprecated) Flag that if set to `true` will force the inclusion of LUIS Api call in results returned by `recognize()`. Defaults to a value of `false`.
      */
     constructor(application: string, options?: LuisPredictionOptions, includeApiResults?: boolean);
     /**
      * Creates a new LuisRecognizer instance.
-     * @param application An object conforming to the [LuisApplication](#luisapplication) definition.
-     * @param options (Optional) Options object used to control predictions. Should conform to the [LuisRecognizerOptions](#luisrecognizeroptions) definition.
-     * @param includeApiResults (Deprecated) Flag that if set to `true` will force the inclusion of LUIS Api call in results returned by [recognize()](#recognize). Defaults to a value of `false`.
+     * @param application An object conforming to the `LuisApplication` definition.
+     * @param options (Optional) Options object used to control predictions. Should conform to the `LuisRecognizerOptions` definition.
+     * @param includeApiResults (Deprecated) Flag that if set to `true` will force the inclusion of LUIS Api call in results returned by `recognize()`. Defaults to a value of `false`.
      */
     constructor(application: LuisApplication, options?: LuisPredictionOptions, includeApiResults?: boolean);
     /**
      * Creates a new LuisRecognizer instance.
-     * @param application An object conforming to the [LuisApplication](#luisapplication) definition or a string representing a LUIS application endpoint, usually retrieved from https://luis.ai.
-     * @param options (Optional) Options object used to control predictions. Should conform to the [LuisRecognizerOptionsV3](#luisrecognizeroptionsv3) or [LuisRecognizerOptionsV2](#luisrecognizeroptionsv2) definition.
+     * @param application An object conforming to the `LuisApplication` definition or a string representing a LUIS application endpoint, usually retrieved from https://luis.ai.
+     * @param options (Optional) Options object used to control predictions. Should conform to the `LuisRecognizerOptionsV3` or `LuisRecognizerOptionsV2` definition.
      */
     constructor(application: LuisApplication | string, options?: LuisRecognizerOptionsV3 | LuisRecognizerOptionsV2);
     /**
      * Creates a new LuisRecognizer instance.
      * @param application The LUIS application endpoint, usually retrieved from https://luis.ai.
-     * @param options (Optional) Options object used to control predictions. Should conform to the [LuisRecognizerOptions](#luisrecognizeroptions), [LuisRecognizerOptionsV3](#luisrecognizeroptionsv3) or [LuisRecognizerOptionsV2](#luisrecognizeroptionsv2) definition.
-     * @param includeApiResults (Deprecated) Flag that if set to `true` will force the inclusion of LUIS Api call in results returned by [recognize()](#recognize). Defaults to a value of `false`.
+     * @param options (Optional) Options object used to control predictions. Should conform to the `LuisRecognizerOptions`, `LuisRecognizerOptionsV3` or `LuisRecognizerOptionsV2` definition.
+     * @param includeApiResults (Deprecated) Flag that if set to `true` will force the inclusion of LUIS Api call in results returned by `recognize()`. Defaults to a value of `false`.
      */
     constructor(application: LuisApplication | string, options?: LuisRecognizerOptionsV3 | LuisRecognizerOptionsV2 | LuisPredictionOptions, includeApiResults?: boolean) {
         if (typeof application === 'string') {

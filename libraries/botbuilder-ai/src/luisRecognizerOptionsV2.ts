@@ -32,8 +32,8 @@ export function isLuisRecognizerOptionsV2(options: any): options is LuisRecogniz
 export class LuisRecognizerV2 extends LuisRecognizerInternal {
     /**
      * Creates a new LuisRecognizerV2 instance.
-     * @param application An object conforming to the [LuisApplication](#luisapplication) definition or a string representing a LUIS application endpoint, usually retrieved from https://luis.ai.
-     * @param options (Optional) Options object used to control predictions. Should conform to the [LuisRecognizerOptionsV2](#luisrecognizeroptionsv2) definition.
+     * @param application An object conforming to the `LuisApplication` definition or a string representing a LUIS application endpoint, usually retrieved from https://luis.ai.
+     * @param options (Optional) Options object used to control predictions. Should conform to the `LuisRecognizerOptionsV2` definition.
      */
     constructor (application: LuisApplication, options?: LuisRecognizerOptionsV2) {
         super(application);
