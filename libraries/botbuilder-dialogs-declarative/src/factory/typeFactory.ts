@@ -9,7 +9,7 @@
 import { TypeBuilder } from './typeBuilder';
 
 /**
- * Declarative type factory
+ * Declarative type factory.
  */
 export class TypeFactory {
 
@@ -36,6 +36,11 @@ export class TypeFactory {
         this.registrations[name] = builder;
     }
 
+    /**
+     * Builds a type in the factory.
+     * @param name Name of the type to build.
+     * @param config Configuration object for the type.
+     */
     public build(name: string, config: object): object {
 
         if (!name) {

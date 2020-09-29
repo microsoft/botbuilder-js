@@ -7,7 +7,15 @@
  */
 import { Converter } from './converter';
 
+/**
+ * Registers a converter to receive notifications on converter events.
+ */
 export class ConverterRegistration {
+    /**
+     * Creates a new instance of the `ConverterRegistration` class.
+     * @param name Name for the converter.
+     * @param converter Converter.
+     */
     public constructor(name: string, converter: Converter) {
         this.name = name;
         this.converter = converter;

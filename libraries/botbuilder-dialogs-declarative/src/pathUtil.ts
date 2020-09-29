@@ -9,6 +9,9 @@
 import { join } from 'path';
 import { readdirSync, lstatSync } from 'fs';
 
+/**
+ * A utilities class of file path operations.
+ */
 export class PathUtil {
     /**
      * Check if a path is a directory

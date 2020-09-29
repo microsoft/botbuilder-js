@@ -103,6 +103,9 @@ export class FolderResourceProvider extends ResourceProvider {
         return resources;
     }
 
+    /**
+     * @private
+     */
     private onResourceAdded(path: string): void {
         const ext = extname(path.toLowerCase()).replace(/^\./, '');
         if (this.resourceExplorer.resourceTypes.has(ext)) {
@@ -114,6 +117,9 @@ export class FolderResourceProvider extends ResourceProvider {
         }
     }
 
+    /**
+     * @private
+     */
     private onResourceChanged(path: string): void {
         const ext = extname(path.toLowerCase()).replace(/^\./, '');
         if (this.resourceExplorer.resourceTypes.has(ext)) {
@@ -123,6 +129,9 @@ export class FolderResourceProvider extends ResourceProvider {
         }
     }
 
+    /**
+     * @private
+     */
     private onResourceRemoved(path: string): void {
         const ext = extname(path.toLowerCase()).replace(/^\./, '');
         if (this.resourceExplorer.resourceTypes.has(ext)) {

@@ -210,6 +210,12 @@ export class ResourceExplorer {
         return result;
     }
 
+    /**
+     * @protected
+     * Handler for on changed events.
+     * @param event Resource Change Event.
+     * @param resources A collection of resources to pass to the event handler.
+     */
     protected onChanged(event: ResourceChangeEvent, resources: Resource[]): void {
         if (this._eventEmitter) {
             this._eventEmitter.emit(event, resources);
