@@ -19,17 +19,22 @@ import {
     IUserTokenProvider,
 } from 'botbuilder-core';
 
-/*
-* This Bot requires an Azure Bot Service OAuth connection name in appsettings.json
-* see: https://docs.microsoft.com/en-us/azure/bot-service/bot-builder-authentication
-*
-* Clicking this bot's Task Menu will retrieve the login dialog, if the user is not already signed in.
-*/
+/**
+ * This Bot requires an Azure Bot Service OAuth connection name in appsettings.json
+ * see: https://docs.microsoft.com/en-us/azure/bot-service/bot-builder-authentication
+ *
+ * Clicking this bot's Task Menu will retrieve the login dialog, if the user is not already signed in.
+ */
 export class MessagingExtensionAuthBot extends TeamsActivityHandler {
     connectionName: string;
+
+    /**
+     * Initializes a new instance of the `MessagingExtensionAuthBot` class.
+     * @param authConnectionName The Auth connection name.
+     */
     constructor(authConnectionName: string) {
         super();
-        
+
         this.connectionName = authConnectionName;
 
         // See https://aka.ms/about-bot-activity-message to learn more about the message and other activity types.
@@ -47,7 +52,7 @@ export class MessagingExtensionAuthBot extends TeamsActivityHandler {
 
                 await adapter.signOutUser(context, this.connectionName);
                 await context.sendActivity(`Signed Out: ${context.activity.from.name}`);
-                
+
                 return;
             }
 
@@ -69,6 +74,9 @@ export class MessagingExtensionAuthBot extends TeamsActivityHandler {
         });
     }
 
+    /**
+     * @protected
+     */
     protected async handleTeamsMessagingExtensionFetchTask(context: TurnContext, action: MessagingExtensionAction): Promise<MessagingExtensionActionResponse> {
         const adapter: IUserTokenProvider = context.adapter as BotFrameworkAdapter;
         const userToken = await adapter.getUserToken(context, this.connectionName);
@@ -79,14 +87,14 @@ export class MessagingExtensionAuthBot extends TeamsActivityHandler {
             // Retrieve the OAuth Sign in Link to use in the MessagingExtensionResult Suggested Actions
             const signInLink = await adapter.getSignInLink(context, this.connectionName);
 
-            const response : MessagingExtensionActionResponse = { 
-                composeExtension: { 
-                    type: 'auth', 
-                    suggestedActions: { 
-                        actions: [{ 
-                            type: 'openUrl', 
-                            value: signInLink, 
-                            title: 'Bot Service OAuth' 
+            const response : MessagingExtensionActionResponse = {
+                composeExtension: {
+                    type: 'auth',
+                    suggestedActions: {
+                        actions: [{
+                            type: 'openUrl',
+                            value: signInLink,
+                            title: 'Bot Service OAuth'
                         }]
                     }
                 }
@@ -100,13 +108,16 @@ export class MessagingExtensionAuthBot extends TeamsActivityHandler {
             value: this.CreateSignedInTaskModuleTaskInfo(),
         };
 
-        const response : MessagingExtensionActionResponse = { 
-            task: continueResponse 
-        }; 
+        const response : MessagingExtensionActionResponse = {
+            task: continueResponse
+        };
 
         return response;
     }
 
+    /**
+     * @protected
+     */
     protected async handleTeamsTaskModuleFetch(context: TurnContext, taskModuleRequest: TaskModuleRequest): Promise<TaskModuleResponse> {
         var data = context.activity.value;
         if (data && data.state)
@@ -118,10 +129,10 @@ export class MessagingExtensionAuthBot extends TeamsActivityHandler {
                 type: 'continue',
                 value: this.CreateSignedInTaskModuleTaskInfo(tokenResponse.token),
             };
-    
-            const response : MessagingExtensionActionResponse = { 
-                task: continueResponse 
-            }; 
+
+            const response : MessagingExtensionActionResponse = {
+                task: continueResponse
+            };
 
             return response;
         }
@@ -132,6 +143,9 @@ export class MessagingExtensionAuthBot extends TeamsActivityHandler {
         }
     }
 
+    /**
+     * @protected
+     */
     protected async handleTeamsMessagingExtensionSubmitAction(context, action: MessagingExtensionAction): Promise<MessagingExtensionActionResponse> {
         if (action.data != null && action.data.key && action.data.key == "signout")
         {
@@ -143,8 +157,11 @@ export class MessagingExtensionAuthBot extends TeamsActivityHandler {
         return null;
     }
 
+    /**
+     * @private
+     */
     private CreateSignedInTaskModuleTaskInfo(token?: string): TaskModuleTaskInfo {
-        const attachment = this.GetTaskModuleAdaptiveCard(); 
+        const attachment = this.GetTaskModuleAdaptiveCard();
         let width = 350;
         let height = 160;
         if(token){
@@ -172,7 +189,7 @@ export class MessagingExtensionAuthBot extends TeamsActivityHandler {
             width = 500;
             height = 300;
         }
-        return { 
+        return {
             card: attachment,
             height: height,
             width: width,
@@ -180,6 +197,9 @@ export class MessagingExtensionAuthBot extends TeamsActivityHandler {
         };
     }
 
+    /**
+     * @private
+     */
     private GetTaskModuleAdaptiveCard(): Attachment {
         return CardFactory.adaptiveCard({
             version: '1.0.0',

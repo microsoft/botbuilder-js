@@ -3,14 +3,20 @@
 
 import {
     AppBasedLinkQuery,
-    CardFactory, 
+    CardFactory,
     MessagingExtensionResponse,
     MessagingExtensionResult,
     TeamsActivityHandler,
-    TurnContext } 
+    TurnContext }
 from 'botbuilder';
 
+/**
+ * Teams handler class to do link unfurling.
+ */
 export class LinkUnfurlingBot extends TeamsActivityHandler {
+    /**
+     * Initializes a new instance of the `LinkUnfurlingBot` class.
+     */
     constructor() {
         super();
 
@@ -22,11 +28,14 @@ export class LinkUnfurlingBot extends TeamsActivityHandler {
         });
     }
 
-     // "Link Unfurling"
-    // This handler is used for the processing of "composeExtension/queryLink" activities from Teams.
-    // https://docs.microsoft.com/en-us/microsoftteams/platform/concepts/messaging-extensions/search-extensions#receive-requests-from-links-inserted-into-the-compose-message-box
-    // By specifying domains under the messageHandlers section in the manifest, the bot can receive
-    // events when a user enters in a domain in the compose box.   
+    /**
+     * @protected
+     * "Link Unfurling"
+     * This handler is used for the processing of "composeExtension/queryLink" activities from Teams.
+     * https://docs.microsoft.com/en-us/microsoftteams/platform/concepts/messaging-extensions/search-extensions#receive-requests-from-links-inserted-into-the-compose-message-box
+     * By specifying domains under the messageHandlers section in the manifest, the bot can receive
+     * events when a user enters in a domain in the compose box.
+     */
     protected async handleTeamsAppBasedLinkQuery(context: TurnContext, query: AppBasedLinkQuery): Promise<MessagingExtensionResponse> {
         const attachment = CardFactory.thumbnailCard('Thumbnail Card', query.url, ["https://raw.githubusercontent.com/microsoft/botframework-sdk/master/icon.png"]);
 
@@ -39,7 +48,7 @@ export class LinkUnfurlingBot extends TeamsActivityHandler {
         const response: MessagingExtensionResponse = {
             composeExtension: result,
         }
-        
+
         return response;
     }
 }

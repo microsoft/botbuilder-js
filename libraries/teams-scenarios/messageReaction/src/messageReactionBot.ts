@@ -12,11 +12,15 @@ import {
     ActivityLog
 } from './activityLog';
 
+/**
+ * From the UI you need to @mention the bot, then add a message reaction to the message the bot sent.
+ */
 export class MessageReactionBot extends ActivityHandler {
     _log: ActivityLog;
 
-    /*
-     * From the UI you need to @mention the bot, then add a message reaction to the message the bot sent.
+    /**
+     * Initializes a new instance of the `MessageReactionBot` class.
+     * @param activityLog The `ActivityLog`.
      */
     constructor(activityLog: ActivityLog) {
         super();
@@ -32,6 +36,9 @@ export class MessageReactionBot extends ActivityHandler {
         });
     }
 
+    /**
+     * @protected
+     */
     protected async onReactionsAddedActivity(reactionsAdded: MessageReaction[], context: TurnContext): Promise<void> {
         for (var i = 0, len = reactionsAdded.length; i < len; i++) {
             var activity = await this._log.find(context.activity.replyToId);
@@ -47,6 +54,9 @@ export class MessageReactionBot extends ActivityHandler {
         return;
     }
 
+    /**
+     * @protected
+     */
     protected async onReactionsRemovedActivity(reactionsAdded: MessageReaction[], context: TurnContext): Promise<void> {
         for (var i = 0, len = reactionsAdded.length; i < len; i++) {
             // The ReplyToId property of the inbound MessageReaction Activity will correspond to a Message Activity that was previously sent from this bot.
@@ -63,6 +73,11 @@ export class MessageReactionBot extends ActivityHandler {
         return;
     }
 
+    /**
+     * Sends an activity reply.
+     * @param context The `TurnContext`.
+     * @param text The `Activity`'s text.
+     */
     async sendMessageAndLogActivityId(context: TurnContext, text: string): Promise<void> {
         var replyActivity = MessageFactory.text(text);
         var resourceResponse = await context.sendActivity(replyActivity);

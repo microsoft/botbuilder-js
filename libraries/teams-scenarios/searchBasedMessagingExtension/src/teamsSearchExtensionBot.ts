@@ -15,15 +15,16 @@ import {
     TurnContext
 } from 'botbuilder';
 
+/**
+ * For this example, we're using UserState to store the user's preferences for the type of Rich Card they receive.
+ * Users can specify the type of card they receive by configuring the Messaging Extension.
+ * To store their configuration, we will use the userState passed in via the constructor.
+ */
 export class TeamsSearchExtensionBot extends TeamsActivityHandler {
-
-    // For this example, we're using UserState to store the user's preferences for the type of Rich Card they receive.
-    // Users can specify the type of card they receive by configuring the Messaging Extension.
-    // To store their configuration, we will use the userState passed in via the constructor.
-
     /**
+     * Initializes a new instance of the `TeamsSearchExtensionBot` class.
      * We need to change the key for the user state because the bot might not be in the conversation, which means they get a 403 error.
-     * @param userState 
+     * @param userState User's bot state for persistance.
      */
     constructor(public userState: BotState) {
         super();
@@ -48,11 +49,14 @@ export class TeamsSearchExtensionBot extends TeamsActivityHandler {
         });
     }
 
+    /**
+     * @protected
+     */
     protected async handleTeamsMessagingExtensionQuery(context: TurnContext, query: MessagingExtensionQuery): Promise<MessagingExtensionResponse>{
         const searchQuery = query.parameters[0].value;
         const composeExtension = this.createMessagingExtensionResult([
-            this.createSearchResultAttachment(searchQuery), 
-            this.createDummySearchResultAttachment(searchQuery), 
+            this.createSearchResultAttachment(searchQuery),
+            this.createDummySearchResultAttachment(searchQuery),
             this.createSelectItemsResultAttachment(searchQuery)
         ]);
 
@@ -61,6 +65,9 @@ export class TeamsSearchExtensionBot extends TeamsActivityHandler {
         };
     }
 
+    /**
+     * @protected
+     */
     protected async handleTeamsMessagingExtensionSelectItem(context: TurnContext, query: any): Promise<MessagingExtensionResponse> {
         const searchQuery = query.query;
         const bfLogo = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQtB3AwMUeNoq4gUBGe6Ocj8kyh3bXa9ZbV7u1fVKQoyKFHdkqU";
@@ -71,6 +78,9 @@ export class TeamsSearchExtensionBot extends TeamsActivityHandler {
         };
     }
 
+    /**
+     * @private
+     */
     private createMessagingExtensionResult(attachments: Attachment[]) : MessagingExtensionResult {
         return <MessagingExtensionResult> {
             type: "result",
@@ -79,6 +89,9 @@ export class TeamsSearchExtensionBot extends TeamsActivityHandler {
         };
     }
 
+    /**
+     * @private
+     */
     private createSearchResultAttachment(searchQuery: string) : MessagingExtensionAttachment {
         const cardText = `You said \"${searchQuery}\"`;
         const bfLogo = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQtB3AwMUeNoq4gUBGe6Ocj8kyh3bXa9ZbV7u1fVKQoyKFHdkqU";
@@ -100,6 +113,9 @@ export class TeamsSearchExtensionBot extends TeamsActivityHandler {
         };
     }
 
+    /**
+     * @private
+     */
     private createDummySearchResultAttachment(searchQuery: string) : MessagingExtensionAttachment {
         const cardText = "https://docs.microsoft.com/en-us/microsoftteams/platform/concepts/bots/bots-overview";
         const bfLogo = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQtB3AwMUeNoq4gUBGe6Ocj8kyh3bXa9ZbV7u1fVKQoyKFHdkqU";
@@ -121,6 +137,9 @@ export class TeamsSearchExtensionBot extends TeamsActivityHandler {
         };
     }
 
+    /**
+     * @private
+     */
     private createSelectItemsResultAttachment(searchQuery: string): MessagingExtensionAttachment {
         const bfLogo = 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQtB3AwMUeNoq4gUBGe6Ocj8kyh3bXa9ZbV7u1fVKQoyKFHdkqU';
         const cardText = `You said: "${searchQuery}"`;

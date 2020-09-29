@@ -16,9 +16,15 @@ import {
 } from 'botbuilder';
 import { basename } from 'path';
 
+/**
+ * Reply to channel bot handlers.
+ */
 export class ReplyToChannelBot extends TeamsActivityHandler {
     botId: string;
-    
+
+    /**
+     * Initializes a new instance of the `ReplyToChannelBot` class.
+     */
     constructor() {
         super();
 
@@ -43,16 +49,18 @@ export class ReplyToChannelBot extends TeamsActivityHandler {
         });
     }
 
-    
+    /**
+     * @private
+     */
     private async teamsCreateConversation(context: TurnContext, teamsChannelId: string, message: Partial<Activity>): Promise<[ConversationReference, string]> {
         if (!teamsChannelId) {
             throw new Error('Missing valid teamsChannelId argument');
         }
-    
+
         if (!message) {
             throw new Error('Missing valid message argument');
         }
-    
+
         const conversationParameters = <ConversationParameters>{
             isGroup: true,
             channelData: <TeamsChannelData>{
@@ -60,14 +68,14 @@ export class ReplyToChannelBot extends TeamsActivityHandler {
                     id: teamsChannelId
                 }
             },
-    
+
             activity: message,
         };
 
-        const adapter = <BotFrameworkAdapter>context.adapter;    
+        const adapter = <BotFrameworkAdapter>context.adapter;
         const connectorClient = adapter.createConnectorClient(context.activity.serviceUrl);
 
-        // This call does NOT send the outbound Activity is not being sent through the middleware stack.    
+        // This call does NOT send the outbound Activity is not being sent through the middleware stack.
         const conversationResourceResponse: ConversationResourceResponse = await connectorClient.conversations.createConversation(conversationParameters);
         const conversationReference = <ConversationReference>TurnContext.getConversationReference(context.activity);
         conversationReference.conversation.id = conversationResourceResponse.id;

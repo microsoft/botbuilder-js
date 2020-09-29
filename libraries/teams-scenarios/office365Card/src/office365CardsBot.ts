@@ -23,6 +23,9 @@ import {
  * You can install this bot in any scope. From the UI just @mention the bot.
  */
 export class Office365CardsBot extends TeamsActivityHandler {
+    /**
+     * Initializes a new instance of the `Office365CardsBot` class.
+     */
     constructor() {
         super();
 
@@ -46,10 +49,16 @@ export class Office365CardsBot extends TeamsActivityHandler {
         });
     }
 
+    /**
+     * @protected
+     */
     protected async handleTeamsO365ConnectorCardAction(context: TurnContext, query: O365ConnectorCardActionQuery): Promise<void> {
         await context.sendActivity(MessageFactory.text(`O365ConnectorCardActionQuery event value: ${JSON.stringify(query)}`));
     }
 
+    /**
+     * @private
+     */
     private async sendO365CardAttachment(context: TurnContext): Promise<void> {
         const card = CardFactory.o365ConnectorCard(<O365ConnectorCard>{
             "title": "card title",

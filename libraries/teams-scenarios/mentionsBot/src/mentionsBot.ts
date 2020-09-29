@@ -7,10 +7,13 @@ import {
     TeamsActivityHandler,
 } from 'botbuilder';
 
+/**
+ * You can @mention the bot from any scope and it will reply with the mention.
+ */
 export class MentionsBot  extends TeamsActivityHandler {
-    /*
-     * You can @mention the bot from any scope and it will reply with the mention.
-     */    
+    /**
+     * Initializes a new instance of the `MentionsBot` class.
+     */
     constructor() {
         super();
 

@@ -14,7 +14,16 @@ import {
     ActionTypes,
 } from 'botframework-schema'
 
+/**
+ * After uploading the manifest you can click the dots in the extension menu at the bottom, or search for the
+ * exntesion in the command bar. From the extension window or the command bar you can click on the 3 dots on the specific extension to trigger
+ * the OnMessageActivityAsync function. If you click on the "Settings" tab you will fire the OnTeamsMessagingExtensionConfigurationSettingAsync
+ * function.
+ */
 export class MessagingExtensionConfigBot  extends TeamsActivityHandler {
+    /**
+     * Initializes a new instance of the `MessagingExtensionConfigBot` class.
+     */
     constructor() {
         super();
 
@@ -38,12 +47,15 @@ export class MessagingExtensionConfigBot  extends TeamsActivityHandler {
         });
     }
 
+    /**
+     * @protected
+     */
     protected async handleTeamsMessagingExtensionConfigurationQuerySettingUrl(context: TurnContext, query: MessagingExtensionQuery){
         return <MessagingExtensionActionResponse>
         {
             composeExtension: <MessagingExtensionResult> {
                 type: 'config',
-                suggestedActions: <MessagingExtensionSuggestedAction> { 
+                suggestedActions: <MessagingExtensionSuggestedAction> {
                     actions: [
                         {
                             type: ActionTypes.OpenUrl,
@@ -55,6 +67,9 @@ export class MessagingExtensionConfigBot  extends TeamsActivityHandler {
         }
     }
 
+    /**
+     * @protected
+     */
     protected async handleTeamsMessagingExtensionConfigurationSetting(context: TurnContext, settings){
         // This event is fired when the settings page is submitted
         await context.sendActivity(`onTeamsMessagingExtensionSettings event fired with ${ JSON.stringify(settings) }`);

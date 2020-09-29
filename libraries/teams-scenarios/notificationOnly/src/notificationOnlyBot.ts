@@ -9,12 +9,15 @@ import {
     TurnContext,
 } from 'botbuilder';
 
+/**
+ * This bot needs to be installed in a team or group chat that you are an admin of. You can add/remove someone from that team and
+ * the bot will send that person a 1:1 message saying what happened. Also, yes, this scenario isn't the most up to date with the updated
+ * APIs for membersAdded/removed. Also you should NOT be able to @mention this bot.
+ */
 export class NotificationOnlyBot extends TeamsActivityHandler {
-    /*
-     * This bot needs to be installed in a team or group chat that you are an admin of. You can add/remove someone from that team and
-     * the bot will send that person a 1:1 message saying what happened. Also, yes, this scenario isn't the most up to date with the updated
-     * APIs for membersAdded/removed. Also you should NOT be able to @mention this bot.
-     */    
+    /**
+     * Initializes a new instance of the `NotificationOnlyBot` class.
+     */
     constructor() {
         super();
 
@@ -46,7 +49,7 @@ export class NotificationOnlyBot extends TeamsActivityHandler {
         this.onMembersAdded(async (context: TurnContext, next: () => Promise<void>): Promise<void> => {
             for (const member of context.activity.membersAdded) {
                 var replyActivity = MessageFactory.text(`${member.id} was added to the team.`);
-                
+
                 replyActivity = TurnContext.applyConversationReference(replyActivity, TurnContext.getConversationReference(context.activity));
                 const channelId = context.activity.conversation.id.split(';')[0];
                 replyActivity.conversation.id = channelId;
@@ -58,7 +61,7 @@ export class NotificationOnlyBot extends TeamsActivityHandler {
         this.onMembersRemoved(async (context: TurnContext, next: () => Promise<void>): Promise<void> => {
             for (const member of context.activity.membersRemoved) {
                 var replyActivity = MessageFactory.text(`${member.id} was removed from the team.`);
-                
+
                 replyActivity = TurnContext.applyConversationReference(replyActivity, TurnContext.getConversationReference(context.activity));
                 const channelId = context.activity.conversation.id.split(';')[0];
                 replyActivity.conversation.id = channelId;
