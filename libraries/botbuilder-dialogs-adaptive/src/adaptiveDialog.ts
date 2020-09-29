@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 
-import { IntExpression, ExpressionParser } from 'adaptive-expressions';
+import { IntExpression, ExpressionParser, BoolExpression } from 'adaptive-expressions';
 import { Activity, ActivityTypes, getTopScoringIntent, RecognizerResult, StringUtils, TurnContext, telemetryTrackDialogView } from 'botbuilder-core';
 import { Dialog, DialogContainer, DialogContext, DialogDependencies, DialogEvent, DialogInstance, DialogPath, DialogReason, DialogState, DialogTurnResult, DialogTurnStatus, TurnPath } from 'botbuilder-dialogs';
 import { ActionContext } from './actionContext';
@@ -75,7 +75,7 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
      * If false, when there are no actions to execute, the current dialog will simply end the turn and still be active.
      * Defaults to a value of true.
      */
-    public autoEndDialog: boolean = true;
+    public autoEndDialog: BoolExpression = new BoolExpression(true);
 
     /**
      * Optional. The selector for picking the possible events to execute.
@@ -174,6 +174,12 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
         // Install dependencies on first access
         this.ensureDependenciesInstalled();
 
+        // Initialize dialog state
+        if (options) {
+            // Replace initial activeDialog.State with clone of options
+            dc.activeDialog.state = JSON.parse(JSON.stringify(options));
+        }
+
         // Initialize event counter
         const dcState = dc.state;
         if (dcState.getValue(DialogPath.eventCounter) == undefined) {
@@ -199,11 +205,6 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
             });
         }
 
-        // Initialize dialog state
-        if (options) {
-            // Replace initial activeDialog.State with clone of options
-            dc.activeDialog.state = JSON.parse(JSON.stringify(options));
-        }
         dc.activeDialog.state[this.adaptiveKey] = {};
 
         const properties: { [key: string]: string } = {
@@ -603,7 +604,7 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
             if (handled) {
                 // Still processing assignments
                 return await this.continueActions(actionContext);
-            } else if (this.shouldEnd(actionContext)) {
+            } else if (this.autoEndDialog.getValue(actionContext.state)) {
                 const result = actionContext.state.getValue(this.defaultResultProperty);
                 return await actionContext.endDialog(result);
             }
@@ -614,10 +615,6 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
 
     private getUniqueInstanceId(dc: DialogContext): string {
         return dc.stack.length > 0 ? `${ dc.stack.length }:${ dc.activeDialog.id }` : '';
-    }
-
-    private shouldEnd(dc: DialogContext): boolean {
-        return this.autoEndDialog;
     }
 
     private toActionContext(dc: DialogContext): ActionContext {

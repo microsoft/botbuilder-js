@@ -10,6 +10,7 @@ import { Expression } from '../expression';
 import { ExpressionEvaluator, ValueWithError } from '../expressionEvaluator';
 import { ExpressionType } from '../expressionType';
 import { FunctionUtils } from '../functionUtils';
+import { InternalFunctionUtils } from '../functionUtils.internal';
 import { MemoryInterface } from '../memory/memoryInterface';
 import { SimpleObjectMemory } from '../memory/simpleObjectMemory';
 import { Options } from '../options';
@@ -34,7 +35,7 @@ export class Accessor extends ExpressionEvaluator {
 
         if (left == undefined) {
             // fully converted to path, so we just delegate to memory scope
-            return { value: FunctionUtils.wrapGetValue(state, path, options), error: undefined };
+            return { value: InternalFunctionUtils.wrapGetValue(state, path, options), error: undefined };
         } else {
             let newScope: any;
             let err: string;
@@ -43,7 +44,7 @@ export class Accessor extends ExpressionEvaluator {
                 return { value: undefined, error: err };
             }
 
-            return { value: FunctionUtils.wrapGetValue(new SimpleObjectMemory(newScope), path, options), error: undefined };
+            return { value: InternalFunctionUtils.wrapGetValue(new SimpleObjectMemory(newScope), path, options), error: undefined };
         }
     }
 

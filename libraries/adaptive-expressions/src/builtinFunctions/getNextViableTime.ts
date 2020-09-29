@@ -11,6 +11,7 @@ import { Expression } from '../expression';
 import { ReturnType } from '../returnType';
 import { ExpressionType } from '../expressionType';
 import { FunctionUtils } from '../functionUtils';
+import { InternalFunctionUtils } from '../functionUtils.internal';
 import { MemoryInterface } from '../memory/memoryInterface';
 import { Options } from '../options';
 import { TimeZoneConverter } from '../timeZoneConverter';
@@ -39,7 +40,7 @@ export class GetNextViableTime extends ExpressionEvaluator {
         ({args, error} = FunctionUtils.evaluateChildren(expr, state, options));
         if(!error)  {
             if (!formatRegex.test(args[0] as string)) {
-                error = `${args[0]}  must be a timex string which only contains minutes and seconds, for example: 'TXX:15:28'`
+                error = `${args[0]}  must be a timex string which only contains minutes and seconds, for example: 'TXX:15:28'`;
             }
         }
 
@@ -59,7 +60,7 @@ export class GetNextViableTime extends ExpressionEvaluator {
         }
 
         if (!error) {
-            ({timexProperty: parsed, error: error} = FunctionUtils.parseTimexProperty((args[0] as string).replace('XX', '00')));
+            ({timexProperty: parsed, error: error} = InternalFunctionUtils.parseTimexProperty((args[0] as string).replace('XX', '00')));
         }
 
         if (!error) {
@@ -71,6 +72,10 @@ export class GetNextViableTime extends ExpressionEvaluator {
                 validHour = hour;
             } else {
                 validHour = hour + 1;
+            }
+
+            if (validHour >= 24) {
+                validHour -= 24;
             }
 
             validMinute = parsed.minute;

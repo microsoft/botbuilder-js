@@ -12,6 +12,7 @@ import { Expression } from '../expression';
 import { ExpressionEvaluator, ValueWithError } from '../expressionEvaluator';
 import { ExpressionType } from '../expressionType';
 import { FunctionUtils } from '../functionUtils';
+import { InternalFunctionUtils } from '../functionUtils.internal';
 import { MemoryInterface } from '../memory/memoryInterface';
 import { Options } from '../options';
 import { ReturnType } from '../returnType';
@@ -38,7 +39,7 @@ export class ConvertFromUTC extends ExpressionEvaluator {
             if (typeof (args[0]) === 'string' && typeof (args[1]) === 'string') {
                 ({ value, error } = ConvertFromUTC.evalConvertFromUTC(args[0], args[1], format));
             } else {
-                error = `${expression} cannot evaluate`;
+                error = `${expression} should contain an ISO format timestamp, an origin time zone string and an optional output format string.`;
             }
         }
 
@@ -48,7 +49,7 @@ export class ConvertFromUTC extends ExpressionEvaluator {
     private static evalConvertFromUTC(timeStamp: string, destinationTimeZone: string, format?: string): ValueWithError {
         let result: string;
         let error: string;
-        error = FunctionUtils.verifyISOTimestamp(timeStamp);
+        error = InternalFunctionUtils.verifyISOTimestamp(timeStamp);
         const timeZone: string = TimeZoneConverter.windowsToIana(destinationTimeZone);
         if (!TimeZoneConverter.verifyTimeZoneStr(timeZone)) {
             error = `${destinationTimeZone} is not a valid timezone`;
