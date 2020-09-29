@@ -68,7 +68,7 @@
             "files": ["libraries/botbuilder-applicationinsights/src/*.ts", "libraries/botbuilder-applicationinsights/src/**/*.ts"],
             "plugins": ["jsdoc"],
             "rules": {
-              "jsdoc/require-jsdoc": ["warn", {
+              "jsdoc/require-jsdoc": ["error", {
                   "require": {
                       "FunctionDeclaration": true,
                       "MethodDefinition": true,
