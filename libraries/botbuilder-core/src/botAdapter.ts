@@ -98,7 +98,7 @@ export abstract class BotAdapter {
         ) => Promise<void>): Promise<void>;
 
     /**
-     * Gets or sets an error handler that can catch exceptions in the middleware or application.
+     * Gets an error handler that can catch exceptions in the middleware or application.
      * 
      * @remarks
      * The error handler is called with these parameters:
@@ -112,6 +112,17 @@ export abstract class BotAdapter {
         return this.turnError;
     }
 
+    /**
+     * Sets an error handler that can catch exceptions in the middleware or application.
+     * 
+     * @remarks
+     * The error handler is called with these parameters:
+     * 
+     * | Name | Type | Description |
+     * | :--- | :--- | :--- |
+     * | `context` | [TurnContext](xref:botbuilder-core.TurnContext) | The context object for the turn. |
+     * | `error` | `Error` | The Node.js error thrown. |
+     */
     public set onTurnError(value: (context: TurnContext, error: Error) => Promise<void>) {
         this.turnError = value;
     }

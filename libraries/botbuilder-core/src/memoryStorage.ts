@@ -37,6 +37,11 @@ export class MemoryStorage  implements Storage {
         this.etag = 1;
     }
 
+    /**
+     * Reads storage items from storage.
+     * @param keys Keys of the `StoreItem` objects to read.
+     * @returns The read items.
+     */
     public read(keys: string[]): Promise<StoreItems> {
         return new Promise<StoreItems>((resolve: any, reject: any): void => {
             if (!keys) { throw new ReferenceError(`Keys are required when reading.`); }
@@ -51,6 +56,10 @@ export class MemoryStorage  implements Storage {
         });
     }
 
+    /**
+     * Writes storage items to storage.
+     * @param changes The items to write, indexed by key.
+     */
     public write(changes: StoreItems): Promise<void> {
         const that: MemoryStorage = this;
         function saveItem(key: string, item: any): void {
@@ -79,6 +88,10 @@ export class MemoryStorage  implements Storage {
         });
     }
 
+    /**
+     * Deletes storage items from storage.
+     * @param keys Keys of the objects to delete.
+     */
     public delete(keys: string[]): Promise<void> {
         return new Promise<void>((resolve: any, reject: any): void => {
             keys.forEach((key: string) => this.memory[key] = <any>undefined);

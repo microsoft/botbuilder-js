@@ -67,37 +67,75 @@ export interface TelemetryPageView {
     metrics?: {[key: string]: number };
 }
 
+/**
+ * A null bot telemetry client that implements `IBotTelemetryClient`.
+ */
 export class NullTelemetryClient implements BotTelemetryClient, BotPageViewTelemetryClient {
 
+    /**
+     * Creates a new instance of the `NullTelemetryClient` class.
+     * @param settings Optional. Settings for the telemetry client.
+     */
     constructor(settings?: any) {
         // noop
     }
-    
+
+    /**
+     * Logs an Application Insights page view.
+     * @param telemetry Telemetry Page View.
+     */
     trackPageView(telemetry: TelemetryPageView) {
         // noop
     }
 
+    /**
+     * Sends information about an external dependency (outgoing call) in the application.
+     * @param telemetry Telemetry Dependency.
+     */
     trackDependency(telemetry: TelemetryDependency) {
         // noop
     }
 
-    trackEvent(telemetry: TelemetryEvent)  {
+    /**
+     * Logs custom events with extensible named fields.
+     * @param telemetry Telemetry Event.
+     */
+    trackEvent(telemetry: TelemetryEvent) {
         // noop
     }
 
+    /**
+     * Logs a system exception.
+     * @param telemetry Telemetry Exception to log.
+     */
     trackException(telemetry: TelemetryException)  {
         // noop
     }
 
+    /**
+     * Sends a trace message.
+     * @param telemetry Telemetry Trace.
+     */
     trackTrace(telemetry: TelemetryTrace) {
         // noop
     }
 
+    /**
+     * Flushes the in-memory buffer and any metrics being pre-aggregated.
+     */
     flush()  {
         // noop
     }
 }
 
+/**
+ * Logs a DialogView using the TrackPageView method on the BotTelemetryClient if BotPageViewTelemetryClient has been implemented.
+ * Alternatively logs the information out via TrackTrace.
+ * @param telemetryClient TelemetryClient that implements BotTelemetryClient.
+ * @param dialogName Name of the dialog to log the entry / start for.
+ * @param properties Named string values you can use to search and classify events.
+ * @param metrics Measurements associated with this event.
+ */
 export function telemetryTrackDialogView(telemetryClient: BotTelemetryClient, dialogName: string, properties?: {[key: string]: any}, metrics?: {[key: string]: number }): void {
     if (!clientSupportsTrackDialogView(telemetryClient)) {
         throw new TypeError('"telemetryClient" parameter does not have methods trackPageView() or trackTrace()');

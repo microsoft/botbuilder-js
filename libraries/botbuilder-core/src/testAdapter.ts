@@ -445,9 +445,16 @@ export class TestAdapter extends BotAdapter implements ExtendedUserTokenProvider
         return undefined;
     }
 
-    
     private exchangeableTokens : {[key: string]: ExchangeableToken} = {};
 
+    /**
+     * Adds a fake exchangeable token so it can be exchanged later.
+     * @param connectionName Name of the auth connection to use.
+     * @param channelId Channel ID.
+     * @param userId User ID.
+     * @param exchangeableItem Exchangeable token or resource URI.
+     * @param token Token to store.
+     */
     public addExchangeableToken(connectionName: string, channelId: string, userId: string, exchangeableItem: string, token: string) {
         const key: ExchangeableToken = new ExchangeableToken();
         key.ChannelId = channelId;
@@ -458,6 +465,13 @@ export class TestAdapter extends BotAdapter implements ExtendedUserTokenProvider
         this.exchangeableTokens[key.toKey()] = key;
     }
 
+    /**
+     * Gets a sign-in resource.
+     * @param context Context for the current turn of conversation with the user.
+     * @param connectionName Name of the auth connection to use.
+     * @param userId User ID
+     * @param finalRedirect Final redirect URL.
+     */
     public async getSignInResource(context: TurnContext, connectionName: string, userId?: string, finalRedirect?: string): Promise<SignInUrlResponse> {
         return {
             signInLink: `https://botframeworktestadapter.com/oauthsignin/${connectionName}/${context.activity.channelId}/${userId}`,
@@ -470,7 +484,14 @@ export class TestAdapter extends BotAdapter implements ExtendedUserTokenProvider
         }
     }
 
-
+    /**
+     * Performs a token exchange operation such as for single sign-on.
+     * @param context Context for the current turn of conversation with the user.
+     * @param connectionName Name of the auth connection to use.
+     * @param userId User id associated with the token.
+     * @param tokenExchangeRequest Exchange request details, either a token to exchange or a uri to exchange.
+     * @returns If the promise completes, the exchanged token is returned.
+     */
     public async exchangeToken(context: TurnContext, connectionName: string, userId: string, tokenExchangeRequest: TokenExchangeRequest): Promise<TokenResponse> {
         const exchangeableValue: string = tokenExchangeRequest.token ? tokenExchangeRequest.token : tokenExchangeRequest.uri;
         const key = new ExchangeableToken();

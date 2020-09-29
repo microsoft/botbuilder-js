@@ -447,9 +447,8 @@ export class ActivityHandler extends ActivityHandlerBase {
         await this.handle(context, 'Message', this.defaultNextEvent(context));
     }
 
-    /*
+    /**
      * Provides default behavior for invoke activities.
-     * 
      * @param context The context object for the current turn.
      * 
      * @remarks
@@ -482,7 +481,7 @@ export class ActivityHandler extends ActivityHandlerBase {
         }
     }
 
-    /*
+    /**
      * Handle _signin invoke activity type_.
      * 
      * @param context The context object for the current turn.
@@ -494,7 +493,7 @@ export class ActivityHandler extends ActivityHandlerBase {
         throw new Error('NotImplemented');
     }
 
-    /*
+    /**
      * Handle _healthCheck invoke activity type_.
      * 
      * @param context The context object for the current turn.
@@ -866,6 +865,11 @@ export class ActivityHandler extends ActivityHandlerBase {
         return returnValue;
     }
 
+    /**
+     * An InvokeResponse factory that initializes the body to the parameter passed and status equal to OK.
+     * @param body JSON serialized content from a POST response.
+     * @returns A new InvokeResponse object.
+     */
     protected static createInvokeResponse(body?: any): InvokeResponse {
         return { status: 200, body };
     }

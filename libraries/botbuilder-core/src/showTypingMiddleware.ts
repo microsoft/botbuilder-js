@@ -73,6 +73,9 @@ export class ShowTypingMiddleware implements Middleware {
         if (timeout) clearTimeout(timeout);
     }
 
+    /**
+     * @private
+     */
     private async sendTypingActivity(context: TurnContext) {
         // Sending the Activity directly via the Adapter avoids other middleware and avoids setting the
         // responded flag. However this also requires that the conversation reference details are explicitly added.

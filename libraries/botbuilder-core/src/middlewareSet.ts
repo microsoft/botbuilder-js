@@ -77,6 +77,11 @@ export class MiddlewareSet implements Middleware {
         MiddlewareSet.prototype.use.apply(this, middleware);
     }
 
+    /**
+     * Processes an incoming activity.
+     * @param context Context object for this turn.
+     * @param next Delegate to call to continue the bot middleware pipeline.
+     */
     public onTurn(context: TurnContext, next: () => Promise<void>): Promise<void> {
         return this.run(context, next);
     }

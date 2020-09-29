@@ -744,6 +744,9 @@ export class TurnContext {
         return this._turnState;
     }
 
+    /**
+     * @private
+     */
     private emit<T>(
         handlers: ((context: TurnContext, arg: T, next: () => Promise<any>) => Promise<any>)[],
         arg: T,

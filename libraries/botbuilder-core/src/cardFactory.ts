@@ -156,6 +156,15 @@ export class CardFactory {
         buttons?: (CardAction | string)[],
         other?: Partial<HeroCard>
     ): Attachment;
+    /**
+     * Returns an attachment for a hero card.
+     *
+     * @param title The card title.
+     * @param text Optional. The card text.
+     * @param images Optional. Images to include on the card.
+     * @param buttons Optional. Buttons to include on the card.
+     * @param other Optional. Any additional properties to include on the card.
+     */
     public static heroCard(
         title: string,
         text?: any,
@@ -276,6 +285,15 @@ export class CardFactory {
         buttons?: (CardAction | string)[],
         other?: Partial<ThumbnailCard>
     ): Attachment;
+    /**
+     * Returns an attachment for a thumbnail card.
+     *
+     * @param title The card title.
+     * @param text Optional. The card text.
+     * @param images Optional. Images to include on the card.
+     * @param buttons Optional. Buttons to include on the card.
+     * @param other Optional. Any additional properties to include on the card.
+     */
     public static thumbnailCard(
         title: string,
         text?: any,

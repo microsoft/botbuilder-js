@@ -22,6 +22,10 @@ import { TurnContext } from './turnContext';
  * This will remove the <at> nodes, leaving just the name.
  */
 export class SkypeMentionNormalizeMiddleware implements Middleware {
+    /**
+     * Performs the normalization of Skype mention Entities.
+     * @param activity Activity containing the mentions to normalize.
+     */
     public static normalizeSkypeMentionText(activity: Activity): void {
         if (activity.channelId === 'skype' && activity.type === 'message'){
             activity.entities.map((element): void => {
@@ -37,6 +41,11 @@ export class SkypeMentionNormalizeMiddleware implements Middleware {
         }
     }
 
+    /**
+     * Middleware implementation which corrects Entity.Mention.Text to a value RemoveMentionText can work with.
+     * @param turnContext Context for the current turn of conversation.
+     * @param next Delegate to call to continue the bot middleware pipeline.
+     */
     public async onTurn(turnContext: TurnContext, next: () => Promise<void>): Promise<void> {
         SkypeMentionNormalizeMiddleware.normalizeSkypeMentionText(turnContext.activity);
         await next();

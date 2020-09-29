@@ -5,6 +5,11 @@
 
 const TURN_STATE_SCOPE_CACHE = Symbol('turnStateScopeCache');
 
+/**
+ * Values persisted for the lifetime of the turn as part of the `TurnContext`.
+ * @remarks Typical values stored here are objects which are needed for the lifetime of a turn, such
+ * as `Storage`, `BotState`, `ConversationState`, `LanguageGenerator`, `ResourceExplorer`, etc.
+ */
 export class TurnContextStateCollection extends Map<any, any> {
     /**
      * Push a value by key to the turn's context.

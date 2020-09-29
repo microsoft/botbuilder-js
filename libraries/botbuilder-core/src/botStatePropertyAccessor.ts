@@ -89,6 +89,10 @@ export class BotStatePropertyAccessor<T = any> implements StatePropertyAccessor<
      */
     constructor(protected readonly state: BotState, public readonly name: string) { }
 
+    /**
+     * Deletes the persisted property from its backing storage object.
+     * @param context Context object for this turn.
+     */
     public async delete(context: TurnContext): Promise<void> {
         const obj: any = await this.state.load(context);
         if (obj.hasOwnProperty(this.name)) {
@@ -98,6 +102,12 @@ export class BotStatePropertyAccessor<T = any> implements StatePropertyAccessor<
 
     public async get(context: TurnContext): Promise<T|undefined>;
     public async get(context: TurnContext, defaultValue: T): Promise<T>;
+    /**
+     * Reads a persisted property from its backing storage object.
+     * @param context Context object for this turn.
+     * @param defaultValue Optional. Default value for the property.
+     * @returns A JSON representation of the cached state.
+     */
     public async get(context: TurnContext, defaultValue?: T): Promise<T> {
         const obj: any = await this.state.load(context);
         if (!obj.hasOwnProperty(this.name) && defaultValue !== undefined) {
@@ -109,6 +119,11 @@ export class BotStatePropertyAccessor<T = any> implements StatePropertyAccessor<
         return obj[this.name];
     }
 
+    /**
+     * Assigns a new value to the properties backing storage object.
+     * @param context Context object for this turn.
+     * @param value Value to set on the property.
+     */
     public async set(context: TurnContext, value: T): Promise<void> {
         const obj: any = await this.state.load(context);
         obj[this.name] = value;

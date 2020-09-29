@@ -6,6 +6,9 @@
  * Licensed under the MIT License.
  */
 
+/**
+ * Helper class containing string utility methods.
+ */
 export class StringUtils {
     /**
      * Truncate string with ...
