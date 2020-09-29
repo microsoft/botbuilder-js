@@ -9,6 +9,7 @@
 import { EvaluateExpressionDelegate, ExpressionEvaluator } from '../expressionEvaluator';
 import { ExpressionType } from '../expressionType';
 import { FunctionUtils } from '../functionUtils';
+import { InternalFunctionUtils } from '../functionUtils.internal';
 import { ReturnType } from '../returnType';
 
 import atob = require('atob-lite');
@@ -25,7 +26,7 @@ export class Base64ToBinary extends ExpressionEvaluator {
         return FunctionUtils.apply(
             (args: Readonly<any>): Uint8Array => {
                 const raw = atob(args[0].toString());
-                return FunctionUtils.toBinary(raw);
+                return InternalFunctionUtils.toBinary(raw);
             }, FunctionUtils.verifyString);
     }
 }
