@@ -22,7 +22,7 @@ export class DialogMemoryScope extends MemoryScope {
     }
 
     /**
-     * Gets the backing memory for this scope
+     * Gets the backing memory for this scope.
      * @param dc The DialogContext object for this turn.
      * @returns The memory for the scope.
      */
