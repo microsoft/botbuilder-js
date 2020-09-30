@@ -9,6 +9,7 @@
 import { EvaluateExpressionDelegate, ExpressionEvaluator } from '../expressionEvaluator';
 import { ExpressionType } from '../expressionType';
 import { FunctionUtils } from '../functionUtils';
+import { InternalFunctionUtils } from '../functionUtils.internal';
 import { ReturnType } from '../returnType';
 
 /**
@@ -21,7 +22,7 @@ export class Year extends ExpressionEvaluator {
 
     private static evaluator(): EvaluateExpressionDelegate {
         return FunctionUtils.applyWithError(
-            (args: any[]): any => FunctionUtils.parseTimestamp(args[0], (timestamp: Date): number => timestamp.getUTCFullYear()),
+            (args: any[]): any => InternalFunctionUtils.parseTimestamp(args[0], (timestamp: Date): number => timestamp.getUTCFullYear()),
             FunctionUtils.verifyString);
     }
 }
