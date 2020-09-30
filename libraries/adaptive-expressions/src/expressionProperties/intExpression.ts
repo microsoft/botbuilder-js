@@ -15,8 +15,8 @@ import { Expression } from '../expression';
  */
 export class IntExpression extends ExpressionProperty<number> {
     /**
-     * Initializes a new instance of the `ArrayExpression<T>` class.
-     * @param value An `int` or `string` expression which resolves to a `int`.
+     * Initializes a new instance of the `IntExpression` class.
+     * @param value An int `number` or `string` expression which resolves to an int `number`.
      */
     public constructor(value?: number | string | Expression) {
         super(value, 0);

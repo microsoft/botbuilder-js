@@ -16,7 +16,7 @@ import { Expression } from '../expression';
 export class BoolExpression extends ExpressionProperty<boolean> {
     
     /**
-     * Initializes a new instance of the `ArrayExpression<T>` class.
+     * Initializes a new instance of the `BoolExpression` class.
      * @param value A `boolean` or a `string` expression which resolves to a `boolean`.
      */
     public constructor(value?: boolean | string | Expression) {

@@ -16,7 +16,7 @@ import { ExpressionProperty } from './expressionProperty';
  */
 export class EnumExpression<T> extends ExpressionProperty<T> {
     /**
-     * Initializes a new instance of the `ArrayExpression<T>` class.
+     * Initializes a new instance of the `EnumExpression<T>` class.
      * @param value An enum of `T` or a `string` expression which resolves to an `enum`.
      */
     public constructor(value: T | string | Expression) {

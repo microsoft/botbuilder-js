@@ -23,7 +23,7 @@ import { Expression } from '../expression';
  */
 export class ValueExpression extends ExpressionProperty<any> {
     /**
-     * Initializes a new instance of the `ArrayExpression<T>` class.
+     * Initializes a new instance of the `ValueExpression` class.
      * @param value An object of `any` kind or a `string` expression.
      */
     public constructor(value?: any | string | Expression) {
