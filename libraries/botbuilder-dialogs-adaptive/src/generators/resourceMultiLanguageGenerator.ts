@@ -12,6 +12,9 @@ import { LanguageGenerator } from '../languageGenerator';
 import { LanguageGeneratorManager } from './languageGeneratorManager';
 import { languageGeneratorManagerKey } from '../languageGeneratorExtensions';
 
+/**
+ * Multi language resource generator that extends `MultiLanguageGeneratorBase` class.
+ */
 export class ResourceMultiLanguageGenerator extends MultiLanguageGeneratorBase {
     /**
      * Initializes a new instance of the ResourceMultiLanguageGenerator class.

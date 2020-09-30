@@ -7,7 +7,7 @@
  */
 
 /**
- * Class which manages cache of all LG resources from a ResourceExplorer. 
+ * Class which manages cache of all LG resources from a ResourceExplorer.
  * This class automatically updates the cache when resource change events occure.
  */
 import { Resource, ResourceExplorer, FileResource, ResourceChangeEvent } from 'botbuilder-dialogs-declarative';
@@ -64,6 +64,12 @@ export class LanguageGeneratorManager {
      */
     public languageGenerators: Map<string, LanguageGenerator> = new Map<string, LanguageGenerator>();
 
+    /**
+     * Returns the resolver to resolve LG import id to template text based on language and a template resource loader delegate.
+     * @param locale Locale to identify language.
+     * @param resourceMapping Template resource loader delegate.
+     * @returns The delegate to resolve the resource.
+     */
     public static resourceExplorerResolver(locale: string, resourceMapping: Map<string, Resource[]>): ImportResolverDelegate {
         return (lgResource: LGResource, id: string): LGResource => {
             const fallbackLocale = LanguageResourceLoader.fallbackLocale(locale, Array.from(resourceMapping.keys()));
@@ -81,6 +87,9 @@ export class LanguageGeneratorManager {
         };
     }
 
+    /**
+     * @private
+     */
     private getTemplateEngineLanguageGenerator(resource: Resource): TemplateEngineLanguageGenerator {
         return new TemplateEngineLanguageGenerator(resource, this._multiLanguageResources);
     }

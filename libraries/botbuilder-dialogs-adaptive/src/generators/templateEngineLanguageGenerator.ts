@@ -15,7 +15,7 @@ import { LanguageResourceLoader } from '../languageResourceLoader';
 import { LanguageGeneratorManager } from './languageGeneratorManager';
 
 /**
- * LanguageGenerator implementation which uses LGFile. 
+ * LanguageGenerator implementation which uses LGFile.
  */
 export class TemplateEngineLanguageGenerator implements LanguageGenerator{
     private readonly DEFAULTLABEL: string  = 'Unknown';
@@ -24,6 +24,11 @@ export class TemplateEngineLanguageGenerator implements LanguageGenerator{
 
     public id: string = '';
 
+    /**
+     * Initializes a new instance of the `TemplateEngineLanguageGenerator` class.
+     * @param arg1 An LG `Templates` or a `Resource`.
+     * @param arg2 A `Map` object with a `Resource` array for each key.
+     */
     public constructor(arg1?: Templates | Resource, arg2?: Map<string,Resource[]>) {
         if (arguments.length === 0) {
             this.lg = new Templates();
@@ -38,7 +43,14 @@ export class TemplateEngineLanguageGenerator implements LanguageGenerator{
             this.lg = Templates.parseResource(lgResource, importResolver);
         }
     }
-    
+
+    /**
+     * Method to generate text from given template and data.
+     * @param dialogContext Context for the current turn of conversation.
+     * @param template Template to evaluate.
+     * @param data Data to bind to.
+     * @returns A Promise string with the evaluated result.
+     */
     public generate(dialogContext: DialogContext, template: string, data: object): Promise<string> {
         try {
             // BUGBUG: I'm casting objects to <any> to work around a bug in the activity factory.
