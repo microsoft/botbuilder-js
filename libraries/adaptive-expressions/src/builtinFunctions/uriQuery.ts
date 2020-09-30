@@ -19,9 +19,8 @@ import { ReturnType } from '../returnType';
  * Return the query value of a unified resource identifier (URI).
  */
 export class UriQuery extends ExpressionEvaluator {
-
     /**
-     * Initializes a new instance of the UriQuery class.
+     * Initializes a new instance of the `UriQuery` class.
      */
     public constructor() {
         super(ExpressionType.UriQuery, UriQuery.evaluator, ReturnType.String, FunctionUtils.validateUnary);

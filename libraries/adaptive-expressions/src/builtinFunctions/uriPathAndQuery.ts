@@ -19,9 +19,8 @@ import { ReturnType } from '../returnType';
  * Return the path and query value of a unified resource identifier (URI).
  */
 export class UriPathAndQuery extends ExpressionEvaluator {
-
     /**
-     * Initializes a new instance of the UriPathAndQuery class.
+     * Initializes a new instance of the `UriPathAndQuery` class.
      */
     public constructor() {
         super(ExpressionType.UriPathAndQuery, UriPathAndQuery.evaluator, ReturnType.String, FunctionUtils.validateUnary);

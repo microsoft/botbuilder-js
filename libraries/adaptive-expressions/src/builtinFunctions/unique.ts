@@ -16,9 +16,8 @@ import { ReturnType } from '../returnType';
  * Remove all duplicates from an array.
  */
 export class Unique extends ExpressionEvaluator {
-
     /**
-     * Initializes a new instance of the Unique class.
+     * Initializes a new instance of the `Unique` class.
      */
     public constructor() {
         super(ExpressionType.Unique, Unique.evaluator(), ReturnType.Array, Unique.validator);

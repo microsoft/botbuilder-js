@@ -19,9 +19,8 @@ import { ReturnType } from '../returnType';
  * Return the port value of a unified resource identifier (URI).
  */
 export class UriPort extends ExpressionEvaluator {
-
     /**
-     * Initializes a new instance of the UriPort class.
+     * Initializes a new instance of the `UriPort` class.
      */
     public constructor() {
         super(ExpressionType.UriPort, UriPort.evaluator, ReturnType.Number, FunctionUtils.validateUnary);

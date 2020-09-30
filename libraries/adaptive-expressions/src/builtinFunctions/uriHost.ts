@@ -19,9 +19,8 @@ import { ReturnType } from '../returnType';
  * Return the host value of a unified resource identifier (URI).
  */
 export class UriHost extends ExpressionEvaluator {
-
     /**
-     * Initializes a new instance of the UriHost class.
+     * Initializes a new instance of the `UriHost` class.
      */
     public constructor() {
         super(ExpressionType.UriHost, UriHost.evaluator, ReturnType.String, FunctionUtils.validateUnary);

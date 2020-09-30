@@ -22,9 +22,8 @@ import { ReturnType } from '../returnType';
  * Filter on each element and return the new collection of filtered elements which match a specific condition.
  */
 export class Where extends ExpressionEvaluator {
-
     /**
-     * Initializes a new instance of the Where class.
+     * Initializes a new instance of the `Where` class.
      */
     public constructor() {
         super(ExpressionType.Where, Where.evaluator, ReturnType.Array, InternalFunctionUtils.validateForeach);

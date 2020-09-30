@@ -16,9 +16,8 @@ import { ReturnType } from '../returnType';
  * Return the year of the specified timestamp.
  */
 export class Year extends ExpressionEvaluator {
-
     /**
-     * Initializes a new instance of the Year class.
+     * Initializes a new instance of the `Year` class.
      */
     public constructor() {
         super(ExpressionType.Year, Year.evaluator(), ReturnType.Number, FunctionUtils.validateUnaryString);
