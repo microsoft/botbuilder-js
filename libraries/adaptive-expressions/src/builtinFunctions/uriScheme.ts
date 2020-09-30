@@ -19,17 +19,10 @@ import { ReturnType } from '../returnType';
  * Return the scheme value of a unified resource identifier (URI).
  */
 export class UriScheme extends ExpressionEvaluator {
-
-    /**
-     * Initializes a new instance of the UriScheme class.
-     */
     public constructor() {
         super(ExpressionType.UriScheme, UriScheme.evaluator, ReturnType.String, FunctionUtils.validateUnary);
     }
 
-    /**
-     * @private
-     */
     private static evaluator(expr: Expression, state: MemoryInterface, options: Options): ValueWithError {
         let value: any;
         let error: string;
@@ -39,16 +32,13 @@ export class UriScheme extends ExpressionEvaluator {
             if (typeof (args[0]) === 'string') {
                 ({ value, error } = UriScheme.evalUriScheme(args[0]));
             } else {
-                error = `${ expr } should contain a URI string.`;
+                error = `${expr} should contain a URI string.`;
             }
         }
 
         return { value, error };
     }
 
-    /**
-     * @private
-     */
     private static evalUriScheme(uri: string): ValueWithError {
         let result: string;
         let error: string;
