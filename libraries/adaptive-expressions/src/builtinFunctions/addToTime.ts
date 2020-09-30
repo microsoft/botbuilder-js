@@ -42,7 +42,7 @@ export class AddToTime extends ExpressionEvaluator {
             if (typeof (args[0]) === 'string' && Number.isInteger(args[1]) && typeof (args[2]) === 'string') {
                 ({ value, error } = AddToTime.evalAddToTime(args[0], args[1], args[2], format));
             } else {
-                error = `${expression} should contain an ISO format timestamp, a time interval integer, a string unit of time and an optional output format string.`;
+                error = `${ expression } should contain an ISO format timestamp, a time interval integer, a string unit of time and an optional output format string.`;
             }
         }
 
@@ -98,7 +98,7 @@ export class AddToTime extends ExpressionEvaluator {
                 }
 
                 default: {
-                    error = `${timeUnit} is not valid time unit`;
+                    error = `${ timeUnit } is not valid time unit`;
                     break;
                 }
             }
