@@ -28,7 +28,7 @@ export class LinkUnfurlingBot extends TeamsActivityHandler {
     // By specifying domains under the messageHandlers section in the manifest, the bot can receive
     // events when a user enters in a domain in the compose box.   
     protected async handleTeamsAppBasedLinkQuery(context: TurnContext, query: AppBasedLinkQuery): Promise<MessagingExtensionResponse> {
-        const attachment = CardFactory.thumbnailCard('Thumbnail Card', query.url, ["https://raw.githubusercontent.com/microsoft/botframework-sdk/master/icon.png"]);
+        const attachment = CardFactory.thumbnailCard('Thumbnail Card', query.url, ["https://raw.githubusercontent.com/microsoft/botframework-sdk/main/icon.png"]);
 
         const result: MessagingExtensionResult = {
             attachmentLayout: 'list',
