@@ -8,7 +8,16 @@
 
 import { BoolExpression } from '../expressionProperties';
 
+/**
+ * Any value to json BoolExpression converter.
+ */
 export class BoolExpressionConverter {
+
+    /**
+     * Converts any value into a BoolExpression.
+     * @param value Any value to convert.
+     * @returns The BoolExpression.
+     */
     public convert(value: any): BoolExpression {
         return new BoolExpression(value);
     }
