@@ -90,8 +90,8 @@ export class FunctionTable implements Map<string, ExpressionEvaluator> {
     public add(key: string, value: customFunction): void;
     /**
      * Inserts a mapping of a string key to ExpressionEvaluator into FunctionTable.
-     * @param param1 Key-Value for the ExpressionEvaluator or .
-     * @param param2 
+     * @param param1 Key-Value pair for the ExpressionEvaluator or the function name to be added.
+     * @param param2 Value of the ExpressionEvaluator to be added or value of the user customized function to be added.
      */
     public add(param1: { key: string; value: ExpressionEvaluator } | string, param2?: ExpressionEvaluator | customFunction): void {
         if (arguments.length === 1) {
@@ -109,31 +109,62 @@ export class FunctionTable implements Map<string, ExpressionEvaluator> {
         }
     }
 
+    /**
+     * Clears the user customized functions.
+     */
     public clear(): void {
         this.customFunctions.clear();
     }
 
+    /**
+     * Determines if the FunctionTable has a given string key.
+     * @param key A string key.
+     * @returns `True` if the key is contained, otherwise returns `False`.
+     */
     public has(key: string): boolean {
         return ExpressionFunctions.standardFunctions.has(key) || this.customFunctions.has(key);
     }
 
+    /**
+     * Deletes a specified key from user customized functions.
+     * @param key A string key of function name.
+     * @returns A boolean value indicating whether the key is successfully deleted.
+     */
     public delete(key: string): boolean {
         return this.customFunctions.delete(key);
     }
 
+    /**
+     * Operates on each element of the StandardFunctions.
+     * Not implemented.
+     * @param _callbackfn Callback function.
+     * @param thisArg Optional. This args.
+     */
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     public forEach(_callbackfn: (value: ExpressionEvaluator, key: string, map: Map<string, ExpressionEvaluator>) => void, thisArg?: any): void {
         throw Error(`forEach function not implemented`);
     }
 
+    /**
+     * Returns an iterable of key, value pairs for every entry in the map.
+     * Not implemented.
+     */
     public entries(): IterableIterator<[string, ExpressionEvaluator]> {
         throw Error(`entries function not implemented`);
     }
 
+    /**
+     * Returns an iterable of key, value pairs.
+     * Not implemented.
+     */
     public get [Symbol.iterator](): () => IterableIterator<[string, ExpressionEvaluator]> {
         throw Error(`Symbol.iterator function not implemented`);
     }
 
+    /**
+     * Returns a string value.
+     * Not implemented.
+     */
     public get [Symbol.toStringTag](): string {
         throw Error(`Symbol.toStringTag function not implemented`);
     }

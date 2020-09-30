@@ -189,7 +189,6 @@ export class ExpressionParser implements ExpressionParserInterface {
 
             return Expression.makeExpression(functionType, this._lookupFunction(functionType), ...children);
         }
-           
 
         private processArgsList(context: ep.ArgsListContext): Expression[] {
             const result: Expression[] = [];
@@ -244,10 +243,20 @@ export class ExpressionParser implements ExpressionParserInterface {
         }
     };
 
+    /**
+     * Initializes a new instance of the `ExpressionParser` class.
+     * @param lookup Delegate to lookup evaluation information from type string.
+     */
     public constructor(lookup?: EvaluatorLookup) {
         this.EvaluatorLookup = lookup || Expression.lookup;
     }
 
+    /**
+     * @protected
+     * Parse the expression to ANTLR lexer and parser.
+     * @param expression The input string expression.
+     * @returns A ParseTree.
+     */
     protected static antlrParse(expression: string): ParseTree {
         if (ExpressionParser.expressionDict.has(expression)) {
             return ExpressionParser.expressionDict.get(expression);

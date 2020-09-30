@@ -567,6 +567,9 @@ export class TimeZoneConverter {
         return this.validTimezonStr.includes(timezoneStr);
     }
 
+    /**
+     * @private
+     */
     private static loadData(): void {
         const data: string = this.mappingString;
         const lines: string [] = data.split(this.seperator);

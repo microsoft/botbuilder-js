@@ -604,6 +604,9 @@ export class FunctionUtils {
         return instance !== undefined && instance !== null && typeof instance === 'number' && !Number.isNaN(instance);
     }
 
+    /**
+     * @private
+     */
     private static buildTypeValidatorError(returnType: ReturnType, childExpr: Expression, expr: Expression): string {
         const names = Object.keys(ReturnType).filter((x): boolean => !(parseInt(x) >= 0));
         let types = [];

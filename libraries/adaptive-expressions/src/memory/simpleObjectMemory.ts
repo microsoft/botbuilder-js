@@ -18,6 +18,11 @@ export class SimpleObjectMemory implements MemoryInterface {
 
     private memory: any = undefined;
 
+    /**
+     * Initializes a new instance of the `SimpleObjectMemory` class.
+     * This wraps a simple object as `MemoryInterface`.
+     * @param memory The object to wrap.
+     */
     public constructor(memory: any) {
         this.memory = memory;
     }
@@ -35,6 +40,11 @@ export class SimpleObjectMemory implements MemoryInterface {
         return new SimpleObjectMemory(obj);
     }
 
+    /**
+     * Gets the value from a given path.
+     * @param path Given path.
+     * @returns The value in the given path or undefined.
+     */
     public getValue(path: string): any {
         if (this.memory === undefined || path.length === 0) {
             return undefined;
@@ -145,14 +155,25 @@ export class SimpleObjectMemory implements MemoryInterface {
         return;
     }
 
-    public  version(): string {
+    /**
+     * Returns the version info of `SimpleObjectMemory`.
+     * @returns A string value representing the version info.
+     */
+    public version(): string {
         return this.toString();
     }
 
+    /**
+     * Returns a string that represents the current SimpleObjectMemory object.
+     * @returns A string value representing the current SimpleObjectMemory object.
+     */
     public toString(): string {
         return JSON.stringify(this.memory, this.getCircularReplacer());
     }
 
+    /**
+     * @private
+     */
     private getCircularReplacer(): any {
         const seen = new WeakSet();
         return (_key: any, value: object): any => {
@@ -166,6 +187,9 @@ export class SimpleObjectMemory implements MemoryInterface {
         };
     };
 
+    /**
+     * @private
+     */
     private setProperty(instance: any, property: string, value: any): {value: any; error: string} {
         const result: any = value;
         if (instance instanceof Map) {

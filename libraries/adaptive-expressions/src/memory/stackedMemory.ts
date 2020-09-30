@@ -15,6 +15,11 @@ import { MemoryInterface } from './memoryInterface';
  */
 export class StackedMemory extends Array<MemoryInterface> implements MemoryInterface {
 
+    /**
+     * Wraps an object that implements `MemoryInterface` into a `StackedMemory` object.
+     * @param memory An object that implements `MemoryInterface`.
+     * @returns A StackedMemory object.
+     */
     public static wrap(memory: MemoryInterface): StackedMemory {
         if (memory instanceof StackedMemory) {
             return memory;
@@ -25,6 +30,11 @@ export class StackedMemory extends Array<MemoryInterface> implements MemoryInter
         }
     }
 
+    /**
+     * Gets the value from a given path.
+     * @param path Given path.
+     * @returns The value from the given path if found, otherwise, undefined.
+     */
     public getValue(path: string): any {
         if (this.length === 0) {
             return undefined;
@@ -39,10 +49,19 @@ export class StackedMemory extends Array<MemoryInterface> implements MemoryInter
         }
     }
 
+    /**
+     * Sets value to a given path.
+     * @param _path Memory path.
+     * @param _value Value to set.
+     */
     public setValue(_path: string, _value: any): void {
         throw new Error(`Can't set value to ${ _path }, stacked memory is read-only`);
     }
 
+    /**
+     * Gets the version of the current StackedMemory.
+     * @returns A string value representing the version.
+     */
     public version(): string {
         return '0';
     }
