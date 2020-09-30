@@ -11,6 +11,9 @@ import { LuisPredictionOptions, LuisRecognizerOptionsV3, LuisRecognizer, LuisApp
 import { DialogContext } from 'botbuilder-dialogs';
 import { Activity, RecognizerResult } from 'botbuilder-core';
 
+/**
+ * Class that represents an adaptive LUIS recognizer.
+ */
 export class LuisAdaptiveRecognizer extends Recognizer {
     /**
      * LUIS application ID.
@@ -51,12 +54,19 @@ export class LuisAdaptiveRecognizer extends Recognizer {
      */
     public predictionOptions: LuisPredictionOptions;
 
+    /**
+     * To recognize intents and entities in a users utterance.
+     * @param dialogContext Dialog Context.
+     * @param activity Activity.
+     * @param telemetryProperties Additional properties to be logged to telemetry with event.
+     * @param telemetryMetrics Additional metrics to be logged to telemetry with event.
+     */
     public async recognize(dialogContext: DialogContext, activity: Activity, telemetryProperties?: { [key: string]: string }, telemetryMetrics?: { [key: string]: number }) {
-        // Validate passed in activity matches turn activity 
+        // Validate passed in activity matches turn activity
         const context = dialogContext.context;
-        const utteranceMatches: boolean = !activity || 
+        const utteranceMatches: boolean = !activity ||
             (context.activity.type === activity.type &&  context.activity.text === activity.text);
-        
+
         if (!utteranceMatches) {
             throw new Error(`TurnContext is different than text`);
         }
@@ -103,7 +113,7 @@ export class LuisAdaptiveRecognizer extends Recognizer {
     protected  fillRecognizerResultTelemetryProperties(recognizerResult: RecognizerResult, telemetryProperties: { [key: string]: string }, dialogContext: DialogContext): { [key: string]: string } {
         const logPersonalInfo = this.logPersonalInformation.tryGetValue(dialogContext.state);
         const applicationId = this.applicationId.tryGetValue(dialogContext.state);
-        
+
         const topLuisIntent: string = LuisRecognizer.topIntent(recognizerResult);
         const intentScore: number = (recognizerResult.intents[topLuisIntent] && recognizerResult.intents[topLuisIntent].score) || 0;
 
