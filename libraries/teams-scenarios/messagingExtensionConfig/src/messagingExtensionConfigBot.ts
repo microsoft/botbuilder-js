@@ -17,7 +17,7 @@ import {
 /**
  * After uploading the manifest you can click the dots in the extension menu at the bottom, or search for the
  * exntesion in the command bar. From the extension window or the command bar you can click on the 3 dots on the specific extension to trigger
- * the OnMessageActivityAsync function. If you click on the "Settings" tab you will fire the OnTeamsMessagingExtensionConfigurationSettingAsync
+ * the onMessage function. If you click on the "Settings" tab you will fire the handleTeamsMessagingExtensionConfigurationSetting
  * function.
  */
 export class MessagingExtensionConfigBot  extends TeamsActivityHandler {
