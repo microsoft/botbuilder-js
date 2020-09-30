@@ -9,16 +9,14 @@
 /**
  * Join Operator for Strict Filters.
  */
-export class JoinOperator {
-
+export enum JoinOperator {
     /**
      * Default Join Operator, AND.
      */
-    public static readonly AND: string = 'AND';
+    AND = 'AND',
 
     /**
      * Join Operator, OR.
      */
-    public static readonly OR: string = 'OR';
-
+    OR = 'OR'
 }
