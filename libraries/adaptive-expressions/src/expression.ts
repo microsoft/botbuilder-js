@@ -206,14 +206,20 @@ export class Expression {
         return { path, refs };
     }
 
+    /**
+     * Parse an expression string into an expression object.
+     * @param expression Expression string.
+     * @param lookup Optional. Function lookup when parsing the expression. Default is Expression.lookup which uses Expression.functions table.
+     * @returns The expression object.
+     */
     public static parse(expression: string, lookup?: EvaluatorLookup): Expression {
         return new ExpressionParser(lookup || Expression.lookup).parse(expression);
     }
 
     /**
      * Lookup a ExpressionEvaluator (function) by name.
-     * @param functionName name of function to lookup
-     * @returns a ExpressionEvaluator that corresponding to the funtion name
+     * @param functionName name of function to lookup.
+     * @returns an ExpressionEvaluator corresponding to the funtion name.
      */
     public static lookup(functionName: string): ExpressionEvaluator {
         const exprEvaluator = Expression.functions.get(functionName);
@@ -226,7 +232,7 @@ export class Expression {
 
     /**
      * Make an expression and validate it.
-     * @param type Type of expression from ExpressionType
+     * @param type Type of expression from ExpressionType.
      * @param evaluator Information about how to validate and evaluate expression.
      * @param children Child expressions.
      */
@@ -245,7 +251,7 @@ export class Expression {
         return new Expression(ExpressionType.Lambda, new ExpressionEvaluator(ExpressionType.Lambda, func));
     }
 
-    /**	
+    /**
      * Construct an expression from a lamba expression over the state.
      * Exceptions will be caught and surfaced as an error string.
      * @param func ambda expression to evaluate.
@@ -280,7 +286,6 @@ export class Expression {
             return Expression.makeExpression(ExpressionType.SetPathToValue, undefined, property, new Constant(value));
         }
     }
-
 
     /**
      * Construct and validate an Equals expression.
@@ -326,7 +331,6 @@ export class Expression {
         return Expression.makeExpression(ExpressionType.Not, undefined, child);
     }
 
-
     /**
      * Validate immediate expression.
      */
@@ -357,6 +361,10 @@ export class Expression {
         return this.evaluator.tryEvaluate(this, state, options);
     }
 
+    /**
+     * Returns a string that represents the current Expression object.
+     * @returns A string that represents the current Expression object.
+     */
     public toString(): string {
         let builder = '';
         let valid = false;

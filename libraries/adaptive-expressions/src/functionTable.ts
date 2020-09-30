@@ -18,24 +18,45 @@ type customFunction = (args: any[]) => any;
 export class FunctionTable implements Map<string, ExpressionEvaluator> {
     private readonly customFunctions = new Map<string, ExpressionEvaluator>();
 
+    /**
+     * Gets a collection of string values that represent the keys of the StandardFunctions.
+     * @returns A list of string values.
+     */
     public keys(): IterableIterator<string> {
         const keysOfAllFunctions = Array.from(ExpressionFunctions.standardFunctions.keys()).concat(Array.from(this.customFunctions.keys()));
         return keysOfAllFunctions[Symbol.iterator]();
     }
 
+    /**
+     * Gets a collection of ExpressionEvaluator which is the value of the StandardFunctions.
+     * @returns A list of ExpressionEvaluator.
+     */
     public values(): IterableIterator<ExpressionEvaluator> {
         const valuesOfAllFunctions = Array.from(ExpressionFunctions.standardFunctions.values()).concat(Array.from(this.customFunctions.values()));
         return valuesOfAllFunctions[Symbol.iterator]();
     }
 
+    /**
+     * Gets the total number of StandardFunctions and user customFunctions.
+     * @returns An integer value.
+     */
     public get size(): number {
         return ExpressionFunctions.standardFunctions.size + this.customFunctions.size;
     }
 
+    /**
+     * Gets a value indicating whether the FunctionTable is readonly.
+     * @returns A boolean value indicating whether the FunctionTable is readonly.
+     */
     public get isReadOnly(): boolean {
         return false;
     }
 
+    /**
+     * Gets a value of ExpressionEvaluator corresponding to the given key.
+     * @param key A string value of function name.
+     * @returns An ExpressionEvaluator.
+     */
     public get(key: string): ExpressionEvaluator {
 
         if (ExpressionFunctions.standardFunctions.get(key)) {
@@ -49,6 +70,11 @@ export class FunctionTable implements Map<string, ExpressionEvaluator> {
         return undefined;
     }
 
+    /**
+     * Sets a value of ExpressionEvaluator corresponding to the given key.
+     * @param key A string value of function name.
+     * @param value The value to set for the ExpressionEvaluator.
+     */
     public set(key: string, value: ExpressionEvaluator): this {
         if (ExpressionFunctions.standardFunctions.get(key)) {
             throw Error(`You can't overwrite a built in function.`);
@@ -62,6 +88,11 @@ export class FunctionTable implements Map<string, ExpressionEvaluator> {
     public add(item: { key: string; value: ExpressionEvaluator }): void;
     public add(key: string, value: ExpressionEvaluator): void;
     public add(key: string, value: customFunction): void;
+    /**
+     * Inserts a mapping of a string key to ExpressionEvaluator into FunctionTable.
+     * @param param1 Key-Value for the ExpressionEvaluator or .
+     * @param param2 
+     */
     public add(param1: { key: string; value: ExpressionEvaluator } | string, param2?: ExpressionEvaluator | customFunction): void {
         if (arguments.length === 1) {
             if (param1 instanceof Object) {

@@ -24,6 +24,9 @@ export class Constant extends Expression {
         return this._value;
     }
 
+    /**
+     * Sets constant value.
+     */
     public set value(theValue: any) {
         this.evaluator.returnType =
             typeof theValue === 'string' ? ReturnType.String
@@ -36,6 +39,12 @@ export class Constant extends Expression {
     }
 
     private _value: any;
+
+    /**
+     * Initializes a new instance of the `Constant` class.
+     * Constructs an expression constant.
+     * @param value Constant value.
+     */
     public constructor(value: any) {
         super(ExpressionType.Constant, new ExpressionEvaluator(ExpressionType.Constant,
             (expression: Expression): ValueWithError => {
@@ -45,7 +54,11 @@ export class Constant extends Expression {
         this.value = value;
     }
 
-    
+    /**
+     * Determines if the current Expression instance is deep equal to another one.
+     * @param other The other Expression instance to compare.
+     * @returns A boolean value indicating whether the two Expressions are deep equal (`true`) or not (`false`).
+     */
     public  deepEquals(other: Expression): boolean {
         let eq: boolean;
         if (!other || other.type !== this.type) {
@@ -58,6 +71,10 @@ export class Constant extends Expression {
         return eq;
     }
 
+    /**
+     * Returns a string that represents the current constant object.
+     * @returns A string that represents the current constant object.
+     */
     public toString(): string {
         
         if (this.value === undefined) {
@@ -79,6 +96,9 @@ export class Constant extends Expression {
         return this.value.toString();
     }
 
+    /**
+     * @private
+     */
     private reverseString(str: string | undefined): string {
         if (!str) {
             return str;

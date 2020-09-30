@@ -42,6 +42,9 @@ export class CommonRegex {
         return result;
     }
 
+    /**
+     * @private
+     */
     private static getRegExpFromString(pattern: string): RegExp {
         const flags: string[] = ['(?i)', '(?m)', '(?s)'];
         let flag = '';
@@ -62,6 +65,9 @@ export class CommonRegex {
         return regexp;
     }
 
+    /**
+     * @private
+     */
     private static isCommonRegex(pattern: string): boolean {
         try {
             this.antlrParse(pattern);
@@ -72,6 +78,9 @@ export class CommonRegex {
         return true;
     }
 
+    /**
+     * @private
+     */
     private static antlrParse(pattern: string): ParseTree {
         const inputStream: ANTLRInputStream = new ANTLRInputStream(pattern);
         const lexer: CommonRegexLexer = new CommonRegexLexer(inputStream);

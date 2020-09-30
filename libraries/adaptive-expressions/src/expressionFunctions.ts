@@ -30,6 +30,9 @@ export class ExpressionFunctions {
      */
     public static readonly standardFunctions: ReadonlyMap<string, ExpressionEvaluator> = ExpressionFunctions.getStandardFunctions();
 
+    /**
+     * @private
+     */
     private static getStandardFunctions(): ReadonlyMap<string, ExpressionEvaluator> {
         const functions: ExpressionEvaluator[] = [
             new BuiltinFunctions.Accessor(),
