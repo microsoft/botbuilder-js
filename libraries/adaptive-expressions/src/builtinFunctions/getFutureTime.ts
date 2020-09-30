@@ -21,10 +21,17 @@ import { ReturnType } from '../returnType';
  * Return the current timestamp plus the specified time units.
  */
 export class GetFutureTime extends ExpressionEvaluator {
+
+    /**
+     * Initializes a new instance of the GetFutureTime class.
+     */
     public constructor() {
         super(ExpressionType.GetFutureTime, GetFutureTime.evaluator, ReturnType.String, GetFutureTime.validator);
     }
 
+    /**
+     * @private
+     */
     private static evaluator(expression: Expression, state: MemoryInterface, options: Options): ValueWithError {
         let value: any;
         let error: any;
@@ -35,7 +42,7 @@ export class GetFutureTime extends ExpressionEvaluator {
                 const format: string = (args.length === 3 ? FunctionUtils.timestampFormatter(args[2]) : FunctionUtils.DefaultDateTimeFormat);
                 const { duration, tsStr } = InternalFunctionUtils.timeUnitTransformer(args[0], args[1]);
                 if (tsStr === undefined) {
-                    error = `${args[2]} is not a valid time unit.`;
+                    error = `${ args[2] } is not a valid time unit.`;
                 } else {
                     const dur: any = duration;
                     ({ value, error } = InternalFunctionUtils.parseTimestamp(new Date().toISOString(), (dt: Date): string => {
@@ -43,7 +50,7 @@ export class GetFutureTime extends ExpressionEvaluator {
                     }));
                 }
             } else {
-                error = `${expression} should contain a time interval integer, a string unit of time and an optional output format string.`;
+                error = `${ expression } should contain a time interval integer, a string unit of time and an optional output format string.`;
             }
         }
 
@@ -51,6 +58,9 @@ export class GetFutureTime extends ExpressionEvaluator {
     }
 
 
+    /**
+     * @private
+     */
     private static validator(expression: Expression): void {
         FunctionUtils.validateOrder(expression, [ReturnType.String], ReturnType.Number, ReturnType.String);
     }

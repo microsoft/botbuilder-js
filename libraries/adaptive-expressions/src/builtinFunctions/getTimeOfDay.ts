@@ -18,10 +18,17 @@ import { ReturnType } from '../returnType';
  * Returns time of day for a given timestamp.
  */
 export class GetTimeOfDay extends ExpressionEvaluator {
+
+    /**
+     * Initializes a new instance of the GetTimeOfDay class.
+     */
     public constructor() {
         super(ExpressionType.GetTimeOfDay, GetTimeOfDay.evaluator(), ReturnType.String, FunctionUtils.validateUnaryString);
     }
 
+    /**
+     * @private
+     */
     private static evaluator(): EvaluateExpressionDelegate {
         return FunctionUtils.applyWithError(
             (args: any[]): any => {
