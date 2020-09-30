@@ -247,7 +247,7 @@ export interface LuisRecognizerOptionsV2 extends LuisRecognizerOptions {
  *
  * @remarks
  * This class is used to recognize intents and extract entities from incoming messages.
- * See this class in action [in this sample application](https://github.com/microsoft/BotBuilder-Samples/tree/master/samples/javascript_nodejs/14.nlp-with-dispatch).
+ * See this class in action [in this sample application](https://github.com/microsoft/BotBuilder-Samples/tree/main/samples/javascript_nodejs/14.nlp-with-dispatch).
  *
  * This component can be used within your bots logic by calling [recognize()](#recognize).
  */
