@@ -13,6 +13,7 @@ export * from './configurable';
 export * from './dialog';
 export * from './dialogContainer';
 export * from './dialogContext';
+export * from './dialogContextError';
 export * from './dialogEvents';
 export { runDialog } from './dialogHelper';
 export * from './dialogManager';

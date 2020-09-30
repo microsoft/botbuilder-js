@@ -12,6 +12,25 @@ import { DialogContainer } from './dialogContainer';
 import { DialogEvents } from './dialogEvents';
 import { DialogManager } from './dialogManager';
 import { DialogTurnStateConstants } from './dialogTurnStateConstants';
+import { DialogContextError } from './dialogContextError';
+
+/**
+ * Wraps a promise in a try-catch that automatically enriches errors with extra dialog context.
+ * 
+ * @param dialogContext source dialog context from which enriched error properties are sourced
+ * @param promise a promise to await inside a try-catch for error enrichment
+ */
+const wrapErrors = async <T>(dialogContext: DialogContext, promise: Promise<T>): Promise<T> => {
+    try {
+        return await promise;
+    } catch (err) {
+        if (err instanceof DialogContextError) {
+            throw err;
+        } else {
+            throw new DialogContextError(err, dialogContext);
+        }
+    }
+}
 
 /**
  * @private
@@ -113,7 +132,7 @@ export class DialogContext {
      * Returns dialog context for child if the active dialog is a container.
      */
     public get child(): DialogContext | undefined {
-        var instance = this.activeDialog;
+        const instance = this.activeDialog;
         if (instance != undefined) {
             // Is active dialog a container?
             const dialog = this.findDialog(instance.id);
@@ -181,7 +200,7 @@ export class DialogContext {
     public async beginDialog(dialogId: string, options?: object): Promise<DialogTurnResult> {
         // Lookup dialog
         const dialog: Dialog<{}> = this.findDialog(dialogId);
-        if (!dialog) { throw new Error(`DialogContext.beginDialog(): A dialog with an id of '${ dialogId }' wasn't found.`); }
+        if (!dialog) { throw new DialogContextError(`DialogContext.beginDialog(): A dialog with an id of '${ dialogId }' wasn't found.`, this); }
 
         // Push new instance onto stack.
         const instance: DialogInstance<any> = {
@@ -191,7 +210,7 @@ export class DialogContext {
         this.stack.push(instance);
 
         // Call dialogs begin() method.
-        return await dialog.beginDialog(this, options);
+        return wrapErrors(this, dialog.beginDialog(this, options));
     }
 
     /**
@@ -311,7 +330,7 @@ export class DialogContext {
             options.choices = choices;
         }
 
-        return this.beginDialog(dialogId, options);
+        return wrapErrors(this, this.beginDialog(dialogId, options));
     }
 
     /**
@@ -353,11 +372,11 @@ export class DialogContext {
             // Lookup dialog
             const dialog: Dialog<{}> = this.findDialog(instance.id);
             if (!dialog) {
-                throw new Error(`DialogContext.continueDialog(): Can't continue dialog. A dialog with an id of '${ instance.id }' wasn't found.`);
+                throw new DialogContextError(`DialogContext.continueDialog(): Can't continue dialog. A dialog with an id of '${ instance.id }' wasn't found.`, this);
             }
 
             // Continue execution of dialog
-            return await dialog.continueDialog(this);
+            return wrapErrors(this, dialog.continueDialog(this));
         } else {
             return { status: DialogTurnStatus.empty };
         }
@@ -404,11 +423,11 @@ export class DialogContext {
             // Lookup dialog
             const dialog: Dialog<{}> = this.findDialog(instance.id);
             if (!dialog) {
-                throw new Error(`DialogContext.endDialog(): Can't resume previous dialog. A dialog with an id of '${ instance.id }' wasn't found.`);
+                throw new DialogContextError(`DialogContext.endDialog(): Can't resume previous dialog. A dialog with an id of '${ instance.id }' wasn't found.`, this);
             }
 
             // Return result to previous dialog
-            return await dialog.resumeDialog(this, DialogReason.endCalled, result);
+            return wrapErrors(this, dialog.resumeDialog(this, DialogReason.endCalled, result));
         } else {
             // Signal completion
             return { status: DialogTurnStatus.complete, result: result };
@@ -439,7 +458,7 @@ export class DialogContext {
         await this.endActiveDialog(DialogReason.replaceCalled);
 
         // Start replacement dialog
-        return await this.beginDialog(dialogId, options);
+        return this.beginDialog(dialogId, options);
     }
 
     /**
@@ -463,11 +482,11 @@ export class DialogContext {
                 // Lookup dialog
                 const dialog: Dialog<{}> = this.findDialog(instance.id);
                 if (!dialog) {
-                    throw new Error(`DialogContext.repromptDialog(): Can't find a dialog with an id of '${ instance.id }'.`);
+                    throw new DialogContextError(`DialogContext.repromptDialog(): Can't find a dialog with an id of '${ instance.id }'.`, this);
                 }
 
                 // Ask dialog to re-prompt if supported
-                await dialog.repromptDialog(this.context, instance);
+                await wrapErrors(this, dialog.repromptDialog(this.context, instance));
             }
         }
     }
@@ -509,7 +528,7 @@ export class DialogContext {
         if (instance != undefined) {
             const dialog = dc.findDialog(instance.id);
             if (dialog != undefined) {
-                return await dialog.onDialogEvent(dc, dialogEvent);
+                return wrapErrors(this, dialog.onDialogEvent(dc, dialogEvent));
             }
         }
 
@@ -523,7 +542,7 @@ export class DialogContext {
             const dialog: Dialog<{}> = this.findDialog(instance.id);
             if (dialog) {
                 // Notify dialog of end
-                await dialog.endDialog(this.context, instance, reason);
+                await wrapErrors(this, dialog.endDialog(this.context, instance, reason));
             }
 
             // Pop dialog off stack

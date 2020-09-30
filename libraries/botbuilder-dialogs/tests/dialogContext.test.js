@@ -1,5 +1,5 @@
 const { ConversationState, MemoryStorage, TestAdapter } = require('botbuilder-core');
-const { Dialog, DialogSet, WaterfallDialog, DialogTurnStatus } =  require('../');
+const { Dialog, DialogContextError, DialogSet, WaterfallDialog, DialogTurnStatus } =  require('../');
 const assert = require('assert');
 
 const beginMessage = { text: `begin`, type: 'message' };
@@ -75,6 +75,10 @@ describe('DialogContext', function() {
             catch (err) {
                 assert(err);
                 assert.strictEqual(err.message, `DialogContext.beginDialog(): A dialog with an id of 'b' wasn't found.`, `unexpected error message thrown: "${err.message}"`);
+
+                assert(err instanceof DialogContextError, 'err should be a DialogContextError');
+                assert(err.dialogContext, 'err should include dialogContext');
+
                 return done();
             }
             throw new Error('Should have thrown an error.');
@@ -250,6 +254,10 @@ describe('DialogContext', function() {
             catch (err) {
                 assert(err, `Error not found.`);
                 assert.strictEqual(err.message, `DialogContext.continueDialog(): Can't continue dialog. A dialog with an id of 'b' wasn't found.`, `unexpected error message thrown: "${err.message}"`);
+
+                assert(err instanceof DialogContextError, 'err should be a DialogContextError');
+                assert(err.dialogContext, 'err should include dialogContext');
+
                 return done();
             }
             if (results.status === DialogTurnStatus.empty) {
