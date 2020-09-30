@@ -18,9 +18,8 @@ import { ReturnType } from '../returnType';
  * If one or more items have the same name, the last item with that name appears in the result.
  */
 export class Union extends ExpressionEvaluator {
-
     /**
-     * Initializes a new instance of the Union class.
+     * Initializes a new instance of the `Union` class.
      */
     public constructor() {
         super(ExpressionType.Union, Union.evaluator(), ReturnType.Array, Union.validator);

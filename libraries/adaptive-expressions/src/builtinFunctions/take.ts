@@ -17,9 +17,8 @@ import { ReturnType } from '../returnType';
  * Return items from the front of an array.
  */
 export class Take extends ExpressionEvaluator {
-
     /**
-     * Initializes a new instance of the Take class.
+     * Initializes a new instance of the `Take` class.
      */
     public constructor() {
         super(ExpressionType.Take, Take.evaluator, ReturnType.Array, Take.validator);

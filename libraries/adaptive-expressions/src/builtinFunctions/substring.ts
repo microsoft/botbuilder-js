@@ -18,9 +18,8 @@ import { ReturnType } from '../returnType';
  * Return characters from a string, starting from the specified position or index. Index values start with the number 0.
  */
 export class Substring extends ExpressionEvaluator {
-
     /**
-     * Initializes a new instance of the Substring class.
+     * Initializes a new instance of the `Substring` class.
      */
     public constructor() {
         super(ExpressionType.Substring, Substring.evaluator, ReturnType.String, Substring.validator);

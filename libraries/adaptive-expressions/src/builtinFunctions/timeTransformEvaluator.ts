@@ -20,9 +20,8 @@ import { ReturnType } from '../returnType';
  * Evaluator that transforms a datetime to another datetime.
  */
 export class TimeTransformEvaluator extends ExpressionEvaluator {
-
     /**
-     * Initializes a new instance of the TimeTransformEvaluator class.
+     * Initializes a new instance of the `TimeTransformEvaluator` class.
      */
     public constructor(type: string, func: (timestamp: Date, numOfTransformation: any) => Date) {
         super(type, TimeTransformEvaluator.evaluator(func), ReturnType.String, TimeTransformEvaluator.validator);

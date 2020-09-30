@@ -19,9 +19,8 @@ import { ReturnType } from '../returnType';
  * Return the ticks property value of a specified timestamp. A tick is 100-nanosecond interval.
  */
 export class Ticks extends ExpressionEvaluator {
-
     /**
-     * Initializes a new instance of the Ticks class.
+     * Initializes a new instance of the `Ticks` class.
      */
     public constructor() {
         super(ExpressionType.Ticks, Ticks.evaluator, ReturnType.Number, Ticks.validator);

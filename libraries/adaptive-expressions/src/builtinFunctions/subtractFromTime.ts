@@ -21,9 +21,8 @@ import { ReturnType } from '../returnType';
  * Subtract a number of time units from a timestamp.
  */
 export class SubtractFromTime extends ExpressionEvaluator {
-
     /**
-     * Initializes a new instance of the SubtractFromTime class.
+     * Initializes a new instance of the `SubtractFromTime` class.
      */
     public constructor() {
         super(ExpressionType.SubtractFromTime, SubtractFromTime.evaluator, ReturnType.String, SubtractFromTime.validator);

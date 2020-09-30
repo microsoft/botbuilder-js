@@ -22,7 +22,7 @@ export class TicksToDays extends ExpressionEvaluator {
     private static readonly TicksPerDay: number = 24 * 60 * 60 * 10000000;
 
     /**
-     * Initializes a new instance of the TicksToDays class.
+     * Initializes a new instance of the `TicksToDays` class.
      */
     public constructor() {
         super(ExpressionType.TicksToDays, TicksToDays.evaluator, ReturnType.Number, FunctionUtils.validateUnaryNumber);

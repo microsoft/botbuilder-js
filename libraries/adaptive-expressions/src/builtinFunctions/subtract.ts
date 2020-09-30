@@ -13,9 +13,8 @@ import { MultivariateNumericEvaluator } from './multivariateNumericEvaluator';
  * Return the result from subtracting the next number from the previous number.
  */
 export class Subtract extends MultivariateNumericEvaluator {
-
     /**
-     * Initializes a new instance of the Subtract class.
+     * Initializes a new instance of the `Subtract` class.
      */
     public constructor() {
         super(ExpressionType.Subtract, Subtract.func);

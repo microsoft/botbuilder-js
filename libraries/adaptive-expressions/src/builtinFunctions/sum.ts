@@ -16,9 +16,8 @@ import { ReturnType } from '../returnType';
  * Return the result from adding numbers in an array.
  */
 export class Sum extends ExpressionEvaluator {
-
     /**
-     * Initializes a new instance of the Sum class.
+     * Initializes a new instance of the `Sum` class.
      */
     public constructor() {
         super(ExpressionType.Sum, Sum.evaluator(), ReturnType.Number, Sum.validator);

@@ -15,9 +15,8 @@ import { StringTransformEvaluator } from './stringTransformEvaluator';
  * Remove leading and trailing whitespace from a string, and return the updated string.
  */
 export class Trim extends StringTransformEvaluator {
-
     /**
-     * Initializes a new instance of the Trim class.
+     * Initializes a new instance of the `Trim` class.
      */
     public constructor() {
         super(ExpressionType.Trim, Trim.evaluator);

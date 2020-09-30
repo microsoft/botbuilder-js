@@ -15,9 +15,8 @@ import { StringTransformEvaluator } from './stringTransformEvaluator';
  * Converts the specified string to title case.
  */
 export class TitleCase extends StringTransformEvaluator {
-
     /**
-     * Initializes a new instance of the TitleCase class.
+     * Initializes a new instance of the `TitleCase` class.
      */
     public constructor() {
         super(ExpressionType.TitleCase, TitleCase.evaluator);
