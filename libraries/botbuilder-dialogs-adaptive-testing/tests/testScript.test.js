@@ -1,3 +1,4 @@
+const assert = require ('assert');
 const path = require('path');
 const { TestRunner } = require('../lib');
 
@@ -7,6 +8,15 @@ describe('TestScriptTests', function() {
 
     it('AssertReply_Assertions', async () => {
         await testRunner.runTestScript('TestScriptTests_AssertReply_Assertions');
+    });
+
+    it('AssertReply_Assertions_Failed', async () => {
+        try {
+            await testRunner.runTestScript('TestScriptTests_AssertReply_Assertions_Failed');
+        } 
+        catch (error) {
+            assert(error.message.includes('\"text\":\"hi User1\"'), `assertion should have failed.`);
+        }
     });
 
     it('AssertReply_Exact', async () => {

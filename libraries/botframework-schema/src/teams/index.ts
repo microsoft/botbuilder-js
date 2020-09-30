@@ -187,14 +187,14 @@ export interface TeamsChannelAccount extends ChannelAccount {
 }
 
 export interface TeamsPagedMembersResult {
-        /**
-     * Paging token
-     */
-    continuationToken: string;
-    /**
-     * The Channel Accounts.
-     */
-    members: TeamsChannelAccount[];
+  /**
+   * Paging token
+   */
+  continuationToken: string;
+  /**
+   * The Channel Accounts.
+   */
+  members: TeamsChannelAccount[];
 }
 
 /**
