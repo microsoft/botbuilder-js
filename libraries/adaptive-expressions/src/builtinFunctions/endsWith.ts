@@ -18,9 +18,8 @@ import { ReturnType } from '../returnType';
  * This function is case-insensitive.
  */
 export class EndsWith extends ExpressionEvaluator {
-
     /**
-     * Initializes a new instance of the EndsWith class.
+     * Initializes a new instance of the `EndsWith` class.
      */
     public constructor() {
         super(ExpressionType.EndsWith, EndsWith.evaluator(), ReturnType.Boolean, EndsWith.validator);

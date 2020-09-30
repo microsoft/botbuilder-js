@@ -18,9 +18,8 @@ import { ComparisonEvaluator } from './comparisonEvaluator';
  * 4.Input is an object with no property.
  */
 export class Empty extends ComparisonEvaluator {
-
     /**
-     * Initializes a new instance of the Empty class.
+     * Initializes a new instance of the `Empty` class.
      */
     public constructor() {
         super(ExpressionType.Empty, Empty.func, FunctionUtils.validateUnary, FunctionUtils.verifyContainer);

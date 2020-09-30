@@ -15,9 +15,8 @@ import { MultivariateNumericEvaluator } from './multivariateNumericEvaluator';
  * Return the integer result from dividing two numbers. 
  */
 export class Divide extends MultivariateNumericEvaluator {
-
     /**
-     * Initializes a new instance of the Divide class.
+     * Initializes a new instance of the `Divide` class.
      */
     public constructor() {
         super(ExpressionType.Divide, Divide.func, Divide.verify);

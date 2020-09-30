@@ -16,9 +16,8 @@ import { ReturnType } from '../returnType';
  *  Flatten an array into non-array values. You can optionally set the maximum depth to flatten to.
  */
 export class Flatten extends ExpressionEvaluator {
-
     /**
-     * Initializes a new instance of the Flatten class.
+     * Initializes a new instance of the `Flatten` class.
      */
     public constructor() {
         super(ExpressionType.Flatten, Flatten.evaluator(), ReturnType.Array, Flatten.validator);

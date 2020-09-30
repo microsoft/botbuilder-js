@@ -20,9 +20,8 @@ import { ReturnType } from '../returnType';
  * Support number index for list or string index for object.
  */
 export class Element extends ExpressionEvaluator {
-
     /**
-     * Initializes a new instance of the Element class.
+     * Initializes a new instance of the `Element` class.
      */
     public constructor() {
         super(ExpressionType.Element, Element.evaluator, ReturnType.Object, FunctionUtils.validateBinary);

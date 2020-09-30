@@ -15,9 +15,8 @@ import { ReturnType } from '../returnType';
  * Convert the string version of a floating-point number to a floating-point number.
  */
 export class Float extends ExpressionEvaluator {
-
     /**
-     * Initializes a new instance of the Float class.
+     * Initializes a new instance of the `Float` class.
      */
     public constructor() {
         super(ExpressionType.Float, Float.evaluator(), ReturnType.Number, FunctionUtils.validateUnary);
