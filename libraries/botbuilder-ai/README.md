@@ -85,6 +85,6 @@ server.post('/api/messages', (req, res) => {
 
 See this module in action in these example apps:
 
-* [QnA Maker](https://github.com/Microsoft/BotBuilder-Samples/tree/master/samples/javascript_nodejs/11.qnamaker)
-* [LUIS](https://github.com/Microsoft/BotBuilder-Samples/tree/master/samples/javascript_nodejs/12.nlp-with-luis)
-* [Using LUIS and QnA Maker together with Dispatch](https://github.com/Microsoft/BotBuilder-Samples/tree/master/samples/javascript_nodejs/14.nlp-with-dispatch)
+* [QnA Maker](https://github.com/Microsoft/BotBuilder-Samples/tree/main/samples/javascript_nodejs/11.qnamaker)
+* [LUIS](https://github.com/Microsoft/BotBuilder-Samples/tree/main/samples/javascript_nodejs/12.nlp-with-luis)
+* [Using LUIS and QnA Maker together with Dispatch](https://github.com/Microsoft/BotBuilder-Samples/tree/main/samples/javascript_nodejs/14.nlp-with-dispatch)
