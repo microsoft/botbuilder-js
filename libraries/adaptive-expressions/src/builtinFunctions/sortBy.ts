@@ -17,10 +17,16 @@ import { ReturnType } from '../returnType';
  * Sort elements in the collection in ascending order and return the sorted collection.
  */
 export class SortBy extends ExpressionEvaluator {
+    /**
+     * Initializes a new instance of the `SortBy` class.
+     */
     public constructor() {
         super(ExpressionType.SortBy, InternalFunctionUtils.sortBy(false), ReturnType.Array, SortBy.validator);
     }
 
+    /**
+     * @private
+     */
     private static validator(expression: Expression): void {
         FunctionUtils.validateOrder(expression, [ReturnType.String], ReturnType.Array);
     }

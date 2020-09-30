@@ -15,10 +15,16 @@ import { StringTransformEvaluator } from './stringTransformEvaluator';
  * Capitalizing only the first word and leave others lowercase.
  */
 export class SentenceCase extends StringTransformEvaluator {
+    /**
+     * Initializes a new instance of the `SentenceCase` class.
+     */
     public constructor() {
         super(ExpressionType.SentenceCase, SentenceCase.evaluator);
     }
 
+    /**
+     * @private
+     */
     private static evaluator(args: any[]): string {
         const inputStr = String(InternalFunctionUtils.parseStringOrUndefined(args[0])).toLowerCase();
         if (inputStr === '') {

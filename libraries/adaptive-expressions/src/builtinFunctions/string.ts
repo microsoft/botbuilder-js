@@ -15,10 +15,16 @@ import { ReturnType } from '../returnType';
  * Return the string version of a value.
  */
 export class String extends ExpressionEvaluator {
+    /**
+     * Initializes a new instance of the `String` class.
+     */
     public constructor() {
         super(ExpressionType.String, String.evaluator(), ReturnType.String, FunctionUtils.validateUnary);
     }
 
+    /**
+     * @private
+     */
     private static evaluator(): EvaluateExpressionDelegate {
         return FunctionUtils.apply((args: any[]): string => {
             if (typeof args[0] === 'string') {

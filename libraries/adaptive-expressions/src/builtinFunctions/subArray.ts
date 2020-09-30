@@ -17,10 +17,16 @@ import { ReturnType } from '../returnType';
  * Returns a subarray from specified start and end positions. Index values start with the number 0.
  */
 export class SubArray extends ExpressionEvaluator {
+    /**
+     * Initializes a new instance of the `SubArray` class.
+     */
     public constructor() {
         super(ExpressionType.SubArray, SubArray.evaluator, ReturnType.Array, SubArray.validator);
     }
 
+    /**
+     * @private
+     */
     private static evaluator(expression: Expression, state: any, options: Options): ValueWithError {
         let result: any;
         let error: any;
@@ -63,6 +69,9 @@ export class SubArray extends ExpressionEvaluator {
         return { value: result, error };
     }
 
+    /**
+     * @private
+     */
     private static validator(expression: Expression): void {
         FunctionUtils.validateOrder(expression, [ReturnType.Number], ReturnType.Array, ReturnType.Number);
     }

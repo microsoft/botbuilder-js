@@ -17,10 +17,16 @@ import { ReturnType } from '../returnType';
  * Remove items from the front of a collection, and return all the other items.
  */
 export class Skip extends ExpressionEvaluator {
+    /**
+     * Initializes a new instance of the `Skip` class.
+     */
     public constructor() {
         super(ExpressionType.Skip, Skip.evaluator, ReturnType.Array, Skip.validator);
     }
 
+    /**
+     * @private
+     */
     private static evaluator(expression: Expression, state: any, options: Options): ValueWithError {
         let result: any;
         let error: any;
@@ -49,6 +55,9 @@ export class Skip extends ExpressionEvaluator {
         return { value: result, error };
     }
 
+    /**
+     * @private
+     */
     private static validator(expression: Expression): void {
         FunctionUtils.validateOrder(expression, [], ReturnType.Array, ReturnType.Number);
     }

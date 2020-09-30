@@ -21,10 +21,16 @@ import { ReturnType } from '../returnType';
  * Return the start of the hour for a timestamp.
  */
 export class StartOfHour extends ExpressionEvaluator {
+    /**
+     * Initializes a new instance of the `StartOfHour` class.
+     */
     public constructor() {
         super(ExpressionType.StartOfHour, StartOfHour.evaluator, ReturnType.String, StartOfHour.validator);
     }
 
+    /**
+     * @private
+     */
     private static evaluator(expr: Expression, state: MemoryInterface, options: Options): ValueWithError {
         let value: any;
         let error: string;
@@ -42,6 +48,9 @@ export class StartOfHour extends ExpressionEvaluator {
         return { value, error };
     }
 
+    /**
+     * @private
+     */
     private static evalStartOfHour(timeStamp: string, format?: string): ValueWithError {
         let result: string;
         let error: string;
@@ -55,6 +64,9 @@ export class StartOfHour extends ExpressionEvaluator {
         return { value: result, error };
     }
 
+    /**
+     * @private
+     */
     private static validator(expr: Expression): void {
         FunctionUtils.validateOrder(expr, [ReturnType.String], ReturnType.String);
     }

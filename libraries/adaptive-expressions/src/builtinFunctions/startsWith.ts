@@ -18,14 +18,23 @@ import { ReturnType } from '../returnType';
  * This function is case-insensitive.
  */
 export class StartsWith extends ExpressionEvaluator {
+    /**
+     * Initializes a new instance of the `StartsWith` class.
+     */
     public constructor() {
         super(ExpressionType.StartsWith, StartsWith.evaluator(), ReturnType.Boolean, StartsWith.validator);
     }
 
+    /**
+     * @private
+     */
     private static evaluator(): EvaluateExpressionDelegate {
         return FunctionUtils.apply((args: any[]): boolean => InternalFunctionUtils.parseStringOrUndefined(args[0]).startsWith(InternalFunctionUtils.parseStringOrUndefined(args[1])), FunctionUtils.verifyStringOrNull);
     }
 
+    /**
+     * @private
+     */
     private static validator(expression: Expression): void {
         FunctionUtils.validateArityAndAnyType(expression, 2, 2, ReturnType.String);
     }

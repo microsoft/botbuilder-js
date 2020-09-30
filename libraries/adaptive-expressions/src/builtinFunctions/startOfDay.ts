@@ -21,10 +21,16 @@ import { ReturnType } from '../returnType';
  * Return the start of the day for a timestamp.
  */
 export class StartOfDay extends ExpressionEvaluator {
+    /**
+     * Initializes a new instance of the `StartOfDay` class.
+     */
     public constructor() {
         super(ExpressionType.StartOfDay, StartOfDay.evaluator, ReturnType.String, StartOfDay.validator);
     }
 
+    /**
+     * @private
+     */
     private static evaluator(expression: Expression, state: MemoryInterface, options: Options): ValueWithError {
         let value: any;
         let error: string;
@@ -42,6 +48,9 @@ export class StartOfDay extends ExpressionEvaluator {
         return { value, error };
     }
 
+    /**
+     * @private
+     */
     private static evalStartOfDay(timeStamp: string, format?: string): ValueWithError {
         let result: string;
         let error: string;
@@ -55,6 +64,9 @@ export class StartOfDay extends ExpressionEvaluator {
         return { value: result, error };
     }
 
+    /**
+     * @private
+     */
     private static validator(expression: Expression): void {
         FunctionUtils.validateOrder(expression, [ReturnType.String], ReturnType.String);
     }

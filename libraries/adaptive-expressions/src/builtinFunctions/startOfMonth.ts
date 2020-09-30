@@ -21,10 +21,16 @@ import { ReturnType } from '../returnType';
  * Return the start of the month for a timestamp.
  */
 export class StartOfMonth extends ExpressionEvaluator {
+    /**
+     * Initializes a new instance of the `StartOfMonth` class.
+     */
     public constructor() {
         super(ExpressionType.StartOfMonth, StartOfMonth.evaluator, ReturnType.String, StartOfMonth.validator);
     }
 
+    /**
+     * @private
+     */
     private static evaluator(expr: Expression, state: MemoryInterface, options: Options): ValueWithError {
         let value: any;
         let error: string;
@@ -42,6 +48,9 @@ export class StartOfMonth extends ExpressionEvaluator {
         return { value, error };
     }
 
+    /**
+     * @private
+     */
     private static evalStartOfMonth(timeStamp: string, format?: string): ValueWithError {
         let result: string;
         let error: string;
@@ -55,6 +64,9 @@ export class StartOfMonth extends ExpressionEvaluator {
         return { value: result, error };
     }
 
+    /**
+     * @private
+     */
     private static validator(expr: Expression): void {
         FunctionUtils.validateOrder(expr, [ReturnType.String], ReturnType.String);
     }

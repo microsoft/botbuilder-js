@@ -18,10 +18,16 @@ import { ReturnType } from '../returnType';
  * Set path in a JSON object to value.
  */
 export class SetPathToValue extends ExpressionEvaluator {
+    /**
+     * Initializes a new instance of the `SetPathToValue` class.
+     */
     public constructor() {
         super(ExpressionType.SetPathToValue, SetPathToValue.evaluator, ReturnType.Object, FunctionUtils.validateBinary);
     }
 
+    /**
+     * @private
+     */
     private static evaluator(expression: Expression, state: MemoryInterface, options: Options): ValueWithError {
         let path: string;
         let left: Expression;
