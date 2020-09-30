@@ -98,7 +98,9 @@ export class ConvertToUTC extends ExpressionEvaluator {
         return { value: result, error };
     }
 
-
+    /**
+     * @private
+     */
     private static validator(expr: Expression): void {
         FunctionUtils.validateOrder(expr, [ReturnType.String], ReturnType.String, ReturnType.String);
     }
