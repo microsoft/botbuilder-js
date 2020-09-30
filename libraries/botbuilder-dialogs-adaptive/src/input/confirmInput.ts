@@ -12,6 +12,9 @@ import { InputDialog, InputState } from './inputDialog';
 import { ChoiceSet } from './choiceSet';
 import { StringExpression, ObjectExpression, ArrayExpression, EnumExpression } from 'adaptive-expressions';
 
+/**
+ * Declarative input control that will gather yes/no confirmation input from a set of choices.
+ */
 export class ConfirmInput extends InputDialog {
     /**
      * Default options for rendering the choices to the user based on locale.
@@ -56,10 +59,19 @@ export class ConfirmInput extends InputDialog {
      */
     public outputFormat: StringExpression;
 
+    /**
+     * @protected
+     */
     protected onComputeId(): string {
         return `ConfirmInput[${ this.prompt && this.prompt.toString() }]`;
     }
 
+    /**
+     * @protected
+     * Called when input has been received.
+     * @param dc The `DialogContext` for the current turn of conversation.
+     * @returns InputState which reflects whether input was recognized as valid or not.
+     */
     protected async onRecognizeInput(dc: DialogContext): Promise<InputState> {
         // Recognize input if needed
         let input: any = dc.state.getValue(InputDialog.VALUE_PROPERTY);
@@ -95,6 +107,13 @@ export class ConfirmInput extends InputDialog {
         return InputState.valid;
     }
 
+    /**
+     * @protected
+     * Method which renders the prompt to the user given the current input state.
+     * @param dc The `DialogContext for the current turn of conversation.
+     * @param state Dialog `InputState`.
+     * @returns An `Activity` Promise representing the asynchronous operation.
+     */
     protected async onRenderPrompt(dc: DialogContext, state: InputState): Promise<Partial<Activity>> {
         // Determine locale
         let locale: string = dc.context.activity.locale || this.defaultLocale.getValue(dc.state);

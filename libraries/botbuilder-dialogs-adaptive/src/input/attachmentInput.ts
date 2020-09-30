@@ -15,19 +15,34 @@ export enum AttachmentOutputFormat {
     first = 'first'
 }
 
+/**
+ * Input dialog which prompts the user to send a file.
+ */
 export class AttachmentInput extends InputDialog {
 
     public outputFormat: EnumExpression<AttachmentOutputFormat> = new EnumExpression<AttachmentOutputFormat>(AttachmentOutputFormat.first);
 
+    /**
+     * @protected
+     */
     protected onComputeId(): string {
         return `AttachmentInput[${ this.prompt && this.prompt.toString() }]`;
     }
 
+    /**
+     * @protected
+     */
     protected getDefaultInput(dc: DialogContext): any {
         const attachments = dc.context.activity.attachments;
         return Array.isArray(attachments) && attachments.length > 0 ? attachments : undefined;
     }
 
+    /**
+     * @protected
+     * Called when input has been received.
+     * @param dc The `DialogContext` for the current turn of conversation.
+     * @returns InputState which reflects whether input was recognized as valid or not.
+     */
     protected async onRecognizeInput(dc: DialogContext): Promise<InputState> {
         // Recognize input and filter out non-attachments
         let input: Attachment | Attachment[] = dc.state.getValue(InputDialog.VALUE_PROPERTY);

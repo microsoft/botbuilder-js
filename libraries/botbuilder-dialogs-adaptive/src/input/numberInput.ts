@@ -11,16 +11,28 @@ import { DialogContext } from 'botbuilder-dialogs';
 import { InputDialog, InputState } from './inputDialog';
 import { StringExpression, NumberExpression } from 'adaptive-expressions';
 
+/**
+ * Input dialog for asking for numbers.
+ */
 export class NumberInput extends InputDialog {
 
     public defaultLocale?: StringExpression;
 
     public outputFormat?: NumberExpression;
 
+    /**
+     * @protected
+     */
     protected onComputeId(): string {
         return `NumberInput[${ this.prompt && this.prompt.toString() }]`;
     }
 
+    /**
+     * @protected
+     * Called when input has been received.
+     * @param dc The `DialogContext` for the current turn of conversation.
+     * @returns InputState which reflects whether input was recognized as valid or not.
+     */
     protected async onRecognizeInput(dc: DialogContext): Promise<InputState> {
         // Recognize input if needed
         let input: any = dc.state.getValue(InputDialog.VALUE_PROPERTY);

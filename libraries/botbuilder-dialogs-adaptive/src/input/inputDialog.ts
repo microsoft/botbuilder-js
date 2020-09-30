@@ -21,6 +21,9 @@ export enum InputState {
     valid = 'valid'
 }
 
+/**
+ * Defines input dialogs.
+ */
 export abstract class InputDialog extends Dialog {
     public static OPTIONS_PROPERTY = 'this.options';
     public static VALUE_PROPERTY = 'this.value';
@@ -86,20 +89,32 @@ export abstract class InputDialog extends Dialog {
      */
     public disabled?: BoolExpression;
 
+    /**
+     * Initializes a new instance of the `InputDialog` class
+     * @param property Optional. The value expression which the input will be bound to.
+     * @param prompt Optional. The `Activity` to send to the user,
+     * if a string is specified it will instantiates an `ActivityTemplate`.
+     */
     public constructor(property?: string, prompt?: Partial<Activity> | string) {
         super();
         if (property) {
             this.property = new StringExpression(property);
         }
         if (prompt) {
-            if (typeof prompt === 'string') { 
-                this.prompt = new ActivityTemplate(prompt); 
+            if (typeof prompt === 'string') {
+                this.prompt = new ActivityTemplate(prompt);
             } else {
-                this.prompt = new StaticActivityTemplate(prompt); 
+                this.prompt = new StaticActivityTemplate(prompt);
             }
         }
     }
 
+    /**
+     * Called when the dialog is started and pushed onto the dialog stack.
+     * @param dc The `DialogContext` for the current turn of conversation.
+     * @param options Optional. Initial information to pass to the dialog.
+     * @returns A `DialogTurnResult` Promise representing the asynchronous operation.
+     */
     public async beginDialog(dc: DialogContext, options?: any): Promise<DialogTurnResult> {
         if (this.disabled && this.disabled.getValue(dc.state)) {
             return await dc.endDialog();
@@ -130,6 +145,11 @@ export abstract class InputDialog extends Dialog {
         }
     }
 
+    /**
+     * Called when the dialog is _continued_, where it is the active dialog and the user replies with a new activity.
+     * @param dc The `DialogContext` for the current turn of conversation.
+     * @returns A `DialogTurnResult` Promise representing the asynchronous operation.
+     */
     public async continueDialog(dc: DialogContext): Promise<DialogTurnResult> {
         // Filter to only message activities
         const activity = dc.context.activity;
@@ -175,11 +195,26 @@ export abstract class InputDialog extends Dialog {
         return await dc.endDialog();
     }
 
+    /**
+     * Called when a child dialog completes its turn, returning control to this dialog.
+     * @param dc The `DialogContext` for the current turn of conversation.
+     * @param reason Reason why the dialog resumed.
+     * @param result Optional. Value returned from the dialog that was called.
+     * The type of the value returned is dependent on the child dialog.
+     * @returns A `DialogTurnResult` Promise representing the asynchronous operation.
+     */
     public async resumeDialog(dc: DialogContext, reason: DialogReason, result?: any): Promise<DialogTurnResult> {
         // Re-send initial prompt
         return await this.promptUser(dc, InputState.missing);
     }
 
+    /**
+     * @protected
+     * Called before an event is bubbled to its parent.
+     * @param dc The `DialogContext` for the current turn of conversation.
+     * @param event The event being raised.
+     * @returns Whether the event is handled by the current dialog and further processing should stop.
+     */
     protected async onPreBubbleEvent(dc: DialogContext, event: DialogEvent): Promise<boolean> {
         if (event.name === DialogEvents.activityReceived && dc.context.activity.type === ActivityTypes.Message) {
             if (dc.parent) {
@@ -202,10 +237,23 @@ export abstract class InputDialog extends Dialog {
 
     protected abstract onRecognizeInput(dc: DialogContext): Promise<InputState>;
 
+    /**
+     * @protected
+     * Method which processes options.
+     * @param dc The `DialogContext` for the current turn of conversation.
+     * @param options Initial information to pass to the dialog.
+     */
     protected onInitializeOptions(dc: DialogContext, options: any): any {
         return Object.assign({}, options);
     }
 
+    /**
+     * @protected
+     * Method which renders the prompt to the user give n the current input state.
+     * @param dc The `DialogContext` for the current turn of conversation.
+     * @param state Dialog `InputState`
+     * @returns An `Activity` Promise representing the asynchronous operation.
+     */
     protected async onRenderPrompt(dc: DialogContext, state: InputState): Promise<Partial<Activity>> {
         let msg: Partial<Activity>;
         let template: TemplateInterface<Partial<Activity>>;
@@ -245,9 +293,12 @@ export abstract class InputDialog extends Dialog {
             }
         });
 
-        return msg; 
+        return msg;
     }
 
+    /**
+     * @protected
+     */
     protected getDefaultInput(dc: DialogContext): any {
         const text = dc.context.activity.text;
         return typeof text == 'string' && text.length > 0 ? text : undefined;
@@ -316,6 +367,9 @@ export abstract class InputDialog extends Dialog {
         return clone;
     }
 
+    /**
+     * @private
+     */
     private async recognizeInput(dc: DialogContext, turnCount: number): Promise<InputState> {
         let input: any;
         if (this.property) {
@@ -366,6 +420,9 @@ export abstract class InputDialog extends Dialog {
         }
     }
 
+    /**
+     * @private
+     */
     private async promptUser(dc: DialogContext, state: InputState): Promise<DialogTurnResult> {
         const prompt = await this.onRenderPrompt(dc, state);
         await dc.context.sendActivity(prompt);

@@ -21,6 +21,9 @@ export interface ChoiceInputOptions {
     choices: Choice[];
 }
 
+/**
+ * ChoiceInput - Declarative input to gather choices from user.
+ */
 export class ChoiceInput extends InputDialog {
     /**
      * Default options for rendering the choices to the user based on locale.
@@ -70,6 +73,13 @@ export class ChoiceInput extends InputDialog {
      */
     public recognizerOptions?: ObjectExpression<FindChoicesOptions> = new ObjectExpression();
 
+    /**
+     * @protected
+     * Method which processes options.
+     * @param dc The `DialogContext` for the current turn of conversation.
+     * @param options Optional, initial information to pass to the dialog.
+     * @returns Modified options.
+     */
     protected onInitializeOptions(dc: DialogContext, options: ChoiceInputOptions): ChoiceInputOptions {
         if (!options || !options.choices || options.choices.length == 0) {
             if (!options) {
@@ -81,6 +91,12 @@ export class ChoiceInput extends InputDialog {
         return super.onInitializeOptions(dc, options);
     }
 
+    /**
+     * @protected
+     * Called when input has been received, recognices choice.
+     * @param dc The `DialogContext` for the current turn of conversation.
+     * @returns InputState which reflects whether input was recognized as valid or not.
+     */
     protected async onRecognizeInput(dc: DialogContext): Promise<InputState> {
         // Get input and options
         let input: string = dc.state.getValue(InputDialog.VALUE_PROPERTY).toString();
@@ -115,6 +131,13 @@ export class ChoiceInput extends InputDialog {
         return InputState.valid;
     }
 
+    /**
+     * @protected
+     * Method which renders the prompt to the user given the current input state.
+     * @param dc The `DialogContext` for the current turn of conversation.
+     * @param state Dialog `InputState`.
+     * @returns An `Activity` Promise representing the asynchronous operation.
+     */
     protected async onRenderPrompt(dc: DialogContext, state: InputState): Promise<Partial<Activity>> {
         // Determine locale
         let locale: string = dc.context.activity.locale || this.defaultLocale.getValue(dc.state);
@@ -132,6 +155,9 @@ export class ChoiceInput extends InputDialog {
         return Promise.resolve(this.appendChoices(prompt, channelId, choices, style, choiceOptions));
     }
 
+    /**
+     * @protected
+     */
     protected onComputeId(): string {
         return `ChoiceInput[${ this.prompt && this.prompt.toString() }]`;
     }

@@ -7,8 +7,15 @@
  */
 import { Choice } from "botbuilder-dialogs";
 
+/**
+ * Defines ChoiceSet collection.
+ */
 export class ChoiceSet extends Array<Choice>
 {
+    /**
+     * Initializes a new instance of the `ChoiceSet` class.
+     * @param obj Choice values.
+     */
     public constructor(obj: any) {
         super()
         if (obj instanceof Array) {

@@ -10,16 +10,28 @@ import { DialogContext } from 'botbuilder-dialogs';
 import { InputDialog, InputState } from './inputDialog';
 import { StringExpression } from 'adaptive-expressions';
 
+/**
+ * Input dialog to collect a datetime from the user.
+ */
 export class DateTimeInput extends InputDialog {
 
     public defaultLocale: StringExpression;
 
     public outputFormat: StringExpression;
 
+    /**
+     * @protected
+     */
     protected onComputeId(): string {
         return `DateTimeInput[${ this.prompt && this.prompt.toString() }]`;
     }
 
+    /**
+     * @protected
+     * Called when input has been received.
+     * @param dc The `DialogContext` for the current turn of conversation.
+     * @returns InputState which reflects whether input was recognized as valid or not.
+     */
     protected async onRecognizeInput(dc: DialogContext): Promise<InputState> {
         // Recognize input and filter out non-attachments
         const input: object = dc.state.getValue(InputDialog.VALUE_PROPERTY);

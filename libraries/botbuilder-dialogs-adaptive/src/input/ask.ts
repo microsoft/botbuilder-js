@@ -18,7 +18,11 @@ import { SendActivity } from '../actions/sendActivity';
  * `DialogPath.retries` is updated as the same question is asked multiple times.
  */
 export class Ask extends SendActivity {
-
+    /**
+     *Initializes a new instance of the `Ask` class.
+     * @param text Optional, text value.
+     * @param expectedProperties Optional, expected properties values.
+     */
     public constructor(text?: string, expectedProperties?: ArrayExpression<string>) {
         super(text);
         this.expectedProperties = expectedProperties;
@@ -34,6 +38,12 @@ export class Ask extends SendActivity {
      */
     public defaultOperation: StringExpression;
 
+    /**
+     * Called when the dialog is started and pushed onto the dialog stack.
+     * @param dc The `DialogContext` for the current turn of conversation.
+     * @param options Optional, initial information to pass to the dialog.
+     * @returns A `DialogTurnResult` Promise representing the asynchronous operation.
+     */
     public async beginDialog(dc: DialogContext, options?: object): Promise<DialogTurnResult> {
         // get number of retries from memory
         let retries: number = dc.state.getValue<number>(DialogPath.retries, 0);
