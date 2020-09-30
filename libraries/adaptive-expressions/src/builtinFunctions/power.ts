@@ -14,9 +14,8 @@ import { MultivariateNumericEvaluator } from './multivariateNumericEvaluator';
  * Return exponentiation of one number to another.
  */
 export class Power extends MultivariateNumericEvaluator {
-
     /**
-     * Initializes a new instance of the Power class.
+     * Initializes a new instance of the `Power` class.
      */
     public constructor() {
         super(ExpressionType.Power, Power.func, FunctionUtils.verifyNumberOrNumericList);

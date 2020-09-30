@@ -20,9 +20,8 @@ import { ReturnType } from '../returnType';
  * Return true if at least one expression is true, or return false if all are false.
  */
 export class Or extends ExpressionEvaluator {
-
     /**
-     * Initializes a new instance of the Or class.
+     * Initializes a new instance of the `Or` class.
      */
     public constructor() {
         super(ExpressionType.Or, Or.evaluator, ReturnType.Boolean, FunctionUtils.validateAtLeastOne);

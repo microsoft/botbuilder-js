@@ -18,9 +18,8 @@ import { ReturnType } from '../returnType';
  * This function is case-insensitive.
  */
 export class ReplaceIgnoreCase extends ExpressionEvaluator {
-
     /**
-     * Initializes a new instance of the ReplaceIgnoreCase class.
+     * Initializes a new instance of the `ReplaceIgnoreCase` class.
      */
     public constructor() {
         super(ExpressionType.ReplaceIgnoreCase, ReplaceIgnoreCase.evaluator(), ReturnType.String, ReplaceIgnoreCase.validator);

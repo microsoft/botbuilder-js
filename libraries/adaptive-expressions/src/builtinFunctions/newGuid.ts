@@ -16,9 +16,8 @@ import { ReturnType } from '../returnType';
  * Return a new Guid string.
  */
 export class NewGuid extends ExpressionEvaluator {
-
     /**
-     * Initializes a new instance of the NewGuid class.
+     * Initializes a new instance of the `NewGuid` class.
      */
     public constructor() {
         super(ExpressionType.NewGuid, NewGuid.evaluator(), ReturnType.String, NewGuid.validator);

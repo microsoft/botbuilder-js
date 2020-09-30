@@ -15,9 +15,8 @@ import { ReturnType } from '../returnType';
  * Return an integer array that starts from a specified integer with the given length.
  */
 export class Range extends ExpressionEvaluator {
-
     /**
-     * Initializes a new instance of the Range class.
+     * Initializes a new instance of the `Range` class.
      */
     public constructor() {
         super(ExpressionType.Range, Range.evaluator(), ReturnType.Array, FunctionUtils.validateBinaryNumber);

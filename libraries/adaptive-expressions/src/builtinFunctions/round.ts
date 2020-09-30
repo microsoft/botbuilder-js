@@ -15,9 +15,8 @@ import { ReturnType } from '../returnType';
  * Rounds a number value to the nearest integer.
  */
 export class Round extends ExpressionEvaluator {
-
     /**
-     * Initializes a new instance of the Round class.
+     * Initializes a new instance of the `Round` class.
      */
     public constructor() {
         super(ExpressionType.Round, Round.evaluator(), ReturnType.Number, FunctionUtils.validateUnaryOrBinaryNumber);

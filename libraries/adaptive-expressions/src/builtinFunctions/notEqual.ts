@@ -15,9 +15,8 @@ import { ComparisonEvaluator } from './comparisonEvaluator';
  * Return true if the two items are not equal.
  */
 export class NotEqual extends ComparisonEvaluator {
-
     /**
-     * Initializes a new instance of the NotEqual class.
+     * Initializes a new instance of the `NotEqual` class.
      */
     public constructor() {
         super(ExpressionType.NotEqual, NotEqual.func, FunctionUtils.validateBinary);

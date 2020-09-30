@@ -15,9 +15,8 @@ import { ReturnType } from '../returnType';
  * For the MostSpecificSelector, this is a short hand so that instead of having to do A &amp; B || A you can do A &amp; optional(B) to mean the same thing.
  */
 export class Optional extends ExpressionEvaluator {
-
     /**
-     * Initializes a new instance of the Optional class.
+     * Initializes a new instance of the `Optional` class.
      */
     public constructor() {
         super(ExpressionType.Optional, Optional.evaluator(), ReturnType.Boolean, FunctionUtils.validateUnaryBoolean);
