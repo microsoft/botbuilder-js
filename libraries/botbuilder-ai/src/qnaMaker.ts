@@ -5,28 +5,18 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { TurnContext, BotTelemetryClient, NullTelemetryClient } from 'botbuilder-core';
 
+import { BotTelemetryClient, NullTelemetryClient, TurnContext } from 'botbuilder-core';
+
+import { FeedbackRecords, JoinOperator, QnAMakerEndpoint, QnAMakerMetadata, QnAMakerOptions, QnAMakerResult, QnAMakerResults, RankerTypes } from './qnamaker-interfaces';
+import { ActiveLearningUtils, GenerateAnswerUtils, TrainUtils } from './qnamaker-utils';
 import { QnATelemetryConstants } from './qnaTelemetryConstants';
-import { QnAMakerEndpoint } from './qnamaker-interfaces/qnamakerEndpoint';
-import { QnAMakerMetadata } from './qnamaker-interfaces/qnamakerMetadata';
-import { QnAMakerOptions } from './qnamaker-interfaces/qnamakerOptions';
-import { QnAMakerResult } from './qnamaker-interfaces/qnamakerResult';
-import { FeedbackRecords } from './qnamaker-interfaces/feedbackRecords';
-
-import { GenerateAnswerUtils } from './qnamaker-utils/generateAnswerUtils';
-import { ActiveLearningUtils } from './qnamaker-utils/activeLearningUtils';
-import { TrainUtils } from './qnamaker-utils/trainUtils';
-import { QnAMakerResults } from './qnamaker-interfaces/qnamakerResults';
-import { RankerTypes } from './qnamaker-interfaces/rankerTypes';
-import { JoinOperator } from './qnamaker-interfaces/JoinOperator';
 
 export const QNAMAKER_TRACE_TYPE = 'https://www.qnamaker.ai/schemas/trace';
 export const QNAMAKER_TRACE_NAME = 'QnAMaker';
 export const QNAMAKER_TRACE_LABEL = 'QnAMaker Trace';
 
-export interface QnAMakerTelemetryClient
-{
+export interface QnAMakerTelemetryClient {
     /**
      * Gets a value indicating whether determines whether to log personal information that came from the user.
      */
