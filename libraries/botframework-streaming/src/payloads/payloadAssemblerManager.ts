@@ -35,9 +35,7 @@ export class PayloadAssemblerManager {
     /**
      * Retrieves the assembler's payload as a stream.
      * @param header The Header of the Stream to retrieve.
-
      * @returns A `SubscribableStream` of the assembler's payload.
-
      */
     public getPayloadStream(header: IHeader): SubscribableStream {
         if (header.payloadType === PayloadTypes.stream) {
