@@ -16,6 +16,11 @@ import { Expression } from '../expression';
  * @param T Type of object in the array.
  */
 export class ArrayExpression<T> extends ExpressionProperty<T[]> {
+    
+    /**
+     * Initializes a new instance of the ArrayExpression<T> class.
+     * @param value Value of array of T or a string expression to bind to an array of T.
+     */
     public constructor(value?: T[] | string | Expression) {
         super(value);
     }

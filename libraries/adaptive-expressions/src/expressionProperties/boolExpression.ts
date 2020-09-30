@@ -14,6 +14,11 @@ import { Expression } from '../expression';
  * String values are always interpreted as an expression, whether it has '=' prefix or not.
  */
 export class BoolExpression extends ExpressionProperty<boolean> {
+    
+    /**
+     * Initializes a new instance of the ArrayExpression<T> class.
+     * @param value A boolean or a string expression which resolves to a boolean.
+     */
     public constructor(value?: boolean | string | Expression) {
         super(value, false);
     }

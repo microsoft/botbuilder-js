@@ -9,12 +9,18 @@ import { Expression } from '../expression';
 
 
 /**
- * Base class which defines a Expression or value for a property.
+ * Base class which defines an Expression or value for a property.
+ * @typeparam T Type of value of the expression property.
  */
 export class ExpressionProperty<T> {
     private defaultValue: T;
     private expression: Expression;
 
+    /**
+     * Initializes a new instance of the ExpressionProperty<T> class.
+     * @param value Optional. Raw value of the expression property.
+     * @param defaultValue Optional. Default value for the property.
+     */
     public constructor(value?: T | string | Expression, defaultValue?: T) {
         this.defaultValue = defaultValue;
         this.setValue(value);

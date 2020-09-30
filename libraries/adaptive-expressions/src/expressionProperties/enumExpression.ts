@@ -15,6 +15,11 @@ import { ExpressionProperty } from './expressionProperty';
  * String values are always interpreted as an expression whether it has '=' prefix or not, as string values cannot be parsed to enum values.
  */
 export class EnumExpression<T> extends ExpressionProperty<T> {
+    
+    /**
+     * Initializes a new instance of the ArrayExpression<T> class.
+     * @param value An enum of T or a string expression which resolves to an enum.
+     */
     public constructor(value: T | string | Expression) {
         super(value);
     }
