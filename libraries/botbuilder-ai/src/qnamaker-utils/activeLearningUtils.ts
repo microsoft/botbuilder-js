@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 
-import { QnAMakerResult } from '../qnamaker-interfaces/qnamakerResult';
+import { QnAMakerResult } from '../qnamaker-interfaces';
 
 /** Previous Low Score Variation Multiplier. */
 const PreviousLowScoreVariationMultiplier = 0.7;
@@ -64,7 +64,6 @@ export class ActiveLearningUtils {
 
         return filteredQnaSearchResult;
     }
-
 
     private static includeForClustering(prevScore, currentScore, multiplier): boolean {
         return (prevScore - currentScore) < (multiplier * Math.sqrt(prevScore));

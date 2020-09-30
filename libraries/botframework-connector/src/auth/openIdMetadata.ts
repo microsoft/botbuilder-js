@@ -1,18 +1,16 @@
 /**
- * @module botbuilder
+ * @module botframework-connector
  */
 /**
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
 
+import * as getPem from 'rsa-pem-from-mod-exp';
+import base64url from 'base64url';
+import fetch from 'cross-fetch';
 import { AuthenticationError } from "./authenticationError";
 import { StatusCodes } from "botframework-schema";
-
-// tslint:disable-next-line:no-var-requires no-require-imports
-const getPem: any = require('rsa-pem-from-mod-exp');
-// tslint:disable-next-line:no-var-requires no-require-imports
-const base64url: any = require('base64url');
 
 /**
  * Class in charge of manage OpenId metadata.

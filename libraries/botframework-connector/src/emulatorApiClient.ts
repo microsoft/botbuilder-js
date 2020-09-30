@@ -1,12 +1,13 @@
 /**
- * @module botbuilder
+ * @module botframework-connector
  */
 /**
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
 
-import { AppCredentials } from "./auth/appCredentials";
+import { AppCredentials } from './auth/appCredentials';
+import fetch from 'cross-fetch';
 
 /**
  * The purpose of this class is to emulate an api client.
