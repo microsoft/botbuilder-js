@@ -13,6 +13,7 @@ import { Expression } from '../expression';
 import { EvaluateExpressionDelegate, ExpressionEvaluator } from '../expressionEvaluator';
 import { ExpressionType } from '../expressionType';
 import { FunctionUtils } from '../functionUtils';
+import { InternalFunctionUtils } from '../functionUtils.internal';
 import { ReturnType } from '../returnType';
 
 /**
@@ -38,7 +39,7 @@ export class FormatTicks extends ExpressionEvaluator {
                     error = `formatTicks first argument ${arg} is not a number, numeric string or bigInt`;
                 } else {
                     // Convert to ms
-                    arg = ((arg.subtract(FunctionUtils.UnixMilliSecondToTicksConstant)).divide(FunctionUtils.MillisecondToTickConstant)).toJSNumber();
+                    arg = ((arg.subtract(InternalFunctionUtils.UnixMilliSecondToTicksConstant)).divide(InternalFunctionUtils.MillisecondToTickConstant)).toJSNumber();
                 }
 
                 let value: any;

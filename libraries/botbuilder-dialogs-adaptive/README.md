@@ -121,10 +121,10 @@ adapter.processActivity(req, res, async (turnContext) => {
 
 See this module in action in these example apps:
 
-* [Simple Prompts](https://github.com/Microsoft/BotBuilder-Samples/tree/master/samples/javascript_nodejs/04.simple-prompt)
-* [Multiple Prompts](https://github.com/Microsoft/BotBuilder-Samples/tree/master/samples/javascript_nodejs/05.multi-turn-prompt)
-* [Prompt Validation](https://github.com/Microsoft/BotBuilder-Samples/tree/master/samples/javascript_nodejs/10.prompt-validations)
-* [Custom Dialog Class](https://github.com/Microsoft/BotBuilder-Samples/tree/master/samples/javascript_nodejs/19.custom-dialogs)
+* [Simple Prompts](https://github.com/Microsoft/BotBuilder-Samples/tree/main/samples/javascript_nodejs/04.simple-prompt)
+* [Multiple Prompts](https://github.com/Microsoft/BotBuilder-Samples/tree/main/samples/javascript_nodejs/05.multi-turn-prompt)
+* [Prompt Validation](https://github.com/Microsoft/BotBuilder-Samples/tree/main/samples/javascript_nodejs/10.prompt-validations)
+* [Custom Dialog Class](https://github.com/Microsoft/BotBuilder-Samples/tree/main/samples/javascript_nodejs/19.custom-dialogs)
 
 # Learn More
 
@@ -134,6 +134,6 @@ See this module in action in these example apps:
 
 [WaterfallDialog](https://docs.microsoft.com/en-us/javascript/api/botbuilder-dialogs/waterfalldialog) WaterfallDialogs execute a series of step functions in order, passing the resulting user input from each steo into the next step's function.
 
-[Track Waterfall Dialogs with Application Insights](https://github.com/Microsoft/botbuilder-js/tree/master/libraries/botbuilder-applicationinsights#use-with-waterfall-dialogs).
+[Track Waterfall Dialogs with Application Insights](https://github.com/Microsoft/botbuilder-js/tree/main/libraries/botbuilder-applicationinsights#use-with-waterfall-dialogs).
 
 [ComponentDialog](https://docs.microsoft.com/en-us/javascript/api/botbuilder-dialogs/componentdialog) ComponentDialogs are containers that encapsulate multiple sub-dialogs, but can be invoked like normal dialogs. This is useful for re-usable dialogs, or creating multiple dialogs with similarly named sub-dialogs that would otherwise collide.

@@ -10,6 +10,7 @@ import { Expression } from '../expression';
 import { EvaluateExpressionDelegate, ExpressionEvaluator } from '../expressionEvaluator';
 import { ExpressionType } from '../expressionType';
 import { FunctionUtils } from '../functionUtils';
+import { InternalFunctionUtils } from '../functionUtils.internal';
 import { ReturnType } from '../returnType';
 
 /**
@@ -22,7 +23,7 @@ export class StartsWith extends ExpressionEvaluator {
     }
 
     private static evaluator(): EvaluateExpressionDelegate {
-        return FunctionUtils.apply((args: any[]): boolean => FunctionUtils.parseStringOrUndefined(args[0]).startsWith(FunctionUtils.parseStringOrUndefined(args[1])), FunctionUtils.verifyStringOrNull);
+        return FunctionUtils.apply((args: any[]): boolean => InternalFunctionUtils.parseStringOrUndefined(args[0]).startsWith(InternalFunctionUtils.parseStringOrUndefined(args[1])), FunctionUtils.verifyStringOrNull);
     }
 
     private static validator(expression: Expression): void {
