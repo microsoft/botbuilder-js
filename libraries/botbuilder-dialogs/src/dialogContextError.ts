@@ -6,7 +6,7 @@ import { DialogInstance } from './dialog';
  */
 export class DialogContextError extends Error {
     public readonly dialogContext: {
-        activeDialog: string;
+        activeDialog?: string;
         parent?: string;
         stack: DialogInstance[];
     };
@@ -29,8 +29,8 @@ export class DialogContextError extends Error {
         }
 
         this.dialogContext = {
-            activeDialog: dialogContext.activeDialog.id,
-            parent: dialogContext.parent ? dialogContext.parent.activeDialog.id : null,
+            activeDialog: dialogContext.activeDialog ? dialogContext.activeDialog.id : undefined,
+            parent: dialogContext.parent && dialogContext.parent.activeDialog ? dialogContext.parent.activeDialog.id : undefined,
             stack: dialogContext.stack,
         };
     }
