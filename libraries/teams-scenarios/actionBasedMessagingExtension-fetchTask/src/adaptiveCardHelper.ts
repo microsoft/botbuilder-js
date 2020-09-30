@@ -18,7 +18,7 @@ import { SubmitExampleData } from './submitExampleData';
 export class AdaptiveCardHelper {
     /**
      * Creates an example data.
-     * @param action Messaging extension action
+     * @param action Messaging extension action.
      * @returns A `SubmitExampleData` object.
      */
     public static toSubmitExampleData(action: MessagingExtensionAction): SubmitExampleData {

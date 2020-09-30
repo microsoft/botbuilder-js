@@ -16,7 +16,7 @@ import {
 
 /**
  * After installing this bot you can click on the 3 dots to pull up the extension menu. You should be able to click on the search extension
- * and the bot will start. Interact with the cards to execrcise the flows.
+ * and the bot will start. Interact with the cards to exercise the flows.
  */
 export class ActionBasedMessagingExtensionBot extends TeamsActivityHandler {
     /**

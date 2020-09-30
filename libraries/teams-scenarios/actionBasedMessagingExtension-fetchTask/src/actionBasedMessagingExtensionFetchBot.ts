@@ -24,8 +24,8 @@ import { CardResponseHelpers } from './cardResponseHelpers';
 import { SubmitExampleData } from './submitExampleData';
 
 /**
- * After installing this bot you will need to click on the 3 dots to pull up the extension menu to select the bot. Once you do you do
- * see the extension pop a task module.
+ * After installing this bot you will need to click on the 3 dots to pull up the extension menu to select the bot.
+ * Once you do, you will see the extension pop a task module.
  */
 export class ActionBasedMessagingExtensionFetchTaskBot extends TeamsActivityHandler {
     /**
