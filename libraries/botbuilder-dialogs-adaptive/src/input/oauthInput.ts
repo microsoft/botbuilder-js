@@ -276,7 +276,7 @@ export class OAuthInput extends InputDialog {
                     if (turnContext.activity.channelId === Channels.Emulator) {
                         cardActionType = ActionTypes.OpenUrl;
                     }
-                } else {
+                } else if (!this.channelRequiresSignInLink(turnContext.activity.channelId)) {
                     link = undefined;
                 }
 
@@ -447,6 +447,16 @@ export class OAuthInput extends InputDialog {
                 body
             }
         });
+    }
+
+    private channelRequiresSignInLink(channelId: string): boolean {
+        switch (channelId) {
+            case Channels.Msteams:
+                return true;
+            default:
+        }
+
+        return false;
     }
 }
 

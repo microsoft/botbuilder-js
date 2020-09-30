@@ -5,7 +5,8 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { Activity, ActivityTypes, ConversationReference } from 'botframework-schema';
+import { ActivityTypes } from 'botframework-schema';
+import { SkillValidation } from 'botframework-connector';
 import { Middleware } from './middlewareSet';
 import { TurnContext } from './turnContext';
 
@@ -20,17 +21,12 @@ import { TurnContext } from './turnContext';
   * will continue to be sent until your bot sends another message back to the user
   */
 export class ShowTypingMiddleware implements Middleware {
-    private readonly delay: number;
-    private readonly period: number;
-    private interval: any;
-    private finished: boolean;
-
     /**
          * Create the SendTypingIndicator middleware
          * @param delay {number} Number of milliseconds to wait before sending the first typing indicator.
          * @param period {number} Number of milliseconds to wait before sending each following indicator.
          */
-    constructor(delay: number = 500, period: number = 2000) {
+    constructor(private readonly delay: number = 500, private readonly period: number = 2000) {
         if (delay < 0) {
             throw new Error('Delay must be greater than or equal to zero');
         }
@@ -38,86 +34,62 @@ export class ShowTypingMiddleware implements Middleware {
         if (period <= 0) {
             throw new Error('Repeat period must be greater than zero');
         }
-
-        this.delay = delay;
-        this.period = period;
     }
 
-    /** Implement middleware signature
+    /**
+         * Processes an incoming activity.
          * @param context {TurnContext} An incoming TurnContext object.
          * @param next {function} The next delegate function.
          */
-    public async onTurn(context: TurnContext, next: () => Promise<void>): Promise<void> {
-
+    public async onTurn(context: TurnContext, next: () => Promise<void>) {
         let finished = false;
-        let hTimeout: any = undefined;
+        let timeout: ReturnType<typeof setTimeout>;
 
-        /**
-             * @param context TurnContext object representing incoming message.
-             * @param delay The initial delay before sending the first indicator.
-             * @param period How often to send the indicator after the first.
-             */
-        function startInterval(context: TurnContext, delay: number, period: number): void {
-            hTimeout = setTimeout(
-                async () => {
-                    if (!finished) {
-                        let typingActivity: Partial<Activity> = {
-                            type: ActivityTypes.Typing,
-                            relatesTo: context.activity.relatesTo
-                        };
-
-                        // Sending the Activity directly via the Adapter avoids other middleware and avoids setting the
-                        // responded flag. However this also requires that the conversation reference details are explicitly added.
-                        const conversationReference: Partial<ConversationReference> =
-                                TurnContext.getConversationReference(context.activity);
-                        typingActivity = TurnContext.applyConversationReference(typingActivity, conversationReference);
-
-                        await context.adapter.sendActivities(context, [typingActivity]);
-
-                        // Pass in period as the delay to repeat at an interval.
-                        startInterval(context, period, period);
-                    } else {
-                        // Do nothing! This turn is done and we don't want to continue sending typing indicators.
+        const scheduleIndicator = (delay = this.delay) => {
+            timeout = setTimeout(async () => {
+                if (!finished) {
+                    try {
+                        await this.sendTypingActivity(context);
+                    } catch (err) {
+                        if (context.adapter && context.adapter.onTurnError) {
+                            await context.adapter.onTurnError(context, err);
+                        } else {
+                            throw err;
+                        }
                     }
-                },
-                delay
-            );
+
+                    scheduleIndicator(this.period);
+                }
+            }, delay);
         }
 
-        if (context.activity.type === ActivityTypes.Message) {
-            // Set a property to track whether or not the turn is finished.
-            // When it flips to true, we won't send anymore typing indicators.
+        if (!this.isSkillBot(context) && context.activity.type === ActivityTypes.Message) {
             finished = false;
-            startInterval(context, this.delay, this.period);
+            scheduleIndicator();
         }
 
-        // Let the rest of the process run.
-        // After everything has run, stop the indicator!
-        try {
-            return await next();
-        }
-        finally
-        {
-            finished = true;
-            if (hTimeout) {
-                clearTimeout(hTimeout);
-            }
-        }
+        // Execute remaining middleware, then clear scheduled indicators
+        await next();
+
+        finished = true;
+        if (timeout) clearTimeout(timeout);
     }
-    private async sendTypingActivity(context: TurnContext): Promise<void> {
 
-        let typingActivity: Partial<Activity> = {
-            type: ActivityTypes.Typing,
-            relatesTo: context.activity.relatesTo
-        };
+    private isSkillBot(context: TurnContext) {
+        const identity = context.turnState.get(context.adapter.BotIdentityKey);
+        return identity && SkillValidation.isSkillClaim(identity.claims);
+    }
 
+    private async sendTypingActivity(context: TurnContext) {
         // Sending the Activity directly via the Adapter avoids other middleware and avoids setting the
         // responded flag. However this also requires that the conversation reference details are explicitly added.
-        const conversationReference: Partial<ConversationReference> = TurnContext.getConversationReference(context.activity);
-        typingActivity = TurnContext.applyConversationReference(typingActivity, conversationReference);
+        const conversationReference = TurnContext.getConversationReference(context.activity);
+
+        const typingActivity = TurnContext.applyConversationReference({
+            type: ActivityTypes.Typing,
+            relatesTo: context.activity.relatesTo
+        }, conversationReference);
 
         await context.adapter.sendActivities(context, [typingActivity]);
-
     }
-
 }

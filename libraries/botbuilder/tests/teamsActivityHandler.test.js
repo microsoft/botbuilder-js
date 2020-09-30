@@ -1801,7 +1801,7 @@ describe('TeamsActivityHandler', () => {
 
         it('signin/verifyState routed activity', done => {
             onDialogCalled = false;
-            handleTeamsSigninVerifyStateCalled = false;
+            let handleTeamsSigninVerifyStateCalled = false;
 
             class InvokeHandler extends TeamsActivityHandler {
                 constructor() {
@@ -1840,7 +1840,7 @@ describe('TeamsActivityHandler', () => {
 
         it('signin/tokenExchange routed activity', done => {
             onDialogCalled = false;
-            handleTeamsSigninTokenExchangeCalled = false;
+            let handleTeamsSigninTokenExchangeCalled = false;
 
             class InvokeHandler extends TeamsActivityHandler {
                 constructor() {

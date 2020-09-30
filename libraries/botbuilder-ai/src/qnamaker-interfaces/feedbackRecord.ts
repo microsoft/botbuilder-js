@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 
- /**
+/**
  * Defines active learning feedback record.
  */
 export interface FeedbackRecord {
