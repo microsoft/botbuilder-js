@@ -20,10 +20,17 @@ import { ReturnType } from '../returnType';
  * Return true if the expression is false, or return false if true.
  */
 export class Not extends ExpressionEvaluator {
+
+    /**
+     * Initializes a new instance of the Not class.
+     */
     public constructor() {
         super(ExpressionType.Not, Not.evaluator, ReturnType.Boolean, FunctionUtils.validateUnary);
     }
 
+    /**
+     * @private
+     */
     private static evaluator(expression: Expression, state: MemoryInterface, options: Options): ValueWithError {
         let result = false;
         let error: string;

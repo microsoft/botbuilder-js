@@ -15,16 +15,23 @@ import { ReturnType } from '../returnType';
  * Return a random integer from a specified range, which is inclusive only at the starting end.
  */
 export class Rand extends ExpressionEvaluator {
+
+    /**
+     * Initializes a new instance of the Rand class.
+     */
     public constructor() {
         super(ExpressionType.Rand, Rand.evaluator(), ReturnType.Number, FunctionUtils.validateBinaryNumber);
     }
 
+    /**
+     * @private
+     */
     private static evaluator(): EvaluateExpressionDelegate {
         return FunctionUtils.applyWithError(
             (args: any[]): any => {
                 let error: string;
                 if (args[0] > args[1]) {
-                    error = `Min value ${args[0]} cannot be greater than max value ${args[1]}.`;
+                    error = `Min value ${ args[0] } cannot be greater than max value ${ args[1] }.`;
                 }
 
                 const value: any = Math.floor(Math.random() * (Number(args[1]) - Number(args[0])) + Number(args[0]));

@@ -15,23 +15,30 @@ import { ReturnType } from '../returnType';
  * Rounds a number value to the nearest integer.
  */
 export class Round extends ExpressionEvaluator {
+
+    /**
+     * Initializes a new instance of the Round class.
+     */
     public constructor() {
         super(ExpressionType.Round, Round.evaluator(), ReturnType.Number, FunctionUtils.validateUnaryOrBinaryNumber);
     }
 
+    /**
+     * @private
+     */
     private static evaluator(): EvaluateExpressionDelegate {
         return FunctionUtils.applyWithError(
             (args: any[]): any => {
                 let result: any;
                 let error: string;
                 if (args.length === 2 && !Number.isInteger(args[1])) {
-                    error = `The second parameter ${args[1]} must be an integer.`;
+                    error = `The second parameter ${ args[1] } must be an integer.`;
                 }
 
                 if (!error) {
                     const digits = args.length === 2 ? args[1] as number : 0;
                     if (digits < 0 || digits > 15) {
-                        error = `The second parameter ${args[1]} must be an integer between 0 and 15;`;
+                        error = `The second parameter ${ args[1] } must be an integer between 0 and 15;`;
                     } else {
                         result = Round.roundToPrecision(args[0], digits);
                     }

@@ -16,10 +16,17 @@ import { ReturnType } from '../returnType';
  * Remove a property from an object and return the updated object.
  */
 export class RemoveProperty extends ExpressionEvaluator {
+
+    /**
+     * Initializes a new instance of the RemoveProperty class.
+     */
     public constructor() {
         super(ExpressionType.RemoveProperty, RemoveProperty.evaluator(), ReturnType.Object, RemoveProperty.validator);
     }
 
+    /**
+     * @private
+     */
     private static evaluator(): EvaluateExpressionDelegate {
         return FunctionUtils.apply(
             (args: any[]): any => {
@@ -30,6 +37,9 @@ export class RemoveProperty extends ExpressionEvaluator {
             });
     }
 
+    /**
+     * @private
+     */
     private static validator(expression: Expression): void {
         FunctionUtils.validateOrder(expression, undefined, ReturnType.Object, ReturnType.String);
     }
