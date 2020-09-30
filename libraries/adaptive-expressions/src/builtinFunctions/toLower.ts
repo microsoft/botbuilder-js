@@ -16,10 +16,17 @@ import { StringTransformEvaluator } from './stringTransformEvaluator';
  * If a character in the string doesn't have a lowercase version, that character stays unchanged in the returned string.
  */
 export class ToLower extends StringTransformEvaluator {
+
+    /**
+     * Initializes a new instance of the ToLower class.
+     */
     public constructor() {
         super(ExpressionType.ToLower, ToLower.evaluator);
     }
 
+    /**
+     * @private
+     */
     private static evaluator(args: any[]): string {
         return String(InternalFunctionUtils.parseStringOrUndefined(args[0])).toLowerCase();
     }

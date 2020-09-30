@@ -20,10 +20,17 @@ import { ReturnType } from '../returnType';
  * Evaluator that transforms a datetime to another datetime.
  */
 export class TimeTransformEvaluator extends ExpressionEvaluator {
+
+    /**
+     * Initializes a new instance of the TimeTransformEvaluator class.
+     */
     public constructor(type: string, func: (timestamp: Date, numOfTransformation: any) => Date) {
         super(type, TimeTransformEvaluator.evaluator(func), ReturnType.String, TimeTransformEvaluator.validator);
     }
 
+    /**
+     * @private
+     */
     private static evaluator(func: (timestamp: Date, numOfTransformation: any) => Date): EvaluateExpressionDelegate {
         return (expression: Expression, state: MemoryInterface, options: Options): ValueWithError => {
             let result: any;
@@ -42,7 +49,7 @@ export class TimeTransformEvaluator extends ExpressionEvaluator {
                         }
                     }
                 } else {
-                    error = `${expression} should contain an ISO format timestamp and a time interval integer.`;
+                    error = `${ expression } should contain an ISO format timestamp and a time interval integer.`;
                 }
             }
 
@@ -50,6 +57,9 @@ export class TimeTransformEvaluator extends ExpressionEvaluator {
         };
     }
 
+    /**
+     * @private
+     */
     private static validator(expression: Expression): void {
         FunctionUtils.validateOrder(expression, [ReturnType.String], ReturnType.String, ReturnType.Number);
     }

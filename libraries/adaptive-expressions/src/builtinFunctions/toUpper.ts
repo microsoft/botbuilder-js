@@ -15,10 +15,17 @@ import { StringTransformEvaluator } from './stringTransformEvaluator';
  * If a character in the string doesn't have an uppercase version, that character stays unchanged in the returned string.
  */
 export class ToUpper extends StringTransformEvaluator {
+
+    /**
+     * Initializes a new instance of the ToUpper class.
+     */
     public constructor() {
         super(ExpressionType.ToUpper, ToUpper.evaluator);
     }
 
+    /**
+     * @private
+     */
     private static evaluator(args: any[]): string {
         return String(InternalFunctionUtils.parseStringOrUndefined(args[0])).toUpperCase();
     }

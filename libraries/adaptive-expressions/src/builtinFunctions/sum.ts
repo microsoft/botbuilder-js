@@ -16,15 +16,25 @@ import { ReturnType } from '../returnType';
  * Return the result from adding numbers in an array.
  */
 export class Sum extends ExpressionEvaluator {
+
+    /**
+     * Initializes a new instance of the Sum class.
+     */
     public constructor() {
         super(ExpressionType.Sum, Sum.evaluator(), ReturnType.Number, Sum.validator);
     }
 
+    /**
+     * @private
+     */
     private static evaluator(): EvaluateExpressionDelegate {
         return FunctionUtils.apply((args: any[]): number => args[0].reduce((x: number, y: number): number => x + y),
             FunctionUtils.verifyNumericList);
     }
 
+    /**
+     * @private
+     */
     private static validator(expression: Expression): void {
         FunctionUtils.validateOrder(expression, [], ReturnType.Array);
     }

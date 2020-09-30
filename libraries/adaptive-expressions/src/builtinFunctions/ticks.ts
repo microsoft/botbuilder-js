@@ -19,10 +19,17 @@ import { ReturnType } from '../returnType';
  * Return the ticks property value of a specified timestamp. A tick is 100-nanosecond interval.
  */
 export class Ticks extends ExpressionEvaluator {
+
+    /**
+     * Initializes a new instance of the Ticks class.
+     */
     public constructor() {
         super(ExpressionType.Ticks, Ticks.evaluator, ReturnType.Number, Ticks.validator);
     }
 
+    /**
+     * @private
+     */
     private static evaluator(expr: Expression, state: MemoryInterface, options: Options): ValueWithError {
         let value: any;
         let error: string;
@@ -32,13 +39,16 @@ export class Ticks extends ExpressionEvaluator {
             if (typeof (args[0]) === 'string') {
                 ({ value, error } = InternalFunctionUtils.ticks(args[0]));
             } else {
-                error = `${expr} should contain an ISO format timestamp.`;
+                error = `${ expr } should contain an ISO format timestamp.`;
             }
         }
 
         return { value, error };
     }
 
+    /**
+     * @private
+     */
     private static validator(expression: Expression): void {
         FunctionUtils.validateArityAndAnyType(expression, 1, 1, ReturnType.String);
     }

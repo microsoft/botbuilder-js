@@ -18,10 +18,17 @@ import { ReturnType } from '../returnType';
  * If one or more items have the same name, the last item with that name appears in the result.
  */
 export class Union extends ExpressionEvaluator {
+
+    /**
+     * Initializes a new instance of the Union class.
+     */
     public constructor() {
         super(ExpressionType.Union, Union.evaluator(), ReturnType.Array, Union.validator);
     }
 
+    /**
+     * @private
+     */
     private static evaluator(): EvaluateExpressionDelegate {
         return FunctionUtils.apply(
             (args: any[]): any => {
@@ -35,6 +42,9 @@ export class Union extends ExpressionEvaluator {
             FunctionUtils.verifyList);
     }
 
+    /**
+     * @private
+     */
     private static validator(expression: Expression): void {
         FunctionUtils.validateArityAndAnyType(expression, 1, Number.MAX_SAFE_INTEGER, ReturnType.Array);
     }
