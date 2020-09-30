@@ -16,10 +16,17 @@ import { ReturnType } from '../returnType';
  * Return the last item from a collection.
  */
 export class Last extends ExpressionEvaluator {
+
+    /**
+     * Initializes a new instance of the Last class.
+     */
     public constructor() {
         super(ExpressionType.Last, Last.evaluator(), ReturnType.Object, FunctionUtils.validateUnary);
     }
 
+    /**
+     * @private
+     */
     private static evaluator(): EvaluateExpressionDelegate {
         return FunctionUtils.apply(
             (args: any[]): any => {

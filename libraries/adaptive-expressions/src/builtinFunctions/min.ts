@@ -15,10 +15,17 @@ import { ReturnType } from '../returnType';
  * Return the lowest value from a set of numbers in an array.
  */
 export class Min extends ExpressionEvaluator {
+
+    /**
+     * Initializes a new instance of the Min class.
+     */
     public constructor() {
         super(ExpressionType.Min, Min.evaluator(), ReturnType.Number, FunctionUtils.validateAtLeastOne);
     }
 
+    /**
+     * @private
+     */
     private static evaluator(): EvaluateExpressionDelegate {
         return FunctionUtils.apply((args: any[]): number => {
             let result = Number.POSITIVE_INFINITY;

@@ -16,14 +16,24 @@ import { ReturnType } from '../returnType';
  * Return the JavaScript Object Notation (JSON) type value or object of a string or XML.
  */
 export class Json extends ExpressionEvaluator {
+
+    /**
+     * Initializes a new instance of the Json class.
+     */
     public constructor() {
         super(ExpressionType.Json, Json.evaluator(), ReturnType.Object, Json.validator);
     }
 
+    /**
+     * @private
+     */
     private static evaluator(): EvaluateExpressionDelegate {
         return FunctionUtils.apply((args: any[]): any => JSON.parse(args[0].trim()));
     }
 
+    /**
+     * @private
+     */
     private static validator(expression: Expression): void {
         FunctionUtils.validateOrder(expression, undefined, ReturnType.String);
     }

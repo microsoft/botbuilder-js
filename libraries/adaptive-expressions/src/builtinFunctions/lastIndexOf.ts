@@ -20,10 +20,17 @@ import { ReturnType } from '../returnType';
  * The zero-based index position of value if that value is found, or -1 if it is not.
  */
 export class LastIndexOf extends ExpressionEvaluator {
+
+    /**
+     * Initializes a new instance of the LastIndexOf class.
+     */
     public constructor() {
         super(ExpressionType.LastIndexOf, LastIndexOf.evaluator, ReturnType.Number, LastIndexOf.validator);
     }
 
+    /**
+     * @private
+     */
     private static evaluator(expression: Expression, state: MemoryInterface, options: Options): ValueWithError {
         let value = -1;
         let error: string;
@@ -36,18 +43,21 @@ export class LastIndexOf extends ExpressionEvaluator {
                     const searchValue = InternalFunctionUtils.parseStringOrUndefined(args[1]);
                     value = str.lastIndexOf(searchValue, str.length - 1);
                 } else {
-                    error = `Can only look for indexof string in ${expression}`;
+                    error = `Can only look for indexof string in ${ expression }`;
                 }
             } else if (Array.isArray(args[0])) {
                 value = args[0].lastIndexOf(args[1]);
             } else {
-                error = `${expression} works only on string or list.`;
+                error = `${ expression } works only on string or list.`;
             }
         }
 
         return { value, error };
     }
 
+    /**
+     * @private
+     */
     private static validator(expression: Expression): void {
         FunctionUtils.validateOrder(expression, [], ReturnType.String | ReturnType.Array, ReturnType.Object);
     }

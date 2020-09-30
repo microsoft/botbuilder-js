@@ -15,10 +15,17 @@ import { ReturnType } from '../returnType';
  *  Return the highest value from an array. The array is inclusive at both ends.
  */
 export class Max extends ExpressionEvaluator {
+
+    /**
+     * Initializes a new instance of the Max class.
+     */
     public constructor() {
         super(ExpressionType.Max, Max.evaluator(), ReturnType.Number, FunctionUtils.validateAtLeastOne);
     }
 
+    /**
+     * @private
+     */
     private static evaluator(): EvaluateExpressionDelegate {
         return FunctionUtils.apply((args: any[]): number => {
             let result = Number.NEGATIVE_INFINITY;

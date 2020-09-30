@@ -15,10 +15,17 @@ import { ReturnType } from '../returnType';
  * Return the remainder from dividing two numbers. 
  */
 export class Mod extends ExpressionEvaluator {
+
+    /**
+     * Initializes a new instance of the Mod class.
+     */
     public constructor() {
         super(ExpressionType.Mod, Mod.evaluator(), ReturnType.Number, FunctionUtils.validateBinaryNumber);
     }
 
+    /**
+     * @private
+     */
     private static evaluator(): EvaluateExpressionDelegate {
         return FunctionUtils.applyWithError(
             (args: any[]): any => {

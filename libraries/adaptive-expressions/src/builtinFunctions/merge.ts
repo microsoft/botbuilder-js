@@ -16,10 +16,17 @@ import { ReturnType } from '../returnType';
  * Merge two JSON objects into one JSON object.
  */
 export class Merge extends ExpressionEvaluator {
+
+    /**
+     * Initializes a new instance of the Merge class.
+     */
     public constructor() {
         super(ExpressionType.Merge, Merge.evaluator(), ReturnType.Object, Merge.validator);
     }
 
+    /**
+     * @private
+     */
     private static evaluator(): EvaluateExpressionDelegate {
         return FunctionUtils.applySequenceWithError(
             (args: any[]): any => {
@@ -29,13 +36,16 @@ export class Merge extends ExpressionEvaluator {
                     Object.assign(args[0], args[1]);
                     value = args[0];
                 } else {
-                    error = `The argumets ${args[0]} and ${args[1]} must be JSON objects.`;
+                    error = `The argumets ${ args[0] } and ${ args[1] } must be JSON objects.`;
                 }
 
                 return { value, error };
             });
     }
 
+    /**
+     * @private
+     */
     private static validator(expression: Expression): void {
         FunctionUtils.validateArityAndAnyType(expression, 2, Number.MAX_SAFE_INTEGER);
     }
