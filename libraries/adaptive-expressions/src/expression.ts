@@ -217,9 +217,9 @@ export class Expression {
     }
 
     /**
-     * Lookup a ExpressionEvaluator (function) by name.
-     * @param functionName name of function to lookup.
-     * @returns an ExpressionEvaluator corresponding to the funtion name.
+     * Lookup an `ExpressionEvaluator` (function) by name.
+     * @param functionName Name of function to lookup.
+     * @returns An `ExpressionEvaluator` corresponding to the function name.
      */
     public static lookup(functionName: string): ExpressionEvaluator {
         const exprEvaluator = Expression.functions.get(functionName);
@@ -228,7 +228,7 @@ export class Expression {
         }
 
         return exprEvaluator;
-    };
+    }
 
     /**
      * Make an expression and validate it.
