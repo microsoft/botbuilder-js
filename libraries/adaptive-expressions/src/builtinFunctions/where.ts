@@ -22,10 +22,17 @@ import { ReturnType } from '../returnType';
  * Filter on each element and return the new collection of filtered elements which match a specific condition.
  */
 export class Where extends ExpressionEvaluator {
+
+    /**
+     * Initializes a new instance of the Where class.
+     */
     public constructor() {
         super(ExpressionType.Where, Where.evaluator, ReturnType.Array, InternalFunctionUtils.validateForeach);
     }
 
+    /**
+     * @private
+     */
     private static evaluator(expression: Expression, state: MemoryInterface, options: Options): ValueWithError {
         let result: any;
         let error: string;
@@ -43,7 +50,7 @@ export class Where extends ExpressionEvaluator {
             } else if (typeof instance === 'object') {
                 Object.keys(instance).forEach((u): number => arr.push({ key: u, value: instance[u] }));
             } else {
-                error = `${expression.children[0]} is not a collection or structure object to run foreach`;
+                error = `${ expression.children[0] } is not a collection or structure object to run foreach`;
             }
 
             if (!error) {
