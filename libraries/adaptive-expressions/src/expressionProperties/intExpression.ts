@@ -14,10 +14,9 @@ import { Expression } from '../expression';
  * String values are always interpreted as an expression, whether it has '=' prefix or not.
  */
 export class IntExpression extends ExpressionProperty<number> {
-    
     /**
-     * Initializes a new instance of the ArrayExpression<T> class.
-     * @param value An int or string expression which resolves to a int.
+     * Initializes a new instance of the `ArrayExpression<T>` class.
+     * @param value An `int` or `string` expression which resolves to a `int`.
      */
     public constructor(value?: number | string | Expression) {
         super(value, 0);

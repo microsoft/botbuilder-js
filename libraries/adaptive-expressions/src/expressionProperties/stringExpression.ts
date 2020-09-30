@@ -22,10 +22,9 @@ import { Expression } from '../expression';
  *     prop = "\=user" => "=user".
  */
 export class StringExpression extends ExpressionProperty<string> {
-    
     /**
-     * Initializes a new instance of the ArrayExpression<T> class.
-     * @param value A string value or a string expression.
+     * Initializes a new instance of the `ArrayExpression<T>` class.
+     * @param value A `string` value or a `string` expression.
      */
     public constructor(value?: string | Expression) {
         super(value);

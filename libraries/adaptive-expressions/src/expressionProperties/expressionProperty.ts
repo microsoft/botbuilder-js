@@ -17,7 +17,7 @@ export class ExpressionProperty<T> {
     private expression: Expression;
 
     /**
-     * Initializes a new instance of the ExpressionProperty<T> class.
+     * Initializes a new instance of the `ExpressionProperty<T>` class.
      * @param value Optional. Raw value of the expression property.
      * @param defaultValue Optional. Default value for the property.
      */
