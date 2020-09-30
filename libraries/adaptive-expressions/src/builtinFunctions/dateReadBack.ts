@@ -19,10 +19,16 @@ import { ReturnType } from '../returnType';
  * Uses the date-time library to provide a date readback.
  */
 export class DateReadBack extends ExpressionEvaluator {
+    /**
+     * Initializes a new instance of the `DateReadBack` class.
+     */
     public constructor() {
         super(ExpressionType.DateReadBack, DateReadBack.evaluator(), ReturnType.String, DateReadBack.validator);
     }
 
+    /**
+     * @private
+     */
     private static evaluator(): EvaluateExpressionDelegate {
         return FunctionUtils.applyWithError(
             (args: any[]): any => {
@@ -42,6 +48,9 @@ export class DateReadBack extends ExpressionEvaluator {
             FunctionUtils.verifyString);
     }
 
+    /**
+     * @private
+     */
     private static validator(expression: Expression): void {
         FunctionUtils.validateOrder(expression, undefined, ReturnType.String, ReturnType.String);
     }

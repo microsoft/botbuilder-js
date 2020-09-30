@@ -19,10 +19,20 @@ import { ReturnType } from '../returnType';
  * A comparison operator returns false if the comparison is false, or there is an error.  This prevents errors from short-circuiting boolean expressions.
  */
 export class ComparisonEvaluator extends ExpressionEvaluator {
+    /**
+     * Initializes a new instance of the `ComparisonEvaluator` class.
+     * @param type Name of the built-in function.
+     * @param func The comparison function, it takes a list of objects and returns a boolean.
+     * @param validator Validator of input arguments.
+     * @param verify Optional. Function to verify each child's result.
+     */
     public constructor(type: string, func: (arg0: any[]) => boolean, validator: ValidateExpressionDelegate, verify?: VerifyExpression) {
         super(type, ComparisonEvaluator.evaluator(func, verify), ReturnType.Boolean, validator);
     }
 
+    /**
+     * @private
+     */
     private static evaluator(func: (args: any[]) => boolean, verify?: VerifyExpression): EvaluateExpressionDelegate {
         return (expression: Expression, state: MemoryInterface, options: Options): ValueWithError => {
             let result = false;

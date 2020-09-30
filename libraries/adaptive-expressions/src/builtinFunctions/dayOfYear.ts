@@ -18,10 +18,16 @@ import { ReturnType } from '../returnType';
  * Return the day of the year from a timestamp.
  */
 export class DayOfYear extends ExpressionEvaluator {
+    /**
+     * Initializes a new instance of the `DayOfYear` class.
+     */
     public constructor() {
         super(ExpressionType.DayOfYear, DayOfYear.evaluator(), ReturnType.Number, FunctionUtils.validateUnaryString);
     }
 
+    /**
+     * @private
+     */
     private static evaluator(): EvaluateExpressionDelegate {
         return FunctionUtils.applyWithError(
             (args: any[]): any => InternalFunctionUtils.parseTimestamp(args[0], (timestamp: Date): number => moment(timestamp).utc().dayOfYear()),

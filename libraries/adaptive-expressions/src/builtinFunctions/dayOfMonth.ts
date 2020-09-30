@@ -16,10 +16,16 @@ import { ReturnType } from '../returnType';
  * Return the day of the month from a timestamp.
  */
 export class DayOfMonth extends ExpressionEvaluator {
+    /**
+     * Initializes a new instance of the `DayOfMonth` class.
+     */
     public constructor() {
         super(ExpressionType.DayOfMonth, DayOfMonth.evaluator(), ReturnType.Number, FunctionUtils.validateUnaryString);
     }
 
+    /**
+     * @private
+     */
     private static evaluator(): EvaluateExpressionDelegate {
         return FunctionUtils.applyWithError(
             (args: any[]): any => InternalFunctionUtils.parseTimestamp(args[0], (timestamp: Date): number => timestamp.getUTCDate()),

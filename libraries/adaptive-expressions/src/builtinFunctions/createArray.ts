@@ -15,10 +15,16 @@ import { ReturnType } from '../returnType';
  * Return an array from multiple inputs.
  */
 export class CreateArray extends ExpressionEvaluator {
+    /**
+     * Initializes a new instance of the `CreateArray` class.
+     */
     public constructor() {
         super(ExpressionType.CreateArray, CreateArray.evaluator(), ReturnType.Array);
     }
 
+    /**
+     * @private
+     */
     private static evaluator(): EvaluateExpressionDelegate {
         return FunctionUtils.apply((args: any[]): any[] => Array.from(args));
     }

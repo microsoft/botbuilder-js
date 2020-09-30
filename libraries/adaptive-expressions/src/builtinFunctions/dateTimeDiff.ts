@@ -19,10 +19,16 @@ import { ReturnType } from '../returnType';
  * Return a number of ticks that the two timestamps differ.
  */
 export class DateTimeDiff extends ExpressionEvaluator {
+    /**
+     * Initializes a new instance of the `DataUriToBinary` class.
+     */
     public constructor() {
         super(ExpressionType.DateTimeDiff, DateTimeDiff.evaluator, ReturnType.Number, DateTimeDiff.validator);
     }
 
+    /**
+     * @private
+     */
     private static evaluator(expr: Expression, state: MemoryInterface, options: Options): ValueWithError {
         let value: any;
         let dateTimeStart: any;
@@ -44,6 +50,9 @@ export class DateTimeDiff extends ExpressionEvaluator {
         return { value, error };
     }
 
+    /**
+     * @private
+     */
     private static validator(expression: Expression): void {
         FunctionUtils.validateArityAndAnyType(expression, 2, 2, ReturnType.String);
     }

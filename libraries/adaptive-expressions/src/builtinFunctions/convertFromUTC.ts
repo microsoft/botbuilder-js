@@ -25,10 +25,16 @@ export class ConvertFromUTC extends ExpressionEvaluator {
 
     private static readonly NoneUtcDefaultDateTimeFormat: string = 'YYYY-MM-DDTHH:mm:ss.SSSZ';
 
+    /**
+     * Initializes a new instance of the `ConvertFromUTC` class.
+     */
     public constructor() {
         super(ExpressionType.ConvertFromUTC, ConvertFromUTC.evaluator, ReturnType.String, ConvertFromUTC.validator);
     }
 
+    /**
+     * @private
+     */
     private static evaluator(expression: Expression, state: MemoryInterface, options: Options): ValueWithError {
         let value: any;
         let error: string;
@@ -46,6 +52,9 @@ export class ConvertFromUTC extends ExpressionEvaluator {
         return { value, error };
     }
 
+    /**
+     * @private
+     */
     private static evalConvertFromUTC(timeStamp: string, destinationTimeZone: string, format?: string): ValueWithError {
         let result: string;
         let error: string;
@@ -66,6 +75,9 @@ export class ConvertFromUTC extends ExpressionEvaluator {
         return { value: result, error };
     }
 
+    /**
+     * @private
+     */
     private static validator(expression: Expression): void {
         FunctionUtils.validateOrder(expression, [ReturnType.String], ReturnType.String, ReturnType.String);
     }

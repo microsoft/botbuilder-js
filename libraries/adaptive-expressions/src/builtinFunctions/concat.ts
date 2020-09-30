@@ -15,10 +15,16 @@ import { ReturnType } from '../returnType';
  * Combine two or more strings, and return the combined string.
  */
 export class Concat extends ExpressionEvaluator {
+    /**
+     * Initializes a new instance of the `Concat` class.
+     */
     public constructor() {
         super(ExpressionType.Concat, Concat.evaluator(), ReturnType.String | ReturnType.Array, FunctionUtils.validateAtLeastOne);
     }
 
+    /**
+     * @private
+     */
     private static evaluator(): EvaluateExpressionDelegate {
         return FunctionUtils.applySequence((args: any[]): string => {
             const firstItem = args[0];
@@ -41,6 +47,9 @@ export class Concat extends ExpressionEvaluator {
         });
     }
 
+    /**
+     * @private
+     */
     private static commonStringify(input: any): string {
         if (input === null || input === undefined) {
             return '';
