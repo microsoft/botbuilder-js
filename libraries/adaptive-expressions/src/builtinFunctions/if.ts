@@ -20,7 +20,7 @@ import { ReturnType } from '../returnType';
  */
 export class If extends ExpressionEvaluator {
     /**
-     * Initializes a new instance of the `GreaterThan` class.
+     * Initializes a new instance of the `If` class.
      */
     public constructor() {
         super(ExpressionType.If, If.evaluator, ReturnType.Object, If.validator);
