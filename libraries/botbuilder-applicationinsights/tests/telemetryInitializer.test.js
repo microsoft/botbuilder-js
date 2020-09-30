@@ -34,7 +34,6 @@ describe(`TelemetryInitializerMiddleware`, function() {
         const initializerMiddleware = new TestInitializerMiddleware(telemetryLoggerMiddleware, true, []);
         
         const adapter = new TestAdapter(async (context) => {
-            conversationId = context.activity.conversation.id;
             const typingActivity = {
                 type: ActivityTypes.Typing,
                 relatesTo: context.activity.relatesTo
@@ -71,7 +70,6 @@ describe(`TelemetryInitializerMiddleware`, function() {
         const initializerMiddleware = new TestInitializerMiddleware(telemetryLoggerMiddleware, true, []);
         
         const adapter = new TestAdapter(async (context) => {
-            conversationId = context.activity.conversation.id;
             const typingActivity = {
                 type: ActivityTypes.Typing,
                 relatesTo: context.activity.relatesTo
@@ -102,7 +100,6 @@ describe(`TelemetryInitializerMiddleware`, function() {
         const initializerMiddleware = new TestInitializerMiddleware(telemetryLoggerMiddleware, false, []);
         
         const adapter = new TestAdapter(async (context) => {
-            conversationId = context.activity.conversation.id;
             const typingActivity = {
                 type: ActivityTypes.Typing,
                 relatesTo: context.activity.relatesTo
