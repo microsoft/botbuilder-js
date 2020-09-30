@@ -19,10 +19,17 @@ import { ReturnType } from '../returnType';
  * Return the path and query value of a unified resource identifier (URI).
  */
 export class UriPathAndQuery extends ExpressionEvaluator {
+
+    /**
+     * Initializes a new instance of the UriPathAndQuery class.
+     */
     public constructor() {
         super(ExpressionType.UriPathAndQuery, UriPathAndQuery.evaluator, ReturnType.String, FunctionUtils.validateUnary);
     }
 
+    /**
+     * @private
+     */
     private static evaluator(expr: Expression, state: MemoryInterface, options: Options): ValueWithError {
         let value: any;
         let error: string;
@@ -32,13 +39,16 @@ export class UriPathAndQuery extends ExpressionEvaluator {
             if (typeof (args[0]) === 'string') {
                 ({ value, error } = UriPathAndQuery.evalUriPathAndQuery(args[0]));
             } else {
-                error = `${expr} should contain a URI string.`;
+                error = `${ expr } should contain a URI string.`;
             }
         }
 
         return { value, error };
     }
 
+    /**
+     * @private
+     */
     private static evalUriPathAndQuery(uri: string): ValueWithError {
         let result: string;
         let error: string;

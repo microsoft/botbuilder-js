@@ -16,14 +16,24 @@ import { ReturnType } from '../returnType';
  * Remove all duplicates from an array.
  */
 export class Unique extends ExpressionEvaluator {
+
+    /**
+     * Initializes a new instance of the Unique class.
+     */
     public constructor() {
         super(ExpressionType.Unique, Unique.evaluator(), ReturnType.Array, Unique.validator);
     }
 
+    /**
+     * @private
+     */
     private static evaluator(): EvaluateExpressionDelegate {
         return FunctionUtils.apply((args: any[]): any[] => [... new Set(args[0])]);
     }
 
+    /**
+     * @private
+     */
     private static validator(expression: Expression): void {
         FunctionUtils.validateOrder(expression, [], ReturnType.Array);
     }
