@@ -20,7 +20,7 @@ export class TeamsTenantFilteringMiddleware implements Middleware {
 
     /**
      * Initializes a new instance of the TeamsTenantFilteringMiddleware class.
-     * * @param allowedTenants Either a single Tenant Id or array of Tenant Ids.
+     * @param allowedTenants Either a single Tenant Id or array of Tenant Ids.
      */
     constructor(allowedTenants: string | string[]) {
         if(Array.isArray(allowedTenants)){
