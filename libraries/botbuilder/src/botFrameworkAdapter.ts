@@ -1210,7 +1210,7 @@ export class BotFrameworkAdapter extends BotAdapter implements ConnectorClientBu
 
     /**
      * Generates the CallerId property for the activity based on
-     * https://github.com/microsoft/botframework-obi/blob/master/protocols/botframework-activity/botframework-activity.md#appendix-v---caller-id-values.
+     * https://github.com/microsoft/botframework-obi/blob/main/protocols/botframework-activity/botframework-activity.md#appendix-v---caller-id-values.
      * @param identity 
      */
     private async generateCallerId(identity: ClaimsIdentity): Promise<string> {
