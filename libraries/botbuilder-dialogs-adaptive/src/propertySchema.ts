@@ -6,6 +6,9 @@
  * Licensed under the MIT License.
  */
 
+/**
+ * Represents a property found in a JSON schema.
+ */
 export class PropertySchema {
     private _parent: PropertySchema;
     private readonly _children: PropertySchema[];
@@ -30,7 +33,7 @@ export class PropertySchema {
     /**
      * Path to schema.
      * @remarks
-     * Contains `[]` for arrays and `.` for path segments. 
+     * Contains `[]` for arrays and `.` for path segments.
      */
     public readonly path: string;
 

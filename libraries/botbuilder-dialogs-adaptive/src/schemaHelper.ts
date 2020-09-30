@@ -57,6 +57,9 @@ export class SchemaHelper {
         return property;
     }
 
+    /**
+     * @private
+     */
     private createProperty(schema: object, path: string = ''): PropertySchema {
         // Simplify array handling by collapsing to arrays sub-type
         let type: string = schema['type'];

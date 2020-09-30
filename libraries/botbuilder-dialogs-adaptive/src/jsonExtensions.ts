@@ -9,6 +9,12 @@
 import { DialogStateManager } from 'botbuilder-dialogs';
 import { ValueExpression } from 'adaptive-expressions';
 
+/**
+ * Replaces the binding paths in a JSON value with the evaluated results recursively.
+ * @param state A scope for looking up variables.
+ * @param unit An object.
+ * @returns Deep data binding result.
+ */
 export function replaceJsonRecursively(state: DialogStateManager, unit: object): any {
     if (typeof unit === 'string') {
         const { value, error } = new ValueExpression(unit).tryGetValue(state);

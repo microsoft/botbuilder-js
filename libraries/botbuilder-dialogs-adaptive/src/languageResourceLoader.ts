@@ -114,6 +114,9 @@ export class LanguageResourceLoader {
         throw new Error(`there is no locale fallback for ${ locale }`);
     }
 
+    /**
+     * @private
+     */
     private static fallbackMultiLangResource(resourceMapping: Map<string, Resource[]>): Map<string, Resource[]> {
         const resourcePoolDict = new Map<string, Resource[]>();
         for (const currentLocale of resourceMapping.keys()) {
@@ -133,7 +136,9 @@ export class LanguageResourceLoader {
         return resourcePoolDict;
     }
 
-
+    /**
+     * @private
+     */
     private static findCommonAncestorLocale(locale1: string, locale2: string): string {
         const languagePolicy = new LanguagePolicy();
         if (!languagePolicy.has(locale1) || !languagePolicy.has(locale2)) {
@@ -149,10 +154,13 @@ export class LanguageResourceLoader {
                 }
             }
         }
-        
+
         return '';
     }
 
+    /**
+     * @private
+     */
     private static hasSameResourcePool(resourceMapping1: Resource[], resourceMapping2: Resource[]): boolean {
         if (resourceMapping1 === undefined && resourceMapping2 === undefined) {
             return true;

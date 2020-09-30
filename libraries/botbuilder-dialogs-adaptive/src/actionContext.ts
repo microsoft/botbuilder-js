@@ -11,6 +11,10 @@ import { ActionState } from './actionState';
 import { ActionChangeList } from './actionChangeList';
 import { ActionChangeType } from './actionChangeType';
 
+/**
+ * Extends the `DialogContext` with additional methods for manipulating the
+ * executing sequence of actions for an `AdaptiveDialog`.
+ */
 export class ActionContext extends DialogContext {
     private readonly _changeKey: symbol;
 

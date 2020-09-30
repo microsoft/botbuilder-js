@@ -27,10 +27,17 @@ import { LanguageGeneratorConverter } from './converters/languageGeneratorConver
 import { LuisAdaptiveRecognizer } from './luis';
 import { LanguagePolicyConverter } from './languagePolicy';
 
+/**
+ * `ComponentRegistration` implementation for adaptive components.
+ */
 export class AdaptiveDialogComponentRegistration implements ComponentRegistration {
     private _resourceExplorer: ResourceExplorer;
     private _builderRegistrations: BuilderRegistration[] = [];
 
+    /**
+     * Initializes a new instance of the `AdaptiveComponentRegistration` class.
+     * @param resourceExplorer `ResourceExplorer` to get all schema resources.
+     */
     public constructor(resourceExplorer: ResourceExplorer) {
         this._resourceExplorer = resourceExplorer;
 
@@ -59,16 +66,26 @@ export class AdaptiveDialogComponentRegistration implements ComponentRegistratio
         this.registerCustomDialogs();
     }
 
+    /**
+     * Gets all the builder registrations instances.
+     * @returns An array of `BuilderRegistration`.
+     */
     public getTypeBuilders(): BuilderRegistration[] {
         return this._builderRegistrations;
     }
 
+    /**
+     * @private
+     */
     private registerBuilder(name: string, builder: TypeBuilder): void {
         this._builderRegistrations.push(
             new BuilderRegistration(name, builder)
         );
     }
 
+    /**
+     * @private
+     */
     private registerActions(): void {
         const baseInvokeDialogConverters = {
             'options': new ObjectExpressionConverter<object>(),
@@ -230,6 +247,9 @@ export class AdaptiveDialogComponentRegistration implements ComponentRegistratio
         }));
     }
 
+    /**
+     * @private
+     */
     private registerConditions(): void {
         const OnConditionConverters = {
             'condition': new BoolExpressionConverter(),
@@ -262,6 +282,9 @@ export class AdaptiveDialogComponentRegistration implements ComponentRegistratio
         this.registerBuilder('Microsoft.OnUnknownIntent', new AdaptiveTypeBuilder(OnUnknownIntent, this._resourceExplorer, OnConditionConverters));
     }
 
+    /**
+     * @private
+     */
     private registerInputs(): void {
         const inputDialogConverters = {
             'alwaysPrompt': new BoolExpressionConverter(),
@@ -325,6 +348,9 @@ export class AdaptiveDialogComponentRegistration implements ComponentRegistratio
             })));
     }
 
+    /**
+     * @private
+     */
     private registerRecognizers(): void {
         this.registerBuilder('Microsoft.LuisRecognizer', new AdaptiveTypeBuilder(LuisAdaptiveRecognizer, this._resourceExplorer, {
             'applicationId': new StringExpressionConverter(),
@@ -377,6 +403,9 @@ export class AdaptiveDialogComponentRegistration implements ComponentRegistratio
         }));
     }
 
+    /**
+     * @private
+     */
     private registerGenerators(): void {
         this.registerBuilder('Microsoft.TemplateEngineLanguageGenerator', new AdaptiveTypeBuilder(TemplateEngineLanguageGenerator, this._resourceExplorer, {}));
         this.registerBuilder('Microsoft.ResourceMultiLanguageGenerator', new AdaptiveTypeBuilder(ResourceMultiLanguageGenerator, this._resourceExplorer, {
@@ -384,6 +413,9 @@ export class AdaptiveDialogComponentRegistration implements ComponentRegistratio
         }));
     }
 
+    /**
+     * @private
+     */
     private registerSelectors(): void {
         this.registerBuilder('Microsoft.ConditionalSelector', new AdaptiveTypeBuilder(ConditionalSelector, this._resourceExplorer, {
             'condition': new BoolExpressionConverter()
@@ -393,6 +425,9 @@ export class AdaptiveDialogComponentRegistration implements ComponentRegistratio
         this.registerBuilder('Microsoft.TrueSelector', new AdaptiveTypeBuilder(TrueSelector, this._resourceExplorer, {}));
     }
 
+    /**
+     * @private
+     */
     private registerCustomDialogs(): void {
         const schemas = this._resourceExplorer.getResources('.schema');
         for (const schema of schemas) {

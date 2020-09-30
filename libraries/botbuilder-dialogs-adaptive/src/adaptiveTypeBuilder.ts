@@ -8,17 +8,30 @@
 
 import { TypeBuilder, Converter, ResourceExplorer } from 'botbuilder-dialogs-declarative';
 
+/**
+ * Adaptive type builder.
+ */
 export class AdaptiveTypeBuilder implements TypeBuilder {
     private _factory: new () => object;
     private _converters: { [key: string]: Converter } = {};
     private _resourceExplorer: ResourceExplorer;
 
+    /**
+     * Creates a new instance of the `AdaptiveTypeBuilder` class.
+     * @param factory Factory for the adaptive type.
+     * @param resourceExplorer  Resource explorer.
+     * @param converters Key value pair with converters.
+     */
     public constructor(factory: new () => object, resourceExplorer: ResourceExplorer, converters: { [key: string]: Converter }) {
         this._factory = factory;
         this._resourceExplorer = resourceExplorer;
         this._converters = converters;
     }
 
+    /**
+     * Builds a adaptive type.
+     * @param config Configuration object for the type.
+     */
     public build(config: object): object {
         const obj = new this._factory();
         for (const key in config) {

@@ -8,6 +8,9 @@
 
 import { DialogEvents } from 'botbuilder-dialogs'
 
+/**
+ * Adaptive event identifier definition list.
+ */
 export class AdaptiveEvents extends DialogEvents {
     /**
      * Raised when utterance is received.

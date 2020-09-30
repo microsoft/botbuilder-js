@@ -12,6 +12,10 @@ import { Converter } from 'botbuilder-dialogs-declarative';
  * Language policy with fallback for each language as most specific to default en-us -> en -> default.
  */
 export class LanguagePolicy extends Map<string, string[]> {
+    /**
+     * Initializes a new instance of the `LanguagePolicy` class.
+     * @param defaultLanguages Default languages to use.
+     */
     public constructor(...defaultLanguages: string[]) {
         super(LanguagePolicy.defaultPolicy(defaultLanguages));
     };
@@ -79,12 +83,15 @@ export class LanguagePolicy extends Map<string, string[]> {
         'xh', 'xh-za', 'xog', 'xog-ug', 'yav', 'yav-cm', 'yi', 'yi-001', 'yo', 'yo-bj', 'yo-ng', 'zgh', 'zgh-tfng', 'zgh-tfng-ma',
         'zh', 'zh-cn', 'zh-hans', 'zh-hans-hk', 'zh-hans-mo', 'zh-hant', 'zh-hk', 'zh-mo', 'zh-sg', 'zh-tw', 'zu', 'zu-za'];
 
-    // walk through all of the cultures and create a dictionary map with most specific to least specific
-    // Example output "en-us" will generate fallback rule like this:
-    //   "en-us" -> "en" -> "" 
-    //   "en" -> ""
-    // So that when we get a locale such as en-gb, we can try to resolve to "en-gb" then "en" then ""
-    // See commented section for full sample of output of this function
+    /**
+     * Walk through all of the cultures and create a dictionary map with most specific to least specific.
+     * @param defaultLanguages Default languages to use.
+     * @returns A `Map` object with a string array for each key.
+     * @example Example output "en-us" will generate fallback rule like this:
+     * "en-us" -> "en" -> ""
+     * "en" -> ""
+     * So that when we get a locale such as en-gb, we can try to resolve to "en-gb" then "en" then ""
+     */
     public static defaultPolicy(defaultLanguages: string[] = []): Map<string, string[]> {
         var result = new Map<string, string[]> ();
 
@@ -116,7 +123,15 @@ export class LanguagePolicy extends Map<string, string[]> {
     }
 }
 
+/**
+ * Language policy converter that implements `Converter`.
+ */
 export class LanguagePolicyConverter implements Converter {
+    /**
+     * Converts an object to a `LanguagePolicy` instance.
+     * @param value Object.
+     * @returns A new `LanguagePolicy` instance.
+     */
     public convert(value: object): LanguagePolicy {
         const policy = new LanguagePolicy();
         policy.clear(); // Empty default policy to load custom language policy
