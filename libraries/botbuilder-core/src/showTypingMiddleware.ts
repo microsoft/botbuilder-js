@@ -6,6 +6,7 @@
  * Licensed under the MIT License.
  */
 import { ActivityTypes } from 'botframework-schema';
+import { SkillValidation } from 'botframework-connector';
 import { Middleware } from './middlewareSet';
 import { TurnContext } from './turnContext';
 
@@ -35,7 +36,8 @@ export class ShowTypingMiddleware implements Middleware {
         }
     }
 
-    /** Implement middleware signature
+    /**
+         * Processes an incoming activity.
          * @param context {TurnContext} An incoming TurnContext object.
          * @param next {function} The next delegate function.
          */
@@ -61,7 +63,7 @@ export class ShowTypingMiddleware implements Middleware {
             }, delay);
         }
 
-        if (context.activity.type === ActivityTypes.Message) {
+        if (!this.isSkillBot(context) && context.activity.type === ActivityTypes.Message) {
             finished = false;
             scheduleIndicator();
         }
@@ -71,6 +73,12 @@ export class ShowTypingMiddleware implements Middleware {
 
         finished = true;
         if (timeout) clearTimeout(timeout);
+    }
+
+
+    private isSkillBot(context: TurnContext) {
+        const identity = context.turnState.get(context.adapter.BotIdentityKey);
+        return identity && SkillValidation.isSkillClaim(identity.claims);
     }
 
     /**
