@@ -39,13 +39,17 @@
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^3.10.1",
     "@typescript-eslint/parser": "^3.10.1",
-    "eslint": "^7.9.0",
-    "eslint-config-prettier": "^6.11.0",
+    "eslint": "^7.10.0",
+    "eslint-config-prettier": "^6.12.0",
     "eslint-config-standard": "^14.1.1",
+    "eslint-plugin-import": "^2.22.1",
     "eslint-plugin-jsdoc": "^29.2.0",
+    "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-only-warn": "^1.0.2",
     "eslint-plugin-prettier": "^3.1.4",
+    "eslint-plugin-promise": "^4.2.1",
     "eslint-plugin-security": "^1.4.0",
+    "eslint-plugin-standard": "^4.0.1",
     "prettier": "^2.1.2"
   },
   "nyc": {
