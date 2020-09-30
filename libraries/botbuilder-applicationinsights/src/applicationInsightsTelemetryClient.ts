@@ -137,7 +137,7 @@ export class ApplicationInsightsTelemetryClient implements BotTelemetryClient, B
     }
 
     /**
-     * Logs a dialog entry / as an Application Insights page view.
+     * Logs a dialog entry as an Application Insights page view.
      * @param telemetry Telemetry Page View.
      */
     public trackPageView(telemetry: TelemetryPageView): void {
