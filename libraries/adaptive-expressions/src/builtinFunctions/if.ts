@@ -19,10 +19,17 @@ import { ReturnType } from '../returnType';
  * Check whether an expression is true or false. Based on the result, return a specified value.
  */
 export class If extends ExpressionEvaluator {
+
+    /**
+     * Initializes a new instance of the GreaterThan class.
+     */
     public constructor() {
         super(ExpressionType.If, If.evaluator, ReturnType.Object, If.validator);
     }
 
+    /**
+     * @private
+     */
     private static evaluator(expression: Expression, state: MemoryInterface, options: Options): ValueWithError {
         let result: any;
         let error: string;
@@ -38,6 +45,9 @@ export class If extends ExpressionEvaluator {
         return { value: result, error };
     }
 
+    /**
+     * @private
+     */
     private static validator(expr: Expression): void {
         FunctionUtils.validateArityAndAnyType(expr, 3, 3);
     }

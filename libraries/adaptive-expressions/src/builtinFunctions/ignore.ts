@@ -20,10 +20,17 @@ import { ReturnType } from '../returnType';
  * 
  */
 export class Ignore extends ExpressionEvaluator {
+
+    /**
+     * Initializes a new instance of the GreaterThan class.
+     */
     public constructor() {
         super(ExpressionType.Ignore, Ignore.evaluator, ReturnType.Boolean, FunctionUtils.validateUnaryBoolean);
     }
 
+    /**
+     * @private
+     */
     private static evaluator(expression: Expression, state: MemoryInterface, options: Options): ValueWithError {
         return expression.children[0].tryEvaluate(state, options);
     }
