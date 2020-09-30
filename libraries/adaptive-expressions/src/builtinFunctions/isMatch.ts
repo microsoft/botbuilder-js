@@ -18,10 +18,16 @@ import { ReturnType } from '../returnType';
  * Return true if a given string matches a specified regular expression pattern.
  */
 export class IsMatch extends ExpressionEvaluator {
+    /**
+     * Initializes a new instance of the `IsMatch` class.
+     */
     public constructor() {
         super(ExpressionType.IsMatch, IsMatch.evaluator(), ReturnType.Boolean, IsMatch.validator);
     }
 
+    /**
+     * @private
+     */
     private static evaluator(): EvaluateExpressionDelegate {
         return FunctionUtils.applyWithError(
             (args: any[]): any => {
@@ -39,6 +45,9 @@ export class IsMatch extends ExpressionEvaluator {
             }, FunctionUtils.verifyStringOrNull);
     }
 
+    /**
+     * @private
+     */
     private static validator(expression: Expression): void {
         FunctionUtils.validateArityAndAnyType(expression, 2, 2, ReturnType.String);
 

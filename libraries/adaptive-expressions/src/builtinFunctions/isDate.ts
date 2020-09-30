@@ -22,10 +22,16 @@ import { ReturnType } from '../returnType';
  * Valid dates contain the month and dayOfMonth, or contain the dayOfWeek.
  */
 export class IsDate extends ExpressionEvaluator {
+    /**
+     * Initializes a new instance of the `IsDate` class.
+     */
     public constructor() {
         super(ExpressionType.IsDate, IsDate.evaluator, ReturnType.Boolean, FunctionUtils.validateUnary);
     }
 
+    /**
+     * @private
+     */
     private static evaluator(expr: Expression, state: MemoryInterface, options: Options): ValueWithError {
         let parsed: TimexProperty;
         let value = false;

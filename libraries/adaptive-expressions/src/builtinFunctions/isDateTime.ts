@@ -16,10 +16,16 @@ import { ReturnType } from '../returnType';
  * Return true if a given input is a UTC ISO format (YYYY-MM-DDTHH:mm:ss.fffZ) timestamp string.
  */
 export class IsDateTime extends ExpressionEvaluator {
+    /**
+     * Initializes a new instance of the `IsDateTime` class.
+     */
     public constructor() {
         super(ExpressionType.IsDateTime, IsDateTime.evaluator(), ReturnType.Boolean, FunctionUtils.validateUnary);
     }
 
+    /**
+     * @private
+     */
     private static evaluator(): EvaluateExpressionDelegate {
         return FunctionUtils.apply(
             (args: any[]): boolean => typeof args[0] === 'string' && InternalFunctionUtils.verifyISOTimestamp(args[0]) === undefined);

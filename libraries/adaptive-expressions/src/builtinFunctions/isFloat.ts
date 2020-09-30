@@ -16,10 +16,16 @@ import { ReturnType } from '../returnType';
  * Due to the alignment between C# and JavaScript, a number with an non-zero residue of its modulo 1 will be treated as a floating-point number.
  */
 export class IsFloat extends ExpressionEvaluator {
+    /**
+     * Initializes a new instance of the `IsFloat` class.
+     */
     public constructor() {
         super(ExpressionType.IsFloat, IsFloat.evaluator(), ReturnType.Boolean, FunctionUtils.validateUnary);
     }
 
+    /**
+     * @private
+     */
     private static evaluator(): EvaluateExpressionDelegate {
         return FunctionUtils.apply(
             (args: any[]): boolean => FunctionUtils.isNumber(args[0]) && !Number.isInteger(args[0]));

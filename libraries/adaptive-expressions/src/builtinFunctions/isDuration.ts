@@ -21,10 +21,16 @@ import { ReturnType } from '../returnType';
  * Return true if a given TimexProperty or Timex expression refers to a valid duration.
  */
 export class IsDuration extends ExpressionEvaluator {
+    /**
+     * Initializes a new instance of the `IsDuration` class.
+     */
     public constructor() {
         super(ExpressionType.IsDuration, IsDuration.evaluator, ReturnType.Boolean, FunctionUtils.validateUnary);
     }
 
+    /**
+     * @private
+     */
     private static evaluator(expr: Expression, state: MemoryInterface, options: Options): ValueWithError {
         let parsed: TimexProperty;
         let value = false;

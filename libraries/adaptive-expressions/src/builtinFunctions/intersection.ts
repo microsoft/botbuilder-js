@@ -19,10 +19,16 @@ import { ReturnType } from '../returnType';
  * the last item with that name appears in the result.
  */
 export class Intersection extends ExpressionEvaluator {
+    /**
+     * Initializes a new instance of the `Intersection` class.
+     */
     public constructor() {
         super(ExpressionType.Intersection, Intersection.evaluator(), ReturnType.Array, Intersection.validator);
     }
 
+    /**
+     * @private
+     */
     private static evaluator(): EvaluateExpressionDelegate {
         return FunctionUtils.apply(
             (args: any[]): any => {
@@ -36,6 +42,9 @@ export class Intersection extends ExpressionEvaluator {
             FunctionUtils.verifyList);
     }
 
+    /**
+     * @private
+     */
     private static validator(expression: Expression): void {
         FunctionUtils.validateArityAndAnyType(expression, 1, Number.MAX_SAFE_INTEGER, ReturnType.Array);
     }

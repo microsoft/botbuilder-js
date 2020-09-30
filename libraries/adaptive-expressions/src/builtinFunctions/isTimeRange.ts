@@ -21,10 +21,16 @@ import { ReturnType } from '../returnType';
  * Return true if a given `TimexProperty` or Timex string refers to a valid time range Valid time ranges contain partOfDay.
  */
 export class IsTimeRange extends ExpressionEvaluator {
+    /**
+     * Initializes a new instance of the `IsTimeRange` class.
+     */
     public constructor() {
         super(ExpressionType.IsTimeRange, IsTimeRange.evaluator, ReturnType.Boolean, FunctionUtils.validateUnary);
     }
 
+    /**
+     * @private
+     */
     private static evaluator(expr: Expression, state: MemoryInterface, options: Options): ValueWithError {
         let parsed: TimexProperty;
         let value = false;

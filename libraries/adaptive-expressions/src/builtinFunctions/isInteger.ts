@@ -15,10 +15,16 @@ import { ReturnType } from '../returnType';
  * Return true if a given input is an integer number. Due to the alignment between C# and JavaScript, a number with a zero residue of its modulo 1 will be treated as an integer number.
  */
 export class IsInteger extends ExpressionEvaluator {
+    /**
+     * Initializes a new instance of the `IsInteger` class.
+     */
     public constructor() {
         super(ExpressionType.IsInteger, IsInteger.evaluator(), ReturnType.Boolean, FunctionUtils.validateUnary);
     }
 
+    /**
+     * @private
+     */
     private static evaluator(): EvaluateExpressionDelegate {
         return FunctionUtils.apply(
             (args: any[]): boolean => FunctionUtils.isNumber(args[0]) && Number.isInteger(args[0]));

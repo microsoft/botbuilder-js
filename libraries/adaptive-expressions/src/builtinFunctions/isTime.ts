@@ -22,10 +22,16 @@ import { ReturnType } from '../returnType';
  * Valid time contains hours, minutes and seconds.
  */
 export class IsTime extends ExpressionEvaluator {
+    /**
+     * Initializes a new instance of the `IsTime` class.
+     */
     public constructor() {
         super(ExpressionType.IsTime, IsTime.evaluator, ReturnType.Boolean, FunctionUtils.validateUnary);
     }
 
+    /**
+     * @private
+     */
     private static evaluator(expr: Expression, state: MemoryInterface, options: Options): ValueWithError {
         let parsed: TimexProperty;
         let value = false;

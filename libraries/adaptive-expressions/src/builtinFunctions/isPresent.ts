@@ -21,10 +21,16 @@ import { ReturnType } from '../returnType';
  * Return true if a given TimexProperty or Timex expression refers to the present.
  */
 export class IsPresent extends ExpressionEvaluator {
+    /**
+     * Initializes a new instance of the `IsPresent` class.
+     */
     public constructor() {
         super(ExpressionType.IsPresent, IsPresent.evaluator, ReturnType.Boolean, FunctionUtils.validateUnary);
     }
 
+    /**
+     * @private
+     */
     private static evaluator(expr: Expression, state: MemoryInterface, options: Options): ValueWithError {
         let parsed: TimexProperty;
         let value = false;

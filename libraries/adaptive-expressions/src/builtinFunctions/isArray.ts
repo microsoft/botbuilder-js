@@ -15,10 +15,16 @@ import { ReturnType } from '../returnType';
  * Return true if a given input is an array.
  */
 export class IsArray extends ExpressionEvaluator {
+    /**
+     * Initializes a new instance of the `IsArray` class.
+     */
     public constructor() {
         super(ExpressionType.IsArray, IsArray.evaluator(), ReturnType.Boolean, FunctionUtils.validateUnary);
     }
 
+    /**
+     * @private
+     */
     private static evaluator(): EvaluateExpressionDelegate {
         return FunctionUtils.apply(
             (args: any[]): boolean => Array.isArray(args[0]));
