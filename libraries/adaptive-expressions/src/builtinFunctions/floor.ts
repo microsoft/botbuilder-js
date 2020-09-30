@@ -13,10 +13,17 @@ import { NumberTransformEvaluator } from './numberTransformEvaluator';
  * Returns the largest integer less than or equal to the specified number.
  */
 export class Floor extends NumberTransformEvaluator {
+
+    /**
+     * Initializes a new instance of the Floor class.
+     */
     public constructor() {
         super(ExpressionType.Floor, Floor.func);
     }
 
+    /**
+     * @private
+     */
     private static func(args: any[]): number {
         return Math.floor(args[0]);
     }

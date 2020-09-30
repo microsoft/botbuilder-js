@@ -16,6 +16,10 @@ import { ComparisonEvaluator } from './comparisonEvaluator';
  * Return true if both are equivalent, or return false if they're not equivalent.
  */
 export class Equal extends ComparisonEvaluator {
+
+    /**
+     * Initializes a new instance of the Equal class.
+     */
     public constructor() {
         super(ExpressionType.Equal, InternalFunctionUtils.isEqual, FunctionUtils.validateBinary);
     }

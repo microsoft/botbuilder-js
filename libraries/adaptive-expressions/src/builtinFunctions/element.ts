@@ -20,10 +20,17 @@ import { ReturnType } from '../returnType';
  * Support number index for list or string index for object.
  */
 export class Element extends ExpressionEvaluator {
+
+    /**
+     * Initializes a new instance of the Element class.
+     */
     public constructor() {
         super(ExpressionType.Element, Element.evaluator, ReturnType.Object, FunctionUtils.validateBinary);
     }
 
+    /**
+     * @private
+     */
     private static evaluator(expression: Expression, state: MemoryInterface, options: Options): ValueWithError {
         let value: any;
         let error: string;
@@ -42,7 +49,7 @@ export class Element extends ExpressionEvaluator {
                 } else if (typeof idxValue === 'string') {
                     ({ value, error } = InternalFunctionUtils.accessProperty(inst, idxValue.toString()));
                 } else {
-                    error = `Could not coerce ${index} to an int or string.`;
+                    error = `Could not coerce ${ index } to an int or string.`;
                 }
 
                 return { value, error };

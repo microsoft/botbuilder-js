@@ -18,14 +18,24 @@ import { ComparisonEvaluator } from './comparisonEvaluator';
  * 4.Input is an object with no property.
  */
 export class Empty extends ComparisonEvaluator {
+
+    /**
+     * Initializes a new instance of the Empty class.
+     */
     public constructor() {
         super(ExpressionType.Empty, Empty.func, FunctionUtils.validateUnary, FunctionUtils.verifyContainer);
     }
 
+    /**
+     * @private
+     */
     private static func(args: any[]): boolean {
         return Empty.isEmpty(args[0]);
     }
 
+    /**
+     * @private
+     */
     private static isEmpty(instance: any): boolean {
         let result: boolean;
         if (instance === undefined) {

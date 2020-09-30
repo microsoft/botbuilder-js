@@ -15,18 +15,28 @@ import { MultivariateNumericEvaluator } from './multivariateNumericEvaluator';
  * Return the integer result from dividing two numbers. 
  */
 export class Divide extends MultivariateNumericEvaluator {
+
+    /**
+     * Initializes a new instance of the Divide class.
+     */
     public constructor() {
         super(ExpressionType.Divide, Divide.func, Divide.verify);
     }
 
+    /**
+     * @private
+     */
     private static func(args: any[]): number {
         return Math.floor(Number(args[0]) / Number(args[1]));
     }
 
+    /**
+     * @private
+     */
     private static verify(val: any, expression: Expression, pos: number): string {
         let error: string = FunctionUtils.verifyNumber(val, expression, pos);
         if (!error && (pos > 0 && Number(val) === 0)) {
-            error = `Cannot divide by 0 from ${expression}`;
+            error = `Cannot divide by 0 from ${ expression }`;
         }
 
         return error;

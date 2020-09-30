@@ -14,10 +14,17 @@ import { ComparisonEvaluator } from './comparisonEvaluator';
  * Evaluates an expression for truthiness.
  */
 export class Exists extends ComparisonEvaluator {
+
+    /**
+     * Initializes a new instance of the Exists class.
+     */
     public constructor() {
         super(ExpressionType.Exists, Exists.func, FunctionUtils.validateUnary, FunctionUtils.verifyNotNull);
     }
 
+    /**
+     * @private
+     */
     private static func(args: any[]): boolean {
         return args[0] !== undefined && args[0] !== null;
     }
