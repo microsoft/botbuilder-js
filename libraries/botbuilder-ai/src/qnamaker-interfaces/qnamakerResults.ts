@@ -8,7 +8,7 @@
 
 import { QnAMakerResult } from './qnamakerResult';
 
- /**
+/**
  * An object returned by a call to the QnA Maker Service.
  */
 export interface QnAMakerResults {
