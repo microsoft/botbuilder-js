@@ -174,7 +174,7 @@ describe('PayloadTransport', () => {
             sock.setReceiver(pr);
 
             this.streamManager = new StreamManager.StreamManager(undefined);
-            assemblerManager = new PayloadAssemblerManager.PayloadAssemblerManager(
+            const assemblerManager = new PayloadAssemblerManager.PayloadAssemblerManager(
                 this.streamManager,
                 (id, response) => onReceiveResponse(id, response),
                 (id, request) => onReceiveRequest(id, request)
