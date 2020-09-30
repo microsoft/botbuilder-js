@@ -20,10 +20,17 @@ import { ReturnType } from '../returnType';
  * Used to access the variable value corresponding to the path.
  */
 export class Accessor extends ExpressionEvaluator {
+
+    /**
+     * Initializes a new instance of the Accessor class.
+     */
     public constructor() {
         super(ExpressionType.Accessor, Accessor.evaluator, ReturnType.Object, Accessor.validator);
     }
 
+    /**
+     * @private
+     */
     private static evaluator(expression: Expression, state: MemoryInterface, options: Options): ValueWithError {
         let path: string;
         let left: any;
@@ -48,6 +55,9 @@ export class Accessor extends ExpressionEvaluator {
         }
     }
 
+    /**
+     * @private
+     */
     private static validator(expression: Expression): void {
         const children: any[] = expression.children;
         if (children.length === 0

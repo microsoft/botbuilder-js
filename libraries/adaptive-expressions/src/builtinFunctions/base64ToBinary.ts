@@ -18,10 +18,17 @@ import atob = require('atob-lite');
  * Return the binary array of a base64-encoded string.
  */
 export class Base64ToBinary extends ExpressionEvaluator {
+
+    /**
+     * Initializes a new instance of the Base64ToBinary class.
+     */
     public constructor() {
         super(ExpressionType.Base64ToBinary, Base64ToBinary.evaluator(), ReturnType.Object, FunctionUtils.validateUnary);
     }
 
+    /**
+     * @private
+     */
     private static evaluator(): EvaluateExpressionDelegate {
         return FunctionUtils.apply(
             (args: Readonly<any>): Uint8Array => {

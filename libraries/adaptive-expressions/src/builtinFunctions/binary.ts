@@ -16,10 +16,17 @@ import { ReturnType } from '../returnType';
  * Return the binary version of a string.
  */
 export class Binary extends ExpressionEvaluator {
+
+    /**
+     * Initializes a new instance of the Binary class.
+     */
     public constructor() {
         super(ExpressionType.Binary, Binary.evaluator(), ReturnType.Object, FunctionUtils.validateUnary);
     }
 
+    /**
+     * @private
+     */
     private static evaluator(): EvaluateExpressionDelegate {
         return FunctionUtils.apply((args: any[]): Uint8Array => InternalFunctionUtils.toBinary(args[0]), FunctionUtils.verifyString);
     }

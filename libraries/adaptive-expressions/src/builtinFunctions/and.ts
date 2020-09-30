@@ -19,10 +19,17 @@ import { ReturnType } from '../returnType';
  * Return true if all expressions are true or return false if at least one expression is false.
  */
 export class And extends ExpressionEvaluator {
+
+    /**
+     * Initializes a new instance of the And class.
+     */
     public constructor() {
         super(ExpressionType.And, And.evaluator, ReturnType.Boolean, FunctionUtils.validateAtLeastOne);
     }
 
+    /**
+     * @private
+     */
     private static evaluator(expression: Expression, state: MemoryInterface, options: Options): ValueWithError {
         let result = true;
         let error: string;

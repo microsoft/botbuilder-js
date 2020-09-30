@@ -16,10 +16,17 @@ import { ReturnType } from '../returnType';
  * Return the result from adding two or more numbers (pure number case) or concatting two or more strings (other case).
  */
 export class Add extends ExpressionEvaluator {
+
+    /**
+     * Initializes a new instance of the Add class.
+     */
     public constructor() {
         super(ExpressionType.Add, Add.evaluator(), ReturnType.String | ReturnType.Number, Add.validator);
     }
 
+    /**
+     * @private
+     */
     private static evaluator(): EvaluateExpressionDelegate {
         return FunctionUtils.applySequenceWithError(
             (args: any[]): any => {
@@ -48,6 +55,9 @@ export class Add extends ExpressionEvaluator {
             }, FunctionUtils.verifyNumberOrStringOrNull);
     }
 
+    /**
+     * @private
+     */
     private static validator(expression: Expression): void {
         FunctionUtils.validateArityAndAnyType(expression, 2, Number.MAX_SAFE_INTEGER, ReturnType.String | ReturnType.Number);
     }

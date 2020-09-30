@@ -21,10 +21,17 @@ import { ReturnType } from '../returnType';
  * Add a number of time units to a timestamp.
  */
 export class AddToTime extends ExpressionEvaluator {
+
+    /**
+     * Initializes a new instance of the AddToTime class.
+     */
     public constructor() {
         super(ExpressionType.AddToTime, AddToTime.evaluator, ReturnType.String, AddToTime.validator);
     }
 
+    /**
+     * @private
+     */
     private static evaluator(expression: Expression, state: MemoryInterface, options: Options): ValueWithError {
         let value: any;
         let error: string;
@@ -42,6 +49,9 @@ export class AddToTime extends ExpressionEvaluator {
         return { value, error };
     }
 
+    /**
+     * @private
+     */
     private static evalAddToTime(timeStamp: string, interval: number, timeUnit: string, format?: string): ValueWithError {
         let result: string;
         let error: string;
@@ -102,6 +112,9 @@ export class AddToTime extends ExpressionEvaluator {
         return { value: result, error };
     }
 
+    /**
+     * @private
+     */
     private static validator(expression: Expression): void {
         FunctionUtils.validateOrder(expression, [ReturnType.String], ReturnType.String, ReturnType.Number, ReturnType.String);
     }

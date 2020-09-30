@@ -15,10 +15,17 @@ import { ReturnType } from '../returnType';
  * Return the average of a numeric array.
  */
 export class Average extends ExpressionEvaluator {
+
+    /**
+     * Initializes a new instance of the Average class.
+     */
     public constructor() {
         super(ExpressionType.Average, Average.evaluator(), ReturnType.Number, FunctionUtils.validateUnary);
     }
 
+    /**
+     * @private
+     */
     private static evaluator(): EvaluateExpressionDelegate {
         return FunctionUtils.apply(
             (args: any[]): number => args[0].reduce((x: number, y: number): number => x + y) / args[0].length,

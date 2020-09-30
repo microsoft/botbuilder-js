@@ -16,14 +16,24 @@ import { ReturnType } from '../returnType';
  * Return the ordinal number of the input number.
  */
 export class AddOrdinal extends ExpressionEvaluator {
+
+    /**
+     * Initializes a new instance of the AddOrdinal class.
+     */
     public constructor() {
         super(ExpressionType.AddOrdinal, AddOrdinal.evaluator(), ReturnType.String, AddOrdinal.validator);
     }
 
+    /**
+     * @private
+     */
     private static evaluator(): EvaluateExpressionDelegate {
         return FunctionUtils.apply((args: any[]): string => AddOrdinal.evalAddOrdinal(args[0]), FunctionUtils.verifyInteger);
     }
 
+    /**
+     * @private
+     */
     private static evalAddOrdinal(num: number): string {
         let hasResult = false;
         let ordinalResult: string = num.toString();
@@ -60,6 +70,9 @@ export class AddOrdinal extends ExpressionEvaluator {
         return ordinalResult;
     }
 
+    /**
+     * @private
+     */
     private static validator(expression: Expression): void {
         FunctionUtils.validateArityAndAnyType(expression, 1, 1, ReturnType.Number);
     }
