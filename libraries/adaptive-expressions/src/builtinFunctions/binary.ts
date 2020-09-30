@@ -9,6 +9,7 @@
 import { EvaluateExpressionDelegate, ExpressionEvaluator } from '../expressionEvaluator';
 import { ExpressionType } from '../expressionType';
 import { FunctionUtils } from '../functionUtils';
+import { InternalFunctionUtils } from '../functionUtils.internal';
 import { ReturnType } from '../returnType';
 
 /**
@@ -20,6 +21,6 @@ export class Binary extends ExpressionEvaluator {
     }
 
     private static evaluator(): EvaluateExpressionDelegate {
-        return FunctionUtils.apply((args: any[]): Uint8Array => FunctionUtils.toBinary(args[0]), FunctionUtils.verifyString);
+        return FunctionUtils.apply((args: any[]): Uint8Array => InternalFunctionUtils.toBinary(args[0]), FunctionUtils.verifyString);
     }
 }

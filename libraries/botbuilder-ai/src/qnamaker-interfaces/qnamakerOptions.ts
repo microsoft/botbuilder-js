@@ -6,9 +6,9 @@
  * Licensed under the MIT License.
  */
 
+import { JoinOperator } from './joinOperator';
 import { QnAMakerMetadata } from './qnamakerMetadata';
 import { QnARequestContext } from './qnaRequestContext';
-import { JoinOperator} from './JoinOperator';
 
 /**
  * Additional settings used to configure a `QnAMaker` instance.
@@ -40,7 +40,8 @@ export interface QnAMakerOptions {
      */
     metadataBoost?: QnAMakerMetadata[];
 
-    /** (Optional) The time in milliseconds to wait before the request times out.
+    /**
+     * (Optional) The time in milliseconds to wait before the request times out.
      *
      * @remarks Defaults to "100000" milliseconds.
     */
@@ -67,7 +68,7 @@ export interface QnAMakerOptions {
     rankerType?: string;
 
     /**
-     * A value indicating choice  for Strict Filters Join Operation.
+     * A value indicating choice for Strict Filters Join Operation.
      */
     strictFiltersJoinOperator?: JoinOperator;
 }
