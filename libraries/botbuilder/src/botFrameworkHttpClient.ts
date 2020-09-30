@@ -63,8 +63,6 @@ export class BotFrameworkHttpClient implements BotFrameworkClient {
     public async postActivity(fromBotId: string, toBotId: string, toUrl: string, serviceUrl: string, conversationId: string, activity: Activity): Promise<InvokeResponse>
     /**
      * Forwards an activity to another bot.
-     * @remarks
-     * 
      * @template T The type of body in the InvokeResponse. 
      * @param fromBotId The MicrosoftAppId of the bot sending the activity.
      * @param toBotId The MicrosoftAppId of the bot receiving the activity.
