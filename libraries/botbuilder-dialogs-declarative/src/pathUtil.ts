@@ -10,7 +10,7 @@ import { join } from 'path';
 import { readdirSync, lstatSync } from 'fs';
 
 /**
- * A utilities class of file path operations.
+ * An utility class for file path operations.
  */
 export class PathUtil {
     /**
