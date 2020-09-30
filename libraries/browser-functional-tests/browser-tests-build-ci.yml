@@ -6,10 +6,10 @@ pool:
   vmImage: 'vs2017-win2016'
 
 trigger:
-    - master
+    - main
 
 pr:
-    - master
+    - main
 
 variables:
   TestResourceGroup: 'BrowserBotTest$(Build.BuildId)'
