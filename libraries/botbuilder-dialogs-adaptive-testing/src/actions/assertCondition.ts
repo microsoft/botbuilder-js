@@ -24,10 +24,10 @@ export class AssertCondition<O extends object = {}> extends Dialog<O> {
     public description: StringExpression;
 
     /**
-     * Begins the dialog.
-     * @param dc The DialogContext.
-     * @param options Options.
-     * @returns A `Promise<DialogTurnResult>` object.
+     * Called when the dialog is started and pushed onto the dialog stack.
+     * @param dc The DialogContext for the current turn of the conversation.
+     * @param options Additional information to pass to the prompt being started.
+     * @returns A Promise representing the asynchronous operation.
      */
     public async beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {
         const { value } = this.condition.tryEvaluate(dc.state);
