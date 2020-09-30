@@ -20,7 +20,7 @@
             "files": ["libraries/adaptive-expressions/src/*.ts", "libraries/adaptive-expressions/src/**/*.ts"],
             "plugins": ["jsdoc"],
             "rules": {
-              "jsdoc/require-jsdoc": ["warn", {
+              "jsdoc/require-jsdoc": ["error", {
                   "require": {
                       "FunctionDeclaration": true,
                       "MethodDefinition": true,
