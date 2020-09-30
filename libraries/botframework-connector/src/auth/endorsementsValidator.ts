@@ -1,5 +1,5 @@
 /**
- * @module botbuilder
+ * @module botframework-connector
  */
 
 import { AuthenticationError } from "./authenticationError";
