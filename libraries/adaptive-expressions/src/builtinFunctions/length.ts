@@ -16,9 +16,8 @@ import { ReturnType } from '../returnType';
  * Return the length of a string.
  */
 export class Length extends ExpressionEvaluator {
-
     /**
-     * Initializes a new instance of the Length class.
+     * Initializes a new instance of the `Length` class.
      */
     public constructor() {
         super(ExpressionType.Length, Length.evaluator(), ReturnType.Number, FunctionUtils.validateUnaryString);

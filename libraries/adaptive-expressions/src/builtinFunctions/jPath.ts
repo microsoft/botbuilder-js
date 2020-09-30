@@ -18,9 +18,8 @@ import { ReturnType } from '../returnType';
  * Check JSON or a JSON string for nodes or values that match a path expression, and return the matching nodes.
  */
 export class JPath extends ExpressionEvaluator {
-
     /**
-     * Initializes a new instance of the JPath class.
+     * Initializes a new instance of the `JPath` class.
      */
     public constructor() {
         super(ExpressionType.JPath, JPath.evaluator(), ReturnType.Object, JPath.validator);

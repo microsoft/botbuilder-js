@@ -16,9 +16,8 @@ import { ReturnType } from '../returnType';
  * Return the JavaScript Object Notation (JSON) type value or object of a string or XML.
  */
 export class Json extends ExpressionEvaluator {
-
     /**
-     * Initializes a new instance of the Json class.
+     * Initializes a new instance of the `Json` class.
      */
     public constructor() {
         super(ExpressionType.Json, Json.evaluator(), ReturnType.Object, Json.validator);

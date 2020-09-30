@@ -13,9 +13,8 @@ import { MultivariateNumericEvaluator } from './multivariateNumericEvaluator';
  * Return the product from multiplying any number of numbers.
  */
 export class Multiply extends MultivariateNumericEvaluator {
-
     /**
-     * Initializes a new instance of the Multiply class.
+     * Initializes a new instance of the `Multiply` class.
      */
     public constructor() {
         super(ExpressionType.Multiply, Multiply.func);

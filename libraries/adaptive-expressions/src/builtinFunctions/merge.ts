@@ -16,9 +16,8 @@ import { ReturnType } from '../returnType';
  * Merge two JSON objects into one JSON object.
  */
 export class Merge extends ExpressionEvaluator {
-
     /**
-     * Initializes a new instance of the Merge class.
+     * Initializes a new instance of the `Merge` class.
      */
     public constructor() {
         super(ExpressionType.Merge, Merge.evaluator(), ReturnType.Object, Merge.validator);

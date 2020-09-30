@@ -15,9 +15,8 @@ import { ReturnType } from '../returnType';
  *  Return the highest value from an array. The array is inclusive at both ends.
  */
 export class Max extends ExpressionEvaluator {
-
     /**
-     * Initializes a new instance of the Max class.
+     * Initializes a new instance of the `Max` class.
      */
     public constructor() {
         super(ExpressionType.Max, Max.evaluator(), ReturnType.Number, FunctionUtils.validateAtLeastOne);

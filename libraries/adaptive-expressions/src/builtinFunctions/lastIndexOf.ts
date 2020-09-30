@@ -20,9 +20,8 @@ import { ReturnType } from '../returnType';
  * The zero-based index position of value if that value is found, or -1 if it is not.
  */
 export class LastIndexOf extends ExpressionEvaluator {
-
     /**
-     * Initializes a new instance of the LastIndexOf class.
+     * Initializes a new instance of the `LastIndexOf` class.
      */
     public constructor() {
         super(ExpressionType.LastIndexOf, LastIndexOf.evaluator, ReturnType.Number, LastIndexOf.validator);
