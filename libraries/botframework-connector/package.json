@@ -26,7 +26,7 @@
     "botframework-schema": "4.1.6",
     "cross-fetch": "^3.0.5",
     "jsonwebtoken": "8.0.1",
-    "rsa-pem-from-mod-exp": "^0.8.4"
+    "rsa-pem-from-mod-exp": "^0.8.4"    
   },
   "devDependencies": {
     "@microsoft/api-extractor": "^7.7.12",
@@ -35,12 +35,14 @@
     "@types/node": "^10.17.27",
     "browserify": "16.5.2",
     "codelyzer": "^4.1.0",
+    "cp": "^0.2.0",
     "dotenv": "^6.2.0",
     "exorcist": "^1.0.1",
     "mocha": "^6.2.3",
     "nock": "^11.9.1",
     "nyc": "^15.1.0",
     "should": "^13.2.3",
+    "shx": "^0.3.2",
     "sponge": "^0.1.0",
     "source-map-support": "^0.5.3",
     "ts-node": "^4.1.0",
@@ -48,7 +50,7 @@
   },
   "scripts": {
     "build": "tsc",
-    "postbuild": "cp lib/index.js lib/browser.js | browserify --debug lib/browser.js | exorcist lib/browser.map.js | sponge lib/browser.js",
+    "postbuild": "shx cp lib/index.js lib/browser.js | browserify --debug lib/browser.js | exorcist lib/browser.map.js | sponge lib/browser.js",
     "clean": "erase /q /s .\\lib",
     "set-version": "npm version --allow-same-version ${Version}",
     "test": "tsc && nyc mocha tests/ --timeout 60000 --inspect"

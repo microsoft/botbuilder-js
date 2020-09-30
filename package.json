@@ -14,8 +14,8 @@
     "test-coverage": "nyc mocha \"libraries/@(adaptive*|bot*)/tests/**/*.test.js\" --exit",
     "upload-coverage": "nyc report --reporter=text-lcov | coveralls",
     "build-docs": "lerna run build-docs",
-    "eslint": "eslint  ./libraries/*/src/*.ts ./libraries/*/src/**/*.ts",
-    "eslint-fix": "eslint  ./libraries/*/src/*.ts ./libraries/*/src/**/*.ts --fix",
+    "eslint": "eslint ./libraries/*/src/**/*.ts --resolve-plugins-relative-to .",
+    "eslint-fix": "eslint  ./libraries/*/src/*.ts ./libraries/*/src/**/*.ts --fix --resolve-plugins-relative-to .",
     "set-dependency-versions": "node tools/util/updateDependenciesInPackageJsons.js ./libraries ${Version} ${PreviewPackageVersion} adaptive-expressions botbuilder-lg botframework-streaming botbuilder botbuilder-ai botbuilder-dialogs botbuilder-dialogs-adaptive botbuilder-dialogs-declarative botbuilder-core botbuilder-applicationinsights botbuilder-testing botframework-connector botframework-config botframework-schema testbot bot-integration-tests && node tools/util/updateDependenciesInPackageJsons.js ./transcripts ${Version} botbuilder botbuilder-ai botbuilder-dialogs",
     "update-versions": "lerna run set-version && npm run set-dependency-versions"
   },
@@ -24,13 +24,8 @@
     "@microsoft/api-extractor": "^7.7.12",
     "@types/jsonwebtoken": "7.2.8",
     "@types/lodash": "^4.14.134",
-    "@typescript-eslint/eslint-plugin": "^3.9.1",
-    "@typescript-eslint/parser": "^3.9.1",
     "applicationinsights": "^1.7.5",
     "coveralls": "^3.0.4",
-    "eslint": "^7.7.0",
-    "eslint-plugin-jsdoc": "^29.2.0",
-    "eslint-plugin-only-warn": "^1.0.2",
     "lerna": "^3.2.1",
     "mocha": "^6.2.3",
     "ms-rest-azure": "^2.6.0",
@@ -40,6 +35,19 @@
     "typedoc": "^0.15.0",
     "typedoc-plugin-external-module-name": "^2.1.0",
     "typedoc-plugin-markdown": "^2.2.10"
+  },
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^3.10.1",
+    "@typescript-eslint/parser": "^3.10.1",
+    "eslint": "^7.9.0",
+    "eslint-config-prettier": "^6.11.0",
+    "eslint-config-standard": "^14.1.1",
+    "eslint-plugin-jsdoc": "^29.2.0",
+    "eslint-plugin-only-warn": "^1.0.2",
+    "eslint-plugin-prettier": "^3.1.4",
+    "eslint-plugin-security": "^1.4.0",
+    "prettier": "^2.1.2",
+    "typescript": "^3.9.7"
   },
   "nyc": {
     "exclude": [
