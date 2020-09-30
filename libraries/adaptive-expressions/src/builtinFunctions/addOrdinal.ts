@@ -16,9 +16,8 @@ import { ReturnType } from '../returnType';
  * Return the ordinal number of the input number.
  */
 export class AddOrdinal extends ExpressionEvaluator {
-
     /**
-     * Initializes a new instance of the AddOrdinal class.
+     * Initializes a new instance of the `AddOrdinal` class.
      */
     public constructor() {
         super(ExpressionType.AddOrdinal, AddOrdinal.evaluator(), ReturnType.String, AddOrdinal.validator);

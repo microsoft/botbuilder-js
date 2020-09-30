@@ -20,9 +20,8 @@ import { ReturnType } from '../returnType';
  * Used to access the variable value corresponding to the path.
  */
 export class Accessor extends ExpressionEvaluator {
-
     /**
-     * Initializes a new instance of the Accessor class.
+     * Initializes a new instance of the `Accessor` class.
      */
     public constructor() {
         super(ExpressionType.Accessor, Accessor.evaluator, ReturnType.Object, Accessor.validator);

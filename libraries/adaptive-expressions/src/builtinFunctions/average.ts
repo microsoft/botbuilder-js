@@ -15,9 +15,8 @@ import { ReturnType } from '../returnType';
  * Return the average of a numeric array.
  */
 export class Average extends ExpressionEvaluator {
-
     /**
-     * Initializes a new instance of the Average class.
+     * Initializes a new instance of the `Average` class.
      */
     public constructor() {
         super(ExpressionType.Average, Average.evaluator(), ReturnType.Number, FunctionUtils.validateUnary);

@@ -21,9 +21,8 @@ import { ReturnType } from '../returnType';
  * Add a number of time units to a timestamp.
  */
 export class AddToTime extends ExpressionEvaluator {
-
     /**
-     * Initializes a new instance of the AddToTime class.
+     * Initializes a new instance of the `AddToTime` class.
      */
     public constructor() {
         super(ExpressionType.AddToTime, AddToTime.evaluator, ReturnType.String, AddToTime.validator);

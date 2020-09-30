@@ -16,9 +16,8 @@ import { ReturnType } from '../returnType';
  * Return the result from adding two or more numbers (pure number case) or concatting two or more strings (other case).
  */
 export class Add extends ExpressionEvaluator {
-
     /**
-     * Initializes a new instance of the Add class.
+     * Initializes a new instance of the `Add` class.
      */
     public constructor() {
         super(ExpressionType.Add, Add.evaluator(), ReturnType.String | ReturnType.Number, Add.validator);

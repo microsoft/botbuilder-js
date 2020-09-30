@@ -17,9 +17,8 @@ import { ReturnType } from '../returnType';
  * If the object already exists at runtime the function throws an error.
  */
 export class AddProperty extends ExpressionEvaluator {
-
     /**
-     * Initializes a new instance of the AddProperty class.
+     * Initializes a new instance of the `AddProperty` class.
      */
     public constructor() {
         super(ExpressionType.AddProperty, AddProperty.evaluator(), ReturnType.Object, AddProperty.validator);
