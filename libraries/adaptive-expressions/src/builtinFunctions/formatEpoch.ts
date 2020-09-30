@@ -18,9 +18,8 @@ import { ReturnType } from '../returnType';
  * Return a timestamp in the specified format from UNIX time (also know as Epoch time, POSIX time, UNIX Epoch time).
  */
 export class FormatEpoch extends ExpressionEvaluator {
-
     /**
-     * Initializes a new instance of the FormatEpoch class.
+     * Initializes a new instance of the `FormatEpoch` class.
      */
     public constructor() {
         super(ExpressionType.FormatEpoch, FormatEpoch.evaluator(), ReturnType.String, FormatEpoch.validator);

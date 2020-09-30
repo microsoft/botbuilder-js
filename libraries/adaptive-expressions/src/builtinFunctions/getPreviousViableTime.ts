@@ -22,9 +22,8 @@ import {TimexProperty, Time} from '@microsoft/recognizers-text-data-types-timex-
  * Return the previous viable time of a timex expression based on the current time and user's timezone.
  */
 export class GetPreviousViableTime extends ExpressionEvaluator {
-
     /**
-     * Initializes a new instance of the GetPreviousViableTime class.
+     * Initializes a new instance of the `GetPreviousViableTime` class.
      */
     public constructor(){
         super(ExpressionType.GetPreviousViableTime, GetPreviousViableTime.evaluator, ReturnType.String, FunctionUtils.validateUnaryOrBinaryString);

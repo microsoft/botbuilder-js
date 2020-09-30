@@ -20,9 +20,8 @@ import { ReturnType } from '../returnType';
  * 
  */
 export class Ignore extends ExpressionEvaluator {
-
     /**
-     * Initializes a new instance of the GreaterThan class.
+     * Initializes a new instance of the `GreaterThan` class.
      */
     public constructor() {
         super(ExpressionType.Ignore, Ignore.evaluator, ReturnType.Boolean, FunctionUtils.validateUnaryBoolean);

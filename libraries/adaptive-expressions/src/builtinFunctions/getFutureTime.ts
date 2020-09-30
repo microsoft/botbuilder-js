@@ -21,9 +21,8 @@ import { ReturnType } from '../returnType';
  * Return the current timestamp plus the specified time units.
  */
 export class GetFutureTime extends ExpressionEvaluator {
-
     /**
-     * Initializes a new instance of the GetFutureTime class.
+     * Initializes a new instance of the `GetFutureTime` class.
      */
     public constructor() {
         super(ExpressionType.GetFutureTime, GetFutureTime.evaluator, ReturnType.String, GetFutureTime.validator);

@@ -21,9 +21,8 @@ import { ReturnType } from '../returnType';
  * Return the current timestamp minus the specified time units.
  */
 export class GetPastTime extends ExpressionEvaluator {
-
     /**
-     * Initializes a new instance of the GetPastTime class.
+     * Initializes a new instance of the `GetPastTime` class.
      */
     public constructor() {
         super(ExpressionType.GetPastTime, GetPastTime.evaluator, ReturnType.String, GetPastTime.validator);

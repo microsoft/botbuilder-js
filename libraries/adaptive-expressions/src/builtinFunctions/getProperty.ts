@@ -20,9 +20,8 @@ import { ReturnType } from '../returnType';
  * Retrieve the value of the specified property from the JSON object.
  */
 export class GetProperty extends ExpressionEvaluator {
-
     /**
-     * Initializes a new instance of the GetProperty class.
+     * Initializes a new instance of the `GetProperty` class.
      */
     public constructor() {
         super(ExpressionType.GetProperty, GetProperty.evaluator, ReturnType.Object, GetProperty.validator);

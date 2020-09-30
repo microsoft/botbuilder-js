@@ -20,9 +20,8 @@ import { ReturnType } from '../returnType';
  * Format reference: https://docs.microsoft.com/en-us/dotnet/standard/base-types/custom-date-and-time-format-strings
  */
 export class FormatDateTime extends ExpressionEvaluator {
-
     /**
-     * Initializes a new instance of the FormatDateTime class.
+     * Initializes a new instance of the `FormatDateTime` class.
      */
     public constructor() {
         super(ExpressionType.FormatDateTime, FormatDateTime.evaluator(), ReturnType.String, FormatDateTime.validator);

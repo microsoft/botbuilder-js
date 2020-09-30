@@ -20,9 +20,8 @@ import { ReturnType } from '../returnType';
  * Return a timestamp in the specified format from ticks.
  */
 export class FormatTicks extends ExpressionEvaluator {
-
     /**
-     * Initializes a new instance of the FormatTicks class.
+     * Initializes a new instance of the `FormatTicks` class.
      */
     public constructor() {
         super(ExpressionType.FormatTicks, FormatTicks.evaluator(), ReturnType.String, FormatTicks.validator);

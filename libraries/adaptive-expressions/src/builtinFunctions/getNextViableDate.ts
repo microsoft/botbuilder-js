@@ -23,9 +23,8 @@ import {TimexProperty} from '@microsoft/recognizers-text-data-types-timex-expres
  * Return the next viable date of a timex expression based on the current date and user's timezone.
  */
 export class GetNextViableDate extends ExpressionEvaluator {
-
     /**
-     * Initializes a new instance of the GetNextViableDate class.
+     * Initializes a new instance of the `GetNextViableDate` class.
      */
     public constructor(){
         super(ExpressionType.GetNextViableDate, GetNextViableDate.evaluator, ReturnType.String, FunctionUtils.validateUnaryOrBinaryString);
