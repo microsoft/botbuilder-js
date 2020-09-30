@@ -20,7 +20,7 @@ import { ReturnType } from '../returnType';
  */
 export class DateTimeDiff extends ExpressionEvaluator {
     /**
-     * Initializes a new instance of the `DataUriToBinary` class.
+     * Initializes a new instance of the `DateTimeDiff` class.
      */
     public constructor() {
         super(ExpressionType.DateTimeDiff, DateTimeDiff.evaluator, ReturnType.Number, DateTimeDiff.validator);
