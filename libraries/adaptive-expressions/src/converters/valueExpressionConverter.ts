@@ -9,14 +9,13 @@
 import { ValueExpression } from '../expressionProperties';
 
 /**
- * Any value to json ValueExpression converter.
+ * `any` value to json `ValueExpression` converter.
  */
 export class ValueExpressionConverter {
-
     /**
-     * Converts any value into a ValueExpression.
-     * @param value Any value to convert.
-     * @returns The ValueExpression.
+     * Converts `any` value into a `ValueExpression`.
+     * @param value `any` value to convert.
+     * @returns The `ValueExpression`.
      */
     public convert(value: any): ValueExpression {
         return new ValueExpression(value);

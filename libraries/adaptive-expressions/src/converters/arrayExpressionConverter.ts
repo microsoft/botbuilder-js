@@ -9,15 +9,14 @@
 import { ArrayExpression } from '../expressionProperties';
 
 /**
- * Array to json ArrayExpression converter.
+ * `array` to json `ArrayExpression` converter.
  * @typeparam T The type of the items of the array.
  */
 export class ArrayExpressionConverter<T> {
-
     /**
-     * Converts an array into an ArrayExpression.
-     * @param value Array to convert.
-     * @returns The ArrayExpression.
+     * Converts an array into an `ArrayExpression`.
+     * @param value `array` to convert.
+     * @returns The `ArrayExpression`.
      */
     public convert(value: T[]): ArrayExpression<T> {
         return new ArrayExpression<T>(value);

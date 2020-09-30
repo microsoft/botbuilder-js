@@ -9,14 +9,13 @@
 import { StringExpression } from '../expressionProperties';
 
 /**
- * String to json StringExpression converter.
+ * `string` to json `StringExpression` converter.
  */
 export class StringExpressionConverter {
-
     /**
-     * Converts a string into an StringExpression.
-     * @param value Any value to convert.
-     * @returns The StringExpression.
+     * Converts a string into an `StringExpression`.
+     * @param value `string` to convert.
+     * @returns The `StringExpression`.
      */
     public convert(value: string): StringExpression {
         return new StringExpression(value);
