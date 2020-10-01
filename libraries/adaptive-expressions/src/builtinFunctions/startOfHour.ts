@@ -37,8 +37,9 @@ export class StartOfHour extends ExpressionEvaluator {
         let args: any[];
         ({ args, error } = FunctionUtils.evaluateChildren(expr, state, options));
         if (!error) {
-            const format: string = (args.length === 2) ? FunctionUtils.timestampFormatter(args[1]) : FunctionUtils.DefaultDateTimeFormat;
-            if (typeof (args[0]) === 'string') {
+            const format: string =
+                args.length === 2 ? FunctionUtils.timestampFormatter(args[1]) : FunctionUtils.DefaultDateTimeFormat;
+            if (typeof args[0] === 'string') {
                 ({ value, error } = StartOfHour.evalStartOfHour(args[0], format));
             } else {
                 error = `${expr} should contain an ISO format timestamp and an optional output format string.`;

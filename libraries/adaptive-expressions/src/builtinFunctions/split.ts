@@ -28,7 +28,13 @@ export class Split extends ExpressionEvaluator {
      * @private
      */
     private static evaluator(): EvaluateExpressionDelegate {
-        return FunctionUtils.apply((args: any[]): string[] => InternalFunctionUtils.parseStringOrUndefined(args[0]).split(InternalFunctionUtils.parseStringOrUndefined(args[1] || '')), FunctionUtils.verifyStringOrNull);
+        return FunctionUtils.apply(
+            (args: any[]): string[] =>
+                InternalFunctionUtils.parseStringOrUndefined(args[0]).split(
+                    InternalFunctionUtils.parseStringOrUndefined(args[1] || '')
+                ),
+            FunctionUtils.verifyStringOrNull
+        );
     }
 
     /**

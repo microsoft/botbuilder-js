@@ -19,6 +19,11 @@ export class Select extends ExpressionEvaluator {
      * Initializes a new instance of the `Select` class.
      */
     public constructor() {
-        super(ExpressionType.Select, InternalFunctionUtils.foreach, ReturnType.Array, InternalFunctionUtils.validateForeach);
+        super(
+            ExpressionType.Select,
+            InternalFunctionUtils.foreach,
+            ReturnType.Array,
+            InternalFunctionUtils.validateForeach
+        );
     }
 }

@@ -37,8 +37,9 @@ export class StartOfDay extends ExpressionEvaluator {
         let args: any[];
         ({ args, error } = FunctionUtils.evaluateChildren(expression, state, options));
         if (!error) {
-            const format: string = (args.length === 2) ? FunctionUtils.timestampFormatter(args[1]) : FunctionUtils.DefaultDateTimeFormat;
-            if (typeof (args[0]) === 'string') {
+            const format: string =
+                args.length === 2 ? FunctionUtils.timestampFormatter(args[1]) : FunctionUtils.DefaultDateTimeFormat;
+            if (typeof args[0] === 'string') {
                 ({ value, error } = StartOfDay.evalStartOfDay(args[0], format));
             } else {
                 error = `${expression} should contain an ISO format timestamp and an optional output format string.`;

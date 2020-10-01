@@ -21,7 +21,12 @@ export class SortByDescending extends ExpressionEvaluator {
      * Initializes a new instance of the `SortByDescending` class.
      */
     public constructor() {
-        super(ExpressionType.SortByDescending, InternalFunctionUtils.sortBy(true), ReturnType.Array, SortByDescending.validator);
+        super(
+            ExpressionType.SortByDescending,
+            InternalFunctionUtils.sortBy(true),
+            ReturnType.Array,
+            SortByDescending.validator
+        );
     }
 
     /**
