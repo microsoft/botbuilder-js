@@ -1,7 +1,15 @@
 {
+    "env": {    
+        "es6": true
+      },
     "extends": [
+        "eslint:recommended",
+        "plugin:security/recommended",
         "plugin:@typescript-eslint/recommended",
-        "plugin:@typescript-eslint/eslint-recommended"
+        "plugin:@typescript-eslint/eslint-recommended",
+        "prettier",
+        "plugin:prettier/recommended",
+        "prettier/@typescript-eslint"
     ],
     "ignorePatterns": [
         "libraries/adaptive-expressions/**/generated/**/*",
@@ -11,268 +19,6 @@
         "libraries/streaming-e2e-tests/**"
     ],
     "parser": "@typescript-eslint/parser",
-    "plugins": [
-        "@typescript-eslint",
-        "only-warn"
-    ],
-    "overrides": [
-        {
-            "files": ["libraries/adaptive-expressions/src/*.ts", "libraries/adaptive-expressions/src/**/*.ts"],
-            "plugins": ["jsdoc"],
-            "rules": {
-              "jsdoc/require-jsdoc": ["warn", {
-                  "require": {
-                      "FunctionDeclaration": true,
-                      "MethodDefinition": true,
-                      "ClassDeclaration": true,
-                      "ArrowFunctionExpression": false,
-                      "FunctionExpression": false
-                  },
-                  "publicOnly": true
-              }]
-            }
-        },
-        {
-            "files": ["libraries/botbuilder/src/*.ts", "libraries/botbuilder/src/**/*.ts"],
-            "plugins": ["jsdoc"],
-            "rules": {
-              "jsdoc/require-jsdoc": ["warn", {
-                  "require": {
-                      "FunctionDeclaration": true,
-                      "MethodDefinition": true,
-                      "ClassDeclaration": true,
-                      "ArrowFunctionExpression": false,
-                      "FunctionExpression": false
-                  },
-                  "publicOnly": true
-              }]
-            }
-        },
-        {
-            "files": ["libraries/botbuilder-ai/src/*.ts", "libraries/botbuilder-ai/src/**/*.ts"],
-            "plugins": ["jsdoc"],
-            "rules": {
-              "jsdoc/require-jsdoc": ["warn", {
-                  "require": {
-                      "FunctionDeclaration": true,
-                      "MethodDefinition": true,
-                      "ClassDeclaration": true,
-                      "ArrowFunctionExpression": false,
-                      "FunctionExpression": false
-                  },
-                  "publicOnly": true
-              }]
-            }
-        },
-        {
-            "files": ["libraries/botbuilder-applicationinsights/src/*.ts", "libraries/botbuilder-applicationinsights/src/**/*.ts"],
-            "plugins": ["jsdoc"],
-            "rules": {
-              "jsdoc/require-jsdoc": ["warn", {
-                  "require": {
-                      "FunctionDeclaration": true,
-                      "MethodDefinition": true,
-                      "ClassDeclaration": true,
-                      "ArrowFunctionExpression": false,
-                      "FunctionExpression": false
-                  },
-                  "publicOnly": true
-              }]
-            }
-        },
-        {
-            "files": ["libraries/botbuilder-azure/src/*.ts", "libraries/botbuilder-azure/src/**/*.ts"],
-            "plugins": ["jsdoc"],
-            "rules": {
-              "jsdoc/require-jsdoc": ["warn", {
-                  "require": {
-                      "FunctionDeclaration": true,
-                      "MethodDefinition": true,
-                      "ClassDeclaration": true,
-                      "ArrowFunctionExpression": false,
-                      "FunctionExpression": false
-                  },
-                  "publicOnly": true
-              }]
-            }
-        },
-        {
-            "files": ["libraries/botbuilder-core/src/*.ts", "libraries/botbuilder-core/src/**/*.ts"],
-            "plugins": ["jsdoc"],
-            "rules": {
-              "jsdoc/require-jsdoc": ["warn", {
-                  "require": {
-                      "FunctionDeclaration": true,
-                      "MethodDefinition": true,
-                      "ClassDeclaration": true,
-                      "ArrowFunctionExpression": false,
-                      "FunctionExpression": false
-                  },
-                  "publicOnly": true
-              }]
-            }
-        },
-        {
-            "files": ["libraries/botbuilder-dialogs/src/*.ts", "libraries/botbuilder-dialogs/src/**/*.ts"],
-            "plugins": ["jsdoc"],
-            "rules": {
-              "jsdoc/require-jsdoc": ["warn", {
-                  "require": {
-                      "FunctionDeclaration": true,
-                      "MethodDefinition": true,
-                      "ClassDeclaration": true,
-                      "ArrowFunctionExpression": false,
-                      "FunctionExpression": false
-                  },
-                  "publicOnly": true
-              }]
-            }
-        },
-        {
-            "files": ["libraries/botbuilder-dialogs-adaptive/src/*.ts", "libraries/botbuilder-dialogs-adaptive/src/**/*.ts"],
-            "plugins": ["jsdoc"],
-            "rules": {
-              "jsdoc/require-jsdoc": ["error", {
-                  "require": {
-                      "FunctionDeclaration": true,
-                      "MethodDefinition": true,
-                      "ClassDeclaration": true,
-                      "ArrowFunctionExpression": false,
-                      "FunctionExpression": false
-                  },
-                  "publicOnly": true
-              }]
-            }
-        },
-        {
-            "files": ["libraries/botbuilder-dialogs-adaptive-tests/src/*.ts", "libraries/botbuilder-dialogs-adaptive-tests/src/**/*.ts"],
-            "plugins": ["jsdoc"],
-            "rules": {
-              "jsdoc/require-jsdoc": ["warn", {
-                  "require": {
-                      "FunctionDeclaration": true,
-                      "MethodDefinition": true,
-                      "ClassDeclaration": true,
-                      "ArrowFunctionExpression": false,
-                      "FunctionExpression": false
-                  },
-                  "publicOnly": true
-              }]
-            }
-        },
-        {
-            "files": ["libraries/botbuilder-dialogs-declarative/src/*.ts", "libraries/botbuilder-dialogs-declarative/src/**/*.ts"],
-            "plugins": ["jsdoc"],
-            "rules": {
-              "jsdoc/require-jsdoc": ["warn", {
-                  "require": {
-                      "FunctionDeclaration": true,
-                      "MethodDefinition": true,
-                      "ClassDeclaration": true,
-                      "ArrowFunctionExpression": false,
-                      "FunctionExpression": false
-                  },
-                  "publicOnly": true
-              }]
-            }
-        },
-        {
-            "files": ["libraries/botbuilder-lg/src/*.ts", "libraries/botbuilder-lg/src/**/*.ts"],
-            "plugins": ["jsdoc"],
-            "rules": {
-              "jsdoc/require-jsdoc": ["warn", {
-                  "require": {
-                      "FunctionDeclaration": true,
-                      "MethodDefinition": true,
-                      "ClassDeclaration": true,
-                      "ArrowFunctionExpression": false,
-                      "FunctionExpression": false
-                  },
-                  "publicOnly": true
-              }]
-            }
-        },
-        {
-            "files": ["libraries/botbuilder-testing/src/*.ts", "libraries/botbuilder-testing/src/**/*.ts"],
-            "plugins": ["jsdoc"],
-            "rules": {
-              "jsdoc/require-jsdoc": ["warn", {
-                  "require": {
-                      "FunctionDeclaration": true,
-                      "MethodDefinition": true,
-                      "ClassDeclaration": true,
-                      "ArrowFunctionExpression": false,
-                      "FunctionExpression": false
-                  },
-                  "publicOnly": true
-              }]
-            }
-        },
-        {
-            "files": ["libraries/botframework-config/src/*.ts", "libraries/botframework-config/src/**/*.ts"],
-            "plugins": ["jsdoc"],
-            "rules": {
-              "jsdoc/require-jsdoc": ["warn", {
-                  "require": {
-                      "FunctionDeclaration": true,
-                      "MethodDefinition": true,
-                      "ClassDeclaration": true,
-                      "ArrowFunctionExpression": false,
-                      "FunctionExpression": false
-                  },
-                  "publicOnly": true
-              }]
-            }
-        },
-        {
-            "files": ["libraries/botframework-connector/src/*.ts", "libraries/botframework-connector/src/**/*.ts"],
-            "plugins": ["jsdoc"],
-            "rules": {
-              "jsdoc/require-jsdoc": ["warn", {
-                  "require": {
-                      "FunctionDeclaration": true,
-                      "MethodDefinition": true,
-                      "ClassDeclaration": true,
-                      "ArrowFunctionExpression": false,
-                      "FunctionExpression": false
-                  },
-                  "publicOnly": true
-              }]
-            }
-        },
-        {
-            "files": ["libraries/botframework-schema/src/*.ts", "libraries/botframework-schema/src/**/*.ts"],
-            "plugins": ["jsdoc"],
-            "rules": {
-              "jsdoc/require-jsdoc": ["warn", {
-                  "require": {
-                      "FunctionDeclaration": true,
-                      "MethodDefinition": true,
-                      "ClassDeclaration": true,
-                      "ArrowFunctionExpression": false,
-                      "FunctionExpression": false
-                  },
-                  "publicOnly": true
-              }]
-            }
-        },
-        {
-            "files": ["libraries/botframework-streaming/src/*.ts", "libraries/botframework-streaming/src/**/*.ts"],
-            "plugins": ["jsdoc"],
-            "rules": {
-              "jsdoc/require-jsdoc": ["warn", {
-                  "require": {
-                      "FunctionDeclaration": true,
-                      "MethodDefinition": true,
-                      "ClassDeclaration": true,
-                      "ArrowFunctionExpression": false,
-                      "FunctionExpression": false
-                  },
-                  "publicOnly": true
-              }]
-            }
-        }
-    ],
     "parserOptions": {
         "ecmaVersion": 9,
         "sourceType": "module",
@@ -280,23 +26,13 @@
             "impliedStrict": true
         }
     },
+    "plugins": [
+        "@typescript-eslint",
+        "prettier",        
+        "security",        
+        "only-warn"
+    ],
     "rules": {
-        "semi": ["error", "always"],
-        "no-return-await": 0,
-        "space-before-function-paren": ["error", {
-            "named": "never",
-            "anonymous": "never",
-            "asyncArrow": "always"
-        }],
-        "quotes": ["error", "single", {"allowTemplateLiterals": true}],
-        "template-curly-spacing": ["error", "always"],
-        "@typescript-eslint/indent": ["error", 4],
-        "@typescript-eslint/interface-name-prefix": 0,
-        "@typescript-eslint/no-explicit-any": 0,
-        "@typescript-eslint/consistent-type-assertions": ["error", {
-            "assertionStyle": "as",
-            "objectLiteralTypeAssertions": "allow-as-parameter"
-         }],
-        "@typescript-eslint/no-use-before-define": ["error", { "functions": false, "classes": true }]
+        "prettier/prettier": "error"        
     }
 }
