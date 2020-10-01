@@ -22,7 +22,9 @@ export class Year extends ExpressionEvaluator {
 
     private static evaluator(): EvaluateExpressionDelegate {
         return FunctionUtils.applyWithError(
-            (args: any[]): any => InternalFunctionUtils.parseTimestamp(args[0], (timestamp: Date): number => timestamp.getUTCFullYear()),
-            FunctionUtils.verifyString);
+            (args: any[]): any =>
+                InternalFunctionUtils.parseTimestamp(args[0], (timestamp: Date): number => timestamp.getUTCFullYear()),
+            FunctionUtils.verifyString
+        );
     }
 }
