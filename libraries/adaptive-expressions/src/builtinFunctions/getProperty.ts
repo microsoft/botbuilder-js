@@ -51,7 +51,11 @@ export class GetProperty extends ExpressionEvaluator {
                 ({ value: property, error } = children[1].tryEvaluate(state, options));
 
                 if (!error) {
-                    value = InternalFunctionUtils.wrapGetValue(new SimpleObjectMemory(firstItem), property.toString(), options);
+                    value = InternalFunctionUtils.wrapGetValue(
+                        new SimpleObjectMemory(firstItem),
+                        property.toString(),
+                        options
+                    );
                 }
             }
         }

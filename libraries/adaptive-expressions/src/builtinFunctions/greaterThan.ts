@@ -19,7 +19,12 @@ export class GreaterThan extends ComparisonEvaluator {
      * Initializes a new instance of the `GreaterThan` class.
      */
     public constructor() {
-        super(ExpressionType.GreaterThan, GreaterThan.func, FunctionUtils.validateBinaryNumberOrString, FunctionUtils.verifyNumberOrString);
+        super(
+            ExpressionType.GreaterThan,
+            GreaterThan.func,
+            FunctionUtils.validateBinaryNumberOrString,
+            FunctionUtils.verifyNumberOrString
+        );
     }
 
     /**
