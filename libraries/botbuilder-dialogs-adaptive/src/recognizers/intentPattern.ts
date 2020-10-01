@@ -67,7 +67,7 @@ export class IntentPattern {
  */
 export class IntentPatternConverter implements Converter {
     /**
-     * Converts an object or string to a `IntentPattern` instance.
+     * Converts an object or string to an `IntentPattern` instance.
      * @param value An object composed by the `intent` and the `pattern` to match.
      * @returns A new `IntentPattern` instance.
      */

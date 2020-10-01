@@ -11,7 +11,7 @@ import { DialogContext } from 'botbuilder-dialogs';
 import { Recognizer } from './recognizer';
 
 /**
- * RecognizerSet - Recognizer which is the union of of multiple recognizers into one RecognizerResult.
+ * RecognizerSet - Recognizer which is the union of multiple recognizers into one RecognizerResult.
  */
 export class RecognizerSet extends Recognizer {
 
