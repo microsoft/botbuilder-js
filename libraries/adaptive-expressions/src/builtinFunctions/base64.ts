@@ -20,17 +20,16 @@ export class Base64 extends ExpressionEvaluator {
     }
 
     private static evaluator(): EvaluateExpressionDelegate {
-        return FunctionUtils.apply(
-            (args: Readonly<any>): string | Uint8Array => {
-                let result: string;
-                if (typeof args[0] === 'string') {
-                    result = Buffer.from(args[0]).toString('base64');
-                }
+        return FunctionUtils.apply((args: Readonly<any>): string | Uint8Array => {
+            let result: string;
+            if (typeof args[0] === 'string') {
+                result = Buffer.from(args[0]).toString('base64');
+            }
 
-                if (args[0] instanceof Uint8Array) {
-                    result = Buffer.from(args[0]).toString('base64');
-                }
-                return result;
-            });
+            if (args[0] instanceof Uint8Array) {
+                result = Buffer.from(args[0]).toString('base64');
+            }
+            return result;
+        });
     }
 }

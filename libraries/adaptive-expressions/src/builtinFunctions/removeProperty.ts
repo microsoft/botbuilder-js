@@ -27,13 +27,12 @@ export class RemoveProperty extends ExpressionEvaluator {
      * @private
      */
     private static evaluator(): EvaluateExpressionDelegate {
-        return FunctionUtils.apply(
-            (args: any[]): any => {
-                const temp: any = args[0];
-                delete temp[String(args[1])];
+        return FunctionUtils.apply((args: any[]): any => {
+            const temp: any = args[0];
+            delete temp[String(args[1])];
 
-                return temp;
-            });
+            return temp;
+        });
     }
 
     /**

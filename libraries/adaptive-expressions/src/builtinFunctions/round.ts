@@ -26,28 +26,27 @@ export class Round extends ExpressionEvaluator {
      * @private
      */
     private static evaluator(): EvaluateExpressionDelegate {
-        return FunctionUtils.applyWithError(
-            (args: any[]): any => {
-                let result: any;
-                let error: string;
-                if (args.length === 2 && !Number.isInteger(args[1])) {
-                    error = `The second parameter ${ args[1] } must be an integer.`;
-                }
+        return FunctionUtils.applyWithError((args: any[]): any => {
+            let result: any;
+            let error: string;
+            if (args.length === 2 && !Number.isInteger(args[1])) {
+                error = `The second parameter ${args[1]} must be an integer.`;
+            }
 
-                if (!error) {
-                    const digits = args.length === 2 ? args[1] as number : 0;
-                    if (digits < 0 || digits > 15) {
-                        error = `The second parameter ${ args[1] } must be an integer between 0 and 15;`;
-                    } else {
-                        result = Round.roundToPrecision(args[0], digits);
-                    }
+            if (!error) {
+                const digits = args.length === 2 ? (args[1] as number) : 0;
+                if (digits < 0 || digits > 15) {
+                    error = `The second parameter ${args[1]} must be an integer between 0 and 15;`;
+                } else {
+                    result = Round.roundToPrecision(args[0], digits);
                 }
+            }
 
-                return { value: result, error };
-            },
-            FunctionUtils.verifyNumber
-        );
+            return { value: result, error };
+        }, FunctionUtils.verifyNumber);
     }
 
-    private static roundToPrecision = (num: number, digits: number): number => Math.round(num * Math.pow(10, digits)) / Math.pow(10, digits);
+
+    private static roundToPrecision = (num: number, digits: number): number =>
+        Math.round(num * Math.pow(10, digits)) / Math.pow(10, digits);
 }

@@ -26,18 +26,15 @@ export class Range extends ExpressionEvaluator {
      * @private
      */
     private static evaluator(): EvaluateExpressionDelegate {
-        return FunctionUtils.applyWithError(
-            (args: any[]): any => {
-                let error: string;
-                if (args[1] <= 0) {
-                    error = 'Second paramter must be more than zero';
-                }
+        return FunctionUtils.applyWithError((args: any[]): any => {
+            let error: string;
+            if (args[1] <= 0) {
+                error = 'Second paramter must be more than zero';
+            }
 
-                const result: number[] = [...Array(args[1]).keys()].map((u: number): number => u + Number(args[0]));
+            const result: number[] = [...Array(args[1]).keys()].map((u: number): number => u + Number(args[0]));
 
-                return { value: result, error };
-            },
-            FunctionUtils.verifyInteger
-        );
+            return { value: result, error };
+        }, FunctionUtils.verifyInteger);
     }
 }
