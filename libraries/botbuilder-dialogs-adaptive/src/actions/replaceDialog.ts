@@ -9,14 +9,24 @@ import { DialogTurnResult, DialogContext, TurnPath } from 'botbuilder-dialogs';
 import { BaseInvokeDialog } from './baseInvokeDialog';
 import { BoolExpression } from 'adaptive-expressions';
 
+/**
+ * Action which calls another dialog, when it is done it will go to the callers parent dialog.
+ */
 export class ReplaceDialog<O extends object = {}> extends BaseInvokeDialog<O> {
+    public constructor();
+    
     /**
      * Creates a new `ReplaceWithDialog` instance.
      * @param dialogId ID of the dialog to goto.
-     * @param options (Optional) static options to pass the dialog.
+     * @param options Optional, static options to pass the dialog.
      */
-    public constructor();
     public constructor(dialogIdToCall: string, options?: O);
+        
+    /**
+     * Creates a new `ReplaceWithDialog` instance.
+     * @param dialogId Optional, ID of the dialog to goto.
+     * @param options Optional, static options to pass the dialog.
+     */
     public constructor(dialogIdToCall?: string, options?: O) {
         super(dialogIdToCall, options);
     }
@@ -26,6 +36,12 @@ export class ReplaceDialog<O extends object = {}> extends BaseInvokeDialog<O> {
      */
     public disabled?: BoolExpression;
 
+    /**
+     * Starts a new dialog and pushes it onto the dialog stack.
+     * @param dc The `DialogContext` for the current turn of conversation.
+     * @param options Optional, initial information to pass to the dialog.
+     * @returns A `Promise` representing the asynchronous operation.
+     */
     public async beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {
         if (this.disabled && this.disabled.getValue(dc.state)) {
             return await dc.endDialog();

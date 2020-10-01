@@ -13,7 +13,15 @@ import { Activity } from 'botbuilder-core';
 import { ValueExpression, StringExpression, BoolExpression, EnumExpression } from 'adaptive-expressions';
 import { replaceJsonRecursively } from '../jsonExtensions';
 
+/**
+ * Key - value pair to `HttpHeader` converter.
+ */
 export class HttpHeadersConverter implements Converter {
+
+    /**
+     * Converts a Key - value pair to `HttpHeader`.
+     * @param value Value to convert.
+     */
     public convert(value: object): { [key: string]: StringExpression } {
         const headers = {};
         for (const key in value) {
@@ -114,9 +122,28 @@ export class Result {
     public content?: any;
 }
 
+/**
+ * Action for performing an `HttpRequest`.
+ */
 export class HttpRequest<O extends object = {}> extends Dialog<O> implements Configurable {
     public constructor();
+
+    /**
+     * Initializes a new instance of the `HttpRequest` class.
+     * @param method The HTTP method, for example POST, GET, DELETE or PUT.
+     * @param url URL for the request.
+     * @param headers The headers of the request.
+     * @param body The raw body of the request.
+     */
     public constructor(method: HttpMethod, url: string, headers: { [key: string]: string }, body: any);
+
+    /**
+     * Initializes a new instance of the `HttpRequest` class.
+     * @param method Optional, the HTTP method, for example POST, GET, DELETE or PUT.
+     * @param url Optional, URL for the request.
+     * @param headers Optional, the headers of the request.
+     * @param body Optional, the raw body of the request.
+     */
     public constructor(method?: HttpMethod, url?: string, headers?: { [key: string]: string }, body?: any) {
         super();
         this.method = method || HttpMethod.GET;
@@ -169,6 +196,12 @@ export class HttpRequest<O extends object = {}> extends Dialog<O> implements Con
      */
     public disabled?: BoolExpression;
 
+    /**
+     * Starts a new dialog and pushes it onto the dialog stack.
+     * @param dc The `DialogContext` for the current turn of conversation.
+     * @param options Optional, initial information to pass to the dialog.
+     * @returns A `Promise` representing the asynchronous operation.
+     */
     public async beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {
         if (this.disabled && this.disabled.getValue(dc.state)) {
             return await dc.endDialog();
@@ -272,6 +305,11 @@ export class HttpRequest<O extends object = {}> extends Dialog<O> implements Con
         return await dc.endDialog(result);
     }
 
+    /**
+     * @protected
+     * Builds the compute Id for the dialog.
+     * @returns A `string` representing the compute Id.
+     */
     protected onComputeId(): string {
         return `HttpRequest[${ this.method } ${ this.url }]`;
     }

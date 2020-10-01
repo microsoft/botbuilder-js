@@ -8,8 +8,17 @@
 import { Dialog, DialogContext, DialogTurnResult } from 'botbuilder-dialogs';
 import { StringExpression, BoolExpression } from 'adaptive-expressions';
 
+/**
+ * Send an activity back to the user.
+ */
 export class SignOutUser<O extends object = {}> extends Dialog<O> {
     public constructor();
+
+    /**
+     * Initializes a new instance of the `SignOutUser` class.
+     * @param userId Optional, the expression which resolves to the userId to sign out.
+     * @param connectionName Optional, the name of the OAuth connection.
+     */
     public constructor(userId?: string, connectionName?: string) {
         super();
         if (userId) { this.userId = new StringExpression(userId); }
@@ -31,6 +40,12 @@ export class SignOutUser<O extends object = {}> extends Dialog<O> {
      */
     public disabled?: BoolExpression;
 
+    /**
+     * Starts a new dialog and pushes it onto the dialog stack.
+     * @param dc The `DialogContext` for the current turn of conversation.
+     * @param options Optional, initial information to pass to the dialog.
+     * @returns A `Promise` representing the asynchronous operation.
+     */
     public async beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {
         if (this.disabled && this.disabled.getValue(dc.state)) {
             return await dc.endDialog();
@@ -51,6 +66,11 @@ export class SignOutUser<O extends object = {}> extends Dialog<O> {
         }
     }
 
+    /**
+     * @protected
+     * Builds the compute Id for the dialog.
+     * @returns A `string` representing the compute Id.
+     */
     protected onComputeId(): string {
         return `SignOutUser[${ this.connectionName ? this.connectionName.toString() : '' }, ${ this.userId ? this.userId.toString() : '' }]`;
     }

@@ -9,9 +9,28 @@ import { DialogTurnResult, DialogContext, Dialog } from 'botbuilder-dialogs';
 import { Activity, ActivityTypes } from 'botbuilder-core';
 import { ValueExpression, StringExpression, BoolExpression } from 'adaptive-expressions';
 
+/**
+ * Send an Tace activity back to the transcript.
+ */
 export class TraceActivity<O extends object = {}> extends Dialog<O> {
     public constructor();
+
+    /**
+     * Initializes a new instance of the `TraceActivity` class.
+     * @param name Name of the trace activity.
+     * @param valueType Value type of the trace activity.
+     * @param value Value expression to send as the value.
+     * @param label Label to use when describing a trace activity.
+     */
     public constructor(name: string, valueType: string, value: any, label: string);
+    
+    /**
+     * Initializes a new instance of the `TraceActivity` class.
+     * @param name Optional, name of the trace activity.
+     * @param valueType Optional, value type of the trace activity.
+     * @param value Optional, value expression to send as the value.
+     * @param label Optional, label to use when describing a trace activity.
+     */
     public constructor(name?: string, valueType?: string, value?: any, label?: string) {
         super();
         if (name) { this.name = new StringExpression(name); }
@@ -45,6 +64,12 @@ export class TraceActivity<O extends object = {}> extends Dialog<O> {
      */
     public disabled?: BoolExpression;
 
+    /**
+     * Starts a new dialog and pushes it onto the dialog stack.
+     * @param dc The `DialogContext` for the current turn of conversation.
+     * @param options Optional, initial information to pass to the dialog.
+     * @returns A `Promise` representing the asynchronous operation.
+     */
     public async beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {
         if (this.disabled && this.disabled.getValue(dc.state)) {
             return await dc.endDialog();
@@ -74,6 +99,11 @@ export class TraceActivity<O extends object = {}> extends Dialog<O> {
         return await dc.endDialog(traceActivity);
     }
 
+    /**
+     * @protected
+     * Builds the compute Id for the dialog.
+     * @returns A `string` representing the compute Id.
+     */
     protected onComputeId(): string {
         return `TraceActivity[${ this.name ? this.name.toString() : '' }]`;
     }

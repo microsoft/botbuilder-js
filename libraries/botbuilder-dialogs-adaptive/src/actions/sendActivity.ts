@@ -12,6 +12,9 @@ import { ActivityTemplate } from '../templates/activityTemplate';
 import { StaticActivityTemplate } from '../templates/staticActivityTemplate';
 import { BoolExpression } from 'adaptive-expressions';
 
+/**
+ * Send an activity back to the user.
+ */
 export class SendActivity<O extends object = {}> extends Dialog<O> {
     /**
      * Creates a new `SendActivity` instance.
@@ -38,6 +41,12 @@ export class SendActivity<O extends object = {}> extends Dialog<O> {
      */
     public disabled?: BoolExpression;
 
+    /**
+     * Starts a new dialog and pushes it onto the dialog stack.
+     * @param dc The `DialogContext` for the current turn of conversation.
+     * @param options Optional, initial information to pass to the dialog.
+     * @returns A `Promise` representing the asynchronous operation.
+     */
     public async beginDialog(dc: DialogContext, options: O): Promise<DialogTurnResult> {
 
         if (this.disabled && this.disabled.getValue(dc.state)) {
@@ -71,12 +80,17 @@ export class SendActivity<O extends object = {}> extends Dialog<O> {
              || (activityResult.attachments && activityResult.attachments.length > 0)
              || activityResult.suggestedActions
              || activityResult.channelData) {
-                result = await dc.context.sendActivity(activityResult);
+            result = await dc.context.sendActivity(activityResult);
         }
 
         return await dc.endDialog(result);
     }
 
+    /**
+     * @protected
+     * Builds the compute Id for the dialog.
+     * @returns A `string` representing the compute Id.
+     */
     protected onComputeId(): string {
         if (this.activity instanceof ActivityTemplate) {
             return `SendActivity[${ StringUtils.ellipsis(this.activity.template.trim(), 30) }]`;

@@ -11,9 +11,26 @@ import { ActionScope } from './actionScope';
 import { Case } from './case';
 import { BoolExpression } from 'adaptive-expressions';
 
+/**
+ * Conditional branch with multiple cases.
+ */
 export class SwitchCondition<O extends object = {}> extends Dialog<O> implements DialogDependencies {
     public constructor();
+
+    /**
+     * Initializes a new instance of the `SwitchCondition` class
+     * @param condition Condition expression against memory.
+     * @param defaultDialogs Default case.
+     * @param cases Cases.
+     */
     public constructor(condition: string, defaultDialogs: Dialog[], cases: Case[]);
+
+    /**
+     * Initializes a new instance of the `SwitchCondition` class
+     * @param condition Optional, condition expression against memory.
+     * @param defaultDialogs Optional, default case.
+     * @param cases Optional, cases.
+     */
     public constructor(condition?: string, defaultDialogs?: Dialog[], cases?: Case[]) {
         super();
         if (condition) { this.condition = new ExpressionParser().parse(condition); }
@@ -45,6 +62,10 @@ export class SwitchCondition<O extends object = {}> extends Dialog<O> implements
 
     private _defaultScope: ActionScope;
 
+    /**
+     * Gets the child dialog dependencies so they can be added to the containers dialog set.
+     * @returns The child dialog dependencies.
+     */
     public getDependencies(): Dialog[] {
         let dialogs: Dialog[] = [];
         if (this.default) {
@@ -57,6 +78,12 @@ export class SwitchCondition<O extends object = {}> extends Dialog<O> implements
         return dialogs;
     }
 
+    /**
+     * Starts a new dialog and pushes it onto the dialog stack.
+     * @param dc The `DialogContext` for the current turn of conversation.
+     * @param options Optional, initial information to pass to the dialog.
+     * @returns A `Promise` representing the asynchronous operation.
+     */
     public async beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {
         if (this.disabled && this.disabled.getValue(dc.state)) {
             return await dc.endDialog();
@@ -89,6 +116,11 @@ export class SwitchCondition<O extends object = {}> extends Dialog<O> implements
         return await dc.replaceDialog(actionScope.id);
     }
 
+    /**
+     * @protected
+     * Gets the default scope.
+     * @returns An `ActionScope` with the scope.
+     */
     protected get defaultScope(): ActionScope {
         if (!this._defaultScope) {
             this._defaultScope = new ActionScope(this.default);
@@ -96,6 +128,11 @@ export class SwitchCondition<O extends object = {}> extends Dialog<O> implements
         return this._defaultScope;
     }
 
+    /**
+     * @protected
+     * Builds the compute Id for the dialog.
+     * @returns A `string` representing the compute Id.
+     */
     protected onComputeId(): string {
         return `SwitchCondition[${ this.condition.toString() }]`;
     }

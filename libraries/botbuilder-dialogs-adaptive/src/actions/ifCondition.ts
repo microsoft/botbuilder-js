@@ -10,8 +10,17 @@ import { DialogTurnResult, Dialog, DialogDependencies, DialogContext } from 'bot
 import { ActionScope } from './actionScope';
 import { BoolExpression } from 'adaptive-expressions';
 
+/**
+ * Conditional branch.
+ */
 export class IfCondition<O extends object = {}> extends Dialog<O> implements DialogDependencies {
     public constructor();
+
+    /**
+     * Initializes a new instance of the `IfCondition` class.
+     * @param condition Conditional expression to evaluate.
+     * @param elseActions The actions to run if [condition](#condition) returns false.
+     */
     public constructor(condition?: string, elseActions?: Dialog[]) {
         super();
         if (condition) { this.condition = new BoolExpression(condition); }
@@ -33,6 +42,11 @@ export class IfCondition<O extends object = {}> extends Dialog<O> implements Dia
      */
     public elseActions: Dialog[] = [];
 
+    /**
+     * @protected
+     * Gets the true scope.
+     * @returns An `ActionScope` with the action scope.
+     */
     protected get trueScope(): ActionScope {
         if (!this._trueScope) {
             this._trueScope = new ActionScope(this.actions);
@@ -41,6 +55,11 @@ export class IfCondition<O extends object = {}> extends Dialog<O> implements Dia
         return this._trueScope;
     }
 
+    /**
+     * @protected
+     * Gets the false scope.
+     * @returns An `ActionScope` with the action scope.
+     */
     protected get falseScope(): ActionScope {
         if (!this._falseScope) {
             this._falseScope = new ActionScope(this.elseActions);
@@ -58,10 +77,20 @@ export class IfCondition<O extends object = {}> extends Dialog<O> implements Dia
 
     private _falseScope: ActionScope;
 
+    /**
+     * Gets the child dialog dependencies so they can be added to the containers dialog set.
+     * @returns The child dialog dependencies.
+     */
     public getDependencies(): Dialog[] {
         return [].concat(this.trueScope, this.falseScope);
     }
 
+    /**
+     * Starts a new dialog and pushes it onto the dialog stack.
+     * @param dc The `DialogContext` for the current turn of conversation.
+     * @param options Optional, initial information to pass to the dialog.
+     * @returns A `Promise` representing the asynchronous operation.
+     */
     public async beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {
         if (this.disabled && this.disabled.getValue(dc.state)) {
             return await dc.endDialog();
@@ -76,6 +105,11 @@ export class IfCondition<O extends object = {}> extends Dialog<O> implements Dia
         return await dc.endDialog();
     }
 
+    /**
+     * @protected
+     * Builds the compute Id for the dialog.
+     * @returns A `string` representing the compute Id.
+     */
     protected onComputeId(): string {
         const label = this.condition ? this.condition.toString() : '';
         const idList = this.actions.map((action: Dialog): string => action.id);

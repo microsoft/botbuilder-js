@@ -11,14 +11,22 @@ import { TemplateInterface } from '../template';
 import { TextTemplate } from '../templates';
 import { StringExpression, BoolExpression } from 'adaptive-expressions';
 
+/**
+ * Write entry into application trace logs.
+ */
 export class LogAction<O extends object = {}> extends Dialog<O> {
+    public constructor();
+    
     /**
      * Creates a new `SendActivity` instance.
      * @param template The text template to log.
-     * @param sendTrace (Optional) If true, the message will both be logged to the console and sent as a trace activity.  Defaults to a value of false.
      */
-    public constructor();
     public constructor(text: string);
+    
+    /**
+     * Creates a new `SendActivity` instance.
+     * @param text Optional, the text template to log.
+     */
     public constructor(text?: string) {
         super();
         if (text) { this.text = new TextTemplate(text); }
@@ -45,12 +53,18 @@ export class LogAction<O extends object = {}> extends Dialog<O> {
      */
     public disabled?: BoolExpression;
 
+    /**
+     * Starts a new dialog and pushes it onto the dialog stack.
+     * @param dc The `DialogContext` for the current turn of conversation.
+     * @param options Optional, initial information to pass to the dialog.
+     * @returns A `Promise` representing the asynchronous operation.
+     */
     public async beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {
         if (this.disabled && this.disabled.getValue(dc.state)) {
             return await dc.endDialog();
         }
 
-        if (!this.text) { throw new Error(`${ this.id }: no 'message' specified.`) }
+        if (!this.text) { throw new Error(`${ this.id }: no 'message' specified.`); }
 
         const msg = await this.text.bind(dc, dc.state);
         this.telemetryClient.trackEvent({
@@ -85,6 +99,11 @@ export class LogAction<O extends object = {}> extends Dialog<O> {
         return await dc.endDialog();
     }
 
+    /**
+     * @protected
+     * Builds the compute Id for the dialog.
+     * @returns A `string` representing the compute Id.
+     */
     protected onComputeId(): string {
         return `LogAction[${ this.text }]`;
     }

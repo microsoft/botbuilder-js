@@ -16,7 +16,16 @@ export interface PropertyAssignment {
     value: ValueExpression;
 }
 
+/**
+ * `property`-`value` pair to `PropertyAssignment` converter.
+ */
 export class PropertyAssignmentConverter implements Converter {
+
+    /**
+     * Converts a `property`-`value` pair to a `PropertyAssignment`
+     * @param assignment `property`-`value` pair.
+     * @returns The `PropertyAssignment`.
+     */
     public convert(assignment: { property: string; value: any }): PropertyAssignment {
         const propertyAssignment: PropertyAssignment = {
             property: new StringExpression(assignment.property),
@@ -26,8 +35,16 @@ export class PropertyAssignmentConverter implements Converter {
     }
 }
 
+/**
+ * Sets a property with the result of evaluating a value expression.
+ */
 export class SetProperties<O extends object = {}> extends Dialog<O> {
     public constructor();
+
+    /**
+     * Initializes a new instance of the `SetProperties` class.
+     * @param assignments Optional, additional property settings as property/value pairs.
+     */
     public constructor(assignments?: PropertyAssignment[]) {
         super();
         if (assignments) { this.assignments = assignments; }
@@ -43,6 +60,12 @@ export class SetProperties<O extends object = {}> extends Dialog<O> {
      */
     public disabled?: BoolExpression;
 
+    /**
+     * Starts a new dialog and pushes it onto the dialog stack.
+     * @param dc The `DialogContext` for the current turn of conversation.
+     * @param options Optional, initial information to pass to the dialog.
+     * @returns A `Promise` representing the asynchronous operation.
+     */
     public async beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {
         if (this.disabled && this.disabled.getValue(dc.state)) {
             return await dc.endDialog();
@@ -63,6 +86,11 @@ export class SetProperties<O extends object = {}> extends Dialog<O> {
         return await dc.endDialog();
     }
 
+    /**
+     * @protected
+     * Builds the compute Id for the dialog.
+     * @returns A `string` representing the compute Id.
+     */
     protected onComputeId(): string {
         return `SetProperties[${ StringUtils.ellipsis(this.assignments.map((item): string => item.property.toString()).join(','), 50) }]`;
     }
