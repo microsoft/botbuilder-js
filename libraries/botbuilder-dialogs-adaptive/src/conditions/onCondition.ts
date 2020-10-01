@@ -15,6 +15,9 @@ import { ActionChangeList } from '../actionChangeList';
 import { ActionState } from '../actionState';
 import { ActionChangeType } from '../actionChangeType';
 
+/**
+ * Actions triggered when condition is true.
+ */
 export class OnCondition implements DialogDependencies {
     /**
      * Evaluates the rule and returns a predicted set of changes that should be applied to the
@@ -53,6 +56,9 @@ export class OnCondition implements DialogDependencies {
      */
     public id: string;
 
+    /**
+     * @protected
+     */
     protected get actionScope(): ActionScope {
         if (!this._actionScope) {
             this._actionScope = new ActionScope(this.actions);
@@ -162,6 +168,13 @@ export class OnCondition implements DialogDependencies {
         return [this.actionScope];
     }
 
+    /**
+     * @protected
+     * Called when a change list is created.
+     * @param actionContext Context to use for evaluation.
+     * @param dialogOptions Optional. Object with dialog options.
+     * @returns An `ActionChangeList` with the list of actions.
+     */
     protected onCreateChangeList(actionContext: ActionContext, dialogOptions?: any): ActionChangeList {
         const actionState: ActionState = {
             dialogId: this.actionScope.id,

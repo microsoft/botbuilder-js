@@ -29,6 +29,11 @@ export class OnDialogEvent extends OnCondition {
         this.event = event;
     }
 
+    /**
+     * Get the expression for this rule.
+     * @param parser Used to parse a string into an `Expression`.
+     * @returns Expression which will be cached and used to evaluate this rule.
+     */
     public getExpression(parser: ExpressionParserInterface): Expression {
         return Expression.makeExpression(ExpressionType.And, undefined,
             parser.parse(`${ TurnPath.dialogEvent }.name == '${ this.event }'`),

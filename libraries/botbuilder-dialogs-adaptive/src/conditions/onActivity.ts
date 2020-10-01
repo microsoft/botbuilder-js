@@ -19,11 +19,22 @@ export class OnActivity extends OnDialogEvent {
      */
     public type: string;
 
+    /**
+     * Initializes a new instance of the `OnActivity` class.
+     * @param type Optional. ActivityType which must be matched for this event to trigger.
+     * @param actions Optional. Actions to add to the plan when the rule constraints are met.
+     * @param condition Optional. Condition which needs to be met for the actions to be executed.
+     */
     public constructor(type?: string, actions: Dialog[] = [], condition?: string) {
         super(AdaptiveEvents.activityReceived, actions, condition);
         this.type = type;
     }
 
+    /**
+     * Gets this activity representing expression.
+     * @param parser Used to parse a string into an `Expression`.
+     * @returns An `Expression` representing the activity.
+     */
     public getExpression(parser: ExpressionParserInterface): Expression {
         // add constraints for activity type
         const expression = parser.parse(`${ TurnPath.activity }.type == '${ this.type }'`)

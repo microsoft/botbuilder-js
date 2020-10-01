@@ -14,7 +14,14 @@ import { OnDialogEvent } from './onDialogEvent';
  * Triggered to assign an entity to a property.
  */
 export class OnAssignEntity extends OnDialogEvent {
-
+    /**
+     * Initializes a new instance of the `OnAssignEntity` class.
+     * @param property Optional. Property to be assigned for filtering events.
+     * @param entity Optional. Entity name being assigned for filtering events.
+     * @param operation Optional. Operation being used to assign the entity for filtering events.
+     * @param actions Optional. Actions to add to the plan when the rule constraints are met.
+     * @param condition Optional. Condition which needs to be met for the actions to be executed.
+     */
     public constructor(property?: string, entity?: string, operation?: string, actions: Dialog[] = [], condition?: string) {
         super(AdaptiveEvents.assignEntity, actions, condition);
         this.property = property;
@@ -37,6 +44,11 @@ export class OnAssignEntity extends OnDialogEvent {
      */
     public operation: string;
 
+    /**
+     * Get the expression for this rule.
+     * @param parser Used to parse a string into an `Expression`.
+     * @returns Expression which will be cached and used to evaluate this rule.
+     */
     public getExpression(parser: ExpressionParserInterface): Expression {
         const expressions = [super.getExpression(parser)];
         if (this.property) {
