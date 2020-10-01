@@ -13,7 +13,7 @@ import { EntityRecognizer } from './entityRecognizer';
 import { TextEntity } from './textEntity';
 
 /**
- * TextEntityRecognizer - base class for `text.recogizers` from the text recognizer library.
+ * TextEntityRecognizer - base class for `text.recognizers` from the text recognizer library.
  */
 export abstract class TextEntityRecognizer implements EntityRecognizer {
     /**
