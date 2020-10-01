@@ -38,15 +38,13 @@ export class GetPreviousViableDate extends ExpressionEvaluator {
         options: Options
     ): { value: any; error: string } {
         let parsed: TimexProperty;
-        let value: string;
-        let error: string;
-        let args: any[];
         const currentTime = moment(new Date().toISOString());
         let validYear = 0;
         let validMonth = 0;
         let validDay = 0;
         let convertedDateTime: moment.Moment;
-        ({ args, error } = FunctionUtils.evaluateChildren(expr, state, options));
+        const { args, error: childrenError } = FunctionUtils.evaluateChildren(expr, state, options);
+        let error = childrenError;
         if (!error) {
             ({ timexProperty: parsed, error: error } = InternalFunctionUtils.parseTimexProperty(args[0]));
         }
@@ -93,7 +91,7 @@ export class GetPreviousViableDate extends ExpressionEvaluator {
             }
         }
 
-        value = TimexProperty.fromDate(new Date(validYear, validMonth - 1, validDay)).timex;
+        const value = TimexProperty.fromDate(new Date(validYear, validMonth - 1, validDay)).timex;
         return { value, error };
     }
 

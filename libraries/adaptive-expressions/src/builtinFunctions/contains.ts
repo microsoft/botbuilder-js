@@ -26,10 +26,8 @@ export class Contains extends ExpressionEvaluator {
 
     private static evaluator(expression: Expression, state: MemoryInterface, options: Options): ValueWithError {
         let found = false;
-        let error: any;
-        let args: any[];
-        ({ args, error } = FunctionUtils.evaluateChildren(expression, state, options));
-
+        const { args, error: childrenError } = FunctionUtils.evaluateChildren(expression, state, options);
+        let error = childrenError;
         if (!error) {
             if ((typeof args[0] === 'string' && typeof args[1] === 'string') || Array.isArray(args[0])) {
                 found = args[0].includes(args[1]);

@@ -7,7 +7,6 @@
  */
 
 import { ExpressionType } from '../expressionType';
-import { FunctionUtils } from '../functionUtils';
 import { InternalFunctionUtils } from '../functionUtils.internal';
 import { StringTransformEvaluator } from './stringTransformEvaluator';
 

@@ -27,9 +27,8 @@ export class DateTimeDiff extends ExpressionEvaluator {
         let value: any;
         let dateTimeStart: any;
         let dateTimeEnd: any;
-        let error: string;
-        let args: any[];
-        ({ args, error } = FunctionUtils.evaluateChildren(expr, state, options));
+        const { args, error: childrenError } = FunctionUtils.evaluateChildren(expr, state, options);
+        let error = childrenError;
         if (!error) {
             ({ value: dateTimeStart, error: error } = InternalFunctionUtils.ticks(args[0]));
             if (!error) {

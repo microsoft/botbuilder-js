@@ -24,9 +24,8 @@ export class Join extends ExpressionEvaluator {
 
     private static evaluator(expression: Expression, state: MemoryInterface, options: Options): ValueWithError {
         let value: any;
-        let error: string;
-        let args: any[];
-        ({ args, error } = FunctionUtils.evaluateChildren(expression, state, options));
+        const { args, error: childrenError } = FunctionUtils.evaluateChildren(expression, state, options);
+        let error = childrenError;
         if (!error) {
             if (!Array.isArray(args[0])) {
                 error = `${expression.children[0]} evaluates to ${args[0]} which is not a list.`;
