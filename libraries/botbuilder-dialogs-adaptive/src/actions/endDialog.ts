@@ -9,12 +9,16 @@ import { DialogTurnResult, DialogContext, Dialog } from 'botbuilder-dialogs';
 import { ValueExpression, BoolExpression } from 'adaptive-expressions';
 import { replaceJsonRecursively } from '../jsonExtensions';
 
+/**
+ * Command to end the current dialog, returning the resultProperty as the result of the dialog.
+ */
 export class EndDialog<O extends object = {}> extends Dialog<O> {
+    public constructor();
+
     /**
      * Creates a new `EndDialog` instance.
-     * @param value (Optional) A value expression for the result to be returned to the caller
+     * @param value Optional, a value expression for the result to be returned to the caller.
      */
-    public constructor();
     public constructor(value?: any) {
         super();
         if (value) { this.value = new ValueExpression(value); }
@@ -30,6 +34,13 @@ export class EndDialog<O extends object = {}> extends Dialog<O> {
      */
     public disabled?: BoolExpression;
 
+    /**
+     * Starts a new dialog and pushes it onto the dialog stack.
+     * @param dc The `DialogContext` for the current turn of conversation.
+     * @param result Optional, value returned from the dialog that was called. The type 
+     * of the value returned is dependent on the child dialog.
+     * @returns A `Promise` representing the asynchronous operation.
+     */
     public async beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {
         if (this.disabled && this.disabled.getValue(dc.state)) {
             return await dc.endDialog();
@@ -48,6 +59,13 @@ export class EndDialog<O extends object = {}> extends Dialog<O> {
         return await this.endParentDialog(dc);
     }
 
+    /**
+     * Ends the parent dialog.
+     * @param dc The `DialogContext` for the current turn of conversation.
+     * @param result Optional, value returned from the dialog that was called. The type 
+     * of the value returned is dependent on the child dialog.
+     * @returns A `Promise` representing the asynchronous operation.
+     */
     protected async endParentDialog(dc: DialogContext, result?: any): Promise<DialogTurnResult> {
         if (dc.parent) {
             const turnResult = await dc.parent.endDialog(result);
@@ -58,6 +76,11 @@ export class EndDialog<O extends object = {}> extends Dialog<O> {
         }
     }
 
+    /**
+     * @protected
+     * Builds the compute Id for the dialog.
+     * @returns A `string` representing the compute Id.
+     */
     protected onComputeId(): string {
         return `EndDialog[${ this.value ? this.value.toString() : '' }]`;
     }

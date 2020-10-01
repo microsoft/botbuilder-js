@@ -23,6 +23,12 @@ const FOREACHPAGEINDEX = 'dialog.foreach.pageindex';
  */
 export class ForEachPage<O extends object = {}> extends ActionScope<O> {
     public constructor();
+
+    /**
+     * Initializes a new instance of the `ForeachPage` class.
+     * @param itemsProperty Optional, expression used to compute the list that should be enumerated.
+     * @param pageSize Default = `10`. Page size.
+     */
     public constructor(itemsProperty?: string, pageSize: number = 10) {
         super();
         if (itemsProperty) { this.itemsProperty = new StringExpression(itemsProperty); }
@@ -54,10 +60,21 @@ export class ForEachPage<O extends object = {}> extends ActionScope<O> {
      */
     public disabled?: BoolExpression;
 
+    /**
+     * Gets the child dialog dependencies so they can be added to the containers dialog set.
+     * @returns The child dialog dependencies.
+     */
     public getDependencies(): Dialog[] {
         return this.actions;
     }
 
+    /**
+     * Starts a new dialog and pushes it onto the dialog stack.
+     * @param dc The `DialogContext` for the current turn of conversation.
+     * @param result Optional, value returned from the dialog that was called. The type 
+     * of the value returned is dependent on the child dialog.
+     * @returns A `Promise` representing the asynchronous operation.
+     */
     public async beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {
         if (this.disabled && this.disabled.getValue(dc.state)) {
             return await dc.endDialog();
@@ -67,22 +84,56 @@ export class ForEachPage<O extends object = {}> extends ActionScope<O> {
         return await this.nextPage(dc);
     }
 
+    /**
+     * @protected
+     * Called when the dialog continues to the next action.
+     * @param dc The `DialogContext` for the current turn of conversation.
+     * @param result Optional, value returned from the dialog that was called. The type 
+     * of the value returned is dependent on the child dialog.
+     * @returns A `Promise` representing the asynchronous operation.
+     */
     protected async onEndOfActions(dc: DialogContext, result?: any): Promise<DialogTurnResult> {
         return await this.nextPage(dc);
     }
 
+    /**
+     * @protected
+     * Called when returning control to this dialog with an `ActionScopeResult` 
+     * with the property `ActionCommand` set to `BreakLoop`.
+     * @param dc The `DialogContext` for the current turn of conversation.
+     * @param actionScopeResult Contains the actions scope result.
+     * @returns A `Promise` representing the asynchronous operation.
+     */
     protected async onBreakLoop(dc: DialogContext, actionScopeResult: ActionScopeResult): Promise<DialogTurnResult> {
         return await dc.endDialog();
     }
 
+    /**
+     * @protected
+     * Called when returning control to this dialog with an `ActionScopeResult` 
+     * with the property `ActionCommand` set to `ContinueLoop`.
+     * @param dc The `DialogContext` for the current turn of conversation.
+     * @param actionScopeResult Contains the actions scope result.
+     * @returns A `Promise` representing the asynchronous operation.
+     */
     protected async onContinueLoop(dc: DialogContext, actionScopeResult: ActionScopeResult): Promise<DialogTurnResult> {
         return await this.nextPage(dc);
     }
 
+    /**
+     * @protected
+     * Builds the compute Id for the dialog.
+     * @returns A `string` representing the compute Id.
+     */
     protected onComputeId(): string {
         return `ForEachPage[${ this.itemsProperty.toString() }]`;
     }
 
+    /**
+     * @private
+     * @param dc The `DialogContext` for the current turn of conversation.
+     * @returns A `Promise` representing the asynchronous operation.    
+     */
     private async nextPage(dc: DialogContext): Promise<DialogTurnResult> {
         let pageIndex = dc.state.getValue(this.pageIndex.getValue(dc.state), 0);
         const pageSize = this.pageSize.getValue(dc.state);
@@ -101,6 +152,9 @@ export class ForEachPage<O extends object = {}> extends ActionScope<O> {
         return await dc.endDialog();
     }
 
+    /**
+     * @private
+     */
     private getPage(list: any[] | object, index: number, pageSize: number): any[] {
         const page: any[] = [];
         const end = index + pageSize;

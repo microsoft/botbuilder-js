@@ -8,9 +8,26 @@
 import { DialogTurnResult, DialogContext, Dialog } from 'botbuilder-dialogs';
 import { ValueExpression, StringExpression, BoolExpression } from 'adaptive-expressions';
 
+/**
+ * Action which emits an event declaratively.
+ */
 export class EmitEvent<O extends object = {}> extends Dialog<O> {
     public constructor();
+
+    /**
+     * Initializes a new instance of the `EmitEvent` class.
+     * @param eventName Name of the event to emit.
+     * @param eventValue Optional, memory property path to use to get the value to send as part of the event.
+     * @param bubbleEvent Default = `false`. Value indicating whether the event should bubble to parents or not.
+     */
     public constructor(eventName: string, eventValue?: string, bubbleEvent?: boolean);
+
+    /**
+     * Initializes a new instance of the `EmitEvent` class.
+     * @param eventName Optional, name of the event to emit.
+     * @param eventValue Optional, memory property path to use to get the value to send as part of the event.
+     * @param bubbleEvent Default = `false`. Value indicating whether the event should bubble to parents or not.
+     */
     public constructor(eventName?: string, eventValue?: string, bubbleEvent = false) {
         super();
         if (eventName) { this.eventName = new StringExpression(eventName); }
@@ -38,6 +55,13 @@ export class EmitEvent<O extends object = {}> extends Dialog<O> {
      */
     public disabled?: BoolExpression;
 
+    /**
+     * Starts a new dialog and pushes it onto the dialog stack.
+     * @param dc The `DialogContext` for the current turn of conversation.
+     * @param result Optional, value returned from the dialog that was called. The type 
+     * of the value returned is dependent on the child dialog.
+     * @returns A `Promise` representing the asynchronous operation.
+     */
     public async beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {
         if (this.disabled && this.disabled.getValue(dc.state)) {
             return await dc.endDialog();
@@ -68,6 +92,11 @@ export class EmitEvent<O extends object = {}> extends Dialog<O> {
         return await dc.endDialog(handled);
     }
 
+    /**
+     * @protected
+     * Builds the compute Id for the dialog.
+     * @returns A `string` representing the compute Id.
+     */
     protected onComputeId(): string {
         return `EmitEvent[${ this.eventName.toString() || '' }]`;
     }

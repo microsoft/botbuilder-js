@@ -13,9 +13,25 @@ import { ActionChangeType } from '../actionChangeType';
 import { ActionState } from '../actionState';
 import { ActionChangeList } from '../actionChangeList';
 
+/**
+ * Class which allows you to edit the current actions. 
+ */
 export class EditActions<O extends object = {}> extends Dialog<O> implements DialogDependencies {
     public constructor();
+
+    /**
+     * Initializes a new instance of the `EditActions` class.
+     * @param changeType Type of change to appy to the active actions
+     * @param actions Optional, child dialog dependencies so they can be added to the containers dialogset
+     */
+
     public constructor(changeType: ActionChangeType, actions?: Dialog[]);
+
+    /**
+     * Initializes a new instance of the `EditActions` class.
+     * @param changeType Optional, type of change to appy to the active actions
+     * @param actions Optional, child dialog dependencies so they can be added to the containers dialogset
+     */
     public constructor(changeType?: ActionChangeType, actions?: Dialog[]) {
         super();
         if (changeType) { this.changeType = new EnumExpression<ActionChangeType>(changeType); }
@@ -37,10 +53,21 @@ export class EditActions<O extends object = {}> extends Dialog<O> implements Dia
      */
     public disabled?: BoolExpression;
 
+    /**
+     * Gets the child dialog dependencies so they can be added to the containers dialog set.
+     * @returns The child dialog dependencies.
+     */
     public getDependencies(): Dialog[] {
         return this.actions;
     }
 
+    /**
+     * Starts a new dialog and pushes it onto the dialog stack.
+     * @param dc The `DialogContext` for the current turn of conversation.
+     * @param result Optional, value returned from the dialog that was called. The type 
+     * of the value returned is dependent on the child dialog.
+     * @returns A `Promise` representing the asynchronous operation.
+     */
     public async beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {
         if (this.disabled && this.disabled.getValue(dc.state)) {
             return await dc.endDialog();
@@ -67,6 +94,11 @@ export class EditActions<O extends object = {}> extends Dialog<O> implements Dia
         }
     }
 
+    /**
+     * @protected
+     * Builds the compute Id for the dialog.
+     * @returns A `string` representing the compute Id.
+     */
     protected onComputeId(): string {
         const idList = this.actions.map((action: Dialog): string => action.id);
         return `EditActions[${ this.changeType.toString() }|${ StringUtils.ellipsis(idList.join(','), 50) }]`;
