@@ -26,13 +26,13 @@
     "@microsoft/recognizers-text-suite": "1.1.4",
     "@types/node": "^10.17.27",
     "botbuilder-core": "4.1.6",
-    "globalize": "^1.4.2",
-    "line-reader": "^0.4.0"
+    "globalize": "^1.4.2"
   },
   "devDependencies": {
     "@microsoft/api-extractor": "^7.7.12",
     "@types/mocha": "^5.2.7",
     "codelyzer": "^4.1.0",
+    "line-reader": "^0.4.0",
     "mocha": "^6.2.3",
     "nyc": "^15.1.0",
     "source-map-support": "^0.5.3",
