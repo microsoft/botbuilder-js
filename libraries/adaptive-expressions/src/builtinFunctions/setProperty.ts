@@ -13,7 +13,7 @@ import { FunctionUtils } from '../functionUtils';
 import { ReturnType } from '../returnType';
 
 /**
- * Set the value of an object's property and return the updated object. 
+ * Set the value of an object's property and return the updated object.
  */
 export class SetProperty extends ExpressionEvaluator {
     public constructor() {
@@ -21,13 +21,12 @@ export class SetProperty extends ExpressionEvaluator {
     }
 
     private static evaluator(): EvaluateExpressionDelegate {
-        return FunctionUtils.apply(
-            (args: any[]): any => {
-                const temp: any = args[0];
-                temp[String(args[1])] = args[2];
+        return FunctionUtils.apply((args: any[]): any => {
+            const temp: any = args[0];
+            temp[String(args[1])] = args[2];
 
-                return temp;
-            });
+            return temp;
+        });
     }
 
     private static validator(expression: Expression): void {

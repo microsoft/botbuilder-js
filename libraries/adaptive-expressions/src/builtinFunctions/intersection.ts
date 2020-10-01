@@ -30,16 +30,14 @@ export class Intersection extends ExpressionEvaluator {
      * @private
      */
     private static evaluator(): EvaluateExpressionDelegate {
-        return FunctionUtils.apply(
-            (args: any[]): any => {
-                let result: any[] = args[0];
-                for (const arg of args) {
-                    result = result.filter((e: any): boolean => arg.indexOf(e) > -1);
-                }
+        return FunctionUtils.apply((args: any[]): any => {
+            let result: any[] = args[0];
+            for (const arg of args) {
+                result = result.filter((e: any): boolean => arg.indexOf(e) > -1);
+            }
 
-                return Array.from(new Set(result));
-            },
-            FunctionUtils.verifyList);
+            return Array.from(new Set(result));
+        }, FunctionUtils.verifyList);
     }
 
     /**

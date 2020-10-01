@@ -42,10 +42,13 @@ export class IsDateRange extends ExpressionEvaluator {
         }
 
         if (parsed && !error) {
-            value = (parsed.year !== undefined && parsed.dayOfMonth === undefined) ||
+            value =
+                (parsed.year !== undefined && parsed.dayOfMonth === undefined) ||
                 (parsed.year !== undefined && parsed.month !== undefined && parsed.dayOfMonth === undefined) ||
                 (parsed.month !== undefined && parsed.dayOfMonth === undefined) ||
-                parsed.season !== undefined || parsed.weekOfYear !== undefined || parsed.weekOfMonth !== undefined;
+                parsed.season !== undefined ||
+                parsed.weekOfYear !== undefined ||
+                parsed.weekOfMonth !== undefined;
         }
 
         return { value, error };

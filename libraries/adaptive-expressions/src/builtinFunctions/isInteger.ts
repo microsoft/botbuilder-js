@@ -27,6 +27,7 @@ export class IsInteger extends ExpressionEvaluator {
      */
     private static evaluator(): EvaluateExpressionDelegate {
         return FunctionUtils.apply(
-            (args: any[]): boolean => FunctionUtils.isNumber(args[0]) && Number.isInteger(args[0]));
+            (args: any[]): boolean => FunctionUtils.isNumber(args[0]) && Number.isInteger(args[0])
+        );
     }
 }

@@ -42,13 +42,14 @@ export class IsDuration extends ExpressionEvaluator {
         }
 
         if (parsed && !error) {
-            value = parsed.years !== undefined
-                || parsed.months !== undefined
-                || parsed.weeks !== undefined
-                || parsed.days !== undefined
-                || parsed.hours !== undefined
-                || parsed.minutes !== undefined
-                || parsed.seconds !== undefined;
+            value =
+                parsed.years !== undefined ||
+                parsed.months !== undefined ||
+                parsed.weeks !== undefined ||
+                parsed.days !== undefined ||
+                parsed.hours !== undefined ||
+                parsed.minutes !== undefined ||
+                parsed.seconds !== undefined;
         }
 
         return { value, error };
