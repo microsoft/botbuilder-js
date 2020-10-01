@@ -36,7 +36,11 @@ export class IsDefinite extends ExpressionEvaluator {
         }
 
         if (!error) {
-            value = parsed != undefined && parsed.year !== undefined && parsed.month !== undefined && parsed.dayOfMonth !== undefined;
+            value =
+                parsed != undefined &&
+                parsed.year !== undefined &&
+                parsed.month !== undefined &&
+                parsed.dayOfMonth !== undefined;
         }
 
         return { value, error };
