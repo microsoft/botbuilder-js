@@ -21,7 +21,7 @@ export class Unique extends ExpressionEvaluator {
     }
 
     private static evaluator(): EvaluateExpressionDelegate {
-        return FunctionUtils.apply((args: any[]): any[] => [... new Set(args[0])]);
+        return FunctionUtils.apply((args: any[]): any[] => [...new Set(args[0])]);
     }
 
     private static validator(expression: Expression): void {

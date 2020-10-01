@@ -18,7 +18,12 @@ import { ReturnType } from '../returnType';
  */
 export class SortByDescending extends ExpressionEvaluator {
     public constructor() {
-        super(ExpressionType.SortByDescending, InternalFunctionUtils.sortBy(true), ReturnType.Array, SortByDescending.validator);
+        super(
+            ExpressionType.SortByDescending,
+            InternalFunctionUtils.sortBy(true),
+            ReturnType.Array,
+            SortByDescending.validator
+        );
     }
 
     private static validator(expression: Expression): void {
