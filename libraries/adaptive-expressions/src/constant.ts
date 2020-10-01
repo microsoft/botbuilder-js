@@ -14,7 +14,6 @@ import { ExpressionType } from './expressionType';
  * Construct an expression constant.
  */
 export class Constant extends Expression {
-
     // original regex: (?<!\\)'
     private readonly singleQuotRegex: RegExp = new RegExp(/'(?!\\)/g);
     /**
@@ -29,11 +28,15 @@ export class Constant extends Expression {
      */
     public set value(theValue: any) {
         this.evaluator.returnType =
-            typeof theValue === 'string' ? ReturnType.String
-                : typeof theValue === 'boolean' ? ReturnType.Boolean
-                    : typeof theValue === 'number' && !Number.isNaN(theValue) ? ReturnType.Number
-                        : Array.isArray(theValue) ? ReturnType.Array
-                            : ReturnType.Object;
+            typeof theValue === 'string'
+                ? ReturnType.String
+                : typeof theValue === 'boolean'
+                ? ReturnType.Boolean
+                : typeof theValue === 'number' && !Number.isNaN(theValue)
+                ? ReturnType.Number
+                : Array.isArray(theValue)
+                ? ReturnType.Array
+                : ReturnType.Object;
 
         this._value = theValue;
     }
@@ -46,11 +49,15 @@ export class Constant extends Expression {
      * @param value Constant value.
      */
     public constructor(value: any) {
-        super(ExpressionType.Constant, new ExpressionEvaluator(ExpressionType.Constant,
-            (expression: Expression): ValueWithError => {
-                return { value: (expression as Constant).value, error: undefined };
-            }
-        ));
+        super(
+            ExpressionType.Constant,
+            new ExpressionEvaluator(
+                ExpressionType.Constant,
+                (expression: Expression): ValueWithError => {
+                    return { value: (expression as Constant).value, error: undefined };
+                }
+            )
+        );
         this.value = value;
     }
 
@@ -59,12 +66,12 @@ export class Constant extends Expression {
      * @param other The other Expression instance to compare.
      * @returns A boolean value indicating whether the two Expressions are deep equal (`true`) or not (`false`).
      */
-    public  deepEquals(other: Expression): boolean {
+    public deepEquals(other: Expression): boolean {
         let eq: boolean;
         if (!other || other.type !== this.type) {
-            eq = false; 
+            eq = false;
         } else {
-            let otherVal = (other as Constant).value;
+            const otherVal = (other as Constant).value;
             eq = this.value === otherVal;
         }
 
@@ -76,7 +83,6 @@ export class Constant extends Expression {
      * @returns A string that represents the current constant object.
      */
     public toString(): string {
-        
         if (this.value === undefined) {
             return 'undefined';
         } else if (this.value === null) {
@@ -85,11 +91,11 @@ export class Constant extends Expression {
             let result = this.value;
 
             result = result.replace(/\\/g, '\\\\');
-            result = this.reverseString(this.reverseString(result).replace(this.singleQuotRegex, (): any => '\'\\'));
-            return `'${ result }'`;
+            result = this.reverseString(this.reverseString(result).replace(this.singleQuotRegex, (): any => "'\\"));
+            return `'${result}'`;
         } else if (typeof this.value === 'number') {
             return this.value.toString();
-        } else if(typeof this.value === 'object') {
+        } else if (typeof this.value === 'object') {
             return JSON.stringify(this.value);
         }
 

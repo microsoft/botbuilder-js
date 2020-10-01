@@ -24,8 +24,10 @@ export class UtcNow extends ExpressionEvaluator {
 
     private static evaluator(): EvaluateExpressionDelegate {
         return FunctionUtils.apply(
-            (args: any[]): string => args.length === 1 ? moment(new Date()).utc().format(args[0]) : new Date().toISOString(),
-            FunctionUtils.verifyString);
+            (args: any[]): string =>
+                args.length === 1 ? moment(new Date()).utc().format(args[0]) : new Date().toISOString(),
+            FunctionUtils.verifyString
+        );
     }
 
     private static validator(expression: Expression): void {

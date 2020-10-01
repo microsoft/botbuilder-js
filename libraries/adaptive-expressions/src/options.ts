@@ -9,6 +9,7 @@
 /**
  * Options used to define evaluation behaviors.
  */
+
 export class Options {
     public nullSubstitution: (path: string) => any;
 

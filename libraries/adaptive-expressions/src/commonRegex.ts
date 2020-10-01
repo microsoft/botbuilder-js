@@ -26,13 +26,12 @@ export class CommonRegex {
      * @returns RegExp object.
      */
     public static CreateRegex(pattern: string): RegExp {
-
         let result: RegExp;
         if (pattern && this.regexCache.has(pattern)) {
             result = this.regexCache.get(pattern);
         } else {
             if (!pattern || !this.isCommonRegex(pattern)) {
-                throw new Error(`'${ pattern }' is not a valid regex.`);
+                throw new Error(`'${pattern}' is not a valid regex.`);
             }
 
             result = this.getRegExpFromString(pattern);
@@ -57,9 +56,9 @@ export class CommonRegex {
 
         let regexp: RegExp;
         if (flag) {
-            regexp = new RegExp(`${ pattern }`, flag);
+            regexp = new RegExp(`${pattern}`, flag);
         } else {
-            regexp = new RegExp(`${ pattern }`);
+            regexp = new RegExp(`${pattern}`);
         }
 
         return regexp;

@@ -15,7 +15,6 @@ import { MemoryInterface } from './memoryInterface';
  * Simple implement of MemoryInterface
  */
 export class SimpleObjectMemory implements MemoryInterface {
-
     private memory: any = undefined;
 
     /**
@@ -33,7 +32,7 @@ export class SimpleObjectMemory implements MemoryInterface {
      * @returns Simple memory instance.
      */
     public static wrap(obj: any): MemoryInterface {
-        if(Extensions.isMemoryInterface(obj)) {
+        if (Extensions.isMemoryInterface(obj)) {
             return obj;
         }
 
@@ -50,10 +49,11 @@ export class SimpleObjectMemory implements MemoryInterface {
             return undefined;
         }
 
-        const parts: string[] = path.split(/[.\[\]]+/)
+        const parts: string[] = path
+            .split(/[.\[\]]+/)
             .filter((u: string): boolean => u !== undefined && u !== '')
             .map((u: string): string => {
-                if ((u.startsWith('"') && u.endsWith('"')) || (u.startsWith('\'') && u.endsWith('\''))) {
+                if ((u.startsWith('"') && u.endsWith('"')) || (u.startsWith("'") && u.endsWith("'"))) {
                     return u.substr(1, u.length - 2);
                 } else {
                     return u;
@@ -65,10 +65,10 @@ export class SimpleObjectMemory implements MemoryInterface {
         for (const part of parts) {
             let error: string;
             const idx = parseInt(part);
-            if(!isNaN(idx) && Array.isArray(curScope)) {
-                ({value, error} = InternalFunctionUtils.accessIndex(curScope, idx));
+            if (!isNaN(idx) && Array.isArray(curScope)) {
+                ({ value, error } = InternalFunctionUtils.accessIndex(curScope, idx));
             } else {
-                ({value, error} = InternalFunctionUtils.accessProperty(curScope, part));
+                ({ value, error } = InternalFunctionUtils.accessProperty(curScope, part));
             }
 
             if (error) {
@@ -90,13 +90,14 @@ export class SimpleObjectMemory implements MemoryInterface {
      */
     public setValue(path: string, input: any): void {
         if (this.memory === undefined) {
-            return;;
+            return;
         }
 
-        const parts: string[] = path.split(/[.\[\]]+/)
+        const parts: string[] = path
+            .split(/[.\[\]]+/)
             .filter((u: string): boolean => u !== undefined && u !== '')
             .map((u: string): string => {
-                if ((u.startsWith('"') && u.endsWith('"')) || (u.startsWith('\'') && u.endsWith('\''))) {
+                if ((u.startsWith('"') && u.endsWith('"')) || (u.startsWith("'") && u.endsWith("'"))) {
                     return u.substr(1, u.length - 2);
                 } else {
                     return u;
@@ -107,14 +108,14 @@ export class SimpleObjectMemory implements MemoryInterface {
         let error: string = undefined;
 
         // find the 2nd last value, ie, the container
-        for(let i = 0; i < parts.length - 1; i++) {
+        for (let i = 0; i < parts.length - 1; i++) {
             const idx = parseInt(parts[i]);
-            if(!isNaN(idx) && Array.isArray(curScope)) {
-                curPath = `[${ parts[i] }]`;
-                ({value: curScope, error} = InternalFunctionUtils.accessIndex(curScope, idx));
+            if (!isNaN(idx) && Array.isArray(curScope)) {
+                curPath = `[${parts[i]}]`;
+                ({ value: curScope, error } = InternalFunctionUtils.accessIndex(curScope, idx));
             } else {
-                curPath = `.${ parts[i] }`;
-                ({value: curScope, error} = InternalFunctionUtils.accessProperty(curScope, parts[i]));
+                curPath = `.${parts[i]}`;
+                ({ value: curScope, error } = InternalFunctionUtils.accessProperty(curScope, parts[i]));
             }
 
             if (error) {
@@ -129,11 +130,11 @@ export class SimpleObjectMemory implements MemoryInterface {
 
         // set the last value
         const idx = parseInt(parts[parts.length - 1]);
-        if(!isNaN(idx)) {
+        if (!isNaN(idx)) {
             if (Array.isArray(curScope)) {
                 if (idx > curScope.length) {
-                    error = `${ idx } index out of range`;
-                } else if(idx === curScope.length) {
+                    error = `${idx} index out of range`;
+                } else if (idx === curScope.length) {
                     curScope.push(input);
                 } else {
                     curScope[idx] = input;
@@ -146,7 +147,7 @@ export class SimpleObjectMemory implements MemoryInterface {
                 return;
             }
         } else {
-            error = this.setProperty(curScope,parts[parts.length - 1], input).error;
+            error = this.setProperty(curScope, parts[parts.length - 1], input).error;
             if (error) {
                 return;
             }
@@ -185,12 +186,12 @@ export class SimpleObjectMemory implements MemoryInterface {
             }
             return value;
         };
-    };
-
+    }
+  
     /**
      * @private
      */
-    private setProperty(instance: any, property: string, value: any): {value: any; error: string} {
+    private setProperty(instance: any, property: string, value: any): { value: any; error: string } {
         const result: any = value;
         if (instance instanceof Map) {
             instance.set(property, value);
@@ -198,6 +199,6 @@ export class SimpleObjectMemory implements MemoryInterface {
             instance[property] = value;
         }
 
-        return {value: result, error: undefined};
+        return { value: result, error: undefined };
     }
 }

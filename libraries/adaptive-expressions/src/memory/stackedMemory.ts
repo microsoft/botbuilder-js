@@ -14,7 +14,6 @@ import { MemoryInterface } from './memoryInterface';
  * Memory variables have a hierarchical relationship.
  */
 export class StackedMemory extends Array<MemoryInterface> implements MemoryInterface {
-
     /**
      * Wraps an object that implements `MemoryInterface` into a `StackedMemory` object.
      * @param memory An object that implements `MemoryInterface`.
@@ -55,7 +54,7 @@ export class StackedMemory extends Array<MemoryInterface> implements MemoryInter
      * @param _value Value to set.
      */
     public setValue(_path: string, _value: any): void {
-        throw new Error(`Can't set value to ${ _path }, stacked memory is read-only`);
+        throw new Error(`Can't set value to ${_path}, stacked memory is read-only`);
     }
 
     /**
@@ -65,4 +64,4 @@ export class StackedMemory extends Array<MemoryInterface> implements MemoryInter
     public version(): string {
         return '0';
     }
-} 
+}

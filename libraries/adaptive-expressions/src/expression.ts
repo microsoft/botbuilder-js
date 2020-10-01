@@ -6,7 +6,12 @@
  * Licensed under the MIT License.
  */
 import { Constant } from './constant';
-import { EvaluateExpressionDelegate, EvaluatorLookup, ExpressionEvaluator, ValueWithError } from './expressionEvaluator';
+import {
+    EvaluateExpressionDelegate,
+    EvaluatorLookup,
+    ExpressionEvaluator,
+    ValueWithError,
+} from './expressionEvaluator';
 import { ExpressionType } from './expressionType';
 import { Extensions } from './extensions';
 import { FunctionTable } from './functionTable';
@@ -21,7 +26,6 @@ import { ReturnType } from './returnType';
  * It also supports validation of the correctness of an expression and evaluation that should be exception free.
  */
 export class Expression {
-
     /**
      * Expected result of evaluating expression.
      */
@@ -86,7 +90,7 @@ export class Expression {
                     for (let i = 0; eq && i < this.children.length; i++) {
                         const primary = this.children[0];
                         let found = false;
-                        for (var j = 0; j < this.children.length; j++) {
+                        for (let j = 0; j < this.children.length; j++) {
                             if (primary.deepEquals(other.children[j])) {
                                 found = true;
                                 break;
@@ -127,8 +131,10 @@ export class Expression {
      * @param extension If present, called to override lookup for things like template expansion.
      * @returns Accessor path of expression.
      */
-    public referenceWalk(expression: Expression,
-        extension?: (arg0: Expression) => boolean): { path: string; refs: Set<string> } {
+    public referenceWalk(
+        expression: Expression,
+        extension?: (arg0: Expression) => boolean
+    ): { path: string; refs: Set<string> } {
         let path: string;
         let refs = new Set<string>();
         if (extension === undefined || !extension(expression)) {
@@ -169,9 +175,11 @@ export class Expression {
                 if (idxPath !== undefined) {
                     refs.add(idxPath);
                 }
-            } else if (expression.type === ExpressionType.Foreach ||
+            } else if (
+                expression.type === ExpressionType.Foreach ||
                 expression.type === ExpressionType.Where ||
-                expression.type === ExpressionType.Select) {
+                expression.type === ExpressionType.Select
+            ) {
                 let result = this.referenceWalk(children[0], extension);
                 const child0Path = result.path;
                 const refs0 = result.refs;
@@ -187,9 +195,11 @@ export class Expression {
                 }
 
                 const iteratorName = (children[1].children[0] as Constant).value as string;
-                var nonLocalRefs2 = Array.from(refs2).filter((x): boolean => !(x === iteratorName || x.startsWith(iteratorName + '.') || x.startsWith(iteratorName + '[')));
+                const nonLocalRefs2 = Array.from(refs2).filter(
+                    (x): boolean =>
+                        !(x === iteratorName || x.startsWith(iteratorName + '.') || x.startsWith(iteratorName + '['))
+                );
                 refs = new Set([...refs, ...refs0, ...nonLocalRefs2]);
-
             } else {
                 for (const child of expression.children) {
                     const result = this.referenceWalk(child, extension);
@@ -258,19 +268,23 @@ export class Expression {
      * @returns New expression.
      */
     public static lambda(func: (arg0: any) => any): Expression {
-        return new Expression(ExpressionType.Lambda, new ExpressionEvaluator(ExpressionType.Lambda,
-            (_expression: Expression, state: any, _: Options): ValueWithError => {
-                let value: any;
-                let error: string;
-                try {
-                    value = func(state);
-                } catch (funcError) {
-                    error = funcError;
-                }
+        return new Expression(
+            ExpressionType.Lambda,
+            new ExpressionEvaluator(
+                ExpressionType.Lambda,
+                (_expression: Expression, state: any, _: Options): ValueWithError => {
+                    let value: any;
+                    let error: string;
+                    try {
+                        value = func(state);
+                    } catch (funcError) {
+                        error = funcError;
+                    }
 
-                return { value, error };
-            }
-        ));
+                    return { value, error };
+                }
+            )
+        );
     }
 
     /**
@@ -388,7 +402,8 @@ export class Expression {
         }
 
         if (!valid) {
-            const infix: boolean = this.type.length > 0 && !new RegExp(/[a-z]/i).test(this.type[0]) && this.children.length >= 2;
+            const infix: boolean =
+                this.type.length > 0 && !new RegExp(/[a-z]/i).test(this.type[0]) && this.children.length >= 2;
             if (!infix) {
                 builder = builder.concat(this.type);
             }

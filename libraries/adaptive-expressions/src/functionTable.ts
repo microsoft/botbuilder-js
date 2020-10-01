@@ -23,7 +23,9 @@ export class FunctionTable implements Map<string, ExpressionEvaluator> {
      * @returns A list of string values.
      */
     public keys(): IterableIterator<string> {
-        const keysOfAllFunctions = Array.from(ExpressionFunctions.standardFunctions.keys()).concat(Array.from(this.customFunctions.keys()));
+        const keysOfAllFunctions = Array.from(ExpressionFunctions.standardFunctions.keys()).concat(
+            Array.from(this.customFunctions.keys())
+        );
         return keysOfAllFunctions[Symbol.iterator]();
     }
 
@@ -32,7 +34,9 @@ export class FunctionTable implements Map<string, ExpressionEvaluator> {
      * @returns A list of ExpressionEvaluator.
      */
     public values(): IterableIterator<ExpressionEvaluator> {
-        const valuesOfAllFunctions = Array.from(ExpressionFunctions.standardFunctions.values()).concat(Array.from(this.customFunctions.values()));
+        const valuesOfAllFunctions = Array.from(ExpressionFunctions.standardFunctions.values()).concat(
+            Array.from(this.customFunctions.values())
+        );
         return valuesOfAllFunctions[Symbol.iterator]();
     }
 
@@ -58,7 +62,6 @@ export class FunctionTable implements Map<string, ExpressionEvaluator> {
      * @returns An ExpressionEvaluator.
      */
     public get(key: string): ExpressionEvaluator {
-
         if (ExpressionFunctions.standardFunctions.get(key)) {
             return ExpressionFunctions.standardFunctions.get(key);
         }
@@ -82,18 +85,21 @@ export class FunctionTable implements Map<string, ExpressionEvaluator> {
 
         this.customFunctions.set(key, value);
         return this;
-
     }
 
     public add(item: { key: string; value: ExpressionEvaluator }): void;
     public add(key: string, value: ExpressionEvaluator): void;
     public add(key: string, value: customFunction): void;
+
     /**
      * Inserts a mapping of a string key to ExpressionEvaluator into FunctionTable.
      * @param param1 Key-Value pair for the ExpressionEvaluator or the function name to be added.
      * @param param2 Value of the ExpressionEvaluator to be added or value of the user customized function to be added.
      */
-    public add(param1: { key: string; value: ExpressionEvaluator } | string, param2?: ExpressionEvaluator | customFunction): void {
+    public add(
+        param1: { key: string; value: ExpressionEvaluator } | string,
+        param2?: ExpressionEvaluator | customFunction
+    ): void {
         if (arguments.length === 1) {
             if (param1 instanceof Object) {
                 this.set(param1.key, param1.value);
@@ -141,7 +147,10 @@ export class FunctionTable implements Map<string, ExpressionEvaluator> {
      * @param thisArg Optional. This args.
      */
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    public forEach(_callbackfn: (value: ExpressionEvaluator, key: string, map: Map<string, ExpressionEvaluator>) => void, thisArg?: any): void {
+    public forEach(
+        _callbackfn: (value: ExpressionEvaluator, key: string, map: Map<string, ExpressionEvaluator>) => void,
+        thisArg?: any
+    ): void {
         throw Error(`forEach function not implemented`);
     }
 
