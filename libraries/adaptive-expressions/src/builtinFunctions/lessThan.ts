@@ -19,7 +19,12 @@ export class LessThan extends ComparisonEvaluator {
      * Initializes a new instance of the `LessThan` class.
      */
     public constructor() {
-        super(ExpressionType.LessThan, LessThan.func, FunctionUtils.validateBinaryNumberOrString, FunctionUtils.verifyNumberOrString);
+        super(
+            ExpressionType.LessThan,
+            LessThan.func,
+            FunctionUtils.validateBinaryNumberOrString,
+            FunctionUtils.verifyNumberOrString
+        );
     }
 
     /**

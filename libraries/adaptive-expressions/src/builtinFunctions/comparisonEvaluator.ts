@@ -9,7 +9,10 @@
 import { MemoryInterface, Options } from '../';
 import { Expression } from '../expression';
 import {
-    EvaluateExpressionDelegate, ExpressionEvaluator, ValidateExpressionDelegate, ValueWithError
+    EvaluateExpressionDelegate,
+    ExpressionEvaluator,
+    ValidateExpressionDelegate,
+    ValueWithError,
 } from '../expressionEvaluator';
 import { FunctionUtils, VerifyExpression } from '../functionUtils';
 import { ReturnType } from '../returnType';
@@ -19,7 +22,12 @@ import { ReturnType } from '../returnType';
  * A comparison operator returns false if the comparison is false, or there is an error.  This prevents errors from short-circuiting boolean expressions.
  */
 export class ComparisonEvaluator extends ExpressionEvaluator {
-    public constructor(type: string, func: (arg0: any[]) => boolean, validator: ValidateExpressionDelegate, verify?: VerifyExpression) {
+    public constructor(
+        type: string,
+        func: (arg0: any[]) => boolean,
+        validator: ValidateExpressionDelegate,
+        verify?: VerifyExpression
+    ) {
         super(type, ComparisonEvaluator.evaluator(func, verify), ReturnType.Boolean, validator);
     }
 
