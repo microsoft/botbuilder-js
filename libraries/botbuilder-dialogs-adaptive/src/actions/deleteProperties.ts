@@ -16,7 +16,7 @@ export class DeleteProperties<O extends object = {}> extends Dialog<O> {
 
     /**
      * Initializes a new instance of the `DeleteProperties` class.
-     * @param properties Optional, collection of property paths to remove.
+     * @param properties Optional. Collection of property paths to remove.
      */
     public constructor(properties?: string[]) {
         super();
@@ -38,7 +38,7 @@ export class DeleteProperties<O extends object = {}> extends Dialog<O> {
     /**
      * Called when the dialog is started and pushed onto the dialog stack.
      * @param dc The `DialogContext` for the current turn of conversation.
-     * @param options Optional, initial information to pass to the dialog.
+     * @param options Optional. Initial information to pass to the dialog.
      * @returns A `Promise` representing the asynchronous operation.
      */
     public async beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {

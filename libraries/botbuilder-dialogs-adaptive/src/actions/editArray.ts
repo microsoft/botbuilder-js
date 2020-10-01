@@ -26,17 +26,17 @@ export class EditArray<O extends object = {}> extends Dialog<O> {
      * Initializes a new instance of the `EditArray` class.
      * @param changeType Change type.
      * @param itemsProperty Array property.
-     * @param value Optional, value to insert.
-     * @param resultProperty Optional, output property to put Pop/Take into.
+     * @param value Optional. Value to insert.
+     * @param resultProperty Optional. Output property to put Pop/Take into.
      */
     public constructor(changeType: ArrayChangeType, itemsProperty: string, value?: any, resultProperty?: string);
 
     /**
      * Initializes a new instance of the `EditArray` class.
-     * @param changeType Optional, change type.
-     * @param itemsProperty Optional, array property.
-     * @param value Optional, value to insert.
-     * @param resultProperty Optional, output property to put Pop/Take into.
+     * @param changeType Optional. Change type.
+     * @param itemsProperty Optional. Array property.
+     * @param value Optional. Value to insert.
+     * @param resultProperty Optional. Output property to put Pop/Take into.
      */
     public constructor(changeType?: ArrayChangeType, itemsProperty?: string, value?: any, resultProperty?: string) {
         super();
@@ -85,7 +85,7 @@ export class EditArray<O extends object = {}> extends Dialog<O> {
     /**
      * Starts a new dialog and pushes it onto the dialog stack.
      * @param dc The `DialogContext` for the current turn of conversation.
-     * @param result Optional, value returned from the dialog that was called. The type 
+     * @param result Optional. Value returned from the dialog that was called. The type 
      * of the value returned is dependent on the child dialog.
      * @returns A `Promise` representing the asynchronous operation.
      */

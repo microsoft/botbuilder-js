@@ -27,8 +27,8 @@ export class ForEach<O extends object = {}> extends ActionScope<O> {
 
     /**
      * Initializes a new instance of the `Foreach` class.
-     * @param itemsProperty Optional, property path expression to the collection of items.
-     * @param actions Optional, the actions to execute.
+     * @param itemsProperty Optional. Property path expression to the collection of items.
+     * @param actions Optional. The actions to execute.
      */
     public constructor(itemsProperty?: string, actions?: Dialog[]) {
         super();
@@ -67,7 +67,7 @@ export class ForEach<O extends object = {}> extends ActionScope<O> {
     /**
      * Starts a new dialog and pushes it onto the dialog stack.
      * @param dc The `DialogContext` for the current turn of conversation.
-     * @param options Optional, initial information to pass to the dialog.
+     * @param options Optional. Initial information to pass to the dialog.
      * @returns A `Promise` representing the asynchronous operation.
      */
     public async beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {
@@ -106,7 +106,7 @@ export class ForEach<O extends object = {}> extends ActionScope<O> {
      * @protected
      * Called when the dialog continues to the next action.
      * @param dc The `DialogContext` for the current turn of conversation.
-     * @param result Optional, value returned from the dialog that was called. The type 
+     * @param result Optional. Value returned from the dialog that was called. The type 
      * of the value returned is dependent on the child dialog.
      * @returns A `Promise` representing the asynchronous operation.
      */

@@ -43,7 +43,7 @@ export class GetActivityMembers<O extends object = {}> extends Dialog {
     /**
      * Starts a new dialog and pushes it onto the dialog stack.
      * @param dc The `DialogContext` for the current turn of conversation.
-     * @param result Optional, value returned from the dialog that was called. The type 
+     * @param result Optional. Value returned from the dialog that was called. The type 
      * of the value returned is dependent on the child dialog.
      * @returns A `Promise` representing the asynchronous operation.
      */

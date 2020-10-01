@@ -26,7 +26,7 @@ export class ForEachPage<O extends object = {}> extends ActionScope<O> {
 
     /**
      * Initializes a new instance of the `ForeachPage` class.
-     * @param itemsProperty Optional, expression used to compute the list that should be enumerated.
+     * @param itemsProperty Optional. Expression used to compute the list that should be enumerated.
      * @param pageSize Default = `10`. Page size.
      */
     public constructor(itemsProperty?: string, pageSize: number = 10) {
@@ -71,7 +71,7 @@ export class ForEachPage<O extends object = {}> extends ActionScope<O> {
     /**
      * Starts a new dialog and pushes it onto the dialog stack.
      * @param dc The `DialogContext` for the current turn of conversation.
-     * @param result Optional, value returned from the dialog that was called. The type 
+     * @param result Optional. Value returned from the dialog that was called. The type 
      * of the value returned is dependent on the child dialog.
      * @returns A `Promise` representing the asynchronous operation.
      */
@@ -88,7 +88,7 @@ export class ForEachPage<O extends object = {}> extends ActionScope<O> {
      * @protected
      * Called when the dialog continues to the next action.
      * @param dc The `DialogContext` for the current turn of conversation.
-     * @param result Optional, value returned from the dialog that was called. The type 
+     * @param result Optional. Value returned from the dialog that was called. The type 
      * of the value returned is dependent on the child dialog.
      * @returns A `Promise` representing the asynchronous operation.
      */

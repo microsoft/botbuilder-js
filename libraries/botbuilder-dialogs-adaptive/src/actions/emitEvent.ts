@@ -17,15 +17,15 @@ export class EmitEvent<O extends object = {}> extends Dialog<O> {
     /**
      * Initializes a new instance of the `EmitEvent` class.
      * @param eventName Name of the event to emit.
-     * @param eventValue Optional, memory property path to use to get the value to send as part of the event.
+     * @param eventValue Optional. Memory property path to use to get the value to send as part of the event.
      * @param bubbleEvent Default = `false`. Value indicating whether the event should bubble to parents or not.
      */
     public constructor(eventName: string, eventValue?: string, bubbleEvent?: boolean);
 
     /**
      * Initializes a new instance of the `EmitEvent` class.
-     * @param eventName Optional, name of the event to emit.
-     * @param eventValue Optional, memory property path to use to get the value to send as part of the event.
+     * @param eventName Optional. Name of the event to emit.
+     * @param eventValue Optional. Memory property path to use to get the value to send as part of the event.
      * @param bubbleEvent Default = `false`. Value indicating whether the event should bubble to parents or not.
      */
     public constructor(eventName?: string, eventValue?: string, bubbleEvent = false) {
@@ -58,7 +58,7 @@ export class EmitEvent<O extends object = {}> extends Dialog<O> {
     /**
      * Starts a new dialog and pushes it onto the dialog stack.
      * @param dc The `DialogContext` for the current turn of conversation.
-     * @param result Optional, value returned from the dialog that was called. The type 
+     * @param result Optional. Value returned from the dialog that was called. The type 
      * of the value returned is dependent on the child dialog.
      * @returns A `Promise` representing the asynchronous operation.
      */
