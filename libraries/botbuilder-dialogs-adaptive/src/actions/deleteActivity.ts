@@ -35,7 +35,6 @@ export class DeleteActivity<O extends object = {}> extends Dialog<O> {
 
     /**
      * Called when the dialog is started and pushed onto the dialog stack.
-     * @remarks Method not implemented.
      * @param dc The `DialogContext` for the current turn of conversation.
      * @param options Optional, initial information to pass to the dialog.
      * @returns A `Promise` representing the asynchronous operation.
