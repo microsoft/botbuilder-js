@@ -19,8 +19,8 @@ export class UpdateActivity<O extends object = {}> extends Dialog<O> {
 
     /**
      * Initializes a new instance of the UpdateActivity class.
-     * @param activityId The expression which resolves to the activityId to update.
-     * @param activity Template for the activity.
+     * @param activityId Optional. The expression which resolves to the activityId to update.
+     * @param activity Optional. Template for the activity.
      */
     public constructor(activityId?: string, activity?: Partial<Activity> | string) {
         super();
