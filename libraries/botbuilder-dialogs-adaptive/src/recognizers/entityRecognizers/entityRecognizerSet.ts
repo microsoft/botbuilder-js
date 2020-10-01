@@ -11,7 +11,18 @@ import { DialogContext } from 'botbuilder-dialogs';
 import { EntityRecognizer } from './entityRecognizer';
 import { TextEntity } from './textEntity';
 
+/**
+ * EntityRecognizerSet - Implements a workflow against a pool of `EntityRecognizer` instances, iterating until nobody has anything new to add.
+ */
 export class EntityRecognizerSet extends Array<EntityRecognizer> {
+    /**
+     * Implement `recognizeEntities` by iterating against the Recognizer pool.
+     * @param dialogContext Context for the current turn of conversation.
+     * @param text Text to recognize.
+     * @param locale Locale to use.
+     * @param entities The `Entity` array to be recognized. If no entities are passed in, it will generate a `TextEntity`.
+     * @returns Recognized `Entity` list Promise.
+     */
     public async recognizeEntities(dialogContext: DialogContext, text: string, locale: string, entities: Entity[] = []): Promise<Entity[]> {
         const allNewEntities: Entity[] = [];
         let entitiesToProcess: Entity[] = [...entities];
@@ -25,7 +36,7 @@ export class EntityRecognizerSet extends Array<EntityRecognizer> {
             entitiesToProcess.push(textEntity);
         }
 
-        do { 
+        do {
             const newEntitiesToProcess: Entity[] = [];
             for (let i = 0; i < this.length; i++) {
                 const recognizer: EntityRecognizer = this[i];

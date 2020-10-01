@@ -8,11 +8,18 @@
 
 import { Entity } from 'botbuilder-core';
 
+/**
+ * Text entity base class.
+ */
 export class TextEntity implements Entity {
     public type: string = 'text';
 
     public text: string;
 
+    /**
+     * Initializes a new instance of the `TextEntity` class.
+     * @param text The text value.
+     */
     public constructor(text?: string) {
         this.text = text;
     }
