@@ -49,7 +49,6 @@ export class Take extends ExpressionEvaluator {
         return { value: result, error };
     }
 
-
     private static validator(expression: Expression): void {
         FunctionUtils.validateOrder(expression, [], ReturnType.Array, ReturnType.Number);
     }
