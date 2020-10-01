@@ -30,7 +30,11 @@ export class DateFunc extends ExpressionEvaluator {
      */
     private static evaluator(): EvaluateExpressionDelegate {
         return FunctionUtils.applyWithError(
-            (args: any[]): any => InternalFunctionUtils.parseTimestamp(args[0], (timestamp: Date): string => moment(timestamp).utc().format('M/DD/YYYY')),
-            FunctionUtils.verifyString);
+            (args: any[]): any =>
+                InternalFunctionUtils.parseTimestamp(args[0], (timestamp: Date): string =>
+                    moment(timestamp).utc().format('M/DD/YYYY')
+                ),
+            FunctionUtils.verifyString
+        );
     }
 }

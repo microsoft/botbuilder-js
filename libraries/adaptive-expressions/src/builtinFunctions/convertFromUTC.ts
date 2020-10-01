@@ -22,7 +22,6 @@ import { TimeZoneConverter } from '../timeZoneConverter';
  * Convert a timestamp from Universal Time Coordinated (UTC) to a target time zone.
  */
 export class ConvertFromUTC extends ExpressionEvaluator {
-
     private static readonly NoneUtcDefaultDateTimeFormat: string = 'YYYY-MM-DDTHH:mm:ss.SSSZ';
 
     /**
@@ -41,8 +40,11 @@ export class ConvertFromUTC extends ExpressionEvaluator {
         let args: any[];
         ({ args, error } = FunctionUtils.evaluateChildren(expression, state, options));
         if (!error) {
-            const format: string = (args.length === 3) ? FunctionUtils.timestampFormatter(args[2]) : ConvertFromUTC.NoneUtcDefaultDateTimeFormat;
-            if (typeof (args[0]) === 'string' && typeof (args[1]) === 'string') {
+            const format: string =
+                args.length === 3
+                    ? FunctionUtils.timestampFormatter(args[2])
+                    : ConvertFromUTC.NoneUtcDefaultDateTimeFormat;
+            if (typeof args[0] === 'string' && typeof args[1] === 'string') {
                 ({ value, error } = ConvertFromUTC.evalConvertFromUTC(args[0], args[1], format));
             } else {
                 error = `${expression} should contain an ISO format timestamp, an origin time zone string and an optional output format string.`;

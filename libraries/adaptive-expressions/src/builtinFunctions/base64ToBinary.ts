@@ -19,14 +19,18 @@ import atob = require('atob-lite');
  */
 export class Base64ToBinary extends ExpressionEvaluator {
     public constructor() {
-        super(ExpressionType.Base64ToBinary, Base64ToBinary.evaluator(), ReturnType.Object, FunctionUtils.validateUnary);
+        super(
+            ExpressionType.Base64ToBinary,
+            Base64ToBinary.evaluator(),
+            ReturnType.Object,
+            FunctionUtils.validateUnary
+        );
     }
 
     private static evaluator(): EvaluateExpressionDelegate {
-        return FunctionUtils.apply(
-            (args: Readonly<any>): Uint8Array => {
-                const raw = atob(args[0].toString());
-                return InternalFunctionUtils.toBinary(raw);
-            }, FunctionUtils.verifyString);
+        return FunctionUtils.apply((args: Readonly<any>): Uint8Array => {
+            const raw = atob(args[0].toString());
+            return InternalFunctionUtils.toBinary(raw);
+        }, FunctionUtils.verifyString);
     }
 }

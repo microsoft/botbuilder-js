@@ -9,7 +9,10 @@
 import { MemoryInterface, Options } from '../';
 import { Expression } from '../expression';
 import {
-    EvaluateExpressionDelegate, ExpressionEvaluator, ValidateExpressionDelegate, ValueWithError
+    EvaluateExpressionDelegate,
+    ExpressionEvaluator,
+    ValidateExpressionDelegate,
+    ValueWithError,
 } from '../expressionEvaluator';
 import { FunctionUtils, VerifyExpression } from '../functionUtils';
 import { ReturnType } from '../returnType';
@@ -26,7 +29,12 @@ export class ComparisonEvaluator extends ExpressionEvaluator {
      * @param validator Validator of input arguments.
      * @param verify Optional. Function to verify each child's result.
      */
-    public constructor(type: string, func: (arg0: any[]) => boolean, validator: ValidateExpressionDelegate, verify?: VerifyExpression) {
+    public constructor(
+        type: string,
+        func: (arg0: any[]) => boolean,
+        validator: ValidateExpressionDelegate,
+        verify?: VerifyExpression
+    ) {
         super(type, ComparisonEvaluator.evaluator(func, verify), ReturnType.Boolean, validator);
     }
 

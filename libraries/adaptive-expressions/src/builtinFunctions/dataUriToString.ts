@@ -19,13 +19,21 @@ export class DataUriToString extends ExpressionEvaluator {
      * Initializes a new instance of the `DataUriToString` class.
      */
     public constructor() {
-        super(ExpressionType.DataUriToString, DataUriToString.evaluator(), ReturnType.String, FunctionUtils.validateUnary);
+        super(
+            ExpressionType.DataUriToString,
+            DataUriToString.evaluator(),
+            ReturnType.String,
+            FunctionUtils.validateUnary
+        );
     }
 
     /**
      * @private
      */
     private static evaluator(): EvaluateExpressionDelegate {
-        return FunctionUtils.apply((args: any[]): string => Buffer.from(args[0].slice(args[0].indexOf(',') + 1), 'base64').toString(), FunctionUtils.verifyString);
+        return FunctionUtils.apply(
+            (args: any[]): string => Buffer.from(args[0].slice(args[0].indexOf(',') + 1), 'base64').toString(),
+            FunctionUtils.verifyString
+        );
     }
 }

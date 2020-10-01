@@ -26,6 +26,10 @@ export class DataUri extends ExpressionEvaluator {
      * @private
      */
     private static evaluator(): EvaluateExpressionDelegate {
-        return FunctionUtils.apply((args: any[]): string => 'data:text/plain;charset=utf-8;base64,'.concat(Buffer.from(args[0]).toString('base64')), FunctionUtils.verifyString);
+        return FunctionUtils.apply(
+            (args: any[]): string =>
+                'data:text/plain;charset=utf-8;base64,'.concat(Buffer.from(args[0]).toString('base64')),
+            FunctionUtils.verifyString
+        );
     }
 }
