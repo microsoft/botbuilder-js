@@ -8,6 +8,9 @@
 
 import { BotAdapter, IUserTokenProvider, TurnContext, Activity, ResourceResponse, ConversationReference, TokenResponse, ChannelAccount, RoleTypes, ConversationAccount, Middleware, ActivityTypes, IActivity } from 'botbuilder-core';
 
+/**
+ * A mock adapter that can be used for unit testing of bot logic.
+ */
 export class AdaptiveTestAdapter extends BotAdapter implements IUserTokenProvider {
     private _sendTraceActivity: boolean = false;
     private _nextId: number = 0;
@@ -16,6 +19,9 @@ export class AdaptiveTestAdapter extends BotAdapter implements IUserTokenProvide
      * A value indicating whether to send trace activities.
      */
     public get enableTrace(): boolean { return this._sendTraceActivity };
+    /**
+     * A value indicating whether to send trace activities.
+     */
     public set enableTrace(value: boolean) { this._sendTraceActivity = value };
 
     /**
@@ -350,16 +356,16 @@ export class AdaptiveTestAdapter extends BotAdapter implements IUserTokenProvide
         return undefined;
     }
 
-    /** 
+    /**
      * Asynchronously retrieves the token status for each configured connection for the given user.
-     * 
+     *
      * @param context The context object for the turn.
      * @param userId Optional. If present, the ID of the user to retrieve the token status for.
      *      Otherwise, the ID of the user who sent the current activity is used.
      * @param includeFilter Optional. A comma-separated list of connection's to include. If present,
      *      the `includeFilter` parameter limits the tokens this method returns.
      * @param oAuthAppCredentials AppCredentials for OAuth.
-     * 
+     *
      * @returns The [TokenStatus](xref:botframework-connector.TokenStatus) objects retrieved.
      */
     public async getTokenStatus(context: TurnContext, userId: string, includeFilter?: string, oAuthAppCredentials?: any): Promise<[any]> {
@@ -367,8 +373,8 @@ export class AdaptiveTestAdapter extends BotAdapter implements IUserTokenProvide
     }
 }
 
-/* 
- * This function generates a GUID-like random number that should be sufficient for our purposes of tracking 
+/*
+ * This function generates a GUID-like random number that should be sufficient for our purposes of tracking
  * instances of a given waterfall dialog.
  * Source: https://stackoverflow.com/questions/105034/create-guid-uuid-in-javascript
  */

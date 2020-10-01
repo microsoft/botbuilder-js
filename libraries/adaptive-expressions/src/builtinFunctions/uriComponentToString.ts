@@ -19,7 +19,12 @@ export class UriComponentToString extends ExpressionEvaluator {
      * Initializes a new instance of the `UriComponentToString` class.
      */
     public constructor() {
-        super(ExpressionType.UriComponentToString, UriComponentToString.evaluator(), ReturnType.String, FunctionUtils.validateUnary);
+        super(
+            ExpressionType.UriComponentToString,
+            UriComponentToString.evaluator(),
+            ReturnType.String,
+            FunctionUtils.validateUnary
+        );
     }
 
     /**

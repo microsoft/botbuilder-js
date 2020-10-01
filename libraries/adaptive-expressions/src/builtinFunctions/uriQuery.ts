@@ -35,7 +35,7 @@ export class UriQuery extends ExpressionEvaluator {
         let args: any[];
         ({ args, error } = FunctionUtils.evaluateChildren(expr, state, options));
         if (!error) {
-            if (typeof (args[0]) === 'string') {
+            if (typeof args[0] === 'string') {
                 ({ value, error } = UriQuery.evalUriQuery(args[0]));
             } else {
                 error = `${ expr } should contain a URI string.`;

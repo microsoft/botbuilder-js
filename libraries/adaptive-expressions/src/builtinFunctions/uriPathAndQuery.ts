@@ -23,7 +23,12 @@ export class UriPathAndQuery extends ExpressionEvaluator {
      * Initializes a new instance of the `UriPathAndQuery` class.
      */
     public constructor() {
-        super(ExpressionType.UriPathAndQuery, UriPathAndQuery.evaluator, ReturnType.String, FunctionUtils.validateUnary);
+        super(
+            ExpressionType.UriPathAndQuery,
+            UriPathAndQuery.evaluator,
+            ReturnType.String,
+            FunctionUtils.validateUnary
+        );
     }
 
     /**
@@ -35,7 +40,7 @@ export class UriPathAndQuery extends ExpressionEvaluator {
         let args: any[];
         ({ args, error } = FunctionUtils.evaluateChildren(expr, state, options));
         if (!error) {
-            if (typeof (args[0]) === 'string') {
+            if (typeof args[0] === 'string') {
                 ({ value, error } = UriPathAndQuery.evalUriPathAndQuery(args[0]));
             } else {
                 error = `${ expr } should contain a URI string.`;

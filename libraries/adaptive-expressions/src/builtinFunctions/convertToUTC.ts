@@ -32,8 +32,9 @@ export class ConvertToUTC extends ExpressionEvaluator {
         let args: any[];
         ({ args, error } = FunctionUtils.evaluateChildren(expression, state, options));
         if (!error) {
-            const format: string = (args.length === 3) ? FunctionUtils.timestampFormatter(args[2]) : FunctionUtils.DefaultDateTimeFormat;
-            if (typeof (args[0]) === 'string' && typeof (args[1]) === 'string') {
+            const format: string =
+                args.length === 3 ? FunctionUtils.timestampFormatter(args[2]) : FunctionUtils.DefaultDateTimeFormat;
+            if (typeof args[0] === 'string' && typeof args[1] === 'string') {
                 ({ value, error } = ConvertToUTC.evalConvertToUTC(args[0], args[1], format));
             } else {
                 error = `${expression} should contain an ISO format timestamp, a destination time zone string and an optional output format string.`;
@@ -85,7 +86,6 @@ export class ConvertToUTC extends ExpressionEvaluator {
 
         return { value: result, error };
     }
-
 
     private static validator(expr: Expression): void {
         FunctionUtils.validateOrder(expr, [ReturnType.String], ReturnType.String, ReturnType.String);
