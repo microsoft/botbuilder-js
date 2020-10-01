@@ -8,7 +8,7 @@
 
 import { ObjectExpression } from '../expressionProperties';
 
-export class ObjectExpressionConverter<T extends object = {}>{
+export class ObjectExpressionConverter<T extends object = {}> {
     public convert(value: T): ObjectExpression<T> {
         return new ObjectExpression<T>(value);
     }

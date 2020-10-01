@@ -7,7 +7,6 @@
  */
 import { Expression } from '../expression';
 
-
 /**
  * Base class which defines a Expression or value for a property.
  */
@@ -35,7 +34,7 @@ export class ExpressionProperty<T> {
      */
     public toString(): string {
         if (this.expressionText) {
-            return `=${ this.expressionText.replace(/^=/, '') }`;
+            return `=${this.expressionText.replace(/^=/, '')}`;
         }
         return this.value ? this.value.toString() : '';
     }
@@ -64,7 +63,7 @@ export class ExpressionProperty<T> {
                 if (this.value == undefined || this.value == null) {
                     this.expression = Expression.parse('null');
                 } else {
-                    this.expression = Expression.parse(`json(${ JSON.stringify(this.value) })`);
+                    this.expression = Expression.parse(`json(${JSON.stringify(this.value)})`);
                 }
                 break;
         }
@@ -80,7 +79,9 @@ export class ExpressionProperty<T> {
      */
     public getValue(data: object): T {
         const { value, error } = this.tryGetValue(data);
-        if (error) { throw error; }
+        if (error) {
+            throw error;
+        }
 
         return value;
     }
@@ -121,4 +122,3 @@ export class ExpressionProperty<T> {
         }
     }
 }
-

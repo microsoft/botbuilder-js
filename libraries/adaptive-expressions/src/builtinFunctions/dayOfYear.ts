@@ -24,7 +24,11 @@ export class DayOfYear extends ExpressionEvaluator {
 
     private static evaluator(): EvaluateExpressionDelegate {
         return FunctionUtils.applyWithError(
-            (args: any[]): any => InternalFunctionUtils.parseTimestamp(args[0], (timestamp: Date): number => moment(timestamp).utc().dayOfYear()),
-            FunctionUtils.verifyString);
+            (args: any[]): any =>
+                InternalFunctionUtils.parseTimestamp(args[0], (timestamp: Date): number =>
+                    moment(timestamp).utc().dayOfYear()
+                ),
+            FunctionUtils.verifyString
+        );
     }
 }
