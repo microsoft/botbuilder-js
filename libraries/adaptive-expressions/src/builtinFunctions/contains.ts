@@ -31,7 +31,7 @@ export class Contains extends ExpressionEvaluator {
         ({ args, error } = FunctionUtils.evaluateChildren(expression, state, options));
 
         if (!error) {
-            if (typeof args[0] === 'string' && typeof args[1] === 'string' || Array.isArray(args[0])) {
+            if ((typeof args[0] === 'string' && typeof args[1] === 'string') || Array.isArray(args[0])) {
                 found = args[0].includes(args[1]);
             } else if (args[0] instanceof Map) {
                 found = (args[0] as Map<string, any>).get(args[1]) !== undefined;

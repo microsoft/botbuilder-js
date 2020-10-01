@@ -29,7 +29,7 @@ export class Ticks extends ExpressionEvaluator {
         let args: any[];
         ({ args, error } = FunctionUtils.evaluateChildren(expr, state, options));
         if (!error) {
-            if (typeof (args[0]) === 'string') {
+            if (typeof args[0] === 'string') {
                 ({ value, error } = InternalFunctionUtils.ticks(args[0]));
             } else {
                 error = `${expr} should contain an ISO format timestamp.`;
