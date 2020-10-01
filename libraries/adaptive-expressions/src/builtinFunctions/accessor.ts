@@ -50,7 +50,10 @@ export class Accessor extends ExpressionEvaluator {
                 return { value: undefined, error: err };
             }
 
-            return { value: InternalFunctionUtils.wrapGetValue(new SimpleObjectMemory(newScope), path, options), error: undefined };
+            return {
+                value: InternalFunctionUtils.wrapGetValue(new SimpleObjectMemory(newScope), path, options),
+                error: undefined,
+            };
         }
     }
 
@@ -59,10 +62,12 @@ export class Accessor extends ExpressionEvaluator {
      */
     private static validator(expression: Expression): void {
         const children: any[] = expression.children;
-        if (children.length === 0
-            || children[0].type !== ExpressionType.Constant
-            || children[0].returnType !== ReturnType.String) {
-            throw new Error(`${ expression } must have a string as first argument.`);
+        if (
+            children.length === 0 ||
+            children[0].type !== ExpressionType.Constant ||
+            children[0].returnType !== ReturnType.String
+        ) {
+            throw new Error(`${expression} must have a string as first argument.`);
         }
 
         if (children.length > 2) {

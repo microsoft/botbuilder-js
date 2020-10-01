@@ -28,6 +28,7 @@ export class Average extends ExpressionEvaluator {
     private static evaluator(): EvaluateExpressionDelegate {
         return FunctionUtils.apply(
             (args: any[]): number => args[0].reduce((x: number, y: number): number => x + y) / args[0].length,
-            FunctionUtils.verifyNumericList);
+            FunctionUtils.verifyNumericList
+        );
     }
 }

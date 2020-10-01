@@ -7,8 +7,7 @@
     "main": "app.js",
     "scripts": {
         "build": "webpack --mode=production",
-        "start": "webpack-dev-server",
-        "lint": "eslint ."
+        "start": "webpack-dev-server"
     },
     "dependencies": {
         "@babel/runtime": "^7.1.5",
@@ -30,12 +29,6 @@
         "copy-webpack-plugin": "^5.0.3",
         "core-js": "^3.1.4",
         "css-loader": "^3.0.0",
-        "eslint": "^6.0.1",
-        "eslint-config-standard": "^13.0.1",
-        "eslint-plugin-import": "^2.18.0",
-        "eslint-plugin-node": "^9.1.0",
-        "eslint-plugin-promise": "^4.2.1",
-        "eslint-plugin-standard": "^4.0.0",
         "regenerator-runtime": "^0.13.2",
         "style-loader": "^0.23.1",
         "webpack": "^4.35.3",

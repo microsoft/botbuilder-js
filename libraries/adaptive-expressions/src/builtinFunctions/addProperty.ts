@@ -28,19 +28,18 @@ export class AddProperty extends ExpressionEvaluator {
      * @private
      */
     private static evaluator(): EvaluateExpressionDelegate {
-        return FunctionUtils.applyWithError(
-            (args: any[]): any => {
-                let error: string;
-                const temp: any = args[0];
-                const prop = String(args[1]);
-                if (prop in temp) {
-                    error = `${ prop } already exists`;
-                } else {
-                    temp[String(args[1])] = args[2];
-                }
+        return FunctionUtils.applyWithError((args: any[]): any => {
+            let error: string;
+            const temp: any = args[0];
+            const prop = String(args[1]);
+            if (prop in temp) {
+                error = `${prop} already exists`;
+            } else {
+                temp[String(args[1])] = args[2];
+            }
 
-                return { value: temp, error };
-            });
+            return { value: temp, error };
+        });
     }
 
     /**
