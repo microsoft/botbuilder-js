@@ -22,6 +22,8 @@ export class IsDateTime extends ExpressionEvaluator {
 
     private static evaluator(): EvaluateExpressionDelegate {
         return FunctionUtils.apply(
-            (args: any[]): boolean => typeof args[0] === 'string' && InternalFunctionUtils.verifyISOTimestamp(args[0]) === undefined);
+            (args: any[]): boolean =>
+                typeof args[0] === 'string' && InternalFunctionUtils.verifyISOTimestamp(args[0]) === undefined
+        );
     }
 }
