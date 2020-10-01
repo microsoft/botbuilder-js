@@ -42,6 +42,11 @@ export class OnIntent extends OnDialogEvent {
         this.entities = entities;
     }
 
+    /**
+     * Get the expression for this rule.
+     * @param parser Used to parse a string into an `Expression`.
+     * @returns Expression which will be cached and used to evaluate this rule.
+     */
     public getExpression(parser: ExpressionParserInterface): Expression {
         if (!this.intent) {
             throw new Error('Intent cannot be null.');
@@ -63,6 +68,13 @@ export class OnIntent extends OnDialogEvent {
         return Expression.makeExpression(ExpressionType.And, undefined, intentExpression, super.getExpression(parser));
     }
 
+    /**
+     * @protected
+     * Called when a change list is created.
+     * @param actionContext Context to use for evaluation.
+     * @param dialogOptions Optional. Object with dialog options.
+     * @returns An `ActionChangeList` with the list of actions.
+     */
     protected onCreateChangeList(actionContext: ActionContext, dialogOptions?: any): ActionChangeList {
         const recognizerResult = actionContext.state.getValue<RecognizerResult>(`${ TurnPath.dialogEvent }.value`);
         if (recognizerResult) {
