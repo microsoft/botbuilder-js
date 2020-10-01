@@ -9,7 +9,7 @@
 import { CancelAllDialogsBase } from './cancelAllDialogsBase';
 
 /**
- * Command to cancel all of the current dialogs by emitting an event which must be caught to prevent cancelation from propagating.
+ * Command to cancel all of the current dialogs by emitting an event that must be caught to prevent cancellation from propagating.
  */
 export class CancelAllDialogs<O extends object = {}> extends CancelAllDialogsBase<O> {
     public constructor();

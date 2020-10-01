@@ -9,7 +9,7 @@ import { Dialog, DialogContext, DialogTurnResult } from 'botbuilder-dialogs';
 import { StringExpression, BoolExpression } from 'adaptive-expressions';
 
 /**
- * Send an activity back to the user.
+ * Ends and deletes an activity.
  */
 export class DeleteActivity<O extends object = {}> extends Dialog<O> {
     public constructor();

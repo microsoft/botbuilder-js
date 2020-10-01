@@ -205,7 +205,7 @@ export class BeginSkill extends SkillDialog {
 
     /**
      * @private
-     * Regenerates the `SkillDialog.DialogOptions` based on the values used during the `BeingDialog` call.
+     * Regenerates the `SkillDialog.DialogOptions` based on the values used during the `BeginDialog` call.
      * @remarks The dialog can be resumed in another server or after redeploying the bot, this code ensure that the options used are the ones
      * used to call `BeginDialog`.
      * Also, if `ContinueConversation` or other methods are called on a server different than the one where BeginDialog was called,
