@@ -18,8 +18,8 @@ export class IfCondition<O extends object = {}> extends Dialog<O> implements Dia
 
     /**
      * Initializes a new instance of the `IfCondition` class.
-     * @param condition Conditional expression to evaluate.
-     * @param elseActions The actions to run if [condition](#condition) returns false.
+     * @param condition Optional. Conditional expression to evaluate.
+     * @param elseActions Optional. The actions to run if [condition](#condition) returns false.
      */
     public constructor(condition?: string, elseActions?: Dialog[]) {
         super();

@@ -10,7 +10,7 @@ import { BaseInvokeDialog } from './baseInvokeDialog';
 import { BoolExpression } from 'adaptive-expressions';
 
 /**
- * Action which calls another dialog, when it is done it will go to the callers parent dialog.
+ * Action which calls another dialog, when it is done it will go to the caller's parent dialog.
  */
 export class ReplaceDialog<O extends object = {}> extends BaseInvokeDialog<O> {
     public constructor();
