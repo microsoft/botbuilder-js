@@ -15,7 +15,11 @@ import { ReturnType } from '../returnType';
  */
 export class StringTransformEvaluator extends ExpressionEvaluator {
     public constructor(type: string, func: (arg0: any[]) => string) {
-        super(type, FunctionUtils.apply(func, FunctionUtils.verifyStringOrNull),
-            ReturnType.String, FunctionUtils.validateUnaryString);
+        super(
+            type,
+            FunctionUtils.apply(func, FunctionUtils.verifyStringOrNull),
+            ReturnType.String,
+            FunctionUtils.validateUnaryString
+        );
     }
 }
