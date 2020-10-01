@@ -442,7 +442,7 @@ describe('LuisRecognizer', function() {
         ReturnErrorStatusCode(400);
         const context = new TestContext({ text: 'Hello world!' });
         recognizer.recognize(context).catch(error => {
-            expectedError = `Response 400: The request's body or parameters are incorrect, meaning they are missing, malformed, or too large.`;
+            const expectedError = `Response 400: The request's body or parameters are incorrect, meaning they are missing, malformed, or too large.`;
             assert(error.message === expectedError, `unexpected error message thrown.`);
             nock.cleanAll();
             throttle(done);
@@ -454,7 +454,7 @@ describe('LuisRecognizer', function() {
         ReturnErrorStatusCode(401);
         const context = new TestContext({ text: 'Hello world!' });
         recognizer.recognize(context).catch(error => {
-            expectedError = `Response 401: The key used is invalid, malformed, empty, or doesn't match the region.`;
+            const expectedError = `Response 401: The key used is invalid, malformed, empty, or doesn't match the region.`;
             assert(error.message === expectedError, `unexpected error message thrown.`);
             nock.cleanAll();
             throttle(done);
@@ -466,7 +466,7 @@ describe('LuisRecognizer', function() {
         ReturnErrorStatusCode(403);
         const context = new TestContext({ text: 'Hello world!' });
         recognizer.recognize(context).catch(error => {
-            expectedError = `Response 403: Total monthly key quota limit exceeded.`;
+            const expectedError = `Response 403: Total monthly key quota limit exceeded.`;
             assert(error.message === expectedError, `unexpected error message thrown.`);
             nock.cleanAll();
             throttle(done);
@@ -478,7 +478,7 @@ describe('LuisRecognizer', function() {
         ReturnErrorStatusCode(409);
         const context = new TestContext({ text: 'Hello world!' });
         recognizer.recognize(context).catch(error => {
-            expectedError = `Response 409: Application loading in progress, please try again.`;
+            const expectedError = `Response 409: Application loading in progress, please try again.`;
             assert(error.message === expectedError, `unexpected error message thrown.`);
             nock.cleanAll();
             throttle(done);
@@ -490,7 +490,7 @@ describe('LuisRecognizer', function() {
         ReturnErrorStatusCode(410);
         const context = new TestContext({ text: 'Hello world!' });
         recognizer.recognize(context).catch(error => {
-            expectedError = `Response 410: Please retrain and republish your application.`;
+            const expectedError = `Response 410: Please retrain and republish your application.`;
             assert(error.message === expectedError, `unexpected error message thrown.`);
             nock.cleanAll();
             throttle(done);
@@ -502,7 +502,7 @@ describe('LuisRecognizer', function() {
         ReturnErrorStatusCode(414);
         const context = new TestContext({ text: 'Hello world!' });
         recognizer.recognize(context).catch(error => {
-            expectedError = `Response 414: The query is too long. Please reduce the query length to 500 or less characters.`;
+            const expectedError = `Response 414: The query is too long. Please reduce the query length to 500 or less characters.`;
             assert(error.message === expectedError, `unexpected error message thrown.`);
             nock.cleanAll();
             throttle(done);
@@ -514,7 +514,7 @@ describe('LuisRecognizer', function() {
         ReturnErrorStatusCode(429);
         const context = new TestContext({ text: 'Hello world!' });
         recognizer.recognize(context).catch(error => {
-            expectedError = `Response 429: Too many requests.`;
+            const expectedError = `Response 429: Too many requests.`;
             assert(error.message === expectedError, `unexpected error message thrown.`);
             nock.cleanAll();
             throttle(done);
@@ -527,7 +527,7 @@ describe('LuisRecognizer', function() {
         ReturnErrorStatusCode(statusCode);
         const context = new TestContext({ text: 'Hello world!' });
         recognizer.recognize(context).catch(error => {
-            expectedError = `Response ${ statusCode }: Unexpected status code received. Please verify that your LUIS application is properly setup.`;
+            const expectedError = `Response ${ statusCode }: Unexpected status code received. Please verify that your LUIS application is properly setup.`;
             assert(error.message === expectedError, `unexpected error message thrown.`);
             nock.cleanAll();
             throttle(done);
@@ -539,7 +539,7 @@ describe('LuisRecognizer', function() {
             const recognizer = new ThrowErrorRecognizer();
             const context = new TestContext({ text: 'Hello world!' });
             recognizer.recognize(context).catch(error => {
-                expectedError = 'Test';
+                const expectedError = 'Test';
                 assert(error.message === expectedError, `unexpected error message thrown.`);
                 throttle(done);
             });
@@ -602,6 +602,12 @@ describe('LuisRecognizer', function() {
     });
 
     it('null telemetryClient should work.', () => {
+        const includeAllIntents = false;
+        const includeInstance = true;
+        const nullTelemetryClient = null;
+        const nullTelemetryProperties = null;
+        const logPersonalInformation = true;
+
         TestJson('SingleIntent_SimplyEntityTelemetry.json', (res) => {
             assert(res);
             assert(res.text == 'My name is Emad');
@@ -616,7 +622,7 @@ describe('LuisRecognizer', function() {
             assert(res.entities.$instance.Name[0].startIndex === 11);
             assert(res.entities.$instance.Name[0].endIndex === 15);
             assert(res.entities.$instance.Name[0].score > 0 && res.entities.$instance.Name[0].score <= 1);
-        }, includeAllIntents = false, includeInstance = true, telemetryClient = null, telemetryProperties = null, logPersonalInformation = true);
+        }, includeAllIntents, includeInstance, nullTelemetryClient, nullTelemetryProperties, logPersonalInformation);
     });
 
     it('basic telemetry test.', () => {
@@ -649,6 +655,11 @@ describe('LuisRecognizer', function() {
             }
         };
 
+        const includeAllIntents = false;
+        const includeInstance = false;
+        const nullTelemetryProperties = null;
+        const logPersonalInformation = true;
+
         TestJson('SingleIntent_SimplyEntityTelemetry.json', (res) => {
             assert(res);
             assert(res.text == 'My name is Emad');
@@ -663,7 +674,7 @@ describe('LuisRecognizer', function() {
             assert(res.entities.$instance.Name[0].startIndex === 11);
             assert(res.entities.$instance.Name[0].endIndex === 15);
             assert(res.entities.$instance.Name[0].score > 0 && res.entities.$instance.Name[0].score <= 1);
-        }, includeAllIntents = false, includeInstance = true, telemetryClient = telemetryClient, telemetryProperties = null, logPersonalInformation = true);
+        }, includeAllIntents, includeInstance, telemetryClient, nullTelemetryProperties, logPersonalInformation);
     });
 
     it('telemetry with multiple entity names returned.', () => {
@@ -696,6 +707,11 @@ describe('LuisRecognizer', function() {
             }
         };
 
+        const includeAllIntents = true;
+        const includeInstance = true;
+        const nullTelemetryProperties = null;
+        const logPersonalInformation = true;
+
         TestJson('MultipleIntents_ListEntityWithMultiValuesTelemetry.json', (res) => {
             assert(res);
             assert(res.text == 'I want to travel on DL');
@@ -715,7 +731,7 @@ describe('LuisRecognizer', function() {
             assert(res.entities.$instance.Airline[0].endIndex === 22);
             assert(res.entities.$instance.Airline[0].text);
             assert(res.entities.$instance.Airline[0].text === 'dl');
-        }, includeAllIntents = true, includeInstance = true, telemetryClient = telemetryClient, telemetryProperties = null, logPersonalInformation = true);
+        }, includeAllIntents, includeInstance, telemetryClient, nullTelemetryProperties, logPersonalInformation);
     });
 
     it('override telemetry properties on logging.', () => {
@@ -758,6 +774,10 @@ describe('LuisRecognizer', function() {
         properties['foo'] = 'foovalue';
         properties['intent'] = 'MYINTENT';
 
+        const includeAllIntents = true;
+        const includeInstance = true;
+        const logPersonalInformation = true;
+
         TestJson('SingleIntent_SimplyEntityTelemetry.json', (res) => {
             assert(res);
             assert(res.text == 'My name is Emad');
@@ -772,7 +792,7 @@ describe('LuisRecognizer', function() {
             assert(res.entities.$instance.Name[0].startIndex === 11);
             assert(res.entities.$instance.Name[0].endIndex === 15);
             assert(res.entities.$instance.Name[0].score > 0 && res.entities.$instance.Name[0].score <= 1);
-        }, includeAllIntents = false, includeInstance = true, telemetryClient = telemetryClient, telemetryProperties = properties, logPersonalInformation = true);
+        }, includeAllIntents, includeInstance, telemetryClient, properties, logPersonalInformation);
     });
 
     it('override telemetry by deriving LuisRecognizer.', () => {

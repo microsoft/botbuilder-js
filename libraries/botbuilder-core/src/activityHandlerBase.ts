@@ -360,7 +360,7 @@ export class ActivityHandlerBase {
         }
 
         // List of all Activity Types:
-        // https://github.com/Microsoft/botbuilder-js/blob/master/libraries/botframework-schema/src/index.ts#L1627
+        // https://github.com/Microsoft/botbuilder-js/blob/main/libraries/botframework-schema/src/index.ts#L1627
         await this.onTurnActivity(context);
     }
 }
