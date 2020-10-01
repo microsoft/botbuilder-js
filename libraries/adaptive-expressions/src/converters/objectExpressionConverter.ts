@@ -12,7 +12,7 @@ import { ObjectExpression } from '../expressionProperties';
  * `any` value to json `ObjectExpressionConverter` converter.
  * @typeparam T The type of the value.
  */
-export class ObjectExpressionConverter<T extends object = {}>{
+export class ObjectExpressionConverter<T extends object = {}> {
     /**
      * Converts value of type `T` into an `ObjectExpression`.
      * @param value Value of type `T` to convert.
