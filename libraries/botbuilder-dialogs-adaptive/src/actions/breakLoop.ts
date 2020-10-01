@@ -37,6 +37,7 @@ export class BreakLoop<O extends object = {}> extends Dialog<O> {
     }
 
     /**
+     * @protected
      * Builds the compute Id for the dialog.
      * @returns A `string` representing the compute Id.
      */

@@ -68,6 +68,7 @@ export class BaseInvokeDialog<O extends object = {}> extends Dialog<O> implement
     }
 
     /**
+     * @protected
      * Builds the compute Id for the dialog.
      * @returns A `string` representing the compute Id.
      */
@@ -76,6 +77,7 @@ export class BaseInvokeDialog<O extends object = {}> extends Dialog<O> implement
     }
 
     /**
+     * @protected
      * Resolve Dialog Expression as either `Dialog`, or `StringExpression` to get `dialogid`.
      * @param dc The `DialogContext` for the current turn of conversation.
      */
@@ -95,6 +97,7 @@ export class BaseInvokeDialog<O extends object = {}> extends Dialog<O> implement
     }
 
     /**
+     * @protected
      * BindOptions - evaluate expressions in options.
      * @param dc The `DialogContext` for the current turn of conversation.
      * @param options Options to bind.

@@ -191,6 +191,7 @@ export class BeginSkill extends SkillDialog {
     }
 
     /**
+     * @protected
      * Builds the compute Id for the dialog.
      * @returns A `string` representing the compute Id.
      */

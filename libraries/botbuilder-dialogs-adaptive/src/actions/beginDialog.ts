@@ -13,12 +13,13 @@ import { StringExpression, BoolExpression } from 'adaptive-expressions';
  * Action which begins executing another dialog, when it is done, it will return to the caller.
  */
 export class BeginDialog<O extends object = {}> extends BaseInvokeDialog<O> {
+    public constructor();
+    
     /**
      * Creates a new `BeginDialog` instance.
      * @param dialogIdToCall ID of the dialog to call.
      * @param options (Optional) static options to pass the called dialog.
      */
-    public constructor();
     public constructor(dialogIdToCall: string, options?: O)
     
     /**

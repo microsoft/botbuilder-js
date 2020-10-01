@@ -13,6 +13,13 @@ import { StringExpression, BoolExpression, ValueExpression } from 'adaptive-expr
  */
 export class CancelAllDialogsBase<O extends object = {}> extends Dialog<O> {
     public constructor();
+
+    /**
+     * Initializes a new instance of the `CancelAllDialogsBase` class.
+     * @param eventName Expression for event name.
+     * @param eventValue Optional, expression for event value.
+     * @param isCancelAll Set to `true` to cancel all dialogs; `false` otherwise.
+     */
     public constructor(eventName: string, eventValue?: string, isCancelAll?: boolean);
 
     /**
@@ -93,6 +100,7 @@ export class CancelAllDialogsBase<O extends object = {}> extends Dialog<O> {
     }
     
     /**
+     * @protected
      * Builds the compute Id for the dialog.
      * @returns A `string` representing the compute Id.
      */

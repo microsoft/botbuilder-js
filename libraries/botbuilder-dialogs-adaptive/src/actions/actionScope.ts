@@ -100,6 +100,7 @@ export class ActionScope<O extends object = {}> extends Dialog<O> implements Dia
     }
 
     /**
+     * @protected
      * Called when returning control to this dialog with an `ActionScopeResult`.
      * @param dc The `DialogContext` for the current turn of conversation.
      * @param actionScopeResult Contains the actions scope result.
@@ -119,6 +120,7 @@ export class ActionScope<O extends object = {}> extends Dialog<O> implements Dia
     }
 
     /**
+     * @protected
      * Called when returning control to this dialog with an `ActionScopeResult` 
      * with the property `ActionCommand` set to `GoToAction`.
      * @param dc The `DialogContext` for the current turn of conversation.
@@ -139,6 +141,7 @@ export class ActionScope<O extends object = {}> extends Dialog<O> implements Dia
     }
 
     /**
+     * @protected
      * Called when returning control to this dialog with an `ActionScopeResult` 
      * with the property `ActionCommand` set to `BreakLoop`.
      * @param dc The `DialogContext` for the current turn of conversation.
@@ -150,6 +153,7 @@ export class ActionScope<O extends object = {}> extends Dialog<O> implements Dia
     }
 
     /**
+     * @protected
      * Called when returning control to this dialog with an `ActionScopeResult` 
      * with the property `ActionCommand` set to `ContinueLoop`.
      * @param dc The `DialogContext` for the current turn of conversation.
@@ -161,6 +165,7 @@ export class ActionScope<O extends object = {}> extends Dialog<O> implements Dia
     }
 
     /**
+     * @protected
      * Called when the dialog continues to the next action.
      * @param dc The `DialogContext` for the current turn of conversation.
      * @param result Optional, value returned from the dialog that was called. The type 
@@ -199,6 +204,7 @@ export class ActionScope<O extends object = {}> extends Dialog<O> implements Dia
     }
 
     /**
+     * @protected
      * Called when the dialog's action ends.
      * @param dc The `DialogContext` for the current turn of conversation.
      * @param result Optional, value returned from the dialog that was called. The type 
@@ -210,6 +216,7 @@ export class ActionScope<O extends object = {}> extends Dialog<O> implements Dia
     }
 
     /**
+     * @protected
      * Starts a new dialog and pushes it onto the dialog stack.
      * @param dc The `DialogContext` for the current turn of conversation.
      * @param result Optional, value returned from the dialog that was called. The type 
@@ -237,6 +244,7 @@ export class ActionScope<O extends object = {}> extends Dialog<O> implements Dia
     }
 
     /**
+     * @protected
      * Builds the compute Id for the dialog.
      * @returns A `string` representing the compute Id.
      */
