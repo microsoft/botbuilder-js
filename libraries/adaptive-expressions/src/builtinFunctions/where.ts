@@ -50,9 +50,7 @@ export class Where extends ExpressionEvaluator {
                 const stackedMemory = StackedMemory.wrap(state);
                 const arrResult = [];
                 for (const item of arr) {
-                    const local: Map<string, any> = new Map<string, any>([
-                        [iteratorName, item]
-                    ]);
+                    const local: Map<string, any> = new Map<string, any>([[iteratorName, item]]);
 
                     stackedMemory.push(SimpleObjectMemory.wrap(local));
                     const newOptions = new Options(options);
@@ -63,14 +61,14 @@ export class Where extends ExpressionEvaluator {
                         return { value: undefined, error: e };
                     }
 
-                    if ((Boolean(r))) {
+                    if (r) {
                         arrResult.push(local.get(iteratorName));
                     }
                 }
 
                 //reconstruct object if instance is object, otherwise, return array result
                 if (!isInstanceArray) {
-                    let objResult = {};
+                    const objResult = {};
                     for (const item of arrResult) {
                         objResult[item.key] = item.value;
                     }

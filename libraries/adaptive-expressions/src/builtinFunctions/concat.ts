@@ -16,7 +16,12 @@ import { ReturnType } from '../returnType';
  */
 export class Concat extends ExpressionEvaluator {
     public constructor() {
-        super(ExpressionType.Concat, Concat.evaluator(), ReturnType.String | ReturnType.Array, FunctionUtils.validateAtLeastOne);
+        super(
+            ExpressionType.Concat,
+            Concat.evaluator(),
+            ReturnType.String | ReturnType.Array,
+            FunctionUtils.validateAtLeastOne
+        );
     }
 
     private static evaluator(): EvaluateExpressionDelegate {
@@ -26,8 +31,7 @@ export class Concat extends ExpressionEvaluator {
             const isFirstList = Array.isArray(firstItem);
             const isSecondList = Array.isArray(secondItem);
 
-            if ((firstItem === null || firstItem === undefined)
-                && (secondItem === null || secondItem === undefined)) {
+            if ((firstItem === null || firstItem === undefined) && (secondItem === null || secondItem === undefined)) {
                 return undefined;
             } else if ((firstItem === null || firstItem === undefined) && isSecondList) {
                 return secondItem;

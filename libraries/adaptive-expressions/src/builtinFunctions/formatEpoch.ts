@@ -23,25 +23,27 @@ export class FormatEpoch extends ExpressionEvaluator {
     }
 
     private static evaluator(): EvaluateExpressionDelegate {
-        return FunctionUtils.applyWithError(
-            (args: any[]): any => {
-                let error: string;
-                let arg: any = args[0];
-                if (typeof arg !== 'number') {
-                    error = `formatEpoch first argument ${arg} must be a number`
-                } else {
-                    // Convert to ms
-                    arg = arg * 1000
-                }
+        return FunctionUtils.applyWithError((args: any[]): any => {
+            let error: string;
+            let arg: any = args[0];
+            if (typeof arg !== 'number') {
+                error = `formatEpoch first argument ${arg} must be a number`;
+            } else {
+                // Convert to ms
+                arg = arg * 1000;
+            }
 
-                let value: any;
-                if (!error) {
-                    const dateString: string = new Date(arg).toISOString();
-                    value = args.length === 2 ? moment(dateString).format(FunctionUtils.timestampFormatter(args[1])) : dateString;
-                }
+            let value: any;
+            if (!error) {
+                const dateString: string = new Date(arg).toISOString();
+                value =
+                    args.length === 2
+                        ? moment(dateString).format(FunctionUtils.timestampFormatter(args[1]))
+                        : dateString;
+            }
 
-                return { value, error };
-            });
+            return { value, error };
+        });
     }
 
     private static validator(expression: Expression): void {
