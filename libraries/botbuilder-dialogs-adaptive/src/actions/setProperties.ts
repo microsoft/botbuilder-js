@@ -43,7 +43,7 @@ export class SetProperties<O extends object = {}> extends Dialog<O> {
 
     /**
      * Initializes a new instance of the `SetProperties` class.
-     * @param assignments Optional, additional property settings as property/value pairs.
+     * @param assignments Optional. Additional property settings as property/value pairs.
      */
     public constructor(assignments?: PropertyAssignment[]) {
         super();
@@ -63,7 +63,7 @@ export class SetProperties<O extends object = {}> extends Dialog<O> {
     /**
      * Starts a new dialog and pushes it onto the dialog stack.
      * @param dc The `DialogContext` for the current turn of conversation.
-     * @param options Optional, initial information to pass to the dialog.
+     * @param options Optional. Initial information to pass to the dialog.
      * @returns A `Promise` representing the asynchronous operation.
      */
     public async beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {

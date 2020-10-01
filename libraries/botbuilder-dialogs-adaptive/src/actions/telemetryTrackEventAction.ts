@@ -43,8 +43,8 @@ export class TelemetryTrackEventAction<O extends object = {}> extends Dialog {
 
     /**
      * Initializes a new instance of the `TelemetryTrackEventAction` class.
-     * @param eventName Optional, name to use for the event.
-     * @param properties Optional, properties to attach to the tracked event.
+     * @param eventName Optional. Name to use for the event.
+     * @param properties Optional. Properties to attach to the tracked event.
      */
     public constructor(eventName?: string, properties?: { [name: string]: string }) {
         super();
@@ -75,7 +75,7 @@ export class TelemetryTrackEventAction<O extends object = {}> extends Dialog {
     /**
      * Starts a new dialog and pushes it onto the dialog stack.
      * @param dc The `DialogContext` for the current turn of conversation.
-     * @param options Optional, initial information to pass to the dialog.
+     * @param options Optional. Initial information to pass to the dialog.
      * @returns A `Promise` representing the asynchronous operation.
      */
     public async beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {

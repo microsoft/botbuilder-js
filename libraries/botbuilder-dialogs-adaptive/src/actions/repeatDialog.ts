@@ -17,7 +17,7 @@ export class RepeatDialog<O extends object = {}> extends BaseInvokeDialog<O> {
 
     /**
      * Initializes a new instance of the `RepeatDialog` class.
-     * @param options Optional, object with additional options.
+     * @param options Optional. Object with additional options.
      */
     public constructor(options?: O) {
         super(undefined, options);
@@ -36,7 +36,7 @@ export class RepeatDialog<O extends object = {}> extends BaseInvokeDialog<O> {
     /**
      * Starts a new dialog and pushes it onto the dialog stack.
      * @param dc The `DialogContext` for the current turn of conversation.
-     * @param options Optional, initial information to pass to the dialog.
+     * @param options Optional. Initial information to pass to the dialog.
      * @returns A `Promise` representing the asynchronous operation.
      */
     public async beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {

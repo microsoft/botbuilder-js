@@ -16,8 +16,8 @@ export class SignOutUser<O extends object = {}> extends Dialog<O> {
 
     /**
      * Initializes a new instance of the `SignOutUser` class.
-     * @param userId Optional, the expression which resolves to the userId to sign out.
-     * @param connectionName Optional, the name of the OAuth connection.
+     * @param userId Optional. The expression which resolves to the userId to sign out.
+     * @param connectionName Optional. The name of the OAuth connection.
      */
     public constructor(userId?: string, connectionName?: string) {
         super();
@@ -43,7 +43,7 @@ export class SignOutUser<O extends object = {}> extends Dialog<O> {
     /**
      * Starts a new dialog and pushes it onto the dialog stack.
      * @param dc The `DialogContext` for the current turn of conversation.
-     * @param options Optional, initial information to pass to the dialog.
+     * @param options Optional. Initial information to pass to the dialog.
      * @returns A `Promise` representing the asynchronous operation.
      */
     public async beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {

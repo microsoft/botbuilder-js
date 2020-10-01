@@ -139,10 +139,10 @@ export class HttpRequest<O extends object = {}> extends Dialog<O> implements Con
 
     /**
      * Initializes a new instance of the `HttpRequest` class.
-     * @param method Optional, the HTTP method, for example POST, GET, DELETE or PUT.
-     * @param url Optional, URL for the request.
-     * @param headers Optional, the headers of the request.
-     * @param body Optional, the raw body of the request.
+     * @param method Optional. The HTTP method, for example POST, GET, DELETE or PUT.
+     * @param url Optional. URL for the request.
+     * @param headers Optional. The headers of the request.
+     * @param body Optional. The raw body of the request.
      */
     public constructor(method?: HttpMethod, url?: string, headers?: { [key: string]: string }, body?: any) {
         super();
@@ -199,7 +199,7 @@ export class HttpRequest<O extends object = {}> extends Dialog<O> implements Con
     /**
      * Starts a new dialog and pushes it onto the dialog stack.
      * @param dc The `DialogContext` for the current turn of conversation.
-     * @param options Optional, initial information to pass to the dialog.
+     * @param options Optional. Initial information to pass to the dialog.
      * @returns A `Promise` representing the asynchronous operation.
      */
     public async beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {

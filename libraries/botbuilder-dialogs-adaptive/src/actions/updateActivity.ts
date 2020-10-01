@@ -11,8 +11,17 @@ import { TemplateInterface } from '../template';
 import { StringExpression, BoolExpression } from 'adaptive-expressions';
 import { ActivityTemplate, StaticActivityTemplate } from '../templates';
 
+/**
+ * Update an activity with replacement.
+ */
 export class UpdateActivity<O extends object = {}> extends Dialog<O> {
     public constructor();
+
+    /**
+     * Initializes a new instance of the UpdateActivity class.
+     * @param activityId The expression which resolves to the activityId to update.
+     * @param activity Template for the activity.
+     */
     public constructor(activityId?: string, activity?: Partial<Activity> | string) {
         super();
         if (activityId) {
@@ -42,6 +51,12 @@ export class UpdateActivity<O extends object = {}> extends Dialog<O> {
      */
     public disabled?: BoolExpression;
 
+    /**
+     * Starts a new dialog and pushes it onto the dialog stack.
+     * @param dc The `DialogContext` for the current turn of conversation.
+     * @param options Optional. Initial information to pass to the dialog.
+     * @returns A `Promise` representing the asynchronous operation.
+     */
     public async beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {
         if (this.disabled && this.disabled.getValue(dc.state)) {
             return await dc.endDialog();
@@ -71,6 +86,11 @@ export class UpdateActivity<O extends object = {}> extends Dialog<O> {
         return await dc.endDialog(result);
     }
 
+    /**
+     * @protected
+     * Builds the compute Id for the dialog.
+     * @returns A `string` representing the compute Id.
+     */
     protected onComputeId(): string {
         if (this.activity instanceof ActivityTemplate) {
             return `UpdateActivity[${ StringUtils.ellipsis(this.activity.template.trim(), 30) }]`;

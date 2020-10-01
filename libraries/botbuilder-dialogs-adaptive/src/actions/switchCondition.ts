@@ -27,9 +27,9 @@ export class SwitchCondition<O extends object = {}> extends Dialog<O> implements
 
     /**
      * Initializes a new instance of the `SwitchCondition` class
-     * @param condition Optional, condition expression against memory.
-     * @param defaultDialogs Optional, default case.
-     * @param cases Optional, cases.
+     * @param condition Optional. Condition expression against memory.
+     * @param defaultDialogs Optional. Default case.
+     * @param cases Optional. Cases.
      */
     public constructor(condition?: string, defaultDialogs?: Dialog[], cases?: Case[]) {
         super();
@@ -81,7 +81,7 @@ export class SwitchCondition<O extends object = {}> extends Dialog<O> implements
     /**
      * Starts a new dialog and pushes it onto the dialog stack.
      * @param dc The `DialogContext` for the current turn of conversation.
-     * @param options Optional, initial information to pass to the dialog.
+     * @param options Optional. Initial information to pass to the dialog.
      * @returns A `Promise` representing the asynchronous operation.
      */
     public async beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {

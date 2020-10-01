@@ -25,7 +25,7 @@ export class LogAction<O extends object = {}> extends Dialog<O> {
     
     /**
      * Creates a new `SendActivity` instance.
-     * @param text Optional, the text template to log.
+     * @param text Optional. The text template to log.
      */
     public constructor(text?: string) {
         super();
@@ -56,7 +56,7 @@ export class LogAction<O extends object = {}> extends Dialog<O> {
     /**
      * Starts a new dialog and pushes it onto the dialog stack.
      * @param dc The `DialogContext` for the current turn of conversation.
-     * @param options Optional, initial information to pass to the dialog.
+     * @param options Optional. Initial information to pass to the dialog.
      * @returns A `Promise` representing the asynchronous operation.
      */
     public async beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {

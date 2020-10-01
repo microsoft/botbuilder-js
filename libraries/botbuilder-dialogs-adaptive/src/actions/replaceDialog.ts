@@ -24,8 +24,8 @@ export class ReplaceDialog<O extends object = {}> extends BaseInvokeDialog<O> {
         
     /**
      * Creates a new `ReplaceWithDialog` instance.
-     * @param dialogId Optional, ID of the dialog to goto.
-     * @param options Optional, static options to pass the dialog.
+     * @param dialogId Optional. ID of the dialog to goto.
+     * @param options Optional. Static options to pass the dialog.
      */
     public constructor(dialogIdToCall?: string, options?: O) {
         super(dialogIdToCall, options);
@@ -39,7 +39,7 @@ export class ReplaceDialog<O extends object = {}> extends BaseInvokeDialog<O> {
     /**
      * Starts a new dialog and pushes it onto the dialog stack.
      * @param dc The `DialogContext` for the current turn of conversation.
-     * @param options Optional, initial information to pass to the dialog.
+     * @param options Optional. Initial information to pass to the dialog.
      * @returns A `Promise` representing the asynchronous operation.
      */
     public async beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {
