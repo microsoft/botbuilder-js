@@ -23,8 +23,7 @@ export class Replace extends ExpressionEvaluator {
     }
 
     private static evaluator(): EvaluateExpressionDelegate {
-        return FunctionUtils.applyWithError((
-            args: any[]): any => {
+        return FunctionUtils.applyWithError((args: any[]): any => {
             let error = undefined;
             let result = undefined;
             if (InternalFunctionUtils.parseStringOrUndefined(args[1]).length === 0) {
@@ -32,7 +31,9 @@ export class Replace extends ExpressionEvaluator {
             }
 
             if (!error) {
-                result = InternalFunctionUtils.parseStringOrUndefined(args[0]).split(InternalFunctionUtils.parseStringOrUndefined(args[1])).join(InternalFunctionUtils.parseStringOrUndefined(args[2]));
+                result = InternalFunctionUtils.parseStringOrUndefined(args[0])
+                    .split(InternalFunctionUtils.parseStringOrUndefined(args[1]))
+                    .join(InternalFunctionUtils.parseStringOrUndefined(args[2]));
             }
 
             return { value: result, error };
