@@ -71,8 +71,7 @@ export class ForEachPage<O extends object = {}> extends ActionScope<O> {
     /**
      * Starts a new dialog and pushes it onto the dialog stack.
      * @param dc The `DialogContext` for the current turn of conversation.
-     * @param result Optional. Value returned from the dialog that was called. The type 
-     * of the value returned is dependent on the child dialog.
+     * @param options Optional. Initial information to pass to the dialog.
      * @returns A `Promise` representing the asynchronous operation.
      */
     public async beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {

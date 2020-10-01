@@ -21,16 +21,16 @@ export class EditActions<O extends object = {}> extends Dialog<O> implements Dia
 
     /**
      * Initializes a new instance of the `EditActions` class.
-     * @param changeType Type of change to appy to the active actions
-     * @param actions Optional. Child dialog dependencies so they can be added to the containers dialogset
+     * @param changeType Type of change to apply to the active actions.
+     * @param actions Optional. Child dialog dependencies so they can be added to the containers dialogset.
      */
 
     public constructor(changeType: ActionChangeType, actions?: Dialog[]);
 
     /**
      * Initializes a new instance of the `EditActions` class.
-     * @param changeType Optional. Type of change to appy to the active actions
-     * @param actions Optional. Child dialog dependencies so they can be added to the containers dialogset
+     * @param changeType Optional. Type of change to apply to the active actions.
+     * @param actions Optional. Child dialog dependencies so they can be added to the containers dialogset.
      */
     public constructor(changeType?: ActionChangeType, actions?: Dialog[]) {
         super();
@@ -64,8 +64,7 @@ export class EditActions<O extends object = {}> extends Dialog<O> implements Dia
     /**
      * Starts a new dialog and pushes it onto the dialog stack.
      * @param dc The `DialogContext` for the current turn of conversation.
-     * @param result Optional. Value returned from the dialog that was called. The type 
-     * of the value returned is dependent on the child dialog.
+     * @param options Optional. Initial information to pass to the dialog.
      * @returns A `Promise` representing the asynchronous operation.
      */
     public async beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {

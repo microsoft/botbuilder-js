@@ -9,7 +9,7 @@ import { Dialog, DialogContext, DialogTurnResult } from 'botbuilder-dialogs';
 import { StringExpression, BoolExpression } from 'adaptive-expressions';
 
 /**
- * Deletes a property from memory.
+ * Deletes a collection of properties from memory.
  */
 export class DeleteProperties<O extends object = {}> extends Dialog<O> {
     public constructor();

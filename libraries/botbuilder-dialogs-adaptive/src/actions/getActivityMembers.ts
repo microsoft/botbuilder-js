@@ -16,8 +16,8 @@ export class GetActivityMembers<O extends object = {}> extends Dialog {
 
     /**
      * Initializes a new instance of the `GetActivityMembers` class.
-     * @param activityId The expression to get the value to put into property path.
-     * @param property Property path to put the value in.
+     * @param activityId Optional. The expression to get the value to put into property path.
+     * @param property Optional. Property path to put the value in.
      */
     public constructor(activityId?: string, property?: string) {
         super();
@@ -43,8 +43,7 @@ export class GetActivityMembers<O extends object = {}> extends Dialog {
     /**
      * Starts a new dialog and pushes it onto the dialog stack.
      * @param dc The `DialogContext` for the current turn of conversation.
-     * @param result Optional. Value returned from the dialog that was called. The type 
-     * of the value returned is dependent on the child dialog.
+     * @param options Optional. Initial information to pass to the dialog.
      * @returns A `Promise` representing the asynchronous operation.
      */
     public async beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {
