@@ -16,6 +16,11 @@ import { ReturnType } from '../returnType';
  */
 export class Select extends ExpressionEvaluator {
     public constructor() {
-        super(ExpressionType.Select, InternalFunctionUtils.foreach, ReturnType.Array, InternalFunctionUtils.validateForeach);
+        super(
+            ExpressionType.Select,
+            InternalFunctionUtils.foreach,
+            ReturnType.Array,
+            InternalFunctionUtils.validateForeach
+        );
     }
 }

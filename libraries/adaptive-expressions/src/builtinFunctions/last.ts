@@ -21,18 +21,17 @@ export class Last extends ExpressionEvaluator {
     }
 
     private static evaluator(): EvaluateExpressionDelegate {
-        return FunctionUtils.apply(
-            (args: any[]): any => {
-                let last: any;
-                if (typeof args[0] === 'string' && args[0].length > 0) {
-                    last = args[0][args[0].length - 1];
-                }
+        return FunctionUtils.apply((args: any[]): any => {
+            let last: any;
+            if (typeof args[0] === 'string' && args[0].length > 0) {
+                last = args[0][args[0].length - 1];
+            }
 
-                if (Array.isArray(args[0]) && args[0].length > 0) {
-                    last = InternalFunctionUtils.accessIndex(args[0], args[0].length - 1).value;
-                }
+            if (Array.isArray(args[0]) && args[0].length > 0) {
+                last = InternalFunctionUtils.accessIndex(args[0], args[0].length - 1).value;
+            }
 
-                return last;
-            });
+            return last;
+        });
     }
 }
