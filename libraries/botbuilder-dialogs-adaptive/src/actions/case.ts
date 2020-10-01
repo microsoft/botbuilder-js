@@ -74,6 +74,7 @@ export class CaseConverter implements Converter {
     /**
      * Converts a `config` object into a `Case` object.
      * @param config Composed of the case `string` value and an numerable list of dialog actions.
+     * @returns The `Case`.
      */
     public convert(config: { value: string; actions: Dialog[] }): Case {
         return new Case(config.value, config.actions);
