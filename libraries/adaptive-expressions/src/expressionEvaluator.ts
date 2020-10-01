@@ -20,8 +20,7 @@ export type ValidateExpressionDelegate = (expression: Expression) => any;
  * Value result with error.
  */
 // eslint-disable-next-line @typescript-eslint/prefer-interface
-export type ValueWithError = 
-{
+export type ValueWithError = {
     value: any;
     error: string;
 };
@@ -30,7 +29,11 @@ export type ValueWithError =
  * Delegate to evaluate an expression.
  * Evaluators should verify runtime arguments when appropriate and return an error rather than throw exceptions if possible.
  */
-export type EvaluateExpressionDelegate = (expression: Expression, state: MemoryInterface, options: Options) => ValueWithError;
+export type EvaluateExpressionDelegate = (
+    expression: Expression,
+    state: MemoryInterface,
+    options: Options
+) => ValueWithError;
 
 /**
  * Delegate to lookup function information from the type.
@@ -41,7 +44,6 @@ export type EvaluatorLookup = (type: string) => ExpressionEvaluator;
  * Information on how to evaluate an expression.
  */
 export class ExpressionEvaluator {
-
     /**
      * Gets the expression type for evaluator.
      */
@@ -64,12 +66,13 @@ export class ExpressionEvaluator {
         type: string,
         evaluator: EvaluateExpressionDelegate,
         returnType: ReturnType = ReturnType.Object,
-        validator?: ValidateExpressionDelegate) {
+        validator?: ValidateExpressionDelegate
+    ) {
         this.type = type;
         this._evaluator = evaluator;
         this.returnType = returnType;
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        this._validator = validator || ((expr: Expression): any => { });
+        this._validator = validator || ((expr: Expression): any => {});
     }
 
     /**
@@ -77,7 +80,8 @@ export class ExpressionEvaluator {
      * @param expression Expression to evaluate.
      * @param state Global state information.
      */
-    public tryEvaluate = (expression: Expression, state: MemoryInterface, options: Options): ValueWithError => this._evaluator(expression, state, options);
+    public tryEvaluate = (expression: Expression, state: MemoryInterface, options: Options): ValueWithError =>
+        this._evaluator(expression, state, options);
     /**
      * Validate an expression.
      * @param expression Expression to validate.

@@ -19,6 +19,11 @@ export class Foreach extends ExpressionEvaluator {
      * Initializes a new instance of the `Foreach` class.
      */
     public constructor() {
-        super(ExpressionType.Foreach, InternalFunctionUtils.foreach, ReturnType.Array, InternalFunctionUtils.validateForeach);
+        super(
+            ExpressionType.Foreach,
+            InternalFunctionUtils.foreach,
+            ReturnType.Array,
+            InternalFunctionUtils.validateForeach
+        );
     }
 }

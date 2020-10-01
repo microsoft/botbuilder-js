@@ -36,7 +36,9 @@ export class TimeTransformEvaluator extends ExpressionEvaluator {
                     ({ value, error } = InternalFunctionUtils.parseTimestamp(args[0]));
                     if (!error) {
                         if (args.length === 3 && typeof args[2] === 'string') {
-                            result = moment(func(value, args[1])).utc().format(FunctionUtils.timestampFormatter(args[2]));
+                            result = moment(func(value, args[1]))
+                                .utc()
+                                .format(FunctionUtils.timestampFormatter(args[2]));
                         } else {
                             result = func(value, args[1]).toISOString();
                         }

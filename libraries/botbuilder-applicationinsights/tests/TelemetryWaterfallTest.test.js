@@ -1,31 +1,24 @@
-const { BotTelemetryClient, ConversationState, MemoryStorage, NullTelemetryClient, TestAdapter } = require('botbuilder-core');
+const { ConversationState, MemoryStorage, NullTelemetryClient, TestAdapter } = require('botbuilder-core');
 const { ComponentDialog, DialogSet, WaterfallDialog } = require('../../botbuilder-dialogs/lib');
 const assert = require('assert');
 
 describe('TelemetryWaterfall', function() {
 
     class TestClient {
-        trackEvent(t) {
+        trackEvent() {
         } 
 
-        trackTrace(t) {
+        trackTrace() {
         }
 
-        trackException(t) {
+        trackException() {
         }
 
-        trackDependency(t) {
+        trackDependency() {
         }
     }
 
-    it('should track a dialog start event on first turn of dialog', function (done) {
-        // Initialize TestAdapter.
-        const adapter = new TestAdapter(async (turnContext) => {
-            const dc = await dialogs.createContext(turnContext);
-
-            await dc.beginDialog('testDialog');
-            await convoState.saveChanges(turnContext);
-        });
+    it('should track a dialog start event on first turn of dialog', function(done) {
         // Create new ConversationState with MemoryStorage and register the state as middleware.
         const convoState = new ConversationState(new MemoryStorage());
 
@@ -35,6 +28,14 @@ describe('TelemetryWaterfall', function() {
         const dialog = new WaterfallDialog('testDialog',[
             async (step) => { return step.next(); }
         ]);
+
+        // Initialize TestAdapter.
+        const adapter = new TestAdapter(async (turnContext) => {
+            const dc = await dialogs.createContext(turnContext);
+
+            await dc.beginDialog('testDialog');
+            await convoState.saveChanges(turnContext);
+        });
 
         const client = new TestClient();
         TestClient.prototype.trackEvent = (telemetry) => {
@@ -51,14 +52,7 @@ describe('TelemetryWaterfall', function() {
         adapter.send({text: 'hello'}).startTest();
     });
 
-    it('should track an event for every step of a waterfall dialog', function (done) {
-        // Initialize TestAdapter.
-        const adapter = new TestAdapter(async (turnContext) => {
-            const dc = await dialogs.createContext(turnContext);
-
-            await dc.beginDialog('testDialog');
-            await convoState.saveChanges(turnContext);
-        });
+    it('should track an event for every step of a waterfall dialog', function(done) {
         // Create new ConversationState with MemoryStorage and register the state as middleware.
         const convoState = new ConversationState(new MemoryStorage());
 
@@ -72,6 +66,14 @@ describe('TelemetryWaterfall', function() {
             async (step) => { return step.next(); },
             async (step) => { return step.next(); }
         ]);
+
+        // Initialize TestAdapter.
+        const adapter = new TestAdapter(async (turnContext) => {
+            const dc = await dialogs.createContext(turnContext);
+
+            await dc.beginDialog('testDialog');
+            await convoState.saveChanges(turnContext);
+        });
 
         let count = 0;
 
@@ -96,14 +98,7 @@ describe('TelemetryWaterfall', function() {
         adapter.send({text: 'hello'}).startTest();
     });
 
-    it('should track an event for at the end of the waterfall dialog', function (done) {
-        // Initialize TestAdapter.
-        const adapter = new TestAdapter(async (turnContext) => {
-            const dc = await dialogs.createContext(turnContext);
-
-            await dc.beginDialog('testDialog');
-            await convoState.saveChanges(turnContext);
-        });
+    it('should track an event for at the end of the waterfall dialog', function(done) {
         // Create new ConversationState with MemoryStorage and register the state as middleware.
         const convoState = new ConversationState(new MemoryStorage());
 
@@ -113,6 +108,14 @@ describe('TelemetryWaterfall', function() {
         const dialog = new WaterfallDialog('testDialog',[
             async (step) => { return step.next(); },
         ]);
+
+        // Initialize TestAdapter.
+        const adapter = new TestAdapter(async (turnContext) => {
+            const dc = await dialogs.createContext(turnContext);
+
+            await dc.beginDialog('testDialog');
+            await convoState.saveChanges(turnContext);
+        });
 
         const client = new TestClient();
         TestClient.prototype.trackEvent = (telemetry) => {
@@ -129,14 +132,7 @@ describe('TelemetryWaterfall', function() {
         adapter.send({text: 'hello'}).startTest();
     });
 
-    it('should track an event for a waterfall cancel', function (done) {
-        // Initialize TestAdapter.
-        const adapter = new TestAdapter(async (turnContext) => {
-            const dc = await dialogs.createContext(turnContext);
-
-            await dc.beginDialog('testDialog');
-            await convoState.saveChanges(turnContext);
-        });
+    it('should track an event for a waterfall cancel', function(done) {
         // Create new ConversationState with MemoryStorage and register the state as middleware.
         const convoState = new ConversationState(new MemoryStorage());
 
@@ -146,6 +142,14 @@ describe('TelemetryWaterfall', function() {
         const dialog = new WaterfallDialog('testDialog',[
             async (step) => { step.cancelAllDialogs(); },
         ]);
+
+        // Initialize TestAdapter.
+        const adapter = new TestAdapter(async (turnContext) => {
+            const dc = await dialogs.createContext(turnContext);
+
+            await dc.beginDialog('testDialog');
+            await convoState.saveChanges(turnContext);
+        });
 
         const client = new TestClient();
         TestClient.prototype.trackEvent = (telemetry) => {
@@ -162,14 +166,7 @@ describe('TelemetryWaterfall', function() {
         adapter.send({text: 'hello'}).startTest();
     });
 
-    it('should have same instance id for all events', function (done) {
-        // Initialize TestAdapter.
-        const adapter = new TestAdapter(async (turnContext) => {
-            const dc = await dialogs.createContext(turnContext);
-
-            await dc.beginDialog('testDialog');
-            await convoState.saveChanges(turnContext);
-        });
+    it('should have same instance id for all events', function(done) {
         // Create new ConversationState with MemoryStorage and register the state as middleware.
         const convoState = new ConversationState(new MemoryStorage());
 
@@ -184,13 +181,21 @@ describe('TelemetryWaterfall', function() {
             async (step) => { return step.next(); }
         ]);
 
+        // Initialize TestAdapter.
+        const adapter = new TestAdapter(async (turnContext) => {
+            const dc = await dialogs.createContext(turnContext);
+
+            await dc.beginDialog('testDialog');
+            await convoState.saveChanges(turnContext);
+        });
+
         let count = 0;
         let instanceId = null;
 
         const client = new TestClient();
         TestClient.prototype.trackEvent = (telemetry) => {
             if (!instanceId && telemetry.properties.InstanceId) {
-                instanceId = telemetry.properties.InstanceId
+                instanceId = telemetry.properties.InstanceId;
             }
             assert(telemetry, 'telemetry is null');
             assert(instanceId,'instanceid is not set on event');
