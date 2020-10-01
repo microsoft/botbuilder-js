@@ -117,7 +117,7 @@ function assertBotLogicWithTranscript(transcriptPath, botLogicFactoryFun, middle
 // **** PRIVATE **** //
 
 function checkTranscriptResourcesExist() {
-    var transcriptsLocation = process.env['BOTBUILDER_TRANSCRIPTS_LOCATION'] || 'https://github.com/Microsoft/BotBuilder/archive/master.zip';
+    var transcriptsLocation = process.env['BOTBUILDER_TRANSCRIPTS_LOCATION'] || 'https://github.com/microsoft/botframework-sdk/archive/main.zip';
     return isUrl(transcriptsLocation)
         ? downloadAndExtractOnce(transcriptsLocation)               // Download and extract transcript from repo, fulfill Promise with extraction path
         : Promise.resolve(transcriptsLocation);                     // FS, return the environment variable (or default to current directory)

@@ -10,18 +10,18 @@ const { TestAdapter, MemoryStorage, MessageFactory, UserState, ConversationState
 const { InspectionMiddleware, InspectionState } = require('../');
 const sinon = require('sinon');
 
-beforeEach(function(done) {
-    nock.cleanAll();
-
-    done();
-});
-
-afterEach(function(done) {
-    nock.cleanAll();
-    done();
-});
-
 describe('InspectionMiddleware', function() {
+
+    beforeEach(function(done) {
+        nock.cleanAll();
+        done();
+    });
+    
+    afterEach(function(done) {
+        nock.cleanAll();
+        done();
+    });
+
     const storage = new MemoryStorage();
     const inspectionState = new InspectionState(storage);
     const userState = new UserState(storage);

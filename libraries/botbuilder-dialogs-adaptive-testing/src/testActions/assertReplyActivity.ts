@@ -37,7 +37,7 @@ export class AssertReplyActivity implements TestAction {
                 const assertion = this.assertions[i];
                 const { value, error } = engine.parse(assertion).tryEvaluate(activity);
                 if (!value || error) {
-                    throw new Error(`${ this.description } ${ assertion }`);
+                    throw new Error(`${ this.description } ${ assertion } ${ JSON.stringify(activity) }`);
                 }
             }
         }
