@@ -10,7 +10,15 @@ import { Expression, Constant } from 'adaptive-expressions';
 import { Converter, ResourceExplorer } from 'botbuilder-dialogs-declarative';
 import { ActionScope } from './actionScope';
 
+/**
+ * Cases of action scope.
+ */
 export class Case extends ActionScope {
+    /**
+     * Initializes a new instance of the `Case` class.
+     * @param value Optional, case's string value.
+     * @param actions Optional, numerable list of dialog actions.
+     */
     public constructor(value?: string, actions: Dialog[] = []) {
         super(actions);
         this.value = value;
@@ -49,12 +57,24 @@ export class Case extends ActionScope {
     }
 }
 
+/**
+ * `config` to `Case` converter class.
+ */
 export class CaseConverter implements Converter {
     private _resourceExplorer: ResourceExplorer;
 
+    /**
+     * Initializes a new instance of the `CaseConverter` class.
+     * @param resourceExplorer `ResourceExplorer` to use.
+     */
     public constructor(resourceExplorer: ResourceExplorer) {
         this._resourceExplorer = resourceExplorer;
     }
+
+    /**
+     * Converts a `config` object into a `Case` object.
+     * @param config Composed of the case `string` value and an numerable list of dialog actions.
+     */
     public convert(config: { value: string; actions: Dialog[] }): Case {
         return new Case(config.value, config.actions);
     }

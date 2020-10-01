@@ -10,8 +10,16 @@ import { ValueExpression, ObjectExpression, BoolExpression } from 'adaptive-expr
 import { DialogExpression } from '../expressions';
 import { replaceJsonRecursively } from '../jsonExtensions';
 
-
+/**
+ * Action which calls another dialog.
+ */
 export class BaseInvokeDialog<O extends object = {}> extends Dialog<O> implements DialogDependencies {
+    /**
+     * Initializes a new instance of the `BaseInvokeDialog` class.
+     * Expression for `dialogId` to call (allowing dynamic expression).
+     * @param dialogIdToCall Optional, id of the dialog to call.
+     * @param bindingOptions Optional, binding options for the dialog to call.
+     */
     public constructor(dialogIdToCall?: string, bindingOptions?: O) {
         super();
         if (dialogIdToCall) {
@@ -37,10 +45,21 @@ export class BaseInvokeDialog<O extends object = {}> extends Dialog<O> implement
      */
     public activityProcessed: BoolExpression = new BoolExpression(true);
 
+    /**
+     * Called when the dialog is started and pushed onto the dialog stack.
+     * @remarks Method not implemented.
+     * @param dc The `DialogContext` for the current turn of conversation.
+     * @param options Optional, initial information to pass to the dialog.
+     * @returns A `Promise` representing the asynchronous operation.
+     */
     public beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult<any>> {
         throw new Error('Method not implemented.');
     }
 
+    /**
+     * Gets the child dialog dependencies so they can be added to the containers dialog set.
+     * @returns The child dialog dependencies.
+     */
     public getDependencies(): Dialog<{}>[] {
         if (this.dialog && this.dialog.value) {
             return [this.dialog.value];
@@ -48,10 +67,18 @@ export class BaseInvokeDialog<O extends object = {}> extends Dialog<O> implement
         return [];
     }
 
+    /**
+     * Builds the compute Id for the dialog.
+     * @returns A `string` representing the compute Id.
+     */
     protected onComputeId(): string {
         return `${ this.constructor.name }[${ this.dialog && this.dialog.toString() }]`;
     }
 
+    /**
+     * Resolve Dialog Expression as either `Dialog`, or `StringExpression` to get `dialogid`.
+     * @param dc The `DialogContext` for the current turn of conversation.
+     */
     protected resolveDialog(dc: DialogContext): Dialog {
         if (this.dialog && this.dialog.value) {
             return this.dialog.value;
@@ -67,6 +94,12 @@ export class BaseInvokeDialog<O extends object = {}> extends Dialog<O> implement
         return dialog;
     }
 
+    /**
+     * BindOptions - evaluate expressions in options.
+     * @param dc The `DialogContext` for the current turn of conversation.
+     * @param options Options to bind.
+     * @returns The merged options with expressions bound to values.
+     */
     protected bindOptions(dc: DialogContext, options: object): object {
         const bindingOptions = Object.assign({}, this.options.getValue(dc.state), options);
         const boundOptions = {};

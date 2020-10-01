@@ -8,8 +8,16 @@
 import { Dialog, DialogContext, DialogTurnResult } from 'botbuilder-dialogs';
 import { StringExpression, BoolExpression } from 'adaptive-expressions';
 
+/**
+ * Send an activity back to the user.
+ */
 export class DeleteActivity<O extends object = {}> extends Dialog<O> {
     public constructor();
+
+    /**
+     * Initializes a new instance of the `DeleteActivity` class.
+     * @param activityId ID of the activity to update.
+     */
     public constructor(activityId?: string) {
         super();
         if (activityId) { this.activityId = new StringExpression(activityId); }
@@ -25,6 +33,13 @@ export class DeleteActivity<O extends object = {}> extends Dialog<O> {
      */
     public disabled?: BoolExpression;
 
+    /**
+     * Called when the dialog is started and pushed onto the dialog stack.
+     * @remarks Method not implemented.
+     * @param dc The `DialogContext` for the current turn of conversation.
+     * @param options Optional, initial information to pass to the dialog.
+     * @returns A `Promise` representing the asynchronous operation.
+     */
     public async beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {
         if (this.disabled && this.disabled.getValue(dc.state)) {
             return await dc.endDialog();
@@ -36,6 +51,10 @@ export class DeleteActivity<O extends object = {}> extends Dialog<O> {
         return await dc.endDialog();
     }
 
+    /**
+     * Builds the compute Id for the dialog.
+     * @returns A `string` representing the compute Id.
+     */
     protected onComputeId(): string {
         return `DeleteActivity[${ this.activityId.toString() }]`;
     }

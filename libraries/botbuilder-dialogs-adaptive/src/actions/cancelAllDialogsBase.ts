@@ -8,10 +8,19 @@
 import { DialogTurnResult, DialogContext, Dialog, TurnPath, DialogEvents } from 'botbuilder-dialogs';
 import { StringExpression, BoolExpression, ValueExpression } from 'adaptive-expressions';
 
-
+/**
+ * Base class for CancelAllDialogs api.
+ */
 export class CancelAllDialogsBase<O extends object = {}> extends Dialog<O> {
     public constructor();
     public constructor(eventName: string, eventValue?: string, isCancelAll?: boolean);
+
+    /**
+     * Initializes a new instance of the `CancelAllDialogsBase` class.
+     * @param eventName Optional, expression for event name.
+     * @param eventValue Optional, expression for event value.
+     * @param isCancelAll Set to `true` to cancel all dialogs; `false` otherwise.
+     */
     public constructor(eventName?: string, eventValue?: string, isCancelAll = true) {
         super();
         if (eventName) {
@@ -50,6 +59,13 @@ export class CancelAllDialogsBase<O extends object = {}> extends Dialog<O> {
      */
     public cancelAll: boolean;
 
+    /**
+     * Called when the dialog is started and pushed onto the dialog stack.
+     * @remarks Method not implemented.
+     * @param dc The `DialogContext` for the current turn of conversation.
+     * @param options Optional, initial information to pass to the dialog.
+     * @returns A `Promise` representing the asynchronous operation.
+     */
     public async beginDialog(dc: DialogContext, options: O): Promise<DialogTurnResult> {
         if (this.disabled && this.disabled.getValue(dc.state)) {
             return await dc.endDialog();
@@ -75,7 +91,11 @@ export class CancelAllDialogsBase<O extends object = {}> extends Dialog<O> {
             return turnResult;
         }
     }
-
+    
+    /**
+     * Builds the compute Id for the dialog.
+     * @returns A `string` representing the compute Id.
+     */
     protected onComputeId(): string {
         return `${ this.constructor.name }[${ this.eventName ? this.eventName.toString() : '' }]`;
     }

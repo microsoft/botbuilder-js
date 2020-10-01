@@ -22,6 +22,9 @@ export interface ActionScopeResult {
     actionId?: string;
 }
 
+/**
+ * `ActionScope` manages execution of a block of actions, and supports Goto, Continue and Break semantics.
+ */
 export class ActionScope<O extends object = {}> extends Dialog<O> implements DialogDependencies {
 
     /**
@@ -37,15 +40,31 @@ export class ActionScope<O extends object = {}> extends Dialog<O> implements Dia
      */
     public actions: Dialog[] = [];
 
+    /**
+     * Gets a unique `string` which represents the version of this dialog. If the version 
+     * changes between turns the dialog system will emit a DialogChanged event.
+     * @returns Unique `string` which should only change when dialog has changed in a 
+     * way that should restart the dialog.
+     */
     public getVersion(): string {
         const versions = this.actions.map((action): string => action.getVersion() || '').join('');
         return StringUtils.hash(versions);
     }
 
+    /**
+     * Gets the child dialog dependencies so they can be added to the containers dialog set.
+     * @returns The child dialog dependencies.
+     */
     public getDependencies(): Dialog[] {
         return this.actions;
     }
 
+    /**
+     * Called when the dialog is started and pushed onto the dialog stack.
+     * @param dc The `DialogContext` for the current turn of conversation.
+     * @param options Optional, initial information to pass to the dialog.
+     * @returns A `Promise` representing the asynchronous operation.
+     */
     public async beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {
         if (this.actions && this.actions.length > 0) {
             return await this.beginAction(dc, 0);
@@ -54,11 +73,24 @@ export class ActionScope<O extends object = {}> extends Dialog<O> implements Dia
         }
     }
 
+    /**
+     * Called when the dialog is _continued_, where it is the active dialog and the 
+     * user replies with a new activity.
+     * @param dc The `DialogContext` for the current turn of conversation.
+     * @returns A `Promise` representing the asynchronous operation.
+     */
     public async continueDialog(dc: DialogContext): Promise<DialogTurnResult> {
-        // We're being continued after an interruption so just run next action
         return await this.onNextAction(dc);
     }
 
+    /**
+     * Called when a child dialog completed its turn, returning control to this dialog.
+     * @param dc The `DialogContext` for the current turn of conversation.
+     * @param _reason Reason why the dialog resumed.
+     * @param result Optional, value returned from the dialog that was called. The type 
+     * of the value returned is dependent on the child dialog.
+     * @returns A `Promise` representing the asynchronous operation.
+     */
     public async resumeDialog(dc: DialogContext, _reason: DialogReason, result?: any): Promise<DialogTurnResult> {
         if (result && typeof result === 'object' && result.hasOwnProperty('actionScopeCommand')) {
             return await this.onActionScopeResult(dc, result as ActionScopeResult);
@@ -67,6 +99,12 @@ export class ActionScope<O extends object = {}> extends Dialog<O> implements Dia
         return await this.onNextAction(dc, result);
     }
 
+    /**
+     * Called when returning control to this dialog with an `ActionScopeResult`.
+     * @param dc The `DialogContext` for the current turn of conversation.
+     * @param actionScopeResult Contains the actions scope result.
+     * @returns A `Promise` representing the asynchronous operation.
+     */
     protected async onActionScopeResult(dc: DialogContext, actionScopeResult: ActionScopeResult): Promise<DialogTurnResult> {
         switch (actionScopeResult.actionScopeCommand) {
             case ActionScopeCommands.GotoAction:
@@ -80,6 +118,13 @@ export class ActionScope<O extends object = {}> extends Dialog<O> implements Dia
         }
     }
 
+    /**
+     * Called when returning control to this dialog with an `ActionScopeResult` 
+     * with the property `ActionCommand` set to `GoToAction`.
+     * @param dc The `DialogContext` for the current turn of conversation.
+     * @param actionScopeResult Contains the actions scope result.
+     * @returns A `Promise` representing the asynchronous operation.
+     */
     protected async onGotoAction(dc: DialogContext, actionScopeResult: ActionScopeResult): Promise<DialogTurnResult> {
         const offset = this.actions.findIndex((action: Dialog): boolean => {
             return action.id == actionScopeResult.actionId;
@@ -93,14 +138,35 @@ export class ActionScope<O extends object = {}> extends Dialog<O> implements Dia
         }
     }
 
+    /**
+     * Called when returning control to this dialog with an `ActionScopeResult` 
+     * with the property `ActionCommand` set to `BreakLoop`.
+     * @param dc The `DialogContext` for the current turn of conversation.
+     * @param actionScopeResult Contains the actions scope result.
+     * @returns A `Promise` representing the asynchronous operation.
+     */
     protected async onBreakLoop(dc: DialogContext, actionScopeResult: ActionScopeResult): Promise<DialogTurnResult> {
         return await dc.endDialog(actionScopeResult);
     }
 
+    /**
+     * Called when returning control to this dialog with an `ActionScopeResult` 
+     * with the property `ActionCommand` set to `ContinueLoop`.
+     * @param dc The `DialogContext` for the current turn of conversation.
+     * @param actionScopeResult Contains the actions scope result.
+     * @returns A `Promise` representing the asynchronous operation.
+     */
     protected async onContinueLoop(dc: DialogContext, actionScopeResult: ActionScopeResult): Promise<DialogTurnResult> {
         return await dc.endDialog(actionScopeResult);
     }
 
+    /**
+     * Called when the dialog continues to the next action.
+     * @param dc The `DialogContext` for the current turn of conversation.
+     * @param result Optional, value returned from the dialog that was called. The type 
+     * of the value returned is dependent on the child dialog.
+     * @returns A `Promise` representing the asynchronous operation.
+     */
     protected async onNextAction(dc: DialogContext, result?: any): Promise<DialogTurnResult> {
         // Check for any plan changes
         let hasChanges = false;
@@ -132,10 +198,24 @@ export class ActionScope<O extends object = {}> extends Dialog<O> implements Dia
         return await this.onEndOfActions(dc, result);
     }
 
+    /**
+     * Called when the dialog's action ends.
+     * @param dc The `DialogContext` for the current turn of conversation.
+     * @param result Optional, value returned from the dialog that was called. The type 
+     * of the value returned is dependent on the child dialog.
+     * @returns A `Promise` representing the asynchronous operation.
+     */
     protected async onEndOfActions(dc: DialogContext, result?: any): Promise<DialogTurnResult> {
         return await dc.endDialog(result);
     }
 
+    /**
+     * Starts a new dialog and pushes it onto the dialog stack.
+     * @param dc The `DialogContext` for the current turn of conversation.
+     * @param result Optional, value returned from the dialog that was called. The type 
+     * of the value returned is dependent on the child dialog.
+     * @returns A `Promise` representing the asynchronous operation.
+     */
     protected async beginAction(dc: DialogContext, offset: number): Promise<DialogTurnResult> {
         dc.state.setValue(OFFSET_KEY, offset);
 
@@ -156,6 +236,10 @@ export class ActionScope<O extends object = {}> extends Dialog<O> implements Dia
         return await dc.beginDialog(action.id);
     }
 
+    /**
+     * Builds the compute Id for the dialog.
+     * @returns A `string` representing the compute Id.
+     */
     protected onComputeId(): string {
         const ids = this.actions.map((action: Dialog): string => action.id);
         return `ActionScope[${ StringUtils.ellipsisHash(ids.join(','), 50) }]`;
