@@ -9,6 +9,8 @@
 import { CancelAllDialogsBase } from './cancelAllDialogsBase';
 
 export class CancelDialog<O extends object = {}> extends CancelAllDialogsBase<O> {
+    public static $kind = 'Microsoft.CancelDialog';
+
     public constructor();
     public constructor(eventName: string, eventValue?: string);
     public constructor(eventName?: string, eventValue?: string) {

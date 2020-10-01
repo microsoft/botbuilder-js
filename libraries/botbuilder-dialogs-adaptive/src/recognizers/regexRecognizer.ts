@@ -5,13 +5,21 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { RecognizerResult, Entity, Activity } from 'botbuilder-core';
-import { DialogContext } from 'botbuilder-dialogs';
+import { Activity, Entity, RecognizerResult } from 'botbuilder-core';
+import { Converter, Converters, DialogContext } from 'botbuilder-dialogs';
 import { Recognizer } from './recognizer';
 import { IntentPattern } from './intentPattern';
 import { EntityRecognizer, TextEntity, EntityRecognizerSet } from './entityRecognizers';
 
+class IntentPatternsConverter implements Converter<any[], IntentPattern[]> {
+    public convert(value: { intent: string; pattern: string }[]): IntentPattern[] {
+        return value.map(item => new IntentPattern(item.intent, item.pattern));
+    }
+}
+
 export class RegexRecognizer extends Recognizer {
+    public static $kind = 'Microsoft.RegexRecognizer';
+
     /**
      * Dictionary of patterns -> intent names.
      */
@@ -21,6 +29,10 @@ export class RegexRecognizer extends Recognizer {
      * The entity recognizers.
      */
     public entities: EntityRecognizer[] = [];
+
+    public converters: Converters<RegexRecognizer> = {
+        intents: new IntentPatternsConverter()
+    };
 
     public async recognize(dialogContext: DialogContext, activity: Activity, telemetryProperties?: { [key: string]: string }, telemetryMetrics?: { [key: string]: number }): Promise<RecognizerResult> {
         const text = activity.text || '';

@@ -11,6 +11,8 @@ import { ModelResult } from 'botbuilder-dialogs';
 import { TextEntityRecognizer } from './textEntityRecognizer';
 
 export class MentionEntityRecognizer extends TextEntityRecognizer {
+    public static $kind = 'Microsoft.MentionEntityRecognizer';
+
     protected recognize(text: string, culture: string): ModelResult[] {
         return recognizeMention(text, culture);
     }

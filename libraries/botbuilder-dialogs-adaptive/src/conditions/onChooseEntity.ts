@@ -14,6 +14,7 @@ import { OnDialogEvent } from './onDialogEvent';
  * Triggered to choose between different possible entity resolutions.
  */
 export class OnChooseEntity extends OnDialogEvent {
+    public static $kind = 'Microsoft.OnChooseEntity';
 
     public constructor(property?: string, entity?: string, actions: Dialog[] = [], condition?: string) {
         super(AdaptiveEvents.chooseEntity, actions, condition);

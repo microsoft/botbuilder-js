@@ -13,6 +13,8 @@ import { OnCondition } from './onCondition';
  * Actions triggered when a dialog event is emitted.
  */
 export class OnDialogEvent extends OnCondition {
+    public static $kind = 'Microsoft.OnDialogEvent';
+
     /**
      * Gets or sets the event to fire on.
      */

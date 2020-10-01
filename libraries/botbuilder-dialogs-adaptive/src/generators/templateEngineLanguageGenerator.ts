@@ -6,8 +6,7 @@
  * Licensed under the MIT License.
  */
 
-import { normalize, basename } from 'path';
-import { DialogContext } from 'botbuilder-dialogs';
+import { Converters, DialogContext } from 'botbuilder-dialogs';
 import { Resource } from 'botbuilder-dialogs-declarative';
 import { Templates, LGResource } from 'botbuilder-lg';
 import { LanguageGenerator } from '../languageGenerator';
@@ -18,11 +17,15 @@ import { LanguageGeneratorManager } from './languageGeneratorManager';
  * LanguageGenerator implementation which uses LGFile. 
  */
 export class TemplateEngineLanguageGenerator implements LanguageGenerator{
+    public static $kind = 'Microsoft.TemplateEngineLanguageGenerator';
+
     private readonly DEFAULTLABEL: string  = 'Unknown';
 
     private lg: Templates;
 
     public id: string = '';
+    
+    public converters: Converters<TemplateEngineLanguageGenerator> = {};
 
     public constructor(arg1?: Templates | Resource, arg2?: Map<string,Resource[]>) {
         if (arguments.length === 0) {

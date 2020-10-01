@@ -6,8 +6,10 @@
  * Licensed under the MIT License.
  */
 
-import { RecognizerResult, Activity, getTopScoringIntent } from 'botbuilder-core';
-import { DialogContext } from 'botbuilder-dialogs';
+import { Activity, RecognizerResult, getTopScoringIntent } from 'botbuilder-core';
+import { Converters, DialogContext } from 'botbuilder-dialogs';
+import { ResourceExplorer } from 'botbuilder-dialogs-declarative';
+import { RecognizerListConverter } from '../converters';
 import { Recognizer } from './recognizer';
 
 /**
@@ -19,11 +21,16 @@ const deferPrefix = 'DeferToRecognizer_';
  * Recognizer for selecting between cross trained recognizers.
  */
 export class CrossTrainedRecognizerSet extends Recognizer {
+    public static $kind = 'Microsoft.CrossTrainedRecognizerSet';
 
     /**
      * Gets or sets the input recognizers.
      */
     public recognizers: Recognizer[] = [];
+
+    public converters: Converters<CrossTrainedRecognizerSet> = {
+        recognizers: (resourceExplorer: ResourceExplorer) => new RecognizerListConverter(resourceExplorer)
+    };
 
     /**
      * To recognize intents and entities in a users utterance.
@@ -44,11 +51,11 @@ export class CrossTrainedRecognizerSet extends Recognizer {
         const results = await Promise.all(this.recognizers.map((recognizer: Recognizer): Promise<RecognizerResult> => {
             return recognizer.recognize(dialogContext, activity, telemetryProperties, telemetryMetrics);
         }));
-        
+
         const result = this.processResults(results);
-        this.trackRecognizerResult(dialogContext, 'CrossTrainedRecognizerSetResult', this.fillRecognizerResultTelemetryProperties(result, telemetryProperties),telemetryMetrics);
+        this.trackRecognizerResult(dialogContext, 'CrossTrainedRecognizerSetResult', this.fillRecognizerResultTelemetryProperties(result, telemetryProperties), telemetryMetrics);
         return result;
-        
+
     }
 
     /**

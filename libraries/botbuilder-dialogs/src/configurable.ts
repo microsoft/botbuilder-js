@@ -6,6 +6,8 @@
  * Licensed under the MIT License.
  */
 
+import { Converter, Converters } from './converter';
+
 /**
  * Base class for all configurable classes.
  */
@@ -18,24 +20,31 @@ export abstract class Configurable {
         for (const key in config) {
             if (config.hasOwnProperty(key)) {
                 const setting = config[key];
-                if (Array.isArray(setting)) {
-                    this[key] = setting;
-                } else if (typeof setting == 'object') {
-                    if (typeof this[key] == 'object') {
-                        // Apply as a map update
-                        for (const child in setting) {
-                            if (setting.hasOwnProperty(child)) {
-                                this[key][child] = setting[child]; 
+                if (this.converters && this.converters[key] && typeof this.converters[key] === 'object') {
+                    const converter = this.converters[key] as Converter<any, any>;
+                    this[key] = converter.convert(setting);
+                } else {
+                    if (Array.isArray(setting)) {
+                        this[key] = setting;
+                    } else if (typeof setting == 'object') {
+                        if (typeof this[key] == 'object') {
+                            // Apply as a map update
+                            for (const child in setting) {
+                                if (setting.hasOwnProperty(child)) {
+                                    this[key][child] = setting[child];
+                                }
                             }
+                        } else {
+                            this[key] = setting;
                         }
-                    } else {
+                    } else if (setting !== undefined) {
                         this[key] = setting;
                     }
-                } else if (setting !== undefined) {
-                    this[key] = setting; 
                 }
             }
         }
         return this;
     }
+
+    public converters?: Converters<any>;
 }

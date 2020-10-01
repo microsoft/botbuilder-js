@@ -6,13 +6,20 @@
  * Licensed under the MIT License.
  */
 
-import { RecognizerResult, Activity, getTopScoringIntent } from 'botbuilder-core';
-import { DialogContext } from 'botbuilder-dialogs';
+import { Activity, RecognizerResult, getTopScoringIntent } from 'botbuilder-core';
+import { Converters, DialogContext } from 'botbuilder-dialogs';
+import { ResourceExplorer } from 'botbuilder-dialogs-declarative';
+import { RecognizerListConverter } from '../converters';
 import { Recognizer } from './recognizer';
 
 export class RecognizerSet extends Recognizer {
+    public static $kind = 'Microsoft.RecognizerSet';
 
     public recognizers: Recognizer[] = [];
+
+    public converters: Converters<RecognizerSet> = {
+        recognizers: (resourceExplorer: ResourceExplorer) => new RecognizerListConverter(resourceExplorer)
+    };
 
     public async recognize(dialogContext: DialogContext, activity: Activity, telemetryProperties?: { [key: string]: string }, telemetryMetrics?: { [key: string]: number }): Promise<RecognizerResult> {
         const recognizerResult: RecognizerResult = {
@@ -91,7 +98,7 @@ export class RecognizerSet extends Recognizer {
         }
 
         this.trackRecognizerResult(dialogContext, 'RecognizerSetResult', this.fillRecognizerResultTelemetryProperties(recognizerResult, telemetryProperties), telemetryMetrics);
-        
+
         return recognizerResult;
     }
 }

@@ -5,11 +5,13 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { DialogTurnResult, DialogContext, TurnPath } from 'botbuilder-dialogs';
+import { BoolExpression, BoolExpressionConverter } from 'adaptive-expressions';
+import { Converters, DialogTurnResult, DialogContext, TurnPath } from 'botbuilder-dialogs';
 import { BaseInvokeDialog } from './baseInvokeDialog';
-import { BoolExpression } from 'adaptive-expressions';
 
 export class RepeatDialog<O extends object = {}> extends BaseInvokeDialog<O> {
+    public static $kind = 'Microsoft.RepeatDialog';
+
     public constructor();
     public constructor(options?: O) {
         super(undefined, options);
@@ -19,11 +21,18 @@ export class RepeatDialog<O extends object = {}> extends BaseInvokeDialog<O> {
      * An optional expression which if is true will disable this action.
      */
     public disabled?: BoolExpression;
-    
+
     /**
      * An optional expression which if is true will allow loop of the repeated dialog.
      */
     public allowLoop?: BoolExpression;
+
+    public get converters(): Converters<RepeatDialog> {
+        return Object.assign({}, super.converters, {
+            disabled: new BoolExpressionConverter(),
+            allowLoop: new BoolExpressionConverter()
+        });
+    }
 
     public async beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {
         if (this.disabled && this.disabled.getValue(dc.state)) {
@@ -44,7 +53,7 @@ export class RepeatDialog<O extends object = {}> extends BaseInvokeDialog<O> {
         }
 
         dc.state.setValue(TurnPath.repeatedIds, repeatedIds);
-        
+
         // set the activity processed state (default is true)
         dc.state.setValue(TurnPath.activityProcessed, this.activityProcessed.getValue(dc.state));
 

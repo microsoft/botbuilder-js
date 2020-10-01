@@ -5,8 +5,8 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { DialogTurnResult, DialogContext, Dialog } from 'botbuilder-dialogs';
-import { ValueExpression, StringExpression, BoolExpression, EnumExpression } from 'adaptive-expressions';
+import { Converters, DialogTurnResult, DialogContext, Dialog } from 'botbuilder-dialogs';
+import { ValueExpression, StringExpression, BoolExpression, EnumExpression, BoolExpressionConverter, EnumExpressionConverter, StringExpressionConverter, ValueExpressionConverter } from 'adaptive-expressions';
 
 export enum ArrayChangeType {
     push = 'push',
@@ -17,6 +17,8 @@ export enum ArrayChangeType {
 }
 
 export class EditArray<O extends object = {}> extends Dialog<O> {
+    public static $kind = 'Microsoft.EditArray';
+
     public constructor();
     public constructor(changeType: ArrayChangeType, itemsProperty: string, value?: any, resultProperty?: string);
     public constructor(changeType?: ArrayChangeType, itemsProperty?: string, value?: any, resultProperty?: string) {
@@ -62,6 +64,14 @@ export class EditArray<O extends object = {}> extends Dialog<O> {
      * An optional expression which if is true will disable this action.
      */
     public disabled?: BoolExpression;
+
+    public converters: Converters<EditArray> = {
+        changeType: new EnumExpressionConverter(ArrayChangeType),
+        itemsProperty: new StringExpressionConverter(),
+        resultProperty: new StringExpressionConverter(),
+        value: new ValueExpressionConverter(),
+        disabled: new BoolExpressionConverter()
+    };
 
     public async beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {
         if (this.disabled && this.disabled.getValue(dc.state)) {

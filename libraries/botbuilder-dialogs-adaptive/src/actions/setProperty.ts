@@ -5,11 +5,13 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { DialogTurnResult, DialogContext, Dialog } from 'botbuilder-dialogs';
-import { ValueExpression, StringExpression, BoolExpression } from 'adaptive-expressions';
+import { ValueExpression, StringExpression, BoolExpression, BoolExpressionConverter, StringExpressionConverter, ValueExpressionConverter } from 'adaptive-expressions';
+import { Converters, DialogTurnResult, DialogContext, Dialog } from 'botbuilder-dialogs';
 import { replaceJsonRecursively } from '../jsonExtensions';
 
 export class SetProperty<O extends object = {}> extends Dialog<O> {
+    public static $kind = 'Microsoft.SetProperty';
+
     public constructor();
     public constructor(property: string, value: any);
     public constructor(property?: string, value?: any) {
@@ -32,6 +34,12 @@ export class SetProperty<O extends object = {}> extends Dialog<O> {
      * An optional expression which if is true will disable this action.
      */
     public disabled?: BoolExpression;
+
+    public converters: Converters<SetProperty> = {
+        property: new StringExpressionConverter(),
+        value: new ValueExpressionConverter(),
+        disabled: new BoolExpressionConverter()
+    };
 
     public async beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {
         if (this.disabled && this.disabled.getValue(dc.state)) {

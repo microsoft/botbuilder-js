@@ -10,6 +10,8 @@ import { Activity, ActivityTypes } from 'botbuilder-core';
 import { AssertReplyActivity } from './assertReplyActivity';
 
 export class AssertReplyOneOf extends AssertReplyActivity {
+    public static $kind = 'Microsoft.Test.AssertReplyOneOf';
+
     /**
      * The text variations.
      */

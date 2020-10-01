@@ -6,6 +6,6 @@
  * Licensed under the MIT License.
  */
 
-export interface Converter {
-    convert(value: any): any;
+export interface CustomDeserializer {
+    load(config: any, type: new () => {}): any;
 }

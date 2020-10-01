@@ -10,6 +10,8 @@ import { Activity, ActivityTypes } from 'botbuilder-core';
 import { AssertReplyActivity } from './assertReplyActivity';
 
 export class AssertReply extends AssertReplyActivity {
+    public static $kind = 'Microsoft.Test.AssertReply';
+
     /**
      * The text value to look for in the reply.
      */

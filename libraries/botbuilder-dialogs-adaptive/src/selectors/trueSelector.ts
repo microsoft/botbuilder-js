@@ -6,6 +6,7 @@
  * Licensed under the MIT License.
  */
 import { ExpressionParserInterface, ExpressionParser } from 'adaptive-expressions';
+import { Converters } from 'botbuilder-dialogs';
 import { TriggerSelector } from '../triggerSelector';
 import { OnCondition } from '../conditions';
 import { ActionContext } from '../actionContext';
@@ -14,6 +15,8 @@ import { ActionContext } from '../actionContext';
  * Select all rules which evaluate to true.
  */
 export class TrueSelector implements TriggerSelector {
+    public static $kind = 'Microsoft.TrueSelector';
+
     private _conditionals: OnCondition[];
     private _evaluate: boolean;
 
@@ -21,6 +24,8 @@ export class TrueSelector implements TriggerSelector {
      * Gets or sets the expression parser to use.
      */
     public parser: ExpressionParserInterface = new ExpressionParser()
+
+    public converters: Converters<TrueSelector> = {};
 
     public initialize(conditionals: OnCondition[], evaluate: boolean): void {
         this._conditionals = conditionals;

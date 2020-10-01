@@ -11,6 +11,7 @@ import { Expression, ExpressionParserInterface } from 'adaptive-expressions';
 import { OnIntent } from './onIntent';
 
 export class OnChooseIntent extends OnIntent {
+    public static $kind = 'Microsoft.OnChooseIntent';
 
     public intents: string[] = [];
 

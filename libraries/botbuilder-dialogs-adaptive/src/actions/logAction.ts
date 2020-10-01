@@ -5,13 +5,16 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { DialogTurnResult, DialogContext, Dialog } from 'botbuilder-dialogs';
+import { StringExpression, BoolExpression, BoolExpressionConverter, StringExpressionConverter } from 'adaptive-expressions';
 import { Activity, ActivityTypes } from 'botbuilder-core';
+import { Converters, DialogTurnResult, DialogContext, Dialog } from 'botbuilder-dialogs';
 import { TemplateInterface } from '../template';
 import { TextTemplate } from '../templates';
-import { StringExpression, BoolExpression } from 'adaptive-expressions';
+import { TextTemplateConverter } from '../converters';
 
 export class LogAction<O extends object = {}> extends Dialog<O> {
+    public static $kind = 'Microsoft.LogAction';
+
     /**
      * Creates a new `SendActivity` instance.
      * @param template The text template to log.
@@ -45,6 +48,13 @@ export class LogAction<O extends object = {}> extends Dialog<O> {
      */
     public disabled?: BoolExpression;
 
+    public converters: Converters<LogAction> = {
+        text: new TextTemplateConverter(),
+        traceActivity: new BoolExpressionConverter(),
+        label: new StringExpressionConverter(),
+        disabled: new BoolExpressionConverter()
+    };
+
     public async beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {
         if (this.disabled && this.disabled.getValue(dc.state)) {
             return await dc.endDialog();
@@ -56,8 +66,8 @@ export class LogAction<O extends object = {}> extends Dialog<O> {
         this.telemetryClient.trackEvent({
             name: 'GeneratorResult',
             properties: {
-                'template':this.text,
-                'result': msg || '' 
+                'template': this.text,
+                'result': msg || ''
             }
         });
 
@@ -67,7 +77,7 @@ export class LogAction<O extends object = {}> extends Dialog<O> {
         if (this.label) {
             label = this.label.getValue(dc.state);
         } else {
-            if (dc.parent && dc.parent.activeDialog && dc.parent.activeDialog.id)  {
+            if (dc.parent && dc.parent.activeDialog && dc.parent.activeDialog.id) {
                 label = dc.parent.activeDialog.id;
             }
         }

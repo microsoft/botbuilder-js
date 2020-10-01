@@ -5,12 +5,11 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { DialogContext, Choice, ListStyle, ChoiceFactoryOptions, FindChoicesOptions, ChoiceFactory, recognizeChoices, ModelResult, FoundChoice } from 'botbuilder-dialogs';
 import { Activity } from 'botbuilder-core';
+import { Converters, DialogContext, Choice, ListStyle, ChoiceFactoryOptions, FindChoicesOptions, ChoiceFactory, recognizeChoices, ModelResult, FoundChoice } from 'botbuilder-dialogs';
 import { InputDialog, InputState } from './inputDialog';
 import { ChoiceSet } from './choiceSet';
-import { ObjectExpression, StringExpression, ArrayExpression, EnumExpression } from 'adaptive-expressions';
-
+import { ObjectExpression, StringExpression, EnumExpression, ArrayExpressionConverter, EnumExpressionConverter, ObjectExpressionConverter, StringExpressionConverter } from 'adaptive-expressions';
 
 export enum ChoiceOutputFormat {
     value = 'value',
@@ -22,6 +21,8 @@ export interface ChoiceInputOptions {
 }
 
 export class ChoiceInput extends InputDialog {
+    public static $kind = 'Microsoft.ChoiceInput';
+
     /**
      * Default options for rendering the choices to the user based on locale.
      */
@@ -69,6 +70,17 @@ export class ChoiceInput extends InputDialog {
      * Additional options passed to the underlying `recognizeChoices()` function.
      */
     public recognizerOptions?: ObjectExpression<FindChoicesOptions> = new ObjectExpression();
+
+    public get converters(): Converters<ChoiceInput> {
+        return Object.assign({}, super.converters, {
+            choices: new ArrayExpressionConverter<Choice>(),
+            style: new EnumExpressionConverter(ListStyle),
+            defaultLocale: new StringExpressionConverter(),
+            outputFormat: new EnumExpressionConverter(ChoiceOutputFormat),
+            choiceOptions: new ObjectExpressionConverter<ChoiceFactoryOptions>(),
+            recognizerOptions: new ObjectExpressionConverter<FindChoicesOptions>()
+        });
+    }
 
     protected onInitializeOptions(dc: DialogContext, options: ChoiceInputOptions): ChoiceInputOptions {
         if (!options || !options.choices || options.choices.length == 0) {

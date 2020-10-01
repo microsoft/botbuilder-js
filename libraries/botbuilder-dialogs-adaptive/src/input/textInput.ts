@@ -5,13 +5,20 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { DialogContext } from 'botbuilder-dialogs';
+import { StringExpression, StringExpressionConverter } from 'adaptive-expressions';
+import { Converters, DialogContext } from 'botbuilder-dialogs';
 import { InputDialog, InputState } from './inputDialog';
-import { StringExpression } from 'adaptive-expressions';
 
 export class TextInput extends InputDialog {
+    public static $kind = 'Microsoft.TextInput';
 
     public outputFormat: StringExpression;
+
+    public get converters(): Converters<TextInput> {
+        return Object.assign({}, super.converters, {
+            outputFormat: new StringExpressionConverter()
+        });
+    }
 
     protected onComputeId(): string {
         return `TextInput[${ this.prompt && this.prompt.toString() }]`;

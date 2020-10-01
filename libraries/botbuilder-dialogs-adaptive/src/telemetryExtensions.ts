@@ -6,8 +6,8 @@
  * Licensed under the MIT License.
  */
 
-import { DialogManager } from 'botbuilder-dialogs';
 import { BotTelemetryClient } from 'botbuilder-core';
+import { DialogManager } from 'botbuilder-dialogs';
 
 /**
  * The key to get or set telemetry client from turn state.

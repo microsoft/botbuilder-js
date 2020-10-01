@@ -6,15 +6,12 @@
  * Licensed under the MIT License.
  */
 
-import { Converter, ResourceExplorer } from 'botbuilder-dialogs-declarative';
+import { Converter } from 'botbuilder-dialogs';
+import { ResourceExplorer } from 'botbuilder-dialogs-declarative';
 import { Recognizer } from '../recognizers';
 
-export class RecognizerConverter implements Converter {
-    private _resourceExplorer: ResourceExplorer;
-
-    public constructor(resouceExplorer: ResourceExplorer) {
-        this._resourceExplorer = resouceExplorer;
-    }
+export class RecognizerConverter implements Converter<any, Recognizer> {
+    public constructor(private readonly _resourceExplorer: ResourceExplorer) { }
 
     public convert(value: string | object): Recognizer {
         if (typeof value == 'string') {
@@ -22,5 +19,21 @@ export class RecognizerConverter implements Converter {
             return recognizer;
         }
         return value as Recognizer;
+    }
+}
+
+export class RecognizerListConverter implements Converter<any[], Recognizer[]> {
+    private _recognizerConverter: RecognizerConverter;
+
+    public constructor(resourceExplorer: ResourceExplorer) {
+        this._recognizerConverter = new RecognizerConverter(resourceExplorer);
+    }
+
+    public convert(value: string[] | object[]): Recognizer[] {
+        const recognizers: Recognizer[] = [];
+        value.forEach((item: string | object) => {
+            recognizers.push(this._recognizerConverter.convert(item));
+        });
+        return recognizers;
     }
 }

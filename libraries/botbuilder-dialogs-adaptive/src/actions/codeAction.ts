@@ -5,9 +5,9 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
+import { BoolExpression, BoolExpressionConverter } from 'adaptive-expressions';
 import { StringUtils } from 'botbuilder-core';
-import { DialogTurnResult, DialogContext, Dialog } from 'botbuilder-dialogs';
-import { BoolExpression } from 'adaptive-expressions';
+import { Converters, DialogTurnResult, DialogContext, Dialog } from 'botbuilder-dialogs';
 
 export type CodeActionHandler = (dc: DialogContext, options?: object) => Promise<DialogTurnResult>;
 
@@ -15,6 +15,10 @@ export class CodeAction<O extends object = {}> extends Dialog<O> {
     private codeHandler: CodeActionHandler;
 
     public disabled?: BoolExpression;
+    
+    public converters: Converters<CodeAction> = {
+        disabled: new BoolExpressionConverter()
+    };
 
     public constructor(codeHandler: CodeActionHandler) {
         super();

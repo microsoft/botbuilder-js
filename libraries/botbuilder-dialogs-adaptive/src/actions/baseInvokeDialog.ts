@@ -5,11 +5,12 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { Dialog, DialogDependencies, DialogContext, DialogTurnResult } from 'botbuilder-dialogs';
-import { ValueExpression, ObjectExpression, BoolExpression } from 'adaptive-expressions';
+import { ValueExpression, ObjectExpression, BoolExpression, ObjectExpressionConverter, BoolExpressionConverter } from 'adaptive-expressions';
+import { Converters, Dialog, DialogDependencies, DialogContext, DialogTurnResult } from 'botbuilder-dialogs';
+import { ResourceExplorer } from 'botbuilder-dialogs-declarative';
 import { DialogExpression } from '../expressions';
 import { replaceJsonRecursively } from '../jsonExtensions';
-
+import { DialogExpressionConverter } from '../converters';
 
 export class BaseInvokeDialog<O extends object = {}> extends Dialog<O> implements DialogDependencies {
     public constructor(dialogIdToCall?: string, bindingOptions?: O) {
@@ -36,6 +37,14 @@ export class BaseInvokeDialog<O extends object = {}> extends Dialog<O> implement
      * A value indicating whether to have the new dialog should process the activity.
      */
     public activityProcessed: BoolExpression = new BoolExpression(true);
+
+    public get converters(): Converters<BaseInvokeDialog> {
+        return {
+            options: new ObjectExpressionConverter<object>(),
+            dialog: (resourceExplorer: ResourceExplorer) => new DialogExpressionConverter(resourceExplorer),
+            activityProcessed: new BoolExpressionConverter()
+        };
+    }
 
     public beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult<any>> {
         throw new Error('Method not implemented.');

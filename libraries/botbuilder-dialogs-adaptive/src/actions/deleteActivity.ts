@@ -5,10 +5,12 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { Dialog, DialogContext, DialogTurnResult } from 'botbuilder-dialogs';
-import { StringExpression, BoolExpression } from 'adaptive-expressions';
+import { Converters, Dialog, DialogContext, DialogTurnResult } from 'botbuilder-dialogs';
+import { StringExpression, BoolExpression, StringExpressionConverter, BoolExpressionConverter } from 'adaptive-expressions';
 
 export class DeleteActivity<O extends object = {}> extends Dialog<O> {
+    public static $kind = 'Microsoft.DeleteActivity';
+
     public constructor();
     public constructor(activityId?: string) {
         super();
@@ -24,6 +26,11 @@ export class DeleteActivity<O extends object = {}> extends Dialog<O> {
      * An optional expression which if is true will disable this action.
      */
     public disabled?: BoolExpression;
+
+    public converters: Converters<DeleteActivity> = {
+        activityId: new StringExpressionConverter(),
+        disabled: new BoolExpressionConverter()
+    };
 
     public async beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {
         if (this.disabled && this.disabled.getValue(dc.state)) {

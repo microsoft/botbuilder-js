@@ -5,14 +5,16 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { DialogTurnResult, Dialog, DialogContext } from 'botbuilder-dialogs';
+import { StringExpression, BoolExpression, BoolExpressionConverter, StringExpressionConverter } from 'adaptive-expressions';
+import { Converters, DialogTurnResult, Dialog, DialogContext } from 'botbuilder-dialogs';
 import { ActionScope, ActionScopeResult } from './actionScope';
-import { StringExpression, BoolExpression } from 'adaptive-expressions';
 
 const INDEX = 'dialog.foreach.index';
 const VALUE = 'dialog.foreach.value';
 
 export class ForEach<O extends object = {}> extends ActionScope<O> {
+    public static $kind = 'Microsoft.Foreach';
+
     public constructor();
     public constructor(itemsProperty: string, actions: Dialog[]);
     public constructor(itemsProperty?: string, actions?: Dialog[]) {
@@ -40,6 +42,13 @@ export class ForEach<O extends object = {}> extends ActionScope<O> {
      * An optional expression which if is true will disable this action.
      */
     public disabled?: BoolExpression;
+
+    public converters: Converters<ForEach> = {
+        itemsProperty: new StringExpressionConverter(),
+        index: new StringExpressionConverter(),
+        value: new StringExpressionConverter(),
+        disabled: new BoolExpressionConverter()
+    };
 
     public getDependencies(): Dialog[] {
         return this.actions;

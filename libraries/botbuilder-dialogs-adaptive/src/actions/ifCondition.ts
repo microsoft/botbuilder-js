@@ -5,12 +5,14 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
+import { BoolExpression, BoolExpressionConverter } from 'adaptive-expressions';
 import { StringUtils } from 'botbuilder-core';
-import { DialogTurnResult, Dialog, DialogDependencies, DialogContext } from 'botbuilder-dialogs';
+import { Converters, DialogTurnResult, Dialog, DialogDependencies, DialogContext } from 'botbuilder-dialogs';
 import { ActionScope } from './actionScope';
-import { BoolExpression } from 'adaptive-expressions';
 
 export class IfCondition<O extends object = {}> extends Dialog<O> implements DialogDependencies {
+    public static $kind = 'Microsoft.IfCondition';
+
     public constructor();
     public constructor(condition?: string, elseActions?: Dialog[]) {
         super();
@@ -32,6 +34,11 @@ export class IfCondition<O extends object = {}> extends Dialog<O> implements Dia
      * The actions to run if [condition](#condition) returns false.
      */
     public elseActions: Dialog[] = [];
+
+    public converters: Converters<IfCondition> = {
+        condition: new BoolExpressionConverter(),
+        disabled: new BoolExpressionConverter()
+    };
 
     protected get trueScope(): ActionScope {
         if (!this._trueScope) {

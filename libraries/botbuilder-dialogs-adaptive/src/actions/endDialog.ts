@@ -5,11 +5,13 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { DialogTurnResult, DialogContext, Dialog } from 'botbuilder-dialogs';
-import { ValueExpression, BoolExpression } from 'adaptive-expressions';
+import { Converters, DialogTurnResult, DialogContext, Dialog } from 'botbuilder-dialogs';
+import { ValueExpression, BoolExpression, BoolExpressionConverter, ValueExpressionConverter } from 'adaptive-expressions';
 import { replaceJsonRecursively } from '../jsonExtensions';
 
 export class EndDialog<O extends object = {}> extends Dialog<O> {
+    public static $kind = 'Microsoft.EndDialog';
+
     /**
      * Creates a new `EndDialog` instance.
      * @param value (Optional) A value expression for the result to be returned to the caller
@@ -30,6 +32,11 @@ export class EndDialog<O extends object = {}> extends Dialog<O> {
      */
     public disabled?: BoolExpression;
 
+    public converters: Converters<EndDialog> = {
+        value: new ValueExpressionConverter(),
+        disabled: new BoolExpressionConverter()
+    };
+
     public async beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {
         if (this.disabled && this.disabled.getValue(dc.state)) {
             return await dc.endDialog();
@@ -37,7 +44,7 @@ export class EndDialog<O extends object = {}> extends Dialog<O> {
 
         if (this.value) {
             let value = this.value.getValue(dc.state);
-            
+
             if (value) {
                 value = replaceJsonRecursively(dc.state, value);
             }

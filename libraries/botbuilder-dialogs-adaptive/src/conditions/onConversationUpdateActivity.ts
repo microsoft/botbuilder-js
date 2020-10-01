@@ -13,6 +13,7 @@ import { OnActivity } from './onActivity';
  * Actions triggered when ConversationUpdateActivity is received.
  */
 export class OnConversationUpdateActivity extends OnActivity {
+    public static $kind = 'Microsoft.OnConversationUpdateActivity';
 
     public constructor(actions: Dialog[] = [], condition?: string) {
         super(ActivityTypes.ConversationUpdate, actions, condition);

@@ -6,9 +6,9 @@
  * Licensed under the MIT License.
  */
 
-import { DialogContext } from 'botbuilder-dialogs';
+import { Converters, DialogContext } from 'botbuilder-dialogs';
 import { LanguageGenerator } from '../languageGenerator';
-import { LanguagePolicy } from '../languagePolicy';
+import { LanguagePolicy, LanguagePolicyConverter } from '../languagePolicy';
 import { languagePolicyKey } from '../languageGeneratorExtensions';
 /**
  * Base class which applies language policy to tryGetGenerator.
@@ -18,6 +18,10 @@ export abstract class MultiLanguageGeneratorBase implements LanguageGenerator {
      * Language policy required by language generator.
      */
     public languagePolicy: LanguagePolicy;
+
+    public converters: Converters<MultiLanguageGeneratorBase> = {
+        languagePolicy: new LanguagePolicyConverter()
+    };
 
     /**
      * Abstract method to get a language generator by locale.

@@ -6,11 +6,11 @@
  * Licensed under the MIT License.
  */
 
-import { DialogContext } from 'botbuilder-dialogs';
-import { RecognizerResult, Activity } from 'botbuilder-core';
+import { StringExpression, IntExpression, NumberExpression, BoolExpression, ArrayExpression, ObjectExpression, ArrayExpressionConverter, BoolExpressionConverter, IntExpressionConverter, NumberExpressionConverter, ObjectExpressionConverter, StringExpressionConverter } from 'adaptive-expressions';
+import { Activity, RecognizerResult } from 'botbuilder-core';
 import { RankerTypes, QnAMakerMetadata, QnAMaker, QnAMakerEndpoint, QnAMakerOptions, QnAMakerResult, QnARequestContext } from 'botbuilder-ai';
+import { Converters, DialogContext } from 'botbuilder-dialogs';
 import { Recognizer } from '../recognizers/recognizer';
-import { StringExpression, IntExpression, NumberExpression, BoolExpression, ArrayExpression, ObjectExpression } from 'adaptive-expressions';
 
 const intentPrefix = 'intent=';
 
@@ -18,6 +18,7 @@ const intentPrefix = 'intent=';
  * A recognizer which uses QnAMaker KB to recognize intents.
  */
 export class QnAMakerRecognizer extends Recognizer {
+    public static $kind = 'Microsoft.QnAMakerRecognizer';
     public static readonly qnaMatchIntent = 'QnAMatch';
 
     /**
@@ -74,6 +75,19 @@ export class QnAMakerRecognizer extends Recognizer {
      * An expression to evaluate to set QnAId parameter.
      */
     public qnaId: IntExpression = new IntExpression(0);
+
+    public converters: Converters<QnAMakerRecognizer> = {
+        knowledgeBaseId: new StringExpressionConverter(),
+        hostname: new StringExpressionConverter(),
+        endpointKey: new StringExpressionConverter(),
+        top: new IntExpressionConverter(),
+        threshold: new NumberExpressionConverter(),
+        rankerType: new StringExpressionConverter(),
+        includeDialogNameInMetadata: new BoolExpressionConverter(),
+        metadata: new ArrayExpressionConverter(),
+        context: new ObjectExpressionConverter(),
+        qnaId: new IntExpressionConverter()
+    };
 
     /**
      * Initializes a new instance of `QnAMakerRecognizer`.
@@ -152,10 +166,12 @@ export class QnAMakerRecognizer extends Recognizer {
             }
 
             recognizerResult.entities['answer'] = [topAnswer.answer];
-            recognizerResult.entities['$instance'] = { answer: [Object.assign(topAnswer, {
-                startIndex: 0,
-                endIndex: activity.text.length
-            })] };
+            recognizerResult.entities['$instance'] = {
+                answer: [Object.assign(topAnswer, {
+                    startIndex: 0,
+                    endIndex: activity.text.length
+                })]
+            };
             recognizerResult['answers'] = answers;
         } else {
             recognizerResult.intents['None'] = { score: 1 };

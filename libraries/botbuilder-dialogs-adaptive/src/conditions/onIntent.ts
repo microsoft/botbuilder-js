@@ -5,9 +5,9 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { Dialog, TurnPath } from 'botbuilder-dialogs';
 import { ExpressionParserInterface, Expression, ExpressionType } from 'adaptive-expressions';
 import { RecognizerResult } from 'botbuilder-core';
+import { Dialog, TurnPath } from 'botbuilder-dialogs';
 import { OnDialogEvent } from './onDialogEvent';
 import { ActionContext } from '../actionContext';
 import { AdaptiveEvents } from '../adaptiveEvents';
@@ -19,6 +19,8 @@ import { ActionChangeType } from '../actionChangeType';
  * Actions triggered when an Activity has been received and the recognized intents and entities match specified list of intent and entity filters.
  */
 export class OnIntent extends OnDialogEvent {
+    public static $kind = 'Microsoft.OnIntent';
+
     /**
      * Gets or sets intent to match on.
      */

@@ -6,13 +6,15 @@
  * Licensed under the MIT License.
  */
 import * as Recognizers from '@microsoft/recognizers-text-choice';
+import { StringExpression, ObjectExpression, EnumExpression, EnumExpressionConverter, ObjectExpressionConverter, StringExpressionConverter } from 'adaptive-expressions';
 import { Activity } from 'botbuilder-core';
-import { DialogContext, Choice, ListStyle, ChoiceFactoryOptions, ChoiceFactory, recognizeChoices } from 'botbuilder-dialogs';
+import { Converters, DialogContext, Choice, ListStyle, ChoiceFactoryOptions, ChoiceFactory, recognizeChoices } from 'botbuilder-dialogs';
 import { InputDialog, InputState } from './inputDialog';
 import { ChoiceSet } from './choiceSet';
-import { StringExpression, ObjectExpression, ArrayExpression, EnumExpression } from 'adaptive-expressions';
 
 export class ConfirmInput extends InputDialog {
+    public static $kind = 'Microsoft.ConfirmInput';
+
     /**
      * Default options for rendering the choices to the user based on locale.
      */
@@ -55,6 +57,16 @@ export class ConfirmInput extends InputDialog {
      * The expression of output format.
      */
     public outputFormat: StringExpression;
+
+    public get converters(): Converters<ConfirmInput> {
+        return Object.assign({}, super.converters, {
+            defaultLocale: new StringExpressionConverter(),
+            style: new EnumExpressionConverter(ListStyle),
+            choiceOptions: new ObjectExpressionConverter<ChoiceFactoryOptions>(),
+            confirmChoices: new ObjectExpressionConverter<ChoiceSet>(),
+            outputFormat: new StringExpressionConverter()
+        });
+    }
 
     protected onComputeId(): string {
         return `ConfirmInput[${ this.prompt && this.prompt.toString() }]`;

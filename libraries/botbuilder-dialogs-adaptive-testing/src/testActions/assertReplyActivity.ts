@@ -6,12 +6,15 @@
  * Licensed under the MIT License.
  */
 
-import { Activity, TurnContext } from 'botbuilder-core';
 import { ExpressionParser } from 'adaptive-expressions';
+import { Activity, TurnContext } from 'botbuilder-core';
+import { Converters } from 'botbuilder-dialogs';
 import { TestAction } from '../testAction';
 import { AdaptiveTestAdapter } from '../adaptiveTestAdapter';
 
 export class AssertReplyActivity implements TestAction {
+    public static $kind = 'Microsoft.Test.AssertReplyActivity';
+
     /**
      * Description of what this assertion is.
      */
@@ -26,6 +29,8 @@ export class AssertReplyActivity implements TestAction {
      * The expressions for assertions.
      */
     public assertions: string[];
+
+    public converters: Converters<AssertReplyActivity> = {};
 
     public getConditionDescription(): string {
         return this.description || this.assertions.join('\n');

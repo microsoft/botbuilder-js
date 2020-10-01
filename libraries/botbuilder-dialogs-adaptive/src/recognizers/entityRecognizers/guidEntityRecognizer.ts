@@ -11,6 +11,8 @@ import { ModelResult } from 'botbuilder-dialogs';
 import { TextEntityRecognizer } from './textEntityRecognizer';
 
 export class GuidEntityRecognizer extends TextEntityRecognizer {
+    public static $kind = 'Microsoft.GuidEntityRecognizer';
+
     protected recognize(text: string, culture: string): ModelResult[] {
         return recognizeGUID(text, culture);
     }

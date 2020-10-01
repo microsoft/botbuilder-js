@@ -5,13 +5,20 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { DialogTurnResult, DialogDependencies, Dialog, DialogContext } from 'botbuilder-dialogs';
-import { Expression, ExpressionParser } from 'adaptive-expressions';
+import { BoolExpression, BoolExpressionConverter, Expression, ExpressionConverter, ExpressionParser } from 'adaptive-expressions';
+import { Converter, Converters, DialogTurnResult, DialogDependencies, Dialog, DialogContext } from 'botbuilder-dialogs';
 import { ActionScope } from './actionScope';
 import { Case } from './case';
-import { BoolExpression } from 'adaptive-expressions';
+
+class CasesConverter implements Converter<any[], Case[]> {
+    public convert(value: { value: string; actions: Dialog[] }[]): Case[] {
+        return value.map(item => new Case(item.value, item.actions));
+    }
+}
 
 export class SwitchCondition<O extends object = {}> extends Dialog<O> implements DialogDependencies {
+    public static $kind = 'Microsoft.SwitchCondition';
+
     public constructor();
     public constructor(condition: string, defaultDialogs: Dialog[], cases: Case[]);
     public constructor(condition?: string, defaultDialogs?: Dialog[], cases?: Case[]) {
@@ -40,6 +47,12 @@ export class SwitchCondition<O extends object = {}> extends Dialog<O> implements
      * An optional expression which if is true will disable this action.
      */
     public disabled?: BoolExpression;
+
+    public converters: Converters<SwitchCondition> = {
+        condition: new ExpressionConverter(),
+        cases: new CasesConverter(),
+        disabled: new BoolExpressionConverter()
+    };
 
     private _caseExpresssions: any;
 

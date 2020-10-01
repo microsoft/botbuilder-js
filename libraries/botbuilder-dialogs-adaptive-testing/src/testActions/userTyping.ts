@@ -6,15 +6,20 @@
  * Licensed under the MIT License.
  */
 
-import { TurnContext, ActivityTypes } from 'botbuilder-core';
+import { ActivityTypes, TurnContext } from 'botbuilder-core';
+import { Converters } from 'botbuilder-dialogs';
 import { TestAction } from '../testAction';
 import { AdaptiveTestAdapter } from '../adaptiveTestAdapter';
 
 export class UserTyping implements TestAction {
+    public static $kind = 'Microsoft.Test.UserTyping';
+
     /**
      * If user is set then the channalAccount.id and channelAccount.name will be from user.
      */
     public user: string;
+
+    public converters: Converters<UserTyping> = {};
 
     public async execute(testAdapter: AdaptiveTestAdapter, callback: (context: TurnContext) => Promise<any>): Promise<any> {
         const typing = testAdapter.makeActivity();

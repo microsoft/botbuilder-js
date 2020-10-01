@@ -6,16 +6,24 @@
  * Licensed under the MIT License.
  */
 import * as Recognizers from '@microsoft/recognizers-text-number';
+import { StringExpression, NumberExpression, NumberExpressionConverter, StringExpressionConverter } from 'adaptive-expressions';
 import { Activity } from 'botbuilder-core';
-import { DialogContext } from 'botbuilder-dialogs';
+import { Converters, DialogContext } from 'botbuilder-dialogs';
 import { InputDialog, InputState } from './inputDialog';
-import { StringExpression, NumberExpression } from 'adaptive-expressions';
 
 export class NumberInput extends InputDialog {
+    public static $kind = 'Microsoft.NumberInput';
 
     public defaultLocale?: StringExpression;
 
     public outputFormat?: NumberExpression;
+
+    public get converters(): Converters<NumberInput> {
+        return Object.assign({}, super.converters, {
+            defaultLocale: new StringExpressionConverter(),
+            outputFormat: new NumberExpressionConverter()
+        });
+    }
 
     protected onComputeId(): string {
         return `NumberInput[${ this.prompt && this.prompt.toString() }]`;

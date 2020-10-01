@@ -6,13 +6,15 @@
  * Licensed under the MIT License.
  */
 
-import { IntExpression, ExpressionParser, BoolExpression } from 'adaptive-expressions';
+import { IntExpression, ExpressionParser, BoolExpression, BoolExpressionConverter } from 'adaptive-expressions';
 import { Activity, ActivityTypes, getTopScoringIntent, RecognizerResult, StringUtils, TurnContext, telemetryTrackDialogView } from 'botbuilder-core';
-import { Dialog, DialogContainer, DialogContext, DialogDependencies, DialogEvent, DialogInstance, DialogPath, DialogReason, DialogState, DialogTurnResult, DialogTurnStatus, TurnPath } from 'botbuilder-dialogs';
+import { Converters, Dialog, DialogContainer, DialogContext, DialogDependencies, DialogEvent, DialogInstance, DialogPath, DialogReason, DialogState, DialogTurnResult, DialogTurnStatus, TurnPath } from 'botbuilder-dialogs';
+import { ResourceExplorer } from 'botbuilder-dialogs-declarative';
 import { ActionContext } from './actionContext';
 import { AdaptiveDialogState } from './adaptiveDialogState';
 import { AdaptiveEvents } from './adaptiveEvents';
 import { OnCondition } from './conditions';
+import { LanguageGeneratorConverter, RecognizerConverter } from './converters';
 import { EntityAssignment } from './entityAssignment';
 import { EntityAssignments } from './entityAssignments';
 import { EntityInfo, NormalizedEntityInfos } from './entityInfo';
@@ -25,6 +27,7 @@ import { FirstSelector } from './selectors';
 import { TriggerSelector } from './triggerSelector';
 
 export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
+    public static $kind = 'Microsoft.AdaptiveDialog';
     public static conditionTracker = 'dialog._tracker.conditions';
 
     private readonly adaptiveKey = '_adaptive';
@@ -52,7 +55,7 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
     public constructor(dialogId?: string) {
         super(dialogId);
     }
-
+    
     /**
      * Optional. Recognizer used to analyze any message utterances.
      */
@@ -99,6 +102,12 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
     public get schema(): object | undefined {
         return this.dialogSchema ? this.dialogSchema.schema : undefined;
     }
+
+    public converters: Converters<AdaptiveDialog> = {
+        generator: new LanguageGeneratorConverter(),
+        recognizer: (resourceExplorer: ResourceExplorer) => new RecognizerConverter(resourceExplorer),
+        autoEndDialog: new BoolExpressionConverter()
+    };
 
     protected ensureDependenciesInstalled(): void {
         if (this.installedDependencies) {
@@ -208,8 +217,8 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
         dc.activeDialog.state[this.adaptiveKey] = {};
 
         const properties: { [key: string]: string } = {
-            'DialogId' : this.id,  
-            'Kind' : 'Microsoft.AdaptiveDialog',
+            'DialogId': this.id,
+            'Kind': 'Microsoft.AdaptiveDialog',
         };
         this.telemetryClient.trackEvent({
             name: 'AdaptiveDialogStart',
@@ -236,15 +245,15 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
 
     public async endDialog(turnContext: TurnContext, instance: DialogInstance, reason: DialogReason): Promise<void> {
         const properties: { [key: string]: string } = {
-            'DialogId' : this.id, 
-            'Kind' : 'Microsoft.AdaptiveDialog' 
+            'DialogId': this.id,
+            'Kind': 'Microsoft.AdaptiveDialog'
         };
         if (reason == DialogReason.cancelCalled) {
             this.telemetryClient.trackEvent({
-                name: 'AdaptiveDialogCancel', 
+                name: 'AdaptiveDialogCancel',
                 properties: properties
             });
-        } else if (reason == DialogReason.endCalled){
+        } else if (reason == DialogReason.endCalled) {
             this.telemetryClient.trackEvent({
                 name: 'AdaptiveDialogComplete',
                 properties: properties
@@ -496,7 +505,7 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
             const evt = this.triggers[selection[0]];
             const parser = new ExpressionParser();
             const properties: { [key: string]: string } = {
-                'DialogId': this.id, 
+                'DialogId': this.id,
                 'Expression': evt.getExpression(parser).toString(),
                 'Kind': `Microsoft.${ evt.constructor.name }`,
                 'ConditionId': evt.id
@@ -879,8 +888,7 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
                 }
                 else {
                     if (op && name == this.propertyNameKey) {
-                        for(const property in val)
-                        {
+                        for (const property in val) {
                             const newInfo: Partial<EntityInfo> = Object.assign({}, info);
                             newInfo.property = property;
                             infos.push(newInfo);

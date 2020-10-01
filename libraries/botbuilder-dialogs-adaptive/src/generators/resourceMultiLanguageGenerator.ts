@@ -13,6 +13,8 @@ import { LanguageGeneratorManager } from './languageGeneratorManager';
 import { languageGeneratorManagerKey } from '../languageGeneratorExtensions';
 
 export class ResourceMultiLanguageGenerator extends MultiLanguageGeneratorBase {
+    public static $kind = 'Microsoft.ResourceMultiLanguageGenerator';
+
     /**
      * Initializes a new instance of the ResourceMultiLanguageGenerator class.
      * @param resourceId Resource id of LG file.

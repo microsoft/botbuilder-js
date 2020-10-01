@@ -5,13 +5,15 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { Recognizer } from '../recognizers';
-import { StringExpression, ArrayExpression, BoolExpression } from 'adaptive-expressions';
-import { LuisPredictionOptions, LuisRecognizerOptionsV3, LuisRecognizer, LuisApplication, LuisTelemetryConstants} from 'botbuilder-ai';
-import { DialogContext } from 'botbuilder-dialogs';
+import { StringExpression, ArrayExpression, BoolExpression, ArrayExpressionConverter, BoolExpressionConverter, StringExpressionConverter } from 'adaptive-expressions';
 import { Activity, RecognizerResult } from 'botbuilder-core';
+import { LuisPredictionOptions, LuisRecognizerOptionsV3, LuisRecognizer, LuisApplication, LuisTelemetryConstants } from 'botbuilder-ai';
+import { Converters, DialogContext } from 'botbuilder-dialogs';
+import { Recognizer } from '../recognizers';
 
 export class LuisAdaptiveRecognizer extends Recognizer {
+    public static $kind = 'Microsoft.LuisRecognizer';
+
     /**
      * LUIS application ID.
      */
@@ -51,12 +53,20 @@ export class LuisAdaptiveRecognizer extends Recognizer {
      */
     public predictionOptions: LuisPredictionOptions;
 
+    public converters: Converters<LuisAdaptiveRecognizer> = {
+        applicationId: new StringExpressionConverter(),
+        dynamicLists: new ArrayExpressionConverter(),
+        endpoint: new StringExpressionConverter(),
+        endpointKey: new StringExpressionConverter(),
+        logPersonalInformation: new BoolExpressionConverter()
+    };
+
     public async recognize(dialogContext: DialogContext, activity: Activity, telemetryProperties?: { [key: string]: string }, telemetryMetrics?: { [key: string]: number }) {
         // Validate passed in activity matches turn activity 
         const context = dialogContext.context;
-        const utteranceMatches: boolean = !activity || 
-            (context.activity.type === activity.type &&  context.activity.text === activity.text);
-        
+        const utteranceMatches: boolean = !activity ||
+            (context.activity.type === activity.type && context.activity.text === activity.text);
+
         if (!utteranceMatches) {
             throw new Error(`TurnContext is different than text`);
         }
@@ -100,10 +110,10 @@ export class LuisAdaptiveRecognizer extends Recognizer {
      * @param dialogContext Dialog context.
      * @returns A dictionary that is sent as properties to BotTelemetryClient.trackEvent method for the LuisResult event.
      */
-    protected  fillRecognizerResultTelemetryProperties(recognizerResult: RecognizerResult, telemetryProperties: { [key: string]: string }, dialogContext: DialogContext): { [key: string]: string } {
+    protected fillRecognizerResultTelemetryProperties(recognizerResult: RecognizerResult, telemetryProperties: { [key: string]: string }, dialogContext: DialogContext): { [key: string]: string } {
         const logPersonalInfo = this.logPersonalInformation.tryGetValue(dialogContext.state);
         const applicationId = this.applicationId.tryGetValue(dialogContext.state);
-        
+
         const topLuisIntent: string = LuisRecognizer.topIntent(recognizerResult);
         const intentScore: number = (recognizerResult.intents[topLuisIntent] && recognizerResult.intents[topLuisIntent].score) || 0;
 

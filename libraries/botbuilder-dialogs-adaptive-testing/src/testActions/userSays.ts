@@ -7,10 +7,13 @@
  */
 
 import { TurnContext } from 'botbuilder-core';
+import { Converters } from 'botbuilder-dialogs';
 import { TestAction } from '../testAction';
 import { AdaptiveTestAdapter } from '../adaptiveTestAdapter';
 
 export class UserSays implements TestAction {
+    public static $kind = 'Microsoft.Test.UserSays';
+
     /**
      * The text to send to the bot.
      */
@@ -20,6 +23,8 @@ export class UserSays implements TestAction {
      * If user is set then the channalAccount.id and channelAccount.name will be from user.
      */
     public user: string;
+
+    public converters: Converters<UserSays> = {};
 
     public async execute(testAdapter: AdaptiveTestAdapter, callback: (context: TurnContext) => Promise<any>): Promise<any> {
         if (!this.text) {

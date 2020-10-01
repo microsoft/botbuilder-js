@@ -16,6 +16,7 @@ import { ActionChangeType } from '../actionChangeType';
  * Actions triggered when an error event has been emitted.
  */
 export class OnError extends OnDialogEvent {
+    public static $kind = 'Microsoft.OnError';
 
     public constructor(actions: Dialog[] = [], condition?: string) {
         super(AdaptiveEvents.error, actions, condition);

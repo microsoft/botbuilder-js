@@ -11,6 +11,8 @@ import { ModelResult } from 'botbuilder-dialogs';
 import { TextEntityRecognizer } from './textEntityRecognizer';
 
 export class IpEntityRecognizer extends TextEntityRecognizer {
+    public static $kind = 'Microsoft.IpEntityRecognizer';
+
     protected recognize(text: string, culture: string): ModelResult[] {
         return recognizeIpAddress(text, culture);
     }

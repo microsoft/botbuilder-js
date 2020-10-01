@@ -6,10 +6,10 @@
  * Licensed under the MIT License.
  */
 import { RecognizerResult, Activity, getTopScoringIntent, BotTelemetryClient, NullTelemetryClient } from 'botbuilder-core';
-import { DialogContext } from 'botbuilder-dialogs';
+import { Configurable, DialogContext } from 'botbuilder-dialogs';
 import { telemetryClientKey } from '../telemetryExtensions';
 
-export class Recognizer {
+export class Recognizer extends Configurable {
 
     /**
      * Recognizers unique ID.

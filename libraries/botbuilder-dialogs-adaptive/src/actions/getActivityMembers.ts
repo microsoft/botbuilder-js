@@ -5,10 +5,12 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { Dialog, DialogContext, DialogTurnResult } from 'botbuilder-dialogs';
-import { StringExpression, BoolExpression } from 'adaptive-expressions';
+import { Converters, Dialog, DialogContext, DialogTurnResult } from 'botbuilder-dialogs';
+import { StringExpression, BoolExpression, BoolExpressionConverter, StringExpressionConverter } from 'adaptive-expressions';
 
 export class GetActivityMembers<O extends object = {}> extends Dialog {
+    public static $kind = 'Microsoft.GetActivityMembers';
+
     public constructor();
     public constructor(activityId?: string, property?: string) {
         super();
@@ -30,6 +32,12 @@ export class GetActivityMembers<O extends object = {}> extends Dialog {
      * An optional expression which if is true will disable this action.
      */
     public disabled?: BoolExpression;
+
+    public converters: Converters<GetActivityMembers> = {
+        activityId: new StringExpressionConverter(),
+        property: new StringExpressionConverter(),
+        disabled: new BoolExpressionConverter()
+    };
 
     public async beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {
         if (this.disabled && this.disabled.getValue(dc.state)) {

@@ -6,6 +6,7 @@
  * Licensed under the MIT License.
  */
 import { ExpressionParser, ExpressionParserInterface } from 'adaptive-expressions';
+import { Converters } from 'botbuilder-dialogs';
 import { OnCondition } from '../conditions/onCondition';
 import { TriggerSelector } from '../triggerSelector';
 import { ActionContext } from '../actionContext';
@@ -14,6 +15,8 @@ import { ActionContext } from '../actionContext';
  * Select the first true rule implementation of TriggerSelector
  */
 export class FirstSelector implements TriggerSelector {
+    public static $kind = 'Microsoft.FirstSelector';
+
     private _conditionals: OnCondition[];
     private _evaluate: boolean;
 
@@ -21,6 +24,8 @@ export class FirstSelector implements TriggerSelector {
      * Gets or sets the expression parser to use.
      */
     public parser: ExpressionParserInterface = new ExpressionParser()
+    
+    public converters: Converters<FirstSelector> = {};
 
     public initialize(conditionals: OnCondition[], evaluate: boolean) {
         this._conditionals = conditionals;

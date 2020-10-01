@@ -6,9 +6,10 @@
  * Licensed under the MIT License.
  */
 
-import { ArrayExpression, StringExpression } from 'adaptive-expressions';
-import { DialogContext, DialogTurnResult, DialogPath, DialogEvent, TurnPath, DialogTurnStatus } from 'botbuilder-dialogs';
+import { ArrayExpression, ArrayExpressionConverter, BoolExpressionConverter, StringExpression, StringExpressionConverter } from 'adaptive-expressions';
+import { Converters, DialogContext, DialogTurnResult, DialogPath, DialogEvent, TurnPath, DialogTurnStatus } from 'botbuilder-dialogs';
 import { SendActivity } from '../actions/sendActivity';
+import { ActivityTemplateConverter } from '../converters';
 
 /**
  * Ask for an open-ended response.
@@ -18,6 +19,7 @@ import { SendActivity } from '../actions/sendActivity';
  * `DialogPath.retries` is updated as the same question is asked multiple times.
  */
 export class Ask extends SendActivity {
+    public static $kind = 'Microsoft.Ask';
 
     public constructor(text?: string, expectedProperties?: ArrayExpression<string>) {
         super(text);
@@ -33,6 +35,15 @@ export class Ask extends SendActivity {
      * Gets or sets the default operation that will be used when no operation is recognized.
      */
     public defaultOperation: StringExpression;
+
+    public get converters(): Converters<Ask> {
+        return Object.assign({}, super.converters, {
+            expectedProperties: new ArrayExpressionConverter<string>(),
+            defaultOperation: new StringExpressionConverter(),
+            activity: new ActivityTemplateConverter(),
+            disabled: new BoolExpressionConverter()
+        });
+    }
 
     public async beginDialog(dc: DialogContext, options?: object): Promise<DialogTurnResult> {
         // get number of retries from memory

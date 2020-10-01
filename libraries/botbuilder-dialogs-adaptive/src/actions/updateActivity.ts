@@ -5,24 +5,27 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { Dialog, DialogContext, DialogTurnResult } from 'botbuilder-dialogs';
+import { StringExpression, BoolExpression, BoolExpressionConverter, StringExpressionConverter } from 'adaptive-expressions';
 import { Activity, StringUtils } from 'botbuilder-core';
+import { Converters, Dialog, DialogContext, DialogTurnResult } from 'botbuilder-dialogs';
 import { TemplateInterface } from '../template';
-import { StringExpression, BoolExpression } from 'adaptive-expressions';
 import { ActivityTemplate, StaticActivityTemplate } from '../templates';
+import { ActivityTemplateConverter } from '../converters';
 
 export class UpdateActivity<O extends object = {}> extends Dialog<O> {
+    public static $kind = 'Microsoft.UpdateActivity';
+
     public constructor();
     public constructor(activityId?: string, activity?: Partial<Activity> | string) {
         super();
         if (activityId) {
             this.activityId = new StringExpression(activityId);
         }
-        if (activity) { 
-            if (typeof activity === 'string') { 
-                this.activity = new ActivityTemplate(activity); 
+        if (activity) {
+            if (typeof activity === 'string') {
+                this.activity = new ActivityTemplate(activity);
             } else {
-                this.activity = new StaticActivityTemplate(activity); 
+                this.activity = new StaticActivityTemplate(activity);
             }
         }
     }
@@ -42,6 +45,12 @@ export class UpdateActivity<O extends object = {}> extends Dialog<O> {
      */
     public disabled?: BoolExpression;
 
+    public converters: Converters<UpdateActivity> = {
+        activity: new ActivityTemplateConverter(),
+        activityId: new StringExpressionConverter(),
+        disabled: new BoolExpressionConverter()
+    };
+
     public async beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {
         if (this.disabled && this.disabled.getValue(dc.state)) {
             return await dc.endDialog();
@@ -59,7 +68,7 @@ export class UpdateActivity<O extends object = {}> extends Dialog<O> {
         this.telemetryClient.trackEvent({
             name: 'GeneratorResult',
             properties: {
-                'template':this.activity,
+                'template': this.activity,
                 'result': activityResult || ''
             }
         });

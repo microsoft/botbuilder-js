@@ -6,14 +6,13 @@
  * Licensed under the MIT License.
  */
 
-import { StringExpression, BoolExpression } from 'adaptive-expressions';
-import { Dialog, DialogContext, DialogTurnResult } from 'botbuilder-dialogs';
-import { Converter } from 'botbuilder-dialogs-declarative';
+import { StringExpression, BoolExpression, BoolExpressionConverter, StringExpressionConverter } from 'adaptive-expressions';
+import { Converter, Converters, Dialog, DialogContext, DialogTurnResult } from 'botbuilder-dialogs';
 
 /**
  * Converter to convert telemetry properties configuration.
  */
-export class TelemetryPropertiesConverter implements Converter {
+class TelemetryPropertiesConverter implements Converter<object, { [name: string]: StringExpression }> {
     public convert(properties: { [name: string]: string }): { [name: string]: StringExpression } {
         const result = {};
         for (const name in properties) {
@@ -27,6 +26,8 @@ export class TelemetryPropertiesConverter implements Converter {
  * Track a custom event.
  */
 export class TelemetryTrackEventAction<O extends object = {}> extends Dialog {
+    public static $kind = 'Microsoft.TelemetryTrackEventAction';
+
     /**
      * Initialize a `TelemetryTrackEventAction` instance.
      */
@@ -57,6 +58,12 @@ export class TelemetryTrackEventAction<O extends object = {}> extends Dialog {
      * Gets or sets the properties to attach to the tracked event.
      */
     public properties: { [name: string]: StringExpression };
+
+    public converters: Converters<TelemetryTrackEventAction> = {
+        eventName: new StringExpressionConverter(),
+        properties: new TelemetryPropertiesConverter(),
+        disabled: new BoolExpressionConverter()
+    };
 
     public async beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {
         if (this.disabled && this.disabled.getValue(dc.state)) {

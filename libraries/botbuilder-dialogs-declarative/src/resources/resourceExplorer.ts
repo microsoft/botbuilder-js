@@ -6,6 +6,7 @@
  * Licensed under the MIT License.
  */
 
+import { ComponentRegistration } from 'botbuilder-core';
 import { Dialog } from 'botbuilder-dialogs';
 import { normalize, join } from 'path';
 import { EventEmitter } from 'events';
@@ -13,15 +14,19 @@ import { ResourceProvider, ResourceChangeEvent } from './resourceProvider';
 import { FolderResourceProvider } from './folderResourceProvider';
 import { Resource } from './resource';
 import { PathUtil } from '../pathUtil';
-import { TypeFactory } from '../factory/typeFactory';
-import { ComponentRegistration } from '../componentRegistration';
+import { ComponentDeclarativeTypes } from '../componentDeclarativeTypes';
+import { DeclarativeType } from '../declarativeType';
+import { CustomDeserializer } from '../customDeserializer';
+import { DefaultLoader } from '../defaultLoader';
 
 /**
  * Class which gives standard access to content resources.
  */
 export class ResourceExplorer {
-    private _factory: TypeFactory = new TypeFactory();
+    private _kindToType: Map<string, new () => {}> = new Map();
+    private _kindDeserializer: Map<string, CustomDeserializer> = new Map();
     private _eventEmitter: EventEmitter = new EventEmitter();
+    private _typesLoaded = false;
 
     /**
      * Initializes a new instance of the `ResourceExplorer` class.
@@ -130,20 +135,6 @@ export class ResourceExplorer {
     }
 
     /**
-     * Add a ComponentRegistration to resource explorer for building types.
-     * @param component Component registration to be added.
-     */
-    public addComponent(component: ComponentRegistration): ResourceExplorer {
-        const builders = component.getTypeBuilders();
-        for (let i = 0; i < builders.length; i++) {
-            const type = builders[i];
-            this._factory.register(type.name, type.builder);
-        }
-
-        return this;
-    }
-
-    /**
      * Get resources of a given type extension.
      * @param fileExtension File extension filter.
      */
@@ -174,39 +165,40 @@ export class ResourceExplorer {
     }
 
     /**
-     * Build types from object configuration.
-     * @param config Configuration to be parsed as a type.
-     */
-    public buildType(config: object): object {
-        if (typeof config == 'object') {
-            const kind = config['$kind'] || config['$type'];
-            if (kind) {
-                const result = this._factory.build(kind, config);
-                return result;
-            } else {
-                for (const key in config) {
-                    config[key] = this.buildType(config[key]);
-                }
-            }
-        }
-        return config;
-    }
-
-    /**
      * Load types from resource or resource id.
      * @param resource Resource or resource id to be parsed as a type.
      */
-    public loadType(resource: string | Resource): object {
+    public loadType<T extends object>(resource: string | Resource): T {
+        this.registerComponentTypes();
+
         if (typeof resource == 'string') {
             resource = this.getResource(resource);
         }
+
+        if (!resource) {
+            throw new Error(`Resource ${ resource.id } not found.`);
+        }
+
         const json = resource.readText();
-        const obj = JSON.parse(json) as object;
-        const result = this.buildType(obj);
-        if (result instanceof Dialog && !obj['id']) {
+        const result = JSON.parse(json, (_key: string, value: unknown): any => {
+            if (typeof value !== 'object') {
+                return value;
+            }
+            if (Array.isArray(value)) {
+                return value;
+            }
+            const kind = value['$kind'];
+            if (!kind) {
+                return value;
+            }
+            return this.load(value);
+        }) as T;
+
+        if (result instanceof Dialog && !result['id']) {
             // If there is no id for the dialog, then the resource id would be used as dialog id.
             result.id = resource.id;
         }
+
         return result;
     }
 
@@ -214,5 +206,37 @@ export class ResourceExplorer {
         if (this._eventEmitter) {
             this._eventEmitter.emit(event, resources);
         }
+    }
+
+    private load<T extends object>(value: Record<string, any>): T {
+        const kind = value['$kind'];
+        const type = this._kindToType.get(kind);
+        if (!type) {
+            throw new Error(`Type ${ kind } not registered.`);
+        }
+        const loader = this._kindDeserializer.get(kind);
+        return loader.load(value, type) as T;
+    }
+
+    private getComponentRegistrations(): ComponentRegistration[] {
+        return ComponentRegistration.components.filter((component: ComponentRegistration) => 'getDeclarativeTypes' in component);
+    }
+
+    private registerTypeInternal(kind: string, type: new () => {}, loader?: CustomDeserializer): void {
+        this._kindToType.set(kind, type);
+        this._kindDeserializer.set(kind, loader || new DefaultLoader(this));
+    }
+    
+    private registerComponentTypes(): void {
+        if (this._typesLoaded) {
+            return;
+        }
+        this._typesLoaded = true;
+        this.getComponentRegistrations().forEach((component: ComponentDeclarativeTypes) => {
+            component.getDeclarativeTypes(this).forEach((declarativeType: DeclarativeType) => {
+                const { kind, type, loader } = declarativeType;
+                this.registerTypeInternal(kind, type, loader);
+            });
+        });
     }
 }

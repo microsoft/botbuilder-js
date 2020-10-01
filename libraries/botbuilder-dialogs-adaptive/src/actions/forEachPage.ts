@@ -5,9 +5,9 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { DialogTurnResult, Dialog, DialogContext } from 'botbuilder-dialogs';
+import { StringExpression, BoolExpression, IntExpression, BoolExpressionConverter, IntExpressionConverter, StringExpressionConverter } from 'adaptive-expressions';
+import { Converters, DialogTurnResult, Dialog, DialogContext } from 'botbuilder-dialogs';
 import { ActionScope, ActionScopeResult } from './actionScope';
-import { StringExpression, BoolExpression, IntExpression } from 'adaptive-expressions';
 
 const FOREACHPAGE = 'dialog.foreach.page';
 const FOREACHPAGEINDEX = 'dialog.foreach.pageindex';
@@ -22,6 +22,8 @@ const FOREACHPAGEINDEX = 'dialog.foreach.pageindex';
  * `GotoDialog` action.
  */
 export class ForEachPage<O extends object = {}> extends ActionScope<O> {
+    public static $kind = 'Microsoft.ForeachPage';
+
     public constructor();
     public constructor(itemsProperty?: string, pageSize: number = 10) {
         super();
@@ -47,12 +49,21 @@ export class ForEachPage<O extends object = {}> extends ActionScope<O> {
     /**
      * Page size, default to 10.
      */
-    public pageSize: IntExpression = new IntExpression(10) ;
+    public pageSize: IntExpression = new IntExpression(10);
 
     /**
      * An optional expression which if is true will disable this action.
      */
     public disabled?: BoolExpression;
+
+    public converters: Converters<ForEachPage> = {
+        itemsProperty: new StringExpressionConverter(),
+        page: new StringExpressionConverter(),
+        pageIndex: new StringExpressionConverter(),
+        pageSize: new IntExpressionConverter(),
+        disabled: new BoolExpressionConverter()
+    };
+
 
     public getDependencies(): Dialog[] {
         return this.actions;

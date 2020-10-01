@@ -10,6 +10,9 @@ import { DialogContext } from 'botbuilder-dialogs';
 import { BeginDialog } from './beginDialog';
 
 export class DynamicBeginDialog extends BeginDialog {
+    public static $kind = 'Microsoft.DynamicBeginDialog';
+
+    // public static converters = BeginDialog.converters;
     protected bindOptions(dc: DialogContext, options: object): object {
         // use overflow properties of deserialized object instead of the passed in option.
         return super.bindOptions(dc, Object.assign({}, this));

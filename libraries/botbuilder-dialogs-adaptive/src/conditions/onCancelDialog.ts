@@ -13,7 +13,8 @@ import { OnDialogEvent } from './onDialogEvent';
  * Actions triggered when an dialog was canceled.
  */
 export class OnCancelDialog extends OnDialogEvent {
-    
+    public static $kind = 'Microsoft.OnCancelDialog';
+
     public constructor(actions: Dialog[] = [], condtion?: string) {
         super(AdaptiveEvents.cancelDialog, actions, condtion);
     }

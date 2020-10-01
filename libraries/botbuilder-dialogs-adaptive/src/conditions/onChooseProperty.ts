@@ -14,6 +14,7 @@ import { OnDialogEvent } from './onDialogEvent';
  * TTriggered to choose which property an entity goes to.
  */
 export class OnChooseProperty extends OnDialogEvent {
+    public static $kind = 'Microsoft.OnChooseProperty';
 
     public constructor(properties: string[] = [], entities: string[] = [], actions: Dialog[] = [], condition?: string) {
         super(AdaptiveEvents.chooseProperty, actions, condition);

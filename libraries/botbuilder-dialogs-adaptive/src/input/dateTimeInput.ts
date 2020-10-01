@@ -6,15 +6,23 @@
  * Licensed under the MIT License.
  */
 import * as Recognizers from '@microsoft/recognizers-text-date-time';
-import { DialogContext } from 'botbuilder-dialogs';
+import { StringExpression, StringExpressionConverter } from 'adaptive-expressions';
+import { Converters, DialogContext } from 'botbuilder-dialogs';
 import { InputDialog, InputState } from './inputDialog';
-import { StringExpression } from 'adaptive-expressions';
 
 export class DateTimeInput extends InputDialog {
+    public static $kind = 'Microsoft.DateTimeInput';
 
     public defaultLocale: StringExpression;
 
     public outputFormat: StringExpression;
+
+    public get converters(): Converters<DateTimeInput> {
+        return Object.assign({}, super.converters, {
+            defaultLocale: new StringExpressionConverter(),
+            outputFormat: new StringExpressionConverter()
+        });
+    }
 
     protected onComputeId(): string {
         return `DateTimeInput[${ this.prompt && this.prompt.toString() }]`;

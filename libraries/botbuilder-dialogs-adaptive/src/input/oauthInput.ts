@@ -5,11 +5,11 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { StringExpression, IntExpression } from 'adaptive-expressions';
-import { DialogContext, Dialog, DialogTurnResult, PromptOptions, PromptRecognizerResult, ThisPath, TurnPath } from 'botbuilder-dialogs';
-import { Attachment, InputHints, TokenResponse, IUserTokenProvider, TurnContext, ActivityTypes, Activity, MessageFactory, CardFactory, OAuthLoginTimeoutKey, StatusCodes, ActionTypes, ExtendedUserTokenProvider, OAuthCard, BotAdapter, Channels, TokenExchangeInvokeRequest } from 'botbuilder-core';
+import { StringExpression, IntExpression, IntExpressionConverter, StringExpressionConverter } from 'adaptive-expressions';
+import { ActivityTypes, ActionTypes, Activity, Attachment, BotAdapter, CardFactory, Channels, ExtendedUserTokenProvider, InputHints, IUserTokenProvider, MessageFactory, OAuthCard, OAuthLoginTimeoutKey, StatusCodes, TokenResponse, TokenExchangeInvokeRequest, TurnContext } from 'botbuilder-core';
+import { verifyStateOperationName, tokenExchangeOperationName, tokenResponseEventName } from 'botbuilder-core';
+import { Converters, DialogContext, Dialog, DialogTurnResult, PromptOptions, PromptRecognizerResult, ThisPath, TurnPath } from 'botbuilder-dialogs';
 import { SkillValidation } from 'botframework-connector';
-import { verifyStateOperationName, tokenExchangeOperationName, tokenResponseEventName } from 'botbuilder-core'
 import { InputDialog, InputState } from './inputDialog';
 
 export const channels: any = {
@@ -37,6 +37,8 @@ const persistedExpires = 'expires';
 const attemptCountKey = 'attemptCount';
 
 export class OAuthInput extends InputDialog {
+    public static $kind = 'Microsoft.OAuthInput';
+
     /**
      * Name of the OAuth connection being used.
      */
@@ -57,6 +59,15 @@ export class OAuthInput extends InputDialog {
      * Defaults to a value `900,000` (15 minutes.)
      */
     public timeout?: IntExpression = new IntExpression(900000);
+
+    public get converters(): Converters<OAuthInput> {
+        return Object.assign({}, super.converters, {
+            connectionName: new StringExpressionConverter(),
+            title: new StringExpressionConverter(),
+            text: new StringExpressionConverter(),
+            timeout: new IntExpressionConverter()
+        });
+    }
 
     public constructor(connectionName?: string, title?: string, text?: string, timeout?: number) {
         super();

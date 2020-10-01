@@ -6,14 +6,16 @@
  * Licensed under the MIT License.
  */
 import { StringUtils } from 'botbuilder-core';
-import { DialogTurnResult, Dialog, DialogDependencies, DialogContext } from 'botbuilder-dialogs';
-import { BoolExpression, EnumExpression } from 'adaptive-expressions';
+import { Converters, DialogTurnResult, Dialog, DialogDependencies, DialogContext } from 'botbuilder-dialogs';
+import { BoolExpression, BoolExpressionConverter, EnumExpression, EnumExpressionConverter } from 'adaptive-expressions';
 import { ActionContext } from '../actionContext';
 import { ActionChangeType } from '../actionChangeType';
 import { ActionState } from '../actionState';
 import { ActionChangeList } from '../actionChangeList';
 
 export class EditActions<O extends object = {}> extends Dialog<O> implements DialogDependencies {
+    public static $kind = 'Microsoft.EditActions';
+
     public constructor();
     public constructor(changeType: ActionChangeType, actions?: Dialog[]);
     public constructor(changeType?: ActionChangeType, actions?: Dialog[]) {
@@ -36,6 +38,11 @@ export class EditActions<O extends object = {}> extends Dialog<O> implements Dia
      * An optional expression which if is true will disable this action.
      */
     public disabled?: BoolExpression;
+
+    public converters: Converters<EditActions> = {
+        changeType: new EnumExpressionConverter(ActionChangeType),
+        disabled: new BoolExpressionConverter()
+    };
 
     public getDependencies(): Dialog[] {
         return this.actions;

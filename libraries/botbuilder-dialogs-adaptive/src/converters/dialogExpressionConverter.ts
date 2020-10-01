@@ -6,16 +6,12 @@
  * Licensed under the MIT License.
  */
 
-import { Converter, ResourceExplorer } from 'botbuilder-dialogs-declarative';
-import { Dialog } from 'botbuilder-dialogs';
+import { Converter, Dialog } from 'botbuilder-dialogs';
+import { ResourceExplorer } from 'botbuilder-dialogs-declarative';
 import { DialogExpression } from '../expressions';
 
-export class DialogExpressionConverter implements Converter {
-    private _resourceExplorer: ResourceExplorer;
-
-    public constructor(resouceExplorer: ResourceExplorer) {
-        this._resourceExplorer = resouceExplorer;
-    }
+export class DialogExpressionConverter implements Converter<string | object, DialogExpression> {
+    public constructor(private readonly _resourceExplorer: ResourceExplorer) {}
 
     public convert(value: string | object): DialogExpression {
         if (typeof value == 'string') {

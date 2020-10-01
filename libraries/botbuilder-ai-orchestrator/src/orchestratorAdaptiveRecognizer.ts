@@ -10,7 +10,7 @@ import { existsSync } from 'fs';
 import { resolve } from 'path';
 import { TextEncoder } from 'util';
 
-import { BoolExpression, NumberExpression, StringExpression } from 'adaptive-expressions';
+import { BoolExpression, BoolExpressionConverter, NumberExpression, NumberExpressionConverter, StringExpression, StringExpressionConverter } from 'adaptive-expressions';
 import { Activity, Entity, RecognizerResult } from 'botbuilder-core';
 import { DialogContext } from 'botbuilder-dialogs';
 import { createRecognizerResult, EntityRecognizer, EntityRecognizerSet, Recognizer, TextEntity } from 'botbuilder-dialogs-adaptive';
@@ -19,6 +19,8 @@ const oc: any = require('orchestrator-core/orchestrator-core.node');
 const ReadText: any = require('read-text-file');
 
 export class OrchestratorAdaptiveRecognizer extends Recognizer {
+    public static $kind = 'Microsoft.OrchestratorRecognizer';
+
     /**
      * Recognizers unique ID.
      */
@@ -70,6 +72,13 @@ export class OrchestratorAdaptiveRecognizer extends Recognizer {
      */
     public readonly resultProperty: string = 'result';
 
+    public converters = {
+        modelPath: new StringExpressionConverter(),
+        snapshotPath: new StringExpressionConverter(),
+        disambiguationScoreThreshold: new NumberExpressionConverter(),
+        detectAmbiguousIntents: new BoolExpressionConverter(),
+    };
+
     private readonly unknownIntentFilterScore = 0.4;
     private static orchestrator: any = null;
     private resolver: any = null;
@@ -82,8 +91,7 @@ export class OrchestratorAdaptiveRecognizer extends Recognizer {
      * @param snapshoPath Path to snapshot.
      * @param resolver Orchestrator resolver to use.
      */
-    constructor(modelPath?: string, snapshoPath?: string, resolver?: any)
-    {
+    constructor(modelPath?: string, snapshoPath?: string, resolver?: any) {
         super()
         this._modelPath = modelPath !== undefined ? modelPath : null;
         this._snapshotPath = snapshoPath !== undefined ? snapshoPath : null;
@@ -114,11 +122,11 @@ export class OrchestratorAdaptiveRecognizer extends Recognizer {
 
         if (text === '') {
             return recognizerResult;
-        } 
+        }
 
         if (OrchestratorAdaptiveRecognizer.orchestrator === null || this.resolver === null) {
             this.Initialize();
-        }   
+        }
 
         // recognize text
         let result = await this.resolver.score(text);
@@ -175,7 +183,7 @@ export class OrchestratorAdaptiveRecognizer extends Recognizer {
     private AddTopScoringIntent(result: any, recognizerResult: RecognizerResult): void {
         const topScoringIntent = result[0].label.name;
         const topScore = result[0].score;
-        
+
         // if top scoring intent is less than threshold, return None
         if (topScore < this.unknownIntentFilterScore) {
             recognizerResult.intents['None'] = { score: 1.0 };
@@ -240,24 +248,23 @@ export class OrchestratorAdaptiveRecognizer extends Recognizer {
     }
 
     private Initialize() {
-        if (OrchestratorAdaptiveRecognizer.orchestrator == null && this.resolver == null) 
-        {
+        if (OrchestratorAdaptiveRecognizer.orchestrator == null && this.resolver == null) {
             if (this._modelPath == null) {
                 throw new Error(`Missing "ModelPath" information.`);
             }
-    
+
             if (this._snapshotPath == null) {
                 throw new Error(`Missing "ShapshotPath" information.`);
             }
             const fullModelPath = resolve(this._modelPath);
             const fullSnapshotPath = resolve(this._snapshotPath);
             if (!existsSync(fullModelPath)) {
-                throw new Error(`Model folder does not exist at ${fullModelPath}.`);   
+                throw new Error(`Model folder does not exist at ${ fullModelPath }.`);
             }
             if (!existsSync(fullSnapshotPath)) {
-                throw new Error(`Snapshot file does not exist at ${fullSnapshotPath}.`);
+                throw new Error(`Snapshot file does not exist at ${ fullSnapshotPath }.`);
             }
-    
+
             if (OrchestratorAdaptiveRecognizer.orchestrator == null) {
                 console.time("Model load");
                 // Create orchestrator core
@@ -267,13 +274,13 @@ export class OrchestratorAdaptiveRecognizer extends Recognizer {
                 }
                 console.timeEnd("Model load");
             }
-    
+
             if (this.resolver == null) {
                 // Load the snapshot
                 const encoder: any = new TextEncoder();
                 const fileContent: string = ReadText.readSync(fullSnapshotPath)
                 const snapshot: Uint8Array = encoder.encode(fileContent);
-    
+
                 // Load snapshot and create resolver
                 this.resolver = OrchestratorAdaptiveRecognizer.orchestrator.createLabelResolver(snapshot);
             }

@@ -14,6 +14,8 @@ import { AdaptiveEvents } from '../adaptiveEvents';
  * Actions triggered when a Activity of a given type is received.
  */
 export class OnActivity extends OnDialogEvent {
+    public static $kind = 'Microsoft.OnActivity';
+
     /**
      * Gets or sets the ActivityType which must be matched for this to trigger.
      */

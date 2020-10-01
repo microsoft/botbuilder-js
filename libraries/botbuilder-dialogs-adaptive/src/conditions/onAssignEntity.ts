@@ -14,6 +14,7 @@ import { OnDialogEvent } from './onDialogEvent';
  * Triggered to assign an entity to a property.
  */
 export class OnAssignEntity extends OnDialogEvent {
+    public static $kind = 'Microsoft.OnAssignEntity';
 
     public constructor(property?: string, entity?: string, operation?: string, actions: Dialog[] = [], condition?: string) {
         super(AdaptiveEvents.assignEntity, actions, condition);

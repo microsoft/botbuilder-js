@@ -6,11 +6,12 @@
  * Licensed under the MIT License.
  */
 
-import { Converter, ResourceExplorer } from 'botbuilder-dialogs-declarative';
+import { Converter } from 'botbuilder-dialogs';
+import { ResourceExplorer } from 'botbuilder-dialogs-declarative';
 import { Recognizer } from '../recognizers';
 import { RecognizerConverter } from './recognizerConverter';
 
-export class MultiLanguageRecognizerConverter implements Converter {
+export class MultiLanguageRecognizerConverter implements Converter<object, { [key: string]: Recognizer }> {
     private _recognizerConverter: RecognizerConverter;
 
     public constructor(resouceExplorer: ResourceExplorer) {

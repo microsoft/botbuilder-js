@@ -6,11 +6,14 @@
  * Licensed under the MIT License.
  */
 
-import { TurnContext, ActivityTypes, ChannelAccount, RoleTypes } from 'botbuilder-core';
+import { ActivityTypes, ChannelAccount, RoleTypes, TurnContext } from 'botbuilder-core';
+import { Converters } from 'botbuilder-dialogs';
 import { TestAction } from '../testAction';
 import { AdaptiveTestAdapter } from '../adaptiveTestAdapter';
 
 export class UserConversationUpdate implements TestAction {
+    public static $kind = 'Microsoft.Test.UserConversationUpdate';
+
     /**
      * The members added names.
      */
@@ -20,6 +23,8 @@ export class UserConversationUpdate implements TestAction {
      * The members removed names.
      */
     public membersRemoved: string[];
+    
+    public converters: Converters<UserConversationUpdate> = {};
 
     public async execute(testAdapter: AdaptiveTestAdapter, callback: (context: TurnContext) => Promise<any>): Promise<any> {
         const activity = testAdapter.makeActivity();

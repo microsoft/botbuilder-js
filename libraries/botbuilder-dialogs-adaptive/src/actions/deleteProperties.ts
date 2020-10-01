@@ -5,10 +5,18 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { Dialog, DialogContext, DialogTurnResult } from 'botbuilder-dialogs';
-import { StringExpression, BoolExpression } from 'adaptive-expressions';
+import { StringExpression, BoolExpression, BoolExpressionConverter } from 'adaptive-expressions';
+import { Converter, Converters, Dialog, DialogContext, DialogTurnResult } from 'botbuilder-dialogs';
+
+class PropertiesConverter implements Converter<string[], StringExpression[]> {
+    public convert(value: string[]): StringExpression[] {
+        return value.map(item => new StringExpression(item));
+    }
+}
 
 export class DeleteProperties<O extends object = {}> extends Dialog<O> {
+    public static $kind = 'Microsoft.DeleteProperties';
+
     public constructor();
     public constructor(properties?: string[]) {
         super();
@@ -26,6 +34,11 @@ export class DeleteProperties<O extends object = {}> extends Dialog<O> {
      * An optional expression which if is true will disable this action.
      */
     public disabled?: BoolExpression;
+
+    public converters: Converters<DeleteProperties> = {
+        properties: new PropertiesConverter(),
+        disabled: new BoolExpressionConverter()
+    };
 
     public async beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {
         if (this.disabled && this.disabled.getValue(dc.state)) {

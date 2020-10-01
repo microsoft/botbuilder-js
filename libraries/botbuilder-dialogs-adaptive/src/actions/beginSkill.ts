@@ -5,14 +5,16 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { SkillDialog, SkillDialogOptions, DialogContext, DialogTurnResult, BeginSkillDialogOptions, DialogInstance, DialogReason } from 'botbuilder-dialogs';
-import { BoolExpression, StringExpression } from 'adaptive-expressions';
+import { BoolExpression, BoolExpressionConverter, StringExpression, StringExpressionConverter } from 'adaptive-expressions';
 import { Activity, ActivityTypes, StringUtils, TurnContext } from 'botbuilder-core';
+import { SkillDialog, SkillDialogOptions, Converters,  DialogContext, DialogTurnResult, BeginSkillDialogOptions, DialogInstance, DialogReason } from 'botbuilder-dialogs';
 import { TemplateInterface } from '../template';
 import { skillClientKey, skillConversationIdFactoryKey } from '../skillExtensions';
 import { ActivityTemplate } from '../templates';
+import { ActivityTemplateConverter } from '../converters';
 
 export class BeginSkill extends SkillDialog {
+    public static $kind = 'Microsoft.BeginSkill';
 
     /**
      * Optional expression which if is true will disable this action.
@@ -69,6 +71,18 @@ export class BeginSkill extends SkillDialog {
      */
     public connectionName: StringExpression;
 
+    public converters: Converters<BeginSkill> = {
+        disabled: new BoolExpressionConverter(),
+        activityProcessed: new BoolExpressionConverter(),
+        resultProperty: new StringExpressionConverter(),
+        botId: new StringExpressionConverter(),
+        skillHostEndpoint: new StringExpressionConverter(),
+        skillAppId: new StringExpressionConverter(),
+        skillEndpoint: new StringExpressionConverter(),
+        activity: new ActivityTemplateConverter(),
+        connectionName: new StringExpressionConverter()
+    };
+
     // Used to cache DialogOptions for multi-turn calls across servers.
     private _dialogOptionsStateKey: string = `${ this.constructor.name }.dialogOptionsData`;
 
@@ -110,8 +124,8 @@ export class BeginSkill extends SkillDialog {
             this.telemetryClient.trackEvent({
                 name: 'GeneratorResult',
                 properties: {
-                    'template':this.activity,
-                    'result': activity || '' 
+                    'template': this.activity,
+                    'result': activity || ''
                 }
             });
 
@@ -167,14 +181,14 @@ export class BeginSkill extends SkillDialog {
 
         this.dialogOptions.botId = dialogOptions.botId;
         this.dialogOptions.skillHostEndpoint = dialogOptions.skillHostEndpoint;
-        
+
         this.dialogOptions.conversationIdFactory = context.turnState.get(skillConversationIdFactoryKey);
-        if (this.dialogOptions.conversationIdFactory == null) { 
+        if (this.dialogOptions.conversationIdFactory == null) {
             throw new ReferenceError('Unable to locate skillConversationIdFactoryBase in HostContext.');
         };
-        
+
         this.dialogOptions.skillClient = context.turnState.get(skillClientKey);
-        if (this.dialogOptions.skillClient == null) { 
+        if (this.dialogOptions.skillClient == null) {
             throw new ReferenceError('Unable to get an instance of conversationState from turnState.');
         };
 
