@@ -18,14 +18,18 @@ import { ReturnType } from '../returnType';
  * Convert ticks to number of minutes.
  */
 export class TicksToMinutes extends ExpressionEvaluator {
-
     private static readonly TicksPerMinute: number = 60 * 10000000;
 
     /**
      * Initializes a new instance of the `TicksToMinutes` class.
      */
     public constructor() {
-        super(ExpressionType.TicksToMinutes, TicksToMinutes.evaluator, ReturnType.Number, FunctionUtils.validateUnaryNumber);
+        super(
+            ExpressionType.TicksToMinutes,
+            TicksToMinutes.evaluator,
+            ReturnType.Number,
+            FunctionUtils.validateUnaryNumber
+        );
     }
 
     /**

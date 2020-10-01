@@ -18,14 +18,18 @@ import { ReturnType } from '../returnType';
  * Convert ticks to number of hours.
  */
 export class TicksToHours extends ExpressionEvaluator {
-
     private static readonly TicksPerHour: number = 60 * 60 * 10000000;
 
     /**
      * Initializes a new instance of the `TicksToHours` class.
      */
     public constructor() {
-        super(ExpressionType.TicksToHours, TicksToHours.evaluator, ReturnType.Number, FunctionUtils.validateUnaryNumber);
+        super(
+            ExpressionType.TicksToHours,
+            TicksToHours.evaluator,
+            ReturnType.Number,
+            FunctionUtils.validateUnaryNumber
+        );
     }
 
     /**
