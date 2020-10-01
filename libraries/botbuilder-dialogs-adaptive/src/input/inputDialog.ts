@@ -249,7 +249,7 @@ export abstract class InputDialog extends Dialog {
 
     /**
      * @protected
-     * Method which renders the prompt to the user give n the current input state.
+     * Method which renders the prompt to the user given the current input state.
      * @param dc The `DialogContext` for the current turn of conversation.
      * @param state Dialog `InputState`
      * @returns An `Activity` Promise representing the asynchronous operation.

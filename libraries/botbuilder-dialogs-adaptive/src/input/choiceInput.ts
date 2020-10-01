@@ -93,7 +93,7 @@ export class ChoiceInput extends InputDialog {
 
     /**
      * @protected
-     * Called when input has been received, recognices choice.
+     * Called when input has been received.
      * @param dc The `DialogContext` for the current turn of conversation.
      * @returns InputState which reflects whether input was recognized as valid or not.
      */

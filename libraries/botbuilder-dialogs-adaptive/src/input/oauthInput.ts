@@ -62,12 +62,6 @@ export class OAuthInput extends InputDialog {
     public timeout?: IntExpression = new IntExpression(900000);
 
     /**
-     *
-     * @param property Optional. The value expression which the input will be bound to.
-     * @param prompt Optional. The `Activity` to send to the user,
-     * if a string is specified it will instantiates an `ActivityTemplate`.
-     */
-    /**
      * Initializes a new instance of the `OAuthInput` class
      * @param connectionName Optional. Name of the OAuth connection being used.
      * @param title Optional. Title of the cards signin button.
