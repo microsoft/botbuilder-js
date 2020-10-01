@@ -26,8 +26,8 @@ export class TemplateEngineLanguageGenerator implements LanguageGenerator{
 
     /**
      * Initializes a new instance of the `TemplateEngineLanguageGenerator` class.
-     * @param arg1 An LG `Templates` or a `Resource`.
-     * @param arg2 A `Map` object with a `Resource` array for each key.
+     * @param arg1 Optional. An LG `Templates` or a `Resource`.
+     * @param arg2 Optional. A `Map` object with a `Resource` array for each key.
      */
     public constructor(arg1?: Templates | Resource, arg2?: Map<string,Resource[]>) {
         if (arguments.length === 0) {

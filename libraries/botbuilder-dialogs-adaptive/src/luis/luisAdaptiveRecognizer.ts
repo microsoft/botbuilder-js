@@ -58,8 +58,8 @@ export class LuisAdaptiveRecognizer extends Recognizer {
      * To recognize intents and entities in a users utterance.
      * @param dialogContext Dialog Context.
      * @param activity Activity.
-     * @param telemetryProperties Additional properties to be logged to telemetry with event.
-     * @param telemetryMetrics Additional metrics to be logged to telemetry with event.
+     * @param telemetryProperties Optional. Additional properties to be logged to telemetry with event.
+     * @param telemetryMetrics Optional. Additional metrics to be logged to telemetry with event.
      */
     public async recognize(dialogContext: DialogContext, activity: Activity, telemetryProperties?: { [key: string]: string }, telemetryMetrics?: { [key: string]: number }) {
         // Validate passed in activity matches turn activity

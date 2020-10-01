@@ -25,7 +25,7 @@ export class RandomSelector implements TriggerSelector {
     /**
      * Initialize the selector with the set of rules.
      * @param conditionals Possible rules to match.
-     * @param evaluate True if rules should be evaluated on select.
+     * @param evaluate A boolean representing if rules should be evaluated on select.
      */
     public initialize(conditionals: OnCondition[], evaluate: boolean): void {
         this._conditionals = conditionals;

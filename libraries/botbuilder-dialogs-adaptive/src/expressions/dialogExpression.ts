@@ -17,7 +17,7 @@ import { Dialog } from 'botbuilder-dialogs';
 export class DialogExpression extends ExpressionProperty<Dialog> {
     /**
      * Initializes a new instance of the `DialogExpression` class.
-     * @param value A `Dialog`, a `string` that is interpreted as a resource Id or dialogId, or an `Expression`.
+     * @param value Optional. A `Dialog`, a `string` that is interpreted as a resource Id or dialogId, or an `Expression`.
      */
     public constructor(value?: Dialog | string | Expression) {
         super(value);

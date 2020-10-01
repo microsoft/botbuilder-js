@@ -14,7 +14,7 @@ import { ActivityTemplate, StaticActivityTemplate, TextTemplate } from '../templ
  */
 export class ActivityTemplateConverter implements Converter {
     /**
-     * Converts a template to one of the foloowing classes `ActivityTemplate` | `StaticActivityTemplate`.
+     * Converts a template to one of the following classes `ActivityTemplate` | `StaticActivityTemplate`.
      * @param value The template to evaluate to create the activity.
      * @returns A new instance that could be the following classes `ActivityTemplate` | `StaticActivityTemplate`.
      */
