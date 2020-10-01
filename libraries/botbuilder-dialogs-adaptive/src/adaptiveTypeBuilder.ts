@@ -19,7 +19,7 @@ export class AdaptiveTypeBuilder implements TypeBuilder {
     /**
      * Creates a new instance of the `AdaptiveTypeBuilder` class.
      * @param factory Factory for the adaptive type.
-     * @param resourceExplorer  Resource explorer.
+     * @param resourceExplorer Resource explorer.
      * @param converters Key value pair with converters.
      */
     public constructor(factory: new () => object, resourceExplorer: ResourceExplorer, converters: { [key: string]: Converter }) {
@@ -29,7 +29,7 @@ export class AdaptiveTypeBuilder implements TypeBuilder {
     }
 
     /**
-     * Builds a adaptive type.
+     * Builds an adaptive type.
      * @param config Configuration object for the type.
      */
     public build(config: object): object {

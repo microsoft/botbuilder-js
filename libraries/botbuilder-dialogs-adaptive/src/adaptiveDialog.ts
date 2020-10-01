@@ -693,7 +693,7 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
 
     /**
      * @protected
-     * Removes the current most action from the given `ActionContext` if there are any.
+     * Removes the most current action from the given `ActionContext` if there are any.
      * @param actionContext The `ActionContext` for the current turn of conversation.
      * @returns A Promise representing a boolean indicator for the result.
      */
