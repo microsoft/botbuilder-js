@@ -1,7 +1,6 @@
 const assert = require ('assert');
 const path = require('path');
 const { TestRunner } = require('../lib');
-const assert = require('assert');
 
 describe('TestScriptTests', function () {
     this.timeout(5000);
