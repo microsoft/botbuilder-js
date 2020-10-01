@@ -17,15 +17,15 @@ export class CancelAllDialogsBase<O extends object = {}> extends Dialog<O> {
     /**
      * Initializes a new instance of the `CancelAllDialogsBase` class.
      * @param eventName Expression for event name.
-     * @param eventValue Optional, expression for event value.
+     * @param eventValue Optional. Expression for event value.
      * @param isCancelAll Set to `true` to cancel all dialogs; `false` otherwise.
      */
     public constructor(eventName: string, eventValue?: string, isCancelAll?: boolean);
 
     /**
      * Initializes a new instance of the `CancelAllDialogsBase` class.
-     * @param eventName Optional, expression for event name.
-     * @param eventValue Optional, expression for event value.
+     * @param eventName Optional. Expression for event name.
+     * @param eventValue Optional. Expression for event value.
      * @param isCancelAll Set to `true` to cancel all dialogs; `false` otherwise.
      */
     public constructor(eventName?: string, eventValue?: string, isCancelAll = true) {
@@ -69,7 +69,7 @@ export class CancelAllDialogsBase<O extends object = {}> extends Dialog<O> {
     /**
      * Called when the dialog is started and pushed onto the dialog stack.
      * @param dc The `DialogContext` for the current turn of conversation.
-     * @param options Optional, initial information to pass to the dialog.
+     * @param options Optional. Initial information to pass to the dialog.
      * @returns A `Promise` representing the asynchronous operation.
      */
     public async beginDialog(dc: DialogContext, options: O): Promise<DialogTurnResult> {

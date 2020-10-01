@@ -17,8 +17,8 @@ export class BaseInvokeDialog<O extends object = {}> extends Dialog<O> implement
     /**
      * Initializes a new instance of the `BaseInvokeDialog` class.
      * Expression for `dialogId` to call (allowing dynamic expression).
-     * @param dialogIdToCall Optional, id of the dialog to call.
-     * @param bindingOptions Optional, binding options for the dialog to call.
+     * @param dialogIdToCall Optional. Id of the dialog to call.
+     * @param bindingOptions Optional. Binding options for the dialog to call.
      */
     public constructor(dialogIdToCall?: string, bindingOptions?: O) {
         super();
@@ -49,7 +49,7 @@ export class BaseInvokeDialog<O extends object = {}> extends Dialog<O> implement
      * Called when the dialog is started and pushed onto the dialog stack.
      * @remarks Method not implemented.
      * @param dc The `DialogContext` for the current turn of conversation.
-     * @param options Optional, initial information to pass to the dialog.
+     * @param options Optional. Initial information to pass to the dialog.
      * @returns A `Promise` representing the asynchronous operation.
      */
     public beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult<any>> {

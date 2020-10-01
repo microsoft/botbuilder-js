@@ -17,14 +17,14 @@ export class CancelDialog<O extends object = {}> extends CancelAllDialogsBase<O>
     /**
      * Initializes a new instance of the `CancelDialog` class.
      * @param eventName Expression for event name.
-     * @param eventValue Optional, expression for event value.
+     * @param eventValue Optional. Expression for event value.
      */
     public constructor(eventName: string, eventValue?: string);
 
     /**
      * Initializes a new instance of the `CancelDialog` class.
-     * @param eventName Optional, expression for event name.
-     * @param eventValue Optional, expression for event value.
+     * @param eventName Optional. Expression for event name.
+     * @param eventValue Optional. Expression for event value.
      */
     public constructor(eventName?: string, eventValue?: string) {
         super(eventName, eventValue, false);

@@ -62,7 +62,7 @@ export class ActionScope<O extends object = {}> extends Dialog<O> implements Dia
     /**
      * Called when the dialog is started and pushed onto the dialog stack.
      * @param dc The `DialogContext` for the current turn of conversation.
-     * @param options Optional, initial information to pass to the dialog.
+     * @param options Optional. Initial information to pass to the dialog.
      * @returns A `Promise` representing the asynchronous operation.
      */
     public async beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {
@@ -87,7 +87,7 @@ export class ActionScope<O extends object = {}> extends Dialog<O> implements Dia
      * Called when a child dialog completed its turn, returning control to this dialog.
      * @param dc The `DialogContext` for the current turn of conversation.
      * @param _reason Reason why the dialog resumed.
-     * @param result Optional, value returned from the dialog that was called. The type 
+     * @param result Optional. Value returned from the dialog that was called. The type 
      * of the value returned is dependent on the child dialog.
      * @returns A `Promise` representing the asynchronous operation.
      */
@@ -168,7 +168,7 @@ export class ActionScope<O extends object = {}> extends Dialog<O> implements Dia
      * @protected
      * Called when the dialog continues to the next action.
      * @param dc The `DialogContext` for the current turn of conversation.
-     * @param result Optional, value returned from the dialog that was called. The type 
+     * @param result Optional. Value returned from the dialog that was called. The type 
      * of the value returned is dependent on the child dialog.
      * @returns A `Promise` representing the asynchronous operation.
      */
@@ -207,7 +207,7 @@ export class ActionScope<O extends object = {}> extends Dialog<O> implements Dia
      * @protected
      * Called when the dialog's action ends.
      * @param dc The `DialogContext` for the current turn of conversation.
-     * @param result Optional, value returned from the dialog that was called. The type 
+     * @param result Optional. Value returned from the dialog that was called. The type 
      * of the value returned is dependent on the child dialog.
      * @returns A `Promise` representing the asynchronous operation.
      */
@@ -219,7 +219,7 @@ export class ActionScope<O extends object = {}> extends Dialog<O> implements Dia
      * @protected
      * Starts a new dialog and pushes it onto the dialog stack.
      * @param dc The `DialogContext` for the current turn of conversation.
-     * @param result Optional, value returned from the dialog that was called. The type 
+     * @param result Optional. Value returned from the dialog that was called. The type 
      * of the value returned is dependent on the child dialog.
      * @returns A `Promise` representing the asynchronous operation.
      */

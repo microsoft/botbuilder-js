@@ -16,8 +16,8 @@ import { ActionScope } from './actionScope';
 export class Case extends ActionScope {
     /**
      * Initializes a new instance of the `Case` class.
-     * @param value Optional, case's string value.
-     * @param actions Optional, numerable list of dialog actions.
+     * @param value Optional. Case's string value.
+     * @param actions Optional. Numerable list of dialog actions.
      */
     public constructor(value?: string, actions: Dialog[] = []) {
         super(actions);
