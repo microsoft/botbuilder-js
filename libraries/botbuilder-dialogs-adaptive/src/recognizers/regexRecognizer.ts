@@ -11,6 +11,9 @@ import { Recognizer } from './recognizer';
 import { IntentPattern } from './intentPattern';
 import { EntityRecognizer, TextEntity, EntityRecognizerSet } from './entityRecognizers';
 
+/**
+ * Recognizer implementation which uses regex expressions to identify intents.
+ */
 export class RegexRecognizer extends Recognizer {
     /**
      * Dictionary of patterns -> intent names.
@@ -22,6 +25,14 @@ export class RegexRecognizer extends Recognizer {
      */
     public entities: EntityRecognizer[] = [];
 
+    /**
+     * Runs current `DialogContext.context.activity` through a recognizer and returns a `RecognizerResult`.
+     * @param dialogContext The `DialogContext` for the current turn of conversation.
+     * @param activity The `Activity` to recognize.
+     * @param telemetryProperties Optional. Additional properties to be logged to telemetry with the LuisResult event.
+     * @param telemetryMetrics Optional. Additional metrics to be logged to telemetry with the LuisResult event.
+     * @returns Recognized `RecognizerResult` Promise.
+     */
     public async recognize(dialogContext: DialogContext, activity: Activity, telemetryProperties?: { [key: string]: string }, telemetryMetrics?: { [key: string]: number }): Promise<RecognizerResult> {
         const text = activity.text || '';
         const locale = activity.locale || 'en-us';

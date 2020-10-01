@@ -9,6 +9,9 @@ import { RecognizerResult, Activity, getTopScoringIntent, BotTelemetryClient, Nu
 import { DialogContext } from 'botbuilder-dialogs';
 import { telemetryClientKey } from '../telemetryExtensions';
 
+/**
+ * Recognizer base class.
+ */
 export class Recognizer {
 
     /**
@@ -23,14 +26,14 @@ export class Recognizer {
      */
     protected _telemetryClient: BotTelemetryClient = new NullTelemetryClient();
 
-    /** 
+    /**
      * Gets the telemetry client for this dialog.
      */
     public get telemetryClient(): BotTelemetryClient {
         return this._telemetryClient;
     }
 
-    /** 
+    /**
      * Sets the telemetry client for this dialog.
      */
     public set telemetryClient(client: BotTelemetryClient) {
@@ -57,7 +60,7 @@ export class Recognizer {
      * @returns A dictionary that can be included when calling the TrackEvent method on the TelemetryClient.
      */
     protected fillRecognizerResultTelemetryProperties(recognizerResult: RecognizerResult, telemetryProperties: { [key: string]: string }, dialogContext?: DialogContext): { [key: string]: string } {
-        
+
         const { intent, score } = getTopScoringIntent(recognizerResult);
 
         const properties: { [key: string]: string } = {
@@ -76,6 +79,9 @@ export class Recognizer {
         return properties;
     }
 
+    /**
+     * @private
+     */
     private stringifyAdditionalPropertiesOfRecognizerResult(recognizerResult: RecognizerResult): string {
         const generalProperties = new Set(['text', 'alteredText', 'intents', 'entities']);
         let additionalProperties: { [key: string]: string } = {};
@@ -87,9 +93,17 @@ export class Recognizer {
         return Object.keys(additionalProperties).length > 0 ? JSON.stringify(additionalProperties) : undefined;
     }
 
+    /**
+     * @protected
+     * Tracks an event with the event name provided using the `BotTelemetryClient` attaching the properties / metrics.
+     * @param dialogContext The `DialogContext` for the current turn of conversation.
+     * @param eventName The name of the event to track.
+     * @param telemetryProperties Optional. The properties to be included as part of the event tracking.
+     * @param telemetryMetrics Optional. The metrics to be included as part of the event tracking.
+     */
     protected trackRecognizerResult(dialogContext: DialogContext, eventName: string, telemetryProperties?: { [key: string]: string }, telemetryMetrics?: { [key: string]: number }) {
         if (this.telemetryClient instanceof NullTelemetryClient) {
-            const turnStateTelemetryClient = dialogContext.context.turnState.get(telemetryClientKey); 
+            const turnStateTelemetryClient = dialogContext.context.turnState.get(telemetryClientKey);
             this.telemetryClient = turnStateTelemetryClient || this.telemetryClient;
         }
         this.telemetryClient.trackEvent({
@@ -104,6 +118,13 @@ export interface IntentMap {
     [name: string]: { score: number };
 }
 
+/**
+ * Creates a `RecognizerResult`.
+ * @param text Utterance sent to recognizer.
+ * @param intents A map of intent names to an object with score.
+ * @param entities An object to represent the entities.
+ * @returns A `RecognizerResult` object.
+ */
 export function createRecognizerResult(text: string, intents?: IntentMap, entities?: object ): RecognizerResult {
     if (!intents) {
         intents = { 'None': { score: 0.0 } };
