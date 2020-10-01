@@ -23,16 +23,14 @@ export class Union extends ExpressionEvaluator {
     }
 
     private static evaluator(): EvaluateExpressionDelegate {
-        return FunctionUtils.apply(
-            (args: any[]): any => {
-                let result: any[] = [];
-                for (const arg of args) {
-                    result = result.concat(arg);
-                }
+        return FunctionUtils.apply((args: any[]): any => {
+            let result: any[] = [];
+            for (const arg of args) {
+                result = result.concat(arg);
+            }
 
-                return Array.from(new Set(result));
-            },
-            FunctionUtils.verifyList);
+            return Array.from(new Set(result));
+        }, FunctionUtils.verifyList);
     }
 
     private static validator(expression: Expression): void {
