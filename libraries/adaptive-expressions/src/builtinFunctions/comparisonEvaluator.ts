@@ -34,11 +34,16 @@ export class ComparisonEvaluator extends ExpressionEvaluator {
     private static evaluator(func: (args: any[]) => boolean, verify?: VerifyExpression): EvaluateExpressionDelegate {
         return (expression: Expression, state: MemoryInterface, options: Options): ValueWithError => {
             let result = false;
-            let error: string;
-            let args: any[];
+
             const newOptions = new Options(options);
             newOptions.nullSubstitution = undefined;
-            ({ args, error } = FunctionUtils.evaluateChildren(expression, state, newOptions, verify));
+            const { args, error: childrenError } = FunctionUtils.evaluateChildren(
+                expression,
+                state,
+                newOptions,
+                verify
+            );
+            let error = childrenError;
             if (!error) {
                 const isNumber: boolean = args && args.length > 0 && typeof args[0] === 'number';
                 for (const arg of args) {

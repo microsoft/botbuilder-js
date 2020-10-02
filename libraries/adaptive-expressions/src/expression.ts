@@ -266,6 +266,7 @@ export class Expression {
             ExpressionType.Lambda,
             new ExpressionEvaluator(
                 ExpressionType.Lambda,
+                // eslint-disable-next-line @typescript-eslint/no-unused-vars
                 (_expression: Expression, state: any, _: Options): ValueWithError => {
                     let value: any;
                     let error: string;

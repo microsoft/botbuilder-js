@@ -26,11 +26,10 @@ export class Element extends ExpressionEvaluator {
 
     private static evaluator(expression: Expression, state: MemoryInterface, options: Options): ValueWithError {
         let value: any;
-        let error: string;
         const instance: Expression = expression.children[0];
         const index: Expression = expression.children[1];
-        let inst: any;
-        ({ value: inst, error } = instance.tryEvaluate(state, options));
+        const { value: inst, error: evalError } = instance.tryEvaluate(state, options);
+        let error = evalError;
         if (!error) {
             let idxValue: any;
             const newOptions = new Options(options);
