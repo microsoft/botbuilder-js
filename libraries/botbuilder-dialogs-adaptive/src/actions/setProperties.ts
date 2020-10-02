@@ -36,7 +36,7 @@ export class PropertyAssignmentConverter implements Converter {
 }
 
 /**
- * Sets a property with the result of evaluating a value expression.
+ * Sets properties with the result of evaluating a value expression.
  */
 export class SetProperties<O extends object = {}> extends Dialog<O> {
     public constructor();

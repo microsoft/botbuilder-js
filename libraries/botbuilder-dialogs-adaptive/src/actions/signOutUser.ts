@@ -9,7 +9,7 @@ import { Dialog, DialogContext, DialogTurnResult } from 'botbuilder-dialogs';
 import { StringExpression, BoolExpression } from 'adaptive-expressions';
 
 /**
- * Send an activity back to the user.
+ * Singns out the user and finishes the dialog.
  */
 export class SignOutUser<O extends object = {}> extends Dialog<O> {
     public constructor();

@@ -16,14 +16,14 @@ export class ReplaceDialog<O extends object = {}> extends BaseInvokeDialog<O> {
     public constructor();
     
     /**
-     * Creates a new `ReplaceWithDialog` instance.
+     * Creates a new `ReplaceDialog` instance.
      * @param dialogId ID of the dialog to goto.
      * @param options Optional, static options to pass the dialog.
      */
     public constructor(dialogIdToCall: string, options?: O);
         
     /**
-     * Creates a new `ReplaceWithDialog` instance.
+     * Creates a new `ReplaceDialog` instance.
      * @param dialogId Optional. ID of the dialog to goto.
      * @param options Optional. Static options to pass the dialog.
      */

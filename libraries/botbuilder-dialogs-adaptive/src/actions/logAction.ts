@@ -18,13 +18,13 @@ export class LogAction<O extends object = {}> extends Dialog<O> {
     public constructor();
     
     /**
-     * Creates a new `SendActivity` instance.
+     * Creates a new `LogAction` instance.
      * @param template The text template to log.
      */
     public constructor(text: string);
     
     /**
-     * Creates a new `SendActivity` instance.
+     * Creates a new `LogAction` instance.
      * @param text Optional. The text template to log.
      */
     public constructor(text?: string) {

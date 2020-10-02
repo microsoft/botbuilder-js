@@ -17,7 +17,8 @@ export class TelemetryPropertiesConverter implements Converter {
 
     /**
      * Converts a `string` properties into telemetry `StringExpression` configuration properties.
-     * @param properties 
+     * @param properties The property collection to convert.
+     * @returns The converted `StringExpression`.
      */
     public convert(properties: { [name: string]: string }): { [name: string]: StringExpression } {
         const result = {};

@@ -10,7 +10,7 @@ import { Activity, ActivityTypes } from 'botbuilder-core';
 import { ValueExpression, StringExpression, BoolExpression } from 'adaptive-expressions';
 
 /**
- * Send an Tace activity back to the transcript.
+ * Send an trace activity back to the transcript.
  */
 export class TraceActivity<O extends object = {}> extends Dialog<O> {
     public constructor();
