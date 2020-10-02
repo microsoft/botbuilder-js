@@ -17,7 +17,7 @@ import { ActionChangeType } from '../actionChangeType';
  */
 export class OnError extends OnDialogEvent {
     /**
-     * Initializes a new instance of the `OnEndOfConversationActivity` class.
+     * Initializes a new instance of the `OnError` class.
      * @param actions Optional. Actions to add to the plan when the rule constraints are met.
      * @param condition Optional. Condition which needs to be met for the actions to be executed.
      */
