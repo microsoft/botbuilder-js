@@ -21,10 +21,20 @@ export class DialogTestLogger implements Middleware {
     private _logger;
     private _stopwatchStateKey = Symbol('stopwatch');
 
+    /**
+     * Initializes a new instance of the `DialogTestLogger` class.
+     * @param logger A logger object with a `log` function.
+     */
     public constructor(logger?: {log: (any) => void }) {
         this._logger = logger ? logger : console;
     }
 
+    /**
+     * Called each time the bot receives a new request.
+     * @param context Context for current turn of conversation with the user.
+     * @param next Function to call to continue execution to the next step in the middleware chain.
+     * @returns A `Promise` that represents the work queued to execute.
+     */
     public async onTurn(context: TurnContext, next: () => Promise<void>): Promise<void> {
         // log incoming
         if (context.activity.type == ActivityTypes.Message) {
