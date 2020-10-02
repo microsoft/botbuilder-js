@@ -6,7 +6,16 @@
  * Licensed under the MIT License.
  */
 import * as appInsights from 'applicationinsights';
-import { Activity, BotTelemetryClient, BotPageViewTelemetryClient, TelemetryDependency, TelemetryEvent, TelemetryException, TelemetryTrace, TelemetryPageView } from 'botbuilder-core';
+import {
+    Activity,
+    BotTelemetryClient,
+    BotPageViewTelemetryClient,
+    TelemetryDependency,
+    TelemetryEvent,
+    TelemetryException,
+    TelemetryTrace,
+    TelemetryPageView,
+} from 'botbuilder-core';
 import * as cls from 'cls-hooked';
 import * as crypto from 'crypto';
 const ns: any = cls.createNamespace('my.request');
@@ -15,7 +24,10 @@ const ns: any = cls.createNamespace('my.request');
 // https://github.com/Microsoft/ApplicationInsights-node.js/issues/296
 // This allows AppInsights to automatically apply the appropriate context objects deep inside the async/await chain.
 // tslint:disable-next-line:no-submodule-imports
-import { CorrelationContext, CorrelationContextManager } from 'applicationinsights/out/AutoCollection/CorrelationContextManager';
+import {
+    CorrelationContext,
+    CorrelationContextManager,
+} from 'applicationinsights/out/AutoCollection/CorrelationContextManager';
 const origGetCurrentContext: any = CorrelationContextManager.getCurrentContext;
 
 function getCurrentContext(): any {
@@ -27,7 +39,6 @@ function getCurrentContext(): any {
 CorrelationContextManager.getCurrentContext = getCurrentContext;
 
 export const ApplicationInsightsWebserverMiddleware: any = (req: any, res: any, next: any): void => {
-
     // Check to see if the request contains an incoming request.
     // If so, set it into the Application Insights context.
     const activity: Partial<Activity> = req.body;
@@ -41,11 +52,10 @@ export const ApplicationInsightsWebserverMiddleware: any = (req: any, res: any, 
     ns.bindEmitter(req);
     ns.bindEmitter(res);
     ns.run((): void => {
-    // tslint:disable-next-line:no-backbone-get-set-outside-model
+        // tslint:disable-next-line:no-backbone-get-set-outside-model
         ns.set('ctx', origGetCurrentContext());
         next();
     });
-
 };
 
 /* ApplicationInsightsTelemetryClient Class
@@ -62,7 +72,6 @@ export const ApplicationInsightsWebserverMiddleware: any = (req: any, res: any, 
  * ```
  */
 export class ApplicationInsightsTelemetryClient implements BotTelemetryClient, BotPageViewTelemetryClient {
-
     private client: appInsights.TelemetryClient;
     private config: appInsights.Configuration;
 
@@ -71,8 +80,8 @@ export class ApplicationInsightsTelemetryClient implements BotTelemetryClient, B
      * This function currently takes an app insights instrumentation key only.
      */
     constructor(instrumentationKey: string) {
-
-        this.config = appInsights.setup(instrumentationKey)
+        this.config = appInsights
+            .setup(instrumentationKey)
             .setAutoDependencyCorrelation(true)
             .setAutoCollectRequests(true)
             .setAutoCollectPerformance(true)
@@ -138,7 +147,9 @@ function addBotIdentifiers(envelope: appInsights.Contracts.Envelope, context: { 
         const channelId: string = activity.channelId || '';
         const conversationId: string = activity.conversation ? activity.conversation.id : '';
         // Hashed ID is used due to max session ID length for App Insights session Id
-        const sessionId: string = conversationId ? crypto.createHash('sha256').update(conversationId).digest('base64') : '';
+        const sessionId: string = conversationId
+            ? crypto.createHash('sha256').update(conversationId).digest('base64')
+            : '';
 
         // set user id and session id
         envelope.tags[appInsights.defaultClient.context.keys.userId] = channelId + userId;
