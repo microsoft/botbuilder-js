@@ -18,6 +18,9 @@ import { createRecognizerResult, EntityRecognizer, EntityRecognizerSet, Recogniz
 const oc: any = require('orchestrator-core/orchestrator-core.node');
 const ReadText: any = require('read-text-file');
 
+/**
+ * Class that represents an adaptive Orchestrator recognizer.
+ */
 export class OrchestratorAdaptiveRecognizer extends Recognizer {
     /**
      * Recognizers unique ID.
@@ -35,7 +38,7 @@ export class OrchestratorAdaptiveRecognizer extends Recognizer {
     public snapshotPath: StringExpression = new StringExpression('');
 
     /**
-     * Threshold value to use for ambiguous intent detection. 
+     * Threshold value to use for ambiguous intent detection.
      * Any intents that are classified with a score that is within this value from the top scoring intent is determined to be ambiguous.
      */
     public disambiguationScoreThreshold: NumberExpression = new NumberExpression(0.05);
@@ -114,11 +117,11 @@ export class OrchestratorAdaptiveRecognizer extends Recognizer {
 
         if (text === '') {
             return recognizerResult;
-        } 
+        }
 
         if (OrchestratorAdaptiveRecognizer.orchestrator === null || this.resolver === null) {
             this.Initialize();
-        }   
+        }
 
         // recognize text
         let result = await this.resolver.score(text);
@@ -172,10 +175,13 @@ export class OrchestratorAdaptiveRecognizer extends Recognizer {
         return recognizerResult;
     }
 
+    /**
+     * @private
+     */
     private AddTopScoringIntent(result: any, recognizerResult: RecognizerResult): void {
         const topScoringIntent = result[0].label.name;
         const topScore = result[0].score;
-        
+
         // if top scoring intent is less than threshold, return None
         if (topScore < this.unknownIntentFilterScore) {
             recognizerResult.intents['None'] = { score: 1.0 };
@@ -186,6 +192,9 @@ export class OrchestratorAdaptiveRecognizer extends Recognizer {
         }
     }
 
+    /**
+     * @private
+     */
     private async recognizeEntities(dialogContext: DialogContext, text: string, locale: string, recognizerResult: RecognizerResult) {
         const entityPool: Entity[] = [];
         const textEntity = new TextEntity(text);
@@ -239,25 +248,28 @@ export class OrchestratorAdaptiveRecognizer extends Recognizer {
         }
     }
 
+    /**
+     * @private
+     */
     private Initialize() {
-        if (OrchestratorAdaptiveRecognizer.orchestrator == null && this.resolver == null) 
+        if (OrchestratorAdaptiveRecognizer.orchestrator == null && this.resolver == null)
         {
             if (this._modelPath == null) {
                 throw new Error(`Missing "ModelPath" information.`);
             }
-    
+
             if (this._snapshotPath == null) {
                 throw new Error(`Missing "ShapshotPath" information.`);
             }
             const fullModelPath = resolve(this._modelPath);
             const fullSnapshotPath = resolve(this._snapshotPath);
             if (!existsSync(fullModelPath)) {
-                throw new Error(`Model folder does not exist at ${fullModelPath}.`);   
+                throw new Error(`Model folder does not exist at ${fullModelPath}.`);
             }
             if (!existsSync(fullSnapshotPath)) {
                 throw new Error(`Snapshot file does not exist at ${fullSnapshotPath}.`);
             }
-    
+
             if (OrchestratorAdaptiveRecognizer.orchestrator == null) {
                 console.time("Model load");
                 // Create orchestrator core
@@ -267,13 +279,13 @@ export class OrchestratorAdaptiveRecognizer extends Recognizer {
                 }
                 console.timeEnd("Model load");
             }
-    
+
             if (this.resolver == null) {
                 // Load the snapshot
                 const encoder: any = new TextEncoder();
                 const fileContent: string = ReadText.readSync(fullSnapshotPath)
                 const snapshot: Uint8Array = encoder.encode(fileContent);
-    
+
                 // Load snapshot and create resolver
                 this.resolver = OrchestratorAdaptiveRecognizer.orchestrator.createLabelResolver(snapshot);
             }

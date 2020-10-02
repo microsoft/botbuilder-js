@@ -12,14 +12,25 @@ import { BuilderRegistration, ComponentRegistration, ResourceExplorer } from 'bo
 
 import { OrchestratorAdaptiveRecognizer } from './orchestratorAdaptiveRecognizer';
 
+/**
+ * Define component assets for Luis.
+ */
 export class OrchestratorComponentRegistration implements ComponentRegistration {
     private readonly _builderRegistrations: BuilderRegistration[] = [];
     private _resourceExplorer: ResourceExplorer;
 
+    /**
+     * Gets all the builder registrations instances.
+     * @returns An array of `BuilderRegistration`.
+     */
     public getTypeBuilders(): BuilderRegistration[] {
         return this._builderRegistrations;
     }
 
+    /**
+     * Initializes a new instance of the `OrchestratorComponentRegistration` class.
+     * @param resourceExplorer `ResourceExplorer` to get all schema resources.
+     */
     public constructor(resourceExplorer: ResourceExplorer) {
         this._resourceExplorer = resourceExplorer;
 
@@ -30,6 +41,6 @@ export class OrchestratorComponentRegistration implements ComponentRegistration 
                 disambiguationScoreThreshold: new NumberExpressionConverter(),
                 detectAmbiguousIntents: new BoolExpressionConverter(),
             }))
-        );    
+        );
     }
 };
