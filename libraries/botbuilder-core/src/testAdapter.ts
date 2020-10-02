@@ -7,7 +7,19 @@
  */
 // tslint:disable-next-line:no-require-imports
 import assert from 'assert';
-import { Activity, ActivityTypes, ConversationReference, ResourceResponse, TokenResponse, TokenExchangeRequest, SignInUrlResponse, ConversationAccount, ChannelAccount, Channels, RoleTypes } from 'botframework-schema';
+import {
+    Activity,
+    ActivityTypes,
+    ConversationReference,
+    ResourceResponse,
+    TokenResponse,
+    TokenExchangeRequest,
+    SignInUrlResponse,
+    ConversationAccount,
+    ChannelAccount,
+    Channels,
+    RoleTypes,
+} from 'botframework-schema';
 import { BotAdapter } from './botAdapter';
 import { ExtendedUserTokenProvider } from './extendedUserTokenProvider';
 import { TurnContext } from './turnContext';
@@ -48,12 +60,16 @@ export class TestAdapter extends BotAdapter implements ExtendedUserTokenProvider
      * @param logicOrConversation The bots logic that's under test.
      * @param template (Optional) activity containing default values to assign to all test messages received.
      */
-    public constructor(logicOrConversation?: ((context: TurnContext) => Promise<void>) | ConversationReference, template?: Partial<Activity>, sendTraceActivity = false) {
+    public constructor(
+        logicOrConversation?: ((context: TurnContext) => Promise<void>) | ConversationReference,
+        template?: Partial<Activity>,
+        sendTraceActivity = false
+    ) {
         super();
         this._sendTraceActivity = sendTraceActivity;
         this.template = template || {};
         if (logicOrConversation) {
-            if (typeof (logicOrConversation) === 'function') {
+            if (typeof logicOrConversation === 'function') {
                 this._logic = logicOrConversation;
                 this.conversation = TestAdapter.createConversation('Convo1');
             } else {
@@ -68,7 +84,7 @@ export class TestAdapter extends BotAdapter implements ExtendedUserTokenProvider
             serviceUrl: this.template.serviceUrl || this.conversation.serviceUrl,
             channelId: this.template.channelId || this.conversation.channelId,
             bot: this.template.recipient || this.conversation.bot,
-            user: this.template.from || this.conversation.user
+            user: this.template.from || this.conversation.user,
         });
     }
 
@@ -121,7 +137,7 @@ export class TestAdapter extends BotAdapter implements ExtendedUserTokenProvider
             serviceUrl: 'https://test.com',
             conversation: { isGroup: false, id: name, name: name } as ConversationAccount,
             user: { id: user.toLowerCase(), name: user } as ChannelAccount,
-            bot: { id: bot.toLowerCase(), name: bot } as ChannelAccount
+            bot: { id: bot.toLowerCase(), name: bot } as ChannelAccount,
         };
         return conversationReference;
     }
@@ -149,7 +165,7 @@ export class TestAdapter extends BotAdapter implements ExtendedUserTokenProvider
             conversation: this.conversation.conversation,
             serviceUrl: this.conversation.serviceUrl,
             id: (this._nextId++).toString(),
-            text: text
+            text: text,
         };
         return activity;
     }
@@ -179,8 +195,12 @@ export class TestAdapter extends BotAdapter implements ExtendedUserTokenProvider
      * @param activity The activity to process.
      * @param callback The bot logic to invoke.
      */
-    public async processActivity(activity: string | Partial<Activity>, callback?: (context: TurnContext) => Promise<any>): Promise<any> {
-        const request: Partial<Activity> = typeof activity === 'string' ? { type: ActivityTypes.Message, text: activity } : activity;
+    public async processActivity(
+        activity: string | Partial<Activity>,
+        callback?: (context: TurnContext) => Promise<any>
+    ): Promise<any> {
+        const request: Partial<Activity> =
+            typeof activity === 'string' ? { type: ActivityTypes.Message, text: activity } : activity;
         request.type = request.type || ActivityTypes.Message;
         request.channelId = request.channelId || this.conversation.channelId;
 
@@ -237,7 +257,7 @@ export class TestAdapter extends BotAdapter implements ExtendedUserTokenProvider
 
             if (activity.type === 'delay') {
                 const delayMs = parseInt(activity.value);
-                await new Promise(resolve => setTimeout(resolve, delayMs));
+                await new Promise((resolve) => setTimeout(resolve, delayMs));
             } else if (activity.type === ActivityTypes.Trace) {
                 if (this._sendTraceActivity) {
                     this.activeQueue.push(activity);
@@ -306,13 +326,13 @@ export class TestAdapter extends BotAdapter implements ExtendedUserTokenProvider
     }
 
     /**
-    * Creates a turn context.
-    *
-    * @param request An incoming request body.
-    *
-    * @remarks
-    * Override this in a derived class to modify how the adapter creates a turn context.
-    */
+     * Creates a turn context.
+     *
+     * @param request An incoming request body.
+     *
+     * @remarks
+     * Override this in a derived class to modify how the adapter creates a turn context.
+     */
     protected createContext(request: Partial<Activity>): TurnContext {
         return new TurnContext(this, request);
     }
@@ -356,8 +376,7 @@ export class TestAdapter extends BotAdapter implements ExtendedUserTokenProvider
         description?: string,
         timeout?: number
     ): TestFlow {
-        return this.send(userSays)
-            .assertReply(expected, description);
+        return this.send(userSays).assertReply(expected, description);
     }
 
     /**
@@ -375,21 +394,20 @@ export class TestAdapter extends BotAdapter implements ExtendedUserTokenProvider
             throw new Error('Missing array of activities');
         }
 
-        const activityInspector: any = (expected: Partial<Activity>): TestActivityInspector =>
-            (actual: Partial<Activity>, description2: string): any =>
-                validateTranscriptActivity(actual, expected, description2);
+        const activityInspector: any = (expected: Partial<Activity>): TestActivityInspector => (
+            actual: Partial<Activity>,
+            description2: string
+        ): any => validateTranscriptActivity(actual, expected, description2);
 
         // Chain all activities in a TestFlow, check if its a user message (send) or a bot reply (assert)
-        return activities.reduce(
-            (flow: TestFlow, activity: Partial<Activity>) => {
-                // tslint:disable-next-line:prefer-template
-                const assertDescription = `reply ${ (description ? ' from ' + description : '') }`;
+        return activities.reduce((flow: TestFlow, activity: Partial<Activity>) => {
+            // tslint:disable-next-line:prefer-template
+            const assertDescription = `reply ${description ? ' from ' + description : ''}`;
 
-                return this.isReply(activity)
-                    ? flow.assertReply(activityInspector(activity, description), assertDescription, timeout)
-                    : flow.send(activity);
-            },
-            new TestFlow(Promise.resolve(), this));
+            return this.isReply(activity)
+                ? flow.assertReply(activityInspector(activity, description), assertDescription, timeout)
+                : flow.send(activity);
+        }, new TestFlow(Promise.resolve(), this));
     }
 
     private _userTokens: UserToken[] = [];
@@ -412,8 +430,7 @@ export class TestAdapter extends BotAdapter implements ExtendedUserTokenProvider
 
         if (!magicCode) {
             this._userTokens.push(key);
-        }
-        else {
+        } else {
             const mc = new TokenMagicCode();
             mc.key = key;
             mc.magicCode = magicCode;
@@ -421,20 +438,24 @@ export class TestAdapter extends BotAdapter implements ExtendedUserTokenProvider
         }
     }
 
-    /** 
+    /**
      * Asynchronously retrieves the token status for each configured connection for the given user.
      * In testAdapter, retrieves tokens which were previously added via addUserToken.
-     * 
+     *
      * @param context The context object for the turn.
      * @param userId The ID of the user to retrieve the token status for.
      * @param includeFilter Optional. A comma-separated list of connection's to include. If present,
      *      the `includeFilter` parameter limits the tokens this method returns.
      * @param oAuthAppCredentials AppCredentials for OAuth.
-     * 
+     *
      * @returns The [TokenStatus](xref:botframework-connector.TokenStatus) objects retrieved.
      */
-    public async getTokenStatus(context: TurnContext, userId: string, includeFilter?: string, oAuthAppCredentials?: any): Promise<any[]> {
-
+    public async getTokenStatus(
+        context: TurnContext,
+        userId: string,
+        includeFilter?: string,
+        oAuthAppCredentials?: any
+    ): Promise<any[]> {
         if (!context || !context.activity) {
             throw new Error('testAdapter.getTokenStatus(): context with activity is required');
         }
@@ -443,18 +464,22 @@ export class TestAdapter extends BotAdapter implements ExtendedUserTokenProvider
             throw new Error(`testAdapter.getTokenStatus(): missing userId, from or from.id`);
         }
 
-        const filter = (includeFilter ? includeFilter.split(',') : undefined);
+        const filter = includeFilter ? includeFilter.split(',') : undefined;
         if (!userId) {
             userId = context.activity.from.id;
         }
 
-        return this._userTokens.filter(x => x.channelId === context.activity.channelId
-            && x.userId === userId
-            && (!filter || filter.includes(x.connectionName)))
-            .map(token => ({
+        return this._userTokens
+            .filter(
+                (x) =>
+                    x.channelId === context.activity.channelId &&
+                    x.userId === userId &&
+                    (!filter || filter.includes(x.connectionName))
+            )
+            .map((token) => ({
                 ConnectionName: token.connectionName,
                 HasToken: true,
-                ServiceProviderDisplayName: token.connectionName
+                ServiceProviderDisplayName: token.connectionName,
             }));
     }
 
@@ -464,14 +489,20 @@ export class TestAdapter extends BotAdapter implements ExtendedUserTokenProvider
      * @param connectionName Name of the auth connection to use.
      * @param magicCode (Optional) Optional user entered code to validate.
      */
-    public async getUserToken(context: TurnContext, connectionName: string, magicCode?: string): Promise<TokenResponse> {
+    public async getUserToken(
+        context: TurnContext,
+        connectionName: string,
+        magicCode?: string
+    ): Promise<TokenResponse> {
         const key: UserToken = new UserToken();
         key.channelId = context.activity.channelId;
         key.connectionName = connectionName;
         key.userId = context.activity.from.id;
 
         if (magicCode) {
-            const magicCodeRecord = this._magicCodes.find(item => key.equalsKey(item.key) && item.magicCode === magicCode);
+            const magicCodeRecord = this._magicCodes.find(
+                (item) => key.equalsKey(item.key) && item.magicCode === magicCode
+            );
             if (magicCodeRecord) {
                 // move the token to long term dictionary
                 this.addUserToken(connectionName, key.channelId, key.userId, magicCodeRecord.key.token);
@@ -482,7 +513,7 @@ export class TestAdapter extends BotAdapter implements ExtendedUserTokenProvider
             }
         }
 
-        const userToken = this._userTokens.find(token => key.equalsKey(token));
+        const userToken = this._userTokens.find((token) => key.equalsKey(token));
         return userToken && Object.assign({ expiration: undefined }, userToken);
     }
 
@@ -495,11 +526,10 @@ export class TestAdapter extends BotAdapter implements ExtendedUserTokenProvider
     public async signOutUser(context: TurnContext, connectionName?: string, userId?: string): Promise<void> {
         const channelId = context.activity.channelId;
         userId = userId || context.activity.from.id;
-        this._userTokens = this._userTokens.filter(token =>
-            connectionName &&
-            (connectionName !== token.connectionName ||
-                channelId !== token.channelId ||
-                userId !== token.userId)
+        this._userTokens = this._userTokens.filter(
+            (token) =>
+                connectionName &&
+                (connectionName !== token.connectionName || channelId !== token.channelId || userId !== token.userId)
         );
     }
 
@@ -509,7 +539,7 @@ export class TestAdapter extends BotAdapter implements ExtendedUserTokenProvider
      * @param connectionName Name of the auth connection to use.
      */
     public async getSignInLink(context: TurnContext, connectionName: string): Promise<string> {
-        return `https://fake.com/oauthsignin/${ connectionName }/${ context.activity.channelId }/${ context.activity.from.id }`;
+        return `https://fake.com/oauthsignin/${connectionName}/${context.activity.channelId}/${context.activity.from.id}`;
     }
 
     /**
@@ -517,16 +547,25 @@ export class TestAdapter extends BotAdapter implements ExtendedUserTokenProvider
      * @param context Context for the current turn of conversation with the user.
      * @param connectionName Name of the auth connection to use.
      */
-    public async getAadTokens(context: TurnContext, connectionName: string, resourceUrls: string[]): Promise<{
+    public async getAadTokens(
+        context: TurnContext,
+        connectionName: string,
+        resourceUrls: string[]
+    ): Promise<{
         [propertyName: string]: TokenResponse;
     }> {
         return undefined;
     }
 
-
     private exchangeableTokens: { [key: string]: ExchangeableToken } = {};
 
-    public addExchangeableToken(connectionName: string, channelId: string, userId: string, exchangeableItem: string, token: string) {
+    public addExchangeableToken(
+        connectionName: string,
+        channelId: string,
+        userId: string,
+        exchangeableItem: string,
+        token: string
+    ) {
         const key: ExchangeableToken = new ExchangeableToken();
         key.channelId = channelId;
         key.connectionName = connectionName;
@@ -536,21 +575,31 @@ export class TestAdapter extends BotAdapter implements ExtendedUserTokenProvider
         this.exchangeableTokens[key.toKey()] = key;
     }
 
-    public async getSignInResource(context: TurnContext, connectionName: string, userId?: string, finalRedirect?: string): Promise<SignInUrlResponse> {
+    public async getSignInResource(
+        context: TurnContext,
+        connectionName: string,
+        userId?: string,
+        finalRedirect?: string
+    ): Promise<SignInUrlResponse> {
         return {
-            signInLink: `https://botframeworktestadapter.com/oauthsignin/${ connectionName }/${ context.activity.channelId }/${ userId }`,
+            signInLink: `https://botframeworktestadapter.com/oauthsignin/${connectionName}/${context.activity.channelId}/${userId}`,
             tokenExchangeResource: {
                 id: String(Math.random()),
                 providerId: null,
-                uri: `api://${ connectionName }/resource`
-
-            }
-        }
+                uri: `api://${connectionName}/resource`,
+            },
+        };
     }
 
-
-    public async exchangeToken(context: TurnContext, connectionName: string, userId: string, tokenExchangeRequest: TokenExchangeRequest): Promise<TokenResponse> {
-        const exchangeableValue: string = tokenExchangeRequest.token ? tokenExchangeRequest.token : tokenExchangeRequest.uri;
+    public async exchangeToken(
+        context: TurnContext,
+        connectionName: string,
+        userId: string,
+        tokenExchangeRequest: TokenExchangeRequest
+    ): Promise<TokenResponse> {
+        const exchangeableValue: string = tokenExchangeRequest.token
+            ? tokenExchangeRequest.token
+            : tokenExchangeRequest.uri;
         const key = new ExchangeableToken();
         key.channelId = context.activity.channelId;
         key.connectionName = connectionName;
@@ -562,14 +611,14 @@ export class TestAdapter extends BotAdapter implements ExtendedUserTokenProvider
             throw new Error('Exception occurred during exchanging tokens');
         }
 
-        return tokenExchangeResponse ?
-            {
-                channelId: key.channelId,
-                connectionName: key.connectionName,
-                token: tokenExchangeResponse.token,
-                expiration: null
-            } :
-            null;
+        return tokenExchangeResponse
+            ? {
+                  channelId: key.channelId,
+                  connectionName: key.connectionName,
+                  token: tokenExchangeResponse.token,
+                  expiration: null,
+              }
+            : null;
     }
 
     /**
@@ -579,7 +628,12 @@ export class TestAdapter extends BotAdapter implements ExtendedUserTokenProvider
      * @param userId The user id.
      * @param exchangeableItem The exchangeable token or resource URI.
      */
-    public throwOnExchangeRequest(connectionName: string, channelId: string, userId: string, exchangeableItem: string): void {
+    public throwOnExchangeRequest(
+        connectionName: string,
+        channelId: string,
+        userId: string,
+        exchangeableItem: string
+    ): void {
         const token: ExchangeableToken = new ExchangeableToken();
         token.channelId = channelId;
         token.connectionName = connectionName;
@@ -615,10 +669,12 @@ class UserToken {
     public token: string;
 
     public equalsKey(rhs: UserToken): boolean {
-        return rhs &&
+        return (
+            rhs &&
             this.connectionName === rhs.connectionName &&
             this.userId === rhs.userId &&
-            this.channelId === rhs.channelId;
+            this.channelId === rhs.channelId
+        );
     }
 }
 
@@ -631,9 +687,7 @@ class ExchangeableToken extends UserToken {
     public exchangeableItem: string;
 
     public equalsKey(rhs: ExchangeableToken): boolean {
-        return rhs != null &&
-            this.exchangeableItem === rhs.exchangeableItem &&
-            super.equalsKey(rhs);
+        return rhs != null && this.exchangeableItem === rhs.exchangeableItem && super.equalsKey(rhs);
     }
 
     public toKey(): string {
@@ -665,14 +719,13 @@ class ExchangeableToken extends UserToken {
  * ```
  */
 export class TestFlow {
-
     /**
      * @private
      * INTERNAL: creates a new TestFlow instance.
      * @param previous Promise chain for the current test sequence.
      * @param adapter Adapter under tested.
      */
-    constructor(public previous: Promise<void>, private adapter: TestAdapter) { }
+    constructor(public previous: Promise<void>, private adapter: TestAdapter) {}
 
     /**
      * Send something to the bot and expects the bot to return with a given reply. This is simply a
@@ -689,8 +742,7 @@ export class TestFlow {
         description?: string,
         timeout?: number
     ): TestFlow {
-        return this.send(userSays)
-            .assertReply(expected, description || `test("${ userSays }", "${ expected }")`, timeout);
+        return this.send(userSays).assertReply(expected, description || `test("${userSays}", "${expected}")`, timeout);
     }
 
     /**
@@ -698,7 +750,10 @@ export class TestFlow {
      * @param userSays Text or activity simulating user input.
      */
     public send(userSays: string | Partial<Activity>): TestFlow {
-        return new TestFlow(this.previous.then(() => this.adapter.processActivity(userSays)), this.adapter);
+        return new TestFlow(
+            this.previous.then(() => this.adapter.processActivity(userSays)),
+            this.adapter
+        );
     }
 
     /**
@@ -707,46 +762,58 @@ export class TestFlow {
      * @param description (Optional) Description of the test case. If not provided one will be generated.
      * @param timeout (Optional) number of milliseconds to wait for a response from bot. Defaults to a value of `3000`.
      */
-    public assertReply(expected: string | Partial<Activity> | TestActivityInspector, description?: string, timeout?: number): TestFlow {
+    public assertReply(
+        expected: string | Partial<Activity> | TestActivityInspector,
+        description?: string,
+        timeout?: number
+    ): TestFlow {
         function defaultInspector(reply: Partial<Activity>, description2?: string): void {
             if (typeof expected === 'object') {
                 validateActivity(reply, expected);
             } else {
-                assert.equal(reply.type, ActivityTypes.Message, `${ description2 } type === '${ reply.type }'. `);
-                assert.equal(reply.text, expected, `${ description2 } text === "${ reply.text }"`);
+                assert.equal(reply.type, ActivityTypes.Message, `${description2} type === '${reply.type}'. `);
+                assert.equal(reply.text, expected, `${description2} text === "${reply.text}"`);
             }
         }
 
-        if (!description) { description = ''; }
+        if (!description) {
+            description = '';
+        }
         const inspector: TestActivityInspector = typeof expected === 'function' ? expected : defaultInspector;
 
         return new TestFlow(
             this.previous.then(() => {
                 // tslint:disable-next-line:promise-must-complete
                 return new Promise<void>((resolve: any, reject: any): void => {
-                    if (!timeout) { timeout = 3000; }
+                    if (!timeout) {
+                        timeout = 3000;
+                    }
                     const start: number = new Date().getTime();
                     const adapter: TestAdapter = this.adapter;
 
                     function waitForActivity(): void {
                         const current: number = new Date().getTime();
-                        if ((current - start) > <number>timeout) {
+                        if (current - start > <number>timeout) {
                             // Operation timed out
                             let expecting: string;
                             switch (typeof expected) {
                                 case 'string':
                                 default:
-                                    expecting = `"${ expected.toString() }"`;
+                                    expecting = `"${expected.toString()}"`;
                                     break;
                                 case 'object':
-                                    expecting = `"${ (expected as Activity).text }`;
+                                    expecting = `"${(expected as Activity).text}`;
                                     break;
                                 case 'function':
                                     expecting = expected.toString();
                                     break;
                             }
                             reject(
-                                new Error(`TestAdapter.assertReply(${ expecting }): ${ description } Timed out after ${ current - start }ms.`)
+                                new Error(
+                                    `TestAdapter.assertReply(${expecting}): ${description} Timed out after ${
+                                        current - start
+                                    }ms.`
+                                )
                             );
                         } else if (adapter.activeQueue.length > 0) {
                             // Activity received
@@ -764,7 +831,8 @@ export class TestFlow {
                     waitForActivity();
                 });
             }),
-            this.adapter);
+            this.adapter
+        );
     }
 
     /**
@@ -777,19 +845,25 @@ export class TestFlow {
             this.previous.then(() => {
                 // tslint:disable-next-line:promise-must-complete
                 return new Promise<void>((resolve: any, reject: any): void => {
-                    if (!timeout) { timeout = 3000; }
+                    if (!timeout) {
+                        timeout = 3000;
+                    }
                     const start: number = new Date().getTime();
                     const adapter: TestAdapter = this.adapter;
 
                     function waitForActivity(): void {
                         const current: number = new Date().getTime();
-                        if ((current - start) > <number>timeout) {
+                        if (current - start > <number>timeout) {
                             // Operation timed out and received no reply
                             resolve();
                         } else if (adapter.activeQueue.length > 0) {
                             // Activity received
                             const reply: Partial<Activity> = adapter.activeQueue.shift() as Activity;
-                            assert.strictEqual(reply, undefined, `${ JSON.stringify(reply) } is responded when waiting for no reply: '${ description }'`);
+                            assert.strictEqual(
+                                reply,
+                                undefined,
+                                `${JSON.stringify(reply)} is responded when waiting for no reply: '${description}'`
+                            );
                             resolve();
                         } else {
                             setTimeout(waitForActivity, 5);
@@ -798,7 +872,8 @@ export class TestFlow {
                     waitForActivity();
                 });
             }),
-            this.adapter);
+            this.adapter
+        );
     }
 
     /**
@@ -815,7 +890,11 @@ export class TestFlow {
                         return;
                     }
                 }
-                assert.fail(`TestAdapter.assertReplyOneOf(): ${ description2 || '' } FAILED, Expected one of :${ JSON.stringify(candidates) }`);
+                assert.fail(
+                    `TestAdapter.assertReplyOneOf(): ${description2 || ''} FAILED, Expected one of :${JSON.stringify(
+                        candidates
+                    )}`
+                );
             },
             description,
             timeout
@@ -829,7 +908,9 @@ export class TestFlow {
     public delay(ms: number): TestFlow {
         return new TestFlow(
             this.previous.then(() => {
-                return new Promise<void>((resolve: any, reject: any): void => { setTimeout(resolve, ms); });
+                return new Promise<void>((resolve: any, reject: any): void => {
+                    setTimeout(resolve, ms);
+                });
             }),
             this.adapter
         );
@@ -879,15 +960,23 @@ function validateActivity(activity: Partial<Activity>, expected: Partial<Activit
  * - speak
  * - suggestedActions
  */
-function validateTranscriptActivity(activity: Partial<Activity>, expected: Partial<Activity>, description: string): void {
-    assert.equal(activity.type, expected.type, `failed "type" assert on ${ description }`);
-    assert.equal(activity.text, expected.text, `failed "text" assert on ${ description }`);
-    assert.equal(activity.speak, expected.speak, `failed "speak" assert on ${ description }`);
-    assert.deepEqual(activity.suggestedActions, expected.suggestedActions, `failed "suggestedActions" assert on ${ description }`);
+function validateTranscriptActivity(
+    activity: Partial<Activity>,
+    expected: Partial<Activity>,
+    description: string
+): void {
+    assert.equal(activity.type, expected.type, `failed "type" assert on ${description}`);
+    assert.equal(activity.text, expected.text, `failed "text" assert on ${description}`);
+    assert.equal(activity.speak, expected.speak, `failed "speak" assert on ${description}`);
+    assert.deepEqual(
+        activity.suggestedActions,
+        expected.suggestedActions,
+        `failed "suggestedActions" assert on ${description}`
+    );
 }
 
-/* 
- * This function generates a GUID-like random number that should be sufficient for our purposes of tracking 
+/*
+ * This function generates a GUID-like random number that should be sufficient for our purposes of tracking
  * instances of a given waterfall dialog.
  * Source: https://stackoverflow.com/questions/105034/create-guid-uuid-in-javascript
  */
@@ -897,6 +986,5 @@ function generate_guid() {
             .toString(16)
             .substring(1);
     }
-    return s4() + s4() + '-' + s4() + '-' + s4() + '-' +
-        s4() + '-' + s4() + s4() + s4();
+    return s4() + s4() + '-' + s4() + '-' + s4() + '-' + s4() + '-' + s4() + s4() + s4();
 }
