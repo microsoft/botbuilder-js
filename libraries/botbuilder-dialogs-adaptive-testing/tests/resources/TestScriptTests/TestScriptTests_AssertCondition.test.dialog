@@ -1,0 +1,49 @@
+{
+    "$schema": "../../../schemas/sdk.schema",
+    "$kind": "Microsoft.Test.Script",
+    "description": "Test AssertCondition",
+    "dialog": {
+        "$kind": "Microsoft.AdaptiveDialog",
+        "triggers": [
+            {
+                "$kind": "Microsoft.OnError",
+                "actions": [
+                    {
+                        "$kind": "Microsoft.SendActivity",
+                        "activity": "assert false"
+                    }
+                ]
+            },
+            {
+                "$kind": "Microsoft.OnBeginDialog",
+                "actions": [
+                    {
+                        "$kind": "Microsoft.Test.AssertCondition",
+                        "condition": "true"
+                    },
+                    {
+                        "$kind": "Microsoft.SendActivity",
+                        "activity": "assert true"
+                    },
+                    {
+                        "$kind": "Microsoft.Test.AssertCondition",
+                        "condition": "false"
+                    }
+                ]
+            }
+        ]
+    },
+    "script": [
+        {
+            "$kind": "Microsoft.Test.UserConversationUpdate"
+        },
+        {
+            "$kind": "Microsoft.Test.AssertReply",
+            "text": "assert true"
+        },
+        {
+            "$kind": "Microsoft.Test.AssertReply",
+            "text": "assert false"
+        }
+    ]
+}
