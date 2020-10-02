@@ -25,9 +25,8 @@ export class Ticks extends ExpressionEvaluator {
 
     private static evaluator(expr: Expression, state: MemoryInterface, options: Options): ValueWithError {
         let value: any;
-        let error: string;
-        let args: any[];
-        ({ args, error } = FunctionUtils.evaluateChildren(expr, state, options));
+        const { args, error: childrenError } = FunctionUtils.evaluateChildren(expr, state, options);
+        let error = childrenError;
         if (!error) {
             if (typeof args[0] === 'string') {
                 ({ value, error } = InternalFunctionUtils.ticks(args[0]));

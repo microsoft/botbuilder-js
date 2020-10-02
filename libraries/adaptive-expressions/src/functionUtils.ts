@@ -464,9 +464,8 @@ export class FunctionUtils {
     public static apply(func: (arg0: any[]) => any, verify?: VerifyExpression): EvaluateExpressionDelegate {
         return (expression: Expression, state: MemoryInterface, options: Options): ValueWithError => {
             let value: any;
-            let error: string;
-            let args: any[];
-            ({ args, error } = FunctionUtils.evaluateChildren(expression, state, options, verify));
+            const { args, error: childrenError } = FunctionUtils.evaluateChildren(expression, state, options, verify);
+            let error = childrenError;
             if (!error) {
                 try {
                     value = func(args);
@@ -488,9 +487,8 @@ export class FunctionUtils {
     public static applyWithError(func: (arg0: any[]) => any, verify?: VerifyExpression): EvaluateExpressionDelegate {
         return (expression: Expression, state: MemoryInterface, options: Options): ValueWithError => {
             let value: any;
-            let error: string;
-            let args: any[];
-            ({ args, error } = FunctionUtils.evaluateChildren(expression, state, options, verify));
+            const { args, error: childrenError } = FunctionUtils.evaluateChildren(expression, state, options, verify);
+            let error = childrenError;
             if (!error) {
                 try {
                     ({ value, error } = func(args));

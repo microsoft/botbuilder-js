@@ -27,9 +27,9 @@ export class AddToTime extends ExpressionEvaluator {
 
     private static evaluator(expression: Expression, state: MemoryInterface, options: Options): ValueWithError {
         let value: any;
-        let error: string;
-        let args: any[];
-        ({ args, error } = FunctionUtils.evaluateChildren(expression, state, options));
+
+        const { args, error: childrenError } = FunctionUtils.evaluateChildren(expression, state, options);
+        let error = childrenError;
         if (!error) {
             const format: string =
                 args.length === 4 ? FunctionUtils.timestampFormatter(args[3]) : FunctionUtils.DefaultDateTimeFormat;
@@ -50,9 +50,8 @@ export class AddToTime extends ExpressionEvaluator {
         format?: string
     ): ValueWithError {
         let result: string;
-        let error: string;
-        let parsed: any;
-        ({ value: parsed, error } = InternalFunctionUtils.parseTimestamp(timeStamp));
+        const { value: parsed, error: parseError } = InternalFunctionUtils.parseTimestamp(timeStamp);
+        let error = parseError;
         if (!error) {
             const dt: any = moment(parsed).utc();
             let addedTime = dt;

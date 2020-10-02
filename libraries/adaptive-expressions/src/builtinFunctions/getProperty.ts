@@ -26,12 +26,11 @@ export class GetProperty extends ExpressionEvaluator {
 
     private static evaluator(expression: Expression, state: MemoryInterface, options: Options): ValueWithError {
         let value: any;
-        let error: string;
-        let firstItem: any;
         let property: any;
 
         const children: Expression[] = expression.children;
-        ({ value: firstItem, error } = children[0].tryEvaluate(state, options));
+        const { value: firstItem, error: childrenError } = children[0].tryEvaluate(state, options);
+        let error = childrenError;
         if (!error) {
             if (children.length === 1) {
                 // get root value from memory

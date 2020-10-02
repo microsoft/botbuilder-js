@@ -49,7 +49,7 @@ export class ConfirmInput extends InputDialog {
     /**
      * Custom list of choices to send for the prompt.
      */
-    public confirmChoices?: ObjectExpression<ChoiceSet>;
+    public confirmChoices?: ObjectExpression<ChoiceSet> = new ObjectExpression();
 
     /**
      * The expression of output format.
