@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 
-import moment, { parseTwoDigitYear } from 'moment';
+import moment from 'moment';
 
 import { Expression } from '../expression';
 import { ExpressionEvaluator, ValueWithError } from '../expressionEvaluator';
