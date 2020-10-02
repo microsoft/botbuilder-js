@@ -11,10 +11,17 @@ import { ResourceExplorer } from 'botbuilder-dialogs-declarative';
 import { AdaptiveDialogTestComponentRegistration } from './adaptiveDialogTestComponentRegistration';
 import { TestScript } from './testScript';
 
+/**
+ * In charge of running Dialog Adaptive tests.
+ */
 export class TestRunner {
     private resourceExplorer: ResourceExplorer;
     private testAdapter: TestAdapter;
 
+    /**
+     * Initializes a new instance of the `TestRunner` class.
+     * @param resourcePath Path where the `.dialog` files are located.
+     */
     public constructor(resourcePath: string) {
         this.resourceExplorer = new ResourceExplorer();
         this.resourceExplorer.addFolder(resourcePath, true, false);
@@ -24,6 +31,11 @@ export class TestRunner {
         this.testAdapter = new TestAdapter(TestAdapter.createConversation('botbuilder-dialogs-adaptive-testing'));
     }
 
+    /**
+     * Runs a test script with the specified name.
+     * @param testName Test name.
+     * @returns A Promise that represents the work queued to execute.
+     */
     public async runTestScript(testName: string): Promise<any> {
         const script = this.resourceExplorer.loadType(`${ testName }.test.dialog`) as TestScript;
         script.description = script.description || testName;
