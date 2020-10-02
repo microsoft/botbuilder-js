@@ -69,14 +69,20 @@ interface DocumentStoreItem {
 /**
  * @private
  */
-const ContainerNameCheck: RegExp = new RegExp('^[a-z0-9](?!.*--)[a-z0-9-]{1,61}[a-z0-9]$');
+const ContainerNameCheck = new RegExp('^[a-z0-9](?!.*--)[a-z0-9-]{1,61}[a-z0-9]$');
 
 /**
  * @private
  */
 
 // tslint:disable-next-line:max-line-length typedef align no-shadowed-variable
-const ResolvePromisesSerial = (values, promise) => values.map(value => () => promise(value)).reduce((promise, func) => promise.then(result => func().then(Array.prototype.concat.bind(result))), Promise.resolve([]));
+const ResolvePromisesSerial = (values, promise) =>
+    values
+        .map((value) => () => promise(value))
+        .reduce(
+            (promise, func) => promise.then((result) => func().then(Array.prototype.concat.bind(result))),
+            Promise.resolve([])
+        );
 
 /**
  * @private
@@ -136,37 +142,53 @@ export class BlobStorage implements Storage {
 
         const sanitizedKeys: string[] = keys.filter((k: string) => k).map((key: string) => this.sanitizeKey(key));
 
-        return this.ensureContainerExists().then((container: azure.BlobService.ContainerResult) => {
-            return new Promise<StoreItems>((resolve: any, reject: any): void => {
-                Promise.all<DocumentStoreItem>(sanitizedKeys.map((key: string) => {
-                    return this.client.doesBlobExistAsync(container.name, key).then((blobResult: azure.BlobService.BlobResult) => {
-                        if (blobResult.exists) {
-                            return this.client.getBlobMetadataAsync(container.name, key)
-                                .then((blobMetadata: azure.BlobService.BlobResult) => {
-                                    return this.client.getBlobToTextAsync(blobMetadata.container, blobMetadata.name)
-                                        .then((result: azure.BlobService.BlobToText) => {
-                                            const document: DocumentStoreItem = JSON.parse(result as any);
-                                            document.document.eTag = blobMetadata.etag;
+        return this.ensureContainerExists()
+            .then((container: azure.BlobService.ContainerResult) => {
+                return new Promise<StoreItems>((resolve: any, reject: any): void => {
+                    Promise.all<DocumentStoreItem>(
+                        sanitizedKeys.map((key: string) => {
+                            return this.client
+                                .doesBlobExistAsync(container.name, key)
+                                .then((blobResult: azure.BlobService.BlobResult) => {
+                                    if (blobResult.exists) {
+                                        return this.client
+                                            .getBlobMetadataAsync(container.name, key)
+                                            .then((blobMetadata: azure.BlobService.BlobResult) => {
+                                                return this.client
+                                                    .getBlobToTextAsync(blobMetadata.container, blobMetadata.name)
+                                                    .then((result: azure.BlobService.BlobToText) => {
+                                                        const document: DocumentStoreItem = JSON.parse(result as any);
+                                                        document.document.eTag = blobMetadata.etag;
 
-                                            return document;
-                                        });
+                                                        return document;
+                                                    });
+                                            });
+                                    } else {
+                                        // If blob does not exist, return an empty DocumentStoreItem.
+                                        return { document: {} } as DocumentStoreItem;
+                                    }
                                 });
-                        } else {
-                            // If blob does not exist, return an empty DocumentStoreItem.
-                            return { document: {} } as DocumentStoreItem;
-                        }
-                    });
-                })).then((items: DocumentStoreItem[]) => {
-                    if (items !== null && items.length > 0) {
-                        const storeItems: StoreItems = {};
-                        items.filter((x: DocumentStoreItem) => x).forEach((item: DocumentStoreItem) => {
-                            storeItems[item.realId] = item.document;
+                        })
+                    )
+                        .then((items: DocumentStoreItem[]) => {
+                            if (items !== null && items.length > 0) {
+                                const storeItems: StoreItems = {};
+                                items
+                                    .filter((x: DocumentStoreItem) => x)
+                                    .forEach((item: DocumentStoreItem) => {
+                                        storeItems[item.realId] = item.document;
+                                    });
+                                resolve(storeItems);
+                            }
+                        })
+                        .catch((error: Error) => {
+                            reject(error);
                         });
-                        resolve(storeItems);
-                    }
-                }).catch((error: Error) => { reject(error); });
+                });
+            })
+            .catch((error: Error) => {
+                throw error;
             });
-        }).catch((error: Error) => { throw error; });
     }
 
     public write(changes: StoreItems): Promise<void> {
@@ -183,41 +205,48 @@ export class BlobStorage implements Storage {
                 const documentChange: DocumentStoreItem = {
                     id: this.sanitizeKey(key),
                     realId: key,
-                    document: changes[key]
+                    document: changes[key],
                 };
 
                 const payload: string = JSON.stringify(documentChange);
                 const options: azure.BlobService.CreateBlobRequestOptions = {
-                    accessConditions: changes[key].eTag === '*' ?
-                        azure.AccessCondition.generateEmptyCondition() : azure.AccessCondition.generateIfMatchCondition(changes[key].eTag),
-                    parallelOperationThreadCount: 4
+                    accessConditions:
+                        changes[key].eTag === '*'
+                            ? azure.AccessCondition.generateEmptyCondition()
+                            : azure.AccessCondition.generateIfMatchCondition(changes[key].eTag),
+                    parallelOperationThreadCount: 4,
                 };
 
                 return {
                     id: documentChange.id,
                     data: payload,
-                    options: options
+                    options: options,
                 };
             });
 
             // A block blob can be uploaded using a single PUT operation or divided into multiple PUT block operations
             // depending on the payload's size. The default maximum size for a single blob upload is 128MB.
             // An 'InvalidBlockList' error is commonly caused due to concurrently uploading an object larger than 128MB in size.
-            const promise: (b: any) => Promise<azure.BlobService.BlobResult> =
-                (blob: any): Promise<azure.BlobService.BlobResult> =>
-                    this.client.createBlockBlobFromTextAsync(container.name, blob.id, blob.data, blob.options);
+            const promise: (b: any) => Promise<azure.BlobService.BlobResult> = (
+                blob: any
+            ): Promise<azure.BlobService.BlobResult> =>
+                this.client.createBlockBlobFromTextAsync(container.name, blob.id, blob.data, blob.options);
 
             // if the blob service client is using the storage emulator, all write operations must be performed in a sequential mode
             // because of the storage emulator internal implementation, that includes a SQL LocalDb
             // that crash with a deadlock when performing parallel uploads.
             // This behavior does not occur when using an Azure Blob Storage account.
-            const results: any = this.useEmulator ? ResolvePromisesSerial(blobs, promise) : ResolvePromisesParallel(blobs, promise);
+            const results: any = this.useEmulator
+                ? ResolvePromisesSerial(blobs, promise)
+                : ResolvePromisesParallel(blobs, promise);
 
-            return results.then(() => {
-                return;
-            }).catch((error: Error) => {
-                throw error;
-            });
+            return results
+                .then(() => {
+                    return;
+                })
+                .catch((error: Error) => {
+                    throw error;
+                });
         });
     }
 
@@ -228,15 +257,20 @@ export class BlobStorage implements Storage {
 
         const sanitizedKeys: string[] = keys.filter((k: string) => k).map((key: string) => this.sanitizeKey(key));
 
-        return this.ensureContainerExists().then((container: azure.BlobService.ContainerResult) => {
-            return Promise.all(sanitizedKeys.map((key: string) => {
-                return this.client.deleteBlobIfExistsAsync(container.name, key);
-            }));
-        }).then(() => {
-            return;
-        }).catch((error: Error) => {
-            throw error;
-        });
+        return this.ensureContainerExists()
+            .then((container: azure.BlobService.ContainerResult) => {
+                return Promise.all(
+                    sanitizedKeys.map((key: string) => {
+                        return this.client.deleteBlobIfExistsAsync(container.name, key);
+                    })
+                );
+            })
+            .then(() => {
+                return;
+            })
+            .catch((error: Error) => {
+                throw error;
+            });
     }
 
     /**
@@ -251,7 +285,10 @@ export class BlobStorage implements Storage {
         const segments: string[] = key.split('/').filter((x: string) => x);
         const base: string = segments.splice(0, 1)[0];
         // The number of path segments comprising the blob name cannot exceed 254
-        const validKey: string = segments.reduce((acc: any, curr: any, index: number) => [acc, curr].join(index < 255 ? '/' : ''), base);
+        const validKey: string = segments.reduce(
+            (acc: any, curr: any, index: number) => [acc, curr].join(index < 255 ? '/' : ''),
+            base
+        );
 
         // Reserved URL characters must be escaped.
         return escape(validKey).substr(0, 1024);
@@ -270,16 +307,18 @@ export class BlobStorage implements Storage {
         return checkedCollections[key];
     }
 
-    private createBlobService(storageAccountOrConnectionString: string, storageAccessKey: string, host: any): BlobServiceAsync {
+    private createBlobService(
+        storageAccountOrConnectionString: string,
+        storageAccessKey: string,
+        host: any
+    ): BlobServiceAsync {
         if (!storageAccountOrConnectionString) {
             throw new Error('The storageAccountOrConnectionString parameter is required.');
         }
 
-        const blobService: azure.BlobService = azure.createBlobService(
-            storageAccountOrConnectionString,
-            storageAccessKey,
-            host
-        ).withFilter(new azure.LinearRetryPolicyFilter(5, 500));
+        const blobService: azure.BlobService = azure
+            .createBlobService(storageAccountOrConnectionString, storageAccessKey, host)
+            .withFilter(new azure.LinearRetryPolicyFilter(5, 500));
 
         // create BlobServiceAsync by using denodeify to create promise wrappers around cb functions
         return {
@@ -289,7 +328,7 @@ export class BlobStorage implements Storage {
             deleteContainerIfExistsAsync: this.denodeify(blobService, blobService.deleteContainerIfExists),
             doesBlobExistAsync: this.denodeify(blobService, blobService.doesBlobExist),
             getBlobMetadataAsync: this.denodeify(blobService, blobService.getBlobMetadata),
-            getBlobToTextAsync: this.denodeify(blobService, blobService.getBlobToText)
+            getBlobToTextAsync: this.denodeify(blobService, blobService.getBlobToText),
         } as any;
     }
 
@@ -297,7 +336,7 @@ export class BlobStorage implements Storage {
     private denodeify<T>(thisArg: any, fn: Function): (...args: any[]) => Promise<T> {
         return (...args: any[]): Promise<T> => {
             return new Promise<T>((resolve: any, reject: any): void => {
-                args.push((error: Error, result: any) => (error) ? reject(error) : resolve(result));
+                args.push((error: Error, result: any) => (error ? reject(error) : resolve(result)));
                 fn.apply(thisArg, args);
             });
         };
@@ -309,10 +348,12 @@ export class BlobStorage implements Storage {
  * Promise based methods created using denodeify function
  */
 interface BlobServiceAsync extends azure.BlobService {
-    createBlockBlobFromTextAsync(container: string,
+    createBlockBlobFromTextAsync(
+        container: string,
         blob: string,
         text: string | Buffer,
-        options: azure.BlobService.CreateBlobRequestOptions): Promise<azure.BlobService.BlobResult>;
+        options: azure.BlobService.CreateBlobRequestOptions
+    ): Promise<azure.BlobService.BlobResult>;
     createContainerIfNotExistsAsync(container: string): Promise<azure.BlobService.ContainerResult>;
     deleteBlobIfExistsAsync(container: string, blob: string): Promise<boolean>;
     deleteContainerIfExistsAsync(container: string): Promise<boolean>;
