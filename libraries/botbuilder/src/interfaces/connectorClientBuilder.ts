@@ -18,5 +18,9 @@ export interface ConnectorClientBuilder {
      * @param claimsIdentity The claims claimsIdentity.
      * @param audience The target audience for the ConnectorClient.
      */
-    createConnectorClientWithIdentity: (serviceUrl: string, claimsIdentity: ClaimsIdentity, audience: string) => Promise<ConnectorClient>
+    createConnectorClientWithIdentity: (
+        serviceUrl: string,
+        claimsIdentity: ClaimsIdentity,
+        audience: string
+    ) => Promise<ConnectorClient>;
 }
