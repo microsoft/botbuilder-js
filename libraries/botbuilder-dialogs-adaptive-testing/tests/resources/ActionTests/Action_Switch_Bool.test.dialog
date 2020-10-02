@@ -11,37 +11,20 @@
                     {
                         "$kind": "Microsoft.SetProperty",
                         "property": "user.isVip",
-                        "value": "=true"
+                        "value": true
                     },
                     {
-                        "$kind": "Microsoft.SwitchCondition",
-                        "condition": "user.isVip",
-                        "default": [
-                            {
-                                "$kind": "Microsoft.SendActivity",
-                                "activity": "Who are you?"
-                            }
-                        ],
-                        "cases": [
-                            {
-                                "value": "true",
-                                "actions": [
-                                    {
-                                        "$kind": "Microsoft.SendActivity",
-                                        "activity": "User is VIP"
-                                    }
-                                ]
-                            },
-                            {
-                                "value": "false",
-                                "actions": [
-                                    {
-                                        "$kind": "Microsoft.SendActivity",
-                                        "activity": "User is NOT VIP"
-                                    }
-                                ]
-                            }
-                        ]
+                        "$kind": "Microsoft.BeginDialog",
+                        "dialog": "SwitchBool"
+                    },
+                    {
+                        "$kind": "Microsoft.SetProperty",
+                        "property": "user.isVip",
+                        "value": "=false"
+                    },
+                    {
+                        "$kind": "Microsoft.BeginDialog",
+                        "dialog": "SwitchBool"
                     }
                 ]
             }
@@ -57,6 +40,10 @@
         {
             "$kind": "Microsoft.Test.AssertReply",
             "text": "User is VIP"
+        },
+        {
+            "$kind": "Microsoft.Test.AssertReply",
+            "text": "User is NOT VIP"
         }
     ]
 }
