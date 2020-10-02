@@ -6,9 +6,8 @@
  * Licensed under the MIT License.
  */
 
-import { Activity, TurnContext } from 'botbuilder-core';
+import { Activity, TurnContext, TestAdapter } from 'botbuilder-core';
 import { TestAction } from '../testAction';
-import { AdaptiveTestAdapter } from '../adaptiveTestAdapter';
 
 export interface UserActivityConfiguration {
     activity?: Activity;
@@ -35,7 +34,7 @@ export class UserActivity implements TestAction {
      * @param callback Logic for the bot to use.
      * @returns A Promise that represents the work queued to execute.
      */
-    public async execute(testAdapter: AdaptiveTestAdapter, callback: (context: TurnContext) => Promise<any>): Promise<any> {
+    public async execute(testAdapter: TestAdapter, callback: (context: TurnContext) => Promise<any>): Promise<any> {
         if (!this.activity) {
             throw new Error('You must define one of Text of Activity properties');
         }
