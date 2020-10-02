@@ -35,13 +35,12 @@ export class DialogTestClient {
      * let reply = await client.sendActivity('first message');
      * assert.strictEqual(reply.text, 'first reply', 'reply failed');
      * ```
-     * @param channelId The channelId to be used for the test.
+     * @param channelId The `channelId` to be used for the test.
 	 * Use 'emulator' or 'test' if you are uncertain of the channel you are targeting.
 	 * Otherwise, it is recommended that you use the id for the channel(s) your bot will be using and write a test case for each channel.
-     * @param testAdapter A list of middlewares to be added to the test adapter.
      * @param targetDialog The dialog to be tested. This will be the root dialog for the test client.
      * @param initialDialogOptions Optional. Additional argument(s) to pass to the dialog being started.
-     * @param middlewares Optional. The test adapter to use. If this parameter is not provided, the test client will use a default TestAdapter.
+     * @param middlewares Optional. A list of middlewares to be added to the test adapter.
      * @param conversationState Optional. A ConversationState instance to use in the test client.
      */
     public constructor(channelId: string, targetDialog: Dialog, initialDialogOptions?: any, middlewares?: Middleware[], conversationState?: ConversationState);
@@ -52,19 +51,19 @@ export class DialogTestClient {
      * let reply = await client.sendActivity('first message');
      * assert.strictEqual(reply.text, 'first reply', 'reply failed');
      * ```
-     * @param testAdapter A list of middlewares to be added to the test adapter.
+     * @param testAdapter The `TestAdapter` to use.
      * @param targetDialog The dialog to be tested. This will be the root dialog for the test client.
      * @param initialDialogOptions Optional. Additional argument(s) to pass to the dialog being started.
-     * @param middlewares Optional. The test adapter to use. If this parameter is not provided, the test client will use a default TestAdapter.
+     * @param middlewares Optional. A list of middlewares to be added to the test adapter.
      * @param conversationState Optional. A ConversationState instance to use in the test client.
      */
     public constructor(testAdapter: TestAdapter, targetDialog: Dialog, initialDialogOptions?: any, middlewares?: Middleware[], conversationState?: ConversationState)
     /**
      * Creates a `DialogTestClient` to test a dialog without having to create a full-fledged adapter.
-     * @param channelOrAdapter The channelId to be used for the test or a list of middlewares to be added to the test adapter.
+     * @param channelOrAdapter The `channelId` or the `TestAdapter` to be used for the test.
      * @param targetDialog The dialog to be tested. This will be the root dialog for the test client.
      * @param initialDialogOptions Optional. Additional argument(s) to pass to the dialog being started.
-     * @param middlewares Optional. The test adapter to use. If this parameter is not provided, the test client will use a default TestAdapter.
+     * @param middlewares Optional. A list of middlewares to be added to the test adapter.
      * @param conversationState Optional. A ConversationState instance to use in the test client.
      */
     public constructor(channelOrAdapter: string|TestAdapter, targetDialog: Dialog, initialDialogOptions?: any, middlewares?: Middleware[], conversationState?: ConversationState) {
