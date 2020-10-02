@@ -195,7 +195,7 @@ export class TestAdapter extends BotAdapter implements ExtendedUserTokenProvider
         request.timestamp = request.timestamp || new Date();
 
         Object.assign(request, this.template);
-        const context = new TurnContext(this, request);
+        const context = this.createContext(request);
         if (callback) {
             return await this.runMiddleware(context, callback);
         } else if (this._logic) {
