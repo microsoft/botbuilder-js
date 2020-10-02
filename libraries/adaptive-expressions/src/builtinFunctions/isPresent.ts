@@ -28,9 +28,8 @@ export class IsPresent extends ExpressionEvaluator {
     private static evaluator(expr: Expression, state: MemoryInterface, options: Options): ValueWithError {
         let parsed: TimexProperty;
         let value = false;
-        let error: string;
-        let args: any[];
-        ({ args, error } = FunctionUtils.evaluateChildren(expr, state, options));
+        const { args, error: childrenError } = FunctionUtils.evaluateChildren(expr, state, options);
+        let error = childrenError;
         if (!error) {
             ({ timexProperty: parsed, error: error } = InternalFunctionUtils.parseTimexProperty(args[0]));
         }

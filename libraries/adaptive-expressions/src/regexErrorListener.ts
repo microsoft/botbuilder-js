@@ -8,19 +8,20 @@
 
 import { ANTLRErrorListener, Recognizer, RecognitionException } from 'antlr4ts';
 
+// re-enable when this rule honors underscore prefix
+/* eslint-disable @typescript-eslint/no-unused-vars */
+
 export class RegexErrorListener implements ANTLRErrorListener<any> {
     public static readonly Instance: RegexErrorListener = new RegexErrorListener();
 
     public syntaxError<T>(
-        _recognizer: Recognizer<T, any>, // eslint-disable-line @typescript-eslint/no-unused-vars
-        _offendingSymbol: T, // eslint-disable-line @typescript-eslint/no-unused-vars
-        line: number, // eslint-disable-line @typescript-eslint/no-unused-vars
-        charPositionInLine: number, // eslint-disable-line @typescript-eslint/no-unused-vars
-        msg: string, // eslint-disable-line @typescript-eslint/no-unused-vars
+        _recognizer: Recognizer<T, any>,
+        _offendingSymbol: T,
+        _line: number,
+        _charPositionInLine: number,
+        _msg: string,
         _e: RecognitionException | undefined
     ): void {
-        // eslint-disable-line @typescript-eslint/no-unused-vars
-
         throw Error(`Regular expression is invalid.`);
     }
 }

@@ -78,9 +78,8 @@ export class InternalFunctionUtils {
     public static sortBy(isDescending: boolean): EvaluateExpressionDelegate {
         return (expression: Expression, state: any, options: Options): ValueWithError => {
             let result: any;
-            let error: string;
-            let oriArr: any;
-            ({ value: oriArr, error } = expression.children[0].tryEvaluate(state, options));
+            const { value: oriArr, error: childrenError } = expression.children[0].tryEvaluate(state, options);
+            let error = childrenError;
             if (!error) {
                 if (Array.isArray(oriArr)) {
                     const arr: any = oriArr.slice(0);
@@ -201,10 +200,8 @@ export class InternalFunctionUtils {
      * @param timeStamp String timestamp input.
      */
     public static ticks(timeStamp: string): ValueWithError {
-        let parsed: any;
         let result: any;
-        let error: string;
-        ({ value: parsed, error } = this.parseTimestamp(timeStamp));
+        const { value: parsed, error } = this.parseTimestamp(timeStamp);
         if (!error) {
             const unixMilliSec: number = parseInt(moment(parsed).utc().format('x'), 10);
             result = this.UnixMilliSecondToTicksConstant.add(
@@ -308,10 +305,8 @@ export class InternalFunctionUtils {
      */
     public static foreach(expression: Expression, state: MemoryInterface, options: Options): ValueWithError {
         let result: any[];
-        let error: string;
-        let instance: any;
-
-        ({ value: instance, error } = expression.children[0].tryEvaluate(state, options));
+        const { value: instance, error: childrenError } = expression.children[0].tryEvaluate(state, options);
+        let error = childrenError;
         if (!instance) {
             error = `'${expression.children[0]}' evaluated to null.`;
         }

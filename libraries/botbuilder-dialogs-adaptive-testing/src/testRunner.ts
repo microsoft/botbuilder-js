@@ -5,10 +5,10 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
+import { TestAdapter } from 'botbuilder-core';
 import { AdaptiveDialogComponentRegistration } from 'botbuilder-dialogs-adaptive';
 import { ResourceExplorer } from 'botbuilder-dialogs-declarative';
 import { AdaptiveDialogTestComponentRegistration } from './adaptiveDialogTestComponentRegistration';
-import { AdaptiveTestAdapter } from './adaptiveTestAdapter';
 import { TestScript } from './testScript';
 
 /**
@@ -16,7 +16,7 @@ import { TestScript } from './testScript';
  */
 export class TestRunner {
     private resourceExplorer: ResourceExplorer;
-    private testAdapter: AdaptiveTestAdapter;
+    private testAdapter: TestAdapter;
 
     /**
      * Initializes a new instance of the `TestRunner` class.
@@ -28,7 +28,7 @@ export class TestRunner {
         this.resourceExplorer.addComponent(new AdaptiveDialogComponentRegistration(this.resourceExplorer));
         this.resourceExplorer.addComponent(new AdaptiveDialogTestComponentRegistration(this.resourceExplorer));
 
-        this.testAdapter = new AdaptiveTestAdapter(AdaptiveTestAdapter.createConversation('botbuilder-dialogs-adaptive-testing'));
+        this.testAdapter = new TestAdapter(TestAdapter.createConversation('botbuilder-dialogs-adaptive-testing'));
     }
 
     /**
@@ -39,7 +39,7 @@ export class TestRunner {
     public async runTestScript(testName: string): Promise<any> {
         const script = this.resourceExplorer.loadType(`${ testName }.test.dialog`) as TestScript;
         script.description = script.description || testName;
-        this.testAdapter.activeQueue = [];
+        this.testAdapter.activeQueue.splice(0, this.testAdapter.activeQueue.length);
         await script.execute(this.resourceExplorer, testName, this.testAdapter);
     }
 }

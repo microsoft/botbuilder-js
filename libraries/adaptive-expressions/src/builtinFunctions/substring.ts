@@ -24,9 +24,8 @@ export class Substring extends ExpressionEvaluator {
 
     private static evaluator(expression: Expression, state: MemoryInterface, options: Options): ValueWithError {
         let result: any;
-        let error: any;
-        let str: string;
-        ({ value: str, error } = expression.children[0].tryEvaluate(state, options));
+        const { value: str, error: childrenError } = expression.children[0].tryEvaluate(state, options);
+        let error = childrenError;
 
         if (!error) {
             if (typeof str === 'string') {

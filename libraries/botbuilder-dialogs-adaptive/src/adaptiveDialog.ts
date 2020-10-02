@@ -197,8 +197,8 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
             this.triggers.forEach((trigger): void => {
                 if (trigger.runOnce && trigger.condition) {
                     const references = trigger.condition.toExpression().references();
-                    var paths = dcState.trackPaths(references);
-                    var triggerPath = `${ AdaptiveDialog.conditionTracker }.${ trigger.id }.`;
+                    const paths = dcState.trackPaths(references);
+                    const triggerPath = `${ AdaptiveDialog.conditionTracker }.${ trigger.id }.`;
                     dcState.setValue(triggerPath + 'paths', paths);
                     dcState.setValue(triggerPath + 'lastRun', 0);
                 }

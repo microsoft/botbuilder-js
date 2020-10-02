@@ -27,7 +27,6 @@ export class JPath extends ExpressionEvaluator {
     }
 
     private static evalJPath(jsonEntity: object | string, path: string): ValueWithError {
-        let result: any;
         let error: string;
         let evaled: any;
         let json: object;
@@ -51,9 +50,7 @@ export class JPath extends ExpressionEvaluator {
             }
         }
 
-        result = evaled;
-
-        return { value: result, error };
+        return { value: evaled, error };
     }
 
     private static validator(expr: Expression): void {
