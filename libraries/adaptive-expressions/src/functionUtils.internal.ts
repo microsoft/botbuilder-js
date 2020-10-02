@@ -9,7 +9,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 import { Constant } from './constant';
-import { sortBy as lodashSortBy } from 'lodash';
+import sortBy from 'lodash/sortBy';
 import moment, { Moment } from 'moment';
 import { Expression } from './expression';
 import { ExpressionType } from './expressionType';
@@ -97,9 +97,9 @@ export class InternalFunctionUtils {
                             propertyName = propertyName || '';
                         }
                         if (isDescending) {
-                            result = lodashSortBy(arr, propertyName).reverse();
+                            result = sortBy(arr, propertyName).reverse();
                         } else {
-                            result = lodashSortBy(arr, propertyName);
+                            result = sortBy(arr, propertyName);
                         }
                     }
                 } else {
