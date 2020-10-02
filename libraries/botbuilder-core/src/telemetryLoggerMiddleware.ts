@@ -4,7 +4,13 @@
 import { BotTelemetryClient, NullTelemetryClient } from './botTelemetryClient';
 import { Middleware } from './middlewareSet';
 import { TurnContext } from './turnContext';
-import { Activity, ActivityTypes, ConversationReference, ResourceResponse, TeamsChannelData } from 'botframework-schema';
+import {
+    Activity,
+    ActivityTypes,
+    ConversationReference,
+    ResourceResponse,
+    TeamsChannelData,
+} from 'botframework-schema';
 import { TelemetryConstants } from './telemetryConstants';
 
 /**
@@ -43,20 +49,24 @@ export class TelemetryLoggerMiddleware implements Middleware {
      * @param telemetryClient The BotTelemetryClient used for logging.
      * @param logPersonalInformation (Optional) Enable/Disable logging original message name within Application Insights.
      */
-    constructor(telemetryClient: BotTelemetryClient, logPersonalInformation: boolean = false) {
-        this._telemetryClient = telemetryClient || new NullTelemetryClient() ;
+    constructor(telemetryClient: BotTelemetryClient, logPersonalInformation = false) {
+        this._telemetryClient = telemetryClient || new NullTelemetryClient();
         this._logPersonalInformation = logPersonalInformation;
     }
 
     /**
      * Gets a value indicating whether determines whether to log personal information that came from the user.
      */
-    public get logPersonalInformation(): boolean { return this._logPersonalInformation; }
+    public get logPersonalInformation(): boolean {
+        return this._logPersonalInformation;
+    }
 
     /**
      * Gets the currently configured botTelemetryClient that logs the events.
      */
-    public get telemetryClient(): BotTelemetryClient { return this._telemetryClient; }
+    public get telemetryClient(): BotTelemetryClient {
+        return this._telemetryClient;
+    }
 
     /**
      * Logs events based on incoming and outgoing activities using the botTelemetryClient class.
@@ -70,7 +80,6 @@ export class TelemetryLoggerMiddleware implements Middleware {
 
         // log incoming activity at beginning of turn
         if (context.activity !== null) {
-
             const activity: Activity = context.activity;
 
             // Log Bot Message Received
@@ -78,46 +87,51 @@ export class TelemetryLoggerMiddleware implements Middleware {
         }
 
         // hook up onSend pipeline
-        context.onSendActivities(async (ctx: TurnContext,
-                                        activities: Partial<Activity>[],
-                                        nextSend: () => Promise<ResourceResponse[]>): Promise<ResourceResponse[]> => {
-            // run full pipeline
-            const responses: ResourceResponse[] = await nextSend();
-            activities.forEach(async (act: Partial<Activity>) => { 
-                await this.onSendActivity(<Activity> act);
-            }); 
+        context.onSendActivities(
+            async (
+                ctx: TurnContext,
+                activities: Partial<Activity>[],
+                nextSend: () => Promise<ResourceResponse[]>
+            ): Promise<ResourceResponse[]> => {
+                // run full pipeline
+                const responses: ResourceResponse[] = await nextSend();
+                activities.forEach(async (act: Partial<Activity>) => {
+                    await this.onSendActivity(<Activity>act);
+                });
 
-            return responses;
-        });
+                return responses;
+            }
+        );
 
         // hook up update activity pipeline
-        context.onUpdateActivity(async (ctx: TurnContext,
-                                        activity: Partial<Activity>,
-                                        nextUpdate: () => Promise<void>) => {
-            // run full pipeline
-            const response: void = await nextUpdate();
+        context.onUpdateActivity(
+            async (ctx: TurnContext, activity: Partial<Activity>, nextUpdate: () => Promise<void>) => {
+                // run full pipeline
+                const response: void = await nextUpdate();
 
-            await this.onUpdateActivity(<Activity> activity);
+                await this.onUpdateActivity(<Activity>activity);
 
-            return response;
-        });
+                return response;
+            }
+        );
 
         // hook up delete activity pipeline
-        context.onDeleteActivity(async (ctx: TurnContext,
-                                        reference: Partial<ConversationReference>,
-                                        nextDelete: () => Promise<void>) => {
-            // run full pipeline
-            await nextDelete();
+        context.onDeleteActivity(
+            async (ctx: TurnContext, reference: Partial<ConversationReference>, nextDelete: () => Promise<void>) => {
+                // run full pipeline
+                await nextDelete();
 
-            const deletedActivity: Partial<Activity> = TurnContext.applyConversationReference(
-                {
-                    type: ActivityTypes.MessageDelete,
-                    id: reference.activityId
-                },
-                reference,
-                false);
-            await this.onDeleteActivity(<Activity> deletedActivity);
-        });
+                const deletedActivity: Partial<Activity> = TurnContext.applyConversationReference(
+                    {
+                        type: ActivityTypes.MessageDelete,
+                        id: reference.activityId,
+                    },
+                    reference,
+                    false
+                );
+                await this.onDeleteActivity(<Activity>deletedActivity);
+            }
+        );
 
         if (next !== null) {
             await next();
@@ -131,10 +145,10 @@ export class TelemetryLoggerMiddleware implements Middleware {
      * @param activity Current activity sent from user.
      */
     protected async onReceiveActivity(activity: Activity): Promise<void> {
-            this.telemetryClient.trackEvent({
-                name: TelemetryLoggerMiddleware.botMsgReceiveEvent,
-                properties: await this.fillReceiveEventProperties(activity)
-                });
+        this.telemetryClient.trackEvent({
+            name: TelemetryLoggerMiddleware.botMsgReceiveEvent,
+            properties: await this.fillReceiveEventProperties(activity),
+        });
     }
 
     /**
@@ -146,7 +160,7 @@ export class TelemetryLoggerMiddleware implements Middleware {
     protected async onSendActivity(activity: Activity): Promise<void> {
         this.telemetryClient.trackEvent({
             name: TelemetryLoggerMiddleware.botMsgSendEvent,
-            properties: await this.fillSendEventProperties(<Activity> activity)
+            properties: await this.fillSendEventProperties(<Activity>activity),
         });
     }
 
@@ -154,26 +168,25 @@ export class TelemetryLoggerMiddleware implements Middleware {
      * Invoked when the bot updates a message.
      * Performs logging of telemetry data using the botTelemetryClient.trackEvent() method.
      * The event name used is "BotMessageUpdate".
-     * @param activity 
+     * @param activity
      */
     protected async onUpdateActivity(activity: Activity): Promise<void> {
         this.telemetryClient.trackEvent({
             name: TelemetryLoggerMiddleware.botMsgUpdateEvent,
-            properties: await this.fillUpdateEventProperties(<Activity> activity)
+            properties: await this.fillUpdateEventProperties(<Activity>activity),
         });
-
     }
 
     /**
      * Invoked when the bot deletes a message.
      * Performs logging of telemetry data using the botTelemetryClient.trackEvent() method.
      * The event name used is "BotMessageDelete".
-     * @param activity 
+     * @param activity
      */
     protected async onDeleteActivity(activity: Activity): Promise<void> {
         this.telemetryClient.trackEvent({
             name: TelemetryLoggerMiddleware.botMsgDeleteEvent,
-            properties: await this.fillDeleteEventProperties(<Activity> activity)
+            properties: await this.fillDeleteEventProperties(<Activity>activity),
         });
     }
 
@@ -184,20 +197,26 @@ export class TelemetryLoggerMiddleware implements Middleware {
      * @param telemetryProperties Additional properties to add to the event.
      * @returns A dictionary that is sent as "Properties" to botTelemetryClient.trackEvent method.
      */
-    protected async fillReceiveEventProperties(activity: Activity, telemetryProperties?: {[key: string]:string}): Promise<{ [key: string]: string }> {
+    protected async fillReceiveEventProperties(
+        activity: Activity,
+        telemetryProperties?: { [key: string]: string }
+    ): Promise<{ [key: string]: string }> {
         const properties: { [key: string]: string } = {};
 
         if (activity) {
-            properties[TelemetryConstants.fromIdProperty] = (activity.from && activity.from.id) ? activity.from.id : '';        
-            properties[TelemetryConstants.conversationNameProperty] = (activity.conversation && activity.conversation.name) ? activity.conversation.name : '';        
+            properties[TelemetryConstants.fromIdProperty] = activity.from && activity.from.id ? activity.from.id : '';
+            properties[TelemetryConstants.conversationNameProperty] =
+                activity.conversation && activity.conversation.name ? activity.conversation.name : '';
             properties[TelemetryConstants.localeProperty] = activity.locale || '';
-            properties[TelemetryConstants.recipientIdProperty] = (activity.recipient && activity.recipient.id) ? activity.recipient.id : '';
-            properties[TelemetryConstants.recipientNameProperty] = (activity.recipient && activity.recipient.name) ? activity.recipient.name : '';
+            properties[TelemetryConstants.recipientIdProperty] =
+                activity.recipient && activity.recipient.id ? activity.recipient.id : '';
+            properties[TelemetryConstants.recipientNameProperty] =
+                activity.recipient && activity.recipient.name ? activity.recipient.name : '';
 
             // Use the LogPersonalInformation flag to toggle logging PII data, text and user name are common examples
             if (this.logPersonalInformation) {
                 if (activity.from && activity.from.name && activity.from.name.trim()) {
-                    properties[TelemetryConstants.fromNameProperty] = activity.from ? activity.from.name : '';;
+                    properties[TelemetryConstants.fromNameProperty] = activity.from ? activity.from.name : '';
                 }
 
                 if (activity.text && activity.text.trim()) {
@@ -210,8 +229,7 @@ export class TelemetryLoggerMiddleware implements Middleware {
             }
 
             // Additional Properties can override "stock" properties.
-            if (telemetryProperties)
-            {
+            if (telemetryProperties) {
                 return Object.assign({}, properties, telemetryProperties);
             }
         }
@@ -233,13 +251,18 @@ export class TelemetryLoggerMiddleware implements Middleware {
      * @param telemetryProperties Additional properties to add to the event.
      * @returns A dictionary that is sent as "Properties" to botTelemetryClient.trackEvent method.
      */
-    protected async fillSendEventProperties(activity: Activity, telemetryProperties?: {[key: string]:string}): Promise<{ [key: string]: string }> {
+    protected async fillSendEventProperties(
+        activity: Activity,
+        telemetryProperties?: { [key: string]: string }
+    ): Promise<{ [key: string]: string }> {
         const properties: { [key: string]: string } = {};
 
         if (activity) {
             properties[TelemetryConstants.replyActivityIdProperty] = activity.replyToId || '';
-            properties[TelemetryConstants.recipientIdProperty] = (activity.recipient && activity.recipient.id) ? activity.recipient.id : '';
-            properties[TelemetryConstants.conversationNameProperty] = (activity.conversation && activity.conversation.name) ? activity.conversation.name : '';
+            properties[TelemetryConstants.recipientIdProperty] =
+                activity.recipient && activity.recipient.id ? activity.recipient.id : '';
+            properties[TelemetryConstants.conversationNameProperty] =
+                activity.conversation && activity.conversation.name ? activity.conversation.name : '';
             properties[TelemetryConstants.localeProperty] = activity.locale || '';
 
             // Use the LogPersonalInformation flag to toggle logging PII data, text and user name are common examples
@@ -266,7 +289,7 @@ export class TelemetryLoggerMiddleware implements Middleware {
                 return Object.assign({}, properties, telemetryProperties);
             }
         }
-        
+
         return properties;
     }
 
@@ -279,13 +302,19 @@ export class TelemetryLoggerMiddleware implements Middleware {
      * @param telemetryProperties Additional properties to add to the event.
      * @returns A dictionary that is sent as "Properties" to botTelemetryClient.trackEvent method.
      */
-    protected async fillUpdateEventProperties(activity: Activity, telemetryProperties?: {[key: string]:string} ): Promise<{ [key: string]: string }> {
+    protected async fillUpdateEventProperties(
+        activity: Activity,
+        telemetryProperties?: { [key: string]: string }
+    ): Promise<{ [key: string]: string }> {
         const properties: { [key: string]: string } = {};
 
         if (activity) {
-            properties[TelemetryConstants.recipientIdProperty] = (activity.recipient && activity.recipient.id) ? activity.recipient.id : '';
-            properties[TelemetryConstants.conversationIdProperty] = (activity.conversation && activity.conversation.id) ? activity.conversation.id : '';
-            properties[TelemetryConstants.conversationNameProperty] = (activity.conversation && activity.conversation.name) ? activity.conversation.name : '';
+            properties[TelemetryConstants.recipientIdProperty] =
+                activity.recipient && activity.recipient.id ? activity.recipient.id : '';
+            properties[TelemetryConstants.conversationIdProperty] =
+                activity.conversation && activity.conversation.id ? activity.conversation.id : '';
+            properties[TelemetryConstants.conversationNameProperty] =
+                activity.conversation && activity.conversation.name ? activity.conversation.name : '';
             properties[TelemetryConstants.localeProperty] = activity.locale || '';
 
             // Use the LogPersonalInformation flag to toggle logging PII data, text is a common example
@@ -309,14 +338,20 @@ export class TelemetryLoggerMiddleware implements Middleware {
      * @param telemetryProperties Additional properties to add to the event.
      * @returns A dictionary that is sent as "Properties" to botTelemetryClient.trackEvent method.
      */
-    protected async fillDeleteEventProperties(activity: Activity, telemetryProperties?: {[key: string]:string}): Promise<{ [key: string]: string }> {
+    protected async fillDeleteEventProperties(
+        activity: Activity,
+        telemetryProperties?: { [key: string]: string }
+    ): Promise<{ [key: string]: string }> {
         const properties: { [key: string]: string } = {};
 
         if (activity) {
             properties[TelemetryConstants.channelIdProperty] = activity.channelId || '';
-            properties[TelemetryConstants.recipientIdProperty] = (activity.recipient && activity.recipient.id) ? activity.recipient.id : '';
-            properties[TelemetryConstants.conversationIdProperty] = (activity.conversation && activity.conversation.id) ? activity.conversation.id : '';
-            properties[TelemetryConstants.conversationNameProperty] = (activity.conversation && activity.conversation.name) ? activity.conversation.name : '';
+            properties[TelemetryConstants.recipientIdProperty] =
+                activity.recipient && activity.recipient.id ? activity.recipient.id : '';
+            properties[TelemetryConstants.conversationIdProperty] =
+                activity.conversation && activity.conversation.id ? activity.conversation.id : '';
+            properties[TelemetryConstants.conversationNameProperty] =
+                activity.conversation && activity.conversation.name ? activity.conversation.name : '';
 
             // Additional Properties can override "stock" properties.
             if (telemetryProperties) {
@@ -327,12 +362,12 @@ export class TelemetryLoggerMiddleware implements Middleware {
         return properties;
     }
 
-    private populateAdditionalChannelProperties(activity: Activity, properties?: {[key: string]: string}): void {
+    private populateAdditionalChannelProperties(activity: Activity, properties?: { [key: string]: string }): void {
         if (activity) {
             switch (activity.channelId) {
                 case 'msteams':
                     const channelData = activity.channelData as TeamsChannelData;
-                        
+
                     properties['TeamsTenantId'] = channelData.tenant ? channelData.tenant.id : '';
                     properties['TeamsUserAadObjectId'] = activity.from ? activity.from.aadObjectId : '';
 

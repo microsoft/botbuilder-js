@@ -9,7 +9,7 @@
 /**
  * Registration for a BotFrameworkHttpProtocol based Skill endpoint.
  */
-export interface BotFrameworkSkill { 
+export interface BotFrameworkSkill {
     /**
      * Id of the skill.
      */

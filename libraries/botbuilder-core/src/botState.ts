@@ -37,15 +37,14 @@ export interface CachedBotState {
  * lifetime of the turn and will only be written to storage if it has been modified.
  */
 export class BotState implements PropertyManager {
-
-    private stateKey: symbol = Symbol('state');
+    private stateKey = Symbol('state');
 
     /**
      * Creates a new BotState instance.
      * @param storage Storage provider to persist the state object to.
      * @param storageKey Function called anytime the storage key for a given turn needs to be calculated.
      */
-    constructor(protected storage: Storage, protected storageKey: StorageKeyFactory) { }
+    constructor(protected storage: Storage, protected storageKey: StorageKeyFactory) {}
 
     /**
      * Creates a new property accessor for reading and writing an individual property to the bot
@@ -73,7 +72,7 @@ export class BotState implements PropertyManager {
      * @param context Context for current turn of conversation with the user.
      * @param force (Optional) If `true` the cache will be bypassed and the state will always be read in directly from storage. Defaults to `false`.
      */
-    public load(context: TurnContext, force: boolean = false): Promise<any> {
+    public load(context: TurnContext, force = false): Promise<any> {
         const cached: CachedBotState = context.turnState.get(this.stateKey);
         if (force || !cached || !cached.state) {
             return Promise.resolve(this.storageKey(context)).then((key: string) => {
@@ -104,11 +103,13 @@ export class BotState implements PropertyManager {
      * @param context Context for current turn of conversation with the user.
      * @param force (Optional) if `true` the state will always be written out regardless of its change state. Defaults to `false`.
      */
-    public saveChanges(context: TurnContext, force: boolean = false): Promise<void> {
+    public saveChanges(context: TurnContext, force = false): Promise<void> {
         let cached: CachedBotState = context.turnState.get(this.stateKey);
         if (force || (cached && cached.hash !== calculateChangeHash(cached.state))) {
             return Promise.resolve(this.storageKey(context)).then((key: string) => {
-                if (!cached) { cached = { state: {}, hash: '' }; }
+                if (!cached) {
+                    cached = { state: {}, hash: '' };
+                }
                 cached.state.eTag = '*';
                 const changes: StoreItems = {} as StoreItems;
                 changes[key] = cached.state;
@@ -139,7 +140,7 @@ export class BotState implements PropertyManager {
      */
     public clear(context: TurnContext): Promise<void> {
         // Just overwrite cached value with a new object and empty hash. The empty hash will force the
-        // changes to be saved. 
+        // changes to be saved.
         context.turnState.set(this.stateKey, { state: {}, hash: '' });
         return Promise.resolve();
     }
@@ -149,7 +150,7 @@ export class BotState implements PropertyManager {
      *
      * @remarks
      * The state object will be removed from storage if it exists.  If the state object has been
-     * read in and cached, the cache will be cleared. 
+     * read in and cached, the cache will be cleared.
      *
      * ```JavaScript
      * await botState.delete(context);
@@ -175,7 +176,7 @@ export class BotState implements PropertyManager {
      * ```
      * @param context Context for current turn of conversation with the user.
      */
-    public get(context: TurnContext): any|undefined {
+    public get(context: TurnContext): any | undefined {
         const cached: CachedBotState = context.turnState.get(this.stateKey);
 
         return typeof cached === 'object' && typeof cached.state === 'object' ? cached.state : undefined;

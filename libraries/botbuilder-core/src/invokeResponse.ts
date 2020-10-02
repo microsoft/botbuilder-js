@@ -8,7 +8,7 @@
 
 /**
  * Represents a response returned by a bot when it receives an `invoke` activity.
- * 
+ *
  * This interface supports the framework and is not intended to be called directly for your code.
  */
 export interface InvokeResponse<T = any> {

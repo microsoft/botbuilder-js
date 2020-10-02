@@ -34,7 +34,7 @@ export class TranscriptLoggerMiddleware implements Middleware {
      * @param next Function to call at the end of the middleware chain.
      */
     public async onTurn(context: TurnContext, next: () => Promise<void>): Promise<void> {
-        let transcript: Activity[] = [];
+        const transcript: Activity[] = [];
 
         // log incoming activity at beginning of turn
         if (context.activity) {
@@ -46,34 +46,34 @@ export class TranscriptLoggerMiddleware implements Middleware {
         }
 
         // hook up onSend pipeline
-        context.onSendActivities(async (ctx: TurnContext, activities: Partial<Activity>[], next2: () => Promise<ResourceResponse[]>) => {
-            // Run full pipeline.
-            const responses: ResourceResponse[] = await next2();
+        context.onSendActivities(
+            async (ctx: TurnContext, activities: Partial<Activity>[], next2: () => Promise<ResourceResponse[]>) => {
+                // Run full pipeline.
+                const responses: ResourceResponse[] = await next2();
 
-            activities.map((a: Partial<Activity>, index: number) => {
-                const clonedActivity = this.cloneActivity(a);
-                clonedActivity.id = responses && responses[index] ?
-                    responses[index].id :
-                    clonedActivity.id;
+                activities.map((a: Partial<Activity>, index: number) => {
+                    const clonedActivity = this.cloneActivity(a);
+                    clonedActivity.id = responses && responses[index] ? responses[index].id : clonedActivity.id;
 
-                // For certain channels, a ResourceResponse with an id is not always sent to the bot.
-                // This fix uses the timestamp on the activity to populate its id for logging the transcript.
-                // If there is no outgoing timestamp, the current time for the bot is used for the activity.id.
-                // See https://github.com/microsoft/botbuilder-js/issues/1122
-                if (!clonedActivity.id) {
-                    const prefix = `g_${Math.random().toString(36).slice(2,8)}`;
-                    if (clonedActivity.timestamp) {
-                        clonedActivity.id = `${prefix}${new Date(clonedActivity.timestamp).getTime().toString()}`;
-                    } else {
-                        clonedActivity.id = `${prefix}${new Date().getTime().toString()}`;
+                    // For certain channels, a ResourceResponse with an id is not always sent to the bot.
+                    // This fix uses the timestamp on the activity to populate its id for logging the transcript.
+                    // If there is no outgoing timestamp, the current time for the bot is used for the activity.id.
+                    // See https://github.com/microsoft/botbuilder-js/issues/1122
+                    if (!clonedActivity.id) {
+                        const prefix = `g_${Math.random().toString(36).slice(2, 8)}`;
+                        if (clonedActivity.timestamp) {
+                            clonedActivity.id = `${prefix}${new Date(clonedActivity.timestamp).getTime().toString()}`;
+                        } else {
+                            clonedActivity.id = `${prefix}${new Date().getTime().toString()}`;
+                        }
                     }
-                }
 
-                this.logActivity(transcript, clonedActivity);
-            });
+                    this.logActivity(transcript, clonedActivity);
+                });
 
-            return responses;
-        });
+                return responses;
+            }
+        );
 
         // hook up update activity pipeline
         context.onUpdateActivity(async (ctx: TurnContext, activity: Partial<Activity>, next3: () => Promise<void>) => {
@@ -89,23 +89,25 @@ export class TranscriptLoggerMiddleware implements Middleware {
         });
 
         // hook up delete activity pipeline
-        context.onDeleteActivity(async (ctx: TurnContext, reference: Partial<ConversationReference>, next4: () => Promise<void>) => {
-            // run full pipeline
-            await next4();
+        context.onDeleteActivity(
+            async (ctx: TurnContext, reference: Partial<ConversationReference>, next4: () => Promise<void>) => {
+                // run full pipeline
+                await next4();
 
-            // add MessageDelete activity
-            // log as MessageDelete activity
-            const deleteActivity: Partial<Activity> = TurnContext.applyConversationReference(
-                {
-                    type: ActivityTypes.MessageDelete,
-                    id: reference.activityId
-                },
-                reference,
-                false
-            );
+                // add MessageDelete activity
+                // log as MessageDelete activity
+                const deleteActivity: Partial<Activity> = TurnContext.applyConversationReference(
+                    {
+                        type: ActivityTypes.MessageDelete,
+                        id: reference.activityId,
+                    },
+                    reference,
+                    false
+                );
 
-            this.logActivity(transcript, <Activity>deleteActivity);
-        });
+                this.logActivity(transcript, <Activity>deleteActivity);
+            }
+        );
 
         // process bot logic
         await next();
@@ -125,7 +127,7 @@ export class TranscriptLoggerMiddleware implements Middleware {
                 // UnhandledPromiseRejectionWarnings from being thrown and prints the error to the
                 // console.
                 if (logActivityResult instanceof Promise) {
-                    logActivityResult.catch(err => {
+                    logActivityResult.catch((err) => {
                         this.transcriptLoggerErrorHandler(err);
                     });
                 }
@@ -180,7 +182,9 @@ export class ConsoleTranscriptLogger implements TranscriptLogger {
      * @param activity Activity being logged.
      */
     public logActivity(activity: Activity): void | Promise<void> {
-        if (!activity) { throw new Error('Activity is required.'); }
+        if (!activity) {
+            throw new Error('Activity is required.');
+        }
 
         // tslint:disable-next-line:no-console
         console.log('Activity Log:', activity);
@@ -202,7 +206,6 @@ export interface TranscriptLogger {
  * Transcript logger stores activities for conversations for recall.
  */
 export interface TranscriptStore extends TranscriptLogger {
-
     /**
      * Get activities for a conversation (Aka the transcript)
      * @param channelId Channel Id.
@@ -258,7 +261,6 @@ export interface TranscriptInfo {
  */
 // tslint:disable-next-line:max-classes-per-file
 export interface PagedResult<T> {
-
     /**
      * Page of items.
      */

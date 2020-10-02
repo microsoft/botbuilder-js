@@ -16,7 +16,6 @@ interface CoreWebResource {
     headers?: any;
 }
 
-
 /**
  * CoreAppCredentials
  * @remarks
@@ -28,6 +27,6 @@ export interface CoreAppCredentials {
      *
      * @param {WebResource} webResource The WebResource/request to be signed.
      * @returns {Promise<WebResource>} The signed request object;
-    */
+     */
     signRequest(webResource: CoreWebResource): Promise<CoreWebResource>;
 }
