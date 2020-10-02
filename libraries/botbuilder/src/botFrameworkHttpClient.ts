@@ -14,7 +14,7 @@ import {
     GovernmentConstants,
     ICredentialProvider,
     JwtTokenValidation,
-    MicrosoftAppCredentials
+    MicrosoftAppCredentials,
 } from 'botframework-connector';
 
 import { USER_AGENT } from './botFrameworkAdapter';
@@ -23,7 +23,6 @@ import { USER_AGENT } from './botFrameworkAdapter';
  * HttpClient for calling skills from a Node.js BotBuilder V4 SDK bot.
  */
 export class BotFrameworkHttpClient implements BotFrameworkClient {
-
     protected readonly channelService: string;
 
     /**
@@ -45,8 +44,8 @@ export class BotFrameworkHttpClient implements BotFrameworkClient {
     /**
      * Forwards an activity to a another bot.
      * @remarks
-     * 
-     * @template T The type of body in the InvokeResponse. 
+     *
+     * @template T The type of body in the InvokeResponse.
      * @param fromBotId The MicrosoftAppId of the bot sending the activity.
      * @param toBotId The MicrosoftAppId of the bot receiving the activity.
      * @param toUrl The URL of the bot receiving the activity.
@@ -54,12 +53,35 @@ export class BotFrameworkHttpClient implements BotFrameworkClient {
      * @param conversationId A conversation ID to use for the conversation with the skill.
      * @param activity Activity to forward.
      */
-    public async postActivity<T>(fromBotId: string, toBotId: string, toUrl: string, serviceUrl: string, conversationId: string, activity: Activity): Promise<InvokeResponse<T>>
-    public async postActivity(fromBotId: string, toBotId: string, toUrl: string, serviceUrl: string, conversationId: string, activity: Activity): Promise<InvokeResponse>
-    public async postActivity<T = any>(fromBotId: string, toBotId: string, toUrl: string, serviceUrl: string, conversationId: string, activity: Activity): Promise<InvokeResponse<T>> {
+    public async postActivity<T>(
+        fromBotId: string,
+        toBotId: string,
+        toUrl: string,
+        serviceUrl: string,
+        conversationId: string,
+        activity: Activity
+    ): Promise<InvokeResponse<T>>;
+    public async postActivity(
+        fromBotId: string,
+        toBotId: string,
+        toUrl: string,
+        serviceUrl: string,
+        conversationId: string,
+        activity: Activity
+    ): Promise<InvokeResponse>;
+    public async postActivity<T = any>(
+        fromBotId: string,
+        toBotId: string,
+        toUrl: string,
+        serviceUrl: string,
+        conversationId: string,
+        activity: Activity
+    ): Promise<InvokeResponse<T>> {
         const appCredentials = await this.getAppCredentials(fromBotId, toBotId);
         if (!appCredentials) {
-            throw new Error('BotFrameworkHttpClient.postActivity(): Unable to get appCredentials to connect to the skill');
+            throw new Error(
+                'BotFrameworkHttpClient.postActivity(): Unable to get appCredentials to connect to the skill'
+            );
         }
 
         if (!activity) {
@@ -92,9 +114,9 @@ export class BotFrameworkHttpClient implements BotFrameworkClient {
                     isGroup: activity.conversation.isGroup,
                     properties: activity.conversation.properties,
                     role: activity.conversation.role,
-                    tenantId: activity.conversation.tenantId
+                    tenantId: activity.conversation.tenantId,
                 },
-                bot: null
+                bot: null,
             };
             activity.conversation.id = conversationId;
             activity.serviceUrl = serviceUrl;
@@ -108,15 +130,15 @@ export class BotFrameworkHttpClient implements BotFrameworkClient {
                 headers: {
                     Accept: 'application/json',
                     'Content-Type': 'application/json',
-                    'User-Agent': USER_AGENT
+                    'User-Agent': USER_AGENT,
                 },
-                validateStatus: (): boolean => true
+                validateStatus: (): boolean => true,
             };
 
             if (token) {
-                config.headers['Authorization'] = `Bearer ${ token }`;
+                config.headers['Authorization'] = `Bearer ${token}`;
             }
-            
+
             const response = await axios.post(toUrl, activity, config);
             const invokeResponse: InvokeResponse<T> = { status: response.status, body: response.data };
 
@@ -132,7 +154,7 @@ export class BotFrameworkHttpClient implements BotFrameworkClient {
 
     protected async buildCredentials(appId: string, oAuthScope?: string): Promise<AppCredentials> {
         const appPassword = await this.credentialProvider.getAppPassword(appId);
-        let appCredentials;        
+        let appCredentials;
         if (JwtTokenValidation.isGovernment(this.channelService)) {
             appCredentials = new MicrosoftAppCredentials(appId, appPassword, undefined, oAuthScope);
             appCredentials.oAuthEndpoint = GovernmentConstants.ToChannelFromBotLoginUrl;
@@ -154,14 +176,14 @@ export class BotFrameworkHttpClient implements BotFrameworkClient {
             return new MicrosoftAppCredentials('', '');
         }
 
-        const cacheKey = `${ appId }${ oAuthScope }`;
+        const cacheKey = `${appId}${oAuthScope}`;
         let appCredentials = BotFrameworkHttpClient.appCredentialMapCache.get(cacheKey);
         if (appCredentials) {
             return appCredentials;
         }
 
         // Credentials not found in cache, build them
-        appCredentials = await this.buildCredentials(appId, oAuthScope) as MicrosoftAppCredentials;
+        appCredentials = (await this.buildCredentials(appId, oAuthScope)) as MicrosoftAppCredentials;
 
         // Cache the credentials for later use
         BotFrameworkHttpClient.appCredentialMapCache.set(cacheKey, appCredentials);

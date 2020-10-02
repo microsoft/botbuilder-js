@@ -6,13 +6,7 @@
  * Licensed under the MIT License.
  */
 
-import {
-    Activity,
-    ChannelInfo,
-    NotificationInfo,
-    TeamInfo,
-    TeamsChannelData
-} from 'botbuilder-core';
+import { Activity, ChannelInfo, NotificationInfo, TeamInfo, TeamsChannelData } from 'botbuilder-core';
 
 /**
  * Activity helper methods for Teams.
@@ -48,7 +42,7 @@ export function teamsNotifyUser(activity: Activity): void {
 
     const channelData: TeamsChannelData = activity.channelData as TeamsChannelData;
     channelData.notification = { alert: true } as NotificationInfo;
-}    
+}
 
 export function teamsGetTeamInfo(activity: Activity): TeamInfo {
     if (!activity) {

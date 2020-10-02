@@ -4,7 +4,6 @@
  */
 
 export class HandoffEventNames {
-
     public static readonly InitiateHandoff: string = 'handoff.initiate';
 
     public static readonly HandoffStatus: string = 'handoff.status';
