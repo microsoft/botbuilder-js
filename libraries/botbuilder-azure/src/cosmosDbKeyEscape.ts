@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-var crypto = require('crypto');
+const crypto = require('crypto');
 
 export namespace CosmosDbKeyEscape {
     // Older libraries had a max key length of 255.
@@ -14,40 +14,41 @@ export namespace CosmosDbKeyEscape {
     // https://docs.microsoft.com/en-us/azure/cosmos-db/concepts-limits#per-item-limits
     const maxKeyLength = 255;
     const illegalKeys: string[] = ['\\', '?', '/', '#', '\t', '\n', '\r', '*'];
-    const illegalKeyCharacterReplacementMap: Map<string, string> =
-        illegalKeys.reduce<Map<string, string>>(
-            (map: Map<string, string>, c: string) => {
-                map.set(c, `*${ c.charCodeAt(0).toString(16) }`);
+    const illegalKeyCharacterReplacementMap: Map<string, string> = illegalKeys.reduce<Map<string, string>>(
+        (map: Map<string, string>, c: string) => {
+            map.set(c, `*${c.charCodeAt(0).toString(16)}`);
 
-                return map;
-            },
-            new Map()
-        );
+            return map;
+        },
+        new Map()
+    );
 
     /**
      * Converts the key into a DocumentID that can be used safely with CosmosDB.
      * The following characters are restricted and cannot be used in the Id property: '/', '\', '?', '#'
      * More information at https://docs.microsoft.com/en-us/dotnet/api/microsoft.azure.documents.resource.id?view=azure-dotnet#remarks
-      * @param key The provided key to be escaped.
-      * @param keySuffix The string to add a the end of all RowKeys.
-      * @param compatibilityMode True if keys should be truncated in order to support previous CosmosDb
-      * max key length of 255.  This behavior can be overridden by setting cosmosDbPartitionedStorageOptions.compatibilityMode to false.
-      */
+     * @param key The provided key to be escaped.
+     * @param keySuffix The string to add a the end of all RowKeys.
+     * @param compatibilityMode True if keys should be truncated in order to support previous CosmosDb
+     * max key length of 255.  This behavior can be overridden by setting cosmosDbPartitionedStorageOptions.compatibilityMode to false.
+     */
     export function escapeKey(key: string, keySuffix?: string, compatibilityMode?: boolean): string {
         if (!key) {
-            throw new Error('The \'key\' parameter is required.');
+            throw new Error("The 'key' parameter is required.");
         }
 
         const keySplitted: string[] = key.split('');
 
-        const firstIllegalCharIndex: number = keySplitted.findIndex(((c: string): boolean => illegalKeys.some((i: string) => i === c)));
+        const firstIllegalCharIndex: number = keySplitted.findIndex((c: string): boolean =>
+            illegalKeys.some((i: string) => i === c)
+        );
 
         // If there are no illegal characters return immediately and avoid any further processing/allocations
         if (firstIllegalCharIndex === -1) {
             return truncateKey(`${key}${keySuffix || ''}`, compatibilityMode);
         }
 
-        let sanitizedKey = keySplitted.reduce(
+        const sanitizedKey = keySplitted.reduce(
             (result: string, c: string) =>
                 result + (illegalKeyCharacterReplacementMap.has(c) ? illegalKeyCharacterReplacementMap.get(c) : c),
             ''
@@ -65,7 +66,7 @@ export namespace CosmosDbKeyEscape {
             const hash = crypto.createHash('sha256');
             hash.update(key);
             // combine truncated key with hash of self for extra uniqueness
-            var hex = hash.digest('hex');
+            const hex = hash.digest('hex');
             key = key.substr(0, maxKeyLength - hex.length) + hex;
         }
         return key;
