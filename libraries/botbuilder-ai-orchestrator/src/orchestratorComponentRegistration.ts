@@ -20,7 +20,7 @@ export class OrchestratorComponentRegistration implements ComponentRegistration 
     private _resourceExplorer: ResourceExplorer;
 
     /**
-     * Gets all the builder registrations instances.
+     * Gets all the builder registration instances.
      * @returns An array of `BuilderRegistration`.
      */
     public getTypeBuilders(): BuilderRegistration[] {
