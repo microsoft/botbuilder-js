@@ -18,5 +18,5 @@ export enum JoinOperator {
     /**
      * Join Operator, OR.
      */
-    OR = 'OR'
+    OR = 'OR',
 }

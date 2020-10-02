@@ -20,9 +20,9 @@ export interface GeographyV2 {
 }
 
 export enum GeographyV2Type {
-    POI = "poi",
-    City = "city",
-    CountryRegion = "countryRegion",
-    Continent = "continent",
-    State = "state"
+    POI = 'poi',
+    City = 'city',
+    CountryRegion = 'countryRegion',
+    Continent = 'continent',
+    State = 'state',
 }

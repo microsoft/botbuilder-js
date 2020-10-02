@@ -23,7 +23,7 @@ export class TrainUtils {
      * Creates new instance for active learning train utils.
      * @param endpoint The endpoint of the knowledge base to query.
      */
-    constructor (private readonly endpoint: QnAMakerEndpoint) {
+    constructor(private readonly endpoint: QnAMakerEndpoint) {
         this.httpRequestUtils = new HttpRequestUtils();
     }
 
@@ -36,8 +36,7 @@ export class TrainUtils {
             throw new TypeError('Feedback records can not be null.');
         }
 
-        if (!feedbackRecords.feedbackRecords || feedbackRecords.feedbackRecords.length == 0)
-        {
+        if (!feedbackRecords.feedbackRecords || feedbackRecords.feedbackRecords.length == 0) {
             return;
         }
 
@@ -45,11 +44,11 @@ export class TrainUtils {
     }
 
     private async queryTrain(feedbackRecords: FeedbackRecords) {
-        const url: string = `${ this.endpoint.host }/knowledgebases/${ this.endpoint.knowledgeBaseId }/train`;
-        var payloadBody = JSON.stringify({
-            feedbackRecords: feedbackRecords.feedbackRecords
+        const url = `${this.endpoint.host}/knowledgebases/${this.endpoint.knowledgeBaseId}/train`;
+        const payloadBody = JSON.stringify({
+            feedbackRecords: feedbackRecords.feedbackRecords,
         });
-        
+
         await this.httpRequestUtils.executeHttpRequest(url, payloadBody, this.endpoint);
     }
 }

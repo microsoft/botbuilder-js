@@ -44,12 +44,12 @@ export class OrchestratorRecognizer extends Configurable {
      * Any intents that are classified with a score that is within this value from the top
      * scoring intent is determined to be ambiguous.
      */
-    public disambiguationScoreThreshold: number = 0.05;
+    public disambiguationScoreThreshold = 0.05;
 
     /**
      * Enable ambiguous intent detection. Defaults to false.
      */
-    public detectAmbiguousIntents: boolean = false;
+    public detectAmbiguousIntents = false;
 
     /**
      * Returns recognition result. Also sends trace activity with recognition result.
@@ -64,7 +64,7 @@ export class OrchestratorRecognizer extends Configurable {
         rec.disambiguationScoreThreshold = new NumberExpression(this.disambiguationScoreThreshold);
         rec.detectAmbiguousIntents = new BoolExpression(this.detectAmbiguousIntents);
 
-        const dc = new DialogContext(new DialogSet(), context, { dialogStack:[] });
+        const dc = new DialogContext(new DialogSet(), context, { dialogStack: [] });
         return await rec.recognize(dc, context.activity);
     }
-};
+}

@@ -44,7 +44,7 @@ export interface QnAMakerOptions {
      * (Optional) The time in milliseconds to wait before the request times out.
      *
      * @remarks Defaults to "100000" milliseconds.
-    */
+     */
     timeout?: number;
 
     /**
