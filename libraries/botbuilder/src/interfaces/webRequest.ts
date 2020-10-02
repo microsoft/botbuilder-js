@@ -8,7 +8,7 @@
 
 /**
  * Represents an Express or Restify request object.
- * 
+ *
  * This interface supports the framework and is not intended to be called directly for your code.
  */
 export interface WebRequest {
@@ -41,10 +41,10 @@ export interface WebRequest {
      * When implemented in a derived class, adds a listener for an event.
      * The framework uses this method to retrieve the request body when the
      * [body](xref:botbuilder.WebRequest.body) property is `null` or `undefined`.
-     * 
+     *
      * @param event The event name.
      * @param args Arguments used to handle the event.
-     * 
+     *
      * @returns A reference to the request object.
      */
     on?(event: string, ...args: any[]): any;

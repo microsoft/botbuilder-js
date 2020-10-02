@@ -9,7 +9,7 @@
 /**
  * Constants representing the API path that immediately follows the basePath.
  * These are currently internal but we will re-evaluate making them public, in the future.
- * 
+ *
  * @example
  * RouteConstants.Activities = '/v3/conversations/:conversationId/activities'.
  */
