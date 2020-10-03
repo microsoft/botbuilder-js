@@ -19,12 +19,16 @@ export class FunctionTable implements Map<string, ExpressionEvaluator> {
     private readonly customFunctions = new Map<string, ExpressionEvaluator>();
 
     public keys(): IterableIterator<string> {
-        const keysOfAllFunctions = Array.from(ExpressionFunctions.standardFunctions.keys()).concat(Array.from(this.customFunctions.keys()));
+        const keysOfAllFunctions = Array.from(ExpressionFunctions.standardFunctions.keys()).concat(
+            Array.from(this.customFunctions.keys())
+        );
         return keysOfAllFunctions[Symbol.iterator]();
     }
 
     public values(): IterableIterator<ExpressionEvaluator> {
-        const valuesOfAllFunctions = Array.from(ExpressionFunctions.standardFunctions.values()).concat(Array.from(this.customFunctions.values()));
+        const valuesOfAllFunctions = Array.from(ExpressionFunctions.standardFunctions.values()).concat(
+            Array.from(this.customFunctions.values())
+        );
         return valuesOfAllFunctions[Symbol.iterator]();
     }
 
@@ -37,7 +41,6 @@ export class FunctionTable implements Map<string, ExpressionEvaluator> {
     }
 
     public get(key: string): ExpressionEvaluator {
-
         if (ExpressionFunctions.standardFunctions.get(key)) {
             return ExpressionFunctions.standardFunctions.get(key);
         }
@@ -56,13 +59,15 @@ export class FunctionTable implements Map<string, ExpressionEvaluator> {
 
         this.customFunctions.set(key, value);
         return this;
-
     }
 
     public add(item: { key: string; value: ExpressionEvaluator }): void;
     public add(key: string, value: ExpressionEvaluator): void;
     public add(key: string, value: customFunction): void;
-    public add(param1: { key: string; value: ExpressionEvaluator } | string, param2?: ExpressionEvaluator | customFunction): void {
+    public add(
+        param1: { key: string; value: ExpressionEvaluator } | string,
+        param2?: ExpressionEvaluator | customFunction
+    ): void {
         if (arguments.length === 1) {
             if (param1 instanceof Object) {
                 this.set(param1.key, param1.value);
@@ -91,7 +96,10 @@ export class FunctionTable implements Map<string, ExpressionEvaluator> {
     }
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    public forEach(_callbackfn: (value: ExpressionEvaluator, key: string, map: Map<string, ExpressionEvaluator>) => void, thisArg?: any): void {
+    public forEach(
+        _callbackfn: (value: ExpressionEvaluator, key: string, map: Map<string, ExpressionEvaluator>) => void,
+        thisArg?: any
+    ): void {
         throw Error(`forEach function not implemented`);
     }
 

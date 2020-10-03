@@ -17,10 +17,18 @@ import { ReturnType } from '../returnType';
  */
 export class DataUriToBinary extends ExpressionEvaluator {
     public constructor() {
-        super(ExpressionType.DataUriToBinary, DataUriToBinary.evaluator(), ReturnType.Object, FunctionUtils.validateUnary);
+        super(
+            ExpressionType.DataUriToBinary,
+            DataUriToBinary.evaluator(),
+            ReturnType.Object,
+            FunctionUtils.validateUnary
+        );
     }
 
     private static evaluator(): EvaluateExpressionDelegate {
-        return FunctionUtils.apply((args: any[]): Uint8Array => InternalFunctionUtils.toBinary(args[0]), FunctionUtils.verifyString);
+        return FunctionUtils.apply(
+            (args: any[]): Uint8Array => InternalFunctionUtils.toBinary(args[0]),
+            FunctionUtils.verifyString
+        );
     }
 }

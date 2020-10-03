@@ -9,7 +9,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 import { Constant } from './constant';
-import * as lodash from 'lodash';
+import sortBy from 'lodash/sortBy';
 import moment, { Moment } from 'moment';
 import { Expression } from './expression';
 import { ExpressionType } from './expressionType';
@@ -23,7 +23,6 @@ import bigInt = require('big-integer');
  * Utility functions only used internal
  */
 export class InternalFunctionUtils {
-
     /**
      * Constant for converting unix timestamp to ticks.
      */
@@ -48,7 +47,10 @@ export class InternalFunctionUtils {
         } else {
             parsed = new TimexProperty(timexExpr);
             if (parsed === undefined || Object.keys(parsed).length === 0) {
-                return { timexProperty: parsed, error: `${timexExpr} requires a TimexProperty or a string as a argument` };
+                return {
+                    timexProperty: parsed,
+                    error: `${timexExpr} requires a TimexProperty or a string as a argument`,
+                };
             }
         }
 
@@ -76,9 +78,8 @@ export class InternalFunctionUtils {
     public static sortBy(isDescending: boolean): EvaluateExpressionDelegate {
         return (expression: Expression, state: any, options: Options): ValueWithError => {
             let result: any;
-            let error: string;
-            let oriArr: any;
-            ({ value: oriArr, error } = expression.children[0].tryEvaluate(state, options));
+            const { value: oriArr, error: childrenError } = expression.children[0].tryEvaluate(state, options);
+            let error = childrenError;
             if (!error) {
                 if (Array.isArray(oriArr)) {
                     const arr: any = oriArr.slice(0);
@@ -96,15 +97,14 @@ export class InternalFunctionUtils {
                             propertyName = propertyName || '';
                         }
                         if (isDescending) {
-                            result = lodash.sortBy(arr, propertyName).reverse();
+                            result = sortBy(arr, propertyName).reverse();
                         } else {
-                            result = lodash.sortBy(arr, propertyName);
+                            result = sortBy(arr, propertyName);
                         }
                     }
                 } else {
                     error = `${expression.children[0]} is not an array`;
                 }
-
             }
 
             return { value: result, error };
@@ -158,7 +158,6 @@ export class InternalFunctionUtils {
         return error;
     }
 
-    
     /**
      * Verify a timestamp string is valid ISO timestamp format.
      * @param value Timestamp string to check.
@@ -179,7 +178,6 @@ export class InternalFunctionUtils {
 
         return error;
     }
-
 
     /**
      * Transform a timestamp into another with customized function.
@@ -202,13 +200,13 @@ export class InternalFunctionUtils {
      * @param timeStamp String timestamp input.
      */
     public static ticks(timeStamp: string): ValueWithError {
-        let parsed: any;
         let result: any;
-        let error: string;
-        ({ value: parsed, error } = this.parseTimestamp(timeStamp));
+        const { value: parsed, error } = this.parseTimestamp(timeStamp);
         if (!error) {
             const unixMilliSec: number = parseInt(moment(parsed).utc().format('x'), 10);
-            result = this.UnixMilliSecondToTicksConstant.add(bigInt(unixMilliSec).times(this.MillisecondToTickConstant));
+            result = this.UnixMilliSecondToTicksConstant.add(
+                bigInt(unixMilliSec).times(this.MillisecondToTickConstant)
+            );
         }
 
         return { value: result, error };
@@ -228,17 +226,21 @@ export class InternalFunctionUtils {
 
         let value: any;
         let error: string;
-        if (instance instanceof Map && instance as Map<string, any> !== undefined) {
+        if (instance instanceof Map && (instance as Map<string, any>) !== undefined) {
             const instanceMap: Map<string, any> = instance as Map<string, any>;
             value = instanceMap.get(property);
             if (value === undefined) {
-                const prop: string = Array.from(instanceMap.keys()).find((k: string): boolean => k.toLowerCase() === property.toLowerCase());
+                const prop: string = Array.from(instanceMap.keys()).find(
+                    (k: string): boolean => k.toLowerCase() === property.toLowerCase()
+                );
                 if (prop !== undefined) {
                     value = instanceMap.get(prop);
                 }
             }
         } else {
-            const prop: string = Object.keys(instance).find((k: string): boolean => k.toLowerCase() === property.toLowerCase());
+            const prop: string = Object.keys(instance).find(
+                (k: string): boolean => k.toLowerCase() === property.toLowerCase()
+            );
             if (prop !== undefined) {
                 value = instance[prop];
             }
@@ -254,7 +256,7 @@ export class InternalFunctionUtils {
      * @param options Options.
      */
     public static wrapGetValue(state: MemoryInterface, path: string, options: Options): any {
-        let result = state.getValue(path);
+        const result = state.getValue(path);
         if (result !== undefined && result !== null) {
             return result;
         }
@@ -303,10 +305,8 @@ export class InternalFunctionUtils {
      */
     public static foreach(expression: Expression, state: MemoryInterface, options: Options): ValueWithError {
         let result: any[];
-        let error: string;
-        let instance: any;
-
-        ({ value: instance, error } = expression.children[0].tryEvaluate(state, options));
+        const { value: instance, error: childrenError } = expression.children[0].tryEvaluate(state, options);
+        let error = childrenError;
         if (!instance) {
             error = `'${expression.children[0]}' evaluated to null.`;
         }
@@ -326,9 +326,7 @@ export class InternalFunctionUtils {
                 const stackedMemory = StackedMemory.wrap(state);
                 result = [];
                 for (const item of arr) {
-                    const local: Map<string, any> = new Map<string, any>([
-                        [iteratorName, item]
-                    ]);
+                    const local: Map<string, any> = new Map<string, any>([[iteratorName, item]]);
 
                     stackedMemory.push(SimpleObjectMemory.wrap(local));
                     const { value: r, error: e } = expression.children[2].tryEvaluate(stackedMemory, options);
@@ -346,7 +344,7 @@ export class InternalFunctionUtils {
 
     /**
      * Validator for foreach, select, and where functions.
-     * @param expression 
+     * @param expression
      */
     public static validateForeach(expression: Expression): void {
         if (expression.children.length !== 3) {
@@ -382,14 +380,22 @@ export class InternalFunctionUtils {
      */
     public static timeUnitTransformer(duration: number, cSharpStr: string): { duration: number; tsStr: string } {
         switch (cSharpStr) {
-            case 'Day': return { duration, tsStr: 'days' };
-            case 'Week': return { duration: duration * 7, tsStr: 'days' };
-            case 'Second': return { duration, tsStr: 'seconds' };
-            case 'Minute': return { duration, tsStr: 'minutes' };
-            case 'Hour': return { duration, tsStr: 'hours' };
-            case 'Month': return { duration, tsStr: 'months' };
-            case 'Year': return { duration, tsStr: 'years' };
-            default: return { duration, tsStr: undefined };
+            case 'Day':
+                return { duration, tsStr: 'days' };
+            case 'Week':
+                return { duration: duration * 7, tsStr: 'days' };
+            case 'Second':
+                return { duration, tsStr: 'seconds' };
+            case 'Minute':
+                return { duration, tsStr: 'minutes' };
+            case 'Hour':
+                return { duration, tsStr: 'hours' };
+            case 'Month':
+                return { duration, tsStr: 'months' };
+            case 'Year':
+                return { duration, tsStr: 'years' };
+            default:
+                return { duration, tsStr: undefined };
         }
     }
 
@@ -427,15 +433,16 @@ export class InternalFunctionUtils {
             return true;
         }
 
-        if (InternalFunctionUtils.getPropertyCount(args[0]) === 0 && InternalFunctionUtils.getPropertyCount(args[1]) === 0) {
+        if (
+            InternalFunctionUtils.getPropertyCount(args[0]) === 0 &&
+            InternalFunctionUtils.getPropertyCount(args[1]) === 0
+        ) {
             return true;
         }
 
         try {
             return args[0] === args[1];
-        }
-        catch
-        {
+        } catch {
             return false;
         }
     }

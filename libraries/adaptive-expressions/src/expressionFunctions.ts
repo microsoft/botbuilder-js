@@ -28,7 +28,10 @@ export class ExpressionFunctions {
     /**
      * Read only Dictionary of built in functions.
      */
-    public static readonly standardFunctions: ReadonlyMap<string, ExpressionEvaluator> = ExpressionFunctions.getStandardFunctions();
+    public static readonly standardFunctions: ReadonlyMap<
+        string,
+        ExpressionEvaluator
+    > = ExpressionFunctions.getStandardFunctions();
 
     private static getStandardFunctions(): ReadonlyMap<string, ExpressionEvaluator> {
         const functions: ExpressionEvaluator[] = [
@@ -179,7 +182,7 @@ export class ExpressionFunctions {
             new BuiltinFunctions.UriScheme(),
             new BuiltinFunctions.UtcNow(),
             new BuiltinFunctions.Where(),
-            new BuiltinFunctions.Year()
+            new BuiltinFunctions.Year(),
         ];
 
         const lookup: Map<string, ExpressionEvaluator> = new Map<string, ExpressionEvaluator>();
