@@ -13,7 +13,6 @@ import { OnActivity } from './onActivity';
  * Actions triggered when EndOfConversationActivity is received.
  */
 export class OnEndOfConversationActivity extends OnActivity {
-
     public constructor(actions: Dialog[] = [], condition?: string) {
         super(ActivityTypes.EndOfConversation, actions, condition);
     }

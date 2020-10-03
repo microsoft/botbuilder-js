@@ -20,7 +20,7 @@ export class TrueSelector implements TriggerSelector {
     /**
      * Gets or sets the expression parser to use.
      */
-    public parser: ExpressionParserInterface = new ExpressionParser()
+    public parser: ExpressionParserInterface = new ExpressionParser();
 
     public initialize(conditionals: OnCondition[], evaluate: boolean): void {
         this._conditionals = conditionals;
@@ -45,5 +45,4 @@ export class TrueSelector implements TriggerSelector {
 
         return Promise.resolve(candidates);
     }
-
 }

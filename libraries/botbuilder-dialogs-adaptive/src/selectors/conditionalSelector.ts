@@ -36,7 +36,7 @@ export class ConditionalSelector implements TriggerSelector {
     /**
      * Gets or sets the expression parser to use.
      */
-    public parser: ExpressionParserInterface = new ExpressionParser()
+    public parser: ExpressionParserInterface = new ExpressionParser();
 
     public initialize(conditionals: OnCondition[], evaluate: boolean): void {
         this._conditionals = conditionals;

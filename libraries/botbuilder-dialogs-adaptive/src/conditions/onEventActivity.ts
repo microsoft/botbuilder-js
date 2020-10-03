@@ -13,7 +13,6 @@ import { OnActivity } from './onActivity';
  * Actions triggered when an EventActivity is received.
  */
 export class OnEventActivity extends OnActivity {
-
     public constructor(actions: Dialog[] = [], condition?: string) {
         super(ActivityTypes.Event, actions, condition);
     }

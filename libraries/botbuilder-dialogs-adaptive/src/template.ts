@@ -12,7 +12,6 @@ import { DialogContext } from 'botbuilder-dialogs';
  * Defines Template interface for binding data to T.
  */
 export interface TemplateInterface<T> {
-
     /**
      * Given the turn context bind to the data to create the object
      * @param dialogContext DialogContext.

@@ -17,7 +17,6 @@ import { UserTokenMock } from './userTokenMocks';
  * A mock Test Script that can be used for unit testing bot's logic.
  */
 export class TestScript {
-
     /**
      * A description of the test sequence.
      */
@@ -31,8 +30,8 @@ export class TestScript {
     /**
      * The locale (default: en-us).
      */
-    public locale: string = 'en-us';
-    
+    public locale = 'en-us';
+
     /**
      * The mock data for Microsoft.OAuthInput.
      */
@@ -46,14 +45,18 @@ export class TestScript {
     /**
      * If true then trace activities will be sent to the test script.
      */
-    public enableTrace: boolean = false;
+    public enableTrace = false;
 
     /**
      * Starts the execution of the test sequence.
      * @param testName Name of the test
      * @param testAdapter (Optional) Test adapter
      */
-    public async execute(resourceExplorer: ResourceExplorer, testName?: string, testAdapter?: TestAdapter): Promise<void> {
+    public async execute(
+        resourceExplorer: ResourceExplorer,
+        testName?: string,
+        testAdapter?: TestAdapter
+    ): Promise<void> {
         if (!testAdapter) {
             testAdapter = new TestAdapter(TestAdapter.createConversation(testName));
         }
@@ -66,8 +69,8 @@ export class TestScript {
         bot.userState = new UserState(new MemoryStorage());
         ResourceExtensions.useResourceExplorer(bot, resourceExplorer);
         LanguageGeneratorExtensions.useLanguageGeneration(bot);
-        
-        this.userTokenMocks.forEach(userTokenMock => {
+
+        this.userTokenMocks.forEach((userTokenMock) => {
             userTokenMock.setup(testAdapter);
         });
 
