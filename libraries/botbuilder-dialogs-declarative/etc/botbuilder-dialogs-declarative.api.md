@@ -37,7 +37,6 @@ export class CustomTypeBuilder implements TypeBuilder {
 // @public
 export class FileResource extends Resource {
     constructor(path: string);
-    readonly fullName: string;
     readText(): string;
 }
 
@@ -54,6 +53,9 @@ export class FolderResourceProvider extends ResourceProvider {
 
 // @public
 export abstract class Resource {
+    readonly fullName: string;
+    // (undocumented)
+    protected _fullname: string;
     readonly id: string;
     // (undocumented)
     protected _id: string;

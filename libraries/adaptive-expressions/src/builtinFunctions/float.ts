@@ -20,15 +20,14 @@ export class Float extends ExpressionEvaluator {
     }
 
     private static evaluator(): EvaluateExpressionDelegate {
-        return FunctionUtils.applyWithError(
-            (args: any[]): any => {
-                let error: string;
-                const value: number = parseFloat(args[0]);
-                if (!FunctionUtils.isNumber(value)) {
-                    error = `parameter ${args[0]} is not a valid number string.`;
-                }
+        return FunctionUtils.applyWithError((args: any[]): any => {
+            let error: string;
+            const value: number = parseFloat(args[0]);
+            if (!FunctionUtils.isNumber(value)) {
+                error = `parameter ${args[0]} is not a valid number string.`;
+            }
 
-                return { value, error };
-            });
+            return { value, error };
+        });
     }
 }

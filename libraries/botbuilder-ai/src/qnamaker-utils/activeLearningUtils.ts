@@ -22,16 +22,16 @@ const MaxLowScoreVariationMultiplier = 1.0;
  */
 export class ActiveLearningUtils {
     /** Minimum Score For Low Score Variation. */
-    public static MinimumScoreForLowScoreVariation : number  = 20;
+    public static MinimumScoreForLowScoreVariation = 20;
 
     /** Maximum Score For Low Score Variation. */
-    public static MaximumScoreForLowScoreVariation : number = 95.0;
+    public static MaximumScoreForLowScoreVariation = 95.0;
 
     /**
-    * Returns list of qnaSearch results which have low score variation.
-    * @param {QnAMakerResult[]} qnaSearchResults A list of results returned from the QnA getAnswer call.
-    * @returns List of filtered qnaSearch results.
-    */
+     * Returns list of qnaSearch results which have low score variation.
+     * @param {QnAMakerResult[]} qnaSearchResults A list of results returned from the QnA getAnswer call.
+     * @returns List of filtered qnaSearch results.
+     */
     public static getLowScoreVariation(qnaSearchResults: QnAMakerResult[]): QnAMakerResult[] {
         if (qnaSearchResults == null || qnaSearchResults.length == 0) {
             return [];
@@ -41,8 +41,8 @@ export class ActiveLearningUtils {
             return qnaSearchResults;
         }
 
-        let filteredQnaSearchResult = [];
-        let topAnswerScore = qnaSearchResults[0].score * 100;
+        const filteredQnaSearchResult = [];
+        const topAnswerScore = qnaSearchResults[0].score * 100;
 
         if (topAnswerScore > ActiveLearningUtils.MaximumScoreForLowScoreVariation) {
             filteredQnaSearchResult.push(qnaSearchResults[0]);
@@ -55,7 +55,18 @@ export class ActiveLearningUtils {
             filteredQnaSearchResult.push(qnaSearchResults[0]);
 
             for (let i = 1; i < qnaSearchResults.length; i++) {
-                if (ActiveLearningUtils.includeForClustering(prevScore, qnaSearchResults[i].score * 100, PreviousLowScoreVariationMultiplier) && this.includeForClustering(topAnswerScore, qnaSearchResults[i].score * 100, MaxLowScoreVariationMultiplier)) {
+                if (
+                    ActiveLearningUtils.includeForClustering(
+                        prevScore,
+                        qnaSearchResults[i].score * 100,
+                        PreviousLowScoreVariationMultiplier
+                    ) &&
+                    this.includeForClustering(
+                        topAnswerScore,
+                        qnaSearchResults[i].score * 100,
+                        MaxLowScoreVariationMultiplier
+                    )
+                ) {
                     prevScore = qnaSearchResults[i].score * 100;
                     filteredQnaSearchResult.push(qnaSearchResults[i]);
                 }
@@ -66,6 +77,6 @@ export class ActiveLearningUtils {
     }
 
     private static includeForClustering(prevScore, currentScore, multiplier): boolean {
-        return (prevScore - currentScore) < (multiplier * Math.sqrt(prevScore));
+        return prevScore - currentScore < multiplier * Math.sqrt(prevScore);
     }
 }

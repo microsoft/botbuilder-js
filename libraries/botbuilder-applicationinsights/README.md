@@ -36,10 +36,6 @@ This module contains interfaces to use the Application Insights services to back
 Using this module along with the `dialog.telemetryClient` property will create Waterfall Dialogs that emit Application Insights
 events for each step of the dialog, and which can automatically be correlated with all other actions taken to fufill an incoming request.
 
-In addition, this module can be used alongside the [QnA Maker sample app](https://github.com/Microsoft/BotBuilder-Samples/tree/master/samples/javascript_nodejs/20.qna-with-appinsights) 
-and [LUIS sample app](https://github.com/Microsoft/BotBuilder-Samples/tree/master/samples/javascript_nodejs/21.luis-with-appinsights), both of which
-are instrumented with additional Application Insight events.
-
 ## Use
 
 Import the module into your app. Make sure to import both the `ApplicationInsightsTelemetryClient` class and the `ApplicationInsightsWebserverMiddleware` function.
@@ -80,7 +76,7 @@ appInsightsClient.configuration.setAutoCollectConsole(true, true);
 
 ### Use with Waterfall Dialogs
 
-As of version `4.2`, Waterfall Dialogs included in [botbuilder-dialogs](https://github.com/Microsoft/botbuilder-js/tree/master/libraries/botbuilder-dialogs) can 
+As of version `4.2`, Waterfall Dialogs included in [botbuilder-dialogs](https://github.com/Microsoft/botbuilder-js/tree/main/libraries/botbuilder-dialogs) can 
 tracked automatically with a properly configured telemetry client.  To use Application Insights to track a waterfall dialog, set the `dialog.telemetryClient` property:
 
 ```javascript
@@ -108,5 +104,5 @@ appInsightsClient.trackDependency({target:"http://dbname", name:"select customer
 ## Learn More
 Learn how to build great bots.
 
-* [BotTelemetryClient class interface](https://github.com/Microsoft/botbuilder-js/tree/master/libraries/botbuilder-core/src/botTelemetryClient.ts)
+* [BotTelemetryClient class interface](https://github.com/Microsoft/botbuilder-js/tree/main/libraries/botbuilder-core/src/botTelemetryClient.ts)
 * [Application Insights official client](https://github.com/Microsoft/ApplicationInsights-node.js)

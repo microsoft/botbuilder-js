@@ -23,7 +23,7 @@ export class FormatNumber extends ExpressionEvaluator {
     private static evaluator(): EvaluateExpressionDelegate {
         return FunctionUtils.applyWithError(
             (args: any[]): any => {
-                let value: any;
+                let value: any = null;
                 let error: string;
                 let number = args[0];
                 let precision = args[1];
@@ -41,8 +41,8 @@ export class FormatNumber extends ExpressionEvaluator {
                     value = number.toLocaleString(locale, { minimumFractionDigits: precision, maximumFractionDigits: precision });
                 }
 
-                return { value, error };
-            });
+            return { value, error };
+        });
     }
 
     private static validator(expr: Expression): void {
