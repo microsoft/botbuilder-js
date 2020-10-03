@@ -45,7 +45,7 @@
   "scripts": {
     "build": "tsc -p tsconfig.json && tsc -p tsconfig-browser.json",
     "build:rollup": "npm run clean && npm run build && api-extractor run --verbose --local",
-    "clean": "erase /q /s .\\lib .\\browser",
+    "clean": "rmdir /q /s lib browser",
     "eslint": "eslint  ./src/*.ts ./src/**/*.ts",
     "eslint-fix": "eslint  ./src/*.ts ./src/**/*.ts --fix",
     "set-version": "npm version --allow-same-version ${Version}",

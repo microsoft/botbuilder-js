@@ -24,6 +24,5 @@ export { StreamingResponse } from './streamingResponse';
 export { SubscribableStream } from './subscribableStream';
 export {
     BrowserWebSocket,
-    WebSocketClient,
-    WebSocketServer
+    WebSocketClient
 } from './webSocket/index-browser';
