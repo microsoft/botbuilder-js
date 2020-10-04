@@ -1,4 +1,6 @@
 /**
+ * @module botframework-config
+ *
  * Copyright(c) Microsoft Corporation.All rights reserved.
  * Licensed under the MIT License.
  */
@@ -6,21 +8,11 @@ import * as fsx from 'fs-extra';
 import * as path from 'path';
 import * as process from 'process';
 import * as txtfile from 'read-text-file';
-import * as util from 'util';
 import * as uuid from 'uuid';
 import { BotConfigurationBase } from './botConfigurationBase';
 import * as encrypt from './encrypt';
-/**
- * @module botframework-config
- */
-/**
- * Copyright(c) Microsoft Corporation.All rights reserved.
- * Licensed under the MIT License.
- */
 import { ConnectedService } from './models';
 import { IBotConfiguration, IConnectedService, IDispatchService, ServiceTypes } from './schema';
-// tslint:disable-next-line:no-var-requires no-require-imports
-const exec: Function = util.promisify(require('child_process').exec);
 
 /**
  * @private
