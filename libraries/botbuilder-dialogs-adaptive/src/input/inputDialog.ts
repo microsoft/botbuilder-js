@@ -248,12 +248,6 @@ export abstract class InputDialog extends Dialog {
         return msg; 
     }
 
-    protected getDefaultInput(dc: DialogContext): any {
-        const text = dc.context.activity.text;
-        return typeof text == 'string' && text.length > 0 ? text : undefined;
-    }
-
-
     /**
      * Helper function to compose an output activity containing a set of choices.
      * @param prompt The prompt to append the users choices to.

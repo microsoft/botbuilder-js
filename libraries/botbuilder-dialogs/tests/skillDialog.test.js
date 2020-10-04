@@ -126,6 +126,34 @@ describe('SkillDialog', function() {
                 strictEqual(await dialogOptions.conversationIdFactory.getSkillConversationReference(undefined), undefined, 'no test should use TestAdapter ConversationId as SkillConversationId.');
             };
 
+            it('should delete conversation from conversationIdFactory when receiving EndOfConversation from skill and ExpectReplies is true', async () => {
+                const adapter = new TestAdapter(/* logic param not required */);
+
+                const activity = { type: ActivityTypes.Message, deliveryMode: DeliveryModes.ExpectReplies, channelId: Channels.Directline, conversation: { id: '1' } };
+                const context = new TurnContext(adapter, activity);
+                context.turnState.set(adapter.OAuthScopeKey, DEFAULT_OAUTHSCOPE);
+
+                // Create BotFrameworkHttpClient and postActivityStub
+                const expectedReply = { type: ActivityTypes.EndOfConversation, attachments: [], entities: [] };
+                const expectedReplies = { activities: [expectedReply] };
+                const [skillClient, postActivityStub] = createSkillClientAndStub(() => { return; }, undefined, expectedReplies );
+                const conversationState = new ConversationState(new MemoryStorage());
+                const dialogOptions = createSkillDialogOptions(conversationState, skillClient, undefined, false);
+
+                const dialog = new SkillDialog(dialogOptions, 'SkillDialog');
+                dialog.state = {};
+                const dialogState = conversationState.createProperty('dialogState');
+                const dialogs = new DialogSet(dialogState);
+                dialogs.add(dialog);
+                const dc = await dialogs.createContext(context);
+                dc.stack = [dialog];
+
+                await dialog.beginDialog(dc, { activity });
+
+                strictEqual(1, dialogOptions.conversationIdFactory.createCount);
+                strictEqual(0, dialogOptions.conversationIdFactory._conversationRefs.size);
+            });
+
             // "Data Rows"
             it('when deliveryMode is undefined', async () => {
                 await beginDialogShouldCallSkill();
@@ -492,7 +520,7 @@ describe('SkillDialog', function() {
  * @param {StatusCodes} returnStatusCode Defaults to StatusCodes.OK
  * @returns [BotFrameworkHttpClient, postActivityStub]
  */
-function createSkillClientAndStub(captureAction, returnStatusCode = StatusCodes.OK) {
+function createSkillClientAndStub(captureAction, returnStatusCode = StatusCodes.OK, expectedReplies) {
     // This require should not fail as this method should only be called after verifying that botbuilder is resolvable.
     const { BotFrameworkHttpClient } = require('../../botbuilder');
 
@@ -503,7 +531,7 @@ function createSkillClientAndStub(captureAction, returnStatusCode = StatusCodes.
     // Create ExpectedReplies object for response body
     const dummyActivity = { type: ActivityTypes.Message, attachments: [], entities: [] };
     dummyActivity.text = 'dummy activity';
-    const activityList = { activities: [dummyActivity] };
+    const activityList =  expectedReplies ? expectedReplies : { activities: [dummyActivity] };
 
     // Create wrapper for captureAction
     function wrapAction(...args) {
@@ -621,7 +649,11 @@ class SimpleConversationIdFactory extends SkillConversationIdFactoryBase {
 
     async getSkillConversationReference(skillConversationId) { return this.getConversationReference(skillConversationId) }
 
-    async deleteConversationReference() { /* not used in SkillDialog */ }
+    async deleteConversationReference(skillConversationId) { 
+        if (!this.useCreateSkillConversationId) {
+            this._conversationRefs.delete(skillConversationId);
+        }
+    }
 }
 
 /**

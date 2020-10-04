@@ -6,16 +6,6 @@ const { MicrosoftAppCredentials, ConnectorClient } = require('botframework-conne
 const { Conversations } = require('botframework-connector/lib/connectorApi/operations');
 const { stub } = require('sinon');
 
-beforeEach(function (done) {
-    nock.cleanAll();
-    done();
-});
-
-afterEach(function (done) {
-    nock.cleanAll();
-    done();
-});
-
 class TeamsInfoAdapter extends BotFrameworkAdapter {
     constructor() {
         super({ appId: 'appId', appPassword: 'appPassword' });
@@ -29,6 +19,17 @@ class TestContext extends TurnContext {
 }
 
 describe('TeamsInfo', () => {
+
+    beforeEach(function (done) {
+        nock.cleanAll();
+        done();
+    });
+    
+    afterEach(function (done) {
+        nock.cleanAll();
+        done();
+    });
+
     describe('sendMessageToTeamsChannel()', () => {
         it('should work with correct information', async() => {
             const newConversation = [

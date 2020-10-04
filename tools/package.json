@@ -50,7 +50,7 @@
     "minami": "github:devigned/minami#master",
     "mocha": "^5.2.0",
     "nock": "^11.9.1",
-    "node-forge": "0.6.30",
+    "node-forge": "0.10.0",
     "nyc": "^11.9.0",
     "promise": "^7.1.1",
     "random-js": "1.0.4",

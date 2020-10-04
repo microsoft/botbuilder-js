@@ -274,7 +274,6 @@ describe(`TelemetryMiddleware`, function() {
 
     it(`telemetry should log update activities`, function(done) {
         var callCount = 0;
-        let activityToUpdate = null;
         var telemetryClient = {
             trackEvent: (telemetry) => {
                 try {
@@ -302,7 +301,7 @@ describe(`TelemetryMiddleware`, function() {
         };
         let myLogger = new TelemetryLoggerMiddleware(telemetryClient, true);
         var adapter = new TestAdapter(async (context) => {
-            conversationId = context.activity.conversation.id;
+            let activityToUpdate = context.activity;
             if (context.activity.text === 'update') {
                 activityToUpdate.text = 'new response';
                 await context.updateActivity(activityToUpdate);
@@ -428,7 +427,6 @@ describe(`TelemetryMiddleware`, function() {
         };
         let myLogger = new OverrideReceiveLogger(telemetryClient, true);
         var adapter = new TestAdapter(async (context) => {
-            conversationId = context.activity.conversation.id;
             var typingActivity = {
                 type: ActivityTypes.Typing,
                 relatesTo: context.activity.relatesTo
@@ -496,7 +494,6 @@ describe(`TelemetryMiddleware`, function() {
         };
         let myLogger = new OverrideSendLogger(telemetryClient, true);
         var adapter = new TestAdapter(async (context) => {
-            conversationId = context.activity.conversation.id;
             var typingActivity = {
                 type: ActivityTypes.Typing,
                 relatesTo: context.activity.relatesTo
@@ -540,7 +537,7 @@ describe(`TelemetryMiddleware`, function() {
         };
         let myLogger = new OverrideUpdateDeleteLogger(telemetryClient, true);
         var adapter = new TestAdapter(async (context) => {
-            conversationId = context.activity.conversation.id;
+            let activityToUpdate = context.activity;
             if (context.activity.text === 'update') {
                 activityToUpdate.text = 'new response';
                 await context.updateActivity(activityToUpdate);

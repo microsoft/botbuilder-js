@@ -213,6 +213,9 @@ export class SkillDialog extends Dialog<Partial<BeginSkillDialogOptions>> {
                 if (activityFromSkill.type === ActivityTypes.EndOfConversation) {
                     // Capture the EndOfConversation activity if it was sent from skill
                     eocActivity = activityFromSkill;
+
+                    // The conversation has ended, so cleanup the conversation id.
+                    await this.dialogOptions.conversationIdFactory.deleteConversationReference(skillConversationId);
                 } else if (await this.interceptOAuthCards(context, activityFromSkill, this.dialogOptions.connectionName)) {
                     // Do nothing. The token exchange succeeded, so no OAuthCard needs to be shown to the user.
                 } else {
