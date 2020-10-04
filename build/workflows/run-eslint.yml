@@ -1,0 +1,33 @@
+name: Run ESLint
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main, stgum/test ]
+
+jobs:
+  build:
+    name: 'Run eslint'
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      
+      # Use current Node LTS
+      # This step may be unnecessary. Alternatively it may provide better performance per:
+      # https://github.com/actions/setup-node/blob/c6fd00ceb9747fb23ffdf72987450a2664414867/README.md#v2-beta
+      # If installing or specifying the Node.js version is required.
+      - uses: actions/setup-node@v2-beta
+        with:
+          node-version: '12'
+
+      # Install root package devDependencies
+      # Don't run unnecessary postinstall script
+      - name: npm install --ignore-scripts
+        run: npm install --ignore-scripts
+
+      # Run eslint from the root
+      - name: Run "eslint" npm script
+        run: npm run eslint
