@@ -51,6 +51,7 @@
     "eslint-plugin-promise": "^4.2.1",
     "eslint-plugin-security": "^1.4.0",
     "eslint-plugin-standard": "^4.0.1",
+    "mocha-junit-reporter": "^2.0.0",
     "prettier": "^2.1.2"
   },
   "nyc": {
@@ -64,8 +65,5 @@
       "**/tools/**",
       "**/internal.*"
     ]
-  },
-  "devDependencies": {
-    "mocha-junit-reporter": "^2.0.0"
   }
 }
