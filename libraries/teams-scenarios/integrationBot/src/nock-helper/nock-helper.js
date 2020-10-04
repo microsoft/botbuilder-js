@@ -84,7 +84,7 @@ exports.nockHttp = function(testNameDefault, recordingsPathRoot = './recordings'
     testName = testName;
 
     // Follow autorest environment variables
-    // https://github.com/microsoft/botbuilder-js/blob/master/tools/framework/suite-base.js#L66
+    // https://github.com/microsoft/botbuilder-js/blob/main/tools/framework/suite-base.js
     if (exports.isRecording()) { 
         const nock_output_recording = content => {
             const filterScopes = ['https://login.microsoftonline.com:443', 'https://login.botframework.com:443'];

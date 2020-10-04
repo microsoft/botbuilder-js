@@ -42,7 +42,7 @@ export class CancelAllDialogsBase<O extends object = {}> extends Dialog<O> {
     /**
      * A value indicating whether to have the new dialog should process the activity.
      */
-    public activityProcessed: BoolExpression = new BoolExpression(true);
+    public activityProcessed: BoolExpression;
 
 
     /**
@@ -55,10 +55,10 @@ export class CancelAllDialogsBase<O extends object = {}> extends Dialog<O> {
             return await dc.endDialog();
         }
 
-        var eventName = this.eventName && this.eventName.getValue(dc.state);
-        var eventValue = this.eventValue && this.eventValue.getValue(dc.state);
+        let eventName = this.eventName && this.eventName.getValue(dc.state);
+        let eventValue = this.eventValue && this.eventValue.getValue(dc.state);
 
-        if (this.activityProcessed  && this.activityProcessed.getValue(dc.state) == false ) {
+        if (this.activityProcessed && this.activityProcessed.getValue(dc.state) == false) {
             // mark that this hasn't been recognized
             dc.state.setValue(TurnPath.activityProcessed, false);
 
@@ -67,10 +67,11 @@ export class CancelAllDialogsBase<O extends object = {}> extends Dialog<O> {
             eventValue = dc.context.activity;
 
         }
+
         if (!dc.parent) {
             return await dc.cancelAllDialogs(this.cancelAll, eventName, eventValue);
         } else {
-            const turnResult = await dc.cancelAllDialogs(this.cancelAll, eventName, eventValue);
+            const turnResult = await dc.parent.cancelAllDialogs(this.cancelAll, eventName, eventValue);
             turnResult.parentEnded = true;
             return turnResult;
         }
