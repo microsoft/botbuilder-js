@@ -57,6 +57,14 @@ export class ExpressionParser implements ExpressionParserInterface {
             return this.makeExpression(binaryOperationName, left, right);
         }
 
+        public visitTripleOpExp(context: ep.TripleOpExpContext): Expression {
+            const conditionalExpression: Expression = this.visit(context.expression(0));
+            const left: Expression = this.visit(context.expression(1));
+            const right: Expression = this.visit(context.expression(2));
+
+            return this.makeExpression(ExpressionType.If, conditionalExpression, left, right);
+        }
+
         public visitFuncInvokeExp(context: ep.FuncInvokeExpContext): Expression {
             const parameters: Expression[] = this.processArgsList(context.argsList());
 
@@ -199,7 +207,7 @@ export class ExpressionParser implements ExpressionParserInterface {
             }
 
             return Expression.makeExpression(functionType, this._lookupFunction(functionType), ...children);
-        };
+        }
 
         private processArgsList(context: ep.ArgsListContext): Expression[] {
             const result: Expression[] = [];
