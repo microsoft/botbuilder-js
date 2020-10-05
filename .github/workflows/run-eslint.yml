@@ -1,17 +1,19 @@
-name: Run ESLint
+name: Code Analysis
 
 on:
   workflow_dispatch:
   push:
     branches: 
-    - stgum/test
+    - main
+    - 4.10
   pull_request:
     branches: 
-    - stgum/test
+    - main
+    - 4.10
 
 jobs:
   build:
-    name: 'Run eslint'
+    name: Run ESLint
     runs-on: ubuntu-latest
 
     steps:
