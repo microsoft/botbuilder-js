@@ -16,10 +16,18 @@ import { ReturnType } from '../returnType';
  */
 export class Base64ToString extends ExpressionEvaluator {
     public constructor() {
-        super(ExpressionType.Base64ToString, Base64ToString.evaluator(), ReturnType.String, FunctionUtils.validateUnary);
+        super(
+            ExpressionType.Base64ToString,
+            Base64ToString.evaluator(),
+            ReturnType.String,
+            FunctionUtils.validateUnary
+        );
     }
 
     private static evaluator(): EvaluateExpressionDelegate {
-        return FunctionUtils.apply((args: Readonly<any>): string => Buffer.from(args[0], 'base64').toString(), FunctionUtils.verifyString);
+        return FunctionUtils.apply(
+            (args: Readonly<any>): string => Buffer.from(args[0], 'base64').toString(),
+            FunctionUtils.verifyString
+        );
     }
 }

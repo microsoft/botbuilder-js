@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 import { BoolExpression, BoolExpressionConverter, Constant, Expression, ExpressionParserInterface, ExpressionParser, ExpressionEvaluator, FunctionUtils, IntExpression, IntExpressionConverter, ReturnType } from 'adaptive-expressions';
-import { Converters, Dialog, DialogDependencies, DialogStateManager } from 'botbuilder-dialogs';
+import { Converters, Dialog, DialogDependencies, DialogPath, DialogStateManager } from 'botbuilder-dialogs';
 import { ActionScope } from '../actions/actionScope';
 import { AdaptiveDialog } from '../adaptiveDialog';
 import { ActionContext } from '../actionContext';
@@ -42,7 +42,7 @@ export class OnCondition implements DialogDependencies {
     /**
      * Get or sets the rule priority expression where 0 is the highest and less than 0 is ignored.
      */
-    public priority: IntExpression;
+    public priority: IntExpression = new IntExpression(0);
 
     /**
      * A value indicating whether rule should only run once per unique set of memory paths.
@@ -108,15 +108,15 @@ export class OnCondition implements DialogDependencies {
                 const runOnce = new ExpressionEvaluator(`runOnce${ this.id }`, (exp, state: DialogStateManager) => {
                     const basePath = `${ AdaptiveDialog.conditionTracker }.${ this.id }.`;
                     const lastRun: number = state.getValue(basePath + 'lastRun');
-                    const paths: string[] = state.getValue(basePath + "paths");
-                    var changed = state.anyPathChanged(lastRun, paths);
+                    const paths: string[] = state.getValue(basePath + 'paths');
+                    const changed = state.anyPathChanged(lastRun, paths);
                     return { value: changed, error: undefined };
                 }, ReturnType.Boolean, FunctionUtils.validateUnary);
 
                 this._fullConstraint = Expression.andExpression(
                     this._fullConstraint,
                     new Expression(runOnce.type, runOnce)
-                )
+                );
             }
         }
 
@@ -129,11 +129,11 @@ export class OnCondition implements DialogDependencies {
      * @returns Computed priority.
      */
     public currentPriority(actionContext: ActionContext): number {
-        if (this.priority) {
-            const priority = this.priority.getValue(actionContext.state);
-            return priority || -1;
+        const { value: priority, error } = this.priority.tryGetValue(actionContext.state);
+        if (error) {
+            return -1;
         }
-        return -1;
+        return priority;
     }
 
     /**
@@ -158,6 +158,10 @@ export class OnCondition implements DialogDependencies {
      * @returns A promise with plan change list.
      */
     public async execute(actionContext: ActionContext): Promise<ActionChangeList[]> {
+        if (this.runOnce) {
+            const count = actionContext.state.getValue(DialogPath.eventCounter);
+            actionContext.state.setValue(`${ AdaptiveDialog.conditionTracker }.${ this.id }.lastRun`, count);
+        }
         return [this.onCreateChangeList(actionContext)];
     }
 

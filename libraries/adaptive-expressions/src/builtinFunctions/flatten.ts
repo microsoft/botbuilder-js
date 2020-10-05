@@ -21,12 +21,11 @@ export class Flatten extends ExpressionEvaluator {
     }
 
     private static evaluator(): EvaluateExpressionDelegate {
-        return FunctionUtils.apply(
-            (args: any[]): any[] => {
-                let array = args[0];
-                let depth = args.length > 1 ? args[1] : 100;
-                return Flatten.evalFlatten(array, depth);
-            });
+        return FunctionUtils.apply((args: any[]): any[] => {
+            const array = args[0];
+            const depth = args.length > 1 ? args[1] : 100;
+            return Flatten.evalFlatten(array, depth);
+        });
     }
 
     private static evalFlatten(arr: any[], dept: number): any[] {
@@ -36,10 +35,10 @@ export class Flatten extends ExpressionEvaluator {
 
         let res = JSON.parse(JSON.stringify(arr));
 
-        let reduceArr = (_arr): any => _arr.reduce((prevItem, curItem): any => prevItem.concat(curItem), []);
+        const reduceArr = (_arr): any => _arr.reduce((prevItem, curItem): any => prevItem.concat(curItem), []);
 
         for (let i = 0; i < dept; i++) {
-            let hasArrayItem = res.some((item): boolean => Array.isArray(item));
+            const hasArrayItem = res.some((item): boolean => Array.isArray(item));
             if (hasArrayItem) {
                 res = reduceArr(res);
             } else {

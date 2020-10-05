@@ -6,13 +6,16 @@
  * Licensed under the MIT License.
  */
 
-import { ConversationState, MemoryStorage, UserState } from 'botbuilder-core';
+import { ConversationState, MemoryStorage, UserState, TestAdapter } from 'botbuilder-core';
 import { Converters, DialogManager } from 'botbuilder-dialogs';
 import { DialogExpression, DialogExpressionConverter, LanguageGeneratorExtensions, ResourceExtensions } from 'botbuilder-dialogs-adaptive';
 import { ResourceExplorer } from 'botbuilder-dialogs-declarative';
 import { TestAction } from './testAction';
-import { AdaptiveTestAdapter } from './adaptiveTestAdapter';
+import { UserTokenMock } from './userTokenMocks';
 
+/**
+ * A mock Test Script that can be used for unit testing bot's logic.
+ */
 export class TestScript {
     public static $kind = 'Microsoft.Test.Script';
 
@@ -30,6 +33,11 @@ export class TestScript {
      * The locale (default: en-us).
      */
     public locale: string = 'en-us';
+    
+    /**
+     * The mock data for Microsoft.OAuthInput.
+     */
+    public userTokenMocks: UserTokenMock[] = [];
 
     /**
      * The sequence of test actions to perform to validate the dialog behavior.
@@ -50,9 +58,9 @@ export class TestScript {
      * @param testName Name of the test
      * @param testAdapter (Optional) Test adapter
      */
-    public async execute(resourceExplorer: ResourceExplorer, testName?: string, testAdapter?: AdaptiveTestAdapter): Promise<void> {
+    public async execute(resourceExplorer: ResourceExplorer, testName?: string, testAdapter?: TestAdapter): Promise<void> {
         if (!testAdapter) {
-            testAdapter = new AdaptiveTestAdapter(AdaptiveTestAdapter.createConversation(testName));
+            testAdapter = new TestAdapter(TestAdapter.createConversation(testName));
         }
 
         testAdapter.enableTrace = this.enableTrace;
@@ -63,6 +71,10 @@ export class TestScript {
         bot.userState = new UserState(new MemoryStorage());
         ResourceExtensions.useResourceExplorer(bot, resourceExplorer);
         LanguageGeneratorExtensions.useLanguageGeneration(bot);
+        
+        this.userTokenMocks.forEach(userTokenMock => {
+            userTokenMock.setup(testAdapter);
+        });
 
         for (let i = 0; i < this.script.length; i++) {
             const testAction = this.script[i];

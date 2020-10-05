@@ -9,6 +9,9 @@
 import { Activity, ActivityTypes } from 'botbuilder-core';
 import { AssertReplyActivity } from './assertReplyActivity';
 
+/**
+ * Test Script action to assert that the bots' reply matches expectations.
+ */
 export class AssertReply extends AssertReplyActivity {
     public static $kind = 'Microsoft.Test.AssertReply';
 
@@ -22,10 +25,18 @@ export class AssertReply extends AssertReplyActivity {
      */
     public exact: boolean = true;
 
+    /**
+     * Gets the text to assert for an activity.
+     * @returns String.
+     */
     public getConditionDescription(): string {
         return this.text;
     }
 
+    /**
+     * Validates the reply of an activity.
+     * @param activity The activity to verify.
+     */
     public validateReply(activity: Activity) {
         if (this.text) {
             if (this.exact) {

@@ -38,7 +38,8 @@ export {
     SkillConversationIdFactoryBase,
     SkillConversationReference,
     SkillConversationReferenceKey,
-    SkillConversationIdFactoryOptions } from './skills';
+    SkillConversationIdFactoryOptions,
+} from './skills';
 export * from './skypeMentionNormalizeMiddleware';
 export * from './storage';
 export * from './stringUtils';

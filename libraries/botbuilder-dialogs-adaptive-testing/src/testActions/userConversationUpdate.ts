@@ -6,11 +6,13 @@
  * Licensed under the MIT License.
  */
 
-import { ActivityTypes, ChannelAccount, RoleTypes, TurnContext } from 'botbuilder-core';
+import { TurnContext, ActivityTypes, ChannelAccount, RoleTypes, TestAdapter } from 'botbuilder-core';
 import { Converters } from 'botbuilder-dialogs';
 import { TestAction } from '../testAction';
-import { AdaptiveTestAdapter } from '../adaptiveTestAdapter';
 
+/**
+ * Action to script sending a conversationUpdate activity to the bot.
+ */
 export class UserConversationUpdate implements TestAction {
     public static $kind = 'Microsoft.Test.UserConversationUpdate';
 
@@ -26,7 +28,13 @@ export class UserConversationUpdate implements TestAction {
     
     public converters: Converters<UserConversationUpdate> = {};
 
-    public async execute(testAdapter: AdaptiveTestAdapter, callback: (context: TurnContext) => Promise<any>): Promise<any> {
+    /**
+     * Execute the test.
+     * @param testAdapter Adapter to execute against.
+     * @param callback Logic for the bot to use.
+     * @returns A Promise that represents the work queued to execute.
+     */
+    public async execute(testAdapter: TestAdapter, callback: (context: TurnContext) => Promise<any>): Promise<any> {
         const activity = testAdapter.makeActivity();
         activity.type = ActivityTypes.ConversationUpdate;
 
@@ -37,7 +45,7 @@ export class UserConversationUpdate implements TestAction {
                     name: member,
                     role: RoleTypes.User
                 } as ChannelAccount;
-            })
+            });
         }
 
         if (this.membersRemoved) {
