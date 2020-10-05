@@ -2,6 +2,7 @@ const { ActivityTypes, ConversationState, MemoryStorage, TestAdapter } = require
 const { DialogSet, TextPrompt, DialogTurnStatus } = require('../');
 const assert = require('assert');
 const lineReader = require('line-reader');
+const path = require('path');
 
 const invalidMessage = { type: ActivityTypes.Message, text: '' };
 
@@ -68,7 +69,7 @@ describe('TextPrompt', function() {
     });
 
     it('should call TextPrompt with naughty strings.', async function() {
-        const filePath = `${ __dirname }\\Resources\\naughtyStrings.txt`;
+        const filePath = path.join(__dirname, 'Resources', 'naughtyStrings.txt');
 
         lineReader.eachLine(filePath, async (naughtyString) => {
             if (naughtyString.trim() && !naughtyString.startsWith('#')) {
