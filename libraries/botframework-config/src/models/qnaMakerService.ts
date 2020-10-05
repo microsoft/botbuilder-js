@@ -1,7 +1,6 @@
 /**
  * @module botframework-config
- */
-/**
+ *
  * Copyright(c) Microsoft Corporation.All rights reserved.
  * Licensed under the MIT License.
  */
@@ -11,6 +10,7 @@ import { ConnectedService } from './connectedService';
 
 /**
  * Defines a QnA Maker service connection.
+ * @deprecated See https://aka.ms/bot-file-basics for more information.
  */
 export class QnaMakerService extends ConnectedService implements IQnAService {
     /**

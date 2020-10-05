@@ -16,5 +16,5 @@ export enum StatusCodes {
     UPGRADE_REQUIRED = 426,
     INTERNAL_SERVER_ERROR = 500,
     NOT_IMPLEMENTED = 501,
-    BAD_GATEWAY = 502
+    BAD_GATEWAY = 502,
 }

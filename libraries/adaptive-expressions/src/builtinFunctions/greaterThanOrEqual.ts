@@ -16,7 +16,12 @@ import { ComparisonEvaluator } from './comparisonEvaluator';
  */
 export class GreaterThanOrEqual extends ComparisonEvaluator {
     public constructor() {
-        super(ExpressionType.GreaterThanOrEqual, GreaterThanOrEqual.func, FunctionUtils.validateBinaryNumberOrString, FunctionUtils.verifyNumberOrString);
+        super(
+            ExpressionType.GreaterThanOrEqual,
+            GreaterThanOrEqual.func,
+            FunctionUtils.validateBinaryNumberOrString,
+            FunctionUtils.verifyNumberOrString
+        );
     }
 
     private static func(args: any[]): boolean {

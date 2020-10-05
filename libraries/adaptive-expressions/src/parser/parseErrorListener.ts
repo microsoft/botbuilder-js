@@ -21,7 +21,8 @@ export class ParseErrorListener implements ANTLRErrorListener<any> {
         charPositionInLine: number,
         msg: string,
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        _e: RecognitionException | undefined): void {
-        throw Error(`syntax error at line ${ line }:${ charPositionInLine } ${ msg }`);
+        _e: RecognitionException | undefined
+    ): void {
+        throw Error(`syntax error at line ${line}:${charPositionInLine} ${msg}`);
     }
 }

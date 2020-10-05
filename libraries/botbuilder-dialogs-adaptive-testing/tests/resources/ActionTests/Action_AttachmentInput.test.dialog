@@ -17,6 +17,21 @@
 					{
 						"$kind": "Microsoft.SendActivity",
 						"activity": "Content url ${user.photo.contentUrl}"
+					},
+					{
+						"$kind": "Microsoft.AttachmentInput",
+						"property": "user.photos",
+						"prompt": "Hello, upload photos",
+						"unrecognizedPrompt": "Send photos please",
+						"outputFormat": "all"
+					},
+					{
+						"$kind": "Microsoft.SendActivity",
+						"activity": "First photo: ${user.photos[0].contentUrl}"
+					},
+					{
+						"$kind": "Microsoft.SendActivity",
+						"activity": "Second photo: ${user.photos[1].contentUrl}"
 					}
 				]
 			}
@@ -56,6 +71,34 @@
 		{
 			"$kind": "Microsoft.Test.AssertReply",
 			"text": "Content url http://example.org/photo"
+		},
+		{
+			"$kind": "Microsoft.Test.AssertReply",
+			"text": "Hello, upload photos"
+		},
+		{
+			"$kind": "Microsoft.Test.UserActivity",
+			"activity": {
+				"type": "message",
+				"attachments": [
+					{
+						"contentType": "image/jpg",
+						"contentUrl": "http://example.org/photo1"
+					},
+					{
+						"contentType": "image/jpg",
+						"contentUrl": "http://example.org/photo2"
+					}
+				]
+			}
+		},
+		{
+			"$kind": "Microsoft.Test.AssertReply",
+			"text": "First photo: http://example.org/photo1"
+		},
+		{
+			"$kind": "Microsoft.Test.AssertReply",
+			"text": "Second photo: http://example.org/photo2"
 		}
 	]
 }
