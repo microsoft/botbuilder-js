@@ -145,7 +145,7 @@ import { ActionChangeType } from './actionChangeType';
 import { CaseConverter } from './actions/case';
 import { QnAMakerRecognizer } from './qnaMaker';
 import { TemplateEngineLanguageGenerator, ResourceMultiLanguageGenerator } from './generators';
-import { ConditionalSelector, FirstSelector, RandomSelector, TrueSelector } from './selectors';
+import { ConditionalSelector, FirstSelector, MostSpecificSelector, RandomSelector, TrueSelector } from './selectors';
 import { LanguageGeneratorConverter } from './converters/languageGeneratorConverter';
 import { LuisAdaptiveRecognizer } from './luis';
 import { LanguagePolicyConverter } from './languagePolicy';
@@ -827,6 +827,10 @@ export class AdaptiveDialogComponentRegistration implements ComponentRegistratio
         this.registerBuilder(
             'Microsoft.TrueSelector',
             new AdaptiveTypeBuilder(TrueSelector, this._resourceExplorer, {})
+        );
+        this.registerBuilder(
+            'Microsoft.MostSpecificSelector',
+            new AdaptiveTypeBuilder(MostSpecificSelector, this._resourceExplorer, {})
         );
     }
 

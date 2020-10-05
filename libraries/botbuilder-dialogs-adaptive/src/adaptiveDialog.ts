@@ -42,7 +42,7 @@ import { languageGeneratorKey } from './languageGeneratorExtensions';
 import { Recognizer, RecognizerSet } from './recognizers';
 import { ValueRecognizer } from './recognizers/valueRecognizer';
 import { SchemaHelper } from './schemaHelper';
-import { FirstSelector } from './selectors';
+import { FirstSelector, MostSpecificSelector } from './selectors';
 import { TriggerSelector } from './triggerSelector';
 
 export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
@@ -152,9 +152,10 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
         }
 
         if (!this.selector) {
-            // Default to first selector
-            // TODO: Implement MostSpecificSelector (needs TriggerTree)
-            this.selector = new FirstSelector();
+            // Default to MostSpecificSelector
+            const selector = new MostSpecificSelector();
+            selector.selector = new FirstSelector();
+            this.selector = selector;
         }
         this.selector.initialize(this.triggers, true);
     }
@@ -518,9 +519,9 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
     }
 
     private async queueFirstMatch(actionContext: ActionContext): Promise<boolean> {
-        const selection = await this.selector.select(actionContext);
+        const selection: OnCondition[] = await this.selector.select(actionContext);
         if (selection.length > 0) {
-            const evt = this.triggers[selection[0]];
+            const evt = selection[0];
             const parser = new ExpressionParser();
             const properties: { [key: string]: string } = {
                 DialogId: this.id,
