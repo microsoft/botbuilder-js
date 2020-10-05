@@ -338,7 +338,7 @@ describe('Memory - Dialog State Manager', function() {
 
     it('Should raise an error if getValue() called with an invalid scope.', async function() {
         // Run test
-        let = error = false;
+        let error = false;
         try {
             dc.state.getValue('foo.bar');
         } catch (err) {
@@ -353,7 +353,7 @@ describe('Memory - Dialog State Manager', function() {
         let dc = await createConfiguredTestDc(storage);
 
         // Run test
-        let = error = false;
+        let error = false;
         try {
             dc.state.setValue('', 'bar');
         } catch (err) {
@@ -368,7 +368,7 @@ describe('Memory - Dialog State Manager', function() {
         let dc = await createConfiguredTestDc(storage);
 
         // Run test
-        let = error = false;
+        let error = false;
         try {
             dc.state.setValue('foo', 'bar');
         } catch (err) {
@@ -393,7 +393,7 @@ describe('Memory - Dialog State Manager', function() {
         let dc = await createConfiguredTestDc(storage);
 
         // Run test
-        let = error = false;
+        let error = false;
         try {
             dc.state.deleteValue('conversation');
         } catch (err) {
@@ -408,7 +408,7 @@ describe('Memory - Dialog State Manager', function() {
         let dc = await createConfiguredTestDc(storage);
 
         // Run test
-        let = error = false;
+        let error = false;
         try {
             dc.state.deleteValue('foo.bar');
         } catch (err) {

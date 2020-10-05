@@ -12,11 +12,19 @@ import { ExpressionConverter, StringExpressionConverter } from 'adaptive-express
 import { AssertReply, AssertReplyActivity, AssertReplyOneOf, UserActivity, UserConversationUpdate, UserDelay, UserSays, UserTyping } from './testActions';
 import { AssertCondition } from './actions';
 import { TestScript } from './testScript';
+import { UserTokenMocksConverter, UserTokenBasicMock } from './userTokenMocks';
 
+/**
+ * Component registration for AdaptiveDialogTest resources.
+ */
 export class AdaptiveDialogTestComponentRegistration implements ComponentRegistration {
     private _resourceExplorer: ResourceExplorer;
     private _builderRegistrations: BuilderRegistration[] = [];
 
+    /**
+     * Initializes a new instance of the `AdaptiveDialogTestComponentRegistration` class.
+     * @param resourceExplorer ResourceExplorer.
+     */
     public constructor(resourceExplorer: ResourceExplorer) {
         this._resourceExplorer = resourceExplorer;
         this.registerBuilder('Microsoft.Test.AssertCondition', new AdaptiveTypeBuilder(AssertCondition, this._resourceExplorer, {
@@ -32,14 +40,23 @@ export class AdaptiveDialogTestComponentRegistration implements ComponentRegistr
         this.registerBuilder('Microsoft.Test.UserSays', new AdaptiveTypeBuilder(UserSays, this._resourceExplorer, {}));
         this.registerBuilder('Microsoft.Test.UserTyping', new AdaptiveTypeBuilder(UserTyping, this._resourceExplorer, {}));
         this.registerBuilder('Microsoft.Test.Script', new AdaptiveTypeBuilder(TestScript, this._resourceExplorer, {
-            'dialog': new DialogExpressionConverter(resourceExplorer)
+            'dialog': new DialogExpressionConverter(resourceExplorer),
+            'userTokenMocks': new UserTokenMocksConverter(resourceExplorer)
         }));
+        this.registerBuilder('Microsoft.Test.UserTokenBasicMock', new AdaptiveTypeBuilder(UserTokenBasicMock, this._resourceExplorer, {}));
     }
 
+    /**
+     * Gets all the builder registrations instances.
+     * @returns An array of `BuilderRegistration`.
+     */
     public getTypeBuilders(): BuilderRegistration[] {
         return this._builderRegistrations;
     }
 
+    /**
+     * @private
+     */
     private registerBuilder(name: string, builder: TypeBuilder): void {
         this._builderRegistrations.push(
             new BuilderRegistration(name, builder)

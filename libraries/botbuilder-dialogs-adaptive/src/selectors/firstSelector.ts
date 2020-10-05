@@ -29,19 +29,28 @@ export class FirstSelector extends TriggerSelector {
 
     public select(actionContext: ActionContext): Promise<OnCondition[]> {
         let selection: OnCondition;
+        let lowestPriority = Number.MAX_SAFE_INTEGER;
         if (this._evaluate) {
             for (let i = 0; i < this._conditionals.length; i++) {
                 const conditional = this._conditionals[i];
                 const expression = conditional.getExpression(this.parser);
                 const { value, error } = expression.tryEvaluate(actionContext.state);
                 if (value && !error) {
-                    selection = conditional;
-                    break;
+                    const priority = conditional.currentPriority(actionContext);
+                    if (priority >= 0 && priority < lowestPriority) {
+                        selection = conditional;
+                        lowestPriority = priority;
+                    }
                 }
             }
         } else {
-            if (this._conditionals.length > 0) {
-                selection = this._conditionals[0];
+            for (let i = 0; i < this._conditionals.length; i++) {
+                const conditional = this._conditionals[i];
+                const priority = conditional.currentPriority(actionContext);
+                if (priority >= 0 && priority < lowestPriority) {
+                    selection = conditional;
+                    lowestPriority = priority;
+                }
             }
         }
 

@@ -23,11 +23,6 @@ export class AttachmentInput extends InputDialog {
         return `AttachmentInput[${ this.prompt && this.prompt.toString() }]`;
     }
 
-    protected getDefaultInput(dc: DialogContext): any {
-        const attachments = dc.context.activity.attachments;
-        return Array.isArray(attachments) && attachments.length > 0 ? attachments : undefined;
-    }
-
     protected async onRecognizeInput(dc: DialogContext): Promise<InputState> {
         // Recognize input and filter out non-attachments
         let input: Attachment | Attachment[] = dc.state.getValue(InputDialog.VALUE_PROPERTY);

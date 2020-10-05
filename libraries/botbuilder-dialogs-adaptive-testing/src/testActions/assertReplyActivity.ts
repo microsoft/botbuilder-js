@@ -6,11 +6,13 @@
  * Licensed under the MIT License.
  */
 
-import { Activity, TurnContext } from 'botbuilder-core';
+import { Activity, TurnContext, TestAdapter } from 'botbuilder-core';
 import { ExpressionParser } from 'adaptive-expressions';
 import { TestAction } from '../testAction';
-import { AdaptiveTestAdapter } from '../adaptiveTestAdapter';
 
+/**
+ * Basic assertion TestAction, which validates assertions against a reply activity.
+ */
 export class AssertReplyActivity implements TestAction {
     /**
      * Description of what this assertion is.
@@ -27,10 +29,18 @@ export class AssertReplyActivity implements TestAction {
      */
     public assertions: string[];
 
+    /**
+     * Gets the text to assert for an activity.
+     * @returns String.
+     */
     public getConditionDescription(): string {
         return this.description || this.assertions.join('\n');
     }
 
+    /**
+     * Validates the reply of an activity.
+     * @param activity The activity to verify.
+     */
     public validateReply(activity: Activity): void {
         if (this.assertions) {
             const engine = new ExpressionParser();
@@ -38,13 +48,19 @@ export class AssertReplyActivity implements TestAction {
                 const assertion = this.assertions[i];
                 const { value, error } = engine.parse(assertion).tryEvaluate(activity);
                 if (!value || error) {
-                    throw new Error(`${ this.description } ${ assertion }`);
+                    throw new Error(`${ this.description } ${ assertion } ${ JSON.stringify(activity) }`);
                 }
             }
         }
     }
 
-    public async execute(testAdapter: AdaptiveTestAdapter, callback: (context: TurnContext) => Promise<any>): Promise<any> {
+    /**
+     * Execute the test.
+     * @param testAdapter Adapter to execute against.
+     * @param callback Logic for the bot to use.
+     * @returns A Promise that represents the work queued to execute.
+     */
+    public async execute(testAdapter: TestAdapter, callback: (context: TurnContext) => Promise<any>): Promise<any> {
         const start = new Date();
         while (true) {
             const current = new Date();

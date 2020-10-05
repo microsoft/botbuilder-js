@@ -12,7 +12,7 @@ At the end, you will learn how to:
 - Create a functional test using [Mocha](https://mochajs.org/) as a test suite
 - Set up an [Azure CI](https://docs.microsoft.com/en-us/azure/devops/pipelines/get-started/what-is-azure-pipelines?view=azure-devops) for Deploying a bot and running the functional tests
 
-You can download the project files used in this article in the [functional-tests folder](https://github.com/microsoft/botbuilder-js/tree/master/libraries/functional-tests) included within the BotBuilder-JS repository.
+You can download the project files used in this article in the [functional-tests folder](https://github.com/microsoft/botbuilder-js/tree/main/libraries/functional-tests) included within the BotBuilder-JS repository.
 
 ## Create a test bot
 
@@ -454,7 +454,7 @@ To create the functional test:
 
    **directline-swagger.json**
 
-   Find the Direct Line API definition in the functional test folder from the **BotBuilder-JS** repository. [Here](https://github.com/microsoft/botbuilder-js/blob/master/libraries/functional-tests/tests/directline-swagger.json) 
+   Find the Direct Line API definition in the functional test folder from the **BotBuilder-JS** repository. [Here](https://github.com/microsoft/botbuilder-js/blob/main/libraries/functional-tests/tests/directline-swagger.json) 
 
    **functional.test.js**
    
