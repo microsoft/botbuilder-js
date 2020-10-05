@@ -7,12 +7,12 @@
  */
 
 import { ComponentRegistration, ResourceExplorer, TypeBuilder, BuilderRegistration } from 'botbuilder-dialogs-declarative';
-import { Choice, ListStyle, ChoiceFactoryOptions, FindChoicesOptions } from 'botbuilder-dialogs';
+import { ListStyle, ChoiceFactoryOptions, FindChoicesOptions } from 'botbuilder-dialogs';
 import { AdaptiveTypeBuilder } from './adaptiveTypeBuilder';
 import { CustomDialogTypeBuilder } from './customDialogTypeBuilder';
 import { AdaptiveDialog } from './adaptiveDialog';
 import { BeginDialog, BeginSkill, BreakLoop, CancelAllDialogs, CancelDialog, ContinueLoop, DeleteActivity, DeleteProperties, DeleteProperty, EditActions, EditArray, EmitEvent, EndDialog, EndTurn, ForEach, ForEachPage, GetActivityMembers, GetConversationMembers, GotoAction, IfCondition, LogAction, RepeatDialog, ReplaceDialog, SendActivity, SetProperties, SetProperty, SignOutUser, SwitchCondition, TraceActivity, UpdateActivity, ArrayChangeType, PropertyAssignmentConverter, HttpRequest, HttpHeadersConverter, ResponsesTypes, DynamicBeginDialog, TelemetryTrackEventAction, TelemetryPropertiesConverter } from './actions';
-import { Ask, AttachmentInput, ChoiceInput, ConfirmInput, DateTimeInput, NumberInput, OAuthInput, TextInput, AttachmentOutputFormat, ChoiceOutputFormat } from './input';
+import { Ask, AttachmentInput, ChoiceInput, ConfirmInput, DateTimeInput, NumberInput, OAuthInput, TextInput, AttachmentOutputFormat, ChoiceOutputFormat, ChoiceSet } from './input';
 import { OnActivity, OnAssignEntity, OnBeginDialog, OnCancelDialog, OnChooseEntity, OnChooseIntent, OnChooseProperty, OnCondition, OnConversationUpdateActivity, OnDialogEvent, OnEndOfActions, OnEndOfConversationActivity, OnError, OnEventActivity, OnHandoffActivity, OnIntent, OnInvokeActivity, OnMessageActivity, OnMessageDeleteActivity, OnMessageReactionActivity, OnMessageUpdateActivity, OnQnAMatch, OnRepromptDialog, OnTypingActivity, OnUnknownIntent } from './conditions';
 import { CrossTrainedRecognizerSet, MultiLanguageRecognizer, RecognizerSet, RegexRecognizer, IntentPatternConverter } from './recognizers';
 import { AgeEntityRecognizer, ConfirmationEntityRecognizer, CurrencyEntityRecognizer, DateTimeEntityRecognizer, DimensionEntityRecognizer, EmailEntityRecognizer, GuidEntityRecognizer, HashtagEntityRecognizer, IpEntityRecognizer, MentionEntityRecognizer, NumberEntityRecognizer, OrdinalEntityRecognizer, PercentageEntityRecognizer, PhoneNumberEntityRecognizer, RegexEntityRecognizer, TemperatureEntityRecognizer, UrlEntityRecognizer } from './recognizers/entityRecognizers';
@@ -76,7 +76,7 @@ export class AdaptiveDialogComponentRegistration implements ComponentRegistratio
             'activityProcessed': new BoolExpressionConverter()
         };
         this.registerBuilder('Microsoft.BeginDialog', new AdaptiveTypeBuilder(BeginDialog, this._resourceExplorer,
-            Object.assign(baseInvokeDialogConverters, {
+            Object.assign({}, baseInvokeDialogConverters, {
                 'resultProperty': new StringExpressionConverter(),
                 'disabled': new BoolExpressionConverter()
             })));
@@ -180,12 +180,12 @@ export class AdaptiveDialogComponentRegistration implements ComponentRegistratio
             'disabled': new BoolExpressionConverter()
         }));
         this.registerBuilder('Microsoft.RepeatDialog', new AdaptiveTypeBuilder(RepeatDialog, this._resourceExplorer,
-            Object.assign(baseInvokeDialogConverters, {
+            Object.assign({}, baseInvokeDialogConverters, {
                 'disabled': new BoolExpressionConverter(),
                 'allowLoop': new BoolExpressionConverter()
             })));
         this.registerBuilder('Microsoft.ReplaceDialog', new AdaptiveTypeBuilder(ReplaceDialog, this._resourceExplorer,
-            Object.assign(baseInvokeDialogConverters, {
+            Object.assign({}, baseInvokeDialogConverters, {
                 'disabled': new BoolExpressionConverter()
             })));
         this.registerBuilder('Microsoft.SendActivity', new AdaptiveTypeBuilder(SendActivity, this._resourceExplorer, {
@@ -283,12 +283,12 @@ export class AdaptiveDialogComponentRegistration implements ComponentRegistratio
             'disabled': new BoolExpressionConverter()
         }));
         this.registerBuilder('Microsoft.AttachmentInput', new AdaptiveTypeBuilder(AttachmentInput, this._resourceExplorer,
-            Object.assign(inputDialogConverters, {
+            Object.assign({}, inputDialogConverters, {
                 'outputFormat': new EnumExpressionConverter(AttachmentOutputFormat)
             })));
         this.registerBuilder('Microsoft.ChoiceInput', new AdaptiveTypeBuilder(ChoiceInput, this._resourceExplorer,
-            Object.assign(inputDialogConverters, {
-                'choices': new ArrayExpressionConverter<Choice>(),
+            Object.assign({}, inputDialogConverters, {
+                'choices': new ObjectExpressionConverter<ChoiceSet>(),
                 'style': new EnumExpressionConverter(ListStyle),
                 'defaultLocale': new StringExpressionConverter(),
                 'outputFormat': new EnumExpressionConverter(ChoiceOutputFormat),
@@ -296,31 +296,32 @@ export class AdaptiveDialogComponentRegistration implements ComponentRegistratio
                 'recognizerOptions': new ObjectExpressionConverter<FindChoicesOptions>()
             })));
         this.registerBuilder('Microsoft.ConfirmInput', new AdaptiveTypeBuilder(ConfirmInput, this._resourceExplorer,
-            Object.assign(inputDialogConverters, {
+            Object.assign({}, inputDialogConverters, {
                 'defaultLocale': new StringExpressionConverter(),
                 'style': new EnumExpressionConverter(ListStyle),
                 'choiceOptions': new ObjectExpressionConverter<ChoiceFactoryOptions>(),
+                'confirmChoices': new ObjectExpressionConverter<ChoiceSet>(),
                 'outputFormat': new StringExpressionConverter()
             })));
         this.registerBuilder('Microsoft.DateTimeInput', new AdaptiveTypeBuilder(DateTimeInput, this._resourceExplorer,
-            Object.assign(inputDialogConverters, {
+            Object.assign({}, inputDialogConverters, {
                 'defaultLocale': new StringExpressionConverter(),
                 'outputFormat': new StringExpressionConverter()
             })));
         this.registerBuilder('Microsoft.NumberInput', new AdaptiveTypeBuilder(NumberInput, this._resourceExplorer,
-            Object.assign(inputDialogConverters, {
+            Object.assign({}, inputDialogConverters, {
                 'defaultLocale': new StringExpressionConverter(),
                 'outputFormat': new NumberExpressionConverter()
             })));
         this.registerBuilder('Microsoft.OAuthInput', new AdaptiveTypeBuilder(OAuthInput, this._resourceExplorer,
-            Object.assign(inputDialogConverters, {
+            Object.assign({}, inputDialogConverters, {
                 'connectionName': new StringExpressionConverter(),
                 'title': new StringExpressionConverter(),
                 'text': new StringExpressionConverter(),
                 'timeout': new IntExpressionConverter()
             })));
         this.registerBuilder('Microsoft.TextInput', new AdaptiveTypeBuilder(TextInput, this._resourceExplorer,
-            Object.assign(inputDialogConverters, {
+            Object.assign({}, inputDialogConverters, {
                 'outputFormat': new StringExpressionConverter()
             })));
     }

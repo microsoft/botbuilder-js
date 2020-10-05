@@ -6,9 +6,8 @@
  * Licensed under the MIT License.
  */
 
-import { TurnContext } from 'botbuilder-core';
+import { TurnContext, TestAdapter } from 'botbuilder-core';
 import { TestAction } from '../testAction';
-import { AdaptiveTestAdapter } from '../adaptiveTestAdapter';
 
 export interface UserDelayConfiguration {
     timespan?: number;
@@ -29,7 +28,7 @@ export class UserDelay implements TestAction {
      * @param _callback Logic for the bot to use.
      * @returns A Promise that represents the work queued to execute.
      */
-    public async execute(_testAdapter: AdaptiveTestAdapter, _callback: (context: TurnContext) => Promise<any>): Promise<any> {
+    public async execute(_testAdapter: TestAdapter, _callback: (context: TurnContext) => Promise<any>): Promise<any> {
         await Promise.resolve(resolve => setTimeout(resolve, this.timespan));
     }
 }
