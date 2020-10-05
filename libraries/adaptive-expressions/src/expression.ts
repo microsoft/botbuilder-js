@@ -41,6 +41,9 @@ export class Expression {
      */
     public children: Expression[];
 
+    /**
+     * Evaluator of expression.
+     */
     public readonly evaluator: ExpressionEvaluator;
 
     /**
