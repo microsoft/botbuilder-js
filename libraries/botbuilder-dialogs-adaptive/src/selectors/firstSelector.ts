@@ -13,7 +13,7 @@ import { ActionContext } from '../actionContext';
 /**
  * Select the first true rule implementation of TriggerSelector
  */
-export class FirstSelector implements TriggerSelector {
+export class FirstSelector extends TriggerSelector {
     private _conditionals: OnCondition[];
     private _evaluate: boolean;
 
@@ -27,8 +27,8 @@ export class FirstSelector implements TriggerSelector {
         this._evaluate = evaluate;
     }
 
-    public select(actionContext: ActionContext): Promise<number[]> {
-        let selection = -1;
+    public select(actionContext: ActionContext): Promise<OnCondition[]> {
+        let selection: OnCondition;
         let lowestPriority = Number.MAX_SAFE_INTEGER;
         if (this._evaluate) {
             for (let i = 0; i < this._conditionals.length; i++) {
@@ -38,7 +38,7 @@ export class FirstSelector implements TriggerSelector {
                 if (value && !error) {
                     const priority = conditional.currentPriority(actionContext);
                     if (priority >= 0 && priority < lowestPriority) {
-                        selection = i;
+                        selection = conditional;
                         lowestPriority = priority;
                     }
                 }
@@ -48,14 +48,14 @@ export class FirstSelector implements TriggerSelector {
                 const conditional = this._conditionals[i];
                 const priority = conditional.currentPriority(actionContext);
                 if (priority >= 0 && priority < lowestPriority) {
-                    selection = i;
+                    selection = conditional;
                     lowestPriority = priority;
                 }
             }
         }
 
         const result = [];
-        if (selection != -1) {
+        if (selection) {
             result.push(selection);
         }
 

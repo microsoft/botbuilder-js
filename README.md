@@ -49,7 +49,7 @@ To get started building bots using the SDK, see the [Azure Bot Service Documenta
 
 The [Bot Framework Samples](https://github.com/microsoft/botbuilder-samples) includes a rich set of samples repository.
 
-If you want to debug an issue, would like to [contribute](#contributing), or understand how the Bot Builder SDK works, instructions for building and testing the SDK are below.
+If you want to debug an issue, would like to [contribute](#Contributing-and-our-code-of-conduct), or understand how the Bot Builder SDK works, instructions for building and testing the SDK are below.
 
 ### Prerequisites
 - [Git](https://git-scm.com/downloads) 
@@ -64,7 +64,7 @@ If you want to debug an issue, would like to [contribute](#contributing), or und
 Clone a copy of the repo:
 
 ```bash
-git clone https://github.com/Microsoft/botbuilder-js.git
+git clone https://github.com/microsoft/botbuilder-js.git
 ```
 
 Change to the SDK's directory:
@@ -106,7 +106,7 @@ npm install --global autorest
 Below are the various channels that are available to you for obtaining support and providing feedback. Please pay carful attention to which channel should be used for which type of content. e.g. general "how do I..." questions should be asked on Stack Overflow, Twitter or Gitter, with GitHub issues being for feature requests and bug reports.
 
 ### Github issues
-[Github issues](https://github.com/Microsoft/botbuilder-python/issues) should be used for bugs and feature requests. 
+[Github issues](https://github.com/Microsoft/botbuilder-js/issues) should be used for bugs and feature requests. 
 
 ### Stack overflow
 [Stack Overflow](https://stackoverflow.com/questions/tagged/botframework) is a great place for getting high-quality answers. Our support team, as well as many of our community members are already on Stack Overflow providing answers to 'how-to' questions.
@@ -121,7 +121,7 @@ We use the [@botframework](https://twitter.com/botframework) account on twitter 
 The [Gitter Channel](https://gitter.im/Microsoft/BotBuilder) provides a place where the Community can get together and collaborate.
 
 ## Contributing and our code of conduct
-We welcome contributions and suggestions. Please see our [contributing guidelines](./contributing.md) for more information.
+We welcome contributions and suggestions. Please see our [contributing guidelines](./Contributing.md) for more information.
 
 This project has adopted the [Microsoft Open Source Code of Conduct](https://opensource.microsoft.com/codeofconduct/). 
 For more information see the [Code of Conduct FAQ](https://opensource.microsoft.com/codeofconduct/faq/) or contact
@@ -136,4 +136,4 @@ at [secure@microsoft.com](mailto:secure@microsoft.com).  You should receive a re
 
 Copyright (c) Microsoft Corporation. All rights reserved.
 
-Licensed under the [MIT](./LICENSE.md) License.
+Licensed under the [MIT](./LICENSE) License.
