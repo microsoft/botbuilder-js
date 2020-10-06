@@ -19,11 +19,11 @@ export class SendActivity<O extends object = {}> extends Dialog<O> {
      */
     public constructor(activity?: Partial<Activity> | string) {
         super();
-        if (activity) { 
-            if (typeof activity === 'string') { 
-                this.activity = new ActivityTemplate(activity); 
+        if (activity) {
+            if (typeof activity === 'string') {
+                this.activity = new ActivityTemplate(activity);
             } else {
-                this.activity = new StaticActivityTemplate(activity); 
+                this.activity = new StaticActivityTemplate(activity);
             }
         }
     }
@@ -32,14 +32,13 @@ export class SendActivity<O extends object = {}> extends Dialog<O> {
      * Gets or sets template for the activity.
      */
     public activity: TemplateInterface<Partial<Activity>>;
-    
+
     /**
      * An optional expression which if is true will disable this action.
      */
     public disabled?: BoolExpression;
 
     public async beginDialog(dc: DialogContext, options: O): Promise<DialogTurnResult> {
-
         if (this.disabled && this.disabled.getValue(dc.state)) {
             return await dc.endDialog();
         }
@@ -50,28 +49,34 @@ export class SendActivity<O extends object = {}> extends Dialog<O> {
         }
 
         // Send activity and return result
-        const data = Object.assign(dc.state, {
-            utterance: dc.context.activity.text || ''
-        }, options);
-        
+        const data = Object.assign(
+            dc.state,
+            {
+                utterance: dc.context.activity.text || '',
+            },
+            options
+        );
+
         const activityResult = await this.activity.bind(dc, data);
 
         this.telemetryClient.trackEvent({
             name: 'GeneratorResult',
             properties: {
-                'template':this.activity,
-                'result': activityResult || ''
-            }
+                template: this.activity,
+                result: activityResult || '',
+            },
         });
 
         let result: ResourceResponse;
-        if (activityResult.type !== ActivityTypes.Message
-             || activityResult.text
-             || activityResult.speak
-             || (activityResult.attachments && activityResult.attachments.length > 0)
-             || activityResult.suggestedActions
-             || activityResult.channelData) {
-                result = await dc.context.sendActivity(activityResult);
+        if (
+            activityResult.type !== ActivityTypes.Message ||
+            activityResult.text ||
+            activityResult.speak ||
+            (activityResult.attachments && activityResult.attachments.length > 0) ||
+            activityResult.suggestedActions ||
+            activityResult.channelData
+        ) {
+            result = await dc.context.sendActivity(activityResult);
         }
 
         return await dc.endDialog(result);
@@ -79,8 +84,8 @@ export class SendActivity<O extends object = {}> extends Dialog<O> {
 
     protected onComputeId(): string {
         if (this.activity instanceof ActivityTemplate) {
-            return `SendActivity[${ StringUtils.ellipsis(this.activity.template.trim(), 30) }]`;
+            return `SendActivity[${StringUtils.ellipsis(this.activity.template.trim(), 30)}]`;
         }
-        return `SendActivity[${ StringUtils.ellipsis(this.activity && this.activity.toString().trim(), 30) }]`;
+        return `SendActivity[${StringUtils.ellipsis(this.activity && this.activity.toString().trim(), 30)}]`;
     }
 }

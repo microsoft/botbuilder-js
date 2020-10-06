@@ -32,9 +32,13 @@ export class ResourceMultiLanguageGenerator extends MultiLanguageGeneratorBase {
      * @param dialogContext Context for the current turn of conversation.
      * @param locale Locale to lookup.
      */
-    public tryGetGenerator(dialogContext: DialogContext, locale: string): { exist: boolean; result: LanguageGenerator } {
+    public tryGetGenerator(
+        dialogContext: DialogContext,
+        locale: string
+    ): { exist: boolean; result: LanguageGenerator } {
         const lgm: LanguageGeneratorManager = dialogContext.services.get(languageGeneratorManagerKey);
-        const resourceId = (locale === undefined || locale === '') ? this.resourceId : this.resourceId.replace('.lg', `.${ locale }.lg`);
+        const resourceId =
+            locale === undefined || locale === '' ? this.resourceId : this.resourceId.replace('.lg', `.${locale}.lg`);
         if (lgm.languageGenerators.has(resourceId)) {
             return { exist: true, result: lgm.languageGenerators.get(resourceId) };
         } else {

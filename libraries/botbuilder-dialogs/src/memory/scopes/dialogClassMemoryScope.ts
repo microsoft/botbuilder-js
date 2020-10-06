@@ -21,7 +21,7 @@ export class DialogClassMemoryScope extends ClassMemoryScope {
 
     protected onFindDialog(dc: DialogContext): Dialog {
         // Is the active dialog a container?
-        let dialog = dc.findDialog(dc.activeDialog.id);
+        const dialog = dc.findDialog(dc.activeDialog.id);
         if (dialog && dialog instanceof DialogContainer) {
             return dialog;
         }

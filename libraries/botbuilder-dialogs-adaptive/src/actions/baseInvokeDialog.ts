@@ -10,7 +10,6 @@ import { ValueExpression, ObjectExpression, BoolExpression } from 'adaptive-expr
 import { DialogExpression } from '../expressions';
 import { replaceJsonRecursively } from '../jsonExtensions';
 
-
 export class BaseInvokeDialog<O extends object = {}> extends Dialog<O> implements DialogDependencies {
     public constructor(dialogIdToCall?: string, bindingOptions?: O) {
         super();
@@ -49,7 +48,7 @@ export class BaseInvokeDialog<O extends object = {}> extends Dialog<O> implement
     }
 
     protected onComputeId(): string {
-        return `${ this.constructor.name }[${ this.dialog && this.dialog.toString() }]`;
+        return `${this.constructor.name}[${this.dialog && this.dialog.toString()}]`;
     }
 
     protected resolveDialog(dc: DialogContext): Dialog {
@@ -61,7 +60,7 @@ export class BaseInvokeDialog<O extends object = {}> extends Dialog<O> implement
         const { value: dialogId } = expression.tryEvaluate(dc.state);
         const dialog = dc.findDialog(dialogId);
         if (!dialog) {
-            throw new Error(`${ this.dialog.toString() } not found.`);
+            throw new Error(`${this.dialog.toString()} not found.`);
         }
 
         return dialog;

@@ -7,7 +7,7 @@
  */
 
 /**
- * Class which manages cache of all LG resources from a ResourceExplorer. 
+ * Class which manages cache of all LG resources from a ResourceExplorer.
  * This class automatically updates the cache when resource change events occure.
  */
 import { Resource, ResourceExplorer, FileResource, ResourceChangeEvent } from 'botbuilder-dialogs-declarative';
@@ -64,17 +64,23 @@ export class LanguageGeneratorManager {
      */
     public languageGenerators: Map<string, LanguageGenerator> = new Map<string, LanguageGenerator>();
 
-    public static resourceExplorerResolver(locale: string, resourceMapping: Map<string, Resource[]>): ImportResolverDelegate {
+    public static resourceExplorerResolver(
+        locale: string,
+        resourceMapping: Map<string, Resource[]>
+    ): ImportResolverDelegate {
         return (lgResource: LGResource, id: string): LGResource => {
             const fallbackLocale = LanguageResourceLoader.fallbackLocale(locale, Array.from(resourceMapping.keys()));
             const resources: Resource[] = resourceMapping.get(fallbackLocale.toLowerCase());
 
             const resourceName = basename(normalize(id));
-            const resource = resources.find(u =>
-                LanguageResourceLoader.parseLGFileName(u.id).prefix === LanguageResourceLoader.parseLGFileName(resourceName).prefix);
+            const resource = resources.find(
+                (u) =>
+                    LanguageResourceLoader.parseLGFileName(u.id).prefix ===
+                    LanguageResourceLoader.parseLGFileName(resourceName).prefix
+            );
 
             if (resource === undefined) {
-                throw Error(`There is no matching LG resource for ${ resourceName }`);
+                throw Error(`There is no matching LG resource for ${resourceName}`);
             } else {
                 return new LGResource(resource.id, resource.fullName, resource.readText());
             }

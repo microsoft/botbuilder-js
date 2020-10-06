@@ -8,9 +8,24 @@
 
 import { DialogContext } from 'botbuilder-dialogs';
 import { RecognizerResult, Activity } from 'botbuilder-core';
-import { RankerTypes, QnAMakerMetadata, QnAMaker, QnAMakerEndpoint, QnAMakerOptions, QnAMakerResult, QnARequestContext } from 'botbuilder-ai';
+import {
+    RankerTypes,
+    QnAMakerMetadata,
+    QnAMaker,
+    QnAMakerEndpoint,
+    QnAMakerOptions,
+    QnAMakerResult,
+    QnARequestContext,
+} from 'botbuilder-ai';
 import { Recognizer } from '../recognizers/recognizer';
-import { StringExpression, IntExpression, NumberExpression, BoolExpression, ArrayExpression, ObjectExpression } from 'adaptive-expressions';
+import {
+    StringExpression,
+    IntExpression,
+    NumberExpression,
+    BoolExpression,
+    ArrayExpression,
+    ObjectExpression,
+} from 'adaptive-expressions';
 
 const intentPrefix = 'intent=';
 
@@ -83,9 +98,15 @@ export class QnAMakerRecognizer extends Recognizer {
      */
     public constructor(hostname?: string, knowledgeBaseId?: string, endpointKey?: string) {
         super();
-        if (hostname) { this.hostname = new StringExpression(hostname); }
-        if (knowledgeBaseId) { this.knowledgeBaseId = new StringExpression(knowledgeBaseId); }
-        if (endpointKey) { this.endpointKey = new StringExpression(endpointKey); }
+        if (hostname) {
+            this.hostname = new StringExpression(hostname);
+        }
+        if (knowledgeBaseId) {
+            this.knowledgeBaseId = new StringExpression(knowledgeBaseId);
+        }
+        if (endpointKey) {
+            this.endpointKey = new StringExpression(endpointKey);
+        }
     }
 
     /**
@@ -95,12 +116,17 @@ export class QnAMakerRecognizer extends Recognizer {
      * @param telemetryProperties Additional properties to be logged to telemetry.
      * @param telemetryMetrics Additional metrics to be logged to telemetry.
      */
-    public async recognize(dc: DialogContext, activity: Activity, telemetryProperties?: { [key: string]: string }, telemetryMetrics?: { [key: string]: number }): Promise<RecognizerResult> {
+    public async recognize(
+        dc: DialogContext,
+        activity: Activity,
+        telemetryProperties?: { [key: string]: string },
+        telemetryMetrics?: { [key: string]: number }
+    ): Promise<RecognizerResult> {
         // identify matched intents
         const recognizerResult: RecognizerResult = {
             text: activity.text,
             intents: {},
-            entities: {}
+            entities: {},
         };
 
         if (!activity.text) {
@@ -112,7 +138,7 @@ export class QnAMakerRecognizer extends Recognizer {
         if (this.includeDialogNameInMetadata && this.includeDialogNameInMetadata.getValue(dc.state)) {
             const metadata: QnAMakerMetadata = {
                 name: 'dialogName',
-                value: dc.activeDialog && dc.activeDialog.id
+                value: dc.activeDialog && dc.activeDialog.id,
             };
             filters.push(metadata);
         }
@@ -132,7 +158,7 @@ export class QnAMakerRecognizer extends Recognizer {
             top: this.top && this.top.getValue(dc.state),
             qnaId: this.qnaId && this.qnaId.getValue(dc.state),
             rankerType: this.rankerType && this.rankerType.getValue(dc.state),
-            isTest: this.isTest
+            isTest: this.isTest,
         };
         const answers = await qnaMaker.getAnswers(dc.context, qnaMakerOptions);
 
@@ -140,27 +166,38 @@ export class QnAMakerRecognizer extends Recognizer {
             let topAnswer: QnAMakerResult;
             for (let i = 0; i < answers.length; i++) {
                 const answer = answers[i];
-                if (!topAnswer || (answer.score > topAnswer.score)) {
+                if (!topAnswer || answer.score > topAnswer.score) {
                     topAnswer = answer;
                 }
             }
 
             if (topAnswer.answer.trim().toLowerCase().startsWith(intentPrefix)) {
-                recognizerResult.intents[topAnswer.answer.trim().substr(intentPrefix.length).trim()] = { score: topAnswer.score };
+                recognizerResult.intents[topAnswer.answer.trim().substr(intentPrefix.length).trim()] = {
+                    score: topAnswer.score,
+                };
             } else {
                 recognizerResult.intents[QnAMakerRecognizer.qnaMatchIntent] = { score: topAnswer.score };
             }
 
             recognizerResult.entities['answer'] = [topAnswer.answer];
-            recognizerResult.entities['$instance'] = { answer: [Object.assign(topAnswer, {
-                startIndex: 0,
-                endIndex: activity.text.length
-            })] };
+            recognizerResult.entities['$instance'] = {
+                answer: [
+                    Object.assign(topAnswer, {
+                        startIndex: 0,
+                        endIndex: activity.text.length,
+                    }),
+                ],
+            };
             recognizerResult['answers'] = answers;
         } else {
             recognizerResult.intents['None'] = { score: 1 };
         }
-        this.trackRecognizerResult(dc, 'QnAMakerRecognizerResult', this.fillRecognizerResultTelemetryProperties(recognizerResult, telemetryProperties), telemetryMetrics);
+        this.trackRecognizerResult(
+            dc,
+            'QnAMakerRecognizerResult',
+            this.fillRecognizerResultTelemetryProperties(recognizerResult, telemetryProperties),
+            telemetryMetrics
+        );
         return recognizerResult;
     }
 
@@ -176,7 +213,7 @@ export class QnAMakerRecognizer extends Recognizer {
         const endpoint: QnAMakerEndpoint = {
             endpointKey: endpointKey,
             host: hostname,
-            knowledgeBaseId: knowledgeBaseId
+            knowledgeBaseId: knowledgeBaseId,
         };
         return new QnAMaker(endpoint);
     }

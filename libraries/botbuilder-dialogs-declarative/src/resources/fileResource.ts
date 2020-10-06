@@ -13,7 +13,6 @@ import { Resource } from './resource';
  * Class which represents a file as a resource.
  */
 export class FileResource extends Resource {
-
     /**
      * Initialize a new instance of the `FileResouce` class.
      * @param path Path to file.
