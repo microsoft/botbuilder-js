@@ -8,6 +8,7 @@
 
 import { ExpressionType } from '../expressionType';
 import { FunctionUtils } from '../functionUtils';
+import { InternalFunctionUtils } from '../functionUtils.internal';
 import { ComparisonEvaluator } from './comparisonEvaluator';
 
 /**
@@ -19,6 +20,6 @@ export class NotEqual extends ComparisonEvaluator {
     }
 
     private static func(args: any[]): boolean {
-        return !FunctionUtils.isEqual(args);
+        return !InternalFunctionUtils.isEqual(args);
     }
 }

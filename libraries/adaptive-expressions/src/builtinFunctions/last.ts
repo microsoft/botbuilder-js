@@ -9,6 +9,7 @@
 import { EvaluateExpressionDelegate, ExpressionEvaluator } from '../expressionEvaluator';
 import { ExpressionType } from '../expressionType';
 import { FunctionUtils } from '../functionUtils';
+import { InternalFunctionUtils } from '../functionUtils.internal';
 import { ReturnType } from '../returnType';
 
 /**
@@ -28,7 +29,7 @@ export class Last extends ExpressionEvaluator {
                 }
 
                 if (Array.isArray(args[0]) && args[0].length > 0) {
-                    last = FunctionUtils.accessIndex(args[0], args[0].length - 1).value;
+                    last = InternalFunctionUtils.accessIndex(args[0], args[0].length - 1).value;
                 }
 
                 return last;

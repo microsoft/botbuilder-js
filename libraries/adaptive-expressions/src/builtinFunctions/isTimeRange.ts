@@ -12,6 +12,7 @@ import { Expression } from '../expression';
 import { ExpressionEvaluator, ValueWithError } from '../expressionEvaluator';
 import { ExpressionType } from '../expressionType';
 import { FunctionUtils } from '../functionUtils';
+import { InternalFunctionUtils } from '../functionUtils.internal';
 import { MemoryInterface } from '../memory/memoryInterface';
 import { Options } from '../options';
 import { ReturnType } from '../returnType';
@@ -31,7 +32,7 @@ export class IsTimeRange extends ExpressionEvaluator {
         let args: any[];
         ({ args, error } = FunctionUtils.evaluateChildren(expr, state, options));
         if (!error) {
-            ({ timexProperty: parsed, error: error } = FunctionUtils.parseTimexProperty(args[0]));
+            ({ timexProperty: parsed, error: error } = InternalFunctionUtils.parseTimexProperty(args[0]));
         }
 
         if (parsed && !error) {
