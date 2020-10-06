@@ -16,8 +16,8 @@ export class MostSpecificSelector extends TriggerSelector {
     /**
      * Gets or sets the expression parser to use.
      */
-    public parser: ExpressionParserInterface = new ExpressionParser()
-    
+    public parser: ExpressionParserInterface = new ExpressionParser();
+
     public selector: TriggerSelector;
 
     public initialize(conditionals: OnCondition[], _evaluate: boolean) {
@@ -29,13 +29,13 @@ export class MostSpecificSelector extends TriggerSelector {
     public async select(context: ActionContext): Promise<OnCondition[]> {
         const triggers = this._tree.matches(context.state);
         const matches: OnCondition[] = triggers.map((trigger: Trigger) => trigger.action);
-        
+
         let selections = matches;
         if (matches.length > 0 && this.selector) {
             this.selector.initialize(matches, false);
             selections = await this.selector.select(context);
         }
-        
+
         return selections;
     }
 }

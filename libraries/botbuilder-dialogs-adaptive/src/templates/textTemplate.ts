@@ -16,7 +16,6 @@ import { languageGeneratorKey } from '../languageGeneratorExtensions';
  * and processed through registered language generator.
  */
 export class TextTemplate implements TemplateInterface<string> {
-
     /**
      * Initialize a new instance of TextTemplate class.
      * @param template The template to evaluate to create text.
@@ -37,7 +36,7 @@ export class TextTemplate implements TemplateInterface<string> {
      */
     public async bind(dialogContext: DialogContext, data: object): Promise<string> {
         if (!this.template) {
-            throw new Error(`ArgumentNullException: ${ this.template }`);
+            throw new Error(`ArgumentNullException: ${this.template}`);
         }
 
         const languageGenerator: LanguageGenerator = dialogContext.services.get(languageGeneratorKey);
@@ -49,5 +48,7 @@ export class TextTemplate implements TemplateInterface<string> {
         return Promise.resolve(undefined);
     }
 
-    public toString = (): string => { return `TextTemplate(${ this.template })`; };
+    public toString = (): string => {
+        return `TextTemplate(${this.template})`;
+    };
 }

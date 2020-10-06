@@ -12,7 +12,9 @@ export class GetConversationMembers<O extends object = {}> extends Dialog<O> {
     public constructor();
     public constructor(property?: string) {
         super();
-        if (property) { this.property = new StringExpression(property); }
+        if (property) {
+            this.property = new StringExpression(property);
+        }
     }
 
     /**
@@ -41,7 +43,6 @@ export class GetConversationMembers<O extends object = {}> extends Dialog<O> {
     }
 
     protected onComputeId(): string {
-        return `GetConversationMembers[${ this.property.toString() }]`;
+        return `GetConversationMembers[${this.property.toString()}]`;
     }
 }
- 

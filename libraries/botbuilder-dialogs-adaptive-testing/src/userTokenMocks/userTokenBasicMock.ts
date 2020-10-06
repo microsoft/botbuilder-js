@@ -37,7 +37,7 @@ export class UserTokenBasicMock implements UserTokenMock {
      * Gets or set the optional magic code to associate with this token.
      */
     public magicCode: string;
-    
+
     /**
      * Method to setup this mock for an adapter.
      * @param adapter The test adapter to use for mocking.

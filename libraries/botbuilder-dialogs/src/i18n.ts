@@ -16,4 +16,4 @@ const NumberingSystem = require('../vendor/cldr-data/supplemental/numberingSyste
 const Portuguese = require('../vendor/cldr-data/main/pt/numbers.json');
 const Spanish = require('../vendor/cldr-data/main/es/numbers.json');
 
-export { Chinese, English, French, German, Dutch, Japanese, LikelySubtags, NumberingSystem, Portuguese, Spanish }
+export { Chinese, English, French, German, Dutch, Japanese, LikelySubtags, NumberingSystem, Portuguese, Spanish };
