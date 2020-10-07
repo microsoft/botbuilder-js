@@ -6,7 +6,15 @@
  * Licensed under the MIT License.
  */
 import { Dialog, DialogDependencies, DialogStateManager, DialogPath } from 'botbuilder-dialogs';
-import { Expression, ExpressionParserInterface, Constant, ExpressionParser, ExpressionEvaluator, ReturnType, FunctionUtils } from 'adaptive-expressions';
+import {
+    Expression,
+    ExpressionParserInterface,
+    Constant,
+    ExpressionParser,
+    ExpressionEvaluator,
+    ReturnType,
+    FunctionUtils,
+} from 'adaptive-expressions';
 import { ActionScope } from '../actions/actionScope';
 import { BoolExpression, IntExpression } from 'adaptive-expressions';
 import { AdaptiveDialog } from '../adaptiveDialog';
@@ -82,7 +90,7 @@ export class OnCondition implements DialogDependencies {
                 try {
                     allExpressions.push(this.condition.toExpression());
                 } catch (err) {
-                    throw Error(`Invalid constraint expression: ${ this.condition.toString() }, ${ err.toString() }`);
+                    throw Error(`Invalid constraint expression: ${this.condition.toString()}, ${err.toString()}`);
                 }
             }
 
@@ -99,13 +107,18 @@ export class OnCondition implements DialogDependencies {
             if (this.runOnce) {
                 // TODO: Once we add support for the MostSpecificSelector the code below will need
                 //       some tweaking to wrap runOnce with a call to 'ignore'.
-                const runOnce = new ExpressionEvaluator(`runOnce${ this.id }`, (exp, state: DialogStateManager) => {
-                    const basePath = `${ AdaptiveDialog.conditionTracker }.${ this.id }.`;
-                    const lastRun: number = state.getValue(basePath + 'lastRun');
-                    const paths: string[] = state.getValue(basePath + 'paths');
-                    const changed = state.anyPathChanged(lastRun, paths);
-                    return { value: changed, error: undefined };
-                }, ReturnType.Boolean, FunctionUtils.validateUnary);
+                const runOnce = new ExpressionEvaluator(
+                    `runOnce${this.id}`,
+                    (exp, state: DialogStateManager) => {
+                        const basePath = `${AdaptiveDialog.conditionTracker}.${this.id}.`;
+                        const lastRun: number = state.getValue(basePath + 'lastRun');
+                        const paths: string[] = state.getValue(basePath + 'paths');
+                        const changed = state.anyPathChanged(lastRun, paths);
+                        return { value: changed, error: undefined };
+                    },
+                    ReturnType.Boolean,
+                    FunctionUtils.validateUnary
+                );
 
                 this._fullConstraint = Expression.andExpression(
                     this._fullConstraint,
@@ -141,7 +154,7 @@ export class OnCondition implements DialogDependencies {
                 this._extraConstraints.push(parser.parse(condition));
                 this._fullConstraint = undefined;
             } catch (err) {
-                throw Error(`Invalid constraint expression: ${ condition }, ${ err.toString() }`);
+                throw Error(`Invalid constraint expression: ${condition}, ${err.toString()}`);
             }
         }
     }
@@ -154,7 +167,7 @@ export class OnCondition implements DialogDependencies {
     public async execute(actionContext: ActionContext): Promise<ActionChangeList[]> {
         if (this.runOnce) {
             const count = actionContext.state.getValue(DialogPath.eventCounter);
-            actionContext.state.setValue(`${ AdaptiveDialog.conditionTracker }.${ this.id }.lastRun`, count);
+            actionContext.state.setValue(`${AdaptiveDialog.conditionTracker}.${this.id}.lastRun`, count);
         }
         return [this.onCreateChangeList(actionContext)];
     }
@@ -170,12 +183,12 @@ export class OnCondition implements DialogDependencies {
         const actionState: ActionState = {
             dialogId: this.actionScope.id,
             options: dialogOptions,
-            dialogStack: []
+            dialogStack: [],
         };
 
         const changeList: ActionChangeList = {
             changeType: ActionChangeType.insertActions,
-            actions: [actionState]
+            actions: [actionState],
         };
 
         return changeList;

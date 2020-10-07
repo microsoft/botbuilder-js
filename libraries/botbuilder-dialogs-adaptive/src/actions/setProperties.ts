@@ -20,7 +20,7 @@ export class PropertyAssignmentConverter implements Converter {
     public convert(assignment: { property: string; value: any }): PropertyAssignment {
         const propertyAssignment: PropertyAssignment = {
             property: new StringExpression(assignment.property),
-            value: new ValueExpression(assignment.value)
+            value: new ValueExpression(assignment.value),
         };
         return propertyAssignment;
     }
@@ -30,7 +30,9 @@ export class SetProperties<O extends object = {}> extends Dialog<O> {
     public constructor();
     public constructor(assignments?: PropertyAssignment[]) {
         super();
-        if (assignments) { this.assignments = assignments; }
+        if (assignments) {
+            this.assignments = assignments;
+        }
     }
 
     /**
@@ -51,7 +53,7 @@ export class SetProperties<O extends object = {}> extends Dialog<O> {
         for (let i = 0; i < this.assignments.length; i++) {
             const assignment = this.assignments[i];
             let value = assignment.value.getValue(dc.state);
-            
+
             if (value) {
                 value = replaceJsonRecursively(dc.state, value);
             }
@@ -64,6 +66,9 @@ export class SetProperties<O extends object = {}> extends Dialog<O> {
     }
 
     protected onComputeId(): string {
-        return `SetProperties[${ StringUtils.ellipsis(this.assignments.map((item): string => item.property.toString()).join(','), 50) }]`;
+        return `SetProperties[${StringUtils.ellipsis(
+            this.assignments.map((item): string => item.property.toString()).join(','),
+            50
+        )}]`;
     }
 }

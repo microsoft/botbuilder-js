@@ -12,20 +12,21 @@ import { EnumExpression } from 'adaptive-expressions';
 
 export enum AttachmentOutputFormat {
     all = 'all',
-    first = 'first'
+    first = 'first',
 }
 
 export class AttachmentInput extends InputDialog {
-
-    public outputFormat: EnumExpression<AttachmentOutputFormat> = new EnumExpression<AttachmentOutputFormat>(AttachmentOutputFormat.first);
+    public outputFormat: EnumExpression<AttachmentOutputFormat> = new EnumExpression<AttachmentOutputFormat>(
+        AttachmentOutputFormat.first
+    );
 
     protected onComputeId(): string {
-        return `AttachmentInput[${ this.prompt && this.prompt.toString() }]`;
+        return `AttachmentInput[${this.prompt && this.prompt.toString()}]`;
     }
 
     protected async onRecognizeInput(dc: DialogContext): Promise<InputState> {
         // Recognize input and filter out non-attachments
-        let input: Attachment | Attachment[] = dc.state.getValue(InputDialog.VALUE_PROPERTY);
+        const input: Attachment | Attachment[] = dc.state.getValue(InputDialog.VALUE_PROPERTY);
         const attachments = Array.isArray(input) ? input : [input];
         const first = attachments.length > 0 ? attachments[0] : undefined;
         if (typeof first != 'object' || (!first.contentUrl && !first.content)) {

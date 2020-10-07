@@ -18,11 +18,11 @@ export class UpdateActivity<O extends object = {}> extends Dialog<O> {
         if (activityId) {
             this.activityId = new StringExpression(activityId);
         }
-        if (activity) { 
-            if (typeof activity === 'string') { 
-                this.activity = new ActivityTemplate(activity); 
+        if (activity) {
+            if (typeof activity === 'string') {
+                this.activity = new ActivityTemplate(activity);
             } else {
-                this.activity = new StaticActivityTemplate(activity); 
+                this.activity = new StaticActivityTemplate(activity);
             }
         }
     }
@@ -51,17 +51,21 @@ export class UpdateActivity<O extends object = {}> extends Dialog<O> {
             throw new Error(`UpdateActivity: no activity assigned for action.`);
         }
 
-        const data = Object.assign({
-            utterance: dc.context.activity.text || ''
-        }, dc.state, options);
+        const data = Object.assign(
+            {
+                utterance: dc.context.activity.text || '',
+            },
+            dc.state,
+            options
+        );
         const activityResult = await this.activity.bind(dc, data);
 
         this.telemetryClient.trackEvent({
             name: 'GeneratorResult',
             properties: {
-                'template':this.activity,
-                'result': activityResult || ''
-            }
+                template: this.activity,
+                result: activityResult || '',
+            },
         });
 
         const value = this.activityId.getValue(dc.state);
@@ -73,8 +77,8 @@ export class UpdateActivity<O extends object = {}> extends Dialog<O> {
 
     protected onComputeId(): string {
         if (this.activity instanceof ActivityTemplate) {
-            return `UpdateActivity[${ StringUtils.ellipsis(this.activity.template.trim(), 30) }]`;
+            return `UpdateActivity[${StringUtils.ellipsis(this.activity.template.trim(), 30)}]`;
         }
-        return `UpdateActivity[${ StringUtils.ellipsis(this.activity && this.activity.toString().trim(), 30) }]`;
+        return `UpdateActivity[${StringUtils.ellipsis(this.activity && this.activity.toString().trim(), 30)}]`;
     }
 }

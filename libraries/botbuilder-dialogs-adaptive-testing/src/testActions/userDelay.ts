@@ -29,6 +29,6 @@ export class UserDelay implements TestAction {
      * @returns A Promise that represents the work queued to execute.
      */
     public async execute(_testAdapter: TestAdapter, _callback: (context: TurnContext) => Promise<any>): Promise<any> {
-        await Promise.resolve(resolve => setTimeout(resolve, this.timespan));
+        await Promise.resolve((resolve) => setTimeout(resolve, this.timespan));
     }
 }

@@ -21,7 +21,7 @@ export class AssertReplyOneOf extends AssertReplyActivity {
     /**
      * A value indicating whether exact match policy should be used.
      */
-    public exact: boolean = true;
+    public exact = true;
 
     /**
      * Gets the text to assert for an activity.
@@ -46,7 +46,10 @@ export class AssertReplyOneOf extends AssertReplyActivity {
                     break;
                 }
             } else {
-                if (activity.type == ActivityTypes.Message && activity.text.toLowerCase().trim().includes(reply.toLowerCase().trim())) {
+                if (
+                    activity.type == ActivityTypes.Message &&
+                    activity.text.toLowerCase().trim().includes(reply.toLowerCase().trim())
+                ) {
                     found = true;
                     break;
                 }
@@ -54,7 +57,9 @@ export class AssertReplyOneOf extends AssertReplyActivity {
         }
 
         if (!found) {
-            throw new Error(this.description || `Text ${ activity.text } didn't match one of expected text: ${ this.text.join('\n') }`);
+            throw new Error(
+                this.description || `Text ${activity.text} didn't match one of expected text: ${this.text.join('\n')}`
+            );
         }
 
         super.validateReply(activity);
