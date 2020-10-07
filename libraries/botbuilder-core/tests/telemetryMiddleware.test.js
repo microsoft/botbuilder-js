@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License
 
-const assert = require('assert');
+const { ok: assert, strictEqual } = require('assert');
 const { TestAdapter, TelemetryLoggerMiddleware, ActivityTypes } = require('../');
 
 class OverrideReceiveLogger extends TelemetryLoggerMiddleware {
@@ -169,10 +169,10 @@ describe(`TelemetryMiddleware`, function () {
 
         adapter
             .send('foo')
-            .assertReply((activity) => assert.equal(activity.type, ActivityTypes.Typing))
+            .assertReply((activity) => strictEqual(activity.type, ActivityTypes.Typing))
             .assertReply('echo:foo')
             .send('bar')
-            .assertReply((activity) => assert.equal(activity.type, ActivityTypes.Typing))
+            .assertReply((activity) => strictEqual(activity.type, ActivityTypes.Typing))
             .assertReply('echo:bar');
     });
 
@@ -189,10 +189,10 @@ describe(`TelemetryMiddleware`, function () {
 
         adapter
             .send('foo')
-            .assertReply((activity) => assert.equal(activity.type, ActivityTypes.Typing))
+            .assertReply((activity) => strictEqual(activity.type, ActivityTypes.Typing))
             .assertReply('echo:foo')
             .send('bar')
-            .assertReply((activity) => assert.equal(activity.type, ActivityTypes.Typing))
+            .assertReply((activity) => strictEqual(activity.type, ActivityTypes.Typing))
             .assertReply('echo:bar')
             .then(done);
     });
@@ -267,10 +267,10 @@ describe(`TelemetryMiddleware`, function () {
 
         adapter
             .send('foo')
-            .assertReply((activity) => assert.equal(activity.type, ActivityTypes.Typing))
+            .assertReply((activity) => strictEqual(activity.type, ActivityTypes.Typing))
             .assertReply('echo:foo')
             .send('bar')
-            .assertReply((activity) => assert.equal(activity.type, ActivityTypes.Typing))
+            .assertReply((activity) => strictEqual(activity.type, ActivityTypes.Typing))
             .assertReply('echo:bar');
     });
 
@@ -431,10 +431,10 @@ describe(`TelemetryMiddleware`, function () {
 
         adapter
             .send('foo')
-            .assertReply((activity) => assert.equal(activity.type, ActivityTypes.Typing))
+            .assertReply((activity) => strictEqual(activity.type, ActivityTypes.Typing))
             .assertReply('echo:foo')
             .send('bar')
-            .assertReply((activity) => assert.equal(activity.type, ActivityTypes.Typing))
+            .assertReply((activity) => strictEqual(activity.type, ActivityTypes.Typing))
             .assertReply('echo:bar');
     });
 
@@ -482,7 +482,7 @@ describe(`TelemetryMiddleware`, function () {
                             break;
                     }
                 } catch (err) {
-                    assert.fail(done);
+                    done(err);
                 }
             },
         };
@@ -498,10 +498,10 @@ describe(`TelemetryMiddleware`, function () {
 
         adapter
             .send('foo')
-            .assertReply((activity) => assert.equal(activity.type, ActivityTypes.Typing))
+            .assertReply((activity) => strictEqual(activity.type, ActivityTypes.Typing))
             .assertReply('echo:foo')
             .send('bar')
-            .assertReply((activity) => assert.equal(activity.type, ActivityTypes.Typing))
+            .assertReply((activity) => strictEqual(activity.type, ActivityTypes.Typing))
             .assertReply('echo:bar');
     });
 

@@ -18,6 +18,18 @@
         "libraries/botframework-schema/**/*",
         "libraries/streaming-e2e-tests/**"
     ],
+    "overrides": [
+        {
+            "files": [ "*.test.js" ],
+            "env": {
+                "mocha": true,
+                "node": true
+            },
+            "rules": {
+                "@typescript-eslint/no-var-requires": 0
+            }
+        }
+    ],
     "parser": "@typescript-eslint/parser",
     "parserOptions": {
         "ecmaVersion": 9,
@@ -28,11 +40,11 @@
     },
     "plugins": [
         "@typescript-eslint",
-        "prettier",        
-        "security",        
-        "only-warn"
+        "only-warn",
+        "prettier",
+        "security"
     ],
     "rules": {
-        "prettier/prettier": "error"        
+        "prettier/prettier": "error" 
     }
 }
