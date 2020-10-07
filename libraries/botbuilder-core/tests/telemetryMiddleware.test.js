@@ -2,7 +2,7 @@
 // Licensed under the MIT License
 
 const { ok: assert, strictEqual } = require('assert');
-const { TestAdapter, TelemetryLoggerMiddleware, ActivityTypes } = require('../');
+const { ActivityTypes, Channels, TestAdapter, TelemetryLoggerMiddleware } = require('../');
 
 class OverrideReceiveLogger extends TelemetryLoggerMiddleware {
     async onReceiveActivity(activity) {
@@ -549,39 +549,39 @@ describe(`TelemetryMiddleware`, function () {
     });
 
     it(`telemetry should log channel specific properties`, function (done) {
-        var callCount = 0;
-        var telemetryClient = {
+        let callCount = 0;
+        const telemetryClient = {
             trackEvent: (telemetry) => {
-                try {
-                    assert(telemetry, 'telemetry is null');
-                    switch (++callCount) {
-                        case 1:
-                            assert(telemetry.name === TelemetryLoggerMiddleware.botMsgReceiveEvent);
-                            assert(telemetry.properties);
-                            assert('TeamsTeamInfo' in telemetry.properties);
-                            assert('TeamsTenantId' in telemetry.properties);
-                            assert('TeamsUserAadObjectId' in telemetry.properties);
-                            assert(telemetry.properties.TeamsTeamInfo === '{"id":"teamid"}');
-                            assert(telemetry.properties.TeamsTenantId === 'tenantid');
-                            assert(telemetry.properties.TeamsUserAadObjectId === 'aadObjectId');
-                            done();
-                            break;
-                        default:
-                            break;
-                    }
-                } catch (err) {
-                    done(err);
+                switch (++callCount) {
+                    case 1:
+                        assert(telemetry.name === TelemetryLoggerMiddleware.botMsgReceiveEvent);
+                        assert(telemetry.properties);
+                        assert('TeamsTeamInfo' in telemetry.properties);
+                        assert('TeamsTenantId' in telemetry.properties);
+                        assert('TeamsUserAadObjectId' in telemetry.properties);
+                        assert(telemetry.properties.TeamsTeamInfo === '{"id":"teamid"}');
+                        assert(telemetry.properties.TeamsTenantId === 'tenantid');
+                        assert(telemetry.properties.TeamsUserAadObjectId === 'aadObjectId');
+                        break;
+                    case 2:
+                        assert(telemetry.name === TelemetryLoggerMiddleware.botMsgReceiveEvent);
+                        assert(telemetry.properties);
+                        assert('TeamsUserAadObjectId' in telemetry.properties);
+                        assert(telemetry.properties.TeamsUserAadObjectId === 'aadObjectId');
+                        break;
+                    default:
+                        break;
                 }
             },
         };
 
-        let myLogger = new TelemetryLoggerMiddleware(telemetryClient, true);
+        const myLogger = new TelemetryLoggerMiddleware(telemetryClient, true);
 
-        var adapter = new TestAdapter(async (context) => {
-            await context.sendActivity('foo');
+        const adapter = new TestAdapter(async () => {
+            // No logic required for test.
         }).use(myLogger);
 
-        var teamsChannelData = {
+        const teamsChannelData = {
             teamsChannelId: 'teamsChannelId',
             teamsTeamId: 'teamid',
             channel: { id: 'channelid' },
@@ -589,14 +589,24 @@ describe(`TelemetryMiddleware`, function () {
             tenant: { id: 'tenantid' },
         };
 
-        var activity = {
+        const activity = {
             type: ActivityTypes.Message,
-            channelId: 'msteams',
+            channelId: Channels.Msteams,
             text: 'test',
             channelData: teamsChannelData,
             from: { id: 'fromId', name: 'fromName', aadObjectId: 'aadObjectId' },
         };
 
-        adapter.send(activity);
+        // Unit test for https://github.com/microsoft/botbuilder-js/issues/2781
+        const noChannelData = Object.assign({ ...activity }, { channelData: undefined });
+
+        adapter
+            .send(activity)
+            .send(noChannelData)
+            .then(() => {
+                strictEqual(callCount, 2);
+                done();
+            })
+            .catch(done);
     });
 });
