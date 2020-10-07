@@ -51,5 +51,7 @@ export class ActivityTemplate implements TemplateInterface<Partial<Activity>> {
         return Promise.resolve(undefined);
     }
 
-    public toString = (): string => { return `ActivityTemplate(${ this.template })`; };
+    public toString = (): string => {
+        return `ActivityTemplate(${this.template})`;
+    };
 }

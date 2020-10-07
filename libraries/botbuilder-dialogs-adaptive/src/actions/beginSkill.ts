@@ -5,9 +5,23 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { BoolExpression, BoolExpressionConverter, StringExpression, StringExpressionConverter } from 'adaptive-expressions';
+import {
+    BoolExpression,
+    BoolExpressionConverter,
+    StringExpression,
+    StringExpressionConverter,
+} from 'adaptive-expressions';
 import { Activity, ActivityTypes, StringUtils, TurnContext } from 'botbuilder-core';
-import { SkillDialog, SkillDialogOptions, Converters, DialogContext, DialogTurnResult, BeginSkillDialogOptions, DialogInstance, DialogReason } from 'botbuilder-dialogs';
+import {
+    BeginSkillDialogOptions,
+    Converters,
+    DialogContext,
+    DialogTurnResult,
+    DialogInstance,
+    DialogReason,
+    SkillDialog,
+    SkillDialogOptions,
+} from 'botbuilder-dialogs';
 import { TemplateInterface } from '../template';
 import { skillClientKey, skillConversationIdFactoryKey } from '../skillExtensions';
 import { ActivityTemplate } from '../templates';
@@ -23,9 +37,9 @@ export class BeginSkill extends SkillDialog {
 
     /**
      * Value indicating whether the new dialog should process the activity.
-     * 
+     *
      * @remarks
-     * The default for this will be true, which means the new dialog should not look at the activity. 
+     * The default for this will be true, which means the new dialog should not look at the activity.
      * You can set this to false to dispatch the activity to the new dialog.
      */
     public activityProcessed = new BoolExpression(true);
@@ -37,7 +51,7 @@ export class BeginSkill extends SkillDialog {
 
     /**
      * The Microsoft App ID that will be calling the skill.
-     * 
+     *
      * @remarks
      * Defauls to a value of `=settings.MicrosoftAppId` which retrievs the bots ID from settings.
      */
@@ -45,7 +59,7 @@ export class BeginSkill extends SkillDialog {
 
     /**
      * The callback Url for the skill host.
-     * 
+     *
      * @remarks
      * Defauls to a value of `=settings.SkillHostEndpoint` which retrieves the endpoint from settings.
      */
@@ -86,7 +100,7 @@ export class BeginSkill extends SkillDialog {
     }
 
     // Used to cache DialogOptions for multi-turn calls across servers.
-    private _dialogOptionsStateKey: string = `${this.constructor.name}.dialogOptionsData`;
+    private _dialogOptionsStateKey = `${this.constructor.name}.dialogOptionsData`;
 
     /**
      * Creates a new `BeginSkillDialog instance.
@@ -105,14 +119,30 @@ export class BeginSkill extends SkillDialog {
         // Setup the skill to call
         const botId = this.botId.getValue(dcState);
         const skillHostEndpoint = this.skillHostEndpoint.getValue(dcState);
-        if (botId) { this.dialogOptions.botId = botId; }
-        if (skillHostEndpoint) { this.dialogOptions.skillHostEndpoint = skillHostEndpoint; }
-        if (this.skillAppId) { this.dialogOptions.skill.id = this.dialogOptions.skill.appId = this.skillAppId.getValue(dcState); }
-        if (this.skillEndpoint) { this.dialogOptions.skill.skillEndpoint = this.skillEndpoint.getValue(dcState); }
-        if (this.connectionName) { this.dialogOptions.connectionName = this.connectionName.getValue(dcState); }
-        if (!this.dialogOptions.conversationState) { this.dialogOptions.conversationState = dc.dialogManager.conversationState; }
-        if (!this.dialogOptions.skillClient) { this.dialogOptions.skillClient = dc.context.turnState.get(skillClientKey); }
-        if (!this.dialogOptions.conversationIdFactory) { this.dialogOptions.conversationIdFactory = dc.context.turnState.get(skillConversationIdFactoryKey); }
+        if (botId) {
+            this.dialogOptions.botId = botId;
+        }
+        if (skillHostEndpoint) {
+            this.dialogOptions.skillHostEndpoint = skillHostEndpoint;
+        }
+        if (this.skillAppId) {
+            this.dialogOptions.skill.id = this.dialogOptions.skill.appId = this.skillAppId.getValue(dcState);
+        }
+        if (this.skillEndpoint) {
+            this.dialogOptions.skill.skillEndpoint = this.skillEndpoint.getValue(dcState);
+        }
+        if (this.connectionName) {
+            this.dialogOptions.connectionName = this.connectionName.getValue(dcState);
+        }
+        if (!this.dialogOptions.conversationState) {
+            this.dialogOptions.conversationState = dc.dialogManager.conversationState;
+        }
+        if (!this.dialogOptions.skillClient) {
+            this.dialogOptions.skillClient = dc.context.turnState.get(skillClientKey);
+        }
+        if (!this.dialogOptions.conversationIdFactory) {
+            this.dialogOptions.conversationIdFactory = dc.context.turnState.get(skillConversationIdFactoryKey);
+        }
 
         // Store the initialized dialogOptions in state so we can restore these values when the dialog is resumed.
         dc.activeDialog.state[this._dialogOptionsStateKey] = this.dialogOptions;
@@ -126,9 +156,9 @@ export class BeginSkill extends SkillDialog {
             this.telemetryClient.trackEvent({
                 name: 'GeneratorResult',
                 properties: {
-                    'template': this.activity,
-                    'result': activity || ''
-                }
+                    template: this.activity,
+                    result: activity || '',
+                },
             });
 
             options.activity = activity;
@@ -187,12 +217,12 @@ export class BeginSkill extends SkillDialog {
         this.dialogOptions.conversationIdFactory = context.turnState.get(skillConversationIdFactoryKey);
         if (this.dialogOptions.conversationIdFactory == null) {
             throw new ReferenceError('Unable to locate skillConversationIdFactoryBase in HostContext.');
-        };
+        }
 
         this.dialogOptions.skillClient = context.turnState.get(skillClientKey);
         if (this.dialogOptions.skillClient == null) {
             throw new ReferenceError('Unable to get an instance of conversationState from turnState.');
-        };
+        }
 
         this.dialogOptions.connectionName = dialogOptions.connectionName;
 

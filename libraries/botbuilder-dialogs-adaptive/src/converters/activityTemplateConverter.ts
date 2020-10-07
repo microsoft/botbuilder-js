@@ -13,7 +13,7 @@ import { ActivityTemplate, StaticActivityTemplate } from '../templates';
 
 export class ActivityTemplateConverter implements Converter<string | Partial<Activity>, TemplateInterface<Partial<Activity>>> {
     public convert(value: string | Partial<Activity>): TemplateInterface<Partial<Activity>> {
-        if (typeof value === 'string') { 
+        if (typeof value === 'string') {
             return new ActivityTemplate(value);
         } else {
             return new StaticActivityTemplate(value);

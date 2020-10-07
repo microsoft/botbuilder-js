@@ -30,7 +30,10 @@ export abstract class MultiLanguageGeneratorBase implements LanguageGenerator {
      * @param dialogContext DialogContext.
      * @param locale Locale to lookup.
      */
-    public abstract tryGetGenerator(dialogContext: DialogContext, locale: string): { exist: boolean; result: LanguageGenerator };
+    public abstract tryGetGenerator(
+        dialogContext: DialogContext,
+        locale: string
+    ): { exist: boolean; result: LanguageGenerator };
 
     /**
      * Find a language generator that matches the current context locale.
@@ -39,7 +42,9 @@ export abstract class MultiLanguageGeneratorBase implements LanguageGenerator {
      * @param data Data to bind to.
      */
     public async generate(dialogContext: DialogContext, template: string, data: object): Promise<string> {
-        const targetLocale = dialogContext.context.activity.locale ? dialogContext.context.activity.locale.toLocaleLowerCase() : '';
+        const targetLocale = dialogContext.context.activity.locale
+            ? dialogContext.context.activity.locale.toLocaleLowerCase()
+            : '';
 
         // priority
         // 1. local policy
@@ -53,7 +58,7 @@ export abstract class MultiLanguageGeneratorBase implements LanguageGenerator {
         }
 
         // see if we have any locales that match
-        let fallbackLocales = [];
+        const fallbackLocales = [];
         if (this.languagePolicy.has(targetLocale)) {
             this.languagePolicy.get(targetLocale).forEach((u: string): number => fallbackLocales.push(u));
         }

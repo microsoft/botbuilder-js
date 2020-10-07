@@ -18,7 +18,9 @@ export class DeleteProperty<O extends object = {}> extends Dialog<O> {
     public constructor();
     public constructor(property?: string) {
         super();
-        if (property) { this.property = new StringExpression(property); }
+        if (property) {
+            this.property = new StringExpression(property);
+        }
     }
 
     /**

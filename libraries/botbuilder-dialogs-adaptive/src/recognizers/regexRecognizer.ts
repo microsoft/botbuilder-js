@@ -36,14 +36,19 @@ export class RegexRecognizer extends Recognizer {
         };
     }
 
-    public async recognize(dialogContext: DialogContext, activity: Activity, telemetryProperties?: { [key: string]: string }, telemetryMetrics?: { [key: string]: number }): Promise<RecognizerResult> {
+    public async recognize(
+        dialogContext: DialogContext,
+        activity: Activity,
+        telemetryProperties?: { [key: string]: string },
+        telemetryMetrics?: { [key: string]: number }
+    ): Promise<RecognizerResult> {
         const text = activity.text || '';
         const locale = activity.locale || 'en-us';
 
         const recognizerResult: RecognizerResult = {
             text: text,
             intents: {},
-            entities: {}
+            entities: {},
         };
 
         const entityPool: Entity[] = [];
@@ -61,7 +66,7 @@ export class RegexRecognizer extends Recognizer {
             const matches = [];
             let matched: RegExpExecArray;
             const regexp = intentPattern.regex;
-            while (matched = regexp.exec(text)) {
+            while ((matched = regexp.exec(text))) {
                 matches.push(matched);
                 if (regexp.lastIndex == text.length) {
                     break; // to avoid infinite loop
@@ -136,7 +141,7 @@ export class RegexRecognizer extends Recognizer {
                 score: 1.0,
                 text: entityResult['text'],
                 type: entityResult['type'],
-                resolution: entityResult['resolution']
+                resolution: entityResult['resolution'],
             };
             instanceData.push(instance);
         }
@@ -145,8 +150,18 @@ export class RegexRecognizer extends Recognizer {
             recognizerResult.intents['None'] = { score: 1.0 };
         }
 
-        await dialogContext.context.sendTraceActivity('RegexRecognizer', recognizerResult, 'RecognizerResult', 'Regex RecognizerResult');
-        this.trackRecognizerResult(dialogContext, 'RegexRecognizerResult', this.fillRecognizerResultTelemetryProperties(recognizerResult, telemetryProperties), telemetryMetrics);
+        await dialogContext.context.sendTraceActivity(
+            'RegexRecognizer',
+            recognizerResult,
+            'RecognizerResult',
+            'Regex RecognizerResult'
+        );
+        this.trackRecognizerResult(
+            dialogContext,
+            'RegexRecognizerResult',
+            this.fillRecognizerResultTelemetryProperties(recognizerResult, telemetryProperties),
+            telemetryMetrics
+        );
         return recognizerResult;
     }
 }

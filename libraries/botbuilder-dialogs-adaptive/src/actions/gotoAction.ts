@@ -15,7 +15,9 @@ export class GotoAction<O extends object = {}> extends Dialog<O> {
     public constructor();
     public constructor(actionId?: string) {
         super();
-        if (actionId) { this.actionId = new StringExpression(actionId); }
+        if (actionId) {
+            this.actionId = new StringExpression(actionId);
+        }
     }
 
     /**
@@ -46,7 +48,7 @@ export class GotoAction<O extends object = {}> extends Dialog<O> {
 
         const actionScopeResult: ActionScopeResult = {
             actionScopeCommand: ActionScopeCommands.GotoAction,
-            actionId: this.actionId.getValue(dc.state)
+            actionId: this.actionId.getValue(dc.state),
         };
 
         return await dc.endDialog(actionScopeResult);

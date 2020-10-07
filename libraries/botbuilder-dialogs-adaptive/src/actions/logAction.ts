@@ -24,7 +24,9 @@ export class LogAction<O extends object = {}> extends Dialog<O> {
     public constructor(text: string);
     public constructor(text?: string) {
         super();
-        if (text) { this.text = new TextTemplate(text); }
+        if (text) {
+            this.text = new TextTemplate(text);
+        }
     }
 
     /**
@@ -62,15 +64,17 @@ export class LogAction<O extends object = {}> extends Dialog<O> {
             return await dc.endDialog();
         }
 
-        if (!this.text) { throw new Error(`${this.id}: no 'message' specified.`) }
+        if (!this.text) {
+            throw new Error(`${this.id}: no 'message' specified.`);
+        }
 
         const msg = await this.text.bind(dc, dc.state);
         this.telemetryClient.trackEvent({
             name: 'GeneratorResult',
             properties: {
-                'template': this.text,
-                'result': msg || ''
-            }
+                template: this.text,
+                result: msg || '',
+            },
         });
 
         // Log to console and send trace if needed
@@ -89,7 +93,7 @@ export class LogAction<O extends object = {}> extends Dialog<O> {
                 name: 'LogAction',
                 valueType: 'string',
                 value: msg,
-                label: label
+                label: label,
             };
             await dc.context.sendActivity(activity);
         }

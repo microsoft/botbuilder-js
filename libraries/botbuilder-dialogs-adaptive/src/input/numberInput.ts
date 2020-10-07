@@ -6,7 +6,12 @@
  * Licensed under the MIT License.
  */
 import * as Recognizers from '@microsoft/recognizers-text-number';
-import { StringExpression, NumberExpression, NumberExpressionConverter, StringExpressionConverter } from 'adaptive-expressions';
+import {
+    StringExpression,
+    NumberExpression,
+    NumberExpressionConverter,
+    StringExpressionConverter,
+} from 'adaptive-expressions';
 import { Activity } from 'botbuilder-core';
 import { Converters, DialogContext } from 'botbuilder-dialogs';
 import { InputDialog, InputState } from './inputDialog';
@@ -26,7 +31,7 @@ export class NumberInput extends InputDialog {
     }
 
     protected onComputeId(): string {
-        return `NumberInput[${ this.prompt && this.prompt.toString() }]`;
+        return `NumberInput[${this.prompt && this.prompt.toString()}]`;
     }
 
     protected async onRecognizeInput(dc: DialogContext): Promise<InputState> {

@@ -5,11 +5,33 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { BoolExpressionConverter, ExpressionParser, IntExpressionConverter, StringExpressionConverter, ValueExpressionConverter } from 'adaptive-expressions';
+import {
+    BoolExpression,
+    BoolExpressionConverter,
+    ExpressionParser,
+    IntExpression,
+    IntExpressionConverter,
+    StringExpression,
+    StringExpressionConverter,
+    ValueExpression,
+    ValueExpressionConverter,
+} from 'adaptive-expressions';
 import { ActivityTypes, Activity, InputHints, MessageFactory } from 'botbuilder-core';
-import { Converters, Dialog, DialogContext, DialogTurnResult, DialogEvent, DialogReason, Choice, ListStyle, ChoiceFactoryOptions, ChoiceFactory, DialogEvents, TurnPath } from 'botbuilder-dialogs';
+import {
+    Converters,
+    Dialog,
+    DialogContext,
+    DialogTurnResult,
+    DialogEvent,
+    DialogReason,
+    Choice,
+    ListStyle,
+    ChoiceFactoryOptions,
+    ChoiceFactory,
+    DialogEvents,
+    TurnPath,
+} from 'botbuilder-dialogs';
 import { TemplateInterface } from '../template';
-import { ValueExpression, StringExpression, BoolExpression, IntExpression } from 'adaptive-expressions';
 import { AdaptiveEvents } from '../adaptiveEvents';
 import { ActivityTemplate } from '../templates/activityTemplate';
 import { StaticActivityTemplate } from '../templates/staticActivityTemplate';
@@ -19,7 +41,7 @@ export enum InputState {
     missing = 'missing',
     unrecognized = 'unrecognized',
     invalid = 'invalid',
-    valid = 'valid'
+    valid = 'valid',
 }
 
 export abstract class InputDialog extends Dialog {
@@ -133,7 +155,10 @@ export abstract class InputDialog extends Dialog {
         }
 
         // Recognize input
-        const state = (this.alwaysPrompt && this.alwaysPrompt.getValue(dc.state)) ? InputState.missing : await this.recognizeInput(dc, 0);
+        const state =
+            this.alwaysPrompt && this.alwaysPrompt.getValue(dc.state)
+                ? InputState.missing
+                : await this.recognizeInput(dc, 0);
         if (state == InputState.valid) {
             // Return input
             const property = this.property.getValue(dc.state);
@@ -174,9 +199,9 @@ export abstract class InputDialog extends Dialog {
                     this.telemetryClient.trackEvent({
                         name: 'GeneratorResult',
                         properties: {
-                            'template': this.defaultValueResponse,
-                            'result': response || ''
-                        }
+                            template: this.defaultValueResponse,
+                            result: response || '',
+                        },
                     });
 
                     await dc.context.sendActivity(response);
@@ -257,9 +282,9 @@ export abstract class InputDialog extends Dialog {
         this.telemetryClient.trackEvent({
             name: 'GeneratorResult',
             properties: {
-                'template': template,
-                'result': msg
-            }
+                template: template,
+                result: msg,
+            },
         });
 
         return msg;
@@ -312,7 +337,11 @@ export abstract class InputDialog extends Dialog {
         // Update clone of prompt with text, actions and attachments
         const clone = JSON.parse(JSON.stringify(prompt)) as Activity;
         clone.text = msg.text;
-        if (msg.suggestedActions && Array.isArray(msg.suggestedActions.actions) && msg.suggestedActions.actions.length > 0) {
+        if (
+            msg.suggestedActions &&
+            Array.isArray(msg.suggestedActions.actions) &&
+            msg.suggestedActions.actions.length > 0
+        ) {
             clone.suggestedActions = msg.suggestedActions;
         }
 
@@ -342,7 +371,7 @@ export abstract class InputDialog extends Dialog {
 
         const activityProcessed = dc.state.getValue(TurnPath.activityProcessed);
         if (!activityProcessed && !input && turnCount > 0) {
-            if ((this.constructor.name) == 'AttachmentInput') {
+            if (this.constructor.name == 'AttachmentInput') {
                 input = dc.context.activity.attachments || [];
             } else {
                 input = dc.context.activity.text;

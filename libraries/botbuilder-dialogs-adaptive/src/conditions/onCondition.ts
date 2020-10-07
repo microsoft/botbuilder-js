@@ -5,7 +5,19 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { BoolExpression, BoolExpressionConverter, Constant, Expression, ExpressionParserInterface, ExpressionParser, ExpressionEvaluator, FunctionUtils, IntExpression, IntExpressionConverter, ReturnType } from 'adaptive-expressions';
+import {
+    BoolExpression,
+    BoolExpressionConverter,
+    Constant,
+    Expression,
+    ExpressionParserInterface,
+    ExpressionParser,
+    ExpressionEvaluator,
+    FunctionUtils,
+    IntExpression,
+    IntExpressionConverter,
+    ReturnType,
+} from 'adaptive-expressions';
 import { Converters, Dialog, DialogDependencies, DialogPath, DialogStateManager } from 'botbuilder-dialogs';
 import { ActionScope } from '../actions/actionScope';
 import { AdaptiveDialog } from '../adaptiveDialog';
@@ -107,13 +119,18 @@ export class OnCondition implements DialogDependencies {
             if (this.runOnce) {
                 // TODO: Once we add support for the MostSpecificSelector the code below will need
                 //       some tweaking to wrap runOnce with a call to 'ignore'.
-                const runOnce = new ExpressionEvaluator(`runOnce${this.id}`, (exp, state: DialogStateManager) => {
-                    const basePath = `${AdaptiveDialog.conditionTracker}.${this.id}.`;
-                    const lastRun: number = state.getValue(basePath + 'lastRun');
-                    const paths: string[] = state.getValue(basePath + 'paths');
-                    const changed = state.anyPathChanged(lastRun, paths);
-                    return { value: changed, error: undefined };
-                }, ReturnType.Boolean, FunctionUtils.validateUnary);
+                const runOnce = new ExpressionEvaluator(
+                    `runOnce${this.id}`,
+                    (exp, state: DialogStateManager) => {
+                        const basePath = `${AdaptiveDialog.conditionTracker}.${this.id}.`;
+                        const lastRun: number = state.getValue(basePath + 'lastRun');
+                        const paths: string[] = state.getValue(basePath + 'paths');
+                        const changed = state.anyPathChanged(lastRun, paths);
+                        return { value: changed, error: undefined };
+                    },
+                    ReturnType.Boolean,
+                    FunctionUtils.validateUnary
+                );
 
                 this._fullConstraint = Expression.andExpression(
                     this._fullConstraint,
@@ -178,12 +195,12 @@ export class OnCondition implements DialogDependencies {
         const actionState: ActionState = {
             dialogId: this.actionScope.id,
             options: dialogOptions,
-            dialogStack: []
+            dialogStack: [],
         };
 
         const changeList: ActionChangeList = {
             changeType: ActionChangeType.insertActions,
-            actions: [actionState]
+            actions: [actionState],
         };
 
         return changeList;

@@ -45,10 +45,9 @@ export class RepeatDialog<O extends object = {}> extends BaseInvokeDialog<O> {
         const repeatedIds: string[] = dc.state.getValue(TurnPath.repeatedIds, []);
         if (repeatedIds.includes(targetDialogId)) {
             if (this.allowLoop == null || this.allowLoop.getValue(dc.state) == false) {
-                throw new Error(`Recursive loop detected, ${ targetDialogId } cannot be repeated twice in one turn.`);
+                throw new Error(`Recursive loop detected, ${targetDialogId} cannot be repeated twice in one turn.`);
             }
-        }
-        else {
+        } else {
             repeatedIds.push(targetDialogId);
         }
 

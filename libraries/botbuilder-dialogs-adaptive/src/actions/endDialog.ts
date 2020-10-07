@@ -19,7 +19,9 @@ export class EndDialog<O extends object = {}> extends Dialog<O> {
     public constructor();
     public constructor(value?: any) {
         super();
-        if (value) { this.value = new ValueExpression(value); }
+        if (value) {
+            this.value = new ValueExpression(value);
+        }
     }
 
     /**

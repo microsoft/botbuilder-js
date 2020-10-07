@@ -46,7 +46,7 @@ export enum ResponsesTypes {
     /**
      * Binary data parsing from http response content
      */
-    Binary
+    Binary,
 }
 
 export enum HttpMethod {
@@ -73,7 +73,7 @@ export enum HttpMethod {
     /**
      * Http DELETE
      */
-    DELETE = 'DELETE'
+    DELETE = 'DELETE',
 }
 
 /**
@@ -202,7 +202,7 @@ export class HttpRequest<O extends object = {}> extends Dialog<O> {
 
         let instanceBody: string;
         if (this.body) {
-            let body = this.body.getValue(dc.state);
+            const body = this.body.getValue(dc.state);
             if (body) {
                 if (typeof body === 'string') {
                     instanceBody = body;
@@ -217,9 +217,9 @@ export class HttpRequest<O extends object = {}> extends Dialog<O> {
                 method: instanceMethod,
                 url: instanceUrl,
                 headers: instanceHeaders,
-                content: instanceBody
+                content: instanceBody,
             },
-            response: undefined
+            response: undefined,
         };
 
         let response: Response;

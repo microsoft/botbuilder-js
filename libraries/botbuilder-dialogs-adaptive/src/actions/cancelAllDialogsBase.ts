@@ -6,7 +6,14 @@
  * Licensed under the MIT License.
  */
 import { Converters, DialogTurnResult, DialogContext, Dialog, TurnPath, DialogEvents } from 'botbuilder-dialogs';
-import { StringExpression, BoolExpression, ValueExpression, StringExpressionConverter, ValueExpressionConverter, BoolExpressionConverter } from 'adaptive-expressions';
+import {
+    StringExpression,
+    BoolExpression,
+    ValueExpression,
+    StringExpressionConverter,
+    ValueExpressionConverter,
+    BoolExpressionConverter,
+} from 'adaptive-expressions';
 
 export class CancelAllDialogsBase<O extends object = {}> extends Dialog<O> {
     public constructor();
@@ -20,7 +27,6 @@ export class CancelAllDialogsBase<O extends object = {}> extends Dialog<O> {
             this.eventValue = new ValueExpression(eventValue);
         }
         this.cancelAll = isCancelAll;
-
     }
 
     /**
@@ -72,7 +78,6 @@ export class CancelAllDialogsBase<O extends object = {}> extends Dialog<O> {
             // emit ActivityReceived, which will tell parent it's supposed to handle recognition.
             eventName = DialogEvents.activityReceived;
             eventValue = dc.context.activity;
-
         }
 
         if (!dc.parent) {

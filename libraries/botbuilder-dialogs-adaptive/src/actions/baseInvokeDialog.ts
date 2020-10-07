@@ -5,7 +5,13 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { ValueExpression, ObjectExpression, BoolExpression, ObjectExpressionConverter, BoolExpressionConverter } from 'adaptive-expressions';
+import {
+    ValueExpression,
+    BoolExpression,
+    BoolExpressionConverter,
+    ObjectExpression,
+    ObjectExpressionConverter,
+} from 'adaptive-expressions';
 import { Converters, Dialog, DialogDependencies, DialogContext, DialogTurnResult } from 'botbuilder-dialogs';
 import { ResourceExplorer } from 'botbuilder-dialogs-declarative';
 import { DialogExpression } from '../expressions';
@@ -42,7 +48,7 @@ export class BaseInvokeDialog<O extends object = {}> extends Dialog<O> implement
         return {
             options: new ObjectExpressionConverter<object>(),
             dialog: (resourceExplorer: ResourceExplorer) => new DialogExpressionConverter(resourceExplorer),
-            activityProcessed: new BoolExpressionConverter()
+            activityProcessed: new BoolExpressionConverter(),
         };
     }
 
@@ -58,7 +64,7 @@ export class BaseInvokeDialog<O extends object = {}> extends Dialog<O> implement
     }
 
     protected onComputeId(): string {
-        return `${ this.constructor.name }[${ this.dialog && this.dialog.toString() }]`;
+        return `${this.constructor.name}[${this.dialog && this.dialog.toString()}]`;
     }
 
     protected resolveDialog(dc: DialogContext): Dialog {
@@ -70,7 +76,7 @@ export class BaseInvokeDialog<O extends object = {}> extends Dialog<O> implement
         const { value: dialogId } = expression.tryEvaluate(dc.state);
         const dialog = dc.findDialog(dialogId);
         if (!dialog) {
-            throw new Error(`${ this.dialog.toString() } not found.`);
+            throw new Error(`${this.dialog.toString()} not found.`);
         }
 
         return dialog;

@@ -16,8 +16,12 @@ export class IfCondition<O extends object = {}> extends Dialog<O> implements Dia
     public constructor();
     public constructor(condition?: string, elseActions?: Dialog[]) {
         super();
-        if (condition) { this.condition = new BoolExpression(condition); }
-        if (elseActions) { this.elseActions = elseActions; }
+        if (condition) {
+            this.condition = new BoolExpression(condition);
+        }
+        if (elseActions) {
+            this.elseActions = elseActions;
+        }
     }
 
     /**

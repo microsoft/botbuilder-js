@@ -23,7 +23,7 @@ export class FirstSelector extends TriggerSelector {
     /**
      * Gets or sets the expression parser to use.
      */
-    public parser: ExpressionParserInterface = new ExpressionParser()
+    public parser: ExpressionParserInterface = new ExpressionParser();
 
     public get converters(): Converters<FirstSelector> {
         return {};

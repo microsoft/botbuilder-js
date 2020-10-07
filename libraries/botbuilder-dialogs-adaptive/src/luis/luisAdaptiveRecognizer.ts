@@ -5,9 +5,22 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { StringExpression, ArrayExpression, BoolExpression, ArrayExpressionConverter, BoolExpressionConverter, StringExpressionConverter } from 'adaptive-expressions';
+import {
+    StringExpression,
+    ArrayExpression,
+    BoolExpression,
+    ArrayExpressionConverter,
+    BoolExpressionConverter,
+    StringExpressionConverter,
+} from 'adaptive-expressions';
+import {
+    LuisPredictionOptions,
+    LuisRecognizerOptionsV3,
+    LuisRecognizer,
+    LuisApplication,
+    LuisTelemetryConstants,
+} from 'botbuilder-ai';
 import { Activity, RecognizerResult } from 'botbuilder-core';
-import { LuisPredictionOptions, LuisRecognizerOptionsV3, LuisRecognizer, LuisApplication, LuisTelemetryConstants } from 'botbuilder-ai';
 import { Converters, DialogContext } from 'botbuilder-dialogs';
 import { Recognizer } from '../recognizers';
 
@@ -59,15 +72,20 @@ export class LuisAdaptiveRecognizer extends Recognizer {
             dynamicLists: new ArrayExpressionConverter(),
             endpoint: new StringExpressionConverter(),
             endpointKey: new StringExpressionConverter(),
-            logPersonalInformation: new BoolExpressionConverter()
+            logPersonalInformation: new BoolExpressionConverter(),
         };
     }
 
-    public async recognize(dialogContext: DialogContext, activity: Activity, telemetryProperties?: { [key: string]: string }, telemetryMetrics?: { [key: string]: number }) {
-        // Validate passed in activity matches turn activity 
+    public async recognize(
+        dialogContext: DialogContext,
+        activity: Activity,
+        telemetryProperties?: { [key: string]: string },
+        telemetryMetrics?: { [key: string]: number }
+    ) {
+        // Validate passed in activity matches turn activity
         const context = dialogContext.context;
-        const utteranceMatches: boolean = !activity ||
-            (context.activity.type === activity.type && context.activity.text === activity.text);
+        const utteranceMatches: boolean =
+            !activity || (context.activity.type === activity.type && context.activity.text === activity.text);
 
         if (!utteranceMatches) {
             throw new Error(`TurnContext is different than text`);
@@ -78,14 +96,19 @@ export class LuisAdaptiveRecognizer extends Recognizer {
         const application: LuisApplication = {
             applicationId: this.applicationId.getValue(dcState),
             endpoint: this.endpoint.getValue(dcState),
-            endpointKey: this.endpointKey.getValue(dcState)
+            endpointKey: this.endpointKey.getValue(dcState),
         };
 
         // Create and call wrapper
         const wrapper = new LuisRecognizer(application, this.recognizerOptions(dialogContext));
 
         const result = await wrapper.recognize(context);
-        this.trackRecognizerResult(dialogContext, 'LuisResult', this.fillRecognizerResultTelemetryProperties(result, telemetryProperties, dialogContext), telemetryMetrics);
+        this.trackRecognizerResult(
+            dialogContext,
+            'LuisResult',
+            this.fillRecognizerResultTelemetryProperties(result, telemetryProperties, dialogContext),
+            telemetryMetrics
+        );
         return result;
     }
 
@@ -112,12 +135,17 @@ export class LuisAdaptiveRecognizer extends Recognizer {
      * @param dialogContext Dialog context.
      * @returns A dictionary that is sent as properties to BotTelemetryClient.trackEvent method for the LuisResult event.
      */
-    protected fillRecognizerResultTelemetryProperties(recognizerResult: RecognizerResult, telemetryProperties: { [key: string]: string }, dialogContext: DialogContext): { [key: string]: string } {
+    protected fillRecognizerResultTelemetryProperties(
+        recognizerResult: RecognizerResult,
+        telemetryProperties: { [key: string]: string },
+        dialogContext: DialogContext
+    ): { [key: string]: string } {
         const logPersonalInfo = this.logPersonalInformation.tryGetValue(dialogContext.state);
         const applicationId = this.applicationId.tryGetValue(dialogContext.state);
 
         const topLuisIntent: string = LuisRecognizer.topIntent(recognizerResult);
-        const intentScore: number = (recognizerResult.intents[topLuisIntent] && recognizerResult.intents[topLuisIntent].score) || 0;
+        const intentScore: number =
+            (recognizerResult.intents[topLuisIntent] && recognizerResult.intents[topLuisIntent].score) || 0;
 
         // Add the intent score and conversation id properties
         const properties: { [key: string]: string } = {};

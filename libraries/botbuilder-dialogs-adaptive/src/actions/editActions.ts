@@ -20,8 +20,12 @@ export class EditActions<O extends object = {}> extends Dialog<O> implements Dia
     public constructor(changeType: ActionChangeType, actions?: Dialog[]);
     public constructor(changeType?: ActionChangeType, actions?: Dialog[]) {
         super();
-        if (changeType) { this.changeType = new EnumExpression<ActionChangeType>(changeType); }
-        if (actions) { this.actions = actions; }
+        if (changeType) {
+            this.changeType = new EnumExpression<ActionChangeType>(changeType);
+        }
+        if (actions) {
+            this.actions = actions;
+        }
     }
 
     /**
@@ -56,17 +60,19 @@ export class EditActions<O extends object = {}> extends Dialog<O> implements Dia
         }
 
         if (dc.parent instanceof ActionContext) {
-            const planActions = this.actions.map((action: Dialog): ActionState => {
-                return {
-                    dialogStack: [],
-                    dialogId: action.id,
-                    options: options
-                };
-            });
+            const planActions = this.actions.map(
+                (action: Dialog): ActionState => {
+                    return {
+                        dialogStack: [],
+                        dialogId: action.id,
+                        options: options,
+                    };
+                }
+            );
 
             const changes: ActionChangeList = {
                 changeType: this.changeType.getValue(dc.state),
-                actions: planActions
+                actions: planActions,
             };
 
             dc.parent.queueChanges(changes);
@@ -80,5 +86,4 @@ export class EditActions<O extends object = {}> extends Dialog<O> implements Dia
         const idList = this.actions.map((action: Dialog): string => action.id);
         return `EditActions[${this.changeType.toString()}|${StringUtils.ellipsis(idList.join(','), 50)}]`;
     }
-
 }

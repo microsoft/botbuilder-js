@@ -18,7 +18,7 @@ export class BeginDialog<O extends object = {}> extends BaseInvokeDialog<O> {
      * @param options (Optional) static options to pass the called dialog.
      */
     public constructor();
-    public constructor(dialogIdToCall: string, options?: O)
+    public constructor(dialogIdToCall: string, options?: O);
     public constructor(dialogIdToCall?: string, options?: O) {
         super(dialogIdToCall, options);
     }

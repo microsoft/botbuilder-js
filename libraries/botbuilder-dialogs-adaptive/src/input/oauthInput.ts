@@ -5,11 +5,43 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { StringExpression, IntExpression, IntExpressionConverter, StringExpressionConverter } from 'adaptive-expressions';
-import { ActivityTypes, ActionTypes, Activity, Attachment, BotAdapter, CardFactory, Channels, ExtendedUserTokenProvider, InputHints, IUserTokenProvider, MessageFactory, OAuthCard, OAuthLoginTimeoutKey, StatusCodes, TokenResponse, TokenExchangeInvokeRequest, TurnContext } from 'botbuilder-core';
-import { verifyStateOperationName, tokenExchangeOperationName, tokenResponseEventName } from 'botbuilder-core';
-import { Converters, DialogContext, Dialog, DialogTurnResult, PromptOptions, PromptRecognizerResult, ThisPath, TurnPath } from 'botbuilder-dialogs';
+import {
+    IntExpression,
+    IntExpressionConverter,
+    StringExpression,
+    StringExpressionConverter,
+} from 'adaptive-expressions';
+import {
+    Converters,
+    DialogContext,
+    Dialog,
+    DialogTurnResult,
+    PromptOptions,
+    PromptRecognizerResult,
+    ThisPath,
+    TurnPath,
+} from 'botbuilder-dialogs';
+import {
+    Attachment,
+    InputHints,
+    TokenResponse,
+    IUserTokenProvider,
+    TurnContext,
+    ActivityTypes,
+    Activity,
+    MessageFactory,
+    CardFactory,
+    OAuthLoginTimeoutKey,
+    StatusCodes,
+    ActionTypes,
+    ExtendedUserTokenProvider,
+    OAuthCard,
+    BotAdapter,
+    Channels,
+    TokenExchangeInvokeRequest,
+} from 'botbuilder-core';
 import { SkillValidation } from 'botframework-connector';
+import { verifyStateOperationName, tokenExchangeOperationName, tokenResponseEventName } from 'botbuilder-core';
 import { InputDialog, InputState } from './inputDialog';
 
 export const channels: any = {
@@ -28,7 +60,7 @@ export const channels: any = {
     slack: 'slack',
     sms: 'sms',
     telegram: 'telegram',
-    webchat: 'webchat'
+    webchat: 'webchat',
 };
 
 const persistedOptions = 'options';
@@ -65,7 +97,7 @@ export class OAuthInput extends InputDialog {
             connectionName: new StringExpressionConverter(),
             title: new StringExpressionConverter(),
             text: new StringExpressionConverter(),
-            timeout: new IntExpressionConverter()
+            timeout: new IntExpressionConverter(),
         });
     }
 
@@ -74,7 +106,9 @@ export class OAuthInput extends InputDialog {
         this.connectionName = new StringExpression(connectionName);
         this.title = new StringExpression(title);
         this.text = new StringExpression(text);
-        if (timeout) { this.timeout = new IntExpression(timeout); }
+        if (timeout) {
+            this.timeout = new IntExpression(timeout);
+        }
     }
 
     public async beginDialog(dc: DialogContext, options?: PromptOptions): Promise<DialogTurnResult> {
@@ -128,7 +162,9 @@ export class OAuthInput extends InputDialog {
     }
 
     public async continueDialog(dc: DialogContext): Promise<DialogTurnResult> {
-        if (!dc) { throw new Error('Missing DialogContext'); }
+        if (!dc) {
+            throw new Error('Missing DialogContext');
+        }
 
         const interrupted = dc.state.getValue(TurnPath.interrupted, false);
         const turnCount = dc.state.getValue(InputDialog.TURN_COUNT_PROPERTY, 0);
@@ -140,7 +176,7 @@ export class OAuthInput extends InputDialog {
         const state: OAuthPromptState = dc.activeDialog.state as OAuthPromptState;
         const expires = state[persistedExpires];
         const isMessage: boolean = dc.context.activity.type === ActivityTypes.Message;
-        const hasTimedOut: boolean = isMessage && (new Date().getTime() > expires);
+        const hasTimedOut: boolean = isMessage && new Date().getTime() > expires;
 
         if (hasTimedOut) {
             if (this.property) {
@@ -149,7 +185,6 @@ export class OAuthInput extends InputDialog {
 
             return await dc.endDialog(undefined);
         } else {
-
             const promptState = state[persistedState];
             const promptOptions = state[persistedOptions];
 
@@ -185,12 +220,12 @@ export class OAuthInput extends InputDialog {
                     if (this.defaultValueResponse) {
                         const response = await this.defaultValueResponse.bind(dc, dc.state);
                         const properties = {
-                            'template': JSON.stringify(this.defaultValueResponse),
-                            'result': response ? JSON.stringify(response) : ''
+                            template: JSON.stringify(this.defaultValueResponse),
+                            result: response ? JSON.stringify(response) : '',
                         };
                         this.telemetryClient.trackEvent({
                             name: 'GeneratorResult',
-                            properties
+                            properties,
                         });
                         await dc.context.sendActivity(response);
                     }
@@ -250,7 +285,7 @@ export class OAuthInput extends InputDialog {
     }
 
     protected onComputeId(): string {
-        return `OAuthInput[${ this.prompt && this.prompt.toString() }]`;
+        return `OAuthInput[${this.prompt && this.prompt.toString()}]`;
     }
 
     protected onRecognizeInput(dc: DialogContext): Promise<InputState> {
@@ -267,23 +302,36 @@ export class OAuthInput extends InputDialog {
 
         // Initialize outgoing message
         const msg: Partial<Activity> =
-            typeof prompt === 'object' ? { ...prompt } : MessageFactory.text(prompt, undefined, InputHints.AcceptingInput);
-        if (!Array.isArray(msg.attachments)) { msg.attachments = []; }
+            typeof prompt === 'object'
+                ? { ...prompt }
+                : MessageFactory.text(prompt, undefined, InputHints.AcceptingInput);
+        if (!Array.isArray(msg.attachments)) {
+            msg.attachments = [];
+        }
 
         // Add login card as needed
         if (this.channelSupportsOAuthCard(turnContext.activity.channelId)) {
-            const cards: Attachment[] = msg.attachments.filter((a: Attachment) => a.contentType === CardFactory.contentTypes.oauthCard);
+            const cards: Attachment[] = msg.attachments.filter(
+                (a: Attachment) => a.contentType === CardFactory.contentTypes.oauthCard
+            );
             if (cards.length === 0) {
                 let cardActionType = ActionTypes.Signin;
-                const signInResource = await (turnContext.adapter as ExtendedUserTokenProvider).getSignInResource(turnContext, this.connectionName.getValue(dc.state), turnContext.activity.from.id);
+                const signInResource = await (turnContext.adapter as ExtendedUserTokenProvider).getSignInResource(
+                    turnContext,
+                    this.connectionName.getValue(dc.state),
+                    turnContext.activity.from.id
+                );
                 let link = signInResource.signInLink;
                 const identity = turnContext.turnState.get((turnContext.adapter as BotAdapter).BotIdentityKey);
 
-                // use the SignInLink when 
+                // use the SignInLink when
                 //   in speech channel or
                 //   bot is a skill or
                 //   an extra OAuthAppCredentials is being passed in
-                if ((identity && SkillValidation.isSkillClaim(identity.claims)) || this.isFromStreamingConnection(turnContext.activity)) {
+                if (
+                    (identity && SkillValidation.isSkillClaim(identity.claims)) ||
+                    this.isFromStreamingConnection(turnContext.activity)
+                ) {
                     if (turnContext.activity.channelId === Channels.Emulator) {
                         cardActionType = ActionTypes.OpenUrl;
                     }
@@ -305,15 +353,23 @@ export class OAuthInput extends InputDialog {
                 msg.attachments.push(card);
             }
         } else {
-            const cards: Attachment[] = msg.attachments.filter((a: Attachment) => a.contentType === CardFactory.contentTypes.signinCard);
+            const cards: Attachment[] = msg.attachments.filter(
+                (a: Attachment) => a.contentType === CardFactory.contentTypes.signinCard
+            );
             if (cards.length === 0) {
                 // Append signin card
-                const signInResource = await (turnContext.adapter as ExtendedUserTokenProvider).getSignInResource(turnContext, this.connectionName.getValue(dc.state), turnContext.activity.from.id);
-                msg.attachments.push(CardFactory.signinCard(
-                    this.title.getValue(dc.state),
-                    signInResource.signInLink,
-                    this.text.getValue(dc.state)
-                ));
+                const signInResource = await (turnContext.adapter as ExtendedUserTokenProvider).getSignInResource(
+                    turnContext,
+                    this.connectionName.getValue(dc.state),
+                    turnContext.activity.from.id
+                );
+                msg.attachments.push(
+                    CardFactory.signinCard(
+                        this.title.getValue(dc.state),
+                        signInResource.signInLink,
+                        this.text.getValue(dc.state)
+                    )
+                );
             }
         }
 
@@ -345,8 +401,7 @@ export class OAuthInput extends InputDialog {
                 } else {
                     await this.sendInvokeResponse(turnContext, StatusCodes.NOT_FOUND);
                 }
-            }
-            catch (e) {
+            } catch (e) {
                 await this.sendInvokeResponse(turnContext, StatusCodes.INTERNAL_SERVER_ERROR);
             }
         } else if (this.isTokenExchangeRequestInvoke(turnContext)) {
@@ -354,20 +409,30 @@ export class OAuthInput extends InputDialog {
             const tokenExchangeRequest = turnContext.activity.value as TokenExchangeInvokeRequest;
             // Received activity is not a token exchange request
             if (!(tokenExchangeRequest && this.isTokenExchangeRequest(tokenExchangeRequest))) {
-                const failureDetail = 'The bot received an InvokeActivity that is missing a TokenExchangeInvokeRequest value. This is required to be sent with the InvokeActivity.';
+                const failureDetail =
+                    'The bot received an InvokeActivity that is missing a TokenExchangeInvokeRequest value. This is required to be sent with the InvokeActivity.';
                 await this.sendInvokeResponse(turnContext, StatusCodes.BAD_REQUEST, { connectionName, failureDetail });
             } else if (tokenExchangeRequest.connectionName != connectionName) {
                 // Connection name on activity does not match that of setting
                 const id = tokenExchangeRequest.id;
-                const failureDetail = 'The bot received an InvokeActivity with a TokenExchangeInvokeRequest containing a ConnectionName that does not match the ConnectionName' +
+                const failureDetail =
+                    'The bot received an InvokeActivity with a TokenExchangeInvokeRequest containing a ConnectionName that does not match the ConnectionName' +
                     'expected by the bots active OAuthPrompt. Ensure these names match when sending the InvokeActivityInvalid ConnectionName in the TokenExchangeInvokeRequest';
-                await this.sendInvokeResponse(turnContext, StatusCodes.BAD_REQUEST, { id, connectionName, failureDetail });
-            }
-            else if (!('exchangeToken' in turnContext.adapter)) {
+                await this.sendInvokeResponse(turnContext, StatusCodes.BAD_REQUEST, {
+                    id,
+                    connectionName,
+                    failureDetail,
+                });
+            } else if (!('exchangeToken' in turnContext.adapter)) {
                 // Token Exchange not supported in the adapter
                 const id = tokenExchangeRequest.id;
-                const failureDetail = 'The bot\'s BotAdapter does not support token exchange operations. Ensure the bot\'s Adapter supports the ExtendedUserTokenProvider interface.';
-                await this.sendInvokeResponse(turnContext, StatusCodes.BAD_REQUEST, { id, connectionName, failureDetail });
+                const failureDetail =
+                    "The bot's BotAdapter does not support token exchange operations. Ensure the bot's Adapter supports the ExtendedUserTokenProvider interface.";
+                await this.sendInvokeResponse(turnContext, StatusCodes.BAD_REQUEST, {
+                    id,
+                    connectionName,
+                    failureDetail,
+                });
                 throw new Error('OAuthPrompt.recognizeToken(): not supported by the current adapter');
             } else {
                 const extendedUserTokenProvider: ExtendedUserTokenProvider = turnContext.adapter as ExtendedUserTokenProvider;
@@ -377,7 +442,8 @@ export class OAuthInput extends InputDialog {
                         turnContext,
                         connectionName,
                         turnContext.activity.from.id,
-                        { token: tokenExchangeRequest.token });
+                        { token: tokenExchangeRequest.token }
+                    );
                 } catch (err) {
                     // Ignore errors.
                     // If the token exchange failed for any reason, the tokenExchangeResponse stays undefined
@@ -387,14 +453,18 @@ export class OAuthInput extends InputDialog {
                 const id = tokenExchangeRequest.id;
                 if (!tokenExchangeResponse || !tokenExchangeResponse.token) {
                     const failureDetail = 'The bot is unable to exchange token. Proceed with regular login.';
-                    await this.sendInvokeResponse(turnContext, StatusCodes.CONFLICT, { id, connectionName, failureDetail });
+                    await this.sendInvokeResponse(turnContext, StatusCodes.CONFLICT, {
+                        id,
+                        connectionName,
+                        failureDetail,
+                    });
                 } else {
                     await this.sendInvokeResponse(turnContext, StatusCodes.OK, { id, connectionName });
                     token = {
                         channelId: tokenExchangeResponse.channelId,
                         connectionName: tokenExchangeResponse.connectionName,
                         token: tokenExchangeResponse.token,
-                        expiration: undefined
+                        expiration: undefined,
                     };
                 }
             }
@@ -455,8 +525,8 @@ export class OAuthInput extends InputDialog {
             type: 'invokeResponse',
             value: {
                 status,
-                body
-            }
+                body,
+            },
         });
     }
 
@@ -477,5 +547,5 @@ export class OAuthInput extends InputDialog {
 interface OAuthPromptState {
     state: any;
     options: PromptOptions;
-    expires: number;        // Timestamp of when the prompt will timeout.
+    expires: number; // Timestamp of when the prompt will timeout.
 }

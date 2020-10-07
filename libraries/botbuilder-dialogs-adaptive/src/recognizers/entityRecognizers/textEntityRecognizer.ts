@@ -17,22 +17,34 @@ export abstract class TextEntityRecognizer implements EntityRecognizer {
         return {};
     }
 
-    public async recognizeEntities(dialogContext: DialogContext, text: string, locale: string, entities: Entity[]): Promise<Entity[]> {
+    public async recognizeEntities(
+        dialogContext: DialogContext,
+        text: string,
+        locale: string,
+        entities: Entity[]
+    ): Promise<Entity[]> {
         const newEntities: Entity[] = [];
         const culture = Culture.mapToNearestLanguage(locale || '');
-        const textEntities: TextEntity[] = entities.filter((e: Entity): boolean => e.type == 'text').map((e: Entity): TextEntity => {
-            const textEntity = new TextEntity();
-            return Object.assign(textEntity, e);
-        });
+        const textEntities: TextEntity[] = entities
+            .filter((e: Entity): boolean => e.type == 'text')
+            .map(
+                (e: Entity): TextEntity => {
+                    const textEntity = new TextEntity();
+                    return Object.assign(textEntity, e);
+                }
+            );
 
         for (let i = 0; i < textEntities.length; i++) {
             const entity = textEntities[i];
             const results = this.recognize(entity.text, culture);
             for (let j = 0; j < results.length; j++) {
                 const result = results[j];
-                const newEntity: Entity = Object.assign({
-                    type: result.typeName
-                }, result);
+                const newEntity: Entity = Object.assign(
+                    {
+                        type: result.typeName,
+                    },
+                    result
+                );
                 newEntity['typeName'] = undefined;
                 newEntities.push(newEntity);
             }

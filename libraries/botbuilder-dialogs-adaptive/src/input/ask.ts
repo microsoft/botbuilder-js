@@ -6,8 +6,22 @@
  * Licensed under the MIT License.
  */
 
-import { ArrayExpression, ArrayExpressionConverter, BoolExpressionConverter, StringExpression, StringExpressionConverter } from 'adaptive-expressions';
-import { Converters, DialogContext, DialogTurnResult, DialogPath, DialogEvent, TurnPath, DialogTurnStatus } from 'botbuilder-dialogs';
+import {
+    ArrayExpression,
+    ArrayExpressionConverter,
+    BoolExpressionConverter,
+    StringExpression,
+    StringExpressionConverter,
+} from 'adaptive-expressions';
+import {
+    Converters,
+    DialogContext,
+    DialogTurnResult,
+    DialogPath,
+    DialogEvent,
+    TurnPath,
+    DialogTurnStatus,
+} from 'botbuilder-dialogs';
 import { SendActivity } from '../actions/sendActivity';
 import { ActivityTemplateConverter } from '../converters';
 
@@ -41,7 +55,7 @@ export class Ask extends SendActivity {
             expectedProperties: new ArrayExpressionConverter<string>(),
             defaultOperation: new StringExpressionConverter(),
             activity: new ActivityTemplateConverter(),
-            disabled: new BoolExpressionConverter()
+            disabled: new BoolExpressionConverter(),
         });
     }
 
@@ -54,10 +68,19 @@ export class Ask extends SendActivity {
         const lastExpectedProperties: string[] = dc.state.getValue<string[]>(DialogPath.expectedProperties);
         const lastTrigger: DialogEvent = dc.state.getValue<DialogEvent>(DialogPath.lastTriggerEvent);
 
-        if (expected && lastExpectedProperties && lastTrigger
-            && !expected.some((prop: string): boolean => !lastExpectedProperties.some((lastProp: string): boolean => lastProp === prop))
-            && !lastExpectedProperties.some((lastProp: string): boolean => !expected.some((prop: string): boolean => prop === lastProp))
-            && lastTrigger.name === trigger.name) {
+        if (
+            expected &&
+            lastExpectedProperties &&
+            lastTrigger &&
+            !expected.some(
+                (prop: string): boolean =>
+                    !lastExpectedProperties.some((lastProp: string): boolean => lastProp === prop)
+            ) &&
+            !lastExpectedProperties.some(
+                (lastProp: string): boolean => !expected.some((prop: string): boolean => prop === lastProp)
+            ) &&
+            lastTrigger.name === trigger.name
+        ) {
             retries++;
         } else {
             retries = 0;

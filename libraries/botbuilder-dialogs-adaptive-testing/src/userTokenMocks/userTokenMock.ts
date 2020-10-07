@@ -24,11 +24,7 @@ export interface UserTokenMock {
  * The type converters for UserTokenMock.
  */
 export class UserTokenMocksConverter implements Converter {
-    private _resourceExplorer: ResourceExplorer;
-
-    public constructor(resourceExplorer: ResourceExplorer) {
-        this._resourceExplorer = resourceExplorer;
-    }
+    public constructor(private readonly _resourceExplorer: ResourceExplorer) {}
 
     public convert(value: string[] | UserTokenMock[]): UserTokenMock[] {
         const userTokenMocks: UserTokenMock[] = [];

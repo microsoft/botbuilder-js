@@ -14,7 +14,9 @@ export class DeleteActivity<O extends object = {}> extends Dialog<O> {
     public constructor();
     public constructor(activityId?: string) {
         super();
-        if (activityId) { this.activityId = new StringExpression(activityId); }
+        if (activityId) {
+            this.activityId = new StringExpression(activityId);
+        }
     }
 
     /**

@@ -41,21 +41,21 @@ export class UserConversationUpdate implements TestAction {
         activity.type = ActivityTypes.ConversationUpdate;
 
         if (this.membersAdded) {
-            activity.membersAdded = this.membersAdded.map(member => {
+            activity.membersAdded = this.membersAdded.map((member) => {
                 return {
                     id: member,
                     name: member,
-                    role: RoleTypes.User
+                    role: RoleTypes.User,
                 } as ChannelAccount;
             });
         }
 
         if (this.membersRemoved) {
-            activity.membersRemoved = this.membersRemoved.map(member => {
+            activity.membersRemoved = this.membersRemoved.map((member) => {
                 return {
                     id: member,
                     name: member,
-                    role: RoleTypes.User
+                    role: RoleTypes.User,
                 } as ChannelAccount;
             });
         }

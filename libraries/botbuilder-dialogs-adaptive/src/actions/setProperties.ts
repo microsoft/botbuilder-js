@@ -33,7 +33,9 @@ export class SetProperties<O extends object = {}> extends Dialog<O> {
     public constructor();
     public constructor(assignments?: PropertyAssignment[]) {
         super();
-        if (assignments) { this.assignments = assignments; }
+        if (assignments) {
+            this.assignments = assignments;
+        }
     }
 
     /**
@@ -74,6 +76,9 @@ export class SetProperties<O extends object = {}> extends Dialog<O> {
     }
 
     protected onComputeId(): string {
-        return `SetProperties[${StringUtils.ellipsis(this.assignments.map((item): string => item.property.toString()).join(','), 50)}]`;
+        return `SetProperties[${StringUtils.ellipsis(
+            this.assignments.map((item): string => item.property.toString()).join(','),
+            50
+        )}]`;
     }
 }

@@ -6,14 +6,33 @@
  * Licensed under the MIT License.
  */
 import { Activity } from 'botbuilder-core';
-import { Converters, DialogContext, Choice, ListStyle, ChoiceFactoryOptions, FindChoicesOptions, ChoiceFactory, recognizeChoices, ModelResult, FoundChoice } from 'botbuilder-dialogs';
+import {
+    Converters,
+    DialogContext,
+    Choice,
+    ListStyle,
+    ChoiceFactoryOptions,
+    FindChoicesOptions,
+    ChoiceFactory,
+    recognizeChoices,
+    ModelResult,
+    FoundChoice,
+} from 'botbuilder-dialogs';
 import { InputDialog, InputState } from './inputDialog';
 import { ChoiceSet } from './choiceSet';
-import { ObjectExpression, StringExpression, EnumExpression, ArrayExpressionConverter, EnumExpressionConverter, ObjectExpressionConverter, StringExpressionConverter } from 'adaptive-expressions';
+import {
+    ObjectExpression,
+    StringExpression,
+    EnumExpression,
+    ArrayExpressionConverter,
+    EnumExpressionConverter,
+    ObjectExpressionConverter,
+    StringExpressionConverter,
+} from 'adaptive-expressions';
 
 export enum ChoiceOutputFormat {
     value = 'value',
-    index = 'index'
+    index = 'index',
 }
 
 export interface ChoiceInputOptions {
@@ -34,7 +53,7 @@ export class ChoiceInput extends InputDialog {
         'de-de': { inlineSeparator: ', ', inlineOr: ' oder ', inlineOrMore: ', oder ', includeNumbers: true },
         'ja-jp': { inlineSeparator: '、 ', inlineOr: ' または ', inlineOrMore: '、 または ', includeNumbers: true },
         'pt-br': { inlineSeparator: ', ', inlineOr: ' ou ', inlineOrMore: ', ou ', includeNumbers: true },
-        'zh-cn': { inlineSeparator: '， ', inlineOr: ' 要么 ', inlineOrMore: '， 要么 ', includeNumbers: true }
+        'zh-cn': { inlineSeparator: '， ', inlineOr: ' 要么 ', inlineOrMore: '， 要么 ', includeNumbers: true },
     };
 
     /**
@@ -58,7 +77,9 @@ export class ChoiceInput extends InputDialog {
     /**
      * Control the format of the response (value or index of the choice).
      */
-    public outputFormat: EnumExpression<ChoiceOutputFormat> = new EnumExpression<ChoiceOutputFormat>(ChoiceOutputFormat.value);
+    public outputFormat: EnumExpression<ChoiceOutputFormat> = new EnumExpression<ChoiceOutputFormat>(
+        ChoiceOutputFormat.value
+    );
 
     /**
      * Additional options passed to the `ChoiceFactory` and used to tweak the style of choices
@@ -95,7 +116,7 @@ export class ChoiceInput extends InputDialog {
 
     protected async onRecognizeInput(dc: DialogContext): Promise<InputState> {
         // Get input and options
-        let input: string = dc.state.getValue(InputDialog.VALUE_PROPERTY).toString();
+        const input: string = dc.state.getValue(InputDialog.VALUE_PROPERTY).toString();
         const options: ChoiceInputOptions = dc.state.getValue(InputDialog.OPTIONS_PROPERTY);
 
         // Format choices
@@ -139,13 +160,13 @@ export class ChoiceInput extends InputDialog {
         // Format prompt to send
         const prompt = await super.onRenderPrompt(dc, state);
         const channelId: string = dc.context.activity.channelId;
-        const choiceOptions: ChoiceFactoryOptions = (this.choiceOptions && this.choiceOptions.getValue(dc.state)) || ChoiceInput.defaultChoiceOptions[locale];
+        const choiceOptions: ChoiceFactoryOptions =
+            (this.choiceOptions && this.choiceOptions.getValue(dc.state)) || ChoiceInput.defaultChoiceOptions[locale];
         const style = this.style.getValue(dc.state);
         return Promise.resolve(this.appendChoices(prompt, channelId, choices, style, choiceOptions));
     }
 
     protected onComputeId(): string {
-        return `ChoiceInput[${ this.prompt && this.prompt.toString() }]`;
+        return `ChoiceInput[${this.prompt && this.prompt.toString()}]`;
     }
-
 }

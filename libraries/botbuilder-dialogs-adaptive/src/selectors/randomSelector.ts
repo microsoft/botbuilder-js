@@ -23,7 +23,7 @@ export class RandomSelector extends TriggerSelector {
     /**
      * Gets or sets the expression parser to use.
      */
-    public parser: ExpressionParserInterface = new ExpressionParser()
+    public parser: ExpressionParserInterface = new ExpressionParser();
 
     public get converters(): Converters<RandomSelector> {
         return {};
@@ -57,5 +57,4 @@ export class RandomSelector extends TriggerSelector {
 
         return Promise.resolve(result);
     }
-
 }

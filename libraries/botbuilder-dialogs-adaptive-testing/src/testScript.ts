@@ -8,9 +8,13 @@
 
 import { ConversationState, MemoryStorage, UserState, TestAdapter } from 'botbuilder-core';
 import { Converters, DialogManager } from 'botbuilder-dialogs';
-import { DialogExpression, DialogExpressionConverter, LanguageGeneratorExtensions, resourceExplorerKey, ResourceExtensions } from 'botbuilder-dialogs-adaptive';
+import {
+    DialogExpression,
+    DialogExpressionConverter,
+    LanguageGeneratorExtensions,
+    ResourceExtensions,
+} from 'botbuilder-dialogs-adaptive';
 import { ResourceExplorer } from 'botbuilder-dialogs-declarative';
-import { TemplateStack } from 'typedoc/dist/lib/output/utils/resources/templates';
 import { TestAction } from './testAction';
 import { UserTokenMock, UserTokenMocksConverter } from './userTokenMocks';
 

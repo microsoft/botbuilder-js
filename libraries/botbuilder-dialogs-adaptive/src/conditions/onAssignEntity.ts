@@ -16,7 +16,13 @@ import { OnDialogEvent } from './onDialogEvent';
 export class OnAssignEntity extends OnDialogEvent {
     public static $kind = 'Microsoft.OnAssignEntity';
 
-    public constructor(property?: string, entity?: string, operation?: string, actions: Dialog[] = [], condition?: string) {
+    public constructor(
+        property?: string,
+        entity?: string,
+        operation?: string,
+        actions: Dialog[] = [],
+        condition?: string
+    ) {
         super(AdaptiveEvents.assignEntity, actions, condition);
         this.property = property;
         this.entity = entity;
@@ -41,13 +47,13 @@ export class OnAssignEntity extends OnDialogEvent {
     public getExpression(parser: ExpressionParserInterface): Expression {
         const expressions = [super.getExpression(parser)];
         if (this.property) {
-            expressions.push(parser.parse(`${ TurnPath.dialogEvent }.value.property == '${ this.property }'`));
+            expressions.push(parser.parse(`${TurnPath.dialogEvent}.value.property == '${this.property}'`));
         }
         if (this.entity) {
-            expressions.push(parser.parse(`${ TurnPath.dialogEvent }.value.entity.name == '${ this.entity }'`));
+            expressions.push(parser.parse(`${TurnPath.dialogEvent}.value.entity.name == '${this.entity}'`));
         }
         if (this.operation) {
-            expressions.push(parser.parse(`${ TurnPath.dialogEvent }.value.operation == '${ this.operation }'`));
+            expressions.push(parser.parse(`${TurnPath.dialogEvent}.value.operation == '${this.operation}'`));
         }
 
         return Expression.andExpression.apply(Expression, expressions);

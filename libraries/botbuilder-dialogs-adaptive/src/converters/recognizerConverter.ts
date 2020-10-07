@@ -11,11 +11,11 @@ import { ResourceExplorer } from 'botbuilder-dialogs-declarative';
 import { Recognizer } from '../recognizers';
 
 export class RecognizerConverter implements Converter<any, Recognizer> {
-    public constructor(private readonly _resourceExplorer: ResourceExplorer) { }
+    public constructor(private readonly _resourceExplorer: ResourceExplorer) {}
 
     public convert(value: string | object): Recognizer {
         if (typeof value == 'string') {
-            const recognizer = this._resourceExplorer.loadType(`${ value }.dialog`) as Recognizer;
+            const recognizer = this._resourceExplorer.loadType(`${value}.dialog`) as Recognizer;
             return recognizer;
         }
         return value as Recognizer;
