@@ -5,7 +5,12 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { StringExpression, BoolExpression, BoolExpressionConverter, StringExpressionConverter } from 'adaptive-expressions';
+import {
+    StringExpression,
+    BoolExpression,
+    BoolExpressionConverter,
+    StringExpressionConverter,
+} from 'adaptive-expressions';
 import { Converters, DialogTurnResult, Dialog, DialogContext } from 'botbuilder-dialogs';
 import { ActionScope, ActionScopeResult } from './actionScope';
 

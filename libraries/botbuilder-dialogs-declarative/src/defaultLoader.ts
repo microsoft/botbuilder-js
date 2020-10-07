@@ -11,7 +11,6 @@ import { CustomDeserializer } from './customDeserializer';
 import { ResourceExplorer } from './resources';
 
 export class DefaultLoader implements CustomDeserializer {
-
     public constructor(private readonly _resourceExplorer: ResourceExplorer) {}
 
     public load(value: any, type: new () => {}): any {

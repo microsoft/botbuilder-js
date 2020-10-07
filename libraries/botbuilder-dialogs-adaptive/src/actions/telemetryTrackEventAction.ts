@@ -6,7 +6,12 @@
  * Licensed under the MIT License.
  */
 
-import { StringExpression, BoolExpression, BoolExpressionConverter, StringExpressionConverter } from 'adaptive-expressions';
+import {
+    StringExpression,
+    BoolExpression,
+    BoolExpressionConverter,
+    StringExpressionConverter,
+} from 'adaptive-expressions';
 import { Converter, Converters, Dialog, DialogContext, DialogTurnResult } from 'botbuilder-dialogs';
 
 /**

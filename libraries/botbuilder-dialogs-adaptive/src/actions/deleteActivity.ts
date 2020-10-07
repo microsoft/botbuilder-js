@@ -6,7 +6,12 @@
  * Licensed under the MIT License.
  */
 import { Converters, Dialog, DialogContext, DialogTurnResult } from 'botbuilder-dialogs';
-import { StringExpression, BoolExpression, StringExpressionConverter, BoolExpressionConverter } from 'adaptive-expressions';
+import {
+    StringExpression,
+    BoolExpression,
+    StringExpressionConverter,
+    BoolExpressionConverter,
+} from 'adaptive-expressions';
 
 export class DeleteActivity<O extends object = {}> extends Dialog<O> {
     public static $kind = 'Microsoft.DeleteActivity';

@@ -30,7 +30,7 @@ export class RepeatDialog<O extends object = {}> extends BaseInvokeDialog<O> {
     public get converters(): Converters<RepeatDialog> {
         return Object.assign({}, super.converters, {
             disabled: new BoolExpressionConverter(),
-            allowLoop: new BoolExpressionConverter()
+            allowLoop: new BoolExpressionConverter(),
         });
     }
 

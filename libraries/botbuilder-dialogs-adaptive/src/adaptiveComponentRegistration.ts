@@ -245,7 +245,7 @@ export class AdaptiveComponentRegistration extends ComponentRegistration impleme
                 declarativeTypes.push({
                     kind: resourceId,
                     type: DynamicBeginDialog,
-                    loader: new CustomDialogLoader(resourceExplorer)
+                    loader: new CustomDialogLoader(resourceExplorer),
                 });
             }
         });

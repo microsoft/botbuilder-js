@@ -43,7 +43,7 @@ export class SendActivity<O extends object = {}> extends Dialog<O> {
     public get converters(): Converters<SendActivity> {
         return {
             activity: new ActivityTemplateConverter(),
-            disabled: new BoolExpressionConverter()
+            disabled: new BoolExpressionConverter(),
         };
     }
 

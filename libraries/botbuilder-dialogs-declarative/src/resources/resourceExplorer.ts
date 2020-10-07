@@ -192,7 +192,7 @@ export class ResourceExplorer {
         }
 
         if (!resource) {
-            throw new Error(`Resource ${ resource.id } not found.`);
+            throw new Error(`Resource ${resource.id} not found.`);
         }
 
         const json = resource.readText();
@@ -228,14 +228,16 @@ export class ResourceExplorer {
         const kind = value['$kind'];
         const type = this._kindToType.get(kind);
         if (!type) {
-            throw new Error(`Type ${ kind } not registered.`);
+            throw new Error(`Type ${kind} not registered.`);
         }
         const loader = this._kindDeserializer.get(kind);
         return loader.load(value, type) as T;
     }
 
     private getComponentRegistrations(): ComponentRegistration[] {
-        return ComponentRegistration.components.filter((component: ComponentRegistration) => 'getDeclarativeTypes' in component);
+        return ComponentRegistration.components.filter(
+            (component: ComponentRegistration) => 'getDeclarativeTypes' in component
+        );
     }
 
     private registerTypeInternal(kind: string, type: new () => {}, loader?: CustomDeserializer): void {

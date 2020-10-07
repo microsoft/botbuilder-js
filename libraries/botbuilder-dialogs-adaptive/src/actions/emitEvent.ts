@@ -6,7 +6,14 @@
  * Licensed under the MIT License.
  */
 import { Converters, DialogTurnResult, DialogContext, Dialog } from 'botbuilder-dialogs';
-import { ValueExpression, StringExpression, BoolExpression, BoolExpressionConverter, StringExpressionConverter, ValueExpressionConverter } from 'adaptive-expressions';
+import {
+    ValueExpression,
+    StringExpression,
+    BoolExpression,
+    BoolExpressionConverter,
+    StringExpressionConverter,
+    ValueExpressionConverter,
+} from 'adaptive-expressions';
 
 export class EmitEvent<O extends object = {}> extends Dialog<O> {
     public static $kind = 'Microsoft.EmitEvent';

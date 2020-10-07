@@ -1,7 +1,6 @@
 import { DefaultLoader, ResourceExplorer } from 'botbuilder-dialogs-declarative';
 
 export class CustomDialogLoader extends DefaultLoader {
-
     public constructor(resourceExplorer: ResourceExplorer) {
         super(resourceExplorer);
     }

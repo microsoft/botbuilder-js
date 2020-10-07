@@ -6,7 +6,12 @@
  * Licensed under the MIT License.
  */
 import { Converters, DialogTurnResult, DialogContext, Dialog } from 'botbuilder-dialogs';
-import { ValueExpression, BoolExpression, BoolExpressionConverter, ValueExpressionConverter } from 'adaptive-expressions';
+import {
+    ValueExpression,
+    BoolExpression,
+    BoolExpressionConverter,
+    ValueExpressionConverter,
+} from 'adaptive-expressions';
 import { replaceJsonRecursively } from '../jsonExtensions';
 
 export class EndDialog<O extends object = {}> extends Dialog<O> {

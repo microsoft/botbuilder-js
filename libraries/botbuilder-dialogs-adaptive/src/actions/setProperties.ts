@@ -12,11 +12,11 @@ import { replaceJsonRecursively } from '../jsonExtensions';
 
 class PropertyAssignmentsConverter implements Converter<any[], PropertyAssignment[]> {
     public convert(assignments: { property: string; value: any }[]): PropertyAssignment[] {
-        return assignments.map(item => {
+        return assignments.map((item) => {
             const { property, value } = item;
             return {
                 property: new StringExpression(property),
-                value: new ValueExpression(value)
+                value: new ValueExpression(value),
             };
         });
     }

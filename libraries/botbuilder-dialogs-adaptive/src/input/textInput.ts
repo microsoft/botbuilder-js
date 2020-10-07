@@ -16,7 +16,7 @@ export class TextInput extends InputDialog {
 
     public get converters(): Converters<TextInput> {
         return Object.assign({}, super.converters, {
-            outputFormat: new StringExpressionConverter()
+            outputFormat: new StringExpressionConverter(),
         });
     }
 

@@ -30,7 +30,7 @@ export class ReplaceDialog<O extends object = {}> extends BaseInvokeDialog<O> {
 
     public get converters(): Converters<ReplaceDialog> {
         return Object.assign({}, super.converters, {
-            disabled: new BoolExpressionConverter()
+            disabled: new BoolExpressionConverter(),
         });
     }
 

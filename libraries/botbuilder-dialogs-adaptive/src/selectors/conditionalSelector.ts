@@ -5,7 +5,12 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { BoolExpression, BoolExpressionConverter, ExpressionParser, ExpressionParserInterface } from 'adaptive-expressions';
+import {
+    BoolExpression,
+    BoolExpressionConverter,
+    ExpressionParser,
+    ExpressionParserInterface,
+} from 'adaptive-expressions';
 import { Converters } from 'botbuilder-dialogs';
 import { OnCondition } from '../conditions/onCondition';
 import { TriggerSelector } from '../triggerSelector';

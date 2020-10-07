@@ -6,7 +6,12 @@
  * Licensed under the MIT License.
  */
 import { Converters, Dialog, DialogContext, DialogTurnResult } from 'botbuilder-dialogs';
-import { StringExpression, BoolExpression, BoolExpressionConverter, StringExpressionConverter } from 'adaptive-expressions';
+import {
+    StringExpression,
+    BoolExpression,
+    BoolExpressionConverter,
+    StringExpressionConverter,
+} from 'adaptive-expressions';
 
 export class GetActivityMembers<O extends object = {}> extends Dialog {
     public static $kind = 'Microsoft.GetActivityMembers';

@@ -20,7 +20,7 @@ export class DateTimeInput extends InputDialog {
     public get converters(): Converters<DateTimeInput> {
         return Object.assign({}, super.converters, {
             defaultLocale: new StringExpressionConverter(),
-            outputFormat: new StringExpressionConverter()
+            outputFormat: new StringExpressionConverter(),
         });
     }
 

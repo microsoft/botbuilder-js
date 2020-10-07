@@ -5,14 +5,22 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { BoolExpression, BoolExpressionConverter, Constant, Expression, ExpressionConverter, ExpressionParser, ValueExpression } from 'adaptive-expressions';
+import {
+    BoolExpression,
+    BoolExpressionConverter,
+    Constant,
+    Expression,
+    ExpressionConverter,
+    ExpressionParser,
+    ValueExpression,
+} from 'adaptive-expressions';
 import { Converter, Converters, DialogTurnResult, DialogDependencies, Dialog, DialogContext } from 'botbuilder-dialogs';
 import { ActionScope } from './actionScope';
 import { Case } from './case';
 
 class CasesConverter implements Converter<any[], Case[]> {
     public convert(value: { value: string; actions: Dialog[] }[]): Case[] {
-        return value.map(item => new Case(item.value, item.actions));
+        return value.map((item) => new Case(item.value, item.actions));
     }
 }
 

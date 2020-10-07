@@ -7,7 +7,16 @@
  */
 import fetch from 'node-fetch';
 import { Response, Headers } from 'node-fetch';
-import { ValueExpression, StringExpression, BoolExpression, EnumExpression, BoolExpressionConverter, EnumExpressionConverter, StringExpressionConverter, ValueExpressionConverter } from 'adaptive-expressions';
+import {
+    ValueExpression,
+    StringExpression,
+    BoolExpression,
+    EnumExpression,
+    BoolExpressionConverter,
+    EnumExpressionConverter,
+    StringExpressionConverter,
+    ValueExpressionConverter,
+} from 'adaptive-expressions';
 import { Activity } from 'botbuilder-core';
 import { Converter, Converters, DialogTurnResult, DialogContext, Dialog } from 'botbuilder-dialogs';
 import { replaceJsonRecursively } from '../jsonExtensions';

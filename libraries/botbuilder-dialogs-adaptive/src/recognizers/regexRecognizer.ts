@@ -13,7 +13,7 @@ import { EntityRecognizer, TextEntity, EntityRecognizerSet } from './entityRecog
 
 class IntentPatternsConverter implements Converter<any[], IntentPattern[]> {
     public convert(value: { intent: string; pattern: string }[]): IntentPattern[] {
-        return value.map(item => new IntentPattern(item.intent, item.pattern));
+        return value.map((item) => new IntentPattern(item.intent, item.pattern));
     }
 }
 

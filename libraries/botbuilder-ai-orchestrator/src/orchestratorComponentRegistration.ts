@@ -11,9 +11,11 @@ import { OrchestratorAdaptiveRecognizer } from './orchestratorAdaptiveRecognizer
 
 export class OrchestratorComponentRegistration extends ComponentRegistration {
     public getDeclarativeTypes(_resourceExplorer: unknown) {
-        return [{
-            kind: OrchestratorAdaptiveRecognizer.$kind,
-            type: OrchestratorAdaptiveRecognizer
-        }];
+        return [
+            {
+                kind: OrchestratorAdaptiveRecognizer.$kind,
+                type: OrchestratorAdaptiveRecognizer,
+            },
+        ];
     }
 }

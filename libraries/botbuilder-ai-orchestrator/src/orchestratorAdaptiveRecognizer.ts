@@ -10,7 +10,14 @@ import { existsSync } from 'fs';
 import { resolve } from 'path';
 import { TextEncoder } from 'util';
 
-import { BoolExpression, BoolExpressionConverter, NumberExpression, NumberExpressionConverter, StringExpression, StringExpressionConverter } from 'adaptive-expressions';
+import {
+    BoolExpression,
+    BoolExpressionConverter,
+    NumberExpression,
+    NumberExpressionConverter,
+    StringExpression,
+    StringExpressionConverter,
+} from 'adaptive-expressions';
 import { Activity, Entity, RecognizerResult } from 'botbuilder-core';
 import { Converters, DialogContext } from 'botbuilder-dialogs';
 import {

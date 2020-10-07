@@ -99,7 +99,7 @@ export class ChoiceInput extends InputDialog {
             defaultLocale: new StringExpressionConverter(),
             outputFormat: new EnumExpressionConverter(ChoiceOutputFormat),
             choiceOptions: new ObjectExpressionConverter<ChoiceFactoryOptions>(),
-            recognizerOptions: new ObjectExpressionConverter<FindChoicesOptions>()
+            recognizerOptions: new ObjectExpressionConverter<FindChoicesOptions>(),
         });
     }
 

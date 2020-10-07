@@ -26,7 +26,7 @@ export class NumberInput extends InputDialog {
     public get converters(): Converters<NumberInput> {
         return Object.assign({}, super.converters, {
             defaultLocale: new StringExpressionConverter(),
-            outputFormat: new NumberExpressionConverter()
+            outputFormat: new NumberExpressionConverter(),
         });
     }
 

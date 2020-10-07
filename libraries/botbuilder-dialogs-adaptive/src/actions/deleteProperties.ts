@@ -10,7 +10,7 @@ import { Converter, Converters, Dialog, DialogContext, DialogTurnResult } from '
 
 class PropertiesConverter implements Converter<string[], StringExpression[]> {
     public convert(value: string[]): StringExpression[] {
-        return value.map(item => new StringExpression(item));
+        return value.map((item) => new StringExpression(item));
     }
 }
 

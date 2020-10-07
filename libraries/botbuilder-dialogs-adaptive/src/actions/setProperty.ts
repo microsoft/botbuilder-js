@@ -5,7 +5,14 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { ValueExpression, StringExpression, BoolExpression, BoolExpressionConverter, StringExpressionConverter, ValueExpressionConverter } from 'adaptive-expressions';
+import {
+    ValueExpression,
+    StringExpression,
+    BoolExpression,
+    BoolExpressionConverter,
+    StringExpressionConverter,
+    ValueExpressionConverter,
+} from 'adaptive-expressions';
 import { Converters, DialogTurnResult, DialogContext, Dialog } from 'botbuilder-dialogs';
 import { replaceJsonRecursively } from '../jsonExtensions';
 

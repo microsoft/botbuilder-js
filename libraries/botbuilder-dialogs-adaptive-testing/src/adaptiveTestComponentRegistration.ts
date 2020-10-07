@@ -30,7 +30,7 @@ import { UserTokenBasicMock } from './userTokenMocks';
 type Type = {
     $kind: string;
     new (): unknown;
-}
+};
 
 export class AdaptiveTestComponentRegistration extends ComponentRegistration implements ComponentDeclarativeTypes {
     private _declarativeTypes: DeclarativeType[] = [];

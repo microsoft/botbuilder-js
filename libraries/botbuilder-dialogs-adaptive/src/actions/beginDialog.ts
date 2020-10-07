@@ -7,7 +7,12 @@
  */
 import { Converters, DialogTurnResult, DialogContext, DialogReason, TurnPath } from 'botbuilder-dialogs';
 import { BaseInvokeDialog } from './baseInvokeDialog';
-import { StringExpression, BoolExpression, StringExpressionConverter, BoolExpressionConverter } from 'adaptive-expressions';
+import {
+    StringExpression,
+    BoolExpression,
+    StringExpressionConverter,
+    BoolExpressionConverter,
+} from 'adaptive-expressions';
 
 export class BeginDialog<O extends object = {}> extends BaseInvokeDialog<O> {
     public static $kind = 'Microsoft.BeginDialog';
@@ -36,7 +41,7 @@ export class BeginDialog<O extends object = {}> extends BaseInvokeDialog<O> {
     public get converters(): Converters<BeginDialog> {
         return Object.assign({}, super.converters, {
             resultProperty: new StringExpressionConverter(),
-            disabled: new BoolExpressionConverter()
+            disabled: new BoolExpressionConverter(),
         });
     }
 
