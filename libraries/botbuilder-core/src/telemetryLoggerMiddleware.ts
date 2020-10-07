@@ -364,12 +364,12 @@ export class TelemetryLoggerMiddleware implements Middleware {
 
     private populateAdditionalChannelProperties(activity: Activity, properties?: { [key: string]: string }): void {
         if (activity) {
+            const channelData = activity.channelData;
             switch (activity.channelId) {
                 case 'msteams':
                     properties['TeamsUserAadObjectId'] = activity.from ? activity.from.aadObjectId : '';
-                    
-                    const channelData = activity.channelData as TeamsChannelData;
-                    if (channelData) {
+
+                    if (channelData as TeamsChannelData) {
                         properties['TeamsTenantId'] = channelData.tenant ? channelData.tenant.id : '';
                         properties['TeamsTeamInfo'] = channelData.team && JSON.stringify(channelData.team);
                     }
