@@ -40,9 +40,11 @@ export class ConditionalSelector extends TriggerSelector {
      */
     public parser: ExpressionParserInterface = new ExpressionParser()
 
-    public converters: Converters<ConditionalSelector> = {
-        condition: new BoolExpressionConverter()
-    };
+    public get converters(): Converters<ConditionalSelector> {
+        return {
+            condition: new BoolExpressionConverter(),
+        };
+    }
 
     public initialize(conditionals: OnCondition[], evaluate: boolean): void {
         this._conditionals = conditionals;

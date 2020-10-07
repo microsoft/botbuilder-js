@@ -71,10 +71,12 @@ export class OnCondition implements DialogDependencies {
         this.actions = actions;
     }
 
-    public converters: Converters<OnCondition> = {
-        condition: new BoolExpressionConverter(),
-        priority: new IntExpressionConverter()
-    };
+    public get converters(): Converters<OnCondition> {
+        return {
+            condition: new BoolExpressionConverter(),
+            priority: new IntExpressionConverter(),
+        };
+    }
 
     /**
      * Get the expression for this condition
@@ -88,7 +90,7 @@ export class OnCondition implements DialogDependencies {
                 try {
                     allExpressions.push(this.condition.toExpression());
                 } catch (err) {
-                    throw Error(`Invalid constraint expression: ${ this.condition.toString() }, ${ err.toString() }`);
+                    throw Error(`Invalid constraint expression: ${this.condition.toString()}, ${err.toString()}`);
                 }
             }
 
@@ -105,8 +107,8 @@ export class OnCondition implements DialogDependencies {
             if (this.runOnce) {
                 // TODO: Once we add support for the MostSpecificSelector the code below will need
                 //       some tweaking to wrap runOnce with a call to 'ignore'.
-                const runOnce = new ExpressionEvaluator(`runOnce${ this.id }`, (exp, state: DialogStateManager) => {
-                    const basePath = `${ AdaptiveDialog.conditionTracker }.${ this.id }.`;
+                const runOnce = new ExpressionEvaluator(`runOnce${this.id}`, (exp, state: DialogStateManager) => {
+                    const basePath = `${AdaptiveDialog.conditionTracker}.${this.id}.`;
                     const lastRun: number = state.getValue(basePath + 'lastRun');
                     const paths: string[] = state.getValue(basePath + 'paths');
                     const changed = state.anyPathChanged(lastRun, paths);
@@ -147,7 +149,7 @@ export class OnCondition implements DialogDependencies {
                 this._extraConstraints.push(parser.parse(condition));
                 this._fullConstraint = undefined;
             } catch (err) {
-                throw Error(`Invalid constraint expression: ${ condition }, ${ err.toString() }`);
+                throw Error(`Invalid constraint expression: ${condition}, ${err.toString()}`);
             }
         }
     }
@@ -160,7 +162,7 @@ export class OnCondition implements DialogDependencies {
     public async execute(actionContext: ActionContext): Promise<ActionChangeList[]> {
         if (this.runOnce) {
             const count = actionContext.state.getValue(DialogPath.eventCounter);
-            actionContext.state.setValue(`${ AdaptiveDialog.conditionTracker }.${ this.id }.lastRun`, count);
+            actionContext.state.setValue(`${AdaptiveDialog.conditionTracker}.${this.id}.lastRun`, count);
         }
         return [this.onCreateChangeList(actionContext)];
     }

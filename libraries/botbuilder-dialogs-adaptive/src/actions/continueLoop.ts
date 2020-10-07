@@ -16,10 +16,12 @@ export class ContinueLoop<O extends object = {}> extends Dialog<O> {
      * An optional expression which if is true will disable this action.
      */
     public disabled?: BoolExpression;
-    
-    public converters: Converters<ContinueLoop> = {
-        disabled: new BoolExpressionConverter()
-    };
+
+    public get converters(): Converters<ContinueLoop> {
+        return {
+            disabled: new BoolExpressionConverter(),
+        };
+    }
 
     public async beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {
         if (this.disabled && this.disabled.getValue(dc.state)) {

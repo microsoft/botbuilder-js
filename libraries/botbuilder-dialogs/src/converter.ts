@@ -14,5 +14,7 @@ export interface Converter<From = any, To = any> {
 }
 
 export type Converters<T> = {
-    [K in keyof Partial<T>]: Converter<any, T[K]> | ((...args: any[]) => Converter<any, T[K]>)
+    [K in keyof Partial<Omit<T, 'converters' | 'configure'>>]:
+        | Converter<any, T[K]>
+        | ((...args: any[]) => Converter<any, T[K]>);
 }

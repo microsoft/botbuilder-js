@@ -46,10 +46,12 @@ export class SetProperties<O extends object = {}> extends Dialog<O> {
      */
     public disabled?: BoolExpression;
 
-    public converters: Converters<SetProperties> = {
-        assignments: new PropertyAssignmentsConverter(),
-        disabled: new BoolExpressionConverter()
-    };
+    public get converters(): Converters<SetProperties> {
+        return {
+            assignments: new PropertyAssignmentsConverter(),
+            disabled: new BoolExpressionConverter(),
+        };
+    }
 
     public async beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {
         if (this.disabled && this.disabled.getValue(dc.state)) {
@@ -72,6 +74,6 @@ export class SetProperties<O extends object = {}> extends Dialog<O> {
     }
 
     protected onComputeId(): string {
-        return `SetProperties[${ StringUtils.ellipsis(this.assignments.map((item): string => item.property.toString()).join(','), 50) }]`;
+        return `SetProperties[${StringUtils.ellipsis(this.assignments.map((item): string => item.property.toString()).join(','), 50)}]`;
     }
 }

@@ -56,14 +56,15 @@ export class ForEachPage<O extends object = {}> extends ActionScope<O> {
      */
     public disabled?: BoolExpression;
 
-    public converters: Converters<ForEachPage> = {
-        itemsProperty: new StringExpressionConverter(),
-        page: new StringExpressionConverter(),
-        pageIndex: new StringExpressionConverter(),
-        pageSize: new IntExpressionConverter(),
-        disabled: new BoolExpressionConverter()
-    };
-
+    public get converters(): Converters<ForEachPage> {
+        return {
+            itemsProperty: new StringExpressionConverter(),
+            page: new StringExpressionConverter(),
+            pageIndex: new StringExpressionConverter(),
+            pageSize: new IntExpressionConverter(),
+            disabled: new BoolExpressionConverter(),
+        };
+    }
 
     public getDependencies(): Dialog[] {
         return this.actions;
@@ -91,7 +92,7 @@ export class ForEachPage<O extends object = {}> extends ActionScope<O> {
     }
 
     protected onComputeId(): string {
-        return `ForEachPage[${ this.itemsProperty.toString() }]`;
+        return `ForEachPage[${this.itemsProperty.toString()}]`;
     }
 
     private async nextPage(dc: DialogContext): Promise<DialogTurnResult> {

@@ -99,7 +99,7 @@ export abstract class InputDialog extends Dialog {
             defaultValueResponse: new ActivityTemplateConverter(),
             maxTurnCount: new IntExpressionConverter(),
             defaultValue: new ValueExpressionConverter(),
-            disabled: new BoolExpressionConverter()
+            disabled: new BoolExpressionConverter(),
         };
     }
 

@@ -46,5 +46,7 @@ export abstract class Configurable {
         return this;
     }
 
-    public converters?: Converters<any>;
+    public get converters(): Converters<any> {
+        return {};
+    }
 }

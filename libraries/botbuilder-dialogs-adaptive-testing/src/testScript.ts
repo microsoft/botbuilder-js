@@ -8,10 +8,11 @@
 
 import { ConversationState, MemoryStorage, UserState, TestAdapter } from 'botbuilder-core';
 import { Converters, DialogManager } from 'botbuilder-dialogs';
-import { DialogExpression, DialogExpressionConverter, LanguageGeneratorExtensions, ResourceExtensions } from 'botbuilder-dialogs-adaptive';
+import { DialogExpression, DialogExpressionConverter, LanguageGeneratorExtensions, resourceExplorerKey, ResourceExtensions } from 'botbuilder-dialogs-adaptive';
 import { ResourceExplorer } from 'botbuilder-dialogs-declarative';
+import { TemplateStack } from 'typedoc/dist/lib/output/utils/resources/templates';
 import { TestAction } from './testAction';
-import { UserTokenMock } from './userTokenMocks';
+import { UserTokenMock, UserTokenMocksConverter } from './userTokenMocks';
 
 /**
  * A mock Test Script that can be used for unit testing bot's logic.
@@ -32,8 +33,8 @@ export class TestScript {
     /**
      * The locale (default: en-us).
      */
-    public locale: string = 'en-us';
-    
+    public locale = 'en-us';
+
     /**
      * The mock data for Microsoft.OAuthInput.
      */
@@ -47,18 +48,25 @@ export class TestScript {
     /**
      * If true then trace activities will be sent to the test script.
      */
-    public enableTrace: boolean = false;
+    public enableTrace = false;
 
-    public converters: Converters<TestScript> = {
-        dialog: (resourceExplorer: ResourceExplorer) => new DialogExpressionConverter(resourceExplorer)
-    };
+    public get converters(): Converters<TestScript> {
+        return {
+            dialog: (resourceExplorer: ResourceExplorer) => new DialogExpressionConverter(resourceExplorer),
+            userTokenMocks: (resourceExplorer: ResourceExplorer) => new UserTokenMocksConverter(resourceExplorer),
+        };
+    }
 
     /**
      * Starts the execution of the test sequence.
      * @param testName Name of the test
      * @param testAdapter (Optional) Test adapter
      */
-    public async execute(resourceExplorer: ResourceExplorer, testName?: string, testAdapter?: TestAdapter): Promise<void> {
+    public async execute(
+        resourceExplorer: ResourceExplorer,
+        testName?: string,
+        testAdapter?: TestAdapter
+    ): Promise<void> {
         if (!testAdapter) {
             testAdapter = new TestAdapter(TestAdapter.createConversation(testName));
         }
@@ -71,8 +79,8 @@ export class TestScript {
         bot.userState = new UserState(new MemoryStorage());
         ResourceExtensions.useResourceExplorer(bot, resourceExplorer);
         LanguageGeneratorExtensions.useLanguageGeneration(bot);
-        
-        this.userTokenMocks.forEach(userTokenMock => {
+
+        this.userTokenMocks.forEach((userTokenMock) => {
             userTokenMock.setup(testAdapter);
         });
 

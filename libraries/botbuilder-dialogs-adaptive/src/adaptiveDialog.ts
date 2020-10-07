@@ -55,7 +55,7 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
     public constructor(dialogId?: string) {
         super(dialogId);
     }
-    
+
     /**
      * Optional. Recognizer used to analyze any message utterances.
      */
@@ -103,11 +103,13 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
         return this.dialogSchema ? this.dialogSchema.schema : undefined;
     }
 
-    public converters: Converters<AdaptiveDialog> = {
-        generator: new LanguageGeneratorConverter(),
-        recognizer: (resourceExplorer: ResourceExplorer) => new RecognizerConverter(resourceExplorer),
-        autoEndDialog: new BoolExpressionConverter()
-    };
+    public get converters(): Converters<AdaptiveDialog> {
+        return {
+            generator: new LanguageGeneratorConverter(),
+            recognizer: (resourceExplorer: ResourceExplorer) => new RecognizerConverter(resourceExplorer),
+            autoEndDialog: new BoolExpressionConverter(),
+        };
+    }
 
     protected ensureDependenciesInstalled(): void {
         if (this.installedDependencies) {
@@ -208,7 +210,7 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
                 if (trigger.runOnce && trigger.condition) {
                     const references = trigger.condition.toExpression().references();
                     const paths = dcState.trackPaths(references);
-                    const triggerPath = `${ AdaptiveDialog.conditionTracker }.${ trigger.id }.`;
+                    const triggerPath = `${AdaptiveDialog.conditionTracker}.${trigger.id}.`;
                     dcState.setValue(triggerPath + 'paths', paths);
                     dcState.setValue(triggerPath + 'lastRun', 0);
                 }
@@ -343,7 +345,7 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
             case AdaptiveEvents.recognizedIntent:
                 // we have received a RecognizedIntent event
                 // get the value and promote to turn.recognized, topintent, topscore and lastintent
-                const recognizedResult = actionContext.state.getValue<RecognizerResult>(`${ TurnPath.dialogEvent }.value`);
+                const recognizedResult = actionContext.state.getValue<RecognizerResult>(`${TurnPath.dialogEvent}.value`);
                 const { intent, score } = getTopScoringIntent(recognizedResult);
                 actionContext.state.setValue(TurnPath.recognized, recognizedResult);
                 actionContext.state.setValue(TurnPath.topIntent, intent);
@@ -508,7 +510,7 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
             const properties: { [key: string]: string } = {
                 'DialogId': this.id,
                 'Expression': evt.getExpression(parser).toString(),
-                'Kind': `Microsoft.${ evt.constructor.name }`,
+                'Kind': `Microsoft.${evt.constructor.name}`,
                 'ConditionId': evt.id
             };
             this.telemetryClient.trackEvent({
@@ -624,7 +626,7 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
     }
 
     private getUniqueInstanceId(dc: DialogContext): string {
-        return dc.stack.length > 0 ? `${ dc.stack.length }:${ dc.activeDialog.id }` : '';
+        return dc.stack.length > 0 ? `${dc.stack.length}:${dc.activeDialog.id}` : '';
     }
 
     private toActionContext(dc: DialogContext): ActionContext {
@@ -674,7 +676,7 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
                     entity = [entity];
                 }
 
-                actionContext.state.setValue(`${ TurnPath.recognized }.entities.${ nextAssignment.entity.name }`, entity);
+                actionContext.state.setValue(`${TurnPath.recognized}.entities.${nextAssignment.entity.name}`, entity);
                 assignments.dequeue(actionContext);
             }
 

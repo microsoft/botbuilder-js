@@ -39,10 +39,12 @@ export class EditActions<O extends object = {}> extends Dialog<O> implements Dia
      */
     public disabled?: BoolExpression;
 
-    public converters: Converters<EditActions> = {
-        changeType: new EnumExpressionConverter(ActionChangeType),
-        disabled: new BoolExpressionConverter()
-    };
+    public get converters(): Converters<EditActions> {
+        return {
+            changeType: new EnumExpressionConverter(ActionChangeType),
+            disabled: new BoolExpressionConverter(),
+        };
+    }
 
     public getDependencies(): Dialog[] {
         return this.actions;
@@ -76,7 +78,7 @@ export class EditActions<O extends object = {}> extends Dialog<O> implements Dia
 
     protected onComputeId(): string {
         const idList = this.actions.map((action: Dialog): string => action.id);
-        return `EditActions[${ this.changeType.toString() }|${ StringUtils.ellipsis(idList.join(','), 50) }]`;
+        return `EditActions[${this.changeType.toString()}|${StringUtils.ellipsis(idList.join(','), 50)}]`;
     }
 
 }

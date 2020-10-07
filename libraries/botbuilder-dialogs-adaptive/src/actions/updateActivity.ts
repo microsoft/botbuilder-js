@@ -45,11 +45,13 @@ export class UpdateActivity<O extends object = {}> extends Dialog<O> {
      */
     public disabled?: BoolExpression;
 
-    public converters: Converters<UpdateActivity> = {
-        activity: new ActivityTemplateConverter(),
-        activityId: new StringExpressionConverter(),
-        disabled: new BoolExpressionConverter()
-    };
+    public get converters(): Converters<UpdateActivity> {
+        return {
+            activity: new ActivityTemplateConverter(),
+            activityId: new StringExpressionConverter(),
+            disabled: new BoolExpressionConverter(),
+        };
+    }
 
     public async beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {
         if (this.disabled && this.disabled.getValue(dc.state)) {
@@ -82,8 +84,8 @@ export class UpdateActivity<O extends object = {}> extends Dialog<O> {
 
     protected onComputeId(): string {
         if (this.activity instanceof ActivityTemplate) {
-            return `UpdateActivity[${ StringUtils.ellipsis(this.activity.template.trim(), 30) }]`;
+            return `UpdateActivity[${StringUtils.ellipsis(this.activity.template.trim(), 30)}]`;
         }
-        return `UpdateActivity[${ StringUtils.ellipsis(this.activity && this.activity.toString().trim(), 30) }]`;
+        return `UpdateActivity[${StringUtils.ellipsis(this.activity && this.activity.toString().trim(), 30)}]`;
     }
 }

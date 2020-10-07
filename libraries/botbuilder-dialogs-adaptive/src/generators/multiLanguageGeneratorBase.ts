@@ -19,9 +19,11 @@ export abstract class MultiLanguageGeneratorBase implements LanguageGenerator {
      */
     public languagePolicy: LanguagePolicy;
 
-    public converters: Converters<MultiLanguageGeneratorBase> = {
-        languagePolicy: new LanguagePolicyConverter()
-    };
+    public get converters(): Converters<MultiLanguageGeneratorBase> {
+        return {
+            languagePolicy: new LanguagePolicyConverter(),
+        };
+    }
 
     /**
      * Abstract method to get a language generator by locale.
@@ -62,7 +64,7 @@ export abstract class MultiLanguageGeneratorBase implements LanguageGenerator {
         }
 
         if (fallbackLocales.length === 0) {
-            throw Error(`No supported language found for ${ targetLocale }`);
+            throw Error(`No supported language found for ${targetLocale}`);
         }
 
         const generators: LanguageGenerator[] = [];
@@ -73,7 +75,7 @@ export abstract class MultiLanguageGeneratorBase implements LanguageGenerator {
         }
 
         if (generators.length === 0) {
-            throw Error(`No generator found for language ${ targetLocale }`);
+            throw Error(`No generator found for language ${targetLocale}`);
         }
 
         const errors: string[] = [];

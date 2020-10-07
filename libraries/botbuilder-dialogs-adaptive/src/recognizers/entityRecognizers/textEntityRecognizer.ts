@@ -6,14 +6,16 @@
  * Licensed under the MIT License.
  */
 
-import { Culture }  from '@microsoft/recognizers-text';
+import { Culture } from '@microsoft/recognizers-text';
 import { Entity } from 'botbuilder-core';
 import { Converters, DialogContext, ModelResult } from 'botbuilder-dialogs';
 import { EntityRecognizer } from './entityRecognizer';
 import { TextEntity } from './textEntity';
 
 export abstract class TextEntityRecognizer implements EntityRecognizer {
-    public converters: Converters<TextEntityRecognizer> = {};
+    public get converters(): Converters<TextEntityRecognizer> {
+        return {};
+    }
 
     public async recognizeEntities(dialogContext: DialogContext, text: string, locale: string, entities: Entity[]): Promise<Entity[]> {
         const newEntities: Entity[] = [];

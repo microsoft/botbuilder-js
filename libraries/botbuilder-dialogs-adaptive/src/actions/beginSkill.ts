@@ -7,7 +7,7 @@
  */
 import { BoolExpression, BoolExpressionConverter, StringExpression, StringExpressionConverter } from 'adaptive-expressions';
 import { Activity, ActivityTypes, StringUtils, TurnContext } from 'botbuilder-core';
-import { SkillDialog, SkillDialogOptions, Converters,  DialogContext, DialogTurnResult, BeginSkillDialogOptions, DialogInstance, DialogReason } from 'botbuilder-dialogs';
+import { SkillDialog, SkillDialogOptions, Converters, DialogContext, DialogTurnResult, BeginSkillDialogOptions, DialogInstance, DialogReason } from 'botbuilder-dialogs';
 import { TemplateInterface } from '../template';
 import { skillClientKey, skillConversationIdFactoryKey } from '../skillExtensions';
 import { ActivityTemplate } from '../templates';
@@ -71,20 +71,22 @@ export class BeginSkill extends SkillDialog {
      */
     public connectionName: StringExpression;
 
-    public converters: Converters<BeginSkill> = {
-        disabled: new BoolExpressionConverter(),
-        activityProcessed: new BoolExpressionConverter(),
-        resultProperty: new StringExpressionConverter(),
-        botId: new StringExpressionConverter(),
-        skillHostEndpoint: new StringExpressionConverter(),
-        skillAppId: new StringExpressionConverter(),
-        skillEndpoint: new StringExpressionConverter(),
-        activity: new ActivityTemplateConverter(),
-        connectionName: new StringExpressionConverter()
-    };
+    public get converters(): Converters<BeginSkill> {
+        return {
+            disabled: new BoolExpressionConverter(),
+            activityProcessed: new BoolExpressionConverter(),
+            resultProperty: new StringExpressionConverter(),
+            botId: new StringExpressionConverter(),
+            skillHostEndpoint: new StringExpressionConverter(),
+            skillAppId: new StringExpressionConverter(),
+            skillEndpoint: new StringExpressionConverter(),
+            activity: new ActivityTemplateConverter(),
+            connectionName: new StringExpressionConverter(),
+        };
+    }
 
     // Used to cache DialogOptions for multi-turn calls across servers.
-    private _dialogOptionsStateKey: string = `${ this.constructor.name }.dialogOptionsData`;
+    private _dialogOptionsStateKey: string = `${this.constructor.name}.dialogOptionsData`;
 
     /**
      * Creates a new `BeginSkillDialog instance.
@@ -171,9 +173,9 @@ export class BeginSkill extends SkillDialog {
     protected onComputeId(): string {
         const appId = this.skillAppId ? this.skillAppId.toString() : '';
         if (this.activity instanceof ActivityTemplate) {
-            return `BeginSkill['${ appId }','${ StringUtils.ellipsis(this.activity.template.trim(), 30) }']`;
+            return `BeginSkill['${appId}','${StringUtils.ellipsis(this.activity.template.trim(), 30)}']`;
         }
-        return `BeginSkill['${ appId }','${ StringUtils.ellipsis(this.activity && this.activity.toString().trim(), 30) }']`;
+        return `BeginSkill['${appId}','${StringUtils.ellipsis(this.activity && this.activity.toString().trim(), 30)}']`;
     }
 
     private loadDialogOptions(context: TurnContext, instance: DialogInstance): void {

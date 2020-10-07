@@ -7,22 +7,118 @@
  */
 
 import { ComponentRegistration } from 'botbuilder-core';
-import { ResourceExplorer, ComponentDeclarativeTypes, DeclarativeType, CustomDeserializer } from 'botbuilder-dialogs-declarative';
+import {
+    ResourceExplorer,
+    ComponentDeclarativeTypes,
+    DeclarativeType,
+    CustomDeserializer,
+} from 'botbuilder-dialogs-declarative';
 import { AdaptiveDialog } from './adaptiveDialog';
-import { BeginDialog, BeginSkill, BreakLoop, CancelAllDialogs, CancelDialog, ContinueLoop, DeleteActivity, DeleteProperties, DeleteProperty, DynamicBeginDialog, EditActions, EditArray, EmitEvent, EndDialog, EndTurn, ForEach, ForEachPage, GetActivityMembers, GetConversationMembers, GotoAction, HttpRequest, IfCondition, LogAction, RepeatDialog, ReplaceDialog, SendActivity, SetProperties, SetProperty, SignOutUser, SwitchCondition, TelemetryTrackEventAction, TraceActivity, UpdateActivity } from './actions';
-import { OnActivity, OnAssignEntity, OnBeginDialog, OnCancelDialog, OnChooseEntity, OnChooseIntent, OnChooseProperty, OnCondition, OnConversationUpdateActivity, OnDialogEvent, OnEndOfActions, OnEndOfConversationActivity, OnError, OnEventActivity, OnHandoffActivity, OnIntent, OnInvokeActivity, OnMessageActivity, OnMessageDeleteActivity, OnMessageReactionActivity, OnMessageUpdateActivity, OnQnAMatch, OnRepromptDialog, OnTypingActivity, OnUnknownIntent } from './conditions';
-import { Ask, AttachmentInput, ChoiceInput, ConfirmInput, DateTimeInput, NumberInput, OAuthInput, TextInput } from './input';
-import { AgeEntityRecognizer, ConfirmationEntityRecognizer, CrossTrainedRecognizerSet, CurrencyEntityRecognizer, DateTimeEntityRecognizer, DimensionEntityRecognizer, EmailEntityRecognizer, GuidEntityRecognizer, HashtagEntityRecognizer, IpEntityRecognizer, MentionEntityRecognizer, MultiLanguageRecognizer, NumberEntityRecognizer, OrdinalEntityRecognizer, PercentageEntityRecognizer, PhoneNumberEntityRecognizer, RecognizerSet, RegexEntityRecognizer, RegexRecognizer, TemperatureEntityRecognizer, UrlEntityRecognizer } from './recognizers';
+import {
+    BeginDialog,
+    BeginSkill,
+    BreakLoop,
+    CancelAllDialogs,
+    CancelDialog,
+    ContinueLoop,
+    DeleteActivity,
+    DeleteProperties,
+    DeleteProperty,
+    DynamicBeginDialog,
+    EditActions,
+    EditArray,
+    EmitEvent,
+    EndDialog,
+    EndTurn,
+    ForEach,
+    ForEachPage,
+    GetActivityMembers,
+    GetConversationMembers,
+    GotoAction,
+    HttpRequest,
+    IfCondition,
+    LogAction,
+    RepeatDialog,
+    ReplaceDialog,
+    SendActivity,
+    SetProperties,
+    SetProperty,
+    SignOutUser,
+    SwitchCondition,
+    TelemetryTrackEventAction,
+    TraceActivity,
+    UpdateActivity,
+} from './actions';
+import {
+    OnActivity,
+    OnAssignEntity,
+    OnBeginDialog,
+    OnCancelDialog,
+    OnChooseEntity,
+    OnChooseIntent,
+    OnChooseProperty,
+    OnCondition,
+    OnConversationUpdateActivity,
+    OnDialogEvent,
+    OnEndOfActions,
+    OnEndOfConversationActivity,
+    OnError,
+    OnEventActivity,
+    OnHandoffActivity,
+    OnIntent,
+    OnInvokeActivity,
+    OnMessageActivity,
+    OnMessageDeleteActivity,
+    OnMessageReactionActivity,
+    OnMessageUpdateActivity,
+    OnQnAMatch,
+    OnRepromptDialog,
+    OnTypingActivity,
+    OnUnknownIntent,
+} from './conditions';
+import {
+    Ask,
+    AttachmentInput,
+    ChoiceInput,
+    ConfirmInput,
+    DateTimeInput,
+    NumberInput,
+    OAuthInput,
+    TextInput,
+} from './input';
+import {
+    AgeEntityRecognizer,
+    ConfirmationEntityRecognizer,
+    CrossTrainedRecognizerSet,
+    CurrencyEntityRecognizer,
+    DateTimeEntityRecognizer,
+    DimensionEntityRecognizer,
+    EmailEntityRecognizer,
+    GuidEntityRecognizer,
+    HashtagEntityRecognizer,
+    IpEntityRecognizer,
+    MentionEntityRecognizer,
+    MultiLanguageRecognizer,
+    NumberEntityRecognizer,
+    OrdinalEntityRecognizer,
+    PercentageEntityRecognizer,
+    PhoneNumberEntityRecognizer,
+    RecognizerSet,
+    RegexEntityRecognizer,
+    RegexRecognizer,
+    TemperatureEntityRecognizer,
+    UrlEntityRecognizer,
+} from './recognizers';
 import { LuisAdaptiveRecognizer } from './luis';
 import { QnAMakerRecognizer } from './qnaMaker';
 import { ResourceMultiLanguageGenerator, TemplateEngineLanguageGenerator } from './generators';
-import { ConditionalSelector, FirstSelector, RandomSelector, TrueSelector } from './selectors';
+import { ConditionalSelector, FirstSelector, MostSpecificSelector, RandomSelector, TrueSelector } from './selectors';
 import { CustomDialogLoader } from './customDialogLoader';
 
 type Type = {
-    $kind: string
-    new(): unknown;
-}
+    $kind: string;
+    new (): unknown;
+};
 
 export class AdaptiveComponentRegistration extends ComponentRegistration implements ComponentDeclarativeTypes {
     private _declarativeTypes: DeclarativeType[] = [];
@@ -132,17 +228,18 @@ export class AdaptiveComponentRegistration extends ComponentRegistration impleme
         // Generators
         this._addDeclarativeType(TemplateEngineLanguageGenerator);
         this._addDeclarativeType(ResourceMultiLanguageGenerator);
-        
+
         // Selectors
         this._addDeclarativeType(ConditionalSelector);
         this._addDeclarativeType(FirstSelector);
         this._addDeclarativeType(RandomSelector);
         this._addDeclarativeType(TrueSelector);
+        this._addDeclarativeType(MostSpecificSelector);
     }
 
     public getDeclarativeTypes(resourceExplorer: ResourceExplorer): DeclarativeType[] {
         const declarativeTypes: DeclarativeType[] = [...this._declarativeTypes];
-        resourceExplorer.getResources('.schema').forEach(schema => {
+        resourceExplorer.getResources('.schema').forEach((schema) => {
             const resourceId = schema.id.replace(/.schema$/, '');
             if (resourceId.endsWith('.dialog')) {
                 declarativeTypes.push({
@@ -155,12 +252,11 @@ export class AdaptiveComponentRegistration extends ComponentRegistration impleme
         return declarativeTypes;
     }
 
-
     private _addDeclarativeType(type: Type, loader?: CustomDeserializer): void {
         const declarativeType: DeclarativeType = {
             kind: type.$kind,
             type,
-            loader
+            loader,
         };
         this._declarativeTypes.push(declarativeType);
     }

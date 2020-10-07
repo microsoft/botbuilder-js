@@ -35,15 +35,17 @@ export class IfCondition<O extends object = {}> extends Dialog<O> implements Dia
      */
     public elseActions: Dialog[] = [];
 
-    public converters: Converters<IfCondition> = {
-        condition: new BoolExpressionConverter(),
-        disabled: new BoolExpressionConverter()
-    };
+    public get converters(): Converters<IfCondition> {
+        return {
+            condition: new BoolExpressionConverter(),
+            disabled: new BoolExpressionConverter(),
+        };
+    }
 
     protected get trueScope(): ActionScope {
         if (!this._trueScope) {
             this._trueScope = new ActionScope(this.actions);
-            this._trueScope.id = `True${ this.id }`;
+            this._trueScope.id = `True${this.id}`;
         }
         return this._trueScope;
     }
@@ -51,7 +53,7 @@ export class IfCondition<O extends object = {}> extends Dialog<O> implements Dia
     protected get falseScope(): ActionScope {
         if (!this._falseScope) {
             this._falseScope = new ActionScope(this.elseActions);
-            this._falseScope.id = `False${ this.id }`;
+            this._falseScope.id = `False${this.id}`;
         }
         return this._falseScope;
     }
@@ -86,6 +88,6 @@ export class IfCondition<O extends object = {}> extends Dialog<O> implements Dia
     protected onComputeId(): string {
         const label = this.condition ? this.condition.toString() : '';
         const idList = this.actions.map((action: Dialog): string => action.id);
-        return `If[${ label }|${ StringUtils.ellipsis(idList.join(','), 50) }]`;
+        return `If[${label}|${StringUtils.ellipsis(idList.join(','), 50)}]`;
     }
 }

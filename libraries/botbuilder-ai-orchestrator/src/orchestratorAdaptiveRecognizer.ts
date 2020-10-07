@@ -12,7 +12,7 @@ import { TextEncoder } from 'util';
 
 import { BoolExpression, BoolExpressionConverter, NumberExpression, NumberExpressionConverter, StringExpression, StringExpressionConverter } from 'adaptive-expressions';
 import { Activity, Entity, RecognizerResult } from 'botbuilder-core';
-import { DialogContext } from 'botbuilder-dialogs';
+import { Converters, DialogContext } from 'botbuilder-dialogs';
 import {
     createRecognizerResult,
     EntityRecognizer,
@@ -78,12 +78,14 @@ export class OrchestratorAdaptiveRecognizer extends Recognizer {
      */
     public readonly resultProperty: string = 'result';
 
-    public converters = {
-        modelPath: new StringExpressionConverter(),
-        snapshotPath: new StringExpressionConverter(),
-        disambiguationScoreThreshold: new NumberExpressionConverter(),
-        detectAmbiguousIntents: new BoolExpressionConverter(),
-    };
+    public get converters(): Converters<OrchestratorAdaptiveRecognizer> {
+        return {
+            modelPath: new StringExpressionConverter(),
+            snapshotPath: new StringExpressionConverter(),
+            disambiguationScoreThreshold: new NumberExpressionConverter(),
+            detectAmbiguousIntents: new BoolExpressionConverter(),
+        };
+    }
 
     private readonly unknownIntentFilterScore = 0.4;
     private static orchestrator: any = null;
@@ -275,10 +277,10 @@ export class OrchestratorAdaptiveRecognizer extends Recognizer {
             const fullModelPath = resolve(this._modelPath);
             const fullSnapshotPath = resolve(this._snapshotPath);
             if (!existsSync(fullModelPath)) {
-                throw new Error(`Model folder does not exist at ${ fullModelPath }.`);
+                throw new Error(`Model folder does not exist at ${fullModelPath}.`);
             }
             if (!existsSync(fullSnapshotPath)) {
-                throw new Error(`Snapshot file does not exist at ${ fullSnapshotPath }.`);
+                throw new Error(`Snapshot file does not exist at ${fullSnapshotPath}.`);
             }
 
             if (OrchestratorAdaptiveRecognizer.orchestrator == null) {

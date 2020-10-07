@@ -7,14 +7,29 @@
  */
 
 import { ComponentRegistration } from 'botbuilder-core';
-import { ComponentDeclarativeTypes, CustomDeserializer, DeclarativeType, ResourceExplorer } from 'botbuilder-dialogs-declarative';
-import { AssertReply, AssertReplyActivity, AssertReplyOneOf, UserActivity, UserConversationUpdate, UserDelay, UserSays, UserTyping } from './testActions';
+import {
+    ComponentDeclarativeTypes,
+    CustomDeserializer,
+    DeclarativeType,
+    ResourceExplorer,
+} from 'botbuilder-dialogs-declarative';
+import {
+    AssertReply,
+    AssertReplyActivity,
+    AssertReplyOneOf,
+    UserActivity,
+    UserConversationUpdate,
+    UserDelay,
+    UserSays,
+    UserTyping,
+} from './testActions';
 import { AssertCondition } from './actions';
 import { TestScript } from './testScript';
+import { UserTokenBasicMock } from './userTokenMocks';
 
 type Type = {
-    $kind: string
-    new(): unknown;
+    $kind: string;
+    new (): unknown;
 }
 
 export class AdaptiveTestComponentRegistration extends ComponentRegistration implements ComponentDeclarativeTypes {
@@ -32,6 +47,7 @@ export class AdaptiveTestComponentRegistration extends ComponentRegistration imp
         this._addDeclarativeType(UserSays);
         this._addDeclarativeType(UserTyping);
         this._addDeclarativeType(TestScript);
+        this._addDeclarativeType(UserTokenBasicMock);
     }
 
     public getDeclarativeTypes(_resourceExplorer: ResourceExplorer): DeclarativeType[] {
@@ -42,7 +58,7 @@ export class AdaptiveTestComponentRegistration extends ComponentRegistration imp
         const declarativeType: DeclarativeType = {
             kind: type.$kind,
             type,
-            loader
+            loader,
         };
         this._declarativeTypes.push(declarativeType);
     }

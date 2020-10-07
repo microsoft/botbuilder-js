@@ -15,10 +15,12 @@ export class CodeAction<O extends object = {}> extends Dialog<O> {
     private codeHandler: CodeActionHandler;
 
     public disabled?: BoolExpression;
-    
-    public converters: Converters<CodeAction> = {
-        disabled: new BoolExpressionConverter()
-    };
+
+    public get converters(): Converters<CodeAction> {
+        return {
+            disabled: new BoolExpressionConverter(),
+        };
+    }
 
     public constructor(codeHandler: CodeActionHandler) {
         super();
@@ -26,7 +28,7 @@ export class CodeAction<O extends object = {}> extends Dialog<O> {
     }
 
     protected onComputeId(): string {
-        return `CodeAction[${ StringUtils.ellipsis(this.codeHandler.toString(), 50) }]`;
+        return `CodeAction[${StringUtils.ellipsis(this.codeHandler.toString(), 50)}]`;
     }
 
     public async beginDialog(dc: DialogContext, options: O): Promise<DialogTurnResult> {

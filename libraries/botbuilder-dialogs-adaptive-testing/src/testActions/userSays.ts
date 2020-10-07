@@ -26,7 +26,9 @@ export class UserSays implements TestAction {
      */
     public user: string;
 
-    public converters: Converters<UserSays> = {};
+    public get converters(): Converters<UserSays> {
+        return {};
+    }
 
     /**
      * Execute the test.

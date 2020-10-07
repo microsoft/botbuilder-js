@@ -33,11 +33,13 @@ export class SignOutUser<O extends object = {}> extends Dialog<O> {
      */
     public disabled?: BoolExpression;
 
-    public converters: Converters<SignOutUser> = {
-        userId: new StringExpressionConverter(),
-        connectionName: new StringExpressionConverter(),
-        disabled: new BoolExpressionConverter()
-    };
+    public get converters(): Converters<SignOutUser> {
+        return {
+            userId: new StringExpressionConverter(),
+            connectionName: new StringExpressionConverter(),
+            disabled: new BoolExpressionConverter(),
+        };
+    }
 
     public async beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {
         if (this.disabled && this.disabled.getValue(dc.state)) {
@@ -60,6 +62,6 @@ export class SignOutUser<O extends object = {}> extends Dialog<O> {
     }
 
     protected onComputeId(): string {
-        return `SignOutUser[${ this.connectionName ? this.connectionName.toString() : '' }, ${ this.userId ? this.userId.toString() : '' }]`;
+        return `SignOutUser[${this.connectionName ? this.connectionName.toString() : ''}, ${this.userId ? this.userId.toString() : ''}]`;
     }
 }

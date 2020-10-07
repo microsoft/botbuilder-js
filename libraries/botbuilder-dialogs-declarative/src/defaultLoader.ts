@@ -16,7 +16,10 @@ export class DefaultLoader implements CustomDeserializer {
 
     public load(value: any, type: new () => {}): any {
         const instance = new type();
-        const converters: Record<string, Converter | ((resourceExplorer: ResourceExplorer) => Converter)> = Object.assign({}, instance['converters']);
+        const converters: Record<
+            string,
+            Converter | ((resourceExplorer: ResourceExplorer) => Converter)
+        > = Object.assign({}, instance['converters']);
         Object.getOwnPropertyNames(value).forEach((k: string) => {
             const config = value[k];
             let converter = converters[k];

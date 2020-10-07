@@ -33,11 +33,13 @@ export class GetActivityMembers<O extends object = {}> extends Dialog {
      */
     public disabled?: BoolExpression;
 
-    public converters: Converters<GetActivityMembers> = {
-        activityId: new StringExpressionConverter(),
-        property: new StringExpressionConverter(),
-        disabled: new BoolExpressionConverter()
-    };
+    public get converters(): Converters<GetActivityMembers> {
+        return {
+            activityId: new StringExpressionConverter(),
+            property: new StringExpressionConverter(),
+            disabled: new BoolExpressionConverter(),
+        };
+    }
 
     public async beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {
         if (this.disabled && this.disabled.getValue(dc.state)) {
@@ -61,6 +63,6 @@ export class GetActivityMembers<O extends object = {}> extends Dialog {
     }
 
     protected onComputeId(): string {
-        return `GetActivityMembers[${ this.activityId ? this.activityId.toString() : '' }, ${ this.property ? this.property.toString() : '' }]`;
+        return `GetActivityMembers[${this.activityId ? this.activityId.toString() : ''}, ${this.property ? this.property.toString() : ''}]`;
     }
 }

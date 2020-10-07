@@ -20,10 +20,12 @@ export class MultiLanguageRecognizer extends Recognizer {
 
     public recognizers: { [locale: string]: Recognizer };
 
-    public converters: Converters<MultiLanguageRecognizer> = {
-        languagePolicy: new LanguagePolicyConverter(),
-        recognizers: (resourceExplorer: ResourceExplorer) => new MultiLanguageRecognizerConverter(resourceExplorer)
-    };
+    public get converters(): Converters<MultiLanguageRecognizer> {
+        return {
+            languagePolicy: new LanguagePolicyConverter(),
+            recognizers: (resourceExplorer: ResourceExplorer) => new MultiLanguageRecognizerConverter(resourceExplorer),
+        };
+    }
 
     public async recognize(dialogContext: DialogContext, activity: Activity, telemetryProperties?: { [key: string]: string }, telemetryMetrics?: { [key: string]: number }): Promise<RecognizerResult> {
         const locale = activity.locale || '';

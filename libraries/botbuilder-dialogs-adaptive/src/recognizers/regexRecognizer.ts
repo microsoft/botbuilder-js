@@ -30,9 +30,11 @@ export class RegexRecognizer extends Recognizer {
      */
     public entities: EntityRecognizer[] = [];
 
-    public converters: Converters<RegexRecognizer> = {
-        intents: new IntentPatternsConverter()
-    };
+    public get converters(): Converters<RegexRecognizer> {
+        return {
+            intents: new IntentPatternsConverter(),
+        };
+    }
 
     public async recognize(dialogContext: DialogContext, activity: Activity, telemetryProperties?: { [key: string]: string }, telemetryMetrics?: { [key: string]: number }): Promise<RecognizerResult> {
         const text = activity.text || '';

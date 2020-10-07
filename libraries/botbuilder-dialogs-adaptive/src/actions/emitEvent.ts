@@ -40,12 +40,14 @@ export class EmitEvent<O extends object = {}> extends Dialog<O> {
      */
     public disabled?: BoolExpression;
 
-    public converters: Converters<EmitEvent> = {
-        eventName: new StringExpressionConverter(),
-        eventValue: new ValueExpressionConverter(),
-        bubbleEvent: new BoolExpressionConverter(),
-        disabled: new BoolExpressionConverter()
-    };
+    public get converters(): Converters<EmitEvent> {
+        return {
+            eventName: new StringExpressionConverter(),
+            eventValue: new ValueExpressionConverter(),
+            bubbleEvent: new BoolExpressionConverter(),
+            disabled: new BoolExpressionConverter(),
+        };
+    }
 
     public async beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {
         if (this.disabled && this.disabled.getValue(dc.state)) {
@@ -78,6 +80,6 @@ export class EmitEvent<O extends object = {}> extends Dialog<O> {
     }
 
     protected onComputeId(): string {
-        return `EmitEvent[${ this.eventName.toString() || '' }]`;
+        return `EmitEvent[${this.eventName.toString() || ''}]`;
     }
 }

@@ -24,8 +24,10 @@ export class RandomSelector extends TriggerSelector {
      * Gets or sets the expression parser to use.
      */
     public parser: ExpressionParserInterface = new ExpressionParser()
-    
-    public converters: Converters<RandomSelector> = {};
+
+    public get converters(): Converters<RandomSelector> {
+        return {};
+    }
 
     public initialize(conditionals: OnCondition[], evaluate: boolean): void {
         this._conditionals = conditionals;

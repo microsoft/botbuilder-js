@@ -28,9 +28,11 @@ export class CrossTrainedRecognizerSet extends Recognizer {
      */
     public recognizers: Recognizer[] = [];
 
-    public converters: Converters<CrossTrainedRecognizerSet> = {
-        recognizers: (resourceExplorer: ResourceExplorer) => new RecognizerListConverter(resourceExplorer)
-    };
+    public get converters(): Converters<CrossTrainedRecognizerSet> {
+        return {
+            recognizers: (resourceExplorer: ResourceExplorer) => new RecognizerListConverter(resourceExplorer),
+        };
+    }
 
     /**
      * To recognize intents and entities in a users utterance.

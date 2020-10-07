@@ -6,8 +6,9 @@
  * Licensed under the MIT License.
  */
 
-import { Converter, ResourceExplorer } from 'botbuilder-dialogs-declarative';
 import { TestAdapter } from 'botbuilder-core';
+import { Converter } from 'botbuilder-dialogs';
+import { ResourceExplorer } from 'botbuilder-dialogs-declarative';
 
 /**
  * Interface for mocking user token flows.
@@ -29,15 +30,21 @@ export class UserTokenMocksConverter implements Converter {
         this._resourceExplorer = resourceExplorer;
     }
 
-    public convert(value: string | UserTokenMock): UserTokenMock {
-        if (typeof value === 'string') {
-            const userTokenMock = this._resourceExplorer.loadType(`${ value }.dialog`) as UserTokenMock;
-            if (userTokenMock) {
-                return userTokenMock;
+    public convert(value: string[] | UserTokenMock[]): UserTokenMock[] {
+        const userTokenMocks: UserTokenMock[] = [];
+        value.forEach((item: string | UserTokenMock) => {
+            if (typeof item === 'string') {
+                const userTokenMock = this._resourceExplorer.loadType(`${item}.dialog`) as UserTokenMock;
+                if (userTokenMock) {
+                    userTokenMocks.push(userTokenMock);
+                } else {
+                    userTokenMocks.push(this._resourceExplorer.loadType(item) as UserTokenMock);
+                }
+            } else {
+                const kind = item['$kind'];
+                userTokenMocks.push(this._resourceExplorer.buildType(kind, item) as UserTokenMock);
             }
-            return this._resourceExplorer.loadType(value) as UserTokenMock;
-        } else {
-            return this._resourceExplorer.buildType(value) as UserTokenMock;
-        }
+        });
+        return userTokenMocks;
     }
 }

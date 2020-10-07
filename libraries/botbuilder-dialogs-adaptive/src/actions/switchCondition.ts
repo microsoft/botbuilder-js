@@ -48,11 +48,13 @@ export class SwitchCondition<O extends object = {}> extends Dialog<O> implements
      */
     public disabled?: BoolExpression;
 
-    public converters: Converters<SwitchCondition> = {
-        condition: new ExpressionConverter(),
-        cases: new CasesConverter(),
-        disabled: new BoolExpressionConverter(),
-    };
+    public get converters(): Converters<SwitchCondition> {
+        return {
+            condition: new ExpressionConverter(),
+            cases: new CasesConverter(),
+            disabled: new BoolExpressionConverter(),
+        };
+    }
 
     private _caseExpresssions: Map<string, Expression>;
 
@@ -128,7 +130,7 @@ export class SwitchCondition<O extends object = {}> extends Dialog<O> implements
             const caseCondition = this._caseExpresssions.get(caseScope.value) as Expression;
             const { value, error } = caseCondition.tryEvaluate(dc.state);
             if (error) {
-                throw new Error(`Expression evaluation resulted in an error. Expression: ${ caseCondition.toString() }. Error: ${ error }`);
+                throw new Error(`Expression evaluation resulted in an error. Expression: ${caseCondition.toString()}. Error: ${error}`);
             }
 
             if (!!value) {
@@ -147,6 +149,6 @@ export class SwitchCondition<O extends object = {}> extends Dialog<O> implements
     }
 
     protected onComputeId(): string {
-        return `SwitchCondition[${ this.condition.toString() }]`;
+        return `SwitchCondition[${this.condition.toString()}]`;
     }
 }

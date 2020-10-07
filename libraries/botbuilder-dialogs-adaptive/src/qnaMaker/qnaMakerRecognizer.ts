@@ -76,18 +76,20 @@ export class QnAMakerRecognizer extends Recognizer {
      */
     public qnaId: IntExpression = new IntExpression(0);
 
-    public converters: Converters<QnAMakerRecognizer> = {
-        knowledgeBaseId: new StringExpressionConverter(),
-        hostname: new StringExpressionConverter(),
-        endpointKey: new StringExpressionConverter(),
-        top: new IntExpressionConverter(),
-        threshold: new NumberExpressionConverter(),
-        rankerType: new StringExpressionConverter(),
-        includeDialogNameInMetadata: new BoolExpressionConverter(),
-        metadata: new ArrayExpressionConverter(),
-        context: new ObjectExpressionConverter(),
-        qnaId: new IntExpressionConverter()
-    };
+    public get converters(): Converters<QnAMakerRecognizer> {
+        return {
+            knowledgeBaseId: new StringExpressionConverter(),
+            hostname: new StringExpressionConverter(),
+            endpointKey: new StringExpressionConverter(),
+            top: new IntExpressionConverter(),
+            threshold: new NumberExpressionConverter(),
+            rankerType: new StringExpressionConverter(),
+            includeDialogNameInMetadata: new BoolExpressionConverter(),
+            metadata: new ArrayExpressionConverter(),
+            context: new ObjectExpressionConverter(),
+            qnaId: new IntExpressionConverter(),
+        };
+    }
 
     /**
      * Initializes a new instance of `QnAMakerRecognizer`.

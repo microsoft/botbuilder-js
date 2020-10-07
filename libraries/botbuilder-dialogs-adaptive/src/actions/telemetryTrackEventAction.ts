@@ -59,11 +59,13 @@ export class TelemetryTrackEventAction<O extends object = {}> extends Dialog {
      */
     public properties: { [name: string]: StringExpression };
 
-    public converters: Converters<TelemetryTrackEventAction> = {
-        eventName: new StringExpressionConverter(),
-        properties: new TelemetryPropertiesConverter(),
-        disabled: new BoolExpressionConverter()
-    };
+    public get converters(): Converters<TelemetryTrackEventAction> {
+        return {
+            eventName: new StringExpressionConverter(),
+            properties: new TelemetryPropertiesConverter(),
+            disabled: new BoolExpressionConverter(),
+        };
+    }
 
     public async beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {
         if (this.disabled && this.disabled.getValue(dc.state)) {
@@ -85,6 +87,6 @@ export class TelemetryTrackEventAction<O extends object = {}> extends Dialog {
     }
 
     protected onComputeId(): string {
-        return `TelemetryTrackEventAction[${ this.eventName && this.eventName.toString() }]`;
+        return `TelemetryTrackEventAction[${this.eventName && this.eventName.toString()}]`;
     }
 }

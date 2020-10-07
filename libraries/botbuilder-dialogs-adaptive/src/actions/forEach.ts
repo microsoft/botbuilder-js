@@ -43,12 +43,14 @@ export class ForEach<O extends object = {}> extends ActionScope<O> {
      */
     public disabled?: BoolExpression;
 
-    public converters: Converters<ForEach> = {
-        itemsProperty: new StringExpressionConverter(),
-        index: new StringExpressionConverter(),
-        value: new StringExpressionConverter(),
-        disabled: new BoolExpressionConverter()
-    };
+    public get converters(): Converters<ForEach> {
+        return {
+            itemsProperty: new StringExpressionConverter(),
+            index: new StringExpressionConverter(),
+            value: new StringExpressionConverter(),
+            disabled: new BoolExpressionConverter(),
+        };
+    }
 
     public getDependencies(): Dialog[] {
         return this.actions;
@@ -89,7 +91,7 @@ export class ForEach<O extends object = {}> extends ActionScope<O> {
     }
 
     protected onComputeId(): string {
-        return `ForEach[${ this.itemsProperty.toString() }]`;
+        return `ForEach[${this.itemsProperty.toString()}]`;
     }
 
 }

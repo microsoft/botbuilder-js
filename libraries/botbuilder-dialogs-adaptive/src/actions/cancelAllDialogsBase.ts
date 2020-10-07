@@ -48,12 +48,14 @@ export class CancelAllDialogsBase<O extends object = {}> extends Dialog<O> {
      */
     public cancelAll: boolean;
 
-    public converters: Converters<CancelAllDialogsBase> = {
-        eventName: new StringExpressionConverter(),
-        eventValue: new ValueExpressionConverter(),
-        disabled: new BoolExpressionConverter(),
-        activityProcessed: new BoolExpressionConverter()
-    };
+    public get converters(): Converters<CancelAllDialogsBase> {
+        return {
+            eventName: new StringExpressionConverter(),
+            eventValue: new ValueExpressionConverter(),
+            disabled: new BoolExpressionConverter(),
+            activityProcessed: new BoolExpressionConverter(),
+        };
+    }
 
     public async beginDialog(dc: DialogContext, options: O): Promise<DialogTurnResult> {
         if (this.disabled && this.disabled.getValue(dc.state)) {
@@ -83,6 +85,6 @@ export class CancelAllDialogsBase<O extends object = {}> extends Dialog<O> {
     }
 
     protected onComputeId(): string {
-        return `${ this.constructor.name }[${ this.eventName ? this.eventName.toString() : '' }]`;
+        return `${this.constructor.name}[${this.eventName ? this.eventName.toString() : ''}]`;
     }
 }

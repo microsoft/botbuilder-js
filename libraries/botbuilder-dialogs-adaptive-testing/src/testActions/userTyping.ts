@@ -21,7 +21,9 @@ export class UserTyping implements TestAction {
      */
     public user: string;
 
-    public converters: Converters<UserTyping> = {};
+    public get converters(): Converters<UserTyping> {
+        return {};
+    }
 
     /**
      * Execute the test.

@@ -24,8 +24,10 @@ export class UserDelay implements TestAction {
      * The timespan in milliseconds to delay.
      */
     public timespan: number;
-    
-    public converters: Converters<UserDelay> = {};
+
+    public get converters(): Converters<UserDelay> {
+        return {};
+    }
 
     /**
      * Execute the test.

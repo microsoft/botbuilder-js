@@ -30,11 +30,13 @@ export class DeleteProperty<O extends object = {}> extends Dialog<O> {
      * An optional expression which if is true will disable this action.
      */
     public disabled?: BoolExpression;
-    
-    public converters: Converters<DeleteProperty> = {
-        property: new StringExpressionConverter(),
-        disabled: new BoolExpressionConverter()
-    };
+
+    public get converters(): Converters<DeleteProperty> {
+        return {
+            property: new StringExpressionConverter(),
+            disabled: new BoolExpressionConverter(),
+        };
+    }
 
     public async beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {
         if (this.disabled && this.disabled.getValue(dc.state)) {
@@ -46,6 +48,6 @@ export class DeleteProperty<O extends object = {}> extends Dialog<O> {
     }
 
     protected onComputeId(): string {
-        return `DeleteProperty[${ this.property.toString() }]`;
+        return `DeleteProperty[${this.property.toString()}]`;
     }
 }

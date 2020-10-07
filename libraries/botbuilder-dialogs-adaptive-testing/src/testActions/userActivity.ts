@@ -30,8 +30,10 @@ export class UserActivity implements TestAction {
      * If user is set then the channalAccount.id and channelAccount.name will be from user.
      */
     public user: string;
-    
-    public converters: Converters<UserActivity> = {};
+
+    public get converters(): Converters<UserActivity> {
+        return {};
+    }
 
     /**
      * Execute the test.

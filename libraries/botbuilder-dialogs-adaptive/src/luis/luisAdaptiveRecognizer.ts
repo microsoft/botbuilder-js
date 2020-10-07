@@ -53,13 +53,15 @@ export class LuisAdaptiveRecognizer extends Recognizer {
      */
     public predictionOptions: LuisPredictionOptions;
 
-    public converters: Converters<LuisAdaptiveRecognizer> = {
-        applicationId: new StringExpressionConverter(),
-        dynamicLists: new ArrayExpressionConverter(),
-        endpoint: new StringExpressionConverter(),
-        endpointKey: new StringExpressionConverter(),
-        logPersonalInformation: new BoolExpressionConverter()
-    };
+    public get converters(): Converters<LuisAdaptiveRecognizer> {
+        return {
+            applicationId: new StringExpressionConverter(),
+            dynamicLists: new ArrayExpressionConverter(),
+            endpoint: new StringExpressionConverter(),
+            endpointKey: new StringExpressionConverter(),
+            logPersonalInformation: new BoolExpressionConverter()
+        };
+    }
 
     public async recognize(dialogContext: DialogContext, activity: Activity, telemetryProperties?: { [key: string]: string }, telemetryMetrics?: { [key: string]: number }) {
         // Validate passed in activity matches turn activity 

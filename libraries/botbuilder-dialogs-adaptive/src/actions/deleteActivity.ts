@@ -27,10 +27,12 @@ export class DeleteActivity<O extends object = {}> extends Dialog<O> {
      */
     public disabled?: BoolExpression;
 
-    public converters: Converters<DeleteActivity> = {
-        activityId: new StringExpressionConverter(),
-        disabled: new BoolExpressionConverter()
-    };
+    public get converters(): Converters<DeleteActivity> {
+        return {
+            activityId: new StringExpressionConverter(),
+            disabled: new BoolExpressionConverter(),
+        };
+    }
 
     public async beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {
         if (this.disabled && this.disabled.getValue(dc.state)) {
@@ -44,6 +46,6 @@ export class DeleteActivity<O extends object = {}> extends Dialog<O> {
     }
 
     protected onComputeId(): string {
-        return `DeleteActivity[${ this.activityId.toString() }]`;
+        return `DeleteActivity[${this.activityId.toString()}]`;
     }
 }

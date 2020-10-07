@@ -17,9 +17,11 @@ export class RecognizerSet extends Recognizer {
 
     public recognizers: Recognizer[] = [];
 
-    public converters: Converters<RecognizerSet> = {
-        recognizers: (resourceExplorer: ResourceExplorer) => new RecognizerListConverter(resourceExplorer)
-    };
+    public get converters(): Converters<RecognizerSet> {
+        return {
+            recognizers: (resourceExplorer: ResourceExplorer) => new RecognizerListConverter(resourceExplorer),
+        };
+    }
 
     public async recognize(dialogContext: DialogContext, activity: Activity, telemetryProperties?: { [key: string]: string }, telemetryMetrics?: { [key: string]: number }): Promise<RecognizerResult> {
         const recognizerResult: RecognizerResult = {

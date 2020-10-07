@@ -28,10 +28,12 @@ export class GotoAction<O extends object = {}> extends Dialog<O> {
      */
     public disabled?: BoolExpression;
 
-    public converters: Converters<GotoAction> = {
-        actionId: new StringExpressionConverter(),
-        disabled: new BoolExpressionConverter()
-    };
+    public get converters(): Converters<GotoAction> {
+        return {
+            actionId: new StringExpressionConverter(),
+            disabled: new BoolExpressionConverter(),
+        };
+    }
 
     public async beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {
         if (this.disabled && this.disabled.getValue(dc.state)) {
@@ -51,6 +53,6 @@ export class GotoAction<O extends object = {}> extends Dialog<O> {
     }
 
     protected onComputeId(): string {
-        return `GotoAction[${ this.actionId.toString() }]`;
+        return `GotoAction[${this.actionId.toString()}]`;
     }
 }

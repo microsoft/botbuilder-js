@@ -25,8 +25,10 @@ export class UserConversationUpdate implements TestAction {
      * The members removed names.
      */
     public membersRemoved: string[];
-    
-    public converters: Converters<UserConversationUpdate> = {};
+
+    public get converters(): Converters<UserConversationUpdate> {
+        return {};
+    }
 
     /**
      * Execute the test.

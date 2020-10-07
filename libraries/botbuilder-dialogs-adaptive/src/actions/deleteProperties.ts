@@ -35,10 +35,12 @@ export class DeleteProperties<O extends object = {}> extends Dialog<O> {
      */
     public disabled?: BoolExpression;
 
-    public converters: Converters<DeleteProperties> = {
-        properties: new PropertiesConverter(),
-        disabled: new BoolExpressionConverter()
-    };
+    public get converters(): Converters<DeleteProperties> {
+        return {
+            properties: new PropertiesConverter(),
+            disabled: new BoolExpressionConverter(),
+        };
+    }
 
     public async beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {
         if (this.disabled && this.disabled.getValue(dc.state)) {
@@ -55,6 +57,6 @@ export class DeleteProperties<O extends object = {}> extends Dialog<O> {
     }
 
     protected onComputeId(): string {
-        return `DeleteProperties[${ this.properties.map((property): string => property.toString()).join(',') }]`;
+        return `DeleteProperties[${this.properties.map((property): string => property.toString()).join(',')}]`;
     }
 }

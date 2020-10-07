@@ -165,6 +165,22 @@ export class ResourceExplorer {
     }
 
     /**
+     * Build type for given $kind.
+     * @param kind $kind.
+     * @param obj Source object.
+     */
+    public buildType<T extends object>(kind: string, config: object): T {
+        this.registerComponentTypes();
+
+        const type = this._kindToType.get(kind);
+        if (!type) {
+            throw new Error(`Type ${kind} not registered.`);
+        }
+        const loader = this._kindDeserializer.get(kind);
+        return loader.load(config, type) as T;
+    }
+
+    /**
      * Load types from resource or resource id.
      * @param resource Resource or resource id to be parsed as a type.
      */
@@ -226,7 +242,7 @@ export class ResourceExplorer {
         this._kindToType.set(kind, type);
         this._kindDeserializer.set(kind, loader || new DefaultLoader(this));
     }
-    
+
     private registerComponentTypes(): void {
         if (this._typesLoaded) {
             return;

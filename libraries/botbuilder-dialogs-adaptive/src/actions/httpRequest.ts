@@ -170,15 +170,17 @@ export class HttpRequest<O extends object = {}> extends Dialog<O> {
      */
     public disabled?: BoolExpression;
 
-    public converters: Converters<HttpRequest> = {
-        contentType: new StringExpressionConverter(),
-        url: new StringExpressionConverter(),
-        headers: new HttpHeadersConverter(),
-        body: new ValueExpressionConverter(),
-        responseType: new EnumExpressionConverter(ResponsesTypes),
-        resultProperty: new StringExpressionConverter(),
-        disabled: new BoolExpressionConverter()
-    };
+    public get converters(): Converters<HttpRequest> {
+        return {
+            contentType: new StringExpressionConverter(),
+            url: new StringExpressionConverter(),
+            headers: new HttpHeadersConverter(),
+            body: new ValueExpressionConverter(),
+            responseType: new EnumExpressionConverter(ResponsesTypes),
+            resultProperty: new StringExpressionConverter(),
+            disabled: new BoolExpressionConverter(),
+        };
+    }
 
     public async beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {
         if (this.disabled && this.disabled.getValue(dc.state)) {
@@ -284,6 +286,6 @@ export class HttpRequest<O extends object = {}> extends Dialog<O> {
     }
 
     protected onComputeId(): string {
-        return `HttpRequest[${ this.method } ${ this.url }]`;
+        return `HttpRequest[${this.method} ${this.url}]`;
     }
 }

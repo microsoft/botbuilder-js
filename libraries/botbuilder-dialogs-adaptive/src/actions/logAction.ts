@@ -48,19 +48,21 @@ export class LogAction<O extends object = {}> extends Dialog<O> {
      */
     public disabled?: BoolExpression;
 
-    public converters: Converters<LogAction> = {
-        text: new TextTemplateConverter(),
-        traceActivity: new BoolExpressionConverter(),
-        label: new StringExpressionConverter(),
-        disabled: new BoolExpressionConverter()
-    };
+    public get converters(): Converters<LogAction> {
+        return {
+            text: new TextTemplateConverter(),
+            traceActivity: new BoolExpressionConverter(),
+            label: new StringExpressionConverter(),
+            disabled: new BoolExpressionConverter(),
+        };
+    }
 
     public async beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {
         if (this.disabled && this.disabled.getValue(dc.state)) {
             return await dc.endDialog();
         }
 
-        if (!this.text) { throw new Error(`${ this.id }: no 'message' specified.`) }
+        if (!this.text) { throw new Error(`${this.id}: no 'message' specified.`) }
 
         const msg = await this.text.bind(dc, dc.state);
         this.telemetryClient.trackEvent({
@@ -96,6 +98,6 @@ export class LogAction<O extends object = {}> extends Dialog<O> {
     }
 
     protected onComputeId(): string {
-        return `LogAction[${ this.text }]`;
+        return `LogAction[${this.text}]`;
     }
 }

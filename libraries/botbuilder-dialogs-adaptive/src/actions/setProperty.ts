@@ -35,19 +35,21 @@ export class SetProperty<O extends object = {}> extends Dialog<O> {
      */
     public disabled?: BoolExpression;
 
-    public converters: Converters<SetProperty> = {
-        property: new StringExpressionConverter(),
-        value: new ValueExpressionConverter(),
-        disabled: new BoolExpressionConverter()
-    };
+    public get converters(): Converters<SetProperty> {
+        return {
+            property: new StringExpressionConverter(),
+            value: new ValueExpressionConverter(),
+            disabled: new BoolExpressionConverter(),
+        };
+    }
 
     public async beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {
         if (this.disabled && this.disabled.getValue(dc.state)) {
             return await dc.endDialog();
         }
 
-        if (!this.property) { throw new Error(`${ this.id }: no 'property' specified.`); }
-        if (!this.value) { throw new Error(`${ this.id }: no 'value' expression specified.`); }
+        if (!this.property) { throw new Error(`${this.id}: no 'property' specified.`); }
+        if (!this.value) { throw new Error(`${this.id}: no 'value' expression specified.`); }
 
         // Evaluate expression and save value
         const property = this.property.getValue(dc.state);
@@ -63,7 +65,7 @@ export class SetProperty<O extends object = {}> extends Dialog<O> {
     }
 
     protected onComputeId(): string {
-        return `SetProperty[${ this.value.toString() }]`;
+        return `SetProperty[${this.value.toString()}]`;
     }
 
 }

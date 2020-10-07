@@ -47,13 +47,15 @@ export class TraceActivity<O extends object = {}> extends Dialog<O> {
      */
     public disabled?: BoolExpression;
 
-    public converters: Converters<TraceActivity> = {
-        name: new StringExpressionConverter(),
-        valueType: new StringExpressionConverter(),
-        value: new ValueExpressionConverter(),
-        label: new StringExpressionConverter(),
-        disabled: new BoolExpressionConverter()
-    };
+    public get converters(): Converters<TraceActivity> {
+        return {
+            name: new StringExpressionConverter(),
+            valueType: new StringExpressionConverter(),
+            value: new ValueExpressionConverter(),
+            label: new StringExpressionConverter(),
+            disabled: new BoolExpressionConverter(),
+        };
+    }
 
     public async beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {
         if (this.disabled && this.disabled.getValue(dc.state)) {
@@ -85,6 +87,6 @@ export class TraceActivity<O extends object = {}> extends Dialog<O> {
     }
 
     protected onComputeId(): string {
-        return `TraceActivity[${ this.name ? this.name.toString() : '' }]`;
+        return `TraceActivity[${this.name ? this.name.toString() : ''}]`;
     }
 }

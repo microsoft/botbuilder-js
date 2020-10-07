@@ -32,7 +32,9 @@ export class AssertReplyActivity implements TestAction {
      */
     public assertions: string[];
 
-    public converters: Converters<AssertReplyActivity> = {};
+    public get converters(): Converters<AssertReplyActivity> {
+        return {};
+    }
 
     /**
      * Gets the text to assert for an activity.

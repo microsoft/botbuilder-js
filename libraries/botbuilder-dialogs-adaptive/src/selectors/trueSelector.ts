@@ -25,7 +25,9 @@ export class TrueSelector extends TriggerSelector {
      */
     public parser: ExpressionParserInterface = new ExpressionParser()
 
-    public converters: Converters<TrueSelector> = {};
+    public get converters(): Converters<TrueSelector> {
+        return {};
+    }
 
     public initialize(conditionals: OnCondition[], evaluate: boolean): void {
         this._conditionals = conditionals;

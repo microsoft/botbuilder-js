@@ -32,10 +32,12 @@ export class EndDialog<O extends object = {}> extends Dialog<O> {
      */
     public disabled?: BoolExpression;
 
-    public converters: Converters<EndDialog> = {
-        value: new ValueExpressionConverter(),
-        disabled: new BoolExpressionConverter()
-    };
+    public get converters(): Converters<EndDialog> {
+        return {
+            value: new ValueExpressionConverter(),
+            disabled: new BoolExpressionConverter(),
+        };
+    }
 
     public async beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {
         if (this.disabled && this.disabled.getValue(dc.state)) {
@@ -66,6 +68,6 @@ export class EndDialog<O extends object = {}> extends Dialog<O> {
     }
 
     protected onComputeId(): string {
-        return `EndDialog[${ this.value ? this.value.toString() : '' }]`;
+        return `EndDialog[${this.value ? this.value.toString() : ''}]`;
     }
 }

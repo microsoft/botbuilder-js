@@ -17,9 +17,11 @@ export class EndTurn<O extends object = {}> extends Dialog<O> {
      */
     public disabled?: BoolExpression;
 
-    public converters: Converters<EndTurn> = {
-        disabled: new BoolExpressionConverter()
-    };
+    public get converters(): Converters<EndTurn> {
+        return {
+            disabled: new BoolExpressionConverter(),
+        };
+    }
 
     public async beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {
         if (this.disabled && this.disabled.getValue(dc.state)) {

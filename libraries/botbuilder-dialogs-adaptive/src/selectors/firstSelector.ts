@@ -24,8 +24,10 @@ export class FirstSelector extends TriggerSelector {
      * Gets or sets the expression parser to use.
      */
     public parser: ExpressionParserInterface = new ExpressionParser()
-    
-    public converters: Converters<FirstSelector> = {};
+
+    public get converters(): Converters<FirstSelector> {
+        return {};
+    }
 
     public initialize(conditionals: OnCondition[], evaluate: boolean) {
         this._conditionals = conditionals;

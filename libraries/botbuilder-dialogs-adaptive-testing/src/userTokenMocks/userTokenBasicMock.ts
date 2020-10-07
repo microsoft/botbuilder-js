@@ -13,6 +13,8 @@ import { UserTokenMock } from './userTokenMock';
  * Mock UserToken with user id and token.
  */
 export class UserTokenBasicMock implements UserTokenMock {
+    public static $kind = 'Microsoft.Test.UserTokenBasicMock';
+
     /**
      * Gets or sets the connection name.
      */
@@ -37,7 +39,7 @@ export class UserTokenBasicMock implements UserTokenMock {
      * Gets or set the optional magic code to associate with this token.
      */
     public magicCode: string;
-    
+
     /**
      * Method to setup this mock for an adapter.
      * @param adapter The test adapter to use for mocking.
