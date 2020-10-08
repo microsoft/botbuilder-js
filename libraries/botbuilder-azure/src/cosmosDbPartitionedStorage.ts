@@ -43,23 +43,23 @@ export interface CosmosDbPartitionedStorageOptions {
     containerThroughput?: number;
     /**
      * The suffix to be added to every key. See cosmosDbKeyEscape.escapeKey
-     * 
+     *
      * Note: compatibilityMode must be set to 'false' to use a KeySuffix.
      * When KeySuffix is used, keys will NOT be truncated but an exception will
      * be thrown if the key length is longer than allowed by CosmosDb.
-     * 
+     *
      * The keySuffix must contain only valid ComosDb key characters.
      * (e.g. not: '\\', '?', '/', '#', '*')
      */
     keySuffix?: string;
     /**
-    * Early version of CosmosDb had a max key length of 255.  Keys longer than
-    * this were truncated in cosmosDbKeyEscape.escapeKey.  This remains the default
-    * behavior of cosmosDbPartitionedStorage, but can be overridden by setting
-    * compatibilityMode to false. 
-    * 
-    * compatibilityMode cannot be true if keySuffix is used.
-    */
+     * Early version of CosmosDb had a max key length of 255.  Keys longer than
+     * this were truncated in cosmosDbKeyEscape.escapeKey.  This remains the default
+     * behavior of cosmosDbPartitionedStorage, but can be overridden by setting
+     * compatibilityMode to false.
+     *
+     * compatibilityMode cannot be true if keySuffix is used.
+     */
     compatibilityMode?: boolean;
 }
 
@@ -77,20 +77,20 @@ class DocumentStoreItem {
     /**
      * Gets or sets the sanitized Id/Key used as PrimaryKey.
      */
-    public id: string
+    public id: string;
     /**
      * Gets or sets the un-sanitized Id/Key.
-     * 
+     *
      */
-    public realId: string
+    public realId: string;
     /**
      * Gets or sets the persisted object.
      */
-    public document: object
+    public document: object;
     /**
      * Gets or sets the ETag information for handling optimistic concurrency updates.
      */
-    public eTag: string
+    public eTag: string;
     /**
      * Gets the PartitionKey value for the document.
      */
@@ -100,7 +100,7 @@ class DocumentStoreItem {
 
     // We can't make the partitionKey optional AND have it auto-get this.realId, so we'll use a constructor
     public constructor(storeItem: { id: string; realId: string; document: object; eTag?: string }) {
-        for (let prop in storeItem) {
+        for (const prop in storeItem) {
             this[prop] = storeItem[prop];
         }
     }
@@ -113,7 +113,7 @@ export class CosmosDbPartitionedStorage implements Storage {
     private container: Container;
     private readonly cosmosDbStorageOptions: CosmosDbPartitionedStorageOptions;
     private client: CosmosClient;
-    private compatabilityModePartitionKey: boolean = false;
+    private compatabilityModePartitionKey = false;
 
     /**
      * Initializes a new instance of the <see cref="CosmosDbPartitionedStorage"/> class.
@@ -122,14 +122,24 @@ export class CosmosDbPartitionedStorage implements Storage {
      * @param cosmosDbStorageOptions Cosmos DB partitioned storage configuration options.
      */
     public constructor(cosmosDbStorageOptions: CosmosDbPartitionedStorageOptions) {
-        if (!cosmosDbStorageOptions) { throw new ReferenceError('CosmosDbPartitionedStorageOptions is required.'); }
-        if (!cosmosDbStorageOptions.cosmosDbEndpoint) { throw new ReferenceError('cosmosDbEndpoint for CosmosDB is required.'); }
-        if (!cosmosDbStorageOptions.authKey) { throw new ReferenceError('authKey for CosmosDB is required.'); }
-        if (!cosmosDbStorageOptions.databaseId) { throw new ReferenceError('databaseId is for CosmosDB required.'); }
-        if (!cosmosDbStorageOptions.containerId) { throw new ReferenceError('containerId for CosmosDB is required.'); }
+        if (!cosmosDbStorageOptions) {
+            throw new ReferenceError('CosmosDbPartitionedStorageOptions is required.');
+        }
+        if (!cosmosDbStorageOptions.cosmosDbEndpoint) {
+            throw new ReferenceError('cosmosDbEndpoint for CosmosDB is required.');
+        }
+        if (!cosmosDbStorageOptions.authKey) {
+            throw new ReferenceError('authKey for CosmosDB is required.');
+        }
+        if (!cosmosDbStorageOptions.databaseId) {
+            throw new ReferenceError('databaseId is for CosmosDB required.');
+        }
+        if (!cosmosDbStorageOptions.containerId) {
+            throw new ReferenceError('containerId for CosmosDB is required.');
+        }
         // In order to support collections previously restricted to max key length of 255, we default
         // compatabilityMode to 'true'.  No compatibilityMode is opt-in only.
-        if (typeof cosmosDbStorageOptions.compatibilityMode === "undefined") {
+        if (typeof cosmosDbStorageOptions.compatibilityMode === 'undefined') {
             cosmosDbStorageOptions.compatibilityMode = true;
         }
         if (cosmosDbStorageOptions.keySuffix) {
@@ -140,7 +150,9 @@ export class CosmosDbPartitionedStorage implements Storage {
             // If the keySuffix has invalid characters, the escaped key will not match
             const suffixEscaped = CosmosDbKeyEscape.escapeKey(cosmosDbStorageOptions.keySuffix);
             if (cosmosDbStorageOptions.keySuffix !== suffixEscaped) {
-                throw new ReferenceError(`Cannot use invalid Row Key characters: ${cosmosDbStorageOptions.keySuffix} in keySuffix`);
+                throw new ReferenceError(
+                    `Cannot use invalid Row Key characters: ${cosmosDbStorageOptions.keySuffix} in keySuffix`
+                );
             }
         }
 
@@ -153,37 +165,54 @@ export class CosmosDbPartitionedStorage implements Storage {
      * @returns The read items.
      */
     public async read(keys: string[]): Promise<StoreItems> {
-        if (!keys) { throw new ReferenceError(`Keys are required when reading.`); }
-        else if (keys.length === 0) { return {}; }
+        if (!keys) {
+            throw new ReferenceError(`Keys are required when reading.`);
+        } else if (keys.length === 0) {
+            return {};
+        }
 
         await this.initialize();
 
         const storeItems: StoreItems = {};
 
-        await Promise.all(keys.map(async (k: string): Promise<void> => {
-            try {
-                const escapedKey = CosmosDbKeyEscape.escapeKey(k, this.cosmosDbStorageOptions.keySuffix, this.cosmosDbStorageOptions.compatibilityMode);
+        await Promise.all(
+            keys.map(
+                async (k: string): Promise<void> => {
+                    try {
+                        const escapedKey = CosmosDbKeyEscape.escapeKey(
+                            k,
+                            this.cosmosDbStorageOptions.keySuffix,
+                            this.cosmosDbStorageOptions.compatibilityMode
+                        );
 
-                const readItemResponse = await this.container.item(escapedKey, this.getPartitionKey(escapedKey)).read<DocumentStoreItem>();
-                const documentStoreItem = readItemResponse.resource;
-                if (documentStoreItem) {
-                    storeItems[documentStoreItem.realId] = documentStoreItem.document;
-                    storeItems[documentStoreItem.realId].eTag = documentStoreItem._etag;
+                        const readItemResponse = await this.container
+                            .item(escapedKey, this.getPartitionKey(escapedKey))
+                            .read<DocumentStoreItem>();
+                        const documentStoreItem = readItemResponse.resource;
+                        if (documentStoreItem) {
+                            storeItems[documentStoreItem.realId] = documentStoreItem.document;
+                            storeItems[documentStoreItem.realId].eTag = documentStoreItem._etag;
+                        }
+                    } catch (err) {
+                        // When an item is not found a CosmosException is thrown, but we want to
+                        // return an empty collection so in this instance we catch and do not rethrow.
+                        // Throw for any other exception.
+                        if (err.code === 404) {
+                        }
+                        // Throw unique error for 400s
+                        else if (err.code === 400) {
+                            this.throwInformativeError(
+                                `Error reading from container. You might be attempting to read from a non-partitioned 
+                    container or a container that does not use '/id' as the partitionKeyPath`,
+                                err
+                            );
+                        } else {
+                            this.throwInformativeError('Error reading from container', err);
+                        }
+                    }
                 }
-            } catch (err) {
-                // When an item is not found a CosmosException is thrown, but we want to
-                // return an empty collection so in this instance we catch and do not rethrow.
-                // Throw for any other exception.
-                if (err.code === 404) { }
-                // Throw unique error for 400s
-                else if (err.code === 400) {
-                    this.throwInformativeError(`Error reading from container. You might be attempting to read from a non-partitioned 
-                    container or a container that does not use '/id' as the partitionKeyPath`, err);
-                } else {
-                    this.throwInformativeError('Error reading from container', err);
-                }
-            }
-        }));
+            )
+        );
 
         return storeItems;
     }
@@ -193,32 +222,45 @@ export class CosmosDbPartitionedStorage implements Storage {
      * @param changes Dictionary of items to be inserted or updated indexed by key.
      */
     public async write(changes: StoreItems): Promise<void> {
-        if (!changes) { throw new ReferenceError(`Changes are required when writing.`); }
-        else if (changes.length === 0) { return; }
+        if (!changes) {
+            throw new ReferenceError(`Changes are required when writing.`);
+        } else if (changes.length === 0) {
+            return;
+        }
 
         await this.initialize();
 
-        await Promise.all(Object.keys(changes).map(async (k: string): Promise<void> => {
-            const changesCopy: any = { ...changes[k] };
+        await Promise.all(
+            Object.keys(changes).map(
+                async (k: string): Promise<void> => {
+                    const changesCopy: any = { ...changes[k] };
 
-            // Remove eTag from JSON object that was copied from IStoreItem.
-            // The ETag information is updated as an _etag attribute in the document metadata.
-            delete changesCopy.eTag;
-            const documentChange = new DocumentStoreItem({
-                id: CosmosDbKeyEscape.escapeKey(k, this.cosmosDbStorageOptions.keySuffix, this.cosmosDbStorageOptions.compatibilityMode),
-                realId: k,
-                document: changesCopy
-            });
+                    // Remove eTag from JSON object that was copied from IStoreItem.
+                    // The ETag information is updated as an _etag attribute in the document metadata.
+                    delete changesCopy.eTag;
+                    const documentChange = new DocumentStoreItem({
+                        id: CosmosDbKeyEscape.escapeKey(
+                            k,
+                            this.cosmosDbStorageOptions.keySuffix,
+                            this.cosmosDbStorageOptions.compatibilityMode
+                        ),
+                        realId: k,
+                        document: changesCopy,
+                    });
 
-            const eTag: string = changes[k].eTag;
-            const ac = eTag !== '*' && eTag != null && eTag.length > 0 ? { accessCondition: { type: 'IfMatch', condition: eTag } } : undefined;
-            try {
-                await this.container.items
-                    .upsert(documentChange, ac);
-            } catch (err) {
-                this.throwInformativeError('Error upserting document', err);
-            }
-        }));
+                    const eTag: string = changes[k].eTag;
+                    const ac =
+                        eTag !== '*' && eTag != null && eTag.length > 0
+                            ? { accessCondition: { type: 'IfMatch', condition: eTag } }
+                            : undefined;
+                    try {
+                        await this.container.items.upsert(documentChange, ac);
+                    } catch (err) {
+                        this.throwInformativeError('Error upserting document', err);
+                    }
+                }
+            )
+        );
     }
 
     /**
@@ -226,23 +268,28 @@ export class CosmosDbPartitionedStorage implements Storage {
      * @param keys Array of Ids for the items to be deleted.
      */
     public async delete(keys: string[]): Promise<void> {
-
         await this.initialize();
 
-        await Promise.all(keys.map(async (k: string): Promise<void> => {
-            const escapedKey = CosmosDbKeyEscape.escapeKey(k, this.cosmosDbStorageOptions.keySuffix, this.cosmosDbStorageOptions.compatibilityMode);
-            try {
-                await this.container
-                    .item(escapedKey, this.getPartitionKey(escapedKey))
-                    .delete();
-            } catch (err) {
-                // If trying to delete a document that doesn't exist, do nothing. Otherwise, throw
-                if (err.code === 404) { }
-                else {
-                    this.throwInformativeError('Unable to delete document', err);
+        await Promise.all(
+            keys.map(
+                async (k: string): Promise<void> => {
+                    const escapedKey = CosmosDbKeyEscape.escapeKey(
+                        k,
+                        this.cosmosDbStorageOptions.keySuffix,
+                        this.cosmosDbStorageOptions.compatibilityMode
+                    );
+                    try {
+                        await this.container.item(escapedKey, this.getPartitionKey(escapedKey)).delete();
+                    } catch (err) {
+                        // If trying to delete a document that doesn't exist, do nothing. Otherwise, throw
+                        if (err.code === 404) {
+                        } else {
+                            this.throwInformativeError('Unable to delete document', err);
+                        }
+                    }
                 }
-            }
-        }));
+            )
+        );
     }
 
     /**
@@ -258,13 +305,13 @@ export class CosmosDbPartitionedStorage implements Storage {
                 });
             }
             const dbAndContainerKey = `${this.cosmosDbStorageOptions.databaseId}-${this.cosmosDbStorageOptions.containerId}`;
-            this.container = await _doOnce.waitFor(dbAndContainerKey, async (): Promise<Container> => await this.getOrCreateContainer());
+            this.container = await _doOnce.waitFor(
+                dbAndContainerKey,
+                async (): Promise<Container> => await this.getOrCreateContainer()
+            );
         }
     }
 
-    /**
-     * @private
-     */
     private async getOrCreateContainer(): Promise<Container> {
         let createIfNotExists = !this.cosmosDbStorageOptions.compatibilityMode;
         let container;
@@ -279,10 +326,11 @@ export class CosmosDbPartitionedStorage implements Storage {
                     // Containers created with CosmosDbStorage had no partition key set, so the default was '/_partitionKey'.
                     if (paths.indexOf('/_partitionKey') !== -1) {
                         this.compatabilityModePartitionKey = true;
-                    }
-                    else if (paths.indexOf(DocumentStoreItem.partitionKeyPath) === -1) {
+                    } else if (paths.indexOf(DocumentStoreItem.partitionKeyPath) === -1) {
                         // We are not supporting custom Partition Key Paths.
-                        new Error(`Custom Partition Key Paths are not supported. ${this.cosmosDbStorageOptions.containerId} has a custom Partition Key Path of ${paths[0]}.`);
+                        new Error(
+                            `Custom Partition Key Paths are not supported. ${this.cosmosDbStorageOptions.containerId} has a custom Partition Key Path of ${paths[0]}.`
+                        );
                     }
                 } else {
                     this.compatabilityModePartitionKey = true;
@@ -299,9 +347,9 @@ export class CosmosDbPartitionedStorage implements Storage {
                 .containers.createIfNotExists({
                     id: this.cosmosDbStorageOptions.containerId,
                     partitionKey: {
-                        paths: [DocumentStoreItem.partitionKeyPath]
+                        paths: [DocumentStoreItem.partitionKeyPath],
                     },
-                    throughput: this.cosmosDbStorageOptions.containerThroughput
+                    throughput: this.cosmosDbStorageOptions.containerThroughput,
                 });
             return result.container;
         }
@@ -315,7 +363,7 @@ export class CosmosDbPartitionedStorage implements Storage {
     }
 
     /**
-     * The Cosmos JS SDK doesn't return very descriptive errors and not all errors contain a body. 
+     * The Cosmos JS SDK doesn't return very descriptive errors and not all errors contain a body.
      * This provides more detailed errors and err['message'] prevents ReferenceError
      */
     private throwInformativeError(prependedMessage: string, err: Error | object | string): void {

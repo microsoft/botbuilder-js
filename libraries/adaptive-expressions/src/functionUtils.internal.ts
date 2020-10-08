@@ -9,7 +9,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 import { Constant } from './constant';
-import * as lodash from 'lodash';
+import sortBy from 'lodash/sortBy';
 import moment, { Moment } from 'moment';
 import { Expression } from './expression';
 import { ExpressionType } from './expressionType';
@@ -78,9 +78,8 @@ export class InternalFunctionUtils {
     public static sortBy(isDescending: boolean): EvaluateExpressionDelegate {
         return (expression: Expression, state: any, options: Options): ValueWithError => {
             let result: any;
-            let error: string;
-            let oriArr: any;
-            ({ value: oriArr, error } = expression.children[0].tryEvaluate(state, options));
+            const { value: oriArr, error: childrenError } = expression.children[0].tryEvaluate(state, options);
+            let error = childrenError;
             if (!error) {
                 if (Array.isArray(oriArr)) {
                     const arr: any = oriArr.slice(0);
@@ -98,9 +97,9 @@ export class InternalFunctionUtils {
                             propertyName = propertyName || '';
                         }
                         if (isDescending) {
-                            result = lodash.sortBy(arr, propertyName).reverse();
+                            result = sortBy(arr, propertyName).reverse();
                         } else {
-                            result = lodash.sortBy(arr, propertyName);
+                            result = sortBy(arr, propertyName);
                         }
                     }
                 } else {
@@ -201,10 +200,8 @@ export class InternalFunctionUtils {
      * @param timeStamp String timestamp input.
      */
     public static ticks(timeStamp: string): ValueWithError {
-        let parsed: any;
         let result: any;
-        let error: string;
-        ({ value: parsed, error } = this.parseTimestamp(timeStamp));
+        const { value: parsed, error } = this.parseTimestamp(timeStamp);
         if (!error) {
             const unixMilliSec: number = parseInt(moment(parsed).utc().format('x'), 10);
             result = this.UnixMilliSecondToTicksConstant.add(
@@ -308,10 +305,8 @@ export class InternalFunctionUtils {
      */
     public static foreach(expression: Expression, state: MemoryInterface, options: Options): ValueWithError {
         let result: any[];
-        let error: string;
-        let instance: any;
-
-        ({ value: instance, error } = expression.children[0].tryEvaluate(state, options));
+        const { value: instance, error: childrenError } = expression.children[0].tryEvaluate(state, options);
+        let error = childrenError;
         if (!instance) {
             error = `'${expression.children[0]}' evaluated to null.`;
         }

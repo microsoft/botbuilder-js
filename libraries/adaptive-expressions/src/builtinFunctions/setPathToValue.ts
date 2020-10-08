@@ -23,10 +23,7 @@ export class SetPathToValue extends ExpressionEvaluator {
     }
 
     private static evaluator(expression: Expression, state: MemoryInterface, options: Options): ValueWithError {
-        let path: string;
-        let left: Expression;
-        let error: string;
-        ({ path, left, error } = FunctionUtils.tryAccumulatePath(expression.children[0], state, options));
+        const { path, left, error } = FunctionUtils.tryAccumulatePath(expression.children[0], state, options);
         if (error !== undefined) {
             return { value: undefined, error };
         }
@@ -35,9 +32,7 @@ export class SetPathToValue extends ExpressionEvaluator {
             // the expression can't be fully merged as a path
             return { value: undefined, error: `${expression.children[0].toString()} is not a valid path to set value` };
         }
-        let value: any;
-        let err: string;
-        ({ value, error: err } = expression.children[1].tryEvaluate(state, options));
+        const { value, error: err } = expression.children[1].tryEvaluate(state, options);
         if (err) {
             return { value: undefined, error: err };
         }

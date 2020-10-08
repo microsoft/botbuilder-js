@@ -11,7 +11,6 @@ import { AliasPathResolver } from './aliasPathResolver';
  * Maps %xxx => class.xxx (aka activeDialog.properties.xxx)
  */
 export class PercentPathResolver extends AliasPathResolver {
-
     constructor() {
         super('%', 'class.');
     }

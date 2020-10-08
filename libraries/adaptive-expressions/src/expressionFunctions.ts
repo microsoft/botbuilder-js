@@ -189,6 +189,11 @@ export class ExpressionFunctions {
         functions.forEach((func: ExpressionEvaluator): void => {
             lookup.set(func.type, func);
         });
+        
+        // Attach negations
+        lookup.get(ExpressionType.LessThan).negation = lookup.get(ExpressionType.GreaterThanOrEqual);
+        lookup.get(ExpressionType.LessThanOrEqual).negation = lookup.get(ExpressionType.GreaterThan);
+        lookup.get(ExpressionType.Equal).negation = lookup.get(ExpressionType.NotEqual);
 
         // Math aliases
         lookup.set('add', lookup.get(ExpressionType.Add)); // more than 1 param
@@ -208,6 +213,7 @@ export class ExpressionFunctions {
         lookup.set('not', lookup.get(ExpressionType.Not));
         lookup.set('or', lookup.get(ExpressionType.Or));
         lookup.set('&', lookup.get(ExpressionType.Concat));
+        lookup.set('??', lookup.get(ExpressionType.Coalesce));
 
         return lookup as ReadonlyMap<string, ExpressionEvaluator>;
     }

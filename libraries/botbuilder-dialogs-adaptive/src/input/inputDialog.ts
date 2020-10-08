@@ -5,7 +5,19 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { Dialog, DialogContext, DialogTurnResult, DialogEvent, DialogReason, Choice, ListStyle, ChoiceFactoryOptions, ChoiceFactory, DialogEvents, TurnPath } from 'botbuilder-dialogs';
+import {
+    Dialog,
+    DialogContext,
+    DialogTurnResult,
+    DialogEvent,
+    DialogReason,
+    Choice,
+    ListStyle,
+    ChoiceFactoryOptions,
+    ChoiceFactory,
+    DialogEvents,
+    TurnPath,
+} from 'botbuilder-dialogs';
 import { ActivityTypes, Activity, InputHints, MessageFactory } from 'botbuilder-core';
 import { ExpressionParser } from 'adaptive-expressions';
 import { TemplateInterface } from '../template';
@@ -18,7 +30,7 @@ export enum InputState {
     missing = 'missing',
     unrecognized = 'unrecognized',
     invalid = 'invalid',
-    valid = 'valid'
+    valid = 'valid',
 }
 
 export abstract class InputDialog extends Dialog {
@@ -92,10 +104,10 @@ export abstract class InputDialog extends Dialog {
             this.property = new StringExpression(property);
         }
         if (prompt) {
-            if (typeof prompt === 'string') { 
-                this.prompt = new ActivityTemplate(prompt); 
+            if (typeof prompt === 'string') {
+                this.prompt = new ActivityTemplate(prompt);
             } else {
-                this.prompt = new StaticActivityTemplate(prompt); 
+                this.prompt = new StaticActivityTemplate(prompt);
             }
         }
     }
@@ -116,7 +128,10 @@ export abstract class InputDialog extends Dialog {
         }
 
         // Recognize input
-        const state = (this.alwaysPrompt && this.alwaysPrompt.getValue(dc.state)) ? InputState.missing : await this.recognizeInput(dc, 0);
+        const state =
+            this.alwaysPrompt && this.alwaysPrompt.getValue(dc.state)
+                ? InputState.missing
+                : await this.recognizeInput(dc, 0);
         if (state == InputState.valid) {
             // Return input
             const property = this.property.getValue(dc.state);
@@ -157,9 +172,9 @@ export abstract class InputDialog extends Dialog {
                     this.telemetryClient.trackEvent({
                         name: 'GeneratorResult',
                         properties: {
-                            'template':this.defaultValueResponse,
-                            'result': response || ''
-                        }
+                            template: this.defaultValueResponse,
+                            result: response || '',
+                        },
                     });
 
                     await dc.context.sendActivity(response);
@@ -240,19 +255,13 @@ export abstract class InputDialog extends Dialog {
         this.telemetryClient.trackEvent({
             name: 'GeneratorResult',
             properties: {
-                'template':template,
-                'result': msg
-            }
+                template: template,
+                result: msg,
+            },
         });
 
-        return msg; 
+        return msg;
     }
-
-    protected getDefaultInput(dc: DialogContext): any {
-        const text = dc.context.activity.text;
-        return typeof text == 'string' && text.length > 0 ? text : undefined;
-    }
-
 
     /**
      * Helper function to compose an output activity containing a set of choices.
@@ -301,7 +310,11 @@ export abstract class InputDialog extends Dialog {
         // Update clone of prompt with text, actions and attachments
         const clone = JSON.parse(JSON.stringify(prompt)) as Activity;
         clone.text = msg.text;
-        if (msg.suggestedActions && Array.isArray(msg.suggestedActions.actions) && msg.suggestedActions.actions.length > 0) {
+        if (
+            msg.suggestedActions &&
+            Array.isArray(msg.suggestedActions.actions) &&
+            msg.suggestedActions.actions.length > 0
+        ) {
             clone.suggestedActions = msg.suggestedActions;
         }
 
@@ -331,7 +344,7 @@ export abstract class InputDialog extends Dialog {
 
         const activityProcessed = dc.state.getValue(TurnPath.activityProcessed);
         if (!activityProcessed && !input && turnCount > 0) {
-            if ((this.constructor.name) == 'AttachmentInput') {
+            if (this.constructor.name == 'AttachmentInput') {
                 input = dc.context.activity.attachments || [];
             } else {
                 input = dc.context.activity.text;

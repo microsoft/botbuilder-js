@@ -41,7 +41,11 @@ import { ModelResult } from './modelResult';
  * @param choices List of choices to search over.
  * @param options (Optional) options used to tweak the search that's performed.
  */
-export function recognizeChoices(utterance: string, choices: (string|Choice)[], options?: FindChoicesOptions): ModelResult<FoundChoice>[] {
+export function recognizeChoices(
+    utterance: string,
+    choices: (string | Choice)[],
+    options?: FindChoicesOptions
+): ModelResult<FoundChoice>[] {
     function matchChoiceByIndex(match: ModelResult<any>): void {
         try {
             const index: number = parseInt(match.resolution.value, 10) - 1;
@@ -55,8 +59,8 @@ export function recognizeChoices(utterance: string, choices: (string|Choice)[], 
                     resolution: {
                         value: choice.value,
                         index: index,
-                        score: 1
-                    }
+                        score: 1,
+                    },
                 });
             }
         } catch (e) {
@@ -64,20 +68,23 @@ export function recognizeChoices(utterance: string, choices: (string|Choice)[], 
             // TODO: Should this log an error or do something?
         }
     }
-    
+
     // Initialize options
-    options = Object.assign({
-        locale: 'en-us',
-        recognizeNumbers: true,
-        recognizeOrdinals: true
-    } as FindChoicesOptions, options);
+    options = Object.assign(
+        {
+            locale: 'en-us',
+            recognizeNumbers: true,
+            recognizeOrdinals: true,
+        } as FindChoicesOptions,
+        options
+    );
 
     // Normalize choices
-    const list: Choice[] = (choices || []).map(
-        (choice: Choice) => typeof choice === 'string' ? { value: choice } : choice
-    ).filter(
-        (choice: Choice) => choice // TODO: does this do anything?
-    );
+    const list: Choice[] = (choices || [])
+        .map((choice: Choice) => (typeof choice === 'string' ? { value: choice } : choice))
+        .filter(
+            (choice: Choice) => choice // TODO: does this do anything?
+        );
 
     // Try finding choices by text search first
     // - We only want to use a single strategy for returning results to avoid issues where utterances

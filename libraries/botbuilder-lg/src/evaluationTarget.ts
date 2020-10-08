@@ -1,4 +1,3 @@
-
 /**
  * @module botbuilder-lg
  */
@@ -8,12 +7,10 @@
  */
 import { MemoryInterface } from 'adaptive-expressions';
 
-
 /**
  * Runtime template state.
  */
 export class EvaluationTarget {
-
     /**
      * Template name.
      */
@@ -25,9 +22,9 @@ export class EvaluationTarget {
     public scope: MemoryInterface;
 
     /**
-     * The children templates that this template has evaluated currently. 
+     * The children templates that this template has evaluated currently.
      */
-    public cachedEvaluatedChildren : Map<string, any>;
+    public cachedEvaluatedChildren: Map<string, any>;
     public constructor(templateName: string, scope: MemoryInterface) {
         this.templateName = templateName;
         this.scope = scope;

@@ -19,7 +19,7 @@ import { ResourceExplorer } from './resourceExplorer';
 export enum ResourceChangeEvent {
     added = 'added',
     changed = 'changed',
-    removed = 'removed'
+    removed = 'removed',
 }
 
 /**
