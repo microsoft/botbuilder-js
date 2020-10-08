@@ -395,6 +395,7 @@ export class AzureBlobTranscriptStore implements TranscriptStore {
      * @param param0.storageAccountOrConnectionString Storage account or connection string.
      * @param param0.storageAccessKey Storage access key.
      * @param param0.host Blob Service host.
+     * @returns The BlobService created.
      */
     private createBlobService({
         storageAccountOrConnectionString,
