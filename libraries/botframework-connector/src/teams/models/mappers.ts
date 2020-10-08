@@ -263,6 +263,23 @@ export const TeamsChannelAccount: msRest.CompositeMapper = {
     },
 };
 
+export const TeamsParticipantChannelAccount: msRest.CompositeMapper = {
+    serializedName: 'TeamsParticipantChannelAccount',
+    type: {
+        name: 'Composite',
+        className: 'TeamsParticipantChannelAccount',
+        modelProperties: {
+            ...TeamsChannelData.type.modelProperties,
+            memberRole: {
+                serializedName: 'memberRole',
+                type: {
+                    name: 'String',
+                },
+            },
+        },
+    },
+};
+
 export const CardAction: msRest.CompositeMapper = {
     serializedName: 'CardAction',
     type: {

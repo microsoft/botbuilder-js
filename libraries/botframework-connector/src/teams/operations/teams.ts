@@ -11,7 +11,7 @@ import * as Models from '../models';
 import * as Mappers from '../models/teamsMappers';
 import * as Parameters from '../models/parameters';
 import { TeamsConnectorClientContext } from '../';
-import { ConversationList, TeamDetails } from 'botframework-schema';
+import { ConversationList, TeamDetails, TeamsParticipantChannelAccount } from 'botframework-schema';
 
 /** Class representing a Teams. */
 export class Teams {
@@ -106,6 +106,60 @@ export class Teams {
             callback
         ) as Promise<Models.TeamsFetchTeamDetailsResponse>;
     }
+
+    /**
+     * Fetch a meeting participant
+     * @summary Fetches a meeting participant
+     * @param meetingId Meeting Id
+     * @param participantId Participant Id
+     * @param [options] The optional parameters
+     * @returns Promise<Models.TeamsFetchMeetingParticipantResponse>
+     */
+    fetchMeetingParticipant(
+        meetingId: string,
+        participantId: string,
+        options?: Models.TeamsFetchMeetingParticipantOptionalParams
+    ): Promise<Models.TeamsFetchMeetingParticipantResponse>;
+    /**
+     * @param meetingId Meeting Id
+     * @param participantId Participant Id
+     * @param callback The callback
+     */
+    fetchMeetingParticipant(
+        meetingId: string,
+        participantId: string,
+        callback: msRest.ServiceCallback<TeamsParticipantChannelAccount>
+    ): void;
+    /**
+     * @param meetingId Meeting Id
+     * @param participantId Participant Id
+     * @param options The optional parameters
+     * @param callback The callback
+     */
+    fetchMeetingParticipant(
+        meetingId: string,
+        participantId: string,
+        options: Models.TeamsFetchMeetingParticipantOptionalParams,
+        callback: msRest.ServiceCallback<TeamsParticipantChannelAccount>
+    ): void;
+    fetchMeetingParticipant(
+        meetingId: string,
+        participantId: string,
+        options?:
+            | Models.TeamsFetchMeetingParticipantOptionalParams
+            | msRest.ServiceCallback<TeamsParticipantChannelAccount>,
+        callback?: msRest.ServiceCallback<TeamsParticipantChannelAccount>
+    ): Promise<Models.TeamsFetchMeetingParticipantResponse> {
+        return this.client.sendOperationRequest(
+            {
+                meetingId,
+                participantId,
+                options,
+            },
+            fetchMeetingParticipantOperationSpec,
+            callback
+        ) as Promise<Models.TeamsFetchMeetingParticipantResponse>;
+    }
 }
 
 // Operation Specifications
@@ -130,6 +184,20 @@ const fetchTeamDetailsOperationSpec: msRest.OperationSpec = {
     responses: {
         200: {
             bodyMapper: Mappers.TeamDetails,
+        },
+        default: {},
+    },
+    serializer,
+};
+
+const fetchMeetingParticipantOperationSpec: msRest.OperationSpec = {
+    httpMethod: 'GET',
+    path: 'v1/meetings/{meetingId}/participants/{participantId}',
+    urlParameters: [Parameters.meetingId, Parameters.participantId],
+    queryParameters: [Parameters.tenantId],
+    responses: {
+        200: {
+            bodyMapper: Mappers.TeamsParticipantChannelAccount,
         },
         default: {},
     },

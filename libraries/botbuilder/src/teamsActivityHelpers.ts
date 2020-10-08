@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 
-import { Activity, TeamInfo, TeamsChannelData } from 'botbuilder-core';
+import { Activity, TeamInfo, TeamsChannelData, TeamsMeetingInfo, TenantInfo } from 'botbuilder-core';
 
 function isTeamsChannelData(channelData: unknown): channelData is TeamsChannelData {
     return typeof channelData === 'object';
@@ -21,6 +21,26 @@ function validateActivity(activity: Activity): void {
 /**
  * Activity helper methods for Teams.
  */
+
+export function teamsGetTeamMeetingInfo(activity: Activity): TeamsMeetingInfo | null {
+    validateActivity(activity);
+
+    if (isTeamsChannelData(activity.channelData)) {
+        return activity.channelData.meeting || null;
+    }
+
+    return null;
+}
+
+export function teamsGetTenant(activity: Activity): TenantInfo | null {
+    validateActivity(activity);
+
+    if (isTeamsChannelData(activity.channelData)) {
+        return activity.channelData.tenant || null;
+    }
+
+    return null;
+}
 
 export function teamsGetTeamInfo(activity: Activity): TeamInfo | null {
     validateActivity(activity);
