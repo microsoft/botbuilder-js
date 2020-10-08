@@ -53,5 +53,4 @@ export class EndpointService extends ConnectedService implements IEndpointServic
             this.appPassword = decryptString(this.appPassword, secret);
         }
     }
-
 }
