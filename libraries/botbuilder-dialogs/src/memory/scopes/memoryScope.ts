@@ -11,8 +11,7 @@ import { DialogContext } from '../../dialogContext';
  * Abstract base class for all memory scopes.
  */
 export abstract class MemoryScope {
-    public constructor(name: string, includeInSnapshot = true)
-    {
+    public constructor(name: string, includeInSnapshot = true) {
         this.includeInSnapshot = includeInSnapshot;
         this.name = name;
     }
@@ -44,7 +43,7 @@ export abstract class MemoryScope {
     }
 
     /**
-     * Loads a scopes backing memory at the start of a turn. 
+     * Loads a scopes backing memory at the start of a turn.
      * @param dc Current dialog context.
      */
     public async load(dc: DialogContext): Promise<void> {
@@ -52,7 +51,7 @@ export abstract class MemoryScope {
     }
 
     /**
-     * Saves a scopes backing memory at the end of a turn. 
+     * Saves a scopes backing memory at the end of a turn.
      * @param dc Current dialog context.
      */
     public async saveChanges(dc: DialogContext): Promise<void> {

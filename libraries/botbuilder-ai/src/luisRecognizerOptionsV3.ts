@@ -7,23 +7,23 @@
  */
 
 import { LUISRuntimeModels as LuisModels } from '@azure/cognitiveservices-luis-runtime';
-import { LuisRecognizerInternal } from './luisRecognizerOptions'
-import { LuisApplication , LuisRecognizerOptionsV3} from './luisRecognizer'
-import { NullTelemetryClient, TurnContext , RecognizerResult} from 'botbuilder-core';
+import { LuisRecognizerInternal } from './luisRecognizerOptions';
+import { LuisApplication, LuisRecognizerOptionsV3 } from './luisRecognizer';
+import { NullTelemetryClient, TurnContext, RecognizerResult } from 'botbuilder-core';
 const fetch = require('node-fetch');
 const LUIS_TRACE_TYPE = 'https://www.luis.ai/schemas/trace';
 const LUIS_TRACE_NAME = 'LuisRecognizer';
 const LUIS_TRACE_LABEL = 'LuisV3 Trace';
-const _dateSubtypes = [ "date", "daterange", "datetime", "datetimerange", "duration", "set", "time", "timerange" ];
-const _geographySubtypes = [ "poi", "city", "countryRegion", "continent", "state" ];
-const MetadataKey = "$instance";
+const _dateSubtypes = ['date', 'daterange', 'datetime', 'datetimerange', 'duration', 'set', 'time', 'timerange'];
+const _geographySubtypes = ['poi', 'city', 'countryRegion', 'continent', 'state'];
+const MetadataKey = '$instance';
 
 /**
  * Validates if the options provided are valid LuisRecognizerOptionsV3.
  * @returns A boolean value that indicates param options is a LuisRecognizerOptionsV3.
  */
 export function isLuisRecognizerOptionsV3(options: any): options is LuisRecognizerOptionsV3 {
-    return (options.apiVersion && options.apiVersion === "v3")
+    return options.apiVersion && options.apiVersion === 'v3';
 }
 
 /**
@@ -36,7 +36,7 @@ export class LuisRecognizerV3 extends LuisRecognizerInternal {
      * @param application An object conforming to the `LuisApplication` definition or a string representing a LUIS application endpoint, usually retrieved from https://luis.ai.
      * @param options (Optional) Options object used to control predictions. Should conform to the `LuisRecognizerOptionsV3` definition.
      */
-    constructor (application: LuisApplication, options?: LuisRecognizerOptionsV3) {
+    constructor(application: LuisApplication, options?: LuisRecognizerOptionsV3) {
         super(application);
 
         this.predictionOptions = {
@@ -49,7 +49,7 @@ export class LuisRecognizerV3 extends LuisRecognizerInternal {
             telemetryClient: new NullTelemetryClient(),
             logPersonalInformation: false,
             includeAPIResults: true,
-            ...options
+            ...options,
         };
     }
 
@@ -77,25 +77,24 @@ export class LuisRecognizerV3 extends LuisRecognizerInternal {
         const response = await data.json();
         if (response.error) {
             const errObj = response.error;
-            const errMessage = errObj.code ? `${ errObj.code }: ${ errObj.message }` : errObj.message;
-            throw new Error(`[LUIS Recognition Error]: ${ errMessage }`);
+            const errMessage = errObj.code ? `${errObj.code}: ${errObj.message}` : errObj.message;
+            throw new Error(`[LUIS Recognition Error]: ${errMessage}`);
         }
         const result: RecognizerResult = {
             text: utterance,
-            intents : getIntents(response.prediction),
-            entities : extractEntitiesAndMetadata(response.prediction),
+            intents: getIntents(response.prediction),
+            entities: extractEntitiesAndMetadata(response.prediction),
             sentiment: getSentiment(response.prediction),
-            luisResult: (this.predictionOptions.includeAPIResults ? response : null)
-        }
+            luisResult: this.predictionOptions.includeAPIResults ? response : null,
+        };
 
         if (this.predictionOptions.includeInstanceData) {
-            result.entities[MetadataKey] = result.entities[MetadataKey] ? result.entities[MetadataKey] : {}
+            result.entities[MetadataKey] = result.entities[MetadataKey] ? result.entities[MetadataKey] : {};
         }
 
         this.emitTraceInfo(context, response.prediction, result);
 
         return result;
-
     }
 
     /**
@@ -103,12 +102,12 @@ export class LuisRecognizerV3 extends LuisRecognizerInternal {
      */
     private buildUrl() {
         const baseUri = this.application.endpoint || 'https://westus.api.cognitive.microsoft.com';
-        let uri =  `${baseUri}/luis/prediction/v3.0/apps/${this.application.applicationId}`;
+        let uri = `${baseUri}/luis/prediction/v3.0/apps/${this.application.applicationId}`;
 
         if (this.predictionOptions.version) {
-            uri += `/versions/${this.predictionOptions.version}/predict`
+            uri += `/versions/${this.predictionOptions.version}/predict`;
         } else {
-            uri += `/slots/${this.predictionOptions.slot}/predict`
+            uri += `/slots/${this.predictionOptions.slot}/predict`;
         }
 
         const params = `?verbose=${this.predictionOptions.includeInstanceData}&log=${this.predictionOptions.log}&show-all-intents=${this.predictionOptions.includeAllIntents}`;
@@ -120,24 +119,24 @@ export class LuisRecognizerV3 extends LuisRecognizerInternal {
     /**
      * @private
      */
-    private buildRequestBody(utterance: string){
+    private buildRequestBody(utterance: string) {
         const content = {
-            'query': utterance,
-            'options': {
-                'preferExternalEntities': this.predictionOptions.preferExternalEntities
-            }
+            query: utterance,
+            options: {
+                preferExternalEntities: this.predictionOptions.preferExternalEntities,
+            },
         };
 
-        if (this.predictionOptions.datetimeReference){
-            content.options['datetimeReference'] = this.predictionOptions.datetimeReference
+        if (this.predictionOptions.datetimeReference) {
+            content.options['datetimeReference'] = this.predictionOptions.datetimeReference;
         }
 
-        if (this.predictionOptions.dynamicLists){
-            content['dynamicLists'] = this.predictionOptions.dynamicLists
+        if (this.predictionOptions.dynamicLists) {
+            content['dynamicLists'] = this.predictionOptions.dynamicLists;
         }
 
-        if (this.predictionOptions.externalEntities){
-            content['externalEntities'] = this.predictionOptions.externalEntities
+        if (this.predictionOptions.externalEntities) {
+            content['externalEntities'] = this.predictionOptions.externalEntities;
         }
 
         return {
@@ -145,23 +144,26 @@ export class LuisRecognizerV3 extends LuisRecognizerInternal {
             body: JSON.stringify(content),
             headers: {
                 'Content-Type': 'application/json',
-                'Ocp-Apim-Subscription-Key' : this.application.endpointKey,
-            }
+                'Ocp-Apim-Subscription-Key': this.application.endpointKey,
+            },
         };
-
     }
 
     /**
      * @private
      */
-    private emitTraceInfo(context: TurnContext, luisResult: LuisModels.LuisResult, recognizerResult: RecognizerResult): Promise<any> {
+    private emitTraceInfo(
+        context: TurnContext,
+        luisResult: LuisModels.LuisResult,
+        recognizerResult: RecognizerResult
+    ): Promise<any> {
         const traceInfo: any = {
             recognizerResult: recognizerResult,
             luisResult: luisResult,
             luisOptions: this.predictionOptions,
             luisModel: {
-                ModelID: this.application.applicationId
-            }
+                ModelID: this.application.applicationId,
+            },
         };
 
         return context.sendActivity({
@@ -169,7 +171,7 @@ export class LuisRecognizerV3 extends LuisRecognizerInternal {
             valueType: LUIS_TRACE_TYPE,
             name: LUIS_TRACE_NAME,
             label: LUIS_TRACE_LABEL,
-            value: traceInfo
+            value: traceInfo,
         });
     }
 }
@@ -178,12 +180,12 @@ function normalizeName(name) {
     return name.replace(/\.| /g, '_');
 }
 
-function  getIntents(luisResult) {
+function getIntents(luisResult) {
     // let intents: { [name: string]: { score: number } } = {};
     const intents = {};
     if (luisResult.intents) {
-        for (let intent in luisResult.intents) {
-            intents[normalizeName(intent)] = { score: luisResult.intents[intent].score};
+        for (const intent in luisResult.intents) {
+            intents[normalizeName(intent)] = { score: luisResult.intents[intent].score };
         }
     }
 
@@ -192,28 +194,25 @@ function  getIntents(luisResult) {
 
 function normalizeEntity(entity) {
     const splitEntity = entity.split(':');
-    const entityName = splitEntity[splitEntity.length -1];
+    const entityName = splitEntity[splitEntity.length - 1];
     return entityName.replace(/\.| /g, '_');
 }
 
-function mapProperties(source, inInstance){
+function mapProperties(source, inInstance) {
     let result = source;
     if (source instanceof Array) {
-        let narr = [];
-        for (let item of source) {
-
+        const narr = [];
+        for (const item of source) {
             // Check if element is geographyV2
             let isGeographyV2 = '';
-            if (item['type'] && _geographySubtypes.includes(item['type']))
-            {
+            if (item['type'] && _geographySubtypes.includes(item['type'])) {
                 isGeographyV2 = item['type'];
             }
 
             if (!inInstance && isGeographyV2) {
-                let geoEntity: any = {};
-                for (let itemProps in item) {
-                    if (itemProps === 'value')
-                    {
+                const geoEntity: any = {};
+                for (const itemProps in item) {
+                    if (itemProps === 'value') {
                         geoEntity.location = item[itemProps];
                     }
                 }
@@ -224,27 +223,22 @@ function mapProperties(source, inInstance){
             }
         }
         result = narr;
-
     } else if (source instanceof Object && typeof source !== 'string') {
-        let nobj: any = {};
+        const nobj: any = {};
 
         // Fix datetime by reverting to simple timex
-        if (!inInstance && source.type && typeof source.type === 'string' && _dateSubtypes.includes(source.type))
-        {
-            let timexs = source.values;
-            let arr = [];
-            if (timexs)
-            {
-                let unique = [];
-                for(let elt of timexs)
-                {
+        if (!inInstance && source.type && typeof source.type === 'string' && _dateSubtypes.includes(source.type)) {
+            const timexs = source.values;
+            const arr = [];
+            if (timexs) {
+                const unique = [];
+                for (const elt of timexs) {
                     if (elt.timex && !unique.includes(elt.timex)) {
                         unique.push(elt.timex);
                     }
                 }
 
-                for (let timex of unique)
-                {
+                for (const timex of unique) {
                     arr.push(timex);
                 }
 
@@ -252,60 +246,41 @@ function mapProperties(source, inInstance){
             }
 
             nobj.type = source.type;
-        }
-        else
-        {
+        } else {
             // Map or remove properties
-            for (let property in source)
-            {
-                let name = normalizeEntity(property);
-                let isArray = source[property] instanceof Array;
-                let isString = typeof source[property] === 'string';
-                let isInt = Number.isInteger(source[property]);
-                let val = mapProperties(source[property], inInstance || property == MetadataKey);
-                if (name == "datetime" && isArray)
-                {
+            for (const property in source) {
+                const name = normalizeEntity(property);
+                const isArray = source[property] instanceof Array;
+                const isString = typeof source[property] === 'string';
+                const isInt = Number.isInteger(source[property]);
+                const val = mapProperties(source[property], inInstance || property == MetadataKey);
+                if (name == 'datetime' && isArray) {
                     nobj.datetimeV1 = val;
-                }
-                else if (name == "datetimeV2" && isArray)
-                {
+                } else if (name == 'datetimeV2' && isArray) {
                     nobj.datetime = val;
-                }
-                else if (inInstance)
-                {
+                } else if (inInstance) {
                     // Correct $instance issues
-                    if (name == "length" && isInt)
-                    {
+                    if (name == 'length' && isInt) {
                         nobj['endIndex'] = source[name] + source.startIndex;
-                    }
-                    else if (!((isInt && name === "modelTypeId") ||
-                               (isString && name === "role")))
-                    {
+                    } else if (!((isInt && name === 'modelTypeId') || (isString && name === 'role'))) {
                         nobj[name] = val;
                     }
-                }
-                else
-                {
+                } else {
                     // Correct non-$instance values
-                    if (name == "unit" && isString)
-                    {
+                    if (name == 'unit' && isString) {
                         nobj.units = val;
-                    }
-                    else
-                    {
+                    } else {
                         nobj[name] = val;
                     }
                 }
             }
-
         }
         result = nobj;
     }
     return result;
 }
 
-function extractEntitiesAndMetadata(prediction){
-
+function extractEntitiesAndMetadata(prediction) {
     const entities = prediction.entities;
     return mapProperties(entities, false);
 }
@@ -315,11 +290,9 @@ function getSentiment(luis): any {
     if (luis.sentiment) {
         result = {
             label: luis.sentiment.label,
-            score: luis.sentiment.score
+            score: luis.sentiment.score,
         };
     }
 
     return result;
 }
-
-

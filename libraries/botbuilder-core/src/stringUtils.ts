@@ -18,17 +18,17 @@ export class StringUtils {
             return text;
         }
 
-        return `${ text.substr(0, length) }...`;
+        return `${text.substr(0, length)}...`;
     }
 
     /**
      * UniqueHash - create a unique hash from a string.
-     * 
+     *
      * @remarks
      * The source for this function was derived from the following article:
-     * 
+     *
      * https://werxltd.com/wp/2010/05/13/javascript-implementation-of-javas-string-hashcode-method/
-     * 
+     *
      * @param text Text to hash.
      */
     public static hash(text: string): string {
@@ -36,7 +36,7 @@ export class StringUtils {
         let hash = 0;
         for (let i = 0; i < length; i++) {
             const chr = text.charCodeAt(i);
-            hash = ((hash << 5) - hash) + chr;
+            hash = (hash << 5) - hash + chr;
             hash |= 0; // Convert to 32 bit integer
         }
         return hash.toString();
@@ -53,6 +53,6 @@ export class StringUtils {
             return text;
         }
 
-        return `${ this.ellipsis(text, length) }${ this.hash(text) }`;
+        return `${this.ellipsis(text, length)}${this.hash(text)}`;
     }
 }

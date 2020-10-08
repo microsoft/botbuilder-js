@@ -30,7 +30,12 @@ export class HttpRequestUtils {
      * @param endpoint QnA Maker endpoint details.
      * @param timeout (Optional)Timeout for http call
      */
-    public async executeHttpRequest(requestUrl: string, payloadBody: string, endpoint: QnAMakerEndpoint, timeout?: number) {
+    public async executeHttpRequest(
+        requestUrl: string,
+        payloadBody: string,
+        endpoint: QnAMakerEndpoint,
+        timeout?: number
+    ) {
         if (!requestUrl) {
             throw new TypeError('Request url cannot be null.');
         }
@@ -49,10 +54,10 @@ export class HttpRequestUtils {
             method: 'POST',
             headers: headers,
             timeout: timeout,
-            body: payloadBody
+            body: payloadBody,
         });
 
-        return (qnaResult.status == 204) ? this.getSuccessful204Result() : await qnaResult.json();
+        return qnaResult.status == 204 ? this.getSuccessful204Result() : await qnaResult.json();
     }
 
     /**
@@ -69,7 +74,7 @@ export class HttpRequestUtils {
         const headers: any = {};
 
         headers['Ocp-Apim-Subscription-Key'] = endpoint.endpointKey;
-        headers.Authorization = `EndpointKey ${ endpoint.endpointKey }`;
+        headers.Authorization = `EndpointKey ${endpoint.endpointKey}`;
         headers['User-Agent'] = this.getUserAgent();
         headers['Content-Type'] = 'application/json';
 
@@ -80,10 +85,10 @@ export class HttpRequestUtils {
      * @private
      */
     private getUserAgent(): string {
-        const packageUserAgent: string = `${ pjson.name }/${ pjson.version }`;
-        const platformUserAgent: string = `(${ os.arch() }-${ os.type() }-${ os.release() }; Node.js,Version=${ process.version })`;
+        const packageUserAgent = `${pjson.name}/${pjson.version}`;
+        const platformUserAgent = `(${os.arch()}-${os.type()}-${os.release()}; Node.js,Version=${process.version})`;
 
-        return `${ packageUserAgent } ${ platformUserAgent }`;
+        return `${packageUserAgent} ${platformUserAgent}`;
     }
 
     /**
@@ -95,11 +100,11 @@ export class HttpRequestUtils {
     private getSuccessful204Result(): QnAMakerResult {
         return {
             questions: [],
-            answer: "204 No-Content",
+            answer: '204 No-Content',
             score: 100,
             id: -1,
             source: null,
-            metadata: []
+            metadata: [],
         };
     }
 }

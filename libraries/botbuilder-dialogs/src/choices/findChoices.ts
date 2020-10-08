@@ -131,19 +131,29 @@ export interface FoundChoice {
  * @param choices List of choices to search over.
  * @param options (Optional) options used to tweak the search that's performed.
  */
-export function findChoices(utterance: string, choices: (string|Choice)[], options?: FindChoicesOptions): ModelResult<FoundChoice>[] {
+export function findChoices(
+    utterance: string,
+    choices: (string | Choice)[],
+    options?: FindChoicesOptions
+): ModelResult<FoundChoice>[] {
     const opt: FindChoicesOptions = options || {};
 
     // Normalize choices
-    const list: Choice[] = (choices || []).map((choice: Choice) => typeof choice === 'string' ? { value: choice } : choice);
+    const list: Choice[] = (choices || []).map((choice: Choice) =>
+        typeof choice === 'string' ? { value: choice } : choice
+    );
 
     // Build up full list of synonyms to search over.
     // - Each entry in the list contains the index of the choice it belongs to which will later be
     //   used to map the search results back to their choice.
     const synonyms: SortedValue[] = [];
     list.forEach((choice: Choice, index: number) => {
-        if (!opt.noValue) { synonyms.push({ value: choice.value, index: index }); }
-        if (choice.action && choice.action.title && !opt.noAction) { synonyms.push({ value: choice.action.title, index: index }); }
+        if (!opt.noValue) {
+            synonyms.push({ value: choice.value, index: index });
+        }
+        if (choice.action && choice.action.title && !opt.noAction) {
+            synonyms.push({ value: choice.action.title, index: index });
+        }
         (choice.synonyms || []).forEach((synonym: string) => synonyms.push({ value: synonym, index: index }));
     });
 
@@ -160,8 +170,8 @@ export function findChoices(utterance: string, choices: (string|Choice)[], optio
                 value: choice.value,
                 index: v.resolution.index,
                 score: v.resolution.score,
-                synonym: v.resolution.value
-            }
+                synonym: v.resolution.value,
+            },
         } as ModelResult<FoundChoice>;
     });
 }
