@@ -1,4 +1,3 @@
-
 /**
  * @module botbuilder-lg
  */
@@ -15,9 +14,11 @@ import { Template } from './template';
 /**
  * Lg template extracter.
  */
-export class Extractor extends AbstractParseTreeVisitor<Map<string, any>> implements LGTemplateParserVisitor<Map<string, any>> {
+export class Extractor
+    extends AbstractParseTreeVisitor<Map<string, any>>
+    implements LGTemplateParserVisitor<Map<string, any>> {
     public readonly templates: Template[];
-    public readonly templateMap: {[name: string]: Template};
+    public readonly templateMap: { [name: string]: Template };
     public constructor(templates: Template[]) {
         super();
         this.templates = templates;
@@ -31,7 +32,10 @@ export class Extractor extends AbstractParseTreeVisitor<Map<string, any>> implem
             const templateName: string = template.name;
             const templateBodies = this.visit(template.templateBodyParseTree);
             let isNormalTemplate = true;
-            templateBodies.forEach((templateBody: Map<string, any>): any => isNormalTemplate = isNormalTemplate && (templateBody === undefined));
+            templateBodies.forEach(
+                (templateBody: Map<string, any>): any =>
+                    (isNormalTemplate = isNormalTemplate && templateBody === undefined)
+            );
 
             if (isNormalTemplate) {
                 const templates: string[] = [];
@@ -63,7 +67,10 @@ export class Extractor extends AbstractParseTreeVisitor<Map<string, any>> implem
         const lineStart = '    ';
         const structName = context.structuredTemplateBody().structuredBodyNameLine().text;
         let fullStr = structName + '\n';
-        context.structuredTemplateBody().structuredBodyContentLine().forEach((line): string => fullStr += lineStart + line.text + '\n');
+        context
+            .structuredTemplateBody()
+            .structuredBodyContentLine()
+            .forEach((line): string => (fullStr += lineStart + line.text + '\n'));
         fullStr += context.structuredTemplateBody().structuredBodyEndLine().text;
 
         result.set(fullStr, undefined);
@@ -75,13 +82,15 @@ export class Extractor extends AbstractParseTreeVisitor<Map<string, any>> implem
         const ifRules: lp.IfConditionRuleContext[] = context.ifElseTemplateBody().ifConditionRule();
         for (const ifRule of ifRules) {
             const expressions = ifRule.ifCondition().expression();
-            const  conditionNode: lp.IfConditionContext = ifRule.ifCondition();
+            const conditionNode: lp.IfConditionContext = ifRule.ifCondition();
             const ifExpr: boolean = conditionNode.IF() !== undefined;
             const elseIfExpr: boolean = conditionNode.ELSEIF() !== undefined;
 
-            const node: TerminalNode = ifExpr ? conditionNode.IF() :
-                elseIfExpr ? conditionNode.ELSEIF() :
-                    conditionNode.ELSE();
+            const node: TerminalNode = ifExpr
+                ? conditionNode.IF()
+                : elseIfExpr
+                ? conditionNode.ELSEIF()
+                : conditionNode.ELSE();
             const conditionLabel: string = node.text.toLowerCase();
             const childTemplateBodyResult: string[] = [];
             const templateBodies: Map<string, any> = this.visit(ifRule.normalTemplateBody());
@@ -110,9 +119,11 @@ export class Extractor extends AbstractParseTreeVisitor<Map<string, any>> implem
             const switchExpr: boolean = switchCaseStat.SWITCH() !== undefined;
             const caseExpr: boolean = switchCaseStat.CASE() !== undefined;
 
-            const node: TerminalNode = switchExpr ? switchCaseStat.SWITCH() :
-                caseExpr ? switchCaseStat.CASE() :
-                    switchCaseStat.DEFAULT();
+            const node: TerminalNode = switchExpr
+                ? switchCaseStat.SWITCH()
+                : caseExpr
+                ? switchCaseStat.CASE()
+                : switchCaseStat.DEFAULT();
             if (switchExpr) {
                 continue;
             }
