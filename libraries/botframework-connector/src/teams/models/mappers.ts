@@ -118,6 +118,18 @@ export const NotificationInfo: msRest.CompositeMapper = {
                     name: 'Boolean',
                 },
             },
+            alertInMeeting: {
+                serializedName: 'alertInMeeting',
+                type: {
+                    name: 'Boolean',
+                },
+            },
+            externalResourceUrl: {
+                serializedName: 'externalResourceUrl',
+                type: {
+                    name: 'String',
+                },
+            },
         },
     },
 };
