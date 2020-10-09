@@ -9,12 +9,12 @@
 /**
  * The converter converts object from one type to another.
  */
-export interface Converter<From = any, To = any> {
+export interface Converter<From = unknown, To = unknown> {
     convert(value: From): To;
 }
 
 export type Converters<T> = {
-    [K in keyof Partial<Omit<T, 'converters' | 'configure'>>]:
-        | Converter<any, T[K]>
-        | ((...args: any[]) => Converter<any, T[K]>);
-}
+    [K in keyof Partial<T>]: T[K] extends Function
+        ? never
+        : K | Converter<unknown, T[K]> | ((...args: unknown[]) => Converter<unknown, T[K]>);
+};
