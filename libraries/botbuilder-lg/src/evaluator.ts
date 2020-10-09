@@ -52,7 +52,7 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGTempla
     public static readonly ReExecuteSuffix = '!';
 
     /**
-     * Creates a new instance of the Evaluator class.
+     * Creates a new instance of the [Evaluator](xref:botbuilder-lg.Evaluator) class.
      * @param templates Template list.
      * @param expressionParser Expression parser.
      * @param opt Options for LG.
@@ -135,6 +135,7 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGTempla
     /**
      * Visit a parse tree produced by LGTemplateParser.structuredTemplateBody.
      * @param ctx The parse tree.
+     * @returns The result of visiting the structured template body.
      */
     public visitStructuredTemplateBody(ctx: lp.StructuredTemplateBodyContext): any {
         const result: any = {};
@@ -205,6 +206,7 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGTempla
     /**
      * Visit a parse tree produced by the normalBody labeled alternative in LGTemplateParser.body.
      * @param ctx The parse tree.
+     * @returns The result of visiting the normal body.
      */
     public visitNormalBody(ctx: lp.NormalBodyContext): any {
         return this.visit(ctx.normalTemplateBody());
@@ -213,6 +215,7 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGTempla
     /**
      * Visit a parse tree produced by LGTemplateParser.normalTemplateBody.
      * @param ctx The parse tree.
+     * @returns The result of visiting the normal template body.
      */
     public visitNormalTemplateBody(ctx: lp.NormalTemplateBodyContext): any {
         const normalTemplateStrs: lp.TemplateStringContext[] = ctx.templateString();
@@ -239,6 +242,7 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGTempla
     /**
      * Visit a parse tree produced by LGTemplateParser.normalTemplateString.
      * @param ctx The parse tree.
+     * @returns The string result of visiting the normal template string.
      */
     public visitNormalTemplateString(ctx: lp.NormalTemplateStringContext): string {
         const prefixErrorMsg = TemplateExtensions.getPrefixErrorMessage(ctx);
@@ -279,10 +283,10 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGTempla
 
     /**
      * Constructs the scope for mapping the values of arguments to the parameters of the template.
-     * Throws errors if certain errors detected TemplateErrors.
+     * Throws errors if certain errors detected [TemplateErrors](xref:botbuilder-lg.TemplateErrors).
      * @param inputTemplateName Template name to evaluate.
      * @param args Arguments to map to the template parameters.
-     * @returns The current scope if the number of arguments is 0, otherwise, returns a CustomizedMemory
+     * @returns The current scope if the number of arguments is 0, otherwise, returns a [CustomizedMemory](xref:botbuilder-lg.CustomizedMemory)
      * with the mapping of the parameter name to the argument value added to the scope.
      */
     public constructScope(inputTemplateName: string, args: any[]): any {
@@ -313,6 +317,7 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGTempla
     /**
      * Visit a parse tree produced by the switchCaseBody labeled alternative in LGTemplateParser.body.
      * @param ctx The parse tree.
+     * @returns The string result of visiting the switch case body.
      */
     public visitSwitchCaseBody(ctx: lp.SwitchCaseBodyContext): string {
         const switchcaseNodes: lp.SwitchCaseRuleContext[] = ctx.switchCaseTemplateBody().switchCaseRule();
@@ -350,7 +355,7 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGTempla
     }
 
     /**
-     * Replaces an expression contained in a text.
+     * Replaces an expression contained in text.
      * @param exp Expression Text.
      * @param regex Regex to select the text to replace.
      */
@@ -359,7 +364,7 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGTempla
     }
 
     /**
-     * Gets the default value returned by visitor methods. 
+     * Gets the default value returned by visitor methods.
      * @returns Empty string.
      */
     protected defaultResult(): string {
@@ -385,7 +390,7 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGTempla
     }
 
     /**
-     * Checks an Expression Result and throws the corresponding error.
+     * Checks an expression result and throws the corresponding error.
      * @param exp Expression text.
      * @param error Error message.
      * @param result Result.

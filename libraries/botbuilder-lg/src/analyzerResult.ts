@@ -21,7 +21,7 @@ export class AnalyzerResult {
     public TemplateReferences: string[];
 
     /**
-     * Creates a new instance of the AnalyzerResult class.
+     * Creates a new instance of the [AnalyzerResult](xref:botbuilder-lg.AnalyzerResult) class.
      * @param variables Init varibales.
      * @param templateRefNames Init template references.
      */
