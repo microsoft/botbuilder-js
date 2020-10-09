@@ -18,9 +18,9 @@ export class ContentStream {
     private stream: SubscribableStream;
 
     /**
-     * Initializes a new instance of the `ContentStream` class.
+     * Initializes a new instance of the [ContentStream](xref:botframework-streaming.ContentStream) class.
      * @param id The ID assigned to this instance.
-     * @param assembler The `PayloadAssembler` assigned to this instance.
+     * @param assembler The [PayloadAssembler](xref:botframework-streaming.PayloadAssembler) assigned to this instance.
      */
     public constructor(id: string, assembler: PayloadAssembler) {
         if (!assembler) {
@@ -31,21 +31,21 @@ export class ContentStream {
     }
 
     /**
-     * Gets the name of the type of the object contained within this `ContentStream`.
+     * Gets the name of the type of the object contained within this [ContentStream](xref:botframework-streaming.ContentStream).
      */
     public get contentType(): string {
         return this.assembler.payloadType;
     }
 
     /**
-     * Gets the length of this `ContentStream`.
+     * Gets the length of this [ContentStream](xref:botframework-streaming.ContentStream).
      */
     public get length(): number {
         return this.assembler.contentLength;
     }
 
     /**
-     * Gets the data contained within this `ContentStream`.
+     * Gets the data contained within this [ContentStream](xref:botframework-streaming.ContentStream).
      */
     public getStream(): SubscribableStream {
         if (!this.stream) {
@@ -63,8 +63,8 @@ export class ContentStream {
     }
 
     /**
-     * Gets the `SubscribableStream` content as a string.
-     * @returns A string Promise with `SubscribableStream` content.
+     * Gets the [SubscribableStream](xref:botframework-streaming.SubscribableStream) content as a string.
+     * @returns A string Promise with [SubscribableStream](xref:botframework-streaming.SubscribableStream) content.
      */
     public async readAsString(): Promise<string> {
         const { bufferArray } = await this.readAll();
@@ -72,7 +72,7 @@ export class ContentStream {
     }
 
     /**
-     * Gets the `SubscribableStream` content as a typed JSON object.
+     * Gets the [SubscribableStream](xref:botframework-streaming.SubscribableStream) content as a typed JSON object.
      * @returns A typed object Promise with `SubscribableStream` content.
      */
     public async readAsJson<T>(): Promise<T> {
