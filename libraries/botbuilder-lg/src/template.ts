@@ -40,6 +40,6 @@ export class Template {
     }
 
     public toString(): string {
-        return `[${ this.name }(${ this.parameters.join(', ') })]"${ this.body }"`;
+        return `[${this.name}(${this.parameters.join(', ')})]"${this.body}"`;
     }
 }
