@@ -31,6 +31,7 @@ export class AdaptiveTypeBuilder implements TypeBuilder {
     /**
      * Builds an adaptive type.
      * @param config Configuration object for the type.
+     * @returns A new factory object for the adaptive type.
      */
     public build(config: object): object {
         const obj = new this._factory();
