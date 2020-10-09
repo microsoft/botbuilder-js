@@ -107,7 +107,7 @@ export class QnAMakerRecognizer extends Recognizer {
             rankerType: new StringExpressionConverter(),
             includeDialogNameInMetadata: new BoolExpressionConverter(),
             metadata: new ArrayExpressionConverter(),
-            context: new ObjectExpressionConverter(),
+            context: new ObjectExpressionConverter<QnARequestContext>(),
             qnaId: new IntExpressionConverter(),
         };
     }
