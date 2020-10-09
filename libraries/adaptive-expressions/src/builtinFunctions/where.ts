@@ -10,7 +10,7 @@ import { Constant } from '../constant';
 import { Expression } from '../expression';
 import { ExpressionEvaluator, ValueWithError } from '../expressionEvaluator';
 import { ExpressionType } from '../expressionType';
-import { FunctionUtils } from '../functionUtils';
+import { InternalFunctionUtils } from '../functionUtils.internal';
 import { MemoryInterface } from '../memory/memoryInterface';
 import { SimpleObjectMemory } from '../memory/simpleObjectMemory';
 import { StackedMemory } from '../memory/stackedMemory';
@@ -22,16 +22,13 @@ import { ReturnType } from '../returnType';
  */
 export class Where extends ExpressionEvaluator {
     public constructor() {
-        super(ExpressionType.Where, Where.evaluator, ReturnType.Array, FunctionUtils.validateForeach);
+        super(ExpressionType.Where, Where.evaluator, ReturnType.Array, InternalFunctionUtils.validateForeach);
     }
 
     private static evaluator(expression: Expression, state: MemoryInterface, options: Options): ValueWithError {
         let result: any;
-        let error: string;
-        let instance: any;
-
-        ({ value: instance, error } = expression.children[0].tryEvaluate(state, options));
-
+        const { value: instance, error: childrenError } = expression.children[0].tryEvaluate(state, options);
+        let error = childrenError;
         if (!error) {
             const iteratorName = (expression.children[1].children[0] as Constant).value as string;
             let arr: any[] = [];
@@ -49,9 +46,7 @@ export class Where extends ExpressionEvaluator {
                 const stackedMemory = StackedMemory.wrap(state);
                 const arrResult = [];
                 for (const item of arr) {
-                    const local: Map<string, any> = new Map<string, any>([
-                        [iteratorName, item]
-                    ]);
+                    const local: Map<string, any> = new Map<string, any>([[iteratorName, item]]);
 
                     stackedMemory.push(SimpleObjectMemory.wrap(local));
                     const newOptions = new Options(options);
@@ -62,14 +57,14 @@ export class Where extends ExpressionEvaluator {
                         return { value: undefined, error: e };
                     }
 
-                    if ((Boolean(r))) {
+                    if (r) {
                         arrResult.push(local.get(iteratorName));
                     }
                 }
 
                 //reconstruct object if instance is object, otherwise, return array result
                 if (!isInstanceArray) {
-                    let objResult = {};
+                    const objResult = {};
                     for (const item of arrResult) {
                         objResult[item.key] = item.value;
                     }

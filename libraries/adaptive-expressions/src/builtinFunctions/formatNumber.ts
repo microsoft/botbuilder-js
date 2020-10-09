@@ -49,8 +49,8 @@ export class FormatNumber extends ExpressionEvaluator {
                     }
                 }
 
-                return { value, error };
-            });
+            return { value, error };
+        });
     }
 
     private static roundToPrecision = (num: number, digits: number): number => Math.round(num * Math.pow(10, digits)) / Math.pow(10, digits);

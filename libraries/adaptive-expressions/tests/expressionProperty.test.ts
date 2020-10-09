@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/explicit-function-return-type */
 import * as assert from 'assert';
 import { ArrayExpression, BoolExpression, EnumExpression, NumberExpression, ObjectExpression, StringExpression, ValueExpression, ExpressionParser } from '../lib';
 
@@ -88,7 +87,7 @@ describe('expressionProperty tests', () => {
         assert.equal(result, TestEnum.Three);
     });
 
-    it('NumberExpression', function() {
+    it('NumberExpression', function () {
         const data = { test: 3.14 };
 
         let val = new NumberExpression('test');
@@ -204,7 +203,7 @@ describe('expressionProperty tests', () => {
         val = new ValueExpression(undefined);
         result = val.getValue(data);
         assert.equal(result, undefined);
-        assert.equal(val.toExpression().toString(), 'null');
+        assert.equal(val.toExpression().toString(), 'undefined');
 
         // slashes are the chars
         val = new ValueExpression('c:\\test\\test\\test');

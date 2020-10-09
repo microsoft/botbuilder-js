@@ -11,7 +11,7 @@ import { ActivityTemplate, StaticActivityTemplate, TextTemplate } from '../templ
 
 export class ActivityTemplateConverter implements Converter {
     public convert(value: string): ActivityTemplate | StaticActivityTemplate | TextTemplate {
-        if (typeof value === 'string') { 
+        if (typeof value === 'string') {
             return new ActivityTemplate(value);
         } else {
             return new StaticActivityTemplate(value);

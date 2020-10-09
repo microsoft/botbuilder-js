@@ -12,6 +12,7 @@ import { Expression } from '../expression';
 import { ExpressionEvaluator, ValueWithError } from '../expressionEvaluator';
 import { ExpressionType } from '../expressionType';
 import { FunctionUtils } from '../functionUtils';
+import { InternalFunctionUtils } from '../functionUtils.internal';
 import { MemoryInterface } from '../memory/memoryInterface';
 import { Options } from '../options';
 import { ReturnType } from '../returnType';
@@ -26,12 +27,13 @@ export class AddToTime extends ExpressionEvaluator {
 
     private static evaluator(expression: Expression, state: MemoryInterface, options: Options): ValueWithError {
         let value: any;
-        let error: string;
-        let args: any[];
-        ({ args, error } = FunctionUtils.evaluateChildren(expression, state, options));
+
+        const { args, error: childrenError } = FunctionUtils.evaluateChildren(expression, state, options);
+        let error = childrenError;
         if (!error) {
-            const format: string = (args.length === 4) ? FunctionUtils.timestampFormatter(args[3]) : FunctionUtils.DefaultDateTimeFormat;
-            if (typeof (args[0]) === 'string' && Number.isInteger(args[1]) && typeof (args[2]) === 'string') {
+            const format: string =
+                args.length === 4 ? FunctionUtils.timestampFormatter(args[3]) : FunctionUtils.DefaultDateTimeFormat;
+            if (typeof args[0] === 'string' && Number.isInteger(args[1]) && typeof args[2] === 'string') {
                 ({ value, error } = AddToTime.evalAddToTime(args[0], args[1], args[2], format));
             } else {
                 error = `${expression} should contain an ISO format timestamp, a time interval integer, a string unit of time and an optional output format string.`;
@@ -41,13 +43,17 @@ export class AddToTime extends ExpressionEvaluator {
         return { value, error };
     }
 
-    private static evalAddToTime(timeStamp: string, interval: number, timeUnit: string, format?: string): ValueWithError {
+    private static evalAddToTime(
+        timeStamp: string,
+        interval: number,
+        timeUnit: string,
+        format?: string
+    ): ValueWithError {
         let result: string;
-        let error: string;
-        let parsed: any;
-        ({ value: parsed, error } = FunctionUtils.parseTimestamp(timeStamp));
+        const { value: parsed, error: parseError } = InternalFunctionUtils.parseTimestamp(timeStamp);
+        let error = parseError;
         if (!error) {
-            let dt: any = moment(parsed).utc();
+            const dt: any = moment(parsed).utc();
             let addedTime = dt;
             let timeUnitMark: string;
             switch (timeUnit) {
@@ -94,7 +100,7 @@ export class AddToTime extends ExpressionEvaluator {
 
             if (!error) {
                 addedTime = dt.add(interval, timeUnitMark);
-                ({ value: result, error } = FunctionUtils.returnFormattedTimeStampStr(addedTime, format));
+                ({ value: result, error } = InternalFunctionUtils.returnFormattedTimeStampStr(addedTime, format));
             }
         }
 
@@ -102,6 +108,12 @@ export class AddToTime extends ExpressionEvaluator {
     }
 
     private static validator(expression: Expression): void {
-        FunctionUtils.validateOrder(expression, [ReturnType.String], ReturnType.String, ReturnType.Number, ReturnType.String);
+        FunctionUtils.validateOrder(
+            expression,
+            [ReturnType.String],
+            ReturnType.String,
+            ReturnType.Number,
+            ReturnType.String
+        );
     }
 }

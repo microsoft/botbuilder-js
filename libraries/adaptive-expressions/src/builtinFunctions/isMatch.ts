@@ -23,20 +23,19 @@ export class IsMatch extends ExpressionEvaluator {
     }
 
     private static evaluator(): EvaluateExpressionDelegate {
-        return FunctionUtils.applyWithError(
-            (args: any[]): any => {
-                let value = false;
-                let error: string;
-                if (args[0] === undefined || args[0] === '') {
-                    value = false;
-                    error = 'regular expression is empty.';
-                } else {
-                    const regex: RegExp = CommonRegex.CreateRegex(args[1].toString());
-                    value = regex.test(args[0].toString());
-                }
+        return FunctionUtils.applyWithError((args: any[]): any => {
+            let value = false;
+            let error: string;
+            if (args[0] === undefined || args[0] === '') {
+                value = false;
+                error = 'regular expression is empty.';
+            } else {
+                const regex: RegExp = CommonRegex.CreateRegex(args[1].toString());
+                value = regex.test(args[0].toString());
+            }
 
-                return { value, error };
-            }, FunctionUtils.verifyStringOrNull);
+            return { value, error };
+        }, FunctionUtils.verifyStringOrNull);
     }
 
     private static validator(expression: Expression): void {

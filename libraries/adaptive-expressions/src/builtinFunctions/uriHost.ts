@@ -10,6 +10,7 @@ import { Expression } from '../expression';
 import { ExpressionEvaluator, ValueWithError } from '../expressionEvaluator';
 import { ExpressionType } from '../expressionType';
 import { FunctionUtils } from '../functionUtils';
+import { InternalFunctionUtils } from '../functionUtils.internal';
 import { MemoryInterface } from '../memory/memoryInterface';
 import { Options } from '../options';
 import { ReturnType } from '../returnType';
@@ -24,11 +25,10 @@ export class UriHost extends ExpressionEvaluator {
 
     private static evaluator(expr: Expression, state: MemoryInterface, options: Options): ValueWithError {
         let value: any;
-        let error: string;
-        let args: any[];
-        ({ args, error } = FunctionUtils.evaluateChildren(expr, state, options));
+        const { args, error: childrenError } = FunctionUtils.evaluateChildren(expr, state, options);
+        let error = childrenError;
         if (!error) {
-            if (typeof (args[0]) === 'string') {
+            if (typeof args[0] === 'string') {
                 ({ value, error } = UriHost.evalUriHost(args[0]));
             } else {
                 error = `${expr} should contain a URI string.`;
@@ -40,9 +40,8 @@ export class UriHost extends ExpressionEvaluator {
 
     private static evalUriHost(uri: string): ValueWithError {
         let result: string;
-        let error: string;
-        let parsed: URL;
-        ({ value: parsed, error } = FunctionUtils.parseUri(uri));
+        const { value: parsed, error: parseError } = InternalFunctionUtils.parseUri(uri);
+        let error = parseError;
         if (!error) {
             try {
                 result = parsed.hostname;

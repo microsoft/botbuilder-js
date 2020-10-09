@@ -9,6 +9,7 @@
 import { EvaluateExpressionDelegate, ExpressionEvaluator } from '../expressionEvaluator';
 import { ExpressionType } from '../expressionType';
 import { FunctionUtils } from '../functionUtils';
+import { InternalFunctionUtils } from '../functionUtils.internal';
 import { ReturnType } from '../returnType';
 
 import atob = require('atob-lite');
@@ -18,14 +19,18 @@ import atob = require('atob-lite');
  */
 export class Base64ToBinary extends ExpressionEvaluator {
     public constructor() {
-        super(ExpressionType.Base64ToBinary, Base64ToBinary.evaluator(), ReturnType.Object, FunctionUtils.validateUnary);
+        super(
+            ExpressionType.Base64ToBinary,
+            Base64ToBinary.evaluator(),
+            ReturnType.Object,
+            FunctionUtils.validateUnary
+        );
     }
 
     private static evaluator(): EvaluateExpressionDelegate {
-        return FunctionUtils.apply(
-            (args: Readonly<any>): Uint8Array => {
-                const raw = atob(args[0].toString());
-                return FunctionUtils.toBinary(raw);
-            }, FunctionUtils.verifyString);
+        return FunctionUtils.apply((args: Readonly<any>): Uint8Array => {
+            const raw = atob(args[0].toString());
+            return InternalFunctionUtils.toBinary(raw);
+        }, FunctionUtils.verifyString);
     }
 }
