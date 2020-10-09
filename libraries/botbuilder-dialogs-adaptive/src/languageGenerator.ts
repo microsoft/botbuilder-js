@@ -19,5 +19,5 @@ export interface LanguageGenerator {
      * @param data Data to bind to.
      * @returns Result of rendering template using data.
      */
-    generate(dialogContext: DialogContext, template: string, data: object): Promise<string>;
+    generate(dialogContext: DialogContext, template: string, data: object): Promise<any>;
 }

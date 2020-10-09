@@ -39,13 +39,10 @@ export class TemplateEngineLanguageGenerator implements LanguageGenerator {
         }
     }
 
-    public generate(dialogContext: DialogContext, template: string, data: object): Promise<string> {
+    public generate(dialogContext: DialogContext, template: string, data: object): Promise<any> {
         try {
-            // BUGBUG: I'm casting objects to <any> to work around a bug in the activity factory.
-            //         The string version of of the serialized card isn't being parsed. We should
-            //         fix that in R10. The cast is working for now.
             const result = this.lg.evaluateText(template, data);
-            return Promise.resolve(typeof result == 'object' ? (result as any) : result.toString());
+            return Promise.resolve(result);
         } catch (e) {
             if (this.id !== undefined && this.id === '') {
                 throw Error(`${this.id}:${e}`);

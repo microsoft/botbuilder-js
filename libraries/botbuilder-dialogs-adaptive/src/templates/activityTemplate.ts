@@ -39,8 +39,8 @@ export class ActivityTemplate implements TemplateInterface<Partial<Activity>> {
         if (this.template) {
             const languageGenerator: LanguageGenerator = dialogContext.services.get(languageGeneratorKey);
             if (languageGenerator) {
-                const lgStringResult = await languageGenerator.generate(dialogContext, this.template, data);
-                const result = ActivityFactory.fromObject(lgStringResult);
+                const lgResult = await languageGenerator.generate(dialogContext, this.template, data);
+                const result = ActivityFactory.fromObject(lgResult);
                 return Promise.resolve(result);
             } else {
                 const message = MessageFactory.text(this.template, this.template);

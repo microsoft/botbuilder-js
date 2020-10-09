@@ -34,14 +34,16 @@ export class TextTemplate implements TemplateInterface<string> {
      * @param dialogContext DialogContext.
      * @param data Data to bind to.
      */
-    public async bind(dialogContext: DialogContext, data: object): Promise<string> {
+    public async bind(dialogContext: DialogContext, data: object): Promise<any> {
         if (!this.template) {
             throw new Error(`ArgumentNullException: ${this.template}`);
         }
 
         const languageGenerator: LanguageGenerator = dialogContext.services.get(languageGeneratorKey);
         if (languageGenerator !== undefined) {
-            const result = languageGenerator.generate(dialogContext, this.template, data);
+            const lgResult = await languageGenerator.generate(dialogContext, this.template, data);
+            const result = lgResult ? lgResult.toString() : '';
+
             return Promise.resolve(result);
         }
 

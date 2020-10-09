@@ -35,7 +35,7 @@ export abstract class MultiLanguageGeneratorBase implements LanguageGenerator {
      * @param template Template to use.
      * @param data Data to bind to.
      */
-    public async generate(dialogContext: DialogContext, template: string, data: object): Promise<string> {
+    public async generate(dialogContext: DialogContext, template: string, data: object): Promise<any> {
         const targetLocale = dialogContext.context.activity.locale
             ? dialogContext.context.activity.locale.toLocaleLowerCase()
             : '';
@@ -80,7 +80,7 @@ export abstract class MultiLanguageGeneratorBase implements LanguageGenerator {
         const errors: string[] = [];
         for (const generator of generators) {
             try {
-                return generator.generate(dialogContext, template, data);
+                return await generator.generate(dialogContext, template, data);
             } catch (e) {
                 errors.push(e);
             }
