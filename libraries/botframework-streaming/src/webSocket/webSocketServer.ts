@@ -9,11 +9,7 @@ import { ProtocolAdapter } from '../protocolAdapter';
 import { RequestHandler } from '../requestHandler';
 import { StreamingRequest } from '../streamingRequest';
 import { RequestManager } from '../payloads';
-import {
-    PayloadReceiver,
-    PayloadSender,
-    TransportDisconnectedEvent
-} from '../payloadTransport';
+import { PayloadReceiver, PayloadSender, TransportDisconnectedEvent } from '../payloadTransport';
 import { ISocket } from '../interfaces/ISocket';
 import { WebSocketTransport } from './webSocketTransport';
 import { IStreamingTransportServer, IReceiveResponse } from '../interfaces';
@@ -54,9 +50,16 @@ export class WebSocketServer implements IStreamingTransportServer {
         this._receiver = new PayloadReceiver();
         this._receiver.disconnected = this.onConnectionDisconnected.bind(this);
 
-        this._protocolAdapter = new ProtocolAdapter(this._requestHandler, this._requestManager, this._sender, this._receiver);
+        this._protocolAdapter = new ProtocolAdapter(
+            this._requestHandler,
+            this._requestManager,
+            this._sender,
+            this._receiver
+        );
 
-        this._closedSignal = (x: string): string => { return x; };
+        this._closedSignal = (x: string): string => {
+            return x;
+        };
     }
 
     /**

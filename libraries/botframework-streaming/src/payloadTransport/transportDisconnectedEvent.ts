@@ -11,7 +11,7 @@ export class TransportDisconnectedEvent {
      * A new and empty TransportDisconnectedEvent.
      */
     public static Empty: TransportDisconnectedEvent = new TransportDisconnectedEvent();
-    
+
     /**
      * The reason the disconnection event fired, in plain text.
      */
