@@ -16,7 +16,7 @@ import {
 } from 'botbuilder-dialogs';
 import { QnAMakerOptions } from './qnamaker-interfaces/qnamakerOptions';
 import { RankerTypes } from './qnamaker-interfaces/rankerTypes';
-import { JoinOperator } from './qnamaker-interfaces/JoinOperator';
+import { JoinOperator } from './qnamaker-interfaces/joinOperator';
 import { QnAMaker, QnAMakerResult } from './';
 import { FeedbackRecord, FeedbackRecords, QnAMakerMetadata } from './qnamaker-interfaces';
 import { QnACardBuilder } from './qnaCardBuilder';
