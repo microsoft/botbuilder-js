@@ -38,7 +38,7 @@ export class TestRunner {
      * @returns A Promise that represents the work queued to execute.
      */
     public async runTestScript(testName: string): Promise<any> {
-        const script = this.resourceExplorer.loadType(`${testName}.test.dialog`) as TestScript;
+        const script = this.resourceExplorer.loadType<TestScript>(`${testName}.test.dialog`);
         script.description = script.description || testName;
         this.testAdapter.activeQueue.splice(0, this.testAdapter.activeQueue.length);
         await script.execute(this.resourceExplorer, testName, this.testAdapter);

@@ -8,8 +8,8 @@
 
 import { CustomDeserializer } from './customDeserializer';
 
-export interface DeclarativeType {
+export interface DeclarativeType<T = unknown, C = Record<string, unknown>> {
     kind: string;
-    type: new () => unknown;
-    loader?: CustomDeserializer;
+    type: new (...args: unknown[]) => T;
+    loader?: CustomDeserializer<T, C>;
 }

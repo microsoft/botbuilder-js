@@ -30,15 +30,15 @@ export class UserTokenMocksConverter implements Converter {
         const userTokenMocks: UserTokenMock[] = [];
         value.forEach((item: string | UserTokenMock) => {
             if (typeof item === 'string') {
-                const userTokenMock = this._resourceExplorer.loadType(`${item}.dialog`) as UserTokenMock;
+                const userTokenMock = this._resourceExplorer.loadType<UserTokenMock>(`${item}.dialog`);
                 if (userTokenMock) {
                     userTokenMocks.push(userTokenMock);
                 } else {
-                    userTokenMocks.push(this._resourceExplorer.loadType(item) as UserTokenMock);
+                    userTokenMocks.push(this._resourceExplorer.loadType<UserTokenMock>(item));
                 }
             } else {
                 const kind = item['$kind'];
-                userTokenMocks.push(this._resourceExplorer.buildType(kind, item) as UserTokenMock);
+                userTokenMocks.push(this._resourceExplorer.buildType<UserTokenMock, UserTokenMock>(kind, item));
             }
         });
         return userTokenMocks;

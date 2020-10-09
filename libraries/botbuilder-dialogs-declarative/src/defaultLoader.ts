@@ -10,25 +10,25 @@ import { Converter } from 'botbuilder-dialogs';
 import { CustomDeserializer } from './customDeserializer';
 import { ResourceExplorer } from './resources';
 
-export class DefaultLoader implements CustomDeserializer {
+export class DefaultLoader<T, C> implements CustomDeserializer<T, C> {
     public constructor(private readonly _resourceExplorer: ResourceExplorer) {}
 
-    public load(value: any, type: new () => {}): any {
+    public load(config: C, type: new (...args: unknown[]) => T): T {
         const instance = new type();
         const converters: Record<
             string,
             Converter | ((resourceExplorer: ResourceExplorer) => Converter)
         > = Object.assign({}, instance['converters']);
-        Object.getOwnPropertyNames(value).forEach((k: string) => {
-            const config = value[k];
+        Object.getOwnPropertyNames(config).forEach((k: string) => {
+            const value = config[k];
             let converter = converters[k];
             if (converter) {
                 if (typeof converter === 'function') {
                     converter = converter(this._resourceExplorer);
                 }
-                instance[k] = converter.convert(config);
+                instance[k] = converter.convert(value);
             } else {
-                instance[k] = config;
+                instance[k] = value;
             }
         });
         return instance;

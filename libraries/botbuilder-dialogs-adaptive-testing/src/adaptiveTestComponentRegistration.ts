@@ -54,7 +54,7 @@ export class AdaptiveTestComponentRegistration extends ComponentRegistration imp
         return this._declarativeTypes;
     }
 
-    private _addDeclarativeType(type: Type, loader?: CustomDeserializer): void {
+    private _addDeclarativeType(type: Type, loader?: CustomDeserializer<unknown, unknown>): void {
         const declarativeType: DeclarativeType = {
             kind: type.$kind,
             type,

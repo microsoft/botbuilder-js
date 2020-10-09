@@ -17,8 +17,8 @@ import { Converter, Converters, Dialog, DialogContext, DialogTurnResult } from '
 /**
  * Converter to convert telemetry properties configuration.
  */
-class TelemetryPropertiesConverter implements Converter<object, { [name: string]: StringExpression }> {
-    public convert(properties: { [name: string]: string }): { [name: string]: StringExpression } {
+class TelemetryPropertiesConverter implements Converter<Record<string, string>, Record<string, StringExpression>> {
+    public convert(properties: Record<string, string>): Record<string, StringExpression> {
         const result = {};
         for (const name in properties) {
             result[name] = new StringExpression(properties[name]);

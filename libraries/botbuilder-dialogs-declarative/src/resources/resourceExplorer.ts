@@ -23,8 +23,8 @@ import { DefaultLoader } from '../defaultLoader';
  * Class which gives standard access to content resources.
  */
 export class ResourceExplorer {
-    private _kindToType: Map<string, new () => {}> = new Map();
-    private _kindDeserializer: Map<string, CustomDeserializer> = new Map();
+    private _kindToType: Map<string, new () => unknown> = new Map();
+    private _kindDeserializer: Map<string, CustomDeserializer<unknown, unknown>> = new Map();
     private _eventEmitter: EventEmitter = new EventEmitter();
     private _typesLoaded = false;
 
@@ -169,7 +169,7 @@ export class ResourceExplorer {
      * @param kind $kind.
      * @param obj Source object.
      */
-    public buildType<T extends object>(kind: string, config: object): T {
+    public buildType<T extends object, C>(kind: string, config: C): T {
         this.registerComponentTypes();
 
         const type = this._kindToType.get(kind);
@@ -240,9 +240,13 @@ export class ResourceExplorer {
         );
     }
 
-    private registerTypeInternal(kind: string, type: new () => {}, loader?: CustomDeserializer): void {
+    private registerTypeInternal(
+        kind: string,
+        type: new (...args: unknown[]) => unknown,
+        loader?: CustomDeserializer<unknown, Record<string, unknown>>
+    ): void {
         this._kindToType.set(kind, type);
-        this._kindDeserializer.set(kind, loader || new DefaultLoader(this));
+        this._kindDeserializer.set(kind, loader || new DefaultLoader<typeof type, Record<string, unknown>>(this));
     }
 
     private registerComponentTypes(): void {

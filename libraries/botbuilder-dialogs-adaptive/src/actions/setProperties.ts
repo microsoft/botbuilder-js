@@ -10,8 +10,13 @@ import { StringUtils } from 'botbuilder-core';
 import { Converter, Converters, Dialog, DialogContext, DialogTurnResult } from 'botbuilder-dialogs';
 import { replaceJsonRecursively } from '../jsonExtensions';
 
-class PropertyAssignmentsConverter implements Converter<any[], PropertyAssignment[]> {
-    public convert(assignments: { property: string; value: any }[]): PropertyAssignment[] {
+type Input<T> = {
+    property: string;
+    value: T;
+};
+
+class PropertyAssignmentsConverter<T = any> implements Converter<Input<T>[], PropertyAssignment[]> {
+    public convert(assignments: Input<T>[]): PropertyAssignment[] {
         return assignments.map((item) => {
             const { property, value } = item;
             return {

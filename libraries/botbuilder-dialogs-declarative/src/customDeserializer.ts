@@ -6,6 +6,6 @@
  * Licensed under the MIT License.
  */
 
-export interface CustomDeserializer {
-    load(config: any, type: new () => {}): any;
+export interface CustomDeserializer<T, C> {
+    load(config: C, type: new (...args: unknown[]) => T): T;
 }

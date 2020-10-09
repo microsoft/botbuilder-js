@@ -8,21 +8,22 @@
 import fetch from 'node-fetch';
 import { Response, Headers } from 'node-fetch';
 import {
-    ValueExpression,
-    StringExpression,
     BoolExpression,
-    EnumExpression,
     BoolExpressionConverter,
+    EnumExpression,
     EnumExpressionConverter,
+    Expression,
+    StringExpression,
     StringExpressionConverter,
+    ValueExpression,
     ValueExpressionConverter,
 } from 'adaptive-expressions';
 import { Activity } from 'botbuilder-core';
 import { Converter, Converters, DialogTurnResult, DialogContext, Dialog } from 'botbuilder-dialogs';
 import { replaceJsonRecursively } from '../jsonExtensions';
 
-class HttpHeadersConverter implements Converter<object, { [key: string]: StringExpression }> {
-    public convert(value: object): { [key: string]: StringExpression } {
+class HttpHeadersConverter implements Converter<Record<string, string | Expression>, Record<string, StringExpression>> {
+    public convert(value: Record<string, string | Expression>): Record<string, StringExpression> {
         const headers = {};
         for (const key in value) {
             headers[key] = new StringExpression(value[key]);

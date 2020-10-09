@@ -11,8 +11,13 @@ import { Recognizer } from './recognizer';
 import { IntentPattern } from './intentPattern';
 import { EntityRecognizer, TextEntity, EntityRecognizerSet } from './entityRecognizers';
 
-class IntentPatternsConverter implements Converter<any[], IntentPattern[]> {
-    public convert(value: { intent: string; pattern: string }[]): IntentPattern[] {
+type Input = {
+    intent: string;
+    pattern: string;
+};
+
+class IntentPatternsConverter implements Converter<Input[], IntentPattern[]> {
+    public convert(value: Input[]): IntentPattern[] {
         return value.map((item) => new IntentPattern(item.intent, item.pattern));
     }
 }

@@ -117,7 +117,7 @@ import { CustomDialogLoader } from './customDialogLoader';
 
 type Type = {
     $kind: string;
-    new (): unknown;
+    new (...args: unknown[]): unknown;
 };
 
 export class AdaptiveComponentRegistration extends ComponentRegistration implements ComponentDeclarativeTypes {
@@ -245,14 +245,14 @@ export class AdaptiveComponentRegistration extends ComponentRegistration impleme
                 declarativeTypes.push({
                     kind: resourceId,
                     type: DynamicBeginDialog,
-                    loader: new CustomDialogLoader(resourceExplorer),
+                    loader: new CustomDialogLoader<DynamicBeginDialog, Record<string, unknown>>(resourceExplorer),
                 });
             }
         });
         return declarativeTypes;
     }
 
-    private _addDeclarativeType(type: Type, loader?: CustomDeserializer): void {
+    private _addDeclarativeType(type: Type, loader?: CustomDeserializer<unknown, unknown>): void {
         const declarativeType: DeclarativeType = {
             kind: type.$kind,
             type,

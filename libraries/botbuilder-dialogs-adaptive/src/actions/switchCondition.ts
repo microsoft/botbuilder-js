@@ -18,8 +18,13 @@ import { Converter, Converters, DialogTurnResult, DialogDependencies, Dialog, Di
 import { ActionScope } from './actionScope';
 import { Case } from './case';
 
-class CasesConverter implements Converter<any[], Case[]> {
-    public convert(value: { value: string; actions: Dialog[] }[]): Case[] {
+type Input = {
+    actions: Dialog[];
+    value: string;
+};
+
+class CasesConverter implements Converter<Input[], Case[]> {
+    public convert(value: Input[]): Case[] {
         return value.map((item) => new Case(item.value, item.actions));
     }
 }
