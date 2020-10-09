@@ -13,7 +13,7 @@ export class AuthenticationError extends Error implements IStatusCodeError {
     /**
      * Initializes a new instance of the `AuthenticationError` class.
      * @param message The Error message.
-     * @param statusCode The `StatusCode` to use.
+     * @param statusCode The `StatusCode` number to use.
      */
     constructor(
         message: string,
@@ -23,7 +23,7 @@ export class AuthenticationError extends Error implements IStatusCodeError {
     }
 
     /**
-     * Corroborates that the error is of type IStatusCodeError.
+     * Corroborates that the error is of type [IStatusCodeError](xref:botbuilder.IStatusCodeError).
      * @param err The error to validate.
      */
     public static isStatusCodeError(err: any): err is IStatusCodeError {

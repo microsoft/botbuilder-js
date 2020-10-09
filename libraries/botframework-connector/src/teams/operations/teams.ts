@@ -29,7 +29,7 @@ export class Teams {
    * Fetches channel list for a given team.
    * @param teamId Team Id.
    * @param options Optional. The options object to be used in every request.
-   * @returns Promise<Models.TeamsFetchChannelListResponse>.
+   * @returns A `Promise<Models.TeamsFetchChannelListResponse>`.
    */
   fetchChannelList(teamId: string, options?: msRest.RequestOptionsBase): Promise<Models.TeamsFetchChannelListResponse>;
   /**
@@ -50,7 +50,7 @@ export class Teams {
    * @param teamId Team Id.
    * @param options Optional. The options object to be used in every request.
    * @param callback The callback.
-   * @returns Promise<Models.TeamsFetchChannelListResponse>.
+   * @returns A `Promise<Models.TeamsFetchChannelListResponse>`.
    */
   fetchChannelList(teamId: string, options?: msRest.RequestOptionsBase | msRest.ServiceCallback<ConversationList>, callback?: msRest.ServiceCallback<ConversationList>): Promise<Models.TeamsFetchChannelListResponse> {
     return this.client.sendOperationRequest(
@@ -66,7 +66,7 @@ export class Teams {
    * Fetches details related to a team.
    * @param teamId Team Id.
    * @param options Optional. The options object to be used in every request.
-   * @returns Promise<Models.TeamsFetchTeamDetailsResponse>.
+   * @returns A `Promise<Models.TeamsFetchTeamDetailsResponse>`.
    */
   fetchTeamDetails(teamId: string, options?: msRest.RequestOptionsBase): Promise<Models.TeamsFetchTeamDetailsResponse>;
   /**
@@ -87,7 +87,7 @@ export class Teams {
    * @param teamId Team Id.
    * @param options Optional. The options object to be used in every request.
    * @param callback The callback.
-   * @returns Promise<Models.TeamsFetchTeamDetailsResponse>.
+   * @returns A `Promise<Models.TeamsFetchTeamDetailsResponse>`.
    */
   fetchTeamDetails(teamId: string, options?: msRest.RequestOptionsBase | msRest.ServiceCallback<TeamDetails>, callback?: msRest.ServiceCallback<TeamDetails>): Promise<Models.TeamsFetchTeamDetailsResponse> {
     return this.client.sendOperationRequest(

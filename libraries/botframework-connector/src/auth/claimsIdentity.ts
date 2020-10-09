@@ -21,8 +21,8 @@ export class ClaimsIdentity {
     public readonly claims: Claim[];
 
     /**
-     * Initializes a new instance of the `ClaimsIdentity` class.
-     * @param claims An array of Claims.
+     * Initializes a new instance of the [ClaimsIdentity](xref:botframework-connector.ClaimsIdentity) class.
+     * @param claims An array of [Claim](xref:botframework-connector.Claim).
      * @param isAuthenticated The value to represent the identity has been authenticated.
      */
     constructor(claims: Claim[], isAuthenticated: boolean) {
