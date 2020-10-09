@@ -17,7 +17,7 @@ export class AdaptiveTypeBuilder implements TypeBuilder {
     private _resourceExplorer: ResourceExplorer;
 
     /**
-     * Creates a new instance of the `AdaptiveTypeBuilder` class.
+     * Creates a new instance of the [AdaptiveTypeBuilder](xref:botbuilder-dialogs-adaptive.AdaptiveTypeBuilder) class.
      * @param factory Factory for the adaptive type.
      * @param resourceExplorer Resource explorer.
      * @param converters Key value pair with converters.
