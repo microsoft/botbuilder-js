@@ -18,7 +18,7 @@ export enum QuantifierType {
     /**
      * Create a new clause for each possible binding of variable.
      */
-    any = 'any'
+    any = 'any',
 }
 
 /**
@@ -31,12 +31,12 @@ export class Quantifier {
      * @param type Type of quantifier.
      * @param bindings Possible bindings for variable.
      */
-    public constructor(readonly variable: string, readonly type: QuantifierType, readonly bindings: string[]) { }
+    public constructor(readonly variable: string, readonly type: QuantifierType, readonly bindings: string[]) {}
 
     /**
      * Returns a string that represents the quantifier.
      */
     public toString(): string {
-        return `${ this.type } ${ this.variable } ${ this.bindings.length }`;
+        return `${this.type} ${this.variable} ${this.bindings.length}`;
     }
 }
