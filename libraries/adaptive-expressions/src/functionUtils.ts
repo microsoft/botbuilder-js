@@ -577,12 +577,12 @@ export class FunctionUtils {
     }
 
     /**
-     * 
+     *
      * @param args An array of arguments.
      * @param locale A locale string
      * @param maxArgsLength The max length of a given function.
      */
-    public static determineLocale(args: any[], locale: string, maxArgsLength: number): string {
+    public static determineLocale(args: any[], maxArgsLength: number, locale: string): string {
         if (args.length === maxArgsLength) {
             locale = args[maxArgsLength - 1] as string;
         }

@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 
-import * as d3 from 'd3-format';
+import { formatLocale as d3formatLocale, format as d3format } from 'd3-format';
 import { Expression } from '../expression';
 import { EvaluateExpressionDelegate, ExpressionEvaluator } from '../expressionEvaluator';
 import { ExpressionType } from '../expressionType';
@@ -24,36 +24,36 @@ export class FormatNumber extends ExpressionEvaluator {
     }
 
     private static evaluator(): EvaluateExpressionDelegate {
-        return FunctionUtils.applyWithOptionsAndError(
-            (args: any[], options: Options): any => {
-                let value: any = null;
-                let error: string;
-                let number = args[0];
-                let precision = args[1];
-                let locale = options.locale ? options.locale : 'en-us';
-                locale = FunctionUtils.determineLocale(args, locale, 3);
-                if (typeof number !== 'number') {
-                    error = `formatNumber first argument ${number} must be a number`;
-                } else if (typeof precision !== 'number') {
-                    error = `formatNumber second argument ${precision} must be a number`;
-                } else if (locale && typeof locale !== 'string') {
-                    error = `formatNubmer third argument ${locale} is not a valid locale`;
+        return FunctionUtils.applyWithOptionsAndError((args: any[], options: Options): any => {
+            let value: any = null;
+            let error: string;
+            const number = args[0];
+            const precision = args[1];
+            let locale = options.locale ? options.locale : 'en-us';
+            locale = FunctionUtils.determineLocale(args, 3, locale);
+            if (typeof number !== 'number') {
+                error = `formatNumber first argument ${number} must be a number`;
+            } else if (typeof precision !== 'number') {
+                error = `formatNumber second argument ${precision} must be a number`;
+            } else if (locale && typeof locale !== 'string') {
+                error = `formatNubmer third argument ${locale} is not a valid locale`;
+            } else {
+                const fixedNotation = `,.${precision}f`;
+                const roundedNumber = this.roundToPrecision(number, precision);
+                const formatLocale = localeInfo[locale];
+                if (formatLocale !== undefined) {
+                    value = d3formatLocale(formatLocale).format(fixedNotation)(roundedNumber);
                 } else {
-                    const fixedNotation = `,.${precision}f`;
-                    const roundedNumber = this.roundToPrecision(number, precision);
-                    const formatLocale = localeInfo[locale];
-                    if (formatLocale !== undefined) {
-                        value = d3.formatLocale(formatLocale).format(fixedNotation)(roundedNumber);
-                    } else {
-                        value = d3.format(fixedNotation)(roundedNumber);
-                    }
+                    value = d3format(fixedNotation)(roundedNumber);
                 }
+            }
 
             return { value, error };
         });
     }
 
-    private static roundToPrecision = (num: number, digits: number): number => Math.round(num * Math.pow(10, digits)) / Math.pow(10, digits);
+    private static roundToPrecision = (num: number, digits: number): number =>
+        Math.round(num * Math.pow(10, digits)) / Math.pow(10, digits);
 
     private static validator(expr: Expression): void {
         FunctionUtils.validateOrder(expr, [ReturnType.String], ReturnType.Number, ReturnType.Number);
