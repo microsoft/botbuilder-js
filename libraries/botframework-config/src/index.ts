@@ -14,7 +14,7 @@ export {
     IFileResource,
     IGenericResource,
     IResource,
-    IUrlResource
+    IUrlResource,
 } from './botRecipe';
 export * from './models';
 export * from './schema';

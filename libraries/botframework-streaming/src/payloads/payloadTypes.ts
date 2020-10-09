@@ -14,5 +14,5 @@ export enum PayloadTypes {
     response = 'B',
     stream = 'S',
     cancelAll = 'X',
-    cancelStream = 'C'
+    cancelStream = 'C',
 }

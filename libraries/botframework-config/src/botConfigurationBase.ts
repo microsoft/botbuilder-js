@@ -5,22 +5,43 @@
  * Licensed under the MIT License.
  */
 import {
-    AppInsightsService, BlobStorageService, BotService, ConnectedService, CosmosDbService, DispatchService,
-    EndpointService, FileService, GenericService, LuisService, QnaMakerService } from './models';
-import { IAppInsightsService, IBlobStorageService, IBotConfiguration, IBotService, IConnectedService,
-    ICosmosDBService, IDispatchService, IEndpointService, IFileService, IGenericService, ILuisService,
-    IQnAService, ServiceTypes } from './schema';
+    AppInsightsService,
+    BlobStorageService,
+    BotService,
+    ConnectedService,
+    CosmosDbService,
+    DispatchService,
+    EndpointService,
+    FileService,
+    GenericService,
+    LuisService,
+    QnaMakerService,
+} from './models';
+import {
+    IAppInsightsService,
+    IBlobStorageService,
+    IBotConfiguration,
+    IBotService,
+    IConnectedService,
+    ICosmosDBService,
+    IDispatchService,
+    IEndpointService,
+    IFileService,
+    IGenericService,
+    ILuisService,
+    IQnAService,
+    ServiceTypes,
+} from './schema';
 
 /**
  * @deprecated See https://aka.ms/bot-file-basics for more information.
  */
 export class BotConfigurationBase implements Partial<IBotConfiguration> {
-
-    public name: string = '';
-    public description: string = '';
+    public name = '';
+    public description = '';
     public services: IConnectedService[] = [];
-    public padlock: string = '';
-    public version: string = '2.0';
+    public padlock = '';
+    public version = '2.0';
 
     /**
      * Creates a new BotConfigurationBase instance.
@@ -76,7 +97,9 @@ export class BotConfigurationBase implements Partial<IBotConfiguration> {
      */
     public static fromJSON(source: Partial<IBotConfiguration> = {}): BotConfigurationBase {
         // tslint:disable-next-line:prefer-const
-        const services: IConnectedService[] = (source.services) ? source.services.slice().map(BotConfigurationBase.serviceFromJSON) : [];
+        const services: IConnectedService[] = source.services
+            ? source.services.slice().map(BotConfigurationBase.serviceFromJSON)
+            : [];
         const botConfig: BotConfigurationBase = new BotConfigurationBase();
         Object.assign(botConfig, source);
         botConfig.services = services;
@@ -92,7 +115,9 @@ export class BotConfigurationBase implements Partial<IBotConfiguration> {
         const newConfig: IBotConfiguration = <IBotConfiguration>{};
         Object.assign(newConfig, this);
         delete (<any>newConfig).internal;
-        newConfig.services = this.services.slice().map((service: IConnectedService) => (<ConnectedService>service).toJSON());
+        newConfig.services = this.services
+            .slice()
+            .map((service: IConnectedService) => (<ConnectedService>service).toJSON());
 
         return newConfig;
     }
@@ -114,9 +139,8 @@ export class BotConfigurationBase implements Partial<IBotConfiguration> {
             });
 
             service.id = (++maxValue).toString();
-        }
-        else if (this.services.filter(s => s.type === service.type && s.id === service.id).length) {
-            throw new Error(`Service with ${ service.id } is already connected`);
+        } else if (this.services.filter((s) => s.type === service.type && s.id === service.id).length) {
+            throw new Error(`Service with ${service.id} is already connected`);
         }
 
         this.services.push(service);
@@ -171,7 +195,7 @@ export class BotConfigurationBase implements Partial<IBotConfiguration> {
                 return services.splice(i, 1)[0];
             }
         }
-        throw new Error(`a service with id or name of [${ nameOrId }] was not found`);
+        throw new Error(`a service with id or name of [${nameOrId}] was not found`);
     }
 
     /**
