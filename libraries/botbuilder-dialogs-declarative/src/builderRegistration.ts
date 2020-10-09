@@ -12,7 +12,7 @@ import { TypeBuilder } from './factory/typeBuilder';
  */
 export class BuilderRegistration {
     /**
-     * Creates a new instance of the `BuilderRegistration` class.
+     * Creates a new instance of the [BuilderRegistration](xref:botbuilder-dialogs-declarative.BuilderRegistration) class.
      * @param name Name for the builder.
      * @param builder Type Builder.
      */

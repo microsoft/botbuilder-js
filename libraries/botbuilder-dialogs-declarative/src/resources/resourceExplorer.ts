@@ -213,7 +213,7 @@ export class ResourceExplorer {
     /**
      * @protected
      * Handler for on changed events.
-     * @param event Resource Change Event.
+     * @param event Resource change event.
      * @param resources A collection of resources to pass to the event handler.
      */
     protected onChanged(event: ResourceChangeEvent, resources: Resource[]): void {
