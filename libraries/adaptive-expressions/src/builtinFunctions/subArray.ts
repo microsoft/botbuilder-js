@@ -23,9 +23,8 @@ export class SubArray extends ExpressionEvaluator {
 
     private static evaluator(expression: Expression, state: any, options: Options): ValueWithError {
         let result: any;
-        let error: any;
-        let arr: any;
-        ({ value: arr, error } = expression.children[0].tryEvaluate(state, options));
+        const { value: arr, error: childrenError } = expression.children[0].tryEvaluate(state, options);
+        let error = childrenError;
 
         if (!error) {
             if (Array.isArray(arr)) {

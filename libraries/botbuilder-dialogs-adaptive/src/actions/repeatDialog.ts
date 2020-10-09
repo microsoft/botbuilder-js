@@ -19,7 +19,7 @@ export class RepeatDialog<O extends object = {}> extends BaseInvokeDialog<O> {
      * An optional expression which if is true will disable this action.
      */
     public disabled?: BoolExpression;
-    
+
     /**
      * An optional expression which if is true will allow loop of the repeated dialog.
      */
@@ -36,15 +36,14 @@ export class RepeatDialog<O extends object = {}> extends BaseInvokeDialog<O> {
         const repeatedIds: string[] = dc.state.getValue(TurnPath.repeatedIds, []);
         if (repeatedIds.includes(targetDialogId)) {
             if (this.allowLoop == null || this.allowLoop.getValue(dc.state) == false) {
-                throw new Error(`Recursive loop detected, ${ targetDialogId } cannot be repeated twice in one turn.`);
+                throw new Error(`Recursive loop detected, ${targetDialogId} cannot be repeated twice in one turn.`);
             }
-        }
-        else {
+        } else {
             repeatedIds.push(targetDialogId);
         }
 
         dc.state.setValue(TurnPath.repeatedIds, repeatedIds);
-        
+
         // set the activity processed state (default is true)
         dc.state.setValue(TurnPath.activityProcessed, this.activityProcessed.getValue(dc.state));
 

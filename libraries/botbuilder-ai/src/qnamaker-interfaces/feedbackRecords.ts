@@ -6,13 +6,12 @@
  * Licensed under the MIT License.
  */
 
-import { FeedbackRecord } from '../qnamaker-interfaces/feedbackRecord';
+import { FeedbackRecord } from './feedbackRecord';
 
- /**
+/**
  * Defines array of active learning feedback records.
  */
 export interface FeedbackRecords {
-    
     /**
      * Array of feedback records.
      */

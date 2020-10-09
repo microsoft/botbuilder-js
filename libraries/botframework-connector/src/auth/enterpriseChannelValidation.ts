@@ -1,5 +1,5 @@
 /**
- * @module botbuilder
+ * @module botframework-connector
  */
 /**
  * Copyright (c) Microsoft Corporation. All rights reserved.

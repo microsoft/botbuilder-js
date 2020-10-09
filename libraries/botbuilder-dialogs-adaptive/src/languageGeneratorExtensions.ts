@@ -8,7 +8,11 @@
 
 import { DialogManager } from 'botbuilder-dialogs';
 import { ResourceExplorer } from 'botbuilder-dialogs-declarative';
-import { LanguageGeneratorManager, ResourceMultiLanguageGenerator, TemplateEngineLanguageGenerator } from './generators';
+import {
+    LanguageGeneratorManager,
+    ResourceMultiLanguageGenerator,
+    TemplateEngineLanguageGenerator,
+} from './generators';
 import { LanguageGenerator } from './languageGenerator';
 import { resourceExplorerKey } from './resourceExtensions';
 import { LanguagePolicy } from './languagePolicy';
@@ -39,10 +43,11 @@ export class LanguageGeneratorExtensions {
      * @returns dialog manager with language generator.
      */
     public static useLanguageGeneration(dialogManager: DialogManager, lg?: string | LanguageGenerator): DialogManager {
-        const resourceExplorer: ResourceExplorer = dialogManager.initialTurnState.get(resourceExplorerKey) || new ResourceExplorer();
+        const resourceExplorer: ResourceExplorer =
+            dialogManager.initialTurnState.get(resourceExplorerKey) || new ResourceExplorer();
 
         let languageGenerator = lg || 'main.lg';
-        if (typeof(languageGenerator) === 'string') {
+        if (typeof languageGenerator === 'string') {
             const resource = resourceExplorer.getResource(languageGenerator);
             if (resource) {
                 languageGenerator = new ResourceMultiLanguageGenerator(languageGenerator);
@@ -57,7 +62,7 @@ export class LanguageGeneratorExtensions {
         dialogManager.initialTurnState.set(languageGeneratorManagerKey, languageGeneratorManager);
 
         return dialogManager;
-    };
+    }
 
     /**
      * Register language policy as default policy.

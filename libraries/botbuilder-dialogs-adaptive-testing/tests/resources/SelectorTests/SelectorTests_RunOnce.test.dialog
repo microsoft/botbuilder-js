@@ -73,16 +73,6 @@
             {
                 "$kind": "Microsoft.OnIntent",
                 "intent": "trigger",
-                "actions": [
-                    {
-                        "$kind": "Microsoft.SendActivity",
-                        "activity": "default"
-                    }
-                ]
-            },
-            {
-                "$kind": "Microsoft.OnIntent",
-                "intent": "trigger",
                 "runOnce": true,
                 "condition": "user.a == 1",
                 "actions": [
@@ -115,14 +105,21 @@
                         "activity": "ruleAorCOnce"
                     }
                 ]
+            },
+            {
+                "$kind": "Microsoft.OnIntent",
+                "intent": "trigger",
+                "actions": [
+                    {
+                        "$kind": "Microsoft.SendActivity",
+                        "activity": "default"
+                    }
+                ]
             }
         ],
         "autoEndDialog": false,
         "selector": {
-            "$kind": "Microsoft.MostSpecificSelector",
-            "selector": {
-                "$kind": "Microsoft.FirstSelector"
-            }
+            "$kind": "Microsoft.FirstSelector"
         },
         "defaultResultProperty": "dialog.result"
     },
@@ -149,15 +146,6 @@
             "$kind": "Microsoft.Test.AssertReply",
             "text": "ruleAOnce",
             "description": "Initial a runonce"
-        },
-        {
-            "$kind": "Microsoft.Test.UserSays",
-            "text": "trigger"
-        },
-        {
-            "$kind": "Microsoft.Test.AssertReply",
-            "text": "default",
-            "description": "Initial a default"
         },
         {
             "$kind": "Microsoft.Test.UserSays",

@@ -9,7 +9,7 @@ import { ExpressionProperty } from './expressionProperty';
 import { Expression } from '../expression';
 
 /**
- * Represents a property which is either a value of array of T or a string expression to bind to a 
+ * Represents a property which is either a value of array of T or a string expression to bind to a
  * array of T.
  * @remarks
  * String values are always interpreted as an expression, whether it has '=' prefix or not.

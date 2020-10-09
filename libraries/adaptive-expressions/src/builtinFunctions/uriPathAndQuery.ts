@@ -20,16 +20,20 @@ import { ReturnType } from '../returnType';
  */
 export class UriPathAndQuery extends ExpressionEvaluator {
     public constructor() {
-        super(ExpressionType.UriPathAndQuery, UriPathAndQuery.evaluator, ReturnType.String, FunctionUtils.validateUnary);
+        super(
+            ExpressionType.UriPathAndQuery,
+            UriPathAndQuery.evaluator,
+            ReturnType.String,
+            FunctionUtils.validateUnary
+        );
     }
 
     private static evaluator(expr: Expression, state: MemoryInterface, options: Options): ValueWithError {
         let value: any;
-        let error: string;
-        let args: any[];
-        ({ args, error } = FunctionUtils.evaluateChildren(expr, state, options));
+        const { args, error: childrenError } = FunctionUtils.evaluateChildren(expr, state, options);
+        let error = childrenError;
         if (!error) {
-            if (typeof (args[0]) === 'string') {
+            if (typeof args[0] === 'string') {
                 ({ value, error } = UriPathAndQuery.evalUriPathAndQuery(args[0]));
             } else {
                 error = `${expr} should contain a URI string.`;
@@ -41,9 +45,8 @@ export class UriPathAndQuery extends ExpressionEvaluator {
 
     private static evalUriPathAndQuery(uri: string): ValueWithError {
         let result: string;
-        let error: string;
-        let parsed: URL;
-        ({ value: parsed, error } = InternalFunctionUtils.parseUri(uri));
+        const { value: parsed, error: parseError } = InternalFunctionUtils.parseUri(uri);
+        let error = parseError;
         if (!error) {
             try {
                 result = parsed.pathname + parsed.search;

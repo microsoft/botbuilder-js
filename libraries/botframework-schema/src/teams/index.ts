@@ -104,6 +104,15 @@ export interface NotificationInfo {
    * false otherwise.
    */
   alert?: boolean;
+  /**
+   * @member {boolean} [alertInMeeting] true if a notification is to be shown to the user while in a meeting,
+   * false otherwise.
+   */
+  alertInMeeting?: boolean;
+  /**
+   * @member {string} [externalResourceUrl] the value of the notification's external resource url
+   */
+  externalResourceUrl?: string;
 }
 
 /**
@@ -187,14 +196,14 @@ export interface TeamsChannelAccount extends ChannelAccount {
 }
 
 export interface TeamsPagedMembersResult {
-        /**
-     * Paging token
-     */
-    continuationToken: string;
-    /**
-     * The Channel Accounts.
-     */
-    members: TeamsChannelAccount[];
+  /**
+   * Paging token
+   */
+  continuationToken: string;
+  /**
+   * The Channel Accounts.
+   */
+  members: TeamsChannelAccount[];
 }
 
 /**

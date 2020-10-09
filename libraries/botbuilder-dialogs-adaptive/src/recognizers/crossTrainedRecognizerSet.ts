@@ -20,7 +20,6 @@ const deferPrefix = 'DeferToRecognizer_';
  * Recognizer for selecting between cross trained recognizers.
  */
 export class CrossTrainedRecognizerSet extends Recognizer {
-
     /**
      * Gets or sets the input recognizers.
      */
@@ -29,11 +28,16 @@ export class CrossTrainedRecognizerSet extends Recognizer {
     /**
      * To recognize intents and entities in a users utterance.
      */
-    public async recognize(dialogContext: DialogContext, activity: Activity, telemetryProperties?: { [key: string]: string }, telemetryMetrics?: { [key: string]: number }): Promise<RecognizerResult> {
+    public async recognize(
+        dialogContext: DialogContext,
+        activity: Activity,
+        telemetryProperties?: { [key: string]: string },
+        telemetryMetrics?: { [key: string]: number }
+    ): Promise<RecognizerResult> {
         if (!this.recognizers.length) {
             return {
                 text: '',
-                intents: { 'None': { score: 1.0 } }
+                intents: { None: { score: 1.0 } },
             };
         }
         for (let i = 0; i < this.recognizers.length; i++) {
@@ -42,21 +46,29 @@ export class CrossTrainedRecognizerSet extends Recognizer {
             }
         }
 
-        const results = await Promise.all(this.recognizers.map((recognizer: Recognizer): Promise<RecognizerResult> => {
-            return recognizer.recognize(dialogContext, activity, telemetryProperties, telemetryMetrics);
-        }));
-        
+        const results = await Promise.all(
+            this.recognizers.map(
+                (recognizer: Recognizer): Promise<RecognizerResult> => {
+                    return recognizer.recognize(dialogContext, activity, telemetryProperties, telemetryMetrics);
+                }
+            )
+        );
+
         const result = this.processResults(results);
-        this.trackRecognizerResult(dialogContext, 'CrossTrainedRecognizerSetResult', this.fillRecognizerResultTelemetryProperties(result, telemetryProperties),telemetryMetrics);
+        this.trackRecognizerResult(
+            dialogContext,
+            'CrossTrainedRecognizerSetResult',
+            this.fillRecognizerResultTelemetryProperties(result, telemetryProperties),
+            telemetryMetrics
+        );
         return result;
-        
     }
 
     /**
      * Process a list of raw results from recognizers.
      * If there is consensus among the cross trained recognizers, the recognizerResult structure from
      * the consensus recognizer is returned.
-     * 
+     *
      * @param results A list of recognizer results to be processed.
      */
     private processResults(results: RecognizerResult[]): RecognizerResult {
@@ -90,7 +102,7 @@ export class CrossTrainedRecognizerSet extends Recognizer {
                 if (recognizerId == recognizer.id && !consensusRecognizedId) {
                     const recognizerResult: RecognizerResult = {
                         text: recognizerResults[recognizer.id].text,
-                        intents: { 'None': { score: 1.0 } }
+                        intents: { None: { score: 1.0 } },
                     };
                     return recognizerResult;
                 }
@@ -122,11 +134,7 @@ export class CrossTrainedRecognizerSet extends Recognizer {
         }
 
         //find if matched entities found when hits the none intent
-        let mergedEntities = {};
-        for (let i = 0; i < results.length; i++) {
-            const result = results[i];
-            mergedEntities = lodash.merge(mergedEntities, result.entities);
-        }
+        const mergedEntities = results.reduce((acc, curr) => lodash.merge(acc, curr.entities), {});
 
         // return none
         const recognizerResult: RecognizerResult = {
@@ -154,7 +162,7 @@ export class CrossTrainedRecognizerSet extends Recognizer {
                     id: key,
                     intent,
                     score,
-                    result
+                    result,
                 });
             }
         }
@@ -162,22 +170,22 @@ export class CrossTrainedRecognizerSet extends Recognizer {
         if (candidates.length > 0) {
             const recognizerResult: RecognizerResult = {
                 text,
-                intents: { 'ChooseIntent': { score: 1.0 } },
-                candidates
+                intents: { ChooseIntent: { score: 1.0 } },
+                candidates,
             };
             return recognizerResult;
         }
 
         const recognizerResult: RecognizerResult = {
             text,
-            intents: { 'None': { score: 1.0 } }
+            intents: { None: { score: 1.0 } },
         };
         return recognizerResult;
     }
 
     /**
      * Check if an intent is triggering redirects.
-     * @param intent 
+     * @param intent
      */
     private isRedirect(intent: string): boolean {
         return intent.startsWith(deferPrefix);

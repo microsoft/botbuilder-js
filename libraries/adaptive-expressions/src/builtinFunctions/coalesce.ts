@@ -24,8 +24,8 @@ export class Coalesce extends ExpressionEvaluator {
         return FunctionUtils.apply((args: any[][]): any => Coalesce.evalCoalesce(args as any[]));
     }
 
-    private static evalCoalesce(objetcList: object[]): any {
-        for (const obj of objetcList) {
+    private static evalCoalesce(objectList: any[]): any {
+        for (const obj of objectList) {
             if (obj !== null && obj !== undefined) {
                 return obj;
             }

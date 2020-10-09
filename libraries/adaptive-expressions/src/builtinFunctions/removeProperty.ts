@@ -21,13 +21,12 @@ export class RemoveProperty extends ExpressionEvaluator {
     }
 
     private static evaluator(): EvaluateExpressionDelegate {
-        return FunctionUtils.apply(
-            (args: any[]): any => {
-                const temp: any = args[0];
-                delete temp[String(args[1])];
+        return FunctionUtils.apply((args: any[]): any => {
+            const temp: any = args[0];
+            delete temp[String(args[1])];
 
-                return temp;
-            });
+            return temp;
+        });
     }
 
     private static validator(expression: Expression): void {
