@@ -29,10 +29,10 @@ export class TemplateImport {
     public sourceRange: SourceRange;
 
     /**
-     * Creates a new instance of the TemplateImport class.
+     * Creates a new instance of the [TemplateImport](xref:botbuilder-lg.TemplateImport) class.
      * @param description Import description, which is in [].
      * @param id Import id, which is a path, in ().
-     * @param sourceRange Source range of template.
+     * @param sourceRange [SourceRange](xref:botbuilder-lg.SourceRange) of template.
      */
     public constructor(description: string, id: string, sourceRange: SourceRange) {
         this.description = description;

@@ -33,11 +33,11 @@ export class Template {
     public templateBodyParseTree: lp.BodyContext;
 
     /**
-     * Creates a new instance of the Template class.
+     * Creates a new instance of the [Template](xref:botbuilder-lg.Template) class.
      * @param templatename Template name without parameters.
      * @param parameters Parameter list.
      * @param templatebody Template content.
-     * @param sourceRange Source range of template.
+     * @param sourceRange [SourceRange](xref:botbuilder-lg.SourceRange) of template.
      */
     public constructor(templatename: string, parameters: string[], templatebody: string, sourceRange: SourceRange) {
         this.name = templatename || '';
@@ -47,8 +47,8 @@ export class Template {
     }
 
     /**
-     * Returns a string representing the current Template object.
-     * @returns A string representing the Template.
+     * Returns a string representing the current [Template](xref:botbuilder-lg.Template) object.
+     * @returns A string representing the [Template](xref:botbuilder-lg.Template).
      */
     public toString(): string {
         return `[${ this.name }(${ this.parameters.join(', ') })]"${ this.body }"`;
