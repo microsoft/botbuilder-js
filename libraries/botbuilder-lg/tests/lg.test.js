@@ -57,6 +57,7 @@ describe('LG', function() {
         MemoryAccess: Templates.parseFile(GetExampleFilePath('MemoryAccess.lg')),
         ReExecute: Templates.parseFile(GetExampleFilePath('ReExecute.lg')),
         inject: Templates.parseFile(GetExampleFilePath('./injectionTest/inject.lg')),
+        injectWithoutNamespace: Templates.parseFile(GetExampleFilePath('./injectionTest/injectWithoutNamespace.lg')),
         StrictModeTrue: Templates.parseFile(GetExampleFilePath('./EvaluationOptions/StrictModeTrue.lg')),
         a1: Templates.parseFile(GetExampleFilePath('./EvaluationOptions/a1.lg')),
         a2: Templates.parseFile(GetExampleFilePath('./EvaluationOptions/a2.lg')),
@@ -1412,5 +1413,31 @@ describe('LG', function() {
         var scope2 = { i: 1, j: 2, k: 3, l: 4 };
         var {value: evaled, error} = Expression.parse('common.sumFourNumbers(i, j, k, l)').tryEvaluate(scope2);
         assert.strictEqual(10, evaled);
+    });
+
+    it('TestInjectLGWithoutNamespace', function() {
+        const lgPath = GetExampleFilePath('./injectionTest/injectWithoutNamespace.lg');
+        let resource = new LGResource('myId', lgPath, fs.readFileSync(lgPath, 'utf-8'));
+        Templates.parseResource(resource);
+
+        var { value: evaled, error } = Expression.parse('myId.greeting()').tryEvaluate({ name: 'Alice' });
+        assert(error === undefined);
+        assert.strictEqual('hi Alice', evaled);
+
+        // using the fuileName parsed from Id as the namespace
+        resource = new LGResource('./path/myNewId.lg', lgPath, fs.readFileSync(lgPath, 'utf-8'));
+        Templates.parseResource(resource);
+
+        var { value: evaled, error } = Expression.parse('myNewId.greeting()').tryEvaluate({ name: 'Alice' });
+        assert(error === undefined);
+        assert.strictEqual('hi Alice', evaled);
+
+        // With empty id
+        resource = new LGResource('', lgPath, fs.readFileSync(lgPath, 'utf-8'));
+        Templates.parseResource(resource);
+
+        var { value: evaled, error } = Expression.parse('greeting()').tryEvaluate({ name: 'Alice' });
+        assert(error === undefined);
+        assert.strictEqual('hi Alice', evaled);
     });
 });
