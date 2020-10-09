@@ -11,7 +11,7 @@ import { DialogContext } from 'botbuilder-dialogs';
 /**
  * Defines interface for a Language Generator system to bind to text.
  */
-export interface LanguageGenerator {
+export interface LanguageGenerator<T = unknown, D = Record<string, unknown>> {
     /**
      * Method to bind data to string.
      * @param dialogContext DialogContext.
@@ -19,5 +19,5 @@ export interface LanguageGenerator {
      * @param data Data to bind to.
      * @returns Result of rendering template using data.
      */
-    generate(dialogContext: DialogContext, template: string, data: object): Promise<any>;
+    generate(dialogContext: DialogContext, template: string, data: D): Promise<T>;
 }
