@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 import { StringExpression, StringExpressionConverter } from 'adaptive-expressions';
-import { Converters, DialogContext } from 'botbuilder-dialogs';
+import { Converters, DialogContext, Properties } from 'botbuilder-dialogs';
 import { InputDialog, InputState } from './inputDialog';
 
 export class TextInput extends InputDialog {
@@ -14,7 +14,7 @@ export class TextInput extends InputDialog {
 
     public outputFormat: StringExpression;
 
-    public get converters(): Converters<TextInput> {
+    public get converters(): Converters<Properties<TextInput>> {
         return Object.assign({}, super.converters, {
             outputFormat: new StringExpressionConverter(),
         });

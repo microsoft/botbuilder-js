@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 import { ExpressionParser, ExpressionParserInterface } from 'adaptive-expressions';
-import { Converters } from 'botbuilder-dialogs';
+import { Converters, Properties } from 'botbuilder-dialogs';
 import { OnCondition } from '../conditions/onCondition';
 import { TriggerSelector } from '../triggerSelector';
 import { ActionContext } from '../actionContext';
@@ -25,11 +25,11 @@ export class FirstSelector extends TriggerSelector {
      */
     public parser: ExpressionParserInterface = new ExpressionParser();
 
-    public get converters(): Converters<FirstSelector> {
+    public get converters(): Converters<Properties<FirstSelector>> {
         return {};
     }
 
-    public initialize(conditionals: OnCondition[], evaluate: boolean) {
+    public initialize(conditionals: OnCondition[], evaluate: boolean): void {
         this._conditionals = conditionals;
         this._evaluate = evaluate;
     }

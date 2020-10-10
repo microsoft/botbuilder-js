@@ -7,7 +7,7 @@
  */
 
 import { ConversationState, MemoryStorage, UserState, TestAdapter } from 'botbuilder-core';
-import { Converters, DialogManager } from 'botbuilder-dialogs';
+import { Converters, DialogManager, Properties } from 'botbuilder-dialogs';
 import {
     DialogExpression,
     DialogExpressionConverter,
@@ -54,7 +54,7 @@ export class TestScript {
      */
     public enableTrace = false;
 
-    public get converters(): Converters<TestScript> {
+    public get converters(): Converters<Properties<TestScript>> {
         return {
             dialog: (resourceExplorer: ResourceExplorer) => new DialogExpressionConverter(resourceExplorer),
             userTokenMocks: (resourceExplorer: ResourceExplorer) => new UserTokenMocksConverter(resourceExplorer),

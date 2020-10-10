@@ -30,6 +30,7 @@ import {
     ChoiceFactory,
     DialogEvents,
     TurnPath,
+    Properties,
 } from 'botbuilder-dialogs';
 import { TemplateInterface } from '../template';
 import { AdaptiveEvents } from '../adaptiveEvents';
@@ -109,7 +110,7 @@ export abstract class InputDialog extends Dialog {
      */
     public disabled?: BoolExpression;
 
-    public get converters(): Converters<InputDialog> {
+    public get converters(): Converters<Properties<InputDialog>> {
         return {
             alwaysPrompt: new BoolExpressionConverter(),
             allowInterruptions: new BoolExpressionConverter(),

@@ -20,6 +20,7 @@ import {
     PromptRecognizerResult,
     ThisPath,
     TurnPath,
+    Properties,
 } from 'botbuilder-dialogs';
 import {
     Attachment,
@@ -92,7 +93,7 @@ export class OAuthInput extends InputDialog {
      */
     public timeout?: IntExpression = new IntExpression(900000);
 
-    public get converters(): Converters<OAuthInput> {
+    public get converters(): Converters<Properties<OAuthInput>> {
         return Object.assign({}, super.converters, {
             connectionName: new StringExpressionConverter(),
             title: new StringExpressionConverter(),

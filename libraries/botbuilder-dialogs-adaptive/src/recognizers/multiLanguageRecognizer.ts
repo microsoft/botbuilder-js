@@ -7,7 +7,7 @@
  */
 
 import { Activity, RecognizerResult } from 'botbuilder-core';
-import { Converters, DialogContext } from 'botbuilder-dialogs';
+import { Converters, DialogContext, Properties } from 'botbuilder-dialogs';
 import { ResourceExplorer } from 'botbuilder-dialogs-declarative';
 import { Recognizer } from './recognizer';
 import { LanguagePolicy, LanguagePolicyConverter } from '../languagePolicy';
@@ -20,7 +20,7 @@ export class MultiLanguageRecognizer extends Recognizer {
 
     public recognizers: { [locale: string]: Recognizer };
 
-    public get converters(): Converters<MultiLanguageRecognizer> {
+    public get converters(): Converters<Properties<MultiLanguageRecognizer>> {
         return {
             languagePolicy: new LanguagePolicyConverter(),
             recognizers: (resourceExplorer: ResourceExplorer) => new MultiLanguageRecognizerConverter(resourceExplorer),

@@ -12,7 +12,7 @@ import {
     StringExpressionConverter,
 } from 'adaptive-expressions';
 import { Activity, StringUtils } from 'botbuilder-core';
-import { Converters, Dialog, DialogContext, DialogTurnResult } from 'botbuilder-dialogs';
+import { Converters, Dialog, DialogContext, DialogTurnResult, Properties } from 'botbuilder-dialogs';
 import { TemplateInterface } from '../template';
 import { ActivityTemplate, StaticActivityTemplate } from '../templates';
 import { ActivityTemplateConverter } from '../converters';
@@ -50,7 +50,7 @@ export class UpdateActivity<O extends object = {}> extends Dialog<O> {
      */
     public disabled?: BoolExpression;
 
-    public get converters(): Converters<UpdateActivity> {
+    public get converters(): Converters<Properties<UpdateActivity>> {
         return {
             activity: new ActivityTemplateConverter(),
             activityId: new StringExpressionConverter(),

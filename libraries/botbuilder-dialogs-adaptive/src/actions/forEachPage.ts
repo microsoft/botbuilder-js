@@ -13,7 +13,7 @@ import {
     IntExpressionConverter,
     StringExpressionConverter,
 } from 'adaptive-expressions';
-import { Converters, DialogTurnResult, Dialog, DialogContext } from 'botbuilder-dialogs';
+import { Converters, DialogTurnResult, Dialog, DialogContext, Properties } from 'botbuilder-dialogs';
 import { ActionScope, ActionScopeResult } from './actionScope';
 
 const FOREACHPAGE = 'dialog.foreach.page';
@@ -65,7 +65,7 @@ export class ForEachPage<O extends object = {}> extends ActionScope<O> {
      */
     public disabled?: BoolExpression;
 
-    public get converters(): Converters<ForEachPage> {
+    public get converters(): Converters<Properties<ForEachPage>> {
         return {
             itemsProperty: new StringExpressionConverter(),
             page: new StringExpressionConverter(),

@@ -7,7 +7,7 @@
  */
 import { BoolExpression, BoolExpressionConverter } from 'adaptive-expressions';
 import { StringUtils } from 'botbuilder-core';
-import { Converters, DialogTurnResult, DialogContext, Dialog } from 'botbuilder-dialogs';
+import { Converters, DialogTurnResult, DialogContext, Dialog, Properties } from 'botbuilder-dialogs';
 
 export type CodeActionHandler = (dc: DialogContext, options?: object) => Promise<DialogTurnResult>;
 
@@ -16,7 +16,7 @@ export class CodeAction<O extends object = {}> extends Dialog<O> {
 
     public disabled?: BoolExpression;
 
-    public get converters(): Converters<CodeAction> {
+    public get converters(): Converters<Properties<CodeAction>> {
         return {
             disabled: new BoolExpressionConverter(),
         };

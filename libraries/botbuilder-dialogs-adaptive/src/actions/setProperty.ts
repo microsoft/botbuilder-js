@@ -13,7 +13,7 @@ import {
     StringExpressionConverter,
     ValueExpressionConverter,
 } from 'adaptive-expressions';
-import { Converters, DialogTurnResult, DialogContext, Dialog } from 'botbuilder-dialogs';
+import { Converters, DialogTurnResult, DialogContext, Dialog, Properties } from 'botbuilder-dialogs';
 import { replaceJsonRecursively } from '../jsonExtensions';
 
 export class SetProperty<O extends object = {}> extends Dialog<O> {
@@ -46,7 +46,7 @@ export class SetProperty<O extends object = {}> extends Dialog<O> {
      */
     public disabled?: BoolExpression;
 
-    public get converters(): Converters<SetProperty> {
+    public get converters(): Converters<Properties<SetProperty>> {
         return {
             property: new StringExpressionConverter(),
             value: new ValueExpressionConverter(),

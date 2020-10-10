@@ -19,11 +19,14 @@ import {
     ValueExpressionConverter,
 } from 'adaptive-expressions';
 import { Activity } from 'botbuilder-core';
-import { Converter, Converters, DialogTurnResult, DialogContext, Dialog } from 'botbuilder-dialogs';
+import { Converter, Converters, DialogTurnResult, DialogContext, Dialog, Properties } from 'botbuilder-dialogs';
 import { replaceJsonRecursively } from '../jsonExtensions';
 
-class HttpHeadersConverter implements Converter<Record<string, string | Expression>, Record<string, StringExpression>> {
-    public convert(value: Record<string, string | Expression>): Record<string, StringExpression> {
+type Input = Record<string, string | Expression>;
+type Output = Record<string, StringExpression>;
+
+class HttpHeadersConverter implements Converter<Input, Output> {
+    public convert(value: Input): Output {
         const headers = {};
         for (const key in value) {
             headers[key] = new StringExpression(value[key]);
@@ -180,7 +183,7 @@ export class HttpRequest<O extends object = {}> extends Dialog<O> {
      */
     public disabled?: BoolExpression;
 
-    public get converters(): Converters<HttpRequest> {
+    public get converters(): Converters<Properties<HttpRequest>> {
         return {
             contentType: new StringExpressionConverter(),
             url: new StringExpressionConverter(),

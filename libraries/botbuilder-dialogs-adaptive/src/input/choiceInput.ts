@@ -17,6 +17,7 @@ import {
     recognizeChoices,
     ModelResult,
     FoundChoice,
+    Properties,
 } from 'botbuilder-dialogs';
 import { InputDialog, InputState } from './inputDialog';
 import { ChoiceSet } from './choiceSet';
@@ -92,7 +93,7 @@ export class ChoiceInput extends InputDialog {
      */
     public recognizerOptions?: ObjectExpression<FindChoicesOptions> = new ObjectExpression();
 
-    public get converters(): Converters<ChoiceInput> {
+    public get converters(): Converters<Properties<ChoiceInput>> {
         return Object.assign({}, super.converters, {
             choices: new ArrayExpressionConverter<Choice>(),
             style: new EnumExpressionConverter(ListStyle),

@@ -11,7 +11,7 @@ import {
     BoolExpressionConverter,
     StringExpressionConverter,
 } from 'adaptive-expressions';
-import { Converters, Dialog, DialogContext, DialogTurnResult } from 'botbuilder-dialogs';
+import { Converters, Dialog, DialogContext, DialogTurnResult, Properties } from 'botbuilder-dialogs';
 
 export class GetConversationMembers<O extends object = {}> extends Dialog<O> {
     public static $kind = 'Microsoft.GetConversationMembers';
@@ -34,7 +34,7 @@ export class GetConversationMembers<O extends object = {}> extends Dialog<O> {
      */
     public disabled?: BoolExpression;
 
-    public get converters(): Converters<GetConversationMembers> {
+    public get converters(): Converters<Properties<GetConversationMembers>> {
         return {
             property: new StringExpressionConverter(),
             disabled: new BoolExpressionConverter(),

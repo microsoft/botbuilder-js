@@ -13,7 +13,7 @@ import {
     StringExpressionConverter,
 } from 'adaptive-expressions';
 import { Activity } from 'botbuilder-core';
-import { Converters, DialogContext } from 'botbuilder-dialogs';
+import { Converters, DialogContext, Properties } from 'botbuilder-dialogs';
 import { InputDialog, InputState } from './inputDialog';
 
 export class NumberInput extends InputDialog {
@@ -23,7 +23,7 @@ export class NumberInput extends InputDialog {
 
     public outputFormat?: NumberExpression;
 
-    public get converters(): Converters<NumberInput> {
+    public get converters(): Converters<Properties<NumberInput>> {
         return Object.assign({}, super.converters, {
             defaultLocale: new StringExpressionConverter(),
             outputFormat: new NumberExpressionConverter(),

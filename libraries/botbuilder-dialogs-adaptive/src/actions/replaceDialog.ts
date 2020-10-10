@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 import { BoolExpression, BoolExpressionConverter } from 'adaptive-expressions';
-import { Converters, DialogTurnResult, DialogContext, TurnPath } from 'botbuilder-dialogs';
+import { Converters, DialogTurnResult, DialogContext, TurnPath, Properties } from 'botbuilder-dialogs';
 import { BaseInvokeDialog } from './baseInvokeDialog';
 
 export class ReplaceDialog<O extends object = {}> extends BaseInvokeDialog<O> {
@@ -28,7 +28,7 @@ export class ReplaceDialog<O extends object = {}> extends BaseInvokeDialog<O> {
      */
     public disabled?: BoolExpression;
 
-    public get converters(): Converters<ReplaceDialog> {
+    public get converters(): Converters<Properties<ReplaceDialog>> {
         return Object.assign({}, super.converters, {
             disabled: new BoolExpressionConverter(),
         });

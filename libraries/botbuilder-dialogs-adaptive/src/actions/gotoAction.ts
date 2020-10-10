@@ -11,7 +11,7 @@ import {
     BoolExpressionConverter,
     StringExpressionConverter,
 } from 'adaptive-expressions';
-import { Converters, DialogTurnResult, Dialog, DialogContext } from 'botbuilder-dialogs';
+import { Converters, DialogTurnResult, Dialog, DialogContext, Properties } from 'botbuilder-dialogs';
 import { ActionScopeResult, ActionScopeCommands } from './actionScope';
 
 export class GotoAction<O extends object = {}> extends Dialog<O> {
@@ -35,7 +35,7 @@ export class GotoAction<O extends object = {}> extends Dialog<O> {
      */
     public disabled?: BoolExpression;
 
-    public get converters(): Converters<GotoAction> {
+    public get converters(): Converters<Properties<GotoAction>> {
         return {
             actionId: new StringExpressionConverter(),
             disabled: new BoolExpressionConverter(),

@@ -6,7 +6,14 @@
  * Licensed under the MIT License.
  */
 import { StringUtils } from 'botbuilder-core';
-import { Converters, DialogTurnResult, Dialog, DialogDependencies, DialogContext } from 'botbuilder-dialogs';
+import {
+    Converters,
+    DialogTurnResult,
+    Dialog,
+    DialogDependencies,
+    DialogContext,
+    Properties,
+} from 'botbuilder-dialogs';
 import { BoolExpression, BoolExpressionConverter, EnumExpression, EnumExpressionConverter } from 'adaptive-expressions';
 import { ActionContext } from '../actionContext';
 import { ActionChangeType } from '../actionChangeType';
@@ -43,7 +50,7 @@ export class EditActions<O extends object = {}> extends Dialog<O> implements Dia
      */
     public disabled?: BoolExpression;
 
-    public get converters(): Converters<EditActions> {
+    public get converters(): Converters<Properties<EditActions>> {
         return {
             changeType: new EnumExpressionConverter(ActionChangeType),
             disabled: new BoolExpressionConverter(),

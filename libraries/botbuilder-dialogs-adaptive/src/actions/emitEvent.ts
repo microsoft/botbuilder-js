@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { Converters, DialogTurnResult, DialogContext, Dialog } from 'botbuilder-dialogs';
+import { Converters, DialogTurnResult, DialogContext, Dialog, Properties } from 'botbuilder-dialogs';
 import {
     ValueExpression,
     StringExpression,
@@ -51,7 +51,7 @@ export class EmitEvent<O extends object = {}> extends Dialog<O> {
      */
     public disabled?: BoolExpression;
 
-    public get converters(): Converters<EmitEvent> {
+    public get converters(): Converters<Properties<EmitEvent>> {
         return {
             eventName: new StringExpressionConverter(),
             eventValue: new ValueExpressionConverter(),

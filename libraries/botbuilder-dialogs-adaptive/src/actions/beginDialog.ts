@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { Converters, DialogTurnResult, DialogContext, DialogReason, TurnPath } from 'botbuilder-dialogs';
+import { Converters, DialogTurnResult, DialogContext, DialogReason, Properties, TurnPath } from 'botbuilder-dialogs';
 import { BaseInvokeDialog } from './baseInvokeDialog';
 import {
     StringExpression,
@@ -38,7 +38,7 @@ export class BeginDialog<O extends object = {}> extends BaseInvokeDialog<O> {
      */
     public disabled?: BoolExpression;
 
-    public get converters(): Converters<BeginDialog> {
+    public get converters(): Converters<Properties<BeginDialog>> {
         return Object.assign({}, super.converters, {
             resultProperty: new StringExpressionConverter(),
             disabled: new BoolExpressionConverter(),

@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 
-import { Converters, DialogContext } from 'botbuilder-dialogs';
+import { Converters, DialogContext, Properties } from 'botbuilder-dialogs';
 import { Resource } from 'botbuilder-dialogs-declarative';
 import { Templates, LGResource } from 'botbuilder-lg';
 import { LanguageGenerator } from '../languageGenerator';
@@ -25,7 +25,7 @@ export class TemplateEngineLanguageGenerator implements LanguageGenerator {
 
     public id = '';
 
-    public get converters(): Converters<TemplateEngineLanguageGenerator> {
+    public get converters(): Converters<Properties<TemplateEngineLanguageGenerator>> {
         return {};
     }
 

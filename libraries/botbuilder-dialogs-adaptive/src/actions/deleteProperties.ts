@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 import { StringExpression, BoolExpression, BoolExpressionConverter } from 'adaptive-expressions';
-import { Converter, Converters, Dialog, DialogContext, DialogTurnResult } from 'botbuilder-dialogs';
+import { Converter, Converters, Dialog, DialogContext, DialogTurnResult, Properties } from 'botbuilder-dialogs';
 
 class PropertiesConverter implements Converter<string[], StringExpression[]> {
     public convert(value: string[]): StringExpression[] {
@@ -35,7 +35,7 @@ export class DeleteProperties<O extends object = {}> extends Dialog<O> {
      */
     public disabled?: BoolExpression;
 
-    public get converters(): Converters<DeleteProperties> {
+    public get converters(): Converters<Properties<DeleteProperties>> {
         return {
             properties: new PropertiesConverter(),
             disabled: new BoolExpressionConverter(),

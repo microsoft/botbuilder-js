@@ -14,7 +14,7 @@ import {
     ValueExpressionConverter,
 } from 'adaptive-expressions';
 import { Activity, ActivityTypes } from 'botbuilder-core';
-import { Converters, DialogTurnResult, DialogContext, Dialog } from 'botbuilder-dialogs';
+import { Converters, DialogTurnResult, DialogContext, Dialog, Properties } from 'botbuilder-dialogs';
 
 export class TraceActivity<O extends object = {}> extends Dialog<O> {
     public static $kind = 'Microsoft.TraceActivity';
@@ -62,7 +62,7 @@ export class TraceActivity<O extends object = {}> extends Dialog<O> {
      */
     public disabled?: BoolExpression;
 
-    public get converters(): Converters<TraceActivity> {
+    public get converters(): Converters<Properties<TraceActivity>> {
         return {
             name: new StringExpressionConverter(),
             valueType: new StringExpressionConverter(),

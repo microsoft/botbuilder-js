@@ -7,7 +7,7 @@
  */
 import { BoolExpression, BoolExpressionConverter } from 'adaptive-expressions';
 import { Activity, ActivityTypes, StringUtils, ResourceResponse } from 'botbuilder-core';
-import { Converters, DialogTurnResult, DialogContext, Dialog } from 'botbuilder-dialogs';
+import { Converters, DialogTurnResult, DialogContext, Dialog, Properties } from 'botbuilder-dialogs';
 import { TemplateInterface } from '../template';
 import { ActivityTemplate, StaticActivityTemplate } from '../templates';
 import { ActivityTemplateConverter } from '../converters';
@@ -40,7 +40,7 @@ export class SendActivity<O extends object = {}> extends Dialog<O> {
      */
     public disabled?: BoolExpression;
 
-    public get converters(): Converters<SendActivity> {
+    public get converters(): Converters<Properties<SendActivity>> {
         return {
             activity: new ActivityTemplateConverter(),
             disabled: new BoolExpressionConverter(),

@@ -12,13 +12,16 @@ import {
     BoolExpressionConverter,
     StringExpressionConverter,
 } from 'adaptive-expressions';
-import { Converter, Converters, Dialog, DialogContext, DialogTurnResult } from 'botbuilder-dialogs';
+import { Converter, Converters, Dialog, DialogContext, DialogTurnResult, Properties } from 'botbuilder-dialogs';
+
+type Input = Record<string, string>;
+type Output = Record<string, StringExpression>;
 
 /**
  * Converter to convert telemetry properties configuration.
  */
-class TelemetryPropertiesConverter implements Converter<Record<string, string>, Record<string, StringExpression>> {
-    public convert(properties: Record<string, string>): Record<string, StringExpression> {
+class TelemetryPropertiesConverter implements Converter<Input, Output> {
+    public convert(properties: Input): Output {
         const result = {};
         for (const name in properties) {
             result[name] = new StringExpression(properties[name]);
@@ -66,7 +69,7 @@ export class TelemetryTrackEventAction<O extends object = {}> extends Dialog {
      */
     public properties: { [name: string]: StringExpression };
 
-    public get converters(): Converters<TelemetryTrackEventAction> {
+    public get converters(): Converters<Properties<TelemetryTrackEventAction>> {
         return {
             eventName: new StringExpressionConverter(),
             properties: new TelemetryPropertiesConverter(),

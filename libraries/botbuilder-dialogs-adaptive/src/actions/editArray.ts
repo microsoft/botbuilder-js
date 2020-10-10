@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { Converters, DialogTurnResult, DialogContext, Dialog } from 'botbuilder-dialogs';
+import { Converters, DialogTurnResult, DialogContext, Dialog, Properties } from 'botbuilder-dialogs';
 import {
     BoolExpression,
     BoolExpressionConverter,
@@ -78,7 +78,7 @@ export class EditArray<O extends object = {}> extends Dialog<O> {
      */
     public disabled?: BoolExpression;
 
-    public get converters(): Converters<EditArray> {
+    public get converters(): Converters<Properties<EditArray>> {
         return {
             changeType: new EnumExpressionConverter(ArrayChangeType),
             itemsProperty: new StringExpressionConverter(),

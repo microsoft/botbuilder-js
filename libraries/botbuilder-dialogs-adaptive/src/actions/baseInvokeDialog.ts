@@ -12,7 +12,14 @@ import {
     ObjectExpression,
     ObjectExpressionConverter,
 } from 'adaptive-expressions';
-import { Converters, Dialog, DialogDependencies, DialogContext, DialogTurnResult } from 'botbuilder-dialogs';
+import {
+    Converters,
+    Dialog,
+    DialogDependencies,
+    DialogContext,
+    DialogTurnResult,
+    Properties,
+} from 'botbuilder-dialogs';
 import { ResourceExplorer } from 'botbuilder-dialogs-declarative';
 import { DialogExpression } from '../expressions';
 import { replaceJsonRecursively } from '../jsonExtensions';
@@ -44,7 +51,7 @@ export class BaseInvokeDialog<O extends object = {}> extends Dialog<O> implement
      */
     public activityProcessed: BoolExpression = new BoolExpression(true);
 
-    public get converters(): Converters<BaseInvokeDialog> {
+    public get converters(): Converters<Properties<BaseInvokeDialog>> {
         return {
             options: new ObjectExpressionConverter<object>(),
             dialog: (resourceExplorer: ResourceExplorer) => new DialogExpressionConverter(resourceExplorer),

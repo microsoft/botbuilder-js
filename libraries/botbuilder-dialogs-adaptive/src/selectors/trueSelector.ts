@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 import { ExpressionParserInterface, ExpressionParser } from 'adaptive-expressions';
-import { Converters } from 'botbuilder-dialogs';
+import { Converters, Properties } from 'botbuilder-dialogs';
 import { TriggerSelector } from '../triggerSelector';
 import { OnCondition } from '../conditions';
 import { ActionContext } from '../actionContext';
@@ -25,7 +25,7 @@ export class TrueSelector extends TriggerSelector {
      */
     public parser: ExpressionParserInterface = new ExpressionParser();
 
-    public get converters(): Converters<TrueSelector> {
+    public get converters(): Converters<Properties<TrueSelector>> {
         return {};
     }
 

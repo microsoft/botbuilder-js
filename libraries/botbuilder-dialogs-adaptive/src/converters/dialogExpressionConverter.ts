@@ -10,10 +10,12 @@ import { Converter, Dialog } from 'botbuilder-dialogs';
 import { ResourceExplorer } from 'botbuilder-dialogs-declarative';
 import { DialogExpression } from '../expressions';
 
-export class DialogExpressionConverter implements Converter<string | Record<string, unknown>, DialogExpression> {
+type Input = string | Record<string, unknown>;
+
+export class DialogExpressionConverter implements Converter<Input, DialogExpression> {
     public constructor(private readonly _resourceExplorer: ResourceExplorer) {}
 
-    public convert(value: string | Record<string, unknown>): DialogExpression {
+    public convert(value: Input): DialogExpression {
         if (typeof value == 'string') {
             if (!value.startsWith('=')) {
                 const dialog = this._resourceExplorer.loadType<Dialog>(`${value}.dialog`);

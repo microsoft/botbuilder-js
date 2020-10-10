@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 import { ActivityTypes } from 'botbuilder-core';
-import { Converters, DialogTurnResult, Dialog, DialogContext } from 'botbuilder-dialogs';
+import { Converters, DialogTurnResult, Dialog, DialogContext, Properties } from 'botbuilder-dialogs';
 import { BoolExpression, BoolExpressionConverter } from 'adaptive-expressions';
 
 export class EndTurn<O extends object = {}> extends Dialog<O> {
@@ -17,7 +17,7 @@ export class EndTurn<O extends object = {}> extends Dialog<O> {
      */
     public disabled?: BoolExpression;
 
-    public get converters(): Converters<EndTurn> {
+    public get converters(): Converters<Properties<EndTurn>> {
         return {
             disabled: new BoolExpressionConverter(),
         };

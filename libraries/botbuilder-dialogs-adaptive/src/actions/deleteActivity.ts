@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { Converters, Dialog, DialogContext, DialogTurnResult } from 'botbuilder-dialogs';
+import { Converters, Dialog, DialogContext, DialogTurnResult, Properties } from 'botbuilder-dialogs';
 import {
     StringExpression,
     BoolExpression,
@@ -34,7 +34,7 @@ export class DeleteActivity<O extends object = {}> extends Dialog<O> {
      */
     public disabled?: BoolExpression;
 
-    public get converters(): Converters<DeleteActivity> {
+    public get converters(): Converters<Properties<DeleteActivity>> {
         return {
             activityId: new StringExpressionConverter(),
             disabled: new BoolExpressionConverter(),

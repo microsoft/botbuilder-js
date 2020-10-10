@@ -7,7 +7,7 @@
  */
 
 import { Activity, TurnContext, TestAdapter } from 'botbuilder-core';
-import { Converters } from 'botbuilder-dialogs';
+import { Converters, Properties } from 'botbuilder-dialogs';
 import { TestAction } from '../testAction';
 
 export interface UserActivityConfiguration {
@@ -31,7 +31,7 @@ export class UserActivity implements TestAction {
      */
     public user: string;
 
-    public get converters(): Converters<UserActivity> {
+    public get converters(): Converters<Properties<UserActivity>> {
         return {};
     }
 

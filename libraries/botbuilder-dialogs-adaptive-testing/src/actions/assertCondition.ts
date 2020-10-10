@@ -7,7 +7,7 @@
  */
 
 import { Expression, ExpressionConverter, StringExpression, StringExpressionConverter } from 'adaptive-expressions';
-import { Converters, Dialog, DialogContext, DialogTurnResult } from 'botbuilder-dialogs';
+import { Converters, Dialog, DialogContext, DialogTurnResult, Properties } from 'botbuilder-dialogs';
 
 /**
  * Dialog action which allows you to add assertions into your dialog flow.
@@ -25,7 +25,7 @@ export class AssertCondition<O extends object = {}> extends Dialog<O> {
      */
     public description: StringExpression;
 
-    public get converters(): Converters<AssertCondition> {
+    public get converters(): Converters<Properties<AssertCondition>> {
         return {
             condition: new ExpressionConverter(),
             description: new StringExpressionConverter(),

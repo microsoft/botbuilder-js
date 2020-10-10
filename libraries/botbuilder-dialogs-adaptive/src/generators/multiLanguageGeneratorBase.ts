@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 
-import { Converters, DialogContext } from 'botbuilder-dialogs';
+import { Converters, DialogContext, Properties } from 'botbuilder-dialogs';
 import { LanguageGenerator } from '../languageGenerator';
 import { LanguagePolicy, LanguagePolicyConverter } from '../languagePolicy';
 import { languagePolicyKey } from '../languageGeneratorExtensions';
@@ -19,7 +19,7 @@ export abstract class MultiLanguageGeneratorBase implements LanguageGenerator {
      */
     public languagePolicy: LanguagePolicy;
 
-    public get converters(): Converters<MultiLanguageGeneratorBase> {
+    public get converters(): Converters<Properties<MultiLanguageGeneratorBase>> {
         return {
             languagePolicy: new LanguagePolicyConverter(),
         };

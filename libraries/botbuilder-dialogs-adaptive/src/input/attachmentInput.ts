@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 import { Attachment } from 'botbuilder-core';
-import { Converters, DialogContext } from 'botbuilder-dialogs';
+import { Converters, DialogContext, Properties } from 'botbuilder-dialogs';
 import { InputDialog, InputState } from './inputDialog';
 import { EnumExpression, EnumExpressionConverter } from 'adaptive-expressions';
 
@@ -22,7 +22,7 @@ export class AttachmentInput extends InputDialog {
         AttachmentOutputFormat.first
     );
 
-    public get converters(): Converters<AttachmentInput> {
+    public get converters(): Converters<Properties<AttachmentInput>> {
         return Object.assign({}, super.converters, {
             outputFormat: new EnumExpressionConverter(AttachmentOutputFormat),
         });

@@ -10,7 +10,7 @@ import { Converter } from 'botbuilder-dialogs';
 import { ResourceExplorer } from 'botbuilder-dialogs-declarative';
 import { Recognizer } from '../recognizers';
 
-export class RecognizerConverter implements Converter<unknown, Recognizer> {
+export class RecognizerConverter implements Converter<string | unknown, Recognizer> {
     public constructor(private readonly _resourceExplorer: ResourceExplorer) {}
 
     public convert(value: string | unknown): Recognizer {

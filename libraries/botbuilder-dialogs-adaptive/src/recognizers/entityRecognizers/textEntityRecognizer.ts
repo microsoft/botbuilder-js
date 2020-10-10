@@ -8,12 +8,12 @@
 
 import { Culture } from '@microsoft/recognizers-text';
 import { Entity } from 'botbuilder-core';
-import { Converters, DialogContext, ModelResult } from 'botbuilder-dialogs';
+import { Converters, DialogContext, ModelResult, Properties } from 'botbuilder-dialogs';
 import { EntityRecognizer } from './entityRecognizer';
 import { TextEntity } from './textEntity';
 
 export abstract class TextEntityRecognizer implements EntityRecognizer {
-    public get converters(): Converters<TextEntityRecognizer> {
+    public get converters(): Converters<Properties<TextEntityRecognizer>> {
         return {};
     }
 

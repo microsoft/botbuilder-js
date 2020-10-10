@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 
-import { Converters, DialogContext } from 'botbuilder-dialogs';
+import { Converters, DialogContext, Properties } from 'botbuilder-dialogs';
 import { RecognizerResult, Activity } from 'botbuilder-core';
 import {
     RankerTypes,
@@ -97,7 +97,7 @@ export class QnAMakerRecognizer extends Recognizer {
      */
     public qnaId: IntExpression = new IntExpression(0);
 
-    public get converters(): Converters<QnAMakerRecognizer> {
+    public get converters(): Converters<Properties<QnAMakerRecognizer>> {
         return {
             knowledgeBaseId: new StringExpressionConverter(),
             hostname: new StringExpressionConverter(),

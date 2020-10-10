@@ -5,7 +5,15 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { Converters, DialogTurnResult, DialogContext, Dialog, TurnPath, DialogEvents } from 'botbuilder-dialogs';
+import {
+    Converters,
+    DialogTurnResult,
+    DialogContext,
+    Dialog,
+    TurnPath,
+    DialogEvents,
+    Properties,
+} from 'botbuilder-dialogs';
 import {
     StringExpression,
     BoolExpression,
@@ -54,7 +62,7 @@ export class CancelAllDialogsBase<O extends object = {}> extends Dialog<O> {
      */
     public cancelAll: boolean;
 
-    public get converters(): Converters<CancelAllDialogsBase> {
+    public get converters(): Converters<Properties<CancelAllDialogsBase>> {
         return {
             eventName: new StringExpressionConverter(),
             eventValue: new ValueExpressionConverter(),

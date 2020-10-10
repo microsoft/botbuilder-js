@@ -26,14 +26,19 @@ import {
 import { AssertCondition } from './actions';
 import { TestScript } from './testScript';
 import { UserTokenBasicMock } from './userTokenMocks';
+import { Properties } from 'botbuilder-dialogs';
 
-type Type = {
+type Type<T> = {
     $kind: string;
-    new (): unknown;
+    new (...args: unknown[]): T;
+};
+
+type Configuration<T> = {
+    [K in keyof Partial<T>]: unknown;
 };
 
 export class AdaptiveTestComponentRegistration extends ComponentRegistration implements ComponentDeclarativeTypes {
-    private _declarativeTypes: DeclarativeType[] = [];
+    private _declarativeTypes: DeclarativeType<unknown, unknown>[] = [];
 
     public constructor() {
         super();
@@ -54,8 +59,11 @@ export class AdaptiveTestComponentRegistration extends ComponentRegistration imp
         return this._declarativeTypes;
     }
 
-    private _addDeclarativeType(type: Type, loader?: CustomDeserializer<unknown, unknown>): void {
-        const declarativeType: DeclarativeType = {
+    private _addDeclarativeType<T, C = Configuration<Properties<T>>>(
+        type: Type<T>,
+        loader?: CustomDeserializer<T, C>
+    ): void {
+        const declarativeType: DeclarativeType<T, C> = {
             kind: type.$kind,
             type,
             loader,

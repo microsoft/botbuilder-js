@@ -18,7 +18,7 @@ import {
     IntExpressionConverter,
     ReturnType,
 } from 'adaptive-expressions';
-import { Converters, Dialog, DialogDependencies, DialogPath, DialogStateManager } from 'botbuilder-dialogs';
+import { Converters, Dialog, DialogDependencies, DialogPath, DialogStateManager, Properties } from 'botbuilder-dialogs';
 import { ActionScope } from '../actions/actionScope';
 import { AdaptiveDialog } from '../adaptiveDialog';
 import { ActionContext } from '../actionContext';
@@ -83,7 +83,7 @@ export class OnCondition implements DialogDependencies {
         this.actions = actions;
     }
 
-    public get converters(): Converters<OnCondition> {
+    public get converters(): Converters<Properties<OnCondition>> {
         return {
             condition: new BoolExpressionConverter(),
             priority: new IntExpressionConverter(),

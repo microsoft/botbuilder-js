@@ -19,7 +19,7 @@ import {
     StringExpressionConverter,
 } from 'adaptive-expressions';
 import { Activity, Entity, RecognizerResult } from 'botbuilder-core';
-import { Converters, DialogContext } from 'botbuilder-dialogs';
+import { Converters, DialogContext, Properties } from 'botbuilder-dialogs';
 import {
     createRecognizerResult,
     EntityRecognizer,
@@ -85,7 +85,7 @@ export class OrchestratorAdaptiveRecognizer extends Recognizer {
      */
     public readonly resultProperty: string = 'result';
 
-    public get converters(): Converters<OrchestratorAdaptiveRecognizer> {
+    public get converters(): Converters<Properties<OrchestratorAdaptiveRecognizer>> {
         return {
             modelPath: new StringExpressionConverter(),
             snapshotPath: new StringExpressionConverter(),

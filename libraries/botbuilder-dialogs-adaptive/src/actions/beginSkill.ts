@@ -21,6 +21,7 @@ import {
     DialogReason,
     SkillDialog,
     SkillDialogOptions,
+    Properties,
 } from 'botbuilder-dialogs';
 import { TemplateInterface } from '../template';
 import { skillClientKey, skillConversationIdFactoryKey } from '../skillExtensions';
@@ -85,7 +86,7 @@ export class BeginSkill extends SkillDialog {
      */
     public connectionName: StringExpression;
 
-    public get converters(): Converters<BeginSkill> {
+    public get converters(): Converters<Properties<BeginSkill>> {
         return {
             disabled: new BoolExpressionConverter(),
             activityProcessed: new BoolExpressionConverter(),

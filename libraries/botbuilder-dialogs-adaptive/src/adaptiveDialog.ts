@@ -29,6 +29,7 @@ import {
     DialogState,
     DialogTurnResult,
     DialogTurnStatus,
+    Properties,
     TurnPath,
 } from 'botbuilder-dialogs';
 import { ResourceExplorer } from 'botbuilder-dialogs-declarative';
@@ -125,7 +126,7 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
         return this.dialogSchema ? this.dialogSchema.schema : undefined;
     }
 
-    public get converters(): Converters<AdaptiveDialog> {
+    public get converters(): Converters<Properties<AdaptiveDialog>> {
         return {
             generator: new LanguageGeneratorConverter(),
             recognizer: (resourceExplorer: ResourceExplorer) => new RecognizerConverter(resourceExplorer),
@@ -858,7 +859,7 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
             });
             for (let i = 0; i < infos.length; ++i) {
                 const current = infos[i];
-                for (let j = i + 1; j < infos.length; ) {
+                for (let j = i + 1; j < infos.length;) {
                     const alt = infos[j];
                     if (EntityInfo.covers(current, alt)) {
                         infos.splice(j, 1);

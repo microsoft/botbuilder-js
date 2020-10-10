@@ -7,7 +7,14 @@
  */
 import { BoolExpression, BoolExpressionConverter } from 'adaptive-expressions';
 import { StringUtils } from 'botbuilder-core';
-import { Converters, DialogTurnResult, Dialog, DialogDependencies, DialogContext } from 'botbuilder-dialogs';
+import {
+    Converters,
+    DialogTurnResult,
+    Dialog,
+    DialogDependencies,
+    DialogContext,
+    Properties,
+} from 'botbuilder-dialogs';
 import { ActionScope } from './actionScope';
 
 export class IfCondition<O extends object = {}> extends Dialog<O> implements DialogDependencies {
@@ -39,7 +46,7 @@ export class IfCondition<O extends object = {}> extends Dialog<O> implements Dia
      */
     public elseActions: Dialog[] = [];
 
-    public get converters(): Converters<IfCondition> {
+    public get converters(): Converters<Properties<IfCondition>> {
         return {
             condition: new BoolExpressionConverter(),
             disabled: new BoolExpressionConverter(),

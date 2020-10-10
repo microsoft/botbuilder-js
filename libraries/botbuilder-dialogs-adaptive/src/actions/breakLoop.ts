@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 import { BoolExpression, BoolExpressionConverter } from 'adaptive-expressions';
-import { Converters, DialogTurnResult, Dialog, DialogContext } from 'botbuilder-dialogs';
+import { Converters, DialogTurnResult, Dialog, DialogContext, Properties } from 'botbuilder-dialogs';
 import { ActionScopeResult, ActionScopeCommands } from './actionScope';
 
 export class BreakLoop<O extends object = {}> extends Dialog<O> {
@@ -17,7 +17,7 @@ export class BreakLoop<O extends object = {}> extends Dialog<O> {
      */
     public disabled?: BoolExpression;
 
-    public get converters(): Converters<BreakLoop> {
+    public get converters(): Converters<Properties<BreakLoop>> {
         return {
             disabled: new BoolExpressionConverter(),
         };

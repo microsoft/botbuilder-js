@@ -77,9 +77,7 @@ export class ResourceExplorer {
      * Reload any cached data.
      */
     public refresh(): void {
-        for (let i = 0; i < this.resourceProviders.length; i++) {
-            this.resourceProviders[i].refresh();
-        }
+        this.resourceProviders.forEach((resourceProvider) => resourceProvider.refresh());
     }
 
     /**
@@ -240,13 +238,13 @@ export class ResourceExplorer {
         );
     }
 
-    private registerTypeInternal(
+    private registerTypeInternal<T, C>(
         kind: string,
-        type: new (...args: unknown[]) => unknown,
-        loader?: CustomDeserializer<unknown, Record<string, unknown>>
+        type: new (...args: unknown[]) => T,
+        loader?: CustomDeserializer<T, C>
     ): void {
         this._kindToType.set(kind, type);
-        this._kindDeserializer.set(kind, loader || new DefaultLoader<typeof type, Record<string, unknown>>(this));
+        this._kindDeserializer.set(kind, loader || new DefaultLoader<T, C>(this));
     }
 
     private registerComponentTypes(): void {

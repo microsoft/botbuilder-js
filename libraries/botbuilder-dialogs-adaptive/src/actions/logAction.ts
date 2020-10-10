@@ -12,7 +12,7 @@ import {
     StringExpressionConverter,
 } from 'adaptive-expressions';
 import { Activity, ActivityTypes } from 'botbuilder-core';
-import { Converters, DialogTurnResult, DialogContext, Dialog } from 'botbuilder-dialogs';
+import { Converters, DialogTurnResult, DialogContext, Dialog, Properties } from 'botbuilder-dialogs';
 import { TemplateInterface } from '../template';
 import { TextTemplate } from '../templates';
 import { TextTemplateConverter } from '../converters';
@@ -55,7 +55,7 @@ export class LogAction<O extends object = {}> extends Dialog<O> {
      */
     public disabled?: BoolExpression;
 
-    public get converters(): Converters<LogAction> {
+    public get converters(): Converters<Properties<LogAction>> {
         return {
             text: new TextTemplateConverter(),
             traceActivity: new BoolExpressionConverter(),

@@ -21,6 +21,7 @@ import {
     DialogEvent,
     TurnPath,
     DialogTurnStatus,
+    Properties,
 } from 'botbuilder-dialogs';
 import { SendActivity } from '../actions/sendActivity';
 import { ActivityTemplateConverter } from '../converters';
@@ -50,7 +51,7 @@ export class Ask extends SendActivity {
      */
     public defaultOperation: StringExpression;
 
-    public get converters(): Converters<Ask> {
+    public get converters(): Converters<Properties<Ask>> {
         return Object.assign({}, super.converters, {
             expectedProperties: new ArrayExpressionConverter<string>(),
             defaultOperation: new StringExpressionConverter(),

@@ -7,7 +7,7 @@
  */
 
 import { TurnContext, TestAdapter } from 'botbuilder-core';
-import { Converters } from 'botbuilder-dialogs';
+import { Converters, Properties } from 'botbuilder-dialogs';
 import { TestAction } from '../testAction';
 
 /**
@@ -26,7 +26,7 @@ export class UserSays implements TestAction {
      */
     public user: string;
 
-    public get converters(): Converters<UserSays> {
+    public get converters(): Converters<Properties<UserSays>> {
         return {};
     }
 

@@ -14,7 +14,15 @@ import {
     ExpressionParser,
     ValueExpression,
 } from 'adaptive-expressions';
-import { Converter, Converters, DialogTurnResult, DialogDependencies, Dialog, DialogContext } from 'botbuilder-dialogs';
+import {
+    Converter,
+    Converters,
+    DialogTurnResult,
+    DialogDependencies,
+    Dialog,
+    DialogContext,
+    Properties,
+} from 'botbuilder-dialogs';
 import { ActionScope } from './actionScope';
 import { Case } from './case';
 
@@ -67,7 +75,7 @@ export class SwitchCondition<O extends object = {}> extends Dialog<O> implements
      */
     public disabled?: BoolExpression;
 
-    public get converters(): Converters<SwitchCondition> {
+    public get converters(): Converters<Properties<SwitchCondition>> {
         return {
             condition: new ExpressionConverter(),
             cases: new CasesConverter(),

@@ -7,7 +7,7 @@
  */
 
 import { Activity, RecognizerResult, getTopScoringIntent } from 'botbuilder-core';
-import { Converters, DialogContext } from 'botbuilder-dialogs';
+import { Converters, DialogContext, Properties } from 'botbuilder-dialogs';
 import { ResourceExplorer } from 'botbuilder-dialogs-declarative';
 import { RecognizerListConverter } from '../converters';
 import { Recognizer } from './recognizer';
@@ -17,7 +17,7 @@ export class RecognizerSet extends Recognizer {
 
     public recognizers: Recognizer[] = [];
 
-    public get converters(): Converters<RecognizerSet> {
+    public get converters(): Converters<Properties<RecognizerSet>> {
         return {
             recognizers: (resourceExplorer: ResourceExplorer) => new RecognizerListConverter(resourceExplorer),
         };

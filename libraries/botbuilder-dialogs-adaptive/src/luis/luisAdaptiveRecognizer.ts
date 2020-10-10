@@ -21,7 +21,7 @@ import {
     LuisTelemetryConstants,
 } from 'botbuilder-ai';
 import { Activity, RecognizerResult } from 'botbuilder-core';
-import { Converters, DialogContext } from 'botbuilder-dialogs';
+import { Converters, DialogContext, Properties } from 'botbuilder-dialogs';
 import { Recognizer } from '../recognizers';
 
 export class LuisAdaptiveRecognizer extends Recognizer {
@@ -66,7 +66,7 @@ export class LuisAdaptiveRecognizer extends Recognizer {
      */
     public predictionOptions: LuisPredictionOptions;
 
-    public get converters(): Converters<LuisAdaptiveRecognizer> {
+    public get converters(): Converters<Properties<LuisAdaptiveRecognizer>> {
         return {
             applicationId: new StringExpressionConverter(),
             dynamicLists: new ArrayExpressionConverter(),

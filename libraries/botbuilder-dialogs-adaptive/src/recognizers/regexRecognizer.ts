@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 import { Activity, Entity, RecognizerResult } from 'botbuilder-core';
-import { Converter, Converters, DialogContext } from 'botbuilder-dialogs';
+import { Converter, Converters, DialogContext, Properties } from 'botbuilder-dialogs';
 import { Recognizer } from './recognizer';
 import { IntentPattern } from './intentPattern';
 import { EntityRecognizer, TextEntity, EntityRecognizerSet } from './entityRecognizers';
@@ -35,7 +35,7 @@ export class RegexRecognizer extends Recognizer {
      */
     public entities: EntityRecognizer[] = [];
 
-    public get converters(): Converters<RegexRecognizer> {
+    public get converters(): Converters<Properties<RegexRecognizer>> {
         return {
             intents: new IntentPatternsConverter(),
         };

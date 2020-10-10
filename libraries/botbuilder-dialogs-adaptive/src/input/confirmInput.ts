@@ -23,6 +23,7 @@ import {
     ChoiceFactoryOptions,
     ChoiceFactory,
     recognizeChoices,
+    Properties,
 } from 'botbuilder-dialogs';
 import { InputDialog, InputState } from './inputDialog';
 import { ChoiceSet } from './choiceSet';
@@ -99,7 +100,7 @@ export class ConfirmInput extends InputDialog {
      */
     public outputFormat: StringExpression;
 
-    public get converters(): Converters<ConfirmInput> {
+    public get converters(): Converters<Properties<ConfirmInput>> {
         return Object.assign({}, super.converters, {
             defaultLocale: new StringExpressionConverter(),
             style: new EnumExpressionConverter(ListStyle),
