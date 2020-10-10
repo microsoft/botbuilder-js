@@ -32,7 +32,6 @@ import {
     Properties,
     TurnPath,
 } from 'botbuilder-dialogs';
-import { ResourceExplorer } from 'botbuilder-dialogs-declarative';
 import { ActionContext } from './actionContext';
 import { AdaptiveDialogState } from './adaptiveDialogState';
 import { AdaptiveEvents } from './adaptiveEvents';
@@ -129,7 +128,7 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
     public get converters(): Converters<Properties<AdaptiveDialog>> {
         return {
             generator: new LanguageGeneratorConverter(),
-            recognizer: (resourceExplorer: ResourceExplorer) => new RecognizerConverter(resourceExplorer),
+            recognizer: RecognizerConverter,
             autoEndDialog: new BoolExpressionConverter(),
         };
     }

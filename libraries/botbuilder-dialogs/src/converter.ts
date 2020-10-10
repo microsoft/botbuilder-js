@@ -18,5 +18,5 @@ export type Properties<T> = {
 };
 
 export type Converters<T> = {
-    [K in keyof Partial<T>]: Converter<unknown, T[K]> | ((...args: unknown[]) => Converter<unknown, T[K]>);
+    [K in keyof Partial<T>]: Converter<unknown, T[K]> | { new (...args: unknown[]): Converter<unknown, T[K]> };
 };

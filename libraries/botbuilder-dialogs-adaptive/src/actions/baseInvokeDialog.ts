@@ -20,7 +20,6 @@ import {
     DialogTurnResult,
     Properties,
 } from 'botbuilder-dialogs';
-import { ResourceExplorer } from 'botbuilder-dialogs-declarative';
 import { DialogExpression } from '../expressions';
 import { replaceJsonRecursively } from '../jsonExtensions';
 import { DialogExpressionConverter } from '../converters';
@@ -54,7 +53,7 @@ export class BaseInvokeDialog<O extends object = {}> extends Dialog<O> implement
     public get converters(): Converters<Properties<BaseInvokeDialog>> {
         return {
             options: new ObjectExpressionConverter<object>(),
-            dialog: (resourceExplorer: ResourceExplorer) => new DialogExpressionConverter(resourceExplorer),
+            dialog: DialogExpressionConverter,
             activityProcessed: new BoolExpressionConverter(),
         };
     }

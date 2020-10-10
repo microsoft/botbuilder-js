@@ -17,14 +17,14 @@ export class DefaultLoader<T, C> implements CustomDeserializer<T, C> {
         const instance = new type();
         const converters: Record<
             string,
-            Converter | ((resourceExplorer: ResourceExplorer) => Converter)
+            Converter | { new (resourceExplorer: ResourceExplorer): Converter }
         > = Object.assign({}, instance['converters']);
         Object.getOwnPropertyNames(config).forEach((k: string) => {
             const value = config[k];
             let converter = converters[k];
             if (converter) {
                 if (typeof converter === 'function') {
-                    converter = converter(this._resourceExplorer);
+                    converter = new converter(this._resourceExplorer);
                 }
                 instance[k] = converter.convert(value);
             } else {

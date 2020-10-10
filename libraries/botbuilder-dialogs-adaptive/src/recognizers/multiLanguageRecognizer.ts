@@ -23,7 +23,7 @@ export class MultiLanguageRecognizer extends Recognizer {
     public get converters(): Converters<Properties<MultiLanguageRecognizer>> {
         return {
             languagePolicy: new LanguagePolicyConverter(),
-            recognizers: (resourceExplorer: ResourceExplorer) => new MultiLanguageRecognizerConverter(resourceExplorer),
+            recognizers: MultiLanguageRecognizerConverter,
         };
     }
 

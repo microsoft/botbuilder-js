@@ -56,8 +56,8 @@ export class TestScript {
 
     public get converters(): Converters<Properties<TestScript>> {
         return {
-            dialog: (resourceExplorer: ResourceExplorer) => new DialogExpressionConverter(resourceExplorer),
-            userTokenMocks: (resourceExplorer: ResourceExplorer) => new UserTokenMocksConverter(resourceExplorer),
+            dialog: DialogExpressionConverter,
+            userTokenMocks: UserTokenMocksConverter,
         };
     }
 

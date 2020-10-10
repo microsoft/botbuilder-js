@@ -8,7 +8,6 @@
 
 import { Activity, RecognizerResult, getTopScoringIntent } from 'botbuilder-core';
 import { Converters, DialogContext, Properties } from 'botbuilder-dialogs';
-import { ResourceExplorer } from 'botbuilder-dialogs-declarative';
 import { RecognizerListConverter } from '../converters';
 import { Recognizer } from './recognizer';
 
@@ -19,7 +18,7 @@ export class RecognizerSet extends Recognizer {
 
     public get converters(): Converters<Properties<RecognizerSet>> {
         return {
-            recognizers: (resourceExplorer: ResourceExplorer) => new RecognizerListConverter(resourceExplorer),
+            recognizers: RecognizerListConverter,
         };
     }
 
