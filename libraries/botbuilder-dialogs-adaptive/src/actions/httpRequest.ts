@@ -12,7 +12,6 @@ import {
     BoolExpressionConverter,
     EnumExpression,
     EnumExpressionConverter,
-    Expression,
     StringExpression,
     StringExpressionConverter,
     ValueExpression,
@@ -22,14 +21,21 @@ import { Activity } from 'botbuilder-core';
 import { Converter, Converters, DialogTurnResult, DialogContext, Dialog, Properties } from 'botbuilder-dialogs';
 import { replaceJsonRecursively } from '../jsonExtensions';
 
-type Input = Record<string, string | Expression>;
+type Input = Record<string, string>;
 type Output = Record<string, StringExpression>;
 
 class HttpHeadersConverter implements Converter<Input, Output> {
-    public convert(value: Input): Output {
+    public convert(value: Input | Output): Output {
         const headers = {};
         for (const key in value) {
-            headers[key] = new StringExpression(value[key]);
+            if (Object.prototype.hasOwnProperty.call(value, key)) {
+                const item = value[key];
+                if (item instanceof StringExpression) {
+                    headers[key] = item;
+                } else {
+                    headers[key] = new StringExpression(item);
+                }
+            }
         }
         return headers;
     }
@@ -189,7 +195,7 @@ export class HttpRequest<O extends object = {}> extends Dialog<O> {
             url: new StringExpressionConverter(),
             headers: new HttpHeadersConverter(),
             body: new ValueExpressionConverter(),
-            responseType: new EnumExpressionConverter(ResponsesTypes),
+            responseType: new EnumExpressionConverter<ResponsesTypes>(ResponsesTypes),
             resultProperty: new StringExpressionConverter(),
             disabled: new BoolExpressionConverter(),
         };

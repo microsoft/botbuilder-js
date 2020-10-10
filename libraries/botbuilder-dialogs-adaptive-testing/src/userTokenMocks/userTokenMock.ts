@@ -23,7 +23,7 @@ export interface UserTokenMock {
 /**
  * The type converters for UserTokenMock.
  */
-export class UserTokenMocksConverter implements Converter {
+export class UserTokenMocksConverter implements Converter<string[], UserTokenMock[]> {
     public constructor(private readonly _resourceExplorer: ResourceExplorer) {}
 
     public convert(value: string[] | UserTokenMock[]): UserTokenMock[] {

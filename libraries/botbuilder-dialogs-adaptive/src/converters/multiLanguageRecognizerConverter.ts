@@ -11,7 +11,7 @@ import { ResourceExplorer } from 'botbuilder-dialogs-declarative';
 import { Recognizer } from '../recognizers';
 import { RecognizerConverter } from './recognizerConverter';
 
-type Input = Record<string, unknown>;
+type Input = Record<string, string>;
 type Output = Record<string, Recognizer>;
 
 export class MultiLanguageRecognizerConverter implements Converter<Input, Output> {
@@ -21,10 +21,13 @@ export class MultiLanguageRecognizerConverter implements Converter<Input, Output
         this._recognizerConverter = new RecognizerConverter(resouceExplorer);
     }
 
-    public convert(value: Input): Output {
+    public convert(value: Input | Output): Output {
         const recognizers = {};
         for (const key in value) {
-            recognizers[key] = this._recognizerConverter.convert(value[key]);
+            if (Object.prototype.hasOwnProperty.call(value, key)) {
+                const item = value[key];
+                recognizers[key] = this._recognizerConverter.convert(item);
+            }
         }
         return recognizers;
     }

@@ -32,8 +32,12 @@ type Input = {
 };
 
 class CasesConverter implements Converter<Input[], Case[]> {
-    public convert(value: Input[]): Case[] {
-        return value.map((item) => new Case(item.value, item.actions));
+    public convert(items: Input[] | Case[]): Case[] {
+        const results: Case[] = [];
+        items.forEach((item) => {
+            results.push(item instanceof Case ? item : new Case(item.value, item.actions));
+        });
+        return results;
     }
 }
 

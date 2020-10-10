@@ -10,28 +10,28 @@ import { Converter } from 'botbuilder-dialogs';
 import { ResourceExplorer } from 'botbuilder-dialogs-declarative';
 import { Recognizer } from '../recognizers';
 
-export class RecognizerConverter implements Converter<string | unknown, Recognizer> {
+export class RecognizerConverter implements Converter<string, Recognizer> {
     public constructor(private readonly _resourceExplorer: ResourceExplorer) {}
 
-    public convert(value: string | unknown): Recognizer {
+    public convert(value: string | Recognizer): Recognizer {
         if (typeof value == 'string') {
             const recognizer = this._resourceExplorer.loadType<Recognizer>(`${value}.dialog`);
             return recognizer;
         }
-        return value as Recognizer;
+        return value;
     }
 }
 
-export class RecognizerListConverter implements Converter<string[] | unknown[], Recognizer[]> {
+export class RecognizerListConverter implements Converter<string[], Recognizer[]> {
     private _recognizerConverter: RecognizerConverter;
 
     public constructor(resourceExplorer: ResourceExplorer) {
         this._recognizerConverter = new RecognizerConverter(resourceExplorer);
     }
 
-    public convert(value: string[] | unknown[]): Recognizer[] {
+    public convert(value: string[] | Recognizer[]): Recognizer[] {
         const recognizers: Recognizer[] = [];
-        value.forEach((item: string | unknown) => {
+        value.forEach((item: string | Recognizer) => {
             recognizers.push(this._recognizerConverter.convert(item));
         });
         return recognizers;

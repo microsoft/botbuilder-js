@@ -17,8 +17,12 @@ type Input = {
 };
 
 class IntentPatternsConverter implements Converter<Input[], IntentPattern[]> {
-    public convert(value: Input[]): IntentPattern[] {
-        return value.map((item) => new IntentPattern(item.intent, item.pattern));
+    public convert(items: Input[] | IntentPattern[]): IntentPattern[] {
+        const results: IntentPattern[] = [];
+        items.forEach((item) => {
+            results.push(item instanceof IntentPattern ? item : new IntentPattern(item.intent, item.pattern));
+        });
+        return results;
     }
 }
 

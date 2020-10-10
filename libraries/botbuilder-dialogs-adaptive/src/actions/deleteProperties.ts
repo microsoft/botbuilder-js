@@ -5,12 +5,16 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { StringExpression, BoolExpression, BoolExpressionConverter } from 'adaptive-expressions';
+import { StringExpression, BoolExpression, BoolExpressionConverter, Expression } from 'adaptive-expressions';
 import { Converter, Converters, Dialog, DialogContext, DialogTurnResult, Properties } from 'botbuilder-dialogs';
 
 class PropertiesConverter implements Converter<string[], StringExpression[]> {
-    public convert(value: string[]): StringExpression[] {
-        return value.map((item) => new StringExpression(item));
+    public convert(value: string[] | StringExpression[]): StringExpression[] {
+        const results: StringExpression[] = [];
+        value.forEach((item: string | StringExpression) => {
+            results.push(item instanceof StringExpression ? item : new StringExpression(item));
+        });
+        return results;
     }
 }
 

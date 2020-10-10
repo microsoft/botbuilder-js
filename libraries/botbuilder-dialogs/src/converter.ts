@@ -10,7 +10,7 @@
  * The converter converts object from one type to another.
  */
 export interface Converter<From = unknown, To = unknown> {
-    convert(value: From): To;
+    convert(value: From | To): To;
 }
 
 export type Properties<T> = {

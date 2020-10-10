@@ -80,7 +80,7 @@ export class EditArray<O extends object = {}> extends Dialog<O> {
 
     public get converters(): Converters<Properties<EditArray>> {
         return {
-            changeType: new EnumExpressionConverter(ArrayChangeType),
+            changeType: new EnumExpressionConverter<ArrayChangeType>(ArrayChangeType),
             itemsProperty: new StringExpressionConverter(),
             resultProperty: new StringExpressionConverter(),
             value: new ValueExpressionConverter(),

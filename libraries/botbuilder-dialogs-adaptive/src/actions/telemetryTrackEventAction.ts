@@ -21,10 +21,13 @@ type Output = Record<string, StringExpression>;
  * Converter to convert telemetry properties configuration.
  */
 class TelemetryPropertiesConverter implements Converter<Input, Output> {
-    public convert(properties: Input): Output {
+    public convert(properties: Input | Output): Output {
         const result = {};
         for (const name in properties) {
-            result[name] = new StringExpression(properties[name]);
+            if (Object.prototype.hasOwnProperty.call(properties, name)) {
+                const property = properties[name];
+                result[name] = property instanceof StringExpression ? property : new StringExpression(property);
+            }
         }
         return result;
     }

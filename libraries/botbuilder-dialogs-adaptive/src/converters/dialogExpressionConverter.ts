@@ -15,7 +15,10 @@ type Input = string | Record<string, unknown>;
 export class DialogExpressionConverter implements Converter<Input, DialogExpression> {
     public constructor(private readonly _resourceExplorer: ResourceExplorer) {}
 
-    public convert(value: Input): DialogExpression {
+    public convert(value: Input | DialogExpression): DialogExpression {
+        if (value instanceof DialogExpression) {
+            return value;
+        }
         if (typeof value == 'string') {
             if (!value.startsWith('=')) {
                 const dialog = this._resourceExplorer.loadType<Dialog>(`${value}.dialog`);

@@ -15,15 +15,17 @@ type Input<T> = {
     value: T;
 };
 
-class PropertyAssignmentsConverter<T = any> implements Converter<Input<T>[], PropertyAssignment[]> {
-    public convert(assignments: Input<T>[]): PropertyAssignment[] {
-        return assignments.map((item) => {
+class PropertyAssignmentsConverter<T = unknown> implements Converter<Input<T>[], PropertyAssignment[]> {
+    public convert(items: Input<T>[] | PropertyAssignment[]): PropertyAssignment[] {
+        const assignments: PropertyAssignment[] = [];
+        items.forEach((item) => {
             const { property, value } = item;
-            return {
-                property: new StringExpression(property),
-                value: new ValueExpression(value),
-            };
+            assignments.push({
+                property: property instanceof StringExpression ? property : new StringExpression(property),
+                value: value instanceof ValueExpression ? value : new ValueExpression(value),
+            });
         });
+        return assignments;
     }
 }
 

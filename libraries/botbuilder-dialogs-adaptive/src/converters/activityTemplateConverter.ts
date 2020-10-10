@@ -11,13 +11,18 @@ import { Converter } from 'botbuilder-dialogs';
 import { TemplateInterface } from '../template';
 import { ActivityTemplate, StaticActivityTemplate } from '../templates';
 
-export class ActivityTemplateConverter
-    implements Converter<string | Partial<Activity>, TemplateInterface<Partial<Activity>>> {
-    public convert(value: string | Partial<Activity>): TemplateInterface<Partial<Activity>> {
+type Input = string | Partial<Activity>;
+type Output = TemplateInterface<Partial<Activity>>;
+
+export class ActivityTemplateConverter implements Converter<Input, Output> {
+    public convert(value: Input | Output): Output {
+        if (value instanceof ActivityTemplate || value instanceof StaticActivityTemplate) {
+            return value;
+        }
         if (typeof value === 'string') {
             return new ActivityTemplate(value);
         } else {
-            return new StaticActivityTemplate(value);
+            return new StaticActivityTemplate(value as Partial<Activity>);
         }
     }
 }

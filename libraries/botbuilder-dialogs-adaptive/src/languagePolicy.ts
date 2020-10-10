@@ -905,7 +905,10 @@ export class LanguagePolicy extends Map<string, string[]> {
 }
 
 export class LanguagePolicyConverter implements Converter<Record<string, string[]>, LanguagePolicy> {
-    public convert(value: Record<string, string[]>): LanguagePolicy {
+    public convert(value: Record<string, string[]> | LanguagePolicy): LanguagePolicy {
+        if (value instanceof LanguagePolicy) {
+            return value;
+        }
         const policy = new LanguagePolicy();
         policy.clear(); // Empty default policy to load custom language policy
         for (const key in value) {

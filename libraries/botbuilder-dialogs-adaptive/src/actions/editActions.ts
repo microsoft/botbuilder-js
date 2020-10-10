@@ -52,7 +52,7 @@ export class EditActions<O extends object = {}> extends Dialog<O> implements Dia
 
     public get converters(): Converters<Properties<EditActions>> {
         return {
-            changeType: new EnumExpressionConverter(ActionChangeType),
+            changeType: new EnumExpressionConverter<ActionChangeType>(ActionChangeType),
             disabled: new BoolExpressionConverter(),
         };
     }

@@ -96,9 +96,9 @@ export class ChoiceInput extends InputDialog {
     public get converters(): Converters<Properties<ChoiceInput>> {
         return Object.assign({}, super.converters, {
             choices: new ArrayExpressionConverter<Choice>(),
-            style: new EnumExpressionConverter(ListStyle),
+            style: new EnumExpressionConverter<ListStyle>(ListStyle),
             defaultLocale: new StringExpressionConverter(),
-            outputFormat: new EnumExpressionConverter(ChoiceOutputFormat),
+            outputFormat: new EnumExpressionConverter<ChoiceOutputFormat>(ChoiceOutputFormat),
             choiceOptions: new ObjectExpressionConverter<ChoiceFactoryOptions>(),
             recognizerOptions: new ObjectExpressionConverter<FindChoicesOptions>(),
         });
