@@ -8,7 +8,6 @@
 
 import { Activity, RecognizerResult } from 'botbuilder-core';
 import { Converters, DialogContext, Properties } from 'botbuilder-dialogs';
-import { ResourceExplorer } from 'botbuilder-dialogs-declarative';
 import { Recognizer } from './recognizer';
 import { LanguagePolicy, LanguagePolicyConverter } from '../languagePolicy';
 import { MultiLanguageRecognizerConverter } from '../converters';
