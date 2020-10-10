@@ -87,7 +87,7 @@ export class WebSocketTransport implements ITransportSender, ITransportReceiver 
 
         this._activeReceiveCount = count;
 
-        let promise = new Promise<INodeBuffer>((resolve, reject): void => {
+        const promise = new Promise<INodeBuffer>((resolve, reject): void => {
             this._activeReceiveResolve = resolve;
             this._activeReceiveReject = reject;
         });
@@ -139,14 +139,14 @@ export class WebSocketTransport implements ITransportSender, ITransportReceiver 
             if (this._active) {
                 if (this._activeOffset === 0 && this._active.length === this._activeReceiveCount) {
                     // can send the entire _active buffer
-                    let buffer = this._active;
+                    const buffer = this._active;
                     this._active = null;
 
                     this._activeReceiveResolve(buffer);
                 } else {
                     // create a Buffer.from and copy some of the contents into it
-                    let available = Math.min(this._activeReceiveCount, this._active.length - this._activeOffset);
-                    let buffer = Buffer.alloc(available);
+                    const available = Math.min(this._activeReceiveCount, this._active.length - this._activeOffset);
+                    const buffer = Buffer.alloc(available);
                     this._active.copy(buffer, 0, this._activeOffset, this._activeOffset + available);
                     this._activeOffset += available;
 

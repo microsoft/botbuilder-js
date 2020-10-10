@@ -189,7 +189,7 @@ export class ExpressionFunctions {
         functions.forEach((func: ExpressionEvaluator): void => {
             lookup.set(func.type, func);
         });
-        
+
         // Attach negations
         lookup.get(ExpressionType.LessThan).negation = lookup.get(ExpressionType.GreaterThanOrEqual);
         lookup.get(ExpressionType.LessThanOrEqual).negation = lookup.get(ExpressionType.GreaterThan);

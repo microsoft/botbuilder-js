@@ -12,6 +12,15 @@ import {
     StringExpressionConverter,
 } from 'adaptive-expressions';
 import { Converters, Dialog, DialogContext, DialogTurnResult, Properties } from 'botbuilder-dialogs';
+import { TurnContext } from 'botbuilder-core';
+
+interface CompatibleAdapter {
+    getConversationMembers(context: TurnContext);
+}
+
+function isCompatibleAdapter(adapter: unknown): adapter is CompatibleAdapter {
+    return adapter && typeof (adapter as CompatibleAdapter).getConversationMembers === 'function';
+}
 
 export class GetConversationMembers<O extends object = {}> extends Dialog<O> {
     public static $kind = 'Microsoft.GetConversationMembers';
@@ -47,8 +56,8 @@ export class GetConversationMembers<O extends object = {}> extends Dialog<O> {
         }
 
         const adapter = dc.context.adapter;
-        if (typeof adapter['getConversationMembers'] === 'function') {
-            const result = await adapter['getConversationMembers'].getConversationMembers(dc.context);
+        if (isCompatibleAdapter(adapter)) {
+            const result = await adapter.getConversationMembers(dc.context);
             dc.state.setValue(this.property.getValue(dc.state), result);
             return await dc.endDialog(result);
         } else {

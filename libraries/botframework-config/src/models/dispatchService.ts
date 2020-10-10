@@ -25,5 +25,4 @@ export class DispatchService extends LuisService implements IDispatchService {
         super(source, ServiceTypes.Dispatch);
         this.serviceIds = this.serviceIds || [];
     }
-
 }

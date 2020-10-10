@@ -41,5 +41,5 @@ export interface PredicateComparer {
 }
 
 export type PredicateComparers = {
-    [name: string]: PredicateComparer
-}
+    [name: string]: PredicateComparer;
+};
