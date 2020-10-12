@@ -208,7 +208,8 @@ export class ResourceExplorer {
             return this.load(value);
         }) as T;
 
-        if (result instanceof Dialog && !result['id']) {
+        const config = JSON.parse(json);
+        if (result instanceof Dialog && !config['id']) {
             // If there is no id for the dialog, then the resource id would be used as dialog id.
             result.id = resource.id;
         }

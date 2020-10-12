@@ -1,4 +1,5 @@
-const { AdaptiveDialogComponentRegistration } = require('../../botbuilder-dialogs-adaptive/lib');
+const { ComponentRegistration } = require('botbuilder-core');
+const { AdaptiveComponentRegistration } = require('../../botbuilder-dialogs-adaptive/lib');
 const { ResourceExplorer, FolderResourceProvider, ResourceChangeEvent } = require('../lib');
 const assert = require('assert');
 const { writeFileSync, existsSync, unlinkSync } = require('fs');
@@ -7,19 +8,19 @@ const { extname, join } = require('path');
 function assertResourceType(explorer, resourceType) {
     const resources = explorer.getResources(resourceType);
     assert(resources.length);
-    assert.equal(extname(resources[0].id), `.${ resourceType }`);
+    assert.equal(extname(resources[0].id), `.${resourceType}`);
 }
 
 function assertResourceFound(explorer, id) {
     const resource = explorer.getResource(id);
-    assert(resource, `getResource(${ id }) should return resource`);
+    assert(resource, `getResource(${id}) should return resource`);
     const dialogs = explorer.getResources('dialog');
     assert(dialogs.some(dialog => dialog.id == id), `getResources('dialog') should return resources`);
 }
 
 function assertResourceNotFound(explorer, id) {
     const resource = explorer.getResource(id);
-    assert.equal(resource, undefined, `getResource(${ id }) should not return resource`);
+    assert.equal(resource, undefined, `getResource(${id}) should not return resource`);
     const dialogs = explorer.getResources('dialog');
     assert(dialogs.every(dialog => dialog.id != id), `getResouces('dialog') should not return resources`);
 }
@@ -27,7 +28,7 @@ function assertResourceNotFound(explorer, id) {
 function assertResourceContents(explorer, id, contents) {
     const resource = explorer.getResource(id);
     let text = resource.readText();
-    assert.equal(text, contents, `getResource(${ id }) contents not the same`);
+    assert.equal(text, contents, `getResource(${id}) contents not the same`);
     const dialogs = explorer.getResources('dialog').filter(dialog => dialog.id == id);
     assert(dialogs.length == 1, `getResouces('dialog') should return resources`);
     const dialog = dialogs[0];
@@ -92,7 +93,7 @@ describe('ResourecExplorer', function() {
     it('dialog id assignment', async () => {
         const explorer = new ResourceExplorer();
         explorer.addFolders(join(__dirname, 'resources'), [], false);
-        explorer.addComponent(new AdaptiveDialogComponentRegistration(explorer));
+        ComponentRegistration.add(new AdaptiveComponentRegistration());
 
         const dialog = explorer.loadType('test.dialog');
         assert.equal(dialog.id, 'test.dialog', 'resource id should be used as default dialog id if none assigned.');
@@ -226,7 +227,7 @@ describe('ResourecExplorer', function() {
 
         // remove test file
         unlinkSync(testPath);
-    
+
         // wait 200ms for file changes
         await new Promise(resolve => setTimeout(resolve, 200));
         assertResourceNotFound(explorer, 'foobar.dialog');
