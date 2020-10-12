@@ -270,10 +270,16 @@ export const TeamsParticipantChannelAccount: msRest.CompositeMapper = {
         className: 'TeamsParticipantChannelAccount',
         modelProperties: {
             ...TeamsChannelData.type.modelProperties,
-            memberRole: {
+            meetingRole: {
                 serializedName: 'memberRole',
                 type: {
                     name: 'String',
+                },
+            },
+            inMeeting: {
+                serializedName: 'inMeeting',
+                type: {
+                    name: 'Boolean',
                 },
             },
         },

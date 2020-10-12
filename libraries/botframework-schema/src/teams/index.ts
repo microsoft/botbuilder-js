@@ -226,6 +226,10 @@ export interface TeamsParticipantChannelAccount extends TeamsChannelAccount {
      */
     meetingRole?: string;
     /**
+     * @member {string} [inMeeting] Indicates if the participant is in the meeting.
+     */
+    inMeeting?: boolean;
+    /**
      * @member {ConversationAccount} [conversation] The conversation account for the meeting.
      */
     conversation?: ConversationAccount;
