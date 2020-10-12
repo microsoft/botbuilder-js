@@ -51,8 +51,8 @@ export class Ask extends SendActivity {
      */
     public defaultOperation: StringExpression;
 
-    public get converters(): Converters<Properties<Ask>> {
-        return Object.assign({}, super.converters, {
+    public getConverters(): Converters<Properties<Ask>> {
+        return Object.assign({}, super.getConverters(), {
             expectedProperties: new ArrayExpressionConverter<string>(),
             defaultOperation: new StringExpressionConverter(),
             activity: new ActivityTemplateConverter(),

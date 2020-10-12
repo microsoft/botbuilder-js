@@ -34,7 +34,7 @@ export class DeleteActivity<O extends object = {}> extends Dialog<O> {
      */
     public disabled?: BoolExpression;
 
-    public get converters(): Converters<Properties<DeleteActivity>> {
+    public getConverters(): Converters<Properties<DeleteActivity>> {
         return {
             activityId: new StringExpressionConverter(),
             disabled: new BoolExpressionConverter(),

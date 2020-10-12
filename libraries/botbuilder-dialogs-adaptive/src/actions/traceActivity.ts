@@ -62,7 +62,7 @@ export class TraceActivity<O extends object = {}> extends Dialog<O> {
      */
     public disabled?: BoolExpression;
 
-    public get converters(): Converters<Properties<TraceActivity>> {
+    public getConverters(): Converters<Properties<TraceActivity>> {
         return {
             name: new StringExpressionConverter(),
             valueType: new StringExpressionConverter(),

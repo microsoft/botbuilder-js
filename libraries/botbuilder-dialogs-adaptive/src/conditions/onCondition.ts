@@ -83,7 +83,7 @@ export class OnCondition implements DialogDependencies {
         this.actions = actions;
     }
 
-    public get converters(): Converters<Properties<OnCondition>> {
+    public getConverters(): Converters<Properties<OnCondition>> {
         return {
             condition: new BoolExpressionConverter(),
             priority: new IntExpressionConverter(),

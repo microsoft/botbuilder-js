@@ -12,7 +12,7 @@ import { UserTokenMock } from './userTokenMock';
 /**
  * Mock UserToken with user id and token.
  */
-export class UserTokenBasicMock implements UserTokenMock {
+export class UserTokenBasicMock extends UserTokenMock {
     public static $kind = 'Microsoft.Test.UserTokenBasicMock';
 
     /**

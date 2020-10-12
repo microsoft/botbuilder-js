@@ -39,7 +39,7 @@ export class RegexRecognizer extends Recognizer {
      */
     public entities: EntityRecognizer[] = [];
 
-    public get converters(): Converters<Properties<RegexRecognizer>> {
+    public getConverters(): Converters<Properties<RegexRecognizer>> {
         return {
             intents: new IntentPatternsConverter(),
         };

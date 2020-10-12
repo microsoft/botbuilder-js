@@ -93,8 +93,8 @@ export class OAuthInput extends InputDialog {
      */
     public timeout?: IntExpression = new IntExpression(900000);
 
-    public get converters(): Converters<Properties<OAuthInput>> {
-        return Object.assign({}, super.converters, {
+    public getConverters(): Converters<Properties<OAuthInput>> {
+        return Object.assign({}, super.getConverters(), {
             connectionName: new StringExpressionConverter(),
             title: new StringExpressionConverter(),
             text: new StringExpressionConverter(),

@@ -25,7 +25,7 @@ export class TrueSelector extends TriggerSelector {
      */
     public parser: ExpressionParserInterface = new ExpressionParser();
 
-    public get converters(): Converters<Properties<TrueSelector>> {
+    public getConverters(): Converters<Properties<TrueSelector>> {
         return {};
     }
 

@@ -189,7 +189,7 @@ export class HttpRequest<O extends object = {}> extends Dialog<O> {
      */
     public disabled?: BoolExpression;
 
-    public get converters(): Converters<Properties<HttpRequest>> {
+    public getConverters(): Converters<Properties<HttpRequest>> {
         return {
             contentType: new StringExpressionConverter(),
             url: new StringExpressionConverter(),

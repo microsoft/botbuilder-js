@@ -46,7 +46,7 @@ export class IfCondition<O extends object = {}> extends Dialog<O> implements Dia
      */
     public elseActions: Dialog[] = [];
 
-    public get converters(): Converters<Properties<IfCondition>> {
+    public getConverters(): Converters<Properties<IfCondition>> {
         return {
             condition: new BoolExpressionConverter(),
             disabled: new BoolExpressionConverter(),

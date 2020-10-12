@@ -37,7 +37,7 @@ export class AssertReplyOneOf extends AssertReplyActivity {
      * Validates the reply of an activity.
      * @param activity The activity to verify.
      */
-    public validateReply(activity: Activity) {
+    public validateReply(activity: Activity): void {
         let found = false;
 
         for (let i = 0; i < this.text.length; i++) {

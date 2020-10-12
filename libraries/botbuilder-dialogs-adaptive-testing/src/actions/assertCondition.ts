@@ -25,7 +25,7 @@ export class AssertCondition<O extends object = {}> extends Dialog<O> {
      */
     public description: StringExpression;
 
-    public get converters(): Converters<Properties<AssertCondition>> {
+    public getConverters(): Converters<Properties<AssertCondition>> {
         return {
             condition: new ExpressionConverter(),
             description: new StringExpressionConverter(),

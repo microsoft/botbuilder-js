@@ -25,7 +25,7 @@ export class FirstSelector extends TriggerSelector {
      */
     public parser: ExpressionParserInterface = new ExpressionParser();
 
-    public get converters(): Converters<Properties<FirstSelector>> {
+    public getConverters(): Converters<Properties<FirstSelector>> {
         return {};
     }
 

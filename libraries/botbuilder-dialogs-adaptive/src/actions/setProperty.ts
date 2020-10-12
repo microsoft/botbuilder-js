@@ -46,7 +46,7 @@ export class SetProperty<O extends object = {}> extends Dialog<O> {
      */
     public disabled?: BoolExpression;
 
-    public get converters(): Converters<Properties<SetProperty>> {
+    public getConverters(): Converters<Properties<SetProperty>> {
         return {
             property: new StringExpressionConverter(),
             value: new ValueExpressionConverter(),

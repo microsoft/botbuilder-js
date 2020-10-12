@@ -16,7 +16,7 @@ export class CodeAction<O extends object = {}> extends Dialog<O> {
 
     public disabled?: BoolExpression;
 
-    public get converters(): Converters<Properties<CodeAction>> {
+    public getConverters(): Converters<Properties<CodeAction>> {
         return {
             disabled: new BoolExpressionConverter(),
         };

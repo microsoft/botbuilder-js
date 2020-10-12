@@ -17,11 +17,12 @@ export abstract class Configurable {
      * @param config Configuration settings to apply.
      */
     public configure(config: Record<string, unknown>): this {
+        const converters = this.getConverters();
         for (const key in config) {
             if (Object.prototype.hasOwnProperty.call(config, key)) {
                 const setting = config[`${key}`];
-                if (this.converters && this.converters[`${key}`] && typeof this.converters[`${key}`] === 'object') {
-                    const converter = this.converters[`${key}`] as Converter<unknown, unknown>;
+                if (converters && converters[`${key}`] && typeof converters[`${key}`] === 'object') {
+                    const converter = converters[`${key}`] as Converter<unknown, unknown>;
                     this[`${key}`] = converter.convert(setting);
                 } else {
                     if (Array.isArray(setting)) {
@@ -46,7 +47,7 @@ export abstract class Configurable {
         return this;
     }
 
-    public get converters(): Converters<Record<string, unknown>> {
+    public getConverters(): Converters<Record<string, unknown>> {
         return {};
     }
 }

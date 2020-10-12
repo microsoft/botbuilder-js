@@ -17,8 +17,8 @@ export class DateTimeInput extends InputDialog {
 
     public outputFormat: StringExpression;
 
-    public get converters(): Converters<Properties<DateTimeInput>> {
-        return Object.assign({}, super.converters, {
+    public getConverters(): Converters<Properties<DateTimeInput>> {
+        return Object.assign({}, super.getConverters(), {
             defaultLocale: new StringExpressionConverter(),
             outputFormat: new StringExpressionConverter(),
         });

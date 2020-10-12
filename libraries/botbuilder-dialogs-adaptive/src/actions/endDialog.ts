@@ -39,7 +39,7 @@ export class EndDialog<O extends object = {}> extends Dialog<O> {
      */
     public disabled?: BoolExpression;
 
-    public get converters(): Converters<Properties<EndDialog>> {
+    public getConverters(): Converters<Properties<EndDialog>> {
         return {
             value: new ValueExpressionConverter(),
             disabled: new BoolExpressionConverter(),

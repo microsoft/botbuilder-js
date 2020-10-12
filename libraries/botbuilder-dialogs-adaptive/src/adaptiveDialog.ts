@@ -125,7 +125,7 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
         return this.dialogSchema ? this.dialogSchema.schema : undefined;
     }
 
-    public get converters(): Converters<Properties<AdaptiveDialog>> {
+    public getConverters(): Converters<Properties<AdaptiveDialog>> {
         return {
             generator: new LanguageGeneratorConverter(),
             recognizer: RecognizerConverter,

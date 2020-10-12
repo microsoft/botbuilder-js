@@ -50,7 +50,7 @@ export class UpdateActivity<O extends object = {}> extends Dialog<O> {
      */
     public disabled?: BoolExpression;
 
-    public get converters(): Converters<Properties<UpdateActivity>> {
+    public getConverters(): Converters<Properties<UpdateActivity>> {
         return {
             activity: new ActivityTemplateConverter(),
             activityId: new StringExpressionConverter(),

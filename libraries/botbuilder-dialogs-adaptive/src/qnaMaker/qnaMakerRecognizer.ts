@@ -97,7 +97,7 @@ export class QnAMakerRecognizer extends Recognizer {
      */
     public qnaId: IntExpression = new IntExpression(0);
 
-    public get converters(): Converters<Properties<QnAMakerRecognizer>> {
+    public getConverters(): Converters<Properties<QnAMakerRecognizer>> {
         return {
             knowledgeBaseId: new StringExpressionConverter(),
             hostname: new StringExpressionConverter(),

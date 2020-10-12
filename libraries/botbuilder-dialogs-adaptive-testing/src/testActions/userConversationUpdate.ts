@@ -13,7 +13,7 @@ import { TestAction } from '../testAction';
 /**
  * Action to script sending a conversationUpdate activity to the bot.
  */
-export class UserConversationUpdate implements TestAction {
+export class UserConversationUpdate extends TestAction {
     public static $kind = 'Microsoft.Test.UserConversationUpdate';
 
     /**
@@ -26,7 +26,7 @@ export class UserConversationUpdate implements TestAction {
      */
     public membersRemoved: string[];
 
-    public get converters(): Converters<Properties<UserConversationUpdate>> {
+    public getConverters(): Converters<Properties<UserConversationUpdate>> {
         return {};
     }
 
@@ -36,7 +36,7 @@ export class UserConversationUpdate implements TestAction {
      * @param callback Logic for the bot to use.
      * @returns A Promise that represents the work queued to execute.
      */
-    public async execute(testAdapter: TestAdapter, callback: (context: TurnContext) => Promise<any>): Promise<any> {
+    public async execute(testAdapter: TestAdapter, callback: (context: TurnContext) => Promise<void>): Promise<void> {
         const activity = testAdapter.makeActivity();
         activity.type = ActivityTypes.ConversationUpdate;
 

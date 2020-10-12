@@ -54,7 +54,7 @@ export class TestScript {
      */
     public enableTrace = false;
 
-    public get converters(): Converters<Properties<TestScript>> {
+    public getConverters(): Converters<Properties<TestScript>> {
         return {
             dialog: DialogExpressionConverter,
             userTokenMocks: UserTokenMocksConverter,

@@ -55,7 +55,7 @@ export class LogAction<O extends object = {}> extends Dialog<O> {
      */
     public disabled?: BoolExpression;
 
-    public get converters(): Converters<Properties<LogAction>> {
+    public getConverters(): Converters<Properties<LogAction>> {
         return {
             text: new TextTemplateConverter(),
             traceActivity: new BoolExpressionConverter(),

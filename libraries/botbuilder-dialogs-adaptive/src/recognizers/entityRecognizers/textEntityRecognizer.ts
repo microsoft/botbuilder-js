@@ -13,7 +13,7 @@ import { EntityRecognizer } from './entityRecognizer';
 import { TextEntity } from './textEntity';
 
 export abstract class TextEntityRecognizer implements EntityRecognizer {
-    public get converters(): Converters<Properties<TextEntityRecognizer>> {
+    public getConverters(): Converters<Properties<TextEntityRecognizer>> {
         return {};
     }
 

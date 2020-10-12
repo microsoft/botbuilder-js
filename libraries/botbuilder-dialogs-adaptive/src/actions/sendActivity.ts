@@ -40,7 +40,7 @@ export class SendActivity<O extends object = {}> extends Dialog<O> {
      */
     public disabled?: BoolExpression;
 
-    public get converters(): Converters<Properties<SendActivity>> {
+    public getConverters(): Converters<Properties<SendActivity>> {
         return {
             activity: new ActivityTemplateConverter(),
             disabled: new BoolExpressionConverter(),

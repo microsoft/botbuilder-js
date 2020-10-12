@@ -7,17 +7,17 @@
  */
 
 import { TestAdapter } from 'botbuilder-core';
-import { Converter } from 'botbuilder-dialogs';
+import { Configurable, Converter } from 'botbuilder-dialogs';
 import { ResourceExplorer } from 'botbuilder-dialogs-declarative';
 
 /**
  * Interface for mocking user token flows.
  */
-export interface UserTokenMock {
+export abstract class UserTokenMock extends Configurable {
     /**
      * Method to setup this mock for an adapter.
      */
-    setup(adapter: TestAdapter): void;
+    public abstract setup(adapter: TestAdapter): void;
 }
 
 /**

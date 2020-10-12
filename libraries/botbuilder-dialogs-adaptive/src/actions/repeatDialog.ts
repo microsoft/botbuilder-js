@@ -27,8 +27,8 @@ export class RepeatDialog<O extends object = {}> extends BaseInvokeDialog<O> {
      */
     public allowLoop?: BoolExpression;
 
-    public get converters(): Converters<Properties<RepeatDialog>> {
-        return Object.assign({}, super.converters, {
+    public getConverters(): Converters<Properties<RepeatDialog>> {
+        return Object.assign({}, super.getConverters(), {
             disabled: new BoolExpressionConverter(),
             allowLoop: new BoolExpressionConverter(),
         });

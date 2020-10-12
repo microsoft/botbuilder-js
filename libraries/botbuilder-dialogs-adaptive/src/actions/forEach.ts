@@ -52,7 +52,7 @@ export class ForEach<O extends object = {}> extends ActionScope<O> {
      */
     public disabled?: BoolExpression;
 
-    public get converters(): Converters<Properties<ForEach>> {
+    public getConverters(): Converters<Properties<ForEach>> {
         return {
             itemsProperty: new StringExpressionConverter(),
             index: new StringExpressionConverter(),

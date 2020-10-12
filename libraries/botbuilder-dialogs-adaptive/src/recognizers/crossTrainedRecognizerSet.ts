@@ -27,7 +27,7 @@ export class CrossTrainedRecognizerSet extends Recognizer {
      */
     public recognizers: Recognizer[] = [];
 
-    public get converters(): Converters<Properties<CrossTrainedRecognizerSet>> {
+    public getConverters(): Converters<Properties<CrossTrainedRecognizerSet>> {
         return {
             recognizers: RecognizerListConverter,
         };

@@ -35,7 +35,7 @@ export class GotoAction<O extends object = {}> extends Dialog<O> {
      */
     public disabled?: BoolExpression;
 
-    public get converters(): Converters<Properties<GotoAction>> {
+    public getConverters(): Converters<Properties<GotoAction>> {
         return {
             actionId: new StringExpressionConverter(),
             disabled: new BoolExpressionConverter(),

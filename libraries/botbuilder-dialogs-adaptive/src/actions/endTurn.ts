@@ -17,7 +17,7 @@ export class EndTurn<O extends object = {}> extends Dialog<O> {
      */
     public disabled?: BoolExpression;
 
-    public get converters(): Converters<Properties<EndTurn>> {
+    public getConverters(): Converters<Properties<EndTurn>> {
         return {
             disabled: new BoolExpressionConverter(),
         };

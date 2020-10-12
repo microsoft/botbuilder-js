@@ -72,7 +72,7 @@ export class TelemetryTrackEventAction<O extends object = {}> extends Dialog {
      */
     public properties: { [name: string]: StringExpression };
 
-    public get converters(): Converters<Properties<TelemetryTrackEventAction>> {
+    public getConverters(): Converters<Properties<TelemetryTrackEventAction>> {
         return {
             eventName: new StringExpressionConverter(),
             properties: new TelemetryPropertiesConverter(),

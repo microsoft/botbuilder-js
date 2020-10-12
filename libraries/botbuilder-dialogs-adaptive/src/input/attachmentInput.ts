@@ -22,8 +22,8 @@ export class AttachmentInput extends InputDialog {
         AttachmentOutputFormat.first
     );
 
-    public get converters(): Converters<Properties<AttachmentInput>> {
-        return Object.assign({}, super.converters, {
+    public getConverters(): Converters<Properties<AttachmentInput>> {
+        return Object.assign({}, super.getConverters(), {
             outputFormat: new EnumExpressionConverter<AttachmentOutputFormat>(AttachmentOutputFormat),
         });
     }

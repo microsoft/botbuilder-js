@@ -7,13 +7,13 @@
  */
 
 import { TurnContext, ActivityTypes, TestAdapter } from 'botbuilder-core';
-import { Converters, Properties } from 'botbuilder-dialogs';
+import { Configurable, Converters, Properties } from 'botbuilder-dialogs';
 import { TestAction } from '../testAction';
 
 /**
  * Action to script sending typing activity to the bot.
  */
-export class UserTyping implements TestAction {
+export class UserTyping extends Configurable implements TestAction {
     public static $kind = 'Microsoft.Test.UserTyping';
 
     /**
@@ -21,7 +21,7 @@ export class UserTyping implements TestAction {
      */
     public user: string;
 
-    public get converters(): Converters<Properties<UserTyping>> {
+    public getConverters(): Converters<Properties<UserTyping>> {
         return {};
     }
 

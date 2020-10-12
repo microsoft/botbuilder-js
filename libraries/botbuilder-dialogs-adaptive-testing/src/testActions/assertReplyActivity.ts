@@ -14,7 +14,7 @@ import { TestAction } from '../testAction';
 /**
  * Basic assertion TestAction, which validates assertions against a reply activity.
  */
-export class AssertReplyActivity implements TestAction {
+export class AssertReplyActivity extends TestAction {
     public static $kind = 'Microsoft.Test.AssertReplyActivity';
 
     /**
@@ -32,7 +32,7 @@ export class AssertReplyActivity implements TestAction {
      */
     public assertions: string[];
 
-    public get converters(): Converters<Properties<AssertReplyActivity>> {
+    public getConverters(): Converters<Properties<AssertReplyActivity>> {
         return {};
     }
 

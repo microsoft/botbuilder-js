@@ -45,7 +45,7 @@ export class ConditionalSelector extends TriggerSelector {
      */
     public parser: ExpressionParserInterface = new ExpressionParser();
 
-    public get converters(): Converters<Properties<ConditionalSelector>> {
+    public getConverters(): Converters<Properties<ConditionalSelector>> {
         return {
             condition: new BoolExpressionConverter(),
         };

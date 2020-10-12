@@ -65,7 +65,7 @@ export class ForEachPage<O extends object = {}> extends ActionScope<O> {
      */
     public disabled?: BoolExpression;
 
-    public get converters(): Converters<Properties<ForEachPage>> {
+    public getConverters(): Converters<Properties<ForEachPage>> {
         return {
             itemsProperty: new StringExpressionConverter(),
             page: new StringExpressionConverter(),

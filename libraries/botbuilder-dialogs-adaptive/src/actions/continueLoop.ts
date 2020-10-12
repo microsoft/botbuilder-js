@@ -17,7 +17,7 @@ export class ContinueLoop<O extends object = {}> extends Dialog<O> {
      */
     public disabled?: BoolExpression;
 
-    public get converters(): Converters<Properties<ContinueLoop>> {
+    public getConverters(): Converters<Properties<ContinueLoop>> {
         return {
             disabled: new BoolExpressionConverter(),
         };

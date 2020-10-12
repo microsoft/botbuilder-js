@@ -50,7 +50,7 @@ export class BaseInvokeDialog<O extends object = {}> extends Dialog<O> implement
      */
     public activityProcessed: BoolExpression = new BoolExpression(true);
 
-    public get converters(): Converters<Properties<BaseInvokeDialog>> {
+    public getConverters(): Converters<Properties<BaseInvokeDialog>> {
         return {
             options: new ObjectExpressionConverter<object>(),
             dialog: DialogExpressionConverter,

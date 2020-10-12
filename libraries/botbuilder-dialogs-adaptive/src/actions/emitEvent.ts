@@ -51,7 +51,7 @@ export class EmitEvent<O extends object = {}> extends Dialog<O> {
      */
     public disabled?: BoolExpression;
 
-    public get converters(): Converters<Properties<EmitEvent>> {
+    public getConverters(): Converters<Properties<EmitEvent>> {
         return {
             eventName: new StringExpressionConverter(),
             eventValue: new ValueExpressionConverter(),

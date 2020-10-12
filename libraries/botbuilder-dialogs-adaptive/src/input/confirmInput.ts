@@ -100,8 +100,8 @@ export class ConfirmInput extends InputDialog {
      */
     public outputFormat: StringExpression;
 
-    public get converters(): Converters<Properties<ConfirmInput>> {
-        return Object.assign({}, super.converters, {
+    public getConverters(): Converters<Properties<ConfirmInput>> {
+        return Object.assign({}, super.getConverters(), {
             defaultLocale: new StringExpressionConverter(),
             style: new EnumExpressionConverter<ListStyle>(ListStyle),
             choiceOptions: new ObjectExpressionConverter<ChoiceFactoryOptions>(),

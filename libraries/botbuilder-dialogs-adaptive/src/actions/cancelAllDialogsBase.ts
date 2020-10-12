@@ -62,7 +62,7 @@ export class CancelAllDialogsBase<O extends object = {}> extends Dialog<O> {
      */
     public cancelAll: boolean;
 
-    public get converters(): Converters<Properties<CancelAllDialogsBase>> {
+    public getConverters(): Converters<Properties<CancelAllDialogsBase>> {
         return {
             eventName: new StringExpressionConverter(),
             eventValue: new ValueExpressionConverter(),

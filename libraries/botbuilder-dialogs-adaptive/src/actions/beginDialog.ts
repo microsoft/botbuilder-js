@@ -38,8 +38,8 @@ export class BeginDialog<O extends object = {}> extends BaseInvokeDialog<O> {
      */
     public disabled?: BoolExpression;
 
-    public get converters(): Converters<Properties<BeginDialog>> {
-        return Object.assign({}, super.converters, {
+    public getConverters(): Converters<Properties<BeginDialog>> {
+        return Object.assign({}, super.getConverters(), {
             resultProperty: new StringExpressionConverter(),
             disabled: new BoolExpressionConverter(),
         });

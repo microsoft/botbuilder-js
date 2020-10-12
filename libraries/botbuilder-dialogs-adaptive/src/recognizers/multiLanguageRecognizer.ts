@@ -19,7 +19,7 @@ export class MultiLanguageRecognizer extends Recognizer {
 
     public recognizers: { [locale: string]: Recognizer };
 
-    public get converters(): Converters<Properties<MultiLanguageRecognizer>> {
+    public getConverters(): Converters<Properties<MultiLanguageRecognizer>> {
         return {
             languagePolicy: new LanguagePolicyConverter(),
             recognizers: MultiLanguageRecognizerConverter,

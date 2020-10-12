@@ -25,7 +25,7 @@ export class TemplateEngineLanguageGenerator implements LanguageGenerator {
 
     public id = '';
 
-    public get converters(): Converters<Properties<TemplateEngineLanguageGenerator>> {
+    public getConverters(): Converters<Properties<TemplateEngineLanguageGenerator>> {
         return {};
     }
 

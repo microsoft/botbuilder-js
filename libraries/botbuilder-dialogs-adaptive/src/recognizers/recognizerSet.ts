@@ -16,7 +16,7 @@ export class RecognizerSet extends Recognizer {
 
     public recognizers: Recognizer[] = [];
 
-    public get converters(): Converters<Properties<RecognizerSet>> {
+    public getConverters(): Converters<Properties<RecognizerSet>> {
         return {
             recognizers: RecognizerListConverter,
         };

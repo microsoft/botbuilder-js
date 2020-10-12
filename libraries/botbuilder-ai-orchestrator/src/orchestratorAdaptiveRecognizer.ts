@@ -85,7 +85,7 @@ export class OrchestratorAdaptiveRecognizer extends Recognizer {
      */
     public readonly resultProperty: string = 'result';
 
-    public get converters(): Converters<Properties<OrchestratorAdaptiveRecognizer>> {
+    public getConverters(): Converters<Properties<OrchestratorAdaptiveRecognizer>> {
         return {
             modelPath: new StringExpressionConverter(),
             snapshotPath: new StringExpressionConverter(),

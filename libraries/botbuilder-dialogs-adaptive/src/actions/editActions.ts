@@ -50,7 +50,7 @@ export class EditActions<O extends object = {}> extends Dialog<O> implements Dia
      */
     public disabled?: BoolExpression;
 
-    public get converters(): Converters<Properties<EditActions>> {
+    public getConverters(): Converters<Properties<EditActions>> {
         return {
             changeType: new EnumExpressionConverter<ActionChangeType>(ActionChangeType),
             disabled: new BoolExpressionConverter(),

@@ -66,7 +66,7 @@ export class LuisAdaptiveRecognizer extends Recognizer {
      */
     public predictionOptions: LuisPredictionOptions;
 
-    public get converters(): Converters<Properties<LuisAdaptiveRecognizer>> {
+    public getConverters(): Converters<Properties<LuisAdaptiveRecognizer>> {
         return {
             applicationId: new StringExpressionConverter(),
             dynamicLists: new ArrayExpressionConverter(),

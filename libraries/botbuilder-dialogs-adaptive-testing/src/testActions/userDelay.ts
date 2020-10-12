@@ -17,7 +17,7 @@ export interface UserDelayConfiguration {
 /**
  * Script action to delay test script for specified timespan.
  */
-export class UserDelay implements TestAction {
+export class UserDelay extends TestAction {
     public static $kind = 'Microsoft.Test.UserDelay';
 
     /**
@@ -25,7 +25,7 @@ export class UserDelay implements TestAction {
      */
     public timespan: number;
 
-    public get converters(): Converters<Properties<UserDelay>> {
+    public getConverters(): Converters<Properties<UserDelay>> {
         return {};
     }
 
@@ -35,7 +35,7 @@ export class UserDelay implements TestAction {
      * @param _callback Logic for the bot to use.
      * @returns A Promise that represents the work queued to execute.
      */
-    public async execute(_testAdapter: TestAdapter, _callback: (context: TurnContext) => Promise<any>): Promise<any> {
+    public async execute(_testAdapter: TestAdapter, _callback: (context: TurnContext) => Promise<any>): Promise<void> {
         await Promise.resolve((resolve) => setTimeout(resolve, this.timespan));
     }
 }

@@ -28,8 +28,8 @@ export class ReplaceDialog<O extends object = {}> extends BaseInvokeDialog<O> {
      */
     public disabled?: BoolExpression;
 
-    public get converters(): Converters<Properties<ReplaceDialog>> {
-        return Object.assign({}, super.converters, {
+    public getConverters(): Converters<Properties<ReplaceDialog>> {
+        return Object.assign({}, super.getConverters(), {
             disabled: new BoolExpressionConverter(),
         });
     }

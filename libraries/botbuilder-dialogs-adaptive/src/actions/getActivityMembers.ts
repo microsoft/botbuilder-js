@@ -42,7 +42,7 @@ export class GetActivityMembers<O extends object = {}> extends Dialog {
      */
     public disabled?: BoolExpression;
 
-    public get converters(): Converters<Properties<GetActivityMembers>> {
+    public getConverters(): Converters<Properties<GetActivityMembers>> {
         return {
             activityId: new StringExpressionConverter(),
             property: new StringExpressionConverter(),

@@ -86,7 +86,7 @@ export class BeginSkill extends SkillDialog {
      */
     public connectionName: StringExpression;
 
-    public get converters(): Converters<Properties<BeginSkill>> {
+    public getConverters(): Converters<Properties<BeginSkill>> {
         return {
             disabled: new BoolExpressionConverter(),
             activityProcessed: new BoolExpressionConverter(),

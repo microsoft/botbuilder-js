@@ -42,7 +42,7 @@ export class SignOutUser<O extends object = {}> extends Dialog<O> {
      */
     public disabled?: BoolExpression;
 
-    public get converters(): Converters<Properties<SignOutUser>> {
+    public getConverters(): Converters<Properties<SignOutUser>> {
         return {
             userId: new StringExpressionConverter(),
             connectionName: new StringExpressionConverter(),

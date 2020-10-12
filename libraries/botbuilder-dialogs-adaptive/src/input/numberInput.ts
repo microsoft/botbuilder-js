@@ -23,8 +23,8 @@ export class NumberInput extends InputDialog {
 
     public outputFormat?: NumberExpression;
 
-    public get converters(): Converters<Properties<NumberInput>> {
-        return Object.assign({}, super.converters, {
+    public getConverters(): Converters<Properties<NumberInput>> {
+        return Object.assign({}, super.getConverters(), {
             defaultLocale: new StringExpressionConverter(),
             outputFormat: new NumberExpressionConverter(),
         });

@@ -43,7 +43,7 @@ export class GetConversationMembers<O extends object = {}> extends Dialog<O> {
      */
     public disabled?: BoolExpression;
 
-    public get converters(): Converters<Properties<GetConversationMembers>> {
+    public getConverters(): Converters<Properties<GetConversationMembers>> {
         return {
             property: new StringExpressionConverter(),
             disabled: new BoolExpressionConverter(),

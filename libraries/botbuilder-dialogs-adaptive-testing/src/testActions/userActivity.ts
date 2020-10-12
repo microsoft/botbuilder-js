@@ -18,7 +18,7 @@ export interface UserActivityConfiguration {
 /**
  * Send an activity to the bot.
  */
-export class UserActivity implements TestAction {
+export class UserActivity extends TestAction {
     public static $kind = 'Microsoft.Test.UserActivity';
 
     /**
@@ -31,7 +31,7 @@ export class UserActivity implements TestAction {
      */
     public user: string;
 
-    public get converters(): Converters<Properties<UserActivity>> {
+    public getConverters(): Converters<Properties<UserActivity>> {
         return {};
     }
 
@@ -41,7 +41,7 @@ export class UserActivity implements TestAction {
      * @param callback Logic for the bot to use.
      * @returns A Promise that represents the work queued to execute.
      */
-    public async execute(testAdapter: TestAdapter, callback: (context: TurnContext) => Promise<any>): Promise<any> {
+    public async execute(testAdapter: TestAdapter, callback: (context: TurnContext) => Promise<void>): Promise<void> {
         if (!this.activity) {
             throw new Error('You must define one of Text of Activity properties');
         }

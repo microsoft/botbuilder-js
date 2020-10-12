@@ -93,8 +93,8 @@ export class ChoiceInput extends InputDialog {
      */
     public recognizerOptions?: ObjectExpression<FindChoicesOptions> = new ObjectExpression();
 
-    public get converters(): Converters<Properties<ChoiceInput>> {
-        return Object.assign({}, super.converters, {
+    public getConverters(): Converters<Properties<ChoiceInput>> {
+        return Object.assign({}, super.getConverters(), {
             choices: new ArrayExpressionConverter<Choice>(),
             style: new EnumExpressionConverter<ListStyle>(ListStyle),
             defaultLocale: new StringExpressionConverter(),

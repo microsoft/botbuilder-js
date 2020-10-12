@@ -39,7 +39,7 @@ export class DeleteProperties<O extends object = {}> extends Dialog<O> {
      */
     public disabled?: BoolExpression;
 
-    public get converters(): Converters<Properties<DeleteProperties>> {
+    public getConverters(): Converters<Properties<DeleteProperties>> {
         return {
             properties: new PropertiesConverter(),
             disabled: new BoolExpressionConverter(),

@@ -78,7 +78,7 @@ export class EditArray<O extends object = {}> extends Dialog<O> {
      */
     public disabled?: BoolExpression;
 
-    public get converters(): Converters<Properties<EditArray>> {
+    public getConverters(): Converters<Properties<EditArray>> {
         return {
             changeType: new EnumExpressionConverter<ArrayChangeType>(ArrayChangeType),
             itemsProperty: new StringExpressionConverter(),

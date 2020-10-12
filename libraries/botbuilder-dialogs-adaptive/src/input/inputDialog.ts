@@ -110,7 +110,7 @@ export abstract class InputDialog extends Dialog {
      */
     public disabled?: BoolExpression;
 
-    public get converters(): Converters<Properties<InputDialog>> {
+    public getConverters(): Converters<Properties<InputDialog>> {
         return {
             alwaysPrompt: new BoolExpressionConverter(),
             allowInterruptions: new BoolExpressionConverter(),

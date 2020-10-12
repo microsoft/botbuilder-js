@@ -79,7 +79,7 @@ export class SwitchCondition<O extends object = {}> extends Dialog<O> implements
      */
     public disabled?: BoolExpression;
 
-    public get converters(): Converters<Properties<SwitchCondition>> {
+    public getConverters(): Converters<Properties<SwitchCondition>> {
         return {
             condition: new ExpressionConverter(),
             cases: new CasesConverter(),

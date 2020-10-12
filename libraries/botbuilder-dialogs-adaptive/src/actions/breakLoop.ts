@@ -17,7 +17,7 @@ export class BreakLoop<O extends object = {}> extends Dialog<O> {
      */
     public disabled?: BoolExpression;
 
-    public get converters(): Converters<Properties<BreakLoop>> {
+    public getConverters(): Converters<Properties<BreakLoop>> {
         return {
             disabled: new BoolExpressionConverter(),
         };
