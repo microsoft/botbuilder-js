@@ -28,5 +28,5 @@ export enum RelationshipType {
     /**
      * Connot tell how the first and second arguments relate.
      */
-    incomparable = 'incomparable'
+    incomparable = 'incomparable',
 }

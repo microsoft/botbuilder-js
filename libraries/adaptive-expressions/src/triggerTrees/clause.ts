@@ -81,7 +81,7 @@ export class Clause extends Expression {
         }
 
         this.anyBindings.forEach((value: string, key: string) => {
-            builder.push(` ${ key }->${ value }`);
+            builder.push(` ${key}->${value}`);
         });
         return builder.join('');
     }
@@ -136,9 +136,11 @@ export class Clause extends Expression {
                     }
 
                     if (soFar === RelationshipType.equal) {
-                        if (shorterRel === RelationshipType.generalizes
-                            || (shorterRel === RelationshipType.specializes && shorterCount === longerCount)
-                            || shorterRel === RelationshipType.equal) {
+                        if (
+                            shorterRel === RelationshipType.generalizes ||
+                            (shorterRel === RelationshipType.specializes && shorterCount === longerCount) ||
+                            shorterRel === RelationshipType.equal
+                        ) {
                             soFar = shorterRel;
                         } else {
                             break;
@@ -209,7 +211,11 @@ export class Clause extends Expression {
         }
     }
 
-    private _bindingRelationship(soFar: RelationshipType, shorterClause: Clause, longerClause: Clause): RelationshipType {
+    private _bindingRelationship(
+        soFar: RelationshipType,
+        shorterClause: Clause,
+        longerClause: Clause
+    ): RelationshipType {
         if (soFar === RelationshipType.equal) {
             let swapped = false;
             let shorter = shorterClause.anyBindings;
