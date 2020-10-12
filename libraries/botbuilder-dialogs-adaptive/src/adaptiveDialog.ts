@@ -864,7 +864,7 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
             });
             for (let i = 0; i < infos.length; ++i) {
                 const current = infos[i];
-                for (let j = i + 1; j < infos.length;) {
+                for (let j = i + 1; j < infos.length; ) {
                     const alt = infos[j];
                     if (EntityInfo.covers(current, alt)) {
                         infos.splice(j, 1);

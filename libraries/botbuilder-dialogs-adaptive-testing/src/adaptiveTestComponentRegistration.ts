@@ -26,15 +26,11 @@ import {
 import { AssertCondition } from './actions';
 import { TestScript } from './testScript';
 import { UserTokenBasicMock } from './userTokenMocks';
-import { Properties } from 'botbuilder-dialogs';
+import { NonFunctionKeys } from 'utility-types';
 
 type Type<T> = {
     $kind: string;
     new (...args: unknown[]): T;
-};
-
-type Configuration<T> = {
-    [K in keyof Partial<T>]: unknown;
 };
 
 export class AdaptiveTestComponentRegistration extends ComponentRegistration implements ComponentDeclarativeTypes {
@@ -42,27 +38,26 @@ export class AdaptiveTestComponentRegistration extends ComponentRegistration imp
 
     public constructor() {
         super();
-        this._addDeclarativeType(AssertCondition);
-        this._addDeclarativeType(AssertReply);
-        this._addDeclarativeType(AssertReplyActivity);
-        this._addDeclarativeType(AssertReplyOneOf);
-        this._addDeclarativeType(UserActivity);
-        this._addDeclarativeType(UserConversationUpdate);
-        this._addDeclarativeType(UserDelay);
-        this._addDeclarativeType(UserSays);
-        this._addDeclarativeType(UserTyping);
-        this._addDeclarativeType(TestScript);
-        this._addDeclarativeType(UserTokenBasicMock);
+        this._addDeclarativeType<AssertCondition, NonFunctionKeys<AssertCondition>>(AssertCondition);
+        this._addDeclarativeType<AssertReply, NonFunctionKeys<AssertReply>>(AssertReply);
+        this._addDeclarativeType<AssertReplyActivity, NonFunctionKeys<AssertReplyActivity>>(AssertReplyActivity);
+        this._addDeclarativeType<AssertReplyOneOf, NonFunctionKeys<AssertReplyOneOf>>(AssertReplyOneOf);
+        this._addDeclarativeType<UserActivity, NonFunctionKeys<UserActivity>>(UserActivity);
+        this._addDeclarativeType<UserConversationUpdate, NonFunctionKeys<UserConversationUpdate>>(
+            UserConversationUpdate
+        );
+        this._addDeclarativeType<UserDelay, NonFunctionKeys<UserDelay>>(UserDelay);
+        this._addDeclarativeType<UserSays, NonFunctionKeys<UserDelay>>(UserSays);
+        this._addDeclarativeType<UserTyping, NonFunctionKeys<UserTyping>>(UserTyping);
+        this._addDeclarativeType<TestScript, NonFunctionKeys<TestScript>>(TestScript);
+        this._addDeclarativeType<UserTokenBasicMock, NonFunctionKeys<UserTokenBasicMock>>(UserTokenBasicMock);
     }
 
     public getDeclarativeTypes(_resourceExplorer: ResourceExplorer): DeclarativeType[] {
         return this._declarativeTypes;
     }
 
-    private _addDeclarativeType<T, C = Configuration<Properties<T>>>(
-        type: Type<T>,
-        loader?: CustomDeserializer<T, C>
-    ): void {
+    private _addDeclarativeType<T, C>(type: Type<T>, loader?: CustomDeserializer<T, C>): void {
         const declarativeType: DeclarativeType<T, C> = {
             kind: type.$kind,
             type,
