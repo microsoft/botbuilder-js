@@ -7,17 +7,33 @@
  */
 
 import { ConversationState, MemoryStorage, UserState, TestAdapter } from 'botbuilder-core';
-import { Configurable, Converter, ConverterFactory, DialogManager } from 'botbuilder-dialogs';
-import {
-    DialogExpression,
-    DialogExpressionConverter,
-    LanguageGeneratorExtensions,
-    ResourceExtensions,
-} from 'botbuilder-dialogs-adaptive';
+import { Configurable, Converter, ConverterFactory, Dialog, DialogManager } from 'botbuilder-dialogs';
+import { LanguageGeneratorExtensions, ResourceExtensions } from 'botbuilder-dialogs-adaptive';
 import { ResourceExplorer } from 'botbuilder-dialogs-declarative';
 import { NonFunctionKeys } from 'utility-types';
 import { TestAction } from './testAction';
 import { UserTokenMock, UserTokenMocksConverter } from './userTokenMocks';
+
+class DialogConverter implements Converter<string, Dialog> {
+    public constructor(private readonly _resourceExplorer: ResourceExplorer) {}
+
+    public convert(value: string | Dialog): Dialog {
+        if (value instanceof Dialog) {
+            return value;
+        }
+
+        let resource = this._resourceExplorer.getResource(value);
+        if (!resource) {
+            resource = this._resourceExplorer.getResource(`${value}.dialog`);
+        }
+
+        if (resource) {
+            return this._resourceExplorer.loadType<Dialog>(resource);
+        }
+
+        return undefined;
+    }
+}
 
 /**
  * A mock Test Script that can be used for unit testing bot's logic.
@@ -33,7 +49,7 @@ export class TestScript extends Configurable {
     /**
      * The dialog to use for the root dialog.
      */
-    public dialog: DialogExpression;
+    public dialog: Dialog;
 
     /**
      * The locale (default: en-us).
@@ -58,7 +74,7 @@ export class TestScript extends Configurable {
     public getConverter(property: NonFunctionKeys<TestScript>): Converter | ConverterFactory {
         switch (property) {
             case 'dialog':
-                return DialogExpressionConverter;
+                return DialogConverter;
             case 'userTokenMocks':
                 return UserTokenMocksConverter;
             default:
@@ -83,7 +99,7 @@ export class TestScript extends Configurable {
         testAdapter.enableTrace = this.enableTrace;
         testAdapter.locale = this.locale;
 
-        const bot = new DialogManager(this.dialog.value);
+        const bot = new DialogManager(this.dialog);
         bot.conversationState = new ConversationState(new MemoryStorage());
         bot.userState = new UserState(new MemoryStorage());
         ResourceExtensions.useResourceExplorer(bot, resourceExplorer);
