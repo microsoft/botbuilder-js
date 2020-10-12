@@ -23,6 +23,7 @@ import {
     DialogTurnResult,
 } from 'botbuilder-dialogs';
 import { NonFunctionKeys } from 'utility-types';
+import { DialogListConverter } from '../converters';
 import { ActionScope } from './actionScope';
 import { Case } from './case';
 
@@ -83,6 +84,8 @@ export class SwitchCondition<O extends object = {}> extends Dialog<O> implements
         switch (property) {
             case 'condition':
                 return new ExpressionConverter();
+            case 'default':
+                return DialogListConverter;
             case 'cases':
                 return new CasesConverter();
             case 'disabled':

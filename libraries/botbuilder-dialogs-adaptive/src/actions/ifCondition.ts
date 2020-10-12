@@ -16,6 +16,7 @@ import {
     DialogTurnResult,
 } from 'botbuilder-dialogs';
 import { NonFunctionKeys } from 'utility-types';
+import { DialogListConverter } from '../converters';
 import { ActionScope } from './actionScope';
 
 export class IfCondition<O extends object = {}> extends Dialog<O> implements DialogDependencies {
@@ -51,6 +52,9 @@ export class IfCondition<O extends object = {}> extends Dialog<O> implements Dia
         switch (property) {
             case 'condition':
                 return new BoolExpressionConverter();
+            case 'actions':
+            case 'elseActions':
+                return DialogListConverter;
             case 'disabled':
                 return new BoolExpressionConverter();
             default:

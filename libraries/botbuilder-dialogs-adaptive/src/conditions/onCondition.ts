@@ -34,6 +34,7 @@ import { ActionChangeList } from '../actionChangeList';
 import { ActionState } from '../actionState';
 import { ActionChangeType } from '../actionChangeType';
 import { NonFunctionKeys } from 'utility-types';
+import { DialogListConverter } from '../converters';
 
 export class OnCondition extends Configurable implements DialogDependencies {
     public static $kind = 'Microsoft.OnCondition';
@@ -97,6 +98,8 @@ export class OnCondition extends Configurable implements DialogDependencies {
         switch (property) {
             case 'condition':
                 return new BoolExpressionConverter();
+            case 'actions':
+                return DialogListConverter;
             case 'priority':
                 return new IntExpressionConverter();
             default:

@@ -20,6 +20,7 @@ import { ActionChangeType } from '../actionChangeType';
 import { ActionState } from '../actionState';
 import { ActionChangeList } from '../actionChangeList';
 import { NonFunctionKeys } from 'utility-types';
+import { DialogListConverter } from '../converters';
 
 export class EditActions<O extends object = {}> extends Dialog<O> implements DialogDependencies {
     public static $kind = 'Microsoft.EditActions';
@@ -39,7 +40,7 @@ export class EditActions<O extends object = {}> extends Dialog<O> implements Dia
     /**
      * The actions to update the dialog with.
      */
-    public actions: Dialog[];
+    public actions: Dialog[] = [];
 
     /**
      * The type of change to make to the dialogs list of actions.
@@ -53,6 +54,8 @@ export class EditActions<O extends object = {}> extends Dialog<O> implements Dia
 
     public getConverter(property: NonFunctionKeys<EditActions>): Converter | ConverterFactory {
         switch (property) {
+            case 'actions':
+                return DialogListConverter;
             case 'changeType':
                 return new EnumExpressionConverter<ActionChangeType>(ActionChangeType);
             case 'disabled':

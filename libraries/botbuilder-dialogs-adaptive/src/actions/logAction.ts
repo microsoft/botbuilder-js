@@ -13,10 +13,10 @@ import {
 } from 'adaptive-expressions';
 import { Activity, ActivityTypes } from 'botbuilder-core';
 import { Converter, ConverterFactory, DialogContext, Dialog, DialogTurnResult } from 'botbuilder-dialogs';
+import { NonFunctionKeys } from 'utility-types';
 import { TemplateInterface } from '../template';
 import { TextTemplate } from '../templates';
-import { TextTemplateConverter } from '../converters';
-import { NonFunctionKeys } from 'utility-types';
+import { TextTemplateConverter } from '../converters/textTemplateConverter';
 
 export class LogAction<O extends object = {}> extends Dialog<O> {
     public static $kind = 'Microsoft.LogAction';
