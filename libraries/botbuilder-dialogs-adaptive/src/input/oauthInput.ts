@@ -12,38 +12,39 @@ import {
     StringExpressionConverter,
 } from 'adaptive-expressions';
 import {
-    Converters,
-    DialogContext,
+    ActionTypes,
+    Activity,
+    ActivityTypes,
+    Attachment,
+    BotAdapter,
+    CardFactory,
+    Channels,
+    ExtendedUserTokenProvider,
+    InputHints,
+    IUserTokenProvider,
+    MessageFactory,
+    OAuthCard,
+    OAuthLoginTimeoutKey,
+    StatusCodes,
+    TokenExchangeInvokeRequest,
+    TokenResponse,
+    TurnContext,
+} from 'botbuilder-core';
+import {
+    Converter,
+    ConverterFactory,
     Dialog,
+    DialogContext,
     DialogTurnResult,
     PromptOptions,
     PromptRecognizerResult,
     ThisPath,
     TurnPath,
-    Properties,
 } from 'botbuilder-dialogs';
-import {
-    Attachment,
-    InputHints,
-    TokenResponse,
-    IUserTokenProvider,
-    TurnContext,
-    ActivityTypes,
-    Activity,
-    MessageFactory,
-    CardFactory,
-    OAuthLoginTimeoutKey,
-    StatusCodes,
-    ActionTypes,
-    ExtendedUserTokenProvider,
-    OAuthCard,
-    BotAdapter,
-    Channels,
-    TokenExchangeInvokeRequest,
-} from 'botbuilder-core';
 import { SkillValidation } from 'botframework-connector';
 import { verifyStateOperationName, tokenExchangeOperationName, tokenResponseEventName } from 'botbuilder-core';
 import { InputDialog, InputState } from './inputDialog';
+import { NonFunctionKeys } from 'utility-types';
 
 export const channels: any = {
     console: 'console',
@@ -93,13 +94,19 @@ export class OAuthInput extends InputDialog {
      */
     public timeout?: IntExpression = new IntExpression(900000);
 
-    public getConverters(): Converters<Properties<OAuthInput>> {
-        return Object.assign({}, super.getConverters(), {
-            connectionName: new StringExpressionConverter(),
-            title: new StringExpressionConverter(),
-            text: new StringExpressionConverter(),
-            timeout: new IntExpressionConverter(),
-        });
+    public getConverter(property: NonFunctionKeys<OAuthInput>): Converter | ConverterFactory {
+        switch (property) {
+            case 'connectionName':
+                return new StringExpressionConverter();
+            case 'title':
+                return new StringExpressionConverter();
+            case 'text':
+                return new StringExpressionConverter();
+            case 'timeout':
+                return new IntExpressionConverter();
+            default:
+                return super.getConverter(property);
+        }
     }
 
     public constructor(connectionName?: string, title?: string, text?: string, timeout?: number) {

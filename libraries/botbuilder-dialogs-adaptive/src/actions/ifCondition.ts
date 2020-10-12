@@ -8,13 +8,14 @@
 import { BoolExpression, BoolExpressionConverter } from 'adaptive-expressions';
 import { StringUtils } from 'botbuilder-core';
 import {
-    Converters,
-    DialogTurnResult,
+    Converter,
+    ConverterFactory,
     Dialog,
-    DialogDependencies,
     DialogContext,
-    Properties,
+    DialogDependencies,
+    DialogTurnResult,
 } from 'botbuilder-dialogs';
+import { NonFunctionKeys } from 'utility-types';
 import { ActionScope } from './actionScope';
 
 export class IfCondition<O extends object = {}> extends Dialog<O> implements DialogDependencies {
@@ -46,11 +47,15 @@ export class IfCondition<O extends object = {}> extends Dialog<O> implements Dia
      */
     public elseActions: Dialog[] = [];
 
-    public getConverters(): Converters<Properties<IfCondition>> {
-        return {
-            condition: new BoolExpressionConverter(),
-            disabled: new BoolExpressionConverter(),
-        };
+    public getConverter(property: NonFunctionKeys<IfCondition>): Converter | ConverterFactory {
+        switch (property) {
+            case 'condition':
+                return new BoolExpressionConverter();
+            case 'disabled':
+                return new BoolExpressionConverter();
+            default:
+                return super.getConverter(property);
+        }
     }
 
     protected get trueScope(): ActionScope {

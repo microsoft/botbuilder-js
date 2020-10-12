@@ -7,7 +7,6 @@
  */
 
 import { TurnContext, ActivityTypes, ChannelAccount, RoleTypes, TestAdapter } from 'botbuilder-core';
-import { Converters, Properties } from 'botbuilder-dialogs';
 import { TestAction } from '../testAction';
 
 /**
@@ -25,10 +24,6 @@ export class UserConversationUpdate extends TestAction {
      * The members removed names.
      */
     public membersRemoved: string[];
-
-    public getConverters(): Converters<Properties<UserConversationUpdate>> {
-        return {};
-    }
 
     /**
      * Execute the test.

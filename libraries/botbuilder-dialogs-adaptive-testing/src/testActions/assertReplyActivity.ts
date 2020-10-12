@@ -8,7 +8,6 @@
 
 import { ExpressionParser } from 'adaptive-expressions';
 import { Activity, TurnContext, TestAdapter } from 'botbuilder-core';
-import { Converters, Properties } from 'botbuilder-dialogs';
 import { TestAction } from '../testAction';
 
 /**
@@ -31,10 +30,6 @@ export class AssertReplyActivity extends TestAction {
      * The expressions for assertions.
      */
     public assertions: string[];
-
-    public getConverters(): Converters<Properties<AssertReplyActivity>> {
-        return {};
-    }
 
     /**
      * Gets the text to assert for an activity.

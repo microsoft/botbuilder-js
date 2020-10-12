@@ -7,7 +7,6 @@
  */
 
 import { TurnContext, TestAdapter } from 'botbuilder-core';
-import { Converters, Properties } from 'botbuilder-dialogs';
 import { TestAction } from '../testAction';
 
 /**
@@ -25,10 +24,6 @@ export class UserSays extends TestAction {
      * If user is set then the channalAccount.id and channelAccount.name will be from user.
      */
     public user: string;
-
-    public getConverters(): Converters<Properties<UserSays>> {
-        return {};
-    }
 
     /**
      * Execute the test.

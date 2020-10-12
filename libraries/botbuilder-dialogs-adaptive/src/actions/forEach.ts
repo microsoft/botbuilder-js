@@ -11,7 +11,8 @@ import {
     BoolExpressionConverter,
     StringExpressionConverter,
 } from 'adaptive-expressions';
-import { Converters, DialogTurnResult, Dialog, DialogContext, Properties } from 'botbuilder-dialogs';
+import { Converter, ConverterFactory, Dialog, DialogContext, DialogTurnResult } from 'botbuilder-dialogs';
+import { NonFunctionKeys } from 'utility-types';
 import { ActionScope, ActionScopeResult } from './actionScope';
 
 const INDEX = 'dialog.foreach.index';
@@ -52,13 +53,19 @@ export class ForEach<O extends object = {}> extends ActionScope<O> {
      */
     public disabled?: BoolExpression;
 
-    public getConverters(): Converters<Properties<ForEach>> {
-        return {
-            itemsProperty: new StringExpressionConverter(),
-            index: new StringExpressionConverter(),
-            value: new StringExpressionConverter(),
-            disabled: new BoolExpressionConverter(),
-        };
+    public getConverter(property: NonFunctionKeys<ForEach>): Converter | ConverterFactory {
+        switch (property) {
+            case 'itemsProperty':
+                return new StringExpressionConverter();
+            case 'index':
+                return new StringExpressionConverter();
+            case 'value':
+                return new StringExpressionConverter();
+            case 'disabled':
+                return new BoolExpressionConverter();
+            default:
+                return super.getConverter(property);
+        }
     }
 
     public getDependencies(): Dialog[] {

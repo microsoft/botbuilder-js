@@ -244,7 +244,7 @@ export class ResourceExplorer {
         loader?: CustomDeserializer<T, C>
     ): void {
         this._kindToType.set(kind, type);
-        this._kindDeserializer.set(kind, loader || new DefaultLoader<T, C>(this));
+        this._kindDeserializer.set(kind, loader || new DefaultLoader(this));
     }
 
     private registerComponentTypes(): void {

@@ -18,8 +18,9 @@ import {
     ValueExpressionConverter,
 } from 'adaptive-expressions';
 import { Activity } from 'botbuilder-core';
-import { Converter, Converters, DialogTurnResult, DialogContext, Dialog, Properties } from 'botbuilder-dialogs';
+import { Converter, ConverterFactory, DialogContext, Dialog, DialogTurnResult } from 'botbuilder-dialogs';
 import { replaceJsonRecursively } from '../jsonExtensions';
+import { NonFunctionKeys } from 'utility-types';
 
 type Input = Record<string, string>;
 type Output = Record<string, StringExpression>;
@@ -189,16 +190,25 @@ export class HttpRequest<O extends object = {}> extends Dialog<O> {
      */
     public disabled?: BoolExpression;
 
-    public getConverters(): Converters<Properties<HttpRequest>> {
-        return {
-            contentType: new StringExpressionConverter(),
-            url: new StringExpressionConverter(),
-            headers: new HttpHeadersConverter(),
-            body: new ValueExpressionConverter(),
-            responseType: new EnumExpressionConverter<ResponsesTypes>(ResponsesTypes),
-            resultProperty: new StringExpressionConverter(),
-            disabled: new BoolExpressionConverter(),
-        };
+    public getConverter(property: NonFunctionKeys<HttpRequest>): Converter | ConverterFactory {
+        switch (property) {
+            case 'contentType':
+                return new StringExpressionConverter();
+            case 'url':
+                return new StringExpressionConverter();
+            case 'headers':
+                return new HttpHeadersConverter();
+            case 'body':
+                return new ValueExpressionConverter();
+            case 'responseType':
+                return new EnumExpressionConverter<ResponsesTypes>(ResponsesTypes);
+            case 'resultProperty':
+                return new StringExpressionConverter();
+            case 'disabled':
+                return new BoolExpressionConverter();
+            default:
+                return super.getConverter(property);
+        }
     }
 
     public async beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {

@@ -5,13 +5,14 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { Converters, Dialog, DialogContext, DialogTurnResult, Properties } from 'botbuilder-dialogs';
 import {
     StringExpression,
     BoolExpression,
     BoolExpressionConverter,
     StringExpressionConverter,
 } from 'adaptive-expressions';
+import { Converter, ConverterFactory, Dialog, DialogContext, DialogTurnResult } from 'botbuilder-dialogs';
+import { NonFunctionKeys } from 'utility-types';
 
 export class SignOutUser<O extends object = {}> extends Dialog<O> {
     public static $kind = 'Microsoft.SignOutUser';
@@ -42,12 +43,17 @@ export class SignOutUser<O extends object = {}> extends Dialog<O> {
      */
     public disabled?: BoolExpression;
 
-    public getConverters(): Converters<Properties<SignOutUser>> {
-        return {
-            userId: new StringExpressionConverter(),
-            connectionName: new StringExpressionConverter(),
-            disabled: new BoolExpressionConverter(),
-        };
+    public getConverter(property: NonFunctionKeys<SignOutUser>): Converter | ConverterFactory {
+        switch (property) {
+            case 'userId':
+                return new StringExpressionConverter();
+            case 'connectionName':
+                return new StringExpressionConverter();
+            case 'disabled':
+                return new BoolExpressionConverter();
+            default:
+                return super.getConverter(property);
+        }
     }
 
     public async beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {

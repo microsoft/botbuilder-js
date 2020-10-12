@@ -17,7 +17,8 @@ import {
     telemetryTrackDialogView,
 } from 'botbuilder-core';
 import {
-    Converters,
+    Converter,
+    ConverterFactory,
     Dialog,
     DialogContainer,
     DialogContext,
@@ -29,9 +30,9 @@ import {
     DialogState,
     DialogTurnResult,
     DialogTurnStatus,
-    Properties,
     TurnPath,
 } from 'botbuilder-dialogs';
+import { NonFunctionKeys } from 'utility-types';
 import { ActionContext } from './actionContext';
 import { AdaptiveDialogState } from './adaptiveDialogState';
 import { AdaptiveEvents } from './adaptiveEvents';
@@ -125,12 +126,17 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
         return this.dialogSchema ? this.dialogSchema.schema : undefined;
     }
 
-    public getConverters(): Converters<Properties<AdaptiveDialog>> {
-        return {
-            generator: new LanguageGeneratorConverter(),
-            recognizer: RecognizerConverter,
-            autoEndDialog: new BoolExpressionConverter(),
-        };
+    public getConverter(property: NonFunctionKeys<AdaptiveDialog>): Converter | ConverterFactory {
+        switch (property) {
+            case 'generator':
+                return new LanguageGeneratorConverter();
+            case 'recognizer':
+                return RecognizerConverter;
+            case 'autoEndDialog':
+                return new BoolExpressionConverter();
+            default:
+                return super.getConverter(property);
+        }
     }
 
     protected ensureDependenciesInstalled(): void {
@@ -858,7 +864,7 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
             });
             for (let i = 0; i < infos.length; ++i) {
                 const current = infos[i];
-                for (let j = i + 1; j < infos.length; ) {
+                for (let j = i + 1; j < infos.length;) {
                     const alt = infos[j];
                     if (EntityInfo.covers(current, alt)) {
                         infos.splice(j, 1);

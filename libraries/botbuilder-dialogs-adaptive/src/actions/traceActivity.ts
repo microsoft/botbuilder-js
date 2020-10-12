@@ -6,15 +6,16 @@
  * Licensed under the MIT License.
  */
 import {
-    ValueExpression,
-    StringExpression,
     BoolExpression,
     BoolExpressionConverter,
+    StringExpression,
     StringExpressionConverter,
+    ValueExpression,
     ValueExpressionConverter,
 } from 'adaptive-expressions';
 import { Activity, ActivityTypes } from 'botbuilder-core';
-import { Converters, DialogTurnResult, DialogContext, Dialog, Properties } from 'botbuilder-dialogs';
+import { Converter, ConverterFactory, Dialog, DialogContext, DialogTurnResult } from 'botbuilder-dialogs';
+import { NonFunctionKeys } from 'utility-types';
 
 export class TraceActivity<O extends object = {}> extends Dialog<O> {
     public static $kind = 'Microsoft.TraceActivity';
@@ -62,14 +63,21 @@ export class TraceActivity<O extends object = {}> extends Dialog<O> {
      */
     public disabled?: BoolExpression;
 
-    public getConverters(): Converters<Properties<TraceActivity>> {
-        return {
-            name: new StringExpressionConverter(),
-            valueType: new StringExpressionConverter(),
-            value: new ValueExpressionConverter(),
-            label: new StringExpressionConverter(),
-            disabled: new BoolExpressionConverter(),
-        };
+    public getConverter(property: NonFunctionKeys<TraceActivity>): Converter | ConverterFactory {
+        switch (property) {
+            case 'name':
+                return new StringExpressionConverter();
+            case 'valueType':
+                return new StringExpressionConverter();
+            case 'value':
+                return new ValueExpressionConverter();
+            case 'label':
+                return new StringExpressionConverter();
+            case 'disabled':
+                return new BoolExpressionConverter();
+            default:
+                return super.getConverter(property);
+        }
     }
 
     public async beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {

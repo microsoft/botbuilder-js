@@ -11,8 +11,9 @@ import {
     BoolExpressionConverter,
     StringExpressionConverter,
 } from 'adaptive-expressions';
-import { Converters, Dialog, DialogContext, DialogTurnResult, Properties } from 'botbuilder-dialogs';
+import { Converter, ConverterFactory, Dialog, DialogContext, DialogTurnResult } from 'botbuilder-dialogs';
 import { TurnContext } from 'botbuilder-core';
+import { NonFunctionKeys } from 'utility-types';
 
 interface CompatibleAdapter {
     getConversationMembers(context: TurnContext);
@@ -43,11 +44,15 @@ export class GetConversationMembers<O extends object = {}> extends Dialog<O> {
      */
     public disabled?: BoolExpression;
 
-    public getConverters(): Converters<Properties<GetConversationMembers>> {
-        return {
-            property: new StringExpressionConverter(),
-            disabled: new BoolExpressionConverter(),
-        };
+    public getConverter(property: NonFunctionKeys<GetConversationMembers>): Converter | ConverterFactory {
+        switch (property) {
+            case 'property':
+                return new StringExpressionConverter();
+            case 'disabled':
+                return new BoolExpressionConverter();
+            default:
+                return super.getConverter(property);
+        }
     }
 
     public async beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {

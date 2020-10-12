@@ -6,18 +6,6 @@
  * Licensed under the MIT License.
  */
 
-import { Converters, DialogContext, Properties } from 'botbuilder-dialogs';
-import { RecognizerResult, Activity } from 'botbuilder-core';
-import {
-    RankerTypes,
-    QnAMakerMetadata,
-    QnAMaker,
-    QnAMakerEndpoint,
-    QnAMakerOptions,
-    QnAMakerResult,
-    QnARequestContext,
-} from 'botbuilder-ai';
-import { Recognizer } from '../recognizers/recognizer';
 import {
     ArrayExpression,
     ArrayExpressionConverter,
@@ -32,6 +20,19 @@ import {
     StringExpression,
     StringExpressionConverter,
 } from 'adaptive-expressions';
+import {
+    RankerTypes,
+    QnAMakerMetadata,
+    QnAMaker,
+    QnAMakerEndpoint,
+    QnAMakerOptions,
+    QnAMakerResult,
+    QnARequestContext,
+} from 'botbuilder-ai';
+import { RecognizerResult, Activity } from 'botbuilder-core';
+import { Converter, ConverterFactory, DialogContext } from 'botbuilder-dialogs';
+import { NonFunctionKeys } from 'utility-types';
+import { Recognizer } from '../recognizers/recognizer';
 
 const intentPrefix = 'intent=';
 
@@ -97,19 +98,31 @@ export class QnAMakerRecognizer extends Recognizer {
      */
     public qnaId: IntExpression = new IntExpression(0);
 
-    public getConverters(): Converters<Properties<QnAMakerRecognizer>> {
-        return {
-            knowledgeBaseId: new StringExpressionConverter(),
-            hostname: new StringExpressionConverter(),
-            endpointKey: new StringExpressionConverter(),
-            top: new IntExpressionConverter(),
-            threshold: new NumberExpressionConverter(),
-            rankerType: new StringExpressionConverter(),
-            includeDialogNameInMetadata: new BoolExpressionConverter(),
-            metadata: new ArrayExpressionConverter(),
-            context: new ObjectExpressionConverter<QnARequestContext>(),
-            qnaId: new IntExpressionConverter(),
-        };
+    public getConverter(property: NonFunctionKeys<QnAMakerRecognizer>): Converter | ConverterFactory {
+        switch (property) {
+            case 'knowledgeBaseId':
+                return new StringExpressionConverter();
+            case 'hostname':
+                return new StringExpressionConverter();
+            case 'endpointKey':
+                return new StringExpressionConverter();
+            case 'top':
+                return new IntExpressionConverter();
+            case 'threshold':
+                return new NumberExpressionConverter();
+            case 'rankerType':
+                return new StringExpressionConverter();
+            case 'includeDialogNameInMetadata':
+                return new BoolExpressionConverter();
+            case 'metadata':
+                return new ArrayExpressionConverter();
+            case 'context':
+                return new ObjectExpressionConverter<QnARequestContext>();
+            case 'qnaId':
+                return new IntExpressionConverter();
+            default:
+                return super.getConverter(property);
+        }
     }
 
     /**

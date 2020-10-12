@@ -5,31 +5,31 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { Activity } from 'botbuilder-core';
 import {
-    Converters,
-    DialogContext,
-    Choice,
-    ListStyle,
-    ChoiceFactoryOptions,
-    FindChoicesOptions,
-    ChoiceFactory,
-    recognizeChoices,
-    ModelResult,
-    FoundChoice,
-    Properties,
-} from 'botbuilder-dialogs';
-import { InputDialog, InputState } from './inputDialog';
-import { ChoiceSet } from './choiceSet';
-import {
-    ObjectExpression,
-    StringExpression,
     EnumExpression,
-    ArrayExpressionConverter,
     EnumExpressionConverter,
+    ObjectExpression,
     ObjectExpressionConverter,
+    StringExpression,
     StringExpressionConverter,
 } from 'adaptive-expressions';
+import { Activity } from 'botbuilder-core';
+import {
+    Choice,
+    ChoiceFactory,
+    ChoiceFactoryOptions,
+    Converter,
+    ConverterFactory,
+    DialogContext,
+    FindChoicesOptions,
+    FoundChoice,
+    ListStyle,
+    ModelResult,
+    recognizeChoices,
+} from 'botbuilder-dialogs';
+import { NonFunctionKeys } from 'utility-types';
+import { InputDialog, InputState } from './inputDialog';
+import { ChoiceSet } from './choiceSet';
 
 export enum ChoiceOutputFormat {
     value = 'value',
@@ -93,15 +93,23 @@ export class ChoiceInput extends InputDialog {
      */
     public recognizerOptions?: ObjectExpression<FindChoicesOptions> = new ObjectExpression();
 
-    public getConverters(): Converters<Properties<ChoiceInput>> {
-        return Object.assign({}, super.getConverters(), {
-            choices: new ArrayExpressionConverter<Choice>(),
-            style: new EnumExpressionConverter<ListStyle>(ListStyle),
-            defaultLocale: new StringExpressionConverter(),
-            outputFormat: new EnumExpressionConverter<ChoiceOutputFormat>(ChoiceOutputFormat),
-            choiceOptions: new ObjectExpressionConverter<ChoiceFactoryOptions>(),
-            recognizerOptions: new ObjectExpressionConverter<FindChoicesOptions>(),
-        });
+    public getConverter(property: NonFunctionKeys<ChoiceInput>): Converter | ConverterFactory {
+        switch (property) {
+            case 'choices':
+                return new ObjectExpressionConverter<ChoiceSet>();
+            case 'style':
+                return new EnumExpressionConverter<ListStyle>(ListStyle);
+            case 'defaultLocale':
+                return new StringExpressionConverter();
+            case 'outputFormat':
+                return new EnumExpressionConverter<ChoiceOutputFormat>(ChoiceOutputFormat);
+            case 'choiceOptions':
+                return new ObjectExpressionConverter<ChoiceFactoryOptions>();
+            case 'recognizerOptions':
+                return new ObjectExpressionConverter<FindChoicesOptions>();
+            default:
+                return super.getConverter(property);
+        }
     }
 
     protected onInitializeOptions(dc: DialogContext, options: ChoiceInputOptions): ChoiceInputOptions {

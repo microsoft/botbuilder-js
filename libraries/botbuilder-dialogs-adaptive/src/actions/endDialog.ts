@@ -5,13 +5,14 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { Converters, DialogTurnResult, DialogContext, Dialog, Properties } from 'botbuilder-dialogs';
 import {
     ValueExpression,
     BoolExpression,
     BoolExpressionConverter,
     ValueExpressionConverter,
 } from 'adaptive-expressions';
+import { Converter, ConverterFactory, Dialog, DialogContext, DialogTurnResult } from 'botbuilder-dialogs';
+import { NonFunctionKeys } from 'utility-types';
 import { replaceJsonRecursively } from '../jsonExtensions';
 
 export class EndDialog<O extends object = {}> extends Dialog<O> {
@@ -39,11 +40,15 @@ export class EndDialog<O extends object = {}> extends Dialog<O> {
      */
     public disabled?: BoolExpression;
 
-    public getConverters(): Converters<Properties<EndDialog>> {
-        return {
-            value: new ValueExpressionConverter(),
-            disabled: new BoolExpressionConverter(),
-        };
+    public getConverter(property: NonFunctionKeys<EndDialog>): Converter | ConverterFactory {
+        switch (property) {
+            case 'value':
+                return new ValueExpressionConverter();
+            case 'disabled':
+                return new BoolExpressionConverter();
+            default:
+                return super.getConverter(property);
+        }
     }
 
     public async beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {

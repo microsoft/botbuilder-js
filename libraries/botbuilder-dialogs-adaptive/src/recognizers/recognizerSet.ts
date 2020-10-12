@@ -7,7 +7,8 @@
  */
 
 import { Activity, RecognizerResult, getTopScoringIntent } from 'botbuilder-core';
-import { Converters, DialogContext, Properties } from 'botbuilder-dialogs';
+import { Converter, ConverterFactory, DialogContext } from 'botbuilder-dialogs';
+import { NonFunctionKeys } from 'utility-types';
 import { RecognizerListConverter } from '../converters';
 import { Recognizer } from './recognizer';
 
@@ -16,10 +17,13 @@ export class RecognizerSet extends Recognizer {
 
     public recognizers: Recognizer[] = [];
 
-    public getConverters(): Converters<Properties<RecognizerSet>> {
-        return {
-            recognizers: RecognizerListConverter,
-        };
+    public getConverter(property: NonFunctionKeys<RecognizerSet>): Converter | ConverterFactory {
+        switch (property) {
+            case 'recognizers':
+                return RecognizerListConverter;
+            default:
+                return super.getConverter(property);
+        }
     }
 
     public async recognize(

@@ -7,7 +7,8 @@
  */
 
 import { Activity, RecognizerResult } from 'botbuilder-core';
-import { Converters, DialogContext, Properties } from 'botbuilder-dialogs';
+import { Converter, ConverterFactory, DialogContext } from 'botbuilder-dialogs';
+import { NonFunctionKeys } from 'utility-types';
 import { Recognizer } from './recognizer';
 import { LanguagePolicy, LanguagePolicyConverter } from '../languagePolicy';
 import { MultiLanguageRecognizerConverter } from '../converters';
@@ -19,11 +20,15 @@ export class MultiLanguageRecognizer extends Recognizer {
 
     public recognizers: { [locale: string]: Recognizer };
 
-    public getConverters(): Converters<Properties<MultiLanguageRecognizer>> {
-        return {
-            languagePolicy: new LanguagePolicyConverter(),
-            recognizers: MultiLanguageRecognizerConverter,
-        };
+    public getConverter(property: NonFunctionKeys<MultiLanguageRecognizer>): Converter | ConverterFactory {
+        switch (property) {
+            case 'languagePolicy':
+                return new LanguagePolicyConverter();
+            case 'recognizers':
+                return MultiLanguageRecognizerConverter;
+            default:
+                return super.getConverter(property);
+        }
     }
 
     public async recognize(

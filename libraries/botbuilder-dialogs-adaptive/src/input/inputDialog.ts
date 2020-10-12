@@ -18,20 +18,21 @@ import {
 } from 'adaptive-expressions';
 import { ActivityTypes, Activity, InputHints, MessageFactory } from 'botbuilder-core';
 import {
-    Converters,
+    Choice,
+    ChoiceFactory,
+    ChoiceFactoryOptions,
+    Converter,
+    ConverterFactory,
     Dialog,
     DialogContext,
-    DialogTurnResult,
     DialogEvent,
-    DialogReason,
-    Choice,
-    ListStyle,
-    ChoiceFactoryOptions,
-    ChoiceFactory,
     DialogEvents,
+    DialogReason,
+    DialogTurnResult,
+    ListStyle,
     TurnPath,
-    Properties,
 } from 'botbuilder-dialogs';
+import { NonFunctionKeys } from 'utility-types';
 import { TemplateInterface } from '../template';
 import { AdaptiveEvents } from '../adaptiveEvents';
 import { ActivityTemplate } from '../templates/activityTemplate';
@@ -110,20 +111,33 @@ export abstract class InputDialog extends Dialog {
      */
     public disabled?: BoolExpression;
 
-    public getConverters(): Converters<Properties<InputDialog>> {
-        return {
-            alwaysPrompt: new BoolExpressionConverter(),
-            allowInterruptions: new BoolExpressionConverter(),
-            property: new StringExpressionConverter(),
-            value: new ValueExpressionConverter(),
-            prompt: new ActivityTemplateConverter(),
-            unrecognizedPrompt: new ActivityTemplateConverter(),
-            invalidPrompt: new ActivityTemplateConverter(),
-            defaultValueResponse: new ActivityTemplateConverter(),
-            maxTurnCount: new IntExpressionConverter(),
-            defaultValue: new ValueExpressionConverter(),
-            disabled: new BoolExpressionConverter(),
-        };
+    public getConverter(property: NonFunctionKeys<InputDialog>): Converter | ConverterFactory {
+        switch (property) {
+            case 'alwaysPrompt':
+                return new BoolExpressionConverter();
+            case 'allowInterruptions':
+                return new BoolExpressionConverter();
+            case 'property':
+                return new StringExpressionConverter();
+            case 'value':
+                return new ValueExpressionConverter();
+            case 'prompt':
+                return new ActivityTemplateConverter();
+            case 'unrecognizedPrompt':
+                return new ActivityTemplateConverter();
+            case 'invalidPrompt':
+                return new ActivityTemplateConverter();
+            case 'defaultValueResponse':
+                return new ActivityTemplateConverter();
+            case 'maxTurnCount':
+                return new IntExpressionConverter();
+            case 'defaultValue':
+                return new ValueExpressionConverter();
+            case 'disabled':
+                return new BoolExpressionConverter();
+            default:
+                return super.getConverter(property);
+        }
     }
 
     public constructor(property?: string, prompt?: Partial<Activity> | string) {

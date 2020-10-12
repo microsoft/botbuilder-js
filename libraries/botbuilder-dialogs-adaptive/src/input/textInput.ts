@@ -6,7 +6,8 @@
  * Licensed under the MIT License.
  */
 import { StringExpression, StringExpressionConverter } from 'adaptive-expressions';
-import { Converters, DialogContext, Properties } from 'botbuilder-dialogs';
+import { Converter, ConverterFactory, DialogContext } from 'botbuilder-dialogs';
+import { NonFunctionKeys } from 'utility-types';
 import { InputDialog, InputState } from './inputDialog';
 
 export class TextInput extends InputDialog {
@@ -14,10 +15,13 @@ export class TextInput extends InputDialog {
 
     public outputFormat: StringExpression;
 
-    public getConverters(): Converters<Properties<TextInput>> {
-        return Object.assign({}, super.getConverters(), {
-            outputFormat: new StringExpressionConverter(),
-        });
+    public getConverter(property: NonFunctionKeys<TextInput>): Converter | ConverterFactory {
+        switch (property) {
+            case 'outputFormat':
+                return new StringExpressionConverter();
+            default:
+                return super.getConverter(property);
+        }
     }
 
     protected onComputeId(): string {

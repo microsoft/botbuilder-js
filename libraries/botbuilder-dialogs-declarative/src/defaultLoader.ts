@@ -6,27 +6,18 @@
  * Licensed under the MIT License.
  */
 
-import { Converter, Converters, Properties } from 'botbuilder-dialogs';
+import { Configurable } from 'botbuilder-dialogs';
 import { CustomDeserializer } from './customDeserializer';
 import { ResourceExplorer } from './resources';
 
-type Type<T> = T & {
-    new (...args: unknown[]): Type<T>;
-    getConverters(): Converters<Properties<T>>;
-};
-
-export class DefaultLoader<T, C> implements CustomDeserializer<T, C> {
+export class DefaultLoader implements CustomDeserializer<Configurable, Record<string, unknown>> {
     public constructor(private readonly _resourceExplorer: ResourceExplorer) {}
 
-    public load(config: C, type: Type<T>): T {
+    public load(config: Record<string, unknown>, type: { new (...args: unknown[]): Configurable }): Configurable {
         const instance = new type();
-        const converters: Record<
-            string,
-            Converter | { new (resourceExplorer: ResourceExplorer): Converter }
-        > = Object.assign({}, instance.getConverters());
         Object.getOwnPropertyNames(config).forEach((k: string) => {
             const value = config[k];
-            let converter = converters[k];
+            let converter = instance.getConverter(k);
             if (converter) {
                 if (typeof converter === 'function') {
                     converter = new converter(this._resourceExplorer);

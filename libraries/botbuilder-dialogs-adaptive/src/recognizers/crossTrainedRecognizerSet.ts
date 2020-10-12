@@ -7,7 +7,8 @@
  */
 
 import { Activity, RecognizerResult, getTopScoringIntent } from 'botbuilder-core';
-import { Converters, DialogContext, Properties } from 'botbuilder-dialogs';
+import { Converter, ConverterFactory, DialogContext } from 'botbuilder-dialogs';
+import { NonFunctionKeys } from 'utility-types';
 import { RecognizerListConverter } from '../converters';
 import { Recognizer } from './recognizer';
 
@@ -27,10 +28,13 @@ export class CrossTrainedRecognizerSet extends Recognizer {
      */
     public recognizers: Recognizer[] = [];
 
-    public getConverters(): Converters<Properties<CrossTrainedRecognizerSet>> {
-        return {
-            recognizers: RecognizerListConverter,
-        };
+    public getConverter(property: NonFunctionKeys<CrossTrainedRecognizerSet>): Converter | ConverterFactory {
+        switch (property) {
+            case 'recognizers':
+                return RecognizerListConverter;
+            default:
+                return super.getConverter(property);
+        }
     }
 
     /**

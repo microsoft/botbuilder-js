@@ -19,7 +19,7 @@ import {
     StringExpressionConverter,
 } from 'adaptive-expressions';
 import { Activity, Entity, RecognizerResult } from 'botbuilder-core';
-import { Converters, DialogContext, Properties } from 'botbuilder-dialogs';
+import { Converter, ConverterFactory, DialogContext } from 'botbuilder-dialogs';
 import {
     createRecognizerResult,
     EntityRecognizer,
@@ -27,6 +27,7 @@ import {
     Recognizer,
     TextEntity,
 } from 'botbuilder-dialogs-adaptive';
+import { NonFunctionKeys } from 'utility-types';
 
 const oc: any = require('orchestrator-core/orchestrator-core.node');
 const ReadText: any = require('read-text-file');
@@ -85,13 +86,19 @@ export class OrchestratorAdaptiveRecognizer extends Recognizer {
      */
     public readonly resultProperty: string = 'result';
 
-    public getConverters(): Converters<Properties<OrchestratorAdaptiveRecognizer>> {
-        return {
-            modelPath: new StringExpressionConverter(),
-            snapshotPath: new StringExpressionConverter(),
-            disambiguationScoreThreshold: new NumberExpressionConverter(),
-            detectAmbiguousIntents: new BoolExpressionConverter(),
-        };
+    public getConverter(property: NonFunctionKeys<OrchestratorAdaptiveRecognizer>): Converter | ConverterFactory {
+        switch (property) {
+            case 'modelPath':
+                return new StringExpressionConverter();
+            case 'snapshotPath':
+                return new StringExpressionConverter();
+            case 'disambiguationScoreThreshold':
+                return new NumberExpressionConverter();
+            case 'detectAmbiguousIntents':
+                return new BoolExpressionConverter();
+            default:
+                return super.getConverter(property);
+        }
     }
 
     private readonly unknownIntentFilterScore = 0.4;

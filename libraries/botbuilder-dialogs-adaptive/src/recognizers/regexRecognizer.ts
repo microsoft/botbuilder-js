@@ -6,10 +6,11 @@
  * Licensed under the MIT License.
  */
 import { Activity, Entity, RecognizerResult } from 'botbuilder-core';
-import { Converter, Converters, DialogContext, Properties } from 'botbuilder-dialogs';
+import { Converter, ConverterFactory, DialogContext } from 'botbuilder-dialogs';
 import { Recognizer } from './recognizer';
 import { IntentPattern } from './intentPattern';
 import { EntityRecognizer, TextEntity, EntityRecognizerSet } from './entityRecognizers';
+import { NonFunctionKeys } from 'utility-types';
 
 type Input = {
     intent: string;
@@ -39,10 +40,13 @@ export class RegexRecognizer extends Recognizer {
      */
     public entities: EntityRecognizer[] = [];
 
-    public getConverters(): Converters<Properties<RegexRecognizer>> {
-        return {
-            intents: new IntentPatternsConverter(),
-        };
+    public getConverter(property: NonFunctionKeys<RegexRecognizer>): Converter | ConverterFactory {
+        switch (property) {
+            case 'intents':
+                return new IntentPatternsConverter();
+            default:
+                return super.getConverter(property);
+        }
     }
 
     public async recognize(

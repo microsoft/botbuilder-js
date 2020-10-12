@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { Converters, DialogTurnResult, DialogContext, Dialog, Properties } from 'botbuilder-dialogs';
+
 import {
     ValueExpression,
     StringExpression,
@@ -14,6 +14,8 @@ import {
     StringExpressionConverter,
     ValueExpressionConverter,
 } from 'adaptive-expressions';
+import { Converter, ConverterFactory, Dialog, DialogContext, DialogTurnResult } from 'botbuilder-dialogs';
+import { NonFunctionKeys } from 'utility-types';
 
 export class EmitEvent<O extends object = {}> extends Dialog<O> {
     public static $kind = 'Microsoft.EmitEvent';
@@ -51,13 +53,19 @@ export class EmitEvent<O extends object = {}> extends Dialog<O> {
      */
     public disabled?: BoolExpression;
 
-    public getConverters(): Converters<Properties<EmitEvent>> {
-        return {
-            eventName: new StringExpressionConverter(),
-            eventValue: new ValueExpressionConverter(),
-            bubbleEvent: new BoolExpressionConverter(),
-            disabled: new BoolExpressionConverter(),
-        };
+    public getConverter(property: NonFunctionKeys<EmitEvent>): Converter | ConverterFactory {
+        switch (property) {
+            case 'eventName':
+                return new StringExpressionConverter();
+            case 'eventValue':
+                return new ValueExpressionConverter();
+            case 'bubbleEvent':
+                return new BoolExpressionConverter();
+            case 'disabled':
+                return new BoolExpressionConverter();
+            default:
+                return super.getConverter(property);
+        }
     }
 
     public async beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {

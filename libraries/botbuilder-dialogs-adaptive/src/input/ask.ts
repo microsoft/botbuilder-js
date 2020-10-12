@@ -14,15 +14,16 @@ import {
     StringExpressionConverter,
 } from 'adaptive-expressions';
 import {
-    Converters,
+    Converter,
+    ConverterFactory,
     DialogContext,
-    DialogTurnResult,
-    DialogPath,
     DialogEvent,
-    TurnPath,
+    DialogPath,
+    DialogTurnResult,
     DialogTurnStatus,
-    Properties,
+    TurnPath,
 } from 'botbuilder-dialogs';
+import { NonFunctionKeys } from 'utility-types';
 import { SendActivity } from '../actions/sendActivity';
 import { ActivityTemplateConverter } from '../converters';
 
@@ -51,13 +52,19 @@ export class Ask extends SendActivity {
      */
     public defaultOperation: StringExpression;
 
-    public getConverters(): Converters<Properties<Ask>> {
-        return Object.assign({}, super.getConverters(), {
-            expectedProperties: new ArrayExpressionConverter<string>(),
-            defaultOperation: new StringExpressionConverter(),
-            activity: new ActivityTemplateConverter(),
-            disabled: new BoolExpressionConverter(),
-        });
+    public getConverter(property: NonFunctionKeys<Ask>): Converter | ConverterFactory {
+        switch (property) {
+            case 'expectedProperties':
+                return new ArrayExpressionConverter<string>();
+            case 'defaultOperation':
+                return new StringExpressionConverter();
+            case 'activity':
+                return new ActivityTemplateConverter();
+            case 'disabled':
+                return new BoolExpressionConverter();
+            default:
+                return super.getConverter(property);
+        }
     }
 
     public async beginDialog(dc: DialogContext, options?: object): Promise<DialogTurnResult> {

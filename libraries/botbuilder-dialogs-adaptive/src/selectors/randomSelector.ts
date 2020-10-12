@@ -6,7 +6,6 @@
  * Licensed under the MIT License.
  */
 import { ExpressionParserInterface, ExpressionParser } from 'adaptive-expressions';
-import { Converters, Properties } from 'botbuilder-dialogs';
 import { TriggerSelector } from '../triggerSelector';
 import { OnCondition } from '../conditions';
 import { ActionContext } from '../actionContext';
@@ -24,10 +23,6 @@ export class RandomSelector extends TriggerSelector {
      * Gets or sets the expression parser to use.
      */
     public parser: ExpressionParserInterface = new ExpressionParser();
-
-    public getConverters(): Converters<Properties<RandomSelector>> {
-        return {};
-    }
 
     public initialize(conditionals: OnCondition[], evaluate: boolean): void {
         this._conditionals = conditionals;

@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 
-import { Converter, Converters } from './converter';
+import { Converter, ConverterFactory } from './converter';
 
 /**
  * Base class for all configurable classes.
@@ -17,12 +17,11 @@ export abstract class Configurable {
      * @param config Configuration settings to apply.
      */
     public configure(config: Record<string, unknown>): this {
-        const converters = this.getConverters();
         for (const key in config) {
             if (Object.prototype.hasOwnProperty.call(config, key)) {
                 const setting = config[`${key}`];
-                if (converters && converters[`${key}`] && typeof converters[`${key}`] === 'object') {
-                    const converter = converters[`${key}`] as Converter<unknown, unknown>;
+                const converter = this.getConverter(key);
+                if (converter && typeof converter === 'object') {
                     this[`${key}`] = converter.convert(setting);
                 } else {
                     if (Array.isArray(setting)) {
@@ -47,7 +46,7 @@ export abstract class Configurable {
         return this;
     }
 
-    public getConverters(): Converters<Record<string, unknown>> {
-        return {};
+    public getConverter(_property: string): Converter | ConverterFactory {
+        return undefined;
     }
 }

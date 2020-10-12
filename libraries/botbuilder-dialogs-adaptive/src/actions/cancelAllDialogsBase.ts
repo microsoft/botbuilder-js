@@ -6,13 +6,13 @@
  * Licensed under the MIT License.
  */
 import {
-    Converters,
-    DialogTurnResult,
-    DialogContext,
+    Converter,
+    ConverterFactory,
     Dialog,
-    TurnPath,
+    DialogContext,
     DialogEvents,
-    Properties,
+    DialogTurnResult,
+    TurnPath,
 } from 'botbuilder-dialogs';
 import {
     StringExpression,
@@ -22,6 +22,7 @@ import {
     ValueExpressionConverter,
     BoolExpressionConverter,
 } from 'adaptive-expressions';
+import { NonFunctionKeys } from 'utility-types';
 
 export class CancelAllDialogsBase<O extends object = {}> extends Dialog<O> {
     public constructor();
@@ -62,13 +63,19 @@ export class CancelAllDialogsBase<O extends object = {}> extends Dialog<O> {
      */
     public cancelAll: boolean;
 
-    public getConverters(): Converters<Properties<CancelAllDialogsBase>> {
-        return {
-            eventName: new StringExpressionConverter(),
-            eventValue: new ValueExpressionConverter(),
-            disabled: new BoolExpressionConverter(),
-            activityProcessed: new BoolExpressionConverter(),
-        };
+    public getConverter(property: NonFunctionKeys<CancelAllDialogsBase>): Converter | ConverterFactory {
+        switch (property) {
+            case 'eventName':
+                return new StringExpressionConverter();
+            case 'eventValue':
+                return new ValueExpressionConverter();
+            case 'disabled':
+                return new BoolExpressionConverter();
+            case 'activityProcessed':
+                return new BoolExpressionConverter();
+            default:
+                return super.getConverter(property);
+        }
     }
 
     public async beginDialog(dc: DialogContext, options: O): Promise<DialogTurnResult> {

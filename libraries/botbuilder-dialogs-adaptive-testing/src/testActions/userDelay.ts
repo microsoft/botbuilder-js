@@ -7,7 +7,6 @@
  */
 
 import { TurnContext, TestAdapter } from 'botbuilder-core';
-import { Converters, Properties } from 'botbuilder-dialogs';
 import { TestAction } from '../testAction';
 
 export interface UserDelayConfiguration {
@@ -24,10 +23,6 @@ export class UserDelay extends TestAction {
      * The timespan in milliseconds to delay.
      */
     public timespan: number;
-
-    public getConverters(): Converters<Properties<UserDelay>> {
-        return {};
-    }
 
     /**
      * Execute the test.

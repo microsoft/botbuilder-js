@@ -5,13 +5,14 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { Converters, Dialog, DialogContext, DialogTurnResult, Properties } from 'botbuilder-dialogs';
 import {
     StringExpression,
     BoolExpression,
     BoolExpressionConverter,
     StringExpressionConverter,
 } from 'adaptive-expressions';
+import { Converter, ConverterFactory, Dialog, DialogContext, DialogTurnResult } from 'botbuilder-dialogs';
+import { NonFunctionKeys } from 'utility-types';
 
 export class GetActivityMembers<O extends object = {}> extends Dialog {
     public static $kind = 'Microsoft.GetActivityMembers';
@@ -42,12 +43,17 @@ export class GetActivityMembers<O extends object = {}> extends Dialog {
      */
     public disabled?: BoolExpression;
 
-    public getConverters(): Converters<Properties<GetActivityMembers>> {
-        return {
-            activityId: new StringExpressionConverter(),
-            property: new StringExpressionConverter(),
-            disabled: new BoolExpressionConverter(),
-        };
+    public getConverter(property: NonFunctionKeys<GetActivityMembers>): Converter | ConverterFactory {
+        switch (property) {
+            case 'activityId':
+                return new StringExpressionConverter();
+            case 'property':
+                return new StringExpressionConverter();
+            case 'disabled':
+                return new BoolExpressionConverter();
+            default:
+                return super.getConverter(property);
+        }
     }
 
     public async beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {

@@ -16,13 +16,13 @@ import {
 } from 'adaptive-expressions';
 import {
     Converter,
-    Converters,
-    DialogTurnResult,
-    DialogDependencies,
+    ConverterFactory,
     Dialog,
     DialogContext,
-    Properties,
+    DialogDependencies,
+    DialogTurnResult,
 } from 'botbuilder-dialogs';
+import { NonFunctionKeys } from 'utility-types';
 import { ActionScope } from './actionScope';
 import { Case } from './case';
 
@@ -79,12 +79,17 @@ export class SwitchCondition<O extends object = {}> extends Dialog<O> implements
      */
     public disabled?: BoolExpression;
 
-    public getConverters(): Converters<Properties<SwitchCondition>> {
-        return {
-            condition: new ExpressionConverter(),
-            cases: new CasesConverter(),
-            disabled: new BoolExpressionConverter(),
-        };
+    public getConverter(property: NonFunctionKeys<SwitchCondition>): Converter | ConverterFactory {
+        switch (property) {
+            case 'condition':
+                return new ExpressionConverter();
+            case 'cases':
+                return new CasesConverter();
+            case 'disabled':
+                return new BoolExpressionConverter();
+            default:
+                return super.getConverter(property);
+        }
     }
 
     private _caseExpresssions: Map<string, Expression>;

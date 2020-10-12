@@ -11,10 +11,11 @@ import {
     ExpressionParser,
     ExpressionParserInterface,
 } from 'adaptive-expressions';
-import { Converters, Properties } from 'botbuilder-dialogs';
+import { Converter, ConverterFactory } from 'botbuilder-dialogs';
 import { OnCondition } from '../conditions/onCondition';
 import { TriggerSelector } from '../triggerSelector';
 import { ActionContext } from '../actionContext';
+import { NonFunctionKeys } from 'utility-types';
 
 /**
  * Select between two rule selectors based on a condition.
@@ -45,10 +46,13 @@ export class ConditionalSelector extends TriggerSelector {
      */
     public parser: ExpressionParserInterface = new ExpressionParser();
 
-    public getConverters(): Converters<Properties<ConditionalSelector>> {
-        return {
-            condition: new BoolExpressionConverter(),
-        };
+    public getConverter(property: NonFunctionKeys<ConditionalSelector>): Converter | ConverterFactory {
+        switch (property) {
+            case 'condition':
+                return new BoolExpressionConverter();
+            default:
+                return super.getConverter(property);
+        }
     }
 
     public initialize(conditionals: OnCondition[], evaluate: boolean): void {

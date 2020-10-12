@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { Converters, DialogTurnResult, DialogContext, Dialog, Properties } from 'botbuilder-dialogs';
+import { Converter, ConverterFactory, Dialog, DialogContext, DialogTurnResult } from 'botbuilder-dialogs';
 import {
     BoolExpression,
     BoolExpressionConverter,
@@ -16,6 +16,7 @@ import {
     ValueExpression,
     ValueExpressionConverter,
 } from 'adaptive-expressions';
+import { NonFunctionKeys } from 'utility-types';
 
 export enum ArrayChangeType {
     push = 'push',
@@ -78,14 +79,21 @@ export class EditArray<O extends object = {}> extends Dialog<O> {
      */
     public disabled?: BoolExpression;
 
-    public getConverters(): Converters<Properties<EditArray>> {
-        return {
-            changeType: new EnumExpressionConverter<ArrayChangeType>(ArrayChangeType),
-            itemsProperty: new StringExpressionConverter(),
-            resultProperty: new StringExpressionConverter(),
-            value: new ValueExpressionConverter(),
-            disabled: new BoolExpressionConverter(),
-        };
+    public getConverter(property: NonFunctionKeys<EditArray>): Converter | ConverterFactory {
+        switch (property) {
+            case 'changeType':
+                return new EnumExpressionConverter<ArrayChangeType>(ArrayChangeType);
+            case 'itemsProperty':
+                return new StringExpressionConverter();
+            case 'resultProperty':
+                return new StringExpressionConverter();
+            case 'value':
+                return new ValueExpressionConverter();
+            case 'disabled':
+                return new BoolExpressionConverter();
+            default:
+                return super.getConverter(property);
+        }
     }
 
     public async beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {

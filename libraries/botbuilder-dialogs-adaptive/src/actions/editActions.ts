@@ -7,18 +7,19 @@
  */
 import { StringUtils } from 'botbuilder-core';
 import {
-    Converters,
-    DialogTurnResult,
+    Converter,
+    ConverterFactory,
     Dialog,
-    DialogDependencies,
     DialogContext,
-    Properties,
+    DialogDependencies,
+    DialogTurnResult,
 } from 'botbuilder-dialogs';
 import { BoolExpression, BoolExpressionConverter, EnumExpression, EnumExpressionConverter } from 'adaptive-expressions';
 import { ActionContext } from '../actionContext';
 import { ActionChangeType } from '../actionChangeType';
 import { ActionState } from '../actionState';
 import { ActionChangeList } from '../actionChangeList';
+import { NonFunctionKeys } from 'utility-types';
 
 export class EditActions<O extends object = {}> extends Dialog<O> implements DialogDependencies {
     public static $kind = 'Microsoft.EditActions';
@@ -50,11 +51,15 @@ export class EditActions<O extends object = {}> extends Dialog<O> implements Dia
      */
     public disabled?: BoolExpression;
 
-    public getConverters(): Converters<Properties<EditActions>> {
-        return {
-            changeType: new EnumExpressionConverter<ActionChangeType>(ActionChangeType),
-            disabled: new BoolExpressionConverter(),
-        };
+    public getConverter(property: NonFunctionKeys<EditActions>): Converter | ConverterFactory {
+        switch (property) {
+            case 'changeType':
+                return new EnumExpressionConverter<ActionChangeType>(ActionChangeType);
+            case 'disabled':
+                return new BoolExpressionConverter();
+            default:
+                return super.getConverter(property);
+        }
     }
 
     public getDependencies(): Dialog[] {

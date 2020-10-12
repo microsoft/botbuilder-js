@@ -6,7 +6,8 @@
  * Licensed under the MIT License.
  */
 import { BoolExpression, BoolExpressionConverter } from 'adaptive-expressions';
-import { Converters, DialogTurnResult, DialogContext, TurnPath, Properties } from 'botbuilder-dialogs';
+import { Converter, ConverterFactory, DialogContext, DialogTurnResult, TurnPath } from 'botbuilder-dialogs';
+import { NonFunctionKeys } from 'utility-types';
 import { BaseInvokeDialog } from './baseInvokeDialog';
 
 export class RepeatDialog<O extends object = {}> extends BaseInvokeDialog<O> {
@@ -27,11 +28,15 @@ export class RepeatDialog<O extends object = {}> extends BaseInvokeDialog<O> {
      */
     public allowLoop?: BoolExpression;
 
-    public getConverters(): Converters<Properties<RepeatDialog>> {
-        return Object.assign({}, super.getConverters(), {
-            disabled: new BoolExpressionConverter(),
-            allowLoop: new BoolExpressionConverter(),
-        });
+    public getConverter(property: NonFunctionKeys<RepeatDialog>): Converter | ConverterFactory {
+        switch (property) {
+            case 'disabled':
+                return new BoolExpressionConverter();
+            case 'allowLoop':
+                return new BoolExpressionConverter();
+            default:
+                return super.getConverter(property);
+        }
     }
 
     public async beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {

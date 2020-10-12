@@ -7,7 +7,8 @@
  */
 import * as Recognizers from '@microsoft/recognizers-text-date-time';
 import { StringExpression, StringExpressionConverter } from 'adaptive-expressions';
-import { Converters, DialogContext, Properties } from 'botbuilder-dialogs';
+import { Converter, ConverterFactory, DialogContext } from 'botbuilder-dialogs';
+import { NonFunctionKeys } from 'utility-types';
 import { InputDialog, InputState } from './inputDialog';
 
 export class DateTimeInput extends InputDialog {
@@ -17,11 +18,15 @@ export class DateTimeInput extends InputDialog {
 
     public outputFormat: StringExpression;
 
-    public getConverters(): Converters<Properties<DateTimeInput>> {
-        return Object.assign({}, super.getConverters(), {
-            defaultLocale: new StringExpressionConverter(),
-            outputFormat: new StringExpressionConverter(),
-        });
+    public getConverter(property: NonFunctionKeys<DateTimeInput>): Converter | ConverterFactory {
+        switch (property) {
+            case 'defaultLocale':
+                return new StringExpressionConverter();
+            case 'outputFormat':
+                return new StringExpressionConverter();
+            default:
+                return super.getConverter(property);
+        }
     }
 
     protected onComputeId(): string {

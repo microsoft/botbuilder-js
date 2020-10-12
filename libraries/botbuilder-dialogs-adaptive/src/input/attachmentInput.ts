@@ -6,9 +6,10 @@
  * Licensed under the MIT License.
  */
 import { Attachment } from 'botbuilder-core';
-import { Converters, DialogContext, Properties } from 'botbuilder-dialogs';
+import { Converter, ConverterFactory, DialogContext } from 'botbuilder-dialogs';
 import { InputDialog, InputState } from './inputDialog';
 import { EnumExpression, EnumExpressionConverter } from 'adaptive-expressions';
+import { NonFunctionKeys } from 'utility-types';
 
 export enum AttachmentOutputFormat {
     all = 'all',
@@ -22,10 +23,13 @@ export class AttachmentInput extends InputDialog {
         AttachmentOutputFormat.first
     );
 
-    public getConverters(): Converters<Properties<AttachmentInput>> {
-        return Object.assign({}, super.getConverters(), {
-            outputFormat: new EnumExpressionConverter<AttachmentOutputFormat>(AttachmentOutputFormat),
-        });
+    public getConverter(property: NonFunctionKeys<AttachmentInput>): Converter | ConverterFactory {
+        switch (property) {
+            case 'outputFormat':
+                return new EnumExpressionConverter<AttachmentOutputFormat>(AttachmentOutputFormat);
+            default:
+                return super.getConverter(property);
+        }
     }
 
     protected onComputeId(): string {

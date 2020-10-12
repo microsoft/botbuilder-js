@@ -6,23 +6,27 @@
  * Licensed under the MIT License.
  */
 
-import { Converters, DialogContext, Properties } from 'botbuilder-dialogs';
+import { Configurable, Converter, ConverterFactory, DialogContext } from 'botbuilder-dialogs';
+import { NonFunctionKeys } from 'utility-types';
 import { LanguageGenerator } from '../languageGenerator';
 import { LanguagePolicy, LanguagePolicyConverter } from '../languagePolicy';
 import { languagePolicyKey } from '../languageGeneratorExtensions';
 /**
  * Base class which applies language policy to tryGetGenerator.
  */
-export abstract class MultiLanguageGeneratorBase implements LanguageGenerator {
+export abstract class MultiLanguageGeneratorBase extends Configurable implements LanguageGenerator {
     /**
      * Language policy required by language generator.
      */
     public languagePolicy: LanguagePolicy;
 
-    public getConverters(): Converters<Properties<MultiLanguageGeneratorBase>> {
-        return {
-            languagePolicy: new LanguagePolicyConverter(),
-        };
+    public getConverter(property: NonFunctionKeys<MultiLanguageGeneratorBase>): Converter | ConverterFactory {
+        switch (property) {
+            case 'languagePolicy':
+                return new LanguagePolicyConverter();
+            default:
+                return super.getConverter(property);
+        }
     }
 
     /**

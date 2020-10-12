@@ -5,14 +5,23 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { Converters, DialogTurnResult, DialogContext, DialogReason, Properties, TurnPath } from 'botbuilder-dialogs';
-import { BaseInvokeDialog } from './baseInvokeDialog';
+
 import {
     StringExpression,
     BoolExpression,
     StringExpressionConverter,
     BoolExpressionConverter,
 } from 'adaptive-expressions';
+import {
+    Converter,
+    ConverterFactory,
+    DialogTurnResult,
+    DialogContext,
+    DialogReason,
+    TurnPath,
+} from 'botbuilder-dialogs';
+import { NonFunctionKeys } from 'utility-types';
+import { BaseInvokeDialog } from './baseInvokeDialog';
 
 export class BeginDialog<O extends object = {}> extends BaseInvokeDialog<O> {
     public static $kind = 'Microsoft.BeginDialog';
@@ -38,11 +47,15 @@ export class BeginDialog<O extends object = {}> extends BaseInvokeDialog<O> {
      */
     public disabled?: BoolExpression;
 
-    public getConverters(): Converters<Properties<BeginDialog>> {
-        return Object.assign({}, super.getConverters(), {
-            resultProperty: new StringExpressionConverter(),
-            disabled: new BoolExpressionConverter(),
-        });
+    public getConverter(property: NonFunctionKeys<BeginDialog>): Converter | ConverterFactory {
+        switch (property) {
+            case 'resultProperty':
+                return new StringExpressionConverter();
+            case 'disabled':
+                return new BoolExpressionConverter();
+            default:
+                return super.getConverter(property);
+        }
     }
 
     public async beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {

@@ -18,15 +18,24 @@ import {
     IntExpressionConverter,
     ReturnType,
 } from 'adaptive-expressions';
-import { Converters, Dialog, DialogDependencies, DialogPath, DialogStateManager, Properties } from 'botbuilder-dialogs';
+import {
+    Configurable,
+    Converter,
+    ConverterFactory,
+    Dialog,
+    DialogDependencies,
+    DialogPath,
+    DialogStateManager,
+} from 'botbuilder-dialogs';
 import { ActionScope } from '../actions/actionScope';
 import { AdaptiveDialog } from '../adaptiveDialog';
 import { ActionContext } from '../actionContext';
 import { ActionChangeList } from '../actionChangeList';
 import { ActionState } from '../actionState';
 import { ActionChangeType } from '../actionChangeType';
+import { NonFunctionKeys } from 'utility-types';
 
-export class OnCondition implements DialogDependencies {
+export class OnCondition extends Configurable implements DialogDependencies {
     public static $kind = 'Microsoft.OnCondition';
 
     /**
@@ -79,15 +88,20 @@ export class OnCondition implements DialogDependencies {
      * @param actions (Optional) The actions to add to the plan when the rule constraints are met.
      */
     public constructor(condition?: string, actions: Dialog[] = []) {
+        super();
         this.condition = condition ? new BoolExpression(condition) : undefined;
         this.actions = actions;
     }
 
-    public getConverters(): Converters<Properties<OnCondition>> {
-        return {
-            condition: new BoolExpressionConverter(),
-            priority: new IntExpressionConverter(),
-        };
+    public getConverter(property: NonFunctionKeys<OnCondition>): Converter | ConverterFactory {
+        switch (property) {
+            case 'condition':
+                return new BoolExpressionConverter();
+            case 'priority':
+                return new IntExpressionConverter();
+            default:
+                return super.getConverter(property);
+        }
     }
 
     /**

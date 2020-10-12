@@ -6,20 +6,20 @@
  * Licensed under the MIT License.
  */
 
-import { Converters, Properties } from 'botbuilder-dialogs';
+import { Configurable } from 'botbuilder-dialogs';
 import { DefaultLoader, ResourceExplorer } from 'botbuilder-dialogs-declarative';
 
-type Type<T> = T & {
-    new (...args: unknown[]): Type<T>;
-    getConverters(): Converters<Properties<T>>;
+type Input = {
+    $kind: string;
+    dialog: unknown;
 };
 
-export class CustomDialogLoader<T, C> extends DefaultLoader<T, C> {
+export class CustomDialogLoader extends DefaultLoader {
     public constructor(resourceExplorer: ResourceExplorer) {
         super(resourceExplorer);
     }
 
-    public load(value: C, type: Type<T>): T {
+    public load(value: Input, type: { new (...args: unknown[]): Configurable }): Configurable {
         const kind = value['$kind'];
         if (kind && !value['dialog']) {
             value['dialog'] = kind.replace(/\.dialog$/, '');

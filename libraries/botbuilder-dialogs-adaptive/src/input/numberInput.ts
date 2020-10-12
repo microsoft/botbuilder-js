@@ -7,13 +7,14 @@
  */
 import * as Recognizers from '@microsoft/recognizers-text-number';
 import {
-    StringExpression,
     NumberExpression,
     NumberExpressionConverter,
+    StringExpression,
     StringExpressionConverter,
 } from 'adaptive-expressions';
 import { Activity } from 'botbuilder-core';
-import { Converters, DialogContext, Properties } from 'botbuilder-dialogs';
+import { Converter, ConverterFactory, DialogContext } from 'botbuilder-dialogs';
+import { NonFunctionKeys } from 'utility-types';
 import { InputDialog, InputState } from './inputDialog';
 
 export class NumberInput extends InputDialog {
@@ -23,11 +24,15 @@ export class NumberInput extends InputDialog {
 
     public outputFormat?: NumberExpression;
 
-    public getConverters(): Converters<Properties<NumberInput>> {
-        return Object.assign({}, super.getConverters(), {
-            defaultLocale: new StringExpressionConverter(),
-            outputFormat: new NumberExpressionConverter(),
-        });
+    public getConverter(property: NonFunctionKeys<NumberInput>): Converter | ConverterFactory {
+        switch (property) {
+            case 'defaultLocale':
+                return new StringExpressionConverter();
+            case 'outputFormat':
+                return new NumberExpressionConverter();
+            default:
+                return super.getConverter(property);
+        }
     }
 
     protected onComputeId(): string {

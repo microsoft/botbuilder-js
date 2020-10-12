@@ -7,10 +7,11 @@
  */
 import { BoolExpression, BoolExpressionConverter } from 'adaptive-expressions';
 import { Activity, ActivityTypes, StringUtils, ResourceResponse } from 'botbuilder-core';
-import { Converters, DialogTurnResult, DialogContext, Dialog, Properties } from 'botbuilder-dialogs';
+import { Converter, ConverterFactory, Dialog, DialogContext, DialogTurnResult } from 'botbuilder-dialogs';
 import { TemplateInterface } from '../template';
 import { ActivityTemplate, StaticActivityTemplate } from '../templates';
 import { ActivityTemplateConverter } from '../converters';
+import { NonFunctionKeys } from 'utility-types';
 
 export class SendActivity<O extends object = {}> extends Dialog<O> {
     public static $kind = 'Microsoft.SendActivity';
@@ -40,11 +41,15 @@ export class SendActivity<O extends object = {}> extends Dialog<O> {
      */
     public disabled?: BoolExpression;
 
-    public getConverters(): Converters<Properties<SendActivity>> {
-        return {
-            activity: new ActivityTemplateConverter(),
-            disabled: new BoolExpressionConverter(),
-        };
+    public getConverter(property: NonFunctionKeys<SendActivity>): Converter | ConverterFactory {
+        switch (property) {
+            case 'activity':
+                return new ActivityTemplateConverter();
+            case 'disabled':
+                return new BoolExpressionConverter();
+            default:
+                return super.getConverter(property);
+        }
     }
 
     public async beginDialog(dc: DialogContext, options: O): Promise<DialogTurnResult> {

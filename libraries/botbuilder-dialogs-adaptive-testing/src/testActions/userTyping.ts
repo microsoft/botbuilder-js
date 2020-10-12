@@ -7,7 +7,7 @@
  */
 
 import { TurnContext, ActivityTypes, TestAdapter } from 'botbuilder-core';
-import { Configurable, Converters, Properties } from 'botbuilder-dialogs';
+import { Configurable } from 'botbuilder-dialogs';
 import { TestAction } from '../testAction';
 
 /**
@@ -20,10 +20,6 @@ export class UserTyping extends Configurable implements TestAction {
      * If user is set then the channalAccount.id and channelAccount.name will be from user.
      */
     public user: string;
-
-    public getConverters(): Converters<Properties<UserTyping>> {
-        return {};
-    }
 
     /**
      * Execute the test.

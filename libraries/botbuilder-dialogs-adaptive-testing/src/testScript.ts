@@ -7,7 +7,7 @@
  */
 
 import { ConversationState, MemoryStorage, UserState, TestAdapter } from 'botbuilder-core';
-import { Converters, DialogManager, Properties } from 'botbuilder-dialogs';
+import { Configurable, Converter, ConverterFactory, DialogManager } from 'botbuilder-dialogs';
 import {
     DialogExpression,
     DialogExpressionConverter,
@@ -15,13 +15,14 @@ import {
     ResourceExtensions,
 } from 'botbuilder-dialogs-adaptive';
 import { ResourceExplorer } from 'botbuilder-dialogs-declarative';
+import { NonFunctionKeys } from 'utility-types';
 import { TestAction } from './testAction';
 import { UserTokenMock, UserTokenMocksConverter } from './userTokenMocks';
 
 /**
  * A mock Test Script that can be used for unit testing bot's logic.
  */
-export class TestScript {
+export class TestScript extends Configurable {
     public static $kind = 'Microsoft.Test.Script';
 
     /**
@@ -54,11 +55,15 @@ export class TestScript {
      */
     public enableTrace = false;
 
-    public getConverters(): Converters<Properties<TestScript>> {
-        return {
-            dialog: DialogExpressionConverter,
-            userTokenMocks: UserTokenMocksConverter,
-        };
+    public getConverter(property: NonFunctionKeys<TestScript>): Converter | ConverterFactory {
+        switch (property) {
+            case 'dialog':
+                return DialogExpressionConverter;
+            case 'userTokenMocks':
+                return UserTokenMocksConverter;
+            default:
+                return super.getConverter(property);
+        }
     }
 
     /**

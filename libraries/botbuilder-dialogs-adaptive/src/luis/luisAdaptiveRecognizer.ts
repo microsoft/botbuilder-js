@@ -6,11 +6,11 @@
  * Licensed under the MIT License.
  */
 import {
-    StringExpression,
     ArrayExpression,
-    BoolExpression,
     ArrayExpressionConverter,
+    BoolExpression,
     BoolExpressionConverter,
+    StringExpression,
     StringExpressionConverter,
 } from 'adaptive-expressions';
 import {
@@ -21,7 +21,8 @@ import {
     LuisTelemetryConstants,
 } from 'botbuilder-ai';
 import { Activity, RecognizerResult } from 'botbuilder-core';
-import { Converters, DialogContext, Properties } from 'botbuilder-dialogs';
+import { Converter, ConverterFactory, DialogContext } from 'botbuilder-dialogs';
+import { NonFunctionKeys } from 'utility-types';
 import { Recognizer } from '../recognizers';
 
 export class LuisAdaptiveRecognizer extends Recognizer {
@@ -66,14 +67,21 @@ export class LuisAdaptiveRecognizer extends Recognizer {
      */
     public predictionOptions: LuisPredictionOptions;
 
-    public getConverters(): Converters<Properties<LuisAdaptiveRecognizer>> {
-        return {
-            applicationId: new StringExpressionConverter(),
-            dynamicLists: new ArrayExpressionConverter(),
-            endpoint: new StringExpressionConverter(),
-            endpointKey: new StringExpressionConverter(),
-            logPersonalInformation: new BoolExpressionConverter(),
-        };
+    public getConverter(property: NonFunctionKeys<LuisAdaptiveRecognizer>): Converter | ConverterFactory {
+        switch (property) {
+            case 'applicationId':
+                return new StringExpressionConverter();
+            case 'dynamicLists':
+                return new ArrayExpressionConverter();
+            case 'endpoint':
+                return new StringExpressionConverter();
+            case 'endpointKey':
+                return new StringExpressionConverter();
+            case 'logPersonalInformation':
+                return new BoolExpressionConverter();
+            default:
+                return super.getConverter(property);
+        }
     }
 
     public async recognize(

@@ -12,10 +12,11 @@ import {
     StringExpressionConverter,
 } from 'adaptive-expressions';
 import { Activity, StringUtils } from 'botbuilder-core';
-import { Converters, Dialog, DialogContext, DialogTurnResult, Properties } from 'botbuilder-dialogs';
+import { Converter, ConverterFactory, Dialog, DialogContext, DialogTurnResult } from 'botbuilder-dialogs';
 import { TemplateInterface } from '../template';
 import { ActivityTemplate, StaticActivityTemplate } from '../templates';
 import { ActivityTemplateConverter } from '../converters';
+import { NonFunctionKeys } from 'utility-types';
 
 export class UpdateActivity<O extends object = {}> extends Dialog<O> {
     public static $kind = 'Microsoft.UpdateActivity';
@@ -50,12 +51,17 @@ export class UpdateActivity<O extends object = {}> extends Dialog<O> {
      */
     public disabled?: BoolExpression;
 
-    public getConverters(): Converters<Properties<UpdateActivity>> {
-        return {
-            activity: new ActivityTemplateConverter(),
-            activityId: new StringExpressionConverter(),
-            disabled: new BoolExpressionConverter(),
-        };
+    public getConverter(property: NonFunctionKeys<UpdateActivity>): Converter | ConverterFactory {
+        switch (property) {
+            case 'activity':
+                return new ActivityTemplateConverter();
+            case 'activityId':
+                return new StringExpressionConverter();
+            case 'disabled':
+                return new BoolExpressionConverter();
+            default:
+                return super.getConverter(property);
+        }
     }
 
     public async beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {

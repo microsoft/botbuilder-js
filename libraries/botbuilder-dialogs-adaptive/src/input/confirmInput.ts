@@ -16,17 +16,18 @@ import {
 } from 'adaptive-expressions';
 import { Activity } from 'botbuilder-core';
 import {
-    Converters,
-    DialogContext,
     Choice,
-    ListStyle,
-    ChoiceFactoryOptions,
     ChoiceFactory,
+    ChoiceFactoryOptions,
+    Converter,
+    ConverterFactory,
+    DialogContext,
+    ListStyle,
     recognizeChoices,
-    Properties,
 } from 'botbuilder-dialogs';
-import { InputDialog, InputState } from './inputDialog';
+import { NonFunctionKeys } from 'utility-types';
 import { ChoiceSet } from './choiceSet';
+import { InputDialog, InputState } from './inputDialog';
 
 export class ConfirmInput extends InputDialog {
     public static $kind = 'Microsoft.ConfirmInput';
@@ -100,14 +101,21 @@ export class ConfirmInput extends InputDialog {
      */
     public outputFormat: StringExpression;
 
-    public getConverters(): Converters<Properties<ConfirmInput>> {
-        return Object.assign({}, super.getConverters(), {
-            defaultLocale: new StringExpressionConverter(),
-            style: new EnumExpressionConverter<ListStyle>(ListStyle),
-            choiceOptions: new ObjectExpressionConverter<ChoiceFactoryOptions>(),
-            confirmChoices: new ObjectExpressionConverter<ChoiceSet>(),
-            outputFormat: new StringExpressionConverter(),
-        });
+    public getConverter(property: NonFunctionKeys<ConfirmInput>): Converter | ConverterFactory {
+        switch (property) {
+            case 'defaultLocale':
+                return new StringExpressionConverter();
+            case 'style':
+                return new EnumExpressionConverter<ListStyle>(ListStyle);
+            case 'choiceOptions':
+                return new ObjectExpressionConverter<ChoiceFactoryOptions>();
+            case 'confirmChoices':
+                return new ObjectExpressionConverter<ChoiceSet>();
+            case 'outputFormat':
+                return new StringExpressionConverter();
+            default:
+                return super.getConverter(property);
+        }
     }
 
     protected onComputeId(): string {

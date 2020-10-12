@@ -13,13 +13,14 @@ import {
     ObjectExpressionConverter,
 } from 'adaptive-expressions';
 import {
-    Converters,
     Dialog,
     DialogDependencies,
     DialogContext,
     DialogTurnResult,
-    Properties,
+    Converter,
+    ConverterFactory,
 } from 'botbuilder-dialogs';
+import { NonFunctionKeys } from 'utility-types';
 import { DialogExpression } from '../expressions';
 import { replaceJsonRecursively } from '../jsonExtensions';
 import { DialogExpressionConverter } from '../converters';
@@ -50,12 +51,17 @@ export class BaseInvokeDialog<O extends object = {}> extends Dialog<O> implement
      */
     public activityProcessed: BoolExpression = new BoolExpression(true);
 
-    public getConverters(): Converters<Properties<BaseInvokeDialog>> {
-        return {
-            options: new ObjectExpressionConverter<object>(),
-            dialog: DialogExpressionConverter,
-            activityProcessed: new BoolExpressionConverter(),
-        };
+    public getConverter(property: NonFunctionKeys<BaseInvokeDialog>): Converter | ConverterFactory {
+        switch (property) {
+            case 'options':
+                return new ObjectExpressionConverter<object>();
+            case 'dialog':
+                return DialogExpressionConverter;
+            case 'activityProcessed':
+                return new BoolExpressionConverter();
+            default:
+                return super.getConverter(property);
+        }
     }
 
     public beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult<any>> {

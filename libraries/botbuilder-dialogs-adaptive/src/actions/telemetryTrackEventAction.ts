@@ -12,7 +12,8 @@ import {
     BoolExpressionConverter,
     StringExpressionConverter,
 } from 'adaptive-expressions';
-import { Converter, Converters, Dialog, DialogContext, DialogTurnResult, Properties } from 'botbuilder-dialogs';
+import { Converter, ConverterFactory, Dialog, DialogContext, DialogTurnResult } from 'botbuilder-dialogs';
+import { NonFunctionKeys } from 'utility-types';
 
 type Input = Record<string, string>;
 type Output = Record<string, StringExpression>;
@@ -72,12 +73,17 @@ export class TelemetryTrackEventAction<O extends object = {}> extends Dialog {
      */
     public properties: { [name: string]: StringExpression };
 
-    public getConverters(): Converters<Properties<TelemetryTrackEventAction>> {
-        return {
-            eventName: new StringExpressionConverter(),
-            properties: new TelemetryPropertiesConverter(),
-            disabled: new BoolExpressionConverter(),
-        };
+    public getConverter(property: NonFunctionKeys<TelemetryTrackEventAction>): Converter | ConverterFactory {
+        switch (property) {
+            case 'eventName':
+                return new StringExpressionConverter();
+            case 'properties':
+                return new TelemetryPropertiesConverter();
+            case 'disabled':
+                return new BoolExpressionConverter();
+            default:
+                return super.getConverter(property);
+        }
     }
 
     public async beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {

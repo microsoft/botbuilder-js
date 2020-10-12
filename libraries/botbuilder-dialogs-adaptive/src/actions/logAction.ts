@@ -12,10 +12,11 @@ import {
     StringExpressionConverter,
 } from 'adaptive-expressions';
 import { Activity, ActivityTypes } from 'botbuilder-core';
-import { Converters, DialogTurnResult, DialogContext, Dialog, Properties } from 'botbuilder-dialogs';
+import { Converter, ConverterFactory, DialogContext, Dialog, DialogTurnResult } from 'botbuilder-dialogs';
 import { TemplateInterface } from '../template';
 import { TextTemplate } from '../templates';
 import { TextTemplateConverter } from '../converters';
+import { NonFunctionKeys } from 'utility-types';
 
 export class LogAction<O extends object = {}> extends Dialog<O> {
     public static $kind = 'Microsoft.LogAction';
@@ -55,13 +56,19 @@ export class LogAction<O extends object = {}> extends Dialog<O> {
      */
     public disabled?: BoolExpression;
 
-    public getConverters(): Converters<Properties<LogAction>> {
-        return {
-            text: new TextTemplateConverter(),
-            traceActivity: new BoolExpressionConverter(),
-            label: new StringExpressionConverter(),
-            disabled: new BoolExpressionConverter(),
-        };
+    public getConverter(property: NonFunctionKeys<LogAction>): Converter | ConverterFactory {
+        switch (property) {
+            case 'text':
+                return new TextTemplateConverter();
+            case 'traceActivity':
+                return new BoolExpressionConverter();
+            case 'label':
+                return new StringExpressionConverter();
+            case 'disabled':
+                return new BoolExpressionConverter();
+            default:
+                return super.getConverter(property);
+        }
     }
 
     public async beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {

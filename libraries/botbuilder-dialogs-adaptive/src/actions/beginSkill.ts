@@ -14,19 +14,21 @@ import {
 import { Activity, ActivityTypes, StringUtils, TurnContext } from 'botbuilder-core';
 import {
     BeginSkillDialogOptions,
-    Converters,
+    Converter,
+    ConverterFactory,
     DialogContext,
     DialogTurnResult,
     DialogInstance,
     DialogReason,
     SkillDialog,
     SkillDialogOptions,
-    Properties,
 } from 'botbuilder-dialogs';
 import { TemplateInterface } from '../template';
 import { skillClientKey, skillConversationIdFactoryKey } from '../skillExtensions';
 import { ActivityTemplate } from '../templates';
 import { ActivityTemplateConverter } from '../converters';
+import { NonFunctionKeys } from 'utility-types';
+import { BeginDialog } from './beginDialog';
 
 export class BeginSkill extends SkillDialog {
     public static $kind = 'Microsoft.BeginSkill';
@@ -86,18 +88,29 @@ export class BeginSkill extends SkillDialog {
      */
     public connectionName: StringExpression;
 
-    public getConverters(): Converters<Properties<BeginSkill>> {
-        return {
-            disabled: new BoolExpressionConverter(),
-            activityProcessed: new BoolExpressionConverter(),
-            resultProperty: new StringExpressionConverter(),
-            botId: new StringExpressionConverter(),
-            skillHostEndpoint: new StringExpressionConverter(),
-            skillAppId: new StringExpressionConverter(),
-            skillEndpoint: new StringExpressionConverter(),
-            activity: new ActivityTemplateConverter(),
-            connectionName: new StringExpressionConverter(),
-        };
+    public getConverter(property: NonFunctionKeys<BeginSkill>): Converter | ConverterFactory {
+        switch (property) {
+            case 'disabled':
+                return new BoolExpressionConverter();
+            case 'activityProcessed':
+                return new BoolExpressionConverter();
+            case 'resultProperty':
+                return new StringExpressionConverter();
+            case 'botId':
+                return new StringExpressionConverter();
+            case 'skillHostEndpoint':
+                return new StringExpressionConverter();
+            case 'skillAppId':
+                return new StringExpressionConverter();
+            case 'skillEndpoint':
+                return new StringExpressionConverter();
+            case 'activity':
+                return new ActivityTemplateConverter();
+            case 'connectionName':
+                return new StringExpressionConverter();
+            default:
+                return super.getConverter(property);
+        }
     }
 
     // Used to cache DialogOptions for multi-turn calls across servers.

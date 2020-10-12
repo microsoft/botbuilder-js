@@ -5,13 +5,14 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { Converters, Dialog, DialogContext, DialogTurnResult, Properties } from 'botbuilder-dialogs';
+import { Converter, ConverterFactory, Dialog, DialogContext, DialogTurnResult } from 'botbuilder-dialogs';
 import {
     StringExpression,
     BoolExpression,
     StringExpressionConverter,
     BoolExpressionConverter,
 } from 'adaptive-expressions';
+import { NonFunctionKeys } from 'utility-types';
 
 export class DeleteActivity<O extends object = {}> extends Dialog<O> {
     public static $kind = 'Microsoft.DeleteActivity';
@@ -34,11 +35,15 @@ export class DeleteActivity<O extends object = {}> extends Dialog<O> {
      */
     public disabled?: BoolExpression;
 
-    public getConverters(): Converters<Properties<DeleteActivity>> {
-        return {
-            activityId: new StringExpressionConverter(),
-            disabled: new BoolExpressionConverter(),
-        };
+    public getConverter(property: NonFunctionKeys<DeleteActivity>): Converter | ConverterFactory {
+        switch (property) {
+            case 'activityId':
+                return new StringExpressionConverter();
+            case 'disabled':
+                return new BoolExpressionConverter();
+            default:
+                return super.getConverter(property);
+        }
     }
 
     public async beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {
