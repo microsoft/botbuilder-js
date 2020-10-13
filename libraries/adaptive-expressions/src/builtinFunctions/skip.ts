@@ -18,7 +18,7 @@ import { ReturnType } from '../returnType';
  */
 export class Skip extends ExpressionEvaluator {
     /**
-     * Initializes a new instance of the `Skip` class.
+     * Initializes a new instance of the [Skip](xref:adaptive-expressions.Skip) class.
      */
     public constructor() {
         super(ExpressionType.Skip, Skip.evaluator, ReturnType.Array, Skip.validator);

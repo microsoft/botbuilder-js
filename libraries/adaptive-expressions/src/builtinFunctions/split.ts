@@ -18,7 +18,7 @@ import { ReturnType } from '../returnType';
  */
 export class Split extends ExpressionEvaluator {
     /**
-     * Initializes a new instance of the `Split` class.
+     * Initializes a new instance of the [Split](xref:adaptive-expressions.Split) class.
      */
     public constructor() {
         super(ExpressionType.Split, Split.evaluator(), ReturnType.Array, Split.validator);

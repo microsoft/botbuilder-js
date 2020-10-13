@@ -22,7 +22,7 @@ import { ReturnType } from '../returnType';
  */
 export class StartOfMonth extends ExpressionEvaluator {
     /**
-     * Initializes a new instance of the `StartOfMonth` class.
+     * Initializes a new instance of the [StartOfMonth](xref:adaptive-expressions.StartOfMonth) class.
      */
     public constructor() {
         super(ExpressionType.StartOfMonth, StartOfMonth.evaluator, ReturnType.String, StartOfMonth.validator);

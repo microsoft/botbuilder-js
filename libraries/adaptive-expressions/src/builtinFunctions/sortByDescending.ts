@@ -18,7 +18,7 @@ import { ReturnType } from '../returnType';
  */
 export class SortByDescending extends ExpressionEvaluator {
     /**
-     * Initializes a new instance of the `SortByDescending` class.
+     * Initializes a new instance of the [SortByDescending](xref:adaptive-expressions.SortByDescending) class.
      */
     public constructor() {
         super(

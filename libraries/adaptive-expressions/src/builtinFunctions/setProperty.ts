@@ -17,7 +17,7 @@ import { ReturnType } from '../returnType';
  */
 export class SetProperty extends ExpressionEvaluator {
     /**
-     * Initializes a new instance of the `SetProperty` class.
+     * Initializes a new instance of the [SetProperty](xref:adaptive-expressions.SetProperty) class.
      */
     public constructor() {
         super(ExpressionType.SetProperty, SetProperty.evaluator(), ReturnType.Object, SetProperty.validator);

@@ -16,7 +16,7 @@ import { ReturnType } from '../returnType';
  */
 export class Select extends ExpressionEvaluator {
     /**
-     * Initializes a new instance of the `Select` class.
+     * Initializes a new instance of the [Select](xref:adaptive-expressions.Select) class.
      */
     public constructor() {
         super(

@@ -22,7 +22,7 @@ import { ReturnType } from '../returnType';
  */
 export class StartOfDay extends ExpressionEvaluator {
     /**
-     * Initializes a new instance of the `StartOfDay` class.
+     * Initializes a new instance of the [StartOfDay](xref:adaptive-expressions.StartOfDay) class.
      */
     public constructor() {
         super(ExpressionType.StartOfDay, StartOfDay.evaluator, ReturnType.String, StartOfDay.validator);
