@@ -21,7 +21,7 @@ export class ParseErrorListener implements ANTLRErrorListener<any> {
      * @param line The line number where the error occurred.
      * @param charPositionInLine The position of character in the line where the error occurred.
      * @param msg The error message.
-     * @param _e The RecognitionException.
+     * @param _e The `RecognitionException`.
      */
     public syntaxError<T>(
         _recognizer: Recognizer<T, any>,

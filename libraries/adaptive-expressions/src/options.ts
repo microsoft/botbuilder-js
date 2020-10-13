@@ -14,8 +14,8 @@ export class Options {
     public nullSubstitution: (path: string) => any;
 
     /**
-     * Initializes a new instance of the `Options` class.
-     * @param opt An Options instance.
+     * Initializes a new instance of the [Options](xref:adaptive-expressions.Options) class.
+     * @param opt Optional. An [Options](xref:adaptive-expressions.Options) instance.
      */
     public constructor(opt?: Options) {
         this.nullSubstitution = opt ? opt.nullSubstitution : undefined;
