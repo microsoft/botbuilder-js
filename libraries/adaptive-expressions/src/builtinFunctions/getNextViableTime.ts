@@ -23,7 +23,7 @@ import { TimexProperty, Time } from '@microsoft/recognizers-text-data-types-time
  */
 export class GetNextViableTime extends ExpressionEvaluator {
     /**
-     * Initializes a new instance of the `GetNextViableTime` class.
+     * Initializes a new instance of the [GetNextViableTime](xref:adaptive-expressions.GetNextViableTime) class.
      */
     public constructor() {
         super(

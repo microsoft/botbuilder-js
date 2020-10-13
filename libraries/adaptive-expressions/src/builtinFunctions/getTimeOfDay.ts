@@ -19,7 +19,7 @@ import { ReturnType } from '../returnType';
  */
 export class GetTimeOfDay extends ExpressionEvaluator {
     /**
-     * Initializes a new instance of the `GetTimeOfDay` class.
+     * Initializes a new instance of the [GetTimeOfDay](xref:adaptive-expressions.GetTimeOfDay) class.
      */
     public constructor() {
         super(

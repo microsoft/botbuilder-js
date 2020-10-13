@@ -24,7 +24,7 @@ import { TimexProperty } from '@microsoft/recognizers-text-data-types-timex-expr
  */
 export class GetNextViableDate extends ExpressionEvaluator {
     /**
-     * Initializes a new instance of the `GetNextViableDate` class.
+     * Initializes a new instance of the [GetNextViableDate](xref:adaptive-expressions.GetNextViableDate) class.
      */
     public constructor() {
         super(

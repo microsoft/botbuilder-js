@@ -17,7 +17,7 @@ import { ReturnType } from '../returnType';
  */
 export class FormatNumber extends ExpressionEvaluator {
     /**
-     * Initializes a new instance of the `FormatNumber` class.
+     * Initializes a new instance of the [FormatNumber](xref:adaptive-expressions.FormatNumber) class.
      */
     public constructor() {
         super(ExpressionType.FormatNumber, FormatNumber.evaluator(), ReturnType.String, FormatNumber.validator);

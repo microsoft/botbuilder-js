@@ -16,7 +16,7 @@ import { ComparisonEvaluator } from './comparisonEvaluator';
  */
 export class GreaterThanOrEqual extends ComparisonEvaluator {
     /**
-     * Initializes a new instance of the `GreaterThanOrEqual` class.
+     * Initializes a new instance of the [GreaterThanOrEqual](xref:adaptive-expressions.GreaterThanOrEqual) class.
      */
     public constructor() {
         super(

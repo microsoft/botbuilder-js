@@ -21,7 +21,7 @@ import { ReturnType } from '../returnType';
  */
 export class FormatTicks extends ExpressionEvaluator {
     /**
-     * Initializes a new instance of the `FormatTicks` class.
+     * Initializes a new instance of the [FormatTicks](xref:adaptive-expressions.FormatTicks) class.
      */
     public constructor() {
         super(ExpressionType.FormatTicks, FormatTicks.evaluator(), ReturnType.String, FormatTicks.validator);

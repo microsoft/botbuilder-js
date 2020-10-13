@@ -19,7 +19,7 @@ import { ReturnType } from '../returnType';
  */
 export class FormatEpoch extends ExpressionEvaluator {
     /**
-     * Initializes a new instance of the `FormatEpoch` class.
+     * Initializes a new instance of the [FormatEpoch](xref:adaptive-expressions.FormatEpoch) class.
      */
     public constructor() {
         super(ExpressionType.FormatEpoch, FormatEpoch.evaluator(), ReturnType.String, FormatEpoch.validator);
