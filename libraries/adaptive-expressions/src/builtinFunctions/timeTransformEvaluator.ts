@@ -22,6 +22,8 @@ import { ReturnType } from '../returnType';
 export class TimeTransformEvaluator extends ExpressionEvaluator {
     /**
      * Initializes a new instance of the [TimeTransformEvaluator](xref:adaptive-expressions.TimeTransformEvaluator) class.
+     * @param type Name of the built-in function.
+     * @param func The evaluation function, it takes a timestamp and the number of transformation, and returns a `Date`.
      */
     public constructor(type: string, func: (timestamp: Date, numOfTransformation: any) => Date) {
         super(type, TimeTransformEvaluator.evaluator(func), ReturnType.String, TimeTransformEvaluator.validator);
