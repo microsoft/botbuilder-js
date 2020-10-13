@@ -40,7 +40,7 @@ stages:
   - job: Node12UnitTests
     displayName: 'Node 12.x Unit Tests'
     variables:
-      PublishTestResults: true # Post current Node LTS (12.x) code coverage report
+      PublishTestResults: true # Publish test results to ADO, publish code coverage
     steps:
     - template: js-build-steps.yml
     - powershell: |
