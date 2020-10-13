@@ -10,7 +10,7 @@ import { WebResource, HttpOperationResponse, HttpClient } from '@azure/ms-rest-j
 import { IStreamingTransportServer, StreamingRequest } from 'botframework-streaming';
 
 /**
- * An implementation of HttpClient that adds compatibility with streaming connections.
+ * An implementation of `HttpClient` that adds compatibility with streaming connections.
  */
 export class StreamingHttpClient implements HttpClient {
     private readonly server: IStreamingTransportServer;

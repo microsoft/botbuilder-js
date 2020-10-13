@@ -58,10 +58,11 @@ export class ChannelServiceHandler {
     }
 
     /**
-     * Sends an activity to the end of a conversation.
+     * Sends an [Activity](xref:botframework-schema.Activity) to the end of a conversation.
      * @param authHeader The authentication header.
      * @param conversationId The conversation Id.
-     * @param activity The activity to send.
+     * @param activity The [Activity](xref:botframework-schema.Activity) to send.
+     * @returns A `Promise` representing the [ResourceResponse](xref:botframework-schema.ResourceResponse) for the operation.
      */
     public async handleSendToConversation(authHeader: string, conversationId: string, activity: Activity): Promise<ResourceResponse> {
         const claimsIdentity = await this.authenticate(authHeader);
@@ -69,11 +70,12 @@ export class ChannelServiceHandler {
     }
 
     /**
-     * Sends a reply to an activity.
+     * Sends a reply to an [Activity](xref:botframework-schema.Activity).
      * @param authHeader The authentication header.
      * @param conversationId The conversation Id.
      * @param activityId The activity Id the reply is to.
-     * @param activity The activity to send.
+     * @param activity The [Activity](xref:botframework-schema.Activity) to send.
+     * @returns A `Promise` representing the [ResourceResponse](xref:botframework-schema.ResourceResponse) for the operation.
      */
     public async handleReplyToActivity(authHeader: string, conversationId: string, activityId: string, activity: Activity): Promise<ResourceResponse> {
         const claimsIdentity = await this.authenticate(authHeader);
@@ -81,11 +83,12 @@ export class ChannelServiceHandler {
     }
 
     /**
-     * Edits a previously sent existing activity.
+     * Edits a previously sent existing [Activity](xref:botframework-schema.Activity).
      * @param authHeader The authentication header.
      * @param conversationId The conversation Id.
      * @param activityId The activity Id to update.
-     * @param activity The replacement activity.
+     * @param activity The replacement [Activity](xref:botframework-schema.Activity).
+     * @returns A `Promise` representing the [ResourceResponse](xref:botframework-schema.ResourceResponse) for the operation.
      */
     public async handleUpdateActivity(authHeader: string, conversationId: string, activityId: string, activity: Activity): Promise<ResourceResponse> {
         const claimsIdentity = await this.authenticate(authHeader);
@@ -93,7 +96,7 @@ export class ChannelServiceHandler {
     }
 
     /**
-     * Deletes an existing activity.
+     * Deletes an existing [Activity](xref:botframework-schema.Activity).
      * @param authHeader The authentication header.
      * @param conversationId The conversation Id.
      * @param activityId The activity Id to delete.
@@ -104,10 +107,11 @@ export class ChannelServiceHandler {
     }
 
     /**
-     * Enumerates the members of an activity.
+     * Enumerates the members of an [Activity](xref:botframework-schema.Activity).
      * @param authHeader The authentication header.
      * @param conversationId The conversation Id.
      * @param activityId The activity Id.
+     * @returns The enumerated [ChannelAccount](xref:botframework-schema.ChannelAccount) list.
      */
     public async handleGetActivityMembers(authHeader: string, conversationId: string, activityId: string): Promise<ChannelAccount[]> {
         const claimsIdentity = await this.authenticate(authHeader);
@@ -117,7 +121,8 @@ export class ChannelServiceHandler {
     /**
      * Creates a new Conversation.
      * @param authHeader The authentication header.
-     * @param parameters Parameters to create the conversation from.
+     * @param parameters [ConversationParameters](xref:botbuilder-core.ConversationParameters) to create the conversation from.
+     * @returns A `Promise` representation of for the operation.
      */
     public async handleCreateConversation(authHeader: string, parameters: ConversationParameters): Promise<ConversationResourceResponse> {
         const claimsIdentity = await this.authenticate(authHeader);
@@ -129,6 +134,7 @@ export class ChannelServiceHandler {
      * @param authHeader The authentication header.
      * @param conversationId The conversation Id.
      * @param continuationToken A skip or continuation token.
+     * @returns A `Promise` representation of for the operation.
      */
     public async handleGetConversations(authHeader: string, conversationId: string, continuationToken?: string /* some default */): Promise<ConversationsResult> {
         const claimsIdentity = await this.authenticate(authHeader);
@@ -139,6 +145,7 @@ export class ChannelServiceHandler {
      * Enumerates the members of a conversation.
      * @param authHeader The authentication header.
      * @param conversationId The conversation Id.
+     * @returns The enumerated [ChannelAccount](xref:botframework-schema.ChannelAccount) list.
      */
     public async handleGetConversationMembers(authHeader: string, conversationId: string): Promise<ChannelAccount[]> {
         const claimsIdentity = await this.authenticate(authHeader);
@@ -151,6 +158,7 @@ export class ChannelServiceHandler {
      * @param conversationId The conversation Id.
      * @param pageSize Suggested page size.
      * @param continuationToken A continuation token.
+     * @returns A `Promise` representing the [PagedMembersResult](xref:botframework-schema.PagedMembersResult) for the operation.
      */
     public async handleGetConversationPagedMembers(
         authHeader: string,
@@ -176,7 +184,8 @@ export class ChannelServiceHandler {
      * Uploads the historic activities of the conversation.
      * @param authHeader The authentication header.
      * @param conversationId The conversation Id.
-     * @param transcript Transcript of activities.
+     * @param transcript [Transcript](xref:botframework-schema.Transcript) of activities.
+     * @returns A `Promise` representing the [ResourceResponse](xref:botframework-schema.ResourceResponse) for the operation.
      */
     public async handleSendConversationHistory(authHeader: string, conversationId: string, transcript: Transcript): Promise<ResourceResponse> {
         const claimsIdentity = await this.authenticate(authHeader);
@@ -187,7 +196,8 @@ export class ChannelServiceHandler {
      * Stores data in a compliant store when dealing with enterprises.
      * @param authHeader The authentication header.
      * @param conversationId The conversation Id.
-     * @param attachmentUpload Attachment data.
+     * @param attachmentUpload [AttachmentData](xref:botframework-schema.AttachmentData).
+     * @returns A `Promise` representing the [ResourceResponse](xref:botframework-schema.ResourceResponse) for the operation.
      */
     public async handleUploadAttachment(authHeader: string, conversationId: string, attachmentUpload: AttachmentData): Promise<ResourceResponse> {
         const claimsIdentity = await this.authenticate(authHeader);

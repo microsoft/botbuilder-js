@@ -30,9 +30,9 @@ export class TokenResolver {
 
     /**
      * Checks if we have token responses from OAuth cards.
-     * @param adapter The BotFramework adapter.
-     * @param context The context for this turn.
-     * @param activity The activity to be checked.
+     * @param adapter The [BotFrameworkAdapter](xref:botbuilder.BotFrameworkAdapter).
+     * @param context The [TurnContext](xref:botbuilder-core.TurnContext) for this turn.
+     * @param activity The [Activity](xref:botframework-schema.Activity) to be checked.
      * @param log Optional. The log to write on.
      */
     public static checkForOAuthCards(adapter: BotFrameworkAdapter, context: TurnContext, activity: Activity, log?: string[]) {
