@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 import { TestAdapter } from 'botbuilder-core';
-import { AdaptiveDialogComponentRegistration } from 'botbuilder-dialogs-adaptive';
+import { AdaptiveDialogComponentRegistration, LanguagePolicy } from 'botbuilder-dialogs-adaptive';
 import { ResourceExplorer } from 'botbuilder-dialogs-declarative';
 import { AdaptiveDialogTestComponentRegistration } from './adaptiveDialogTestComponentRegistration';
 import { TestScript } from './testScript';
@@ -36,10 +36,10 @@ export class TestRunner {
      * @param testName Test name.
      * @returns A Promise that represents the work queued to execute.
      */
-    public async runTestScript(testName: string): Promise<any> {
+    public async runTestScript(testName: string, languagePolicy?: LanguagePolicy): Promise<any> {
         const script = this.resourceExplorer.loadType(`${testName}.test.dialog`) as TestScript;
         script.description = script.description || testName;
         this.testAdapter.activeQueue.splice(0, this.testAdapter.activeQueue.length);
-        await script.execute(this.resourceExplorer, testName, this.testAdapter);
+        await script.execute(this.resourceExplorer, testName, this.testAdapter, languagePolicy);
     }
 }

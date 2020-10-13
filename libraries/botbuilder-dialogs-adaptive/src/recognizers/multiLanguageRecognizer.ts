@@ -10,9 +10,10 @@ import { RecognizerResult, Activity } from 'botbuilder-core';
 import { DialogContext } from 'botbuilder-dialogs';
 import { Recognizer } from './recognizer';
 import { LanguagePolicy } from '../languagePolicy';
+import { languagePolicyKey } from '../languageGeneratorExtensions';
 
 export class MultiLanguageRecognizer extends Recognizer {
-    public languagePolicy: LanguagePolicy = new LanguagePolicy();
+    public languagePolicy: LanguagePolicy;
 
     public recognizers: { [locale: string]: Recognizer };
 
@@ -22,15 +23,23 @@ export class MultiLanguageRecognizer extends Recognizer {
         telemetryProperties?: { [key: string]: string },
         telemetryMetrics?: { [key: string]: number }
     ): Promise<RecognizerResult> {
-        const locale = activity.locale || '';
-        const policy: string[] = [];
-        if (this.languagePolicy.has(locale)) {
-            this.languagePolicy.get(locale).forEach((u: string): number => policy.push(u));
+        let languagepolicy = this.languagePolicy;
+        if (!languagepolicy) {
+            languagepolicy = dialogContext.services.get(languagePolicyKey);
+            if (!languagepolicy) {
+                languagepolicy = new LanguagePolicy();
+            }
         }
 
-        if (locale !== '' && this.languagePolicy.has('')) {
+        const locale = activity.locale || '';
+        const policy: string[] = [];
+        if (languagepolicy.has(locale)) {
+            languagepolicy.get(locale).forEach((u: string): number => policy.push(u));
+        }
+
+        if (locale !== '' && languagepolicy.has('')) {
             // we now explictly add defaultPolicy instead of coding that into target's policy
-            this.languagePolicy.get('').forEach((u: string): number => policy.push(u));
+            languagepolicy.get('').forEach((u: string): number => policy.push(u));
         }
 
         for (let i = 0; i < policy.length; i++) {

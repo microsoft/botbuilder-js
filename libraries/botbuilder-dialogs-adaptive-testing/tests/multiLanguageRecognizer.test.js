@@ -1,3 +1,4 @@
+const { LanguagePolicy } = require('botbuilder-dialogs-adaptive');
 const path = require('path');
 const { TestRunner } = require('../lib');
 
@@ -23,5 +24,10 @@ describe('MultiLanguageRecognizerTests', function() {
 
     it('EnUsFallback_AcitivtyLocaleCasing', async () => {
         await testRunner.runTestScript('MultiLanguageRecognizerTest_EnUsFallback_ActivityLocaleCasing');
+    });
+
+    it('LanguagePolicy', async () => {
+        const languagePolicy = new LanguagePolicy('en-gb');
+        await testRunner.runTestScript('MultiLanguageRecognizerTest_LanguagePolicy', languagePolicy);
     });
 });

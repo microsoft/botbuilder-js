@@ -8,7 +8,7 @@
 
 import { MemoryStorage, UserState, ConversationState, TestAdapter } from 'botbuilder-core';
 import { DialogManager } from 'botbuilder-dialogs';
-import { DialogExpression, LanguageGeneratorExtensions, ResourceExtensions } from 'botbuilder-dialogs-adaptive';
+import { DialogExpression, LanguageGeneratorExtensions, LanguagePolicy, ResourceExtensions } from 'botbuilder-dialogs-adaptive';
 import { ResourceExplorer } from 'botbuilder-dialogs-declarative';
 import { TestAction } from './testAction';
 import { UserTokenMock } from './userTokenMocks';
@@ -51,11 +51,13 @@ export class TestScript {
      * Starts the execution of the test sequence.
      * @param testName Name of the test
      * @param testAdapter (Optional) Test adapter
+     * @param languagePolicy (Optional) Language policy.
      */
     public async execute(
         resourceExplorer: ResourceExplorer,
         testName?: string,
-        testAdapter?: TestAdapter
+        testAdapter?: TestAdapter,
+        languagePolicy?: LanguagePolicy
     ): Promise<void> {
         if (!testAdapter) {
             testAdapter = new TestAdapter(TestAdapter.createConversation(testName));
@@ -69,6 +71,10 @@ export class TestScript {
         bot.userState = new UserState(new MemoryStorage());
         ResourceExtensions.useResourceExplorer(bot, resourceExplorer);
         LanguageGeneratorExtensions.useLanguageGeneration(bot);
+
+        if (languagePolicy) {
+            LanguageGeneratorExtensions.useLanguagePolicy(bot, languagePolicy);
+        }
 
         this.userTokenMocks.forEach((userTokenMock) => {
             userTokenMock.setup(testAdapter);
