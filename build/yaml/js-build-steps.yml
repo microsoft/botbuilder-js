@@ -1,3 +1,8 @@
+#variables:
+#  PackageVersion: Define this in the calling pipeline.
+#  PreviewPackageVersion: Define this in the calling pipeline.
+#  PublishTestResults: (optional) Define this in the calling pipeline.
+
 steps:
 - task: colinsalmcorner.colinsalmcorner-buildtasks.tag-build-task.tagBuildOrRelease@0
   displayName: 'Tag Build with version number. (Skip if a fork PR to avoid access denied error.)'
