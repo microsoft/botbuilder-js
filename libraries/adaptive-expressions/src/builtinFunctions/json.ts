@@ -17,7 +17,7 @@ import { ReturnType } from '../returnType';
  */
 export class Json extends ExpressionEvaluator {
     /**
-     * Initializes a new instance of the `Json` class.
+     * Initializes a new instance of the [Json](xref:adaptive-expressions.Json) class.
      */
     public constructor() {
         super(ExpressionType.Json, Json.evaluator(), ReturnType.Object, Json.validator);

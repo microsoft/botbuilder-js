@@ -21,7 +21,7 @@ import { ReturnType } from '../returnType';
  */
 export class LastIndexOf extends ExpressionEvaluator {
     /**
-     * Initializes a new instance of the `LastIndexOf` class.
+     * Initializes a new instance of the [LastIndexOf](xref:adaptive-expressions.LastIndexOf) class.
      */
     public constructor() {
         super(ExpressionType.LastIndexOf, LastIndexOf.evaluator, ReturnType.Number, LastIndexOf.validator);

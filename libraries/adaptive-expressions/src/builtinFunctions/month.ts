@@ -17,7 +17,7 @@ import { ReturnType } from '../returnType';
  */
 export class Month extends ExpressionEvaluator {
     /**
-     * Initializes a new instance of the `Month` class.
+     * Initializes a new instance of the [Month](xref:adaptive-expressions.Month) class.
      */
     public constructor() {
         super(ExpressionType.Month, Month.evaluator(), ReturnType.Number, FunctionUtils.validateUnaryString);

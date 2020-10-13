@@ -19,7 +19,7 @@ import { ReturnType } from '../returnType';
  */
 export class JPath extends ExpressionEvaluator {
     /**
-     * Initializes a new instance of the `JPath` class.
+     * Initializes a new instance of the [JPath](xref:adaptive-expressions.JPath) class.
      */
     public constructor() {
         super(ExpressionType.JPath, JPath.evaluator(), ReturnType.Object, JPath.validator);
