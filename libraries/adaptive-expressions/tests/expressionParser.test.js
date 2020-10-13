@@ -508,6 +508,8 @@ const testCases = [
             ['date(timestamp)', '3/15/2018'],//Default. TODO
             ['year(timestamp)', 2018],
             ['length(utcNow())', 24],
+            ['formatDateTime(notISOTimestamp, \'dd/MM/yyy\')', '15/03/2018'],
+            ['formatDateTime(notISOTimestamp, \'dd%MM%yyy\')', '15032018'],
             ['formatDateTime(notISOTimestamp)', '2018-03-15T13:00:00.000Z'],
             ['formatDateTime(notISOTimestamp, \'MM-dd-yy\')', '03-15-18'],
             ['formatDateTime(notISOTimestamp, \'ddd\')', 'Thu'],
