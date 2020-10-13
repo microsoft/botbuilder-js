@@ -11,7 +11,7 @@ export type StatusCode = number;
  */
 export class AuthenticationError extends Error implements IStatusCodeError {
     /**
-     * Initializes a new instance of the `AuthenticationError` class.
+     * Initializes a new instance of the [AuthenticationError](xref:botframework-connector.AuthenticationError) class.
      * @param message The Error message.
      * @param statusCode The `StatusCode` number to use.
      */
