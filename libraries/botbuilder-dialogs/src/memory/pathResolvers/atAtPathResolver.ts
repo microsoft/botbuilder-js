@@ -13,7 +13,7 @@ import { AliasPathResolver } from './aliasPathResolver';
 export class AtAtPathResolver extends AliasPathResolver {
 
     /**
-     * Initializes a new instance of the AtAtPathResolver class.
+     * Initializes a new instance of the [AtAtPathResolver](xref:botbuilder-dialogs.AtAtPathResolver) class.
      */
     constructor() {
         super('@@', 'turn.recognized.entities.');

@@ -13,7 +13,7 @@ import { AliasPathResolver } from './aliasPathResolver';
 export class HashPathResolver extends AliasPathResolver {
 
     /**
-     * Initializes a new instance of the HashPathResolver class.
+     * Initializes a new instance of the [HashPathResolver](botbuilder-dialogs.HashPathResolver) class.
      */
     constructor() {
         super('#', 'turn.recognized.intents.');

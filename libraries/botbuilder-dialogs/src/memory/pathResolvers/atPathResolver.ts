@@ -16,7 +16,7 @@ export class AtPathResolver extends AliasPathResolver {
     private readonly _delims = ['.', '['];
 
     /**
-     * Initializes a new instance of the AtPathResolver class.
+     * Initializes a new instance of the [AtPathResolver](xref:botbuilder-dialogs.AtPathResolver) class.
      */
     public constructor() {
         super('@', '');

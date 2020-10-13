@@ -13,7 +13,7 @@ import { AliasPathResolver } from './aliasPathResolver';
 export class PercentPathResolver extends AliasPathResolver {
 
     /**
-     * Initializes a new instance of the PercentPathResolver class.
+     * Initializes a new instance of the [PercentPathResolver](xref:botbuilder-dialogs.PercentPathResolver) class.
      */
     constructor() {
         super('%', 'class.');
