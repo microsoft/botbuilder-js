@@ -6,7 +6,6 @@
  * Licensed under the MIT License.
  */
 
-import { normalize, basename } from 'path';
 import { DialogContext } from 'botbuilder-dialogs';
 import { Resource } from 'botbuilder-dialogs-declarative';
 import { Templates, LGResource } from 'botbuilder-lg';
@@ -17,7 +16,8 @@ import { LanguageGeneratorManager } from './languageGeneratorManager';
 /**
  * LanguageGenerator implementation which uses LGFile.
  */
-export class TemplateEngineLanguageGenerator implements LanguageGenerator {
+export class TemplateEngineLanguageGenerator<T = unknown, D extends Record<string, unknown> = Record<string, unknown>>
+    implements LanguageGenerator<T, D> {
     private readonly DEFAULTLABEL: string = 'Unknown';
 
     private lg: Templates;
@@ -39,7 +39,7 @@ export class TemplateEngineLanguageGenerator implements LanguageGenerator {
         }
     }
 
-    public generate(dialogContext: DialogContext, template: string, data: object): Promise<any> {
+    public generate(dialogContext: DialogContext, template: string, data: D): Promise<T> {
         try {
             const result = this.lg.evaluateText(template, data);
             return Promise.resolve(result);
