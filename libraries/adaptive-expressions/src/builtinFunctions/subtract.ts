@@ -14,7 +14,7 @@ import { MultivariateNumericEvaluator } from './multivariateNumericEvaluator';
  */
 export class Subtract extends MultivariateNumericEvaluator {
     /**
-     * Initializes a new instance of the `Subtract` class.
+     * Initializes a new instance of the [Subtract](xref:adaptive-expressions.Subtract) class.
      */
     public constructor() {
         super(ExpressionType.Subtract, Subtract.func);

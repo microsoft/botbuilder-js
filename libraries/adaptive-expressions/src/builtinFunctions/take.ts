@@ -18,7 +18,7 @@ import { ReturnType } from '../returnType';
  */
 export class Take extends ExpressionEvaluator {
     /**
-     * Initializes a new instance of the `Take` class.
+     * Initializes a new instance of the [Take](xref:adaptive-expressions.Take) class.
      */
     public constructor() {
         super(ExpressionType.Take, Take.evaluator, ReturnType.Array, Take.validator);

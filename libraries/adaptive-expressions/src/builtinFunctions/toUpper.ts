@@ -16,7 +16,7 @@ import { StringTransformEvaluator } from './stringTransformEvaluator';
  */
 export class ToUpper extends StringTransformEvaluator {
     /**
-     * Initializes a new instance of the `ToUpper` class.
+     * Initializes a new instance of the [ToUpper](xref:adaptive-expressions.ToUpper) class.
      */
     public constructor() {
         super(ExpressionType.ToUpper, ToUpper.evaluator);

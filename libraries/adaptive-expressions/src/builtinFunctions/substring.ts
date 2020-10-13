@@ -19,7 +19,7 @@ import { ReturnType } from '../returnType';
  */
 export class Substring extends ExpressionEvaluator {
     /**
-     * Initializes a new instance of the `Substring` class.
+     * Initializes a new instance of the [Substring](xref:adaptive-expressions.Substring) class.
      */
     public constructor() {
         super(ExpressionType.Substring, Substring.evaluator, ReturnType.String, Substring.validator);

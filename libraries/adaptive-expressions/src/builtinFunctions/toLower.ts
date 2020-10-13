@@ -17,7 +17,7 @@ import { StringTransformEvaluator } from './stringTransformEvaluator';
  */
 export class ToLower extends StringTransformEvaluator {
     /**
-     * Initializes a new instance of the `ToLower` class.
+     * Initializes a new instance of the [ToLower](xref:adaptive-expressions.ToLower) class.
      */
     public constructor() {
         super(ExpressionType.ToLower, ToLower.evaluator);
