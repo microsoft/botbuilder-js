@@ -20,7 +20,7 @@ import { ReturnType } from '../returnType';
  */
 export class UriQuery extends ExpressionEvaluator {
     /**
-     * Initializes a new instance of the `UriQuery` class.
+     * Initializes a new instance of the [UriQuery](xref:adaptive-expressions.UriQuery) class.
      */
     public constructor() {
         super(ExpressionType.UriQuery, UriQuery.evaluator, ReturnType.String, FunctionUtils.validateUnary);

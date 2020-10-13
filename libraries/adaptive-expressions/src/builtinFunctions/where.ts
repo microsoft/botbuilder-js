@@ -23,7 +23,7 @@ import { ReturnType } from '../returnType';
  */
 export class Where extends ExpressionEvaluator {
     /**
-     * Initializes a new instance of the `Where` class.
+     * Initializes a new instance of the [Where](xref:adaptive-expressions.Where) class.
      */
     public constructor() {
         super(ExpressionType.Where, Where.evaluator, ReturnType.Array, InternalFunctionUtils.validateForeach);

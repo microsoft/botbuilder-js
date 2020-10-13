@@ -16,7 +16,7 @@ import { ReturnType } from '../returnType';
  */
 export class UriComponentToString extends ExpressionEvaluator {
     /**
-     * Initializes a new instance of the `UriComponentToString` class.
+     * Initializes a new instance of the [UriComponentToString](xref:adaptive-expressions.UriComponentToString) class.
      */
     public constructor() {
         super(ExpressionType.UriComponentToString, UriComponentToString.evaluator(), ReturnType.String, FunctionUtils.validateUnary);
