@@ -14,7 +14,7 @@ import { DialogContext } from '../../dialogContext';
  */
 export class SettingsMemoryScope extends MemoryScope {
     /**
-     * Initializes a new instance of the SettingsMemoryScope class.
+     * Initializes a new instance of the [SettingsMemoryScope](xref:botbuilder-dialogs.SettingsMemoryScope) class.
      */
     public constructor() {
         super(ScopePath.settings, false);
@@ -22,7 +22,7 @@ export class SettingsMemoryScope extends MemoryScope {
 
     /**
      * Gets the backing memory for this scope.
-     * @param dc The DialogContext object for this turn.
+     * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) object for this turn.
      * @returns The memory for the scope.
      */
     public getMemory(dc: DialogContext): object {

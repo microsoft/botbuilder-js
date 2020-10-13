@@ -16,7 +16,7 @@ import { DialogContainer } from '../../dialogContainer';
  */
 export class DialogClassMemoryScope extends ClassMemoryScope {
     /**
-     * Initializes a new instance of the DialogClassMemoryScope class.
+     * Initializes a new instance of the [DialogClassMemoryScope](xref:botbuilder-dialogs.DialogClassMemoryScope) class.
      */
     constructor() {
         super(ScopePath.dialogClass);
@@ -24,8 +24,8 @@ export class DialogClassMemoryScope extends ClassMemoryScope {
 
     /**
      * @protected
-     * @param dc The DialogContext object for this turn.
-     * @retuns The current Dialog.
+     * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) object for this turn.
+     * @retuns The current [Dialog](xref:botbuilder-dialogs.Dialog).
      */
     protected onFindDialog(dc: DialogContext): Dialog {
         // Is the active dialog a container?

@@ -15,7 +15,7 @@ import { DialogContainer } from '../../dialogContainer';
  */
 export class DialogMemoryScope extends MemoryScope {
     /**
-     * Initializes a new instance of the DialogMemoryScope class.
+     * Initializes a new instance of the [DialogMemoryScope](xref:botbuilder-dialogs.DialogMemoryScope) class.
      */
     public constructor() {
         super(ScopePath.dialog);
@@ -23,7 +23,7 @@ export class DialogMemoryScope extends MemoryScope {
 
     /**
      * Gets the backing memory for this scope.
-     * @param dc The DialogContext object for this turn.
+     * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) object for this turn.
      * @returns The memory for the scope.
      */
     public getMemory(dc: DialogContext): object {
@@ -41,7 +41,7 @@ export class DialogMemoryScope extends MemoryScope {
 
     /**
      * Changes the backing object for the memory scope.
-     * @param dc The DialogContext object for this turn.
+     * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) object for this turn.
      * @param memory Memory object to set for the scope.
      */
     public setMemory(dc: DialogContext, memory: object): void {
@@ -65,7 +65,7 @@ export class DialogMemoryScope extends MemoryScope {
 
     /**
      * @private
-     * @param dc The DialogContext object for this turn.
+     * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) object for this turn.
      * @returns A boolean indicating whether is a cointainer or not.
      */
     private isContainer(dc: DialogContext): boolean {
