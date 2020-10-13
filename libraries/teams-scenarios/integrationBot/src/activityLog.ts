@@ -10,13 +10,13 @@ import{
 } from 'botframework-schema'
 
 /**
- * `Activity`'s class with a Storage provider.
+ * [Activity](xref:botframework-schema.Activity)'s class with a [Storage](xref:botbuilder-core.Storage) provider.
  */
 export class ActivityLog  {
     private readonly _storage: Storage;
 
     /**
-     * Initializes a new instance of the `ActivityLog` class.
+     * Initializes a new instance of the [ActivityLog](xref:integration-bot.ActivityLog) class.
      * @param storage A storage provider that stores and retrieves plain old JSON objects.
      */
     public constructor(storage: Storage) {
@@ -24,9 +24,9 @@ export class ActivityLog  {
     }
 
     /**
-     * Saves an `Activity` with its associated id into the storage.
-     * @param activityId `Activity`'s Id.
-     * @param activity The `Activity` object.
+     * Saves an [Activity](xref:botframework-schema.Activity) with its associated id into the storage.
+     * @param activityId [Activity](xref:botframework-schema.Activity)'s Id.
+     * @param activity The [Activity](xref:botframework-schema.Activity) object.
      */
     public async append(activityId: string, activity: Partial<Activity>): Promise<void> {
         if (activityId == null)
@@ -48,9 +48,9 @@ export class ActivityLog  {
     }
 
     /**
-     * Retrieves an `Activity` from the storage by a given Id.
-     * @param activityId `Activity`'s Id.
-     * @returns The `Activity`'s object retrieved from storage.
+     * Retrieves an [Activity](xref:botframework-schema.Activity) from the storage by a given Id.
+     * @param activityId [Activity](xref:botframework-schema.Activity)'s Id.
+     * @returns The [Activity](xref:botframework-schema.Activity)'s object retrieved from storage.
      */
     public async find(activityId: string): Promise<Activity>
     {

@@ -79,11 +79,11 @@ export class IntegrationBot extends TeamsActivityHandler {
     protected _log: ActivityLog;
 
     /**
-     * Initializes a new instance of the `IntegrationBot` class.
+     * Initializes a new instance of the [IntegrationBot](xref:integration-bot.IntegrationBot) class.
      * See README.md on what this bot supports.
      * @param userState User's bot state for persistance.
      * @param activityIds An array of activity ids.
-     * @param activityLog The `ActivityLog`.
+     * @param activityLog The [ActivityLog](xref:integration-bot.ActivityLog).
      */
     constructor(public userState: BotState, activityIds: string[], activityLog: ActivityLog) {
         super();

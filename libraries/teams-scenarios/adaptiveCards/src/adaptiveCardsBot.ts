@@ -16,11 +16,11 @@ import {
 
 /**
  * You can @mention the bot the text "1", "2", or "3". "1" will send back adaptive cards. "2" will send back a
- * task module that contains an adpative card. "3" will return an adpative card that contains BF card actions.
+ * task module that contains an adaptive card. "3" will return an adaptive card that contains BF card actions.
  */
 export class AdaptiveCardsBot extends TeamsActivityHandler {
     /**
-     * Initializes a new instance of the `AdaptiveCardsBot` class.
+     * Initializes a new instance of the [AdaptiveCardsBot](xref:adaptive-cards-bot.AdaptiveCardsBot) class.
      */
     constructor() {
         super();

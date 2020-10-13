@@ -19,7 +19,7 @@ export class TeamsTenantFilteringMiddleware implements Middleware {
     // tslint:enable:variable-name
 
     /**
-     * Initializes a new instance of the TeamsTenantFilteringMiddleware class.
+     * Initializes a new instance of the [TeamsTenantFilteringMiddleware](xref:integration-bot.TeamsTenantFilteringMiddleware) class.
      * @param allowedTenants Either a single Tenant Id or array of Tenant Ids.
      */
     constructor(allowedTenants: string | string[]) {

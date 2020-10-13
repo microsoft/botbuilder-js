@@ -15,7 +15,7 @@ export class ActivityUpdateAndDeleteBot extends ActivityHandler {
     protected activityIds: string[];
 
     /**
-     * Initializes a new instance of the `ActivityUpdateAndDeleteBot` class.
+     * Initializes a new instance of the [ActivityUpdateAndDeleteBot](xref:activity-update-delete-bot.ActivityUpdateAndDeleteBot) class.
      * @param activityIds An array of activity ids.
      */
     constructor(activityIds: string[]) {

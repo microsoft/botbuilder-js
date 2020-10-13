@@ -20,7 +20,7 @@ import {
  */
 export class ActionBasedMessagingExtensionBot extends TeamsActivityHandler {
     /**
-     * Initializes a new instance of the `ActionBasedMessagingExtensionBot` class.
+     * Initializes a new instance of the [ActionBasedMessagingExtensionBot](xref:messaging-extension-action.ActionBasedMessagingExtensionBot) class.
      */
     constructor() {
         super();
