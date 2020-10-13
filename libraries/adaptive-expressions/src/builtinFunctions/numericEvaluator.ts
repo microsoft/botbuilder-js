@@ -17,7 +17,7 @@ export class NumericEvaluator extends ExpressionEvaluator {
     /**
      * Initializes a new instance of the [NumericEvaluator](xref:adaptive-expressions.NumericEvaluator) class.
      * @param type Name of the built-in function.
-     * @param func The comparison function, it takes a list of objects and returns a number.
+     * @param func The evaluation function, it takes a list of objects and returns a number.
      */
     public constructor(type: string, func: (args: any[]) => any) {
         super(type, NumericEvaluator.evaluator(func), ReturnType.Number, FunctionUtils.validateNumber);
