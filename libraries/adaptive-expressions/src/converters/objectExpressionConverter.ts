@@ -14,9 +14,9 @@ import { ObjectExpression } from '../expressionProperties';
  */
 export class ObjectExpressionConverter<T extends object = {}> {
     /**
-     * Converts value of type `T` into an [ObjectExpressionConverter](xref:adaptive-expressions.ObjectExpressionConverter).
+     * Converts value of type `T` into an [ObjectExpression](xref:adaptive-expressions.ObjectExpression).
      * @param value Value of type `T` to convert.
-     * @returns The [ObjectExpressionConverter](xref:adaptive-expressions.ObjectExpressionConverter).
+     * @returns The [ObjectExpression](xref:adaptive-expressions.ObjectExpression).
      */
     public convert(value: T): ObjectExpression<T> {
         return new ObjectExpression<T>(value);
