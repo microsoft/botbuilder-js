@@ -22,7 +22,7 @@ import { ReturnType } from '../returnType';
  */
 export class IsPresent extends ExpressionEvaluator {
     /**
-     * Initializes a new instance of the `IsPresent` class.
+     * Initializes a new instance of the [IsPresent](xref:adaptive-expressions.IsPresent) class.
      */
     public constructor() {
         super(ExpressionType.IsPresent, IsPresent.evaluator, ReturnType.Boolean, FunctionUtils.validateUnary);

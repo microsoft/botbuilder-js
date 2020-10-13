@@ -17,7 +17,7 @@ import { ReturnType } from '../returnType';
  */
 export class IsDateTime extends ExpressionEvaluator {
     /**
-     * Initializes a new instance of the `IsDateTime` class.
+     * Initializes a new instance of the [IsDateTime](xref:adaptive-expressions.IsDateTime) class.
      */
     public constructor() {
         super(ExpressionType.IsDateTime, IsDateTime.evaluator(), ReturnType.Boolean, FunctionUtils.validateUnary);

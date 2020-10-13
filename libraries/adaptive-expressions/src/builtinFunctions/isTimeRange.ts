@@ -22,7 +22,7 @@ import { ReturnType } from '../returnType';
  */
 export class IsTimeRange extends ExpressionEvaluator {
     /**
-     * Initializes a new instance of the `IsTimeRange` class.
+     * Initializes a new instance of the [IsTimeRange](xref:adaptive-expressions.IsTimeRange) class.
      */
     public constructor() {
         super(ExpressionType.IsTimeRange, IsTimeRange.evaluator, ReturnType.Boolean, FunctionUtils.validateUnary);

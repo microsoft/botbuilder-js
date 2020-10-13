@@ -22,7 +22,7 @@ import { ReturnType } from '../returnType';
  */
 export class IsDefinite extends ExpressionEvaluator {
     /**
-     * Initializes a new instance of the `IsDefinite` class.
+     * Initializes a new instance of the [IsDefinite](xref:adaptive-expressions.IsDefinite) class.
      */
     public constructor() {
         super(ExpressionType.IsDefinite, IsDefinite.evaluator, ReturnType.Boolean, FunctionUtils.validateUnary);

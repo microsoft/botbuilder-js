@@ -21,7 +21,7 @@ import { ReturnType } from '../returnType';
  */
 export class IndexOf extends ExpressionEvaluator {
     /**
-     * Initializes a new instance of the `IndexOf` class.
+     * Initializes a new instance of the [IndexOf](xref:adaptive-expressions.IndexOf) class.
      */
     public constructor() {
         super(ExpressionType.IndexOf, IndexOf.evaluator, ReturnType.Number, IndexOf.validator);
