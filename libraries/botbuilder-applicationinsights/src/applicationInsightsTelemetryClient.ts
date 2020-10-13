@@ -67,7 +67,7 @@ export class ApplicationInsightsTelemetryClient implements BotTelemetryClient, B
     private config: appInsights.Configuration;
 
     /**
-     * Creates a new instance of the `ApplicationInsightsTelemetryClient` class.
+     * Creates a new instance of the [ApplicationInsightsTelemetryClient](xref:botbuilder-applicationinsights.ApplicationInsightsTelemetryClient) class.
      * @param instrumentationKey The ApplicationInsights instrumentation key.
      * @remarks The settings parameter is passed directly into appInsights.setup().
      * https://www.npmjs.com/package/applicationinsights#basic-usage
@@ -106,7 +106,7 @@ export class ApplicationInsightsTelemetryClient implements BotTelemetryClient, B
 
     /**
      * Sends information about an external dependency (outgoing call) in the application.
-     * @param telemetry Telemetry Dependency.
+     * @param telemetry The [TelemetryDependency](xref:botbuilder-core.TelemetryDependency) to track.
      */
     public trackDependency(telemetry: TelemetryDependency): void {
         this.defaultClient.trackDependency(telemetry as appInsights.Contracts.DependencyTelemetry);
@@ -114,7 +114,7 @@ export class ApplicationInsightsTelemetryClient implements BotTelemetryClient, B
 
     /**
      * Logs custom events with extensible named fields.
-     * @param telemetry Telemetry Event.
+     * @param telemetry The [TelemetryEvent](xref:botbuilder-core.TelemetryEvent) to track.
      */
     public trackEvent(telemetry: TelemetryEvent): void {
         this.defaultClient.trackEvent(telemetry as appInsights.Contracts.EventTelemetry);
@@ -122,7 +122,7 @@ export class ApplicationInsightsTelemetryClient implements BotTelemetryClient, B
 
     /**
      * Logs a system exception.
-     * @param telemetry Telemetry Exception.
+     * @param telemetry The [TelemetryException](xref:botbuilder-core.TelemetryException) to track.
      */
     public trackException(telemetry: TelemetryException): void {
         this.defaultClient.trackException(telemetry as appInsights.Contracts.ExceptionTelemetry);
@@ -130,7 +130,7 @@ export class ApplicationInsightsTelemetryClient implements BotTelemetryClient, B
 
     /**
      * Sends a trace message.
-     * @param telemetry Telemetry Trace.
+     * @param telemetry The [TelemetryTrace](xref:botbuilder-core.TelemetryTrace) to track.
      */
     public trackTrace(telemetry: TelemetryTrace): void {
         this.defaultClient.trackTrace(telemetry as appInsights.Contracts.TraceTelemetry);
@@ -138,7 +138,7 @@ export class ApplicationInsightsTelemetryClient implements BotTelemetryClient, B
 
     /**
      * Logs a dialog entry as an Application Insights page view.
-     * @param telemetry Telemetry Page View.
+     * @param telemetry The [TelemetryPageView](xref:botbuilder-core.TelemetryPageView) to track.
      */
     public trackPageView(telemetry: TelemetryPageView): void {
         this.defaultClient.trackPageView(telemetry as appInsights.Contracts.PageViewTelemetry);
