@@ -15,16 +15,15 @@ export class DefaultLoader implements CustomDeserializer<Configurable, Record<st
 
     public load(config: Record<string, unknown>, type: { new (...args: unknown[]): Configurable }): Configurable {
         const instance = new type();
-        Object.getOwnPropertyNames(config).forEach((k: string) => {
-            const value = config[k];
-            let converter = instance.getConverter(k);
+        Object.entries(config).forEach(([key, value]) => {
+            let converter = instance.getConverter(key);
             if (converter) {
                 if (typeof converter === 'function') {
                     converter = new converter(this._resourceExplorer);
                 }
-                instance[k] = converter.convert(value);
+                instance[key] = converter.convert(value);
             } else {
-                instance[k] = value;
+                instance[key] = value;
             }
         });
         return instance;
