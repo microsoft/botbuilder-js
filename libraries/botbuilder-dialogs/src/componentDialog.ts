@@ -84,7 +84,7 @@ export class ComponentDialog<O extends object = {}> extends DialogContainer<O> {
      * Dialog.BeginDialogAsync(DialogContext, object, CancellationToken) method
      * of the component dialog's initial dialog, as defined by InitialDialogId.
      * Override this method in a derived class to implement interrupt logic.
-     * @param outerDC The parent DialogContext for the current turn of conversation.
+     * @param outerDC The parent [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
      * @param options Optional, initial information to pass to the dialog.
      * @returns A Promise representing the asynchronous operation.
      * @remarks
@@ -116,9 +116,9 @@ export class ComponentDialog<O extends object = {}> extends DialogContainer<O> {
 
     /**
      * Called when the dialog is _continued_, where it is the active dialog and the
-     * user replies with a new activity.
+     * user replies with a new [Activity](xref:botframework-schema.Activity).
      * If this method is *not* overridden, the dialog automatically ends when the user replies.
-     * @param outerDC The parent DialogContext for the current turn of conversation.
+     * @param outerDC The parent [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
      * @returns A Promise representing the asynchronous operation.
      * @remarks
      * If the task is successful, the result indicates whether the dialog is still
@@ -145,7 +145,7 @@ export class ComponentDialog<O extends object = {}> extends DialogContainer<O> {
     /**
      * Called when a child dialog on the parent's dialog stack completed this turn, returning
      * control to this dialog component.
-     * @param outerDc The DialogContext for the current turn of conversation.
+     * @param outerDc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
      * @param reason Reason why the dialog resumed.
      * @param result Optional, value returned from the dialog that was called. The type
      * of the value returned is dependent on the child dialog.
@@ -174,11 +174,11 @@ export class ComponentDialog<O extends object = {}> extends DialogContainer<O> {
     }
 
     /**
-    * Called when the dialog should re-prompt the user for input.
-    * @param context The context object for this turn.
-    * @param instance State information for this dialog.
-    * @returns A Promise representing the asynchronous operation.
-    */
+     * Called when the dialog should re-prompt the user for input.
+     * @param context The [TurnContext](xref:botbuilder-core.TurnContext) object for this turn.
+     * @param instance State information for this dialog.
+     * @returns A Promise representing the asynchronous operation.
+     */
     public async repromptDialog(context: TurnContext, instance: DialogInstance): Promise<void> {
         // Forward to inner dialogs
         const innerDC: DialogContext = this.createInnerDC(context, instance);
@@ -189,15 +189,15 @@ export class ComponentDialog<O extends object = {}> extends DialogContainer<O> {
     }
 
     /**
-    * Called when the dialog is ending.
-    * @remarks When this method is called from the parent dialog's context, the component dialog
-    * cancels all of the dialogs on its inner dialog stack before ending.
-    * @param context The context object for this turn.
-    * @param instance State information associated with the instance of this component
-    * dialog on its parent's dialog stack.
-    * @param reason Reason why the dialog ended.
-    * @returns A Promise representing the asynchronous operation.
-    */
+     * Called when the dialog is ending.
+     * @param context The [TurnContext](xref:botbuilder-core.TurnContext) object for this turn.
+     * @param instance State information associated with the instance of this component
+     * dialog on its parent's dialog stack.
+     * @param reason Reason why the dialog ended.
+     * @returns A Promise representing the asynchronous operation.
+     * @remarks When this method is called from the parent dialog's context, the component dialog
+     * cancels all of the dialogs on its inner dialog stack before ending.
+     */
     public async endDialog(context: TurnContext, instance: DialogInstance, reason: DialogReason): Promise<void> {
         // Forward cancel to inner dialogs
         if (reason === DialogReason.cancelCalled) {
@@ -211,10 +211,9 @@ export class ComponentDialog<O extends object = {}> extends DialogContainer<O> {
 
     /**
      * Adds a child dialog or prompt to the components internal `DialogSet`.
-     * @param dialog The child dialog or prompt to add.
+     * @param dialog The child [Dialog](xref:botbuilder-dialogs.Dialog) or prompt to add.
      * @remarks
-     * The `Dialog.id` of the first child added to the component will be assigned to the [initialDialogId](#initialdialogid)
-     * property.
+     * The [Dialog](xref:botbuilder-dialogs.Dialog.id) of the first child added to the component will be assigned to the initialDialogId property.
      */
     public addDialog(dialog: Dialog): this {
         this.dialogs.add(dialog);
@@ -297,16 +296,32 @@ export class ComponentDialog<O extends object = {}> extends DialogContainer<O> {
         return outerDC.endDialog(result);
     }
 
+    /**
+     * @private
+     * @param context [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation with the user.
+     * @param instance Current state information for this dialog.
+     * @returns A new [DialogContext](xref:botbuilder-dialogs.DialogContext) instance.
+     * @remarks
+     * You should only call this if you don't have a dc to work with (such as OnResume())
+     */
     private createInnerDC(context: DialogContext, instance: DialogInstance): DialogContext;
+    /**
+     * @private
+     * @param context [TurnContext](xref:botbuilder-core.TurnContext) for the current turn of conversation with the user.
+     * @param instance Current state information for this dialog.
+     * @returns A new [DialogContext](xref:botbuilder-dialogs.DialogContext) instance.
+     * @remarks
+     * You should only call this if you don't have a dc to work with (such as OnResume())
+     */
     private createInnerDC(context: TurnContext, instance: DialogInstance): DialogContext;
-
     /**
      * @private
      * @param context Context for the current turn of conversation with the user.
      * @param instance Current state information for this dialog.
-     * @remarks 
+     * @returns A new [DialogContext](xref:botbuilder-dialogs.DialogContext) instance.
+     * @remarks
      * You should only call this if you don't have a dc to work with (such as OnResume())
-    */
+     */
     private createInnerDC(context: TurnContext | DialogContext, instance: DialogInstance): DialogContext {
         if (!instance) {
             const dialogInstance = { state: {} };

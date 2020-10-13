@@ -61,8 +61,8 @@ export class DialogManager extends Configurable {
     private readonly _initialTurnState: TurnContextStateCollection = new TurnContextStateCollection();
 
     /**
-     * Creates an instance of the DialogManager class.
-     * @param rootDialog Optional, root dialog to use.
+     * Creates an instance of the [DialogSet](xref:botbuilder-dialogs.DialogManager) class.
+     * @param rootDialog Optional, root [Dialog](xref:botbuilder-dialogs.Dialog) to use.
      * @param dialogStateProperty Optional, alternate name for the dialogState property. (Default is "DialogStateProperty")
      */
     public constructor(rootDialog?: Dialog, dialogStateProperty?: string) {
@@ -104,8 +104,8 @@ export class DialogManager extends Configurable {
     }
 
     /**
-     * Gets the root dialog ID.
-     * @returns The root dialog ID.
+     * Gets the root [Dialog](xref:botbuilder-dialogs.Dialog) ID.
+     * @returns The root [Dialog](xref:botbuilder-dialogs.Dialog) ID.
      */
     public get rootDialog(): Dialog {
         return this._rootDialogId ? this.dialogs.find(this._rootDialogId) : undefined;
@@ -129,15 +129,15 @@ export class DialogManager extends Configurable {
     /**
      * Set configuration settings.
      * @param config Configuration settings to apply.
-     * @returns The cofigured dialogManager context.
+     * @returns The cofigured [DialogManager](xref:botbuilder-dialogs.DialogManager) context.
      */
     public configure(config: Partial<DialogManagerConfiguration>): this {
         return super.configure(config);
     }
 
     /**
-     * Runs dialog system in the context of an ITurnContext.
-     * @param context Context for the current turn of conversation with the user.
+     * Runs dialog system in the context of a [TurnContext](xref:botbuilder-core.TurnContext).
+     * @param context [TurnContext](xref:botbuilder-core.TurnContext) for the current turn of conversation with the user.
      * @returns Result of running the logic against the activity.
      */
     public async onTurn(context: TurnContext): Promise<DialogManagerResult> {
@@ -246,8 +246,8 @@ export class DialogManager extends Configurable {
     }
 
     /**
-     * Helper to send a trace activity with a memory snapshot of the active dialog DC.
-     * @param dc Context for the current turn of conversation with the user.
+     * Helper to send a trace activity with a memory snapshot of the active [DialogContext](xref:botbuilder-dialogs.DialogContext).
+     * @param dc [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation with the user.
      * @param traceLabel Trace label to set for the activity.
      */
     private async sendStateSnapshotTrace(dc: DialogContext, traceLabel: string): Promise<void> {
@@ -264,7 +264,7 @@ export class DialogManager extends Configurable {
 
     /**
      * @private
-     * @param dc Context for the current turn of conversation with the user.
+     * @param dc [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation with the user.
      * @returns A Promise representing the asynchronous operation.
      */
     private async handleSkillOnTurn(dc: DialogContext): Promise<DialogTurnResult> {
@@ -320,8 +320,8 @@ export class DialogManager extends Configurable {
 
     /**
      * @private
-     * @param dc Context for the current turn of conversation with the user.
-     * @returns The DialogTurnResult.
+     * @param dc [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation with the user.
+     * @returns The [DialogTurnResult](xref:botbuilder-dialogs.DialogTurnResult).
      */
     private async handleBotOnTurn(dc: DialogContext): Promise<DialogTurnResult> {
         let turnResult: DialogTurnResult;
