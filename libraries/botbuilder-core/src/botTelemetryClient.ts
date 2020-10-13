@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 
-    
+
 /**
  * Defines the level of severity for the event.
  */
@@ -36,7 +36,7 @@ export interface TelemetryDependency {
     target: string;
     name: string;
     data: string;
-    duration: number; 
+    duration: number;
     success: boolean;
     resultCode: number;
 }
@@ -47,7 +47,7 @@ export interface TelemetryEvent {
     metrics?: {[key: string]: number };
 }
 
-export interface TelemetryException { 
+export interface TelemetryException {
     exception: Error;
     handledAt?: string;
     properties?: {[key: string]: string};
@@ -68,12 +68,12 @@ export interface TelemetryPageView {
 }
 
 /**
- * A null bot telemetry client that implements `IBotTelemetryClient`.
+ * A null bot telemetry client that implements [BotTelemetryClient](xref:botbuilder-core.BotTelemetryClient).
  */
 export class NullTelemetryClient implements BotTelemetryClient, BotPageViewTelemetryClient {
 
     /**
-     * Creates a new instance of the `NullTelemetryClient` class.
+     * Creates a new instance of the [NullTelemetryClient](xref:botbuilder-core.NullTelemetryClient) class.
      * @param settings Optional. Settings for the telemetry client.
      */
     constructor(settings?: any) {
@@ -82,7 +82,7 @@ export class NullTelemetryClient implements BotTelemetryClient, BotPageViewTelem
 
     /**
      * Logs an Application Insights page view.
-     * @param telemetry Telemetry Page View.
+     * @param telemetry An object implementing [TelemetryPageView](xref:botbuilder-core.TelemetryPageView).
      */
     trackPageView(telemetry: TelemetryPageView) {
         // noop
@@ -90,7 +90,7 @@ export class NullTelemetryClient implements BotTelemetryClient, BotPageViewTelem
 
     /**
      * Sends information about an external dependency (outgoing call) in the application.
-     * @param telemetry Telemetry Dependency.
+     * @param telemetry An object implementing [TelemetryDependency](xref:botbuilder-core.TelemetryDependency).
      */
     trackDependency(telemetry: TelemetryDependency) {
         // noop
@@ -98,7 +98,7 @@ export class NullTelemetryClient implements BotTelemetryClient, BotPageViewTelem
 
     /**
      * Logs custom events with extensible named fields.
-     * @param telemetry Telemetry Event.
+     * @param telemetry An object implementing [TelemetryEvent](xref:botbuilder-core.TelemetryEvent).
      */
     trackEvent(telemetry: TelemetryEvent) {
         // noop
@@ -106,7 +106,7 @@ export class NullTelemetryClient implements BotTelemetryClient, BotPageViewTelem
 
     /**
      * Logs a system exception.
-     * @param telemetry Telemetry Exception to log.
+     * @param telemetry An object implementing [TelemetryException](xref:botbuilder-core.TelemetryException).
      */
     trackException(telemetry: TelemetryException)  {
         // noop
@@ -114,7 +114,7 @@ export class NullTelemetryClient implements BotTelemetryClient, BotPageViewTelem
 
     /**
      * Sends a trace message.
-     * @param telemetry Telemetry Trace.
+     * @param telemetry An object implementing [TelemetryTrace](xref:botbuilder-core.TelemetryTrace).
      */
     trackTrace(telemetry: TelemetryTrace) {
         // noop
@@ -129,9 +129,9 @@ export class NullTelemetryClient implements BotTelemetryClient, BotPageViewTelem
 }
 
 /**
- * Logs a DialogView using the TrackPageView method on the BotTelemetryClient if BotPageViewTelemetryClient has been implemented.
+ * Logs a DialogView using the [trackPageView](xref:botbuilder-core.BotTelemetryClient.trackPageView) method on the [BotTelemetryClient](xref:botbuilder-core.BotTelemetryClient) if [BotPageViewTelemetryClient](xref:botbuilder-core.BotPageViewTelemetryClient) has been implemented.
  * Alternatively logs the information out via TrackTrace.
- * @param telemetryClient TelemetryClient that implements BotTelemetryClient.
+ * @param telemetryClient TelemetryClient that implements [BotTelemetryClient](xref:botbuilder-core.BotTelemetryClient).
  * @param dialogName Name of the dialog to log the entry / start for.
  * @param properties Named string values you can use to search and classify events.
  * @param metrics Measurements associated with this event.

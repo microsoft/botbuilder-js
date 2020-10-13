@@ -96,9 +96,9 @@ export class ActivityFactory {
     }
 
     /**
-     * Builds an Activity with a given message.
+     * Builds an [Activity](xref:botframework-schema.Activity) with a given message.
      * @param messageValue Message value on which to base the activity.
-     * @returns Activity with the given message.
+     * @returns [Activity](xref:botframework-schema.Activity) with the given message.
      */
     private static buildActivity(messageValue: any): Partial<Activity> {
         let activity: Partial<Activity> = { type: ActivityTypes.Message };

@@ -6,9 +6,9 @@
 const TURN_STATE_SCOPE_CACHE = Symbol('turnStateScopeCache');
 
 /**
- * Values persisted for the lifetime of the turn as part of the `TurnContext`.
+ * Values persisted for the lifetime of the turn as part of the [TurnContext](xref:botbuilder-core.TurnContext).
  * @remarks Typical values stored here are objects which are needed for the lifetime of a turn, such
- * as `Storage`, `BotState`, `ConversationState`, `LanguageGenerator`, `ResourceExplorer`, etc.
+ * as [Storage](xref:botbuilder-core.Storage), [BotState](xref:botbuilder-core.BotState), [ConversationState](xref:botbuilder-core.ConversationState), [LanguageGenerator](xref:botbuilder-dialogs-adaptive.LanguageGenerator), [ResourceExplorer](xref:botbuilder-dialogs-declarative.ResourceExplorer), etc.
  */
 export class TurnContextStateCollection extends Map<any, any> {
     /**

@@ -59,7 +59,7 @@ export class AutoSaveStateMiddleware implements Middleware {
     }
 
     /**
-     * Called by the adapter (for example, a `BotFrameworkAdapter`) at runtime in order to process an inbound `Activity`.
+     * Called by the adapter (for example, a `BotFrameworkAdapter`) at runtime in order to process an inbound [Activity](xref:botframework-schema.Activity).
      * @param context The context object for this turn.
      * @param next {function} The next delegate function.
      */

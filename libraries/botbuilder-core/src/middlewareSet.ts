@@ -79,7 +79,7 @@ export class MiddlewareSet implements Middleware {
 
     /**
      * Processes an incoming activity.
-     * @param context Context object for this turn.
+     * @param context [TurnContext](xref:botbuilder-core.TurnContext) object for this turn.
      * @param next Delegate to call to continue the bot middleware pipeline.
      */
     public onTurn(context: TurnContext, next: () => Promise<void>): Promise<void> {

@@ -39,7 +39,7 @@ export class MemoryStorage  implements Storage {
 
     /**
      * Reads storage items from storage.
-     * @param keys Keys of the `StoreItem` objects to read.
+     * @param keys Keys of the [StoreItems](xref:botbuilder-core.StoreItems) objects to read.
      * @returns The read items.
      */
     public read(keys: string[]): Promise<StoreItems> {
@@ -58,7 +58,7 @@ export class MemoryStorage  implements Storage {
 
     /**
      * Writes storage items to storage.
-     * @param changes The items to write, indexed by key.
+     * @param changes The [StoreItems](xref:botbuilder-core.StoreItems) to write, indexed by key.
      */
     public write(changes: StoreItems): Promise<void> {
         const that: MemoryStorage = this;
@@ -90,7 +90,7 @@ export class MemoryStorage  implements Storage {
 
     /**
      * Deletes storage items from storage.
-     * @param keys Keys of the objects to delete.
+     * @param keys Keys of the [StoreItems](xref:botbuilder-core.StoreItems) objects to delete.
      */
     public delete(keys: string[]): Promise<void> {
         return new Promise<void>((resolve: any, reject: any): void => {
