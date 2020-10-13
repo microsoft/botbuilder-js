@@ -5,9 +5,15 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { StringExpression, BoolExpression, BoolExpressionConverter } from 'adaptive-expressions';
-import { Converter, ConverterFactory, Dialog, DialogContext, DialogTurnResult } from 'botbuilder-dialogs';
-import { NonFunctionKeys } from 'utility-types';
+import { BoolExpression, BoolExpressionConverter, Expression, StringExpression } from 'adaptive-expressions';
+import {
+    Converter,
+    ConverterFactory,
+    Dialog,
+    DialogConfiguration,
+    DialogContext,
+    DialogTurnResult,
+} from 'botbuilder-dialogs';
 
 class PropertiesConverter implements Converter<string[], StringExpression[]> {
     public convert(value: string[] | StringExpression[]): StringExpression[] {
@@ -17,6 +23,11 @@ class PropertiesConverter implements Converter<string[], StringExpression[]> {
         });
         return results;
     }
+}
+
+export interface DeletePropertiesConfiguration extends DialogConfiguration {
+    properties?: string[] | StringExpression[];
+    disabled?: boolean | string | Expression | BoolExpression;
 }
 
 export class DeleteProperties<O extends object = {}> extends Dialog<O> {
@@ -40,7 +51,7 @@ export class DeleteProperties<O extends object = {}> extends Dialog<O> {
      */
     public disabled?: BoolExpression;
 
-    public getConverter(property: NonFunctionKeys<DeleteProperties>): Converter | ConverterFactory {
+    public getConverter(property: keyof DeletePropertiesConfiguration): Converter | ConverterFactory {
         switch (property) {
             case 'properties':
                 return new PropertiesConverter();

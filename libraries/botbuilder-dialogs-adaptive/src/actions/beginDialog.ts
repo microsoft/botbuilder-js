@@ -11,6 +11,7 @@ import {
     BoolExpression,
     StringExpressionConverter,
     BoolExpressionConverter,
+    Expression,
 } from 'adaptive-expressions';
 import {
     Converter,
@@ -20,8 +21,12 @@ import {
     DialogReason,
     TurnPath,
 } from 'botbuilder-dialogs';
-import { NonFunctionKeys } from 'utility-types';
-import { BaseInvokeDialog } from './baseInvokeDialog';
+import { BaseInvokeDialog, BaseInvokeDialogConfiguration } from './baseInvokeDialog';
+
+export interface BeginDialogConfiguration extends BaseInvokeDialogConfiguration {
+    resultProperty?: string | Expression | StringExpression;
+    disabled?: boolean | string | Expression | BoolExpression;
+}
 
 export class BeginDialog<O extends object = {}> extends BaseInvokeDialog<O> {
     public static $kind = 'Microsoft.BeginDialog';
@@ -47,7 +52,7 @@ export class BeginDialog<O extends object = {}> extends BaseInvokeDialog<O> {
      */
     public disabled?: BoolExpression;
 
-    public getConverter(property: NonFunctionKeys<BeginDialog>): Converter | ConverterFactory {
+    public getConverter(property: keyof BeginDialogConfiguration): Converter | ConverterFactory {
         switch (property) {
             case 'resultProperty':
                 return new StringExpressionConverter();

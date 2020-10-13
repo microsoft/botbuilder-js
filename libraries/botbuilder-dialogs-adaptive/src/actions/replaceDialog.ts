@@ -5,10 +5,13 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { BoolExpression, BoolExpressionConverter } from 'adaptive-expressions';
+import { BoolExpression, BoolExpressionConverter, Expression } from 'adaptive-expressions';
 import { Converter, ConverterFactory, DialogContext, DialogTurnResult, TurnPath } from 'botbuilder-dialogs';
-import { NonFunctionKeys } from 'utility-types';
-import { BaseInvokeDialog } from './baseInvokeDialog';
+import { BaseInvokeDialog, BaseInvokeDialogConfiguration } from './baseInvokeDialog';
+
+export interface ReplaceDialogConfiguration extends BaseInvokeDialogConfiguration {
+    disabled?: boolean | string | Expression | BoolExpression;
+}
 
 export class ReplaceDialog<O extends object = {}> extends BaseInvokeDialog<O> {
     public static $kind = 'Microsoft.ReplaceDialog';
@@ -29,7 +32,7 @@ export class ReplaceDialog<O extends object = {}> extends BaseInvokeDialog<O> {
      */
     public disabled?: BoolExpression;
 
-    public getConverter(property: NonFunctionKeys<ReplaceDialog>): Converter | ConverterFactory {
+    public getConverter(property: keyof ReplaceDialogConfiguration): Converter | ConverterFactory {
         switch (property) {
             case 'disabled':
                 return new BoolExpressionConverter();

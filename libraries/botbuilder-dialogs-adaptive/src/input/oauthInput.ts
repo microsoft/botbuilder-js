@@ -6,6 +6,7 @@
  * Licensed under the MIT License.
  */
 import {
+    Expression,
     IntExpression,
     IntExpressionConverter,
     StringExpression,
@@ -43,8 +44,7 @@ import {
 } from 'botbuilder-dialogs';
 import { SkillValidation } from 'botframework-connector';
 import { verifyStateOperationName, tokenExchangeOperationName, tokenResponseEventName } from 'botbuilder-core';
-import { InputDialog, InputState } from './inputDialog';
-import { NonFunctionKeys } from 'utility-types';
+import { InputDialog, InputDialogConfiguration, InputState } from './inputDialog';
 
 export const channels: any = {
     console: 'console',
@@ -70,6 +70,13 @@ const persistedState = 'state';
 const persistedExpires = 'expires';
 const attemptCountKey = 'attemptCount';
 
+export interface OAuthInputConfiguration extends InputDialogConfiguration {
+    connectionName?: string | Expression | StringExpression;
+    title?: string | Expression | StringExpression;
+    text?: string | Expression | StringExpression;
+    timeout?: number | string | Expression | IntExpression;
+}
+
 export class OAuthInput extends InputDialog {
     public static $kind = 'Microsoft.OAuthInput';
 
@@ -94,7 +101,7 @@ export class OAuthInput extends InputDialog {
      */
     public timeout?: IntExpression = new IntExpression(900000);
 
-    public getConverter(property: NonFunctionKeys<OAuthInput>): Converter | ConverterFactory {
+    public getConverter(property: keyof OAuthInputConfiguration): Converter | ConverterFactory {
         switch (property) {
             case 'connectionName':
                 return new StringExpressionConverter();

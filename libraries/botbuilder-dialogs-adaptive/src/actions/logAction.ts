@@ -6,17 +6,31 @@
  * Licensed under the MIT License.
  */
 import {
-    StringExpression,
     BoolExpression,
     BoolExpressionConverter,
+    Expression,
+    StringExpression,
     StringExpressionConverter,
 } from 'adaptive-expressions';
 import { Activity, ActivityTypes } from 'botbuilder-core';
-import { Converter, ConverterFactory, DialogContext, Dialog, DialogTurnResult } from 'botbuilder-dialogs';
-import { NonFunctionKeys } from 'utility-types';
+import {
+    Converter,
+    ConverterFactory,
+    DialogContext,
+    Dialog,
+    DialogTurnResult,
+    DialogConfiguration,
+} from 'botbuilder-dialogs';
 import { TemplateInterface } from '../template';
 import { TextTemplate } from '../templates';
 import { TextTemplateConverter } from '../converters/textTemplateConverter';
+
+export interface LogActionConfiguration extends DialogConfiguration {
+    text?: string | TextTemplate;
+    traceActivity?: boolean | string | Expression | BoolExpression;
+    label?: string | Expression | StringExpression;
+    disabled?: boolean | string | Expression | BoolExpression;
+}
 
 export class LogAction<O extends object = {}> extends Dialog<O> {
     public static $kind = 'Microsoft.LogAction';
@@ -56,7 +70,7 @@ export class LogAction<O extends object = {}> extends Dialog<O> {
      */
     public disabled?: BoolExpression;
 
-    public getConverter(property: NonFunctionKeys<LogAction>): Converter | ConverterFactory {
+    public getConverter(property: keyof LogActionConfiguration): Converter | ConverterFactory {
         switch (property) {
             case 'text':
                 return new TextTemplateConverter();

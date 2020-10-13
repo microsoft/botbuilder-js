@@ -8,7 +8,12 @@
 import { Dialog, TurnPath } from 'botbuilder-dialogs';
 import { Expression, ExpressionParserInterface } from 'adaptive-expressions';
 import { AdaptiveEvents } from '../adaptiveEvents';
-import { OnDialogEvent } from './onDialogEvent';
+import { OnDialogEvent, OnDialogEventConfiguration } from './onDialogEvent';
+
+export interface OnChoosePropertyConfiguration extends OnDialogEventConfiguration {
+    properties?: string[];
+    entities?: string[];
+}
 
 /**
  * Triggered to choose which property an entity goes to.

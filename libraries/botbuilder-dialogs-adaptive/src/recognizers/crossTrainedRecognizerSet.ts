@@ -8,14 +8,17 @@
 
 import { Activity, RecognizerResult, getTopScoringIntent } from 'botbuilder-core';
 import { Converter, ConverterFactory, DialogContext } from 'botbuilder-dialogs';
-import { NonFunctionKeys } from 'utility-types';
 import { RecognizerListConverter } from '../converters';
-import { Recognizer } from './recognizer';
+import { Recognizer, RecognizerConfiguration } from './recognizer';
 
 /**
  * Standard cross trained intent name prefix.
  */
 const deferPrefix = 'DeferToRecognizer_';
+
+export interface CrossTrainedRecognizerSetConfiguration extends RecognizerConfiguration {
+    recognizers?: string[] | Recognizer[];
+}
 
 /**
  * Recognizer for selecting between cross trained recognizers.
@@ -28,7 +31,7 @@ export class CrossTrainedRecognizerSet extends Recognizer {
      */
     public recognizers: Recognizer[] = [];
 
-    public getConverter(property: NonFunctionKeys<CrossTrainedRecognizerSet>): Converter | ConverterFactory {
+    public getConverter(property: keyof CrossTrainedRecognizerSetConfiguration): Converter | ConverterFactory {
         switch (property) {
             case 'recognizers':
                 return RecognizerListConverter;

@@ -33,8 +33,15 @@ import { ActionContext } from '../actionContext';
 import { ActionChangeList } from '../actionChangeList';
 import { ActionState } from '../actionState';
 import { ActionChangeType } from '../actionChangeType';
-import { NonFunctionKeys } from 'utility-types';
 import { DialogListConverter } from '../converters';
+
+export interface OnConditionConfiguration {
+    condition?: boolean | string | Expression | BoolExpression;
+    actions?: string[] | Dialog[];
+    priority?: number | string | Expression | IntExpression;
+    runOnce?: boolean;
+    id?: string;
+}
 
 export class OnCondition extends Configurable implements DialogDependencies {
     public static $kind = 'Microsoft.OnCondition';
@@ -94,7 +101,7 @@ export class OnCondition extends Configurable implements DialogDependencies {
         this.actions = actions;
     }
 
-    public getConverter(property: NonFunctionKeys<OnCondition>): Converter | ConverterFactory {
+    public getConverter(property: keyof OnConditionConfiguration): Converter | ConverterFactory {
         switch (property) {
             case 'condition':
                 return new BoolExpressionConverter();

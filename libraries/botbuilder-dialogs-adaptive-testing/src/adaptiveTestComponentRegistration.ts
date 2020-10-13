@@ -16,17 +16,24 @@ import {
 import {
     AssertReply,
     AssertReplyActivity,
+    AssertReplyActivityConfiguration,
+    AssertReplyConfiguration,
     AssertReplyOneOf,
+    AssertReplyOneOfConfiguration,
     UserActivity,
+    UserActivityConfiguration,
     UserConversationUpdate,
+    UserConversationUpdateConfiguration,
     UserDelay,
+    UserDelayConfiguration,
     UserSays,
+    UserSaysConfiguration,
     UserTyping,
+    UserTypingConfiguration,
 } from './testActions';
-import { AssertCondition } from './actions';
-import { TestScript } from './testScript';
-import { UserTokenBasicMock } from './userTokenMocks';
-import { NonFunctionKeys } from 'utility-types';
+import { AssertCondition, AssertConditionConfiguration } from './actions';
+import { TestScript, TestScriptConfiguration } from './testScript';
+import { UserTokenBasicMock, UserTokenBasicMockConfiguration } from './userTokenMocks';
 
 type Type<T> = {
     $kind: string;
@@ -38,19 +45,17 @@ export class AdaptiveTestComponentRegistration extends ComponentRegistration imp
 
     public constructor() {
         super();
-        this._addDeclarativeType<AssertCondition, NonFunctionKeys<AssertCondition>>(AssertCondition);
-        this._addDeclarativeType<AssertReply, NonFunctionKeys<AssertReply>>(AssertReply);
-        this._addDeclarativeType<AssertReplyActivity, NonFunctionKeys<AssertReplyActivity>>(AssertReplyActivity);
-        this._addDeclarativeType<AssertReplyOneOf, NonFunctionKeys<AssertReplyOneOf>>(AssertReplyOneOf);
-        this._addDeclarativeType<UserActivity, NonFunctionKeys<UserActivity>>(UserActivity);
-        this._addDeclarativeType<UserConversationUpdate, NonFunctionKeys<UserConversationUpdate>>(
-            UserConversationUpdate
-        );
-        this._addDeclarativeType<UserDelay, NonFunctionKeys<UserDelay>>(UserDelay);
-        this._addDeclarativeType<UserSays, NonFunctionKeys<UserDelay>>(UserSays);
-        this._addDeclarativeType<UserTyping, NonFunctionKeys<UserTyping>>(UserTyping);
-        this._addDeclarativeType<TestScript, NonFunctionKeys<TestScript>>(TestScript);
-        this._addDeclarativeType<UserTokenBasicMock, NonFunctionKeys<UserTokenBasicMock>>(UserTokenBasicMock);
+        this._addDeclarativeType<AssertCondition, AssertConditionConfiguration>(AssertCondition);
+        this._addDeclarativeType<AssertReply, AssertReplyConfiguration>(AssertReply);
+        this._addDeclarativeType<AssertReplyActivity, AssertReplyActivityConfiguration>(AssertReplyActivity);
+        this._addDeclarativeType<AssertReplyOneOf, AssertReplyOneOfConfiguration>(AssertReplyOneOf);
+        this._addDeclarativeType<UserActivity, UserActivityConfiguration>(UserActivity);
+        this._addDeclarativeType<UserConversationUpdate, UserConversationUpdateConfiguration>(UserConversationUpdate);
+        this._addDeclarativeType<UserDelay, UserDelayConfiguration>(UserDelay);
+        this._addDeclarativeType<UserSays, UserSaysConfiguration>(UserSays);
+        this._addDeclarativeType<UserTyping, UserTypingConfiguration>(UserTyping);
+        this._addDeclarativeType<TestScript, TestScriptConfiguration>(TestScript);
+        this._addDeclarativeType<UserTokenBasicMock, UserTokenBasicMockConfiguration>(UserTokenBasicMock);
     }
 
     public getDeclarativeTypes(_resourceExplorer: ResourceExplorer): DeclarativeType[] {

@@ -6,14 +6,26 @@
  * Licensed under the MIT License.
  */
 import {
-    StringExpression,
     BoolExpression,
     BoolExpressionConverter,
+    Expression,
+    StringExpression,
     StringExpressionConverter,
 } from 'adaptive-expressions';
-import { Converter, ConverterFactory, Dialog, DialogContext, DialogTurnResult } from 'botbuilder-dialogs';
-import { NonFunctionKeys } from 'utility-types';
+import {
+    Converter,
+    ConverterFactory,
+    Dialog,
+    DialogConfiguration,
+    DialogContext,
+    DialogTurnResult,
+} from 'botbuilder-dialogs';
 import { ActionScopeResult, ActionScopeCommands } from './actionScope';
+
+export interface GotoActionConfiguration extends DialogConfiguration {
+    actionId?: string | Expression | StringExpression;
+    disabled?: boolean | string | Expression | BoolExpression;
+}
 
 export class GotoAction<O extends object = {}> extends Dialog<O> {
     public static $kind = 'Microsoft.GotoAction';
@@ -36,7 +48,7 @@ export class GotoAction<O extends object = {}> extends Dialog<O> {
      */
     public disabled?: BoolExpression;
 
-    public getConverter(property: NonFunctionKeys<GotoAction>): Converter | ConverterFactory {
+    public getConverter(property: keyof GotoActionConfiguration): Converter | ConverterFactory {
         switch (property) {
             case 'actionId':
                 return new StringExpressionConverter();

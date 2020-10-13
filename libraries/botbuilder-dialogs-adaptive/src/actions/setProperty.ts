@@ -6,16 +6,29 @@
  * Licensed under the MIT License.
  */
 import {
-    ValueExpression,
-    StringExpression,
     BoolExpression,
     BoolExpressionConverter,
+    Expression,
+    StringExpression,
     StringExpressionConverter,
+    ValueExpression,
     ValueExpressionConverter,
 } from 'adaptive-expressions';
-import { Converter, ConverterFactory, Dialog, DialogContext, DialogTurnResult } from 'botbuilder-dialogs';
-import { NonFunctionKeys } from 'utility-types';
+import {
+    Converter,
+    ConverterFactory,
+    Dialog,
+    DialogConfiguration,
+    DialogContext,
+    DialogTurnResult,
+} from 'botbuilder-dialogs';
 import { replaceJsonRecursively } from '../jsonExtensions';
+
+export interface SetPropertyConfiguration extends DialogConfiguration {
+    property?: string | Expression | StringExpression;
+    value?: unknown | ValueExpression;
+    disabled?: boolean | string | Expression | BoolExpression;
+}
 
 export class SetProperty<O extends object = {}> extends Dialog<O> {
     public static $kind = 'Microsoft.SetProperty';
@@ -47,7 +60,7 @@ export class SetProperty<O extends object = {}> extends Dialog<O> {
      */
     public disabled?: BoolExpression;
 
-    public getConverter(property: NonFunctionKeys<SetProperty>): Converter | ConverterFactory {
+    public getConverter(property: keyof SetPropertyConfiguration): Converter | ConverterFactory {
         switch (property) {
             case 'property':
                 return new StringExpressionConverter();

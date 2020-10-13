@@ -13,30 +13,48 @@ import {
     DeclarativeType,
     CustomDeserializer,
 } from 'botbuilder-dialogs-declarative';
-import { NonFunctionKeys } from 'utility-types';
-import { AdaptiveDialog } from './adaptiveDialog';
+import { AdaptiveDialog, AdaptiveDialogConfiguration } from './adaptiveDialog';
 import {
     BeginDialog,
+    BeginDialogConfiguration,
     BeginSkill,
+    BeginSkillConfiguration,
     BreakLoop,
+    BreakLoopConfiguration,
     CancelAllDialogs,
     CancelDialog,
+    CancelAllDialogsBaseConfiguration,
     ContinueLoop,
+    ContinueLoopConfiguration,
     DeleteActivity,
+    DeleteActivityConfiguration,
     DeleteProperties,
+    DeletePropertiesConfiguration,
     DeleteProperty,
+    DeletePropertyConfiguration,
     DynamicBeginDialog,
     EditActions,
+    EditActionsConfiguration,
     EditArray,
+    EditArrayConfiguration,
     EmitEvent,
+    EmitEventConfiguration,
     EndDialog,
+    EndDialogConfiguration,
     EndTurn,
+    EndTurnConfiguration,
     ForEach,
+    ForEachConfiguration,
     ForEachPage,
+    ForEachPageConfiguration,
     GetActivityMembers,
+    GetActivityMembersConfiguration,
     GetConversationMembers,
+    GetConversationMembersConfiguration,
     GotoAction,
+    GotoActionConfiguration,
     HttpRequest,
+    HttpRequestConfiguration,
     IfCondition,
     LogAction,
     RepeatDialog,
@@ -49,24 +67,44 @@ import {
     TelemetryTrackEventAction,
     TraceActivity,
     UpdateActivity,
+    IfConditionConfiguration,
+    LogActionConfiguration,
+    RepeatDialogConfiguration,
+    ReplaceDialogConfiguration,
+    SendActivityConfiguration,
+    SetPropertiesConfiguration,
+    SetPropertyConfiguration,
+    SignOutUserConfiguration,
+    SwitchConditionConfiguration,
+    TelemetryTrackEventActionConfiguration,
+    TraceActivityConfiguration,
+    UpdateActivityConfiguration,
 } from './actions';
 import {
     OnActivity,
+    OnActivityConfiguration,
     OnAssignEntity,
+    OnAssignEntityConfiguration,
     OnBeginDialog,
     OnCancelDialog,
     OnChooseEntity,
+    OnChooseEntityConfiguration,
     OnChooseIntent,
+    OnChooseIntentConfiguration,
     OnChooseProperty,
+    OnChoosePropertyConfiguration,
     OnCondition,
+    OnConditionConfiguration,
     OnConversationUpdateActivity,
     OnDialogEvent,
+    OnDialogEventConfiguration,
     OnEndOfActions,
     OnEndOfConversationActivity,
     OnError,
     OnEventActivity,
     OnHandoffActivity,
     OnIntent,
+    OnIntentConfiguration,
     OnInvokeActivity,
     OnMessageActivity,
     OnMessageDeleteActivity,
@@ -79,18 +117,27 @@ import {
 } from './conditions';
 import {
     Ask,
+    AskConfiguration,
     AttachmentInput,
+    AttachmentInputConfiguration,
     ChoiceInput,
+    ChoiceInputConfiguration,
     ConfirmInput,
+    ConfirmInputConfiguration,
     DateTimeInput,
+    DateTimeInputConfiguration,
     NumberInput,
+    NumberInputConfiguration,
     OAuthInput,
+    OAuthInputConfiguration,
     TextInput,
+    TextInputConfiguration,
 } from './input';
 import {
     AgeEntityRecognizer,
     ConfirmationEntityRecognizer,
     CrossTrainedRecognizerSet,
+    CrossTrainedRecognizerSetConfiguration,
     CurrencyEntityRecognizer,
     DateTimeEntityRecognizer,
     DimensionEntityRecognizer,
@@ -100,29 +147,43 @@ import {
     IpEntityRecognizer,
     MentionEntityRecognizer,
     MultiLanguageRecognizer,
+    MultiLanguageRecognizerConfiguration,
     NumberEntityRecognizer,
     OrdinalEntityRecognizer,
     PercentageEntityRecognizer,
     PhoneNumberEntityRecognizer,
     RecognizerSet,
+    RecognizerSetConfiguration,
     RegexEntityRecognizer,
+    RegexEntityRecognizerConfiguration,
     RegexRecognizer,
+    RegexRecognizerConfiguration,
     TemperatureEntityRecognizer,
     UrlEntityRecognizer,
 } from './recognizers';
-import { LuisAdaptiveRecognizer } from './luis';
-import { QnAMakerRecognizer } from './qnaMaker';
-import { ResourceMultiLanguageGenerator, TemplateEngineLanguageGenerator } from './generators';
-import { ConditionalSelector, FirstSelector, MostSpecificSelector, RandomSelector, TrueSelector } from './selectors';
+import { LuisAdaptiveRecognizer, LuisAdaptiveRecognizerConfiguration } from './luis';
+import { QnAMakerRecognizer, QnAMakerRecognizerConfiguration } from './qnaMaker';
+import {
+    ResourceMultiLanguageGenerator,
+    ResourceMultiLanguageGeneratorConfiguration,
+    TemplateEngineLanguageGenerator,
+    TemplateEngineLanguageGeneratorConfiguration,
+} from './generators';
+import {
+    ConditionalSelector,
+    ConditionalSelectorConfiguration,
+    FirstSelector,
+    MostSpecificSelector,
+    MostSpecificSelectorConfiguration,
+    RandomSelector,
+    TrueSelector,
+} from './selectors';
 import { CustomDialogLoader } from './customDialogLoader';
+import { TriggerSelectorConfiguration } from './triggerSelector';
 
 type Type<T> = {
     $kind: string;
     new (...args: unknown[]): T;
-};
-
-type Configuration<T> = {
-    [K in keyof Partial<T>]: unknown;
 };
 
 export class AdaptiveComponentRegistration extends ComponentRegistration implements ComponentDeclarativeTypes {
@@ -132,160 +193,124 @@ export class AdaptiveComponentRegistration extends ComponentRegistration impleme
         super();
 
         // AdaptiveDialog
-        this._addDeclarativeType<AdaptiveDialog, NonFunctionKeys<AdaptiveDialog>>(AdaptiveDialog);
+        this._addDeclarativeType<AdaptiveDialog, AdaptiveDialogConfiguration>(AdaptiveDialog);
 
         // Actions
-        this._addDeclarativeType<BeginDialog, NonFunctionKeys<BeginDialog>>(BeginDialog);
-        this._addDeclarativeType<BeginSkill, NonFunctionKeys<BeginSkill>>(BeginSkill);
-        this._addDeclarativeType<BreakLoop, NonFunctionKeys<BreakLoop>>(BreakLoop);
-        this._addDeclarativeType<CancelAllDialogs, NonFunctionKeys<CancelAllDialogs>>(CancelAllDialogs);
-        this._addDeclarativeType<CancelDialog, NonFunctionKeys<CancelDialog>>(CancelDialog);
-        this._addDeclarativeType<ContinueLoop, NonFunctionKeys<ContinueLoop>>(ContinueLoop);
-        this._addDeclarativeType<DeleteActivity, NonFunctionKeys<DeleteActivity>>(DeleteActivity);
-        this._addDeclarativeType<DeleteProperties, NonFunctionKeys<DeleteProperties>>(DeleteProperties);
-        this._addDeclarativeType<DeleteProperty, NonFunctionKeys<DeleteProperty>>(DeleteProperty);
-        this._addDeclarativeType<EditActions, NonFunctionKeys<EditActions>>(EditActions);
-        this._addDeclarativeType<EditArray, NonFunctionKeys<EditArray>>(EditArray);
-        this._addDeclarativeType<EmitEvent, NonFunctionKeys<EmitEvent>>(EmitEvent);
-        this._addDeclarativeType<EndDialog, NonFunctionKeys<EndDialog>>(EndDialog);
-        this._addDeclarativeType<EndTurn, NonFunctionKeys<EndTurn>>(EndTurn);
-        this._addDeclarativeType<ForEach, NonFunctionKeys<ForEach>>(ForEach);
-        this._addDeclarativeType<ForEachPage, NonFunctionKeys<ForEachPage>>(ForEachPage);
-        this._addDeclarativeType<GetActivityMembers, NonFunctionKeys<GetActivityMembers>>(GetActivityMembers);
-        this._addDeclarativeType<GetConversationMembers, NonFunctionKeys<GetConversationMembers>>(
-            GetConversationMembers
-        );
-        this._addDeclarativeType<GotoAction, NonFunctionKeys<GotoAction>>(GotoAction);
-        this._addDeclarativeType<HttpRequest, NonFunctionKeys<HttpRequest>>(HttpRequest);
-        this._addDeclarativeType<IfCondition, NonFunctionKeys<IfCondition>>(IfCondition);
-        this._addDeclarativeType<LogAction, NonFunctionKeys<LogAction>>(LogAction);
-        this._addDeclarativeType<RepeatDialog, NonFunctionKeys<RepeatDialog>>(RepeatDialog);
-        this._addDeclarativeType<ReplaceDialog, NonFunctionKeys<ReplaceDialog>>(ReplaceDialog);
-        this._addDeclarativeType<SendActivity, NonFunctionKeys<SendActivity>>(SendActivity);
-        this._addDeclarativeType<SetProperties, NonFunctionKeys<SetProperties>>(SetProperties);
-        this._addDeclarativeType<SetProperty, NonFunctionKeys<SetProperty>>(SetProperty);
-        this._addDeclarativeType<SignOutUser, NonFunctionKeys<SignOutUser>>(SignOutUser);
-        this._addDeclarativeType<SwitchCondition, NonFunctionKeys<SwitchCondition>>(SwitchCondition);
-        this._addDeclarativeType<TelemetryTrackEventAction, NonFunctionKeys<TelemetryTrackEventAction>>(
+        this._addDeclarativeType<BeginDialog, BeginDialogConfiguration>(BeginDialog);
+        this._addDeclarativeType<BeginSkill, BeginSkillConfiguration>(BeginSkill);
+        this._addDeclarativeType<BreakLoop, BreakLoopConfiguration>(BreakLoop);
+        this._addDeclarativeType<CancelAllDialogs, CancelAllDialogsBaseConfiguration>(CancelAllDialogs);
+        this._addDeclarativeType<CancelDialog, CancelAllDialogsBaseConfiguration>(CancelDialog);
+        this._addDeclarativeType<ContinueLoop, ContinueLoopConfiguration>(ContinueLoop);
+        this._addDeclarativeType<DeleteActivity, DeleteActivityConfiguration>(DeleteActivity);
+        this._addDeclarativeType<DeleteProperties, DeletePropertiesConfiguration>(DeleteProperties);
+        this._addDeclarativeType<DeleteProperty, DeletePropertyConfiguration>(DeleteProperty);
+        this._addDeclarativeType<EditActions, EditActionsConfiguration>(EditActions);
+        this._addDeclarativeType<EditArray, EditArrayConfiguration>(EditArray);
+        this._addDeclarativeType<EmitEvent, EmitEventConfiguration>(EmitEvent);
+        this._addDeclarativeType<EndDialog, EndDialogConfiguration>(EndDialog);
+        this._addDeclarativeType<EndTurn, EndTurnConfiguration>(EndTurn);
+        this._addDeclarativeType<ForEach, ForEachConfiguration>(ForEach);
+        this._addDeclarativeType<ForEachPage, ForEachPageConfiguration>(ForEachPage);
+        this._addDeclarativeType<GetActivityMembers, GetActivityMembersConfiguration>(GetActivityMembers);
+        this._addDeclarativeType<GetConversationMembers, GetConversationMembersConfiguration>(GetConversationMembers);
+        this._addDeclarativeType<GotoAction, GotoActionConfiguration>(GotoAction);
+        this._addDeclarativeType<HttpRequest, HttpRequestConfiguration>(HttpRequest);
+        this._addDeclarativeType<IfCondition, IfConditionConfiguration>(IfCondition);
+        this._addDeclarativeType<LogAction, LogActionConfiguration>(LogAction);
+        this._addDeclarativeType<RepeatDialog, RepeatDialogConfiguration>(RepeatDialog);
+        this._addDeclarativeType<ReplaceDialog, ReplaceDialogConfiguration>(ReplaceDialog);
+        this._addDeclarativeType<SendActivity, SendActivityConfiguration>(SendActivity);
+        this._addDeclarativeType<SetProperties, SetPropertiesConfiguration>(SetProperties);
+        this._addDeclarativeType<SetProperty, SetPropertyConfiguration>(SetProperty);
+        this._addDeclarativeType<SignOutUser, SignOutUserConfiguration>(SignOutUser);
+        this._addDeclarativeType<SwitchCondition, SwitchConditionConfiguration>(SwitchCondition);
+        this._addDeclarativeType<TelemetryTrackEventAction, TelemetryTrackEventActionConfiguration>(
             TelemetryTrackEventAction
         );
-        this._addDeclarativeType<TraceActivity, NonFunctionKeys<TraceActivity>>(TraceActivity);
-        this._addDeclarativeType<UpdateActivity, NonFunctionKeys<UpdateActivity>>(UpdateActivity);
+        this._addDeclarativeType<TraceActivity, TraceActivityConfiguration>(TraceActivity);
+        this._addDeclarativeType<UpdateActivity, UpdateActivityConfiguration>(UpdateActivity);
 
         // Trigger conditions
-        this._addDeclarativeType<OnActivity, NonFunctionKeys<OnActivity>>(OnActivity);
-        this._addDeclarativeType<OnAssignEntity, NonFunctionKeys<OnAssignEntity>>(OnAssignEntity);
-        this._addDeclarativeType<OnBeginDialog, NonFunctionKeys<OnBeginDialog>>(OnBeginDialog);
-        this._addDeclarativeType<OnCancelDialog, NonFunctionKeys<OnCancelDialog>>(OnCancelDialog);
-        this._addDeclarativeType<OnChooseEntity, NonFunctionKeys<OnChooseEntity>>(OnChooseEntity);
-        this._addDeclarativeType<OnChooseIntent, NonFunctionKeys<OnChooseIntent>>(OnChooseIntent);
-        this._addDeclarativeType<OnChooseProperty, NonFunctionKeys<OnChooseProperty>>(OnChooseProperty);
-        this._addDeclarativeType<OnCondition, NonFunctionKeys<OnCondition>>(OnCondition);
-        this._addDeclarativeType<OnConversationUpdateActivity, NonFunctionKeys<OnConversationUpdateActivity>>(
-            OnConversationUpdateActivity
-        );
-        this._addDeclarativeType<OnDialogEvent, NonFunctionKeys<OnDialogEvent>>(OnDialogEvent);
-        this._addDeclarativeType<OnEndOfActions, NonFunctionKeys<OnEndOfActions>>(OnEndOfActions);
-        this._addDeclarativeType<OnEndOfConversationActivity, NonFunctionKeys<OnEndOfConversationActivity>>(
-            OnEndOfConversationActivity
-        );
-        this._addDeclarativeType<OnError, NonFunctionKeys<OnError>>(OnError);
-        this._addDeclarativeType<OnEventActivity, NonFunctionKeys<OnEventActivity>>(OnEventActivity);
-        this._addDeclarativeType<OnHandoffActivity, NonFunctionKeys<OnHandoffActivity>>(OnHandoffActivity);
-        this._addDeclarativeType<OnIntent, NonFunctionKeys<OnIntent>>(OnIntent);
-        this._addDeclarativeType<OnInvokeActivity, NonFunctionKeys<OnInvokeActivity>>(OnInvokeActivity);
-        this._addDeclarativeType<OnMessageActivity, NonFunctionKeys<OnMessageActivity>>(OnMessageActivity);
-        this._addDeclarativeType<OnMessageDeleteActivity, NonFunctionKeys<OnMessageDeleteActivity>>(
-            OnMessageDeleteActivity
-        );
-        this._addDeclarativeType<OnMessageReactionActivity, NonFunctionKeys<OnMessageReactionActivity>>(
-            OnMessageReactionActivity
-        );
-        this._addDeclarativeType<OnMessageUpdateActivity, NonFunctionKeys<OnMessageUpdateActivity>>(
-            OnMessageUpdateActivity
-        );
-        this._addDeclarativeType<OnQnAMatch, NonFunctionKeys<OnQnAMatch>>(OnQnAMatch);
-        this._addDeclarativeType<OnRepromptDialog, NonFunctionKeys<OnRepromptDialog>>(OnRepromptDialog);
-        this._addDeclarativeType<OnTypingActivity, NonFunctionKeys<OnTypingActivity>>(OnTypingActivity);
-        this._addDeclarativeType<OnUnknownIntent, NonFunctionKeys<OnUnknownIntent>>(OnUnknownIntent);
+        this._addDeclarativeType<OnActivity, OnActivityConfiguration>(OnActivity);
+        this._addDeclarativeType<OnAssignEntity, OnAssignEntityConfiguration>(OnAssignEntity);
+        this._addDeclarativeType<OnBeginDialog, OnDialogEventConfiguration>(OnBeginDialog);
+        this._addDeclarativeType<OnCancelDialog, OnDialogEventConfiguration>(OnCancelDialog);
+        this._addDeclarativeType<OnChooseEntity, OnChooseEntityConfiguration>(OnChooseEntity);
+        this._addDeclarativeType<OnChooseIntent, OnChooseIntentConfiguration>(OnChooseIntent);
+        this._addDeclarativeType<OnChooseProperty, OnChoosePropertyConfiguration>(OnChooseProperty);
+        this._addDeclarativeType<OnCondition, OnConditionConfiguration>(OnCondition);
+        this._addDeclarativeType<OnConversationUpdateActivity, OnActivityConfiguration>(OnConversationUpdateActivity);
+        this._addDeclarativeType<OnDialogEvent, OnDialogEventConfiguration>(OnDialogEvent);
+        this._addDeclarativeType<OnEndOfActions, OnDialogEventConfiguration>(OnEndOfActions);
+        this._addDeclarativeType<OnEndOfConversationActivity, OnActivityConfiguration>(OnEndOfConversationActivity);
+        this._addDeclarativeType<OnError, OnDialogEventConfiguration>(OnError);
+        this._addDeclarativeType<OnEventActivity, OnActivityConfiguration>(OnEventActivity);
+        this._addDeclarativeType<OnHandoffActivity, OnActivityConfiguration>(OnHandoffActivity);
+        this._addDeclarativeType<OnIntent, OnIntentConfiguration>(OnIntent);
+        this._addDeclarativeType<OnInvokeActivity, OnActivityConfiguration>(OnInvokeActivity);
+        this._addDeclarativeType<OnMessageActivity, OnActivityConfiguration>(OnMessageActivity);
+        this._addDeclarativeType<OnMessageDeleteActivity, OnActivityConfiguration>(OnMessageDeleteActivity);
+        this._addDeclarativeType<OnMessageReactionActivity, OnActivityConfiguration>(OnMessageReactionActivity);
+        this._addDeclarativeType<OnMessageUpdateActivity, OnActivityConfiguration>(OnMessageUpdateActivity);
+        this._addDeclarativeType<OnQnAMatch, OnIntentConfiguration>(OnQnAMatch);
+        this._addDeclarativeType<OnRepromptDialog, OnDialogEventConfiguration>(OnRepromptDialog);
+        this._addDeclarativeType<OnTypingActivity, OnActivityConfiguration>(OnTypingActivity);
+        this._addDeclarativeType<OnUnknownIntent, OnDialogEventConfiguration>(OnUnknownIntent);
 
         // Inputs
-        this._addDeclarativeType<Ask, NonFunctionKeys<Ask>>(Ask);
-        this._addDeclarativeType<AttachmentInput, NonFunctionKeys<AttachmentInput>>(AttachmentInput);
-        this._addDeclarativeType<ChoiceInput, NonFunctionKeys<ChoiceInput>>(ChoiceInput);
-        this._addDeclarativeType<ConfirmInput, NonFunctionKeys<ConfirmInput>>(ConfirmInput);
-        this._addDeclarativeType<DateTimeInput, NonFunctionKeys<DateTimeInput>>(DateTimeInput);
-        this._addDeclarativeType<NumberInput, NonFunctionKeys<NumberInput>>(NumberInput);
-        this._addDeclarativeType<OAuthInput, NonFunctionKeys<OAuthInput>>(OAuthInput);
-        this._addDeclarativeType<TextInput, NonFunctionKeys<TextInput>>(TextInput);
+        this._addDeclarativeType<Ask, AskConfiguration>(Ask);
+        this._addDeclarativeType<AttachmentInput, AttachmentInputConfiguration>(AttachmentInput);
+        this._addDeclarativeType<ChoiceInput, ChoiceInputConfiguration>(ChoiceInput);
+        this._addDeclarativeType<ConfirmInput, ConfirmInputConfiguration>(ConfirmInput);
+        this._addDeclarativeType<DateTimeInput, DateTimeInputConfiguration>(DateTimeInput);
+        this._addDeclarativeType<NumberInput, NumberInputConfiguration>(NumberInput);
+        this._addDeclarativeType<OAuthInput, OAuthInputConfiguration>(OAuthInput);
+        this._addDeclarativeType<TextInput, TextInputConfiguration>(TextInput);
 
         // Recognizers
-        this._addDeclarativeType<LuisAdaptiveRecognizer, NonFunctionKeys<LuisAdaptiveRecognizer>>(
-            LuisAdaptiveRecognizer
-        );
-        this._addDeclarativeType<CrossTrainedRecognizerSet, NonFunctionKeys<CrossTrainedRecognizerSet>>(
+        this._addDeclarativeType<LuisAdaptiveRecognizer, LuisAdaptiveRecognizerConfiguration>(LuisAdaptiveRecognizer);
+        this._addDeclarativeType<CrossTrainedRecognizerSet, CrossTrainedRecognizerSetConfiguration>(
             CrossTrainedRecognizerSet
         );
-        this._addDeclarativeType<MultiLanguageRecognizer, NonFunctionKeys<MultiLanguageRecognizer>>(
+        this._addDeclarativeType<MultiLanguageRecognizer, MultiLanguageRecognizerConfiguration>(
             MultiLanguageRecognizer
         );
-        this._addDeclarativeType<RecognizerSet, NonFunctionKeys<RecognizerSet>>(RecognizerSet);
-        this._addDeclarativeType<RegexRecognizer, NonFunctionKeys<RegexRecognizer>>(RegexRecognizer);
-        this._addDeclarativeType<AgeEntityRecognizer, NonFunctionKeys<AgeEntityRecognizer>>(AgeEntityRecognizer);
-        this._addDeclarativeType<ConfirmationEntityRecognizer, NonFunctionKeys<ConfirmationEntityRecognizer>>(
-            ConfirmationEntityRecognizer
-        );
-        this._addDeclarativeType<CurrencyEntityRecognizer, NonFunctionKeys<CurrencyEntityRecognizer>>(
-            CurrencyEntityRecognizer
-        );
-        this._addDeclarativeType<DateTimeEntityRecognizer, NonFunctionKeys<DateTimeEntityRecognizer>>(
-            DateTimeEntityRecognizer
-        );
-        this._addDeclarativeType<DimensionEntityRecognizer, NonFunctionKeys<DimensionEntityRecognizer>>(
-            DimensionEntityRecognizer
-        );
-        this._addDeclarativeType<EmailEntityRecognizer, NonFunctionKeys<EmailEntityRecognizer>>(EmailEntityRecognizer);
-        this._addDeclarativeType<GuidEntityRecognizer, NonFunctionKeys<GuidEntityRecognizer>>(GuidEntityRecognizer);
-        this._addDeclarativeType<HashtagEntityRecognizer, NonFunctionKeys<HashtagEntityRecognizer>>(
-            HashtagEntityRecognizer
-        );
-        this._addDeclarativeType<IpEntityRecognizer, NonFunctionKeys<IpEntityRecognizer>>(IpEntityRecognizer);
-        this._addDeclarativeType<MentionEntityRecognizer, NonFunctionKeys<MentionEntityRecognizer>>(
-            MentionEntityRecognizer
-        );
-        this._addDeclarativeType<NumberEntityRecognizer, NonFunctionKeys<NumberEntityRecognizer>>(
-            NumberEntityRecognizer
-        );
-        this._addDeclarativeType<OrdinalEntityRecognizer, NonFunctionKeys<OrdinalEntityRecognizer>>(
-            OrdinalEntityRecognizer
-        );
-        this._addDeclarativeType<PercentageEntityRecognizer, NonFunctionKeys<PercentageEntityRecognizer>>(
-            PercentageEntityRecognizer
-        );
-        this._addDeclarativeType<PhoneNumberEntityRecognizer, NonFunctionKeys<PhoneNumberEntityRecognizer>>(
-            PhoneNumberEntityRecognizer
-        );
-        this._addDeclarativeType<RegexEntityRecognizer, NonFunctionKeys<RegexEntityRecognizer>>(RegexEntityRecognizer);
-        this._addDeclarativeType<TemperatureEntityRecognizer, NonFunctionKeys<TemperatureEntityRecognizer>>(
-            TemperatureEntityRecognizer
-        );
-        this._addDeclarativeType<UrlEntityRecognizer, NonFunctionKeys<UrlEntityRecognizer>>(UrlEntityRecognizer);
-        this._addDeclarativeType<QnAMakerRecognizer, NonFunctionKeys<QnAMakerRecognizer>>(QnAMakerRecognizer);
+        this._addDeclarativeType<RecognizerSet, RecognizerSetConfiguration>(RecognizerSet);
+        this._addDeclarativeType<RegexRecognizer, RegexRecognizerConfiguration>(RegexRecognizer);
+        this._addDeclarativeType<AgeEntityRecognizer, unknown>(AgeEntityRecognizer);
+        this._addDeclarativeType<ConfirmationEntityRecognizer, unknown>(ConfirmationEntityRecognizer);
+        this._addDeclarativeType<CurrencyEntityRecognizer, unknown>(CurrencyEntityRecognizer);
+        this._addDeclarativeType<DateTimeEntityRecognizer, unknown>(DateTimeEntityRecognizer);
+        this._addDeclarativeType<DimensionEntityRecognizer, unknown>(DimensionEntityRecognizer);
+        this._addDeclarativeType<EmailEntityRecognizer, unknown>(EmailEntityRecognizer);
+        this._addDeclarativeType<GuidEntityRecognizer, unknown>(GuidEntityRecognizer);
+        this._addDeclarativeType<HashtagEntityRecognizer, unknown>(HashtagEntityRecognizer);
+        this._addDeclarativeType<IpEntityRecognizer, unknown>(IpEntityRecognizer);
+        this._addDeclarativeType<MentionEntityRecognizer, unknown>(MentionEntityRecognizer);
+        this._addDeclarativeType<NumberEntityRecognizer, unknown>(NumberEntityRecognizer);
+        this._addDeclarativeType<OrdinalEntityRecognizer, unknown>(OrdinalEntityRecognizer);
+        this._addDeclarativeType<PercentageEntityRecognizer, unknown>(PercentageEntityRecognizer);
+        this._addDeclarativeType<PhoneNumberEntityRecognizer, unknown>(PhoneNumberEntityRecognizer);
+        this._addDeclarativeType<RegexEntityRecognizer, RegexEntityRecognizerConfiguration>(RegexEntityRecognizer);
+        this._addDeclarativeType<TemperatureEntityRecognizer, unknown>(TemperatureEntityRecognizer);
+        this._addDeclarativeType<UrlEntityRecognizer, unknown>(UrlEntityRecognizer);
+        this._addDeclarativeType<QnAMakerRecognizer, QnAMakerRecognizerConfiguration>(QnAMakerRecognizer);
 
         // Generators
-        this._addDeclarativeType<TemplateEngineLanguageGenerator, NonFunctionKeys<TemplateEngineLanguageGenerator>>(
+        this._addDeclarativeType<TemplateEngineLanguageGenerator, TemplateEngineLanguageGeneratorConfiguration>(
             TemplateEngineLanguageGenerator
         );
-        this._addDeclarativeType<ResourceMultiLanguageGenerator, NonFunctionKeys<ResourceMultiLanguageGenerator>>(
+        this._addDeclarativeType<ResourceMultiLanguageGenerator, ResourceMultiLanguageGeneratorConfiguration>(
             ResourceMultiLanguageGenerator
         );
 
         // Selectors
-        this._addDeclarativeType<ConditionalSelector, NonFunctionKeys<ConditionalSelector>>(ConditionalSelector);
-        this._addDeclarativeType<FirstSelector, NonFunctionKeys<FirstSelector>>(FirstSelector);
-        this._addDeclarativeType<RandomSelector, NonFunctionKeys<RandomSelector>>(RandomSelector);
-        this._addDeclarativeType<TrueSelector, NonFunctionKeys<TrueSelector>>(TrueSelector);
-        this._addDeclarativeType<MostSpecificSelector, NonFunctionKeys<MostSpecificSelector>>(MostSpecificSelector);
+        this._addDeclarativeType<ConditionalSelector, ConditionalSelectorConfiguration>(ConditionalSelector);
+        this._addDeclarativeType<FirstSelector, TriggerSelectorConfiguration>(FirstSelector);
+        this._addDeclarativeType<RandomSelector, TriggerSelectorConfiguration>(RandomSelector);
+        this._addDeclarativeType<TrueSelector, TriggerSelectorConfiguration>(TrueSelector);
+        this._addDeclarativeType<MostSpecificSelector, MostSpecificSelectorConfiguration>(MostSpecificSelector);
     }
 
     public getDeclarativeTypes(resourceExplorer: ResourceExplorer): DeclarativeType[] {

@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 
-import { IntExpression, ExpressionParser, BoolExpression, BoolExpressionConverter } from 'adaptive-expressions';
+import { IntExpression, ExpressionParser, BoolExpression, BoolExpressionConverter, Expression } from 'adaptive-expressions';
 import {
     Activity,
     ActivityTypes,
@@ -20,6 +20,7 @@ import {
     Converter,
     ConverterFactory,
     Dialog,
+    DialogConfiguration,
     DialogContainer,
     DialogContext,
     DialogDependencies,
@@ -32,7 +33,6 @@ import {
     DialogTurnStatus,
     TurnPath,
 } from 'botbuilder-dialogs';
-import { NonFunctionKeys } from 'utility-types';
 import { ActionContext } from './actionContext';
 import { AdaptiveDialogState } from './adaptiveDialogState';
 import { AdaptiveEvents } from './adaptiveEvents';
@@ -48,6 +48,16 @@ import { ValueRecognizer } from './recognizers/valueRecognizer';
 import { SchemaHelper } from './schemaHelper';
 import { FirstSelector, MostSpecificSelector } from './selectors';
 import { TriggerSelector } from './triggerSelector';
+
+export interface AdaptiveDialogConfiguration extends DialogConfiguration {
+    recognizer?: string | Recognizer;
+    generator?: string | LanguageGenerator;
+    triggers?: OnCondition[];
+    autoEndDialog?: boolean | string | Expression | BoolExpression;
+    selector?: TriggerSelector;
+    defaultResultProperty?: string;
+    schema?: unknown;
+}
 
 export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
     public static $kind = 'Microsoft.AdaptiveDialog';
@@ -126,12 +136,12 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
         return this.dialogSchema ? this.dialogSchema.schema : undefined;
     }
 
-    public getConverter(property: NonFunctionKeys<AdaptiveDialog>): Converter | ConverterFactory {
+    public getConverter(property: keyof AdaptiveDialogConfiguration): Converter | ConverterFactory {
         switch (property) {
-            case 'generator':
-                return new LanguageGeneratorConverter();
             case 'recognizer':
                 return RecognizerConverter;
+            case 'generator':
+                return new LanguageGeneratorConverter();
             case 'autoEndDialog':
                 return new BoolExpressionConverter();
             default:

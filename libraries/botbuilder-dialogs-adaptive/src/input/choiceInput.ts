@@ -8,6 +8,7 @@
 import {
     EnumExpression,
     EnumExpressionConverter,
+    Expression,
     ObjectExpression,
     ObjectExpressionConverter,
     StringExpression,
@@ -27,8 +28,7 @@ import {
     ModelResult,
     recognizeChoices,
 } from 'botbuilder-dialogs';
-import { NonFunctionKeys } from 'utility-types';
-import { InputDialog, InputState } from './inputDialog';
+import { InputDialog, InputDialogConfiguration, InputState } from './inputDialog';
 import { ChoiceSet } from './choiceSet';
 
 export enum ChoiceOutputFormat {
@@ -38,6 +38,15 @@ export enum ChoiceOutputFormat {
 
 export interface ChoiceInputOptions {
     choices: Choice[];
+}
+
+export interface ChoiceInputConfiguration extends InputDialogConfiguration {
+    choices?: ChoiceSet | string | Expression | ObjectExpression<ChoiceSet>;
+    style?: ListStyle | string | Expression | EnumExpression<ListStyle>;
+    defaultLocale?: string | Expression | StringExpression;
+    outputFormat?: ChoiceOutputFormat | string | Expression | EnumExpression<ChoiceOutputFormat>;
+    choiceOptions?: ChoiceFactoryOptions | string | Expression | ObjectExpression<ChoiceFactoryOptions>;
+    recognizerOptions?: FindChoicesOptions | string | Expression | ObjectExpression<FindChoicesOptions>;
 }
 
 export class ChoiceInput extends InputDialog {
@@ -93,7 +102,7 @@ export class ChoiceInput extends InputDialog {
      */
     public recognizerOptions?: ObjectExpression<FindChoicesOptions> = new ObjectExpression();
 
-    public getConverter(property: NonFunctionKeys<ChoiceInput>): Converter | ConverterFactory {
+    public getConverter(property: keyof ChoiceInputConfiguration): Converter | ConverterFactory {
         switch (property) {
             case 'choices':
                 return new ObjectExpressionConverter<ChoiceSet>();

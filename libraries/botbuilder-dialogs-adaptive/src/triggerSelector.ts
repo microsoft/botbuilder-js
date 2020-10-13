@@ -10,6 +10,10 @@ import { Configurable } from 'botbuilder-dialogs';
 import { ActionContext } from './actionContext';
 import { OnCondition } from './conditions';
 
+export interface TriggerSelectorConfiguration {
+    parser?: ExpressionParserInterface;
+}
+
 /**
  * Select the trigger to execute in a given state.
  */

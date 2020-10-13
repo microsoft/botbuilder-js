@@ -6,14 +6,26 @@
  * Licensed under the MIT License.
  */
 import {
-    ValueExpression,
     BoolExpression,
     BoolExpressionConverter,
+    Expression,
+    ValueExpression,
     ValueExpressionConverter,
 } from 'adaptive-expressions';
-import { Converter, ConverterFactory, Dialog, DialogContext, DialogTurnResult } from 'botbuilder-dialogs';
-import { NonFunctionKeys } from 'utility-types';
+import {
+    Converter,
+    ConverterFactory,
+    Dialog,
+    DialogConfiguration,
+    DialogContext,
+    DialogTurnResult,
+} from 'botbuilder-dialogs';
 import { replaceJsonRecursively } from '../jsonExtensions';
+
+export interface EndDialogConfiguration extends DialogConfiguration {
+    value?: unknown | ValueExpression;
+    disabled?: boolean | string | Expression | BoolExpression;
+}
 
 export class EndDialog<O extends object = {}> extends Dialog<O> {
     public static $kind = 'Microsoft.EndDialog';
@@ -40,7 +52,7 @@ export class EndDialog<O extends object = {}> extends Dialog<O> {
      */
     public disabled?: BoolExpression;
 
-    public getConverter(property: NonFunctionKeys<EndDialog>): Converter | ConverterFactory {
+    public getConverter(property: keyof EndDialogConfiguration): Converter | ConverterFactory {
         switch (property) {
             case 'value':
                 return new ValueExpressionConverter();

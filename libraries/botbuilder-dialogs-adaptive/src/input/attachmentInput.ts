@@ -5,15 +5,18 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
+import { EnumExpression, EnumExpressionConverter, Expression } from 'adaptive-expressions';
 import { Attachment } from 'botbuilder-core';
 import { Converter, ConverterFactory, DialogContext } from 'botbuilder-dialogs';
-import { InputDialog, InputState } from './inputDialog';
-import { EnumExpression, EnumExpressionConverter } from 'adaptive-expressions';
-import { NonFunctionKeys } from 'utility-types';
+import { InputDialog, InputDialogConfiguration, InputState } from './inputDialog';
 
 export enum AttachmentOutputFormat {
     all = 'all',
     first = 'first',
+}
+
+export interface AttachmentInputConfiguration extends InputDialogConfiguration {
+    outputFormat?: AttachmentOutputFormat | string | Expression | EnumExpression<AttachmentOutputFormat>;
 }
 
 export class AttachmentInput extends InputDialog {
@@ -23,7 +26,7 @@ export class AttachmentInput extends InputDialog {
         AttachmentOutputFormat.first
     );
 
-    public getConverter(property: NonFunctionKeys<AttachmentInput>): Converter | ConverterFactory {
+    public getConverter(property: keyof AttachmentInputConfiguration): Converter | ConverterFactory {
         switch (property) {
             case 'outputFormat':
                 return new EnumExpressionConverter<AttachmentOutputFormat>(AttachmentOutputFormat);

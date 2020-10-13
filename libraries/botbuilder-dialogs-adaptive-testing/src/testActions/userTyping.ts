@@ -10,6 +10,10 @@ import { TurnContext, ActivityTypes, TestAdapter } from 'botbuilder-core';
 import { Configurable } from 'botbuilder-dialogs';
 import { TestAction } from '../testAction';
 
+export interface UserTypingConfiguration {
+    user?: string;
+}
+
 /**
  * Action to script sending typing activity to the bot.
  */

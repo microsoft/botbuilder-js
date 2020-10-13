@@ -10,7 +10,6 @@ import { ConversationState, MemoryStorage, UserState, TestAdapter } from 'botbui
 import { Configurable, Converter, ConverterFactory, Dialog, DialogManager } from 'botbuilder-dialogs';
 import { LanguageGeneratorExtensions, ResourceExtensions } from 'botbuilder-dialogs-adaptive';
 import { ResourceExplorer } from 'botbuilder-dialogs-declarative';
-import { NonFunctionKeys } from 'utility-types';
 import { TestAction } from './testAction';
 import { UserTokenMock, UserTokenMocksConverter } from './userTokenMocks';
 
@@ -33,6 +32,15 @@ class DialogConverter implements Converter<string, Dialog> {
 
         return undefined;
     }
+}
+
+export interface TestScriptConfiguration {
+    description?: string;
+    dialog?: string | Dialog;
+    locale?: string;
+    userTokenMocks: string[] | UserTokenMock[];
+    script?: TestAction[];
+    enableTrace?: boolean;
 }
 
 /**
@@ -71,7 +79,7 @@ export class TestScript extends Configurable {
      */
     public enableTrace = false;
 
-    public getConverter(property: NonFunctionKeys<TestScript>): Converter | ConverterFactory {
+    public getConverter(property: keyof TestScriptConfiguration): Converter | ConverterFactory {
         switch (property) {
             case 'dialog':
                 return DialogConverter;

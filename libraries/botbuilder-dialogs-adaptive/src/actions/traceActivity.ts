@@ -8,14 +8,29 @@
 import {
     BoolExpression,
     BoolExpressionConverter,
+    Expression,
     StringExpression,
     StringExpressionConverter,
     ValueExpression,
     ValueExpressionConverter,
 } from 'adaptive-expressions';
 import { Activity, ActivityTypes } from 'botbuilder-core';
-import { Converter, ConverterFactory, Dialog, DialogContext, DialogTurnResult } from 'botbuilder-dialogs';
-import { NonFunctionKeys } from 'utility-types';
+import {
+    Converter,
+    ConverterFactory,
+    Dialog,
+    DialogConfiguration,
+    DialogContext,
+    DialogTurnResult,
+} from 'botbuilder-dialogs';
+
+export interface TraceActivityConfiguration extends DialogConfiguration {
+    name?: string | Expression | StringExpression;
+    valueType?: string | Expression | StringExpression;
+    value?: unknown | ValueExpression;
+    label?: string | Expression | StringExpression;
+    disabled?: boolean | string | Expression | BoolExpression;
+}
 
 export class TraceActivity<O extends object = {}> extends Dialog<O> {
     public static $kind = 'Microsoft.TraceActivity';
@@ -63,7 +78,7 @@ export class TraceActivity<O extends object = {}> extends Dialog<O> {
      */
     public disabled?: BoolExpression;
 
-    public getConverter(property: NonFunctionKeys<TraceActivity>): Converter | ConverterFactory {
+    public getConverter(property: keyof TraceActivityConfiguration): Converter | ConverterFactory {
         switch (property) {
             case 'name':
                 return new StringExpressionConverter();

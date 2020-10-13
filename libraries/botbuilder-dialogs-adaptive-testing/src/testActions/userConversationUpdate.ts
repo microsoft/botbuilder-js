@@ -9,6 +9,11 @@
 import { TurnContext, ActivityTypes, ChannelAccount, RoleTypes, TestAdapter } from 'botbuilder-core';
 import { TestAction } from '../testAction';
 
+export interface UserConversationUpdateConfiguration {
+    memebersAdded?: string[];
+    memebersRemoved?: string[];
+}
+
 /**
  * Action to script sending a conversationUpdate activity to the bot.
  */

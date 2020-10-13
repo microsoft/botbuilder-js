@@ -7,10 +7,14 @@
  */
 
 import { DialogContext } from 'botbuilder-dialogs';
-import { MultiLanguageGeneratorBase } from './multiLanguageGeneratorBase';
+import { MultiLanguageGeneratorBase, MultiLanguageGeneratorBaseConfiguration } from './multiLanguageGeneratorBase';
 import { LanguageGenerator } from '../languageGenerator';
 import { LanguageGeneratorManager } from './languageGeneratorManager';
 import { languageGeneratorManagerKey } from '../languageGeneratorExtensions';
+
+export interface ResourceMultiLanguageGeneratorConfiguration extends MultiLanguageGeneratorBaseConfiguration {
+    resourceId?: string;
+}
 
 export class ResourceMultiLanguageGenerator extends MultiLanguageGeneratorBase {
     public static $kind = 'Microsoft.ResourceMultiLanguageGenerator';

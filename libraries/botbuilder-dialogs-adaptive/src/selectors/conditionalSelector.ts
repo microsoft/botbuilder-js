@@ -8,14 +8,20 @@
 import {
     BoolExpression,
     BoolExpressionConverter,
+    Expression,
     ExpressionParser,
     ExpressionParserInterface,
 } from 'adaptive-expressions';
 import { Converter, ConverterFactory } from 'botbuilder-dialogs';
 import { OnCondition } from '../conditions/onCondition';
-import { TriggerSelector } from '../triggerSelector';
+import { TriggerSelector, TriggerSelectorConfiguration } from '../triggerSelector';
 import { ActionContext } from '../actionContext';
-import { NonFunctionKeys } from 'utility-types';
+
+export interface ConditionalSelectorConfiguration extends TriggerSelectorConfiguration {
+    condition?: boolean | string | Expression | BoolExpression;
+    ifTrue?: TriggerSelector;
+    ifFalse?: TriggerSelector;
+}
 
 /**
  * Select between two rule selectors based on a condition.
@@ -46,7 +52,7 @@ export class ConditionalSelector extends TriggerSelector {
      */
     public parser: ExpressionParserInterface = new ExpressionParser();
 
-    public getConverter(property: NonFunctionKeys<ConditionalSelector>): Converter | ConverterFactory {
+    public getConverter(property: keyof ConditionalSelectorConfiguration): Converter | ConverterFactory {
         switch (property) {
             case 'condition':
                 return new BoolExpressionConverter();

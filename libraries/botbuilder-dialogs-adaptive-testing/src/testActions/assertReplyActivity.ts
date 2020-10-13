@@ -10,6 +10,12 @@ import { ExpressionParser } from 'adaptive-expressions';
 import { Activity, TurnContext, TestAdapter } from 'botbuilder-core';
 import { TestAction } from '../testAction';
 
+export interface AssertReplyActivityConfiguration {
+    description?: string;
+    timeout?: number;
+    assertions?: string[];
+}
+
 /**
  * Basic assertion TestAction, which validates assertions against a reply activity.
  */

@@ -6,19 +6,27 @@
  * Licensed under the MIT License.
  */
 import {
-    StringExpression,
     BoolExpression,
-    IntExpression,
     BoolExpressionConverter,
+    Expression,
+    IntExpression,
     IntExpressionConverter,
+    StringExpression,
     StringExpressionConverter,
 } from 'adaptive-expressions';
 import { Converter, ConverterFactory, Dialog, DialogContext, DialogTurnResult } from 'botbuilder-dialogs';
-import { NonFunctionKeys } from 'utility-types';
-import { ActionScope, ActionScopeResult } from './actionScope';
+import { ActionScope, ActionScopeConfiguration, ActionScopeResult } from './actionScope';
 
 const FOREACHPAGE = 'dialog.foreach.page';
 const FOREACHPAGEINDEX = 'dialog.foreach.pageindex';
+
+export interface ForEachPageConfiguration extends ActionScopeConfiguration {
+    itemsProperty?: string | Expression | StringExpression;
+    page?: string | Expression | StringExpression;
+    pageIndex?: string | Expression | StringExpression;
+    pageSize?: number | string | Expression | IntExpression;
+    disabled?: boolean | string | Expression | BoolExpression;
+}
 
 /**
  * Executes a set of actions once for each page of results in an in-memory list or collection.
@@ -66,7 +74,7 @@ export class ForEachPage<O extends object = {}> extends ActionScope<O> {
      */
     public disabled?: BoolExpression;
 
-    public getConverter(property: NonFunctionKeys<ForEachPage>): Converter | ConverterFactory {
+    public getConverter(property: keyof ForEachPageConfiguration): Converter | ConverterFactory {
         switch (property) {
             case 'itemsProperty':
                 return new StringExpressionConverter();

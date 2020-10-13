@@ -10,21 +10,25 @@ import { Converter, ConverterFactory, DialogContext } from 'botbuilder-dialogs';
 import { Recognizer } from './recognizer';
 import { IntentPattern } from './intentPattern';
 import { EntityRecognizer, TextEntity, EntityRecognizerSet } from './entityRecognizers';
-import { NonFunctionKeys } from 'utility-types';
+import { RecognizerSetConfiguration } from './recognizerSet';
 
-type Input = {
+type IntentPatternInput = {
     intent: string;
     pattern: string;
 };
 
-class IntentPatternsConverter implements Converter<Input[], IntentPattern[]> {
-    public convert(items: Input[] | IntentPattern[]): IntentPattern[] {
+class IntentPatternsConverter implements Converter<IntentPatternInput[], IntentPattern[]> {
+    public convert(items: IntentPatternInput[] | IntentPattern[]): IntentPattern[] {
         const results: IntentPattern[] = [];
         items.forEach((item) => {
             results.push(item instanceof IntentPattern ? item : new IntentPattern(item.intent, item.pattern));
         });
         return results;
     }
+}
+
+export interface RegexRecognizerConfiguration extends RecognizerSetConfiguration {
+    intents?: IntentPatternInput[] | IntentPattern[];
 }
 
 export class RegexRecognizer extends Recognizer {
@@ -40,7 +44,7 @@ export class RegexRecognizer extends Recognizer {
      */
     public entities: EntityRecognizer[] = [];
 
-    public getConverter(property: NonFunctionKeys<RegexRecognizer>): Converter | ConverterFactory {
+    public getConverter(property: keyof RegexRecognizerConfiguration): Converter | ConverterFactory {
         switch (property) {
             case 'intents':
                 return new IntentPatternsConverter();

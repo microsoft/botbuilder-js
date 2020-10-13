@@ -5,19 +5,26 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { BoolExpression, BoolExpressionConverter } from 'adaptive-expressions';
+import { BoolExpression, BoolExpressionConverter, Expression } from 'adaptive-expressions';
 import { StringUtils } from 'botbuilder-core';
 import {
     Converter,
     ConverterFactory,
     Dialog,
+    DialogConfiguration,
     DialogContext,
     DialogDependencies,
     DialogTurnResult,
 } from 'botbuilder-dialogs';
-import { NonFunctionKeys } from 'utility-types';
-import { DialogListConverter } from '../converters';
 import { ActionScope } from './actionScope';
+import { DialogListConverter } from '../converters';
+
+export interface IfConditionConfiguration extends DialogConfiguration {
+    condition?: boolean | string | Expression | BoolExpression;
+    actions?: string[] | Dialog[];
+    elseActions?: string[] | Dialog[];
+    disabled?: boolean | string | Expression | BoolExpression;
+}
 
 export class IfCondition<O extends object = {}> extends Dialog<O> implements DialogDependencies {
     public static $kind = 'Microsoft.IfCondition';
@@ -48,7 +55,12 @@ export class IfCondition<O extends object = {}> extends Dialog<O> implements Dia
      */
     public elseActions: Dialog[] = [];
 
-    public getConverter(property: NonFunctionKeys<IfCondition>): Converter | ConverterFactory {
+    /**
+     * An optional expression which if is true will disable this action.
+     */
+    public disabled?: BoolExpression;
+
+    public getConverter(property: keyof IfConditionConfiguration): Converter | ConverterFactory {
         switch (property) {
             case 'condition':
                 return new BoolExpressionConverter();
@@ -77,11 +89,6 @@ export class IfCondition<O extends object = {}> extends Dialog<O> implements Dia
         }
         return this._falseScope;
     }
-
-    /**
-     * An optional expression which if is true will disable this action.
-     */
-    public disabled?: BoolExpression;
 
     private _trueScope: ActionScope;
 

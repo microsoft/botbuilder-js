@@ -5,10 +5,20 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { BoolExpression, BoolExpressionConverter } from 'adaptive-expressions';
-import { Converter, ConverterFactory, DialogTurnResult, Dialog, DialogContext } from 'botbuilder-dialogs';
-import { NonFunctionKeys } from 'utility-types';
+import { BoolExpression, BoolExpressionConverter, Expression } from 'adaptive-expressions';
+import {
+    Converter,
+    ConverterFactory,
+    DialogTurnResult,
+    Dialog,
+    DialogContext,
+    DialogConfiguration,
+} from 'botbuilder-dialogs';
 import { ActionScopeResult, ActionScopeCommands } from './actionScope';
+
+export interface BreakLoopConfiguration extends DialogConfiguration {
+    disabled?: boolean | string | Expression | BoolExpression;
+}
 
 export class BreakLoop<O extends object = {}> extends Dialog<O> {
     public static $kind = 'Microsoft.BreakLoop';
@@ -18,7 +28,7 @@ export class BreakLoop<O extends object = {}> extends Dialog<O> {
      */
     public disabled?: BoolExpression;
 
-    public getConverter(property: NonFunctionKeys<BreakLoop>): Converter | ConverterFactory {
+    public getConverter(property: keyof BreakLoopConfiguration): Converter | ConverterFactory {
         switch (property) {
             case 'disabled':
                 return new BoolExpressionConverter();

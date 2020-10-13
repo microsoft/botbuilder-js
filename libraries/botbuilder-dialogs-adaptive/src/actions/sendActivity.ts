@@ -5,13 +5,24 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { BoolExpression, BoolExpressionConverter } from 'adaptive-expressions';
+import { BoolExpression, BoolExpressionConverter, Expression } from 'adaptive-expressions';
 import { Activity, ActivityTypes, StringUtils, ResourceResponse } from 'botbuilder-core';
-import { Converter, ConverterFactory, Dialog, DialogContext, DialogTurnResult } from 'botbuilder-dialogs';
+import {
+    Converter,
+    ConverterFactory,
+    Dialog,
+    DialogConfiguration,
+    DialogContext,
+    DialogTurnResult,
+} from 'botbuilder-dialogs';
 import { TemplateInterface } from '../template';
 import { ActivityTemplate, StaticActivityTemplate } from '../templates';
 import { ActivityTemplateConverter } from '../converters';
-import { NonFunctionKeys } from 'utility-types';
+
+export interface SendActivityConfiguration extends DialogConfiguration {
+    activity?: string | Partial<Activity> | TemplateInterface<Partial<Activity>>;
+    disabled?: boolean | string | Expression | BoolExpression;
+}
 
 export class SendActivity<O extends object = {}> extends Dialog<O> {
     public static $kind = 'Microsoft.SendActivity';
@@ -41,7 +52,7 @@ export class SendActivity<O extends object = {}> extends Dialog<O> {
      */
     public disabled?: BoolExpression;
 
-    public getConverter(property: NonFunctionKeys<SendActivity>): Converter | ConverterFactory {
+    public getConverter(property: keyof SendActivityConfiguration): Converter | ConverterFactory {
         switch (property) {
             case 'activity':
                 return new ActivityTemplateConverter();

@@ -10,6 +10,7 @@ import {
     ArrayExpressionConverter,
     BoolExpression,
     BoolExpressionConverter,
+    Expression,
     StringExpression,
     StringExpressionConverter,
 } from 'adaptive-expressions';
@@ -22,8 +23,16 @@ import {
 } from 'botbuilder-ai';
 import { Activity, RecognizerResult } from 'botbuilder-core';
 import { Converter, ConverterFactory, DialogContext } from 'botbuilder-dialogs';
-import { NonFunctionKeys } from 'utility-types';
-import { Recognizer } from '../recognizers';
+import { Recognizer, RecognizerConfiguration } from '../recognizers';
+
+export interface LuisAdaptiveRecognizerConfiguration extends RecognizerConfiguration {
+    applicationId?: string | Expression | StringExpression;
+    logPersonalInformation?: boolean | string | Expression | BoolExpression;
+    dynamicLists?: unknown[] | string | Expression | ArrayExpression<unknown>;
+    endpoint?: string | Expression | StringExpression;
+    endpointKey?: string | Expression | StringExpression;
+    predictionOptions?: LuisPredictionOptions;
+}
 
 export class LuisAdaptiveRecognizer extends Recognizer {
     public static $kind = 'Microsoft.LuisRecognizer';
@@ -67,7 +76,7 @@ export class LuisAdaptiveRecognizer extends Recognizer {
      */
     public predictionOptions: LuisPredictionOptions;
 
-    public getConverter(property: NonFunctionKeys<LuisAdaptiveRecognizer>): Converter | ConverterFactory {
+    public getConverter(property: keyof LuisAdaptiveRecognizerConfiguration): Converter | ConverterFactory {
         switch (property) {
             case 'applicationId':
                 return new StringExpressionConverter();

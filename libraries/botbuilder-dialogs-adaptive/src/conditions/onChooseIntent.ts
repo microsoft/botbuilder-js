@@ -8,7 +8,11 @@
 
 import { Dialog, TurnPath } from 'botbuilder-dialogs';
 import { Expression, ExpressionParserInterface } from 'adaptive-expressions';
-import { OnIntent } from './onIntent';
+import { OnIntent, OnIntentConfiguration } from './onIntent';
+
+export interface OnChooseIntentConfiguration extends OnIntentConfiguration {
+    intents?: string[];
+}
 
 export class OnChooseIntent extends OnIntent {
     public static $kind = 'Microsoft.OnChooseIntent';

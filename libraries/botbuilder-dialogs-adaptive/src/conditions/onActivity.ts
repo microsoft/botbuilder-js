@@ -7,8 +7,12 @@
  */
 import { Dialog, TurnPath } from 'botbuilder-dialogs';
 import { Expression, ExpressionType, ExpressionParserInterface } from 'adaptive-expressions';
-import { OnDialogEvent } from './onDialogEvent';
+import { OnDialogEvent, OnDialogEventConfiguration } from './onDialogEvent';
 import { AdaptiveEvents } from '../adaptiveEvents';
+
+export interface OnActivityConfiguration extends OnDialogEventConfiguration {
+    type?: string;
+}
 
 /**
  * Actions triggered when a Activity of a given type is received.

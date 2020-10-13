@@ -5,22 +5,34 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
+import {
+    BoolExpression,
+    BoolExpressionConverter,
+    EnumExpression,
+    EnumExpressionConverter,
+    Expression,
+} from 'adaptive-expressions';
 import { StringUtils } from 'botbuilder-core';
 import {
     Converter,
     ConverterFactory,
     Dialog,
+    DialogConfiguration,
     DialogContext,
     DialogDependencies,
     DialogTurnResult,
 } from 'botbuilder-dialogs';
-import { BoolExpression, BoolExpressionConverter, EnumExpression, EnumExpressionConverter } from 'adaptive-expressions';
 import { ActionContext } from '../actionContext';
 import { ActionChangeType } from '../actionChangeType';
 import { ActionState } from '../actionState';
 import { ActionChangeList } from '../actionChangeList';
-import { NonFunctionKeys } from 'utility-types';
 import { DialogListConverter } from '../converters';
+
+export interface EditActionsConfiguration extends DialogConfiguration {
+    actions?: string[] | Dialog[];
+    changeType?: ActionChangeType | string | Expression | EnumExpression<ActionChangeType>;
+    disabled?: boolean | string | BoolExpression;
+}
 
 export class EditActions<O extends object = {}> extends Dialog<O> implements DialogDependencies {
     public static $kind = 'Microsoft.EditActions';
@@ -52,7 +64,7 @@ export class EditActions<O extends object = {}> extends Dialog<O> implements Dia
      */
     public disabled?: BoolExpression;
 
-    public getConverter(property: NonFunctionKeys<EditActions>): Converter | ConverterFactory {
+    public getConverter(property: keyof EditActionsConfiguration): Converter | ConverterFactory {
         switch (property) {
             case 'actions':
                 return DialogListConverter;

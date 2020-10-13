@@ -13,6 +13,7 @@ import { TextEncoder } from 'util';
 import {
     BoolExpression,
     BoolExpressionConverter,
+    Expression,
     NumberExpression,
     NumberExpressionConverter,
     StringExpression,
@@ -25,20 +26,23 @@ import {
     EntityRecognizer,
     EntityRecognizerSet,
     Recognizer,
+    RecognizerConfiguration,
     TextEntity,
 } from 'botbuilder-dialogs-adaptive';
-import { NonFunctionKeys } from 'utility-types';
 
 const oc: any = require('orchestrator-core/orchestrator-core.node');
 const ReadText: any = require('read-text-file');
 
+export interface OrchestratorAdaptiveRecognizerConfiguration extends RecognizerConfiguration {
+    modelPath?: string | Expression | StringExpression;
+    snapshotPath?: string | Expression | StringExpression;
+    disambiguationScoreThreshold?: number | string | Expression | NumberExpression;
+    detectAmbiguousIntents?: boolean | string | Expression | BoolExpression;
+    entityRecognizers?: EntityRecognizer[];
+}
+
 export class OrchestratorAdaptiveRecognizer extends Recognizer {
     public static $kind = 'Microsoft.OrchestratorRecognizer';
-
-    /**
-     * Recognizers unique ID.
-     */
-    public id: string;
 
     /**
      * Path to the model to load.
@@ -86,7 +90,7 @@ export class OrchestratorAdaptiveRecognizer extends Recognizer {
      */
     public readonly resultProperty: string = 'result';
 
-    public getConverter(property: NonFunctionKeys<OrchestratorAdaptiveRecognizer>): Converter | ConverterFactory {
+    public getConverter(property: keyof OrchestratorAdaptiveRecognizerConfiguration): Converter | ConverterFactory {
         switch (property) {
             case 'modelPath':
                 return new StringExpressionConverter();

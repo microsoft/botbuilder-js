@@ -10,13 +10,20 @@ import {
     BoolExpression,
     BoolExpressionConverter,
     StringExpressionConverter,
+    Expression,
 } from 'adaptive-expressions';
 import { Converter, ConverterFactory, Dialog, DialogContext, DialogTurnResult } from 'botbuilder-dialogs';
-import { NonFunctionKeys } from 'utility-types';
-import { ActionScope, ActionScopeResult } from './actionScope';
+import { ActionScope, ActionScopeConfiguration, ActionScopeResult } from './actionScope';
 
 const INDEX = 'dialog.foreach.index';
 const VALUE = 'dialog.foreach.value';
+
+export interface ForEachConfiguration extends ActionScopeConfiguration {
+    itemsProperty?: string | Expression | StringExpression;
+    index?: string | Expression | StringExpression;
+    value?: string | Expression | StringExpression;
+    disabled?: boolean | string | Expression | BoolExpression;
+}
 
 export class ForEach<O extends object = {}> extends ActionScope<O> {
     public static $kind = 'Microsoft.Foreach';
@@ -53,7 +60,7 @@ export class ForEach<O extends object = {}> extends ActionScope<O> {
      */
     public disabled?: BoolExpression;
 
-    public getConverter(property: NonFunctionKeys<ForEach>): Converter | ConverterFactory {
+    public getConverter(property: keyof ForEachConfiguration): Converter | ConverterFactory {
         switch (property) {
             case 'itemsProperty':
                 return new StringExpressionConverter();

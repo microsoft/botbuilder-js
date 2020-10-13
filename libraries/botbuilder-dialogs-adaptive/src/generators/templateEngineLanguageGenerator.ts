@@ -13,6 +13,10 @@ import { LanguageGenerator } from '../languageGenerator';
 import { LanguageResourceLoader } from '../languageResourceLoader';
 import { LanguageGeneratorManager } from './languageGeneratorManager';
 
+export interface TemplateEngineLanguageGeneratorConfiguration {
+    id?: string;
+}
+
 /**
  * LanguageGenerator implementation which uses LGFile.
  */

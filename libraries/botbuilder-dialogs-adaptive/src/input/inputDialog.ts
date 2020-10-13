@@ -8,6 +8,7 @@
 import {
     BoolExpression,
     BoolExpressionConverter,
+    Expression,
     ExpressionParser,
     IntExpression,
     IntExpressionConverter,
@@ -24,6 +25,7 @@ import {
     Converter,
     ConverterFactory,
     Dialog,
+    DialogConfiguration,
     DialogContext,
     DialogEvent,
     DialogEvents,
@@ -32,7 +34,6 @@ import {
     ListStyle,
     TurnPath,
 } from 'botbuilder-dialogs';
-import { NonFunctionKeys } from 'utility-types';
 import { TemplateInterface } from '../template';
 import { AdaptiveEvents } from '../adaptiveEvents';
 import { ActivityTemplate } from '../templates/activityTemplate';
@@ -44,6 +45,21 @@ export enum InputState {
     unrecognized = 'unrecognized',
     invalid = 'invalid',
     valid = 'valid',
+}
+
+export interface InputDialogConfiguration extends DialogConfiguration {
+    alwaysPrompt?: boolean | string | Expression | BoolExpression;
+    allowInterruptions?: boolean | string | Expression | BoolExpression;
+    property?: string | Expression | StringExpression;
+    value?: unknown | ValueExpression;
+    prompt?: string | Partial<Activity> | TemplateInterface<Partial<Activity>>;
+    unrecognizedPrompt?: string | Partial<Activity> | TemplateInterface<Partial<Activity>>;
+    invalidPrompt?: string | Partial<Activity> | TemplateInterface<Partial<Activity>>;
+    defaultValueResponse?: string | Partial<Activity> | TemplateInterface<Partial<Activity>>;
+    validations?: string[];
+    maxTurnCount?: number | string | Expression | IntExpression;
+    defaultValue?: unknown | ValueExpression;
+    disabled?: boolean | string | Expression | BoolExpression;
 }
 
 export abstract class InputDialog extends Dialog {
@@ -111,7 +127,7 @@ export abstract class InputDialog extends Dialog {
      */
     public disabled?: BoolExpression;
 
-    public getConverter(property: NonFunctionKeys<InputDialog>): Converter | ConverterFactory {
+    public getConverter(property: keyof InputDialogConfiguration): Converter | ConverterFactory {
         switch (property) {
             case 'alwaysPrompt':
                 return new BoolExpressionConverter();

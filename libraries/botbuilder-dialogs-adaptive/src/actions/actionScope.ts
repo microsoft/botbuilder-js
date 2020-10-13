@@ -10,12 +10,12 @@ import {
     Converter,
     ConverterFactory,
     Dialog,
+    DialogConfiguration,
     DialogContext,
     DialogDependencies,
     DialogReason,
     DialogTurnResult,
 } from 'botbuilder-dialogs';
-import { NonFunctionKeys } from 'utility-types';
 import { ActionContext } from '../actionContext';
 import { DialogListConverter } from '../converters';
 
@@ -32,6 +32,10 @@ export interface ActionScopeResult {
     actionId?: string;
 }
 
+export interface ActionScopeConfiguration extends DialogConfiguration {
+    actions?: string[] | Dialog[];
+}
+
 export class ActionScope<O extends object = {}> extends Dialog<O> implements DialogDependencies {
     /**
      * Creates a new `ActionScope` instance.
@@ -46,7 +50,7 @@ export class ActionScope<O extends object = {}> extends Dialog<O> implements Dia
      */
     public actions: Dialog[] = [];
 
-    public getConverter(property: NonFunctionKeys<ActionScope>): Converter | ConverterFactory {
+    public getConverter(property: keyof ActionScopeConfiguration): Converter | ConverterFactory {
         switch (property) {
             case 'actions':
                 return DialogListConverter;

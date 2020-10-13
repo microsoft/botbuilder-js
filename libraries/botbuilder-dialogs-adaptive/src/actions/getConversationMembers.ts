@@ -6,14 +6,21 @@
  * Licensed under the MIT License.
  */
 import {
-    StringExpression,
     BoolExpression,
     BoolExpressionConverter,
+    Expression,
+    StringExpression,
     StringExpressionConverter,
 } from 'adaptive-expressions';
-import { Converter, ConverterFactory, Dialog, DialogContext, DialogTurnResult } from 'botbuilder-dialogs';
 import { TurnContext } from 'botbuilder-core';
-import { NonFunctionKeys } from 'utility-types';
+import {
+    Converter,
+    ConverterFactory,
+    Dialog,
+    DialogConfiguration,
+    DialogContext,
+    DialogTurnResult,
+} from 'botbuilder-dialogs';
 
 interface CompatibleAdapter {
     getConversationMembers(context: TurnContext);
@@ -21,6 +28,11 @@ interface CompatibleAdapter {
 
 function isCompatibleAdapter(adapter: unknown): adapter is CompatibleAdapter {
     return adapter && typeof (adapter as CompatibleAdapter).getConversationMembers === 'function';
+}
+
+export interface GetConversationMembersConfiguration extends DialogConfiguration {
+    property?: string | Expression | StringExpression;
+    disabled?: boolean | string | Expression | BoolExpression;
 }
 
 export class GetConversationMembers<O extends object = {}> extends Dialog<O> {
@@ -44,7 +56,7 @@ export class GetConversationMembers<O extends object = {}> extends Dialog<O> {
      */
     public disabled?: BoolExpression;
 
-    public getConverter(property: NonFunctionKeys<GetConversationMembers>): Converter | ConverterFactory {
+    public getConverter(property: keyof GetConversationMembersConfiguration): Converter | ConverterFactory {
         switch (property) {
             case 'property':
                 return new StringExpressionConverter();

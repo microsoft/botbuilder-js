@@ -8,6 +8,7 @@
 import {
     BoolExpression,
     BoolExpressionConverter,
+    Expression,
     StringExpression,
     StringExpressionConverter,
 } from 'adaptive-expressions';
@@ -22,13 +23,28 @@ import {
     DialogReason,
     SkillDialog,
     SkillDialogOptions,
+    DialogConfiguration,
+    DialogEvent,
+    DialogEvents,
 } from 'botbuilder-dialogs';
 import { TemplateInterface } from '../template';
 import { skillClientKey, skillConversationIdFactoryKey } from '../skillExtensions';
 import { ActivityTemplate } from '../templates';
 import { ActivityTemplateConverter } from '../converters';
-import { NonFunctionKeys } from 'utility-types';
-import { BeginDialog } from './beginDialog';
+import { AdaptiveEvents } from '../adaptiveEvents';
+
+export interface BeginSkillConfiguration extends DialogConfiguration {
+    disabled?: boolean | string | Expression | BoolExpression;
+    activityProcessed?: boolean | string | Expression | BoolExpression;
+    resultProperty?: string | Expression | StringExpression;
+    botId?: string | Expression | StringExpression;
+    skillHostEndpoint?: string | Expression | StringExpression;
+    skillAppId?: string | Expression | StringExpression;
+    skillEndpoint?: string | Expression | StringExpression;
+    activity?: string | Partial<Activity> | TemplateInterface<Partial<Activity>>;
+    connectionName?: string | Expression | StringExpression;
+    allowInterruptions?: boolean | string | Expression | BoolExpression;
+}
 
 export class BeginSkill extends SkillDialog {
     public static $kind = 'Microsoft.BeginSkill';
@@ -88,7 +104,12 @@ export class BeginSkill extends SkillDialog {
      */
     public connectionName: StringExpression;
 
-    public getConverter(property: NonFunctionKeys<BeginSkill>): Converter | ConverterFactory {
+    /**
+     * The interruption policy.
+     */
+    public allowInterruptions: BoolExpression;
+
+    public getConverter(property: keyof BeginSkillConfiguration): Converter | ConverterFactory {
         switch (property) {
             case 'disabled':
                 return new BoolExpressionConverter();
@@ -109,7 +130,7 @@ export class BeginSkill extends SkillDialog {
             case 'connectionName':
                 return new StringExpressionConverter();
             default:
-                return super.getConverter(property);
+                return undefined;
         }
     }
 
@@ -220,6 +241,25 @@ export class BeginSkill extends SkillDialog {
             return `BeginSkill['${appId}','${StringUtils.ellipsis(this.activity.template.trim(), 30)}']`;
         }
         return `BeginSkill['${appId}','${StringUtils.ellipsis(this.activity && this.activity.toString().trim(), 30)}']`;
+    }
+
+    protected async onPreBubbleEvent(dc: DialogContext, e: DialogEvent): Promise<boolean> {
+        if (e.name === DialogEvents.activityReceived && dc.context.activity.type === ActivityTypes.Message) {
+            // Ask parent to perform recognition.
+            await dc.parent.emitEvent(AdaptiveEvents.recognizeUtterance, dc.context.activity, false);
+
+            // Should we allow interruptions
+            let canInterrupt = true;
+            if (this.allowInterruptions) {
+                const { value: allowInterruptions, error } = this.allowInterruptions.tryGetValue(dc.state);
+                canInterrupt = !error && allowInterruptions;
+            }
+
+            // Stop bubbling if interruptions are NOT allowed
+            return !canInterrupt;
+        }
+
+        return false;
     }
 
     private loadDialogOptions(context: TurnContext, instance: DialogInstance): void {

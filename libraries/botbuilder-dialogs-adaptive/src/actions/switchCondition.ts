@@ -18,28 +18,35 @@ import {
     Converter,
     ConverterFactory,
     Dialog,
+    DialogConfiguration,
     DialogContext,
     DialogDependencies,
     DialogTurnResult,
 } from 'botbuilder-dialogs';
-import { NonFunctionKeys } from 'utility-types';
 import { DialogListConverter } from '../converters';
 import { ActionScope } from './actionScope';
 import { Case } from './case';
 
-type Input = {
+type CaseInput = {
     actions: Dialog[];
     value: string;
 };
 
-class CasesConverter implements Converter<Input[], Case[]> {
-    public convert(items: Input[] | Case[]): Case[] {
+class CasesConverter implements Converter<CaseInput[], Case[]> {
+    public convert(items: CaseInput[] | Case[]): Case[] {
         const results: Case[] = [];
         items.forEach((item) => {
             results.push(item instanceof Case ? item : new Case(item.value, item.actions));
         });
         return results;
     }
+}
+
+export interface SwitchConditionConfiguration extends DialogConfiguration {
+    condition?: string | Expression;
+    default?: string[] | Dialog[];
+    cases?: CaseInput[] | Case[];
+    disabled?: boolean | string | Expression | BoolExpression;
 }
 
 export class SwitchCondition<O extends object = {}> extends Dialog<O> implements DialogDependencies {
@@ -80,7 +87,7 @@ export class SwitchCondition<O extends object = {}> extends Dialog<O> implements
      */
     public disabled?: BoolExpression;
 
-    public getConverter(property: NonFunctionKeys<SwitchCondition>): Converter | ConverterFactory {
+    public getConverter(property: keyof SwitchConditionConfiguration): Converter | ConverterFactory {
         switch (property) {
             case 'condition':
                 return new ExpressionConverter();

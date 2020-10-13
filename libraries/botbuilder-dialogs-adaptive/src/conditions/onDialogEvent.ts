@@ -7,7 +7,11 @@
  */
 import { Dialog, TurnPath } from 'botbuilder-dialogs';
 import { ExpressionParserInterface, Expression, ExpressionType } from 'adaptive-expressions';
-import { OnCondition } from './onCondition';
+import { OnCondition, OnConditionConfiguration } from './onCondition';
+
+export interface OnDialogEventConfiguration extends OnConditionConfiguration {
+    event?: string;
+}
 
 /**
  * Actions triggered when a dialog event is emitted.

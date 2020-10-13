@@ -8,12 +8,17 @@
 import { ExpressionParserInterface, Expression, ExpressionType } from 'adaptive-expressions';
 import { RecognizerResult } from 'botbuilder-core';
 import { Dialog, TurnPath } from 'botbuilder-dialogs';
-import { OnDialogEvent } from './onDialogEvent';
+import { OnDialogEvent, OnDialogEventConfiguration } from './onDialogEvent';
 import { ActionContext } from '../actionContext';
 import { AdaptiveEvents } from '../adaptiveEvents';
 import { ActionChangeList } from '../actionChangeList';
 import { ActionState } from '../actionState';
 import { ActionChangeType } from '../actionChangeType';
+
+export interface OnIntentConfiguration extends OnDialogEventConfiguration {
+    intent?: string;
+    entities?: string[];
+}
 
 /**
  * Actions triggered when an Activity has been received and the recognized intents and entities match specified list of intent and entity filters.

@@ -7,8 +7,19 @@
  */
 
 import { Expression, ExpressionConverter, StringExpression, StringExpressionConverter } from 'adaptive-expressions';
-import { Converter, ConverterFactory, Dialog, DialogContext, DialogTurnResult } from 'botbuilder-dialogs';
-import { NonFunctionKeys } from 'utility-types';
+import {
+    Converter,
+    ConverterFactory,
+    Dialog,
+    DialogConfiguration,
+    DialogContext,
+    DialogTurnResult,
+} from 'botbuilder-dialogs';
+
+export interface AssertConditionConfiguration extends DialogConfiguration {
+    condition?: string | Expression;
+    description?: string | Expression | StringExpression;
+}
 
 /**
  * Dialog action which allows you to add assertions into your dialog flow.
@@ -26,7 +37,7 @@ export class AssertCondition<O extends object = {}> extends Dialog<O> {
      */
     public description: StringExpression;
 
-    public getConverter(property: NonFunctionKeys<AssertCondition>): Converter | ConverterFactory {
+    public getConverter(property: keyof AssertConditionConfiguration): Converter | ConverterFactory {
         switch (property) {
             case 'condition':
                 return new ExpressionConverter();

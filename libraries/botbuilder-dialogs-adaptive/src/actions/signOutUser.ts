@@ -6,13 +6,26 @@
  * Licensed under the MIT License.
  */
 import {
-    StringExpression,
     BoolExpression,
     BoolExpressionConverter,
+    Expression,
+    StringExpression,
     StringExpressionConverter,
 } from 'adaptive-expressions';
-import { Converter, ConverterFactory, Dialog, DialogContext, DialogTurnResult } from 'botbuilder-dialogs';
-import { NonFunctionKeys } from 'utility-types';
+import {
+    Converter,
+    ConverterFactory,
+    Dialog,
+    DialogConfiguration,
+    DialogContext,
+    DialogTurnResult,
+} from 'botbuilder-dialogs';
+
+export interface SignOutUserConfiguration extends DialogConfiguration {
+    userId?: string | Expression | StringExpression;
+    connectionName?: string | Expression | StringExpression;
+    disabled?: boolean | string | Expression | BoolExpression;
+}
 
 export class SignOutUser<O extends object = {}> extends Dialog<O> {
     public static $kind = 'Microsoft.SignOutUser';
@@ -43,7 +56,7 @@ export class SignOutUser<O extends object = {}> extends Dialog<O> {
      */
     public disabled?: BoolExpression;
 
-    public getConverter(property: NonFunctionKeys<SignOutUser>): Converter | ConverterFactory {
+    public getConverter(property: keyof SignOutUserConfiguration): Converter | ConverterFactory {
         switch (property) {
             case 'userId':
                 return new StringExpressionConverter();

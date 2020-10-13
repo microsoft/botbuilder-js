@@ -7,22 +7,29 @@
  */
 
 import {
-    StringExpression,
     BoolExpression,
     BoolExpressionConverter,
+    Expression,
+    StringExpression,
     StringExpressionConverter,
 } from 'adaptive-expressions';
-import { Converter, ConverterFactory, Dialog, DialogContext, DialogTurnResult } from 'botbuilder-dialogs';
-import { NonFunctionKeys } from 'utility-types';
+import {
+    Converter,
+    ConverterFactory,
+    Dialog,
+    DialogConfiguration,
+    DialogContext,
+    DialogTurnResult,
+} from 'botbuilder-dialogs';
 
-type Input = Record<string, string>;
-type Output = Record<string, StringExpression>;
+type PropertiesInput = Record<string, string>;
+type PropertiesOutput = Record<string, StringExpression>;
 
 /**
  * Converter to convert telemetry properties configuration.
  */
-class TelemetryPropertiesConverter implements Converter<Input, Output> {
-    public convert(properties: Input | Output): Output {
+class TelemetryPropertiesConverter implements Converter<PropertiesInput, PropertiesOutput> {
+    public convert(properties: PropertiesInput | PropertiesOutput): PropertiesOutput {
         const result = {};
         for (const name in properties) {
             if (Object.prototype.hasOwnProperty.call(properties, name)) {
@@ -32,6 +39,12 @@ class TelemetryPropertiesConverter implements Converter<Input, Output> {
         }
         return result;
     }
+}
+
+export interface TelemetryTrackEventActionConfiguration extends DialogConfiguration {
+    disabled?: boolean | string | Expression | BoolExpression;
+    eventName?: string | Expression | StringExpression;
+    properties?: PropertiesInput | PropertiesOutput;
 }
 
 /**
@@ -73,7 +86,7 @@ export class TelemetryTrackEventAction<O extends object = {}> extends Dialog {
      */
     public properties: { [name: string]: StringExpression };
 
-    public getConverter(property: NonFunctionKeys<TelemetryTrackEventAction>): Converter | ConverterFactory {
+    public getConverter(property: keyof TelemetryTrackEventActionConfiguration): Converter | ConverterFactory {
         switch (property) {
             case 'eventName':
                 return new StringExpressionConverter();

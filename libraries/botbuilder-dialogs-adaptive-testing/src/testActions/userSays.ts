@@ -9,6 +9,11 @@
 import { TurnContext, TestAdapter } from 'botbuilder-core';
 import { TestAction } from '../testAction';
 
+export interface UserSaysConfiguration {
+    text?: string;
+    user?: string;
+}
+
 /**
  * Action to script sending text to the bot.
  */

@@ -7,6 +7,7 @@
  */
 import * as Recognizers from '@microsoft/recognizers-text-number';
 import {
+    Expression,
     NumberExpression,
     NumberExpressionConverter,
     StringExpression,
@@ -14,8 +15,12 @@ import {
 } from 'adaptive-expressions';
 import { Activity } from 'botbuilder-core';
 import { Converter, ConverterFactory, DialogContext } from 'botbuilder-dialogs';
-import { NonFunctionKeys } from 'utility-types';
-import { InputDialog, InputState } from './inputDialog';
+import { InputDialog, InputDialogConfiguration, InputState } from './inputDialog';
+
+export interface NumberInputConfiguration extends InputDialogConfiguration {
+    defaultLocale?: string | Expression | StringExpression;
+    outputFormat?: number | string | Expression | NumberExpression;
+}
 
 export class NumberInput extends InputDialog {
     public static $kind = 'Microsoft.NumberInput';
@@ -24,7 +29,7 @@ export class NumberInput extends InputDialog {
 
     public outputFormat?: NumberExpression;
 
-    public getConverter(property: NonFunctionKeys<NumberInput>): Converter | ConverterFactory {
+    public getConverter(property: keyof NumberInputConfiguration): Converter | ConverterFactory {
         switch (property) {
             case 'defaultLocale':
                 return new StringExpressionConverter();

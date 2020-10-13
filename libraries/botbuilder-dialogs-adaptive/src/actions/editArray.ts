@@ -5,18 +5,25 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { Converter, ConverterFactory, Dialog, DialogContext, DialogTurnResult } from 'botbuilder-dialogs';
 import {
     BoolExpression,
     BoolExpressionConverter,
     EnumExpression,
     EnumExpressionConverter,
+    Expression,
     StringExpression,
     StringExpressionConverter,
     ValueExpression,
     ValueExpressionConverter,
 } from 'adaptive-expressions';
-import { NonFunctionKeys } from 'utility-types';
+import {
+    Converter,
+    ConverterFactory,
+    Dialog,
+    DialogConfiguration,
+    DialogContext,
+    DialogTurnResult,
+} from 'botbuilder-dialogs';
 
 export enum ArrayChangeType {
     push = 'push',
@@ -24,6 +31,14 @@ export enum ArrayChangeType {
     take = 'take',
     remove = 'remove',
     clear = 'clear',
+}
+
+export interface EditArrayConfiguration extends DialogConfiguration {
+    changeType?: ArrayChangeType | string | Expression | EnumExpression<ArrayChangeType>;
+    itemsProperty?: string | Expression | StringExpression;
+    resultProperty?: string | Expression | StringExpression;
+    value?: unknown | ValueExpression;
+    disabled?: boolean | string | Expression | BoolExpression;
 }
 
 export class EditArray<O extends object = {}> extends Dialog<O> {
@@ -79,7 +94,7 @@ export class EditArray<O extends object = {}> extends Dialog<O> {
      */
     public disabled?: BoolExpression;
 
-    public getConverter(property: NonFunctionKeys<EditArray>): Converter | ConverterFactory {
+    public getConverter(property: keyof EditArrayConfiguration): Converter | ConverterFactory {
         switch (property) {
             case 'changeType':
                 return new EnumExpressionConverter<ArrayChangeType>(ArrayChangeType);

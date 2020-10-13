@@ -8,10 +8,14 @@
 
 import { Activity, RecognizerResult } from 'botbuilder-core';
 import { Converter, ConverterFactory, DialogContext } from 'botbuilder-dialogs';
-import { NonFunctionKeys } from 'utility-types';
-import { Recognizer } from './recognizer';
+import { Recognizer, RecognizerConfiguration } from './recognizer';
 import { LanguagePolicy, LanguagePolicyConverter } from '../languagePolicy';
 import { MultiLanguageRecognizerConverter } from '../converters';
+
+export interface MultiLanguageRecognizerConfiguration extends RecognizerConfiguration {
+    languagePolicy?: Record<string, string[]> | LanguagePolicy;
+    recognizers?: Record<string, string> | Record<string, Recognizer>;
+}
 
 export class MultiLanguageRecognizer extends Recognizer {
     public static $kind = 'Microsoft.MultiLanguageRecognizer';
@@ -20,7 +24,7 @@ export class MultiLanguageRecognizer extends Recognizer {
 
     public recognizers: { [locale: string]: Recognizer };
 
-    public getConverter(property: NonFunctionKeys<MultiLanguageRecognizer>): Converter | ConverterFactory {
+    public getConverter(property: keyof MultiLanguageRecognizerConfiguration): Converter | ConverterFactory {
         switch (property) {
             case 'languagePolicy':
                 return new LanguagePolicyConverter();

@@ -9,6 +9,7 @@ import * as Recognizers from '@microsoft/recognizers-text-choice';
 import {
     EnumExpression,
     EnumExpressionConverter,
+    Expression,
     ObjectExpression,
     ObjectExpressionConverter,
     StringExpression,
@@ -25,9 +26,16 @@ import {
     ListStyle,
     recognizeChoices,
 } from 'botbuilder-dialogs';
-import { NonFunctionKeys } from 'utility-types';
 import { ChoiceSet } from './choiceSet';
-import { InputDialog, InputState } from './inputDialog';
+import { InputDialog, InputDialogConfiguration, InputState } from './inputDialog';
+
+export interface ConfirmInputConfiguration extends InputDialogConfiguration {
+    defaultLocale?: string | Expression | StringExpression;
+    style?: ListStyle | string | Expression | EnumExpression<ListStyle>;
+    choiceOptions?: ChoiceFactoryOptions | string | Expression | ObjectExpression<ChoiceFactoryOptions>;
+    confirmChoices?: ChoiceSet | string | Expression | ObjectExpression<ChoiceSet>;
+    outputFormat?: string | Expression | StringExpression;
+}
 
 export class ConfirmInput extends InputDialog {
     public static $kind = 'Microsoft.ConfirmInput';
@@ -101,7 +109,7 @@ export class ConfirmInput extends InputDialog {
      */
     public outputFormat: StringExpression;
 
-    public getConverter(property: NonFunctionKeys<ConfirmInput>): Converter | ConverterFactory {
+    public getConverter(property: keyof ConfirmInputConfiguration): Converter | ConverterFactory {
         switch (property) {
             case 'defaultLocale':
                 return new StringExpressionConverter();

@@ -8,11 +8,23 @@
 import {
     BoolExpression,
     BoolExpressionConverter,
+    Expression,
     StringExpression,
     StringExpressionConverter,
 } from 'adaptive-expressions';
-import { Converter, ConverterFactory, Dialog, DialogContext, DialogTurnResult } from 'botbuilder-dialogs';
-import { NonFunctionKeys } from 'utility-types';
+import {
+    Converter,
+    ConverterFactory,
+    Dialog,
+    DialogConfiguration,
+    DialogContext,
+    DialogTurnResult,
+} from 'botbuilder-dialogs';
+
+export interface DeletePropertyConfiguration extends DialogConfiguration {
+    property?: string | Expression | StringExpression;
+    disabled?: boolean | string | BoolExpression;
+}
 
 export class DeleteProperty<O extends object = {}> extends Dialog<O> {
     public static $kind = 'Microsoft.DeleteProperty';
@@ -39,7 +51,7 @@ export class DeleteProperty<O extends object = {}> extends Dialog<O> {
      */
     public disabled?: BoolExpression;
 
-    public getConverter(property: NonFunctionKeys<DeleteProperty>): Converter | ConverterFactory {
+    public getConverter(property: keyof DeletePropertyConfiguration): Converter | ConverterFactory {
         switch (property) {
             case 'property':
                 return new StringExpressionConverter();

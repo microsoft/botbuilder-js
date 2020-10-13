@@ -12,21 +12,28 @@ import {
     BoolExpressionConverter,
     EnumExpression,
     EnumExpressionConverter,
+    Expression,
     StringExpression,
     StringExpressionConverter,
     ValueExpression,
     ValueExpressionConverter,
 } from 'adaptive-expressions';
 import { Activity } from 'botbuilder-core';
-import { Converter, ConverterFactory, DialogContext, Dialog, DialogTurnResult } from 'botbuilder-dialogs';
+import {
+    Converter,
+    ConverterFactory,
+    DialogContext,
+    Dialog,
+    DialogTurnResult,
+    DialogConfiguration,
+} from 'botbuilder-dialogs';
 import { replaceJsonRecursively } from '../jsonExtensions';
-import { NonFunctionKeys } from 'utility-types';
 
-type Input = Record<string, string>;
-type Output = Record<string, StringExpression>;
+type HeadersInput = Record<string, string>;
+type HeadersOutput = Record<string, StringExpression>;
 
-class HttpHeadersConverter implements Converter<Input, Output> {
-    public convert(value: Input | Output): Output {
+class HttpHeadersConverter implements Converter<HeadersInput, HeadersOutput> {
+    public convert(value: HeadersInput | HeadersOutput): HeadersOutput {
         const headers = {};
         for (const key in value) {
             if (Object.prototype.hasOwnProperty.call(value, key)) {
@@ -133,6 +140,17 @@ export class Result {
     public content?: any;
 }
 
+export interface HttpRequestConfiguration extends DialogConfiguration {
+    method?: HttpMethod;
+    contentType?: string | Expression | StringExpression;
+    url?: string | Expression | StringExpression;
+    headers?: HeadersInput | HeadersOutput;
+    body?: unknown | ValueExpression;
+    responseType?: ResponsesTypes | string | Expression | EnumExpression<ResponsesTypes>;
+    resultProperty?: string | Expression | StringExpression;
+    disabled?: boolean | string | Expression | BoolExpression;
+}
+
 export class HttpRequest<O extends object = {}> extends Dialog<O> {
     public static $kind = 'Microsoft.HttpRequest';
 
@@ -190,7 +208,7 @@ export class HttpRequest<O extends object = {}> extends Dialog<O> {
      */
     public disabled?: BoolExpression;
 
-    public getConverter(property: NonFunctionKeys<HttpRequest>): Converter | ConverterFactory {
+    public getConverter(property: keyof HttpRequestConfiguration): Converter | ConverterFactory {
         switch (property) {
             case 'contentType':
                 return new StringExpressionConverter();

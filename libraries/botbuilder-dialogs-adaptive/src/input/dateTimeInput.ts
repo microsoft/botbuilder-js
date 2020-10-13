@@ -6,10 +6,14 @@
  * Licensed under the MIT License.
  */
 import * as Recognizers from '@microsoft/recognizers-text-date-time';
-import { StringExpression, StringExpressionConverter } from 'adaptive-expressions';
+import { Expression, StringExpression, StringExpressionConverter } from 'adaptive-expressions';
 import { Converter, ConverterFactory, DialogContext } from 'botbuilder-dialogs';
-import { NonFunctionKeys } from 'utility-types';
-import { InputDialog, InputState } from './inputDialog';
+import { InputDialog, InputDialogConfiguration, InputState } from './inputDialog';
+
+export interface DateTimeInputConfiguration extends InputDialogConfiguration {
+    defaultLocale?: string | Expression | StringExpression;
+    outputFormat?: string | Expression | StringExpression;
+}
 
 export class DateTimeInput extends InputDialog {
     public static $kind = 'Microsoft.DateTimeInput';
@@ -18,7 +22,7 @@ export class DateTimeInput extends InputDialog {
 
     public outputFormat: StringExpression;
 
-    public getConverter(property: NonFunctionKeys<DateTimeInput>): Converter | ConverterFactory {
+    public getConverter(property: keyof DateTimeInputConfiguration): Converter | ConverterFactory {
         switch (property) {
             case 'defaultLocale':
                 return new StringExpressionConverter();

@@ -5,17 +5,20 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { StringExpression, StringExpressionConverter } from 'adaptive-expressions';
+import { Expression, StringExpression, StringExpressionConverter } from 'adaptive-expressions';
 import { Converter, ConverterFactory, DialogContext } from 'botbuilder-dialogs';
-import { NonFunctionKeys } from 'utility-types';
-import { InputDialog, InputState } from './inputDialog';
+import { InputDialog, InputDialogConfiguration, InputState } from './inputDialog';
+
+export interface TextInputConfiguration extends InputDialogConfiguration {
+    outputFormat?: string | Expression | StringExpression;
+}
 
 export class TextInput extends InputDialog {
     public static $kind = 'Microsoft.TextInput';
 
     public outputFormat: StringExpression;
 
-    public getConverter(property: NonFunctionKeys<TextInput>): Converter | ConverterFactory {
+    public getConverter(property: keyof TextInputConfiguration): Converter | ConverterFactory {
         switch (property) {
             case 'outputFormat':
                 return new StringExpressionConverter();

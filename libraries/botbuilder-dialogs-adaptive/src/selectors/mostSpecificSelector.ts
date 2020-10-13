@@ -7,8 +7,12 @@
  */
 import { ExpressionParser, ExpressionParserInterface, TriggerTree, Trigger } from 'adaptive-expressions';
 import { OnCondition } from '../conditions/onCondition';
-import { TriggerSelector } from '../triggerSelector';
+import { TriggerSelector, TriggerSelectorConfiguration } from '../triggerSelector';
 import { ActionContext } from '../actionContext';
+
+export interface MostSpecificSelectorConfiguration extends TriggerSelectorConfiguration {
+    selector?: TriggerSelector;
+}
 
 export class MostSpecificSelector extends TriggerSelector {
     public static $kind = 'Microsoft.MostSpecificSelector';

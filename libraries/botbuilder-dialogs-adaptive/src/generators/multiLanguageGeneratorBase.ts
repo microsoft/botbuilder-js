@@ -7,10 +7,14 @@
  */
 
 import { Configurable, Converter, ConverterFactory, DialogContext } from 'botbuilder-dialogs';
-import { NonFunctionKeys } from 'utility-types';
 import { LanguageGenerator } from '../languageGenerator';
 import { LanguagePolicy, LanguagePolicyConverter } from '../languagePolicy';
 import { languagePolicyKey } from '../languageGeneratorExtensions';
+
+export interface MultiLanguageGeneratorBaseConfiguration {
+    languagePolicy?: Record<string, string[]> | LanguagePolicy;
+}
+
 /**
  * Base class which applies language policy to tryGetGenerator.
  */
@@ -20,7 +24,7 @@ export abstract class MultiLanguageGeneratorBase extends Configurable implements
      */
     public languagePolicy: LanguagePolicy;
 
-    public getConverter(property: NonFunctionKeys<MultiLanguageGeneratorBase>): Converter | ConverterFactory {
+    public getConverter(property: keyof MultiLanguageGeneratorBaseConfiguration): Converter | ConverterFactory {
         switch (property) {
             case 'languagePolicy':
                 return new LanguagePolicyConverter();

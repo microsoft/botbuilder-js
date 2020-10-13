@@ -11,6 +11,7 @@ import {
     BoolExpressionConverter,
     ObjectExpression,
     ObjectExpressionConverter,
+    Expression,
 } from 'adaptive-expressions';
 import {
     Dialog,
@@ -19,11 +20,17 @@ import {
     DialogTurnResult,
     Converter,
     ConverterFactory,
+    DialogConfiguration,
 } from 'botbuilder-dialogs';
-import { NonFunctionKeys } from 'utility-types';
 import { DialogExpression } from '../expressions';
 import { replaceJsonRecursively } from '../jsonExtensions';
 import { DialogExpressionConverter } from '../converters';
+
+export interface BaseInvokeDialogConfiguration extends DialogConfiguration {
+    options?: object | string | Expression | ObjectExpression<object>;
+    dialog?: Dialog | string | Expression | DialogExpression;
+    activityProcessed?: boolean | string | Expression | BoolExpression;
+}
 
 export class BaseInvokeDialog<O extends object = {}> extends Dialog<O> implements DialogDependencies {
     public constructor(dialogIdToCall?: string, bindingOptions?: O) {
@@ -51,7 +58,7 @@ export class BaseInvokeDialog<O extends object = {}> extends Dialog<O> implement
      */
     public activityProcessed: BoolExpression = new BoolExpression(true);
 
-    public getConverter(property: NonFunctionKeys<BaseInvokeDialog>): Converter | ConverterFactory {
+    public getConverter(property: keyof BaseInvokeDialogConfiguration): Converter | ConverterFactory {
         switch (property) {
             case 'options':
                 return new ObjectExpressionConverter<object>();

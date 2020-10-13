@@ -7,15 +7,29 @@
  */
 
 import {
-    ValueExpression,
-    StringExpression,
     BoolExpression,
     BoolExpressionConverter,
+    Expression,
+    StringExpression,
     StringExpressionConverter,
+    ValueExpression,
     ValueExpressionConverter,
 } from 'adaptive-expressions';
-import { Converter, ConverterFactory, Dialog, DialogContext, DialogTurnResult } from 'botbuilder-dialogs';
-import { NonFunctionKeys } from 'utility-types';
+import {
+    Converter,
+    ConverterFactory,
+    Dialog,
+    DialogConfiguration,
+    DialogContext,
+    DialogTurnResult,
+} from 'botbuilder-dialogs';
+
+export interface EmitEventConfiguration extends DialogConfiguration {
+    eventName?: string | Expression | StringExpression;
+    eventValue?: unknown | ValueExpression;
+    bubbleEvent?: boolean | string | Expression | BoolExpression;
+    disabled?: boolean | string | Expression | BoolExpression;
+}
 
 export class EmitEvent<O extends object = {}> extends Dialog<O> {
     public static $kind = 'Microsoft.EmitEvent';
@@ -53,7 +67,7 @@ export class EmitEvent<O extends object = {}> extends Dialog<O> {
      */
     public disabled?: BoolExpression;
 
-    public getConverter(property: NonFunctionKeys<EmitEvent>): Converter | ConverterFactory {
+    public getConverter(property: keyof EmitEventConfiguration): Converter | ConverterFactory {
         switch (property) {
             case 'eventName':
                 return new StringExpressionConverter();

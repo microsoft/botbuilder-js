@@ -11,6 +11,7 @@ import {
     ArrayExpressionConverter,
     BoolExpression,
     BoolExpressionConverter,
+    Expression,
     IntExpression,
     IntExpressionConverter,
     NumberExpression,
@@ -21,20 +22,35 @@ import {
     StringExpressionConverter,
 } from 'adaptive-expressions';
 import {
-    RankerTypes,
+    JoinOperator,
     QnAMakerMetadata,
     QnAMaker,
     QnAMakerEndpoint,
     QnAMakerOptions,
     QnAMakerResult,
     QnARequestContext,
+    RankerTypes,
 } from 'botbuilder-ai';
 import { RecognizerResult, Activity } from 'botbuilder-core';
 import { Converter, ConverterFactory, DialogContext } from 'botbuilder-dialogs';
-import { NonFunctionKeys } from 'utility-types';
-import { Recognizer } from '../recognizers/recognizer';
+import { Recognizer, RecognizerConfiguration } from '../recognizers/recognizer';
 
 const intentPrefix = 'intent=';
+
+export interface QnAMakerRecognizerConfiguration extends RecognizerConfiguration {
+    knowledgeBaseId?: string | Expression | StringExpression;
+    hostname?: string | Expression | StringExpression;
+    endpointKey?: string | Expression | StringExpression;
+    top?: number | string | Expression | IntExpression;
+    threshold?: number | string | Expression | NumberExpression;
+    isTest?: boolean;
+    rankerType?: string | Expression | StringExpression;
+    strictFiltersJoinOperator?: JoinOperator;
+    includeDialogNameInMetadata?: boolean | string | Expression | BoolExpression;
+    metadata?: QnAMakerMetadata[] | string | Expression | ArrayExpression<QnAMakerMetadata>;
+    context?: QnARequestContext | string | Expression | ObjectExpression<QnARequestContext>;
+    qnaId?: number | string | Expression | IntExpression;
+}
 
 /**
  * A recognizer which uses QnAMaker KB to recognize intents.
@@ -79,6 +95,11 @@ export class QnAMakerRecognizer extends Recognizer {
     public rankerType: StringExpression = new StringExpression(RankerTypes.default);
 
     /**
+     * A value used for Join operation of Metadata.
+     */
+    public strictFiltersJoinOperator: JoinOperator;
+
+    /**
      * Whether to include the dialog name metadata for QnA context.
      */
     public includeDialogNameInMetadata: BoolExpression = new BoolExpression(true);
@@ -98,7 +119,7 @@ export class QnAMakerRecognizer extends Recognizer {
      */
     public qnaId: IntExpression = new IntExpression(0);
 
-    public getConverter(property: NonFunctionKeys<QnAMakerRecognizer>): Converter | ConverterFactory {
+    public getConverter(property: keyof QnAMakerRecognizerConfiguration): Converter | ConverterFactory {
         switch (property) {
             case 'knowledgeBaseId':
                 return new StringExpressionConverter();

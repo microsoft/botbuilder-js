@@ -10,13 +10,26 @@ import {
     BoolExpression,
     BoolExpressionConverter,
     StringExpressionConverter,
+    Expression,
 } from 'adaptive-expressions';
 import { Activity, StringUtils } from 'botbuilder-core';
-import { Converter, ConverterFactory, Dialog, DialogContext, DialogTurnResult } from 'botbuilder-dialogs';
+import {
+    Converter,
+    ConverterFactory,
+    Dialog,
+    DialogConfiguration,
+    DialogContext,
+    DialogTurnResult,
+} from 'botbuilder-dialogs';
 import { TemplateInterface } from '../template';
 import { ActivityTemplate, StaticActivityTemplate } from '../templates';
 import { ActivityTemplateConverter } from '../converters';
-import { NonFunctionKeys } from 'utility-types';
+
+export interface UpdateActivityConfiguration extends DialogConfiguration {
+    activity?: string | Partial<Activity> | TemplateInterface<Partial<Activity>>;
+    activityId?: string | Expression | StringExpression;
+    disabled?: boolean | string | Expression | BoolExpression;
+}
 
 export class UpdateActivity<O extends object = {}> extends Dialog<O> {
     public static $kind = 'Microsoft.UpdateActivity';
@@ -51,7 +64,7 @@ export class UpdateActivity<O extends object = {}> extends Dialog<O> {
      */
     public disabled?: BoolExpression;
 
-    public getConverter(property: NonFunctionKeys<UpdateActivity>): Converter | ConverterFactory {
+    public getConverter(property: keyof UpdateActivityConfiguration): Converter | ConverterFactory {
         switch (property) {
             case 'activity':
                 return new ActivityTemplateConverter();

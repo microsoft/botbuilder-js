@@ -9,6 +9,7 @@ import {
     Converter,
     ConverterFactory,
     Dialog,
+    DialogConfiguration,
     DialogContext,
     DialogEvents,
     DialogTurnResult,
@@ -21,8 +22,15 @@ import {
     StringExpressionConverter,
     ValueExpressionConverter,
     BoolExpressionConverter,
+    Expression,
 } from 'adaptive-expressions';
-import { NonFunctionKeys } from 'utility-types';
+
+export interface CancelAllDialogsBaseConfiguration extends DialogConfiguration {
+    eventName?: string | Expression | StringExpression;
+    eventValue?: unknown | ValueExpression;
+    disabled?: boolean | string | Expression | BoolExpression;
+    activityProcessed?: boolean | string | Expression | BoolExpression;
+}
 
 export class CancelAllDialogsBase<O extends object = {}> extends Dialog<O> {
     public constructor();
@@ -35,7 +43,7 @@ export class CancelAllDialogsBase<O extends object = {}> extends Dialog<O> {
         if (eventValue) {
             this.eventValue = new ValueExpression(eventValue);
         }
-        this.cancelAll = isCancelAll;
+        this._cancelAll = isCancelAll;
     }
 
     /**
@@ -58,12 +66,9 @@ export class CancelAllDialogsBase<O extends object = {}> extends Dialog<O> {
      */
     public activityProcessed: BoolExpression;
 
-    /**
-     * A value indicating whether to cancel all dialogs.
-     */
-    public cancelAll: boolean;
+    private _cancelAll: boolean;
 
-    public getConverter(property: NonFunctionKeys<CancelAllDialogsBase>): Converter | ConverterFactory {
+    public getConverter(property: keyof CancelAllDialogsBaseConfiguration): Converter | ConverterFactory {
         switch (property) {
             case 'eventName':
                 return new StringExpressionConverter();
@@ -96,9 +101,9 @@ export class CancelAllDialogsBase<O extends object = {}> extends Dialog<O> {
         }
 
         if (!dc.parent) {
-            return await dc.cancelAllDialogs(this.cancelAll, eventName, eventValue);
+            return await dc.cancelAllDialogs(this._cancelAll, eventName, eventValue);
         } else {
-            const turnResult = await dc.parent.cancelAllDialogs(this.cancelAll, eventName, eventValue);
+            const turnResult = await dc.parent.cancelAllDialogs(this._cancelAll, eventName, eventValue);
             turnResult.parentEnded = true;
             return turnResult;
         }

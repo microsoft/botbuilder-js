@@ -9,7 +9,7 @@
 import {
     ArrayExpression,
     ArrayExpressionConverter,
-    BoolExpressionConverter,
+    Expression,
     StringExpression,
     StringExpressionConverter,
 } from 'adaptive-expressions';
@@ -23,9 +23,12 @@ import {
     DialogTurnStatus,
     TurnPath,
 } from 'botbuilder-dialogs';
-import { NonFunctionKeys } from 'utility-types';
-import { SendActivity } from '../actions/sendActivity';
-import { ActivityTemplateConverter } from '../converters';
+import { SendActivity, SendActivityConfiguration } from '../actions/sendActivity';
+
+export interface AskConfiguration extends SendActivityConfiguration {
+    expectedProperties?: string[] | string | Expression | ArrayExpression<string>;
+    defaultOperation?: string | Expression | StringExpression;
+}
 
 /**
  * Ask for an open-ended response.
@@ -52,16 +55,12 @@ export class Ask extends SendActivity {
      */
     public defaultOperation: StringExpression;
 
-    public getConverter(property: NonFunctionKeys<Ask>): Converter | ConverterFactory {
+    public getConverter(property: keyof AskConfiguration): Converter | ConverterFactory {
         switch (property) {
             case 'expectedProperties':
                 return new ArrayExpressionConverter<string>();
             case 'defaultOperation':
                 return new StringExpressionConverter();
-            case 'activity':
-                return new ActivityTemplateConverter();
-            case 'disabled':
-                return new BoolExpressionConverter();
             default:
                 return super.getConverter(property);
         }

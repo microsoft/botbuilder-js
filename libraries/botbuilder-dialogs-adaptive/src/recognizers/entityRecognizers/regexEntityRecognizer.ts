@@ -9,6 +9,11 @@ import { ModelResult } from 'botbuilder-dialogs';
  * Licensed under the MIT License.
  */
 
+export interface RegexEntityRecognizerConfiguration {
+    name?: string;
+    pattern?: string;
+}
+
 export class RegexEntityRecognizer extends TextEntityRecognizer {
     public static $kind = 'Microsoft.RegexEntityRecognizer';
 

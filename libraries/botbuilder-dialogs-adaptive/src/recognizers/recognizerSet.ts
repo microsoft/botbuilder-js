@@ -8,16 +8,19 @@
 
 import { Activity, RecognizerResult, getTopScoringIntent } from 'botbuilder-core';
 import { Converter, ConverterFactory, DialogContext } from 'botbuilder-dialogs';
-import { NonFunctionKeys } from 'utility-types';
 import { RecognizerListConverter } from '../converters';
-import { Recognizer } from './recognizer';
+import { Recognizer, RecognizerConfiguration } from './recognizer';
+
+export interface RecognizerSetConfiguration extends RecognizerConfiguration {
+    recognizers?: string[] | Recognizer[];
+}
 
 export class RecognizerSet extends Recognizer {
     public static $kind = 'Microsoft.RecognizerSet';
 
     public recognizers: Recognizer[] = [];
 
-    public getConverter(property: NonFunctionKeys<RecognizerSet>): Converter | ConverterFactory {
+    public getConverter(property: keyof RecognizerSetConfiguration): Converter | ConverterFactory {
         switch (property) {
             case 'recognizers':
                 return RecognizerListConverter;

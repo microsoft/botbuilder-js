@@ -7,7 +7,12 @@
  */
 
 import { Activity, ActivityTypes } from 'botbuilder-core';
-import { AssertReplyActivity } from './assertReplyActivity';
+import { AssertReplyActivity, AssertReplyActivityConfiguration } from './assertReplyActivity';
+
+export interface AssertReplyOneOfConfiguration extends AssertReplyActivityConfiguration {
+    text?: string;
+    exact?: boolean;
+}
 
 /**
  * Assertion that reply from the bot matches one of options.

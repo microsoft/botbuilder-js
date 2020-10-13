@@ -5,19 +5,31 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { ValueExpression, StringExpression, BoolExpression, BoolExpressionConverter } from 'adaptive-expressions';
+import {
+    ValueExpression,
+    StringExpression,
+    BoolExpression,
+    BoolExpressionConverter,
+    Expression,
+} from 'adaptive-expressions';
 import { StringUtils } from 'botbuilder-core';
-import { Converter, ConverterFactory, Dialog, DialogContext, DialogTurnResult } from 'botbuilder-dialogs';
-import { NonFunctionKeys } from 'utility-types';
+import {
+    Converter,
+    ConverterFactory,
+    Dialog,
+    DialogConfiguration,
+    DialogContext,
+    DialogTurnResult,
+} from 'botbuilder-dialogs';
 import { replaceJsonRecursively } from '../jsonExtensions';
 
-type Input<T> = {
+type AssignmentInput<T> = {
     property: string;
     value: T;
 };
 
-class PropertyAssignmentsConverter<T = unknown> implements Converter<Input<T>[], PropertyAssignment[]> {
-    public convert(items: Input<T>[] | PropertyAssignment[]): PropertyAssignment[] {
+class PropertyAssignmentsConverter<T = unknown> implements Converter<AssignmentInput<T>[], PropertyAssignment[]> {
+    public convert(items: AssignmentInput<T>[] | PropertyAssignment[]): PropertyAssignment[] {
         const assignments: PropertyAssignment[] = [];
         items.forEach((item) => {
             const { property, value } = item;
@@ -33,6 +45,11 @@ class PropertyAssignmentsConverter<T = unknown> implements Converter<Input<T>[],
 export interface PropertyAssignment {
     property: StringExpression;
     value: ValueExpression;
+}
+
+export interface SetPropertiesConfiguration extends DialogConfiguration {
+    assignments?: AssignmentInput<unknown>[] | PropertyAssignment[];
+    disabled?: boolean | string | Expression | BoolExpression;
 }
 
 export class SetProperties<O extends object = {}> extends Dialog<O> {
@@ -56,7 +73,7 @@ export class SetProperties<O extends object = {}> extends Dialog<O> {
      */
     public disabled?: BoolExpression;
 
-    public getConverter(property: NonFunctionKeys<SetProperties>): Converter | ConverterFactory {
+    public getConverter(property: keyof SetPropertiesConfiguration): Converter | ConverterFactory {
         switch (property) {
             case 'assignments':
                 return new PropertyAssignmentsConverter();

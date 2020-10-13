@@ -5,10 +5,14 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { BoolExpression, BoolExpressionConverter } from 'adaptive-expressions';
+import { BoolExpression, BoolExpressionConverter, Expression } from 'adaptive-expressions';
 import { Converter, ConverterFactory, DialogContext, DialogTurnResult, TurnPath } from 'botbuilder-dialogs';
-import { NonFunctionKeys } from 'utility-types';
-import { BaseInvokeDialog } from './baseInvokeDialog';
+import { BaseInvokeDialog, BaseInvokeDialogConfiguration } from './baseInvokeDialog';
+
+export interface RepeatDialogConfiguration extends BaseInvokeDialogConfiguration {
+    disabled?: boolean | string | Expression | BoolExpression;
+    allowLoop?: boolean | string | Expression | BoolExpression;
+}
 
 export class RepeatDialog<O extends object = {}> extends BaseInvokeDialog<O> {
     public static $kind = 'Microsoft.RepeatDialog';
@@ -28,7 +32,7 @@ export class RepeatDialog<O extends object = {}> extends BaseInvokeDialog<O> {
      */
     public allowLoop?: BoolExpression;
 
-    public getConverter(property: NonFunctionKeys<RepeatDialog>): Converter | ConverterFactory {
+    public getConverter(property: keyof RepeatDialogConfiguration): Converter | ConverterFactory {
         switch (property) {
             case 'disabled':
                 return new BoolExpressionConverter();

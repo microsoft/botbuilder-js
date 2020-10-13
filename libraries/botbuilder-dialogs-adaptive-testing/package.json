@@ -22,8 +22,7 @@
     "@types/mocha": "^5.2.7",
     "nock": "^11.9.1",
     "mocha": "^6.2.3",
-    "typescript": "3.5.3",
-    "utility-types": "^3.10.0"
+    "typescript": "3.5.3"
   },
   "author": "Microsoft",
   "license": "MIT"
