@@ -6,11 +6,11 @@
 name: $(Build.BuildId)
 
 pool:
-    vmImage: 'macOS-10.15'
+  vmImage: 'macOS-10.15'
 
-#  variables:
-#  CI_PULL_REQUEST: define this in Azure
-#  version: define this in Azure, settable at queue time
+variables:
+  PackageVersion: 4.4.0-preview.$(Build.BuildNumber)
+  PreviewPackageVersion: 4.4.0-preview.$(Build.BuildNumber)
 
 stages:
 - stage: Node10CI
@@ -23,6 +23,7 @@ stages:
     displayName: 'Node 10.x Unit Tests'
     steps:
     - template: js-build-steps.yml
+
     - powershell: |
         pushd ..
         Get-ChildItem -Recurse -Force | Where {$_.FullName -notlike "*node_modules*"}
@@ -39,7 +40,7 @@ stages:
   - job: Node12UnitTests
     displayName: 'Node 12.x Unit Tests'
     variables:
-      PostToDevOps: true # Post current Node LTS (12.x) code coverage report
+      PublishTestResults: true # Post current Node LTS (12.x) code coverage report
     steps:
     - template: js-build-steps.yml
     - powershell: |

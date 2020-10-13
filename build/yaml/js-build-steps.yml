@@ -3,7 +3,8 @@ steps:
   displayName: 'Tag Build with version number. (Skip if a fork PR to avoid access denied error.)'
   inputs:
     tags: |
-      Version=$(version)
+     v: $(PackageVersion)
+     preview v: $(PreviewPackageVersion)
   continueOnError: true
   condition: and(succeeded(), eq(variables['System.PullRequest.IsFork'], 'false'))
 
@@ -26,42 +27,41 @@ steps:
     verbose: false
 
 - bash: |
-    set -o xtrace
-    sed -i '' 's/${Version}/$(version)/g' package.json
-    sed -i '' 's/${Version}/$(version)/g' libraries/adaptive-expressions/package.json
-    sed -i '' 's/${Version}/$(version)/g' libraries/bot-integration-tests/package.json
-    sed -i '' 's/${Version}/$(version)/g' libraries/botbuilder/package.json
-    sed -i '' 's/${Version}/$(version)/g' libraries/botbuilder-ai/package.json
-    sed -i '' 's/${Version}/$(version)/g' libraries/botbuilder-applicationinsights/package.json
-    sed -i '' 's/${Version}/$(version)/g' libraries/botbuilder-azure/package.json
-    sed -i '' 's/${Version}/$(version)/g' libraries/botbuilder-core/package.json
-    sed -i '' 's/${Version}/$(version)/g' libraries/botbuilder-dialogs/package.json
-    sed -i '' 's/${Version}/$(version)/g' libraries/botbuilder-dialogs-adaptive/package.json
-    sed -i '' 's/${Version}/$(version)/g' libraries/botbuilder-dialogs-adaptive-tests/package.json
-    sed -i '' 's/${Version}/$(version)/g' libraries/botbuilder-dialogs-declarative/package.json
-    sed -i '' 's/${Version}/$(version)/g' libraries/botbuilder-lg/package.json
-    sed -i '' 's/${Version}/$(version)/g' libraries/botbuilder-testing/package.json
-    sed -i '' 's/${Version}/$(version)/g' libraries/botframework-config/package.json
-    sed -i '' 's/${Version}/$(version)/g' libraries/botframework-connector/package.json
-    sed -i '' 's/${Version}/$(version)/g' libraries/botframework-schema/package.json
-    sed -i '' 's/${Version}/$(version)/g' libraries/botframework-streaming/package.json
+   set -o xtrace
+   sed -i '' 's/${Version}/$(PackageVersion)/g' package.json 
+   sed -i '' 's/${Version}/$(PackageVersion)/g' libraries/adaptive-expressions/package.json
+   sed -i '' 's/${Version}/$(PackageVersion)/g' libraries/bot-integration-tests/package.json
+   sed -i '' 's/${Version}/$(PackageVersion)/g' libraries/botbuilder/package.json
+   sed -i '' 's/${Version}/$(PackageVersion)/g' libraries/botbuilder-ai/package.json
+   sed -i '' 's/${Version}/$(PreviewPackageVersion)/g' libraries/botbuilder-ai-orchestrator/package.json
+   sed -i '' 's/${Version}/$(PackageVersion)/g' libraries/botbuilder-applicationinsights/package.json
+   sed -i '' 's/${Version}/$(PackageVersion)/g' libraries/botbuilder-azure/package.json
+   sed -i '' 's/${Version}/$(PackageVersion)/g' libraries/botbuilder-core/package.json
+   sed -i '' 's/${Version}/$(PackageVersion)/g' libraries/botbuilder-dialogs/package.json
+   sed -i '' 's/${Version}/$(PreviewPackageVersion)/g' libraries/botbuilder-dialogs-adaptive/package.json
+   sed -i '' 's/${Version}/$(PreviewPackageVersion)/g' libraries/botbuilder-dialogs-adaptive-testing/package.json
+   sed -i '' 's/${Version}/$(PreviewPackageVersion)/g' libraries/botbuilder-dialogs-declarative/package.json
+   sed -i '' 's/${Version}/$(PackageVersion)/g' libraries/botbuilder-lg/package.json
+   sed -i '' 's/${Version}/$(PackageVersion)/g' libraries/botbuilder-testing/package.json
+   sed -i '' 's/${Version}/$(PackageVersion)/g' libraries/botframework-config/package.json
+   sed -i '' 's/${Version}/$(PackageVersion)/g' libraries/botframework-connector/package.json
+   sed -i '' 's/${Version}/$(PackageVersion)/g' libraries/botframework-schema/package.json
+   sed -i '' 's/${Version}/$(PackageVersion)/g' libraries/botframework-streaming/package.json
   displayName: 'Replace version number in package.json files'
   continueOnError: true
-  env:
-    version: $(version)
 
-- task: Npm@1
-  displayName: 'npm update-versions'
-  inputs:
-    command: custom
-    verbose: false
-    customCommand: 'run update-versions'
+- bash: |
+   npm run update-versions
+  displayName: 'npm run update-versions'
+  env:
+    Version: $(PackageVersion)
+    PreviewPackageVersion: $(PreviewPackageVersion)
 
 - powershell: |
-    $fileName = 'package-lock.json'
-    Get-ChildItem -Path ./tools -File | Where-Object {$_.Name -eq $fileName};
-    Write-Host "`nDeleting any files listed above";
-    Get-ChildItem -Path ./tools -File | Where-Object {$_.Name -eq $fileName} | Remove-Item -Force;
+   $fileName = 'package-lock.json'
+   Get-ChildItem -Path ./tools -File | Where-Object {$_.Name -eq $fileName};
+   Write-Host "`nDeleting any files listed above";
+   Get-ChildItem -Path ./tools -File | Where-Object {$_.Name -eq $fileName} | Remove-Item -Force;
   displayName: 'Delete tools/package-lock.json. Maybe avoids intermittent error in \"npm run postinstall\" ENOENT: no such file or directory, lchown ''/Users/runner/.npm/_locks/staging-7c222bec8116519f.lock'''
   continueOnError: true
 
@@ -78,10 +78,6 @@ steps:
     command: custom
     verbose: false
     customCommand: 'run build'
-
-- task: azure-cosmosdb.emulator-public-preview.run-cosmosdbemulatorcontainer.CosmosDbEmulator@2
-  displayName: 'Run Azure Cosmos DB Emulator container'
-  enabled: false
 
 - task: Npm@1
   displayName: 'npm run test:devops'
@@ -102,7 +98,7 @@ steps:
     #buildPlatform: # Optional
     #buildConfiguration: # Optional - Include Node runtime version?
     #publishRunAttachments: true # Optional
-  condition: and(succeeded(), ne(variables['System.PullRequest.IsFork'], 'True'), eq(variables['PostToDevOps'], true))
+  condition: and(succeeded(), ne(variables['System.PullRequest.IsFork'], 'True'), eq(variables['PublishTestResults'], true))
 
 - task: PublishCodeCoverageResults@1
   inputs:
@@ -112,3 +108,4 @@ steps:
     #reportDirectory: # Optional
     #additionalCodeCoverageFiles: # Optional
     failIfCoverageEmpty: true
+  condition: and(succeeded(), eq(variables['PublishTestResults'], true))
