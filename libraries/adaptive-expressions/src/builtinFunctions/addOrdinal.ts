@@ -17,7 +17,7 @@ import { ReturnType } from '../returnType';
  */
 export class AddOrdinal extends ExpressionEvaluator {
     /**
-     * Initializes a new instance of the [AddOrdinal](adaptive-expressions.AddOrdinal) class.
+     * Initializes a new instance of the [AddOrdinal](xref:adaptive-expressions.AddOrdinal) class.
      */
     public constructor() {
         super(ExpressionType.AddOrdinal, AddOrdinal.evaluator(), ReturnType.String, AddOrdinal.validator);
