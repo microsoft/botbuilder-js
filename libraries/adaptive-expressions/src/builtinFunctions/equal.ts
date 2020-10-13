@@ -17,7 +17,7 @@ import { ComparisonEvaluator } from './comparisonEvaluator';
  */
 export class Equal extends ComparisonEvaluator {
     /**
-     * Initializes a new instance of the [Equal](adaptive-expressions.Equal) class.
+     * Initializes a new instance of the [Equal](xref:adaptive-expressions.Equal) class.
      */
     public constructor() {
         super(ExpressionType.Equal, InternalFunctionUtils.isEqual, FunctionUtils.validateBinary);
