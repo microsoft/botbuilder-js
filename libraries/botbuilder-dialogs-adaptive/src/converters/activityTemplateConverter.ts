@@ -10,13 +10,13 @@ import { Converter } from 'botbuilder-dialogs-declarative';
 import { ActivityTemplate, StaticActivityTemplate, TextTemplate } from '../templates';
 
 /**
- * Activity template converter that implements `Converter`.
+ * Activity template converter that implements [Converter](xref:botbuilder-dialogs-declarative.Converter).
  */
 export class ActivityTemplateConverter implements Converter {
     /**
-     * Converts a template to one of the following classes `ActivityTemplate` | `StaticActivityTemplate`.
+     * Converts a template to one of the following classes [ActivityTemplate](xref:botbuilder-dialogs-adaptive.ActivityTemplate) | [StaticActivityTemplate](xref:botbuilder-dialogs-adaptive.Static.ActivityTemplate)
      * @param value The template to evaluate to create the activity.
-     * @returns A new instance that could be the following classes `ActivityTemplate` | `StaticActivityTemplate`.
+     * @returns A new instance that could be the following classes [ActivityTemplate](xref:botbuilder-dialogs-adaptive.ActivityTemplate) | [StaticActivityTemplate](xref:botbuilder-dialogs-adaptive.Static.ActivityTemplate).
      */
     public convert(value: string): ActivityTemplate | StaticActivityTemplate | TextTemplate {
         if (typeof value === 'string') {

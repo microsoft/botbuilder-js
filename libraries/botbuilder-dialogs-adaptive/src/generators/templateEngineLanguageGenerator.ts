@@ -15,7 +15,7 @@ import { LanguageResourceLoader } from '../languageResourceLoader';
 import { LanguageGeneratorManager } from './languageGeneratorManager';
 
 /**
- * LanguageGenerator implementation which uses LGFile.
+ * [LanguageGenerator](xref:botbuilder-dialogs-adaptive.LanguageGenerator) implementation which uses LGFile.
  */
 export class TemplateEngineLanguageGenerator implements LanguageGenerator{
     private readonly DEFAULTLABEL: string  = 'Unknown';
@@ -25,8 +25,8 @@ export class TemplateEngineLanguageGenerator implements LanguageGenerator{
     public id: string = '';
 
     /**
-     * Initializes a new instance of the `TemplateEngineLanguageGenerator` class.
-     * @param arg1 Optional. An LG `Templates` or a `Resource`.
+     * Initializes a new instance of the [TemplateEngineLanguageGenerator](xref:botbuilder-dialogs-adaptive.TemplateEngineLanguageGenerator) class.
+     * @param arg1 Optional. An LG [Templates](xref:botbuilder-lg.Templates) or a [Resource](xref:botbuilder-dialogs-declarative.Resource).
      * @param arg2 Optional. A `Map` object with a `Resource` array for each key.
      */
     public constructor(arg1?: Templates | Resource, arg2?: Map<string,Resource[]>) {

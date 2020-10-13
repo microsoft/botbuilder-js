@@ -11,13 +11,13 @@ import { Dialog } from 'botbuilder-dialogs';
 import { DialogExpression } from '../expressions';
 
 /**
- * Dialog expression converter that implements `Converter`.
+ * Dialog expression converter that implements [Converter](xref:botbuilder-dialogs-declarative.Converter).
  */
 export class DialogExpressionConverter implements Converter {
     private _resourceExplorer: ResourceExplorer;
 
     /**
-     * Initializes a new instance of the `DialogExpressionConverter` class.
+     * Initializes a new instance of the [DialogExpressionConverter](xref:botbuilder-dialogs-adaptive.DialogExpressionConverter) class.
      * @param resouceExplorer Resource explorer to use for resolving references.
      */
     public constructor(resouceExplorer: ResourceExplorer) {
@@ -25,9 +25,9 @@ export class DialogExpressionConverter implements Converter {
     }
 
     /**
-     * Converts an object or string to a `DialogExpression` instance.
+     * Converts an object or string to a [DialogExpression](xref:botbuilder-dialogs-adaptive.DialogExpression) instance.
      * @param value An object or string value.
-     * @returns A new `DialogExpression` instance.
+     * @returns A new [DialogExpression](xref:botbuilder-dialogs-adaptive.DialogExpression) instance.
      */
     public convert(value: string | object): DialogExpression {
         if (typeof value == 'string') {

@@ -18,7 +18,7 @@ import { LanguageResourceLoader } from '../languageResourceLoader';
 import { TemplateEngineLanguageGenerator } from './templateEngineLanguageGenerator';
 
 /**
- * Class which manages cache of all LG resources from a ResourceExplorer.
+ * Class which manages cache of all LG resources from a [ResourceExplorer](xref:botbuilder-dialogs-declarative.ResourceExplorer).
  */
 export class LanguageGeneratorManager {
     /**
@@ -32,7 +32,7 @@ export class LanguageGeneratorManager {
     private _multiLanguageResources: Map<string, Resource[]>;
 
     /**
-     * Initialize a new instance of LanguageResourceManager class.
+     * Initialize a new instance of [LanguageResourceManager](xref:botbuilder-dialogs-adaptive.LanguageResourceManager) class.
      * @param resourceManager Resource explorer to manager LG files.
      */
     public constructor(resourceManager: ResourceExplorer) {

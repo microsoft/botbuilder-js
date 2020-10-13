@@ -56,8 +56,8 @@ export class LuisAdaptiveRecognizer extends Recognizer {
 
     /**
      * To recognize intents and entities in a users utterance.
-     * @param dialogContext Dialog Context.
-     * @param activity Activity.
+     * @param dialogContext The [DialogContext](xref:botbuilder-dialogs.DialogContext).
+     * @param activity The [Activity](xref:botbuilder-core.Activity).
      * @param telemetryProperties Optional. Additional properties to be logged to telemetry with event.
      * @param telemetryMetrics Optional. Additional metrics to be logged to telemetry with event.
      */
