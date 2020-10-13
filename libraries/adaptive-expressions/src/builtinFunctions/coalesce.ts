@@ -17,7 +17,7 @@ import { ReturnType } from '../returnType';
  */
 export class Coalesce extends ExpressionEvaluator {
     /**
-     * Initializes a new instance of the `Coalesce` class.
+     * Initializes a new instance of the [Coalesce](xref:adaptive-expressions.Coalesce) class.
      */
     public constructor() {
         super(ExpressionType.Coalesce, Coalesce.evaluator(), ReturnType.Object, FunctionUtils.validateAtLeastOne);

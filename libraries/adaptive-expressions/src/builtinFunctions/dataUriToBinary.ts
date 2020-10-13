@@ -17,7 +17,7 @@ import { ReturnType } from '../returnType';
  */
 export class DataUriToBinary extends ExpressionEvaluator {
     /**
-     * Initializes a new instance of the `DataUriToBinary` class.
+     * Initializes a new instance of the [DataUriToBinary](xref:adaptive-expressions.DataUriToBinary) class.
      */
     public constructor() {
         super(

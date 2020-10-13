@@ -17,7 +17,7 @@ import { ReturnType } from '../returnType';
  */
 export class DayOfMonth extends ExpressionEvaluator {
     /**
-     * Initializes a new instance of the `DayOfMonth` class.
+     * Initializes a new instance of the [DayOfMonth](xref:adaptive-expressions.DayOfMonth) class.
      */
     public constructor() {
         super(ExpressionType.DayOfMonth, DayOfMonth.evaluator(), ReturnType.Number, FunctionUtils.validateUnaryString);

@@ -17,7 +17,7 @@ import { ReturnType } from '../returnType';
  */
 export class Count extends ExpressionEvaluator {
     /**
-     * Initializes a new instance of the `Count` class.
+     * Initializes a new instance of the [Count](xref:adaptive-expressions.Count) class.
      */
     public constructor() {
         super(ExpressionType.Count, Count.evaluator(), ReturnType.Number, Count.validator);

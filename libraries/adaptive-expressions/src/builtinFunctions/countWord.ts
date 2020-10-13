@@ -17,7 +17,7 @@ import { ReturnType } from '../returnType';
  */
 export class CountWord extends ExpressionEvaluator {
     /**
-     * Initializes a new instance of the `CountWord` class.
+     * Initializes a new instance of the [CountWord](xref:adaptive-expressions.CountWord) class.
      */
     public constructor() {
         super(ExpressionType.CountWord, CountWord.evaluator(), ReturnType.Number, FunctionUtils.validateUnaryString);

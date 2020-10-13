@@ -16,7 +16,7 @@ export class BotStateMemoryScope extends MemoryScope {
     protected stateKey: string;
 
     /**
-     * Initializes a new instance of the `BotStateMemoryScope` class.
+     * Initializes a new instance of the [BotStateMemoryScope](xref:adaptive-expressions.BotStateMemoryScope) class.
      * @param name name of the property.
      */
     public constructor(name: string) {

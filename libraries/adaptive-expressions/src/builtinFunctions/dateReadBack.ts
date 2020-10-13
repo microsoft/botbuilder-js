@@ -20,7 +20,7 @@ import { ReturnType } from '../returnType';
  */
 export class DateReadBack extends ExpressionEvaluator {
     /**
-     * Initializes a new instance of the `DateReadBack` class.
+     * Initializes a new instance of the [DateReadBack](xref:adaptive-expressions.DateReadBack) class.
      */
     public constructor() {
         super(ExpressionType.DateReadBack, DateReadBack.evaluator(), ReturnType.String, DateReadBack.validator);

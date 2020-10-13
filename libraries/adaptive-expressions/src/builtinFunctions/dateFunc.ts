@@ -19,7 +19,7 @@ import { ReturnType } from '../returnType';
  */
 export class DateFunc extends ExpressionEvaluator {
     /**
-     * Initializes a new instance of the `DateFunc` class.
+     * Initializes a new instance of the [DateFunc](xref:adaptive-expressions.DateFunc) class.
      */
     public constructor() {
         super(ExpressionType.Date, DateFunc.evaluator(), ReturnType.String, FunctionUtils.validateUnaryString);

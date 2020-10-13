@@ -16,7 +16,7 @@ import { ReturnType } from '../returnType';
  */
 export class DataUriToString extends ExpressionEvaluator {
     /**
-     * Initializes a new instance of the `DataUriToString` class.
+     * Initializes a new instance of the [DataUriToString](xref:adaptive-expressions.DataUriToString) class.
      */
     public constructor() {
         super(
