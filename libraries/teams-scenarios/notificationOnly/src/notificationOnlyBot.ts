@@ -16,7 +16,7 @@ import {
  */
 export class NotificationOnlyBot extends TeamsActivityHandler {
     /**
-     * Initializes a new instance of the `NotificationOnlyBot` class.
+     * Initializes a new instance of the [NotificationOnlyBot](xref:notification-only.NotificationOnlyBot) class.
      */
     constructor() {
         super();

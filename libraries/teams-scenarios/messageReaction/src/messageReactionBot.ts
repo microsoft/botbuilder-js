@@ -19,8 +19,8 @@ export class MessageReactionBot extends ActivityHandler {
     _log: ActivityLog;
 
     /**
-     * Initializes a new instance of the `MessageReactionBot` class.
-     * @param activityLog The `ActivityLog`.
+     * Initializes a new instance of the [MessageReactionBot](xref:reactions-bot.MessageReactionBot) class.
+     * @param activityLog The [ActivityLog](xref:reactions-bot.ActivityLog).
      */
     constructor(activityLog: ActivityLog) {
         super();
@@ -75,8 +75,8 @@ export class MessageReactionBot extends ActivityHandler {
 
     /**
      * Sends an activity reply.
-     * @param context The `TurnContext`.
-     * @param text The `Activity`'s text.
+     * @param context The [TurnContext](xref:botbuilder-core.TurnContext).
+     * @param text The [Activity](xref:botframework-schema.Activity)'s text.
      */
     async sendMessageAndLogActivityId(context: TurnContext, text: string): Promise<void> {
         var replyActivity = MessageFactory.text(text);

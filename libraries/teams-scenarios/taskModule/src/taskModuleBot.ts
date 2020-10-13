@@ -20,9 +20,9 @@ import {
  * This bot can be installed at any scope. If you @mention the bot you will get the task module. You can interact with the task module to
  * hit the other functions.
  */
-export class TaskModuleBot  extends TeamsActivityHandler {
+export class TaskModuleBot extends TeamsActivityHandler {
     /**
-     * Initializes a new instance of the `TaskModuleBot` class.
+     * Initializes a new instance of the [TaskModuleBot](xref:task-module.TaskModuleBot) class.
      */
     constructor() {
         super();

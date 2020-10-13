@@ -17,13 +17,13 @@ import {
 import { basename } from 'path';
 
 /**
- * Reply to channel bot handlers.
+ * Reply to channel bot handler.
  */
 export class ReplyToChannelBot extends TeamsActivityHandler {
     botId: string;
 
     /**
-     * Initializes a new instance of the `ReplyToChannelBot` class.
+     * Initializes a new instance of the [ReplyToChannelBot](xref:reply-to-channel.ReplyToChannelBot) class.
      */
     constructor() {
         super();

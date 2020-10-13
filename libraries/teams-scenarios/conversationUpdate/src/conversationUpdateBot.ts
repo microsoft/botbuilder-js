@@ -16,10 +16,9 @@ import {
  * From the UI you can click the 3 dots on the team level, or the channel level to add, rename, or delete the channel/team.
  * You can go to the "manage team" option at the team level to add/remove people.
  */
-export class ConversationUpdateBot  extends TeamsActivityHandler {
-
+export class ConversationUpdateBot extends TeamsActivityHandler {
     /**
-     * Initializes a new instance of the `ConversationUpdateBot` class.
+     * Initializes a new instance of the [ConversationUpdateBot](xref:conversation-update.ConversationUpdateBot) class.
      */
     constructor() {
         super();

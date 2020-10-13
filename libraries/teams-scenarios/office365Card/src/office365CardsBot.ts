@@ -24,7 +24,7 @@ import {
  */
 export class Office365CardsBot extends TeamsActivityHandler {
     /**
-     * Initializes a new instance of the `Office365CardsBot` class.
+     * Initializes a new instance of the [Office365CardsBot](xref:office365-cards.Office365CardsBot) class.
      */
     constructor() {
         super();

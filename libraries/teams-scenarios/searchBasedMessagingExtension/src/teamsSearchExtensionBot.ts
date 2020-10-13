@@ -22,7 +22,7 @@ import {
  */
 export class TeamsSearchExtensionBot extends TeamsActivityHandler {
     /**
-     * Initializes a new instance of the `TeamsSearchExtensionBot` class.
+     * Initializes a new instance of the [TeamsSearchExtensionBot](xref:search-extension-bot.TeamsSearchExtensionBot) class.
      * We need to change the key for the user state because the bot might not be in the conversation, which means they get a 403 error.
      * @param userState User's bot state for persistance.
      */

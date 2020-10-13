@@ -29,7 +29,7 @@ export class MessagingExtensionAuthBot extends TeamsActivityHandler {
     connectionName: string;
 
     /**
-     * Initializes a new instance of the `MessagingExtensionAuthBot` class.
+     * Initializes a new instance of the [MessagingExtensionAuthBot](xref:messagingextension-auth.MessagingExtensionAuthBot) class.
      * @param authConnectionName The Auth connection name.
      */
     constructor(authConnectionName: string) {

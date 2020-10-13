@@ -15,7 +15,7 @@ import {
  */
 export class RosterBot extends TeamsActivityHandler {
     /**
-     * Initializes a new instance of the `RosterBot` class.
+     * Initializes a new instance of the [RosterBot](xref:teams-roster-bot.RosterBot) class.
      */
     constructor() {
         super();
