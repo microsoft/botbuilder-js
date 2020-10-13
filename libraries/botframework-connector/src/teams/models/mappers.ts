@@ -263,15 +263,14 @@ export const TeamsChannelAccount: msRest.CompositeMapper = {
     },
 };
 
-export const TeamsParticipantChannelAccount: msRest.CompositeMapper = {
-    serializedName: 'TeamsParticipantChannelAccount',
+export const Meeting: msRest.CompositeMapper = {
+    serializedName: 'meeting',
     type: {
         name: 'Composite',
-        className: 'TeamsParticipantChannelAccount',
+        className: 'Meeting',
         modelProperties: {
-            ...TeamsChannelData.type.modelProperties,
-            meetingRole: {
-                serializedName: 'memberRole',
+            role: {
+                serializedName: 'role',
                 type: {
                     name: 'String',
                 },
@@ -280,6 +279,31 @@ export const TeamsParticipantChannelAccount: msRest.CompositeMapper = {
                 serializedName: 'inMeeting',
                 type: {
                     name: 'Boolean',
+                },
+            },
+        },
+    },
+};
+
+export const TeamsParticipantChannelAccount: msRest.CompositeMapper = {
+    serializedName: 'TeamsParticipantChannelAccount',
+    type: {
+        name: 'Composite',
+        className: 'TeamsParticipantChannelAccount',
+        modelProperties: {
+            ...TeamsChannelAccount.type.modelProperties,
+            meeting: {
+                serializedName: 'meeting',
+                type: {
+                    name: 'Composite',
+                    className: 'Meeting',
+                },
+            },
+            conversation: {
+                serializedName: 'conversation',
+                type: {
+                    name: 'Composite',
+                    className: 'MessageActionsPayloadConversation',
                 },
             },
         },

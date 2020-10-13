@@ -577,7 +577,10 @@ describe('TeamsInfo', () => {
                 email: 'User.One@microsoft.com',
                 userPrincipalName: 'user1@microsoft.com',
                 tenantId: teamActivity.conversation.tenantId,
-                meetingRole: 'Organizer',
+                meeting: {
+                    inMeeting: true,
+                    role: 'Organizer',
+                },
                 conversation: {
                     id: teamActivity.conversation.id,
                 },

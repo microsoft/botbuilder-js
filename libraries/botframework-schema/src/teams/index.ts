@@ -215,6 +215,22 @@ export interface TeamsChannelAccount extends ChannelAccount {
 
 /**
  * @interface
+ * An interface representing a Meeting.
+ * Meeting details.
+ */
+export interface Meeting {
+    /**
+     * @member {string} [role] Meeting role of the user.
+     */
+    role?: string;
+    /**
+     * @member {string} [inMeeting] Indicates if the participant is in the meeting.
+     */
+    inMeeting?: boolean;
+}
+
+/**
+ * @interface
  * An interface representing TeamsParticipantChannelAccount.
  * Teams participant channel account detailing user Azure Active Directory details.
  *
@@ -222,13 +238,9 @@ export interface TeamsChannelAccount extends ChannelAccount {
  */
 export interface TeamsParticipantChannelAccount extends TeamsChannelAccount {
     /**
-     * @member {string} [meetingRole] Meeting role of the user.
+     * @member {Meeting} [meeting] The meeting details.
      */
-    meetingRole?: string;
-    /**
-     * @member {string} [inMeeting] Indicates if the participant is in the meeting.
-     */
-    inMeeting?: boolean;
+    meeting?: Meeting;
     /**
      * @member {ConversationAccount} [conversation] The conversation account for the meeting.
      */
