@@ -23,7 +23,7 @@ import { Expression } from '../expression';
  */
 export class ValueExpression extends ExpressionProperty<any> {
     /**
-     * Initializes a new instance of the `ValueExpression` class.
+     * Initializes a new instance of the [ValueExpression](xref:adaptive-expressions.ValueExpression) class.
      * @param value An object of `any` kind or a `string` expression.
      */
     public constructor(value?: any | string | Expression) {

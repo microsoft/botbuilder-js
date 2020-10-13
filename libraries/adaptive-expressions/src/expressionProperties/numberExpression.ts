@@ -15,7 +15,7 @@ import { Expression } from '../expression';
  */
 export class NumberExpression extends ExpressionProperty<number> {
     /**
-     * Initializes a new instance of the `NumberExpression` class.
+     * Initializes a new instance of the [NumberExpression](xref:adaptive-expressions.NumberExpression) class.
      * @param value A float `number` or `string` expression which resolves to a float `number`.
      */
     public constructor(value?: number | string | Expression) {
