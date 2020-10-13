@@ -43,6 +43,7 @@ stages:
       PublishTestResults: true # Publish test results to ADO, publish code coverage
     steps:
     - template: js-build-steps.yml
+
     - powershell: |
         pushd ..
         Get-ChildItem -Recurse -Force | Where {$_.FullName -notlike "*node_modules*"}
@@ -61,6 +62,7 @@ stages:
     displayName: 'Node 14.x Unit Tests'
     steps:
     - template: js-build-steps.yml
+
     - powershell: |
         pushd ..
         Get-ChildItem -Recurse -Force | Where {$_.FullName -notlike "*node_modules*"}
