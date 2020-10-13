@@ -21,7 +21,7 @@ import { ReturnType } from '../returnType';
  */
 export class Accessor extends ExpressionEvaluator {
     /**
-     * Initializes a new instance of the `Accessor` class.
+     * Initializes a new instance of the [Accessor](adaptive-expressions.Accessor) class.
      */
     public constructor() {
         super(ExpressionType.Accessor, Accessor.evaluator, ReturnType.Object, Accessor.validator);

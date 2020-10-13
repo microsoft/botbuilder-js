@@ -16,7 +16,7 @@ import { TimeTransformEvaluator } from './timeTransformEvaluator';
  */
 export class AddHours extends TimeTransformEvaluator {
     /**
-     * Initializes a new instance of the `AddHours` class.
+     * Initializes a new instance of the [AddHours](adaptive-expressions.AddHours) class.
      */
     public constructor() {
         super(ExpressionType.AddHours, (ts: Date, num: any): Date => moment(ts).utc().add(num, 'h').toDate());

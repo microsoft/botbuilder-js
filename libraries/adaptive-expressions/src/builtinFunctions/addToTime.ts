@@ -22,7 +22,7 @@ import { ReturnType } from '../returnType';
  */
 export class AddToTime extends ExpressionEvaluator {
     /**
-     * Initializes a new instance of the `AddToTime` class.
+     * Initializes a new instance of the [AddToTime](adaptive-expressions.AddToTime) class.
      */
     public constructor() {
         super(ExpressionType.AddToTime, AddToTime.evaluator, ReturnType.String, AddToTime.validator);
