@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 
- /**
+/**
  * Streaming payload header definition.
  */
 export interface IHeader {

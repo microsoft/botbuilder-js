@@ -207,7 +207,7 @@ export class ExpressionParser implements ExpressionParserInterface {
             }
 
             return Expression.makeExpression(functionType, this._lookupFunction(functionType), ...children);
-        }
+        };
 
         private processArgsList(context: ep.ArgsListContext): Expression[] {
             const result: Expression[] = [];
