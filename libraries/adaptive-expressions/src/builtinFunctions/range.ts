@@ -16,7 +16,7 @@ import { ReturnType } from '../returnType';
  */
 export class Range extends ExpressionEvaluator {
     /**
-     * Initializes a new instance of the `Range` class.
+     * Initializes a new instance of the [Range](xref:adaptive-expressions.Range) class.
      */
     public constructor() {
         super(ExpressionType.Range, Range.evaluator(), ReturnType.Array, FunctionUtils.validateBinaryNumber);

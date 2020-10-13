@@ -15,7 +15,7 @@ import { ReturnType } from '../returnType';
  */
 export class MultivariateNumericEvaluator extends ExpressionEvaluator {
     /**
-     * Initializes a new instance of the `MultivariateNumericEvaluator` class.
+     * Initializes a new instance of the [MultivariateNumericEvaluator](xref:adaptive-expressions.MultivariateNumericEvaluator) class.
      */
     public constructor(type: string, func: (args: any[]) => number, verify?: VerifyExpression) {
         super(

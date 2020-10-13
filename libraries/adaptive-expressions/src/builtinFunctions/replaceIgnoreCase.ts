@@ -19,7 +19,7 @@ import { ReturnType } from '../returnType';
  */
 export class ReplaceIgnoreCase extends ExpressionEvaluator {
     /**
-     * Initializes a new instance of the `ReplaceIgnoreCase` class.
+     * Initializes a new instance of the [ReplaceIgnoreCase](xref:adaptive-expressions.ReplaceIgnoreCase) class.
      */
     public constructor() {
         super(

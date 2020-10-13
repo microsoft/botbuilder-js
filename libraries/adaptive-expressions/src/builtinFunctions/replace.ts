@@ -19,7 +19,7 @@ import { ReturnType } from '../returnType';
  */
 export class Replace extends ExpressionEvaluator {
     /**
-     * Initializes a new instance of the `Replace` class.
+     * Initializes a new instance of the [XXX](xref:adaptive-expressions.XXX) class.
      */
     public constructor() {
         super(ExpressionType.Replace, Replace.evaluator(), ReturnType.String, Replace.validator);

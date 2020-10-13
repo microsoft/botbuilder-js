@@ -15,7 +15,7 @@ import { ReturnType } from '../returnType';
  */
 export class NumericEvaluator extends ExpressionEvaluator {
     /**
-     * Initializes a new instance of the `NumericEvaluator` class.
+     * Initializes a new instance of the [NumericEvaluator](xref:adaptive-expressions.NumericEvaluator) class.
      */
     public constructor(type: string, func: (args: any[]) => any) {
         super(type, NumericEvaluator.evaluator(func), ReturnType.Number, FunctionUtils.validateNumber);

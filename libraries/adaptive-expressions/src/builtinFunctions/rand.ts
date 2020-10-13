@@ -16,7 +16,7 @@ import { ReturnType } from '../returnType';
  */
 export class Rand extends ExpressionEvaluator {
     /**
-     * Initializes a new instance of the `Rand` class.
+     * Initializes a new instance of the [Rand](xref:adaptive-expressions.Rand) class.
      */
     public constructor() {
         super(ExpressionType.Rand, Rand.evaluator(), ReturnType.Number, FunctionUtils.validateBinaryNumber);

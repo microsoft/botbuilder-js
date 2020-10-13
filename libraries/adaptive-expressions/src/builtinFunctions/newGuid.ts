@@ -17,7 +17,7 @@ import { ReturnType } from '../returnType';
  */
 export class NewGuid extends ExpressionEvaluator {
     /**
-     * Initializes a new instance of the `NewGuid` class.
+     * Initializes a new instance of the [NewGuid](xref:adaptive-expressions.NewGuid) class.
      */
     public constructor() {
         super(ExpressionType.NewGuid, NewGuid.evaluator(), ReturnType.String, NewGuid.validator);
