@@ -33,7 +33,7 @@ export class RequestManager {
     /**
      * Signal fired when all response tasks have completed.
      * @param requestId The ID of the StreamingRequest.
-     * @param response The ReceiveResponse in response to the request.
+     * @param response The [ReceiveResponse](xref:botframework-streaming.IReceiveResponse) in response to the request.
      */
     public async signalResponse(requestId: string, response: IReceiveResponse): Promise<boolean> {
         let pendingRequest = this._pendingRequests[requestId];

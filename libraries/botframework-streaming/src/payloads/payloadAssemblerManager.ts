@@ -21,8 +21,8 @@ export class PayloadAssemblerManager {
     private readonly activeAssemblers: { [id: string]: PayloadAssembler } = {};
 
     /**
-     * Initializes a new instance of the `PayloadAssemblerManager` class.
-     * @param streamManager The `StreamManager` managing the stream being assembled.
+     * Initializes a new instance of the [PayloadAssemblerManager](xref:botframework-streaming.PayloadAssemblerManager) class.
+     * @param streamManager The [StreamManager](xref:botframework-streaming.StreamManager) managing the stream being assembled.
      * @param onReceiveResponse Function that executes when new bytes are received on a `response` stream.
      * @param onReceiveRequest Function that executes when new bytes are received on a `request` stream.
      */
@@ -35,7 +35,7 @@ export class PayloadAssemblerManager {
     /**
      * Retrieves the assembler's payload as a stream.
      * @param header The Header of the Stream to retrieve.
-     * @returns A `SubscribableStream` of the assembler's payload.
+     * @returns A [SubscribableStream](xref:botframework-streaming.SubscribableStream) of the assembler's payload.
      */
     public getPayloadStream(header: IHeader): SubscribableStream {
         if (header.payloadType === PayloadTypes.stream) {

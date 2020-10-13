@@ -17,7 +17,7 @@ export class StreamManager {
     private readonly onCancelStream: Function;
 
     /**
-     * Initializes a new instance of the `StreamManager` class.
+     * Initializes a new instance of the [StreamManager](xref:botframework-streaming.StreamManager) class.
      * @param onCancelStream Function to trigger if the managed stream is cancelled.
      */
     public constructor(onCancelStream: Function) {
@@ -25,9 +25,9 @@ export class StreamManager {
     }
 
     /**
-     * Retrieves a `PayloadAssembler` with the given ID if one exists, otherwise a new instance is created and assigned the given ID.
-     * @param id The ID of the `PayloadAssembler` to retrieve or create.
-     * @returns The `PayloadAssembler` with the given ID.
+     * Retrieves a [PayloadAssembler](xref:botframework-streaming.PayloadAssembler) with the given ID if one exists, otherwise a new instance is created and assigned the given ID.
+     * @param id The ID of the [PayloadAssembler](xref:botframework-streaming.PayloadAssembler) to retrieve or create.
+     * @returns The [PayloadAssembler](xref:botframework-streaming.PayloadAssembler) with the given ID.
      */
     public getPayloadAssembler(id: string): PayloadAssembler {
         if (!this.activeAssemblers[id]) {
@@ -43,9 +43,9 @@ export class StreamManager {
     }
 
     /**
-     * Retrieves the `SubscribableStream` from the `PayloadAssembler` this manager manages.
-     * @param header The Header of the `SubscribableStream` to retrieve.
-     * @returns The `SubscribableStream` with the given header.
+     * Retrieves the [SubscribableStream](xref:botframework-streaming.SubscribableStream) from the [PayloadAssembler](xref:botframework-streaming.PayloadAssembler) this manager manages.
+     * @param header The Header of the [SubscribableStream](xref:botframework-streaming.SubscribableStream) to retrieve.
+     * @returns The [SubscribableStream](xref:botframework-streaming.SubscribableStream) with the given header.
      */
     public getPayloadStream(header: IHeader): SubscribableStream {
         let assembler = this.getPayloadAssembler(header.id);
@@ -54,9 +54,9 @@ export class StreamManager {
     }
 
     /**
-     * Used to set the behavior of the managed `PayloadAssembler` when data is received.
+     * Used to set the behavior of the managed [PayloadAssembler](xref:botframework-streaming.PayloadAssembler) when data is received.
      * @param header The Header of the stream.
-     * @param contentStream The `SubscribableStream` to write incoming data to.
+     * @param contentStream The [SubscribableStream](xref:botframework-streaming.SubscribableStream) to write incoming data to.
      * @param contentLength The amount of data to write to the contentStream.
      */
     public onReceive(header: IHeader, contentStream: SubscribableStream, contentLength: number): void {
@@ -67,8 +67,8 @@ export class StreamManager {
     }
 
     /**
-     * Closes the `PayloadAssembler` assigned to the `SubscribableStream` with the given ID.
-     * @param id The ID of the `SubscribableStream` to close.
+     * Closes the [PayloadAssembler](xref:botframework-streaming.PayloadAssembler) assigned to the [SubscribableStream](xref:botframework-streaming.SubscribableStream) with the given ID.
+     * @param id The ID of the [SubscribableStream](xref:botframework-streaming.SubscribableStream) to close.
      */
     public closeStream(id: string): void {
         if (!this.activeAssemblers[id]) {
