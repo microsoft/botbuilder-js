@@ -144,8 +144,8 @@ export class ActivityPrompt extends Dialog {
      * @param context [TurnContext](xref:botbuilder-core.TurnContext), context for the current
      * turn of conversation with the user.
      * @param state Contains state for the current instance of the prompt on the dialog stack.
-     * @param options [PromptOptions](xref:botbuilder-dialogs.PromptOptions), a prompt options
-     * object constructed from the options initially provided in the call to Prompt.
+     * @param options A [PromptOptions](xref:botbuilder-dialogs.PromptOptions) object constructed
+     * from the options initially provided in the call to Prompt.
      * @param isRetry A boolean representing if the prompt is a retry.
      * @returns A `Promise` representing the asynchronous operation.
      */
@@ -162,8 +162,8 @@ export class ActivityPrompt extends Dialog {
      * @param context [TurnContext](xref:botbuilder-core.TurnContext), context for the current
      * turn of conversation with the user.
      * @param state Contains state for the current instance of the prompt on the dialog stack.
-     * @param options [PromptOptions](xref:botbuilder-dialogs.PromptOptions), a prompt options
-     * object constructed from the options initially provided in the call to Prompt.
+     * @param options A [PromptOptions](xref:botbuilder-dialogs.PromptOptions) object constructed
+     * from the options initially provided in the call to Prompt.
      * @returns A `Promise` representing the asynchronous operation.
      */
     protected async onRecognize(context: TurnContext, state: object, options: PromptOptions): Promise<PromptRecognizerResult<Activity>> {

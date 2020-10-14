@@ -88,8 +88,8 @@ export class ConfirmPrompt extends Prompt<boolean> {
      * @param context [TurnContext](xref:botbuilder-core.TurnContext), context for the current
      * turn of conversation with the user.
      * @param state Contains state for the current instance of the prompt on the dialog stack.
-     * @param options [PromptOptions](xref:botbuilder-dialogs.PromptOptions), a prompt options
-     * object constructed from the options initially provided in the call to Prompt.
+     * @param options A [PromptOptions](xref:botbuilder-dialogs.PromptOptions) object constructed
+     * from the options initially provided in the call to Prompt.
      * @param isRetry `true` if this is the first time this prompt dialog instance
      * on the stack is prompting the user for input; otherwise, false.
      * @returns A `Promise` representing the asynchronous operation.
@@ -117,8 +117,8 @@ export class ConfirmPrompt extends Prompt<boolean> {
      * @param context [TurnContext](xref:botbuilder-core.TurnContext), context for the current
      * turn of conversation with the user.
      * @param state Contains state for the current instance of the prompt on the dialog stack.
-     * @param options [PromptOptions](xref:botbuilder-dialogs.PromptOptions), a prompt options
-     * object constructed from the options initially provided in the call to Prompt.
+     * @param options A [PromptOptions](xref:botbuilder-dialogs.PromptOptions) object constructed
+     * from the options initially provided in the call to Prompt.
      * @returns A `Promise` representing the asynchronous operation.
      */
     protected async onRecognize(context: TurnContext, state: any, options: PromptOptions): Promise<PromptRecognizerResult<boolean>> {
