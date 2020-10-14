@@ -16,7 +16,7 @@ import { ReturnType } from '../returnType';
  */
 export class Mod extends ExpressionEvaluator {
     /**
-     * Initializes a new instance of the `Mod` class.
+     * Initializes a new instance of the [Mod](xref:adaptive-expressions.Mod) class.
      */
     public constructor() {
         super(ExpressionType.Mod, Mod.evaluator(), ReturnType.Number, FunctionUtils.validateBinaryNumber);

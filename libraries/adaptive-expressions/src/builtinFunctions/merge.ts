@@ -17,7 +17,7 @@ import { ReturnType } from '../returnType';
  */
 export class Merge extends ExpressionEvaluator {
     /**
-     * Initializes a new instance of the `Merge` class.
+     * Initializes a new instance of the [Merge](xref:adaptive-expressions.Merge) class.
      */
     public constructor() {
         super(ExpressionType.Merge, Merge.evaluator(), ReturnType.Object, Merge.validator);

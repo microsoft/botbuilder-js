@@ -16,7 +16,7 @@ import { ComparisonEvaluator } from './comparisonEvaluator';
  */
 export class LessThan extends ComparisonEvaluator {
     /**
-     * Initializes a new instance of the `LessThan` class.
+     * Initializes a new instance of the [LessThan](xref:adaptive-expressions.LessThan) class.
      */
     public constructor() {
         super(

@@ -17,7 +17,7 @@ import { ReturnType } from '../returnType';
  */
 export class Last extends ExpressionEvaluator {
     /**
-     * Initializes a new instance of the `Last` class.
+     * Initializes a new instance of the [Last](xref:adaptive-expressions.Last) class.
      */
     public constructor() {
         super(ExpressionType.Last, Last.evaluator(), ReturnType.Object, FunctionUtils.validateUnary);
