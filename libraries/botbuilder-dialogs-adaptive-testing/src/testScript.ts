@@ -38,7 +38,7 @@ export interface TestScriptConfiguration {
     description?: string;
     dialog?: string | Dialog;
     locale?: string;
-    userTokenMocks: string[] | UserTokenMock[];
+    userTokenMocks?: string[] | UserTokenMock[];
     script?: TestAction[];
     enableTrace?: boolean;
 }
