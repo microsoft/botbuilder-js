@@ -13,6 +13,7 @@ import {
     BeginSkillDialogOptions,
     DialogInstance,
     DialogReason,
+    DialogStateManager,
 } from 'botbuilder-dialogs';
 import { BoolExpression, StringExpression } from 'adaptive-expressions';
 import { Activity, ActivityTypes, StringUtils, TurnContext } from 'botbuilder-core';
@@ -69,7 +70,7 @@ export class BeginSkill extends SkillDialog {
     /**
      * Template for the activity.
      */
-    public activity: TemplateInterface<Partial<Activity>>;
+    public activity: TemplateInterface<Partial<Activity>, DialogStateManager>;
 
     /**
      * Optional. The OAuth Connection Name for the Parent Bot.
