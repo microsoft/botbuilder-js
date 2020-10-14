@@ -142,6 +142,7 @@ export class ExpressionFunctions {
             new BuiltinFunctions.RemoveProperty(),
             new BuiltinFunctions.Replace(),
             new BuiltinFunctions.ReplaceIgnoreCase(),
+            new BuiltinFunctions.Reverse(),
             new BuiltinFunctions.Round(),
             new BuiltinFunctions.Select(),
             new BuiltinFunctions.SentenceCase(),
@@ -189,7 +190,7 @@ export class ExpressionFunctions {
         functions.forEach((func: ExpressionEvaluator): void => {
             lookup.set(func.type, func);
         });
-        
+
         // Attach negations
         lookup.get(ExpressionType.LessThan).negation = lookup.get(ExpressionType.GreaterThanOrEqual);
         lookup.get(ExpressionType.LessThanOrEqual).negation = lookup.get(ExpressionType.GreaterThan);

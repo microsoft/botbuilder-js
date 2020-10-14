@@ -27,7 +27,7 @@ import { AnalyzerResult } from './analyzerResult';
 import { TemplateErrors } from './templateErrors';
 import { TemplateExtensions } from './templateExtensions';
 import { EvaluationOptions, LGLineBreakStyle } from './evaluationOptions';
-import { isAbsolute, basename } from 'path';
+import { basename } from 'path';
 import { StaticChecker } from './staticChecker';
 import { LGResource } from './lgResource';
 import { CustomizedMemory } from './customizedMemory';
@@ -549,7 +549,10 @@ export class Templates implements Iterable<Template> {
             const globalFuncs = curTemplates.getGlobalFunctionTable(curTemplates.options);
             for (const templateName of globalFuncs) {
                 if (curTemplates.items.find((u) => u.name === templateName) !== undefined) {
-                    const newGlobalName = `${curTemplates.namespace}.${templateName}`;
+                    const prefix =
+                        !curTemplates.namespace || !curTemplates.namespace.trim() ? '' : curTemplates.namespace + '.';
+
+                    const newGlobalName = prefix + templateName;
                     Expression.functions.add(
                         newGlobalName,
                         new ExpressionEvaluator(
@@ -606,11 +609,7 @@ export class Templates implements Iterable<Template> {
     private extractNamespace(options: string[]): string {
         let result = this.extractOptionByKey(this.namespaceKey, options);
         if (!result) {
-            if (isAbsolute(this.source)) {
-                result = basename(this.source).split('.')[0];
-            } else {
-                throw new Error('namespace is required or the id should be an absoulte path!"');
-            }
+            result = basename(this.id || '').split('.')[0];
         }
 
         return result;

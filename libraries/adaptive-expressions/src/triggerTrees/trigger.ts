@@ -25,16 +25,21 @@ const pushDownNot = (expression: Expression, inNot = false): Expression => {
     switch (expression.type) {
         case ExpressionType.And:
         case ExpressionType.Or:
-            const children = expression.children.map(child => pushDownNot(child, inNot));
+            const children = expression.children.map((child) => pushDownNot(child, inNot));
             if (children.length === 1) {
                 newExpr = children[0];
             } else {
                 newExpr = Expression.makeExpression(
                     expression.type === ExpressionType.And
-                        ? (inNot ? ExpressionType.Or : ExpressionType.And)
-                        : (inNot ? ExpressionType.And : ExpressionType.Or),
+                        ? inNot
+                            ? ExpressionType.Or
+                            : ExpressionType.And
+                        : inNot
+                        ? ExpressionType.And
+                        : ExpressionType.Or,
                     undefined,
-                    ...children);
+                    ...children
+                );
             }
             break;
         case ExpressionType.Not:
@@ -48,15 +53,11 @@ const pushDownNot = (expression: Expression, inNot = false): Expression => {
                         newExpr = Expression.makeExpression(
                             undefined,
                             negation,
-                            ...expression.children.map(child => pushDownNot(child, true))
+                            ...expression.children.map((child) => pushDownNot(child, true))
                         );
                     } else {
                         // Replace with negation and stop
-                        newExpr = Expression.makeExpression(
-                            undefined,
-                            negation,
-                            ...expression.children
-                        );
+                        newExpr = Expression.makeExpression(undefined, negation, ...expression.children);
                     }
                 } else {
                     // Keep not
@@ -201,7 +202,6 @@ export class Trigger {
                             clauseSoFar = reln;
                             break;
                         }
-
                     }
                 }
 
@@ -267,13 +267,10 @@ export class Trigger {
                 }
                 return clauses;
             case ExpressionType.Optional:
-                return [
-                    new Clause(),
-                    ...this._generateClauses(expression.children[0])
-                ];
+                return [new Clause(), ...this._generateClauses(expression.children[0])];
             default:
                 // True becomes empty expression and false drops clause
-                if (expression instanceof Constant && typeof (expression.value) === 'boolean') {
+                if (expression instanceof Constant && typeof expression.value === 'boolean') {
                     return expression.value ? [new Clause()] : [];
                 } else {
                     return [new Clause(expression)];
@@ -346,8 +343,8 @@ export class Trigger {
     }
 
     private _optimizeClauses(): void {
-        this._clauses.forEach(clause => {
-            this._tree.optimizers.forEach(optimizer => {
+        this._clauses.forEach((clause) => {
+            this._tree.optimizers.forEach((optimizer) => {
                 optimizer.optimize(clause);
             });
         });
@@ -377,7 +374,11 @@ export class Trigger {
                     const predicate = clause.children[i];
                     for (let j = 0; j < quantifier.bindings.length; j++) {
                         const binding = quantifier.bindings[j];
-                        const { expression: newPredicate, changed } = this._substituteVariable(quantifier.variable, binding, predicate);
+                        const { expression: newPredicate, changed } = this._substituteVariable(
+                            quantifier.variable,
+                            binding,
+                            predicate
+                        );
                         children.push(newPredicate);
                         if (!changed) {
                             // No change to first predicate, so can stop
@@ -405,7 +406,11 @@ export class Trigger {
                     const children: Expression[] = [];
                     for (let j = 0; j < clause.children.length; j++) {
                         const predicate = clause.children[j];
-                        const { expression: newPredicate, changed: predicateChanged } = this._substituteVariable(quantifier.variable, binding, predicate);
+                        const { expression: newPredicate, changed: predicateChanged } = this._substituteVariable(
+                            quantifier.variable,
+                            binding,
+                            predicate
+                        );
                         changed = changed || predicateChanged;
                         children.push(newPredicate);
                     }
@@ -441,21 +446,31 @@ export class Trigger {
         return results;
     }
 
-    private _substituteVariable(variable: string, binding: string, expression: Expression): { expression: Expression, changed: boolean } {
+    private _substituteVariable(
+        variable: string,
+        binding: string,
+        expression: Expression
+    ): { expression: Expression; changed: boolean } {
         let newExpr = expression;
         let changed = false;
-        if (expression.type === ExpressionType.Accessor
-            && expression.children.length === 1
-            && expression.children[0] instanceof Constant
-            && (typeof (expression.children[0] as Constant).value) === 'string'
-            && (expression.children[0] as Constant).value === variable) {
+        if (
+            expression.type === ExpressionType.Accessor &&
+            expression.children.length === 1 &&
+            expression.children[0] instanceof Constant &&
+            typeof (expression.children[0] as Constant).value === 'string' &&
+            (expression.children[0] as Constant).value === variable
+        ) {
             newExpr = Expression.makeExpression(ExpressionType.Accessor, undefined, new Constant(binding));
             changed = true;
         } else {
             const children: Expression[] = [];
             for (let i = 0; i < expression.children.length; i++) {
                 const child = expression.children[i];
-                const { expression: childExpr, changed: childChanged } = this._substituteVariable(variable, binding, child);
+                const { expression: childExpr, changed: childChanged } = this._substituteVariable(
+                    variable,
+                    binding,
+                    child
+                );
                 children.push(childExpr);
                 changed = changed || childChanged;
             }
@@ -474,7 +489,7 @@ export class Trigger {
             const predicates: Expression[] = [...clause.children];
             for (let i = 0; i < predicates.length; ++i) {
                 const first = predicates[i];
-                for (let j = i + 1; j < predicates.length;) {
+                for (let j = i + 1; j < predicates.length; ) {
                     const second = predicates[j];
                     if (first.deepEquals(second)) {
                         predicates.splice(j, 1);

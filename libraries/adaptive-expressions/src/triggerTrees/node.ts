@@ -17,7 +17,7 @@ enum Operation {
     found = 'found',
     added = 'added',
     removed = 'removed',
-    inserted = 'inserted'
+    inserted = 'inserted',
 }
 
 /**
@@ -132,12 +132,15 @@ export class Node {
         switch (relationship) {
             case RelationshipType.equal:
                 // Ensure action is not already there
-                const found = this._allTriggers.find(existing => trigger.action != undefined && trigger.action === existing.action) !== undefined;
+                const found =
+                    this._allTriggers.find(
+                        (existing) => trigger.action != undefined && trigger.action === existing.action
+                    ) !== undefined;
                 op = Operation.found;
                 if (!found) {
                     this._allTriggers.push(trigger);
                     let add = true;
-                    for (let i = 0; i < this._triggers.length;) {
+                    for (let i = 0; i < this._triggers.length; ) {
                         const existing = this._triggers[i];
                         const reln = trigger.relationship(existing, this.tree.comparers);
                         if (reln === RelationshipType.generalizes) {
