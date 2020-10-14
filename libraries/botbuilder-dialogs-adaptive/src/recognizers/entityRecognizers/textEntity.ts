@@ -12,7 +12,7 @@ import { Entity } from 'botbuilder-core';
  * Text entity base class.
  */
 export class TextEntity implements Entity {
-    public type: string = 'text';
+    public type = 'text';
 
     public text: string;
 

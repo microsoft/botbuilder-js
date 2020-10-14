@@ -13,7 +13,11 @@ export class AdaptiveTypeBuilder implements TypeBuilder {
     private _converters: { [key: string]: Converter } = {};
     private _resourceExplorer: ResourceExplorer;
 
-    public constructor(factory: new () => object, resourceExplorer: ResourceExplorer, converters: { [key: string]: Converter }) {
+    public constructor(
+        factory: new () => object,
+        resourceExplorer: ResourceExplorer,
+        converters: { [key: string]: Converter }
+    ) {
         this._factory = factory;
         this._resourceExplorer = resourceExplorer;
         this._converters = converters;

@@ -12,7 +12,6 @@ import { TypeBuilder } from './typeBuilder';
  * Declarative type factory
  */
 export class TypeFactory {
-
     /**
      * Internal type builder registry
      */
@@ -24,7 +23,6 @@ export class TypeFactory {
      * @param converter optional builder logic for the registered type. Will be invoked each time the type is built
      */
     public register(name: string, builder?: TypeBuilder): void {
-
         if (!name) {
             throw new Error(`TypeFactory: name must be provided to register in the factory`);
         }
@@ -37,15 +35,14 @@ export class TypeFactory {
     }
 
     public build(name: string, config: object): object {
-
         if (!name) {
-            throw new Error(`TypeFactory: type name must be provided.`)
+            throw new Error(`TypeFactory: type name must be provided.`);
         }
 
         const builder = this.registrations[name];
 
         if (!builder) {
-            throw new Error(`TypeFactory: type ${ name } not registered in factory.`)
+            throw new Error(`TypeFactory: type ${name} not registered in factory.`);
         }
 
         return builder.build(config);

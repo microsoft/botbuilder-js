@@ -23,7 +23,12 @@ export class EntityRecognizerSet extends Array<EntityRecognizer> {
      * @param entities The [Entity](xref:botframework-schema.Entity) array to be recognized. If no entities are passed in, it will generate a [TextEntity](xref:botbuilder-dialogs-adaptive.TextEntity).
      * @returns Recognized [Entity](xref:botframework-schema.Entity) list Promise.
      */
-    public async recognizeEntities(dialogContext: DialogContext, text: string, locale: string, entities: Entity[] = []): Promise<Entity[]> {
+    public async recognizeEntities(
+        dialogContext: DialogContext,
+        text: string,
+        locale: string,
+        entities: Entity[] = []
+    ): Promise<Entity[]> {
         const allNewEntities: Entity[] = [];
         let entitiesToProcess: Entity[] = [...entities];
 
@@ -41,11 +46,20 @@ export class EntityRecognizerSet extends Array<EntityRecognizer> {
             for (let i = 0; i < this.length; i++) {
                 const recognizer: EntityRecognizer = this[i];
                 try {
-                    const newEntities = await recognizer.recognizeEntities(dialogContext, text, locale, entitiesToProcess);
+                    const newEntities = await recognizer.recognizeEntities(
+                        dialogContext,
+                        text,
+                        locale,
+                        entitiesToProcess
+                    );
                     for (let j = 0; j < newEntities.length; j++) {
                         const newEntity = newEntities[j];
                         // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-                        if (!allNewEntities.find(entity => !newEntity && JSON.stringify(entity) == JSON.stringify(newEntity))) {
+                        if (
+                            !allNewEntities.find(
+                                (entity) => !newEntity && JSON.stringify(entity) == JSON.stringify(newEntity)
+                            )
+                        ) {
                             allNewEntities.push(newEntity);
                             newEntitiesToProcess.push(newEntity);
                         }
@@ -56,7 +70,7 @@ export class EntityRecognizerSet extends Array<EntityRecognizer> {
             }
 
             entitiesToProcess = newEntitiesToProcess;
-        } while(entitiesToProcess.length > 0);
+        } while (entitiesToProcess.length > 0);
 
         return allNewEntities;
     }

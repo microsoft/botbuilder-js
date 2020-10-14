@@ -18,7 +18,7 @@ export class RecognizerConverter implements Converter {
 
     public convert(value: string | object): Recognizer {
         if (typeof value == 'string') {
-            const recognizer = this._resourceExplorer.loadType(`${ value }.dialog`) as Recognizer;
+            const recognizer = this._resourceExplorer.loadType(`${value}.dialog`) as Recognizer;
             return recognizer;
         }
         return value as Recognizer;

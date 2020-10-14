@@ -21,6 +21,9 @@ export class Binary extends ExpressionEvaluator {
     }
 
     private static evaluator(): EvaluateExpressionDelegate {
-        return FunctionUtils.apply((args: any[]): Uint8Array => InternalFunctionUtils.toBinary(args[0]), FunctionUtils.verifyString);
+        return FunctionUtils.apply(
+            (args: any[]): Uint8Array => InternalFunctionUtils.toBinary(args[0]),
+            FunctionUtils.verifyString
+        );
     }
 }
