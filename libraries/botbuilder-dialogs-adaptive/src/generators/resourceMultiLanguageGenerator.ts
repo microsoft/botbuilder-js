@@ -16,8 +16,8 @@ export interface ResourceMultiLanguageGeneratorConfiguration extends MultiLangua
     resourceId?: string;
 }
 
-export class ResourceMultiLanguageGenerator
-    extends MultiLanguageGeneratorBase
+export class ResourceMultiLanguageGenerator<T = unknown, D extends Record<string, unknown> = Record<string, unknown>>
+    extends MultiLanguageGeneratorBase<T, D>
     implements ResourceMultiLanguageGeneratorConfiguration {
     public static $kind = 'Microsoft.ResourceMultiLanguageGenerator';
 
@@ -43,12 +43,14 @@ export class ResourceMultiLanguageGenerator
     public tryGetGenerator(
         dialogContext: DialogContext,
         locale: string
-    ): { exist: boolean; result: LanguageGenerator } {
-        const lgm: LanguageGeneratorManager = dialogContext.services.get(languageGeneratorManagerKey);
+    ): { exist: boolean; result: LanguageGenerator<T, D> } {
+        const manager = dialogContext.services.get(languageGeneratorManagerKey) as LanguageGeneratorManager<T, D>;
+
         const resourceId =
             locale === undefined || locale === '' ? this.resourceId : this.resourceId.replace('.lg', `.${locale}.lg`);
-        if (lgm.languageGenerators.has(resourceId)) {
-            return { exist: true, result: lgm.languageGenerators.get(resourceId) };
+
+        if (manager.languageGenerators.has(resourceId)) {
+            return { exist: true, result: manager.languageGenerators.get(resourceId) as LanguageGenerator<T, D> };
         } else {
             return { exist: false, result: undefined };
         }

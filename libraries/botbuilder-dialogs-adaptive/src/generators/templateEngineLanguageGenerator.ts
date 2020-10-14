@@ -20,9 +20,10 @@ export interface TemplateEngineLanguageGeneratorConfiguration {
 /**
  * LanguageGenerator implementation which uses LGFile.
  */
-export class TemplateEngineLanguageGenerator
+
+export class TemplateEngineLanguageGenerator<T = unknown, D extends Record<string, unknown> = Record<string, unknown>>
     extends Configurable
-    implements LanguageGenerator, TemplateEngineLanguageGeneratorConfiguration {
+    implements LanguageGenerator<T, D>, TemplateEngineLanguageGeneratorConfiguration {
     public static $kind = 'Microsoft.TemplateEngineLanguageGenerator';
 
     private readonly DEFAULTLABEL: string = 'Unknown';
@@ -47,13 +48,10 @@ export class TemplateEngineLanguageGenerator
         }
     }
 
-    public generate(dialogContext: DialogContext, template: string, data: object): Promise<string> {
+    public generate(dialogContext: DialogContext, template: string, data: D): Promise<T> {
         try {
-            // BUGBUG: I'm casting objects to <any> to work around a bug in the activity factory.
-            //         The string version of of the serialized card isn't being parsed. We should
-            //         fix that in R10. The cast is working for now.
             const result = this.lg.evaluateText(template, data);
-            return Promise.resolve(typeof result == 'object' ? (result as any) : result.toString());
+            return Promise.resolve(result);
         } catch (e) {
             if (this.id !== undefined && this.id === '') {
                 throw Error(`${this.id}:${e}`);

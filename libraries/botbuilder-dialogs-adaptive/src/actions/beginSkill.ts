@@ -21,11 +21,12 @@ import {
     DialogTurnResult,
     DialogInstance,
     DialogReason,
-    SkillDialog,
-    SkillDialogOptions,
     DialogConfiguration,
     DialogEvent,
     DialogEvents,
+    DialogStateManager,
+    SkillDialog,
+    SkillDialogOptions,
 } from 'botbuilder-dialogs';
 import { TemplateInterface } from '../template';
 import { skillClientKey, skillConversationIdFactoryKey } from '../skillExtensions';
@@ -41,7 +42,7 @@ export interface BeginSkillConfiguration extends DialogConfiguration {
     skillHostEndpoint?: string | Expression | StringExpression;
     skillAppId?: string | Expression | StringExpression;
     skillEndpoint?: string | Expression | StringExpression;
-    activity?: string | Partial<Activity> | TemplateInterface<Partial<Activity>>;
+    activity?: string | Partial<Activity> | TemplateInterface<Partial<Activity>, DialogStateManager>;
     connectionName?: string | Expression | StringExpression;
     allowInterruptions?: boolean | string | Expression | BoolExpression;
 }
@@ -97,7 +98,7 @@ export class BeginSkill extends SkillDialog implements BeginSkillConfiguration {
     /**
      * Template for the activity.
      */
-    public activity: TemplateInterface<Partial<Activity>>;
+    public activity: TemplateInterface<Partial<Activity>, DialogStateManager>;
 
     /**
      * Optional. The OAuth Connection Name for the Parent Bot.

@@ -6,27 +6,31 @@
  * Licensed under the MIT License.
  */
 import { BoolExpression, BoolExpressionConverter, Expression } from 'adaptive-expressions';
-import { Activity, ActivityTypes, StringUtils, ResourceResponse } from 'botbuilder-core';
+import { Activity, ActivityTypes, ResourceResponse, StringUtils } from 'botbuilder-core';
 import {
     Converter,
     ConverterFactory,
     Dialog,
     DialogConfiguration,
     DialogContext,
+    DialogStateManager,
     DialogTurnResult,
 } from 'botbuilder-dialogs';
 import { TemplateInterface } from '../template';
 import { ActivityTemplate, StaticActivityTemplate } from '../templates';
 import { ActivityTemplateConverter } from '../converters';
 
+type D = DialogStateManager & {
+    utterance: string;
+};
+
 export interface SendActivityConfiguration extends DialogConfiguration {
-    activity?: string | Partial<Activity> | TemplateInterface<Partial<Activity>>;
+    activity?: string | Partial<Activity> | TemplateInterface<Partial<Activity>, D>;
     disabled?: boolean | string | Expression | BoolExpression;
 }
 
 export class SendActivity<O extends object = {}> extends Dialog<O> implements SendActivityConfiguration {
     public static $kind = 'Microsoft.SendActivity';
-
     /**
      * Creates a new `SendActivity` instance.
      * @param activity Activity or message text to send the user.
@@ -45,7 +49,7 @@ export class SendActivity<O extends object = {}> extends Dialog<O> implements Se
     /**
      * Gets or sets template for the activity.
      */
-    public activity: TemplateInterface<Partial<Activity>>;
+    public activity: TemplateInterface<Partial<Activity>, D & O>;
 
     /**
      * An optional expression which if is true will disable this action.

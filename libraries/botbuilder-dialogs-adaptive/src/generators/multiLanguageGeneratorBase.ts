@@ -18,9 +18,12 @@ export interface MultiLanguageGeneratorBaseConfiguration {
 /**
  * Base class which applies language policy to tryGetGenerator.
  */
-export abstract class MultiLanguageGeneratorBase
+export abstract class MultiLanguageGeneratorBase<
+        T = unknown,
+        D extends Record<string, unknown> = Record<string, unknown>
+    >
     extends Configurable
-    implements LanguageGenerator, MultiLanguageGeneratorBaseConfiguration {
+    implements LanguageGenerator<T, D>, MultiLanguageGeneratorBaseConfiguration {
     /**
      * Language policy required by language generator.
      */
@@ -43,7 +46,7 @@ export abstract class MultiLanguageGeneratorBase
     public abstract tryGetGenerator(
         dialogContext: DialogContext,
         locale: string
-    ): { exist: boolean; result: LanguageGenerator };
+    ): { exist: boolean; result: LanguageGenerator<T, D> };
 
     /**
      * Find a language generator that matches the current context locale.
@@ -51,7 +54,7 @@ export abstract class MultiLanguageGeneratorBase
      * @param template Template to use.
      * @param data Data to bind to.
      */
-    public async generate(dialogContext: DialogContext, template: string, data: object): Promise<string> {
+    public async generate(dialogContext: DialogContext, template: string, data: D): Promise<T> {
         const targetLocale = dialogContext.context.activity.locale
             ? dialogContext.context.activity.locale.toLocaleLowerCase()
             : '';
@@ -82,10 +85,11 @@ export abstract class MultiLanguageGeneratorBase
             throw Error(`No supported language found for ${targetLocale}`);
         }
 
-        const generators: LanguageGenerator[] = [];
+        const generators: LanguageGenerator<T, D>[] = [];
         for (const locale of fallbackLocales) {
-            if (this.tryGetGenerator(dialogContext, locale).exist) {
-                generators.push(this.tryGetGenerator(dialogContext, locale).result);
+            const result = this.tryGetGenerator(dialogContext, locale);
+            if (result.exist) {
+                generators.push(result.result);
             }
         }
 
@@ -96,7 +100,7 @@ export abstract class MultiLanguageGeneratorBase
         const errors: string[] = [];
         for (const generator of generators) {
             try {
-                return generator.generate(dialogContext, template, data);
+                return await generator.generate(dialogContext, template, data);
             } catch (e) {
                 errors.push(e);
             }

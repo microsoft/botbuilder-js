@@ -16,17 +16,18 @@ import { Activity, ActivityTypes } from 'botbuilder-core';
 import {
     Converter,
     ConverterFactory,
+    DialogConfiguration,
     DialogContext,
     Dialog,
+    DialogStateManager,
     DialogTurnResult,
-    DialogConfiguration,
 } from 'botbuilder-dialogs';
 import { TemplateInterface } from '../template';
 import { TextTemplate } from '../templates';
 import { TextTemplateConverter } from '../converters/textTemplateConverter';
 
 export interface LogActionConfiguration extends DialogConfiguration {
-    text?: string | TemplateInterface<string>;
+    text?: string | TemplateInterface<string, DialogStateManager>;
     traceActivity?: boolean | string | Expression | BoolExpression;
     label?: string | Expression | StringExpression;
     disabled?: boolean | string | Expression | BoolExpression;
@@ -52,7 +53,7 @@ export class LogAction<O extends object = {}> extends Dialog<O> implements LogAc
     /**
      * The text template to log.
      */
-    public text: TemplateInterface<string>;
+    public text: TemplateInterface<string, DialogStateManager>;
 
     /**
      * If true, the message will both be logged to the console and sent as a trace activity.

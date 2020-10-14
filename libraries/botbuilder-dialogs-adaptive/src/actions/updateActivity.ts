@@ -19,14 +19,19 @@ import {
     Dialog,
     DialogConfiguration,
     DialogContext,
+    DialogStateManager,
     DialogTurnResult,
 } from 'botbuilder-dialogs';
 import { TemplateInterface } from '../template';
 import { ActivityTemplate, StaticActivityTemplate } from '../templates';
 import { ActivityTemplateConverter } from '../converters';
 
+type D = DialogStateManager & {
+    utterance: string;
+};
+
 export interface UpdateActivityConfiguration extends DialogConfiguration {
-    activity?: string | Partial<Activity> | TemplateInterface<Partial<Activity>>;
+    activity?: string | Partial<Activity> | TemplateInterface<Partial<Activity>, D>;
     activityId?: string | Expression | StringExpression;
     disabled?: boolean | string | Expression | BoolExpression;
 }
@@ -52,7 +57,7 @@ export class UpdateActivity<O extends object = {}> extends Dialog<O> implements 
     /**
      * Gets or sets template for the activity.
      */
-    public activity: TemplateInterface<Partial<Activity>>;
+    public activity: TemplateInterface<Partial<Activity>, D & O>;
 
     /**
      * The expression which resolves to the activityId to update.

@@ -33,6 +33,7 @@ import {
     DialogTurnResult,
     ListStyle,
     TurnPath,
+    DialogStateManager,
 } from 'botbuilder-dialogs';
 import { TemplateInterface } from '../template';
 import { AdaptiveEvents } from '../adaptiveEvents';
@@ -52,10 +53,10 @@ export interface InputDialogConfiguration extends DialogConfiguration {
     allowInterruptions?: boolean | string | Expression | BoolExpression;
     property?: string | Expression | StringExpression;
     value?: unknown | ValueExpression;
-    prompt?: string | Partial<Activity> | TemplateInterface<Partial<Activity>>;
-    unrecognizedPrompt?: string | Partial<Activity> | TemplateInterface<Partial<Activity>>;
-    invalidPrompt?: string | Partial<Activity> | TemplateInterface<Partial<Activity>>;
-    defaultValueResponse?: string | Partial<Activity> | TemplateInterface<Partial<Activity>>;
+    prompt?: string | Partial<Activity> | TemplateInterface<Partial<Activity>, DialogStateManager>;
+    unrecognizedPrompt?: string | Partial<Activity> | TemplateInterface<Partial<Activity>, DialogStateManager>;
+    invalidPrompt?: string | Partial<Activity> | TemplateInterface<Partial<Activity>, DialogStateManager>;
+    defaultValueResponse?: string | Partial<Activity> | TemplateInterface<Partial<Activity>, DialogStateManager>;
     validations?: string[];
     maxTurnCount?: number | string | Expression | IntExpression;
     defaultValue?: unknown | ValueExpression;
@@ -90,22 +91,22 @@ export abstract class InputDialog extends Dialog implements InputDialogConfigura
     /**
      * The activity to send to the user.
      */
-    public prompt: TemplateInterface<Partial<Activity>>;
+    public prompt: TemplateInterface<Partial<Activity>, DialogStateManager>;
 
     /**
      * The activity template for retrying prompt.
      */
-    public unrecognizedPrompt: TemplateInterface<Partial<Activity>>;
+    public unrecognizedPrompt: TemplateInterface<Partial<Activity>, DialogStateManager>;
 
     /**
      * The activity template to send to the user whenever the value provided is invalid or not.
      */
-    public invalidPrompt: TemplateInterface<Partial<Activity>>;
+    public invalidPrompt: TemplateInterface<Partial<Activity>, DialogStateManager>;
 
     /**
      * The activity template to send when maxTurnCount has be reached and the default value is used.
      */
-    public defaultValueResponse: TemplateInterface<Partial<Activity>>;
+    public defaultValueResponse: TemplateInterface<Partial<Activity>, DialogStateManager>;
 
     /**
      * The expressions to run to validate the input.
@@ -281,7 +282,8 @@ export abstract class InputDialog extends Dialog implements InputDialogConfigura
 
     protected async onRenderPrompt(dc: DialogContext, state: InputState): Promise<Partial<Activity>> {
         let msg: Partial<Activity>;
-        let template: TemplateInterface<Partial<Activity>>;
+        let template: TemplateInterface<Partial<Activity>, DialogStateManager>;
+
         switch (state) {
             case InputState.unrecognized:
                 if (this.unrecognizedPrompt) {

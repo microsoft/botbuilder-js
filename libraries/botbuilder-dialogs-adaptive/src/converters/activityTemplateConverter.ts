@@ -7,12 +7,12 @@
  */
 
 import { Activity } from 'botbuilder-core';
-import { Converter } from 'botbuilder-dialogs';
+import { Converter, DialogStateManager } from 'botbuilder-dialogs';
 import { TemplateInterface } from '../template';
 import { ActivityTemplate, StaticActivityTemplate } from '../templates';
 
 type Input = string | Partial<Activity>;
-type Output = TemplateInterface<Partial<Activity>>;
+type Output = TemplateInterface<Partial<Activity>, DialogStateManager>;
 
 export class ActivityTemplateConverter implements Converter<Input, Output> {
     public convert(value: Input | Output): Output {
