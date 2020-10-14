@@ -60,10 +60,8 @@
       }
     ],
     "Airline": [
-      [
-        "Delta",
-        "Virgin"
-      ]
+      "Delta",
+      "Virgin"
     ]
   },
   "sentiment": {

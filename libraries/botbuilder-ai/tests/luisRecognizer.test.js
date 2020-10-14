@@ -275,7 +275,7 @@ describe('LuisRecognizer', function() {
             assert(res.intents.Travel.score > 0 && res.intents.Travel.score <= 1);
             assert(res.entities);
             assert(res.entities.Airline);
-            assert(res.entities.Airline[0][0] === 'United');
+            assert(res.entities.Airline[0] === 'United');
             assert(res.entities.$instance);
             assert(res.entities.$instance.Airline);
             assert(res.entities.$instance.Airline[0].startIndex);
@@ -296,10 +296,10 @@ describe('LuisRecognizer', function() {
             assert(res.intents.Travel);
             assert(res.intents.Travel.score > 0 && res.intents.Travel.score <= 1);
             assert(res.entities);
-            assert(res.entities.Airline[0]);
-            assert(res.entities.Airline[0].length == 2);
-            assert(res.entities.Airline[0].indexOf('Delta') > -1);
-            assert(res.entities.Airline[0].indexOf('Virgin') > -1);
+            assert(res.entities.Airline);
+            assert(res.entities.Airline.length == 2);
+            assert(res.entities.Airline.indexOf('Delta') > -1);
+            assert(res.entities.Airline.indexOf('Virgin') > -1);
             assert(res.entities.$instance);
             assert(res.entities.$instance.Airline);
             assert(res.entities.$instance.Airline[0].startIndex);
@@ -601,8 +601,8 @@ describe('LuisRecognizer', function() {
         }
     });
 
-    it('null telemetryClient should work.', () => {
-        const includeAllIntents = false;
+    it('null telemetryClient should work.', (done) => {
+        const includeAllIntents = true;
         const includeInstance = true;
         const nullTelemetryClient = null;
         const nullTelemetryProperties = null;
@@ -622,10 +622,11 @@ describe('LuisRecognizer', function() {
             assert(res.entities.$instance.Name[0].startIndex === 11);
             assert(res.entities.$instance.Name[0].endIndex === 15);
             assert(res.entities.$instance.Name[0].score > 0 && res.entities.$instance.Name[0].score <= 1);
+            done();
         }, includeAllIntents, includeInstance, nullTelemetryClient, nullTelemetryProperties, logPersonalInformation);
     });
 
-    it('basic telemetry test.', () => {
+    it('basic telemetry test.', (done) => {
         var callCount = 0;
         var telemetryClient = {
             trackEvent: (telemetry) => {
@@ -655,8 +656,8 @@ describe('LuisRecognizer', function() {
             }
         };
 
-        const includeAllIntents = false;
-        const includeInstance = false;
+        const includeAllIntents = true;
+        const includeInstance = true;
         const nullTelemetryProperties = null;
         const logPersonalInformation = true;
 
@@ -674,10 +675,11 @@ describe('LuisRecognizer', function() {
             assert(res.entities.$instance.Name[0].startIndex === 11);
             assert(res.entities.$instance.Name[0].endIndex === 15);
             assert(res.entities.$instance.Name[0].score > 0 && res.entities.$instance.Name[0].score <= 1);
+            done();
         }, includeAllIntents, includeInstance, telemetryClient, nullTelemetryProperties, logPersonalInformation);
     });
 
-    it('telemetry with multiple entity names returned.', () => {
+    it('telemetry with multiple entity names returned.', (done) => {
         var callCount = 0;
         var telemetryClient = {
             trackEvent: (telemetry) => {
@@ -719,10 +721,10 @@ describe('LuisRecognizer', function() {
             assert(res.intents.Travel);
             assert(res.intents.Travel.score > 0 && res.intents.Travel.score <= 1);
             assert(res.entities);
-            assert(res.entities.Airline[0]);
-            assert(res.entities.Airline[0].length == 2);
-            assert(res.entities.Airline[0].indexOf('Delta') > -1);
-            assert(res.entities.Airline[0].indexOf('Virgin') > -1);
+            assert(res.entities.Airline);
+            assert(res.entities.Airline.length == 2);
+            assert(res.entities.Airline.indexOf('Delta') > -1);
+            assert(res.entities.Airline.indexOf('Virgin') > -1);
             assert(res.entities.$instance);
             assert(res.entities.$instance.Airline);
             assert(res.entities.$instance.Airline[0].startIndex);
@@ -731,10 +733,11 @@ describe('LuisRecognizer', function() {
             assert(res.entities.$instance.Airline[0].endIndex === 22);
             assert(res.entities.$instance.Airline[0].text);
             assert(res.entities.$instance.Airline[0].text === 'dl');
+            done();
         }, includeAllIntents, includeInstance, telemetryClient, nullTelemetryProperties, logPersonalInformation);
     });
 
-    it('override telemetry properties on logging.', () => {
+    it('override telemetry properties on logging.', (done) => {
         var callCount = 0;
         var telemetryClient = {
             trackEvent: (telemetry) => {
@@ -792,10 +795,11 @@ describe('LuisRecognizer', function() {
             assert(res.entities.$instance.Name[0].startIndex === 11);
             assert(res.entities.$instance.Name[0].endIndex === 15);
             assert(res.entities.$instance.Name[0].score > 0 && res.entities.$instance.Name[0].score <= 1);
+            done();
         }, includeAllIntents, includeInstance, telemetryClient, properties, logPersonalInformation);
     });
 
-    it('override telemetry by deriving LuisRecognizer.', () => {
+    it('override telemetry by deriving LuisRecognizer.', (done) => {
         var callCount = 0;
         var telemetryClient = {
             trackEvent: (telemetry) => {
@@ -853,11 +857,11 @@ describe('LuisRecognizer', function() {
                 fs.outputJSONSync(newPath, res, { spaces: 2 });
                 assert(false, '\nReturned JSON\n  ' + newPath + '\n!= expected JSON\n  ' + expectedPath);
             }
+            done();
         });
-
     });
 
-    it('override telemetry by deriving LuisRecognizer and using fill.', () => {
+    it('override telemetry by deriving LuisRecognizer and using fill.', (done) => {
         var callCount = 0;
         var telemetryClient = {
             trackEvent: (telemetry) => {
@@ -930,6 +934,7 @@ describe('LuisRecognizer', function() {
             assert(res.entities.$instance.Name[0].startIndex === 11);
             assert(res.entities.$instance.Name[0].endIndex === 15);
             assert(res.entities.$instance.Name[0].score > 0 && res.entities.$instance.Name[0].score <= 1);
+            done();
         });
     });
 
