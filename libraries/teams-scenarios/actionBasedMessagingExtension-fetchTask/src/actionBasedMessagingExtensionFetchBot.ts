@@ -29,7 +29,7 @@ import { SubmitExampleData } from './submitExampleData';
  */
 export class ActionBasedMessagingExtensionFetchTaskBot extends TeamsActivityHandler {
     /**
-     * Initializes a new instance of the `ActionBasedMessagingExtensionFetchTaskBot` class.
+     * Initializes a new instance of the [ActionBasedMessagingExtensionFetchTaskBot](xref:action-based-messaging-extension-fetchtask.ActionBasedMessagingExtensionFetchTaskBot) class.
      */
     constructor() {
         super();

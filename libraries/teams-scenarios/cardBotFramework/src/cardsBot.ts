@@ -19,7 +19,7 @@ export class CardsBot extends TeamsActivityHandler {
     protected cardTypes: string[];
 
     /**
-     * Initializes a new instance of the `CardsBot` class.
+     * Initializes a new instance of the [CardsBot](xref:cards-bot.CardsBot) class.
      */
     constructor() {
         super();
